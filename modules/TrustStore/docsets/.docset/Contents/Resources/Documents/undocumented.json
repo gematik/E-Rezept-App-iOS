@@ -1,0 +1,47 @@
+{
+  "warnings": [
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/TrustStore/TrustAnchor.swift",
+      "line": 9,
+      "symbol": "TrustAnchor",
+      "symbol_kind": "source.lang.swift.decl.struct",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/TrustStore/TrustAnchor.swift",
+      "line": 16,
+      "symbol": "TrustAnchor.init(withPEM:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/TrustStore/TrustStoreError.swift",
+      "line": 8,
+      "symbol": "TrustStoreError",
+      "symbol_kind": "source.lang.swift.decl.enum",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/TrustStore/TrustStoreError.swift",
+      "line": 36,
+      "symbol": "TrustStoreError",
+      "symbol_kind": "source.lang.swift.decl.extension",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/TrustStore/TrustStoreStorage.swift",
+      "line": 27,
+      "symbol": "TrustStoreFileStorage",
+      "symbol_kind": "source.lang.swift.decl.class",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/TrustStore/TrustStoreStorage.swift",
+      "line": 37,
+      "symbol": "TrustStoreFileStorage.init(trustStoreStorageBaseFilePath:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    }
+  ],
+  "source_directory": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare"
+}

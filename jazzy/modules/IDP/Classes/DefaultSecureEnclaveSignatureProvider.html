@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>DefaultSecureEnclaveSignatureProvider Class Reference</title>
+    <link rel="stylesheet" type="text/css" href="../css/jazzy.css" />
+    <link rel="stylesheet" type="text/css" href="../css/highlight.css" />
+    <meta charset="utf-8">
+    <script src="../js/jquery.min.js" defer></script>
+    <script src="../js/jazzy.js" defer></script>
+    
+    <script src="../js/lunr.min.js" defer></script>
+    <script src="../js/typeahead.jquery.js" defer></script>
+    <script src="../js/jazzy.search.js" defer></script>
+  </head>
+  <body>
+
+    <a name="//apple_ref/swift/Class/DefaultSecureEnclaveSignatureProvider" class="dashAnchor"></a>
+
+    <a title="DefaultSecureEnclaveSignatureProvider Class Reference"></a>
+
+    <header class="header">
+      <p class="header-col header-col--primary">
+        <a class="header-link" href="../index.html">
+           1.0.7
+ Docs
+        </a>
+         (81% documented)
+      </p>
+    
+      <p class="header-col--secondary">
+        <form role="search" action="../search.json">
+          <input type="text" placeholder="Search documentation" data-typeahead>
+        </form>
+      </p>
+    
+        <p class="header-col header-col--secondary">
+          <a class="header-link" href="https://github.com/gematik/eRezept-iOS">
+            <img class="header-icon" src="../img/gh.png"/>
+            View on GitHub
+          </a>
+        </p>
+    
+    </header>
+
+    <p class="breadcrumbs">
+      <a class="breadcrumb" href="../index.html"> Reference</a>
+      <img class="carat" src="../img/carat.png" />
+      DefaultSecureEnclaveSignatureProvider Class Reference
+    </p>
+
+    <div class="content-wrapper">
+      <nav class="navigation">
+        <ul class="nav-groups">
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Guides.html">Guides</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../modules.html">Modules</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../requirements.html">requirements</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Classes.html">Classes</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/DefaultIDPSession.html">DefaultIDPSession</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/DefaultIDPSession/Configuration.html">– Configuration</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/DefaultSecureEnclaveSignatureProvider.html">DefaultSecureEnclaveSignatureProvider</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/IDPInterceptor.html">IDPInterceptor</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes.html#/s:3IDP14PairingSessionC">PairingSession</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Enums.html">Enumerations</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/IDPCodeChallengeMode.html">IDPCodeChallengeMode</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/IDPError.html">IDPError</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/IDPError/ServerResponse.html">– ServerResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/SecureEnclaveSignatureProviderError.html">SecureEnclaveSignatureProviderError</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Extensions.html">Extensions</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions/BrainpoolP256r1.html">BrainpoolP256r1</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions/BrainpoolP256r1/KeyExchange.html">– KeyExchange</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions/Publisher.html">Publisher</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Protocols.html">Protocols</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/IDPClient.html">IDPClient</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/IDPEndpoint.html">IDPEndpoint</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/IDPSchedulers.html">IDPSchedulers</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/IDPSession.html">IDPSession</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/IDPSessionDelegate.html">IDPSessionDelegate</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/IDPStorage.html">IDPStorage</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/SecureEGKCertificateStorage.html">SecureEGKCertificateStorage</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/SecureEnclaveSignatureProvider.html">SecureEnclaveSignatureProvider</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Structs.html">Structures</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/AuthenticationData.html">AuthenticationData</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/BiometricAuthenticationSession.html">BiometricAuthenticationSession</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/DiscoveryDocument.html">DiscoveryDocument</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/IDPChallenge.html">IDPChallenge</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/IDPChallenge/Claim.html">– Claim</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/IDPChallenge/UserConsent.html">– UserConsent</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/IDPChallengeResponse.html">IDPChallengeResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/IDPChallengeSession.html">IDPChallengeSession</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/IDPExchangeToken.html">IDPExchangeToken</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/IDPToken.html">IDPToken</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/NestedJWT.html">NestedJWT</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/PairingData.html">PairingData</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs.html#/s:3IDP12PairingEntryV">PairingEntry</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/PrivateKeyContainer.html">PrivateKeyContainer</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/RegistrationData.html">RegistrationData</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/RegistrationData/DeviceInformation.html">– DeviceInformation</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/SignedAuthenticationData.html">SignedAuthenticationData</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/SignedChallenge.html">SignedChallenge</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/SignedPairingData.html">SignedPairingData</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Typealiases.html">Type Aliases</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Typealiases.html#/s:3IDP8IDPScopea">IDPScope</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Typealiases.html#/s:3IDP6Randoma">Random</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Typealiases.html#/s:3IDP12TimeProvidera">TimeProvider</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Typealiases.html#/s:3IDP12VerifierCodea">VerifierCode</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+      <article class="main-content">
+
+        <section class="section">
+          <div class="section-content top-matter">
+            <h1>DefaultSecureEnclaveSignatureProvider</h1>
+              <div class="declaration">
+                <div class="language">
+                  
+                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">DefaultSecureEnclaveSignatureProvider</span> <span class="p">:</span> <span class="kt"><a href="../Protocols/SecureEnclaveSignatureProvider.html">SecureEnclaveSignatureProvider</a></span></code></pre>
+
+                </div>
+              </div>
+            <p>Undocumented</p>
+
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-content">
+            <div class="task-group">
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP37DefaultSecureEnclaveSignatureProviderC7storage22keyIdentifierGenerator019privateKeyContainerF0AcA0C21EGKCertificateStorage_p_10Foundation4DataVyKcAA07PrivatelM0VSSKctcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(storage:keyIdentifierGenerator:privateKeyContainerProvider:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP37DefaultSecureEnclaveSignatureProviderC7storage22keyIdentifierGenerator019privateKeyContainerF0AcA0C21EGKCertificateStorage_p_10Foundation4DataVyKcAA07PrivatelM0VSSKctcfc">init(storage:<wbr>keyIdentifierGenerator:<wbr>privateKeyContainerProvider:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">storage</span><span class="p">:</span> <span class="kt"><a href="../Protocols/SecureEGKCertificateStorage.html">SecureEGKCertificateStorage</a></span><span class="p">,</span>
+            <span class="c1">// [REQ:gemSpec_IDP_Frontend:A_21588] key identfier generator, number of bytes 32</span>
+            <span class="nv">keyIdentifierGenerator</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(()</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt">Data</span><span class="p">)</span> <span class="o">=</span> <span class="p">{</span> <span class="k">try</span> <span class="nf">generateSecureRandom</span><span class="p">(</span><span class="nv">length</span><span class="p">:</span> <span class="mi">32</span><span class="p">)</span> <span class="p">},</span>
+            <span class="nv">privateKeyContainerProvider</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">((</span><span class="kt">String</span><span class="p">)</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Structs/PrivateKeyContainer.html">PrivateKeyContainer</a></span><span class="p">)</span> <span class="o">=</span> <span class="p">{</span> <span class="n">identifier</span> <span class="k">in</span>
+                <span class="k">try</span> <span class="kt"><a href="../Structs/PrivateKeyContainer.html">PrivateKeyContainer</a></span><span class="o">.</span><span class="nf">createFromSecureEnclave</span><span class="p">(</span><span class="nv">with</span><span class="p">:</span> <span class="n">identifier</span><span class="p">)</span>
+            <span class="p">})</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP30SecureEnclaveSignatureProviderP21isBiometrieRegistered7Combine12AnyPublisherVySbs5NeverOGvp"></a>
+                    <a name="//apple_ref/swift/Property/isBiometrieRegistered" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP30SecureEnclaveSignatureProviderP21isBiometrieRegistered7Combine12AnyPublisherVySbs5NeverOGvp">isBiometrieRegistered</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">isBiometrieRegistered</span><span class="p">:</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">Bool</span><span class="p">,</span> <span class="kt">Never</span><span class="o">&gt;</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP30SecureEnclaveSignatureProviderP12registerDataAA14PairingSessionCyKF"></a>
+                    <a name="//apple_ref/swift/Method/registerData()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP30SecureEnclaveSignatureProviderP12registerDataAA14PairingSessionCyKF">registerData()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">registerData</span><span class="p">()</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes.html#/s:3IDP14PairingSessionC">PairingSession</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP30SecureEnclaveSignatureProviderP18signPairingSession_4with11certificate7Combine12AnyPublisherVyAA16RegistrationDataVs5Error_pGAA0gH0C_AA9JWTSigner_p7OpenSSL4X509CtF"></a>
+                    <a name="//apple_ref/swift/Method/signPairingSession(_:with:certificate:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP30SecureEnclaveSignatureProviderP18signPairingSession_4with11certificate7Combine12AnyPublisherVyAA16RegistrationDataVs5Error_pGAA0gH0C_AA9JWTSigner_p7OpenSSL4X509CtF">signPairingSession(_:<wbr>with:<wbr>certificate:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">signPairingSession</span><span class="p">(</span><span class="n">_</span> <span class="nv">pairingSession</span><span class="p">:</span> <span class="kt"><a href="../Classes.html#/s:3IDP14PairingSessionC">PairingSession</a></span><span class="p">,</span> <span class="n">with</span> <span class="nv">signer</span><span class="p">:</span> <span class="kt">JWTSigner</span><span class="p">,</span> <span class="nv">certificate</span><span class="p">:</span> <span class="kt">X509</span><span class="p">)</span>
+<span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/RegistrationData.html">RegistrationData</a></span><span class="p">,</span> <span class="kt">Swift</span><span class="o">.</span><span class="kt">Error</span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP30SecureEnclaveSignatureProviderP5abort14pairingSessionyAA07PairingH0C_tKF"></a>
+                    <a name="//apple_ref/swift/Method/abort(pairingSession:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP30SecureEnclaveSignatureProviderP5abort14pairingSessionyAA07PairingH0C_tKF">abort(pairingSession:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">abort</span><span class="p">(</span><span class="nv">pairingSession</span><span class="p">:</span> <span class="kt"><a href="../Classes.html#/s:3IDP14PairingSessionC">PairingSession</a></span><span class="p">)</span> <span class="k">throws</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP30SecureEnclaveSignatureProviderP18authenticationData3for7Combine12AnyPublisherVyAA020SignedAuthenticationG0VAA0bcdE5ErrorOGAA19IDPChallengeSessionV_tF"></a>
+                    <a name="//apple_ref/swift/Method/authenticationData(for:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP30SecureEnclaveSignatureProviderP18authenticationData3for7Combine12AnyPublisherVyAA020SignedAuthenticationG0VAA0bcdE5ErrorOGAA19IDPChallengeSessionV_tF">authenticationData(for:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">authenticationData</span><span class="p">(</span><span class="k">for</span> <span class="nv">challenge</span><span class="p">:</span> <span class="kt"><a href="../Structs/IDPChallengeSession.html">IDPChallengeSession</a></span><span class="p">)</span>
+<span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/SignedAuthenticationData.html">SignedAuthenticationData</a></span><span class="p">,</span> <span class="kt"><a href="../Enums/SecureEnclaveSignatureProviderError.html">SecureEnclaveSignatureProviderError</a></span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+      </article>
+    </div>
+    <section class="footer">
+      <p>&copy; 2021 <a class="link" href="https://www.gematik.de" target="_blank" rel="external">gematik GmbH</a>. All rights reserved. (Last updated: 2021-07-21)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+    </section>
+  </body>
+</div>
+</html>
