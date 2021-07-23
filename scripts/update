@@ -1,0 +1,13 @@
+#!/bin/sh
+
+# scripts/update: Update all dependencies that the application requires to
+#                   run.
+
+set -ev
+
+cd "$(dirname "$0")/.."
+
+mint run carthage update --no-build
+bundle update
+
+scripts/setup

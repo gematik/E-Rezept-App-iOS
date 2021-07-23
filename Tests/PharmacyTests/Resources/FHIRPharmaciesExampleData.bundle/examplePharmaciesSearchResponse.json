@@ -1,0 +1,164 @@
+{
+    "id": "dabe8067-6755-4bc6-8250-c5072009702b",
+    "meta": {
+        "lastUpdated": "2021-04-30T11:44:52.913826+02:00"
+    },
+    "resourceType": "Bundle",
+    "type": "searchset",
+    "total": 1,
+    "link": [
+        {
+            "relation": "self",
+            "url": "Bundledabe8067-6755-4bc6-8250-c5072009702b"
+        }
+    ],
+    "entry": [
+        {
+            "resource": {
+                "id": "c1d8fb25-795c-4b28-8aa7-d2b1e15d886c",
+                "meta": {
+                    "lastUpdated": "2021-04-26T15:57:45+02:00",
+                    "versionId": "1"
+                },
+                "resourceType": "Location",
+                "contained": [
+                    {
+                        "id": "c1d8fb25-795c-4b28-8aa7-d2b1e15d886cMobile",
+                        "resourceType": "HealthcareService",
+                        "active": true,
+                        "coverageArea": [
+                            {
+                                "extension": [
+                                    {
+                                        "url": "https://ngda.de/fhir/extensions/ServiceCoverageRange",
+                                        "valueQuantity": {
+                                            "value": 50000,
+                                            "unit": "m"
+                                        }
+                                    }
+                                ]
+                            }
+                        ],
+                        "location": [
+                            {
+                                "reference": "Location/c1d8fb25-795c-4b28-8aa7-d2b1e15d886c"
+                            }
+                        ],
+                        "type": [
+                            {
+                                "coding": [
+                                    {
+                                        "system": "http://terminology.hl7.org/CodeSystem/service-type",
+                                        "code": "498",
+                                        "display": "Mobile Services"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                ],
+                "address": {
+                    "use": "work",
+                    "type": "physical",
+                    "text": "",
+                    "line": [
+                        "Duisburgerstraße 225"
+                    ],
+                    "postalCode": "47166",
+                    "city": "Duisburg",
+                    "country": "de"
+                },
+                "createdAt": "2021-04-13T11:38:27+02:00",
+                "hoursOfOperation": [
+                    {
+                        "daysOfWeek": [
+                            "mon"
+                        ],
+                        "openingTime": "08:00:00",
+                        "closingTime": "18:30:00"
+                    },
+                    {
+                        "daysOfWeek": [
+                            "tue"
+                        ],
+                        "openingTime": "08:00:00",
+                        "closingTime": "18:30:00"
+                    },
+                    {
+                        "daysOfWeek": [
+                            "wed"
+                        ],
+                        "openingTime": "08:00:00",
+                        "closingTime": "18:30:00"
+                    },
+                    {
+                        "daysOfWeek": [
+                            "thu"
+                        ],
+                        "openingTime": "08:00:00",
+                        "closingTime": "18:30:00"
+                    },
+                    {
+                        "daysOfWeek": [
+                            "fri"
+                        ],
+                        "openingTime": "08:00:00",
+                        "closingTime": "18:30:00"
+                    },
+                    {
+                        "daysOfWeek": [
+                            "sat"
+                        ],
+                        "openingTime": "09:00:00",
+                        "closingTime": "14:00:00"
+                    }
+                ],
+                "identifier": [
+                    {
+                        "system": "https://gematik.de/fhir/NamingSystem/TelematikID",
+                        "value": "3-10.2.0110216300.940"
+                    },
+                    {
+                        "system": "https://ngda.de/fhir/Namingsystem/NID",
+                        "value": "APO1181061"
+                    }
+                ],
+                "name": "APOTHEKE IM HANDELSHOF",
+                "position": {
+                    "latitude": 51.493926,
+                    "longitude": 6.772768
+                },
+                "telecom": [
+                    {
+                        "system": "phone",
+                        "value": "0203547781"
+                    },
+                    {
+                        "system": "fax",
+                        "value": "020372895032"
+                    },
+                    {
+                        "system": "email",
+                        "value": "verwaltung@apotheke-im-handelshof.net"
+                    },
+                    {
+                        "system": "url",
+                        "value": "https://apotheke-im-handelshof.net/"
+                    }
+                ],
+                "type": [
+                    {
+                        "coding": [
+                            {
+                                "system": "http://terminology.hl7.org/ValueSet/v3-ServiceDeliveryLocationRoleType",
+                                "code": "PHARM",
+                                "display": "Pharmacy"
+                            }
+                        ]
+                    }
+                ],
+                "updatedAt": "2021-04-26T15:57:45+02:00"
+            }
+        }
+    ]
+}

@@ -1,0 +1,14 @@
+#!/bin/sh
+
+# scripts/test: Run test suite for application. Optionally pass in a path to an
+#              individual test file to run a single test.
+
+set -ev
+
+cd "$(dirname "$0")/.."
+
+[ -z "$DEBUG" ] || set -x
+
+echo "==> Running tests…"
+
+bundle exec fastlane build_all

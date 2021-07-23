@@ -1,0 +1,4 @@
+device("iPhone 11")
+
+project("eRp-App.xcodeproj")
+derived_data_path("./DerivedData/")

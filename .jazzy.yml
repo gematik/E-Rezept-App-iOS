@@ -1,0 +1,17 @@
+output: docs
+author: gematik GmbH
+author_url: https://www.gematik.de
+exclude: /*/internal*
+github_url: https://github.com/gematik/eRezept-iOS
+theme: fullwidth
+swift_build_tool: xcodebuild
+documentation:
+  - build/docs/generated/*.md
+  - doc/modules/eRpApp/*.md
+xcodebuild_arguments:
+  - "-project"
+  - 'eRp-App.xcodeproj'
+  - "-scheme"
+  - 'eRpApp'
+  - '-destination'
+  - 'platform=iOS Simulator,name=iPhone 11'

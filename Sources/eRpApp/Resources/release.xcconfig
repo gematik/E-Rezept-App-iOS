@@ -1,0 +1,6 @@
+#include "base.xcconfig"
+
+SWIFT_COMPILATION_MODE = wholemodule
+
+CODE_SIGN_IDENTITY = iPhone Distribution
+PROVISIONING_PROFILE_SPECIFIER = match AppStore de.gematik.erp4ios.eRezept

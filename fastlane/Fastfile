@@ -1,0 +1,709 @@
+#
+# Copyright (c) 2021 gematik GmbH
+# 
+# Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
+# the European Commission - subsequent versions of the EUPL (the Licence);
+# You may not use this work except in compliance with the Licence.
+# You may obtain a copy of the Licence at:
+# 
+#     https://joinup.ec.europa.eu/software/page/eupl
+# 
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the Licence is distributed on an "AS IS" basis,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the Licence for the specific language governing permissions and
+# limitations under the Licence.
+# 
+#
+
+xcversion(version: ENV["FL_XCODE_VERSION"] || "12.5")
+
+fastlane_version "2.187.0"
+
+# Figure out if a setting is truthy
+def true?(obj)
+  if obj.nil?
+    raise "Object is nil. Not a valid boolean value"
+  end
+  obj.to_s.downcase == "true"
+end
+
+desc "Lane that detects whether the project dependencies should be resolved with"
+desc "SPM or Carthage. When both are specified, Carthage takes precedence"
+desc "Note: This lane calls `fix_test_resources` and `fix_project_resources` (because they will be lost due to spm generate-xcodeproj)"
+desc "###Options"
+desc " * **`skip_ios`**: Whether to skip the ios build [default: false]. (`G_BUILD_IOS_SKIP`)"
+desc " * **`skip_macos`**: Whether to skip the macos build [default: false]. (`G_BUILD_MAC_SKIP`)"
+desc ""
+desc "###Example:"
+desc "```\nfastlane resolve_dependencies \n```"
+desc ""
+lane :resolve_dependencies do |options|
+  sh "rm -rf DerivedData/SourcePackages"
+  if File.exist? "../Cartfile.resolved"
+    carthage_resolve_dependencies options
+  elsif File.exist? "../Package.swift"
+    spm(command: "resolve")
+  end
+end
+
+desc "Lane that resolves the project dependencies using Carthage."
+desc "###Options"
+desc " * **`skip_ios`**: Whether to skip the ios build [default: false]. (`G_BUILD_IOS_SKIP`)"
+desc " * **`skip_macos`**: Whether to skip the macos build [default: false]. (`G_BUILD_MAC_SKIP`)"
+desc ""
+lane :carthage_resolve_dependencies do |options|
+  if !options[:skip_ios].nil?
+    skip_ios = options[:skip_ios]
+  elsif !ENV["G_BUILD_IOS_SKIP"].nil?
+    skip_ios = true?(ENV["G_BUILD_IOS_SKIP"])
+  else
+    skip_ios = false
+  end
+
+  if !options[:skip_macos].nil?
+    skip_macos = options[:skip_macos]
+  elsif !ENV["G_BUILD_MAC_SKIP"].nil?
+    skip_macos = true?(ENV["G_BUILD_MAC_SKIP"])
+  else
+    skip_macos = false
+  end
+
+  if options[:configuration]
+    configuration = options[:configuration]
+  elsif ENV["G_BUILD_CONFIGURATION"]
+    configuration = ENV["G_BUILD_CONFIGURATION"]
+  else
+    configuration = "Debug"
+  end
+
+  carthage_mint="mint run carthage"
+
+  carthage(executable: carthage_mint, command: "bootstrap", no_build: true)
+  # Create Xcodeproj when necessary for Carthage dependencies
+  sh("find", "../Carthage/Checkouts/", "-type", "d", "-mindepth", "1", "-maxdepth", "1", "!", "-exec", "sh", "-c", "test -e {}/*.xcodeproj/project.pbxproj", ";", "-execdir", "sh", "-c", "cd {}; if [ -e project.yml ]; then xcodegen; fi;", ";")
+  sh("find", "../Carthage/Checkouts/", "-type", "d", "-mindepth", "1", "-maxdepth", "1", "!", "-exec", "sh", "-c", "test -e {}/*.xcodeproj/project.pbxproj", ";", "-execdir", "sh", "-c", "cd {}; if [ -e Package.swift ] && [ -e Package.xcconfig ]; then swift package generate-xcodeproj --xcconfig-overrides Package.xcconfig; elif [ -e Package.swift ]; then swift package generate-xcodeproj; fi;", ";")
+  platforms = []
+  if !skip_ios
+    platforms.push("iOS")
+  end
+  if !skip_macos
+    platforms.push("Mac")
+  end
+
+  UI.message("No platforms specified. Build all platforms.") if platforms.count == 0
+  carthage(executable: carthage_mint, command: "build", use_xcframeworks: true, cache_builds: true, configuration: configuration) if platforms.count == 0
+  UI.message("Carthage build for platforms: #{platforms}") unless platforms.count == 0
+  carthage(executable: carthage_mint, command: "build", platform: platforms.join(","), use_xcframeworks: true, cache_builds: true, configuration: configuration) unless platforms.count == 0
+end
+
+desc "Generate xcodeproj with SPM or Xcodegen. Depending on what is used by the target project"
+desc "When both are used, the Xcodegen takes precedence."
+desc "The lane to run when Package.swift and/or project.yml has changed and this should be reflected"
+desc "in the xcodeproj. CI builds should always run this."
+desc "Note: This lane calls `xcodegen_generate_xcodeproj` or `spm_generate_xcodeproj`"
+desc ""
+desc "###Example:"
+desc "```\nfastlane spm_generate_xcodeproj xcconfig:Other.xcconfig skip_fix_resources:true skip_fix_test_resources:true --env osx\n```"
+desc "###Options"
+desc " * **`xcconfig`**: The xcconfig file [default: Package.xcconfig]. (`G_XCCONFIG`)"
+desc " * **`skip_fix_resources`**: Whether to run lane `fix_project_resources` or not [default: true => do not run fix_project_resources]. (`G_GEN_XCODEPROJ_SKIP_PROJECT_RESOURCES`)"
+desc " * **`skip_fix_test_resources`**: Whether to run lane `fix_test_resources` or not [default: false => do run fix_test_resources]. (`G_GEN_XCODEPROJ_SKIP_TEST_RESOURCES`)"
+desc ""
+lane :generate_xcodeproj do |options|
+  if File.exist? "../project.yml"
+    xcodegen_generate_xcodeproj options
+  else
+    spm_generate_xcodeproj options
+  end
+end
+
+desc "Generate xcodeproj from project.yml file"
+desc "The lane to run when project.yml has changed and this should be reflected"
+desc "in the xcodeproj."
+desc ""
+desc "###Example:"
+desc "```\nfastlane xcodegen_generate_xcodeproj\n```"
+desc ""
+lane :xcodegen_generate_xcodeproj do |options|
+  sh("xcodegen", "generate", "--spec", "../project.yml")
+end
+
+desc "Generate xcodeproj from Package.swift file"
+desc "The lane to run when Package.swift has changed and this should be reflected"
+desc "in the xcodeproj."
+desc "Note: This lane calls `fix_test_resources` and `fix_project_resources` (because they will be lost due to spm generate-xcodeproj)"
+desc ""
+desc "###Example:"
+desc "```\nfastlane spm_generate_xcodeproj xcconfig:Other.xcconfig skip_fix_resources:true skip_fix_test_resources:true --env osx\n```"
+desc "###Options"
+desc " * **`xcconfig`**: The xcconfig file [default: Package.xcconfig]. (`G_XCCONFIG`)"
+desc " * **`skip_fix_resources`**: Whether to run lane `fix_project_resources` or not [default: true => do not run fix_project_resources]. (`G_GEN_XCODEPROJ_SKIP_PROJECT_RESOURCES`)"
+desc " * **`skip_fix_test_resources`**: Whether to run lane `fix_test_resources` or not [default: false => do run fix_test_resources]. (`G_GEN_XCODEPROJ_SKIP_TEST_RESOURCES`)"
+desc ""
+lane :spm_generate_xcodeproj do |options|
+  if options[:xcconfig]
+    xcconfig = options[:xcconfig]
+  elsif ENV["G_XCCONFIG"]
+    xcconfig = ENV["G_XCCONFIG"]
+  else
+    xcconfig = "./Package.xcconfig"
+  end
+
+  if !options[:skip_fix_resources].nil?
+    skip_fix_resources = options[:skip_fix_resources]
+  elsif !ENV["G_GEN_XCODEPROJ_SKIP_PROJECT_RESOURCES"].nil?
+    skip_fix_resources = true?(ENV["G_GEN_XCODEPROJ_SKIP_PROJECT_RESOURCES"])
+  else
+    skip_fix_resources = true
+  end
+
+  if !options[:skip_fix_test_resources].nil?
+    skip_fix_test_resources = options[:skip_fix_test_resources]
+  elsif !ENV["G_GEN_XCODEPROJ_SKIP_TEST_RESOURCES"].nil?
+    skip_fix_test_resources = true?(ENV["G_GEN_XCODEPROJ_SKIP_TEST_RESOURCES"])
+  else
+    skip_fix_test_resources = false
+  end
+
+  spm(
+    command: "generate-xcodeproj",
+    xcconfig: xcconfig
+  )
+
+  fix_test_resources options unless skip_fix_test_resources
+  fix_project_resources options unless skip_fix_resources
+end
+
+desc "Add test (Bundle) Resource(s) to the Test target"
+desc ""
+desc "###Example:"
+desc "```\nfastlane fix_test_resources project:Project.xcodeproj test_target:TargetTest test_group:Tests/Group test_bundles:\"../Resources.bundle,Tests.bundle\" --env osx\n```"
+desc "###Options"
+desc " * **`project`**: The path to the Xcode project file. (`G_PROJECT`)"
+desc " * **`test_target`**: The target name in the Xcode project. (`G_FIX_TEST_TARGET`)"
+desc " * **`test_group`**: The group name in the Xcode project. (`G_FIX_TEST_GROUP`)"
+desc " * **`test_bundles`**: Comma separated list of the bundle resources to add to the target relative to the group in the Xcode project. (`G_FIX_TEST_BUNDLE_RESOURCES`)"
+desc ""
+lane :fix_test_resources do |options|
+  if options[:project]
+    project = options[:project]
+  elsif ENV["G_PROJECT"]
+    project = ENV["G_PROJECT"]
+  else
+    raise "Project is not set. Please provide a :project or set ENV[G_PROJECT] to a path where the xcodeproj can be found."
+  end
+  if options[:test_target]
+    target = options[:test_target]
+  elsif ENV["G_FIX_TEST_TARGET"]
+    target = ENV["G_FIX_TEST_TARGET"]
+  else
+    raise "Target is not set. Please provide a :target or set ENV[G_FIX_TEST_TARGET] to a valid target in the project."
+  end
+
+  if options[:test_group]
+    group = options[:test_group]
+  elsif ENV["G_FIX_TEST_GROUP"]
+    group = ENV["G_FIX_TEST_GROUP"]
+  else
+    raise "Group is not set. Please provide a :group or set ENV[G_FIX_TEST_GROUP] to a valid group of the project."
+  end
+
+  if options[:test_bundles]
+    bundles = options[:test_bundles]
+  elsif ENV["G_FIX_TEST_BUNDLE_RESOURCES"]
+    bundles = ENV["G_FIX_TEST_BUNDLE_RESOURCES"]
+  else
+    raise "No bundles provided. Please provide a :bundles list or set ENV[G_FIX_TEST_BUNDLE_RESOURCES] to a valid list of bundles."
+  end
+
+  # Convert bundles to array (ignoring leading and trailing whitespace)
+  bundles = bundles.split(/\s*,\s*/)
+
+  xcodeproj(
+    command: "add",
+    project: project,
+    target: target,
+    group: group,
+    resources: bundles
+  )
+end
+
+desc "Add (Bundle) Resource(s) to the Project target"
+desc ""
+desc "###Example:"
+desc "```\nfastlane fix_project_resources project:Project.xcodeproj target:Target group:Sources/Group bundles:\"../Resources.bundle,Assets.bundle\" --env osx\n```"
+desc "###Options"
+desc " * **`project`**: The path to the Xcode project file. (`G_PROJECT`)"
+desc " * **`target`**: The target name in the Xcode project. (`G_FIX_PROJECT_TARGET`)"
+desc " * **`group`**: The group name in the Xcode project. (`G_FIX_PROJECT_GROUP`)"
+desc " * **`bundles`**: Comma separated list of the bundle resources to add to the target relative to the group in the Xcode project. (`G_FIX_PROJECT_BUNDLE_RESOURCES`)"
+desc ""
+lane :fix_project_resources do |options|
+  if options[:project]
+    project = options[:project]
+  elsif ENV["G_PROJECT"]
+    project = ENV["G_PROJECT"]
+  else
+    raise "Project is not set. Please provide a :project or set ENV[G_PROJECT] to a path where the xcodeproj can be found."
+  end
+  if options[:target]
+    target = options[:target]
+  elsif ENV["G_FIX_PROJECT_TARGET"]
+    target = ENV["G_FIX_PROJECT_TARGET"]
+  else
+    raise "Target is not set. Please provide a :target or set ENV[G_FIX_PROJECT_TARGET] to a valid target in the project."
+  end
+
+  if options[:group]
+    group = options[:group]
+  elsif ENV["G_FIX_PROJECT_GROUP"]
+    group = ENV["G_FIX_PROJECT_GROUP"]
+  else
+    raise "Group is not set. Please provide a :group or set ENV[G_FIX_PROJECT_GROUP] to a valid group of the project."
+  end
+
+  if options[:bundles]
+    bundles = options[:bundles]
+  elsif ENV["G_FIX_PROJECT_BUNDLE_RESOURCES"]
+    bundles = ENV["G_FIX_PROJECT_BUNDLE_RESOURCES"]
+  else
+    raise "No bundles provided. Please provide a :bundles list or set ENV[G_FIX_PROJECT_BUNDLE_RESOURCES] to a valid list of bundles."
+  end
+
+  # Convert bundles to array (ignoring leading and trailing whitespace)
+  bundles = bundles.split(/\s*,\s*/)
+
+  xcodeproj(
+    command: "add",
+    project: project,
+    target: target,
+    group: group,
+    resources: bundles
+  )
+end
+
+desc "Build and test (scan) the project for macOS"
+desc "The lane to run by ci on every commit."
+desc ""
+desc "###Example:"
+desc "```\nfastlane build_mac mac_schemes:ProjectScheme mac_sdk:\"macos10.14\" mac_destination:\"platform=macOS,arch=x86_64\" configuration:Release --env osx\n```"
+desc "###Options"
+desc " * **`project`**: The path to the Xcode project file. (`G_PROJECT`)"
+desc " * **`schemes`**: The (shared) schemes to build for the mac build. If only one Scheme exists you can omit this and specify a scheme in a Scanfile (`G_MAC_SCHEMES`)"
+desc " * **`mac_sdk`**: The SDK version to build against [default: macosx]. (`G_MAC_SDK`)"
+desc " * **`mac_destination`**: Build platform destination [default: platform=macOS,arch=x86_64]. (`G_MAC_DESTINATION`)"
+desc " * **`configuration`**: Build configuration (Debug|Release) [default: Release]. (`G_BUILD_CONFIGURATION`)"
+desc ""
+lane :build_mac do |options|
+  if options[:project]
+    project = options[:project]
+  elsif ENV["G_PROJECT"]
+    project = ENV["G_PROJECT"]
+  else
+    raise "Project is not set. Please provide a :project or set ENV[G_PROJECT] to a path where the xcodeproj can be found."
+  end
+
+  if options[:mac_sdk]
+    sdk = options[:mac_sdk]
+  elsif ENV["G_MAC_SDK"]
+    sdk = ENV["G_MAC_SDK"]
+  else
+    sdk = "macosx"
+  end
+
+  if options[:mac_destination]
+    destination = options[:mac_destination]
+  elsif ENV["G_MAC_DESTINATION"]
+    destination = ENV["G_MAC_DESTINATION"]
+  else
+    destination = "platform=macOS,arch=x86_64"
+  end
+
+  if options[:configuration]
+    configuration = options[:configuration]
+  elsif ENV["G_BUILD_CONFIGURATION"]
+    configuration = ENV["G_BUILD_CONFIGURATION"]
+  else
+    configuration = "Debug"
+  end
+
+  if options[:schemes]
+    schemes = options[:schemes]
+  elsif ENV["G_MAC_SCHEMES"]
+    schemes = ENV["G_MAC_SCHEMES"]
+  else
+    scan(
+      project: project,
+      sdk: sdk,
+      destination: destination,
+      configuration: configuration
+    )
+  end
+
+  if !schemes.nil?
+    schemes.split(",").each do |scheme|
+      scan(
+        project: project,
+        scheme: scheme,
+        sdk: sdk,
+        destination: destination,
+        configuration: configuration
+      )
+    end
+  end
+end
+
+desc "Build and test (scan) the project for iOS"
+desc "The lane to run by ci on every commit."
+desc ""
+desc "###Example:"
+desc "```\nfastlane build_ios ios_schemes:ProjectScheme ios_sdk:\"iphonesimulator12.0\" ios_destination:\"platform=iOS Simulator,name=iPhone 6s,OS=12.0\" configuration:Release --env ios12_xcode10\n```"
+desc "###Options"
+desc " * **`project`**: The path to the Xcode project file. (`G_PROJECT`)"
+desc " * **`schemes`**: The (shared) schemes to build for the iOS build. If only one Scheme exists you can omit this and specify a scheme in a Scanfile (`G_IOS_SCHEMES`)"
+desc " * **`ios_sdk`**: The SDK version to build against [default: iphonesimulator]. (`G_IOS_SDK`)"
+desc " * **`ios_destination`**: Build platform destination [default: NULL]. (`G_IOS_DESTINATION`)"
+desc " * **`configuration`**: Build configuration (Debug|Release) [default: Release]. (`G_BUILD_CONFIGURATION`)"
+desc ""
+lane :build_ios do |options|
+  if options[:project]
+    project = options[:project]
+  elsif ENV["G_PROJECT"]
+    project = ENV["G_PROJECT"]
+  else
+    raise "Project is not set. Please provide a :project or set ENV[G_PROJECT] to a path where the xcodeproj can be found."
+  end
+
+  if options[:ios_sdk]
+    sdk = options[:ios_sdk]
+  elsif ENV["G_IOS_SDK"]
+    sdk = ENV["G_IOS_SDK"]
+  else
+    sdk = "iphonesimulator"
+  end
+
+  if options[:ios_destination]
+    destination = options[:ios_destination]
+  elsif ENV["G_IOS_DESTINATION"]
+    destination = ENV["G_IOS_DESTINATION"]
+  end
+
+  if options[:configuration]
+    configuration = options[:configuration]
+  elsif ENV["G_BUILD_CONFIGURATION"]
+    configuration = ENV["G_BUILD_CONFIGURATION"]
+  else
+    configuration = "Debug"
+  end
+
+  reset_simulator_contents
+
+  if options[:schemes]
+    schemes = options[:schemes]
+  elsif ENV["G_IOS_SCHEMES"]
+    schemes = ENV["G_IOS_SCHEMES"]
+  else
+    scan(
+      sdk: sdk,
+      destination: destination,
+      configuration: configuration
+    )
+  end
+
+  if !schemes.nil?
+    schemes.split(",").each do |scheme|
+      scan(
+        scheme: scheme,
+        sdk: sdk,
+        destination: destination,
+        configuration: configuration
+      )
+    end
+  end
+end
+
+desc "Test the integration of the app with external dependencies e.g. IDP/FD. Runs targets, that are excluded from"
+desc "normal CI builds."
+lane :integration_tests do |options|
+  reset_simulator_contents
+
+  scan(
+    project: "eRp-App.xcodeproj",
+    scheme: "AllIntegrationTests_iOS",
+    sdk: "iphonesimulator",
+    configuration: "Debug",
+    skip_build: true
+  )
+end
+
+desc "Lane that builds for macOS and iOS by calling `build_mac` and `build_ios`"
+desc "See other lanes for configuration of options and/or ENV."
+desc ""
+desc "###Example:"
+desc "```\nfastlane build_all skip_ios:true skip_macos:false --env osx\n```"
+desc "###Options"
+desc " * **`skip_ios`**: Whether to skip the ios build [default: false]. (`G_BUILD_IOS_SKIP`)"
+desc " * **`skip_macos`**: Whether to skip the macos build [default: false]. (`G_BUILD_MAC_SKIP`)"
+desc ""
+lane :build_all do |options|
+  if !options[:skip_ios].nil?
+    skip_ios = options[:skip_ios]
+  elsif !ENV["G_BUILD_IOS_SKIP"].nil?
+    skip_ios = true?(ENV["G_BUILD_IOS_SKIP"])
+  else
+    skip_ios = false
+  end
+
+  if !options[:skip_macos].nil?
+    skip_macos = options[:skip_macos]
+  elsif !ENV["G_BUILD_MAC_SKIP"].nil?
+    skip_macos = true?(ENV["G_BUILD_MAC_SKIP"])
+  else
+    skip_macos = false
+  end
+
+  build_mac options unless skip_macos
+  build_ios options unless skip_ios
+end
+
+desc "Lane that (auto) genarates API documentation from inline comments."
+lane :generate_documentation do |options|
+  list_requirements
+
+  output = sh "cd .. && xcodebuild -quiet -list | grep _macOS | grep -v Test; cd - > /dev/null"
+  schemes = output.split("\n").map { |e| e.strip }
+
+  sh "mkdir -p ../build/docs"
+
+  for scheme in schemes
+    sh "cd .. && mint run sourcekitten doc -- -project eRp-App.xcodeproj -scheme #{scheme} > build/docs/#{scheme}.json; cd -"
+  end
+
+  version = sh 'cd .. && grep -A 1 -R CFBundleShortVersionString ./Sources/eRpApp/Resources/Info.plist | grep "<string>" | sed -E "s/.*<string>(.*)<\\/string>/\\1/g"; cd - > /dev/null'.strip
+
+  for scheme in schemes
+    sh "cd .. && jazzy --config '.jazzy.yml' --module-version '#{version}' --sourcekitten-sourcefile build/docs/#{scheme}.json --output 'docs/modules/#{scheme.sub('_macOS','')}' --readme doc/modules/#{scheme.sub('_macOS','')}/Readme.md --documentation 'doc/modules/#{scheme.sub('_macOS','')}/*.md'; cd -"
+  end
+
+  jazzy(
+    config: ".jazzy.yml",
+    module_version: version
+  )
+end
+
+desc "Lane that runs the static code analyzer for the project."
+desc "CI builds should run this lane on every commit and fail the build when"
+desc "the error/warning threshold exceeds the set limit."
+desc "Currently swiftlint is used as static analyzer"
+desc ""
+desc "###Example:"
+desc "```\nfastlane static_code_analysis swiftlint_config:\".swiftlint.yml\" code_analysis_fail_build:true code_analysis_strict:true --env ios12_xcode10\n```"
+desc "###Options"
+desc " * **`swiftlint_config`**: The SwiftLint configfile [default: .swiftlint.yml]. (`G_SWIFTLINT_CONFIG`)"
+desc " * **`code_analysis_fail_build`**: Whether errors/warnings should trigger build failures or not [default: true]. (`G_CODE_ANALYSIS_FAIL_BUILD`)"
+desc " * **`code_analysis_strict`**: Lint mode strict [default: true]. (`G_CODE_ANALYSIS_STRICT`)"
+desc ""
+lane :static_code_analysis do |options|
+  if options[:swiftlint_config]
+    config = options[:swiftlint_config]
+  elsif ENV["G_SWIFTLINT_CONFIG"]
+    config = ENV["G_SWIFTLINT_CONFIG"]
+  else
+    config = ".swiftlint.yml"
+  end
+
+  if !options[:code_analysis_fail_build].nil?
+    fail_build = options[:code_analysis_fail_build]
+  elsif !ENV["G_CODE_ANALYSIS_FAIL_BUILD"].nil?
+    fail_build = true?(ENV["G_CODE_ANALYSIS_FAIL_BUILD"])
+  else
+    fail_build = true
+  end
+
+  if !options[:code_analysis_strict].nil?
+    strict = options[:code_analysis_strict]
+  elsif !ENV["G_CODE_ANALYSIS_STRICT"].nil?
+    strict = true?(ENV["G_CODE_ANALYSIS_STRICT"])
+  else
+    strict = true
+  end
+
+  swiftlint(
+    config_file: config,
+    mode: :lint,
+    ignore_exit_status: !fail_build,
+    quiet: true,
+    strict: strict
+  )
+end
+
+desc "Lane that sets up the SPM/Carthage dependencies and xcodeproj."
+desc "This lane calls `set_build_env`, `resolve_dependencies`, `generate_xcodeproj`"
+desc ""
+desc "###Example:"
+desc "```\nfastlane setup xcode:/Applications/Xcode-10.app configuration:Release --env ios12_xcode10\n```"
+desc "###Options"
+desc " * **`xcode`**: The path to the Xcode.app to use for this project [default: uses system xcodebuild configuration]. (`G_XCODE`)"
+desc ""
+lane :setup do |options|
+  resolve_dependencies options
+  generate_xcodeproj options
+end
+
+desc "Lane that the ci build should invoke directly to do a complete build/test/analysis."
+desc "This lane calls `setup`, `static_code_analysis`, "
+desc "`build_all`, `generate_documentation`. See these sub-lanes for option parameters"
+desc "and ENV configuration options."
+desc ""
+desc "###Example:"
+desc "```\nfastlane cibuild --env ios12_xcode10\n```"
+desc ""
+lane :cibuild do |options|
+  desc "Build and test all platforms"
+  setup options
+  static_code_analysis options
+  build_all options
+  generate_documentation options
+end
+
+lane :list_requirements do |options|
+  SPECS = Hash.new
+
+  def register(matches, file, line, code = "")
+    spec = matches[:SPEC]
+    afos = matches[:AFOS]
+
+    afos.split(',').each do |afo|
+
+      hit = {
+        "file" => file,
+        "line" => line,
+        "code" => code
+      }
+
+      if matches.names.include?("SUBAFOS")
+        hit["part"] = matches[:SUBAFOS]
+      end
+      if matches.names.include?("DESC")
+        hit["description"] = matches[:DESC]
+      end
+
+      unless SPECS[spec]
+        SPECS[spec] = Hash.new
+      end
+      unless SPECS[spec][afo]
+        SPECS[spec][afo] = Array.new
+      end
+
+      SPECS[spec][afo].append(hit)
+    end
+  end
+
+  def parseBlock(block, file, firstLineNumber)
+    number = firstLineNumber
+
+    trimmedCode = block.map { |line|
+      line.strip
+    }.join("\n")
+
+    block.each do |line|
+      # Format: [REQ:<SPEC>:<AFOS>:<SUBAFOS?>] <DESC>
+      if matches = line.match(/\[REQ:(?<SPEC>[^:]*):(?<AFOS>[^:]*)(?:(?::)(?<SUBAFOS>[^:]*))?\](?<DESC>.*)/)
+
+        register(matches, file, number, trimmedCode)
+      end
+      number += 1
+    end
+  end 
+
+  Dir.glob("../sources/**/*.swift").each do |file|
+    # puts "Testing '#{file}'"
+
+    number = 0
+
+    # TODO:  alles mit /// vorher/nachher + 1 Zeile
+
+    firstHit = 0
+    block = Array.new
+
+    open(file).each_line do |line|
+      number += 1
+
+      if line.match(/\/\/\/?/)
+        if block.count == 0
+          firstHit = number
+        end
+        block.append(line)
+      else
+        if (block.count != 0) # first non matching line
+          block.append(line)
+          parseBlock(block, file, number)
+          block = Array.new # reset block
+        end
+        # puts "NOT: #{line}"
+      end
+    end
+  end
+
+  SORTED_SPECS = SPECS.transform_values { |afos|
+    afos.sort_by { |key| key }.to_h
+  }
+
+  sh "mkdir -p ../build/docs/generated"
+
+  erb_path = File.join(File.dirname(__FILE__), '..', 'Templates', 'ERB', 'requirements.csv.erb')
+  erb_out_path = erb_path.sub('.erb','').sub('/Templates/ERB','')
+  erb = ERB.new(File.read(erb_path))
+
+  erb2_path = File.join(File.dirname(__FILE__), '..', 'Templates', 'ERB', 'requirements.md.erb')
+  erb2_out_path = erb2_path.sub('.erb','').sub('/Templates/ERB','/build/docs/generated')
+  erb2 = ERB.new(File.read(erb2_path))
+
+  UI.message("Writing AFOs to #{erb_out_path}")
+
+  File.open(erb_out_path, 'w+') do |file|
+    file.write(erb.result(binding))
+  end
+
+  UI.message("Writing AFOs to #{erb2_out_path}")
+
+  File.open(erb2_out_path, 'w+') do |file|
+    file.write(erb2.result(binding))
+  end
+
+  `which pandoc`
+  if $?.success?
+    UI.message("Generating html using `pandoc`...")
+    sh "cd .. && pandoc -s -f markdown -t html --toc --css Templates/ERB/style.css build/docs/generated/requirements.md > requirements.html"
+  else
+    UI.message("`pandoc` not found, skipping html generation. To install pandoc run `brew install pandoc`.")
+  end
+
+end
+
+lane :compile_foss do
+  require 'open-uri'
+
+  dependencies = YAML.load_file("../dependencies.yml").map { |entry|
+    license = ""
+    open(entry[:license_uri]).read().each_line{|line| license += "#{line.strip}\n" }
+    license = license.gsub(/\R{2}/, 'PARAGRAPH_BREAK')
+    license = license.gsub(/\R{1}/, ' ')
+    license = license.gsub(/PARAGRAPH_BREAK/, "</p>\n\n<p>")
+    entry[:license] = "<p>#{license}</p>"
+
+    entry
+  }
+
+  erb_path = File.join(File.dirname(__FILE__), '..', 'Templates', 'ERB', 'FOSS.html.erb')
+  erb_out_path = erb_path.sub('.erb','').sub('/Templates/ERB','/Sources/eRpApp/Resources/Base.lproj')
+  erb = ERB.new(File.read(erb_path))
+
+
+  File.open(erb_out_path, 'w+') do |file|
+    file.write(erb.result(binding))
+  end
+
+end
+

@@ -1,0 +1,24 @@
+#!/bin/sh
+
+# scripts/integrationtests: Runs integration tests with servers provided within ENV
+
+BUILD_TYPE=${1-Debug}
+
+set -ev
+
+cd "$(dirname "$0")/.."
+
+echo "Integration Tests started at…"
+date "+%H:%M:%S"
+
+# Setup project
+scripts/setup ${BUILD_TYPE}
+
+# run tests
+echo "Running tests…"
+date "+%H:%M:%S"
+
+bundle exec fastlane integration_tests
+
+echo "Done"
+date "+%H:%M:%S"

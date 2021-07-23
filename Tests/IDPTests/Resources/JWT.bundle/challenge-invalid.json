@@ -1,0 +1,16 @@
+{
+	"challenge": "eyJhbGciOiJCUDI1NlIxIiwiZXhwIjoxNjE1OTA2NzE4LCJ0eXAiOiJKV1QiLCJraWQiOiJpZHBTaWcifQ.eyJpc3MiOiJodHRwczovL2lkcC56ZW50cmFsLmlkcC5zcGxpdGRucy50aS1kaWVuc3RlLmRlIiwicmVzcG9uc2VfdHlwZSI6ImNvZGUiLCJzbmMiOiJraFd5MmpaTlZoK1FOUlFMbmlPQkhORjZjR0Y1SUJrcmFZU1ZNdDhaT0tZPSIsImNvZGVfY2hhbGxlbmdlX21ldGhvZCI6IlMyNTYiLCJ0b2tlbl90eXBlIjoiY2hhbGxlbmdlIiwiY2xpZW50X2lkIjoiZVJlemVwdEFwcCIsInNjb3BlIjoiZS1yZXplcHQgb3BlbmlkIiwic3RhdGUiOiIzSXhCcjNKb2htZmxMcTFHIiwicmVkaXJlY3RfdXJpIjoiaHR0cDovL3JlZGlyZWN0LmdlbWF0aWsuZGUvZXJlemVwdCIsImV4cCI6MTYxNTkwNjcxOCwiaWF0IjoxNjE1OTA2NTM4LCJjb2RlX2NoYWxsZW5nZSI6IjdObnFpWG0tenM5RFNabHRPRnMwYXdabDlmU1hFU2wwc0lhTnVqWmF0N0EiLCJqdGkiOiI1OWIzNzRlZDg3MmIzNDJkIn0.BJyePEkKU-RUs37f2GVvHOt-MDnwW40JmO5IsPj1uzgApqnC97Ei_ev99-gjiRRkt2_QsOsz9d6XBRAPRBzT6f",
+	"user_consent": {
+		"requested_scopes": {
+			"e-rezept": "Zugriff auf die E-Rezept-Funktionalität.",
+			"openid": "Zugriff auf den ID-Token."
+		},
+		"requested_claims": {
+			"organizationName": "Zustimmung zur Verarbeitung der Organisationszugehörigkeit",
+			"professionOID": "Zustimmung zur Verarbeitung der Rolle",
+			"idNummer": "Zustimmung zur Verarbeitung der Id (z.B. Krankenversichertennummer, Telematik-Id)",
+			"given_name": "Zustimmung zur Verarbeitung des Vornamens",
+			"family_name": "Zustimmung zur Verarbeitung des Nachnamens"
+		}
+	}
+}

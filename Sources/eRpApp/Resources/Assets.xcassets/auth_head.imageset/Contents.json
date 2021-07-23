@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "auth_head.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

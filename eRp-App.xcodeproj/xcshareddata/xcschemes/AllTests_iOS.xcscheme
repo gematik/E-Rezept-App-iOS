@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Scheme
+   LastUpgradeVersion = "1020"
+   version = "1.3">
+   <BuildAction
+      parallelizeBuildables = "YES"
+      buildImplicitDependencies = "YES">
+      <BuildActionEntries>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "BA579C3E6E6F09B39566B41D"
+               BuildableName = "eRpApp.app"
+               BlueprintName = "eRpApp"
+               ReferencedContainer = "container:eRp-App.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
+      </BuildActionEntries>
+   </BuildAction>
+   <TestAction
+      buildConfiguration = "Debug"
+      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
+      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
+      codeCoverageEnabled = "YES"
+      onlyGenerateCoverageForSpecifiedTargets = "YES"
+      shouldUseLaunchSchemeArgsEnv = "YES">
+      <Testables>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "1251A049674DC0217EA078B6"
+               BuildableName = "eRpAppTests.xctest"
+               BlueprintName = "eRpAppTests"
+               ReferencedContainer = "container:eRp-App.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "3C5B6EB7BE20597C4E82A598"
+               BuildableName = "eRpAppStoreScreenshots.xctest"
+               BlueprintName = "eRpAppStoreScreenshots"
+               ReferencedContainer = "container:eRp-App.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "03798A58A28F9CF2C95C3CE4"
+               BuildableName = "eRpKitTests.xctest"
+               BlueprintName = "eRpKitTests_iOS"
+               ReferencedContainer = "container:eRp-App.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "3C8B6407EF79A2F927535DF2"
+               BuildableName = "eRpLocalStorageTests.xctest"
+               BlueprintName = "eRpLocalStorageTests_iOS"
+               ReferencedContainer = "container:eRp-App.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "7FD665C92837435EB2489070"
+               BuildableName = "eRpRemoteStorageTests.xctest"
+               BlueprintName = "eRpRemoteStorageTests_iOS"
+               ReferencedContainer = "container:eRp-App.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "E17F95EDFE2CDC6011BB384D"
+               BuildableName = "PharmacyTests.xctest"
+               BlueprintName = "PharmacyTests_iOS"
+               ReferencedContainer = "container:eRp-App.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "3344A1D25B013BB1921DF576"
+               BuildableName = "IDPTests.xctest"
+               BlueprintName = "IDPTests_iOS"
+               ReferencedContainer = "container:eRp-App.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "21B4C4B613BBC15E15D4E739"
+               BuildableName = "HTTPClientTests.xctest"
+               BlueprintName = "HTTPClientTests_iOS"
+               ReferencedContainer = "container:eRp-App.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "6E2FDC626A2B83D5A5F25B09"
+               BuildableName = "FHIRClientTests.xctest"
+               BlueprintName = "FHIRClientTests_iOS"
+               ReferencedContainer = "container:eRp-App.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "BCF57857D89E0C60AEC7E254"
+               BuildableName = "TrustStoreTests.xctest"
+               BlueprintName = "TrustStoreTests_iOS"
+               ReferencedContainer = "container:eRp-App.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "25488C0ADD93D9364FAAB054"
+               BuildableName = "VAUClientTests.xctest"
+               BlueprintName = "VAUClientTests_iOS"
+               ReferencedContainer = "container:eRp-App.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+      </Testables>
+      <MacroExpansion>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "BA579C3E6E6F09B39566B41D"
+            BuildableName = "eRpApp.app"
+            BlueprintName = "eRpApp"
+            ReferencedContainer = "container:eRp-App.xcodeproj">
+         </BuildableReference>
+      </MacroExpansion>
+      <CommandLineArguments>
+      </CommandLineArguments>
+      <AdditionalOptions>
+      </AdditionalOptions>
+      <CodeCoverageTargets>
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "BA579C3E6E6F09B39566B41D"
+            BuildableName = "eRpApp.app"
+            BlueprintName = "eRpApp"
+            ReferencedContainer = "container:eRp-App.xcodeproj">
+         </BuildableReference>
+      </CodeCoverageTargets>
+   </TestAction>
+   <LaunchAction
+      buildConfiguration = "Debug"
+      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
+      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
+      launchStyle = "0"
+      useCustomWorkingDirectory = "NO"
+      ignoresPersistentStateOnLaunch = "NO"
+      debugDocumentVersioning = "YES"
+      debugServiceExtension = "internal"
+      allowLocationSimulation = "YES">
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "BA579C3E6E6F09B39566B41D"
+            BuildableName = "eRpApp.app"
+            BlueprintName = "eRpApp"
+            ReferencedContainer = "container:eRp-App.xcodeproj">
+         </BuildableReference>
+      </BuildableProductRunnable>
+      <AdditionalOptions>
+      </AdditionalOptions>
+   </LaunchAction>
+   <ProfileAction
+      buildConfiguration = "Release"
+      shouldUseLaunchSchemeArgsEnv = "YES"
+      savedToolIdentifier = ""
+      useCustomWorkingDirectory = "NO"
+      debugDocumentVersioning = "YES">
+      <BuildableProductRunnable
+         runnableDebuggingMode = "0">
+         <BuildableReference
+            BuildableIdentifier = "primary"
+            BlueprintIdentifier = "BA579C3E6E6F09B39566B41D"
+            BuildableName = "eRpApp.app"
+            BlueprintName = "eRpApp"
+            ReferencedContainer = "container:eRp-App.xcodeproj">
+         </BuildableReference>
+      </BuildableProductRunnable>
+   </ProfileAction>
+   <AnalyzeAction
+      buildConfiguration = "Debug">
+   </AnalyzeAction>
+   <ArchiveAction
+      buildConfiguration = "Release"
+      revealArchiveInOrganizer = "YES">
+   </ArchiveAction>
+</Scheme>

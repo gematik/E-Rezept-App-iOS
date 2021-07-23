@@ -1,0 +1,164 @@
+// sourcery:file:eRpApp/Generated/StreamWrapped
+
+import Combine
+import eRpKit
+import Foundation
+import HealthCardAccess
+import HealthCardControl
+import IDP
+import OpenSSL
+import Pharmacy
+import TrustStore
+import VAUClient
+
+/// AUTO GENERATED – DO NOT EDIT
+///
+/// use sourcery to update this file.
+
+/// # StreamWrapped
+///
+/// Creates a wrapper class for any Protocol that takes a stream of instances of the protocol. The implementation uses the stream for the actual implementation. The following cases for methods and properties may occur:
+/// - function with a result of type `AnyPublisher`: The function will be called on the current stream element and on each new element as long as the subscription exists. Long running tasks may get canceled through `switchToLatest` functionality.
+/// - function with any other or no result type: The function will be called once on the current element of the stream
+/// - property with a type based on AnyPublisher: The property will be flat mapped on the stream to the actual implementation.
+/// - property with any other type: The current element determines the value of the property.
+///
+/// # Usage
+///
+/// - Add `/// Sourcery: StreamWrapped` to any protocol that should be wrapped.
+/// - Run `$ sourcery` to update or add protocols. 
+
+{% macro methodArguments method %}
+	{% for parameter in method.parameters %}
+				{% if parameter.argumentLabel %}{{ parameter.argumentLabel }}: {% endif %}{{ parameter.name }}{{ ',' if not forloop.last }}
+	{% endfor %}
+{% endmacro %}
+
+{% macro methods type %}
+	{% for method in type.methods %}
+		{% if method.returnTypeName %}
+			{% if method.returnTypeName.generic.name == "AnyPublisher" %}
+	func {{ method.name }} -> {{ method.returnTypeName }} {
+        stream
+        	.map { $0.{{ method.callName }}({% call methodArguments method %}
+            ) }
+            .switchToLatest()
+            .eraseToAnyPublisher()
+	}
+			{% else %}
+	func {{ method.name }} -> {{ method.returnTypeName }} {
+        current.{{ method.callName }}({% call methodArguments method %}
+            )
+	}
+			{% endif %}
+		{% else %}
+	func {{ method.name }} {
+        current.{{ method.callName }}({% call methodArguments method %}
+            )
+	}
+		{% endif %}
+
+	{% endfor %}
+{% endmacro %}
+
+{% macro properties type %}
+	{% for property in type.variables %}
+		{% if property.typeName.generic.name == "AnyPublisher" %}
+	var {{property.name}}: {{property.typeName}} {
+		return stream
+			.map { $0.{{property.name}} }
+			.switchToLatest()
+			.eraseToAnyPublisher()
+	}
+		{% else %}
+			{% if property.type.annotations.StreamWrapped %}
+	lazy var {{property.name}}: {{property.typeName}} = {
+		StreamWrapped{{property.typeName}}(stream: stream.map{ $0.{{property.name}} }.eraseToAnyPublisher(), current: current.{{property.name}} )
+	}()
+			{% else %}
+	{% if not property.isMutable %}private(set) {% endif %}var {{ property.name }}: {{property.typeName}}{% if property.isMutable %} {
+		set { current.{{ property.name }} = newValue }
+		get { current.{{ property.name }} }
+	}
+{% endif %}
+			{% endif %}
+		{% endif %}
+	{% endfor %}
+{% endmacro %}
+
+{% macro atomicPropertiesInitializer type %}
+	{% for property in type.variables %}
+		{% if property.typeName.generic.name != "AnyPublisher" %}
+			{% if property.type.annotations.StreamWrapped %}
+			{% else %}
+		self.{{property.name}} = current.{{property.name}}
+			{% endif %}
+		{% endif %}
+	{% endfor %}
+{% endmacro %}
+{% macro atomicPropertiesListener type %}
+	{% for property in type.variables %}
+		{% if property.typeName.generic.name != "AnyPublisher" %}
+			{% if property.type.annotations.StreamWrapped %}
+			{% else %}
+				{% if not property.isMutable %} 
+		stream
+			.map(\.{{property.name}})
+			.assign(to: \.{{property.name}}, on: self)
+			.store(in: &disposeBag)
+				{% endif %}
+			{% endif %}
+		{% endif %}
+	{% endfor %}
+{% endmacro %}
+
+{% macro wrap type %}
+class StreamWrapped{{ type.name }}: {{ type.name }} {
+    private var disposeBag: Set<AnyCancellable> = []
+	private let stream: AnyPublisher<{{type.name}}, Never>
+	private var current: {{type.name}}
+
+	init(stream: AnyPublisher<{{ type.name }}, Never>, current: {{ type.name }}) {
+		self.stream = stream
+		self.current = current
+
+	{% call atomicPropertiesInitializer type %}
+	{% for inheritedType in type.inheritedTypes %}
+		{% for subtype in types.protocols where subtype.name == inheritedType %}
+			{% call atomicPropertiesInitializer subtype %}
+		{% endfor %}
+	{% endfor %}
+
+		stream
+			.assign(to: \.current, on: self)
+			.store(in: &disposeBag)
+
+	{% call atomicPropertiesListener type %}
+	{% for inheritedType in type.inheritedTypes %}
+		{% for subtype in types.protocols where subtype.name == inheritedType %}
+			{% call atomicPropertiesListener subtype %}
+		{% endfor %}
+	{% endfor %}
+
+	}
+
+	{% call properties type %}
+
+	{% call methods type %}
+
+	{% for inheritedType in type.inheritedTypes %}
+	/// {{ inheritedType }}
+		{% for subtype in types.protocols where subtype.name == inheritedType %}
+			{% call properties subtype %}
+			{% call methods subtype %}
+		{% endfor %}
+	{% endfor %}
+}
+
+{% endmacro %}
+
+{% for type in types.protocols where type|annotated:"StreamWrapped" %}
+	{% call wrap type %}
+{% endfor %}
+
+// sourcery:end

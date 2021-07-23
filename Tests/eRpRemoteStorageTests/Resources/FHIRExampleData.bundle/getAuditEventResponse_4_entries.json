@@ -1,0 +1,251 @@
+{
+    "resourceType": "Bundle",
+    "type": "searchset",
+    "total": 4,
+    "entry": [
+        {
+            "fullUrl": "/AuditEvent/64c4f143-1de0-11b2-80eb-443cac489883",
+            "resource": {
+                "resourceType": "AuditEvent",
+                "id": "64c4f143-1de0-11b2-80eb-443cac489883",
+                "meta": {
+                    "profile": [
+                        "https://gematik.de/fhir/StructureDefinition/ErxAuditEvent"
+                    ]
+                },
+                "type": {
+                    "system": "http://terminology.hl7.org/CodeSystem/audit-event-type",
+                    "code": "rest"
+                },
+                "subtype": [
+                    {
+                        "system": "http://hl7.org/fhir/restful-interaction",
+                        "code": "read"
+                    }
+                ],
+                "action": "R",
+                "recorded": "2021-04-29T16:02:39.475065591+00:00",
+                "outcome": "0",
+                "agent": [
+                    {
+                        "type": {
+                            "coding": [
+                                {
+                                    "system": "http://terminology.hl7.org/CodeSystem/extra-security-role-type",
+                                    "code": "humanuser",
+                                    "display": "Human user"
+                                }
+                            ]
+                        },
+                        "who": {
+                            "identifier": {
+                                "system": "http://fhir.de/NamingSystem/gkv/kvid-10",
+                                "value": "X234567890"
+                            }
+                        },
+                        "name": "der Vorname der Nachname Institutions- oder Organisations-Bezeichnung",
+                        "requestor": false
+                    }
+                ],
+                "source": {
+                    "site": "E-Rezept Fachdienst",
+                    "observer": {
+                        "reference": "Device/ErxService"
+                    }
+                },
+                "entity": [
+                    {
+                        "what": {
+                            "reference": "Task/20544d02-1dd2-11b2-805e-443cac489883"
+                        },
+                        "name": "X234567890",
+                        "description": "160.001.024.683.102.61"
+                    }
+                ]
+            }
+        },
+        {
+            "fullUrl": "/AuditEvent/64c4f1af-1de0-11b2-80ec-443cac489883",
+            "resource": {
+                "resourceType": "AuditEvent",
+                "id": "64c4f1af-1de0-11b2-80ec-443cac489883",
+                "meta": {
+                    "profile": [
+                        "https://gematik.de/fhir/StructureDefinition/ErxAuditEvent"
+                    ]
+                },
+                "type": {
+                    "system": "http://terminology.hl7.org/CodeSystem/audit-event-type",
+                    "code": "rest"
+                },
+                "subtype": [
+                    {
+                        "system": "http://hl7.org/fhir/restful-interaction",
+                        "code": "read"
+                    }
+                ],
+                "action": "R",
+                "recorded": "2021-04-29T16:02:39.475074398+00:00",
+                "outcome": "0",
+                "agent": [
+                    {
+                        "type": {
+                            "coding": [
+                                {
+                                    "system": "http://terminology.hl7.org/CodeSystem/extra-security-role-type",
+                                    "code": "humanuser",
+                                    "display": "Human user"
+                                }
+                            ]
+                        },
+                        "who": {
+                            "identifier": {
+                                "system": "http://fhir.de/NamingSystem/gkv/kvid-10",
+                                "value": "X234567890"
+                            }
+                        },
+                        "name": "der Vorname der Nachname Institutions- oder Organisations-Bezeichnung",
+                        "requestor": false
+                    }
+                ],
+                "source": {
+                    "site": "E-Rezept Fachdienst",
+                    "observer": {
+                        "reference": "Device/ErxService"
+                    }
+                },
+                "entity": [
+                    {
+                        "what": {
+                            "reference": "Task/23285587-1dd2-11b2-80a6-443cac489883"
+                        },
+                        "name": "X234567890",
+                        "description": "160.001.024.683.601.19"
+                    }
+                ]
+            }
+        },
+        {
+            "fullUrl": "/AuditEvent/64c4f1cc-1de0-11b2-80ed-443cac489883",
+            "resource": {
+                "resourceType": "AuditEvent",
+                "id": "64c4f1cc-1de0-11b2-80ed-443cac489883",
+                "meta": {
+                    "profile": [
+                        "https://gematik.de/fhir/StructureDefinition/ErxAuditEvent"
+                    ]
+                },
+                "type": {
+                    "system": "http://terminology.hl7.org/CodeSystem/audit-event-type",
+                    "code": "rest"
+                },
+                "subtype": [
+                    {
+                        "system": "http://hl7.org/fhir/restful-interaction",
+                        "code": "read"
+                    }
+                ],
+                "action": "R",
+                "recorded": "2021-04-29T16:02:39.475077274+00:00",
+                "outcome": "0",
+                "agent": [
+                    {
+                        "type": {
+                            "coding": [
+                                {
+                                    "system": "http://terminology.hl7.org/CodeSystem/extra-security-role-type",
+                                    "code": "humanuser",
+                                    "display": "Human user"
+                                }
+                            ]
+                        },
+                        "who": {
+                            "identifier": {
+                                "system": "http://fhir.de/NamingSystem/gkv/kvid-10",
+                                "value": "X234567890"
+                            }
+                        },
+                        "name": "der Vorname der Nachname Institutions- oder Organisations-Bezeichnung",
+                        "requestor": false
+                    }
+                ],
+                "source": {
+                    "site": "E-Rezept Fachdienst",
+                    "observer": {
+                        "reference": "Device/ErxService"
+                    }
+                },
+                "entity": [
+                    {
+                        "what": {
+                            "reference": "Task/234ec20e-1dd2-11b2-80aa-443cac489883"
+                        },
+                        "name": "X234567890",
+                        "description": "160.001.024.683.602.16"
+                    }
+                ]
+            }
+        },
+        {
+            "fullUrl": "/AuditEvent/64c4f1ea-1de0-11b2-80ee-443cac489883",
+            "resource": {
+                "resourceType": "AuditEvent",
+                "id": "64c4f1ea-1de0-11b2-80ee-443cac489883",
+                "meta": {
+                    "profile": [
+                        "https://gematik.de/fhir/StructureDefinition/ErxAuditEvent"
+                    ]
+                },
+                "type": {
+                    "system": "http://terminology.hl7.org/CodeSystem/audit-event-type",
+                    "code": "rest"
+                },
+                "subtype": [
+                    {
+                        "system": "http://hl7.org/fhir/restful-interaction",
+                        "code": "read"
+                    }
+                ],
+                "action": "R",
+                "recorded": "2021-04-29T16:02:39.475080290+00:00",
+                "outcome": "0",
+                "agent": [
+                    {
+                        "type": {
+                            "coding": [
+                                {
+                                    "system": "http://terminology.hl7.org/CodeSystem/extra-security-role-type",
+                                    "code": "humanuser",
+                                    "display": "Human user"
+                                }
+                            ]
+                        },
+                        "who": {
+                            "identifier": {
+                                "system": "http://fhir.de/NamingSystem/gkv/kvid-10",
+                                "value": "X234567890"
+                            }
+                        },
+                        "name": "der Vorname der Nachname Institutions- oder Organisations-Bezeichnung",
+                        "requestor": false
+                    }
+                ],
+                "source": {
+                    "site": "E-Rezept Fachdienst",
+                    "observer": {
+                        "reference": "Device/ErxService"
+                    }
+                },
+                "entity": [
+                    {
+                        "what": {
+                            "reference": "Task/22ff81be-1dd2-11b2-80a2-443cac489883"
+                        },
+                        "name": "X234567890",
+                        "description": "160.001.024.683.600.22"
+                    }
+                ]
+            }
+        }
+    ]
+}

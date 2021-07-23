@@ -1,0 +1,8 @@
+sources:
+  - Sources/eRpApp
+  - Sources/eRpKit
+  - Sources/IDP
+  - Sources/TrustStore
+templates:
+  - Templates/Sourcery/eRpApp
+output: Sources

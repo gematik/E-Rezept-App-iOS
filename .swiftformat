@@ -1,0 +1,20 @@
+--exclude Package.swift,.build,vendor,Carthage,DerivedData,build,**/Generated
+
+# format options
+--swiftversion 5.2
+
+--indent 4
+--ifdef no-indent
+--maxwidth 120
+--operatorfunc no-space
+--self remove
+--trimwhitespace always
+--wraparguments preserve
+--wrapcollections preserve
+
+# rules
+
+--enable isEmpty
+--allman false
+--elseposition same-line
+--disable elseOnSameLine, wrapMultilineStatementBraces, extensionAccessControl, indent

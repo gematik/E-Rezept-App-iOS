@@ -1,0 +1,13 @@
+#!/bin/sh
+
+# scripts/format: Run code formatting.
+
+set -ev
+
+cd "$(dirname "$0")/.."
+
+[ -z "$DEBUG" ] || set -x
+
+echo "==> Running code formattig…"
+
+mint run swiftformat . --config .swiftformat

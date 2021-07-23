@@ -1,0 +1,39 @@
+// swiftlint:disable all
+// Generated using SwiftGen — https://github.com/SwiftGen/SwiftGen
+
+{% if tables.count > 0 %}
+{% set accessModifier %}{% if param.publicAccess %}public{% else %}internal{% endif %}{% endset %}
+import SwiftUI
+
+// swiftlint:disable superfluous_disable_command file_length implicit_return
+
+// MARK: - Strings
+
+{% macro recursiveBlock table item %}
+  {% for string in item.strings %}
+  {% if not param.noComments %}
+  /// {{string.translation}}
+  {% endif %}
+  {{accessModifier}} static let {{string.key|swiftIdentifier:"pretty"|lowerFirstWord|escapeReservedKeywords}} = LocalizedStringKey("{{string.key}}")
+  {% endfor %}
+  {% for child in item.children %}
+  {% call recursiveBlock table child %}
+  {% endfor %}
+{% endmacro %}
+// swiftlint:disable function_parameter_count identifier_name line_length type_body_length
+{% set enumName %}{{param.enumName|default:"L10n"}}{% endset %}
+{{accessModifier}} enum {{enumName}} {
+  {% if tables.count > 1 or param.forceFileNameEnum %}
+  {% for table in tables %}
+  {% call recursiveBlock table.name table.levels %}
+  {% endfor %}
+  {% else %}
+  {% call recursiveBlock tables.first.name tables.first.levels %}
+  {% endif %}
+}
+// swiftlint:enable function_parameter_count identifier_name line_length type_body_length
+
+{% else %}
+// No string found
+{% endif %}
+

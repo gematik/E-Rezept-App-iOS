@@ -1,0 +1,8 @@
+disabled_rules:
+  - identifier_name
+  - line_length
+  - force_try
+  - force_unwrapping
+  - trailing_closure
+file_name: 
+  excluded: ["SnapshotHelper.swift"]

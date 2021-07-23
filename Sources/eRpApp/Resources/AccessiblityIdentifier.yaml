@@ -1,0 +1,200 @@
+scanner:
+  - scn_img_camera_focus_frame
+  - scn_img_scan_state
+  - scn_txt_scan_state
+  - scn_img_scan_alert
+  - scn_btn_scanning_done
+  - scn_btn_cancel_scan
+cardWall:
+  intro:
+    - cdw_btn_intro_later
+    - cdw_btn_intro_cancel
+    - cdw_btn_intro_more
+    - cdw_img_intro_main
+    - cdw_txt_intro_header_bottom
+    - cdw_txt_intro_description
+    - cdw_txt_intro_list_title
+    - cdw_txt_intro_requirement_card
+    - cdw_txt_intro_requirement_pin
+    - cdw_txt_intro_requirement_phone
+  orderEGK:
+    - cdw_txt_order_egk_headline
+    - cdw_txt_order_egk_desription
+    - cdw_inp_order_egk_kv
+    - cdw_inp_order_egk_kvnr
+    - cdw_btn_order_egk_mail
+  notForYou:
+    - cdw_btn_nfu_done
+    - cdw_btn_nfu_cancel
+    - cdw_txt_nfu_title
+    - cdw_img_nfu
+    - cdw_txt_nfu_subtitle
+    - cdw_txt_nfu_description
+    - cdw_txt_nfu_footnote
+    - cdw_btn_nfu_more
+  canInput:
+    - cdw_txt_can_input
+    - cdw_txt_can_instruction
+    - cdw_img_can_card
+    - cdw_txt_can_instruction_2
+    - cdw_btn_can_cancel
+    - cdw_hint_demo_mode
+    - cdw_btn_can_done
+    - cdw_btn_can_more
+  pinInput:
+    - cdw_txt_pin_subtitle
+    - cdw_btn_pin_cancel
+    - cdw_btn_pin_done
+    - cdw_edt_pin_input
+    - cdw_txt_pin_hint
+    - cdw_txt_pin_warning
+    - cdw_img_pin_card
+    - cdw_txt_pin_description
+    - cdw_hint_get_pin
+  loginOption:
+    - cdw_txt_loginOption_subtitle
+    - cdw_btn_loginOption_cancel
+    - cdw_btn_loginOption_back
+    - cdw_btn_loginOption_continue
+    - cdw_txt_loginOption_biometry
+    - cdw_txt_loginOption_without_biometry
+    - cdw_txt_loginOption_security_warning_title
+    - cdw_txt_loginOption_security_warning_description
+    - cdw_btn_loginOption_security_warning_accept
+  readCard:
+    - cdw_btn_rc_next
+    - cdw_btn_rc_cancel
+    - cdw_img_rc_card
+    - cdw_txt_rc_headline
+    - cdw_txt_rc_description
+onboarding:
+  start:
+    - onb_txt_start_title
+    - onb_img_gematik_logo
+    - onb_img_man1
+    - onb_btn_next
+  welcome:
+    - onb_txt_welcome_title
+    - onb_img_frau1
+  features:
+    - onb_txt_features_title
+    - onb_img_hand_with_card
+  legalInfo:
+    - onb_txt_legal_info_title
+    - onb_btn_accept
+    - onb_txt_terms_of_use
+    - onb_btn_accept_terms_of_use
+    - onb_txt_terms_of_privacy
+    - onb_btn_accept_privacy
+auth:
+  - auth_btn_biometrics_faceid
+  - auth_btn_biometrics_touchid
+settings:
+  demo:
+    - nav_done
+    - stg_txt_demo_mode
+    - stg_txt_header_demo_mode
+    - stg_txt_footnote_demo_mode
+  security:
+    - stg_txt_header_security
+    - stg_txt_security_faceid
+    - stg_txt_security_touchid
+    - stg_txt_security_unsecured
+  logout:
+    - stg_btn_logout
+  legalNotice:
+    - stg_lno_txt_header_legal_info
+    - stg_lno_txt_legal_notice
+    - stg_lno_link_contact
+    - stg_lno_mail_contact
+    - stg_lno_phone_contact
+  dataPrivacy:
+    - stg_dpr_txt_data_privacy
+  foss:
+    - stg_dpr_txt_foss
+  termsOfUse:
+    - stg_tou_txt_terms_of_use
+  tracking:
+    - stg_trk_txt_title
+    - stg_trk_txt_explanation
+    - stg_trk_btn_title
+    - stg_trk_txt_footnote
+    - stg_trk_btn_yes
+    - stg_trk_btn_no
+redeem:
+  overview:
+    - rdm_txt_pharmacy_title
+    - rdm_txt_pharmacy_subtitle
+    - rdm_btn_pharmacy_tile
+    - rdm_btn_close_button
+  matrixCode:
+    - rph_txt_title
+    - rph_txt_subtitle
+    - rph_img_matrixcode_loading_indicator
+    - rph_img_matrixcode
+    - rph_btn_close_button
+messages:
+  list:
+    - msgs_txt_empty_list
+    - msgs_txt_title
+  pickupCode:
+    - puc_txt_title
+    - puc_txt_subtitle
+    - puc_txt_hrCode
+    - puc_img_dmcCode
+mainScreen:
+  - erx_btn_refresh
+  - erx_detailed_block
+  - erx_btn_show_settings
+  - erx_btn_scn_prescription
+  - erx_hnt_demo_mode_tour
+  - erx_hnt_app_security
+  - erx_hnt_demo_mode_welcome
+  - erx_hnt_open_scanner
+  - erx_hnt_show_card_wall
+  - erx_hnt_unread_messages
+prescriptionDetails:
+  - prsc_dtl_txt_med_info
+  - prsc_dtl_txt_med_dosage_instructions
+  - prsc_dtl_btn_delete_medication
+  - prsc_dtl_btn_toggle_redeem
+  - prsc_dtl_hnt_noctu_fee_waiver
+  - prsc_dtl_hnt_substitution
+  - prsc_dtl_hnt_dosage_instructions
+  - prsc_dtl_btn_pharmacy_search
+  - prsc_dtl_hnt_keep_overview
+global:
+  - bnr_txt_demo_mode
+pharmacySearch:
+  - pha_search_txt_search_field
+  - pha_search_txt_result_list
+pharmacyDetail:
+  - pha_detail_txt_title
+  - pha_detail_txt_subtitle
+  - pha_detail_btn_organization
+  - pha_detail_btn_healthcare_service
+  - pha_detail_btn_location
+  - pha_detail_hint
+  - pha_detail_contact
+  - pha_detail_web
+  - pha_detail_mail
+  - pha_detail_phone
+pharmacyRedeem:
+  - pha_redeem_txt_title
+  - pha_redeem_txt_subtitle
+  - pha_redeem_txt_address_title
+  - pha_redeem_txt_address_footnote
+  - pha_redeem_txt_prescription_title
+  - pha_redeem_btn_redeem
+  - pha_redeem_btn_redeem_footnote
+  
+# ./Sources/eRpApp/Components/Tiles/FootnoteView.swift:                .accessibility(identifier: text)
+# ./Sources/eRpApp/Components/Tiles/SectionView.swift:                .accessibility(identifier: text)
+# ./Sources/eRpApp/Components/Tiles/ToggleCell.swift:        .accessibility(identifier: text)
+# ./Sources/eRpApp/Components/Controls/TertiaryListButton.swift:        .accessibility(identifier: text)
+# ./Sources/eRpApp/Components/Controls/NavigationTextButton.swift:        .accessibility(identifier: text)
+# ./Sources/eRpApp/Components/Controls/StickyTextButton.swift:        .accessibility(identifier: text)
+# ./Sources/eRpApp/Components/Controls/SecondaryTextButton.swift:            .accessibility(identifier: text)
+# ./Sources/eRpApp/Components/Controls/TertiaryButton.swift:            .accessibility(identifier: text)
+# ./Sources/eRpApp/Components/Controls/PrimaryTextButton.swift:        .accessibility(identifier: text)
+

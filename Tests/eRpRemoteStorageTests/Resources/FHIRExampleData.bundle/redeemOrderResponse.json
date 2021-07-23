@@ -1,0 +1,35 @@
+{
+    "resourceType": "Communication",
+    "id": "2f01f9bb-2687-11b2-9641-783a425d8e87",
+    "meta": {
+        "profile": [
+            "https://gematik.de/fhir/StructureDefinition/ErxCommunicationDispReq"
+        ]
+    },
+    "basedOn": [
+        {
+            "reference": "Task/39c67d5b-1df3-11b2-80b4-783a425d8e87"
+        }
+    ],
+    "status": "unknown",
+    "sent": "2021-05-11T11:25:15.613061082+00:00",
+    "recipient": [
+        {
+            "identifier": {
+                "system": "https://gematik.de/fhir/NamingSystem/TelematikID",
+                "value": "3-17.2.1234560000.10.372"
+            }
+        }
+    ],
+    "sender": {
+        "identifier": {
+            "system": "http://fhir.de/NamingSystem/gkv/kvid-10",
+            "value": "X110461389"
+        }
+    },
+    "payload": [
+        {
+            "contentString": "{\"address\":[\"Anneliese- und Georg-von-Groscurth-Plaetzchen 149-C\\n60437, Bad Homburg\"],\"phone\":\"\",\"supplyOptionsType\":\"on_premise\",\"hint\":\"\",\"name\":\"Erbprinzessin von und zu der Schimmelpfennig-Hammerschmidt Federmannssohn\",\"version\":\"1\"}"
+        }
+    ]
+}

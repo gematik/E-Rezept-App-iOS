@@ -1,0 +1,154 @@
+{
+  "resourceType": "Bundle",
+  "type": "searchset",
+  "entry": [
+    {
+      "resource": {
+        "resourceType": "Communication",
+        "id": "16d2cfc8-2023-11b2-81e1-783a425d8e87",
+        "meta": {
+          "profile": [
+            "https://gematik.de/fhir/StructureDefinition/ErxCommunicationDispReq"
+          ]
+        },
+        "basedOn": [
+          {
+            "reference": "Task/39c67d5b-1df3-11b2-80b4-783a425d8e87/$accept?ac=10c694275fa101508c8edd48cab1d3933c6f1d2a4c9fc132a143d81e91da7dd0"
+          }
+        ],
+        "status": "unknown",
+        "sent": "2021-05-03T08:13:38.389015396+00:00",
+        "recipient": [
+          {
+            "identifier": {
+              "system": "https://gematik.de/fhir/NamingSystem/TelematikID",
+              "value": "3-09.2.S.10.743"
+            }
+          }
+        ],
+        "sender": {
+          "identifier": {
+            "system": "http://fhir.de/NamingSystem/gkv/kvid-10",
+            "value": "X110461389"
+          }
+        },
+        "payload": [
+          {
+            "contentString": "{do something}"
+          }
+        ]
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Communication",
+        "id": "e277e66f-2345-11b2-86e3-783a425d8e87",
+        "meta": {
+          "profile": [
+            "https://gematik.de/fhir/StructureDefinition/ErxCommunicationDispReq"
+          ]
+        },
+        "basedOn": [
+          {
+            "reference": "Task/39c67d5b-1df3-11b2-80b4-783a425d8e87"
+          }
+        ],
+        "status": "unknown",
+        "sent": "2021-05-07T08:00:16.425572577+00:00",
+        "recipient": [
+          {
+            "identifier": {
+              "system": "https://gematik.de/fhir/NamingSystem/TelematikID",
+              "value": "3-17.2.1234560000.10.372"
+            }
+          }
+        ],
+        "sender": {
+          "identifier": {
+            "system": "http://fhir.de/NamingSystem/gkv/kvid-10",
+            "value": "X110461389"
+          }
+        },
+        "payload": [
+          {
+            "contentString": "{do something}"
+          }
+        ]
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Communication",
+        "id": "29095346-2050-11b2-8255-783a425d8e87",
+        "meta": {
+          "profile": [
+            "https://gematik.de/fhir/StructureDefinition/ErxCommunicationDispReq"
+          ]
+        },
+        "basedOn": [
+          {
+            "reference": "Task/39c67d5b-1df3-11b2-80b4-783a425d8e87/$accept?ac=10c694275fa101508c8edd48cab1d3933c6f1d2a4c9fc132a143d81e91da7dd0"
+          }
+        ],
+        "status": "unknown",
+        "sent": "2021-05-03T13:36:16.298084579+00:00",
+        "recipient": [
+          {
+            "identifier": {
+              "system": "https://gematik.de/fhir/NamingSystem/TelematikID",
+              "value": "3-09.2.S.10.743"
+            }
+          }
+        ],
+        "sender": {
+          "identifier": {
+            "system": "http://fhir.de/NamingSystem/gkv/kvid-10",
+            "value": "X110461389"
+          }
+        },
+        "payload": [
+          {
+            "contentString": "{do something}"
+          }
+        ]
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Communication",
+        "id": "af3ca3ce-202b-11b2-81e4-783a425d8e87",
+        "meta": {
+          "profile": [
+            "https://gematik.de/fhir/StructureDefinition/ErxCommunicationDispReq"
+          ]
+        },
+        "basedOn": [
+          {
+            "reference": "Task/39c67d5b-1df3-11b2-80b4-783a425d8e87/$accept?ac=10c694275fa101508c8edd48cab1d3933c6f1d2a4c9fc132a143d81e91da7dd0"
+          }
+        ],
+        "status": "unknown",
+        "sent": "2021-05-03T09:15:10.070099100+00:00",
+        "recipient": [
+          {
+            "identifier": {
+              "system": "https://gematik.de/fhir/NamingSystem/TelematikID",
+              "value": "3-09.2.S.10.743"
+            }
+          }
+        ],
+        "sender": {
+          "identifier": {
+            "system": "http://fhir.de/NamingSystem/gkv/kvid-10",
+            "value": "X110461389"
+          }
+        },
+        "payload": [
+          {
+            "contentString": "{do something}"
+          }
+        ]
+      }
+    }
+  ]
+}

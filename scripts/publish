@@ -1,0 +1,23 @@
+#!/bin/sh
+
+# scripts/build: Build the application
+
+set -evo pipefail
+
+BUILD_TYPE="${1-Release}"
+DRY_RUN=${2-false}
+
+cd "$(dirname "$0")/.."
+
+# Verify repo is clean
+if [[ $(git status 2> /dev/null | tail -n1) != "nothing to commit, working tree clean" ]]; then
+  echo "Working directory dirty. Please revert or commit."
+  exit 1
+fi
+
+[ -z "$DEBUG" ] || set -x
+
+# Start publishing
+echo "==> Publishing App for ${BUILD_TYPE}…"
+
+bundle exec fastlane publish configuration:${BUILD_TYPE} dry_run:${DRY_RUN}

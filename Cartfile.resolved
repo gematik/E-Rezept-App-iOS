@@ -1,0 +1,5 @@
+github "SwiftCommon/DataKit" "1.1.0"
+github "gematik/asn1kit" "1.0.16"
+github "gematik/openssl-swift" "1.0.0"
+github "gematik/ref-GemCommonsKit" "1.2.0"
+github "gematik/ref-OpenHealthCardKit" "3.0.3"

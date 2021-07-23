@@ -1,0 +1,12 @@
+#!/bin/sh
+
+# scripts/build: Build the application
+
+set -ev
+
+cd "$(dirname "$0")/.."
+
+[ -z "$DEBUG" ] || set -x
+
+echo "==> Building…"
+

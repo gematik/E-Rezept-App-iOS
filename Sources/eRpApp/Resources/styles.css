@@ -1,0 +1,97 @@
+/* Any appearance */
+:root {
+  color-scheme: light dark;
+  --primary-color: #000;
+  --primary-600-color: #3182CE;
+  --primary-800-color: #2C5282;
+}
+/* Dark appearance */
+@media screen and (prefers-color-scheme: dark) {
+  :root {
+    --primary-color: #fff;
+    --primary-600-color: #4299E1;
+    --primary-800-color: #90CDF4;
+  }
+}
+
+* {
+    overflow-wrap: break-word;
+}
+
+body {
+  font-family: SF Pro Display, -apple-system, BlinkMacSystemFont, sans-serif;
+  font-style: normal;
+  margin: 0 16px;
+  overflow-x: hidden;
+}
+h1, h2, h3, h4, h5, h6 {
+  color: var(--primary-color);
+  font-weight: bold;
+}
+h5 {
+  font-weight: 600;
+}
+
+h1 {
+  /* SF / Title 1 - Bold */
+  font-size: 28px;
+  line-height: 42px;
+  letter-spacing: 0.87px;
+}
+
+h2 {
+  /* SF / Title 2 - Bold */
+  font-size: 22px;
+  line-height: 33px;
+  /* or 127% */
+  letter-spacing: 0.8px;
+}
+h3 {
+  font-size: 20px;
+  line-height: 30px;
+  /* or 120% */
+
+  letter-spacing: 0.75px;
+}
+h4 {
+  font-size: 17px;
+  line-height: 24px;
+  /* or 129% */
+
+  letter-spacing: -0.408px;
+}
+h5 {
+  font-size: 15px;
+  line-height: 22px;
+  /* identical to box height, or 133% */
+
+  display: flex;
+  align-items: center;
+  letter-spacing: -0.24px;
+}
+
+a {
+  color: var(--primary-600-color);
+  font-family: ui-sans-serif;
+}
+
+ul {
+    padding-inline-start: 16px;
+}
+
+ul li {
+  font-family: ui-sans-serif;
+  font-style: normal;
+  font-weight: normal;
+  font-size: 17px;
+  line-height: 24px;
+  /* identical to box height, or 129% */
+
+  letter-spacing: -0.408px;
+}
+
+section.license {
+  font-size: 17px;
+  line-height: 24px;
+  font-style: italic;
+}

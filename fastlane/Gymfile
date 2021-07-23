@@ -1,0 +1,4 @@
+project("eRp-App.xcodeproj")
+scheme("eRpApp")
+
+configuration("Release")
