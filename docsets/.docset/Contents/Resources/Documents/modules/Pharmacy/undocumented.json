@@ -37,224 +37,210 @@
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/Pharmacy/PharmacyLocation.swift",
-      "line": 50,
+      "line": 54,
       "symbol": "PharmacyLocation.canBeDisplayedInMap",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/Pharmacy/PharmacyLocation.swift",
-      "line": 54,
-      "symbol": "PharmacyLocation.hasDeliveryService",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/Pharmacy/PharmacyLocation.swift",
       "line": 58,
-      "symbol": "PharmacyLocation.hasMailService",
-      "symbol_kind": "source.lang.swift.decl.var.instance",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/Pharmacy/PharmacyLocation.swift",
-      "line": 62,
-      "symbol": "PharmacyLocation.hasReservationService",
+      "symbol": "PharmacyLocation.isErxReady",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/Pharmacy/PharmacyLocation.swift",
       "line": 66,
+      "symbol": "PharmacyLocation.hasDeliveryService",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/Pharmacy/PharmacyLocation.swift",
+      "line": 70,
+      "symbol": "PharmacyLocation.hasMailService",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/Pharmacy/PharmacyLocation.swift",
+      "line": 74,
+      "symbol": "PharmacyLocation.hasReservationService",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/Pharmacy/PharmacyLocation.swift",
+      "line": 78,
       "symbol": "PharmacyLocation.hasEmergencyService",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/Pharmacy/PharmacyLocation.swift",
-      "line": 92,
+      "line": 116,
       "symbol": "PharmacyLocation.PharmacyType",
       "symbol_kind": "source.lang.swift.decl.enum",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/Pharmacy/PharmacyLocation.swift",
-      "line": 93,
-      "symbol": "PharmacyLocation.PharmacyType.pharm",
-      "symbol_kind": "source.lang.swift.decl.enumelement",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/Pharmacy/PharmacyLocation.swift",
-      "line": 94,
-      "symbol": "PharmacyLocation.PharmacyType.outpharm",
-      "symbol_kind": "source.lang.swift.decl.enumelement",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/Pharmacy/PharmacyLocation.swift",
-      "line": 95,
-      "symbol": "PharmacyLocation.PharmacyType.mobl",
-      "symbol_kind": "source.lang.swift.decl.enumelement",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/Pharmacy/PharmacyLocation.swift",
-      "line": 96,
+      "line": 125,
       "symbol": "PharmacyLocation.PharmacyType.emergency",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/Pharmacy/PharmacyLocation.swift",
-      "line": 115,
+      "line": 144,
       "symbol": "PharmacyLocation.Position",
       "symbol_kind": "source.lang.swift.decl.struct",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/Pharmacy/PharmacyLocation.swift",
-      "line": 116,
+      "line": 145,
       "symbol": "PharmacyLocation.Position.init(latitude:longitude:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/Pharmacy/PharmacyLocation.swift",
-      "line": 122,
+      "line": 151,
       "symbol": "PharmacyLocation.Position.latitude",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/Pharmacy/PharmacyLocation.swift",
-      "line": 123,
+      "line": 152,
       "symbol": "PharmacyLocation.Position.longitude",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/Pharmacy/PharmacyLocation.swift",
-      "line": 126,
+      "line": 155,
       "symbol": "PharmacyLocation.Address",
       "symbol_kind": "source.lang.swift.decl.struct",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/Pharmacy/PharmacyLocation.swift",
-      "line": 127,
-      "symbol": "PharmacyLocation.Address.init(street:housenumber:zip:city:)",
+      "line": 156,
+      "symbol": "PharmacyLocation.Address.init(street:houseNumber:zip:city:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/Pharmacy/PharmacyLocation.swift",
-      "line": 137,
+      "line": 166,
       "symbol": "PharmacyLocation.Address.street",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/Pharmacy/PharmacyLocation.swift",
-      "line": 138,
-      "symbol": "PharmacyLocation.Address.housenumber",
+      "line": 167,
+      "symbol": "PharmacyLocation.Address.houseNumber",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/Pharmacy/PharmacyLocation.swift",
-      "line": 139,
+      "line": 168,
       "symbol": "PharmacyLocation.Address.zip",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/Pharmacy/PharmacyLocation.swift",
-      "line": 140,
+      "line": 169,
       "symbol": "PharmacyLocation.Address.city",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/Pharmacy/PharmacyLocation.swift",
-      "line": 142,
+      "line": 171,
       "symbol": "PharmacyLocation.Address.fullAddress",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/Pharmacy/PharmacyLocation.swift",
-      "line": 162,
+      "line": 191,
       "symbol": "PharmacyLocation.Telecom",
       "symbol_kind": "source.lang.swift.decl.struct",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/Pharmacy/PharmacyLocation.swift",
-      "line": 163,
+      "line": 192,
       "symbol": "PharmacyLocation.Telecom.init(phone:fax:email:web:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/Pharmacy/PharmacyLocation.swift",
-      "line": 173,
+      "line": 202,
       "symbol": "PharmacyLocation.Telecom.phone",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/Pharmacy/PharmacyLocation.swift",
-      "line": 174,
+      "line": 203,
       "symbol": "PharmacyLocation.Telecom.fax",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/Pharmacy/PharmacyLocation.swift",
-      "line": 175,
+      "line": 204,
       "symbol": "PharmacyLocation.Telecom.email",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/Pharmacy/PharmacyLocation.swift",
-      "line": 176,
+      "line": 205,
       "symbol": "PharmacyLocation.Telecom.web",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/Pharmacy/PharmacyLocation.swift",
-      "line": 179,
+      "line": 208,
       "symbol": "PharmacyLocation.HoursOfOperation",
       "symbol_kind": "source.lang.swift.decl.struct",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/Pharmacy/PharmacyLocation.swift",
-      "line": 180,
+      "line": 209,
       "symbol": "PharmacyLocation.HoursOfOperation.init(daysOfWeek:openingTime:closingTime:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/Pharmacy/PharmacyLocation.swift",
-      "line": 188,
+      "line": 217,
       "symbol": "PharmacyLocation.HoursOfOperation.daysOfWeek",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/Pharmacy/PharmacyLocation.swift",
-      "line": 189,
+      "line": 218,
       "symbol": "PharmacyLocation.HoursOfOperation.openingTime",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/Pharmacy/PharmacyLocation.swift",
-      "line": 190,
+      "line": 219,
       "symbol": "PharmacyLocation.HoursOfOperation.closingTime",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"

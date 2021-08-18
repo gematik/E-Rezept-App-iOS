@@ -51,7 +51,7 @@
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpRemoteStorage/ErxTaskFHIROperation.swift",
-      "line": 110,
+      "line": 112,
       "symbol": "ErxTaskFHIROperation.acceptFormat",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
