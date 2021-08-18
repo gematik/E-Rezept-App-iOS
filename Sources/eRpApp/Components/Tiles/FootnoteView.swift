@@ -30,6 +30,7 @@ struct FootnoteView: View {
                 .multilineTextAlignment(.leading)
                 .accessibility(identifier: a11y)
                 .padding([.bottom])
+                .fixedSize(horizontal: false, vertical: true)
             Spacer()
         }
     }

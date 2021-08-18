@@ -23,6 +23,8 @@ cardWall:
     - cdw_inp_order_egk_kv
     - cdw_inp_order_egk_kvnr
     - cdw_btn_order_egk_mail
+    - cdw_btn_order_egk_scan_kvnr
+    - cdw_btn_order_egk_scan_kvnr_confirm
   notForYou:
     - cdw_btn_nfu_done
     - cdw_btn_nfu_cancel
@@ -175,6 +177,7 @@ pharmacyDetail:
   - pha_detail_btn_healthcare_service
   - pha_detail_btn_location
   - pha_detail_hint
+  - pha_detail_hint_not_erx_ready
   - pha_detail_contact
   - pha_detail_web
   - pha_detail_mail
@@ -187,7 +190,10 @@ pharmacyRedeem:
   - pha_redeem_txt_prescription_title
   - pha_redeem_btn_redeem
   - pha_redeem_btn_redeem_footnote
-  
+pharmacyGlobal:
+  - pha_global_img_readiness_badge
+  - pha_global_txt_readiness_badge
+
 # ./Sources/eRpApp/Components/Tiles/FootnoteView.swift:                .accessibility(identifier: text)
 # ./Sources/eRpApp/Components/Tiles/SectionView.swift:                .accessibility(identifier: text)
 # ./Sources/eRpApp/Components/Tiles/ToggleCell.swift:        .accessibility(identifier: text)

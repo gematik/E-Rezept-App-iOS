@@ -307,7 +307,7 @@ final class GroupedPrescriptionListViewTests: XCTestCase {
 
         let expected = CardWallDomain.State(
             introAlreadyDisplayed: false,
-            isNFCReady: false,
+            isNFCReady: true,
             isMinimalOS14: true,
             pin: CardWallPINDomain.State(isDemoModus: false, pin: ""),
             loginOption: CardWallLoginOptionDomain.State(isDemoModus: false)
@@ -335,7 +335,7 @@ final class GroupedPrescriptionListViewTests: XCTestCase {
 
         let expected = CardWallDomain.State(
             introAlreadyDisplayed: false,
-            isNFCReady: false,
+            isNFCReady: true,
             isMinimalOS14: true,
             pin: CardWallPINDomain.State(isDemoModus: false, pin: ""),
             loginOption: CardWallLoginOptionDomain.State(isDemoModus: false)
@@ -363,7 +363,7 @@ final class GroupedPrescriptionListViewTests: XCTestCase {
 
         let expected = CardWallDomain.State(
             introAlreadyDisplayed: false,
-            isNFCReady: false,
+            isNFCReady: true,
             isMinimalOS14: true,
             pin: CardWallPINDomain.State(isDemoModus: false, pin: ""),
             loginOption: CardWallLoginOptionDomain.State(isDemoModus: false)

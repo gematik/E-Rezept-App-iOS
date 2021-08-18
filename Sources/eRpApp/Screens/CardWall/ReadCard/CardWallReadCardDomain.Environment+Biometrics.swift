@@ -116,7 +116,7 @@ extension CardWallReadCardDomain.Environment {
                             (SignedChallenge, RegistrationData),
                             NFCSignatureProviderError
                         > in
-                            healthCard.healthCard
+                            healthCard
                                 // [REQ:gemSpec_IDP_Frontend:A_20700-07] C.CH.AUT
                                 // [REQ:gemF_Tokenverschlüsselung:A_20526-01] Smartcard signature
                                 // [REQ:gemF_Tokenverschlüsselung:A_20700-06] sign
@@ -125,7 +125,7 @@ extension CardWallReadCardDomain.Environment {
                                     (SignedChallenge, RegistrationData),
                                     NFCSignatureProviderError
                                 > in
-                                    healthCard.healthCard
+                                    healthCard
                                         .sign(
                                             registerDataProvider: self.signatureProvider,
                                             in: pairingSession,
@@ -133,20 +133,19 @@ extension CardWallReadCardDomain.Environment {
                                         )
                                 }
                                 .userMessage(
-                                    session: healthCard.nfcCardSession,
+                                    session: healthCard,
                                     message: EGKSignatureProvider.systemNFCDialogSuccess
                                 )
                                 // The delay is needed to show the success message
                                 .delay(for: 0.01, scheduler: self.schedulers.main)
                                 .handleEvents(receiveOutput: { _ in
-                                    healthCard.nfcCardSession.invalidateSession(with: nil)
+                                    healthCard.invalidateSession(with: nil)
                                 }, receiveCompletion: { result in
                                     if case let .failure(error) = result {
-                                        healthCard.nfcCardSession.invalidateSession(with: error.localizedDescription)
+                                        healthCard.invalidateSession(with: error.localizedDescription)
                                     }
                                 }, receiveCancel: {
-                                    healthCard.nfcCardSession
-                                        .invalidateSession(with: EGKSignatureProvider.systemNFCDialogCancel)
+                                    healthCard.invalidateSession(with: EGKSignatureProvider.systemNFCDialogCancel)
                                 })
                                 .eraseToAnyPublisher()
                         } // -> AnyPublisher<(SignedChallenge, RegistrationData), NFCSignatureProviderError>

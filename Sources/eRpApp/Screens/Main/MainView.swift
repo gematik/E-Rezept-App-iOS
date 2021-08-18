@@ -60,6 +60,18 @@ struct MainView: View {
                         get: \.isSettingsViewPresented,
                         send: MainDomain.Action.dismissSettingsView
                     )) {
+                        #if ENABLE_DEBUG_VIEW
+                        IfLetStore(
+                            store.scope(
+                                state: { $0.settingsState },
+                                action: MainDomain.Action.settings(action:)
+                            )
+                        ) { scopedStore in
+                            SettingsView(store: scopedStore,
+                                         debugStore: store.scope(state: \.debug,
+                                                                 action: MainDomain.Action.debug(action:)))
+                        }
+                        #else
                         IfLetStore(
                             store.scope(
                                 state: { $0.settingsState },
@@ -67,6 +79,7 @@ struct MainView: View {
                             ),
                             then: SettingsView.init(store:)
                         )
+                        #endif
                     }
 
                 // ScannerView sheet presentation; Work around not being able to use multiple `fullScreenCover` modifier

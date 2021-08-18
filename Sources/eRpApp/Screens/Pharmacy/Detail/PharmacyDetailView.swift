@@ -28,8 +28,12 @@ struct PharmacyDetailView: View {
         WithViewStore(store) { viewStore in
             ScrollView {
                 VStack(alignment: .leading, spacing: 4) {
+                    if viewStore.pharmacy.isErxReady {
+                        ErxReadinessBadge(detailedText: true)
+                    }
+
                     Text(viewStore.state.pharmacy.name ??
-                            NSLocalizedString("pha_detail_txt_subtitle_fallback", comment: ""))
+                             NSLocalizedString("pha_detail_txt_subtitle_fallback", comment: ""))
                         .foregroundColor(Colors.systemLabel)
                         .font(.title2)
                         .bold()
@@ -41,48 +45,60 @@ struct PharmacyDetailView: View {
                                        imageName: SFSymbolName.map) {
                             viewStore.send(.openMapApp)
                         }
-                        .accessibility(identifier: A11y.pharmacyDetail.phaDetailBtnLocation)
-                        .padding(.bottom, 24)
+                            .accessibility(identifier: A11y.pharmacyDetail.phaDetailBtnLocation)
+                            .padding(.bottom, 24)
                     }
 
-                    VStack(spacing: 8) {
-                        if viewStore.state.pharmacy.hasReservationService {
-                            DefaultTextButton(text: L10n.phaDetailBtnLocation,
-                                              a11y: A11y.pharmacyDetail.phaDetailBtnLocation,
-                                              style: .primary) {
-                                viewStore.send(.showPharmacyRedeemView(.onPremise))
+                    if viewStore.pharmacy.isErxReady {
+                        VStack(spacing: 8) {
+                            if viewStore.state.pharmacy.hasReservationService {
+                                DefaultTextButton(text: L10n.phaDetailBtnLocation,
+                                                  a11y: A11y.pharmacyDetail.phaDetailBtnLocation,
+                                                  style: .primary) {
+                                    viewStore.send(.showPharmacyRedeemView(.onPremise))
+                                }
                             }
-                        }
 
-                        if viewStore.state.pharmacy.hasDeliveryService {
-                            DefaultTextButton(
-                                text: L10n.phaDetailBtnHealthcareService,
-                                a11y: A11y.pharmacyDetail.phaDetailBtnHealthcareService,
-                                style: viewStore.state.pharmacy.hasReservationService ? .secondary : .primary
-                            ) {
-                                viewStore.send(.showPharmacyRedeemView(.delivery))
+                            if viewStore.state.pharmacy.hasDeliveryService {
+                                DefaultTextButton(
+                                    text: L10n.phaDetailBtnHealthcareService,
+                                    a11y: A11y.pharmacyDetail.phaDetailBtnHealthcareService,
+                                    style: viewStore.state.pharmacy.hasReservationService ? .secondary : .primary
+                                ) {
+                                    viewStore.send(.showPharmacyRedeemView(.delivery))
+                                }
                             }
-                        }
 
-                        if viewStore.state.pharmacy.hasMailService {
-                            DefaultTextButton(
-                                text: L10n.phaDetailBtnOrganization,
-                                a11y: A11y.pharmacyDetail.phaDetailBtnOrganization,
-                                style: (!viewStore.state.pharmacy.hasReservationService &&
-                                            !viewStore.state.pharmacy.hasDeliveryService) ? .primary : .secondary
-                            ) {
-                                viewStore.send(.showPharmacyRedeemView(.shipment))
+                            if viewStore.state.pharmacy.hasMailService {
+                                DefaultTextButton(
+                                    text: L10n.phaDetailBtnOrganization,
+                                    a11y: A11y.pharmacyDetail.phaDetailBtnOrganization,
+                                    style: (!viewStore.state.pharmacy.hasReservationService &&
+                                        !viewStore.state.pharmacy.hasDeliveryService) ? .primary : .secondary
+                                ) {
+                                    viewStore.send(.showPharmacyRedeemView(.shipment))
+                                }
                             }
                         }
+                    } // if viewStore.pharmacy.isErxReady
+
+                    if viewStore.pharmacy.isErxReady {
+                        HintView<PharmacyDetailDomain.Action>(
+                            hint: Hint(id: A11y.pharmacyDetail.phaDetailHint,
+                                       message: NSLocalizedString("pha_detail_hint_message", comment: ""),
+                                       imageName: Asset.Illustrations.info.name)
+                        )
+                            .padding(.top, 12)
+                            .padding(.bottom, 32)
+                    } else {
+                        HintView<PharmacyDetailDomain.Action>(
+                            hint: Hint(id: A11y.pharmacyDetail.phaDetailHintNotErxReady,
+                                       title: NSLocalizedString("pha_detail_hint_not_erx_ready_title", comment: ""),
+                                       message: NSLocalizedString("pha_detail_hint_not_erx_ready_message", comment: ""),
+                                       imageName: Asset.Illustrations.pharmacistArmRedCirle.name,
+                                       style: .important)
+                        )
                     }
-
-                    HintView<PharmacyDetailDomain.Action>(
-                        hint: Hint(id: A11y.pharmacyDetail.phaDetailHint,
-                                   message: NSLocalizedString("pha_detail_hint_message", comment: ""),
-                                   imageName: Asset.Illustrations.info.name)
-                    )
-                    .padding(.top, 12)
-                    .padding(.bottom, 32)
 
                     if !viewStore.state.pharmacy.hoursOfOperation.isEmpty {
                         OpeningHoursView(days: viewStore.state.pharmacyViewModel.days)
@@ -91,22 +107,25 @@ struct PharmacyDetailView: View {
 
                     ContactView(store: store)
 
+                    Footer()
+                        .padding(.top, 4)
+
                     RedeemViewPresentation(store: store).accessibility(hidden: true)
                 }.padding()
             }
-            .navigationBarTitle(L10n.phaDetailTxtTitle, displayMode: .inline)
-            .navigationBarItems(
-                trailing: NavigationBarCloseItem { viewStore.send(.close) }
-            )
-            .navigationBarTitleDisplayMode(.inline)
-            .introspectNavigationController { navigationController in
-                let navigationBar = navigationController.navigationBar
-                navigationBar.barTintColor = UIColor(Colors.systemBackground)
-                let navigationBarAppearance = UINavigationBarAppearance()
-                navigationBarAppearance.shadowColor = UIColor(Colors.systemColorClear)
-                navigationBarAppearance.backgroundColor = UIColor(Colors.systemBackground)
-                navigationBar.standardAppearance = navigationBarAppearance
-            }
+                .navigationBarTitle(L10n.phaDetailTxtTitle, displayMode: .inline)
+                .navigationBarItems(
+                    trailing: NavigationBarCloseItem { viewStore.send(.close) }
+                )
+                .navigationBarTitleDisplayMode(.inline)
+                .introspectNavigationController { navigationController in
+                    let navigationBar = navigationController.navigationBar
+                    navigationBar.barTintColor = UIColor(Colors.systemBackground)
+                    let navigationBarAppearance = UINavigationBarAppearance()
+                    navigationBarAppearance.shadowColor = UIColor(Colors.systemColorClear)
+                    navigationBarAppearance.backgroundColor = UIColor(Colors.systemBackground)
+                    navigationBar.standardAppearance = navigationBarAppearance
+                }
         }
     }
 
@@ -136,7 +155,7 @@ struct PharmacyDetailView: View {
                         }
                     }
                 }
-                .padding(.vertical, 8)
+                    .padding(.vertical, 8)
                 Divider()
             }
         }
@@ -182,7 +201,7 @@ struct PharmacyDetailView: View {
     struct RedeemViewPresentation: View {
         let store: PharmacyDetailDomain.Store
         var body: some View {
-            WithViewStore(self.store) { viewStore in
+            WithViewStore(store) { viewStore in
                 NavigationLink(destination: IfLetStore(
                     store.scope(
                         state: { $0.pharmacyRedeemState },
@@ -199,12 +218,71 @@ struct PharmacyDetailView: View {
             }
         }
     }
+
+    struct Footer: View {
+        var text: Text = {
+            Text(L10n.phaDetailTxtFooterStart)
+                .foregroundColor(Color(.secondaryLabel)) +
+                Text(L10n.phaDetailTxtFooterMid)
+                    .foregroundColor(Colors.primary) +
+                Text(L10n.phaDetailTxtFooterEnd)
+                    .foregroundColor(Color(.secondaryLabel))
+        }()
+
+        var body: some View {
+            VStack(alignment: .trailing, spacing: 8) {
+                Button(action: {
+                    guard let url = URL(string: "https://mein-apothekenportal.de"),
+                          UIApplication.shared.canOpenURL(url) else { return }
+
+                    UIApplication.shared.open(url)
+                }, label: {
+                    text
+                        .multilineTextAlignment(.leading)
+                })
+                Button(action: {
+                    guard let url = URL(string: "https://www.gematik.de/anwendungen/e-rezept/faq/meine_apotheke/"),
+                          UIApplication.shared.canOpenURL(url) else { return }
+
+                    UIApplication.shared.open(url)
+                }, label: {
+                    Text(L10n.phaDetailBtnFooter)
+                        .foregroundColor(Colors.primary)
+                })
+            }
+                .font(.footnote)
+        }
+    }
 }
 
 struct PharmacyDetailView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
             PharmacyDetailView(store: PharmacyDetailDomain.Dummies.store)
+        }
+
+        NavigationView {
+            PharmacyDetailView(
+                store: PharmacyDetailDomain.Store(
+                    initialState: PharmacyDetailDomain.State(
+                        erxTasks: PharmacyDetailDomain.Dummies.prescriptions,
+                        pharmacyViewModel: PharmacyDetailDomain.Dummies.pharmacyInactiveViewModel
+                    ),
+                    reducer: PharmacyDetailDomain.Reducer.empty,
+                    environment: PharmacyDetailDomain.Dummies.environment
+                )
+            )
+        }
+
+        NavigationView {
+            PharmacyDetailView(
+                store: PharmacyDetailDomain.Dummies.storeFor(
+                    PharmacyDetailDomain.State(
+                        erxTasks: PharmacyDetailDomain.Dummies.prescriptions,
+                        pharmacyViewModel: PharmacyDetailDomain.Dummies.pharmacyInactiveViewModel
+                    )
+                )
+            )
         }
     }
 }

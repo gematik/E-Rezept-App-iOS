@@ -120,10 +120,7 @@ extension RedeemMatrixCodeDomain.Environment {
 
 extension RedeemMatrixCodeDomain {
     enum Dummies {
-        static let demoSessionContainer = ChangeableUserSessionContainer(
-            initialUserSession: DemoSessionContainer(),
-            schedulers: Schedulers()
-        )
+        static let demoSessionContainer = DummyUserSessionContainer()
         static let state = State(groupedPrescription: GroupedPrescription.Dummies.twoPrescriptions)
         static let environment = Environment(
             schedulers: Schedulers(),

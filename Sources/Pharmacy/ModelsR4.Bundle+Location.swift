@@ -24,12 +24,12 @@ extension ModelsR4.Bundle {
         case parseError(String)
     }
 
-    /// Parse and extract all found Pharmacies from `Self`
+    /// Parse and extract all found Pharmacy Locations from `Self`
     ///
     /// - Returns: Array with all found and parsed pharmacies
     /// - Throws: `ModelsR4.Bundle.Error`
     func parsePharmacyLocations() throws -> [PharmacyLocation] {
-        // Collect and parse all Pharmacies
+        // Collect and parse all Pharmacy Locations
         try entry?.compactMap {
             guard let location = $0.resource?.get(if: ModelsR4.Location.self) else {
                 return nil
@@ -44,6 +44,9 @@ extension ModelsR4.Bundle {
         guard let id = location.id?.value?.string else { // swiftlint:disable:this identifier_name
             throw Error.parseError("Could not parse id from pharmacy.")
         }
+
+        let status = location.pharmacyLocationStatus
+
         guard let telematikID = location.telematikID else {
             throw Error.parseError("Could not parse telematikID from pharmacy.")
         }
@@ -61,16 +64,17 @@ extension ModelsR4.Bundle {
 
         let pharmacy = PharmacyLocation(
             id: id,
+            status: status,
             telematikID: telematikID,
             name: location.name?.value?.string,
-            type: location.locationTypes + additionalTypesFromHealthCareService,
+            types: location.locationTypes + additionalTypesFromHealthCareService,
             position: PharmacyLocation.Position(
                 latitude: location.position?.latitude.value?.decimal,
                 longitude: location.position?.longitude.value?.decimal
             ),
             address: PharmacyLocation.Address(
                 street: location.address?.line?.first?.value?.string,
-                housenumber: nil,
+                houseNumber: nil,
                 zip: location.address?.postalCode?.value?.string,
                 city: location.address?.city?.value?.string
             ),
@@ -100,19 +104,19 @@ extension ModelsR4.Bundle {
 
     static func evaluateHealthCareServiceForTypes(healthCareServices: [HealthcareService])
         -> [PharmacyLocation.PharmacyType] {
-        var types: [PharmacyLocation.PharmacyType] = []
+        var pharmacyTypes: [PharmacyLocation.PharmacyType] = []
 
         healthCareServices.forEach { healthService in
-            healthService.type?.forEach { codeableConcept in
-                codeableConcept.coding?.forEach { coding in
+            healthService.type?.forEach { codableConcept in
+                codableConcept.coding?.forEach { coding in
                     if coding.system?.value?.url.absoluteString == FHIRResponseKeys.serviceTypeIDKey {
                         switch coding.code {
                         case "117":
-                            types.append(
+                            pharmacyTypes.append(
                                 PharmacyLocation.PharmacyType.emergency
                             )
                         case "498":
-                            types.append(
+                            pharmacyTypes.append(
                                 PharmacyLocation.PharmacyType.mobl
                             )
                         default:
@@ -123,7 +127,7 @@ extension ModelsR4.Bundle {
                 }
             }
         }
-        return types
+        return pharmacyTypes
     }
 }
 
@@ -138,6 +142,18 @@ extension ModelsR4.FHIRPrimitive where PrimitiveType == ModelsR4.FHIRString {
 }
 
 extension ModelsR4.Location {
+    var pharmacyLocationStatus: PharmacyLocation.Status? {
+        if let status = status?.value {
+            switch status {
+            case .active: return .active
+            case .suspended: return .suspended
+            case .inactive: return .inactive
+            }
+        } else {
+            return nil
+        }
+    }
+
     var telematikID: String? {
         identifier?.first {
             $0.system?.value?.url.absoluteString == FHIRResponseKeys.telematikIDKey
@@ -145,21 +161,21 @@ extension ModelsR4.Location {
     }
 
     var locationTypes: [PharmacyLocation.PharmacyType] {
-        var types: [PharmacyLocation.PharmacyType] = []
-        type?.forEach { codeableConcept in
-            codeableConcept.coding?.forEach { coding in
+        var pharmacyTypes: [PharmacyLocation.PharmacyType] = []
+        type?.forEach { codableConcept in
+            codableConcept.coding?.forEach { coding in
                 switch coding.code {
                 case "PHARM":
-                    types.append(
+                    pharmacyTypes.append(
                         PharmacyLocation.PharmacyType.pharm
                     )
                 case "OUTPHARM":
-                    types.append(
+                    pharmacyTypes.append(
                         PharmacyLocation.PharmacyType.outpharm
                     )
                 case "MOBL":
-                    types.append(
-                        PharmacyLocation.PharmacyType.outpharm
+                    pharmacyTypes.append(
+                        PharmacyLocation.PharmacyType.mobl
                     )
                 default:
                     // do nothing
@@ -167,7 +183,7 @@ extension ModelsR4.Location {
                 }
             }
         }
-        return types
+        return pharmacyTypes
     }
 
     var phone: String? {

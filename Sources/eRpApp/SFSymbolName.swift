@@ -40,6 +40,7 @@ struct SFSymbolName {
     static let qrCode = "qrcode"
     static let person = "person.crop.circle"
     static let camera = "camera.viewfinder"
+    static let docTextViewfinder = "doc.text.viewfinder"
     static let plusViewFinder = "plus.viewfinder"
     static let rightDisclosureIndicator = "chevron.right"
     static let rightDetailDisclosure = "chevron.right.circle.fill"

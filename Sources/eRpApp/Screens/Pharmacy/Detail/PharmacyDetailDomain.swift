@@ -81,7 +81,7 @@ enum PharmacyDetailDomain: Equatable {
             if let city = state.pharmacy.address?.city,
                let zip = state.pharmacy.address?.zip,
                let street = state.pharmacy.address?.street,
-               let number = state.pharmacy.address?.housenumber {
+               let number = state.pharmacy.address?.houseNumber {
                 address = [
                     CNPostalAddressStreetKey: "\(street) \(number)",
                     CNPostalAddressCityKey: city,
@@ -189,7 +189,7 @@ extension PharmacyDetailDomain {
     enum Dummies {
         static let address1 = PharmacyLocation.Address(
             street: "Hinter der Bahn",
-            housenumber: "6",
+            houseNumber: "6",
             zip: "12345",
             city: "Buxtehude"
         )
@@ -205,8 +205,14 @@ extension PharmacyDetailDomain {
             pharmacy: PharmacyLocation.Dummies.pharmacy
         )
 
+        static let pharmacyInactiveViewModel = PharmacyLocationViewModel(
+            pharmacy: PharmacyLocation.Dummies.pharmacyInactive
+        )
+
+        static let prescriptions = ErxTask.Dummies.prescriptions
+
         static let state = State(
-            erxTasks: ErxTask.Dummies.prescriptions,
+            erxTasks: prescriptions,
             pharmacyViewModel: pharmacyViewModel
         )
         static let environment = Environment(

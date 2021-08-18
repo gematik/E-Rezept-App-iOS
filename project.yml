@@ -132,6 +132,7 @@ targets:
       - target: FHIRClient_iOS
       - target: TrustStore_iOS
       - target: VAUClient_iOS
+      - framework: Carthage/Build/OpenSSL.xcframework
       - framework: Carthage/Build/DataKit.xcframework
       - framework: Carthage/Build/GemCommonsKit.xcframework
       - framework: Carthage/Build/CardReaderProviderApi.xcframework
@@ -297,6 +298,7 @@ targets:
     dependencies:
       - target: HTTPClient_${platform}
       - framework: Carthage/Build/GemCommonsKit.xcframework
+      - framework: Carthage/Build/DataKit.xcframework
       - framework: Carthage/Build/OpenSSL.xcframework
     scheme:
       testTargets:
@@ -314,6 +316,7 @@ targets:
       - target: HTTPClient_${platform}
       - target: TrustStore_${platform}
       - framework: Carthage/Build/OpenSSL.xcframework
+      - framework: Carthage/Build/DataKit.xcframework
     scheme:
       testTargets:
         - TrustStoreTests_${platform}

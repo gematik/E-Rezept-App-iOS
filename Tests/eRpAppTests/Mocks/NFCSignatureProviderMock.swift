@@ -26,8 +26,7 @@ import IDP
 // MARK: - NFCSignatureProviderMock -
 
 final class NFCSignatureProviderMock: NFCSignatureProvider {
-    func openSecureSession(can _: CAN,
-                           pin _: Format2Pin) -> AnyPublisher<EGKSignatureSession, NFCSignatureProviderError> {
+    func openSecureSession(can _: CAN, pin _: Format2Pin) -> AnyPublisher<SignatureSession, NFCSignatureProviderError> {
         Fail(error: NFCSignatureProviderError.signingFailure(nil)).eraseToAnyPublisher()
     }
 
@@ -69,7 +68,8 @@ final class NFCSignatureProviderMock: NFCSignatureProvider {
     var signRegistrationDataClosure: ((CAN, Format2Pin, SecureEnclaveSignatureProvider)
         -> AnyPublisher<RegistrationData, NFCSignatureProviderError>)?
 
-    func sign(can: CAN, pin: Format2Pin,
+    func sign(can: CAN,
+              pin: Format2Pin,
               registrationDataProvider: SecureEnclaveSignatureProvider)
         -> AnyPublisher<RegistrationData, NFCSignatureProviderError> {
         signRegistrationDataCallsCount += 1

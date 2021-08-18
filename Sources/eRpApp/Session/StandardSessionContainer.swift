@@ -128,8 +128,23 @@ class StandardSessionContainer: UserSession {
     }()
 
     lazy var nfcSessionProvider: NFCSignatureProvider = {
-        EGKSignatureProvider()
+        #if ENABLE_DEBUG_VIEW
+        #if targetEnvironment(simulator)
+        return VirtualEGKSignatureProvider()
+        #else
+        return switchedSignatureProvider
+        #endif
+        #else
+        return EGKSignatureProvider(schedulers: schedulers)
+        #endif
     }()
+
+    #if ENABLE_DEBUG_VIEW
+    lazy var switchedSignatureProvider: NFCSignatureProvider = {
+        SwitchSignatureProvider(defaultSignatureProvider: EGKSignatureProvider(schedulers: self.schedulers),
+                                alternativeSignatureProvider: VirtualEGKSignatureProvider())
+    }()
+    #endif
 
     // Local VAU storage configuration
     lazy var vauStorage: VAUStorage = {

@@ -23,6 +23,9 @@ import HTTPClient
 #if ENABLE_DEBUG_VIEW
 extension UserDefaults {
     private static let kIsLoggingEnabledKey = "kIsLoggingEnabled"
+    private static let kIsVirtualEGKEnabledKey = "kIsVirtualEGKEnabled"
+    private static let kVirtualEGKPrkCHAUTKey = "kVirtualEGKPrkCHAUT"
+    private static let kVirtualEGKCCHAUTKey = "kVirtualEGKCCHAUT"
 
     @objc var isLoggingEnabled: Bool {
         get {
@@ -30,6 +33,33 @@ extension UserDefaults {
         }
         set {
             UserDefaults.standard.set(newValue, forKey: Self.kIsLoggingEnabledKey)
+        }
+    }
+
+    @objc var isVirtualEGKEnabled: Bool {
+        get {
+            UserDefaults.standard.bool(forKey: Self.kIsVirtualEGKEnabledKey)
+        }
+        set {
+            UserDefaults.standard.set(newValue, forKey: Self.kIsVirtualEGKEnabledKey)
+        }
+    }
+
+    @objc var virtualEGKPrkCHAut: String? {
+        get {
+            UserDefaults.standard.string(forKey: Self.kVirtualEGKPrkCHAUTKey)
+        }
+        set {
+            UserDefaults.standard.set(newValue, forKey: Self.kVirtualEGKPrkCHAUTKey)
+        }
+    }
+
+    @objc var virtualEGKCCHAut: String? {
+        get {
+            UserDefaults.standard.string(forKey: Self.kVirtualEGKCCHAUTKey)
+        }
+        set {
+            UserDefaults.standard.set(newValue, forKey: Self.kVirtualEGKCCHAUTKey)
         }
     }
 }

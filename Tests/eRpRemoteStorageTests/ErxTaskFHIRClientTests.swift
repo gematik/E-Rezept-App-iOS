@@ -123,6 +123,29 @@ final class ErxTaskFHIRClientTests: XCTestCase {
         expect(counter) == 1
     }
 
+    func testFetchingAuditEventsWithDate() {
+        let expectedResponse = load(resource: "getAuditEventResponse_4_entries")
+        let timestamp = "2021-03-24T08:35:26.548+00:00"
+        let dateString = FHIRDateFormatter.shared.date(from: timestamp)!
+            .fhirFormattedString(with: .yearMonthDayTime)
+
+        var counter = 0
+        stub(condition: isPath("/AuditEvent")
+                && containsQueryParams(["date": "ge\(dateString)"])
+                && isMethodGET()) { _ in
+            counter += 1
+            return fixture(filePath: expectedResponse, headers: ["Content-Type": "application/json"])
+        }
+
+        sut.fetchAllAuditEvents(after: timestamp)
+            .test { error in
+                fail("unexpected fail with error: \(error)")
+            } expectations: { auditEvents in
+                expect(auditEvents.count) == 4
+            }
+        expect(counter) == 1
+    }
+
     /// Tests a failure delete, e.g. when task has already been deleted on the server.
     /// The server will then respond with a http status code of 404.
     func testDeleteTasks404() {

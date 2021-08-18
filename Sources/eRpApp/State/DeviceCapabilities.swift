@@ -23,7 +23,7 @@ import SwiftUI
 /// Provides access to device capabilities.
 ///
 /// Use via `ServiceLocator` to enable proper testing via DebugView screen.
-protocol DeviceCapabilities {
+protocol DeviceCapabilities: AnyObject {
     var isNFCReady: Bool { get }
     var isMinimumOS14: Bool { get }
 }
@@ -38,9 +38,14 @@ class RealDeviceCapabilities: DeviceCapabilities {
     }()
 }
 
-struct DebugDeviceCapabilities: DeviceCapabilities {
+class DebugDeviceCapabilities: DeviceCapabilities {
     var isNFCReady: Bool
     var isMinimumOS14: Bool
+
+    internal init(isNFCReady: Bool, isMinimumOS14: Bool) {
+        self.isNFCReady = isNFCReady
+        self.isMinimumOS14 = isMinimumOS14
+    }
 }
 
 extension DebugDeviceCapabilities: Equatable {

@@ -77,6 +77,7 @@ internal enum Asset {
     internal static let info = ImageAsset(name: "Info")
     internal static let womanBlueCircle = ImageAsset(name: "Woman_BlueCircle")
     internal static let egkBlau = ImageAsset(name: "egkBlau")
+    internal static let pharmacistArmRedCirle = ImageAsset(name: "pharmacistArm_RedCirle")
     internal static let pharmacistf1 = ImageAsset(name: "pharmacistf1")
     internal static let practitionerf1 = ImageAsset(name: "practitionerf1")
     internal static let practitionerm1 = ImageAsset(name: "practitionerm1")
@@ -90,6 +91,9 @@ internal enum Asset {
     internal static let logoNeuFahne = ImageAsset(name: "logoNeuFahne")
     internal static let logoNeuGematik = ImageAsset(name: "logoNeuGematik")
     internal static let next = ImageAsset(name: "next")
+  }
+  internal enum Pharmacy {
+    internal static let eRxReadinessBadge = ImageAsset(name: "eRxReadinessBadge")
   }
   internal enum Prescriptions {
     internal enum Details {

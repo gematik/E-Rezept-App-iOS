@@ -23,7 +23,13 @@ import SwiftUI
 /// Usage: `@Injected(\.serviceLocator) var serviceLocator: ServiceLocator`
 class ServiceLocator {
     // swiftlint:disable:next strict_fileprivate
-    fileprivate(set) var deviceCapabilities: DeviceCapabilities = RealDeviceCapabilities()
+    fileprivate(set) var deviceCapabilities: DeviceCapabilities = {
+        #if targetEnvironment(simulator)
+        return DebugDeviceCapabilities(isNFCReady: true, isMinimumOS14: true)
+        #else
+        return RealDeviceCapabilities()
+        #endif
+    }()
 }
 
 class ServiceLocatorDebugAccess {

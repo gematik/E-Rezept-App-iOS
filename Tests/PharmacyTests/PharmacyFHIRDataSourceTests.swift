@@ -68,9 +68,10 @@ final class PharmacyFHIRDataSourceTests: XCTestCase {
                 expect(pharmacyLocations.count) == 5
                 let expectedLocation = PharmacyLocation(
                     id: "a4d2a2ca-8b79-4792-a2be-3b72e1ccdedb",
+                    status: .inactive,
                     telematikID: "3-06.2.ycl.216",
                     name: "Adler Apotheke",
-                    type: [PharmacyLocation.PharmacyType.pharm],
+                    types: [PharmacyLocation.PharmacyType.pharm],
                     address: nil,
                     telecom: nil,
                     hoursOfOperation: []

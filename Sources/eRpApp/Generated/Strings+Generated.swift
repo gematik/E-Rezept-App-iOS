@@ -117,6 +117,10 @@ internal enum L10n {
   internal static let cdwBtnNfuMore = LocalizedStringKey("cdw_btn_nfu_more")
   /// Mail erstellen
   internal static let cdwBtnOrderEgkA11ySendMail = LocalizedStringKey("cdw_btn_order_egk_a11y_send_mail")
+  /// KVNR über die Kamera einlesen
+  internal static let cdwBtnOrderEgkScanKvnr = LocalizedStringKey("cdw_btn_order_egk_scan_kvnr")
+  /// Übernehmen
+  internal static let cdwBtnOrderEgkScanKvnrConfirm = LocalizedStringKey("cdw_btn_order_egk_scan_kvnr_confirm")
   /// Mail erstellen
   internal static let cdwBtnOrderEgkSendMail = LocalizedStringKey("cdw_btn_order_egk_send_mail")
   /// Back
@@ -1077,6 +1081,8 @@ internal enum L10n {
   internal static let onbWelTxtExplanation = LocalizedStringKey("onb_wel_txt_explanation")
   /// Welcome to the e-prescription app
   internal static let onbWelTxtTitle = LocalizedStringKey("onb_wel_txt_title")
+  /// Mehr erfahren
+  internal static let phaDetailBtnFooter = LocalizedStringKey("pha_detail_btn_footer")
   /// Request delivery service
   internal static let phaDetailBtnHealthcareService = LocalizedStringKey("pha_detail_btn_healthcare_service")
   /// Reserve for collection
@@ -1087,18 +1093,32 @@ internal enum L10n {
   internal static let phaDetailContact = LocalizedStringKey("pha_detail_contact")
   /// Please note that prescribed medication may also be subject to additional payments.
   internal static let phaDetailHintMessage = LocalizedStringKey("pha_detail_hint_message")
+  /// Diese Apotheke kann derzeit noch keine Rezepte in Empfang nehmen.
+  internal static let phaDetailHintNotErxReadyMessage = LocalizedStringKey("pha_detail_hint_not_erx_ready_message")
+  /// Einlösen bald möglich
+  internal static let phaDetailHintNotErxReadyTitle = LocalizedStringKey("pha_detail_hint_not_erx_ready_title")
   /// Email address
   internal static let phaDetailMail = LocalizedStringKey("pha_detail_mail")
   /// Opening time
   internal static let phaDetailOpeningTime = LocalizedStringKey("pha_detail_opening_time")
   /// Telephone number
   internal static let phaDetailPhone = LocalizedStringKey("pha_detail_phone")
+  ///  des Deutschen Apothekerverbands e.V. Sie haben einen Fehler entdeckt oder möchten Daten korrigieren?
+  internal static let phaDetailTxtFooterEnd = LocalizedStringKey("pha_detail_txt_footer_end")
+  /// mein-apothekenportal.de
+  internal static let phaDetailTxtFooterMid = LocalizedStringKey("pha_detail_txt_footer_mid")
+  /// Hinweis für Apotheken: Die Kontaktdaten und Informationen zu Apotheken beziehen wir von 
+  internal static let phaDetailTxtFooterStart = LocalizedStringKey("pha_detail_txt_footer_start")
   /// Pharmacy
   internal static let phaDetailTxtSubtitleFallback = LocalizedStringKey("pha_detail_txt_subtitle_fallback")
   /// Details
   internal static let phaDetailTxtTitle = LocalizedStringKey("pha_detail_txt_title")
   /// Website
   internal static let phaDetailWeb = LocalizedStringKey("pha_detail_web")
+  /// E-Rezept
+  internal static let phaGlobalTxtReadinessBadge = LocalizedStringKey("pha_global_txt_readiness_badge")
+  /// Bereit für das E-Rezept
+  internal static let phaGlobalTxtReadinessBadgeDetailed = LocalizedStringKey("pha_global_txt_readiness_badge_detailed")
   /// Send now
   internal static let phaRedeemBtnAlertApproval = LocalizedStringKey("pha_redeem_btn_alert_approval")
   /// Cancel

@@ -65,3 +65,15 @@ class ChangeableUserSessionContainer: UsersSessionContainer {
         currentSession.send(UserMode.standard(StandardSessionContainer(schedulers: schedulers)))
     }
 }
+
+class DummyUserSessionContainer: UsersSessionContainer {
+    var userSession: UserSession = DemoSessionContainer()
+
+    var userSessionStream: AnyPublisher<UserSession, Never> = Just(DemoSessionContainer()).eraseToAnyPublisher()
+
+    var isDemoMode: AnyPublisher<Bool, Never> = Just(false).eraseToAnyPublisher()
+
+    func switchToDemoMode() {}
+
+    func switchToStandardMode() {}
+}

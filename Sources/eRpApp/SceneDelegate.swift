@@ -22,8 +22,6 @@ import SwiftUI
 import UIKit
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing {
-    @Injected(\.userSessionProvider) var userSessionProvider: UserSessionProvider
-
     var mainWindow,
         authenticationWindow: UIWindow?
 

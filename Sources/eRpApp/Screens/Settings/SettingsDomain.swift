@@ -38,7 +38,6 @@ enum SettingsDomain {
         var appVersion = AppVersion.current
         var trackerOptIn = false
         var showTrackerComplyView = false
-        var debug: DebugDomain.State
     }
 
     enum Action: Equatable {
@@ -56,7 +55,6 @@ enum SettingsDomain {
         case toggleTermsOfUseView(Bool)
         case toggleDebugView(Bool)
         case appSecurity(action: AppSecurityDomain.Action)
-        case debug(action: DebugDomain.Action)
         case logout
     }
 
@@ -169,8 +167,6 @@ enum SettingsDomain {
                 return DebugDomain.cleanup()
             }
             return .none
-        case .debug:
-            return .none
 
         // Logout
         case .logout:
@@ -180,7 +176,6 @@ enum SettingsDomain {
 
     static let reducer: Reducer = .combine(
         appSecurityPullbackReducer,
-        debugPullbackReducer,
         domainReducer
     )
 
@@ -191,19 +186,6 @@ enum SettingsDomain {
         ) {
             AppSecurityDomain.Environment(userDataStore: $0.changeableUserSessionContainer.userSession.localUserStore,
                                           schedulers: $0.schedulers)
-        }
-
-    private static let debugPullbackReducer: Reducer =
-        DebugDomain.reducer.pullback(
-            state: \.debug,
-            action: /SettingsDomain.Action.debug(action:)
-        ) {
-            DebugDomain.Environment(
-                schedulers: $0.schedulers,
-                userSession: $0.changeableUserSessionContainer.userSession,
-                tracker: $0.tracker,
-                signatureProvider: $0.signatureProvider
-            )
         }
 
     static var demoModeOnAlertState: AlertState<Action> = {
@@ -229,15 +211,11 @@ extension SettingsDomain {
             isDemoMode: false,
             appVersion: AppVersion(productVersion: "1.0",
                                    buildNumber: "LOCAL BUILD",
-                                   buildHash: "LOCAL BUILD"),
-            debug: DebugDomain.Dummies.state
+                                   buildHash: "LOCAL BUILD")
         )
 
         static let environment = Environment(
-            changeableUserSessionContainer: ChangeableUserSessionContainer(
-                initialUserSession: DemoSessionContainer(),
-                schedulers: AppContainer.shared.schedulers
-            ),
+            changeableUserSessionContainer: DummyUserSessionContainer(),
             schedulers: AppContainer.shared.schedulers,
             tracker: DummyTracker(),
             signatureProvider: DummySecureEnclaveSignatureProvider()

@@ -22,6 +22,10 @@ import SwiftUI
 struct SettingsView: View {
     let store: SettingsDomain.Store
 
+    #if ENABLE_DEBUG_VIEW
+    let debugStore: DebugDomain.Store
+    #endif
+
     var body: some View {
         WithViewStore(store) { viewStore in
             NavigationView {
@@ -35,7 +39,11 @@ struct SettingsView: View {
                     LegalInfoSectionView(store: store)
 
                     #if ENABLE_DEBUG_VIEW
-                    DebugSectionView(store: store)
+                    DebugSectionView(store: debugStore,
+                                     showDebugView: viewStore.binding(
+                                         get: { $0.showDebugView },
+                                         send: SettingsDomain.Action.toggleDebugView
+                                     ))
                     #endif
 
                     BottomSectionView(store: store)
@@ -185,35 +193,28 @@ struct SettingsView: View {
 
     #if ENABLE_DEBUG_VIEW
     private struct DebugSectionView: View {
-        let store: SettingsDomain.Store
+        let store: DebugDomain.Store
+
+        @Binding var showDebugView: Bool
 
         var body: some View {
-            WithViewStore(store) { viewStore in
-                SectionView(
-                    text: "Debug",
-                    a11y: "Debug"
-                )
-                .padding(.bottom, 2)
+            SectionView(
+                text: "Debug",
+                a11y: "Debug"
+            )
+            .padding(.bottom, 2)
 
-                NavigationLink(
-                    destination: DebugView(store:
-                                            store.scope(
-                                                state: \.debug,
-                                                action: SettingsDomain.Action.debug(action:)
-                                            )),
-                    isActive: viewStore.binding(
-                        get: { $0.showDebugView },
-                        send: SettingsDomain.Action.toggleDebugView
-                    )
-                ) {
-                    ListCellView(
-                        sfSymbolName: SFSymbolName.ant,
-                        text: "Debug",
-                        accessibility: "Debug"
-                    )
-                }
-                .border(Colors.systemColorClear, cornerRadius: 16)
+            NavigationLink(
+                destination: DebugView(store: store),
+                isActive: $showDebugView
+            ) {
+                ListCellView(
+                    sfSymbolName: SFSymbolName.ant,
+                    text: "Debug",
+                    accessibility: "Debug"
+                )
             }
+            .border(Colors.systemColorClear, cornerRadius: 16)
             .padding([.leading, .trailing])
         }
     }
@@ -298,7 +299,12 @@ struct SettingsView: View {
 struct SettingsView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
+            #if ENABLE_DEBUG_VIEW
+            SettingsView(store: SettingsDomain.Dummies.store,
+                         debugStore: DebugDomain.Dummies.store)
+            #else
             SettingsView(store: SettingsDomain.Dummies.store)
+            #endif
         }.generateVariations()
     }
 }

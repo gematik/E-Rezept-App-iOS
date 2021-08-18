@@ -384,10 +384,7 @@ extension Publisher where Output == GroupedPrescriptionListDomain.Action, Failur
 
 extension GroupedPrescriptionListDomain {
     enum Dummies {
-        static let demoSessionContainer = ChangeableUserSessionContainer(
-            initialUserSession: DemoSessionContainer(),
-            schedulers: Schedulers()
-        )
+        static let demoSessionContainer = DummyUserSessionContainer()
         static let state = State()
         static let stateWithTwoPrescriptions = State(
             loadingState: .value([GroupedPrescription.Dummies.twoPrescriptions]),

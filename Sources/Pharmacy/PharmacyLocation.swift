@@ -23,18 +23,20 @@ public struct PharmacyLocation: Identifiable, Hashable, Equatable {
     /// Pharmacy default initializer
     public init(
         id: String, // swiftlint:disable:this identifier_name
+        status: Status?,
         telematikID: String,
         name: String?,
-        type: [PharmacyType],
+        types: [PharmacyType],
         position: Position? = nil,
         address: Address? = nil,
         telecom: Telecom? = nil,
         hoursOfOperation: [HoursOfOperation]
     ) {
         self.id = id
+        self.status = status
         self.telematikID = telematikID
         self.name = name
-        self.type = type
+        self.types = types
         self.position = position
         self.address = address
         self.telecom = telecom
@@ -45,15 +47,17 @@ public struct PharmacyLocation: Identifiable, Hashable, Equatable {
 
     /// Id of the FHIR Location
     public var id: String // swiftlint:disable:this identifier_name
-    /// Idenditifer of the pharmacy
+    /// LocationStatus
+    /// NOTE: Is here used to indicate E-Rezept readiness
+    public let status: Status?
+    /// Identifier of the pharmacy
     public let telematikID: String
     /// Name of pharmacy
     public let name: String?
-    /// Type is: "Präsenzapotheke", "Versandapotheke", etc. A pharmacy can have multiple types
-    /// In FHIR the code is "PHARM" and "OUTPHARM" and "MOBL"
-    public let type: [PharmacyType]
-    /// Position, i.e. Latitude and Longitude of pharmacys address
-    public var position: Position?
+    /// A pharmacy can have multiple types. In FHIR the code are e.g. "PHARM" and "OUTPHARM" and "MOBL"
+    public let types: [PharmacyType]
+    /// Position, i.e. Latitude and Longitude of the pharmacy's address
+    public let position: Position?
     /// Address
     public let address: Address?
     /// Telecom
@@ -65,20 +69,28 @@ public struct PharmacyLocation: Identifiable, Hashable, Equatable {
         position?.latitude != nil && position?.longitude != nil
     }
 
+    public var isErxReady: Bool {
+        if let status = status {
+           return status == .active
+        } else {
+            return false
+        }
+    }
+
     public var hasDeliveryService: Bool {
-        type.contains { $0.isDeliveryService }
+        types.contains { $0.isDeliveryService }
     }
 
     public var hasMailService: Bool {
-        type.contains { $0.isMail }
+        types.contains { $0.isMail }
     }
 
     public var hasReservationService: Bool {
-        type.contains { $0.isReservation }
+        types.contains { $0.isReservation }
     }
 
     public var hasEmergencyService: Bool {
-        type.contains { $0.isEmergency }
+        types.contains { $0.isEmergency }
     }
 }
 
@@ -103,9 +115,26 @@ extension PharmacyLocation: Comparable {
 }
 
 extension PharmacyLocation {
+    /// Mode of operation / eRx-readiness status
+    public enum Status {
+        /// The location is operational.
+        /// /// NOTE: Is here used to indicate eRx-readiness.
+        case active
+        /// The location is temporarily closed.
+        case suspended
+        /// The location is no longer used.
+        /// NOTE: Is here used to indicate non eRx-readiness.
+        case inactive
+    }
+
     public enum PharmacyType: Hashable {
+        /// Pharmacy
         case pharm
+        /// Outpatient pharmacy
+        /// NOTE: Is here used to indicate (publicly accessible) brick and mortar pharmacies
         case outpharm
+        /// Mobile Unit
+        /// NOTE: Is here used to indicate pharmacies offering mail order service
         case mobl
         case emergency
 
@@ -118,7 +147,7 @@ extension PharmacyLocation {
         }
 
         var isMail: Bool {
-            self == .outpharm
+            self == .mobl
         }
 
         var isEmergency: Bool {
@@ -139,17 +168,17 @@ extension PharmacyLocation {
 
     public struct Address: Hashable {
         public init(street: String? = nil,
-                    housenumber: String? = nil,
+                    houseNumber: String? = nil,
                     zip: String? = nil,
                     city: String? = nil) {
             self.street = street
-            self.housenumber = housenumber
+            self.houseNumber = houseNumber
             self.zip = zip
             self.city = city
         }
 
         public let street: String?
-        public let housenumber: String?
+        public let houseNumber: String?
         public let zip: String?
         public let city: String?
 
@@ -158,7 +187,7 @@ extension PharmacyLocation {
             if let street = street {
                 address = street
             }
-            if let number = housenumber {
+            if let number = houseNumber {
                 address += " \(number)"
             }
 

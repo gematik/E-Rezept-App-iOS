@@ -87,10 +87,7 @@ extension PickupCodeDomain.Environment {
 
 extension PickupCodeDomain {
     enum Dummies {
-        static let demoSessionContainer = ChangeableUserSessionContainer(
-            initialUserSession: DemoSessionContainer(),
-            schedulers: Schedulers()
-        )
+        static let demoSessionContainer = DummyUserSessionContainer()
         static let state = State(pickupCodeHR: "1234",
                                  pickupCodeDMC: "123456789")
         static let environment = Environment(

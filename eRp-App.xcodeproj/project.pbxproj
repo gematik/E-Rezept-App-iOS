@@ -42,6 +42,7 @@
 		08224C0E453F2980D285D36C /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 01E134092B6DE34B03CED7D4 /* InfoPlist.strings */; };
 		091166C434BB1F9E219CAC64 /* DataPrivacyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1C9B8CCA2DE427A845CF9D7 /* DataPrivacyView.swift */; };
 		09520E13B2C100B94EAF2D07 /* TrustStoreStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3614F6F071B4FC4439C061BC /* TrustStoreStorage.swift */; };
+		097209DBDD54DA3F80457893 /* ErxReadinessBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0267576B0FC2D97110FAB8FA /* ErxReadinessBadge.swift */; };
 		098FD1610B88D518CD842245 /* ErxAuditEventEntity+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 329E97B1EEA433F9C6FA6C91 /* ErxAuditEventEntity+CoreDataProperties.swift */; };
 		0A4E803B8938333043839302 /* CardWallLoginOptionDomain.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFDF6C20FCB525EBD0A84A13 /* CardWallLoginOptionDomain.swift */; };
 		0A7C795E34FFD74332E92A0F /* ErxTaskCommunicationEntity+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 811117CDE0A4B4E85C9314A9 /* ErxTaskCommunicationEntity+CoreDataProperties.swift */; };
@@ -269,6 +270,7 @@
 		3F269F012ACBC13047C62F54 /* Chain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 147C664398573796AB8C208D /* Chain.swift */; };
 		3FEDB4908B2A4F9BB91A165D /* IDP.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = E1306451DE649F27B7ECE332 /* IDP.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4013C96843AF1AFD78BB1F07 /* JWE+KDF.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E96736D9A19AB656B014C33 /* JWE+KDF.swift */; };
+		4030E54D4F751833D9C827C5 /* OpenSSL.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 2DD4921BA0619E88A69676CF /* OpenSSL.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4168106DA7BDB0685AA2C278 /* Nimble in Frameworks */ = {isa = PBXBuildFile; productRef = 04C25F154D74A8C39DDEB7BD /* Nimble */; };
 		4176B45C80B87FDAC6749D06 /* ErxTask+Demo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 620D0F24567AD87B171FA831 /* ErxTask+Demo.swift */; };
 		41B0AC2A8F995C832A1AA1F4 /* PickupCodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 209B2AC42BDDE6803BA25A75 /* PickupCodeView.swift */; };
@@ -330,6 +332,7 @@
 		4C2E13E028BD1C1DE460C831 /* OpenSSL.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DD4921BA0619E88A69676CF /* OpenSSL.xcframework */; };
 		4C42A68FCECDBF9B0B8FBF6E /* KeychainStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E16E945F72293EE445FB1E40 /* KeychainStorageTests.swift */; };
 		4C6314DF9E5096896BA485AD /* VAUAccessTokenProviderMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = F07AB4FB194FED2ED86D12E1 /* VAUAccessTokenProviderMock.swift */; };
+		4C73DBE3448FD7E75C2FA6BD /* KVNRCameraScanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0525F93E245EAA1B1AC37BEB /* KVNRCameraScanner.swift */; };
 		4CD3A1AC2DED76FA82D7F69E /* JWE.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5BB02C4B575F4E3B7E7AD048 /* JWE.swift */; };
 		4D07DD3CD1D1A05280844EE5 /* ErxTaskCommunicationEntity+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 811117CDE0A4B4E85C9314A9 /* ErxTaskCommunicationEntity+CoreDataProperties.swift */; };
 		4D7CF0BFCD89556F24319D09 /* CameraAuthorizationAlertView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06F4DAA3FE69AD22C3B0359A /* CameraAuthorizationAlertView.swift */; };
@@ -361,6 +364,7 @@
 		55371DC0A07367DF1A081EEC /* LaunchScreen.strings in Resources */ = {isa = PBXBuildFile; fileRef = C9729192AB53B8C82D7129B3 /* LaunchScreen.strings */; };
 		554612D20B92B3A044D9B20E /* PrescriptionDetailDomain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 56A38350C04DF89B49449246 /* PrescriptionDetailDomain.swift */; };
 		55952DE2FD4F5A28D6F2F8C4 /* CertList.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5733AD0E34DA40273CE9AB1 /* CertList.swift */; };
+		563A8A85A61E49C5A0F3E0BB /* DataKit.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BA33ACC0740EF453EF921B33 /* DataKit.xcframework */; };
 		564464A6620CF8F45219DA77 /* CardWallReadCardDomainTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FB3F057A6B7DFBA10C7288A5 /* CardWallReadCardDomainTests.swift */; };
 		5688352CD6397AEA00016AFC /* GemCommonsKit.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = F384326304629BF0F91DCF3F /* GemCommonsKit.xcframework */; };
 		56D57B683F79A8047C563DCD /* NestedJWT.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29E63D56769580345C2F9674 /* NestedJWT.swift */; };
@@ -436,6 +440,7 @@
 		69E00C3F22A39F2D4A0CF159 /* DemoErxTaskRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = B82524ADB25C69EAC0EC69A9 /* DemoErxTaskRepository.swift */; };
 		69ED7E12C8B1D9230D086858 /* GroupedPrescriptionListDomain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66A8CA147AB3148B5E0F0E1A /* GroupedPrescriptionListDomain.swift */; };
 		6AF07326044F90911D11F13A /* JWTSigner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2110959026D46C759AA41C50 /* JWTSigner.swift */; };
+		6B10A1F123FC452E4AF30F2E /* OpenSSL.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DD4921BA0619E88A69676CF /* OpenSSL.xcframework */; };
 		6B1D772EE602F4C7A9BE6F36 /* Publisher+Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80BC315E15416A817CB1846E /* Publisher+Test.swift */; };
 		6B371F30269063C500E3318E /* UnknownError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E208D0877610949DB30B9329 /* UnknownError.swift */; };
 		6BF46DDD4CCC3B88018B1C12 /* LoopingVideoPlayerContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 859C34AB397644E558313B0E /* LoopingVideoPlayerContainerView.swift */; };
@@ -494,6 +499,7 @@
 		78160982218FEDDD9C802A02 /* TertiaryButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FDABB58950E1F7D3C41E3C8 /* TertiaryButton.swift */; };
 		78284AE3A6A7AEA29F461696 /* JWKS.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0436A762D11E8751FAAE285 /* JWKS.swift */; };
 		789025EC57D76CA07F296FE1 /* TestUtils.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 75F5D67595B4F5F353D7C7E3 /* TestUtils.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		78D41565F60B71104B96A2C7 /* DataKit.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BA33ACC0740EF453EF921B33 /* DataKit.xcframework */; };
 		78D7D4548DCC0AFE40CA8512 /* IDP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E1306451DE649F27B7ECE332 /* IDP.framework */; };
 		7912244B24C119F4BAB0DC89 /* SnapshotHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 68042D2961FE6AA057BDFE89 /* SnapshotHelper.swift */; };
 		792871B4631804E62DFA8C3B /* IDPClientMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E0B2670697A6BDE97483A33 /* IDPClientMock.swift */; };
@@ -546,6 +552,7 @@
 		8526E20A6CDBA4B7C50D8350 /* IDP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EBFDA63DD0B10A2BC96A3CF1 /* IDP.framework */; };
 		85C64EC2009EB047B81D47E3 /* DataKit.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = BA33ACC0740EF453EF921B33 /* DataKit.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		85E6622D43D9FB67C717F058 /* Nimble in Frameworks */ = {isa = PBXBuildFile; productRef = FE7532CBEC9B7FB02E12F79A /* Nimble */; };
+		861DB77085973FDB4A0DD808 /* SwitchSignatureProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDB6386570F15E14C938C0ED /* SwitchSignatureProvider.swift */; };
 		8682BC88D707BD5D988D086E /* TrustStore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = DAB2C6B897720DE79FF465D8 /* TrustStore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		86B12268B9CC5E55F820BAD0 /* Interceptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ECF3108AF665B1EDD3B5F84 /* Interceptor.swift */; };
 		871FA5D0EA967CAB115DE7F1 /* PageControl.swift in Sources */ = {isa = PBXBuildFile; fileRef = BAFB5F06097EA22CC54332BB /* PageControl.swift */; };
@@ -644,6 +651,7 @@
 		A08D77FDFC364355914D2E5F /* GemCommonsKit.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = F384326304629BF0F91DCF3F /* GemCommonsKit.xcframework */; };
 		A0C526368D00CBCA4B2D11A4 /* TermsOfUseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E777039462C4195A6181567 /* TermsOfUseView.swift */; };
 		A13E182E9E08B57E4183CD93 /* AuthenticationData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2AFC71AD5A7622FC0E34829D /* AuthenticationData.swift */; };
+		A13E636CD5C3DADAF2623C34 /* KVNRCameraScannerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D0E4498D8F6159D6B24167C /* KVNRCameraScannerViewController.swift */; };
 		A1F531BB046B67BD02762871 /* ModelsR4.Bundle+ErxAuditEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2EE393EE19F8C4656852968 /* ModelsR4.Bundle+ErxAuditEvent.swift */; };
 		A1F665A0FAC999A711445818 /* DefaultIDPSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39DCF40D8786DB91C13396D0 /* DefaultIDPSession.swift */; };
 		A258367E1D0A168B9A712CE6 /* LoginHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC16829950ECAC3202EF0FD4 /* LoginHandler.swift */; };
@@ -771,13 +779,16 @@
 		C14D472B5FDAF4144EA0088F /* Interceptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ECF3108AF665B1EDD3B5F84 /* Interceptor.swift */; };
 		C1A9B3AB28ED92F5FDFBE11C /* ModelsR4.Bundle+ErxTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0CBA990CF848A5CB8117C3E3 /* ModelsR4.Bundle+ErxTask.swift */; };
 		C1B8478CEBB80019CE0AD347 /* UIDevice+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E40BF58C7098749C0E8AB4A /* UIDevice+Extension.swift */; };
+		C1ED19AB4394FC5475A6E068 /* DataKit.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BA33ACC0740EF453EF921B33 /* DataKit.xcframework */; };
 		C1F39F528768A18F9AA53B9D /* DefaultDataMatrixStringEncoderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2E3CD1A561DA3BA48B84E5E /* DefaultDataMatrixStringEncoderTests.swift */; };
 		C243741C7106A2AF192A9923 /* ErxTaskEntity+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7B9797E1A8A00BFCF24EAF7 /* ErxTaskEntity+CoreDataClass.swift */; };
 		C285814676B631DD42DDC0A2 /* IDP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E1306451DE649F27B7ECE332 /* IDP.framework */; };
 		C2AA6295F2A8D39C26AF5BF5 /* HTTPClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A4CB8BB325F399E5191C288D /* HTTPClient.framework */; };
+		C2D382B7533A92C893495828 /* DebugEGKScannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 66CA3934D6F351107B79F1B6 /* DebugEGKScannerView.swift */; };
 		C316C84A0F0A9BFCDAFEE8E5 /* UIApplication+Keyboard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9A255C050553D8E820257D0C /* UIApplication+Keyboard.swift */; };
 		C35E732DE03533ED0B41E9F6 /* View+Border.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45D45AC4C81894DCBD30D5C0 /* View+Border.swift */; };
 		C37042EA8DC0EA8227BA5367 /* FHIRDateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1662502BD5CB18C1D5B73F17 /* FHIRDateFormatter.swift */; };
+		C39791497A3B62C7892AF440 /* DataKit.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BA33ACC0740EF453EF921B33 /* DataKit.xcframework */; };
 		C397FB077D912653701FAE7A /* DefaultTrustStoreSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1AB10667B5052B686041B2DC /* DefaultTrustStoreSession.swift */; };
 		C3A1838477B4872AC986CD1D /* TestUtils.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 75F5D67595B4F5F353D7C7E3 /* TestUtils.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		C3A59001D115D1971458218F /* VAUError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39E96757433D30B97282D40F /* VAUError.swift */; };
@@ -827,6 +838,7 @@
 		CEAB435E34D89DD39117DB5E /* PharmacyFHIRClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 24B0BDCBF407A9482E4028EF /* PharmacyFHIRClientTests.swift */; };
 		CF623965A2DF2751D6FD7FB6 /* GroupedPrescriptionRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D96ED81328D1B90089E03AC /* GroupedPrescriptionRepository.swift */; };
 		CF8BF31656ABA2524DBA2C94 /* ModelsR4.Bundle+ErxTaskCommunication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82E1B9DA7E0ECF357B203EB0 /* ModelsR4.Bundle+ErxTaskCommunication.swift */; };
+		CFAFD1987F4715EB733EC722 /* VirtualEGKSignatureProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 349728C052F3B062AE8A8F21 /* VirtualEGKSignatureProvider.swift */; };
 		CFD24412DD26E15E8EACC162 /* ErxTaskRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91238604C24B614E09D0AC3A /* ErxTaskRepository.swift */; };
 		CFD26D331B798ED9A53BA0DB /* RealTrustStoreClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3948088231AEFA9ED1A06E /* RealTrustStoreClient.swift */; };
 		D04CBE8809C7B3B142508FC7 /* DataKit.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = BA33ACC0740EF453EF921B33 /* DataKit.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -1681,6 +1693,7 @@
 				4377A8F9EEAAAD028D6BDF55 /* FHIRClient.framework in Embed Frameworks */,
 				8682BC88D707BD5D988D086E /* TrustStore.framework in Embed Frameworks */,
 				D9E36F97D3F1E047FB22DE08 /* VAUClient.framework in Embed Frameworks */,
+				4030E54D4F751833D9C827C5 /* OpenSSL.xcframework in Embed Frameworks */,
 				132E9D9F67F2484A68EEC9C2 /* DataKit.xcframework in Embed Frameworks */,
 				C6E7AFC79C50FFBFE3118830 /* GemCommonsKit.xcframework in Embed Frameworks */,
 				A3B4C7A7192F8FF338EA957C /* CardReaderProviderApi.xcframework in Embed Frameworks */,
@@ -1872,12 +1885,14 @@
 /* Begin PBXFileReference section */
 		019F2031D67C2753AF7739FC /* SecKeyRandomTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecKeyRandomTests.swift; sourceTree = "<group>"; };
 		02209C8AA6786AAEBAF7F056 /* TrustStoreSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrustStoreSession.swift; sourceTree = "<group>"; };
+		0267576B0FC2D97110FAB8FA /* ErxReadinessBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErxReadinessBadge.swift; sourceTree = "<group>"; };
 		0309E778474BE4EE2620BB84 /* ScannerDomain+Helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ScannerDomain+Helper.swift"; sourceTree = "<group>"; };
 		0439F6DBD74BA9FB1CBCA261 /* IDPChallengeSessionTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IDPChallengeSessionTest.swift; sourceTree = "<group>"; };
 		04684CA889A84FB62550CB4A /* IDPStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IDPStorage.swift; sourceTree = "<group>"; };
 		049E27A643DA700281139DBC /* PrescriptionLowDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrescriptionLowDetailView.swift; sourceTree = "<group>"; };
 		04BE0EC8DE461AA2F3875BF5 /* RoundedCorner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundedCorner.swift; sourceTree = "<group>"; };
 		0525BBDE32FDB45A32F888F7 /* AppAuthenticationBiometricsDomainTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppAuthenticationBiometricsDomainTests.swift; sourceTree = "<group>"; };
+		0525F93E245EAA1B1AC37BEB /* KVNRCameraScanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KVNRCameraScanner.swift; sourceTree = "<group>"; };
 		058727249322156AA831D05D /* JWK+x962.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "JWK+x962.swift"; sourceTree = "<group>"; };
 		058F6B8CD5B90C2D0F9B7A3D /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		0670A5DF9ABAAB04E6E34941 /* DemoIDPSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoIDPSession.swift; sourceTree = "<group>"; };
@@ -1986,6 +2001,7 @@
 		33132FBDAEE9C346EAF9BCA3 /* NFCCardReaderProvider.xcframework */ = {isa = PBXFileReference; name = NFCCardReaderProvider.xcframework; path = Carthage/Build/NFCCardReaderProvider.xcframework; sourceTree = "<group>"; };
 		336413E3287A9C340C5868E6 /* OnboardingLegalInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingLegalInfoView.swift; sourceTree = "<group>"; };
 		344EE8B2C2FD44E59FC47EEC /* MedicationRemoveButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MedicationRemoveButton.swift; sourceTree = "<group>"; };
+		349728C052F3B062AE8A8F21 /* VirtualEGKSignatureProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VirtualEGKSignatureProvider.swift; sourceTree = "<group>"; };
 		34C397996577EB573A4D6832 /* MedicationOrganizationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MedicationOrganizationView.swift; sourceTree = "<group>"; };
 		34D29E927129FACDAA846E7C /* Accessiblity+Generated.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Accessiblity+Generated.swift"; sourceTree = "<group>"; };
 		34E534A860D2358C30A99A9A /* TokenPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenPayload.swift; sourceTree = "<group>"; };
@@ -2014,6 +2030,7 @@
 		3C126BEC583DB83E44F6DFBF /* DataExtSHA256Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataExtSHA256Tests.swift; sourceTree = "<group>"; };
 		3C1AD8EAA69F121F246791E1 /* PharmacyDetailViewSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PharmacyDetailViewSnapshotTests.swift; sourceTree = "<group>"; };
 		3CB3CD4EF9D35380788757D9 /* MatrixCodeGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatrixCodeGenerator.swift; sourceTree = "<group>"; };
+		3D0E4498D8F6159D6B24167C /* KVNRCameraScannerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KVNRCameraScannerViewController.swift; sourceTree = "<group>"; };
 		3D9A616EE2EE83D5C2B52B67 /* TestSchedulers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestSchedulers.swift; sourceTree = "<group>"; };
 		3ECF3108AF665B1EDD3B5F84 /* Interceptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Interceptor.swift; sourceTree = "<group>"; };
 		3F7783D606D3546536809312 /* ErxTaskFHIRDataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErxTaskFHIRDataStore.swift; sourceTree = "<group>"; };
@@ -2109,6 +2126,7 @@
 		666EAD066DDF21541380C9B2 /* UserMode+UserSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserMode+UserSession.swift"; sourceTree = "<group>"; };
 		6687060F5F14E0B34BAFFB42 /* ErxTaskMedicationEntity+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ErxTaskMedicationEntity+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		66A8CA147AB3148B5E0F0E1A /* GroupedPrescriptionListDomain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupedPrescriptionListDomain.swift; sourceTree = "<group>"; };
+		66CA3934D6F351107B79F1B6 /* DebugEGKScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugEGKScannerView.swift; sourceTree = "<group>"; };
 		67F5D5A19D6C578640B652D9 /* AppDomain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDomain.swift; sourceTree = "<group>"; };
 		68042D2961FE6AA057BDFE89 /* SnapshotHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnapshotHelper.swift; sourceTree = "<group>"; };
 		6820092FB83A56F9CF17EBBA /* en-GB */ = {isa = PBXFileReference; name = "en-GB"; path = "en-GB.lproj/FOSS.html"; sourceTree = "<group>"; };
@@ -2319,6 +2337,7 @@
 		BC027D6BB78C0575C046C185 /* CardWallCANDomain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardWallCANDomain.swift; sourceTree = "<group>"; };
 		BCC450E154E870BA99F119F3 /* eRpKitTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = eRpKitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BD2D77AA524A78DD170EE5A9 /* ErxTaskEntity+ErxTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ErxTaskEntity+ErxTask.swift"; sourceTree = "<group>"; };
+		BDB6386570F15E14C938C0ED /* SwitchSignatureProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwitchSignatureProvider.swift; sourceTree = "<group>"; };
 		BE18B7BE142214A8B8DAD9E6 /* eRpLocalStorageTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = eRpLocalStorageTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BECE7E241A5E749FF290FF99 /* Injected.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Injected.swift; sourceTree = "<group>"; };
 		BEF43511FD40CD5ECA02083A /* PharmacyFHIRDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PharmacyFHIRDataSource.swift; sourceTree = "<group>"; };
@@ -2623,6 +2642,7 @@
 			files = (
 				74A80DDEEC339F2D7879E8D1 /* HTTPClient.framework in Frameworks */,
 				8366B22841DF72FADE92456D /* GemCommonsKit.xcframework in Frameworks */,
+				C39791497A3B62C7892AF440 /* DataKit.xcframework in Frameworks */,
 				750DA624F6E06CAAE56A5731 /* OpenSSL.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2633,6 +2653,7 @@
 			files = (
 				A28EFF03ADB5376886590E73 /* HTTPClient.framework in Frameworks */,
 				D708B44FD36222B4170C7E0A /* GemCommonsKit.xcframework in Frameworks */,
+				563A8A85A61E49C5A0F3E0BB /* DataKit.xcframework in Frameworks */,
 				0CFF009AC3DA68E910F6B0B4 /* OpenSSL.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2775,6 +2796,7 @@
 				3EE0742B073F4D79FFCDF0AA /* FHIRClient.framework in Frameworks */,
 				79D1B0689BCCC1E00E56274C /* TrustStore.framework in Frameworks */,
 				73D1A48DC081A81CB6DCB837 /* VAUClient.framework in Frameworks */,
+				6B10A1F123FC452E4AF30F2E /* OpenSSL.xcframework in Frameworks */,
 				50ED4113C74A6CF09D0C0E2B /* DataKit.xcframework in Frameworks */,
 				FCA4250765C9C9F8632C16EA /* GemCommonsKit.xcframework in Frameworks */,
 				645244B0625B79EACA9543FD /* CardReaderProviderApi.xcframework in Frameworks */,
@@ -2801,6 +2823,7 @@
 				885FE24912AD7A6B936A8FD3 /* HTTPClient.framework in Frameworks */,
 				A38131683F9777F2E31374AD /* TrustStore.framework in Frameworks */,
 				1DA09C2E438FF563F19F9594 /* OpenSSL.xcframework in Frameworks */,
+				78D41565F60B71104B96A2C7 /* DataKit.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2952,6 +2975,7 @@
 				59B30C706F411AEE7949E477 /* HTTPClient.framework in Frameworks */,
 				15C8C67F84F202F7E524025A /* TrustStore.framework in Frameworks */,
 				81C45770F9ED9877E5F32E3F /* OpenSSL.xcframework in Frameworks */,
+				C1ED19AB4394FC5475A6E068 /* DataKit.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3160,12 +3184,14 @@
 			isa = PBXGroup;
 			children = (
 				97777EF79E1144983FF8F2BC /* DebugDomain.swift */,
+				66CA3934D6F351107B79F1B6 /* DebugEGKScannerView.swift */,
 				FFB5479911C44F494750DDC0 /* DebugEnvironmentView.swift */,
 				571D80CC32F5C125AC96A669 /* DebugLiveLogger.swift */,
 				DEC5F95D20A1E3CDE2E4145F /* DebugLogDomain.swift */,
 				ACF6CFB9867403248600DBA1 /* DebugLogsView.swift */,
 				742FEDCC09D8B446DF14ADE9 /* DebugLogView.swift */,
 				C2C78D034CBC9154668448A4 /* DebugView.swift */,
+				CBCFCEA6485F0B4BE9FD629B /* Helper */,
 			);
 			path = DebugView;
 			sourceTree = "<group>";
@@ -3838,6 +3864,7 @@
 		6949BBA2EEA07C2251E12C63 /* Pharmacy */ = {
 			isa = PBXGroup;
 			children = (
+				0267576B0FC2D97110FAB8FA /* ErxReadinessBadge.swift */,
 				2D3E0C89E32378B25B69B81D /* Detail */,
 				B3090200E851C52B1CFEBD0D /* Model */,
 				09D9E04B5D75D8F6AA579781 /* Redeem */,
@@ -4150,6 +4177,8 @@
 			isa = PBXGroup;
 			children = (
 				74D02BC33714CE5966B7B014 /* CardWallEGKOrderHelpView.swift */,
+				0525F93E245EAA1B1AC37BEB /* KVNRCameraScanner.swift */,
+				3D0E4498D8F6159D6B24167C /* KVNRCameraScannerViewController.swift */,
 			);
 			path = eGKOrderHelp;
 			sourceTree = "<group>";
@@ -4474,6 +4503,14 @@
 			path = Resources;
 			sourceTree = "<group>";
 		};
+		CBCFCEA6485F0B4BE9FD629B /* Helper */ = {
+			isa = PBXGroup;
+			children = (
+				BDB6386570F15E14C938C0ED /* SwitchSignatureProvider.swift */,
+			);
+			path = Helper;
+			sourceTree = "<group>";
+		};
 		CDC582EC5D4366D1E9CFCAD4 /* Components */ = {
 			isa = PBXGroup;
 			children = (
@@ -4741,6 +4778,7 @@
 				DC16829950ECAC3202EF0FD4 /* LoginHandler.swift */,
 				4170C1D30A3D0096D8CE9BE9 /* NFCSignatureProvider.swift */,
 				2BA296168148CC1AE91267A2 /* Publisher+IDPSession.swift */,
+				349728C052F3B062AE8A8F21 /* VirtualEGKSignatureProvider.swift */,
 			);
 			path = ReadCard;
 			sourceTree = "<group>";
@@ -6606,6 +6644,7 @@
 				091166C434BB1F9E219CAC64 /* DataPrivacyView.swift in Sources */,
 				B38283FA7C055A0A478C37A2 /* Date+Extension.swift in Sources */,
 				3E80749AD422329DC952001B /* DebugDomain.swift in Sources */,
+				C2D382B7533A92C893495828 /* DebugEGKScannerView.swift in Sources */,
 				EDCAAA6AE8CAF67C9DD4534A /* DebugEnvironmentView.swift in Sources */,
 				ED0E0EFBC75F8DC049A2C073 /* DebugLiveLogger.swift in Sources */,
 				3B0865489870E75F00006D9E /* DebugLogDomain.swift in Sources */,
@@ -6630,6 +6669,7 @@
 				54A6404477B42A5EB8437583 /* DummySecureEnclaveSignatureProvider.swift in Sources */,
 				210A508FD23F2B2C69001C02 /* Effect+Helper.swift in Sources */,
 				3CB3D0A066EC1F8296F0D38A /* ErxAuditEvent+Demo.swift in Sources */,
+				097209DBDD54DA3F80457893 /* ErxReadinessBadge.swift in Sources */,
 				4176B45C80B87FDAC6749D06 /* ErxTask+Demo.swift in Sources */,
 				68A5F88DE2CF66FE6B362A42 /* ErxTaskMatrixCodeGenerator+Combine.swift in Sources */,
 				BCA1414D7866A67E0EA3B0C6 /* ErxTaskRepositoryAccess.swift in Sources */,
@@ -6651,6 +6691,8 @@
 				4A6378FCD242FDE06F122850 /* HintsProvider.swift in Sources */,
 				EF059E268158A860903031AC /* Image+ImageAsset.swift in Sources */,
 				77750F2A6C20D3CEE7EF06E8 /* Injected.swift in Sources */,
+				4C73DBE3448FD7E75C2FA6BD /* KVNRCameraScanner.swift in Sources */,
+				A13E636CD5C3DADAF2623C34 /* KVNRCameraScannerViewController.swift in Sources */,
 				E61D3D44C186AE1AE090CF70 /* KeyboardModifier.swift in Sources */,
 				B556C0C7E70C0B916CFC19CF /* KeychainStorage.swift in Sources */,
 				3D1BB0ED4D05681EEDFBE0D4 /* LegalNoticeView.swift in Sources */,
@@ -6753,6 +6795,7 @@
 				52B90CDAA119DBE3C06B672C /* StandardSessionContainer.swift in Sources */,
 				4AEDF6637E6EFFC61CDBD3CC /* StreamWrapped.generated.swift in Sources */,
 				99DBB1166B2BF042EDE15325 /* Strings+Generated.swift in Sources */,
+				861DB77085973FDB4A0DD808 /* SwitchSignatureProvider.swift in Sources */,
 				799D9D9FAB855725504EFD28 /* SystemKeychainAccessHelper.swift in Sources */,
 				017AE4BB37B6B88ED4FF08B4 /* TabContainerView.swift in Sources */,
 				A0C526368D00CBCA4B2D11A4 /* TermsOfUseView.swift in Sources */,
@@ -6777,6 +6820,7 @@
 				C35E732DE03533ED0B41E9F6 /* View+Border.swift in Sources */,
 				AACCFF276CA94576E2D7B577 /* View+Hidden.swift in Sources */,
 				3A4DAE44EDF4829D57F9E8AB /* View+If.swift in Sources */,
+				CFAFD1987F4715EB733EC722 /* VirtualEGKSignatureProvider.swift in Sources */,
 				52DD11E63C8821CF0E5B7964 /* XCAssets+Generated.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

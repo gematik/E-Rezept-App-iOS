@@ -92,9 +92,8 @@ enum MainDomain {
             return .none
         case .showSettingsView,
              .turnOffDemoMode:
-            state.settingsState = SettingsDomain.State(
-                isDemoMode: environment.userSession.isDemoMode,
-                debug: state.debug
+            state.settingsState = .init(
+                isDemoMode: environment.userSession.isDemoMode
             )
             return .none
         case .prescriptionList,
@@ -130,7 +129,7 @@ enum MainDomain {
             state: \.settingsState,
             action: /MainDomain.Action.settings(action:)
         ) { appEnvironment in
-            SettingsDomain.Environment(
+            .init(
                 changeableUserSessionContainer: appEnvironment.userSessionContainer,
                 schedulers: appEnvironment.schedulers,
                 tracker: appEnvironment.tracker,

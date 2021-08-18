@@ -66,6 +66,8 @@ internal enum A11y {
       static let cdwInpOrderEgkKv = "cdw_inp_order_egk_kv"
       static let cdwInpOrderEgkKvnr = "cdw_inp_order_egk_kvnr"
       static let cdwBtnOrderEgkMail = "cdw_btn_order_egk_mail"
+      static let cdwBtnOrderEgkScanKvnr = "cdw_btn_order_egk_scan_kvnr"
+      static let cdwBtnOrderEgkScanKvnrConfirm = "cdw_btn_order_egk_scan_kvnr_confirm"
   }
     internal enum pinInput {
       static let cdwTxtPinSubtitle = "cdw_txt_pin_subtitle"
@@ -144,10 +146,15 @@ internal enum A11y {
       static let phaDetailBtnHealthcareService = "pha_detail_btn_healthcare_service"
       static let phaDetailBtnLocation = "pha_detail_btn_location"
       static let phaDetailHint = "pha_detail_hint"
+      static let phaDetailHintNotErxReady = "pha_detail_hint_not_erx_ready"
       static let phaDetailContact = "pha_detail_contact"
       static let phaDetailWeb = "pha_detail_web"
       static let phaDetailMail = "pha_detail_mail"
       static let phaDetailPhone = "pha_detail_phone"
+  }
+    internal enum pharmacyGlobal {
+      static let phaGlobalImgReadinessBadge = "pha_global_img_readiness_badge"
+      static let phaGlobalTxtReadinessBadge = "pha_global_txt_readiness_badge"
   }
     internal enum pharmacyRedeem {
       static let phaRedeemTxtTitle = "pha_redeem_txt_title"

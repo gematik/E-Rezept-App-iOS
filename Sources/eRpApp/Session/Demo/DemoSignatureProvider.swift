@@ -26,7 +26,7 @@ import NFCCardReaderProvider
 
 class DemoSignatureProvider: NFCSignatureProvider {
     func openSecureSession(can _: CAN,
-                           pin _: Format2Pin) -> AnyPublisher<EGKSignatureSession, NFCSignatureProviderError> {
+                           pin _: Format2Pin) -> AnyPublisher<SignatureSession, NFCSignatureProviderError> {
         Fail(error: NFCSignatureProviderError.cardError(NFCTagReaderSession.Error.unsupportedTag)).eraseToAnyPublisher()
     }
 

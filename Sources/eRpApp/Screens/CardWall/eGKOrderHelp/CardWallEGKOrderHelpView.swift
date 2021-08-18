@@ -23,6 +23,8 @@ import SwiftUI
 struct CardWallEGKOrderHelpView: View {
     @StateObject var viewModel = ViewModel()
 
+    @State var showScanner = false
+
     var body: some View {
         VStack {
             List {
@@ -57,12 +59,12 @@ struct CardWallEGKOrderHelpView: View {
                             .foregroundColor(Color(.label))
                             .padding(.top)) {
                     HStack {
-                        TextField(L10n.cdwTxtOrderEgkKvnrPlaceholder, text: $viewModel.kvnr)
+                        TextField(L10n.cdwTxtOrderEgkKvnrPlaceholder, text: $viewModel.kvnrText)
                             .font(.body)
                             .accessibility(identifier: A11y.cardWall.orderEGK.cdwInpOrderEgkKvnr)
 
                         if viewModel.showKVNRError {
-                            if viewModel.kvnr.isValid {
+                            if viewModel.kvnr?.isValid ?? false {
                                 Image(systemName: SFSymbolName.checkmark)
                                     .foregroundColor(Colors.secondary600)
                                     .font(Font.body.bold())
@@ -73,6 +75,17 @@ struct CardWallEGKOrderHelpView: View {
                             }
                         }
                     }
+
+                    NavigationLink(destination: KVNRCameraScanner(kvnr: $viewModel.kvnr, show: $showScanner),
+                                   isActive: $showScanner) {
+                        HStack {
+                            Image(systemName: SFSymbolName.docTextViewfinder)
+
+                            Text(L10n.cdwBtnOrderEgkScanKvnr)
+                        }
+                        .opacity(viewModel.kvnr?.isValid ?? false ? 0.5 : 1.0)
+                    }
+                    .accessibility(identifier: A11y.cardWall.orderEGK.cdwBtnOrderEgkScanKvnr)
                 }
             }
             .introspectTableView { tableView in
@@ -109,14 +122,32 @@ struct CardWallEGKOrderHelpView: View {
 
         var insuranceCompany: InsuranceCompany?
 
-        @Published var kvnr: KVNR = ""
+        @Published var kvnrText: String = "" {
+            didSet {
+                if (kvnrText as KVNR).isValid {
+                    kvnr = kvnrText
+                } else {
+                    kvnr = nil
+                }
+            }
+        }
+
+        @Published var kvnr: KVNR? {
+            didSet {
+                guard let kvnr = kvnr,
+                      kvnr != kvnrText else {
+                    return
+                }
+                kvnrText = kvnr
+            }
+        }
 
         var valid: Bool {
-            insuranceCompany != nil && kvnr.isValid
+            insuranceCompany != nil && kvnr?.isValid ?? false
         }
 
         var showKVNRError: Bool {
-            kvnr.count >= 10
+            kvnr != nil && kvnr?.count ?? 0 >= 10
         }
 
         init() {
@@ -134,6 +165,7 @@ struct CardWallEGKOrderHelpView: View {
 
         func sendEMail() {
             guard let insuranceCompany = insuranceCompany,
+                  let kvnr = kvnr,
                   kvnr.isValid else {
                 return
             }

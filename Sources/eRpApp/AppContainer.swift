@@ -25,7 +25,6 @@ import HTTPClient
 import Pharmacy
 
 protocol AppContainerType {
-    var userSessionProvider: UserSessionProvider { get }
     var serviceLocator: ServiceLocator { get }
     var uiDateFormatter: DateFormatter { get }
     var fhirDateFormatter: FHIRDateFormatter { get }
@@ -54,10 +53,6 @@ class AppContainer: ObservableObject, AppContainerType {
 
     var userSessionContainer: UsersSessionContainer
 
-    var userSessionProvider: UserSessionProvider {
-        self
-    }
-
     let serviceLocator = ServiceLocator()
 
     @Published private(set) var userSessionSubject: UserSession
@@ -74,25 +69,4 @@ class AppContainer: ObservableObject, AppContainerType {
     lazy var fhirDateFormatter: FHIRDateFormatter = {
         FHIRDateFormatter.shared
     }()
-}
-
-extension AppContainer: UserSessionProvider {
-    func switchToDemoMode() {
-        DLog("will switch to demo mode")
-        userSessionContainer.switchToDemoMode()
-    }
-
-    func switchToStandardMode() {
-        userSessionContainer.switchToStandardMode()
-    }
-
-    var userSession: Published<UserSession>.Publisher {
-        $userSessionSubject
-    }
-}
-
-protocol UserSessionProvider {
-    func switchToDemoMode()
-    func switchToStandardMode()
-    var userSession: Published<UserSession>.Publisher { get }
 }

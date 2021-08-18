@@ -196,10 +196,7 @@ extension AppDomain {
 
         static let environment = Environment(
             router: DummyRouter(),
-            userSessionContainer: ChangeableUserSessionContainer(
-                initialUserSession: DemoSessionContainer(),
-                schedulers: AppContainer.shared.schedulers
-            ),
+            userSessionContainer: DummyUserSessionContainer(),
             userSession: AppContainer.shared.userSessionSubject,
             schedulers: Schedulers(),
             fhirDateFormatter: AppContainer.shared.fhirDateFormatter,

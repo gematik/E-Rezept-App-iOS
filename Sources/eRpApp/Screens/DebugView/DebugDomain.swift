@@ -50,6 +50,9 @@ enum DebugDomain {
         var token: IDPToken?
         var accessCodeText: String = "" +
             ""
+        var useVirtualLogin: Bool = UserDefaults.standard.isVirtualEGKEnabled
+        var virtualLoginPrivateKey: String = UserDefaults.standard.virtualEGKPrkCHAut ?? ""
+        var virtualLoginCertKey: String = UserDefaults.standard.virtualEGKCCHAut ?? ""
 
         var vauUrlText: String = "http://some-service.com:8003/"
         var idpUrlText: String = "http://some-service.com:8003/"
@@ -97,6 +100,9 @@ enum DebugDomain {
         case isAuthenticatedReceived(Bool?)
         case logoutButtonTapped
         case accessCodeTextReceived(String)
+        case toggleVirtualLogin(Bool)
+        case virtualPrkCHAutReceived(String)
+        case virtualCCHAutReceived(String)
         case setAccessCodeTextButtonTapped
         case toggleTrackingTapped
         case tokenReceived(IDPToken?)
@@ -177,6 +183,18 @@ enum DebugDomain {
         case .logoutButtonTapped:
             environment.userSession.secureUserStore.set(token: nil)
             return .none
+        case let .toggleVirtualLogin(useVirtualLogin):
+            state.useVirtualLogin = useVirtualLogin
+            UserDefaults.standard.isVirtualEGKEnabled = useVirtualLogin
+            return .none
+        case let .virtualCCHAutReceived(cchaut):
+            state.virtualLoginCertKey = cchaut
+            UserDefaults.standard.virtualEGKCCHAut = cchaut
+            return .none
+        case let .virtualPrkCHAutReceived(prkchaut):
+            state.virtualLoginPrivateKey = prkchaut
+            UserDefaults.standard.virtualEGKPrkCHAut = prkchaut
+            return .none
         case let .accessCodeTextReceived(accessCodeText):
             state.accessCodeText = accessCodeText
             return .none
@@ -214,7 +232,8 @@ enum DebugDomain {
                 environment.onReceiveHideCardWallIntro(),
                 environment.onReceiveIsAuthenticated(),
                 environment.onReceiveToken(),
-                environment.onReceiveConfigurationName(for: state.availableEnvironments)
+                environment.onReceiveConfigurationName(for: state.availableEnvironments),
+                environment.onReceiveVirtualEGK()
             )
             .cancellable(id: Token.updates)
         case .resetHintEvents:
@@ -291,6 +310,14 @@ extension DebugDomain.Environment {
             .receive(on: schedulers.main)
             .map(DebugDomain.Action.configurationReceived)
             .eraseToEffect()
+    }
+
+    func onReceiveVirtualEGK() -> Effect<DebugDomain.Action, Never> {
+        .concatenate([
+            Effect(value: DebugDomain.Action.toggleVirtualLogin(UserDefaults.standard.isVirtualEGKEnabled)),
+            Effect(value: DebugDomain.Action.virtualPrkCHAutReceived(UserDefaults.standard.virtualEGKPrkCHAut ?? "")),
+            Effect(value: DebugDomain.Action.virtualCCHAutReceived(UserDefaults.standard.virtualEGKCCHAut ?? "")),
+        ])
     }
 }
 #endif

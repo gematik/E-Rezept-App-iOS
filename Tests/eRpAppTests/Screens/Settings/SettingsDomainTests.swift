@@ -60,8 +60,7 @@ final class SettingsDomainTests: XCTestCase {
     }
 
     func testDemoModeToggleShouldUnsetDemoMode() {
-        let store = testStore(for: SettingsDomain.State(isDemoMode: true,
-                                                        debug: DebugDomain.State(trackingOptOut: true)))
+        let store = testStore(for: SettingsDomain.State(isDemoMode: true))
 
         store.assert(
             // when
@@ -74,8 +73,7 @@ final class SettingsDomainTests: XCTestCase {
     }
 
     func testAppTrackingOptInStartsComplyDialog() {
-        let store = testStore(for: SettingsDomain.State(isDemoMode: false,
-                                                        debug: DebugDomain.State(trackingOptOut: true)))
+        let store = testStore(for: SettingsDomain.State(isDemoMode: false))
 
         store.assert(
             // when
@@ -88,8 +86,7 @@ final class SettingsDomainTests: XCTestCase {
     }
 
     func testAppTrackingOptInConfirmAlert() {
-        let store = testStore(for: SettingsDomain.State(isDemoMode: false,
-                                                        debug: DebugDomain.State(trackingOptOut: true)))
+        let store = testStore(for: SettingsDomain.State(isDemoMode: false))
 
         store.assert(
             // when
@@ -107,8 +104,7 @@ final class SettingsDomainTests: XCTestCase {
     }
 
     func testAppTrackingOptInCancelAlert() {
-        let store = testStore(for: SettingsDomain.State(isDemoMode: false,
-                                                        debug: DebugDomain.State(trackingOptOut: true)))
+        let store = testStore(for: SettingsDomain.State(isDemoMode: false))
 
         store.assert(
             // when

@@ -25,6 +25,7 @@ struct DebugEnvironmentView: View {
     private class State: ObservableObject {
         @Published var environmentName: String = defaultConfiguration.name
         @Published var loggingEnabled = false
+        @Published var virtualEGKEnabled = false
 
         private var disposeBag: Set<AnyCancellable> = []
 
@@ -38,6 +39,12 @@ struct DebugEnvironmentView: View {
             UserDefaults.standard.publisher(for: \.isLoggingEnabled)
                 .sink { [weak self] value in
                     self?.loggingEnabled = value
+                }
+                .store(in: &disposeBag)
+
+            UserDefaults.standard.publisher(for: \.isVirtualEGKEnabled)
+                .sink { [weak self] value in
+                    self?.virtualEGKEnabled = value
                 }
                 .store(in: &disposeBag)
         }
@@ -62,9 +69,24 @@ struct DebugEnvironmentView: View {
                         .frame(width: 8, height: 8)
                         .offset(x: 12, y: 0)
                 }
+                if state.virtualEGKEnabled {
+                    Text("v-eGK")
+                        .font(.footnote)
+                        .offset(x: 40, y: 8)
+                        .foregroundColor(Colors.primary600)
+                }
             }
             Spacer()
         }
     }
 }
+
+struct DebugEnvironmentView_Previews: PreviewProvider {
+    static var previews: some View {
+        NavigationView {
+            DebugEnvironmentView()
+        }
+    }
+}
+
 #endif

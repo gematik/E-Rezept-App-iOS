@@ -1,4 +1,4 @@
-// Generated using Sourcery 1.3.4 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 1.5.0 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 
 import Combine
@@ -124,9 +124,7 @@ class StreamWrappedErxTaskRepositoryAccess: ErxTaskRepositoryAccess {
             .eraseToAnyPublisher()
 	}
 
-	func countAllUnreadCommunications(
-        for profile: ErxTask.Communication.Profile
-    ) -> AnyPublisher<Int, ErxTaskRepositoryError> {
+	func countAllUnreadCommunications(for profile: ErxTask.Communication.Profile) -> AnyPublisher<Int, ErxTaskRepositoryError> {
         stream
         	.map { $0.countAllUnreadCommunications(
 				for: profile
@@ -311,7 +309,7 @@ class StreamWrappedNFCSignatureProvider: NFCSignatureProvider {
 	}
 
 
-	func openSecureSession(can: CAN, pin: Format2Pin) -> AnyPublisher<EGKSignatureSession, NFCSignatureProviderError> {
+	func openSecureSession(can: CAN, pin: Format2Pin) -> AnyPublisher<SignatureSession, NFCSignatureProviderError> {
         stream
         	.map { $0.openSecureSession(
 				can: can,

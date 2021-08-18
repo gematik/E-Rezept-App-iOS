@@ -37,7 +37,7 @@ final class PharmacyBundleTests: XCTestCase {
         expect(parsedLocation.name) == "APOTHEKE IM HANDELSHOF"
         // Address
         expect(parsedLocation.address?.street).to(equal("Duisburgerstraße 225"))
-        expect(parsedLocation.address?.housenumber).to(beNil())
+        expect(parsedLocation.address?.houseNumber).to(beNil())
         expect(parsedLocation.address?.zip).to(equal("47166"))
         expect(parsedLocation.address?.city).to(equal("Duisburg"))
         // Telecom
@@ -89,8 +89,8 @@ final class PharmacyBundleTests: XCTestCase {
 
         let expectedTypes = [PharmacyLocation.PharmacyType.mobl,
                              PharmacyLocation.PharmacyType.emergency]
-        let pharmacytypes = parsedPharmacyLocations.flatMap(\.type)
-        expect(pharmacytypes) == expectedTypes
+        let pharmacyTypes = parsedPharmacyLocations.flatMap(\.types)
+        expect(pharmacyTypes) == expectedTypes
     }
 
     private func bundle(for source: String) throws -> ModelsR4.Bundle {

@@ -37,11 +37,15 @@ extension KVNR {
         guard rawNumber.isDigitsOnly else { return false }
 
         guard let letterAsInt = letter.asciiValue,
-              let aAsInt = "A".first?.asciiValue else {
+              let aAsInt = "A".first?.asciiValue,
+              letterAsInt >= aAsInt else {
             return false
         }
+        let letterValue = letterAsInt - aAsInt + 1
 
-        let letterAsDigitString = String(format: "%02d", letterAsInt - aAsInt + 1)
+        guard 1 ... 26 ~= letterValue else { return false }
+
+        let letterAsDigitString = String(format: "%02d", letterValue)
 
         let numberStringToCheck = letterAsDigitString + rawNumber
 

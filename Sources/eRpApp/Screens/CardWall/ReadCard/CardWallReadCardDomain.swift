@@ -140,7 +140,8 @@ extension CardWallReadCardDomain.Environment {
 
     // [REQ:gemSpec_eRp_FdV:A_20172]
     // [REQ:gemSpec_IDP_Frontend:A_20526-01] sign and verify with idp
-    func signChallengeWithNFCCard(can: CAN, pin: Format2Pin,
+    func signChallengeWithNFCCard(can: CAN,
+                                  pin: Format2Pin,
                                   challenge: IDPChallengeSession) -> Effect<CardWallReadCardDomain.Action, Never> {
         Effect<CardWallReadCardDomain.Action, Never>.run { subscriber -> Cancellable in
 

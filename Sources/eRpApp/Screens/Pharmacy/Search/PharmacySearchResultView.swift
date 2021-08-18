@@ -21,7 +21,7 @@ import Pharmacy
 import SwiftUI
 
 struct PharmacySearchResultView: View {
-    static let minimumOpenMinutesLeftBeforWarn = 30
+    static let minimumOpenMinutesLeftBeforeWarn = 30
 
     let store: PharmacySearchDomain.Store
 
@@ -32,7 +32,7 @@ struct PharmacySearchResultView: View {
                 HStack {
                     ProgressView()
                         .padding([.leading, .trailing])
-                    .hidden(viewStore.state.searchState != .searchRunning)
+                        .hidden(viewStore.state.searchState != .searchRunning)
                     Text(L10n.phaSearchTxtProgressSearch)
                         .padding()
                     Spacer()
@@ -53,7 +53,7 @@ struct PharmacySearchResultView: View {
                         .padding()
                     Spacer()
                 }
-                .frame(maxHeight: .infinity)
+                    .frame(maxHeight: .infinity)
             case .searchResultEmpty:
                 NoResultsView()
                     .frame(maxHeight: .infinity)
@@ -78,10 +78,10 @@ struct PharmacySearchResultView: View {
                         )
                         : store
                 )
-                .redacted(
-                    reason: viewStore.state.isLoading ? .placeholder : []
-                )
-                .accessibility(identifier: A11y.pharmacySearch.phaSearchTxtResultList)
+                    .redacted(
+                        reason: viewStore.state.isLoading ? .placeholder : []
+                    )
+                    .accessibility(identifier: A11y.pharmacySearch.phaSearchTxtResultList)
             default:
                 EmptyView()
             }
@@ -106,9 +106,9 @@ struct PharmacySearchResultView: View {
                                 .foregroundColor(Colors.primary600)
                         }
                     })
-                    .foregroundColor(Colors.primary600)
-                    .font(Font.subheadline.weight(.semibold))
-                    .padding(.leading, 2)
+                        .foregroundColor(Colors.primary600)
+                        .font(Font.subheadline.weight(.semibold))
+                        .padding(.leading, 2)
 
                     Spacer()
 
@@ -148,13 +148,13 @@ struct PharmacySearchResultView: View {
                                     .font(.footnote)
                                 Image(systemName: SFSymbolName.crossIconFill)
                             }
-                            .padding([.top, .bottom], 4)
-                            .padding([.leading, .trailing], 8)
-                            .background(RoundedRectangle(cornerRadius: 16).fill(Colors.backgroundSecondary))
+                                .padding([.top, .bottom], 4)
+                                .padding([.leading, .trailing], 8)
+                                .background(RoundedRectangle(cornerRadius: 16).fill(Colors.backgroundSecondary))
                         })
                     }
                 }
-                .foregroundColor(Colors.systemLabelSecondary)
+                    .foregroundColor(Colors.systemLabelSecondary)
             }
         }
     }
@@ -194,60 +194,66 @@ struct PharmacySearchResultView: View {
     private struct PharmacyCell: View {
         let pharmacy: PharmacyLocationViewModel
         var timeOnlyFormatter: DateFormatter = {
-            let dateformatter = DateFormatter()
+            let dateFormatter = DateFormatter()
             if let preferredLang = Locale.preferredLanguages.first,
                preferredLang.starts(with: "de") {
-                dateformatter.dateFormat = "HH:mm 'Uhr'"
+                dateFormatter.dateFormat = "HH:mm 'Uhr'"
             } else {
-                dateformatter.timeStyle = .short
-                dateformatter.dateStyle = .none
+                dateFormatter.timeStyle = .short
+                dateFormatter.dateStyle = .none
             }
-            return dateformatter
+            return dateFormatter
         }()
 
         var body: some View {
             HStack {
                 VStack(alignment: .leading) {
+                    if pharmacy.pharmacyLocation.isErxReady {
+                        ErxReadinessBadge(detailedText: false)
+                            .padding([.top, .bottom], 1)
+                    }
+
                     Text("\(pharmacy.pharmacyLocation.name ?? "")")
                         .fontWeight(.semibold)
                         .foregroundColor(Colors.systemLabel)
-                        .padding(.bottom, 1)
+                        .padding([.top, .bottom], 1)
                     HStack {
-                        Text("\(pharmacy.pharmacyLocation.address?.fullAddress ?? "")")
-                    }.foregroundColor(Colors.systemLabelSecondary)
+                        Text(pharmacy.pharmacyLocation.address?.fullAddress ?? "")
+                    }
+                        .foregroundColor(Colors.systemLabelSecondary)
 
                     Group {
                         if case let PharmacyOpenHoursCalculator.TodaysOpeningState
-                            .open(minutesLeft, closingDateTime) = pharmacy.todaysOpeningState2 {
+                            .open(minutesLeft, closingDateTime) = pharmacy.todayOpeningState {
                             if let minutesLeft = minutesLeft,
-                               minutesLeft < PharmacySearchResultView.minimumOpenMinutesLeftBeforWarn {
+                               minutesLeft < PharmacySearchResultView.minimumOpenMinutesLeftBeforeWarn {
                                 Group {
                                     Text(L10n.phaSearchTxtClosingSoon) +
-                                    Text(" - \(timeOnlyFormatter.string(from: closingDateTime))")
+                                        Text(" - \(timeOnlyFormatter.string(from: closingDateTime))")
                                 }.foregroundColor(Colors.yellow700)
                             } else {
                                 Group {
                                     Text(L10n.phaSearchTxtOpenUntil) +
-                                    Text(" \(timeOnlyFormatter.string(from: closingDateTime))")
+                                        Text(" \(timeOnlyFormatter.string(from: closingDateTime))")
                                 }.foregroundColor(Colors.secondary600)
                             }
                         } else if case let PharmacyOpenHoursCalculator.TodaysOpeningState
-                            .willOpen(_, openingDateTime) = pharmacy.todaysOpeningState2 {
+                            .willOpen(_, openingDateTime) = pharmacy.todayOpeningState {
                             Group {
                                 Text(L10n.phaSearchTxtOpensAt) +
-                                Text(" \(timeOnlyFormatter.string(from: openingDateTime))")
+                                    Text(" \(timeOnlyFormatter.string(from: openingDateTime))")
                             }.foregroundColor(Colors.yellow700)
                         } else if case PharmacyOpenHoursCalculator.TodaysOpeningState.closed =
-                                    pharmacy.todaysOpeningState2 {
+                        pharmacy.todayOpeningState {
                             Text(L10n.phaSearchTxtClosed)
                                 .foregroundColor(Colors.systemLabelSecondary)
                         }
                     }
-                    .padding(.top, 1)
-                    .font(Font.subheadline.weight(.semibold))
+                        .padding(.top, 1)
+                        .font(Font.subheadline.weight(.semibold))
                 }
-                .accessibilityElement(children: .combine)
-                .padding([.top, .bottom], 8)
+                    .accessibilityElement(children: .combine)
+                    .padding([.top, .bottom], 8)
 
                 Spacer()
 
@@ -257,6 +263,7 @@ struct PharmacySearchResultView: View {
                         .foregroundColor(Colors.systemLabelSecondary)
                         .padding([.leading, .trailing], 8)
                 }
+
                 Image(systemName: SFSymbolName.rightDisclosureIndicator)
                     .foregroundColor(Colors.systemLabelTertiary)
                     .unredacted()

@@ -27,7 +27,7 @@ import OpenSSL
 
 /// sourcery: StreamWrapped
 protocol NFCSignatureProvider {
-    func openSecureSession(can: CAN, pin: Format2Pin) -> AnyPublisher<EGKSignatureSession, NFCSignatureProviderError>
+    func openSecureSession(can: CAN, pin: Format2Pin) -> AnyPublisher<SignatureSession, NFCSignatureProviderError>
 
     func sign(can: CAN, pin: Format2Pin, challenge: IDPChallengeSession)
         -> AnyPublisher<SignedChallenge, NFCSignatureProviderError>
@@ -135,7 +135,7 @@ extension EGKSignatureProvider {
     )
 }
 
-class EGKSignatureSession {
+class EGKSignatureSession: SignatureSession {
     internal init(healthCard: HealthCardType, nfcCardSession: NFCCardSession) {
         self.healthCard = healthCard
         self.nfcCardSession = nfcCardSession
@@ -143,21 +143,59 @@ class EGKSignatureSession {
 
     let healthCard: HealthCardType
     let nfcCardSession: NFCCardSession
+
+    func sign(challengeSession: IDPChallengeSession) -> AnyPublisher<SignedChallenge, NFCSignatureProviderError> {
+        healthCard.sign(challengeSession: challengeSession)
+    }
+
+    func sign(registerDataProvider: SecureEnclaveSignatureProvider,
+              in pairingSession: PairingSession,
+              signedChallenge: SignedChallenge)
+    -> AnyPublisher<(SignedChallenge, RegistrationData), NFCSignatureProviderError> {
+        healthCard.sign(registerDataProvider: registerDataProvider,
+                        in: pairingSession,
+                        signedChallenge: signedChallenge)
+    }
+
+    func updateAlert(message: String) {
+        nfcCardSession.updateAlert(message: message)
+    }
+
+    func invalidateSession(with error: String?) {
+        nfcCardSession.invalidateSession(with: error)
+    }
 }
 
-class EGKSignatureProvider: NFCSignatureProvider {
+protocol SignatureSession: AnyObject {
+    func sign(challengeSession: IDPChallengeSession) -> AnyPublisher<SignedChallenge, NFCSignatureProviderError>
+
+    func sign(registerDataProvider: SecureEnclaveSignatureProvider,
+              in pairingSession: PairingSession,
+              signedChallenge: SignedChallenge)
+    -> AnyPublisher<(SignedChallenge, RegistrationData), NFCSignatureProviderError>
+
+    func updateAlert(message: String)
+
+    func invalidateSession(with error: String?)
+}
+
+final class EGKSignatureProvider: NFCSignatureProvider {
     typealias Error = NFCSignatureProviderError
 
-    @Injected(\.schedulers) var schedulers: Schedulers
+    init(schedulers: Schedulers) {
+        self.schedulers = schedulers
+    }
+
+    let schedulers: Schedulers
     private var uiScheduler: AnySchedulerOf<DispatchQueue> {
         schedulers.main
     }
 
-    func openSecureSession(can: CAN, pin: Format2Pin) -> AnyPublisher<EGKSignatureSession, NFCSignatureProviderError> {
+    func openSecureSession(can: CAN, pin: Format2Pin) -> AnyPublisher<SignatureSession, NFCSignatureProviderError> {
         NFCTagReaderSession
             .publisher(messages: messages)
             .mapError { NFCSignatureProviderError.cardError($0) }
-            .flatMap { session -> AnyPublisher<EGKSignatureSession, NFCSignatureProviderError> in
+            .flatMap { session -> AnyPublisher<SignatureSession, NFCSignatureProviderError> in
                 session.updateAlert(message: Self.systemNFCDialogOpenPACEMessage)
 
                 return session
@@ -212,6 +250,14 @@ class EGKSignatureProvider: NFCSignatureProvider {
 
 extension Publisher {
     func userMessage(session: NFCCardSession, message: String) -> AnyPublisher<Self.Output, Self.Failure> {
+        handleEvents(receiveOutput: { _ in
+            // swiftlint:disable:previous trailing_closure
+            session.updateAlert(message: message)
+        })
+            .eraseToAnyPublisher()
+    }
+
+    func userMessage(session: SignatureSession, message: String) -> AnyPublisher<Self.Output, Self.Failure> {
         handleEvents(receiveOutput: { _ in
             // swiftlint:disable:previous trailing_closure
             session.updateAlert(message: message)

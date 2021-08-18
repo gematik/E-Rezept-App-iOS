@@ -231,14 +231,14 @@ extension PharmacySearchTests {
         /// Test-Data address
         public static let address1 = PharmacyLocation.Address(
             street: "Hinter der Bahn",
-            housenumber: "6",
+            houseNumber: "6",
             zip: "12345",
             city: "Buxtehude"
         )
         /// Test-Data address
         public static let address2 = PharmacyLocation.Address(
             street: "Meisenweg",
-            housenumber: "23",
+            houseNumber: "23",
             zip: "54321",
             city: "Linsengericht"
         )
@@ -252,9 +252,10 @@ extension PharmacySearchTests {
         /// Test-Data Pharmacy 1
         public static let pharmacy1 = PharmacyLocation(
             id: "1",
+            status: .active,
             telematikID: "3-06.2.ycl.123",
             name: "Apotheke am Wäldchen",
-            type: [.pharm, .emergency, .mobl, .outpharm],
+            types: [.pharm, .emergency, .mobl, .outpharm],
             position: PharmacyLocation.Position(
                 latitude: Decimal(testLocation.coordinate.latitude),
                 longitude: Decimal(testLocation.coordinate.longitude)
@@ -272,10 +273,11 @@ extension PharmacySearchTests {
         /// Test-Data Pharmacy 2
         public static let pharmacy2 = PharmacyLocation(
             id: "2",
+            status: .inactive,
             telematikID: "3-09.2.S.10.124",
             name: "Apotheke hinter der Bahn",
-            type: [PharmacyLocation.PharmacyType.pharm,
-                   PharmacyLocation.PharmacyType.outpharm],
+            types: [PharmacyLocation.PharmacyType.pharm,
+                    PharmacyLocation.PharmacyType.outpharm],
             address: address2,
             telecom: telecom,
             hoursOfOperation: [
@@ -289,10 +291,11 @@ extension PharmacySearchTests {
         /// Test-Data Pharmacy 3
         public static let pharmacy3 = PharmacyLocation(
             id: "3",
+            status: .active,
             telematikID: "3-09.2.sdf.125",
-            name: "Apotheke Elise",
-            type: [PharmacyLocation.PharmacyType.pharm,
-                   PharmacyLocation.PharmacyType.mobl],
+            name: "Apotheke Elise mit langem Vor- und Zunamen am Rathaus",
+            types: [PharmacyLocation.PharmacyType.pharm,
+                    PharmacyLocation.PharmacyType.mobl],
             address: address1,
             telecom: telecom,
             hoursOfOperation: []
@@ -300,9 +303,10 @@ extension PharmacySearchTests {
         /// Test-Data Pharmacy 4
         public static let pharmacy4 = PharmacyLocation(
             id: "4",
+            status: .inactive,
             telematikID: "3-09.2.dfs.126",
             name: "Eulenapotheke",
-            type: [PharmacyLocation.PharmacyType.outpharm],
+            types: [PharmacyLocation.PharmacyType.outpharm],
             address: address2,
             telecom: telecom,
             hoursOfOperation: [

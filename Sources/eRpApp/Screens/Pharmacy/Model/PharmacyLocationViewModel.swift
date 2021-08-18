@@ -36,8 +36,8 @@ struct PharmacyLocationViewModel: Equatable, Hashable {
             hoursOfOperation: hoursOfOperationNonNil,
             openHoursCalculator: openHoursCalculator
         )
-        if let pharmacyPostion = pharmacy.position {
-            distanceInKm = initDistance(pharmacyPosition: pharmacyPostion, referenceLocation: referenceLocation)
+        if let pharmacyPosition = pharmacy.position {
+            distanceInKm = initDistance(pharmacyPosition: pharmacyPosition, referenceLocation: referenceLocation)
         }
     }
 
@@ -47,7 +47,7 @@ struct PharmacyLocationViewModel: Equatable, Hashable {
     var days: [DailyOpenHours] = []
     var distanceInKm: Double?
 
-    var todaysOpeningState2: PharmacyOpenHoursCalculator.TodaysOpeningState {
+    var todayOpeningState: PharmacyOpenHoursCalculator.TodaysOpeningState {
         days.first { day -> Bool in
             if case .open = day.openingState {
                 return true
@@ -121,12 +121,13 @@ struct PharmacyLocationViewModel: Equatable, Hashable {
     static let placeholderPharmacies = (0 ... 10).map { _ in
         PharmacyLocation(
             id: .init(),
+            status: .inactive,
             telematikID: .init(),
             name: String(repeating: " ", count: .random(in: 25 ... 50)),
-            type: [PharmacyLocation.PharmacyType.pharm],
+            types: [PharmacyLocation.PharmacyType.pharm],
             address: PharmacyLocation.Address(
                 street: String(repeating: " ", count: .random(in: 25 ... 50)),
-                housenumber: "  ",
+                houseNumber: "  ",
                 zip: "     ",
                 city: String(repeating: " ", count: .random(in: 25 ... 50))
             ),

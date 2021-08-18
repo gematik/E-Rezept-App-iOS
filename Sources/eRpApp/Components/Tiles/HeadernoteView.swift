@@ -25,9 +25,11 @@ struct HeadernoteView: View {
     var body: some View {
         HStack {
             Text(text)
+                .font(.body)
                 .multilineTextAlignment(.leading)
                 .accessibility(identifier: a11y)
                 .padding([.bottom])
+                .fixedSize(horizontal: false, vertical: true)
             Spacer()
         }
     }

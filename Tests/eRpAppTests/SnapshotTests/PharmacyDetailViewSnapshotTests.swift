@@ -34,4 +34,19 @@ final class PharmacyDetailViewSnapshotTests: XCTestCase {
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
     }
+
+    func testPharmacyDetailInactivePharmacy() {
+        let sut = PharmacyDetailView(
+            store: PharmacyDetailDomain.Dummies.storeFor(
+                PharmacyDetailDomain.State(
+                    erxTasks: PharmacyDetailDomain.Dummies.prescriptions,
+                    pharmacyViewModel: PharmacyDetailDomain.Dummies.pharmacyInactiveViewModel
+                )
+            )
+        )
+
+        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
+        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+    }
 }

@@ -170,7 +170,7 @@ extension PharmacyRedeemDomain {
     enum Dummies {
         static let address1 = PharmacyLocation.Address(
             street: "Hinter der Bahn",
-            housenumber: "6",
+            houseNumber: "6",
             zip: "12345",
             city: "Buxtehude"
         )

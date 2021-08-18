@@ -153,10 +153,7 @@ extension MessagesDomain {
             payloadJSON: "{\"version\": \"1\",\"supplyOptionsType\": \"delivery\",\"info_text\": \"Your prescription is on the way. Make sure you are at home. We will not come back and bring you more drugs! Just kidding ;)\"}" // swiftlint:disable:this line_length
         ))
 
-        static let demoSessionContainer = ChangeableUserSessionContainer(
-            initialUserSession: DemoSessionContainer(),
-            schedulers: Schedulers()
-        )
+        static let demoSessionContainer = DummyUserSessionContainer()
         static let state =
             State(messageDomainStates: [communicationOnPremise, communicationShipment, communicationDelivery])
         static let environment = Environment(

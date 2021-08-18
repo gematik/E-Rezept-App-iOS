@@ -269,10 +269,7 @@ extension PrescriptionDetailDomain.Environment {
 
 extension PrescriptionDetailDomain {
     enum Dummies {
-        static let demoSessionContainer = ChangeableUserSessionContainer(
-            initialUserSession: DemoSessionContainer(),
-            schedulers: Schedulers()
-        )
+        static let demoSessionContainer = DummyUserSessionContainer()
         static let state = State(
             erxTask: ErxTask.Dummies.prescription,
             isRedeemed: false

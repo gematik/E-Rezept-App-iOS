@@ -64,7 +64,7 @@ struct PharmacySearchView: View {
             }
             .padding(8)
             .alert(
-                self.store.scope(state: \.alertState),
+                store.scope(state: \.alertState),
                 dismiss: .alertDismissButtonTapped
             )
             .navigationTitle(L10n.phaSearchTxtTitle)
@@ -100,8 +100,8 @@ struct PharmacySearchView: View {
                             onEditingChanged: { _ in },
                             onCommit: { viewStore.send(.performSearch) }
                         )
-                        .introspectTextField { textfield in
-                            textfield.returnKeyType = .go
+                        .introspectTextField { textField in
+                            textField.returnKeyType = .go
                         }
                         .foregroundColor(
                             viewStore.state.searchText.count > 2 ? Colors.systemLabel : Colors.systemLabelTertiary

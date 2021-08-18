@@ -30,10 +30,10 @@ struct DebugView: View {
         WithViewStore(store) { viewStore in
             List {
                 EnvironmentSection(store: store)
-                TutorialSection(store: store)
-                CardWallSection(store: store)
-                LoginSection(store: store)
                 LogSection(store: store)
+                TutorialSection(store: store)
+                LoginSection(store: store)
+                CardWallSection(store: store)
             }
             .listStyle(GroupedListStyle())
             .respectKeyboardInsets()
@@ -143,6 +143,89 @@ extension DebugView {
         @Injected(\.fhirDateFormatter) var dateFormatter: FHIRDateFormatter
         let store: DebugDomain.Store
 
+        struct VirtualEGKLogin: View {
+            private let store: DebugDomain.Store
+
+            @ObservedObject
+            private var viewStore: ViewStore<DebugDomain.State, DebugDomain.Action>
+
+            init(store: DebugDomain.Store) {
+                self.store = store
+                viewStore = ViewStore(store)
+            }
+
+            @State var showScanVirtualEGK = false
+
+            var body: some View {
+                WithViewStore(store) { viewStore in
+                    SectionView(text: "Virtual eGK Login", a11y: "dummy_a11y_i")
+                    Toggle("Use Virtual eGK instead of NFC",
+                           isOn: viewStore.binding(
+                               get: \.useVirtualLogin,
+                               send: DebugDomain.Action.toggleVirtualLogin
+                           )
+                           .animation())
+                    if viewStore.useVirtualLogin {
+                        FootnoteView(
+                            // swiftlint:disable:next line_length
+                            text: "The following key + certificate pair is used instead of your NFC eGK within the Cardwall.",
+                            a11y: "dummy_a11y_i"
+                        )
+
+                        NavigationLink(
+                            destination: DebugEGKScannerView(
+                                show: $showScanVirtualEGK,
+                                prkCHAUTbase64: viewStore.binding(
+                                    get: \.virtualLoginPrivateKey,
+                                    send: DebugDomain.Action.virtualPrkCHAutReceived
+                                ),
+                                cCHAUTbase64: viewStore.binding(
+                                    get: \.virtualLoginCertKey,
+                                    send: DebugDomain.Action.virtualCCHAutReceived
+                                )
+                            ),
+                            isActive: $showScanVirtualEGK
+                        ) {
+                            HStack {
+                                Text("Scan virtual eGK")
+                                Image(systemName: SFSymbolName.qrCode)
+                            }
+                        }
+
+                        VStack {
+                            TextEditor(text: viewStore.binding(
+                                get: \.virtualLoginPrivateKey,
+                                send: DebugDomain.Action.virtualPrkCHAutReceived
+                            ))
+                            .accessibility(identifier: "debug_prk_ch_aut")
+                            .frame(minHeight: 100, maxHeight: 100)
+                            .foregroundColor(Colors.systemLabel)
+                            .border(Color.black)
+                            .keyboardType(.default)
+                            .disableAutocorrection(true)
+
+                            FootnoteView(text: "PrK_CH_AUT (BASE64)", a11y: "dummy_a11y_i")
+                        }
+
+                        VStack {
+                            TextEditor(text: viewStore.binding(
+                                get: \.virtualLoginCertKey,
+                                send: DebugDomain.Action.virtualCCHAutReceived
+                            ))
+                            .accessibility(identifier: "debug_c_ch_aut")
+                            .frame(minHeight: 100, maxHeight: 100)
+                            .foregroundColor(Colors.systemLabel)
+                            .keyboardType(.default)
+                            .border(Color.black)
+                            .disableAutocorrection(true)
+
+                            FootnoteView(text: "C.CH.AUT (BASE64)", a11y: "dummy_a11y_i")
+                        }
+                    }
+                }
+            }
+        }
+
         var body: some View {
             WithViewStore(store) { viewStore in
                 Section(header: Text("Login State")) {
@@ -161,17 +244,21 @@ extension DebugView {
                         .foregroundColor((viewStore.isAuthenticated ?? false) ? .red : .gray)
                     }
 
+                    VirtualEGKLogin(store: store)
+
                     SectionView(text: "Manual Login with Token:", a11y: "dummy_a11y_i")
-                    TextEditor(text: viewStore.binding(
-                        get: \.accessCodeText,
-                        send: DebugDomain.Action.accessCodeTextReceived
-                    ))
-                    .frame(minHeight: 100, maxHeight: 100)
-                    .background(Color(.systemGray5))
-                    .foregroundColor(Colors.systemLabel)
-                    .keyboardType(.default)
-                    .disableAutocorrection(true)
-                    FootnoteView(text: "Initial access token only for internal IDP", a11y: "")
+                    Group {
+                        TextEditor(text: viewStore.binding(
+                            get: \.accessCodeText,
+                            send: DebugDomain.Action.accessCodeTextReceived
+                        ))
+                        .frame(minHeight: 100, maxHeight: 100)
+                        .background(Color(.systemGray5))
+                        .foregroundColor(Colors.systemLabel)
+                        .keyboardType(.default)
+                        .disableAutocorrection(true)
+                        FootnoteView(text: "Initial access token only for internal IDP", a11y: "")
+                    }
 
                     Button("Login") {
                         withAnimation {
