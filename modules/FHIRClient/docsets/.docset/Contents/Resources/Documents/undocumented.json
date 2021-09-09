@@ -30,7 +30,7 @@
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/FHIRClient/FHIRClient.swift",
-      "line": 112,
+      "line": 113,
       "symbol": "FHIRClient.DefaultFHIRResponseHandler.init(acceptFormat:_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"

@@ -21,10 +21,10 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-           1.0.8
+           1.0.9
  Docs
         </a>
-         (79% documented)
+         (82% documented)
       </p>
     
       <p class="header-col--secondary">
@@ -180,9 +180,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10FHIRClientAAC16eRpRemoteStorageE15fetchAllTaskIDs7Combine12AnyPublisherVySaySSGAB5ErrorOGyF"></a>
-                    <a name="//apple_ref/swift/Method/fetchAllTaskIDs()" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10FHIRClientAAC16eRpRemoteStorageE15fetchAllTaskIDs7Combine12AnyPublisherVySaySSGAB5ErrorOGyF">fetchAllTaskIDs()</a>
+                    <a name="/s:10FHIRClientAAC16eRpRemoteStorageE15fetchAllTaskIDs5after7Combine12AnyPublisherVySaySSGAB5ErrorOGSSSg_tF"></a>
+                    <a name="//apple_ref/swift/Method/fetchAllTaskIDs(after:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10FHIRClientAAC16eRpRemoteStorageE15fetchAllTaskIDs5after7Combine12AnyPublisherVySaySSGAB5ErrorOGSSSg_tF">fetchAllTaskIDs(after:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -203,9 +203,28 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">fetchAllTaskIDs</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="p">[</span><span class="kt">String</span><span class="p">],</span> <span class="kt">FHIRClient</span><span class="o">.</span><span class="kt">Error</span><span class="o">&gt;</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">fetchAllTaskIDs</span><span class="p">(</span><span class="n">after</span> <span class="nv">referenceDate</span><span class="p">:</span> <span class="kt">String</span><span class="p">?)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="p">[</span><span class="kt">String</span><span class="p">],</span> <span class="kt">FHIRClient</span><span class="o">.</span><span class="kt">Error</span><span class="o">&gt;</span></code></pre>
 
                         </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>referenceDate</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Tasks with modification date greater or equal <code>referenceDate</code> will be fetched</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
                       </div>
                       <div>
                         <h4>Return Value</h4>
@@ -365,6 +384,39 @@
                         </div>
                       </div>
                       <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>referenceDate</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Audit-Events with date greater or equal <code>referenceDate</code> will be fetched.
+          Pass <code>nil</code> for fetching all audit events</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>locale</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Locale key for which language the audit events will be fetched.
+    Nil if all languages should be fetched</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
                         <h4>Return Value</h4>
                         <p><code>AnyPublisher</code> that emits the audit events</p>
                       </div>
@@ -424,9 +476,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10FHIRClientAAC16eRpRemoteStorageE22communicationResources7Combine12AnyPublisherVySay01eB3Kit7ErxTaskV13CommunicationVGAB5ErrorOGyF"></a>
-                    <a name="//apple_ref/swift/Method/communicationResources()" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10FHIRClientAAC16eRpRemoteStorageE22communicationResources7Combine12AnyPublisherVySay01eB3Kit7ErxTaskV13CommunicationVGAB5ErrorOGyF">communicationResources()</a>
+                    <a name="/s:10FHIRClientAAC16eRpRemoteStorageE22communicationResources5after7Combine12AnyPublisherVySay01eB3Kit7ErxTaskV13CommunicationVGAB5ErrorOGSSSg_tF"></a>
+                    <a name="//apple_ref/swift/Method/communicationResources(after:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10FHIRClientAAC16eRpRemoteStorageE22communicationResources5after7Combine12AnyPublisherVySay01eB3Kit7ErxTaskV13CommunicationVGAB5ErrorOGSSSg_tF">communicationResources(after:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -441,13 +493,87 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">communicationResources</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="p">[</span><span class="kt">ErxTask</span><span class="o">.</span><span class="kt">Communication</span><span class="p">],</span> <span class="kt">FHIRClient</span><span class="o">.</span><span class="kt">Error</span><span class="o">&gt;</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">communicationResources</span><span class="p">(</span>
+    <span class="n">after</span> <span class="nv">referenceDate</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="p">[</span><span class="kt">ErxTask</span><span class="o">.</span><span class="kt">Communication</span><span class="p">],</span> <span class="kt">FHIRClient</span><span class="o">.</span><span class="kt">Error</span><span class="o">&gt;</span></code></pre>
 
                         </div>
                       </div>
                       <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>referenceDate</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Communications with <code>timestamp</code> greater or equal <code>referenceDate</code> will be fetched</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
                         <h4>Return Value</h4>
                         <p>Array of all loaded communication resources</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:10FHIRClientAAC16eRpRemoteStorageE27fetchAllMedicationDispenses5after7Combine12AnyPublisherVySay01eB3Kit7ErxTaskV0G8DispenseVGAB5ErrorOGSSSg_tF"></a>
+                    <a name="//apple_ref/swift/Method/fetchAllMedicationDispenses(after:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:10FHIRClientAAC16eRpRemoteStorageE27fetchAllMedicationDispenses5after7Combine12AnyPublisherVySay01eB3Kit7ErxTaskV0G8DispenseVGAB5ErrorOGSSSg_tF">fetchAllMedicationDispenses(after:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Requests all medication dispenses available since <code>referenceDate</code></p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">fetchAllMedicationDispenses</span><span class="p">(</span>
+    <span class="n">after</span> <span class="nv">referenceDate</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="p">[</span><span class="kt">ErxTask</span><span class="o">.</span><span class="kt">MedicationDispense</span><span class="p">],</span> <span class="kt">FHIRClient</span><span class="o">.</span><span class="kt">Error</span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>referenceDate</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>MedicationDispense with date greater or equal <code>referenceDate</code> will be fetched.
+                       Pass <code>nil</code> for fetching all audit events</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>MedicationDispenses with <code>whenHandedOver</code> great or equal <code>referenceDate</code> will be fetched</p>
                       </div>
                     </section>
                   </div>
@@ -460,7 +586,7 @@
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2021 <a class="link" href="https://www.gematik.de" target="_blank" rel="external">gematik GmbH</a>. All rights reserved. (Last updated: 2021-08-06)</p>
+      <p>&copy; 2021 <a class="link" href="https://www.gematik.de" target="_blank" rel="external">gematik GmbH</a>. All rights reserved. (Last updated: 2021-09-07)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>
