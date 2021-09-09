@@ -26,7 +26,7 @@ public enum ErxTaskFHIROperation<Value, Handler: FHIRResponseHandler> where Hand
     /// Request the capability statement
     case capabilityStatement(handler: Handler)
     /// Request all tasks from the service in a certain format
-    case allTasks(handler: Handler)
+    case allTasks(referenceDate: String?, handler: Handler)
     /// Request a specific task from the service in a certain format
     case taskBy(id: ErxTask.ID, accessCode: String?, handler: Handler)
     // swiftlint:disable:previous identifier_name
@@ -41,40 +41,82 @@ public enum ErxTaskFHIROperation<Value, Handler: FHIRResponseHandler> where Hand
     /// Request to redeem a `ErxTaskOrder` in a pharmacy
     case redeem(order: ErxTaskOrder, handler: Handler)
     /// Load communication resource from server
-    case communicationResource(handler: Handler)
+    case allCommunications(referenceDate: String?, handler: Handler)
+    /// Load all medication dispenses since reference date
+    case allMedicationDispenses(referenceDate: String?, handler: Handler)
 }
 
 extension ErxTaskFHIROperation: FHIRClientOperation {
     public func handle(response: FHIRClient.Response) throws -> Value {
         switch self {
         case let .capabilityStatement(handler),
-             let .allTasks(handler),
+             let .allTasks(_, handler),
              let .taskBy(_, _, handler),
              let .deleteTask(_, _, handler),
              let .auditEventBy(_, handler),
              let .auditEvents(_, _, handler),
              let .redeem(order: _, handler),
-             let .communicationResource(handler):
+             let .allCommunications(_, handler),
+             let .allMedicationDispenses(_, handler: handler):
             return try handler.handle(response: response)
         }
     }
 
-    public var path: String {
+    public var relativeUrlString: String? {
         switch self {
         case .capabilityStatement: return "metadata"
         case let .taskBy(taskId, _, _): return "Task/\(taskId)"
-        case .allTasks: return "Task"
+        case let .allTasks(referenceDate, _):
+            var components = URLComponents(string: "Task")
+            // endpoint expects format like "ge2021-01-31T10:00Z" where "ge" represents greater or equal
+            if let referenceDate = referenceDate,
+               let fhirDate = FHIRDateFormatter.shared.date(from: referenceDate) {
+                let modifiedItem = URLQueryItem(
+                    name: "modified",
+                    value: "ge\(fhirDate.fhirFormattedString(with: .yearMonthDayTime))"
+                )
+                components?.queryItems = [modifiedItem]
+            }
+
+            return components?.string
         case let .deleteTask(taskId, _, _): return "Task/\(taskId)/$abort"
         case let .auditEventBy(auditEventId, _): return "AuditEvent/\(auditEventId)"
         case let .auditEvents(referenceDate, _, _):
+            var queryItems: [URLQueryItem] = [URLQueryItem(name: "_sort", value: "-date")]
             if let referenceDate = referenceDate,
-               let fhirDate = FHIRDateFormatter.shared.date(from: referenceDate),
-               let encodedDateString = fhirDate.fhirFormattedString(with: .yearMonthDayTime).urlPercentEscapedString() {
-                return "AuditEvent?date=ge\(encodedDateString)&_sort=-date"
-            } else {
-                return "AuditEvent?_sort=-date"
+               let fhirDate = FHIRDateFormatter.shared.date(from: referenceDate) {
+                let dateItem = URLQueryItem(
+                    name: "date",
+                    value: "ge\(fhirDate.fhirFormattedString(with: .yearMonthDayTime))"
+                )
+                queryItems.append(dateItem)
             }
-        case .redeem(order: _, handler: _), .communicationResource(handler: _): return "Communication"
+            var components = URLComponents(string: "AuditEvent")
+            components?.queryItems = queryItems
+            return components?.string
+        case .redeem(order: _, handler: _): return "Communication"
+        case let .allCommunications(referenceDate, handler: _):
+            var components = URLComponents(string: "Communication")
+            if let referenceDate = referenceDate,
+               let fhirDate = FHIRDateFormatter.shared.date(from: referenceDate) {
+                let sentItem = URLQueryItem(
+                    name: "sent",
+                    value: "ge\(fhirDate.fhirFormattedString(with: .yearMonthDayTime))"
+                )
+                components?.queryItems = [sentItem]
+            }
+            return components?.string
+        case let .allMedicationDispenses(referenceDate, handler: _):
+            var components = URLComponents(string: "MedicationDispense")
+            if let referenceDate = referenceDate,
+               let fhirDate = FHIRDateFormatter.shared.date(from: referenceDate) {
+                let whenHandOverItem = URLQueryItem(
+                    name: "whenHandedOver",
+                    value: "ge\(fhirDate.fhirFormattedString(with: .yearMonthDayTime))"
+                )
+                components?.queryItems = [whenHandOverItem]
+            }
+            return components?.string
         }
     }
 
@@ -116,7 +158,8 @@ extension ErxTaskFHIROperation: FHIRClientOperation {
              .deleteTask,
              .auditEvents,
              .auditEventBy,
-             .communicationResource:
+             .allCommunications,
+             .allMedicationDispenses:
             return nil
         case let .redeem(order: order, _):
             return try? order.asCommunicationResource()
@@ -126,13 +169,14 @@ extension ErxTaskFHIROperation: FHIRClientOperation {
     public var acceptFormat: FHIRAcceptFormat {
         switch self {
         case let .capabilityStatement(handler),
-             let .allTasks(handler),
+             let .allTasks(_, handler),
              let .taskBy(_, _, handler),
              let .deleteTask(_, _, handler),
              let .auditEventBy(_, handler),
              let .auditEvents(_, _, handler),
              let .redeem(_, handler),
-             let .communicationResource(handler):
+             let .allCommunications(_, handler),
+             let .allMedicationDispenses(_, handler: handler):
             return handler.acceptFormat
         }
     }

@@ -1,3 +1,11 @@
+# Release 1.0.9
+
+## feature (3 changes)
+
+- Add authentication via passwords
+- Add update existing password screen
+- Change medication details to include substituted medications
+
 # Release 1.0.8
 
 ## feature (4 changes)

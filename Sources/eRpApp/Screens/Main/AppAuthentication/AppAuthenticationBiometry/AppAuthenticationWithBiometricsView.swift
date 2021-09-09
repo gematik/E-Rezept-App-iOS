@@ -22,86 +22,19 @@ import SwiftUI
 struct AppAuthenticationWithBiometricsView: View {
     let store: AppAuthenticationBiometricsDomain.Store
 
-    @State private var calculatedHeight: CGFloat = 0
-
     var body: some View {
         WithViewStore(store) { viewStore in
-            VStack {
-                HStack {
-                    Image(Asset.authHead)
-                        .padding(.vertical)
-                    Spacer()
-                }
-
-                VStack {
-                    Spacer()
-
-                    VStack {
-                        Text(L10n.authTxtBiometricsTitle)
-                            .font(.title)
-                            .fontWeight(.bold)
-                            .padding()
-                        switch viewStore.biometryType {
-                        case .faceID:
-                            Text(L10n.authTxtBiometricsFaceidStart)
-                                .font(.headline)
-                                .padding()
-                            Text(L10n.authTxtBiometricsFaceidDescription)
-                                .multilineTextAlignment(.center)
-                                .foregroundColor(.gray)
-                                .padding()
-                                .fixedSize(horizontal: false, vertical: true)
-                            PrimaryTextButton(text: L10n.authBtnBiometricsFaceid,
-                                              a11y: A18n.auth.authBtnBiometricsFaceid,
-                                              image: Image(systemName: SFSymbolName.faceId)) {
-                                viewStore.send(.startAuthenticationChallenge)
-                            }
-                            .frame(width: 216,
-                                   height: 52,
-                                   alignment: .center)
-                            .padding()
-                        case .touchID:
-                            Text(L10n.authTxtBiometricsTouchidStart)
-                                .font(.headline)
-                                .padding()
-                            Text(L10n.authTxtBiometricsTouchidDescription)
-                                .multilineTextAlignment(.center)
-                                .foregroundColor(.gray)
-                                .padding()
-                                .fixedSize(horizontal: false, vertical: true)
-                            PrimaryTextButton(text: L10n.authBtnBiometricsTouchid,
-                                              a11y: A18n.auth.authBtnBiometricsTouchid,
-                                              image: Image(systemName: SFSymbolName.touchId)) {
-                                viewStore.send(.startAuthenticationChallenge)
-                            }
-                            .frame(width: 216,
-                                   height: 52,
-                                   alignment: .center)
-                            .padding()
-                        }
+            VStack(spacing: 8) {
+                switch viewStore.biometryType {
+                case .faceID:
+                    FaceID {
+                        viewStore.send(.startAuthenticationChallenge)
                     }
-                    .padding()
-
-                    Spacer()
-
-                    LinksAwareTextView(
-                        text: NSLocalizedString("auth_txt_biometrics_footer",
-                                                comment: ""),
-                        links: [
-                            NSLocalizedString("auth_txt_biometrics_footer_url_display",
-                                              comment: ""):
-                                NSLocalizedString("auth_txt_biometrics_footer_url_link",
-                                                  comment: ""),
-                            NSLocalizedString("auth_txt_biometrics_footer_email_display",
-                                              comment: ""):
-                                NSLocalizedString("auth_txt_biometrics_footer_email_link",
-                                                  comment: ""),
-                        ],
-                        calculatedHeight: $calculatedHeight
-                    )
-                    .frame(maxHeight: calculatedHeight)
+                case .touchID:
+                    TouchID {
+                        viewStore.send(.startAuthenticationChallenge)
+                    }
                 }
-                .padding()
             }
             .alert(isPresented: viewStore.binding(
                 get: { $0.errorToDisplay != nil },
@@ -113,6 +46,47 @@ struct AppAuthenticationWithBiometricsView: View {
                     dismissButton: .default(Text(L10n.alertBtnOk))
                 )
             }
+        }
+    }
+
+    struct FaceID: View {
+        let action: () -> Void
+
+        var body: some View {
+            Text(L10n.authTxtBiometricsFaceidStart)
+                .font(Font.body.weight(.semibold))
+
+            Text(L10n.authTxtBiometricsFaceidDescription)
+                .font(.subheadline)
+                .multilineTextAlignment(.center)
+                .foregroundColor(Color(.secondaryLabel))
+                .fixedSize(horizontal: false, vertical: true)
+
+            PrimaryTextButton(text: L10n.authBtnBiometricsFaceid,
+                              a11y: A18n.auth.authBtnBiometricsFaceid,
+                              image: Image(systemName: SFSymbolName.faceId),
+                              action: action)
+                .padding()
+        }
+    }
+
+    struct TouchID: View {
+        let action: () -> Void
+
+        var body: some View {
+            Text(L10n.authTxtBiometricsTouchidStart)
+                .font(Font.body.weight(.semibold))
+
+            Text(L10n.authTxtBiometricsTouchidDescription)
+                .multilineTextAlignment(.center)
+                .foregroundColor(Color(.secondaryLabel))
+                .fixedSize(horizontal: false, vertical: true)
+
+            PrimaryTextButton(text: L10n.authBtnBiometricsTouchid,
+                              a11y: A18n.auth.authBtnBiometricsTouchid,
+                              image: Image(systemName: SFSymbolName.touchId),
+                              action: action)
+                .padding()
         }
     }
 }
@@ -130,6 +104,6 @@ struct AppAuthenticationWithBiometricsView_Previews: PreviewProvider {
                     )
                 )
             )
-        }.generateVariations()
+        }
     }
 }

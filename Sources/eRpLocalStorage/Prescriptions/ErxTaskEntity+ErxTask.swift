@@ -33,6 +33,7 @@ extension ErxTaskEntity {
         accessCode = task.accessCode
         fullUrl = task.fullUrl
         authoredOn = task.authoredOn
+        lastModified = task.lastModified
         expiresOn = task.expiresOn
         redeemedOn = task.redeemedOn
         author = task.author
@@ -52,6 +53,8 @@ extension ErxTaskEntity {
                                                  in: context)
         workRelatedAccident = ErxTaskWorkRelatedAccidentEntity(accident: task.workRelatedAccident,
                                                                in: context)
+        // Note: auditEvents, communications and medicationDispense is not set here
+        // since it is loaded asynchronous from remote
     }
 }
 
@@ -62,6 +65,7 @@ extension ErxTask {
             accessCode: entity.accessCode,
             fullUrl: entity.fullUrl,
             authoredOn: entity.authoredOn,
+            lastModified: entity.lastModified,
             expiresOn: entity.expiresOn,
             redeemedOn: entity.redeemedOn,
             author: entity.author,
@@ -91,7 +95,8 @@ extension ErxTask {
                         return nil
                     }
                 }
-                .sorted { $0.timestamp < $1.timestamp } ?? []
+                .sorted { $0.timestamp < $1.timestamp } ?? [],
+            medicationDispense: MedicationDispense(entity: entity.medicationDispense)
         )
     }
 }

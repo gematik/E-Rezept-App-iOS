@@ -505,6 +505,7 @@ class StreamWrappedUserSession: UserSession {
 		self.isDemoMode = current.isDemoMode
 		self.vauStorage = current.vauStorage
 		self.trustStoreSession = current.trustStoreSession
+		self.appSecurityPasswordManager = current.appSecurityPasswordManager
 
 		stream
 			.assign(to: \.current, on: self)
@@ -525,6 +526,10 @@ class StreamWrappedUserSession: UserSession {
 		stream
 			.map(\.trustStoreSession)
 			.assign(to: \.trustStoreSession, on: self)
+			.store(in: &disposeBag)
+		stream
+			.map(\.appSecurityPasswordManager)
+			.assign(to: \.appSecurityPasswordManager, on: self)
 			.store(in: &disposeBag)
 
 	}
@@ -560,6 +565,7 @@ class StreamWrappedUserSession: UserSession {
 	}()
 	private(set) var vauStorage: VAUStorage
 	private(set) var trustStoreSession: TrustStoreSession
+	private(set) var appSecurityPasswordManager: AppSecurityPasswordManager
 
 
 }

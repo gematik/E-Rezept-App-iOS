@@ -68,6 +68,7 @@ struct SelectionCell: View {
             }
         )
         .accessibility(identifier: a11y)
+        .accessibility(value: isOn ? Text(L10n.sectionTxtIsActiveValue) : Text(L10n.sectionTxtIsInactiveValue))
     }
 }
 

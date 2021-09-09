@@ -89,6 +89,7 @@ extension ModelsR4.Bundle {
             accessCode: taskAccessCode,
             fullUrl: fullUrl?.value?.url.absoluteString,
             authoredOn: patientReceiptBundle.medicationRequest?.authoredOn?.value?.description,
+            lastModified: task.lastModified?.value?.description,
             expiresOn: task.expiryDate,
             author: patientReceiptBundle.organization?.author,
             dispenseValidityEnd: patientReceiptBundle.dispenseValidityEnd,
@@ -346,7 +347,9 @@ extension ModelsR4.Medication {
     }
 
     var dosageForm: String? {
-        form?.coding?.first?.code?.value?.string
+        form?.coding?.first {
+            $0.system?.value?.url.absoluteString == FHIRResponseKeys.dosageFormKey
+        }?.code?.value?.string
     }
 
     var decimalAmount: Decimal? {
@@ -428,4 +431,7 @@ internal enum FHIRResponseKeys {
     static let expiryDateKey = "https://gematik.de/fhir/StructureDefinition/ExpiryDate"
     static let noctuFeeWaiverKey: FHIRURI = "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_EmergencyServicesFee"
     static let dosageFlag: FHIRURI = "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_DosageFlag"
+    static let kvIDKey = "http://fhir.de/NamingSystem/gkv/kvid-10"
+    static let dosageFormKey = "https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_KBV_DARREICHUNGSFORM"
+    static let telematikIdKey = "https://gematik.de/fhir/NamingSystem/TelematikID"
 }

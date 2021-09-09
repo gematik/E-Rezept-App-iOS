@@ -283,8 +283,8 @@ extension PharmacySearchTests {
             hoursOfOperation: [
                 PharmacyLocation.HoursOfOperation(
                     daysOfWeek: ["wed"],
-                    openingTime: "09:00:00",
-                    closingTime: "17:30:00"
+                    openingTime: "08:00:00",
+                    closingTime: "07:00:00"
                 ),
             ]
         )

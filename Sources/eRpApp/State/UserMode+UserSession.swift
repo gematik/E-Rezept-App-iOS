@@ -81,4 +81,8 @@ extension UserMode: UserSession {
     var trustStoreSession: TrustStoreSession {
         sessionContainer.trustStoreSession
     }
+
+    var appSecurityPasswordManager: AppSecurityPasswordManager {
+        sessionContainer.appSecurityPasswordManager
+    }
 }

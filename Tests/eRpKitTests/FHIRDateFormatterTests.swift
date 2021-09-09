@@ -122,13 +122,14 @@ final class FHIRDateFormatterTests: XCTestCase {
         let sut = FHIRDateFormatter.shared
 
         // when
-        let date = sut.date(from: inputDateString, format: .yearMonthDayTimeMilliSeconds)
-        let dataString = sut.string(from: date ?? Date(), format: .yearMonthDayTimeMilliSeconds)
-        let stringRef = sut.string(from: refDate ?? Date(), format: .yearMonthDayTimeMilliSeconds)
+        let date = sut.date(from: inputDateString, format: .yearMonthDayTimeMilliSeconds)!
+        let dataString = sut.string(from: date, format: .yearMonthDayTimeMilliSeconds)
 
         // then
         // see: https://stackoverflow.com/questions/67351860/swift-date-difference-in-nanoseconds-is-not-working
-//        expect(date) == refDate -> not working maybe due to a bug.
+        // expect(date) == refDate //-> not working maybe due to a bug.
+        // workaround check:
+        expect(refDate?.timeIntervalSince(date)).to(beCloseTo(0.0, within: 1.0))
         // The final string is correct:
         expect(dataString) == expectedOutputDateString
     }

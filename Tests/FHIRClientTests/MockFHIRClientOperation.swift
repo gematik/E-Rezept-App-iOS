@@ -23,12 +23,12 @@ import HTTPClient
 // swiftlint:disable all
 class MockFHIRClientOperation: FHIRClientOperation {
     typealias Value = MockFHIRResponseHandler.Value
-    var path: String = ""
+    var relativeUrlString: String? = ""
     var httpHeaders: [String: String] = ["operation_key": "operation_value"]
     var httpMethod = HTTPMethod.get
 
-    init(path: String) {
-        self.path = path
+    init(relativeUrlString: String) {
+        self.relativeUrlString = relativeUrlString
     }
 
     var handleResponse_Response: MockFHIRResponseHandler.Value = "Mocked Response"

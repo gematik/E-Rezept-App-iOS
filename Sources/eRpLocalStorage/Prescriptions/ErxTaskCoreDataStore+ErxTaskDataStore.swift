@@ -48,7 +48,19 @@ extension ErxTaskCoreDataStore: ErxTaskDataStore {
             .eraseToAnyPublisher()
     }
 
-    public func listAllTasks() -> AnyPublisher<[ErxTask], Error> {
+    public func fetchLatestLastModifiedForErxTasks() -> AnyPublisher<String?, Error> {
+        let request: NSFetchRequest<ErxTaskEntity> = ErxTaskEntity.fetchRequest()
+        request.fetchLimit = 1
+        request.sortDescriptors = [NSSortDescriptor(key: #keyPath(ErxTaskEntity.lastModified), ascending: false)]
+        return container.viewContext
+            .publisher(for: request)
+            .map { $0.first?.lastModified }
+            .mapError(Error.read)
+            .subscribe(on: foregroundQueue)
+            .eraseToAnyPublisher()
+    }
+
+    public func listAllTasks(after _: String? = nil) -> AnyPublisher<[ErxTask], Error> {
         let request: NSFetchRequest<ErxTaskEntity> = ErxTaskEntity.fetchRequest()
         request.sortDescriptors = [NSSortDescriptor(key: #keyPath(ErxTaskEntity.authoredOn), ascending: true)]
         return container.viewContext
@@ -71,7 +83,16 @@ extension ErxTaskCoreDataStore: ErxTaskDataStore {
                 moc.performAndWait {
                     // Insert the ErxTasks (Prescriptions)
                     _ = tasks.map { task in
-                        ErxTaskEntity.from(task: task, in: moc)
+                        let taskEntity = ErxTaskEntity.from(task: task, in: moc)
+
+                        let request: NSFetchRequest<ErxTaskMedicationDispenseEntity> = ErxTaskMedicationDispenseEntity
+                            .fetchRequest()
+                        request.predicate = NSPredicate(
+                            format: "%K == %@",
+                            #keyPath(ErxTaskMedicationDispenseEntity.taskId),
+                            task.identifier
+                        )
+                        taskEntity.medicationDispense = try? request.execute().first
                     }
                     do {
                         try moc.save()
@@ -130,6 +151,18 @@ extension ErxTaskCoreDataStore: ErxTaskDataStore {
                 }
                 return ErxAuditEvent(entity: auditEvent)
             }
+            .mapError(Error.read)
+            .subscribe(on: foregroundQueue)
+            .eraseToAnyPublisher()
+    }
+
+    public func fetchLatestTimestampForAuditEvents() -> AnyPublisher<String?, Error> {
+        let request: NSFetchRequest<ErxAuditEventEntity> = ErxAuditEventEntity.fetchRequest()
+        request.fetchLimit = 1
+        request.sortDescriptors = [NSSortDescriptor(key: #keyPath(ErxAuditEventEntity.timestamp), ascending: false)]
+        return container.viewContext
+            .publisher(for: request)
+            .map { $0.first?.timestamp }
             .mapError(Error.read)
             .subscribe(on: foregroundQueue)
             .eraseToAnyPublisher()
@@ -259,7 +292,23 @@ extension ErxTaskCoreDataStore: ErxTaskDataStore {
         Fail(error: Error.notImplemented).eraseToAnyPublisher()
     }
 
+    public func fetchLatestTimestampForCommunications() -> AnyPublisher<String?, Error> {
+        let request: NSFetchRequest<ErxTaskCommunicationEntity> = ErxTaskCommunicationEntity.fetchRequest()
+        request.fetchLimit = 1
+        request.sortDescriptors = [NSSortDescriptor(
+            key: #keyPath(ErxTaskCommunicationEntity.timestamp),
+            ascending: false
+        )]
+        return container.viewContext
+            .publisher(for: request)
+            .map { $0.first?.timestamp }
+            .mapError(Error.read)
+            .subscribe(on: foregroundQueue)
+            .eraseToAnyPublisher()
+    }
+
     public func listAllCommunications(
+        after _: String? = nil,
         for profile: ErxTask.Communication.Profile
     ) -> AnyPublisher<[ErxTask.Communication], Error> {
         let request: NSFetchRequest<ErxTaskCommunicationEntity> = ErxTaskCommunicationEntity.fetchRequest()
@@ -360,6 +409,79 @@ extension ErxTaskCoreDataStore: ErxTaskDataStore {
                             taskEntity?.addToCommunications(newCommunicationEntity)
                             return newCommunicationEntity
                         }
+                    }
+                    do {
+                        try moc.save()
+                        promise(.success(true))
+                        moc.reset()
+                    } catch {
+                        promise(.failure(error))
+                        moc.reset()
+                    }
+                }
+            }
+        }
+        .subscribe(on: backgroundQueue)
+        .mapError(Error.write)
+        .eraseToAnyPublisher()
+    }
+
+    public func fetchLatestHandOverDateForMedicationDispenses() -> AnyPublisher<String?, Error> {
+        let request: NSFetchRequest<ErxTaskMedicationDispenseEntity> = ErxTaskMedicationDispenseEntity.fetchRequest()
+        request.fetchLimit = 1
+        request.sortDescriptors = [NSSortDescriptor(
+            key: #keyPath(ErxTaskMedicationDispenseEntity.whenHandedOver),
+            ascending: false
+        )]
+        return container.viewContext
+            .publisher(for: request)
+            .map { $0.first?.whenHandedOver }
+            .mapError(Error.read)
+            .subscribe(on: foregroundQueue)
+            .eraseToAnyPublisher()
+    }
+
+    public func listAllMedicationDispenses(
+        after _: String?
+    ) -> AnyPublisher<[ErxTask.MedicationDispense], Error> {
+        let request: NSFetchRequest<ErxTaskMedicationDispenseEntity> = ErxTaskMedicationDispenseEntity.fetchRequest()
+        request.sortDescriptors = [NSSortDescriptor(
+            key: #keyPath(ErxTaskMedicationDispenseEntity.whenHandedOver),
+            ascending: true
+        )]
+        return container.viewContext
+            .publisher(for: request)
+            .map { list in list.compactMap(ErxTask.MedicationDispense.init) }
+            .mapError(Error.read)
+            .subscribe(on: foregroundQueue)
+            .eraseToAnyPublisher()
+    }
+
+    public func save(medicationDispenses: [ErxTask.MedicationDispense]) -> AnyPublisher<Bool, Error> {
+        Deferred {
+            Future { [weak self] promise in
+                guard let self = self else {
+                    // Note that promise will never emit
+                    return
+                }
+                let moc = self.container.newBackgroundContext()
+                moc.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
+                moc.performAndWait {
+                    _ = medicationDispenses.map { medicationDispense -> ErxTaskMedicationDispenseEntity in
+                        let medicationDispenseEntity = ErxTaskMedicationDispenseEntity.from(
+                            medicationDispense: medicationDispense,
+                            in: moc
+                        )
+                        // Set relationship to related `ErxTask`
+                        let request: NSFetchRequest<ErxTaskEntity> = ErxTaskEntity.fetchRequest()
+                        request.predicate = NSPredicate(
+                            format: "%K == %@",
+                            #keyPath(ErxTaskEntity.identifier),
+                            medicationDispense.taskId
+                        )
+                        medicationDispenseEntity.task = try? request.execute().first
+
+                        return medicationDispenseEntity
                     }
                     do {
                         try moc.save()

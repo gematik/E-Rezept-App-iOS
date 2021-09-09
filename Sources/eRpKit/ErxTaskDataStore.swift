@@ -34,7 +34,12 @@ public protocol ErxTaskDataStore where ErrorType: LocalizedError {
         -> AnyPublisher<ErxTask?, ErrorType>
 
     /// List all tasks contained in the store
-    func listAllTasks() -> AnyPublisher<[ErxTask], ErrorType>
+    /// - Parameter referenceDate: Tasks with modification date greater or equal  `referenceDate` will be listed.
+    ///                            Pass `nil` for listing all
+    func listAllTasks(after referenceDate: String?) -> AnyPublisher<[ErxTask], ErrorType>
+
+    /// Fetch the most recent `lastModified` of all `ErxTask`s
+    func fetchLatestLastModifiedForErxTasks() -> AnyPublisher<String?, ErrorType>
 
     /// Save a sequence of tasks into the store
     func save(tasks: [ErxTask]) -> AnyPublisher<Bool, ErrorType>
@@ -55,7 +60,12 @@ public protocol ErxTaskDataStore where ErrorType: LocalizedError {
     func listAllAuditEvents(forTaskID taskID: ErxTask.ID,
                             for locale: String?) -> AnyPublisher<[ErxAuditEvent], ErrorType>
 
+    /// Fetch the most recent `timestamp` of all `AuditEvent`s
+    func fetchLatestTimestampForAuditEvents() -> AnyPublisher<String?, ErrorType>
+
     /// List all audit events contained in the store
+    /// - Parameter referenceDate: `AuditEvent`s with modification date great or equal  `referenceDate` will be listed.
+    ///                             Pass `nil` for listing all
     func listAllAuditEvents(after referenceDate: String?,
                             for locale: String?) -> AnyPublisher<[ErxAuditEvent], ErrorType>
 
@@ -70,11 +80,17 @@ public protocol ErxTaskDataStore where ErrorType: LocalizedError {
     func redeem(orders: [ErxTaskOrder]) -> AnyPublisher<Bool, ErrorType>
 
     /// Load All communications of the given profile
-    /// - Returns: Array of all loaded `ErxTaskCommunication`
-    /// - Parameter profile: Filters for the passed Profile type
+    /// - Parameters:
+    ///   - referenceDate: `Communication`s with modification date great or equal  `referenceDate` will be listed.
+    ///                     Pass `nil` for listing all
+    ///   - profile: Filters for the passed Profile type
     func listAllCommunications(
+        after referenceDate: String?,
         for profile: ErxTask.Communication.Profile
     ) -> AnyPublisher<[ErxTask.Communication], ErrorType>
+
+    /// Fetch the most recent `timestamp` of all `Communication`s
+    func fetchLatestTimestampForCommunications() -> AnyPublisher<String?, ErrorType>
 
     /// Saves the passes sequence of `ErxTaskCommunication`s
     /// - Parameter communications: Array of communications that should be stored
@@ -86,4 +102,43 @@ public protocol ErxTaskDataStore where ErrorType: LocalizedError {
     func countAllUnreadCommunications(
         for profile: ErxTask.Communication.Profile
     ) -> AnyPublisher<Int, ErrorType>
+
+    /// Fetch the most recent `handOverDate` of all `MedicationDispense`s
+    func fetchLatestHandOverDateForMedicationDispenses() -> AnyPublisher<String?, ErrorType>
+
+    /// List all MedicationDispenses from the given reference date
+    /// - Parameter referenceDate: `MedicationDispense`s with modification date great or equal  `referenceDate`
+    ///                             will be listed. Pass `nil` for listing all
+    func listAllMedicationDispenses(
+        after referenceDate: String?
+    ) -> AnyPublisher<[ErxTask.MedicationDispense], ErrorType>
+
+    /// Saves the passed sequence of `ErxTask.MedicationDispense`s
+    /// - Parameter medicationDispenses: Array of medication dispenses that should be stored
+    /// - Returns: `true` if save operation was successful
+    func save(medicationDispenses: [ErxTask.MedicationDispense]) -> AnyPublisher<Bool, ErrorType>
+}
+
+extension ErxTaskDataStore {
+    /// List all tasks contained in the store
+    public func listAllTasks() -> AnyPublisher<[ErxTask], ErrorType> {
+        listAllTasks(after: nil)
+    }
+
+    /// List all audit events with the given local contained in the store
+    public func listAllAuditEvents(for locale: String) -> AnyPublisher<[ErxAuditEvent], ErrorType> {
+        listAllAuditEvents(after: nil, for: locale)
+    }
+
+    /// List all communications for the given profile contained in the store
+    public func listAllCommunications(
+        for profile: ErxTask.Communication.Profile
+    ) -> AnyPublisher<[ErxTask.Communication], ErrorType> {
+        listAllCommunications(after: nil, for: profile)
+    }
+
+    /// List all medication dispenses contained in the store
+    public func listAllMedicationDispenses() -> AnyPublisher<[ErxTask.MedicationDispense], ErrorType> {
+        listAllMedicationDispenses(after: nil)
+    }
 }

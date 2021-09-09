@@ -89,4 +89,7 @@ struct SFSymbolName {
     static let chevronUp = "chevron.up"
     static let chevronDown = "chevron.down"
     static let filter = "slider.horizontal.3"
+    static let rectangleAndPencilAndEllipsis = "rectangle.and.pencil.and.ellipsis"
+    static let eye = "eye"
+    static let eyeSlash = "eye.slash"
 }

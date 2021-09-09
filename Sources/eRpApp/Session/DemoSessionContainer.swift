@@ -86,4 +86,8 @@ class DemoSessionContainer: UserSession {
     lazy var trustStoreSession: TrustStoreSession = {
         DemoTrustStoreSession()
     }()
+
+    lazy var appSecurityPasswordManager: AppSecurityPasswordManager = {
+        DemoAppSecurityPasswordManager()
+    }()
 }

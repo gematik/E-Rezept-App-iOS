@@ -185,6 +185,8 @@ enum SettingsDomain {
             action: /SettingsDomain.Action.appSecurity(action:)
         ) {
             AppSecurityDomain.Environment(userDataStore: $0.changeableUserSessionContainer.userSession.localUserStore,
+                                          appSecurityPasswordManager: $0.changeableUserSessionContainer.userSession
+                                          .appSecurityPasswordManager,
                                           schedulers: $0.schedulers)
         }
 

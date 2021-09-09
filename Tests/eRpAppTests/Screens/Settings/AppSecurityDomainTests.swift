@@ -20,6 +20,7 @@ import Combine
 import ComposableArchitecture
 @testable import eRpApp
 import eRpKit
+import Nimble
 import XCTest
 
 final class AppSecurityDomainTests: XCTestCase {
@@ -32,51 +33,28 @@ final class AppSecurityDomainTests: XCTestCase {
         AppSecurityDomain.Action,
         AppSecurityDomain.Environment
     >
+    var mockUserDataStore: MockUserDataStore!
+    var mockAppSecurityPasswordManager: MockAppSecurityPasswordManager!
 
-    class MockUserDataStore: UserDataStore {
-        var hideOnboarding: AnyPublisher<Bool, Never> = Just(false).eraseToAnyPublisher()
-        func set(hideOnboarding _: Bool) {
-            // Do nothing
-        }
+    override func setUp() {
+        super.setUp()
 
-        var hideCardWallIntro: AnyPublisher<Bool, Never> = Just(false).eraseToAnyPublisher()
-        func set(hideCardWallIntro _: Bool) {
-            // Do nothing
-        }
-
-        var serverEnvironmentConfiguration: AnyPublisher<String?, Never> = Just(nil).eraseToAnyPublisher()
-        func set(serverEnvironmentConfiguration _: String?) {
-            // Do nothing
-        }
-
-        private var appSecurityOptionCurrentValue: CurrentValueSubject<Int, Never> = CurrentValueSubject(0)
-        var appSecurityOption: AnyPublisher<Int, Never> {
-            appSecurityOptionCurrentValue.eraseToAnyPublisher()
-        }
-
-        func set(appSecurityOption: Int) {
-            appSecurityOptionCurrentValue.send(appSecurityOption)
-        }
-
-        var appTrackingAllowed: AnyPublisher<Bool, Never> = Just(false).eraseToAnyPublisher()
-        func set(appTrackingAllowed _: Bool) {
-            // Do nothing
-        }
+        mockUserDataStore = MockUserDataStore()
+        mockAppSecurityPasswordManager = MockAppSecurityPasswordManager()
     }
 
     private func testStore(for availableSecurityOptions: [AppSecurityDomain.AppSecurityOption] = [],
                            selectedSecurityOption: AppSecurityDomain.AppSecurityOption? = nil) -> TestStore {
         var appSecurityEnvironment = AppSecurityDomain.Environment(
-            userDataStore: MockUserDataStore(),
+            userDataStore: mockUserDataStore,
+            appSecurityPasswordManager: mockAppSecurityPasswordManager,
             schedulers: Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler())
         )
         appSecurityEnvironment.getAvailableSecurityOptions = {
             (availableSecurityOptions, nil)
         }()
 
-        if let selectedSecurityOption = selectedSecurityOption {
-            appSecurityEnvironment.selectedSecurityOption.set(selectedSecurityOption)
-        }
+        mockUserDataStore.appSecurityOption = Just(selectedSecurityOption?.id ?? 0).eraseToAnyPublisher()
 
         return TestStore(initialState: AppSecurityDomain.State(),
                          reducer: AppSecurityDomain.reducer,
@@ -209,6 +187,48 @@ final class AppSecurityDomainTests: XCTestCase {
         )
     }
 
+    func testSelectingAppSecurityOption_From_None_To_Password() {
+        let state = AppSecurityDomain.State(
+            availableSecurityOptions: [.password, .unsecured],
+            selectedSecurityOption: nil,
+            errorToDisplay: nil,
+            createPasswordState: nil
+        )
+
+        let store = TestStore(initialState: state,
+                              reducer: AppSecurityDomain.reducer,
+                              environment: AppSecurityDomain.Environment(
+                                  userDataStore: MockUserDataStore(),
+                                  appSecurityPasswordManager: mockAppSecurityPasswordManager,
+                                  schedulers: Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler())
+                              ))
+
+        store.send(.select(.password)) { state in
+            state.createPasswordState = CreatePasswordDomain.State(mode: .create)
+        }
+    }
+
+    func testSelectingAppSecurityOption_From_Password_To_Password() {
+        let state = AppSecurityDomain.State(
+            availableSecurityOptions: [.password, .unsecured],
+            selectedSecurityOption: .password,
+            errorToDisplay: nil,
+            createPasswordState: nil
+        )
+
+        let store = TestStore(initialState: state,
+                              reducer: AppSecurityDomain.reducer,
+                              environment: AppSecurityDomain.Environment(
+                                  userDataStore: MockUserDataStore(),
+                                  appSecurityPasswordManager: mockAppSecurityPasswordManager,
+                                  schedulers: Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler())
+                              ))
+
+        store.send(.select(.password)) { state in
+            state.createPasswordState = CreatePasswordDomain.State(mode: .update)
+        }
+    }
+
     func testSelectingAppSecurityOption_From_Unsecured_To_Biometry() {
         let availableSecurityOptions: [AppSecurityDomain.AppSecurityOption] = [.biometry(.faceID), .unsecured]
         let preSelectedSecurityOption: AppSecurityDomain.AppSecurityOption? = .unsecured
@@ -251,5 +271,31 @@ final class AppSecurityDomainTests: XCTestCase {
                 $0.selectedSecurityOption = selectedSecurityOption
             }
         )
+    }
+
+    func testCloseCreatePasswordViewOnClose() {
+        let state = AppSecurityDomain.State(
+            availableSecurityOptions: [.password, .unsecured],
+            selectedSecurityOption: nil,
+            errorToDisplay: nil,
+            createPasswordState: CreatePasswordDomain.State(mode: .create)
+        )
+
+        let store = TestStore(initialState: state,
+                              reducer: AppSecurityDomain.reducer,
+                              environment: AppSecurityDomain.Environment(
+                                  userDataStore: mockUserDataStore,
+                                  appSecurityPasswordManager: mockAppSecurityPasswordManager,
+                                  schedulers: Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler())
+                              ))
+
+        expect(self.mockUserDataStore.setAppSecurityOptionCalled) == false
+
+        store.send(.createPassword(action: .closeAfterPasswordSaved)) { state in
+            state.createPasswordState = nil
+            state.selectedSecurityOption = .password
+        }
+
+        expect(self.mockUserDataStore.setAppSecurityOptionCalled) == true
     }
 }

@@ -35,7 +35,7 @@ extension PharmacyFHIROperation: FHIRClientOperation {
         }
     }
 
-    public var path: String {
+    public var relativeUrlString: String? {
         switch self {
         case let .searchPharmacies(searchTerm, position, _):
             var queryItems: [URLQueryItem] = []
@@ -49,7 +49,7 @@ extension PharmacyFHIROperation: FHIRClientOperation {
             }
             var urlComps = URLComponents(string: "Location")
             urlComps?.queryItems = queryItems
-            return urlComps?.string ?? ""
+            return urlComps?.string
         }
     }
 

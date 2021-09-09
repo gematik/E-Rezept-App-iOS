@@ -62,8 +62,12 @@ public class ErxTaskFHIRDataStore: ErxTaskDataStore {
             .eraseToAnyPublisher()
     }
 
-    public func listAllTasks() -> AnyPublisher<[ErxTask], Error> {
-        fhirClient.fetchAllTaskIDs()
+    public func fetchLatestLastModifiedForErxTasks() -> AnyPublisher<String?, Error> {
+        Fail(error: Error.notImplemented).eraseToAnyPublisher()
+    }
+
+    public func listAllTasks(after referenceDate: String?) -> AnyPublisher<[ErxTask], Error> {
+        fhirClient.fetchAllTaskIDs(after: referenceDate)
             .mapError { Error.fhirClientError($0) }
             .first()
             .flatMap { self.collectAndMergeTaskPublishers(taskIds: $0) }
@@ -132,6 +136,10 @@ public class ErxTaskFHIRDataStore: ErxTaskDataStore {
             .eraseToAnyPublisher()
     }
 
+    public func fetchLatestTimestampForAuditEvents() -> AnyPublisher<String?, Error> {
+        Fail(error: Error.notImplemented).eraseToAnyPublisher()
+    }
+
     public func listAllAuditEvents(after referenceDate: String? = nil,
                                    for locale: String? = nil) -> AnyPublisher<[ErxAuditEvent], Error> {
         fhirClient.fetchAllAuditEvents(after: referenceDate, for: locale)
@@ -165,12 +173,17 @@ public class ErxTaskFHIRDataStore: ErxTaskDataStore {
     }
 
     public func listAllCommunications(
+        after referenceDate: String?,
         for _: ErxTask.Communication.Profile
     ) -> AnyPublisher<[ErxTask.Communication], Error> {
-        fhirClient.communicationResources()
+        fhirClient.communicationResources(after: referenceDate)
             .mapError { Error.fhirClientError($0) }
             .first()
             .eraseToAnyPublisher()
+    }
+
+    public func fetchLatestTimestampForCommunications() -> AnyPublisher<String?, Error> {
+        Fail(error: Error.notImplemented).eraseToAnyPublisher()
     }
 
     public func listAllUnreadCommunications(
@@ -185,6 +198,23 @@ public class ErxTaskFHIRDataStore: ErxTaskDataStore {
     }
 
     public func countAllUnreadCommunications(for _: ErxTask.Communication.Profile) -> AnyPublisher<Int, Error> {
+        Fail(error: Error.notImplemented).eraseToAnyPublisher()
+    }
+
+    public func fetchLatestHandOverDateForMedicationDispenses() -> AnyPublisher<String?, Error> {
+        Fail(error: Error.notImplemented).eraseToAnyPublisher()
+    }
+
+    public func listAllMedicationDispenses(
+        after referenceDate: String?
+    ) -> AnyPublisher<[ErxTask.MedicationDispense], Error> {
+        fhirClient.fetchAllMedicationDispenses(after: referenceDate)
+            .mapError { Error.fhirClientError($0) }
+            .first()
+            .eraseToAnyPublisher()
+    }
+
+    public func save(medicationDispenses _: [ErxTask.MedicationDispense]) -> AnyPublisher<Bool, Error> {
         Fail(error: Error.notImplemented).eraseToAnyPublisher()
     }
 }

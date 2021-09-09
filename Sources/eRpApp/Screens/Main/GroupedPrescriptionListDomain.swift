@@ -159,7 +159,7 @@ enum GroupedPrescriptionListDomain {
         case let .prescriptionDetailViewTapped(erxTask):
             state.selectedPrescriptionDetailState = PrescriptionDetailDomain.State(
                 erxTask: erxTask,
-                isRedeemed: erxTask.redeemedOn != nil
+                isRedeemed: erxTask.isRedeemed
             )
             return .none
         case .dismissPrescriptionDetailView, .prescriptionDetailAction(.close):

@@ -110,10 +110,10 @@ internal enum Asset {
     internal static let appLogoTabItem = ImageAsset(name: "AppLogoTabItem")
     internal static let bubbleLeft = ImageAsset(name: "bubble.left")
   }
-  internal static let authHead = ImageAsset(name: "auth_head")
   internal static let findCan = ImageAsset(name: "find_can")
   internal enum LaunchAssets {
     internal static let g = ImageAsset(name: "g")
+    internal static let logoGematik = ImageAsset(name: "logo_gematik")
     internal static let srgLeft = ImageAsset(name: "srg_left")
     internal static let srgSmallLeft = ImageAsset(name: "srg_small_left")
   }

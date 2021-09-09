@@ -50,11 +50,11 @@ final class FHIRClientTests: XCTestCase {
     }
 
     func testFHIRClientWithHTTPError() {
-        let mockOperation = MockFHIRClientOperation(path: "/path/to/operation")
+        let mockOperation = MockFHIRClientOperation(relativeUrlString: "/path/to/operation")
         let expectedError = URLError(.notConnectedToInternet)
         var counter = 0
         stub(condition: isHost(host)
-                && isPath(mockOperation.path)
+                && isPath(mockOperation.relativeUrlString!)
                 && isMethodGET()
                 && hasHeaderNamed(mockOperation.httpHeaders.first!.key,
                                   value: mockOperation.httpHeaders.first!.value)) { _ in
@@ -74,7 +74,7 @@ final class FHIRClientTests: XCTestCase {
     }
 
     func testFHIRClientWithInternalError() {
-        let mockOperation = MockFHIRClientOperation(path: "")
+        let mockOperation = MockFHIRClientOperation(relativeUrlString: "")
         let expectedError = FHIRClient.Error.internalError("Operation endpoint url could not be constructed")
 
         sut.execute(operation: mockOperation)
@@ -87,12 +87,12 @@ final class FHIRClientTests: XCTestCase {
     }
 
     func testFHIRClientWithSuccess() {
-        let mockOperation = MockFHIRClientOperation(path: "/path/to/operation")
+        let mockOperation = MockFHIRClientOperation(relativeUrlString: "/path/to/operation")
         let url = resourceUrl(for: "emptyResponse.json")
         var counter = 0
 
         stub(condition: isHost(host)
-                && isPath(mockOperation.path)
+                && isPath(mockOperation.relativeUrlString!)
                 && isMethodGET()
                 && hasHeaderNamed(mockOperation.httpHeaders.first!.key,
                                   value: mockOperation.httpHeaders.first!.value)) { _ in
@@ -113,7 +113,7 @@ final class FHIRClientTests: XCTestCase {
     }
 
     func testFHIRClientWithOperationOutcomeResponse() {
-        let mockOperation = MockFHIRClientOperation(path: "/path/to/operation")
+        let mockOperation = MockFHIRClientOperation(relativeUrlString: "/path/to/operation")
         let url = resourceUrl(for: "errorFHIRResponse.json")
 
         let responseData = try! Data(contentsOf: url)
@@ -124,7 +124,7 @@ final class FHIRClientTests: XCTestCase {
 
         var counter = 0
         stub(condition: isHost(host)
-                && isPath(mockOperation.path)
+                && isPath(mockOperation.relativeUrlString!)
                 && isMethodGET()
                 && hasHeaderNamed(mockOperation.httpHeaders.first!.key,
                                   value: mockOperation.httpHeaders.first!.value)) { _ in

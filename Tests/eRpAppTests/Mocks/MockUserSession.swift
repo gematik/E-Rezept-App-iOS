@@ -31,7 +31,7 @@ import VAUClient
 class MockUserSession: UserSession {
     lazy var trustStoreSession: TrustStoreSession = DemoTrustStoreSession()
 
-    private var isLoggedIn: Bool
+    var isLoggedIn: Bool
 
     init(isAuthenticated: Bool = true) {
         isLoggedIn = isAuthenticated
@@ -57,9 +57,13 @@ class MockUserSession: UserSession {
         MockSecureUserStore()
     }()
 
-    lazy var localUserStore: UserDataStore = {
+    lazy var mockUserDataStore: MockUserDataStore = {
         MockUserDataStore()
     }()
+
+    var localUserStore: UserDataStore {
+        mockUserDataStore
+    }
 
     lazy var hintEventsStore: EventsStore = {
         MockHintEventsStore()
@@ -79,6 +83,10 @@ class MockUserSession: UserSession {
     lazy var nfcSessionProvider: NFCSignatureProvider = {
         NFCSignatureProviderMock()
     }()
+
+    lazy var appSecurityPasswordManager: AppSecurityPasswordManager = {
+        MockAppSecurityPasswordManager()
+    }()
 }
 
 class MockHintEventsStore: EventsStore {
@@ -86,31 +94,6 @@ class MockHintEventsStore: EventsStore {
             Just(HintState()).eraseToAnyPublisher()
 
     var hintState = HintState()
-}
-
-class MockUserDataStore: UserDataStore {
-    var hideOnboarding: AnyPublisher<Bool, Never> = Just(false).eraseToAnyPublisher()
-
-    func set(hideOnboarding _: Bool) {
-        // Do nothing
-    }
-
-    var hideCardWallIntro: AnyPublisher<Bool, Never> = Just(false).eraseToAnyPublisher()
-
-    func set(hideCardWallIntro _: Bool) {
-        // Do nothing
-    }
-
-    var serverEnvironmentConfiguration: AnyPublisher<String?, Never> = Just(nil).eraseToAnyPublisher()
-    func set(serverEnvironmentConfiguration _: String?) {
-        // Do nothing
-    }
-
-    var appSecurityOption: AnyPublisher<Int, Never> = Just(0).eraseToAnyPublisher()
-    /// The app security option
-    func set(appSecurityOption _: Int) {
-        // Do nothing
-    }
 }
 
 // TODO: Maybe MockSecureUserStore can be removed? swiftlint:disable:this todo

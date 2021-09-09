@@ -95,7 +95,7 @@ final class GroupedPrescriptionRepositoryTests: XCTestCase {
             expect(groupedPrescriptions.count) == 7
 
             // test 13 out of 15 are not redeemed
-            let notRedeemed = groupedPrescriptions.flatMap(\.prescriptions).filter { $0.redeemedOn == nil }
+            let notRedeemed = groupedPrescriptions.flatMap(\.prescriptions).filter { !$0.isRedeemed }
             expect(notRedeemed.count) == 13
 
             let redeemedGroup: [GroupedPrescription] = groupedPrescriptions.filter(\.isRedeemed)

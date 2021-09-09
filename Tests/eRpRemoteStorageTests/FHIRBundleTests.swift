@@ -26,10 +26,7 @@ import XCTest
 
 final class FHIRBundleTests: XCTestCase {
     func testParseErxTasks() throws {
-        let gemFhirBundle: ModelsR4.Bundle = try Bundle(for: Self.self)
-            .bundleFromResources(name: "FHIRExampleData.bundle")
-            .decode(ModelsR4.Bundle.self,
-                    from: "getTaskResponse_5e00e907-1e4f-11b2-80be-b806a73c0cd0.json")
+        let gemFhirBundle = try decode(resource: "getTaskResponse_5e00e907-1e4f-11b2-80be-b806a73c0cd0.json")
 
         guard let task = try gemFhirBundle.parseErxTasks().first else {
             fail("Could not parse ModelsR4.Bundle into TaskBundle.")
@@ -42,6 +39,7 @@ final class FHIRBundleTests: XCTestCase {
         expect(task.fullUrl).to(beNil())
         expect(task.medication?.name) == "Sumatriptan-1a Pharma 100 mg Tabletten"
         expect(task.authoredOn) == "2020-02-03T00:00:00+00:00"
+        expect(task.lastModified) == "2021-03-24T08:35:26.548174460+00:00"
         expect(task.expiresOn) == "2021-06-24"
         expect(task.author) == "Hausarztpraxis Dr. Topp-Glücklich"
         expect(task.dispenseValidityEnd).to(beNil())
@@ -68,10 +66,7 @@ final class FHIRBundleTests: XCTestCase {
     }
 
     func testParseAuditEventsFromSamplePayload() throws {
-        let gemFhirBundle: ModelsR4.Bundle = try Bundle(for: Self.self)
-            .bundleFromResources(name: "FHIRExampleData.bundle")
-            .decode(ModelsR4.Bundle.self,
-                    from: "getAuditEventResponse_4_entries.json")
+        let gemFhirBundle = try decode(resource: "getAuditEventResponse_4_entries.json")
 
         let auditEvents = try gemFhirBundle.parseErxAuditEvents()
 
@@ -95,10 +90,7 @@ final class FHIRBundleTests: XCTestCase {
     }
 
     func testParseErxTaskCommunicationReply() throws {
-        let communicationBundle: ModelsR4.Bundle = try Bundle(for: Self.self)
-            .bundleFromResources(name: "FHIRExampleData.bundle")
-            .decode(ModelsR4.Bundle.self,
-                    from: "erxCommunicationReplyResponse.json")
+        let communicationBundle = try decode(resource: "erxCommunicationReplyResponse.json")
 
         let communications = try communicationBundle.parseErxTaskCommunications()
         expect(communications.count) == 4
@@ -118,10 +110,7 @@ final class FHIRBundleTests: XCTestCase {
     }
 
     func testParseErxTaskCommunicationDispReq() throws {
-        let communicationBundle: ModelsR4.Bundle = try Bundle(for: Self.self)
-            .bundleFromResources(name: "FHIRExampleData.bundle")
-            .decode(ModelsR4.Bundle.self,
-                    from: "erxCommunicationDispReqResponse.json")
+        let communicationBundle = try decode(resource: "erxCommunicationDispReqResponse.json")
 
         let communications = try communicationBundle.parseErxTaskCommunications()
         expect(communications.count) == 4
@@ -138,5 +127,32 @@ final class FHIRBundleTests: XCTestCase {
 
         // test payload parsing for all possible variations of payload
         expect(first.payloadJSON) == "{do something}"
+    }
+
+    func testParseErxTaskMedicationDispense() throws {
+        let medicationDispenceBundle: ModelsR4.Bundle = try decode(resource: "medicationDispenseBundle.json")
+
+        let medicationDispenses = try medicationDispenceBundle.parseErxTaskMedicationDispenses()
+        expect(medicationDispenses.count) == 2
+        guard let first = medicationDispenses.last else {
+            fail("expected to have this medicationDispenses")
+            return
+        }
+        expect(first.taskId) == "160.000.000.014.285.76"
+        expect(first.insuranceId) == "X114428530"
+        expect(first.pzn) == "03273514"
+        expect(first.name) == "gesund"
+        expect(first.dosageForm) == "TAB"
+        expect(first.dosageInstruction) == "1-0-1-0"
+        expect(first.telematikId) == "3-SMC-B-Testkarte-883110000129068"
+        expect(first.whenHandedOver) == "2021-07-23T10:55:04+02:00"
+        expect(first.amount) == 12.0
+        expect(first.dose).to(beNil())
+    }
+
+    private func decode(resource file: String) throws -> ModelsR4.Bundle {
+        try Bundle(for: Self.self)
+            .bundleFromResources(name: "FHIRExampleData.bundle")
+            .decode(ModelsR4.Bundle.self, from: file)
     }
 }

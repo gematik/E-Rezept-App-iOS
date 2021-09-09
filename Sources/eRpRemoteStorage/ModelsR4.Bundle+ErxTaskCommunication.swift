@@ -80,20 +80,15 @@ extension ModelsR4.Bundle {
 }
 
 extension ModelsR4.Communication {
-    enum UrlKey {
-        static var telematikID = "https://gematik.de/fhir/NamingSystem/TelematikID"
-        static var kvID = "http://fhir.de/NamingSystem/gkv/kvid-10"
-    }
-
     func telematikId(for profile: ErxTask.Communication.Profile) -> String? {
         switch profile {
         case .reply:
-            if sender?.identifier?.system?.value?.url.absoluteString == UrlKey.telematikID {
+            if sender?.identifier?.system?.value?.url.absoluteString == FHIRResponseKeys.telematikIdKey {
                 return sender?.identifier?.value?.value?.string
             }
         case .dispReq:
             return recipient?.first { recipient in
-                recipient.identifier?.system?.value?.url.absoluteString == UrlKey.telematikID
+                recipient.identifier?.system?.value?.url.absoluteString == FHIRResponseKeys.telematikIdKey
             }?.identifier?.value?.value?.string
         case .infoReq, .representative, .none, .all:
             return nil
@@ -106,10 +101,10 @@ extension ModelsR4.Communication {
         switch profile {
         case .reply:
             return recipient?.first { recipient in
-                recipient.identifier?.system?.value?.url.absoluteString == UrlKey.kvID
+                recipient.identifier?.system?.value?.url.absoluteString == FHIRResponseKeys.kvIDKey
             }?.identifier?.value?.value?.string
         case .dispReq:
-            if sender?.identifier?.system?.value?.url.absoluteString == UrlKey.kvID {
+            if sender?.identifier?.system?.value?.url.absoluteString == FHIRResponseKeys.kvIDKey {
                 return sender?.identifier?.value?.value?.string
             }
         case .infoReq, .representative, .none, .all:

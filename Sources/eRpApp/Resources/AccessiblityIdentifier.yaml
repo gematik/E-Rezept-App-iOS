@@ -91,6 +91,11 @@ onboarding:
 auth:
   - auth_btn_biometrics_faceid
   - auth_btn_biometrics_touchid
+  - auth_btn_password_continue
+  - auth_txt_password_failure
+  - auth_edt_password_input
+  - auth_txt_password_placeholder
+  - auth_txt_password_subtitle
 settings:
   demo:
     - nav_done
@@ -102,6 +107,16 @@ settings:
     - stg_txt_security_faceid
     - stg_txt_security_touchid
     - stg_txt_security_unsecured
+    - stg_txt_security_password
+  createPassword:
+    - cpw_btn_save
+    - cpw_btn_update
+    - cpw_inp_current_password
+    - cpw_inp_passwordA
+    - cpw_inp_passwordB
+    - cpw_txt_password_recommendation
+    - cpw_txt_passwords_dont_match
+    - cpw_txt_title
   logout:
     - stg_btn_logout
   legalNotice:

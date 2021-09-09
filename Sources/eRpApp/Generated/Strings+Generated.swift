@@ -29,6 +29,8 @@ internal enum L10n {
   internal static let authBtnBiometricsFaceid = LocalizedStringKey("auth_btn_biometrics_faceid")
   /// Unlock with Touch ID
   internal static let authBtnBiometricsTouchid = LocalizedStringKey("auth_btn_biometrics_touchid")
+  /// Weiter
+  internal static let authBtnPasswordContinue = LocalizedStringKey("auth_btn_password_continue")
   /// You have selected Face ID to secure your data.
   internal static let authTxtBiometricsFaceidDescription = LocalizedStringKey("auth_txt_biometrics_faceid_description")
   /// Unlock with Face ID
@@ -61,6 +63,14 @@ internal enum L10n {
   internal static let authTxtBiometricsTouchidDescription = LocalizedStringKey("auth_txt_biometrics_touchid_description")
   /// Unlock with Touch ID
   internal static let authTxtBiometricsTouchidStart = LocalizedStringKey("auth_txt_biometrics_touchid_start")
+  /// Falsches Passwort. Bitte probieren Sie es erneut.
+  internal static let authTxtPasswordFailure = LocalizedStringKey("auth_txt_password_failure")
+  /// Eingabefeld Kennwort
+  internal static let authTxtPasswordLabel = LocalizedStringKey("auth_txt_password_label")
+  /// Kennwort eingeben
+  internal static let authTxtPasswordPlaceholder = LocalizedStringKey("auth_txt_password_placeholder")
+  /// Kennwort eingeben
+  internal static let authTxtPasswordSubtitle = LocalizedStringKey("auth_txt_password_subtitle")
   /// Demo mode enabled
   internal static let bnrTxtDemoMode = LocalizedStringKey("bnr_txt_demo_mode")
   /// To use the scanner, you must allow the app to access your camera in the system settings.
@@ -315,6 +325,28 @@ internal enum L10n {
   internal static let cdwTxtRcStepsTitle = LocalizedStringKey("cdw_txt_rc_steps_title")
   /// Login
   internal static let cdwTxtRcTitle = LocalizedStringKey("cdw_txt_rc_title")
+  /// Ändern
+  internal static let cpwBtnChange = LocalizedStringKey("cpw_btn_change")
+  /// Speichern
+  internal static let cpwBtnSave = LocalizedStringKey("cpw_btn_save")
+  /// Aktuelles Kennwort
+  internal static let cpwInpCurrentPasswordPlaceholder = LocalizedStringKey("cpw_inp_current_password_placeholder")
+  /// Kennwort eingeben
+  internal static let cpwInpPasswordAPlaceholder = LocalizedStringKey("cpw_inp_passwordA_placeholder")
+  /// Kennwort wiederholen
+  internal static let cpwInpPasswordBPlaceholder = LocalizedStringKey("cpw_inp_passwordB_placeholder")
+  /// Das Passwort ist falsch.
+  internal static let cpwTxtCurrentPasswordWrong = LocalizedStringKey("cpw_txt_current_password_wrong")
+  /// Empfehlung: Möglichst wenige Worte und keine Redewendungen verwenden.\nSymbole, Zahlen oder Großbuchstaben sind nicht notwendig.
+  internal static let cpwTxtPasswordRecommendation = LocalizedStringKey("cpw_txt_password_recommendation")
+  /// Zweite Eingabe des Kennwortes, um Tippfehler zu erkennen
+  internal static let cpwTxtPasswordBAccessibility = LocalizedStringKey("cpw_txt_passwordB_accessibility")
+  /// Die Eingaben weichen vorneinander ab.
+  internal static let cpwTxtPasswordsDontMatch = LocalizedStringKey("cpw_txt_passwords_dont_match")
+  /// Kennwort
+  internal static let cpwTxtTitle = LocalizedStringKey("cpw_txt_title")
+  /// Kennwort ändern
+  internal static let cpwTxtUpdateTitle = LocalizedStringKey("cpw_txt_update_title")
   /// Cancel
   internal static let dmoTxtAlertNo = LocalizedStringKey("dmo_txt_alert_no")
   /// Would you like to disable demo mode?
@@ -1367,6 +1399,10 @@ internal enum L10n {
   internal static let scnTxtAuthor = LocalizedStringKey("scn_txt_author")
   /// Medicine %@
   internal static let scnTxtMedication = LocalizedStringKey("scn_txt_medication_%@")
+  /// Ausgewählt
+  internal static let sectionTxtIsActiveValue = LocalizedStringKey("section_txt_is_active_value")
+  /// Nicht Ausgewählt
+  internal static let sectionTxtIsInactiveValue = LocalizedStringKey("section_txt_is_inactive_value")
   /// Delete login details
   internal static let stgBtnLogout = LocalizedStringKey("stg_btn_logout")
   /// Privacy Policy
@@ -1447,6 +1483,8 @@ internal enum L10n {
   internal static let stgTxtSecurityOptionFaceidTitle = LocalizedStringKey("stg_txt_security_option_faceid_title")
   /// Not recommended
   internal static let stgTxtSecurityOptionNoneDescription = LocalizedStringKey("stg_txt_security_option_none_description")
+  /// Kennwort
+  internal static let stgTxtSecurityOptionPasswordTitle = LocalizedStringKey("stg_txt_security_option_password_title")
   /// Touch ID
   internal static let stgTxtSecurityOptionTouchidTitle = LocalizedStringKey("stg_txt_security_option_touchid_title")
   /// Not secured

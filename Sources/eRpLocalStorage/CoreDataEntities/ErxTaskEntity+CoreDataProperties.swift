@@ -27,6 +27,7 @@ extension ErxTaskEntity {
     @NSManaged public var accessCode: String?
     @NSManaged public var author: String?
     @NSManaged public var authoredOn: String?
+    @NSManaged public var lastModified: String?
     @NSManaged public var dispenseValidityEnd: String?
     @NSManaged public var expiresOn: String?
     @NSManaged public var form: String?
@@ -38,12 +39,13 @@ extension ErxTaskEntity {
     @NSManaged public var source: String?
     @NSManaged public var substitutionAllowed: Bool
     @NSManaged public var auditEvents: NSSet?
+    @NSManaged public var communications: NSSet?
     @NSManaged public var medication: ErxTaskMedicationEntity?
     @NSManaged public var organization: ErxTaskOrganizationEntity?
     @NSManaged public var patient: ErxTaskPatientEntity?
     @NSManaged public var practitioner: ErxTaskPractitionerEntity?
     @NSManaged public var workRelatedAccident: ErxTaskWorkRelatedAccidentEntity?
-    @NSManaged public var communications: NSSet?
+    @NSManaged public var medicationDispense: ErxTaskMedicationDispenseEntity?
 }
 
 // MARK: Generated accessors for auditEvents

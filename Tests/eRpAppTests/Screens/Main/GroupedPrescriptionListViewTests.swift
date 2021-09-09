@@ -36,6 +36,17 @@ final class GroupedPrescriptionListViewTests: XCTestCase {
         GroupedPrescriptionListDomain.Environment
     >
 
+    var userSession: MockUserSession!
+    var userDataStore: MockUserDataStore {
+        userSession.mockUserDataStore
+    }
+
+    override func setUp() {
+        super.setUp()
+
+        userSession = MockUserSession()
+    }
+
     private func testStore(for groupedPrescriptionStore: GroupedPrescriptionRepository,
                            isAuthenticated: Bool = true) -> TestStore {
         let schedulers = Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler())
@@ -45,12 +56,14 @@ final class GroupedPrescriptionListViewTests: XCTestCase {
             Just(LoginResult.success(isAuthenticated))
             .eraseToAnyPublisher()
 
+        userSession.isLoggedIn = isAuthenticated
+
         return TestStore(
             initialState: GroupedPrescriptionListDomain.State(),
             reducer: GroupedPrescriptionListDomain.domainReducer,
             environment: GroupedPrescriptionListDomain.Environment(
                 router: MockRouting(),
-                userSession: MockUserSession(isAuthenticated: isAuthenticated),
+                userSession: userSession,
                 serviceLocator: ServiceLocator(),
                 accessibilityAnnouncementReceiver: { _ in },
                 groupedPrescriptionStore: groupedPrescriptionStore,
@@ -301,6 +314,7 @@ final class GroupedPrescriptionListViewTests: XCTestCase {
     }
 
     func testRefreshShouldShowCardWallWhenNotAuthenticated() {
+        userDataStore.hideCardWallIntro = Just(false).eraseToAnyPublisher()
         let store = testStore(groups: [],
                               auditEvents: [],
                               isAuthenticated: false)
@@ -324,6 +338,7 @@ final class GroupedPrescriptionListViewTests: XCTestCase {
     }
 
     func testRefreshShouldShowCardWallServerResponseIs403Forbidden() {
+        userDataStore.hideCardWallIntro = Just(false).eraseToAnyPublisher()
         let repository = MockGroupedPrescriptionRepository(groups: [])
         repository.loadRemoteAndSavePublisher = Fail(
             error: ErxTaskRepositoryError.remote(
@@ -352,6 +367,8 @@ final class GroupedPrescriptionListViewTests: XCTestCase {
     }
 
     func testRefreshShouldShowCardWallServerResponseIs401Unauthorized() {
+        userDataStore.hideCardWallIntro = Just(false).eraseToAnyPublisher()
+
         let repository = MockGroupedPrescriptionRepository(groups: [])
         repository.loadRemoteAndSavePublisher = Fail(
             error: ErxTaskRepositoryError.remote(

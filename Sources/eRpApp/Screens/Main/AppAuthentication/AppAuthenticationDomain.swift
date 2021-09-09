@@ -27,6 +27,7 @@ enum AppAuthenticationDomain {
     struct State: Equatable {
         var didCompleteAuthentication = false
         var biometrics: AppAuthenticationBiometricsDomain.State?
+        var password: AppAuthenticationPasswordDomain.State?
     }
 
     enum Action: Equatable {
@@ -34,11 +35,13 @@ enum AppAuthenticationDomain {
         case loadAppAuthenticationOptionResponse(AppSecurityDomain.AppSecurityOption?)
 
         case biometrics(action: AppAuthenticationBiometricsDomain.Action)
+        case password(action: AppAuthenticationPasswordDomain.Action)
     }
 
     struct Environment {
         let schedulers: Schedulers
         var appAuthenticationProvider: AppAuthenticationProvider
+        var appSecurityPasswordManager: AppSecurityPasswordManager
         var didCompleteAuthentication: (() -> Void)?
 
         private let userDataStore: UserDataStore
@@ -46,10 +49,12 @@ enum AppAuthenticationDomain {
         init(userDataStore: UserDataStore,
              schedulers: Schedulers,
              appAuthenticationProvider: AppAuthenticationProvider,
+             appSecurityPasswordManager: AppSecurityPasswordManager,
              didCompleteAuthentication: (() -> Void)? = nil) {
             self.userDataStore = userDataStore
             self.schedulers = schedulers
             self.appAuthenticationProvider = appAuthenticationProvider
+            self.appSecurityPasswordManager = appSecurityPasswordManager
             self.didCompleteAuthentication = didCompleteAuthentication
         }
     }
@@ -64,6 +69,7 @@ enum AppAuthenticationDomain {
                 .map { Action.loadAppAuthenticationOptionResponse($0) }
                 .receive(on: environment.schedulers.main)
                 .eraseToEffect()
+
         case let .loadAppAuthenticationOptionResponse(response):
             guard let authenticationOption = response else {
                 state.didCompleteAuthentication = true
@@ -71,7 +77,6 @@ enum AppAuthenticationDomain {
                 state.biometrics = nil
                 return .none
             }
-
             switch authenticationOption {
             case let .biometry(type):
                 state.biometrics = AppAuthenticationBiometricsDomain.State(biometryType: type)
@@ -79,9 +84,11 @@ enum AppAuthenticationDomain {
                 state.didCompleteAuthentication = true
                 environment.didCompleteAuthentication?()
                 state.biometrics = nil
+            case .password:
+                state.password = AppAuthenticationPasswordDomain.State()
             }
-
             return .none
+
         case let .biometrics(action: .authenticationChallengeResponse(response)):
             if case .success = response {
                 state.didCompleteAuthentication = true
@@ -89,14 +96,22 @@ enum AppAuthenticationDomain {
                 state.biometrics = nil
             }
             return .none
-        case .biometrics(action: .startAuthenticationChallenge),
-             .biometrics(action: .dismissError):
+
+        case .password(.closeAfterPasswordVerified):
+            state.didCompleteAuthentication = true
+            environment.didCompleteAuthentication?()
+            state.password = nil
+            return .none
+
+        case .password,
+             .biometrics:
             return .none
         }
     }
 
     static let reducer = Reducer.combine(
         biometricsPullbackReducer,
+        passwordPullbackReducer,
         domainReducer
     )
 
@@ -112,6 +127,16 @@ enum AppAuthenticationDomain {
                     authenticationChallengeProvider: BiometricsAuthenticationChallengeProvider()
                 )
             }
+
+    private static let passwordPullbackReducer: Reducer =
+        AppAuthenticationPasswordDomain.reducer
+            .optional()
+            .pullback(state: \.password,
+                      action: /AppAuthenticationDomain.Action.password(action:)) { currentEnvironment in
+                AppAuthenticationPasswordDomain.Environment(
+                    appSecurityPasswordManager: currentEnvironment.appSecurityPasswordManager
+                )
+            }
 }
 
 extension AppAuthenticationDomain {
@@ -123,10 +148,12 @@ extension AppAuthenticationDomain {
         }
 
         func loadAppAuthenticationOption() -> AnyPublisher<AppSecurityDomain.AppSecurityOption?, Never> {
-            userDataStore.appSecurityOption.map {
-                AppSecurityDomain.AppSecurityOption(fromId: $0)
-            }
-            .eraseToAnyPublisher()
+            userDataStore
+                .appSecurityOption
+                .map {
+                    AppSecurityDomain.AppSecurityOption(fromId: $0)
+                }
+                .eraseToAnyPublisher()
         }
     }
 }
@@ -134,6 +161,30 @@ extension AppAuthenticationDomain {
 extension AppAuthenticationDomain {
     enum Dummies {
         static let state = State()
+
+        static let environment = Environment(
+            userDataStore: DemoSessionContainer().localUserStore,
+            schedulers: AppContainer.shared.schedulers,
+            appAuthenticationProvider:
+            AppAuthenticationDomain.DefaultAuthenticationProvider(
+                userDataStore: DemoSessionContainer().localUserStore
+            ),
+            appSecurityPasswordManager: DummyAppSecurityPasswordManager()
+        )
+
+        static let store = Store(
+            initialState: state,
+            reducer: reducer,
+            environment: environment
+        )
+
+        static func storeFor(_ state: State) -> Store {
+            Store(
+                initialState: state,
+                reducer: domainReducer,
+                environment: environment
+            )
+        }
     }
 }
 

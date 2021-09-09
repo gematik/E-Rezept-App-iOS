@@ -4,6 +4,7 @@
 "alert_error_title" = "Hata";
 "auth_btn_biometrics_faceid" = "Kilidi Face ID ile aç";
 "auth_btn_biometrics_touchid" = "Kilidi Touch ID ile aç";
+"auth_btn_password_continue" = "Weiter";
 "auth_txt_biometrics_faceid_description" = "Verilerinizi güvence altına almak için Face ID'yi seçtiniz.";
 "auth_txt_biometrics_faceid_start" = "Face ID ile kilidini aç";
 "auth_txt_biometrics_failed_authentication_failed" = "Kimlik doğrulama başarısız";
@@ -20,6 +21,10 @@
 "auth_txt_biometrics_title" = "Hoş geldiniz";
 "auth_txt_biometrics_touchid_description" = "Verilerinizi güvence altına almak için Touch ID'yi seçtiniz.";
 "auth_txt_biometrics_touchid_start" = "Touch ID ile kilidini aç";
+"auth_txt_password_failure" = "Falsches Passwort. Bitte probieren Sie es erneut.";
+"auth_txt_password_label" = "Eingabefeld Kennwort";
+"auth_txt_password_placeholder" = "Kennwort eingeben";
+"auth_txt_password_subtitle" = "Kennwort eingeben";
 "bnr_txt_demo_mode" = "Demo modu etkin";
 "cam_init_fail_message" = "Tarayıcıyı kullanmak için uygulamanın sistem ayarlarından kameranıza erişmesine izin vermeniz gerekir.";
 "cam_init_fail_title" = "Kameraya erişim reddedildi";
@@ -146,6 +151,17 @@
 "cdw_txt_rc_step_verify_at_idp" = "Giriş reçete dizini";
 "cdw_txt_rc_steps_title" = "Adımlar";
 "cdw_txt_rc_title" = "Giriş";
+"cpw_btn_change" = "Ändern";
+"cpw_btn_save" = "Speichern";
+"cpw_inp_current_password_placeholder" = "Aktuelles Kennwort";
+"cpw_inp_passwordA_placeholder" = "Kennwort eingeben";
+"cpw_inp_passwordB_placeholder" = "Kennwort wiederholen";
+"cpw_txt_current_password_wrong" = "Das Passwort ist falsch.";
+"cpw_txt_passwordB_accessibility" = "Zweite Eingabe des Kennwortes, um Tippfehler zu erkennen";
+"cpw_txt_password_recommendation" = "Empfehlung: Möglichst wenige Worte und keine Redewendungen verwenden.\nSymbole, Zahlen oder Großbuchstaben sind nicht notwendig.";
+"cpw_txt_passwords_dont_match" = "Die Eingaben weichen vorneinander ab.";
+"cpw_txt_title" = "Kennwort";
+"cpw_txt_update_title" = "Kennwort ändern";
 "dmo_txt_alert_no" = "İptal et";
 "dmo_txt_alert_text" = "Demo modunu devre dışı bırakmak ister misiniz?";
 "dmo_txt_alert_title" = "Demo modu";
@@ -672,6 +688,8 @@
 "scn_msg_scanning_code_consecutive" = "Başka bir reçete kodu için hazır";
 "scn_txt_author" = "Taranmış reçete";
 "scn_txt_medication_%@" = "İlaç %@";
+"section_txt_is_active_value" = "Ausgewählt";
+"section_txt_is_inactive_value" = "Nicht Ausgewählt";
 "stg_btn_logout" = "Erişim verilerini sil";
 "stg_dpo_txt_data_privacy" = "Veri koruma";
 "stg_dpo_txt_foss" = "Open Source Licenses";
@@ -712,6 +730,7 @@
 "stg_txt_security_no_biometrics_warning" = "Biyometrik hata: %@";
 "stg_txt_security_option_faceid_title" = "Face ID";
 "stg_txt_security_option_none_description" = "Önerilmez";
+"stg_txt_security_option_password_title" = "Kennwort";
 "stg_txt_security_option_touchid_title" = "Touch ID";
 "stg_txt_security_option_unsecured_title" = "Yedekleme olmadan";
 "stg_txt_security_warning" = "Bu uygulama henüz güvenli hale getirilmedi. Parmak izi veya yüz taraması ile verilerinizin korumasını iyileştirin.";

@@ -44,7 +44,7 @@ extension Sequence where Self.Element == ErxTask {
             return byDate.flatMap { issueDate, erxTasks -> [GroupedPrescription] in
                 let byAuthor = Dictionary(grouping: erxTasks) { $0.author ?? $0.practitioner?.name }
                 return byAuthor.flatMap { author, erxTasks -> [GroupedPrescription] in
-                    let byRedeemedState = Dictionary(grouping: erxTasks) { $0.redeemedOn != nil }
+                    let byRedeemedState = Dictionary(grouping: erxTasks) { $0.isRedeemed }
                     return byRedeemedState.compactMap { isRedeemed, prescriptions in
                         let sortedPrescriptions = prescriptions.sorted(by: <)
                         let identifier = sortedPrescriptions.map(\.identifier).joined(separator: "-")

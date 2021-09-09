@@ -68,6 +68,7 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
                 expect(erxTask.authoredOn).toNot(beNil())
                 expect(erxTask.authoredOn) == "2020-02-03T00:00:00+00:00"
                 expect(erxTask.expiresOn) == "2021-06-24"
+                expect(erxTask.lastModified) == "2021-03-24T08:35:32.311376627+00:00"
                 expect(erxTask.author).toNot(beNil())
                 expect(erxTask.author) == "Hausarztpraxis Dr. Topp-Glücklich"
                 expect(erxTask.medication?.dosageForm).toNot(beNil())
@@ -107,7 +108,7 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
 			counter += 1
 			return fixture(filePath: secondTaskResponse, headers: ["Accept": "application/fhir+json"])
         }
-		sut.listAllTasks()
+        sut.listAllTasks(after: nil)
 			.test(expectations: { erxTasks in
                 expect(erxTasks.count).to(equal(2))
                 let sortedIds = erxTasks.map(\.id).sorted()
@@ -237,7 +238,7 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
             return fixture(filePath: expectedResponse, headers: ["Accept": "application/fhir+json"])
         }
 
-        sut.listAllCommunications(for: .reply)
+        sut.listAllCommunications(after: nil, for: .reply)
             .test { error in
                 fail("unexpected fail with error: \(error)")
             } expectations: { communications in
@@ -260,7 +261,50 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
             return HTTPStubsResponse(error: expectedError)
         }
 
-        sut.listAllCommunications(for: .reply)
+        sut.listAllCommunications(after: nil, for: .reply)
+            .test { error in
+                expect(counter) == 1
+                expect(error) == .fhirClientError(.httpError(.httpError(expectedError)))
+            } expectations: { _ in
+                fail("this test should rase an error instead")
+            }
+    }
+
+    func testListAllMedicationDispensesWithSuccess() {
+        let expectedResponse = load(resource: "medicationDispenseBundle")
+        var counter = 0
+
+        stub(condition: isHost(host)
+                && isMethodGET()
+                && isPath("/MedicationDispense")) { _ in
+            counter += 1
+            return fixture(filePath: expectedResponse, headers: ["Accept": "application/fhir+json"])
+        }
+
+        sut.listAllMedicationDispenses(after: nil)
+            .test { error in
+                fail("unexpected fail with error: \(error)")
+            } expectations: { medicationDispenses in
+                expect(counter) == 1
+                expect(medicationDispenses.count) == 2
+                let sortedIds = medicationDispenses.map(\.taskId).sorted()
+                expect(sortedIds.first) == "160.000.000.014.285.76"
+                expect(sortedIds.last) == "160.000.000.014.298.37"
+            }
+    }
+
+    func testListAllAllMedicationDispensesWithFailure() {
+        let expectedError = URLError(.notConnectedToInternet)
+
+        var counter = 0
+        stub(condition: isHost(host)
+                && isPath("/MedicationDispense")
+                && isMethodGET()) { _ in
+            counter += 1
+            return HTTPStubsResponse(error: expectedError)
+        }
+
+        sut.listAllMedicationDispenses(after: nil)
             .test { error in
                 expect(counter) == 1
                 expect(error) == .fhirClientError(.httpError(.httpError(expectedError)))

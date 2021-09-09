@@ -26,6 +26,7 @@ public struct ErxTask: Identifiable, Hashable {
         accessCode: String? = nil,
         fullUrl: String? = nil,
         authoredOn: String? = nil,
+        lastModified: String? = nil,
         expiresOn: String? = nil,
         redeemedOn: String? = nil,
         author: String? = nil,
@@ -40,13 +41,15 @@ public struct ErxTask: Identifiable, Hashable {
         organization: Organization? = nil,
         workRelatedAccident: WorkRelatedAccident? = nil,
         auditEvents: [ErxAuditEvent] = [],
-        communications: [Communication] = []
+        communications: [Communication] = [],
+        medicationDispense: MedicationDispense? = nil
     ) {
         self.identifier = identifier
         self.prescriptionId = prescriptionId
         self.accessCode = accessCode
         self.fullUrl = fullUrl
         self.authoredOn = authoredOn
+        self.lastModified = lastModified
         self.expiresOn = expiresOn
         self.redeemedOn = redeemedOn
         self.author = author
@@ -61,6 +64,7 @@ public struct ErxTask: Identifiable, Hashable {
         self.workRelatedAccident = workRelatedAccident
         self.auditEvents = auditEvents
         self.communications = communications
+        self.medicationDispense = medicationDispense
     }
 
     // MARK: gematik profiled FHIR resources
@@ -81,6 +85,8 @@ public struct ErxTask: Identifiable, Hashable {
 
     /// When the prescription was authored
     public let authoredOn: String?
+    /// Timestamp of the last modification of the task
+    public let lastModified: String?
     /// When the prescription will be expired
     public let expiresOn: String?
     /// When the prescription was redeemed (only for scanned tasks)
@@ -109,6 +115,8 @@ public struct ErxTask: Identifiable, Hashable {
     public let auditEvents: [ErxAuditEvent]
     /// List of all  communications for  the task, sorted by timestamp
     public let communications: [Communication]
+    /// The actual medication dispense
+    public let medicationDispense: MedicationDispense?
 }
 
 extension ErxTask {

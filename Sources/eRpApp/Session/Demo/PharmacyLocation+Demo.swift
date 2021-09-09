@@ -52,7 +52,7 @@ extension PharmacyLocation {
             hoursOfOperation: [
                 PharmacyLocation.HoursOfOperation(
                     daysOfWeek: ["mon", "tue"],
-                    openingTime: "08:00:00",
+                    openingTime: "08:00:00", // Invalid opening times to not fail snapshot tests
                     closingTime: "07:00:00"
                 ),
             ]
@@ -71,8 +71,8 @@ extension PharmacyLocation {
                 hoursOfOperation: [
                     PharmacyLocation.HoursOfOperation(
                         daysOfWeek: ["wed"],
-                        openingTime: "09:00:00",
-                        closingTime: "17:30:00"
+                        openingTime: "08:00:00", // Invalid opening times to not fail snapshot tests
+                        closingTime: "07:00:00"
                     ),
                 ]
             )

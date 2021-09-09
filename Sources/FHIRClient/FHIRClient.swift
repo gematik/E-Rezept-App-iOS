@@ -83,7 +83,8 @@ public class FHIRClient {
     /// - Parameter operation: The request to be performed will be derived from this `FHIRClientOperation`.
     /// - Returns: `AnyPublisher` that emits a `FHIRClient.Response`
     public func execute<F: FHIRClientOperation>(operation: F) -> AnyPublisher<F.Value, FHIRClient.Error> {
-        guard let targetUrl = URL(string: operation.path, relativeTo: server) else {
+        guard let relativeURlString = operation.relativeUrlString,
+              let targetUrl = URL(string: relativeURlString, relativeTo: server) else {
             return Fail(error: .internalError("Operation endpoint url could not be constructed")).eraseToAnyPublisher()
         }
         var request = URLRequest(url: targetUrl)
@@ -152,8 +153,8 @@ public protocol FHIRClientOperation {
     /// The associated return type
     associatedtype Value
 
-    /// Operation path - used to compose the endpoint
-    var path: String { get }
+    /// Relative url string used to compose the endpoint
+    var relativeUrlString: String? { get }
     /// Operation HTTP-Headers
     var httpHeaders: [String: String] { get }
     /// Operation method

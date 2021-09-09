@@ -49,16 +49,12 @@ public class DefaultErxTaskRepository<D: ErxTaskDataStore, C: ErxTaskDataStore>:
     ) -> AnyPublisher<ErxTask?, ErrorType> {
         if let accessCode = accessCode {
             return cloud.fetchTask(by: id, accessCode: accessCode)
-                .mapError {
-                    .remote($0)
-                }
+                .mapError(ErrorType.remote)
                 .compactMap { $0 }
                 .flatMap { task in
                     self.disk.save(tasks: [task])
                         .map { _ in task }
-                        .mapError {
-                            .local($0)
-                        }
+                        .mapError(ErrorType.local)
                 }
                 .eraseToAnyPublisher()
         } else {
@@ -76,9 +72,7 @@ public class DefaultErxTaskRepository<D: ErxTaskDataStore, C: ErxTaskDataStore>:
         accessCode: String?
     ) -> AnyPublisher<ErxTask?, ErrorType> {
         disk.fetchTask(by: id, accessCode: accessCode)
-            .mapError {
-                .local($0)
-            }
+            .mapError(ErrorType.local)
             .eraseToAnyPublisher()
     }
 
@@ -86,10 +80,8 @@ public class DefaultErxTaskRepository<D: ErxTaskDataStore, C: ErxTaskDataStore>:
     ///
     /// - Returns: AnyPublisher that emits an array of all `ErxTask`s or `DefaultErxTaskRepository.Error`
     public func loadLocalAll() -> AnyPublisher<[ErxTask], ErrorType> {
-        disk.listAllTasks()
-            .mapError {
-                .local($0)
-            }
+        disk.listAllTasks(after: nil)
+            .mapError(ErrorType.local)
             .eraseToAnyPublisher()
     }
 
@@ -98,56 +90,81 @@ public class DefaultErxTaskRepository<D: ErxTaskDataStore, C: ErxTaskDataStore>:
     ///   - locale: The locale to fetch the audit events by
     /// - Returns: AnyPublisher that emits an array of all `ErxTask`s or `DefaultErxTaskRepository.Error`
     public func loadRemoteAll(for locale: String?) -> AnyPublisher<[ErxTask], ErrorType> {
-        cloud.listAllTasks()
-            .mapError {
-                .remote($0)
+        loadRemoteLatestTasks()
+            .flatMap { _ in
+                 self.loadRemoteLatestAuditEvents(for: locale)
+            }
+            .flatMap { _ in
+               self.loadRemoteLatestCommunications()
+            }
+            .flatMap { _ in
+                self.loadRemoteLatestMedicationDispenses()
+            }
+            .flatMap { _ -> AnyPublisher<[ErxTask], ErrorType> in
+                self.disk.listAllTasks(after: nil)
+                    .first()
+                    .mapError(ErrorType.local)
+                    .eraseToAnyPublisher()
+            }
+            .eraseToAnyPublisher()
+    }
+
+    private func loadRemoteLatestTasks() -> AnyPublisher<Bool, ErrorType> {
+        disk.fetchLatestLastModifiedForErxTasks()
+            .first() // only read once, we are interested in latest event to fetch all younger events.
+            .mapError(ErrorType.local)
+            .flatMap { lastModified in
+                self.cloud.listAllTasks(after: lastModified)
+                    .mapError(ErrorType.remote)
             }
             .flatMap {
                 self.disk.save(tasks: $0)
-                    .mapError {
-                        .local($0)
-                    }
+                    .mapError(ErrorType.local)
             }
-            .flatMap { _ in
-                self.disk.listAllAuditEvents(after: nil,
-                                             for: locale)
-                    .first() // only read once, we are interested in latest event to fetch all younger events.
-                    .mapError {
-                        .local($0)
-                    }
-            }
-            .flatMap {
-                self.cloud.listAllAuditEvents(after: $0.first?.timestamp,
-                                              for: locale)
-                    .mapError {
-                        .remote($0)
-                    }
+            .eraseToAnyPublisher()
+    }
+
+    private func loadRemoteLatestAuditEvents(for locale: String?) -> AnyPublisher<Bool, ErrorType> {
+        disk.fetchLatestTimestampForAuditEvents()
+            .first() // only read once, we are interested in latest event to fetch all younger events.
+            .mapError(ErrorType.local)
+            .flatMap { timestamp in
+                self.cloud.listAllAuditEvents(after: timestamp, for: locale)
+                    .mapError(ErrorType.remote)
             }
             .flatMap {
                 self.disk.save(auditEvents: $0)
-                    .mapError {
-                        .local($0)
-                    }
+                    .mapError(ErrorType.local)
             }
-            .flatMap { _ in
-                self.cloud.listAllCommunications(for: .all)
-                    .mapError {
-                        .remote($0)
-                    }
+            .eraseToAnyPublisher()
+    }
+
+    private func loadRemoteLatestCommunications() -> AnyPublisher<Bool, ErrorType> {
+        disk.fetchLatestTimestampForCommunications()
+            .first() // only read once, we are interested in latest event to fetch all younger events.
+            .mapError(ErrorType.local)
+            .flatMap { timestamp in
+                self.cloud.listAllCommunications(after: timestamp, for: .all)
+                    .mapError(ErrorType.remote)
             }
             .flatMap {
                 self.disk.save(communications: $0)
-                    .mapError {
-                        .local($0)
-                    }
+                    .mapError(ErrorType.local)
             }
-            .flatMap { _ -> AnyPublisher<[ErxTask], ErrorType> in
-                self.disk.listAllTasks()
-                    .first()
-                    .mapError {
-                        .local($0)
-                    }
-                    .eraseToAnyPublisher()
+            .eraseToAnyPublisher()
+    }
+
+    private func loadRemoteLatestMedicationDispenses() -> AnyPublisher<Bool, ErrorType> {
+        disk.fetchLatestHandOverDateForMedicationDispenses()
+            .first()
+            .mapError(ErrorType.local)
+            .flatMap { timestamp in
+                self.cloud.listAllMedicationDispenses(after: timestamp)
+                    .mapError(ErrorType.remote)
+            }
+            .flatMap {
+                self.disk.save(medicationDispenses: $0)
+                    .mapError(ErrorType.local)
             }
             .eraseToAnyPublisher()
     }
@@ -158,9 +175,7 @@ public class DefaultErxTaskRepository<D: ErxTaskDataStore, C: ErxTaskDataStore>:
     /// - Returns: AnyPublisher that emits `true` if saving was successful or returns an`ErrorType`
     public func save(erxTasks: [ErxTask]) -> AnyPublisher<Bool, ErrorType> {
         disk.save(tasks: erxTasks)
-            .mapError {
-                .local($0)
-            }
+            .mapError(ErrorType.local)
             .eraseToAnyPublisher()
     }
 
@@ -172,24 +187,18 @@ public class DefaultErxTaskRepository<D: ErxTaskDataStore, C: ErxTaskDataStore>:
         // Delete only locally when all tasks are scanned tasks
         if erxTasks.allSatisfy({ $0.source == ErxTask.Source.scanner }) {
             return disk.delete(tasks: erxTasks)
-                .mapError {
-                    .local($0)
-                }
+                .mapError(ErrorType.local)
                 .eraseToAnyPublisher()
         // Delete remote & locally when at least one is not a scanned task
         } else {
             // 1. Delete on cloud/server
             return cloud.delete(tasks: erxTasks)
-            .mapError {
-                .remote($0)
-            }
+                .mapError(ErrorType.remote)
 
             // 2. Delete on disk/locally
             .flatMap { _ in
                 self.disk.delete(tasks: erxTasks)
-                    .mapError {
-                        .local($0)
-                    }
+                    .mapError(ErrorType.local)
             }
             .eraseToAnyPublisher()
         }
@@ -202,15 +211,15 @@ public class DefaultErxTaskRepository<D: ErxTaskDataStore, C: ErxTaskDataStore>:
     /// - Returns: `true` if the server has received the order
     public func redeem(orders: [ErxTaskOrder]) -> AnyPublisher<Bool, ErrorType> {
         cloud.redeem(orders: orders)
-            .mapError { .remote($0) }
+            .mapError(ErrorType.remote)
             .eraseToAnyPublisher()
     }
 
     public func loadLocalCommunications(
         for profile: ErxTask.Communication.Profile
     ) -> AnyPublisher<[ErxTask.Communication], ErrorType> {
-        disk.listAllCommunications(for: profile)
-            .mapError { .local($0) }
+        disk.listAllCommunications(after: nil, for: profile)
+            .mapError(ErrorType.local)
             .eraseToAnyPublisher()
     }
 
@@ -218,7 +227,7 @@ public class DefaultErxTaskRepository<D: ErxTaskDataStore, C: ErxTaskDataStore>:
     /// - Parameter communications: communications where the `isRead` state should be changed.
     public func saveLocal(communications: [ErxTask.Communication]) -> AnyPublisher<Bool, ErrorType> {
         disk.save(communications: communications)
-            .mapError { .local($0) }
+            .mapError(ErrorType.local)
             .eraseToAnyPublisher()
     }
 
@@ -228,7 +237,7 @@ public class DefaultErxTaskRepository<D: ErxTaskDataStore, C: ErxTaskDataStore>:
         for profile: ErxTask.Communication.Profile
     ) -> AnyPublisher<Int, ErrorType> {
         disk.countAllUnreadCommunications(for: profile)
-            .mapError { .local($0) }
+            .mapError(ErrorType.local)
             .eraseToAnyPublisher()
     }
 }

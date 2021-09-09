@@ -34,6 +34,11 @@ enum AppSecurityDomain {
         var availableSecurityOptions = [AppSecurityOption]()
         var selectedSecurityOption: AppSecurityOption?
         var errorToDisplay: Error?
+
+        var createPasswordState: CreatePasswordDomain.State?
+        var showCreatePasswordScreen: Bool {
+            createPasswordState != nil
+        }
     }
 
     enum Action: Equatable {
@@ -41,10 +46,14 @@ enum AppSecurityDomain {
         case loadSecurityOptionResponse(AppSecurityDomain.AppSecurityOption?)
         case select(_ option: AppSecurityOption)
         case dismissError
+
+        case hideCreatePasswordScreen
+        case createPassword(action: CreatePasswordDomain.Action)
     }
 
     struct Environment {
         private let userDataStore: UserDataStore
+        let appSecurityPasswordManager: AppSecurityPasswordManager
         let schedulers: Schedulers
 
         var getAvailableSecurityOptions: ([AppSecurityOption], Error?) = {
@@ -53,27 +62,29 @@ enum AppSecurityDomain {
 
             guard authenticationContext.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics,
                                                           error: &error) == true else {
-                return ([.unsecured],
+                return ([.password, .unsecured],
                         Error.localAuthenticationContext(error))
             }
 
             switch authenticationContext.biometryType {
             case .faceID:
-                return ([.biometry(.faceID), .unsecured], nil)
+                return ([.biometry(.faceID), .password, .unsecured], nil)
             case .touchID:
-                return ([.biometry(.touchID), .unsecured], nil)
+                return ([.biometry(.touchID), .password, .unsecured], nil)
             case .none:
-                return ([.unsecured], nil)
+                return ([.password, .unsecured], nil)
             @unknown default:
-                return ([.unsecured], nil)
+                return ([.password, .unsecured], nil)
             }
         }()
 
         var selectedSecurityOption: SelectedSecurityOption
 
         init(userDataStore: UserDataStore,
+             appSecurityPasswordManager: AppSecurityPasswordManager,
              schedulers: Schedulers) {
             self.userDataStore = userDataStore
+            self.appSecurityPasswordManager = appSecurityPasswordManager
             self.schedulers = schedulers
             selectedSecurityOption = SelectedSecurityOption(userDataStore: userDataStore)
         }
@@ -99,7 +110,7 @@ enum AppSecurityDomain {
         }
     }
 
-    static let reducer = Reducer { state, action, environment in
+    static let domainReducer = Reducer { state, action, environment in
         switch action {
         case .loadSecurityOption:
             let availableSecurityOptions = environment.getAvailableSecurityOptions
@@ -111,27 +122,62 @@ enum AppSecurityDomain {
                 .eraseToEffect()
         case let .loadSecurityOptionResponse(response):
             if let response = response,
-                !state.availableSecurityOptions.contains(response) {
+               !state.availableSecurityOptions.contains(response) {
                 environment.selectedSecurityOption.remove()
             } else {
                 state.selectedSecurityOption = response
             }
             return .none
         case let .select(option):
-            state.selectedSecurityOption = option
-            environment.selectedSecurityOption.set(option)
+            switch option {
+            case .password:
+                if state.selectedSecurityOption == .password {
+                    state.createPasswordState = CreatePasswordDomain.State(mode: .update)
+                } else {
+                    state.createPasswordState = CreatePasswordDomain.State(mode: .create)
+                }
+                return .none
+            default:
+                state.selectedSecurityOption = option
+                environment.selectedSecurityOption.set(option)
+            }
             return .none
         case .dismissError:
             state.errorToDisplay = nil
             return .none
+        case .hideCreatePasswordScreen:
+            state.createPasswordState = nil
+            return Effect.cancel(token: CreatePasswordDomain.Token.self)
+        case .createPassword(.closeAfterPasswordSaved):
+            state.createPasswordState = nil
+            state.selectedSecurityOption = .password
+            environment.selectedSecurityOption.set(.password)
+            return Effect.cancel(token: CreatePasswordDomain.Token.self)
+        case .createPassword:
+            return .none
         }
     }
+
+    static let createPasswordPullbackReducer: Reducer =
+        CreatePasswordDomain.reducer.optional().pullback(
+            state: \State.createPasswordState,
+            action: /AppSecurityDomain.Action.createPassword(action:)
+        ) { global in
+            CreatePasswordDomain.Environment(passwordManager: global.appSecurityPasswordManager,
+                                             schedulers: global.schedulers)
+        }
+
+    static let reducer = Reducer.combine(
+        createPasswordPullbackReducer,
+        domainReducer
+    )
 }
 
 extension AppSecurityDomain {
     enum AppSecurityOption: Identifiable, Equatable {
         case unsecured
         case biometry(BiometryType)
+        case password
 
         var id: Int { // swiftlint:disable:this identifier_name
             switch self {
@@ -144,6 +190,8 @@ extension AppSecurityDomain {
                 case .touchID:
                     return 2
                 }
+            case .password:
+                return 3
             }
         }
 
@@ -155,6 +203,8 @@ extension AppSecurityDomain {
                 self = .biometry(.faceID)
             case 2:
                 self = .biometry(.touchID)
+            case 3:
+                self = .password
             default:
                 return nil
             }
@@ -187,6 +237,7 @@ extension AppSecurityDomain {
         static let state = State(selectedSecurityOption: .biometry(.faceID))
 
         static let environment = Environment(userDataStore: DemoSessionContainer().localUserStore,
+                                             appSecurityPasswordManager: DummyAppSecurityPasswordManager(),
                                              schedulers: AppContainer.shared.schedulers)
 
         static let store = Store(

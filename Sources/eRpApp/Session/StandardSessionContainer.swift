@@ -205,6 +205,10 @@ class StandardSessionContainer: UserSession {
             .eraseToAnyPublisher()
         return AnyErxTaskRepository(repositoryPublisher)
     }()
+
+    lazy var appSecurityPasswordManager: AppSecurityPasswordManager = {
+        DefaultAppSecurityPasswordManager(keychainAccess: SystemKeychainAccessHelper())
+    }()
 }
 
 extension IDPSession {

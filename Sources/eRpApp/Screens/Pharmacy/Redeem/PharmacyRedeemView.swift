@@ -248,7 +248,7 @@ extension PharmacyRedeemView {
 
             init(_ task: ErxTask, isSelected: Bool) {
                 taskID = task.id
-                title = task.medication?.name ?? "Missing"
+                title = task.medicationName ?? "Missing"
                 subtitle = task
                     .substitutionAllowed ? NSLocalizedString("pha_redeem_txt_prescription_sub", comment: "") : ""
                 self.isSelected = isSelected

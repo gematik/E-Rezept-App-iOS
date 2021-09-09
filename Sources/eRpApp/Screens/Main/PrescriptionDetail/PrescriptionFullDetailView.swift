@@ -70,11 +70,12 @@ struct PrescriptionFullDetailView: View {
                     .padding([.top, .horizontal])
 
                     // Medication name
-                    MedicationNameView(medicationText: viewStore.state.erxTask.medication?.name,
+                    MedicationNameView(medicationText: viewStore.state.erxTask.medicationName,
                                        expirationDate: uiFormattedDate(dateString: viewStore.state.erxTask.expiresOn),
-                                       redeemedOnDate: uiFormattedDate(dateString: viewStore.state.erxTask.redeemedOn))
+                                       redeemedOnDate: uiFormattedDate(dateString: viewStore.state.erxTask
+                                       .whenHandedOver))
 
-                    if viewStore.state.erxTask.redeemedOn == nil {
+                    if !viewStore.state.erxTask.isRedeemed {
                         NavigateToPharmacySearchView(store: store)
                             .padding([.leading, .trailing, .bottom])
                     }
@@ -103,13 +104,13 @@ struct PrescriptionFullDetailView: View {
                 Group {
                     // Medication details
                     MedicationDetailsView(
-                        dosageForm: localizedStringForDosageFormKey(viewStore.state.erxTask.medication?.dosageForm),
+                        dosageForm: localizedStringForDosageFormKey(viewStore.state.erxTask.medicationDosageForm),
                         dose: composedDoseInfoFrom(
-                            doseKey: viewStore.state.erxTask.medication?.dose,
-                            amount: viewStore.state.erxTask.medication?.amount,
-                            dosageKey: viewStore.state.erxTask.medication?.dosageForm
+                            doseKey: viewStore.state.erxTask.medicationDose,
+                            amount: viewStore.state.erxTask.medicationAmount,
+                            dosageKey: viewStore.state.erxTask.medicationDosageForm
                         ),
-                        pzn: viewStore.state.erxTask.medication?.pzn
+                        pzn: viewStore.state.erxTask.medicationPZN
                     )
 
                     // Dosage instructions
@@ -121,7 +122,7 @@ struct PrescriptionFullDetailView: View {
                         HintView(
                             hint: Hint<PrescriptionDetailDomain.Action>(
                                 id: A11y.prescriptionDetails.prscDtlHntDosageInstructions,
-                                message: viewStore.state.erxTask.medication?.dosageInstructions ?? NSLocalizedString(
+                                message: viewStore.state.erxTask.medicationDosageInstructions ?? NSLocalizedString(
                                     "prsc_fd_txt_dosage_instructions_na",
                                     comment: ""
                                 ),

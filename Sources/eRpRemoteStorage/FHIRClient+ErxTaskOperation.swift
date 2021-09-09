@@ -52,7 +52,8 @@ extension FHIRClient {
     ///         tasks in one bundle/requests
     ///
     /// - Returns: `AnyPublisher` that emits the ids for the found  tasks
-    public func fetchAllTaskIDs() -> AnyPublisher<[String], FHIRClient.Error> {
+    /// - Parameter referenceDate: Tasks with modification date greater or equal `referenceDate` will be fetched
+    public func fetchAllTaskIDs(after referenceDate: String?) -> AnyPublisher<[String], FHIRClient.Error> {
         let handler = DefaultFHIRResponseHandler { (fhirResponse: FHIRClient.Response) -> [String] in
             let decoder = JSONDecoder()
 
@@ -64,7 +65,7 @@ extension FHIRClient {
             }
         }
 
-        return execute(operation: ErxTaskFHIROperation.allTasks(handler: handler))
+        return execute(operation: ErxTaskFHIROperation.allTasks(referenceDate: referenceDate, handler: handler))
     }
 
     /// Convenience function for deleting a task
@@ -76,7 +77,6 @@ extension FHIRClient {
     public func deleteTask(by id: ErxTask.ID, // swiftlint:disable:this identifier_name
                            accessCode: String?) -> AnyPublisher<Bool, FHIRClient.Error> {
         let handler = DefaultFHIRResponseHandler { (fhirResponse: FHIRClient.Response) -> Bool in
-            let decoder = JSONDecoder()
             let resource: ModelsR4.Bundle
             if fhirResponse.status.isNoContent {
                 // Successful delete is supposed to produces return code 204 and an empty body.
@@ -84,7 +84,7 @@ extension FHIRClient {
                 return true
             } else {
                 do {
-                    resource = try decoder.decode(ModelsR4.Bundle.self, from: fhirResponse.body)
+                    resource = try FHIRClient.decoder.decode(ModelsR4.Bundle.self, from: fhirResponse.body)
                 } catch {
                     throw Error.decoding(error)
                 }
@@ -117,10 +117,9 @@ extension FHIRClient {
     public func fetchAuditEvent(by id: ErxAuditEvent.ID) -> AnyPublisher<ErxAuditEvent?, FHIRClient.Error> {
         // swiftlint:disable:previous identifier_name
         let handler = DefaultFHIRResponseHandler { (fhirResponse: FHIRClient.Response) -> ErxAuditEvent? in
-            let decoder = JSONDecoder()
             let resource: ModelsR4.Bundle
             do {
-                resource = try decoder.decode(ModelsR4.Bundle.self, from: fhirResponse.body)
+                resource = try FHIRClient.decoder.decode(ModelsR4.Bundle.self, from: fhirResponse.body)
             } catch {
                 throw Error.decoding(error)
             }
@@ -133,13 +132,16 @@ extension FHIRClient {
     /// Convenience function for requesting audit events
     ///
     /// - Returns: `AnyPublisher` that emits the audit events
+    /// - Parameters:
+    ///   - referenceDate:Audit-Events with date greater or equal `referenceDate` will be fetched.
+    ///                   Pass `nil` for fetching all audit events
+    ///   - locale: Locale key for which language the audit events will be fetched.
+    ///             Nil if all languages should be fetched
     public func fetchAllAuditEvents(after referenceDate: String? = nil,
                                     for locale: String? = nil) -> AnyPublisher<[ErxAuditEvent], FHIRClient.Error> {
         let handler = DefaultFHIRResponseHandler { (fhirResponse: FHIRClient.Response) -> [ErxAuditEvent] in
-            let decoder = JSONDecoder()
-
             do {
-                let resource = try decoder.decode(ModelsR4.Bundle.self, from: fhirResponse.body)
+                let resource = try FHIRClient.decoder.decode(ModelsR4.Bundle.self, from: fhirResponse.body)
                 return try resource.parseErxAuditEvents()
             } catch {
                 throw Error.decoding(error)
@@ -156,9 +158,8 @@ extension FHIRClient {
     /// - Returns: `true` if the server responds without error and parsing has been successful, otherwise  error
     public func redeem(order: ErxTaskOrder) -> AnyPublisher<Bool, FHIRClient.Error> {
         let handler = DefaultFHIRResponseHandler { (fhirResponse: FHIRClient.Response) -> Bool in
-            let decoder = JSONDecoder()
             do {
-                _ = try decoder.decode(ModelsR4.Communication.self, from: fhirResponse.body)
+                _ = try FHIRClient.decoder.decode(ModelsR4.Communication.self, from: fhirResponse.body)
             } catch {
                 throw Error.decoding(error)
             }
@@ -171,17 +172,45 @@ extension FHIRClient {
 
     /// Requests all communication Resources for the logged in user
     /// - Returns: Array of all loaded communication resources
-    public func communicationResources() -> AnyPublisher<[ErxTask.Communication], FHIRClient.Error> {
+    /// - Parameter referenceDate: Communications with `timestamp` greater or equal `referenceDate` will be fetched
+    public func communicationResources(
+        after referenceDate: String?
+    ) -> AnyPublisher<[ErxTask.Communication], FHIRClient.Error> {
         let handler = DefaultFHIRResponseHandler { (fhirResponse: FHIRClient.Response) -> [ErxTask.Communication] in
-            let decoder = JSONDecoder()
             do {
-                let resource = try decoder.decode(ModelsR4.Bundle.self, from: fhirResponse.body)
+                let resource = try FHIRClient.decoder.decode(ModelsR4.Bundle.self, from: fhirResponse.body)
                 return try resource.parseErxTaskCommunications()
             } catch {
                 throw Error.decoding(error)
             }
         }
 
-        return execute(operation: ErxTaskFHIROperation.communicationResource(handler: handler))
+        return execute(operation: ErxTaskFHIROperation
+            .allCommunications(referenceDate: referenceDate, handler: handler))
+    }
+
+    /// Requests all medication dispenses available since `referenceDate`
+    /// - Parameter referenceDate: MedicationDispense with date greater or equal `referenceDate` will be fetched.
+    ///                            Pass `nil` for fetching all audit events
+    /// - Returns: MedicationDispenses with `whenHandedOver` great or equal `referenceDate` will be fetched
+    public func fetchAllMedicationDispenses(
+        after referenceDate: String?
+    ) -> AnyPublisher<[ErxTask.MedicationDispense], FHIRClient.Error> {
+        let handler =
+            DefaultFHIRResponseHandler { (fhirResponse: FHIRClient.Response) -> [ErxTask.MedicationDispense] in
+                do {
+                    let resource = try FHIRClient.decoder.decode(ModelsR4.Bundle.self, from: fhirResponse.body)
+                    return try resource.parseErxTaskMedicationDispenses()
+                } catch {
+                    throw Error.decoding(error)
+                }
+            }
+
+        return execute(operation: ErxTaskFHIROperation
+            .allMedicationDispenses(referenceDate: referenceDate, handler: handler))
+    }
+
+    static var decoder: JSONDecoder {
+        JSONDecoder()
     }
 }

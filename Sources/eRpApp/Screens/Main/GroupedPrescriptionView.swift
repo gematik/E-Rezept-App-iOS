@@ -167,7 +167,7 @@ struct GroupedPrescriptionView: View {
                 label: {
                     HStack {
                         VStack(alignment: .leading, spacing: 4) {
-                            Text(prescription.medication?.name, placeholder: L10n.erxTxtMedicationPlaceholder)
+                            Text(prescription.medicationName, placeholder: L10n.erxTxtMedicationPlaceholder)
                                 .foregroundColor(Colors.systemLabel)
                                 .font(Font.body.weight(.semibold))
                             Text(localizedString)
@@ -199,7 +199,7 @@ struct GroupedPrescriptionView: View {
                             .font(Font.body.weight(.semibold))
                             .foregroundColor(Colors.primary500)
                         VStack(alignment: .leading, spacing: 4) {
-                            Text(prescription.medication?.name, placeholder: L10n.erxTxtMedicationPlaceholder)
+                            Text(prescription.medicationName, placeholder: L10n.erxTxtMedicationPlaceholder)
                                 .font(Font.body.weight(.semibold))
                         }
                         Spacer()

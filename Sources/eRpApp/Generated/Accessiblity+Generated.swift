@@ -15,6 +15,11 @@ internal enum A11y {
     internal enum auth {
       static let authBtnBiometricsFaceid = "auth_btn_biometrics_faceid"
       static let authBtnBiometricsTouchid = "auth_btn_biometrics_touchid"
+      static let authBtnPasswordContinue = "auth_btn_password_continue"
+      static let authTxtPasswordFailure = "auth_txt_password_failure"
+      static let authEdtPasswordInput = "auth_edt_password_input"
+      static let authTxtPasswordPlaceholder = "auth_txt_password_placeholder"
+      static let authTxtPasswordSubtitle = "auth_txt_password_subtitle"
   }
     internal enum cardWall { 
     internal enum canInput {
@@ -204,6 +209,16 @@ internal enum A11y {
       static let scnBtnCancelScan = "scn_btn_cancel_scan"
   }
     internal enum settings { 
+    internal enum createPassword {
+      static let cpwBtnSave = "cpw_btn_save"
+      static let cpwBtnUpdate = "cpw_btn_update"
+      static let cpwInpCurrentPassword = "cpw_inp_current_password"
+      static let cpwInpPasswordA = "cpw_inp_passwordA"
+      static let cpwInpPasswordB = "cpw_inp_passwordB"
+      static let cpwTxtPasswordRecommendation = "cpw_txt_password_recommendation"
+      static let cpwTxtPasswordsDontMatch = "cpw_txt_passwords_dont_match"
+      static let cpwTxtTitle = "cpw_txt_title"
+  }
     internal enum dataPrivacy {
       static let stgDprTxtDataPrivacy = "stg_dpr_txt_data_privacy"
   }
@@ -231,6 +246,7 @@ internal enum A11y {
       static let stgTxtSecurityFaceid = "stg_txt_security_faceid"
       static let stgTxtSecurityTouchid = "stg_txt_security_touchid"
       static let stgTxtSecurityUnsecured = "stg_txt_security_unsecured"
+      static let stgTxtSecurityPassword = "stg_txt_security_password"
   }
     internal enum termsOfUse {
       static let stgTouTxtTermsOfUse = "stg_tou_txt_terms_of_use"

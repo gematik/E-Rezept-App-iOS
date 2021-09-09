@@ -33,7 +33,7 @@ struct AppConfiguration: Equatable {
                   trustAnchor: TrustAnchor,
                   idp: Server,
                   erp: Server,
-                  base: String = "https://base.url.will.eventually.disappear/",
+                  base: String = "https://this.is.the.inner.vau.request/",
                   apoVzd: Server,
                   sharedHeader: [String: String] = ["User-Agent": defaultUserAgent]) {
         self.name = name

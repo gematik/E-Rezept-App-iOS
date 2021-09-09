@@ -4,6 +4,7 @@
 "alert_error_title" = "Fehler";
 "auth_btn_biometrics_faceid" = "Mit Face ID entsperren";
 "auth_btn_biometrics_touchid" = "Mit Touch ID entsperren";
+"auth_btn_password_continue" = "Weiter";
 "auth_txt_biometrics_faceid_description" = "Zur Sicherung Ihrer Daten haben Sie Face ID gewählt.";
 "auth_txt_biometrics_faceid_start" = "Mit Face ID entsperren";
 "auth_txt_biometrics_failed_authentication_failed" = "Authentifizierung fehlgeschlagen";
@@ -20,6 +21,10 @@
 "auth_txt_biometrics_title" = "Willkommen";
 "auth_txt_biometrics_touchid_description" = "Zur Sicherung Ihrer Daten haben Sie Touch ID gewählt.";
 "auth_txt_biometrics_touchid_start" = "Mit Touch ID entsperren";
+"auth_txt_password_failure" = "Falsches Passwort. Bitte probieren Sie es erneut.";
+"auth_txt_password_label" = "Eingabefeld Kennwort";
+"auth_txt_password_placeholder" = "Kennwort eingeben";
+"auth_txt_password_subtitle" = "Kennwort eingeben";
 "bnr_txt_demo_mode" = "Demo-Modus aktiviert";
 "cam_init_fail_message" = "Um den Scanner verwenden zu können, müssen Sie der App in den Systemeinstellungen den Zugriff auf Ihre Kamera gestatten.";
 "cam_init_fail_title" = "Zugriff auf Kamera verweigert";
@@ -147,6 +152,17 @@
 "cdw_txt_rc_step_verify_at_idp" = "Login Rezeptverzeichnis";
 "cdw_txt_rc_steps_title" = "Schritte";
 "cdw_txt_rc_title" = "Login";
+"cpw_btn_change" = "Ändern";
+"cpw_btn_save" = "Speichern";
+"cpw_inp_current_password_placeholder" = "Aktuelles Kennwort";
+"cpw_inp_passwordA_placeholder" = "Kennwort eingeben";
+"cpw_inp_passwordB_placeholder" = "Kennwort wiederholen";
+"cpw_txt_current_password_wrong" = "Das Passwort ist falsch.";
+"cpw_txt_passwordB_accessibility" = "Zweite Eingabe des Kennwortes, um Tippfehler zu erkennen";
+"cpw_txt_password_recommendation" = "Empfehlung: Möglichst wenige Worte und keine Redewendungen verwenden.\nSymbole, Zahlen oder Großbuchstaben sind nicht notwendig.";
+"cpw_txt_passwords_dont_match" = "Die Eingaben weichen vorneinander ab.";
+"cpw_txt_title" = "Kennwort";
+"cpw_txt_update_title" = "Kennwort ändern";
 "dmo_txt_alert_no" = "Abbrechen";
 "dmo_txt_alert_text" = "Möchten Sie den Demo-Modus deaktivieren?";
 "dmo_txt_alert_title" = "Demo-Modus";
@@ -674,6 +690,8 @@
 "scn_msg_scanning_code_consecutive" = "Bereit für einen weiteren Rezeptcode";
 "scn_txt_author" = "Eingescanntes Rezept";
 "scn_txt_medication_%@" = "Medikament %@";
+"section_txt_is_active_value" = "Ausgewählt";
+"section_txt_is_inactive_value" = "Nicht Ausgewählt";
 "stg_btn_logout" = "Zugangsdaten löschen";
 "stg_dpo_txt_data_privacy" = "Datenschutz";
 "stg_dpo_txt_foss" = "Open Source Lizenzen";
@@ -714,6 +732,7 @@
 "stg_txt_security_no_biometrics_warning" = "Biometrie-Fehler: %@";
 "stg_txt_security_option_faceid_title" = "Face ID";
 "stg_txt_security_option_none_description" = "Nicht empfohlen";
+"stg_txt_security_option_password_title" = "Kennwort";
 "stg_txt_security_option_touchid_title" = "Touch ID";
 "stg_txt_security_option_unsecured_title" = "Ohne Sicherung";
 "stg_txt_security_warning" = "Diese App wurde bislang nicht abgesichert. Verbessern Sie den Schutz Ihrer Daten durch einen Fingerabdruck- oder Gesichts-Scan.";

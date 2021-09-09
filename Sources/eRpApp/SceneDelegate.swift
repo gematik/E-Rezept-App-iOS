@@ -17,6 +17,7 @@
 //
 
 import ComposableArchitecture
+import eRpLocalStorage
 import IDP
 import SwiftUI
 import UIKit
@@ -98,11 +99,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing {
 
     func sceneWillEnterForeground(_: UIScene) {
         removeBlurOverlayFromWindow()
-        let userDataStore = AppContainer
-            .shared
-            .userSessionContainer
-            .userSession
-            .localUserStore
+        let userDataStore = UserDefaultsStore(userDefaults: .standard)
 
         authenticationWindow?.rootViewController = UIHostingController(
             rootView: AppAuthenticationView(
@@ -112,10 +109,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing {
                     environment: AppAuthenticationDomain.Environment(
                         userDataStore: userDataStore,
                         schedulers: Schedulers(),
-                        appAuthenticationProvider:
-                            AppAuthenticationDomain.DefaultAuthenticationProvider(
-                                userDataStore: userDataStore
-                            )
+                        appAuthenticationProvider: AppAuthenticationDomain.DefaultAuthenticationProvider(
+                            userDataStore: userDataStore
+                        ),
+                        appSecurityPasswordManager: DefaultAppSecurityPasswordManager(
+                            keychainAccess: SystemKeychainAccessHelper()
+                        )
                     ) { [weak self] in
                         self?.mainWindow?.accessibilityElementsHidden = false
                         self?.mainWindow?.makeKeyAndVisible()

@@ -65,4 +65,7 @@ protocol UserSession {
     var vauStorage: VAUStorage { get }
 
     var trustStoreSession: TrustStoreSession { get }
+
+    /// Affected manager when app (start) ist secured by password usage
+    var appSecurityPasswordManager: AppSecurityPasswordManager { get }
 }

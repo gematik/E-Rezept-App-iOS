@@ -23,6 +23,13 @@ struct AppSecuritySelectionView: View {
     typealias AppSecurityOption = AppSecurityDomain.AppSecurityOption
 
     let store: AppSecurityDomain.Store
+    @ObservedObject
+    var viewStore: ViewStore<AppSecurityDomain.State, AppSecurityDomain.Action>
+
+    init(store: AppSecurityDomain.Store) {
+        self.store = store
+        viewStore = ViewStore(store)
+    }
 
     var body: some View {
         WithViewStore(store) { viewStore in
@@ -59,6 +66,23 @@ struct AppSecuritySelectionView: View {
                 }
                 .background(Colors.systemBackgroundTertiary)
                 .border(Colors.systemColorClear, cornerRadius: 16)
+
+                NavigationLink(
+                    destination: IfLetStore(
+                        store.scope(
+                            state: { $0.createPasswordState },
+                            action: { AppSecurityDomain.Action.createPassword(action: $0) }
+                        )
+                    ) { store in
+                        CreatePasswordView(store: store)
+                    },
+                    isActive: viewStore.binding(
+                        get: \.showCreatePasswordScreen,
+                        send: AppSecurityDomain.Action.hideCreatePasswordScreen
+                    )
+                ) {
+                    EmptyView()
+                }.accessibility(hidden: true)
             }
             .onAppear {
                 viewStore.send(.loadSecurityOption)
@@ -115,6 +139,14 @@ struct AppSecuritySelectionView: View {
                     isOn: binding
                 )
             }
+        case .password:
+            return SelectionCell(
+                text: L10n.stgTxtSecurityOptionPasswordTitle,
+                description: nil,
+                a11y: A18n.settings.security.stgTxtSecurityPassword,
+                systemImage: SFSymbolName.rectangleAndPencilAndEllipsis,
+                isOn: binding
+            )
         case .unsecured:
             return SelectionCell(
                 text: L10n.stgTxtSecurityOptionUnsecuredTitle,
@@ -129,7 +161,7 @@ struct AppSecuritySelectionView: View {
 
 struct AppSecuritySelectionView_Previews: PreviewProvider {
     static var previews: some View {
-        Group {
+        NavigationView {
             AppSecuritySelectionView(store: AppSecurityDomain.Dummies.store).generateVariations()
         }
     }

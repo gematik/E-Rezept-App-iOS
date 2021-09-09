@@ -39,7 +39,7 @@ struct PrescriptionLowDetailView: View {
                 .border(Colors.systemGray3, cornerRadius: 16)
                 .padding()
 
-                MedicationNameView(medicationText: viewStore.state.erxTask.medication?.name,
+                MedicationNameView(medicationText: viewStore.state.erxTask.medicationName,
                                    expirationDate: uiFormattedDate(dateString: viewStore.state.erxTask.expiresOn),
                                    redeemedOnDate: uiFormattedDate(dateString: viewStore.state.erxTask.redeemedOn))
 
@@ -51,7 +51,7 @@ struct PrescriptionLowDetailView: View {
                     viewStore.send(.toggleRedeemPrescription)
                 }
 
-                if viewStore.state.erxTask.redeemedOn == nil {
+                if !viewStore.state.erxTask.isRedeemed {
                     HintView<PrescriptionDetailDomain.Action>(
                         hint: Hint(id: A11y.prescriptionDetails.prscDtlHntKeepOverview,
                                    title: NSLocalizedString("dtl_txt_hint_overview_title", comment: ""),

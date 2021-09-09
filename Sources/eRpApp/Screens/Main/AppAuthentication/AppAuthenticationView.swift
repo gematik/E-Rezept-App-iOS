@@ -24,15 +24,43 @@ struct AppAuthenticationView: View {
 
     var body: some View {
         WithViewStore(store) { viewStore in
-            ZStack {
-                IfLetStore(
-                    store.scope(
-                        state: \.biometrics,
-                        action: AppAuthenticationDomain.Action.biometrics(action:)
-                    )
-                ) {
-                    AppAuthenticationWithBiometricsView(store: $0)
+            ScrollView {
+                HStack {
+                    Image(decorative: Asset.LaunchAssets.logoGematik)
+                        .padding()
+                    Spacer()
                 }
+
+                VStack {
+                    Spacer()
+
+                    Text(L10n.authTxtBiometricsTitle)
+                        .font(.title)
+                        .fontWeight(.bold)
+                        .padding()
+
+                    VStack {
+                        IfLetStore(
+                            store.scope(
+                                state: \.biometrics,
+                                action: AppAuthenticationDomain.Action.biometrics(action:)
+                            )
+                        ) {
+                            AppAuthenticationWithBiometricsView(store: $0)
+                        }
+
+                        IfLetStore(
+                            store.scope(
+                                state: \.password,
+                                action: AppAuthenticationDomain.Action.password(action:)
+                            )
+                        ) {
+                            AppAuthenticationPasswordView(store: $0)
+                        }
+                    }
+                    .padding(.vertical)
+                }
+
             }.onAppear {
                 viewStore.send(.loadAppAuthenticationOption)
             }
@@ -43,16 +71,20 @@ struct AppAuthenticationView: View {
 struct AppAuthenticationView_Previews: PreviewProvider {
     static var previews: some View {
         AppAuthenticationView(
-            store: AppAuthenticationDomain.Store(
-                initialState: AppAuthenticationDomain.State(),
-                reducer: AppAuthenticationDomain.reducer,
-                environment: AppAuthenticationDomain.Environment(
-                    userDataStore: DemoSessionContainer().localUserStore,
-                    schedulers: AppContainer.shared.schedulers,
-                    appAuthenticationProvider:
-                        AppAuthenticationDomain.DefaultAuthenticationProvider(
-                            userDataStore: DemoSessionContainer().localUserStore
-                        )
+            store: AppAuthenticationDomain.Dummies.storeFor(
+                AppAuthenticationDomain.State(
+                    biometrics: AppAuthenticationBiometricsDomain.State(
+                        biometryType: .faceID,
+                        authenticationResult: .success(true)
+                    )
+                )
+            )
+        )
+
+        AppAuthenticationView(
+            store: AppAuthenticationDomain.Dummies.storeFor(
+                AppAuthenticationDomain.State(
+                    password: AppAuthenticationPasswordDomain.State()
                 )
             )
         )
