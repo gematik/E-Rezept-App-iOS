@@ -87,7 +87,7 @@ enum MessagesDomain: Equatable {
         case let .message(messageID, .didSelect):
             guard var erxTaskCommunication = state.messageDomainStates.first(where: { $0.id == messageID })?
                 .communication,
-                  !erxTaskCommunication.isRead else {
+                !erxTaskCommunication.isRead else {
                 return .none
             }
 

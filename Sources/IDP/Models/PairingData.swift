@@ -52,13 +52,13 @@ public struct PairingData: Claims, Codable {
     let pairingDataVersion: String
 
     enum CodingKeys: String, CodingKey {
-            case authCertSubjectPublicKeyInfo = "auth_cert_subject_public_key_info"
-            case notAfter = "not_after"
-            case product
-            case serialnumber
-            case keyIdentifier = "key_identifier"
-            case seSubjectPublicKeyInfo = "se_subject_public_key_info"
-            case issuer
-            case pairingDataVersion = "pairing_data_version"
+        case authCertSubjectPublicKeyInfo = "auth_cert_subject_public_key_info"
+        case notAfter = "not_after"
+        case product
+        case serialnumber
+        case keyIdentifier = "key_identifier"
+        case seSubjectPublicKeyInfo = "se_subject_public_key_info"
+        case issuer
+        case pairingDataVersion = "pairing_data_version"
     }
 }

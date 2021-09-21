@@ -36,9 +36,9 @@ public struct PairingEntry: Equatable, Codable {
     let pairingEntryVersion: String
 
     enum CodingKeys: String, CodingKey {
-            case name
-            case signedPairingData = "signed_pairing_data"
-            case creationTime = "creation_time"
-            case pairingEntryVersion = "pairing_entry_version"
+        case name
+        case signedPairingData = "signed_pairing_data"
+        case creationTime = "creation_time"
+        case pairingEntryVersion = "pairing_entry_version"
     }
 }

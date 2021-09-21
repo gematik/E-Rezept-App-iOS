@@ -40,8 +40,8 @@ struct DetailedIconCellView: View {
                     .foregroundColor(Colors.primary)
 
             }.fixedSize(horizontal: false, vertical: true)
-            .padding(.top, 8)
-            .padding(.bottom, 4)
+                .padding(.top, 8)
+                .padding(.bottom, 4)
 
             Divider()
         }

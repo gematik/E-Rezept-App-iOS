@@ -34,7 +34,7 @@ struct BiometricsAuthenticationChallengeProvider: AuthenticationChallengeProvide
     }
 
     private func startAuthenticationChallenge(completion: @escaping (AppAuthenticationBiometricsDomain
-        .AuthenticationResult) -> Void) {
+            .AuthenticationResult) -> Void) {
         var error: NSError?
         let authenticationContext = LAContext()
 

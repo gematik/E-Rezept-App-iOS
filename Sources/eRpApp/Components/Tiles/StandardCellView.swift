@@ -35,7 +35,7 @@ struct StandardCellView: View {
                     .foregroundColor(Colors.systemLabelSecondary)
 
             }.fixedSize(horizontal: false, vertical: true)
-            .padding(.vertical, 8)
+                .padding(.vertical, 8)
 
             Divider()
         }

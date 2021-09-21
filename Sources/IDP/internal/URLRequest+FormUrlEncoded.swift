@@ -30,7 +30,7 @@ extension URLRequest {
         httpBody = parameterArray.joined(separator: "&").data(using: .utf8)
     }
 
-	mutating func setFormUrlEncodedHeader() {
-		addValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
-	}
+    mutating func setFormUrlEncodedHeader() {
+        addValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+    }
 }

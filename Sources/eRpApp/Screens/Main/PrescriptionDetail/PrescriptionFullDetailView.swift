@@ -49,7 +49,7 @@ struct PrescriptionFullDetailView: View {
                         textAction: nil,
                         closeAction: nil
                     )
-                        .padding([.top, .horizontal])
+                    .padding([.top, .horizontal])
                 }
 
                 Group {
@@ -73,7 +73,7 @@ struct PrescriptionFullDetailView: View {
                     MedicationNameView(medicationText: viewStore.state.erxTask.medicationName,
                                        expirationDate: uiFormattedDate(dateString: viewStore.state.erxTask.expiresOn),
                                        redeemedOnDate: uiFormattedDate(dateString: viewStore.state.erxTask
-                                       .whenHandedOver))
+                                           .whenHandedOver))
 
                     if !viewStore.state.erxTask.isRedeemed {
                         NavigateToPharmacySearchView(store: store)
@@ -97,7 +97,7 @@ struct PrescriptionFullDetailView: View {
                             textAction: { viewStore.send(PrescriptionDetailDomain.Action.openSubstitutionInfo) },
                             closeAction: nil
                         )
-                            .padding(.horizontal)
+                        .padding(.horizontal)
                     }
                 }
 
@@ -230,7 +230,7 @@ struct PrescriptionFullDetailView: View {
                         NavigationView {
                             PharmacySearchView(store: scopedStore)
                         }.navigationViewStyle(StackNavigationViewStyle())
-                        .accentColor(Colors.primary700)
+                            .accentColor(Colors.primary700)
                     }
                 }
             }
@@ -250,7 +250,7 @@ struct PrescriptionFullDetailView: View {
               let amount = amount,
               let dosageKey = dosageKey,
               let dosageString = PrescriptionKBVKeyMapping.localizedStringKeyForDosageFormKey(dosageKey)
-              else { return nil }
+        else { return nil }
         return "\(doseKey) \(amount) \(NSLocalizedString(dosageString, comment: ""))"
     }
 
@@ -328,7 +328,7 @@ struct PrescriptionFullDetailView_Previews: PreviewProvider {
             NavigationView {
                 PrescriptionFullDetailView(store: PrescriptionDetailDomain.Dummies.store)
             }.previewLayout(.fixed(width: 480, height: 4000))
-            .preferredColorScheme(.dark)
+                .preferredColorScheme(.dark)
         }
     }
 }

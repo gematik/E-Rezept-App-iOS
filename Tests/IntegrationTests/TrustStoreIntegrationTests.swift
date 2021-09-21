@@ -32,7 +32,7 @@ final class TrustStoreIntegrationTests: XCTestCase {
     func testCompleteFlow() {
         let fdvURLString = ProcessInfo.processInfo
 //                .environment["FDV_URL"] ?? "https://erp.dev.gematik.solutions/fdv/"
-                .environment["FDV_URL"] ?? "https://erp-ref.zentral.erp.splitdns.ti-dienste.de/"
+            .environment["FDV_URL"] ?? "https://erp-ref.zentral.erp.splitdns.ti-dienste.de/"
         guard let fdvURL = URL(string: fdvURLString) else {
             fail("invalid fdv URL (injected?)")
             return
@@ -48,14 +48,14 @@ final class TrustStoreIntegrationTests: XCTestCase {
         )
         var success = false
         session.loadVauCertificate()
-                .test(
-                    timeout: 20,
-                    expectations: { vauCertificate in
-                          success = true
-                          Swift.print("vauCertificate", (vauCertificate.derBytes?.base64EncodedString()) ?? "")
-                    },
-                    subscribeScheduler: DispatchQueue.global().eraseToAnyScheduler()
-                )
+            .test(
+                timeout: 20,
+                expectations: { vauCertificate in
+                    success = true
+                    Swift.print("vauCertificate", (vauCertificate.derBytes?.base64EncodedString()) ?? "")
+                },
+                subscribeScheduler: DispatchQueue.global().eraseToAnyScheduler()
+            )
         expect(success) == true
     }
 }

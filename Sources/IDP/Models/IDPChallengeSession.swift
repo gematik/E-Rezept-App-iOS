@@ -75,14 +75,14 @@ public struct IDPChallengeSession {
     }
 
     func validateState(with state: String) -> Bool {
-           self.state == state
-       }
+        self.state == state
+    }
 
     func validateNonce(with idToken: String) throws -> Bool {
-         let idTokenJWT = try JWT(from: idToken)
-         let idTokenPayload = try idTokenJWT.decodePayload(type: TokenPayload.IDTokenPayload.self)
-         return idTokenPayload.nonce == nonce
-     }
+        let idTokenJWT = try JWT(from: idToken)
+        let idTokenPayload = try idTokenJWT.decodePayload(type: TokenPayload.IDTokenPayload.self)
+        return idTokenPayload.nonce == nonce
+    }
 }
 
 extension IDPChallengeSession: Equatable {}

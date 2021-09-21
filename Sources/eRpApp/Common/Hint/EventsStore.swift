@@ -21,10 +21,10 @@ import Foundation
 
 // sourcery: StreamWrapped
 protocol EventsStore: AnyObject {
-	/// Publisher for the `HintState`. Use this interface for read access
-	var hintStatePublisher: AnyPublisher<HintState, Never> { get }
-	/// Provides write access for hintState. Do not use for read access. Use `hintStatePublisher` instead
-	var hintState: HintState { get set }
+    /// Publisher for the `HintState`. Use this interface for read access
+    var hintStatePublisher: AnyPublisher<HintState, Never> { get }
+    /// Provides write access for hintState. Do not use for read access. Use `hintStatePublisher` instead
+    var hintState: HintState { get set }
 }
 
 /// Concrete implementation for storing `HintState`
@@ -46,7 +46,7 @@ class HintEventsStore: EventsStore {
     var hintState: HintState {
         get {
             guard let hintData = userDefaults.hintState,
-                let hintState = HintState.from(hintData, decoder: decoder) else {
+                  let hintState = HintState.from(hintData, decoder: decoder) else {
                 return HintState()
             }
             return hintState
@@ -61,8 +61,8 @@ class HintEventsStore: EventsStore {
         userDefaults.publisher(for: \UserDefaults.hintState)
             .map { [weak self] dataOptional in
                 guard let self = self,
-                    let data = dataOptional,
-                    let hintState = HintState.from(data, decoder: self.decoder) else {
+                      let data = dataOptional,
+                      let hintState = HintState.from(data, decoder: self.decoder) else {
                     return HintState()
                 }
 

@@ -72,7 +72,7 @@ class KeychainStorage: SecureUserDataStore, IDPStorage, SecureEGKCertificateStor
     private func retrieveCAN() -> AnyPublisher<String?, Never> {
         Deferred { [weak self] () -> AnyPublisher<String?, Never> in
             guard let self = self,
-                let result = try? self.keychainHelper.genericPassword(for: self.egkPasswordIdentifier) as String?
+                  let result = try? self.keychainHelper.genericPassword(for: self.egkPasswordIdentifier) as String?
             else { return Just(nil).eraseToAnyPublisher() }
 
             return Just(result).eraseToAnyPublisher()
@@ -87,8 +87,8 @@ class KeychainStorage: SecureUserDataStore, IDPStorage, SecureEGKCertificateStor
     var token: AnyPublisher<IDPToken?, Never> {
         Deferred { [weak self] () -> AnyPublisher<IDPToken?, Never> in
             guard let self = self,
-                let result = try? self.keychainHelper.genericPassword(for: self.idpTokenIdentifier) as Data?,
-                let token = try? JSONDecoder().decode(IDPToken.self, from: result)
+                  let result = try? self.keychainHelper.genericPassword(for: self.idpTokenIdentifier) as Data?,
+                  let token = try? JSONDecoder().decode(IDPToken.self, from: result)
             else { return Just(nil).eraseToAnyPublisher() }
 
             return Just(token).eraseToAnyPublisher()
@@ -120,13 +120,13 @@ class KeychainStorage: SecureUserDataStore, IDPStorage, SecureEGKCertificateStor
     private func retrieveDiscoveryDocument() -> AnyPublisher<DiscoveryDocument?, Never> {
         Deferred { [weak self] () -> AnyPublisher<DiscoveryDocument?, Never> in
             guard let self = self,
-                let result = try? self.keychainHelper
-                .genericPassword(for: self.idpDiscoveryDocumentIdentifier) as Data?,
-                let archiver = try? NSKeyedUnarchiver(forReadingFrom: result),
-                let document = try? archiver.decodeTopLevelDecodable(
-                    DiscoveryDocument.self,
-                    forKey: NSKeyedArchiveRootObjectKey
-                )
+                  let result = try? self.keychainHelper
+                  .genericPassword(for: self.idpDiscoveryDocumentIdentifier) as Data?,
+                  let archiver = try? NSKeyedUnarchiver(forReadingFrom: result),
+                  let document = try? archiver.decodeTopLevelDecodable(
+                      DiscoveryDocument.self,
+                      forKey: NSKeyedArchiveRootObjectKey
+                  )
             else {
                 return Just(nil).eraseToAnyPublisher()
             }
@@ -165,8 +165,8 @@ class KeychainStorage: SecureUserDataStore, IDPStorage, SecureEGKCertificateStor
     private func retrieveCertificate() -> AnyPublisher<X509?, Never> {
         Deferred { [weak self] () -> AnyPublisher<X509?, Never> in
             guard let self = self,
-                let derBytes = try? self.keychainHelper.genericPassword(for: self.egkAuthCertIdentifier) as Data?,
-                let certificate = try? X509(der: derBytes)
+                  let derBytes = try? self.keychainHelper.genericPassword(for: self.egkAuthCertIdentifier) as Data?,
+                  let certificate = try? X509(der: derBytes)
             else {
                 return Just(nil).eraseToAnyPublisher()
             }

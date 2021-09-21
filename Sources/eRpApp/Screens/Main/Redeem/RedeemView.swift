@@ -64,7 +64,7 @@ struct RedeemView: View {
                 }
             }
         }.navigationViewStyle(StackNavigationViewStyle())
-        .accentColor(Colors.primary700)
+            .accentColor(Colors.primary700)
     }
 
     private struct NavigateToRedeemView: View {
@@ -97,7 +97,7 @@ struct RedeemView: View {
                          title: L10n.rdmBtnRedeemPharmacyTitle,
                          description: L10n.rdmBtnRedeemPharmacyDescription,
                          discloseIcon: SFSymbolName.rightDisclosureIndicator)
-                         .padding([.leading, .trailing], 16)
+                        .padding([.leading, .trailing], 16)
                 }
                 .accessibility(identifier: A18n.redeem.overview.rdmBtnPharmacyTile)
             }
@@ -136,7 +136,7 @@ struct RedeemView: View {
                          title: L10n.rdmBtnRedeemSearchPharmacyTitle,
                          description: L10n.rdmBtnRedeemSearchPharmacyDescription,
                          discloseIcon: SFSymbolName.rightDisclosureIndicator)
-                         .padding([.leading, .trailing], 16)
+                        .padding([.leading, .trailing], 16)
                 }
                 .accessibility(identifier: A18n.redeem.overview.rdmBtnPharmacyTile)
             }

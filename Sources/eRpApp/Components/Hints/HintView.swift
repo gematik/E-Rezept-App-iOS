@@ -78,9 +78,9 @@ struct HintView<Action: Equatable>: View {
                     }
                 }
             }
-			.frame(maxWidth: .infinity)
+            .frame(maxWidth: .infinity)
         }
-		.accessibility(identifier: hint.id)
+        .accessibility(identifier: hint.id)
         .background(RoundedRectangle(cornerRadius: 16).fill(hint.fillColor))
         .border(hint.borderColor, width: 0.5, cornerRadius: 16)
     }
@@ -94,15 +94,15 @@ struct HintView_Previews: PreviewProvider {
                 textAction: {},
                 closeAction: {}
             )
-                .previewLayout(.fixed(width: 400.0, height: 200.0))
+            .previewLayout(.fixed(width: 400.0, height: 200.0))
             HintView(
                 hint: MainViewHintsDomain.Dummies.hintBottomAligned(with: .awareness),
                 textAction: {},
                 closeAction: {}
             )
-                .previewLayout(.fixed(width: 400.0, height: 200.0))
-                .preferredColorScheme(.dark)
-                .environment(\.sizeCategory, .extraExtraLarge)
+            .previewLayout(.fixed(width: 400.0, height: 200.0))
+            .preferredColorScheme(.dark)
+            .environment(\.sizeCategory, .extraExtraLarge)
             HintView(hint: MainViewHintsDomain.Dummies.hintTopAligned(with: .neutral), textAction: {}, closeAction: {})
                 .previewLayout(.fixed(width: 400.0, height: 200.0))
             HintView(
@@ -110,21 +110,21 @@ struct HintView_Previews: PreviewProvider {
                 textAction: {},
                 closeAction: {}
             )
-                .previewLayout(.fixed(width: 400.0, height: 200.0))
-                .preferredColorScheme(.dark)
+            .previewLayout(.fixed(width: 400.0, height: 200.0))
+            .preferredColorScheme(.dark)
             HintView(
                 hint: MainViewHintsDomain.Dummies.hintBottomAligned(with: .important),
                 textAction: {},
                 closeAction: {}
             )
-                .previewLayout(.fixed(width: 400.0, height: 200.0))
+            .previewLayout(.fixed(width: 400.0, height: 200.0))
             HintView(
                 hint: MainViewHintsDomain.Dummies.hintBottomAligned(with: .important),
                 textAction: {},
                 closeAction: {}
             )
-                .previewLayout(.fixed(width: 400.0, height: 200.0))
-                .preferredColorScheme(.dark)
+            .previewLayout(.fixed(width: 400.0, height: 200.0))
+            .preferredColorScheme(.dark)
         }
     }
 }

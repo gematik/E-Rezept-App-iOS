@@ -30,7 +30,7 @@ final class NFCSignatureProviderMock: NFCSignatureProvider {
         Fail(error: NFCSignatureProviderError.signingFailure(nil)).eraseToAnyPublisher()
     }
 
-   // MARK: - sign
+    // MARK: - sign
 
     var signResult = PassthroughSubject<SignedChallenge, NFCSignatureProviderError>()
 
@@ -46,7 +46,7 @@ final class NFCSignatureProviderMock: NFCSignatureProvider {
             .eraseToAnyPublisher()
     }
 
-   // MARK: - sign
+    // MARK: - sign
 
     var signRegistrationDataCallsCount = 0
     var signRegistrationDataCalled: Bool {

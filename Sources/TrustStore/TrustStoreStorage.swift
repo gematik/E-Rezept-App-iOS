@@ -62,7 +62,7 @@ public class TrustStoreFileStorage: TrustStoreStorage {
         do {
             if let certList = certList {
                 let writeResult = try Self.jsonEncoder.encode(certList)
-                        .save(to: certListFilePath, options: writingOptions)
+                    .save(to: certListFilePath, options: writingOptions)
                 switch writeResult {
                 case .success: success = true
                 case .failure: success = false
@@ -86,13 +86,13 @@ public class TrustStoreFileStorage: TrustStoreStorage {
             guard let self = self,
                   let certListData = try? Data(contentsOf: self.certListFilePath),
                   let certList = try? Self.jsonDecoder.decode(CertList.self, from: certListData)
-                    else {
+            else {
                 return Just(nil).eraseToAnyPublisher()
             }
             return Just(certList).eraseToAnyPublisher()
         }
-                .merge(with: certListPassthrough)
-                .eraseToAnyPublisher()
+        .merge(with: certListPassthrough)
+        .eraseToAnyPublisher()
     }
 
     public var ocspList: AnyPublisher<OCSPList?, Never> {
@@ -104,7 +104,7 @@ public class TrustStoreFileStorage: TrustStoreStorage {
         do {
             if let ocspList = ocspList {
                 let writeResult = try Self.jsonEncoder.encode(ocspList)
-                        .save(to: ocspListFilePath, options: writingOptions)
+                    .save(to: ocspListFilePath, options: writingOptions)
                 switch writeResult {
                 case .success: success = true
                 case .failure: success = false
@@ -128,10 +128,10 @@ public class TrustStoreFileStorage: TrustStoreStorage {
             guard let self = self,
                   let data = try? Data(contentsOf: self.ocspListFilePath),
                   let ocspList = try? Self.jsonDecoder.decode(OCSPList.self, from: data)
-                    else {
+            else {
                 return Just(nil).eraseToAnyPublisher()
             }
-        return Just(ocspList).eraseToAnyPublisher()
+            return Just(ocspList).eraseToAnyPublisher()
         }
         .merge(with: ocspListPassthrough)
         .eraseToAnyPublisher()

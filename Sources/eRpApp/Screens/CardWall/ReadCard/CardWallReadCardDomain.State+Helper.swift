@@ -46,7 +46,7 @@ extension CardWallReadCardDomain.State {
             }
             // Pop to correct screen if we have a card error a.k.a. wrong pin or wrong can
             if case let .signingChallenge(signingState) = self,
-                case let .error(error) = signingState {
+               case let .error(error) = signingState {
                 switch error {
                 case .signChallengeError(.wrongPin),
                      .inputError(.missingPIN):

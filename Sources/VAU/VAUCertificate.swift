@@ -32,10 +32,10 @@ protocol VAUCertificate {
 extension VAUSession: VAUCertificateProvider {
     func loadAndVerifyVauCertificate() -> AnyPublisher<VAUCertificate, VAUError> {
         trustStoreSession.loadVauCertificate()
-                .first()
-                .mapError { $0.asVAUError() }
-                .map { X509VAUCertificate(x509: $0) }
-                .eraseToAnyPublisher()
+            .first()
+            .mapError { $0.asVAUError() }
+            .map { X509VAUCertificate(x509: $0) }
+            .eraseToAnyPublisher()
     }
 }
 

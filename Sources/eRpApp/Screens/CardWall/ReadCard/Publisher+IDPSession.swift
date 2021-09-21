@@ -24,7 +24,7 @@ import IDP
 extension Publisher where Self.Output == IDPExchangeToken, Failure == CardWallReadCardDomain.State.Error {
     func exchangeIDPToken(idp: IDPSession,
                           challengeSession: IDPChallengeSession)
-                          -> AnyPublisher<IDPToken, CardWallReadCardDomain.State.Error> {
+        -> AnyPublisher<IDPToken, CardWallReadCardDomain.State.Error> {
         flatMap { token in
             idp
                 .exchange(token: token, challengeSession: challengeSession)

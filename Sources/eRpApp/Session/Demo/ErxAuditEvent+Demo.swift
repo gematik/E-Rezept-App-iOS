@@ -26,10 +26,10 @@ extension ErxAuditEvent {
                 ErxAuditEvent(identifier: "100",
                               locale: "de",
                               text: """
-                                    Das Rezept wurde gelöscht, und dieser Audit-Event ist \
-                                    extra sehr lang und sehr ausführlich geschrieben, \
-                                    um zu schauen, ob er trotzdem richtig angezeigt wird.
-                                    """,
+                              Das Rezept wurde gelöscht, und dieser Audit-Event ist \
+                              extra sehr lang und sehr ausführlich geschrieben, \
+                              um zu schauen, ob er trotzdem richtig angezeigt wird.
+                              """,
                               timestamp: "2021-05-01T14:22:15.444555666+00:00",
                               taskId: "6390f983-1e67-11b2-8555-63bf44e44fb8"),
                 ErxAuditEvent(identifier: "101",

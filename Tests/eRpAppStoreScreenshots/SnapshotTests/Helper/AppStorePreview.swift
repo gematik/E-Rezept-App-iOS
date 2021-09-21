@@ -110,47 +110,47 @@ struct StatusBar: View {
 }
 
 struct Notch: Shape {
-  func path(in rect: CGRect) -> Path {
-    Path {
-      let notchInset = rect.size.width * 0.23
-      let smallNotchRadius: CGFloat = 7
-      let scaleFactor: CGFloat = 1.6
-      let notchRadius = rect.maxY / scaleFactor
+    func path(in rect: CGRect) -> Path {
+        Path {
+            let notchInset = rect.size.width * 0.23
+            let smallNotchRadius: CGFloat = 7
+            let scaleFactor: CGFloat = 1.6
+            let notchRadius = rect.maxY / scaleFactor
 
-      $0.move(to: .init(x: 0, y: 0))
-      $0.addLine(to: .init(x: notchInset, y: 0))
-      $0.addArc(
-          center: .init(x: notchInset - smallNotchRadius, y: smallNotchRadius),
-          radius: smallNotchRadius,
-          startAngle: .init(degrees: -90),
-          endAngle: .init(degrees: 0),
-          clockwise: false
-      )
-      $0.addArc(
-          center: .init(x: notchInset + notchRadius, y: notchRadius * (scaleFactor - 1)),
-          radius: notchRadius,
-          startAngle: .init(degrees: 180),
-          endAngle: .init(degrees: 90),
-          clockwise: true
-      )
-      $0.addLine(to: .init(x: rect.width - notchInset - notchRadius, y: rect.height))
-      $0.addArc(
-          center: .init(x: rect.width - notchInset - notchRadius, y: notchRadius * (scaleFactor - 1)),
-          radius: notchRadius,
-          startAngle: .init(degrees: 90),
-          endAngle: .init(degrees: 0),
-          clockwise: true
-      )
-      $0.addLine(to: .init(x: rect.width - notchInset, y: 0))
-      $0.addArc(
-          center: .init(x: rect.width - notchInset + smallNotchRadius, y: smallNotchRadius),
-          radius: smallNotchRadius,
-          startAngle: .init(degrees: 180),
-          endAngle: .init(degrees: 270),
-          clockwise: false
-      )
-      $0.addLine(to: .init(x: rect.width, y: 0))
-      $0.closeSubpath()
+            $0.move(to: .init(x: 0, y: 0))
+            $0.addLine(to: .init(x: notchInset, y: 0))
+            $0.addArc(
+                center: .init(x: notchInset - smallNotchRadius, y: smallNotchRadius),
+                radius: smallNotchRadius,
+                startAngle: .init(degrees: -90),
+                endAngle: .init(degrees: 0),
+                clockwise: false
+            )
+            $0.addArc(
+                center: .init(x: notchInset + notchRadius, y: notchRadius * (scaleFactor - 1)),
+                radius: notchRadius,
+                startAngle: .init(degrees: 180),
+                endAngle: .init(degrees: 90),
+                clockwise: true
+            )
+            $0.addLine(to: .init(x: rect.width - notchInset - notchRadius, y: rect.height))
+            $0.addArc(
+                center: .init(x: rect.width - notchInset - notchRadius, y: notchRadius * (scaleFactor - 1)),
+                radius: notchRadius,
+                startAngle: .init(degrees: 90),
+                endAngle: .init(degrees: 0),
+                clockwise: true
+            )
+            $0.addLine(to: .init(x: rect.width - notchInset, y: 0))
+            $0.addArc(
+                center: .init(x: rect.width - notchInset + smallNotchRadius, y: smallNotchRadius),
+                radius: smallNotchRadius,
+                startAngle: .init(degrees: 180),
+                endAngle: .init(degrees: 270),
+                clockwise: false
+            )
+            $0.addLine(to: .init(x: rect.width, y: 0))
+            $0.closeSubpath()
+        }
     }
-  }
 }

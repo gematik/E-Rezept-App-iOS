@@ -78,10 +78,10 @@ enum CardWallReadCardDomain {
                     .receive(on: environment.schedulers.main)
                     .flatMap { can -> Effect<Action, Never> in
                         guard let can = can,
-                            let canData = try? CAN.from(Data(can.utf8)) else {
+                              let canData = try? CAN.from(Data(can.utf8)) else {
                             return Just(Action
                                 .stateReceived(State.Output.retrievingChallenge(.error(.inputError(.missingCAN)))))
-                                .eraseToEffect()
+                                                            .eraseToEffect()
                         }
                         guard let format2Pin = try? Format2Pin(pincode: pin) else {
                             return Just(Action.stateReceived(.retrievingChallenge(.error(.inputError(.missingPIN)))))

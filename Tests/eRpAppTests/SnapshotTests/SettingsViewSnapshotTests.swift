@@ -49,7 +49,7 @@ final class SettingsViewSnapshotTests: XCTestCase {
             reducer: SettingsDomain.Reducer.empty,
             environment: SettingsDomain.Dummies.environment
         ),
-                               debugStore: debugStore)
+        debugStore: debugStore)
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
@@ -64,7 +64,7 @@ final class SettingsViewSnapshotTests: XCTestCase {
             reducer: SettingsDomain.Reducer.empty,
             environment: SettingsDomain.Dummies.environment
         ),
-                               debugStore: debugStore)
+        debugStore: debugStore)
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
@@ -79,7 +79,7 @@ final class SettingsViewSnapshotTests: XCTestCase {
             reducer: SettingsDomain.Reducer.empty,
             environment: SettingsDomain.Dummies.environment
         ),
-                               debugStore: debugStore)
+        debugStore: debugStore)
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
@@ -94,7 +94,7 @@ final class SettingsViewSnapshotTests: XCTestCase {
             reducer: SettingsDomain.Reducer.empty,
             environment: SettingsDomain.Dummies.environment
         ),
-                               debugStore: debugStore)
+        debugStore: debugStore)
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
@@ -109,7 +109,7 @@ final class SettingsViewSnapshotTests: XCTestCase {
             reducer: SettingsDomain.Reducer.empty,
             environment: SettingsDomain.Dummies.environment
         ),
-                               debugStore: debugStore)
+        debugStore: debugStore)
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
@@ -124,7 +124,7 @@ final class SettingsViewSnapshotTests: XCTestCase {
             reducer: SettingsDomain.Reducer.empty,
             environment: SettingsDomain.Dummies.environment
         ),
-                               debugStore: debugStore)
+        debugStore: debugStore)
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
@@ -139,15 +139,15 @@ final class SettingsViewSnapshotTests: XCTestCase {
                                                showDataProtectionView: false,
                                                showTermsOfUseView: false,
                                                appSecurityState: AppSecurityDomain
-                                                .State(
-                                                    availableSecurityOptions: [.unsecured],
-                                                    selectedSecurityOption: nil
-                                                ),
+                                                   .State(
+                                                       availableSecurityOptions: [.unsecured],
+                                                       selectedSecurityOption: nil
+                                                   ),
                                                appVersion: appVersion),
             reducer: SettingsDomain.Reducer.empty,
             environment: SettingsDomain.Dummies.environment
         ),
-                               debugStore: debugStore)
+        debugStore: debugStore)
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
@@ -165,19 +165,19 @@ final class SettingsViewSnapshotTests: XCTestCase {
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
     }
 
-    private func configuredSettingsDomainState(withAvailableSecurityOptions availableSecurityOptions: [AppSecurityDomain
-                                                .AppSecurityOption],
-                                               andSelectedSecurityOption selectedSecurityOption: AppSecurityDomain
-                                                .AppSecurityOption?) -> SettingsDomain.State {
+    private func configuredSettingsDomainState(
+        withAvailableSecurityOptions availableSecurityOptions: [AppSecurityDomain.AppSecurityOption],
+        andSelectedSecurityOption selectedSecurityOption: AppSecurityDomain.AppSecurityOption?
+    ) -> SettingsDomain.State {
         SettingsDomain.State(isDemoMode: false,
                              showLegalNoticeView: false,
                              showDataProtectionView: false,
                              showTermsOfUseView: false,
                              appSecurityState: AppSecurityDomain
-                                .State(
-                                    availableSecurityOptions: availableSecurityOptions,
-                                    selectedSecurityOption: selectedSecurityOption
-                                ),
+                                 .State(
+                                     availableSecurityOptions: availableSecurityOptions,
+                                     selectedSecurityOption: selectedSecurityOption
+                                 ),
                              appVersion: appVersion)
     }
 }

@@ -33,7 +33,7 @@ struct PharmacyDetailView: View {
                     }
 
                     Text(viewStore.state.pharmacy.name ??
-                             NSLocalizedString("pha_detail_txt_subtitle_fallback", comment: ""))
+                        NSLocalizedString("pha_detail_txt_subtitle_fallback", comment: ""))
                         .foregroundColor(Colors.systemLabel)
                         .font(.title2)
                         .bold()
@@ -45,8 +45,8 @@ struct PharmacyDetailView: View {
                                        imageName: SFSymbolName.map) {
                             viewStore.send(.openMapApp)
                         }
-                            .accessibility(identifier: A11y.pharmacyDetail.phaDetailBtnLocation)
-                            .padding(.bottom, 24)
+                        .accessibility(identifier: A11y.pharmacyDetail.phaDetailBtnLocation)
+                        .padding(.bottom, 24)
                     }
 
                     if viewStore.pharmacy.isErxReady {
@@ -88,8 +88,8 @@ struct PharmacyDetailView: View {
                                        message: NSLocalizedString("pha_detail_hint_message", comment: ""),
                                        imageName: Asset.Illustrations.info.name)
                         )
-                            .padding(.top, 12)
-                            .padding(.bottom, 32)
+                        .padding(.top, 12)
+                        .padding(.bottom, 32)
                     } else {
                         HintView<PharmacyDetailDomain.Action>(
                             hint: Hint(id: A11y.pharmacyDetail.phaDetailHintNotErxReady,
@@ -113,19 +113,19 @@ struct PharmacyDetailView: View {
                     RedeemViewPresentation(store: store).accessibility(hidden: true)
                 }.padding()
             }
-                .navigationBarTitle(L10n.phaDetailTxtTitle, displayMode: .inline)
-                .navigationBarItems(
-                    trailing: NavigationBarCloseItem { viewStore.send(.close) }
-                )
-                .navigationBarTitleDisplayMode(.inline)
-                .introspectNavigationController { navigationController in
-                    let navigationBar = navigationController.navigationBar
-                    navigationBar.barTintColor = UIColor(Colors.systemBackground)
-                    let navigationBarAppearance = UINavigationBarAppearance()
-                    navigationBarAppearance.shadowColor = UIColor(Colors.systemColorClear)
-                    navigationBarAppearance.backgroundColor = UIColor(Colors.systemBackground)
-                    navigationBar.standardAppearance = navigationBarAppearance
-                }
+            .navigationBarTitle(L10n.phaDetailTxtTitle, displayMode: .inline)
+            .navigationBarItems(
+                trailing: NavigationBarCloseItem { viewStore.send(.close) }
+            )
+            .navigationBarTitleDisplayMode(.inline)
+            .introspectNavigationController { navigationController in
+                let navigationBar = navigationController.navigationBar
+                navigationBar.barTintColor = UIColor(Colors.systemBackground)
+                let navigationBarAppearance = UINavigationBarAppearance()
+                navigationBarAppearance.shadowColor = UIColor(Colors.systemColorClear)
+                navigationBarAppearance.backgroundColor = UIColor(Colors.systemBackground)
+                navigationBar.standardAppearance = navigationBarAppearance
+            }
         }
     }
 
@@ -155,7 +155,7 @@ struct PharmacyDetailView: View {
                         }
                     }
                 }
-                    .padding(.vertical, 8)
+                .padding(.vertical, 8)
                 Divider()
             }
         }
@@ -209,10 +209,10 @@ struct PharmacyDetailView: View {
                     ),
                     then: PharmacyRedeemView.init(store:)
                 ),
-                               isActive: viewStore.binding(
-                                   get: { $0.isPharmacyRedeemViewPresented },
-                                   send: PharmacyDetailDomain.Action.dismissPharmacyRedeemView
-                               )) {
+                isActive: viewStore.binding(
+                    get: { $0.isPharmacyRedeemViewPresented },
+                    send: PharmacyDetailDomain.Action.dismissPharmacyRedeemView
+                )) {
                     EmptyView()
                 }
             }
@@ -224,9 +224,9 @@ struct PharmacyDetailView: View {
             Text(L10n.phaDetailTxtFooterStart)
                 .foregroundColor(Color(.secondaryLabel)) +
                 Text(L10n.phaDetailTxtFooterMid)
-                    .foregroundColor(Colors.primary) +
+                .foregroundColor(Colors.primary) +
                 Text(L10n.phaDetailTxtFooterEnd)
-                    .foregroundColor(Color(.secondaryLabel))
+                .foregroundColor(Color(.secondaryLabel))
         }()
 
         var body: some View {
@@ -250,7 +250,7 @@ struct PharmacyDetailView: View {
                         .foregroundColor(Colors.primary)
                 })
             }
-                .font(.footnote)
+            .font(.footnote)
         }
     }
 }

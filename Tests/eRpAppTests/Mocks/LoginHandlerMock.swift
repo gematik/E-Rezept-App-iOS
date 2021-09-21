@@ -23,7 +23,7 @@ import Foundation
 // MARK: - LoginHandlerMock -
 
 final class LoginHandlerMock: LoginHandler {
-   // MARK: - isAuthenticated
+    // MARK: - isAuthenticated
 
     var isAuthenticatedCallsCount = 0
     var isAuthenticatedCalled: Bool {
@@ -38,7 +38,7 @@ final class LoginHandlerMock: LoginHandler {
         return isAuthenticatedClosure.map { $0() } ?? isAuthenticatedReturnValue
     }
 
-   // MARK: - isAuthenticatedOrAuthenticate
+    // MARK: - isAuthenticatedOrAuthenticate
 
     var isAuthenticatedOrAuthenticateCallsCount = 0
     var isAuthenticatedOrAuthenticateCalled: Bool {

@@ -37,7 +37,7 @@ struct TransparentTextButtonStyle_Previews: PreviewProvider {
             Button(action: {},
                    label: {
                        Text("Transparent Button Style")
-            })
+                   })
                 .buttonStyle(TransparentTextButtonStyle())
         }
     }

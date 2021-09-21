@@ -72,7 +72,7 @@ struct X509TrustStore: TrustStore {
 
     func validate(certificate: X509) -> Bool {
         guard let result = try? certificate.validateWith(trustStore: [rootCa] + addRoots + caCerts)
-                else {
+        else {
             return false
         }
         return result
@@ -141,13 +141,13 @@ extension X509TrustStore {
 extension X509TrustStore {
     // [REQ:gemSpec_Krypt:A_21218:(3)] Check ca_certs against category A certificates
     private static let caCertRegex =
-            try! NSRegularExpression(pattern: "CN=GEM\\.KOMP-CA\\d+") // swiftlint:disable:this force_try
+        try! NSRegularExpression(pattern: "CN=GEM\\.KOMP-CA\\d+") // swiftlint:disable:this force_try
 
     static func filter(caCerts: [X509], trusting trustStore: [X509]) -> [X509] {
         caCerts.filter { caCert in
             guard let chainCheck = try? caCert.validateWith(trustStore: trustStore),
                   let subjectOneLine = try? caCert.subjectOneLine()
-                    else {
+            else {
                 return false
             }
 

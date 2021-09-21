@@ -48,7 +48,7 @@ class StandardSessionContainer: UserSession {
             appropriateFor: nil,
             create: false
         )
-                .appendingPathComponent("TrustStoreStorage") else {
+        .appendingPathComponent("TrustStoreStorage") else {
             preconditionFailure("Could not create a filePath for the truststore storage.")
         }
         let trustStoreStorage = TrustStoreFileStorage(trustStoreStorageBaseFilePath: trustStoreStorageFilePath)
@@ -71,12 +71,12 @@ class StandardSessionContainer: UserSession {
                 ConfiguredIDPSession.Configuration(
                     httpClient: self.idpHttpClient(configuration: configuration),
                     idpSessionConfiguration:
-                        DefaultIDPSession.Configuration(
-                            clientId: configuration.clientId,
-                            redirectURL: configuration.redirectUri,
-                            discoveryURL: configuration.idp,
-                            scopes: ["e-rezept", "openid"]
-                        )
+                    DefaultIDPSession.Configuration(
+                        clientId: configuration.clientId,
+                        redirectURL: configuration.redirectUri,
+                        discoveryURL: configuration.idp,
+                        scopes: ["e-rezept", "openid"]
+                    )
                 )
             }
         return ConfiguredIDPSession(
@@ -93,12 +93,12 @@ class StandardSessionContainer: UserSession {
                 ConfiguredIDPSession.Configuration(
                     httpClient: self.idpHttpClient(configuration: configuration),
                     idpSessionConfiguration:
-                        DefaultIDPSession.Configuration(
-                            clientId: configuration.clientId,
-                            redirectURL: configuration.redirectUri,
-                            discoveryURL: configuration.idp,
-                            scopes: ["pairing", "openid"]
-                        )
+                    DefaultIDPSession.Configuration(
+                        clientId: configuration.clientId,
+                        redirectURL: configuration.redirectUri,
+                        discoveryURL: configuration.idp,
+                        scopes: ["pairing", "openid"]
+                    )
                 )
             }
         return ConfiguredIDPSession(
@@ -123,8 +123,8 @@ class StandardSessionContainer: UserSession {
 
     lazy var isAuthenticated: AnyPublisher<Bool, UserSessionError> = {
         idpSession.isLoggedIn
-                .mapError { UserSessionError.networkError(error: $0) }
-                .eraseToAnyPublisher()
+            .mapError { UserSessionError.networkError(error: $0) }
+            .eraseToAnyPublisher()
     }()
 
     lazy var nfcSessionProvider: NFCSignatureProvider = {
@@ -154,7 +154,7 @@ class StandardSessionContainer: UserSession {
             appropriateFor: nil,
             create: false
         )
-                .appendingPathComponent("VauStorage") else {
+        .appendingPathComponent("VauStorage") else {
             preconditionFailure("Could not create a filePath for the vau storage.")
         }
         return FileVAUStorage(vauStorageBaseFilePath: vauStorageFilePath)
@@ -172,7 +172,7 @@ class StandardSessionContainer: UserSession {
             appropriateFor: nil,
             create: false
         )
-                .appendingPathComponent("ErxTask.db") else {
+        .appendingPathComponent("ErxTask.db") else {
             preconditionFailure("Could not create a filePath for the local storage data store.")
         }
 
@@ -226,11 +226,11 @@ class IDPSessionTokenProvider: VAUAccessTokenProvider {
 
     var vauBearerToken: AnyPublisher<BearerToken, VAUError> {
         idpSession.autoRefreshedToken
-                .compactMap { $0?.accessToken }
-                .mapError { error in
-                    VAUError.unspecified(error: error)
-                }
-                .eraseToAnyPublisher()
+            .compactMap { $0?.accessToken }
+            .mapError { error in
+                VAUError.unspecified(error: error)
+            }
+            .eraseToAnyPublisher()
     }
 }
 

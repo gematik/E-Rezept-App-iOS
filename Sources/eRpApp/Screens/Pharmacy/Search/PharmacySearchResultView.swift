@@ -53,7 +53,7 @@ struct PharmacySearchResultView: View {
                         .padding()
                     Spacer()
                 }
-                    .frame(maxHeight: .infinity)
+                .frame(maxHeight: .infinity)
             case .searchResultEmpty:
                 NoResultsView()
                     .frame(maxHeight: .infinity)
@@ -78,10 +78,10 @@ struct PharmacySearchResultView: View {
                         )
                         : store
                 )
-                    .redacted(
-                        reason: viewStore.state.isLoading ? .placeholder : []
-                    )
-                    .accessibility(identifier: A11y.pharmacySearch.phaSearchTxtResultList)
+                .redacted(
+                    reason: viewStore.state.isLoading ? .placeholder : []
+                )
+                .accessibility(identifier: A11y.pharmacySearch.phaSearchTxtResultList)
             default:
                 EmptyView()
             }
@@ -113,21 +113,21 @@ struct PharmacySearchResultView: View {
                     Spacer()
 
                     /*
-                     swiftlint:disable:next todo
-                     TODO: This filter button is deactivated until the ApoVZD-Server
-                     provides the necessary data.
+                      swiftlint:disable:next todo
+                      TODO: This filter button is deactivated until the ApoVZD-Server
+                      provides the necessary data.
 
-                    Button(action: {
-                        viewStore.send(.showPharmacyFilterView)
-                    }, label: {
-                        Image(systemName: SFSymbolName.filter)
-                        Text(L10n.phaSearchBtnShowFilterView)
+                     Button(action: {
+                         viewStore.send(.showPharmacyFilterView)
+                     }, label: {
+                         Image(systemName: SFSymbolName.filter)
+                         Text(L10n.phaSearchBtnShowFilterView)
 
-                    })
-                    .foregroundColor(Colors.primary600)
-                    .font(Font.subheadline.weight(.semibold))
-                    .padding(.trailing, 2)
-                     */
+                     })
+                     .foregroundColor(Colors.primary600)
+                     .font(Font.subheadline.weight(.semibold))
+                     .padding(.trailing, 2)
+                      */
                 }
             }
         }
@@ -148,13 +148,13 @@ struct PharmacySearchResultView: View {
                                     .font(.footnote)
                                 Image(systemName: SFSymbolName.crossIconFill)
                             }
-                                .padding([.top, .bottom], 4)
-                                .padding([.leading, .trailing], 8)
-                                .background(RoundedRectangle(cornerRadius: 16).fill(Colors.backgroundSecondary))
+                            .padding([.top, .bottom], 4)
+                            .padding([.leading, .trailing], 8)
+                            .background(RoundedRectangle(cornerRadius: 16).fill(Colors.backgroundSecondary))
                         })
                     }
                 }
-                    .foregroundColor(Colors.systemLabelSecondary)
+                .foregroundColor(Colors.systemLabelSecondary)
             }
         }
     }
@@ -220,7 +220,7 @@ struct PharmacySearchResultView: View {
                     HStack {
                         Text(pharmacy.pharmacyLocation.address?.fullAddress ?? "")
                     }
-                        .foregroundColor(Colors.systemLabelSecondary)
+                    .foregroundColor(Colors.systemLabelSecondary)
 
                     Group {
                         if case let PharmacyOpenHoursCalculator.TodaysOpeningState
@@ -244,16 +244,16 @@ struct PharmacySearchResultView: View {
                                     Text(" \(timeOnlyFormatter.string(from: openingDateTime))")
                             }.foregroundColor(Colors.yellow700)
                         } else if case PharmacyOpenHoursCalculator.TodaysOpeningState.closed =
-                        pharmacy.todayOpeningState {
+                            pharmacy.todayOpeningState {
                             Text(L10n.phaSearchTxtClosed)
                                 .foregroundColor(Colors.systemLabelSecondary)
                         }
                     }
-                        .padding(.top, 1)
-                        .font(Font.subheadline.weight(.semibold))
+                    .padding(.top, 1)
+                    .font(Font.subheadline.weight(.semibold))
                 }
-                    .accessibilityElement(children: .combine)
-                    .padding([.top, .bottom], 8)
+                .accessibilityElement(children: .combine)
+                .padding([.top, .bottom], 8)
 
                 Spacer()
 

@@ -24,7 +24,7 @@ import TrustStore
 // MARK: - TrustStoreSessionMock -
 
 final class TrustStoreSessionMock: TrustStoreSession {
-   // MARK: - loadVauCertificate
+    // MARK: - loadVauCertificate
 
     var loadVauCertificateCallsCount = 0
     var loadVauCertificateCalled: Bool {
@@ -39,7 +39,7 @@ final class TrustStoreSessionMock: TrustStoreSession {
         return loadVauCertificateClosure.map { $0() } ?? loadVauCertificateReturnValue
     }
 
-   // MARK: - validate
+    // MARK: - validate
 
     var validateCertificateCallsCount = 0
     var validateCertificateCalled: Bool {

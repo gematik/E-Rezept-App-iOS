@@ -103,8 +103,8 @@ extension KeychainAccessHelper {
     /// - Throws: `KeychainAccessHelperError`
     func setGenericPassword(_ password: String, for account: String, encoding: String.Encoding = .utf8) throws -> Bool {
         guard let service = defaultService.data(using: encoding),
-            let encodedAccount = account.data(using: encoding),
-            let encodedPassword = password.data(using: encoding) else {
+              let encodedAccount = account.data(using: encoding),
+              let encodedPassword = password.data(using: encoding) else {
             throw KeychainAccessHelperError.illegalArgument
         }
         return try setGenericPassword(encodedPassword, for: encodedAccount, service: service)
@@ -112,7 +112,7 @@ extension KeychainAccessHelper {
 
     func genericPassword(for account: String, encoding: String.Encoding = .utf8) throws -> Data? {
         guard let accountData = account.data(using: encoding),
-            let service = defaultService.data(using: encoding) else {
+              let service = defaultService.data(using: encoding) else {
             throw KeychainAccessHelperError.illegalArgument
         }
         return try genericPassword(for: accountData, ofService: service)
@@ -152,7 +152,7 @@ extension KeychainAccessHelper {
     func genericPassword(for account: String, ofService service: String, encoding: String.Encoding = .utf8) throws
         -> String? {
         guard let accountData = account.data(using: .utf8),
-            let serviceData = service.data(using: .utf8) else {
+              let serviceData = service.data(using: .utf8) else {
             throw KeychainAccessHelperError.illegalArgument
         }
 
@@ -179,7 +179,7 @@ extension KeychainAccessHelper {
     func unsetGenericPassword(for account: String, ofService service: String,
                               encoding: String.Encoding = .utf8) throws -> Bool {
         guard let accountData = account.data(using: encoding),
-            let serviceData = service.data(using: encoding) else {
+              let serviceData = service.data(using: encoding) else {
             throw KeychainAccessHelperError.illegalArgument
         }
 
@@ -203,8 +203,8 @@ extension KeychainAccessHelper {
         encoding: String.Encoding = .utf8
     ) throws -> Bool {
         guard let passwordData = password.data(using: encoding),
-            let accountData = account.data(using: encoding),
-            let serviceData = service.data(using: encoding) else {
+              let accountData = account.data(using: encoding),
+              let serviceData = service.data(using: encoding) else {
             throw KeychainAccessHelperError.illegalArgument
         }
 
@@ -224,8 +224,8 @@ struct SystemKeychainAccessHelper: KeychainAccessHelper {
         let status: OSStatus = SecItemCopyMatching(query as CFDictionary, &item)
 
         guard status == errSecSuccess,
-            let existingItem = item as? [String: Any],
-            let passwordData = existingItem[kSecValueData as String] as? Data
+              let existingItem = item as? [String: Any],
+              let passwordData = existingItem[kSecValueData as String] as? Data
         else {
             if status == errSecItemNotFound {
                 return nil

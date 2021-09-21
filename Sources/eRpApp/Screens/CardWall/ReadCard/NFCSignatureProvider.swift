@@ -151,7 +151,7 @@ class EGKSignatureSession: SignatureSession {
     func sign(registerDataProvider: SecureEnclaveSignatureProvider,
               in pairingSession: PairingSession,
               signedChallenge: SignedChallenge)
-    -> AnyPublisher<(SignedChallenge, RegistrationData), NFCSignatureProviderError> {
+        -> AnyPublisher<(SignedChallenge, RegistrationData), NFCSignatureProviderError> {
         healthCard.sign(registerDataProvider: registerDataProvider,
                         in: pairingSession,
                         signedChallenge: signedChallenge)
@@ -172,7 +172,7 @@ protocol SignatureSession: AnyObject {
     func sign(registerDataProvider: SecureEnclaveSignatureProvider,
               in pairingSession: PairingSession,
               signedChallenge: SignedChallenge)
-    -> AnyPublisher<(SignedChallenge, RegistrationData), NFCSignatureProviderError>
+        -> AnyPublisher<(SignedChallenge, RegistrationData), NFCSignatureProviderError>
 
     func updateAlert(message: String)
 

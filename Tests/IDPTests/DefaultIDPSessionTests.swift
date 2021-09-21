@@ -183,7 +183,7 @@ final class DefaultIDPSessionTests: XCTestCase {
         let storage = MemStorage()
         let issuedDate = dateFormatter.date(from: "2021-03-16 14:42:03.0000+0000")!
         let discoveryDocument = self.discoveryDocument(createdOn: issuedDate)
-       storage.set(discovery: discoveryDocument)
+        storage.set(discovery: discoveryDocument)
 
         // sut: IDPSession is not stored as we test its internals
         _ = DefaultIDPSession(
@@ -324,9 +324,9 @@ final class DefaultIDPSessionTests: XCTestCase {
         let issuedDate = dateFormatter.date(from: "2021-03-16 14:00:00.0000+0000")!
         let discoveryDocument = self.discoveryDocument(createdOn: issuedDate)
         storage.set(discovery: discoveryDocument)
-		// must be between iat date and exp date from `challengeDocument`
+        // must be between iat date and exp date from `challengeDocument`
         let nowDate = dateFormatter.date(from: "2021-03-16 14:56:38.0000+0000")!
-		// must be exact exp date from `challengeDocument`
+        // must be exact exp date from `challengeDocument`
         let challengeExpirationDate = dateFormatter.date(from: "2021-03-16 14:58:38.0000+0000")!
 
         let codeVerifier = "very-random-string"
@@ -374,45 +374,45 @@ final class DefaultIDPSessionTests: XCTestCase {
             })
 
         expect(randomGeneratorCalls) == 3
-		if randomGeneratorCalls == 3 {
-			expect(randomGeneratorParams[0]) == verifierLength
-			expect(randomGeneratorParams[1]) == stateLength
+        if randomGeneratorCalls == 3 {
+            expect(randomGeneratorParams[0]) == verifierLength
+            expect(randomGeneratorParams[1]) == stateLength
             expect(randomGeneratorParams[2]) == nonceLength
-		} else {
-			fail("unexpected calls count of randomGenerator")
-		}
+        } else {
+            fail("unexpected calls count of randomGenerator")
+        }
         expect(idpClientMock.requestChallenge_CallsCount) == 1
-		if let firstCallArguments = idpClientMock.requestChallenge_ReceivedArguments.first {
-			expect(firstCallArguments.codeChallenge) == codeChallenge
-			expect(firstCallArguments.method) == IDPCodeChallengeMode.sha256
-			expect(firstCallArguments.state) == stateOrNonce.hexString()
+        if let firstCallArguments = idpClientMock.requestChallenge_ReceivedArguments.first {
+            expect(firstCallArguments.codeChallenge) == codeChallenge
+            expect(firstCallArguments.method) == IDPCodeChallengeMode.sha256
+            expect(firstCallArguments.state) == stateOrNonce.hexString()
             expect(firstCallArguments.nonce) == stateOrNonce.hexString()
-			expect(firstCallArguments.discovery) == discoveryDocument
-		} else {
-			fail("request challenge did not get called")
-		}
+            expect(firstCallArguments.discovery) == discoveryDocument
+        } else {
+            fail("request challenge did not get called")
+        }
 
         let expInterval = challengeExpirationDate.timeIntervalSince(nowDate)
         timerScheduler.advance(by: .init(floatLiteral: expInterval + 1))
 
         expect(randomGeneratorCalls) == 6
-		if randomGeneratorCalls == 6 {
-			expect(randomGeneratorParams[3]) == verifierLength
-			expect(randomGeneratorParams[4]) == stateLength
+        if randomGeneratorCalls == 6 {
+            expect(randomGeneratorParams[3]) == verifierLength
+            expect(randomGeneratorParams[4]) == stateLength
             expect(randomGeneratorParams[5]) == nonceLength
-		} else {
-			fail("unexpected calls count of randomGenerator")
-		}
+        } else {
+            fail("unexpected calls count of randomGenerator")
+        }
         expect(idpClientMock.requestChallenge_CallsCount) == 2
-		if idpClientMock.requestChallenge_CallsCount == 2 {
-			let secondCallArguments = idpClientMock.requestChallenge_ReceivedArguments[1]
-			expect(secondCallArguments.codeChallenge) == codeChallenge
-			expect(secondCallArguments.method) == IDPCodeChallengeMode.sha256
-			expect(secondCallArguments.state) == stateOrNonce.hexString()
-			expect(secondCallArguments.discovery) == discoveryDocument
-		} else {
-			fail("request challenge did not get called for the second time")
-		}
+        if idpClientMock.requestChallenge_CallsCount == 2 {
+            let secondCallArguments = idpClientMock.requestChallenge_ReceivedArguments[1]
+            expect(secondCallArguments.codeChallenge) == codeChallenge
+            expect(secondCallArguments.method) == IDPCodeChallengeMode.sha256
+            expect(secondCallArguments.state) == stateOrNonce.hexString()
+            expect(secondCallArguments.discovery) == discoveryDocument
+        } else {
+            fail("request challenge did not get called for the second time")
+        }
 
         cancellable.cancel()
     }
@@ -714,8 +714,8 @@ final class DefaultIDPSessionTests: XCTestCase {
 
         idpClientMock.registerDevice_Publisher =
             Just(pairingEntry)
-            .setFailureType(to: IDPError.self)
-            .eraseToAnyPublisher()
+                .setFailureType(to: IDPError.self)
+                .eraseToAnyPublisher()
 
         sut.pairDevice(with: registrationData, token: initialToken).test(
             failure: { error in
@@ -780,8 +780,8 @@ final class DefaultIDPSessionTests: XCTestCase {
 
         idpClientMock.altVerify_Publisher =
             Just(idpExchangeToken)
-            .setFailureType(to: IDPError.self)
-            .eraseToAnyPublisher()
+                .setFailureType(to: IDPError.self)
+                .eraseToAnyPublisher()
 
         let challenge = try! IDPChallenge(
             challenge: JWT(header: JWT.Header(), payload: IDPChallenge.Claim())

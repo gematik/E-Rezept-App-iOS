@@ -63,7 +63,7 @@ extension FHIRClient.Response {
                     return nil
                 }
                 return (key, value)
-        }) // swiftlint:disable:this closure_end_indentation
+            })
 
         return FHIRClient.Response(status: status, headers: headers, body: data)
     }

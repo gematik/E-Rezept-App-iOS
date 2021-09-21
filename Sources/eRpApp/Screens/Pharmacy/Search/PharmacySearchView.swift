@@ -116,7 +116,7 @@ struct PharmacySearchView: View {
                         viewStore.send(.locationButtonTapped)
                     }, label: {
                         Image(systemName: viewStore.state.currentLocation != nil ?
-                                SFSymbolName.locationFill : SFSymbolName.location).padding()
+                            SFSymbolName.locationFill : SFSymbolName.location).padding()
                     })
                 }
                 .foregroundColor(Colors.systemLabelSecondary)

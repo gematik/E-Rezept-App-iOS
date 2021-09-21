@@ -118,9 +118,9 @@ final class RecordActionsForHintsTests: XCTestCase {
         store.assert(
             // when prescriptions were loaded and have no results
             .send(.main(action: .prescriptionList(action: .loadLocalGroupedPrescriptionsReceived(LoadingState
-                .idle)))) { _ in
-                // than hint state should not be changed from the `recordActionsForHints` reducer
-                expect(sessionContainer.userSession.hintEventsStore.hintState.hasTasksInLocalStore).to(beFalse())
+                    .idle)))) { _ in
+                    // than hint state should not be changed from the `recordActionsForHints` reducer
+                    expect(sessionContainer.userSession.hintEventsStore.hintState.hasTasksInLocalStore).to(beFalse())
             }
         )
     }

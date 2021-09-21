@@ -1,3 +1,10 @@
+# Release 1.0.10
+
+## fixes (1 change)
+
+- Fix password view layouts
+
+
 # Release 1.0.9
 
 ## feature (3 changes)

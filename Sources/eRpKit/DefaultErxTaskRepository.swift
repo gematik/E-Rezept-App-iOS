@@ -92,10 +92,10 @@ public class DefaultErxTaskRepository<D: ErxTaskDataStore, C: ErxTaskDataStore>:
     public func loadRemoteAll(for locale: String?) -> AnyPublisher<[ErxTask], ErrorType> {
         loadRemoteLatestTasks()
             .flatMap { _ in
-                 self.loadRemoteLatestAuditEvents(for: locale)
+                self.loadRemoteLatestAuditEvents(for: locale)
             }
             .flatMap { _ in
-               self.loadRemoteLatestCommunications()
+                self.loadRemoteLatestCommunications()
             }
             .flatMap { _ in
                 self.loadRemoteLatestMedicationDispenses()
@@ -189,18 +189,18 @@ public class DefaultErxTaskRepository<D: ErxTaskDataStore, C: ErxTaskDataStore>:
             return disk.delete(tasks: erxTasks)
                 .mapError(ErrorType.local)
                 .eraseToAnyPublisher()
-        // Delete remote & locally when at least one is not a scanned task
+            // Delete remote & locally when at least one is not a scanned task
         } else {
             // 1. Delete on cloud/server
             return cloud.delete(tasks: erxTasks)
                 .mapError(ErrorType.remote)
 
-            // 2. Delete on disk/locally
-            .flatMap { _ in
-                self.disk.delete(tasks: erxTasks)
-                    .mapError(ErrorType.local)
-            }
-            .eraseToAnyPublisher()
+                // 2. Delete on disk/locally
+                .flatMap { _ in
+                    self.disk.delete(tasks: erxTasks)
+                        .mapError(ErrorType.local)
+                }
+                .eraseToAnyPublisher()
         }
     }
 

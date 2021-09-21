@@ -69,9 +69,9 @@ extension String {
         // Process first line + (optional) header fields
         let headComponents = head.components(separatedBy: "\r\n")
         guard let firstLineSplit = headComponents.first?.split(separator: " ", maxSplits: 2),
-            let httpVersionSubstring = firstLineSplit.first,
-            let statusCodeString = firstLineSplit.dropFirst().first,
-            let statusCode = Int(statusCodeString) else {
+              let httpVersionSubstring = firstLineSplit.first,
+              let statusCodeString = firstLineSplit.dropFirst().first,
+              let statusCode = Int(statusCodeString) else {
             throw VAUError.responseValidation
         }
         let httpVersion = String(httpVersionSubstring)
@@ -107,7 +107,7 @@ extension String {
         ]
         if let contentType = httpURLResponse.value(forHTTPHeaderField: "Content-Type") {
             guard acceptContentTypes.contains(where: { contentType.contains($0) }),
-                let bodyData = body.data(using: .utf8) else {
+                  let bodyData = body.data(using: .utf8) else {
                 throw VAUError.responseValidation
             }
             data = bodyData

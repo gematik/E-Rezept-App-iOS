@@ -44,7 +44,7 @@ extension ScannerDomain {
             }
 
             guard case let .erxCode(string) = firstCode,
-                let tasksString = string else {
+                  let tasksString = string else {
                 throw Error.empty
             }
 

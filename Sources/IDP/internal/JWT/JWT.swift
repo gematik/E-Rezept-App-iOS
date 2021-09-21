@@ -76,7 +76,7 @@ public struct JWT {
         /// 3:                                                 .MXUq3IrpzRL6Rc0Q8RP1987yAvUm2JoRQjvtGgJBNeg-MF6QJiuQQ
         /// 4:                                                  MXUq3IrpzRL6Rc0Q8RP1987yAvUm2JoRQjvtGgJBNeg-MF6QJiuQQ
         guard let rawHeader = (string as NSString).substring(with: result[0].range(at: 1)).data(using: .ascii),
-            let payload = (string as NSString).substring(with: result[0].range(at: 2)).data(using: .ascii) else {
+              let payload = (string as NSString).substring(with: result[0].range(at: 2)).data(using: .ascii) else {
             throw Error.encodingError
         }
         if result[0].range(at: 4).location != NSNotFound {

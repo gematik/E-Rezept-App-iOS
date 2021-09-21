@@ -32,8 +32,8 @@ extension ErxTaskScannerView {
                     HStack {
                         Spacer()
                         CloseButton { viewStore.send(.closeWithoutSave) }
-                        .accessibility(identifier: A11y.scanner.scnBtnCancelScan)
-                        .accessibility(label: Text(L10n.scnBtnCancelScan))
+                            .accessibility(identifier: A11y.scanner.scnBtnCancelScan)
+                            .accessibility(label: Text(L10n.scnBtnCancelScan))
                     }
 
                     InfoView(localizedTextKey: textLabel(for: viewStore.scanState,

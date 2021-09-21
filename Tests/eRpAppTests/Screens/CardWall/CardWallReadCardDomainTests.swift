@@ -186,7 +186,7 @@ final class CardWallReadCardDomainTests: XCTestCase {
             },
             .receive(CardWallReadCardDomain.Action
                 .stateReceived(.retrievingChallenge(.error(.idpError(idpError))))) { state in
-                state.output = .retrievingChallenge(.error(.idpError(self.idpError)))
+                    state.output = .retrievingChallenge(.error(.idpError(self.idpError)))
             }
         )
     }
@@ -298,7 +298,7 @@ final class CardWallReadCardDomainTests: XCTestCase {
             },
             .receive(CardWallReadCardDomain.Action
                 .stateReceived(.signingChallenge(.error(.signChallengeError(pinError))))) { state in
-                state.output = .signingChallenge(.error(.signChallengeError(pinError)))
+                    state.output = .signingChallenge(.error(.signChallengeError(pinError)))
             }
         )
     }
@@ -334,7 +334,7 @@ final class CardWallReadCardDomainTests: XCTestCase {
             },
             .receive(CardWallReadCardDomain.Action
                 .stateReceived(.signingChallenge(.error(.signChallengeError(canError))))) { state in
-                state.output = .signingChallenge(.error(.signChallengeError(canError)))
+                    state.output = .signingChallenge(.error(.signChallengeError(canError)))
             }
         )
     }

@@ -79,12 +79,12 @@ final class IDPIntegrationTests: XCTestCase {
                 session.verifyAndExchange(signedChallenge: signedChallenge)
             }
             .test(expectations: { idpToken in
-                    success = true
-                    Swift.print("token access", idpToken.accessToken)
-                    Swift.print("token id", idpToken.idToken)
-                    Swift.print("token sso: '\(idpToken.ssoToken ?? "<empty>")'")
-                    token = idpToken
-                  }, subscribeScheduler: DispatchQueue.global().eraseToAnyScheduler())
+                success = true
+                Swift.print("token access", idpToken.accessToken)
+                Swift.print("token id", idpToken.idToken)
+                Swift.print("token sso: '\(idpToken.ssoToken ?? "<empty>")'")
+                token = idpToken
+            }, subscribeScheduler: DispatchQueue.global().eraseToAnyScheduler())
         expect(success) == true
 
         guard token != nil else {
@@ -127,7 +127,7 @@ final class IDPIntegrationTests: XCTestCase {
             }, expectations: { _ in
                 fail("token should not be valid")
             },
-                  subscribeScheduler: DispatchQueue.global().eraseToAnyScheduler())
+            subscribeScheduler: DispatchQueue.global().eraseToAnyScheduler())
 
         expect(storage.tokenState.value).to(beNil())
 
@@ -226,11 +226,11 @@ final class IDPIntegrationTests: XCTestCase {
                       fail("\(error)")
                   },
                   expectations: { idpToken in
-                    success = true
-                    Swift.print("token access", idpToken.accessToken)
-                    Swift.print("token id", idpToken.idToken)
-                    Swift.print("token sso: '\(idpToken.ssoToken ?? "<empty>")'")
-                    token = idpToken
+                      success = true
+                      Swift.print("token access", idpToken.accessToken)
+                      Swift.print("token id", idpToken.idToken)
+                      Swift.print("token sso: '\(idpToken.ssoToken ?? "<empty>")'")
+                      token = idpToken
                   }, subscribeScheduler: DispatchQueue.global().eraseToAnyScheduler())
         expect(success) == true
 
@@ -305,11 +305,11 @@ final class IDPIntegrationTests: XCTestCase {
                       fail("\(error)")
                   },
                   expectations: { idpToken in
-                    success = true
-                    Swift.print("token access", idpToken.accessToken)
-                    Swift.print("token id", idpToken.idToken)
-                    Swift.print("token sso: '\(idpToken.ssoToken ?? "<empty>")'")
-                    token = idpToken
+                      success = true
+                      Swift.print("token access", idpToken.accessToken)
+                      Swift.print("token id", idpToken.idToken)
+                      Swift.print("token sso: '\(idpToken.ssoToken ?? "<empty>")'")
+                      token = idpToken
                   }, subscribeScheduler: DispatchQueue.global().eraseToAnyScheduler())
         expect(success) == true
     }

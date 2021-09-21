@@ -59,9 +59,9 @@ extension DebugView {
         let action: () -> Void
 
         var body: some View {
-                Button(text, action: action)
-                    .foregroundColor(.red)
-                    .frame(maxWidth: .infinity)
+            Button(text, action: action)
+                .foregroundColor(.red)
+                .frame(maxWidth: .infinity)
         }
     }
 
@@ -107,7 +107,7 @@ extension DebugView {
                             text: "CardWall Intro is only displayed until accepted once.",
                             a11y: "dummy_a11y_e"
                         )
-                            .font(.subheadline)
+                        .font(.subheadline)
                     }
                     DebugView.ResetButton(text: "Reset CAN") {
                         viewStore.send(.resetCanButtonTapped)
@@ -197,12 +197,12 @@ extension DebugView {
                                 get: \.virtualLoginPrivateKey,
                                 send: DebugDomain.Action.virtualPrkCHAutReceived
                             ))
-                            .accessibility(identifier: "debug_prk_ch_aut")
-                            .frame(minHeight: 100, maxHeight: 100)
-                            .foregroundColor(Colors.systemLabel)
-                            .border(Color.black)
-                            .keyboardType(.default)
-                            .disableAutocorrection(true)
+                                .accessibility(identifier: "debug_prk_ch_aut")
+                                .frame(minHeight: 100, maxHeight: 100)
+                                .foregroundColor(Colors.systemLabel)
+                                .border(Color.black)
+                                .keyboardType(.default)
+                                .disableAutocorrection(true)
 
                             FootnoteView(text: "PrK_CH_AUT (BASE64)", a11y: "dummy_a11y_i")
                         }
@@ -212,12 +212,12 @@ extension DebugView {
                                 get: \.virtualLoginCertKey,
                                 send: DebugDomain.Action.virtualCCHAutReceived
                             ))
-                            .accessibility(identifier: "debug_c_ch_aut")
-                            .frame(minHeight: 100, maxHeight: 100)
-                            .foregroundColor(Colors.systemLabel)
-                            .keyboardType(.default)
-                            .border(Color.black)
-                            .disableAutocorrection(true)
+                                .accessibility(identifier: "debug_c_ch_aut")
+                                .frame(minHeight: 100, maxHeight: 100)
+                                .foregroundColor(Colors.systemLabel)
+                                .keyboardType(.default)
+                                .border(Color.black)
+                                .disableAutocorrection(true)
 
                             FootnoteView(text: "C.CH.AUT (BASE64)", a11y: "dummy_a11y_i")
                         }
@@ -252,11 +252,11 @@ extension DebugView {
                             get: \.accessCodeText,
                             send: DebugDomain.Action.accessCodeTextReceived
                         ))
-                        .frame(minHeight: 100, maxHeight: 100)
-                        .background(Color(.systemGray5))
-                        .foregroundColor(Colors.systemLabel)
-                        .keyboardType(.default)
-                        .disableAutocorrection(true)
+                            .frame(minHeight: 100, maxHeight: 100)
+                            .background(Color(.systemGray5))
+                            .foregroundColor(Colors.systemLabel)
+                            .keyboardType(.default)
+                            .disableAutocorrection(true)
                         FootnoteView(text: "Initial access token only for internal IDP", a11y: "")
                     }
 
@@ -347,11 +347,11 @@ extension DebugView {
                 Section(header: Text("Environment")) {
                     Picker("Environment",
                            selection: viewStore.binding(get: {
-                            $0.selectedEnvironment?.name ?? "no selection"
-                           },
+                                                            $0.selectedEnvironment?.name ?? "no selection"
+                                                        },
                                                         send: { value in
-                            DebugDomain.Action.setServerEnvironment(value)
-                           })) {
+                                                            DebugDomain.Action.setServerEnvironment(value)
+                                                        })) {
                         ForEach(viewStore.availableEnvironments, id: \.id) { serverEnvironment in
                             Text(serverEnvironment.configuration.name).tag(serverEnvironment.name)
                         }

@@ -75,12 +75,12 @@ class VirtualEGKSignatureProvider: NFCSignatureProvider {
         func sign(registerDataProvider _: SecureEnclaveSignatureProvider,
                   in _: PairingSession,
                   signedChallenge _: SignedChallenge)
-        -> AnyPublisher<(SignedChallenge, RegistrationData), NFCSignatureProviderError> {
+            -> AnyPublisher<(SignedChallenge, RegistrationData), NFCSignatureProviderError> {
             Fail(
                 outputType: (SignedChallenge, RegistrationData).self,
                 failure: NFCSignatureProviderError.signingFailure(nil)
             )
-                .eraseToAnyPublisher()
+            .eraseToAnyPublisher()
         }
 
         func updateAlert(message _: String) {}

@@ -250,9 +250,9 @@ enum PharmacySearchDomain: Equatable {
         case .requestLocationPermission:
             return .merge(
                 environment.locationManager.create(id: LocationManagerId())
-                .map(PharmacySearchDomain.Action.locationManager),
+                    .map(PharmacySearchDomain.Action.locationManager),
                 environment.locationManager.requestWhenInUseAuthorization(id: LocationManagerId())
-                .fireAndForget()
+                    .fireAndForget()
             )
         case .locationManager(.didChangeAuthorization(.authorizedAlways)),
              .locationManager(.didChangeAuthorization(.authorizedWhenInUse)):
@@ -293,36 +293,36 @@ enum PharmacySearchDomain: Equatable {
     )
 
     static let pharmacyFilterPullbackReducer: Reducer =
-            PharmacySearchFilterDomain.reducer.optional().pullback(
-                state: \.pharmacyFilterState,
-                action: /PharmacySearchDomain.Action.pharmacyFilterView(action:)
-            ) { environment in
-                PharmacySearchFilterDomain.Environment(schedulers: environment.schedulers)
-            }
+        PharmacySearchFilterDomain.reducer.optional().pullback(
+            state: \.pharmacyFilterState,
+            action: /PharmacySearchDomain.Action.pharmacyFilterView(action:)
+        ) { environment in
+            PharmacySearchFilterDomain.Environment(schedulers: environment.schedulers)
+        }
 
     static let pharmacyDetailPullbackReducer: Reducer =
-            PharmacyDetailDomain.reducer.optional().pullback(
-                state: \.pharmacyDetailState,
-                action: /PharmacySearchDomain.Action.pharmacyDetailView(action:)
-            ) { environment in
-                PharmacyDetailDomain.Environment(schedulers: environment.schedulers)
-            }
+        PharmacyDetailDomain.reducer.optional().pullback(
+            state: \.pharmacyDetailState,
+            action: /PharmacySearchDomain.Action.pharmacyDetailView(action:)
+        ) { environment in
+            PharmacyDetailDomain.Environment(schedulers: environment.schedulers)
+        }
 
     static var locationPermissionAlertState: AlertState<Action> = {
-            AlertState(
-                title: TextState(L10n.phaSearchTxtLocationAlertTitle),
-                message: TextState(L10n.phaSearchTxtLocationAlertMessage),
-                dismissButton: .default(TextState(L10n.alertBtnOk), send: .alertDismissButtonTapped)
-            )
-        }()
+        AlertState(
+            title: TextState(L10n.phaSearchTxtLocationAlertTitle),
+            message: TextState(L10n.phaSearchTxtLocationAlertMessage),
+            dismissButton: .default(TextState(L10n.alertBtnOk), send: .alertDismissButtonTapped)
+        )
+    }()
 
     static var searchResultErrorAlertState: AlertState<Action> = {
-            AlertState(
-                title: TextState(L10n.phaSearchTxtErrorAlertTitle),
-                message: TextState(L10n.phaSearchTxtErrorAlertMessage),
-                dismissButton: .default(TextState(L10n.alertBtnOk), send: .alertDismissButtonTapped)
-            )
-        }()
+        AlertState(
+            title: TextState(L10n.phaSearchTxtErrorAlertTitle),
+            message: TextState(L10n.phaSearchTxtErrorAlertMessage),
+            dismissButton: .default(TextState(L10n.alertBtnOk), send: .alertDismissButtonTapped)
+        )
+    }()
 }
 
 extension PharmacySearchDomain {

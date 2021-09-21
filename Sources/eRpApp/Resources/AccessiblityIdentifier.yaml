@@ -116,6 +116,8 @@ settings:
     - cpw_inp_passwordB
     - cpw_txt_password_recommendation
     - cpw_txt_passwords_dont_match
+    - cpw_txt_section_title
+    - cpw_txt_section_update_title
     - cpw_txt_title
   logout:
     - stg_btn_logout

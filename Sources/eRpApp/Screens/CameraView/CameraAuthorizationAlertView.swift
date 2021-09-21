@@ -28,17 +28,17 @@ struct CameraAuthorizationAlertView: View {
                 Alert(title: Text(L10n.camPermDenyTitle),
                       message: Text(L10n.camPermDenyMessage),
                       primaryButton: .cancel {
-                        self.presentationMode.wrappedValue.dismiss()
+                          self.presentationMode.wrappedValue.dismiss()
                       },
                       secondaryButton: .default(Text(L10n.camPermDenyBtnSettings)) {
-                        guard let settingsUrl = URL(string: UIApplication.openSettingsURLString),
-                              UIApplication.shared.canOpenURL(settingsUrl) else {
-                            self.presentationMode.wrappedValue.dismiss()
-                            return
-                        }
+                          guard let settingsUrl = URL(string: UIApplication.openSettingsURLString),
+                                UIApplication.shared.canOpenURL(settingsUrl) else {
+                              self.presentationMode.wrappedValue.dismiss()
+                              return
+                          }
 
-                        UIApplication.shared.open(settingsUrl)
-                        self.presentationMode.wrappedValue.dismiss()
+                          UIApplication.shared.open(settingsUrl)
+                          self.presentationMode.wrappedValue.dismiss()
                       })
             }
     }

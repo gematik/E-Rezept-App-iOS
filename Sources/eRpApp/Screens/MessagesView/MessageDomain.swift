@@ -128,15 +128,15 @@ enum MessageDomain: Equatable {
 
     private static let pickupCodeReducer: Reducer =
         PickupCodeDomain.reducer.optional()
-        .pullback(
-            state: \.pickupCodeViewState,
-            action: /MessageDomain.Action.pickupCode(action:)
-        ) { messagesEnvironment in
-            PickupCodeDomain.Environment(
-                schedulers: messagesEnvironment.schedulers,
-                matrixCodeGenerator: ZXDataMatrixWriter()
-            )
-        }
+            .pullback(
+                state: \.pickupCodeViewState,
+                action: /MessageDomain.Action.pickupCode(action:)
+            ) { messagesEnvironment in
+                PickupCodeDomain.Environment(
+                    schedulers: messagesEnvironment.schedulers,
+                    matrixCodeGenerator: ZXDataMatrixWriter()
+                )
+            }
 
     struct DeviceInformations {
         let model: String

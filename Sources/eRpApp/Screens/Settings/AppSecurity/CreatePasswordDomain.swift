@@ -91,7 +91,7 @@ enum CreatePasswordDomain {
         case .saveButtonTapped:
             state.showPasswordsNotEqualMessage = state.passwordA != state.passwordB
             guard state.mode == .create ||
-                    (try? environment.passwordManager.matches(password: state.password)) ?? false else {
+                (try? environment.passwordManager.matches(password: state.password)) ?? false else {
                 state.showOriginalPasswordWrong = true
                 return .none
             }

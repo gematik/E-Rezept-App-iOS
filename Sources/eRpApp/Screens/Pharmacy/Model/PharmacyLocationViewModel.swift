@@ -101,7 +101,7 @@ struct PharmacyLocationViewModel: Equatable, Hashable {
         }
         .sorted {
             hoursOfOperation.firstIndex(of: $0.daysOfWeek) ?? -1
-            < hoursOfOperation.firstIndex(of: $1.daysOfWeek) ?? -1
+                < hoursOfOperation.firstIndex(of: $1.daysOfWeek) ?? -1
         }
         return days
     }

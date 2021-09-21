@@ -91,26 +91,26 @@ public struct RegistrationData: Claims, Codable {
             public let manufacturer: String
 
             enum CodingKeys: String, CodingKey {
-                    case deviceTypeDataVersion = "device_type_data_version"
-                    case product
-                    case model
-                    case os // swiftlint:disable:this identifier_name
-                    case osVersion = "os_version"
-                    case manufacturer
+                case deviceTypeDataVersion = "device_type_data_version"
+                case product
+                case model
+                case os // swiftlint:disable:this identifier_name
+                case osVersion = "os_version"
+                case manufacturer
             }
         }
 
         enum CodingKeys: String, CodingKey {
-                case name
-                case deviceInformationDataVersion = "device_information_data_version"
-                case deviceType = "device_type"
+            case name
+            case deviceInformationDataVersion = "device_information_data_version"
+            case deviceType = "device_type"
         }
     }
 
     private static var defaultEncoder: JSONEncoder = {
-            let jsonEncoder = JSONEncoder()
-            jsonEncoder.dataEncodingStrategy = .base64
-            return jsonEncoder
+        let jsonEncoder = JSONEncoder()
+        jsonEncoder.dataEncodingStrategy = .base64
+        return jsonEncoder
     }()
 
     /// [REQ:gemF_Biometrie:A_21415:Encrypted_Registration_Data] Returns JWE encrypted Registration_Data
@@ -125,10 +125,10 @@ public struct RegistrationData: Claims, Codable {
                                               encryption: .a256gcm,
                                               contentType: "JSON",
                                               type: "JWT"),
-              let jwePayload = try? RegistrationData.defaultEncoder.encode(self),
-              let signedChallengeJWE = try? JWE(header: jweHeader,
-                                                payload: jwePayload,
-                                                nonceGenerator: cryptoBox.aesNonceGenerator) else {
+            let jwePayload = try? RegistrationData.defaultEncoder.encode(self),
+            let signedChallengeJWE = try? JWE(header: jweHeader,
+                                              payload: jwePayload,
+                                              nonceGenerator: cryptoBox.aesNonceGenerator) else {
             throw IDPError.internalError("Unable to encrypt signed challenge")
         }
 

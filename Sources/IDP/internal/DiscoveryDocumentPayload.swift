@@ -24,25 +24,25 @@ public struct DiscoveryDocumentPayload: Claims, Equatable {
     public let authentication: URL
     /// IDP Authentication via paired key (a.k.a. authentication via biometrics) endpoint
     public let authenticationPair: URL
-	/// SSO endpoint
-	public let sso: URL
+    /// SSO endpoint
+    public let sso: URL
     /// IDP Token exchange endpoint
     public let token: URL
     /// Endpoint for the DiscoveryDocument
     public let disc: URL
     /// Endpoint for the pairing of new biometric keys
     public let pairing: URL
-	/// Endpoint of the issuer
+    /// Endpoint of the issuer
     public let issuer: URL
-	/// Endpoint for all JWKs (incl. pukIdpEnc, pukIdpSig and discKey)
+    /// Endpoint for all JWKs (incl. pukIdpEnc, pukIdpSig and discKey)
     public let jwks: URL
     /// Expiration UNIX Timestamp
     public let exp: Date
     /// Issued at
     public let iat: Date
-	/// Endpoint for the public encryption key
+    /// Endpoint for the public encryption key
     public let pukIdpEnc: URL
-	/// Endpoint for the public signing key
+    /// Endpoint for the public signing key
     public let pukIdpSig: URL
 
     public let subjectTypesSupported: [String]

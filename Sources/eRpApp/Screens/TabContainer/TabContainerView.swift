@@ -60,23 +60,23 @@ struct TabContainerView: View {
                     store: store.scope(state: \.main,
                                        action: AppDomain.Action.main(action:))
                 )
-                    .tabItem {
-                        Image(Asset.TabIcon.appLogoTabItem)
-                            .accessibility(hidden: true)
-                        Text(L10n.tabTxtMain)
-                    }
-                    .tag(AppDomain.Tab.main)
+                .tabItem {
+                    Image(Asset.TabIcon.appLogoTabItem)
+                        .accessibility(hidden: true)
+                    Text(L10n.tabTxtMain)
+                }
+                .tag(AppDomain.Tab.main)
 
                 MessagesView(
                     store: store.scope(state: \.messages,
                                        action: AppDomain.Action.messages(action:))
                 )
-                    .tabItem {
-                        Image(Asset.TabIcon.bubbleLeft)
-                            .accessibility(hidden: true)
-                        Text(L10n.tabTxtMessages)
-                    }
-                    .tag(AppDomain.Tab.messages)
+                .tabItem {
+                    Image(Asset.TabIcon.bubbleLeft)
+                        .accessibility(hidden: true)
+                    Text(L10n.tabTxtMessages)
+                }
+                .tag(AppDomain.Tab.messages)
             }
             .onAppear {
                 viewStore.send(.loadOnboarding)

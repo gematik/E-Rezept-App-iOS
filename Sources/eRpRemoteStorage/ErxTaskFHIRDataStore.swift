@@ -105,20 +105,20 @@ public class ErxTaskFHIRDataStore: ErxTaskDataStore {
         guard tasks.count == 1,
               let id = tasks.first?.id, // swiftlint:disable:this identifier_name
               let accessCode = tasks.first?.accessCode
-              else {
+        else {
             var fhirClientError = FHIRClient.Error.unknown(Error.notImplemented)
-                if tasks.isEmpty {
-                    fhirClientError = FHIRClient.Error.internalError("Cannot delete: Empty array of ErxTasks!")
-                } else if tasks.count > 1 {
-                    fhirClientError = FHIRClient.Error.internalError(
-                        "Cannot delete: Deletion of multiple elements is not implemented currently!"
-                    )
-                } else {
-                    fhirClientError = FHIRClient.Error.internalError(
-                        "Cannot delete: ID oder accessCode missing?"
-                    )
-                }
-                let localError = ErxTaskFHIRDataStore.Error.fhirClientError(fhirClientError)
+            if tasks.isEmpty {
+                fhirClientError = FHIRClient.Error.internalError("Cannot delete: Empty array of ErxTasks!")
+            } else if tasks.count > 1 {
+                fhirClientError = FHIRClient.Error.internalError(
+                    "Cannot delete: Deletion of multiple elements is not implemented currently!"
+                )
+            } else {
+                fhirClientError = FHIRClient.Error.internalError(
+                    "Cannot delete: ID oder accessCode missing?"
+                )
+            }
+            let localError = ErxTaskFHIRDataStore.Error.fhirClientError(fhirClientError)
 
             return Result<Bool, Error>.failure(localError).publisher.eraseToAnyPublisher()
         }

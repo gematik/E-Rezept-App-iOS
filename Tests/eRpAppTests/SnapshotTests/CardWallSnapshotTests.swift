@@ -199,7 +199,7 @@ final class CardWallSnapshotTests: XCTestCase {
     private func readCardStore(for state: CardWallReadCardDomain.State) -> CardWallReadCardDomain.Store {
         CardWallReadCardDomain.Store(initialState: state,
                                      reducer:
-                                        CardWallReadCardDomain.Reducer.empty,
+                                     CardWallReadCardDomain.Reducer.empty,
                                      environment: CardWallReadCardDomain.Environment(
                                          userSession: MockUserSession(),
                                          schedulers: Schedulers(),

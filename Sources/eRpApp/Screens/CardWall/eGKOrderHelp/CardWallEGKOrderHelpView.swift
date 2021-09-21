@@ -43,49 +43,49 @@ struct CardWallEGKOrderHelpView: View {
                 }
 
                 Section(header: Text(L10n.cdwTxtOrderEgkKvSubheadline)
-                            .font(Font.headline.bold())
-                            .foregroundColor(Color(.label))
-                            .padding(.top)) {
-                    Picker(L10n.cdwTxtOrderEgkKvPlaceholder, selection: $viewModel.healthInsuranceId) {
-                        ForEach(viewModel.insuranceCompanies) { insurance in
-                            Text(insurance.name).tag(insurance.id)
+                    .font(Font.headline.bold())
+                    .foregroundColor(Color(.label))
+                    .padding(.top)) {
+                        Picker(L10n.cdwTxtOrderEgkKvPlaceholder, selection: $viewModel.healthInsuranceId) {
+                            ForEach(viewModel.insuranceCompanies) { insurance in
+                                Text(insurance.name).tag(insurance.id)
+                            }
                         }
-                    }
-                    .accessibility(identifier: A11y.cardWall.orderEGK.cdwInpOrderEgkKv)
+                        .accessibility(identifier: A11y.cardWall.orderEGK.cdwInpOrderEgkKv)
                 }
 
                 Section(header: Text(L10n.cdwTxtOrderEgkKvnrSubheadline)
-                            .font(Font.headline.bold())
-                            .foregroundColor(Color(.label))
-                            .padding(.top)) {
-                    HStack {
-                        TextField(L10n.cdwTxtOrderEgkKvnrPlaceholder, text: $viewModel.kvnrText)
-                            .font(.body)
-                            .accessibility(identifier: A11y.cardWall.orderEGK.cdwInpOrderEgkKvnr)
+                    .font(Font.headline.bold())
+                    .foregroundColor(Color(.label))
+                    .padding(.top)) {
+                        HStack {
+                            TextField(L10n.cdwTxtOrderEgkKvnrPlaceholder, text: $viewModel.kvnrText)
+                                .font(.body)
+                                .accessibility(identifier: A11y.cardWall.orderEGK.cdwInpOrderEgkKvnr)
 
-                        if viewModel.showKVNRError {
-                            if viewModel.kvnr?.isValid ?? false {
-                                Image(systemName: SFSymbolName.checkmark)
-                                    .foregroundColor(Colors.secondary600)
-                                    .font(Font.body.bold())
-                            } else {
-                                Image(systemName: SFSymbolName.crossIconPlain)
-                                    .foregroundColor(Colors.red600)
-                                    .font(Font.body.bold())
+                            if viewModel.showKVNRError {
+                                if viewModel.kvnr?.isValid ?? false {
+                                    Image(systemName: SFSymbolName.checkmark)
+                                        .foregroundColor(Colors.secondary600)
+                                        .font(Font.body.bold())
+                                } else {
+                                    Image(systemName: SFSymbolName.crossIconPlain)
+                                        .foregroundColor(Colors.red600)
+                                        .font(Font.body.bold())
+                                }
                             }
                         }
-                    }
 
-                    NavigationLink(destination: KVNRCameraScanner(kvnr: $viewModel.kvnr, show: $showScanner),
-                                   isActive: $showScanner) {
-                        HStack {
-                            Image(systemName: SFSymbolName.docTextViewfinder)
+                        NavigationLink(destination: KVNRCameraScanner(kvnr: $viewModel.kvnr, show: $showScanner),
+                                       isActive: $showScanner) {
+                            HStack {
+                                Image(systemName: SFSymbolName.docTextViewfinder)
 
-                            Text(L10n.cdwBtnOrderEgkScanKvnr)
+                                Text(L10n.cdwBtnOrderEgkScanKvnr)
+                            }
+                            .opacity(viewModel.kvnr?.isValid ?? false ? 0.5 : 1.0)
                         }
-                        .opacity(viewModel.kvnr?.isValid ?? false ? 0.5 : 1.0)
-                    }
-                    .accessibility(identifier: A11y.cardWall.orderEGK.cdwBtnOrderEgkScanKvnr)
+                        .accessibility(identifier: A11y.cardWall.orderEGK.cdwBtnOrderEgkScanKvnr)
                 }
             }
             .introspectTableView { tableView in

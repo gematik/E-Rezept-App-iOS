@@ -47,13 +47,13 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
         try super.tearDownWithError()
     }
 
-	func testFetchTaskById() {
+    func testFetchTaskById() {
         let firstTaskResponse = load(resource: "getTaskResponse_61704e3f-1e4f-11b2-80f4-b806a73c0cd0")
-		var counter = 0
-		stub(condition: isHost(host) && isPath("/Task/61704e3f-1e4f-11b2-80f4-b806a73c0cd0")) { _ in
-			counter += 1
-			return fixture(filePath: firstTaskResponse, headers: ["Accept": "application/fhir+json"])
-		}
+        var counter = 0
+        stub(condition: isHost(host) && isPath("/Task/61704e3f-1e4f-11b2-80f4-b806a73c0cd0")) { _ in
+            counter += 1
+            return fixture(filePath: firstTaskResponse, headers: ["Accept": "application/fhir+json"])
+        }
 
         sut.fetchTask(by: "61704e3f-1e4f-11b2-80f4-b806a73c0cd0", accessCode: nil)
             .test(expectations: { erxTask in
@@ -78,47 +78,47 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
                 expect(erxTask.medication?.dosageInstructions) == "1-0-1-0"
             })
 
-		// test if sub has been called
-		expect(counter) == 1
+        // test if sub has been called
+        expect(counter) == 1
     }
 
-	func testListAllTasks() {
-		let taskIdsResponse = load(resource: "getTaskIdsWithTwoTasksResponse")
-		var counter = 0
-		stub(condition: isHost(host) && isPath("/Task")) { _ in
-			counter += 1
-			return fixture(filePath: taskIdsResponse, headers: ["Accept": "application/fhir+json"])
-		}
+    func testListAllTasks() {
+        let taskIdsResponse = load(resource: "getTaskIdsWithTwoTasksResponse")
+        var counter = 0
+        stub(condition: isHost(host) && isPath("/Task")) { _ in
+            counter += 1
+            return fixture(filePath: taskIdsResponse, headers: ["Accept": "application/fhir+json"])
+        }
 
-		guard let firstTaskResponse = Bundle(for: Self.self).path(
-		    forResource: "getTaskResponse_61704e3f-1e4f-11b2-80f4-b806a73c0cd0",
-		    ofType: "json",
-		    inDirectory: "FHIRExampleData.bundle"
-		) else {
-			fail("Bundle could not find resource getTaskIdsWithTwoTasksResponse")
-			return
-		}
+        guard let firstTaskResponse = Bundle(for: Self.self).path(
+            forResource: "getTaskResponse_61704e3f-1e4f-11b2-80f4-b806a73c0cd0",
+            ofType: "json",
+            inDirectory: "FHIRExampleData.bundle"
+        ) else {
+            fail("Bundle could not find resource getTaskIdsWithTwoTasksResponse")
+            return
+        }
 
-		stub(condition: isHost(host) && isPath("/Task/61704e3f-1e4f-11b2-80f4-b806a73c0cd0")) { _ in
-			counter += 1
-			return fixture(filePath: firstTaskResponse, headers: ["Accept": "application/fhir+json"])
-		}
+        stub(condition: isHost(host) && isPath("/Task/61704e3f-1e4f-11b2-80f4-b806a73c0cd0")) { _ in
+            counter += 1
+            return fixture(filePath: firstTaskResponse, headers: ["Accept": "application/fhir+json"])
+        }
         let secondTaskResponse = load(resource: "getTaskResponse_5e00e907-1e4f-11b2-80be-b806a73c0cd0")
         stub(condition: isHost(host) && isPath("/Task/5e00e907-1e4f-11b2-80be-b806a73c0cd0")) { _ in
-			counter += 1
-			return fixture(filePath: secondTaskResponse, headers: ["Accept": "application/fhir+json"])
+            counter += 1
+            return fixture(filePath: secondTaskResponse, headers: ["Accept": "application/fhir+json"])
         }
         sut.listAllTasks(after: nil)
-			.test(expectations: { erxTasks in
+            .test(expectations: { erxTasks in
                 expect(erxTasks.count).to(equal(2))
                 let sortedIds = erxTasks.map(\.id).sorted()
                 expect(sortedIds)
                     .to(equal(["5e00e907-1e4f-11b2-80be-b806a73c0cd0", "61704e3f-1e4f-11b2-80f4-b806a73c0cd0"]))
-			})
+            })
 
-		// test if all subs have been called
-		expect(counter) == 3
-	}
+        // test if all subs have been called
+        expect(counter) == 3
+    }
 
     func testListAllAuditEvents() {
         guard let firstTaskResponse = Bundle(for: Self.self).path(
@@ -187,10 +187,10 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
 
         var counter = 0
         stub(condition: isPath("/Communication")
-                && isMethodPOST()
-                && hasBody(expectedRequestBody)) { _ in
-            counter += 1
-            return fixture(filePath: redeemOrderResponse, headers: ["Content-Type": "application/json"])
+            && isMethodPOST()
+            && hasBody(expectedRequestBody)) { _ in
+                counter += 1
+                return fixture(filePath: redeemOrderResponse, headers: ["Content-Type": "application/json"])
         }
 
         sut.redeem(orders: [inputOrder, inputOrder])
@@ -208,14 +208,14 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
 
         var counter = 0
         stub(condition: isPath("/Communication")
-                && isMethodPOST()
-                && hasBody(expectedRequestBody)) { _ in
-            counter += 1
-            if counter == 1 {
-                return fixture(filePath: redeemOrderResponse, headers: ["Content-Type": "application/json"])
-            } else {
-                return HTTPStubsResponse(error: expectedError)
-            }
+            && isMethodPOST()
+            && hasBody(expectedRequestBody)) { _ in
+                counter += 1
+                if counter == 1 {
+                    return fixture(filePath: redeemOrderResponse, headers: ["Content-Type": "application/json"])
+                } else {
+                    return HTTPStubsResponse(error: expectedError)
+                }
         }
 
         sut.redeem(orders: [inputOrder, inputOrder])
@@ -232,10 +232,10 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
         var counter = 0
 
         stub(condition: isHost(host)
-                && isMethodGET()
-                && isPath("/Communication")) { _ in
-            counter += 1
-            return fixture(filePath: expectedResponse, headers: ["Accept": "application/fhir+json"])
+            && isMethodGET()
+            && isPath("/Communication")) { _ in
+                counter += 1
+                return fixture(filePath: expectedResponse, headers: ["Accept": "application/fhir+json"])
         }
 
         sut.listAllCommunications(after: nil, for: .reply)
@@ -255,10 +255,10 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
 
         var counter = 0
         stub(condition: isHost(host)
-                && isPath("/Communication")
-                && isMethodGET()) { _ in
-            counter += 1
-            return HTTPStubsResponse(error: expectedError)
+            && isPath("/Communication")
+            && isMethodGET()) { _ in
+                counter += 1
+                return HTTPStubsResponse(error: expectedError)
         }
 
         sut.listAllCommunications(after: nil, for: .reply)
@@ -275,10 +275,10 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
         var counter = 0
 
         stub(condition: isHost(host)
-                && isMethodGET()
-                && isPath("/MedicationDispense")) { _ in
-            counter += 1
-            return fixture(filePath: expectedResponse, headers: ["Accept": "application/fhir+json"])
+            && isMethodGET()
+            && isPath("/MedicationDispense")) { _ in
+                counter += 1
+                return fixture(filePath: expectedResponse, headers: ["Accept": "application/fhir+json"])
         }
 
         sut.listAllMedicationDispenses(after: nil)
@@ -298,10 +298,10 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
 
         var counter = 0
         stub(condition: isHost(host)
-                && isPath("/MedicationDispense")
-                && isMethodGET()) { _ in
-            counter += 1
-            return HTTPStubsResponse(error: expectedError)
+            && isPath("/MedicationDispense")
+            && isMethodGET()) { _ in
+                counter += 1
+                return HTTPStubsResponse(error: expectedError)
         }
 
         sut.listAllMedicationDispenses(after: nil)

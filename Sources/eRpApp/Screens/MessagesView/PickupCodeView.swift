@@ -40,7 +40,7 @@ struct PickupCodeView: View {
                         }
 
                         if let dmcCode = viewStore.pickupCodeDMC,
-                            let dmcImage = viewStore.dmcImage {
+                           let dmcImage = viewStore.dmcImage {
                             DMCView(image: dmcImage, dmcCode: dmcCode)
                                 .padding(.horizontal, 8)
                                 .padding(.bottom)

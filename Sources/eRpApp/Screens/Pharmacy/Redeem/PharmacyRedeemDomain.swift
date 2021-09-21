@@ -71,9 +71,9 @@ enum PharmacyRedeemDomain: Equatable {
             state.loadingState = .loading()
             let orders: [ErxTaskOrder] = state.selectedErxTasks.compactMap { task in
                 guard let name = task.patient?.name,
-                     let address = task.patient?.address,
-                     let accessCode = task.accessCode
-                     else { return nil }
+                      let address = task.patient?.address,
+                      let accessCode = task.accessCode
+                else { return nil }
                 let payload = ErxTaskOrder.Payload(
                     supplyOptionsType: state.redeemOption,
                     name: name,
@@ -127,12 +127,12 @@ enum PharmacyRedeemDomain: Equatable {
     }
 
     static var loginAlertState: AlertState<Action> = {
-            AlertState(
-                title: TextState(L10n.alertErrorTitle),
-                message: TextState(L10n.phaRedeemTxtNotLoggedIn),
-                dismissButton: .default(TextState(L10n.alertBtnOk), send: .alertDismissButtonTapped)
-            )
-        }()
+        AlertState(
+            title: TextState(L10n.alertErrorTitle),
+            message: TextState(L10n.phaRedeemTxtNotLoggedIn),
+            dismissButton: .default(TextState(L10n.alertBtnOk), send: .alertDismissButtonTapped)
+        )
+    }()
 
     static var askRedeemPermissionState: AlertState<Action> = {
         AlertState(
@@ -152,7 +152,7 @@ extension PharmacyRedeemDomain.Environment {
             .first()
             .flatMap { isAuthenticated -> AnyPublisher<Bool, ErxTaskRepositoryError> in
                 if isAuthenticated {
-                  return erxTaskRepository.redeem(orders: orders)
+                    return erxTaskRepository.redeem(orders: orders)
                         .first()
                         .eraseToAnyPublisher()
                 } else {

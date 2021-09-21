@@ -131,31 +131,31 @@ class RealIDPClient: IDPClient {
         return httpClient.send(request: request, interceptors: []) { _, _, completion in
             completion(nil) // Don't follow the redirect, but handle it
         }
-            .tryMap { body, _, status -> IDPChallenge in
-                if status.isSuccessful {
-                    do {
-                     return try self.jsonParser.decode(IDPChallenge.self, from: body)
-                    } catch {
-                        throw IDPError.decoding(error: error)
-                    }
-                } else {
-                    // [REQ:gemSpec_IDP_Frontend:A_19937,A_20605] Decoding server errors
-                    guard let responseError = try? JSONDecoder().decode(IDPError.ServerResponse.self, from: body) else {
-                        throw IDPError.serverError(IDPError.ServerResponse(
-                            error: "Unable to decode.",
-                            errorText: "Unable to decode server error",
-                            timestamp: Int(round(Date().timeIntervalSince1970 * 1000)),
-                            uuid: "unknown",
-                            code: "-1"
-                        ))
-                    }
-                    throw IDPError.serverError(responseError)
+        .tryMap { body, _, status -> IDPChallenge in
+            if status.isSuccessful {
+                do {
+                    return try self.jsonParser.decode(IDPChallenge.self, from: body)
+                } catch {
+                    throw IDPError.decoding(error: error)
                 }
+            } else {
+                // [REQ:gemSpec_IDP_Frontend:A_19937,A_20605] Decoding server errors
+                guard let responseError = try? JSONDecoder().decode(IDPError.ServerResponse.self, from: body) else {
+                    throw IDPError.serverError(IDPError.ServerResponse(
+                        error: "Unable to decode.",
+                        errorText: "Unable to decode server error",
+                        timestamp: Int(round(Date().timeIntervalSince1970 * 1000)),
+                        uuid: "unknown",
+                        code: "-1"
+                    ))
+                }
+                throw IDPError.serverError(responseError)
             }
-            .mapError {
-                $0.asIDPError()
-            }
-            .eraseToAnyPublisher()
+        }
+        .mapError {
+            $0.asIDPError()
+        }
+        .eraseToAnyPublisher()
     }
 
     func verify(
@@ -210,7 +210,7 @@ class RealIDPClient: IDPClient {
     func refresh(with unsignedChallenge: IDPChallenge,
                  ssoToken: String,
                  using document: DiscoveryDocument)
-    -> AnyPublisher<IDPExchangeToken, IDPError> {
+        -> AnyPublisher<IDPExchangeToken, IDPError> {
         var request = URLRequest(url: document.sso.url, cachePolicy: .reloadIgnoringCacheData)
         request.httpMethod = "POST"
         request.addValue("application/json", forHTTPHeaderField: "Accept")
@@ -219,7 +219,7 @@ class RealIDPClient: IDPClient {
               let ssotoken = ssoToken.urlPercentEscapedString() else {
             return Fail(error: IDPError
                 .internalError("Could not assemble POST authentication signed challenge request URL."))
-                .eraseToAnyPublisher()
+                            .eraseToAnyPublisher()
         }
         request.setFormUrlEncodedHeader()
         request.setFormUrlEncodedBody(parameters: [

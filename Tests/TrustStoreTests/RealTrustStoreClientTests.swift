@@ -36,7 +36,7 @@ final class RealTrustStoreClientTests: XCTestCase {
 
     var certListPath: String {
         guard let certListPath = Bundle(for: Self.self)
-                .path(forResource: "kompca10-vauref-idpsig3", ofType: "json", inDirectory: "CertList.bundle") else {
+            .path(forResource: "kompca10-vauref-idpsig3", ofType: "json", inDirectory: "CertList.bundle") else {
             fatalError("Could not load  discovery document")
         }
         return certListPath
@@ -55,10 +55,10 @@ final class RealTrustStoreClientTests: XCTestCase {
 
         // then
         sut.loadCertListFromServer()
-                .test(expectations: { certList in
-                    expect(certList.caCerts.count) == 1
-                    expect(certList.eeCerts.count) == 2
-                })
+            .test(expectations: { certList in
+                expect(certList.caCerts.count) == 1
+                expect(certList.eeCerts.count) == 2
+            })
         expect(counter) == 1
     }
 }

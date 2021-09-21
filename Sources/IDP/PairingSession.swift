@@ -66,7 +66,7 @@ public class PairingSession {
     }
 
     func sign(with signer: JWTSigner, certificate: X509, privateKeyContainer: PrivateKeyContainer)
-    -> AnyPublisher<RegistrationData, Swift.Error> {
+        -> AnyPublisher<RegistrationData, Swift.Error> {
         self.certificate = certificate
 
         guard let authCertRaw = certificate.derBytes,

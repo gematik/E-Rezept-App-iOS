@@ -107,9 +107,9 @@ struct DebugLogView: View {
                 }
             }
         }.navigationTitle("Logs")
-        .navigationBarItems(trailing: Button(action: self.actionSheet) {
-            Image(systemName: "square.and.arrow.up")
-        })
+            .navigationBarItems(trailing: Button(action: self.actionSheet) {
+                Image(systemName: "square.and.arrow.up")
+            })
     }
 
     func actionSheet() {

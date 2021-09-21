@@ -279,7 +279,7 @@ final class CreatePasswordDomainTests: XCTestCase {
 // MARK: - MockAppSecurityPasswordManager -
 
 final class MockAppSecurityPasswordManager: AppSecurityPasswordManager {
-   // MARK: - save
+    // MARK: - save
 
     var savePasswordThrowableError: Error?
     var savePasswordCallsCount = 0
@@ -302,7 +302,7 @@ final class MockAppSecurityPasswordManager: AppSecurityPasswordManager {
         return try savePasswordClosure.map { try $0(password) } ?? savePasswordReturnValue
     }
 
-   // MARK: - matches
+    // MARK: - matches
 
     var matchesPasswordThrowableError: Error?
     var matchesPasswordCallsCount = 0

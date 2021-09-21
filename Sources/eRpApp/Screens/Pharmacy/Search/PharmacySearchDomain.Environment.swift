@@ -26,7 +26,7 @@ import SwiftUI
 
 extension PharmacySearchDomain.Environment {
     func searchPharmacies(searchTerm: String, location: ComposableCoreLocation.Location?)
-    -> Effect<PharmacySearchDomain.Action, Never> {
+        -> Effect<PharmacySearchDomain.Action, Never> {
         var position: Position?
         if let latitude = location?.coordinate.latitude,
            let longitude = location?.coordinate.longitude {

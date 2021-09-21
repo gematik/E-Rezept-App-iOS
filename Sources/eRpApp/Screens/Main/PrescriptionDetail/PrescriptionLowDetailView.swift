@@ -36,8 +36,8 @@ struct PrescriptionLowDetailView: View {
                             .accessibility(identifier: A18n.redeem.matrixCode.rphImgMatrixcode)
                     }
                 }.frame(minWidth: 0, maxWidth: .infinity)
-                .border(Colors.systemGray3, cornerRadius: 16)
-                .padding()
+                    .border(Colors.systemGray3, cornerRadius: 16)
+                    .padding()
 
                 MedicationNameView(medicationText: viewStore.state.erxTask.medicationName,
                                    expirationDate: uiFormattedDate(dateString: viewStore.state.erxTask.expiresOn),

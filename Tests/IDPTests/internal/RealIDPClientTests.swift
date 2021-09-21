@@ -70,8 +70,8 @@ final class RealIDPClientTests: XCTestCase {
         var counter = 0
         stub(condition: isAbsoluteURLString(config.discoveryURL.absoluteString) && isMethodGET() &&
             !hasHeaderNamed("Authorization")) { _ in
-            counter += 1
-            return fixture(filePath: self.documentPath, headers: ["Content-Type": "application/json"])
+                counter += 1
+                return fixture(filePath: self.documentPath, headers: ["Content-Type": "application/json"])
         }
 
         stub(condition: isPath("/ipdSig/jwk.json") && isMethodGET()) { _ in
@@ -102,8 +102,8 @@ final class RealIDPClientTests: XCTestCase {
         var counter = 0
         stub(condition: isAbsoluteURLString(config.discoveryURL.absoluteString) && isMethodGET() &&
             !hasHeaderNamed("Authorization")) { _ in
-            counter += 1
-            return fixture(filePath: jwksPath, headers: ["Content-Type": "application/json"])
+                counter += 1
+                return fixture(filePath: jwksPath, headers: ["Content-Type": "application/json"])
         }
 
         RealIDPClient(client: config)
@@ -119,10 +119,10 @@ final class RealIDPClientTests: XCTestCase {
         let notConnectedError = NSError(domain: NSURLErrorDomain, code: URLError.notConnectedToInternet.rawValue)
         stub(condition: isAbsoluteURLString(config.discoveryURL.absoluteString) && isMethodGET() &&
             !hasHeaderNamed("Authorization")) { _ in
-            counter += 1
-            let response = HTTPStubsResponse(error: notConnectedError)
-            response.requestTime = 0.0
-            return response
+                counter += 1
+                let response = HTTPStubsResponse(error: notConnectedError)
+                response.requestTime = 0.0
+                return response
         }
 
         RealIDPClient(client: config)
@@ -171,8 +171,8 @@ final class RealIDPClientTests: XCTestCase {
                 "redirect_uri": config.redirectURL.absoluteString,
             ])
             && !hasHeaderNamed("Authorization")) { _ in
-            counter += 1
-            return fixture(filePath: challengePath, headers: ["Content-Type": "application/json"])
+                counter += 1
+                return fixture(filePath: challengePath, headers: ["Content-Type": "application/json"])
         }
 
         let expectedChallenge = try! IDPChallenge(
@@ -231,8 +231,8 @@ final class RealIDPClientTests: XCTestCase {
                 "redirect_uri": config.redirectURL.absoluteString,
             ])
             && !hasHeaderNamed("Authorization")) { _ in
-            counter += 1
-            return fixture(filePath: challengePath, headers: ["Content-Type": "application/json"])
+                counter += 1
+                return fixture(filePath: challengePath, headers: ["Content-Type": "application/json"])
         }
 
         RealIDPClient(client: config)
@@ -268,10 +268,10 @@ final class RealIDPClientTests: XCTestCase {
                                   aesKey: SymmetricKey(data: Data()))
 
         let header = try! JWE.Header(algorithm: JWE.Algorithm
-                                        .ecdh_es(.bpp256r1(localDiscoveryDocument.encryptionPublicKey,
-                                                           keyPairGenerator: cryptoBox.brainpoolKeyPairGenerator)),
-                                     encryption: .a256gcm,
-                                     contentType: "NJWT")
+            .ecdh_es(.bpp256r1(localDiscoveryDocument.encryptionPublicKey,
+                               keyPairGenerator: cryptoBox.brainpoolKeyPairGenerator)),
+            encryption: .a256gcm,
+            contentType: "NJWT")
 
         let signedChallengePayload = NestedJWT(njwt: signedChallengeResponse.serialize())
         let jwePayload = try! JSONEncoder().encode(signedChallengePayload)
@@ -298,17 +298,17 @@ final class RealIDPClientTests: XCTestCase {
             && hasHeaderNamed("Content-Type", value: "application/x-www-form-urlencoded")
             && hasBody(encodedJWEBody)
             && !hasHeaderNamed("Authorization")) { _ in
-            counter += 1
-            let response = HTTPStubsResponse()
-            let location = "http://localhost:9999/token?code=\(exchangeString)&ssotoken=\(ssoString)&state=\(state)"
-            response.statusCode = 302
-            response.httpHeaders = [
-                "Cache-Control": "no-store",
-                "Pragma": "no-cache",
-                "Location": location,
-                "Content-Length": "0",
-            ]
-            return response
+                counter += 1
+                let response = HTTPStubsResponse()
+                let location = "http://localhost:9999/token?code=\(exchangeString)&ssotoken=\(ssoString)&state=\(state)"
+                response.statusCode = 302
+                response.httpHeaders = [
+                    "Cache-Control": "no-store",
+                    "Pragma": "no-cache",
+                    "Location": location,
+                    "Content-Length": "0",
+                ]
+                return response
         }
 
         let expectedToken = IDPExchangeToken(
@@ -323,11 +323,11 @@ final class RealIDPClientTests: XCTestCase {
                 using: localDiscoveryDocument
             )
             .test(expectations: { token in
-                expect(token) == expectedToken
-            },
+                      expect(token) == expectedToken
+                  },
                   // We need to do some scheduling here because of a known issue with OHHTTPStubs and redirects
-            // https://github.com/AliSoftware/OHHTTPStubs - Known limitations
-            subscribeScheduler: DispatchQueue.global().eraseToAnyScheduler(),
+                  // https://github.com/AliSoftware/OHHTTPStubs - Known limitations
+                  subscribeScheduler: DispatchQueue.global().eraseToAnyScheduler(),
                   receivingScheduler: DispatchQueue.global().eraseToAnyScheduler())
         expect(counter) == 1
     }
@@ -341,10 +341,10 @@ final class RealIDPClientTests: XCTestCase {
                                   aesKey: SymmetricKey(data: Data()))
 
         let header = try! JWE.Header(algorithm: JWE.Algorithm
-                                        .ecdh_es(.bpp256r1(localDiscoveryDocument.encryptionPublicKey,
-                                                           keyPairGenerator: cryptoBox.brainpoolKeyPairGenerator)),
-                                     encryption: .a256gcm,
-                                     contentType: "NJWT")
+            .ecdh_es(.bpp256r1(localDiscoveryDocument.encryptionPublicKey,
+                               keyPairGenerator: cryptoBox.brainpoolKeyPairGenerator)),
+            encryption: .a256gcm,
+            contentType: "NJWT")
 
         let jwePayload = "<dummy_jwe_payload>".data(using: .utf8)!
 
@@ -379,14 +379,14 @@ final class RealIDPClientTests: XCTestCase {
             && hasHeaderNamed("Content-Type", value: "application/x-www-form-urlencoded")
             && hasBody(encodedJWEBody)
             && hasHeaderNamed("Authorization")) { _ in
-            counter += 1
-            return HTTPStubsResponse(data: try! JSONEncoder().encode(expected),
-                                     statusCode: 200,
-                                     headers: [
-                                         "Cache-Control": "no-store",
-                                         "Pragma": "no-cache",
-                                         "Content-Length": "0",
-                                     ])
+                counter += 1
+                return HTTPStubsResponse(data: try! JSONEncoder().encode(expected),
+                                         statusCode: 200,
+                                         headers: [
+                                             "Cache-Control": "no-store",
+                                             "Pragma": "no-cache",
+                                             "Content-Length": "0",
+                                         ])
         }
 
         RealIDPClient(client: config)
@@ -396,10 +396,10 @@ final class RealIDPClientTests: XCTestCase {
             }, expectations: { pairingEntry in
                 expect(pairingEntry).to(equal(expected))
             },
-                  // We need to do some scheduling here because of a known issue with OHHTTPStubs and redirects
+            // We need to do some scheduling here because of a known issue with OHHTTPStubs and redirects
             // https://github.com/AliSoftware/OHHTTPStubs - Known limitations
             subscribeScheduler: DispatchQueue.global().eraseToAnyScheduler(),
-                  receivingScheduler: DispatchQueue.global().eraseToAnyScheduler())
+            receivingScheduler: DispatchQueue.global().eraseToAnyScheduler())
         expect(counter) == 1
     }
 
@@ -425,14 +425,14 @@ final class RealIDPClientTests: XCTestCase {
             && hasHeaderNamed("Content-Type", value: "application/x-www-form-urlencoded")
             && hasBody(encodedJWEBody)
             && hasHeaderNamed("Authorization")) { _ in
-            counter += 1
-            return HTTPStubsResponse(data: try! JSONEncoder().encode(responseError),
-                                     statusCode: 400,
-                                     headers: [
-                                         "Cache-Control": "no-store",
-                                         "Pragma": "no-cache",
-                                         "Content-Length": "0",
-                                     ])
+                counter += 1
+                return HTTPStubsResponse(data: try! JSONEncoder().encode(responseError),
+                                         statusCode: 400,
+                                         headers: [
+                                             "Cache-Control": "no-store",
+                                             "Pragma": "no-cache",
+                                             "Content-Length": "0",
+                                         ])
         }
 
         RealIDPClient(client: config)
@@ -442,10 +442,10 @@ final class RealIDPClientTests: XCTestCase {
             }, expectations: { _ in
                 fail("Received unexpeted success")
             },
-                  // We need to do some scheduling here because of a known issue with OHHTTPStubs and redirects
+            // We need to do some scheduling here because of a known issue with OHHTTPStubs and redirects
             // https://github.com/AliSoftware/OHHTTPStubs - Known limitations
             subscribeScheduler: DispatchQueue.global().eraseToAnyScheduler(),
-                  receivingScheduler: DispatchQueue.global().eraseToAnyScheduler())
+            receivingScheduler: DispatchQueue.global().eraseToAnyScheduler())
         expect(counter) == 1
     }
 
@@ -471,17 +471,17 @@ final class RealIDPClientTests: XCTestCase {
             && hasHeaderNamed("Content-Type", value: "application/x-www-form-urlencoded")
             && hasBody(encodedJWEBody)
             && !hasHeaderNamed("Authorization")) { _ in
-            counter += 1
-            let response = HTTPStubsResponse()
-            let location = "http://localhost:9999/token?code=\(exchangeString)&ssotoken=\(ssoString)&state=\(state)"
-            response.statusCode = 302
-            response.httpHeaders = [
-                "Cache-Control": "no-store",
-                "Pragma": "no-cache",
-                "Location": location,
-                "Content-Length": "0",
-            ]
-            return response
+                counter += 1
+                let response = HTTPStubsResponse()
+                let location = "http://localhost:9999/token?code=\(exchangeString)&ssotoken=\(ssoString)&state=\(state)"
+                response.statusCode = 302
+                response.httpHeaders = [
+                    "Cache-Control": "no-store",
+                    "Pragma": "no-cache",
+                    "Location": location,
+                    "Content-Length": "0",
+                ]
+                return response
         }
 
         let expectedToken = IDPExchangeToken(
@@ -500,10 +500,10 @@ final class RealIDPClientTests: XCTestCase {
             }, expectations: { token in
                 expect(token) == expectedToken
             },
-                  // We need to do some scheduling here because of a known issue with OHHTTPStubs and redirects
+            // We need to do some scheduling here because of a known issue with OHHTTPStubs and redirects
             // https://github.com/AliSoftware/OHHTTPStubs - Known limitations
             subscribeScheduler: DispatchQueue.global().eraseToAnyScheduler(),
-                  receivingScheduler: DispatchQueue.global().eraseToAnyScheduler())
+            receivingScheduler: DispatchQueue.global().eraseToAnyScheduler())
         expect(counter) == 1
     }
 
@@ -529,15 +529,15 @@ final class RealIDPClientTests: XCTestCase {
             && hasHeaderNamed("Content-Type", value: "application/x-www-form-urlencoded")
             && hasBody(encodedJWEBody)
             && !hasHeaderNamed("Authorization")) { _ in
-            counter += 1
+                counter += 1
 
-            return HTTPStubsResponse(data: try! JSONEncoder().encode(responseError),
-                                     statusCode: 400,
-                                     headers: [
-                                         "Cache-Control": "no-store",
-                                         "Pragma": "no-cache",
-                                         "Content-Length": "0",
-                                     ])
+                return HTTPStubsResponse(data: try! JSONEncoder().encode(responseError),
+                                         statusCode: 400,
+                                         headers: [
+                                             "Cache-Control": "no-store",
+                                             "Pragma": "no-cache",
+                                             "Content-Length": "0",
+                                         ])
         }
 
         RealIDPClient(client: config)
@@ -550,10 +550,10 @@ final class RealIDPClientTests: XCTestCase {
             }, expectations: { _ in
                 fail("Received success")
             },
-                  // We need to do some scheduling here because of a known issue with OHHTTPStubs and redirects
+            // We need to do some scheduling here because of a known issue with OHHTTPStubs and redirects
             // https://github.com/AliSoftware/OHHTTPStubs - Known limitations
             subscribeScheduler: DispatchQueue.global().eraseToAnyScheduler(),
-                  receivingScheduler: DispatchQueue.global().eraseToAnyScheduler())
+            receivingScheduler: DispatchQueue.global().eraseToAnyScheduler())
         expect(counter) == 1
     }
 
@@ -585,9 +585,9 @@ final class RealIDPClientTests: XCTestCase {
 
     func testSSORefreshHappyPath() {
         // given
-            // a valid exchangeToken
-            // a valid ssoToken
-            // a valid server response
+        // a valid exchangeToken
+        // a valid ssoToken
+        // a valid server response
 
         let state = "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc"
 
@@ -618,9 +618,9 @@ final class RealIDPClientTests: XCTestCase {
 
     func testSSORefreshInvalidTokenResponse() {
         // given
-            // a valid exchangeToken
-            // a valid ssoToken
-            // server responds with error
+        // a valid exchangeToken
+        // a valid ssoToken
+        // server responds with error
         let serverError = IDPError.ServerResponse(
             error: "error",
             errorText: "gematik_error_text",
@@ -703,9 +703,9 @@ final class RealIDPClientTests: XCTestCase {
             && hasHeaderNamed("Content-Type", value: "application/x-www-form-urlencoded")
             && hasBody(httpBodyData)
             && !hasHeaderNamed("Authorization")) { _ in
-            counter += 1
+                counter += 1
 
-            return fixture(filePath: idpTokenResponsePath, headers: ["Content-Type": "application/json"])
+                return fixture(filePath: idpTokenResponsePath, headers: ["Content-Type": "application/json"])
         }
 
         RealIDPClient(client: config)

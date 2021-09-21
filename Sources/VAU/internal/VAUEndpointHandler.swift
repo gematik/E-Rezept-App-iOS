@@ -30,13 +30,13 @@ protocol VAUEndpointHandler {
 extension VAUSession: VAUEndpointHandler {
     var vauEndpoint: AnyPublisher<URL, VAUError> {
         vauStorage.userPseudonym
-                .map { userPseudonym in
-                    // If the client has yet not been assigned a user pseudonym, then default to "0".
-                    let userPseudonymPathComponent = userPseudonym ?? "0"
-                    return self.vauEndpoint(withLastComponent: userPseudonymPathComponent)
-                }
-                .setFailureType(to: VAUError.self)
-                .eraseToAnyPublisher()
+            .map { userPseudonym in
+                // If the client has yet not been assigned a user pseudonym, then default to "0".
+                let userPseudonymPathComponent = userPseudonym ?? "0"
+                return self.vauEndpoint(withLastComponent: userPseudonymPathComponent)
+            }
+            .setFailureType(to: VAUError.self)
+            .eraseToAnyPublisher()
     }
 
     private func vauEndpoint(withLastComponent: String) -> URL {

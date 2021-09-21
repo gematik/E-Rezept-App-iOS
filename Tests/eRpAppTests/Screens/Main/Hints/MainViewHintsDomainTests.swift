@@ -31,20 +31,20 @@ final class MainViewHintsDomainTests: XCTestCase {
         let mockRouter = MockRouting()
         let schedulers = Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler())
         let testStore = TestStore<MainViewHintsDomain.State,
-                                  MainViewHintsDomain.State,
-                                  MainViewHintsDomain.Action,
-                                  MainViewHintsDomain.Action,
-                                  MainViewHintsDomain.Environment>(
-                                      initialState: MainViewHintsDomain.State(),
-                                      reducer: MainViewHintsDomain.reducer,
-                                      environment: MainViewHintsDomain.Environment(
-                                          router: mockRouter,
-                                          userSession: MockUserSession(),
-                                          schedulers: schedulers,
-                                          hintEventsStore: fakeHintEventsStore,
-                                          hintProvider: fakeHintProvider
-                                      )
-                                  )
+            MainViewHintsDomain.State,
+            MainViewHintsDomain.Action,
+            MainViewHintsDomain.Action,
+            MainViewHintsDomain.Environment>(
+            initialState: MainViewHintsDomain.State(),
+            reducer: MainViewHintsDomain.reducer,
+            environment: MainViewHintsDomain.Environment(
+                router: mockRouter,
+                userSession: MockUserSession(),
+                schedulers: schedulers,
+                hintEventsStore: fakeHintEventsStore,
+                hintProvider: fakeHintProvider
+            )
+        )
 
         let expectedHint = fakeHintProvider.currentHintReturn
         testStore.assert(

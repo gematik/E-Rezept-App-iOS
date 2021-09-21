@@ -72,7 +72,7 @@ final class MainViewHintsProviderTests: XCTestCase {
         expect(hint).to(beNil())
 
         // when hint has been dismissed
-		hintState = HintState(hiddenHintIDs: [A18n.mainScreen.erxHntDemoModeTour])
+        hintState = HintState(hiddenHintIDs: [A18n.mainScreen.erxHntDemoModeTour])
         hintState.hasScannedPrescriptionsBefore = true
         hintState.hasSecurityOptionBeenSelected = true
         hint = sut.currentHint(for: hintState, isDemoMode: false)

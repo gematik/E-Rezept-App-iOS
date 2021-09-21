@@ -26,6 +26,7 @@
 "auth_txt_password_placeholder" = "Kennwort eingeben";
 "auth_txt_password_subtitle" = "Kennwort eingeben";
 "bnr_txt_demo_mode" = "Demo modu etkin";
+"button_txt_is_inactive_value" = "inaktiv";
 "cam_init_fail_message" = "Tarayıcıyı kullanmak için uygulamanın sistem ayarlarından kameranıza erişmesine izin vermeniz gerekir.";
 "cam_init_fail_title" = "Kameraya erişim reddedildi";
 "cam_perm_deny_btn_settings" = "İzin ver";
@@ -151,8 +152,8 @@
 "cdw_txt_rc_step_verify_at_idp" = "Giriş reçete dizini";
 "cdw_txt_rc_steps_title" = "Adımlar";
 "cdw_txt_rc_title" = "Giriş";
-"cpw_btn_change" = "Ändern";
-"cpw_btn_save" = "Speichern";
+"cpw_btn_change" = "Neues Kennword speichern";
+"cpw_btn_save" = "Kennword speichern";
 "cpw_inp_current_password_placeholder" = "Aktuelles Kennwort";
 "cpw_inp_passwordA_placeholder" = "Kennwort eingeben";
 "cpw_inp_passwordB_placeholder" = "Kennwort wiederholen";
@@ -160,6 +161,8 @@
 "cpw_txt_passwordB_accessibility" = "Zweite Eingabe des Kennwortes, um Tippfehler zu erkennen";
 "cpw_txt_password_recommendation" = "Empfehlung: Möglichst wenige Worte und keine Redewendungen verwenden.\nSymbole, Zahlen oder Großbuchstaben sind nicht notwendig.";
 "cpw_txt_passwords_dont_match" = "Die Eingaben weichen vorneinander ab.";
+"cpw_txt_section_title" = "Neues Kennwort";
+"cpw_txt_section_update_title" = "Altes Kennwort";
 "cpw_txt_title" = "Kennwort";
 "cpw_txt_update_title" = "Kennwort ändern";
 "dmo_txt_alert_no" = "İptal et";

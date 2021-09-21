@@ -24,31 +24,31 @@ struct GroupedPrescriptionListView: View {
     let store: GroupedPrescriptionListDomain.Store
     @ObservedObject var viewStore: ViewStore<ViewState, GroupedPrescriptionListDomain.Action>
 
-     init(store: GroupedPrescriptionListDomain.Store) {
-         self.store = store
-         viewStore = ViewStore(store.scope(state: ViewState.init))
-     }
+    init(store: GroupedPrescriptionListDomain.Store) {
+        self.store = store
+        viewStore = ViewStore(store.scope(state: ViewState.init))
+    }
 
-     struct ViewState: Equatable {
-         let isLoading: Bool
-         let showError: Bool
-         let error: ErxTaskRepositoryError?
-         let showPrescriptionDetails: Bool
+    struct ViewState: Equatable {
+        let isLoading: Bool
+        let showError: Bool
+        let error: ErxTaskRepositoryError?
+        let showPrescriptionDetails: Bool
 
-         let isRedeemViewPresented: Bool
-         let isCardWallPresented: Bool
+        let isRedeemViewPresented: Bool
+        let isCardWallPresented: Bool
 
-         init(state: GroupedPrescriptionListDomain.State) {
-             isLoading = state.loadingState.isLoading
-             showError = state.loadingState.error != nil
-             error = state.loadingState.error
+        init(state: GroupedPrescriptionListDomain.State) {
+            isLoading = state.loadingState.isLoading
+            showError = state.loadingState.error != nil
+            error = state.loadingState.error
 
-             showPrescriptionDetails = state.selectedPrescriptionDetailState != nil
+            showPrescriptionDetails = state.selectedPrescriptionDetailState != nil
 
-             isRedeemViewPresented = state.redeemState != nil
-             isCardWallPresented = state.cardWallState != nil
-         }
-     }
+            isRedeemViewPresented = state.redeemState != nil
+            isCardWallPresented = state.cardWallState != nil
+        }
+    }
 
     var body: some View {
         Group {
@@ -178,23 +178,23 @@ extension GroupedPrescriptionListView {
                         state: { $0.hintState },
                         action: GroupedPrescriptionListDomain.Action.hint(action:)
                     ))
-                    .hidden(viewStore.isHintViewHidden)
+                        .hidden(viewStore.isHintViewHidden)
 
                     if viewStore.groupedPrescriptionsNotRedeemed
                         .isEmpty { HintView<GroupedPrescriptionListDomain.Action>(
-                            hint: Hint(id: A18n.mainScreen.erxHntShowCardWall,
-                                       title: NSLocalizedString("hint_txt_card_wall_title", comment: ""),
-                                       message: NSLocalizedString("hint_txt_card_wall", comment: ""),
-                                       actionText: L10n.hintBtnCardWall,
-                                       action: GroupedPrescriptionListDomain.Action.refresh,
-                                       imageName: Asset.Illustrations.egkBlau.name,
-                                       closeAction: nil,
-                                       style: .neutral,
-                                       buttonStyle: .tertiary,
-                                       imageStyle: .topAligned),
-                            textAction: { viewStore.send(.refresh) },
-                            closeAction: nil
-                        )
+                        hint: Hint(id: A18n.mainScreen.erxHntShowCardWall,
+                                   title: NSLocalizedString("hint_txt_card_wall_title", comment: ""),
+                                   message: NSLocalizedString("hint_txt_card_wall", comment: ""),
+                                   actionText: L10n.hintBtnCardWall,
+                                   action: GroupedPrescriptionListDomain.Action.refresh,
+                                   imageName: Asset.Illustrations.egkBlau.name,
+                                   closeAction: nil,
+                                   style: .neutral,
+                                   buttonStyle: .tertiary,
+                                   imageStyle: .topAligned),
+                        textAction: { viewStore.send(.refresh) },
+                        closeAction: nil
+                    )
                     }
 
                     CurrentSectionView(isLoading: viewStore.isLoading) {
@@ -320,18 +320,18 @@ struct GroupedPrescriptionListView_Previews: PreviewProvider {
             VStack {
                 GroupedPrescriptionListView(store: GroupedPrescriptionListDomain.Dummies.store)
             }
-                .previewDevice("iPod touch (7th generation)")
-                .preferredColorScheme(.dark)
-                .environment(\.sizeCategory, .extraExtraExtraLarge)
+            .previewDevice("iPod touch (7th generation)")
+            .preferredColorScheme(.dark)
+            .environment(\.sizeCategory, .extraExtraExtraLarge)
 
             let state = GroupedPrescriptionListDomain.State(
                 groupedPrescriptions: [GroupedPrescription.Dummies.twoPrescriptions]
             )
 
             VStack {
-            GroupedPrescriptionListView(store: GroupedPrescriptionListDomain.Dummies.storeFor(state))
+                GroupedPrescriptionListView(store: GroupedPrescriptionListDomain.Dummies.storeFor(state))
             }
-                .preferredColorScheme(.light)
+            .preferredColorScheme(.light)
         }
     }
 }

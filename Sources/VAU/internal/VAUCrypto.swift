@@ -118,8 +118,8 @@ class EciesVAUCrypto: VAUCrypto {
         // Steps according to gemSpec_Krypt A_20174
         // [REQ:gemSpec_Krypt:A_20174:3] Decrypt using AES symmetric key
         guard let sealed = try? AES.GCM.SealedBox(combined: data),
-            let decrypted = try? AES.GCM.open(sealed, using: symmetricKey),
-            let utf8 = decrypted.utf8string
+              let decrypted = try? AES.GCM.open(sealed, using: symmetricKey),
+              let utf8 = decrypted.utf8string
         else {
             throw VAUError.responseValidation
         }
@@ -127,8 +127,8 @@ class EciesVAUCrypto: VAUCrypto {
         // [REQ:gemSpec_Krypt:A_20174:4,5] Verify decrypted message. Expect: "1 <request id> <response header and body>"
         let separated = utf8.split(separator: " ", maxSplits: 2).map { String($0) }
         guard separated.count == 3,
-            separated[0] == "1",
-            separated[1] == requestId
+              separated[0] == "1",
+              separated[1] == requestId
         else {
             throw VAUError.responseValidation
         }

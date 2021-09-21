@@ -100,7 +100,7 @@ extension RedeemMatrixCodeDomain.Environment {
     }
 
     func redeemAndSaveErxTasks(erxTasks: [ErxTask])
-    -> Effect<RedeemMatrixCodeDomain.Action, Never> {
+        -> Effect<RedeemMatrixCodeDomain.Action, Never> {
         let redeemedErxTasks = erxTasks
             .filter { $0.source == .scanner }
             .map { erxTask -> ErxTask in

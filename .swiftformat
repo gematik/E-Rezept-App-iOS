@@ -17,4 +17,4 @@
 --enable isEmpty
 --allman false
 --elseposition same-line
---disable elseOnSameLine, wrapMultilineStatementBraces, extensionAccessControl, indent
+--disable elseOnSameLine, wrapMultilineStatementBraces, extensionAccessControl

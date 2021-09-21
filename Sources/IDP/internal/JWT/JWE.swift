@@ -273,9 +273,9 @@ extension JWE.Backing {
 
     func encoded() -> Data {
         header.safeEncodeBase64urlsafe() + Self.dot +
-        wrappedKey.safeEncodeBase64urlsafe() + Self.dot +
-        iv.safeEncodeBase64urlsafe() + Self.dot +
-        ciphertext.safeEncodeBase64urlsafe() + Self.dot +
-        tag.safeEncodeBase64urlsafe()
+            wrappedKey.safeEncodeBase64urlsafe() + Self.dot +
+            iv.safeEncodeBase64urlsafe() + Self.dot +
+            ciphertext.safeEncodeBase64urlsafe() + Self.dot +
+            tag.safeEncodeBase64urlsafe()
     }
 }

@@ -54,13 +54,13 @@ final class FHIRClientTests: XCTestCase {
         let expectedError = URLError(.notConnectedToInternet)
         var counter = 0
         stub(condition: isHost(host)
-                && isPath(mockOperation.relativeUrlString!)
-                && isMethodGET()
-                && hasHeaderNamed(mockOperation.httpHeaders.first!.key,
-                                  value: mockOperation.httpHeaders.first!.value)) { _ in
-            counter += 1
-            let response = HTTPStubsResponse(error: expectedError)
-            return response
+            && isPath(mockOperation.relativeUrlString!)
+            && isMethodGET()
+            && hasHeaderNamed(mockOperation.httpHeaders.first!.key,
+                              value: mockOperation.httpHeaders.first!.value)) { _ in
+                counter += 1
+                let response = HTTPStubsResponse(error: expectedError)
+                return response
         }
 
         sut.execute(operation: mockOperation)
@@ -92,14 +92,14 @@ final class FHIRClientTests: XCTestCase {
         var counter = 0
 
         stub(condition: isHost(host)
-                && isPath(mockOperation.relativeUrlString!)
-                && isMethodGET()
-                && hasHeaderNamed(mockOperation.httpHeaders.first!.key,
-                                  value: mockOperation.httpHeaders.first!.value)) { _ in
-            counter += 1
-            return fixture(filePath: url.path,
-                           status: Int32(HTTPStatusCode.ok.rawValue),
-                           headers: ["Content-Type": "application/json"])
+            && isPath(mockOperation.relativeUrlString!)
+            && isMethodGET()
+            && hasHeaderNamed(mockOperation.httpHeaders.first!.key,
+                              value: mockOperation.httpHeaders.first!.value)) { _ in
+                counter += 1
+                return fixture(filePath: url.path,
+                               status: Int32(HTTPStatusCode.ok.rawValue),
+                               headers: ["Content-Type": "application/json"])
         }
 
         sut.execute(operation: mockOperation)
@@ -124,14 +124,14 @@ final class FHIRClientTests: XCTestCase {
 
         var counter = 0
         stub(condition: isHost(host)
-                && isPath(mockOperation.relativeUrlString!)
-                && isMethodGET()
-                && hasHeaderNamed(mockOperation.httpHeaders.first!.key,
-                                  value: mockOperation.httpHeaders.first!.value)) { _ in
-            counter += 1
-            return fixture(filePath: url.path,
-                           status: Int32(HTTPStatusCode.badRequest.rawValue),
-                           headers: ["Content-Type": "application/json"])
+            && isPath(mockOperation.relativeUrlString!)
+            && isMethodGET()
+            && hasHeaderNamed(mockOperation.httpHeaders.first!.key,
+                              value: mockOperation.httpHeaders.first!.value)) { _ in
+                counter += 1
+                return fixture(filePath: url.path,
+                               status: Int32(HTTPStatusCode.badRequest.rawValue),
+                               headers: ["Content-Type": "application/json"])
         }
 
         sut.execute(operation: mockOperation)

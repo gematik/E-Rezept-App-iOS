@@ -55,12 +55,12 @@ class DefaultSecureEnclaveSignatureProvider: SecureEnclaveSignatureProvider {
             )
         } catch {
             throw SecureEnclaveSignatureProviderError
-                            .internal("Generating a key identifier failed.", error)
+                .internal("Generating a key identifier failed.", error)
         }
     }
 
     public func signPairingSession(_ pairingSession: PairingSession, with signer: JWTSigner, certificate: X509)
-    -> AnyPublisher<RegistrationData, Swift.Error> {
+        -> AnyPublisher<RegistrationData, Swift.Error> {
         // [REQ:gemSpec_IDP_Frontend:A_21598,A_21595,A_21595] Store pairing data
         certificateStorage.set(certificate: certificate)
         certificateStorage.set(keyIdentifier: pairingSession.tempKeyIdentifier)
@@ -91,7 +91,7 @@ class DefaultSecureEnclaveSignatureProvider: SecureEnclaveSignatureProvider {
     }
 
     public func authenticationData(for challenge: IDPChallengeSession)
-    -> AnyPublisher<SignedAuthenticationData, SecureEnclaveSignatureProviderError> {
+        -> AnyPublisher<SignedAuthenticationData, SecureEnclaveSignatureProviderError> {
         certificateStorage.certificate
             .setFailureType(to: SecureEnclaveSignatureProviderError.self)
             .flatMap { certificate -> AnyPublisher<SignedAuthenticationData, SecureEnclaveSignatureProviderError> in
@@ -107,7 +107,7 @@ class DefaultSecureEnclaveSignatureProvider: SecureEnclaveSignatureProvider {
 
 extension DefaultSecureEnclaveSignatureProvider {
     private func authenticationData(for challenge: IDPChallengeSession, with certificate: X509)
-    -> AnyPublisher<SignedAuthenticationData, SecureEnclaveSignatureProviderError> {
+        -> AnyPublisher<SignedAuthenticationData, SecureEnclaveSignatureProviderError> {
         certificateStorage.keyIdentifier
             .setFailureType(to: SecureEnclaveSignatureProviderError.self)
             .flatMap { identifier -> AnyPublisher<SignedAuthenticationData, SecureEnclaveSignatureProviderError> in

@@ -217,6 +217,8 @@ internal enum A11y {
       static let cpwInpPasswordB = "cpw_inp_passwordB"
       static let cpwTxtPasswordRecommendation = "cpw_txt_password_recommendation"
       static let cpwTxtPasswordsDontMatch = "cpw_txt_passwords_dont_match"
+      static let cpwTxtSectionTitle = "cpw_txt_section_title"
+      static let cpwTxtSectionUpdateTitle = "cpw_txt_section_update_title"
       static let cpwTxtTitle = "cpw_txt_title"
   }
     internal enum dataPrivacy {

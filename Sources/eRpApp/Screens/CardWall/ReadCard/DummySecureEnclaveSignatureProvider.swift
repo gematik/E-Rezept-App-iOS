@@ -28,7 +28,7 @@ class DummySecureEnclaveSignatureProvider: SecureEnclaveSignatureProvider {
     }
 
     func signPairingSession(_: PairingSession, with _: JWTSigner, certificate _: X509)
-    -> AnyPublisher<RegistrationData, Swift.Error> {
+        -> AnyPublisher<RegistrationData, Swift.Error> {
         Fail(error: SecureEnclaveSignatureProviderError.packagingAuthCertificate).eraseToAnyPublisher()
     }
 

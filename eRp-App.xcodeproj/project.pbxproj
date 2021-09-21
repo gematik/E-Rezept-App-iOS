@@ -825,6 +825,7 @@
 		C60822B7C64534930F1F5BC3 /* Nimble in Frameworks */ = {isa = PBXBuildFile; productRef = 0B6D08B7DDCAF098DB3E9EC8 /* Nimble */; };
 		C62A2951F835DF730EC80157 /* eRpKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = BF9C9E519BC7B2F67FBC3704 /* eRpKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		C66173CF1934C79A2F0A79BB /* DefaultHTTPClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2697B303332FD2DAC40EC6EC /* DefaultHTTPClientTests.swift */; };
+		C6658E66F958C1893B6986F9 /* CreatePasswordViewSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BAC402B33A6330D487A477A /* CreatePasswordViewSnapshotTests.swift */; };
 		C6E7AFC79C50FFBFE3118830 /* GemCommonsKit.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F384326304629BF0F91DCF3F /* GemCommonsKit.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		C769B16A0AD84B2A53EC29DA /* SectionViewString.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C633A7E2E4B4883110E18E5 /* SectionViewString.swift */; };
 		C78A3F450888B571A6189DA1 /* VAUInterceptorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5729E1A7652907BFE60476A0 /* VAUInterceptorTests.swift */; };
@@ -1930,6 +1931,7 @@
 		09D1CFBAF1FE649B58BC7A89 /* DiscoveryDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoveryDocument.swift; sourceTree = "<group>"; };
 		0AC08A49C42E0B6124B3F59D /* eRpApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = eRpApp.entitlements; sourceTree = "<group>"; };
 		0AF673405A370577E70A31B2 /* eRpRemoteStorageTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = eRpRemoteStorageTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		0BAC402B33A6330D487A477A /* CreatePasswordViewSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreatePasswordViewSnapshotTests.swift; sourceTree = "<group>"; };
 		0C88B2F1040BD3C4FEA11D38 /* ErxTaskWorkRelatedAccidentEntity+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ErxTaskWorkRelatedAccidentEntity+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		0CBA990CF848A5CB8117C3E3 /* ModelsR4.Bundle+ErxTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ModelsR4.Bundle+ErxTask.swift"; sourceTree = "<group>"; };
 		0CC04FA462006B0AFE691357 /* MessageDomainTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageDomainTests.swift; sourceTree = "<group>"; };
@@ -4650,6 +4652,7 @@
 			children = (
 				83854DA06794400A1E3D7FB3 /* CameraViewSnapshotTests.swift */,
 				C19324FFF251B8470610EEA2 /* CardWallSnapshotTests.swift */,
+				0BAC402B33A6330D487A477A /* CreatePasswordViewSnapshotTests.swift */,
 				3FA486976E89B930B80D873D /* HintViewSnapshotTests.swift */,
 				4B6770A26FC96CDC67BE71DB /* LegalNoticeSnapshotTests.swift */,
 				EE6892364B7CD7EB66A65613 /* MainViewSnapshotTests.swift */,
@@ -6330,6 +6333,7 @@
 				70FE9D37E9FFDE9B62E24153 /* CardWallRouteTests.swift in Sources */,
 				0777DC9AECBB2C51326230D9 /* CardWallSnapshotTests.swift in Sources */,
 				A6B057F3E3030ABFFD6964C9 /* CreatePasswordDomainTests.swift in Sources */,
+				C6658E66F958C1893B6986F9 /* CreatePasswordViewSnapshotTests.swift in Sources */,
 				73011F240E1529510DA441A7 /* DateExtensionTests.swift in Sources */,
 				F82E35F8B91C6E7D88E57484 /* DefaultAppSecurityPasswordManagerTests.swift in Sources */,
 				80A7E3FDC3046B41462BB341 /* FakeHintEventsStore.swift in Sources */,

@@ -73,6 +73,8 @@ internal enum L10n {
   internal static let authTxtPasswordSubtitle = LocalizedStringKey("auth_txt_password_subtitle")
   /// Demo mode enabled
   internal static let bnrTxtDemoMode = LocalizedStringKey("bnr_txt_demo_mode")
+  /// inaktiv
+  internal static let buttonTxtIsInactiveValue = LocalizedStringKey("button_txt_is_inactive_value")
   /// To use the scanner, you must allow the app to access your camera in the system settings.
   internal static let camInitFailMessage = LocalizedStringKey("cam_init_fail_message")
   /// Access to camera denied
@@ -325,9 +327,9 @@ internal enum L10n {
   internal static let cdwTxtRcStepsTitle = LocalizedStringKey("cdw_txt_rc_steps_title")
   /// Login
   internal static let cdwTxtRcTitle = LocalizedStringKey("cdw_txt_rc_title")
-  /// Ändern
+  /// Neues Kennword speichern
   internal static let cpwBtnChange = LocalizedStringKey("cpw_btn_change")
-  /// Speichern
+  /// Kennword speichern
   internal static let cpwBtnSave = LocalizedStringKey("cpw_btn_save")
   /// Aktuelles Kennwort
   internal static let cpwInpCurrentPasswordPlaceholder = LocalizedStringKey("cpw_inp_current_password_placeholder")
@@ -343,6 +345,10 @@ internal enum L10n {
   internal static let cpwTxtPasswordBAccessibility = LocalizedStringKey("cpw_txt_passwordB_accessibility")
   /// Die Eingaben weichen vorneinander ab.
   internal static let cpwTxtPasswordsDontMatch = LocalizedStringKey("cpw_txt_passwords_dont_match")
+  /// Neues Kennwort
+  internal static let cpwTxtSectionTitle = LocalizedStringKey("cpw_txt_section_title")
+  /// Altes Kennwort
+  internal static let cpwTxtSectionUpdateTitle = LocalizedStringKey("cpw_txt_section_update_title")
   /// Kennwort
   internal static let cpwTxtTitle = LocalizedStringKey("cpw_txt_title")
   /// Kennwort ändern

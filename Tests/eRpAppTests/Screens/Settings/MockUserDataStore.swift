@@ -24,7 +24,7 @@ import eRpKit
 // MARK: - MockUserDataStore -
 
 final class MockUserDataStore: UserDataStore {
-   // MARK: - hideOnboarding
+    // MARK: - hideOnboarding
 
     var hideOnboarding: AnyPublisher<Bool, Never> {
         get { underlyingHideOnboarding }
@@ -33,7 +33,7 @@ final class MockUserDataStore: UserDataStore {
 
     private var underlyingHideOnboarding: AnyPublisher<Bool, Never>!
 
-   // MARK: - hideCardWallIntro
+    // MARK: - hideCardWallIntro
 
     var hideCardWallIntro: AnyPublisher<Bool, Never> {
         get { underlyingHideCardWallIntro }
@@ -42,7 +42,7 @@ final class MockUserDataStore: UserDataStore {
 
     private var underlyingHideCardWallIntro: AnyPublisher<Bool, Never>!
 
-   // MARK: - serverEnvironmentConfiguration
+    // MARK: - serverEnvironmentConfiguration
 
     var serverEnvironmentConfiguration: AnyPublisher<String?, Never> {
         get { underlyingServerEnvironmentConfiguration }
@@ -51,7 +51,7 @@ final class MockUserDataStore: UserDataStore {
 
     private var underlyingServerEnvironmentConfiguration: AnyPublisher<String?, Never>!
 
-   // MARK: - appSecurityOption
+    // MARK: - appSecurityOption
 
     var appSecurityOption: AnyPublisher<Int, Never> {
         get { underlyingAppSecurityOption }
@@ -60,7 +60,7 @@ final class MockUserDataStore: UserDataStore {
 
     private var underlyingAppSecurityOption: AnyPublisher<Int, Never>!
 
-   // MARK: - set
+    // MARK: - set
 
     var setHideOnboardingCallsCount = 0
     var setHideOnboardingCalled: Bool {
@@ -78,7 +78,7 @@ final class MockUserDataStore: UserDataStore {
         setHideOnboardingClosure?(hideOnboarding)
     }
 
-   // MARK: - set
+    // MARK: - set
 
     var setHideCardWallIntroCallsCount = 0
     var setHideCardWallIntroCalled: Bool {
@@ -96,7 +96,7 @@ final class MockUserDataStore: UserDataStore {
         setHideCardWallIntroClosure?(hideCardWallIntro)
     }
 
-   // MARK: - set
+    // MARK: - set
 
     var setServerEnvironmentConfigurationCallsCount = 0
     var setServerEnvironmentConfigurationCalled: Bool {
@@ -114,7 +114,7 @@ final class MockUserDataStore: UserDataStore {
         setServerEnvironmentConfigurationClosure?(serverEnvironmentConfiguration)
     }
 
-   // MARK: - set
+    // MARK: - set
 
     var setAppSecurityOptionCallsCount = 0
     var setAppSecurityOptionCalled: Bool {

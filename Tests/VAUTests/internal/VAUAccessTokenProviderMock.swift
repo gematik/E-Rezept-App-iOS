@@ -23,7 +23,7 @@ import Foundation
 struct VAUAccessTokenProviderMock: VAUAccessTokenProvider {
     var vauBearerToken: AnyPublisher<BearerToken, VAUError> {
         Just("SomeAccessToken")
-                .setFailureType(to: VAUError.self)
-                .eraseToAnyPublisher()
+            .setFailureType(to: VAUError.self)
+            .eraseToAnyPublisher()
     }
 }

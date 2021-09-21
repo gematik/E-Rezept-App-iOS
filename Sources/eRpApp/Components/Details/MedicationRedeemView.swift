@@ -79,7 +79,7 @@ struct MedicationRedeemView_Previews: PreviewProvider {
                     a11y: A11y.prescriptionDetails.prscDtlBtnToggleRedeem,
                     isEnabled: false
                 ) {}
-                .preferredColorScheme(.dark)
+                    .preferredColorScheme(.dark)
                 Spacer()
             }
             .background(Color.black)
@@ -91,7 +91,7 @@ struct MedicationRedeemView_Previews: PreviewProvider {
                     a11y: A11y.prescriptionDetails.prscDtlBtnToggleRedeem,
                     isEnabled: true
                 ) {}
-                .preferredColorScheme(.dark)
+                    .preferredColorScheme(.dark)
                 Spacer()
             }
             .background(Color.black)

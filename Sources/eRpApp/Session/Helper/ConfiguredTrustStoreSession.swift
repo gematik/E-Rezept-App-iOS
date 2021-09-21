@@ -33,19 +33,19 @@ class ConfiguredTrustStoreSession: TrustStoreSession {
         trustStoreStorage: TrustStoreStorage
     ) {
         sessionProvider = configurationProvider
-                .map {
-                    DefaultTrustStoreSession(
-                        serverURL: $0.serverURL,
-                        trustAnchor: $0.trustAnchor,
-                        trustStoreStorage: trustStoreStorage,
-                        httpClient: $0.httpClient
-                    )
-                }
-                .eraseToAnyPublisher()
+            .map {
+                DefaultTrustStoreSession(
+                    serverURL: $0.serverURL,
+                    trustAnchor: $0.trustAnchor,
+                    trustStoreStorage: trustStoreStorage,
+                    httpClient: $0.httpClient
+                )
+            }
+            .eraseToAnyPublisher()
     }
 
     func loadVauCertificate() -> AnyPublisher<X509, TrustStoreError> {
-       sessionProvider.map { $0.loadVauCertificate() }.switchToLatest().eraseToAnyPublisher()
+        sessionProvider.map { $0.loadVauCertificate() }.switchToLatest().eraseToAnyPublisher()
     }
 
     func validate(certificate: X509) -> AnyPublisher<Bool, TrustStoreError> {

@@ -54,7 +54,7 @@ class DemoSessionContainer: UserSession {
     }()
 
     lazy var hintEventsStore: EventsStore = {
-		// In demo mode we need the same store as in the default session
+        // In demo mode we need the same store as in the default session
         HintEventsStore()
     }()
 

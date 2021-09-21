@@ -38,26 +38,26 @@ public class VAUSession {
     ///   - vauStorage: the VAU storage
     ///   - trustStoreSession: session that obtains the VAU encryption certificate
     public convenience init(
-            vauServer: URL,
-            vauAccessTokenProvider: VAUAccessTokenProvider,
-            vauStorage: VAUStorage,
-            trustStoreSession: TrustStoreSession
+        vauServer: URL,
+        vauAccessTokenProvider: VAUAccessTokenProvider,
+        vauStorage: VAUStorage,
+        trustStoreSession: TrustStoreSession
     ) {
         self.init(
-                vauServer: vauServer,
-                vauAccessTokenProvider: vauAccessTokenProvider,
-                vauCryptoProvider: EciesVAUCryptoProvider(),
-                vauStorage: vauStorage,
-                trustStoreSession: trustStoreSession
+            vauServer: vauServer,
+            vauAccessTokenProvider: vauAccessTokenProvider,
+            vauCryptoProvider: EciesVAUCryptoProvider(),
+            vauStorage: vauStorage,
+            trustStoreSession: trustStoreSession
         )
     }
 
     init(
-            vauServer: URL,
-            vauAccessTokenProvider: VAUAccessTokenProvider,
-            vauCryptoProvider: VAUCryptoProvider,
-            vauStorage: VAUStorage,
-            trustStoreSession: TrustStoreSession
+        vauServer: URL,
+        vauAccessTokenProvider: VAUAccessTokenProvider,
+        vauCryptoProvider: VAUCryptoProvider,
+        vauStorage: VAUStorage,
+        trustStoreSession: TrustStoreSession
     ) {
         self.vauServer = vauServer
         self.vauAccessTokenProvider = vauAccessTokenProvider
@@ -69,10 +69,10 @@ public class VAUSession {
     /// Provides the actual HTTP request interceptor that re-routes the original request to the VAU server.
     public func provideInterceptor() -> Interceptor {
         VAUInterceptor(
-                vauAccessTokenProvider: vauAccessTokenProvider,
-                vauCertificateProvider: self,
-                vauCryptoProvider: vauCryptoProvider,
-                vauEndpointHandler: self
+            vauAccessTokenProvider: vauAccessTokenProvider,
+            vauCertificateProvider: self,
+            vauCryptoProvider: vauCryptoProvider,
+            vauEndpointHandler: self
         )
     }
 }

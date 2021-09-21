@@ -81,7 +81,7 @@ class DiscoveryDocumentTests: XCTestCase {
         let expirationDate = dateFormatter.date(from: "2021-03-19 08:51:16.0000+0000")!
         let issuedDate = dateFormatter.date(from: "2021-03-18 08:51:16.0000+0000")!
 
-		let document = try DiscoveryDocument(jwt: jwt, encryptPuks: jwk, signingPuks: jwk, createdOn: issuedDate)
+        let document = try DiscoveryDocument(jwt: jwt, encryptPuks: jwk, signingPuks: jwk, createdOn: issuedDate)
         expect(document.expiresOn) == expirationDate
         expect(document.issuedAt) == issuedDate
 
@@ -91,7 +91,7 @@ class DiscoveryDocumentTests: XCTestCase {
         // isValid
         expect(document.isValid(on: expirationDate)) == true
         expect(document.isValid(on: issuedDate)) == true
-		expect(document.isValid(on: Date(timeInterval: -1.0, since: expirationDate))) == true
+        expect(document.isValid(on: Date(timeInterval: -1.0, since: expirationDate))) == true
         // isInvalid
         expect(document.isValid(on: Date(timeInterval: 1.0, since: expirationDate))) == false
     }

@@ -61,7 +61,7 @@ public protocol SecureEnclaveSignatureProvider {
     ///   - signer: The `JWTSigner` that is used to authenticate the key that is paired. Usually this is a eGK.
     ///   - certificate: Certificate of the signer that is used to sign the `PairingData`.
     func signPairingSession(_ pairingSession: PairingSession, with signer: JWTSigner, certificate: X509)
-    -> AnyPublisher<RegistrationData, Swift.Error>
+        -> AnyPublisher<RegistrationData, Swift.Error>
 
     /// Cancels the signing session and delete all temporary data, such as `PrK_SE_AUT` and `PuK_SE_AUT`.
     ///
@@ -72,7 +72,7 @@ public protocol SecureEnclaveSignatureProvider {
     /// automatically handle biometric unlock such as FaceID or TouchID.
     /// - Parameter challenge: The `IDPChallengeSession` to sign with `PrK_SE_AUT`.
     func authenticationData(for challenge: IDPChallengeSession)
-    -> AnyPublisher<SignedAuthenticationData, SecureEnclaveSignatureProviderError>
+        -> AnyPublisher<SignedAuthenticationData, SecureEnclaveSignatureProviderError>
 
     /// If the Publishers value is true, biometrics is successfully registered, false otherwise.
     var isBiometrieRegistered: AnyPublisher<Bool, Never> { get }

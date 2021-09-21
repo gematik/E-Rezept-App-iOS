@@ -41,16 +41,16 @@ class RealTrustStoreClient {
 extension RealTrustStoreClient: TrustStoreClient {
     func loadCertListFromServer() -> AnyPublisher<CertList, TrustStoreError> {
         httpClient
-                .send(request: URLRequest(url: certListEndpoint, cachePolicy: .reloadIgnoringLocalCacheData))
-                .processCertListResponse()
-                .eraseToAnyPublisher()
+            .send(request: URLRequest(url: certListEndpoint, cachePolicy: .reloadIgnoringLocalCacheData))
+            .processCertListResponse()
+            .eraseToAnyPublisher()
     }
 
     func loadOCSPListFromServer() -> AnyPublisher<OCSPList, TrustStoreError> {
         httpClient
-                .send(request: URLRequest(url: ocspListEndpoint, cachePolicy: .reloadIgnoringLocalCacheData))
-                .processOCSPListResponse()
-                .eraseToAnyPublisher()
+            .send(request: URLRequest(url: ocspListEndpoint, cachePolicy: .reloadIgnoringLocalCacheData))
+            .processOCSPListResponse()
+            .eraseToAnyPublisher()
     }
 }
 
@@ -59,16 +59,16 @@ extension Publisher where Output == HTTPResponse, Failure == HTTPError {
         tryMap { httpResponse -> CertList in
             try RealTrustStoreClient.processCertListResponse(httpResponse: httpResponse)
         }
-                .mapError { $0.asTrustStoreError() }
-                .eraseToAnyPublisher()
+        .mapError { $0.asTrustStoreError() }
+        .eraseToAnyPublisher()
     }
 
     func processOCSPListResponse() -> AnyPublisher<OCSPList, TrustStoreError> {
         tryMap { httpResponse -> OCSPList in
             try RealTrustStoreClient.processOCSPListResponse(httpResponse: httpResponse)
         }
-                .mapError { $0.asTrustStoreError() }
-                .eraseToAnyPublisher()
+        .mapError { $0.asTrustStoreError() }
+        .eraseToAnyPublisher()
     }
 }
 

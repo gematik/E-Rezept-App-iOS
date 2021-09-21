@@ -76,7 +76,7 @@ extension MainViewHintsDomain.Environment {
     func subscribeToHints() -> Effect<MainViewHintsDomain.Action, Never> {
         hintEventsStore.hintStatePublisher
             .map { hintState in
-				let isDemoMode = userSession.isDemoMode
+                let isDemoMode = userSession.isDemoMode
                 let hint = hintProvider.currentHint(for: hintState, isDemoMode: isDemoMode)
                 return .hintChangeReceived(hint)
             }

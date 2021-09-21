@@ -70,7 +70,7 @@ class MockUserSession: UserSession {
     }()
 
     lazy var isAuthenticated: AnyPublisher<Bool, UserSessionError> = Just(isLoggedIn)
-            .setFailureType(to: UserSessionError.self).eraseToAnyPublisher()
+        .setFailureType(to: UserSessionError.self).eraseToAnyPublisher()
 
     lazy var erxTaskRepository: ErxTaskRepositoryAccess = {
         AnyErxTaskRepository(Just(MockErxTaskRepository()).eraseToAnyPublisher())
@@ -91,7 +91,7 @@ class MockUserSession: UserSession {
 
 class MockHintEventsStore: EventsStore {
     var hintStatePublisher: AnyPublisher<HintState, Never> =
-            Just(HintState()).eraseToAnyPublisher()
+        Just(HintState()).eraseToAnyPublisher()
 
     var hintState = HintState()
 }
@@ -163,7 +163,7 @@ extension MockSecureUserStore: IDPStorage {
 
 class MockPharmacyRepository: PharmacyRepository {
     func searchPharmacies(searchTerm: String, position: Position?)
-    -> AnyPublisher<[PharmacyLocation], PharmacyRepositoryError> {
+        -> AnyPublisher<[PharmacyLocation], PharmacyRepositoryError> {
         let filteredResult = store.filter { pharmacy in
             if !searchTerm.isEmpty,
                let pharmName = pharmacy.name,
@@ -239,7 +239,7 @@ class MockErxTaskRepository: ErxTaskRepository {
     func loadLocalCommunications(for _: ErxTask.Communication
         .Profile)
         -> AnyPublisher<[ErxTask.Communication], ErrorType> {
-            Just([]).setFailureType(to: ErrorType.self).eraseToAnyPublisher()
+        Just([]).setFailureType(to: ErrorType.self).eraseToAnyPublisher()
     }
 
     func saveLocal(communications _: [ErxTask.Communication]) -> AnyPublisher<Bool, ErrorType> {

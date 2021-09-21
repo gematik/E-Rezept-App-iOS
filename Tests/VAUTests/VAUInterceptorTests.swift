@@ -41,9 +41,9 @@ final class VAUInterceptorTests: XCTestCase {
 
         // expectations
         sut.intercept(chain: chain)
-                .test(expectations: { _ in
-                    expect(chain.incomingProceedRequests.count) == 1
-                })
+            .test(expectations: { _ in
+                expect(chain.incomingProceedRequests.count) == 1
+            })
     }
 
     // Crypto only works from macOS 11 and onwards.
@@ -77,12 +77,12 @@ final class VAUInterceptorTests: XCTestCase {
         let vauResponse = HTTPResponse(data: Data(), response: HTTPURLResponse(), status: .forbidden)
         let vauCertificate = X509VAUCertificate(x509: TrustStoreSessionMock().vauCertificate)
         let vauCrypto = try EciesVAUCryptoProvider()
-                .provide(for: "message", vauCertificate: vauCertificate, bearerToken: "Bearer xyz")
+            .provide(for: "message", vauCertificate: vauCertificate, bearerToken: "Bearer xyz")
         let url = URL(string: "http://some-service.com/path")!
 
         // when
         let processedResponse =
-                try VAUInterceptor.processVauResponse(httpResponse: vauResponse, vauCrypto: vauCrypto, originalUrl: url)
+            try VAUInterceptor.processVauResponse(httpResponse: vauResponse, vauCrypto: vauCrypto, originalUrl: url)
 
         // then
         expect(processedResponse == vauResponse).to(beTrue())

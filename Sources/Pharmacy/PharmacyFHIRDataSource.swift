@@ -39,7 +39,7 @@ public struct PharmacyFHIRDataSource {
     /// - Returns: `AnyPublisher` that emits all `PharmacyLocation`s for the given `searchTerm`
     public func searchPharmacies(by searchTerm: String,
                                  position: Position?)
-    -> AnyPublisher<[PharmacyLocation], Error> {
+        -> AnyPublisher<[PharmacyLocation], Error> {
         fhirClient.searchPharmacies(by: searchTerm, position: position)
             .mapError { Error.fhirClient($0) }
             .eraseToAnyPublisher()

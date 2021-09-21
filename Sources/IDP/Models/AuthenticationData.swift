@@ -47,12 +47,12 @@ public struct AuthenticationData: Claims, Codable {
     let exp: Int
 
     enum CodingKeys: String, CodingKey {
-            case authCert = "auth_cert"
-            case challengeToken = "challenge_token"
-            case deviceInformation = "device_information"
-            case amr
-            case authenticationDataVersion = "authentication_data_version"
-            case keyIdentifier = "key_identifier"
-            case exp
+        case authCert = "auth_cert"
+        case challengeToken = "challenge_token"
+        case deviceInformation = "device_information"
+        case amr
+        case authenticationDataVersion = "authentication_data_version"
+        case keyIdentifier = "key_identifier"
+        case exp
     }
 }

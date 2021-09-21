@@ -27,18 +27,18 @@ struct ErxReadinessBadge: View {
                 .accessibility(identifier: A11y.pharmacyGlobal.phaGlobalImgReadinessBadge)
             Text(detailedText ? L10n.phaGlobalTxtReadinessBadgeDetailed : L10n.phaGlobalTxtReadinessBadge)
                 .accessibility(identifier: A11y.pharmacyGlobal.phaGlobalTxtReadinessBadge)
-            .font(.subheadline)
+                .font(.subheadline)
         }
-                .padding(.vertical, 2)
-                .padding(.horizontal, 10)
-                .background(Colors.primary100)
-                .cornerRadius(8)
+        .padding(.vertical, 2)
+        .padding(.horizontal, 10)
+        .background(Colors.primary100)
+        .cornerRadius(8)
     }
 }
 
 struct ErxReadinessBadge_Previews: PreviewProvider {
     static var previews: some View {
-            ErxReadinessBadge(detailedText: false)
-            ErxReadinessBadge(detailedText: true)
+        ErxReadinessBadge(detailedText: false)
+        ErxReadinessBadge(detailedText: true)
     }
 }

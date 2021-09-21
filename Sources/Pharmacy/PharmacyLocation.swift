@@ -71,7 +71,7 @@ public struct PharmacyLocation: Identifiable, Hashable, Equatable {
 
     public var isErxReady: Bool {
         if let status = status {
-           return status == .active
+            return status == .active
         } else {
             return false
         }

@@ -29,8 +29,8 @@ public class IDPClientMock: IDPClient {
 
     var requestChallenge_Publisher: AnyPublisher<IDPChallenge, IDPError>! =
         try! Just(IDPChallenge(challenge: JWT(header: JWT.Header(), payload: IDPChallenge.Claim()), consent: nil))
-        .setFailureType(to: IDPError.self)
-        .eraseToAnyPublisher()
+            .setFailureType(to: IDPError.self)
+            .eraseToAnyPublisher()
     var requestChallenge_ReceivedArguments = [(
         codeChallenge: String,
         method: IDPCodeChallengeMode,
@@ -91,7 +91,7 @@ public class IDPClientMock: IDPClient {
     }
 
     public func refresh(with unsignedChallenge: IDPChallenge, ssoToken: String, using document: DiscoveryDocument)
-    -> AnyPublisher<IDPExchangeToken, IDPError> {
+        -> AnyPublisher<IDPExchangeToken, IDPError> {
         ssoLogin_CallsCount += 1
         ssoLogin_ReceivedArguments = (unsignedChallenge: unsignedChallenge,
                                       sso: ssoToken,

@@ -254,7 +254,7 @@ class NoTokenStorage: IDPStorage {
 extension HTTPError {
     var isIDPTokenUnavailable: Bool {
         guard case let .authentication(err) = self, let idpError = err as? IDPError,
-            case IDPError.tokenUnavailable = idpError else {
+              case IDPError.tokenUnavailable = idpError else {
             return false
         }
         return true

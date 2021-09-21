@@ -67,7 +67,7 @@ public protocol IDPClient {
     /// - Parameters:
     ///   - unsigned: The unsigned IDP-Challenge. Generate a new challenge for each sso refresh by using
     ///               `requestChallenge`.
-    ///   - sso: The SSO token from a prior successfull login via `verify` and `exchange`.
+    ///   - sso: The SSO token from a prior successful login via `verify` and `exchange`.
     ///   - document: The discovery document to use.
     func refresh(with unsignedChallenge: IDPChallenge,
                  ssoToken: String,
@@ -92,13 +92,13 @@ public protocol IDPClient {
     ///
     /// - Parameters:
     ///   - jwe: JWE encrypting the `PairingRegistration` of the key to register.
-    ///   - token: Accesstoken for authentication and authorization for the new key.
+    ///   - token: Access token for authentication and authorization for the new key.
     ///   - document: use this DiscoveryDocument to resolve the actual endpoint
     /// - Returns: AnyPublisher with a`PairingEntry` containing registration information upon success.
     func registerDevice(_ jwe: JWE,
                         token: IDPToken,
                         using document: DiscoveryDocument)
-    -> AnyPublisher<PairingEntry, IDPError>
+        -> AnyPublisher<PairingEntry, IDPError>
 
     /// Unregisters a key of the device with the given identifier.
     /// - Parameters:
@@ -116,5 +116,5 @@ public protocol IDPClient {
     /// - Returns: exchange token upon success
     func altVerify(_ encryptedSignedChallenge: JWE,
                    using document: DiscoveryDocument)
-    -> AnyPublisher<IDPExchangeToken, IDPError>
+        -> AnyPublisher<IDPExchangeToken, IDPError>
 }

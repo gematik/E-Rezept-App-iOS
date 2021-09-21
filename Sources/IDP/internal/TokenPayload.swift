@@ -111,19 +111,19 @@ public struct TokenPayload: Codable {
 }
 
 extension TokenPayload {
-	enum Error: Swift.Error {
-		case dataEncoding
-		case stringConversion
-		case decryption(Swift.Error)
-	}
+    enum Error: Swift.Error {
+        case dataEncoding
+        case stringConversion
+        case decryption(Swift.Error)
+    }
 
-	func decrypted(with aesKey: SymmetricKey) throws -> TokenPayload {
-		guard let accessTokenData = accessToken.data(using: .utf8),
-			  let idTokenData = idToken.data(using: .utf8) else {
-			throw Error.dataEncoding
-		}
+    func decrypted(with aesKey: SymmetricKey) throws -> TokenPayload {
+        guard let accessTokenData = accessToken.data(using: .utf8),
+              let idTokenData = idToken.data(using: .utf8) else {
+            throw Error.dataEncoding
+        }
 
-		do {
+        do {
             let accessTokenJWE = try JWE.from(accessTokenData, with: .plain(aesKey))
             let idTokenJWE = try JWE.from(idTokenData, with: .plain(aesKey))
 
@@ -132,38 +132,38 @@ extension TokenPayload {
             let idTokenDecrypted = try JSONDecoder().decode(IDTokenResponse.self,
                                                             from: idTokenJWE.payload)
             return TokenPayload(
-            	accessToken: accessTokenDecrypted.njwt,
-            	expiresIn: expiresIn,
-            	idToken: idTokenDecrypted.njwt,
-            	ssoToken: ssoToken,
-            	tokenType: tokenType
+                accessToken: accessTokenDecrypted.njwt,
+                expiresIn: expiresIn,
+                idToken: idTokenDecrypted.njwt,
+                ssoToken: ssoToken,
+                tokenType: tokenType
             )
-		} catch {
-			throw Error.decryption(error)
-		}
-	}
+        } catch {
+            throw Error.decryption(error)
+        }
+    }
 }
 
 extension TokenPayload: Equatable {}
 
 struct KeyVerifier: Codable {
-	/// data string key that is used by the server to encrypt the access token response
-	let tokenKey: String
-	///  random generated verifier code that was created and sent with the request challenge API call
-	let verifierCode: VerifierCode
+    /// data string key that is used by the server to encrypt the access token response
+    let tokenKey: String
+    ///  random generated verifier code that was created and sent with the request challenge API call
+    let verifierCode: VerifierCode
 
-	init(with key: SymmetricKey, codeVerifier: String) throws {
+    init(with key: SymmetricKey, codeVerifier: String) throws {
         guard let keyDataString = key.withUnsafeBytes({ Data(Array($0)) }).encodeBase64urlsafe().utf8string else {
             throw Error.stringConversion
         }
         tokenKey = keyDataString
-		verifierCode = codeVerifier
-	}
+        verifierCode = codeVerifier
+    }
 
-	enum CodingKeys: String, CodingKey {
-		case tokenKey = "token_key"
-		case verifierCode = "code_verifier"
-	}
+    enum CodingKeys: String, CodingKey {
+        case tokenKey = "token_key"
+        case verifierCode = "code_verifier"
+    }
 
     enum Error: Swift.Error {
         case stringConversion
@@ -172,12 +172,12 @@ struct KeyVerifier: Codable {
     func encrypted(with publicKey: BrainpoolP256r1.KeyExchange.PublicKey,
                    using cryptoBox: IDPCrypto) throws -> JWE {
         guard let keyVerifierEncoded = try? KeyVerifier.jsonEncoder.encode(self) else {
-           throw IDPError.internalError("constructing key verifier failed")
+            throw IDPError.internalError("constructing key verifier failed")
         }
 
         let keyExchangeContext = JWE.Algorithm.KeyExchangeContext.bpp256r1(
-        	publicKey,
-        	keyPairGenerator: cryptoBox.brainpoolKeyPairGenerator
+            publicKey,
+            keyPairGenerator: cryptoBox.brainpoolKeyPairGenerator
         )
 
         guard let jweHeader = try? JWE.Header(algorithm: JWE.Algorithm.ecdh_es(keyExchangeContext),
@@ -196,8 +196,8 @@ struct KeyVerifier: Codable {
     }
 
     private static var jsonEncoder: JSONEncoder = {
-            let jsonEncoder = JSONEncoder()
-            jsonEncoder.dataEncodingStrategy = .base64
-            return jsonEncoder
+        let jsonEncoder = JSONEncoder()
+        jsonEncoder.dataEncodingStrategy = .base64
+        return jsonEncoder
     }()
 }

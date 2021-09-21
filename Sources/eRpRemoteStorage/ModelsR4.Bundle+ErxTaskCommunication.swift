@@ -151,7 +151,7 @@ private struct TaskCheck: Identifiable, Hashable {
     /// (2)       `Task/4711`
     ///
     /// - Parameter taskString:String that containing taskID and potentially accessCode
-     init?(taskString: String) {
+    init?(taskString: String) {
         guard Self.taskStringRegex.numberOfMatches(
             in: taskString,
             range: NSRange(location: 0, length: taskString.count)

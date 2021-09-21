@@ -153,9 +153,9 @@ final class X509TrustStoreTests: XCTestCase {
     func testBuildFromCertList() throws {
         // given
         guard let url = Bundle(for: Self.self)
-                .url(forResource: "kompca10-vauref-idpsig3", withExtension: "json", subdirectory: "CertList.bundle"),
-              let json = try? Data(contentsOf: url)
-                else {
+            .url(forResource: "kompca10-vauref-idpsig3", withExtension: "json", subdirectory: "CertList.bundle"),
+            let json = try? Data(contentsOf: url)
+        else {
             fatalError("Could not load json")
         }
         let certList = try CertList.from(data: json)
@@ -165,9 +165,9 @@ final class X509TrustStoreTests: XCTestCase {
 
         // then
         let expectedVauCert =
-                "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"
+            "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"
         let expectedIdpCert =
-                "MIICsTCCAligAwIBAgIHAbssqQhqOzAKBggqhkjOPQQDAjCBhDELMAkGA1UEBhMCREUxHzAdBgNVBAoMFmdlbWF0aWsgR21iSCBOT1QtVkFMSUQxMjAwBgNVBAsMKUtvbXBvbmVudGVuLUNBIGRlciBUZWxlbWF0aWtpbmZyYXN0cnVrdHVyMSAwHgYDVQQDDBdHRU0uS09NUC1DQTEwIFRFU1QtT05MWTAeFw0yMTAxMTUwMDAwMDBaFw0yNjAxMTUyMzU5NTlaMEkxCzAJBgNVBAYTAkRFMSYwJAYDVQQKDB1nZW1hdGlrIFRFU1QtT05MWSAtIE5PVC1WQUxJRDESMBAGA1UEAwwJSURQIFNpZyAzMFowFAYHKoZIzj0CAQYJKyQDAwIIAQEHA0IABIYZnwiGAn5QYOx43Z8MwaZLD3r/bz6BTcQO5pbeum6qQzYD5dDCcriw/VNPPZCQzXQPg4StWyy5OOq9TogBEmOjge0wgeowDgYDVR0PAQH/BAQDAgeAMC0GBSskCAMDBCQwIjAgMB4wHDAaMAwMCklEUC1EaWVuc3QwCgYIKoIUAEwEggQwIQYDVR0gBBowGDAKBggqghQATASBSzAKBggqghQATASBIzAfBgNVHSMEGDAWgBQo8Pjmqch3zENF25qu1zqDrA4PqDA4BggrBgEFBQcBAQQsMCowKAYIKwYBBQUHMAGGHGh0dHA6Ly9laGNhLmdlbWF0aWsuZGUvb2NzcC8wHQYDVR0OBBYEFC94M9LgW44lNgoAbkPaomnLjS8/MAwGA1UdEwEB/wQCMAAwCgYIKoZIzj0EAwIDRwAwRAIgCg4yZDWmyBirgxzawz/S8DJnRFKtYU/YGNlRc7+kBHcCIBuzba3GspqSmoP1VwMeNNKNaLsgV8vMbDJb30aqaiX1"
+            "MIICsTCCAligAwIBAgIHAbssqQhqOzAKBggqhkjOPQQDAjCBhDELMAkGA1UEBhMCREUxHzAdBgNVBAoMFmdlbWF0aWsgR21iSCBOT1QtVkFMSUQxMjAwBgNVBAsMKUtvbXBvbmVudGVuLUNBIGRlciBUZWxlbWF0aWtpbmZyYXN0cnVrdHVyMSAwHgYDVQQDDBdHRU0uS09NUC1DQTEwIFRFU1QtT05MWTAeFw0yMTAxMTUwMDAwMDBaFw0yNjAxMTUyMzU5NTlaMEkxCzAJBgNVBAYTAkRFMSYwJAYDVQQKDB1nZW1hdGlrIFRFU1QtT05MWSAtIE5PVC1WQUxJRDESMBAGA1UEAwwJSURQIFNpZyAzMFowFAYHKoZIzj0CAQYJKyQDAwIIAQEHA0IABIYZnwiGAn5QYOx43Z8MwaZLD3r/bz6BTcQO5pbeum6qQzYD5dDCcriw/VNPPZCQzXQPg4StWyy5OOq9TogBEmOjge0wgeowDgYDVR0PAQH/BAQDAgeAMC0GBSskCAMDBCQwIjAgMB4wHDAaMAwMCklEUC1EaWVuc3QwCgYIKoIUAEwEggQwIQYDVR0gBBowGDAKBggqghQATASBSzAKBggqghQATASBIzAfBgNVHSMEGDAWgBQo8Pjmqch3zENF25qu1zqDrA4PqDA4BggrBgEFBQcBAQQsMCowKAYIKwYBBQUHMAGGHGh0dHA6Ly9laGNhLmdlbWF0aWsuZGUvb2NzcC8wHQYDVR0OBBYEFC94M9LgW44lNgoAbkPaomnLjS8/MAwGA1UdEwEB/wQCMAAwCgYIKoZIzj0EAwIDRwAwRAIgCg4yZDWmyBirgxzawz/S8DJnRFKtYU/YGNlRc7+kBHcCIBuzba3GspqSmoP1VwMeNNKNaLsgV8vMbDJb30aqaiX1"
         expect(sut.vauCert.derBytes?.base64EncodedString()) == expectedVauCert
         expect(sut.idpCerts.count) == 1
         expect(sut.idpCerts.first?.derBytes?.base64EncodedString()) == expectedIdpCert
@@ -216,8 +216,8 @@ final class X509TrustStoreTests: XCTestCase {
         guard let url = Bundle(for: Self.self).url(forResource: "oscp-responses-fd-enc",
                                                    withExtension: "json",
                                                    subdirectory: "OCSPList.bundle"),
-              let json = try? Data(contentsOf: url)
-                else {
+            let json = try? Data(contentsOf: url)
+        else {
             fatalError("Could not load json")
         }
         return try! OCSPList.from(data: json)
@@ -227,8 +227,8 @@ final class X509TrustStoreTests: XCTestCase {
         guard let url = Bundle(for: Self.self).url(forResource: "oscp-responses-fd-enc-idp-sig1-idp-sig3",
                                                    withExtension: "json",
                                                    subdirectory: "OCSPList.bundle"),
-              let json = try? Data(contentsOf: url)
-                else {
+            let json = try? Data(contentsOf: url)
+        else {
             fatalError("Could not load json")
         }
         return try! OCSPList.from(data: json)
@@ -238,8 +238,8 @@ final class X509TrustStoreTests: XCTestCase {
         guard let url = Bundle(for: Self.self).url(forResource: "oscp-responses-fd-enc-idp-sig_notKompCa10signed",
                                                    withExtension: "json",
                                                    subdirectory: "OCSPList.bundle"),
-              let json = try? Data(contentsOf: url)
-                else {
+            let json = try? Data(contentsOf: url)
+        else {
             fatalError("Could not load json")
         }
         return try! OCSPList.from(data: json)
@@ -348,9 +348,9 @@ enum CertificateResourceFileReader {
     static func readFromCertificatesBundle(file: String, inForm _: InForm = .pem) throws -> Data {
         let bundle = Bundle(for: X509TrustStoreTests.self)
         guard let url = bundle.resourceURL?
-                .appendingPathComponent("Certificates.bundle")
-                .appendingPathComponent(file)
-                else {
+            .appendingPathComponent("Certificates.bundle")
+            .appendingPathComponent(file)
+        else {
             throw Error.fileNotFound(file)
         }
         return try Data(contentsOf: url, options: .mappedIfSafe)

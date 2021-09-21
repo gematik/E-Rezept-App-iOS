@@ -23,7 +23,7 @@ import SnapshotTesting
 import SwiftUI
 
 struct SnapshotConfig {
-  let viewImageConfig: ViewImageConfig
+    let viewImageConfig: ViewImageConfig
 }
 
 let appStoreViewConfigs: [String: ViewImageConfig] = [

@@ -19,39 +19,39 @@
 import Foundation
 
 extension JWK {
-	/// Creates a `x962` representation of the x and y values of the JWK.  The format follows the ANSI X9.62 standard
-	/// using a byte string of 04 || X || Y . Hexadecimal representation should start with 0x04.
-	/// see: https://www.secg.org/SEC1-Ver-1.0.pdf 2.3.3 EllipticCurvePoint-to-OctetString Conversion
-	func publicKeyX962UncompressedRepresentation(padToByteCount: Int = 32) throws -> Data? {
-		do {
-			if let xBase64Decoded = try x?.decodeBase64URLEncoded(),
-			   let yBase64Decoded = try y?.decodeBase64URLEncoded() {
-				return Data([0x04] +
-								xBase64Decoded.dropLeadingZeroByte.padWithLeadingZeroes(totalLength: padToByteCount) +
-								yBase64Decoded.dropLeadingZeroByte.padWithLeadingZeroes(totalLength: padToByteCount))
-			} else {
-				return nil
-			}
-		} catch {
-			throw error
-		}
-	}
+    /// Creates a `x962` representation of the x and y values of the JWK.  The format follows the ANSI X9.62 standard
+    /// using a byte string of 04 || X || Y . Hexadecimal representation should start with 0x04.
+    /// see: https://www.secg.org/SEC1-Ver-1.0.pdf 2.3.3 EllipticCurvePoint-to-OctetString Conversion
+    func publicKeyX962UncompressedRepresentation(padToByteCount: Int = 32) throws -> Data? {
+        do {
+            if let xBase64Decoded = try x?.decodeBase64URLEncoded(),
+               let yBase64Decoded = try y?.decodeBase64URLEncoded() {
+                return Data([0x04] +
+                    xBase64Decoded.dropLeadingZeroByte.padWithLeadingZeroes(totalLength: padToByteCount) +
+                    yBase64Decoded.dropLeadingZeroByte.padWithLeadingZeroes(totalLength: padToByteCount))
+            } else {
+                return nil
+            }
+        } catch {
+            throw error
+        }
+    }
 }
 
 extension Data {
-	var dropLeadingZeroByte: Data {
-		if first == 0x0 {
-			return dropFirst()
-		} else {
-			return self
-		}
-	}
+    var dropLeadingZeroByte: Data {
+        if first == 0x0 {
+            return dropFirst()
+        } else {
+            return self
+        }
+    }
 
-	func padWithLeadingZeroes(totalLength: Int) -> Data {
-		if count >= totalLength {
-			return self
-		} else {
-			return Data(count: totalLength - count) + self
-		}
-	}
+    func padWithLeadingZeroes(totalLength: Int) -> Data {
+        if count >= totalLength {
+            return self
+        } else {
+            return Data(count: totalLength - count) + self
+        }
+    }
 }

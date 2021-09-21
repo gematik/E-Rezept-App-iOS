@@ -47,10 +47,10 @@ public struct SignedAuthenticationData {
                                               expiry: originalChallenge.challenge.exp,
                                               contentType: "NJWT",
                                               type: "JWT"),
-              let jwePayload = try? SignedAuthenticationData.defaultEncoder.encode(signedChallengePayload),
-              let signedChallengeJWE = try? JWE(header: jweHeader,
-                                                payload: jwePayload,
-                                                nonceGenerator: cryptoBox.aesNonceGenerator) else {
+            let jwePayload = try? SignedAuthenticationData.defaultEncoder.encode(signedChallengePayload),
+            let signedChallengeJWE = try? JWE(header: jweHeader,
+                                              payload: jwePayload,
+                                              nonceGenerator: cryptoBox.aesNonceGenerator) else {
             throw IDPError.internalError("Unable to encrypt signed challenge")
         }
 
@@ -58,8 +58,8 @@ public struct SignedAuthenticationData {
     }
 
     private static let defaultEncoder: JSONEncoder = {
-            let jsonEncoder = JSONEncoder()
-            jsonEncoder.dataEncodingStrategy = .base64
-            return jsonEncoder
+        let jsonEncoder = JSONEncoder()
+        jsonEncoder.dataEncodingStrategy = .base64
+        return jsonEncoder
     }()
 }

@@ -89,7 +89,7 @@ class DemoErxTaskRepository: ErxTaskRepository {
     func loadLocalCommunications(for _: ErxTask.Communication
         .Profile)
         -> AnyPublisher<[ErxTask.Communication], // swiftlint:disable:this operator_usage_whitespace
-                        ErxRepositoryError<ErxTaskCoreDataStore.ErrorType, ErxTaskFHIRDataStore.ErrorType>> {
+            ErxRepositoryError<ErxTaskCoreDataStore.ErrorType, ErxTaskFHIRDataStore.ErrorType>> {
         Just([]).setFailureType(to: ErrorType.self).eraseToAnyPublisher()
     }
 

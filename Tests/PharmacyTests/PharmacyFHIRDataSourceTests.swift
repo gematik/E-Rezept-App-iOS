@@ -45,7 +45,7 @@ final class PharmacyFHIRDataSourceTests: XCTestCase {
 
     override func tearDown() {
         HTTPStubs.removeAllStubs()
-            super.tearDown()
+        super.tearDown()
     }
 
     func testSearchPharmacyWithSuccess() {

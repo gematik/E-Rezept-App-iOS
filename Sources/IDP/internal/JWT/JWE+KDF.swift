@@ -43,7 +43,7 @@ extension JWE {
             // [REQ:gemSpec_Krypt:GS-A_4357] Key pair generation delegated to OpenSSL with BrainpoolP256r1 parameters
             case bpp256r1(BrainpoolP256r1.KeyExchange.PublicKey,
                           keyPairGenerator: () throws -> BrainpoolP256r1.KeyExchange.PrivateKey
-                            = { try BrainpoolP256r1.KeyExchange.generateKey(compactRepresentable: true) })
+                              = { try BrainpoolP256r1.KeyExchange.generateKey(compactRepresentable: true) })
 
             func encryptionContext() throws -> EncryptionContext {
                 switch self {

@@ -35,13 +35,13 @@ final class DefaultTrustStoreSessionTests: XCTestCase {
 
     private lazy var certList: CertList = {
         guard let url = Bundle(for: Self.self)
-                .url(
-                    forResource: "kompca10-fd-enc-idp-sig1-idp-sig3",
-                    withExtension: "json",
-                    subdirectory: "CertList.bundle"
-                ),
-              let json = try? Data(contentsOf: url)
-                else {
+            .url(
+                forResource: "kompca10-fd-enc-idp-sig1-idp-sig3",
+                withExtension: "json",
+                subdirectory: "CertList.bundle"
+            ),
+            let json = try? Data(contentsOf: url)
+        else {
             fatalError("Could not load json")
         }
         return try! CertList.from(data: json)
@@ -51,8 +51,8 @@ final class DefaultTrustStoreSessionTests: XCTestCase {
         guard let url = Bundle(for: Self.self).url(forResource: "oscp-responses-fd-enc-idp-sig1-idp-sig3",
                                                    withExtension: "json",
                                                    subdirectory: "OCSPList.bundle"),
-              let json = try? Data(contentsOf: url)
-                else {
+            let json = try? Data(contentsOf: url)
+        else {
             fatalError("Could not load json")
         }
         return try! OCSPList.from(data: json)
@@ -62,8 +62,8 @@ final class DefaultTrustStoreSessionTests: XCTestCase {
         guard let url = Bundle(for: Self.self).url(forResource: "oscp-responses-fd-enc-idp-sig",
                                                    withExtension: "json",
                                                    subdirectory: "OCSPList.bundle"),
-              let json = try? Data(contentsOf: url)
-                else {
+            let json = try? Data(contentsOf: url)
+        else {
             fatalError("Could not load json")
         }
         return try! OCSPList.from(data: json)
@@ -98,22 +98,22 @@ final class DefaultTrustStoreSessionTests: XCTestCase {
         expect(trustStoreClient.loadOCSPListFromServer_Called) == false
 
         sut.loadVauCertificate()
-                .test(expectations: { _ in
-                    expect(trustStoreClient.loadCertListFromServer_Called) == true
-                    expect(trustStoreClient.loadCertListFromServer_CallsCount) == 1
-                    expect(storage.certListState) == self.certList
+            .test(expectations: { _ in
+                expect(trustStoreClient.loadCertListFromServer_Called) == true
+                expect(trustStoreClient.loadCertListFromServer_CallsCount) == 1
+                expect(storage.certListState) == self.certList
 
-                    expect(trustStoreClient.loadOCSPListFromServer_Called) == true
-                    expect(trustStoreClient.loadOCSPListFromServer_CallsCount) == 1
-                    expect(storage.ocspListState) == self.ocspList
-                })
+                expect(trustStoreClient.loadOCSPListFromServer_Called) == true
+                expect(trustStoreClient.loadOCSPListFromServer_CallsCount) == 1
+                expect(storage.ocspListState) == self.ocspList
+            })
 
         // When saved in storage, the object will not be requested from the server again
         sut.loadVauCertificate()
-                .test(expectations: { _ in
-                    expect(trustStoreClient.loadCertListFromServer_CallsCount) == 1
-                    expect(trustStoreClient.loadOCSPListFromServer_CallsCount) == 1
-                })
+            .test(expectations: { _ in
+                expect(trustStoreClient.loadCertListFromServer_CallsCount) == 1
+                expect(trustStoreClient.loadOCSPListFromServer_CallsCount) == 1
+            })
 
         // Advance the time so that saved mocked OCSP responses will be invalidated
         // The same mocked OCSP responses will be received by the client cannot be validated,
@@ -121,14 +121,14 @@ final class DefaultTrustStoreSessionTests: XCTestCase {
         // [REQ:gemSpec_Krypt:A_21218] If only OCSP responses >12h available, we must request new ones
         currentDate = currentDate.advanced(by: TimeInterval(expirationInterval))
         sut.loadVauCertificate()
-                .test(failure: { error in
-                    expect(trustStoreClient.loadCertListFromServer_CallsCount) == 1
-                    expect(trustStoreClient.loadOCSPListFromServer_CallsCount) == 2
+            .test(failure: { error in
+                expect(trustStoreClient.loadCertListFromServer_CallsCount) == 1
+                expect(trustStoreClient.loadOCSPListFromServer_CallsCount) == 2
 
-                    expect(error) == TrustStoreError.invalidOCSPResponse
-                }) { _ in
-                    fail("Expected failing test")
-                }
+                expect(error) == TrustStoreError.invalidOCSPResponse
+            }) { _ in
+                fail("Expected failing test")
+            }
     }
 
     func testLoadVauCertificateFromServer_failWhenOCSPResponsesCannotBeVerified() throws {
@@ -159,18 +159,18 @@ final class DefaultTrustStoreSessionTests: XCTestCase {
         expect(trustStoreClient.loadOCSPListFromServer_Called) == false
 
         sut.loadVauCertificate()
-                .test(failure: { error in
-                    expect(trustStoreClient.loadCertListFromServer_Called) == true
-                    expect(trustStoreClient.loadCertListFromServer_CallsCount) == 1
-                    expect(storage.certListState).to(beNil())
+            .test(failure: { error in
+                expect(trustStoreClient.loadCertListFromServer_Called) == true
+                expect(trustStoreClient.loadCertListFromServer_CallsCount) == 1
+                expect(storage.certListState).to(beNil())
 
-                    expect(trustStoreClient.loadOCSPListFromServer_Called) == true
-                    expect(trustStoreClient.loadOCSPListFromServer_CallsCount) == 1
-                    expect(storage.ocspListState) == self.ocspList_NotVerifiableByTrustStore
+                expect(trustStoreClient.loadOCSPListFromServer_Called) == true
+                expect(trustStoreClient.loadOCSPListFromServer_CallsCount) == 1
+                expect(storage.ocspListState) == self.ocspList_NotVerifiableByTrustStore
 
-                    expect(error) == .eeCertificateOCSPStatusVerification
-                }) { _ in
-                    fail("Expected failing test")
-                }
+                expect(error) == .eeCertificateOCSPStatusVerification
+            }) { _ in
+                fail("Expected failing test")
+            }
     }
 }

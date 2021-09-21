@@ -40,7 +40,7 @@ struct TertiaryButton: View {
                 Spacer()
             }
         }.buttonStyle(TertiaryButtonStyle())
-        .disabled(!isEnabled)
+            .disabled(!isEnabled)
     }
 }
 

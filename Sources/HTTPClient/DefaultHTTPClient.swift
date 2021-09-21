@@ -95,8 +95,8 @@ extension DefaultHTTPClient {
             completionHandler: @escaping (URLRequest?) -> Void
         ) {
             if let originalRequest = task.originalRequest,
-                let requestID = originalRequest.value(forHTTPHeaderField: "X-RID"),
-                let handler = redirectHandler[requestID] {
+               let requestID = originalRequest.value(forHTTPHeaderField: "X-RID"),
+               let handler = redirectHandler[requestID] {
                 handler(response, request, completionHandler)
             } else {
                 // Follow redirect [default]

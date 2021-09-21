@@ -33,7 +33,7 @@ extension FHIRClient {
     /// - Returns: `AnyPublisher` that emits a list of pharmacies or nil when not found
     public func searchPharmacies(by searchTerm: String,
                                  position: Position?)
-    -> AnyPublisher<[PharmacyLocation], FHIRClient.Error> {
+        -> AnyPublisher<[PharmacyLocation], FHIRClient.Error> {
         let handler = DefaultFHIRResponseHandler(
             acceptFormat: FHIRAcceptFormat.json
         ) { (fhirResponse: FHIRClient.Response) -> [PharmacyLocation] in

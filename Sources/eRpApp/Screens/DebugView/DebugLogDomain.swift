@@ -200,10 +200,10 @@ extension DebugLogDomain {
             let response: HTTPResponse = (
                 // swiftlint:disable:next force_try
                 data: try! Data(contentsOf:
-                            Bundle.main.url(
-                                forResource: "FOSS",
-                                withExtension: "html"
-                            )!),
+                    Bundle.main.url(
+                        forResource: "FOSS",
+                        withExtension: "html"
+                    )!),
                 response: HTTPURLResponse(
                     url: URL(string: "http://google.com")!,
                     statusCode: HTTPStatusCode.serverError.rawValue,

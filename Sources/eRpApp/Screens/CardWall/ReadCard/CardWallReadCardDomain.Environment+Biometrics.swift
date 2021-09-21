@@ -46,7 +46,7 @@ extension HealthCardType {
     func sign(registerDataProvider: SecureEnclaveSignatureProvider,
               in pairingSession: PairingSession,
               signedChallenge: SignedChallenge)
-    -> AnyPublisher<(SignedChallenge, RegistrationData), NFCSignatureProviderError> {
+        -> AnyPublisher<(SignedChallenge, RegistrationData), NFCSignatureProviderError> {
         readAutCertificate() // AnyPublisher<HealthCardControl.AutCertificateResponse, Error>
             .mapError { $0.asNFCSignatureError() }
             .flatMap { certificate -> AnyPublisher<RegistrationData, Swift.Error> in
@@ -93,7 +93,7 @@ extension CardWallReadCardDomain.Environment {
     }
 
     func signChallengeThenAltAuthWithNFCCard(can: CAN, pin: Format2Pin) // swiftlint:disable:this function_body_length
-    -> Effect<CardWallReadCardDomain.Action, Never> {
+        -> Effect<CardWallReadCardDomain.Action, Never> {
         let pairingSession: PairingSession
         do {
             pairingSession = try signatureProvider.registerData()
@@ -116,56 +116,56 @@ extension CardWallReadCardDomain.Environment {
                             (SignedChallenge, RegistrationData),
                             NFCSignatureProviderError
                         > in
+                        healthCard
+                            // [REQ:gemSpec_IDP_Frontend:A_20700-07] C.CH.AUT
+                            // [REQ:gemF_Tokenverschlüsselung:A_20526-01] Smartcard signature
+                            // [REQ:gemF_Tokenverschlüsselung:A_20700-06] sign
+                            .sign(challengeSession: challengeSession)
+                            .flatMap { signedChallenge -> AnyPublisher<
+                                (SignedChallenge, RegistrationData),
+                                NFCSignatureProviderError
+                            > in
                             healthCard
-                                // [REQ:gemSpec_IDP_Frontend:A_20700-07] C.CH.AUT
-                                // [REQ:gemF_Tokenverschlüsselung:A_20526-01] Smartcard signature
-                                // [REQ:gemF_Tokenverschlüsselung:A_20700-06] sign
-                                .sign(challengeSession: challengeSession)
-                                .flatMap { signedChallenge -> AnyPublisher<
-                                    (SignedChallenge, RegistrationData),
-                                    NFCSignatureProviderError
-                                > in
-                                    healthCard
-                                        .sign(
-                                            registerDataProvider: self.signatureProvider,
-                                            in: pairingSession,
-                                            signedChallenge: signedChallenge
-                                        )
-                                }
-                                .userMessage(
-                                    session: healthCard,
-                                    message: EGKSignatureProvider.systemNFCDialogSuccess
+                                .sign(
+                                    registerDataProvider: self.signatureProvider,
+                                    in: pairingSession,
+                                    signedChallenge: signedChallenge
                                 )
-                                // The delay is needed to show the success message
-                                .delay(for: 0.01, scheduler: self.schedulers.main)
-                                .handleEvents(receiveOutput: { _ in
-                                    healthCard.invalidateSession(with: nil)
-                                }, receiveCompletion: { result in
-                                    if case let .failure(error) = result {
-                                        healthCard.invalidateSession(with: error.localizedDescription)
-                                    }
-                                }, receiveCancel: {
-                                    healthCard.invalidateSession(with: EGKSignatureProvider.systemNFCDialogCancel)
-                                })
-                                .eraseToAnyPublisher()
+                            }
+                            .userMessage(
+                                session: healthCard,
+                                message: EGKSignatureProvider.systemNFCDialogSuccess
+                            )
+                            // The delay is needed to show the success message
+                            .delay(for: 0.01, scheduler: self.schedulers.main)
+                            .handleEvents(receiveOutput: { _ in
+                                healthCard.invalidateSession(with: nil)
+                            }, receiveCompletion: { result in
+                                if case let .failure(error) = result {
+                                    healthCard.invalidateSession(with: error.localizedDescription)
+                                }
+                            }, receiveCancel: {
+                                healthCard.invalidateSession(with: EGKSignatureProvider.systemNFCDialogCancel)
+                            })
+                            .eraseToAnyPublisher()
                         } // -> AnyPublisher<(SignedChallenge, RegistrationData), NFCSignatureProviderError>
                         .mapError(CardWallReadCardDomain.State.Error.signChallengeError)
                         .flatMap { signedChallenge, registrationData -> AnyPublisher<
                             IDPToken,
                             CardWallReadCardDomain.State.Error
                         > in
-                            self.userSession.biometrieIdpSession
-                                .verifyAndExchange(signedChallenge: signedChallenge)
-                                .flatMap { token -> AnyPublisher<IDPToken, IDPError> in
-                                    self.userSession.biometrieIdpSession.pairDevice(
-                                        with: registrationData,
-                                        token: token
-                                    )
-                                        .map { _ in token }
-                                        .eraseToAnyPublisher()
-                                }
-                                .mapError(CardWallReadCardDomain.State.Error.idpError)
+                        self.userSession.biometrieIdpSession
+                            .verifyAndExchange(signedChallenge: signedChallenge)
+                            .flatMap { token -> AnyPublisher<IDPToken, IDPError> in
+                                self.userSession.biometrieIdpSession.pairDevice(
+                                    with: registrationData,
+                                    token: token
+                                )
+                                .map { _ in token }
                                 .eraseToAnyPublisher()
+                            }
+                            .mapError(CardWallReadCardDomain.State.Error.idpError)
+                            .eraseToAnyPublisher()
                         }
                         .flatMap { _ -> AnyPublisher<IDPToken, CardWallReadCardDomain.State.Error> in
                             self.loginWithBiometrics()

@@ -54,7 +54,7 @@ final class GroupedPrescriptionListViewTests: XCTestCase {
         let loginHandler = LoginHandlerMock()
         loginHandler.isAuthenticatedOrAuthenticateReturnValue =
             Just(LoginResult.success(isAuthenticated))
-            .eraseToAnyPublisher()
+                .eraseToAnyPublisher()
 
         userSession.isLoggedIn = isAuthenticated
 

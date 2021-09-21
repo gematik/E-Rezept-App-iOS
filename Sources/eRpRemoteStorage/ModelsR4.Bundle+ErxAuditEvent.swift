@@ -46,15 +46,15 @@ extension ModelsR4.Bundle {
             }
 
             /*
-             Right now, references to task can come in several formats. For example:
-             - https://www.example.com/Task/xxx (reference to a task with the ID xxx)
-             - Task/xxx (reference to a task with the ID xxx)
-             - https://www.example.com/Task (this audit event belongs to no specific task)
-             - Task (this audit event belongs to no specific task)
-             Therefore, we have to parse the ID from the URL (or partial URL) provided by the server,
-             by looking right after the path component 'Task'.
-             If the audit event does not belong to a specific task, then taskId remains nil.
-            */
+              Right now, references to task can come in several formats. For example:
+              - https://www.example.com/Task/xxx (reference to a task with the ID xxx)
+              - Task/xxx (reference to a task with the ID xxx)
+              - https://www.example.com/Task (this audit event belongs to no specific task)
+              - Task (this audit event belongs to no specific task)
+              Therefore, we have to parse the ID from the URL (or partial URL) provided by the server,
+              by looking right after the path component 'Task'.
+              If the audit event does not belong to a specific task, then taskId remains nil.
+             */
             var taskId: String?
             if let taskIDString = auditEvent.entity?.first?.what?.reference?.value?.string,
                let pathComponents = URL(string: taskIDString)?.pathComponents,

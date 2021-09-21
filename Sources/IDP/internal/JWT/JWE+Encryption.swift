@@ -38,9 +38,9 @@ extension JWE {
                                               encryption: .a256gcm,
                                               expiry: expiry,
                                               contentType: "NJWT"),
-              let jwePayload = try? Self.defaultEncoder.encode(serialized),
-              let jwe = try? JWE(header: jweHeader, payload: jwePayload, nonceGenerator: cryptoBox.aesNonceGenerator)
-                else {
+            let jwePayload = try? Self.defaultEncoder.encode(serialized),
+            let jwe = try? JWE(header: jweHeader, payload: jwePayload, nonceGenerator: cryptoBox.aesNonceGenerator)
+        else {
             throw IDPError.internalError("Unable to encrypt given JWT")
         }
 

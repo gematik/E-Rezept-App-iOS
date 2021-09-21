@@ -124,7 +124,7 @@ public class DefaultIDPSession: IDPSession {
         getAndValidateChallenge()
             .flatMap { challengeSession -> AnyPublisher<IDPChallengeSession, IDPError> in
                 guard let expirationDate = challengeSession.challenge.exp,
-                    expirationDate.timeIntervalSince(self.time()) > 0 else {
+                      expirationDate.timeIntervalSince(self.time()) > 0 else {
                     return Fail(error: IDPError.internalError("Challenge has an expiry date earlier than now."))
                         .eraseToAnyPublisher()
                 }
@@ -139,7 +139,7 @@ public class DefaultIDPSession: IDPSession {
                         )
                         .flatMap { _ -> AnyPublisher<IDPChallengeSession, IDPError> in
                             self.requestChallenge()
-                    }) // swiftlint:disable:this closure_end_indentation
+                        })
                     .eraseToAnyPublisher()
             }
             .eraseToAnyPublisher()
@@ -176,43 +176,43 @@ public class DefaultIDPSession: IDPSession {
         return loadDiscoveryDocument() // swiftlint:disable:this trailing_closure
             .flatMap { document -> AnyPublisher<IDPToken, IDPError> in
 
-            // [REQ:gemSpec_IDP_Frontend:A_20529-01] Encryption
-            guard let encryptedKeyVerifier = try? KeyVerifier(
-                with: cryptoBox.aesKey,
-                codeVerifier: challengeSession.verifierCode
-            ).encrypted(with: document.encryptionPublicKey, using: cryptoBox) else {
-                return Fail(error: IDPError.encryption).eraseToAnyPublisher()
-            }
-
-            return self.client.exchange(
-                token: exchange,
-                verifier: challengeSession.verifierCode,
-                encryptedKeyVerifier: encryptedKeyVerifier,
-                using: document
-            )
-            .flatMap { token -> AnyPublisher<IDPToken, IDPError> in
-                // [REQ:gemSpec_IDP_Frontend:A_19938-01,A_20283-01] Decrypt, fails if wrong aes key
-                guard let decrypted = try? token.decrypted(with: cryptoBox.aesKey) else {
-                    return Fail(error: IDPError.decryption).eraseToAnyPublisher()
-                }
-                guard (try? challengeSession.validateNonce(with: decrypted.idToken)) ?? false else {
-                    return Fail(error: IDPError.invalidNonce).eraseToAnyPublisher()
-                }
-                // [REQ:gemSpec_IDP_Frontend:A_20625] Validate ID_TOKEN signature
-                guard let jwt = try? JWT(from: decrypted.idToken),
-                      (try? jwt.verify(with: document.signingCert)) ?? false else {
-                    return Fail(error: IDPError.invalidSignature("ID_TOKEN")).eraseToAnyPublisher()
+                // [REQ:gemSpec_IDP_Frontend:A_20529-01] Encryption
+                guard let encryptedKeyVerifier = try? KeyVerifier(
+                    with: cryptoBox.aesKey,
+                    codeVerifier: challengeSession.verifierCode
+                ).encrypted(with: document.encryptionPublicKey, using: cryptoBox) else {
+                    return Fail(error: IDPError.encryption).eraseToAnyPublisher()
                 }
 
-                return Just(IDPToken(
-                    accessToken: decrypted.accessToken, // [REQ:gemSpec_IDP_Frontend:A_20283-01] Usage
-                    expires: self.time().addingTimeInterval(TimeInterval(token.expiresIn)),
-                    idToken: decrypted.idToken, // [REQ:gemSpec_IDP_Frontend:A_19938-01] Usage
-                    ssoToken: exchange.sso,
-                    tokenType: decrypted.tokenType
-                )).setFailureType(to: IDPError.self).eraseToAnyPublisher()
-            }
-            .eraseToAnyPublisher()
+                return self.client.exchange(
+                    token: exchange,
+                    verifier: challengeSession.verifierCode,
+                    encryptedKeyVerifier: encryptedKeyVerifier,
+                    using: document
+                )
+                .flatMap { token -> AnyPublisher<IDPToken, IDPError> in
+                    // [REQ:gemSpec_IDP_Frontend:A_19938-01,A_20283-01] Decrypt, fails if wrong aes key
+                    guard let decrypted = try? token.decrypted(with: cryptoBox.aesKey) else {
+                        return Fail(error: IDPError.decryption).eraseToAnyPublisher()
+                    }
+                    guard (try? challengeSession.validateNonce(with: decrypted.idToken)) ?? false else {
+                        return Fail(error: IDPError.invalidNonce).eraseToAnyPublisher()
+                    }
+                    // [REQ:gemSpec_IDP_Frontend:A_20625] Validate ID_TOKEN signature
+                    guard let jwt = try? JWT(from: decrypted.idToken),
+                          (try? jwt.verify(with: document.signingCert)) ?? false else {
+                        return Fail(error: IDPError.invalidSignature("ID_TOKEN")).eraseToAnyPublisher()
+                    }
+
+                    return Just(IDPToken(
+                        accessToken: decrypted.accessToken, // [REQ:gemSpec_IDP_Frontend:A_20283-01] Usage
+                        expires: self.time().addingTimeInterval(TimeInterval(token.expiresIn)),
+                        idToken: decrypted.idToken, // [REQ:gemSpec_IDP_Frontend:A_19938-01] Usage
+                        ssoToken: exchange.sso,
+                        tokenType: decrypted.tokenType
+                    )).setFailureType(to: IDPError.self).eraseToAnyPublisher()
+                }
+                .eraseToAnyPublisher()
             }
             .handleEvents(receiveOutput: { token in
                 self.storage.set(token: token)
@@ -289,7 +289,7 @@ public class DefaultIDPSession: IDPSession {
                                                    using: self.cryptoBox,
                                                    expiry: tokenPayload.exp),
                       let encryptedAccessToken = tokenJWE.encoded().utf8string
-                        else {
+                else {
                     return Fail(error: IDPError.encryption).eraseToAnyPublisher()
                 }
                 let encryptedToken = token.mutating(accessToken: encryptedAccessToken)
@@ -313,7 +313,7 @@ public class DefaultIDPSession: IDPSession {
                                                    with: document.encryptionPublicKey,
                                                    using: self.cryptoBox),
                       let encryptedAccessToken = tokenJWE.encoded().utf8string
-                        else {
+                else {
                     return Fail(error: IDPError.encryption).eraseToAnyPublisher()
                 }
                 let encryptedToken = token.mutating(accessToken: encryptedAccessToken)
@@ -387,7 +387,7 @@ extension DefaultIDPSession {
                 // Generate a verifierCode
                 // [REQ:gemSpec_IDP_Frontend:A_20309] generation and hashing for codeChallenge
                 guard let verifierCode = try? cryptoBox.generateRandomVerifier(),
-                    let codeChallenge = verifierCode.sha256()?.encodeBase64urlsafe().asciiString else {
+                      let codeChallenge = verifierCode.sha256()?.encodeBase64urlsafe().asciiString else {
                     return Fail(error: IDPError.internalError("Could not hash/encoded verifierCode"))
                         .eraseToAnyPublisher()
                 }
@@ -435,12 +435,12 @@ extension DefaultIDPSession {
         return loadDiscoveryDocument()
             // swiftlint:disable:previous trailing_closure
             .flatMap { document in
-            self.client.refresh(with: challenge, ssoToken: ssoToken, using: document)
-                .flatMap { exchangeToken in
-                    self.exchange(token: exchangeToken,
-                                  challengeSession: challengeSession)
-                }
-                .eraseToAnyPublisher()
+                self.client.refresh(with: challenge, ssoToken: ssoToken, using: document)
+                    .flatMap { exchangeToken in
+                        self.exchange(token: exchangeToken,
+                                      challengeSession: challengeSession)
+                    }
+                    .eraseToAnyPublisher()
             }
             .handleEvents(receiveCompletion: { [weak self] result in
                 if case let .failure(error) = result,
@@ -500,18 +500,18 @@ extension Publisher where Output == DiscoveryDocument? {
             if let document = document,
                document.isValid(on: timeProvider()) {
                 return Just(document)
-                        .setFailureType(to: IDPError.self)
-                        .validate(with: trustStoreSession, timeProvider: timeProvider)
-                        .map { $0 as DiscoveryDocument? }
-                        .catch { _ -> AnyPublisher<DiscoveryDocument?, Never> in
-                            Just(nil).eraseToAnyPublisher()
-                        }
-                        .setFailureType(to: Failure.self)
-                        .eraseToAnyPublisher()
+                    .setFailureType(to: IDPError.self)
+                    .validate(with: trustStoreSession, timeProvider: timeProvider)
+                    .map { $0 as DiscoveryDocument? }
+                    .catch { _ -> AnyPublisher<DiscoveryDocument?, Never> in
+                        Just(nil).eraseToAnyPublisher()
+                    }
+                    .setFailureType(to: Failure.self)
+                    .eraseToAnyPublisher()
             }
             return Just(nil).setFailureType(to: Failure.self).eraseToAnyPublisher()
         }
-                .eraseToAnyPublisher()
+        .eraseToAnyPublisher()
     }
 }
 

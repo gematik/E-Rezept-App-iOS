@@ -121,11 +121,11 @@ struct AnyErxTaskRepository: ErxTaskRepository {
     func loadLocalCommunications(
         for profile: ErxTask.Communication.Profile
     ) -> AnyPublisher<[ErxTask.Communication], ErrorType> {
-            communicationLoader(profile)
-        }
+        communicationLoader(profile)
+    }
 
     func saveLocal(communications: [ErxTask.Communication]) -> AnyPublisher<Bool, ErrorType> {
-         communicationSaver(communications)
+        communicationSaver(communications)
     }
 
     func countAllUnreadCommunications(

@@ -81,10 +81,10 @@ struct PharmacyRedeemView: View {
                     .font(Font.title.bold())
                     .accessibility(identifier: A11y.pharmacyRedeem.phaRedeemTxtTitle)
 
-              Text(subtitle)
-                .font(Font.subheadline.weight(.semibold))
-                .multilineTextAlignment(.center)
-                .accessibility(identifier: A11y.pharmacyRedeem.phaRedeemTxtSubtitle)
+                Text(subtitle)
+                    .font(Font.subheadline.weight(.semibold))
+                    .multilineTextAlignment(.center)
+                    .accessibility(identifier: A11y.pharmacyRedeem.phaRedeemTxtSubtitle)
             }
         }
 
@@ -143,11 +143,11 @@ struct PharmacyRedeemView: View {
                 ForEach(viewStore.prescriptions) { prescription in
                     Button(action: { viewStore.send(.didSelect(prescription.taskID)) },
                            label: {
-                        TitleWithSubtitleCellView(
-                            title: prescription.title,
-                            subtitle: prescription.subtitle,
-                            isSelected: prescription.isSelected
-                        )
+                               TitleWithSubtitleCellView(
+                                   title: prescription.title,
+                                   subtitle: prescription.subtitle,
+                                   isSelected: prescription.isSelected
+                               )
                            })
                 }
             }
@@ -198,10 +198,10 @@ struct PharmacyRedeemView: View {
                     ),
                     then: RedeemSuccessView.init(store:)
                 ),
-                               isActive: viewStore.binding(
-                                   get: { $0.successViewState != nil },
-                                   send: PharmacyRedeemDomain.Action.dismissRedeemSuccessView
-                               )) {
+                isActive: viewStore.binding(
+                    get: { $0.successViewState != nil },
+                    send: PharmacyRedeemDomain.Action.dismissRedeemSuccessView
+                )) {
                     EmptyView()
                 }
             }

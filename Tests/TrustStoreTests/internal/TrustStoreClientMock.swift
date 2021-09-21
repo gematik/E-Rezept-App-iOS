@@ -34,13 +34,13 @@ class TrustStoreClientMock: TrustStoreClient {
             self.loadCertListFromServer_CallsCount += 1
             guard let certList = self.certList else {
                 return Fail(error: TrustStoreError.internalError("No cert list available from TrustStoreClientMock"))
-                        .eraseToAnyPublisher()
+                    .eraseToAnyPublisher()
             }
             return Just(certList)
-                    .setFailureType(to: TrustStoreError.self)
-                    .eraseToAnyPublisher()
-        }
+                .setFailureType(to: TrustStoreError.self)
                 .eraseToAnyPublisher()
+        }
+        .eraseToAnyPublisher()
     }
 
     var loadOCSPListFromServer_CallsCount = 0
@@ -54,12 +54,12 @@ class TrustStoreClientMock: TrustStoreClient {
             self.loadOCSPListFromServer_CallsCount += 1
             guard let ocspList = self.ocspList else {
                 return Fail(error: TrustStoreError.internalError("No OCSP list available from TrustStoreClientMock"))
-                        .eraseToAnyPublisher()
+                    .eraseToAnyPublisher()
             }
             return Just(ocspList)
-                    .setFailureType(to: TrustStoreError.self)
-                    .eraseToAnyPublisher()
-        }
+                .setFailureType(to: TrustStoreError.self)
                 .eraseToAnyPublisher()
+        }
+        .eraseToAnyPublisher()
     }
 }

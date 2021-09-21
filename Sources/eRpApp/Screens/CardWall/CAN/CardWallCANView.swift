@@ -56,7 +56,7 @@ struct CardWallCANView: View {
                                   isEnabled: viewStore.state.can.count == 6) {
                     viewStore.send(.advance)
                 }.padding(.horizontal)
-                .padding(.bottom)
+                    .padding(.bottom)
             }
             .demoBanner(isPresented: viewStore.isDemoModus) {
                 Text(L10n.cdwTxtCanDemoModeInfo)

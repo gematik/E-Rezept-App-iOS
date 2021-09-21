@@ -47,19 +47,33 @@ struct CreatePasswordView: View {
     var body: some View {
         List {
             if updatePassword {
-                Section(footer: currentPasswordFooter()) {
+                Section(
+                    header: SectionView(
+                        text: L10n.cpwTxtSectionUpdateTitle,
+                        a11y: A11y.settings.createPassword.cpwTxtSectionUpdateTitle
+                    ),
+                    footer: currentPasswordFooter()
+                ) {
                     SecureFieldWithReveal(L10n.cpwInpCurrentPasswordPlaceholder,
                                           text: currentPassword) {}
-                    .accessibility(identifier: A11y.settings.createPassword.cpwInpCurrentPassword)
+                        .accessibility(identifier: A11y.settings.createPassword.cpwInpCurrentPassword)
                 }
             }
 
-            Section(footer: FootnoteView(text: L10n.cpwTxtPasswordRecommendation,
-                                         a11y: A11y.settings.createPassword.cpwTxtPasswordRecommendation)) {
+            Section(
+                header: SectionView(
+                    text: L10n.cpwTxtSectionTitle,
+                    a11y: A11y.settings.createPassword.cpwTxtSectionTitle
+                ),
+                footer: FootnoteView(
+                    text: L10n.cpwTxtPasswordRecommendation,
+                    a11y: A11y.settings.createPassword.cpwTxtPasswordRecommendation
+                )
+            ) {
                 SecureFieldWithReveal(L10n.cpwInpPasswordAPlaceholder,
                                       text: passwordA,
                                       textContentType: .newPassword) {}
-                .accessibility(identifier: A11y.settings.createPassword.cpwInpPasswordA)
+                    .accessibility(identifier: A11y.settings.createPassword.cpwInpPasswordA)
             }
 
             Section(footer: saveButtonAndError()) {
@@ -72,7 +86,9 @@ struct CreatePasswordView: View {
                 .accessibility(identifier: A11y.settings.createPassword.cpwInpPasswordB)
             }
         }
+
         .listStyle(GroupedListStyle())
+
         .navigationTitle(updatePassword ? L10n.cpwTxtUpdateTitle : L10n.cpwTxtTitle)
     }
 
@@ -86,8 +102,8 @@ struct CreatePasswordView: View {
 
             PrimaryTextButton(
                 text: updatePassword ? L10n.cpwBtnChange : L10n.cpwBtnSave,
-                a11y: updatePassword ? A11y.settings.createPassword.cpwBtnUpdate : A11y.settings.createPassword
-                .cpwBtnSave,
+                a11y: updatePassword ?
+                    A11y.settings.createPassword.cpwBtnUpdate : A11y.settings.createPassword.cpwBtnSave,
                 image: nil,
                 isEnabled: viewStore.hasValidPasswordEntries
             ) { viewStore.send(.saveButtonTapped) }

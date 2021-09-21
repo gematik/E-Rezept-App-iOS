@@ -98,8 +98,8 @@ enum SettingsDomain {
         case .initSettings:
             return
                 UserDefaults.standard.publisher(for: \UserDefaults.kAppTrackingAllowed)
-                .map(Action.trackerStatusReceived)
-                .eraseToEffect()
+                    .map(Action.trackerStatusReceived)
+                    .eraseToEffect()
         case let .trackerStatusReceived(value):
             state.trackerOptIn = value
             return .none
@@ -186,7 +186,7 @@ enum SettingsDomain {
         ) {
             AppSecurityDomain.Environment(userDataStore: $0.changeableUserSessionContainer.userSession.localUserStore,
                                           appSecurityPasswordManager: $0.changeableUserSessionContainer.userSession
-                                          .appSecurityPasswordManager,
+                                              .appSecurityPasswordManager,
                                           schedulers: $0.schedulers)
         }
 

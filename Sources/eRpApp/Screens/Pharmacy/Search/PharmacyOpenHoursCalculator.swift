@@ -37,7 +37,7 @@ struct PharmacyOpenHoursCalculator {
 
     func determineOpeningState(for date: Date,
                                hoursOfOperation: [PharmacyLocation.HoursOfOperation])
-    -> TodaysOpeningState {
+        -> TodaysOpeningState {
         let timeFormatter = createTimeFormatter()
 
         let groupedByWeekday = Dictionary(grouping: hoursOfOperation) { $0.daysOfWeek.first }
@@ -59,7 +59,7 @@ struct PharmacyOpenHoursCalculator {
                         closingDateTime: closingDateTime
                     )
                     break // when it's open do not compare any other times
-                // if not open right now maybe opens later?
+                    // if not open right now maybe opens later?
                 } else if openingDateTime > date {
                     let minutesTilOpen = Calendar.current.dateComponents([.minute], from: date, to: openingDateTime)
                     result = TodaysOpeningState.willOpen(

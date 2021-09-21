@@ -51,7 +51,7 @@ struct MainView: View {
                     // Workaround to get correct accessibility while activating voice over *after* presentation of
                     // settings dialog. As soon as we can use multiple `fullScreenCover` (drop iOS <= ~14.4) we may omit
                     // this modifier and the `EmptyView()`.
-                .accessibility(hidden: viewStore.isSettingsViewPresented || viewStore.isScannerViewPresented)
+                    .accessibility(hidden: viewStore.isSettingsViewPresented || viewStore.isScannerViewPresented)
 
                 // Settings sheet presentation; Work around not being able to use multiple `fullScreenCover` modifier
                 // at once. As soon as we drop iOS <= ~14.4, we may omit this.

@@ -29,10 +29,10 @@ public protocol IDPEndpoint {
 }
 
 extension BrainpoolP256r1.KeyExchange.PublicKey: Equatable {
-	public static func ==(lhs: BrainpoolP256r1.KeyExchange.PublicKey,
-	                      rhs: BrainpoolP256r1.KeyExchange.PublicKey) -> Bool {
-		lhs.rawValue == rhs.rawValue
-	}
+    public static func ==(lhs: BrainpoolP256r1.KeyExchange.PublicKey,
+                          rhs: BrainpoolP256r1.KeyExchange.PublicKey) -> Bool {
+        lhs.rawValue == rhs.rawValue
+    }
 }
 
 /// IDP Discovery document
@@ -44,7 +44,7 @@ public struct DiscoveryDocument: Codable {
     /// The IDP X.509 certificate used to validate the discovery document
     public let discKey: X509
     /// The IDP Authentication endpoint public key, used to derivce the encryption key to encrypt the JWE‘s
-	let encryptionPublicKey: BrainpoolP256r1.KeyExchange.PublicKey
+    let encryptionPublicKey: BrainpoolP256r1.KeyExchange.PublicKey
     /// The IDP X.509 certificate that is used to check signatures
     public let signingCert: X509
 
@@ -55,13 +55,13 @@ public struct DiscoveryDocument: Codable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         backing = try container.decode(JWT.self, forKey: .payload)
         payload = try backing.decodePayload(type: DiscoveryDocumentPayload.self)
-		encryptionPublicKey = try BrainpoolP256r1.KeyExchange
-			.PublicKey(x962: try container.decode(Data.self, forKey: .encryptionPublicKey))
+        encryptionPublicKey = try BrainpoolP256r1.KeyExchange
+            .PublicKey(x962: try container.decode(Data.self, forKey: .encryptionPublicKey))
         signingCert = try X509(der: container.decode(Data.self, forKey: .tokenKey))
-		guard let discHeaderX5C = backing.header.x5c?.first else {
-			throw IDPError.noCertificateFound
-		}
-		discKey = try X509(der: discHeaderX5C)
+        guard let discHeaderX5C = backing.header.x5c?.first else {
+            throw IDPError.noCertificateFound
+        }
+        discKey = try X509(der: discHeaderX5C)
         createdOn = try container.decode(Date.self, forKey: .createdOn)
     }
 
@@ -72,7 +72,7 @@ public struct DiscoveryDocument: Codable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(backing, forKey: .payload)
-		try container.encode(encryptionPublicKey.x962Value, forKey: .encryptionPublicKey)
+        try container.encode(encryptionPublicKey.x962Value, forKey: .encryptionPublicKey)
         try container.encode(signingCert.derBytes, forKey: .tokenKey)
         try container.encode(createdOn, forKey: .createdOn)
     }
@@ -83,21 +83,21 @@ public struct DiscoveryDocument: Codable {
         guard let signingX5C = signingPuks.x5c?.first else {
             throw IDPError.noCertificateFound
         }
-		signingCert = try X509(der: signingX5C)
+        signingCert = try X509(der: signingX5C)
 
-		if let encryptX5c = encryptPuks.x5c?.first,
+        if let encryptX5c = encryptPuks.x5c?.first,
            let certPublicKey = try X509(der: encryptX5c).brainpoolP256r1KeyExchangePublicKey() {
-			encryptionPublicKey = certPublicKey
-		} else {
-			do {
-				guard let pubKeyX962 = try encryptPuks.publicKeyX962UncompressedRepresentation() else {
-					throw IDPError.noCertificateFound
-				}
-				encryptionPublicKey = try BrainpoolP256r1.KeyExchange.PublicKey(x962: pubKeyX962)
-			} catch {
-				throw IDPError.noCertificateFound
-			}
-		}
+            encryptionPublicKey = certPublicKey
+        } else {
+            do {
+                guard let pubKeyX962 = try encryptPuks.publicKeyX962UncompressedRepresentation() else {
+                    throw IDPError.noCertificateFound
+                }
+                encryptionPublicKey = try BrainpoolP256r1.KeyExchange.PublicKey(x962: pubKeyX962)
+            } catch {
+                throw IDPError.noCertificateFound
+            }
+        }
         guard let discHeaderX5C = jwt.header.x5c?.first else {
             throw IDPError.noCertificateFound
         }
@@ -148,13 +148,13 @@ extension DiscoveryDocument {
         let cert: X509
     }
 
-	private enum CodingKeys: String, CodingKey {
-		case payload
-		case authKey = "puk_auth"
-		case tokenKey = "puk_token"
+    private enum CodingKeys: String, CodingKey {
+        case payload
+        case authKey = "puk_auth"
+        case tokenKey = "puk_token"
         case encryptionPublicKey
         case createdOn
-	}
+    }
 }
 
 extension DiscoveryDocument {

@@ -149,17 +149,19 @@ enum DebugDomain {
             environment.userSession.secureUserStore.set(certificate: nil)
             return
                 environment.userSession.secureUserStore.keyIdentifier
-                .flatMap { identifier -> AnyPublisher<Bool, Never> in
-                    guard let identifier = identifier else {
-                        return Just(false).eraseToAnyPublisher()
+                    .flatMap { identifier -> AnyPublisher<Bool, Never> in
+                        guard let identifier = identifier else {
+                            return Just(false).eraseToAnyPublisher()
+                        }
+                        return environment.userSession.idpSession
+                            .unregisterDevice(identifier.base64EncodedString()) // -> <Bool, IDPError>
+                            .catch { _ in Just(true).eraseToAnyPublisher() } // -> <Bool, Never>
+                            .eraseToAnyPublisher()
                     }
-                    return environment.userSession.idpSession
-                        .unregisterDevice(identifier.base64EncodedString()) // -> <Bool, IDPError>
-                        .catch { _ in Just(true).eraseToAnyPublisher() } // -> <Bool, Never>
-                        .eraseToAnyPublisher()
-                }
-                .map { _ -> DebugDomain.Action in DebugDomain.Action.showAlert(true) } // -> <DebugDomain.Action, Never>
-                .eraseToEffect()
+                    .map { _ -> DebugDomain.Action in
+                        DebugDomain.Action.showAlert(true)
+                    } // -> <DebugDomain.Action, Never>
+                    .eraseToEffect()
         case .useDebugDeviceCapabilitiesToggleTapped:
             state.useDebugDeviceCapabilities.toggle()
             let serviceLocatorDebugAccess = ServiceLocatorDebugAccess()

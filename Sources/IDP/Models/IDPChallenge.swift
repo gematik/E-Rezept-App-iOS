@@ -33,20 +33,20 @@ public struct IDPChallenge: Codable, Equatable {
     }
 
     public let challenge: JWT
-	public let userConsent: UserConsent?
+    public let userConsent: UserConsent?
     private let claims: Claim
 
-	public init(challenge: JWT, consent: UserConsent? = nil) throws {
+    public init(challenge: JWT, consent: UserConsent? = nil) throws {
         self.challenge = challenge
         claims = try challenge.decodePayload(type: Claim.self)
-		userConsent = consent
+        userConsent = consent
     }
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         try self.init(
-        	challenge: container.decode(JWT.self, forKey: .challenge),
-        	consent: container.decode(UserConsent.self, forKey: .userConsent)
+            challenge: container.decode(JWT.self, forKey: .challenge),
+            consent: container.decode(UserConsent.self, forKey: .userConsent)
         )
     }
 
@@ -55,26 +55,26 @@ public struct IDPChallenge: Codable, Equatable {
         case userConsent = "user_consent"
     }
 
-	public struct UserConsent: Codable, Equatable {
-		let requestedScopes: [String: String]
-		let requestedClaims: [String: String]
-	}
+    public struct UserConsent: Codable, Equatable {
+        let requestedScopes: [String: String]
+        let requestedClaims: [String: String]
+    }
 }
 
 extension IDPChallenge.UserConsent {
-	/// Initializer for decoding UserContent
-	public init(from decoder: Decoder) throws {
-		let container = try decoder.container(keyedBy: CodingKeys.self)
-		try self.init(
-			requestedScopes: container.decode([String: String].self, forKey: .requestedScopes),
-			requestedClaims: container.decode([String: String].self, forKey: .requestedClaims)
-		)
-	}
+    /// Initializer for decoding UserContent
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        try self.init(
+            requestedScopes: container.decode([String: String].self, forKey: .requestedScopes),
+            requestedClaims: container.decode([String: String].self, forKey: .requestedClaims)
+        )
+    }
 
-	enum CodingKeys: String, CodingKey {
-		case requestedScopes = "requested_scopes"
-		case requestedClaims = "requested_claims"
-	}
+    enum CodingKeys: String, CodingKey {
+        case requestedScopes = "requested_scopes"
+        case requestedClaims = "requested_claims"
+    }
 }
 
 extension IDPChallenge: Claims {

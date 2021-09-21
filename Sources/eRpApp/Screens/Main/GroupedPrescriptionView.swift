@@ -141,11 +141,11 @@ struct GroupedPrescriptionView: View {
 
         private var remainingDays: Int {
             guard let expiresOnString = prescription.expiresOn,
-                let expiresDate = AppContainer.shared.fhirDateFormatter.date(
-                    from: expiresOnString,
-                    format: .yearMonthDay
-                ),
-                let remainingDays = Date().days(until: expiresDate) else {
+                  let expiresDate = AppContainer.shared.fhirDateFormatter.date(
+                      from: expiresOnString,
+                      format: .yearMonthDay
+                  ),
+                  let remainingDays = Date().days(until: expiresDate) else {
                 return 0
             }
             return max(remainingDays, 0)

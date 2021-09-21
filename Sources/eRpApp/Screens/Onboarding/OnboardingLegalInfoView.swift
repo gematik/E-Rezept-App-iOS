@@ -63,7 +63,7 @@ struct OnboardingLegalInfoView: View {
                     Button(action: action) {
                         Text(L10n.onbLegBtnTitle)
                             .padding(15)
-							.frame(minWidth: 0, maxWidth: .infinity, minHeight: iconSize)
+                            .frame(minWidth: 0, maxWidth: .infinity, minHeight: iconSize)
                     }
                     .disabled(isDoneButtonDisabled)
                     .accessibility(identifier: A18n.onboarding.legalInfo.onbBtnAccept)
@@ -126,7 +126,7 @@ extension OnboardingLegalInfoView {
                         OnboardingLegalInfoCheckmarkView(isAccepted: $isUseAccepted)
                     }
                 ).accessibility(identifier: A18n.onboarding.legalInfo.onbBtnAcceptTermsOfUse)
-                .accessibility(hint: Text(L10n.onbLegBtnTermsOfUseHint))
+                    .accessibility(hint: Text(L10n.onbLegBtnTermsOfUseHint))
             }
             .padding([.leading, .trailing, .bottom], 24)
         }
@@ -175,7 +175,7 @@ extension OnboardingLegalInfoView {
                         OnboardingLegalInfoCheckmarkView(isAccepted: $isPrivacyAccepted)
                     }
                 ).accessibility(identifier: A18n.onboarding.legalInfo.onbBtnAcceptPrivacy)
-                .accessibility(hint: Text(L10n.onbLegBtnPrivacyHint))
+                    .accessibility(hint: Text(L10n.onbLegBtnPrivacyHint))
             }
             .padding([.leading, .trailing, .bottom], 24)
         }

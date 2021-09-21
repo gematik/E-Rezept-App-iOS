@@ -58,9 +58,9 @@ struct SecureFieldWithReveal: View {
             }, label: {
                 Image(systemName: showPassword ? SFSymbolName.eye : SFSymbolName.eyeSlash)
             })
-            .buttonStyle(PlainButtonStyle())
-            .foregroundColor(Color(.tertiaryLabel))
-            .accessibility(hidden: true)
+                .buttonStyle(PlainButtonStyle())
+                .foregroundColor(Color(.tertiaryLabel))
+                .accessibility(hidden: true)
         }
     }
 }

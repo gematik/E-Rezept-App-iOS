@@ -113,16 +113,21 @@ class DebugLiveLogger {
 
             return chain.proceed(request: request)
                 .handleEvents(receiveOutput: { data, response, status in
-                    DebugLiveLogger.shared.log(
-                        request: request,
-                        sentAt: sentAt,
-                        response: (data, response, status),
-                        receivedAt: Date()
-                    )
-                },
+                                  DebugLiveLogger.shared.log(
+                                      request: request,
+                                      sentAt: sentAt,
+                                      response: (data, response, status),
+                                      receivedAt: Date()
+                                  )
+                              },
                               receiveCancel: {
-                    DebugLiveLogger.shared.log(request: request, sentAt: sentAt, response: nil, receivedAt: Date())
-                })
+                                  DebugLiveLogger.shared.log(
+                                      request: request,
+                                      sentAt: sentAt,
+                                      response: nil,
+                                      receivedAt: Date()
+                                  )
+                              })
                 .eraseToAnyPublisher()
             #else
             return chain.proceed(request: chain.request)

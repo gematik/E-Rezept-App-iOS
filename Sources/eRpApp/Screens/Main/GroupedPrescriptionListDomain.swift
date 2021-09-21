@@ -283,7 +283,7 @@ extension GroupedPrescriptionListDomain.Environment {
                 if isAuthenticated {
                     return
                         groupedPrescriptionStore
-                        .loadRemoteAndSave(for: locale)
+                            .loadRemoteAndSave(for: locale)
                             .first()
                             .eraseToAnyPublisher()
                 } else {
@@ -362,20 +362,20 @@ extension Publisher where Output == GroupedPrescriptionListDomain.Action, Failur
     func catchUnauthorizedToShowCardwall(
         in environment: GroupedPrescriptionListDomain.Environment
     )
-    -> AnyPublisher<GroupedPrescriptionListDomain.Action, ErxTaskRepositoryError> {
+        -> AnyPublisher<GroupedPrescriptionListDomain.Action, ErxTaskRepositoryError> {
         tryCatch { (error: ErxTaskRepositoryError) -> AnyPublisher<
             GroupedPrescriptionListDomain.Action,
             ErxTaskRepositoryError
         > in
-            if case let ErxTaskRepositoryError.remote(.fhirClientError(.httpError(.httpError(urlError)))) = error,
-               urlError.code.rawValue == 403 || urlError.code.rawValue == 401 {
-                return environment.cardWall()
-                    .receive(on: environment.schedulers.main.animation())
-                    .map(GroupedPrescriptionListDomain.Action.showCardWallReceived)
-                    .setFailureType(to: ErxTaskRepositoryError.self)
-                    .eraseToAnyPublisher()
-            }
-            throw error as ErxTaskRepositoryError
+        if case let ErxTaskRepositoryError.remote(.fhirClientError(.httpError(.httpError(urlError)))) = error,
+           urlError.code.rawValue == 403 || urlError.code.rawValue == 401 {
+            return environment.cardWall()
+                .receive(on: environment.schedulers.main.animation())
+                .map(GroupedPrescriptionListDomain.Action.showCardWallReceived)
+                .setFailureType(to: ErxTaskRepositoryError.self)
+                .eraseToAnyPublisher()
+        }
+        throw error as ErxTaskRepositoryError
         }
         .mapError { $0 as! ErxTaskRepositoryError } // swiftlint:disable:this force_cast
         .eraseToAnyPublisher()

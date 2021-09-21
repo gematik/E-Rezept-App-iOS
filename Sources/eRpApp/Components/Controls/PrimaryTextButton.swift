@@ -43,6 +43,7 @@ struct PrimaryTextButton: View {
         }
         .buttonStyle(PrimaryButtonStyle(enabled: isEnabled))
         .accessibility(identifier: a11y)
+        .if(!isEnabled) { $0.accessibility(value: Text(L10n.buttonTxtIsInactiveValue)) }
         .disabled(!isEnabled)
     }
 }

@@ -56,7 +56,7 @@ public class FileVAUStorage: VAUStorage {
         do {
             if let userPseudonym = userPseudonym {
                 let writeResult = try Self.jsonEncoder.encode(userPseudonym)
-                        .save(to: userPseudonymFilePath, options: writingOptions)
+                    .save(to: userPseudonymFilePath, options: writingOptions)
                 switch writeResult {
                 case .success: success = true
                 case .failure: success = false
@@ -78,13 +78,13 @@ public class FileVAUStorage: VAUStorage {
             guard let self = self,
                   let userPseudonymData = try? Data(contentsOf: self.userPseudonymFilePath),
                   let userPseudonym = try? Self.jsonDecoder.decode(String.self, from: userPseudonymData)
-                    else {
+            else {
                 return Just(nil).eraseToAnyPublisher()
             }
             return Just(userPseudonym).eraseToAnyPublisher()
         }
-                .merge(with: userPseudonymPassthrough)
-                .eraseToAnyPublisher()
+        .merge(with: userPseudonymPassthrough)
+        .eraseToAnyPublisher()
     }
 
     private let userPseudonymPassthrough = PassthroughSubject<String?, Never>()

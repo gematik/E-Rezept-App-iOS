@@ -25,22 +25,22 @@ extension ModelsR4.Bundle {
         case parseError(String)
     }
 
-	/// Parse and extract all found ErxTask IDs from `Self`
-	///
-	/// - Returns: Array with all found task ID's
-	/// - Throws: `ModelsR4.Bundle.Error`
+    /// Parse and extract all found ErxTask IDs from `Self`
+    ///
+    /// - Returns: Array with all found task ID's
+    /// - Throws: `ModelsR4.Bundle.Error`
     func parseErxTaskIDs() throws -> [String] {
-		// Collect and parse all ErxTask id's
-		try entry?.compactMap {
-			guard let task = $0.resource?.get(if: ModelsR4.Task.self) else {
-				return nil
-			}
-			guard let identifier = task.id?.value?.string else {
-				throw Error.parseError("Could not parse id from task.")
-			}
-			return identifier
-		} ?? []
-	}
+        // Collect and parse all ErxTask id's
+        try entry?.compactMap {
+            guard let task = $0.resource?.get(if: ModelsR4.Task.self) else {
+                return nil
+            }
+            guard let identifier = task.id?.value?.string else {
+                throw Error.parseError("Could not parse id from task.")
+            }
+            return identifier
+        } ?? []
+    }
 
     /// Parse and extract all found ErxTasks from `Self`
     ///
@@ -173,9 +173,9 @@ extension ModelsR4.Task {
             $0.url.value?.url.absoluteString == FHIRResponseKeys.acceptDateKey
         }
         .flatMap {
-			if let valueX = $0.value,
-                case let Extension.ValueX.date(date) = valueX,
-                let acceptDateString = date.value?.description {
+            if let valueX = $0.value,
+               case let Extension.ValueX.date(date) = valueX,
+               let acceptDateString = date.value?.description {
                 return acceptDateString
             }
             return nil
@@ -190,8 +190,8 @@ extension ModelsR4.Task {
         }
         .flatMap {
             if let valueX = $0.value,
-                case let Extension.ValueX.date(date) = valueX,
-                let expiryDateString = date.value?.description {
+               case let Extension.ValueX.date(date) = valueX,
+               let expiryDateString = date.value?.description {
                 return expiryDateString
             }
             return nil
@@ -316,8 +316,8 @@ extension ModelsR4.MedicationRequest {
         }
         .flatMap {
             if let valueX = $0.value,
-                case let Extension.ValueX.date(date) = valueX,
-                let dateString = date.value?.description {
+               case let Extension.ValueX.date(date) = valueX,
+               let dateString = date.value?.description {
                 return dateString
             }
             return nil

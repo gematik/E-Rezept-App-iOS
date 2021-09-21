@@ -30,11 +30,11 @@ final class VAUSessionTests: XCTestCase {
         let vauStorage = MemStorage()
         let url = URL(string: "http://some-service.com")!
         let sut = VAUSession(
-                vauServer: url,
-                vauAccessTokenProvider: VAUAccessTokenProviderMock(),
-                vauCryptoProvider: VAUCryptoProviderMock(),
-                vauStorage: vauStorage,
-                trustStoreSession: TrustStoreSessionMock()
+            vauServer: url,
+            vauAccessTokenProvider: VAUAccessTokenProviderMock(),
+            vauCryptoProvider: VAUCryptoProviderMock(),
+            vauStorage: vauStorage,
+            trustStoreSession: TrustStoreSessionMock()
         )
         let request = URLRequest(url: URL(string: "http://www.url.com")!)
         let chain = PassThroughChain(request: request)
@@ -43,10 +43,10 @@ final class VAUSessionTests: XCTestCase {
         // helping subscriber
         var currentVauEndpoints: [URL?] = []
         let currentVauEndpointSubscriber = sut.vauEndpoint
-                .sink(
-                        receiveCompletion: { _ in },
-                        receiveValue: { currentVauEndpoints.append($0) }
-                )
+            .sink(
+                receiveCompletion: { _ in },
+                receiveValue: { currentVauEndpoints.append($0) }
+            )
 
         // If nothing was assigned, the VAU endpoint should default to ___/VAU/0
         expect(currentVauEndpoints.count) == 1
@@ -55,32 +55,32 @@ final class VAUSessionTests: XCTestCase {
         // Mock first response containing a new user pseudonym for further use
         let userPseudonymHeaders1 = ["userpseudonym": "pseudo1"]
         let response1 = HTTPURLResponse(
-                url: url,
-                statusCode: 200,
-                httpVersion: "1/1",
-                headerFields: userPseudonymHeaders1
+            url: url,
+            statusCode: 200,
+            httpVersion: "1/1",
+            headerFields: userPseudonymHeaders1
         )!
         chain.response = response1
         interceptor.intercept(chain: chain)
-                .test(expectations: { _ in
-                    expect(currentVauEndpoints.count) == 2
-                    expect(currentVauEndpoints[1]?.absoluteString) == "\(url)/VAU/pseudo1"
-                })
+            .test(expectations: { _ in
+                expect(currentVauEndpoints.count) == 2
+                expect(currentVauEndpoints[1]?.absoluteString) == "\(url)/VAU/pseudo1"
+            })
 
         // Mock second response containing another user pseudonym for further use
         let userPseudonymHeaders2 = ["userpseudonym": "pseudo2"]
         let response2 = HTTPURLResponse(
-                url: url,
-                statusCode: 200,
-                httpVersion: "1/1",
-                headerFields: userPseudonymHeaders2
+            url: url,
+            statusCode: 200,
+            httpVersion: "1/1",
+            headerFields: userPseudonymHeaders2
         )!
         chain.response = response2
         interceptor.intercept(chain: chain)
-                .test(expectations: { _ in
-                    expect(currentVauEndpoints.count) == 3
-                    expect(currentVauEndpoints[2]?.absoluteString) == "\(url)/VAU/pseudo2"
-                })
+            .test(expectations: { _ in
+                expect(currentVauEndpoints.count) == 3
+                expect(currentVauEndpoints[2]?.absoluteString) == "\(url)/VAU/pseudo2"
+            })
 
         currentVauEndpointSubscriber.cancel()
     }

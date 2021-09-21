@@ -24,7 +24,7 @@ public protocol PharmacyRepository {
     /// Loads pharmacies with `searchTerm`
     func searchPharmacies(searchTerm: String,
                           position: Position?)
-    -> AnyPublisher<[PharmacyLocation], PharmacyRepositoryError>
+        -> AnyPublisher<[PharmacyLocation], PharmacyRepositoryError>
 }
 
 public enum PharmacyRepositoryError: Error, Equatable {
@@ -53,7 +53,7 @@ public struct DefaultPharmacyRepository: PharmacyRepository {
     }
 
     public func searchPharmacies(searchTerm: String, position: Position?)
-    -> AnyPublisher<[PharmacyLocation], PharmacyRepositoryError> {
+        -> AnyPublisher<[PharmacyLocation], PharmacyRepositoryError> {
         cloud.searchPharmacies(by: searchTerm, position: position)
             .mapError { PharmacyRepositoryError.remote($0) }
             .eraseToAnyPublisher()

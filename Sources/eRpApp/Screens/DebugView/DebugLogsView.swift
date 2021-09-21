@@ -42,14 +42,14 @@ struct DebugLogsView: View {
     }
 
     func sortBinding(of viewStore: ViewStore<DebugLogDomain.State, DebugLogDomain.Action>)
-    -> Binding<DebugLogDomain.State.Sort> {
+        -> Binding<DebugLogDomain.State.Sort> {
         viewStore
             .binding(get: \.sort, send: DebugLogDomain.Action.sort(by:))
             .animation()
     }
 
     func filterBinding(of viewStore: ViewStore<DebugLogDomain.State, DebugLogDomain.Action>)
-    -> Binding<String> {
+        -> Binding<String> {
         viewStore
             .binding(get: \.filter, send: DebugLogDomain.Action.setFilter)
             .animation()

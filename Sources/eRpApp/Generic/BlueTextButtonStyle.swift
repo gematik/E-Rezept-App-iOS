@@ -36,7 +36,7 @@ struct BlueTextButtonStyle_Previews: PreviewProvider {
         Button(action: {},
                label: {
                    Text("Blue Button Style")
-        })
+               })
             .buttonStyle(BlueTextButtonStyle())
     }
 }

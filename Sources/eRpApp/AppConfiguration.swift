@@ -157,7 +157,7 @@ let IDP_RISE_PU = AppConfiguration.Server(
 let ERP_IBM_PU = AppConfiguration.Server(
     url: "https://erp.app.ti-dienste.de/",
     header: ["X-api-key": "" +
-                ""]
+        ""]
 )
 
 #endif
@@ -168,7 +168,7 @@ let ERP_IBM_PU = AppConfiguration.Server(
 let APOVZD_PU = AppConfiguration.Server(
     url: "https://apovzd.app.ti-dienste.de/api/",
     header: ["X-API-KEY": "" +
-                ""]
+        ""]
 )
 #endif
 

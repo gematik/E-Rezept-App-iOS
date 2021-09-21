@@ -51,8 +51,8 @@ final class ErxTaskFHIRClientTests: XCTestCase {
         stub(condition: isPath("/Task/61704e3f-1e4f-11b2-80f4-b806a73c0cd0") && isMethodGET() &&
             hasHeaderNamed("X-AccessCode", value: "access-now") &&
             hasHeaderNamed("Accept", value: "application/fhir+json")) { _ in
-            counter += 1
-            return fixture(filePath: expectedResponse, headers: ["Content-Type": "application/fhir+json"])
+                counter += 1
+                return fixture(filePath: expectedResponse, headers: ["Content-Type": "application/fhir+json"])
         }
 
         sut.fetchTask(by: "61704e3f-1e4f-11b2-80f4-b806a73c0cd0", accessCode: "access-now")
@@ -61,7 +61,7 @@ final class ErxTaskFHIRClientTests: XCTestCase {
 
                 expect(erxTaskBundle?.id) == "61704e3f-1e4f-11b2-80f4-b806a73c0cd0"
                 expect(erxTaskBundle?.accessCode) == "7eccd529292631f6a7cd120b57ded23062c35932cc721bfd32b08c5fb188b642"
-				expect(erxTaskBundle?.fullUrl).to(beNil())
+                expect(erxTaskBundle?.fullUrl).to(beNil())
                 expect(erxTaskBundle?.medication?.name) == "Sumatriptan-1a Pharma 100 mg Tabletten"
                 expect(erxTaskBundle?.authoredOn) == "2020-02-03T00:00:00+00:00"
                 expect(erxTaskBundle?.lastModified) == "2021-03-24T08:35:32.311376627+00:00"
@@ -85,9 +85,9 @@ final class ErxTaskFHIRClientTests: XCTestCase {
             .test { error in
                 fail("unexpected fail with error: \(error)")
             } expectations: { taskIDs in
-				expect(taskIDs.count) == 2
+                expect(taskIDs.count) == 2
                 expect(taskIDs[0]) == "61704e3f-1e4f-11b2-80f4-b806a73c0cd0"
-				expect(taskIDs[1]) == "5e00e907-1e4f-11b2-80be-b806a73c0cd0"
+                expect(taskIDs[1]) == "5e00e907-1e4f-11b2-80be-b806a73c0cd0"
             }
         expect(counter) == 1
     }
@@ -100,10 +100,10 @@ final class ErxTaskFHIRClientTests: XCTestCase {
 
         var counter = 0
         stub(condition: isPath("/Task")
-                && containsQueryParams(["modified": "ge\(dateString)"])
-                && isMethodGET()) { _ in
-            counter += 1
-            return fixture(filePath: expectedResponse, headers: ["Content-Type": "application/json"])
+            && containsQueryParams(["modified": "ge\(dateString)"])
+            && isMethodGET()) { _ in
+                counter += 1
+                return fixture(filePath: expectedResponse, headers: ["Content-Type": "application/json"])
         }
 
         sut.fetchAllTaskIDs(after: lastModified)
@@ -138,28 +138,28 @@ final class ErxTaskFHIRClientTests: XCTestCase {
     }
 
     func testFetchingAuditEventsWithDate() {
-            let expectedResponse = load(resource: "getAuditEventResponse_4_entries")
+        let expectedResponse = load(resource: "getAuditEventResponse_4_entries")
 
-            let timestamp = "2021-03-24T08:35:26.548+00:00"
-            let dateString = FHIRDateFormatter.shared.date(from: timestamp)!
-                .fhirFormattedString(with: .yearMonthDayTime)
+        let timestamp = "2021-03-24T08:35:26.548+00:00"
+        let dateString = FHIRDateFormatter.shared.date(from: timestamp)!
+            .fhirFormattedString(with: .yearMonthDayTime)
 
-            var counter = 0
-            stub(condition: isPath("/AuditEvent")
-                    && containsQueryParams(["date": "ge\(dateString)"])
-                    && isMethodGET()) { _ in
+        var counter = 0
+        stub(condition: isPath("/AuditEvent")
+            && containsQueryParams(["date": "ge\(dateString)"])
+            && isMethodGET()) { _ in
                 counter += 1
                 return fixture(filePath: expectedResponse, headers: ["Content-Type": "application/json"])
-            }
-
-            sut.fetchAllAuditEvents(after: timestamp)
-                .test { error in
-                    fail("unexpected fail with error: \(error)")
-                } expectations: { auditEvents in
-                    expect(auditEvents.count) == 4
-                }
-            expect(counter) == 1
         }
+
+        sut.fetchAllAuditEvents(after: timestamp)
+            .test { error in
+                fail("unexpected fail with error: \(error)")
+            } expectations: { auditEvents in
+                expect(auditEvents.count) == 4
+            }
+        expect(counter) == 1
+    }
 
     /// Tests a failure delete, e.g. when task has already been deleted on the server.
     /// The server will then respond with a http status code of 404.
@@ -183,10 +183,10 @@ final class ErxTaskFHIRClientTests: XCTestCase {
 
         var counter = 0
         stub(condition: isPath("/Communication")
-                && isMethodPOST()
-                && hasBody(expectedRequestBody)) { _ in
-            counter += 1
-            return fixture(filePath: redeemOrderResponse, headers: ["Content-Type": "application/json"])
+            && isMethodPOST()
+            && hasBody(expectedRequestBody)) { _ in
+                counter += 1
+                return fixture(filePath: redeemOrderResponse, headers: ["Content-Type": "application/json"])
         }
 
         sut.redeem(order: inputOrder)
@@ -203,10 +203,10 @@ final class ErxTaskFHIRClientTests: XCTestCase {
 
         var counter = 0
         stub(condition: isPath("/Communication")
-                && isMethodPOST()
-                && hasBody(expectedRequestBody)) { _ in
-            counter += 1
-            return HTTPStubsResponse(error: expectedError)
+            && isMethodPOST()
+            && hasBody(expectedRequestBody)) { _ in
+                counter += 1
+                return HTTPStubsResponse(error: expectedError)
         }
 
         sut.redeem(order: inputOrder)
@@ -223,9 +223,9 @@ final class ErxTaskFHIRClientTests: XCTestCase {
 
         var counter = 0
         stub(condition: isPath("/Communication")
-                && isMethodGET()) { _ in
-            counter += 1
-            return fixture(filePath: expectedResponse, headers: ["Content-Type": "application/json"])
+            && isMethodGET()) { _ in
+                counter += 1
+                return fixture(filePath: expectedResponse, headers: ["Content-Type": "application/json"])
         }
 
         sut.communicationResources(after: nil)
@@ -246,10 +246,10 @@ final class ErxTaskFHIRClientTests: XCTestCase {
 
         var counter = 0
         stub(condition: isPath("/Communication")
-                && containsQueryParams(["sent": "ge\(dateString)"])
-                && isMethodGET()) { _ in
-            counter += 1
-            return fixture(filePath: expectedResponse, headers: ["Content-Type": "application/json"])
+            && containsQueryParams(["sent": "ge\(dateString)"])
+            && isMethodGET()) { _ in
+                counter += 1
+                return fixture(filePath: expectedResponse, headers: ["Content-Type": "application/json"])
         }
 
         sut.communicationResources(after: timestamp)
@@ -266,9 +266,9 @@ final class ErxTaskFHIRClientTests: XCTestCase {
 
         var counter = 0
         stub(condition: isPath("/Communication")
-                && isMethodGET()) { _ in
-            counter += 1
-            return HTTPStubsResponse(error: expectedError)
+            && isMethodGET()) { _ in
+                counter += 1
+                return HTTPStubsResponse(error: expectedError)
         }
 
         sut.communicationResources(after: nil)
@@ -285,9 +285,9 @@ final class ErxTaskFHIRClientTests: XCTestCase {
 
         var counter = 0
         stub(condition: isPath("/MedicationDispense")
-                && isMethodGET()) { _ in
-            counter += 1
-            return fixture(filePath: expectedResponse, headers: ["Content-Type": "application/json"])
+            && isMethodGET()) { _ in
+                counter += 1
+                return fixture(filePath: expectedResponse, headers: ["Content-Type": "application/json"])
         }
 
         sut.fetchAllMedicationDispenses(after: nil)
@@ -308,10 +308,10 @@ final class ErxTaskFHIRClientTests: XCTestCase {
 
         var counter = 0
         stub(condition: isPath("/MedicationDispense")
-                && containsQueryParams(["whenHandedOver": "ge\(dateString)"])
-                && isMethodGET()) { _ in
-            counter += 1
-            return fixture(filePath: expectedResponse, headers: ["Content-Type": "application/json"])
+            && containsQueryParams(["whenHandedOver": "ge\(dateString)"])
+            && isMethodGET()) { _ in
+                counter += 1
+                return fixture(filePath: expectedResponse, headers: ["Content-Type": "application/json"])
         }
 
         sut.fetchAllMedicationDispenses(after: timestamp)
@@ -328,9 +328,9 @@ final class ErxTaskFHIRClientTests: XCTestCase {
 
         var counter = 0
         stub(condition: isPath("/MedicationDispense")
-                && isMethodGET()) { _ in
-            counter += 1
-            return HTTPStubsResponse(error: expectedError)
+            && isMethodGET()) { _ in
+                counter += 1
+                return HTTPStubsResponse(error: expectedError)
         }
 
         sut.fetchAllMedicationDispenses(after: nil)
