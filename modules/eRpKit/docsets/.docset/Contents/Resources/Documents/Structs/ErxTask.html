@@ -21,10 +21,10 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-           1.0.10
+           1.0.11
  Docs
         </a>
-         (71% documented)
+         (72% documented)
       </p>
     
       <p class="header-col--secondary">
@@ -100,6 +100,9 @@
                 <a class="nav-group-task-link" href="../Extensions/KVNR.html">KVNR</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions/String.html">String</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/ZXDataMatrixWriter.html">ZXDataMatrixWriter</a>
               </li>
             </ul>
@@ -150,6 +153,9 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/ErxTask/MedicationDispense.html">– MedicationDispense</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/ErxTask/Status.html">– Status</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/ErxTask/Source.html">– Source</a>
@@ -218,9 +224,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:6eRpKit7ErxTaskV10identifier10accessCode7fullUrl10authoredOn12lastModified07expiresK008redeemedK06author19dispenseValidityEnd14noctuFeeWaiver14prescriptionId19substitutionAllowed6source10medication7patient12practitioner12organization19workRelatedAccident11auditEvents14communications18medicationDispenseACSS_SSSgA7YSbAYSbAC6SourceOAC10MedicationVSgAC7PatientVSgAC12PractitionerVSgAC12OrganizationVSgAC19WorkRelatedAccidentVSgSayAA0C10AuditEventVGSayAC13CommunicationVGAC18MedicationDispenseVSgtcfc"></a>
-                    <a name="//apple_ref/swift/Method/init(identifier:accessCode:fullUrl:authoredOn:lastModified:expiresOn:redeemedOn:author:dispenseValidityEnd:noctuFeeWaiver:prescriptionId:substitutionAllowed:source:medication:patient:practitioner:organization:workRelatedAccident:auditEvents:communications:medicationDispense:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6eRpKit7ErxTaskV10identifier10accessCode7fullUrl10authoredOn12lastModified07expiresK008redeemedK06author19dispenseValidityEnd14noctuFeeWaiver14prescriptionId19substitutionAllowed6source10medication7patient12practitioner12organization19workRelatedAccident11auditEvents14communications18medicationDispenseACSS_SSSgA7YSbAYSbAC6SourceOAC10MedicationVSgAC7PatientVSgAC12PractitionerVSgAC12OrganizationVSgAC19WorkRelatedAccidentVSgSayAA0C10AuditEventVGSayAC13CommunicationVGAC18MedicationDispenseVSgtcfc">init(identifier:<wbr>accessCode:<wbr>fullUrl:<wbr>authoredOn:<wbr>lastModified:<wbr>expiresOn:<wbr>redeemedOn:<wbr>author:<wbr>dispenseValidityEnd:<wbr>noctuFeeWaiver:<wbr>prescriptionId:<wbr>substitutionAllowed:<wbr>source:<wbr>medication:<wbr>patient:<wbr>practitioner:<wbr>organization:<wbr>workRelatedAccident:<wbr>auditEvents:<wbr>communications:<wbr>medicationDispense:<wbr>)</a>
+                    <a name="/s:6eRpKit7ErxTaskV10identifier6status10accessCode7fullUrl10authoredOn12lastModified07expiresL013acceptedUntil08redeemedL06author19dispenseValidityEnd14noctuFeeWaiver14prescriptionId19substitutionAllowed6source10medication7patient12practitioner12organization19workRelatedAccident11auditEvents14communications18medicationDispenseACSS_AC6StatusOSSSgA1_A1_A1_A1_A1_A1_A1_A1_SbA1_SbAC6SourceOAC10MedicationVSgAC7PatientVSgAC12PractitionerVSgAC12OrganizationVSgAC19WorkRelatedAccidentVSgSayAA0C10AuditEventVGSayAC13CommunicationVGAC18MedicationDispenseVSgtcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(identifier:status:accessCode:fullUrl:authoredOn:lastModified:expiresOn:acceptedUntil:redeemedOn:author:dispenseValidityEnd:noctuFeeWaiver:prescriptionId:substitutionAllowed:source:medication:patient:practitioner:organization:workRelatedAccident:auditEvents:communications:medicationDispense:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:6eRpKit7ErxTaskV10identifier6status10accessCode7fullUrl10authoredOn12lastModified07expiresL013acceptedUntil08redeemedL06author19dispenseValidityEnd14noctuFeeWaiver14prescriptionId19substitutionAllowed6source10medication7patient12practitioner12organization19workRelatedAccident11auditEvents14communications18medicationDispenseACSS_AC6StatusOSSSgA1_A1_A1_A1_A1_A1_A1_A1_SbA1_SbAC6SourceOAC10MedicationVSgAC7PatientVSgAC12PractitionerVSgAC12OrganizationVSgAC19WorkRelatedAccidentVSgSayAA0C10AuditEventVGSayAC13CommunicationVGAC18MedicationDispenseVSgtcfc">init(identifier:<wbr>status:<wbr>accessCode:<wbr>fullUrl:<wbr>authoredOn:<wbr>lastModified:<wbr>expiresOn:<wbr>acceptedUntil:<wbr>redeemedOn:<wbr>author:<wbr>dispenseValidityEnd:<wbr>noctuFeeWaiver:<wbr>prescriptionId:<wbr>substitutionAllowed:<wbr>source:<wbr>medication:<wbr>patient:<wbr>practitioner:<wbr>organization:<wbr>workRelatedAccident:<wbr>auditEvents:<wbr>communications:<wbr>medicationDispense:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -237,11 +243,13 @@
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span>
     <span class="nv">identifier</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
+    <span class="nv">status</span><span class="p">:</span> <span class="kt"><a href="../Structs/ErxTask/Status.html">Status</a></span><span class="p">,</span>
     <span class="nv">accessCode</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
     <span class="nv">fullUrl</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
     <span class="nv">authoredOn</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
     <span class="nv">lastModified</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
     <span class="nv">expiresOn</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+    <span class="nv">acceptedUntil</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
     <span class="nv">redeemedOn</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
     <span class="nv">author</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
     <span class="nv">dispenseValidityEnd</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
@@ -325,6 +333,33 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">identifier</span><span class="p">:</span> <span class="kt">String</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:6eRpKit7ErxTaskV6statusAC6StatusOvp"></a>
+                    <a name="//apple_ref/swift/Property/status" class="dashAnchor"></a>
+                    <a class="token" href="#/s:6eRpKit7ErxTaskV6statusAC6StatusOvp">status</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Status of the current task</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">status</span><span class="p">:</span> <span class="kt"><a href="../Structs/ErxTask/Status.html">Status</a></span></code></pre>
 
                         </div>
                       </div>
@@ -500,6 +535,34 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">expiresOn</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:6eRpKit7ErxTaskV13acceptedUntilSSSgvp"></a>
+                    <a name="//apple_ref/swift/Property/acceptedUntil" class="dashAnchor"></a>
+                    <a class="token" href="#/s:6eRpKit7ErxTaskV13acceptedUntilSSSgvp">acceptedUntil</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Date until which a prescription can be redeemed in the pharmacy without paying
+the entire prescription. Note that <code>acceptDate &lt;= expireDate</code></p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">acceptedUntil</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span></code></pre>
 
                         </div>
                       </div>
@@ -887,6 +950,54 @@
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:6eRpKit7ErxTaskV6update4withySSSg_tF"></a>
+                    <a name="//apple_ref/swift/Method/update(with:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:6eRpKit7ErxTaskV6update4withySSSg_tF">update(with:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Changes status of <code>ErxTask</code> and updates the manual changed <code><a href="../Structs/ErxTask.html#/s:6eRpKit7ErxTaskV10redeemedOnSSSgvp">redeemedOn</a></code> property
+Use this method only for scanned <code>ErxTask</code>s that have been manually redeemed by the user</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">mutating</span> <span class="kd">func</span> <span class="nf">update</span><span class="p">(</span><span class="n">with</span> <span class="nv">redeemedOn</span><span class="p">:</span> <span class="kt">String</span><span class="p">?)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>redeemedOn</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Date string when the <code>ErxTask</code> has been redeemed.
+                    Pass <code>nil</code> to reset the redeem status</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:6eRpKit7ErxTaskV13CommunicationV"></a>
                     <a name="//apple_ref/swift/Struct/Communication" class="dashAnchor"></a>
                     <a class="token" href="#/s:6eRpKit7ErxTaskV13CommunicationV">Communication</a>
@@ -935,6 +1046,34 @@ and the local store representation</p>
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">MedicationDispense</span> <span class="p">:</span> <span class="kt">Equatable</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:6eRpKit7ErxTaskV6StatusO"></a>
+                    <a name="//apple_ref/swift/Enum/Status" class="dashAnchor"></a>
+                    <a class="token" href="#/s:6eRpKit7ErxTaskV6StatusO">Status</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>All defined states of a task (see <code>gemSysL_eRp</code> chapter 2.4.6 &ldquo;Konzept Status E-Rezept&rdquo;)</p>
+
+                        <a href="../Structs/ErxTask/Status.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">Status</span> <span class="p">:</span> <span class="kt">String</span></code></pre>
 
                         </div>
                       </div>
@@ -1195,7 +1334,7 @@ and the local store representation</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2021 <a class="link" href="https://www.gematik.de" target="_blank" rel="external">gematik GmbH</a>. All rights reserved. (Last updated: 2021-09-20)</p>
+      <p>&copy; 2021 <a class="link" href="https://www.gematik.de" target="_blank" rel="external">gematik GmbH</a>. All rights reserved. (Last updated: 2021-09-21)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>
