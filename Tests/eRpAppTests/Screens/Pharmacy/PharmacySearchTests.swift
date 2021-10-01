@@ -193,7 +193,7 @@ extension PharmacySearchTests {
         /// Test-Data PharmacyDomain.State
         public static let state =
             PharmacySearchDomain.State(
-                erxTasks: [ErxTask.Dummies.prescription],
+                erxTasks: [ErxTask.Dummies.erxTaskReady],
                 searchText: "",
                 pharmacies: pharmacies.map { pharmacies in
                     PharmacyLocationViewModel(
@@ -206,14 +206,14 @@ extension PharmacySearchTests {
         /// Test-Data PharmacyDomain.State
         public static let stateEmpty =
             PharmacySearchDomain.State(
-                erxTasks: [ErxTask.Dummies.prescription],
+                erxTasks: [ErxTask.Dummies.erxTaskReady],
                 searchText: "",
                 pharmacies: []
             )
         /// Test-Data PharmacyDomain.State with a location
         public static let stateWithLocation =
             PharmacySearchDomain.State(
-                erxTasks: [ErxTask.Dummies.prescription],
+                erxTasks: [ErxTask.Dummies.erxTaskReady],
                 searchText: "",
                 currentLocation: testLocation,
                 pharmacies: pharmaciesWithLocations.map { pharmacies in

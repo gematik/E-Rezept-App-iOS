@@ -1,3 +1,19 @@
+# Release 1.0.11
+
+Added:
+
+  - Add Login-Token display to settings menu
+
+Changed:
+
+  - Temporarily remove Order eGK
+  - Improve Accessibility for UI-Tests
+
+Fixed:
+
+  - Fix recipe accepted Date
+  - Fix recipe status
+
 # Release 1.0.10
 
 ## fixes (1 change)

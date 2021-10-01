@@ -64,7 +64,7 @@ enum RedeemMatrixCodeDomain {
         switch action {
         case let .loadMatrixCodeImage(screenSize):
             return environment.matrixCodeGenerator.publishedMatrixCode(
-                for: state.groupedPrescription.prescriptions,
+                for: state.groupedPrescription.prescriptions.map(\.erxTask),
                 with: environment.calcMatrixCodeSize(screenSize: screenSize)
             )
             .mapError { _ in
@@ -81,7 +81,9 @@ enum RedeemMatrixCodeDomain {
             UIScreen.main.brightness = CGFloat(1.0)
             // User story defines that scanned erxTasks should be automatically
             // redeemed when this screen was successfully shown.
-            return environment.redeemAndSaveErxTasks(erxTasks: state.groupedPrescription.prescriptions)
+            return environment.redeemAndSaveErxTasks(
+                erxTasks: state.groupedPrescription.prescriptions.map(\.erxTask)
+            )
         case let .redeemedOnSavedReceived(success):
             return .none
         case .close:

@@ -40,7 +40,7 @@ enum AppAuthenticationPasswordDomain {
     }
 
     struct Environment {
-        let appSecurityPasswordManager: AppSecurityPasswordManager
+        let appSecurityPasswordManager: AppSecurityManager
     }
 
     static let domainReducer = Reducer { state, action, environment in
@@ -72,7 +72,7 @@ extension AppAuthenticationPasswordDomain {
         static let state = State()
 
         static let environment = Environment(
-            appSecurityPasswordManager: DummyAppSecurityPasswordManager()
+            appSecurityPasswordManager: DummyAppSecurityManager()
         )
 
         static let store = Store(

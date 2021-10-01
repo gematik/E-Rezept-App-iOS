@@ -206,8 +206,8 @@ class StandardSessionContainer: UserSession {
         return AnyErxTaskRepository(repositoryPublisher)
     }()
 
-    lazy var appSecurityPasswordManager: AppSecurityPasswordManager = {
-        DefaultAppSecurityPasswordManager(keychainAccess: SystemKeychainAccessHelper())
+    lazy var appSecurityManager: AppSecurityManager = {
+        DefaultAppSecurityManager(keychainAccess: SystemKeychainAccessHelper())
     }()
 }
 

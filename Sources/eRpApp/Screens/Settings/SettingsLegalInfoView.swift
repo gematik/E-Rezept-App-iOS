@@ -24,65 +24,61 @@ struct SettingsLegalInfoView: View {
 
     var body: some View {
         WithViewStore(store) { viewStore in
-            VStack(alignment: .center, spacing: 4) {
-                NavigationLink(
-                    destination: LegalNoticeView(),
-                    isActive: viewStore.binding(
-                        get: { $0.showLegalNoticeView },
-                        send: SettingsDomain.Action.toggleLegalNoticeView
-                    )
-                ) {
-                    ListCellView(
-                        sfSymbolName: SFSymbolName.info,
-                        text: L10n.stgLnoTxtLegalNotice,
-                        accessibility: A18n.settings.legalNotice.stgLnoTxtLegalNotice
-                    )
-                }
-                Divider()
-                NavigationLink(
-                    destination: DataPrivacyView(),
-                    isActive: viewStore.binding(
-                        get: { $0.showDataProtectionView },
-                        send: SettingsDomain.Action.toggleDataProtectionView
-                    )
-                ) {
-                    ListCellView(
-                        sfSymbolName: SFSymbolName.shield,
-                        text: L10n.stgDpoTxtDataPrivacy,
-                        accessibility: A18n.settings.dataPrivacy.stgDprTxtDataPrivacy
-                    )
-                }
-                Divider()
-                NavigationLink(
-                    destination: FOSSView(),
-                    isActive: viewStore.binding(
-                        get: { $0.showFOSSView },
-                        send: SettingsDomain.Action.toggleFOSSView
-                    )
-                ) {
-                    ListCellView(
-                        sfSymbolName: SFSymbolName.heartTextSquare,
-                        text: L10n.stgDpoTxtFoss,
-                        accessibility: A18n.settings.foss.stgDprTxtFoss
-                    )
-                }
-                Divider()
-                NavigationLink(
-                    destination: TermsOfUseView(),
-                    isActive: viewStore.binding(
-                        get: { $0.showTermsOfUseView },
-                        send: SettingsDomain.Action.toggleTermsOfUseView
-                    )
-                ) {
-                    ListCellView(
-                        sfSymbolName: SFSymbolName.docPlaintext,
-                        text: L10n.stgDpoTxtTermsOfUse,
-                        accessibility: A18n.settings.termsOfUse.stgTouTxtTermsOfUse
-                    )
-                }
+            NavigationLink(
+                destination: LegalNoticeView(),
+                isActive: viewStore.binding(
+                    get: { $0.showLegalNoticeView },
+                    send: SettingsDomain.Action.toggleLegalNoticeView
+                )
+            ) {
+                ListCellView(
+                    sfSymbolName: SFSymbolName.info,
+                    text: L10n.stgLnoTxtLegalNotice
+                )
             }
-            .background(Colors.systemBackgroundTertiary)
-            .border(Colors.systemColorClear, cornerRadius: 16)
+            .accessibility(identifier: A18n.settings.legalNotice.stgLnoTxtLegalNotice)
+
+            NavigationLink(
+                destination: DataPrivacyView(),
+                isActive: viewStore.binding(
+                    get: { $0.showDataProtectionView },
+                    send: SettingsDomain.Action.toggleDataProtectionView
+                )
+            ) {
+                ListCellView(
+                    sfSymbolName: SFSymbolName.shield,
+                    text: L10n.stgDpoTxtDataPrivacy
+                )
+            }
+            .accessibility(identifier: A18n.settings.dataPrivacy.stgDprTxtDataPrivacy)
+
+            NavigationLink(
+                destination: FOSSView(),
+                isActive: viewStore.binding(
+                    get: { $0.showFOSSView },
+                    send: SettingsDomain.Action.toggleFOSSView
+                )
+            ) {
+                ListCellView(
+                    sfSymbolName: SFSymbolName.heartTextSquare,
+                    text: L10n.stgDpoTxtFoss
+                )
+            }
+            .accessibility(identifier: A18n.settings.foss.stgDprTxtFoss)
+
+            NavigationLink(
+                destination: TermsOfUseView(),
+                isActive: viewStore.binding(
+                    get: { $0.showTermsOfUseView },
+                    send: SettingsDomain.Action.toggleTermsOfUseView
+                )
+            ) {
+                ListCellView(
+                    sfSymbolName: SFSymbolName.docPlaintext,
+                    text: L10n.stgDpoTxtTermsOfUse
+                )
+            }
+            .accessibility(identifier: A18n.settings.termsOfUse.stgTouTxtTermsOfUse)
         }
     }
 }

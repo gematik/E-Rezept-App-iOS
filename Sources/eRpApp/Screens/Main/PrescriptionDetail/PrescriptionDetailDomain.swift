@@ -43,20 +43,21 @@ enum PrescriptionDetailDomain: Equatable {
     }
 
     struct State: Equatable {
-        var erxTask: ErxTask
+        var prescription: GroupedPrescription.Prescription
         var loadingState: LoadingState<UIImage, LoadingImageError> = .idle
         var alertState: AlertState<Action>?
-        var isRedeemed: Bool
+        var isArchived: Bool
         var isSubstitutionReadMorePresented = false
         // pharmacy state
         var pharmacySearchState: PharmacySearchDomain.State?
 
         var auditEventsLastUpdated: String? {
-            erxTask.auditEvents.first?.timestamp
+            prescription.auditEvents.first?.timestamp
         }
 
         var auditEventsErrorText: String? {
-            erxTask.auditEvents.isEmpty ? NSLocalizedString("prsc_fd_txt_protocol_download_error", comment: "") : nil
+            prescription.auditEvents
+                .isEmpty ? NSLocalizedString("prsc_fd_txt_protocol_download_error", comment: "") : nil
         }
     }
 
@@ -111,7 +112,7 @@ enum PrescriptionDetailDomain: Equatable {
         // Matrix Code
         case let .loadMatrixCodeImage(screenSize):
             return environment.matrixCodeGenerator.publishedMatrixCode(
-                for: [state.erxTask],
+                for: [state.prescription.erxTask],
                 with: environment.calcMatrixCodeSize(screenSize: screenSize)
             )
             .mapError { _ in
@@ -142,7 +143,7 @@ enum PrescriptionDetailDomain: Equatable {
         // [REQ:gemSpec_eRp_FdV:A_19229]
         case .confirmedDelete:
             state.alertState = nil
-            return environment.taskRepositoryAccess.delete([state.erxTask])
+            return environment.taskRepositoryAccess.delete([state.prescription.erxTask])
                 .first()
                 .receive(on: environment.schedulers.main)
                 .catchToEffect()
@@ -162,16 +163,19 @@ enum PrescriptionDetailDomain: Equatable {
 
         // Redeem
         case .toggleRedeemPrescription:
-            state.isRedeemed.toggle()
-            if state.isRedeemed {
-                state.erxTask.redeemedOn = environment.fhirDateFormatter.string(from: Date())
+            state.isArchived.toggle()
+            var erxTask = state.prescription.erxTask
+            if state.isArchived {
+                let redeemedOn = environment.fhirDateFormatter.stringWithLongUTCTimeZone(from: Date())
+                erxTask.update(with: redeemedOn)
             } else {
-                state.erxTask.redeemedOn = nil
+                erxTask.update(with: nil)
             }
-            return environment.saveErxTasks(erxTasks: [state.erxTask])
+            state.prescription = GroupedPrescription.Prescription(erxTask: erxTask)
+            return environment.saveErxTasks(erxTasks: [erxTask])
         case let .redeemedOnSavedReceived(success):
             if !success {
-                state.isRedeemed.toggle()
+                state.isArchived.toggle()
             }
             return .none
         case .openSubstitutionInfo:
@@ -184,7 +188,7 @@ enum PrescriptionDetailDomain: Equatable {
         // Pharmacy
         case .showPharmacySearch:
             state.pharmacySearchState = PharmacySearchDomain.State(
-                erxTasks: [state.erxTask],
+                erxTasks: [state.prescription.erxTask],
                 pharmacies: [],
                 locationHintState: environment.shouldPresentLocationHint
             )
@@ -271,8 +275,8 @@ extension PrescriptionDetailDomain {
     enum Dummies {
         static let demoSessionContainer = DummyUserSessionContainer()
         static let state = State(
-            erxTask: ErxTask.Dummies.prescription,
-            isRedeemed: false
+            prescription: GroupedPrescription.Prescription(erxTask: ErxTask.Dummies.erxTaskReady),
+            isArchived: false
         )
         static let environment = Environment(
             schedulers: Schedulers(),

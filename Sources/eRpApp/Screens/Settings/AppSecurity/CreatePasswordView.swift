@@ -48,7 +48,7 @@ struct CreatePasswordView: View {
         List {
             if updatePassword {
                 Section(
-                    header: SectionView(
+                    header: SectionHeaderView(
                         text: L10n.cpwTxtSectionUpdateTitle,
                         a11y: A11y.settings.createPassword.cpwTxtSectionUpdateTitle
                     ),
@@ -58,10 +58,11 @@ struct CreatePasswordView: View {
                                           text: currentPassword) {}
                         .accessibility(identifier: A11y.settings.createPassword.cpwInpCurrentPassword)
                 }
+                .textCase(.none)
             }
 
             Section(
-                header: SectionView(
+                header: SectionHeaderView(
                     text: L10n.cpwTxtSectionTitle,
                     a11y: A11y.settings.createPassword.cpwTxtSectionTitle
                 ),
@@ -75,6 +76,7 @@ struct CreatePasswordView: View {
                                       textContentType: .newPassword) {}
                     .accessibility(identifier: A11y.settings.createPassword.cpwInpPasswordA)
             }
+            .textCase(.none)
 
             Section(footer: saveButtonAndError()) {
                 SecureFieldWithReveal(L10n.cpwInpPasswordBPlaceholder,
@@ -86,9 +88,7 @@ struct CreatePasswordView: View {
                 .accessibility(identifier: A11y.settings.createPassword.cpwInpPasswordB)
             }
         }
-
-        .listStyle(GroupedListStyle())
-
+        .listStyle(InsetGroupedListStyle())
         .navigationTitle(updatePassword ? L10n.cpwTxtUpdateTitle : L10n.cpwTxtTitle)
     }
 

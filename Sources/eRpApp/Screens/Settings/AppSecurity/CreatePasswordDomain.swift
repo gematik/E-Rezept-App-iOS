@@ -56,7 +56,7 @@ enum CreatePasswordDomain {
     }
 
     struct Environment {
-        let passwordManager: AppSecurityPasswordManager
+        let passwordManager: AppSecurityManager
         let schedulers: Schedulers
     }
 
@@ -120,7 +120,7 @@ extension CreatePasswordDomain {
         static let state = State(mode: .update)
 
         static let environment = Environment(
-            passwordManager: DummyAppSecurityPasswordManager(),
+            passwordManager: DummyAppSecurityManager(),
             schedulers: Schedulers()
         )
 

@@ -35,7 +35,7 @@ struct PrescriptionFullDetailView: View {
 
             ScrollView(.vertical) {
                 // Noctu fee waiver hint
-                if viewStore.state.erxTask.noctuFeeWaiver {
+                if viewStore.state.prescription.noctuFeeWaiver {
                     HintView(
                         hint: Hint<PrescriptionDetailDomain.Action>(
                             id: A11y.prescriptionDetails.prscDtlHntNoctuFeeWaiver,
@@ -70,18 +70,16 @@ struct PrescriptionFullDetailView: View {
                     .padding([.top, .horizontal])
 
                     // Medication name
-                    MedicationNameView(medicationText: viewStore.state.erxTask.medicationName,
-                                       expirationDate: uiFormattedDate(dateString: viewStore.state.erxTask.expiresOn),
-                                       redeemedOnDate: uiFormattedDate(dateString: viewStore.state.erxTask
-                                           .whenHandedOver))
+                    MedicationNameView(medicationText: viewStore.state.prescription.actualMedication?.name,
+                                       dateString: viewStore.state.prescription.statusMessage)
 
-                    if !viewStore.state.erxTask.isRedeemed {
+                    if !viewStore.state.prescription.isArchived {
                         NavigateToPharmacySearchView(store: store)
                             .padding([.leading, .trailing, .bottom])
                     }
 
                     // Substitution hint
-                    if viewStore.state.erxTask.substitutionAllowed {
+                    if viewStore.state.prescription.substitutionAllowed {
                         HintView(
                             hint: Hint(
                                 id: A11y.prescriptionDetails.prscDtlHntSubstitution,
@@ -104,28 +102,30 @@ struct PrescriptionFullDetailView: View {
                 Group {
                     // Medication details
                     MedicationDetailsView(
-                        dosageForm: localizedStringForDosageFormKey(viewStore.state.erxTask.medicationDosageForm),
+                        dosageForm: localizedStringForDosageFormKey(viewStore.state.prescription.actualMedication?
+                            .dosageForm),
                         dose: composedDoseInfoFrom(
-                            doseKey: viewStore.state.erxTask.medicationDose,
-                            amount: viewStore.state.erxTask.medicationAmount,
-                            dosageKey: viewStore.state.erxTask.medicationDosageForm
+                            doseKey: viewStore.state.prescription.actualMedication?.dose,
+                            amount: viewStore.state.prescription.actualMedication?.amount,
+                            dosageKey: viewStore.state.prescription.actualMedication?.dosageForm
                         ),
-                        pzn: viewStore.state.erxTask.medicationPZN
+                        pzn: viewStore.state.prescription.actualMedication?.pzn
                     )
 
                     // Dosage instructions
                     Group {
-                        SectionView(
+                        SectionHeaderView(
                             text: L10n.prscFdTxtDosageInstructionsTitle,
                             a11y: A18n.prescriptionDetails.prscDtlTxtMedDosageInstructions
                         )
                         HintView(
                             hint: Hint<PrescriptionDetailDomain.Action>(
                                 id: A11y.prescriptionDetails.prscDtlHntDosageInstructions,
-                                message: viewStore.state.erxTask.medicationDosageInstructions ?? NSLocalizedString(
-                                    "prsc_fd_txt_dosage_instructions_na",
-                                    comment: ""
-                                ),
+                                message: viewStore.state.prescription.actualMedication?
+                                    .dosageInstruction ?? NSLocalizedString(
+                                        "prsc_fd_txt_dosage_instructions_na",
+                                        comment: ""
+                                    ),
                                 imageName: Asset.Illustrations.practitionerf1.name,
                                 style: .neutral,
                                 buttonStyle: .tertiary,
@@ -139,39 +139,40 @@ struct PrescriptionFullDetailView: View {
 
                     // Patient details
                     MedicationPatientView(
-                        name: viewStore.state.erxTask.patient?.name,
-                        address: viewStore.state.erxTask.patient?.address,
-                        dateOfBirth: uiFormattedDate(dateString: viewStore.state.erxTask.patient?.birthDate),
-                        phone: viewStore.state.erxTask.patient?.phone,
-                        healthInsurance: viewStore.state.erxTask.patient?.insurance,
-                        healthInsuranceState: viewStore.state.erxTask.patient?.status,
-                        healthInsuranceNumber: viewStore.state.erxTask.patient?.insuranceIdentifier
+                        name: viewStore.state.prescription.patient?.name,
+                        address: viewStore.state.prescription.patient?.address,
+                        dateOfBirth: uiFormattedDate(dateString: viewStore.state.prescription.patient?.birthDate),
+                        phone: viewStore.state.prescription.patient?.phone,
+                        healthInsurance: viewStore.state.prescription.patient?.insurance,
+                        healthInsuranceState: viewStore.state.prescription.patient?.status,
+                        healthInsuranceNumber: viewStore.state.prescription.patient?.insuranceIdentifier
                     )
 
                     // Practitioner details
                     MedicationPractitionerView(
-                        name: viewStore.state.erxTask.practitioner?.name,
-                        medicalSpeciality: viewStore.state.erxTask.practitioner?.qualification,
-                        lanr: viewStore.state.erxTask.practitioner?.lanr
+                        name: viewStore.state.prescription.practitioner?.name,
+                        medicalSpeciality: viewStore.state.prescription.practitioner?.qualification,
+                        lanr: viewStore.state.prescription.practitioner?.lanr
                     )
 
                     // Organization details
                     MedicationOrganizationView(
-                        name: viewStore.state.erxTask.organization?.name,
-                        address: viewStore.state.erxTask.organization?.address,
-                        bsnr: viewStore.state.erxTask.organization?.identifier,
-                        phone: viewStore.state.erxTask.organization?.phone,
-                        email: viewStore.state.erxTask.organization?.email
+                        name: viewStore.state.prescription.organization?.name,
+                        address: viewStore.state.prescription.organization?.address,
+                        bsnr: viewStore.state.prescription.organization?.identifier,
+                        phone: viewStore.state.prescription.organization?.phone,
+                        email: viewStore.state.prescription.organization?.email
                     )
 
                     // Work-related accident details
                     MedicationWorkAccidentView(
-                        accidentDate: uiFormattedDate(dateString: viewStore.state.erxTask.workRelatedAccident?.date),
-                        number: viewStore.state.erxTask.workRelatedAccident?.workPlaceIdentifier
+                        accidentDate: uiFormattedDate(dateString: viewStore.state.prescription.workRelatedAccident?
+                            .date),
+                        number: viewStore.state.prescription.workRelatedAccident?.workPlaceIdentifier
                     )
 
                     MedicationProtocolView(
-                        protocolEvents: viewStore.state.erxTask.auditEvents.map {
+                        protocolEvents: viewStore.state.prescription.auditEvents.map {
                             ($0.text, uiFormattedDateTime(dateTimeString: $0.timestamp))
                         },
                         lastUpdated: uiFormattedDate(dateString: viewStore.state.auditEventsLastUpdated),
@@ -181,11 +182,11 @@ struct PrescriptionFullDetailView: View {
                     // Task information details
                     MedicationInfoView(codeInfos: [
                         MedicationInfoView.CodeInfo(
-                            code: viewStore.state.erxTask.accessCode,
+                            code: viewStore.state.prescription.accessCode,
                             codeTitle: L10n.dtlTxtAccessCode
                         ),
                         MedicationInfoView.CodeInfo(
-                            code: viewStore.state.erxTask.id,
+                            code: viewStore.state.prescription.id,
                             codeTitle: L10n.dtlTxtTaskId
                         ),
                     ])

@@ -59,7 +59,7 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
 
         var receivedResults = [Bool]()
         var receivedSaveCompletions = [Subscribers.Completion<ErxTaskCoreDataStore.Error>]()
-        let task = ErxTask(identifier: "id", accessCode: "access")
+        let task = ErxTask(identifier: "id", status: .ready, accessCode: "access")
         _ = store.save(tasks: [task])
             .sink(receiveCompletion: { completion in
                 receivedSaveCompletions.append(completion)
@@ -93,7 +93,7 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
         var receivedResults = [Bool]()
         var receivedSaveCompletions = [Subscribers.Completion<ErxTaskCoreDataStore.Error>]()
 
-        let task = ErxTask(identifier: "id", accessCode: "access")
+        let task = ErxTask(identifier: "id", status: .ready, accessCode: "access")
         _ = store.save(tasks: [task])
             .sink(receiveCompletion: { completion in
                 receivedSaveCompletions.append(completion)

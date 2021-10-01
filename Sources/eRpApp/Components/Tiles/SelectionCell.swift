@@ -22,6 +22,7 @@ struct SelectionCell: View {
     let text: LocalizedStringKey
     let description: LocalizedStringKey?
     let a11y: String
+    @ScaledMetric var iconSize: CGFloat = 22
     var systemImage: String?
     @Binding var isOn: Bool
 
@@ -32,7 +33,8 @@ struct SelectionCell: View {
                 HStack {
                     if let systemImage = systemImage {
                         Image(systemName: systemImage)
-                            .font(Font.title.weight(.semibold))
+                            .frame(width: iconSize)
+                            .font(.body.weight(.semibold))
                             .foregroundColor(Colors.primary500)
                             .padding(.trailing)
                     }
@@ -48,23 +50,19 @@ struct SelectionCell: View {
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .font(.subheadline)
                                 .foregroundColor(Colors.systemLabelTertiary)
-                                .fixedSize(horizontal: false,
-                                           vertical: true)
+                                .fixedSize(horizontal: false, vertical: true)
                         }
                     }
 
                     Spacer()
 
                     Image(systemName: isOn ? SFSymbolName.checkmarkCircleFill : SFSymbolName.circle)
-                        .resizable()
-                        .frame(width: 30,
-                               height: 30)
+                        .frame(width: iconSize)
+                        .font(.body.weight(.semibold))
                         .foregroundColor(isOn ? Colors.primary500 : Colors.systemLabelTertiary)
                         .foregroundColor(Color(.tertiaryLabel))
                 }
-                .padding()
-                .background(Color(.tertiarySystemBackground))
-                .cornerRadius(16)
+                .padding(.vertical)
             }
         )
         .accessibility(identifier: a11y)

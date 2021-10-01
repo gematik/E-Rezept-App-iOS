@@ -20,6 +20,7 @@ import eRpKit
 import Foundation
 
 extension ErxTask {
+    // swiftlint:disable:next type_body_length
     enum Dummies {
         static let medication1: ErxTask.Medication = {
             ErxTask.Medication(
@@ -97,19 +98,21 @@ extension ErxTask {
                                dosageInstructions: nil)
         }()
 
-        static let prescription: ErxTask = {
-            prescriptions.first ?? ErxTask(identifier: "",
-                                           accessCode: "")
+        static let erxTaskReady: ErxTask = {
+            erxTasks.first ?? ErxTask(identifier: "",
+                                      status: .ready,
+                                      accessCode: "")
         }()
 
-        static let prescriptionRedeemed: ErxTask = {
-            prescriptions.last ?? ErxTask(
+        static let erxTaskRedeemed: ErxTask = {
+            erxTasks.last ?? ErxTask(
                 identifier: "",
+                status: .completed,
                 accessCode: ""
             )
         }()
 
-        static let prescriptions: [ErxTask] = {
+        static let erxTasks: [ErxTask] = {
             var demoPatient = ErxTask.Patient(
                 name: "Ludger Königsstein",
                 address: "Musterstr. 1 \n10623 Berlin",
@@ -136,17 +139,19 @@ extension ErxTask {
                 address: "Vor der Bahn 6\n54321 Berlin"
             )
 
-            var demoWorkRelatedAccicdent = ErxTask.WorkRelatedAccident(
+            var demoWorkRelatedAccident = ErxTask.WorkRelatedAccident(
                 workPlaceIdentifier: "1234567890",
                 date: "9.4.2021"
             )
 
             return [
                 ErxTask(identifier: "2390f983-1e67-11b2-8555-63bf44e44fb8",
+                        status: .ready,
                         accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
                         fullUrl: nil,
                         authoredOn: DemoDate.createDemoDate(.today),
                         expiresOn: DemoDate.createDemoDate(.tomorrow),
+                        acceptedUntil: DemoDate.createDemoDate(.ninetyTwoDaysAhead),
                         author: "Dr. Dr. med. Carsten van Storchhausen",
                         noctuFeeWaiver: true,
                         substitutionAllowed: true,
@@ -154,96 +159,125 @@ extension ErxTask {
                         patient: demoPatient,
                         practitioner: demoPractitioner,
                         organization: demoOrganization,
-                        workRelatedAccident: demoWorkRelatedAccicdent,
+                        workRelatedAccident: demoWorkRelatedAccident,
                         auditEvents: ErxAuditEvent.Dummies.auditEvents),
                 ErxTask(identifier: "5390f983-1e67-11b2-8555-63bf44e44fb8",
+                        status: .ready,
                         accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
                         fullUrl: nil,
                         authoredOn: DemoDate.createDemoDate(.today),
-                        expiresOn: DemoDate.createDemoDate(.thirtyOneDaysAhead),
+                        expiresOn: DemoDate.createDemoDate(.twentyEightDaysAhead),
+                        acceptedUntil: DemoDate.createDemoDate(.ninetyTwoDaysAhead),
                         author: "Dr. Dr. med. Carsten van Storchhausen",
                         substitutionAllowed: true,
                         medication: medication2,
                         patient: demoPatient,
                         practitioner: demoPractitioner,
                         organization: demoOrganization,
-                        workRelatedAccident: demoWorkRelatedAccicdent,
+                        workRelatedAccident: demoWorkRelatedAccident,
                         auditEvents: ErxAuditEvent.Dummies.auditEvents),
                 ErxTask(identifier: "0390f983-1e67-11b2-8555-63bf44e44fb8",
+                        status: .ready,
                         accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
                         fullUrl: nil,
                         authoredOn: DemoDate.createDemoDate(.yesterday),
                         expiresOn: DemoDate.createDemoDate(.twelveDaysAhead),
+                        acceptedUntil: DemoDate.createDemoDate(.ninetyTwoDaysAhead),
                         author: "Dr. Dr. med. Carsten van Storchhausen",
                         noctuFeeWaiver: true,
                         medication: medication3,
                         patient: demoPatient,
                         practitioner: demoPractitioner,
                         organization: demoOrganization,
-                        workRelatedAccident: demoWorkRelatedAccicdent,
+                        workRelatedAccident: demoWorkRelatedAccident,
                         auditEvents: ErxAuditEvent.Dummies.auditEvents),
                 ErxTask(identifier: "1390f983-1e67-11b2-8555-63bf44e44fb8",
+                        status: .ready,
                         accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
                         fullUrl: nil,
                         authoredOn: DemoDate.createDemoDate(.dayBeforeYesterday),
-                        expiresOn: DemoDate.createDemoDate(.thirtyOneDaysAhead),
+                        expiresOn: DemoDate.createDemoDate(.twentyEightDaysAhead),
+                        acceptedUntil: DemoDate.createDemoDate(.ninetyTwoDaysAhead),
                         author: "Dr. Dr. med. Carsten van Storchhausen",
                         medication: medication4,
                         patient: demoPatient,
                         practitioner: demoPractitioner,
                         organization: demoOrganization,
-                        workRelatedAccident: demoWorkRelatedAccicdent,
+                        workRelatedAccident: demoWorkRelatedAccident,
                         auditEvents: ErxAuditEvent.Dummies.auditEvents),
                 ErxTask(identifier: "3390f983-1e67-11b2-8555-63bf44e44fb8",
+                        status: .ready,
                         accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
                         fullUrl: nil,
                         authoredOn: DemoDate.createDemoDate(.sixteenDaysBefore),
                         expiresOn: DemoDate.createDemoDate(.yesterday),
+                        acceptedUntil: DemoDate.createDemoDate(.ninetyTwoDaysAhead),
                         author: "Dr. Dr. med. Carsten van Storchhausen",
                         medication: medication5,
                         patient: demoPatient,
                         practitioner: demoPractitioner,
                         organization: demoOrganization,
-                        workRelatedAccident: demoWorkRelatedAccicdent,
+                        workRelatedAccident: demoWorkRelatedAccident,
                         auditEvents: ErxAuditEvent.Dummies.auditEvents),
                 ErxTask(identifier: "490f983-1e67-11b2-8555-63bf44e44fb8",
+                        status: .ready,
                         accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
                         fullUrl: nil,
                         authoredOn: DemoDate.createDemoDate(.thirtyDaysBefore),
-                        expiresOn: DemoDate.createDemoDate(.twelveDaysAhead),
+                        expiresOn: DemoDate.createDemoDate(.dayBeforeYesterday),
+                        acceptedUntil: DemoDate.createDemoDate(.ninetyTwoDaysAhead),
                         author: "Praxis Dr. med. Karin Hasenbein",
                         noctuFeeWaiver: true,
                         medication: medication6,
                         patient: demoPatient,
                         practitioner: demoPractitioner,
                         organization: demoOrganization,
-                        workRelatedAccident: demoWorkRelatedAccicdent,
+                        workRelatedAccident: demoWorkRelatedAccident,
                         auditEvents: ErxAuditEvent.Dummies.auditEvents),
                 ErxTask(identifier: "6390f983-1e67-11b2-8555-63bf44e44fb8",
+                        status: .ready,
                         accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
                         fullUrl: nil,
                         authoredOn: DemoDate.createDemoDate(.sixteenDaysBefore),
-                        expiresOn: DemoDate.createDemoDate(.thirtyOneDaysAhead),
+                        expiresOn: DemoDate.createDemoDate(.twentyEightDaysAhead),
+                        acceptedUntil: DemoDate.createDemoDate(.ninetyTwoDaysAhead),
                         author: "Dr. Dr. med. Carsten van Storchhausen",
                         medication: medication7,
                         patient: demoPatient,
                         practitioner: demoPractitioner,
                         organization: demoOrganization,
-                        workRelatedAccident: demoWorkRelatedAccicdent,
+                        workRelatedAccident: demoWorkRelatedAccident,
                         auditEvents: ErxAuditEvent.Dummies.auditEvents),
                 ErxTask(identifier: "7390f983-1e67-11b2-8555-63bf44e44fb8",
+                        status: .completed,
                         accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
                         fullUrl: nil,
                         authoredOn: DemoDate.createDemoDate(.thirtyDaysBefore),
-                        expiresOn: DemoDate.createDemoDate(.tomorrow),
+                        expiresOn: DemoDate.createDemoDate(.yesterday),
+                        acceptedUntil: DemoDate.createDemoDate(.yesterday),
                         redeemedOn: DemoDate.createDemoDate(.yesterday),
                         author: "Dr. Dr. med. Carsten van Storchhausen",
                         medication: medication8,
                         patient: demoPatient,
                         practitioner: demoPractitioner,
                         organization: demoOrganization,
-                        workRelatedAccident: demoWorkRelatedAccicdent,
+                        workRelatedAccident: demoWorkRelatedAccident,
                         auditEvents: ErxAuditEvent.Dummies.auditEvents),
+                ErxTask(identifier: "7390f983-1e67-11b2-8955-63bf44e44fb8",
+                        status: .ready,
+                        accessCode: "e46ab30336811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
+                        fullUrl: nil,
+                        authoredOn: DemoDate.createDemoDate(.thirtyDaysBefore),
+                        expiresOn: DemoDate.createDemoDate(.weekBefore),
+                        acceptedUntil: DemoDate.createDemoDate(.weekBefore),
+                        redeemedOn: nil,
+                        author: "Dr. Dr. med. Carsten van Storchhausen",
+                        medication: medication8,
+                        patient: demoPatient,
+                        practitioner: demoPractitioner,
+                        organization: demoOrganization,
+                        workRelatedAccident: demoWorkRelatedAccident,
+                        auditEvents: []),
             ]
         }()
     }

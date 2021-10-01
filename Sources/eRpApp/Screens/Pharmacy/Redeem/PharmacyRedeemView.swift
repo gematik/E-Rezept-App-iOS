@@ -100,8 +100,8 @@ struct PharmacyRedeemView: View {
         @State var viewStore: ViewStore<ViewState, PharmacyRedeemDomain.Action>
         var body: some View {
             VStack(spacing: 16) {
-                SectionView(text: L10n.phaRedeemTxtAddress,
-                            a11y: A11y.pharmacyRedeem.phaRedeemTxtAddressTitle)
+                SectionHeaderView(text: L10n.phaRedeemTxtAddress,
+                                  a11y: A11y.pharmacyRedeem.phaRedeemTxtAddressTitle)
 
                 HStack(alignment: .top, spacing: 16) {
                     Image(systemName: SFSymbolName.house)
@@ -137,8 +137,8 @@ struct PharmacyRedeemView: View {
         @State var viewStore: ViewStore<ViewState, PharmacyRedeemDomain.Action>
         var body: some View {
             VStack(spacing: 0) {
-                SectionView(text: L10n.phaRedeemTxtPrescription,
-                            a11y: A11y.pharmacyRedeem.phaRedeemTxtPrescriptionTitle)
+                SectionHeaderView(text: L10n.phaRedeemTxtPrescription,
+                                  a11y: A11y.pharmacyRedeem.phaRedeemTxtPrescriptionTitle)
 
                 ForEach(viewStore.prescriptions) { prescription in
                     Button(action: { viewStore.send(.didSelect(prescription.taskID)) },
@@ -248,7 +248,7 @@ extension PharmacyRedeemView {
 
             init(_ task: ErxTask, isSelected: Bool) {
                 taskID = task.id
-                title = task.medicationName ?? "Missing"
+                title = task.medication?.name ?? NSLocalizedString("prsc_fd_txt_na", comment: "")
                 subtitle = task
                     .substitutionAllowed ? NSLocalizedString("pha_redeem_txt_prescription_sub", comment: "") : ""
                 self.isSelected = isSelected

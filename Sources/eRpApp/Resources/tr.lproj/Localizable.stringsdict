@@ -1,38 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
+<dict>
+	<key>erx_txt_expires_in</key>
 	<dict>
-		<key>erx_txt_expires_in</key>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@v1_days_variable@</string>
+		<key>v1_days_variable</key>
 		<dict>
-			<key>NSStringLocalizedFormatKey</key>
-            <string>%#@v1_days_variable@</string>
-			<key>v1_days_variable</key>
-			<dict>
-				<key>NSStringFormatSpecTypeKey</key>
-				<string>NSStringPluralRuleType</string>
-				<key>NSStringFormatValueTypeKey</key>
-				<string>u</string>
-				<key>one</key>
-				<string>Daha %u gün geçerli</string>
-				<key>other</key>
-				<string>Daha %u gün geçerli</string>
-			</dict>
-		</dict>
-		<key>scn_btn_scanning_done</key>
-		<dict>
-			<key>NSStringLocalizedFormatKey</key>
-            <string>%#@variable_0@</string>
-			<key>variable_0</key>
-			<dict>
-				<key>NSStringFormatSpecTypeKey</key>
-				<string>NSStringPluralRuleType</string>
-				<key>NSStringFormatValueTypeKey</key>
-				<string>d</string>
-				<key>one</key>
-				<string>Tamamlandı, reçete ekle</string>
-				<key>other</key>
-				<string>Tamamlandı, reçeteleri ekle</string>
-			</dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>u</string>
+			<key>one</key>
+			<string>Daha %u gün geçerli</string>
+			<key>other</key>
+			<string>Daha %u gün geçerli</string>
 		</dict>
 	</dict>
+	<key>erx_txt_accepted_until</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>u</string>
+			<key>one</key>
+			<string>Nur noch heute als Selbstzahler einlösbar</string>
+			<key>other</key>
+			<string>Noch %u Tage als Selbstzahler einlösbar</string>
+		</dict>
+	</dict>
+	<key>scn_btn_scanning_done</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>Tamamlandı, reçete ekle</string>
+			<key>other</key>
+			<string>Tamamlandı, reçeteleri ekle</string>
+		</dict>
+	</dict>
+</dict>
 </plist>

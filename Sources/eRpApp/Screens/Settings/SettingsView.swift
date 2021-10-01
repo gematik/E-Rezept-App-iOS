@@ -29,24 +29,30 @@ struct SettingsView: View {
     var body: some View {
         WithViewStore(store) { viewStore in
             NavigationView {
-                ScrollView {
-                    DemoModeSectionView(store: store)
+                Group {
+                    List {
+                        #if ENABLE_DEBUG_VIEW
+                        DebugSectionView(store: debugStore,
+                                         showDebugView: viewStore.binding(
+                                             get: { $0.showDebugView },
+                                             send: SettingsDomain.Action.toggleDebugView
+                                         ))
+                        #endif
 
-                    SecuritySectionView(store: store)
+                        DemoModeSectionView(store: store)
 
-                    TrackerSectionView(store: store)
+                        SecuritySectionView(store: store)
 
-                    LegalInfoSectionView(store: store)
+                        // [REQ:gemSpec_BSI_FdV:O.Tokn_9] integration in SettingsView
+                        TokenSectionView(store: store)
 
-                    #if ENABLE_DEBUG_VIEW
-                    DebugSectionView(store: debugStore,
-                                     showDebugView: viewStore.binding(
-                                         get: { $0.showDebugView },
-                                         send: SettingsDomain.Action.toggleDebugView
-                                     ))
-                    #endif
+                        TrackerSectionView(store: store)
 
-                    BottomSectionView(store: store)
+                        LegalInfoSectionView(store: store)
+
+                        BottomSectionView(store: store)
+                    }
+                    .listStyle(InsetGroupedListStyle())
 
                     // Tracking comply sheet presentation
                     EmptyView()
@@ -57,7 +63,6 @@ struct SettingsView: View {
                             TrackingComplyView(store: store)
                         }
                 }
-                .background(Color(.secondarySystemBackground))
                 .navigationBarTitle(Text(L10n.stgTxtTitle), displayMode: .inline)
                 .navigationBarItems(
                     leading: NavigationTextButton(
@@ -70,6 +75,7 @@ struct SettingsView: View {
                 .edgesIgnoringSafeArea(.bottom)
                 .demoBanner(isPresented: viewStore.state.isDemoMode)
             }
+            .navigationViewStyle(StackNavigationViewStyle())
             .alert(
                 self.store.scope(state: \.alertState),
                 dismiss: .alertDismissButtonTapped
@@ -85,44 +91,49 @@ struct SettingsView: View {
 
         var body: some View {
             WithViewStore(store) { viewStore in
-                SectionView(text: L10n.stgTxtHeaderDemoMode, a11y: A18n.settings.demo.stgTxtHeaderDemoMode)
-
-                ToggleCell(
-                    text: L10n.stgTxtDemoMode,
-                    a11y: A18n.settings.demo.stgTxtDemoMode,
-                    systemImage: SFSymbolName.wandAndStars,
-                    isToggleOn: viewStore.binding(
-                        get: \.isDemoMode,
-                        send: SettingsDomain.Action.toggleDemoModeSwitch
+                Section(
+                    header: SectionHeaderView(
+                        text: L10n.stgTxtHeaderDemoMode,
+                        a11y: A18n.settings.demo.stgTxtHeaderDemoMode
+                    ).padding(.bottom, 8),
+                    footer: FootnoteView(
+                        text: L10n.stgTxtFootnoteDemoMode,
+                        a11y: A18n.settings.demo.stgTxtFootnoteDemoMode
                     )
-                    .animation()
-                )
-                FootnoteView(text: L10n.stgTxtFootnoteDemoMode, a11y: A18n.settings.demo.stgTxtFootnoteDemoMode)
+                ) {
+                    ToggleCell(
+                        text: L10n.stgTxtDemoMode,
+                        a11y: A18n.settings.demo.stgTxtDemoMode,
+                        systemImage: SFSymbolName.wandAndStars,
+                        backgroundColor: Colors.systemColorClear,
+                        isToggleOn: viewStore.binding(
+                            get: \.isDemoMode,
+                            send: SettingsDomain.Action.toggleDemoModeSwitch
+                        )
+                        .animation()
+                    )
+                }
+                .textCase(.none)
             }
-            .padding([.leading, .trailing])
         }
     }
 
-    private struct SecuritySectionView: View {
+    private struct TokenSectionView: View {
         let store: SettingsDomain.Store
 
         var body: some View {
-            WithViewStore(store) { _ in
-                SectionView(
-                    text: L10n.stgTxtHeaderSecurity,
-                    a11y: A18n.settings.security.stgTxtHeaderSecurity
-                )
-                .padding(.bottom, 2)
-
-                AppSecuritySelectionView(store: store.scope(
-                    state: { $0.appSecurityState },
-                    action: { .appSecurity(action: $0) }
-                ))
-
-                Spacer()
-                    .padding(.bottom, 20)
+            WithViewStore(store) { viewStore in
+                Section {
+                    NavigationLink(destination: IDPTokenView(token: viewStore.state.token)) {
+                        ListCellView(
+                            sfSymbolName: SFSymbolName.key,
+                            text: L10n.stgTxtSecurityTokens
+                        )
+                    }
+                    .accessibility(identifier: A11y.settings.security.stgTxtSecurityTokens)
+                }
+                .disabled(viewStore.state.token == nil)
             }
-            .padding([.leading, .trailing])
         }
     }
 
@@ -131,44 +142,50 @@ struct SettingsView: View {
 
         var body: some View {
             WithViewStore(store) { viewStore in
-                SectionView(
-                    text: L10n.stgTrkTxtTitle,
-                    a11y: A11y.settings.tracking.stgTrkTxtTitle
-                )
-                .padding(.bottom, 2)
-
-                // [REQ:gemSpec_eRp_FdV:A_19089] User info for usage tracking
-                HeadernoteView(
-                    text: L10n.stgTrkTxtExplanation,
-                    a11y: A11y.settings.tracking.stgTrkTxtExplanation
-                )
-
-                ToggleCell(
-                    text: L10n.stgTrkBtnTitle,
-                    a11y: A18n.settings.tracking.stgTrkBtnTitle,
-                    systemImage: SFSymbolName.wandAndStars,
-                    isToggleOn: viewStore.binding(
-                        get: \.trackerOptIn,
-                        send: SettingsDomain.Action.toggleTrackingTapped
+                Section(
+                    header: HeaderView(),
+                    footer: FootnoteView(
+                        text: viewStore.state.isDemoMode ?
+                            L10n.stgTrkTxtFootnoteDisabled : L10n.stgTrkTxtFootnote,
+                        a11y: A18n.settings.tracking.stgTrkTxtFootnote
                     )
-                    .animation(),
-                    isDisabled: Binding(
-                        get: { viewStore.state.isDemoMode },
-                        set: { _, _ in }
+                ) {
+                    ToggleCell(
+                        text: L10n.stgTrkBtnTitle,
+                        a11y: A18n.settings.tracking.stgTrkBtnTitle,
+                        systemImage: SFSymbolName.wandAndStars,
+                        backgroundColor: Colors.systemColorClear,
+                        isToggleOn: viewStore.binding(
+                            get: \.trackerOptIn,
+                            send: SettingsDomain.Action.toggleTrackingTapped
+                        )
+                        .animation(),
+                        isDisabled: Binding(
+                            get: { viewStore.state.isDemoMode },
+                            set: { _, _ in }
+                        )
                     )
-                )
-
-                // [REQ:gemSpec_eRp_FdV:A_19089] User info for usage tracking
-                FootnoteView(
-                    text: viewStore.state.isDemoMode ?
-                        L10n.stgTrkTxtFootnoteDisabled : L10n.stgTrkTxtFootnote,
-                    a11y: A18n.settings.tracking.stgTrkTxtFootnote
-                )
-
-                Spacer()
-                    .padding(.bottom, 20)
+                }
+                .textCase(.none)
             }
-            .padding([.leading, .trailing])
+        }
+
+        private struct HeaderView: View {
+            var body: some View {
+                VStack {
+                    SectionHeaderView(
+                        text: L10n.stgTrkTxtTitle,
+                        a11y: A11y.settings.tracking.stgTrkTxtTitle
+                    )
+                    .padding(.bottom, 8)
+
+                    // [REQ:gemSpec_eRp_FdV:A_19089] User info for usage tracking
+                    HeadernoteView(
+                        text: L10n.stgTrkTxtExplanation,
+                        a11y: A11y.settings.tracking.stgTrkTxtExplanation
+                    )
+                }
+            }
         }
     }
 
@@ -177,17 +194,16 @@ struct SettingsView: View {
 
         var body: some View {
             WithViewStore(store) { _ in
-                SectionView(
-                    text: L10n.stgTxtHeaderLegalInfo,
-                    a11y: A18n.settings.legalNotice.stgLnoTxtHeaderLegalInfo
-                )
-                .padding(.bottom, 2)
-
-                SettingsLegalInfoView(store: store)
-
-                Spacer().padding(.bottom, 20)
+                Section(
+                    header: SectionHeaderView(
+                        text: L10n.stgTxtHeaderLegalInfo,
+                        a11y: A18n.settings.legalNotice.stgLnoTxtHeaderLegalInfo
+                    ).padding(.bottom, 8)
+                ) {
+                    SettingsLegalInfoView(store: store)
+                }
+                .textCase(.none)
             }
-            .padding([.leading, .trailing])
         }
     }
 
@@ -198,24 +214,19 @@ struct SettingsView: View {
         @Binding var showDebugView: Bool
 
         var body: some View {
-            SectionView(
-                text: "Debug",
-                a11y: "Debug"
-            )
-            .padding(.bottom, 2)
-
-            NavigationLink(
-                destination: DebugView(store: store),
-                isActive: $showDebugView
-            ) {
-                ListCellView(
-                    sfSymbolName: SFSymbolName.ant,
-                    text: "Debug",
-                    accessibility: "Debug"
-                )
+            Section(header: SectionHeaderView(text: "Debug", a11y: "Debug").padding(.bottom, 8)) {
+                NavigationLink(
+                    destination: DebugView(store: store),
+                    isActive: $showDebugView
+                ) {
+                    ListCellView(
+                        sfSymbolName: SFSymbolName.ant,
+                        text: "Debug"
+                    )
+                }
+                .border(Colors.systemColorClear, cornerRadius: 16)
             }
-            .border(Colors.systemColorClear, cornerRadius: 16)
-            .padding([.leading, .trailing])
+            .textCase(.none)
         }
     }
     #endif
@@ -225,17 +236,32 @@ struct SettingsView: View {
 
         var body: some View {
             WithViewStore(store) { viewStore in
-                Spacer()
-
-                LogoutButton {
-                    viewStore.send(.logout)
+                Section(header: Spacer(minLength: 64),
+                        footer: VersionInfoView(appVersion: viewStore.appVersion)
+                            .padding(.bottom)) {
+                    LogoutButton {
+                        viewStore.send(.logout)
+                    }
                 }
-
-                // Version info
-                VersionInfoView(appVersion: viewStore.appVersion)
-                    .padding(.bottom)
+                .listRowBackground(Colors.red600)
             }
-            .padding([.leading, .trailing, .bottom])
+        }
+
+        struct LogoutButton: View {
+            @Environment(\.colorScheme) var colorScheme
+            let action: () -> Void
+
+            var body: some View {
+                Button(action: action) {
+                    HStack {
+                        Text(L10n.stgBtnLogout)
+                    }
+                    .frame(maxWidth: .infinity)
+                }
+                .accessibility(identifier: A18n.settings.logout.stgBtnLogout)
+                .font(Font.body.weight(.semibold))
+                .foregroundColor(colorScheme == .dark ? Colors.systemLabel : Colors.systemColorWhite)
+            }
         }
     }
 

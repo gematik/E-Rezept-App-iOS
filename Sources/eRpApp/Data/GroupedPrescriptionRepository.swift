@@ -44,15 +44,16 @@ extension Sequence where Self.Element == ErxTask {
             return byDate.flatMap { issueDate, erxTasks -> [GroupedPrescription] in
                 let byAuthor = Dictionary(grouping: erxTasks) { $0.author ?? $0.practitioner?.name }
                 return byAuthor.flatMap { author, erxTasks -> [GroupedPrescription] in
-                    let byRedeemedState = Dictionary(grouping: erxTasks) { $0.isRedeemed }
-                    return byRedeemedState.compactMap { isRedeemed, prescriptions in
+                    let prescriptions = erxTasks.map { GroupedPrescription.Prescription(erxTask: $0) }
+                    let byArchivedState = Dictionary(grouping: prescriptions) { $0.isArchived }
+                    return byArchivedState.compactMap { isArchived, prescriptions in
                         let sortedPrescriptions = prescriptions.sorted(by: <)
                         let identifier = sortedPrescriptions.map(\.identifier).joined(separator: "-")
                         return GroupedPrescription(
                             id: identifier,
                             title: author ?? "",
                             authoredOn: issueDate ?? "",
-                            isRedeemed: isRedeemed,
+                            isArchived: isArchived,
                             prescriptions: sortedPrescriptions,
                             displayType: GroupedPrescription.DisplayType.from(erxTaskSource: source)
                         )
@@ -66,7 +67,9 @@ extension Sequence where Self.Element == ErxTask {
 extension Publisher where Output == [ErxTask], Failure == ErxTaskRepositoryError {
     func asGroupedPrescriptionSorted() -> AnyPublisher<[GroupedPrescription], ErxTaskRepositoryError> {
         map { tasks in
-            tasks.groupBySourceAndIssuerAndDate().sorted { $0.authoredOn > $1.authoredOn }
-        }.eraseToAnyPublisher()
+            tasks.groupBySourceAndIssuerAndDate()
+                .sorted { ($0.authoredOn, $0.title) > ($1.authoredOn, $1.title) }
+        }
+        .eraseToAnyPublisher()
     }
 }

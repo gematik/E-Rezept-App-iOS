@@ -84,8 +84,8 @@ class MockUserSession: UserSession {
         NFCSignatureProviderMock()
     }()
 
-    lazy var appSecurityPasswordManager: AppSecurityPasswordManager = {
-        MockAppSecurityPasswordManager()
+    lazy var appSecurityManager: AppSecurityManager = {
+        MockAppSecurityManager()
     }()
 }
 
@@ -191,6 +191,11 @@ class MockPharmacyRepository: PharmacyRepository {
 class MockErxTaskRepository: ErxTaskRepository {
     typealias ErrorType = ErxRepositoryError<ErxTaskCoreDataStore.ErrorType, ErxTaskFHIRDataStore.ErrorType>
 
+    var store: [String: ErxTask]
+    init(store: [String: ErxTask] = MockErxTaskRepository.exampleStore) {
+        self.store = store
+    }
+
     func loadRemote(
         by id: ErxTask.ID, // swiftlint:disable:this identifier_name
         accessCode _: String?
@@ -252,23 +257,27 @@ class MockErxTaskRepository: ErxTaskRepository {
         Just(0).setFailureType(to: ErrorType.self).eraseToAnyPublisher()
     }
 
-    var store: [String: ErxTask] = {
-        let authoredOnFirstBlock = "2020-09-20T14:34:29+00:00"
-        let authoredOnYesterdayBlock = "2021-01-19T14:34:29+00:00"
-        let authoredOnTodayBlock = "2021-01-20T14:34:29+00:00"
-        let expiresIn12DaysString = "2020-10-02T14:34:29+00:00"
-        let expiresYesterdayString = "2021-01-19T14:34:29+00:00"
-        let expiresIn31DaysString = "2021-02-20T14:34:29+00:00"
-        let redeemedOnTodayBlock = "2021-01-20T14:34:29+00:00"
+    static var exampleStore: [String: ErxTask] = {
+        let authoredOnNinetyTwoDaysBefore = DemoDate.createDemoDate(.ninetyTwoDaysBefore)
+        let authoredOnThirtyDaysBefore = DemoDate.createDemoDate(.thirtyDaysBefore)
+        let authoredOnSixteenDaysBefore = DemoDate.createDemoDate(.sixteenDaysBefore)
+        let authoredOnWeekBefore = DemoDate.createDemoDate(.weekBefore)
+        let expiresIn12DaysString = DemoDate.createDemoDate(.twelveDaysAhead)
+        let expiresYesterdayString = DemoDate.createDemoDate(.yesterday)
+        let expiresIn31DaysString = DemoDate.createDemoDate(.twentyEightDaysAhead)
+        let redeemedOnToday = DemoDate.createDemoDate(.today)
+        let handedOverAWeekBefore = DemoDate.createDemoDate(.weekBefore)
 
         return [
+            // Group 1 [0 - 2]
             "0390f983-1e67-11b2-8555-63bf44e44fb8": ErxTask(
                 identifier: "0390f983-1e67-11b2-8555-63bf44e44fb8",
+                status: .ready,
                 accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
                 fullUrl: nil,
-                authoredOn: authoredOnFirstBlock,
+                authoredOn: authoredOnThirtyDaysBefore,
                 expiresOn: expiresIn12DaysString,
-                author: "Dr. Dr. med. Carsten van Storchhausen",
+                author: "Dr. A",
                 medication: ErxTask.Medication(
                     name: "Sumatriptan-1a Pharma 100 mg Tabletten",
                     amount: 12,
@@ -277,11 +286,12 @@ class MockErxTaskRepository: ErxTaskRepository {
             ),
             "1": ErxTask(
                 identifier: "1390f983-1e67-11b2-8555-63bf44e44fb8",
+                status: .ready,
                 accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
                 fullUrl: nil,
-                authoredOn: authoredOnFirstBlock,
+                authoredOn: authoredOnThirtyDaysBefore,
                 expiresOn: expiresIn31DaysString,
-                author: "Dr. Dr. med. Carsten van Storchhausen",
+                author: "Dr. A",
                 medication: ErxTask.Medication(
                     name: "Saflorblüten-Extrakt",
                     amount: 12,
@@ -290,37 +300,42 @@ class MockErxTaskRepository: ErxTaskRepository {
             ),
             "2": ErxTask(
                 identifier: "2390f983-1e67-11b2-8555-63bf44e44fb8",
+                status: .ready,
                 accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
                 fullUrl: nil,
-                authoredOn: authoredOnTodayBlock,
+                authoredOn: authoredOnThirtyDaysBefore,
                 expiresOn: expiresIn12DaysString,
-                author: "Dr. Dr. med. Carsten van Storchhausen",
+                author: "Dr. A",
                 medication: ErxTask.Medication(
                     name: "Yucca filamentosa",
                     amount: 12,
                     dosageForm: "TAB"
                 )
             ),
+            // Group 2 [3]: archived because expired
             "3": ErxTask(
                 identifier: "3390f983-1e67-11b2-8555-63bf44e44fb8",
+                status: .ready,
                 accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
                 fullUrl: nil,
-                authoredOn: authoredOnFirstBlock,
+                authoredOn: authoredOnThirtyDaysBefore,
                 expiresOn: expiresYesterdayString,
-                author: "Dr. Dr. med. Carsten van Storchhausen",
+                author: "Dr. Abgelaufen",
                 medication: ErxTask.Medication(
                     name: "Zimtöl",
                     amount: 20,
                     dosageForm: "AEO"
                 )
             ),
+            // Group 3 [4 -7]: other authored on date same author
             "4": ErxTask(
                 identifier: "490f983-1e67-11b2-8555-63bf44e44fb8",
+                status: .ready,
                 accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
                 fullUrl: nil,
-                authoredOn: authoredOnYesterdayBlock,
+                authoredOn: authoredOnWeekBefore,
                 expiresOn: expiresIn12DaysString,
-                author: "Praxis Dr. med. Karin Hasenbein",
+                author: "Dr. A",
                 medication: ErxTask.Medication(
                     name: "Iboprogenal 100+",
                     amount: 10,
@@ -329,11 +344,12 @@ class MockErxTaskRepository: ErxTaskRepository {
             ),
             "5": ErxTask(
                 identifier: "5390f983-1e67-11b2-8555-63bf44e44fb8",
+                status: .ready,
                 accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
                 fullUrl: nil,
-                authoredOn: authoredOnTodayBlock,
+                authoredOn: authoredOnWeekBefore,
                 expiresOn: expiresIn31DaysString,
-                author: "Dr. Dr. med. Carsten van Storchhausen",
+                author: "Dr. A",
                 medication: ErxTask.Medication(
                     name: "Saflorblüten-Extrakt",
                     amount: 12,
@@ -342,38 +358,45 @@ class MockErxTaskRepository: ErxTaskRepository {
             ),
             "6": ErxTask(
                 identifier: "6390f983-1e67-11b2-8555-63bf44e44fb8",
+                status: .ready,
                 accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
                 fullUrl: nil,
-                authoredOn: authoredOnFirstBlock,
+                authoredOn: authoredOnWeekBefore,
                 expiresOn: expiresIn31DaysString,
-                author: "Dr. Dr. med. Carsten van Storchhausen",
+                author: "Dr. A",
                 medication: ErxTask.Medication(
-                    name: nil,
+                    name: "Med. A",
                     amount: 12,
                     dosageForm: "TAB"
                 )
             ),
+            // expired but not jet acceptDate passed
             "7": ErxTask(
                 identifier: "7390f983-1e67-11b2-8555-63bf44e44fb8",
+                status: .ready,
                 accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
                 fullUrl: nil,
-                authoredOn: authoredOnFirstBlock,
-                expiresOn: expiresIn12DaysString,
-                author: "Dr. Dr. med. Carsten van Storchhausen",
+                authoredOn: authoredOnWeekBefore,
+                expiresOn: expiresYesterdayString,
+                acceptedUntil: expiresIn12DaysString,
+                author: "Dr. A",
                 medication: ErxTask.Medication(
-                    name: nil,
+                    name: "Med. A",
                     amount: 12,
                     dosageForm: "TAB"
                 )
             ),
+            // Gruppe 4 [8 - 9]: Redeemed by hand (scanned tasks)
             "8": ErxTask(
                 identifier: "7390f983-1e67-11b2-8555-63bf44e44f1c",
+                status: .completed,
                 accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
                 fullUrl: nil,
-                authoredOn: authoredOnYesterdayBlock,
+                authoredOn: authoredOnSixteenDaysBefore,
                 expiresOn: expiresIn12DaysString,
-                redeemedOn: redeemedOnTodayBlock,
-                author: "Dr. Dr. med. Carsten van Storchhausen",
+                redeemedOn: redeemedOnToday,
+                author: nil,
+                source: .scanner,
                 medication: ErxTask.Medication(
                     name: "Meditonsin 1",
                     amount: 12,
@@ -381,26 +404,30 @@ class MockErxTaskRepository: ErxTaskRepository {
                 )
             ),
             "9": ErxTask(
-                identifier: "7390f983-1e67-11b2-8555-63bf44e44f2d",
+                identifier: "7390f983-1e67-11b2-8555-63bf44e44f2c",
+                status: .completed,
                 accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
                 fullUrl: nil,
-                authoredOn: authoredOnYesterdayBlock,
+                authoredOn: authoredOnSixteenDaysBefore,
                 expiresOn: expiresIn12DaysString,
-                redeemedOn: redeemedOnTodayBlock,
-                author: "Dr. Dr. med. Carsten van Storchhausen",
+                redeemedOn: redeemedOnToday,
+                author: nil,
+                source: .scanner,
                 medication: ErxTask.Medication(
                     name: "Meditonsin 2",
                     amount: 12,
                     dosageForm: "TAB"
                 )
             ),
+            // Gruppe 5 [10 - 12] other author
             "10": ErxTask(
                 identifier: "7390f983-1e67-11b2-8555-63bf44e44f3c",
+                status: .ready,
                 accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e25",
                 fullUrl: nil,
-                authoredOn: authoredOnYesterdayBlock,
+                authoredOn: authoredOnSixteenDaysBefore,
                 expiresOn: expiresIn12DaysString,
-                author: nil,
+                author: "Dr. B",
                 medication: ErxTask.Medication(
                     name: "Brausepulver 1",
                     amount: 1,
@@ -412,12 +439,13 @@ class MockErxTaskRepository: ErxTaskRepository {
                 )
             ),
             "11": ErxTask(
-                identifier: "7390f983-1e67-11b2-8555-63bf44e44f3c",
+                identifier: "7390f983-1e67-11b2-8555-63bf44e44f4c",
+                status: .ready,
                 accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e25",
                 fullUrl: nil,
-                authoredOn: authoredOnYesterdayBlock,
+                authoredOn: authoredOnSixteenDaysBefore,
                 expiresOn: expiresIn12DaysString,
-                author: nil,
+                author: "Dr. B",
                 medication: ErxTask.Medication(
                     name: "Brausepulver 2",
                     amount: 1,
@@ -429,12 +457,13 @@ class MockErxTaskRepository: ErxTaskRepository {
                 )
             ),
             "12": ErxTask(
-                identifier: "7390f983-1e67-11b2-8555-63bf44e44f4c",
+                identifier: "7390f983-1e67-11b2-8555-63bf44e44f5c",
+                status: .ready,
                 accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e25",
                 fullUrl: nil,
-                authoredOn: authoredOnYesterdayBlock,
+                authoredOn: authoredOnSixteenDaysBefore,
                 expiresOn: expiresIn12DaysString,
-                author: nil,
+                author: "Dr. B",
                 medication: ErxTask.Medication(
                     name: "Brausepulver 3",
                     amount: 11,
@@ -445,13 +474,15 @@ class MockErxTaskRepository: ErxTaskRepository {
                     name: "Dr. White"
                 )
             ),
+            // Group 6 [13 -14]: Redeemed by server with medication dispenses
             "13": ErxTask(
-                identifier: "7390f983-1e67-11b2-8555-63bf44e44f5c",
+                identifier: "7390f983-1e67-11b2-8555-63bf44e44f6c",
+                status: .completed,
                 accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e25",
                 fullUrl: nil,
-                authoredOn: authoredOnYesterdayBlock,
+                authoredOn: authoredOnNinetyTwoDaysBefore,
                 expiresOn: expiresIn12DaysString,
-                author: nil,
+                author: "Dr. B",
                 medication: ErxTask.Medication(
                     name: "Brausepulver 3",
                     amount: 11,
@@ -460,15 +491,28 @@ class MockErxTaskRepository: ErxTaskRepository {
                 practitioner: ErxTask.Practitioner(
                     lanr: "987654321",
                     name: "Dr. Black"
+                ),
+                medicationDispense: ErxTask.MedicationDispense(
+                    taskId: "7390f983-1e67-11b2-8555-63bf44e44f6c",
+                    insuranceId: "ABC",
+                    pzn: "X123456",
+                    name: "Brausepulver 4",
+                    dose: "",
+                    dosageForm: "TAB",
+                    dosageInstruction: "",
+                    amount: 11,
+                    telematikId: "1234567",
+                    whenHandedOver: handedOverAWeekBefore!
                 )
             ),
             "14": ErxTask(
-                identifier: "7390f983-1e67-11b2-8555-63bf44e44f6c",
+                identifier: "7390f983-1e67-11b2-8555-63bf44e44f7c",
+                status: .completed,
                 accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e25",
                 fullUrl: nil,
-                authoredOn: authoredOnYesterdayBlock,
+                authoredOn: authoredOnNinetyTwoDaysBefore,
                 expiresOn: expiresIn12DaysString,
-                author: nil,
+                author: "Dr. B",
                 medication: ErxTask.Medication(
                     name: "Brausepulver 3",
                     amount: 11,
@@ -476,6 +520,18 @@ class MockErxTaskRepository: ErxTaskRepository {
                 ),
                 practitioner: ErxTask.Practitioner(
                     lanr: "987654322"
+                ),
+                medicationDispense: ErxTask.MedicationDispense(
+                    taskId: "7390f983-1e67-11b2-8555-63bf44e44f7c",
+                    insuranceId: "ABC",
+                    pzn: "X123456",
+                    name: "Brausepulver 3",
+                    dose: "",
+                    dosageForm: "TAB",
+                    dosageInstruction: "",
+                    amount: 11,
+                    telematikId: "1234567",
+                    whenHandedOver: handedOverAWeekBefore!
                 )
             ),
         ]

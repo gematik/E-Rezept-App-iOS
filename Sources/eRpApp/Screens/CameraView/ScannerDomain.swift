@@ -77,7 +77,7 @@ enum ScannerDomain {
             return .none
         case let .saveAndClose(scannedBatches):
             let authoredOn = environment.dateFormatter.stringWithLongUTCTimeZone(from: Date())
-            let erxTasks = scannedBatches.flatMap { $0 }.asErxTasks(with: authoredOn)
+            let erxTasks = scannedBatches.flatMap { $0 }.asErxTasks(status: .ready, with: authoredOn)
 
             return environment.repository.save(erxTasks)
                 .receive(on: environment.scheduler.main)
@@ -177,12 +177,13 @@ extension ScannerDomain.Environment {
 }
 
 extension Sequence where Element == ScannedErxTask {
-    func asErxTasks(with authoredOn: String) -> [ErxTask] {
+    func asErxTasks(status: ErxTask.Status, with authoredOn: String) -> [ErxTask] {
         var prescriptionCount = 1
         var tasks = [ErxTask]()
         for scannedTask in self {
             let task = ErxTask(
                 identifier: scannedTask.id,
+                status: status,
                 accessCode: scannedTask.accessCode,
                 authoredOn: authoredOn,
                 author: NSLocalizedString("scn_txt_author", comment: ""),

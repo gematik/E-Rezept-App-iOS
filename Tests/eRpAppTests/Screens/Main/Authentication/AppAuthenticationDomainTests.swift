@@ -34,28 +34,28 @@ final class AppAuthenticationDomainTests: XCTestCase {
     >
 
     struct MockAuthenticationProvider: AppAuthenticationProvider {
-        var authenticationOption: AppSecurityDomain.AppSecurityOption
+        var authenticationOption: AppSecurityOption
 
-        func loadAppAuthenticationOption() -> AnyPublisher<AppSecurityDomain.AppSecurityOption?, Never> {
+        func loadAppAuthenticationOption() -> AnyPublisher<AppSecurityOption?, Never> {
             Just(authenticationOption.id)
                 .map {
-                    AppSecurityDomain.AppSecurityOption(fromId: $0)
+                    AppSecurityOption(fromId: $0)
                 }
                 .eraseToAnyPublisher()
         }
     }
 
-    var appSecurityPasswordManager: MockAppSecurityPasswordManager!
+    var appSecurityPasswordManager: MockAppSecurityManager!
     var userDataStore: MockUserDataStore!
 
     override func setUp() {
         super.setUp()
 
-        appSecurityPasswordManager = MockAppSecurityPasswordManager()
+        appSecurityPasswordManager = MockAppSecurityManager()
         userDataStore = MockUserDataStore()
     }
 
-    private func testStore(for authenticationOption: AppSecurityDomain.AppSecurityOption) -> TestStore {
+    private func testStore(for authenticationOption: AppSecurityOption) -> TestStore {
         TestStore(initialState: AppAuthenticationDomain.State(),
                   reducer: AppAuthenticationDomain.reducer,
                   environment: AppAuthenticationDomain.Environment(
@@ -109,7 +109,10 @@ final class AppAuthenticationDomainTests: XCTestCase {
         }
 
         let store = TestStore(
-            initialState: AppAuthenticationDomain.State(),
+            initialState: AppAuthenticationDomain.State(
+                biometrics: nil,
+                password: AppAuthenticationPasswordDomain.State()
+            ),
             reducer: AppAuthenticationDomain.reducer,
             environment: AppAuthenticationDomain.Environment(
                 userDataStore: MockUserDataStore(),

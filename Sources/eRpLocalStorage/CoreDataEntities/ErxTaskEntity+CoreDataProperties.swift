@@ -25,11 +25,13 @@ extension ErxTaskEntity {
     }
 
     @NSManaged public var accessCode: String?
+    @NSManaged public var status: String?
     @NSManaged public var author: String?
     @NSManaged public var authoredOn: String?
     @NSManaged public var lastModified: String?
     @NSManaged public var dispenseValidityEnd: String?
     @NSManaged public var expiresOn: String?
+    @NSManaged public var acceptedUntil: String?
     @NSManaged public var form: String?
     @NSManaged public var fullUrl: String?
     @NSManaged public var identifier: String?

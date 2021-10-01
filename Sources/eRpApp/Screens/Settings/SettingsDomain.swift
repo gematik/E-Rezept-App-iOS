@@ -25,6 +25,14 @@ enum SettingsDomain {
     typealias Store = ComposableArchitecture.Store<State, Action>
     typealias Reducer = ComposableArchitecture.Reducer<State, Action, Environment>
 
+    static func cleanup<T>() -> Effect<T, Never> {
+        Effect.cancel(token: Token.self)
+    }
+
+    enum Token: CaseIterable, Hashable {
+        case updates
+    }
+
     struct State: Equatable {
         var isDemoMode: Bool
         var alertState: AlertState<Action>?
@@ -33,11 +41,11 @@ enum SettingsDomain {
         var showFOSSView = false
         var showTermsOfUseView = false
         var showDebugView = false
-        var appSecurityState =
-            AppSecurityDomain.State()
+        var appSecurityState: AppSecurityDomain.State
         var appVersion = AppVersion.current
         var trackerOptIn = false
         var showTrackerComplyView = false
+        var token: IDPToken?
     }
 
     enum Action: Equatable {
@@ -55,6 +63,7 @@ enum SettingsDomain {
         case toggleTermsOfUseView(Bool)
         case toggleDebugView(Bool)
         case appSecurity(action: AppSecurityDomain.Action)
+        case tokenReceived(IDPToken?)
         case logout
     }
 
@@ -63,6 +72,7 @@ enum SettingsDomain {
         let schedulers: Schedulers
         let tracker: Tracker
         let signatureProvider: SecureEnclaveSignatureProvider
+        let appSecurityManager: AppSecurityManager
 
         func logout() -> Effect<Never, Never> {
             // [REQ:gemSpec_IDP_Frontend:A_20499] Deletion of SSO_TOKEN, ID_TOKEN, AUTH_TOKEN
@@ -90,20 +100,31 @@ enum SettingsDomain {
                 }
                 .eraseToEffect()
         }
+
+        func subscribeToTokenUpdates() -> Effect<SettingsDomain.Action, Never> {
+            changeableUserSessionContainer.userSession.idpSession.autoRefreshedToken
+                .receive(on: schedulers.main)
+                .map(SettingsDomain.Action.tokenReceived)
+                .catch { _ in Effect.none }
+                .eraseToEffect()
+        }
     }
 
     private static let domainReducer = Reducer { state, action, environment in
         switch action {
-        // Init & Close
         case .initSettings:
-            return
+            return Effect.merge(
                 UserDefaults.standard.publisher(for: \UserDefaults.kAppTrackingAllowed)
                     .map(Action.trackerStatusReceived)
-                    .eraseToEffect()
+                    .eraseToEffect(),
+                // [REQ:gemSpec_BSI_FdV:O.Tokn_9] observe token updates
+                environment.subscribeToTokenUpdates().cancellable(id: Token.updates)
+            )
         case let .trackerStatusReceived(value):
             state.trackerOptIn = value
             return .none
         case .close:
+            state.appSecurityState.availableSecurityOptions = []
             return .none
 
         // Alert
@@ -167,7 +188,9 @@ enum SettingsDomain {
                 return DebugDomain.cleanup()
             }
             return .none
-
+        case let .tokenReceived(token):
+            state.token = token
+            return .none
         // Logout
         case .logout:
             return environment.logout().eraseToEffect().fireAndForget()
@@ -185,8 +208,7 @@ enum SettingsDomain {
             action: /SettingsDomain.Action.appSecurity(action:)
         ) {
             AppSecurityDomain.Environment(userDataStore: $0.changeableUserSessionContainer.userSession.localUserStore,
-                                          appSecurityPasswordManager: $0.changeableUserSessionContainer.userSession
-                                              .appSecurityPasswordManager,
+                                          appSecurityManager: $0.appSecurityManager,
                                           schedulers: $0.schedulers)
         }
 
@@ -211,6 +233,7 @@ extension SettingsDomain {
     enum Dummies {
         static let state = State(
             isDemoMode: false,
+            appSecurityState: AppSecurityDomain.State(availableSecurityOptions: []),
             appVersion: AppVersion(productVersion: "1.0",
                                    buildNumber: "LOCAL BUILD",
                                    buildHash: "LOCAL BUILD")
@@ -220,7 +243,8 @@ extension SettingsDomain {
             changeableUserSessionContainer: DummyUserSessionContainer(),
             schedulers: AppContainer.shared.schedulers,
             tracker: DummyTracker(),
-            signatureProvider: DummySecureEnclaveSignatureProvider()
+            signatureProvider: DummySecureEnclaveSignatureProvider(),
+            appSecurityManager: DummyAppSecurityManager()
         )
 
         static let store = Store(

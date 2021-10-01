@@ -419,24 +419,27 @@ final class GroupedPrescriptionListViewTests: XCTestCase {
 
     func testNavigateIntoLowDetailPrescriptionDetails() {
         // given
-        let erxTask = PrescriptionDetailDomain.Dummies.state.erxTask
+        let prescription = PrescriptionDetailDomain.Dummies.state.prescription
         let groupedPrescription = GroupedPrescription(
             id: "1",
             title: "Scanned Prescription",
             authoredOn: "2020-02-03",
-            prescriptions: [erxTask],
+            prescriptions: [prescription],
             displayType: GroupedPrescription.DisplayType.lowDetail
         )
         let store = testStore(groups: [groupedPrescription],
                               auditEvents: [],
                               isAuthenticated: true)
 
-        let expectedState = PrescriptionDetailDomain.State(erxTask: erxTask, isRedeemed: false)
+        let expectedState = PrescriptionDetailDomain.State(
+            prescription: prescription,
+            isArchived: false
+        )
 
         store.assert(
             // when
             .send(
-                .prescriptionDetailViewTapped(selectedPrescription: erxTask)
+                .prescriptionDetailViewTapped(selectedPrescription: prescription)
             ) {
                 // then
                 $0.selectedPrescriptionDetailState = expectedState

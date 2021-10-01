@@ -25,6 +25,11 @@ cardWall:
     - cdw_btn_order_egk_mail
     - cdw_btn_order_egk_scan_kvnr
     - cdw_btn_order_egk_scan_kvnr_confirm
+  orderEGKInfo:
+    - cdw_txt_order_egk_info_headline
+    - cdw_btn_order_egk_info
+    - cdw_txt_order_egk_textblock
+    - cdw_btn_order_egk_close
   notForYou:
     - cdw_btn_nfu_done
     - cdw_btn_nfu_cancel
@@ -108,6 +113,7 @@ settings:
     - stg_txt_security_touchid
     - stg_txt_security_unsecured
     - stg_txt_security_password
+    - stg_txt_security_tokens
   createPassword:
     - cpw_btn_save
     - cpw_btn_update
@@ -140,6 +146,9 @@ settings:
     - stg_trk_txt_footnote
     - stg_trk_btn_yes
     - stg_trk_btn_no
+  tokens:
+    - stg_tkn_txt_access_token
+    - stg_tkn_txt_sso_token
 redeem:
   overview:
     - rdm_txt_pharmacy_title

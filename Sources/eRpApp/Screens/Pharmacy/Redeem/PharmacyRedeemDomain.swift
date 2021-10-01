@@ -186,7 +186,7 @@ extension PharmacyRedeemDomain {
 
         static let state = State(
             redeemOption: .onPremise,
-            erxTasks: ErxTask.Dummies.prescriptions,
+            erxTasks: ErxTask.Dummies.erxTasks,
             pharmacy: pharmacy
         )
         static let environment = Environment(

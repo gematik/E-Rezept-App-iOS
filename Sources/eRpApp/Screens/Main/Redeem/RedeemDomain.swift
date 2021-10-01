@@ -38,7 +38,7 @@ enum RedeemDomain {
         var pharmacySearchState: PharmacySearchDomain.State?
         var prescriptionsAreAllFullDetail: Bool {
             groupedPrescription.prescriptions.allSatisfy {
-                $0.source == ErxTask.Source.server
+                $0.erxTask.source == ErxTask.Source.server
             }
         }
     }
@@ -94,7 +94,7 @@ enum RedeemDomain {
                 showLocationHint = false
             }
             state.pharmacySearchState = PharmacySearchDomain.State(
-                erxTasks: state.groupedPrescription.prescriptions,
+                erxTasks: state.groupedPrescription.prescriptions.map(\.erxTask),
                 locationHintState: showLocationHint
             )
             return .none

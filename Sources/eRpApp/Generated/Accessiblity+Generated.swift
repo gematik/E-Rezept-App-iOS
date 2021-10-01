@@ -74,6 +74,12 @@ internal enum A11y {
       static let cdwBtnOrderEgkScanKvnr = "cdw_btn_order_egk_scan_kvnr"
       static let cdwBtnOrderEgkScanKvnrConfirm = "cdw_btn_order_egk_scan_kvnr_confirm"
   }
+    internal enum orderEGKInfo {
+      static let cdwTxtOrderEgkInfoHeadline = "cdw_txt_order_egk_info_headline"
+      static let cdwBtnOrderEgkInfo = "cdw_btn_order_egk_info"
+      static let cdwTxtOrderEgkTextblock = "cdw_txt_order_egk_textblock"
+      static let cdwBtnOrderEgkClose = "cdw_btn_order_egk_close"
+  }
     internal enum pinInput {
       static let cdwTxtPinSubtitle = "cdw_txt_pin_subtitle"
       static let cdwBtnPinCancel = "cdw_btn_pin_cancel"
@@ -249,9 +255,14 @@ internal enum A11y {
       static let stgTxtSecurityTouchid = "stg_txt_security_touchid"
       static let stgTxtSecurityUnsecured = "stg_txt_security_unsecured"
       static let stgTxtSecurityPassword = "stg_txt_security_password"
+      static let stgTxtSecurityTokens = "stg_txt_security_tokens"
   }
     internal enum termsOfUse {
       static let stgTouTxtTermsOfUse = "stg_tou_txt_terms_of_use"
+  }
+    internal enum tokens {
+      static let stgTknTxtAccessToken = "stg_tkn_txt_access_token"
+      static let stgTknTxtSsoToken = "stg_tkn_txt_sso_token"
   }
     internal enum tracking {
       static let stgTrkTxtTitle = "stg_trk_txt_title"

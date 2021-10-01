@@ -337,23 +337,23 @@ extension PharmacySearchDomain {
             }
 
         static let stateEmpty = State(
-            erxTasks: [ErxTask.Dummies.prescription],
+            erxTasks: [ErxTask.Dummies.erxTaskReady],
             searchText: "Apothekesdfwerwerasdf",
             pharmacies: []
         )
         static let stateSearchRunning = State(
-            erxTasks: [ErxTask.Dummies.prescription],
+            erxTasks: [ErxTask.Dummies.erxTaskReady],
             searchText: "Apotheke",
             pharmacies: [],
             searchState: .searchRunning
         )
         static let stateSearchTermInsufficient = State(
-            erxTasks: [ErxTask.Dummies.prescription],
+            erxTasks: [ErxTask.Dummies.erxTaskReady],
             searchText: "Ap",
             pharmacies: []
         )
         static let stateFilterItems = State(
-            erxTasks: [ErxTask.Dummies.prescription],
+            erxTasks: [ErxTask.Dummies.erxTaskReady],
             pharmacies: [],
             pharmacyFilterOptions: [
                 PharmacySearchFilterDomain.PharmacyFilterOption.messenger,
@@ -361,7 +361,7 @@ extension PharmacySearchDomain {
             ]
         )
         static let state = State(
-            erxTasks: [ErxTask.Dummies.prescription],
+            erxTasks: [ErxTask.Dummies.erxTaskReady],
             searchText: "Apotheke",
             pharmacies: pharmaciesLocationViewModel,
             searchState: .searchResultOk(pharmaciesLocationViewModel)

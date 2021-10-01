@@ -209,7 +209,7 @@ extension PharmacyDetailDomain {
             pharmacy: PharmacyLocation.Dummies.pharmacyInactive
         )
 
-        static let prescriptions = ErxTask.Dummies.prescriptions
+        static let prescriptions = ErxTask.Dummies.erxTasks
 
         static let state = State(
             erxTasks: prescriptions,

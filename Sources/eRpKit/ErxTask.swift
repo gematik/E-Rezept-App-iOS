@@ -23,11 +23,13 @@ public struct ErxTask: Identifiable, Hashable {
     /// ErxTask default initializer
     public init(
         identifier: String,
+        status: Status,
         accessCode: String? = nil,
         fullUrl: String? = nil,
         authoredOn: String? = nil,
         lastModified: String? = nil,
         expiresOn: String? = nil,
+        acceptedUntil: String? = nil,
         redeemedOn: String? = nil,
         author: String? = nil,
         dispenseValidityEnd: String? = nil,
@@ -45,12 +47,14 @@ public struct ErxTask: Identifiable, Hashable {
         medicationDispense: MedicationDispense? = nil
     ) {
         self.identifier = identifier
+        self.status = status
         self.prescriptionId = prescriptionId
         self.accessCode = accessCode
         self.fullUrl = fullUrl
         self.authoredOn = authoredOn
         self.lastModified = lastModified
         self.expiresOn = expiresOn
+        self.acceptedUntil = acceptedUntil
         self.redeemedOn = redeemedOn
         self.author = author
         self.noctuFeeWaiver = noctuFeeWaiver
@@ -74,6 +78,8 @@ public struct ErxTask: Identifiable, Hashable {
 
     /// Idenditifer of the task
     public let identifier: String
+    /// Status of the current task
+    public var status: Status
     /// Prescription Id of the task
     public let prescriptionId: String?
     /// Access code authorizing for the task
@@ -89,6 +95,9 @@ public struct ErxTask: Identifiable, Hashable {
     public let lastModified: String?
     /// When the prescription will be expired
     public let expiresOn: String?
+    /// Date until which a prescription can be redeemed in the pharmacy without paying
+    /// the entire prescription. Note that `acceptDate <= expireDate`
+    public let acceptedUntil: String?
     /// When the prescription was redeemed (only for scanned tasks)
     public var redeemedOn: String?
     /// Practitioner who authored the prescription
@@ -117,9 +126,38 @@ public struct ErxTask: Identifiable, Hashable {
     public let communications: [Communication]
     /// The actual medication dispense
     public let medicationDispense: MedicationDispense?
+
+    /// Changes status of `ErxTask` and updates the manual changed `redeemedOn` property
+    /// Use this method only for scanned `ErxTask`s that have been manually redeemed by the user
+    /// - Parameter redeemedOn: Date string when the `ErxTask` has been redeemed.
+    ///                         Pass `nil` to reset the redeem status
+    public mutating func update(with redeemedOn: String?) {
+        if let redeemedOn = redeemedOn {
+            self.redeemedOn = redeemedOn
+            status = .completed
+        } else {
+            self.redeemedOn = nil
+            status = .ready
+        }
+    }
 }
 
 extension ErxTask {
+    /// All defined states of a task (see `gemSysL_eRp` chapter 2.4.6 "Konzept Status E-Rezept")
+    public enum Status: String {
+        /// The task has been initialized but  is not yet ready to be acted upon.
+        case draft
+        /// The task is ready (open) to be performed, but no action has yet been taken.
+        case ready
+        /// The task has been started by a pharmacy but is not yet complete.
+        /// If the task is in this state it is blocked for any operation (e.g. redeem or delete)
+        case inProgress = "in-progress"
+        /// The task was not completed and has been deleted.
+        case cancelled
+        /// The task has been completed which means it has been accepted by a pharmacy
+        case completed
+    }
+
     public enum Source: String, Codable {
         case scanner
         case server

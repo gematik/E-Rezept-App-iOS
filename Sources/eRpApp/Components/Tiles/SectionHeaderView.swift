@@ -18,7 +18,7 @@
 
 import SwiftUI
 
-struct SectionView: View {
+struct SectionHeaderView: View {
     let text: LocalizedStringKey
     let a11y: String
 
@@ -26,6 +26,7 @@ struct SectionView: View {
         HStack {
             Text(text)
                 .font(Font.headline.weight(Font.Weight.bold))
+                .foregroundColor(Colors.systemLabel)
                 .multilineTextAlignment(.leading)
                 .accessibility(identifier: a11y)
                 .padding([.top, .trailing])
@@ -39,13 +40,13 @@ struct SectionView_Previews: PreviewProvider {
         Group {
             VStack {
                 Spacer()
-                SectionView(text: "Peter picked a peck of pickled peppers", a11y: "dummy_a11y_a")
+                SectionHeaderView(text: "Peter picked a peck of pickled peppers", a11y: "dummy_a11y_a")
                 Spacer()
             }
             .background(Color.purple)
             VStack {
                 Spacer()
-                SectionView(text: "Peter picked a peck of pickled peppers", a11y: "dummy_a11y_b")
+                SectionHeaderView(text: "Peter picked a peck of pickled peppers", a11y: "dummy_a11y_b")
                 Spacer()
             }
             .preferredColorScheme(.dark)

@@ -32,7 +32,7 @@ enum AppAuthenticationDomain {
 
     enum Action: Equatable {
         case loadAppAuthenticationOption
-        case loadAppAuthenticationOptionResponse(AppSecurityDomain.AppSecurityOption?)
+        case loadAppAuthenticationOptionResponse(AppSecurityOption?)
 
         case biometrics(action: AppAuthenticationBiometricsDomain.Action)
         case password(action: AppAuthenticationPasswordDomain.Action)
@@ -41,7 +41,7 @@ enum AppAuthenticationDomain {
     struct Environment {
         let schedulers: Schedulers
         var appAuthenticationProvider: AppAuthenticationProvider
-        var appSecurityPasswordManager: AppSecurityPasswordManager
+        var appSecurityPasswordManager: AppSecurityManager
         var didCompleteAuthentication: (() -> Void)?
 
         private let userDataStore: UserDataStore
@@ -49,7 +49,7 @@ enum AppAuthenticationDomain {
         init(userDataStore: UserDataStore,
              schedulers: Schedulers,
              appAuthenticationProvider: AppAuthenticationProvider,
-             appSecurityPasswordManager: AppSecurityPasswordManager,
+             appSecurityPasswordManager: AppSecurityManager,
              didCompleteAuthentication: (() -> Void)? = nil) {
             self.userDataStore = userDataStore
             self.schedulers = schedulers
@@ -147,11 +147,11 @@ extension AppAuthenticationDomain {
             self.userDataStore = userDataStore
         }
 
-        func loadAppAuthenticationOption() -> AnyPublisher<AppSecurityDomain.AppSecurityOption?, Never> {
+        func loadAppAuthenticationOption() -> AnyPublisher<AppSecurityOption?, Never> {
             userDataStore
                 .appSecurityOption
                 .map {
-                    AppSecurityDomain.AppSecurityOption(fromId: $0)
+                    AppSecurityOption(fromId: $0)
                 }
                 .eraseToAnyPublisher()
         }
@@ -169,7 +169,7 @@ extension AppAuthenticationDomain {
             AppAuthenticationDomain.DefaultAuthenticationProvider(
                 userDataStore: DemoSessionContainer().localUserStore
             ),
-            appSecurityPasswordManager: DummyAppSecurityPasswordManager()
+            appSecurityPasswordManager: DummyAppSecurityManager()
         )
 
         static let store = Store(
@@ -189,5 +189,5 @@ extension AppAuthenticationDomain {
 }
 
 protocol AppAuthenticationProvider {
-    func loadAppAuthenticationOption() -> AnyPublisher<AppSecurityDomain.AppSecurityOption?, Never>
+    func loadAppAuthenticationOption() -> AnyPublisher<AppSecurityOption?, Never>
 }

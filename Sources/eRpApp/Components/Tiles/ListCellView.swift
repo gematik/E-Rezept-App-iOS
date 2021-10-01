@@ -22,25 +22,18 @@ struct ListCellView: View {
     @ScaledMetric var iconSize: CGFloat = 22
     var sfSymbolName: String
     var text: LocalizedStringKey
-    let accessibility: String
 
     var body: some View {
-        HStack {
+        HStack(spacing: 16) {
             Image(systemName: sfSymbolName)
                 .foregroundColor(Colors.primary500)
                 .frame(width: iconSize)
-                .font(Font.title.weight(.semibold))
-                .padding()
+                .font(Font.body.weight(.semibold))
             Text(text)
                 .foregroundColor(Colors.systemLabel)
             Spacer()
-            Image(systemName: SFSymbolName.rightDisclosureIndicator)
-                .foregroundColor(Colors.systemLabelTertiary)
-                .padding()
         }
         .frame(maxWidth: .infinity, minHeight: 50)
-        .background(Colors.systemBackgroundTertiary)
-        .accessibility(identifier: accessibility)
     }
 }
 
@@ -48,8 +41,7 @@ struct ListCellView_Previews: PreviewProvider {
     static var previews: some View {
         ListCellView(
             sfSymbolName: SFSymbolName.info,
-            text: L10n.stgLnoTxtLegalNotice,
-            accessibility: A18n.settings.legalNotice.stgLnoTxtLegalNotice
+            text: L10n.stgLnoTxtLegalNotice
         )
     }
 }

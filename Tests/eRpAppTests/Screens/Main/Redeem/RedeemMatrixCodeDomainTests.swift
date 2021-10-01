@@ -45,8 +45,8 @@ final class RedeemMatrixCodeDomainTests: XCTestCase {
                 id: "1",
                 title: "Test-Prescription",
                 authoredOn: "1.1.2021",
-                isRedeemed: false,
-                prescriptions: [ErxTask.Dummies.prescriptionRedeemed],
+                isArchived: false,
+                prescriptions: [GroupedPrescription.Prescription(erxTask: ErxTask.Dummies.erxTaskRedeemed)],
                 displayType: GroupedPrescription.DisplayType.fullDetail
             )
         )
@@ -76,7 +76,7 @@ final class RedeemMatrixCodeDomainTests: XCTestCase {
     func generateMockDMCImage() -> UIImage {
         var generatedImage: UIImage?
         _ = mockDMCGenerator.publishedMatrixCode(
-            for: RedeemMatrixCodeDomain.Dummies.state.groupedPrescription.prescriptions,
+            for: RedeemMatrixCodeDomain.Dummies.state.groupedPrescription.prescriptions.map(\.erxTask),
             with: CGSize(width: 400, height: 800)
         )
         .sink(

@@ -92,6 +92,7 @@ final class RedeemDomainTests: XCTestCase {
         )
         erxTask = ErxTask(
             identifier: "2390f983-1e67-11b2-8555-63bf44e44fb8",
+            status: .ready,
             accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
             fullUrl: nil,
             authoredOn: DemoDate.createDemoDate(.today),
@@ -110,7 +111,7 @@ final class RedeemDomainTests: XCTestCase {
             id: "1",
             title: "Test-Grouped-Prescription",
             authoredOn: DemoDate.createDemoDate(.today)!,
-            prescriptions: [erxTask],
+            prescriptions: [GroupedPrescription.Prescription(erxTask: erxTask)],
             displayType: GroupedPrescription.DisplayType.fullDetail
         )
         state = RedeemDomain.State(

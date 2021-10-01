@@ -112,6 +112,14 @@
 "cdw_txt_nfu_title" = "Oturum açma";
 "cdw_txt_order_egk_desription" = "Die Gesundheitskarte und die zugehörige PIN erhalten Sie kostenfrei von Ihrer Krankenversicherung. Der Antrag kann formlos und per Mail gestellt werden.";
 "cdw_txt_order_egk_headline" = "Neue Gesundheitskarte beantragen";
+"cdw_txt_order_egk_info_button" = "So erkennen Sie eine NFC-fähige Gesundheitskarte";
+"cdw_txt_order_egk_info_footnote" = "Sollten Sie bereits über eine Gesundheitskarte mit NFC-Funktion verfügen, müssen Sie lediglich die Zusendung einer PIN beantragen.";
+"cdw_txt_order_egk_info_headline" = "Gesundheitskarte mit NFC & PIN beantragen";
+"cdw_txt_order_egk_info_link" = "https://www.das-e-rezept-fuer-deutschland.de/fragen-antworten/woran-erkenne-ich-ob-ich-eine-nfc-faehige-gesundheitskarte-habe#c204";
+"cdw_txt_order_egk_info_text_1" = "Um sich in dieser App anmelden zu können, benötigen Sie";
+"cdw_txt_order_egk_info_text_2" = "eine NFC-fähige Gesundheitskarte, sowie";
+"cdw_txt_order_egk_info_text_3" = "die zugehörige PIN.";
+"cdw_txt_order_egk_info_text_4" = "Diese erhalten Sie kostenfrei von Ihrer Krankenversicherung.";
 "cdw_txt_order_egk_kv_placeholder" = "Krankenversicherung wählen";
 "cdw_txt_order_egk_kv_subheadline" = "Krankenkasse";
 "cdw_txt_order_egk_kvnr_placeholder" = "Versichtertennummer";
@@ -186,8 +194,7 @@
 "dtl_txt_hint_overview_title" = "Genel bakış elde edin";
 "dtl_txt_med_info" = "Teknik bilgiler";
 "dtl_txt_med_protocol" = "Protokol";
-"dtl_txt_med_redeemable_until" = "Şu tarihe kadar kullanılabilir";
-"dtl_txt_med_redeemed_on" = "Eingelöst:";
+"dtl_txt_med_redeemed_on_%@" = "Eingelöst: %@";
 "dtl_txt_scanned_on" = "Şu tarihte tarandı";
 "dtl_txt_task_id" = "Task-ID";
 "dtl_txt_title" = "Ayrıntılar";
@@ -196,6 +203,7 @@
 "erx_btn_scn_prescription" = "Reçete tarayıcıyı aç";
 "erx_btn_show_settings" = "Ayarları aç";
 "erx_title" = "Reçeteler";
+"erx_txt_accepted_until" = "This is a plural string handled by Localizable.stringdict!";
 "erx_txt_current" = "Güncel";
 "erx_txt_expires_in" = "This is a plural string handled by Localizable.stringdict!";
 "erx_txt_medication_placeholder" = "Bilinmeyen ilaç";
@@ -521,6 +529,7 @@
 "msgs_txt_title" = "Messages";
 "nav_back" = "Geri";
 "nav_cancel" = "İptal et";
+"nav_close" = "Schließen";
 "nav_done" = "Hazır";
 "onb_btn_lets_start" = "İleri";
 "onb_btn_lets_start_hint" = "İleri";
@@ -713,6 +722,11 @@
 "stg_lno_txt_title_note" = "Not";
 "stg_lno_txt_title_responsible" = "İçerikten sorumlu";
 "stg_lno_you_know_us" = "Deutschlands moderne Plattform für digitale Medizin";
+"stg_tkn_txt_access_token" = "Access Token";
+"stg_tkn_txt_copy_to_clipboard" = "Token in Zwischenablage kopiert";
+"stg_tkn_txt_sso_token" = "SSO Token";
+"stg_tkn_txt_title_tokens" = "Tokens";
+"stg_tkn_txt_not_available" = "Nicht vorhanden";
 "stg_trk_btn_alert_no" = "Reddet";
 "stg_trk_btn_alert_yes" = "Onayla";
 "stg_trk_btn_title" = "Anonim analize izin ver";
@@ -736,6 +750,7 @@
 "stg_txt_security_option_password_title" = "Kennwort";
 "stg_txt_security_option_touchid_title" = "Touch ID";
 "stg_txt_security_option_unsecured_title" = "Yedekleme olmadan";
+"stg_txt_security_tokens" = "Tokens anzeigen";
 "stg_txt_security_warning" = "Bu uygulama henüz güvenli hale getirilmedi. Parmak izi veya yüz taraması ile verilerinizin korumasını iyileştirin.";
 "stg_txt_title" = "Ayarlar";
 "stg_txt_version_%@_and_build_%@" = "Sürüm %@ • Yapı %@";

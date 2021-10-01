@@ -39,19 +39,18 @@ struct PrescriptionLowDetailView: View {
                     .border(Colors.systemGray3, cornerRadius: 16)
                     .padding()
 
-                MedicationNameView(medicationText: viewStore.state.erxTask.medicationName,
-                                   expirationDate: uiFormattedDate(dateString: viewStore.state.erxTask.expiresOn),
-                                   redeemedOnDate: uiFormattedDate(dateString: viewStore.state.erxTask.redeemedOn))
+                MedicationNameView(medicationText: viewStore.state.prescription.actualMedication?.name,
+                                   dateString: viewStore.state.prescription.statusMessage)
 
                 MedicationRedeemView(
-                    text: viewStore.state.isRedeemed ? L10n.dtlBtnToogleMarkedRedeemed : L10n.dtlBtnToogleMarkRedeemed,
+                    text: viewStore.state.isArchived ? L10n.dtlBtnToogleMarkedRedeemed : L10n.dtlBtnToogleMarkRedeemed,
                     a11y: A11y.prescriptionDetails.prscDtlBtnToggleRedeem,
-                    isEnabled: viewStore.state.isRedeemed
+                    isEnabled: viewStore.state.isArchived
                 ) {
                     viewStore.send(.toggleRedeemPrescription)
                 }
 
-                if !viewStore.state.erxTask.isRedeemed {
+                if !viewStore.state.prescription.isArchived {
                     HintView<PrescriptionDetailDomain.Action>(
                         hint: Hint(id: A11y.prescriptionDetails.prscDtlHntKeepOverview,
                                    title: NSLocalizedString("dtl_txt_hint_overview_title", comment: ""),
@@ -70,18 +69,18 @@ struct PrescriptionLowDetailView: View {
                 }
 
                 MedicationProtocolView(
-                    protocolEvents: [(uiFormattedDate(dateString: viewStore.state.erxTask.authoredOn),
+                    protocolEvents: [(uiFormattedDate(dateString: viewStore.state.prescription.authoredOn),
                                       NSLocalizedString("dtl_txt_scanned_on", comment: ""))],
-                    lastUpdated: uiFormattedDate(dateString: viewStore.state.erxTask.redeemedOn)
+                    lastUpdated: uiFormattedDate(dateString: viewStore.state.prescription.redeemedOn)
                 )
 
                 MedicationInfoView(codeInfos: [
                     MedicationInfoView.CodeInfo(
-                        code: viewStore.state.erxTask.accessCode,
+                        code: viewStore.state.prescription.accessCode,
                         codeTitle: L10n.dtlTxtAccessCode
                     ),
                     MedicationInfoView.CodeInfo(
-                        code: viewStore.state.erxTask.id,
+                        code: viewStore.state.prescription.id,
                         codeTitle: L10n.dtlTxtTaskId
                     ),
                 ])

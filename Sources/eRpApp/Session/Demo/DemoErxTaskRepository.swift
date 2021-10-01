@@ -104,7 +104,7 @@ class DemoErxTaskRepository: ErxTaskRepository {
     }
 
     private lazy var store: Set<ErxTask> = {
-        Set(ErxTask.Dummies.prescriptions)
+        Set(ErxTask.Dummies.erxTasks)
     }()
 
     /// Demo data is loaded in iterations. With every refresh a next chunk is loaded.

@@ -27,7 +27,7 @@ struct CardWallIntroductionView: View {
     var body: some View {
         WithViewStore(store) { viewStore in
             VStack(alignment: .leading, spacing: 0) {
-                InformationBlockView()
+                InformationBlockView(store: store)
 
                 Spacer(minLength: 0)
 
@@ -66,67 +66,76 @@ extension CardWallIntroductionView {
     // MARK: - screen related views
 
     private struct InformationBlockView: View {
+        let store: CardWallIntroductionDomain.Store
         var body: some View {
-            ScrollView(.vertical, showsIndicators: true) {
-                VStack(alignment: .leading) {
-                    Image(Asset.CardWall.cardwallInitial)
-                        .resizable()
-                        .scaledToFit()
-                        .background(RoundedCorner(radius: 16, corners: [.bottomLeft, .bottomRight])
-                            .foregroundColor(Colors.primary100))
-                        .accessibility(identifier: A11y.cardWall.intro.cdwImgIntroMain)
-                        .accessibility(label: Text(L10n.cdwImgIntroMainLabel))
-                        .padding(.bottom, 8)
+            WithViewStore(store) { viewStore in
+                ScrollView(.vertical, showsIndicators: true) {
+                    VStack(alignment: .leading) {
+                        Image(Asset.CardWall.cardwallInitial)
+                            .resizable()
+                            .scaledToFit()
+                            .background(RoundedCorner(radius: 16, corners: [.bottomLeft, .bottomRight])
+                                .foregroundColor(Colors.primary100))
+                            .accessibility(identifier: A11y.cardWall.intro.cdwImgIntroMain)
+                            .accessibility(label: Text(L10n.cdwImgIntroMainLabel))
+                            .padding(.bottom, 8)
 
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text(L10n.cdwTxtIntroHeaderBottom)
-                            .foregroundColor(Colors.systemLabel)
-                            .font(.title3)
-                            .bold()
-                            .accessibility(identifier: A11y.cardWall.intro.cdwTxtIntroHeaderBottom)
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text(L10n.cdwTxtIntroHeaderBottom)
+                                .foregroundColor(Colors.systemLabel)
+                                .font(.title3)
+                                .bold()
+                                .accessibility(identifier: A11y.cardWall.intro.cdwTxtIntroHeaderBottom)
 
-                        Text(L10n.cdwTxtIntroDescription)
-                            .font(.body)
-                            .foregroundColor(Colors.systemLabel)
-                            .accessibility(identifier: A11y.cardWall.intro.cdwTxtIntroDescription)
+                            Text(L10n.cdwTxtIntroDescription)
+                                .font(.body)
+                                .foregroundColor(Colors.systemLabel)
+                                .accessibility(identifier: A11y.cardWall.intro.cdwTxtIntroDescription)
 
-                        NavigationLink(destination: CardWallEGKOrderHelpView()) {
-                            Text(L10n.cdwBtnIntroMore)
-                        }
-                        .accessibility(identifier: A11y.cardWall.intro.cdwBtnIntroMore)
+                            Button(L10n.cdwBtnIntroMore) {
+                                viewStore.send(.showEGKOrderInfoView)
+                            }
+                            .foregroundColor(Colors.primary)
+                            .accessibility(identifier: A11y.cardWall.intro.cdwBtnIntroMore)
 
-                        // Work around navigation bug when only one Navigation link is present
-                        NavigationLink(destination: EmptyView()) {
                             EmptyView()
-                        }.hidden()
-                    }.padding()
+                                .sheet(isPresented: viewStore.binding(
+                                    get: \.isEGKOrderInfoViewPresented,
+                                    send: CardWallIntroductionDomain.Action.dismissEGKOrderInfoView
+                                )) {
+                                    CardWallEGKOrderInfoView {
+                                        viewStore.send(.dismissEGKOrderInfoView)
+                                    }
+                                }
+                        }.padding()
 
-                    VStack(alignment: .leading, spacing: 16) {
-                        Text(L10n.cdwTxtIntroListTitle)
-                            .font(Font.body.weight(.semibold))
-                            .accessibility(identifier: A11y.cardWall.intro.cdwTxtIntroListTitle)
-                        HStack(alignment: .top, spacing: 16) {
-                            Image(systemName: SFSymbolName.checkmarkCircleFill)
-                                .font(Font.title3.bold())
-                                .foregroundColor(Colors.secondary600)
-                            Text(L10n.cdwTxtIntroRequirementCard)
-                                .accessibility(identifier: A11y.cardWall.intro.cdwTxtIntroRequirementCard)
-                        }
-                        HStack(alignment: .top, spacing: 16) {
-                            Image(systemName: SFSymbolName.checkmarkCircleFill)
-                                .font(Font.title3.bold())
-                                .foregroundColor(Colors.secondary600)
-                            Text(L10n.cdwTxtIntroRequirementPin)
-                                .accessibility(identifier: A11y.cardWall.intro.cdwTxtIntroRequirementPin)
-                        }
-                        HStack(alignment: .top, spacing: 16) {
-                            Image(systemName: SFSymbolName.checkmarkCircleFill)
-                                .font(Font.title3.bold())
-                                .foregroundColor(Colors.secondary600)
-                            Text(L10n.cdwTxtIntroRequirementPhone)
-                                .accessibility(identifier: A11y.cardWall.intro.cdwTxtIntroRequirementPhone)
-                        }
-                    }.padding(.horizontal)
+                        VStack(alignment: .leading, spacing: 16) {
+                            Text(L10n.cdwTxtIntroListTitle)
+                                .font(Font.body.weight(.semibold))
+                                .accessibility(identifier: A11y.cardWall.intro.cdwTxtIntroListTitle)
+                            HStack(alignment: .top, spacing: 16) {
+                                Image(systemName: SFSymbolName.checkmarkCircleFill)
+                                    .font(Font.title3.bold())
+                                    .foregroundColor(Colors.secondary600)
+                                Text(L10n.cdwTxtIntroRequirementCard)
+                                    .accessibility(identifier: A11y.cardWall.intro.cdwTxtIntroRequirementCard)
+                            }
+                            HStack(alignment: .top, spacing: 16) {
+                                Image(systemName: SFSymbolName.checkmarkCircleFill)
+                                    .font(Font.title3.bold())
+                                    .foregroundColor(Colors.secondary600)
+                                Text(L10n.cdwTxtIntroRequirementPin)
+                                    .accessibility(identifier: A11y.cardWall.intro.cdwTxtIntroRequirementPin)
+                            }
+                            HStack(alignment: .top, spacing: 16) {
+                                Image(systemName: SFSymbolName.checkmarkCircleFill)
+                                    .font(Font.title3.bold())
+                                    .foregroundColor(Colors.secondary600)
+                                Text(L10n.cdwTxtIntroRequirementPhone)
+                                    .accessibility(identifier: A11y.cardWall.intro.cdwTxtIntroRequirementPhone)
+                            }
+                        }.padding(.horizontal)
+                    }
                 }
             }
         }

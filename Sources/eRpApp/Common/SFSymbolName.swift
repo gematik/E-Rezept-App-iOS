@@ -64,6 +64,7 @@ struct SFSymbolName {
     static let map = "map"
     static let arrowUpForward = "arrow.up.forward"
     static let house = "house"
+    static let key = "key"
 
     static let numbers1circle = "1.circle"
     static let numbers2circle = "2.circle"
@@ -92,4 +93,8 @@ struct SFSymbolName {
     static let rectangleAndPencilAndEllipsis = "rectangle.and.pencil.and.ellipsis"
     static let eye = "eye"
     static let eyeSlash = "eye.slash"
+}
+
+enum UnicodeCharacter {
+    static let bullet = "\u{2022}"
 }

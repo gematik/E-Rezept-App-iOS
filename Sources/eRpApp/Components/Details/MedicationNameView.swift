@@ -20,8 +20,7 @@ import SwiftUI
 
 struct MedicationNameView: View {
     let medicationText: String?
-    let expirationDate: String?
-    let redeemedOnDate: String?
+    let dateString: String?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
@@ -30,21 +29,11 @@ struct MedicationNameView: View {
                 a11y: medicationText ?? ""
             )
             .fixedSize(horizontal: false, vertical: true)
-
             .padding([.top, .horizontal])
 
             HStack {
-                if redeemedOnDate != nil {
-                    Text(L10n.dtlTxtMedRedeemedOn)
-                        + Text(" ")
-                        + Text(redeemedOnDate ?? NSLocalizedString("prsc_fd_txt_na", comment: ""))
-                    Spacer()
-                } else if expirationDate != nil {
-                    Text(L10n.dtlTxtMedRedeemableUntil)
-                        + Text(" ")
-                        + Text(expirationDate ?? NSLocalizedString("prsc_fd_txt_na", comment: ""))
-                    Spacer()
-                }
+                Text(dateString ?? NSLocalizedString("prsc_fd_txt_na", comment: ""))
+                Spacer()
             }
             .font(Font.subheadline)
             .padding([.bottom, .horizontal])
@@ -56,7 +45,6 @@ struct MedicationNameView: View {
 struct MedicationNameView_Previews: PreviewProvider {
     static var previews: some View {
         MedicationNameView(medicationText: "Medication 3",
-                           expirationDate: "Noch einlösbar bis zum 16.01.2021",
-                           redeemedOnDate: nil)
+                           dateString: "Noch einlösbar bis zum 16.01.2021")
     }
 }

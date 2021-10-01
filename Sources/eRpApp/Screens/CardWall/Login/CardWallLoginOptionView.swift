@@ -51,6 +51,7 @@ struct CardWallLoginOptionView: View {
                         )
                         .animation()
                     )
+                    .padding(.horizontal)
                     .border(Colors.systemGray5, cornerRadius: 16)
 
                     SelectionCell(
@@ -64,6 +65,7 @@ struct CardWallLoginOptionView: View {
                         )
                         .animation()
                     )
+                    .padding(.horizontal)
                     .border(Colors.systemGray5, cornerRadius: 16)
                 }
                 .padding()

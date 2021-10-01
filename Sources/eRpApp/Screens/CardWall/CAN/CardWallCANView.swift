@@ -113,28 +113,31 @@ struct CardWallCANView: View {
                             .accessibility(identifier: A11y.cardWall.canInput.cdwTxtCanInstruction)
                             .padding(.horizontal)
 
-                        NavigationLink(destination: CardWallEGKOrderHelpView()) {
-                            HintView<CardWallCANDomain.Action>(
-                                hint: Hint(id: A11y.cardWall.canInput.cdwBtnCanMore,
-                                           title: NSLocalizedString("cdw_hint_can_order_egk_title", comment: ""),
-                                           message: NSLocalizedString("cdw_hint_can_order_egk_message", comment: ""),
-                                           actionText: L10n.cdwHintCanOrderEgkBtn,
-                                           action: nil,
-                                           imageName: Asset.CardWall.apothekerin2.name,
-                                           closeAction: nil,
-                                           style: .neutral,
-                                           buttonStyle: .tertiary,
-                                           imageStyle: .bottomAligned),
-                                textAction: nil,
-                                closeAction: nil
-                            )
-                            .padding()
-                        }
+                        EmptyView()
+                            .sheet(isPresented: viewStore.binding(
+                                get: \.isEGKOrderInfoViewPresented,
+                                send: CardWallCANDomain.Action.dismissEGKOrderInfoView
+                            )) {
+                                CardWallEGKOrderInfoView {
+                                    viewStore.send(.dismissEGKOrderInfoView)
+                                }
+                            }
 
-                        // Work around navigation bug when only one/two Navigation link are present
-                        NavigationLink(destination: EmptyView()) {
-                            EmptyView()
-                        }.hidden()
+                        HintView<CardWallCANDomain.Action>(
+                            hint: Hint(id: A11y.cardWall.canInput.cdwBtnCanMore,
+                                       title: NSLocalizedString("cdw_hint_can_order_egk_title", comment: ""),
+                                       message: NSLocalizedString("cdw_hint_can_order_egk_message", comment: ""),
+                                       actionText: L10n.cdwHintCanOrderEgkBtn,
+                                       action: CardWallCANDomain.Action.showEGKOrderInfoView,
+                                       imageName: Asset.CardWall.apothekerin2.name,
+                                       closeAction: nil,
+                                       style: .neutral,
+                                       buttonStyle: .tertiary,
+                                       imageStyle: .bottomAligned),
+                            textAction: { viewStore.send(.showEGKOrderInfoView) },
+                            closeAction: nil
+                        )
+                        .padding()
                     }
                 }.respectKeyboardInsets()
             }

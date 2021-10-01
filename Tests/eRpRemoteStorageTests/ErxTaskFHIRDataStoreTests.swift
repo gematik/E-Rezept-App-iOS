@@ -62,12 +62,14 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
                     return
                 }
                 expect(erxTask.id) == "61704e3f-1e4f-11b2-80f4-b806a73c0cd0"
+                expect(erxTask.status) == .ready
                 expect(erxTask.accessCode) == "7eccd529292631f6a7cd120b57ded23062c35932cc721bfd32b08c5fb188b642"
                 expect(erxTask.medication?.name).toNot(beNil())
                 expect(erxTask.medication?.name) == "Sumatriptan-1a Pharma 100 mg Tabletten"
                 expect(erxTask.authoredOn).toNot(beNil())
                 expect(erxTask.authoredOn) == "2020-02-03T00:00:00+00:00"
                 expect(erxTask.expiresOn) == "2021-06-24"
+                expect(erxTask.acceptedUntil) == "2021-04-23"
                 expect(erxTask.lastModified) == "2021-03-24T08:35:32.311376627+00:00"
                 expect(erxTask.author).toNot(beNil())
                 expect(erxTask.author) == "Hausarztpraxis Dr. Topp-Glücklich"
@@ -158,7 +160,7 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
         stub(condition: isHost(host) && pathEndsWith("$abort")) { _ in
             fixture(filePath: emptyResponse, status: 204, headers: ["Accept": "application/fhir+json"])
         }
-        let erxTask = ErxTask(identifier: "1", accessCode: "12")
+        let erxTask = ErxTask(identifier: "1", status: .ready, accessCode: "12")
         sut.delete(tasks: [erxTask])
             .test(expectations: { response in
                 expect(response) == true
@@ -172,7 +174,7 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
             return HTTPStubsResponse(error: error)
         }
 
-        let erxTask = ErxTask(identifier: "1", accessCode: "12")
+        let erxTask = ErxTask(identifier: "1", status: .ready, accessCode: "12")
 
         sut.delete(tasks: [erxTask])
             .test(failure: { error in

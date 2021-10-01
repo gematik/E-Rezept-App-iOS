@@ -37,20 +37,51 @@ final class PrescriptionLowDetailSnapshotTests: XCTestCase {
     }
 
     func testPrescriptionLowDetailView_Show_NotRedeemed() {
-        let stateRedeemed = PrescriptionDetailDomain.State(
-            erxTask: ErxTask(
-                identifier: "06313728",
-                accessCode: "06313728",
-                fullUrl: nil,
-                authoredOn: nil,
-                expiresOn: "24.6.2021",
-                redeemedOn: nil,
-                author: nil,
-                medication: ErxTask.Dummies.medication1
-            ), isRedeemed: false
+        let now = "2021-02-20T14:34:29+00:00".date!
+        let erxTask = ErxTask(
+            identifier: "06313728",
+            status: .ready,
+            accessCode: "06313728",
+            fullUrl: nil,
+            authoredOn: nil,
+            expiresOn: "2021-02-23T14:34:29+00:00",
+            redeemedOn: nil,
+            author: nil,
+            medication: ErxTask.Dummies.medication1
+        )
+        let stateNotArchived = PrescriptionDetailDomain.State(
+            prescription: GroupedPrescription.Prescription(erxTask: erxTask, date: now),
+            isArchived: false
         )
         let storeRedeemed = PrescriptionDetailDomain.Store(
-            initialState: stateRedeemed,
+            initialState: stateNotArchived,
+            reducer: PrescriptionDetailDomain.reducer,
+            environment: PrescriptionDetailDomain.Dummies.environment
+        )
+        let sutRedeemed = PrescriptionLowDetailView(store: storeRedeemed)
+        assertSnapshots(matching: sutRedeemed, as: snapshotModiOnDevicesWithTheming(mode: .dark))
+        assertSnapshots(matching: sutRedeemed, as: snapshotModiOnDevicesWithTheming(mode: .light))
+    }
+
+    func testPrescriptionLowDetailView_Show_NotRedeemed_But_Expired() {
+        let now = "2021-02-23T14:34:29+00:00".date!
+        let erxTask = ErxTask(
+            identifier: "06313728",
+            status: .ready,
+            accessCode: "06313728",
+            fullUrl: nil,
+            authoredOn: nil,
+            expiresOn: "2021-02-20T14:34:29+00:00",
+            redeemedOn: nil,
+            author: nil,
+            medication: ErxTask.Dummies.medication1
+        )
+        let stateNotArchived = PrescriptionDetailDomain.State(
+            prescription: GroupedPrescription.Prescription(erxTask: erxTask, date: now),
+            isArchived: false
+        )
+        let storeRedeemed = PrescriptionDetailDomain.Store(
+            initialState: stateNotArchived,
             reducer: PrescriptionDetailDomain.reducer,
             environment: PrescriptionDetailDomain.Dummies.environment
         )
@@ -60,17 +91,21 @@ final class PrescriptionLowDetailSnapshotTests: XCTestCase {
     }
 
     func testPrescriptionLowDetailView_Show_Redeemed() {
+        let now = "2021-02-23T14:34:29+00:00".date!
+        let erxTask = ErxTask(
+            identifier: "06313728",
+            status: .completed,
+            accessCode: "06313728",
+            fullUrl: nil,
+            authoredOn: nil,
+            expiresOn: "24.6.2021",
+            redeemedOn: "2021-02-20T14:34:29+00:00",
+            author: nil,
+            medication: ErxTask.Dummies.medication1
+        )
         let stateRedeemed = PrescriptionDetailDomain.State(
-            erxTask: ErxTask(
-                identifier: "06313728",
-                accessCode: "06313728",
-                fullUrl: nil,
-                authoredOn: nil,
-                expiresOn: "24.6.2021",
-                redeemedOn: "24.5.2021",
-                author: nil,
-                medication: ErxTask.Dummies.medication1
-            ), isRedeemed: true
+            prescription: GroupedPrescription.Prescription(erxTask: erxTask, date: now),
+            isArchived: true
         )
         let storeRedeemed = PrescriptionDetailDomain.Store(
             initialState: stateRedeemed,

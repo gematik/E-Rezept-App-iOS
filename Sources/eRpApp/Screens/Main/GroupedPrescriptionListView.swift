@@ -96,7 +96,7 @@ struct GroupedPrescriptionListView: View {
                         action: GroupedPrescriptionListDomain.Action.prescriptionDetailAction(action:)
                     )
                 ) { scopedStore in
-                    WithViewStore(scopedStore.scope(state: \.erxTask.source)) { viewStore in
+                    WithViewStore(scopedStore.scope(state: \.prescription.source)) { viewStore in
                         switch viewStore.state {
                         case .scanner: PrescriptionLowDetailView(store: scopedStore)
                         case .server: PrescriptionFullDetailView(store: scopedStore)
@@ -128,7 +128,7 @@ struct GroupedPrescriptionListView: View {
 
             // CardWallView sheet presentation
             EmptyView()
-                .sheet(isPresented: viewStore.binding(
+                .fullScreenCover(isPresented: viewStore.binding(
                     get: { $0.isCardWallPresented },
                     send: GroupedPrescriptionListDomain.Action.dismissCardWall
                 )) {
@@ -157,15 +157,15 @@ extension GroupedPrescriptionListView {
         struct ViewState: Equatable {
             let isHintViewHidden: Bool
 
-            let groupedPrescriptionsNotRedeemed: [GroupedPrescription]
-            let groupedPrescriptionsRedeemed: [GroupedPrescription]
+            let groupedPrescriptionsOpen: [GroupedPrescription]
+            let groupedPrescriptionsArchived: [GroupedPrescription]
 
             let isLoading: Bool
 
             init(state: GroupedPrescriptionListDomain.State) {
                 isHintViewHidden = state.hintState.hint == nil
-                groupedPrescriptionsNotRedeemed = state.groupedPrescriptions.filter { !$0.isRedeemed }
-                groupedPrescriptionsRedeemed = state.groupedPrescriptions.filter(\.isRedeemed)
+                groupedPrescriptionsOpen = state.groupedPrescriptions.filter { !$0.isArchived }
+                groupedPrescriptionsArchived = state.groupedPrescriptions.filter(\.isArchived)
 
                 isLoading = state.loadingState.isLoading
             }
@@ -180,7 +180,7 @@ extension GroupedPrescriptionListView {
                     ))
                         .hidden(viewStore.isHintViewHidden)
 
-                    if viewStore.groupedPrescriptionsNotRedeemed
+                    if viewStore.groupedPrescriptionsOpen
                         .isEmpty { HintView<GroupedPrescriptionListDomain.Action>(
                         hint: Hint(id: A18n.mainScreen.erxHntShowCardWall,
                                    title: NSLocalizedString("hint_txt_card_wall_title", comment: ""),
@@ -201,9 +201,9 @@ extension GroupedPrescriptionListView {
                         viewStore.send(.refresh)
                     }
 
-                    if !viewStore.groupedPrescriptionsNotRedeemed.isEmpty {
+                    if !viewStore.groupedPrescriptionsOpen.isEmpty {
                         VStack(spacing: 16) {
-                            ForEach(viewStore.groupedPrescriptionsNotRedeemed) { groupedPrescription in
+                            ForEach(viewStore.groupedPrescriptionsOpen) { groupedPrescription in
                                 GroupedPrescriptionView(
                                     groupedPrescription: groupedPrescription,
                                     store: store
@@ -216,9 +216,9 @@ extension GroupedPrescriptionListView {
 
                     RedeemSectionView()
 
-                    if !viewStore.groupedPrescriptionsRedeemed.isEmpty {
+                    if !viewStore.groupedPrescriptionsArchived.isEmpty {
                         VStack(spacing: 16) {
-                            ForEach(viewStore.groupedPrescriptionsRedeemed) { groupedRedeemedPrescription in
+                            ForEach(viewStore.groupedPrescriptionsArchived) { groupedRedeemedPrescription in
                                 GroupedPrescriptionView(
                                     groupedPrescription: groupedRedeemedPrescription,
                                     store: store

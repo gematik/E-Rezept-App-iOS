@@ -65,7 +65,7 @@ extension ErxTaskCoreDataStore: ErxTaskDataStore {
         request.sortDescriptors = [NSSortDescriptor(key: #keyPath(ErxTaskEntity.authoredOn), ascending: true)]
         return container.viewContext
             .publisher(for: request)
-            .map { list in list.map(ErxTask.init) }
+            .map { list in list.compactMap(ErxTask.init) }
             .mapError(Error.read)
             .subscribe(on: foregroundQueue)
             .eraseToAnyPublisher()

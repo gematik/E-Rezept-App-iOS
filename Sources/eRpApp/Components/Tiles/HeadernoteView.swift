@@ -26,6 +26,7 @@ struct HeadernoteView: View {
         HStack {
             Text(text)
                 .font(.body)
+                .foregroundColor(Colors.systemLabel)
                 .multilineTextAlignment(.leading)
                 .accessibility(identifier: a11y)
                 .padding([.bottom])

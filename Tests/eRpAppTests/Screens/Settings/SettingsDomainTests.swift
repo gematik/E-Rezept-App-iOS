@@ -41,7 +41,8 @@ final class SettingsDomainTests: XCTestCase {
                 changeableUserSessionContainer: MockUserSessionContainer(),
                 schedulers: Schedulers(uiScheduler: DispatchQueue.test.eraseToAnyScheduler()),
                 tracker: DummyTracker(),
-                signatureProvider: DummySecureEnclaveSignatureProvider()
+                signatureProvider: DummySecureEnclaveSignatureProvider(),
+                appSecurityManager: DummyAppSecurityManager()
             )
         )
     }
@@ -60,7 +61,12 @@ final class SettingsDomainTests: XCTestCase {
     }
 
     func testDemoModeToggleShouldUnsetDemoMode() {
-        let store = testStore(for: SettingsDomain.State(isDemoMode: true))
+        let store = testStore(
+            for: SettingsDomain.State(
+                isDemoMode: true,
+                appSecurityState: AppSecurityDomain.State(availableSecurityOptions: [.password])
+            )
+        )
 
         store.assert(
             // when
@@ -73,7 +79,12 @@ final class SettingsDomainTests: XCTestCase {
     }
 
     func testAppTrackingOptInStartsComplyDialog() {
-        let store = testStore(for: SettingsDomain.State(isDemoMode: false))
+        let store = testStore(
+            for: SettingsDomain.State(
+                isDemoMode: false,
+                appSecurityState: AppSecurityDomain.State(availableSecurityOptions: [.password])
+            )
+        )
 
         store.assert(
             // when
@@ -86,7 +97,12 @@ final class SettingsDomainTests: XCTestCase {
     }
 
     func testAppTrackingOptInConfirmAlert() {
-        let store = testStore(for: SettingsDomain.State(isDemoMode: false))
+        let store = testStore(
+            for: SettingsDomain.State(
+                isDemoMode: false,
+                appSecurityState: AppSecurityDomain.State(availableSecurityOptions: [.password])
+            )
+        )
 
         store.assert(
             // when
@@ -104,7 +120,12 @@ final class SettingsDomainTests: XCTestCase {
     }
 
     func testAppTrackingOptInCancelAlert() {
-        let store = testStore(for: SettingsDomain.State(isDemoMode: false))
+        let store = testStore(
+            for: SettingsDomain.State(
+                isDemoMode: false,
+                appSecurityState: AppSecurityDomain.State(availableSecurityOptions: [.password])
+            )
+        )
 
         store.assert(
             // when

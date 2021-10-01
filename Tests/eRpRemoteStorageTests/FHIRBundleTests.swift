@@ -34,6 +34,7 @@ final class FHIRBundleTests: XCTestCase {
         }
 
         expect(task.id) == "5e00e907-1e4f-11b2-80be-b806a73c0cd0"
+        expect(task.status) == ErxTask.Status.ready
         expect(task.prescriptionId) == "160.000.711.572.601.54"
         expect(task.accessCode) == "9d6f58a2c5a89c0681f91cbd69dd666f365443e3ae114d7d9ca9162181f7d34d"
         expect(task.fullUrl).to(beNil())
@@ -41,6 +42,7 @@ final class FHIRBundleTests: XCTestCase {
         expect(task.authoredOn) == "2020-02-03T00:00:00+00:00"
         expect(task.lastModified) == "2021-03-24T08:35:26.548174460+00:00"
         expect(task.expiresOn) == "2021-06-24"
+        expect(task.acceptedUntil) == "2021-04-23"
         expect(task.author) == "Hausarztpraxis Dr. Topp-Glücklich"
         expect(task.dispenseValidityEnd).to(beNil())
         expect(task.medication?.dosageForm) == "TAB"

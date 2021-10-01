@@ -32,7 +32,7 @@ final class CreatePasswordDomainTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        mockPasswordManager = MockAppSecurityPasswordManager()
+        mockPasswordManager = MockAppSecurityManager()
     }
 
     func testStore(for state: CreatePasswordDomain.State) -> TestStore {
@@ -46,7 +46,7 @@ final class CreatePasswordDomainTests: XCTestCase {
 
     let emptyPasswords = CreatePasswordDomain.State(mode: .create, passwordA: "", passwordB: "")
     let testScheduler = DispatchQueue.test
-    var mockPasswordManager: MockAppSecurityPasswordManager!
+    var mockPasswordManager: MockAppSecurityManager!
 
     func testSetPasswordA() {
         let store = testStore(for: emptyPasswords)
@@ -276,9 +276,9 @@ final class CreatePasswordDomainTests: XCTestCase {
     }
 }
 
-// MARK: - MockAppSecurityPasswordManager -
+// MARK: - MockAppSecurityManager -
 
-final class MockAppSecurityPasswordManager: AppSecurityPasswordManager {
+final class MockAppSecurityManager: AppSecurityManager {
     // MARK: - save
 
     var savePasswordThrowableError: Error?
@@ -323,5 +323,17 @@ final class MockAppSecurityPasswordManager: AppSecurityPasswordManager {
         matchesPasswordReceivedPassword = password
         matchesPasswordReceivedInvocations.append(password)
         return try matchesPasswordClosure.map { try $0(password) } ?? matchesPasswordReturnValue
+    }
+
+    var availableSecurityOptionsCallsCount = 0
+    var availableSecurityOptionsCalled: Bool {
+        availableSecurityOptionsCallsCount > 0
+    }
+
+    var availableSecurityOptionsReturnValue: (options: [AppSecurityOption], error: AppSecurityManagerError?)
+        = (options: [.password], error: nil)
+    var availableSecurityOptions: (options: [AppSecurityOption], error: AppSecurityManagerError?) {
+        availableSecurityOptionsCallsCount += 1
+        return availableSecurityOptionsReturnValue
     }
 }

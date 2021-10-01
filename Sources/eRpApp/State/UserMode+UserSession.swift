@@ -82,7 +82,7 @@ extension UserMode: UserSession {
         sessionContainer.trustStoreSession
     }
 
-    var appSecurityPasswordManager: AppSecurityPasswordManager {
-        sessionContainer.appSecurityPasswordManager
+    var appSecurityManager: AppSecurityManager {
+        sessionContainer.appSecurityManager
     }
 }

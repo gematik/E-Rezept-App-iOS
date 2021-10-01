@@ -16,12 +16,16 @@
 //  
 //
 
-struct DemoAppSecurityPasswordManager: AppSecurityPasswordManager {
+struct DemoAppSecurityPasswordManager: AppSecurityManager {
     func save(password _: String) throws -> Bool {
         true
     }
 
     func matches(password _: String) throws -> Bool {
         true
+    }
+
+    var availableSecurityOptions: (options: [AppSecurityOption], error: AppSecurityManagerError?) {
+        return (options: [.password, .biometry(.faceID)], error: nil)
     }
 }

@@ -66,6 +66,7 @@ enum MainDomain {
         let router: Routing
         var userSessionContainer: UsersSessionContainer
         var userSession: UserSession
+        let appSecurityManager: AppSecurityManager
         var serviceLocator: ServiceLocator
         let accessibilityAnnouncementReceiver: (String) -> Void
         var erxTaskRepository: ErxTaskRepositoryAccess
@@ -89,11 +90,14 @@ enum MainDomain {
         case .dismissSettingsView,
              .settings(action: .close):
             state.settingsState = nil
-            return .none
+            return SettingsDomain.cleanup()
         case .showSettingsView,
              .turnOffDemoMode:
             state.settingsState = .init(
-                isDemoMode: environment.userSession.isDemoMode
+                isDemoMode: environment.userSession.isDemoMode,
+                appSecurityState: AppSecurityDomain.State(
+                    availableSecurityOptions: environment.appSecurityManager.availableSecurityOptions.options
+                )
             )
             return .none
         case .prescriptionList,
@@ -133,7 +137,8 @@ enum MainDomain {
                 changeableUserSessionContainer: appEnvironment.userSessionContainer,
                 schedulers: appEnvironment.schedulers,
                 tracker: appEnvironment.tracker,
-                signatureProvider: appEnvironment.signatureProvider
+                signatureProvider: appEnvironment.signatureProvider,
+                appSecurityManager: appEnvironment.appSecurityManager
             )
         }
 
@@ -209,6 +214,7 @@ extension MainDomain {
             router: DummyRouter(),
             userSessionContainer: AppContainer.shared.userSessionContainer,
             userSession: AppContainer.shared.userSessionSubject,
+            appSecurityManager: AppContainer.shared.userSessionContainer.userSession.appSecurityManager,
             serviceLocator: ServiceLocator(),
             accessibilityAnnouncementReceiver: { _ in },
             erxTaskRepository: AppContainer.shared.userSessionSubject.erxTaskRepository,

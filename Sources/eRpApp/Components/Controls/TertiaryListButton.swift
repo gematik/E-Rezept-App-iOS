@@ -20,14 +20,17 @@ import SwiftUI
 
 struct TertiaryListButton: View {
     var text: LocalizedStringKey
+    var imageName: String? = SFSymbolName.refresh
     var accessibilityIdentifier: String
     let action: () -> Void
 
     var body: some View {
         Button(action: action) {
             HStack {
-                Image(systemName: SFSymbolName.refresh)
-                    .foregroundColor(Colors.primary)
+                if let imageName = imageName {
+                    Image(systemName: imageName)
+                        .foregroundColor(Colors.primary)
+                }
                 Text(text)
                     .font(.subheadline)
                     .foregroundColor(Colors.primary)

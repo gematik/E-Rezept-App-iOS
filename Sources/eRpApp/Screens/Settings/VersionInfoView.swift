@@ -30,7 +30,8 @@ struct VersionInfoView: View {
     }
 
     var body: some View {
-        VStack(spacing: 4) {
+        VStack(alignment: .center, spacing: 4) {
+            Spacer(minLength: 32)
             HStack(spacing: 4) {
                 Image(systemName: SFSymbolName.flipPhone)
                 Text("stg_txt_version_\(marketingVersion)_and_build_\(buildNumber)")
@@ -40,6 +41,8 @@ struct VersionInfoView: View {
                 Text(buildHash)
             }
         }
+        .frame(maxWidth: .infinity)
+        .multilineTextAlignment(.center)
         .font(.footnote)
         .foregroundColor(Color(.secondaryLabel))
     }

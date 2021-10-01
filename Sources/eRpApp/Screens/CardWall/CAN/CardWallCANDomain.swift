@@ -30,12 +30,15 @@ enum CardWallCANDomain {
         var wrongCANEntered = false
 
         var showNextScreen = false
+        var isEGKOrderInfoViewPresented = false
     }
 
     enum Action: Equatable {
         case update(can: String)
         case reset
         case advance
+        case showEGKOrderInfoView
+        case dismissEGKOrderInfoView
         case close
     }
 
@@ -60,6 +63,12 @@ enum CardWallCANDomain {
             state.showNextScreen = true
             return .none
         case .close:
+            return .none
+        case .dismissEGKOrderInfoView:
+            state.isEGKOrderInfoViewPresented = false
+            return .none
+        case .showEGKOrderInfoView:
+            state.isEGKOrderInfoViewPresented.toggle()
             return .none
         }
     }

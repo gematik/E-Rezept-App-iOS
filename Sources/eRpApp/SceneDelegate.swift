@@ -112,7 +112,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing {
                         appAuthenticationProvider: AppAuthenticationDomain.DefaultAuthenticationProvider(
                             userDataStore: userDataStore
                         ),
-                        appSecurityPasswordManager: DefaultAppSecurityPasswordManager(
+                        appSecurityPasswordManager: DefaultAppSecurityManager(
                             keychainAccess: SystemKeychainAccessHelper()
                         )
                     ) { [weak self] in

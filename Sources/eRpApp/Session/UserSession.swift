@@ -67,5 +67,5 @@ protocol UserSession {
     var trustStoreSession: TrustStoreSession { get }
 
     /// Affected manager when app (start) ist secured by password usage
-    var appSecurityPasswordManager: AppSecurityPasswordManager { get }
+    var appSecurityManager: AppSecurityManager { get }
 }

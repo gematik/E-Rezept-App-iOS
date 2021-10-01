@@ -139,7 +139,7 @@ extension Date {
 
 extension String {
     /// Returns a `Date`  object of the corresponding FHIR date if it's format is within the allowed FHIR formats
-    var date: Date? {
+    public var date: Date? {
         FHIRDateFormatter.shared.date(from: self)
     }
 }

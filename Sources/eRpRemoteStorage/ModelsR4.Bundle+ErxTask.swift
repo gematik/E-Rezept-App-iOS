@@ -66,6 +66,11 @@ extension ModelsR4.Bundle {
             throw Error.parseError("Could not parse id from task.")
         }
 
+        guard let status = task.status.value?.rawValue,
+              let erxTaskStatus = ErxTask.Status(rawValue: status) else {
+            throw Error.parseError("Could not parse status from task.")
+        }
+
         // Find the patientReceipt document reference
         guard let patientReceiptReference = task.input?.firstPatientReceipt else {
             throw Error.parseError("No patientReceipt Document reference found")
@@ -86,11 +91,13 @@ extension ModelsR4.Bundle {
 
         return ErxTask(
             identifier: id,
+            status: erxTaskStatus,
             accessCode: taskAccessCode,
             fullUrl: fullUrl?.value?.url.absoluteString,
             authoredOn: patientReceiptBundle.medicationRequest?.authoredOn?.value?.description,
             lastModified: task.lastModified?.value?.description,
             expiresOn: task.expiryDate,
+            acceptedUntil: task.acceptDate,
             author: patientReceiptBundle.organization?.author,
             dispenseValidityEnd: patientReceiptBundle.dispenseValidityEnd,
             noctuFeeWaiver: patientReceiptBundle.medicationRequest?.noctuFeeWaiver ?? false,

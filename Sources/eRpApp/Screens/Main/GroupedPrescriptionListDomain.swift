@@ -96,7 +96,7 @@ enum GroupedPrescriptionListDomain {
         case cardWall(action: CardWallDomain.Action)
 
         /// Details actions
-        case prescriptionDetailViewTapped(selectedPrescription: ErxTask)
+        case prescriptionDetailViewTapped(selectedPrescription: GroupedPrescription.Prescription)
         case dismissPrescriptionDetailView
         case prescriptionDetailAction(action: PrescriptionDetailDomain.Action)
 
@@ -156,10 +156,10 @@ enum GroupedPrescriptionListDomain {
             return .none
 
         // details view
-        case let .prescriptionDetailViewTapped(erxTask):
+        case let .prescriptionDetailViewTapped(prescription):
             state.selectedPrescriptionDetailState = PrescriptionDetailDomain.State(
-                erxTask: erxTask,
-                isRedeemed: erxTask.isRedeemed
+                prescription: prescription,
+                isArchived: prescription.isArchived
             )
             return .none
         case .dismissPrescriptionDetailView, .prescriptionDetailAction(.close):

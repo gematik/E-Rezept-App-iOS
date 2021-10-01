@@ -31,11 +31,11 @@ final class AppAuthenticationPasswordDomainTests: XCTestCase {
     >
     let emptyPassword = AppAuthenticationPasswordDomain.State(password: "")
     let abcPassword = AppAuthenticationPasswordDomain.State(password: "abc")
-    var mockAppSecurityPasswordManager: MockAppSecurityPasswordManager!
+    var mockAppSecurityPasswordManager: MockAppSecurityManager!
 
     override func setUp() {
         super.setUp()
-        mockAppSecurityPasswordManager = MockAppSecurityPasswordManager()
+        mockAppSecurityPasswordManager = MockAppSecurityManager()
     }
 
     func testStore(for state: AppAuthenticationPasswordDomain.State) -> TestStore {

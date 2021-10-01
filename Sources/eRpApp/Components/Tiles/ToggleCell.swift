@@ -48,22 +48,21 @@ struct ToggleCell: View {
 
     var body: some View {
         Toggle(isOn: $isToggleOn) {
-            if let systemImage = systemImage {
-                Image(systemName: systemImage)
-                    // TODO: change font to `title2` when compiling against iOS 14 swiftlint:disable:this todo
-                    .font(Font.title.weight(.semibold))
-                    .foregroundColor(isDisabled ? Colors.systemGray : iconColor)
-                    .padding(.trailing)
-                    .disabled(isDisabled)
+            HStack(spacing: 16) {
+                if let systemImage = systemImage {
+                    Image(systemName: systemImage)
+                        .font(Font.body.weight(.semibold))
+                        .foregroundColor(isDisabled ? Colors.systemGray : iconColor)
+                        .disabled(isDisabled)
+                }
+                Text(text)
+                    .font(.body)
+                    .foregroundColor(isDisabled ? Colors.systemGray : textColor)
             }
-            Text(text)
-                .font(.body)
-                .foregroundColor(isDisabled ? Colors.systemGray : textColor)
         }
         .disabled(isDisabled)
-        .padding()
         .background(backgroundColor)
-        .cornerRadius(16)
+        .padding(.vertical)
         .accessibility(identifier: a11y)
     }
 }

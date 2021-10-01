@@ -20,6 +20,7 @@ import Foundation
 
 /// Creates formatted dates (authoredOn, expiresOn) for demo data
 enum DemoDate: CaseIterable {
+    case ninetyTwoDaysBefore
     case thirtyDaysBefore
     case sixteenDaysBefore
     case weekBefore
@@ -28,11 +29,15 @@ enum DemoDate: CaseIterable {
     case today
     case tomorrow
     case twelveDaysAhead
-    case thirtyOneDaysAhead
+    case twentyEightDaysAhead
+    case ninetyTwoDaysAhead
 
+    // swiftlint:disable:next cyclomatic_complexity
     static func createDemoDate(_ authoredDate: DemoDate) -> String? {
         let aDate: Date
         switch authoredDate {
+        case .ninetyTwoDaysBefore:
+            aDate = Date(timeIntervalSinceNow: -60 * 60 * 24 * 92)
         case .thirtyDaysBefore:
             aDate = Date(timeIntervalSinceNow: -60 * 60 * 24 * 30)
         case .sixteenDaysBefore:
@@ -49,8 +54,10 @@ enum DemoDate: CaseIterable {
             aDate = Date(timeIntervalSinceNow: 60 * 60 * 24)
         case .twelveDaysAhead:
             aDate = Date(timeIntervalSinceNow: 60 * 60 * 24 * 12)
-        case .thirtyOneDaysAhead:
-            aDate = Date(timeIntervalSinceNow: 60 * 60 * 24 * 31)
+        case .twentyEightDaysAhead:
+            aDate = Date(timeIntervalSinceNow: 60 * 60 * 24 * 28)
+        case .ninetyTwoDaysAhead:
+            aDate = Date(timeIntervalSinceNow: 60 * 60 * 24 * 92)
         }
         return AppContainer.shared.fhirDateFormatter
             .stringWithLongUTCTimeZone(from: aDate)

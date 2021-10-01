@@ -32,9 +32,11 @@ extension ErxTaskEntity {
         prescriptionId = task.prescriptionId
         accessCode = task.accessCode
         fullUrl = task.fullUrl
+        status = task.status.rawValue
         authoredOn = task.authoredOn
         lastModified = task.lastModified
         expiresOn = task.expiresOn
+        acceptedUntil = task.acceptedUntil
         redeemedOn = task.redeemedOn
         author = task.author
         dispenseValidityEnd = task.dispenseValidityEnd
@@ -59,14 +61,24 @@ extension ErxTaskEntity {
 }
 
 extension ErxTask {
-    init(entity: ErxTaskEntity) {
+    init?(entity: ErxTaskEntity) {
+        guard let identifier = entity.identifier else {
+            return nil
+        }
+
+        var erxTaskStatus: ErxTask.Status = .ready
+        if let status = entity.status {
+            erxTaskStatus = ErxTask.Status(rawValue: status) ?? .ready
+        }
         self.init(
-            identifier: entity.identifier ?? "",
+            identifier: identifier,
+            status: erxTaskStatus,
             accessCode: entity.accessCode,
             fullUrl: entity.fullUrl,
             authoredOn: entity.authoredOn,
             lastModified: entity.lastModified,
             expiresOn: entity.expiresOn,
+            acceptedUntil: entity.acceptedUntil,
             redeemedOn: entity.redeemedOn,
             author: entity.author,
             dispenseValidityEnd: entity.dispenseValidityEnd,

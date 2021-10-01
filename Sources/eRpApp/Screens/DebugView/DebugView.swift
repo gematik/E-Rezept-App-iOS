@@ -158,7 +158,7 @@ extension DebugView {
 
             var body: some View {
                 WithViewStore(store) { viewStore in
-                    SectionView(text: "Virtual eGK Login", a11y: "dummy_a11y_i")
+                    SectionHeaderView(text: "Virtual eGK Login", a11y: "dummy_a11y_i")
                     Toggle("Use Virtual eGK instead of NFC",
                            isOn: viewStore.binding(
                                get: \.useVirtualLogin,
@@ -246,7 +246,7 @@ extension DebugView {
 
                     VirtualEGKLogin(store: store)
 
-                    SectionView(text: "Manual Login with Token:", a11y: "dummy_a11y_i")
+                    SectionHeaderView(text: "Manual Login with Token:", a11y: "dummy_a11y_i")
                     Group {
                         TextEditor(text: viewStore.binding(
                             get: \.accessCodeText,
@@ -270,7 +270,7 @@ extension DebugView {
                     .frame(maxWidth: .infinity)
                     .foregroundColor(.green)
 
-                    SectionView(text: "Current access token", a11y: "dummy_a11y_i")
+                    SectionHeaderView(text: "Current access token", a11y: "dummy_a11y_i")
                     Text(viewStore.token?.accessToken ?? "*** No valid token available ***")
                         .contextMenu(ContextMenu {
                             Button("Copy") {

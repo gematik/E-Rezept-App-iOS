@@ -25,7 +25,7 @@ import XCTest
 final class DefaultAppSecurityPasswordManagerTests: XCTestCase {
     func testSavePasswordCallsKeychainHelper() {
         let keychainAccess = KeychainAccessHelperMock()
-        let sut = DefaultAppSecurityPasswordManager(keychainAccess: keychainAccess)
+        let sut = DefaultAppSecurityManager(keychainAccess: keychainAccess)
 
         expect(try sut.save(password: "abc")).to(beTrue())
 

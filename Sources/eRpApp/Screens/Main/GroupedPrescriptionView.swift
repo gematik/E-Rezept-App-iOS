@@ -67,7 +67,7 @@ struct GroupedPrescriptionView: View {
                             .padding(.bottom, 12)
                     }
                 }
-                if !groupedPrescription.isRedeemed {
+                if !groupedPrescription.isArchived {
                     FooterView {
                         viewStore.send(.redeemViewTapped(selectedGroupedPrescription: groupedPrescription))
                     }
@@ -135,29 +135,9 @@ struct GroupedPrescriptionView: View {
     }
 
     struct FullDetailCellView: View {
-        var prescription: ErxTask
+        var prescription: GroupedPrescription.Prescription
         let action: () -> Void
         @State var showDetail = false
-
-        private var remainingDays: Int {
-            guard let expiresOnString = prescription.expiresOn,
-                  let expiresDate = AppContainer.shared.fhirDateFormatter.date(
-                      from: expiresOnString,
-                      format: .yearMonthDay
-                  ),
-                  let remainingDays = Date().days(until: expiresDate) else {
-                return 0
-            }
-            return max(remainingDays, 0)
-        }
-
-        private var localizedString: String {
-            let formatString: String = NSLocalizedString(
-                "erx_txt_expires_in",
-                comment: "erx_txt_expires_in string format to be found in Localized.stringsdict"
-            )
-            return String.localizedStringWithFormat(formatString, remainingDays)
-        }
 
         var body: some View {
             Button(
@@ -167,10 +147,10 @@ struct GroupedPrescriptionView: View {
                 label: {
                     HStack {
                         VStack(alignment: .leading, spacing: 4) {
-                            Text(prescription.medicationName, placeholder: L10n.erxTxtMedicationPlaceholder)
+                            Text(prescription.actualMedication?.name, placeholder: L10n.erxTxtMedicationPlaceholder)
                                 .foregroundColor(Colors.systemLabel)
                                 .font(Font.body.weight(.semibold))
-                            Text(localizedString)
+                            Text(prescription.statusMessage)
                                 .font(Font.subheadline.weight(.regular))
                                 .foregroundColor(Color(.secondaryLabel))
                         }
@@ -185,7 +165,7 @@ struct GroupedPrescriptionView: View {
     }
 
     struct LowDetailCellView: View {
-        let prescription: ErxTask
+        let prescription: GroupedPrescription.Prescription
         let action: () -> Void
         @State var showDetail = false
 
@@ -199,8 +179,14 @@ struct GroupedPrescriptionView: View {
                             .font(Font.body.weight(.semibold))
                             .foregroundColor(Colors.primary500)
                         VStack(alignment: .leading, spacing: 4) {
-                            Text(prescription.medicationName, placeholder: L10n.erxTxtMedicationPlaceholder)
+                            Text(prescription.actualMedication?.name, placeholder: L10n.erxTxtMedicationPlaceholder)
                                 .font(Font.body.weight(.semibold))
+                                .foregroundColor(Colors.systemLabel)
+                            if prescription.isArchived {
+                                Text(prescription.statusMessage)
+                                    .font(Font.subheadline.weight(.regular))
+                                    .foregroundColor(Color(.secondaryLabel))
+                            }
                         }
                         Spacer()
                         Image(systemName: SFSymbolName.rightDisclosureIndicator)

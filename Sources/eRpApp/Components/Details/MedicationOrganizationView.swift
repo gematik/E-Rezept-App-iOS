@@ -27,7 +27,7 @@ struct MedicationOrganizationView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            SectionView(
+            SectionHeaderView(
                 text: L10n.prscFdTxtOrganizationTitle,
                 a11y: A18n.prescriptionDetails.prscDtlTxtMedInfo
             )

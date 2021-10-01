@@ -25,7 +25,7 @@ import Nimble
 import XCTest
 
 final class GroupedPrescriptionRepositoryTests: XCTestCase {
-    func testLoadingErxTasksFromDiscAndConvertingInGroupedPrescriptions() {
+    func testLoadingErxTasksFromDiskAndConvertingInGroupedPrescriptions() {
         let sut = GroupedPrescriptionInteractor(
             erxTaskInteractor: AnyErxTaskRepository(Just(MockErxTaskRepository()).eraseToAnyPublisher())
         )
@@ -33,24 +33,45 @@ final class GroupedPrescriptionRepositoryTests: XCTestCase {
         sut.loadLocal().test(expectations: { groupedPrescriptions in
             // swiftlint:disable:previous trailing_closure
             expect(groupedPrescriptions.totalPrescriptionCount) == 15
-            // test sorting of prescriptions into 7 groups
-            expect(groupedPrescriptions.count) == 7
-            // test oldest group to be last
-            let groupedPrescription = groupedPrescriptions.last!
-            expect(groupedPrescription.prescriptions.count) == 5
-            expect(groupedPrescription.title) == "Dr. Dr. med. Carsten van Storchhausen"
-            expect(groupedPrescription.authoredOn) == "2020-09-20T14:34:29+00:00"
-            // test parsing
-            let firstErxTask = groupedPrescription.prescriptions.first
-            expect(firstErxTask?.accessCode) == "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24"
-            expect(firstErxTask?.medication?.amount) == 12
-            expect(firstErxTask?.medication?.dosageForm) == "TAB"
-            expect(firstErxTask?.expiresOn) == "2021-02-20T14:34:29+00:00"
-            expect(firstErxTask?.medication?.name) == "Saflorblüten-Extrakt"
-            // test sorting by medication text within a group
-            expect(firstErxTask?.medication?.name) < (groupedPrescription.prescriptions[1].medication?.name!)!
-            expect(groupedPrescription.prescriptions[1].medication?.name!) < groupedPrescription.prescriptions[2]
-                .medication!.name!
+            // test sorting of prescriptions into 6 groups
+            expect(groupedPrescriptions.count) == 6
+            expect(groupedPrescriptions[0].prescriptions.count) == 4
+            expect(groupedPrescriptions[0].id) ==
+                "490f983-1e67-11b2-8555-63bf44e44fb8-7390f983-1e67-11b2-8555-63bf44e44fb8-6390f983-1e67-11b2-8555-63bf44e44fb8-5390f983-1e67-11b2-8555-63bf44e44fb8" // swiftlint:disable:this line_length
+            expect(groupedPrescriptions[0].isArchived).to(beFalse())
+
+            expect(groupedPrescriptions[1].prescriptions.count) == 3
+            expect(groupedPrescriptions[1].id) ==
+                "7390f983-1e67-11b2-8555-63bf44e44f3c-7390f983-1e67-11b2-8555-63bf44e44f4c-7390f983-1e67-11b2-8555-63bf44e44f5c" // swiftlint:disable:this line_length
+            expect(groupedPrescriptions[1].isArchived).to(beFalse())
+
+            expect(groupedPrescriptions[2].prescriptions.count) == 2
+            expect(groupedPrescriptions[2].id) ==
+                "7390f983-1e67-11b2-8555-63bf44e44f1c-7390f983-1e67-11b2-8555-63bf44e44f2c"
+            expect(groupedPrescriptions[2].isArchived).to(beTrue())
+
+            expect(groupedPrescriptions[3].prescriptions.count) == 1
+            expect(groupedPrescriptions[3].id) == "3390f983-1e67-11b2-8555-63bf44e44fb8"
+            expect(groupedPrescriptions[3].isArchived).to(beTrue())
+
+            expect(groupedPrescriptions[4].prescriptions.count) == 3
+            expect(groupedPrescriptions[4].id) ==
+                "1390f983-1e67-11b2-8555-63bf44e44fb8-0390f983-1e67-11b2-8555-63bf44e44fb8-2390f983-1e67-11b2-8555-63bf44e44fb8" // swiftlint:disable:this line_length
+            expect(groupedPrescriptions[4].isArchived).to(beFalse())
+
+            expect(groupedPrescriptions[5].prescriptions.count) == 2
+            expect(groupedPrescriptions[5].id) ==
+                "7390f983-1e67-11b2-8555-63bf44e44f7c-7390f983-1e67-11b2-8555-63bf44e44f6c"
+            expect(groupedPrescriptions[5].isArchived).to(beTrue())
+
+            let notArchivedPrescriptions = groupedPrescriptions.flatMap(\.prescriptions).filter { !$0.isArchived }
+            expect(notArchivedPrescriptions.count) == 10
+
+            let archivedPrescriptions = groupedPrescriptions.flatMap(\.prescriptions).filter(\.isArchived)
+            expect(archivedPrescriptions.count) == 5
+
+            let archivedGroups: [GroupedPrescription] = groupedPrescriptions.filter(\.isArchived)
+            expect(archivedGroups.count) == 3
         })
     }
 
@@ -62,65 +83,40 @@ final class GroupedPrescriptionRepositoryTests: XCTestCase {
         sut.loadRemoteAndSave(for: nil).test(expectations: { groupedPrescriptions in
             // swiftlint:disable:previous trailing_closure
             expect(groupedPrescriptions.totalPrescriptionCount) == 15
-            // test sorting of prescriptions into 7 groups
-            expect(groupedPrescriptions.count) == 7
-            // test oldest group to be last
-            let groupedPrescription = groupedPrescriptions.last!
-            expect(groupedPrescription.prescriptions.count) == 5
-            expect(groupedPrescription.title) == "Dr. Dr. med. Carsten van Storchhausen"
-            expect(groupedPrescription.authoredOn) == "2020-09-20T14:34:29+00:00"
-            // test parsing
-            let firstErxTask = groupedPrescription.prescriptions.first
-            expect(firstErxTask?.accessCode) == "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24"
-            expect(firstErxTask?.medication?.amount) == 12
-            expect(firstErxTask?.medication?.dosageForm) == "TAB"
-            expect(firstErxTask?.expiresOn) == "2021-02-20T14:34:29+00:00"
-            expect(firstErxTask?.medication?.name) == "Saflorblüten-Extrakt"
-            // test sorting by medication text within a group
-            expect(firstErxTask?.medication?.name) < (groupedPrescription.prescriptions[1].medication?.name!)!
-            expect(groupedPrescription.prescriptions[1].medication?.name!) < groupedPrescription.prescriptions[2]
-                .medication!.name!
-        })
-    }
+            // test sorting of prescriptions into 6 groups
+            expect(groupedPrescriptions.count) == 6
+            expect(groupedPrescriptions[0].prescriptions.count) == 4
+            expect(groupedPrescriptions[0].title) == "Dr. A"
+            expect(groupedPrescriptions[0].isArchived).to(beFalse())
 
-    func testLoadingErxTasksFromDiscAndConvertingInRedeemedGroupedPrescriptions() {
-        let sut = GroupedPrescriptionInteractor(
-            erxTaskInteractor: AnyErxTaskRepository(Just(MockErxTaskRepository()).eraseToAnyPublisher())
-        )
+            expect(groupedPrescriptions[1].prescriptions.count) == 3
+            expect(groupedPrescriptions[1].title) == "Dr. B"
+            expect(groupedPrescriptions[1].isArchived).to(beFalse())
 
-        sut.loadLocal().test(expectations: { groupedPrescriptions in
-            // swiftlint:disable:previous trailing_closure
-            expect(groupedPrescriptions.totalPrescriptionCount) == 15
-            // test sorting of prescriptions into 7 groups
-            expect(groupedPrescriptions.count) == 7
+            expect(groupedPrescriptions[2].prescriptions.count) == 2
+            expect(groupedPrescriptions[2].title) == ""
+            expect(groupedPrescriptions[2].isArchived).to(beTrue())
 
-            // test 13 out of 15 are not redeemed
-            let notRedeemed = groupedPrescriptions.flatMap(\.prescriptions).filter { !$0.isRedeemed }
-            expect(notRedeemed.count) == 13
+            expect(groupedPrescriptions[3].prescriptions.count) == 1
+            expect(groupedPrescriptions[3].title) == "Dr. Abgelaufen"
+            expect(groupedPrescriptions[3].isArchived).to(beTrue())
 
-            let redeemedGroup: [GroupedPrescription] = groupedPrescriptions.filter(\.isRedeemed)
-            // test one grouped is redeemed
-            expect(redeemedGroup.count) > 0
-            // test redeemed group has two redeemed prescriptions
-            expect(redeemedGroup.first?.prescriptions.count) == 2
-        })
-    }
+            expect(groupedPrescriptions[4].prescriptions.count) == 3
+            expect(groupedPrescriptions[4].title) == "Dr. A"
+            expect(groupedPrescriptions[4].isArchived).to(beFalse())
 
-    func testLoadingFromCloudAndGroupedPrescriptionsHasGroupedByPractitionerName() {
-        let sut = GroupedPrescriptionInteractor(
-            erxTaskInteractor: AnyErxTaskRepository(Just(MockErxTaskRepository()).eraseToAnyPublisher())
-        )
+            expect(groupedPrescriptions[5].prescriptions.count) == 2
+            expect(groupedPrescriptions[5].title) == "Dr. B"
+            expect(groupedPrescriptions[5].isArchived).to(beTrue())
 
-        sut.loadRemoteAndSave(for: nil).test(expectations: { groupedPrescriptions in
-            // swiftlint:disable:previous trailing_closure
-            expect(groupedPrescriptions.totalPrescriptionCount) == 15
-            // test sorting of prescriptions into 7 groups
-            expect(groupedPrescriptions.count) == 7
-            // test grouping by practitioner happens when organization name is nil
-            expect(groupedPrescriptions.contains(where: { $0.title == "Dr. Black" })).to(beTrue())
-            // Dr. White should have 3 prescriptions
-            let drWhiteGroup = groupedPrescriptions.filter { $0.title == "Dr. White" }
-            expect(drWhiteGroup.first?.prescriptions.count).to(equal(3))
+            let notArchivedPrescriptions = groupedPrescriptions.flatMap(\.prescriptions).filter { !$0.isArchived }
+            expect(notArchivedPrescriptions.count) == 10
+
+            let archivedPrescriptions = groupedPrescriptions.flatMap(\.prescriptions).filter(\.isArchived)
+            expect(archivedPrescriptions.count) == 5
+
+            let archivedGroups: [GroupedPrescription] = groupedPrescriptions.filter(\.isArchived)
+            expect(archivedGroups.count) == 3
         })
     }
 }

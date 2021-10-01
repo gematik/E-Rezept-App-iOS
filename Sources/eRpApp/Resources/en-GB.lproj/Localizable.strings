@@ -115,6 +115,14 @@
 "cdw_txt_nfu_title" = "Login";
 "cdw_txt_order_egk_desription" = "Die Gesundheitskarte und die zugehörige PIN erhalten Sie kostenfrei von Ihrer Krankenversicherung. Der Antrag kann formlos und per Mail gestellt werden.";
 "cdw_txt_order_egk_headline" = "Neue Gesundheitskarte beantragen";
+"cdw_txt_order_egk_info_button" = "So erkennen Sie eine NFC-fähige Gesundheitskarte";
+"cdw_txt_order_egk_info_footnote" = "Sollten Sie bereits über eine Gesundheitskarte mit NFC-Funktion verfügen, müssen Sie lediglich die Zusendung einer PIN beantragen.";
+"cdw_txt_order_egk_info_headline" = "Gesundheitskarte mit NFC & PIN beantragen";
+"cdw_txt_order_egk_info_link" = "https://www.das-e-rezept-fuer-deutschland.de/fragen-antworten/woran-erkenne-ich-ob-ich-eine-nfc-faehige-gesundheitskarte-habe#c204";
+"cdw_txt_order_egk_info_text_1" = "Um sich in dieser App anmelden zu können, benötigen Sie";
+"cdw_txt_order_egk_info_text_2" = "eine NFC-fähige Gesundheitskarte, sowie";
+"cdw_txt_order_egk_info_text_3" = "die zugehörige PIN.";
+"cdw_txt_order_egk_info_text_4" = "Diese erhalten Sie kostenfrei von Ihrer Krankenversicherung.";
 "cdw_txt_order_egk_kv_placeholder" = "Krankenversicherung wählen";
 "cdw_txt_order_egk_kv_subheadline" = "Krankenkasse";
 "cdw_txt_order_egk_kvnr_placeholder" = "Versichtertennummer";
@@ -189,8 +197,7 @@
 "dtl_txt_hint_overview_title" = "Keep track of things";
 "dtl_txt_med_info" = "Technical information";
 "dtl_txt_med_protocol" = "Log";
-"dtl_txt_med_redeemable_until" = "Can still be redeemed until";
-"dtl_txt_med_redeemed_on" = "Redeemed:";
+"dtl_txt_med_redeemed_on_%@" = "Redeemed: %@";
 "dtl_txt_scanned_on" = "Scanned on";
 "dtl_txt_task_id" = "Task ID";
 "dtl_txt_title" = "Details";
@@ -199,8 +206,10 @@
 "erx_btn_scn_prescription" = "Open prescription scanner";
 "erx_btn_show_settings" = "Open settings";
 "erx_title" = "Prescriptions";
+"erx_txt_accepted_until" = "This is a plural string handled by Localizable.stringdict!";
 "erx_txt_current" = "Current";
 "erx_txt_expires_in" = "This is a plural string handled by Localizable.stringdict!";
+"erx_txt_invalid" = "Not valid anymore";
 "erx_txt_medication_placeholder" = "Unknown medicine";
 "erx_txt_medication_placeholder" = "Unknown pharmaceutical";
 "erx_txt_no_current_prescriptions" = "You do not have any open prescriptions";
@@ -525,6 +534,7 @@
 "msgs_txt_title" = "Messages";
 "nav_back" = "Back";
 "nav_cancel" = "Cancel";
+"nav_close" = "Close";
 "nav_done" = "Ready";
 "onb_btn_lets_start" = "Next";
 "onb_btn_lets_start_hint" = "Next";
@@ -717,6 +727,11 @@
 "stg_lno_txt_title_note" = "Note";
 "stg_lno_txt_title_responsible" = "Responsible for the content";
 "stg_lno_you_know_us" = "Deutschlands moderne Plattform für digitale Medizin";
+"stg_tkn_txt_access_token" = "Access Token";
+"stg_tkn_txt_copy_to_clipboard" = "Token in Zwischenablage kopiert";
+"stg_tkn_txt_sso_token" = "SSO Token";
+"stg_tkn_txt_title_tokens" = "Tokens";
+"stg_tkn_txt_not_available" = "Not available";
 "stg_trk_btn_alert_no" = "Decline";
 "stg_trk_btn_alert_yes" = "Agree";
 "stg_trk_btn_title" = "Allow anonymous analysis";
@@ -740,6 +755,7 @@
 "stg_txt_security_option_password_title" = "Kennwort";
 "stg_txt_security_option_touchid_title" = "Touch ID";
 "stg_txt_security_option_unsecured_title" = "Not secured";
+"stg_txt_security_tokens" = "Show tokens";
 "stg_txt_security_warning" = "This app has not yet been secured. Improve the protection of your data with a fingerprint or face scan.";
 "stg_txt_title" = "Settings";
 "stg_txt_version_%@_and_build_%@" = "Version %@ • Build %@";

@@ -25,11 +25,13 @@ import XCTest
 
 extension AppStoreSnapshotTests {
     func main() -> some View {
-        let groupedPrescription = GroupedPrescription(id: "1",
-                                                      title: "Hausarztpraxis Dr. Topp-Glücklich",
-                                                      authoredOn: "2019-12-20",
-                                                      prescriptions: ErxTask.Dummies.prescriptions,
-                                                      displayType: .fullDetail)
+        let groupedPrescription = GroupedPrescription(
+            id: "1",
+            title: "Hausarztpraxis Dr. Topp-Glücklich",
+            authoredOn: "2019-12-20",
+            prescriptions: ErxTask.Dummies.erxTasks.map { GroupedPrescription.Prescription(erxTask: $0) },
+            displayType: .fullDetail
+        )
 
         let state = GroupedPrescriptionListDomain.State(
             groupedPrescriptions: Array(

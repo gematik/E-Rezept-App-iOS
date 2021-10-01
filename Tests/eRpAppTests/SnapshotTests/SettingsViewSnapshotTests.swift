@@ -118,16 +118,16 @@ final class SettingsViewSnapshotTests: XCTestCase {
     func testSettingsView_DemoMode_Disabled() {
         let sut = SettingsView(store: SettingsDomain.Store(
             initialState: configuredSettingsDomainState(
-                withAvailableSecurityOptions: [.unsecured],
+                withAvailableSecurityOptions: [.password, .biometry(.faceID), .unsecured],
                 andSelectedSecurityOption: nil
             ),
             reducer: SettingsDomain.Reducer.empty,
             environment: SettingsDomain.Dummies.environment
         ),
         debugStore: debugStore)
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+            .frame(width: 320, height: 1600)
+
+        assertSnapshots(matching: sut, as: snapshotModi())
     }
 
     let appVersion = AppVersion(productVersion: "1.0", buildNumber: "LOCAL BUILD", buildHash: "LOCAL BUILD")
@@ -140,7 +140,11 @@ final class SettingsViewSnapshotTests: XCTestCase {
                                                showTermsOfUseView: false,
                                                appSecurityState: AppSecurityDomain
                                                    .State(
-                                                       availableSecurityOptions: [.unsecured],
+                                                       availableSecurityOptions: [
+                                                           .password,
+                                                           .biometry(.faceID),
+                                                           .unsecured,
+                                                       ],
                                                        selectedSecurityOption: nil
                                                    ),
                                                appVersion: appVersion),
@@ -148,15 +152,16 @@ final class SettingsViewSnapshotTests: XCTestCase {
             environment: SettingsDomain.Dummies.environment
         ),
         debugStore: debugStore)
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+            .frame(width: 320, height: 1600)
+
+        assertSnapshots(matching: sut, as: snapshotModi())
     }
 
     func testSettingsView_ComplyTrackingView() {
         let sut = SettingsView.TrackingComplyView(store: SettingsDomain.Store(
             initialState: SettingsDomain.State(
                 isDemoMode: false,
+                appSecurityState: AppSecurityDomain.State(availableSecurityOptions: [.password]),
                 showTrackerComplyView: true
             ),
             reducer: SettingsDomain.Reducer.empty,
@@ -166,8 +171,8 @@ final class SettingsViewSnapshotTests: XCTestCase {
     }
 
     private func configuredSettingsDomainState(
-        withAvailableSecurityOptions availableSecurityOptions: [AppSecurityDomain.AppSecurityOption],
-        andSelectedSecurityOption selectedSecurityOption: AppSecurityDomain.AppSecurityOption?
+        withAvailableSecurityOptions availableSecurityOptions: [AppSecurityOption],
+        andSelectedSecurityOption selectedSecurityOption: AppSecurityOption?
     ) -> SettingsDomain.State {
         SettingsDomain.State(isDemoMode: false,
                              showLegalNoticeView: false,

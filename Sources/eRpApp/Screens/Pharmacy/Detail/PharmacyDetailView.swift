@@ -133,7 +133,7 @@ struct PharmacyDetailView: View {
         let days: [PharmacyLocationViewModel.DailyOpenHours]
 
         var body: some View {
-            SectionView(
+            SectionHeaderView(
                 text: L10n.phaDetailOpeningTime,
                 a11y: ""
             ).padding(.bottom, 8)
@@ -166,8 +166,8 @@ struct PharmacyDetailView: View {
         var body: some View {
             VStack {
                 WithViewStore(store) { viewStore in
-                    SectionView(text: L10n.phaDetailContact,
-                                a11y: A11y.pharmacyDetail.phaDetailContact)
+                    SectionHeaderView(text: L10n.phaDetailContact,
+                                      a11y: A11y.pharmacyDetail.phaDetailContact)
 
                     if let phone = viewStore.state.pharmacy.telecom?.phone {
                         Button(action: { viewStore.send(.openPhoneApp) }, label: {

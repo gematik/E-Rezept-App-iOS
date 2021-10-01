@@ -60,12 +60,14 @@ final class ErxTaskFHIRClientTests: XCTestCase {
                 expect(counter) == 1
 
                 expect(erxTaskBundle?.id) == "61704e3f-1e4f-11b2-80f4-b806a73c0cd0"
+                expect(erxTaskBundle?.status) == .ready
                 expect(erxTaskBundle?.accessCode) == "7eccd529292631f6a7cd120b57ded23062c35932cc721bfd32b08c5fb188b642"
                 expect(erxTaskBundle?.fullUrl).to(beNil())
                 expect(erxTaskBundle?.medication?.name) == "Sumatriptan-1a Pharma 100 mg Tabletten"
                 expect(erxTaskBundle?.authoredOn) == "2020-02-03T00:00:00+00:00"
                 expect(erxTaskBundle?.lastModified) == "2021-03-24T08:35:32.311376627+00:00"
                 expect(erxTaskBundle?.expiresOn) == "2021-06-24"
+                expect(erxTaskBundle?.acceptedUntil) == "2021-04-23"
                 expect(erxTaskBundle?.author) == "Hausarztpraxis Dr. Topp-Glücklich"
                 expect(erxTaskBundle?.medication?.dosageForm) == "TAB"
                 expect(erxTaskBundle?.medication?.amount) == 12
@@ -170,7 +172,7 @@ final class ErxTaskFHIRClientTests: XCTestCase {
             fixture(filePath: errorResponse, status: 404, headers: ["Accept": "application/fhir+json"])
         }
 
-        let erxTask = ErxTask(identifier: "1", accessCode: "12")
+        let erxTask = ErxTask(identifier: "1", status: .ready, accessCode: "12")
 
         sut.deleteTask(by: erxTask.id, accessCode: erxTask.accessCode)
             .test(expectations: { success in

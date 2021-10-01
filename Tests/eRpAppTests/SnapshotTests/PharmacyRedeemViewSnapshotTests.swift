@@ -32,9 +32,9 @@ final class PharmacyRedeemViewSnapshotTests: XCTestCase {
     func testPharmacyRedeemViewTypeReservationServiceWithSelection() {
         let initialState = PharmacyRedeemDomain.State(
             redeemOption: .onPremise,
-            erxTasks: ErxTask.Dummies.prescriptions,
+            erxTasks: ErxTask.Dummies.erxTasks,
             pharmacy: PharmacyLocation.Dummies.pharmacy,
-            selectedErxTasks: Set(ErxTask.Dummies.prescriptions)
+            selectedErxTasks: Set(ErxTask.Dummies.erxTasks)
         )
         let sut = NavigationView {
             PharmacyRedeemView(store: PharmacyRedeemDomain.Dummies.storeFor(initialState))
@@ -48,7 +48,7 @@ final class PharmacyRedeemViewSnapshotTests: XCTestCase {
     func testPharmacyRedeemViewTypeMailService() {
         let initialState = PharmacyRedeemDomain.State(
             redeemOption: .shipment,
-            erxTasks: ErxTask.Dummies.prescriptions,
+            erxTasks: ErxTask.Dummies.erxTasks,
             pharmacy: PharmacyLocation.Dummies.pharmacy
         )
         let sut = NavigationView {
@@ -63,7 +63,7 @@ final class PharmacyRedeemViewSnapshotTests: XCTestCase {
     func testPharmacyRedeemViewTypeDeliveryService() {
         let initialState = PharmacyRedeemDomain.State(
             redeemOption: .shipment,
-            erxTasks: ErxTask.Dummies.prescriptions,
+            erxTasks: ErxTask.Dummies.erxTasks,
             pharmacy: PharmacyLocation.Dummies.pharmacy
         )
         let sut = NavigationView {

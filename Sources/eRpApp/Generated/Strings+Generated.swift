@@ -247,6 +247,22 @@ internal enum L10n {
   internal static let cdwTxtOrderEgkDesription = LocalizedStringKey("cdw_txt_order_egk_desription")
   /// Neue Gesundheitskarte beantragen
   internal static let cdwTxtOrderEgkHeadline = LocalizedStringKey("cdw_txt_order_egk_headline")
+  /// So erkennen Sie eine NFC-fähige Gesundheitskarte
+  internal static let cdwTxtOrderEgkInfoButton = LocalizedStringKey("cdw_txt_order_egk_info_button")
+  /// Sollten Sie bereits über eine Gesundheitskarte mit NFC-Funktion verfügen, müssen Sie lediglich die Zusendung einer PIN beantragen.
+  internal static let cdwTxtOrderEgkInfoFootnote = LocalizedStringKey("cdw_txt_order_egk_info_footnote")
+  /// Gesundheitskarte mit NFC & PIN beantragen
+  internal static let cdwTxtOrderEgkInfoHeadline = LocalizedStringKey("cdw_txt_order_egk_info_headline")
+  /// https://www.das-e-rezept-fuer-deutschland.de/fragen-antworten/woran-erkenne-ich-ob-ich-eine-nfc-faehige-gesundheitskarte-habe#c204
+  internal static let cdwTxtOrderEgkInfoLink = LocalizedStringKey("cdw_txt_order_egk_info_link")
+  /// Um sich in dieser App anmelden zu können, benötigen Sie
+  internal static let cdwTxtOrderEgkInfoText1 = LocalizedStringKey("cdw_txt_order_egk_info_text_1")
+  /// eine NFC-fähige Gesundheitskarte, sowie
+  internal static let cdwTxtOrderEgkInfoText2 = LocalizedStringKey("cdw_txt_order_egk_info_text_2")
+  /// die zugehörige PIN.
+  internal static let cdwTxtOrderEgkInfoText3 = LocalizedStringKey("cdw_txt_order_egk_info_text_3")
+  /// Diese erhalten Sie kostenfrei von Ihrer Krankenversicherung.
+  internal static let cdwTxtOrderEgkInfoText4 = LocalizedStringKey("cdw_txt_order_egk_info_text_4")
   /// Krankenversicherung wählen
   internal static let cdwTxtOrderEgkKvPlaceholder = LocalizedStringKey("cdw_txt_order_egk_kv_placeholder")
   /// Krankenkasse
@@ -395,10 +411,8 @@ internal enum L10n {
   internal static let dtlTxtMedInfo = LocalizedStringKey("dtl_txt_med_info")
   /// Log
   internal static let dtlTxtMedProtocol = LocalizedStringKey("dtl_txt_med_protocol")
-  /// Can still be redeemed until
-  internal static let dtlTxtMedRedeemableUntil = LocalizedStringKey("dtl_txt_med_redeemable_until")
-  /// Redeemed:
-  internal static let dtlTxtMedRedeemedOn = LocalizedStringKey("dtl_txt_med_redeemed_on")
+  /// Redeemed: %@
+  internal static let dtlTxtMedRedeemedOn = LocalizedStringKey("dtl_txt_med_redeemed_on_%@")
   /// Scanned on
   internal static let dtlTxtScannedOn = LocalizedStringKey("dtl_txt_scanned_on")
   /// Task ID
@@ -415,10 +429,14 @@ internal enum L10n {
   internal static let erxBtnShowSettings = LocalizedStringKey("erx_btn_show_settings")
   /// Prescriptions
   internal static let erxTitle = LocalizedStringKey("erx_title")
+  /// Plural format key: "%#@variable_0@"
+  internal static let erxTxtAcceptedUntil = LocalizedStringKey("erx_txt_accepted_until")
   /// Current
   internal static let erxTxtCurrent = LocalizedStringKey("erx_txt_current")
   /// Plural format key: "%#@v1_days_variable@"
   internal static let erxTxtExpiresIn = LocalizedStringKey("erx_txt_expires_in")
+  /// Not valid anymore
+  internal static let erxTxtInvalid = LocalizedStringKey("erx_txt_invalid")
   /// Unknown pharmaceutical
   internal static let erxTxtMedicationPlaceholder = LocalizedStringKey("erx_txt_medication_placeholder")
   /// You do not have any open prescriptions
@@ -1065,6 +1083,8 @@ internal enum L10n {
   internal static let navBack = LocalizedStringKey("nav_back")
   /// Cancel
   internal static let navCancel = LocalizedStringKey("nav_cancel")
+  /// Close
+  internal static let navClose = LocalizedStringKey("nav_close")
   /// Ready
   internal static let navDone = LocalizedStringKey("nav_done")
   /// Next
@@ -1449,6 +1469,16 @@ internal enum L10n {
   internal static let stgLnoTxtTitleResponsible = LocalizedStringKey("stg_lno_txt_title_responsible")
   /// Deutschlands moderne Plattform für digitale Medizin
   internal static let stgLnoYouKnowUs = LocalizedStringKey("stg_lno_you_know_us")
+  /// Access Token
+  internal static let stgTknTxtAccessToken = LocalizedStringKey("stg_tkn_txt_access_token")
+  /// Token in Zwischenablage kopiert
+  internal static let stgTknTxtCopyToClipboard = LocalizedStringKey("stg_tkn_txt_copy_to_clipboard")
+  /// Not available
+  internal static let stgTknTxtNotAvailable = LocalizedStringKey("stg_tkn_txt_not_available")
+  /// SSO Token
+  internal static let stgTknTxtSsoToken = LocalizedStringKey("stg_tkn_txt_sso_token")
+  /// Tokens
+  internal static let stgTknTxtTitleTokens = LocalizedStringKey("stg_tkn_txt_title_tokens")
   /// Decline
   internal static let stgTrkBtnAlertNo = LocalizedStringKey("stg_trk_btn_alert_no")
   /// Agree
@@ -1495,6 +1525,8 @@ internal enum L10n {
   internal static let stgTxtSecurityOptionTouchidTitle = LocalizedStringKey("stg_txt_security_option_touchid_title")
   /// Not secured
   internal static let stgTxtSecurityOptionUnsecuredTitle = LocalizedStringKey("stg_txt_security_option_unsecured_title")
+  /// Show tokens
+  internal static let stgTxtSecurityTokens = LocalizedStringKey("stg_txt_security_tokens")
   /// This app has not yet been secured. Improve the protection of your data with a fingerprint or face scan.
   internal static let stgTxtSecurityWarning = LocalizedStringKey("stg_txt_security_warning")
   /// Settings

@@ -25,10 +25,13 @@ enum CardWallIntroductionDomain {
 
     struct State: Equatable {
         var showNextScreen = false
+        var isEGKOrderInfoViewPresented = false
     }
 
     enum Action: Equatable {
         case advance(forward: Bool)
+        case showEGKOrderInfoView
+        case dismissEGKOrderInfoView
         case close
     }
 
@@ -45,6 +48,12 @@ enum CardWallIntroductionDomain {
             }
             return .none
         case .close:
+            return .none
+        case .showEGKOrderInfoView:
+            state.isEGKOrderInfoViewPresented = true
+            return .none
+        case .dismissEGKOrderInfoView:
+            state.isEGKOrderInfoViewPresented = false
             return .none
         }
     }

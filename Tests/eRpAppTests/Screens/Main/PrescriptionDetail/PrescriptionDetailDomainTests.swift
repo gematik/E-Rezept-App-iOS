@@ -149,28 +149,32 @@ final class PrescriptionDetailDomainTests: XCTestCase {
     /// Test redeem low-detail prescriptions.
     func testRedeemLowDetail() {
         let store = testStore()
+
         let expectedRedeemDate = FHIRDateFormatter.shared.string(
             from: Date(),
             format: .yearMonthDayTime
         )
-
+        var erxTask = ErxTask.Dummies.erxTaskReady
+        erxTask.update(with: expectedRedeemDate)
+        let prescription = GroupedPrescription.Prescription(erxTask: ErxTask.Dummies.erxTaskReady)
+        let expectedPrescription = GroupedPrescription.Prescription(erxTask: erxTask)
         store.assert(
             // when
             .send(.toggleRedeemPrescription) { sut in
                 // then
-                sut.isRedeemed = true
+                sut.isArchived = true
             },
             .do { self.testScheduler.advance() },
             .receive(.redeemedOnSavedReceived(true)) { state in
-                state.erxTask.redeemedOn = nil
+                state.prescription = prescription
             },
             .send(.toggleRedeemPrescription) { sut in
                 // then
-                sut.isRedeemed = false
+                sut.isArchived = false
             },
             .do { self.testScheduler.advance() },
             .receive(.redeemedOnSavedReceived(true)) { state in
-                state.erxTask.redeemedOn = expectedRedeemDate
+                state.prescription = expectedPrescription
             }
         )
     }

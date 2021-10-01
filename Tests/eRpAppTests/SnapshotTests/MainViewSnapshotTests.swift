@@ -53,7 +53,7 @@ final class MainViewSnapshotTests: XCTestCase {
             id: "1",
             title: "Hausarztpraxis Dr. Topp-Glücklich",
             authoredOn: "2020-02-03",
-            prescriptions: [ErxTask.Dummies.prescription],
+            prescriptions: [GroupedPrescription.Prescription(erxTask: ErxTask.Dummies.erxTaskReady)],
             displayType: .fullDetail
         )
 
@@ -95,7 +95,7 @@ final class MainViewSnapshotTests: XCTestCase {
             id: "1",
             title: "Hausarztpraxis Dr. Topp-Glücklich",
             authoredOn: "2019-12-20",
-            prescriptions: ErxTask.Dummies.prescriptions,
+            prescriptions: ErxTask.Dummies.erxTasks.map { GroupedPrescription.Prescription(erxTask: $0) },
             displayType: .fullDetail
         )
 

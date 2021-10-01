@@ -26,7 +26,7 @@ struct MedicationProtocolView: View {
     var body: some View {
         VStack(alignment: .center, spacing: 8) {
             VStack(alignment: .leading, spacing: 16) {
-                SectionView(
+                SectionHeaderView(
                     text: L10n.dtlTxtMedProtocol,
                     a11y: A18n.prescriptionDetails.prscDtlTxtMedInfo
                 )

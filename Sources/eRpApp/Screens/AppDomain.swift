@@ -134,6 +134,7 @@ enum AppDomain {
                 router: appEnvironment.router,
                 userSessionContainer: appEnvironment.userSessionContainer,
                 userSession: appEnvironment.userSessionContainer.userSession,
+                appSecurityManager: appEnvironment.userSessionContainer.userSession.appSecurityManager,
                 serviceLocator: appEnvironment.serviceLocator,
                 accessibilityAnnouncementReceiver: appEnvironment.accessibilityAnnouncementReceiver,
                 erxTaskRepository: appEnvironment.userSessionContainer.userSession.erxTaskRepository,

@@ -19,19 +19,21 @@
 import eRpKit
 import Foundation
 
+/// GroupedPrescription acts as the view model for an array  of `Prescription`s,
+/// which acts as the view model for `ErxTask`s
 struct GroupedPrescription: Identifiable, Equatable, Hashable {
     init(
         id: String, // swiftlint:disable:this identifier_name
         title: String,
         authoredOn: String,
-        isRedeemed: Bool = false,
-        prescriptions: [ErxTask],
+        isArchived: Bool = false,
+        prescriptions: [Prescription],
         displayType: GroupedPrescription.DisplayType
     ) {
         self.id = id
         self.title = title
         self.authoredOn = authoredOn
-        self.isRedeemed = isRedeemed
+        self.isArchived = isArchived
         self.prescriptions = prescriptions
         self.displayType = displayType
     }
@@ -39,8 +41,8 @@ struct GroupedPrescription: Identifiable, Equatable, Hashable {
     let id: String // swiftlint:disable:this identifier_name
     let title: String
     let authoredOn: String
-    let isRedeemed: Bool
-    let prescriptions: [ErxTask]
+    let isArchived: Bool
+    let prescriptions: [Prescription]
     let displayType: DisplayType
 
     enum DisplayType {
@@ -67,19 +69,23 @@ extension Sequence where Self.Element == GroupedPrescription {
 extension GroupedPrescription {
     enum Dummies {
         static let twoPrescriptions: GroupedPrescription = {
-            GroupedPrescription(id: "1",
-                                title: "Hausarztpraxis Dr. med. Topp-Glücklich",
-                                authoredOn: "2020-02-03",
-                                prescriptions: ErxTask.Dummies.prescriptions,
-                                displayType: .fullDetail)
+            GroupedPrescription(
+                id: "1",
+                title: "Hausarztpraxis Dr. med. Topp-Glücklich",
+                authoredOn: "2020-02-03",
+                prescriptions: ErxTask.Dummies.erxTasks.map { GroupedPrescription.Prescription(erxTask: $0) },
+                displayType: .fullDetail
+            )
         }()
 
         static let twoScannedPrescriptions: GroupedPrescription = {
-            GroupedPrescription(id: "2",
-                                title: "Scanned Prescription",
-                                authoredOn: "2020-02-03",
-                                prescriptions: ErxTask.Dummies.prescriptions,
-                                displayType: .lowDetail)
+            GroupedPrescription(
+                id: "2",
+                title: "Scanned Prescription",
+                authoredOn: "2020-02-03",
+                prescriptions: ErxTask.Dummies.erxTasks.map { GroupedPrescription.Prescription(erxTask: $0) },
+                displayType: .lowDetail
+            )
         }()
     }
 }
