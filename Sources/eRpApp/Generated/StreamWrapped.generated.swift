@@ -439,6 +439,12 @@ class StreamWrappedUserDataStore: UserDataStore {
 			.switchToLatest()
 			.eraseToAnyPublisher()
 	}
+	var onboardingVersion: AnyPublisher<String?, Never> {
+		return stream
+			.map { $0.onboardingVersion }
+			.switchToLatest()
+			.eraseToAnyPublisher()
+	}
 	var hideCardWallIntro: AnyPublisher<Bool, Never> {
 		return stream
 			.map { $0.hideCardWallIntro }
@@ -457,6 +463,18 @@ class StreamWrappedUserDataStore: UserDataStore {
 			.switchToLatest()
 			.eraseToAnyPublisher()
 	}
+	var failedAppAuthentications: AnyPublisher<Int, Never> {
+		return stream
+			.map { $0.failedAppAuthentications }
+			.switchToLatest()
+			.eraseToAnyPublisher()
+	}
+	var ignoreDeviceNotSecuredWarningPermanently: AnyPublisher<Bool, Never> {
+		return stream
+			.map { $0.ignoreDeviceNotSecuredWarningPermanently }
+			.switchToLatest()
+			.eraseToAnyPublisher()
+	}
 	var configuration: AnyPublisher<AppConfiguration, Never> {
 		return stream
 			.map { $0.configuration }
@@ -467,6 +485,12 @@ class StreamWrappedUserDataStore: UserDataStore {
 	func set(hideOnboarding: Bool) -> Void {
         current.set(
 				hideOnboarding: hideOnboarding
+            )
+	}
+
+	func set(onboardingVersion: String?) -> Void {
+        current.set(
+				onboardingVersion: onboardingVersion
             )
 	}
 
@@ -488,6 +512,18 @@ class StreamWrappedUserDataStore: UserDataStore {
             )
 	}
 
+	func set(failedAppAuthentications: Int) -> Void {
+        current.set(
+				failedAppAuthentications: failedAppAuthentications
+            )
+	}
+
+	func set(ignoreDeviceNotSecuredWarningPermanently: Bool) -> Void {
+        current.set(
+				ignoreDeviceNotSecuredWarningPermanently: ignoreDeviceNotSecuredWarningPermanently
+            )
+	}
+
 
 	/// AnyObject
 }
@@ -506,6 +542,7 @@ class StreamWrappedUserSession: UserSession {
 		self.vauStorage = current.vauStorage
 		self.trustStoreSession = current.trustStoreSession
 		self.appSecurityManager = current.appSecurityManager
+		self.deviceSecurityManager = current.deviceSecurityManager
 
 		stream
 			.assign(to: \.current, on: self)
@@ -530,6 +567,10 @@ class StreamWrappedUserSession: UserSession {
 		stream
 			.map(\.appSecurityManager)
 			.assign(to: \.appSecurityManager, on: self)
+			.store(in: &disposeBag)
+		stream
+			.map(\.deviceSecurityManager)
+			.assign(to: \.deviceSecurityManager, on: self)
 			.store(in: &disposeBag)
 
 	}
@@ -566,6 +607,7 @@ class StreamWrappedUserSession: UserSession {
 	private(set) var vauStorage: VAUStorage
 	private(set) var trustStoreSession: TrustStoreSession
 	private(set) var appSecurityManager: AppSecurityManager
+	private(set) var deviceSecurityManager: DeviceSecurityManager
 
 
 }

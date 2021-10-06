@@ -23,6 +23,6 @@ import XCTest
 
 extension AppStoreSnapshotTests {
     func onboarding() -> some View {
-        OnboardingWelcomeView(action: {})
+        OnboardingWelcomeView()
     }
 }

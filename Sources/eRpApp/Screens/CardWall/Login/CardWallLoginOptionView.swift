@@ -20,10 +20,15 @@ import ComposableArchitecture
 import SwiftUI
 import UIKit
 
-struct CardWallLoginOptionView: View {
+struct CardWallLoginOptionView<Content: View>: View {
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     let store: CardWallLoginOptionDomain.Store
-    let nextView: () -> AnyView
+    let nextView: () -> Content
+
+    init(store: CardWallLoginOptionDomain.Store, @ViewBuilder nextView: @escaping () -> Content) {
+        self.store = store
+        self.nextView = nextView
+    }
 
     var body: some View {
         WithViewStore(store) { viewStore in
@@ -174,7 +179,7 @@ struct CardWallBiometryView_Previews: PreviewProvider {
                     CardWallLoginOptionView(
                         store: CardWallLoginOptionDomain.Dummies.store
                     ) {
-                        AnyView(EmptyView())
+                        EmptyView()
                     }
                 }
                 .previewDevice(PreviewDevice(rawValue: deviceName))

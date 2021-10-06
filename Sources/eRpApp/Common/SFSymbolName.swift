@@ -56,6 +56,7 @@ struct SFSymbolName {
     static let exclamationMark = "exclamationmark.triangle"
     static let wandAndStars = "wand.and.stars"
     static let arrowRight = "arrow.right"
+    static let arrowRightCircleFill = "arrow.right.circle.fill"
     static let pencil = "pencil"
     static let shield = "shield"
     static let heartTextSquare = "heart.text.square"

@@ -33,8 +33,8 @@ public enum ErxRepositoryError<LocalError: LocalizedError, RemoteError: Localize
         }
     }
 
-    public static func ==(lhs: Self<LocalError, RemoteError>,
-                          rhs: Self<LocalError, RemoteError>) -> Bool {
+    public static func ==(lhs: Self,
+                          rhs: Self) -> Bool {
         switch (lhs, rhs) {
         case let (local(lhsError), local(rhsError)): return lhsError == rhsError
         case let (remote(lhsError), remote(rhsError)): return lhsError == rhsError

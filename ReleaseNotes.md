@@ -1,3 +1,17 @@
+# Release 1.0.12
+
+### added (5 changes)
+
+- Add hint for failure app access
+- Add mandatory app authenication to onboarding
+- Add mandatory app authenication for existing users
+- Add warning screen for rooted devices
+- Add warning screen for devices without system passcode
+
+### removed (1 change)
+
+- Remove unsecure option from app security options
+
 # Release 1.0.11
 
 Added:

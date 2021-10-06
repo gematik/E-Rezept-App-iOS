@@ -43,7 +43,7 @@ final class SettingsViewSnapshotTests: XCTestCase {
     func testSettingsView_App_Security_Biometry_Available_No_Selection() {
         let sut = SettingsView(store: SettingsDomain.Store(
             initialState: configuredSettingsDomainState(
-                withAvailableSecurityOptions: [.biometry(.faceID), .unsecured],
+                withAvailableSecurityOptions: [.biometry(.faceID)],
                 andSelectedSecurityOption: nil
             ),
             reducer: SettingsDomain.Reducer.empty,
@@ -58,7 +58,7 @@ final class SettingsViewSnapshotTests: XCTestCase {
     func testSettingsView_App_Security_Biometry_Available_And_Selected() {
         let sut = SettingsView(store: SettingsDomain.Store(
             initialState: configuredSettingsDomainState(
-                withAvailableSecurityOptions: [.biometry(.faceID), .unsecured],
+                withAvailableSecurityOptions: [.biometry(.faceID)],
                 andSelectedSecurityOption: .biometry(.faceID)
             ),
             reducer: SettingsDomain.Reducer.empty,
@@ -73,7 +73,7 @@ final class SettingsViewSnapshotTests: XCTestCase {
     func testSettingsView_App_Security_Biometry_Available_Unsecured_Selected() {
         let sut = SettingsView(store: SettingsDomain.Store(
             initialState: configuredSettingsDomainState(
-                withAvailableSecurityOptions: [.biometry(.faceID), .unsecured],
+                withAvailableSecurityOptions: [.biometry(.faceID)],
                 andSelectedSecurityOption: .unsecured
             ),
             reducer: SettingsDomain.Reducer.empty,
@@ -88,7 +88,7 @@ final class SettingsViewSnapshotTests: XCTestCase {
     func testSettingsView_App_Security_Biometry_Unavailable_No_Selection() {
         let sut = SettingsView(store: SettingsDomain.Store(
             initialState: configuredSettingsDomainState(
-                withAvailableSecurityOptions: [.unsecured],
+                withAvailableSecurityOptions: [],
                 andSelectedSecurityOption: nil
             ),
             reducer: SettingsDomain.Reducer.empty,
@@ -103,7 +103,7 @@ final class SettingsViewSnapshotTests: XCTestCase {
     func testSettingsView_App_Security_Biometry_Unvailable_Unsecured_Selected() {
         let sut = SettingsView(store: SettingsDomain.Store(
             initialState: configuredSettingsDomainState(
-                withAvailableSecurityOptions: [.unsecured],
+                withAvailableSecurityOptions: [],
                 andSelectedSecurityOption: .unsecured
             ),
             reducer: SettingsDomain.Reducer.empty,
@@ -118,7 +118,7 @@ final class SettingsViewSnapshotTests: XCTestCase {
     func testSettingsView_DemoMode_Disabled() {
         let sut = SettingsView(store: SettingsDomain.Store(
             initialState: configuredSettingsDomainState(
-                withAvailableSecurityOptions: [.password, .biometry(.faceID), .unsecured],
+                withAvailableSecurityOptions: [.password, .biometry(.faceID)],
                 andSelectedSecurityOption: nil
             ),
             reducer: SettingsDomain.Reducer.empty,
@@ -143,7 +143,6 @@ final class SettingsViewSnapshotTests: XCTestCase {
                                                        availableSecurityOptions: [
                                                            .password,
                                                            .biometry(.faceID),
-                                                           .unsecured,
                                                        ],
                                                        selectedSecurityOption: nil
                                                    ),

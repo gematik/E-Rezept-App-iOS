@@ -86,6 +86,17 @@ onboarding:
   features:
     - onb_txt_features_title
     - onb_img_hand_with_card
+  authentication:
+    - onb_auth_inp_passwordA
+    - onb_auth_inp_passwordB
+    - onb_auth_txt_password_recommendation
+    - onb_auth_txt_passwords_dont_match
+    - onb_auth_txt_no_selection
+    - onb_auth_txt_alt_description
+    - onb_auth_txt_no_biometrics
+    - onb_auth_txt_section_title
+    - onb_auth_btn_faceid
+    - onb_auth_btn_touchid
   legalInfo:
     - onb_txt_legal_info_title
     - onb_btn_accept
@@ -101,6 +112,7 @@ auth:
   - auth_edt_password_input
   - auth_txt_password_placeholder
   - auth_txt_password_subtitle
+  - auth_txt_failed_login_hint
 settings:
   demo:
     - nav_done
@@ -219,6 +231,19 @@ pharmacyRedeem:
 pharmacyGlobal:
   - pha_global_img_readiness_badge
   - pha_global_txt_readiness_badge
+security:
+  - sec_txt_system_pin_headline
+  - sec_txt_system_pin_title
+  - sec_txt_system_pin_message
+  - sec_txt_system_pin_selection
+  - sec_btn_system_pin_done
+  - sec_txt_system_root_detection_headline
+  - sec_txt_system_root_detection_title
+  - sec_txt_system_root_detection_message
+  - sec_txt_system_root_detection_selection
+  - sec_txt_system_root_detection_footnote
+  - sec_btn_system_root_detection_footnote_more
+  - sec_btn_system_root_detection_done
 
 # ./Sources/eRpApp/Components/Tiles/FootnoteView.swift:                .accessibility(identifier: text)
 # ./Sources/eRpApp/Components/Tiles/SectionView.swift:                .accessibility(identifier: text)

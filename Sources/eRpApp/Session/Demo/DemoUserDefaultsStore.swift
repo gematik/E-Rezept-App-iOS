@@ -37,6 +37,17 @@ class DemoUserDefaultsStore: UserDataStore {
         hideCardWallIntroCurrentValue.eraseToAnyPublisher()
     }
 
+    private var onboardingVersionCurrentValue: CurrentValueSubject<String?, Never> = CurrentValueSubject(nil)
+
+    var onboardingVersion: AnyPublisher<String?, Never> {
+        onboardingVersionCurrentValue
+            .eraseToAnyPublisher()
+    }
+
+    func set(onboardingVersion: String?) {
+        onboardingVersionCurrentValue.send(onboardingVersion)
+    }
+
     private var hideCardWallIntroCurrentValue: CurrentValueSubject<Bool, Never> = CurrentValueSubject(false)
 
     func set(hideCardWallIntro: Bool) {
@@ -56,5 +67,27 @@ class DemoUserDefaultsStore: UserDataStore {
 
     func set(appSecurityOption: Int) {
         appSecurityOptionCurrentValue.send(appSecurityOption)
+    }
+
+    private var failedAppAuthenticationsValue: CurrentValueSubject<Int, Never> = CurrentValueSubject(0)
+
+    var failedAppAuthentications: AnyPublisher<Int, Never> {
+        failedAppAuthenticationsValue.eraseToAnyPublisher()
+    }
+
+    func set(failedAppAuthentications: Int) {
+        failedAppAuthenticationsValue.send(failedAppAuthentications)
+    }
+
+    var ignoreDeviceNotSecuredWarningPermanently: AnyPublisher<Bool, Never> {
+        ignoreDeviceNotSecuredWarningForSessionValue.eraseToAnyPublisher()
+    }
+
+    // swiftlint:disable:next identifier_name
+    private var ignoreDeviceNotSecuredWarningForSessionValue: CurrentValueSubject<Bool, Never> =
+        CurrentValueSubject(true)
+
+    func set(ignoreDeviceNotSecuredWarningPermanently: Bool) {
+        ignoreDeviceNotSecuredWarningForSessionValue.send(ignoreDeviceNotSecuredWarningPermanently)
     }
 }

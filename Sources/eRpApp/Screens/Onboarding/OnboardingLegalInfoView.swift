@@ -79,6 +79,11 @@ struct OnboardingLegalInfoView: View {
                 Spacer()
             }
         }
+        .onAppear {
+            withAnimation {
+                UIApplication.shared.dismissKeyboard()
+            }
+        }
     }
 }
 

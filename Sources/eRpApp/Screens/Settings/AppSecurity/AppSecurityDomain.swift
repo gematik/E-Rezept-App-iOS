@@ -114,7 +114,6 @@ enum AppSecurityDomain {
                 } else {
                     state.createPasswordState = CreatePasswordDomain.State(mode: .create)
                 }
-                return .none
             default:
                 state.selectedSecurityOption = option
                 environment.selectedSecurityOption.set(option)

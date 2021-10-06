@@ -57,10 +57,6 @@ extension SettingsView {
                             WarningView(text: NSLocalizedString("stg_txt_security_warning",
                                                                 comment: "stg_hnt_security_warning"))
                                 .accessibility(identifier: "")
-                        } else if case .unsecured = viewStore.state.selectedSecurityOption {
-                            WarningView(text: NSLocalizedString("stg_txt_security_warning",
-                                                                comment: "stg_hnt_security_warning"))
-                                .accessibility(identifier: "")
                         }
 
                         if let error = viewStore.state.errorToDisplay {
@@ -168,13 +164,7 @@ extension SettingsView {
                         )
                     }
                 case .unsecured:
-                    SelectionCell(
-                        text: L10n.stgTxtSecurityOptionUnsecuredTitle,
-                        description: L10n.stgTxtSecurityOptionNoneDescription,
-                        a11y: A18n.settings.security.stgTxtSecurityUnsecured,
-                        systemImage: SFSymbolName.lockOpen,
-                        isOn: binding
-                    )
+                    EmptyView()
                 }
             }
         }

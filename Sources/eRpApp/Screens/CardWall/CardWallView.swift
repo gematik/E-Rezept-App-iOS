@@ -25,15 +25,104 @@ import SwiftUI
 /// See `CardWallRoute`.
 struct CardWallView: View {
     let store: CardWallDomain.Store
+    @ObservedObject var viewStore: ViewStore<ViewState, CardWallDomain.Action>
+
+    init(store: CardWallDomain.Store) {
+        self.store = store
+        viewStore = ViewStore(store.scope(state: ViewState.init))
+    }
+
+    struct ViewState: Equatable {
+        let introAlreadyDisplayed: Bool
+        let isNFCCapable: Bool
+        let isCanAvailable: Bool
+
+        init(state: CardWallDomain.State) {
+            introAlreadyDisplayed = state.introAlreadyDisplayed
+            isNFCCapable = state.isCapable
+            isCanAvailable = state.canAvailable
+        }
+    }
 
     var body: some View {
         NavigationView {
             VStack {
-                WithViewStore(store) { viewStore in
-                    CardWallRoute(with: viewStore.state)
-                        .provideView(state: viewStore.state, store: store)
+                if viewStore.introAlreadyDisplayed {
+                    afterIntroductionView()
+                } else {
+                    CardWallIntroductionView(
+                        store: store.scope(
+                            state: \.introduction,
+                            action: CardWallDomain.Action.introduction(action:)
+                        )
+                    ) {
+                        afterIntroductionView()
+                    }
                 }
             }
+        }
+    }
+
+    @ViewBuilder
+    func afterIntroductionView() -> some View {
+        if !viewStore.isNFCCapable {
+            CapabilitiesView(store: store)
+        } else {
+            if viewStore.isCanAvailable {
+                pinView()
+            } else {
+                canView()
+            }
+        }
+    }
+
+    @ViewBuilder
+    func canView() -> some View {
+        IfLetStore(
+            store.scope(
+                state: \.can,
+                action: CardWallDomain.Action.canAction(action:)
+            )
+        ) { canStore in
+            CardWallCANView(store: canStore) {
+                pinView()
+            }
+        }
+    }
+
+    @ViewBuilder
+    func pinView() -> some View {
+        CardWallPINView(
+            store: store.scope(
+                state: \.pin,
+                action: CardWallDomain.Action.pinAction(action:)
+            )
+        ) { _ in
+            loginOptionView()
+        }
+    }
+
+    @ViewBuilder
+    func loginOptionView() -> some View {
+        CardWallLoginOptionView(
+            store: store.scope(
+                state: \.loginOption,
+                action: CardWallDomain.Action.loginOption(action:)
+            )
+        ) {
+            readCardView()
+        }
+    }
+
+    @ViewBuilder
+    func readCardView() -> some View {
+        IfLetStore(
+            store.scope(
+                state: \.readCard,
+                action: CardWallDomain.Action.readCard(action:)
+            )
+        ) { store in
+            CardWallReadCardView(store: store)
         }
     }
 }

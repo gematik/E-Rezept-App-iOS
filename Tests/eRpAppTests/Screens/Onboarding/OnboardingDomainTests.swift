@@ -22,6 +22,8 @@ import Nimble
 import XCTest
 
 final class OnboardingDomainTests: XCTestCase {
+    let mockUserDataStore = MockUserDataStore()
+    let mockAppSecurityManager = MockAppSecurityManager()
     typealias TestStore = ComposableArchitecture.TestStore<
         OnboardingDomain.State,
         OnboardingDomain.State,
@@ -30,42 +32,101 @@ final class OnboardingDomainTests: XCTestCase {
         OnboardingDomain.Environment
     >
 
-    func testStore() -> TestStore {
-        TestStore(initialState: OnboardingDomain.Dummies.state,
-                  reducer: OnboardingDomain.reducer,
-                  environment: OnboardingDomain.Dummies.environment)
-    }
-
-    func testActionsPageMovement() {
-        let store = testStore()
-        var expectedPage = OnboardingDomain.State.Page.features
-
-        store.assert(
-            // when
-            .send(.setPage(page: OnboardingDomain.State.Page.features)) { sut in
-                // then
-                sut.page = expectedPage
-            },
-            // when
-            .send(.nextPage) { sut in
-                // then
-                expectedPage.next()
-                sut.page = expectedPage
-            }
+    func testStore(with state: OnboardingDomain.State = OnboardingDomain.Dummies.state) -> TestStore {
+        TestStore(
+            initialState: state,
+            reducer: OnboardingDomain.reducer,
+            environment: OnboardingDomain.Environment(
+                appVersion: AppVersion.current,
+                localUserStore: mockUserDataStore,
+                schedulers: Schedulers(),
+                appSecurityManager: mockAppSecurityManager,
+                authenticationChallengeProvider: MockAuthenticationChallengeProvider(result: .success(true))
+            )
         )
     }
 
-    func testActionDismiss() {
-        let store = testStore()
-        var expectedState = OnboardingDomain.Dummies.state
-        expectedState.onboardingVisible = false
-
-        store.assert(
-            // when
-            .send(.dismissOnboarding) { sut in
-                // then
-                sut.onboardingVisible = expectedState.onboardingVisible
-            }
+    func testSavingAuthenticationWithoutSelection() {
+        let composition = OnboardingDomain.Composition.allPages
+        let store = testStore(
+            with: OnboardingDomain.State(composition: composition)
         )
+
+        store.send(.saveAuthentication) { state in
+            state.composition.setPage(OnboardingDomain.Page.registerAuthentication)
+            state.registerAuthenticationState.showNoSelectionMessage = true
+        }
+    }
+
+    func testSavingAuthenticationWithWrongPassword() {
+        let authenticationState = RegisterAuthenticationDomain.State(
+            availableSecurityOptions: [],
+            selectedSecurityOption: .password,
+            passwordA: "ABC",
+            passwordB: "different"
+        )
+        let store = testStore(
+            with: OnboardingDomain.State(composition: OnboardingDomain.Composition.allPages,
+                                         registerAuthenticationState: authenticationState)
+        )
+
+        store.send(.saveAuthentication) { state in
+            state.composition.setPage(OnboardingDomain.Page.registerAuthentication)
+            state.registerAuthenticationState.showNoSelectionMessage = true
+        }
+    }
+
+    func testSavingAuthenticationWithCorrectPassword() {
+        let selectedOption: AppSecurityOption = .password
+        mockAppSecurityManager.savePasswordReturnValue = true
+        let authenticationState = RegisterAuthenticationDomain.State(
+            availableSecurityOptions: [],
+            selectedSecurityOption: .password,
+            passwordA: "ABC",
+            passwordB: "ABC"
+        )
+        let store = testStore(
+            with: OnboardingDomain.State(composition: OnboardingDomain.Composition.allPages,
+                                         registerAuthenticationState: authenticationState)
+        )
+
+        store.send(.saveAuthentication) { state in
+            state.composition.setPage(index: 0)
+            state.registerAuthenticationState.selectedSecurityOption = .password
+            state.registerAuthenticationState.passwordA = "ABC"
+            state.registerAuthenticationState.passwordB = "ABC"
+            state.registerAuthenticationState.showNoSelectionMessage = false
+        }
+        expect(self.mockAppSecurityManager.savePasswordCallsCount) == 1
+        expect(self.mockAppSecurityManager.savePasswordReturnValue).to(beTrue())
+        expect(self.mockUserDataStore.setAppSecurityOptionReceivedAppSecurityOption) == selectedOption.id
+        expect(self.mockUserDataStore.setAppSecurityOptionCallsCount) == 1
+
+        store.receive(.dismissOnboarding)
+        expect(self.mockUserDataStore.setHideOnboardingCallsCount) == 1
+        expect(self.mockUserDataStore.setHideOnboardingReceivedHideOnboarding) == true
+    }
+
+    func testSavingAuthenticationWithBiometry() {
+        let selectedOption: AppSecurityOption = .biometry(.faceID)
+        let authenticationState = RegisterAuthenticationDomain.State(
+            availableSecurityOptions: [],
+            selectedSecurityOption: .biometry(.faceID)
+        )
+        let store = testStore(
+            with: OnboardingDomain.State(composition: OnboardingDomain.Composition.allPages,
+                                         registerAuthenticationState: authenticationState)
+        )
+
+        store.send(.saveAuthentication) { state in
+            state.composition.setPage(index: 0)
+            state.registerAuthenticationState.selectedSecurityOption = selectedOption
+        }
+        expect(self.mockUserDataStore.setAppSecurityOptionReceivedAppSecurityOption) == selectedOption.id
+        expect(self.mockUserDataStore.setAppSecurityOptionCallsCount) == 1
+
+        store.receive(.dismissOnboarding)
+        expect(self.mockUserDataStore.setHideOnboardingCallsCount) == 1
+        expect(self.mockUserDataStore.setHideOnboardingReceivedHideOnboarding) == true
     }
 }

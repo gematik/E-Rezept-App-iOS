@@ -32,12 +32,10 @@ struct TabContainerView: View {
 
     struct ViewState: Equatable {
         let selectedTab: AppDomain.Tab
-        let isOnboardingVisible: Bool
         let unreadMessagesCount: Int
 
         init(state: AppDomain.State) {
             selectedTab = state.selectedTab
-            isOnboardingVisible = state.isOnboardingVisible
             unreadMessagesCount = state.unreadMessagesCount
         }
     }
@@ -79,25 +77,14 @@ struct TabContainerView: View {
                 .tag(AppDomain.Tab.messages)
             }
             .onAppear {
-                viewStore.send(.loadOnboarding)
                 viewStore.send(.registerDemoModeListener)
                 viewStore.send(.registerUnreadMessagesListener)
             }
             .accentColor(Colors.primary700)
-            .accessibilityElement(children: viewStore.isOnboardingVisible ? .ignore : .contain)
             .zIndex(0)
 
             if viewStore.unreadMessagesCount > 0 {
                 MessagesBadgeView(badgeCount: viewStore.unreadMessagesCount)
-            }
-
-            IfLetStore(
-                store.scope(
-                    state: \.onboarding,
-                    action: AppDomain.Action.onboarding(action:)
-                )
-            ) {
-                OnboardingContainer(store: $0).zIndex(1)
             }
         }
     }

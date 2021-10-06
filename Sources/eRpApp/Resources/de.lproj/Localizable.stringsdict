@@ -34,6 +34,22 @@
 			<string>Noch %u Tage als Selbstzahler einlösbar</string>
 		</dict>
 	</dict>
+	<key>auth_txt_failed_login_hint_msg</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>u</string>
+			<key>one</key>
+			<string>Es wurde ein erfolgloser Anmeldeversuche festgestellt</string>
+			<key>other</key>
+			<string>Es wurden %u erfolglose Anmeldeversuche festgestellt</string>
+		</dict>
+	</dict>
 	<key>scn_btn_scanning_done</key>
 	<dict>
 		<key>NSStringLocalizedFormatKey</key>

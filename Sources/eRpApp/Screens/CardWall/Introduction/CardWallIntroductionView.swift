@@ -20,9 +20,14 @@ import Combine
 import ComposableArchitecture
 import SwiftUI
 
-struct CardWallIntroductionView: View {
+struct CardWallIntroductionView<Content: View>: View {
     let store: CardWallIntroductionDomain.Store
-    let nextView: () -> AnyView
+    let nextView: () -> Content
+
+    init(store: CardWallIntroductionDomain.Store, @ViewBuilder nextView: @escaping () -> Content) {
+        self.store = store
+        self.nextView = nextView
+    }
 
     var body: some View {
         WithViewStore(store) { viewStore in
@@ -148,7 +153,7 @@ struct IntroductionView_Previews: PreviewProvider {
             CardWallIntroductionView(
                 store: CardWallIntroductionDomain.Dummies.store
             ) {
-                AnyView(EmptyView())
+                EmptyView()
             }
         }.generateVariations()
     }

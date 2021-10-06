@@ -30,7 +30,7 @@ final class CardWallSnapshotTests: XCTestCase {
     func testIntroductionView() {
         let sut = CardWallIntroductionView(
             store: CardWallIntroductionDomain.Dummies.store,
-            nextView: { AnyView(EmptyView()) }
+            nextView: { EmptyView() }
         )
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
@@ -77,7 +77,7 @@ final class CardWallSnapshotTests: XCTestCase {
                 reducer: .empty,
                 environment: CardWallCANDomain.Dummies.environment
             ),
-            nextView: AnyView(EmptyView())
+            nextView: { EmptyView() }
         )
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
@@ -92,7 +92,7 @@ final class CardWallSnapshotTests: XCTestCase {
                 reducer: .empty,
                 environment: CardWallCANDomain.Dummies.environment
             ),
-            nextView: AnyView(EmptyView())
+            nextView: { EmptyView() }
         )
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
@@ -110,7 +110,7 @@ final class CardWallSnapshotTests: XCTestCase {
                 reducer: .empty,
                 environment: CardWallCANDomain.Dummies.environment
             ),
-            nextView: AnyView(EmptyView())
+            nextView: { EmptyView() }
         )
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
@@ -124,7 +124,7 @@ final class CardWallSnapshotTests: XCTestCase {
                 initialState: CardWallPINDomain.State(isDemoModus: false, pin: ""),
                 reducer: .empty,
                 environment: CardWallPINDomain.Dummies.environment
-            ), nextView: { _ in AnyView(EmptyView()) }
+            ), nextView: { _ in EmptyView() }
         )
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
@@ -139,7 +139,7 @@ final class CardWallSnapshotTests: XCTestCase {
                 reducer: .empty,
                 environment: CardWallPINDomain.Dummies.environment
             ),
-            nextView: { _ in AnyView(EmptyView()) }
+            nextView: { _ in EmptyView() }
         )
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
@@ -156,7 +156,7 @@ final class CardWallSnapshotTests: XCTestCase {
                 initialState: state,
                 reducer: .empty,
                 environment: CardWallPINDomain.Dummies.environment
-            ), nextView: { _ in AnyView(EmptyView()) }
+            ), nextView: { _ in EmptyView() }
         )
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
@@ -172,7 +172,7 @@ final class CardWallSnapshotTests: XCTestCase {
                 reducer: .empty,
                 environment: CardWallLoginOptionDomain.Dummies.environment
             ),
-            nextView: { AnyView(EmptyView()) }
+            nextView: { EmptyView() }
         )
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
@@ -188,7 +188,7 @@ final class CardWallSnapshotTests: XCTestCase {
                 reducer: .empty,
                 environment: CardWallLoginOptionDomain.Dummies.environment
             ),
-            nextView: { AnyView(EmptyView()) }
+            nextView: { EmptyView() }
         )
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())

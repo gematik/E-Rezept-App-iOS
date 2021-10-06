@@ -42,9 +42,6 @@ class MainViewHintsProvider: HintsProvider {
         if !hintState.hasScannedPrescriptionsBefore {
             return MainViewHintsProvider.openScannerHint
         }
-        if !hintState.hasSecurityOptionBeenSelected {
-            return MainViewHintsProvider.appSecurityHint
-        }
         if !hintState.hasDemoModeBeenToggledBefore,
            !hintState.hasTasksInLocalStore,
            hintState.hiddenHintIDs.contains(A18n.mainScreen.erxHntDemoModeTour) == false {
@@ -75,19 +72,6 @@ class MainViewHintsProvider: HintsProvider {
         action: nil,
         imageName: Asset.Illustrations.celebrationYellowCircle.name,
         closeAction: MainViewHintsDomain.Action.hideHint,
-        style: .neutral,
-        buttonStyle: .tertiary,
-        imageStyle: .topAligned
-    )
-
-    static var appSecurityHint = Hint<MainViewHintsDomain.Action>(
-        id: A18n.mainScreen.erxHntAppSecurity,
-        title: NSLocalizedString("hint_txt_app_security_title", comment: ""),
-        message: NSLocalizedString("hint_txt_app_security", comment: ""),
-        actionText: L10n.hintBtnAppSecurity,
-        action: MainViewHintsDomain.Action.routeTo(.settings),
-        imageName: Asset.Illustrations.arztRedCircle.name,
-        closeAction: nil,
         style: .neutral,
         buttonStyle: .tertiary,
         imageStyle: .topAligned

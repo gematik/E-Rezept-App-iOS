@@ -46,7 +46,6 @@ final class MainViewHintsProviderTests: XCTestCase {
 
         var hintState = HintState()
         hintState.hasScannedPrescriptionsBefore = true
-        hintState.hasSecurityOptionBeenSelected = true
         let hint = sut.currentHint(for: hintState, isDemoMode: false)
 
         expect(hint).to(equal(MainViewHintsProvider.demoModeTourHint))
@@ -58,7 +57,6 @@ final class MainViewHintsProviderTests: XCTestCase {
         // when there are tasks in local store
         var hintState = HintState(hasTasksInLocalStore: true)
         hintState.hasScannedPrescriptionsBefore = true
-        hintState.hasSecurityOptionBeenSelected = true
         var hint = sut.currentHint(for: hintState, isDemoMode: false)
 
         expect(hint).to(beNil())
@@ -66,7 +64,6 @@ final class MainViewHintsProviderTests: XCTestCase {
         // when demo mode has been toggled
         hintState = HintState(hasDemoModeBeenToggledBefore: true)
         hintState.hasScannedPrescriptionsBefore = true
-        hintState.hasSecurityOptionBeenSelected = true
         hint = sut.currentHint(for: hintState, isDemoMode: false)
 
         expect(hint).to(beNil())
@@ -74,7 +71,6 @@ final class MainViewHintsProviderTests: XCTestCase {
         // when hint has been dismissed
         hintState = HintState(hiddenHintIDs: [A18n.mainScreen.erxHntDemoModeTour])
         hintState.hasScannedPrescriptionsBefore = true
-        hintState.hasSecurityOptionBeenSelected = true
         hint = sut.currentHint(for: hintState, isDemoMode: false)
 
         expect(hint).to(beNil())
@@ -84,7 +80,6 @@ final class MainViewHintsProviderTests: XCTestCase {
             hasScannedPrescriptionsBefore: true,
             hasTasksInLocalStore: true,
             hasDemoModeBeenToggledBefore: true,
-            hasSecurityOptionBeenSelected: true,
             hiddenHintIDs: [A18n.mainScreen.erxHntDemoModeTour]
         )
         hint = sut.currentHint(for: hintState, isDemoMode: false)
@@ -99,20 +94,11 @@ final class MainViewHintsProviderTests: XCTestCase {
         expect(hint) == MainViewHintsProvider.demoModeWelcomeHint
     }
 
-    func testAppSequrityAdvertiseHintWhenItShouldBePresented() {
-        let sut = MainViewHintsProvider()
-
-        let hint = sut.currentHint(for: HintState(hasScannedPrescriptionsBefore: true), isDemoMode: false)
-
-        expect(hint).to(equal(MainViewHintsProvider.appSecurityHint))
-    }
-
     func testAppSequrityAdvertiseHintWhenItShouldNotBePresented() {
         let sut = MainViewHintsProvider()
 
         var hintState = HintState(hasScannedPrescriptionsBefore: true)
         hintState.hasDemoModeBeenToggledBefore = true
-        hintState.hasSecurityOptionBeenSelected = true
         let hint = sut.currentHint(for: hintState, isDemoMode: false)
 
         expect(hint).to(beNil())
@@ -157,7 +143,6 @@ final class MainViewHintsProviderTests: XCTestCase {
 
         // when not in demo mode
         hintState = HintState(hasScannedPrescriptionsBefore: true)
-        hintState.hasSecurityOptionBeenSelected = true
         hint = sut.currentHint(for: hintState, isDemoMode: false)
 
         expect(hint) != MainViewHintsProvider.demoModeWelcomeHint

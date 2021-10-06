@@ -30,6 +30,14 @@ public protocol UserDataStore: AnyObject {
     /// - Parameter hideOnboarding: `true`if it should be hidden, otherwise `false`
     func set(hideOnboarding: Bool)
 
+    /// Indicates with which version the onboarding has been shown
+    var onboardingVersion: AnyPublisher<String?, Never> { get }
+
+    /// Set the app version in which onboarding has been presented
+    /// The new value is published through `onboardingVersion`
+    /// - Parameter onboardingVersion: app version that was installed when onboarding has finished
+    func set(onboardingVersion: String?)
+
     /// Indicates if the card wall intro screen should be displayed
     var hideCardWallIntro: AnyPublisher<Bool, Never> { get }
 
@@ -51,4 +59,19 @@ public protocol UserDataStore: AnyObject {
     /// The new value is published through `appSecurityOption`
     /// - Parameter appSecurityOption:The option selected to secure the app
     func set(appSecurityOption: Int)
+
+    /// The current count of failed app authentications
+    var failedAppAuthentications: AnyPublisher<Int, Never> { get }
+
+    /// Set the count of failed app authentications during login
+    /// - Parameter failedAppAuthentications: number of failures
+    func set(failedAppAuthentications: Int)
+
+    /// Whether the "your device is not secured" warning should be ignored permanently.
+    var ignoreDeviceNotSecuredWarningPermanently: AnyPublisher<Bool, Never> { get }
+
+    /// Set whether the "your device is not secured" warning should be ignored permanently.
+    ///
+    /// - Parameter ignoreDeviceNotSecuredWarningForSession: ignore the warning permanently
+    func set(ignoreDeviceNotSecuredWarningPermanently: Bool)
 }

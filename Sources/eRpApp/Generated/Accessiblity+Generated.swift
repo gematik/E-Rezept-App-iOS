@@ -20,6 +20,7 @@ internal enum A11y {
       static let authEdtPasswordInput = "auth_edt_password_input"
       static let authTxtPasswordPlaceholder = "auth_txt_password_placeholder"
       static let authTxtPasswordSubtitle = "auth_txt_password_subtitle"
+      static let authTxtFailedLoginHint = "auth_txt_failed_login_hint"
   }
     internal enum cardWall { 
     internal enum canInput {
@@ -127,6 +128,18 @@ internal enum A11y {
   }
     }
     internal enum onboarding { 
+    internal enum authentication {
+      static let onbAuthInpPasswordA = "onb_auth_inp_passwordA"
+      static let onbAuthInpPasswordB = "onb_auth_inp_passwordB"
+      static let onbAuthTxtPasswordRecommendation = "onb_auth_txt_password_recommendation"
+      static let onbAuthTxtPasswordsDontMatch = "onb_auth_txt_passwords_dont_match"
+      static let onbAuthTxtNoSelection = "onb_auth_txt_no_selection"
+      static let onbAuthTxtAltDescription = "onb_auth_txt_alt_description"
+      static let onbAuthTxtNoBiometrics = "onb_auth_txt_no_biometrics"
+      static let onbAuthTxtSectionTitle = "onb_auth_txt_section_title"
+      static let onbAuthBtnFaceid = "onb_auth_btn_faceid"
+      static let onbAuthBtnTouchid = "onb_auth_btn_touchid"
+  }
     internal enum features {
       static let onbTxtFeaturesTitle = "onb_txt_features_title"
       static let onbImgHandWithCard = "onb_img_hand_with_card"
@@ -213,6 +226,20 @@ internal enum A11y {
       static let scnImgScanAlert = "scn_img_scan_alert"
       static let scnBtnScanningDone = "scn_btn_scanning_done"
       static let scnBtnCancelScan = "scn_btn_cancel_scan"
+  }
+    internal enum security {
+      static let secTxtSystemPinHeadline = "sec_txt_system_pin_headline"
+      static let secTxtSystemPinTitle = "sec_txt_system_pin_title"
+      static let secTxtSystemPinMessage = "sec_txt_system_pin_message"
+      static let secTxtSystemPinSelection = "sec_txt_system_pin_selection"
+      static let secBtnSystemPinDone = "sec_btn_system_pin_done"
+      static let secTxtSystemRootDetectionHeadline = "sec_txt_system_root_detection_headline"
+      static let secTxtSystemRootDetectionTitle = "sec_txt_system_root_detection_title"
+      static let secTxtSystemRootDetectionMessage = "sec_txt_system_root_detection_message"
+      static let secTxtSystemRootDetectionSelection = "sec_txt_system_root_detection_selection"
+      static let secTxtSystemRootDetectionFootnote = "sec_txt_system_root_detection_footnote"
+      static let secBtnSystemRootDetectionFootnoteMore = "sec_btn_system_root_detection_footnote_more"
+      static let secBtnSystemRootDetectionDone = "sec_btn_system_root_detection_done"
   }
     internal enum settings { 
     internal enum createPassword {

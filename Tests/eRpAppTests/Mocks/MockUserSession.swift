@@ -87,6 +87,10 @@ class MockUserSession: UserSession {
     lazy var appSecurityManager: AppSecurityManager = {
         MockAppSecurityManager()
     }()
+
+    private(set) lazy var deviceSecurityManager: DeviceSecurityManager = {
+        MockDeviceSecurityManager()
+    }()
 }
 
 class MockHintEventsStore: EventsStore {

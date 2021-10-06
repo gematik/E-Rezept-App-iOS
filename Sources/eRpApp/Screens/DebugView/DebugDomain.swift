@@ -20,6 +20,8 @@ import Combine
 import ComposableArchitecture
 import IDP
 
+// swiftlint:disable:next superfluous_disable_command
+// swiftlint:disable type_body_length
 enum DebugDomain {
     typealias Store = ComposableArchitecture.Store<State, Action>
     typealias Reducer = ComposableArchitecture.Reducer<State, Action, Environment>
@@ -89,7 +91,7 @@ enum DebugDomain {
     enum Action: Equatable {
         #if ENABLE_DEBUG_VIEW
         case hideOnboardingToggleTapped
-        case hideOnboardingReceived(Bool)
+        case hideOnboardingReceived(String?)
         case hideCardWallIntroToggleTapped
         case hideCardWallIntroReceived(Bool)
         case resetCanButtonTapped
@@ -129,11 +131,11 @@ enum DebugDomain {
         #if ENABLE_DEBUG_VIEW
         switch action {
         case .hideOnboardingToggleTapped:
-            state.hideOnboarding.toggle()
-            environment.userSession.localUserStore.set(hideOnboarding: state.hideOnboarding)
+            environment.userSession.localUserStore.set(hideOnboarding: false)
+            environment.userSession.localUserStore.set(onboardingVersion: nil)
             return .none
-        case let .hideOnboardingReceived(hideOnboarding):
-            state.hideOnboarding = hideOnboarding
+        case let .hideOnboardingReceived(onboardingVersion):
+            state.hideOnboarding = onboardingVersion != nil
             return .none
         case .hideCardWallIntroToggleTapped:
             state.hideCardWallIntro.toggle()
@@ -266,7 +268,7 @@ enum DebugDomain {
 #if ENABLE_DEBUG_VIEW
 extension DebugDomain.Environment {
     func onReceiveHideOnboarding() -> Effect<DebugDomain.Action, Never> {
-        userSession.localUserStore.hideOnboarding
+        userSession.localUserStore.onboardingVersion
             .receive(on: schedulers.main)
             .map(DebugDomain.Action.hideOnboardingReceived)
             .eraseToEffect()

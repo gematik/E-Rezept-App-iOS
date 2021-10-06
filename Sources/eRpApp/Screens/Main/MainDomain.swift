@@ -28,6 +28,7 @@ enum MainDomain {
     struct State: Equatable {
         var scannerState: ScannerDomain.State?
         var settingsState: SettingsDomain.State?
+        var deviceSecurityState: DeviceSecurityDomain.State?
         var prescriptionListState: GroupedPrescriptionListDomain.State
         var debug: DebugDomain.State
         var isDemoMode = false
@@ -46,6 +47,9 @@ enum MainDomain {
         case showSettingsView
         /// Hides the `SettingsView`
         case dismissSettingsView
+        case loadDeviceSecurityView
+        case loadDeviceSecurityViewReceived(DeviceSecurityDomain.State?)
+        case dismissDeviceSecurityView
         /// Child view actions for the `SettingsDomain`
         case settings(action: SettingsDomain.Action)
         /// Child view actions for the `GroupedPrescriptionListDomain`
@@ -54,6 +58,7 @@ enum MainDomain {
         case scanner(action: ScannerDomain.Action)
         /// Debug actions
         case debug(action: DebugDomain.Action)
+        case deviceSecurity(action: DeviceSecurityDomain.Action)
         /// Start listening to demo mode changes
         case subscribeToDemoModeChange
         case unsubscribeFromDemoModeChange
@@ -100,6 +105,22 @@ enum MainDomain {
                 )
             )
             return .none
+        case .loadDeviceSecurityView:
+            return environment.userSession.deviceSecurityManager.showSystemSecurityWarning
+                .map { type in
+                    switch type {
+                    case .none:
+                        return nil
+                    default:
+                        return DeviceSecurityDomain.State(warningType: type)
+                    }
+                }
+                .map(Action.loadDeviceSecurityViewReceived)
+                .receive(on: environment.schedulers.main)
+                .eraseToEffect()
+        case let .loadDeviceSecurityViewReceived(deviceSecurityState):
+            state.deviceSecurityState = deviceSecurityState
+            return .none
         case .prescriptionList,
              .settings,
              .scanner:
@@ -117,6 +138,12 @@ enum MainDomain {
             return .cancel(id: Token.demoMode)
         case .debug:
             return .none
+        case .deviceSecurity(.close),
+             .dismissDeviceSecurityView:
+            state.deviceSecurityState = nil
+            return Effect.cancel(token: DeviceSecurityDomain.Token.self)
+        case .deviceSecurity:
+            return .none
         }
     }
 
@@ -124,6 +151,7 @@ enum MainDomain {
         settingsPullbackReducer,
         groupedPrescriptionListPullback,
         scannerPullbackReducer,
+        deviceSecurityPullbackReducer,
         debugPullbackReducer,
         domainReducer
     )
@@ -173,6 +201,16 @@ enum MainDomain {
             ScannerDomain.Environment(repository: globalEnvironment.erxTaskRepository,
                                       dateFormatter: globalEnvironment.fhirDateFormatter,
                                       scheduler: globalEnvironment.schedulers)
+        }
+
+    private static let deviceSecurityPullbackReducer: Reducer =
+        DeviceSecurityDomain.reducer.optional().pullback(
+            state: \.deviceSecurityState,
+            action: /MainDomain.Action.deviceSecurity(action:)
+        ) {
+            DeviceSecurityDomain.Environment(
+                deviceSecurityManager: $0.userSessionContainer.userSession.deviceSecurityManager
+            )
         }
 
     private static let debugPullbackReducer: Reducer =

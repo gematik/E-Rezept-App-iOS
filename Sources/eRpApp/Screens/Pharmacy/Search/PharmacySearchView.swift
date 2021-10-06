@@ -100,13 +100,13 @@ struct PharmacySearchView: View {
                             onEditingChanged: { _ in },
                             onCommit: { viewStore.send(.performSearch) }
                         )
+                        .accessibility(identifier: A11y.pharmacySearch.phaSearchTxtSearchField)
                         .introspectTextField { textField in
                             textField.returnKeyType = .go
                         }
                         .foregroundColor(
                             viewStore.state.searchText.count > 2 ? Colors.systemLabel : Colors.systemLabelTertiary
                         )
-                        .accessibility(identifier: A11y.pharmacySearch.phaSearchTxtSearchField)
                     }
                     .accessibilityElement(children: .combine)
                     .accessibility(label: Text(L10n.phaSearchTxtSearchHint))

@@ -72,15 +72,30 @@ class VirtualEGKSignatureProvider: NFCSignatureProvider {
             }
         }
 
-        func sign(registerDataProvider _: SecureEnclaveSignatureProvider,
-                  in _: PairingSession,
-                  signedChallenge _: SignedChallenge)
+        func sign(registerDataProvider: SecureEnclaveSignatureProvider,
+                  in pairingSession: PairingSession,
+                  signedChallenge: SignedChallenge)
             -> AnyPublisher<(SignedChallenge, RegistrationData), NFCSignatureProviderError> {
-            Fail(
-                outputType: (SignedChallenge, RegistrationData).self,
-                failure: NFCSignatureProviderError.signingFailure(nil)
-            )
-            .eraseToAnyPublisher()
+            do {
+                let signer = try Brainpool256r1Signer(
+                    x5c: encodedCertificate,
+                    key: encodedPrivateKey
+                )
+                guard let certificate = signer.certificates.first else {
+                    return Fail(error: NFCSignatureProviderError.signingFailure(nil)).eraseToAnyPublisher()
+                }
+                let cert = try X509(der: certificate)
+                return registerDataProvider
+                    .signPairingSession(pairingSession, with: signer, certificate: cert)
+                    .mapError { error in
+                        print(error)
+                        return error.asNFCSignatureError()
+                    }
+                    .map { (signedChallenge, $0) }
+                    .eraseToAnyPublisher()
+            } catch {
+                return Fail(error: NFCSignatureProviderError.signingFailure(error)).eraseToAnyPublisher()
+            }
         }
 
         func updateAlert(message _: String) {}

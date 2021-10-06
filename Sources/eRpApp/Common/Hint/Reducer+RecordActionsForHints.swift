@@ -44,8 +44,6 @@ extension Reducer where Action == AppDomain.Action, State == AppDomain.State, En
                 } else {
                     environment.userSession.hintEventsStore.hintState.hasUnreadMessages = false
                 }
-            case .main(action: .settings(action: .appSecurity(action: .select))):
-                environment.userSession.hintEventsStore.hintState.hasSecurityOptionBeenSelected = true
             case .main(action: .settings(action: .toggleDemoModeSwitch)):
                 environment.userSession.hintEventsStore.hintState.hasDemoModeBeenToggledBefore = true
             case .main(action: .scanner(action: .saveAndClose)):

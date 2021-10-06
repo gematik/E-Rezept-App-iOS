@@ -68,4 +68,7 @@ protocol UserSession {
 
     /// Affected manager when app (start) ist secured by password usage
     var appSecurityManager: AppSecurityManager { get }
+
+    // Manager that gathering information about device security and the user's acknowledgement thereof
+    var deviceSecurityManager: DeviceSecurityManager { get }
 }

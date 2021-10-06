@@ -37,6 +37,15 @@ public class UserDefaultsStore: UserDataStore {
         userDefaults.shouldHideOnboarding = hideOnboarding
     }
 
+    public var onboardingVersion: AnyPublisher<String?, Never> {
+        userDefaults.publisher(for: \UserDefaults.onboardingVersion)
+            .eraseToAnyPublisher()
+    }
+
+    public func set(onboardingVersion: String?) {
+        userDefaults.onboardingVersion = onboardingVersion
+    }
+
     public var hideCardWallIntro: AnyPublisher<Bool, Never> {
         userDefaults.publisher(for: \UserDefaults.shouldHideCardWallIntro)
             .eraseToAnyPublisher()
@@ -63,6 +72,24 @@ public class UserDefaultsStore: UserDataStore {
     public func set(appSecurityOption: Int) {
         userDefaults.appSecurityOption = appSecurityOption
     }
+
+    public var failedAppAuthentications: AnyPublisher<Int, Never> {
+        userDefaults.publisher(for: \UserDefaults.failedAppAuthentications)
+            .eraseToAnyPublisher()
+    }
+
+    public func set(failedAppAuthentications: Int) {
+        userDefaults.failedAppAuthentications = failedAppAuthentications
+    }
+
+    public var ignoreDeviceNotSecuredWarningPermanently: AnyPublisher<Bool, Never> {
+        userDefaults.publisher(for: \UserDefaults.ignoreDeviceNotSecuredWarningForSession)
+            .eraseToAnyPublisher()
+    }
+
+    public func set(ignoreDeviceNotSecuredWarningPermanently: Bool) {
+        userDefaults.ignoreDeviceNotSecuredWarningForSession = ignoreDeviceNotSecuredWarningPermanently
+    }
 }
 
 extension UserDefaults {
@@ -76,12 +103,16 @@ extension UserDefaults {
     /// DiscoveryDocument URL Key for `UserDefaults`
     public static let kDiscoveryURL = "kIDPDiscoveryURL"
     private static let kShouldHideOnboarding = "kShouldHideOnboarding"
+    private static let kOnboardingVersion = "kOnboardingVersion"
     private static let kShouldHideCardWallIntro = "kShouldHideCardWallIntro"
     private static let kAppSecurityOption = "kAppSecurityOption"
+    private static let kIgnoreDeviceNotSecuredWarningForSession = "kIgnoreDeviceNotSecuredWarningForSession"
     /// Key for app tracking settings `UserDefaults`
     public static let kAppTrackingAllowed = "kAppTrackingAllowed"
     /// Key for storing if app-install event has been sent to tracking server in `UserDefaults`
     public static let kAppInstallSent = "kAppInstallSent"
+    /// Key for storing failedAppAuthentications
+    public static let kFailedAppAuthentications = "kFailedAppAuthentications"
 
     @objc var serverEnvironmentConfiguration: String? {
         get {
@@ -97,6 +128,11 @@ extension UserDefaults {
         set { set(newValue, forKey: Self.kShouldHideOnboarding) }
     }
 
+    @objc var onboardingVersion: String? {
+        get { string(forKey: Self.kOnboardingVersion) }
+        set { set(newValue, forKey: Self.kOnboardingVersion) }
+    }
+
     @objc var shouldHideCardWallIntro: Bool {
         get { bool(forKey: Self.kShouldHideCardWallIntro) }
         set { set(newValue, forKey: Self.kShouldHideCardWallIntro) }
@@ -107,6 +143,11 @@ extension UserDefaults {
         set { set(newValue, forKey: Self.kAppSecurityOption) }
     }
 
+    @objc var ignoreDeviceNotSecuredWarningForSession: Bool {
+        get { bool(forKey: Self.kIgnoreDeviceNotSecuredWarningForSession) }
+        set { set(newValue, forKey: Self.kIgnoreDeviceNotSecuredWarningForSession) }
+    }
+
     /// Store users setting for app tracking
     @objc public var kAppTrackingAllowed: Bool {
         get { bool(forKey: Self.kAppTrackingAllowed) }
@@ -114,9 +155,15 @@ extension UserDefaults {
     }
 
     /// Store if app-install event has been sent to tracking server
-    @objc public var kAppInstallSent: Bool {
+    @objc public var appInstallSent: Bool {
         get { bool(forKey: Self.kAppInstallSent) }
         set { set(newValue, forKey: Self.kAppInstallSent) }
+    }
+
+    /// Store number of failure app authentications
+    @objc public var failedAppAuthentications: Int {
+        get { integer(forKey: Self.kFailedAppAuthentications) }
+        set { set(newValue, forKey: Self.kFailedAppAuthentications) }
     }
 
     // swiftlint:enable implicit_getter

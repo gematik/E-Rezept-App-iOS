@@ -124,18 +124,6 @@ final class HintViewSnapshotTests: XCTestCase {
         assertSnapshots(matching: sut, as: snapshotModi())
     }
 
-    func testSecurityHintView() {
-        let sut = HintView(
-            hint: MainViewHintsProvider.appSecurityHint,
-            textAction: {},
-            closeAction: {}
-        )
-        .padding()
-        .frame(width: 500, height: 900)
-
-        assertSnapshots(matching: sut, as: snapshotModi())
-    }
-
     func testUnreadMessagesHintView() {
         let sut = HintView(
             hint: MainViewHintsProvider.unreadMessagesHint,

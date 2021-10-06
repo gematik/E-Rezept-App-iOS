@@ -26,7 +26,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing {
     var mainWindow,
         authenticationWindow: UIWindow?
 
-    var routerStore: RouterStore<AppDomain.State, AppDomain.Action, AppDomain.Environment>?
+    var routerStore: RouterStore<AppStartDomain.State, AppStartDomain.Action, AppStartDomain.Environment>?
 
     func scene(_ scene: UIScene,
                willConnectTo _: UISceneSession,
@@ -38,28 +38,29 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing {
             optOutSetting: UserDefaults.standard.publisher(for: \UserDefaults.kAppTrackingAllowed).eraseToAnyPublisher()
         )
 
+        #if ENABLE_DEBUG_VIEW && targetEnvironment(simulator)
+        // swiftlint:disable:next trailing_closure
+        let signatureProvider = DefaultSecureEnclaveSignatureProvider(
+            storage: sessionContainer.userSession.secureUserStore,
+            privateKeyContainerProvider: {
+                try PrivateKeyContainer.createFromKeyChain(with: $0)
+            }
+        )
+        #else
         let signatureProvider = DefaultSecureEnclaveSignatureProvider(
             storage: sessionContainer.userSession.secureUserStore
         )
+        #endif
 
         let routableAppStore = RouterStore(
-            initialState: AppDomain.State(
-                selectedTab: .main,
-                onboarding: nil,
-                appAuthentication: nil,
-                main: MainDomain.State(
-                    prescriptionListState: GroupedPrescriptionListDomain.State(),
-                    debug: DebugDomain.State(trackingOptOut: tracker.optOut)
-                ),
-                messages: MessagesDomain.State(messageDomainStates: []),
-                unreadMessagesCount: 0,
-                isDemoMode: false
-            ),
-            reducer: AppDomain.reducer,
-            environment: AppDomain.Environment(
+            initialState: .init(),
+            reducer: AppStartDomain.reducer,
+            environment: AppStartDomain.Environment(
+                appVersion: AppVersion.current,
                 router: self,
                 userSessionContainer: sessionContainer,
                 userSession: sessionContainer.userSession,
+                userDataStore: sessionContainer.userSession.localUserStore,
                 schedulers: Schedulers(),
                 fhirDateFormatter: AppContainer.shared.fhirDateFormatter,
                 serviceLocator: AppContainer.shared.serviceLocator,
@@ -68,9 +69,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing {
                                          argument: message)
                 },
                 tracker: tracker,
-                signatureProvider: signatureProvider
+                signatureProvider: signatureProvider,
+                appSecurityManager: DefaultAppSecurityManager(keychainAccess: SystemKeychainAccessHelper()),
+                authenticationChallengeProvider: BiometricsAuthenticationChallengeProvider()
             ),
-            router: AppDomain.router
+            router: AppStartDomain.router
         )
 
         routerStore = routableAppStore
@@ -79,9 +82,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing {
             authenticationWindow = UIWindow(windowScene: windowScene)
             mainWindow = UIWindow(windowScene: windowScene)
             mainWindow?.rootViewController = UIHostingController(
-                rootView: TabContainerView(
-                    store: routableAppStore.wrappedStore
-                )
+                rootView: AppStartView(store: routableAppStore.wrappedStore)
             )
             mainWindow?.makeKeyAndVisible()
         }
@@ -99,29 +100,32 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing {
 
     func sceneWillEnterForeground(_: UIScene) {
         removeBlurOverlayFromWindow()
-        let userDataStore = UserDefaultsStore(userDefaults: .standard)
+        let sessionContainer = AppContainer.shared.userSessionContainer
+        let authenticationProvider = AppAuthenticationDomain.DefaultAuthenticationProvider(
+            userDataStore: sessionContainer.userSession.localUserStore
+        )
+        let appAuthenticationStore = Store(
+            initialState: AppAuthenticationDomain.State(),
+            reducer: AppAuthenticationDomain.reducer,
+            environment: AppAuthenticationDomain.Environment(
+                userDataStore: sessionContainer.userSession.localUserStore,
+                schedulers: Schedulers(),
+                appAuthenticationProvider: authenticationProvider,
+                appSecurityPasswordManager: DefaultAppSecurityManager(keychainAccess: SystemKeychainAccessHelper()),
+                authenticationChallengeProvider: BiometricsAuthenticationChallengeProvider()
+            ) { [weak self] in
+                guard let self = self else { return }
+                self.mainWindow?.accessibilityElementsHidden = false
+                self.mainWindow?.makeKeyAndVisible()
+                // background color is lost after window switch, reset it to black
+                self.mainWindow?.backgroundColor = UIColor.black
+                self.authenticationWindow?.rootViewController = nil
+            }
+        )
 
         authenticationWindow?.rootViewController = UIHostingController(
-            rootView: AppAuthenticationView(
-                store: AppAuthenticationDomain.Store(
-                    initialState: AppAuthenticationDomain.State(),
-                    reducer: AppAuthenticationDomain.reducer,
-                    environment: AppAuthenticationDomain.Environment(
-                        userDataStore: userDataStore,
-                        schedulers: Schedulers(),
-                        appAuthenticationProvider: AppAuthenticationDomain.DefaultAuthenticationProvider(
-                            userDataStore: userDataStore
-                        ),
-                        appSecurityPasswordManager: DefaultAppSecurityManager(
-                            keychainAccess: SystemKeychainAccessHelper()
-                        )
-                    ) { [weak self] in
-                        self?.mainWindow?.accessibilityElementsHidden = false
-                        self?.mainWindow?.makeKeyAndVisible()
-                        self?.mainWindow?.backgroundColor = UIColor.black
-                    }
-                )
-            )
+            // [REQ:gemSpec_BSI_FdV:A_20834] mandatory app authentication
+            rootView: AppAuthenticationView(store: appAuthenticationStore)
         )
         mainWindow?.accessibilityElementsHidden = true
         authenticationWindow?.makeKeyAndVisible()

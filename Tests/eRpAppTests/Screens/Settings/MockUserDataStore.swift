@@ -60,6 +60,15 @@ final class MockUserDataStore: UserDataStore {
 
     private var underlyingAppSecurityOption: AnyPublisher<Int, Never>!
 
+    // MARK: - ignoreDeviceNotSecuredWarningPermanently
+
+    var ignoreDeviceNotSecuredWarningPermanently: AnyPublisher<Bool, Never> {
+        get { underlyingIgnoreDeviceNotSecuredWarningPermanently }
+        set(value) { underlyingIgnoreDeviceNotSecuredWarningPermanently = value }
+    }
+
+    private var underlyingIgnoreDeviceNotSecuredWarningPermanently: AnyPublisher<Bool, Never>!
+
     // MARK: - set
 
     var setHideOnboardingCallsCount = 0
@@ -76,6 +85,31 @@ final class MockUserDataStore: UserDataStore {
         setHideOnboardingReceivedHideOnboarding = hideOnboarding
         setHideOnboardingReceivedInvocations.append(hideOnboarding)
         setHideOnboardingClosure?(hideOnboarding)
+    }
+
+    // MARK: - set
+
+    var setOnboardingVersionCallsCount = 0
+    var setOnboardingVersionCalled: Bool {
+        setOnboardingVersionCallsCount > 0
+    }
+
+    var setOnboardingVersionReceivedOnboardingVersion: String?
+    var setOnboardingVersionReceivedInvocations: [String] = []
+    var setOnboardingVersionClosure: ((String) -> Void)?
+
+    private var underlyingOnboardingVersion: AnyPublisher<String?, Never>!
+
+    var onboardingVersion: AnyPublisher<String?, Never> {
+        get { underlyingOnboardingVersion }
+        set(value) { underlyingOnboardingVersion = value }
+    }
+
+    func set(onboardingVersion _: String?) {
+        setOnboardingVersionCallsCount += 1
+//        setOnboardingVersionReceivedHideOnboarding = hideOnboarding
+//        setOnboardingVersionReceivedInvocations.append(hideOnboarding)
+//        setOnboardingVersionClosure?(hideOnboarding)
     }
 
     // MARK: - set
@@ -130,5 +164,50 @@ final class MockUserDataStore: UserDataStore {
         setAppSecurityOptionReceivedAppSecurityOption = appSecurityOption
         setAppSecurityOptionReceivedInvocations.append(appSecurityOption)
         setAppSecurityOptionClosure?(appSecurityOption)
+    }
+
+    // MARK: - failedAppAuthentications
+
+    var underlyingFailedAppAuthentications: CurrentValueSubject<Int, Never> = CurrentValueSubject(0)
+
+    var failedAppAuthentications: AnyPublisher<Int, Never> {
+        underlyingFailedAppAuthentications.eraseToAnyPublisher()
+    }
+
+    // MARK: - set
+
+    var setFailedAppAuthenticationsCallsCount = 0
+    var setFailedAppAuthenticationsCalled: Bool {
+        setFailedAppAuthenticationsCallsCount > 0
+    }
+
+    var setFailedAppAuthenticationsReceived: Int?
+    var setFailedAppAuthenticationsReceivedInvocations: [Int] = []
+    var setFailedAppAuthenticationsClosure: ((Int) -> Void)?
+
+    func set(failedAppAuthentications: Int) {
+        setFailedAppAuthenticationsCallsCount += 1
+        setFailedAppAuthenticationsReceived = failedAppAuthentications
+        setFailedAppAuthenticationsReceivedInvocations.append(failedAppAuthentications)
+        setFailedAppAuthenticationsClosure?(failedAppAuthentications)
+    }
+
+    // MARK: - set
+
+    var setIgnoreDeviceNotSecuredWarningPermanentlyCallsCount = 0
+    var setIgnoreDeviceNotSecuredWarningPermanentlyCalled: Bool {
+        setIgnoreDeviceNotSecuredWarningPermanentlyCallsCount > 0
+    }
+
+    var setIgnoreDeviceNotSecuredWarningPermanentlyReceivedIgnoreDeviceNotSecuredWarningPermanently: Bool?
+    var setIgnoreDeviceNotSecuredWarningPermanentlyReceivedInvocations: [Bool] = []
+    var setIgnoreDeviceNotSecuredWarningPermanentlyClosure: ((Bool) -> Void)?
+
+    func set(ignoreDeviceNotSecuredWarningPermanently: Bool) {
+        setIgnoreDeviceNotSecuredWarningPermanentlyCallsCount += 1
+        setIgnoreDeviceNotSecuredWarningPermanentlyReceivedIgnoreDeviceNotSecuredWarningPermanently =
+            ignoreDeviceNotSecuredWarningPermanently
+        setIgnoreDeviceNotSecuredWarningPermanentlyReceivedInvocations.append(ignoreDeviceNotSecuredWarningPermanently)
+        setIgnoreDeviceNotSecuredWarningPermanentlyClosure?(ignoreDeviceNotSecuredWarningPermanently)
     }
 }

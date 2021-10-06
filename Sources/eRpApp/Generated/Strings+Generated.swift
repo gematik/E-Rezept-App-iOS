@@ -41,8 +41,6 @@ internal enum L10n {
   internal static let authTxtBiometricsFailedDefault = LocalizedStringKey("auth_txt_biometrics_failed_default")
   /// No biometric security has been set up on this device.
   internal static let authTxtBiometricsFailedNotEnrolled = LocalizedStringKey("auth_txt_biometrics_failed_not_enrolled")
-  /// Login was cancelled
-  internal static let authTxtBiometricsFailedUserCancel = LocalizedStringKey("auth_txt_biometrics_failed_user_cancel")
   /// An alternative login method is not supported.
   internal static let authTxtBiometricsFailedUserFallback = LocalizedStringKey("auth_txt_biometrics_failed_user_fallback")
   /// Do you have any questions or problems concerning use of the app? You can contact our technical hotline on 0800 277 377 7. \n\nWe have already answered plenty of questions for you at das-e-rezept-fuer-deutschland.de.
@@ -55,6 +53,8 @@ internal enum L10n {
   internal static let authTxtBiometricsFooterUrlDisplay = LocalizedStringKey("auth_txt_biometrics_footer_url_display")
   /// https://www.das-e-rezept-fuer-deutschland.de
   internal static let authTxtBiometricsFooterUrlLink = LocalizedStringKey("auth_txt_biometrics_footer_url_link")
+  /// Sie hatten zu viele fehlerhafte Anmeldeversuche. Gehen Sie in die Einstellungen ihres iPhones und reaktivieren sie die FaceID oder TouchID Funktion durch eine PIN Eingabe.
+  internal static let authTxtBiometricsLockout = LocalizedStringKey("auth_txt_biometrics_lockout")
   /// %@ is required to protect the app from unauthorised access.
   internal static let authTxtBiometricsReason = LocalizedStringKey("auth_txt_biometrics_reason")
   /// Welcome
@@ -63,6 +63,10 @@ internal enum L10n {
   internal static let authTxtBiometricsTouchidDescription = LocalizedStringKey("auth_txt_biometrics_touchid_description")
   /// Unlock with Touch ID
   internal static let authTxtBiometricsTouchidStart = LocalizedStringKey("auth_txt_biometrics_touchid_start")
+  /// Plural format key: "%#@variable_0@"
+  internal static let authTxtFailedLoginHintMsg = LocalizedStringKey("auth_txt_failed_login_hint_msg")
+  /// Erfolglose Anmeldeversuche
+  internal static let authTxtFailedLoginHintTitle = LocalizedStringKey("auth_txt_failed_login_hint_title")
   /// Falsches Passwort. Bitte probieren Sie es erneut.
   internal static let authTxtPasswordFailure = LocalizedStringKey("auth_txt_password_failure")
   /// Eingabefeld Kennwort
@@ -1087,6 +1091,14 @@ internal enum L10n {
   internal static let navClose = LocalizedStringKey("nav_close")
   /// Ready
   internal static let navDone = LocalizedStringKey("nav_done")
+  /// Machen Sie es Unbefugten schwerer an Ihre Daten zu gelangen und sichern Sie den Start der App.
+  internal static let onbAuthTxtAltDescription = LocalizedStringKey("onb_auth_txt_alt_description")
+  /// ODER
+  internal static let onbAuthTxtDivider = LocalizedStringKey("onb_auth_txt_divider")
+  /// Bitte wählen Sie eine Methode zum absichern der App aus:
+  internal static let onbAuthTxtNoSelection = LocalizedStringKey("onb_auth_txt_no_selection")
+  /// Wie möchten Sie diese App absichern?
+  internal static let onbAuthTxtTitle = LocalizedStringKey("onb_auth_txt_title")
   /// Next
   internal static let onbBtnLetsStart = LocalizedStringKey("onb_btn_lets_start")
   /// Next
@@ -1425,6 +1437,30 @@ internal enum L10n {
   internal static let scnTxtAuthor = LocalizedStringKey("scn_txt_author")
   /// Medicine %@
   internal static let scnTxtMedication = LocalizedStringKey("scn_txt_medication_%@")
+  /// OK
+  internal static let secBtnSystemPinDone = LocalizedStringKey("sec_btn_system_pin_done")
+  /// Okay
+  internal static let secBtnSystemRootDetectionDone = LocalizedStringKey("sec_btn_system_root_detection_done")
+  /// Mehr erfahren
+  internal static let secBtnSystemRootDetectionMore = LocalizedStringKey("sec_btn_system_root_detection_more")
+  /// Hinweis
+  internal static let secTxtSystemPinHeadline = LocalizedStringKey("sec_txt_system_pin_headline")
+  /// Wir empfehlen Ihnen, Ihre medizinischen Daten zusätzlich durch eine Gerätesicherung wie beispielsweise einen Code oder Biometrie zu schützen.
+  internal static let secTxtSystemPinMessage = LocalizedStringKey("sec_txt_system_pin_message")
+  /// Diesen Hinweis in Zukunft nicht mehr anzeigen.
+  internal static let secTxtSystemPinSelection = LocalizedStringKey("sec_txt_system_pin_selection")
+  /// Für dieses Gerät wurde keine Zugangssperre eingerichtet
+  internal static let secTxtSystemPinTitle = LocalizedStringKey("sec_txt_system_pin_title")
+  /// Weshalb sind Geräte mit Root-Zugriff ein potentielles Sicherheitsrisiko?
+  internal static let secTxtSystemRootDetectionFootnote = LocalizedStringKey("sec_txt_system_root_detection_footnote")
+  /// Warnung
+  internal static let secTxtSystemRootDetectionHeadline = LocalizedStringKey("sec_txt_system_root_detection_headline")
+  /// Diese App sollte aus Sicherheitsgründen nicht auf gejailbreakten Geräten genutzt werden.
+  internal static let secTxtSystemRootDetectionMessage = LocalizedStringKey("sec_txt_system_root_detection_message")
+  /// Ich nehme das erhöhte Risiko zur Kenntnis und möchte dennoch fortfahren.
+  internal static let secTxtSystemRootDetectionSelection = LocalizedStringKey("sec_txt_system_root_detection_selection")
+  /// Eventuell wurde dieses Gerät gejailbreakt
+  internal static let secTxtSystemRootDetectionTitle = LocalizedStringKey("sec_txt_system_root_detection_title")
   /// Ausgewählt
   internal static let sectionTxtIsActiveValue = LocalizedStringKey("section_txt_is_active_value")
   /// Nicht Ausgewählt

@@ -41,7 +41,6 @@ final class RecordActionsForHintsTests: XCTestCase {
         TestStore(
             initialState: AppDomain.State(
                 selectedTab: .main,
-                onboarding: nil,
                 main: MainDomain.State(
                     scannerState: nil,
                     settingsState: nil,

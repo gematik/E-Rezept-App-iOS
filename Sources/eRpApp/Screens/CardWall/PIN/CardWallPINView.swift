@@ -20,10 +20,15 @@ import ComposableArchitecture
 import SwiftUI
 import UIKit
 
-struct CardWallPINView: View {
+struct CardWallPINView<Content: View>: View {
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     let store: CardWallPINDomain.Store
-    let nextView: (String) -> AnyView
+    let nextView: (String) -> Content
+
+    init(store: CardWallPINDomain.Store, @ViewBuilder nextView: @escaping (String) -> Content) {
+        self.store = store
+        self.nextView = nextView
+    }
 
     var body: some View {
         WithViewStore(store) { viewStore in
@@ -204,7 +209,7 @@ struct MyPINView_Previews: PreviewProvider {
                     CardWallPINView(
                         store: CardWallPINDomain.Dummies.store
                     ) { _ in
-                        AnyView(EmptyView())
+                        EmptyView()
                     }
                 }
                 .previewDevice(PreviewDevice(rawValue: deviceName))

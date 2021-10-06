@@ -74,7 +74,10 @@ internal enum Asset {
   internal enum Illustrations {
     internal static let arztRedCircle = ImageAsset(name: "Arzt_RedCircle")
     internal static let celebrationYellowCircle = ImageAsset(name: "Celebration_YellowCircle")
+    internal static let girlRedCircle = ImageAsset(name: "Girl_RedCircle")
+    internal static let groupShot = ImageAsset(name: "GroupShot")
     internal static let info = ImageAsset(name: "Info")
+    internal static let ladyDeveloperBlueCircle = ImageAsset(name: "LadyDeveloper_BlueCircle")
     internal static let womanBlueCircle = ImageAsset(name: "Woman_BlueCircle")
     internal static let egkBlau = ImageAsset(name: "egkBlau")
     internal static let pharmacistArmRedCirle = ImageAsset(name: "pharmacistArm_RedCirle")
@@ -82,6 +85,8 @@ internal enum Asset {
     internal static let practitionerf1 = ImageAsset(name: "practitionerf1")
     internal static let practitionerm1 = ImageAsset(name: "practitionerm1")
     internal static let redWoman23 = ImageAsset(name: "redWoman2-3")
+    internal static let womanRedCircle = ImageAsset(name: "woman_redCircle")
+    internal static let womanYellowCircle = ImageAsset(name: "woman_yellowCircle")
   }
   internal enum Onboarding {
     internal static let apotheker = ImageAsset(name: "Apotheker")
@@ -90,7 +95,6 @@ internal enum Asset {
     internal static let handMitKarte = ImageAsset(name: "handMitKarte")
     internal static let logoNeuFahne = ImageAsset(name: "logoNeuFahne")
     internal static let logoNeuGematik = ImageAsset(name: "logoNeuGematik")
-    internal static let next = ImageAsset(name: "next")
   }
   internal enum Pharmacy {
     internal static let eRxReadinessBadge = ImageAsset(name: "eRxReadinessBadge")

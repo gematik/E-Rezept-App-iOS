@@ -63,7 +63,7 @@ class PiwikProTracker: Tracker {
 
     /// This will send an "app installed" event to the server but only once.
     func trackAppInstall() {
-        if !UserDefaults.standard.kAppInstallSent {
+        if !UserDefaults.standard.appInstallSent {
             tracker?.sendApplicationDownload()
             UserDefaults.standard.setValue(true, forKey: UserDefaults.kAppInstallSent)
         }

@@ -68,19 +68,19 @@ struct DefaultAppSecurityManager: AppSecurityManager {
 
         guard authenticationContext.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics,
                                                       error: &error) == true else {
-            return ([.password, .unsecured],
+            return ([.password],
                     AppSecurityManagerError.localAuthenticationContext(error))
         }
 
         switch authenticationContext.biometryType {
         case .faceID:
-            return ([.biometry(.faceID), .password, .unsecured], nil)
+            return ([.biometry(.faceID), .password], nil)
         case .touchID:
-            return ([.biometry(.touchID), .password, .unsecured], nil)
+            return ([.biometry(.touchID), .password], nil)
         case .none:
-            return ([.password, .unsecured], nil)
+            return ([.password], nil)
         @unknown default:
-            return ([.password, .unsecured], nil)
+            return ([.password], nil)
         }
     }
 }
@@ -145,8 +145,19 @@ enum AppSecurityManagerError: Error, Equatable {
 }
 
 struct DummyAppSecurityManager: AppSecurityManager {
+    private let underlyingOptions: [AppSecurityOption]
+    private let underlyingError: AppSecurityManagerError?
+
+    init(
+        options: [AppSecurityOption] = [AppSecurityOption.password, AppSecurityOption.biometry(.faceID)],
+        error: AppSecurityManagerError? = nil
+    ) {
+        underlyingOptions = options
+        underlyingError = error
+    }
+
     var availableSecurityOptions: (options: [AppSecurityOption], error: AppSecurityManagerError?) {
-        return (options: [AppSecurityOption.password], error: nil)
+        return (options: underlyingOptions, error: underlyingError)
     }
 
     func save(password _: String) throws -> Bool {

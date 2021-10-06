@@ -21,49 +21,61 @@ import SwiftUI
 
 struct OnboardingContainer: View {
     let store: Store<OnboardingDomain.State, OnboardingDomain.Action>
-    @State private var offsetValue: CGSize = .zero
-    @State private var isShowingNextButton = false
 
     init(store: Store<OnboardingDomain.State, OnboardingDomain.Action>) {
         self.store = store
         UIPageControl.appearance().currentPageIndicatorTintColor = UIColor(Colors.primary500)
         UIPageControl.appearance().pageIndicatorTintColor = UIColor(Colors.systemLabelQuarternary)
-        UIScrollView.appearance().bounces = false
     }
 
     var body: some View {
         WithViewStore(store) { viewStore in
-
             ZStack(alignment: .bottomTrailing) {
-                if viewStore.onboardingVisible {
-                    TabView(
-                        selection: viewStore.binding(
-                            get: { $0.page },
-                            send: OnboardingDomain.Action.setPage(page:)
+                TabView(
+                    selection: viewStore.binding(
+                        get: { $0.composition.currentPageIndex },
+                        send: OnboardingDomain.Action.setPage(index:)
+                    )
+                ) {
+                    if viewStore.composition.pages.contains(.altRegisterAuthentication) {
+                        // [REQ:gemSpec_BSI_FdV:A_20834] view to register authentication in onboarding process
+                        OnboardingAltRegisterAuthenticationView(
+                            store: store.scope(state: { $0.registerAuthenticationState },
+                                               action: { .registerAuthentication(action: $0) })
                         )
-                    ) {
-                        OnboardingStartView { withAnimation { viewStore.send(.nextPage) } }
-                            .tag(OnboardingDomain.State.Page.start)
-                        OnboardingWelcomeView { withAnimation { viewStore.send(.nextPage) } }
-                            .tag(OnboardingDomain.State.Page.welcome)
-                        OnboardingFeaturesView { withAnimation { viewStore.send(.nextPage) } }
-                            .tag(OnboardingDomain.State.Page.features)
-                        OnboardingLegalInfoView { withAnimation { viewStore.send(.dismissOnboarding) } }
-                            .tag(OnboardingDomain.State.Page.legalInfo)
-                    }
-                    .background(Colors.systemBackground)
-                    .tabViewStyle(PageTabViewStyle(indexDisplayMode: .always))
-                    .indexViewStyle(PageIndexViewStyle(backgroundDisplayMode: .always))
+                        .gesture(viewStore.isDragEnabled ? nil : DragGesture())
+                        .tag(0)
+                    } else {
+                        OnboardingStartView()
+                            .tag(0)
+                        OnboardingWelcomeView()
+                            .tag(1)
+                        OnboardingFeaturesView()
+                            .tag(2)
+                        // [REQ:gemSpec_BSI_FdV:A_20834] view to register authentication in onboarding process
+                        OnboardingRegisterAuthenticationView(
+                            store: store.scope(state: { $0.registerAuthenticationState },
+                                               action: { .registerAuthentication(action: $0) })
+                        )
+                        .gesture(viewStore.isDragEnabled ? nil : DragGesture())
+                        .tag(3)
 
-                    ZStack {
-                        if viewStore.state.isShowingNextButton {
-                            OnboardingNextButton {
-                                withAnimation { viewStore.send(.nextPage) }
-                            }
+                        OnboardingLegalInfoView { withAnimation { viewStore.send(.saveAuthentication) } }
+                            .tag(4)
+                    }
+                }
+                .background(Colors.systemBackground)
+                .tabViewStyle(PageTabViewStyle(indexDisplayMode: viewStore.isDragEnabled ? .always : .never))
+                .indexViewStyle(PageIndexViewStyle(backgroundDisplayMode: viewStore.isDragEnabled ? .always : .never))
+
+                ZStack {
+                    if viewStore.state.isShowingNextButton {
+                        OnboardingNextButton(isEnabled: viewStore.state.isNextButtonEnabled) {
+                            withAnimation { viewStore.send(.nextPage) }
                         }
                     }
-                    .animation(.easeInOut)
                 }
+                .animation(.easeInOut)
             }
         }
     }

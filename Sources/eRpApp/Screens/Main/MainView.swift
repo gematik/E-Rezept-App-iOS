@@ -32,11 +32,13 @@ struct MainView: View {
     struct ViewState: Equatable {
         let isSettingsViewPresented: Bool
         let isScannerViewPresented: Bool
+        let isDeviceSecurityViewPresented: Bool
         let isDemoModeEnabled: Bool
 
         init(state: MainDomain.State) {
             isSettingsViewPresented = state.settingsState != nil
             isScannerViewPresented = state.scannerState != nil
+            isDeviceSecurityViewPresented = state.deviceSecurityState != nil
             isDemoModeEnabled = state.isDemoMode
         }
     }
@@ -97,6 +99,24 @@ struct MainView: View {
                             then: ErxTaskScannerView.init(store:)
                         )
                     }
+
+                // Device security sheet presentation; Work around not being able to use multiple `fullScreenCover`
+                // modifier at once. As soon as we drop iOS <= ~14.4, we may omit this.
+                EmptyView()
+                    .sheet(
+                        isPresented: viewStore.binding(
+                            get: \.isDeviceSecurityViewPresented,
+                            send: MainDomain.Action.dismissDeviceSecurityView
+                        )
+                    ) {
+                        IfLetStore(
+                            store.scope(
+                                state: { $0.deviceSecurityState },
+                                action: MainDomain.Action.deviceSecurity(action:)
+                            ),
+                            then: DeviceSecurityView.init(store:)
+                        )
+                    }
             }
             .navigationTitle(Text(L10n.erxTitle))
             .navigationBarTitleDisplayMode(viewStore.isDemoModeEnabled ? .inline : .automatic)
@@ -109,6 +129,7 @@ struct MainView: View {
             }
             .onAppear {
                 viewStore.send(.subscribeToDemoModeChange)
+                viewStore.send(.loadDeviceSecurityView)
             }
             .onDisappear {
                 viewStore.send(.unsubscribeFromDemoModeChange)

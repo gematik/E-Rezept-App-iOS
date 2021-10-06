@@ -209,6 +209,12 @@ class StandardSessionContainer: UserSession {
     lazy var appSecurityManager: AppSecurityManager = {
         DefaultAppSecurityManager(keychainAccess: SystemKeychainAccessHelper())
     }()
+
+    lazy var deviceSecurityManager: DeviceSecurityManager = {
+        DefaultDeviceSecurityManager(
+            userDataStore: localUserStore
+        )
+    }()
 }
 
 extension IDPSession {

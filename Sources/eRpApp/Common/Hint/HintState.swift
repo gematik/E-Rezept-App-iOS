@@ -29,8 +29,6 @@ struct HintState: Codable, Equatable {
     var hasTasksInLocalStore = false
     /// Indicates if the demo mode has been toggled at least once
     var hasDemoModeBeenToggledBefore = false
-    /// Indicates whether a security option was selected
-    var hasSecurityOptionBeenSelected = false
     /// Set of IDs for the hints that should not be displayed
     var hiddenHintIDs: Set<String> = []
 

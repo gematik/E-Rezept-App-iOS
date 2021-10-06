@@ -90,4 +90,8 @@ class DemoSessionContainer: UserSession {
     lazy var appSecurityManager: AppSecurityManager = {
         DemoAppSecurityPasswordManager()
     }()
+
+    private(set) lazy var deviceSecurityManager: DeviceSecurityManager = {
+        DemoDeviceSecurityManager()
+    }()
 }

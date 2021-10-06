@@ -17,6 +17,7 @@
 //
 
 @testable import eRpApp
+import LocalAuthentication
 import SnapshotTesting
 import SwiftUI
 import XCTest
@@ -25,20 +26,84 @@ final class OnboardingSnapshotTests: XCTestCase {
     let next: (() -> Void) = {}
 
     func testOnboardingStartView() {
-        let sut = OnboardingStartView(action: next)
+        let sut = OnboardingStartView()
             .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
         assertSnapshots(matching: sut, as: snapshotModi())
     }
 
     func testOnboardingWelcomeView() {
-        let sut = OnboardingWelcomeView(action: next)
+        let sut = OnboardingWelcomeView()
             .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
         assertSnapshots(matching: sut, as: snapshotModi())
     }
 
     func testOnboardingFeaturesView() {
-        let sut = OnboardingFeaturesView(action: next)
+        let sut = OnboardingFeaturesView()
             .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
+        assertSnapshots(matching: sut, as: snapshotModi())
+    }
+
+    func testOnboardingRegisterAuthenticationView_NoBiometrics() {
+        let state = RegisterAuthenticationDomain.State(
+            availableSecurityOptions: [.password],
+            securityOptionsError: AppSecurityManagerError.localAuthenticationContext(
+                NSError(domain: "", code: LAError.Code.biometryNotEnrolled.rawValue)
+            )
+        )
+        let sut = OnboardingRegisterAuthenticationView(
+            store: RegisterAuthenticationDomain.Dummies.store(with: state)
+        )
+        .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
+        assertSnapshots(matching: sut, as: snapshotModi())
+    }
+
+    func testOnboardingRegisterAuthenticationView_WithSelectedFaceId() {
+        let state = RegisterAuthenticationDomain.State(
+            availableSecurityOptions: [.password, .biometry(.faceID)],
+            selectedSecurityOption: AppSecurityOption.biometry(.faceID)
+        )
+        let sut = OnboardingRegisterAuthenticationView(
+            store: RegisterAuthenticationDomain.Dummies.store(with: state)
+        )
+        .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
+        assertSnapshots(matching: sut, as: snapshotModi())
+    }
+
+    func testOnboardingRegisterAuthenticationView_WithSelectedPasswordOption() {
+        let state = RegisterAuthenticationDomain.State(
+            availableSecurityOptions: [.password, .biometry(.touchID)],
+            selectedSecurityOption: AppSecurityOption.password
+        )
+        let sut = OnboardingRegisterAuthenticationView(
+            store: RegisterAuthenticationDomain.Dummies.store(with: state)
+        )
+        .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
+        assertSnapshots(matching: sut, as: snapshotModi())
+    }
+
+    func testOnboardingRegisterAuthenticationView_WithWrongPasswordOption() {
+        let state = RegisterAuthenticationDomain.State(
+            availableSecurityOptions: [.password, .biometry(.touchID)],
+            selectedSecurityOption: AppSecurityOption.password,
+            passwordA: "Abc",
+            showPasswordsNotEqualMessage: true
+        )
+        let sut = OnboardingRegisterAuthenticationView(
+            store: RegisterAuthenticationDomain.Dummies.store(with: state)
+        )
+        .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
+        assertSnapshots(matching: sut, as: snapshotModi())
+    }
+
+    func testOnboardingRegisterAuthenticationView_WithNoSelectionError() {
+        let state = RegisterAuthenticationDomain.State(
+            availableSecurityOptions: [.password, .biometry(.touchID)],
+            showNoSelectionMessage: true
+        )
+        let sut = OnboardingRegisterAuthenticationView(
+            store: RegisterAuthenticationDomain.Dummies.store(with: state)
+        )
+        .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
         assertSnapshots(matching: sut, as: snapshotModi())
     }
 

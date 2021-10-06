@@ -19,29 +19,34 @@
 import SwiftUI
 
 struct OnboardingNextButton: View {
+    let isEnabled: Bool
     let action: () -> Void
     @ScaledMetric var iconSize: CGFloat = 56
     var maxIconSize: CGFloat { 56 * 2 }
 
     var body: some View {
         Button(action: action) {
-            Image(Asset.Onboarding.next)
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(height: iconSize > maxIconSize ? maxIconSize : iconSize)
+            Image(systemName: SFSymbolName.arrowRightCircleFill)
+                .font(Font.largeTitle)
+                .imageScale(.large)
                 .accessibility(identifier: A18n.onboarding.start.onbBtnNext)
                 .accessibility(hint: Text(L10n.onbBtnNextHint))
                 .accessibility(label: Text(L10n.onbBtnNextHint))
-                .padding([.bottom, .trailing], 30)
+                .padding(.all, 30)
         }
+        .disabled(!isEnabled)
+        .accentColor(isEnabled ? Colors.primary : Color(.systemGray))
     }
 }
 
 struct OnboardingNextButton_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            OnboardingNextButton {}
-            OnboardingNextButton {}
+            OnboardingNextButton(isEnabled: true) {}
+            OnboardingNextButton(isEnabled: true) {}
+                .preferredColorScheme(.dark)
+            OnboardingNextButton(isEnabled: false) {}
+            OnboardingNextButton(isEnabled: false) {}
                 .preferredColorScheme(.dark)
         }
     }

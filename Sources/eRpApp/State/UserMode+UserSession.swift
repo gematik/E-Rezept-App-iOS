@@ -85,4 +85,8 @@ extension UserMode: UserSession {
     var appSecurityManager: AppSecurityManager {
         sessionContainer.appSecurityManager
     }
+
+    var deviceSecurityManager: DeviceSecurityManager {
+        sessionContainer.deviceSecurityManager
+    }
 }

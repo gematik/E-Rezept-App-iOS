@@ -23,13 +23,13 @@ import eRpKit
 import eRpLocalStorage
 import SwiftUI
 
-struct CardWallCANView: View {
+struct CardWallCANView<Content: View>: View {
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     let store: CardWallCANDomain.Store
 
-    let nextView: () -> AnyView
+    let nextView: () -> Content
 
-    init(store: CardWallCANDomain.Store, nextView: @escaping @autoclosure () -> AnyView) {
+    init(store: CardWallCANDomain.Store, @ViewBuilder nextView: @escaping () -> Content) {
         self.store = store
         self.nextView = nextView
     }
@@ -179,9 +179,10 @@ struct CardWallCANView_Previews: PreviewProvider {
         Group {
             NavigationView {
                 CardWallCANView(
-                    store: CardWallCANDomain.Dummies.store,
-                    nextView: AnyView(EmptyView())
-                )
+                    store: CardWallCANDomain.Dummies.store
+                ) {
+                    EmptyView()
+                }
             }.generateVariations()
         }
     }

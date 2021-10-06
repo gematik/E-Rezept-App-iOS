@@ -19,8 +19,6 @@
 import SwiftUI
 
 struct OnboardingStartView: View {
-    var action: () -> Void
-
     var body: some View {
         GeometryReader { geometry in
             VStack {
@@ -77,10 +75,10 @@ struct OnboardingStartView: View {
 struct OnboardingStartView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            OnboardingStartView {}
-            OnboardingStartView {}
+            OnboardingStartView()
+            OnboardingStartView()
                 .preferredColorScheme(.dark)
-            OnboardingStartView {}
+            OnboardingStartView()
                 .previewDevice("iPod touch (7th generation)")
         }
     }
