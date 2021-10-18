@@ -1,6 +1,12 @@
 {
   "warnings": [
-
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/KKAppDirectory.swift",
+      "line": 104,
+      "symbol": "KKAppDirectory.Entry",
+      "symbol_kind": "source.lang.swift.decl.extension",
+      "warning": "undocumented"
+    }
   ],
   "source_directory": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare"
 }

@@ -21,10 +21,10 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-           1.0.12
+           1.1.0
  Docs
         </a>
-         (81% documented)
+         (79% documented)
       </p>
     
       <p class="header-col--secondary">
@@ -114,6 +114,12 @@
             <a class="nav-group-name-link" href="../Protocols.html">Protocols</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/ChallengeSession.html">ChallengeSession</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/ExtAuthRequestStorage.html">ExtAuthRequestStorage</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Protocols/IDPClient.html">IDPClient</a>
               </li>
               <li class="nav-group-task">
@@ -152,6 +158,9 @@
                 <a class="nav-group-task-link" href="../Structs/DiscoveryDocument.html">DiscoveryDocument</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/ExtAuthChallengeSession.html">ExtAuthChallengeSession</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/IDPChallenge.html">IDPChallenge</a>
               </li>
               <li class="nav-group-task">
@@ -167,10 +176,25 @@
                 <a class="nav-group-task-link" href="../Structs/IDPChallengeSession.html">IDPChallengeSession</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/IDPDirectoryKKApps.html">IDPDirectoryKKApps</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/IDPExchangeToken.html">IDPExchangeToken</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/IDPExtAuth.html">IDPExtAuth</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/IDPExtAuthVerify.html">IDPExtAuthVerify</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/IDPToken.html">IDPToken</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/KKAppDirectory.html">KKAppDirectory</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/KKAppDirectory/Entry.html">– Entry</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/NestedJWT.html">NestedJWT</a>
@@ -523,9 +547,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:3IDP9IDPClientP8exchange5token8verifier20encryptedKeyVerifier5using7Combine12AnyPublisherVyAA12TokenPayloadVAA8IDPErrorOGAA011IDPExchangeM0V_SSAA3JWEVAA17DiscoveryDocumentVtF"></a>
-                    <a name="//apple_ref/swift/Method/exchange(token:verifier:encryptedKeyVerifier:using:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:3IDP9IDPClientP8exchange5token8verifier20encryptedKeyVerifier5using7Combine12AnyPublisherVyAA12TokenPayloadVAA8IDPErrorOGAA011IDPExchangeM0V_SSAA3JWEVAA17DiscoveryDocumentVtF">exchange(token:<wbr>verifier:<wbr>encryptedKeyVerifier:<wbr>using:<wbr>)</a>
+                    <a name="/s:3IDP9IDPClientP8exchange5token8verifier11redirectURI20encryptedKeyVerifier5using7Combine12AnyPublisherVyAA12TokenPayloadVAA8IDPErrorOGAA011IDPExchangeO0V_S2SSgAA3JWEVAA17DiscoveryDocumentVtF"></a>
+                    <a name="//apple_ref/swift/Method/exchange(token:verifier:redirectURI:encryptedKeyVerifier:using:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP9IDPClientP8exchange5token8verifier11redirectURI20encryptedKeyVerifier5using7Combine12AnyPublisherVyAA12TokenPayloadVAA8IDPErrorOGAA011IDPExchangeO0V_S2SSgAA3JWEVAA17DiscoveryDocumentVtF">exchange(token:<wbr>verifier:<wbr>redirectURI:<wbr>encryptedKeyVerifier:<wbr>using:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -542,6 +566,7 @@
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">exchange</span><span class="p">(</span><span class="nv">token</span><span class="p">:</span> <span class="kt"><a href="../Structs/IDPExchangeToken.html">IDPExchangeToken</a></span><span class="p">,</span>
               <span class="nv">verifier</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
+              <span class="nv">redirectURI</span><span class="p">:</span> <span class="kt">String</span><span class="p">?,</span>
               <span class="nv">encryptedKeyVerifier</span><span class="p">:</span> <span class="kt">JWE</span><span class="p">,</span>
               <span class="n">using</span> <span class="nv">document</span><span class="p">:</span> <span class="kt"><a href="../Structs/DiscoveryDocument.html">DiscoveryDocument</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">TokenPayload</span><span class="p">,</span> <span class="kt"><a href="../Enums/IDPError.html">IDPError</a></span><span class="o">&gt;</span></code></pre>
 
@@ -574,6 +599,18 @@
                                   <p>initial verifier generated upon requesting the challenge.
       Must be at least 43 * 128-bit unreserved characters long.
       See <a href="https://tools.ietf.org/html/rfc7636#section-4.2">https://tools.ietf.org/html/rfc7636#section-4.2</a></p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>redirectURI</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>redirect_uri to use for the backend call.</p>
                                 </div>
                               </td>
                             </tr>
@@ -824,6 +861,169 @@
                     </section>
                   </div>
                 </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP9IDPClientP19loadDirectoryKKApps5using7Combine12AnyPublisherVyAA012IDPDirectoryE0VAA8IDPErrorOGAA17DiscoveryDocumentV_tF"></a>
+                    <a name="//apple_ref/swift/Method/loadDirectoryKKApps(using:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP9IDPClientP19loadDirectoryKKApps5using7Combine12AnyPublisherVyAA012IDPDirectoryE0VAA8IDPErrorOGAA17DiscoveryDocumentV_tF">loadDirectoryKKApps(using:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Load available Insurance companies that are capable of External Authentication (<em>FastTrack</em>).</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">loadDirectoryKKApps</span><span class="p">(</span><span class="n">using</span> <span class="nv">document</span><span class="p">:</span> <span class="kt"><a href="../Structs/DiscoveryDocument.html">DiscoveryDocument</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/IDPDirectoryKKApps.html">IDPDirectoryKKApps</a></span><span class="p">,</span> <span class="kt"><a href="../Enums/IDPError.html">IDPError</a></span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>document</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The DiscoveryDocument to resolve the actual endpoint.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP9IDPClientP12startExtAuth_5using7Combine12AnyPublisherVy10Foundation3URLVAA8IDPErrorOGAA06IDPExtE0V_AA17DiscoveryDocumentVtF"></a>
+                    <a name="//apple_ref/swift/Method/startExtAuth(_:using:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP9IDPClientP12startExtAuth_5using7Combine12AnyPublisherVy10Foundation3URLVAA8IDPErrorOGAA06IDPExtE0V_AA17DiscoveryDocumentVtF">startExtAuth(_:<wbr>using:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Initial step for external authentication with insurance company app.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">startExtAuth</span><span class="p">(</span><span class="n">_</span> <span class="nv">app</span><span class="p">:</span> <span class="kt"><a href="../Structs/IDPExtAuth.html">IDPExtAuth</a></span><span class="p">,</span> <span class="n">using</span> <span class="nv">document</span><span class="p">:</span> <span class="kt"><a href="../Structs/DiscoveryDocument.html">DiscoveryDocument</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">URL</span><span class="p">,</span> <span class="kt"><a href="../Enums/IDPError.html">IDPError</a></span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>app</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The reference to an insurance company app to user for the authentication.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>document</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The DiscoveryDocument to resolve the actual endpoint.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP9IDPClientP13extAuthVerify_5using7Combine12AnyPublisherVyAA16IDPExchangeTokenVAA8IDPErrorOGAA06IDPExtdE0V_AA17DiscoveryDocumentVtF"></a>
+                    <a name="//apple_ref/swift/Method/extAuthVerify(_:using:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP9IDPClientP13extAuthVerify_5using7Combine12AnyPublisherVyAA16IDPExchangeTokenVAA8IDPErrorOGAA06IDPExtdE0V_AA17DiscoveryDocumentVtF">extAuthVerify(_:<wbr>using:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Follow up step whenever an insurance company app authorizes a user login.</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">extAuthVerify</span><span class="p">(</span><span class="n">_</span> <span class="nv">verify</span><span class="p">:</span> <span class="kt"><a href="../Structs/IDPExtAuthVerify.html">IDPExtAuthVerify</a></span><span class="p">,</span> <span class="n">using</span> <span class="nv">document</span><span class="p">:</span> <span class="kt"><a href="../Structs/DiscoveryDocument.html">DiscoveryDocument</a></span><span class="p">)</span>
+    <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/IDPExchangeToken.html">IDPExchangeToken</a></span><span class="p">,</span> <span class="kt"><a href="../Enums/IDPError.html">IDPError</a></span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>verify</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Data used to authenticate and authorize the user.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>document</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The DiscoveryDocument to resolve the actual endpoint.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
               </ul>
             </div>
           </div>
@@ -832,7 +1032,7 @@
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2021 <a class="link" href="https://www.gematik.de" target="_blank" rel="external">gematik GmbH</a>. All rights reserved. (Last updated: 2021-10-05)</p>
+      <p>&copy; 2021 <a class="link" href="https://www.gematik.de" target="_blank" rel="external">gematik GmbH</a>. All rights reserved. (Last updated: 2021-10-18)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>

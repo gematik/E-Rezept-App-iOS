@@ -21,10 +21,10 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="index.html">
-           1.0.12
+           1.1.0
  Docs
         </a>
-         (81% documented)
+         (79% documented)
       </p>
     
       <p class="header-col--secondary">
@@ -114,6 +114,12 @@
             <a class="nav-group-name-link" href="Protocols.html">Protocols</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Protocols/ChallengeSession.html">ChallengeSession</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Protocols/ExtAuthRequestStorage.html">ExtAuthRequestStorage</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Protocols/IDPClient.html">IDPClient</a>
               </li>
               <li class="nav-group-task">
@@ -152,6 +158,9 @@
                 <a class="nav-group-task-link" href="Structs/DiscoveryDocument.html">DiscoveryDocument</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Structs/ExtAuthChallengeSession.html">ExtAuthChallengeSession</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Structs/IDPChallenge.html">IDPChallenge</a>
               </li>
               <li class="nav-group-task">
@@ -167,10 +176,25 @@
                 <a class="nav-group-task-link" href="Structs/IDPChallengeSession.html">IDPChallengeSession</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Structs/IDPDirectoryKKApps.html">IDPDirectoryKKApps</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Structs/IDPExchangeToken.html">IDPExchangeToken</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Structs/IDPExtAuth.html">IDPExtAuth</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Structs/IDPExtAuthVerify.html">IDPExtAuthVerify</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Structs/IDPToken.html">IDPToken</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Structs/KKAppDirectory.html">KKAppDirectory</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Structs/KKAppDirectory/Entry.html">– Entry</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Structs/NestedJWT.html">NestedJWT</a>
@@ -381,6 +405,34 @@ authentication against the idp.</p>
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:3IDP23ExtAuthChallengeSessionV"></a>
+                    <a name="//apple_ref/swift/Struct/ExtAuthChallengeSession" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP23ExtAuthChallengeSessionV">ExtAuthChallengeSession</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                        <a href="Structs/ExtAuthChallengeSession.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">ExtAuthChallengeSession</span> <span class="p">:</span> <span class="kt"><a href="Protocols/ChallengeSession.html">ChallengeSession</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:3IDP19IDPChallengeSessionV"></a>
                     <a name="//apple_ref/swift/Struct/IDPChallengeSession" class="dashAnchor"></a>
                     <a class="token" href="#/s:3IDP19IDPChallengeSessionV">IDPChallengeSession</a>
@@ -399,8 +451,36 @@ authentication against the idp.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">IDPChallengeSession</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">IDPChallengeSession</span> <span class="p">:</span> <span class="kt"><a href="Protocols/ChallengeSession.html">ChallengeSession</a></span></code></pre>
 <pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">IDPChallengeSession</span><span class="p">:</span> <span class="kt">Equatable</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP18IDPDirectoryKKAppsV"></a>
+                    <a name="//apple_ref/swift/Struct/IDPDirectoryKKApps" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP18IDPDirectoryKKAppsV">IDPDirectoryKKApps</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>All relevant constraints needed for a successful challenge exchange</p>
+
+                        <a href="Structs/IDPDirectoryKKApps.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">IDPDirectoryKKApps</span></code></pre>
 
                         </div>
                       </div>
@@ -439,6 +519,62 @@ authentication against the idp.</p>
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:3IDP10IDPExtAuthV"></a>
+                    <a name="//apple_ref/swift/Struct/IDPExtAuth" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP10IDPExtAuthV">IDPExtAuth</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Stores login information needed for external authentication (a.k.a. FastTrack).</p>
+
+                        <a href="Structs/IDPExtAuth.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">IDPExtAuth</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP16IDPExtAuthVerifyV"></a>
+                    <a name="//apple_ref/swift/Struct/IDPExtAuthVerify" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP16IDPExtAuthVerifyV">IDPExtAuthVerify</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Transport structure storing external authentication information transported by an universal link.</p>
+
+                        <a href="Structs/IDPExtAuthVerify.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">IDPExtAuthVerify</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:3IDP8IDPTokenV"></a>
                     <a name="//apple_ref/swift/Struct/IDPToken" class="dashAnchor"></a>
                     <a class="token" href="#/s:3IDP8IDPTokenV">IDPToken</a>
@@ -459,6 +595,34 @@ authentication against the idp.</p>
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">IDPToken</span> <span class="p">:</span> <span class="kt">Codable</span></code></pre>
 <pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">IDPToken</span><span class="p">:</span> <span class="kt">Equatable</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP14KKAppDirectoryV"></a>
+                    <a name="//apple_ref/swift/Struct/KKAppDirectory" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP14KKAppDirectoryV">KKAppDirectory</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                        <a href="Structs/KKAppDirectory.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">KKAppDirectory</span> <span class="p">:</span> <span class="kt">Codable</span><span class="p">,</span> <span class="kt">Equatable</span><span class="p">,</span> <span class="kt">Claims</span></code></pre>
 
                         </div>
                       </div>
@@ -702,7 +866,7 @@ authentication against the idp.</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2021 <a class="link" href="https://www.gematik.de" target="_blank" rel="external">gematik GmbH</a>. All rights reserved. (Last updated: 2021-10-05)</p>
+      <p>&copy; 2021 <a class="link" href="https://www.gematik.de" target="_blank" rel="external">gematik GmbH</a>. All rights reserved. (Last updated: 2021-10-18)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>

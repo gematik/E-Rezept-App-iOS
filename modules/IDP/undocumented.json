@@ -57,6 +57,20 @@
       "warning": "undocumented"
     },
     {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/DiscoveryDocument.swift",
+      "line": 118,
+      "symbol": "DiscoveryDocument.directoryKKApps",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/DiscoveryDocument.swift",
+      "line": 125,
+      "symbol": "DiscoveryDocument.thirdPartyAuth",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/IDPChallenge.swift",
       "line": 9,
       "symbol": "IDPChallenge.Claim",
@@ -106,6 +120,48 @@
       "warning": "undocumented"
     },
     {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/IDPChallengeSession.swift",
+      "line": 18,
+      "symbol": "ExtAuthChallengeSession",
+      "symbol_kind": "source.lang.swift.decl.struct",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/IDPChallengeSession.swift",
+      "line": 20,
+      "symbol": "ExtAuthChallengeSession.nonce",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/IDPChallengeSession.swift",
+      "line": 22,
+      "symbol": "ExtAuthChallengeSession.init(verifierCode:nonce:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/IDPChallengeSession.swift",
+      "line": 34,
+      "symbol": "ExtAuthRequestStorage",
+      "symbol_kind": "source.lang.swift.decl.protocol",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/IDPChallengeSession.swift",
+      "line": 35,
+      "symbol": "ExtAuthRequestStorage.setExtAuthRequest(_:for:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/IDPChallengeSession.swift",
+      "line": 36,
+      "symbol": "ExtAuthRequestStorage.getExtAuthRequest(for:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/IDPError.swift",
       "line": 40,
       "symbol": "IDPError.pairing(_:)",
@@ -121,9 +177,44 @@
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/IDPError.swift",
-      "line": 50,
+      "line": 52,
       "symbol": "IDPError.ServerResponse",
       "symbol_kind": "source.lang.swift.decl.struct",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/KKAppDirectory.swift",
+      "line": 7,
+      "symbol": "KKAppDirectory",
+      "symbol_kind": "source.lang.swift.decl.struct",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/KKAppDirectory.swift",
+      "line": 8,
+      "symbol": "KKAppDirectory.apps",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/KKAppDirectory.swift",
+      "line": 14,
+      "symbol": "KKAppDirectory.Entry",
+      "symbol_kind": "source.lang.swift.decl.struct",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/KKAppDirectory.swift",
+      "line": 15,
+      "symbol": "KKAppDirectory.Entry.name",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/KKAppDirectory.swift",
+      "line": 16,
+      "symbol": "KKAppDirectory.Entry.identifier",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
