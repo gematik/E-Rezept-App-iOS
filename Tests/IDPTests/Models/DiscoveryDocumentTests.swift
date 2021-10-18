@@ -38,6 +38,8 @@ class DiscoveryDocumentTests: XCTestCase {
             iat: Date(timeIntervalSince1970: 1_615_823_464),
             pukIdpEnc: URL(string: "http://localhost:8888/idpEnc/jwks.json")!,
             pukIdpSig: URL(string: "http://localhost:8888/ipdSig/jwks.json")!,
+            kkAppList: URL(string: "http://localhost:8888/appList")!,
+            thirdPartyAuth: URL(string: "http://localhost:8888/thirdPartyAuth")!,
             subjectTypesSupported: [
                 "pairwise",
             ],

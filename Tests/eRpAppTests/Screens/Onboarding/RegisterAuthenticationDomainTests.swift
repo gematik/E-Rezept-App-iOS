@@ -282,4 +282,68 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
         store.send(.saveSelection)
         store.receive(.saveSelectionSuccess)
     }
+
+    func testSaveBiometrics() {
+        mockAppSecurityManager.savePasswordReturnValue = true
+        let store = testStore(
+            with: RegisterAuthenticationDomain.State(
+                availableSecurityOptions: [.biometry(.faceID)],
+                selectedSecurityOption: .biometry(.faceID),
+                passwordA: "",
+                passwordB: "",
+                showPasswordsNotEqualMessage: false,
+                showNoSelectionMessage: false,
+                securityOptionsError: nil,
+                alertState: nil
+            )
+        )
+
+        store.send(.saveSelection)
+        store.receive(.saveSelectionSuccess)
+    }
+
+    func testSelectBiometricsSucceeds() {
+        let store = testStore(
+            with: RegisterAuthenticationDomain.State(
+                availableSecurityOptions: [.biometry(.faceID)],
+                selectedSecurityOption: .none,
+                passwordA: "",
+                passwordB: "",
+                showPasswordsNotEqualMessage: false,
+                showNoSelectionMessage: false,
+                securityOptionsError: nil,
+                alertState: nil
+            )
+        )
+
+        store.send(.select(.biometry(.faceID))) { state in
+            state.selectedSecurityOption = .biometry(.faceID)
+        }
+        store.receive(.authenticationChallengeResponse(.success(true)))
+    }
+
+    func testSelectBiometricsFails() {
+        let store = testStore(
+            with: RegisterAuthenticationDomain.State(
+                availableSecurityOptions: [.biometry(.faceID)],
+                selectedSecurityOption: .none,
+                passwordA: "",
+                passwordB: "",
+                showPasswordsNotEqualMessage: false,
+                showNoSelectionMessage: false,
+                securityOptionsError: nil,
+                alertState: nil
+            )
+        )
+        let authenticationChallengeProvider =
+            store.environment.authenticationChallengeProvider as! MockAuthenticationChallengeProvider
+        authenticationChallengeProvider.result = .success(false)
+
+        store.send(.select(.biometry(.faceID))) { state in
+            state.selectedSecurityOption = .biometry(.faceID)
+        }
+        store.receive(.authenticationChallengeResponse(.success(false))) { state in
+            state.selectedSecurityOption = .none
+        }
+    }
 }

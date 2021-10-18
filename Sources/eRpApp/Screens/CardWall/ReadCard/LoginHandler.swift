@@ -118,7 +118,8 @@ class DefaultLoginHandler: LoginHandler {
                     .flatMap { exchangeToken in
                         self.idpSession.exchange(
                             token: exchangeToken,
-                            challengeSession: signedAuthenticationData.originalChallenge
+                            challengeSession: signedAuthenticationData.originalChallenge,
+                            redirectURI: nil
                         )
                         .map { _ in
                             // Receiving any IDPToken means we are logged in

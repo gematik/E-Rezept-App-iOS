@@ -115,7 +115,7 @@ targets:
         name: Swiftgen
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: de.gematik.erp4ios.eRezept
+        PRODUCT_BUNDLE_IDENTIFIER: ${GEM_PRODUCT_BUNDLE_IDENTIFIER}
         TARGETED_DEVICE_FAMILY: 1
     configFiles:
       Debug: Sources/eRpApp/Resources/debug.xcconfig
@@ -285,6 +285,7 @@ targets:
       - target: HTTPClient_${platform}
       - target: IDP_${platform}
       - target: VAUClient_${platform}
+      - package: Nimble
       - sdk: XCTest.framework
     scheme:
   TrustStore:
@@ -479,7 +480,7 @@ targets:
     type: bundle.unit-test
     platform: [iOS]
     settings:
-      INFOPLIST_FILE: Tests/eRpKitTests/Resources/Info.plist
+      INFOPLIST_FILE: Tests/IntegrationTests/Resources/Info.plist
     sources:
       - Tests/IntegrationTests
     dependencies:

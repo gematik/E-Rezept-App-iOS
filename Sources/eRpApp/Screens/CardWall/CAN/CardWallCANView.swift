@@ -102,7 +102,8 @@ struct CardWallCANView<Content: View>: View {
                             Spacer()
                         }
 
-                        CardWallCANInputView(can: viewStore.binding(get: \.can) { .update(can: $0) }) {
+                        CardWallCANInputView(can: viewStore.binding(get: \.can) { .update(can: $0) },
+                                             pauseFirstResponder: viewStore.isEGKOrderInfoViewPresented) {
                             viewStore.send(.advance)
                         }.padding(.horizontal)
 
@@ -118,9 +119,11 @@ struct CardWallCANView<Content: View>: View {
                                 get: \.isEGKOrderInfoViewPresented,
                                 send: CardWallCANDomain.Action.dismissEGKOrderInfoView
                             )) {
-                                CardWallEGKOrderInfoView {
-                                    viewStore.send(.dismissEGKOrderInfoView)
-                                }
+                                NavigationView {
+                                    OrderHealthCardView {
+                                        viewStore.send(.dismissEGKOrderInfoView)
+                                    }
+                                }.navigationViewStyle(StackNavigationViewStyle())
                             }
 
                         HintView<CardWallCANDomain.Action>(

@@ -1,3 +1,22 @@
+# Release 1.1.0
+
+### added (5 changes)
+
+- Add additional jailbreak detection
+- Add external authentication implementation to IDPClient as IDPService as well as simple initial UI
+- Add UI for upcoming external authentication feature
+- Add dedicated redirect_uri for external authentication
+- Add new order health card screens with optional support for mail, phone and web
+
+### changed (1 change)
+
+- Change App Icon to new Design
+
+### internal (2 changes)
+
+- Execute parametrizable intergration tests (in Jenkins)
+- Add Konny app variant
+
 # Release 1.0.12
 
 ### added (5 changes)

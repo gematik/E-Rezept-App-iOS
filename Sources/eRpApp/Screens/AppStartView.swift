@@ -43,7 +43,7 @@ struct AppStartView: View {
                 }
             }
             .onAppear {
-                viewStore.send(.shouldHideOnboarding)
+                viewStore.send(.refreshOnboardingState)
             }
         }
     }

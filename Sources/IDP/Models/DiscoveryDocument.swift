@@ -129,6 +129,20 @@ public struct DiscoveryDocument: Codable {
         Endpoint(url: payload.authenticationPair.correct(), cert: signingCert)
     }
 
+    public var directoryKKApps: IDPEndpoint? {
+        guard let url = payload.kkAppList else {
+            return nil
+        }
+        return Endpoint(url: url.correct(), cert: signingCert)
+    }
+
+    public var thirdPartyAuth: IDPEndpoint? {
+        guard let url = payload.thirdPartyAuth else {
+            return nil
+        }
+        return Endpoint(url: url.correct(), cert: signingCert)
+    }
+
     /// Expiration date
     public var expiresOn: Date {
         payload.exp

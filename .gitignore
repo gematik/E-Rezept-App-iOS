@@ -88,6 +88,7 @@ fastlane/Preview.html
 fastlane/screenshots/**/*.png
 fastlane/test_output
 fastlane/README.md
+fastlane/settings.xctestrun
 artifacts/
 distribution/
 

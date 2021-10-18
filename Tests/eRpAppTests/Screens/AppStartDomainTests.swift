@@ -62,9 +62,9 @@ final class AppStartDomainTests: XCTestCase {
         mockUserDataStore.hideOnboarding = Just(false).eraseToAnyPublisher()
         mockUserDataStore.onboardingVersion = Just(nil).eraseToAnyPublisher()
 
-        store.send(.shouldHideOnboarding)
+        store.send(.refreshOnboardingState)
         // when receiving onboarding with composition
-        store.receive(.shouldHideOnboardingReceived(OnboardingDomain.Composition.allPages)) {
+        store.receive(.refreshOnboardingStateReceived(OnboardingDomain.Composition.allPages)) {
             // onboarding should be presented
             $0 = .onboarding(OnboardingDomain.State(composition: OnboardingDomain.Composition.allPages))
         }
@@ -91,10 +91,15 @@ final class AppStartDomainTests: XCTestCase {
         mockUserDataStore.hideOnboarding = Just(true).eraseToAnyPublisher()
         mockUserDataStore.onboardingVersion = Just(nil).eraseToAnyPublisher()
 
-        let expectedComposition = OnboardingDomain.Composition(hideOnboardingLegacy: true, onboardingVersion: nil)
-        store.send(.shouldHideOnboarding)
+        let expectedComposition = OnboardingDomain.Composition(
+            currentPageIndex: 0,
+            pages: [OnboardingDomain.Page.altRegisterAuthentication],
+            hideOnboardingLegacy: true
+        )
+
+        store.send(.refreshOnboardingState)
         // when receiving onboarding with composition
-        store.receive(.shouldHideOnboardingReceived(expectedComposition)) {
+        store.receive(.refreshOnboardingStateReceived(expectedComposition)) {
             // onboarding should be presented
             $0 = .onboarding(OnboardingDomain.State(composition: expectedComposition))
         }
@@ -121,9 +126,9 @@ final class AppStartDomainTests: XCTestCase {
         mockUserDataStore.hideOnboarding = Just(true).eraseToAnyPublisher()
         mockUserDataStore.onboardingVersion = Just("version").eraseToAnyPublisher()
 
-        store.send(.shouldHideOnboarding)
-        store.receive(.shouldHideOnboardingReceived(OnboardingDomain.Composition(hideOnboardingLegacy: true,
-                                                                                 onboardingVersion: "version"))) {
+        store.send(.refreshOnboardingState)
+        store.receive(.refreshOnboardingStateReceived(OnboardingDomain.Composition(hideOnboardingLegacy: true,
+                                                                                   onboardingVersion: "version"))) {
             $0 = .app(
                 AppDomain.State(
                     selectedTab: .main,

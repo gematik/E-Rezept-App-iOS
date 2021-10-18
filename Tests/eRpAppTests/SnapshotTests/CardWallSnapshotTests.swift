@@ -27,6 +27,34 @@ final class CardWallSnapshotTests: XCTestCase {
         diffTool = "open"
     }
 
+    func testSelectionView() {
+        let sut = CardWallView(
+            store: CardWallDomain.Store(
+                initialState: .init(
+                    introAlreadyDisplayed: false,
+                    isNFCReady: true,
+                    isMinimalOS14: true,
+                    pin: .init(isDemoModus: false),
+                    loginOption: .init(isDemoModus: false)
+                ),
+                reducer: .empty,
+                environment: CardWallDomain.Dummies.environment
+            )
+        )
+
+        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
+        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+    }
+
+    func testFastTrackFallbackView() {
+        let sut = CardWallInsuranceSelectionInactiveView(closeAction: {})
+
+        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
+        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+    }
+
     func testIntroductionView() {
         let sut = CardWallIntroductionView(
             store: CardWallIntroductionDomain.Dummies.store,

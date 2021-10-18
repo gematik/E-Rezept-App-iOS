@@ -95,8 +95,8 @@ final class MockUserDataStore: UserDataStore {
     }
 
     var setOnboardingVersionReceivedOnboardingVersion: String?
-    var setOnboardingVersionReceivedInvocations: [String] = []
-    var setOnboardingVersionClosure: ((String) -> Void)?
+    var setOnboardingVersionReceivedInvocations: [String?] = []
+    var setOnboardingVersionClosure: ((String?) -> Void)?
 
     private var underlyingOnboardingVersion: AnyPublisher<String?, Never>!
 
@@ -105,11 +105,11 @@ final class MockUserDataStore: UserDataStore {
         set(value) { underlyingOnboardingVersion = value }
     }
 
-    func set(onboardingVersion _: String?) {
+    func set(onboardingVersion version: String?) {
         setOnboardingVersionCallsCount += 1
-//        setOnboardingVersionReceivedHideOnboarding = hideOnboarding
-//        setOnboardingVersionReceivedInvocations.append(hideOnboarding)
-//        setOnboardingVersionClosure?(hideOnboarding)
+        setOnboardingVersionReceivedOnboardingVersion = version
+        setOnboardingVersionReceivedInvocations.append(version)
+        setOnboardingVersionClosure?(version)
     }
 
     // MARK: - set

@@ -5,7 +5,26 @@ scanner:
   - scn_img_scan_alert
   - scn_btn_scanning_done
   - scn_btn_cancel_scan
+orderEGK:
+  - ogk_txt_headline
+  - ogk_txt_desription
+  - ogk_btn_cancel
+  - ogk_btn_phone
+  - ogk_btn_web
+  - ogk_btn_mail
+  - ogk_btn_egk_info
+  - ogk_txt_no_selection_hint
+  - ogk_txt_insurance_company_header
+  - ogk_txt_service_selection_header
+  - ogk_txt_contact_company_header
 cardWall:
+  select:
+    - cdw_btn_sel_continue
+    - cdw_btn_sel_egk
+    - cdw_btn_sel_kkapp
+  fasttrackFallback:
+    - cdw_btn_ftfb_orderegk
+    - cdw_btn_ftfb_cancel
   intro:
     - cdw_btn_intro_later
     - cdw_btn_intro_cancel
@@ -17,14 +36,6 @@ cardWall:
     - cdw_txt_intro_requirement_card
     - cdw_txt_intro_requirement_pin
     - cdw_txt_intro_requirement_phone
-  orderEGK:
-    - cdw_txt_order_egk_headline
-    - cdw_txt_order_egk_desription
-    - cdw_inp_order_egk_kv
-    - cdw_inp_order_egk_kvnr
-    - cdw_btn_order_egk_mail
-    - cdw_btn_order_egk_scan_kvnr
-    - cdw_btn_order_egk_scan_kvnr_confirm
   orderEGKInfo:
     - cdw_txt_order_egk_info_headline
     - cdw_btn_order_egk_info

@@ -48,9 +48,10 @@ extension Publisher where Output == IDPSession, Failure == Never {
     ///   - verifier: initial verifier generated upon requesting the challenge
     /// - Returns: the authenticated token
     public func exchange(token: IDPExchangeToken,
-                         challengeSession: IDPChallengeSession) -> AnyPublisher<IDPToken, IDPError> {
+                         challengeSession: ChallengeSession,
+                         redirectURI: String? = nil) -> AnyPublisher<IDPToken, IDPError> {
         setFailureType(to: IDPError.self)
-            .flatMap { $0.exchange(token: token, challengeSession: challengeSession) }
+            .flatMap { $0.exchange(token: token, challengeSession: challengeSession, redirectURI: redirectURI) }
             .eraseToAnyPublisher()
     }
 

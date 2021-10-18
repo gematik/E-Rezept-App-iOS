@@ -80,11 +80,13 @@ public protocol IDPClient {
     ///   - verifier: initial verifier generated upon requesting the challenge.
     ///               Must be at least 43 * 128-bit unreserved characters long.
     ///               See https://tools.ietf.org/html/rfc7636#section-4.2
+    ///   - redirectURI: redirect_uri to use for the backend call.
     ///   - encryptedKeyVerifier: encrypted  symmetric key together with the `verifier`
     ///   - document: use this DiscoveryDocument to resolve the actual endpoint
     /// - Returns: the authenticated token
     func exchange(token: IDPExchangeToken,
                   verifier: String,
+                  redirectURI: String?,
                   encryptedKeyVerifier: JWE,
                   using document: DiscoveryDocument) -> AnyPublisher<TokenPayload, IDPError>
 
@@ -116,5 +118,22 @@ public protocol IDPClient {
     /// - Returns: exchange token upon success
     func altVerify(_ encryptedSignedChallenge: JWE,
                    using document: DiscoveryDocument)
+        -> AnyPublisher<IDPExchangeToken, IDPError>
+
+    /// Load available Insurance companies that are capable of External Authentication (*FastTrack*).
+    /// - Parameter document: The DiscoveryDocument to resolve the actual endpoint.
+    func loadDirectoryKKApps(using document: DiscoveryDocument) -> AnyPublisher<IDPDirectoryKKApps, IDPError>
+
+    /// Initial step for external authentication with insurance company app.
+    /// - Parameters:
+    ///   - app: The reference to an insurance company app to user for the authentication.
+    ///   - document: The DiscoveryDocument to resolve the actual endpoint.
+    func startExtAuth(_ app: IDPExtAuth, using document: DiscoveryDocument) -> AnyPublisher<URL, IDPError>
+
+    /// Follow up step whenever an insurance company app authorizes a user login.
+    /// - Parameters:
+    ///   - verify: Data used to authenticate and authorize the user.
+    ///   - document: The DiscoveryDocument to resolve the actual endpoint.
+    func extAuthVerify(_ verify: IDPExtAuthVerify, using document: DiscoveryDocument)
         -> AnyPublisher<IDPExchangeToken, IDPError>
 }

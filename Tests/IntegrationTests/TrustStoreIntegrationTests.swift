@@ -18,6 +18,7 @@
 
 import Combine
 import DataKit
+@testable import eRpApp
 import Foundation
 import HTTPClient
 import Nimble
@@ -27,29 +28,37 @@ import TestUtils
 import XCTest
 
 /// Runs TrustStore Integration Tests.
-/// Set `FDV_URL` in runtime environment to setup service server url.
+/// Set `APP_CONF` in runtime environment to setup the execution environment.
 final class TrustStoreIntegrationTests: XCTestCase {
     func testCompleteFlow() {
-        let fdvURLString = ProcessInfo.processInfo
-//                .environment["FDV_URL"] ?? "https://erp.dev.gematik.solutions/fdv/"
-            .environment["FDV_URL"] ?? "https://erp-ref.zentral.erp.splitdns.ti-dienste.de/"
-        guard let fdvURL = URL(string: fdvURLString) else {
-            fail("invalid fdv URL (injected?)")
-            return
+        var environment: AppConfiguration
+        if let testAppConfigurationString = ProcessInfo.processInfo.environment["APP_CONF"],
+           let testAppConfiguration = testAppConfigurations[testAppConfigurationString] {
+            environment = testAppConfiguration
+        } else {
+            environment = dummyAppConfiguration // change me for manuel testing
         }
 
         let storage = MemStorage()
         let session = DefaultTrustStoreSession(
-            serverURL: fdvURL,
+            serverURL: environment.erp,
+            trustAnchor: environment.trustAnchor,
             trustStoreStorage: storage,
-            httpClient: DefaultHTTPClient(urlSessionConfiguration: .ephemeral,
-                                          interceptors: [
-                                          ])
+            httpClient: DefaultHTTPClient(
+                urlSessionConfiguration: .ephemeral,
+                interceptors: [
+                    AdditionalHeaderInterceptor(additionalHeader: environment.erpAdditionalHeader),
+                    LoggingInterceptor(log: .body),
+                ]
+            )
         )
         var success = false
         session.loadVauCertificate()
             .test(
                 timeout: 20,
+                failure: { error in
+                    fail("Failed with error: \(error)")
+                },
                 expectations: { vauCertificate in
                     success = true
                     Swift.print("vauCertificate", (vauCertificate.derBytes?.base64EncodedString()) ?? "")

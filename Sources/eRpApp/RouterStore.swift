@@ -19,10 +19,11 @@
 import ComposableArchitecture
 import Foundation
 
-enum Endpoint {
+enum Endpoint: Equatable {
     case settings
     case scanner
     case messages
+    case universalLink(URL)
 }
 
 protocol Routing {

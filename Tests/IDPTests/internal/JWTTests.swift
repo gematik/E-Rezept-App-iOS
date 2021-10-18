@@ -47,7 +47,7 @@ class JWTTests: XCTestCase {
 
         // Check signature
         let data = try! Data(
-            hex: "26938E376231A15E4FDF611D437A1C74E24FB246E40E17EF01A55D1453E270903B9E1536D62EFB2712942EF47FDBF2FCCA41A1CCA2A23DE389FA54D7A9D67718" // swiftlint:disable:this line_length
+            hex: "9334442839a3318ede0569f28c97a08a3e2cac57083b31f2790b3f080cf8038a73a1b3254c30bd40d3744b5cbe6f8113c7a382872a7f3ae1420bfe20e1c9686d" // swiftlint:disable:this line_length
         )
         expect(jwt.signature) == data
 

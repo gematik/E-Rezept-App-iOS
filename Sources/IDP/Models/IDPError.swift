@@ -60,6 +60,8 @@ public enum IDPError: Swift.Error {
 
     /// Any biometrics related error
     case biometrics(SecureEnclaveSignatureProviderError)
+    /// External authentication failed due to missing or invalid original request
+    case extAuthOriginalRequestMissing
 
     public struct ServerResponse: Codable, CustomStringConvertible, Equatable {
         let error: String
@@ -96,7 +98,8 @@ extension IDPError: Equatable, LocalizedError {
             .localizedDescription == rhsError.localizedDescription
         case (.tokenUnavailable, .tokenUnavailable),
              (.noCertificateFound, .noCertificateFound),
-             (.invalidDiscoveryDocument, .invalidDiscoveryDocument): return true
+             (.invalidDiscoveryDocument, .invalidDiscoveryDocument),
+             (.extAuthOriginalRequestMissing, .extAuthOriginalRequestMissing): return true
         case let (.internalError(lhsText), .internalError(rhsText)),
              let (.invalidSignature(lhsText), .invalidSignature(rhsText)): return lhsText == rhsText
         case let (.serverError(lhsError), .serverError(rhsError)): return lhsError == rhsError
@@ -138,6 +141,8 @@ extension IDPError: Equatable, LocalizedError {
             return "Pairing error: \(error)"
         case let .biometrics(error):
             return "Error running biometrics \(error)"
+        case .extAuthOriginalRequestMissing:
+            return "Error while processing external authentication: original request not found."
         }
     }
 }

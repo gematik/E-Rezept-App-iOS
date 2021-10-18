@@ -32,14 +32,6 @@ import XCTest
 final class DefaultIDPSessionTests: XCTestCase {
     var trustStoreSessionMock: TrustStoreSessionMock!
 
-    override func setUp() {
-        super.setUp()
-
-        trustStoreSessionMock = TrustStoreSessionMock()
-        trustStoreSessionMock.validateCertificateReturnValue = Just(true).setFailureType(to: TrustStoreError.self)
-            .eraseToAnyPublisher()
-    }
-
     private lazy var dateFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss.SSSSZ"
@@ -78,6 +70,53 @@ final class DefaultIDPSessionTests: XCTestCase {
         return challenge
     }()
 
+    var idpClientMock: IDPClientMock!
+    var schedulers: TestSchedulers!
+    var storage: MemStorage!
+    var sut: DefaultIDPSession!
+    var extAuthRequestStorageMock: ExtAuthRequestStorageMock!
+
+    var initialToken: IDPToken!
+    var dateProvider: TimeProvider!
+
+    override func setUpWithError() throws {
+        try super.setUpWithError()
+
+        idpClientMock = IDPClientMock()
+
+        // Date provider provides a date that should validate the DiscoveryDocument when reading from IDPStorage
+        let issuedDate = dateFormatter.date(from: "2021-03-16 14:42:03.0000+0000")!
+        let discoveryDocument = self.discoveryDocument(createdOn: issuedDate.addingTimeInterval(TimeInterval(-10)))
+
+        idpClientMock.discoveryDocument = discoveryDocument
+
+        initialToken = IDPToken(
+            // swiftlint:disable:next line_length
+            accessToken: "eyJhbGciOiJCUDI1NlIxIiwidHlwIjoiYXQrSldUIiwia2lkIjoicHVrX2lkcF9zaWcifQ.eyJzdWIiOiJRWFkzUUx2dDhnX09BdVZkZldOM2xyVjBhNThISzRhMU1rSWJ2YlpkQm9BIiwicHJvZmVzc2lvbk9JRCI6IjEuMi4yNzYuMC43Ni40LjQ5Iiwib3JnYW5pemF0aW9uTmFtZSI6IlRlc3QgR0tWLVNWTk9ULVZBTElEIiwiaWROdW1tZXIiOiJYMTEwNDQzODc0IiwiYW1yIjpbIm1mYSIsInNjIiwicGluIl0sImlzcyI6Imh0dHBzOi8vaWRwLmRldi5nZW1hdGlrLnNvbHV0aW9ucyIsImdpdmVuX25hbWUiOiJIZWlueiBIaWxsYmVydCIsImNsaWVudF9pZCI6ImVSZXplcHRBcHAiLCJhY3IiOiJnZW1hdGlrLWVoZWFsdGgtbG9hLWhpZ2giLCJhdWQiOiJodHRwczovL2VycC10ZXN0LnplbnRyYWwuZXJwLnNwbGl0ZG5zLnRpLWRpZW5zdGUuZGUvIiwiYXpwIjoiZVJlemVwdEFwcCIsInNjb3BlIjoiZS1yZXplcHQgb3BlbmlkIiwiYXV0aF90aW1lIjoxNjE5NTE2OTk0LCJleHAiOjE2MTk1MTcyOTQsImZhbWlseV9uYW1lIjoiQ8O2cmRlcyIsImlhdCI6MTYxOTUxNjk5NCwianRpIjoiYjUzYTIwYzFmMzM1MTBlOCJ9.E9K6Wsjyxe-udXWgkk-pk6esZd2rw6UP5Ang_KV8-eBd0PvW663I-zcIcPVds2H939wBoRnPAzXmvipxxdnHPg",
+            expires: issuedDate,
+            idToken: decryptedTokenPayload.idToken,
+            ssoToken: "sso-token",
+            tokenType: "Bearer"
+        )
+
+        storage = MemStorage()
+        storage.set(discovery: discoveryDocument)
+
+        schedulers = TestSchedulers()
+
+        trustStoreSessionMock = TrustStoreSessionMock()
+        trustStoreSessionMock.validateCertificateReturnValue = Just(true).setFailureType(to: TrustStoreError.self)
+            .eraseToAnyPublisher()
+
+        extAuthRequestStorageMock = ExtAuthRequestStorageMock()
+
+        // 1 second before token expiration
+        let dateProviderDate = issuedDate.addingTimeInterval(TimeInterval(-1))
+        dateProvider = {
+            dateProviderDate
+        }
+    }
+
     // [REQ:gemSpec_IDP_Frontend:A_20617-01]
     // [REQ:gemSpec_IDP_Frontend:A_20623]
     // [REQ:gemSpec_IDP_Frontend:A_20512]
@@ -95,7 +134,8 @@ final class DefaultIDPSessionTests: XCTestCase {
             client: idpClientMock,
             storage: storage,
             schedulers: TestSchedulers(),
-            trustStoreSession: trustStoreSessionMock
+            trustStoreSession: trustStoreSessionMock,
+            extAuthRequestStorage: extAuthRequestStorageMock
         ) { issuedDate }
 
         expect(storage.discoveryDocumentState).to(beNil())
@@ -119,7 +159,8 @@ final class DefaultIDPSessionTests: XCTestCase {
             client: idpClientMock,
             storage: storage,
             schedulers: TestSchedulers(),
-            trustStoreSession: trustStoreSessionMock
+            trustStoreSession: trustStoreSessionMock,
+            extAuthRequestStorage: extAuthRequestStorageMock
         ) { issuedDate }
 
         expect(storage.discoveryDocumentState).to(beNil())
@@ -143,7 +184,8 @@ final class DefaultIDPSessionTests: XCTestCase {
             client: idpClientMock,
             storage: storage,
             schedulers: TestSchedulers(),
-            trustStoreSession: trustStoreSessionMock
+            trustStoreSession: trustStoreSessionMock,
+            extAuthRequestStorage: extAuthRequestStorageMock
         ) { issuedDate }
 
         expect(storage.discoveryDocumentState).to(beNil())
@@ -167,7 +209,8 @@ final class DefaultIDPSessionTests: XCTestCase {
             client: idpClientMock,
             storage: storage,
             schedulers: TestSchedulers(),
-            trustStoreSession: trustStoreSessionMock
+            trustStoreSession: trustStoreSessionMock,
+            extAuthRequestStorage: extAuthRequestStorageMock
         ) { issuedDate }
 
         expect(storage.discoveryDocumentState).to(beNil())
@@ -190,7 +233,8 @@ final class DefaultIDPSessionTests: XCTestCase {
             client: idpClientMock,
             storage: storage,
             schedulers: TestSchedulers(),
-            trustStoreSession: trustStoreSessionMock
+            trustStoreSession: trustStoreSessionMock,
+            extAuthRequestStorage: extAuthRequestStorageMock
         ) { issuedDate }
 
         expect(storage.discoveryDocumentState) == discoveryDocument
@@ -213,7 +257,8 @@ final class DefaultIDPSessionTests: XCTestCase {
             client: idpClientMock,
             storage: storage,
             schedulers: TestSchedulers(),
-            trustStoreSession: trustStoreSessionMock
+            trustStoreSession: trustStoreSessionMock,
+            extAuthRequestStorage: extAuthRequestStorageMock
         ) { issuedDate }
 
         expect(storage.discoveryDocumentState) == discoveryDocument
@@ -231,6 +276,7 @@ final class DefaultIDPSessionTests: XCTestCase {
             storage: storage,
             schedulers: TestSchedulers(),
             trustStoreSession: trustStoreSessionMock,
+            extAuthRequestStorage: extAuthRequestStorageMock,
             time: { Date.distantPast }
         )
 
@@ -259,6 +305,7 @@ final class DefaultIDPSessionTests: XCTestCase {
                                     storage: storage,
                                     schedulers: schedulers,
                                     trustStoreSession: trustStoreSessionMock,
+                                    extAuthRequestStorage: extAuthRequestStorageMock,
                                     time: dateProvider)
 
         storage.token.first().test(expectations: { token in
@@ -305,6 +352,7 @@ final class DefaultIDPSessionTests: XCTestCase {
                               storage: storage,
                               schedulers: schedulers,
                               trustStoreSession: trustStoreSessionMock,
+                              extAuthRequestStorage: extAuthRequestStorageMock,
                               time: dateProvider)
 
         expect(storage.discoveryDocumentState) == discoveryDocument
@@ -358,6 +406,7 @@ final class DefaultIDPSessionTests: XCTestCase {
             storage: storage,
             schedulers: schedulers,
             trustStoreSession: trustStoreSessionMock,
+            extAuthRequestStorage: extAuthRequestStorageMock,
             time: { nowDate },
             idpCrypto: cryptoBox
         )
@@ -453,6 +502,7 @@ final class DefaultIDPSessionTests: XCTestCase {
                                     storage: storage,
                                     schedulers: schedulers,
                                     trustStoreSession: trustStoreSessionMock,
+                                    extAuthRequestStorage: extAuthRequestStorageMock,
                                     time: dateProvider)
         sut.verify(signedChallenge)
             .test(expectations: { token in
@@ -527,6 +577,7 @@ final class DefaultIDPSessionTests: XCTestCase {
                                     storage: storage,
                                     schedulers: schedulers,
                                     trustStoreSession: trustStoreSessionMock,
+                                    extAuthRequestStorage: extAuthRequestStorageMock,
                                     time: dateProvider,
                                     idpCrypto: cryptoBox)
         let originalChallenge = try! IDPChallenge(
@@ -538,7 +589,7 @@ final class DefaultIDPSessionTests: XCTestCase {
             state: "state",
             nonce: "5557577A7576615347" // nonce must be equal to the one in idToken
         )
-        sut.exchange(token: exchangeToken, challengeSession: challengeSession)
+        sut.exchange(token: exchangeToken, challengeSession: challengeSession, redirectURI: nil)
             .test(expectations: { token in
 
                 expect(token) == expectedToken
@@ -626,6 +677,7 @@ final class DefaultIDPSessionTests: XCTestCase {
             storage: storage,
             schedulers: schedulers,
             trustStoreSession: trustStoreSessionMock,
+            extAuthRequestStorage: extAuthRequestStorageMock,
             time: dateProvider,
             idpCrypto: cryptoBox // the crypto box used is the one used to encrypt the example data
         )
@@ -683,6 +735,7 @@ final class DefaultIDPSessionTests: XCTestCase {
             storage: storage,
             schedulers: schedulers,
             trustStoreSession: trustStoreSessionMock,
+            extAuthRequestStorage: extAuthRequestStorageMock,
             time: dateProvider,
             idpCrypto: cryptoBox // the crypto box used is the one used to encrypt the example data
         )
@@ -755,6 +808,7 @@ final class DefaultIDPSessionTests: XCTestCase {
             storage: storage,
             schedulers: schedulers,
             trustStoreSession: trustStoreSessionMock,
+            extAuthRequestStorage: extAuthRequestStorageMock,
             time: dateProvider,
             idpCrypto: cryptoBox // the crypto box used is the one used to encrypt the example data
         )
@@ -819,6 +873,209 @@ final class DefaultIDPSessionTests: XCTestCase {
         let (_, resultDD) = idpClientMock.altVerify_ReceivedArguments!
 
         expect(resultDD).to(equal(discoveryDocument))
+    }
+
+    func testLoadDirectoryKKApps() throws {
+        sut = DefaultIDPSession(
+            client: idpClientMock,
+            storage: storage,
+            schedulers: schedulers,
+            trustStoreSession: trustStoreSessionMock,
+            extAuthRequestStorage: extAuthRequestStorageMock,
+            time: dateProvider,
+            idpCrypto: cryptoBox // the crypto box used is the one used to encrypt the example data
+        )
+
+        let mocked =
+            try! IDPDirectoryKKApps(
+                jwt: "eyJhbGciOiJCUDI1NlIxIiwidHlwIjoiSldUIiwia2lkIjoicHVrX2Rpc2Nfc2lnIiwieDVjIjpbIk1JSUNzVENDQWxpZ0F3SUJBZ0lIQWJzc3FRaHFPekFLQmdncWhrak9QUVFEQWpDQmhERUxNQWtHQTFVRUJoTUNSRVV4SHpBZEJnTlZCQW9NRm1kbGJXRjBhV3NnUjIxaVNDQk9UMVF0VmtGTVNVUXhNakF3QmdOVkJBc01LVXR2YlhCdmJtVnVkR1Z1TFVOQklHUmxjaUJVWld4bGJXRjBhV3RwYm1aeVlYTjBjblZyZEhWeU1TQXdIZ1lEVlFRRERCZEhSVTB1UzA5TlVDMURRVEV3SUZSRlUxUXRUMDVNV1RBZUZ3MHlNVEF4TVRVd01EQXdNREJhRncweU5qQXhNVFV5TXpVNU5UbGFNRWt4Q3pBSkJnTlZCQVlUQWtSRk1TWXdKQVlEVlFRS0RCMW5aVzFoZEdscklGUkZVMVF0VDA1TVdTQXRJRTVQVkMxV1FVeEpSREVTTUJBR0ExVUVBd3dKU1VSUUlGTnBaeUF6TUZvd0ZBWUhLb1pJemowQ0FRWUpLeVFEQXdJSUFRRUhBMElBQklZWm53aUdBbjVRWU94NDNaOE13YVpMRDNyL2J6NkJUY1FPNXBiZXVtNnFRellENWREQ2NyaXcvVk5QUFpDUXpYUVBnNFN0V3l5NU9PcTlUb2dCRW1PamdlMHdnZW93RGdZRFZSMFBBUUgvQkFRREFnZUFNQzBHQlNza0NBTURCQ1F3SWpBZ01CNHdIREFhTUF3TUNrbEVVQzFFYVdWdWMzUXdDZ1lJS29JVUFFd0VnZ1F3SVFZRFZSMGdCQm93R0RBS0JnZ3FnaFFBVEFTQlN6QUtCZ2dxZ2hRQVRBU0JJekFmQmdOVkhTTUVHREFXZ0JRbzhQam1xY2gzekVORjI1cXUxenFEckE0UHFEQTRCZ2dyQmdFRkJRY0JBUVFzTUNvd0tBWUlLd1lCQlFVSE1BR0dIR2gwZEhBNkx5OWxhR05oTG1kbGJXRjBhV3N1WkdVdmIyTnpjQzh3SFFZRFZSME9CQllFRkM5NE05TGdXNDRsTmdvQWJrUGFvbW5MalM4L01Bd0dBMVVkRXdFQi93UUNNQUF3Q2dZSUtvWkl6ajBFQXdJRFJ3QXdSQUlnQ2c0eVpEV215QmlyZ3h6YXd6L1M4REpuUkZLdFlVL1lHTmxSYzcra0JIY0NJQnV6YmEzR3NwcVNtb1AxVndNZU5OS05hTHNnVjh2TWJESmIzMGFxYWlYMSJdfQ.eyJra19hcHBfbGlzdCI6W3sia2tfYXBwX25hbWUiOiAiR2VtYXRpayBLSyIsImtrX2FwcF9pZCI6ICJra0FwcElkMDAxIn0seyAgICAia2tfYXBwX25hbWUiOiAiQW5kZXJlIEtLIiwgImtrX2FwcF9pZCI6ICJra0FwcElkMDAyIn1dfQ.YgsCr2Lr_OnwcSvhMQOUSKIb8wq8ueyJVM0x5_pCVfhgwVW9orQzynQ4gHNOpgdOqBlHlOjLID6YYdkZSrrNOw" // swiftlint:disable:this line_length
+            )
+        let fixture = KKAppDirectory(
+            apps: [
+                KKAppDirectory.Entry(name: "Gematik KK", identifier: "kkAppId001"),
+                KKAppDirectory.Entry(name: "Andere KK", identifier: "kkAppId002"),
+            ]
+        )
+
+        idpClientMock.loadDirectoryKKAppsUsingReturnValue = Just(mocked)
+            .setFailureType(to: IDPError.self)
+            .eraseToAnyPublisher()
+
+        var actual: KKAppDirectory?
+
+        sut.loadDirectoryKKApps()
+            .test(
+                failure: { error in
+                    fail("Error: \(error)")
+                },
+                expectations: { directory in
+                    expect(directory).toNot(beNil())
+                    actual = directory
+                }
+            )
+
+        expect(actual).toNot(beNil())
+        expect(actual).to(equal(fixture))
+    }
+
+    // [REQ:gemSpec_IDP_Sek:A_22296] Test
+    func testLoadDirectoryKKAppsInvalidSignature() throws {
+        sut = DefaultIDPSession(
+            client: idpClientMock,
+            storage: storage,
+            schedulers: schedulers,
+            trustStoreSession: trustStoreSessionMock,
+            extAuthRequestStorage: extAuthRequestStorageMock,
+            time: dateProvider,
+            idpCrypto: cryptoBox // the crypto box used is the one used to encrypt the example data
+        )
+
+        let mocked =
+            try! IDPDirectoryKKApps(
+                jwt: "eyJhbGciOiJCUDI1NlIxIiwidHlwIjoiSldUIiwia2lkIjoicHVrX2Rpc2Nfc2lnIiwieDVjIjpbIk1JSUNzVENDQWxpZ0F3SUJBZ0lIQWJzc3FRaHFPekFLQmdncWhrak9QUVFEQWpDQmhERUxNQWtHQTFVRUJoTUNSRVV4SHpBZEJnTlZCQW9NRm1kbGJXRjBhV3NnUjIxaVNDQk9UMVF0VmtGTVNVUXhNakF3QmdOVkJBc01LVXR2YlhCdmJtVnVkR1Z1TFVOQklHUmxjaUJVWld4bGJXRjBhV3RwYm1aeVlYTjBjblZyZEhWeU1TQXdIZ1lEVlFRRERCZEhSVTB1UzA5TlVDMURRVEV3SUZSRlUxUXRUMDVNV1RBZUZ3MHlNVEF4TVRVd01EQXdNREJhRncweU5qQXhNVFV5TXpVNU5UbGFNRWt4Q3pBSkJnTlZCQVlUQWtSRk1TWXdKQVlEVlFRS0RCMW5aVzFoZEdscklGUkZVMVF0VDA1TVdTQXRJRTVQVkMxV1FVeEpSREVTTUJBR0ExVUVBd3dKU1VSUUlGTnBaeUF6TUZvd0ZBWUhLb1pJemowQ0FRWUpLeVFEQXdJSUFRRUhBMElBQklZWm53aUdBbjVRWU94NDNaOE13YVpMRDNyL2J6NkJUY1FPNXBiZXVtNnFRellENWREQ2NyaXcvVk5QUFpDUXpYUVBnNFN0V3l5NU9PcTlUb2dCRW1PamdlMHdnZW93RGdZRFZSMFBBUUgvQkFRREFnZUFNQzBHQlNza0NBTURCQ1F3SWpBZ01CNHdIREFhTUF3TUNrbEVVQzFFYVdWdWMzUXdDZ1lJS29JVUFFd0VnZ1F3SVFZRFZSMGdCQm93R0RBS0JnZ3FnaFFBVEFTQlN6QUtCZ2dxZ2hRQVRBU0JJekFmQmdOVkhTTUVHREFXZ0JRbzhQam1xY2gzekVORjI1cXUxenFEckE0UHFEQTRCZ2dyQmdFRkJRY0JBUVFzTUNvd0tBWUlLd1lCQlFVSE1BR0dIR2gwZEhBNkx5OWxhR05oTG1kbGJXRjBhV3N1WkdVdmIyTnpjQzh3SFFZRFZSME9CQllFRkM5NE05TGdXNDRsTmdvQWJrUGFvbW5MalM4L01Bd0dBMVVkRXdFQi93UUNNQUF3Q2dZSUtvWkl6ajBFQXdJRFJ3QXdSQUlnQ2c0eVpEV215QmlyZ3h6YXd6L1M4REpuUkZLdFlVL1lHTmxSYzcra0JIY0NJQnV6YmEzR3NwcVNtb1AxVndNZU5OS05hTHNnVjh2TWJESmIzMGFxYWlYMSJdfQ.eyJra19hcHBfbGlzdCI6W3sia2tfYXBwX25hbWUiOiAiR2VtYXRpayBLSyIsImtrX2FwcF9pZCI6ICJra0FwcElkMDAxIn0seyAgICAia2tfYXBwX25hbWUiOiAiQW5kZXJlIEtLIiwgImtrX2FwcF9pZCI6ICJra0FwcElkMDAyIn1dfQ.YgsCr2Lr_OnwcSvhMQOUSKIb8wq8ueyJVM0x5_pCVfhgwVW9orQzynQ4gHNOpgdOqBlHlOjLID6YYdkZSrr" // swiftlint:disable:this line_length
+            )
+
+        idpClientMock.loadDirectoryKKAppsUsingReturnValue = Just(mocked)
+            .setFailureType(to: IDPError.self)
+            .eraseToAnyPublisher()
+
+        sut.loadDirectoryKKApps()
+            .test(
+                failure: { error in
+                    expect(error).to(equal(IDPError.invalidSignature("kk_apps document signature wrong")))
+                },
+                expectations: { directory in
+                    fail("Error: \(directory)")
+                }
+            )
+    }
+
+    // [REQ:gemSpec_IDP_Sek:A_22295] Test
+    // [REQ:gemSpec_IDP_Sek:A_22299] Test
+    func testStartExtAuth() throws {
+        sut = DefaultIDPSession(
+            client: idpClientMock,
+            storage: storage,
+            schedulers: schedulers,
+            trustStoreSession: trustStoreSessionMock,
+            extAuthRequestStorage: extAuthRequestStorageMock,
+            time: dateProvider,
+            idpCrypto: cryptoBox // the crypto box used is the one used to encrypt the example data
+        )
+
+        let fixture = URL(string: "https://kk.dev.gematik.solutions/redirect?state=mystate")!
+        idpClientMock.startExtAuthUsingReturnValue =
+            Just(fixture).setFailureType(to: IDPError.self).eraseToAnyPublisher()
+
+        let entry = KKAppDirectory.Entry(name: "entry_name", identifier: "entry_identifier")
+
+        sut.startExtAuth(entry: entry)
+            .test(
+                failure: { error in
+                    fail("Error: \(error)")
+                },
+                expectations: { response in
+                    expect(response).to(equal(fixture))
+                }
+            )
+
+        expect(self.idpClientMock.startExtAuthUsingCallsCount).to(equal(1))
+        expect(self.idpClientMock.startExtAuthUsingReceivedArguments?.0.kkAppId).to(equal("entry_identifier"))
+
+        expect(self.extAuthRequestStorageMock.setExtAuthRequestForCalled).to(beTrue())
+        expect(self.extAuthRequestStorageMock.setExtAuthRequestForReceivedArguments?.state).to(equal("mystate"))
+
+        guard let extAuthRequest = extAuthRequestStorageMock.setExtAuthRequestForReceivedArguments?.request else {
+            return
+        }
+
+        expect(extAuthRequest.nonce).to(equal(try! cryptoBox.generateRandomNonce()))
+        expect(extAuthRequest.verifierCode).to(equal(try! cryptoBox.generateRandomVerifier()))
+    }
+
+    // [REQ:gemSpec_IDP_Sek:A_22301] Positive Test
+    func testExtAuthVerifyAndExchange() throws {
+        sut = DefaultIDPSession(
+            client: idpClientMock,
+            storage: storage,
+            schedulers: schedulers,
+            trustStoreSession: trustStoreSessionMock,
+            extAuthRequestStorage: extAuthRequestStorageMock,
+            time: dateProvider,
+            idpCrypto: cryptoBox // the crypto box used is the one used to encrypt the example data
+        )
+
+        let fixture = URL(string:
+            "https://das-e-rezept-fuer-deutschland.de?state=mystate&code=testcode&kk_app_redirect_uri=kk_app_redirect_uri" // swiftlint:disable:this line_length
+        )!
+        idpClientMock.extAuthVerifyUsingReturnValue =
+            Just(IDPExchangeToken(code: "code", sso: nil, state: "state"))
+                .setFailureType(to: IDPError.self)
+                .eraseToAnyPublisher()
+
+        idpClientMock.exchange_Publisher = Just(encryptedTokenPayload)
+            .setFailureType(to: IDPError.self)
+            .eraseToAnyPublisher()
+
+        extAuthRequestStorageMock.getExtAuthRequestForReturnValue =
+            ExtAuthChallengeSession(verifierCode: "verifier_code", nonce: "5557577A7576615347")
+
+        sut.extAuthVerifyAndExchange(fixture)
+            .test(
+                failure: { error in
+                    fail("Error: \(error)")
+                },
+                expectations: { response in
+                    let expected = IDPToken(accessToken: self.decryptedTokenPayload.accessToken,
+                                            expires: self.dateProvider().addingTimeInterval(300),
+                                            idToken: self.decryptedTokenPayload.idToken,
+                                            ssoToken: self.decryptedTokenPayload.ssoToken,
+                                            tokenType: self.decryptedTokenPayload.tokenType)
+                    expect(response).to(equal(expected))
+                }
+            )
+        expect(self.extAuthRequestStorageMock.getExtAuthRequestForCalled).to(beTrue())
+        expect(self.extAuthRequestStorageMock.getExtAuthRequestForReceivedInvocations.first).to(equal("mystate"))
+
+        expect(self.idpClientMock.exchange_Called).to(beTrue())
+        expect(self.idpClientMock.exchange_ReceivedArguments).toNot(beNil())
+        guard let receivedArguments = idpClientMock.exchange_ReceivedArguments else {
+            fail("received Arguments nil")
+            return
+        }
+
+        expect(receivedArguments.redirectURI).to(equal("https://das-e-rezept-fuer-deutschland.de"))
+    }
+
+    // [REQ:gemSpec_IDP_Sek:A_22301] Negative Test
+    func testExtAuthVerifyAndExchangeFailesWithoutReferenceState() throws {
+        sut = DefaultIDPSession(
+            client: idpClientMock,
+            storage: storage,
+            schedulers: schedulers,
+            trustStoreSession: trustStoreSessionMock,
+            extAuthRequestStorage: extAuthRequestStorageMock,
+            time: dateProvider,
+            idpCrypto: cryptoBox // the crypto box used is the one used to encrypt the example data
+        )
+
+        let fixture = URL(string:
+            "https://das-e-rezept-fuer-deutschland.de/extauth?state=mystate&code=testcode&kk_app_redirect_uri=kk_app_redirect_uri" // swiftlint:disable:this line_length
+        )!
+
+        extAuthRequestStorageMock.getExtAuthRequestForReturnValue = nil
+
+        sut.extAuthVerifyAndExchange(fixture)
+            .test(
+                failure: { error in
+                    expect(error).to(equal(IDPError.extAuthOriginalRequestMissing))
+                },
+                expectations: { _ in
+                    fail("Should not be called!")
+                }
+            )
+        expect(self.extAuthRequestStorageMock.getExtAuthRequestForCalled).to(beTrue())
+        expect(self.extAuthRequestStorageMock.getExtAuthRequestForReceivedInvocations.first).to(equal("mystate"))
     }
 }
 

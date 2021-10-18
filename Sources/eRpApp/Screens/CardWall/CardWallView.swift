@@ -46,10 +46,8 @@ struct CardWallView: View {
 
     var body: some View {
         NavigationView {
-            VStack {
-                if viewStore.introAlreadyDisplayed {
-                    afterIntroductionView()
-                } else {
+            VStack(alignment: .leading) {
+                CardWallLoginSelectionView {
                     CardWallIntroductionView(
                         store: store.scope(
                             state: \.introduction,
@@ -58,8 +56,28 @@ struct CardWallView: View {
                     ) {
                         afterIntroductionView()
                     }
+                } kkApp: {
+                    #if ENABLE_DEBUG_VIEW
+                    CardWallInsuranceSelectionView(
+                        store: store.scope(
+                            state: \.insuranceSelectionState,
+                            action: CardWallDomain.Action.insuranceSelection(action:)
+                        )
+                    )
+                    #else
+                    CardWallInsuranceSelectionInactiveView {
+                        viewStore.send(.close)
+                    }
+                    #endif
                 }
             }
+            .navigationBarItems(
+                trailing: NavigationBarCloseItem {
+                    viewStore.send(.close)
+                }
+                .accessibility(identifier: A11y.cardWall.intro.cdwBtnIntroCancel)
+                .accessibility(label: Text(L10n.cdwBtnIntroCancelLabel))
+            )
         }
     }
 
@@ -129,55 +147,17 @@ struct CardWallView: View {
 
 struct CardWall_Previews: PreviewProvider {
     static var previews: some View {
-        Group {
-            CardWallView(
-                store: CardWallDomain.Dummies.storeFor(
-                    CardWallDomain.State(
-                        introAlreadyDisplayed: false,
-                        isNFCReady: true,
-                        isMinimalOS14: true,
-                        can: CardWallCANDomain.Dummies.state,
-                        pin: CardWallPINDomain.State(isDemoModus: false, pin: ""),
-                        loginOption: CardWallLoginOptionDomain.State(isDemoModus: false)
-                    )
+        CardWallView(
+            store: CardWallDomain.Dummies.storeFor(
+                CardWallDomain.State(
+                    introAlreadyDisplayed: false,
+                    isNFCReady: true,
+                    isMinimalOS14: true,
+                    can: CardWallCANDomain.Dummies.state,
+                    pin: CardWallPINDomain.State(isDemoModus: false, pin: ""),
+                    loginOption: CardWallLoginOptionDomain.State(isDemoModus: false)
                 )
             )
-            CardWallView(
-                store: CardWallDomain.Dummies.storeFor(
-                    CardWallDomain.State(
-                        introAlreadyDisplayed: true,
-                        isNFCReady: false,
-                        isMinimalOS14: true,
-                        can: CardWallCANDomain.Dummies.state,
-                        pin: CardWallPINDomain.State(isDemoModus: false, pin: ""),
-                        loginOption: CardWallLoginOptionDomain.State(isDemoModus: false)
-                    )
-                )
-            )
-            CardWallView(
-                store: CardWallDomain.Dummies.storeFor(
-                    CardWallDomain.State(
-                        introAlreadyDisplayed: true,
-                        isNFCReady: true,
-                        isMinimalOS14: true,
-                        can: CardWallCANDomain.Dummies.state,
-                        pin: CardWallPINDomain.State(isDemoModus: false, pin: ""),
-                        loginOption: CardWallLoginOptionDomain.State(isDemoModus: false)
-                    )
-                )
-            )
-            CardWallView(
-                store: CardWallDomain.Dummies.storeFor(
-                    CardWallDomain.State(
-                        introAlreadyDisplayed: true,
-                        isNFCReady: true,
-                        isMinimalOS14: true,
-                        can: nil,
-                        pin: CardWallPINDomain.State(isDemoModus: false, pin: ""),
-                        loginOption: CardWallLoginOptionDomain.State(isDemoModus: false)
-                    )
-                )
-            )
-        }
+        )
     }
 }

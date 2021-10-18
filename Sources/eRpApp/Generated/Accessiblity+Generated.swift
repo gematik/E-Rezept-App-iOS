@@ -33,6 +33,10 @@ internal enum A11y {
       static let cdwBtnCanDone = "cdw_btn_can_done"
       static let cdwBtnCanMore = "cdw_btn_can_more"
   }
+    internal enum fasttrackFallback {
+      static let cdwBtnFtfbOrderegk = "cdw_btn_ftfb_orderegk"
+      static let cdwBtnFtfbCancel = "cdw_btn_ftfb_cancel"
+  }
     internal enum intro {
       static let cdwBtnIntroLater = "cdw_btn_intro_later"
       static let cdwBtnIntroCancel = "cdw_btn_intro_cancel"
@@ -66,15 +70,6 @@ internal enum A11y {
       static let cdwTxtNfuFootnote = "cdw_txt_nfu_footnote"
       static let cdwBtnNfuMore = "cdw_btn_nfu_more"
   }
-    internal enum orderEGK {
-      static let cdwTxtOrderEgkHeadline = "cdw_txt_order_egk_headline"
-      static let cdwTxtOrderEgkDesription = "cdw_txt_order_egk_desription"
-      static let cdwInpOrderEgkKv = "cdw_inp_order_egk_kv"
-      static let cdwInpOrderEgkKvnr = "cdw_inp_order_egk_kvnr"
-      static let cdwBtnOrderEgkMail = "cdw_btn_order_egk_mail"
-      static let cdwBtnOrderEgkScanKvnr = "cdw_btn_order_egk_scan_kvnr"
-      static let cdwBtnOrderEgkScanKvnrConfirm = "cdw_btn_order_egk_scan_kvnr_confirm"
-  }
     internal enum orderEGKInfo {
       static let cdwTxtOrderEgkInfoHeadline = "cdw_txt_order_egk_info_headline"
       static let cdwBtnOrderEgkInfo = "cdw_btn_order_egk_info"
@@ -98,6 +93,11 @@ internal enum A11y {
       static let cdwImgRcCard = "cdw_img_rc_card"
       static let cdwTxtRcHeadline = "cdw_txt_rc_headline"
       static let cdwTxtRcDescription = "cdw_txt_rc_description"
+  }
+    internal enum select {
+      static let cdwBtnSelContinue = "cdw_btn_sel_continue"
+      static let cdwBtnSelEgk = "cdw_btn_sel_egk"
+      static let cdwBtnSelKkapp = "cdw_btn_sel_kkapp"
   }
     }
     internal enum global {
@@ -163,6 +163,19 @@ internal enum A11y {
       static let onbImgFrau1 = "onb_img_frau1"
   }
     }
+    internal enum orderEGK {
+      static let ogkTxtHeadline = "ogk_txt_headline"
+      static let ogkTxtDesription = "ogk_txt_desription"
+      static let ogkBtnCancel = "ogk_btn_cancel"
+      static let ogkBtnPhone = "ogk_btn_phone"
+      static let ogkBtnWeb = "ogk_btn_web"
+      static let ogkBtnMail = "ogk_btn_mail"
+      static let ogkBtnEgkInfo = "ogk_btn_egk_info"
+      static let ogkTxtNoSelectionHint = "ogk_txt_no_selection_hint"
+      static let ogkTxtInsuranceCompanyHeader = "ogk_txt_insurance_company_header"
+      static let ogkTxtServiceSelectionHeader = "ogk_txt_service_selection_header"
+      static let ogkTxtContactCompanyHeader = "ogk_txt_contact_company_header"
+  }
     internal enum pharmacyDetail {
       static let phaDetailTxtTitle = "pha_detail_txt_title"
       static let phaDetailTxtSubtitle = "pha_detail_txt_subtitle"

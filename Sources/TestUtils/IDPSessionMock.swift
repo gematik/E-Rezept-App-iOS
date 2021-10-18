@@ -112,16 +112,19 @@ public class IDPSessionMock: IDPSession {
         ))
         .setFailureType(to: IDPError.self)
         .eraseToAnyPublisher()
-    public var exchange_ReceivedArguments: (token: IDPExchangeToken, challengeSession: IDPChallengeSession)?
+    public var exchange_ReceivedArguments: (token: IDPExchangeToken,
+                                            challengeSession: ChallengeSession,
+                                            redirectURI: String?)?
     public var exchange_CallsCount = 0
     public var exchange_Called: Bool {
         exchange_CallsCount > 0
     }
 
     public func exchange(token: IDPExchangeToken,
-                         challengeSession: IDPChallengeSession) -> AnyPublisher<IDPToken, IDPError> {
+                         challengeSession: ChallengeSession,
+                         redirectURI: String?) -> AnyPublisher<IDPToken, IDPError> {
         exchange_CallsCount += 1
-        exchange_ReceivedArguments = (token: token, challengeSession: challengeSession)
+        exchange_ReceivedArguments = (token: token, challengeSession: challengeSession, redirectURI: redirectURI)
         return exchange_Publisher
     }
 
@@ -185,6 +188,43 @@ public class IDPSessionMock: IDPSession {
         altVerify_CallsCount += 1
         altVerify_ReceivedArguments = signedChallenge
         return altVerify_Publisher
+    }
+
+    public var loadDirectoryKKApps_Publisher: AnyPublisher<KKAppDirectory, IDPError>!
+    public var loadDirectoryKKApps_CallsCount = 0
+    public var loadDirectoryKKApps_Called: Bool {
+        loadDirectoryKKApps_CallsCount > 0
+    }
+
+    public func loadDirectoryKKApps() -> AnyPublisher<KKAppDirectory, IDPError> {
+        loadDirectoryKKApps_CallsCount += 1
+        return loadDirectoryKKApps_Publisher
+    }
+
+    public var loginWithKKApp_Publisher: AnyPublisher<URL, IDPError>!
+    public var loginWithKKApp_ReceivedArguments: KKAppDirectory.Entry?
+    public var loginWithKKApp_CallsCount = 0
+    public var loginWithKKApp_Called: Bool {
+        loginWithKKApp_CallsCount > 0
+    }
+
+    public func startExtAuth(entry: KKAppDirectory.Entry) -> AnyPublisher<URL, IDPError> {
+        loginWithKKApp_CallsCount += 1
+        loginWithKKApp_ReceivedArguments = entry
+        return loginWithKKApp_Publisher
+    }
+
+    public var extAuthVerifyAndExchange_Publisher: AnyPublisher<IDPToken, IDPError>!
+    public var extAuthVerifyAndExchange_ReceivedArguments: URL?
+    public var extAuthVerifyAndExchange_CallsCount = 0
+    public var extAuthVerifyAndExchange_Called: Bool {
+        extAuthVerifyAndExchange_CallsCount > 0
+    }
+
+    public func extAuthVerifyAndExchange(_ url: URL) -> AnyPublisher<IDPToken, IDPError> {
+        extAuthVerifyAndExchange_CallsCount += 1
+        extAuthVerifyAndExchange_ReceivedArguments = url
+        return extAuthVerifyAndExchange_Publisher
     }
 }
 

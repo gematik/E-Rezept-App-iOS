@@ -1,0 +1,742 @@
+{
+  "entries": [
+    {
+      "name": "AOK Baden-Württemberg",
+      "healthCardAndPinPhone": "",
+      "healthCardAndPinMail": "a99_egk@bw.aok.de",
+      "healthCardAndPinUrl": "",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": ""
+    },
+    {
+      "name": "AOK Bayern",
+      "healthCardAndPinPhone": "00498922844050",
+      "healthCardAndPinMail": "",
+      "healthCardAndPinUrl": "",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": ""
+    },
+    {
+      "name": "AOK Bremen/Bremerhaven",
+      "healthCardAndPinPhone": "",
+      "healthCardAndPinMail": "",
+      "healthCardAndPinUrl": "https://www.aok.de/pk/bremen/inhalt/elektronische-gesundheitskarte-3/",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": ""
+    },
+    {
+      "name": "AOK Hessen",
+      "healthCardAndPinPhone": "",
+      "healthCardAndPinMail": "service@he.aok.de",
+      "healthCardAndPinUrl": "",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": ""
+    },
+    {
+      "name": "AOK Niedersachsen",
+      "healthCardAndPinPhone": "00498000265637",
+      "healthCardAndPinMail": "",
+      "healthCardAndPinUrl": "",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": ""
+    },
+    {
+      "name": "AOK Nordost",
+      "healthCardAndPinPhone": "",
+      "healthCardAndPinMail": "eGK_online@nordost.aok.de",
+      "healthCardAndPinUrl": "",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": ""
+    },
+    {
+      "name": "AOK Nordwest",
+      "healthCardAndPinPhone": "00498002655060",
+      "healthCardAndPinMail": "",
+      "healthCardAndPinUrl": "",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": ""
+    },
+    {
+      "name": "AOK PLUS",
+      "healthCardAndPinPhone": "",
+      "healthCardAndPinMail": "",
+      "healthCardAndPinUrl": "https://www.aok.de/pk/plus/inhalt/elektronische-gesundheitskarte-11/",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": ""
+    },
+    {
+      "name": "AOK Rheinland/Hamburg",
+      "healthCardAndPinPhone": "",
+      "healthCardAndPinMail": "aok@rh.aok.de",
+      "healthCardAndPinUrl": "",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": ""
+    },
+    {
+      "name": "AOK Rheinland-Pfalz/Saarland",
+      "healthCardAndPinPhone": "",
+      "healthCardAndPinMail": "",
+      "healthCardAndPinUrl": "https://www.aok.de/pk/rps/inhalt/die-haeufigsten-fragen-und-antworten-zum-e-rezept-4/",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": ""
+    },
+    {
+      "name": "AOK Sachsen-Anhalt",
+      "healthCardAndPinPhone": "004908002265725",
+      "healthCardAndPinMail": "",
+      "healthCardAndPinUrl": "",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": ""
+    },
+    {
+      "name": "Audi BKK",
+      "healthCardAndPinPhone": "",
+      "healthCardAndPinMail": "",
+      "healthCardAndPinUrl": "https://www.audibkk.de/e-rezept-gematik-egkpin/",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": "https://www.audibkk.de/e-rezept-gematik-pin/"
+    },
+    {
+      "name": "BAHN-BKK",
+      "healthCardAndPinPhone": "",
+      "healthCardAndPinMail": "",
+      "healthCardAndPinUrl": "https://www.bahn-bkk.de/egk-erezept",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": "https://www.bahn-bkk.de/egk-erezept"
+    },
+    {
+      "name": "BARMER",
+      "healthCardAndPinPhone": "",
+      "healthCardAndPinMail": "",
+      "healthCardAndPinUrl": "https://www.barmer.de/gematik-eRezept",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": ""
+    },
+    {
+      "name": "Bergische Krankenkasse",
+      "healthCardAndPinPhone": "",
+      "healthCardAndPinMail": "",
+      "healthCardAndPinUrl": "https://www.bergische-krankenkasse.de/digital/e-rezept",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": "https://www.bergische-krankenkasse.de/digital/e-rezept"
+    },
+    {
+      "name": "Bertelsmann BKK",
+      "healthCardAndPinPhone": "004952418074120",
+      "healthCardAndPinMail": "nicole.ackemann@bertelsmann-bkk.de",
+      "healthCardAndPinUrl": "https://www.bertelsmann-bkk.de/erezept-egk-pin",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": "https://www.bertelsmann-bkk.de/erezept-egk-pin"
+    },
+    {
+      "name": "BIG direkt gesund",
+      "healthCardAndPinPhone": "",
+      "healthCardAndPinMail": "",
+      "healthCardAndPinUrl": "https://www.big-direkt.de/de/erezept-der-gematik-nutzen",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": "https://www.big-direkt.de/de/erezept-der-gematik-nutzen"
+    },
+    {
+      "name": "BKK Akzo Nobel Bayern",
+      "healthCardAndPinPhone": "",
+      "healthCardAndPinMail": "",
+      "healthCardAndPinUrl": "https://www.bkk-akzo.de/service/elektronische-gesundheitskarte-egk",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": ""
+    },
+    {
+      "name": "BKK B. Braun Aesculap",
+      "healthCardAndPinPhone": "",
+      "healthCardAndPinMail": "",
+      "healthCardAndPinUrl": "https://www.bkk-bba.de/egk-pin-bestellen",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": "https://www.bkk-bba.de/pin-bestellen"
+    },
+    {
+      "name": "BKK EUREGIO",
+      "healthCardAndPinPhone": "",
+      "healthCardAndPinMail": "",
+      "healthCardAndPinUrl": "",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": "https://www.bkk-euregio.de/elektronische-gesundheitskarte"
+    },
+    {
+      "name": "BKK EWE",
+      "healthCardAndPinPhone": "0049441350285108",
+      "healthCardAndPinMail": "versicherung@bkk-ewe.de",
+      "healthCardAndPinUrl": "",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": ""
+    },
+    {
+      "name": "BKK Faber-Castell & Partner",
+      "healthCardAndPinPhone": "",
+      "healthCardAndPinMail": "erezept@bkk-faber-castell.de",
+      "healthCardAndPinUrl": "",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": ""
+    },
+    {
+      "name": "BKK firmus",
+      "healthCardAndPinPhone": "004942164343",
+      "healthCardAndPinMail": "",
+      "healthCardAndPinUrl": "https://www.bkk-firmus.de/beratung-und-service/online-tools/e-rezept.html",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": ""
+    },
+    {
+      "name": "BKK Freudenberg",
+      "healthCardAndPinPhone": "004962016905001",
+      "healthCardAndPinMail": "",
+      "healthCardAndPinUrl": "",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": ""
+    },
+    {
+      "name": "BKK GILDEMEISTER SEIDENSTICKER",
+      "healthCardAndPinPhone": "00498000255255",
+      "healthCardAndPinMail": "",
+      "healthCardAndPinUrl": "https://www.bkkgs.de/e-rezept",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": "https://www.bkkgs.de/e-rezept"
+    },
+    {
+      "name": "BKK Herkules",
+      "healthCardAndPinPhone": "0049561208550",
+      "healthCardAndPinMail": "info@bkk-herkules.de",
+      "healthCardAndPinUrl": "https://www.bkk-herkules.de/service/gesundheitskarte-und-lichtbild/",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": ""
+    },
+    {
+      "name": "BKK HMR",
+      "healthCardAndPinPhone": "004952211026210",
+      "healthCardAndPinMail": "",
+      "healthCardAndPinUrl": "",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": ""
+    },
+    {
+      "name": "BKK Linde",
+      "healthCardAndPinPhone": "00496117366781",
+      "healthCardAndPinMail": "egk@bkk-linde.de",
+      "healthCardAndPinUrl": "https://bkkln.de/epa-egkpin",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": "https://bkkln.de/epa-egkpin"
+    },
+    {
+      "name": "BKK MAHLE",
+      "healthCardAndPinPhone": "",
+      "healthCardAndPinMail": "",
+      "healthCardAndPinUrl": "https://www.bkk-mahle.de/service/elektronische-gesundheitskarte-egk",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": ""
+    },
+    {
+      "name": "BKK Miele",
+      "healthCardAndPinPhone": "00498008002189",
+      "healthCardAndPinMail": "",
+      "healthCardAndPinUrl": "https://www.miele-bkk.de/service/elektronische-gesundheitskarte",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": ""
+    },
+    {
+      "name": "BKK MTU",
+      "healthCardAndPinPhone": "00497541907100",
+      "healthCardAndPinMail": "info@bkk-mtu.de",
+      "healthCardAndPinUrl": "https://www.bkk-mtu.de/unsere-leistungen/leistungen-a-z/elektronische-gesundheitskarte-egk-bkk-mtu-service/",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": ""
+    },
+    {
+      "name": "BKK PFAFF",
+      "healthCardAndPinPhone": "0049631318760",
+      "healthCardAndPinMail": "info@bkk-pfaff.de",
+      "healthCardAndPinUrl": "",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": ""
+    },
+    {
+      "name": "BKK Pfalz",
+      "healthCardAndPinPhone": "",
+      "healthCardAndPinMail": "",
+      "healthCardAndPinUrl": "https://www.bkkpfalz.de/service-informationen/elektronische-gesundheitskarte",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": ""
+    },
+    {
+      "name": "BKK ProVita",
+      "healthCardAndPinPhone": "00498006648808",
+      "healthCardAndPinMail": "",
+      "healthCardAndPinUrl": "https://bkk-provita.de/service-info/e-rezept/",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": ""
+    },
+    {
+      "name": "BKK Public",
+      "healthCardAndPinPhone": "00495341405600",
+      "healthCardAndPinMail": "service@bkk-public.de",
+      "healthCardAndPinUrl": "",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": ""
+    },
+    {
+      "name": "BKK PwC",
+      "healthCardAndPinPhone": "08002557920",
+      "healthCardAndPinMail": "erezept@bkk-pwc.de",
+      "healthCardAndPinUrl": "",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": ""
+    },
+    {
+      "name": "BKK RWE",
+      "healthCardAndPinPhone": "",
+      "healthCardAndPinMail": "",
+      "healthCardAndPinUrl": "https://www.bkkrwe.de/e-rezept",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": "https://www.bkkrwe.de/e-rezept"
+    },
+    {
+      "name": "BKK Salzgitter",
+      "healthCardAndPinPhone": "00495341405700",
+      "healthCardAndPinMail": "service@bkk-salzgitter.de",
+      "healthCardAndPinUrl": "",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": ""
+    },
+    {
+      "name": "BKK SBH",
+      "healthCardAndPinPhone": "",
+      "healthCardAndPinMail": "",
+      "healthCardAndPinUrl": "https://bkk-sbh.de/e-rezept/",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": "https://bkk-sbh.de/e-rezept/"
+    },
+    {
+      "name": "BKK Scheufelen",
+      "healthCardAndPinPhone": "",
+      "healthCardAndPinMail": "",
+      "healthCardAndPinUrl": "https://bkk-scheufelen.de/e-rezept",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": "https://bkk-scheufelen.de/e-rezept"
+    },
+    {
+      "name": "BKK Technoform",
+      "healthCardAndPinPhone": "",
+      "healthCardAndPinMail": "",
+      "healthCardAndPinUrl": "https://www.bkk-technoform.de/index.php?p=page&ID=11",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": ""
+    },
+    {
+      "name": "BKK VBU",
+      "healthCardAndPinPhone": "",
+      "healthCardAndPinMail": "info@bkk-vbu.de",
+      "healthCardAndPinUrl": "",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": ""
+    },
+    {
+      "name": "BKK VDN",
+      "healthCardAndPinPhone": "0049230498260",
+      "healthCardAndPinMail": "",
+      "healthCardAndPinUrl": "",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": ""
+    },
+    {
+      "name": "BKK VerbundPlus",
+      "healthCardAndPinPhone": "",
+      "healthCardAndPinMail": "",
+      "healthCardAndPinUrl": "https://www.bkk-verbundplus.de/nfc-karte-pin",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": "https://www.bkk-verbundplus.de/nfc-karte-pin"
+    },
+    {
+      "name": "BKK Voralb",
+      "healthCardAndPinPhone": "004970229324639",
+      "healthCardAndPinMail": "beitraege@bkk-voralb.de",
+      "healthCardAndPinUrl": "",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": ""
+    },
+    {
+      "name": "BKK Werra-Meissner",
+      "healthCardAndPinPhone": "00490565174510",
+      "healthCardAndPinMail": "info@bkk-wm.de",
+      "healthCardAndPinUrl": "",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": ""
+    },
+    {
+      "name": "BKK WIRTSCHAFT& FINANZEN",
+      "healthCardAndPinPhone": "",
+      "healthCardAndPinMail": "",
+      "healthCardAndPinUrl": "https://www.bkk-wf.de/e-rezept/",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": ""
+    },
+    {
+      "name": "BKK Würth",
+      "healthCardAndPinPhone": "0049794091900",
+      "healthCardAndPinMail": "info@bkk-wuerth.de",
+      "healthCardAndPinUrl": "",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": ""
+    },
+    {
+      "name": "BKK ZF & Partner",
+      "healthCardAndPinPhone": "00493381306652512",
+      "healthCardAndPinMail": "",
+      "healthCardAndPinUrl": "",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": ""
+    },
+    {
+      "name": "BKK_DürkoppAdler",
+      "healthCardAndPinPhone": "00495215578470",
+      "healthCardAndPinMail": "eRezept@bkk-da.de",
+      "healthCardAndPinUrl": "",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": ""
+    },
+    {
+      "name": "BKK24",
+      "healthCardAndPinPhone": "",
+      "healthCardAndPinMail": "",
+      "healthCardAndPinUrl": "https://bkk24.de/e-rezept",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": "https://bkk24.de/e-rezept"
+    },
+    {
+      "name": "BMW BKK",
+      "healthCardAndPinPhone": "",
+      "healthCardAndPinMail": "",
+      "healthCardAndPinUrl": "https://www.bmwbkk.de/egk",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": "https://www.bmwbkk.de/egk-pin-puk"
+    },
+    {
+      "name": "Bosch BKK",
+      "healthCardAndPinPhone": "",
+      "healthCardAndPinMail": "info@bosch-bkk.de",
+      "healthCardAndPinUrl": "https://meine.bosch-bkk.de/bitgo_gs/de/oeffentlich/login/login.xhtml",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": "https://meine.bosch-bkk.de/bitgo_gs/de/oeffentlich/login/login.xhtml"
+    },
+    {
+      "name": "Continentale BKK",
+      "healthCardAndPinPhone": "00498006262626",
+      "healthCardAndPinMail": "kundenservice@continentale-bkk.de",
+      "healthCardAndPinUrl": "https://www.continentale-bkk.de/kontakt/kontaktformular/",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": "https://www.continentale-bkk.de/kontakt/kontaktformular/"
+    },
+    {
+      "name": "Daimler BKK",
+      "healthCardAndPinPhone": "",
+      "healthCardAndPinMail": "",
+      "healthCardAndPinUrl": "https://www.daimler-bkk.com/service/erezept",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": "https://www.daimler-bkk.com/service/erezept"
+    },
+    {
+      "name": "Debeka BKK",
+      "healthCardAndPinPhone": "",
+      "healthCardAndPinMail": "",
+      "healthCardAndPinUrl": "",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": "https://www.debeka-bkk.de/erezept/"
+    },
+    {
+      "name": "EY BKK",
+      "healthCardAndPinPhone": "00495661707670",
+      "healthCardAndPinMail": "versicherung@ey-bkk.de",
+      "healthCardAndPinUrl": "",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": ""
+    },
+    {
+      "name": "Heimat Krankenkasse",
+      "healthCardAndPinPhone": "",
+      "healthCardAndPinMail": "",
+      "healthCardAndPinUrl": "https://www.heimat-krankenkasse.de/egk-anfordern",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": "https://www.heimat-krankenkasse.de/egk-pin-anfordern"
+    },
+    {
+      "name": "HEK - Hanseatische Krankenkasse",
+      "healthCardAndPinPhone": "00498000213213",
+      "healthCardAndPinMail": "",
+      "healthCardAndPinUrl": "",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": "https://www.hek.de/egk"
+    },
+    {
+      "name": "hkk Krankenkasse",
+      "healthCardAndPinPhone": "",
+      "healthCardAndPinMail": "",
+      "healthCardAndPinUrl": "https://www.hkk.de/versicherung-und-tarife/allgemeine-infos/erezept-app",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": "https://www.hkk.de/versicherung-und-tarife/allgemeine-infos/erezept-app"
+    },
+    {
+      "name": "IKK Brandenburg und Berlin",
+      "healthCardAndPinPhone": "",
+      "healthCardAndPinMail": "",
+      "healthCardAndPinUrl": "https://www.ikkbb.de/erezept/auth-nfc-egk-pin",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": "https://www.ikkbb.de/erezept/auth-pin"
+    },
+    {
+      "name": "IKK classic",
+      "healthCardAndPinPhone": "00498004551111",
+      "healthCardAndPinMail": "",
+      "healthCardAndPinUrl": "",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": ""
+    },
+    {
+      "name": "IKK Südwest",
+      "healthCardAndPinPhone": "00498000119119",
+      "healthCardAndPinMail": "",
+      "healthCardAndPinUrl": "https://www.ikk-suedwest.de/service/persoenlicher-kundenberater/",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": "https://www.ikk-suedwest.de/service/persoenlicher-kundenberater/"
+    },
+    {
+      "name": "KKH Kaufmännische Krankenkasse",
+      "healthCardAndPinPhone": "00498005548640554",
+      "healthCardAndPinMail": "",
+      "healthCardAndPinUrl": "",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": ""
+    },
+    {
+      "name": "Knappschaft",
+      "healthCardAndPinPhone": "00498000 200 501",
+      "healthCardAndPinMail": "",
+      "healthCardAndPinUrl": "",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": ""
+    },
+    {
+      "name": "Koenig & Bauer BKK",
+      "healthCardAndPinPhone": "",
+      "healthCardAndPinMail": "erezept@koenig-bauer-bkk.de",
+      "healthCardAndPinUrl": "",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": ""
+    },
+    {
+      "name": "mobil Krankenkasse",
+      "healthCardAndPinPhone": "0049800 255 0800",
+      "healthCardAndPinMail": "",
+      "healthCardAndPinUrl": "https://mobil-krankenkasse.de/unser-service/e-rezept.html",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": ""
+    },
+    {
+      "name": "Novitas BKK",
+      "healthCardAndPinPhone": "00498006566300",
+      "healthCardAndPinMail": "gesundheitskarte@novitas-bkk.de",
+      "healthCardAndPinUrl": "https://www.novitas-bkk.de/egk",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": "https://www.novitas-bkk.de/egk"
+    },
+    {
+      "name": "pronova BKK",
+      "healthCardAndPinPhone": "0049621533911000",
+      "healthCardAndPinMail": "",
+      "healthCardAndPinUrl": "https://www.pronovabkk.de/leistungen/elektronische-gesundheitskarte",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": "https://meine.pronovabkk.de/"
+    },
+    {
+      "name": "R+V Betriebskrankenkasse",
+      "healthCardAndPinPhone": "",
+      "healthCardAndPinMail": "",
+      "healthCardAndPinUrl": "https://www.ruv-bkk.de/leistungen/alle-leistungen-im-ueberblick/leistungen-a-z/e/erezept/",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": "https://www.ruv-bkk.de/leistungen/alle-leistungen-im-ueberblick/leistungen-a-z/e/erezept/"
+    },
+    {
+      "name": "SBK Siemens-Betriebskrankenkasse",
+      "healthCardAndPinPhone": "",
+      "healthCardAndPinMail": "",
+      "healthCardAndPinUrl": "https://meine.sbk.org/pin_gesundheitskarte",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": "https://meine.sbk.org/pin_gesundheitskarte"
+    },
+    {
+      "name": "SECURVITA BKK",
+      "healthCardAndPinPhone": "00494033477",
+      "healthCardAndPinMail": "egk@secuvita-bkk.de",
+      "healthCardAndPinUrl": "",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": ""
+    },
+    {
+      "name": "Südzucker BKK",
+      "healthCardAndPinPhone": "00496213285845",
+      "healthCardAndPinMail": "",
+      "healthCardAndPinUrl": "",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": ""
+    },
+    {
+      "name": "SVLFG",
+      "healthCardAndPinPhone": "00495617850",
+      "healthCardAndPinMail": "",
+      "healthCardAndPinUrl": "",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": ""
+    },
+    {
+      "name": "Techniker Krankenkasse",
+      "healthCardAndPinPhone": "",
+      "healthCardAndPinMail": "",
+      "healthCardAndPinUrl": "https://www.tk.de/techniker/2113848",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": "https://www.tk.de/techniker/2113852"
+    },
+    {
+      "name": "TUI BKK",
+      "healthCardAndPinPhone": "00495341405800",
+      "healthCardAndPinMail": "service@tui-bkk.de",
+      "healthCardAndPinUrl": "",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": ""
+    },
+    {
+      "name": "VIACTIV BKK",
+      "healthCardAndPinPhone": "00498002221211",
+      "healthCardAndPinMail": "service@viactiv.de",
+      "healthCardAndPinUrl": "",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": ""
+    },
+    {
+      "name": "vivida bkk",
+      "healthCardAndPinPhone": "0049800375537555",
+      "healthCardAndPinMail": "Info@vividabkk.de",
+      "healthCardAndPinUrl": "https://www.vividabkk.de/de/service/e-rezept-info",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": "https://www.vividabkk.de/de/service/e-rezept-info"
+    },
+    {
+      "name": "Wieland BKK",
+      "healthCardAndPinPhone": "",
+      "healthCardAndPinMail": "",
+      "healthCardAndPinUrl": "https://www.wieland-bkk.de/service/unsere-digitalen-moeglichkeiten/e-rezept",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": "https://www.wieland-bkk.de/service/unsere-digitalen-moeglichkeiten/e-rezept"
+    },
+    {
+      "name": "WMF BKK",
+      "healthCardAndPinPhone": "",
+      "healthCardAndPinMail": "service@wmf-bkk.de",
+      "healthCardAndPinUrl": "",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": ""
+    },
+    {
+      "name": "mhplus",
+      "healthCardAndPinPhone": "",
+      "healthCardAndPinMail": "",
+      "healthCardAndPinUrl": "https://www.mhplus-krankenkasse.de/privatkunden/unser-service/services-fuer-mitglieder/mhplus-gesundheitskarte",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": "https://iam.mhplusdirekt.de/pinaas/pin-request-with-egk"
+    },
+    {
+      "name": "Salus BKK",
+      "healthCardAndPinPhone": "00498002213222",
+      "healthCardAndPinMail": "egk@salus-bkk.de",
+      "healthCardAndPinUrl": "https://www.salus-bkk.de/service-formulare/infos-zur-mitgliedschaft/meine-gesundheitskarte/elektronische-gesundheitskarte/",
+      "pinPhone": "",
+      "pinMail": "",
+      "pinUrl": "https://www.salus-bkk.de/service-formulare/infos-zur-mitgliedschaft/meine-gesundheitskarte/elektronische-gesundheitskarte/"
+    }
+  ]
+}

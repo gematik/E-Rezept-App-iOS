@@ -21,7 +21,11 @@ import ComposableArchitecture
 @testable import eRpApp
 import XCTest
 
-struct MockAuthenticationChallengeProvider: AuthenticationChallengeProvider {
+class MockAuthenticationChallengeProvider: AuthenticationChallengeProvider {
+    init(result: Result<Bool, AppAuthenticationBiometricsDomain.Error>) {
+        self.result = result
+    }
+
     var result: Result<Bool, AppAuthenticationBiometricsDomain.Error>
     func startAuthenticationChallenge()
         -> AnyPublisher<AppAuthenticationBiometricsDomain.AuthenticationResult, Never> {

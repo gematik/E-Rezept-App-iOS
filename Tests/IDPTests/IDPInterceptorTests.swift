@@ -34,13 +34,16 @@ final class IDPInterceptorTests: XCTestCase {
         return mock
     }()
 
+    let extAuthRequestStorageMock = ExtAuthRequestStorageMock()
+
     func testInterceptWithoutDelegate() {
         let idpClientMock = IDPClientMock()
         let session = DefaultIDPSession(
             client: idpClientMock,
             storage: MemStorage(accessToken: token),
             schedulers: TestSchedulers(compute: DispatchQueue.test.eraseToAnyScheduler()),
-            trustStoreSession: trustStoreSessionMock
+            trustStoreSession: trustStoreSessionMock,
+            extAuthRequestStorage: extAuthRequestStorageMock
         )
         let request = URLRequest(url: URL(string: "http://www.url.com")!)
         let chain = PassThroughChain(request: request)
@@ -59,7 +62,8 @@ final class IDPInterceptorTests: XCTestCase {
             client: idpClientMock,
             storage: MemStorage(token: nil),
             schedulers: TestSchedulers(),
-            trustStoreSession: trustStoreSessionMock
+            trustStoreSession: trustStoreSessionMock,
+            extAuthRequestStorage: extAuthRequestStorageMock
         )
         let request = URLRequest(url: URL(string: "http://www.url.com")!)
         let chain = PassThroughChain(request: request)
@@ -79,7 +83,8 @@ final class IDPInterceptorTests: XCTestCase {
             client: idpClientMock,
             storage: MemStorage(accessToken: token),
             schedulers: TestSchedulers(compute: DispatchQueue.test.eraseToAnyScheduler()),
-            trustStoreSession: trustStoreSessionMock
+            trustStoreSession: trustStoreSessionMock,
+            extAuthRequestStorage: extAuthRequestStorageMock
         )
         let request = URLRequest(url: URL(string: "http://www.url.com")!)
         let chain = PassThroughChain(request: request)
@@ -102,7 +107,8 @@ final class IDPInterceptorTests: XCTestCase {
             client: idpClientMock,
             storage: MemStorage(token: nil),
             schedulers: TestSchedulers(),
-            trustStoreSession: trustStoreSessionMock
+            trustStoreSession: trustStoreSessionMock,
+            extAuthRequestStorage: extAuthRequestStorageMock
         )
         let request = URLRequest(url: URL(string: "http://www.url.com")!)
         let chain = PassThroughChain(request: request)
@@ -127,7 +133,8 @@ final class IDPInterceptorTests: XCTestCase {
             client: idpClientMock,
             storage: NoTokenStorage(),
             schedulers: TestSchedulers(),
-            trustStoreSession: trustStoreSessionMock
+            trustStoreSession: trustStoreSessionMock,
+            extAuthRequestStorage: extAuthRequestStorageMock
         )
         let request = URLRequest(url: URL(string: "http://www.url.com")!)
         let chain = PassThroughChain(request: request)
@@ -150,7 +157,8 @@ final class IDPInterceptorTests: XCTestCase {
             client: idpClientMock,
             storage: MemStorage(accessToken: token),
             schedulers: TestSchedulers(),
-            trustStoreSession: trustStoreSessionMock
+            trustStoreSession: trustStoreSessionMock,
+            extAuthRequestStorage: extAuthRequestStorageMock
         )
         let request = URLRequest(url: URL(string: "http://www.url.com")!)
         let chain = PassThroughChain(request: request)
@@ -174,7 +182,8 @@ final class IDPInterceptorTests: XCTestCase {
             client: idpClientMock,
             storage: storage,
             schedulers: TestSchedulers(),
-            trustStoreSession: trustStoreSessionMock
+            trustStoreSession: trustStoreSessionMock,
+            extAuthRequestStorage: extAuthRequestStorageMock
         )
         let request = URLRequest(url: URL(string: "http://www.url.com")!)
         let chain = PassThroughChain(request: request)

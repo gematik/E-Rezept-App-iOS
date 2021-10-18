@@ -19,6 +19,7 @@
 import Combine
 import ComposableArchitecture
 import IDP
+import SwiftUI
 
 enum CardWallDomain {
     typealias Store = ComposableArchitecture.Store<State, Action>
@@ -52,6 +53,7 @@ enum CardWallDomain {
         var loginOption: CardWallLoginOptionDomain.State
         var introduction = CardWallIntroductionDomain.State()
         var readCard: CardWallReadCardDomain.State?
+        var insuranceSelectionState = CardWallInsuranceSelectionDomain.State()
     }
 
     enum Action: Equatable {
@@ -62,6 +64,7 @@ enum CardWallDomain {
         case loginOption(action: CardWallLoginOptionDomain.Action)
         case introduction(action: CardWallIntroductionDomain.Action)
         case readCard(action: CardWallReadCardDomain.Action)
+        case insuranceSelection(action: CardWallInsuranceSelectionDomain.Action)
     }
 
     struct Environment {
@@ -82,7 +85,8 @@ enum CardWallDomain {
              .canAction(action: .close),
              .pinAction(action: .close),
              .loginOption(action: .close),
-             .readCard(action: .close):
+             .readCard(action: .close),
+             .insuranceSelection(action: .close):
             // closing a subscreen should close the whole stack -> forward to generic `.close`
             return Effect(value: .close)
         case .pinAction(action: .advance):
@@ -128,7 +132,8 @@ enum CardWallDomain {
              .canAction,
              .pinAction,
              .loginOption,
-             .readCard:
+             .readCard,
+             .insuranceSelection:
             return .none
         }
     }
@@ -182,12 +187,22 @@ enum CardWallDomain {
             )
         }
 
+    static let insuranceSelectionPullbackReducer: Reducer =
+        CardWallInsuranceSelectionDomain.reducer.pullback(
+            state: \.insuranceSelectionState,
+            action: /Action.insuranceSelection(action:)
+        ) { environment in
+            .init(idpSession: environment.userSession.idpSession,
+                  schedulers: environment.schedulers)
+        }
+
     static let reducer = Reducer.combine(
         readCardPullbackReducer,
         introductionPullbackReducer,
         canPullbackReducer,
         pinPullbackReducer,
         loginOptionPullbackReducer,
+        insuranceSelectionPullbackReducer,
         domainReducer
     )
 }

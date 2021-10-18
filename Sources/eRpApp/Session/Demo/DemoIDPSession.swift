@@ -78,8 +78,9 @@ class DemoIDPSession: IDPSession {
             .eraseToAnyPublisher()
     }
 
-    func exchange(token _: IDPExchangeToken,
-                  challengeSession _: IDPChallengeSession) -> AnyPublisher<IDPToken, IDPError> {
+    func exchange(token: IDPExchangeToken,
+                  challengeSession _: ChallengeSession,
+                  redirectURI _: String?) -> AnyPublisher<IDPToken, IDPError> {
         currentValue.send(
             IDPToken(
                 accessToken: "SECRET ACCESSTOKEN",
@@ -119,6 +120,21 @@ class DemoIDPSession: IDPSession {
     }
 
     func altVerify(_: SignedAuthenticationData) -> AnyPublisher<IDPExchangeToken, IDPError> {
+        Fail(error: IDPError.internalError("not implemented for demo session"))
+            .eraseToAnyPublisher()
+    }
+
+    func loadDirectoryKKApps() -> AnyPublisher<KKAppDirectory, IDPError> {
+        Fail(error: IDPError.internalError("not implemented for demo session"))
+            .eraseToAnyPublisher()
+    }
+
+    func startExtAuth(entry _: KKAppDirectory.Entry) -> AnyPublisher<URL, IDPError> {
+        Fail(error: IDPError.internalError("not implemented for demo session"))
+            .eraseToAnyPublisher()
+    }
+
+    func extAuthVerifyAndExchange(_: URL) -> AnyPublisher<IDPToken, IDPError> {
         Fail(error: IDPError.internalError("not implemented for demo session"))
             .eraseToAnyPublisher()
     }

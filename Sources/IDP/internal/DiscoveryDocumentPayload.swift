@@ -44,6 +44,10 @@ public struct DiscoveryDocumentPayload: Claims, Equatable {
     public let pukIdpEnc: URL
     /// Endpoint for the public signing key
     public let pukIdpSig: URL
+    /// Endpoint for retrieving available kk apps for alternative authentication
+    public let kkAppList: URL?
+    /// Endpoint for alternative authentication request as in `gemSpec_IDP_Sek`
+    public let thirdPartyAuth: URL?
 
     public let subjectTypesSupported: [String]
 
@@ -74,6 +78,8 @@ public struct DiscoveryDocumentPayload: Claims, Equatable {
         case iat
         case pukIdpEnc = "uri_puk_idp_enc"
         case pukIdpSig = "uri_puk_idp_sig"
+        case kkAppList = "kk_app_list_uri"
+        case thirdPartyAuth = "third_party_authorization_endpoint"
         case subjectTypesSupported = "subject_types_supported"
         case supportedSigningAlgorithms = "id_token_signing_alg_values_supported"
         case supportedResponseTypes = "response_types_supported"

@@ -117,6 +117,8 @@ internal enum L10n {
   internal static let cdwBtnCanDoneLabelError = LocalizedStringKey("cdw_btn_can_done_label_error_%@")
   /// Cancel
   internal static let cdwBtnCancel = LocalizedStringKey("cdw_btn_cancel")
+  /// Gesundheitskarte bestellen
+  internal static let cdwBtnFtfbOrderEgk = LocalizedStringKey("cdw_btn_ftfb_order_egk")
   /// Close dialog
   internal static let cdwBtnIntroCancelLabel = LocalizedStringKey("cdw_btn_intro_cancel_label")
   /// Vielleicht später
@@ -165,6 +167,8 @@ internal enum L10n {
   internal static let cdwBtnRcNextHint = LocalizedStringKey("cdw_btn_rc_next_hint")
   /// Repeat
   internal static let cdwBtnRcRetry = LocalizedStringKey("cdw_btn_rc_retry")
+  /// Weiter
+  internal static let cdwBtnSelContinue = LocalizedStringKey("cdw_btn_sel_continue")
   /// Please enter your PIN here
   internal static let cdwEdtPinInput = LocalizedStringKey("cdw_edt_pin_input")
   /// Launch demo mode
@@ -225,6 +229,14 @@ internal enum L10n {
   internal static let cdwTxtCanWarnWrongDescription = LocalizedStringKey("cdw_txt_can_warn_wrong_description")
   /// Wrong CAN
   internal static let cdwTxtCanWarnWrongTitle = LocalizedStringKey("cdw_txt_can_warn_wrong_title")
+  /// Derzeit bereiten sich die Krankenkassen auf diese Funktion vor.
+  internal static let cdwTxtFtfbDescription1 = LocalizedStringKey("cdw_txt_ftfb_description1")
+  /// Sie wollen nicht warten?  Die Anmeldung mit Gesundheitskarte wird bereits jetzt von jeder Krankenkasse unterstützt.
+  internal static let cdwTxtFtfbDescription2 = LocalizedStringKey("cdw_txt_ftfb_description2")
+  /// Versicherung wählen
+  internal static let cdwTxtFtfbHeadline = LocalizedStringKey("cdw_txt_ftfb_headline")
+  /// Mit App anmelden
+  internal static let cdwTxtFtfbTitle = LocalizedStringKey("cdw_txt_ftfb_title")
   /// To be able to use all functions of the app, log in with your medical card. You will receive this card and the required login details from your health insurance company.
   internal static let cdwTxtIntroDescription = LocalizedStringKey("cdw_txt_intro_description")
   /// Use all functions now
@@ -347,9 +359,23 @@ internal enum L10n {
   internal static let cdwTxtRcStepsTitle = LocalizedStringKey("cdw_txt_rc_steps_title")
   /// Login
   internal static let cdwTxtRcTitle = LocalizedStringKey("cdw_txt_rc_title")
-  /// Neues Kennword speichern
+  /// Wählen Sie eine Anmeldemethode um automatisch Rezepte zu empfangen.
+  internal static let cdwTxtSelDescription = LocalizedStringKey("cdw_txt_sel_description")
+  /// Sichere Anmeldung mit Ihrer neuen elektronischen Gesundheitskarte
+  internal static let cdwTxtSelEgkDescription = LocalizedStringKey("cdw_txt_sel_egk_description")
+  /// Mit Gesundheitskarte anmelden
+  internal static let cdwTxtSelEgkTitle = LocalizedStringKey("cdw_txt_sel_egk_title")
+  /// Wie möchten Sie sich anmelden?
+  internal static let cdwTxtSelHeadline = LocalizedStringKey("cdw_txt_sel_headline")
+  /// Nutzen Sie eine App Ihrer Krankenversicherung zur Freischaltung
+  internal static let cdwTxtSelKkappDescription = LocalizedStringKey("cdw_txt_sel_kkapp_description")
+  /// Mit Kassen-App anmelden
+  internal static let cdwTxtSelKkappTitle = LocalizedStringKey("cdw_txt_sel_kkapp_title")
+  /// Anmeldung
+  internal static let cdwTxtSelTitle = LocalizedStringKey("cdw_txt_sel_title")
+  /// Neues Kennwort speichern
   internal static let cpwBtnChange = LocalizedStringKey("cpw_btn_change")
-  /// Kennword speichern
+  /// Kennwort speichern
   internal static let cpwBtnSave = LocalizedStringKey("cpw_btn_save")
   /// Aktuelles Kennwort
   internal static let cpwInpCurrentPasswordPlaceholder = LocalizedStringKey("cpw_inp_current_password_placeholder")
@@ -1151,6 +1177,54 @@ internal enum L10n {
   internal static let onbWelTxtExplanation = LocalizedStringKey("onb_wel_txt_explanation")
   /// Welcome to the e-prescription app
   internal static let onbWelTxtTitle = LocalizedStringKey("onb_wel_txt_title")
+  /// So erkennen Sie eine NFC-fähige Gesundheitskarte
+  internal static let orderEgkBtnInfoButton = LocalizedStringKey("order_egk_btn_info_button")
+  /// Mail
+  internal static let orderEgkTxtContactOptionMail = LocalizedStringKey("order_egk_txt_contact_option_mail")
+  /// Telefon
+  internal static let orderEgkTxtContactOptionTelephone = LocalizedStringKey("order_egk_txt_contact_option_telephone")
+  /// Webseite
+  internal static let orderEgkTxtContactOptionWeb = LocalizedStringKey("order_egk_txt_contact_option_web")
+  /// Um sich in dieser App anmelden zu können, benötigen Sie eine NFC-fähige Gesundheitskarte sowie eine zugehörige PIN.
+  internal static let orderEgkTxtDescription1 = LocalizedStringKey("order_egk_txt_description_1")
+  /// Diese erhalten Sie kostenfrei von Ihrer Krankenversicherung. Hierfür müssen Sie sich mittels amtlichem Ausweisdokument identifiziert haben.
+  internal static let orderEgkTxtDescription2 = LocalizedStringKey("order_egk_txt_description_2")
+  /// Krankenversicherung kontaktieren
+  internal static let orderEgkTxtHeadline = LocalizedStringKey("order_egk_txt_headline")
+  /// Bitte nutzen Sie die üblichen Kanäle, um Ihre Versicherung zu kontaktieren.
+  internal static let orderEgkTxtHintNoContactOptionMessage = LocalizedStringKey("order_egk_txt_hint_no_contact_option_message")
+  /// Keine Kontaktaufnahme über diese App möglich
+  internal static let orderEgkTxtHintNoContactOptionTitle = LocalizedStringKey("order_egk_txt_hint_no_contact_option_title")
+  /// https://www.das-e-rezept-fuer-deutschland.de/fragen-antworten/woran-erkenne-ich-ob-ich-eine-nfc-faehige-gesundheitskarte-habe#c204
+  internal static let orderEgkTxtInfoLink = LocalizedStringKey("order_egk_txt_info_link")
+  /// Sehr geehrte Damen und Herren,\n\nich möchte das E-Rezept der gematik nutzen.\n\nBitte senden Sie mir hierfür eine NFC-fähige Gesundheitskarte zu.\n\nIch benötige zu der Gesundheitskarte auch die PIN.\n\nBitte leiten Sie gleich das Identifikationsverfahren ein. Sollte das bei Ihnen nicht direkt möglich sein, senden Sie mir bitte detaillierte Informationen zu, wie ich die PIN erhalten kann.\n\nMeine Versichertennummer ist:\n<#####Bitte eintragen#####>\n\nBeste Grüße,\n\nIhre Versicherte / Ihr Versicherter
+  internal static let orderEgkTxtMailHealthcardAndPinBody = LocalizedStringKey("order_egk_txt_mail_healthcard_and_pin_body")
+  /// #eGKPIN# Bestellung einer NFC-fähigen Gesundheitskarte inklusive PIN
+  internal static let orderEgkTxtMailHealthcardAndPinSubject = LocalizedStringKey("order_egk_txt_mail_healthcard_and_pin_subject")
+  /// Sehr geehrte Damen und Herren,\n\nich möchte das E-Rezept der gematik nutzen .\n\nBitte senden Sie mir für meine NFC-fähige Gesundheitskarte die PIN zu.\n\nBitte leiten Sie gleich das Identifikationsverfahren ein. Sollte das bei Ihnen nicht direkt möglich sein, senden Sie mir bitte detaillierte Informationen zu, wie ich die PIN erhalten kann.\n\nMeine KVNR ist:\n<#####Bitte eintragen#####>\n\nBeste Grüße,\n\nIhre Versicherte / Ihr Versicherter
+  internal static let orderEgkTxtMailOnlyPinBody = LocalizedStringKey("order_egk_txt_mail_only_pin_body")
+  /// #PIN# Bestellung einer PIN für meine NFC-fähige Gesundheitskarte
+  internal static let orderEgkTxtMailOnlyPinSubject = LocalizedStringKey("order_egk_txt_mail_only_pin_subject")
+  /// Krankenversicherung wählen
+  internal static let orderEgkTxtPickerInsuranceHeader = LocalizedStringKey("order_egk_txt_picker_insurance_header")
+  /// Krankenversicherung wählen
+  internal static let orderEgkTxtPickerInsurancePlaceholder = LocalizedStringKey("order_egk_txt_picker_insurance_placeholder")
+  /// Was möchten Sie beantragen?
+  internal static let orderEgkTxtPickerServiceHeader = LocalizedStringKey("order_egk_txt_picker_service_header")
+  /// Sollten Sie bereits über eine Gesundheitskarte mit NFC-Funktion verfügen, müssen Sie lediglich die Zusendung einer PIN beantragen.
+  internal static let orderEgkTxtPickerServiceInfoFootnote = LocalizedStringKey("order_egk_txt_picker_service_info_footnote")
+  /// Auswahl treffen
+  internal static let orderEgkTxtPickerServiceLabel = LocalizedStringKey("order_egk_txt_picker_service_label")
+  /// Auswählen
+  internal static let orderEgkTxtPickerServiceNavigationTitle = LocalizedStringKey("order_egk_txt_picker_service_navigation_title")
+  /// Kontaktieren Sie Ihre Krankenversicherung
+  internal static let orderEgkTxtSectionContactInsurance = LocalizedStringKey("order_egk_txt_section_contact_insurance")
+  /// Gesundheitskarte & PIN
+  internal static let orderEgkTxtServiceInquiryHealthcardAndPin = LocalizedStringKey("order_egk_txt_service_inquiry_healthcard_and_pin")
+  /// Nur PIN
+  internal static let orderEgkTxtServiceInquiryOnlyPin = LocalizedStringKey("order_egk_txt_service_inquiry_only_pin")
+  /// https://www.das-e-rezept-fuer-deutschland.de/fragen-antworten/woran-erkenne-ich-ob-ich-eine-nfc-faehige-gesundheitskarte-habe#c204
+  internal static let orderTxtInfoLink = LocalizedStringKey("order_txt_info_link")
   /// Mehr erfahren
   internal static let phaDetailBtnFooter = LocalizedStringKey("pha_detail_btn_footer")
   /// Request delivery service

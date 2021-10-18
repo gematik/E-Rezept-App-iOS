@@ -16,6 +16,7 @@
 //  
 //
 // swiftlint:disable file_length
+// swiftlint:disable type_body_length
 
 import Combine
 import CombineSchedulers
@@ -38,6 +39,7 @@ public class DefaultIDPSession: IDPSession {
     private let time: TimeProvider
     private let cryptoBox: IDPCrypto
     private let trustStoreSession: TrustStoreSession
+    private let extAuthRequestStorage: ExtAuthRequestStorage
 
     private var disposeBag = Set<AnyCancellable>()
 
@@ -54,13 +56,15 @@ public class DefaultIDPSession: IDPSession {
         storage: IDPStorage,
         schedulers: IDPSchedulers,
         httpClient: HTTPClient,
-        trustStoreSession: TrustStoreSession
+        trustStoreSession: TrustStoreSession,
+        extAuthRequestStorage: ExtAuthRequestStorage
     ) {
         self.init(
             client: RealIDPClient(client: config, httpClient: httpClient),
             storage: storage,
             schedulers: schedulers,
-            trustStoreSession: trustStoreSession
+            trustStoreSession: trustStoreSession,
+            extAuthRequestStorage: extAuthRequestStorage
         )
     }
 
@@ -78,6 +82,7 @@ public class DefaultIDPSession: IDPSession {
         storage: IDPStorage,
         schedulers: IDPSchedulers,
         trustStoreSession: TrustStoreSession,
+        extAuthRequestStorage: ExtAuthRequestStorage,
         time: @escaping TimeProvider = Date.init,
         idpCrypto: IDPCrypto = IDPCrypto()
     ) {
@@ -86,6 +91,7 @@ public class DefaultIDPSession: IDPSession {
         self.schedulers = schedulers
         self.time = time
         self.trustStoreSession = trustStoreSession
+        self.extAuthRequestStorage = extAuthRequestStorage
         cryptoBox = idpCrypto
 
         loadDiscoveryDocument()
@@ -170,7 +176,8 @@ public class DefaultIDPSession: IDPSession {
     }
 
     public func exchange(token exchange: IDPExchangeToken,
-                         challengeSession: IDPChallengeSession) -> AnyPublisher<IDPToken, IDPError> {
+                         challengeSession: ChallengeSession,
+                         redirectURI: String?) -> AnyPublisher<IDPToken, IDPError> {
         // [REQ:gemSpec_IDP_Frontend:A_21323] Crypto box contains `Token-Key`
         let cryptoBox = self.cryptoBox
         return loadDiscoveryDocument() // swiftlint:disable:this trailing_closure
@@ -187,6 +194,7 @@ public class DefaultIDPSession: IDPSession {
                 return self.client.exchange(
                     token: exchange,
                     verifier: challengeSession.verifierCode,
+                    redirectURI: redirectURI,
                     encryptedKeyVerifier: encryptedKeyVerifier,
                     using: document
                 )
@@ -338,6 +346,104 @@ public class DefaultIDPSession: IDPSession {
             }
             .eraseToAnyPublisher()
     }
+
+    public func loadDirectoryKKApps() -> AnyPublisher<KKAppDirectory, IDPError> {
+        loadDiscoveryDocument()
+            .flatMap { document -> AnyPublisher<KKAppDirectory, IDPError> in
+                self.client.loadDirectoryKKApps(using: document)
+                    .tryMap { jwtContainer in
+                        // [REQ:gemSpec_IDP_Sek:A_22296] Signature verification
+                        guard try jwtContainer.verify(with: document.discKey) == true else {
+                            throw IDPError.invalidSignature("kk_apps document signature wrong")
+                        }
+                        return try jwtContainer.claims()
+                    }
+                    .mapError { $0.asIDPError() }
+                    .eraseToAnyPublisher()
+            }
+            .eraseToAnyPublisher()
+    }
+
+    public func startExtAuth(entry: KKAppDirectory.Entry) -> AnyPublisher<URL, IDPError> {
+        let cryptoBox = self.cryptoBox
+        return loadDiscoveryDocument()
+            .flatMap { document -> AnyPublisher<URL, IDPError> in
+                guard let verifierCode = try? cryptoBox.generateRandomVerifier(),
+                      let codeChallenge = verifierCode.sha256()?.encodeBase64urlsafe().asciiString else {
+                    return Fail(error: IDPError.internalError("Could not hash/encoded verifierCode"))
+                        .eraseToAnyPublisher()
+                }
+                guard let state = try? cryptoBox.generateRandomState(),
+                      let nonce = try? cryptoBox.generateRandomNonce() else {
+                    return Fail(error: IDPError.internalError("Could not generate state")).eraseToAnyPublisher()
+                }
+
+                // [REQ:gemSpec_IDP_Sek:A_22295] Usage of kk_app_id
+                let extAuth = IDPExtAuth(kkAppId: entry.identifier,
+                                         state: state,
+                                         codeChallenge: codeChallenge,
+                                         codeChallengeMethod: .sha256,
+                                         nonce: nonce)
+
+                let challengeSession = ExtAuthChallengeSession(verifierCode: verifierCode, nonce: nonce)
+
+                // swiftlint:disable:next trailing_closure
+                return self.client.startExtAuth(extAuth, using: document)
+                    .handleEvents(receiveOutput: { redirectUrl in
+                        // [REQ:gemSpec_IDP_Sek:A_22299] Remember State parameter for later verification
+
+                        guard let components = URLComponents(url: redirectUrl, resolvingAgainstBaseURL: true),
+                              let state = components.queryItemWithName("state")?.value else {
+                            return
+                        }
+                        self.extAuthRequestStorage.setExtAuthRequest(challengeSession, for: state)
+                    })
+                    .mapError { $0.asIDPError() }
+                    .eraseToAnyPublisher()
+            }
+            .eraseToAnyPublisher()
+    }
+
+    public func extAuthVerifyAndExchange(_ url: URL) -> AnyPublisher<IDPToken, IDPError> {
+        guard var components = URLComponents(url: url, resolvingAgainstBaseURL: true),
+              let code = components.queryItemWithName("code")?.value,
+              let state = components.queryItemWithName("state")?.value,
+              let kkAppRedirectURI = components.queryItemWithName("kk_app_redirect_uri")?.value else {
+            return Fail(error: IDPError.internalError("Missing parameters for extAuthVerify")).eraseToAnyPublisher()
+        }
+
+        components.queryItems = nil
+        components.fragment = nil
+        guard let redirectURI = components.url?.absoluteString else {
+            return Fail(error: IDPError.internalError("Failed to construct redirect_uri.")).eraseToAnyPublisher()
+        }
+
+        let verify = IDPExtAuthVerify(code: code,
+                                      state: state,
+                                      kkAppRedirectURI: kkAppRedirectURI)
+
+        // [REQ:gemSpec_IDP_Sek:A_22301] Match request with existing state
+        guard let challengeSession = extAuthRequestStorage.getExtAuthRequest(for: state) else {
+            return Fail(error: IDPError.extAuthOriginalRequestMissing).eraseToAnyPublisher()
+        }
+
+        // [REQ:gemSpec_IDP_Sek:A_22301] Send authorization request
+        return extAuthVerify(verify)
+            .flatMap { token -> AnyPublisher<IDPToken, IDPError> in
+                self.exchange(token: token,
+                              challengeSession: challengeSession,
+                              redirectURI: redirectURI)
+            }
+            .eraseToAnyPublisher()
+    }
+
+    private func extAuthVerify(_ verify: IDPExtAuthVerify) -> AnyPublisher<IDPExchangeToken, IDPError> {
+        loadDiscoveryDocument()
+            .flatMap { document -> AnyPublisher<IDPExchangeToken, IDPError> in
+                self.client.extAuthVerify(verify, using: document)
+            }
+            .eraseToAnyPublisher()
+    }
 }
 
 extension IDPToken {
@@ -358,7 +464,9 @@ extension DefaultIDPSession {
         /// Client-ID
         let clientId: String
         /// Token exchange redirect URL
-        let redirectURL: URL
+        let redirectURI: URL
+        /// External Authentication redirect URI
+        let extAuthRedirectURI: URL
         /// IDP server discovery url
         let discoveryURL: URL
         /// List of scopes to be authorized by the user.
@@ -371,9 +479,14 @@ extension DefaultIDPSession {
         ///   - redirectURL: token exchange redirect URL
         ///   - discoveryURL: IDP server discovery document URL
         ///   - scopes: List of scopes to be authorized by the user.
-        public init(clientId: String, redirectURL: URL, discoveryURL: URL, scopes: [IDPScope]) {
+        public init(clientId: String,
+                    redirectURI: URL,
+                    extAuthRedirectURI: URL,
+                    discoveryURL: URL,
+                    scopes: [IDPScope]) {
             self.clientId = clientId
-            self.redirectURL = redirectURL
+            self.redirectURI = redirectURI
+            self.extAuthRedirectURI = extAuthRedirectURI
             self.discoveryURL = discoveryURL
             self.scopes = scopes
         }
@@ -438,7 +551,8 @@ extension DefaultIDPSession {
                 self.client.refresh(with: challenge, ssoToken: ssoToken, using: document)
                     .flatMap { exchangeToken in
                         self.exchange(token: exchangeToken,
-                                      challengeSession: challengeSession)
+                                      challengeSession: challengeSession,
+                                      redirectURI: nil)
                     }
                     .eraseToAnyPublisher()
             }

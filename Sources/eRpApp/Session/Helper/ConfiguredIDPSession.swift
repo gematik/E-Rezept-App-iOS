@@ -34,7 +34,8 @@ class ConfiguredIDPSession: IDPSession {
         _ configurationProvider: AnyPublisher<Configuration, Never>,
         storage: IDPStorage,
         schedulers: IDPSchedulers,
-        trustStoreSession: TrustStoreSession
+        trustStoreSession: TrustStoreSession,
+        extAuthRequestStorage: ExtAuthRequestStorage
     ) {
         sessionProvider = configurationProvider
             .map { configuration in
@@ -42,7 +43,8 @@ class ConfiguredIDPSession: IDPSession {
                                   storage: storage,
                                   schedulers: schedulers,
                                   httpClient: configuration.httpClient,
-                                  trustStoreSession: trustStoreSession) as IDPSession
+                                  trustStoreSession: trustStoreSession,
+                                  extAuthRequestStorage: extAuthRequestStorage) as IDPSession
             }
             .eraseToAnyPublisher()
     }
@@ -75,9 +77,10 @@ class ConfiguredIDPSession: IDPSession {
     }
 
     func exchange(token: IDPExchangeToken,
-                  challengeSession: IDPChallengeSession) -> AnyPublisher<IDPToken, IDPError> {
+                  challengeSession: ChallengeSession,
+                  redirectURI: String?) -> AnyPublisher<IDPToken, IDPError> {
         sessionProvider
-            .map { $0.exchange(token: token, challengeSession: challengeSession) }
+            .map { $0.exchange(token: token, challengeSession: challengeSession, redirectURI: redirectURI) }
             .switchToLatest()
             .eraseToAnyPublisher()
     }
@@ -102,5 +105,17 @@ class ConfiguredIDPSession: IDPSession {
 
     func altVerify(_ signedChallenge: SignedAuthenticationData) -> AnyPublisher<IDPExchangeToken, IDPError> {
         sessionProvider.map { $0.altVerify(signedChallenge) }.switchToLatest().eraseToAnyPublisher()
+    }
+
+    func loadDirectoryKKApps() -> AnyPublisher<KKAppDirectory, IDPError> {
+        sessionProvider.map { $0.loadDirectoryKKApps() }.switchToLatest().eraseToAnyPublisher()
+    }
+
+    func startExtAuth(entry: KKAppDirectory.Entry) -> AnyPublisher<URL, IDPError> {
+        sessionProvider.map { $0.startExtAuth(entry: entry) }.switchToLatest().eraseToAnyPublisher()
+    }
+
+    func extAuthVerifyAndExchange(_ url: URL) -> AnyPublisher<IDPToken, IDPError> {
+        sessionProvider.map { $0.extAuthVerifyAndExchange(url) }.switchToLatest().eraseToAnyPublisher()
     }
 }

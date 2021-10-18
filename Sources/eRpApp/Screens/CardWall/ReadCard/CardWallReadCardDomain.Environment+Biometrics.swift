@@ -82,7 +82,11 @@ extension CardWallReadCardDomain.Environment {
                         -> AnyPublisher<IDPToken, IDPError> in
                         self.userSession.idpSession.altVerify(signedAuthenticationData)
                             .flatMap { (exchangeToken: IDPExchangeToken) -> AnyPublisher<IDPToken, IDPError> in
-                                self.userSession.idpSession.exchange(token: exchangeToken, challengeSession: challenge)
+                                self.userSession.idpSession.exchange(
+                                    token: exchangeToken,
+                                    challengeSession: challenge,
+                                    redirectURI: nil
+                                )
                             }
                             .eraseToAnyPublisher()
                     }

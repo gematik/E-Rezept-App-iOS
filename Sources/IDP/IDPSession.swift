@@ -57,9 +57,11 @@ public protocol IDPSession {
     /// - Parameters:
     ///   - token: the exchange token
     ///   - verifier: plain verifier code
+    ///   - redirectUIR: optional redirect URI to use for the token exchange.
     /// - Returns:
     func exchange(token: IDPExchangeToken,
-                  challengeSession: IDPChallengeSession) -> AnyPublisher<IDPToken, IDPError>
+                  challengeSession: ChallengeSession,
+                  redirectURI: String?) -> AnyPublisher<IDPToken, IDPError>
 
     /// Refresh token
     ///
@@ -84,6 +86,19 @@ public protocol IDPSession {
     /// - Parameter signedChallenge: `SignedAuthenticationData` that is signed with a biometric key instead of an eGK.
     /// - Returns: AnyPublisher with `IDPExchangeToken` if successfull, fails with an `IDPError` otherwise.
     func altVerify(_ signedChallenge: SignedAuthenticationData) -> AnyPublisher<IDPExchangeToken, IDPError>
+
+    /// Load available Insurance companies that are capable of External Authentication (*FastTrack*).
+    func loadDirectoryKKApps() -> AnyPublisher<KKAppDirectory, IDPError>
+
+    /// Initial step for external authentication with insurance company app.
+    /// - Parameters:
+    ///   - entry: The reference to an insurance company app to user for the authentication.
+    func startExtAuth(entry: KKAppDirectory.Entry) -> AnyPublisher<URL, IDPError>
+
+    /// Follow up step whenever an insurance company app authorizes a user login.
+    /// - Parameters:
+    ///   - url: Universal link containing login information
+    func extAuthVerifyAndExchange(_ url: URL) -> AnyPublisher<IDPToken, IDPError>
 }
 
 extension IDPSession {
@@ -95,7 +110,8 @@ extension IDPSession {
         verify(signedChallenge)
             .flatMap { exchangeToken in
                 self.exchange(token: exchangeToken,
-                              challengeSession: signedChallenge.originalChallenge)
+                              challengeSession: signedChallenge.originalChallenge,
+                              redirectURI: nil)
             }
             .eraseToAnyPublisher()
     }

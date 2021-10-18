@@ -92,11 +92,14 @@ enum OnboardingDomain {
             )
         }
 
-        init(currentPageIndex: Int = 0, pages: [Page] = []) {
+        init(currentPageIndex: Int = 0,
+             pages: [Page] = [],
+             hideOnboardingLegacy: Bool = false,
+             onboardingVersion: String? = nil) {
             self.currentPageIndex = currentPageIndex
             self.pages = pages
-            hideOnboardingLegacy = false
-            onboardingVersion = nil
+            self.hideOnboardingLegacy = hideOnboardingLegacy
+            self.onboardingVersion = onboardingVersion
         }
 
         var isEmpty: Bool {

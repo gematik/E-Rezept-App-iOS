@@ -74,6 +74,8 @@ final class OnboardingDomainTests: XCTestCase {
             state.composition.setPage(OnboardingDomain.Page.registerAuthentication)
             state.registerAuthenticationState.showNoSelectionMessage = true
         }
+
+        expect(self.mockUserDataStore.setOnboardingVersionCalled).to(beFalse())
     }
 
     func testSavingAuthenticationWithCorrectPassword() {
@@ -105,6 +107,10 @@ final class OnboardingDomainTests: XCTestCase {
         store.receive(.dismissOnboarding)
         expect(self.mockUserDataStore.setHideOnboardingCallsCount) == 1
         expect(self.mockUserDataStore.setHideOnboardingReceivedHideOnboarding) == true
+
+        expect(self.mockUserDataStore.setOnboardingVersionCalled).to(beTrue())
+        expect(self.mockUserDataStore.setOnboardingVersionReceivedInvocations)
+            .to(equal([AppVersion.current.productVersion]))
     }
 
     func testSavingAuthenticationWithBiometry() {
@@ -128,5 +134,9 @@ final class OnboardingDomainTests: XCTestCase {
         store.receive(.dismissOnboarding)
         expect(self.mockUserDataStore.setHideOnboardingCallsCount) == 1
         expect(self.mockUserDataStore.setHideOnboardingReceivedHideOnboarding) == true
+
+        expect(self.mockUserDataStore.setOnboardingVersionCalled).to(beTrue())
+        expect(self.mockUserDataStore.setOnboardingVersionReceivedInvocations)
+            .to(equal([AppVersion.current.productVersion]))
     }
 }

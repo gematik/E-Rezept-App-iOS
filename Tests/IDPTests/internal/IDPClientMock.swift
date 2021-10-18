@@ -111,6 +111,7 @@ public class IDPClientMock: IDPClient {
         .eraseToAnyPublisher()
     var exchange_ReceivedArguments: (token: IDPExchangeToken,
                                      verifier: String,
+                                     redirectURI: String?,
                                      encryptedKeyVerifier: JWE,
                                      document: DiscoveryDocument)?
     var exchange_CallsCount = 0
@@ -121,12 +122,14 @@ public class IDPClientMock: IDPClient {
     public func exchange(
         token: IDPExchangeToken,
         verifier: String,
+        redirectURI: String?,
         encryptedKeyVerifier: JWE,
         using document: DiscoveryDocument
     ) -> AnyPublisher<TokenPayload, IDPError> {
         exchange_CallsCount += 1
         exchange_ReceivedArguments = (token: token,
                                       verifier: verifier,
+                                      redirectURI: redirectURI,
                                       encryptedKeyVerifier: encryptedKeyVerifier,
                                       document: document)
         return exchange_Publisher
@@ -191,6 +194,60 @@ public class IDPClientMock: IDPClient {
         altVerify_CallsCount += 1
         altVerify_ReceivedArguments = (encryptedSignedChallenge, document)
         return altVerify_Publisher
+    }
+
+    // MARK: - loadDirectoryKKApps
+
+    public var loadDirectoryKKAppsUsingCallsCount = 0
+    public var loadDirectoryKKAppsUsingCalled: Bool {
+        loadDirectoryKKAppsUsingCallsCount > 0
+    }
+
+    public var loadDirectoryKKAppsUsingReceivedDocument: DiscoveryDocument?
+    public var loadDirectoryKKAppsUsingReceivedInvocations: [DiscoveryDocument] = []
+    public var loadDirectoryKKAppsUsingReturnValue: AnyPublisher<IDPDirectoryKKApps, IDPError>!
+    public var loadDirectoryKKAppsUsingClosure: ((DiscoveryDocument) -> AnyPublisher<IDPDirectoryKKApps, IDPError>)?
+
+    public func loadDirectoryKKApps(using document: DiscoveryDocument) -> AnyPublisher<IDPDirectoryKKApps, IDPError> {
+        loadDirectoryKKAppsUsingCallsCount += 1
+        loadDirectoryKKAppsUsingReceivedDocument = document
+        loadDirectoryKKAppsUsingReceivedInvocations.append(document)
+        return loadDirectoryKKAppsUsingClosure.map { $0(document) } ?? loadDirectoryKKAppsUsingReturnValue
+    }
+
+    public var startExtAuthUsingCallsCount = 0
+    public var startExtAuthUsingCalled: Bool {
+        startExtAuthUsingCallsCount > 0
+    }
+
+    public var startExtAuthUsingReceivedArguments: (IDPExtAuth, DiscoveryDocument)?
+    public var startExtAuthUsingReceivedInvocations: [(IDPExtAuth, DiscoveryDocument)] = []
+    public var startExtAuthUsingReturnValue: AnyPublisher<URL, IDPError>!
+    public var startExtAuthUsingClosure: ((IDPExtAuth, DiscoveryDocument) -> AnyPublisher<URL, IDPError>)?
+
+    public func startExtAuth(_ app: IDPExtAuth, using document: DiscoveryDocument) -> AnyPublisher<URL, IDPError> {
+        startExtAuthUsingCallsCount += 1
+        startExtAuthUsingReceivedArguments = (app, document)
+        startExtAuthUsingReceivedInvocations.append((app, document))
+        return startExtAuthUsingClosure.map { $0(app, document) } ?? startExtAuthUsingReturnValue
+    }
+
+    public var extAuthVerifyUsingCallsCount = 0
+    public var extAuthVerifyUsingCalled: Bool {
+        extAuthVerifyUsingCallsCount > 0
+    }
+
+    public var extAuthVerifyUsingReceivedDocument: DiscoveryDocument?
+    public var extAuthVerifyUsingReceivedInvocations: [DiscoveryDocument] = []
+    public var extAuthVerifyUsingReturnValue: AnyPublisher<IDPExchangeToken, IDPError>!
+    public var extAuthVerifyUsingClosure: ((DiscoveryDocument) -> AnyPublisher<IDPExchangeToken, IDPError>)?
+
+    public func extAuthVerify(_: IDPExtAuthVerify,
+                              using document: DiscoveryDocument) -> AnyPublisher<IDPExchangeToken, IDPError> {
+        extAuthVerifyUsingCallsCount += 1
+        extAuthVerifyUsingReceivedDocument = document
+        extAuthVerifyUsingReceivedInvocations.append(document)
+        return extAuthVerifyUsingClosure.map { $0(document) } ?? extAuthVerifyUsingReturnValue
     }
 }
 

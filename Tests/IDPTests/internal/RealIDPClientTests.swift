@@ -37,7 +37,8 @@ final class RealIDPClientTests: XCTestCase {
 
     let config = DefaultIDPSession.Configuration(
         clientId: "test_client_id",
-        redirectURL: URL(string: "http://redirect.com/path?query=something&extra=5")!,
+        redirectURI: URL(string: "http://redirect.com/path?query=something&extra=5")!,
+        extAuthRedirectURI: URL(string: "https://das-e-rezept-fuer-deutschland.de/extauth")!,
         discoveryURL: URL(string: "http://idp.gematik/discoveryDocument")!,
         scopes: ["e-rezept", "openid"]
     )
@@ -168,7 +169,7 @@ final class RealIDPClientTests: XCTestCase {
                 "code_challenge": codeChallenge,
                 "code_challenge_method": "S256",
                 "state": state,
-                "redirect_uri": config.redirectURL.absoluteString,
+                "redirect_uri": config.redirectURI.absoluteString,
             ])
             && !hasHeaderNamed("Authorization")) { _ in
                 counter += 1
@@ -228,7 +229,7 @@ final class RealIDPClientTests: XCTestCase {
                 "code_challenge": codeChallenge,
                 "code_challenge_method": "S256",
                 "state": state,
-                "redirect_uri": config.redirectURL.absoluteString,
+                "redirect_uri": config.redirectURI.absoluteString,
             ])
             && !hasHeaderNamed("Authorization")) { _ in
                 counter += 1
@@ -676,7 +677,7 @@ final class RealIDPClientTests: XCTestCase {
             "key_verifier": keyVerifierString,
             "code": exchangeTokenDummy.code,
             "grant_type": "authorization_code",
-            "redirect_uri": config.redirectURL.absoluteString,
+            "redirect_uri": config.redirectURI.absoluteString,
             "code_verifier": verifier,
             "client_id": config.clientId,
         ]
@@ -711,11 +712,182 @@ final class RealIDPClientTests: XCTestCase {
         RealIDPClient(client: config)
             .exchange(token: exchangeTokenDummy,
                       verifier: verifier,
+                      redirectURI: nil,
                       encryptedKeyVerifier: keyVerifier,
                       using: localDiscoveryDocument)
             .test(expectations: { token in
                 expect(token) == expectedToken
             })
         expect(counter) == 1
+    }
+
+    func testExchangeWithCustomRedirectURI() {
+        let verifier = "123456789&=^"
+        let keyVerifier = encryptedKeyVerifier(for: verifier)
+        let keyVerifierString = keyVerifier.encoded().utf8string!
+        let exchangeTokenDummy = IDPExchangeToken(code: "exchange-code!", sso: nil, state: "state-123")
+        let parameters: [String: String] = [
+            "key_verifier": keyVerifierString,
+            "code": exchangeTokenDummy.code,
+            "grant_type": "authorization_code",
+            "redirect_uri": "abc",
+            "code_verifier": verifier,
+            "client_id": config.clientId,
+        ]
+
+        let httpBodyData = parameters
+            .sorted(by: { $0.0 > $1.0 })
+            .map { key, value -> String in
+                let escapedValue = value.urlPercentEscapedString()
+                return "\(key)=\(escapedValue ?? value)"
+            }
+            .joined(separator: "&")
+            .data(using: .utf8)!
+
+        let idpTokenResponsePath = Bundle(for: Self.self)
+            .path(forResource: "idp_token_encrypted", ofType: "json", inDirectory: "JWT.bundle")!
+        let expectedTokenData = try! idpTokenResponsePath.readFileContents()
+        let expectedToken = try! JSONDecoder().decode(TokenPayload.self, from: expectedTokenData)
+
+        var counter = 0
+        let tokenEndpoint = localDiscoveryDocument.token.url
+        stub(condition: isHost("localhost")
+            && isPath(tokenEndpoint.path)
+            && isMethodPOST()
+            && hasHeaderNamed("Content-Type", value: "application/x-www-form-urlencoded")
+            && hasBody(httpBodyData)
+            && !hasHeaderNamed("Authorization")) { _ in
+                counter += 1
+
+                return fixture(filePath: idpTokenResponsePath, headers: ["Content-Type": "application/json"])
+        }
+
+        RealIDPClient(client: config)
+            .exchange(token: exchangeTokenDummy,
+                      verifier: verifier,
+                      redirectURI: "abc",
+                      encryptedKeyVerifier: keyVerifier,
+                      using: localDiscoveryDocument)
+            .test(expectations: { token in
+                expect(token) == expectedToken
+            })
+        expect(counter) == 1
+    }
+
+    func testLoadDirectoryKKApps() throws {
+        let loadDirectoryKKAppsResponse =
+            "eyJhbGciOiJCUDI1NlIxIiwidHlwIjoiSldUIiwia2lkIjoicHVrX2Rpc2Nfc2lnIiwieDVjIjpbIk1JSUNzVENDQWxpZ0F3SUJBZ0lIQWJzc3FRaHFPekFLQmdncWhrak9QUVFEQWpDQmhERUxNQWtHQTFVRUJoTUNSRVV4SHpBZEJnTlZCQW9NRm1kbGJXRjBhV3NnUjIxaVNDQk9UMVF0VmtGTVNVUXhNakF3QmdOVkJBc01LVXR2YlhCdmJtVnVkR1Z1TFVOQklHUmxjaUJVWld4bGJXRjBhV3RwYm1aeVlYTjBjblZyZEhWeU1TQXdIZ1lEVlFRRERCZEhSVTB1UzA5TlVDMURRVEV3SUZSRlUxUXRUMDVNV1RBZUZ3MHlNVEF4TVRVd01EQXdNREJhRncweU5qQXhNVFV5TXpVNU5UbGFNRWt4Q3pBSkJnTlZCQVlUQWtSRk1TWXdKQVlEVlFRS0RCMW5aVzFoZEdscklGUkZVMVF0VDA1TVdTQXRJRTVQVkMxV1FVeEpSREVTTUJBR0ExVUVBd3dKU1VSUUlGTnBaeUF6TUZvd0ZBWUhLb1pJemowQ0FRWUpLeVFEQXdJSUFRRUhBMElBQklZWm53aUdBbjVRWU94NDNaOE13YVpMRDNyL2J6NkJUY1FPNXBiZXVtNnFRellENWREQ2NyaXcvVk5QUFpDUXpYUVBnNFN0V3l5NU9PcTlUb2dCRW1PamdlMHdnZW93RGdZRFZSMFBBUUgvQkFRREFnZUFNQzBHQlNza0NBTURCQ1F3SWpBZ01CNHdIREFhTUF3TUNrbEVVQzFFYVdWdWMzUXdDZ1lJS29JVUFFd0VnZ1F3SVFZRFZSMGdCQm93R0RBS0JnZ3FnaFFBVEFTQlN6QUtCZ2dxZ2hRQVRBU0JJekFmQmdOVkhTTUVHREFXZ0JRbzhQam1xY2gzekVORjI1cXUxenFEckE0UHFEQTRCZ2dyQmdFRkJRY0JBUVFzTUNvd0tBWUlLd1lCQlFVSE1BR0dIR2gwZEhBNkx5OWxhR05oTG1kbGJXRjBhV3N1WkdVdmIyTnpjQzh3SFFZRFZSME9CQllFRkM5NE05TGdXNDRsTmdvQWJrUGFvbW5MalM4L01Bd0dBMVVkRXdFQi93UUNNQUF3Q2dZSUtvWkl6ajBFQXdJRFJ3QXdSQUlnQ2c0eVpEV215QmlyZ3h6YXd6L1M4REpuUkZLdFlVL1lHTmxSYzcra0JIY0NJQnV6YmEzR3NwcVNtb1AxVndNZU5OS05hTHNnVjh2TWJESmIzMGFxYWlYMSJdfQ.eyJra19hcHBfbGlzdCI6W3sia2tfYXBwX25hbWUiOiAiR2VtYXRpayBLSyIsImtrX2FwcF9pZCI6ICJra0FwcElkMDAxIn0seyAgICAia2tfYXBwX25hbWUiOiAiQW5kZXJlIEtLIiwgImtrX2FwcF9pZCI6ICJra0FwcElkMDAyIn1dfQ.YgsCr2Lr_OnwcSvhMQOUSKIb8wq8ueyJVM0x5_pCVfhgwVW9orQzynQ4gHNOpgdOqBlHlOjLID6YYdkZSrrNOw" // swiftlint:disable:this line_length
+            .data(using: .utf8)!
+        let responseJWT = try JWT(from: loadDirectoryKKAppsResponse)
+
+        var counter = 0
+        let endpoint = localDiscoveryDocument.directoryKKApps!.url
+        stub(condition: isHost("localhost")
+            && isPath(endpoint.path)
+            && isMethodGET()) { _ in
+                counter += 1
+                return HTTPStubsResponse(data: loadDirectoryKKAppsResponse, statusCode: 200, headers: nil)
+        }
+
+        RealIDPClient(client: config)
+            .loadDirectoryKKApps(using: localDiscoveryDocument)
+            .test(expectations: { idpDirectory in
+                expect(idpDirectory.jwt).to(equal(responseJWT))
+                expect((try! idpDirectory.claims()).apps.count).to(equal(2))
+                expect(try! idpDirectory.claims().apps.first?.name).to(equal("Gematik KK"))
+                expect(try! idpDirectory.claims().apps.first?.identifier).to(equal("kkAppId001"))
+                expect(try! idpDirectory.claims().apps.last?.name).to(equal("Andere KK"))
+                expect(try! idpDirectory.claims().apps.last?.identifier).to(equal("kkAppId002"))
+            })
+        expect(counter) == 1
+    }
+
+    func testStartExtAuth() throws {
+        let urlFixture = URL(string: "http://localhost/redirect")!
+        let idpExtAuth = IDPExtAuth(kkAppId: "kk_app_id",
+                                    state: "state",
+                                    codeChallenge: "code_challenge",
+                                    codeChallengeMethod: .sha256,
+                                    nonce: "nonce")
+        let parameters: [String: String] = [
+            "kk_app_id": idpExtAuth.kkAppId,
+            "state": idpExtAuth.state,
+            "code_challenge": idpExtAuth.codeChallenge,
+            "code_challenge_method": idpExtAuth.codeChallengeMethod.rawValue,
+            "nonce": idpExtAuth.nonce,
+            "redirect_uri": config.extAuthRedirectURI.absoluteString,
+            "client_id": config.clientId,
+        ]
+
+        var requestURL: URL?
+        var counter = 0
+        let endpoint = localDiscoveryDocument.thirdPartyAuth!.url
+        stub(condition: isHost("localhost")
+            && isPath(endpoint.path)
+            && isMethodGET()) { request in
+                requestURL = request.url
+                counter += 1
+                return HTTPStubsResponse(
+                    data: Data(),
+                    statusCode: 302,
+                    headers: ["Location": urlFixture.absoluteString]
+                )
+        }
+
+        var result: URL?
+
+        RealIDPClient(client: config)
+            .startExtAuth(idpExtAuth, using: localDiscoveryDocument)
+            .test(expectations: { redirectURL in
+                result = redirectURL
+            })
+
+        expect(result).toNot(beNil())
+        expect(result!).to(equal(urlFixture))
+        expect(requestURL).toNot(beNil())
+        expect(requestURL!).to(containsParameters(parameters))
+    }
+
+    func testExtAuthVerify() throws {
+        let idpExtAuthVerify = IDPExtAuthVerify(code: "code", state: "state", kkAppRedirectURI: "kkAppRedirectURI")
+
+        var actualToken: IDPExchangeToken?
+        let parameters = [
+            "state": idpExtAuthVerify.state,
+            "code": idpExtAuthVerify.code,
+            "kk_app_redirect_uri": idpExtAuthVerify.kkAppRedirectURI,
+        ]
+
+        let fixtureToken = IDPExchangeToken(code: "testcode",
+                                            sso: "testsso",
+                                            state: "teststate")
+        let responseURL =
+            URL(
+                string: "http://redirect.gematik.de/?code=\(fixtureToken.code)&state=\(fixtureToken.state)&ssotoken=\(fixtureToken.sso!)" // swiftlint:disable:this line_length
+            )!
+
+        var counter = 0
+        let endpoint = localDiscoveryDocument.thirdPartyAuth!.url
+        stub(condition: isHost("localhost")
+            && isPath(endpoint.path)
+            && hasFormBody(parameters)
+            && isMethodPOST()) { _ in
+                counter += 1
+                return HTTPStubsResponse(
+                    data: Data(),
+                    statusCode: 302,
+                    headers: ["Location": responseURL.absoluteString]
+                )
+        }
+
+        RealIDPClient(client: config)
+            .extAuthVerify(idpExtAuthVerify, using: localDiscoveryDocument)
+            .test(expectations: { token in
+                actualToken = token
+            })
+
+        expect(actualToken).toNot(beNil())
+        expect(actualToken).toNot(beNil())
+        expect(actualToken!).to(equal(fixtureToken))
     }
 }

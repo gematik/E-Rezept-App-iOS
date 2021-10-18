@@ -73,7 +73,8 @@ class StandardSessionContainer: UserSession {
                     idpSessionConfiguration:
                     DefaultIDPSession.Configuration(
                         clientId: configuration.clientId,
-                        redirectURL: configuration.redirectUri,
+                        redirectURI: configuration.redirectUri,
+                        extAuthRedirectURI: configuration.extAuthRedirectUri,
                         discoveryURL: configuration.idp,
                         scopes: ["e-rezept", "openid"]
                     )
@@ -83,7 +84,8 @@ class StandardSessionContainer: UserSession {
             publishedConfig.eraseToAnyPublisher(),
             storage: secureUserStore, // [REQ:gemSpec_eRp_FdV:A_20184] Keychain storage encrypts session/ssl tokens
             schedulers: schedulers,
-            trustStoreSession: trustStoreSession
+            trustStoreSession: trustStoreSession,
+            extAuthRequestStorage: extAuthRequestStorage
         )
     }()
 
@@ -95,7 +97,8 @@ class StandardSessionContainer: UserSession {
                     idpSessionConfiguration:
                     DefaultIDPSession.Configuration(
                         clientId: configuration.clientId,
-                        redirectURL: configuration.redirectUri,
+                        redirectURI: configuration.redirectUri,
+                        extAuthRedirectURI: configuration.extAuthRedirectUri,
                         discoveryURL: configuration.idp,
                         scopes: ["pairing", "openid"]
                     )
@@ -105,8 +108,13 @@ class StandardSessionContainer: UserSession {
             publishedConfig.eraseToAnyPublisher(),
             storage: MemoryStorage(), // [REQ:gemSpec_eRp_FdV:A_20184] No persistent storage for idp biometrics session
             schedulers: schedulers,
-            trustStoreSession: trustStoreSession
+            trustStoreSession: trustStoreSession,
+            extAuthRequestStorage: DummyExtAuthRequestStorage()
         )
+    }()
+
+    lazy var extAuthRequestStorage: ExtAuthRequestStorage = {
+        PersistentExtAuthRequestStorage()
     }()
 
     lazy var secureUserStore: SecureUserDataStore = {

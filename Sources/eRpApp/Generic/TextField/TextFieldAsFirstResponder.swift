@@ -21,8 +21,8 @@ import UIKit
 
 extension View {
     /// Modifier to keep a TextField as first responder, as long as it is on screen.
-    func textFieldKeepFirstResponder() -> some View {
-        modifier(TextFieldAsFirstResponder())
+    func textFieldKeepFirstResponder(pause: Bool = false) -> some View {
+        modifier(TextFieldAsFirstResponder(pause: pause))
     }
 }
 
@@ -30,10 +30,17 @@ extension View {
 ///
 /// **Important:** Works only on SwiftUI components that rely on UITextField, such as TextField and SecureField
 private struct TextFieldAsFirstResponder: ViewModifier {
+    let pause: Bool
     func body(content: Content) -> some View {
         content
             .introspectTextField { textField in
-                guard !textField.isFirstResponder else { return }
+                if pause,
+                   textField.isFirstResponder {
+                    textField.resignFirstResponder()
+                }
+
+                guard !pause,
+                      !textField.isFirstResponder else { return }
 
                 // Async is necessary to not overlap the swiftui animation, which would cause flicker
                 // 0.5 is an educated guess rather than anything else

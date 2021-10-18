@@ -80,9 +80,6 @@ struct AltRegistrationView: View, KeyboardReadable {
         ScrollView(.vertical, showsIndicators: true) {
             VStack {
                 Image(decorative: Asset.Illustrations.ladyDeveloperBlueCircle)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(height: 200)
 
                 TitleView()
 

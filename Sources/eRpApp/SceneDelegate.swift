@@ -51,6 +51,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing {
             storage: sessionContainer.userSession.secureUserStore
         )
         #endif
+        // This must be raw userDefaults access, demo session should *not* interfere with user authentication
+        let standardUserDataStore = UserDefaultsStore(userDefaults: .standard)
 
         let routableAppStore = RouterStore(
             initialState: .init(),
@@ -60,7 +62,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing {
                 router: self,
                 userSessionContainer: sessionContainer,
                 userSession: sessionContainer.userSession,
-                userDataStore: sessionContainer.userSession.localUserStore,
+                // This must be raw userDefaults access, demo session should *not* interfere with user authentication
+                userDataStore: standardUserDataStore,
                 schedulers: Schedulers(),
                 fhirDateFormatter: AppContainer.shared.fhirDateFormatter,
                 serviceLocator: AppContainer.shared.serviceLocator,
@@ -100,15 +103,17 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing {
 
     func sceneWillEnterForeground(_: UIScene) {
         removeBlurOverlayFromWindow()
-        let sessionContainer = AppContainer.shared.userSessionContainer
+        // This must be raw userDefaults access, demo session should *not* interfere with user authentication
+        let standardUserDataStore = UserDefaultsStore(userDefaults: .standard)
+
         let authenticationProvider = AppAuthenticationDomain.DefaultAuthenticationProvider(
-            userDataStore: sessionContainer.userSession.localUserStore
+            userDataStore: standardUserDataStore
         )
         let appAuthenticationStore = Store(
             initialState: AppAuthenticationDomain.State(),
             reducer: AppAuthenticationDomain.reducer,
             environment: AppAuthenticationDomain.Environment(
-                userDataStore: sessionContainer.userSession.localUserStore,
+                userDataStore: standardUserDataStore,
                 schedulers: Schedulers(),
                 appAuthenticationProvider: authenticationProvider,
                 appSecurityPasswordManager: DefaultAppSecurityManager(keychainAccess: SystemKeychainAccessHelper()),
@@ -133,6 +138,16 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing {
 
     func sceneDidEnterBackground(_: UIScene) {
         addBlurOverlayToWindow()
+    }
+
+    func scene(_: UIScene, continue userActivity: NSUserActivity) {
+        switch userActivity.activityType {
+        case NSUserActivityTypeBrowsingWeb:
+            guard let url = userActivity.webpageURL else { return }
+            routeTo(.universalLink(url))
+        default:
+            break
+        }
     }
 
     private func addBlurOverlayToWindow() {

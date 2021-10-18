@@ -428,13 +428,45 @@ desc "normal CI builds."
 lane :integration_tests do |options|
   reset_simulator_contents
 
+  if options[:app_conf]
+    app_conf = options[:app_conf]
+  elsif ENV["APP_CONF"]
+    app_conf = ENV["APP_CONF"]
+  else
+    app_conf = "NO_APP_CONF_INJECTED_INTO_FASTFILE_INTEGRATION_TESTS_LANE"
+  end
+
+  # Build scheme for testing and output a xctestrun file.
   scan(
     project: "eRp-App.xcodeproj",
     scheme: "AllIntegrationTests_iOS",
     sdk: "iphonesimulator",
     configuration: "Debug",
-    skip_build: true
+    output_xctestrun: true,
+    build_for_testing: true
   )
+  
+  # According to the `xcodebuild` manual the previous step "will also produce an xctestrun file", but the actual output filename is undefined.
+  # Wokraround: Take the copy `settings.xctestrun` that fastlane produces and proceed with that file.
+  derived_data=lane_context[SharedValues::SCAN_DERIVED_DATA_PATH]
+  xctestrun_file = "#{derived_data}/Build/Products/Current.xctestrun" 
+  sh("cp test_output/settings.xctestrun ../#{xctestrun_file}")
+
+  # Inject the environment as variable to the test run
+  sh("/usr/libexec/PlistBuddy -c \"Delete :IntegrationTests_iOS:TestingEnvironmentVariables:APP_CONF\" ../#{xctestrun_file} || true")
+  sh("/usr/libexec/PlistBuddy -c \"Add :IntegrationTests_iOS:TestingEnvironmentVariables:APP_CONF string '#{app_conf}'\" ../#{xctestrun_file}")
+
+  # Run the tests given the modified `xctestrun` file.
+  scan(
+    project: "eRp-App.xcodeproj",
+    scheme: "AllIntegrationTests_iOS",
+    sdk: "iphonesimulator",
+    configuration: "Debug",
+    output_xctestrun: true,
+    xctestrun: xctestrun_file,
+    test_without_building: true
+  )
+
 end
 
 desc "Lane that builds for macOS and iOS by calling `build_mac` and `build_ios`"

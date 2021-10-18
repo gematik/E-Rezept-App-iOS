@@ -121,12 +121,25 @@ struct DefaultDeviceSecurityManager: DeviceSecurityManager {
 
     // [REQ:gemSpec_BSI_FdV:A_20937] Jailbreak detection
     func informJailbreakDetected() -> Bool {
+        #if targetEnvironment(simulator)
+        return false
+        #else
+
         guard deviceSecurityManagerSessionStorage.ignoreDeviceRootedWarningForSession == false else {
             return false
         }
 
+        let fileManager = FileManager.default
+
         // swiftlint:disable:next line_length
         // Source: https://github.com/OWASP/owasp-mstg/blob/10f1f8a639dd29cbe4db166881244f3e4ea52797/Document/0x06j-Testing-Resiliency-Against-Reverse-Engineering.md#checking-file-permissions
+
+        for file in filesToCheck {
+            if fileManager.fileExists(atPath: file) {
+                return true
+            }
+        }
+
         do {
             let pathToFileInRestrictedDirectory = "/private/jailbreak.txt"
             try "This is a test.".write(toFile: pathToFileInRestrictedDirectory,
@@ -138,6 +151,7 @@ struct DefaultDeviceSecurityManager: DeviceSecurityManager {
         } catch {
             return false
         }
+        #endif
     }
 
     func set(ignoreRootedDeviceWarningForSession: Bool) {
@@ -170,3 +184,42 @@ struct DummyDeviceSecurityManager: DeviceSecurityManager {
         // do nothing
     }
 }
+
+private let filesToCheck = [
+    "/Applications/Cydia.app",
+    "/Applications/FakeCarrier.app",
+    "/Applications/Icy.app",
+    "/Applications/IntelliScreen.app",
+    "/Applications/MxTube.app",
+    "/Applications/RockApp.app",
+    "/Applications/SBSettings.app",
+    "/Applications/WinterBoard.app",
+    "/Applications/blackra1n.app",
+    "/Library/MobileSubstrate/DynamicLibraries/LiveClock.plist",
+    "/Library/MobileSubstrate/DynamicLibraries/Veency.plist",
+    "/Library/MobileSubstrate/MobileSubstrate.dylib",
+    "/System/Library/LaunchDaemons/com.ikey.bbot.plist",
+    "/System/Library/LaunchDaemons/com.saurik.Cydia.Startup.plist",
+    "/bin/bash",
+    "/bin/sh",
+    "/etc/apt",
+    "/etc/ssh/sshd_config",
+    "/private/var/lib/apt",
+    "/private/var/lib/cydia",
+    "/private/var/mobile/Library/SBSettings/Themes",
+    "/private/var/stash",
+    "/private/var/tmp/cydia.log",
+    "/var/tmp/cydia.log",
+    "/usr/bin/sshd",
+    "/usr/libexec/sftp-server",
+    "/usr/libexec/ssh-keysign",
+    "/usr/sbin/sshd",
+    "/var/cache/apt",
+    "/var/lib/apt",
+    "/var/lib/cydia",
+    "/usr/sbin/frida-server",
+    "/usr/bin/cycript",
+    "/usr/local/bin/cycript",
+    "/usr/lib/libcycript.dylib",
+    "/var/log/syslog",
+]

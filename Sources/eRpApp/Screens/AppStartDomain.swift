@@ -39,8 +39,8 @@ enum AppStartDomain {
     enum Action: Equatable {
         case app(action: AppDomain.Action)
         case onboarding(action: OnboardingDomain.Action)
-        case shouldHideOnboarding
-        case shouldHideOnboardingReceived(OnboardingDomain.Composition)
+        case refreshOnboardingState
+        case refreshOnboardingStateReceived(OnboardingDomain.Composition)
     }
 
     struct Environment {
@@ -78,16 +78,16 @@ enum AppStartDomain {
         case .app,
              .onboarding:
             return .none
-        case .shouldHideOnboarding:
+        case .refreshOnboardingState:
             return environment.userDataStore.hideOnboarding
                 .zip(environment.userDataStore.onboardingVersion)
                 .first()
                 .receive(on: environment.schedulers.main)
                 .map(OnboardingDomain.Composition.init)
-                .map(AppStartDomain.Action.shouldHideOnboardingReceived)
+                .map(AppStartDomain.Action.refreshOnboardingStateReceived)
                 .eraseToEffect()
 
-        case let .shouldHideOnboardingReceived(composition):
+        case let .refreshOnboardingStateReceived(composition):
             guard composition.isEmpty else {
                 state = .onboarding(OnboardingDomain.State(composition: composition))
                 return .none
@@ -156,6 +156,8 @@ enum AppStartDomain {
             return Effect(value: .app(action: .main(action: .showScannerView)))
         case .messages:
             return Effect(value: .app(action: .selectTab(.messages)))
+        case let .universalLink(url):
+            return Effect(value: .app(action: .main(action: .externalLogin(url))))
         }
     }
 }

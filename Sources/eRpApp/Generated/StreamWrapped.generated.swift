@@ -221,11 +221,12 @@ class StreamWrappedIDPSession: IDPSession {
             .eraseToAnyPublisher()
 	}
 
-	func exchange(token: IDPExchangeToken, challengeSession: IDPChallengeSession) -> AnyPublisher<IDPToken, IDPError> {
+	func exchange(token: IDPExchangeToken, challengeSession: ChallengeSession, redirectURI: String?) -> AnyPublisher<IDPToken, IDPError> {
         stream
         	.map { $0.exchange(
 				token: token,
-				challengeSession: challengeSession
+				challengeSession: challengeSession,
+				redirectURI: redirectURI
             ) }
             .switchToLatest()
             .eraseToAnyPublisher()
@@ -263,6 +264,32 @@ class StreamWrappedIDPSession: IDPSession {
         stream
         	.map { $0.altVerify(
 				signedChallenge
+            ) }
+            .switchToLatest()
+            .eraseToAnyPublisher()
+	}
+
+	func loadDirectoryKKApps() -> AnyPublisher<KKAppDirectory, IDPError> {
+        stream
+        	.map { $0.loadDirectoryKKApps(
+            ) }
+            .switchToLatest()
+            .eraseToAnyPublisher()
+	}
+
+	func startExtAuth(entry: KKAppDirectory.Entry) -> AnyPublisher<URL, IDPError> {
+        stream
+        	.map { $0.startExtAuth(
+				entry: entry
+            ) }
+            .switchToLatest()
+            .eraseToAnyPublisher()
+	}
+
+	func extAuthVerifyAndExchange(_ url: URL) -> AnyPublisher<IDPToken, IDPError> {
+        stream
+        	.map { $0.extAuthVerifyAndExchange(
+				url
             ) }
             .switchToLatest()
             .eraseToAnyPublisher()

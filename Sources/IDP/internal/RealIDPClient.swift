@@ -1,4 +1,3 @@
-// swiftlint:disable type_body_length
 //
 //  Copyright (c) 2021 gematik GmbH
 //  
@@ -16,6 +15,8 @@
 //  limitations under the Licence.
 //  
 //
+// swiftlint:disable type_body_length
+// swiftlint:disable file_length
 
 import Combine
 import CryptoKit
@@ -24,7 +25,8 @@ import HTTPClient
 
 protocol IDPClientConfig {
     var clientId: String { get }
-    var redirectURL: URL { get }
+    var redirectURI: URL { get }
+    var extAuthRedirectURI: URL { get }
     var discoveryURL: URL { get }
     var scopes: [IDPScope] { get }
 }
@@ -118,7 +120,7 @@ class RealIDPClient: IDPClient {
             URLQueryItem(
                 // [REQ:gemSpec_IDP_Frontend:A_20740] transfer
                 name: "redirect_uri",
-                value: clientConfig.redirectURL.absoluteString.urlPercentEscapedString()
+                value: clientConfig.redirectURI.absoluteString.urlPercentEscapedString()
             ),
         ]
         authenticationComponents?.percentEncodedQueryItems = queryItems
@@ -139,17 +141,7 @@ class RealIDPClient: IDPClient {
                     throw IDPError.decoding(error: error)
                 }
             } else {
-                // [REQ:gemSpec_IDP_Frontend:A_19937,A_20605] Decoding server errors
-                guard let responseError = try? JSONDecoder().decode(IDPError.ServerResponse.self, from: body) else {
-                    throw IDPError.serverError(IDPError.ServerResponse(
-                        error: "Unable to decode.",
-                        errorText: "Unable to decode server error",
-                        timestamp: Int(round(Date().timeIntervalSince1970 * 1000)),
-                        uuid: "unknown",
-                        code: "-1"
-                    ))
-                }
-                throw IDPError.serverError(responseError)
+                throw Self.responseError(for: body)
             }
         }
         .mapError {
@@ -190,17 +182,7 @@ class RealIDPClient: IDPClient {
                 // [REQ:gemSpec_IDP_Frontend:A_20600]
                 return IDPExchangeToken(code: code, sso: sso, state: state)
             } else {
-                // [REQ:gemSpec_IDP_Frontend:A_19937,A_20605] Decoding server errors
-                guard let responseError = try? JSONDecoder().decode(IDPError.ServerResponse.self, from: body) else {
-                    throw IDPError.serverError(IDPError.ServerResponse(
-                        error: "Unable to decode.",
-                        errorText: "Unable to decode server error",
-                        timestamp: Int(round(Date().timeIntervalSince1970 * 1000)),
-                        uuid: "unknown",
-                        code: "-1"
-                    ))
-                }
-                throw IDPError.serverError(responseError)
+                throw Self.responseError(for: body)
             }
         }
         .mapError { $0.asIDPError() }
@@ -241,17 +223,7 @@ class RealIDPClient: IDPClient {
                 let sso = locationComponents.queryItemWithName("ssotoken")?.value ?? ssoToken
                 return IDPExchangeToken(code: code, sso: sso, state: state)
             } else {
-                // [REQ:gemSpec_IDP_Frontend:A_19937,A_20605] Decoding server errors
-                guard let responseError = try? JSONDecoder().decode(IDPError.ServerResponse.self, from: data) else {
-                    throw IDPError.serverError(IDPError.ServerResponse(
-                        error: "Unable to decode.",
-                        errorText: "Unable to decode server error",
-                        timestamp: Int(round(Date().timeIntervalSince1970)),
-                        uuid: "unknown",
-                        code: "-1"
-                    ))
-                }
-                throw IDPError.serverError(responseError)
+                throw Self.responseError(for: data)
             }
         }
         .mapError { $0.asIDPError() }
@@ -260,6 +232,7 @@ class RealIDPClient: IDPClient {
 
     func exchange(token: IDPExchangeToken,
                   verifier: String,
+                  redirectURI: String?,
                   encryptedKeyVerifier: JWE,
                   using document: DiscoveryDocument) -> AnyPublisher<TokenPayload, IDPError> {
         var request = URLRequest(url: document.token.url, cachePolicy: .reloadIgnoringCacheData)
@@ -277,7 +250,7 @@ class RealIDPClient: IDPClient {
             "code": token.code,
             "grant_type": "authorization_code",
             // [REQ:gemSpec_IDP_Frontend:A_20740] transfer
-            "redirect_uri": clientConfig.redirectURL.absoluteString,
+            "redirect_uri": redirectURI ?? clientConfig.redirectURI.absoluteString,
             "code_verifier": verifier,
             // [REQ:gemSpec_IDP_Frontend:A_20603] transfer
             "client_id": clientConfig.clientId,
@@ -289,17 +262,7 @@ class RealIDPClient: IDPClient {
                 if status.isSuccessful {
                     return try JSONDecoder().decode(TokenPayload.self, from: body)
                 } else {
-                    // [REQ:gemSpec_IDP_Frontend:A_19937,A_20605] Decoding server errors
-                    guard let responseError = try? JSONDecoder().decode(IDPError.ServerResponse.self, from: body) else {
-                        throw IDPError.serverError(IDPError.ServerResponse(
-                            error: "Unable to decode.",
-                            errorText: "Unable to decode server error",
-                            timestamp: Int(round(Date().timeIntervalSince1970)),
-                            uuid: "unknown",
-                            code: "-1"
-                        ))
-                    }
-                    throw IDPError.serverError(responseError)
+                    throw Self.responseError(for: body)
                 }
             }
             .mapError {
@@ -329,17 +292,7 @@ class RealIDPClient: IDPClient {
                 if status.isSuccessful {
                     return try JSONDecoder().decode(PairingEntry.self, from: body)
                 } else {
-                    // [REQ:gemSpec_IDP_Frontend:A_19937,A_20605] Decoding server errors
-                    guard let responseError = try? JSONDecoder().decode(IDPError.ServerResponse.self, from: body) else {
-                        throw IDPError.serverError(IDPError.ServerResponse(
-                            error: "Unable to decode.",
-                            errorText: "Unable to decode server error",
-                            timestamp: Int(round(Date().timeIntervalSince1970)),
-                            uuid: "unknown",
-                            code: "-1"
-                        ))
-                    }
-                    throw IDPError.serverError(responseError)
+                    throw Self.responseError(for: body)
                 }
             }
             .mapError { $0.asIDPError() }
@@ -362,13 +315,7 @@ class RealIDPClient: IDPClient {
                     return true
                 } else {
                     guard let responseError = try? JSONDecoder().decode(IDPError.ServerResponse.self, from: body) else {
-                        throw IDPError.serverError(IDPError.ServerResponse(
-                            error: "Unable to decode.",
-                            errorText: "Unable to decode server error",
-                            timestamp: Int(round(Date().timeIntervalSince1970 * 1000)),
-                            uuid: "unknown",
-                            code: "-1"
-                        ))
+                        throw Self.fallbackServerResponse
                     }
                     throw IDPError.serverError(responseError)
                 }
@@ -406,21 +353,157 @@ class RealIDPClient: IDPClient {
                 let sso = locationComponents.queryItemWithName("ssotoken")?.value
                 return IDPExchangeToken(code: code, sso: sso, state: state)
             } else {
-                // [REQ:gemSpec_IDP_Frontend:A_19937,A_20605] Decoding server errors
-                guard let responseError = try? JSONDecoder().decode(IDPError.ServerResponse.self, from: data) else {
-                    throw IDPError.serverError(IDPError.ServerResponse(
-                        error: "Unable to decode.",
-                        errorText: "Unable to decode server error",
-                        timestamp: Int(round(Date().timeIntervalSince1970)),
-                        uuid: "unknown",
-                        code: "-1"
-                    ))
-                }
-                throw IDPError.serverError(responseError)
+                throw Self.responseError(for: data)
             }
         }
         .mapError { $0.asIDPError() }
         .eraseToAnyPublisher()
+    }
+
+    func loadDirectoryKKApps(using document: DiscoveryDocument) -> AnyPublisher<IDPDirectoryKKApps, IDPError> {
+        guard let url = document.directoryKKApps?.url else {
+            return Fail(error: Self.missingFeature).eraseToAnyPublisher()
+        }
+        // load complete kk_apps directory
+        let request = URLRequest(url: url)
+
+        return httpClient.send(request: request)
+            .mapError {
+                $0 as Error
+            }
+            .tryMap { data, _, status -> IDPDirectoryKKApps in
+                if status.isSuccessful {
+                    let jwt = try JWT(from: data)
+                    return IDPDirectoryKKApps(jwt: jwt)
+                } else {
+                    guard let responseError = try? JSONDecoder().decode(IDPError.ServerResponse.self, from: data) else {
+                        throw Self.fallbackServerResponse
+                    }
+                    throw IDPError.serverError(responseError)
+                }
+            }
+            .mapError {
+                $0.asIDPError()
+            }
+            .eraseToAnyPublisher()
+    }
+
+    func startExtAuth(_ app: IDPExtAuth, using document: DiscoveryDocument) -> AnyPublisher<URL, IDPError> {
+        guard let url = document.thirdPartyAuth?.url else {
+            return Fail(error: Self.missingFeature).eraseToAnyPublisher()
+        }
+        var components = URLComponents(
+            url: url,
+            resolvingAgainstBaseURL: false
+        )
+
+        let queryItems = [
+            URLQueryItem(name: "kk_app_id", value: app.kkAppId),
+            URLQueryItem(name: "response_type", value: "code"),
+            URLQueryItem(name: "client_id", value: clientConfig.clientId.urlPercentEscapedString()),
+            URLQueryItem(name: "state", value: app.state),
+            URLQueryItem(
+                name: "redirect_uri",
+                value: clientConfig.extAuthRedirectURI.absoluteString.urlPercentEscapedString()
+            ),
+            URLQueryItem(name: "scope", value: clientConfig.scopes.joined(separator: " ").urlPercentEscapedString()),
+            URLQueryItem(name: "code_challenge", value: app.codeChallenge),
+            URLQueryItem(name: "code_challenge_method", value: app.codeChallengeMethod.rawValue),
+            URLQueryItem(name: "nonce", value: app.nonce),
+        ]
+        components?.percentEncodedQueryItems = queryItems
+        guard let url = components?.url else {
+            return Fail(error: IDPError.internalError("Could not assemble GET authentication challenge request URL."))
+                .eraseToAnyPublisher()
+        }
+        let request = URLRequest(url: url, cachePolicy: .reloadIgnoringCacheData)
+
+        return httpClient.send(request: request, interceptors: []) { _, _, completion in
+            completion(nil) // Don't follow the redirect, but handle it
+        }
+        .tryMap { data, httpResponse, status -> URL in
+            if status.isRedirect {
+                guard let redirect = httpResponse.locationComponents()?.url else {
+                    throw Self.fallbackServerResponse
+                }
+                return redirect
+            } else {
+                throw Self.responseError(for: data)
+            }
+        }
+        .mapError { $0.asIDPError() }
+        .eraseToAnyPublisher()
+    }
+
+    func extAuthVerify(_ verify: IDPExtAuthVerify,
+                       using document: DiscoveryDocument) -> AnyPublisher<IDPExchangeToken, IDPError> {
+        guard let url = document.thirdPartyAuth?.url else {
+            return Fail(error: Self.missingFeature).eraseToAnyPublisher()
+        }
+        var request = URLRequest(url: url, cachePolicy: .reloadIgnoringCacheData)
+        request.httpMethod = "POST"
+
+        request.setFormUrlEncodedHeader()
+        request.setFormUrlEncodedBody(parameters: [
+            "state": verify.state,
+            "code": verify.code,
+            "kk_app_redirect_uri": verify.kkAppRedirectURI,
+        ])
+
+        return httpClient.send(request: request, interceptors: []) { _, _, completion in
+            completion(nil) // Don't follow the redirect, but handle it
+        }
+        .tryMap { body, httpResponse, status -> IDPExchangeToken in
+            if status.isRedirect {
+                guard let locationComponents = httpResponse.locationComponents(),
+                      let code = locationComponents.queryItemWithName("code")?.value,
+                      let state = locationComponents.queryItemWithName("state")?.value
+                else {
+                    throw IDPError.internalError("IDP Verify response is missing a valid Location header")
+                }
+                let sso = locationComponents.queryItemWithName("ssotoken")?.value
+                // [REQ:gemSpec_IDP_Frontend:A_20600]
+                return IDPExchangeToken(code: code, sso: sso, state: state)
+            } else {
+                throw Self.responseError(for: body)
+            }
+        }
+        .mapError { $0.asIDPError() }
+        .eraseToAnyPublisher()
+    }
+}
+
+extension RealIDPClient {
+    // [REQ:gemSpec_IDP_Frontend:A_19937,A_20605] Decoding server errors
+    private static func responseError(for body: Data) -> IDPError {
+        guard let responseError = try? JSONDecoder().decode(IDPError.ServerResponse.self, from: body) else {
+            return Self.fallbackServerResponse
+        }
+        return IDPError.serverError(responseError)
+    }
+
+    private static var fallbackServerResponse: IDPError {
+        IDPError.serverError(
+            .init(
+                error: "Unable to decode.",
+                errorText: "Unable to decode server error",
+                timestamp: Int(round(Date().timeIntervalSince1970)),
+                uuid: "unknown",
+                code: "-1"
+            )
+        )
+    }
+
+    private static var missingFeature: IDPError {
+        IDPError.serverError(
+            .init(
+                error: "Missing Server Feature",
+                errorText: "Endpoint not available within Discovery Document. Change environment or reset DD",
+                timestamp: Int(round(Date().timeIntervalSince1970)),
+                uuid: "unknonw",
+                code: "-1"
+            )
+        )
     }
 }
 

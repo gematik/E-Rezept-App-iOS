@@ -108,9 +108,11 @@ extension CardWallIntroductionView {
                                     get: \.isEGKOrderInfoViewPresented,
                                     send: CardWallIntroductionDomain.Action.dismissEGKOrderInfoView
                                 )) {
-                                    CardWallEGKOrderInfoView {
-                                        viewStore.send(.dismissEGKOrderInfoView)
-                                    }
+                                    NavigationView {
+                                        OrderHealthCardView {
+                                            viewStore.send(.dismissEGKOrderInfoView)
+                                        }
+                                    }.navigationViewStyle(StackNavigationViewStyle())
                                 }
                         }.padding()
 

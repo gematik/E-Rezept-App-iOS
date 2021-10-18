@@ -65,6 +65,8 @@ enum MainDomain {
         case demoModeChangeReceived(Bool)
         /// Tapping the demo mode banner can also turn the demo mode off
         case turnOffDemoMode
+
+        case externalLogin(URL)
     }
 
     struct Environment {
@@ -144,6 +146,10 @@ enum MainDomain {
             return Effect.cancel(token: DeviceSecurityDomain.Token.self)
         case .deviceSecurity:
             return .none
+        case let .externalLogin(url):
+            return environment.userSession.idpSession
+                .extAuthVerifyAndExchange(url)
+                .fireAndForget()
         }
     }
 

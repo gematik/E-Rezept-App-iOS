@@ -20,8 +20,38 @@ import Combine
 import DataKit
 import Foundation
 
+/// Protocol for challenge sessions that need to be verified at some point in the process.
+public protocol ChallengeSession {
+    /// The verifier code used to request the `challenge`
+    var verifierCode: VerifierCode { get }
+
+    /// Validate the session with the given id token
+    func validateNonce(with idToken: String) throws -> Bool
+}
+
+public struct ExtAuthChallengeSession: ChallengeSession {
+    public var verifierCode: VerifierCode
+    public let nonce: String
+
+    public init(verifierCode: VerifierCode, nonce: String) {
+        self.verifierCode = verifierCode
+        self.nonce = nonce
+    }
+
+    public func validateNonce(with idToken: String) throws -> Bool {
+        let idTokenJWT = try JWT(from: idToken)
+        let idTokenPayload = try idTokenJWT.decodePayload(type: TokenPayload.IDTokenPayload.self)
+        return idTokenPayload.nonce == nonce
+    }
+}
+
+public protocol ExtAuthRequestStorage: AnyObject {
+    func setExtAuthRequest(_ request: ExtAuthChallengeSession, for state: String)
+    func getExtAuthRequest(for state: String) -> ExtAuthChallengeSession?
+}
+
 /// All relevant constraints needed for a successful challenge exchange
-public struct IDPChallengeSession {
+public struct IDPChallengeSession: ChallengeSession {
     /// The verified challenge
     public let challenge: IDPChallenge
     /// The verifier code used to request the `challenge`
@@ -78,7 +108,7 @@ public struct IDPChallengeSession {
         self.state == state
     }
 
-    func validateNonce(with idToken: String) throws -> Bool {
+    public func validateNonce(with idToken: String) throws -> Bool {
         let idTokenJWT = try JWT(from: idToken)
         let idTokenPayload = try idTokenJWT.decodePayload(type: TokenPayload.IDTokenPayload.self)
         return idTokenPayload.nonce == nonce

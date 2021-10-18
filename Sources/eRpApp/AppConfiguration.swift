@@ -69,6 +69,9 @@ struct AppConfiguration: Equatable {
     let clientId: String = defaultClientId
     // [REQ:gemSpec_IDP_Frontend:A_20740] Actual redirect uri
     let redirectUri = URL(string: "https://redirect.gematik.de/erezept")! // swiftlint:disable:this force_unwrapping
+    let extAuthRedirectUri = URL(
+        string: "https://das-e-rezept-fuer-deutschland.de/extauth"
+    )! // swiftlint:disable:this force_unwrapping
 
     // apo vzd
     let apoVzd: URL
