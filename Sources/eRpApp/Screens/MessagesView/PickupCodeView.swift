@@ -68,6 +68,8 @@ struct PickupCodeView: View {
                 }
             }
         }
+        .accentColor(Colors.primary700)
+        .navigationViewStyle(StackNavigationViewStyle())
     }
 
     struct TitleView: View {

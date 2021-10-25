@@ -279,7 +279,7 @@ internal enum L10n {
   internal static let cdwTxtOrderEgkInfoText3 = LocalizedStringKey("cdw_txt_order_egk_info_text_3")
   /// Diese erhalten Sie kostenfrei von Ihrer Krankenversicherung.
   internal static let cdwTxtOrderEgkInfoText4 = LocalizedStringKey("cdw_txt_order_egk_info_text_4")
-  /// Krankenversicherung wählen
+  /// Auswahl treffen
   internal static let cdwTxtOrderEgkKvPlaceholder = LocalizedStringKey("cdw_txt_order_egk_kv_placeholder")
   /// Krankenkasse
   internal static let cdwTxtOrderEgkKvSubheadline = LocalizedStringKey("cdw_txt_order_egk_kv_subheadline")
@@ -289,7 +289,7 @@ internal enum L10n {
   internal static let cdwTxtOrderEgkKvnrSubheadline = LocalizedStringKey("cdw_txt_order_egk_kvnr_subheadline")
   /// Sehr geehrte Damen und Herren,\n\nich möchte das E-Rezept der gematik nutzen.\n\nBitte senden Sie mir hierfür eine NFC-fähige Gesundheitskarte zu.\n\nIch benötige zu der Gesundheitskarte auch die PIN.\n\nBitte leiten Sie gleich das Identifikationsverfahren ein. Sollte das bei der %1$@ nicht direkt möglich sein, senden Sie mir bitte detaillierte Informationen zu, wie ich die PIN erhalten kann.\n\nMeine KVNR ist: %2$@\n\nBeste Grüße,\n\nIhre Versicherte / Ihr Versicherter
   internal static let cdwTxtOrderEgkMailBody = LocalizedStringKey("cdw_txt_order_egk_mail_body")
-  /// #eGKPIN# Bestellung einer NFC-fähigen Gesundheitskarte inklusive PIN
+  /// Bestellung einer NFC-fähigen Gesundheitskarte inklusive PIN
   internal static let cdwTxtOrderEgkMailSubject = LocalizedStringKey("cdw_txt_order_egk_mail_subject")
   /// You can enter any digits.
   internal static let cdwTxtPinDemoModeInfo = LocalizedStringKey("cdw_txt_pin_demo_mode_info")
@@ -368,11 +368,17 @@ internal enum L10n {
   /// Wie möchten Sie sich anmelden?
   internal static let cdwTxtSelHeadline = LocalizedStringKey("cdw_txt_sel_headline")
   /// Nutzen Sie eine App Ihrer Krankenversicherung zur Freischaltung
+  internal static let cdwTxtSelKkappComingSoonDescription = LocalizedStringKey("cdw_txt_sel_kkapp_coming_soon_description")
+  /// Nächstes Jahr: Mit Kassen-App anmelden
+  internal static let cdwTxtSelKkappComingSoonTitle = LocalizedStringKey("cdw_txt_sel_kkapp_coming_soon_title")
+  /// Nutzen Sie eine App Ihrer Krankenversicherung zur Freischaltung
   internal static let cdwTxtSelKkappDescription = LocalizedStringKey("cdw_txt_sel_kkapp_description")
   /// Mit Kassen-App anmelden
   internal static let cdwTxtSelKkappTitle = LocalizedStringKey("cdw_txt_sel_kkapp_title")
   /// Anmeldung
   internal static let cdwTxtSelTitle = LocalizedStringKey("cdw_txt_sel_title")
+  /// Speichern
+  internal static let cpwBtnAltAuthSave = LocalizedStringKey("cpw_btn_alt_auth_save")
   /// Neues Kennwort speichern
   internal static let cpwBtnChange = LocalizedStringKey("cpw_btn_change")
   /// Kennwort speichern
@@ -399,6 +405,18 @@ internal enum L10n {
   internal static let cpwTxtTitle = LocalizedStringKey("cpw_txt_title")
   /// Kennwort ändern
   internal static let cpwTxtUpdateTitle = LocalizedStringKey("cpw_txt_update_title")
+  /// Ok
+  internal static let ctlTxtPasswordStrengthAccessiblityValueMedium = LocalizedStringKey("ctl_txt_password_strength_accessiblity_value_medium")
+  /// Stark
+  internal static let ctlTxtPasswordStrengthAccessiblityValueStrong = LocalizedStringKey("ctl_txt_password_strength_accessiblity_value_strong")
+  /// Sehr stark
+  internal static let ctlTxtPasswordStrengthAccessiblityValueVeryStrong = LocalizedStringKey("ctl_txt_password_strength_accessiblity_value_very_strong")
+  /// Sehr schwach
+  internal static let ctlTxtPasswordStrengthAccessiblityValueVeryWeak = LocalizedStringKey("ctl_txt_password_strength_accessiblity_value_very_weak")
+  /// Schwach
+  internal static let ctlTxtPasswordStrengthAccessiblityValueWeak = LocalizedStringKey("ctl_txt_password_strength_accessiblity_value_weak")
+  /// Kennwortstärke
+  internal static let ctlTxtPasswordStrengthHint = LocalizedStringKey("ctl_txt_password_strength_hint")
   /// Cancel
   internal static let dmoTxtAlertNo = LocalizedStringKey("dmo_txt_alert_no")
   /// Would you like to disable demo mode?
@@ -1197,17 +1215,17 @@ internal enum L10n {
   internal static let orderEgkTxtHintNoContactOptionTitle = LocalizedStringKey("order_egk_txt_hint_no_contact_option_title")
   /// https://www.das-e-rezept-fuer-deutschland.de/fragen-antworten/woran-erkenne-ich-ob-ich-eine-nfc-faehige-gesundheitskarte-habe#c204
   internal static let orderEgkTxtInfoLink = LocalizedStringKey("order_egk_txt_info_link")
-  /// Sehr geehrte Damen und Herren,\n\nich möchte das E-Rezept der gematik nutzen.\n\nBitte senden Sie mir hierfür eine NFC-fähige Gesundheitskarte zu.\n\nIch benötige zu der Gesundheitskarte auch die PIN.\n\nBitte leiten Sie gleich das Identifikationsverfahren ein. Sollte das bei Ihnen nicht direkt möglich sein, senden Sie mir bitte detaillierte Informationen zu, wie ich die PIN erhalten kann.\n\nMeine Versichertennummer ist:\n<#####Bitte eintragen#####>\n\nBeste Grüße,\n\nIhre Versicherte / Ihr Versicherter
+  /// 
   internal static let orderEgkTxtMailHealthcardAndPinBody = LocalizedStringKey("order_egk_txt_mail_healthcard_and_pin_body")
-  /// #eGKPIN# Bestellung einer NFC-fähigen Gesundheitskarte inklusive PIN
+  /// Bestellung einer NFC-fähigen Gesundheitskarte inklusive PIN
   internal static let orderEgkTxtMailHealthcardAndPinSubject = LocalizedStringKey("order_egk_txt_mail_healthcard_and_pin_subject")
-  /// Sehr geehrte Damen und Herren,\n\nich möchte das E-Rezept der gematik nutzen .\n\nBitte senden Sie mir für meine NFC-fähige Gesundheitskarte die PIN zu.\n\nBitte leiten Sie gleich das Identifikationsverfahren ein. Sollte das bei Ihnen nicht direkt möglich sein, senden Sie mir bitte detaillierte Informationen zu, wie ich die PIN erhalten kann.\n\nMeine KVNR ist:\n<#####Bitte eintragen#####>\n\nBeste Grüße,\n\nIhre Versicherte / Ihr Versicherter
+  /// 
   internal static let orderEgkTxtMailOnlyPinBody = LocalizedStringKey("order_egk_txt_mail_only_pin_body")
-  /// #PIN# Bestellung einer PIN für meine NFC-fähige Gesundheitskarte
+  /// Bestellung einer PIN für meine NFC-fähige Gesundheitskarte
   internal static let orderEgkTxtMailOnlyPinSubject = LocalizedStringKey("order_egk_txt_mail_only_pin_subject")
   /// Krankenversicherung wählen
   internal static let orderEgkTxtPickerInsuranceHeader = LocalizedStringKey("order_egk_txt_picker_insurance_header")
-  /// Krankenversicherung wählen
+  /// Auswahl treffen
   internal static let orderEgkTxtPickerInsurancePlaceholder = LocalizedStringKey("order_egk_txt_picker_insurance_placeholder")
   /// Was möchten Sie beantragen?
   internal static let orderEgkTxtPickerServiceHeader = LocalizedStringKey("order_egk_txt_picker_service_header")

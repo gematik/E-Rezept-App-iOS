@@ -63,8 +63,9 @@ struct RedeemView: View {
                     navigationBar.standardAppearance = navigationBarAppearance
                 }
             }
-        }.navigationViewStyle(StackNavigationViewStyle())
-            .accentColor(Colors.primary700)
+        }
+        .accentColor(Colors.primary700)
+        .navigationViewStyle(StackNavigationViewStyle())
     }
 
     private struct NavigateToRedeemView: View {

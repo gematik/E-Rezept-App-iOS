@@ -41,6 +41,8 @@ struct Colors {
 }
 
 extension Colors {
+    // disabled
+    static let disabled = Asset.Colors.disabled.color
     // primary == blue
     static let primary900 = Asset.Colors.primary900.color
     static let primary800 = Asset.Colors.primary800.color

@@ -18,6 +18,7 @@
 
 import ComposableArchitecture
 import Foundation
+import Zxcvbn
 
 enum CreatePasswordDomain {
     typealias Store = ComposableArchitecture.Store<State, Action>
@@ -33,11 +34,12 @@ enum CreatePasswordDomain {
 
         var passwordA: String = ""
         var passwordB: String = ""
+        var passwordStrength = PasswordStrength.none
         var showPasswordsNotEqualMessage = false
         var showOriginalPasswordWrong = false
 
         var hasValidPasswordEntries: Bool {
-            passwordA == passwordB && passwordA.lengthOfBytes(using: .utf8) > 0
+            passwordA == passwordB && passwordStrength.minimumThreshold
         }
 
         enum Mode {
@@ -58,6 +60,7 @@ enum CreatePasswordDomain {
     struct Environment {
         let passwordManager: AppSecurityManager
         let schedulers: Schedulers
+        let passwordStrengthTester: PasswordStrengthTester
     }
 
     static let reducer: Reducer = .init { state, action, environment in
@@ -67,6 +70,7 @@ enum CreatePasswordDomain {
             state.showOriginalPasswordWrong = false
             return .none
         case let .setPasswordA(string):
+            state.passwordStrength = environment.passwordStrengthTester.passwordStrength(for: string)
             state.passwordA = string
             return Effect(value: .comparePasswords)
                 .delay(for: timeout, scheduler: environment.schedulers.main.animation())
@@ -90,6 +94,11 @@ enum CreatePasswordDomain {
 
         case .saveButtonTapped:
             state.showPasswordsNotEqualMessage = state.passwordA != state.passwordB
+
+            guard state.passwordStrength.minimumThreshold else {
+                return .none
+            }
+
             guard state.mode == .create ||
                 (try? environment.passwordManager.matches(password: state.password)) ?? false else {
                 state.showOriginalPasswordWrong = true
@@ -121,7 +130,8 @@ extension CreatePasswordDomain {
 
         static let environment = Environment(
             passwordManager: DummyAppSecurityManager(),
-            schedulers: Schedulers()
+            schedulers: Schedulers(),
+            passwordStrengthTester: DefaultPasswordStrengthTester()
         )
 
         static let store = Store(

@@ -49,12 +49,14 @@ struct CardWallInsuranceSelectionInactiveView: View {
                 .accessibility(identifier: A11y.cardWall.fasttrackFallback.cdwBtnFtfbOrderegk)
             }
             .padding()
-            .sheet(isPresented: $presentOderEGK) {
+            .fullScreenCover(isPresented: $presentOderEGK) {
                 NavigationView {
                     OrderHealthCardView {
                         presentOderEGK = false
                     }
-                }.navigationViewStyle(StackNavigationViewStyle())
+                }
+                .accentColor(Colors.primary700)
+                .navigationViewStyle(StackNavigationViewStyle())
             }
         }
         .navigationBarItems(

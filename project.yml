@@ -92,6 +92,9 @@ packages:
   ComposableCoreLocation:
     url: https://github.com/pointfreeco/composable-core-location
     version: 0.1.0
+  Zxcvbn:
+    url: https://github.com/andyjohns/zxcvbn-ios
+    revision: bf6083dc17df950c8bdfcf2063859ee1270015fd
 settings:
   base:
     # for DISABLE_DIAMOND_PROBLEM_DIAGNOSTIC see: https://developer.apple.com/forums/thread/128806
@@ -151,6 +154,8 @@ targets:
         product: ComposableArchitecture
       - package: ComposableCoreLocation
         product: ComposableCoreLocation
+      - package: Zxcvbn
+        product: Zxcvbn
       - framework: Frameworks/PiwikPROSDK.framework
         embed: false
     scheme:

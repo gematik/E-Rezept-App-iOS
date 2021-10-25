@@ -27,7 +27,8 @@ struct OnboardingNextButton: View {
     var body: some View {
         Button(action: action) {
             Image(systemName: SFSymbolName.arrowRightCircleFill)
-                .font(Font.largeTitle)
+                .resizable()
+                .frame(width: iconSize, height: iconSize, alignment: .center)
                 .imageScale(.large)
                 .accessibility(identifier: A18n.onboarding.start.onbBtnNext)
                 .accessibility(hint: Text(L10n.onbBtnNextHint))

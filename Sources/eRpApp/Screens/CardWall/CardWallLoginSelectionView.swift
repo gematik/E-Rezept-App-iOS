@@ -51,6 +51,8 @@ struct CardWallLoginSelectionView<EGK: View, KK: View>: View {
         kkSubView = kkApp()
     }
 
+    @AppStorage("enable_fast_track_preview") var enableFastTrackPreview = true
+
     var body: some View {
         VStack(spacing: 0) {
             ScrollView {
@@ -77,7 +79,24 @@ struct CardWallLoginSelectionView<EGK: View, KK: View>: View {
                     .accessibility(identifier: A11y.cardWall.select.cdwBtnSelEgk)
                     .padding(.top, 24)
 
-                    ZStack(alignment: .topLeading) {
+                    if enableFastTrackPreview {
+                        Tile(selected: .constant(false),
+                             hideSelectionMark: true) {
+                            VStack(spacing: 8) {
+                                Image(decorative: Asset.Illustrations.mannkarteCircle)
+
+                                Text(L10n.cdwTxtSelKkappComingSoonTitle)
+                                    .font(Font.headline.bold())
+                                    .foregroundColor(Color(.secondaryLabel))
+                                Text(L10n.cdwTxtSelKkappComingSoonDescription)
+                                    .font(.subheadline)
+                                    .foregroundColor(Color(.tertiaryLabel))
+                                    .multilineTextAlignment(.center)
+                                    .fixedSize(horizontal: false, vertical: true)
+                            }
+                        }
+                        .accessibility(identifier: A11y.cardWall.select.cdwBtnSelKkapp)
+                    } else {
                         Tile(selected: secondBinding) {
                             VStack(spacing: 8) {
                                 Image(decorative: Asset.Illustrations.celebrationYellowCircle)
@@ -92,8 +111,6 @@ struct CardWallLoginSelectionView<EGK: View, KK: View>: View {
                             }
                         }
                         .accessibility(identifier: A11y.cardWall.select.cdwBtnSelKkapp)
-
-                        UnderConstruction()
                     }
                 }
                 .padding(.horizontal)
@@ -150,27 +167,14 @@ struct CardWallLoginSelectionView<EGK: View, KK: View>: View {
         }
     }
 
-    struct UnderConstruction: View {
-        var body: some View {
-            Text("🚧 In Kürze 🧰")
-                .font(.callout)
-                .padding(.vertical, 8)
-                .padding(.horizontal)
-                .foregroundColor(Colors.yellow900)
-                .background(Colors.yellow500)
-                .cornerRadius(8)
-                .rotationEffect(.degrees(-10))
-                .transformEffect(.init(translationX: -5, y: 5))
-        }
-    }
-
     private struct Tile<Content: View>: View {
         @Binding var selected: Bool
-
+        private let hideSelectionMark: Bool
         var content: () -> Content
 
-        init(selected: Binding<Bool>, @ViewBuilder content: @escaping () -> Content) {
+        init(selected: Binding<Bool>, hideSelectionMark: Bool = false, @ViewBuilder content: @escaping () -> Content) {
             _selected = selected
+            self.hideSelectionMark = hideSelectionMark
             self.content = content
         }
 
@@ -182,10 +186,12 @@ struct CardWallLoginSelectionView<EGK: View, KK: View>: View {
                     content()
                         .frame(maxWidth: .infinity)
 
-                    Image(systemName: selected ? SFSymbolName.checkmarkCircleFill : SFSymbolName.circle)
-                        .frame(minWidth: 24, minHeight: 24)
-                        .foregroundColor(selected ? Colors.primary : Color(.tertiaryLabel))
-                        .font(Font.title3)
+                    if !hideSelectionMark {
+                        Image(systemName: selected ? SFSymbolName.checkmarkCircleFill : SFSymbolName.circle)
+                            .frame(minWidth: 24, minHeight: 24)
+                            .foregroundColor(selected ? Colors.primary : Color(.tertiaryLabel))
+                            .font(Font.title3)
+                    }
                 }
             })
                 .frame(maxWidth: .infinity)

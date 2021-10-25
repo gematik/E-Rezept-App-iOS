@@ -23,7 +23,8 @@ import Nimble
 import XCTest
 
 final class RegisterAuthenticationDomainTests: XCTestCase {
-    let mockAppSecurityManager = MockAppSecurityManager()
+    var mockAppSecurityManager: MockAppSecurityManager!
+    var mockPasswordStrengthTester: MockPasswordStrengthTester!
 
     typealias TestStore = ComposableArchitecture.TestStore<
         RegisterAuthenticationDomain.State,
@@ -32,6 +33,13 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
         RegisterAuthenticationDomain.Action,
         RegisterAuthenticationDomain.Environment
     >
+
+    override func setUp() {
+        super.setUp()
+
+        mockAppSecurityManager = MockAppSecurityManager()
+        mockPasswordStrengthTester = MockPasswordStrengthTester()
+    }
 
     func testStore(
         with state: RegisterAuthenticationDomain.State,
@@ -43,11 +51,14 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
             environment: RegisterAuthenticationDomain.Environment(
                 appSecurityManager: mockAppSecurityManager,
                 userDataStore: MockUserDataStore(),
-                schedulers: Schedulers(uiScheduler: DispatchQueue.immediate.eraseToAnyScheduler()),
-                authenticationChallengeProvider: MockAuthenticationChallengeProvider(result: challengeResponse)
+                schedulers: Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler()),
+                authenticationChallengeProvider: MockAuthenticationChallengeProvider(result: challengeResponse),
+                passwordStrengthTester: mockPasswordStrengthTester
             )
         )
     }
+
+    let testScheduler = DispatchQueue.test
 
     func testLoadingSecurityOptions() {
         mockAppSecurityManager.availableSecurityOptionsReturnValue = (options: [.password, .biometry(.faceID)],
@@ -81,6 +92,7 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
                 availableSecurityOptions: [.password, .biometry(.faceID)]
             )
         )
+        mockPasswordStrengthTester.passwordStrengthForReturnValue = .excellent
 
         store.send(.select(.password)) { state in
             state.availableSecurityOptions = [.password, .biometry(.faceID)]
@@ -93,8 +105,10 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
             state.selectedSecurityOption = .password
             state.passwordA = "ABC"
             state.passwordB = ""
+            state.passwordStrength = .excellent
             state.showPasswordsNotEqualMessage = false
         }
+        testScheduler.run()
         store.receive(.comparePasswords) { state in
             state.showPasswordsNotEqualMessage = true
             state.selectedSecurityOption = .password
@@ -107,6 +121,7 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
             state.passwordB = "ABC"
             state.showPasswordsNotEqualMessage = true
         }
+        testScheduler.run()
         store.receive(.comparePasswords) { state in
             state.showPasswordsNotEqualMessage = false
             state.selectedSecurityOption = .password
@@ -119,6 +134,7 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
             state.passwordA = "ABC"
             state.passwordB = "ABC"
         }
+        testScheduler.run()
         store.receive(.comparePasswords) { state in
             state.showPasswordsNotEqualMessage = false
             state.selectedSecurityOption = .password
@@ -143,6 +159,7 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
             state.passwordA = ""
             state.passwordB = ""
         }
+        testScheduler.advance()
         store.receive(.authenticationChallengeResponse(.success(true))) { state in
             state.selectedSecurityOption = .biometry(.faceID)
         }
@@ -159,6 +176,7 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
         store.send(.select(.biometry(.faceID))) { state in
             state.selectedSecurityOption = .biometry(.faceID)
         }
+        testScheduler.advance()
         store.receive(.authenticationChallengeResponse(.success(false))) { state in
             state.selectedSecurityOption = nil
         }
@@ -183,6 +201,7 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
         store.send(.select(.biometry(.touchID))) { state in
             state.selectedSecurityOption = .biometry(.touchID)
         }
+        testScheduler.advance()
         store.receive(.authenticationChallengeResponse(expectedResponse)) { state in
             state.selectedSecurityOption = nil
             state.alertState = AlertState(
@@ -208,6 +227,7 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
             state.selectedSecurityOption = .biometry(.faceID)
             state.showNoSelectionMessage = false
         }
+        testScheduler.advance()
         store.receive(.authenticationChallengeResponse(.success(true))) { state in
             state.selectedSecurityOption = .biometry(.faceID)
             state.showNoSelectionMessage = false
@@ -220,6 +240,7 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
             state.selectedSecurityOption = .biometry(.faceID)
             state.showNoSelectionMessage = false
         }
+        testScheduler.advance()
         store.receive(.authenticationChallengeResponse(.success(true))) { state in
             state.selectedSecurityOption = .biometry(.faceID)
             state.showNoSelectionMessage = false
@@ -272,6 +293,7 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
                 selectedSecurityOption: .password,
                 passwordA: "abc",
                 passwordB: "abc",
+                passwordStrength: .veryStrong,
                 showPasswordsNotEqualMessage: false,
                 showNoSelectionMessage: false,
                 securityOptionsError: nil,
@@ -280,6 +302,7 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
         )
 
         store.send(.saveSelection)
+        testScheduler.advance()
         store.receive(.saveSelectionSuccess)
     }
 
@@ -319,6 +342,7 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
         store.send(.select(.biometry(.faceID))) { state in
             state.selectedSecurityOption = .biometry(.faceID)
         }
+        testScheduler.run()
         store.receive(.authenticationChallengeResponse(.success(true)))
     }
 
@@ -342,8 +366,67 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
         store.send(.select(.biometry(.faceID))) { state in
             state.selectedSecurityOption = .biometry(.faceID)
         }
+        testScheduler.run()
         store.receive(.authenticationChallengeResponse(.success(false))) { state in
             state.selectedSecurityOption = .none
         }
+    }
+
+    func testSetPasswordACalculatesStrength() {
+        let store = testStore(
+            with: RegisterAuthenticationDomain.State(
+                availableSecurityOptions: [.biometry(.faceID)],
+                selectedSecurityOption: .none,
+                passwordA: "",
+                passwordB: "",
+                showPasswordsNotEqualMessage: false,
+                showNoSelectionMessage: false,
+                securityOptionsError: nil,
+                alertState: nil
+            )
+        )
+
+        mockPasswordStrengthTester.passwordStrengthForReturnValue = .veryWeak
+
+        store.send(.setPasswordA("ABC")) { state in
+            state.selectedSecurityOption = .password
+            state.passwordA = "ABC"
+            state.passwordB = ""
+            state.passwordStrength = .veryWeak
+            state.showPasswordsNotEqualMessage = false
+        }
+
+        mockPasswordStrengthTester.passwordStrengthForReturnValue = .medium
+
+        store.send(.setPasswordA("ABCD")) { state in
+            state.passwordA = "ABCD"
+            state.passwordStrength = .medium
+        }
+
+        testScheduler.run()
+
+        store.receive(.comparePasswords) { state in
+            state.showPasswordsNotEqualMessage = true
+        }
+    }
+
+    func testWeakPasswordFailsSave() {
+        let store = testStore(
+            with: RegisterAuthenticationDomain.State(
+                availableSecurityOptions: [.password],
+                selectedSecurityOption: .password,
+                passwordA: "ABC",
+                passwordB: "ABC",
+                passwordStrength: .weak,
+                showPasswordsNotEqualMessage: false,
+                showNoSelectionMessage: false,
+                securityOptionsError: nil,
+                alertState: nil
+            )
+        )
+
+        store.send(.saveSelection)
+
+        expect(self.mockAppSecurityManager.savePasswordCallsCount).to(equal(0))
     }
 }

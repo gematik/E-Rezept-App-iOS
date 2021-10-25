@@ -135,6 +135,7 @@ struct MainView: View {
                 viewStore.send(.unsubscribeFromDemoModeChange)
             }
         }
+        .accentColor(Colors.primary700)
         .navigationViewStyle(StackNavigationViewStyle())
     }
 }

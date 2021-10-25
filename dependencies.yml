@@ -39,3 +39,7 @@
   :url: https://www.openssl.org/source
   :license_uri: https://www.openssl.org/source/apache-license-2.0.txt
   :version: 1.1.0j
+- :name: Zxcvbn
+  :url: https://github.com/dropbox/zxcvbn-ios
+  :license_uri: https://raw.githubusercontent.com/dropbox/zxcvbn-ios/master/LICENSE.txt
+  :version: v1.0.4 + SwiftPM

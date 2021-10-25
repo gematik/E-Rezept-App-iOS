@@ -230,8 +230,9 @@ struct PrescriptionFullDetailView: View {
                     )) { scopedStore in
                         NavigationView {
                             PharmacySearchView(store: scopedStore)
-                        }.navigationViewStyle(StackNavigationViewStyle())
-                            .accentColor(Colors.primary700)
+                        }
+                        .accentColor(Colors.primary700)
+                        .navigationViewStyle(StackNavigationViewStyle())
                     }
                 }
             }

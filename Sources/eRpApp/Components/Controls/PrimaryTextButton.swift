@@ -48,6 +48,37 @@ struct PrimaryTextButton: View {
     }
 }
 
+struct PrimaryTextButtonBorder: View {
+    var text: LocalizedStringKey
+    var image: Image?
+    var isEnabled = true
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 8) {
+                Spacer()
+                if let image = image {
+                    image
+                        .foregroundColor(isEnabled ? Colors.primary : Colors.disabled)
+                        .font(.body.weight(.semibold))
+                }
+                Text(text)
+                    .fontWeight(.semibold)
+                    .font(.body)
+                    .multilineTextAlignment(.center)
+                    .foregroundColor(isEnabled ? Colors.primary : Colors.disabled)
+                    .fixedSize(horizontal: false, vertical: true)
+                Spacer()
+            }
+            .padding()
+        }
+        .buttonStyle(PrimaryBorderButtonStyle(enabled: isEnabled))
+        .if(!isEnabled) { $0.accessibility(value: Text(L10n.buttonTxtIsInactiveValue)) }
+        .disabled(!isEnabled)
+    }
+}
+
 struct LoadingPrimaryButton: View {
     var text: LocalizedStringKey
     var isLoading: Bool
@@ -101,6 +132,22 @@ struct PrimaryButtonStyle: ButtonStyle {
     }
 }
 
+struct PrimaryBorderButtonStyle: ButtonStyle {
+    private var isEnabled: Bool
+
+    init(enabled: Bool = true) {
+        isEnabled = enabled
+    }
+
+    func makeBody(configuration: Self.Configuration) -> some View {
+        configuration.label
+            .frame(minWidth: 0, maxWidth: .infinity)
+            .opacity(configuration.isPressed ? 0.25 : 1)
+            .background(isEnabled ? Color(.systemBackground) : Color(.systemGray5))
+            .border(Colors.primary, width: isEnabled ? 1.0 : 0.0, cornerRadius: 16)
+    }
+}
+
 struct PrimaryButton_Previews: PreviewProvider {
     static var previews: some View {
         Group {
@@ -112,6 +159,13 @@ struct PrimaryButton_Previews: PreviewProvider {
                 .previewLayout(.fixed(width: 400.0, height: 150.0))
                 .preferredColorScheme(.dark)
                 .environment(\.sizeCategory, .extraExtraLarge)
+            PrimaryTextButtonBorder(text: "Peter picked a peck of pickled peppers",
+                                    image: Image(systemName: SFSymbolName.safari)) {}
+                .previewLayout(.fixed(width: 350.0, height: 150.0))
+            PrimaryTextButtonBorder(text: "Peter picked a peck of pickled peppers",
+                                    image: Image(systemName: SFSymbolName.safari),
+                                    isEnabled: false) {}
+                .previewLayout(.fixed(width: 350.0, height: 150.0))
         }
     }
 }

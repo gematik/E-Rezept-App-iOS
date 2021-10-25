@@ -237,6 +237,10 @@ struct OnboardingRegisterAuthenticationView: View, KeyboardReadable {
                     .padding(.horizontal)
                     .accessibility(identifier: A11y.onboarding.authentication.onbAuthTxtPasswordRecommendation)
 
+                    PasswordStrengthView(strength: viewStore.passwordStrength)
+                        .padding(.bottom, 16)
+                        .padding(.horizontal)
+
                     VStack(alignment: .leading, spacing: 11) {
                         Divider()
                         SecureFieldWithReveal(

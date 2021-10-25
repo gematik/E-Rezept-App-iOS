@@ -204,7 +204,8 @@ enum OnboardingDomain {
                 appSecurityManager: $0.appSecurityManager,
                 userDataStore: $0.localUserStore,
                 schedulers: $0.schedulers,
-                authenticationChallengeProvider: $0.authenticationChallengeProvider
+                authenticationChallengeProvider: $0.authenticationChallengeProvider,
+                passwordStrengthTester: DefaultPasswordStrengthTester()
             )
         }
 

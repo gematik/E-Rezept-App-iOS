@@ -27,10 +27,8 @@ struct OrderHealthCardView: View {
 
     var body: some View {
         List {
-            Section(header: Header()) {
-                EmptyView()
-            }
-            .textCase(.none)
+            Section(header: Header()) {}
+                .textCase(.none)
 
             Section(
                 header: SectionHeaderView(
@@ -39,17 +37,15 @@ struct OrderHealthCardView: View {
                 ).padding(.bottom, 8),
                 footer: Group {}
             ) {
-                ZStack {
-                    Picker(
-                        selection: $viewModel.healthInsuranceCompanyId,
-                        label: Group {
-                            Text(L10n.orderEgkTxtPickerInsurancePlaceholder)
-                                .foregroundColor(Color(.label))
-                        }
-                    ) {
-                        ForEach(viewModel.insuranceCompanies) { insurance in
-                            Text(insurance.name).tag(insurance.id)
-                        }
+                Picker(
+                    selection: $viewModel.healthInsuranceCompanyId,
+                    label: Group {
+                        Text(L10n.orderEgkTxtPickerInsurancePlaceholder)
+                            .foregroundColor(Color(.label))
+                    }
+                ) {
+                    ForEach(viewModel.insuranceCompanies) { insurance in
+                        Text(insurance.name).tag(insurance.id)
                     }
                 }
             }
@@ -60,26 +56,28 @@ struct OrderHealthCardView: View {
                     Section(header: HintView(hint: hint)) { EmptyView() }
                         .textCase(.none)
                 } else {
-                    Section(
-                        header: SectionHeaderView(
-                            text: L10n.orderEgkTxtPickerServiceHeader,
-                            a11y: A11y.orderEGK.ogkTxtServiceSelectionHeader
-                        ).padding(.bottom, 8)
-                    ) {
-                        NavigationLink(
-                            destination:
-                            OrderHealthCardInquiryOptionsView(
-                                availableInquiries: insuranceCompany.serviceInquiryOptions,
-                                selectedInquiry: $viewModel.serviceInquiryId,
-                                show: $inquiryOptionViewVisible
-                            ),
-                            isActive: $inquiryOptionViewVisible
+                    if insuranceCompany.serviceInquiryOptions.count > 1 {
+                        Section(
+                            header: SectionHeaderView(
+                                text: L10n.orderEgkTxtPickerServiceHeader,
+                                a11y: A11y.orderEGK.ogkTxtServiceSelectionHeader
+                            ).padding(.bottom, 8)
                         ) {
-                            Text(viewModel.serviceInquiry?.localizedName ?? L10n.orderEgkTxtPickerServiceLabel)
-                                .foregroundColor(Color(.label))
+                            NavigationLink(
+                                destination:
+                                OrderHealthCardInquiryOptionsView(
+                                    availableInquiries: insuranceCompany.serviceInquiryOptions,
+                                    selectedInquiry: $viewModel.serviceInquiryId,
+                                    show: $inquiryOptionViewVisible
+                                ),
+                                isActive: $inquiryOptionViewVisible
+                            ) {
+                                Text(viewModel.serviceInquiry?.localizedName ?? L10n.orderEgkTxtPickerServiceLabel)
+                                    .foregroundColor(Color(.label))
+                            }
                         }
+                        .textCase(.none)
                     }
-                    .textCase(.none)
 
                     if let serviceInquiry = viewModel.serviceInquiry {
                         Section(
@@ -160,6 +158,7 @@ struct OrderHealthCardView: View {
                     }
                 }
             }
+            .padding(.top, 16)
         }
     }
 
@@ -171,7 +170,11 @@ struct OrderHealthCardView: View {
         @Published var healthInsuranceCompanyId: UUID {
             didSet {
                 insuranceCompany = insuranceCompanies.first { $0.id == healthInsuranceCompanyId }
-                serviceInquiryId = -1
+                if let inquiryId = insuranceCompany?.serviceInquiryOptions.first {
+                    serviceInquiryId = inquiryId.rawValue
+                } else {
+                    serviceInquiryId = -1
+                }
             }
         }
 
@@ -234,11 +237,11 @@ struct OrderHealthCardView: View {
 
         var serviceInquiryOptions: [ServiceInquiry] {
             var options = [ServiceInquiry]()
-            if hasContactInformationForPin {
-                options.append(.pin)
-            }
             if hasContactInformationForHealthCardAndPin {
                 options.append(.healthCardAndPin)
+            }
+            if hasContactInformationForPin {
+                options.append(.pin)
             }
             return options
         }

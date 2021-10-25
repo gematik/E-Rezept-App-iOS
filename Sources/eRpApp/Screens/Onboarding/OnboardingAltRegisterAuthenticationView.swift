@@ -37,7 +37,7 @@ struct OnboardingAltRegisterAuthenticationView: View {
 
             GreyDivider()
 
-            PrimaryTextButton(text: L10n.cpwBtnSave,
+            PrimaryTextButton(text: L10n.cpwBtnAltAuthSave,
                               a11y: A11y.cardWall.canInput.cdwBtnCanDone,
                               isEnabled: viewStore.state.hasValidSelection) {
                 viewStore.send(.saveSelection)
@@ -274,6 +274,10 @@ struct AltRegistrationView: View, KeyboardReadable {
                     )
                     .padding(.horizontal)
                     .accessibility(identifier: A11y.onboarding.authentication.onbAuthTxtPasswordRecommendation)
+
+                    PasswordStrengthView(strength: viewStore.passwordStrength)
+                        .padding(.bottom, 16)
+                        .padding(.horizontal)
 
                     VStack(alignment: .leading, spacing: 11) {
                         Divider()

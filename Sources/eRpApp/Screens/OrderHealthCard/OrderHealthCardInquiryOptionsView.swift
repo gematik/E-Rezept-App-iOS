@@ -74,6 +74,7 @@ struct OrderHealthCardInquiryOptionsView: View {
                     }
                 }
             }
+            .padding(.top, 8)
         }
     }
 }

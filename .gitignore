@@ -4,8 +4,8 @@
 
 # Generated documentation
 docs
-requirements.csv
-requirements.html
+/requirements.csv
+/requirements.html
 
 # AppCode project files
 .idea/

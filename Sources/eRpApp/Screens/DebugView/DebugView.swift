@@ -31,6 +31,7 @@ struct DebugView: View {
             List {
                 EnvironmentSection(store: store)
                 LogSection(store: store)
+                FeatureFlagsSection()
                 TutorialSection(store: store)
                 LoginSection(store: store)
                 CardWallSection(store: store)
@@ -300,7 +301,7 @@ extension DebugView {
         let store: DebugDomain.Store
 
         var body: some View {
-            Section(header: Text("Login State")) {
+            Section(header: Text("Logging")) {
                 WithViewStore(store) { _ in
                     NavigationLink("Logs", destination: DebugLogsView(
                         store: store.scope(
@@ -371,6 +372,38 @@ extension DebugView {
                     Button("Reset") {
                         viewStore.send(DebugDomain.Action.setServerEnvironment(nil))
                     }
+                }
+            }
+        }
+    }
+
+    private struct FeatureFlagsSection: View {
+        var body: some View {
+            Section(header: Text("Feature Flags")) {
+                NavigationLink(destination: FeatureFlags()) {
+                    Text("Feature Flags")
+                }
+            }
+        }
+
+        private struct FeatureFlags: View {
+            @AppStorage("enable_fast_track") var enableFastTrack = false
+            @AppStorage("enable_fast_track_preview") var enableFastTrackPreview = true
+
+            var body: some View {
+                List {
+                    Toggle("FastTrack", isOn: $enableFastTrack)
+
+                    VStack(alignment: .leading) {
+                        Toggle("FastTrack Preview", isOn: $enableFastTrackPreview)
+                            .foregroundColor(enableFastTrack ? Color(.label) : Color(.secondaryLabel))
+                        Text("Wenn FastTrack eingeschaltet ist, kann hier zwischen 'aktiv' und 'preview' Modus " +
+                            "gewechselt werden.")
+                            .font(.footnote)
+                            .foregroundColor(enableFastTrack ? Color(.secondaryLabel) : Color(.tertiaryLabel))
+                    }
+                    .disabled(!enableFastTrack)
+                    .padding(.leading)
                 }
             }
         }

@@ -58,6 +58,7 @@ struct MessagesView: View {
             .onAppear { viewStore.send(.subscribeToCommunicationChanges) }
             .onDisappear { viewStore.send(.removeSubscription) }
         }
+        .accentColor(Colors.primary700)
         .navigationViewStyle(StackNavigationViewStyle())
     }
 

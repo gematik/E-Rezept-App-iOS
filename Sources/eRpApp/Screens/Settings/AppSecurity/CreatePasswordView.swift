@@ -66,15 +66,21 @@ struct CreatePasswordView: View {
                     text: L10n.cpwTxtSectionTitle,
                     a11y: A11y.settings.createPassword.cpwTxtSectionTitle
                 ),
-                footer: FootnoteView(
-                    text: L10n.cpwTxtPasswordRecommendation,
-                    a11y: A11y.settings.createPassword.cpwTxtPasswordRecommendation
-                )
+                footer: VStack(spacing: 8) {
+                    FootnoteView(
+                        text: L10n.cpwTxtPasswordRecommendation,
+                        a11y: A11y.settings.createPassword.cpwTxtPasswordRecommendation
+                    )
+
+                    PasswordStrengthView(strength: viewStore.passwordStrength)
+                }
             ) {
-                SecureFieldWithReveal(L10n.cpwInpPasswordAPlaceholder,
-                                      text: passwordA,
-                                      textContentType: .newPassword) {}
-                    .accessibility(identifier: A11y.settings.createPassword.cpwInpPasswordA)
+                VStack {
+                    SecureFieldWithReveal(L10n.cpwInpPasswordAPlaceholder,
+                                          text: passwordA,
+                                          textContentType: .newPassword) {}
+                        .accessibility(identifier: A11y.settings.createPassword.cpwInpPasswordA)
+                }
             }
             .textCase(.none)
 

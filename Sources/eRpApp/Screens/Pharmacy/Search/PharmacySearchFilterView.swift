@@ -60,6 +60,8 @@ struct PharmacySearchFilterView: View {
                 }
             }
         }
+        .accentColor(Colors.primary700)
+        .navigationViewStyle(StackNavigationViewStyle())
     }
 
     private struct PharmacyFilterCell: View {

@@ -115,7 +115,7 @@ struct CardWallCANView<Content: View>: View {
                             .padding(.horizontal)
 
                         EmptyView()
-                            .sheet(isPresented: viewStore.binding(
+                            .fullScreenCover(isPresented: viewStore.binding(
                                 get: \.isEGKOrderInfoViewPresented,
                                 send: CardWallCANDomain.Action.dismissEGKOrderInfoView
                             )) {
@@ -123,7 +123,9 @@ struct CardWallCANView<Content: View>: View {
                                     OrderHealthCardView {
                                         viewStore.send(.dismissEGKOrderInfoView)
                                     }
-                                }.navigationViewStyle(StackNavigationViewStyle())
+                                }
+                                .accentColor(Colors.primary700)
+                                .navigationViewStyle(StackNavigationViewStyle())
                             }
 
                         HintView<CardWallCANDomain.Action>(

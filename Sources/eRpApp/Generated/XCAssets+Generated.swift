@@ -34,6 +34,7 @@ internal enum Asset {
     internal static let pinLetter = ImageAsset(name: "pinLetter")
   }
   internal enum Colors {
+    internal static let disabled = ColorAsset(name: "disabled")
     internal static let primary100 = ColorAsset(name: "primary100")
     internal static let primary200 = ColorAsset(name: "primary200")
     internal static let primary300 = ColorAsset(name: "primary300")
@@ -80,6 +81,7 @@ internal enum Asset {
     internal static let ladyDeveloperBlueCircle = ImageAsset(name: "LadyDeveloper_BlueCircle")
     internal static let womanBlueCircle = ImageAsset(name: "Woman_BlueCircle")
     internal static let egkBlau = ImageAsset(name: "egkBlau")
+    internal static let mannkarteCircle = ImageAsset(name: "mannkarte_circle")
     internal static let pharmacistArmRedCirle = ImageAsset(name: "pharmacistArm_RedCirle")
     internal static let pharmacistf1 = ImageAsset(name: "pharmacistf1")
     internal static let practitionerf1 = ImageAsset(name: "practitionerf1")

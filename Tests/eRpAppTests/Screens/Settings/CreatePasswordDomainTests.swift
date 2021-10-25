@@ -33,6 +33,7 @@ final class CreatePasswordDomainTests: XCTestCase {
     override func setUp() {
         super.setUp()
         mockPasswordManager = MockAppSecurityManager()
+        mockPasswordStrengthTester = MockPasswordStrengthTester()
     }
 
     func testStore(for state: CreatePasswordDomain.State) -> TestStore {
@@ -40,16 +41,19 @@ final class CreatePasswordDomainTests: XCTestCase {
                   reducer: CreatePasswordDomain.reducer,
                   environment: CreatePasswordDomain.Environment(
                       passwordManager: mockPasswordManager,
-                      schedulers: Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler())
+                      schedulers: Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler()),
+                      passwordStrengthTester: mockPasswordStrengthTester
                   ))
     }
 
     let emptyPasswords = CreatePasswordDomain.State(mode: .create, passwordA: "", passwordB: "")
     let testScheduler = DispatchQueue.test
     var mockPasswordManager: MockAppSecurityManager!
+    var mockPasswordStrengthTester: MockPasswordStrengthTester!
 
     func testSetPasswordA() {
         let store = testStore(for: emptyPasswords)
+        mockPasswordStrengthTester.passwordStrengthForReturnValue = PasswordStrength.none
 
         store.send(.setPasswordA("MyPasswordA")) { state in
             state.passwordA = "MyPasswordA"
@@ -60,6 +64,7 @@ final class CreatePasswordDomainTests: XCTestCase {
 
     func testSetPasswordB() {
         let store = testStore(for: emptyPasswords)
+        mockPasswordStrengthTester.passwordStrengthForReturnValue = PasswordStrength.none
 
         store.send(.setPasswordB("MyPasswordB")) { state in
             state.passwordB = "MyPasswordB"
@@ -70,6 +75,7 @@ final class CreatePasswordDomainTests: XCTestCase {
 
     func testComparePasswords() {
         let store = testStore(for: emptyPasswords)
+        mockPasswordStrengthTester.passwordStrengthForReturnValue = PasswordStrength.none
 
         store.send(.setPasswordA("MyPassword")) { state in
             state.passwordA = "MyPassword"
@@ -95,6 +101,8 @@ final class CreatePasswordDomainTests: XCTestCase {
     }
 
     func testShowPasswordsNotEqualMessageTiming() {
+        mockPasswordStrengthTester.passwordStrengthForReturnValue = .excellent
+
         let store = testStore(for: .init(mode: .create,
                                          passwordA: "ABC",
                                          passwordB: "ABC",
@@ -134,6 +142,7 @@ final class CreatePasswordDomainTests: XCTestCase {
                 mode: .create,
                 passwordA: "",
                 passwordB: "ABC",
+                passwordStrength: .excellent,
                 showPasswordsNotEqualMessage: false
             )
         )
@@ -153,6 +162,7 @@ final class CreatePasswordDomainTests: XCTestCase {
                 mode: .create,
                 passwordA: "ABC",
                 passwordB: "ABC",
+                passwordStrength: .excellent,
                 showPasswordsNotEqualMessage: false
             )
         )
@@ -201,6 +211,7 @@ final class CreatePasswordDomainTests: XCTestCase {
                 mode: .create,
                 passwordA: "ABC",
                 passwordB: "ABC",
+                passwordStrength: .excellent,
                 showPasswordsNotEqualMessage: false
             )
         )
@@ -217,6 +228,7 @@ final class CreatePasswordDomainTests: XCTestCase {
                 password: "abc",
                 passwordA: "ABC",
                 passwordB: "ABC",
+                passwordStrength: .excellent,
                 showPasswordsNotEqualMessage: false
             )
         )
@@ -238,6 +250,7 @@ final class CreatePasswordDomainTests: XCTestCase {
                 password: "abc",
                 passwordA: "ABC",
                 passwordB: "ABC",
+                passwordStrength: .excellent,
                 showPasswordsNotEqualMessage: false
             )
         )
@@ -260,6 +273,7 @@ final class CreatePasswordDomainTests: XCTestCase {
                 password: "abc",
                 passwordA: "ABC",
                 passwordB: "ABCD",
+                passwordStrength: .excellent,
                 showPasswordsNotEqualMessage: false
             )
         )
@@ -273,6 +287,46 @@ final class CreatePasswordDomainTests: XCTestCase {
         }
         expect(self.mockPasswordManager.matchesPasswordCalled).to(beTrue())
         expect(self.mockPasswordManager.savePasswordCalled).to(beFalse())
+    }
+
+    func testSaveFailsIfPasswordStrengthLow() {
+        let store = testStore(
+            for: .init(
+                mode: .create,
+                password: "",
+                passwordA: "abc",
+                passwordB: "abc",
+                passwordStrength: .veryWeak,
+                showPasswordsNotEqualMessage: false,
+                showOriginalPasswordWrong: false
+            )
+        )
+
+        store.send(.saveButtonTapped)
+        expect(self.mockPasswordManager.savePasswordCallsCount).to(equal(0))
+    }
+
+    func testSetPasswordTriggersSetPasswordStrength() {
+        let store = testStore(
+            for: .init(
+                mode: .create,
+                password: "",
+                passwordA: "",
+                passwordB: "",
+                showPasswordsNotEqualMessage: false
+            )
+        )
+
+        mockPasswordStrengthTester.passwordStrengthForReturnValue = PasswordStrength.excellent
+
+        store.send(.setPasswordA("abc")) { state in
+            state.passwordA = "abc"
+            state.passwordStrength = .excellent
+        }
+        expect(self.mockPasswordStrengthTester.passwordStrengthForCallsCount).to(equal(1))
+
+        testScheduler.run()
+        store.receive(.comparePasswords)
     }
 }
 

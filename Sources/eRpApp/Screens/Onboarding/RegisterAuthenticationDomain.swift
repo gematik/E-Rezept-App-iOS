@@ -21,6 +21,7 @@ import ComposableArchitecture
 import eRpKit
 import LocalAuthentication
 import SwiftUI
+import Zxcvbn
 
 enum RegisterAuthenticationDomain {
     typealias Store = ComposableArchitecture.Store<State, Action>
@@ -41,6 +42,7 @@ enum RegisterAuthenticationDomain {
         var selectedSecurityOption: AppSecurityOption?
         var passwordA: String = ""
         var passwordB: String = ""
+        var passwordStrength = PasswordStrength.none
         var showPasswordsNotEqualMessage = false
         var showNoSelectionMessage = false
         var securityOptionsError: AppSecurityManagerError?
@@ -80,6 +82,7 @@ enum RegisterAuthenticationDomain {
         let userDataStore: UserDataStore
         let schedulers: Schedulers
         let authenticationChallengeProvider: AuthenticationChallengeProvider
+        let passwordStrengthTester: PasswordStrengthTester
     }
 
     static let domainReducer = Reducer { state, action, environment in
@@ -127,6 +130,7 @@ enum RegisterAuthenticationDomain {
             state.alertState = nil
             return .none
         case let .setPasswordA(string):
+            state.passwordStrength = environment.passwordStrengthTester.passwordStrength(for: string)
             state.selectedSecurityOption = .password
             state.passwordA = string
             return Effect(value: .comparePasswords)
@@ -169,6 +173,10 @@ enum RegisterAuthenticationDomain {
             }
 
             if case .password = selectedOption {
+                guard state.passwordStrength.minimumThreshold else {
+                    return .none
+                }
+
                 guard let success = try? environment.appSecurityManager
                     .save(password: state.passwordA),
                     success == true else {
@@ -196,11 +204,13 @@ extension RegisterAuthenticationDomain {
     enum Dummies {
         static let state = State(availableSecurityOptions: [.password, .biometry(.faceID)])
 
-        static let environment = Environment(appSecurityManager: DummyAppSecurityManager(),
-                                             userDataStore: DemoUserDefaultsStore(),
-                                             schedulers: AppContainer.shared.schedulers,
-                                             authenticationChallengeProvider: BiometricsAuthenticationChallengeProvider(
-                                             ))
+        static let environment = Environment(
+            appSecurityManager: DummyAppSecurityManager(),
+            userDataStore: DemoUserDefaultsStore(),
+            schedulers: AppContainer.shared.schedulers,
+            authenticationChallengeProvider: BiometricsAuthenticationChallengeProvider(),
+            passwordStrengthTester: DefaultPasswordStrengthTester()
+        )
 
         static let store = Store(
             initialState: state,
@@ -217,7 +227,8 @@ extension RegisterAuthenticationDomain {
                                                                 error: state.securityOptionsError),
                     userDataStore: DemoUserDefaultsStore(),
                     schedulers: AppContainer.shared.schedulers,
-                    authenticationChallengeProvider: BiometricsAuthenticationChallengeProvider()
+                    authenticationChallengeProvider: BiometricsAuthenticationChallengeProvider(),
+                    passwordStrengthTester: DefaultPasswordStrengthTester()
                 )
             )
         }

@@ -30,44 +30,37 @@ struct ContactOptionsRowView: View {
     }
 
     var body: some View {
-        HStack {
-            ContactCellButtonView(
-                symbolName: SFSymbolName.phone,
-                text: L10n.orderEgkTxtContactOptionTelephone,
-                a11y: A11y.orderEGK.ogkBtnPhone,
-                isEnabled: phone != nil
-            ) {
-                if let phone = phone,
-                   UIApplication.shared.canOpenURL(phone) {
-                    UIApplication.shared.open(phone)
+        VStack(spacing: 16) {
+            if let phone = phone {
+                PrimaryTextButtonBorder(text: L10n.orderEgkTxtContactOptionTelephone,
+                                        image: Image(systemName: SFSymbolName.phone)) {
+                    if UIApplication.shared.canOpenURL(phone) {
+                        UIApplication.shared.open(phone)
+                    }
                 }
+                .accessibility(identifier: A11y.orderEGK.ogkBtnPhone)
             }
 
-            ContactCellButtonView(
-                symbolName: SFSymbolName.safari,
-                text: L10n.orderEgkTxtContactOptionWeb,
-                a11y: A11y.orderEGK.ogkBtnWeb,
-                isEnabled: web != nil
-            ) {
-                if let web = web,
-                   UIApplication.shared.canOpenURL(web) {
-                    UIApplication.shared.open(web)
+            if let web = web {
+                PrimaryTextButtonBorder(text: L10n.orderEgkTxtContactOptionWeb,
+                                        image: Image(systemName: SFSymbolName.safari)) {
+                    if UIApplication.shared.canOpenURL(web) {
+                        UIApplication.shared.open(web)
+                    }
                 }
+                .accessibility(identifier: A11y.orderEGK.ogkBtnWeb)
             }
 
-            ContactCellButtonView(
-                symbolName: SFSymbolName.envelope,
-                text: L10n.orderEgkTxtContactOptionMail,
-                a11y: A11y.orderEGK.ogkBtnMail,
-                isEnabled: email != nil
-            ) {
-                if let email = email,
-                   UIApplication.shared.canOpenURL(email) {
-                    UIApplication.shared.open(email)
+            if let email = email {
+                PrimaryTextButtonBorder(text: L10n.orderEgkTxtContactOptionMail,
+                                        image: Image(systemName: SFSymbolName.envelope)) {
+                    if UIApplication.shared.canOpenURL(email) {
+                        UIApplication.shared.open(email)
+                    }
                 }
+                .accessibility(identifier: A11y.orderEGK.ogkBtnMail)
             }
         }
-        .padding(.horizontal)
     }
 
     private struct ContactCellButtonView: View {

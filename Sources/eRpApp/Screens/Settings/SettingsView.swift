@@ -75,6 +75,7 @@ struct SettingsView: View {
                 .edgesIgnoringSafeArea(.bottom)
                 .demoBanner(isPresented: viewStore.state.isDemoMode)
             }
+            .accentColor(Colors.primary700)
             .navigationViewStyle(StackNavigationViewStyle())
             .alert(
                 self.store.scope(state: \.alertState),
@@ -318,6 +319,8 @@ struct SettingsView: View {
                     }
                 }
             }
+            .accentColor(Colors.primary700)
+            .navigationViewStyle(StackNavigationViewStyle())
         }
     }
 }

@@ -42,6 +42,8 @@ final class CardWallSnapshotTests: XCTestCase {
             )
         )
 
+        // This snapshots are subject to feature flags.
+        // If these test fail, delete the app within your simulator and restart the test.
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())

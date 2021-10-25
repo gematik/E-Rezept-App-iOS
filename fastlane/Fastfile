@@ -729,7 +729,7 @@ lane :compile_foss do
   }
 
   erb_path = File.join(File.dirname(__FILE__), '..', 'Templates', 'ERB', 'FOSS.html.erb')
-  erb_out_path = erb_path.sub('.erb','').sub('/Templates/ERB','/Sources/eRpApp/Resources/Base.lproj')
+  erb_out_path = erb_path.sub('.erb','').sub('/Templates/ERB','/Sources/eRpApp/Resources/en-GB.lproj')
   erb = ERB.new(File.read(erb_path))
 
 

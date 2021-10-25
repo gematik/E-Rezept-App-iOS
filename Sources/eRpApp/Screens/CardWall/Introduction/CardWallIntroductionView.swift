@@ -104,7 +104,7 @@ extension CardWallIntroductionView {
                             .accessibility(identifier: A11y.cardWall.intro.cdwBtnIntroMore)
 
                             EmptyView()
-                                .sheet(isPresented: viewStore.binding(
+                                .fullScreenCover(isPresented: viewStore.binding(
                                     get: \.isEGKOrderInfoViewPresented,
                                     send: CardWallIntroductionDomain.Action.dismissEGKOrderInfoView
                                 )) {
@@ -112,7 +112,9 @@ extension CardWallIntroductionView {
                                         OrderHealthCardView {
                                             viewStore.send(.dismissEGKOrderInfoView)
                                         }
-                                    }.navigationViewStyle(StackNavigationViewStyle())
+                                    }
+                                    .accentColor(Colors.primary700)
+                                    .navigationViewStyle(StackNavigationViewStyle())
                                 }
                         }.padding()
 

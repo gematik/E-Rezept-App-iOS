@@ -2,7 +2,7 @@ output: docs
 author: gematik GmbH
 author_url: https://www.gematik.de
 exclude: /*/internal*
-github_url: https://github.com/gematik/eRezept-iOS
+github_url: https://github.com/gematik/E-Rezept-App-iOS
 theme: fullwidth
 swift_build_tool: xcodebuild
 documentation:

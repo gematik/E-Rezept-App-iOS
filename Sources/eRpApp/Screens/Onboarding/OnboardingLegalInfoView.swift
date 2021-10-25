@@ -119,6 +119,8 @@ extension OnboardingLegalInfoView {
                                 CloseButton { showTermsOfUse = false }
                             }
                     }
+                    .accentColor(Colors.primary700)
+                    .navigationViewStyle(StackNavigationViewStyle())
                 }
 
                 Spacer()
@@ -168,6 +170,8 @@ extension OnboardingLegalInfoView {
                                 CloseButton { showTermsOfPrivacy = false }
                             }
                     }
+                    .accentColor(Colors.primary700)
+                    .navigationViewStyle(StackNavigationViewStyle())
                 }
 
                 Spacer()

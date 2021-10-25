@@ -141,7 +141,8 @@ enum AppSecurityDomain {
             action: /AppSecurityDomain.Action.createPassword(action:)
         ) { global in
             CreatePasswordDomain.Environment(passwordManager: global.appSecurityManager,
-                                             schedulers: global.schedulers)
+                                             schedulers: global.schedulers,
+                                             passwordStrengthTester: DefaultPasswordStrengthTester())
         }
 
     static let reducer = Reducer.combine(
