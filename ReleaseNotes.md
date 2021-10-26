@@ -1,3 +1,29 @@
+# Release 1.1.0-RC3
+
+### added (5 changes)
+
+- Add additional jailbreak detection
+- Add external authentication implementation to IDPClient as IDPService as well as simple initial UI
+- Add UI for upcoming external authentication feature
+- Add FeatureFlag for external authentication
+- Add dedicated redirect_uri for external authentication
+- Add new order health card screens with optional support for mail, phone and web
+- Add password strength indicator and mandatory password strength
+
+### changed (1 change)
+
+- Change App Icon to new Design
+
+### fixed (1 change)
+
+- Fix wording for onboarding password dialog in case of an update
+- Fix mandatory password for normal onboarding screen
+
+### internal (2 changes)
+
+- Execute parametrizable intergration tests (in Jenkins)
+- Add Konny app variant
+
 # Release 1.1.0-RC2
 
 ### added (5 changes)

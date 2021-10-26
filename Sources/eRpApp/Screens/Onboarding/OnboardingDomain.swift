@@ -171,9 +171,10 @@ enum OnboardingDomain {
             }
 
             if case .password = selectedOption {
-                guard let success = try? environment.appSecurityManager
-                    .save(password: state.registerAuthenticationState.passwordA),
-                    success == true else {
+                guard state.registerAuthenticationState.passwordStrength.minimumThreshold,
+                      let success = try? environment.appSecurityManager
+                      .save(password: state.registerAuthenticationState.passwordA),
+                      success == true else {
                     state.composition.setPage(.registerAuthentication)
                     state.registerAuthenticationState.showNoSelectionMessage = true
                     return .none

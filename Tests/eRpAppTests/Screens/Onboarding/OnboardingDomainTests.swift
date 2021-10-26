@@ -78,6 +78,27 @@ final class OnboardingDomainTests: XCTestCase {
         expect(self.mockUserDataStore.setOnboardingVersionCalled).to(beFalse())
     }
 
+    func testSavingAuthenticationWithUnsafePassword() {
+        let authenticationState = RegisterAuthenticationDomain.State(
+            availableSecurityOptions: [],
+            selectedSecurityOption: .password,
+            passwordA: "ABC",
+            passwordB: "ABC",
+            passwordStrength: .veryWeak
+        )
+
+        let store = testStore(
+            with: OnboardingDomain.State(composition: OnboardingDomain.Composition.allPages,
+                                         registerAuthenticationState: authenticationState)
+        )
+
+        store.send(.saveAuthentication) { state in
+            state.composition.setPage(OnboardingDomain.Page.registerAuthentication)
+            state.registerAuthenticationState.showNoSelectionMessage = true
+        }
+        expect(self.mockUserDataStore.setOnboardingVersionCalled).to(beFalse())
+    }
+
     func testSavingAuthenticationWithCorrectPassword() {
         let selectedOption: AppSecurityOption = .password
         mockAppSecurityManager.savePasswordReturnValue = true
@@ -85,7 +106,8 @@ final class OnboardingDomainTests: XCTestCase {
             availableSecurityOptions: [],
             selectedSecurityOption: .password,
             passwordA: "ABC",
-            passwordB: "ABC"
+            passwordB: "ABC",
+            passwordStrength: .excellent
         )
         let store = testStore(
             with: OnboardingDomain.State(composition: OnboardingDomain.Composition.allPages,

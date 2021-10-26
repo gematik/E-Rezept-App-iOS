@@ -273,6 +273,7 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
                 selectedSecurityOption: .password,
                 passwordA: "ABC",
                 passwordB: "",
+                passwordStrength: .strong,
                 showPasswordsNotEqualMessage: false,
                 showNoSelectionMessage: false,
                 securityOptionsError: nil,

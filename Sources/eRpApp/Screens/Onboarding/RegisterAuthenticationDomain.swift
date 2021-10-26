@@ -60,7 +60,7 @@ enum RegisterAuthenticationDomain {
         }
 
         var hasValidPasswordEntries: Bool {
-            passwordA == passwordB && passwordA.lengthOfBytes(using: .utf8) > 0
+            passwordA == passwordB && passwordStrength.minimumThreshold
         }
     }
 
@@ -160,6 +160,11 @@ enum RegisterAuthenticationDomain {
                 .eraseToEffect()
                 .cancellable(id: Token.comparePasswords, cancelInFlight: true)
         case .saveSelection:
+            guard state.selectedSecurityOption != .password ||
+                state.passwordStrength.minimumThreshold else {
+                return .none
+            }
+
             guard state.hasValidSelection,
                   let selectedOption = state.selectedSecurityOption else {
                 if state.selectedSecurityOption == .password {
@@ -173,10 +178,6 @@ enum RegisterAuthenticationDomain {
             }
 
             if case .password = selectedOption {
-                guard state.passwordStrength.minimumThreshold else {
-                    return .none
-                }
-
                 guard let success = try? environment.appSecurityManager
                     .save(password: state.passwordA),
                     success == true else {
