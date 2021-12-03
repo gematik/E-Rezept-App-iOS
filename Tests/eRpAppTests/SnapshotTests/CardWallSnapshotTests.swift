@@ -50,7 +50,7 @@ final class CardWallSnapshotTests: XCTestCase {
     }
 
     func testFastTrackFallbackView() {
-        let sut = CardWallInsuranceSelectionInactiveView(closeAction: {})
+        let sut = CardWallExtAuthFallbackView(closeAction: {})
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())

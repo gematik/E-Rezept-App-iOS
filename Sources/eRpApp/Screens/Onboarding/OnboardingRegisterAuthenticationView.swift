@@ -255,8 +255,8 @@ struct OnboardingRegisterAuthenticationView: View, KeyboardReadable {
                         .padding(.horizontal)
                         Divider()
 
-                        if viewStore.showPasswordsNotEqualMessage {
-                            Text(L10n.cpwTxtPasswordsDontMatch)
+                        if let message = viewStore.passwordErrorMessage {
+                            Text(message)
                                 .fixedSize(horizontal: false, vertical: true)
                                 .foregroundColor(Colors.red600)
                                 .font(.footnote)

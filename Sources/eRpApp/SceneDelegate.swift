@@ -23,8 +23,8 @@ import SwiftUI
 import UIKit
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing {
-    var mainWindow,
-        authenticationWindow: UIWindow?
+    var mainWindow: UIWindow?
+    var authenticationWindow: UIWindow?
 
     var routerStore: RouterStore<AppStartDomain.State, AppStartDomain.Action, AppStartDomain.Environment>?
 
@@ -82,7 +82,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing {
         routerStore = routableAppStore
 
         if let windowScene = scene as? UIWindowScene {
-            authenticationWindow = UIWindow(windowScene: windowScene)
             mainWindow = UIWindow(windowScene: windowScene)
             mainWindow?.rootViewController = UIHostingController(
                 rootView: AppStartView(store: routableAppStore.wrappedStore)
@@ -101,8 +100,15 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing {
 
     func sceneWillResignActive(_: UIScene) {}
 
-    func sceneWillEnterForeground(_: UIScene) {
+    func sceneWillEnterForeground(_ scene: UIScene) {
         removeBlurOverlayFromWindow()
+
+        guard let windowScene = scene as? UIWindowScene else {
+            // prevent using the app if authentication view can't be presented
+            mainWindow?.rootViewController = nil
+            return
+        }
+
         // This must be raw userDefaults access, demo session should *not* interfere with user authentication
         let standardUserDataStore = UserDefaultsStore(userDefaults: .standard)
 
@@ -125,18 +131,21 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing {
                 // background color is lost after window switch, reset it to black
                 self.mainWindow?.backgroundColor = UIColor.black
                 self.authenticationWindow?.rootViewController = nil
+                self.authenticationWindow = nil
             }
         )
 
+        mainWindow?.accessibilityElementsHidden = true
+        authenticationWindow = UIWindow(windowScene: windowScene)
         authenticationWindow?.rootViewController = UIHostingController(
             // [REQ:gemSpec_BSI_FdV:A_20834] mandatory app authentication
             rootView: AppAuthenticationView(store: appAuthenticationStore)
         )
-        mainWindow?.accessibilityElementsHidden = true
         authenticationWindow?.makeKeyAndVisible()
     }
 
     func sceneDidEnterBackground(_: UIScene) {
+        authenticationWindow = nil
         addBlurOverlayToWindow()
     }
 

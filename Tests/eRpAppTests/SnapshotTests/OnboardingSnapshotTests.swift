@@ -25,6 +25,11 @@ import XCTest
 final class OnboardingSnapshotTests: XCTestCase {
     let next: (() -> Void) = {}
 
+    override func setUp() {
+        super.setUp()
+        diffTool = "open"
+    }
+
     func testOnboardingStartView() {
         let sut = OnboardingStartView()
             .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
@@ -81,17 +86,41 @@ final class OnboardingSnapshotTests: XCTestCase {
         assertSnapshots(matching: sut, as: snapshotModi())
     }
 
-    func testOnboardingRegisterAuthenticationView_WithWrongPasswordOption() {
-        let state = RegisterAuthenticationDomain.State(
-            availableSecurityOptions: [.password, .biometry(.touchID)],
-            selectedSecurityOption: AppSecurityOption.password,
-            passwordA: "Abc",
-            showPasswordsNotEqualMessage: true
+    func testOnboardingRegisterAuthenticationView_WithNonEqualPasswords() {
+        let store = RegisterAuthenticationDomain.Store(
+            initialState: RegisterAuthenticationDomain.State(
+                availableSecurityOptions: [.password, .biometry(.touchID)],
+                selectedSecurityOption: .password,
+                passwordA: "Abc",
+                passwordB: "A",
+                passwordStrength: .strong,
+                showPasswordErrorMessage: true
+            ),
+            reducer: RegisterAuthenticationDomain.Reducer.empty,
+            environment: RegisterAuthenticationDomain.Dummies.environment
         )
-        let sut = OnboardingRegisterAuthenticationView(
-            store: RegisterAuthenticationDomain.Dummies.store(with: state)
+
+        let sut = OnboardingRegisterAuthenticationView(store: store)
+            .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
+        assertSnapshots(matching: sut, as: snapshotModi())
+    }
+
+    func testOnboardingRegisterAuthenticationView_WithInsufficientPasswordStrength() {
+        let store = RegisterAuthenticationDomain.Store(
+            initialState: RegisterAuthenticationDomain.State(
+                availableSecurityOptions: [.password, .biometry(.touchID)],
+                selectedSecurityOption: .password,
+                passwordA: "Abc",
+                passwordB: "Abc",
+                passwordStrength: .veryWeak,
+                showPasswordErrorMessage: true
+            ),
+            reducer: RegisterAuthenticationDomain.Reducer.empty,
+            environment: RegisterAuthenticationDomain.Dummies.environment
         )
-        .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
+
+        let sut = OnboardingRegisterAuthenticationView(store: store)
+            .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
         assertSnapshots(matching: sut, as: snapshotModi())
     }
 

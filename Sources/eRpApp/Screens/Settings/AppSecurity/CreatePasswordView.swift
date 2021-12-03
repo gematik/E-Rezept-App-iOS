@@ -100,8 +100,8 @@ struct CreatePasswordView: View {
 
     private func saveButtonAndError() -> some View {
         VStack(alignment: .leading) {
-            if viewStore.showPasswordsNotEqualMessage {
-                Text(L10n.cpwTxtPasswordsDontMatch)
+            if let error = viewStore.passwordErrorMessage {
+                Text(error)
                     .foregroundColor(Colors.red600)
                     .font(.footnote)
             }

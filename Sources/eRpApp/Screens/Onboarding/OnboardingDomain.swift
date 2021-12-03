@@ -171,7 +171,7 @@ enum OnboardingDomain {
             }
 
             if case .password = selectedOption {
-                guard state.registerAuthenticationState.passwordStrength.minimumThreshold,
+                guard state.registerAuthenticationState.passwordStrength.isMinimumThreshold,
                       let success = try? environment.appSecurityManager
                       .save(password: state.registerAuthenticationState.passwordA),
                       success == true else {

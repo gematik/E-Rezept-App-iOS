@@ -1,3 +1,22 @@
+# Release 1.1.1
+
+Update, regarding the `1.1.0 RC` Releases: We accidentally tagged recent commits with wrong version labels. These were meant to be named `1.1.1 RC`. The actual 1.1.0 (without the `RC`) is tagged correctly.
+
+### added
+
+- Add password strength indicator and mandatory password strength
+- Add localization for weekday names within pharmacies details
+
+### internal
+
+- Add parameterization for localization to stencils
+- Move some CI tasks to Fastfile
+
+### fixed
+
+- Fix layouts for alternate authentication app selection screen
+- Fix authentication window to be created with the correct scene so that onDismiss and onAppear are called in the correct order
+
 # Release 1.1.0-RC3
 
 ### added (5 changes)

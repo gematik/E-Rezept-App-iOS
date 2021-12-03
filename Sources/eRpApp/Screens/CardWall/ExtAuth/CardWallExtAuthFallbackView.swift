@@ -18,7 +18,7 @@
 
 import SwiftUI
 
-struct CardWallInsuranceSelectionInactiveView: View {
+struct CardWallExtAuthFallbackView: View {
     var closeAction: () -> Void
 
     @State var presentOderEGK = false
@@ -26,14 +26,14 @@ struct CardWallInsuranceSelectionInactiveView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 8) {
-                Text(L10n.cdwTxtFtfbHeadline)
+                Text(L10n.cdwTxtExtauthFallbackHeadline)
                     .font(.title3.bold())
                     .padding(.bottom, 8)
 
-                Text(L10n.cdwTxtFtfbDescription1)
+                Text(L10n.cdwTxtExtauthFallbackDescription1)
                     .font(.subheadline)
                     .foregroundColor(Color(.secondaryLabel))
-                Text(L10n.cdwTxtFtfbDescription2)
+                Text(L10n.cdwTxtExtauthFallbackDescription2)
                     .font(.subheadline)
                     .foregroundColor(Color(.secondaryLabel))
                 Button {
@@ -41,12 +41,12 @@ struct CardWallInsuranceSelectionInactiveView: View {
                 } label: {
                     HStack {
                         Spacer()
-                        Text(L10n.cdwBtnFtfbOrderEgk)
+                        Text(L10n.cdwBtnExtauthFallbackOrderEgk)
                             .font(.subheadline)
                             .foregroundColor(Colors.primary)
                     }
                 }
-                .accessibility(identifier: A11y.cardWall.fasttrackFallback.cdwBtnFtfbOrderegk)
+                .accessibility(identifier: A11y.cardWall.extAuthFallback.cdwBtnExtauthFallbackOrderegk)
             }
             .padding()
             .fullScreenCover(isPresented: $presentOderEGK) {
@@ -63,17 +63,17 @@ struct CardWallInsuranceSelectionInactiveView: View {
             trailing: NavigationBarCloseItem {
                 closeAction()
             }
-            .accessibility(identifier: A11y.cardWall.fasttrackFallback.cdwBtnFtfbCancel)
+            .accessibility(identifier: A11y.cardWall.extAuthFallback.cdwBtnExtauthFallbackCancel)
         )
-        .navigationTitle(L10n.cdwTxtFtfbTitle)
+        .navigationTitle(L10n.cdwTxtExtauthFallbackTitle)
         .navigationBarTitleDisplayMode(.inline)
     }
 }
 
-struct CardWallInsuranceSelectionInactiveView_Previews: PreviewProvider {
+struct CardWallExtAuthSelectionInactiveView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
-            CardWallInsuranceSelectionInactiveView {}
+            CardWallExtAuthFallbackView {}
         }
     }
 }

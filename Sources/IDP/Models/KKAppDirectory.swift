@@ -19,6 +19,10 @@
 import Foundation
 
 public struct KKAppDirectory: Codable, Equatable, Claims {
+    public init(apps: [KKAppDirectory.Entry]) {
+        self.apps = apps
+    }
+
     public let apps: [Entry]
 
     enum CodingKeys: String, CodingKey {
@@ -26,6 +30,11 @@ public struct KKAppDirectory: Codable, Equatable, Claims {
     }
 
     public struct Entry: Codable, Equatable {
+        public init(name: String, identifier: String) {
+            self.name = name
+            self.identifier = identifier
+        }
+
         public let name: String
         public let identifier: String
 

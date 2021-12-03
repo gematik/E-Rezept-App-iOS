@@ -75,14 +75,14 @@ final class AppAuthenticationDomainTests: XCTestCase {
         let store = testStore(for: .biometry(.faceID))
         userDataStore.underlyingFailedAppAuthentications.send(0) // no failed authentications
 
-        store.send(.loadAppAuthenticationOption)
+        store.send(.onAppear)
         store.receive(.failedAppAuthenticationsReceived(0)) {
             $0.biometrics = nil
             $0.password = nil
             $0.failedAuthenticationsCount = 0
             $0.didCompleteAuthentication = false
         }
-        store.receive(.loadAppAuthenticationOptionResponse(.biometry(.faceID))) {
+        store.receive(.loadAppAuthenticationOptionResponse(.biometry(.faceID), 0)) {
             $0.biometrics = AppAuthenticationBiometricsDomain.State(
                 biometryType: .faceID,
                 startImmediateAuthenticationChallenge: true
@@ -98,14 +98,14 @@ final class AppAuthenticationDomainTests: XCTestCase {
         let store = testStore(for: .biometry(.faceID))
         userDataStore.underlyingFailedAppAuthentications.send(1)
 
-        store.send(.loadAppAuthenticationOption)
+        store.send(.onAppear)
         store.receive(.failedAppAuthenticationsReceived(1)) {
             $0.biometrics = nil
             $0.password = nil
             $0.failedAuthenticationsCount = 1
             $0.didCompleteAuthentication = false
         }
-        store.receive(.loadAppAuthenticationOptionResponse(.biometry(.faceID))) {
+        store.receive(.loadAppAuthenticationOptionResponse(.biometry(.faceID), 1)) {
             $0.biometrics = AppAuthenticationBiometricsDomain.State(
                 biometryType: .faceID,
                 startImmediateAuthenticationChallenge: false
@@ -160,14 +160,14 @@ final class AppAuthenticationDomainTests: XCTestCase {
         let testStore = testStore(for: .password)
         userDataStore.appSecurityOption = Just(3).eraseToAnyPublisher()
 
-        testStore.send(.loadAppAuthenticationOption)
+        testStore.send(.onAppear)
         testStore.receive(.failedAppAuthenticationsReceived(0)) {
             $0.biometrics = nil
             $0.password = nil
             $0.failedAuthenticationsCount = 0
             $0.didCompleteAuthentication = false
         }
-        testStore.receive(.loadAppAuthenticationOptionResponse(.password)) { state in
+        testStore.receive(.loadAppAuthenticationOptionResponse(.password, 0)) { state in
             state.password = AppAuthenticationPasswordDomain.State()
         }
         testStore.send(.removeSubscriptions)
@@ -176,7 +176,7 @@ final class AppAuthenticationDomainTests: XCTestCase {
     func testLoadingPasswordAppAuthenticationResponse() {
         let testStore = testStore(for: .password)
 
-        testStore.send(.loadAppAuthenticationOptionResponse(.password)) { state in
+        testStore.send(.loadAppAuthenticationOptionResponse(.password, 0)) { state in
             state.password = AppAuthenticationPasswordDomain.State()
         }
     }

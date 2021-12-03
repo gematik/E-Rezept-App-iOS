@@ -35,11 +35,31 @@ enum CreatePasswordDomain {
         var passwordA: String = ""
         var passwordB: String = ""
         var passwordStrength = PasswordStrength.none
-        var showPasswordsNotEqualMessage = false
+        var showPasswordErrorMessage = false
+        var passwordErrorMessage: String? {
+            guard showPasswordErrorMessage, !passwordA.isEmpty else {
+                return nil
+            }
+
+            guard passwordStrength.isMinimumThreshold else {
+                return NSLocalizedString("cpw_txt_password_strength_insufficient", comment: "")
+            }
+
+            guard !passwordB.isEmpty else {
+                return nil
+            }
+
+            guard passwordA == passwordB else {
+                return NSLocalizedString("cpw_txt_passwords_dont_match", comment: "")
+            }
+
+            return nil
+        }
+
         var showOriginalPasswordWrong = false
 
         var hasValidPasswordEntries: Bool {
-            passwordA == passwordB && passwordStrength.minimumThreshold
+            passwordA == passwordB && passwordStrength.isMinimumThreshold
         }
 
         enum Mode {
@@ -85,17 +105,18 @@ enum CreatePasswordDomain {
                 .cancellable(id: Token.comparePasswords, cancelInFlight: true)
 
         case .comparePasswords:
-            if !state.passwordA.isEmpty, !state.passwordB.isEmpty {
-                state.showPasswordsNotEqualMessage = state.passwordA != state.passwordB
+            if !state.passwordA.isEmpty {
+                state.showPasswordErrorMessage = true
             } else {
-                state.showPasswordsNotEqualMessage = false
+                state.showPasswordErrorMessage = false
             }
             return .none
 
         case .saveButtonTapped:
-            state.showPasswordsNotEqualMessage = state.passwordA != state.passwordB
-
-            guard state.passwordStrength.minimumThreshold else {
+            guard state.hasValidPasswordEntries else {
+                if !state.passwordA.isEmpty {
+                    state.showPasswordErrorMessage = true
+                }
                 return .none
             }
 

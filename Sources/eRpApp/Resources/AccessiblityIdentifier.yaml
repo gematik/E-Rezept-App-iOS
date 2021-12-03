@@ -22,9 +22,17 @@ cardWall:
     - cdw_btn_sel_continue
     - cdw_btn_sel_egk
     - cdw_btn_sel_kkapp
-  fasttrackFallback:
-    - cdw_btn_ftfb_orderegk
-    - cdw_btn_ftfb_cancel
+  extAuthFallback:
+    - cdw_btn_extauth_fallback_orderegk
+    - cdw_btn_extauth_fallback_cancel
+  extAuthSelection:
+    - cdw_btn_extauth_selection_retry
+    - cdw_btn_extauth_selection_cancel
+    - cdw_btn_extauth_selection_confirm
+  extAuthConfirmation:
+    - cdw_btn_extauth_confirm_send
+    - cdw_btn_extauth_confirm_cancel
+    - cdw_btn_extauth_confirm_contact
   intro:
     - cdw_btn_intro_later
     - cdw_btn_intro_cancel

@@ -34,7 +34,7 @@ struct VersionInfoView: View {
             Spacer(minLength: 32)
             HStack(spacing: 4) {
                 Image(systemName: SFSymbolName.flipPhone)
-                Text("stg_txt_version_\(marketingVersion)_and_build_\(buildNumber)")
+                Text(L10n.stgTxtVersionAndBuild(marketingVersion, buildNumber))
             }
             HStack(spacing: 4) {
                 Image(systemName: SFSymbolName.phoneSquare)

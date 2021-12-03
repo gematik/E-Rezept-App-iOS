@@ -20,7 +20,7 @@ import ComposableArchitecture
 import IDP
 import UIKit
 
-enum CardWallInsuranceSelectionDomain {
+enum CardWallExtAuthSelectionDomain {
     typealias Store = ComposableArchitecture.Store<State, Action>
     typealias Reducer = ComposableArchitecture.Reducer<State, Action, Environment>
 
@@ -32,8 +32,11 @@ enum CardWallInsuranceSelectionDomain {
 
     struct State: Equatable {
         var kkList: KKAppDirectory?
-        var errorMessage: String?
+        var error: IDPError?
         var selectedKK: KKAppDirectory.Entry?
+
+        var orderEgkVisible = false
+        var confirmation: CardWallExtAuthConfirmationDomain.State?
     }
 
     enum Action: Equatable {
@@ -41,10 +44,13 @@ enum CardWallInsuranceSelectionDomain {
         case loadKKListReceived(Result<KKAppDirectory, IDPError>)
         case selectKK(KKAppDirectory.Entry)
         case confirmKK
-        case error(String)
-        case openURL(URL)
-        case openURLReceived(Bool)
+        case error(IDPError)
         case close
+
+        case showOrderEgk(Bool)
+        case hideConfirmation
+
+        case confirmation(_ action: CardWallExtAuthConfirmationDomain.Action)
     }
 
     struct Environment {
@@ -54,20 +60,25 @@ enum CardWallInsuranceSelectionDomain {
 
     static let domainReducer = Reducer { state, action, environment in
         switch action {
+        case let .showOrderEgk(show):
+            state.orderEgkVisible = show
+            return .none
         case .loadKKList:
+            state.error = nil
             state.selectedKK = nil
             // [REQ:gemSpec_IDP_Sek:A_22296] Load available apps
             return environment.idpSession.loadDirectoryKKApps()
+                .delay(for: 2.0, scheduler: environment.schedulers.main)
                 .catchToEffect()
                 .map(Action.loadKKListReceived)
-                .receive(on: environment.schedulers.main)
+                .receive(on: environment.schedulers.main.animation())
                 .eraseToEffect()
         case let .loadKKListReceived(.success(result)):
-            state.errorMessage = nil
+            state.error = nil
             state.kkList = result
             return .none
         case let .loadKKListReceived(.failure(error)):
-            state.errorMessage = error.localizedDescription
+            state.error = error
             return .none
         case let .selectKK(entry):
             // [REQ:gemSpec_IDP_Sek:A_22294] Select KK
@@ -75,44 +86,39 @@ enum CardWallInsuranceSelectionDomain {
             return .none
         case .confirmKK:
             guard let selectedKK = state.selectedKK else { return .none }
-            // [REQ:gemSpec_IDP_Sek:A_22294] Start login with KK
-            return environment.idpSession.startExtAuth(entry: selectedKK)
-                .map(Action.openURL)
-                .catch { error in
-                    Effect(value: Action.error(error.localizedDescription))
-                }
-                .receive(on: environment.schedulers.main)
-                .eraseToEffect()
-        case let .openURL(url):
-            return Effect.future { completion in
-                // [REQ:gemSpec_IDP_Sek:A_22299] Follow redirect
-                guard UIApplication.shared.canOpenURL(url) else {
-                    completion(.success(Action.openURLReceived(false)))
-                    return
-                }
 
-                // [REQ:gemSpec_IDP_Sek:A_22313] Remember State parameter for later verification
-                // May Be To Do: .universalLinksOnly: true aus der AFO abwarten
-                UIApplication.shared.open(url, options: [:]) { result in
-                    completion(.success(Action.openURLReceived(result)))
-                }
-            }
-        case let .openURLReceived(successfull):
-            if successfull {
-                return Effect(value: .close)
-            }
+            state.confirmation = CardWallExtAuthConfirmationDomain.State(selectedKK: selectedKK,
+                                                                         error: nil)
+            return .none
+        case .hideConfirmation:
+            state.confirmation = nil
             return .none
         case let .error(error):
-            state.errorMessage = error
+            state.error = error
             return .none
-        case .close:
+        case .confirmation(.close):
+            return Effect(value: .close)
+        case .close,
+             .confirmation:
             return .none // Handled by parent domain
         }
     }
 
     static let reducer: Reducer = .combine(
+        confirmationPullback,
         domainReducer
     )
+
+    private static let confirmationPullback: Reducer =
+        CardWallExtAuthConfirmationDomain.reducer
+            .optional()
+            .pullback(state: \.confirmation,
+                      action: /Action.confirmation) {
+                .init(idpSession: $0.idpSession,
+                      schedulers: $0.schedulers,
+                      canOpenURL: UIApplication.shared.canOpenURL,
+                      openURL: UIApplication.shared.open)
+            }
 }
 
 extension KKAppDirectory.Entry: Identifiable {
@@ -121,7 +127,7 @@ extension KKAppDirectory.Entry: Identifiable {
     }
 }
 
-extension CardWallInsuranceSelectionDomain {
+extension CardWallExtAuthSelectionDomain {
     enum Dummies {
         static let state = State()
         static let environment = Environment(idpSession: DemoIDPSession(storage: MemoryStorage()),

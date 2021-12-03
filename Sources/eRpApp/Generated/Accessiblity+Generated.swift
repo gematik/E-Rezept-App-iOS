@@ -33,9 +33,19 @@ internal enum A11y {
       static let cdwBtnCanDone = "cdw_btn_can_done"
       static let cdwBtnCanMore = "cdw_btn_can_more"
   }
-    internal enum fasttrackFallback {
-      static let cdwBtnFtfbOrderegk = "cdw_btn_ftfb_orderegk"
-      static let cdwBtnFtfbCancel = "cdw_btn_ftfb_cancel"
+    internal enum extAuthConfirmation {
+      static let cdwBtnExtauthConfirmSend = "cdw_btn_extauth_confirm_send"
+      static let cdwBtnExtauthConfirmCancel = "cdw_btn_extauth_confirm_cancel"
+      static let cdwBtnExtauthConfirmContact = "cdw_btn_extauth_confirm_contact"
+  }
+    internal enum extAuthFallback {
+      static let cdwBtnExtauthFallbackOrderegk = "cdw_btn_extauth_fallback_orderegk"
+      static let cdwBtnExtauthFallbackCancel = "cdw_btn_extauth_fallback_cancel"
+  }
+    internal enum extAuthSelection {
+      static let cdwBtnExtauthSelectionRetry = "cdw_btn_extauth_selection_retry"
+      static let cdwBtnExtauthSelectionCancel = "cdw_btn_extauth_selection_cancel"
+      static let cdwBtnExtauthSelectionConfirm = "cdw_btn_extauth_selection_confirm"
   }
     internal enum intro {
       static let cdwBtnIntroLater = "cdw_btn_intro_later"

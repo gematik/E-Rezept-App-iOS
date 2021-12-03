@@ -53,7 +53,7 @@ enum CardWallDomain {
         var loginOption: CardWallLoginOptionDomain.State
         var introduction = CardWallIntroductionDomain.State()
         var readCard: CardWallReadCardDomain.State?
-        var insuranceSelectionState = CardWallInsuranceSelectionDomain.State()
+        var insuranceSelectionState = CardWallExtAuthSelectionDomain.State()
     }
 
     enum Action: Equatable {
@@ -64,7 +64,7 @@ enum CardWallDomain {
         case loginOption(action: CardWallLoginOptionDomain.Action)
         case introduction(action: CardWallIntroductionDomain.Action)
         case readCard(action: CardWallReadCardDomain.Action)
-        case insuranceSelection(action: CardWallInsuranceSelectionDomain.Action)
+        case insuranceSelection(action: CardWallExtAuthSelectionDomain.Action)
     }
 
     struct Environment {
@@ -188,7 +188,7 @@ enum CardWallDomain {
         }
 
     static let insuranceSelectionPullbackReducer: Reducer =
-        CardWallInsuranceSelectionDomain.reducer.pullback(
+        CardWallExtAuthSelectionDomain.reducer.pullback(
             state: \.insuranceSelectionState,
             action: /Action.insuranceSelection(action:)
         ) { environment in

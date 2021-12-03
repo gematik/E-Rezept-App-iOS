@@ -35,7 +35,7 @@ extension ModelsR4.Bundle {
     }
 
     static func parse(_ communication: ModelsR4.Communication,
-                      from _: ModelsR4.Bundle) throws -> ErxTask.Communication {
+                      from _: ModelsR4.Bundle) throws -> ErxTask.Communication? {
         guard let identifier = communication.id?.value?.string else {
             throw Error.parseError("Could not parse id from communication.")
         }
@@ -51,7 +51,7 @@ extension ModelsR4.Bundle {
         }
 
         guard let telematikId = communication.telematikId(for: profile) else {
-            throw Error.parseError("Could not parse telematikId from communication")
+            return nil
         }
 
         guard let userKVID = communication.kvID(for: profile) else {

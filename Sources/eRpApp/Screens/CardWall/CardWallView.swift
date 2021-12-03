@@ -77,11 +77,11 @@ struct CardWallView: View {
                         }
                     } kkApp: {
                         if enableFastTrackPreview {
-                            CardWallInsuranceSelectionInactiveView {
+                            CardWallExtAuthFallbackView {
                                 viewStore.send(.close)
                             }
                         } else {
-                            CardWallInsuranceSelectionView(
+                            CardWallExtAuthSelectionView(
                                 store: store.scope(
                                     state: \.insuranceSelectionState,
                                     action: CardWallDomain.Action.insuranceSelection(action:)

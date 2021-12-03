@@ -31,7 +31,7 @@ enum PasswordStrength: Int {
     case veryStrong
     case excellent
 
-    var minimumThreshold: Bool {
+    var isMinimumThreshold: Bool {
         rawValue >= PasswordStrength.medium.rawValue
     }
 }

@@ -101,7 +101,7 @@ struct PharmacyDetailView: View {
                     }
 
                     if !viewStore.state.pharmacy.hoursOfOperation.isEmpty {
-                        OpeningHoursView(days: viewStore.state.pharmacyViewModel.days)
+                        OpeningHoursView(dailyOpenHours: viewStore.state.pharmacyViewModel.days)
                             .padding(.bottom, 8)
                     }
 
@@ -130,7 +130,7 @@ struct PharmacyDetailView: View {
     }
 
     struct OpeningHoursView: View {
-        let days: [PharmacyLocationViewModel.DailyOpenHours]
+        let dailyOpenHours: [PharmacyLocationViewModel.DailyOpenHours]
 
         var body: some View {
             SectionHeaderView(
@@ -138,14 +138,14 @@ struct PharmacyDetailView: View {
                 a11y: ""
             ).padding(.bottom, 8)
 
-            ForEach(days, id: \.self) { day in
+            ForEach(dailyOpenHours, id: \.self) { dailyOpenHour in
                 HStack(alignment: .top) {
-                    Text(day.daysOfWeek.uppercased())
+                    Text(dailyOpenHour.dayOfWeekLocalizedDisplayName)
                         .font(Font.body)
-                        .foregroundColor(day.openingState.isOpen ? Colors.secondary600 : Colors.systemLabel)
+                        .foregroundColor(dailyOpenHour.openingState.isOpen ? Colors.secondary600 : Colors.systemLabel)
                     Spacer(minLength: 0)
                     VStack(alignment: .trailing) {
-                        ForEach(day.entries, id: \.self) { hop in
+                        ForEach(dailyOpenHour.entries, id: \.self) { hop in
                             Text("\(hop.openingTime ?? "") - \(hop.closingTime ?? "")")
                                 .font(Font.monospacedDigit(.body)())
                                 .foregroundColor(

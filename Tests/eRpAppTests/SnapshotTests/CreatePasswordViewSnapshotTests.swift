@@ -26,7 +26,6 @@ import XCTest
 final class CreatePasswordViewSnapshotTests: XCTestCase {
     override func setUp() {
         super.setUp()
-
         diffTool = "open"
     }
 
@@ -38,7 +37,8 @@ final class CreatePasswordViewSnapshotTests: XCTestCase {
                     password: "",
                     passwordA: "newPassword",
                     passwordB: "newPassword",
-                    showPasswordsNotEqualMessage: false,
+                    passwordStrength: .strong,
+                    showPasswordErrorMessage: false,
                     showOriginalPasswordWrong: false
                 ),
                 reducer: CreatePasswordDomain.Reducer.empty,
@@ -58,7 +58,28 @@ final class CreatePasswordViewSnapshotTests: XCTestCase {
                     password: "oldPassword",
                     passwordA: "newPassworf",
                     passwordB: "newPassword",
-                    showPasswordsNotEqualMessage: true,
+                    passwordStrength: .strong,
+                    showPasswordErrorMessage: true,
+                    showOriginalPasswordWrong: true
+                ),
+                reducer: CreatePasswordDomain.Reducer.empty,
+                environment: CreatePasswordDomain.Dummies.environment
+            )
+        )
+        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
+        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+    }
+
+    func testCreatePasswordView_Update_Password_Insufficient_Strength() {
+        let sut = CreatePasswordView(
+            store: CreatePasswordDomain.Store(
+                initialState: CreatePasswordDomain.State(
+                    mode: .update,
+                    password: "oldPassword",
+                    passwordA: "newPassword",
+                    passwordB: "newPassword",
+                    showPasswordErrorMessage: true,
                     showOriginalPasswordWrong: true
                 ),
                 reducer: CreatePasswordDomain.Reducer.empty,

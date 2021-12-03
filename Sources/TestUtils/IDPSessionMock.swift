@@ -201,17 +201,17 @@ public class IDPSessionMock: IDPSession {
         return loadDirectoryKKApps_Publisher
     }
 
-    public var loginWithKKApp_Publisher: AnyPublisher<URL, IDPError>!
-    public var loginWithKKApp_ReceivedArguments: KKAppDirectory.Entry?
-    public var loginWithKKApp_CallsCount = 0
-    public var loginWithKKApp_Called: Bool {
-        loginWithKKApp_CallsCount > 0
+    public var startExtAuth_Publisher: AnyPublisher<URL, IDPError>!
+    public var startExtAuth_ReceivedArguments: KKAppDirectory.Entry?
+    public var startExtAuth_CallsCount = 0
+    public var startExtAuth_Called: Bool {
+        startExtAuth_CallsCount > 0
     }
 
     public func startExtAuth(entry: KKAppDirectory.Entry) -> AnyPublisher<URL, IDPError> {
-        loginWithKKApp_CallsCount += 1
-        loginWithKKApp_ReceivedArguments = entry
-        return loginWithKKApp_Publisher
+        startExtAuth_CallsCount += 1
+        startExtAuth_ReceivedArguments = entry
+        return startExtAuth_Publisher
     }
 
     public var extAuthVerifyAndExchange_Publisher: AnyPublisher<IDPToken, IDPError>!

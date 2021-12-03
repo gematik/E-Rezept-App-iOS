@@ -40,9 +40,9 @@ enum AppAuthenticationDomain {
     }
 
     enum Action: Equatable {
-        case loadAppAuthenticationOption
+        case onAppear
         case failedAppAuthenticationsReceived(Int)
-        case loadAppAuthenticationOptionResponse(AppSecurityOption?)
+        case loadAppAuthenticationOptionResponse(AppSecurityOption?, Int)
         case removeSubscriptions
         case biometrics(action: AppAuthenticationBiometricsDomain.Action)
         case password(action: AppAuthenticationPasswordDomain.Action)
@@ -73,7 +73,7 @@ enum AppAuthenticationDomain {
 
     private static let domainReducer = Reducer { state, action, environment in
         switch action {
-        case .loadAppAuthenticationOption:
+        case .onAppear:
             return Effect.merge(
                 environment.subscribeToFailedAuthenticationChanges()
                     .cancellable(id: Token.failedAuthentications, cancelInFlight: true),
@@ -82,7 +82,7 @@ enum AppAuthenticationDomain {
         case let .failedAppAuthenticationsReceived(count):
             state.failedAuthenticationsCount = count
             return .none
-        case let .loadAppAuthenticationOptionResponse(response):
+        case let .loadAppAuthenticationOptionResponse(response, failedAuthenticationsCount):
             guard let authenticationOption = response else {
                 state.didCompleteAuthentication = true
                 environment.didCompleteAuthentication?()
@@ -93,7 +93,7 @@ enum AppAuthenticationDomain {
             case let .biometry(type):
                 state.biometrics = AppAuthenticationBiometricsDomain.State(
                     biometryType: type,
-                    startImmediateAuthenticationChallenge: state.failedAuthenticationsCount == 0
+                    startImmediateAuthenticationChallenge: failedAuthenticationsCount == 0
                 )
             case .unsecured:
                 state.didCompleteAuthentication = true
@@ -177,6 +177,7 @@ extension AppAuthenticationDomain.Environment {
     func loadAppAuthenticationOption() -> Effect<AppAuthenticationDomain.Action, Never> {
         appAuthenticationProvider
             .loadAppAuthenticationOption()
+            .zip(userDataStore.failedAppAuthentications.first())
             .receive(on: schedulers.main)
             .first()
             .map(AppAuthenticationDomain.Action.loadAppAuthenticationOptionResponse)

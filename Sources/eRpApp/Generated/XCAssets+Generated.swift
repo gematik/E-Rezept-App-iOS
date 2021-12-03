@@ -23,11 +23,14 @@ internal typealias AssetImageTypeAlias = ImageAsset.Image
 internal enum Asset {
   internal enum CardWall {
     internal static let apotheker1 = ImageAsset(name: "Apotheker1")
+    internal static let appIconPlaceholder = ImageAsset(name: "AppIconPlaceholder")
     internal static let arzt1 = ImageAsset(name: "Arzt1")
     internal static let cardwallCard = ImageAsset(name: "Cardwall_card")
     internal static let cardwallInitial = ImageAsset(name: "Cardwall_initial")
     internal static let ohNo = ImageAsset(name: "OhNo")
+    internal static let previewAppIcon = ImageAsset(name: "PreviewAppIcon")
     internal static let apothekerin2 = ImageAsset(name: "apothekerin2")
+    internal static let homescreenBg = ImageAsset(name: "homescreen_bg")
     internal static let ios = ImageAsset(name: "ios")
     internal static let nfc = ImageAsset(name: "nfc")
     internal static let phoneExclamationMark = ImageAsset(name: "phoneExclamationMark")

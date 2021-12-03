@@ -114,11 +114,27 @@ internal enum L10n {
   /// Next
   internal static let cdwBtnCanDoneLabel = LocalizedStringKey("cdw_btn_can_done_label")
   /// The access number consists of 6 digits; you have entered %@.
-  internal static let cdwBtnCanDoneLabelError = LocalizedStringKey("cdw_btn_can_done_label_error_%@")
+  internal static func cdwBtnCanDoneLabelError(_ element1: String) -> LocalizedStringKey {
+    LocalizedStringKey("cdw_btn_can_done_label_error_\(element1)")
+  }
   /// Cancel
   internal static let cdwBtnCancel = LocalizedStringKey("cdw_btn_cancel")
+  /// Abbrechen
+  internal static let cdwBtnExtauthConfirmCancel = LocalizedStringKey("cdw_btn_extauth_confirm_cancel")
+  /// Technischen Kundendienst kontaktieren
+  internal static let cdwBtnExtauthConfirmContact = LocalizedStringKey("cdw_btn_extauth_confirm_contact")
+  /// Senden
+  internal static let cdwBtnExtauthConfirmSend = LocalizedStringKey("cdw_btn_extauth_confirm_send")
   /// Gesundheitskarte bestellen
-  internal static let cdwBtnFtfbOrderEgk = LocalizedStringKey("cdw_btn_ftfb_order_egk")
+  internal static let cdwBtnExtauthFallbackOrderEgk = LocalizedStringKey("cdw_btn_extauth_fallback_order_egk")
+  /// Abbrechen
+  internal static let cdwBtnExtauthSelectionCancel = LocalizedStringKey("cdw_btn_extauth_selection_cancel")
+  /// Weiter
+  internal static let cdwBtnExtauthSelectionContinue = LocalizedStringKey("cdw_btn_extauth_selection_continue")
+  /// Gesundheitskarte bestellen
+  internal static let cdwBtnExtauthSelectionOrderEgk = LocalizedStringKey("cdw_btn_extauth_selection_order_egk")
+  /// Erneut versuchen
+  internal static let cdwBtnExtauthSelectionRetry = LocalizedStringKey("cdw_btn_extauth_selection_retry")
   /// Close dialog
   internal static let cdwBtnIntroCancelLabel = LocalizedStringKey("cdw_btn_intro_cancel_label")
   /// Vielleicht später
@@ -229,14 +245,42 @@ internal enum L10n {
   internal static let cdwTxtCanWarnWrongDescription = LocalizedStringKey("cdw_txt_can_warn_wrong_description")
   /// Wrong CAN
   internal static let cdwTxtCanWarnWrongTitle = LocalizedStringKey("cdw_txt_can_warn_wrong_title")
-  /// Derzeit bereiten sich die Krankenkassen auf diese Funktion vor.
-  internal static let cdwTxtFtfbDescription1 = LocalizedStringKey("cdw_txt_ftfb_description1")
-  /// Sie wollen nicht warten?  Die Anmeldung mit Gesundheitskarte wird bereits jetzt von jeder Krankenkasse unterstützt.
-  internal static let cdwTxtFtfbDescription2 = LocalizedStringKey("cdw_txt_ftfb_description2")
-  /// Versicherung wählen
-  internal static let cdwTxtFtfbHeadline = LocalizedStringKey("cdw_txt_ftfb_headline")
+  /// Mail
+  internal static let cdwTxtExtauthConfirmContactsheetMail = LocalizedStringKey("cdw_txt_extauth_confirm_contactsheet_mail")
+  /// Telefon
+  internal static let cdwTxtExtauthConfirmContactsheetTelephone = LocalizedStringKey("cdw_txt_extauth_confirm_contactsheet_telephone")
+  /// Kundendienst kontaktieren
+  internal static let cdwTxtExtauthConfirmContactsheetTitle = LocalizedStringKey("cdw_txt_extauth_confirm_contactsheet_title")
+  /// Website
+  internal static let cdwTxtExtauthConfirmContactsheetWeb = LocalizedStringKey("cdw_txt_extauth_confirm_contactsheet_web")
+  /// Wir fragen nun die Authentisierung bei Ihrer Krankenversicherung an.
+  internal static let cdwTxtExtauthConfirmDescription = LocalizedStringKey("cdw_txt_extauth_confirm_description")
+  /// Bitte erwähnen Sie diesen Fehler gegenüber unserem technischen Kundendienst, um die Suche nach einer Lösung zu erleichtern.
+  internal static let cdwTxtExtauthConfirmErrorDescription = LocalizedStringKey("cdw_txt_extauth_confirm_error_description")
+  /// Authentisierung wird angefragt
+  internal static let cdwTxtExtauthConfirmHeadline = LocalizedStringKey("cdw_txt_extauth_confirm_headline")
+  /// E-Rezept
+  internal static let cdwTxtExtauthConfirmOwnAppname = LocalizedStringKey("cdw_txt_extauth_confirm_own_appname")
   /// Mit App anmelden
-  internal static let cdwTxtFtfbTitle = LocalizedStringKey("cdw_txt_ftfb_title")
+  internal static let cdwTxtExtauthConfirmTitle = LocalizedStringKey("cdw_txt_extauth_confirm_title")
+  /// Fehler beim Öffnen der Krankenkassenapp.
+  internal static let cdwTxtExtauthConfirmUniversalLinkFailedError = LocalizedStringKey("cdw_txt_extauth_confirm_universal_link_failed_error")
+  /// Derzeit bereiten sich die Krankenkassen auf diese Funktion vor.
+  internal static let cdwTxtExtauthFallbackDescription1 = LocalizedStringKey("cdw_txt_extauth_fallback_description1")
+  /// Sie wollen nicht warten?  Die Anmeldung mit Gesundheitskarte wird bereits jetzt von jeder Krankenkasse unterstützt.
+  internal static let cdwTxtExtauthFallbackDescription2 = LocalizedStringKey("cdw_txt_extauth_fallback_description2")
+  /// Versicherung wählen
+  internal static let cdwTxtExtauthFallbackHeadline = LocalizedStringKey("cdw_txt_extauth_fallback_headline")
+  /// Mit App anmelden
+  internal static let cdwTxtExtauthFallbackTitle = LocalizedStringKey("cdw_txt_extauth_fallback_title")
+  /// Nicht fündig geworden? Diese Liste wird ständig erweitert. Die Anmeldung mit Gesundheitskarte wird bereits jetzt von jeder Krankenkasse unterstützt.
+  internal static let cdwTxtExtauthSelectionDescription = LocalizedStringKey("cdw_txt_extauth_selection_description")
+  /// Bitte probieren Sie es zu einem späteren Zeitpunkt erneut.
+  internal static let cdwTxtExtauthSelectionErrorFallback = LocalizedStringKey("cdw_txt_extauth_selection_error_fallback")
+  /// Versicherung wählen
+  internal static let cdwTxtExtauthSelectionHeadline = LocalizedStringKey("cdw_txt_extauth_selection_headline")
+  /// Mit App Anmelden
+  internal static let cdwTxtExtauthSelectionTitle = LocalizedStringKey("cdw_txt_extauth_selection_title")
   /// To be able to use all functions of the app, log in with your medical card. You will receive this card and the required login details from your health insurance company.
   internal static let cdwTxtIntroDescription = LocalizedStringKey("cdw_txt_intro_description")
   /// Use all functions now
@@ -308,7 +352,9 @@ internal enum L10n {
   /// A PIN consists of digits only.
   internal static let cdwTxtPinWarningChar = LocalizedStringKey("cdw_txt_pin_warning_char")
   /// The PIN consists of 6 to 8 digits; you have entered %@.
-  internal static let cdwTxtPinWarningCount = LocalizedStringKey("cdw_txt_pin_warning_count %@")
+  internal static func cdwTxtPinWarningCount(_ element1: String) -> LocalizedStringKey {
+    LocalizedStringKey("cdw_txt_pin_warning_count \(element1)")
+  }
   /// You do not need a medical card in demo mode.
   internal static let cdwTxtRcDemoModeInfo = LocalizedStringKey("cdw_txt_rc_demo_mode_info")
   /// Click Login and hold your card against the device as shown. Do not move the card once a connection has been established.
@@ -322,9 +368,13 @@ internal enum L10n {
   /// Please enter the correct access number (CAN)
   internal static let cdwTxtRcErrorWrongCanRecovery = LocalizedStringKey("cdw_txt_rc_error_wrong_can_recovery")
   /// Incorrect pin
-  internal static let cdwTxtRcErrorWrongPinDescription = LocalizedStringKey("cdw_txt_rc_error_wrong_pin_description_%@")
+  internal static func cdwTxtRcErrorWrongPinDescription(_ element1: String) -> LocalizedStringKey {
+    LocalizedStringKey("cdw_txt_rc_error_wrong_pin_description_\(element1)")
+  }
   /// %@ attempts left. Please enter the correct PIN.
-  internal static let cdwTxtRcErrorWrongPinRecovery = LocalizedStringKey("cdw_txt_rc_error_wrong_pin_recovery_%@")
+  internal static func cdwTxtRcErrorWrongPinRecovery(_ element1: String) -> LocalizedStringKey {
+    LocalizedStringKey("cdw_txt_rc_error_wrong_pin_recovery_\(element1)")
+  }
   /// Have your medical card ready
   internal static let cdwTxtRcHeadline = LocalizedStringKey("cdw_txt_rc_headline")
   /// Connection interrupted
@@ -393,9 +443,11 @@ internal enum L10n {
   internal static let cpwTxtCurrentPasswordWrong = LocalizedStringKey("cpw_txt_current_password_wrong")
   /// Empfehlung: Möglichst wenige Worte und keine Redewendungen verwenden.\nSymbole, Zahlen oder Großbuchstaben sind nicht notwendig.
   internal static let cpwTxtPasswordRecommendation = LocalizedStringKey("cpw_txt_password_recommendation")
+  /// Sicherheitsstufe des gewählten Kennworts nicht ausreichend
+  internal static let cpwTxtPasswordStrengthInsufficient = LocalizedStringKey("cpw_txt_password_strength_insufficient")
   /// Zweite Eingabe des Kennwortes, um Tippfehler zu erkennen
   internal static let cpwTxtPasswordBAccessibility = LocalizedStringKey("cpw_txt_passwordB_accessibility")
-  /// Die Eingaben weichen vorneinander ab.
+  /// Die Eingaben weichen voneinander ab.
   internal static let cpwTxtPasswordsDontMatch = LocalizedStringKey("cpw_txt_passwords_dont_match")
   /// Neues Kennwort
   internal static let cpwTxtSectionTitle = LocalizedStringKey("cpw_txt_section_title")
@@ -460,7 +512,9 @@ internal enum L10n {
   /// Log
   internal static let dtlTxtMedProtocol = LocalizedStringKey("dtl_txt_med_protocol")
   /// Redeemed: %@
-  internal static let dtlTxtMedRedeemedOn = LocalizedStringKey("dtl_txt_med_redeemed_on_%@")
+  internal static func dtlTxtMedRedeemedOn(_ element1: String) -> LocalizedStringKey {
+    LocalizedStringKey("dtl_txt_med_redeemed_on_\(element1)")
+  }
   /// Scanned on
   internal static let dtlTxtScannedOn = LocalizedStringKey("dtl_txt_scanned_on")
   /// Task ID
@@ -1141,6 +1195,10 @@ internal enum L10n {
   internal static let onbAuthTxtDivider = LocalizedStringKey("onb_auth_txt_divider")
   /// Bitte wählen Sie eine Methode zum absichern der App aus:
   internal static let onbAuthTxtNoSelection = LocalizedStringKey("onb_auth_txt_no_selection")
+  /// Sicherheitsstufe des gewählten Kennworts nicht ausreichend
+  internal static let onbAuthTxtPasswordStrengthInsufficient = LocalizedStringKey("onb_auth_txt_password_strength_insufficient")
+  /// Die Eingaben weichen voneinander ab.
+  internal static let onbAuthTxtPasswordsDontMatch = LocalizedStringKey("onb_auth_txt_passwords_dont_match")
   /// Wie möchten Sie diese App absichern?
   internal static let onbAuthTxtTitle = LocalizedStringKey("onb_auth_txt_title")
   /// Next
@@ -1306,7 +1364,9 @@ internal enum L10n {
   /// Substitutes are permitted. You may be given an alternative due to the legal requirements of your health insurance.
   internal static let phaRedeemTxtPrescriptionSub = LocalizedStringKey("pha_redeem_txt_prescription_sub")
   /// Commit to redeeming the following prescriptions at the %@?
-  internal static let phaRedeemTxtSubtitle = LocalizedStringKey("pha_redeem_txt_subtitle_%@")
+  internal static func phaRedeemTxtSubtitle(_ element1: String) -> LocalizedStringKey {
+    LocalizedStringKey("pha_redeem_txt_subtitle_\(element1)")
+  }
   /// Delivery service
   internal static let phaRedeemTxtTitleDelivery = LocalizedStringKey("pha_redeem_txt_title_delivery")
   /// Mail order
@@ -1528,7 +1588,9 @@ internal enum L10n {
   /// Scanned prescription
   internal static let scnTxtAuthor = LocalizedStringKey("scn_txt_author")
   /// Medicine %@
-  internal static let scnTxtMedication = LocalizedStringKey("scn_txt_medication_%@")
+  internal static func scnTxtMedication(_ element1: String) -> LocalizedStringKey {
+    LocalizedStringKey("scn_txt_medication_\(element1)")
+  }
   /// OK
   internal static let secBtnSystemPinDone = LocalizedStringKey("sec_btn_system_pin_done")
   /// Okay
@@ -1660,7 +1722,9 @@ internal enum L10n {
   /// Settings
   internal static let stgTxtTitle = LocalizedStringKey("stg_txt_title")
   /// Version %@ • Build %@
-  internal static let stgTxtVersionAndBuild = LocalizedStringKey("stg_txt_version_%@_and_build_%@")
+  internal static func stgTxtVersionAndBuild(_ element1: String,_ element2: String) -> LocalizedStringKey {
+    LocalizedStringKey("stg_txt_version_\(element1)_and_build_\(element2)")
+  }
   /// Prescriptions
   internal static let tabTxtMain = LocalizedStringKey("tab_txt_main")
   /// Messages

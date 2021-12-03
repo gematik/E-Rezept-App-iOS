@@ -45,7 +45,7 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>u</string>
 			<key>one</key>
-			<string>Es wurde ein erfolgloser Anmeldeversuche festgestellt</string>
+			<string>Es wurde ein erfolgloser Anmeldeversuch festgestellt</string>
 			<key>other</key>
 			<string>Es wurden %u erfolglose Anmeldeversuche festgestellt</string>
 		</dict>

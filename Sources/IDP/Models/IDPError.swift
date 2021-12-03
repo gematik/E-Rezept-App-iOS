@@ -145,4 +145,8 @@ extension IDPError: Equatable, LocalizedError {
             return "Error while processing external authentication: original request not found."
         }
     }
+
+    public var recoverySuggestion: String? {
+        "Try again later"
+    }
 }

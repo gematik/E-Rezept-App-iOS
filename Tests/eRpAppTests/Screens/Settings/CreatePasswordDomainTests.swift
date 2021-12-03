@@ -51,7 +51,7 @@ final class CreatePasswordDomainTests: XCTestCase {
     var mockPasswordManager: MockAppSecurityManager!
     var mockPasswordStrengthTester: MockPasswordStrengthTester!
 
-    func testSetPasswordA() {
+    func testSetPasswordAOnly() {
         let store = testStore(for: emptyPasswords)
         mockPasswordStrengthTester.passwordStrengthForReturnValue = PasswordStrength.none
 
@@ -59,10 +59,14 @@ final class CreatePasswordDomainTests: XCTestCase {
             state.passwordA = "MyPasswordA"
         }
         testScheduler.run()
-        store.receive(.comparePasswords)
+        store.receive(.comparePasswords) { state in
+            state.showPasswordErrorMessage = true
+            let message = state.passwordErrorMessage
+            expect(message) == NSLocalizedString("cpw_txt_password_strength_insufficient", comment: "")
+        }
     }
 
-    func testSetPasswordB() {
+    func testSetPasswordBOnly() {
         let store = testStore(for: emptyPasswords)
         mockPasswordStrengthTester.passwordStrengthForReturnValue = PasswordStrength.none
 
@@ -81,22 +85,41 @@ final class CreatePasswordDomainTests: XCTestCase {
             state.passwordA = "MyPassword"
         }
         testScheduler.run()
-        store.receive(.comparePasswords)
+        store.receive(.comparePasswords) { state in
+            state.showPasswordErrorMessage = true
+            state.passwordStrength = .none
+            let message = state.passwordErrorMessage
+            expect(message) == NSLocalizedString("cpw_txt_password_strength_insufficient", comment: "")
+        }
+        mockPasswordStrengthTester.passwordStrengthForReturnValue = PasswordStrength.strong
+        store.send(.setPasswordA("Secure password")) { state in
+            state.passwordA = "Secure password"
+            state.passwordStrength = .strong
+        }
+
+        testScheduler.run()
+        store.receive(.comparePasswords) { state in
+            state.showPasswordErrorMessage = true
+            let message = state.passwordErrorMessage
+            expect(message).to(beNil())
+        }
 
         store.send(.setPasswordB("MyPasswordB")) { state in
             state.passwordB = "MyPasswordB"
         }
         testScheduler.run()
         store.receive(.comparePasswords) { state in
-            state.showPasswordsNotEqualMessage = true
+            state.showPasswordErrorMessage = true
+            let message = state.passwordErrorMessage
+            expect(message) == NSLocalizedString("cpw_txt_passwords_dont_match", comment: "")
         }
 
-        store.send(.setPasswordB("MyPassword")) { state in
-            state.passwordB = "MyPassword"
+        store.send(.setPasswordB("Secure password")) { state in
+            state.passwordB = "Secure password"
         }
         testScheduler.run()
         store.receive(.comparePasswords) { state in
-            state.showPasswordsNotEqualMessage = false
+            state.showPasswordErrorMessage = true
         }
     }
 
@@ -105,8 +128,7 @@ final class CreatePasswordDomainTests: XCTestCase {
 
         let store = testStore(for: .init(mode: .create,
                                          passwordA: "ABC",
-                                         passwordB: "ABC",
-                                         showPasswordsNotEqualMessage: false))
+                                         passwordB: "ABC"))
 
         store.send(.setPasswordB("ABCD")) { state in
             state.passwordB = "ABCD"
@@ -117,7 +139,7 @@ final class CreatePasswordDomainTests: XCTestCase {
         }
         testScheduler.advance(by: .seconds(0.5))
         store.receive(.comparePasswords) { state in
-            state.showPasswordsNotEqualMessage = true
+            state.showPasswordErrorMessage = true
         }
     }
 
@@ -126,13 +148,12 @@ final class CreatePasswordDomainTests: XCTestCase {
             for: .init(
                 mode: .create,
                 passwordA: "ABC",
-                passwordB: "ABCD",
-                showPasswordsNotEqualMessage: false
+                passwordB: "ABCD"
             )
         )
-
+        mockPasswordStrengthTester.passwordStrengthForReturnValue = PasswordStrength.none
         store.send(.saveButtonTapped) { state in
-            state.showPasswordsNotEqualMessage = true
+            state.showPasswordErrorMessage = true
         }
     }
 
@@ -143,17 +164,16 @@ final class CreatePasswordDomainTests: XCTestCase {
                 passwordA: "",
                 passwordB: "ABC",
                 passwordStrength: .excellent,
-                showPasswordsNotEqualMessage: false
+                showPasswordErrorMessage: false
             )
         )
 
         store.send(.setPasswordB("ABCD")) { state in
             state.passwordB = "ABCD"
         }
-
-        store.send(.saveButtonTapped) { state in
-            state.showPasswordsNotEqualMessage = true
-        }
+        testScheduler.run()
+        store.receive(.comparePasswords)
+        store.send(.saveButtonTapped)
     }
 
     func testPasswordWasSavedWhenValidCreatePasswordAndButtonPressed() {
@@ -163,7 +183,7 @@ final class CreatePasswordDomainTests: XCTestCase {
                 passwordA: "ABC",
                 passwordB: "ABC",
                 passwordStrength: .excellent,
-                showPasswordsNotEqualMessage: false
+                showPasswordErrorMessage: true
             )
         )
         mockPasswordManager.savePasswordReturnValue = true
@@ -182,12 +202,15 @@ final class CreatePasswordDomainTests: XCTestCase {
             for: .init(
                 mode: .create,
                 passwordA: "ABC",
-                passwordB: "ABCD",
-                showPasswordsNotEqualMessage: true
+                passwordB: "ABCD"
             )
         )
 
-        store.send(.saveButtonTapped)
+        store.send(.saveButtonTapped) { state in
+            state.showPasswordErrorMessage = true
+            let message = state.passwordErrorMessage
+            expect(message) == NSLocalizedString("cpw_txt_password_strength_insufficient", comment: "")
+        }
         expect(self.mockPasswordManager.savePasswordCalled) == false
     }
 
@@ -197,7 +220,7 @@ final class CreatePasswordDomainTests: XCTestCase {
                 mode: .create,
                 passwordA: "",
                 passwordB: "",
-                showPasswordsNotEqualMessage: false
+                showPasswordErrorMessage: false
             )
         )
 
@@ -211,8 +234,7 @@ final class CreatePasswordDomainTests: XCTestCase {
                 mode: .create,
                 passwordA: "ABC",
                 passwordB: "ABC",
-                passwordStrength: .excellent,
-                showPasswordsNotEqualMessage: false
+                passwordStrength: .excellent
             )
         )
         mockPasswordManager.savePasswordReturnValue = true
@@ -228,8 +250,7 @@ final class CreatePasswordDomainTests: XCTestCase {
                 password: "abc",
                 passwordA: "ABC",
                 passwordB: "ABC",
-                passwordStrength: .excellent,
-                showPasswordsNotEqualMessage: false
+                passwordStrength: .excellent
             )
         )
         mockPasswordManager.savePasswordReturnValue = true
@@ -250,8 +271,7 @@ final class CreatePasswordDomainTests: XCTestCase {
                 password: "abc",
                 passwordA: "ABC",
                 passwordB: "ABC",
-                passwordStrength: .excellent,
-                showPasswordsNotEqualMessage: false
+                passwordStrength: .excellent
             )
         )
         mockPasswordManager.savePasswordReturnValue = true
@@ -273,8 +293,7 @@ final class CreatePasswordDomainTests: XCTestCase {
                 password: "abc",
                 passwordA: "ABC",
                 passwordB: "ABCD",
-                passwordStrength: .excellent,
-                showPasswordsNotEqualMessage: false
+                passwordStrength: .excellent
             )
         )
         mockPasswordManager.savePasswordReturnValue = true
@@ -283,9 +302,9 @@ final class CreatePasswordDomainTests: XCTestCase {
         expect(self.mockPasswordManager.matchesPasswordCalled).to(beFalse())
         expect(self.mockPasswordManager.savePasswordCalled).to(beFalse())
         store.send(.saveButtonTapped) { state in
-            state.showPasswordsNotEqualMessage = true
+            state.showPasswordErrorMessage = true
         }
-        expect(self.mockPasswordManager.matchesPasswordCalled).to(beTrue())
+        expect(self.mockPasswordManager.matchesPasswordCalled).to(beFalse())
         expect(self.mockPasswordManager.savePasswordCalled).to(beFalse())
     }
 
@@ -297,12 +316,17 @@ final class CreatePasswordDomainTests: XCTestCase {
                 passwordA: "abc",
                 passwordB: "abc",
                 passwordStrength: .veryWeak,
-                showPasswordsNotEqualMessage: false,
+                showPasswordErrorMessage: false,
                 showOriginalPasswordWrong: false
             )
         )
 
-        store.send(.saveButtonTapped)
+        mockPasswordStrengthTester.passwordStrengthForReturnValue = PasswordStrength.none
+        store.send(.saveButtonTapped) { state in
+            state.showPasswordErrorMessage = true
+            let message = state.passwordErrorMessage
+            expect(message) == NSLocalizedString("cpw_txt_password_strength_insufficient", comment: "")
+        }
         expect(self.mockPasswordManager.savePasswordCallsCount).to(equal(0))
     }
 
@@ -312,8 +336,7 @@ final class CreatePasswordDomainTests: XCTestCase {
                 mode: .create,
                 password: "",
                 passwordA: "",
-                passwordB: "",
-                showPasswordsNotEqualMessage: false
+                passwordB: ""
             )
         )
 
@@ -326,7 +349,11 @@ final class CreatePasswordDomainTests: XCTestCase {
         expect(self.mockPasswordStrengthTester.passwordStrengthForCallsCount).to(equal(1))
 
         testScheduler.run()
-        store.receive(.comparePasswords)
+        store.receive(.comparePasswords) { state in
+            state.showPasswordErrorMessage = true
+            let message = state.passwordErrorMessage
+            expect(message).to(beNil())
+        }
     }
 }
 

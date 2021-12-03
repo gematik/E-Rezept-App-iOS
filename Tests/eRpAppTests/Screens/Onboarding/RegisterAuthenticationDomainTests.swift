@@ -43,6 +43,7 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
 
     func testStore(
         with state: RegisterAuthenticationDomain.State,
+        passwordStrengthTester: PasswordStrengthTester = DefaultPasswordStrengthTester(),
         challengeResponse: Result<Bool, AppAuthenticationBiometricsDomain.Error> = .success(true)
     ) -> TestStore {
         TestStore(
@@ -53,7 +54,7 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
                 userDataStore: MockUserDataStore(),
                 schedulers: Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler()),
                 authenticationChallengeProvider: MockAuthenticationChallengeProvider(result: challengeResponse),
-                passwordStrengthTester: mockPasswordStrengthTester
+                passwordStrengthTester: passwordStrengthTester
             )
         )
     }
@@ -86,60 +87,109 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
         expect(self.mockAppSecurityManager.availableSecurityOptionsCallsCount) == 1
     }
 
-    func testSelectingPassword() {
+    func testSelectingWeakPassword() {
         let store = testStore(
             with: RegisterAuthenticationDomain.State(
                 availableSecurityOptions: [.password, .biometry(.faceID)]
             )
         )
-        mockPasswordStrengthTester.passwordStrengthForReturnValue = .excellent
 
         store.send(.select(.password)) { state in
             state.availableSecurityOptions = [.password, .biometry(.faceID)]
             state.selectedSecurityOption = .password
             state.passwordA = ""
             state.passwordB = ""
-            state.showPasswordsNotEqualMessage = false
+            state.showPasswordErrorMessage = false
+            let message = state.passwordErrorMessage
+            expect(message).to(beNil())
         }
-        store.send(.setPasswordA("ABC")) { state in
+        store.send(.setPasswordA("Strong")) { state in
             state.selectedSecurityOption = .password
-            state.passwordA = "ABC"
+            state.passwordA = "Strong"
             state.passwordB = ""
-            state.passwordStrength = .excellent
-            state.showPasswordsNotEqualMessage = false
+            state.passwordStrength = .veryWeak
+            state.showPasswordErrorMessage = false
+            let message = state.passwordErrorMessage
+            expect(message).to(beNil())
         }
         testScheduler.run()
         store.receive(.comparePasswords) { state in
-            state.showPasswordsNotEqualMessage = true
+            state.showPasswordErrorMessage = true
             state.selectedSecurityOption = .password
-            state.passwordA = "ABC"
+            state.passwordA = "Strong"
             state.passwordB = ""
+            state.passwordStrength = .veryWeak
+            let message = state.passwordErrorMessage
+            expect(message) == NSLocalizedString("onb_auth_txt_password_strength_insufficient", comment: "")
         }
-        store.send(.setPasswordB("ABC")) { state in
+        store.send(.setPasswordA("Secure Pass word")) { state in
             state.selectedSecurityOption = .password
-            state.passwordA = "ABC"
-            state.passwordB = "ABC"
-            state.showPasswordsNotEqualMessage = true
-        }
-        testScheduler.run()
-        store.receive(.comparePasswords) { state in
-            state.showPasswordsNotEqualMessage = false
-            state.selectedSecurityOption = .password
-            state.passwordA = "ABC"
-            state.passwordB = "ABC"
-        }
-        store.send(.enterButtonTapped) { state in
-            state.showPasswordsNotEqualMessage = false
-            state.selectedSecurityOption = .password
-            state.passwordA = "ABC"
-            state.passwordB = "ABC"
+            state.passwordA = "Secure Pass word"
+            state.passwordB = ""
+            state.passwordStrength = .strong
+            state.showPasswordErrorMessage = false
+            let message = state.passwordErrorMessage
+            expect(message).to(beNil())
         }
         testScheduler.run()
         store.receive(.comparePasswords) { state in
-            state.showPasswordsNotEqualMessage = false
+            state.showPasswordErrorMessage = true
             state.selectedSecurityOption = .password
-            state.passwordA = "ABC"
+            state.passwordA = "Secure Pass word"
+            state.passwordB = ""
+            state.passwordStrength = .strong
+            let message = state.passwordErrorMessage
+            expect(message).to(beNil())
+        }
+    }
+
+    func testSelectingStrongAndEqualPasswords() {
+        let store = testStore(
+            with: RegisterAuthenticationDomain.State(
+                availableSecurityOptions: [.password, .biometry(.faceID)],
+                selectedSecurityOption: .password,
+                passwordA: "ABC",
+                passwordB: "ABC"
+            )
+        )
+
+        store.send(.setPasswordA("Secure Pass word")) { state in
+            state.selectedSecurityOption = .password
+            state.passwordA = "Secure Pass word"
             state.passwordB = "ABC"
+            state.passwordStrength = .strong
+            state.showPasswordErrorMessage = false
+            let message = state.passwordErrorMessage
+            expect(message).to(beNil())
+        }
+        testScheduler.run()
+        store.receive(.comparePasswords) { state in
+            state.showPasswordErrorMessage = true
+            state.selectedSecurityOption = .password
+            state.passwordA = "Secure Pass word"
+            state.passwordB = "ABC"
+            state.passwordStrength = .strong
+            let message = state.passwordErrorMessage
+            expect(message) == NSLocalizedString("onb_auth_txt_passwords_dont_match", comment: "")
+        }
+        store.send(.setPasswordB("Secure Pass word")) { state in
+            state.selectedSecurityOption = .password
+            state.passwordA = "Secure Pass word"
+            state.passwordB = "Secure Pass word"
+            state.passwordStrength = .strong
+            state.showPasswordErrorMessage = false
+            let message = state.passwordErrorMessage
+            expect(message).to(beNil())
+        }
+        testScheduler.run()
+        store.receive(.comparePasswords) { state in
+            state.showPasswordErrorMessage = false
+            state.selectedSecurityOption = .password
+            state.passwordA = "Secure Pass word"
+            state.passwordB = "Secure Pass word"
+            state.passwordStrength = .strong
+            let message = state.passwordErrorMessage
+            expect(message).to(beNil())
         }
     }
 
@@ -254,7 +304,6 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
                 selectedSecurityOption: nil,
                 passwordA: "",
                 passwordB: "",
-                showPasswordsNotEqualMessage: false,
                 showNoSelectionMessage: false,
                 securityOptionsError: nil,
                 alertState: nil
@@ -274,7 +323,6 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
                 passwordA: "ABC",
                 passwordB: "",
                 passwordStrength: .strong,
-                showPasswordsNotEqualMessage: false,
                 showNoSelectionMessage: false,
                 securityOptionsError: nil,
                 alertState: nil
@@ -282,7 +330,7 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
         )
 
         store.send(.saveSelection) { state in
-            state.showPasswordsNotEqualMessage = true
+            state.showPasswordErrorMessage = true
         }
     }
 
@@ -295,7 +343,6 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
                 passwordA: "abc",
                 passwordB: "abc",
                 passwordStrength: .veryStrong,
-                showPasswordsNotEqualMessage: false,
                 showNoSelectionMessage: false,
                 securityOptionsError: nil,
                 alertState: nil
@@ -315,7 +362,7 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
                 selectedSecurityOption: .biometry(.faceID),
                 passwordA: "",
                 passwordB: "",
-                showPasswordsNotEqualMessage: false,
+                showPasswordErrorMessage: false,
                 showNoSelectionMessage: false,
                 securityOptionsError: nil,
                 alertState: nil
@@ -333,7 +380,7 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
                 selectedSecurityOption: .none,
                 passwordA: "",
                 passwordB: "",
-                showPasswordsNotEqualMessage: false,
+                showPasswordErrorMessage: false,
                 showNoSelectionMessage: false,
                 securityOptionsError: nil,
                 alertState: nil
@@ -354,7 +401,7 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
                 selectedSecurityOption: .none,
                 passwordA: "",
                 passwordB: "",
-                showPasswordsNotEqualMessage: false,
+                showPasswordErrorMessage: false,
                 showNoSelectionMessage: false,
                 securityOptionsError: nil,
                 alertState: nil
@@ -380,11 +427,12 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
                 selectedSecurityOption: .none,
                 passwordA: "",
                 passwordB: "",
-                showPasswordsNotEqualMessage: false,
+                showPasswordErrorMessage: false,
                 showNoSelectionMessage: false,
                 securityOptionsError: nil,
                 alertState: nil
-            )
+            ),
+            passwordStrengthTester: mockPasswordStrengthTester
         )
 
         mockPasswordStrengthTester.passwordStrengthForReturnValue = .veryWeak
@@ -394,7 +442,7 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
             state.passwordA = "ABC"
             state.passwordB = ""
             state.passwordStrength = .veryWeak
-            state.showPasswordsNotEqualMessage = false
+            state.showPasswordErrorMessage = false
         }
 
         mockPasswordStrengthTester.passwordStrengthForReturnValue = .medium
@@ -402,12 +450,15 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
         store.send(.setPasswordA("ABCD")) { state in
             state.passwordA = "ABCD"
             state.passwordStrength = .medium
+            state.showPasswordErrorMessage = false
         }
 
         testScheduler.run()
 
         store.receive(.comparePasswords) { state in
-            state.showPasswordsNotEqualMessage = true
+            state.showPasswordErrorMessage = true
+            let message = state.passwordErrorMessage
+            expect(message).to(beNil())
         }
     }
 
@@ -417,16 +468,18 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
                 availableSecurityOptions: [.password],
                 selectedSecurityOption: .password,
                 passwordA: "ABC",
-                passwordB: "ABC",
-                passwordStrength: .weak,
-                showPasswordsNotEqualMessage: false,
-                showNoSelectionMessage: false,
-                securityOptionsError: nil,
-                alertState: nil
-            )
+                passwordB: "ABC"
+            ),
+            passwordStrengthTester: mockPasswordStrengthTester
         )
 
-        store.send(.saveSelection)
+        mockPasswordStrengthTester.passwordStrengthForReturnValue = .weak
+
+        store.send(.saveSelection) { state in
+            state.showPasswordErrorMessage = true
+            let message = state.passwordErrorMessage
+            expect(message) == NSLocalizedString("onb_auth_txt_password_strength_insufficient", comment: "")
+        }
 
         expect(self.mockAppSecurityManager.savePasswordCallsCount).to(equal(0))
     }

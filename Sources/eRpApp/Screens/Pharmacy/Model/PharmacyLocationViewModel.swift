@@ -75,6 +75,26 @@ struct PharmacyLocationViewModel: Equatable, Hashable {
             let openingTime: String?
             let closingTime: String?
         }
+
+        var dayOfWeekLocalizedDisplayName: String {
+            // At this point dayOfWeek is of format 'EEE' in "en_US" locale
+            let dayNameParseFormatter: DateFormatter = {
+                let dateFormatter = DateFormatter()
+                dateFormatter.locale = Locale(identifier: "en_US")
+                dateFormatter.dateFormat = "EEE"
+                return dateFormatter
+            }()
+            let localizesDisplayNameFormatter: DateFormatter = {
+                let dateFormatter = DateFormatter()
+                dateFormatter.locale = .current
+                dateFormatter.dateFormat = "EEEE"
+                return dateFormatter
+            }()
+            guard let date = dayNameParseFormatter.date(from: daysOfWeek) else {
+                return daysOfWeek.uppercased()
+            }
+            return localizesDisplayNameFormatter.string(from: date)
+        }
     }
 
     mutating func initHoursOfOperation(
@@ -140,7 +160,9 @@ struct PharmacyLocationViewModel: Equatable, Hashable {
             ]
         )
     }
-    .map { PharmacyLocationViewModel(pharmacy: $0) }
+    .map {
+        PharmacyLocationViewModel(pharmacy: $0)
+    }
 }
 
 extension PharmacyLocation.HoursOfOperation {

@@ -108,7 +108,7 @@ struct AppAuthenticationView: View {
                 .frame(minHeight: geometry.size.height)
             }
         }.onAppear {
-            viewStore.send(.loadAppAuthenticationOption)
+            viewStore.send(.onAppear)
         }
         .onDisappear {
             viewStore.send(.removeSubscriptions)

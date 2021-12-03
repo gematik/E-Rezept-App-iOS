@@ -330,7 +330,7 @@ final class IDPIntegrationTests: XCTestCase {
         expect(success) == true
     }
 
-    func testFastTrackLogin() throws {
+    func testExternalAuthentiactionLogin() throws {
         environment = environmentGMTKDEV // hard coded for now
         let idpsekURLString = ProcessInfo.processInfo
             .environment["IDPSEK_URL"] ??
@@ -363,7 +363,8 @@ final class IDPIntegrationTests: XCTestCase {
             extAuthRequestStorage: PersistentExtAuthRequestStorage()
         )
 
-        // Step: Download available KKs for fasttrack, select the first named "*Gematik*"
+        // Step: Download available KKs for external authentication (a.k.a. fasttrack), select the first named
+        // "*Gematik*"
 
         var success = false
         var selectedEntry: KKAppDirectory.Entry?

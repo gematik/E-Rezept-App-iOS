@@ -43,7 +43,27 @@ enum RegisterAuthenticationDomain {
         var passwordA: String = ""
         var passwordB: String = ""
         var passwordStrength = PasswordStrength.none
-        var showPasswordsNotEqualMessage = false
+        var showPasswordErrorMessage = false
+        var passwordErrorMessage: String? {
+            guard showPasswordErrorMessage, !passwordA.isEmpty else {
+                return nil
+            }
+
+            guard passwordStrength.isMinimumThreshold else {
+                return NSLocalizedString("onb_auth_txt_password_strength_insufficient", comment: "")
+            }
+
+            guard !passwordB.isEmpty else {
+                return nil
+            }
+
+            guard passwordA == passwordB else {
+                return NSLocalizedString("onb_auth_txt_passwords_dont_match", comment: "")
+            }
+
+            return nil
+        }
+
         var showNoSelectionMessage = false
         var securityOptionsError: AppSecurityManagerError?
         var alertState: AlertState<Action>?
@@ -60,7 +80,7 @@ enum RegisterAuthenticationDomain {
         }
 
         var hasValidPasswordEntries: Bool {
-            passwordA == passwordB && passwordStrength.minimumThreshold
+            passwordA == passwordB && passwordStrength.isMinimumThreshold
         }
     }
 
@@ -132,6 +152,7 @@ enum RegisterAuthenticationDomain {
         case let .setPasswordA(string):
             state.passwordStrength = environment.passwordStrengthTester.passwordStrength(for: string)
             state.selectedSecurityOption = .password
+            state.showPasswordErrorMessage = false
             state.passwordA = string
             return Effect(value: .comparePasswords)
                 .delay(for: state.timeout, scheduler: environment.schedulers.main.animation())
@@ -139,6 +160,7 @@ enum RegisterAuthenticationDomain {
                 .cancellable(id: Token.comparePasswords, cancelInFlight: true)
 
         case let .setPasswordB(string):
+            state.showPasswordErrorMessage = false
             state.passwordB = string
             return Effect(value: .comparePasswords)
                 .delay(for: state.timeout, scheduler: environment.schedulers.main.animation())
@@ -147,11 +169,11 @@ enum RegisterAuthenticationDomain {
 
         case .comparePasswords:
             if state.hasValidPasswordEntries {
-                state.showPasswordsNotEqualMessage = false
+                state.showPasswordErrorMessage = false
                 state.showNoSelectionMessage = false
                 UIApplication.shared.dismissKeyboard()
             } else {
-                state.showPasswordsNotEqualMessage = true
+                state.showPasswordErrorMessage = true
             }
             return .none
         case .enterButtonTapped:
@@ -160,18 +182,13 @@ enum RegisterAuthenticationDomain {
                 .eraseToEffect()
                 .cancellable(id: Token.comparePasswords, cancelInFlight: true)
         case .saveSelection:
-            guard state.selectedSecurityOption != .password ||
-                state.passwordStrength.minimumThreshold else {
-                return .none
-            }
-
             guard state.hasValidSelection,
                   let selectedOption = state.selectedSecurityOption else {
                 if state.selectedSecurityOption == .password {
-                    state.showPasswordsNotEqualMessage = true
+                    state.showPasswordErrorMessage = true
                     state.showNoSelectionMessage = false
                 } else {
-                    state.showPasswordsNotEqualMessage = false
+                    state.showPasswordErrorMessage = false
                     state.showNoSelectionMessage = true
                 }
                 return .none
