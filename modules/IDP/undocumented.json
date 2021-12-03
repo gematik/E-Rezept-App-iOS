@@ -192,27 +192,41 @@
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/KKAppDirectory.swift",
       "line": 8,
+      "symbol": "KKAppDirectory.init(apps:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/KKAppDirectory.swift",
+      "line": 12,
       "symbol": "KKAppDirectory.apps",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/KKAppDirectory.swift",
-      "line": 14,
+      "line": 18,
       "symbol": "KKAppDirectory.Entry",
       "symbol_kind": "source.lang.swift.decl.struct",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/KKAppDirectory.swift",
-      "line": 15,
+      "line": 19,
+      "symbol": "KKAppDirectory.Entry.init(name:identifier:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/KKAppDirectory.swift",
+      "line": 24,
       "symbol": "KKAppDirectory.Entry.name",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/KKAppDirectory.swift",
-      "line": 16,
+      "line": 25,
       "symbol": "KKAppDirectory.Entry.identifier",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"

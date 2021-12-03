@@ -20,7 +20,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="index.html">
-           1.1.0 Docs
+           1.1.1 Docs
         </a>
          (85% documented)
       </p>
@@ -63,6 +63,9 @@
           <li class="nav-group-name">
             <a class="nav-group-name-link" href="Extensions.html">Extensions</a>
             <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Extensions.html#/CardWallExtAuthConfirmationDomain">CardWallExtAuthConfirmationDomain</a>
+              </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Extensions/CardWallReadCardDomain.html">CardWallReadCardDomain</a>
               </li>
@@ -1039,13 +1042,13 @@ static func generateSecureRandom(length: Int, randomizer: SecRandomRef? = kSecRa
 </code></pre>
 <h2 id='gemspec_idp_sek' class='heading'>gemSpec_IDP_Sek</h2>
 <h3 id='a_22294' class='heading'>A_22294</h3>
-<h4 id='code-sources-erpapp-screens-cardwall-kk-cardwallinsuranceselectiondomain-swift-60-code-select-kk' class='heading'><code>../Sources/eRpApp/Screens/CardWall/KK/CardWallInsuranceSelectionDomain.swift:60</code>:  Select KK</h4>
+<h4 id='code-sources-erpapp-screens-cardwall-extauth-cardwallextauthconfirmationdomain-swift-60-code-start-login-with-kk' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ExtAuth/CardWallExtAuthConfirmationDomain.swift:60</code>:  Start login with KK</h4>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Sek:A_22294] Start login with KK
+return environment.idpSession.startExtAuth(entry: state.selectedKK)
+</code></pre>
+<h4 id='code-sources-erpapp-screens-cardwall-extauth-cardwallextauthselectiondomain-swift-71-code-select-kk' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ExtAuth/CardWallExtAuthSelectionDomain.swift:71</code>:  Select KK</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Sek:A_22294] Select KK
 state.selectedKK = entry
-</code></pre>
-<h4 id='code-sources-erpapp-screens-cardwall-kk-cardwallinsuranceselectiondomain-swift-65-code-start-login-with-kk' class='heading'><code>../Sources/eRpApp/Screens/CardWall/KK/CardWallInsuranceSelectionDomain.swift:65</code>:  Start login with KK</h4>
-<pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Sek:A_22294] Start login with KK
-return environment.idpSession.startExtAuth(entry: selectedKK)
 </code></pre>
 <h3 id='a_22295' class='heading'>A_22295</h3>
 <h4 id='code-sources-idp-defaultidpsession-swift-368-code-usage-of-kk_app_id' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:368</code>:  Usage of kk_app_id</h4>
@@ -1057,7 +1060,7 @@ let extAuth = IDPExtAuth(kkAppId: entry.identifier,
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Sek:A_22296] Signature verification
 guard try jwtContainer.verify(with: document.discKey) == true else {
 </code></pre>
-<h4 id='code-sources-erpapp-screens-cardwall-kk-cardwallinsuranceselectiondomain-swift-46-code-load-available-apps' class='heading'><code>../Sources/eRpApp/Screens/CardWall/KK/CardWallInsuranceSelectionDomain.swift:46</code>:  Load available apps</h4>
+<h4 id='code-sources-erpapp-screens-cardwall-extauth-cardwallextauthselectiondomain-swift-56-code-load-available-apps' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ExtAuth/CardWallExtAuthSelectionDomain.swift:56</code>:  Load available apps</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Sek:A_22296] Load available apps
 return environment.idpSession.loadDirectoryKKApps()
 </code></pre>
@@ -1066,9 +1069,9 @@ return environment.idpSession.loadDirectoryKKApps()
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Sek:A_22299] Remember State parameter for later verification
 
 </code></pre>
-<h4 id='code-sources-erpapp-screens-cardwall-kk-cardwallinsuranceselectiondomain-swift-75-code-follow-redirect' class='heading'><code>../Sources/eRpApp/Screens/CardWall/KK/CardWallInsuranceSelectionDomain.swift:75</code>:  Follow redirect</h4>
+<h4 id='code-sources-erpapp-screens-cardwall-extauth-cardwallextauthconfirmationdomain-swift-71-code-follow-redirect' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ExtAuth/CardWallExtAuthConfirmationDomain.swift:71</code>:  Follow redirect</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Sek:A_22299] Follow redirect
-guard UIApplication.shared.canOpenURL(url) else {
+guard environment.canOpenURL(url) else {
 </code></pre>
 <h3 id='a_22301' class='heading'>A_22301</h3>
 <h4 id='code-sources-idp-defaultidpsession-swift-412-code-match-request-with-existing-state' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:412</code>:  Match request with existing state</h4>
@@ -1080,10 +1083,9 @@ guard let challengeSession = extAuthRequestStorage.getExtAuthRequest(for: state)
 return extAuthVerify(verify)
 </code></pre>
 <h3 id='a_22313' class='heading'>A_22313</h3>
-<h4 id='code-sources-erpapp-screens-cardwall-kk-cardwallinsuranceselectiondomain-swift-82-code-remember-state-parameter-for-later-verification' class='heading'><code>../Sources/eRpApp/Screens/CardWall/KK/CardWallInsuranceSelectionDomain.swift:82</code>:  Remember State parameter for later verification</h4>
+<h4 id='code-sources-erpapp-screens-cardwall-extauth-cardwallextauthconfirmationdomain-swift-77-code-remember-state-parameter-for-later-verification' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ExtAuth/CardWallExtAuthConfirmationDomain.swift:77</code>:  Remember State parameter for later verification</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Sek:A_22313] Remember State parameter for later verification
-// May Be To Do: .universalLinksOnly: true aus der AFO abwarten
-UIApplication.shared.open(url, options: [:]) { result in
+environment.openURL(url, [:]) { result in
 </code></pre>
 <h2 id='gemf_biometrie' class='heading'>gemF_Biometrie</h2>
 <h3 id='a21450' class='heading'>A21450</h3>
@@ -1376,7 +1378,7 @@ OnboardingAltRegisterAuthenticationView(
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_BSI_FdV:A_20834] view to register authentication in onboarding process
 OnboardingRegisterAuthenticationView(
 </code></pre>
-<h4 id='code-sources-erpapp-scenedelegate-swift-119-code-mandatory-app-authentication' class='heading'><code>../Sources/eRpApp/SceneDelegate.swift:119</code>:  mandatory app authentication</h4>
+<h4 id='code-sources-erpapp-scenedelegate-swift-128-code-mandatory-app-authentication' class='heading'><code>../Sources/eRpApp/SceneDelegate.swift:128</code>:  mandatory app authentication</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_BSI_FdV:A_20834] mandatory app authentication
 rootView: AppAuthenticationView(store: appAuthenticationStore)
 </code></pre>
@@ -1411,7 +1413,7 @@ struct IDPTokenView: View {
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2021 <a class="link" href="https://www.gematik.de" target="_blank" rel="external">gematik GmbH</a>. All rights reserved. (Last updated: 2021-10-25)</p>
+      <p>&copy; 2021 <a class="link" href="https://www.gematik.de" target="_blank" rel="external">gematik GmbH</a>. All rights reserved. (Last updated: 2021-11-16)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>
