@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>LocalStoreFactory Class Reference</title>
+    <link rel="stylesheet" type="text/css" href="../css/jazzy.css" />
+    <link rel="stylesheet" type="text/css" href="../css/highlight.css" />
+    <meta charset="utf-8">
+    <script src="../js/jquery.min.js" defer></script>
+    <script src="../js/jazzy.js" defer></script>
+    
+    <script src="../js/lunr.min.js" defer></script>
+    <script src="../js/typeahead.jquery.js" defer></script>
+    <script src="../js/jazzy.search.js" defer></script>
+  </head>
+  <body>
+
+    <a name="//apple_ref/swift/Class/LocalStoreFactory" class="dashAnchor"></a>
+
+    <a title="LocalStoreFactory Class Reference"></a>
+
+    <header class="header">
+      <p class="header-col header-col--primary">
+        <a class="header-link" href="../index.html">
+           1.1.2
+ Docs
+        </a>
+         (33% documented)
+      </p>
+    
+      <p class="header-col--secondary">
+        <form role="search" action="../search.json">
+          <input type="text" placeholder="Search documentation" data-typeahead>
+        </form>
+      </p>
+    
+        <p class="header-col header-col--secondary">
+          <a class="header-link" href="https://github.com/gematik/E-Rezept-App-iOS">
+            <img class="header-icon" src="../img/gh.png"/>
+            View on GitHub
+          </a>
+        </p>
+    
+    </header>
+
+    <p class="breadcrumbs">
+      <a class="breadcrumb" href="../index.html"> Reference</a>
+      <img class="carat" src="../img/carat.png" />
+      LocalStoreFactory Class Reference
+    </p>
+
+    <div class="content-wrapper">
+      <nav class="navigation">
+        <ul class="nav-groups">
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Guides.html">Guides</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../readme.html">Readme</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Classes.html">Classes</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/CoreDataController.html">CoreDataController</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/CoreDataController/Error.html">– Error</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/ErxAuditEventEntity.html">ErxAuditEventEntity</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/ErxTaskCommunicationEntity.html">ErxTaskCommunicationEntity</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/ErxTaskCoreDataStore.html">ErxTaskCoreDataStore</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/ErxTaskEntity.html">ErxTaskEntity</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/ErxTaskMedicationDispenseEntity.html">ErxTaskMedicationDispenseEntity</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/ErxTaskMedicationEntity.html">ErxTaskMedicationEntity</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/ErxTaskOrganizationEntity.html">ErxTaskOrganizationEntity</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/ErxTaskPatientEntity.html">ErxTaskPatientEntity</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/ErxTaskPractitionerEntity.html">ErxTaskPractitionerEntity</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/ErxTaskWorkRelatedAccidentEntity.html">ErxTaskWorkRelatedAccidentEntity</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/LocalStoreFactory.html">LocalStoreFactory</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/ProfileCoreDataStore.html">ProfileCoreDataStore</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/ProfileEntity.html">ProfileEntity</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/UserDefaultsStore.html">UserDefaultsStore</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Enums.html">Enumerations</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/CoreDataStoreError.html">CoreDataStoreError</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Extensions.html">Extensions</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions/FileManager.html">FileManager</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions/FileManager/ExcludeFileError.html">– ExcludeFileError</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions/UserDefaults.html">UserDefaults</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../Protocols.html">Protocols</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/CoreDataControllerFactory.html">CoreDataControllerFactory</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/ProfileDataStore.html">ProfileDataStore</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+      <article class="main-content">
+
+        <section class="section">
+          <div class="section-content top-matter">
+            <h1>LocalStoreFactory</h1>
+              <div class="declaration">
+                <div class="language">
+                  
+                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">LocalStoreFactory</span> <span class="p">:</span> <span class="kt"><a href="../Protocols/CoreDataControllerFactory.html">CoreDataControllerFactory</a></span></code></pre>
+
+                </div>
+              </div>
+            <p>Factory for all public <code>eRpLocalStorage</code> instances.
+Guarantees to always return the same instance of <code><a href="../Classes/CoreDataController.html">CoreDataController</a></code> during it&rsquo;s lifetime</p>
+
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-content">
+            <div class="task-group">
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:15eRpLocalStorage0B12StoreFactoryC3url14fileProtectionAC10Foundation3URLV_So06NSFileH4Typeatcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(url:fileProtection:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:15eRpLocalStorage0B12StoreFactoryC3url14fileProtectionAC10Foundation3URLV_So06NSFileH4Typeatcfc">init(url:<wbr>fileProtection:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Initialize a CoreDataControllerFactory</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span>
+    <span class="n">url</span> <span class="nv">databaseUrl</span><span class="p">:</span> <span class="kt">URL</span> <span class="o">=</span> <span class="n"><a href="../Classes/LocalStoreFactory.html#/s:15eRpLocalStorage0B12StoreFactoryC18defaultDatabaseUrl10Foundation3URLVvpZ">defaultDatabaseUrl</a></span><span class="p">,</span>
+    <span class="nv">fileProtection</span><span class="p">:</span> <span class="kt">FileProtectionType</span> <span class="o">=</span> <span class="o">.</span><span class="n">completeUnlessOpen</span>
+<span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>databaseUrl</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The database location on device</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>fileProtection</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The file protection level</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:15eRpLocalStorage0B12StoreFactoryC22loadCoreDataControllerAA0ghI0CyKF"></a>
+                    <a name="//apple_ref/swift/Method/loadCoreDataController()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:15eRpLocalStorage0B12StoreFactoryC22loadCoreDataControllerAA0ghI0CyKF">loadCoreDataController()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Lazy initializer for the CoreDataController</p>
+<div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    When store can not be initialized
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">loadCoreDataController</span><span class="p">()</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt"><a href="../Classes/CoreDataController.html">CoreDataController</a></span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>The same instance of <code><a href="../Classes/CoreDataController.html">CoreDataController</a></code> during the lifetime of <code><a href="../Protocols/CoreDataControllerFactory.html">CoreDataControllerFactory</a></code></p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:15eRpLocalStorage0B12StoreFactoryC18defaultDatabaseUrl10Foundation3URLVvpZ"></a>
+                    <a name="//apple_ref/swift/Variable/defaultDatabaseUrl" class="dashAnchor"></a>
+                    <a class="token" href="#/s:15eRpLocalStorage0B12StoreFactoryC18defaultDatabaseUrl10Foundation3URLVvpZ">defaultDatabaseUrl</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Default Local FHIR data store url</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">var</span> <span class="nv">defaultDatabaseUrl</span><span class="p">:</span> <span class="kt">URL</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+      </article>
+    </div>
+    <section class="footer">
+      <p>&copy; 2021 <a class="link" href="https://www.gematik.de" target="_blank" rel="external">gematik GmbH</a>. All rights reserved. (Last updated: 2021-12-03)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+    </section>
+  </body>
+</div>
+</html>

@@ -135,30 +135,44 @@
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/IDPChallengeSession.swift",
-      "line": 22,
-      "symbol": "ExtAuthChallengeSession.init(verifierCode:nonce:)",
-      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "line": 21,
+      "symbol": "ExtAuthChallengeSession.entry",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/IDPChallengeSession.swift",
-      "line": 34,
-      "symbol": "ExtAuthRequestStorage",
-      "symbol_kind": "source.lang.swift.decl.protocol",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/IDPChallengeSession.swift",
-      "line": 35,
-      "symbol": "ExtAuthRequestStorage.setExtAuthRequest(_:for:)",
+      "line": 23,
+      "symbol": "ExtAuthChallengeSession.init(verifierCode:nonce:for:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/IDPChallengeSession.swift",
       "line": 36,
+      "symbol": "ExtAuthRequestStorage",
+      "symbol_kind": "source.lang.swift.decl.protocol",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/IDPChallengeSession.swift",
+      "line": 37,
+      "symbol": "ExtAuthRequestStorage.setExtAuthRequest(_:for:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/IDPChallengeSession.swift",
+      "line": 38,
       "symbol": "ExtAuthRequestStorage.getExtAuthRequest(for:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/IDPChallengeSession.swift",
+      "line": 43,
+      "symbol": "ExtAuthRequestStorage.pendingExtAuthRequests",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {

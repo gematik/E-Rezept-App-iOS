@@ -1,6 +1,62 @@
 {
   "warnings": [
     {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/CoreDataController.swift",
+      "line": 105,
+      "symbol": "CoreDataController.Error",
+      "symbol_kind": "source.lang.swift.decl.enum",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/CoreDataController.swift",
+      "line": 106,
+      "symbol": "CoreDataController.Error.initialization(error:)",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/CoreDataCrudable.swift",
+      "line": 124,
+      "symbol": "CoreDataStoreError",
+      "symbol_kind": "source.lang.swift.decl.enum",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/CoreDataCrudable.swift",
+      "line": 125,
+      "symbol": "CoreDataStoreError.notImplemented",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/CoreDataCrudable.swift",
+      "line": 126,
+      "symbol": "CoreDataStoreError.initialization(error:)",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/CoreDataCrudable.swift",
+      "line": 127,
+      "symbol": "CoreDataStoreError.write(error:)",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/CoreDataCrudable.swift",
+      "line": 128,
+      "symbol": "CoreDataStoreError.delete(error:)",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/CoreDataCrudable.swift",
+      "line": 129,
+      "symbol": "CoreDataStoreError.read(error:)",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/CoreDataEntities/ErxAuditEventEntity+CoreDataClass.swift",
       "line": 8,
       "symbol": "ErxAuditEventEntity",
@@ -53,6 +109,13 @@
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/CoreDataEntities/ErxAuditEventEntity+CoreDataProperties.swift",
       "line": 17,
       "symbol": "ErxAuditEventEntity.task",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/CoreDataEntities/ErxAuditEventEntity+CoreDataProperties.swift",
+      "line": 18,
+      "symbol": "ErxAuditEventEntity.profile",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
@@ -163,21 +226,21 @@
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/CoreDataEntities/ErxTaskEntity+CoreDataClass.swift",
-      "line": 41,
+      "line": 42,
       "symbol": "ErxTaskEntity",
       "symbol_kind": "source.lang.swift.decl.extension",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/CoreDataEntities/ErxTaskEntity+CoreDataClass.swift",
-      "line": 57,
+      "line": 58,
       "symbol": "ErxTaskEntity",
       "symbol_kind": "source.lang.swift.decl.extension",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/CoreDataEntities/ErxTaskEntity+CoreDataClass.swift",
-      "line": 71,
+      "line": 72,
       "symbol": "ErxTaskEntity",
       "symbol_kind": "source.lang.swift.decl.extension",
       "warning": "undocumented"
@@ -359,56 +422,63 @@
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/CoreDataEntities/ErxTaskEntity+CoreDataProperties.swift",
-      "line": 43,
+      "line": 37,
+      "symbol": "ErxTaskEntity.profile",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/CoreDataEntities/ErxTaskEntity+CoreDataProperties.swift",
+      "line": 44,
       "symbol": "ErxTaskEntity.addToAuditEvents(_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/CoreDataEntities/ErxTaskEntity+CoreDataProperties.swift",
-      "line": 46,
+      "line": 47,
       "symbol": "ErxTaskEntity.removeFromAuditEvents(_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/CoreDataEntities/ErxTaskEntity+CoreDataProperties.swift",
-      "line": 49,
+      "line": 50,
       "symbol": "ErxTaskEntity.addToAuditEvents(_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/CoreDataEntities/ErxTaskEntity+CoreDataProperties.swift",
-      "line": 52,
+      "line": 53,
       "symbol": "ErxTaskEntity.removeFromAuditEvents(_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/CoreDataEntities/ErxTaskEntity+CoreDataProperties.swift",
-      "line": 59,
+      "line": 60,
       "symbol": "ErxTaskEntity.addToCommunications(_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/CoreDataEntities/ErxTaskEntity+CoreDataProperties.swift",
-      "line": 62,
+      "line": 63,
       "symbol": "ErxTaskEntity.removeFromCommunications(_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/CoreDataEntities/ErxTaskEntity+CoreDataProperties.swift",
-      "line": 65,
+      "line": 66,
       "symbol": "ErxTaskEntity.addToCommunications(_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/CoreDataEntities/ErxTaskEntity+CoreDataProperties.swift",
-      "line": 68,
+      "line": 69,
       "symbol": "ErxTaskEntity.removeFromCommunications(_:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
@@ -799,6 +869,167 @@
       "warning": "undocumented"
     },
     {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/CoreDataEntities/ProfileEntity+CoreDataClass.swift",
+      "line": 8,
+      "symbol": "ProfileEntity",
+      "symbol_kind": "source.lang.swift.decl.extension",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/CoreDataEntities/ProfileEntity+CoreDataClass.swift",
+      "line": 9,
+      "symbol": "ProfileEntity",
+      "symbol_kind": "source.lang.swift.decl.class",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/CoreDataEntities/ProfileEntity+CoreDataClass.swift",
+      "line": 26,
+      "symbol": "ProfileEntity",
+      "symbol_kind": "source.lang.swift.decl.extension",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/CoreDataEntities/ProfileEntity+CoreDataClass.swift",
+      "line": 42,
+      "symbol": "ProfileEntity",
+      "symbol_kind": "source.lang.swift.decl.extension",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/CoreDataEntities/ProfileEntity+CoreDataClass.swift",
+      "line": 56,
+      "symbol": "ProfileEntity",
+      "symbol_kind": "source.lang.swift.decl.extension",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/CoreDataEntities/ProfileEntity+CoreDataProperties.swift",
+      "line": 9,
+      "symbol": "ProfileEntity.fetchRequest()",
+      "symbol_kind": "source.lang.swift.decl.function.method.class",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/CoreDataEntities/ProfileEntity+CoreDataProperties.swift",
+      "line": 13,
+      "symbol": "ProfileEntity.color",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/CoreDataEntities/ProfileEntity+CoreDataProperties.swift",
+      "line": 14,
+      "symbol": "ProfileEntity.created",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/CoreDataEntities/ProfileEntity+CoreDataProperties.swift",
+      "line": 15,
+      "symbol": "ProfileEntity.emoji",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/CoreDataEntities/ProfileEntity+CoreDataProperties.swift",
+      "line": 16,
+      "symbol": "ProfileEntity.identifier",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/CoreDataEntities/ProfileEntity+CoreDataProperties.swift",
+      "line": 17,
+      "symbol": "ProfileEntity.insuranceId",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/CoreDataEntities/ProfileEntity+CoreDataProperties.swift",
+      "line": 18,
+      "symbol": "ProfileEntity.lastAuthenticated",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/CoreDataEntities/ProfileEntity+CoreDataProperties.swift",
+      "line": 19,
+      "symbol": "ProfileEntity.name",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/CoreDataEntities/ProfileEntity+CoreDataProperties.swift",
+      "line": 20,
+      "symbol": "ProfileEntity.erxTasks",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/CoreDataEntities/ProfileEntity+CoreDataProperties.swift",
+      "line": 21,
+      "symbol": "ProfileEntity.auditEvents",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/CoreDataEntities/ProfileEntity+CoreDataProperties.swift",
+      "line": 28,
+      "symbol": "ProfileEntity.addToErxTasks(_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/CoreDataEntities/ProfileEntity+CoreDataProperties.swift",
+      "line": 31,
+      "symbol": "ProfileEntity.removeFromErxTasks(_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/CoreDataEntities/ProfileEntity+CoreDataProperties.swift",
+      "line": 34,
+      "symbol": "ProfileEntity.addToErxTasks(_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/CoreDataEntities/ProfileEntity+CoreDataProperties.swift",
+      "line": 37,
+      "symbol": "ProfileEntity.removeFromErxTasks(_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/CoreDataEntities/ProfileEntity+CoreDataProperties.swift",
+      "line": 44,
+      "symbol": "ProfileEntity.addToAuditEvents(_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/CoreDataEntities/ProfileEntity+CoreDataProperties.swift",
+      "line": 47,
+      "symbol": "ProfileEntity.removeFromAuditEvents(_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/CoreDataEntities/ProfileEntity+CoreDataProperties.swift",
+      "line": 50,
+      "symbol": "ProfileEntity.addToAuditEvents(_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/CoreDataEntities/ProfileEntity+CoreDataProperties.swift",
+      "line": 53,
+      "symbol": "ProfileEntity.removeFromAuditEvents(_:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/FileManager+Backup.swift",
       "line": 8,
       "symbol": "FileManager.ExcludeFileError",
@@ -820,45 +1051,10 @@
       "warning": "undocumented"
     },
     {
-      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/Prescriptions/ErxTaskCoreDataStore+Error.swift",
-      "line": 8,
-      "symbol": "ErxTaskCoreDataStore.Error",
-      "symbol_kind": "source.lang.swift.decl.enum",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/Prescriptions/ErxTaskCoreDataStore+Error.swift",
-      "line": 9,
-      "symbol": "ErxTaskCoreDataStore.Error.notImplemented",
-      "symbol_kind": "source.lang.swift.decl.enumelement",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/Prescriptions/ErxTaskCoreDataStore+Error.swift",
-      "line": 10,
-      "symbol": "ErxTaskCoreDataStore.Error.initialization(error:)",
-      "symbol_kind": "source.lang.swift.decl.enumelement",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/Prescriptions/ErxTaskCoreDataStore+Error.swift",
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/Prescriptions/ErxTaskCoreDataStore.swift",
       "line": 11,
-      "symbol": "ErxTaskCoreDataStore.Error.write(error:)",
-      "symbol_kind": "source.lang.swift.decl.enumelement",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/Prescriptions/ErxTaskCoreDataStore+Error.swift",
-      "line": 12,
-      "symbol": "ErxTaskCoreDataStore.Error.delete(error:)",
-      "symbol_kind": "source.lang.swift.decl.enumelement",
-      "warning": "undocumented"
-    },
-    {
-      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/Prescriptions/ErxTaskCoreDataStore+Error.swift",
-      "line": 13,
-      "symbol": "ErxTaskCoreDataStore.Error.read(error:)",
-      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "symbol": "ErxTaskCoreDataStore.Error",
+      "symbol_kind": "source.lang.swift.decl.typealias",
       "warning": "undocumented"
     },
     {

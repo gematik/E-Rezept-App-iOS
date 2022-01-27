@@ -44,9 +44,30 @@
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpRemoteStorage/ErxTaskFHIRDataStore.swift",
-      "line": 175,
+      "line": 138,
+      "symbol": "ErxTaskFHIRDataStore",
+      "symbol_kind": "source.lang.swift.decl.extension",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpRemoteStorage/ErxTaskFHIRDataStore.swift",
+      "line": 168,
+      "symbol": "ErxTaskFHIRDataStore",
+      "symbol_kind": "source.lang.swift.decl.extension",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpRemoteStorage/ErxTaskFHIRDataStore.swift",
+      "line": 183,
       "symbol": "ErxTaskFHIRDataStore.listAllUnreadCommunications(for:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpRemoteStorage/ErxTaskFHIRDataStore.swift",
+      "line": 199,
+      "symbol": "ErxTaskFHIRDataStore",
+      "symbol_kind": "source.lang.swift.decl.extension",
       "warning": "undocumented"
     },
     {

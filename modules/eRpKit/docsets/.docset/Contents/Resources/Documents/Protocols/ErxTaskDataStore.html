@@ -21,10 +21,10 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-           1.1.1
+           1.1.2
  Docs
         </a>
-         (73% documented)
+         (70% documented)
       </p>
     
       <p class="header-col--secondary">
@@ -114,6 +114,15 @@
                 <a class="nav-group-task-link" href="../Protocols/DataMatrixStringEncoder.html">DataMatrixStringEncoder</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/ErxAuditEventDataStore.html">ErxAuditEventDataStore</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/ErxCommunicationDataStore.html">ErxCommunicationDataStore</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/ErxMedicationDispenseDataStore.html">ErxMedicationDispenseDataStore</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Protocols/ErxTaskDataStore.html">ErxTaskDataStore</a>
               </li>
               <li class="nav-group-task">
@@ -182,6 +191,12 @@
                 <a class="nav-group-task-link" href="../Structs/ErxTaskOrder/Payload.html">– Payload</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/Profile.html">Profile</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/Profile/Color.html">– Color</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/ScannedErxTask.html">ScannedErxTask</a>
               </li>
               <li class="nav-group-task">
@@ -192,6 +207,9 @@
           <li class="nav-group-name">
             <a class="nav-group-name-link" href="../Typealiases.html">Type Aliases</a>
             <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Typealiases.html#/s:6eRpKit12ErxDataStorea">ErxDataStore</a>
+              </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Typealiases.html#/s:6eRpKit4KVNRa">KVNR</a>
               </li>
@@ -397,7 +415,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Save a sequence of tasks into the store</p>
+                        <p>Creates or updates a sequence of tasks into the store</p>
 
                       </div>
                       <div class="declaration">
@@ -407,6 +425,25 @@
                           <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">save</span><span class="p">(</span><span class="nv">tasks</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Structs/ErxTask.html">ErxTask</a></span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">Bool</span><span class="p">,</span> <span class="kt"><a href="../Protocols/ErxTaskDataStore.html#/s:6eRpKit16ErxTaskDataStoreP9ErrorTypeQa">ErrorType</a></span><span class="o">&gt;</span></code></pre>
 
                         </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>tasks</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Array of <code>ErxTasks</code>s that should be saved</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
                       </div>
                     </section>
                   </div>
@@ -432,199 +469,6 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">delete</span><span class="p">(</span><span class="nv">tasks</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Structs/ErxTask.html">ErxTask</a></span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">Bool</span><span class="p">,</span> <span class="kt"><a href="../Protocols/ErxTaskDataStore.html#/s:6eRpKit16ErxTaskDataStoreP9ErrorTypeQa">ErrorType</a></span><span class="o">&gt;</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:6eRpKit16ErxTaskDataStoreP15fetchAuditEvent2by7Combine12AnyPublisherVyAA0chI0VSg9ErrorTypeQzGSS_tF"></a>
-                    <a name="//apple_ref/swift/Method/fetchAuditEvent(by:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6eRpKit16ErxTaskDataStoreP15fetchAuditEvent2by7Combine12AnyPublisherVyAA0chI0VSg9ErrorTypeQzGSS_tF">fetchAuditEvent(by:<wbr>)</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Fetch the ErxAuditEvent by its id and accessCode when required by <code>Self</code></p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">fetchAuditEvent</span><span class="p">(</span><span class="n">by</span> <span class="nv">id</span><span class="p">:</span> <span class="kt"><a href="../Structs/ErxAuditEvent.html">ErxAuditEvent</a></span><span class="o">.</span><span class="kt">ID</span><span class="p">)</span> <span class="c1">// swiftlint:disable:this identifier_name</span>
-    <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/ErxAuditEvent.html">ErxAuditEvent</a></span><span class="p">?,</span> <span class="kt"><a href="../Protocols/ErxTaskDataStore.html#/s:6eRpKit16ErxTaskDataStoreP9ErrorTypeQa">ErrorType</a></span><span class="o">&gt;</span></code></pre>
-
-                        </div>
-                      </div>
-                      <div>
-                        <h4>Parameters</h4>
-                        <table class="graybox">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>id</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>the ErxAuditEvent ID</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>accessCode</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>AccessCode, optional as required by implementing DataStore</p>
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                      <div>
-                        <h4>Return Value</h4>
-                        <p>Publisher for the fetch request</p>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:6eRpKit16ErxTaskDataStoreP18listAllAuditEvents03forD2ID0K07Combine12AnyPublisherVySayAA0cI5EventVG9ErrorTypeQzGSS_SSSgtF"></a>
-                    <a name="//apple_ref/swift/Method/listAllAuditEvents(forTaskID:for:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6eRpKit16ErxTaskDataStoreP18listAllAuditEvents03forD2ID0K07Combine12AnyPublisherVySayAA0cI5EventVG9ErrorTypeQzGSS_SSSgtF">listAllAuditEvents(forTaskID:<wbr>for:<wbr>)</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Fetch all audit events related to a specific task.</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">listAllAuditEvents</span><span class="p">(</span><span class="n">forTaskID</span> <span class="nv">taskID</span><span class="p">:</span> <span class="kt"><a href="../Structs/ErxTask.html">ErxTask</a></span><span class="o">.</span><span class="kt">ID</span><span class="p">,</span>
-                        <span class="k">for</span> <span class="nv">locale</span><span class="p">:</span> <span class="kt">String</span><span class="p">?)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="p">[</span><span class="kt"><a href="../Structs/ErxAuditEvent.html">ErxAuditEvent</a></span><span class="p">],</span> <span class="kt"><a href="../Protocols/ErxTaskDataStore.html#/s:6eRpKit16ErxTaskDataStoreP9ErrorTypeQa">ErrorType</a></span><span class="o">&gt;</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:6eRpKit16ErxTaskDataStoreP34fetchLatestTimestampForAuditEvents7Combine12AnyPublisherVySSSg9ErrorTypeQzGyF"></a>
-                    <a name="//apple_ref/swift/Method/fetchLatestTimestampForAuditEvents()" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6eRpKit16ErxTaskDataStoreP34fetchLatestTimestampForAuditEvents7Combine12AnyPublisherVySSSg9ErrorTypeQzGyF">fetchLatestTimestampForAuditEvents()</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Fetch the most recent <code>timestamp</code> of all <code>AuditEvent</code>s</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">fetchLatestTimestampForAuditEvents</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">String</span><span class="p">?,</span> <span class="kt"><a href="../Protocols/ErxTaskDataStore.html#/s:6eRpKit16ErxTaskDataStoreP9ErrorTypeQa">ErrorType</a></span><span class="o">&gt;</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:6eRpKit16ErxTaskDataStoreP18listAllAuditEvents5after3for7Combine12AnyPublisherVySayAA0cI5EventVG9ErrorTypeQzGSSSg_APtF"></a>
-                    <a name="//apple_ref/swift/Method/listAllAuditEvents(after:for:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6eRpKit16ErxTaskDataStoreP18listAllAuditEvents5after3for7Combine12AnyPublisherVySayAA0cI5EventVG9ErrorTypeQzGSSSg_APtF">listAllAuditEvents(after:<wbr>for:<wbr>)</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>List all audit events contained in the store</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">listAllAuditEvents</span><span class="p">(</span><span class="n">after</span> <span class="nv">referenceDate</span><span class="p">:</span> <span class="kt">String</span><span class="p">?,</span>
-                        <span class="k">for</span> <span class="nv">locale</span><span class="p">:</span> <span class="kt">String</span><span class="p">?)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="p">[</span><span class="kt"><a href="../Structs/ErxAuditEvent.html">ErxAuditEvent</a></span><span class="p">],</span> <span class="kt"><a href="../Protocols/ErxTaskDataStore.html#/s:6eRpKit16ErxTaskDataStoreP9ErrorTypeQa">ErrorType</a></span><span class="o">&gt;</span></code></pre>
-
-                        </div>
-                      </div>
-                      <div>
-                        <h4>Parameters</h4>
-                        <table class="graybox">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>referenceDate</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p><code>AuditEvent</code>s with modification date great or equal  <code>referenceDate</code> will be listed.
-                        Pass <code>nil</code> for listing all</p>
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:6eRpKit16ErxTaskDataStoreP4save11auditEvents7Combine12AnyPublisherVySb9ErrorTypeQzGSayAA0C10AuditEventVG_tF"></a>
-                    <a name="//apple_ref/swift/Method/save(auditEvents:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6eRpKit16ErxTaskDataStoreP4save11auditEvents7Combine12AnyPublisherVySb9ErrorTypeQzGSayAA0C10AuditEventVG_tF">save(auditEvents:<wbr>)</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Save a sequence of audit events into the store</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">save</span><span class="p">(</span><span class="nv">auditEvents</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Structs/ErxAuditEvent.html">ErxAuditEvent</a></span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">Bool</span><span class="p">,</span> <span class="kt"><a href="../Protocols/ErxTaskDataStore.html#/s:6eRpKit16ErxTaskDataStoreP9ErrorTypeQa">ErrorType</a></span><span class="o">&gt;</span></code></pre>
 
                         </div>
                       </div>
@@ -686,9 +530,9 @@ Note: The response does not verify that the pharmacy has accepted the order</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:6eRpKit16ErxTaskDataStoreP21listAllCommunications5after3for7Combine12AnyPublisherVySayAA0cD0V13CommunicationVG9ErrorTypeQzGSSSg_AM7ProfileOtF"></a>
-                    <a name="//apple_ref/swift/Method/listAllCommunications(after:for:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6eRpKit16ErxTaskDataStoreP21listAllCommunications5after3for7Combine12AnyPublisherVySayAA0cD0V13CommunicationVG9ErrorTypeQzGSSSg_AM7ProfileOtF">listAllCommunications(after:<wbr>for:<wbr>)</a>
+                    <a name="/s:6eRpKit16ErxTaskDataStoreP26listAllTasksWithoutProfile7Combine12AnyPublisherVySayAA0cD0VG9ErrorTypeQzGyF"></a>
+                    <a name="//apple_ref/swift/Method/listAllTasksWithoutProfile()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:6eRpKit16ErxTaskDataStoreP26listAllTasksWithoutProfile7Combine12AnyPublisherVySayAA0cD0VG9ErrorTypeQzGyF">listAllTasksWithoutProfile()</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -696,302 +540,16 @@ Note: The response does not verify that the pharmacy has accepted the order</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Load All communications of the given profile</p>
+                        <p>List all tasks without relationship to a <code><a href="../Structs/Profile.html">Profile</a></code></p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">listAllCommunications</span><span class="p">(</span>
-    <span class="n">after</span> <span class="nv">referenceDate</span><span class="p">:</span> <span class="kt">String</span><span class="p">?,</span>
-    <span class="k">for</span> <span class="nv">profile</span><span class="p">:</span> <span class="kt"><a href="../Structs/ErxTask.html">ErxTask</a></span><span class="o">.</span><span class="kt">Communication</span><span class="o">.</span><span class="kt">Profile</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="p">[</span><span class="kt"><a href="../Structs/ErxTask.html">ErxTask</a></span><span class="o">.</span><span class="kt">Communication</span><span class="p">],</span> <span class="kt"><a href="../Protocols/ErxTaskDataStore.html#/s:6eRpKit16ErxTaskDataStoreP9ErrorTypeQa">ErrorType</a></span><span class="o">&gt;</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">listAllTasksWithoutProfile</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="p">[</span><span class="kt"><a href="../Structs/ErxTask.html">ErxTask</a></span><span class="p">],</span> <span class="kt"><a href="../Protocols/ErxTaskDataStore.html#/s:6eRpKit16ErxTaskDataStoreP9ErrorTypeQa">ErrorType</a></span><span class="o">&gt;</span></code></pre>
 
                         </div>
-                      </div>
-                      <div>
-                        <h4>Parameters</h4>
-                        <table class="graybox">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>referenceDate</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p><code>Communication</code>s with modification date great or equal  <code>referenceDate</code> will be listed.
-            Pass <code>nil</code> for listing all</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>profile</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>Filters for the passed Profile type</p>
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:6eRpKit16ErxTaskDataStoreP37fetchLatestTimestampForCommunications7Combine12AnyPublisherVySSSg9ErrorTypeQzGyF"></a>
-                    <a name="//apple_ref/swift/Method/fetchLatestTimestampForCommunications()" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6eRpKit16ErxTaskDataStoreP37fetchLatestTimestampForCommunications7Combine12AnyPublisherVySSSg9ErrorTypeQzGyF">fetchLatestTimestampForCommunications()</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Fetch the most recent <code>timestamp</code> of all <code>Communication</code>s</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">fetchLatestTimestampForCommunications</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">String</span><span class="p">?,</span> <span class="kt"><a href="../Protocols/ErxTaskDataStore.html#/s:6eRpKit16ErxTaskDataStoreP9ErrorTypeQa">ErrorType</a></span><span class="o">&gt;</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:6eRpKit16ErxTaskDataStoreP4save14communications7Combine12AnyPublisherVySb9ErrorTypeQzGSayAA0cD0V13CommunicationVG_tF"></a>
-                    <a name="//apple_ref/swift/Method/save(communications:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6eRpKit16ErxTaskDataStoreP4save14communications7Combine12AnyPublisherVySb9ErrorTypeQzGSayAA0cD0V13CommunicationVG_tF">save(communications:<wbr>)</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Saves the passes sequence of <code>ErxTaskCommunication</code>s</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">save</span><span class="p">(</span><span class="nv">communications</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Structs/ErxTask.html">ErxTask</a></span><span class="o">.</span><span class="kt">Communication</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">Bool</span><span class="p">,</span> <span class="kt"><a href="../Protocols/ErxTaskDataStore.html#/s:6eRpKit16ErxTaskDataStoreP9ErrorTypeQa">ErrorType</a></span><span class="o">&gt;</span></code></pre>
-
-                        </div>
-                      </div>
-                      <div>
-                        <h4>Parameters</h4>
-                        <table class="graybox">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>communications</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>Array of communications that should be stored</p>
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                      <div>
-                        <h4>Return Value</h4>
-                        <p><code>true</code> if save operation was successful</p>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:6eRpKit16ErxTaskDataStoreP28countAllUnreadCommunications3for7Combine12AnyPublisherVySi9ErrorTypeQzGAA0cD0V13CommunicationV7ProfileO_tF"></a>
-                    <a name="//apple_ref/swift/Method/countAllUnreadCommunications(for:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6eRpKit16ErxTaskDataStoreP28countAllUnreadCommunications3for7Combine12AnyPublisherVySi9ErrorTypeQzGAA0cD0V13CommunicationV7ProfileO_tF">countAllUnreadCommunications(for:<wbr>)</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Returns a count for all unread communications for the given profile</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">countAllUnreadCommunications</span><span class="p">(</span>
-    <span class="k">for</span> <span class="nv">profile</span><span class="p">:</span> <span class="kt"><a href="../Structs/ErxTask.html">ErxTask</a></span><span class="o">.</span><span class="kt">Communication</span><span class="o">.</span><span class="kt">Profile</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">Int</span><span class="p">,</span> <span class="kt"><a href="../Protocols/ErxTaskDataStore.html#/s:6eRpKit16ErxTaskDataStoreP9ErrorTypeQa">ErrorType</a></span><span class="o">&gt;</span></code></pre>
-
-                        </div>
-                      </div>
-                      <div>
-                        <h4>Parameters</h4>
-                        <table class="graybox">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>profile</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>profile for which you want to have the count</p>
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:6eRpKit16ErxTaskDataStoreP45fetchLatestHandOverDateForMedicationDispenses7Combine12AnyPublisherVySSSg9ErrorTypeQzGyF"></a>
-                    <a name="//apple_ref/swift/Method/fetchLatestHandOverDateForMedicationDispenses()" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6eRpKit16ErxTaskDataStoreP45fetchLatestHandOverDateForMedicationDispenses7Combine12AnyPublisherVySSSg9ErrorTypeQzGyF">fetchLatestHandOverDateForMedicationDispenses()</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Fetch the most recent <code>handOverDate</code> of all <code>MedicationDispense</code>s</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">fetchLatestHandOverDateForMedicationDispenses</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">String</span><span class="p">?,</span> <span class="kt"><a href="../Protocols/ErxTaskDataStore.html#/s:6eRpKit16ErxTaskDataStoreP9ErrorTypeQa">ErrorType</a></span><span class="o">&gt;</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:6eRpKit16ErxTaskDataStoreP26listAllMedicationDispenses5after7Combine12AnyPublisherVySayAA0cD0V0I8DispenseVG9ErrorTypeQzGSSSg_tF"></a>
-                    <a name="//apple_ref/swift/Method/listAllMedicationDispenses(after:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6eRpKit16ErxTaskDataStoreP26listAllMedicationDispenses5after7Combine12AnyPublisherVySayAA0cD0V0I8DispenseVG9ErrorTypeQzGSSSg_tF">listAllMedicationDispenses(after:<wbr>)</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>List all MedicationDispenses from the given reference date</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">listAllMedicationDispenses</span><span class="p">(</span>
-    <span class="n">after</span> <span class="nv">referenceDate</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="p">[</span><span class="kt"><a href="../Structs/ErxTask.html">ErxTask</a></span><span class="o">.</span><span class="kt">MedicationDispense</span><span class="p">],</span> <span class="kt"><a href="../Protocols/ErxTaskDataStore.html#/s:6eRpKit16ErxTaskDataStoreP9ErrorTypeQa">ErrorType</a></span><span class="o">&gt;</span></code></pre>
-
-                        </div>
-                      </div>
-                      <div>
-                        <h4>Parameters</h4>
-                        <table class="graybox">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>referenceDate</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p><code>MedicationDispense</code>s with modification date great or equal  <code>referenceDate</code>
-                        will be listed. Pass <code>nil</code> for listing all</p>
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:6eRpKit16ErxTaskDataStoreP4save19medicationDispenses7Combine12AnyPublisherVySb9ErrorTypeQzGSayAA0cD0V18MedicationDispenseVG_tF"></a>
-                    <a name="//apple_ref/swift/Method/save(medicationDispenses:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6eRpKit16ErxTaskDataStoreP4save19medicationDispenses7Combine12AnyPublisherVySb9ErrorTypeQzGSayAA0cD0V18MedicationDispenseVG_tF">save(medicationDispenses:<wbr>)</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Saves the passed sequence of <code><a href="../Structs/ErxTask/MedicationDispense.html">ErxTask.MedicationDispense</a></code>s</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">save</span><span class="p">(</span><span class="nv">medicationDispenses</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Structs/ErxTask.html">ErxTask</a></span><span class="o">.</span><span class="kt">MedicationDispense</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">Bool</span><span class="p">,</span> <span class="kt"><a href="../Protocols/ErxTaskDataStore.html#/s:6eRpKit16ErxTaskDataStoreP9ErrorTypeQa">ErrorType</a></span><span class="o">&gt;</span></code></pre>
-
-                        </div>
-                      </div>
-                      <div>
-                        <h4>Parameters</h4>
-                        <table class="graybox">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>medicationDispenses</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>Array of medication dispenses that should be stored</p>
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                      <div>
-                        <h4>Return Value</h4>
-                        <p><code>true</code> if save operation was successful</p>
                       </div>
                     </section>
                   </div>
@@ -1026,98 +584,6 @@ Note: The response does not verify that the pharmacy has accepted the order</p>
                     </section>
                   </div>
                 </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:6eRpKit16ErxTaskDataStorePAAE18listAllAuditEvents3for7Combine12AnyPublisherVySayAA0cI5EventVG9ErrorTypeQzGSS_tF"></a>
-                    <a name="//apple_ref/swift/Method/listAllAuditEvents(for:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6eRpKit16ErxTaskDataStorePAAE18listAllAuditEvents3for7Combine12AnyPublisherVySayAA0cI5EventVG9ErrorTypeQzGSS_tF">listAllAuditEvents(for:<wbr>)</a>
-                    </code>
-                      <span class="declaration-note">
-                        Extension method
-                      </span>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>List all audit events with the given local contained in the store</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">listAllAuditEvents</span><span class="p">(</span><span class="k">for</span> <span class="nv">locale</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="p">[</span><span class="kt"><a href="../Structs/ErxAuditEvent.html">ErxAuditEvent</a></span><span class="p">],</span> <span class="kt"><a href="../Protocols/ErxTaskDataStore.html#/s:6eRpKit16ErxTaskDataStoreP9ErrorTypeQa">ErrorType</a></span><span class="o">&gt;</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:6eRpKit16ErxTaskDataStorePAAE21listAllCommunications3for7Combine12AnyPublisherVySayAA0cD0V13CommunicationVG9ErrorTypeQzGAL7ProfileO_tF"></a>
-                    <a name="//apple_ref/swift/Method/listAllCommunications(for:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6eRpKit16ErxTaskDataStorePAAE21listAllCommunications3for7Combine12AnyPublisherVySayAA0cD0V13CommunicationVG9ErrorTypeQzGAL7ProfileO_tF">listAllCommunications(for:<wbr>)</a>
-                    </code>
-                      <span class="declaration-note">
-                        Extension method
-                      </span>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>List all communications for the given profile contained in the store</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">listAllCommunications</span><span class="p">(</span>
-    <span class="k">for</span> <span class="nv">profile</span><span class="p">:</span> <span class="kt"><a href="../Structs/ErxTask.html">ErxTask</a></span><span class="o">.</span><span class="kt">Communication</span><span class="o">.</span><span class="kt">Profile</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="p">[</span><span class="kt"><a href="../Structs/ErxTask.html">ErxTask</a></span><span class="o">.</span><span class="kt">Communication</span><span class="p">],</span> <span class="kt"><a href="../Protocols/ErxTaskDataStore.html#/s:6eRpKit16ErxTaskDataStoreP9ErrorTypeQa">ErrorType</a></span><span class="o">&gt;</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:6eRpKit16ErxTaskDataStorePAAE26listAllMedicationDispenses7Combine12AnyPublisherVySayAA0cD0V0I8DispenseVG9ErrorTypeQzGyF"></a>
-                    <a name="//apple_ref/swift/Method/listAllMedicationDispenses()" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6eRpKit16ErxTaskDataStorePAAE26listAllMedicationDispenses7Combine12AnyPublisherVySayAA0cD0V0I8DispenseVG9ErrorTypeQzGyF">listAllMedicationDispenses()</a>
-                    </code>
-                      <span class="declaration-note">
-                        Extension method
-                      </span>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>List all medication dispenses contained in the store</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">listAllMedicationDispenses</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="p">[</span><span class="kt"><a href="../Structs/ErxTask.html">ErxTask</a></span><span class="o">.</span><span class="kt">MedicationDispense</span><span class="p">],</span> <span class="kt"><a href="../Protocols/ErxTaskDataStore.html#/s:6eRpKit16ErxTaskDataStoreP9ErrorTypeQa">ErrorType</a></span><span class="o">&gt;</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
               </ul>
             </div>
           </div>
@@ -1126,7 +592,7 @@ Note: The response does not verify that the pharmacy has accepted the order</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2021 <a class="link" href="https://www.gematik.de" target="_blank" rel="external">gematik GmbH</a>. All rights reserved. (Last updated: 2021-11-16)</p>
+      <p>&copy; 2021 <a class="link" href="https://www.gematik.de" target="_blank" rel="external">gematik GmbH</a>. All rights reserved. (Last updated: 2021-12-03)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>
