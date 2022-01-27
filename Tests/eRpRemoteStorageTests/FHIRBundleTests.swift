@@ -59,7 +59,7 @@ final class FHIRBundleTests: XCTestCase {
         expect(task.patient?.phone).to(beNil())
         expect(task.patient?.status) == "1"
         expect(task.patient?.insurance) == "AOK Rheinland/Hamburg"
-        expect(task.patient?.insuranceIdentifier) == "104212059"
+        expect(task.patient?.insuranceId) == "X234567890"
         expect(task.practitioner?.lanr) == "838382202"
         expect(task.practitioner?.name) == "Hans Topp-Glücklich"
         expect(task.practitioner?.qualification) == "Hausarzt"

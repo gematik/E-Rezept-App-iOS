@@ -35,12 +35,51 @@ final class MainViewSnapshotTests: XCTestCase {
                          environment: MainDomain.Dummies.environment)
     }
 
-    func testMainView_Empty() {
-        let sut = MainView(store: store(for: MainDomain.State(
-            prescriptionListState: GroupedPrescriptionListDomain.State(
-                groupedPrescriptions: []
+    private func store(for state: GroupedPrescriptionListDomain.State, profile: UserProfile? = nil)
+        -> MainDomain.Store {
+        MainDomain.Store(
+            initialState: MainDomain.State(
+                prescriptionListState: state,
+                profile: profile ?? testProfileTheoTestprofil
             ),
-            debug: DebugDomain.State(trackingOptOut: true)
+            reducer: MainDomain.Reducer.empty,
+            environment: MainDomain.Dummies.environment
+        )
+    }
+
+    let testProfileTheoTestprofil = UserProfile(
+        profile: Profile(
+            name: "Theo Testprofil",
+            identifier: UUID(),
+            created: Date(),
+            insuranceId: nil,
+            color: .green,
+            emoji: "🌮",
+            lastAuthenticated: nil,
+            erxTasks: [],
+            erxAuditEvents: []
+        ),
+        connectionStatus: .connected
+    )
+
+    let testProfileOlafOffline = UserProfile(
+        profile: Profile(
+            name: "Olaf Offline",
+            identifier: UUID(),
+            created: Date(),
+            insuranceId: nil,
+            color: .red,
+            emoji: nil,
+            lastAuthenticated: nil,
+            erxTasks: [],
+            erxAuditEvents: []
+        ),
+        connectionStatus: .disconnected
+    )
+
+    func testMainView_Empty() {
+        let sut = MainView(store: store(for: GroupedPrescriptionListDomain.State(
+            groupedPrescriptions: []
         )))
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
@@ -61,8 +100,7 @@ final class MainViewSnapshotTests: XCTestCase {
             groupedPrescriptions: [groupedPrescription]
         )
         let sut = MainView(
-            store: store(for: MainDomain.State(prescriptionListState: state,
-                                               debug: DebugDomain.State(trackingOptOut: true)))
+            store: store(for: state, profile: testProfileOlafOffline)
         )
         .frame(width: 320, height: 700)
 
@@ -82,8 +120,7 @@ final class MainViewSnapshotTests: XCTestCase {
             groupedPrescriptions: [groupedPrescription]
         )
         let sut = MainView(
-            store: store(for: MainDomain.State(prescriptionListState: state,
-                                               debug: DebugDomain.State(trackingOptOut: true)))
+            store: store(for: state)
         )
         .frame(width: 320, height: 700)
 
@@ -107,8 +144,7 @@ final class MainViewSnapshotTests: XCTestCase {
         )
 
         let sut = MainView(
-            store: store(for: MainDomain.State(prescriptionListState: state,
-                                               debug: DebugDomain.State(trackingOptOut: true)))
+            store: store(for: state)
         )
         .frame(width: 320, height: 1400)
 

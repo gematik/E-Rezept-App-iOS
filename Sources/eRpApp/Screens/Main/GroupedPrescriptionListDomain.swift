@@ -19,6 +19,7 @@
 import Combine
 import ComposableArchitecture
 import eRpKit
+import FHIRClient
 import IDP
 
 enum GroupedPrescriptionListDomain {
@@ -57,7 +58,7 @@ enum GroupedPrescriptionListDomain {
     }
 
     struct State: Equatable {
-        var loadingState: LoadingState<[GroupedPrescription], ErxTaskRepositoryError> =
+        var loadingState: LoadingState<[GroupedPrescription], ErxRepositoryError> =
             .idle
 
         // sub states
@@ -76,12 +77,12 @@ enum GroupedPrescriptionListDomain {
         /// Loads locally stored GroupedPrescriptions
         case loadLocalGroupedPrescriptions
         /// Response from `loadLocalGroupedPrescriptions`
-        case loadLocalGroupedPrescriptionsReceived(LoadingState<[GroupedPrescription], ErxTaskRepositoryError>)
+        case loadLocalGroupedPrescriptionsReceived(LoadingState<[GroupedPrescription], ErxRepositoryError>)
         ///  Loads GroupedPrescriptions from server and stores them in the local store
         case loadRemoteGroupedPrescriptionsAndSave
         /// Response from `loadRemoteGroupedPrescriptionsAndSave`
         // swiftlint:disable:next identifier_name
-        case loadRemoteGroupedPrescriptionsAndSaveReceived(LoadingState<[GroupedPrescription], ErxTaskRepositoryError>)
+        case loadRemoteGroupedPrescriptionsAndSaveReceived(LoadingState<[GroupedPrescription], ErxRepositoryError>)
         /// Presents the CardWall when not logged in or executes `loadFromCloudAndSave`
         case refresh
         /// Dismisses the alert that showing loading errors
@@ -212,8 +213,7 @@ enum GroupedPrescriptionListDomain {
         ) { environment in
             PrescriptionDetailDomain.Environment(
                 schedulers: environment.schedulers,
-                locationManager: .live,
-                taskRepositoryAccess: environment.userSession.erxTaskRepository,
+                taskRepository: environment.userSession.erxTaskRepository,
                 fhirDateFormatter: environment.fhirDateFormatter,
                 pharmacyRepository: environment.userSession.pharmacyRepository,
                 userSession: environment.userSession
@@ -228,8 +228,7 @@ enum GroupedPrescriptionListDomain {
             RedeemDomain.Environment(
                 schedulers: environment.schedulers,
                 userSession: environment.userSession,
-                fhirDateFormatter: environment.fhirDateFormatter,
-                locationManager: .live
+                fhirDateFormatter: environment.fhirDateFormatter
             )
         }
 
@@ -274,13 +273,13 @@ extension GroupedPrescriptionListDomain.Environment {
     }
 
     func loadRemoteTasksAndSave()
-        -> Effect<LoadingState<[GroupedPrescription], ErxTaskRepositoryError>, Never> {
+        -> Effect<LoadingState<[GroupedPrescription], ErxRepositoryError>, Never> {
         userSession
             .isAuthenticated
-            .mapError { ErxTaskRepositoryError.local(.initialization(error: $0)) }
+            .mapError { ErxRepositoryError.local(.initialization(error: $0)) }
             .first()
             .flatMap { isAuthenticated
-                -> AnyPublisher<[GroupedPrescription], ErxTaskRepositoryError> in
+                -> AnyPublisher<[GroupedPrescription], ErxRepositoryError> in
 
                 if isAuthenticated {
                     return
@@ -291,11 +290,11 @@ extension GroupedPrescriptionListDomain.Environment {
                 } else {
                     // return so the loadingState can be updated
                     return Just([])
-                        .setFailureType(to: ErxTaskRepositoryError.self)
+                        .setFailureType(to: ErxRepositoryError.self)
                         .eraseToAnyPublisher()
                 }
             }
-            .map(LoadingState<[GroupedPrescription], ErxTaskRepositoryError>.value)
+            .map(LoadingState<[GroupedPrescription], ErxRepositoryError>.value)
             .catch { _ in Effect(value: LoadingState.idle).eraseToEffect() }
             .receive(on: schedulers.main.animation())
             .eraseToEffect()
@@ -318,7 +317,7 @@ extension GroupedPrescriptionListDomain.Environment {
                     // TODO: error type mapping is bogus // swiftlint:disable:this todo
                     return Just(GroupedPrescriptionListDomain.Action
                         .loadRemoteGroupedPrescriptionsAndSaveReceived(
-                            LoadingState.error(ErxTaskRepositoryError.local(.initialization(error: error)))
+                            LoadingState.error(ErxRepositoryError.local(.initialization(error: error)))
                         ))
                         .eraseToEffect()
 
@@ -354,7 +353,7 @@ extension GroupedPrescriptionListDomain.Environment {
     }
 }
 
-extension Publisher where Output == GroupedPrescriptionListDomain.Action, Failure == ErxTaskRepositoryError {
+extension Publisher where Output == GroupedPrescriptionListDomain.Action, Failure == ErxRepositoryError {
     /// Catches "forbidden"/403 server response to show card wall. The acutual invalidation of any token is communicated
     /// within IDPInterceptor.
     ///
@@ -364,22 +363,23 @@ extension Publisher where Output == GroupedPrescriptionListDomain.Action, Failur
     func catchUnauthorizedToShowCardwall(
         in environment: GroupedPrescriptionListDomain.Environment
     )
-        -> AnyPublisher<GroupedPrescriptionListDomain.Action, ErxTaskRepositoryError> {
-        tryCatch { (error: ErxTaskRepositoryError) -> AnyPublisher<
+        -> AnyPublisher<GroupedPrescriptionListDomain.Action, ErxRepositoryError> {
+        tryCatch { (error: ErxRepositoryError) -> AnyPublisher<
             GroupedPrescriptionListDomain.Action,
-            ErxTaskRepositoryError
+            ErxRepositoryError
         > in
-        if case let ErxTaskRepositoryError.remote(.fhirClientError(.httpError(.httpError(urlError)))) = error,
-           urlError.code.rawValue == 403 || urlError.code.rawValue == 401 {
+        if case let ErxRepositoryError
+            .remote(.fhirClientError(FHIRClient.Error.httpError(.httpError(urlError)))) = error,
+            urlError.code.rawValue == 403 || urlError.code.rawValue == 401 {
             return environment.cardWall()
                 .receive(on: environment.schedulers.main.animation())
                 .map(GroupedPrescriptionListDomain.Action.showCardWallReceived)
-                .setFailureType(to: ErxTaskRepositoryError.self)
+                .setFailureType(to: ErxRepositoryError.self)
                 .eraseToAnyPublisher()
         }
-        throw error as ErxTaskRepositoryError
+        throw error as ErxRepositoryError
         }
-        .mapError { $0 as! ErxTaskRepositoryError } // swiftlint:disable:this force_cast
+        .mapError { $0 as! ErxRepositoryError } // swiftlint:disable:this force_cast
         .eraseToAnyPublisher()
     }
 }

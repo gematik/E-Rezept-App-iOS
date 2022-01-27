@@ -24,10 +24,6 @@ class MockUserSessionContainer: UsersSessionContainer {
         Just(true).setFailureType(to: Never.self).eraseToAnyPublisher()
     }
 
-    var userSessionStream: AnyPublisher<UserSession, Never> {
-        Just(userSession).setFailureType(to: Never.self).eraseToAnyPublisher()
-    }
-
     var userSession: UserSession = MockUserSession()
 
     func switchToDemoMode() {

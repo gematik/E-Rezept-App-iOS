@@ -26,8 +26,6 @@ import IDP
 protocol UsersSessionContainer {
     var userSession: UserSession { get }
 
-    // TODO: Remove `userSessionStream` as soon as AppContainer is removed swiftlint:disable:this todo
-    var userSessionStream: AnyPublisher<UserSession, Never> { get }
     var isDemoMode: AnyPublisher<Bool, Never> { get }
 
     func switchToDemoMode()
@@ -39,23 +37,51 @@ class ChangeableUserSessionContainer: UsersSessionContainer {
         currentSession.map(\.isDemoMode).eraseToAnyPublisher()
     }
 
-    var userSessionStream: AnyPublisher<UserSession, Never> {
-        currentSession.eraseToAnyPublisher()
-    }
-
     private var currentSession: CurrentValueSubject<UserSession, Never>
     private(set) var userSession: UserSession
-    private var schedulers: Schedulers
-    private var erxTaskCoreDataStore: ErxTaskCoreDataStore
 
-    init(initialUserSession: UserSession, schedulers: Schedulers, erxTaskCoreDataStore: ErxTaskCoreDataStore) {
-        self.schedulers = schedulers
-        self.erxTaskCoreDataStore = erxTaskCoreDataStore
-        currentSession = CurrentValueSubject(initialUserSession)
+    private var currentProfileUserSession: SelectedProfileUserSessionProvider
+
+    private let userStore = UserDefaultsStore(userDefaults: UserDefaults.standard)
+
+    init(initialUserSession: UserSession? = nil,
+         profileId: UUID,
+         schedulers: Schedulers,
+         coreDataControllerFactory: CoreDataControllerFactory,
+         profileDataStore: ProfileDataStore) {
+        let session: UserSession
+
+        if let initialUserSession = initialUserSession {
+            session = initialUserSession
+        } else {
+            session = StandardSessionContainer(
+                for: profileId,
+                schedulers: schedulers,
+                erxTaskCoreDataStore: ErxTaskCoreDataStore(
+                    profileId: profileId,
+                    coreDataControllerFactory: coreDataControllerFactory
+                ),
+                profileDataStore: profileDataStore
+            )
+        }
+        currentSession = CurrentValueSubject(session)
+        currentProfileUserSession = SelectedProfileUserSessionProvider(
+            initialUserSession: session,
+            schedulers: schedulers,
+            coreDataControllerFactory: coreDataControllerFactory,
+            profileDataStore: profileDataStore,
+            publisher: userStore.selectedProfileId.dropFirst().compactMap { $0 }.eraseToAnyPublisher()
+        )
+
         userSession = StreamWrappedUserSession(
             stream: currentSession.eraseToAnyPublisher(),
-            current: initialUserSession
+            current: session
         )
+        if let initialUserSession = initialUserSession {
+            currentSession.send(initialUserSession)
+        } else {
+            currentSession.send(currentProfileUserSession.userSession)
+        }
     }
 
     func switchToDemoMode() {
@@ -65,19 +91,12 @@ class ChangeableUserSessionContainer: UsersSessionContainer {
 
     func switchToStandardMode() {
         DLog("will switch to standard mode")
-        // TODO: load current selected profile and pass profileId // swiftlint:disable:this todo
-        let sessionContainer = StandardSessionContainer(
-            schedulers: schedulers,
-            erxTaskCoreDataStore: erxTaskCoreDataStore
-        )
-        currentSession.send(UserMode.standard(sessionContainer))
+        currentSession.send(currentProfileUserSession.userSession)
     }
 }
 
 class DummyUserSessionContainer: UsersSessionContainer {
     var userSession: UserSession = DemoSessionContainer()
-
-    var userSessionStream: AnyPublisher<UserSession, Never> = Just(DemoSessionContainer()).eraseToAnyPublisher()
 
     var isDemoMode: AnyPublisher<Bool, Never> = Just(false).eraseToAnyPublisher()
 

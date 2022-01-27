@@ -263,9 +263,7 @@ struct OrderHealthCardView: View {
                 "order_egk_txt_mail_healthcard_and_pin_subject",
                 comment: ""
             )
-            let subjectOnlyPin = NSLocalizedString("order_egk_txt_mail_healthcard_and_pin_body", comment: "")
             let bodyHealthCardAndPin = NSLocalizedString("order_egk_txt_mail_healthcard_and_pin_body", comment: "")
-            let bodyOnlyPin = NSLocalizedString("order_egk_txt_mail_only_pin_body", comment: "")
 
             switch serviceInquiry {
             case .healthCardAndPin,

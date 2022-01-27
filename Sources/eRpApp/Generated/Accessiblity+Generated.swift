@@ -96,10 +96,16 @@ internal enum A11y {
       static let cdwBtnSelKkapp = "cdw_btn_sel_kkapp"
   }
     }
+    internal enum controls { 
+    internal enum emojiPicker {
+      static let ctlBtnEmojiPickerEditSave = "ctl_btn_emoji_picker_edit_save"
+      static let ctlBtnEmojiPickerEdit = "ctl_btn_emoji_picker_edit"
+  }
+    }
     internal enum mainScreen {
       static let erxBtnRefresh = "erx_btn_refresh"
       static let erxDetailedBlock = "erx_detailed_block"
-      static let erxBtnShowSettings = "erx_btn_show_settings"
+      static let erxBtnProfile = "erx_btn_profile"
       static let erxBtnScnPrescription = "erx_btn_scn_prescription"
       static let erxHntDemoModeTour = "erx_hnt_demo_mode_tour"
       static let erxHntDemoModeWelcome = "erx_hnt_demo_mode_welcome"
@@ -118,6 +124,9 @@ internal enum A11y {
       static let pucTxtHrCode = "puc_txt_hrCode"
   }
     }
+    internal enum migration {
+      static let amgTxtAndSpinner = "amg_txt_and_spinner"
+  }
     internal enum onboarding { 
     internal enum authentication {
       static let onbAuthInpPasswordA = "onb_auth_inp_passwordA"
@@ -142,6 +151,12 @@ internal enum A11y {
       static let onbBtnAcceptTermsOfUse = "onb_btn_accept_terms_of_use"
       static let onbTxtTermsOfPrivacy = "onb_txt_terms_of_privacy"
       static let onbBtnAcceptPrivacy = "onb_btn_accept_privacy"
+  }
+    internal enum newProfile {
+      static let onbPrfTxtTitle = "onb_prf_txt_title"
+      static let onbPrfTxtAlertEmpty = "onb_prf_txt_alert_empty"
+      static let onbPrfTxtFootnote = "onb_prf_txt_footnote"
+      static let onbPrfTxtField = "onb_prf_txt_field"
   }
     internal enum start {
       static let onbTxtStartTitle = "onb_txt_start_title"
@@ -260,6 +275,16 @@ internal enum A11y {
       static let stgTxtHeaderDemoMode = "stg_txt_header_demo_mode"
       static let stgTxtFootnoteDemoMode = "stg_txt_footnote_demo_mode"
   }
+    internal enum editProfile {
+      static let stgTxtEditProfileBgColorTitle = "stg_txt_edit_profile_bg_color_title"
+      static let stgTxtEditProfileBgColorPicker = "stg_txt_edit_profile_bg_color_picker"
+      static let stgBtnEditProfileDelete = "stg_btn_edit_profile_delete"
+      static let stgBtnEditProfileLogin = "stg_btn_edit_profile_login"
+      static let stgBtnEditProfileLogout = "stg_btn_edit_profile_logout"
+      static let stgTxtEditProfileSecuritySectionTitle = "stg_txt_edit_profile_security_section_title"
+      static let stgBtnEditProfileSecuritySectionShowTokens = "stg_btn_edit_profile_security_section_show_tokens"
+      static let stgTxtEditProfileSecurityShowTokensHint = "stg_txt_edit_profile_security_show_tokens_hint"
+  }
     internal enum foss {
       static let stgDprTxtFoss = "stg_dpr_txt_foss"
   }
@@ -270,8 +295,14 @@ internal enum A11y {
       static let stgLnoMailContact = "stg_lno_mail_contact"
       static let stgLnoPhoneContact = "stg_lno_phone_contact"
   }
-    internal enum logout {
-      static let stgBtnLogout = "stg_btn_logout"
+    internal enum newProfile {
+      static let stgTxtNewProfileBgColorTitle = "stg_txt_new_profile_bg_color_title"
+      static let stgTxtNewProfileBgColorPicker = "stg_txt_new_profile_bg_color_picker"
+      static let stgBtnNewProfileSave = "stg_btn_new_profile_save"
+  }
+    internal enum profiles {
+      static let stgTxtHeaderProfiles = "stg_txt_header_profiles"
+      static let stgBtnNewProfile = "stg_btn_new_profile"
   }
     internal enum security {
       static let stgTxtHeaderSecurity = "stg_txt_header_security"

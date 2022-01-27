@@ -30,4 +30,7 @@ public protocol SecureUserDataStore: IDPStorage, SecureEGKCertificateStorage {
     ///
     /// - Parameter can: the CAN to set and save
     func set(can: String?)
+
+    /// Wipe the whole storage and delete all user information
+    func wipe()
 }

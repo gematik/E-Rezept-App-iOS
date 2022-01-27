@@ -18,7 +18,6 @@
 
 import Combine
 import ComposableArchitecture
-import ComposableCoreLocation
 import eRpKit
 import IDP
 import Pharmacy
@@ -76,7 +75,7 @@ enum PrescriptionDetailDomain: Equatable {
         /// When user chooses to not delete
         case cancelDelete
         /// Response when deletion was executed
-        case taskDeletedReceived(Result<Bool, ErxTaskRepositoryError>)
+        case taskDeletedReceived(Result<Bool, ErxRepositoryError>)
         /// Sets the `alertState` back to nil (which hides the alert)
         case alertDismissButtonTapped
         /// Responds after save
@@ -97,8 +96,7 @@ enum PrescriptionDetailDomain: Equatable {
 
     struct Environment {
         let schedulers: Schedulers
-        let locationManager: LocationManager
-        let taskRepositoryAccess: ErxTaskRepositoryAccess
+        let taskRepository: ErxTaskRepository
         let matrixCodeGenerator = DefaultErxTaskMatrixCodeGenerator()
         let fhirDateFormatter: FHIRDateFormatter
         let pharmacyRepository: PharmacyRepository
@@ -109,7 +107,7 @@ enum PrescriptionDetailDomain: Equatable {
 
         switch action {
         case .close:
-            // Note: successfull deletion is handled in parent reducer!
+            // Note: successful deletion is handled in parent reducer!
             return cleanup()
 
         // Matrix Code
@@ -146,14 +144,14 @@ enum PrescriptionDetailDomain: Equatable {
         // [REQ:gemSpec_eRp_FdV:A_19229]
         case .confirmedDelete:
             state.alertState = nil
-            return environment.taskRepositoryAccess.delete([state.prescription.erxTask])
+            return environment.taskRepository.delete(erxTasks: [state.prescription.erxTask])
                 .first()
                 .receive(on: environment.schedulers.main)
                 .catchToEffect()
                 .map(Action.taskDeletedReceived)
                 .cancellable(id: Token.deleteErxTask)
         case let .taskDeletedReceived(.failure(fail)):
-            if case ErxTaskRepositoryError.local(.delete(IDPError.tokenUnavailable)) = fail {
+            if case ErxRepositoryError.local(.delete(IDPError.tokenUnavailable)) = fail {
                 // Only show error message when token is not available
                 state.alertState = deleteFailedAlertState(fail.localizedDescription)
             }
@@ -192,13 +190,12 @@ enum PrescriptionDetailDomain: Equatable {
         case .showPharmacySearch:
             state.pharmacySearchState = PharmacySearchDomain.State(
                 erxTasks: [state.prescription.erxTask],
-                pharmacies: [],
-                locationHintState: environment.shouldPresentLocationHint
+                pharmacies: []
             )
             return .none
         case .dismissPharmacySearch, .pharmacySearch(action: .close):
             state.pharmacySearchState = nil
-            return PrescriptionDetailDomain.cleanup()
+            return PharmacySearchDomain.cleanup()
         case .pharmacySearch(action:):
             return .none
         }
@@ -217,7 +214,6 @@ enum PrescriptionDetailDomain: Equatable {
             PharmacySearchDomain.Environment(
                 schedulers: environment.schedulers,
                 pharmacyRepository: environment.pharmacyRepository,
-                locationManager: .live,
                 fhirDateFormatter: environment.fhirDateFormatter,
                 openHoursCalculator: PharmacyOpenHoursCalculator(),
                 referenceDateForOpenHours: nil,
@@ -229,8 +225,8 @@ enum PrescriptionDetailDomain: Equatable {
         AlertState<Action>(
             title: TextState(L10n.dtlTxtDeleteAlertTitle),
             message: TextState(L10n.dtlTxtDeleteAlertMessage),
-            primaryButton: .destructive(TextState(L10n.dtlTxtDeleteYes), send: .confirmedDelete),
-            secondaryButton: .default(TextState(L10n.dtlTxtDeleteNo), send: .cancelDelete)
+            primaryButton: .destructive(TextState(L10n.dtlTxtDeleteYes), action: .send(.confirmedDelete)),
+            secondaryButton: .default(TextState(L10n.dtlTxtDeleteNo), action: .send(.cancelDelete))
         )
     }()
 
@@ -238,7 +234,7 @@ enum PrescriptionDetailDomain: Equatable {
         AlertState(
             title: TextState(L10n.dtlTxtDeleteMissingTokenAlertTitle),
             message: TextState(L10n.dtlTxtDeleteMissingTokenAlertMessage),
-            dismissButton: .default(TextState(L10n.alertBtnOk), send: .alertDismissButtonTapped)
+            dismissButton: .default(TextState(L10n.alertBtnOk), action: .send(.alertDismissButtonTapped))
         )
     }
 }
@@ -256,22 +252,13 @@ extension PrescriptionDetailDomain.Environment {
 
     func saveErxTasks(erxTasks: [ErxTask])
         -> Effect<PrescriptionDetailDomain.Action, Never> {
-        taskRepositoryAccess.save(erxTasks)
+        taskRepository.save(erxTasks: erxTasks)
             .first()
             .receive(on: schedulers.main)
             .replaceError(with: false)
             .map(PrescriptionDetailDomain.Action.redeemedOnSavedReceived)
             .eraseToEffect()
             .cancellable(id: PrescriptionDetailDomain.Token.saveErxTask)
-    }
-
-    var shouldPresentLocationHint: Bool {
-        if locationManager.locationServicesEnabled(),
-           locationManager.authorizationStatus() != CLAuthorizationStatus.notDetermined {
-            return false
-        } else {
-            return true
-        }
     }
 }
 
@@ -284,8 +271,7 @@ extension PrescriptionDetailDomain {
         )
         static let environment = Environment(
             schedulers: Schedulers(),
-            locationManager: .live,
-            taskRepositoryAccess: demoSessionContainer.userSession.erxTaskRepository,
+            taskRepository: demoSessionContainer.userSession.erxTaskRepository,
             fhirDateFormatter: FHIRDateFormatter.shared,
             pharmacyRepository: DemoSessionContainer().pharmacyRepository,
             userSession: DemoSessionContainer()

@@ -30,6 +30,7 @@ struct SectionHeaderView: View {
                 .multilineTextAlignment(.leading)
                 .accessibility(identifier: a11y)
                 .padding([.top, .trailing])
+                .fixedSize(horizontal: false, vertical: true)
             Spacer()
         }
     }

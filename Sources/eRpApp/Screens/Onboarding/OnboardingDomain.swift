@@ -16,6 +16,7 @@
 //  
 //
 
+import Combine
 import ComposableArchitecture
 import eRpKit
 import SwiftUI
@@ -34,6 +35,8 @@ enum OnboardingDomain {
             availableSecurityOptions: []
         )
 
+        var newProfileState = OnboardingNewProfileDomain.State(name: "")
+
         var isShowingNextButton: Bool {
             currentPage != .legalInfo && currentPage != .altRegisterAuthentication
         }
@@ -41,6 +44,8 @@ enum OnboardingDomain {
         var isNextButtonEnabled: Bool {
             if case .registerAuthentication = currentPage {
                 return registerAuthenticationState.hasValidSelection
+            } else if case .newProfile = currentPage {
+                return newProfileState.hasValidName
             }
             return true
         }
@@ -51,6 +56,8 @@ enum OnboardingDomain {
             } else if currentPage == .altRegisterAuthentication ||
                 currentPage == .registerAuthentication {
                 return false
+            } else if currentPage == .newProfile {
+                return newProfileState.hasValidName
             } else {
                 return true
             }
@@ -61,19 +68,12 @@ enum OnboardingDomain {
         case start
         case welcome
         case features
+        case newProfile
         case registerAuthentication
         case altRegisterAuthentication
         case legalInfo
 
-        static var all: [Page] = [.start, .welcome, .features, .registerAuthentication, .legalInfo]
-    }
-
-    enum Action: Equatable {
-        case saveAuthentication
-        case dismissOnboarding
-        case setPage(index: Int)
-        case registerAuthentication(action: RegisterAuthenticationDomain.Action)
-        case nextPage
+        static var all: [Page] = [.start, .welcome, .features, .newProfile, .registerAuthentication, .legalInfo]
     }
 
     struct Composition: Equatable {
@@ -146,9 +146,21 @@ enum OnboardingDomain {
         static var allPages = Composition(currentPageIndex: 0, pages: Page.all)
     }
 
+    enum Action: Equatable {
+        case saveAuthenticationAndProfile
+        case saveProfile
+        case saveProfileReceived(Result<UUID, LocalStoreError>)
+        case dismissOnboarding
+        case setPage(index: Int)
+        case registerAuthentication(action: RegisterAuthenticationDomain.Action)
+        case newProfile(action: OnboardingNewProfileDomain.Action)
+        case nextPage
+    }
+
     struct Environment {
         let appVersion: AppVersion
         let localUserStore: UserDataStore
+        let profileStore: ProfileDataStore
         let schedulers: Schedulers
         let appSecurityManager: AppSecurityManager
         let authenticationChallengeProvider: AuthenticationChallengeProvider
@@ -162,7 +174,7 @@ enum OnboardingDomain {
         case let .setPage(index):
             state.composition.setPage(index: index)
             return .none
-        case .saveAuthentication:
+        case .saveAuthenticationAndProfile:
             guard state.registerAuthenticationState.hasValidSelection,
                   let selectedOption = state.registerAuthenticationState.selectedSecurityOption else {
                 state.composition.setPage(.registerAuthentication)
@@ -180,11 +192,39 @@ enum OnboardingDomain {
                     return .none
                 }
                 environment.localUserStore.set(appSecurityOption: selectedOption.id)
-                return Effect(value: .dismissOnboarding)
+                return Effect(value: .saveProfile)
             } else {
                 environment.localUserStore.set(appSecurityOption: selectedOption.id)
-                return Effect(value: .dismissOnboarding)
+                return Effect(value: .saveProfile)
             }
+        case .saveProfile:
+            let name = state.newProfileState.name.trimmed()
+            guard name.lengthOfBytes(using: .utf8) > 0 else {
+                state.newProfileState.alertState = OnboardingNewProfileDomain.AlertStates.emptyName
+                state.composition.setPage(.newProfile)
+                return .none
+            }
+            let profile = Profile(name: name)
+            return environment.profileStore.save(profiles: [profile])
+                .catchToEffect()
+                .map { result in
+                    switch result {
+                    case let .success(profileId):
+                        return Action.saveProfileReceived(.success(profile.id))
+                    case let .failure(error):
+                        return Action.saveProfileReceived(.failure(error))
+                    }
+                }
+                .receive(on: environment.schedulers.main)
+                .eraseToEffect()
+
+        case let .saveProfileReceived(.success(profileId)):
+            environment.localUserStore.set(selectedProfileId: profileId)
+            return Effect(value: .dismissOnboarding)
+        case let .saveProfileReceived(.failure(error)):
+            state.newProfileState.alertState = OnboardingNewProfileDomain.AlertStates.for(error)
+            state.composition.setPage(.newProfile)
+            return .none
         case .dismissOnboarding:
             environment.localUserStore.set(hideOnboarding: true)
             environment.localUserStore.set(onboardingVersion: environment.appVersion.productVersion)
@@ -192,6 +232,8 @@ enum OnboardingDomain {
         case .registerAuthentication(action: .saveSelectionSuccess):
             return Effect(value: .dismissOnboarding)
         case .registerAuthentication:
+            return .none
+        case .newProfile:
             return .none
         }
     }
@@ -210,8 +252,17 @@ enum OnboardingDomain {
             )
         }
 
+    private static let newProfilePullbackReducer: Reducer =
+        OnboardingNewProfileDomain.reducer.pullback(
+            state: \.newProfileState,
+            action: /OnboardingDomain.Action.newProfile(action:)
+        ) { _ in
+            OnboardingNewProfileDomain.Environment()
+        }
+
     static let reducer = Reducer.combine(
         appSecurityPullbackReducer,
+        newProfilePullbackReducer,
         domainReducer
     )
 }
@@ -222,6 +273,7 @@ extension OnboardingDomain {
         static let environment = Environment(
             appVersion: AppVersion.current,
             localUserStore: DummyUserSessionContainer().userSession.localUserStore,
+            profileStore: DemoProfileDataStore(),
             schedulers: Schedulers(),
             appSecurityManager: DummyAppSecurityManager(),
             authenticationChallengeProvider: BiometricsAuthenticationChallengeProvider()

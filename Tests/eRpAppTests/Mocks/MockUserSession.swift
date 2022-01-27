@@ -32,9 +32,11 @@ class MockUserSession: UserSession {
     lazy var trustStoreSession: TrustStoreSession = DemoTrustStoreSession()
 
     var isLoggedIn: Bool
+    var profileId: UUID
 
-    init(isAuthenticated: Bool = true) {
+    init(isAuthenticated: Bool = true, profileId: UUID = UUID()) {
         isLoggedIn = isAuthenticated
+        self.profileId = profileId
     }
 
     var isDemoMode: Bool {
@@ -78,8 +80,16 @@ class MockUserSession: UserSession {
     lazy var isAuthenticated: AnyPublisher<Bool, UserSessionError> = Just(isLoggedIn)
         .setFailureType(to: UserSessionError.self).eraseToAnyPublisher()
 
-    lazy var erxTaskRepository: ErxTaskRepositoryAccess = {
-        AnyErxTaskRepository(Just(MockErxTaskRepository()).eraseToAnyPublisher())
+    lazy var erxTaskRepository: ErxTaskRepository = {
+        StreamWrappedErxTaskRepository(stream: Just(FakeErxTaskRepository()).eraseToAnyPublisher())
+    }()
+
+    lazy var mockProfileDataStore: MockProfileDataStore = {
+        MockProfileDataStore()
+    }()
+
+    lazy var profileDataStore: ProfileDataStore = {
+        mockProfileDataStore
     }()
 
     lazy var pharmacyRepository: PharmacyRepository = {
@@ -97,6 +107,14 @@ class MockUserSession: UserSession {
     private(set) lazy var deviceSecurityManager: DeviceSecurityManager = {
         MockDeviceSecurityManager()
     }()
+
+    var profileReturnValue: AnyPublisher<Profile, LocalStoreError>!
+
+    func profile() -> AnyPublisher<Profile, LocalStoreError> {
+        profileReturnValue
+    }
+
+    var profileSecureDataWiper: ProfileSecureDataWiper = MockProfileSecureDataWiper()
 }
 
 class MockHintEventsStore: EventsStore {
@@ -106,8 +124,6 @@ class MockHintEventsStore: EventsStore {
     var hintState = HintState()
 }
 
-// TODO: Maybe MockSecureUserStore can be removed? swiftlint:disable:this todo
-// It has been removed from DemoIDPSession. Check if it is used otherwise
 class MockSecureUserStore: SecureUserDataStore {
     @Published var publishedKeyIdentifier: Data?
     var keyIdentifier: AnyPublisher<Data?, Never> {
@@ -150,6 +166,11 @@ class MockSecureUserStore: SecureUserDataStore {
     var setCertificateCalledCount = 0
     func set(certificate _: X509?) {
         setCertificateCalledCount += 1
+    }
+
+    var wipeCalledCount = 0
+    func wipe() {
+        wipeCalledCount += 1
     }
 }
 
@@ -198,11 +219,11 @@ class MockPharmacyRepository: PharmacyRepository {
     var store: [PharmacyLocation] = PharmacyLocation.Dummies.pharmacies
 }
 
-class MockErxTaskRepository: ErxTaskRepository {
-    typealias ErrorType = ErxRepositoryError<ErxTaskCoreDataStore.ErrorType, ErxTaskFHIRDataStore.ErrorType>
+class FakeErxTaskRepository: ErxTaskRepository {
+    typealias ErrorType = ErxRepositoryError
 
     var store: [String: ErxTask]
-    init(store: [String: ErxTask] = MockErxTaskRepository.exampleStore) {
+    init(store: [String: ErxTask] = FakeErxTaskRepository.exampleStore) {
         self.store = store
     }
 
@@ -263,7 +284,7 @@ class MockErxTaskRepository: ErxTaskRepository {
 
     func countAllUnreadCommunications(for _: ErxTask.Communication
         .Profile)
-        -> AnyPublisher<Int, ErxRepositoryError<ErxTaskCoreDataStore.ErrorType, ErxTaskFHIRDataStore.ErrorType>> {
+        -> AnyPublisher<Int, ErxRepositoryError> {
         Just(0).setFailureType(to: ErrorType.self).eraseToAnyPublisher()
     }
 

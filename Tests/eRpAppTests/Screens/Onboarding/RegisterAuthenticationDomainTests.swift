@@ -257,7 +257,7 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
             state.alertState = AlertState(
                 title: TextState(L10n.alertErrorTitle),
                 message: TextState("my error message"),
-                dismissButton: .default(TextState(L10n.alertBtnOk), send: .alertDismissButtonTapped)
+                dismissButton: .default(TextState(L10n.alertBtnOk), action: .send(.alertDismissButtonTapped))
             )
         }
         store.send(.alertDismissButtonTapped) { state in

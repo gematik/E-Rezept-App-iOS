@@ -216,7 +216,7 @@ extension PharmacyRedeemView {
         let prescriptions: [Prescription]
         let name: String
         let address: String
-        let loadingState: LoadingState<Bool, ErxTaskRepositoryError>
+        let loadingState: LoadingState<Bool, ErxRepositoryError>
 
         init(state: PharmacyRedeemDomain.State) {
             redeemType = state.redeemOption

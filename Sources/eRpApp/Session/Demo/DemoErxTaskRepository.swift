@@ -24,7 +24,7 @@ import eRpRemoteStorage
 import Foundation
 
 class DemoErxTaskRepository: ErxTaskRepository {
-    typealias ErrorType = ErxRepositoryError<ErxTaskCoreDataStore.ErrorType, ErxTaskFHIRDataStore.ErrorType>
+    typealias ErrorType = ErxRepositoryError
     private let delay: Double
     private var demoDatesIterator = DemoDatesIterator()
     private let currentValue: CurrentValueSubject<[ErxTask], ErrorType> = CurrentValueSubject([])
@@ -46,7 +46,7 @@ class DemoErxTaskRepository: ErxTaskRepository {
     func loadLocal(
         by id: ErxTask.ID, // swiftlint:disable:this identifier_name
         accessCode _: String?
-    ) -> AnyPublisher<ErxTask?, ErxRepositoryError<ErxTaskCoreDataStore.ErrorType, ErxTaskFHIRDataStore.ErrorType>> {
+    ) -> AnyPublisher<ErxTask?, ErxRepositoryError> {
         if let result = store.first(where: { $0.id == id }) {
             return Just(result).setFailureType(to: ErrorType.self).eraseToAnyPublisher()
         } else {
@@ -89,7 +89,7 @@ class DemoErxTaskRepository: ErxTaskRepository {
     func loadLocalCommunications(for _: ErxTask.Communication
         .Profile)
         -> AnyPublisher<[ErxTask.Communication], // swiftlint:disable:this operator_usage_whitespace
-            ErxRepositoryError<ErxTaskCoreDataStore.ErrorType, ErxTaskFHIRDataStore.ErrorType>> {
+            ErxRepositoryError> {
         Just([]).setFailureType(to: ErrorType.self).eraseToAnyPublisher()
     }
 

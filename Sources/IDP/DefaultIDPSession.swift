@@ -175,9 +175,12 @@ public class DefaultIDPSession: IDPSession {
             .eraseToAnyPublisher()
     }
 
-    public func exchange(token exchange: IDPExchangeToken,
-                         challengeSession: ChallengeSession,
-                         redirectURI: String?) -> AnyPublisher<IDPToken, IDPError> {
+    public func exchange(
+        token exchange: IDPExchangeToken,
+        challengeSession: ChallengeSession,
+        redirectURI: String?,
+        idTokenValidator: @escaping (TokenPayload.IDTokenPayload) -> Result<Bool, Error>
+    ) -> AnyPublisher<IDPToken, IDPError> {
         // [REQ:gemSpec_IDP_Frontend:A_21323] Crypto box contains `Token-Key`
         let cryptoBox = self.cryptoBox
         return loadDiscoveryDocument() // swiftlint:disable:this trailing_closure
@@ -211,7 +214,14 @@ public class DefaultIDPSession: IDPSession {
                           (try? jwt.verify(with: document.signingCert)) ?? false else {
                         return Fail(error: IDPError.invalidSignature("ID_TOKEN")).eraseToAnyPublisher()
                     }
-
+                    do {
+                        let idToken = try jwt.decodePayload(type: TokenPayload.IDTokenPayload.self)
+                        if case let .failure(validationError) = idTokenValidator(idToken) {
+                            return Fail(error: IDPError.unspecified(error: validationError)).eraseToAnyPublisher()
+                        }
+                    } catch {
+                        return Fail(error: IDPError.unspecified(error: error)).eraseToAnyPublisher()
+                    }
                     return Just(IDPToken(
                         accessToken: decrypted.accessToken, // [REQ:gemSpec_IDP_Frontend:A_20283-01] Usage
                         expires: self.time().addingTimeInterval(TimeInterval(token.expiresIn)),
@@ -404,7 +414,10 @@ public class DefaultIDPSession: IDPSession {
             .eraseToAnyPublisher()
     }
 
-    public func extAuthVerifyAndExchange(_ url: URL) -> AnyPublisher<IDPToken, IDPError> {
+    public func extAuthVerifyAndExchange(
+        _ url: URL,
+        idTokenValidator: @escaping (TokenPayload.IDTokenPayload) -> Result<Bool, Error>
+    ) -> AnyPublisher<IDPToken, IDPError> {
         guard var components = URLComponents(url: url, resolvingAgainstBaseURL: true),
               let code = components.queryItemWithName("code")?.value,
               let state = components.queryItemWithName("state")?.value,
@@ -433,7 +446,8 @@ public class DefaultIDPSession: IDPSession {
                 // swiftlint:disable:next trailing_closure
                 self.exchange(token: token,
                               challengeSession: challengeSession,
-                              redirectURI: redirectURI)
+                              redirectURI: redirectURI,
+                              idTokenValidator: idTokenValidator)
                     .handleEvents(receiveOutput: { _ in
                         self.extAuthRequestStorage.setExtAuthRequest(nil, for: state)
                     })

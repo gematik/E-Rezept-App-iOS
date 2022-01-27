@@ -37,7 +37,7 @@ import VAUClient
 {% macro methods type %}
 	{% for method in type.methods %}
 		{% if method.returnTypeName %}
-			{% if method.returnTypeName.generic.name == "AnyPublisher" %}
+			{% if method.returnTypeName.generic.name == "AnyPublisher" and not method.annotations.SkipStreamWrapped %}
 	func {{ method.name }} -> {{ method.returnTypeName }} {
         stream
         	.map { $0.{{ method.callName }}({% call methodArguments method %}
@@ -73,7 +73,7 @@ import VAUClient
 		{% else %}
 			{% if property.type.annotations.StreamWrapped %}
 	lazy var {{property.name}}: {{property.typeName}} = {
-		StreamWrapped{{property.typeName}}(stream: stream.map{ $0.{{property.name}} }.eraseToAnyPublisher(), current: current.{{property.name}} )
+		StreamWrapped{{property.typeName}}(stream: stream.map{ $0.{{property.name}} }.eraseToAnyPublisher(){% if not property.type.annotations.SkipCurrent %}, current: current.{{property.name}}{% endif %} )
 	}()
 			{% else %}
 	{% if not property.isMutable %}private(set) {% endif %}var {{ property.name }}: {{property.typeName}}{% if property.isMutable %} {
@@ -116,11 +116,15 @@ import VAUClient
 class StreamWrapped{{ type.name }}: {{ type.name }} {
     private var disposeBag: Set<AnyCancellable> = []
 	private let stream: AnyPublisher<{{type.name}}, Never>
+	{% if not type.annotations.SkipCurrent %}
 	private var current: {{type.name}}
+	{% endif %}
 
-	init(stream: AnyPublisher<{{ type.name }}, Never>, current: {{ type.name }}) {
+	init(stream: AnyPublisher<{{ type.name }}, Never>{% if not type.annotations.SkipCurrent %}, current: {{ type.name }}{% endif %}) {
 		self.stream = stream
+		{% if not type.annotations.SkipCurrent %}
 		self.current = current
+		{% endif %}
 
 	{% call atomicPropertiesInitializer type %}
 	{% for inheritedType in type.inheritedTypes %}
@@ -129,9 +133,11 @@ class StreamWrapped{{ type.name }}: {{ type.name }} {
 		{% endfor %}
 	{% endfor %}
 
+		{% if not type.annotations.SkipCurrent %}
 		stream
 			.assign(to: \.current, on: self)
 			.store(in: &disposeBag)
+		{% endif %}	
 
 	{% call atomicPropertiesListener type %}
 	{% for inheritedType in type.inheritedTypes %}

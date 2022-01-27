@@ -51,6 +51,11 @@ public struct IDPToken: Codable {
         self.ssoToken = ssoToken
         self.tokenType = tokenType
     }
+
+    public func idTokenPayload() throws -> TokenPayload.IDTokenPayload {
+        let idTokenJWT = try JWT(from: idToken)
+        return try idTokenJWT.decodePayload(type: TokenPayload.IDTokenPayload.self)
+    }
 }
 
 extension IDPToken: Equatable {}

@@ -36,7 +36,7 @@ enum ScannerDomain {
     }
 
     struct Environment {
-        let repository: ErxTaskRepositoryAccess
+        let repository: ErxTaskRepository
         let dateFormatter: FHIRDateFormatter
         var messageInterval: DispatchQueue.SchedulerTimeType.Stride = 2.0
         let scheduler: Schedulers
@@ -59,7 +59,7 @@ enum ScannerDomain {
         /// Saves all scanned tasks and closes after successful save. In case of failure `showError` is called
         case saveAndClose(Set<[ScannedErxTask]>)
         /// Called if an error during save occurs
-        case saveAndCloseReceived(ErxTaskRepositoryError)
+        case saveAndCloseReceived(ErxRepositoryError)
         /// Analyses the scan output and add calls  `analysesReceived` with the result
         case analyse(scanOutput: [ScanOutput])
         /// Mutates the `scanState` after successful scan and calls `resetScannerState` after `messageInterval` passed
@@ -79,7 +79,7 @@ enum ScannerDomain {
             let authoredOn = environment.dateFormatter.stringWithLongUTCTimeZone(from: Date())
             let erxTasks = scannedBatches.flatMap { $0 }.asErxTasks(status: .ready, with: authoredOn)
 
-            return environment.repository.save(erxTasks)
+            return environment.repository.save(erxTasks: erxTasks)
                 .receive(on: environment.scheduler.main)
                 .map { _ in Action.close }
                 .catch { error in
@@ -132,8 +132,8 @@ enum ScannerDomain {
     static var closeAlertState: AlertState<Action> = {
         AlertState<Action>(
             title: TextState(L10n.camTxtWarnCancelTitle),
-            primaryButton: .destructive(TextState(L10n.camTxtWarnContinue), send: nil),
-            secondaryButton: .default(TextState(L10n.camTxtWarnCancel), send: .close)
+            primaryButton: .destructive(TextState(L10n.camTxtWarnContinue), action: nil),
+            secondaryButton: .default(TextState(L10n.camTxtWarnCancel), action: .send(.close))
         )
     }()
 
@@ -141,7 +141,7 @@ enum ScannerDomain {
         AlertState(
             title: TextState(L10n.alertErrorTitle),
             message: TextState(L10n.scnMsgSavingError),
-            dismissButton: .default(TextState(L10n.alertBtnOk), send: .alertDismissButtonTapped)
+            dismissButton: .default(TextState(L10n.alertBtnOk), action: .send(.alertDismissButtonTapped))
         )
     }()
 }
@@ -149,7 +149,7 @@ enum ScannerDomain {
 extension ScannerDomain.Environment {
     func checkForDuplicatesInStore(_ scannedTasks: [ScannedErxTask]) -> Effect<ScannerDomain.Action, Never> {
         let findPublishers: [AnyPublisher<ScannedErxTask?, Never>] = scannedTasks.map { scannedTask in
-            self.repository.find(by: scannedTask.id, accessCode: scannedTask.accessCode)
+            self.repository.loadLocal(by: scannedTask.id, accessCode: scannedTask.accessCode)
                 .map { erxTask -> ScannedErxTask? in
                     if erxTask != nil {
                         return nil // by returning nil we sort out previously stored tasks

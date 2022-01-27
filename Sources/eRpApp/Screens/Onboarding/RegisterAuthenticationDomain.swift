@@ -139,7 +139,7 @@ enum RegisterAuthenticationDomain {
                     state.alertState = AlertState(
                         title: TextState(L10n.alertErrorTitle),
                         message: TextState(errorMessage),
-                        dismissButton: .default(TextState(L10n.alertBtnOk), send: .alertDismissButtonTapped)
+                        dismissButton: .default(TextState(L10n.alertBtnOk), action: .send(.alertDismissButtonTapped))
                     )
                 }
             case .success(true):

@@ -23,6 +23,7 @@ import ComposableArchitecture
 import eRpKit
 import eRpLocalStorage
 import eRpRemoteStorage
+import FHIRClient
 import XCTest
 
 final class GroupedPrescriptionListViewTests: XCTestCase {
@@ -88,7 +89,7 @@ final class GroupedPrescriptionListViewTests: XCTestCase {
         let store = testStore(groups: input,
                               auditEvents: [])
 
-        let expected: LoadingState<[GroupedPrescription], AnyErxTaskRepository.ErrorType> =
+        let expected: LoadingState<[GroupedPrescription], ErxRepositoryError> =
             .value(input)
 
         store.assert(
@@ -124,7 +125,7 @@ final class GroupedPrescriptionListViewTests: XCTestCase {
         let store = testStore(groups: input,
                               auditEvents: [])
 
-        let expected: LoadingState<[GroupedPrescription], AnyErxTaskRepository.ErrorType> =
+        let expected: LoadingState<[GroupedPrescription], ErxRepositoryError> =
             .value(input)
         store.assert(
             // when
@@ -160,7 +161,7 @@ final class GroupedPrescriptionListViewTests: XCTestCase {
                               auditEvents: [],
                               isAuthenticated: false)
 
-        let expected: LoadingState<[GroupedPrescription], AnyErxTaskRepository.ErrorType> =
+        let expected: LoadingState<[GroupedPrescription], ErxRepositoryError> =
             .value([])
         store.assert(
             // when
@@ -195,9 +196,9 @@ final class GroupedPrescriptionListViewTests: XCTestCase {
                               auditEvents: [],
                               isAuthenticated: false)
 
-        let expectedValueForLoad: LoadingState<[GroupedPrescription], AnyErxTaskRepository.ErrorType> =
+        let expectedValueForLoad: LoadingState<[GroupedPrescription], ErxRepositoryError> =
             .value(input)
-        let expectedValueForFetch: LoadingState<[GroupedPrescription], AnyErxTaskRepository.ErrorType> =
+        let expectedValueForFetch: LoadingState<[GroupedPrescription], ErxRepositoryError> =
             .value([])
         store.assert(
             // when
@@ -231,7 +232,7 @@ final class GroupedPrescriptionListViewTests: XCTestCase {
                               auditEvents: [],
                               isAuthenticated: true)
 
-        let expectedValueForLoad: LoadingState<[GroupedPrescription], AnyErxTaskRepository.ErrorType> =
+        let expectedValueForLoad: LoadingState<[GroupedPrescription], ErxRepositoryError> =
             .value(input)
         let expectedValueForFetch = expectedValueForLoad
         store.assert(
@@ -259,10 +260,8 @@ final class GroupedPrescriptionListViewTests: XCTestCase {
         )
     }
 
-    let loadingErrorTasks: ErxRepositoryError<ErxTaskCoreDataStore.ErrorType, ErxTaskFHIRDataStore.ErrorType> =
-        .local(.notImplemented)
-    let loadingErrorAuditEvents: ErxRepositoryError<ErxTaskCoreDataStore.ErrorType, ErxTaskFHIRDataStore.ErrorType> =
-        .local(.notImplemented)
+    let loadingErrorTasks: ErxRepositoryError = .local(.notImplemented)
+    let loadingErrorAuditEvents: ErxRepositoryError = .local(.notImplemented)
 
     func testLoadingFromDiskWithError() {
         let groupedPrescriptionStore = MockGroupedPrescriptionRepository(
@@ -271,7 +270,7 @@ final class GroupedPrescriptionListViewTests: XCTestCase {
         )
         let store = testStore(for: groupedPrescriptionStore)
 
-        let expected: LoadingState<[GroupedPrescription], AnyErxTaskRepository.ErrorType> =
+        let expected: LoadingState<[GroupedPrescription], ErxRepositoryError> =
             .error(loadingErrorTasks)
         store.assert(
             // when
@@ -296,7 +295,7 @@ final class GroupedPrescriptionListViewTests: XCTestCase {
             loadedFromCloudAndSaved: Fail(error: loadingErrorTasks).eraseToAnyPublisher()
         )
         let store = testStore(for: groupedPrescriptionStore)
-        let expectedTasks: LoadingState<[GroupedPrescription], AnyErxTaskRepository.ErrorType> =
+        let expectedTasks: LoadingState<[GroupedPrescription], ErxRepositoryError> =
             .idle
 
         store.assert(
@@ -341,8 +340,8 @@ final class GroupedPrescriptionListViewTests: XCTestCase {
         userDataStore.hideCardWallIntro = Just(false).eraseToAnyPublisher()
         let repository = MockGroupedPrescriptionRepository(groups: [])
         repository.loadRemoteAndSavePublisher = Fail(
-            error: ErxTaskRepositoryError.remote(
-                .fhirClientError(.httpError(.httpError(.init(URLError.Code(rawValue: 403)))))
+            error: ErxRepositoryError.remote(
+                .fhirClientError(FHIRClient.Error.httpError(.httpError(.init(URLError.Code(rawValue: 403)))))
             )
         ).eraseToAnyPublisher()
         let store = testStore(for: repository,
@@ -371,8 +370,8 @@ final class GroupedPrescriptionListViewTests: XCTestCase {
 
         let repository = MockGroupedPrescriptionRepository(groups: [])
         repository.loadRemoteAndSavePublisher = Fail(
-            error: ErxTaskRepositoryError.remote(
-                .fhirClientError(.httpError(.httpError(.init(URLError.Code(rawValue: 401)))))
+            error: ErxRepositoryError.remote(
+                .fhirClientError(FHIRClient.Error.httpError(.httpError(.init(URLError.Code(rawValue: 401)))))
             )
         ).eraseToAnyPublisher()
         let store = testStore(for: repository,
@@ -402,7 +401,7 @@ final class GroupedPrescriptionListViewTests: XCTestCase {
                               auditEvents: [],
                               isAuthenticated: true)
 
-        let expected: LoadingState<[GroupedPrescription], AnyErxTaskRepository.ErrorType> =
+        let expected: LoadingState<[GroupedPrescription], ErxRepositoryError> =
             .value(input)
 
         store.assert(

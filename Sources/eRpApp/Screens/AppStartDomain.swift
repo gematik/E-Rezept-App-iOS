@@ -66,10 +66,20 @@ enum AppStartDomain {
                 AppDomain.State(
                     selectedTab: .main,
                     main: MainDomain.State(
-                        prescriptionListState: GroupedPrescriptionListDomain.State(),
-                        debug: DebugDomain.State(trackingOptOut: environment.tracker.optOut)
+                        prescriptionListState: GroupedPrescriptionListDomain.State()
                     ),
+                    pharmacySearch: PharmacySearchDomain.State(erxTasks: []),
                     messages: MessagesDomain.State(messageDomainStates: []),
+                    settingsState: .init(
+                        isDemoMode: environment.userSession.isDemoMode,
+                        appSecurityState: .init(
+                            availableSecurityOptions: environment.appSecurityManager.availableSecurityOptions.options,
+                            selectedSecurityOption: nil,
+                            errorToDisplay: nil,
+                            createPasswordState: nil
+                        )
+                    ),
+                    debug: DebugDomain.State(trackingOptOut: environment.tracker.optOut),
                     unreadMessagesCount: 0,
                     isDemoMode: false
                 )
@@ -96,10 +106,20 @@ enum AppStartDomain {
                 AppDomain.State(
                     selectedTab: .main,
                     main: MainDomain.State(
-                        prescriptionListState: GroupedPrescriptionListDomain.State(),
-                        debug: DebugDomain.State(trackingOptOut: environment.tracker.optOut)
+                        prescriptionListState: GroupedPrescriptionListDomain.State()
                     ),
+                    pharmacySearch: PharmacySearchDomain.State(erxTasks: []),
                     messages: MessagesDomain.State(messageDomainStates: []),
+                    settingsState: .init(
+                        isDemoMode: environment.userSession.isDemoMode,
+                        appSecurityState: .init(
+                            availableSecurityOptions: environment.appSecurityManager.availableSecurityOptions.options,
+                            selectedSecurityOption: nil,
+                            errorToDisplay: nil,
+                            createPasswordState: nil
+                        )
+                    ),
+                    debug: DebugDomain.State(trackingOptOut: environment.tracker.optOut),
                     unreadMessagesCount: 0,
                     isDemoMode: false
                 )
@@ -117,6 +137,7 @@ enum AppStartDomain {
                 OnboardingDomain.Environment(
                     appVersion: $0.appVersion,
                     localUserStore: $0.userDataStore,
+                    profileStore: $0.userSession.profileDataStore,
                     schedulers: $0.schedulers,
                     appSecurityManager: $0.appSecurityManager,
                     authenticationChallengeProvider: $0.authenticationChallengeProvider
@@ -151,11 +172,21 @@ enum AppStartDomain {
     static let router: (Endpoint) -> Effect<Action, Never> = { route in
         switch route {
         case .settings:
-            return Effect(value: .app(action: .main(action: .showSettingsView)))
+            return Effect(value: .app(action: .selectTab(.settings)))
         case .scanner:
             return Effect(value: .app(action: .main(action: .showScannerView)))
         case .messages:
             return Effect(value: .app(action: .selectTab(.messages)))
+        case let .mainScreen(endpoint):
+            switch endpoint {
+            case .login:
+                return Effect.merge(
+                    Effect(value: .app(action: .selectTab(.main))),
+                    Effect(value: .app(action: .main(action: .prescriptionList(action: .refresh))))
+                )
+            default:
+                return Effect(value: .app(action: .selectTab(.main)))
+            }
         case let .universalLink(url):
             return Effect(value: .app(action: .main(action: .externalLogin(url))))
         }

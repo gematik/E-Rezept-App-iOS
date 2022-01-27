@@ -51,7 +51,7 @@ public struct JWT {
     /// - Parameters:
     ///   - string: JWT string that should be formatted according to the RFC-7519 JWT specification
     /// - Throws: `JWT.Error`
-    init(from string: String) throws {
+    public init(from string: String) throws {
         /// Regex magic
         /// if we find a match we should have a parsable JWT structure.
         /// Note: the signature is not validated at this point

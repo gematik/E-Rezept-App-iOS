@@ -42,6 +42,7 @@ struct IDPTokenView: View {
         }
         .listStyle(InsetGroupedListStyle())
         .navigationTitle(L10n.stgTknTxtTitleTokens)
+        .navigationBarTitleDisplayMode(.automatic)
     }
 
     struct TokenCell: View {

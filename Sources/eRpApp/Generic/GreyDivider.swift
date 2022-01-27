@@ -19,10 +19,16 @@
 import SwiftUI
 
 struct GreyDivider: View {
+    let topPadding: CGFloat?
+
+    init(topPadding: CGFloat? = 1) {
+        self.topPadding = topPadding
+    }
+
     var body: some View {
         Divider().foregroundColor(Colors.separator)
             .shadow(color: Colors.separator, radius: 4, x: 0, y: -2)
-            .padding(.top, 1)
+            .padding(.top, topPadding)
     }
 }
 

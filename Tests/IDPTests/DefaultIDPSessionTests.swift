@@ -70,6 +70,16 @@ final class DefaultIDPSessionTests: XCTestCase {
         return challenge
     }()
 
+    private lazy var invalidChallenge: IDPChallenge = {
+        guard let challengeData = try? Bundle(for: Self.self)
+            .path(forResource: "challenge-invalid", ofType: "json", inDirectory: "JWT.bundle")?
+            .readFileContents(),
+            let challenge = try? JSONDecoder().decode(IDPChallenge.self, from: challengeData) else {
+            fatalError("Could not load test idp challenge")
+        }
+        return challenge
+    }()
+
     var idpClientMock: IDPClientMock!
     var schedulers: TestSchedulers!
     var storage: MemStorage!
@@ -464,6 +474,29 @@ final class DefaultIDPSessionTests: XCTestCase {
         }
 
         cancellable.cancel()
+    }
+
+    func testRequestChallengeInvalidSignature() throws {
+        let storage = MemStorage()
+        let issuedDate = dateFormatter.date(from: "2021-03-16 14:00:00.0000+0000")!
+        let discoveryDocument = self.discoveryDocument(createdOn: issuedDate)
+        storage.set(discovery: discoveryDocument)
+        let idpClientMock = IDPClientMock()
+        idpClientMock.requestChallenge_Publisher = Just(invalidChallenge)
+            .setFailureType(to: IDPError.self).eraseToAnyPublisher()
+        idpClientMock.discoveryDocument = discoveryDocument
+
+        let sut = DefaultIDPSession(
+            client: idpClientMock,
+            storage: storage,
+            schedulers: TestSchedulers(),
+            trustStoreSession: trustStoreSessionMock,
+            extAuthRequestStorage: extAuthRequestStorageMock,
+            time: { issuedDate }
+        )
+
+        let expectedError = IDPError.validation(error: JWT.Error.invalidSignature)
+        expect(try self.awaitPublisher(sut.requestChallenge())).to(throwError(expectedError))
     }
 
     func testVerifySignedChallenge() {
@@ -1023,7 +1056,7 @@ final class DefaultIDPSessionTests: XCTestCase {
             for: KKAppDirectory.Entry(name: "Gematik KK", identifier: "K1234")
         )
 
-        sut.extAuthVerifyAndExchange(fixture)
+        sut.extAuthVerifyAndExchange(fixture, idTokenValidator: { _ in .success(true) })
             .test(
                 failure: { error in
                     fail("Error: \(error)")
@@ -1068,7 +1101,7 @@ final class DefaultIDPSessionTests: XCTestCase {
 
         extAuthRequestStorageMock.getExtAuthRequestForReturnValue = nil
 
-        sut.extAuthVerifyAndExchange(fixture)
+        sut.extAuthVerifyAndExchange(fixture, idTokenValidator: { _ in .success(true) })
             .test(
                 failure: { error in
                     expect(error).to(equal(IDPError.extAuthOriginalRequestMissing))

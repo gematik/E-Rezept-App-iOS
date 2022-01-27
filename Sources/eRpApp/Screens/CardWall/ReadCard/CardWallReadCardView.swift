@@ -47,6 +47,10 @@ struct CardWallReadCardView: View {
             .demoBanner(isPresented: viewStore.isDemoModus) {
                 Text(L10n.cdwTxtRcDemoModeInfo)
             }
+            .alert(
+                self.store.scope(state: \.alertState),
+                dismiss: .alertDismissButtonTapped
+            )
             .navigationBarTitle(L10n.cdwTxtRcTitle, displayMode: .inline)
             .navigationBarBackButtonHidden(true)
             .navigationBarItems(

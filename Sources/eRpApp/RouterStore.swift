@@ -23,7 +23,12 @@ enum Endpoint: Equatable {
     case settings
     case scanner
     case messages
+    case mainScreen(MainScreen?)
     case universalLink(URL)
+
+    enum MainScreen: Equatable {
+        case login
+    }
 }
 
 protocol Routing {

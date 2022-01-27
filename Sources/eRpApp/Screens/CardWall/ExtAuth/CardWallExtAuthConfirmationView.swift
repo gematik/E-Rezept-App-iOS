@@ -55,8 +55,8 @@ struct CardWallExtAuthConfirmationView: View {
                             Text(L10n.cdwBtnExtauthConfirmContact)
                         })
                             .accessibility(identifier: A11y.cardWall.extAuthConfirmation.cdwBtnExtauthConfirmContact)
-                            .actionSheet(store.scope(state: \.contactActionSheet),
-                                         dismiss: CardWallExtAuthConfirmationDomain.Action.closeContactSheet)
+                            .confirmationDialog(store.scope(state: \.contactActionSheet),
+                                                dismiss: CardWallExtAuthConfirmationDomain.Action.closeContactSheet)
                     }
                     .padding(.horizontal)
                     .frame(maxWidth: .infinity, alignment: .leading)

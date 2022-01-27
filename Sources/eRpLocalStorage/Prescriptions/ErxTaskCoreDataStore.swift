@@ -16,16 +16,17 @@
 //  
 //
 
+import CombineSchedulers
 import CoreData
+import eRpKit
 import Foundation
 import GemCommonsKit
 
 /// Store for fetching, creating, updating or deleting `ErxTask`s and it‘s underlying types
-public class ErxTaskCoreDataStore: CoreDataCrudable {
-    public typealias Error = CoreDataStoreError
+public class ErxTaskCoreDataStore: CoreDataCrudable, ErxLocalDataStore {
     let coreDataControllerFactory: CoreDataControllerFactory
-    let foregroundQueue: DispatchQueue
-    let backgroundQueue: DispatchQueue
+    let foregroundQueue: AnySchedulerOf<DispatchQueue>
+    let backgroundQueue: AnySchedulerOf<DispatchQueue>
     let profileId: UUID? // TODO: make private and let after refactoring // swiftlint:disable:this todo
 
     /// Initialize an ErxTask Core Data Store
@@ -40,8 +41,9 @@ public class ErxTaskCoreDataStore: CoreDataCrudable {
     public init(
         profileId: UUID?,
         coreDataControllerFactory: CoreDataControllerFactory,
-        foregroundQueue: DispatchQueue = DispatchQueue.main,
-        backgroundQueue: DispatchQueue = DispatchQueue(label: "erx-task-data-source-queue", qos: .userInitiated)
+        foregroundQueue: AnySchedulerOf<DispatchQueue> = AnyScheduler.main,
+        backgroundQueue: AnySchedulerOf<DispatchQueue> = DispatchQueue(label: "erx-task-data-source-queue",
+                                                                       qos: .userInitiated).eraseToAnyScheduler()
     ) {
         self.profileId = profileId
         self.coreDataControllerFactory = coreDataControllerFactory
@@ -67,4 +69,12 @@ public class ErxTaskCoreDataStore: CoreDataCrudable {
         guard let result = results.first else { return nil }
         return result
     }
+}
+
+extension ErxTaskCoreDataStore {
+    /// Initializes an instance of `ErxTaskCoreDataStore`with a failing CoreDataController
+    public static let failing = ErxTaskCoreDataStore(
+        profileId: nil,
+        coreDataControllerFactory: LocalStoreFactory.failing
+    )
 }

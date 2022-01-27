@@ -222,7 +222,7 @@ enum MessageDomain: Equatable {
         AlertState(
             title: TextState(L10n.msgsTxtOpenMailErrorTitle),
             message: TextState(L10n.msgsTxtOpenMailErrorMessage),
-            dismissButton: .cancel()
+            dismissButton: .cancel(TextState(L10n.alertBtnClose))
         )
     }()
 
@@ -230,10 +230,10 @@ enum MessageDomain: Equatable {
         AlertState(
             title: TextState(L10n.msgsTxtFormatErrorTitle),
             message: TextState(L10n.msgsTxtFormatErrorMessage),
-            primaryButton: .cancel(),
+            primaryButton: .cancel(TextState(L10n.alertBtnClose)),
             secondaryButton: .default(
                 TextState(L10n.msgsBtnFormatError),
-                send: Action.openMail(message: url.absoluteString)
+                action: .send(Action.openMail(message: url.absoluteString))
             )
         )
     }

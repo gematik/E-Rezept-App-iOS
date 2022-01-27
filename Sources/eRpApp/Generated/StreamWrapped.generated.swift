@@ -1,4 +1,4 @@
-// Generated using Sourcery 1.5.0 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 1.6.1 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 
 import Combine
@@ -34,62 +34,22 @@ import VAUClient
 
 
 
-class StreamWrappedErxTaskRepositoryAccess: ErxTaskRepositoryAccess {
+class StreamWrappedErxTaskRepository: ErxTaskRepository {
     private var disposeBag: Set<AnyCancellable> = []
-	private let stream: AnyPublisher<ErxTaskRepositoryAccess, Never>
-	private var current: ErxTaskRepositoryAccess
+	private let stream: AnyPublisher<ErxTaskRepository, Never>
 
-	init(stream: AnyPublisher<ErxTaskRepositoryAccess, Never>, current: ErxTaskRepositoryAccess) {
+	init(stream: AnyPublisher<ErxTaskRepository, Never>) {
 		self.stream = stream
-		self.current = current
 
 
-		stream
-			.assign(to: \.current, on: self)
-			.store(in: &disposeBag)
 
 
 	}
 
 
-	func loadLocal() -> AnyPublisher<[ErxTask], ErxTaskRepositoryError> {
+	func loadRemote(by id: ErxTask.ID, accessCode: String?) -> AnyPublisher<ErxTask?, ErxRepositoryError> {
         stream
-        	.map { $0.loadLocal(
-            ) }
-            .switchToLatest()
-            .eraseToAnyPublisher()
-	}
-
-	func loadRemoteAndSave(for locale: String?) -> AnyPublisher<[ErxTask], ErxTaskRepositoryError> {
-        stream
-        	.map { $0.loadRemoteAndSave(
-				for: locale
-            ) }
-            .switchToLatest()
-            .eraseToAnyPublisher()
-	}
-
-	func save(_ erxTasks: [ErxTask]) -> AnyPublisher<Bool, ErxTaskRepositoryError> {
-        stream
-        	.map { $0.save(
-				erxTasks
-            ) }
-            .switchToLatest()
-            .eraseToAnyPublisher()
-	}
-
-	func delete(_ erxTasks: [ErxTask]) -> AnyPublisher<Bool, ErxTaskRepositoryError> {
-        stream
-        	.map { $0.delete(
-				erxTasks
-            ) }
-            .switchToLatest()
-            .eraseToAnyPublisher()
-	}
-
-	func find(by id: ErxTask.ID, accessCode: String?) -> AnyPublisher<ErxTask?, ErxTaskRepositoryError> {
-        stream
-        	.map { $0.find(
+        	.map { $0.loadRemote(
 				by: id,
 				accessCode: accessCode
             ) }
@@ -97,7 +57,52 @@ class StreamWrappedErxTaskRepositoryAccess: ErxTaskRepositoryAccess {
             .eraseToAnyPublisher()
 	}
 
-	func redeem(orders: [ErxTaskOrder]) -> AnyPublisher<Bool, ErxTaskRepositoryError> {
+	func loadLocal(by id: ErxTask.ID, accessCode: String?) -> AnyPublisher<ErxTask?, ErxRepositoryError> {
+        stream
+        	.map { $0.loadLocal(
+				by: id,
+				accessCode: accessCode
+            ) }
+            .switchToLatest()
+            .eraseToAnyPublisher()
+	}
+
+	func loadLocalAll() -> AnyPublisher<[ErxTask], ErxRepositoryError> {
+        stream
+        	.map { $0.loadLocalAll(
+            ) }
+            .switchToLatest()
+            .eraseToAnyPublisher()
+	}
+
+	func loadRemoteAll(for locale: String?) -> AnyPublisher<[ErxTask], ErxRepositoryError> {
+        stream
+        	.map { $0.loadRemoteAll(
+				for: locale
+            ) }
+            .switchToLatest()
+            .eraseToAnyPublisher()
+	}
+
+	func save(erxTasks: [ErxTask]) -> AnyPublisher<Bool, ErxRepositoryError> {
+        stream
+        	.map { $0.save(
+				erxTasks: erxTasks
+            ) }
+            .switchToLatest()
+            .eraseToAnyPublisher()
+	}
+
+	func delete(erxTasks: [ErxTask]) -> AnyPublisher<Bool, ErxRepositoryError> {
+        stream
+        	.map { $0.delete(
+				erxTasks: erxTasks
+            ) }
+            .switchToLatest()
+            .eraseToAnyPublisher()
+	}
+
+	func redeem(orders: [ErxTaskOrder]) -> AnyPublisher<Bool, ErxRepositoryError> {
         stream
         	.map { $0.redeem(
 				orders: orders
@@ -106,7 +111,7 @@ class StreamWrappedErxTaskRepositoryAccess: ErxTaskRepositoryAccess {
             .eraseToAnyPublisher()
 	}
 
-	func loadLocalCommunications(for profile: ErxTask.Communication.Profile) -> AnyPublisher<[ErxTask.Communication], ErxTaskRepositoryError> {
+	func loadLocalCommunications(for profile: ErxTask.Communication.Profile) -> AnyPublisher<[ErxTask.Communication], ErxRepositoryError> {
         stream
         	.map { $0.loadLocalCommunications(
 				for: profile
@@ -115,7 +120,7 @@ class StreamWrappedErxTaskRepositoryAccess: ErxTaskRepositoryAccess {
             .eraseToAnyPublisher()
 	}
 
-	func saveLocal(communications: [ErxTask.Communication]) -> AnyPublisher<Bool, ErxTaskRepositoryError> {
+	func saveLocal(communications: [ErxTask.Communication]) -> AnyPublisher<Bool, ErxRepositoryError> {
         stream
         	.map { $0.saveLocal(
 				communications: communications
@@ -124,7 +129,7 @@ class StreamWrappedErxTaskRepositoryAccess: ErxTaskRepositoryAccess {
             .eraseToAnyPublisher()
 	}
 
-	func countAllUnreadCommunications(for profile: ErxTask.Communication.Profile) -> AnyPublisher<Int, ErxTaskRepositoryError> {
+	func countAllUnreadCommunications(for profile: ErxTask.Communication.Profile) -> AnyPublisher<Int, ErxRepositoryError> {
         stream
         	.map { $0.countAllUnreadCommunications(
 				for: profile
@@ -221,12 +226,13 @@ class StreamWrappedIDPSession: IDPSession {
             .eraseToAnyPublisher()
 	}
 
-	func exchange(token: IDPExchangeToken, challengeSession: ChallengeSession, redirectURI: String?) -> AnyPublisher<IDPToken, IDPError> {
+	func exchange(token: IDPExchangeToken, challengeSession: ChallengeSession, redirectURI: String?, idTokenValidator: @escaping (TokenPayload.IDTokenPayload) -> Result<Bool, Error>) -> AnyPublisher<IDPToken, IDPError> {
         stream
         	.map { $0.exchange(
 				token: token,
 				challengeSession: challengeSession,
-				redirectURI: redirectURI
+				redirectURI: redirectURI,
+				idTokenValidator: idTokenValidator
             ) }
             .switchToLatest()
             .eraseToAnyPublisher()
@@ -286,10 +292,11 @@ class StreamWrappedIDPSession: IDPSession {
             .eraseToAnyPublisher()
 	}
 
-	func extAuthVerifyAndExchange(_ url: URL) -> AnyPublisher<IDPToken, IDPError> {
+	func extAuthVerifyAndExchange(_ url: URL, idTokenValidator: @escaping (TokenPayload.IDTokenPayload) -> Result<Bool, Error>) -> AnyPublisher<IDPToken, IDPError> {
         stream
         	.map { $0.extAuthVerifyAndExchange(
-				url
+				url,
+				idTokenValidator: idTokenValidator
             ) }
             .switchToLatest()
             .eraseToAnyPublisher()
@@ -300,10 +307,11 @@ class StreamWrappedIDPSession: IDPSession {
             )
 	}
 
-	func verifyAndExchange(signedChallenge: SignedChallenge) -> AnyPublisher<IDPToken, IDPError> {
+	func verifyAndExchange(signedChallenge: SignedChallenge, idTokenValidator: @escaping (TokenPayload.IDTokenPayload) -> Result<Bool, Error>) -> AnyPublisher<IDPToken, IDPError> {
         stream
         	.map { $0.verifyAndExchange(
-				signedChallenge: signedChallenge
+				signedChallenge: signedChallenge,
+				idTokenValidator: idTokenValidator
             ) }
             .switchToLatest()
             .eraseToAnyPublisher()
@@ -313,6 +321,17 @@ class StreamWrappedIDPSession: IDPSession {
         current.httpInterceptor(
 				delegate: delegate
             )
+	}
+
+	func exchange(token: IDPExchangeToken, challengeSession: ChallengeSession, redirectURI: String?) -> AnyPublisher<IDPToken, IDPError> {
+        stream
+        	.map { $0.exchange(
+				token: token,
+				challengeSession: challengeSession,
+				redirectURI: redirectURI
+            ) }
+            .switchToLatest()
+            .eraseToAnyPublisher()
 	}
 
 
@@ -360,6 +379,63 @@ class StreamWrappedNFCSignatureProvider: NFCSignatureProvider {
 
 }
 
+class StreamWrappedProfileDataStore: ProfileDataStore {
+    private var disposeBag: Set<AnyCancellable> = []
+	private let stream: AnyPublisher<ProfileDataStore, Never>
+	private var current: ProfileDataStore
+
+	init(stream: AnyPublisher<ProfileDataStore, Never>, current: ProfileDataStore) {
+		self.stream = stream
+		self.current = current
+
+
+		stream
+			.assign(to: \.current, on: self)
+			.store(in: &disposeBag)
+
+
+	}
+
+
+	func fetchProfile(by identifier: Profile.ID) -> AnyPublisher<Profile?, LocalStoreError> {
+        stream
+        	.map { $0.fetchProfile(
+				by: identifier
+            ) }
+            .switchToLatest()
+            .eraseToAnyPublisher()
+	}
+
+	func listAllProfiles() -> AnyPublisher<[Profile], LocalStoreError> {
+        stream
+        	.map { $0.listAllProfiles(
+            ) }
+            .switchToLatest()
+            .eraseToAnyPublisher()
+	}
+
+	func save(profiles: [Profile]) -> AnyPublisher<Bool, LocalStoreError> {
+        current.save(
+				profiles: profiles
+            )
+	}
+
+	func delete(profiles: [Profile]) -> AnyPublisher<Bool, LocalStoreError> {
+        current.delete(
+				profiles: profiles
+            )
+	}
+
+	func update(profileId: UUID, mutating: @escaping (inout Profile) -> Void) -> AnyPublisher<Bool, LocalStoreError> {
+        current.update(
+				profileId: profileId,
+				mutating: mutating
+            )
+	}
+
+
+}
+
 class StreamWrappedSecureUserDataStore: SecureUserDataStore {
     private var disposeBag: Set<AnyCancellable> = []
 	private let stream: AnyPublisher<SecureUserDataStore, Never>
@@ -387,6 +463,11 @@ class StreamWrappedSecureUserDataStore: SecureUserDataStore {
 	func set(can: String?) -> Void {
         current.set(
 				can: can
+            )
+	}
+
+	func wipe() -> Void {
+        current.wipe(
             )
 	}
 
@@ -452,11 +533,18 @@ class StreamWrappedUserDataStore: UserDataStore {
 		self.stream = stream
 		self.current = current
 
+		self.isOnboardingHidden = current.isOnboardingHidden
+		self.latestCompatibleModelVersion = current.latestCompatibleModelVersion
+		self.appStartCounter = current.appStartCounter
 
 		stream
 			.assign(to: \.current, on: self)
 			.store(in: &disposeBag)
 
+		stream
+			.map(\.isOnboardingHidden)
+			.assign(to: \.isOnboardingHidden, on: self)
+			.store(in: &disposeBag)
 
 	}
 
@@ -466,6 +554,7 @@ class StreamWrappedUserDataStore: UserDataStore {
 			.switchToLatest()
 			.eraseToAnyPublisher()
 	}
+	private(set) var isOnboardingHidden: Bool
 	var onboardingVersion: AnyPublisher<String?, Never> {
 		return stream
 			.map { $0.onboardingVersion }
@@ -501,6 +590,20 @@ class StreamWrappedUserDataStore: UserDataStore {
 			.map { $0.ignoreDeviceNotSecuredWarningPermanently }
 			.switchToLatest()
 			.eraseToAnyPublisher()
+	}
+	var selectedProfileId: AnyPublisher<UUID?, Never> {
+		return stream
+			.map { $0.selectedProfileId }
+			.switchToLatest()
+			.eraseToAnyPublisher()
+	}
+	var latestCompatibleModelVersion: ModelVersion {
+		set { current.latestCompatibleModelVersion = newValue }
+		get { current.latestCompatibleModelVersion }
+	}
+	var appStartCounter: Int {
+		set { current.appStartCounter = newValue }
+		get { current.appStartCounter }
 	}
 	var configuration: AnyPublisher<AppConfiguration, Never> {
 		return stream
@@ -551,6 +654,12 @@ class StreamWrappedUserDataStore: UserDataStore {
             )
 	}
 
+	func set(selectedProfileId: UUID) -> Void {
+        current.set(
+				selectedProfileId: selectedProfileId
+            )
+	}
+
 
 	/// AnyObject
 }
@@ -571,6 +680,8 @@ class StreamWrappedUserSession: UserSession {
 		self.trustStoreSession = current.trustStoreSession
 		self.appSecurityManager = current.appSecurityManager
 		self.deviceSecurityManager = current.deviceSecurityManager
+		self.profileId = current.profileId
+		self.profileSecureDataWiper = current.profileSecureDataWiper
 
 		stream
 			.assign(to: \.current, on: self)
@@ -604,6 +715,14 @@ class StreamWrappedUserSession: UserSession {
 			.map(\.deviceSecurityManager)
 			.assign(to: \.deviceSecurityManager, on: self)
 			.store(in: &disposeBag)
+		stream
+			.map(\.profileId)
+			.assign(to: \.profileId, on: self)
+			.store(in: &disposeBag)
+		stream
+			.map(\.profileSecureDataWiper)
+			.assign(to: \.profileSecureDataWiper, on: self)
+			.store(in: &disposeBag)
 
 	}
 
@@ -613,8 +732,11 @@ class StreamWrappedUserSession: UserSession {
 			.switchToLatest()
 			.eraseToAnyPublisher()
 	}
-	lazy var erxTaskRepository: ErxTaskRepositoryAccess = {
-		StreamWrappedErxTaskRepositoryAccess(stream: stream.map{ $0.erxTaskRepository }.eraseToAnyPublisher(), current: current.erxTaskRepository )
+	lazy var erxTaskRepository: ErxTaskRepository = {
+		StreamWrappedErxTaskRepository(stream: stream.map{ $0.erxTaskRepository }.eraseToAnyPublisher() )
+	}()
+	lazy var profileDataStore: ProfileDataStore = {
+		StreamWrappedProfileDataStore(stream: stream.map{ $0.profileDataStore }.eraseToAnyPublisher(), current: current.profileDataStore )
 	}()
 	private(set) var pharmacyRepository: PharmacyRepository
 	lazy var localUserStore: UserDataStore = {
@@ -641,6 +763,24 @@ class StreamWrappedUserSession: UserSession {
 	private(set) var trustStoreSession: TrustStoreSession
 	private(set) var appSecurityManager: AppSecurityManager
 	private(set) var deviceSecurityManager: DeviceSecurityManager
+	private(set) var profileId: UUID
+	private(set) var profileSecureDataWiper: ProfileSecureDataWiper
+
+	func profile() -> AnyPublisher<Profile, LocalStoreError> {
+        stream
+        	.map { $0.profile(
+            ) }
+            .switchToLatest()
+            .eraseToAnyPublisher()
+	}
+
+	func idTokenValidator() -> AnyPublisher<IDTokenValidator, IDTokenValidatorError> {
+        stream
+        	.map { $0.idTokenValidator(
+            ) }
+            .switchToLatest()
+            .eraseToAnyPublisher()
+	}
 
 
 }

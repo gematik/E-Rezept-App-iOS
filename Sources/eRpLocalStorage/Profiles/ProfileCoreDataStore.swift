@@ -17,14 +17,15 @@
 //
 
 import Combine
+import CombineSchedulers
 import CoreData
 import eRpKit
 
 /// Store for fetching, creating, updating or deleting `Profile`s on the provided `CoreDataController`
 public class ProfileCoreDataStore: ProfileDataStore, CoreDataCrudable {
     let coreDataControllerFactory: CoreDataControllerFactory
-    let foregroundQueue: DispatchQueue
-    let backgroundQueue: DispatchQueue
+    let foregroundQueue: AnySchedulerOf<DispatchQueue>
+    let backgroundQueue: AnySchedulerOf<DispatchQueue>
 
     /// Initialize a Profile Core Data Store
     /// - Parameters:
@@ -35,8 +36,9 @@ public class ProfileCoreDataStore: ProfileDataStore, CoreDataCrudable {
     ///     write queue (Default: DispatchQueue(label: "profile-queue", qos: .userInitiated))
     public init(
         coreDataControllerFactory: CoreDataControllerFactory,
-        foregroundQueue: DispatchQueue = DispatchQueue.main,
-        backgroundQueue: DispatchQueue = DispatchQueue(label: "profile-queue", qos: .userInitiated)
+        foregroundQueue: AnySchedulerOf<DispatchQueue> = AnyScheduler.main,
+        backgroundQueue: AnySchedulerOf<DispatchQueue> = DispatchQueue(label: "profile-queue", qos: .userInitiated)
+            .eraseToAnyScheduler()
     ) {
         self.coreDataControllerFactory = coreDataControllerFactory
         self.foregroundQueue = foregroundQueue
@@ -44,7 +46,7 @@ public class ProfileCoreDataStore: ProfileDataStore, CoreDataCrudable {
     }
 
     public func fetchProfile(by identifier: Profile.ID)
-        -> AnyPublisher<Profile?, CoreDataStoreError> {
+        -> AnyPublisher<Profile?, LocalStoreError> {
         let request: NSFetchRequest<ProfileEntity> = ProfileEntity.fetchRequest()
         request.predicate = NSPredicate(
             format: "%K == %@",
@@ -52,7 +54,6 @@ public class ProfileCoreDataStore: ProfileDataStore, CoreDataCrudable {
         )
         request.sortDescriptors = [NSSortDescriptor(key: #keyPath(ProfileEntity.created), ascending: true)]
         return fetch(request)
-            .first()
             .map { results in
                 guard let profileEntity = results.first else {
                     return nil
@@ -65,9 +66,9 @@ public class ProfileCoreDataStore: ProfileDataStore, CoreDataCrudable {
             .eraseToAnyPublisher()
     }
 
-    public func listAllProfiles() -> AnyPublisher<[Profile], CoreDataStoreError> {
+    public func listAllProfiles() -> AnyPublisher<[Profile], LocalStoreError> {
         let request: NSFetchRequest<ProfileEntity> = ProfileEntity.fetchRequest()
-        request.sortDescriptors = [NSSortDescriptor(key: #keyPath(ProfileEntity.lastAuthenticated), ascending: false)]
+        request.sortDescriptors = [NSSortDescriptor(key: #keyPath(ProfileEntity.created), ascending: true)]
 
         return fetch(request)
             .map { list in list.compactMap(Profile.init) }
@@ -75,7 +76,7 @@ public class ProfileCoreDataStore: ProfileDataStore, CoreDataCrudable {
     }
 
     // creates or updates a `Profile`. Note that the `erxTasks` relationship will not be saved
-    public func save(profiles: [Profile]) -> AnyPublisher<Bool, CoreDataStoreError> {
+    public func save(profiles: [Profile]) -> AnyPublisher<Bool, LocalStoreError> {
         save(mergePolicy: NSMergePolicy.error) { moc in
             _ = profiles.map { profile -> ProfileEntity in
                 let request: NSFetchRequest<ProfileEntity> = ProfileEntity.fetchRequest()
@@ -86,6 +87,7 @@ public class ProfileCoreDataStore: ProfileDataStore, CoreDataCrudable {
 
                 if let profileEntity = try? moc.fetch(request).first {
                     profileEntity.name = profile.name
+                    profileEntity.emoji = profile.emoji
                     profileEntity.insuranceId = profile.insuranceId
                     profileEntity.color = profile.color.rawValue
                     profileEntity.lastAuthenticated = profile.lastAuthenticated
@@ -97,11 +99,41 @@ public class ProfileCoreDataStore: ProfileDataStore, CoreDataCrudable {
         }
     }
 
-    public func delete(profiles: [Profile]) -> AnyPublisher<Bool, CoreDataStoreError> {
+    public func update(
+        profileId: UUID,
+        mutating: @escaping (inout Profile) -> Void
+    ) -> AnyPublisher<Bool, LocalStoreError> {
+        save(mergePolicy: NSMergePolicy.error) { moc in
+            let request: NSFetchRequest<ProfileEntity> = ProfileEntity.fetchRequest()
+            request.fetchLimit = 1
+            request.predicate = NSPredicate(
+                format: "%K == %@",
+                argumentArray: [#keyPath(ProfileEntity.identifier), profileId]
+            )
+
+            if let profileEntity = try? moc.fetch(request).first,
+               var profile = Profile(entity: profileEntity) {
+                mutating(&profile)
+                profileEntity.name = profile.name
+                profileEntity.insuranceId = profile.insuranceId
+                profileEntity.emoji = profile.emoji
+                profileEntity.color = profile.color.rawValue
+                profileEntity.lastAuthenticated = profile.lastAuthenticated
+            } else {
+                throw Error.noMatchingEntity
+            }
+        }
+    }
+
+    public func delete(profiles: [Profile]) -> AnyPublisher<Bool, LocalStoreError> {
         let request: NSFetchRequest<ProfileEntity> = ProfileEntity.fetchRequest()
         let ids = profiles.map(\.identifier)
         request.predicate = NSPredicate(format: "%K in %@", #keyPath(ProfileEntity.identifier), ids)
         request.sortDescriptors = [NSSortDescriptor(key: #keyPath(ProfileEntity.name), ascending: false)]
         return delete(resultsOf: request)
+    }
+
+    enum Error: Swift.Error {
+        case noMatchingEntity
     }
 }

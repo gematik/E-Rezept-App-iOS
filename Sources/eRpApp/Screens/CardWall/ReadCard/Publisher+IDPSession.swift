@@ -21,15 +21,28 @@ import HealthCardAccess
 import HealthCardControl
 import IDP
 
-extension Publisher where Self.Output == IDPExchangeToken, Failure == CardWallReadCardDomain.State.Error {
+extension Publisher where Self.Output == IDPExchangeToken, Failure == IDPError {
     func exchangeIDPToken(idp: IDPSession,
                           challengeSession: IDPChallengeSession,
-                          redirectURI: String? = nil)
+                          redirectURI: String? = nil,
+                          idTokenValidator: @escaping (TokenPayload.IDTokenPayload) -> Result<Bool, Error>)
         -> AnyPublisher<IDPToken, CardWallReadCardDomain.State.Error> {
         flatMap { token in
             idp
-                .exchange(token: token, challengeSession: challengeSession, redirectURI: redirectURI)
-                .mapError { CardWallReadCardDomain.State.Error.idpError($0) }
+                .exchange(
+                    token: token,
+                    challengeSession: challengeSession,
+                    redirectURI: redirectURI,
+                    idTokenValidator: idTokenValidator
+                )
+        }
+        .mapError { error in
+            if case let .unspecified(error) = error,
+               let validationError = error as? IDTokenValidatorError {
+                return .profileValidation(validationError)
+            } else {
+                return .idpError(error)
+            }
         }
         .eraseToAnyPublisher()
     }
@@ -37,8 +50,8 @@ extension Publisher where Self.Output == IDPExchangeToken, Failure == CardWallRe
 
 extension Publisher where Self.Output == IDPToken, Failure == CardWallReadCardDomain.State.Error {
     func eraseToCardWallLoginState() -> AnyPublisher<CardWallReadCardDomain.State.Output, Never> {
-        map { _ in
-            CardWallReadCardDomain.State.Output.loggedIn
+        map { idpToken in
+            CardWallReadCardDomain.State.Output.loggedIn(idpToken)
         }
         .catch { error in
             Just(

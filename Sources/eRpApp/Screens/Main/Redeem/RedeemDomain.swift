@@ -18,7 +18,6 @@
 
 import Combine
 import ComposableArchitecture
-import ComposableCoreLocation
 import eRpKit
 
 enum RedeemDomain {
@@ -57,7 +56,6 @@ enum RedeemDomain {
         let schedulers: Schedulers
         let userSession: UserSession
         let fhirDateFormatter: FHIRDateFormatter
-        let locationManager: LocationManager
     }
 
     static let reducer: Reducer = .combine(
@@ -66,7 +64,7 @@ enum RedeemDomain {
         redeemReducer
     )
 
-    static let redeemReducer = Reducer { state, action, environment in
+    static let redeemReducer = Reducer { state, action, _ in
         switch action {
         case .close:
             return .none
@@ -88,14 +86,8 @@ enum RedeemDomain {
             return .none
         // Pharmacy Search
         case .openPharmacySearchView:
-            var showLocationHint = true
-            if environment.locationManager.locationServicesEnabled(),
-               environment.locationManager.authorizationStatus() != CLAuthorizationStatus.notDetermined {
-                showLocationHint = false
-            }
             state.pharmacySearchState = PharmacySearchDomain.State(
-                erxTasks: state.groupedPrescription.prescriptions.map(\.erxTask),
-                locationHintState: showLocationHint
+                erxTasks: state.groupedPrescription.prescriptions.map(\.erxTask)
             )
             return .none
         case .dismissPharmacySearchView:
@@ -117,7 +109,7 @@ enum RedeemDomain {
             RedeemMatrixCodeDomain.Environment(
                 schedulers: redeemEnv.schedulers,
                 matrixCodeGenerator: DefaultErxTaskMatrixCodeGenerator(),
-                taskRepositoryAccess: redeemEnv.userSession.erxTaskRepository,
+                taskRepository: redeemEnv.userSession.erxTaskRepository,
                 fhirDateFormatter: redeemEnv.fhirDateFormatter
             )
         }
@@ -130,7 +122,6 @@ enum RedeemDomain {
             PharmacySearchDomain.Environment(
                 schedulers: environment.schedulers,
                 pharmacyRepository: environment.userSession.pharmacyRepository,
-                locationManager: .live,
                 fhirDateFormatter: environment.fhirDateFormatter,
                 openHoursCalculator: PharmacyOpenHoursCalculator(),
                 referenceDateForOpenHours: nil,
@@ -147,8 +138,7 @@ extension RedeemDomain {
         static let environment = Environment(
             schedulers: Schedulers(),
             userSession: DemoSessionContainer(),
-            fhirDateFormatter: FHIRDateFormatter.shared,
-            locationManager: .live
+            fhirDateFormatter: FHIRDateFormatter.shared
         )
         static let store = Store(initialState: state,
                                  reducer: reducer,

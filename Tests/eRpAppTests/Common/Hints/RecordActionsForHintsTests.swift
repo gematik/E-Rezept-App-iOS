@@ -19,6 +19,7 @@
 import CombineSchedulers
 import ComposableArchitecture
 @testable import eRpApp
+import eRpKit
 import eRpLocalStorage
 import Nimble
 import XCTest
@@ -44,12 +45,19 @@ final class RecordActionsForHintsTests: XCTestCase {
                 selectedTab: .main,
                 main: MainDomain.State(
                     scannerState: nil,
-                    settingsState: nil,
                     prescriptionListState: groupedPrescriptionListState,
-                    debug: DebugDomain.State(trackingOptOut: true),
                     isDemoMode: false
                 ),
+                pharmacySearch: PharmacySearchDomain.State(erxTasks: []),
                 messages: MessagesDomain.State(messageDomainStates: []),
+                settingsState: .init(isDemoMode: false,
+                                     appSecurityState: .init(
+                                         availableSecurityOptions: [],
+                                         selectedSecurityOption: nil,
+                                         errorToDisplay: nil,
+                                         createPasswordState: nil
+                                     )),
+                debug: .init(trackingOptOut: true),
                 unreadMessagesCount: 0,
                 isDemoMode: false
             ),
@@ -72,7 +80,7 @@ final class RecordActionsForHintsTests: XCTestCase {
         let mockSessionContainer = MockUserSessionContainer()
         let groupedPrescriptions = GroupedPrescription.Dummies.twoPrescriptions
         let prescriptionLoadingState =
-            LoadingState<[GroupedPrescription], ErxTaskRepositoryError>
+            LoadingState<[GroupedPrescription], ErxRepositoryError>
                 .value([groupedPrescriptions])
         let groupedPrescriptionListState = GroupedPrescriptionListDomain.State(
             loadingState: prescriptionLoadingState,
@@ -87,7 +95,7 @@ final class RecordActionsForHintsTests: XCTestCase {
         expect(mockSessionContainer.userSession.hintEventsStore.hintState.hasTasksInLocalStore).to(beFalse())
         store.assert(
             // when toggling the demo mode
-            .send(.main(action: .settings(action: .toggleDemoModeSwitch))) { _ in
+            .send(.settings(action: .toggleDemoModeSwitch)) { _ in
                 // than the hint state should be changed from the `recordActionsForHints` reducer
                 expect(mockSessionContainer.userSession.hintEventsStore.hintState.hasDemoModeBeenToggledBefore)
                     .to(beTrue())

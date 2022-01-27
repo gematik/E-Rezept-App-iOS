@@ -36,7 +36,15 @@ class KeychainStorage: SecureUserDataStore, IDPStorage, SecureEGKCertificateStor
 
     internal var keychainHelper: KeychainAccessHelper = SystemKeychainAccessHelper()
 
-    init() {
+    private let profileId: UUID
+
+    var profilePrefix: String {
+        "\(profileId.uuidString)."
+    }
+
+    init(profileId: UUID) {
+        self.profileId = profileId
+
         $tokenState.map { $0?.accessToken }
             .receive(on: schedulers.main)
             .assign(to: \.accessTokenState, on: self)
@@ -47,11 +55,31 @@ class KeychainStorage: SecureUserDataStore, IDPStorage, SecureEGKCertificateStor
         retrieveCAN()
     }
 
-    private let egkPasswordIdentifier = "egk.can"
-    private let idpTokenIdentifier = "idp.token"
-    private let idpDiscoveryDocumentIdentifier = "idp.discovery"
-    private let egkAuthCertIdentifier = "egk.authCert"
-    private let idpBiometricKeyIdentifier = "egk.biometricKeyIdentifier"
+    private static let egkPasswordIdentifier = "egk.can"
+    private static let idpTokenIdentifier = "idp.token"
+    private static let idpDiscoveryDocumentIdentifier = "idp.discovery"
+    private static let egkAuthCertIdentifier = "egk.authCert"
+    private static let idpBiometricKeyIdentifier = "egk.biometricKeyIdentifier"
+
+    var egkPasswordIdentifier: String {
+        profilePrefix + Self.egkPasswordIdentifier
+    }
+
+    var idpTokenIdentifier: String {
+        profilePrefix + Self.idpTokenIdentifier
+    }
+
+    var idpDiscoveryDocumentIdentifier: String {
+        profilePrefix + Self.idpDiscoveryDocumentIdentifier
+    }
+
+    var egkAuthCertIdentifier: String {
+        profilePrefix + Self.egkAuthCertIdentifier
+    }
+
+    var idpBiometricKeyIdentifier: String {
+        profilePrefix + Self.idpBiometricKeyIdentifier
+    }
 
     func set(can: String?) {
         let success: Bool
@@ -212,5 +240,15 @@ class KeychainStorage: SecureUserDataStore, IDPStorage, SecureEGKCertificateStor
         } else {
             _ = try? keychainHelper.unsetGenericPassword(for: idpBiometricKeyIdentifier)
         }
+    }
+
+    func wipe() {
+        // [REQ:gemSpec_IDP_Frontend:A_20499] Deletion of SSO_TOKEN, ID_TOKEN, AUTH_TOKEN
+        // [REQ:gemSpec_eRp_FdV:A_20186] Deletion of SSO_TOKEN, ID_TOKEN, AUTH_TOKEN
+        set(can: nil)
+        set(token: nil)
+        set(discovery: nil)
+        // [REQ:gemSpec_IDP_Frontend:A_21603] Certificate
+        set(certificate: nil)
     }
 }

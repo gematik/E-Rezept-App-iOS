@@ -208,48 +208,6 @@ final class RealIDPClientTests: XCTestCase {
         expect(counter) == 1
     }
 
-    func testRequestChallengeInvalidSignature() {
-        let codeChallenge = "1234567890abcdefghijklmnop"
-        let state = "D1FC3A1F5303B169C51D85ACFD1DA845F8A33447A1A549636B6B5456C6AF"
-        let nonce = "01379FF7F0754551CFA484FF19061EB61E847EF72D9886BA0180C8DD4F11"
-
-        guard let challengePath = Bundle(for: Self.self)
-            .path(forResource: "challenge-invalid", ofType: "json", inDirectory: "JWT.bundle") else {
-            fatalError("Could not load test challenge json")
-        }
-
-        var counter = 0
-        let authenticationEndpoint = localDiscoveryDocument.authentication.url
-        stub(condition: isHost("localhost")
-            && isPath(authenticationEndpoint.path)
-            && isMethodGET()
-            && hasHeaderNamed("Accept", value: "application/json")
-            && containsQueryParams([
-                "client_id": config.clientId,
-                "code_challenge": codeChallenge,
-                "code_challenge_method": "S256",
-                "state": state,
-                "redirect_uri": config.redirectURI.absoluteString,
-            ])
-            && !hasHeaderNamed("Authorization")) { _ in
-                counter += 1
-                return fixture(filePath: challengePath, headers: ["Content-Type": "application/json"])
-        }
-
-        RealIDPClient(client: config)
-            .requestChallenge(
-                codeChallenge: codeChallenge,
-                method: .sha256,
-                state: state,
-                nonce: nonce,
-                using: localDiscoveryDocument
-            )
-            .test(failure: { error in
-                expect(error) == IDPError.validation(error: JWT.Error.invalidSignature)
-            })
-        expect(counter) == 1
-    }
-
     func testSendVerify() {
         let signedChallengeResponse = try! JWT(from: Bundle(for: Self.self)
             .path(forResource: "signed-challenge-query-param", ofType: "jwt", inDirectory: "JWT.bundle")!

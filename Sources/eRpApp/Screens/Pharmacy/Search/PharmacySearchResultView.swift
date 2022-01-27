@@ -29,12 +29,15 @@ struct PharmacySearchResultView: View {
         WithViewStore(store) { viewStore in
             switch viewStore.state.searchState {
             case .searchRunning where viewStore.state.pharmacies.isEmpty:
-                HStack {
-                    ProgressView()
-                        .padding([.leading, .trailing])
-                        .hidden(viewStore.state.searchState != .searchRunning)
-                    Text(L10n.phaSearchTxtProgressSearch)
-                        .padding()
+                VStack(alignment: .leading) {
+                    HStack {
+                        ProgressView()
+                            .padding([.leading, .trailing])
+                            .hidden(viewStore.state.searchState != .searchRunning)
+                        Text(L10n.phaSearchTxtProgressSearch)
+                            .padding()
+                        Spacer()
+                    }
                     Spacer()
                 }
             case .localizingDevice:
@@ -51,20 +54,22 @@ struct PharmacySearchResultView: View {
                     Spacer()
                     Text(L10n.phaSearchTxtMinSearchChars)
                         .padding()
+                        .multilineTextAlignment(.center)
                     Spacer()
                 }
-                .frame(maxHeight: .infinity)
             case .searchResultEmpty:
                 NoResultsView()
-                    .frame(maxHeight: .infinity)
+                    .padding(.horizontal, 30)
             case .searchResultOk, .searchRunning:
-                SortAndFilterActionView(store: store)
-                    .padding([.horizontal, .top], 8)
-
-                if viewStore.state.pharmacyFilterOptions.isEmpty {
-                    FilterItemsView(store: store)
-                        .padding([.horizontal, .bottom], 8)
-                }
+                // swiftlint:disable:next todo
+                // TODO: refactor in one of the next tickets
+//                SortAndFilterActionView(store: store)
+//                    .padding([.horizontal, .top], 8)
+//
+//                if viewStore.state.pharmacyFilterOptions.isEmpty {
+//                    FilterItemsView(store: store)
+//                        .padding([.horizontal, .bottom], 8)
+//                }
 
                 PharmacyListView(
                     store: viewStore.state.isLoading ?
@@ -82,8 +87,10 @@ struct PharmacySearchResultView: View {
                     reason: viewStore.state.isLoading ? .placeholder : []
                 )
                 .accessibility(identifier: A11y.pharmacySearch.phaSearchTxtResultList)
-            default:
+            case .searchAfterLocalizationWasAuthorized:
                 EmptyView()
+            case .error:
+                ErrorView(store: store)
             }
         }
     }
@@ -92,26 +99,8 @@ struct PharmacySearchResultView: View {
         let store: PharmacySearchDomain.Store
 
         var body: some View {
-            WithViewStore(store) { viewStore in
+            WithViewStore(store) { _ in
                 HStack {
-                    Button(action: {
-                        viewStore.send(.sortResult)
-                    }, label: {
-                        Text(viewStore.state.sortOrder.localizedString())
-                        VStack {
-                            Image(systemName: SFSymbolName.chevronUp)
-                                .foregroundColor(Colors.primary600)
-                            Spacer().frame(height: 1)
-                            Image(systemName: SFSymbolName.chevronDown)
-                                .foregroundColor(Colors.primary600)
-                        }
-                    })
-                        .foregroundColor(Colors.primary600)
-                        .font(Font.subheadline.weight(.semibold))
-                        .padding(.leading, 2)
-
-                    Spacer()
-
                     /*
                       swiftlint:disable:next todo
                       TODO: This filter button is deactivated until the ApoVZD-Server
@@ -161,21 +150,49 @@ struct PharmacySearchResultView: View {
 
     private struct NoResultsView: View {
         var body: some View {
-            VStack(alignment: .center) {
+            VStack {
                 Text(L10n.phaSearchTxtNoResultsTitle)
                     .font(.headline)
-                    .padding([.leading, .trailing], 30)
-                    .padding(.bottom, 8)
+                    .padding(.bottom, 1)
                 Text(L10n.phaSearchTxtNoResults)
                     .font(.subheadline)
+                    .foregroundColor(Colors.textSecondary)
                     .multilineTextAlignment(.center)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .padding([.leading, .trailing, .bottom], 30)
-            }.padding([.top, .bottom], 8)
+            }
         }
     }
 
-    private struct PharmacyListView: View {
+    private struct ErrorView: View {
+        let store: PharmacySearchDomain.Store
+
+        var body: some View {
+            WithViewStore(store) { viewStore in
+                VStack {
+                    Text(L10n.phaSearchTxtErrorNoServerResponseHeadline)
+                        .font(.headline)
+                        .padding(.bottom, 1)
+
+                    Text(L10n.phaSearchTxtErrorNoServerResponseSubheadline)
+                        .font(.subheadline)
+                        .foregroundColor(Colors.textSecondary)
+                        .multilineTextAlignment(.center)
+                        .padding(.bottom, 1)
+
+                    Button(
+                        action: {
+                            viewStore.send(.performSearch)
+                        },
+                        label: {
+                            Text(L10n.phaSearchBtnErrorNoServerResponse)
+                                .font(.subheadline)
+                        }
+                    )
+                }
+            }
+        }
+    }
+
+    struct PharmacyListView: View {
         let store: PharmacySearchDomain.Store
         var body: some View {
             WithViewStore(store) { viewStore in
@@ -187,6 +204,7 @@ struct PharmacySearchResultView: View {
                         ).listRowInsets(EdgeInsets())
                     }
                 }
+                .listStyle(PlainListStyle())
             }
         }
     }
@@ -267,18 +285,29 @@ struct PharmacySearchResultView: View {
                 Image(systemName: SFSymbolName.rightDisclosureIndicator)
                     .foregroundColor(Colors.systemLabelTertiary)
                     .unredacted()
-            }.padding(8)
+            }
+            .padding(.horizontal, 16)
         }
     }
 }
 
 struct PharmacySearchResultView_Previews: PreviewProvider {
     static var previews: some View {
-        Group {
-            // Search with result
-            NavigationView {
-                PharmacySearchResultView(store: PharmacySearchDomain.Dummies.store)
-            }
-        }
+        // Search with result
+        PharmacySearchResultView(store: PharmacySearchDomain.Dummies.store)
+
+        // Search with empty Result
+        PharmacySearchResultView(
+            store: PharmacySearchDomain.Dummies.storeFor(
+                PharmacySearchDomain.Dummies.stateEmpty
+            )
+        )
+
+        // Search with error response
+        PharmacySearchResultView(
+            store: PharmacySearchDomain.Dummies.storeFor(
+                PharmacySearchDomain.Dummies.stateError
+            )
+        )
     }
 }

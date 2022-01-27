@@ -49,6 +49,8 @@ struct SettingsView: View {
         #endif
         let showTrackerComplyView: Bool
         let isDemoMode: Bool
+        let route: ProfilesDomain.Route?
+        let routeTag: ProfilesDomain.Route.Tag?
 
         init(state: SettingsDomain.State) {
             #if ENABLE_DEBUG_VIEW
@@ -56,6 +58,8 @@ struct SettingsView: View {
             #endif
             showTrackerComplyView = state.showTrackerComplyView
             isDemoMode = state.isDemoMode
+            route = state.profiles.route
+            routeTag = state.profiles.route?.tag
         }
     }
 
@@ -71,12 +75,11 @@ struct SettingsView: View {
                                      ))
                     #endif
 
+                    ProfileSectionView(store: profilesStore)
+
                     DemoModeSectionView(store: store)
 
                     SecuritySectionView(store: store)
-
-                    // [REQ:gemSpec_BSI_FdV:O.Tokn_9] integration in SettingsView
-                    TokenSectionView(store: store)
 
                     TrackerSectionView(store: store)
 
@@ -85,6 +88,7 @@ struct SettingsView: View {
                     BottomSectionView(store: store)
                 }
                 .listStyle(InsetGroupedListStyle())
+                .alert(profilesAlertStore, dismiss: .setNavigation(tag: nil))
 
                 // Tracking comply sheet presentation
                 EmptyView()
@@ -94,16 +98,33 @@ struct SettingsView: View {
                     )) {
                         TrackingComplyView(store: store)
                     }
+
+                EmptyView()
+                    .sheet(isPresented: Binding<Bool>(get: {
+                        viewStore.route?.tag == .newProfile
+                    }, set: { show in
+                        if !show {
+                            viewStore.send(.profiles(action: .setNavigation(tag: nil)))
+                        }
+                    }),
+                    onDismiss: {},
+                    content: {
+                        IfLetStore(newProfileStore, then: NewProfileView.init)
+                    })
+
+                NavigationLink(
+                    destination: IfLetStore(profileStore) { profileStore in
+                        EditProfileView(store: profileStore)
+                    },
+                    tag: ProfilesDomain.Route.Tag.details, // swiftlint:disable:next trailing_closure
+                    selection: viewStore.binding(get: \.routeTag, send: { tag in
+                        SettingsDomain.Action.profiles(action: .setNavigation(tag: tag))
+                    })
+                ) {}
+                    .hidden()
+                    .accessibility(hidden: true)
             }
-            .navigationBarTitle(Text(L10n.stgTxtTitle), displayMode: .inline)
-            .navigationBarItems(
-                leading: NavigationTextButton(
-                    text: L10n.navDone,
-                    a11y: A18n.settings.demo.navDone
-                ) {
-                    viewStore.send(.close)
-                }
-            )
+            .navigationBarTitle(Text(L10n.stgTxtTitle))
             .edgesIgnoringSafeArea(.bottom)
             .demoBanner(isPresented: viewStore.isDemoMode)
         }
@@ -163,39 +184,6 @@ extension SettingsView {
                 )
             }
             .textCase(.none)
-        }
-    }
-
-    private struct TokenSectionView: View {
-        let store: SettingsDomain.Store
-
-        @ObservedObject
-        var viewStore: ViewStore<ViewState, SettingsDomain.Action>
-
-        init(store: SettingsDomain.Store) {
-            self.store = store
-            viewStore = ViewStore(store.scope(state: ViewState.init))
-        }
-
-        struct ViewState: Equatable {
-            let token: IDPToken?
-
-            init(state: SettingsDomain.State) {
-                token = state.token
-            }
-        }
-
-        var body: some View {
-            Section {
-                NavigationLink(destination: IDPTokenView(token: viewStore.token)) {
-                    ListCellView(
-                        sfSymbolName: SFSymbolName.key,
-                        text: L10n.stgTxtSecurityTokens
-                    )
-                }
-                .accessibility(identifier: A11y.settings.security.stgTxtSecurityTokens)
-            }
-            .disabled(viewStore.state.token == nil)
         }
     }
 
@@ -295,10 +283,7 @@ extension SettingsView {
                     destination: DebugView(store: store),
                     isActive: $showDebugView
                 ) {
-                    ListCellView(
-                        sfSymbolName: SFSymbolName.ant,
-                        text: "Debug"
-                    )
+                    ListCellView(sfSymbolName: SFSymbolName.ant, text: "Debug")
                 }
                 .border(Colors.systemColorClear, cornerRadius: 16)
             }
@@ -329,29 +314,7 @@ extension SettingsView {
         var body: some View {
             Section(header: Spacer(minLength: 64),
                     footer: VersionInfoView(appVersion: viewStore.appVersion)
-                        .padding(.bottom)) {
-                LogoutButton {
-                    viewStore.send(.logout)
-                }
-            }
-            .listRowBackground(Colors.red600)
-        }
-
-        struct LogoutButton: View {
-            @Environment(\.colorScheme) var colorScheme
-            let action: () -> Void
-
-            var body: some View {
-                Button(action: action) {
-                    HStack {
-                        Text(L10n.stgBtnLogout)
-                    }
-                    .frame(maxWidth: .infinity)
-                }
-                .accessibility(identifier: A18n.settings.logout.stgBtnLogout)
-                .font(Font.body.weight(.semibold))
-                .foregroundColor(colorScheme == .dark ? Colors.systemLabel : Colors.systemColorWhite)
-            }
+                        .padding(.bottom)) {}
         }
     }
 
@@ -429,6 +392,6 @@ struct SettingsView_Previews: PreviewProvider {
             #else
             SettingsView(store: SettingsDomain.Dummies.store)
             #endif
-        }.generateVariations()
+        }
     }
 }

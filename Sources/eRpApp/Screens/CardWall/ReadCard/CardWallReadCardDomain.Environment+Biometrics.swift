@@ -74,25 +74,31 @@ extension HealthCardType {
 
 extension CardWallReadCardDomain.Environment {
     func loginWithBiometrics() -> AnyPublisher<IDPToken, CardWallReadCardDomain.State.Error> {
-        userSession.idpSession.requestChallenge()
-            .flatMap { (challenge: IDPChallengeSession) -> AnyPublisher<IDPToken, IDPError> in
-                self.signatureProvider.authenticationData(for: challenge)
-                    .mapError(IDPError.pairing)
-                    .flatMap { (signedAuthenticationData: SignedAuthenticationData)
-                        -> AnyPublisher<IDPToken, IDPError> in
-                        self.userSession.idpSession.altVerify(signedAuthenticationData)
-                            .flatMap { (exchangeToken: IDPExchangeToken) -> AnyPublisher<IDPToken, IDPError> in
-                                self.userSession.idpSession.exchange(
-                                    token: exchangeToken,
-                                    challengeSession: challenge,
-                                    redirectURI: nil
-                                )
+        idTokenValidator
+            .mapError(CardWallReadCardDomain.State.Error.profileValidation)
+            .flatMap { idTokenValidator in
+                userSession.idpSession.requestChallenge()
+                    .flatMap { (challenge: IDPChallengeSession) -> AnyPublisher<IDPToken, IDPError> in
+                        self.signatureProvider.authenticationData(for: challenge)
+                            .mapError(IDPError.pairing)
+                            .flatMap { (signedAuthenticationData: SignedAuthenticationData)
+                                -> AnyPublisher<IDPToken, IDPError> in
+                                self.userSession.idpSession.altVerify(signedAuthenticationData)
+                                    .flatMap { (exchangeToken: IDPExchangeToken) -> AnyPublisher<IDPToken, IDPError> in
+                                        self.userSession.idpSession.exchange(
+                                            token: exchangeToken,
+                                            challengeSession: challenge,
+                                            redirectURI: nil,
+                                            idTokenValidator: idTokenValidator.validate(idToken:)
+                                        )
+                                    }
+                                    .eraseToAnyPublisher()
                             }
                             .eraseToAnyPublisher()
                     }
+                    .mapError(CardWallReadCardDomain.State.Error.idpError)
                     .eraseToAnyPublisher()
             }
-            .mapError(CardWallReadCardDomain.State.Error.idpError)
             .eraseToAnyPublisher()
     }
 
@@ -158,28 +164,31 @@ extension CardWallReadCardDomain.Environment {
                             IDPToken,
                             CardWallReadCardDomain.State.Error
                         > in
-                        self.userSession.biometrieIdpSession
-                            .verifyAndExchange(signedChallenge: signedChallenge)
-                            .flatMap { token -> AnyPublisher<IDPToken, IDPError> in
-                                self.userSession.biometrieIdpSession.pairDevice(
-                                    with: registrationData,
-                                    token: token
-                                )
-                                .map { _ in token }
-                                .eraseToAnyPublisher()
+                        idTokenValidator
+                            .mapError(CardWallReadCardDomain.State.Error.profileValidation)
+                            .flatMap { idTokenValidator in
+                                self.userSession.biometrieIdpSession
+                                    .verifyAndExchange(signedChallenge: signedChallenge,
+                                                       idTokenValidator: idTokenValidator.validate(idToken:))
+                                    .flatMap { token -> AnyPublisher<IDPToken, IDPError> in
+                                        self.userSession.biometrieIdpSession.pairDevice(
+                                            with: registrationData,
+                                            token: token
+                                        )
+                                        .map { _ in token }
+                                        .eraseToAnyPublisher()
+                                    }
+                                    .mapError(CardWallReadCardDomain.State.Error.idpError)
+                                    .eraseToAnyPublisher()
                             }
-                            .mapError(CardWallReadCardDomain.State.Error.idpError)
+                            .flatMap { _ -> AnyPublisher<IDPToken, CardWallReadCardDomain.State.Error> in
+                                self.loginWithBiometrics()
+                            }
                             .eraseToAnyPublisher()
-                        }
-                        .flatMap { _ -> AnyPublisher<IDPToken, CardWallReadCardDomain.State.Error> in
-                            self.loginWithBiometrics()
                         }
                         .eraseToAnyPublisher()
                 }
-                .map { _ in
-                    // If we receive any IDPToken, user is considered logged in
-                    CardWallReadCardDomain.State.Output.loggedIn
-                }
+                .map(CardWallReadCardDomain.State.Output.loggedIn)
                 .sink(receiveCompletion: { completion in
                     if case let .failure(error) = completion {
                         subscriber.send(CardWallReadCardDomain.Action.stateReceived(.signingChallenge(.error(error))))

@@ -16,7 +16,10 @@
 //  
 //
 
+import Combine
 @testable import eRpApp
+import eRpKit
+import IDP
 import SnapshotTesting
 import SwiftUI
 import XCTest
@@ -226,15 +229,28 @@ final class CardWallSnapshotTests: XCTestCase {
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
     }
 
+    lazy var testProfile = { Profile(name: "testProfile") }()
+    var mockProfileValidator: AnyPublisher<IDTokenValidator, IDTokenValidatorError>!
+    var mockCurrentProfile: AnyPublisher<Profile, LocalStoreError>!
     private func readCardStore(for state: CardWallReadCardDomain.State) -> CardWallReadCardDomain.Store {
-        CardWallReadCardDomain.Store(initialState: state,
-                                     reducer:
-                                     CardWallReadCardDomain.Reducer.empty,
-                                     environment: CardWallReadCardDomain.Environment(
-                                         userSession: MockUserSession(),
-                                         schedulers: Schedulers(),
-                                         signatureProvider: DummySecureEnclaveSignatureProvider()
-                                     ))
+        mockProfileValidator = CurrentValueSubject(
+            ProfileValidator(currentProfile: testProfile, otherProfiles: [testProfile])
+        ).eraseToAnyPublisher()
+        mockCurrentProfile = CurrentValueSubject(testProfile).eraseToAnyPublisher()
+
+        return CardWallReadCardDomain.Store(
+            initialState: state,
+            reducer:
+            CardWallReadCardDomain.Reducer.empty,
+            environment: CardWallReadCardDomain.Environment(
+                userSession: MockUserSession(),
+                schedulers: Schedulers(),
+                currentProfile: mockCurrentProfile,
+                idTokenValidator: mockProfileValidator,
+                profileDataStore: MockProfileDataStore(),
+                signatureProvider: DummySecureEnclaveSignatureProvider()
+            )
+        )
     }
 
     private func readCardStore(for output: CardWallReadCardDomain.State.Output) -> CardWallReadCardDomain.Store {
@@ -289,7 +305,8 @@ final class CardWallSnapshotTests: XCTestCase {
     }
 
     func testReadCardViewDone() {
-        let sut = CardWallReadCardView(store: readCardStore(for: .loggedIn))
+        let idpToken = IDPToken(accessToken: "", expires: Date(), idToken: "")
+        let sut = CardWallReadCardView(store: readCardStore(for: .loggedIn(idpToken)))
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
     }

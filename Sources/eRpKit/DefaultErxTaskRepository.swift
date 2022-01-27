@@ -20,19 +20,19 @@ import Combine
 import Foundation
 
 /// Repository for the app to the ErxTask data layer handling the syncing between its data stores.
-public class DefaultErxTaskRepository<D: ErxDataStore, C: ErxDataStore>: ErxTaskRepository {
+public class DefaultErxTaskRepository: ErxTaskRepository {
     /// ErxTaskRepository ErrorType
-    public typealias ErrorType = ErxRepositoryError<D.ErrorType, C.ErrorType>
+    public typealias ErrorType = ErxRepositoryError
 
-    private let disk: D
-    private let cloud: C
+    private let disk: ErxLocalDataStore
+    private let cloud: ErxRemoteDataStore
 
     /// Initialize a new ErxTaskRepository as the gateway between Presentation layer and underlying data layer(s)
     ///
     /// - Parameters:
     ///   - disk: The data source that represents the disk/local storage
     ///   - cloud: The data source that represents the cloud/remote storage
-    public required init(disk: D, cloud: C) {
+    public required init(disk: ErxLocalDataStore, cloud: ErxRemoteDataStore) {
         self.disk = disk
         self.cloud = cloud
     }
@@ -52,7 +52,7 @@ public class DefaultErxTaskRepository<D: ErxDataStore, C: ErxDataStore>: ErxTask
                 .mapError(ErrorType.remote)
                 .compactMap { $0 }
                 .flatMap { task in
-                    self.disk.save(tasks: [task])
+                    self.disk.save(tasks: [task], updateProfileLastAuthenticated: false)
                         .map { _ in task }
                         .mapError(ErrorType.local)
                 }
@@ -80,7 +80,7 @@ public class DefaultErxTaskRepository<D: ErxDataStore, C: ErxDataStore>: ErxTask
     ///
     /// - Returns: AnyPublisher that emits an array of all `ErxTask`s or `DefaultErxTaskRepository.Error`
     public func loadLocalAll() -> AnyPublisher<[ErxTask], ErrorType> {
-        disk.listAllTasks(after: nil)
+        disk.listAllTasks()
             .mapError(ErrorType.local)
             .eraseToAnyPublisher()
     }
@@ -101,7 +101,7 @@ public class DefaultErxTaskRepository<D: ErxDataStore, C: ErxDataStore>: ErxTask
                 self.loadRemoteLatestMedicationDispenses()
             }
             .flatMap { _ -> AnyPublisher<[ErxTask], ErrorType> in
-                self.disk.listAllTasks(after: nil)
+                self.disk.listAllTasks()
                     .first()
                     .mapError(ErrorType.local)
                     .eraseToAnyPublisher()
@@ -118,7 +118,7 @@ public class DefaultErxTaskRepository<D: ErxDataStore, C: ErxDataStore>: ErxTask
                     .mapError(ErrorType.remote)
             }
             .flatMap {
-                self.disk.save(tasks: $0)
+                self.disk.save(tasks: $0, updateProfileLastAuthenticated: true)
                     .mapError(ErrorType.local)
             }
             .eraseToAnyPublisher()
@@ -174,7 +174,7 @@ public class DefaultErxTaskRepository<D: ErxDataStore, C: ErxDataStore>: ErxTask
     /// - Parameter erxTasks: The tasks that should be saved
     /// - Returns: AnyPublisher that emits `true` if saving was successful or returns an`ErrorType`
     public func save(erxTasks: [ErxTask]) -> AnyPublisher<Bool, ErrorType> {
-        disk.save(tasks: erxTasks)
+        disk.save(tasks: erxTasks, updateProfileLastAuthenticated: false)
             .mapError(ErrorType.local)
             .eraseToAnyPublisher()
     }
@@ -218,7 +218,7 @@ public class DefaultErxTaskRepository<D: ErxDataStore, C: ErxDataStore>: ErxTask
     public func loadLocalCommunications(
         for profile: ErxTask.Communication.Profile
     ) -> AnyPublisher<[ErxTask.Communication], ErrorType> {
-        disk.listAllCommunications(after: nil, for: profile)
+        disk.listAllCommunications(for: profile)
             .mapError(ErrorType.local)
             .eraseToAnyPublisher()
     }

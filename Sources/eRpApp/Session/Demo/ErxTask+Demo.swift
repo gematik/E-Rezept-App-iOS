@@ -120,7 +120,7 @@ extension ErxTask {
                 phone: "555 1234567",
                 status: "Mitglied",
                 insurance: "AOK Rheinland/Hamburg",
-                insuranceIdentifier: "A123456789"
+                insuranceId: "A123456789"
             )
 
             var demoPractitioner = ErxTask.Practitioner(

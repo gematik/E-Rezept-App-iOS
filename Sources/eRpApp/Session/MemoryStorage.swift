@@ -83,4 +83,12 @@ class MemoryStorage: SecureUserDataStore, IDPStorage {
     func set(keyIdentifier: Data?) {
         keyIdentifierState = keyIdentifier
     }
+
+    func wipe() {
+        set(can: nil)
+        set(token: nil)
+        set(discovery: nil)
+        set(certificate: nil)
+        set(keyIdentifier: nil)
+    }
 }

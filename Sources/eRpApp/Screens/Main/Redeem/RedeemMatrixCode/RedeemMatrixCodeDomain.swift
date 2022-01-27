@@ -55,7 +55,7 @@ enum RedeemMatrixCodeDomain {
     struct Environment {
         var schedulers: Schedulers
         let matrixCodeGenerator: ErxTaskMatrixCodeGenerator
-        let taskRepositoryAccess: ErxTaskRepositoryAccess
+        let taskRepository: ErxTaskRepository
         let fhirDateFormatter: FHIRDateFormatter
     }
 
@@ -110,7 +110,7 @@ extension RedeemMatrixCodeDomain.Environment {
                 copy.redeemedOn = fhirDateFormatter.string(from: Date())
                 return copy
             }
-        return taskRepositoryAccess.save(redeemedErxTasks)
+        return taskRepository.save(erxTasks: redeemedErxTasks)
             .first()
             .receive(on: schedulers.main)
             .replaceError(with: false)
@@ -127,7 +127,7 @@ extension RedeemMatrixCodeDomain {
         static let environment = Environment(
             schedulers: Schedulers(),
             matrixCodeGenerator: DefaultErxTaskMatrixCodeGenerator(),
-            taskRepositoryAccess: demoSessionContainer.userSession.erxTaskRepository,
+            taskRepository: demoSessionContainer.userSession.erxTaskRepository,
             fhirDateFormatter: FHIRDateFormatter.shared
         )
         static let store = Store(initialState: state,

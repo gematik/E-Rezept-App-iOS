@@ -19,7 +19,7 @@
 import Foundation
 
 /// Represents a user profile selectable within the settings
-public struct Profile: Identifiable, Hashable {
+public struct Profile: Identifiable, Hashable, Equatable {
     public init(
         name: String,
         identifier: UUID = UUID(),
@@ -53,7 +53,7 @@ public struct Profile: Identifiable, Hashable {
     public var color: Color
     public var emoji: String?
     public var lastAuthenticated: Date?
-    public let erxTasks: [ErxTask]
+    public var erxTasks: [ErxTask]
     public let erxAuditEvents: [ErxAuditEvent]
 
     public enum Color: String, CaseIterable {

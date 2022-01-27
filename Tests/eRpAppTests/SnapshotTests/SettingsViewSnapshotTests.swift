@@ -18,6 +18,7 @@
 
 import CombineSchedulers
 @testable import eRpApp
+import eRpKit
 @testable import eRpLocalStorage
 import SnapshotTesting
 import SwiftUI
@@ -26,7 +27,6 @@ import XCTest
 final class SettingsViewSnapshotTests: XCTestCase {
     override func setUp() {
         super.setUp()
-
         diffTool = "open"
     }
 
@@ -128,7 +128,7 @@ final class SettingsViewSnapshotTests: XCTestCase {
             environment: SettingsDomain.Dummies.environment
         ),
         debugStore: debugStore)
-            .frame(width: 320, height: 1600)
+            .frame(width: 320, height: 2000)
 
         assertSnapshots(matching: sut, as: snapshotModi())
     }
@@ -154,7 +154,7 @@ final class SettingsViewSnapshotTests: XCTestCase {
             environment: SettingsDomain.Dummies.environment
         ),
         debugStore: debugStore)
-            .frame(width: 320, height: 1600)
+            .frame(width: 320, height: 2000)
 
         assertSnapshots(matching: sut, as: snapshotModi())
     }
@@ -176,15 +176,26 @@ final class SettingsViewSnapshotTests: XCTestCase {
         withAvailableSecurityOptions availableSecurityOptions: [AppSecurityOption],
         andSelectedSecurityOption selectedSecurityOption: AppSecurityOption?
     ) -> SettingsDomain.State {
-        SettingsDomain.State(isDemoMode: false,
-                             showLegalNoticeView: false,
-                             showDataProtectionView: false,
-                             showTermsOfUseView: false,
-                             appSecurityState: AppSecurityDomain
-                                 .State(
-                                     availableSecurityOptions: availableSecurityOptions,
-                                     selectedSecurityOption: selectedSecurityOption
-                                 ),
-                             appVersion: appVersion)
+        let profiles = [
+            UserProfile(
+                from: Profile(name: "Super duper long name so that I get nervous", color: Profile.Color.blue),
+                isAuthenticated: true
+            ),
+            UserProfile(from: Profile(name: "Anna Vetter", color: Profile.Color.yellow), isAuthenticated: false),
+        ]
+        return SettingsDomain.State(isDemoMode: false,
+                                    showLegalNoticeView: false,
+                                    showDataProtectionView: false,
+                                    showTermsOfUseView: false,
+                                    appSecurityState: AppSecurityDomain
+                                        .State(
+                                            availableSecurityOptions: availableSecurityOptions,
+                                            selectedSecurityOption: selectedSecurityOption
+                                        ),
+                                    profiles: ProfilesDomain.State(
+                                        profiles: profiles,
+                                        selectedProfileId: profiles.first!.id
+                                    ),
+                                    appVersion: appVersion)
     }
 }

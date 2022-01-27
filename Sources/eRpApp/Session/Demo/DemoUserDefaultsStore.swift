@@ -26,9 +26,12 @@ class DemoUserDefaultsStore: UserDataStore {
         hideOnboardingCurrentValue.eraseToAnyPublisher()
     }
 
+    var isOnboardingHidden = true
+
     private var hideOnboardingCurrentValue: CurrentValueSubject<Bool, Never> = CurrentValueSubject(true)
 
     func set(hideOnboarding: Bool) {
+        isOnboardingHidden = hideOnboarding
         hideOnboardingCurrentValue.send(hideOnboarding)
     }
 
@@ -89,5 +92,28 @@ class DemoUserDefaultsStore: UserDataStore {
 
     func set(ignoreDeviceNotSecuredWarningPermanently: Bool) {
         ignoreDeviceNotSecuredWarningForSessionValue.send(ignoreDeviceNotSecuredWarningPermanently)
+    }
+
+    var selectedProfileIdSubject = CurrentValueSubject<UUID?, Never>(DemoProfileDataStore.anna.id)
+    var selectedProfileId: AnyPublisher<UUID?, Never> {
+        selectedProfileIdSubject.eraseToAnyPublisher()
+    }
+
+    func set(selectedProfileId: UUID) {
+        selectedProfileIdSubject.send(selectedProfileId)
+    }
+
+    var latestCompatibleModelVersionValue = ModelVersion.taskStatus
+
+    var latestCompatibleModelVersion: ModelVersion {
+        get { latestCompatibleModelVersionValue }
+        set { latestCompatibleModelVersionValue = newValue }
+    }
+
+    var appStartCounterValue: Int = 0
+
+    var appStartCounter: Int {
+        get { appStartCounterValue }
+        set { appStartCounterValue = newValue }
     }
 }

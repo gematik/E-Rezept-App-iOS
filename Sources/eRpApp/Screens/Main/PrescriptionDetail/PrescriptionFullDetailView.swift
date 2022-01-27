@@ -20,6 +20,7 @@ import ComposableArchitecture
 import SwiftUI
 import WebKit
 
+// swiftlint:disable:next type_body_length
 struct PrescriptionFullDetailView: View {
     let store: PrescriptionDetailDomain.Store
 
@@ -147,7 +148,7 @@ struct PrescriptionFullDetailView: View {
                         phone: viewStore.state.prescription.patient?.phone,
                         healthInsurance: viewStore.state.prescription.patient?.insurance,
                         healthInsuranceState: viewStore.state.prescription.patient?.status,
-                        healthInsuranceNumber: viewStore.state.prescription.patient?.insuranceIdentifier
+                        healthInsuranceNumber: viewStore.state.prescription.patient?.insuranceId
                     )
 
                     // Practitioner details
@@ -232,6 +233,8 @@ struct PrescriptionFullDetailView: View {
                     )) { scopedStore in
                         NavigationView {
                             PharmacySearchView(store: scopedStore)
+                                .navigationTitle(L10n.phaSearchTxtTitle)
+                                .navigationBarTitleDisplayMode(.inline)
                         }
                         .accentColor(Colors.primary700)
                         .navigationViewStyle(StackNavigationViewStyle())

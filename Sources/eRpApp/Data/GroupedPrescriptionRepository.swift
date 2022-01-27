@@ -20,19 +20,19 @@ import Combine
 import eRpKit
 
 protocol GroupedPrescriptionRepository {
-    func loadLocal() -> AnyPublisher<[GroupedPrescription], ErxTaskRepositoryError>
-    func loadRemoteAndSave(for locale: String?) -> AnyPublisher<[GroupedPrescription], ErxTaskRepositoryError>
+    func loadLocal() -> AnyPublisher<[GroupedPrescription], ErxRepositoryError>
+    func loadRemoteAndSave(for locale: String?) -> AnyPublisher<[GroupedPrescription], ErxRepositoryError>
 }
 
 struct GroupedPrescriptionInteractor: GroupedPrescriptionRepository {
-    let erxTaskInteractor: ErxTaskRepositoryAccess
+    let erxTaskInteractor: ErxTaskRepository
 
-    func loadLocal() -> AnyPublisher<[GroupedPrescription], ErxTaskRepositoryError> {
-        erxTaskInteractor.loadLocal().asGroupedPrescriptionSorted()
+    func loadLocal() -> AnyPublisher<[GroupedPrescription], ErxRepositoryError> {
+        erxTaskInteractor.loadLocalAll().asGroupedPrescriptionSorted()
     }
 
-    func loadRemoteAndSave(for locale: String?) -> AnyPublisher<[GroupedPrescription], ErxTaskRepositoryError> {
-        erxTaskInteractor.loadRemoteAndSave(for: locale).asGroupedPrescriptionSorted()
+    func loadRemoteAndSave(for locale: String?) -> AnyPublisher<[GroupedPrescription], ErxRepositoryError> {
+        erxTaskInteractor.loadRemoteAll(for: locale).asGroupedPrescriptionSorted()
     }
 }
 
@@ -64,8 +64,8 @@ extension Sequence where Self.Element == ErxTask {
     }
 }
 
-extension Publisher where Output == [ErxTask], Failure == ErxTaskRepositoryError {
-    func asGroupedPrescriptionSorted() -> AnyPublisher<[GroupedPrescription], ErxTaskRepositoryError> {
+extension Publisher where Output == [ErxTask], Failure == ErxRepositoryError {
+    func asGroupedPrescriptionSorted() -> AnyPublisher<[GroupedPrescription], ErxRepositoryError> {
         map { tasks in
             tasks.groupBySourceAndIssuerAndDate()
                 .sorted { ($0.authoredOn, $0.title) > ($1.authoredOn, $1.title) }

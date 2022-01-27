@@ -37,6 +37,10 @@ public class UserDefaultsStore: UserDataStore {
         userDefaults.shouldHideOnboarding = hideOnboarding
     }
 
+    public var isOnboardingHidden: Bool {
+        userDefaults.shouldHideOnboarding
+    }
+
     public var onboardingVersion: AnyPublisher<String?, Never> {
         userDefaults.publisher(for: \UserDefaults.onboardingVersion)
             .eraseToAnyPublisher()
@@ -90,6 +94,29 @@ public class UserDefaultsStore: UserDataStore {
     public func set(ignoreDeviceNotSecuredWarningPermanently: Bool) {
         userDefaults.ignoreDeviceNotSecuredWarningForSession = ignoreDeviceNotSecuredWarningPermanently
     }
+
+    public var selectedProfileId: AnyPublisher<UUID?, Never> {
+        userDefaults.publisher(for: \UserDefaults.selectedProfileId).eraseToAnyPublisher()
+    }
+
+    public func set(selectedProfileId: UUID) {
+        userDefaults.selectedProfileId = selectedProfileId
+    }
+
+    public var latestCompatibleModelVersion: ModelVersion {
+        get {
+            guard let modelVersion = ModelVersion(rawValue: userDefaults.latestCompatibleCoreDataModelVersion) else {
+                return ModelVersion.taskStatus
+            }
+            return modelVersion
+        }
+        set { userDefaults.latestCompatibleCoreDataModelVersion = newValue.rawValue }
+    }
+
+    public var appStartCounter: Int {
+        get { userDefaults.appStartCounter }
+        set { userDefaults.appStartCounter = newValue }
+    }
 }
 
 extension UserDefaults {
@@ -113,6 +140,12 @@ extension UserDefaults {
     public static let kAppInstallSent = "kAppInstallSent"
     /// Key for storing failedAppAuthentications
     public static let kFailedAppAuthentications = "kFailedAppAuthentications"
+    /// Key for storing the selectedProfileId
+    public static let kSelectedProfileId = "kSelectedProfileId"
+    /// Key for latest compatible core data model version
+    public static let kLatestCompatibleCoreDataModelVersion = "kLatestCompatibleCoreDataModelVersion"
+    /// Kex for storing the app start count
+    public static let kAppStartCounter = "kAppStartCounter"
 
     @objc var serverEnvironmentConfiguration: String? {
         get {
@@ -164,6 +197,29 @@ extension UserDefaults {
     @objc public var failedAppAuthentications: Int {
         get { integer(forKey: Self.kFailedAppAuthentications) }
         set { set(newValue, forKey: Self.kFailedAppAuthentications) }
+    }
+
+    /// Store for the selected profile identifier
+    @objc public var selectedProfileId: UUID? {
+        get {
+            guard let uuidString = string(forKey: Self.kSelectedProfileId) else {
+                return nil
+            }
+            return UUID(uuidString: uuidString)
+        }
+        set { set(newValue?.uuidString, forKey: Self.kSelectedProfileId) }
+    }
+
+    /// Store number of failure app authentications
+    @objc public var latestCompatibleCoreDataModelVersion: Int {
+        get { integer(forKey: Self.kLatestCompatibleCoreDataModelVersion) }
+        set { set(newValue, forKey: Self.kLatestCompatibleCoreDataModelVersion) }
+    }
+
+    /// Store every app start in this counter
+    @objc public var appStartCounter: Int {
+        get { integer(forKey: Self.kAppInstallSent) }
+        set { set(newValue, forKey: Self.kAppInstallSent) }
     }
 
     // swiftlint:enable implicit_getter

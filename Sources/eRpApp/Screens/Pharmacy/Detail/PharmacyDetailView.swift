@@ -23,6 +23,12 @@ import SwiftUI
 
 struct PharmacyDetailView: View {
     let store: PharmacyDetailDomain.Store
+    let isModalView: Bool
+
+    init(store: PharmacyDetailDomain.Store, isModalView: Bool = true) {
+        self.store = store
+        self.isModalView = isModalView
+    }
 
     var body: some View {
         WithViewStore(store) { viewStore in
@@ -49,7 +55,7 @@ struct PharmacyDetailView: View {
                         .padding(.bottom, 24)
                     }
 
-                    if viewStore.pharmacy.isErxReady {
+                    if viewStore.pharmacy.isErxReady && !viewStore.erxTasks.isEmpty {
                         VStack(spacing: 8) {
                             if viewStore.state.pharmacy.hasReservationService {
                                 DefaultTextButton(text: L10n.phaDetailBtnLocation,
@@ -113,11 +119,9 @@ struct PharmacyDetailView: View {
                     RedeemViewPresentation(store: store).accessibility(hidden: true)
                 }.padding()
             }
-            .navigationBarTitle(L10n.phaDetailTxtTitle, displayMode: .inline)
             .navigationBarItems(
-                trailing: NavigationBarCloseItem { viewStore.send(.close) }
+                trailing: trailingNavigationBarItem()
             )
-            .navigationBarTitleDisplayMode(.inline)
             .introspectNavigationController { navigationController in
                 let navigationBar = navigationController.navigationBar
                 navigationBar.barTintColor = UIColor(Colors.systemBackground)
@@ -125,6 +129,21 @@ struct PharmacyDetailView: View {
                 navigationBarAppearance.shadowColor = UIColor(Colors.systemColorClear)
                 navigationBarAppearance.backgroundColor = UIColor(Colors.systemBackground)
                 navigationBar.standardAppearance = navigationBarAppearance
+            }
+        }
+    }
+
+    // TODO: rebuild view structure,  // swiftlint:disable:this todo
+    // also `trailingNavigationBarItem` and alike are deprecating (Use `toolbar(content:)`)
+    @ViewBuilder
+    private func trailingNavigationBarItem() -> some View {
+        WithViewStore(store) { viewStore in
+            if isModalView {
+                NavigationBarCloseItem {
+                    viewStore.send(.close)
+                }
+            } else {
+                EmptyView()
             }
         }
     }

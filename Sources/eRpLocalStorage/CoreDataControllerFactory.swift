@@ -20,6 +20,8 @@ import Foundation
 
 /// Instance of conforming type know how to instantiate a `CoreDataController`.
 public protocol CoreDataControllerFactory {
+    /// The database location on device
+    var databaseUrl: URL { get }
     /// Provides an instance of  `CoreDataController`
     func loadCoreDataController() throws -> CoreDataController
 }
@@ -28,7 +30,7 @@ public protocol CoreDataControllerFactory {
 /// Guarantees to always return the same instance of `CoreDataController` during it's lifetime
 public class LocalStoreFactory: CoreDataControllerFactory {
     private let fileProtection: FileProtectionType
-    private let databaseUrl: URL
+    public let databaseUrl: URL
     private var coreDataController: CoreDataController?
 
     /// Initialize a CoreDataControllerFactory
@@ -75,4 +77,19 @@ public class LocalStoreFactory: CoreDataControllerFactory {
         }
         return filePath
     }()
+}
+
+extension LocalStoreFactory {
+    public struct Failing: CoreDataControllerFactory {
+        public var databaseUrl = URL(fileURLWithPath: "")
+        private var coreDataController: CoreDataController!
+
+        public func loadCoreDataController() throws -> CoreDataController {
+            assertionFailure("should not have been called")
+            return coreDataController
+        }
+    }
+
+    /// Returns a factory which fails returning a CoreDataController
+    public static let failing = Failing()
 }

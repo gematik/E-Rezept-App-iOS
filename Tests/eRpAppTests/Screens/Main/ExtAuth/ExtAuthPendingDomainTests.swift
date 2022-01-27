@@ -19,6 +19,7 @@
 import Combine
 import ComposableArchitecture
 @testable import eRpApp
+import eRpKit
 import IDP
 import Nimble
 import TestUtils
@@ -35,9 +36,11 @@ final class ExtAuthPendingDomainTests: XCTestCase {
 
     var idpSessionMock: IDPSessionMock!
     var extAuthRequestStorageMock: ExtAuthRequestStorageMock!
-
+    lazy var testProfile = { Profile(name: "TestProfile") }()
+    var mockProfileValidator: AnyPublisher<IDTokenValidator, IDTokenValidatorError>!
+    var mockCurrentProfile: AnyPublisher<Profile, LocalStoreError>!
+    var mockProfileDataStore = MockProfileDataStore()
     let uiScheduler = DispatchQueue.test
-
     lazy var schedulers: Schedulers = {
         Schedulers(
             uiScheduler: uiScheduler.eraseToAnyScheduler(),
@@ -54,13 +57,20 @@ final class ExtAuthPendingDomainTests: XCTestCase {
         extAuthRequestStorageMock = ExtAuthRequestStorageMock()
     }
 
-    func testStore(for state: ExtAuthPendingDomain.State)
-        -> TestStore {
-        TestStore(
+    func testStore(for state: ExtAuthPendingDomain.State) -> TestStore {
+        mockProfileValidator = Just(
+            ProfileValidator(currentProfile: testProfile, otherProfiles: [testProfile])
+        ).setFailureType(to: IDTokenValidatorError.self).eraseToAnyPublisher()
+        mockCurrentProfile = Just(testProfile).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
+
+        return TestStore(
             initialState: state,
             reducer: ExtAuthPendingDomain.reducer,
             environment: .init(idpSession: idpSessionMock,
                                schedulers: schedulers,
+                               currentProfile: mockCurrentProfile,
+                               idTokenValidator: mockProfileValidator,
+                               profileDataStore: mockProfileDataStore,
                                extAuthRequestStorage: extAuthRequestStorageMock)
         )
     }
@@ -102,6 +112,9 @@ final class ExtAuthPendingDomainTests: XCTestCase {
         let session = ExtAuthChallengeSession(verifierCode: "VerifierCode",
                                               nonce: "nonce",
                                               for: healthInsurance)
+        mockProfileDataStore.updateProfileIdMutatingReturnValue = Just(true)
+            .setFailureType(to: LocalStoreError.self)
+            .eraseToAnyPublisher()
         extAuthRequestStorageMock.underlyingPendingExtAuthRequests = Just([session]).eraseToAnyPublisher()
 
         sut.send(.registerListener)
@@ -112,21 +125,15 @@ final class ExtAuthPendingDomainTests: XCTestCase {
         let urlFixture = URL(string: "https://dummy.gematik.de")!
 
         idpSessionMock.extAuthVerifyAndExchange_Publisher =
-            Just(IDPToken(
-                accessToken: "SECRET ACCESSTOKEN",
-                expires: Date(),
-                idToken: "IDP TOKEN",
-                ssoToken: "SSO TOKEN",
-                tokenType: "type"
-            ))
-            .setFailureType(to: IDPError.self)
-            .eraseToAnyPublisher()
+            Just(IDPSessionMock.fixtureIDPToken)
+                .setFailureType(to: IDPError.self)
+                .eraseToAnyPublisher()
 
         sut.send(.externalLogin(urlFixture)) { state in
             state = .extAuthReceived(healthInsurance)
         }
         uiScheduler.run()
-        sut.receive(.externalLoginReceived(.success(true))) { state in
+        sut.receive(.externalLoginReceived(.success(IDPSessionMock.fixtureIDPToken))) { state in
             state = .extAuthSuccessful(healthInsurance)
         }
         uiScheduler.run()
@@ -142,6 +149,9 @@ final class ExtAuthPendingDomainTests: XCTestCase {
                                               nonce: "nonce",
                                               for: healthInsurance)
         extAuthRequestStorageMock.underlyingPendingExtAuthRequests = Just([session]).eraseToAnyPublisher()
+        mockProfileDataStore.updateProfileIdMutatingReturnValue = Just(true)
+            .setFailureType(to: LocalStoreError.self)
+            .eraseToAnyPublisher()
 
         sut.send(.registerListener)
         uiScheduler.run()
@@ -151,15 +161,9 @@ final class ExtAuthPendingDomainTests: XCTestCase {
         let urlFixture = URL(string: "https://dummy.gematik.de?state=hallo")!
 
         idpSessionMock.extAuthVerifyAndExchange_Publisher =
-            Just(IDPToken(
-                accessToken: "SECRET ACCESSTOKEN",
-                expires: Date(),
-                idToken: "IDP TOKEN",
-                ssoToken: "SSO TOKEN",
-                tokenType: "type"
-            ))
-            .setFailureType(to: IDPError.self)
-            .eraseToAnyPublisher()
+            Just(IDPSessionMock.fixtureIDPToken)
+                .setFailureType(to: IDPError.self)
+                .eraseToAnyPublisher()
 
         let requestingKK = KKAppDirectory.Entry(name: "Requested KK", identifier: "1234")
         let actualSessionResponse = ExtAuthChallengeSession(verifierCode: "code", nonce: "nonce", for: requestingKK)
@@ -168,7 +172,7 @@ final class ExtAuthPendingDomainTests: XCTestCase {
             state = .extAuthReceived(requestingKK)
         }
         uiScheduler.run()
-        sut.receive(.externalLoginReceived(.success(true))) { state in
+        sut.receive(.externalLoginReceived(.success(IDPSessionMock.fixtureIDPToken))) { state in
             state = .extAuthSuccessful(requestingKK)
         }
         uiScheduler.advance(by: .seconds(2.1))
@@ -272,5 +276,73 @@ final class ExtAuthPendingDomainTests: XCTestCase {
         publisher.send([])
 
         uiScheduler.advance(by: .seconds(2.1))
+    }
+
+    func testProfileValidatorWithError() {
+        let sut = testStore(for: .empty)
+        let healthInsurance = KKAppDirectory.Entry(name: "Gematik KK", identifier: "kk id")
+        let session = ExtAuthChallengeSession(verifierCode: "VerifierCode",
+                                              nonce: "nonce",
+                                              for: healthInsurance)
+        extAuthRequestStorageMock.underlyingPendingExtAuthRequests = Just([session]).eraseToAnyPublisher()
+
+        sut.send(.registerListener)
+        uiScheduler.run()
+        sut.receive(.pendingExtAuthRequestsReceived([session])) { state in
+            state = .pendingExtAuth(healthInsurance)
+        }
+        let urlFixture = URL(string: "https://dummy.gematik.de")!
+        let expectedInternalError = IDTokenValidatorError.profileNotMatchingInsuranceId("X123")
+        idpSessionMock.extAuthVerifyAndExchange_Publisher = Fail(
+            error: .unspecified(error: expectedInternalError)
+        ).eraseToAnyPublisher()
+
+        sut.send(.externalLogin(urlFixture)) { state in
+            state = .extAuthReceived(healthInsurance)
+        }
+        uiScheduler.run()
+        sut.receive(.externalLoginReceived(.failure(.profileValidation(error: expectedInternalError)))) { state in
+            state = .extAuthFailed(
+                ExtAuthPendingDomain.alertState(
+                    title: healthInsurance.name,
+                    message: expectedInternalError.localizedDescription
+                )
+            )
+        }
+    }
+
+    func testSaveProfileWithError() {
+        let sut = testStore(for: .empty)
+        let healthInsurance = KKAppDirectory.Entry(name: "KK name", identifier: "kk id")
+        let session = ExtAuthChallengeSession(verifierCode: "VerifierCode",
+                                              nonce: "nonce",
+                                              for: healthInsurance)
+        mockProfileDataStore.updateProfileIdMutatingReturnValue =
+            Fail(error: LocalStoreError.notImplemented).eraseToAnyPublisher()
+        extAuthRequestStorageMock.underlyingPendingExtAuthRequests = Just([session]).eraseToAnyPublisher()
+
+        sut.send(.registerListener)
+        uiScheduler.run()
+        sut.receive(.pendingExtAuthRequestsReceived([session])) { state in
+            state = .pendingExtAuth(healthInsurance)
+        }
+        let urlFixture = URL(string: "https://dummy.gematik.de")!
+
+        idpSessionMock.extAuthVerifyAndExchange_Publisher =
+            Just(IDPSessionMock.fixtureIDPToken)
+                .setFailureType(to: IDPError.self)
+                .eraseToAnyPublisher()
+
+        sut.send(.externalLogin(urlFixture)) { state in
+            state = .extAuthReceived(healthInsurance)
+        }
+        uiScheduler.run()
+        sut.receive(.externalLoginReceived(.success(IDPSessionMock.fixtureIDPToken))) { state in
+            state = .extAuthSuccessful(healthInsurance)
+        }
+        uiScheduler.run()
+        sut.receive(.saveProfile(error: LocalStoreError.notImplemented)) { state in
+            state = .extAuthFailed(ExtAuthPendingDomain.saveProfileAlert)
+        }
     }
 }

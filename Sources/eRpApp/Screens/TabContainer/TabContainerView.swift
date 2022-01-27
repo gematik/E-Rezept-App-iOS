@@ -65,6 +65,24 @@ struct TabContainerView: View {
                 }
                 .tag(AppDomain.Tab.main)
 
+                NavigationView {
+                    PharmacySearchView(
+                        store: store.scope(
+                            state: \.pharmacySearch,
+                            action: AppDomain.Action.pharmacySearch(action:)
+                        ),
+                        isModalView: false
+                    )
+                    .navigationTitle(L10n.tabTxtPharmacySearch)
+                    .navigationBarTitleDisplayMode(.large)
+                }
+                .tabItem {
+                    Image(Asset.TabIcon.mapPinAndEllipse)
+                        .accessibility(hidden: true)
+                    Text(L10n.tabTxtPharmacySearch)
+                }
+                .tag(AppDomain.Tab.pharmacySearch)
+
                 MessagesView(
                     store: store.scope(state: \.messages,
                                        action: AppDomain.Action.messages(action:))
@@ -75,6 +93,38 @@ struct TabContainerView: View {
                     Text(L10n.tabTxtMessages)
                 }
                 .tag(AppDomain.Tab.messages)
+
+                #if ENABLE_DEBUG_VIEW
+                SettingsView(
+                    store: store.scope(
+                        state: \.settingsState,
+                        action: AppDomain.Action.settings(action:)
+                    ),
+                    debugStore: store.scope(
+                        state: \.debug,
+                        action: AppDomain.Action.debug(action:)
+                    )
+                )
+                .tabItem {
+                    Image(systemName: SFSymbolName.settings)
+                        .accessibility(hidden: true)
+                    Text(L10n.tabTxtSettings)
+                }
+                .tag(AppDomain.Tab.settings)
+                #else
+                SettingsView(
+                    store: store.scope(
+                        state: \.settingsState,
+                        action: AppDomain.Action.settings(action:)
+                    )
+                )
+                .tabItem {
+                    Image(systemName: SFSymbolName.settings)
+                        .accessibility(hidden: true)
+                    Text(L10n.tabTxtSettings)
+                }
+                .tag(AppDomain.Tab.settings)
+                #endif
             }
             .onAppear {
                 viewStore.send(.registerDemoModeListener)

@@ -16,8 +16,10 @@
 //  
 //
 
+import Combine
 import CombineSchedulers
 @testable import eRpApp
+import eRpKit
 import IDP
 import SnapshotTesting
 import SwiftUI
@@ -43,12 +45,20 @@ final class ExtAuthPendingViewSnapshotTests: XCTestCase {
     }
 
     func testExtAuthPendingView_WithSuccess() {
+        let mockUserSession = MockUserSession()
+        mockUserSession.profileReturnValue = Just(Profile(name: ""))
+            .setFailureType(to: LocalStoreError.self)
+            .eraseToAnyPublisher()
+        mockUserSession.mockUserDataStore.underlyingSelectedProfileId = Just(UUID()).eraseToAnyPublisher()
         let store = ExtAuthPendingDomain.Store(
             initialState: .extAuthSuccessful(KKAppDirectory.Entry(name: "Gematik KK", identifier: "abc")),
             reducer: .empty,
             environment: ExtAuthPendingDomain.Environment(
                 idpSession: DemoIDPSession(storage: MemoryStorage()),
                 schedulers: schedulers,
+                currentProfile: mockUserSession.profile(),
+                idTokenValidator: mockUserSession.idTokenValidator(),
+                profileDataStore: mockUserSession.profileDataStore,
                 extAuthRequestStorage: DummyExtAuthRequestStorage()
             )
         )
@@ -60,12 +70,20 @@ final class ExtAuthPendingViewSnapshotTests: XCTestCase {
     }
 
     func testExtAuthPendingView_WithPending() {
+        let mockUserSession = MockUserSession()
+        mockUserSession.profileReturnValue = Just(Profile(name: ""))
+            .setFailureType(to: LocalStoreError.self)
+            .eraseToAnyPublisher()
+        mockUserSession.mockUserDataStore.underlyingSelectedProfileId = Just(UUID()).eraseToAnyPublisher()
         let store = ExtAuthPendingDomain.Store(
             initialState: .pendingExtAuth(KKAppDirectory.Entry(name: "Gematik KK", identifier: "abc")),
             reducer: .empty,
             environment: ExtAuthPendingDomain.Environment(
                 idpSession: DemoIDPSession(storage: MemoryStorage()),
                 schedulers: schedulers,
+                currentProfile: mockUserSession.profile(),
+                idTokenValidator: mockUserSession.idTokenValidator(),
+                profileDataStore: mockUserSession.profileDataStore,
                 extAuthRequestStorage: DummyExtAuthRequestStorage()
             )
         )

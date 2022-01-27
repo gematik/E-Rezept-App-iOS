@@ -183,6 +183,9 @@ enum CardWallDomain {
             CardWallReadCardDomain.Environment(
                 userSession: environment.userSession,
                 schedulers: environment.schedulers,
+                currentProfile: environment.userSession.profile(),
+                idTokenValidator: environment.userSession.idTokenValidator(),
+                profileDataStore: environment.userSession.profileDataStore,
                 signatureProvider: environment.signatureProvider
             )
         }

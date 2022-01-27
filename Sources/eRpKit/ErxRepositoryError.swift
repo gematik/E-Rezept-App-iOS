@@ -19,10 +19,9 @@
 import Foundation
 
 /// Repository error cases
-public enum ErxRepositoryError<LocalError: LocalizedError, RemoteError: LocalizedError>: Swift.Error, LocalizedError,
-    Equatable where LocalError: Equatable, RemoteError: Equatable {
-    case local(LocalError)
-    case remote(RemoteError)
+public enum ErxRepositoryError: Swift.Error, LocalizedError, Equatable {
+    case local(LocalStoreError)
+    case remote(RemoteStoreError)
 
     public var errorDescription: String? {
         switch self {

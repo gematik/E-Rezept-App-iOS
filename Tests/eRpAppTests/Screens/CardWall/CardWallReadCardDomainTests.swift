@@ -20,6 +20,7 @@ import Combine
 import CombineSchedulers
 import ComposableArchitecture
 @testable import eRpApp
+import eRpKit
 import HealthCardAccess
 import HealthCardControl
 import HTTPClient
@@ -41,6 +42,10 @@ final class CardWallReadCardDomainTests: XCTestCase {
     var mockUserSession: MockUserSession!
     let idpError = IDPError.network(error: HTTPError.networkError("generic network error"))
     var mockNFCSessionProvider: NFCSignatureProviderMock!
+    lazy var testProfile = { Profile(name: "TestProfile") }()
+    var mockProfileValidator: AnyPublisher<IDTokenValidator, IDTokenValidatorError>!
+    var mockCurrentProfile: AnyPublisher<Profile, LocalStoreError>!
+    var mockProfileDataStore = MockProfileDataStore()
 
     let challenge = try! IDPChallengeSession(
         challenge: IDPChallenge(
@@ -87,138 +92,121 @@ final class CardWallReadCardDomainTests: XCTestCase {
         )
     }()
 
+    func testStore(initialState: CardWallReadCardDomain.State) -> TestStore {
+        mockProfileValidator = Just(
+            ProfileValidator(currentProfile: testProfile, otherProfiles: [testProfile])
+        ).setFailureType(to: IDTokenValidatorError.self).eraseToAnyPublisher()
+        mockCurrentProfile = Just(testProfile).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
+
+        return TestStore(
+            initialState: initialState,
+            reducer: CardWallReadCardDomain.reducer,
+            environment: CardWallReadCardDomain.Environment(
+                userSession: mockUserSession,
+                schedulers: schedulers,
+                currentProfile: mockCurrentProfile,
+                idTokenValidator: mockProfileValidator,
+                profileDataStore: mockProfileDataStore,
+                signatureProvider: DummySecureEnclaveSignatureProvider()
+            )
+        )
+    }
+
     func testOnAppearTriggersRequestIDPChallenge() {
-        let testStore = TestStore(
+        let sut = testStore(
             initialState: CardWallReadCardDomain.State(
                 isDemoModus: false,
                 pin: "123456",
                 loginOption: .withoutBiometry,
                 output: .idle
-            ),
-            reducer: CardWallReadCardDomain.reducer,
-            environment: CardWallReadCardDomain.Environment(
-                userSession: mockUserSession,
-                schedulers: schedulers,
-                signatureProvider: DummySecureEnclaveSignatureProvider()
             )
         )
 
-        testStore.assert(
-            .send(.getChallenge),
-            .receive(.stateReceived(.retrievingChallenge(.loading))) { state in
-                state.output = .retrievingChallenge(.loading)
-            },
-            .do {
-                self.networkScheduler.advance()
-                self.uiScheduler.advance()
-            },
-            .receive(.stateReceived(.challengeLoaded(challenge))) { state in
-                state.output = .challengeLoaded(self.challenge)
-            }
-        )
+        sut.send(.getChallenge)
+        sut.receive(.stateReceived(.retrievingChallenge(.loading))) { state in
+            state.output = .retrievingChallenge(.loading)
+        }
+        networkScheduler.advance()
+        uiScheduler.advance()
+        sut.receive(.stateReceived(.challengeLoaded(challenge))) { state in
+            state.output = .challengeLoaded(self.challenge)
+        }
     }
 
     func testHappyPathSigning() {
-        let testStore = TestStore(
+        let sut = testStore(
             initialState: CardWallReadCardDomain.State(
                 isDemoModus: false,
                 pin: "123456",
                 loginOption: .withoutBiometry,
                 output: .challengeLoaded(challenge)
-            ),
-            reducer: CardWallReadCardDomain.reducer,
-            environment: CardWallReadCardDomain.Environment(
-                userSession: mockUserSession,
-                schedulers: schedulers,
-                signatureProvider: DummySecureEnclaveSignatureProvider()
             )
         )
+        mockProfileDataStore.updateProfileIdMutatingReturnValue = Just(true)
+            .setFailureType(to: LocalStoreError.self)
+            .eraseToAnyPublisher()
 
-        testStore.assert(
-            .send(.signChallenge(challenge)),
-            .do {
-                self.uiScheduler.advance()
-            },
-            .receive(.stateReceived(.signingChallenge(.loading))) { state in
-                state.output = .signingChallenge(.loading)
-            },
-            .do {
-                expect(self.mockNFCSessionProvider.signCalled).to(beTrue())
-                self.mockNFCSessionProvider.signResult.send(self.signedChallenge)
-                self.mockNFCSessionProvider.signResult.send(completion: .finished)
-                self.uiScheduler.advance()
-            },
-            .receive(.stateReceived(.verifying(.loading))) { state in
-                state.output = .verifying(.loading)
-            },
-            .receive(.stateReceived(.loggedIn)) { state in
-                state.output = .loggedIn
-            }
-        )
+        let idpToken = IDPSessionMock.fixtureIDPToken
+        sut.send(.signChallenge(challenge))
+        uiScheduler.advance()
+
+        sut.receive(.stateReceived(.signingChallenge(.loading))) { state in
+            state.output = .signingChallenge(.loading)
+        }
+        expect(self.mockNFCSessionProvider.signCalled).to(beTrue())
+        mockNFCSessionProvider.signResult.send(signedChallenge)
+        mockNFCSessionProvider.signResult.send(completion: .finished)
+        uiScheduler.advance()
+        sut.receive(.stateReceived(.verifying(.loading))) { state in
+            state.output = .verifying(.loading)
+        }
+        sut.receive(.stateReceived(.loggedIn(idpToken))) { state in
+            state.output = .loggedIn(idpToken)
+        }
+        uiScheduler.advance()
+        sut.receive(.nothing)
     }
 
     func testWhenOnAppearIDPChallengeFails_ViewIsInErrorState() {
         let passthrough = PassthroughSubject<IDPChallengeSession, IDPError>()
         idpMock.requestChallenge_Publisher = passthrough.eraseToAnyPublisher()
 
-        let testStore = TestStore(
-            initialState: CardWallReadCardDomain.State(isDemoModus: false,
-                                                       pin: "123456",
-                                                       loginOption: .withoutBiometry,
-                                                       output: .idle),
-            reducer: CardWallReadCardDomain.reducer,
-            environment: CardWallReadCardDomain.Environment(
-                userSession: mockUserSession,
-                schedulers: schedulers,
-                signatureProvider: DummySecureEnclaveSignatureProvider()
-            )
-        )
+        let sut = testStore(initialState: CardWallReadCardDomain.State(isDemoModus: false,
+                                                                       pin: "123456",
+                                                                       loginOption: .withoutBiometry,
+                                                                       output: .idle))
 
-        testStore.assert(
-            .send(.getChallenge),
-            .receive(.stateReceived(.retrievingChallenge(.loading))) { state in
-                state.output = .retrievingChallenge(.loading)
-            },
-            .do {
-                passthrough.send(completion: .failure(self.idpError))
-                self.networkScheduler.advance()
-                self.uiScheduler.advance()
-            },
-            .receive(CardWallReadCardDomain.Action
-                .stateReceived(.retrievingChallenge(.error(.idpError(idpError))))) { state in
-                    state.output = .retrievingChallenge(.error(.idpError(self.idpError)))
-            }
-        )
+        sut.send(.getChallenge)
+        sut.receive(.stateReceived(.retrievingChallenge(.loading))) { state in
+            state.output = .retrievingChallenge(.loading)
+        }
+        passthrough.send(completion: .failure(idpError))
+        networkScheduler.advance()
+        uiScheduler.advance()
+        sut.receive(CardWallReadCardDomain.Action
+            .stateReceived(.retrievingChallenge(.error(.idpError(idpError))))) { state in
+                state.output = .retrievingChallenge(.error(.idpError(self.idpError)))
+        }
     }
 
     func testWhenOnAppearIDPChallengeFails_ButtonPressStartsAnotherRequest() {
-        let testStore = TestStore(
+        let testStore = testStore(
             initialState: CardWallReadCardDomain.State(
                 isDemoModus: false,
                 pin: "123456",
                 loginOption: .withoutBiometry,
                 output: .retrievingChallenge(.error(.idpError(idpError)))
-            ),
-            reducer: CardWallReadCardDomain.reducer,
-            environment: CardWallReadCardDomain.Environment(
-                userSession: mockUserSession,
-                schedulers: schedulers,
-                signatureProvider: DummySecureEnclaveSignatureProvider()
             )
         )
 
-        testStore.assert(
-            .send(.getChallenge),
-            .receive(.stateReceived(.retrievingChallenge(.loading))) { state in
-                state.output = .retrievingChallenge(.loading)
-            },
-            .do {
-                self.uiScheduler.advance()
-            },
-            .receive(CardWallReadCardDomain.Action.stateReceived(.challengeLoaded(challenge))) { state in
-                state.output = .challengeLoaded(self.challenge)
-            }
-        )
+        testStore.send(.getChallenge)
+        testStore.receive(.stateReceived(.retrievingChallenge(.loading))) { state in
+            state.output = .retrievingChallenge(.loading)
+        }
+        uiScheduler.advance()
+        testStore.receive(CardWallReadCardDomain.Action.stateReceived(.challengeLoaded(challenge))) { state in
+            state.output = .challengeLoaded(self.challenge)
+        }
     }
 
     func testWhenIDPChallengeAvailable_SigningStates_HappyPath() {
@@ -227,115 +215,150 @@ final class CardWallReadCardDomainTests: XCTestCase {
 
         idpMock.verify_Publisher = verifyPassthrough.eraseToAnyPublisher()
 
-        let testStore = TestStore(
-            initialState: CardWallReadCardDomain.State(isDemoModus: false,
-                                                       pin: "123456",
-                                                       loginOption: .withoutBiometry,
-                                                       output: .challengeLoaded(challenge)),
-            reducer: CardWallReadCardDomain.reducer,
-            environment: CardWallReadCardDomain.Environment(
-                userSession: mockUserSession,
-                schedulers: schedulers,
-                signatureProvider: DummySecureEnclaveSignatureProvider()
-            )
-        )
+        let sut = testStore(initialState: CardWallReadCardDomain.State(isDemoModus: false,
+                                                                       pin: "123456",
+                                                                       loginOption: .withoutBiometry,
+                                                                       output: .challengeLoaded(challenge)))
 
-        testStore.assert(
-            .send(.signChallenge(challenge)),
-            .do {
-                self.uiScheduler.advance()
-            },
-            .receive(.stateReceived(.signingChallenge(.loading))) { state in
-                state.output = .signingChallenge(.loading)
-            },
-            .do {
-                self.mockNFCSessionProvider.signResult.send(self.signedChallenge)
-                self.mockNFCSessionProvider.signResult.send(completion: .finished)
-                self.uiScheduler.advance()
-            },
-            .receive(CardWallReadCardDomain.Action.stateReceived(.verifying(.loading))) { state in
-                state.output = .verifying(.loading)
-            },
-            .do {
-                verifyPassthrough.send(exchangeToken)
-                verifyPassthrough.send(completion: .finished)
-                self.uiScheduler.advance()
-            },
-            .receive(.stateReceived(.loggedIn)) { state in
-                state.output = .loggedIn
-            }
-        )
+        mockProfileDataStore.updateProfileIdMutatingReturnValue = Just(true)
+            .setFailureType(to: LocalStoreError.self)
+            .eraseToAnyPublisher()
+        sut.send(.signChallenge(challenge))
+        uiScheduler.advance()
+        sut.receive(.stateReceived(.signingChallenge(.loading))) { state in
+            state.output = .signingChallenge(.loading)
+        }
+        mockNFCSessionProvider.signResult.send(signedChallenge)
+        mockNFCSessionProvider.signResult.send(completion: .finished)
+        uiScheduler.advance()
+        sut.receive(CardWallReadCardDomain.Action.stateReceived(.verifying(.loading))) { state in
+            state.output = .verifying(.loading)
+        }
+        verifyPassthrough.send(exchangeToken)
+        verifyPassthrough.send(completion: .finished)
+        uiScheduler.advance()
+        sut.receive(.stateReceived(.loggedIn(IDPSessionMock.fixtureIDPToken))) { state in
+            state.output = .loggedIn(IDPSessionMock.fixtureIDPToken)
+        }
+        sut.receive(.nothing)
     }
 
     func testWhenIDPChallengeAvailable_SigningStates_PinError() {
-        let testStore = TestStore(
+        let sut = testStore(
             initialState: CardWallReadCardDomain.State(isDemoModus: false,
                                                        pin: "123456",
                                                        loginOption: .withoutBiometry,
-                                                       output: .challengeLoaded(challenge)),
-            reducer: CardWallReadCardDomain.reducer,
-            environment: CardWallReadCardDomain.Environment(
-                userSession: mockUserSession,
-                schedulers: schedulers,
-                signatureProvider: DummySecureEnclaveSignatureProvider()
-            )
+                                                       output: .challengeLoaded(challenge))
         )
 
         let pinError = NFCSignatureProviderError.wrongPin(retryCount: 2)
-
-        testStore.assert(
-            .send(.signChallenge(challenge)),
-            .do {
-                self.uiScheduler.advance()
-            },
-            .receive(.stateReceived(.signingChallenge(.loading))) { state in
-                state.output = .signingChallenge(.loading)
-            },
-            .do {
-                self.mockNFCSessionProvider.signResult.send(completion: .failure(pinError))
-                self.mockNFCSessionProvider.signResult.send(completion: .finished)
-                self.uiScheduler.advance()
-            },
-            .receive(CardWallReadCardDomain.Action
-                .stateReceived(.signingChallenge(.error(.signChallengeError(pinError))))) { state in
-                    state.output = .signingChallenge(.error(.signChallengeError(pinError)))
-            }
-        )
+        sut.send(.signChallenge(challenge))
+        uiScheduler.advance()
+        sut.receive(.stateReceived(.signingChallenge(.loading))) { state in
+            state.output = .signingChallenge(.loading)
+        }
+        mockNFCSessionProvider.signResult.send(completion: .failure(pinError))
+        mockNFCSessionProvider.signResult.send(completion: .finished)
+        uiScheduler.advance()
+        sut.receive(CardWallReadCardDomain.Action
+            .stateReceived(.signingChallenge(.error(.signChallengeError(pinError))))) { state in
+                state.output = .signingChallenge(.error(.signChallengeError(pinError)))
+        }
     }
 
     func testWhenIDPChallengeAvailable_SigningStates_CanError() {
-        let testStore = TestStore(
+        let sut = testStore(
             initialState: CardWallReadCardDomain.State(isDemoModus: false,
                                                        pin: "123456",
                                                        loginOption: .withoutBiometry,
-                                                       output: .challengeLoaded(challenge)),
-            reducer: CardWallReadCardDomain.reducer,
-            environment: CardWallReadCardDomain.Environment(
-                userSession: mockUserSession,
-                schedulers: schedulers,
-                signatureProvider: DummySecureEnclaveSignatureProvider()
-            )
+                                                       output: .challengeLoaded(challenge))
         )
 
         let canError = NFCSignatureProviderError.wrongCAN(GenericTestError.genericError)
 
-        testStore.assert(
-            .send(.signChallenge(challenge)),
-            .do {
-                self.uiScheduler.advance()
-            },
-            .receive(.stateReceived(.signingChallenge(.loading))) { state in
-                state.output = .signingChallenge(.loading)
-            },
-            .do {
-                self.mockNFCSessionProvider.signResult.send(completion: .failure(canError))
-                self.mockNFCSessionProvider.signResult.send(completion: .finished)
-                self.uiScheduler.advance()
-            },
-            .receive(CardWallReadCardDomain.Action
-                .stateReceived(.signingChallenge(.error(.signChallengeError(canError))))) { state in
-                    state.output = .signingChallenge(.error(.signChallengeError(canError)))
-            }
+        sut.send(.signChallenge(challenge))
+        uiScheduler.advance()
+        sut.receive(.stateReceived(.signingChallenge(.loading))) { state in
+            state.output = .signingChallenge(.loading)
+        }
+        mockNFCSessionProvider.signResult.send(completion: .failure(canError))
+        mockNFCSessionProvider.signResult.send(completion: .finished)
+        uiScheduler.advance()
+        sut.receive(
+            CardWallReadCardDomain.Action
+                .stateReceived(.signingChallenge(.error(.signChallengeError(canError))))
+        ) { state in
+            state.output = .signingChallenge(.error(.signChallengeError(canError)))
+        }
+    }
+
+    func testUpdateProfileSaveError() {
+        let sut = testStore(
+            initialState: CardWallReadCardDomain.State(
+                isDemoModus: false,
+                pin: "123456",
+                loginOption: .withoutBiometry,
+                output: .challengeLoaded(challenge)
+            )
         )
+        mockProfileDataStore.updateProfileIdMutatingReturnValue = Fail(error: .notImplemented).eraseToAnyPublisher()
+
+        let idpToken = IDPSessionMock.fixtureIDPToken
+        sut.send(.signChallenge(challenge))
+        uiScheduler.advance()
+
+        sut.receive(.stateReceived(.signingChallenge(.loading))) { state in
+            state.output = .signingChallenge(.loading)
+        }
+        expect(self.mockNFCSessionProvider.signCalled).to(beTrue())
+        mockNFCSessionProvider.signResult.send(signedChallenge)
+        mockNFCSessionProvider.signResult.send(completion: .finished)
+        uiScheduler.advance()
+        sut.receive(.stateReceived(.verifying(.loading))) { state in
+            state.output = .verifying(.loading)
+        }
+        sut.receive(.stateReceived(.loggedIn(idpToken))) { state in
+            state.output = .loggedIn(idpToken)
+        }
+        uiScheduler.advance()
+        sut.receive(.saveError(.notImplemented)) { state in
+            state.alertState = CardWallReadCardDomain.saveProfileAlertState
+        }
+    }
+
+    func testValidateProfileFailure() {
+        let sut = testStore(
+            initialState: CardWallReadCardDomain.State(
+                isDemoModus: false,
+                pin: "123456",
+                loginOption: .withoutBiometry,
+                output: .challengeLoaded(challenge)
+            )
+        )
+
+        let expectedInternalError = IDTokenValidatorError.profileNotMatchingInsuranceId("X12345")
+        mockProfileDataStore.updateProfileIdMutatingReturnValue = Just(true)
+            .setFailureType(to: LocalStoreError.self)
+            .eraseToAnyPublisher()
+        idpMock.exchange_Publisher = Fail(
+            error: .unspecified(error: expectedInternalError)
+        ).eraseToAnyPublisher()
+
+        sut.send(.signChallenge(challenge))
+        uiScheduler.advance()
+
+        sut.receive(.stateReceived(.signingChallenge(.loading))) { state in
+            state.output = .signingChallenge(.loading)
+        }
+        expect(self.mockNFCSessionProvider.signCalled).to(beTrue())
+        mockNFCSessionProvider.signResult.send(signedChallenge)
+        mockNFCSessionProvider.signResult.send(completion: .finished)
+        uiScheduler.advance()
+        sut.receive(.stateReceived(.verifying(.loading))) { state in
+            state.output = .verifying(.loading)
+        }
+        sut.receive(.stateReceived(.verifying(.error(.profileValidation(expectedInternalError))))) { state in
+            state.output = .verifying(.error(.profileValidation(expectedInternalError)))
+        }
     }
 }

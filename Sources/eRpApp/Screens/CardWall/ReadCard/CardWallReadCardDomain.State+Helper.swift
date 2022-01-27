@@ -20,15 +20,42 @@ import IDP
 import SwiftUI
 
 extension CardWallReadCardDomain.State {
-    enum Error: Swift.Error {
+    enum Error: Swift.Error, Equatable {
+        /// `IDPError` thrown within the `CardWallReadCardDomain`
         case idpError(IDPError)
+        /// Possible user input errors thrown within the `CardWallReadCardDomain`
         case inputError(InputError)
+        /// NFC signature errors thrown within the `CardWallReadCardDomain`
         case signChallengeError(NFCSignatureProviderError)
+        /// Error that can occur during authentication with biometry
         case biometrieError(Swift.Error)
+        /// Error when `Profile` validation with the given authentication fails.
+        /// Error is produces within the `IDPError.unspecified` error before saving the IDPToken
+        case profileValidation(IDTokenValidatorError)
 
+        /// User input error
         enum InputError: Swift.Error {
+            /// User input for PIN is incorrect
             case missingPIN
+            /// User input for CAN is incorrect
             case missingCAN
+        }
+
+        static func ==(lhs: CardWallReadCardDomain.State.Error, rhs: CardWallReadCardDomain.State.Error) -> Bool {
+            switch (lhs, rhs) {
+            case let (.idpError(lhsError), .idpError(rhsError)):
+                return lhsError.localizedDescription == rhsError.localizedDescription
+            case let (.inputError(lhsError), .inputError(rhsError)):
+                return lhsError.localizedDescription == rhsError.localizedDescription
+            case let (.signChallengeError(lhsError), .signChallengeError(rhsError)):
+                return lhsError.localizedDescription == rhsError.localizedDescription
+            case let (.biometrieError(lhsError), .biometrieError(rhsError)):
+                return lhsError.localizedDescription == rhsError.localizedDescription
+            case let (.profileValidation(lhsError), .profileValidation(rhsError)):
+                return lhsError.localizedDescription == rhsError.localizedDescription
+            default:
+                return false
+            }
         }
     }
 
@@ -38,10 +65,10 @@ extension CardWallReadCardDomain.State {
         case challengeLoaded(IDPChallengeSession)
         case signingChallenge(StepState)
         case verifying(StepState)
-        case loggedIn
+        case loggedIn(IDPToken)
 
         var nextAction: CardWallReadCardDomain.Action {
-            if self == .loggedIn {
+            if case .loggedIn = self {
                 return .close
             }
             // Pop to correct screen if we have a card error a.k.a. wrong pin or wrong can
@@ -154,9 +181,9 @@ extension CardWallReadCardDomain.State {
                 rhs: CardWallReadCardDomain.State.Output.StepState
             ) -> Bool {
                 switch (lhs, rhs) {
-                case (.loading, .loading),
-                     (.error, .error):
-                    return true
+                case (.loading, .loading): return true
+                case let (.error(lhsError), .error(rhsError)):
+                    return lhsError == rhsError
                 default:
                     return false
                 }
@@ -190,6 +217,8 @@ extension CardWallReadCardDomain.State.Error: CustomStringConvertible, Localized
             return error.localizedDescription
         case let .biometrieError(error):
             return "biometrie error \(error)"
+        case let .profileValidation(error):
+            return "validation error: \(error.localizedDescription)"
         }
     }
 
@@ -205,6 +234,8 @@ extension CardWallReadCardDomain.State.Error: CustomStringConvertible, Localized
             return error.localizedDescription
         case let .biometrieError(error):
             return "biometrie error \(error)"
+        case let .profileValidation(error):
+            return error.localizedDescription
         }
     }
 
@@ -213,7 +244,8 @@ extension CardWallReadCardDomain.State.Error: CustomStringConvertible, Localized
         case let .idpError(error as LocalizedError),
              let .signChallengeError(error as LocalizedError),
              let .inputError(error as LocalizedError),
-             let .biometrieError(error as LocalizedError):
+             let .biometrieError(error as LocalizedError),
+             let .profileValidation(error as LocalizedError):
             return error.recoverySuggestion
         case let .biometrieError(error):
             return "biometrie error \(error)"

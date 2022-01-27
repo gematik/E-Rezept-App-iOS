@@ -50,11 +50,11 @@ final class RedeemMatrixCodeDomainTests: XCTestCase {
                 displayType: GroupedPrescription.DisplayType.fullDetail
             )
         )
-        let savingError: ErxTaskRepositoryError = .local(.notImplemented)
-        let saveErxTaskPublisher = Fail<Bool, ErxTaskRepositoryError>(error: savingError).eraseToAnyPublisher()
-        let deleteErxTaskPublisher = Fail<Bool, ErxTaskRepositoryError>(error: savingError).eraseToAnyPublisher()
-        let findPublisher = Just<ErxTask?>(nil).setFailureType(to: ErxTaskRepositoryError.self).eraseToAnyPublisher()
-        let mockRepository = MockErxTaskRepositoryAccess(
+        let savingError: ErxRepositoryError = .local(.notImplemented)
+        let saveErxTaskPublisher = Fail<Bool, ErxRepositoryError>(error: savingError).eraseToAnyPublisher()
+        let deleteErxTaskPublisher = Fail<Bool, ErxRepositoryError>(error: savingError).eraseToAnyPublisher()
+        let findPublisher = Just<ErxTask?>(nil).setFailureType(to: ErxRepositoryError.self).eraseToAnyPublisher()
+        let mockRepository = MockErxTaskRepository(
             stored: [],
             saveErxTasks: saveErxTaskPublisher,
             deleteErxTasks: deleteErxTaskPublisher,
@@ -66,7 +66,7 @@ final class RedeemMatrixCodeDomainTests: XCTestCase {
             environment: RedeemMatrixCodeDomain.Environment(
                 schedulers: schedulers,
                 matrixCodeGenerator: mockDMCGenerator,
-                taskRepositoryAccess: mockRepository,
+                taskRepository: mockRepository,
                 fhirDateFormatter: FHIRDateFormatter.shared
             )
         )

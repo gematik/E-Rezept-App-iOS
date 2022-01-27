@@ -19,6 +19,7 @@
 import Combine
 import ComposableArchitecture
 import DataKit
+import eRpKit
 import IDP
 
 enum SettingsDomain {
@@ -26,7 +27,10 @@ enum SettingsDomain {
     typealias Reducer = ComposableArchitecture.Reducer<State, Action, Environment>
 
     static func cleanup<T>() -> Effect<T, Never> {
-        Effect.cancel(token: Token.self)
+        .concatenate(
+            .cancel(token: Token.self),
+            ProfilesDomain.cleanup()
+        )
     }
 
     enum Token: CaseIterable, Hashable {
@@ -42,10 +46,10 @@ enum SettingsDomain {
         var showTermsOfUseView = false
         var showDebugView = false
         var appSecurityState: AppSecurityDomain.State
+        var profiles = ProfilesDomain.State(profiles: [], selectedProfileId: nil, route: nil)
         var appVersion = AppVersion.current
         var trackerOptIn = false
         var showTrackerComplyView = false
-        var token: IDPToken?
     }
 
     enum Action: Equatable {
@@ -63,8 +67,7 @@ enum SettingsDomain {
         case toggleTermsOfUseView(Bool)
         case toggleDebugView(Bool)
         case appSecurity(action: AppSecurityDomain.Action)
-        case tokenReceived(IDPToken?)
-        case logout
+        case profiles(action: ProfilesDomain.Action)
     }
 
     struct Environment {
@@ -73,41 +76,7 @@ enum SettingsDomain {
         let tracker: Tracker
         let signatureProvider: SecureEnclaveSignatureProvider
         let appSecurityManager: AppSecurityManager
-
-        func logout() -> Effect<Never, Never> {
-            // [REQ:gemSpec_IDP_Frontend:A_20499] Deletion of SSO_TOKEN, ID_TOKEN, AUTH_TOKEN
-            // [REQ:gemSpec_eRp_FdV:A_20186] Deletion of SSO_TOKEN, ID_TOKEN, AUTH_TOKEN
-            changeableUserSessionContainer.userSession.secureUserStore.set(token: nil)
-            changeableUserSessionContainer.userSession.secureUserStore.set(can: nil)
-            changeableUserSessionContainer.userSession.secureUserStore.set(discovery: nil)
-            changeableUserSessionContainer.userSession.vauStorage.set(userPseudonym: nil)
-            changeableUserSessionContainer.userSession.idpSession.invalidateAccessToken()
-
-            // [REQ:gemSpec_IDP_Frontend:A_21603] Certificate
-            changeableUserSessionContainer.userSession.secureUserStore.set(certificate: nil)
-
-            return changeableUserSessionContainer.userSession.secureUserStore.keyIdentifier
-                .flatMap { identifier -> Effect<Never, Never> in
-                    if let someIdentifier = identifier,
-                       let identifier = Base64.urlSafe.encode(data: someIdentifier).utf8string {
-                        // [REQ:gemSpec_IDP_Frontend:A_21603] key identifier
-                        changeableUserSessionContainer.userSession.secureUserStore.set(keyIdentifier: nil)
-                        // If deletion fails we cannot do anything
-                        // [REQ:gemSpec_IDP_Frontend:A_21603] PrK_SE_AUT/PuK_SE_AUT
-                        _ = try? PrivateKeyContainer.deleteExistingKey(for: identifier)
-                    }
-                    return Effect<Never, Never>.none
-                }
-                .eraseToEffect()
-        }
-
-        func subscribeToTokenUpdates() -> Effect<SettingsDomain.Action, Never> {
-            changeableUserSessionContainer.userSession.idpSession.autoRefreshedToken
-                .receive(on: schedulers.main)
-                .map(SettingsDomain.Action.tokenReceived)
-                .catch { _ in Effect.none }
-                .eraseToEffect()
-        }
+        let router: Routing
     }
 
     private static let domainReducer = Reducer { state, action, environment in
@@ -117,8 +86,9 @@ enum SettingsDomain {
                 UserDefaults.standard.publisher(for: \UserDefaults.kAppTrackingAllowed)
                     .map(Action.trackerStatusReceived)
                     .eraseToEffect(),
-                // [REQ:gemSpec_BSI_FdV:O.Tokn_9] observe token updates
-                environment.subscribeToTokenUpdates().cancellable(id: Token.updates)
+                // loading within the specific domain triggeres multiple times, due to update mechanics within the table
+                Effect(value: .profiles(action: .registerListener)),
+                Effect(value: .appSecurity(action: .loadSecurityOption))
             )
         case let .trackerStatusReceived(value):
             state.trackerOptIn = value
@@ -178,7 +148,8 @@ enum SettingsDomain {
         case let .toggleTermsOfUseView(show):
             state.showTermsOfUseView = show
             return .none
-        case .appSecurity:
+        case .appSecurity,
+             .profiles:
             return .none
 
         // Debug
@@ -188,17 +159,12 @@ enum SettingsDomain {
                 return DebugDomain.cleanup()
             }
             return .none
-        case let .tokenReceived(token):
-            state.token = token
-            return .none
-        // Logout
-        case .logout:
-            return environment.logout().eraseToEffect().fireAndForget()
         }
     }
 
     static let reducer: Reducer = .combine(
         appSecurityPullbackReducer,
+        profilesPullbackReducer,
         domainReducer
     )
 
@@ -212,11 +178,30 @@ enum SettingsDomain {
                                           schedulers: $0.schedulers)
         }
 
+    private static let profilesPullbackReducer: Reducer =
+        ProfilesDomain.reducer.pullback(
+            state: \.profiles,
+            action: /SettingsDomain.Action.profiles(action:)
+        ) {
+            .init(
+                schedulers: $0.schedulers,
+                profileDataStore: $0.changeableUserSessionContainer.userSession.profileDataStore,
+                userDataStore: $0.changeableUserSessionContainer.userSession.localUserStore,
+                userProfileService: DefaultUserProfileService(
+                    profileDataStore: $0.changeableUserSessionContainer.userSession.profileDataStore,
+                    profileOnlineChecker: DefaultProfileOnlineChecker(),
+                    userSession: $0.changeableUserSessionContainer.userSession
+                ),
+                profileSecureDataWiper: $0.changeableUserSessionContainer.userSession.profileSecureDataWiper,
+                router: $0.router
+            )
+        }
+
     static var demoModeOnAlertState: AlertState<Action> = {
         AlertState<Action>(
             title: TextState(L10n.stgTxtAlertTitleDemoMode),
             message: TextState(L10n.stgTxtAlertMessageDemoModeOn),
-            dismissButton: .default(TextState(L10n.alertBtnOk), send: .alertDismissButtonTapped)
+            dismissButton: .default(TextState(L10n.alertBtnOk), action: .send(.alertDismissButtonTapped))
         )
     }()
 
@@ -224,7 +209,7 @@ enum SettingsDomain {
         AlertState<Action>(
             title: TextState(L10n.stgTxtAlertTitleDemoMode),
             message: TextState(L10n.stgTxtAlertMessageDemoModeOff),
-            dismissButton: .default(TextState(L10n.alertBtnOk), send: .alertDismissButtonTapped)
+            dismissButton: .default(TextState(L10n.alertBtnOk), action: .send(.alertDismissButtonTapped))
         )
     }()
 }
@@ -234,6 +219,7 @@ extension SettingsDomain {
         static let state = State(
             isDemoMode: false,
             appSecurityState: AppSecurityDomain.State(availableSecurityOptions: []),
+            profiles: ProfilesDomain.Dummies.state,
             appVersion: AppVersion(productVersion: "1.0",
                                    buildNumber: "LOCAL BUILD",
                                    buildHash: "LOCAL BUILD")
@@ -244,7 +230,8 @@ extension SettingsDomain {
             schedulers: Schedulers(),
             tracker: DummyTracker(),
             signatureProvider: DummySecureEnclaveSignatureProvider(),
-            appSecurityManager: DummyAppSecurityManager()
+            appSecurityManager: DummyAppSecurityManager(),
+            router: DummyRouter()
         )
 
         static let store = Store(

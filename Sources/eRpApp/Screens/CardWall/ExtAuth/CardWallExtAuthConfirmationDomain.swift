@@ -37,7 +37,7 @@ enum CardWallExtAuthConfirmationDomain {
 
         var error: Error?
 
-        var contactActionSheet: ActionSheetState<Action>?
+        var contactActionSheet: ConfirmationDialogState<Action>?
     }
 
     enum Error: Swift.Error, Equatable {
@@ -107,12 +107,15 @@ enum CardWallExtAuthConfirmationDomain {
             state.error = error
             return .none
         case .openContactSheet:
-            state.contactActionSheet = ActionSheetState(
+            state.contactActionSheet = ConfirmationDialogState(
                 title: TextState(L10n.cdwTxtExtauthConfirmContactsheetTitle),
                 buttons: [
-                    .default(TextState(L10n.cdwTxtExtauthConfirmContactsheetTelephone), send: .contactByTelephone),
-                    .default(TextState(L10n.cdwTxtExtauthConfirmContactsheetMail), send: .contactByMail),
-                    .cancel(send: .closeContactSheet),
+                    .default(
+                        TextState(L10n.cdwTxtExtauthConfirmContactsheetTelephone),
+                        action: .send(.contactByTelephone)
+                    ),
+                    .default(TextState(L10n.cdwTxtExtauthConfirmContactsheetMail), action: .send(.contactByMail)),
+                    .cancel(TextState(L10n.alertBtnClose), action: .send(.closeContactSheet)),
                 ]
             )
             return .none

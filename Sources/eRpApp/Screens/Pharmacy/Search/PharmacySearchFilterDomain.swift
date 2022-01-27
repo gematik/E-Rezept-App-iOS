@@ -29,7 +29,6 @@ enum PharmacySearchFilterDomain: Equatable {
     /// All filter options used with pharmacies search
     enum PharmacyFilterOption: String, CaseIterable, Hashable {
         case messenger = "pha_search_txt_filter_messenger"
-        case order = "pha_search_txt_filter_order"
 
         func localizedString() -> String {
             NSLocalizedString(rawValue, comment: "")

@@ -75,10 +75,18 @@ final class AppStartDomainTests: XCTestCase {
                 AppDomain.State(
                     selectedTab: .main,
                     main: MainDomain.State(
-                        prescriptionListState: GroupedPrescriptionListDomain.State(),
-                        debug: DebugDomain.State(trackingOptOut: DummyTracker().optOut)
+                        prescriptionListState: GroupedPrescriptionListDomain.State()
                     ),
+                    pharmacySearch: PharmacySearchDomain.State(erxTasks: []),
                     messages: MessagesDomain.State(messageDomainStates: []),
+                    settingsState: SettingsDomain.State(isDemoMode: false,
+                                                        appSecurityState: .init(
+                                                            availableSecurityOptions: [.password],
+                                                            selectedSecurityOption: nil,
+                                                            errorToDisplay: nil,
+                                                            createPasswordState: nil
+                                                        )),
+                    debug: DebugDomain.State(trackingOptOut: DummyTracker().optOut),
                     unreadMessagesCount: 0,
                     isDemoMode: false
                 )
@@ -110,10 +118,18 @@ final class AppStartDomainTests: XCTestCase {
                 AppDomain.State(
                     selectedTab: .main,
                     main: MainDomain.State(
-                        prescriptionListState: GroupedPrescriptionListDomain.State(),
-                        debug: DebugDomain.State(trackingOptOut: DummyTracker().optOut)
+                        prescriptionListState: GroupedPrescriptionListDomain.State()
                     ),
+                    pharmacySearch: PharmacySearchDomain.State(erxTasks: []),
                     messages: MessagesDomain.State(messageDomainStates: []),
+                    settingsState: .init(isDemoMode: false,
+                                         appSecurityState: .init(
+                                             availableSecurityOptions: [.password],
+                                             selectedSecurityOption: nil,
+                                             errorToDisplay: nil,
+                                             createPasswordState: nil
+                                         )),
+                    debug: DebugDomain.State(trackingOptOut: DummyTracker().optOut),
                     unreadMessagesCount: 0,
                     isDemoMode: false
                 )
@@ -133,10 +149,17 @@ final class AppStartDomainTests: XCTestCase {
                 AppDomain.State(
                     selectedTab: .main,
                     main: MainDomain.State(
-                        prescriptionListState: GroupedPrescriptionListDomain.State(),
-                        debug: DebugDomain.State(trackingOptOut: DummyTracker().optOut)
+                        prescriptionListState: GroupedPrescriptionListDomain.State()
                     ),
+                    pharmacySearch: PharmacySearchDomain.State(erxTasks: []),
                     messages: MessagesDomain.State(messageDomainStates: []),
+                    settingsState: .init(isDemoMode: false,
+                                         appSecurityState:
+                                         .init(availableSecurityOptions: [.password],
+                                               selectedSecurityOption: nil,
+                                               errorToDisplay: nil,
+                                               createPasswordState: nil)),
+                    debug: DebugDomain.State(trackingOptOut: DummyTracker().optOut),
                     unreadMessagesCount: 0,
                     isDemoMode: false
                 )

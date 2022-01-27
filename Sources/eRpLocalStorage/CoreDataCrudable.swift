@@ -17,14 +17,15 @@
 //
 
 import Combine
+import CombineSchedulers
 import CoreData
 import eRpKit
 
 protocol CoreDataCrudable {
     /// Dispatch queue used for fetch operations
-    var foregroundQueue: DispatchQueue { get }
+    var foregroundQueue: AnySchedulerOf<DispatchQueue> { get }
     /// Dispatch queue used for create, update and delete operations
-    var backgroundQueue: DispatchQueue { get }
+    var backgroundQueue: AnySchedulerOf<DispatchQueue> { get }
     /// Factory that provides the underlying CoreDataController with a NSPersistentContainer
     var coreDataControllerFactory: CoreDataControllerFactory { get }
 
@@ -35,25 +36,25 @@ protocol CoreDataCrudable {
     ///   - context: Closure that provides a  background context which can be used to do the work
     func save(
         mergePolicy: NSMergePolicy,
-        in context: @escaping (NSManagedObjectContext) -> Void
-    ) -> AnyPublisher<Bool, CoreDataStoreError>
+        in context: @escaping (NSManagedObjectContext) throws -> Void
+    ) -> AnyPublisher<Bool, LocalStoreError>
 
     /// Deletes all results of the passed NSFetchRequest on a background context
     /// and returns the success or failure state of the operation in a publisher
     /// - Parameter fetchRequest: NSFetchRequest of the entities that should be deleted
     func delete<Entity: NSManagedObject>(
         resultsOf fetchRequest: NSFetchRequest<Entity>
-    ) -> AnyPublisher<Bool, CoreDataStoreError>
+    ) -> AnyPublisher<Bool, LocalStoreError>
 
     /// Executes the passed NSFetchRequest on the `viewContext` and returns the results in a publisher
     /// - Parameter request: NSFetchRequest for the entities to fetch
     func fetch<Entity: NSManagedObject>(
         _ request: NSFetchRequest<Entity>
-    ) -> AnyPublisher<[Entity], CoreDataStoreError>
+    ) -> AnyPublisher<[Entity], LocalStoreError>
 }
 
 extension CoreDataCrudable {
-    typealias Error = CoreDataStoreError
+    typealias Error = LocalStoreError
     func fetch<Entity: NSManagedObject>(_ request: NSFetchRequest<Entity>) -> AnyPublisher<[Entity], Error> {
         let viewContext: NSManagedObjectContext
         do {
@@ -71,7 +72,7 @@ extension CoreDataCrudable {
 
     func save(
         mergePolicy: NSMergePolicy,
-        in context: @escaping (NSManagedObjectContext) -> Void
+        in context: @escaping (NSManagedObjectContext) throws -> Void
     ) -> AnyPublisher<Bool, Error> {
         let coreData: CoreDataController
         do {
@@ -85,8 +86,8 @@ extension CoreDataCrudable {
                 let moc = coreData.container.newBackgroundContext()
                 moc.mergePolicy = mergePolicy
                 moc.performAndWait {
-                    context(moc)
                     do {
+                        try context(moc)
                         try moc.save()
                         promise(.success(true))
                         moc.reset()
@@ -132,43 +133,5 @@ extension CoreDataCrudable {
         .subscribe(on: backgroundQueue)
         .mapError(Error.delete)
         .eraseToAnyPublisher()
-    }
-}
-
-public enum CoreDataStoreError: Swift.Error, LocalizedError, Equatable {
-    case notImplemented
-    case initialization(error: Swift.Error)
-    case write(error: Swift.Error)
-    case delete(error: Swift.Error)
-    case read(error: Swift.Error)
-
-    public var errorDescription: String? {
-        switch self {
-        case .notImplemented:
-            return "missing interface implementation"
-        case let .initialization(error: error):
-            return error.localizedDescription
-        case let .write(error: error):
-            return error.localizedDescription
-        case let .delete(error: error):
-            return error.localizedDescription
-        case let .read(error: error):
-            return error.localizedDescription
-        }
-    }
-
-    public static func ==(lhs: CoreDataStoreError, rhs: CoreDataStoreError) -> Bool {
-        switch (lhs, rhs) {
-        case (notImplemented, notImplemented): return true
-        case let (initialization(error: lhsError), initialization(error: rhsError)): return lhsError
-            .localizedDescription == rhsError.localizedDescription
-        case let (write(error: lhsError), write(error: rhsError)): return lhsError.localizedDescription == rhsError
-            .localizedDescription
-        case let (delete(error: lhsError), delete(error: rhsError)): return lhsError
-            .localizedDescription == rhsError.localizedDescription
-        case let (read(error: lhsError), read(error: rhsError)): return lhsError.localizedDescription == rhsError
-            .localizedDescription
-        default: return false
-        }
     }
 }

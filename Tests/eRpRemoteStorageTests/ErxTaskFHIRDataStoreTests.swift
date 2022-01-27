@@ -178,8 +178,9 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
 
         sut.delete(tasks: [erxTask])
             .test(failure: { error in
-                let expectedError = ErxTaskFHIRDataStore
-                    .Error.fhirClientError(.httpError(HTTPError.httpError(URLError(URLError.Code(rawValue: -1)))))
+                let expectedError = RemoteStoreError.fhirClientError(
+                    FHIRClient.Error.httpError(HTTPError.httpError(URLError(URLError.Code(rawValue: -1))))
+                )
                 expect(error.self) == expectedError.self
             })
     }
@@ -223,7 +224,7 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
         sut.redeem(orders: [inputOrder, inputOrder])
             .test { error in
                 expect(counter) == 2
-                expect(error) == .fhirClientError(.httpError(.httpError(expectedError)))
+                expect(error) == .fhirClientError(FHIRClient.Error.httpError(.httpError(expectedError)))
             } expectations: { _ in
                 fail("this test should rase an error instead")
             }
@@ -266,7 +267,7 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
         sut.listAllCommunications(after: nil, for: .reply)
             .test { error in
                 expect(counter) == 1
-                expect(error) == .fhirClientError(.httpError(.httpError(expectedError)))
+                expect(error) == .fhirClientError(FHIRClient.Error.httpError(.httpError(expectedError)))
             } expectations: { _ in
                 fail("this test should rase an error instead")
             }
@@ -309,7 +310,7 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
         sut.listAllMedicationDispenses(after: nil)
             .test { error in
                 expect(counter) == 1
-                expect(error) == .fhirClientError(.httpError(.httpError(expectedError)))
+                expect(error) == .fhirClientError(FHIRClient.Error.httpError(.httpError(expectedError)))
             } expectations: { _ in
                 fail("this test should rase an error instead")
             }

@@ -40,4 +40,13 @@ struct Schedulers {
     }
 }
 
+extension Schedulers {
+    static var immediate = Schedulers(
+        uiScheduler: .immediate,
+        networkScheduler: .immediate,
+        ioScheduler: .immediate,
+        computeScheduler: .immediate
+    )
+}
+
 extension Schedulers: IDPSchedulers {}

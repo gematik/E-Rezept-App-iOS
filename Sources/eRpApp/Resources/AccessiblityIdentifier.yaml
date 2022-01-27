@@ -1,3 +1,9 @@
+controls:
+  emojiPicker:
+    - ctl_btn_emoji_picker_edit_save
+    - ctl_btn_emoji_picker_edit
+migration:
+  - amg_txt_and_spinner
 scanner:
   - scn_txt_scan_state
   - scn_img_scan_alert
@@ -91,6 +97,11 @@ onboarding:
   features:
     - onb_txt_features_title
     - onb_img_hand_with_card
+  newProfile:
+    - onb_prf_txt_title
+    - onb_prf_txt_alert_empty
+    - onb_prf_txt_footnote
+    - onb_prf_txt_field
   authentication:
     - onb_auth_inp_passwordA
     - onb_auth_inp_passwordB
@@ -137,8 +148,22 @@ settings:
     - cpw_txt_password_recommendation
     - cpw_txt_section_title
     - cpw_txt_section_update_title
-  logout:
-    - stg_btn_logout
+  profiles:
+    - stg_txt_header_profiles
+    - stg_btn_new_profile
+  editProfile:
+    - stg_txt_edit_profile_bg_color_title
+    - stg_txt_edit_profile_bg_color_picker
+    - stg_btn_edit_profile_delete
+    - stg_btn_edit_profile_login
+    - stg_btn_edit_profile_logout
+    - stg_txt_edit_profile_security_section_title
+    - stg_btn_edit_profile_security_section_show_tokens
+    - stg_txt_edit_profile_security_show_tokens_hint
+  newProfile:
+    - stg_txt_new_profile_bg_color_title
+    - stg_txt_new_profile_bg_color_picker
+    - stg_btn_new_profile_save
   legalNotice:
     - stg_lno_txt_header_legal_info
     - stg_lno_txt_legal_notice
@@ -184,7 +209,7 @@ messages:
 mainScreen:
   - erx_btn_refresh
   - erx_detailed_block
-  - erx_btn_show_settings
+  - erx_btn_profile
   - erx_btn_scn_prescription
   - erx_hnt_demo_mode_tour
   - erx_hnt_demo_mode_welcome

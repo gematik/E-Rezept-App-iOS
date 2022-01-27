@@ -44,7 +44,7 @@ extension Reducer where Action == AppDomain.Action, State == AppDomain.State, En
                 } else {
                     environment.userSession.hintEventsStore.hintState.hasUnreadMessages = false
                 }
-            case .main(action: .settings(action: .toggleDemoModeSwitch)):
+            case .settings(action: .toggleDemoModeSwitch):
                 environment.userSession.hintEventsStore.hintState.hasDemoModeBeenToggledBefore = true
             case .main(action: .scanner(action: .saveAndClose)):
                 environment.userSession.hintEventsStore.hintState.hasScannedPrescriptionsBefore = true

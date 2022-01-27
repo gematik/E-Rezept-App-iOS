@@ -22,8 +22,11 @@ import Foundation
 /// Interface to access user specific data
 /// sourcery: StreamWrapped
 public protocol UserDataStore: AnyObject {
-    /// Indicates if the onboarding screens should be displayed
+    /// Publisher that returns if the onboarding screens should be displayed
     var hideOnboarding: AnyPublisher<Bool, Never> { get }
+
+    /// Indicates if the onboarding screens should be displayed (alternative to publisher)
+    var isOnboardingHidden: Bool { get }
 
     /// Set the hideOnboarding
     /// The new value is published through `hideOnboarding`
@@ -74,4 +77,13 @@ public protocol UserDataStore: AnyObject {
     ///
     /// - Parameter ignoreDeviceNotSecuredWarningForSession: ignore the warning permanently
     func set(ignoreDeviceNotSecuredWarningPermanently: Bool)
+
+    var selectedProfileId: AnyPublisher<UUID?, Never> { get }
+
+    func set(selectedProfileId: UUID)
+
+    var latestCompatibleModelVersion: ModelVersion { get set }
+
+    /// Counter that is increased every time the app has been opened
+    var appStartCounter: Int { get set }
 }

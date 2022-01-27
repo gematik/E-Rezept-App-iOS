@@ -17,6 +17,7 @@
 //
 
 @testable import eRpApp
+import eRpKit
 import SnapshotTesting
 import SwiftUI
 import XCTest
@@ -33,5 +34,37 @@ final class PharmacySearchViewSnapshotTests: XCTestCase {
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+    }
+
+    func testPharmacySearch_searchResultEmpty() {
+        let sut = PharmacySearchView(
+            store: Self.storeFor(
+                state: .init(
+                    erxTasks: [],
+                    searchText: "Apothekesdfwerwerasdf",
+                    searchState: .searchResultEmpty
+                )
+            )
+        )
+
+        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
+        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+    }
+
+    static func storeFor(state: PharmacySearchDomain.State) -> PharmacySearchDomain.Store {
+        .init(
+            initialState: state,
+            reducer: .empty,
+            environment: PharmacySearchDomain.Environment(
+                schedulers: Schedulers(),
+                pharmacyRepository: MockPharmacyRepository(),
+                locationManager: .unimplemented(),
+                fhirDateFormatter: FHIRDateFormatter.shared,
+                openHoursCalculator: PharmacyOpenHoursCalculator(),
+                referenceDateForOpenHours: Date(),
+                userSession: MockUserSession()
+            )
+        )
     }
 }

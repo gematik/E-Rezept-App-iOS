@@ -35,8 +35,12 @@ extension Publisher {
         timeout: TimeInterval = 2.0,
         file: StaticString = #file,
         line: UInt = #line,
-        failure: @escaping (Failure) -> Void = { error in XCTFail("Publisher threw (unexpected) error: \(error)") },
-        expectations: @escaping (Output) -> Void = { _ in },
+        failure: @escaping (Failure) -> Void = { error in
+            XCTFail("Publisher threw (unexpected) error: \(error)", file: #file, line: #line)
+        },
+        expectations: @escaping (Output) -> Void = { value in
+            XCTFail("Publisher did not expect to receive a value \(value)", file: #file, line: #line)
+        },
         subscribeScheduler: AnySchedulerOf<DispatchQueue> = AnyScheduler.immediate,
         receivingScheduler: AnySchedulerOf<DispatchQueue> = AnyScheduler.immediate
     ) {

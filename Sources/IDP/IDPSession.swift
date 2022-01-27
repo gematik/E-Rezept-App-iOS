@@ -56,12 +56,16 @@ public protocol IDPSession {
     ///
     /// - Parameters:
     ///   - token: the exchange token
-    ///   - verifier: plain verifier code
-    ///   - redirectUIR: optional redirect URI to use for the token exchange.
-    /// - Returns:
-    func exchange(token: IDPExchangeToken,
-                  challengeSession: ChallengeSession,
-                  redirectURI: String?) -> AnyPublisher<IDPToken, IDPError>
+    ///   - challengeSession: A  challengeSession with verifier code for the challenge
+    ///   - redirectURI: optional redirect URI to use for the token exchange.
+    ///   - idTokenValidator: Closure that validates the passed IDToken for the selected profile
+    /// - Returns: Publisher of the received IDPToken
+    func exchange(
+        token: IDPExchangeToken,
+        challengeSession: ChallengeSession,
+        redirectURI: String?,
+        idTokenValidator: @escaping (TokenPayload.IDTokenPayload) -> Result<Bool, Error>
+    ) -> AnyPublisher<IDPToken, IDPError>
 
     /// Refresh token
     ///
@@ -98,20 +102,29 @@ public protocol IDPSession {
     /// Follow up step whenever an insurance company app authorizes a user login.
     /// - Parameters:
     ///   - url: Universal link containing login information
-    func extAuthVerifyAndExchange(_ url: URL) -> AnyPublisher<IDPToken, IDPError>
+    ///   - idTokenValidator: Closure that validates the passed IDToken for the selected profile
+    func extAuthVerifyAndExchange(
+        _ url: URL,
+        idTokenValidator: @escaping (TokenPayload.IDTokenPayload) -> Result<Bool, Error>
+    ) -> AnyPublisher<IDPToken, IDPError>
 }
 
 extension IDPSession {
     /// Verify signed challenge and immediately exchange the token
     ///
-    /// - Parameter challenge: singed challenge
+    /// - Parameter signedChallenge: singed challenge
+    /// - Parameter idTokenValidator: Closure that validates the passed IDToken for the selected profile
     /// - Returns: Publisher that emits `IDPToken` or `IDPError`
-    public func verifyAndExchange(signedChallenge: SignedChallenge) -> AnyPublisher<IDPToken, IDPError> {
+    public func verifyAndExchange(
+        signedChallenge: SignedChallenge,
+        idTokenValidator: @escaping (TokenPayload.IDTokenPayload) -> Result<Bool, Error>
+    ) -> AnyPublisher<IDPToken, IDPError> {
         verify(signedChallenge)
             .flatMap { exchangeToken in
                 self.exchange(token: exchangeToken,
                               challengeSession: signedChallenge.originalChallenge,
-                              redirectURI: nil)
+                              redirectURI: nil,
+                              idTokenValidator: idTokenValidator)
             }
             .eraseToAnyPublisher()
     }
@@ -124,5 +137,21 @@ extension IDPSession {
     /// - Returns: new IDPInterceptor
     public func httpInterceptor(delegate: IDPSessionDelegate?) -> IDPInterceptor {
         IDPInterceptor(session: self, delegate: delegate)
+    }
+
+    /// Exchange the token with verifier for the actual token
+    ///
+    /// - Parameters:
+    ///   - token: the exchange token
+    ///   - challengeSession: A  challengeSession with verifier code for the challenge
+    ///   - redirectURI: optional redirect URI to use for the token exchange.
+    /// - Returns: Publisher of the received IDPToken
+    public func exchange(token: IDPExchangeToken,
+                         challengeSession: ChallengeSession,
+                         redirectURI: String?)
+        -> AnyPublisher<IDPToken, IDPError> {
+        exchange(token: token,
+                 challengeSession: challengeSession,
+                 redirectURI: redirectURI) { _ in .success(true) }
     }
 }

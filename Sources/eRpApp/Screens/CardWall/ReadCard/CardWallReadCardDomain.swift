@@ -18,6 +18,7 @@
 
 import Combine
 import ComposableArchitecture
+import eRpKit
 import HealthCardAccess
 import IDP
 
@@ -30,6 +31,7 @@ enum CardWallReadCardDomain {
         var pin: String
         var loginOption: LoginOption
         var output: Output
+        var alertState: AlertState<Action>?
     }
 
     enum Token: CaseIterable, Hashable {
@@ -43,14 +45,19 @@ enum CardWallReadCardDomain {
         case signChallenge(IDPChallengeSession)
         case wrongCAN
         case wrongPIN
+        case nothing
 
         case stateReceived(State.Output)
+        case saveError(LocalStoreError)
+        case alertDismissButtonTapped
     }
 
     struct Environment {
         let userSession: UserSession
         let schedulers: Schedulers
-
+        let currentProfile: AnyPublisher<Profile, LocalStoreError>
+        let idTokenValidator: AnyPublisher<IDTokenValidator, IDTokenValidatorError>
+        let profileDataStore: ProfileDataStore
         let signatureProvider: SecureEnclaveSignatureProvider
     }
 
@@ -61,6 +68,13 @@ enum CardWallReadCardDomain {
             return environment.idpChallengePublisher
                 .eraseToEffect()
                 .cancellable(id: Token.idpChallenge, cancelInFlight: true)
+        case let .stateReceived(.loggedIn(idpToken)):
+            let insuranceId = try? idpToken.idTokenPayload().idNummer
+            state.output = .loggedIn(idpToken)
+            return environment.saveInsuranceIdInProfile(insuranceId: insuranceId)
+        case .saveError:
+            state.alertState = saveProfileAlertState
+            return .none
         case let .stateReceived(output):
             state.output = output
             return .none
@@ -75,7 +89,6 @@ enum CardWallReadCardDomain {
                 Effect.cancel(id: Token.idpChallenge),
                 environment.userSession.secureUserStore.can
                     .first()
-                    .receive(on: environment.schedulers.main)
                     .flatMap { can -> Effect<Action, Never> in
                         guard let can = can,
                               let canData = try? CAN.from(Data(can.utf8)) else {
@@ -93,6 +106,7 @@ enum CardWallReadCardDomain {
                         }
                         return environment.signChallengeWithNFCCard(can: canData, pin: format2Pin, challenge: challenge)
                     }
+                    .receive(on: environment.schedulers.main)
                     .eraseToEffect()
                     .cancellable(id: Token.signAndVerify, cancelInFlight: true)
             )
@@ -100,8 +114,21 @@ enum CardWallReadCardDomain {
             return .none
         case .wrongPIN:
             return .none
+        case .alertDismissButtonTapped:
+            state.alertState = nil
+            return .none
+        case .nothing:
+            return .none
         }
     }
+
+    static var saveProfileAlertState: AlertState<Action> = {
+        AlertState(
+            title: TextState(L10n.cdwTxtRcAlertTitleSaveProfile),
+            message: TextState(L10n.cdwTxtRcAlertMessageSaveProfile),
+            dismissButton: .cancel(TextState(L10n.cdwBtnRcAlertSaveProfile))
+        )
+    }()
 }
 
 extension CardWallReadCardDomain {
@@ -109,6 +136,9 @@ extension CardWallReadCardDomain {
         static let state = State(isDemoModus: false, pin: "", loginOption: .withoutBiometry, output: .idle)
         static let environment = Environment(userSession: DemoSessionContainer(),
                                              schedulers: Schedulers(),
+                                             currentProfile: DemoSessionContainer().profile(),
+                                             idTokenValidator: DemoSessionContainer().idTokenValidator(),
+                                             profileDataStore: DemoProfileDataStore(),
                                              signatureProvider: DummySecureEnclaveSignatureProvider())
 
         static let store = Store(
@@ -120,6 +150,27 @@ extension CardWallReadCardDomain {
 }
 
 extension CardWallReadCardDomain.Environment {
+    func saveInsuranceIdInProfile(
+        insuranceId: String?
+    ) -> Effect<CardWallReadCardDomain.Action, Never> {
+        currentProfile
+            .first()
+            .flatMap { profile -> AnyPublisher<Bool, LocalStoreError> in
+                profileDataStore.update(profileId: profile.id) { profile in
+                    profile.insuranceId = insuranceId
+                }
+                .eraseToAnyPublisher()
+            }
+            .map { _ in
+                CardWallReadCardDomain.Action.nothing
+            }
+            .catch { error in
+                Just(CardWallReadCardDomain.Action.saveError(error))
+            }
+            .receive(on: schedulers.main)
+            .eraseToEffect()
+    }
+
     // [REQ:gemSpec_eRp_FdV:A_20172]
     var idpChallengePublisher: Effect<CardWallReadCardDomain.Action, Never> {
         Effect<CardWallReadCardDomain.Action, Never>.run { subscriber -> Cancellable in
@@ -174,15 +225,17 @@ extension CardWallReadCardDomain.Environment {
         -> Effect<CardWallReadCardDomain.Action, Never> {
         Effect<CardWallReadCardDomain.Action, Never>.run { subscriber -> Cancellable in
             subscriber.send(.stateReceived(.verifying(.loading)))
-
-            return self.userSession.idpSession
-                .verify(signedChallenge)
-                .mapError(CardWallReadCardDomain.State.Error
-                    .idpError) // AnyPublisher<IDPExchangeToken, CardWallReadCardDomain.State.Error>
-                .exchangeIDPToken(
-                    idp: self.userSession.idpSession,
-                    challengeSession: signedChallenge.originalChallenge
-                )
+            return idTokenValidator
+                .mapError(CardWallReadCardDomain.State.Error.profileValidation)
+                .flatMap { idTokenValidator in
+                    self.userSession.idpSession
+                        .verify(signedChallenge)
+                        .exchangeIDPToken(
+                            idp: self.userSession.idpSession,
+                            challengeSession: signedChallenge.originalChallenge,
+                            idTokenValidator: idTokenValidator.validate(idToken:)
+                        )
+                }
                 .eraseToCardWallLoginState()
                 .receive(on: self.schedulers.main)
                 .sink(receiveCompletion: { _ in

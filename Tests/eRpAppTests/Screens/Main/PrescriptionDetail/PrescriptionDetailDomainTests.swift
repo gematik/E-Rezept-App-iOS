@@ -37,15 +37,14 @@ final class PrescriptionDetailDomainTests: XCTestCase {
 
     func testStore() -> TestStore {
         let schedulers = Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler())
-        let erxTaskRespositoryAccess = PrescriptionDetailDomain.Dummies
+        let erxTaskRespository = PrescriptionDetailDomain.Dummies
             .demoSessionContainer.userSession.erxTaskRepository
         return TestStore(
             initialState: PrescriptionDetailDomain.Dummies.state,
             reducer: PrescriptionDetailDomain.reducer,
             environment: PrescriptionDetailDomain.Environment(
                 schedulers: schedulers,
-                locationManager: .unimplemented(),
-                taskRepositoryAccess: erxTaskRespositoryAccess,
+                taskRepository: erxTaskRespository,
                 fhirDateFormatter: FHIRDateFormatter.shared,
                 pharmacyRepository: MockPharmacyRepository(),
                 userSession: MockUserSession()
@@ -109,7 +108,7 @@ final class PrescriptionDetailDomainTests: XCTestCase {
                 sut.alertState = nil
             },
             .send(.taskDeletedReceived(
-                Result.failure(ErxTaskRepositoryError.local(.delete(error: IDPError.tokenUnavailable)))
+                Result.failure(ErxRepositoryError.local(.delete(error: IDPError.tokenUnavailable)))
             )) { state in
                 // then
                 state.alertState = PrescriptionDetailDomain.deleteFailedAlertState(
@@ -137,7 +136,7 @@ final class PrescriptionDetailDomainTests: XCTestCase {
                 sut.alertState = nil
             },
             .send(.taskDeletedReceived(
-                Result.failure(ErxTaskRepositoryError.local(.notImplemented))
+                Result.failure(ErxRepositoryError.local(.notImplemented))
             )) { state in
                 // then
                 state.alertState = nil

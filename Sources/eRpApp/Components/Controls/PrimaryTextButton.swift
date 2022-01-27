@@ -48,6 +48,29 @@ struct PrimaryTextButton: View {
     }
 }
 
+struct DestructiveTextButton: View {
+    var text: LocalizedStringKey
+    var isEnabled = true
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            HStack {
+                Text(text)
+                    .fontWeight(.semibold)
+                    .font(.body)
+                    .multilineTextAlignment(.center)
+                    .foregroundColor(isEnabled ? Color(.white) : Color(.systemGray))
+                    .padding()
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }
+        .buttonStyle(DestructiveButtonStyle(enabled: isEnabled))
+        .disabled(!isEnabled)
+    }
+}
+
 struct PrimaryTextButtonBorder: View {
     var text: LocalizedStringKey
     var image: Image?
@@ -128,6 +151,37 @@ struct PrimaryButtonStyle: ButtonStyle {
             .frame(minWidth: 0, maxWidth: .infinity)
             .opacity(configuration.isPressed ? 0.25 : 1)
             .background(isEnabled ? Colors.primary : Color(.systemGray4))
+            .cornerRadius(16)
+    }
+}
+
+struct DestructiveButtonStyle: ButtonStyle {
+    private var isEnabled: Bool
+
+    init(enabled: Bool = true) {
+        isEnabled = enabled
+    }
+
+    func makeBody(configuration: Self.Configuration) -> some View {
+        configuration.label
+            .frame(minWidth: 0, maxWidth: .infinity)
+            .opacity(configuration.isPressed ? 0.25 : 1)
+            .background(isEnabled ? Colors.red600 : Color(.systemGray4))
+            .cornerRadius(16)
+    }
+}
+
+struct DestructiveSecondaryButtonStyle: ButtonStyle {
+    func makeBody(configuration: Self.Configuration) -> some View {
+        configuration.label
+            .multilineTextAlignment(.center)
+            .font(.body.weight(.semibold))
+            .frame(maxWidth: .infinity, alignment: .center)
+            .foregroundColor(Colors.red600)
+            .fixedSize(horizontal: false, vertical: true)
+            .padding()
+            .opacity(configuration.isPressed ? 0.25 : 1)
+            .background(Color(.systemGray5))
             .cornerRadius(16)
     }
 }

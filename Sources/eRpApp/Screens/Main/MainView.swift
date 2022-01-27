@@ -16,13 +16,17 @@
 //  
 //
 
+import Combine
 import ComposableArchitecture
+import eRpKit
 import Introspect
 import SwiftUI
 
 struct MainView: View {
     let store: MainDomain.Store
     @ObservedObject var viewStore: ViewStore<ViewState, MainDomain.Action>
+    @State
+    var formattedString: String?
 
     init(store: MainDomain.Store) {
         self.store = store
@@ -30,16 +34,19 @@ struct MainView: View {
     }
 
     struct ViewState: Equatable {
-        let isSettingsViewPresented: Bool
         let isScannerViewPresented: Bool
         let isDeviceSecurityViewPresented: Bool
         let isDemoModeEnabled: Bool
 
+        let route: MainDomain.Route?
+        let profile: UserProfile?
+
         init(state: MainDomain.State) {
-            isSettingsViewPresented = state.settingsState != nil
             isScannerViewPresented = state.scannerState != nil
             isDeviceSecurityViewPresented = state.deviceSecurityState != nil
             isDemoModeEnabled = state.isDemoMode
+            route = state.route
+            profile = state.profile
         }
     }
 
@@ -54,7 +61,7 @@ struct MainView: View {
                         // Workaround to get correct accessibility while activating voice over *after* presentation of
                         // settings dialog. As soon as we can use multiple `fullScreenCover` (drop iOS <= ~14.4) we may
                         // omit this modifier and the `EmptyView()`.
-                        .accessibility(hidden: viewStore.isSettingsViewPresented || viewStore.isScannerViewPresented)
+                        .accessibility(hidden: viewStore.isScannerViewPresented)
 
                     ExtAuthPendingView(
                         store: store.scope(
@@ -63,35 +70,17 @@ struct MainView: View {
                         )
                     )
                 }
-
-                // Settings sheet presentation; Work around not being able to use multiple `fullScreenCover` modifier
-                // at once. As soon as we drop iOS <= ~14.4, we may omit this.
-                EmptyView()
-                    .fullScreenCover(isPresented: viewStore.binding(
-                        get: \.isSettingsViewPresented,
-                        send: MainDomain.Action.dismissSettingsView
-                    )) {
-                        #if ENABLE_DEBUG_VIEW
-                        IfLetStore(
-                            store.scope(
-                                state: { $0.settingsState },
-                                action: MainDomain.Action.settings(action:)
-                            )
-                        ) { scopedStore in
-                            SettingsView(store: scopedStore,
-                                         debugStore: store.scope(state: \.debug,
-                                                                 action: MainDomain.Action.debug(action:)))
-                        }
-                        #else
-                        IfLetStore(
-                            store.scope(
-                                state: { $0.settingsState },
-                                action: MainDomain.Action.settings(action:)
-                            ),
-                            then: SettingsView.init(store:)
-                        )
-                        #endif
+                .toolbar {
+                    ToolbarItem(placement: .navigationBarLeading) {
+                        UserProfileSelectionItem(store: store, formattedString: $formattedString)
+                            .accessibility(value: Text(formattedString ?? ""))
+                            .accessibilityElement(children: .combine)
                     }
+
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        ScanItem { viewStore.send(.showScannerView) }
+                    }
+                }
 
                 // ScannerView sheet presentation; Work around not being able to use multiple `fullScreenCover` modifier
                 // at once. As soon as we drop iOS <= ~14.4, we may omit this.
@@ -126,21 +115,44 @@ struct MainView: View {
                             then: DeviceSecurityView.init(store:)
                         )
                     }
+
+                EmptyView()
+                    .sheet(isPresented: Binding<Bool>(get: {
+                        viewStore.route?.tag == .selectProfile
+                    }, set: { show in
+                        if !show {
+                            viewStore.send(.setNavigation(tag: nil))
+                        }
+                    }),
+                    onDismiss: {},
+                    content: {
+                        IfLetStore(store.scope(
+                            state: (\MainDomain.State.route)
+                                .appending(path: /MainDomain.Route.selectProfile)
+                                .extract(from:),
+                            action: MainDomain.Action.selectProfile(action:)
+                        ), then: ProfileSelectionView.init)
+                    })
             }
-            .navigationTitle(Text(L10n.erxTitle))
-            .navigationBarTitleDisplayMode(viewStore.isDemoModeEnabled ? .inline : .automatic)
-            .navigationBarItems(
-                leading: SettingsItem { viewStore.send(.showSettingsView) },
-                trailing: ScanItem { viewStore.send(.showScannerView) }
-            )
+            .navigationBarTitleDisplayMode(.inline)
+            .introspectNavigationController { navigationController in
+                let navigationBar = navigationController.navigationBar
+                navigationBar.barTintColor = UIColor(Colors.systemBackground)
+                let navigationBarAppearance = UINavigationBarAppearance()
+                navigationBarAppearance.shadowColor = UIColor(Colors.systemColorClear)
+                navigationBarAppearance.backgroundColor = UIColor(Colors.systemBackground)
+                navigationBar.standardAppearance = navigationBarAppearance
+            }
             .demoBanner(isPresented: viewStore.isDemoModeEnabled) {
                 viewStore.send(MainDomain.Action.turnOffDemoMode)
             }
             .onAppear {
+                viewStore.send(.registerProfileListener)
                 viewStore.send(.subscribeToDemoModeChange)
                 viewStore.send(.loadDeviceSecurityView)
             }
             .onDisappear {
+                viewStore.send(.unregisterProfileListener)
                 viewStore.send(.unsubscribeFromDemoModeChange)
             }
         }
@@ -153,19 +165,72 @@ struct MainView: View {
 private extension MainView {
     // MARK: - screen related views
 
-    struct SettingsItem: View {
-        let action: () -> Void
+    struct UserProfileSelectionItem: View {
+        let store: MainDomain.Store
+        @ObservedObject var viewStore: ViewStore<ViewState, MainDomain.Action>
+
+        init(store: MainDomain.Store, formattedString: Binding<String?>) {
+            self.store = store
+            viewStore = ViewStore(store.scope(state: ViewState.init))
+            _formattedString = formattedString
+        }
+
+        struct ViewState: Equatable {
+            let profile: UserProfile?
+
+            init(state: MainDomain.State) {
+                profile = state.profile
+            }
+        }
+
+        @Binding
+        var formattedString: String?
+        let maxCharacterLength = 16
 
         var body: some View {
-            Button(action: action) {
-                Image(systemName: SFSymbolName.settings)
-                    .font(Font.title3.weight(.bold))
-                    .foregroundColor(Colors.primary700)
-                    .padding(.trailing)
-                    .padding(.vertical)
-            }
-            .accessibility(identifier: A18n.mainScreen.erxBtnShowSettings)
-            .accessibility(label: Text(L10n.erxBtnShowSettings))
+            Button(action: {
+                viewStore.send(.showProfileSelection)
+            }, label: {
+                if let profile = viewStore.profile {
+                    HStack(alignment: .center, spacing: 8) {
+                        Circle()
+                            .strokeBorder(profile.color.border, lineWidth: 2)
+                            .frame(width: 32, height: 32, alignment: .center)
+                            .background(Circle().fill(profile.color.background))
+                            .overlay(
+                                Text(profile.emoji ?? profile.acronym)
+                                    .font(.system(size: 13))
+                            )
+                            .overlay(ProfileCell.ConnectionStatusCircle(status: profile.connectionStatus),
+                                     alignment: .bottomTrailing)
+
+                        VStack(alignment: .leading, spacing: 0) {
+                            HStack(alignment: .center, spacing: 4) {
+                                Text(profile.name.prefix(maxCharacterLength).trimmingCharacters(in: .whitespaces))
+                                    .font(.subheadline.weight(.semibold))
+                                Image(systemName: SFSymbolName.chevronForward)
+                                    .font(.caption2.weight(.semibold))
+                            }
+                            .foregroundColor(Color(.label))
+
+                            if let date = profile.lastSuccessfulSync {
+                                RelativeTimerViewForToolbars(date: date, formattedString: $formattedString)
+                                    .foregroundColor(Color(.secondaryLabel))
+                                    .font(.caption)
+                            } else {
+                                Text(L10n.proTxtSelectionProfileNotConnected)
+                                    .foregroundColor(Color(.secondaryLabel))
+                                    .font(.caption)
+                            }
+                        }
+                    }
+                    .padding(.vertical, 8)
+                } else {
+                    ProgressView()
+                }
+            })
+                .contentShape(Rectangle())
+                .accessibility(identifier: A18n.mainScreen.erxBtnProfile)
         }
     }
 
@@ -192,8 +257,7 @@ struct MainView_Previews: PreviewProvider {
             MainView(
                 store: MainDomain.Dummies.storeFor(
                     MainDomain.State(
-                        prescriptionListState: GroupedPrescriptionListDomain.State(),
-                        debug: DebugDomain.Dummies.state
+                        prescriptionListState: GroupedPrescriptionListDomain.State()
                     )
                 )
             )
@@ -207,8 +271,7 @@ struct MainView_Previews: PreviewProvider {
                                 repeating: GroupedPrescription.Dummies.twoPrescriptions,
                                 count: 2
                             )
-                        ),
-                        debug: DebugDomain.Dummies.state
+                        )
                     )
                 )
             )

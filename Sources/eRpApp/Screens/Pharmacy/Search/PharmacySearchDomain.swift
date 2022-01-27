@@ -23,7 +23,6 @@ import eRpKit
 import Pharmacy
 import SwiftUI
 
-// swiftlint:disable:next type_body_length
 enum PharmacySearchDomain: Equatable {
     typealias Store = ComposableArchitecture.Store<State, Action>
     typealias Reducer = ComposableArchitecture.Reducer<State, Action, Environment>
@@ -38,16 +37,6 @@ enum PharmacySearchDomain: Equatable {
         case search
     }
 
-    /// Sort-Order for pharmacies search result.
-    enum SortOrder: String, CaseIterable, Hashable {
-        case alphabetical = "pha_search_btn_sort_alpha"
-        case distance = "pha_search_btn_sort_distance"
-
-        func localizedString() -> String {
-            NSLocalizedString(rawValue, comment: "")
-        }
-    }
-
     /// Same screen shows different UI elements based on the current state of the search
     enum SearchState: Equatable {
         case startView
@@ -56,6 +45,7 @@ enum PharmacySearchDomain: Equatable {
         case searchResultOk([PharmacyLocationViewModel])
         case searchAfterLocalizationWasAuthorized
         case localizingDevice
+        case error
     }
 
     // A unique identifier for our location manager, just in case we want to use
@@ -73,8 +63,13 @@ enum PharmacySearchDomain: Equatable {
         var pharmacies: [PharmacyLocationViewModel] = []
         /// We show an alert when the user taps the "location" icon but has not allowed to share the device location
         var alertState: AlertState<Action>?
-        /// State to control visibility of location hint
-        var locationHintState = true
+        /// Visibility of location hint
+        var isLocationServiceAuthorized = false
+        var hintDismissButtonTapped = false
+        var showLocationHint: Bool {
+            !hintDismissButtonTapped && !isLocationServiceAuthorized
+        }
+
         /// A valid search terms should at least consist of 3 chars
         var searchTextValid: Bool {
             searchText.count > 2
@@ -91,8 +86,6 @@ enum PharmacySearchDomain: Equatable {
 
         /// TCA Detail-State for navigation
         var pharmacyDetailState: PharmacyDetailDomain.State?
-        /// The current sort order
-        var sortOrder: SortOrder = .alphabetical
         /// Used to navigate into filter details sheet
         var pharmacyFilterState: PharmacySearchFilterDomain.State?
         /// Store for the active filter options the user has chosen
@@ -103,35 +96,34 @@ enum PharmacySearchDomain: Equatable {
 
     enum Action: Equatable {
         case close
+        case onAppear
         // Alert
         case alertDismissButtonTapped
-        case closeLocationHint
         // Search
         case searchTextChanged(String)
         case performSearch
         case pharmaciesReceived(Result<[PharmacyLocation], PharmacyRepositoryError>)
+        // Hint
+        case hintButtonTapped
+        case hintDismissButtonTapped
         // Pharmacy details
         case showDetails(PharmacyLocationViewModel)
         case dismissPharmacyDetailView
         case pharmacyDetailView(action: PharmacyDetailDomain.Action)
-        // Sorting
-        case sortResult
-        case sortedResultReceived([PharmacyLocationViewModel])
         // Filter
         case showPharmacyFilterView
         case dismissFilterSheetView
         case removeFilterOption(PharmacySearchFilterDomain.PharmacyFilterOption)
         case pharmacyFilterView(action: PharmacySearchFilterDomain.Action)
         // Device location
-        case locationButtonTapped
+        case requestLocation
         case locationManager(LocationManager.Action)
-        case requestLocationPermission
     }
 
     struct Environment {
         var schedulers: Schedulers
         var pharmacyRepository: PharmacyRepository
-        var locationManager: LocationManager
+        var locationManager: LocationManager = .live
         let fhirDateFormatter: FHIRDateFormatter
         let openHoursCalculator: PharmacyOpenHoursCalculator
         // Control the current time for opening/closing determination. When not set current device time is used.
@@ -143,12 +135,18 @@ enum PharmacySearchDomain: Equatable {
         switch action {
         case .close:
             return cleanup()
+        case .onAppear:
+            state.isLocationServiceAuthorized = environment.locationManager.isLocationServiceAuthorized
+            if state.isLocationServiceAuthorized, state.searchState == .startView {
+                state.searchState = .searchAfterLocalizationWasAuthorized
+                return .init(value: .requestLocation)
+            } else {
+                return .none
+            }
+
         // Alert
         case .alertDismissButtonTapped:
             state.alertState = nil
-            return .none
-        case .closeLocationHint:
-            state.locationHintState = false
             return .none
 
         // Search
@@ -158,7 +156,6 @@ enum PharmacySearchDomain: Equatable {
         case .performSearch:
             // [REQ:gemSpec_eRp_FdV:A_20183] search results mirrored verbatim, no sorting, no highlighting
             state.searchState = .searchRunning
-            state.sortOrder = state.currentLocation != nil ? .distance : .alphabetical
             return .concatenate(
                 .cancel(id: Token.search),
                 environment.searchPharmacies(
@@ -179,18 +176,19 @@ enum PharmacySearchDomain: Equatable {
                 }
 
                 state.searchState = pharmacies.isEmpty ? .searchResultEmpty : .searchResultOk(state.pharmacies)
-                if case .searchResultOk = state.searchState {
-                    return environment.sortPharmacies(
-                        pharmacyLocations: state.pharmacies,
-                        sortOrder: state.sortOrder
-                    )
-                    .map(PharmacySearchDomain.Action.sortedResultReceived)
-                }
             case let .failure(error):
-                state.searchState = .searchResultEmpty
-                state.alertState = searchResultErrorAlertState
+                state.searchState = .error
             }
             return .none
+
+        // Hint
+        case .hintButtonTapped:
+            state.searchState = .searchAfterLocalizationWasAuthorized
+            return .init(value: .requestLocation)
+        case .hintDismissButtonTapped:
+            state.hintDismissButtonTapped = true
+            return .none
+
         // Details
         case let .showDetails(pharmacyLocation):
             state.pharmacyDetailState = PharmacyDetailDomain.State(
@@ -205,18 +203,6 @@ enum PharmacySearchDomain: Equatable {
             state.pharmacyDetailState = nil
             return Effect(value: .close)
         case .pharmacyDetailView:
-            return .none
-
-        // Sorting
-        case .sortResult:
-            state.sortOrder = state.sortOrder == .alphabetical ? .distance : .alphabetical
-            return environment.sortPharmacies(
-                pharmacyLocations: state.pharmacies,
-                sortOrder: state.sortOrder
-            )
-            .map(PharmacySearchDomain.Action.sortedResultReceived)
-        case let .sortedResultReceived(pharmaciesSorted):
-            state.pharmacies = pharmaciesSorted
             return .none
 
         // Filter
@@ -240,24 +226,18 @@ enum PharmacySearchDomain: Equatable {
             return .none
 
         // Location
-        case .locationButtonTapped:
-            if state.currentLocation == nil {
-                state.searchState = .searchAfterLocalizationWasAuthorized
-                return Effect(value: .requestLocationPermission)
-            } else {
-                state.currentLocation = nil
-                return .none
-            }
-        case .requestLocationPermission:
+        case .requestLocation:
             return .merge(
-                environment.locationManager.create(id: LocationManagerId())
+                environment.locationManager
+                    .create(id: LocationManagerId())
                     .map(PharmacySearchDomain.Action.locationManager),
-                environment.locationManager.requestWhenInUseAuthorization(id: LocationManagerId())
+                environment.locationManager
+                    .requestWhenInUseAuthorization(id: LocationManagerId())
                     .fireAndForget()
             )
         case .locationManager(.didChangeAuthorization(.authorizedAlways)),
              .locationManager(.didChangeAuthorization(.authorizedWhenInUse)):
-            state.locationHintState = false
+            state.isLocationServiceAuthorized = true
             if state.searchState == .searchAfterLocalizationWasAuthorized {
                 if state.currentLocation != nil {
                     return Effect(value: .performSearch)
@@ -270,7 +250,7 @@ enum PharmacySearchDomain: Equatable {
             return .none
         case .locationManager(.didChangeAuthorization(.denied)),
              .locationManager(.didChangeAuthorization(.restricted)):
-            state.locationHintState = false
+            state.isLocationServiceAuthorized = true
             if state.searchState == .searchAfterLocalizationWasAuthorized {
                 state.alertState = locationPermissionAlertState
             }
@@ -316,17 +296,25 @@ enum PharmacySearchDomain: Equatable {
         AlertState(
             title: TextState(L10n.phaSearchTxtLocationAlertTitle),
             message: TextState(L10n.phaSearchTxtLocationAlertMessage),
-            dismissButton: .default(TextState(L10n.alertBtnOk), send: .alertDismissButtonTapped)
+            dismissButton: .default(TextState(L10n.alertBtnOk), action: .send(.alertDismissButtonTapped))
         )
     }()
+}
 
-    static var searchResultErrorAlertState: AlertState<Action> = {
-        AlertState(
-            title: TextState(L10n.phaSearchTxtErrorAlertTitle),
-            message: TextState(L10n.phaSearchTxtErrorAlertMessage),
-            dismissButton: .default(TextState(L10n.alertBtnOk), send: .alertDismissButtonTapped)
-        )
-    }()
+extension PharmacySearchDomain.Environment {
+    func searchPharmacies(searchTerm: String, location: ComposableCoreLocation.Location?)
+        -> Effect<PharmacySearchDomain.Action, Never> {
+        var position: Position?
+        if let latitude = location?.coordinate.latitude,
+           let longitude = location?.coordinate.longitude {
+            position = Position(lat: latitude, lon: longitude)
+        }
+        return pharmacyRepository.searchPharmacies(searchTerm: searchTerm, position: position)
+            .catchToEffect()
+            .map(PharmacySearchDomain.Action.pharmaciesReceived)
+            .receive(on: schedulers.main.animation())
+            .eraseToEffect()
+    }
 }
 
 extension PharmacySearchDomain {
@@ -343,7 +331,8 @@ extension PharmacySearchDomain {
         static let stateEmpty = State(
             erxTasks: [ErxTask.Dummies.erxTaskReady],
             searchText: "Apothekesdfwerwerasdf",
-            pharmacies: []
+            pharmacies: [],
+            searchState: .searchResultEmpty
         )
         static let stateSearchRunning = State(
             erxTasks: [ErxTask.Dummies.erxTaskReady],
@@ -361,8 +350,12 @@ extension PharmacySearchDomain {
             pharmacies: [],
             pharmacyFilterOptions: [
                 PharmacySearchFilterDomain.PharmacyFilterOption.messenger,
-                PharmacySearchFilterDomain.PharmacyFilterOption.order,
             ]
+        )
+        static let stateError = State(
+            erxTasks: [ErxTask.Dummies.erxTaskReady],
+            pharmacies: [],
+            searchState: .error
         )
         static let state = State(
             erxTasks: [ErxTask.Dummies.erxTaskReady],
@@ -399,6 +392,19 @@ extension PharmacySearchDomain {
             Store(initialState: state,
                   reducer: PharmacySearchDomain.Reducer.empty,
                   environment: environment)
+        }
+    }
+}
+
+extension LocationManager {
+    var isLocationServiceAuthorized: Bool {
+        if !locationServicesEnabled() {
+            return false
+        }
+        switch authorizationStatus() {
+        case .notDetermined, .restricted, .denied: return false
+        case .authorizedAlways, .authorizedWhenInUse: return true
+        @unknown default: return false
         }
     }
 }

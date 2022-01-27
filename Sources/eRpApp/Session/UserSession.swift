@@ -24,8 +24,15 @@ import Pharmacy
 import TrustStore
 import VAUClient
 
-enum UserSessionError: Error {
+enum UserSessionError: Error, Equatable {
     case networkError(error: Error)
+
+    static func ==(lhs: UserSessionError, rhs: UserSessionError) -> Bool {
+        switch (lhs, rhs) {
+        case let (.networkError(lhsError), .networkError(rhsError)):
+            return lhsError.localizedDescription == rhsError.localizedDescription
+        }
+    }
 }
 
 /// `UserSession` defines a SceneDelegate environment variable that a \.userSession should conform to.
@@ -34,8 +41,9 @@ protocol UserSession {
     /// Last authentication state of the app. This value should not get stale as it should inform on the latest state.
     var isAuthenticated: AnyPublisher<Bool, UserSessionError> { get }
 
-    /// Interface to access the `AnyErxTaskRepository`
-    var erxTaskRepository: ErxTaskRepositoryAccess { get }
+    var erxTaskRepository: ErxTaskRepository { get }
+
+    var profileDataStore: ProfileDataStore { get }
 
     /// Access to the `PharmacyRepository`
     var pharmacyRepository: PharmacyRepository { get }
@@ -73,4 +81,10 @@ protocol UserSession {
 
     // Manager that gathering information about device security and the user's acknowledgement thereof
     var deviceSecurityManager: DeviceSecurityManager { get }
+
+    var profileId: UUID { get }
+
+    func profile() -> AnyPublisher<Profile, LocalStoreError>
+
+    var profileSecureDataWiper: ProfileSecureDataWiper { get }
 }

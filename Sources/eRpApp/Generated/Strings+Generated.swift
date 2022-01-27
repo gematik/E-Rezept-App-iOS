@@ -25,6 +25,20 @@ internal enum L10n {
   internal static let alertErrorMessageUnknown = LocalizedStringKey("alert_error_message_unknown")
   /// Error
   internal static let alertErrorTitle = LocalizedStringKey("alert_error_title")
+  /// Abbrechen
+  internal static let amgBtnAlertCancel = LocalizedStringKey("amg_btn_alert_cancel")
+  /// Daten löschen
+  internal static let amgBtnAlertDeleteDatabase = LocalizedStringKey("amg_btn_alert_delete_database")
+  /// Wiederholen
+  internal static let amgBtnAlertRetry = LocalizedStringKey("amg_btn_alert_retry")
+  /// Aktualisierung fehlgeschlagen
+  internal static let amgBtnAlertTitle = LocalizedStringKey("amg_btn_alert_title")
+  /// Falls dieser Fehler wiederholt auftritt, bitte die App löschen und neu installieren
+  internal static let amgTxtAlertMessageDeleteDatabase = LocalizedStringKey("amg_txt_alert_message_delete_database")
+  /// Löschen fehlgeschlagen
+  internal static let amgTxtAlertTitleDeleteDatabase = LocalizedStringKey("amg_txt_alert_title_delete_database")
+  /// Aktualisieren...
+  internal static let amgTxtInProgress = LocalizedStringKey("amg_txt_in_progress")
   /// Unlock with Face ID
   internal static let authBtnBiometricsFaceid = LocalizedStringKey("auth_btn_biometrics_faceid")
   /// Unlock with Touch ID
@@ -111,6 +125,8 @@ internal enum L10n {
   internal static func cdwBtnCanDoneLabelError(_ element1: String) -> LocalizedStringKey {
     LocalizedStringKey("cdw_btn_can_done_label_error_\(element1)")
   }
+  /// Schließen
+  internal static let cdwBtnExtauthAlertSaveProfile = LocalizedStringKey("cdw_btn_extauth_alert_save_profile")
   /// Abbrechen
   internal static let cdwBtnExtauthConfirmCancel = LocalizedStringKey("cdw_btn_extauth_confirm_cancel")
   /// Technischen Kundendienst kontaktieren
@@ -145,6 +161,8 @@ internal enum L10n {
   internal static let cdwBtnPinDone = LocalizedStringKey("cdw_btn_pin_done")
   /// Next
   internal static let cdwBtnPinDoneLabel = LocalizedStringKey("cdw_btn_pin_done_label")
+  /// Schließen
+  internal static let cdwBtnRcAlertSaveProfile = LocalizedStringKey("cdw_btn_rc_alert_save_profile")
   /// Close dialog
   internal static let cdwBtnRcCancelLabel = LocalizedStringKey("cdw_btn_rc_cancel_label")
   /// Close
@@ -213,6 +231,10 @@ internal enum L10n {
   internal static let cdwTxtCanWarnWrongDescription = LocalizedStringKey("cdw_txt_can_warn_wrong_description")
   /// Incorrect CAN
   internal static let cdwTxtCanWarnWrongTitle = LocalizedStringKey("cdw_txt_can_warn_wrong_title")
+  /// Ihre Gesundheitskarte konnte nicht mit dem Profil verknüpft werden.
+  internal static let cdwTxtExtauthAlertMessageSaveProfile = LocalizedStringKey("cdw_txt_extauth_alert_message_save_profile")
+  /// Fehler beim Speichern des Profils
+  internal static let cdwTxtExtauthAlertTitleSaveProfile = LocalizedStringKey("cdw_txt_extauth_alert_title_save_profile")
   /// Mail
   internal static let cdwTxtExtauthConfirmContactsheetMail = LocalizedStringKey("cdw_txt_extauth_confirm_contactsheet_mail")
   /// Telefon
@@ -289,6 +311,10 @@ internal enum L10n {
   internal static func cdwTxtPinWarningCount(_ element1: String) -> LocalizedStringKey {
     LocalizedStringKey("cdw_txt_pin_warning_count \(element1)")
   }
+  /// Ihre Gesundheitskarte konnte nicht mit dem Profil verknüpft werden.
+  internal static let cdwTxtRcAlertMessageSaveProfile = LocalizedStringKey("cdw_txt_rc_alert_message_save_profile")
+  /// Fehler beim Speichern des Profils
+  internal static let cdwTxtRcAlertTitleSaveProfile = LocalizedStringKey("cdw_txt_rc_alert_title_save_profile")
   /// You do not need a medical card in demo mode.
   internal static let cdwTxtRcDemoModeInfo = LocalizedStringKey("cdw_txt_rc_demo_mode_info")
   /// Click Login and hold your card against the device as shown. Do not move the card once a connection has been established.
@@ -361,6 +387,12 @@ internal enum L10n {
   internal static let cdwTxtSelKkappTitle = LocalizedStringKey("cdw_txt_sel_kkapp_title")
   /// Anmeldung
   internal static let cdwTxtSelTitle = LocalizedStringKey("cdw_txt_sel_title")
+  /// Zuletzt aktualisiert %@
+  internal static func cpnTxtRelativeTimerViewLastUpdate(_ element1: String) -> LocalizedStringKey {
+    LocalizedStringKey("cpn_txt_relative_timer_view_last_update_\(element1)")
+  }
+  /// vor wenigen Sekunden
+  internal static let cpnTxtRelativeTimerViewLastUpdateRecent = LocalizedStringKey("cpn_txt_relative_timer_view_last_update_recent")
   /// Speichern
   internal static let cpwBtnAltAuthSave = LocalizedStringKey("cpw_btn_alt_auth_save")
   /// Neues Kennwort speichern
@@ -391,6 +423,12 @@ internal enum L10n {
   internal static let cpwTxtTitle = LocalizedStringKey("cpw_txt_title")
   /// Kennwort ändern
   internal static let cpwTxtUpdateTitle = LocalizedStringKey("cpw_txt_update_title")
+  /// Bild bearbeiten
+  internal static let ctlBtnProfilePickerEdit = LocalizedStringKey("ctl_btn_profile_picker_edit")
+  /// Bild zurücksetzen
+  internal static let ctlBtnProfilePickerReset = LocalizedStringKey("ctl_btn_profile_picker_reset")
+  /// Speichern
+  internal static let ctlBtnProfilePickerSet = LocalizedStringKey("ctl_btn_profile_picker_set")
   /// Kennwortstärke
   internal static let ctlTxtPasswordStrength0 = LocalizedStringKey("ctl_txt_password_strength_0")
   /// Kennwortstärke
@@ -413,8 +451,20 @@ internal enum L10n {
   internal static let ctlTxtPasswordStrengthAccessiblityValueVeryWeak = LocalizedStringKey("ctl_txt_password_strength_accessiblity_value_very_weak")
   /// Schwach
   internal static let ctlTxtPasswordStrengthAccessiblityValueWeak = LocalizedStringKey("ctl_txt_password_strength_accessiblity_value_weak")
-  /// Kennwortstärke
-  internal static let ctlTxtPasswordStrengthHint = LocalizedStringKey("ctl_txt_password_strength_hint")
+  /// Nicht angemeldet
+  internal static let ctlTxtProfileCellNotConnected = LocalizedStringKey("ctl_txt_profile__cell_not_connected")
+  /// Blau
+  internal static let ctlTxtProfileColorPickerBlue = LocalizedStringKey("ctl_txt_profile_color_picker_blue")
+  /// Grün
+  internal static let ctlTxtProfileColorPickerGreen = LocalizedStringKey("ctl_txt_profile_color_picker_green")
+  /// Grau
+  internal static let ctlTxtProfileColorPickerGrey = LocalizedStringKey("ctl_txt_profile_color_picker_grey")
+  /// Rosa
+  internal static let ctlTxtProfileColorPickerPink = LocalizedStringKey("ctl_txt_profile_color_picker_pink")
+  /// Ausgewählt
+  internal static let ctlTxtProfileColorPickerSelected = LocalizedStringKey("ctl_txt_profile_color_picker_selected")
+  /// Gelb
+  internal static let ctlTxtProfileColorPickerYellow = LocalizedStringKey("ctl_txt_profile_color_picker_yellow")
   /// Copy
   internal static let dtlBtnCopyClipboard = LocalizedStringKey("dtl_btn_copy_clipboard")
   /// Delete from this device
@@ -457,6 +507,8 @@ internal enum L10n {
   internal static let dtlTxtTaskId = LocalizedStringKey("dtl_txt_task_id")
   /// Details
   internal static let dtlTxtTitle = LocalizedStringKey("dtl_txt_title")
+  /// Fehler beim Zugriff auf die Datenbank
+  internal static let errTxtDatabaseAccess = LocalizedStringKey("err_txt_database_access")
   /// Redeem all
   internal static let erxBtnRedeem = LocalizedStringKey("erx_btn_redeem")
   /// Update
@@ -1093,6 +1145,12 @@ internal enum L10n {
   internal static func mainTxtPendingextauthSuccessful(_ element1: String) -> LocalizedStringKey {
     LocalizedStringKey("main_txt_pendingextauth_successful_\(element1)")
   }
+  /// Profilname
+  internal static let mgmFallbackProfileName = LocalizedStringKey("mgm_fallback_profile_name")
+  /// Es konnte kein Profil bei der Aktualisierung erstellt werden
+  internal static let mgmTxtAlertMessageProfileCreation = LocalizedStringKey("mgm_txt_alert_message_profile_creation")
+  /// Die App ist bereits auf dem neusten Stand
+  internal static let mgmTxtAlertMessageUpToDate = LocalizedStringKey("mgm_txt_alert_message_up_to_date")
   /// Report error
   internal static let msgsBtnFormatError = LocalizedStringKey("msgs_btn_format_error")
   /// Show pickup code
@@ -1173,6 +1231,18 @@ internal enum L10n {
   internal static let onbLegTxtSubtitle = LocalizedStringKey("onb_leg_txt_subtitle")
   /// Terms of Use & Privacy Policy
   internal static let onbLegTxtTitle = LocalizedStringKey("onb_leg_txt_title")
+  /// Das Namensfeld darf nicht leer sein
+  internal static let onbPrfTxtAlertMessage = LocalizedStringKey("onb_prf_txt_alert_message")
+  /// Fehler
+  internal static let onbPrfTxtAlertTitle = LocalizedStringKey("onb_prf_txt_alert_title")
+  /// Das hilft Ihnen dabei, den Überblick zu behalten, wenn Sie die Rezepte für mehrere Personen verwalten möchten.
+  internal static let onbPrfTxtFootnote = LocalizedStringKey("onb_prf_txt_footnote")
+  /// Erstes Profil
+  internal static let onbPrfTxtInitialName = LocalizedStringKey("onb_prf_txt_initial_name")
+  /// Vorname und Nachname
+  internal static let onbPrfTxtPlaceholder = LocalizedStringKey("onb_prf_txt_placeholder")
+  /// Wie sollen wir Sie nennen?
+  internal static let onbPrfTxtTitle = LocalizedStringKey("onb_prf_txt_title")
   /// Digital. Fast. Secure.
   internal static let onbStrTxtSubtitle = LocalizedStringKey("onb_str_txt_subtitle")
   /// The e-prescription
@@ -1219,8 +1289,6 @@ internal enum L10n {
   internal static let orderEgkTxtMailHealthcardAndPinBody = LocalizedStringKey("order_egk_txt_mail_healthcard_and_pin_body")
   /// Bestellung einer NFC-fähigen Gesundheitskarte inklusive PIN
   internal static let orderEgkTxtMailHealthcardAndPinSubject = LocalizedStringKey("order_egk_txt_mail_healthcard_and_pin_subject")
-  /// 
-  internal static let orderEgkTxtMailOnlyPinBody = LocalizedStringKey("order_egk_txt_mail_only_pin_body")
   /// Krankenversicherung wählen
   internal static let orderEgkTxtPickerInsuranceHeader = LocalizedStringKey("order_egk_txt_picker_insurance_header")
   /// Auswahl treffen
@@ -1311,6 +1379,8 @@ internal enum L10n {
   internal static let phaRedeemTxtTitleMail = LocalizedStringKey("pha_redeem_txt_title_mail")
   /// Reservation
   internal static let phaRedeemTxtTitleReservation = LocalizedStringKey("pha_redeem_txt_title_reservation")
+  /// Erneut probieren
+  internal static let phaSearchBtnErrorNoServerResponse = LocalizedStringKey("pha_search_btn_error_no_server_response")
   /// Share location
   internal static let phaSearchBtnLocationHintAction = LocalizedStringKey("pha_search_btn_location_hint_action")
   /// Filter
@@ -1329,6 +1399,10 @@ internal enum L10n {
   internal static let phaSearchTxtErrorAlertMessage = LocalizedStringKey("pha_search_txt_error_alert_message")
   /// Error
   internal static let phaSearchTxtErrorAlertTitle = LocalizedStringKey("pha_search_txt_error_alert_title")
+  /// Server antwortet nicht
+  internal static let phaSearchTxtErrorNoServerResponseHeadline = LocalizedStringKey("pha_search_txt_error_no_server_response_headline")
+  /// Bitte probieren Sie es in einigen Minuten erneut.
+  internal static let phaSearchTxtErrorNoServerResponseSubheadline = LocalizedStringKey("pha_search_txt_error_no_server_response_subheadline")
   /// Delivery service
   internal static let phaSearchTxtFilterMessenger = LocalizedStringKey("pha_search_txt_filter_messenger")
   /// Mail order
@@ -1363,6 +1437,14 @@ internal enum L10n {
   internal static let phaSearchTxtTitle = LocalizedStringKey("pha_search_txt_title")
   /// Done! 🎉
   internal static let phaSuccessRedeemTitle = LocalizedStringKey("pha_success_redeem_title")
+  /// Fertig
+  internal static let proBtnSelectionClose = LocalizedStringKey("pro_btn_selection_close")
+  /// Profile bearbeiten
+  internal static let proBtnSelectionEdit = LocalizedStringKey("pro_btn_selection_edit")
+  /// Nicht angemeldet
+  internal static let proTxtSelectionProfileNotConnected = LocalizedStringKey("pro_txt_selection_profile_not_connected")
+  /// Profil wählen
+  internal static let proTxtSelectionTitle = LocalizedStringKey("pro_txt_selection_title")
   /// gesund.bund.de öffnen
   internal static let prscDtlHntGesundBundDeBtn = LocalizedStringKey("prsc_dtl_hnt_gesund_bund_de_btn")
   /// Fachlich geprüfte Informationen zu Krankheiten, ICD-Codes und zu Vorsorge- und Pflegethemen finden Sie im Nationalen Gesundheitsportal.
@@ -1543,8 +1625,28 @@ internal enum L10n {
   internal static let sectionTxtIsActiveValue = LocalizedStringKey("section_txt_is_active_value")
   /// Nicht Ausgewählt
   internal static let sectionTxtIsInactiveValue = LocalizedStringKey("section_txt_is_inactive_value")
-  /// Delete login details
-  internal static let stgBtnLogout = LocalizedStringKey("stg_btn_logout")
+  /// Ihre Gesundheitskarte ist bereits mit einem anderen Profil verbunden. Wechseln Sie zu Profil %@.
+  internal static func sessionErrorCardConnectedWithOtherProfile(_ element1: String) -> LocalizedStringKey {
+    LocalizedStringKey("session_error_card_connected_with_other_profile_\(element1)")
+  }
+  /// Das aktuelle Profil ist bereits mit einer anderen Gesundheitskarte (Krankenversichertennummer: %@) verbunden.
+  internal static func sessionErrorCardProfileMismatch(_ element1: String) -> LocalizedStringKey {
+    LocalizedStringKey("session_error_card_profile_mismatch_\(element1)")
+  }
+  /// Es konnte kein ausgewähltes Profil gefunden werden. Bitte wählen Sie ein Profil aus.
+  internal static let sessionErrorNoProfile = LocalizedStringKey("session_error_no_profile")
+  /// Profil hinzufügen
+  internal static let stgBtnAddProfile = LocalizedStringKey("stg_btn_add_profile")
+  /// Profil löschen
+  internal static let stgBtnEditProfileDelete = LocalizedStringKey("stg_btn_edit_profile_delete")
+  /// Abbrechen
+  internal static let stgBtnEditProfileDeleteAlertCancel = LocalizedStringKey("stg_btn_edit_profile_delete_alert_cancel")
+  /// Anmelden
+  internal static let stgBtnEditProfileLogin = LocalizedStringKey("stg_btn_edit_profile_login")
+  /// Abmelden
+  internal static let stgBtnEditProfileLogout = LocalizedStringKey("stg_btn_edit_profile_logout")
+  /// Speichern
+  internal static let stgBtnNewProfileCreate = LocalizedStringKey("stg_btn_new_profile_create")
   /// Privacy Policy
   internal static let stgDpoTxtDataPrivacy = LocalizedStringKey("stg_dpo_txt_data_privacy")
   /// Open source licences
@@ -1617,14 +1719,50 @@ internal enum L10n {
   internal static let stgTxtAlertTitleDemoMode = LocalizedStringKey("stg_txt_alert_title_demo_mode")
   /// Demo mode
   internal static let stgTxtDemoMode = LocalizedStringKey("stg_txt_demo_mode")
+  /// Hintergrundfarbe
+  internal static let stgTxtEditProfileBackgroundSectionTitle = LocalizedStringKey("stg_txt_edit_profile_background_section_title")
+  /// Hiermit werden alle Daten auf diesem Gerät gelöscht. Ihre Rezepte im Gesundheitsnetzwerk bleiben erhalten.
+  internal static let stgTxtEditProfileDeleteConfirmationMessage = LocalizedStringKey("stg_txt_edit_profile_delete_confirmation_message")
+  /// Profil löschen?
+  internal static let stgTxtEditProfileDeleteConfirmationTitle = LocalizedStringKey("stg_txt_edit_profile_delete_confirmation_title")
+  /// Das Namensfeld darf nicht leer sein
+  internal static let stgTxtEditProfileEmptyNameErrorMessage = LocalizedStringKey("stg_txt_edit_profile_empty_name_error_message")
+  /// Fehler
+  internal static let stgTxtEditProfileErrorMessageTitle = LocalizedStringKey("stg_txt_edit_profile_error_message_title")
+  /// Hiermit trennen Sie die Verbindung zum Gesundheitsnetzwerk. Sie erhalten keine neuen Rezepte oder Nachrichten.
+  internal static let stgTxtEditProfileLogoutInfo = LocalizedStringKey("stg_txt_edit_profile_logout_info")
+  /// Name eingeben
+  internal static let stgTxtEditProfileNamePlaceholder = LocalizedStringKey("stg_txt_edit_profile_name_placeholder")
+  /// Sicherheit
+  internal static let stgTxtEditProfileSecuritySectionTitle = LocalizedStringKey("stg_txt_edit_profile_security_section_title")
+  /// Zugangsschlüssel zum Rezeptdienst
+  internal static let stgTxtEditProfileSecurityShowTokensDescription = LocalizedStringKey("stg_txt_edit_profile_security_show_tokens_description")
+  /// Sie erhalten einen Token, wenn Sie am Rezeptdienst angemeldet sind.
+  internal static let stgTxtEditProfileSecurityShowTokensHint = LocalizedStringKey("stg_txt_edit_profile_security_show_tokens_hint")
+  /// Tokens anzeigen
+  internal static let stgTxtEditProfileSecurityShowTokensLabel = LocalizedStringKey("stg_txt_edit_profile_security_show_tokens_label")
+  /// Profil
+  internal static let stgTxtEditProfileTitle = LocalizedStringKey("stg_txt_edit_profile_title")
   /// Our demo mode shows you all the functions of the app – without a medical card.
   internal static let stgTxtFootnoteDemoMode = LocalizedStringKey("stg_txt_footnote_demo_mode")
   /// Launch demo mode
   internal static let stgTxtHeaderDemoMode = LocalizedStringKey("stg_txt_header_demo_mode")
   /// Legal information
   internal static let stgTxtHeaderLegalInfo = LocalizedStringKey("stg_txt_header_legal_info")
+  /// Profile
+  internal static let stgTxtHeaderProfiles = LocalizedStringKey("stg_txt_header_profiles")
   /// Security
   internal static let stgTxtHeaderSecurity = LocalizedStringKey("stg_txt_header_security")
+  /// Hintergrundfarbe
+  internal static let stgTxtNewProfileBackgroundSectionTitle = LocalizedStringKey("stg_txt_new_profile_background_section_title")
+  /// Fehler
+  internal static let stgTxtNewProfileErrorMessageTitle = LocalizedStringKey("stg_txt_new_profile_error_message_title")
+  /// Das Namensfeld darf nicht leer sein
+  internal static let stgTxtNewProfileMissingNameError = LocalizedStringKey("stg_txt_new_profile_missing_name_error")
+  /// Name eingeben
+  internal static let stgTxtNewProfileNamePlaceholder = LocalizedStringKey("stg_txt_new_profile_name_placeholder")
+  /// Neues Profil anlegen
+  internal static let stgTxtNewProfileTitle = LocalizedStringKey("stg_txt_new_profile_title")
   /// Face ID
   internal static let stgTxtSecurityOptionFaceidTitle = LocalizedStringKey("stg_txt_security_option_faceid_title")
   /// Kennwort
@@ -1645,6 +1783,10 @@ internal enum L10n {
   internal static let tabTxtMain = LocalizedStringKey("tab_txt_main")
   /// Messages
   internal static let tabTxtMessages = LocalizedStringKey("tab_txt_messages")
+  /// Apotheken
+  internal static let tabTxtPharmacySearch = LocalizedStringKey("tab_txt_pharmacy_search")
+  /// Einstellungen
+  internal static let tabTxtSettings = LocalizedStringKey("tab_txt_settings")
 }
 // swiftlint:enable function_parameter_count identifier_name line_length type_body_length
 

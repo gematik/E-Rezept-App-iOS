@@ -17,6 +17,7 @@
 //
 
 import ComposableArchitecture
+import eRpKit
 import Introspect
 import SwiftUI
 
@@ -32,7 +33,7 @@ struct GroupedPrescriptionListView: View {
     struct ViewState: Equatable {
         let isLoading: Bool
         let showError: Bool
-        let error: ErxTaskRepositoryError?
+        let error: ErxRepositoryError?
         let showPrescriptionDetails: Bool
 
         let isRedeemViewPresented: Bool

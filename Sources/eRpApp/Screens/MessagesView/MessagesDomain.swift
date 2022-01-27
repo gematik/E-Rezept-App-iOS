@@ -55,13 +55,13 @@ enum MessagesDomain: Equatable {
         case subscribeToCommunicationChanges
         case communicationChangeReceived([MessageDomain.State])
         case message(MessageDomain.State.ID, MessageDomain.Action)
-        case didReceiveSave(Result<Bool, ErxTaskRepositoryError>)
+        case didReceiveSave(Result<Bool, ErxRepositoryError>)
         case removeSubscription
     }
 
     struct Environment {
         let schedulers: Schedulers
-        let erxTaskRepository: ErxTaskRepositoryAccess
+        let erxTaskRepository: ErxTaskRepository
         let application: ResourceHandler
     }
 

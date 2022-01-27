@@ -36,9 +36,6 @@ extension SettingsView {
                 AppSecuritySelectionView(store: store)
             }
             .textCase(.none)
-            .onAppear {
-                viewStore.send(.loadSecurityOption)
-            }
         }
 
         private struct HeaderView: View {

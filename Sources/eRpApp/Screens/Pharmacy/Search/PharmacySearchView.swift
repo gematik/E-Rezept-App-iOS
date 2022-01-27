@@ -22,30 +22,36 @@ import SwiftUI
 
 struct PharmacySearchView: View {
     let store: PharmacySearchDomain.Store
+    let isModalView: Bool
 
-    init(store: PharmacySearchDomain.Store) {
+    init(store: PharmacySearchDomain.Store, isModalView: Bool = true) {
         self.store = store
+        self.isModalView = isModalView
     }
 
     var body: some View {
         WithViewStore(store) { viewStore in
-            VStack(alignment: .leading) {
+            VStack(spacing: 0) {
                 SearchBarView(store: store)
-                    .padding(8)
+                    .padding()
 
-                if viewStore.state.locationHintState {
+                GreyDivider(topPadding: 0)
+
+                if viewStore.state.showLocationHint {
                     LocalizationHintView(
-                        textAction: { viewStore.send(.locationButtonTapped) },
-                        closeAction: { viewStore.send(.closeLocationHint) }
+                        textAction: { viewStore.send(.hintButtonTapped) },
+                        closeAction: { viewStore.send(.hintDismissButtonTapped) }
                     )
-                    .padding([.top, .horizontal, .bottom])
+                    .padding(.horizontal)
+                    .padding(.top)
                 }
 
                 PharmacySearchResultView(store: store)
+                    .frame(maxHeight: .infinity)
 
-                Spacer()
+                PharmacyDetailViewNavigation(store: store, isModalView: isModalView)
 
-                PharmacyDetailViewNavigation(store: store)
+                Spacer(minLength: 0)
 
                 // Search-Filter sheet presentation
                 EmptyView()
@@ -62,16 +68,13 @@ struct PharmacySearchView: View {
                         )
                     }
             }
-            .padding(8)
             .alert(
                 store.scope(state: \.alertState),
                 dismiss: .alertDismissButtonTapped
             )
-            .navigationTitle(L10n.phaSearchTxtTitle)
             .navigationBarItems(
-                trailing: NavigationBarCloseItem { viewStore.send(.close) }
+                trailing: trailingNavigationBarItem()
             )
-            .navigationBarTitleDisplayMode(.inline)
             .introspectNavigationController { navigationController in
                 let navigationBar = navigationController.navigationBar
                 navigationBar.barTintColor = UIColor(Colors.systemBackground)
@@ -79,6 +82,24 @@ struct PharmacySearchView: View {
                 navigationBarAppearance.shadowColor = UIColor(Colors.systemColorClear)
                 navigationBarAppearance.backgroundColor = UIColor(Colors.systemBackground)
                 navigationBar.standardAppearance = navigationBarAppearance
+            }
+            .onAppear {
+                viewStore.send(.onAppear)
+            }
+        }
+    }
+
+    // TODO: rebuild view structure,  // swiftlint:disable:this todo
+    // also `trailingNavigationBarItem` and alike are deprecating (Use `toolbar(content:)`)
+    @ViewBuilder
+    private func trailingNavigationBarItem() -> some View {
+        WithViewStore(store) { viewStore in
+            if isModalView {
+                NavigationBarCloseItem {
+                    viewStore.send(.close)
+                }
+            } else {
+                EmptyView()
             }
         }
     }
@@ -89,38 +110,29 @@ struct PharmacySearchView: View {
         var body: some View {
             WithViewStore(store) { viewStore in
                 HStack {
-                    Group {
-                        Image(systemName: SFSymbolName.magnifyingGlas).padding()
-                        TextField(
-                            L10n.phaSearchTxtSearchHint,
-                            text: viewStore.binding(
-                                get: { $0.searchText },
-                                send: PharmacySearchDomain.Action.searchTextChanged
-                            ),
-                            onEditingChanged: { _ in },
-                            onCommit: { viewStore.send(.performSearch) }
-                        )
-                        .accessibility(identifier: A11y.pharmacySearch.phaSearchTxtSearchField)
-                        .introspectTextField { textField in
-                            textField.returnKeyType = .go
-                        }
-                        .foregroundColor(
-                            viewStore.state.searchText.count > 2 ? Colors.systemLabel : Colors.systemLabelTertiary
-                        )
+                    Image(systemName: SFSymbolName.magnifyingGlas).padding()
+                    TextField(
+                        L10n.phaSearchTxtSearchHint,
+                        text: viewStore.binding(
+                            get: { $0.searchText },
+                            send: PharmacySearchDomain.Action.searchTextChanged
+                        ),
+                        onEditingChanged: { _ in },
+                        onCommit: { viewStore.send(.performSearch) }
+                    )
+                    .accessibility(identifier: A11y.pharmacySearch.phaSearchTxtSearchField)
+                    .introspectTextField { textField in
+                        textField.returnKeyType = .go
                     }
-                    .accessibilityElement(children: .combine)
-                    .accessibility(label: Text(L10n.phaSearchTxtSearchHint))
-                    .accessibility(hint: Text(L10n.phaSearchTxtHintStartSearch))
-
-                    Button(action: {
-                        viewStore.send(.locationButtonTapped)
-                    }, label: {
-                        Image(systemName: viewStore.state.currentLocation != nil ?
-                            SFSymbolName.locationFill : SFSymbolName.location).padding()
-                    })
+                    .foregroundColor(
+                        viewStore.state.searchText.count > 2 ? Colors.systemLabel : Colors.systemLabelTertiary
+                    )
                 }
                 .foregroundColor(Colors.systemLabelSecondary)
-                .background(RoundedRectangle(cornerRadius: 16).fill(Colors.systemFillTertiary))
+                .background(RoundedRectangle(cornerRadius: 8).fill(Colors.systemFillTertiary))
+                .accessibilityElement(children: .combine)
+                .accessibility(label: Text(L10n.phaSearchTxtSearchHint))
+                .accessibility(hint: Text(L10n.phaSearchTxtHintStartSearch))
             }
         }
     }
@@ -137,7 +149,7 @@ struct PharmacySearchView: View {
                     message: NSLocalizedString("pha_search_txt_location_hint_message", comment: ""),
                     actionText: L10n.phaSearchBtnLocationHintAction,
                     imageName: Asset.Prescriptions.Details.apothekerin.name,
-                    closeAction: .closeLocationHint,
+                    closeAction: .hintDismissButtonTapped,
                     style: .neutral,
                     buttonStyle: .tertiary,
                     imageStyle: .topAligned
@@ -150,6 +162,8 @@ struct PharmacySearchView: View {
 
     private struct PharmacyDetailViewNavigation: View {
         let store: PharmacySearchDomain.Store
+        let isModalView: Bool
+
         var body: some View {
             WithViewStore(store) { viewStore in
                 NavigationLink(
@@ -159,7 +173,8 @@ struct PharmacySearchView: View {
                             action: PharmacySearchDomain.Action.pharmacyDetailView(action:)
                         )
                     ) { scopedStore in
-                        PharmacyDetailView(store: scopedStore)
+                        PharmacyDetailView(store: scopedStore, isModalView: isModalView)
+                            .navigationBarTitle(L10n.phaDetailTxtTitle, displayMode: .inline)
                     },
                     isActive: viewStore.binding(
                         get: { $0.pharmacyDetailState != nil },

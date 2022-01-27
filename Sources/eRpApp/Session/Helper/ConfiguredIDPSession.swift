@@ -76,11 +76,18 @@ class ConfiguredIDPSession: IDPSession {
         sessionProvider.map { $0.verify(signedChallenge) }.switchToLatest().eraseToAnyPublisher()
     }
 
-    func exchange(token: IDPExchangeToken,
-                  challengeSession: ChallengeSession,
-                  redirectURI: String?) -> AnyPublisher<IDPToken, IDPError> {
+    func exchange(
+        token: IDPExchangeToken,
+        challengeSession: ChallengeSession,
+        redirectURI: String?,
+        idTokenValidator: @escaping (TokenPayload.IDTokenPayload) -> Result<Bool, Error>
+    ) -> AnyPublisher<IDPToken, IDPError> {
         sessionProvider
-            .map { $0.exchange(token: token, challengeSession: challengeSession, redirectURI: redirectURI) }
+            .map { $0.exchange(token: token,
+                               challengeSession: challengeSession,
+                               redirectURI: redirectURI,
+                               idTokenValidator: idTokenValidator)
+            }
             .switchToLatest()
             .eraseToAnyPublisher()
     }
@@ -115,7 +122,13 @@ class ConfiguredIDPSession: IDPSession {
         sessionProvider.map { $0.startExtAuth(entry: entry) }.switchToLatest().eraseToAnyPublisher()
     }
 
-    func extAuthVerifyAndExchange(_ url: URL) -> AnyPublisher<IDPToken, IDPError> {
-        sessionProvider.map { $0.extAuthVerifyAndExchange(url) }.switchToLatest().eraseToAnyPublisher()
+    func extAuthVerifyAndExchange(
+        _ url: URL,
+        idTokenValidator: @escaping (TokenPayload.IDTokenPayload) -> Result<Bool, Error>
+    ) -> AnyPublisher<IDPToken, IDPError> {
+        sessionProvider
+            .map { $0.extAuthVerifyAndExchange(url, idTokenValidator: idTokenValidator) }
+            .switchToLatest()
+            .eraseToAnyPublisher()
     }
 }

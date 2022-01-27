@@ -29,14 +29,23 @@ import TrustStore
 import VAUClient
 
 class StandardSessionContainer: UserSession {
-    private lazy var keychainStorage = KeychainStorage()
+    private var keychainStorage: KeychainStorage
     private let schedulers: Schedulers
     private var erxTaskCoreDataStore: ErxTaskCoreDataStore
 
-    init(schedulers: Schedulers,
-         erxTaskCoreDataStore: ErxTaskCoreDataStore) {
+    var profileDataStore: ProfileDataStore
+
+    let profileId: UUID
+
+    init(for profileId: UUID,
+         schedulers: Schedulers,
+         erxTaskCoreDataStore: ErxTaskCoreDataStore,
+         profileDataStore: ProfileDataStore) {
+        self.profileId = profileId
         self.schedulers = schedulers
         self.erxTaskCoreDataStore = erxTaskCoreDataStore
+        self.profileDataStore = profileDataStore
+        keychainStorage = KeychainStorage(profileId: profileId)
     }
 
     var isDemoMode: Bool {
@@ -174,10 +183,10 @@ class StandardSessionContainer: UserSession {
         ConfiguredPharmacyRepository(localUserStore.configuration)
     }()
 
-    lazy var erxTaskRepository: ErxTaskRepositoryAccess = {
+    lazy var erxTaskRepository: ErxTaskRepository = {
         let disk = erxTaskCoreDataStore
         let repositoryPublisher = localUserStore.configuration
-            .map { configuration -> DefaultErxTaskRepository<ErxTaskCoreDataStore, ErxTaskFHIRDataStore> in
+            .map { configuration -> ErxTaskRepository in
                 let vauUrl = configuration.erp
                 let serverUrl = configuration.base
 
@@ -193,11 +202,10 @@ class StandardSessionContainer: UserSession {
                     httpClient: self.erpHttpClient(configuration: configuration, vau: vauSession)
                 )
                 let cloud = ErxTaskFHIRDataStore(fhirClient: fhirClient)
-
                 return DefaultErxTaskRepository(disk: disk, cloud: cloud)
             }
             .eraseToAnyPublisher()
-        return AnyErxTaskRepository(repositoryPublisher)
+        return StreamWrappedErxTaskRepository(stream: repositoryPublisher)
     }()
 
     lazy var appSecurityManager: AppSecurityManager = {
@@ -209,6 +217,14 @@ class StandardSessionContainer: UserSession {
             userDataStore: localUserStore
         )
     }()
+
+    func profile() -> AnyPublisher<Profile, LocalStoreError> {
+        profileDataStore.fetchProfile(by: profileId)
+            .compactMap { $0 }
+            .eraseToAnyPublisher()
+    }
+
+    lazy var profileSecureDataWiper: ProfileSecureDataWiper = DefaultProfileSecureDataWiper()
 }
 
 extension IDPSession {

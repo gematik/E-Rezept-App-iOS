@@ -28,13 +28,18 @@ enum AppDomain {
 
     enum Tab {
         case main
+        case pharmacySearch
         case messages
+        case settings
     }
 
     struct State: Equatable {
         var selectedTab: Tab
         var main: MainDomain.State
+        var pharmacySearch: PharmacySearchDomain.State
         var messages: MessagesDomain.State
+        var settingsState: SettingsDomain.State
+        var debug: DebugDomain.State
         var unreadMessagesCount: Int
 
         var isDemoMode: Bool
@@ -42,7 +47,11 @@ enum AppDomain {
 
     enum Action: Equatable {
         case main(action: MainDomain.Action)
+        case pharmacySearch(action: PharmacySearchDomain.Action)
         case messages(action: MessagesDomain.Action)
+        case settings(action: SettingsDomain.Action)
+        case debug(action: DebugDomain.Action)
+
         case isDemoModeReceived(Bool)
         case registerDemoModeListener
         case registerUnreadMessagesListener
@@ -67,18 +76,22 @@ enum AppDomain {
     private static let domainReducer = Reducer { state, action, environment in
         switch action {
         case .main,
-             .messages:
+             .pharmacySearch,
+             .messages,
+             .settings,
+             .debug:
             return .none
         case let .isDemoModeReceived(isDemoMode):
             state.isDemoMode = isDemoMode
-            state.main.settingsState?.isDemoMode = isDemoMode
+            state.settingsState.isDemoMode = isDemoMode
             return .none
         case .registerDemoModeListener:
             return environment.userSessionContainer.isDemoMode
                 .map(AppDomain.Action.isDemoModeReceived)
                 .eraseToEffect()
         case .registerUnreadMessagesListener:
-            return environment.userSession.erxTaskRepository.countAllUnreadCommunications(for: .reply)
+            return environment.userSessionContainer.userSession.erxTaskRepository
+                .countAllUnreadCommunications(for: ErxTask.Communication.Profile.reply)
                 .receive(on: environment.schedulers.main.animation())
                 .map(AppDomain.Action.unreadMessagesReceived)
                 .catch { _ in Effect.none }
@@ -107,8 +120,29 @@ enum AppDomain {
                 erxTaskRepository: appEnvironment.userSessionContainer.userSession.erxTaskRepository,
                 schedulers: appEnvironment.schedulers,
                 fhirDateFormatter: appEnvironment.fhirDateFormatter,
+                userProfileService: DefaultUserProfileService(
+                    profileDataStore: appEnvironment.userSessionContainer.userSession.profileDataStore,
+                    profileOnlineChecker: DefaultProfileOnlineChecker(),
+                    userSession: appEnvironment.userSessionContainer.userSession
+                ),
                 signatureProvider: appEnvironment.signatureProvider,
                 tracker: appEnvironment.tracker
+            )
+        }
+
+    private static let pharmacySearchPullbackReducer: AppDomain.Reducer =
+        PharmacySearchDomain.reducer.pullback(
+            state: \.pharmacySearch,
+            action: /AppDomain.Action.pharmacySearch(action:)
+        ) { appEnvironment in
+            PharmacySearchDomain.Environment(
+                schedulers: appEnvironment.schedulers,
+                pharmacyRepository: appEnvironment.userSessionContainer.userSession.pharmacyRepository,
+                locationManager: .live,
+                fhirDateFormatter: appEnvironment.fhirDateFormatter,
+                openHoursCalculator: PharmacyOpenHoursCalculator(),
+                referenceDateForOpenHours: nil,
+                userSession: appEnvironment.userSessionContainer.userSession
             )
         }
 
@@ -124,9 +158,41 @@ enum AppDomain {
             )
         }
 
+    private static let settingsPullbackReducer: Reducer =
+        SettingsDomain.reducer.pullback(
+            state: \.settingsState,
+            action: /AppDomain.Action.settings(action:)
+        ) { appEnvironment in
+            .init(
+                changeableUserSessionContainer: appEnvironment.userSessionContainer,
+                schedulers: appEnvironment.schedulers,
+                tracker: appEnvironment.tracker,
+                signatureProvider: appEnvironment.signatureProvider,
+                appSecurityManager: appEnvironment.userSession.appSecurityManager,
+                router: appEnvironment.router
+            )
+        }
+
+    private static let debugPullbackReducer: Reducer =
+        DebugDomain.reducer.pullback(
+            state: \.debug,
+            action: /AppDomain.Action.debug(action:)
+        ) { appEnvironment in
+            DebugDomain.Environment(
+                schedulers: appEnvironment.schedulers,
+                userSession: appEnvironment.userSession,
+                tracker: appEnvironment.tracker,
+                signatureProvider: appEnvironment.signatureProvider,
+                serviceLocatorDebugAccess: ServiceLocatorDebugAccess(serviceLocator: appEnvironment.serviceLocator)
+            )
+        }
+
     static let reducer = Reducer.combine(
         mainPullbackReducer,
+        pharmacySearchPullbackReducer,
         messagesPullbackReducer,
+        settingsPullbackReducer,
+        debugPullbackReducer,
         domainReducer
     )
     .recordActionsForHints()
@@ -143,7 +209,10 @@ extension AppDomain {
         static let state = State(
             selectedTab: .main,
             main: MainDomain.Dummies.state,
+            pharmacySearch: PharmacySearchDomain.Dummies.state,
             messages: MessagesDomain.Dummies.state,
+            settingsState: SettingsDomain.Dummies.state,
+            debug: DebugDomain.Dummies.state,
             unreadMessagesCount: 0,
             isDemoMode: false
         )

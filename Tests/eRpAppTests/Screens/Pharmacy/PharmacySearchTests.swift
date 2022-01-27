@@ -15,6 +15,7 @@
 //  limitations under the Licence.
 //  
 //
+import Combine
 import ComposableArchitecture
 import ComposableCoreLocation
 @testable import eRpApp
@@ -67,14 +68,6 @@ class PharmacySearchTests: XCTestCase {
         store = testStore(for: TestData.state)
         let testSearchText = "Apo"
         let expected: Result<[PharmacyLocation], PharmacyRepositoryError> = .success(TestData.pharmacies)
-        let expectedSorted: [PharmacyLocationViewModel] =
-            TestData.pharmaciesSortedAlphabetical.map {
-                PharmacyLocationViewModel(
-                    pharmacy: $0,
-                    referenceLocation: nil,
-                    referenceDate: TestData.openHoursTestReferenceDate
-                )
-            }
 
         store.assert(
             // when search text changes to valid search term...
@@ -100,9 +93,6 @@ class PharmacySearchTests: XCTestCase {
                         )
                     }
                 )
-            },
-            .receive(.sortedResultReceived(expectedSorted)) { state in
-                state.pharmacies = expectedSorted
             }
         )
     }
@@ -137,20 +127,11 @@ class PharmacySearchTests: XCTestCase {
         // given
         store = testStore(for: TestData.stateWithLocation)
         let expected: Result<[PharmacyLocation], PharmacyRepositoryError> = .success(TestData.pharmaciesWithLocations)
-        let expectedSorted: [PharmacyLocationViewModel] =
-            TestData.pharmaciesWithLocations.map {
-                PharmacyLocationViewModel(
-                    pharmacy: $0,
-                    referenceLocation: TestData.stateWithLocation.currentLocation,
-                    referenceDate: TestData.openHoursTestReferenceDate
-                )
-            }
 
         store.assert(
             // when user hits Location button start search...
             .send(.performSearch) { state in
                 // ...expect a search request to run
-                state.sortOrder = .distance
                 state.searchState = .searchRunning
             },
             .do { self.testScheduler.advance() },
@@ -166,11 +147,28 @@ class PharmacySearchTests: XCTestCase {
                         )
                     }
                 )
-            },
-            .receive(.sortedResultReceived(expectedSorted)) { state in
-                state.pharmacies = expectedSorted
             }
         )
+    }
+
+    func testRequestLocationOnAppearWhenLocationAuthorizationAlreadyGranted() {
+        var didRequestInUseAuthorization = false
+        let sut = testStore(for: TestData.stateWithLocation)
+        sut.environment.locationManager = .unimplemented(
+            authorizationStatus: { .authorizedWhenInUse },
+            create: { _ in Effect<LocationManager.Action, Never>.none },
+            locationServicesEnabled: { true },
+            requestWhenInUseAuthorization: { _ in
+                .fireAndForget { didRequestInUseAuthorization = true }
+            }
+        )
+
+        sut.send(.onAppear) { state in
+            state.isLocationServiceAuthorized = true
+            state.searchState = .searchAfterLocalizationWasAuthorized
+        }
+        sut.receive(.requestLocation)
+        expect(didRequestInUseAuthorization) == true
     }
 }
 

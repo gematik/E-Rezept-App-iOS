@@ -17,8 +17,11 @@
 //
 
 @testable import eRpLocalStorage
+import Foundation
 
 class MockCoreDataControllerFactory: CoreDataControllerFactory {
+    var databaseUrl = URL(fileURLWithPath: "/dev/null/ErxTask.db")
+
     var loadCoreDataControllerError: Error?
     var loadCoreDataControllerCallsCount = 0
     var loadCoreDataControllerCalled: Bool {

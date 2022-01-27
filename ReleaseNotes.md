@@ -1,3 +1,41 @@
+# Release 1.2.0
+
+### added (11 changes)
+
+- Add Migration Manager
+- Add AppMigrationDomain to start migration logic if needed
+- Add removal of SecureStorage data upon profile deletion
+- Add database relationship between auditEvents and profile
+- Add medication hint to gesund.bund.de to dosage instructions
+- Add ProfilesDomain and according views
+- Add Edit Profile and Add New Profile
+- Add Profile functionality to DemoMode
+- Add Profile Selection to MainScreen
+- Add Profile creation to onboarding
+- Add pharmacy search to TabBar
+
+### changed (9 changes)
+
+- Move IDPTokenView to be located inside EditProfile instead of SettingsView
+- Change profile name length in navigation header and remove navigation title in main view
+- Move logout to individual Profile Screens
+- Change to fetch for a specific task to be done without profile predicate so
+- Refactor pharmacy search view
+- Move SettingsDomain and DebugDomain from MainDomain into AppDomain
+- Empty search result view
+- Location hint
+- Refactor ErxTaskRepository to not be generic
+
+### internal (3 changes)
+
+- Update TCA, Introspect, CombineSchedulers dependencies
+- Add ApoVZ Integration Tests
+- Reenable Integration Tests
+
+### removed (1 change)
+
+- Remove unused strings and variables
+
 # Release 1.1.2
 
 ### added (2 changes)

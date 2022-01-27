@@ -17,6 +17,7 @@
 //
 
 import Combine
+import CombineSchedulers
 import CoreData
 import eRpKit
 @testable import eRpLocalStorage
@@ -65,7 +66,7 @@ final class ProfileCoreDataStoreTests: XCTestCase {
     private func loadProfileCoreDataStore(for _: UUID? = nil) -> ProfileCoreDataStore {
         ProfileCoreDataStore(
             coreDataControllerFactory: loadFactory(),
-            backgroundQueue: DispatchQueue.main
+            backgroundQueue: AnyScheduler.main
         )
     }
 
@@ -73,7 +74,7 @@ final class ProfileCoreDataStoreTests: XCTestCase {
         ErxTaskCoreDataStore(
             profileId: profileId,
             coreDataControllerFactory: loadFactory(),
-            backgroundQueue: DispatchQueue.main
+            backgroundQueue: AnyScheduler.main
         )
     }
 
@@ -121,7 +122,7 @@ final class ProfileCoreDataStoreTests: XCTestCase {
 
         // verify result
         var receivedListAllProfileValues = [[Profile]]()
-        var receivedCompletions = [Subscribers.Completion<ProfileCoreDataStore.Error>]()
+        var receivedCompletions = [Subscribers.Completion<LocalStoreError>]()
         let cancellable = store.listAllProfiles()
             .sink(receiveCompletion: { completion in
                 receivedCompletions.append(completion)
@@ -151,13 +152,13 @@ final class ProfileCoreDataStoreTests: XCTestCase {
 
     func testSaveProfilesWithFailingLoadingDatabase() throws {
         let factory = MockCoreDataControllerFactory()
-        factory.loadCoreDataControllerError = CoreDataStoreError.notImplemented
+        factory.loadCoreDataControllerError = LocalStoreError.notImplemented
         let store = ProfileCoreDataStore(
             coreDataControllerFactory: factory,
-            backgroundQueue: DispatchQueue.main
+            backgroundQueue: AnyScheduler.main
         )
 
-        var receivedSaveCompletions = [Subscribers.Completion<ErxTaskCoreDataStore.Error>]()
+        var receivedSaveCompletions = [Subscribers.Completion<LocalStoreError>]()
         var receivedSaveResults = [Bool]()
 
         let cancellable = store.save(profiles: [profileSimple])
@@ -171,7 +172,7 @@ final class ProfileCoreDataStoreTests: XCTestCase {
         expect(receivedSaveResults.count).toEventually(equal(0))
         expect(receivedSaveCompletions.count).toEventually(equal(1))
         expect(receivedSaveCompletions.first) ==
-            .failure(CoreDataStoreError.initialization(error: factory.loadCoreDataControllerError!))
+            .failure(LocalStoreError.initialization(error: factory.loadCoreDataControllerError!))
 
         cancellable.cancel()
     }
@@ -187,7 +188,7 @@ final class ProfileCoreDataStoreTests: XCTestCase {
         try store.add(profiles: [heinz, dieter])
 
         var receivedListAllProfileValues = [[Profile]]()
-        var receivedCompletions = [Subscribers.Completion<ProfileCoreDataStore.Error>]()
+        var receivedCompletions = [Subscribers.Completion<LocalStoreError>]()
 
         // when
         let cancellable = store.listAllProfiles()
@@ -202,8 +203,8 @@ final class ProfileCoreDataStoreTests: XCTestCase {
         // than two profiles should be received
         expect(receivedListAllProfileValues[0].count) == 2
         let receivedProfiles = receivedListAllProfileValues[0]
-        expect(receivedProfiles[0]) == dieter
-        expect(receivedProfiles[1]) == heinz
+        expect(receivedProfiles[0]) == heinz
+        expect(receivedProfiles[1]) == dieter
 
         cancellable.cancel()
     }
@@ -257,7 +258,7 @@ final class ProfileCoreDataStoreTests: XCTestCase {
 
         // when deleting the profile
         var receivedDeleteResults = [Bool]()
-        var receivedDeleteCompletions = [Subscribers.Completion<ErxTaskCoreDataStore.Error>]()
+        var receivedDeleteCompletions = [Subscribers.Completion<LocalStoreError>]()
         _ = store.delete(profiles: [profileWithTasksAndAuditEvents])
             .sink(receiveCompletion: { completion in
                 receivedDeleteCompletions.append(completion)
@@ -347,6 +348,65 @@ final class ProfileCoreDataStoreTests: XCTestCase {
         cancellable.cancel()
     }
 
+    func testUpdateProfileWithMatchingProfileInStore() throws {
+        // given
+        let store = loadProfileCoreDataStore()
+        try store.add(profiles: [profileAuthenticated])
+
+        // when
+        var receivedUpdateValues = [Bool]()
+        var expectedResult: Profile?
+        _ = store.update(profileId: profileAuthenticated.id) { profile in
+            profile.name = "Updated Name"
+            expectedResult = profile
+        }
+        .sink(receiveCompletion: { completion in
+            expect(completion) == .finished
+        }, receiveValue: { result in
+            receivedUpdateValues.append(result)
+        })
+
+        expect(receivedUpdateValues.count).toEventually(equal(1))
+
+        var receivedListAllProfileValues = [[Profile]]()
+        // we observe all store changes
+        let cancellable = store.listAllProfiles()
+            .sink(receiveCompletion: { _ in
+                fail("did not expect to complete")
+            }, receiveValue: { profiles in
+                receivedListAllProfileValues.append(profiles)
+            })
+
+        // than
+        expect(receivedListAllProfileValues.count).toEventually(equal(1))
+        expect(receivedListAllProfileValues.first?.count) == 1
+        expect(receivedListAllProfileValues.first?.first) == expectedResult
+
+        cancellable.cancel()
+    }
+
+    func testUpdateProfileWithoutMatchingProfileInStore() throws {
+        let store = loadProfileCoreDataStore()
+        var receivedUpdateValues = [Bool]()
+        var receivedCompletions = [Subscribers.Completion<LocalStoreError>]()
+
+        let cancellable = store.update(profileId: profileAuthenticated.id) { _ in
+            fail("should not be called if an error fetching profile occurs")
+        }
+        .sink(receiveCompletion: { completion in
+            receivedCompletions.append(completion)
+        }, receiveValue: { result in
+            receivedUpdateValues.append(result)
+        })
+
+        expect(receivedCompletions.count).toEventually(equal(1))
+        let expectedError = LocalStoreError.write(error: ProfileCoreDataStore.Error.noMatchingEntity)
+        expect(receivedCompletions.first) == .failure(expectedError)
+        expect(receivedUpdateValues.count).toEventually(equal(0))
+
+        cancellable.cancel()
+    }
+
     func testFetchingProfilesWithTasksAndAuditEvents() throws {
         // given
         let profileStore = loadProfileCoreDataStore()
@@ -358,14 +418,13 @@ final class ProfileCoreDataStoreTests: XCTestCase {
 
         // when fetching ...
         var receivedListAllProfileValues = [[Profile]]()
-        var receivedCompletions = [Subscribers.Completion<ProfileCoreDataStore.Error>]()
+        var receivedCompletions = [Subscribers.Completion<LocalStoreError>]()
         let cancellable = profileStore.listAllProfiles()
             .sink(receiveCompletion: { completion in
                 receivedCompletions.append(completion)
             }, receiveValue: { profiles in
                 receivedListAllProfileValues.append(profiles)
             })
-
         expect(receivedCompletions.count) == 0
         expect(receivedListAllProfileValues.count).toEventually(equal(1))
         // than the stored profile with tasks and auditEvents should be returned
@@ -378,14 +437,13 @@ final class ProfileCoreDataStoreTests: XCTestCase {
         expect(profile.identifier) == profileWithTasksAndAuditEvents.identifier
         expect(profile.erxTasks).to(contain(profileWithTasksAndAuditEvents.erxTasks))
         expect(profile.erxAuditEvents).to(contain(profileWithTasksAndAuditEvents.erxAuditEvents))
-
         cancellable.cancel()
     }
 }
 
 extension ProfileCoreDataStore {
     func add(profiles: [Profile]) throws {
-        var receivedSaveCompletions = [Subscribers.Completion<ProfileCoreDataStore.Error>]()
+        var receivedSaveCompletions = [Subscribers.Completion<LocalStoreError>]()
         var receivedSaveResults = [Bool]()
 
         let cancellable = save(profiles: profiles)

@@ -33,6 +33,21 @@ extension AppStoreSnapshotTests {
             displayType: .fullDetail
         )
 
+        let testProfileTheoTestprofil = UserProfile(
+            profile: Profile(
+                name: "Theo Testprofil",
+                identifier: UUID(),
+                created: Date(),
+                insuranceId: nil,
+                color: .green,
+                emoji: "🌮",
+                lastAuthenticated: nil,
+                erxTasks: [],
+                erxAuditEvents: []
+            ),
+            connectionStatus: .connected
+        )
+
         let state = GroupedPrescriptionListDomain.State(
             groupedPrescriptions: Array(
                 repeating: groupedPrescription,
@@ -41,8 +56,10 @@ extension AppStoreSnapshotTests {
         )
 
         return MainView(
-            store: MainDomain.Dummies.storeFor(MainDomain.State(prescriptionListState: state,
-                                                                debug: DebugDomain.State(trackingOptOut: true)))
+            store: MainDomain.Dummies.storeFor(MainDomain.State(
+                prescriptionListState: state,
+                profile: testProfileTheoTestprofil
+            ))
         )
     }
 }

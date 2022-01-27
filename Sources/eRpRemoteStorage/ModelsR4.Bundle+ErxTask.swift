@@ -117,7 +117,7 @@ extension ModelsR4.Bundle {
                 phone: patient?.phone,
                 status: patientReceiptBundle.coverageStatus,
                 insurance: patientReceiptBundle.coverage?.payor.first?.display?.value?.string,
-                insuranceIdentifier: patientReceiptBundle.coverage?.payor.first?.identifier?.value?.value?.string
+                insuranceId: patient?.insuranceId
             ),
             practitioner: ErxTask.Practitioner(
                 lanr: practitioner?.lanr,

@@ -185,7 +185,29 @@ extension ErxTask: Comparable {
     }
 
     public static func ==(lhs: ErxTask, rhs: ErxTask) -> Bool {
-        lhs.identifier == rhs.identifier
+        lhs.identifier == rhs.identifier &&
+            lhs.status == rhs.status &&
+            lhs.prescriptionId == rhs.prescriptionId &&
+            lhs.accessCode == rhs.accessCode &&
+            lhs.fullUrl == rhs.fullUrl &&
+            lhs.authoredOn == rhs.authoredOn &&
+            lhs.lastModified == rhs.lastModified &&
+            lhs.expiresOn == rhs.expiresOn &&
+            lhs.acceptedUntil == rhs.acceptedUntil &&
+            lhs.redeemedOn == rhs.redeemedOn &&
+            lhs.author == rhs.author &&
+            lhs.noctuFeeWaiver == rhs.noctuFeeWaiver &&
+            lhs.substitutionAllowed == rhs.substitutionAllowed &&
+            lhs.source == rhs.source &&
+            lhs.dispenseValidityEnd == rhs.dispenseValidityEnd &&
+            lhs.medication == rhs.medication &&
+            lhs.patient == rhs.patient &&
+            lhs.practitioner == rhs.practitioner &&
+            lhs.organization == rhs.organization &&
+            lhs.workRelatedAccident == rhs.workRelatedAccident &&
+            lhs.auditEvents.elementsEqual(rhs.auditEvents) &&
+            lhs.communications.elementsEqual(rhs.communications) &&
+            lhs.medicationDispense == rhs.medicationDispense
     }
 
     public func hash(into hasher: inout Hasher) {
@@ -221,23 +243,30 @@ extension ErxTask {
                     phone: String? = nil,
                     status: String? = nil,
                     insurance: String? = nil,
-                    insuranceIdentifier: String? = nil) {
+                    insuranceId: String? = nil) {
             self.name = name
             self.address = address
             self.birthDate = birthDate
             self.phone = phone
             self.status = status
             self.insurance = insurance
-            self.insuranceIdentifier = insuranceIdentifier
+            self.insuranceId = insuranceId
         }
 
+        /// First and last name of the patient (e.g.: Anna Vetter)
         public let name: String?
+        /// Full address incl. street, city, postcode
         public let address: String?
+        /// Patient birthdate (e.g.: 2010-01-31)
         public let birthDate: String?
+        /// Patient phone number
         public let phone: String?
+        /// Contract status (e.g.: 3 == family)
         public let status: String?
+        /// Name of the health insurance (e.g.:  IT Versicherung)
         public let insurance: String?
-        public let insuranceIdentifier: String?
+        /// Health card insurance identifier a.k.a. kvnr (e.g: X764228533)
+        public let insuranceId: String?
     }
 
     public struct Organization: Hashable {

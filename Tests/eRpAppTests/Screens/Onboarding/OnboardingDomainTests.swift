@@ -16,14 +16,17 @@
 //  
 //
 
+import Combine
 import ComposableArchitecture
 @testable import eRpApp
+import eRpKit
 import Nimble
 import XCTest
 
 final class OnboardingDomainTests: XCTestCase {
     let mockUserDataStore = MockUserDataStore()
     let mockAppSecurityManager = MockAppSecurityManager()
+    let mockProfileDataStore = MockProfileDataStore()
     typealias TestStore = ComposableArchitecture.TestStore<
         OnboardingDomain.State,
         OnboardingDomain.State,
@@ -39,7 +42,8 @@ final class OnboardingDomainTests: XCTestCase {
             environment: OnboardingDomain.Environment(
                 appVersion: AppVersion.current,
                 localUserStore: mockUserDataStore,
-                schedulers: Schedulers(),
+                profileStore: mockProfileDataStore,
+                schedulers: Schedulers.immediate,
                 appSecurityManager: mockAppSecurityManager,
                 authenticationChallengeProvider: MockAuthenticationChallengeProvider(result: .success(true))
             )
@@ -52,7 +56,7 @@ final class OnboardingDomainTests: XCTestCase {
             with: OnboardingDomain.State(composition: composition)
         )
 
-        store.send(.saveAuthentication) { state in
+        store.send(.saveAuthenticationAndProfile) { state in
             state.composition.setPage(OnboardingDomain.Page.registerAuthentication)
             state.registerAuthenticationState.showNoSelectionMessage = true
         }
@@ -70,7 +74,7 @@ final class OnboardingDomainTests: XCTestCase {
                                          registerAuthenticationState: authenticationState)
         )
 
-        store.send(.saveAuthentication) { state in
+        store.send(.saveAuthenticationAndProfile) { state in
             state.composition.setPage(OnboardingDomain.Page.registerAuthentication)
             state.registerAuthenticationState.showNoSelectionMessage = true
         }
@@ -92,14 +96,14 @@ final class OnboardingDomainTests: XCTestCase {
                                          registerAuthenticationState: authenticationState)
         )
 
-        store.send(.saveAuthentication) { state in
+        store.send(.saveAuthenticationAndProfile) { state in
             state.composition.setPage(OnboardingDomain.Page.registerAuthentication)
             state.registerAuthenticationState.showNoSelectionMessage = true
         }
         expect(self.mockUserDataStore.setOnboardingVersionCalled).to(beFalse())
     }
 
-    func testSavingAuthenticationWithCorrectPassword() {
+    func testSavingAuthenticationAndProfileWithCorrectPasswordAndName() {
         let selectedOption: AppSecurityOption = .password
         mockAppSecurityManager.savePasswordReturnValue = true
         let authenticationState = RegisterAuthenticationDomain.State(
@@ -111,10 +115,14 @@ final class OnboardingDomainTests: XCTestCase {
         )
         let store = testStore(
             with: OnboardingDomain.State(composition: OnboardingDomain.Composition.allPages,
-                                         registerAuthenticationState: authenticationState)
+                                         registerAuthenticationState: authenticationState,
+                                         newProfileState: OnboardingNewProfileDomain.State(name: "Test Profile"))
         )
+        mockProfileDataStore.saveProfilesReturnValue = Just(true)
+            .setFailureType(to: LocalStoreError.self)
+            .eraseToAnyPublisher()
 
-        store.send(.saveAuthentication) { state in
+        store.send(.saveAuthenticationAndProfile) { state in
             state.composition.setPage(index: 0)
             state.registerAuthenticationState.selectedSecurityOption = .password
             state.registerAuthenticationState.passwordA = "ABC"
@@ -125,40 +133,127 @@ final class OnboardingDomainTests: XCTestCase {
         expect(self.mockAppSecurityManager.savePasswordReturnValue).to(beTrue())
         expect(self.mockUserDataStore.setAppSecurityOptionReceivedAppSecurityOption) == selectedOption.id
         expect(self.mockUserDataStore.setAppSecurityOptionCallsCount) == 1
-
+        store.receive(.saveProfile)
+        let savedProfile = mockProfileDataStore.saveProfilesReceivedProfiles!.first!
+        store.receive(.saveProfileReceived(.success(savedProfile.id)))
         store.receive(.dismissOnboarding)
         expect(self.mockUserDataStore.setHideOnboardingCallsCount) == 1
         expect(self.mockUserDataStore.setHideOnboardingReceivedHideOnboarding) == true
+        expect(self.mockUserDataStore.setSelectedProfileIdCallsCount) == 1
+        expect(self.mockUserDataStore.setSelectedProfileIdReceived) == savedProfile.id
+        expect(self.mockProfileDataStore.saveProfilesCallsCount) == 1
 
         expect(self.mockUserDataStore.setOnboardingVersionCalled).to(beTrue())
         expect(self.mockUserDataStore.setOnboardingVersionReceivedInvocations)
             .to(equal([AppVersion.current.productVersion]))
     }
 
-    func testSavingAuthenticationWithBiometry() {
+    func testSavingAuthenticationAndProfileWithBiometryAndCorrectName() {
         let selectedOption: AppSecurityOption = .biometry(.faceID)
         let authenticationState = RegisterAuthenticationDomain.State(
             availableSecurityOptions: [],
             selectedSecurityOption: .biometry(.faceID)
         )
         let store = testStore(
-            with: OnboardingDomain.State(composition: OnboardingDomain.Composition.allPages,
-                                         registerAuthenticationState: authenticationState)
+            with: OnboardingDomain.State(
+                composition: OnboardingDomain.Composition.allPages,
+                registerAuthenticationState: authenticationState,
+                newProfileState: OnboardingNewProfileDomain.State(name: "Test Profile")
+            )
         )
 
-        store.send(.saveAuthentication) { state in
+        mockProfileDataStore.saveProfilesReturnValue = Just(true)
+            .setFailureType(to: LocalStoreError.self)
+            .eraseToAnyPublisher()
+
+        store.send(.saveAuthenticationAndProfile) { state in
             state.composition.setPage(index: 0)
             state.registerAuthenticationState.selectedSecurityOption = selectedOption
         }
         expect(self.mockUserDataStore.setAppSecurityOptionReceivedAppSecurityOption) == selectedOption.id
         expect(self.mockUserDataStore.setAppSecurityOptionCallsCount) == 1
-
+        store.receive(.saveProfile)
+        let savedProfile = mockProfileDataStore.saveProfilesReceivedProfiles!.first!
+        store.receive(.saveProfileReceived(.success(savedProfile.id)))
         store.receive(.dismissOnboarding)
         expect(self.mockUserDataStore.setHideOnboardingCallsCount) == 1
         expect(self.mockUserDataStore.setHideOnboardingReceivedHideOnboarding) == true
+        expect(self.mockUserDataStore.setSelectedProfileIdCallsCount) == 1
+        expect(self.mockUserDataStore.setSelectedProfileIdReceived) == savedProfile.id
+        expect(self.mockProfileDataStore.saveProfilesCallsCount) == 1
 
         expect(self.mockUserDataStore.setOnboardingVersionCalled).to(beTrue())
         expect(self.mockUserDataStore.setOnboardingVersionReceivedInvocations)
             .to(equal([AppVersion.current.productVersion]))
+    }
+
+    func testSavingAuthenticationAndProfileWithBiometryAndIncorrectName() {
+        let selectedOption: AppSecurityOption = .biometry(.faceID)
+        let authenticationState = RegisterAuthenticationDomain.State(
+            availableSecurityOptions: [],
+            selectedSecurityOption: .biometry(.faceID)
+        )
+        let store = testStore(
+            with: OnboardingDomain.State(
+                composition: OnboardingDomain.Composition.allPages,
+                registerAuthenticationState: authenticationState,
+                newProfileState: OnboardingNewProfileDomain.State(name: "") // empty name is producing the error
+            )
+        )
+
+        mockProfileDataStore.saveProfilesReturnValue = Just(true)
+            .setFailureType(to: LocalStoreError.self)
+            .eraseToAnyPublisher()
+
+        store.send(.saveAuthenticationAndProfile) { state in
+            state.composition.setPage(index: 0)
+            state.registerAuthenticationState.selectedSecurityOption = selectedOption
+        }
+        expect(self.mockUserDataStore.setAppSecurityOptionReceivedAppSecurityOption) == selectedOption.id
+        expect(self.mockUserDataStore.setAppSecurityOptionCallsCount) == 1
+        store.receive(.saveProfile) { state in
+            state.composition.setPage(OnboardingDomain.Page.newProfile)
+            state.newProfileState.alertState = OnboardingNewProfileDomain.AlertStates.emptyName
+        }
+
+        expect(self.mockUserDataStore.setHideOnboardingCallsCount) == 0
+        expect(self.mockUserDataStore.setSelectedProfileIdCallsCount) == 0
+        expect(self.mockProfileDataStore.saveProfilesCallsCount) == 0
+        expect(self.mockUserDataStore.setOnboardingVersionCalled).to(beFalse())
+    }
+
+    func testSavingAuthenticationAndProfileWithBiometryAndFailingSaveProfile() {
+        let selectedOption: AppSecurityOption = .biometry(.faceID)
+        let authenticationState = RegisterAuthenticationDomain.State(
+            availableSecurityOptions: [],
+            selectedSecurityOption: .biometry(.faceID)
+        )
+        let store = testStore(
+            with: OnboardingDomain.State(
+                composition: OnboardingDomain.Composition.allPages,
+                registerAuthenticationState: authenticationState,
+                newProfileState: OnboardingNewProfileDomain.State(name: "Test Profile")
+            )
+        )
+        let expectedError = LocalStoreError.notImplemented
+        mockProfileDataStore.saveProfilesReturnValue = Fail(error: expectedError)
+            .eraseToAnyPublisher()
+
+        store.send(.saveAuthenticationAndProfile) { state in
+            state.composition.setPage(index: 0)
+            state.registerAuthenticationState.selectedSecurityOption = selectedOption
+        }
+        expect(self.mockUserDataStore.setAppSecurityOptionReceivedAppSecurityOption) == selectedOption.id
+        expect(self.mockUserDataStore.setAppSecurityOptionCallsCount) == 1
+        store.receive(.saveProfile)
+        store.receive(.saveProfileReceived(.failure(expectedError))) { state in
+            state.composition.setPage(OnboardingDomain.Page.newProfile)
+            state.newProfileState.alertState = OnboardingNewProfileDomain.AlertStates.for(expectedError)
+        }
+
+        expect(self.mockProfileDataStore.saveProfilesCallsCount) == 1
+        expect(self.mockUserDataStore.setHideOnboardingCallsCount) == 0
+        expect(self.mockUserDataStore.setSelectedProfileIdCallsCount) == 0
+        expect(self.mockUserDataStore.setOnboardingVersionCalled).to(beFalse())
     }
 }

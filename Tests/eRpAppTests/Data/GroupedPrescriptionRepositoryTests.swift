@@ -27,7 +27,8 @@ import XCTest
 final class GroupedPrescriptionRepositoryTests: XCTestCase {
     func testLoadingErxTasksFromDiskAndConvertingInGroupedPrescriptions() {
         let sut = GroupedPrescriptionInteractor(
-            erxTaskInteractor: AnyErxTaskRepository(Just(MockErxTaskRepository()).eraseToAnyPublisher())
+            erxTaskInteractor: StreamWrappedErxTaskRepository(stream: Just(FakeErxTaskRepository())
+                .eraseToAnyPublisher())
         )
 
         sut.loadLocal().test(expectations: { groupedPrescriptions in
@@ -77,7 +78,8 @@ final class GroupedPrescriptionRepositoryTests: XCTestCase {
 
     func testLoadingErxTasksFromCloudAndConvertingInGroupedPrescriptions() {
         let sut = GroupedPrescriptionInteractor(
-            erxTaskInteractor: AnyErxTaskRepository(Just(MockErxTaskRepository()).eraseToAnyPublisher())
+            erxTaskInteractor: StreamWrappedErxTaskRepository(stream: Just(FakeErxTaskRepository())
+                .eraseToAnyPublisher())
         )
 
         sut.loadRemoteAndSave(for: nil).test(expectations: { groupedPrescriptions in

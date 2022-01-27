@@ -18,16 +18,17 @@
 
 import Combine
 @testable import eRpApp
+import eRpKit
 
 class MockGroupedPrescriptionRepository: GroupedPrescriptionRepository {
     var prescriptions: [GroupedPrescription]
-    var loadLocalPublisher: AnyPublisher<[GroupedPrescription], AnyErxTaskRepository.ErrorType>
+    var loadLocalPublisher: AnyPublisher<[GroupedPrescription], ErxRepositoryError>
     var loadLocalCallsCount = 0
     var loadLocalCalled: Bool {
         loadLocalCallsCount > 0
     }
 
-    var loadRemoteAndSavePublisher: AnyPublisher<[GroupedPrescription], AnyErxTaskRepository.ErrorType>
+    var loadRemoteAndSavePublisher: AnyPublisher<[GroupedPrescription], ErxRepositoryError>
     var loadRemoteAndSaveCallsCount = 0
     var loadRemoteAndSaveCalled: Bool {
         loadRemoteAndSaveCallsCount > 0
@@ -37,26 +38,26 @@ class MockGroupedPrescriptionRepository: GroupedPrescriptionRepository {
                                           GroupedPrescription.Dummies.twoPrescriptions]) {
         prescriptions = groups
         loadLocalPublisher = Just(prescriptions)
-            .setFailureType(to: AnyErxTaskRepository.ErrorType.self)
+            .setFailureType(to: ErxRepositoryError.self)
             .eraseToAnyPublisher()
         loadRemoteAndSavePublisher = Just(prescriptions)
-            .setFailureType(to: AnyErxTaskRepository.ErrorType.self)
+            .setFailureType(to: ErxRepositoryError.self)
             .eraseToAnyPublisher()
     }
 
-    init(loadFromDisk: AnyPublisher<[GroupedPrescription], AnyErxTaskRepository.ErrorType>,
-         loadedFromCloudAndSaved: AnyPublisher<[GroupedPrescription], AnyErxTaskRepository.ErrorType>) {
+    init(loadFromDisk: AnyPublisher<[GroupedPrescription], ErxRepositoryError>,
+         loadedFromCloudAndSaved: AnyPublisher<[GroupedPrescription], ErxRepositoryError>) {
         prescriptions = []
         loadLocalPublisher = loadFromDisk
         loadRemoteAndSavePublisher = loadedFromCloudAndSaved
     }
 
-    func loadLocal() -> AnyPublisher<[GroupedPrescription], AnyErxTaskRepository.ErrorType> {
+    func loadLocal() -> AnyPublisher<[GroupedPrescription], ErxRepositoryError> {
         loadLocalCallsCount += 1
         return loadLocalPublisher
     }
 
-    func loadRemoteAndSave(for _: String?) -> AnyPublisher<[GroupedPrescription], AnyErxTaskRepository.ErrorType> {
+    func loadRemoteAndSave(for _: String?) -> AnyPublisher<[GroupedPrescription], ErxRepositoryError> {
         loadRemoteAndSaveCallsCount += 1
         return loadRemoteAndSavePublisher
     }

@@ -55,7 +55,7 @@ final class RedeemDomainTests: XCTestCase {
             phone: "555 1234567",
             status: "Mitglied",
             insurance: "AOK Rheinland/Hamburg",
-            insuranceIdentifier: "A123456789"
+            insuranceId: "A123456789"
         )
         medication = ErxTask.Medication(
             name: "Saflorblüten-Extrakt Pulver Peroral",
@@ -129,8 +129,7 @@ final class RedeemDomainTests: XCTestCase {
             environment: RedeemDomain.Environment(
                 schedulers: schedulers,
                 userSession: MockUserSession(),
-                fhirDateFormatter: FHIRDateFormatter.shared,
-                locationManager: .unimplemented()
+                fhirDateFormatter: FHIRDateFormatter.shared
             )
         )
     }

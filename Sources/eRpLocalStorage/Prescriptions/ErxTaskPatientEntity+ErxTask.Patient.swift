@@ -29,7 +29,7 @@ extension ErxTaskPatientEntity {
         address = patient.address
         birthDate = patient.birthDate
         insurance = patient.insurance
-        insuranceIdentifier = patient.insuranceIdentifier
+        insuranceIdentifier = patient.insuranceId
         name = patient.name
         phone = patient.phone
         status = patient.status
@@ -47,7 +47,7 @@ extension ErxTask.Patient {
             phone: entity.phone,
             status: entity.status,
             insurance: entity.insurance,
-            insuranceIdentifier: entity.insuranceIdentifier
+            insuranceId: entity.insuranceIdentifier
         )
     }
 }

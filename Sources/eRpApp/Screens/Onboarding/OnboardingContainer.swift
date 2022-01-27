@@ -19,11 +19,12 @@
 import ComposableArchitecture
 import SwiftUI
 
-struct OnboardingContainer: View {
+struct OnboardingContainer: View, KeyboardReadable {
     let store: Store<OnboardingDomain.State, OnboardingDomain.Action>
 
     @ObservedObject
     var viewStore: ViewStore<ViewState, OnboardingDomain.Action>
+    @State var isKeyboardVisible = false
 
     init(store: Store<OnboardingDomain.State, OnboardingDomain.Action>) {
         self.store = store
@@ -69,16 +70,21 @@ struct OnboardingContainer: View {
                         .tag(1)
                     OnboardingFeaturesView()
                         .tag(2)
+                    OnboardingNewProfileView(store: store.scope(state: { $0.newProfileState },
+                                                                action: { .newProfile(action: $0) }))
+                        .gesture(viewStore.isDragEnabled ? nil : DragGesture())
+                        .tag(3)
+
                     // [REQ:gemSpec_BSI_FdV:A_20834] view to register authentication in onboarding process
                     OnboardingRegisterAuthenticationView(
                         store: store.scope(state: { $0.registerAuthenticationState },
                                            action: { .registerAuthentication(action: $0) })
                     )
                     .gesture(viewStore.isDragEnabled ? nil : DragGesture())
-                    .tag(3)
+                    .tag(4)
 
-                    OnboardingLegalInfoView { withAnimation { viewStore.send(.saveAuthentication) } }
-                        .tag(4)
+                    OnboardingLegalInfoView { withAnimation { viewStore.send(.saveAuthenticationAndProfile) } }
+                        .tag(5)
                 }
             }
             .background(Colors.systemBackground)
@@ -88,9 +94,19 @@ struct OnboardingContainer: View {
             ZStack {
                 if viewStore.isShowingNextButton {
                     OnboardingNextButton(isEnabled: viewStore.isNextButtonEnabled) {
-                        withAnimation { viewStore.send(.nextPage) }
+                        // Due to a bug in iOS < 14.5 the keyboard animation somehow breaks
+                        // the page animation. For that we close the keyboard on first touch and
+                        // animate to the next page only if there is no keyboard on screen
+                        if isKeyboardVisible {
+                            UIApplication.shared.dismissKeyboard()
+                        } else {
+                            withAnimation { viewStore.send(.nextPage) }
+                        }
                     }
                 }
+            }
+            .onReceive(keyboardPublisher) { isKeyboardVisible in
+                self.isKeyboardVisible = isKeyboardVisible
             }
             .animation(.easeInOut)
         }

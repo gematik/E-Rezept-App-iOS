@@ -39,6 +39,8 @@ class DemoSessionContainer: UserSession {
 
     var extAuthRequestStorage: ExtAuthRequestStorage = DummyExtAuthRequestStorage()
 
+    var profileDataStore: ProfileDataStore = DemoProfileDataStore()
+
     lazy var biometrieIdpSession: IDPSession = {
         DemoIDPSession(storage: secureUserStore)
     }()
@@ -74,14 +76,10 @@ class DemoSessionContainer: UserSession {
         ConfiguredPharmacyRepository(localUserStore.configuration)
     }()
 
-    lazy var erxTaskRepository: ErxTaskRepositoryAccess = {
-        AnyErxTaskRepository(
-            Just(
-                DemoErxTaskRepository(
-                    requestDelayInSeconds: 0.9,
-                    schedulers: Schedulers()
-                )
-            ).eraseToAnyPublisher()
+    lazy var erxTaskRepository: ErxTaskRepository = {
+        DemoErxTaskRepository(
+            requestDelayInSeconds: 0.9,
+            schedulers: Schedulers()
         )
     }()
 
@@ -96,4 +94,18 @@ class DemoSessionContainer: UserSession {
     private(set) lazy var deviceSecurityManager: DeviceSecurityManager = {
         DemoDeviceSecurityManager()
     }()
+
+    let profileId = DemoProfileDataStore.anna.id
+
+    func profile() -> AnyPublisher<Profile, LocalStoreError> {
+        localUserStore.selectedProfileId
+            .compactMap { $0 }
+            .flatMap { userId in
+                self.profileDataStore.fetchProfile(by: userId)
+                    .compactMap { $0 }
+            }
+            .eraseToAnyPublisher()
+    }
+
+    lazy var profileSecureDataWiper: ProfileSecureDataWiper = DemoProfileSecureDataWiper()
 }

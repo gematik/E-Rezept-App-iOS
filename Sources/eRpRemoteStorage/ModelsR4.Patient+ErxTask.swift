@@ -84,4 +84,10 @@ extension ModelsR4.Patient {
 
         return postalCodeAndCity
     }
+
+    var insuranceId: String? {
+        identifier?.first { identifier in
+            identifier.system?.value?.url.absoluteString == FHIRResponseKeys.kvIDKey
+        }?.value?.value?.string
+    }
 }

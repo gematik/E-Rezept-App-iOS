@@ -16,7 +16,9 @@
 //  
 //
 
+import Combine
 import ComposableArchitecture
+import eRpKit
 import IDP
 
 enum ExtAuthPendingDomain {
@@ -55,8 +57,13 @@ enum ExtAuthPendingDomain {
         }
     }
 
+    /// `ExtAuthPendingDomain` error types
     enum Error: Swift.Error, Equatable {
+        /// Underlying `IDPError` for the external authentication agains `URL`
         case idpError(IDPError, URL)
+        /// Error when `Profile` validation with the given authentication fails.
+        /// Error is produces within the `IDPError.unspecified` error before saving the IDPToken
+        case profileValidation(error: IDTokenValidatorError)
     }
 
     enum Action: Equatable {
@@ -64,7 +71,8 @@ enum ExtAuthPendingDomain {
         case unregisterListener
         case pendingExtAuthRequestsReceived([ExtAuthChallengeSession])
         case externalLogin(URL)
-        case externalLoginReceived(Result<Bool, Error>)
+        case externalLoginReceived(Result<IDPToken, Error>)
+        case saveProfile(error: LocalStoreError)
         /// Hides the visisble part of the view, e.g. while finishing a login. The view itself will stay in the
         /// hierarchy, to handle additional requests.
         case hide
@@ -75,7 +83,9 @@ enum ExtAuthPendingDomain {
     struct Environment {
         let idpSession: IDPSession
         let schedulers: Schedulers
-
+        let currentProfile: AnyPublisher<Profile, LocalStoreError>
+        let idTokenValidator: AnyPublisher<IDTokenValidator, IDTokenValidatorError>
+        let profileDataStore: ProfileDataStore
         let extAuthRequestStorage: ExtAuthRequestStorage
     }
 
@@ -120,25 +130,45 @@ enum ExtAuthPendingDomain {
             guard let entry = entry else { return .none }
 
             state = .extAuthReceived(entry)
-            return environment.idpSession
-                .extAuthVerifyAndExchange(url)
-                .map { _ in true }
-                .mapError { .idpError($0, url) }
+            return environment.idTokenValidator
+                .mapError(Error.profileValidation)
+                .flatMap { idTokenValidator -> AnyPublisher<IDPToken, Error> in
+                    environment.idpSession
+                        .extAuthVerifyAndExchange(url, idTokenValidator: idTokenValidator.validate(idToken:))
+                        .mapError { error in
+                            if case let .unspecified(error) = error,
+                               let validationError = error as? IDTokenValidatorError {
+                                return .profileValidation(error: validationError)
+                            } else {
+                                return .idpError(error, url)
+                            }
+                        }
+                        .eraseToAnyPublisher()
+                }
                 .catchToEffect()
                 .cancellable(id: Token.login, cancelInFlight: true)
                 .map(Action.externalLoginReceived)
                 .receive(on: environment.schedulers.main.animation())
                 .eraseToEffect()
-        case .externalLoginReceived(.success):
+        case let .externalLoginReceived(.success(idpToken)):
             guard case let State.extAuthReceived(entry) = state else { return .none }
+            let insuranceId = try? idpToken.idTokenPayload().idNummer
             state = .extAuthSuccessful(entry)
-            return Effect(value: Action.hide)
+            return environment.saveInsuranceIdInProfile(insuranceId: insuranceId)
                 .delay(for: 2,
                        scheduler: environment.schedulers.main.animation())
                 .eraseToEffect()
+        case .saveProfile(error: _):
+            state = .extAuthFailed(saveProfileAlert)
+            return .none
         case let .externalLoginReceived(.failure(.idpError(error, url))):
             guard case let State.extAuthReceived(entry) = state else { return .none }
             let alertState = alertState(title: entry.name, message: error.localizedDescription, url: url)
+            state = .extAuthFailed(alertState)
+            return .none
+        case let .externalLoginReceived(.failure(.profileValidation(error: error))):
+            guard case let State.extAuthReceived(entry) = state else { return .none }
+            let alertState = alertState(title: entry.name, message: error.localizedDescription)
             state = .extAuthFailed(alertState)
             return .none
         case .hide:
@@ -157,14 +187,57 @@ enum ExtAuthPendingDomain {
         AlertState<Action>(
             title: TextState(L10n.mainTxtPendingextauthFailed(title)),
             message: TextState(message),
-            primaryButton: .default(TextState(L10n.mainTxtPendingextauthRetry), send: .externalLogin(url)),
-            secondaryButton: .cancel(TextState(L10n.mainTxtPendingextauthCancel), send: .cancelAllPendingRequests)
+            primaryButton: .default(TextState(L10n.mainTxtPendingextauthRetry),
+                                    action: .send(.externalLogin(url))),
+            secondaryButton: .cancel(TextState(L10n.mainTxtPendingextauthCancel),
+                                     action: .send(.cancelAllPendingRequests))
         )
     }
+
+    static func alertState(title: String, message: String) -> AlertState<Action> {
+        AlertState<Action>(
+            title: TextState(title),
+            message: TextState(message),
+            dismissButton: .cancel(TextState(L10n.mainTxtPendingextauthCancel),
+                                   action: .send(.cancelAllPendingRequests))
+        )
+    }
+
+    static var saveProfileAlert: AlertState<Action> = {
+        AlertState<Action>(
+            title: TextState(L10n.cdwTxtExtauthAlertTitleSaveProfile),
+            message: TextState(L10n.cdwTxtExtauthAlertMessageSaveProfile),
+            dismissButton: .cancel(TextState(L10n.cdwBtnExtauthAlertSaveProfile),
+                                   action: .send(.cancelAllPendingRequests))
+        )
+    }()
 
     static let reducer: Reducer = .combine(
         domainReducer
     )
+}
+
+extension ExtAuthPendingDomain.Environment {
+    func saveInsuranceIdInProfile(
+        insuranceId: String?
+    ) -> Effect<ExtAuthPendingDomain.Action, Never> {
+        currentProfile
+            .first()
+            .flatMap { profile -> AnyPublisher<Bool, LocalStoreError> in
+                profileDataStore.update(profileId: profile.id) { profile in
+                    profile.insuranceId = insuranceId
+                }
+                .eraseToAnyPublisher()
+            }
+            .map { _ in
+                ExtAuthPendingDomain.Action.hide
+            }
+            .catch { error in
+                Just(ExtAuthPendingDomain.Action.saveProfile(error: error))
+            }
+            .receive(on: schedulers.main)
+            .eraseToEffect()
+    }
 }
 
 extension ExtAuthPendingDomain {
@@ -172,6 +245,9 @@ extension ExtAuthPendingDomain {
         static let state = State()
         static let environment = Environment(idpSession: DemoIDPSession(storage: MemoryStorage()),
                                              schedulers: Schedulers(),
+                                             currentProfile: DemoSessionContainer().profile(),
+                                             idTokenValidator: DemoSessionContainer().idTokenValidator(),
+                                             profileDataStore: DemoProfileDataStore(),
                                              extAuthRequestStorage: DummyExtAuthRequestStorage())
 
         static let store = Store(initialState: state,
@@ -191,6 +267,8 @@ extension ExtAuthPendingDomain.Error: LocalizedError {
         switch self {
         case let .idpError(idpError, _):
             return idpError.localizedDescription
+        case let .profileValidation(error: error):
+            return error.localizedDescription
         }
     }
 }

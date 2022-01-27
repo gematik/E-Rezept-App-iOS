@@ -18,6 +18,7 @@
 
 import Combine
 import eRpKit
+import Foundation
 import IDP
 import Pharmacy
 import TrustStore
@@ -35,8 +36,12 @@ extension UserMode: UserSession {
         sessionContainer.isAuthenticated
     }
 
-    var erxTaskRepository: ErxTaskRepositoryAccess {
+    var erxTaskRepository: ErxTaskRepository {
         sessionContainer.erxTaskRepository
+    }
+
+    var profileDataStore: ProfileDataStore {
+        sessionContainer.profileDataStore
     }
 
     var pharmacyRepository: PharmacyRepository {
@@ -92,5 +97,17 @@ extension UserMode: UserSession {
 
     var deviceSecurityManager: DeviceSecurityManager {
         sessionContainer.deviceSecurityManager
+    }
+
+    var profileId: UUID {
+        sessionContainer.profileId
+    }
+
+    func profile() -> AnyPublisher<Profile, LocalStoreError> {
+        sessionContainer.profile()
+    }
+
+    var profileSecureDataWiper: ProfileSecureDataWiper {
+        sessionContainer.profileSecureDataWiper
     }
 }

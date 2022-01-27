@@ -80,7 +80,11 @@ class DemoIDPSession: IDPSession {
 
     func exchange(token: IDPExchangeToken,
                   challengeSession _: ChallengeSession,
-                  redirectURI _: String?) -> AnyPublisher<IDPToken, IDPError> {
+                  redirectURI _: String?,
+                  idTokenValidator _: @escaping (TokenPayload.IDTokenPayload) -> Result<Bool, Error>) -> AnyPublisher<
+        IDPToken,
+        IDPError
+    > {
         currentValue.send(
             IDPToken(
                 accessToken: "SECRET ACCESSTOKEN",
@@ -134,7 +138,10 @@ class DemoIDPSession: IDPSession {
             .eraseToAnyPublisher()
     }
 
-    func extAuthVerifyAndExchange(_: URL) -> AnyPublisher<IDPToken, IDPError> {
+    func extAuthVerifyAndExchange(
+        _: URL,
+        idTokenValidator _: @escaping (TokenPayload.IDTokenPayload) -> Result<Bool, Error>
+    ) -> AnyPublisher<IDPToken, IDPError> {
         Fail(error: IDPError.internalError("not implemented for demo session"))
             .eraseToAnyPublisher()
     }

@@ -27,6 +27,14 @@ public class IDPSessionMock: IDPSession {
         self.clientId = clientId
     }
 
+    public static var fixtureIDPToken = IDPToken(
+        accessToken: "SECRET ACCESSTOKEN",
+        expires: Date(),
+        idToken: "IDP TOKEN",
+        ssoToken: "SSO TOKEN",
+        tokenType: "type"
+    )
+
     public var idpToken: CurrentValueSubject<IDPToken?, IDPError> = CurrentValueSubject(nil)
 
     public var isLoggedIn: AnyPublisher<Bool, IDPError> {
@@ -103,41 +111,36 @@ public class IDPSessionMock: IDPSession {
     }
 
     public var exchange_Publisher: AnyPublisher<IDPToken, IDPError>! =
-        Just(IDPToken(
-            accessToken: "SECRET ACCESSTOKEN",
-            expires: Date(),
-            idToken: "IDP TOKEN",
-            ssoToken: "SSO TOKEN",
-            tokenType: "type"
-        ))
-        .setFailureType(to: IDPError.self)
-        .eraseToAnyPublisher()
+        Just(fixtureIDPToken)
+            .setFailureType(to: IDPError.self)
+            .eraseToAnyPublisher()
     public var exchange_ReceivedArguments: (token: IDPExchangeToken,
                                             challengeSession: ChallengeSession,
-                                            redirectURI: String?)?
+                                            redirectURI: String?,
+                                            idTokenValidator: (TokenPayload.IDTokenPayload) -> Result<Bool, Error>)?
     public var exchange_CallsCount = 0
     public var exchange_Called: Bool {
         exchange_CallsCount > 0
     }
 
-    public func exchange(token: IDPExchangeToken,
-                         challengeSession: ChallengeSession,
-                         redirectURI: String?) -> AnyPublisher<IDPToken, IDPError> {
+    public func exchange(
+        token: IDPExchangeToken,
+        challengeSession: ChallengeSession,
+        redirectURI: String?,
+        idTokenValidator: @escaping (TokenPayload.IDTokenPayload) -> Result<Bool, Error>
+    ) -> AnyPublisher<IDPToken, IDPError> {
         exchange_CallsCount += 1
-        exchange_ReceivedArguments = (token: token, challengeSession: challengeSession, redirectURI: redirectURI)
+        exchange_ReceivedArguments = (token: token,
+                                      challengeSession: challengeSession,
+                                      redirectURI: redirectURI,
+                                      idTokenValidator: idTokenValidator)
         return exchange_Publisher
     }
 
     public var refresh_Publisher: AnyPublisher<IDPToken, IDPError>! =
-        Just(IDPToken(
-            accessToken: "SECRET ACCESSTOKEN",
-            expires: Date(),
-            idToken: "IDP TOKEN",
-            ssoToken: "SSO TOKEN",
-            tokenType: "type"
-        ))
-        .setFailureType(to: IDPError.self)
-        .eraseToAnyPublisher()
+        Just(fixtureIDPToken)
+            .setFailureType(to: IDPError.self)
+            .eraseToAnyPublisher()
     public var refresh_ReceivedArguments: IDPToken?
     public var refresh_CallsCount = 0
     public var refresh_Called: Bool {
@@ -215,15 +218,18 @@ public class IDPSessionMock: IDPSession {
     }
 
     public var extAuthVerifyAndExchange_Publisher: AnyPublisher<IDPToken, IDPError>!
-    public var extAuthVerifyAndExchange_ReceivedArguments: URL?
+    public var extAuthVerifyAndExchange_ReceivedArguments: (URL, (TokenPayload.IDTokenPayload) -> Result<Bool, Error>)?
     public var extAuthVerifyAndExchange_CallsCount = 0
     public var extAuthVerifyAndExchange_Called: Bool {
         extAuthVerifyAndExchange_CallsCount > 0
     }
 
-    public func extAuthVerifyAndExchange(_ url: URL) -> AnyPublisher<IDPToken, IDPError> {
+    public func extAuthVerifyAndExchange(
+        _ url: URL,
+        idTokenValidator: @escaping (TokenPayload.IDTokenPayload) -> Result<Bool, Error>
+    ) -> AnyPublisher<IDPToken, IDPError> {
         extAuthVerifyAndExchange_CallsCount += 1
-        extAuthVerifyAndExchange_ReceivedArguments = url
+        extAuthVerifyAndExchange_ReceivedArguments = (url, idTokenValidator)
         return extAuthVerifyAndExchange_Publisher
     }
 }

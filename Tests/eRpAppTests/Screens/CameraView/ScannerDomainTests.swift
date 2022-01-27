@@ -43,7 +43,7 @@ final class ScannerDomainTests: XCTestCase {
         return TestStore(
             initialState: state,
             reducer: ScannerDomain.domainReducer,
-            environment: ScannerDomain.Environment(repository: MockUserSession().erxTaskRepository,
+            environment: ScannerDomain.Environment(repository: FakeErxTaskRepository(),
                                                    dateFormatter: FHIRDateFormatter.shared,
                                                    messageInterval: 0.0,
                                                    scheduler: schedulers)
@@ -305,13 +305,13 @@ final class ScannerDomainTests: XCTestCase {
         // given
         let initialState = ScannerDomain.State(scanState: .idle, acceptedTaskBatches: Set([scannedTasks]))
         let schedulers = Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler())
-        let saveErxTaskPublisher = Just(true).setFailureType(to: ErxTaskRepositoryError.self).eraseToAnyPublisher()
-        let deleteErxTaskPublisher = Just(true).setFailureType(to: ErxTaskRepositoryError.self).eraseToAnyPublisher()
-        let findPublisher = Just<ErxTask?>(nil).setFailureType(to: ErxTaskRepositoryError.self).eraseToAnyPublisher()
-        let repository = MockErxTaskRepositoryAccess(stored: [],
-                                                     saveErxTasks: saveErxTaskPublisher,
-                                                     deleteErxTasks: deleteErxTaskPublisher,
-                                                     find: findPublisher)
+        let saveErxTaskPublisher = Just(true).setFailureType(to: ErxRepositoryError.self).eraseToAnyPublisher()
+        let deleteErxTaskPublisher = Just(true).setFailureType(to: ErxRepositoryError.self).eraseToAnyPublisher()
+        let findPublisher = Just<ErxTask?>(nil).setFailureType(to: ErxRepositoryError.self).eraseToAnyPublisher()
+        let repository = MockErxTaskRepository(stored: [],
+                                               saveErxTasks: saveErxTaskPublisher,
+                                               deleteErxTasks: deleteErxTaskPublisher,
+                                               find: findPublisher)
         let store = TestStore(
             initialState: initialState,
             reducer: ScannerDomain.domainReducer,
@@ -344,14 +344,14 @@ final class ScannerDomainTests: XCTestCase {
         let initialState = ScannerDomain.State(scanState: .idle, acceptedTaskBatches: Set([scannedTasks]))
         let schedulers = Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler())
 
-        let savingError: ErxTaskRepositoryError = .local(.notImplemented)
-        let saveErxTaskPublisher = Fail<Bool, ErxTaskRepositoryError>(error: savingError).eraseToAnyPublisher()
-        let deleteErxTaskPublisher = Fail<Bool, ErxTaskRepositoryError>(error: savingError).eraseToAnyPublisher()
-        let findPublisher = Just<ErxTask?>(nil).setFailureType(to: ErxTaskRepositoryError.self).eraseToAnyPublisher()
-        let repository = MockErxTaskRepositoryAccess(stored: [],
-                                                     saveErxTasks: saveErxTaskPublisher,
-                                                     deleteErxTasks: deleteErxTaskPublisher,
-                                                     find: findPublisher)
+        let savingError: ErxRepositoryError = .local(.notImplemented)
+        let saveErxTaskPublisher = Fail<Bool, ErxRepositoryError>(error: savingError).eraseToAnyPublisher()
+        let deleteErxTaskPublisher = Fail<Bool, ErxRepositoryError>(error: savingError).eraseToAnyPublisher()
+        let findPublisher = Just<ErxTask?>(nil).setFailureType(to: ErxRepositoryError.self).eraseToAnyPublisher()
+        let repository = MockErxTaskRepository(stored: [],
+                                               saveErxTasks: saveErxTaskPublisher,
+                                               deleteErxTasks: deleteErxTaskPublisher,
+                                               find: findPublisher)
         let store = TestStore(
             initialState: initialState,
             reducer: ScannerDomain.domainReducer,

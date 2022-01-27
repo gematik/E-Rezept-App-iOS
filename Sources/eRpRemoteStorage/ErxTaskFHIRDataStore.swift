@@ -23,69 +23,39 @@ import FHIRClient
 import Foundation
 import ModelsR4
 
-extension ErxTaskFHIRDataStore {
-    public enum Error: Swift.Error, LocalizedError, Equatable {
-        public static func ==(lhs: ErxTaskFHIRDataStore.Error, rhs: ErxTaskFHIRDataStore.Error) -> Bool {
-            switch (lhs, rhs) {
-            case let (fhirClientError(lhsError), fhirClientError(rhsError)): return lhsError == rhsError
-            case (notImplemented, notImplemented): return true
-            default: return false
-            }
-        }
-
-        case fhirClientError(FHIRClient.Error)
-        case notImplemented
-
-        public var errorDescription: String? {
-            switch self {
-            case let .fhirClientError(error):
-                return error.localizedDescription
-            case .notImplemented:
-                return "ErxTaskFHIRDataStore: missing interface implementation"
-            }
-        }
-    }
-}
-
-public class ErxTaskFHIRDataStore: ErxTaskDataStore {
+public class ErxTaskFHIRDataStore: ErxRemoteDataStore {
     private let fhirClient: FHIRClient
 
     public init(fhirClient: FHIRClient) {
         self.fhirClient = fhirClient
     }
 
+    // MARK: - ErxTasks
+
     public func fetchTask(by id: ErxTask.ID, // swiftlint:disable:this identifier_name
                           accessCode: String?)
-        -> AnyPublisher<ErxTask?, Error> {
+        -> AnyPublisher<ErxTask?, RemoteStoreError> {
         fhirClient.fetchTask(by: id, accessCode: accessCode)
-            .mapError { Error.fhirClientError($0) }
+            .mapError { RemoteStoreError.fhirClientError($0) }
             .eraseToAnyPublisher()
     }
 
-    public func fetchLatestLastModifiedForErxTasks() -> AnyPublisher<String?, Error> {
-        Fail(error: Error.notImplemented).eraseToAnyPublisher()
-    }
-
-    public func listAllTasks(after referenceDate: String?) -> AnyPublisher<[ErxTask], Error> {
+    public func listAllTasks(after referenceDate: String?) -> AnyPublisher<[ErxTask], RemoteStoreError> {
         fhirClient.fetchAllTaskIDs(after: referenceDate)
-            .mapError { Error.fhirClientError($0) }
+            .mapError { RemoteStoreError.fhirClientError($0) }
             .first()
             .flatMap { self.collectAndMergeTaskPublishers(taskIds: $0) }
             .eraseToAnyPublisher()
     }
 
-    public func listAllTasksWithoutProfile() -> AnyPublisher<[ErxTask], Error> {
-        Fail(error: Error.notImplemented).eraseToAnyPublisher()
-    }
-
-    private func collectAndMergeTaskPublishers(taskIds: [String]) -> AnyPublisher<[ErxTask], Error> {
-        let taskPublishers: [AnyPublisher<ErxTask, Error>] =
+    private func collectAndMergeTaskPublishers(taskIds: [String]) -> AnyPublisher<[ErxTask], RemoteStoreError> {
+        let taskPublishers: [AnyPublisher<ErxTask, RemoteStoreError>] =
             taskIds.map { taskId in
                 self.fhirClient
                     .fetchTask(by: taskId, accessCode: nil)
                     .first()
                     .compactMap { $0 }
-                    .mapError { Error.fhirClientError($0) }
+                    .mapError { RemoteStoreError.fhirClientError($0) }
                     .eraseToAnyPublisher()
             }
 
@@ -94,11 +64,7 @@ public class ErxTaskFHIRDataStore: ErxTaskDataStore {
             .eraseToAnyPublisher()
     }
 
-    public func save(tasks _: [ErxTask]) -> AnyPublisher<Bool, Error> {
-        Fail(error: Error.notImplemented).eraseToAnyPublisher()
-    }
-
-    public func delete(tasks: [ErxTask]) -> AnyPublisher<Bool, Error> {
+    public func delete(tasks: [ErxTask]) -> AnyPublisher<Bool, RemoteStoreError> {
         // swiftlint:disable:next todo
         // TODO: Ideally this should delete multiple tasks at once.
         //       But it needs special error handling, if the server only
@@ -110,7 +76,7 @@ public class ErxTaskFHIRDataStore: ErxTaskDataStore {
               let id = tasks.first?.id, // swiftlint:disable:this identifier_name
               let accessCode = tasks.first?.accessCode
         else {
-            var fhirClientError = FHIRClient.Error.unknown(Error.notImplemented)
+            var fhirClientError = FHIRClient.Error.unknown(RemoteStoreError.notImplemented)
             if tasks.isEmpty {
                 fhirClientError = FHIRClient.Error.internalError("Cannot delete: Empty array of ErxTasks!")
             } else if tasks.count > 1 {
@@ -122,23 +88,23 @@ public class ErxTaskFHIRDataStore: ErxTaskDataStore {
                     "Cannot delete: ID oder accessCode missing?"
                 )
             }
-            let localError = ErxTaskFHIRDataStore.Error.fhirClientError(fhirClientError)
+            let localError = RemoteStoreError.fhirClientError(fhirClientError)
 
-            return Result<Bool, Error>.failure(localError).publisher.eraseToAnyPublisher()
+            return Result<Bool, RemoteStoreError>.failure(localError).publisher.eraseToAnyPublisher()
         }
 
         // In case of success...
         return fhirClient.deleteTask(by: id, accessCode: accessCode)
-            .mapError { Error.fhirClientError($0) }
+            .mapError { RemoteStoreError.fhirClientError($0) }
             .eraseToAnyPublisher()
     }
 
-    public func redeem(orders: [ErxTaskOrder]) -> AnyPublisher<Bool, Error> {
-        let redeemOrderPublishers: [AnyPublisher<Bool, Error>] =
+    public func redeem(orders: [ErxTaskOrder]) -> AnyPublisher<Bool, RemoteStoreError> {
+        let redeemOrderPublishers: [AnyPublisher<Bool, RemoteStoreError>] =
             orders.map { order in
                 self.fhirClient.redeem(order: order)
                     .first()
-                    .mapError { Error.fhirClientError($0) }
+                    .mapError { RemoteStoreError.fhirClientError($0) }
                     .eraseToAnyPublisher()
             }
 
@@ -147,84 +113,44 @@ public class ErxTaskFHIRDataStore: ErxTaskDataStore {
             .map { _ in true } // always returns true or throws an error
             .eraseToAnyPublisher()
     }
-}
 
-extension ErxTaskFHIRDataStore: ErxAuditEventDataStore {
+    // MARK: - AuditEvent
+
     public func fetchAuditEvent(by id: ErxAuditEvent.ID) // swiftlint:disable:this identifier_name
-        -> AnyPublisher<ErxAuditEvent?, Error> {
+        -> AnyPublisher<ErxAuditEvent?, RemoteStoreError> {
         fhirClient.fetchAuditEvent(by: id)
-            .mapError { Error.fhirClientError($0) }
+            .mapError { RemoteStoreError.fhirClientError($0) }
             .eraseToAnyPublisher()
-    }
-
-    public func fetchLatestTimestampForAuditEvents() -> AnyPublisher<String?, Error> {
-        Fail(error: Error.notImplemented).eraseToAnyPublisher()
     }
 
     public func listAllAuditEvents(after referenceDate: String? = nil,
-                                   for locale: String? = nil) -> AnyPublisher<[ErxAuditEvent], Error> {
+                                   for locale: String? = nil) -> AnyPublisher<[ErxAuditEvent], RemoteStoreError> {
         fhirClient.fetchAllAuditEvents(after: referenceDate, for: locale)
-            .mapError { Error.fhirClientError($0) }
+            .mapError { RemoteStoreError.fhirClientError($0) }
             .first()
             .eraseToAnyPublisher()
     }
 
-    public func listAllAuditEvents(forTaskID _: ErxTask.ID,
-                                   for _: String? = nil) -> AnyPublisher<[ErxAuditEvent], Error> {
-        Fail(error: Error.notImplemented).eraseToAnyPublisher()
-    }
+    // MARK: - Communications
 
-    public func save(auditEvents _: [ErxAuditEvent]) -> AnyPublisher<Bool, Error> {
-        Fail(error: Error.notImplemented).eraseToAnyPublisher()
-    }
-}
-
-extension ErxTaskFHIRDataStore: ErxCommunicationDataStore {
     public func listAllCommunications(
         after referenceDate: String?,
         for _: ErxTask.Communication.Profile
-    ) -> AnyPublisher<[ErxTask.Communication], Error> {
+    ) -> AnyPublisher<[ErxTask.Communication], RemoteStoreError> {
         fhirClient.communicationResources(after: referenceDate)
-            .mapError { Error.fhirClientError($0) }
+            .mapError { RemoteStoreError.fhirClientError($0) }
             .first()
             .eraseToAnyPublisher()
     }
 
-    public func fetchLatestTimestampForCommunications() -> AnyPublisher<String?, Error> {
-        Fail(error: Error.notImplemented).eraseToAnyPublisher()
-    }
-
-    public func listAllUnreadCommunications(
-        for _: ErxTask.Communication.Profile
-    ) -> AnyPublisher<[ErxTask.Communication], Error> {
-        // Can only be implemented by the local store since server has no knowledge about read state
-        Fail(error: Error.notImplemented).eraseToAnyPublisher()
-    }
-
-    public func save(communications _: [ErxTask.Communication]) -> AnyPublisher<Bool, Error> {
-        Fail(error: Error.notImplemented).eraseToAnyPublisher()
-    }
-
-    public func countAllUnreadCommunications(for _: ErxTask.Communication.Profile) -> AnyPublisher<Int, Error> {
-        Fail(error: Error.notImplemented).eraseToAnyPublisher()
-    }
-}
-
-extension ErxTaskFHIRDataStore: ErxMedicationDispenseDataStore {
-    public func fetchLatestHandOverDateForMedicationDispenses() -> AnyPublisher<String?, Error> {
-        Fail(error: Error.notImplemented).eraseToAnyPublisher()
-    }
+    // MARK: - MedicationDispense
 
     public func listAllMedicationDispenses(
         after referenceDate: String?
-    ) -> AnyPublisher<[ErxTask.MedicationDispense], Error> {
+    ) -> AnyPublisher<[ErxTask.MedicationDispense], RemoteStoreError> {
         fhirClient.fetchAllMedicationDispenses(after: referenceDate)
-            .mapError { Error.fhirClientError($0) }
+            .mapError { RemoteStoreError.fhirClientError($0) }
             .first()
             .eraseToAnyPublisher()
-    }
-
-    public func save(medicationDispenses _: [ErxTask.MedicationDispense]) -> AnyPublisher<Bool, Error> {
-        Fail(error: Error.notImplemented).eraseToAnyPublisher()
     }
 }

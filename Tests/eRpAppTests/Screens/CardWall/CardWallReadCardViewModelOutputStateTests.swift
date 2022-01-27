@@ -88,7 +88,8 @@ final class CardWallReadCardViewModelOutputStateTests: XCTestCase {
         expect(sut.nextButtonEnabled).to(beTrue())
         expect(sut.buttonTitle).to(equal(titleRetry))
 
-        sut = CardWallReadCardDomain.State.Output.loggedIn
+        let idpToken = IDPToken(accessToken: "", expires: Date(), idToken: "")
+        sut = CardWallReadCardDomain.State.Output.loggedIn(idpToken)
         expect(sut.nextButtonEnabled).to(beTrue())
         expect(sut.buttonTitle).to(equal(titleClose))
     }
@@ -132,7 +133,8 @@ final class CardWallReadCardViewModelOutputStateTests: XCTestCase {
         expect(sut.signingProgressTileState).to(equal(.done))
         expect(sut.verifyProgressTileState.isError).to(beTrue())
 
-        sut = CardWallReadCardDomain.State.Output.loggedIn
+        let idpToken = IDPToken(accessToken: "", expires: Date(), idToken: "")
+        sut = CardWallReadCardDomain.State.Output.loggedIn(idpToken)
         expect(sut.challengeProgressTileState).to(equal(.done))
         expect(sut.signingProgressTileState).to(equal(.done))
         expect(sut.verifyProgressTileState).to(equal(.done))

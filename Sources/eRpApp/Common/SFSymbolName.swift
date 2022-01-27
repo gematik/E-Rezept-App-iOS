@@ -23,6 +23,8 @@ struct SFSymbolName {
     static let cardIcon = "creditcard"
     static let back = "chevron.left"
     static let threeDots = "ellipsis.circle"
+    static let ellipsis = "ellipsis"
+    static let plus = "plus"
     static let barCode = "barcode.viewfinder"
     static let list = "list.dash"
     static let message = "message"

@@ -113,6 +113,15 @@ public class CoreDataController {
         }
         return container
     }
+
+    /// Destroy a persistent store.
+    ///
+    /// - Parameter storeURL: A `URL` for the persistent store to be destroyed.
+    /// - Throws: If the store cannot be destroyed.
+    public func destroyPersistentStore(at storeURL: URL) throws {
+        let psc = container.persistentStoreCoordinator
+        try psc.destroyPersistentStore(at: storeURL, ofType: NSSQLiteStoreType, options: nil)
+    }
 }
 
 extension CoreDataController {

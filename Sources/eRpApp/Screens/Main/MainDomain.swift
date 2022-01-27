@@ -25,18 +25,35 @@ enum MainDomain {
     typealias Store = ComposableArchitecture.Store<State, Action>
     typealias Reducer = ComposableArchitecture.Reducer<State, Action, Environment>
 
+    enum Route: Equatable {
+        case selectProfile(ProfileSelectionDomain.State)
+
+        enum Tag: Int {
+            case selectProfile
+        }
+
+        var tag: Tag {
+            switch self {
+            case .selectProfile:
+                return .selectProfile
+            }
+        }
+    }
+
     struct State: Equatable {
         var scannerState: ScannerDomain.State?
-        var settingsState: SettingsDomain.State?
         var deviceSecurityState: DeviceSecurityDomain.State?
         var prescriptionListState: GroupedPrescriptionListDomain.State
         var extAuthPendingState = ExtAuthPendingDomain.State()
-        var debug: DebugDomain.State
         var isDemoMode = false
+
+        var profile: UserProfile?
+        var route: Route?
     }
 
     enum Token: CaseIterable, Hashable {
         case demoMode
+        case profileUpdates
     }
 
     enum Action: Equatable {
@@ -45,20 +62,15 @@ enum MainDomain {
         /// Hides the `ScannerView`
         case dismissScannerView
         /// Presents the `SettingsView`
-        case showSettingsView
+        case showProfileSelection
         /// Hides the `SettingsView`
-        case dismissSettingsView
         case loadDeviceSecurityView
         case loadDeviceSecurityViewReceived(DeviceSecurityDomain.State?)
         case dismissDeviceSecurityView
-        /// Child view actions for the `SettingsDomain`
-        case settings(action: SettingsDomain.Action)
         /// Child view actions for the `GroupedPrescriptionListDomain`
         case prescriptionList(action: GroupedPrescriptionListDomain.Action)
         /// Child view actions for the `ScannerDomain`
         case scanner(action: ScannerDomain.Action)
-        /// Debug actions
-        case debug(action: DebugDomain.Action)
         case deviceSecurity(action: DeviceSecurityDomain.Action)
         /// Start listening to demo mode changes
         case subscribeToDemoModeChange
@@ -67,8 +79,20 @@ enum MainDomain {
         /// Tapping the demo mode banner can also turn the demo mode off
         case turnOffDemoMode
 
+        case registerProfileListener
+        case unregisterProfileListener
+        case profileReceived(Result<UserProfile, UserProfileServiceError>)
+
         case externalLogin(URL)
         case extAuthPending(action: ExtAuthPendingDomain.Action)
+
+        case setNavigation(tag: Route.Tag?)
+        case selectProfile(action: ProfileSelectionDomain.Action)
+    }
+
+    enum Error: Swift.Error, Equatable {
+        case localStoreError(LocalStoreError)
+        case userSessionError(UserSessionError)
     }
 
     struct Environment {
@@ -78,9 +102,10 @@ enum MainDomain {
         let appSecurityManager: AppSecurityManager
         var serviceLocator: ServiceLocator
         let accessibilityAnnouncementReceiver: (String) -> Void
-        var erxTaskRepository: ErxTaskRepositoryAccess
+        var erxTaskRepository: ErxTaskRepository
         var schedulers: Schedulers
         var fhirDateFormatter: FHIRDateFormatter
+        let userProfileService: UserProfileService
 
         var signatureProvider: SecureEnclaveSignatureProvider
 
@@ -96,18 +121,22 @@ enum MainDomain {
              .scanner(action: .close):
             state.scannerState = nil
             return ScannerDomain.cleanup()
-        case .dismissSettingsView,
-             .settings(action: .close):
-            state.settingsState = nil
-            return SettingsDomain.cleanup()
-        case .showSettingsView,
-             .turnOffDemoMode:
-            state.settingsState = .init(
-                isDemoMode: environment.userSession.isDemoMode,
-                appSecurityState: AppSecurityDomain.State(
-                    availableSecurityOptions: environment.appSecurityManager.availableSecurityOptions.options
-                )
-            )
+        case .turnOffDemoMode:
+            environment.router.routeTo(.settings)
+            return .none
+        case .unregisterProfileListener:
+            return .cancel(id: Token.profileUpdates)
+        case .registerProfileListener:
+            return environment.userProfileService.activeUserProfilePublisher()
+                .catchToEffect()
+                .map(Action.profileReceived)
+                .cancellable(id: Token.profileUpdates, cancelInFlight: true)
+                .receive(on: environment.schedulers.main)
+                .eraseToEffect()
+        case let .profileReceived(.failure(error)):
+            return .none
+        case let .profileReceived(.success(profile)):
+            state.profile = profile
             return .none
         case .loadDeviceSecurityView:
             return environment.userSession.deviceSecurityManager.showSystemSecurityWarning
@@ -125,10 +154,13 @@ enum MainDomain {
         case let .loadDeviceSecurityViewReceived(deviceSecurityState):
             state.deviceSecurityState = deviceSecurityState
             return .none
+        case .selectProfile(action: .close):
+            state.route = nil
+            return .none
         case .prescriptionList,
-             .settings,
              .scanner,
-             .extAuthPending:
+             .extAuthPending,
+             .selectProfile:
             return .none
         case .subscribeToDemoModeChange:
             return environment.userSessionContainer.isDemoMode
@@ -141,8 +173,6 @@ enum MainDomain {
             return .none
         case .unsubscribeFromDemoModeChange:
             return .cancel(id: Token.demoMode)
-        case .debug:
-            return .none
         case .deviceSecurity(.close),
              .dismissDeviceSecurityView:
             state.deviceSecurityState = nil
@@ -153,32 +183,25 @@ enum MainDomain {
             return Effect(value: .extAuthPending(action: .externalLogin(url)))
                 .delay(for: 5, scheduler: environment.schedulers.main)
                 .eraseToEffect()
+        case .showProfileSelection:
+            state.route = .selectProfile(.init(profiles: [], selectedProfileId: nil, route: nil))
+            return .none
+        case .setNavigation(tag: .none):
+            state.route = nil
+            return ProfileSelectionDomain.cleanup()
+        case .setNavigation:
+            return .none
         }
     }
 
     static let reducer: Reducer = .combine(
-        settingsPullbackReducer,
         groupedPrescriptionListPullback,
         scannerPullbackReducer,
         deviceSecurityPullbackReducer,
-        debugPullbackReducer,
         extAuthPendingReducer,
+        profileSelectionReducer,
         domainReducer
     )
-
-    private static let settingsPullbackReducer: Reducer =
-        SettingsDomain.reducer.optional().pullback(
-            state: \.settingsState,
-            action: /MainDomain.Action.settings(action:)
-        ) { appEnvironment in
-            .init(
-                changeableUserSessionContainer: appEnvironment.userSessionContainer,
-                schedulers: appEnvironment.schedulers,
-                tracker: appEnvironment.tracker,
-                signatureProvider: appEnvironment.signatureProvider,
-                appSecurityManager: appEnvironment.appSecurityManager
-            )
-        }
 
     private static let groupedPrescriptionListPullback: Reducer =
         GroupedPrescriptionListDomain.reducer.pullback(
@@ -223,20 +246,6 @@ enum MainDomain {
             )
         }
 
-    private static let debugPullbackReducer: Reducer =
-        DebugDomain.reducer.pullback(
-            state: \.debug,
-            action: /MainDomain.Action.debug(action:)
-        ) { appEnvironment in
-            DebugDomain.Environment(
-                schedulers: appEnvironment.schedulers,
-                userSession: appEnvironment.userSession,
-                tracker: appEnvironment.tracker,
-                signatureProvider: appEnvironment.signatureProvider,
-                serviceLocatorDebugAccess: ServiceLocatorDebugAccess(serviceLocator: appEnvironment.serviceLocator)
-            )
-        }
-
     private static let extAuthPendingReducer: Reducer =
         ExtAuthPendingDomain.reducer.pullback(
             state: \.extAuthPendingState,
@@ -245,8 +254,22 @@ enum MainDomain {
             .init(
                 idpSession: $0.userSession.idpSession,
                 schedulers: $0.schedulers,
+                currentProfile: $0.userSession.profile(),
+                idTokenValidator: $0.userSession.idTokenValidator(),
+                profileDataStore: $0.userSession.profileDataStore,
                 extAuthRequestStorage: $0.userSession.extAuthRequestStorage
             )
+        }
+
+    private static let profileSelectionReducer: Reducer =
+        ProfileSelectionDomain.reducer._pullback(
+            state: (\State.route).appending(path: /Route.selectProfile),
+            action: /Action.selectProfile(action:)
+        ) {
+            .init(schedulers: $0.schedulers,
+                  userDataStore: $0.userSession.localUserStore,
+                  userProfileService: $0.userProfileService,
+                  router: $0.router)
         }
 }
 
@@ -259,8 +282,7 @@ extension MainDomain {
         )
 
         static let state = State(
-            prescriptionListState: GroupedPrescriptionListDomain.Dummies.state,
-            debug: DebugDomain.Dummies.state
+            prescriptionListState: GroupedPrescriptionListDomain.Dummies.state
         )
 
         static func storeFor(_ state: State) -> Store {
@@ -281,6 +303,7 @@ extension MainDomain {
             erxTaskRepository: DemoSessionContainer().erxTaskRepository,
             schedulers: Schedulers(),
             fhirDateFormatter: globals.fhirDateFormatter,
+            userProfileService: DummyUserProfileService(),
             signatureProvider: DummySecureEnclaveSignatureProvider(),
             tracker: DummyTracker()
         )

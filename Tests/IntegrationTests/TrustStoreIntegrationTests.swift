@@ -31,23 +31,24 @@ import XCTest
 /// Set `APP_CONF` in runtime environment to setup the execution environment.
 final class TrustStoreIntegrationTests: XCTestCase {
     func testCompleteFlow() {
-        var environment: AppConfiguration
-        if let testAppConfigurationString = ProcessInfo.processInfo.environment["APP_CONF"],
-           let testAppConfiguration = testAppConfigurations[testAppConfigurationString] {
-            environment = testAppConfiguration
+        var environment: IntegrationTestsEnvironment!
+
+        if let integrationTestsEnvironmentString = ProcessInfo.processInfo.environment["APP_CONF"],
+           let integrationTestsEnvironment = integrationTestsAppConfigurations[integrationTestsEnvironmentString] {
+            environment = integrationTestsEnvironment
         } else {
-            environment = dummyAppConfiguration // change me for manuel testing
+            environment = integrationTestsEnvironmentDummy // change me for manual testing
         }
 
         let storage = MemStorage()
         let session = DefaultTrustStoreSession(
-            serverURL: environment.erp,
-            trustAnchor: environment.trustAnchor,
+            serverURL: environment.appConfiguration.erp,
+            trustAnchor: environment.appConfiguration.trustAnchor,
             trustStoreStorage: storage,
             httpClient: DefaultHTTPClient(
                 urlSessionConfiguration: .ephemeral,
                 interceptors: [
-                    AdditionalHeaderInterceptor(additionalHeader: environment.erpAdditionalHeader),
+                    AdditionalHeaderInterceptor(additionalHeader: environment.appConfiguration.erpAdditionalHeader),
                     LoggingInterceptor(log: .body),
                 ]
             )
@@ -55,7 +56,7 @@ final class TrustStoreIntegrationTests: XCTestCase {
         var success = false
         session.loadVauCertificate()
             .test(
-                timeout: 20,
+                timeout: 120,
                 failure: { error in
                     fail("Failed with error: \(error)")
                 },

@@ -42,7 +42,8 @@ final class SettingsDomainTests: XCTestCase {
                 schedulers: Schedulers(uiScheduler: DispatchQueue.test.eraseToAnyScheduler()),
                 tracker: DummyTracker(),
                 signatureProvider: DummySecureEnclaveSignatureProvider(),
-                appSecurityManager: DummyAppSecurityManager()
+                appSecurityManager: DummyAppSecurityManager(),
+                router: MockRouting()
             )
         )
     }

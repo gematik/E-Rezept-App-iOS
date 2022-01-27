@@ -84,7 +84,7 @@ final class KeychainStorageTests: XCTestCase {
 
     func testDiscoveryDocumentStorage() throws {
         let keychainHelperMock = KeychainAccessHelperMock()
-        let sut = KeychainStorage()
+        let sut = KeychainStorage(profileId: UUID())
         sut.keychainHelper = keychainHelperMock
 
         sut.set(discovery: testDocument)
@@ -100,7 +100,7 @@ final class KeychainStorageTests: XCTestCase {
 
     func testRetrieveDiscoveryDocumentStorage() throws {
         let keychainHelperMock = KeychainAccessHelperMock()
-        let sut = KeychainStorage()
+        let sut = KeychainStorage(profileId: UUID())
         sut.keychainHelper = keychainHelperMock
 
         keychainHelperMock.genericPassword = serialized
@@ -113,7 +113,7 @@ final class KeychainStorageTests: XCTestCase {
 
     func testCANStorage() {
         let keychainHelperMock = KeychainAccessHelperMock()
-        let sut = KeychainStorage()
+        let sut = KeychainStorage(profileId: UUID())
         sut.keychainHelper = keychainHelperMock
 
         sut.set(can: "123456")
@@ -129,7 +129,7 @@ final class KeychainStorageTests: XCTestCase {
 
     func testCANRetrieval() {
         let keychainHelperMock = KeychainAccessHelperMock()
-        let sut = KeychainStorage()
+        let sut = KeychainStorage(profileId: UUID())
         sut.keychainHelper = keychainHelperMock
 
         keychainHelperMock.genericPassword = "123456".data(using: .utf8)
@@ -142,7 +142,7 @@ final class KeychainStorageTests: XCTestCase {
 
     func testCANRetrievalOnAnotherSet() {
         let keychainHelperMock = KeychainAccessHelperMock()
-        let sut = KeychainStorage()
+        let sut = KeychainStorage(profileId: UUID())
         sut.keychainHelper = keychainHelperMock
 
         keychainHelperMock.genericPassword = "123456".data(using: .utf8)

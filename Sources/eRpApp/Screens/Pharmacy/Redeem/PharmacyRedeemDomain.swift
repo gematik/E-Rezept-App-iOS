@@ -32,7 +32,7 @@ enum PharmacyRedeemDomain: Equatable {
         var erxTasks: [ErxTask]
         var pharmacy: PharmacyLocation
         var selectedErxTasks: Set<ErxTask> = []
-        var loadingState: LoadingState<Bool, ErxTaskRepositoryError> = .idle
+        var loadingState: LoadingState<Bool, ErxRepositoryError> = .idle
         var alertState: AlertState<Action>?
         var successViewState: RedeemSuccessDomain.State?
     }
@@ -44,7 +44,7 @@ enum PharmacyRedeemDomain: Equatable {
         /// Redeem the selected prescriptions
         case redeem
         /// Called when redeem network call finishes
-        case redeemReceived(LoadingState<Bool, ErxTaskRepositoryError>)
+        case redeemReceived(LoadingState<Bool, ErxRepositoryError>)
         /// Called when a prescription has been selected
         case didSelect(String)
         case alertDismissButtonTapped
@@ -55,7 +55,7 @@ enum PharmacyRedeemDomain: Equatable {
     struct Environment {
         var schedulers: Schedulers
         var userSession: UserSession
-        var erxTaskRepository: ErxTaskRepositoryAccess
+        var erxTaskRepository: ErxTaskRepository
     }
 
     static let reducer = Reducer { state, action, environment in
@@ -98,7 +98,7 @@ enum PharmacyRedeemDomain: Equatable {
                 state.alertState = AlertState(
                     title: TextState(L10n.alertErrorTitle),
                     message: TextState(error.localizedDescription),
-                    dismissButton: .default(TextState(L10n.alertBtnOk), send: .alertDismissButtonTapped)
+                    dismissButton: .default(TextState(L10n.alertBtnOk), action: .send(.alertDismissButtonTapped))
                 )
                 return .none
             }
@@ -130,7 +130,7 @@ enum PharmacyRedeemDomain: Equatable {
         AlertState(
             title: TextState(L10n.alertErrorTitle),
             message: TextState(L10n.phaRedeemTxtNotLoggedIn),
-            dismissButton: .default(TextState(L10n.alertBtnOk), send: .alertDismissButtonTapped)
+            dismissButton: .default(TextState(L10n.alertBtnOk), action: .send(.alertDismissButtonTapped))
         )
     }()
 
@@ -138,26 +138,26 @@ enum PharmacyRedeemDomain: Equatable {
         AlertState(
             title: TextState(L10n.phaRedeemTxtAlertTitle),
             message: TextState(L10n.phaRedeemTxtAlertMessage),
-            primaryButton: .cancel(TextState(L10n.phaRedeemBtnAlertCancel), send: .alertDismissButtonTapped),
-            secondaryButton: .default(TextState(L10n.phaRedeemBtnAlertApproval), send: .redeem)
+            primaryButton: .cancel(TextState(L10n.phaRedeemBtnAlertCancel), action: .send(.alertDismissButtonTapped)),
+            secondaryButton: .default(TextState(L10n.phaRedeemBtnAlertApproval), action: .send(.redeem))
         )
     }()
 }
 
 extension PharmacyRedeemDomain.Environment {
-    func redeem(orders: [ErxTaskOrder]) -> Effect<LoadingState<Bool, ErxTaskRepositoryError>, Never> {
+    func redeem(orders: [ErxTaskOrder]) -> Effect<LoadingState<Bool, ErxRepositoryError>, Never> {
         userSession
             .isAuthenticated
-            .mapError { ErxTaskRepositoryError.local(.initialization(error: $0)) }
+            .mapError { ErxRepositoryError.local(.initialization(error: $0)) }
             .first()
-            .flatMap { isAuthenticated -> AnyPublisher<Bool, ErxTaskRepositoryError> in
+            .flatMap { isAuthenticated -> AnyPublisher<Bool, ErxRepositoryError> in
                 if isAuthenticated {
                     return erxTaskRepository.redeem(orders: orders)
                         .first()
                         .eraseToAnyPublisher()
                 } else {
                     return Just(false)
-                        .setFailureType(to: ErxTaskRepositoryError.self)
+                        .setFailureType(to: ErxRepositoryError.self)
                         .eraseToAnyPublisher()
                 }
             }

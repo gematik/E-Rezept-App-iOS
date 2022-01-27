@@ -34,7 +34,7 @@ final class MessagesDomainTests: XCTestCase {
     >
 
     private func testStore(
-        for repository: MockErxTaskRepositoryAccess
+        for repository: MockErxTaskRepository
     ) -> TestStore {
         let schedulers = Schedulers(uiScheduler: DispatchQueue.immediate.eraseToAnyScheduler())
 
@@ -49,15 +49,15 @@ final class MessagesDomainTests: XCTestCase {
         )
     }
 
-    private func repository(with communications: [ErxTask.Communication]) -> MockErxTaskRepositoryAccess {
+    private func repository(with communications: [ErxTask.Communication]) -> MockErxTaskRepository {
         let communicationPublisher = Just<[ErxTask.Communication]>(communications)
-            .setFailureType(to: ErxTaskRepositoryError.self)
+            .setFailureType(to: ErxRepositoryError.self)
             .eraseToAnyPublisher()
         let savePublisher = Just(true)
-            .setFailureType(to: ErxTaskRepositoryError.self)
+            .setFailureType(to: ErxRepositoryError.self)
             .eraseToAnyPublisher()
-        return MockErxTaskRepositoryAccess(listCommunications: communicationPublisher,
-                                           saveCommunications: savePublisher)
+        return MockErxTaskRepository(listCommunications: communicationPublisher,
+                                     saveCommunications: savePublisher)
     }
 
     func testMessagesDomainWithoutMessages() {
@@ -84,15 +84,15 @@ final class MessagesDomainTests: XCTestCase {
             $0.messageDomainStates = []
         }
         store.receive(.communicationChangeReceived(expected)) { state in
-            state.messageDomainStates = IdentifiedArray(expected)
+            state.messageDomainStates = IdentifiedArray(uniqueElements: expected)
             expect(mockRepositoryAccess.listCommunicationsCallsCount) == 1
             expect(mockRepositoryAccess.saveCommunicationsCallsCount) == 0
         }
         store.send(.message(unreadOnPremiseCommunication.id, .didSelect)) {
-            $0.messageDomainStates = IdentifiedArray(expected)
+            $0.messageDomainStates = IdentifiedArray(uniqueElements: expected)
         }
         store.receive(.didReceiveSave(.success(true))) {
-            $0.messageDomainStates = IdentifiedArray(expected)
+            $0.messageDomainStates = IdentifiedArray(uniqueElements: expected)
             expect(mockRepositoryAccess.listCommunicationsCallsCount) == 1
             expect(mockRepositoryAccess.saveCommunicationsCallsCount) == 1
         }
@@ -109,13 +109,13 @@ final class MessagesDomainTests: XCTestCase {
             $0.messageDomainStates = []
         }
         store.receive(.communicationChangeReceived(expected)) { state in
-            state.messageDomainStates = IdentifiedArray(expected)
+            state.messageDomainStates = IdentifiedArray(uniqueElements: expected)
             expect(mockRepositoryAccess.listCommunicationsCallsCount) == 1
             expect(mockRepositoryAccess.saveCommunicationsCallsCount) == 0
         }
 
         store.send(.message(readShipmentCommunication.id, .didSelect)) {
-            $0.messageDomainStates = IdentifiedArray(expected)
+            $0.messageDomainStates = IdentifiedArray(uniqueElements: expected)
         }
         expect(mockRepositoryAccess.listCommunicationsCallsCount) == 1
         expect(mockRepositoryAccess.saveCommunicationsCallsCount) == 0

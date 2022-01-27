@@ -32,39 +32,36 @@ import XCTest
 /// Runs IDP Integration Tests.
 /// Set `IDP_URL` in runtime environment to setup idp server url.
 final class IDPIntegrationTests: XCTestCase {
-    var environment: AppConfiguration!
+    var environment: IntegrationTestsEnvironment!
 
     override func setUp() {
         super.setUp()
 
-        if let testAppConfigurationString = ProcessInfo.processInfo.environment["APP_CONF"],
-           let testAppConfiguration = testAppConfigurations[testAppConfigurationString] {
-            environment = testAppConfiguration
+        if let integrationTestsEnvironmentString = ProcessInfo.processInfo.environment["APP_CONF"],
+           let integrationTestsEnvironment = integrationTestsAppConfigurations[integrationTestsEnvironmentString] {
+            environment = integrationTestsEnvironment
         } else {
-            environment = dummyAppConfiguration // change me for manual testing
+            environment = integrationTestsEnvironmentDummy // change me for manual testing
         }
     }
 
-    func testCompleteFlow() {
-        let signer = try! Brainpool256r1Signer(
-            x5c: Bundle(for: Self.self)
-                .path(forResource: "x509-ec-bp256r1", ofType: "cer", inDirectory: "Certificates.bundle")!,
-            key: Bundle(for: Self.self)
-                .path(forResource: "x509-ec-key-bp256r1", ofType: "bin", inDirectory: "Certificates.bundle")!
-        )
+    func testCompleteFlow() throws {
+        guard let signer = environment.brainpool256r1Signer else {
+            throw XCTSkip("Skip test because no signing entity available")
+        }
 
         let storage = MemStorage()
         let configuration = DefaultIDPSession.Configuration(
             clientId: "eRezeptApp",
-            redirectURI: environment.redirectUri,
-            extAuthRedirectURI: environment.extAuthRedirectUri,
-            discoveryURL: environment.idp,
+            redirectURI: environment.appConfiguration.redirectUri,
+            extAuthRedirectURI: environment.appConfiguration.extAuthRedirectUri,
+            discoveryURL: environment.appConfiguration.idp,
             scopes: ["e-rezept", "openid"]
         )
         let httpClient = DefaultHTTPClient(
             urlSessionConfiguration: .ephemeral,
             interceptors: [
-                AdditionalHeaderInterceptor(additionalHeader: environment.idpAdditionalHeader),
+                AdditionalHeaderInterceptor(additionalHeader: environment.appConfiguration.idpAdditionalHeader),
                 LoggingInterceptor(log: .body),
             ]
         )
@@ -87,7 +84,8 @@ final class IDPIntegrationTests: XCTestCase {
                     .mapError { $0.asIDPError() }
             }
             .flatMap { signedChallenge in
-                session.verifyAndExchange(signedChallenge: signedChallenge)
+                session.verifyAndExchange(signedChallenge: signedChallenge,
+                                          idTokenValidator: { _ in .success(true) })
             }
             .first()
             .test(expectations: { idpToken in
@@ -189,26 +187,23 @@ final class IDPIntegrationTests: XCTestCase {
             _ = try? PrivateKeyContainer.deleteExistingKey(for: keyTag)
         }
 
-        let signer = try! Brainpool256r1Signer(
-            x5c: Bundle(for: Self.self)
-                .path(forResource: "x509-ec-bp256r1", ofType: "cer", inDirectory: "Certificates.bundle")!,
-            key: Bundle(for: Self.self)
-                .path(forResource: "x509-ec-key-bp256r1", ofType: "bin", inDirectory: "Certificates.bundle")!
-        )
+        guard let signer = environment.brainpool256r1Signer else {
+            throw XCTSkip("Skip test because no signing entity available")
+        }
 
         let storage = MemStorage()
         let pairingIDPSessionConfiguration = DefaultIDPSession.Configuration(
             clientId: "eRezeptApp",
-            redirectURI: environment.redirectUri,
-            extAuthRedirectURI: environment.extAuthRedirectUri,
-            discoveryURL: environment.idp,
+            redirectURI: environment.appConfiguration.redirectUri,
+            extAuthRedirectURI: environment.appConfiguration.extAuthRedirectUri,
+            discoveryURL: environment.appConfiguration.idp,
             scopes: ["pairing", "openid"]
         )
         let schedulers = TestSchedulers(compute: DispatchQueue(label: "serial-test").eraseToAnyScheduler())
         let httpClient = DefaultHTTPClient(
             urlSessionConfiguration: .ephemeral,
             interceptors: [
-                AdditionalHeaderInterceptor(additionalHeader: environment.idpAdditionalHeader),
+                AdditionalHeaderInterceptor(additionalHeader: environment.appConfiguration.idpAdditionalHeader),
                 LoggingInterceptor(log: .body),
             ]
         )
@@ -230,7 +225,8 @@ final class IDPIntegrationTests: XCTestCase {
                     .mapError { $0.asIDPError() }
             }
             .flatMap { signedChallenge in
-                pairingIDPSession.verifyAndExchange(signedChallenge: signedChallenge)
+                pairingIDPSession.verifyAndExchange(signedChallenge: signedChallenge,
+                                                    idTokenValidator: { _ in .success(true) })
             }
             .first()
             .test(timeout: 10,
@@ -255,9 +251,9 @@ final class IDPIntegrationTests: XCTestCase {
         // Biometrie Registration
         let altVerifyIDPSessionConfiguration = DefaultIDPSession.Configuration(
             clientId: "eRezeptApp",
-            redirectURI: environment.redirectUri,
-            extAuthRedirectURI: environment.extAuthRedirectUri,
-            discoveryURL: environment.idp,
+            redirectURI: environment.appConfiguration.redirectUri,
+            extAuthRedirectURI: environment.appConfiguration.extAuthRedirectUri,
+            discoveryURL: environment.appConfiguration.idp,
             scopes: ["e-rezept", "openid"]
         )
         let altVerifyIDPSession = DefaultIDPSession(
@@ -330,24 +326,23 @@ final class IDPIntegrationTests: XCTestCase {
         expect(success) == true
     }
 
-    func testExternalAuthentiactionLogin() throws {
-        environment = environmentGMTKDEV // hard coded for now
-        let idpsekURLString = ProcessInfo.processInfo
-            .environment["IDPSEK_URL"] ??
-            "https://idpsek.dev.gematik.solutions/authorization" // hard coded for now
+    func testExternalAuthenticationLogin() throws {
+        guard let idpsekServer = environment.idpsekURLServer else {
+            throw XCTSkip("Skip test because no IDP Server was provided")
+        }
 
         let storage = MemStorage()
         let configuration = DefaultIDPSession.Configuration(
             clientId: "eRezeptApp",
-            redirectURI: environment.redirectUri,
-            extAuthRedirectURI: environment.extAuthRedirectUri,
-            discoveryURL: environment.idp,
+            redirectURI: environment.appConfiguration.redirectUri,
+            extAuthRedirectURI: environment.appConfiguration.extAuthRedirectUri,
+            discoveryURL: environment.appConfiguration.idp,
             scopes: ["e-rezept", "openid"]
         )
         let httpClient = DefaultHTTPClient(
             urlSessionConfiguration: .ephemeral,
             interceptors: [
-                AdditionalHeaderInterceptor(additionalHeader: environment.idpAdditionalHeader),
+                AdditionalHeaderInterceptor(additionalHeader: environment.appConfiguration.idpAdditionalHeader),
                 LoggingInterceptor(log: .body),
             ]
         )
@@ -416,10 +411,7 @@ final class IDPIntegrationTests: XCTestCase {
             return
         }
 
-        guard let idpsekURL = URL(string: idpsekURLString) else {
-            fail("URL creation with '\(idpsekURLString)' failed")
-            return
-        }
+        let idpsekURL = idpsekServer.url
         components.scheme = idpsekURL.scheme
         components.host = idpsekURL.host
         components.port = idpsekURL.port
@@ -432,11 +424,17 @@ final class IDPIntegrationTests: XCTestCase {
             fail("Step 4 URL Creation failed")
             return
         }
-        var request = URLRequest(url: urlStep4)
+        let request = URLRequest(url: urlStep4)
 
         var urlStep7RedirectVal: URL?
         httpClient
-            .send(request: request, interceptors: [LoggingInterceptor(log: .url)]) { _, redirect, completionHandler in
+            .send(
+                request: request,
+                interceptors: [
+                    LoggingInterceptor(log: .url),
+                    AdditionalHeaderInterceptor(additionalHeader: idpsekServer.header),
+                ]
+            ) { _, redirect, completionHandler in
                 urlStep7RedirectVal = redirect.url
                 completionHandler(nil) // Handle redirect
             }
@@ -475,7 +473,7 @@ final class IDPIntegrationTests: XCTestCase {
         // MARK: - STEP 9
 
         var token: IDPToken?
-        session.extAuthVerifyAndExchange(universalLink)
+        session.extAuthVerifyAndExchange(universalLink, idTokenValidator: { _ in .success(true) })
             .test(
                 failure: { error in
                     fail("\(error)")
