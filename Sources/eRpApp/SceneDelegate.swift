@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2021 gematik GmbH
+//  Copyright (c) 2022 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -17,6 +17,7 @@
 //
 
 import ComposableArchitecture
+import eRpKit
 import eRpLocalStorage
 import IDP
 import SwiftUI
@@ -25,57 +26,17 @@ import UIKit
 class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing {
     var mainWindow: UIWindow?
     var authenticationWindow: UIWindow?
+    let coreDataControllerFactory: CoreDataControllerFactory = LocalStoreFactory()
 
     var routerStore: RouterStore<AppStartDomain.State, AppStartDomain.Action, AppStartDomain.Environment>?
 
     func scene(_ scene: UIScene,
                willConnectTo _: UISceneSession,
                options _: UIScene.ConnectionOptions) {
-        // As soon as AppContainer is removed, the construction of ChangeableUserSessionContainer will be here
-        let sessionContainer = AppContainer.shared.userSessionContainer
-
-        let tracker = PiwikProTracker(
-            optOutSetting: UserDefaults.standard.publisher(for: \UserDefaults.kAppTrackingAllowed).eraseToAnyPublisher()
-        )
-
-        #if ENABLE_DEBUG_VIEW && targetEnvironment(simulator)
-        // swiftlint:disable:next trailing_closure
-        let signatureProvider = DefaultSecureEnclaveSignatureProvider(
-            storage: sessionContainer.userSession.secureUserStore,
-            privateKeyContainerProvider: {
-                try PrivateKeyContainer.createFromKeyChain(with: $0)
-            }
-        )
-        #else
-        let signatureProvider = DefaultSecureEnclaveSignatureProvider(
-            storage: sessionContainer.userSession.secureUserStore
-        )
-        #endif
-        // This must be raw userDefaults access, demo session should *not* interfere with user authentication
-        let standardUserDataStore = UserDefaultsStore(userDefaults: .standard)
-
         let routableAppStore = RouterStore(
             initialState: .init(),
             reducer: AppStartDomain.reducer,
-            environment: AppStartDomain.Environment(
-                appVersion: AppVersion.current,
-                router: self,
-                userSessionContainer: sessionContainer,
-                userSession: sessionContainer.userSession,
-                // This must be raw userDefaults access, demo session should *not* interfere with user authentication
-                userDataStore: standardUserDataStore,
-                schedulers: Schedulers(),
-                fhirDateFormatter: AppContainer.shared.fhirDateFormatter,
-                serviceLocator: AppContainer.shared.serviceLocator,
-                accessibilityAnnouncementReceiver: { message in
-                    UIAccessibility.post(notification: .announcement,
-                                         argument: message)
-                },
-                tracker: tracker,
-                signatureProvider: signatureProvider,
-                appSecurityManager: DefaultAppSecurityManager(keychainAccess: SystemKeychainAccessHelper()),
-                authenticationChallengeProvider: BiometricsAuthenticationChallengeProvider()
-            ),
+            environment: environment(),
             router: AppStartDomain.router
         )
 
@@ -172,4 +133,67 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing {
     lazy var blurEffectView: UIView = {
         UIVisualEffectView(effect: UIBlurEffect(style: .regular))
     }()
+}
+
+extension SceneDelegate {
+    private func environment() -> AppStartDomain.Environment {
+        let schedulers = Schedulers()
+        // TODO: load current selected profile and pass profileId // swiftlint:disable:this todo
+
+        let erxTaskStore = ErxTaskCoreDataStore(
+            profileId: nil,
+            coreDataControllerFactory: coreDataControllerFactory
+        )
+
+        let sessionContainer = StandardSessionContainer(
+            schedulers: schedulers,
+            erxTaskCoreDataStore: erxTaskStore
+        )
+        let userSession = UserMode.standard(sessionContainer)
+        let changeableUserSessionContainer = ChangeableUserSessionContainer(
+            initialUserSession: userSession,
+            schedulers: schedulers,
+            erxTaskCoreDataStore: erxTaskStore
+        )
+
+        let tracker = PiwikProTracker(
+            optOutSetting: UserDefaults.standard.publisher(for: \UserDefaults.kAppTrackingAllowed).eraseToAnyPublisher()
+        )
+
+        #if ENABLE_DEBUG_VIEW && targetEnvironment(simulator)
+        // swiftlint:disable:next trailing_closure
+        let signatureProvider = DefaultSecureEnclaveSignatureProvider(
+            storage: changeableUserSessionContainer.userSession.secureUserStore,
+            privateKeyContainerProvider: {
+                try PrivateKeyContainer.createFromKeyChain(with: $0)
+            }
+        )
+        #else
+        let signatureProvider = DefaultSecureEnclaveSignatureProvider(
+            storage: changeableUserSessionContainer.userSession.secureUserStore
+        )
+        #endif
+        // This must be raw userDefaults access, demo session should *not* interfere with user authentication
+        let standardUserDataStore = UserDefaultsStore(userDefaults: .standard)
+
+        return .init(
+            appVersion: AppVersion.current,
+            router: self,
+            userSessionContainer: changeableUserSessionContainer,
+            userSession: changeableUserSessionContainer.userSession,
+            // This must be raw userDefaults access, demo session should *not* interfere with user authentication
+            userDataStore: standardUserDataStore,
+            schedulers: schedulers,
+            fhirDateFormatter: globals.fhirDateFormatter,
+            serviceLocator: ServiceLocator(),
+            accessibilityAnnouncementReceiver: { message in
+                UIAccessibility.post(notification: .announcement,
+                                     argument: message)
+            },
+            tracker: tracker,
+            signatureProvider: signatureProvider,
+            appSecurityManager: DefaultAppSecurityManager(keychainAccess: SystemKeychainAccessHelper()),
+            authenticationChallengeProvider: BiometricsAuthenticationChallengeProvider()
+        )
+    }
 }

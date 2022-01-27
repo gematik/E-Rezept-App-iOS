@@ -85,7 +85,7 @@ packages:
     version: 9.1.0
   ComposableArchitecture:
     url: https://github.com/pointfreeco/swift-composable-architecture
-    version: 0.20.0
+    version: 0.21.0
   CasePaths:
     url: https://github.com/pointfreeco/swift-case-paths
     version: 0.5.0

@@ -566,6 +566,7 @@ class StreamWrappedUserSession: UserSession {
 
 		self.pharmacyRepository = current.pharmacyRepository
 		self.isDemoMode = current.isDemoMode
+		self.extAuthRequestStorage = current.extAuthRequestStorage
 		self.vauStorage = current.vauStorage
 		self.trustStoreSession = current.trustStoreSession
 		self.appSecurityManager = current.appSecurityManager
@@ -582,6 +583,10 @@ class StreamWrappedUserSession: UserSession {
 		stream
 			.map(\.isDemoMode)
 			.assign(to: \.isDemoMode, on: self)
+			.store(in: &disposeBag)
+		stream
+			.map(\.extAuthRequestStorage)
+			.assign(to: \.extAuthRequestStorage, on: self)
 			.store(in: &disposeBag)
 		stream
 			.map(\.vauStorage)
@@ -628,6 +633,7 @@ class StreamWrappedUserSession: UserSession {
 	lazy var idpSession: IDPSession = {
 		StreamWrappedIDPSession(stream: stream.map{ $0.idpSession }.eraseToAnyPublisher(), current: current.idpSession )
 	}()
+	private(set) var extAuthRequestStorage: ExtAuthRequestStorage
 	lazy var biometrieIdpSession: IDPSession = {
 		StreamWrappedIDPSession(stream: stream.map{ $0.biometrieIdpSession }.eraseToAnyPublisher(), current: current.biometrieIdpSession )
 	}()

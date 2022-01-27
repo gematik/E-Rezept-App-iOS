@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2021 gematik GmbH
+//  Copyright (c) 2022 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -17,6 +17,7 @@
 //
 
 import ComposableArchitecture
+import IDP
 import SwiftUI
 
 struct SettingsView: View {
@@ -26,149 +27,225 @@ struct SettingsView: View {
     let debugStore: DebugDomain.Store
     #endif
 
-    var body: some View {
-        WithViewStore(store) { viewStore in
-            NavigationView {
-                Group {
-                    List {
-                        #if ENABLE_DEBUG_VIEW
-                        DebugSectionView(store: debugStore,
-                                         showDebugView: viewStore.binding(
-                                             get: { $0.showDebugView },
-                                             send: SettingsDomain.Action.toggleDebugView
-                                         ))
-                        #endif
+    @ObservedObject
+    var viewStore: ViewStore<ViewState, SettingsDomain.Action>
 
-                        DemoModeSectionView(store: store)
+    #if !ENABLE_DEBUG_VIEW
+    init(store: SettingsDomain.Store) {
+        self.store = store
+        viewStore = ViewStore(store.scope(state: ViewState.init))
+    }
+    #else
+    init(store: SettingsDomain.Store, debugStore: DebugDomain.Store) {
+        self.store = store
+        self.debugStore = debugStore
+        viewStore = ViewStore(store.scope(state: ViewState.init))
+    }
+    #endif
 
-                        SecuritySectionView(store: store)
+    struct ViewState: Equatable {
+        #if ENABLE_DEBUG_VIEW
+        let showDebugView: Bool
+        #endif
+        let showTrackerComplyView: Bool
+        let isDemoMode: Bool
 
-                        // [REQ:gemSpec_BSI_FdV:O.Tokn_9] integration in SettingsView
-                        TokenSectionView(store: store)
-
-                        TrackerSectionView(store: store)
-
-                        LegalInfoSectionView(store: store)
-
-                        BottomSectionView(store: store)
-                    }
-                    .listStyle(InsetGroupedListStyle())
-
-                    // Tracking comply sheet presentation
-                    EmptyView()
-                        .sheet(isPresented: viewStore.binding(
-                            get: { $0.showTrackerComplyView },
-                            send: SettingsDomain.Action.dismissTrackerComplyView
-                        )) {
-                            TrackingComplyView(store: store)
-                        }
-                }
-                .navigationBarTitle(Text(L10n.stgTxtTitle), displayMode: .inline)
-                .navigationBarItems(
-                    leading: NavigationTextButton(
-                        text: L10n.navDone,
-                        a11y: A18n.settings.demo.navDone
-                    ) {
-                        viewStore.send(.close)
-                    }
-                )
-                .edgesIgnoringSafeArea(.bottom)
-                .demoBanner(isPresented: viewStore.state.isDemoMode)
-            }
-            .accentColor(Colors.primary700)
-            .navigationViewStyle(StackNavigationViewStyle())
-            .alert(
-                self.store.scope(state: \.alertState),
-                dismiss: .alertDismissButtonTapped
-            )
-            .onAppear {
-                viewStore.send(.initSettings)
-            }
+        init(state: SettingsDomain.State) {
+            #if ENABLE_DEBUG_VIEW
+            showDebugView = state.showDebugView
+            #endif
+            showTrackerComplyView = state.showTrackerComplyView
+            isDemoMode = state.isDemoMode
         }
     }
 
+    var body: some View {
+        NavigationView {
+            Group {
+                List {
+                    #if ENABLE_DEBUG_VIEW
+                    DebugSectionView(store: debugStore,
+                                     showDebugView: viewStore.binding(
+                                         get: { $0.showDebugView },
+                                         send: SettingsDomain.Action.toggleDebugView
+                                     ))
+                    #endif
+
+                    DemoModeSectionView(store: store)
+
+                    SecuritySectionView(store: store)
+
+                    // [REQ:gemSpec_BSI_FdV:O.Tokn_9] integration in SettingsView
+                    TokenSectionView(store: store)
+
+                    TrackerSectionView(store: store)
+
+                    LegalInfoSectionView(store: store)
+
+                    BottomSectionView(store: store)
+                }
+                .listStyle(InsetGroupedListStyle())
+
+                // Tracking comply sheet presentation
+                EmptyView()
+                    .sheet(isPresented: viewStore.binding(
+                        get: { $0.showTrackerComplyView },
+                        send: SettingsDomain.Action.dismissTrackerComplyView
+                    )) {
+                        TrackingComplyView(store: store)
+                    }
+            }
+            .navigationBarTitle(Text(L10n.stgTxtTitle), displayMode: .inline)
+            .navigationBarItems(
+                leading: NavigationTextButton(
+                    text: L10n.navDone,
+                    a11y: A18n.settings.demo.navDone
+                ) {
+                    viewStore.send(.close)
+                }
+            )
+            .edgesIgnoringSafeArea(.bottom)
+            .demoBanner(isPresented: viewStore.isDemoMode)
+        }
+        .accentColor(Colors.primary700)
+        .navigationViewStyle(StackNavigationViewStyle())
+        .alert(
+            self.store.scope(state: \.alertState),
+            dismiss: .alertDismissButtonTapped
+        )
+        .onAppear {
+            viewStore.send(.initSettings)
+        }
+    }
+}
+
+extension SettingsView {
     private struct DemoModeSectionView: View {
         let store: SettingsDomain.Store
 
-        var body: some View {
-            WithViewStore(store) { viewStore in
-                Section(
-                    header: SectionHeaderView(
-                        text: L10n.stgTxtHeaderDemoMode,
-                        a11y: A18n.settings.demo.stgTxtHeaderDemoMode
-                    ).padding(.bottom, 8),
-                    footer: FootnoteView(
-                        text: L10n.stgTxtFootnoteDemoMode,
-                        a11y: A18n.settings.demo.stgTxtFootnoteDemoMode
-                    )
-                ) {
-                    ToggleCell(
-                        text: L10n.stgTxtDemoMode,
-                        a11y: A18n.settings.demo.stgTxtDemoMode,
-                        systemImage: SFSymbolName.wandAndStars,
-                        backgroundColor: Colors.systemColorClear,
-                        isToggleOn: viewStore.binding(
-                            get: \.isDemoMode,
-                            send: SettingsDomain.Action.toggleDemoModeSwitch
-                        )
-                        .animation()
-                    )
-                }
-                .textCase(.none)
+        @ObservedObject
+        var viewStore: ViewStore<ViewState, SettingsDomain.Action>
+
+        init(store: SettingsDomain.Store) {
+            self.store = store
+            viewStore = ViewStore(store.scope(state: ViewState.init))
+        }
+
+        struct ViewState: Equatable {
+            let isDemoMode: Bool
+
+            init(state: SettingsDomain.State) {
+                isDemoMode = state.isDemoMode
             }
+        }
+
+        var body: some View {
+            Section(
+                header: SectionHeaderView(
+                    text: L10n.stgTxtHeaderDemoMode,
+                    a11y: A18n.settings.demo.stgTxtHeaderDemoMode
+                ).padding(.bottom, 8),
+                footer: FootnoteView(
+                    text: L10n.stgTxtFootnoteDemoMode,
+                    a11y: A18n.settings.demo.stgTxtFootnoteDemoMode
+                )
+            ) {
+                ToggleCell(
+                    text: L10n.stgTxtDemoMode,
+                    a11y: A18n.settings.demo.stgTxtDemoMode,
+                    systemImage: SFSymbolName.wandAndStars,
+                    backgroundColor: Colors.systemColorClear,
+                    isToggleOn: viewStore.binding(
+                        get: \.isDemoMode,
+                        send: SettingsDomain.Action.toggleDemoModeSwitch
+                    )
+                    .animation()
+                )
+            }
+            .textCase(.none)
         }
     }
 
     private struct TokenSectionView: View {
         let store: SettingsDomain.Store
 
-        var body: some View {
-            WithViewStore(store) { viewStore in
-                Section {
-                    NavigationLink(destination: IDPTokenView(token: viewStore.state.token)) {
-                        ListCellView(
-                            sfSymbolName: SFSymbolName.key,
-                            text: L10n.stgTxtSecurityTokens
-                        )
-                    }
-                    .accessibility(identifier: A11y.settings.security.stgTxtSecurityTokens)
-                }
-                .disabled(viewStore.state.token == nil)
+        @ObservedObject
+        var viewStore: ViewStore<ViewState, SettingsDomain.Action>
+
+        init(store: SettingsDomain.Store) {
+            self.store = store
+            viewStore = ViewStore(store.scope(state: ViewState.init))
+        }
+
+        struct ViewState: Equatable {
+            let token: IDPToken?
+
+            init(state: SettingsDomain.State) {
+                token = state.token
             }
+        }
+
+        var body: some View {
+            Section {
+                NavigationLink(destination: IDPTokenView(token: viewStore.token)) {
+                    ListCellView(
+                        sfSymbolName: SFSymbolName.key,
+                        text: L10n.stgTxtSecurityTokens
+                    )
+                }
+                .accessibility(identifier: A11y.settings.security.stgTxtSecurityTokens)
+            }
+            .disabled(viewStore.state.token == nil)
         }
     }
 
     private struct TrackerSectionView: View {
         let store: SettingsDomain.Store
 
-        var body: some View {
-            WithViewStore(store) { viewStore in
-                Section(
-                    header: HeaderView(),
-                    footer: FootnoteView(
-                        text: viewStore.state.isDemoMode ?
-                            L10n.stgTrkTxtFootnoteDisabled : L10n.stgTrkTxtFootnote,
-                        a11y: A18n.settings.tracking.stgTrkTxtFootnote
-                    )
-                ) {
-                    ToggleCell(
-                        text: L10n.stgTrkBtnTitle,
-                        a11y: A18n.settings.tracking.stgTrkBtnTitle,
-                        systemImage: SFSymbolName.wandAndStars,
-                        backgroundColor: Colors.systemColorClear,
-                        isToggleOn: viewStore.binding(
-                            get: \.trackerOptIn,
-                            send: SettingsDomain.Action.toggleTrackingTapped
-                        )
-                        .animation(),
-                        isDisabled: Binding(
-                            get: { viewStore.state.isDemoMode },
-                            set: { _, _ in }
-                        )
-                    )
-                }
-                .textCase(.none)
+        @ObservedObject
+        var viewStore: ViewStore<ViewState, SettingsDomain.Action>
+
+        init(store: SettingsDomain.Store) {
+            self.store = store
+            viewStore = ViewStore(store.scope(state: ViewState.init))
+        }
+
+        struct ViewState: Equatable {
+            let isDemoMode: Bool
+            let trackerOptIn: Bool
+
+            init(state: SettingsDomain.State) {
+                isDemoMode = state.isDemoMode
+                trackerOptIn = state.trackerOptIn
             }
+        }
+
+        var body: some View {
+            Section(
+                header: HeaderView(),
+                footer: FootnoteView(
+                    text: viewStore.state.isDemoMode ?
+                        L10n.stgTrkTxtFootnoteDisabled : L10n.stgTrkTxtFootnote,
+                    a11y: A18n.settings.tracking.stgTrkTxtFootnote
+                )
+            ) {
+                ToggleCell(
+                    text: L10n.stgTrkBtnTitle,
+                    a11y: A18n.settings.tracking.stgTrkBtnTitle,
+                    systemImage: SFSymbolName.wandAndStars,
+                    backgroundColor: Colors.systemColorClear,
+                    isToggleOn: viewStore.binding(
+                        get: \.trackerOptIn,
+                        send: SettingsDomain.Action.toggleTrackingTapped
+                    )
+                    .animation(),
+                    isDisabled: Binding(
+                        get: { viewStore.state.isDemoMode },
+                        set: { _, _ in }
+                    )
+                )
+            }
+            .textCase(.none)
         }
 
         private struct HeaderView: View {
@@ -194,17 +271,15 @@ struct SettingsView: View {
         let store: SettingsDomain.Store
 
         var body: some View {
-            WithViewStore(store) { _ in
-                Section(
-                    header: SectionHeaderView(
-                        text: L10n.stgTxtHeaderLegalInfo,
-                        a11y: A18n.settings.legalNotice.stgLnoTxtHeaderLegalInfo
-                    ).padding(.bottom, 8)
-                ) {
-                    SettingsLegalInfoView(store: store)
-                }
-                .textCase(.none)
+            Section(
+                header: SectionHeaderView(
+                    text: L10n.stgTxtHeaderLegalInfo,
+                    a11y: A18n.settings.legalNotice.stgLnoTxtHeaderLegalInfo
+                ).padding(.bottom, 8)
+            ) {
+                SettingsLegalInfoView(store: store)
             }
+            .textCase(.none)
         }
     }
 
@@ -235,17 +310,31 @@ struct SettingsView: View {
     private struct BottomSectionView: View {
         let store: SettingsDomain.Store
 
-        var body: some View {
-            WithViewStore(store) { viewStore in
-                Section(header: Spacer(minLength: 64),
-                        footer: VersionInfoView(appVersion: viewStore.appVersion)
-                            .padding(.bottom)) {
-                    LogoutButton {
-                        viewStore.send(.logout)
-                    }
-                }
-                .listRowBackground(Colors.red600)
+        @ObservedObject
+        var viewStore: ViewStore<ViewState, SettingsDomain.Action>
+
+        init(store: SettingsDomain.Store) {
+            self.store = store
+            viewStore = ViewStore(store.scope(state: ViewState.init))
+        }
+
+        struct ViewState: Equatable {
+            let appVersion: AppVersion
+
+            init(state: SettingsDomain.State) {
+                appVersion = state.appVersion
             }
+        }
+
+        var body: some View {
+            Section(header: Spacer(minLength: 64),
+                    footer: VersionInfoView(appVersion: viewStore.appVersion)
+                        .padding(.bottom)) {
+                LogoutButton {
+                    viewStore.send(.logout)
+                }
+            }
+            .listRowBackground(Colors.red600)
         }
 
         struct LogoutButton: View {
@@ -269,54 +358,60 @@ struct SettingsView: View {
     struct TrackingComplyView: View {
         let store: SettingsDomain.Store
 
+        @ObservedObject
+        var viewStore: ViewStore<Void, SettingsDomain.Action>
+
+        init(store: SettingsDomain.Store) {
+            self.store = store
+            viewStore = ViewStore(store.stateless)
+        }
+
         var body: some View {
             NavigationView {
-                WithViewStore(store) { viewStore in
-                    VStack(alignment: .center, spacing: 16) {
-                        ScrollView(.vertical) {
-                            Text(L10n.stgTrkTxtAlertTitle)
-                                .foregroundColor(Colors.systemLabel)
-                                .multilineTextAlignment(.center)
-                                .font(Font.title.bold())
-                                .padding()
-                                .accessibility(identifier: A18n.redeem.overview.rdmTxtPharmacyTitle)
-                            Text(L10n.stgTrkTxtAlertMessage)
-                                .font(.body)
-                                .foregroundColor(Colors.systemLabel)
-                                .multilineTextAlignment(.leading)
-                                .padding()
-                                .accessibility(identifier: A18n.redeem.overview.rdmTxtPharmacySubtitle)
-                        }
-                        VStack(alignment: .center, spacing: 4) {
-                            PrimaryTextButton(
-                                text: L10n.stgTrkBtnAlertYes,
-                                a11y: A11y.settings.tracking.stgTrkBtnYes
-                            ) {
-                                viewStore.send(.confirmedOptInTracking)
-                            }
-                            .font(Font.body.weight(.semibold))
+                VStack(alignment: .center, spacing: 16) {
+                    ScrollView(.vertical) {
+                        Text(L10n.stgTrkTxtAlertTitle)
+                            .foregroundColor(Colors.systemLabel)
+                            .multilineTextAlignment(.center)
+                            .font(Font.title.bold())
                             .padding()
-                            Button(L10n.stgTrkBtnAlertNo) {
-                                viewStore.send(.dismissTrackerComplyView)
-                            }
-                            .accessibility(identifier: A11y.settings.tracking.stgTrkBtnNo)
-                            .font(Font.body.weight(.semibold))
-                            .padding([.leading, .trailing, .bottom])
+                            .accessibility(identifier: A18n.redeem.overview.rdmTxtPharmacyTitle)
+                        Text(L10n.stgTrkTxtAlertMessage)
+                            .font(.body)
+                            .foregroundColor(Colors.systemLabel)
+                            .multilineTextAlignment(.leading)
+                            .padding()
+                            .accessibility(identifier: A18n.redeem.overview.rdmTxtPharmacySubtitle)
+                    }
+                    VStack(alignment: .center, spacing: 4) {
+                        PrimaryTextButton(
+                            text: L10n.stgTrkBtnAlertYes,
+                            a11y: A11y.settings.tracking.stgTrkBtnYes
+                        ) {
+                            viewStore.send(.confirmedOptInTracking)
                         }
+                        .font(Font.body.weight(.semibold))
+                        .padding()
+                        Button(L10n.stgTrkBtnAlertNo) {
+                            viewStore.send(.dismissTrackerComplyView)
+                        }
+                        .accessibility(identifier: A11y.settings.tracking.stgTrkBtnNo)
+                        .font(Font.body.weight(.semibold))
+                        .padding([.leading, .trailing, .bottom])
                     }
-                    .navigationBarItems(
-                        trailing: CloseButton { viewStore.send(.dismissTrackerComplyView) }
-                            .accessibility(identifier: A18n.redeem.overview.rdmBtnCloseButton)
-                    )
-                    .navigationBarTitleDisplayMode(.inline)
-                    .introspectNavigationController { navigationController in
-                        let navigationBar = navigationController.navigationBar
-                        navigationBar.barTintColor = UIColor(Colors.systemBackground)
-                        let navigationBarAppearance = UINavigationBarAppearance()
-                        navigationBarAppearance.shadowColor = UIColor(Colors.systemColorClear)
-                        navigationBarAppearance.backgroundColor = UIColor(Colors.systemBackground)
-                        navigationBar.standardAppearance = navigationBarAppearance
-                    }
+                }
+                .navigationBarItems(
+                    trailing: CloseButton { viewStore.send(.dismissTrackerComplyView) }
+                        .accessibility(identifier: A18n.redeem.overview.rdmBtnCloseButton)
+                )
+                .navigationBarTitleDisplayMode(.inline)
+                .introspectNavigationController { navigationController in
+                    let navigationBar = navigationController.navigationBar
+                    navigationBar.barTintColor = UIColor(Colors.systemBackground)
+                    let navigationBarAppearance = UINavigationBarAppearance()
+                    navigationBarAppearance.shadowColor = UIColor(Colors.systemColorClear)
+                    navigationBarAppearance.backgroundColor = UIColor(Colors.systemBackground)
+                    navigationBar.standardAppearance = navigationBarAppearance
                 }
             }
             .accentColor(Colors.primary700)

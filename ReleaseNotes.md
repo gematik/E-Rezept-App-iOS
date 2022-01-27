@@ -1,3 +1,27 @@
+# Release 1.1.2
+
+### added (2 changes)
+
+- Add profile entity to core data store
+- Add PendingExtAuthenticationView a.k.a. snackbar to MainScreen (External Authentication)
+
+### changed (4 changes)
+
+- Update health insurance contact list
+- Change CoreDataController so that we can present store initialization errors to the user
+- Change ErxTaskCoreDataStore to be seperated from ProfileCoreDataStore
+- Updated localizations to fix typos
+
+### fixed (2 changes)
+
+- Fix overall performance, especially for password inputs
+- Fix layouting issues within onboarding password creation and settings password creation/updating
+
+### removed (2 changes)
+
+- Remove AppContainer and almost all singleton like dependencies.
+- Removed unused accessibility identifier and unused localization keys
+
 # Release 1.1.1
 
 Update, regarding the `1.1.0 RC` Releases: We accidentally tagged recent commits with wrong version labels. These were meant to be named `1.1.1 RC`. The actual 1.1.0 (without the `RC`) is tagged correctly.

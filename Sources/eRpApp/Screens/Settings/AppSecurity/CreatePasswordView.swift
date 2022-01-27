@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2021 gematik GmbH
+//  Copyright (c) 2022 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -51,7 +51,7 @@ struct CreatePasswordView: View {
                     header: SectionHeaderView(
                         text: L10n.cpwTxtSectionUpdateTitle,
                         a11y: A11y.settings.createPassword.cpwTxtSectionUpdateTitle
-                    ),
+                    ).padding(.bottom, 8),
                     footer: currentPasswordFooter()
                 ) {
                     SecureFieldWithReveal(L10n.cpwInpCurrentPasswordPlaceholder,
@@ -65,7 +65,7 @@ struct CreatePasswordView: View {
                 header: SectionHeaderView(
                     text: L10n.cpwTxtSectionTitle,
                     a11y: A11y.settings.createPassword.cpwTxtSectionTitle
-                ),
+                ).padding(.bottom, 8),
                 footer: VStack(spacing: 8) {
                     FootnoteView(
                         text: L10n.cpwTxtPasswordRecommendation,
@@ -84,7 +84,7 @@ struct CreatePasswordView: View {
             }
             .textCase(.none)
 
-            Section(footer: saveButtonAndError()) {
+            Section {
                 SecureFieldWithReveal(L10n.cpwInpPasswordBPlaceholder,
                                       accessibilityLabelKey: L10n.cpwTxtPasswordBAccessibility,
                                       text: passwordB,
@@ -93,37 +93,52 @@ struct CreatePasswordView: View {
                 }
                 .accessibility(identifier: A11y.settings.createPassword.cpwInpPasswordB)
             }
+
+            Section(header: errorFooter(),
+                    footer: saveButtonAndError()) {
+                EmptyView()
+            }
+            .textCase(.none)
         }
         .listStyle(InsetGroupedListStyle())
         .navigationTitle(updatePassword ? L10n.cpwTxtUpdateTitle : L10n.cpwTxtTitle)
     }
 
-    private func saveButtonAndError() -> some View {
-        VStack(alignment: .leading) {
-            if let error = viewStore.passwordErrorMessage {
-                Text(error)
-                    .foregroundColor(Colors.red600)
-                    .font(.footnote)
-            }
-
-            PrimaryTextButton(
-                text: updatePassword ? L10n.cpwBtnChange : L10n.cpwBtnSave,
-                a11y: updatePassword ?
-                    A11y.settings.createPassword.cpwBtnUpdate : A11y.settings.createPassword.cpwBtnSave,
-                image: nil,
-                isEnabled: viewStore.hasValidPasswordEntries
-            ) { viewStore.send(.saveButtonTapped) }
-                .padding(.top)
+    @ViewBuilder
+    private func errorFooter() -> some View {
+        if let error = viewStore.passwordErrorMessage {
+            Text(error)
+                .foregroundColor(Colors.red600)
+                .font(.footnote)
+                .fixedSize(horizontal: false, vertical: true)
+                .transformEffect(.init(translationX: 0, y: -16))
         }
     }
 
+    @ViewBuilder
+    private func saveButtonAndError() -> some View {
+        PrimaryTextButton(
+            text: updatePassword ? L10n.cpwBtnChange : L10n.cpwBtnSave,
+            a11y: updatePassword ?
+                A11y.settings.createPassword.cpwBtnUpdate : A11y.settings.createPassword.cpwBtnSave,
+            image: nil,
+            isEnabled: viewStore.hasValidPasswordEntries
+        ) {
+            UIApplication.shared.dismissKeyboard()
+            viewStore.send(.saveButtonTapped)
+        }
+    }
+
+    @ViewBuilder
     private func currentPasswordFooter() -> some View {
-        VStack(alignment: .leading) {
-            if viewStore.showOriginalPasswordWrong {
+        if viewStore.showOriginalPasswordWrong {
+            VStack(alignment: .leading) {
                 Text(L10n.cpwTxtCurrentPasswordWrong)
                     .foregroundColor(Colors.red600)
                     .font(.footnote)
             }
+        } else {
+            EmptyView()
         }
     }
 }

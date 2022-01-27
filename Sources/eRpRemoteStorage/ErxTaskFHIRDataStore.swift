@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2021 gematik GmbH
+//  Copyright (c) 2022 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -74,6 +74,10 @@ public class ErxTaskFHIRDataStore: ErxTaskDataStore {
             .eraseToAnyPublisher()
     }
 
+    public func listAllTasksWithoutProfile() -> AnyPublisher<[ErxTask], Error> {
+        Fail(error: Error.notImplemented).eraseToAnyPublisher()
+    }
+
     private func collectAndMergeTaskPublishers(taskIds: [String]) -> AnyPublisher<[ErxTask], Error> {
         let taskPublishers: [AnyPublisher<ErxTask, Error>] =
             taskIds.map { taskId in
@@ -129,6 +133,23 @@ public class ErxTaskFHIRDataStore: ErxTaskDataStore {
             .eraseToAnyPublisher()
     }
 
+    public func redeem(orders: [ErxTaskOrder]) -> AnyPublisher<Bool, Error> {
+        let redeemOrderPublishers: [AnyPublisher<Bool, Error>] =
+            orders.map { order in
+                self.fhirClient.redeem(order: order)
+                    .first()
+                    .mapError { Error.fhirClientError($0) }
+                    .eraseToAnyPublisher()
+            }
+
+        return Publishers.MergeMany(redeemOrderPublishers)
+            .collect()
+            .map { _ in true } // always returns true or throws an error
+            .eraseToAnyPublisher()
+    }
+}
+
+extension ErxTaskFHIRDataStore: ErxAuditEventDataStore {
     public func fetchAuditEvent(by id: ErxAuditEvent.ID) // swiftlint:disable:this identifier_name
         -> AnyPublisher<ErxAuditEvent?, Error> {
         fhirClient.fetchAuditEvent(by: id)
@@ -156,22 +177,9 @@ public class ErxTaskFHIRDataStore: ErxTaskDataStore {
     public func save(auditEvents _: [ErxAuditEvent]) -> AnyPublisher<Bool, Error> {
         Fail(error: Error.notImplemented).eraseToAnyPublisher()
     }
+}
 
-    public func redeem(orders: [ErxTaskOrder]) -> AnyPublisher<Bool, Error> {
-        let redeemOrderPublishers: [AnyPublisher<Bool, Error>] =
-            orders.map { order in
-                self.fhirClient.redeem(order: order)
-                    .first()
-                    .mapError { Error.fhirClientError($0) }
-                    .eraseToAnyPublisher()
-            }
-
-        return Publishers.MergeMany(redeemOrderPublishers)
-            .collect()
-            .map { _ in true } // always returns true or throws an error
-            .eraseToAnyPublisher()
-    }
-
+extension ErxTaskFHIRDataStore: ErxCommunicationDataStore {
     public func listAllCommunications(
         after referenceDate: String?,
         for _: ErxTask.Communication.Profile
@@ -200,7 +208,9 @@ public class ErxTaskFHIRDataStore: ErxTaskDataStore {
     public func countAllUnreadCommunications(for _: ErxTask.Communication.Profile) -> AnyPublisher<Int, Error> {
         Fail(error: Error.notImplemented).eraseToAnyPublisher()
     }
+}
 
+extension ErxTaskFHIRDataStore: ErxMedicationDispenseDataStore {
     public func fetchLatestHandOverDateForMedicationDispenses() -> AnyPublisher<String?, Error> {
         Fail(error: Error.notImplemented).eraseToAnyPublisher()
     }

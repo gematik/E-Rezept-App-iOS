@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2021 gematik GmbH
+//  Copyright (c) 2022 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -23,28 +23,42 @@ import SwiftUI
 struct AppStartView: View {
     let store: AppStartDomain.Store
 
+    @ObservedObject
+    var viewStore: ViewStore<AppStartDomain.State, AppStartDomain.Action>
+
+    init(store: AppStartDomain.Store) {
+        self.store = store
+        viewStore = ViewStore(store) { old, new in
+            switch (old, new) {
+            case (.onboarding, .onboarding),
+                 (.app, .app):
+                return true
+            default:
+                return false
+            }
+        }
+    }
+
     var body: some View {
-        WithViewStore(store) { viewStore in
-            SwitchStore(store) {
-                CaseLet(
-                    state: /AppStartDomain.State.onboarding,
-                    action: AppStartDomain.Action.onboarding(action:)
-                ) { onboardingStore in
-                    OnboardingContainer(store: onboardingStore)
-                }
-                CaseLet(
-                    state: /AppStartDomain.State.app,
-                    action: AppStartDomain.Action.app(action:)
-                ) { appStore in
-                    TabContainerView(store: appStore)
-                }
-                Default {
-                    EmptyView()
-                }
+        SwitchStore(store) {
+            CaseLet(
+                state: /AppStartDomain.State.onboarding,
+                action: AppStartDomain.Action.onboarding(action:)
+            ) { onboardingStore in
+                OnboardingContainer(store: onboardingStore)
             }
-            .onAppear {
-                viewStore.send(.refreshOnboardingState)
+            CaseLet(
+                state: /AppStartDomain.State.app,
+                action: AppStartDomain.Action.app(action:)
+            ) { appStore in
+                TabContainerView(store: appStore)
             }
+            Default {
+                EmptyView()
+            }
+        }
+        .onAppear {
+            viewStore.send(.refreshOnboardingState)
         }
     }
 }

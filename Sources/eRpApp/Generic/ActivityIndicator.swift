@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2021 gematik GmbH
+//  Copyright (c) 2022 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -21,9 +21,10 @@ import SwiftUI
 struct ActivityIndicator: UIViewRepresentable {
     let shouldAnimate: Bool
     var hideWhenStopped = false
+    var style: UIActivityIndicatorView.Style = .large
 
     func makeUIView(context _: Context) -> UIActivityIndicatorView {
-        let activityView = UIActivityIndicatorView(style: .large)
+        let activityView = UIActivityIndicatorView(style: style)
         activityView.hidesWhenStopped = hideWhenStopped
         return activityView
     }

@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2021 gematik GmbH
+//  Copyright (c) 2022 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -26,7 +26,7 @@ struct GroupedPrescriptionView: View {
     @ScaledMetric var lastItemSpacerSize: CGFloat = 12
 
     var body: some View {
-        WithViewStore(store) { viewStore in
+        WithViewStore(store.stateless) { viewStore in
             VStack(spacing: 0) {
                 if groupedPrescription.displayType == .lowDetail {
                     LowDetailHeaderView(
@@ -86,8 +86,8 @@ struct GroupedPrescriptionView: View {
         let date: String?
         private var dateFormatted: String {
             if let date = date, let dateFhirFormatted =
-                AppContainer.shared.fhirDateFormatter.date(from: date, format: .yearMonthDay) {
-                return AppContainer.shared.uiDateFormatter.string(from: dateFhirFormatted)
+                globals.fhirDateFormatter.date(from: date, format: .yearMonthDay) {
+                return globals.uiDateFormatter.string(from: dateFhirFormatted)
             }
             return ""
         }
@@ -111,8 +111,8 @@ struct GroupedPrescriptionView: View {
         let date: String?
         private var dateFormatted: String {
             if let date = date, let dateFhirFormatted =
-                AppContainer.shared.fhirDateFormatter.date(from: date, format: .yearMonthDay) {
-                return AppContainer.shared.uiDateFormatter.string(from: dateFhirFormatted)
+                globals.fhirDateFormatter.date(from: date, format: .yearMonthDay) {
+                return globals.uiDateFormatter.string(from: dateFhirFormatted)
             }
             return ""
         }

@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2021 gematik GmbH
+//  Copyright (c) 2022 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -29,13 +29,15 @@ public protocol ChallengeSession {
     func validateNonce(with idToken: String) throws -> Bool
 }
 
-public struct ExtAuthChallengeSession: ChallengeSession {
+public struct ExtAuthChallengeSession: ChallengeSession, Equatable {
     public var verifierCode: VerifierCode
     public let nonce: String
+    public let entry: KKAppDirectory.Entry
 
-    public init(verifierCode: VerifierCode, nonce: String) {
+    public init(verifierCode: VerifierCode, nonce: String, for entry: KKAppDirectory.Entry) {
         self.verifierCode = verifierCode
         self.nonce = nonce
+        self.entry = entry
     }
 
     public func validateNonce(with idToken: String) throws -> Bool {
@@ -46,8 +48,13 @@ public struct ExtAuthChallengeSession: ChallengeSession {
 }
 
 public protocol ExtAuthRequestStorage: AnyObject {
-    func setExtAuthRequest(_ request: ExtAuthChallengeSession, for state: String)
+    func setExtAuthRequest(_ request: ExtAuthChallengeSession?, for state: String)
     func getExtAuthRequest(for state: String) -> ExtAuthChallengeSession?
+
+    /// Removes all pending requests
+    func reset()
+
+    var pendingExtAuthRequests: AnyPublisher<[ExtAuthChallengeSession], Never> { get }
 }
 
 /// All relevant constraints needed for a successful challenge exchange

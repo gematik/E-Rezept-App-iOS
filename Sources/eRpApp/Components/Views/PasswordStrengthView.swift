@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2021 gematik GmbH
+//  Copyright (c) 2022 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -20,6 +20,7 @@ import SwiftUI
 
 struct PasswordStrengthView: View {
     let strength: PasswordStrength
+    var barBackgroundColor = Color(.tertiarySystemBackground)
 
     private var strengthColor: Color {
         switch strength {
@@ -30,10 +31,11 @@ struct PasswordStrengthView: View {
             return Color(.systemOrange)
         case .medium:
             return Color(.systemYellow)
-        case .strong,
-             .veryStrong,
-             .excellent:
+        case .strong:
             return Color(.systemGreen)
+        case .veryStrong,
+             .excellent:
+            return Colors.secondary700
         }
     }
 
@@ -73,6 +75,24 @@ struct PasswordStrengthView: View {
         }
     }
 
+    private var strengthLocalization: LocalizedStringKey {
+        switch strength {
+        case .none,
+             .veryWeak:
+            return L10n.ctlTxtPasswordStrength0
+        case .weak:
+            return L10n.ctlTxtPasswordStrength1
+        case .medium:
+            return L10n.ctlTxtPasswordStrength2
+        case .strong:
+            return L10n.ctlTxtPasswordStrength3
+        case .veryStrong:
+            return L10n.ctlTxtPasswordStrength4
+        case .excellent:
+            return L10n.ctlTxtPasswordStrength5
+        }
+    }
+
     private func width(for availableSpace: CGFloat) -> CGFloat {
         availableSpace * strengthPercent
     }
@@ -85,10 +105,10 @@ struct PasswordStrengthView: View {
                         .frame(width: width(for: geometry.size.width), height: 8, alignment: .leading)
                         .cornerRadius(6)
                         .foregroundColor(strengthColor)
-
+                        .colorScheme(.light)
                     Spacer(minLength: 0)
                 }
-                .background(Colors.systemGray6)
+                .background(barBackgroundColor)
                 .cornerRadius(6)
             }
             .frame(
@@ -101,9 +121,18 @@ struct PasswordStrengthView: View {
                 alignment: .center
             )
 
-            Text(L10n.ctlTxtPasswordStrengthHint)
-                .font(.caption)
-                .foregroundColor(Color(.secondaryLabel))
+            HStack {
+                Text(strengthLocalization)
+                    .font(.caption)
+                    .foregroundColor(Color(.secondaryLabel))
+
+                if strength.passesMinimumThreshold {
+                    Image(systemName: SFSymbolName.checkmark)
+                        .font(.caption.weight(.medium))
+                        .foregroundColor(Colors.secondary600)
+                }
+                Spacer()
+            }
         }
         .accessibilityElement(children: .combine)
         .accessibility(value: Text(strengthValue))
@@ -148,5 +177,6 @@ struct PasswordStrength_Preview: PreviewProvider {
         }
         .padding()
         .frame(width: nil, height: 500, alignment: .center)
+        .background(Color(.secondarySystemBackground))
     }
 }

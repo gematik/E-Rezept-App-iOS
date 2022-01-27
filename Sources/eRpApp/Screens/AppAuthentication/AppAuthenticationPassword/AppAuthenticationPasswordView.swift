@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2021 gematik GmbH
+//  Copyright (c) 2022 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -85,6 +85,7 @@ struct AppAuthenticationPasswordView: View {
                 .foregroundColor(Colors.red600)
                 .font(.footnote)
                 .accessibility(identifier: A11y.auth.authTxtPasswordFailure)
+                .fixedSize(horizontal: false, vertical: true)
         }
     }
 

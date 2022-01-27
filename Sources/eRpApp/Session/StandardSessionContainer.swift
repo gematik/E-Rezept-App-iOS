@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2021 gematik GmbH
+//  Copyright (c) 2022 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -30,11 +30,13 @@ import VAUClient
 
 class StandardSessionContainer: UserSession {
     private lazy var keychainStorage = KeychainStorage()
-
     private let schedulers: Schedulers
+    private var erxTaskCoreDataStore: ErxTaskCoreDataStore
 
-    init(schedulers: Schedulers) {
+    init(schedulers: Schedulers,
+         erxTaskCoreDataStore: ErxTaskCoreDataStore) {
         self.schedulers = schedulers
+        self.erxTaskCoreDataStore = erxTaskCoreDataStore
     }
 
     var isDemoMode: Bool {
@@ -173,23 +175,7 @@ class StandardSessionContainer: UserSession {
     }()
 
     lazy var erxTaskRepository: ErxTaskRepositoryAccess = {
-        // Local FHIR data store configuration
-        guard let filePath = try? FileManager.default.url(
-            for: .documentDirectory,
-            in: .userDomainMask,
-            appropriateFor: nil,
-            create: false
-        )
-        .appendingPathComponent("ErxTask.db") else {
-            preconditionFailure("Could not create a filePath for the local storage data store.")
-        }
-
-        let disk: ErxTaskCoreDataStore
-        do {
-            disk = try ErxTaskCoreDataStore(url: filePath, fileProtection: .completeUnlessOpen)
-        } catch {
-            preconditionFailure("Failed to initialize ErxTaskCoreDataStore: \(error)")
-        }
+        let disk = erxTaskCoreDataStore
         let repositoryPublisher = localUserStore.configuration
             .map { configuration -> DefaultErxTaskRepository<ErxTaskCoreDataStore, ErxTaskFHIRDataStore> in
                 let vauUrl = configuration.erp

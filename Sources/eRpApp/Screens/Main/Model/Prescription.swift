@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2021 gematik GmbH
+//  Copyright (c) 2022 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -36,7 +36,7 @@ extension GroupedPrescription {
         init(
             erxTask: ErxTask,
             date: Date = Date(),
-            dateFormatter: DateFormatter = AppContainer.shared.uiDateFormatter
+            dateFormatter: DateFormatter = globals.uiDateFormatter
         ) {
             self.erxTask = erxTask
             if let medicationDispense = erxTask.medicationDispense {
@@ -60,7 +60,7 @@ extension GroupedPrescription {
             for erxTask: ErxTask,
             whenHandedOver: String?,
             date: Date = Date(),
-            dateFormatter: DateFormatter = AppContainer.shared.uiDateFormatter
+            dateFormatter: DateFormatter = globals.uiDateFormatter
         ) -> Status {
             switch erxTask.status {
             case .ready:

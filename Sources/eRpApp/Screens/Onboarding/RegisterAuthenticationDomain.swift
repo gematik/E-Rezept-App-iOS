@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2021 gematik GmbH
+//  Copyright (c) 2022 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -49,7 +49,7 @@ enum RegisterAuthenticationDomain {
                 return nil
             }
 
-            guard passwordStrength.isMinimumThreshold else {
+            guard passwordStrength.passesMinimumThreshold else {
                 return NSLocalizedString("onb_auth_txt_password_strength_insufficient", comment: "")
             }
 
@@ -80,7 +80,7 @@ enum RegisterAuthenticationDomain {
         }
 
         var hasValidPasswordEntries: Bool {
-            passwordA == passwordB && passwordStrength.isMinimumThreshold
+            passwordA == passwordB && passwordStrength.passesMinimumThreshold
         }
     }
 
@@ -225,7 +225,7 @@ extension RegisterAuthenticationDomain {
         static let environment = Environment(
             appSecurityManager: DummyAppSecurityManager(),
             userDataStore: DemoUserDefaultsStore(),
-            schedulers: AppContainer.shared.schedulers,
+            schedulers: Schedulers(),
             authenticationChallengeProvider: BiometricsAuthenticationChallengeProvider(),
             passwordStrengthTester: DefaultPasswordStrengthTester()
         )
@@ -244,7 +244,7 @@ extension RegisterAuthenticationDomain {
                     appSecurityManager: DummyAppSecurityManager(options: state.availableSecurityOptions,
                                                                 error: state.securityOptionsError),
                     userDataStore: DemoUserDefaultsStore(),
-                    schedulers: AppContainer.shared.schedulers,
+                    schedulers: Schedulers(),
                     authenticationChallengeProvider: BiometricsAuthenticationChallengeProvider(),
                     passwordStrengthTester: DefaultPasswordStrengthTester()
                 )

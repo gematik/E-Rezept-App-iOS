@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2021 gematik GmbH
+//  Copyright (c) 2022 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -137,6 +137,8 @@ struct PrescriptionFullDetailView: View {
                     }
                     .padding([.horizontal, .top])
 
+                    DosageHint()
+
                     // Patient details
                     MedicationPatientView(
                         name: viewStore.state.prescription.patient?.name,
@@ -258,17 +260,17 @@ struct PrescriptionFullDetailView: View {
 
     private func uiFormattedDate(dateString: String?) -> String? {
         if let dateString = dateString,
-           let date = AppContainer.shared.fhirDateFormatter.date(from: dateString,
-                                                                 format: .yearMonthDay) {
-            return AppContainer.shared.uiDateFormatter.string(from: date)
+           let date = globals.fhirDateFormatter.date(from: dateString,
+                                                     format: .yearMonthDay) {
+            return globals.uiDateFormatter.string(from: date)
         }
         return dateString
     }
 
     private func uiFormattedDateTime(dateTimeString: String?) -> String? {
         if let dateTimeString = dateTimeString,
-           let dateTime = AppContainer.shared.fhirDateFormatter.date(from: dateTimeString,
-                                                                     format: .yearMonthDayTimeMilliSeconds) {
+           let dateTime = globals.fhirDateFormatter.date(from: dateTimeString,
+                                                         format: .yearMonthDayTimeMilliSeconds) {
             return uiDateFormatter.string(from: dateTime)
         }
         return dateTimeString
@@ -317,6 +319,36 @@ struct PrescriptionFullDetailView: View {
                     decisionHandler(.allow, webView.configuration.defaultWebpagePreferences)
                 }
             }
+        }
+    }
+}
+
+extension PrescriptionFullDetailView {
+    private struct DosageHint: View {
+        var body: some View {
+            VStack(alignment: .leading, spacing: 8) {
+                Text(L10n.prscDtlHntGesundBundDeText)
+                    .foregroundColor(Color(.secondaryLabel))
+                    .multilineTextAlignment(.leading)
+
+                HStack {
+                    Spacer(minLength: 0)
+
+                    Button(action: {
+                        guard let url = URL(string: "https://gesund.bund.de"),
+                              UIApplication.shared.canOpenURL(url) else { return }
+
+                        UIApplication.shared.open(url)
+                    }, label: {
+                        Text(L10n.prscDtlHntGesundBundDeBtn)
+                            .foregroundColor(Colors.primary)
+                            .multilineTextAlignment(.trailing)
+                    })
+                }
+            }
+            .font(.footnote)
+            .padding(.horizontal)
+            .padding(.top, 8)
         }
     }
 }

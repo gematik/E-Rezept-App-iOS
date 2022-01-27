@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2021 gematik GmbH
+//  Copyright (c) 2022 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -29,4 +29,5 @@ extension ErxAuditEventEntity {
     @NSManaged public var text: String?
     @NSManaged public var timestamp: String?
     @NSManaged public var task: ErxTaskEntity?
+    @NSManaged public var profile: ProfileEntity?
 }

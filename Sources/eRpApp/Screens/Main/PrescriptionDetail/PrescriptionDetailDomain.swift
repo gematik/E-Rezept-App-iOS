@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2021 gematik GmbH
+//  Copyright (c) 2022 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -21,6 +21,7 @@ import ComposableArchitecture
 import ComposableCoreLocation
 import eRpKit
 import IDP
+import Pharmacy
 import SwiftUI
 
 enum PrescriptionDetailDomain: Equatable {
@@ -95,11 +96,13 @@ enum PrescriptionDetailDomain: Equatable {
     }
 
     struct Environment {
-        var schedulers: Schedulers
+        let schedulers: Schedulers
         let locationManager: LocationManager
-        var taskRepositoryAccess: ErxTaskRepositoryAccess
+        let taskRepositoryAccess: ErxTaskRepositoryAccess
         let matrixCodeGenerator = DefaultErxTaskMatrixCodeGenerator()
-        var fhirDateFormatter: FHIRDateFormatter
+        let fhirDateFormatter: FHIRDateFormatter
+        let pharmacyRepository: PharmacyRepository
+        let userSession: UserSession
     }
 
     static let domainReducer = Reducer { state, action, environment in
@@ -213,11 +216,12 @@ enum PrescriptionDetailDomain: Equatable {
         ) { environment in
             PharmacySearchDomain.Environment(
                 schedulers: environment.schedulers,
-                pharmacyRepository: AppContainer.shared.userSessionSubject.pharmacyRepository,
+                pharmacyRepository: environment.pharmacyRepository,
                 locationManager: .live,
                 fhirDateFormatter: environment.fhirDateFormatter,
                 openHoursCalculator: PharmacyOpenHoursCalculator(),
-                referenceDateForOpenHours: nil
+                referenceDateForOpenHours: nil,
+                userSession: environment.userSession
             )
         }
 
@@ -282,7 +286,9 @@ extension PrescriptionDetailDomain {
             schedulers: Schedulers(),
             locationManager: .live,
             taskRepositoryAccess: demoSessionContainer.userSession.erxTaskRepository,
-            fhirDateFormatter: FHIRDateFormatter.shared
+            fhirDateFormatter: FHIRDateFormatter.shared,
+            pharmacyRepository: DemoSessionContainer().pharmacyRepository,
+            userSession: DemoSessionContainer()
         )
         static let store = Store(initialState: state,
                                  reducer: reducer,

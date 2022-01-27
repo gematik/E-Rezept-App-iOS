@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2021 gematik GmbH
+//  Copyright (c) 2022 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -16,6 +16,8 @@
 //  
 //
 
+/// Will be deprecated soon, do not use it.
+///
 /// Use this property wrapper to  inject dependencies from a type conforming to the `AppContainerType` protocol.
 /// Dependencies are resolved by passing a related `keyPath` for the service
 ///
@@ -31,16 +33,16 @@
 @propertyWrapper
 class Injected<Service> {
     private var service: Service?
-    private var container: AppContainerType
-    private var keyPath: KeyPath<AppContainerType, Service>
+    private var ref: Globals
+    private var keyPath: KeyPath<Globals, Service>
 
     /// Initializer for the `Injected` property wrapper.
     ///
     /// - Parameters:
     ///   - container: dependency injection container that is used to load the dependency
     ///   - keyPath: keyPath that is used to resolve the injected service
-    init(container: AppContainerType = AppContainer.shared, _ keyPath: KeyPath<AppContainerType, Service>) {
-        self.container = container
+    init(container _: Globals = globals, _ keyPath: KeyPath<Globals, Service>) {
+        ref = globals
         self.keyPath = keyPath
     }
 
@@ -48,7 +50,7 @@ class Injected<Service> {
     var wrappedValue: Service {
         get {
             guard let service = service else {
-                let resolvedService = container[keyPath: keyPath]
+                let resolvedService = ref[keyPath: keyPath]
                 self.service = resolvedService
                 return resolvedService
             }

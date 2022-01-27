@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2021 gematik GmbH
+//  Copyright (c) 2022 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -33,7 +33,11 @@ class ServiceLocator {
 }
 
 class ServiceLocatorDebugAccess {
-    @Injected(\.serviceLocator) var serviceLocator: ServiceLocator
+    internal init(serviceLocator: ServiceLocator) {
+        self.serviceLocator = serviceLocator
+    }
+
+    var serviceLocator: ServiceLocator
 
     func setDeviceCapabilities(_ deviceCapabilities: DeviceCapabilities) {
         serviceLocator.deviceCapabilities = deviceCapabilities

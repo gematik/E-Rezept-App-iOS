@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2021 gematik GmbH
+//  Copyright (c) 2022 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -31,7 +31,7 @@ enum PasswordStrength: Int {
     case veryStrong
     case excellent
 
-    var isMinimumThreshold: Bool {
+    var passesMinimumThreshold: Bool {
         rawValue >= PasswordStrength.medium.rawValue
     }
 }
@@ -42,10 +42,15 @@ struct DefaultPasswordStrengthTester: PasswordStrengthTester {
     }
 }
 
+private class LazyZxcvbnDB {
+    private(set) lazy var zxcvbn = DBZxcvbn()
+}
+
+private var lazyZxcvbnDB = LazyZxcvbnDB()
+
 extension String {
     func passwordStrength() -> PasswordStrength {
-        let zxcvbn = DBZxcvbn()
-        switch zxcvbn.passwordStrength(self)?.score {
+        switch lazyZxcvbnDB.zxcvbn.passwordStrength(self)?.score {
         case 0:
             return .veryWeak
         case 1:

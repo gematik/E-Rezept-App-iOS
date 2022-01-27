@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2021 gematik GmbH
+//  Copyright (c) 2022 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -33,7 +33,7 @@ struct CardWallLoginOptionView<Content: View>: View {
     var body: some View {
         WithViewStore(store) { viewStore in
             VStack(alignment: .leading) {
-                PrivacyWarningView(store: store)
+                PrivacyWarningViewContainer(store: store)
 
                 ScrollView(.vertical, showsIndicators: true) {
                     VStack(alignment: .leading) {
@@ -116,7 +116,7 @@ struct CardWallLoginOptionView<Content: View>: View {
     }
 
     // [REQ:gemSpec_IDP_Frontend:A_21574] Actual view
-    private struct PrivacyWarningView: View {
+    private struct PrivacyWarningViewContainer: View {
         let store: CardWallLoginOptionDomain.Store
 
         var body: some View {
@@ -127,44 +127,56 @@ struct CardWallLoginOptionView<Content: View>: View {
                             get: { $0.isSecurityWarningPresented },
                             send: CardWallLoginOptionDomain.Action.dismissSecurityWarning
                         )) {
-                            VStack(alignment: .leading) {
-                                ScrollView(.vertical, showsIndicators: true) {
-                                    VStack(alignment: .center) {
-                                        Text(L10n.cdwTxtBiometrySecurityWarningTitle)
-                                            .foregroundColor(Colors.systemLabel)
-                                            .font(.title3)
-                                            .bold()
-                                            .accessibility(identifier: A11y.cardWall.loginOption
-                                                .cdwTxtLoginOptionSecurityWarningTitle)
-                                            .padding(.bottom, 16)
-
-                                        Spacer()
-
-                                        Text(L10n.cdwTxtBiometrySecurityWarningDescription)
-                                            .foregroundColor(Colors.systemLabel)
-                                            .font(.body)
-                                            .accessibility(identifier: A11y.cardWall.loginOption
-                                                .cdwTxtLoginOptionSecurityWarningDescription)
-                                            .padding(.bottom, 16)
-                                    }
-                                }
-                                .padding()
-
-                                Spacer()
-
-                                GreyDivider()
-
-                                PrimaryTextButton(
-                                    text: L10n.cdwBtnBiometrySecurityWarningAccept,
-                                    a11y: A11y.cardWall.loginOption.cdwBtnLoginOptionSecurityWarningAccept
-                                ) {
-                                    viewStore.send(.acceptSecurityWarning)
-                                }
-                                .accessibility(label: Text(L10n.cdwBtnBiometryContinueLabel))
-                                .padding(.horizontal)
-                                .padding(.bottom)
+                            PrivacyWarningView {
+                                viewStore.send(.acceptSecurityWarning)
                             }
                         }
+                }
+            }
+        }
+
+        private struct PrivacyWarningView: View {
+            var confirm: () -> Void
+
+            var body: some View {
+                VStack(alignment: .leading) {
+                    ScrollView(.vertical, showsIndicators: true) {
+                        VStack(alignment: .center) {
+                            Text(L10n.cdwTxtBiometrySecurityWarningTitle)
+                                .foregroundColor(Colors.systemLabel)
+                                .font(.title3)
+                                .bold()
+                                .accessibility(
+                                    identifier: A11y.cardWall.loginOption.cdwTxtLoginOptionSecurityWarningTitle
+                                )
+                                .padding(.bottom, 16)
+
+                            Spacer()
+
+                            Text(L10n.cdwTxtBiometrySecurityWarningDescription)
+                                .foregroundColor(Colors.systemLabel)
+                                .font(.body)
+                                .accessibility(
+                                    identifier: A11y.cardWall.loginOption.cdwTxtLoginOptionSecurityWarningDescription
+                                )
+                                .padding(.bottom, 16)
+                        }
+                    }
+                    .padding()
+
+                    Spacer()
+
+                    GreyDivider()
+
+                    PrimaryTextButton(
+                        text: L10n.cdwBtnBiometrySecurityWarningAccept,
+                        a11y: A11y.cardWall.loginOption.cdwBtnLoginOptionSecurityWarningAccept
+                    ) {
+                        confirm()
+                    }
+                    .accessibility(label: Text(L10n.cdwBtnBiometryContinueLabel))
+                    .padding(.horizontal)
+                    .padding(.bottom)
                 }
             }
         }

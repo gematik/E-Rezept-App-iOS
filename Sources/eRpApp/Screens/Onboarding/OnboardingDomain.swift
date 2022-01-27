@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2021 gematik GmbH
+//  Copyright (c) 2022 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -171,7 +171,7 @@ enum OnboardingDomain {
             }
 
             if case .password = selectedOption {
-                guard state.registerAuthenticationState.passwordStrength.isMinimumThreshold,
+                guard state.registerAuthenticationState.passwordStrength.passesMinimumThreshold,
                       let success = try? environment.appSecurityManager
                       .save(password: state.registerAuthenticationState.passwordA),
                       success == true else {

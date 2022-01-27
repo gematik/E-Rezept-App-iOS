@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2021 gematik GmbH
+//  Copyright (c) 2022 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -136,6 +136,7 @@ enum PharmacySearchDomain: Equatable {
         let openHoursCalculator: PharmacyOpenHoursCalculator
         // Control the current time for opening/closing determination. When not set current device time is used.
         let referenceDateForOpenHours: Date?
+        let userSession: UserSession
     }
 
     static let domainReducer = Reducer { state, action, environment in
@@ -305,7 +306,10 @@ enum PharmacySearchDomain: Equatable {
             state: \.pharmacyDetailState,
             action: /PharmacySearchDomain.Action.pharmacyDetailView(action:)
         ) { environment in
-            PharmacyDetailDomain.Environment(schedulers: environment.schedulers)
+            PharmacyDetailDomain.Environment(
+                schedulers: environment.schedulers,
+                userSession: environment.userSession
+            )
         }
 
     static var locationPermissionAlertState: AlertState<Action> = {
@@ -381,11 +385,12 @@ extension PharmacySearchDomain {
 
         static let environment = Environment(
             schedulers: Schedulers(),
-            pharmacyRepository: AppContainer.shared.userSessionSubject.pharmacyRepository,
+            pharmacyRepository: DemoSessionContainer().pharmacyRepository,
             locationManager: .live,
             fhirDateFormatter: FHIRDateFormatter.shared,
             openHoursCalculator: PharmacyOpenHoursCalculator(),
-            referenceDateForOpenHours: openHoursReferenceDate
+            referenceDateForOpenHours: openHoursReferenceDate,
+            userSession: DemoSessionContainer()
         )
         static let store = Store(initialState: state,
                                  reducer: reducer,

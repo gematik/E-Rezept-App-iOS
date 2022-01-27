@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2021 gematik GmbH
+//  Copyright (c) 2022 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -102,8 +102,8 @@ struct PrescriptionLowDetailView: View {
 
     private func uiFormattedDate(dateString: String?) -> String? {
         if let dateString = dateString,
-           let date = AppContainer.shared.fhirDateFormatter.date(from: dateString, format: .yearMonthDay) {
-            return AppContainer.shared.uiDateFormatter.string(from: date)
+           let date = globals.fhirDateFormatter.date(from: dateString, format: .yearMonthDay) {
+            return globals.uiDateFormatter.string(from: date)
         }
         return dateString
     }

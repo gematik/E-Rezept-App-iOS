@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2021 gematik GmbH
+//  Copyright (c) 2022 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -41,7 +41,7 @@ enum CreatePasswordDomain {
                 return nil
             }
 
-            guard passwordStrength.isMinimumThreshold else {
+            guard passwordStrength.passesMinimumThreshold else {
                 return NSLocalizedString("cpw_txt_password_strength_insufficient", comment: "")
             }
 
@@ -59,7 +59,7 @@ enum CreatePasswordDomain {
         var showOriginalPasswordWrong = false
 
         var hasValidPasswordEntries: Bool {
-            passwordA == passwordB && passwordStrength.isMinimumThreshold
+            passwordA == passwordB && passwordStrength.passesMinimumThreshold
         }
 
         enum Mode {

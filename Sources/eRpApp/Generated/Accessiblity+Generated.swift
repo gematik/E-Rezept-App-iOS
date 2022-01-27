@@ -18,8 +18,6 @@ internal enum A11y {
       static let authBtnPasswordContinue = "auth_btn_password_continue"
       static let authTxtPasswordFailure = "auth_txt_password_failure"
       static let authEdtPasswordInput = "auth_edt_password_input"
-      static let authTxtPasswordPlaceholder = "auth_txt_password_placeholder"
-      static let authTxtPasswordSubtitle = "auth_txt_password_subtitle"
       static let authTxtFailedLoginHint = "auth_txt_failed_login_hint"
   }
     internal enum cardWall { 
@@ -27,9 +25,7 @@ internal enum A11y {
       static let cdwTxtCanInput = "cdw_txt_can_input"
       static let cdwTxtCanInstruction = "cdw_txt_can_instruction"
       static let cdwImgCanCard = "cdw_img_can_card"
-      static let cdwTxtCanInstruction2 = "cdw_txt_can_instruction_2"
       static let cdwBtnCanCancel = "cdw_btn_can_cancel"
-      static let cdwHintDemoMode = "cdw_hint_demo_mode"
       static let cdwBtnCanDone = "cdw_btn_can_done"
       static let cdwBtnCanMore = "cdw_btn_can_more"
   }
@@ -73,18 +69,11 @@ internal enum A11y {
     internal enum notForYou {
       static let cdwBtnNfuDone = "cdw_btn_nfu_done"
       static let cdwBtnNfuCancel = "cdw_btn_nfu_cancel"
-      static let cdwTxtNfuTitle = "cdw_txt_nfu_title"
       static let cdwImgNfu = "cdw_img_nfu"
       static let cdwTxtNfuSubtitle = "cdw_txt_nfu_subtitle"
       static let cdwTxtNfuDescription = "cdw_txt_nfu_description"
       static let cdwTxtNfuFootnote = "cdw_txt_nfu_footnote"
       static let cdwBtnNfuMore = "cdw_btn_nfu_more"
-  }
-    internal enum orderEGKInfo {
-      static let cdwTxtOrderEgkInfoHeadline = "cdw_txt_order_egk_info_headline"
-      static let cdwBtnOrderEgkInfo = "cdw_btn_order_egk_info"
-      static let cdwTxtOrderEgkTextblock = "cdw_txt_order_egk_textblock"
-      static let cdwBtnOrderEgkClose = "cdw_btn_order_egk_close"
   }
     internal enum pinInput {
       static let cdwTxtPinSubtitle = "cdw_txt_pin_subtitle"
@@ -93,14 +82,11 @@ internal enum A11y {
       static let cdwEdtPinInput = "cdw_edt_pin_input"
       static let cdwTxtPinHint = "cdw_txt_pin_hint"
       static let cdwTxtPinWarning = "cdw_txt_pin_warning"
-      static let cdwImgPinCard = "cdw_img_pin_card"
-      static let cdwTxtPinDescription = "cdw_txt_pin_description"
       static let cdwHintGetPin = "cdw_hint_get_pin"
   }
     internal enum readCard {
       static let cdwBtnRcNext = "cdw_btn_rc_next"
       static let cdwBtnRcCancel = "cdw_btn_rc_cancel"
-      static let cdwImgRcCard = "cdw_img_rc_card"
       static let cdwTxtRcHeadline = "cdw_txt_rc_headline"
       static let cdwTxtRcDescription = "cdw_txt_rc_description"
   }
@@ -110,16 +96,12 @@ internal enum A11y {
       static let cdwBtnSelKkapp = "cdw_btn_sel_kkapp"
   }
     }
-    internal enum global {
-      static let bnrTxtDemoMode = "bnr_txt_demo_mode"
-  }
     internal enum mainScreen {
       static let erxBtnRefresh = "erx_btn_refresh"
       static let erxDetailedBlock = "erx_detailed_block"
       static let erxBtnShowSettings = "erx_btn_show_settings"
       static let erxBtnScnPrescription = "erx_btn_scn_prescription"
       static let erxHntDemoModeTour = "erx_hnt_demo_mode_tour"
-      static let erxHntAppSecurity = "erx_hnt_app_security"
       static let erxHntDemoModeWelcome = "erx_hnt_demo_mode_welcome"
       static let erxHntOpenScanner = "erx_hnt_open_scanner"
       static let erxHntShowCardWall = "erx_hnt_show_card_wall"
@@ -134,7 +116,6 @@ internal enum A11y {
       static let pucTxtTitle = "puc_txt_title"
       static let pucTxtSubtitle = "puc_txt_subtitle"
       static let pucTxtHrCode = "puc_txt_hrCode"
-      static let pucImgDmcCode = "puc_img_dmcCode"
   }
     }
     internal enum onboarding { 
@@ -175,7 +156,6 @@ internal enum A11y {
     }
     internal enum orderEGK {
       static let ogkTxtHeadline = "ogk_txt_headline"
-      static let ogkTxtDesription = "ogk_txt_desription"
       static let ogkBtnCancel = "ogk_btn_cancel"
       static let ogkBtnPhone = "ogk_btn_phone"
       static let ogkBtnWeb = "ogk_btn_web"
@@ -187,7 +167,6 @@ internal enum A11y {
       static let ogkTxtContactCompanyHeader = "ogk_txt_contact_company_header"
   }
     internal enum pharmacyDetail {
-      static let phaDetailTxtTitle = "pha_detail_txt_title"
       static let phaDetailTxtSubtitle = "pha_detail_txt_subtitle"
       static let phaDetailBtnOrganization = "pha_detail_btn_organization"
       static let phaDetailBtnHealthcareService = "pha_detail_btn_healthcare_service"
@@ -224,7 +203,6 @@ internal enum A11y {
       static let prscDtlHntNoctuFeeWaiver = "prsc_dtl_hnt_noctu_fee_waiver"
       static let prscDtlHntSubstitution = "prsc_dtl_hnt_substitution"
       static let prscDtlHntDosageInstructions = "prsc_dtl_hnt_dosage_instructions"
-      static let prscDtlBtnPharmacySearch = "prsc_dtl_btn_pharmacy_search"
       static let prscDtlHntKeepOverview = "prsc_dtl_hnt_keep_overview"
   }
     internal enum redeem { 
@@ -243,8 +221,6 @@ internal enum A11y {
   }
     }
     internal enum scanner {
-      static let scnImgCameraFocusFrame = "scn_img_camera_focus_frame"
-      static let scnImgScanState = "scn_img_scan_state"
       static let scnTxtScanState = "scn_txt_scan_state"
       static let scnImgScanAlert = "scn_img_scan_alert"
       static let scnBtnScanningDone = "scn_btn_scanning_done"
@@ -272,10 +248,8 @@ internal enum A11y {
       static let cpwInpPasswordA = "cpw_inp_passwordA"
       static let cpwInpPasswordB = "cpw_inp_passwordB"
       static let cpwTxtPasswordRecommendation = "cpw_txt_password_recommendation"
-      static let cpwTxtPasswordsDontMatch = "cpw_txt_passwords_dont_match"
       static let cpwTxtSectionTitle = "cpw_txt_section_title"
       static let cpwTxtSectionUpdateTitle = "cpw_txt_section_update_title"
-      static let cpwTxtTitle = "cpw_txt_title"
   }
     internal enum dataPrivacy {
       static let stgDprTxtDataPrivacy = "stg_dpr_txt_data_privacy"
@@ -303,7 +277,6 @@ internal enum A11y {
       static let stgTxtHeaderSecurity = "stg_txt_header_security"
       static let stgTxtSecurityFaceid = "stg_txt_security_faceid"
       static let stgTxtSecurityTouchid = "stg_txt_security_touchid"
-      static let stgTxtSecurityUnsecured = "stg_txt_security_unsecured"
       static let stgTxtSecurityPassword = "stg_txt_security_password"
       static let stgTxtSecurityTokens = "stg_txt_security_tokens"
   }

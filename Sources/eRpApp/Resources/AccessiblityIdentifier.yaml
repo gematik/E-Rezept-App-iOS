@@ -1,13 +1,10 @@
 scanner:
-  - scn_img_camera_focus_frame
-  - scn_img_scan_state
   - scn_txt_scan_state
   - scn_img_scan_alert
   - scn_btn_scanning_done
   - scn_btn_cancel_scan
 orderEGK:
   - ogk_txt_headline
-  - ogk_txt_desription
   - ogk_btn_cancel
   - ogk_btn_phone
   - ogk_btn_web
@@ -44,15 +41,9 @@ cardWall:
     - cdw_txt_intro_requirement_card
     - cdw_txt_intro_requirement_pin
     - cdw_txt_intro_requirement_phone
-  orderEGKInfo:
-    - cdw_txt_order_egk_info_headline
-    - cdw_btn_order_egk_info
-    - cdw_txt_order_egk_textblock
-    - cdw_btn_order_egk_close
   notForYou:
     - cdw_btn_nfu_done
     - cdw_btn_nfu_cancel
-    - cdw_txt_nfu_title
     - cdw_img_nfu
     - cdw_txt_nfu_subtitle
     - cdw_txt_nfu_description
@@ -62,9 +53,7 @@ cardWall:
     - cdw_txt_can_input
     - cdw_txt_can_instruction
     - cdw_img_can_card
-    - cdw_txt_can_instruction_2
     - cdw_btn_can_cancel
-    - cdw_hint_demo_mode
     - cdw_btn_can_done
     - cdw_btn_can_more
   pinInput:
@@ -74,8 +63,6 @@ cardWall:
     - cdw_edt_pin_input
     - cdw_txt_pin_hint
     - cdw_txt_pin_warning
-    - cdw_img_pin_card
-    - cdw_txt_pin_description
     - cdw_hint_get_pin
   loginOption:
     - cdw_txt_loginOption_subtitle
@@ -90,7 +77,6 @@ cardWall:
   readCard:
     - cdw_btn_rc_next
     - cdw_btn_rc_cancel
-    - cdw_img_rc_card
     - cdw_txt_rc_headline
     - cdw_txt_rc_description
 onboarding:
@@ -129,8 +115,6 @@ auth:
   - auth_btn_password_continue
   - auth_txt_password_failure
   - auth_edt_password_input
-  - auth_txt_password_placeholder
-  - auth_txt_password_subtitle
   - auth_txt_failed_login_hint
 settings:
   demo:
@@ -142,7 +126,6 @@ settings:
     - stg_txt_header_security
     - stg_txt_security_faceid
     - stg_txt_security_touchid
-    - stg_txt_security_unsecured
     - stg_txt_security_password
     - stg_txt_security_tokens
   createPassword:
@@ -152,10 +135,8 @@ settings:
     - cpw_inp_passwordA
     - cpw_inp_passwordB
     - cpw_txt_password_recommendation
-    - cpw_txt_passwords_dont_match
     - cpw_txt_section_title
     - cpw_txt_section_update_title
-    - cpw_txt_title
   logout:
     - stg_btn_logout
   legalNotice:
@@ -200,14 +181,12 @@ messages:
     - puc_txt_title
     - puc_txt_subtitle
     - puc_txt_hrCode
-    - puc_img_dmcCode
 mainScreen:
   - erx_btn_refresh
   - erx_detailed_block
   - erx_btn_show_settings
   - erx_btn_scn_prescription
   - erx_hnt_demo_mode_tour
-  - erx_hnt_app_security
   - erx_hnt_demo_mode_welcome
   - erx_hnt_open_scanner
   - erx_hnt_show_card_wall
@@ -220,15 +199,11 @@ prescriptionDetails:
   - prsc_dtl_hnt_noctu_fee_waiver
   - prsc_dtl_hnt_substitution
   - prsc_dtl_hnt_dosage_instructions
-  - prsc_dtl_btn_pharmacy_search
   - prsc_dtl_hnt_keep_overview
-global:
-  - bnr_txt_demo_mode
 pharmacySearch:
   - pha_search_txt_search_field
   - pha_search_txt_result_list
 pharmacyDetail:
-  - pha_detail_txt_title
   - pha_detail_txt_subtitle
   - pha_detail_btn_organization
   - pha_detail_btn_healthcare_service

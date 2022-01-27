@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2021 gematik GmbH
+//  Copyright (c) 2022 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -16,11 +16,21 @@
 //  
 //
 
+import Combine
 import IDP
 
 // MARK: - ExtAuthRequestStorageMock -
 
 final class ExtAuthRequestStorageMock: ExtAuthRequestStorage {
+    // MARK: - pendingExtAuthRequests
+
+    var pendingExtAuthRequests: AnyPublisher<[ExtAuthChallengeSession], Never> {
+        get { underlyingPendingExtAuthRequests }
+        set(value) { underlyingPendingExtAuthRequests = value }
+    }
+
+    private var underlyingPendingExtAuthRequests: AnyPublisher<[ExtAuthChallengeSession], Never>!
+
     // MARK: - setExtAuthRequest
 
     var setExtAuthRequestForCallsCount = 0
@@ -28,11 +38,11 @@ final class ExtAuthRequestStorageMock: ExtAuthRequestStorage {
         setExtAuthRequestForCallsCount > 0
     }
 
-    var setExtAuthRequestForReceivedArguments: (request: ExtAuthChallengeSession, state: String)?
-    var setExtAuthRequestForReceivedInvocations: [(request: ExtAuthChallengeSession, state: String)] = []
-    var setExtAuthRequestForClosure: ((ExtAuthChallengeSession, String) -> Void)?
+    var setExtAuthRequestForReceivedArguments: (request: ExtAuthChallengeSession?, state: String)?
+    var setExtAuthRequestForReceivedInvocations: [(request: ExtAuthChallengeSession?, state: String)] = []
+    var setExtAuthRequestForClosure: ((ExtAuthChallengeSession?, String) -> Void)?
 
-    func setExtAuthRequest(_ request: ExtAuthChallengeSession, for state: String) {
+    func setExtAuthRequest(_ request: ExtAuthChallengeSession?, for state: String) {
         setExtAuthRequestForCallsCount += 1
         setExtAuthRequestForReceivedArguments = (request: request, state: state)
         setExtAuthRequestForReceivedInvocations.append((request: request, state: state))
@@ -56,5 +66,19 @@ final class ExtAuthRequestStorageMock: ExtAuthRequestStorage {
         getExtAuthRequestForReceivedState = state
         getExtAuthRequestForReceivedInvocations.append(state)
         return getExtAuthRequestForClosure.map { $0(state) } ?? getExtAuthRequestForReturnValue
+    }
+
+    // MARK: - reset
+
+    var resetCallsCount = 0
+    var resetCalled: Bool {
+        resetCallsCount > 0
+    }
+
+    var resetClosure: (() -> Void)?
+
+    func reset() {
+        resetCallsCount += 1
+        resetClosure?()
     }
 }

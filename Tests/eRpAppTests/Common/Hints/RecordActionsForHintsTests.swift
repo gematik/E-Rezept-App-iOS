@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2021 gematik GmbH
+//  Copyright (c) 2022 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -19,6 +19,7 @@
 import CombineSchedulers
 import ComposableArchitecture
 @testable import eRpApp
+import eRpLocalStorage
 import Nimble
 import XCTest
 
@@ -35,7 +36,7 @@ final class RecordActionsForHintsTests: XCTestCase {
     >
 
     private func testStore(
-        sessionContainer: ChangeableUserSessionContainer,
+        sessionContainer: UsersSessionContainer,
         for groupedPrescriptionListState: GroupedPrescriptionListDomain.State = GroupedPrescriptionListDomain.State()
     ) -> TestStore {
         TestStore(
@@ -58,8 +59,8 @@ final class RecordActionsForHintsTests: XCTestCase {
                 userSessionContainer: sessionContainer,
                 userSession: sessionContainer.userSession,
                 schedulers: Schedulers(),
-                fhirDateFormatter: AppContainer.shared.fhirDateFormatter,
-                serviceLocator: AppContainer.shared.serviceLocator,
+                fhirDateFormatter: globals.fhirDateFormatter,
+                serviceLocator: ServiceLocator(),
                 accessibilityAnnouncementReceiver: { _ in },
                 tracker: DummyTracker(),
                 signatureProvider: DummySecureEnclaveSignatureProvider()
@@ -68,10 +69,7 @@ final class RecordActionsForHintsTests: XCTestCase {
     }
 
     func testRecordActionsForHintsReducerHappyPath() {
-        let sessionContainer = ChangeableUserSessionContainer(
-            initialUserSession: MockUserSession(),
-            schedulers: Schedulers()
-        )
+        let mockSessionContainer = MockUserSessionContainer()
         let groupedPrescriptions = GroupedPrescription.Dummies.twoPrescriptions
         let prescriptionLoadingState =
             LoadingState<[GroupedPrescription], ErxTaskRepositoryError>
@@ -82,16 +80,16 @@ final class RecordActionsForHintsTests: XCTestCase {
             groupedPrescriptions: [groupedPrescriptions],
             redeemState: nil
         )
-        let store = testStore(sessionContainer: sessionContainer,
+        let store = testStore(sessionContainer: mockSessionContainer,
                               for: groupedPrescriptionListState)
 
-        expect(sessionContainer.userSession.hintEventsStore.hintState.hasDemoModeBeenToggledBefore).to(beFalse())
-        expect(sessionContainer.userSession.hintEventsStore.hintState.hasTasksInLocalStore).to(beFalse())
+        expect(mockSessionContainer.userSession.hintEventsStore.hintState.hasDemoModeBeenToggledBefore).to(beFalse())
+        expect(mockSessionContainer.userSession.hintEventsStore.hintState.hasTasksInLocalStore).to(beFalse())
         store.assert(
             // when toggling the demo mode
             .send(.main(action: .settings(action: .toggleDemoModeSwitch))) { _ in
                 // than the hint state should be changed from the `recordActionsForHints` reducer
-                expect(sessionContainer.userSession.hintEventsStore.hintState.hasDemoModeBeenToggledBefore)
+                expect(mockSessionContainer.userSession.hintEventsStore.hintState.hasDemoModeBeenToggledBefore)
                     .to(beTrue())
             },
             // when prescriptions were loaded and have results
@@ -101,16 +99,13 @@ final class RecordActionsForHintsTests: XCTestCase {
                 )
             ) { _ in
                 // than hint state should change from the `recordActionsForHints` reducer
-                expect(sessionContainer.userSession.hintEventsStore.hintState.hasTasksInLocalStore).to(beTrue())
+                expect(mockSessionContainer.userSession.hintEventsStore.hintState.hasTasksInLocalStore).to(beTrue())
             }
         )
     }
 
     func testRecordActionsForHintsReducerWhenThereAreNoTasksInLocalStore() {
-        let sessionContainer = ChangeableUserSessionContainer(
-            initialUserSession: MockUserSession(),
-            schedulers: Schedulers()
-        )
+        let sessionContainer = MockUserSessionContainer()
         let store = testStore(sessionContainer: sessionContainer)
 
         expect(sessionContainer.userSession.hintEventsStore.hintState.hasTasksInLocalStore).to(beFalse())

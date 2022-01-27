@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2021 gematik GmbH
+//  Copyright (c) 2022 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -37,7 +37,10 @@ final class SettingsViewSnapshotTests: XCTestCase {
                                            userSession: DemoSessionContainer(),
                                            tracker: DummyTracker(),
                                            serverEnvironmentConfiguration: nil,
-                                           signatureProvider: DummySecureEnclaveSignatureProvider()
+                                           signatureProvider: DummySecureEnclaveSignatureProvider(),
+                                           serviceLocatorDebugAccess: ServiceLocatorDebugAccess(
+                                               serviceLocator: ServiceLocator()
+                                           )
                                        ))
 
     func testSettingsView_App_Security_Biometry_Available_No_Selection() {

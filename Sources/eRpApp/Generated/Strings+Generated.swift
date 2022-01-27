@@ -67,14 +67,12 @@ internal enum L10n {
   internal static let authTxtFailedLoginHintMsg = LocalizedStringKey("auth_txt_failed_login_hint_msg")
   /// Erfolglose Anmeldeversuche
   internal static let authTxtFailedLoginHintTitle = LocalizedStringKey("auth_txt_failed_login_hint_title")
-  /// Falsches Passwort. Bitte probieren Sie es erneut.
+  /// Falsches Kennwort. Bitte probieren Sie es erneut.
   internal static let authTxtPasswordFailure = LocalizedStringKey("auth_txt_password_failure")
   /// Eingabefeld Kennwort
   internal static let authTxtPasswordLabel = LocalizedStringKey("auth_txt_password_label")
   /// Kennwort eingeben
   internal static let authTxtPasswordPlaceholder = LocalizedStringKey("auth_txt_password_placeholder")
-  /// Kennwort eingeben
-  internal static let authTxtPasswordSubtitle = LocalizedStringKey("auth_txt_password_subtitle")
   /// Demo mode enabled
   internal static let bnrTxtDemoMode = LocalizedStringKey("bnr_txt_demo_mode")
   /// inaktiv
@@ -95,8 +93,6 @@ internal enum L10n {
   internal static let camTxtWarnCancelTitle = LocalizedStringKey("cam_txt_warn_cancel_title")
   /// Don't cancel
   internal static let camTxtWarnContinue = LocalizedStringKey("cam_txt_warn_continue")
-  /// PIN
-  internal static let cdwBtnBiometryBack = LocalizedStringKey("cdw_btn_biometry_back")
   /// Close dialog
   internal static let cdwBtnBiometryCancelLabel = LocalizedStringKey("cdw_btn_biometry_cancel_label")
   /// Next
@@ -105,8 +101,6 @@ internal enum L10n {
   internal static let cdwBtnBiometryContinueLabel = LocalizedStringKey("cdw_btn_biometry_continue_label")
   /// Agreed
   internal static let cdwBtnBiometrySecurityWarningAccept = LocalizedStringKey("cdw_btn_biometry_security_warning_accept")
-  /// Back
-  internal static let cdwBtnCanBack = LocalizedStringKey("cdw_btn_can_back")
   /// Cancel
   internal static let cdwBtnCanCancelLabel = LocalizedStringKey("cdw_btn_can_cancel_label")
   /// Next
@@ -117,8 +111,6 @@ internal enum L10n {
   internal static func cdwBtnCanDoneLabelError(_ element1: String) -> LocalizedStringKey {
     LocalizedStringKey("cdw_btn_can_done_label_error_\(element1)")
   }
-  /// Cancel
-  internal static let cdwBtnCancel = LocalizedStringKey("cdw_btn_cancel")
   /// Abbrechen
   internal static let cdwBtnExtauthConfirmCancel = LocalizedStringKey("cdw_btn_extauth_confirm_cancel")
   /// Technischen Kundendienst kontaktieren
@@ -137,9 +129,7 @@ internal enum L10n {
   internal static let cdwBtnExtauthSelectionRetry = LocalizedStringKey("cdw_btn_extauth_selection_retry")
   /// Close dialog
   internal static let cdwBtnIntroCancelLabel = LocalizedStringKey("cdw_btn_intro_cancel_label")
-  /// Vielleicht später
-  internal static let cdwBtnIntroLater = LocalizedStringKey("cdw_btn_intro_later")
-  /// Mehr erfahren
+  /// Find out more
   internal static let cdwBtnIntroMore = LocalizedStringKey("cdw_btn_intro_more")
   /// Let's get started
   internal static let cdwBtnIntroNext = LocalizedStringKey("cdw_btn_intro_next")
@@ -149,24 +139,12 @@ internal enum L10n {
   internal static let cdwBtnNfuDone = LocalizedStringKey("cdw_btn_nfu_done")
   /// Find out more
   internal static let cdwBtnNfuMore = LocalizedStringKey("cdw_btn_nfu_more")
-  /// Mail erstellen
-  internal static let cdwBtnOrderEgkA11ySendMail = LocalizedStringKey("cdw_btn_order_egk_a11y_send_mail")
-  /// KVNR über die Kamera einlesen
-  internal static let cdwBtnOrderEgkScanKvnr = LocalizedStringKey("cdw_btn_order_egk_scan_kvnr")
-  /// Übernehmen
-  internal static let cdwBtnOrderEgkScanKvnrConfirm = LocalizedStringKey("cdw_btn_order_egk_scan_kvnr_confirm")
-  /// Mail erstellen
-  internal static let cdwBtnOrderEgkSendMail = LocalizedStringKey("cdw_btn_order_egk_send_mail")
-  /// Back
-  internal static let cdwBtnPinBack = LocalizedStringKey("cdw_btn_pin_back")
   /// Cancel
   internal static let cdwBtnPinCancelLabel = LocalizedStringKey("cdw_btn_pin_cancel_label")
   /// Next
   internal static let cdwBtnPinDone = LocalizedStringKey("cdw_btn_pin_done")
   /// Next
   internal static let cdwBtnPinDoneLabel = LocalizedStringKey("cdw_btn_pin_done_label")
-  /// Remember login
-  internal static let cdwBtnRcBack = LocalizedStringKey("cdw_btn_rc_back")
   /// Close dialog
   internal static let cdwBtnRcCancelLabel = LocalizedStringKey("cdw_btn_rc_cancel_label")
   /// Close
@@ -187,18 +165,12 @@ internal enum L10n {
   internal static let cdwBtnSelContinue = LocalizedStringKey("cdw_btn_sel_continue")
   /// Please enter your PIN here
   internal static let cdwEdtPinInput = LocalizedStringKey("cdw_edt_pin_input")
-  /// Launch demo mode
-  internal static let cdwHintCanBtn = LocalizedStringKey("cdw_hint_can_btn")
-  /// Diese erweiterten Funktionen können Sie mit Ihrer Karte nutzen.
-  internal static let cdwHintCanMessage = LocalizedStringKey("cdw_hint_can_message")
-  /// Mehr erfahren
+  /// Find out more
   internal static let cdwHintCanOrderEgkBtn = LocalizedStringKey("cdw_hint_can_order_egk_btn")
-  /// Hier hilft Ihnen Ihre Krankenversicherung.
+  /// Your health insurance company will be able to help you with this.
   internal static let cdwHintCanOrderEgkMessage = LocalizedStringKey("cdw_hint_can_order_egk_message")
-  /// Wie erhalte ich eine neue Gesundheitskarte?
+  /// How do I get a new medical card?
   internal static let cdwHintCanOrderEgkTitle = LocalizedStringKey("cdw_hint_can_order_egk_title")
-  /// Launch demo mode
-  internal static let cdwHintCanTitle = LocalizedStringKey("cdw_hint_can_title")
   /// Find out more
   internal static let cdwHintPinBtn = LocalizedStringKey("cdw_hint_pin_btn")
   /// You will receive a PIN for your medical card from your health insurance company.
@@ -209,10 +181,6 @@ internal enum L10n {
   internal static let cdwImgCanCardLabel = LocalizedStringKey("cdw_img_can_card_label")
   /// Illustration of a user holding their medical card to the back of their smartphone.
   internal static let cdwImgIntroMainLabel = LocalizedStringKey("cdw_img_intro_main_label")
-  /// Illustration PIN
-  internal static let cdwImgPinLabel = LocalizedStringKey("cdw_img_pin_label")
-  /// Image with telephone and medical card
-  internal static let cdwImgRcCardLabel = LocalizedStringKey("cdw_img_rc_card_label")
   /// Your selection will not be saved.
   internal static let cdwTxtBiometryDemoModeInfo = LocalizedStringKey("cdw_txt_biometry_demo_mode_info")
   /// Log in conveniently with fingerprint or face scan
@@ -241,9 +209,9 @@ internal enum L10n {
   internal static let cdwTxtCanTitle = LocalizedStringKey("cdw_txt_can_title")
   /// Ihre Kartenzugangsnummer (Card Access Number, kurz: CAN) hat 6 Stellen. Sie finden die CAN in der rechten oberen Ecke der Vorderseite Ihrer Gesundheitskarte. Steht hier keine sechsstellige Zugangsnummer, benötigen Sie eine neue Gesundheitskarte von Ihrer Krankenversicherung.
   internal static let cdwTxtCanTitleHint = LocalizedStringKey("cdw_txt_can_title_hint")
-  /// You entered a wrong CAN for the card. Please enter the right CAN again.
+  /// Unfortunately, the CAN entered does not match the recognised card. Please enter the CAN again. Thank you!
   internal static let cdwTxtCanWarnWrongDescription = LocalizedStringKey("cdw_txt_can_warn_wrong_description")
-  /// Wrong CAN
+  /// Incorrect CAN
   internal static let cdwTxtCanWarnWrongTitle = LocalizedStringKey("cdw_txt_can_warn_wrong_title")
   /// Mail
   internal static let cdwTxtExtauthConfirmContactsheetMail = LocalizedStringKey("cdw_txt_extauth_confirm_contactsheet_mail")
@@ -251,8 +219,6 @@ internal enum L10n {
   internal static let cdwTxtExtauthConfirmContactsheetTelephone = LocalizedStringKey("cdw_txt_extauth_confirm_contactsheet_telephone")
   /// Kundendienst kontaktieren
   internal static let cdwTxtExtauthConfirmContactsheetTitle = LocalizedStringKey("cdw_txt_extauth_confirm_contactsheet_title")
-  /// Website
-  internal static let cdwTxtExtauthConfirmContactsheetWeb = LocalizedStringKey("cdw_txt_extauth_confirm_contactsheet_web")
   /// Wir fragen nun die Authentisierung bei Ihrer Krankenversicherung an.
   internal static let cdwTxtExtauthConfirmDescription = LocalizedStringKey("cdw_txt_extauth_confirm_description")
   /// Bitte erwähnen Sie diesen Fehler gegenüber unserem technischen Kundendienst, um die Suche nach einer Lösung zu erleichtern.
@@ -267,7 +233,7 @@ internal enum L10n {
   internal static let cdwTxtExtauthConfirmUniversalLinkFailedError = LocalizedStringKey("cdw_txt_extauth_confirm_universal_link_failed_error")
   /// Derzeit bereiten sich die Krankenkassen auf diese Funktion vor.
   internal static let cdwTxtExtauthFallbackDescription1 = LocalizedStringKey("cdw_txt_extauth_fallback_description1")
-  /// Sie wollen nicht warten?  Die Anmeldung mit Gesundheitskarte wird bereits jetzt von jeder Krankenkasse unterstützt.
+  /// Sie wollen nicht warten? Die Anmeldung mit Gesundheitskarte wird bereits jetzt von jeder Krankenkasse unterstützt.
   internal static let cdwTxtExtauthFallbackDescription2 = LocalizedStringKey("cdw_txt_extauth_fallback_description2")
   /// Versicherung wählen
   internal static let cdwTxtExtauthFallbackHeadline = LocalizedStringKey("cdw_txt_extauth_fallback_headline")
@@ -303,38 +269,6 @@ internal enum L10n {
   internal static let cdwTxtNfuSubtitle = LocalizedStringKey("cdw_txt_nfu_subtitle")
   /// Login
   internal static let cdwTxtNfuTitle = LocalizedStringKey("cdw_txt_nfu_title")
-  /// Die Gesundheitskarte und die zugehörige PIN erhalten Sie kostenfrei von Ihrer Krankenversicherung. Der Antrag kann formlos und per Mail gestellt werden.
-  internal static let cdwTxtOrderEgkDesription = LocalizedStringKey("cdw_txt_order_egk_desription")
-  /// Neue Gesundheitskarte beantragen
-  internal static let cdwTxtOrderEgkHeadline = LocalizedStringKey("cdw_txt_order_egk_headline")
-  /// So erkennen Sie eine NFC-fähige Gesundheitskarte
-  internal static let cdwTxtOrderEgkInfoButton = LocalizedStringKey("cdw_txt_order_egk_info_button")
-  /// Sollten Sie bereits über eine Gesundheitskarte mit NFC-Funktion verfügen, müssen Sie lediglich die Zusendung einer PIN beantragen.
-  internal static let cdwTxtOrderEgkInfoFootnote = LocalizedStringKey("cdw_txt_order_egk_info_footnote")
-  /// Gesundheitskarte mit NFC & PIN beantragen
-  internal static let cdwTxtOrderEgkInfoHeadline = LocalizedStringKey("cdw_txt_order_egk_info_headline")
-  /// https://www.das-e-rezept-fuer-deutschland.de/fragen-antworten/woran-erkenne-ich-ob-ich-eine-nfc-faehige-gesundheitskarte-habe#c204
-  internal static let cdwTxtOrderEgkInfoLink = LocalizedStringKey("cdw_txt_order_egk_info_link")
-  /// Um sich in dieser App anmelden zu können, benötigen Sie
-  internal static let cdwTxtOrderEgkInfoText1 = LocalizedStringKey("cdw_txt_order_egk_info_text_1")
-  /// eine NFC-fähige Gesundheitskarte, sowie
-  internal static let cdwTxtOrderEgkInfoText2 = LocalizedStringKey("cdw_txt_order_egk_info_text_2")
-  /// die zugehörige PIN.
-  internal static let cdwTxtOrderEgkInfoText3 = LocalizedStringKey("cdw_txt_order_egk_info_text_3")
-  /// Diese erhalten Sie kostenfrei von Ihrer Krankenversicherung.
-  internal static let cdwTxtOrderEgkInfoText4 = LocalizedStringKey("cdw_txt_order_egk_info_text_4")
-  /// Auswahl treffen
-  internal static let cdwTxtOrderEgkKvPlaceholder = LocalizedStringKey("cdw_txt_order_egk_kv_placeholder")
-  /// Krankenkasse
-  internal static let cdwTxtOrderEgkKvSubheadline = LocalizedStringKey("cdw_txt_order_egk_kv_subheadline")
-  /// Versichtertennummer
-  internal static let cdwTxtOrderEgkKvnrPlaceholder = LocalizedStringKey("cdw_txt_order_egk_kvnr_placeholder")
-  /// Versichtertennummer
-  internal static let cdwTxtOrderEgkKvnrSubheadline = LocalizedStringKey("cdw_txt_order_egk_kvnr_subheadline")
-  /// Sehr geehrte Damen und Herren,\n\nich möchte das E-Rezept der gematik nutzen.\n\nBitte senden Sie mir hierfür eine NFC-fähige Gesundheitskarte zu.\n\nIch benötige zu der Gesundheitskarte auch die PIN.\n\nBitte leiten Sie gleich das Identifikationsverfahren ein. Sollte das bei der %1$@ nicht direkt möglich sein, senden Sie mir bitte detaillierte Informationen zu, wie ich die PIN erhalten kann.\n\nMeine KVNR ist: %2$@\n\nBeste Grüße,\n\nIhre Versicherte / Ihr Versicherter
-  internal static let cdwTxtOrderEgkMailBody = LocalizedStringKey("cdw_txt_order_egk_mail_body")
-  /// Bestellung einer NFC-fähigen Gesundheitskarte inklusive PIN
-  internal static let cdwTxtOrderEgkMailSubject = LocalizedStringKey("cdw_txt_order_egk_mail_subject")
   /// You can enter any digits.
   internal static let cdwTxtPinDemoModeInfo = LocalizedStringKey("cdw_txt_pin_demo_mode_info")
   /// Your PIN can have between 6 and 8 digits.
@@ -345,9 +279,9 @@ internal enum L10n {
   internal static let cdwTxtPinSubtitle = LocalizedStringKey("cdw_txt_pin_subtitle")
   /// Login
   internal static let cdwTxtPinTitle = LocalizedStringKey("cdw_txt_pin_title")
-  /// You entered a wrong PIN for the card. Please enter the PIN you received from your insurance.
+  /// Unfortunately, the PIN entered does not match the recognised card. Are you sure you entered the PIN you received from your health insurance company?
   internal static let cdwTxtPinWarnWrongDescription = LocalizedStringKey("cdw_txt_pin_warn_wrong_description")
-  /// Wrong PIN
+  /// Incorrect PIN
   internal static let cdwTxtPinWarnWrongTitle = LocalizedStringKey("cdw_txt_pin_warn_wrong_title")
   /// A PIN consists of digits only.
   internal static let cdwTxtPinWarningChar = LocalizedStringKey("cdw_txt_pin_warning_char")
@@ -439,7 +373,7 @@ internal enum L10n {
   internal static let cpwInpPasswordAPlaceholder = LocalizedStringKey("cpw_inp_passwordA_placeholder")
   /// Kennwort wiederholen
   internal static let cpwInpPasswordBPlaceholder = LocalizedStringKey("cpw_inp_passwordB_placeholder")
-  /// Das Passwort ist falsch.
+  /// Das Kennwort ist falsch.
   internal static let cpwTxtCurrentPasswordWrong = LocalizedStringKey("cpw_txt_current_password_wrong")
   /// Empfehlung: Möglichst wenige Worte und keine Redewendungen verwenden.\nSymbole, Zahlen oder Großbuchstaben sind nicht notwendig.
   internal static let cpwTxtPasswordRecommendation = LocalizedStringKey("cpw_txt_password_recommendation")
@@ -457,11 +391,23 @@ internal enum L10n {
   internal static let cpwTxtTitle = LocalizedStringKey("cpw_txt_title")
   /// Kennwort ändern
   internal static let cpwTxtUpdateTitle = LocalizedStringKey("cpw_txt_update_title")
+  /// Kennwortstärke
+  internal static let ctlTxtPasswordStrength0 = LocalizedStringKey("ctl_txt_password_strength_0")
+  /// Kennwortstärke
+  internal static let ctlTxtPasswordStrength1 = LocalizedStringKey("ctl_txt_password_strength_1")
+  /// Kennwortstärke ausreichend
+  internal static let ctlTxtPasswordStrength2 = LocalizedStringKey("ctl_txt_password_strength_2")
+  /// Kennwortstärke gut
+  internal static let ctlTxtPasswordStrength3 = LocalizedStringKey("ctl_txt_password_strength_3")
+  /// Kennwortstärke sehr gut
+  internal static let ctlTxtPasswordStrength4 = LocalizedStringKey("ctl_txt_password_strength_4")
+  /// Kennwortstärke exzellent
+  internal static let ctlTxtPasswordStrength5 = LocalizedStringKey("ctl_txt_password_strength_5")
   /// Ok
   internal static let ctlTxtPasswordStrengthAccessiblityValueMedium = LocalizedStringKey("ctl_txt_password_strength_accessiblity_value_medium")
   /// Stark
   internal static let ctlTxtPasswordStrengthAccessiblityValueStrong = LocalizedStringKey("ctl_txt_password_strength_accessiblity_value_strong")
-  /// Sehr stark
+  /// Sehr Stark
   internal static let ctlTxtPasswordStrengthAccessiblityValueVeryStrong = LocalizedStringKey("ctl_txt_password_strength_accessiblity_value_very_strong")
   /// Sehr schwach
   internal static let ctlTxtPasswordStrengthAccessiblityValueVeryWeak = LocalizedStringKey("ctl_txt_password_strength_accessiblity_value_very_weak")
@@ -469,14 +415,6 @@ internal enum L10n {
   internal static let ctlTxtPasswordStrengthAccessiblityValueWeak = LocalizedStringKey("ctl_txt_password_strength_accessiblity_value_weak")
   /// Kennwortstärke
   internal static let ctlTxtPasswordStrengthHint = LocalizedStringKey("ctl_txt_password_strength_hint")
-  /// Cancel
-  internal static let dmoTxtAlertNo = LocalizedStringKey("dmo_txt_alert_no")
-  /// Would you like to disable demo mode?
-  internal static let dmoTxtAlertText = LocalizedStringKey("dmo_txt_alert_text")
-  /// Demo mode
-  internal static let dmoTxtAlertTitle = LocalizedStringKey("dmo_txt_alert_title")
-  /// Disable
-  internal static let dmoTxtAlertYes = LocalizedStringKey("dmo_txt_alert_yes")
   /// Copy
   internal static let dtlBtnCopyClipboard = LocalizedStringKey("dtl_btn_copy_clipboard")
   /// Delete from this device
@@ -489,8 +427,6 @@ internal enum L10n {
   internal static let dtlBtnToogleMarkedRedeemed = LocalizedStringKey("dtl_btn_toogle_marked_redeemed")
   /// Access code
   internal static let dtlTxtAccessCode = LocalizedStringKey("dtl_txt_access_code")
-  /// Prescriptions
-  internal static let dtlTxtBackNav = LocalizedStringKey("dtl_txt_back_nav")
   /// Do you want to permanently delete this prescription?
   internal static let dtlTxtDeleteAlertMessage = LocalizedStringKey("dtl_txt_delete_alert_message")
   /// Delete this prescription?
@@ -511,7 +447,7 @@ internal enum L10n {
   internal static let dtlTxtMedInfo = LocalizedStringKey("dtl_txt_med_info")
   /// Log
   internal static let dtlTxtMedProtocol = LocalizedStringKey("dtl_txt_med_protocol")
-  /// Redeemed: %@
+  /// Eingelöst: %@
   internal static func dtlTxtMedRedeemedOn(_ element1: String) -> LocalizedStringKey {
     LocalizedStringKey("dtl_txt_med_redeemed_on_\(element1)")
   }
@@ -537,11 +473,11 @@ internal enum L10n {
   internal static let erxTxtCurrent = LocalizedStringKey("erx_txt_current")
   /// Plural format key: "%#@v1_days_variable@"
   internal static let erxTxtExpiresIn = LocalizedStringKey("erx_txt_expires_in")
-  /// Not valid anymore
+  /// Nicht mehr gültig
   internal static let erxTxtInvalid = LocalizedStringKey("erx_txt_invalid")
-  /// Unknown pharmaceutical
+  /// Unknown medicine
   internal static let erxTxtMedicationPlaceholder = LocalizedStringKey("erx_txt_medication_placeholder")
-  /// You do not have any open prescriptions
+  /// You do not have any current prescriptions
   internal static let erxTxtNoCurrentPrescriptions = LocalizedStringKey("erx_txt_no_current_prescriptions")
   /// You haven't redeemed any prescriptions yet
   internal static let erxTxtNotYetRedeemed = LocalizedStringKey("erx_txt_not_yet_redeemed")
@@ -549,20 +485,14 @@ internal enum L10n {
   internal static let erxTxtRedeemed = LocalizedStringKey("erx_txt_redeemed")
   /// Loading ...
   internal static let erxTxtRefreshLoading = LocalizedStringKey("erx_txt_refresh_loading")
-  /// Jetzt aktivieren
-  internal static let hintBtnAppSecurity = LocalizedStringKey("hint_btn_app_security")
   /// Log in now
   internal static let hintBtnCardWall = LocalizedStringKey("hint_btn_card_wall")
   /// Open scanner
   internal static let hintBtnOpenScn = LocalizedStringKey("hint_btn_open_scn")
   /// Launch demo mode
   internal static let hintBtnTryDemoMode = LocalizedStringKey("hint_btn_try_demo_mode")
-  /// Open messages
+  /// View new messages now
   internal static let hintBtnUnreadMessages = LocalizedStringKey("hint_btn_unread_messages")
-  /// Verbesserter Schutz Ihrer Daten durch Fingerabdruck oder Gesichts-Scan.
-  internal static let hintTxtAppSecurity = LocalizedStringKey("hint_txt_app_security")
-  /// Rezeptdaten absichern
-  internal static let hintTxtAppSecurityTitle = LocalizedStringKey("hint_txt_app_security_title")
   /// Unlock many more functions.
   internal static let hintTxtCardWall = LocalizedStringKey("hint_txt_card_wall")
   /// Log in with your medical card
@@ -579,7 +509,7 @@ internal enum L10n {
   internal static let hintTxtTryDemoMode = LocalizedStringKey("hint_txt_try_demo_mode")
   /// Would you like a tour of the app?
   internal static let hintTxtTryDemoModeTitle = LocalizedStringKey("hint_txt_try_demo_mode_title")
-  /// You have received new messages
+  /// You have received a new message from the health network.
   internal static let hintTxtUnreadMessages = LocalizedStringKey("hint_txt_unread_messages")
   /// New messages
   internal static let hintTxtUnreadMessagesTitle = LocalizedStringKey("hint_txt_unread_messages_title")
@@ -1143,39 +1073,59 @@ internal enum L10n {
   internal static let kbvNormSizeNb = LocalizedStringKey("kbv_norm_size_nb")
   /// Other
   internal static let kbvNormSizeSonstiges = LocalizedStringKey("kbv_norm_size_sonstiges")
-  /// Fehler melden
+  /// Abbrechen
+  internal static let mainTxtPendingextauthCancel = LocalizedStringKey("main_txt_pendingextauth_cancel")
+  /// Authentisierung mit %@ fehlgeschlagen
+  internal static func mainTxtPendingextauthFailed(_ element1: String) -> LocalizedStringKey {
+    LocalizedStringKey("main_txt_pendingextauth_failed_\(element1)")
+  }
+  /// Authentisierung in %@ ausstehend
+  internal static func mainTxtPendingextauthPending(_ element1: String) -> LocalizedStringKey {
+    LocalizedStringKey("main_txt_pendingextauth_pending_\(element1)")
+  }
+  /// Authentisierung für %@ wird verarbeitet
+  internal static func mainTxtPendingextauthResolving(_ element1: String) -> LocalizedStringKey {
+    LocalizedStringKey("main_txt_pendingextauth_resolving_\(element1)")
+  }
+  /// Wiederholen
+  internal static let mainTxtPendingextauthRetry = LocalizedStringKey("main_txt_pendingextauth_retry")
+  /// Authentisierung mit %@ erfolgreich
+  internal static func mainTxtPendingextauthSuccessful(_ element1: String) -> LocalizedStringKey {
+    LocalizedStringKey("main_txt_pendingextauth_successful_\(element1)")
+  }
+  /// Report error
   internal static let msgsBtnFormatError = LocalizedStringKey("msgs_btn_format_error")
   /// Show pickup code
   internal static let msgsBtnOnPremise = LocalizedStringKey("msgs_btn_onPremise")
   /// Show shopping cart
   internal static let msgsBtnShipment = LocalizedStringKey("msgs_btn_shipment")
-  /// Received message
+  /// Message received
   internal static let msgsTxtDeliveryTitle = LocalizedStringKey("msgs_txt_delivery_title")
   /// app-fehlermeldung@ti-support.de
   internal static let msgsTxtEmailSupport = LocalizedStringKey("msgs_txt_email_support")
-  /// You did not yet receive any messages
+  /// You haven't received any messages yet
   internal static let msgsTxtEmptyListMessage = LocalizedStringKey("msgs_txt_empty_list_message")
   /// No messages
   internal static let msgsTxtEmptyListTitle = LocalizedStringKey("msgs_txt_empty_list_title")
-  /// Unfortuanatly the message of your pharmacy was empty. Please contact your pharmacy directly.
+  /// Unfortunately, your pharmacy's message was empty. Please contact your pharmacy.
   internal static let msgsTxtEmptyMessage = LocalizedStringKey("msgs_txt_empty_message")
-  /// Eine Apotheke hat eine Mitteilung in einem fehlerhaften Format versendet.
+  /// A pharmacy has sent a message in an incorrect format.
   internal static let msgsTxtFormatErrorMessage = LocalizedStringKey("msgs_txt_format_error_message")
-  /// Fehlerhafte Mitteilung erhalten
+  /// Defective message received
   internal static let msgsTxtFormatErrorTitle = LocalizedStringKey("msgs_txt_format_error_title")
-  /// Liebes Service-Team, ich habe eine Nachricht von einer Apotheke erhalten. Leider konnte ich meinem Nutzer die Nachricht aber nicht mitteilen, da ich sie nicht verstanden habe. Bitte prüft, was hier passiert ist, und helft uns. Vielen Dank! Die E-Rezept App
+  /// Dear Service Team, I received a message from a pharmacy. Unfortunately, however, I could not pass the message on to my user because I did not understand it. Please check what happened here and help us. Thank you very much! The e-prescription app
   internal static let msgsTxtMailBody1 = LocalizedStringKey("msgs_txt_mail_body1")
-  /// Die folgenden Informationen würde ich gerne dem Service-Team mitteilen, damit die Fehlersuche durchgeführt werden kann. Bitte beachten Sie, dass wir auch Ihre eMail-Adresse sowie ggf. Ihren Namen erfahren, wenn Sie ihn als Absender der eMail konfiguriert haben. Wenn Sie diese Informationen ganz oder teilweise nicht übermitteln möchten, löschen Sie diese bitte aus der eMail. Alle Daten werden von der gematik GmbH oder deren beauftragten Unternehmen nur zur Bearbeitung dieser Fehlermeldung gespeichert und verarbeitet. Die Löschung erfolgt automatisiert, spätestens 180 Tage nach Erledigung des Tickets. Ihre eMail-Adresse nutzen wir ausschließlich, um mit Ihnen Kontakt in Bezug auf diese Fehlermeldung aufzunehmen. Für Fragen oder eine vorzeitige Löschung können Sie sich jederzeit an den Datenschutzverantwortlichen des E-Rezept Systems wenden. Sie finden weitere Informationen in der E-Rezept App im Menü unter dem Datenschutz-Eintrag.
+  /// You are sending us this information for purposes of troubleshooting. Please note that your email address and any name you include will also be transferred. If you do not wish to transfer this information either in full or in part, please remove it from this email. \n\nAll data will only be stored or processed by gematik GmbH or its appointed companies in order to deal with this error message. Deletion takes place automatically a maximum of 180 days after the ticket has been processed. We will use your email address exclusively to contact you regarding this error message. If you have any questions, or require an earlier deletion, you can contact the data protection representative responsible for the e-prescription system. You can find further information in the menu below the entry for data protection in the e-prescription app.
   internal static let msgsTxtMailBody2 = LocalizedStringKey("msgs_txt_mail_body2")
-  /// Error 40 42 67336
+  /// Fehler 40 42 67336
   internal static let msgsTxtMailError = LocalizedStringKey("msgs_txt_mail_error")
-  /// Fehlermeldung aus der E-Rezept App
+  /// Error message from the e-prescription app
   internal static let msgsTxtMailSubject = LocalizedStringKey("msgs_txt_mail_subject")
   /// Received pickup code
   internal static let msgsTxtOnPremiseTitle = LocalizedStringKey("msgs_txt_onPremise_title")
-  /// Die Mail-App konnte nicht geöffnet werden. Nutzen Sie bitte die Hotline
+  /// The email app could not be opened. Please use the hotline
   internal static let msgsTxtOpenMailErrorMessage = LocalizedStringKey("msgs_txt_open_mail_error_message")
-  /// Fehler
+  /// Error
   internal static let msgsTxtOpenMailErrorTitle = LocalizedStringKey("msgs_txt_open_mail_error_title")
   /// Your shopping cart is ready
   internal static let msgsTxtShipmentTitle = LocalizedStringKey("msgs_txt_shipment_title")
@@ -1185,8 +1135,6 @@ internal enum L10n {
   internal static let navBack = LocalizedStringKey("nav_back")
   /// Cancel
   internal static let navCancel = LocalizedStringKey("nav_cancel")
-  /// Close
-  internal static let navClose = LocalizedStringKey("nav_close")
   /// Ready
   internal static let navDone = LocalizedStringKey("nav_done")
   /// Machen Sie es Unbefugten schwerer an Ihre Daten zu gelangen und sichern Sie den Start der App.
@@ -1201,10 +1149,6 @@ internal enum L10n {
   internal static let onbAuthTxtPasswordsDontMatch = LocalizedStringKey("onb_auth_txt_passwords_dont_match")
   /// Wie möchten Sie diese App absichern?
   internal static let onbAuthTxtTitle = LocalizedStringKey("onb_auth_txt_title")
-  /// Next
-  internal static let onbBtnLetsStart = LocalizedStringKey("onb_btn_lets_start")
-  /// Next
-  internal static let onbBtnLetsStartHint = LocalizedStringKey("onb_btn_lets_start_hint")
   /// Next
   internal static let onbBtnNextHint = LocalizedStringKey("onb_btn_next_hint")
   /// Automatically update your new prescriptions
@@ -1233,19 +1177,17 @@ internal enum L10n {
   internal static let onbStrTxtSubtitle = LocalizedStringKey("onb_str_txt_subtitle")
   /// The e-prescription
   internal static let onbStrTxtTitle = LocalizedStringKey("onb_str_txt_title")
-  /// Only data that is essential for the functioning of the services is collected.
-  internal static let onbTxtMsgPrivacy = LocalizedStringKey("onb_txt_msg_privacy")
   /// Privacy Policy
   internal static let onbTxtTermsOfPrivacyLink = LocalizedStringKey("onb_txt_terms_of_privacy_link")
   /// I accept the 
   internal static let onbTxtTermsOfPrivacyPrefix = LocalizedStringKey("onb_txt_terms_of_privacy_prefix")
-  /// of this app
+  ///  of this app
   internal static let onbTxtTermsOfPrivacySuffix = LocalizedStringKey("onb_txt_terms_of_privacy_suffix")
   /// Terms of Use
   internal static let onbTxtTermsOfUseLink = LocalizedStringKey("onb_txt_terms_of_use_link")
   /// I accept the 
   internal static let onbTxtTermsOfUsePrefix = LocalizedStringKey("onb_txt_terms_of_use_prefix")
-  /// of this app
+  ///  of this app
   internal static let onbTxtTermsOfUseSuffix = LocalizedStringKey("onb_txt_terms_of_use_suffix")
   /// Illustration of a smiling pharmacist
   internal static let onbWelImgFrau1 = LocalizedStringKey("onb_wel_img_frau1")
@@ -1279,8 +1221,6 @@ internal enum L10n {
   internal static let orderEgkTxtMailHealthcardAndPinSubject = LocalizedStringKey("order_egk_txt_mail_healthcard_and_pin_subject")
   /// 
   internal static let orderEgkTxtMailOnlyPinBody = LocalizedStringKey("order_egk_txt_mail_only_pin_body")
-  /// Bestellung einer PIN für meine NFC-fähige Gesundheitskarte
-  internal static let orderEgkTxtMailOnlyPinSubject = LocalizedStringKey("order_egk_txt_mail_only_pin_subject")
   /// Krankenversicherung wählen
   internal static let orderEgkTxtPickerInsuranceHeader = LocalizedStringKey("order_egk_txt_picker_insurance_header")
   /// Auswahl treffen
@@ -1299,9 +1239,7 @@ internal enum L10n {
   internal static let orderEgkTxtServiceInquiryHealthcardAndPin = LocalizedStringKey("order_egk_txt_service_inquiry_healthcard_and_pin")
   /// Nur PIN
   internal static let orderEgkTxtServiceInquiryOnlyPin = LocalizedStringKey("order_egk_txt_service_inquiry_only_pin")
-  /// https://www.das-e-rezept-fuer-deutschland.de/fragen-antworten/woran-erkenne-ich-ob-ich-eine-nfc-faehige-gesundheitskarte-habe#c204
-  internal static let orderTxtInfoLink = LocalizedStringKey("order_txt_info_link")
-  /// Mehr erfahren
+  /// Find out more
   internal static let phaDetailBtnFooter = LocalizedStringKey("pha_detail_btn_footer")
   /// Request delivery service
   internal static let phaDetailBtnHealthcareService = LocalizedStringKey("pha_detail_btn_healthcare_service")
@@ -1313,21 +1251,21 @@ internal enum L10n {
   internal static let phaDetailContact = LocalizedStringKey("pha_detail_contact")
   /// Please note that prescribed medication may also be subject to additional payments.
   internal static let phaDetailHintMessage = LocalizedStringKey("pha_detail_hint_message")
-  /// Diese Apotheke kann derzeit noch keine Rezepte in Empfang nehmen.
+  /// This pharmacy is not currently able to receive any e-prescriptions.
   internal static let phaDetailHintNotErxReadyMessage = LocalizedStringKey("pha_detail_hint_not_erx_ready_message")
-  /// Einlösen bald möglich
+  /// Can be redeemed soon
   internal static let phaDetailHintNotErxReadyTitle = LocalizedStringKey("pha_detail_hint_not_erx_ready_title")
   /// Email address
   internal static let phaDetailMail = LocalizedStringKey("pha_detail_mail")
-  /// Opening time
+  /// Opening hours
   internal static let phaDetailOpeningTime = LocalizedStringKey("pha_detail_opening_time")
   /// Telephone number
   internal static let phaDetailPhone = LocalizedStringKey("pha_detail_phone")
-  ///  des Deutschen Apothekerverbands e.V. Sie haben einen Fehler entdeckt oder möchten Daten korrigieren?
+  ///  provided by the Deutscher Apothekenverband e.V. Have you found an error or would you like to correct any data?
   internal static let phaDetailTxtFooterEnd = LocalizedStringKey("pha_detail_txt_footer_end")
   /// mein-apothekenportal.de
   internal static let phaDetailTxtFooterMid = LocalizedStringKey("pha_detail_txt_footer_mid")
-  /// Hinweis für Apotheken: Die Kontaktdaten und Informationen zu Apotheken beziehen wir von 
+  /// Note to pharmacies: this app obtains the contact details for and information about pharmacies from 
   internal static let phaDetailTxtFooterStart = LocalizedStringKey("pha_detail_txt_footer_start")
   /// Pharmacy
   internal static let phaDetailTxtSubtitleFallback = LocalizedStringKey("pha_detail_txt_subtitle_fallback")
@@ -1335,11 +1273,11 @@ internal enum L10n {
   internal static let phaDetailTxtTitle = LocalizedStringKey("pha_detail_txt_title")
   /// Website
   internal static let phaDetailWeb = LocalizedStringKey("pha_detail_web")
-  /// E-Rezept
+  /// E-prescription
   internal static let phaGlobalTxtReadinessBadge = LocalizedStringKey("pha_global_txt_readiness_badge")
-  /// Bereit für das E-Rezept
+  /// Ready for the e-prescription
   internal static let phaGlobalTxtReadinessBadgeDetailed = LocalizedStringKey("pha_global_txt_readiness_badge_detailed")
-  /// Send now
+  /// Redeem now
   internal static let phaRedeemBtnAlertApproval = LocalizedStringKey("pha_redeem_btn_alert_approval")
   /// Cancel
   internal static let phaRedeemBtnAlertCancel = LocalizedStringKey("pha_redeem_btn_alert_cancel")
@@ -1353,9 +1291,9 @@ internal enum L10n {
   internal static let phaRedeemTxtAddress = LocalizedStringKey("pha_redeem_txt_address")
   /// You can change your delivery address on the website of the mail-order pharmacy.
   internal static let phaRedeemTxtAddressFootnote = LocalizedStringKey("pha_redeem_txt_address_footnote")
-  /// After sending your prescriptions to the selected pharmacy you may not be able to redeem them in other pharmacies.
+  /// Your prescriptions will be sent to this pharmacy. You will then not be able to redeem them in any other pharmacy.
   internal static let phaRedeemTxtAlertMessage = LocalizedStringKey("pha_redeem_txt_alert_message")
-  /// Redeem bindingly!
+  /// Redeem with binding effect?
   internal static let phaRedeemTxtAlertTitle = LocalizedStringKey("pha_redeem_txt_alert_title")
   /// You are no longer logged in. Please log back in to redeem prescriptions.
   internal static let phaRedeemTxtNotLoggedIn = LocalizedStringKey("pha_redeem_txt_not_logged_in")
@@ -1385,9 +1323,9 @@ internal enum L10n {
   internal static let phaSearchFilterTxtTitle = LocalizedStringKey("pha_search_filter_txt_title")
   /// Closed
   internal static let phaSearchTxtClosed = LocalizedStringKey("pha_search_txt_closed")
-  /// Closes soon
+  /// Closing soon
   internal static let phaSearchTxtClosingSoon = LocalizedStringKey("pha_search_txt_closing_soon")
-  /// The pharmacy-service seems to be unvailable at the moment.
+  /// Unfortunately, communication with the pharmacy service seems to be disrupted at the moment.
   internal static let phaSearchTxtErrorAlertMessage = LocalizedStringKey("pha_search_txt_error_alert_message")
   /// Error
   internal static let phaSearchTxtErrorAlertTitle = LocalizedStringKey("pha_search_txt_error_alert_title")
@@ -1395,13 +1333,13 @@ internal enum L10n {
   internal static let phaSearchTxtFilterMessenger = LocalizedStringKey("pha_search_txt_filter_messenger")
   /// Mail order
   internal static let phaSearchTxtFilterOrder = LocalizedStringKey("pha_search_txt_filter_order")
-  /// Search starts by tapping on go on the keyboard
+  /// Start the search by tapping Open on the keypad
   internal static let phaSearchTxtHintStartSearch = LocalizedStringKey("pha_search_txt_hint_start_search")
   /// Share your location to find pharmacies near you.
   internal static let phaSearchTxtLocationAlertMessage = LocalizedStringKey("pha_search_txt_location_alert_message")
   /// Share location
   internal static let phaSearchTxtLocationAlertTitle = LocalizedStringKey("pha_search_txt_location_alert_title")
-  /// Share your location to find pharmacies around you
+  /// Share your location and find pharmacies in your area
   internal static let phaSearchTxtLocationHintMessage = LocalizedStringKey("pha_search_txt_location_hint_message")
   /// Find pharmacies easily
   internal static let phaSearchTxtLocationHintTitle = LocalizedStringKey("pha_search_txt_location_hint_title")
@@ -1415,7 +1353,7 @@ internal enum L10n {
   internal static let phaSearchTxtOpenUntil = LocalizedStringKey("pha_search_txt_open_until")
   /// Opens at
   internal static let phaSearchTxtOpensAt = LocalizedStringKey("pha_search_txt_opens_at")
-  /// Locating device...
+  /// Determining device location...
   internal static let phaSearchTxtProgressLocating = LocalizedStringKey("pha_search_txt_progress_locating")
   /// Searching...
   internal static let phaSearchTxtProgressSearch = LocalizedStringKey("pha_search_txt_progress_search")
@@ -1423,26 +1361,12 @@ internal enum L10n {
   internal static let phaSearchTxtSearchHint = LocalizedStringKey("pha_search_txt_search_hint")
   /// Select pharmacy
   internal static let phaSearchTxtTitle = LocalizedStringKey("pha_search_txt_title")
-  /// To the order details
-  internal static let phaSuccessRedeemBtnDetails = LocalizedStringKey("pha_success_redeem_btn_details")
-  /// The pharmacy will contact you as soon as possible to verify the delivery details with you.
-  internal static let phaSuccessRedeemDeliveryDescription = LocalizedStringKey("pha_success_redeem_delivery_description")
-  /// Successfully redeemed
-  internal static let phaSuccessRedeemDeliveryTitle = LocalizedStringKey("pha_success_redeem_delivery_title")
-  /// Your order will usually be ready for you in good time. Please contact the pharmacy for an exact time.
-  internal static let phaSuccessRedeemOnPremiseDescription = LocalizedStringKey("pha_success_redeem_onPremise_description")
-  /// Successfully redeemed
-  internal static let phaSuccessRedeemOnPremiseTitle = LocalizedStringKey("pha_success_redeem_onPremise_title")
-  /// Go to homepage
-  internal static let phaSuccessRedeemShipmentDescription1 = LocalizedStringKey("pha_success_redeem_shipment_description_1")
-  /// The mail-order pharmacy will create a shopping basket for you with your medicines. This process may take a few minutes.
-  internal static let phaSuccessRedeemShipmentDescription2 = LocalizedStringKey("pha_success_redeem_shipment_description_2")
-  /// Tap on "Open shopping cart" and complete your order on the pharmacy's website.
-  internal static let phaSuccessRedeemShipmentDescription3 = LocalizedStringKey("pha_success_redeem_shipment_description_3")
-  /// Your next steps
-  internal static let phaSuccessRedeemShipmentTitle = LocalizedStringKey("pha_success_redeem_shipment_title")
-  /// Geschafft! 🎉
+  /// Done! 🎉
   internal static let phaSuccessRedeemTitle = LocalizedStringKey("pha_success_redeem_title")
+  /// gesund.bund.de öffnen
+  internal static let prscDtlHntGesundBundDeBtn = LocalizedStringKey("prsc_dtl_hnt_gesund_bund_de_btn")
+  /// Fachlich geprüfte Informationen zu Krankheiten, ICD-Codes und zu Vorsorge- und Pflegethemen finden Sie im Nationalen Gesundheitsportal.
+  internal static let prscDtlHntGesundBundDeText = LocalizedStringKey("prsc_dtl_hnt_gesund_bund_de_text")
   /// Date of accident
   internal static let prscFdTxtAccidentDate = LocalizedStringKey("prsc_fd_txt_accident_date")
   /// Accident company or employer number
@@ -1517,9 +1441,9 @@ internal enum L10n {
   internal static let prscFdTxtSubstitutionReadFurtherLink = LocalizedStringKey("prsc_fd_txt_substitution_read_further_link")
   /// Substitute medication possible
   internal static let prscFdTxtSubstitutionTitle = LocalizedStringKey("prsc_fd_txt_substitution_title")
-  /// Present this code in your pharmacy.
+  /// Show this code at your pharmacy.
   internal static let pucTxtSubtitle = LocalizedStringKey("puc_txt_subtitle")
-  /// Pickup code
+  /// Collection code
   internal static let pucTxtTitle = LocalizedStringKey("puc_txt_title")
   /// You are in a pharmacy and want to redeem your prescription.
   internal static let rdmBtnRedeemPharmacyDescription = LocalizedStringKey("rdm_btn_redeem_pharmacy_description")
@@ -1529,23 +1453,23 @@ internal enum L10n {
   internal static let rdmBtnRedeemSearchPharmacyDescription = LocalizedStringKey("rdm_btn_redeem_search_pharmacy_description")
   /// I would like to make a reservation or order
   internal static let rdmBtnRedeemSearchPharmacyTitle = LocalizedStringKey("rdm_btn_redeem_search_pharmacy_title")
-  /// Back to main screen
+  /// To the homepage
   internal static let rdmSccBtnReturnToMain = LocalizedStringKey("rdm_scc_btn_return_to_main")
-  /// The pharmacy will contact you as soon as possible to clarify details of the delivery with you.
+  /// The pharmacy will contact you as soon as possible to verify the delivery details with you.
   internal static let rdmSccTxtDeliveryContent = LocalizedStringKey("rdm_scc_txt_delivery_content")
-  /// Redeemed successfully
+  /// Successfully redeemed
   internal static let rdmSccTxtDeliveryTitle = LocalizedStringKey("rdm_scc_txt_delivery_title")
-  /// Your order will usually be ready for you promptly. For an exact appointment, please contact the pharmacy.
+  /// Your order will usually be ready for you as soon as possible. Please contact the pharmacy for an exact time.
   internal static let rdmSccTxtOnpremiseContent = LocalizedStringKey("rdm_scc_txt_onpremise_content")
-  /// Redeemed successfully
+  /// Successfully redeemed
   internal static let rdmSccTxtOnpremiseTitle = LocalizedStringKey("rdm_scc_txt_onpremise_title")
-  /// Go to main screen.
+  /// Go to homepage
   internal static let rdmSccTxtShipmentContent1 = LocalizedStringKey("rdm_scc_txt_shipment_content_1")
-  /// The mail-order pharmacy creates a shopping cart for you with your medication. This process can take several minutes.
+  /// The mail-order pharmacy will create a shopping cart for you with your medicines. This process may take a few minutes.
   internal static let rdmSccTxtShipmentContent2 = LocalizedStringKey("rdm_scc_txt_shipment_content_2")
-  /// Tap on “Open shopping cart” and complete your order on the pharmacy's website.
+  /// Tap "Open shopping cart" and complete your order on the pharmacy's website.
   internal static let rdmSccTxtShipmentContent3 = LocalizedStringKey("rdm_scc_txt_shipment_content_3")
-  /// Next steps
+  /// Your next steps
   internal static let rdmSccTxtShipmentTitle = LocalizedStringKey("rdm_scc_txt_shipment_title")
   /// Choose how you would like to redeem your prescription.
   internal static let rdmTxtSubtitle = LocalizedStringKey("rdm_txt_subtitle")
@@ -1623,7 +1547,7 @@ internal enum L10n {
   internal static let stgBtnLogout = LocalizedStringKey("stg_btn_logout")
   /// Privacy Policy
   internal static let stgDpoTxtDataPrivacy = LocalizedStringKey("stg_dpo_txt_data_privacy")
-  /// Open Source Licenses
+  /// Open source licences
   internal static let stgDpoTxtFoss = LocalizedStringKey("stg_dpo_txt_foss")
   /// Terms of Use
   internal static let stgDpoTxtTermsOfUse = LocalizedStringKey("stg_dpo_txt_terms_of_use")
@@ -1663,8 +1587,6 @@ internal enum L10n {
   internal static let stgTknTxtAccessToken = LocalizedStringKey("stg_tkn_txt_access_token")
   /// Token in Zwischenablage kopiert
   internal static let stgTknTxtCopyToClipboard = LocalizedStringKey("stg_tkn_txt_copy_to_clipboard")
-  /// Not available
-  internal static let stgTknTxtNotAvailable = LocalizedStringKey("stg_tkn_txt_not_available")
   /// SSO Token
   internal static let stgTknTxtSsoToken = LocalizedStringKey("stg_tkn_txt_sso_token")
   /// Tokens
@@ -1703,19 +1625,13 @@ internal enum L10n {
   internal static let stgTxtHeaderLegalInfo = LocalizedStringKey("stg_txt_header_legal_info")
   /// Security
   internal static let stgTxtHeaderSecurity = LocalizedStringKey("stg_txt_header_security")
-  /// Biometrics error: %@
-  internal static let stgTxtSecurityNoBiometricsWarning = LocalizedStringKey("stg_txt_security_no_biometrics_warning")
   /// Face ID
   internal static let stgTxtSecurityOptionFaceidTitle = LocalizedStringKey("stg_txt_security_option_faceid_title")
-  /// Not recommended
-  internal static let stgTxtSecurityOptionNoneDescription = LocalizedStringKey("stg_txt_security_option_none_description")
   /// Kennwort
   internal static let stgTxtSecurityOptionPasswordTitle = LocalizedStringKey("stg_txt_security_option_password_title")
   /// Touch ID
   internal static let stgTxtSecurityOptionTouchidTitle = LocalizedStringKey("stg_txt_security_option_touchid_title")
-  /// Not secured
-  internal static let stgTxtSecurityOptionUnsecuredTitle = LocalizedStringKey("stg_txt_security_option_unsecured_title")
-  /// Show tokens
+  /// Tokens anzeigen
   internal static let stgTxtSecurityTokens = LocalizedStringKey("stg_txt_security_tokens")
   /// This app has not yet been secured. Improve the protection of your data with a fingerprint or face scan.
   internal static let stgTxtSecurityWarning = LocalizedStringKey("stg_txt_security_warning")

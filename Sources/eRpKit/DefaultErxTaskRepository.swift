@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2021 gematik GmbH
+//  Copyright (c) 2022 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -20,7 +20,7 @@ import Combine
 import Foundation
 
 /// Repository for the app to the ErxTask data layer handling the syncing between its data stores.
-public class DefaultErxTaskRepository<D: ErxTaskDataStore, C: ErxTaskDataStore>: ErxTaskRepository {
+public class DefaultErxTaskRepository<D: ErxDataStore, C: ErxDataStore>: ErxTaskRepository {
     /// ErxTaskRepository ErrorType
     public typealias ErrorType = ErxRepositoryError<D.ErrorType, C.ErrorType>
 

@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2021 gematik GmbH
+//  Copyright (c) 2022 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -221,8 +221,6 @@ struct OrderHealthCardView: View {
         let healthCardAndPinPhone: String
         let healthCardAndPinMail: String
         let healthCardAndPinUrl: String
-        let pinPhone: String
-        let pinMail: String
         let pinUrl: String
 
         private enum CodingKeys: String, CodingKey {
@@ -230,8 +228,6 @@ struct OrderHealthCardView: View {
             case healthCardAndPinPhone
             case healthCardAndPinMail
             case healthCardAndPinUrl
-            case pinPhone
-            case pinMail
             case pinUrl
         }
 
@@ -251,7 +247,7 @@ struct OrderHealthCardView: View {
         }
 
         var hasContactInformationForPin: Bool {
-            !pinPhone.isEmpty || !pinMail.isEmpty || !pinUrl.isEmpty
+            !pinUrl.isEmpty
         }
 
         var hasContactInformationForHealthCardAndPin: Bool {
@@ -272,14 +268,11 @@ struct OrderHealthCardView: View {
             let bodyOnlyPin = NSLocalizedString("order_egk_txt_mail_only_pin_body", comment: "")
 
             switch serviceInquiry {
-            case .healthCardAndPin:
+            case .healthCardAndPin,
+                 .pin:
                 subject = subjectHealthCardAndPin
                 body = bodyHealthCardAndPin
                 email = healthCardAndPinMail
-            case .pin:
-                subject = subjectOnlyPin
-                body = bodyOnlyPin
-                email = pinMail
             }
 
             guard !email.isEmpty else {
@@ -319,9 +312,9 @@ extension ContactOptionsRowView {
         switch serviceInquiry {
         case .pin:
             self.init(
-                phone: healthInsuranceCompany.pinPhone,
+                phone: "",
                 web: healthInsuranceCompany.pinUrl,
-                email: healthInsuranceCompany.createEmailUrl(for: .pin)
+                email: nil
             )
         case .healthCardAndPin:
             self.init(
@@ -350,9 +343,7 @@ extension OrderHealthCardView.HealthInsuranceCompany {
         healthCardAndPinPhone: "003012341234",
         healthCardAndPinMail: "app-feedback@gematik.de",
         healthCardAndPinUrl: "",
-        pinPhone: "00 30 12341234",
-        pinMail: "app-feedback@gematik.de",
-        pinUrl: ""
+        pinUrl: "www.gematik.de"
     )
 }
 

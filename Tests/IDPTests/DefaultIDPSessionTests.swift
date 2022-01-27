@@ -1,6 +1,6 @@
 // swiftlint:disable file_length
 //
-//  Copyright (c) 2021 gematik GmbH
+//  Copyright (c) 2022 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -1017,8 +1017,11 @@ final class DefaultIDPSessionTests: XCTestCase {
             .setFailureType(to: IDPError.self)
             .eraseToAnyPublisher()
 
-        extAuthRequestStorageMock.getExtAuthRequestForReturnValue =
-            ExtAuthChallengeSession(verifierCode: "verifier_code", nonce: "5557577A7576615347")
+        extAuthRequestStorageMock.getExtAuthRequestForReturnValue = ExtAuthChallengeSession(
+            verifierCode: "verifier_code",
+            nonce: "5557577A7576615347",
+            for: KKAppDirectory.Entry(name: "Gematik KK", identifier: "K1234")
+        )
 
         sut.extAuthVerifyAndExchange(fixture)
             .test(

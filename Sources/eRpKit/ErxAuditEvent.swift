@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2021 gematik GmbH
+//  Copyright (c) 2022 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -21,11 +21,13 @@ import Foundation
 /// Represents audit events related to Erx Tasks.
 public struct ErxAuditEvent: Identifiable, Hashable {
     /// ErxAuditEvent default initializer
-    public init(identifier: String,
-                locale: String?,
-                text: String?,
-                timestamp: String?,
-                taskId: String?) {
+    public init(
+        identifier: String,
+        locale: String? = nil,
+        text: String? = nil,
+        timestamp: String? = nil,
+        taskId: String? = nil
+    ) {
         self.identifier = identifier
         self.locale = locale
         self.text = text

@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2021 gematik GmbH
+//  Copyright (c) 2022 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -129,11 +129,12 @@ enum RedeemDomain {
         ) { environment in
             PharmacySearchDomain.Environment(
                 schedulers: environment.schedulers,
-                pharmacyRepository: AppContainer.shared.userSessionSubject.pharmacyRepository,
+                pharmacyRepository: environment.userSession.pharmacyRepository,
                 locationManager: .live,
                 fhirDateFormatter: environment.fhirDateFormatter,
                 openHoursCalculator: PharmacyOpenHoursCalculator(),
-                referenceDateForOpenHours: nil
+                referenceDateForOpenHours: nil,
+                userSession: environment.userSession
             )
         }
 }

@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2021 gematik GmbH
+//  Copyright (c) 2022 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -125,6 +125,7 @@ enum DebugDomain {
         var serverEnvironmentConfiguration: AppConfiguration?
 
         let signatureProvider: SecureEnclaveSignatureProvider
+        let serviceLocatorDebugAccess: ServiceLocatorDebugAccess
     }
 
     static let domainReducer = Reducer { state, action, environment in
@@ -166,7 +167,7 @@ enum DebugDomain {
                     .eraseToEffect()
         case .useDebugDeviceCapabilitiesToggleTapped:
             state.useDebugDeviceCapabilities.toggle()
-            let serviceLocatorDebugAccess = ServiceLocatorDebugAccess()
+            let serviceLocatorDebugAccess = environment.serviceLocatorDebugAccess
             if state.useDebugDeviceCapabilities {
                 serviceLocatorDebugAccess.setDeviceCapabilities(state.debugCapabilities)
             } else {
@@ -332,9 +333,10 @@ extension DebugDomain {
 
         static let environment = Environment(
             schedulers: Schedulers(),
-            userSession: AppContainer.shared.userSessionSubject,
+            userSession: DemoSessionContainer(),
             tracker: DummyTracker(),
-            signatureProvider: DummySecureEnclaveSignatureProvider()
+            signatureProvider: DummySecureEnclaveSignatureProvider(),
+            serviceLocatorDebugAccess: ServiceLocatorDebugAccess(serviceLocator: ServiceLocator())
         )
 
         static let store = Store(

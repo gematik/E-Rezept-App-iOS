@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2021 gematik GmbH
+//  Copyright (c) 2022 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -23,12 +23,12 @@ extension SettingsView {
     struct SecuritySectionView: View {
         let store: AppSecurityDomain.Store
         @ObservedObject
-        var viewStore: ViewStore<AppSecurityDomain.State, AppSecurityDomain.Action>
+        var viewStore: ViewStore<Void, AppSecurityDomain.Action>
 
         init(store: SettingsDomain.Store) {
             self.store = store.scope(state: { $0.appSecurityState },
                                      action: { .appSecurity(action: $0) })
-            viewStore = ViewStore(self.store)
+            viewStore = ViewStore(self.store.stateless)
         }
 
         var body: some View {
@@ -99,11 +99,22 @@ extension SettingsView {
     struct AppSecuritySelectionView: View {
         let store: AppSecurityDomain.Store
         @ObservedObject
-        var viewStore: ViewStore<AppSecurityDomain.State, AppSecurityDomain.Action>
+        var viewStore: ViewStore<ViewState, AppSecurityDomain.Action>
 
         init(store: AppSecurityDomain.Store) {
             self.store = store
-            viewStore = ViewStore(store)
+            viewStore = ViewStore(store.scope(state: ViewState.init))
+        }
+
+        struct ViewState: Equatable {
+            let availableSecurityOptions: [AppSecurityOption]
+            let selectedSecurityOption: AppSecurityOption?
+            let showCreatePasswordScreen: Bool
+            init(state: AppSecurityDomain.State) {
+                availableSecurityOptions = state.availableSecurityOptions
+                selectedSecurityOption = state.selectedSecurityOption
+                showCreatePasswordScreen = state.showCreatePasswordScreen
+            }
         }
 
         var body: some View {

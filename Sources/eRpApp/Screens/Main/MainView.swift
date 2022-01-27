@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2021 gematik GmbH
+//  Copyright (c) 2022 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -46,14 +46,23 @@ struct MainView: View {
     var body: some View {
         NavigationView {
             Group {
-                GroupedPrescriptionListView(store: store.scope(
-                    state: \.prescriptionListState,
-                    action: MainDomain.Action.prescriptionList(action:)
-                ))
-                    // Workaround to get correct accessibility while activating voice over *after* presentation of
-                    // settings dialog. As soon as we can use multiple `fullScreenCover` (drop iOS <= ~14.4) we may omit
-                    // this modifier and the `EmptyView()`.
-                    .accessibility(hidden: viewStore.isSettingsViewPresented || viewStore.isScannerViewPresented)
+                ZStack {
+                    GroupedPrescriptionListView(store: store.scope(
+                        state: \.prescriptionListState,
+                        action: MainDomain.Action.prescriptionList(action:)
+                    ))
+                        // Workaround to get correct accessibility while activating voice over *after* presentation of
+                        // settings dialog. As soon as we can use multiple `fullScreenCover` (drop iOS <= ~14.4) we may
+                        // omit this modifier and the `EmptyView()`.
+                        .accessibility(hidden: viewStore.isSettingsViewPresented || viewStore.isScannerViewPresented)
+
+                    ExtAuthPendingView(
+                        store: store.scope(
+                            state: \.extAuthPendingState,
+                            action: MainDomain.Action.extAuthPending(action:)
+                        )
+                    )
+                }
 
                 // Settings sheet presentation; Work around not being able to use multiple `fullScreenCover` modifier
                 // at once. As soon as we drop iOS <= ~14.4, we may omit this.

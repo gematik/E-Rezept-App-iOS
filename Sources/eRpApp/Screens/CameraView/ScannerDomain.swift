@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2021 gematik GmbH
+//  Copyright (c) 2022 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -217,7 +217,7 @@ extension ScannerDomain {
         static let state = State()
 
         static let environment = Environment(repository: DemoSessionContainer().erxTaskRepository,
-                                             dateFormatter: AppContainer.shared.fhirDateFormatter,
-                                             scheduler: AppContainer.shared.schedulers)
+                                             dateFormatter: globals.fhirDateFormatter,
+                                             scheduler: Schedulers())
     }
 }

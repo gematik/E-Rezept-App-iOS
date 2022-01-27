@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2021 gematik GmbH
+//  Copyright (c) 2022 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -22,8 +22,30 @@ import SwiftUI
 struct SettingsLegalInfoView: View {
     let store: SettingsDomain.Store
 
+    @ObservedObject
+    var viewStore: ViewStore<ViewState, SettingsDomain.Action>
+
+    init(store: SettingsDomain.Store) {
+        self.store = store
+        viewStore = ViewStore(store.scope(state: ViewState.init))
+    }
+
+    struct ViewState: Equatable {
+        let showLegalNoticeView: Bool
+        let showDataProtectionView: Bool
+        let showFOSSView: Bool
+        let showTermsOfUseView: Bool
+
+        init(state: SettingsDomain.State) {
+            showLegalNoticeView = state.showLegalNoticeView
+            showDataProtectionView = state.showDataProtectionView
+            showFOSSView = state.showFOSSView
+            showTermsOfUseView = state.showTermsOfUseView
+        }
+    }
+
     var body: some View {
-        WithViewStore(store) { viewStore in
+        Group {
             NavigationLink(
                 destination: LegalNoticeView(),
                 isActive: viewStore.binding(

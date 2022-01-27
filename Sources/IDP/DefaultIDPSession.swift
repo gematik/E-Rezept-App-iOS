@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2021 gematik GmbH
+//  Copyright (c) 2022 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -385,7 +385,7 @@ public class DefaultIDPSession: IDPSession {
                                          codeChallengeMethod: .sha256,
                                          nonce: nonce)
 
-                let challengeSession = ExtAuthChallengeSession(verifierCode: verifierCode, nonce: nonce)
+                let challengeSession = ExtAuthChallengeSession(verifierCode: verifierCode, nonce: nonce, for: entry)
 
                 // swiftlint:disable:next trailing_closure
                 return self.client.startExtAuth(extAuth, using: document)
@@ -430,9 +430,14 @@ public class DefaultIDPSession: IDPSession {
         // [REQ:gemSpec_IDP_Sek:A_22301] Send authorization request
         return extAuthVerify(verify)
             .flatMap { token -> AnyPublisher<IDPToken, IDPError> in
+                // swiftlint:disable:next trailing_closure
                 self.exchange(token: token,
                               challengeSession: challengeSession,
                               redirectURI: redirectURI)
+                    .handleEvents(receiveOutput: { _ in
+                        self.extAuthRequestStorage.setExtAuthRequest(nil, for: state)
+                    })
+                    .eraseToAnyPublisher()
             }
             .eraseToAnyPublisher()
     }

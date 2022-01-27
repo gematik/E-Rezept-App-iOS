@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2021 gematik GmbH
+//  Copyright (c) 2022 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -18,6 +18,7 @@
 
 import Combine
 import eRpKit
+import eRpLocalStorage
 import Foundation
 import GemCommonsKit
 import IDP
@@ -45,9 +46,11 @@ class ChangeableUserSessionContainer: UsersSessionContainer {
     private var currentSession: CurrentValueSubject<UserSession, Never>
     private(set) var userSession: UserSession
     private var schedulers: Schedulers
+    private var erxTaskCoreDataStore: ErxTaskCoreDataStore
 
-    init(initialUserSession: UserSession, schedulers: Schedulers) {
+    init(initialUserSession: UserSession, schedulers: Schedulers, erxTaskCoreDataStore: ErxTaskCoreDataStore) {
         self.schedulers = schedulers
+        self.erxTaskCoreDataStore = erxTaskCoreDataStore
         currentSession = CurrentValueSubject(initialUserSession)
         userSession = StreamWrappedUserSession(
             stream: currentSession.eraseToAnyPublisher(),
@@ -62,7 +65,12 @@ class ChangeableUserSessionContainer: UsersSessionContainer {
 
     func switchToStandardMode() {
         DLog("will switch to standard mode")
-        currentSession.send(UserMode.standard(StandardSessionContainer(schedulers: schedulers)))
+        // TODO: load current selected profile and pass profileId // swiftlint:disable:this todo
+        let sessionContainer = StandardSessionContainer(
+            schedulers: schedulers,
+            erxTaskCoreDataStore: erxTaskCoreDataStore
+        )
+        currentSession.send(UserMode.standard(sessionContainer))
     }
 }
 

@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2021 gematik GmbH
+//  Copyright (c) 2022 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -218,7 +218,7 @@ extension CardWallDomain {
             loginOption: CardWallLoginOptionDomain.State(isDemoModus: false)
         )
         static let environment = Environment(schedulers: Schedulers(),
-                                             userSession: AppContainer.shared.userSessionSubject,
+                                             userSession: DemoSessionContainer(),
                                              signatureProvider: DummySecureEnclaveSignatureProvider()) { _ in }
         static let store = Store(
             initialState: state,

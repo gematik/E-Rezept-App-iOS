@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2021 gematik GmbH
+//  Copyright (c) 2022 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -30,6 +30,7 @@ enum MainDomain {
         var settingsState: SettingsDomain.State?
         var deviceSecurityState: DeviceSecurityDomain.State?
         var prescriptionListState: GroupedPrescriptionListDomain.State
+        var extAuthPendingState = ExtAuthPendingDomain.State()
         var debug: DebugDomain.State
         var isDemoMode = false
     }
@@ -67,6 +68,7 @@ enum MainDomain {
         case turnOffDemoMode
 
         case externalLogin(URL)
+        case extAuthPending(action: ExtAuthPendingDomain.Action)
     }
 
     struct Environment {
@@ -125,7 +127,8 @@ enum MainDomain {
             return .none
         case .prescriptionList,
              .settings,
-             .scanner:
+             .scanner,
+             .extAuthPending:
             return .none
         case .subscribeToDemoModeChange:
             return environment.userSessionContainer.isDemoMode
@@ -147,9 +150,9 @@ enum MainDomain {
         case .deviceSecurity:
             return .none
         case let .externalLogin(url):
-            return environment.userSession.idpSession
-                .extAuthVerifyAndExchange(url)
-                .fireAndForget()
+            return Effect(value: .extAuthPending(action: .externalLogin(url)))
+                .delay(for: 5, scheduler: environment.schedulers.main)
+                .eraseToEffect()
         }
     }
 
@@ -159,6 +162,7 @@ enum MainDomain {
         scannerPullbackReducer,
         deviceSecurityPullbackReducer,
         debugPullbackReducer,
+        extAuthPendingReducer,
         domainReducer
     )
 
@@ -228,7 +232,20 @@ enum MainDomain {
                 schedulers: appEnvironment.schedulers,
                 userSession: appEnvironment.userSession,
                 tracker: appEnvironment.tracker,
-                signatureProvider: appEnvironment.signatureProvider
+                signatureProvider: appEnvironment.signatureProvider,
+                serviceLocatorDebugAccess: ServiceLocatorDebugAccess(serviceLocator: appEnvironment.serviceLocator)
+            )
+        }
+
+    private static let extAuthPendingReducer: Reducer =
+        ExtAuthPendingDomain.reducer.pullback(
+            state: \.extAuthPendingState,
+            action: /MainDomain.Action.extAuthPending(action:)
+        ) {
+            .init(
+                idpSession: $0.userSession.idpSession,
+                schedulers: $0.schedulers,
+                extAuthRequestStorage: $0.userSession.extAuthRequestStorage
             )
         }
 }
@@ -256,14 +273,14 @@ extension MainDomain {
 
         static let environment = Environment(
             router: DummyRouter(),
-            userSessionContainer: AppContainer.shared.userSessionContainer,
-            userSession: AppContainer.shared.userSessionSubject,
-            appSecurityManager: AppContainer.shared.userSessionContainer.userSession.appSecurityManager,
+            userSessionContainer: DummyUserSessionContainer(),
+            userSession: DemoSessionContainer(),
+            appSecurityManager: DemoAppSecurityPasswordManager(),
             serviceLocator: ServiceLocator(),
             accessibilityAnnouncementReceiver: { _ in },
-            erxTaskRepository: AppContainer.shared.userSessionSubject.erxTaskRepository,
-            schedulers: AppContainer.shared.schedulers,
-            fhirDateFormatter: AppContainer.shared.fhirDateFormatter,
+            erxTaskRepository: DemoSessionContainer().erxTaskRepository,
+            schedulers: Schedulers(),
+            fhirDateFormatter: globals.fhirDateFormatter,
             signatureProvider: DummySecureEnclaveSignatureProvider(),
             tracker: DummyTracker()
         )

@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2021 gematik GmbH
+//  Copyright (c) 2022 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -237,7 +237,8 @@ struct OnboardingRegisterAuthenticationView: View, KeyboardReadable {
                     .padding(.horizontal)
                     .accessibility(identifier: A11y.onboarding.authentication.onbAuthTxtPasswordRecommendation)
 
-                    PasswordStrengthView(strength: viewStore.passwordStrength)
+                    PasswordStrengthView(strength: viewStore.passwordStrength,
+                                         barBackgroundColor: Color(.secondarySystemBackground))
                         .padding(.bottom, 16)
                         .padding(.horizontal)
 

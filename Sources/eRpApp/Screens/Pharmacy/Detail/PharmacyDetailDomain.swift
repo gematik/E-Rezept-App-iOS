@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2021 gematik GmbH
+//  Copyright (c) 2022 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -62,6 +62,7 @@ enum PharmacyDetailDomain: Equatable {
 
     struct Environment {
         var schedulers: Schedulers
+        let userSession: UserSession
     }
 
     static let domainReducer = Reducer { state, action, _ in
@@ -143,8 +144,8 @@ enum PharmacyDetailDomain: Equatable {
         ) { environment in
             PharmacyRedeemDomain.Environment(
                 schedulers: environment.schedulers,
-                userSession: AppContainer.shared.userSessionContainer.userSession,
-                erxTaskRepository: AppContainer.shared.userSessionSubject.erxTaskRepository
+                userSession: environment.userSession,
+                erxTaskRepository: environment.userSession.erxTaskRepository
             )
         }
 
@@ -216,7 +217,8 @@ extension PharmacyDetailDomain {
             pharmacyViewModel: pharmacyViewModel
         )
         static let environment = Environment(
-            schedulers: Schedulers()
+            schedulers: Schedulers(),
+            userSession: DemoSessionContainer()
         )
         static let store = Store(initialState: state,
                                  reducer: reducer,

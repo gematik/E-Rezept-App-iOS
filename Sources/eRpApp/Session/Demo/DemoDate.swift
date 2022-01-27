@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2021 gematik GmbH
+//  Copyright (c) 2022 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -59,7 +59,7 @@ enum DemoDate: CaseIterable {
         case .ninetyTwoDaysAhead:
             aDate = Date(timeIntervalSinceNow: 60 * 60 * 24 * 92)
         }
-        return AppContainer.shared.fhirDateFormatter
+        return globals.fhirDateFormatter
             .stringWithLongUTCTimeZone(from: aDate)
     }
 }

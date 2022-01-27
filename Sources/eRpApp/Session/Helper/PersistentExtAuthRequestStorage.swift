@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2021 gematik GmbH
+//  Copyright (c) 2022 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -16,24 +16,41 @@
 //  
 //
 
+import Combine
 import IDP
 
 class PersistentExtAuthRequestStorage: ExtAuthRequestStorage {
     private var extAuthRequests: [String: ExtAuthChallengeSession] = [:]
 
-    func setExtAuthRequest(_ request: ExtAuthChallengeSession, for state: String) {
+    func setExtAuthRequest(_ request: ExtAuthChallengeSession?, for state: String) {
         extAuthRequests[state] = request
+        _pendingExtAuthRequests.send(Array(extAuthRequests.values))
     }
 
     func getExtAuthRequest(for state: String) -> ExtAuthChallengeSession? {
         extAuthRequests[state]
     }
+
+    func reset() {
+        extAuthRequests = [:]
+    }
+
+    private var _pendingExtAuthRequests = CurrentValueSubject<[ExtAuthChallengeSession], Never>([])
+
+    var pendingExtAuthRequests: AnyPublisher<[ExtAuthChallengeSession], Never> {
+        _pendingExtAuthRequests
+            .eraseToAnyPublisher()
+    }
 }
 
 class DummyExtAuthRequestStorage: ExtAuthRequestStorage {
-    func setExtAuthRequest(_: ExtAuthChallengeSession, for _: String) {}
+    func setExtAuthRequest(_: ExtAuthChallengeSession?, for _: String) {}
 
     func getExtAuthRequest(for _: String) -> ExtAuthChallengeSession? {
         nil
     }
+
+    func reset() {}
+
+    var pendingExtAuthRequests: AnyPublisher<[ExtAuthChallengeSession], Never> = Just([]).eraseToAnyPublisher()
 }

@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2021 gematik GmbH
+//  Copyright (c) 2022 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -134,9 +134,9 @@ class DemoErxTaskRepository: ErxTaskRepository {
         return store.filter { erxTask in
             // convert date strings to real dates for comparison
             if let demoDateString = nextDemoDate,
-               let demoDate = AppContainer.shared.fhirDateFormatter.date(from: demoDateString, format: .yearMonthDay),
+               let demoDate = globals.fhirDateFormatter.date(from: demoDateString, format: .yearMonthDay),
                let authoredOnString = erxTask.authoredOn,
-               let erxDate = AppContainer.shared.fhirDateFormatter.date(from: authoredOnString, format: .yearMonthDay) {
+               let erxDate = globals.fhirDateFormatter.date(from: authoredOnString, format: .yearMonthDay) {
                 let compareResult = Calendar.current.compare(demoDate, to: erxDate, toGranularity: .day)
                 return compareResult == .orderedSame || compareResult == .orderedDescending
             }
