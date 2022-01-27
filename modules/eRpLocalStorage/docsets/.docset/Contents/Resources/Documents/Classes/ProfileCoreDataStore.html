@@ -21,10 +21,10 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-           1.1.2
+           1.2.0
  Docs
         </a>
-         (33% documented)
+         (36% documented)
       </p>
     
       <p class="header-col--secondary">
@@ -102,6 +102,12 @@
                 <a class="nav-group-task-link" href="../Classes/LocalStoreFactory.html">LocalStoreFactory</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/LocalStoreFactory/Failing.html">– Failing</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/MigrationManager.html">MigrationManager</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/ProfileCoreDataStore.html">ProfileCoreDataStore</a>
               </li>
               <li class="nav-group-task">
@@ -116,7 +122,7 @@
             <a class="nav-group-name-link" href="../Enums.html">Enumerations</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Enums/CoreDataStoreError.html">CoreDataStoreError</a>
+                <a class="nav-group-task-link" href="../Enums/MigrationError.html">MigrationError</a>
               </li>
             </ul>
           </li>
@@ -141,7 +147,7 @@
                 <a class="nav-group-task-link" href="../Protocols/CoreDataControllerFactory.html">CoreDataControllerFactory</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Protocols/ProfileDataStore.html">ProfileDataStore</a>
+                <a class="nav-group-task-link" href="../Protocols/ModelMigrating.html">ModelMigrating</a>
               </li>
             </ul>
           </li>
@@ -155,7 +161,7 @@
               <div class="declaration">
                 <div class="language">
                   
-                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">ProfileCoreDataStore</span> <span class="p">:</span> <span class="kt"><a href="../Protocols/ProfileDataStore.html">ProfileDataStore</a></span><span class="p">,</span> <span class="kt">CoreDataCrudable</span></code></pre>
+                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">ProfileCoreDataStore</span> <span class="p">:</span> <span class="kt">ProfileDataStore</span><span class="p">,</span> <span class="kt">CoreDataCrudable</span></code></pre>
 
                 </div>
               </div>
@@ -171,9 +177,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:15eRpLocalStorage20ProfileCoreDataStoreC04coreF17ControllerFactory15foregroundQueue010backgroundL0AcA0efiJ0_p_So17OS_dispatch_queueCAItcfc"></a>
+                    <a name="/s:15eRpLocalStorage20ProfileCoreDataStoreC04coreF17ControllerFactory15foregroundQueue010backgroundL0AcA0efiJ0_p_17CombineSchedulers12AnySchedulerVySo17OS_dispatch_queueC8DispatchE0Q8TimeTypeVAlME0Q7OptionsVGARtcfc"></a>
                     <a name="//apple_ref/swift/Method/init(coreDataControllerFactory:foregroundQueue:backgroundQueue:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:15eRpLocalStorage20ProfileCoreDataStoreC04coreF17ControllerFactory15foregroundQueue010backgroundL0AcA0efiJ0_p_So17OS_dispatch_queueCAItcfc">init(coreDataControllerFactory:<wbr>foregroundQueue:<wbr>backgroundQueue:<wbr>)</a>
+                    <a class="token" href="#/s:15eRpLocalStorage20ProfileCoreDataStoreC04coreF17ControllerFactory15foregroundQueue010backgroundL0AcA0efiJ0_p_17CombineSchedulers12AnySchedulerVySo17OS_dispatch_queueC8DispatchE0Q8TimeTypeVAlME0Q7OptionsVGARtcfc">init(coreDataControllerFactory:<wbr>foregroundQueue:<wbr>backgroundQueue:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -190,8 +196,9 @@
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span>
     <span class="nv">coreDataControllerFactory</span><span class="p">:</span> <span class="kt"><a href="../Protocols/CoreDataControllerFactory.html">CoreDataControllerFactory</a></span><span class="p">,</span>
-    <span class="nv">foregroundQueue</span><span class="p">:</span> <span class="kt">DispatchQueue</span> <span class="o">=</span> <span class="kt">DispatchQueue</span><span class="o">.</span><span class="n">main</span><span class="p">,</span>
-    <span class="nv">backgroundQueue</span><span class="p">:</span> <span class="kt">DispatchQueue</span> <span class="o">=</span> <span class="kt">DispatchQueue</span><span class="p">(</span><span class="nv">label</span><span class="p">:</span> <span class="s">"profile-queue"</span><span class="p">,</span> <span class="nv">qos</span><span class="p">:</span> <span class="o">.</span><span class="n">userInitiated</span><span class="p">)</span>
+    <span class="nv">foregroundQueue</span><span class="p">:</span> <span class="kt">AnySchedulerOf</span><span class="o">&lt;</span><span class="kt">DispatchQueue</span><span class="o">&gt;</span> <span class="o">=</span> <span class="kt">AnyScheduler</span><span class="o">.</span><span class="n">main</span><span class="p">,</span>
+    <span class="nv">backgroundQueue</span><span class="p">:</span> <span class="kt">AnySchedulerOf</span><span class="o">&lt;</span><span class="kt">DispatchQueue</span><span class="o">&gt;</span> <span class="o">=</span> <span class="kt">DispatchQueue</span><span class="p">(</span><span class="nv">label</span><span class="p">:</span> <span class="s">"profile-queue"</span><span class="p">,</span> <span class="nv">qos</span><span class="p">:</span> <span class="o">.</span><span class="n">userInitiated</span><span class="p">)</span>
+        <span class="o">.</span><span class="nf">eraseToAnyScheduler</span><span class="p">()</span>
 <span class="p">)</span></code></pre>
 
                         </div>
@@ -246,9 +253,9 @@ other queue (Default: DispatchQueue.main)</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:15eRpLocalStorage16ProfileDataStoreP05fetchD02by7Combine12AnyPublisherVy01eA3Kit0D0VSgAA04CoreeF5ErrorOG10Foundation4UUIDV_tF"></a>
+                    <a name="/s:6eRpKit16ProfileDataStoreP05fetchC02by7Combine12AnyPublisherVyAA0C0VSgAA05LocalE5ErrorOG10Foundation4UUIDV_tF"></a>
                     <a name="//apple_ref/swift/Method/fetchProfile(by:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:15eRpLocalStorage16ProfileDataStoreP05fetchD02by7Combine12AnyPublisherVy01eA3Kit0D0VSgAA04CoreeF5ErrorOG10Foundation4UUIDV_tF">fetchProfile(by:<wbr>)</a>
+                    <a class="token" href="#/s:6eRpKit16ProfileDataStoreP05fetchC02by7Combine12AnyPublisherVyAA0C0VSgAA05LocalE5ErrorOG10Foundation4UUIDV_tF">fetchProfile(by:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -263,7 +270,7 @@ other queue (Default: DispatchQueue.main)</p>
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">fetchProfile</span><span class="p">(</span><span class="n">by</span> <span class="nv">identifier</span><span class="p">:</span> <span class="kt">Profile</span><span class="o">.</span><span class="kt">ID</span><span class="p">)</span>
-    <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">Profile</span><span class="p">?,</span> <span class="kt"><a href="../Enums/CoreDataStoreError.html">CoreDataStoreError</a></span><span class="o">&gt;</span></code></pre>
+    <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">Profile</span><span class="p">?,</span> <span class="kt">LocalStoreError</span><span class="o">&gt;</span></code></pre>
 
                         </div>
                       </div>
@@ -273,9 +280,9 @@ other queue (Default: DispatchQueue.main)</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:15eRpLocalStorage16ProfileDataStoreP15listAllProfiles7Combine12AnyPublisherVySay01eA3Kit0D0VGAA04CoreeF5ErrorOGyF"></a>
+                    <a name="/s:6eRpKit16ProfileDataStoreP15listAllProfiles7Combine12AnyPublisherVySayAA0C0VGAA05LocalE5ErrorOGyF"></a>
                     <a name="//apple_ref/swift/Method/listAllProfiles()" class="dashAnchor"></a>
-                    <a class="token" href="#/s:15eRpLocalStorage16ProfileDataStoreP15listAllProfiles7Combine12AnyPublisherVySay01eA3Kit0D0VGAA04CoreeF5ErrorOGyF">listAllProfiles()</a>
+                    <a class="token" href="#/s:6eRpKit16ProfileDataStoreP15listAllProfiles7Combine12AnyPublisherVySayAA0C0VGAA05LocalE5ErrorOGyF">listAllProfiles()</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -289,7 +296,7 @@ other queue (Default: DispatchQueue.main)</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">listAllProfiles</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="p">[</span><span class="kt">Profile</span><span class="p">],</span> <span class="kt"><a href="../Enums/CoreDataStoreError.html">CoreDataStoreError</a></span><span class="o">&gt;</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">listAllProfiles</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="p">[</span><span class="kt">Profile</span><span class="p">],</span> <span class="kt">LocalStoreError</span><span class="o">&gt;</span></code></pre>
 
                         </div>
                       </div>
@@ -299,9 +306,9 @@ other queue (Default: DispatchQueue.main)</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:15eRpLocalStorage16ProfileDataStoreP4save8profiles7Combine12AnyPublisherVySbAA04CoreeF5ErrorOGSay01eA3Kit0D0VG_tF"></a>
+                    <a name="/s:6eRpKit16ProfileDataStoreP4save8profiles7Combine12AnyPublisherVySbAA05LocalE5ErrorOGSayAA0C0VG_tF"></a>
                     <a name="//apple_ref/swift/Method/save(profiles:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:15eRpLocalStorage16ProfileDataStoreP4save8profiles7Combine12AnyPublisherVySbAA04CoreeF5ErrorOGSay01eA3Kit0D0VG_tF">save(profiles:<wbr>)</a>
+                    <a class="token" href="#/s:6eRpKit16ProfileDataStoreP4save8profiles7Combine12AnyPublisherVySbAA05LocalE5ErrorOGSayAA0C0VG_tF">save(profiles:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -315,7 +322,7 @@ other queue (Default: DispatchQueue.main)</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">save</span><span class="p">(</span><span class="nv">profiles</span><span class="p">:</span> <span class="p">[</span><span class="kt">Profile</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">Bool</span><span class="p">,</span> <span class="kt"><a href="../Enums/CoreDataStoreError.html">CoreDataStoreError</a></span><span class="o">&gt;</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">save</span><span class="p">(</span><span class="nv">profiles</span><span class="p">:</span> <span class="p">[</span><span class="kt">Profile</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">Bool</span><span class="p">,</span> <span class="kt">LocalStoreError</span><span class="o">&gt;</span></code></pre>
 
                         </div>
                       </div>
@@ -325,9 +332,9 @@ other queue (Default: DispatchQueue.main)</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:15eRpLocalStorage16ProfileDataStoreP6delete8profiles7Combine12AnyPublisherVySbAA04CoreeF5ErrorOGSay01eA3Kit0D0VG_tF"></a>
-                    <a name="//apple_ref/swift/Method/delete(profiles:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:15eRpLocalStorage16ProfileDataStoreP6delete8profiles7Combine12AnyPublisherVySbAA04CoreeF5ErrorOGSay01eA3Kit0D0VG_tF">delete(profiles:<wbr>)</a>
+                    <a name="/s:6eRpKit16ProfileDataStoreP6update9profileId8mutating7Combine12AnyPublisherVySbAA05LocalE5ErrorOG10Foundation4UUIDV_yAA0C0VzctF"></a>
+                    <a name="//apple_ref/swift/Method/update(profileId:mutating:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:6eRpKit16ProfileDataStoreP6update9profileId8mutating7Combine12AnyPublisherVySbAA05LocalE5ErrorOG10Foundation4UUIDV_yAA0C0VzctF">update(profileId:<wbr>mutating:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -341,7 +348,36 @@ other queue (Default: DispatchQueue.main)</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">delete</span><span class="p">(</span><span class="nv">profiles</span><span class="p">:</span> <span class="p">[</span><span class="kt">Profile</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">Bool</span><span class="p">,</span> <span class="kt"><a href="../Enums/CoreDataStoreError.html">CoreDataStoreError</a></span><span class="o">&gt;</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">update</span><span class="p">(</span>
+    <span class="nv">profileId</span><span class="p">:</span> <span class="kt">UUID</span><span class="p">,</span>
+    <span class="nv">mutating</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="k">inout</span> <span class="kt">Profile</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">Bool</span><span class="p">,</span> <span class="kt">LocalStoreError</span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:6eRpKit16ProfileDataStoreP6delete8profiles7Combine12AnyPublisherVySbAA05LocalE5ErrorOGSayAA0C0VG_tF"></a>
+                    <a name="//apple_ref/swift/Method/delete(profiles:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:6eRpKit16ProfileDataStoreP6delete8profiles7Combine12AnyPublisherVySbAA05LocalE5ErrorOGSayAA0C0VG_tF">delete(profiles:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">delete</span><span class="p">(</span><span class="nv">profiles</span><span class="p">:</span> <span class="p">[</span><span class="kt">Profile</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">Bool</span><span class="p">,</span> <span class="kt">LocalStoreError</span><span class="o">&gt;</span></code></pre>
 
                         </div>
                       </div>
@@ -356,7 +392,7 @@ other queue (Default: DispatchQueue.main)</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2021 <a class="link" href="https://www.gematik.de" target="_blank" rel="external">gematik GmbH</a>. All rights reserved. (Last updated: 2021-12-03)</p>
+      <p>&copy; 2022 <a class="link" href="https://www.gematik.de" target="_blank" rel="external">gematik GmbH</a>. All rights reserved. (Last updated: 2022-01-20)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>

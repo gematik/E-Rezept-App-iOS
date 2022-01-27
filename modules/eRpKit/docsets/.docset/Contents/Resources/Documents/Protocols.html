@@ -21,7 +21,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="index.html">
-           1.1.2
+           1.2.0
  Docs
         </a>
          (70% documented)
@@ -86,7 +86,16 @@
                 <a class="nav-group-task-link" href="Enums/ErxRepositoryError.html">ErxRepositoryError</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Enums/LocalStoreError.html">LocalStoreError</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Enums/ModelVersion.html">ModelVersion</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Enums/RedeemOption.html">RedeemOption</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Enums/RemoteStoreError.html">RemoteStoreError</a>
               </li>
             </ul>
           </li>
@@ -114,16 +123,10 @@
                 <a class="nav-group-task-link" href="Protocols/DataMatrixStringEncoder.html">DataMatrixStringEncoder</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="Protocols/ErxAuditEventDataStore.html">ErxAuditEventDataStore</a>
+                <a class="nav-group-task-link" href="Protocols/ErxLocalDataStore.html">ErxLocalDataStore</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="Protocols/ErxCommunicationDataStore.html">ErxCommunicationDataStore</a>
-              </li>
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="Protocols/ErxMedicationDispenseDataStore.html">ErxMedicationDispenseDataStore</a>
-              </li>
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="Protocols/ErxTaskDataStore.html">ErxTaskDataStore</a>
+                <a class="nav-group-task-link" href="Protocols/ErxRemoteDataStore.html">ErxRemoteDataStore</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Protocols/ErxTaskMatrixCode.html">ErxTaskMatrixCode</a>
@@ -136,6 +139,9 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Protocols/MatrixCodeGenerator.html">MatrixCodeGenerator</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Protocols/ProfileDataStore.html">ProfileDataStore</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Protocols/SecureUserDataStore.html">SecureUserDataStore</a>
@@ -207,9 +213,6 @@
           <li class="nav-group-name">
             <a class="nav-group-name-link" href="Typealiases.html">Type Aliases</a>
             <ul class="nav-group-tasks">
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="Typealiases.html#/s:6eRpKit12ErxDataStorea">ErxDataStore</a>
-              </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Typealiases.html#/s:6eRpKit4KVNRa">KVNR</a>
               </li>
@@ -346,9 +349,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:6eRpKit16ErxTaskDataStoreP"></a>
-                    <a name="//apple_ref/swift/Protocol/ErxTaskDataStore" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6eRpKit16ErxTaskDataStoreP">ErxTaskDataStore</a>
+                    <a name="/s:6eRpKit17ErxLocalDataStoreP"></a>
+                    <a name="//apple_ref/swift/Protocol/ErxLocalDataStore" class="dashAnchor"></a>
+                    <a class="token" href="#/s:6eRpKit17ErxLocalDataStoreP">ErxLocalDataStore</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -356,15 +359,15 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Interface that is binding the repository to the various implementing data stores</p>
+                        <p>Interface for the local data store</p>
 
-                        <a href="Protocols/ErxTaskDataStore.html" class="slightly-smaller">See more</a>
+                        <a href="Protocols/ErxLocalDataStore.html" class="slightly-smaller">See more</a>
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">protocol</span> <span class="kt">ErxTaskDataStore</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">protocol</span> <span class="kt">ErxLocalDataStore</span></code></pre>
 
                         </div>
                       </div>
@@ -374,9 +377,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:6eRpKit25ErxCommunicationDataStoreP"></a>
-                    <a name="//apple_ref/swift/Protocol/ErxCommunicationDataStore" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6eRpKit25ErxCommunicationDataStoreP">ErxCommunicationDataStore</a>
+                    <a name="/s:6eRpKit18ErxRemoteDataStoreP"></a>
+                    <a name="//apple_ref/swift/Protocol/ErxRemoteDataStore" class="dashAnchor"></a>
+                    <a class="token" href="#/s:6eRpKit18ErxRemoteDataStoreP">ErxRemoteDataStore</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -384,71 +387,15 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Interface for operations on <code><a href="Structs/ErxTask/Communication.html">ErxTask.Communication</a></code></p>
+                        <p>Interface for the remote data store</p>
 
-                        <a href="Protocols/ErxCommunicationDataStore.html" class="slightly-smaller">See more</a>
+                        <a href="Protocols/ErxRemoteDataStore.html" class="slightly-smaller">See more</a>
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">protocol</span> <span class="kt">ErxCommunicationDataStore</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:6eRpKit22ErxAuditEventDataStoreP"></a>
-                    <a name="//apple_ref/swift/Protocol/ErxAuditEventDataStore" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6eRpKit22ErxAuditEventDataStoreP">ErxAuditEventDataStore</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Interface for operations on <code>ErxAuditEventDataStore</code></p>
-
-                        <a href="Protocols/ErxAuditEventDataStore.html" class="slightly-smaller">See more</a>
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">protocol</span> <span class="kt">ErxAuditEventDataStore</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:6eRpKit30ErxMedicationDispenseDataStoreP"></a>
-                    <a name="//apple_ref/swift/Protocol/ErxMedicationDispenseDataStore" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6eRpKit30ErxMedicationDispenseDataStoreP">ErxMedicationDispenseDataStore</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Interface for operations on <code><a href="Structs/ErxTask/MedicationDispense.html">ErxTask.MedicationDispense</a></code></p>
-
-                        <a href="Protocols/ErxMedicationDispenseDataStore.html" class="slightly-smaller">See more</a>
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">protocol</span> <span class="kt">ErxMedicationDispenseDataStore</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">protocol</span> <span class="kt">ErxRemoteDataStore</span></code></pre>
 
                         </div>
                       </div>
@@ -468,7 +415,8 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Interface for the app to the ErxTask data layer</p>
+                        <p>Interface for the app to the ErxTask data layer
+sourcery: StreamWrapped, SkipCurrent</p>
 
                         <a href="Protocols/ErxTaskRepository.html" class="slightly-smaller">See more</a>
                       </div>
@@ -477,6 +425,36 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">protocol</span> <span class="kt">ErxTaskRepository</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:6eRpKit16ProfileDataStoreP"></a>
+                    <a name="//apple_ref/swift/Protocol/ProfileDataStore" class="dashAnchor"></a>
+                    <a class="token" href="#/s:6eRpKit16ProfileDataStoreP">ProfileDataStore</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Interface for saving, loading and deleting profiles</p>
+
+<p>sourcery: StreamWrapped</p>
+
+                        <a href="Protocols/ProfileDataStore.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">protocol</span> <span class="kt">ProfileDataStore</span></code></pre>
 
                         </div>
                       </div>
@@ -549,7 +527,7 @@ sourcery: StreamWrapped</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2021 <a class="link" href="https://www.gematik.de" target="_blank" rel="external">gematik GmbH</a>. All rights reserved. (Last updated: 2021-12-03)</p>
+      <p>&copy; 2022 <a class="link" href="https://www.gematik.de" target="_blank" rel="external">gematik GmbH</a>. All rights reserved. (Last updated: 2022-01-20)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>

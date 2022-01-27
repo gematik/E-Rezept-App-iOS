@@ -21,10 +21,10 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-           1.1.2
+           1.2.0
  Docs
         </a>
-         (33% documented)
+         (36% documented)
       </p>
     
       <p class="header-col--secondary">
@@ -102,6 +102,12 @@
                 <a class="nav-group-task-link" href="../Classes/LocalStoreFactory.html">LocalStoreFactory</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/LocalStoreFactory/Failing.html">– Failing</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/MigrationManager.html">MigrationManager</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/ProfileCoreDataStore.html">ProfileCoreDataStore</a>
               </li>
               <li class="nav-group-task">
@@ -116,7 +122,7 @@
             <a class="nav-group-name-link" href="../Enums.html">Enumerations</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Enums/CoreDataStoreError.html">CoreDataStoreError</a>
+                <a class="nav-group-task-link" href="../Enums/MigrationError.html">MigrationError</a>
               </li>
             </ul>
           </li>
@@ -141,7 +147,7 @@
                 <a class="nav-group-task-link" href="../Protocols/CoreDataControllerFactory.html">CoreDataControllerFactory</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Protocols/ProfileDataStore.html">ProfileDataStore</a>
+                <a class="nav-group-task-link" href="../Protocols/ModelMigrating.html">ModelMigrating</a>
               </li>
             </ul>
           </li>
@@ -241,6 +247,32 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">set</span><span class="p">(</span><span class="nv">hideOnboarding</span><span class="p">:</span> <span class="kt">Bool</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:6eRpKit13UserDataStoreP18isOnboardingHiddenSbvp"></a>
+                    <a name="//apple_ref/swift/Property/isOnboardingHidden" class="dashAnchor"></a>
+                    <a class="token" href="#/s:6eRpKit13UserDataStoreP18isOnboardingHiddenSbvp">isOnboardingHidden</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">isOnboardingHidden</span><span class="p">:</span> <span class="kt">Bool</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -559,6 +591,113 @@
                     </section>
                   </div>
                 </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:15eRpLocalStorage17UserDefaultsStoreC17selectedProfileId7Combine12AnyPublisherVy10Foundation4UUIDVSgs5NeverOGvp"></a>
+                    <a name="//apple_ref/swift/Property/selectedProfileId" class="dashAnchor"></a>
+                    <a class="token" href="#/s:15eRpLocalStorage17UserDefaultsStoreC17selectedProfileId7Combine12AnyPublisherVy10Foundation4UUIDVSgs5NeverOGvp">selectedProfileId</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">selectedProfileId</span><span class="p">:</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">UUID</span><span class="p">?,</span> <span class="kt">Never</span><span class="o">&gt;</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:15eRpLocalStorage17UserDefaultsStoreC3set17selectedProfileIdy10Foundation4UUIDV_tF"></a>
+                    <a name="//apple_ref/swift/Method/set(selectedProfileId:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:15eRpLocalStorage17UserDefaultsStoreC3set17selectedProfileIdy10Foundation4UUIDV_tF">set(selectedProfileId:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">set</span><span class="p">(</span><span class="nv">selectedProfileId</span><span class="p">:</span> <span class="kt">UUID</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:15eRpLocalStorage17UserDefaultsStoreC28latestCompatibleModelVersion01eA3Kit0iJ0Ovp"></a>
+                    <a name="//apple_ref/swift/Property/latestCompatibleModelVersion" class="dashAnchor"></a>
+                    <a class="token" href="#/s:15eRpLocalStorage17UserDefaultsStoreC28latestCompatibleModelVersion01eA3Kit0iJ0Ovp">latestCompatibleModelVersion</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">latestCompatibleModelVersion</span><span class="p">:</span> <span class="kt">ModelVersion</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:6eRpKit13UserDataStoreP15appStartCounterSivp"></a>
+                    <a name="//apple_ref/swift/Property/appStartCounter" class="dashAnchor"></a>
+                    <a class="token" href="#/s:6eRpKit13UserDataStoreP15appStartCounterSivp">appStartCounter</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">appStartCounter</span><span class="p">:</span> <span class="kt">Int</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
               </ul>
             </div>
           </div>
@@ -567,7 +706,7 @@
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2021 <a class="link" href="https://www.gematik.de" target="_blank" rel="external">gematik GmbH</a>. All rights reserved. (Last updated: 2021-12-03)</p>
+      <p>&copy; 2022 <a class="link" href="https://www.gematik.de" target="_blank" rel="external">gematik GmbH</a>. All rights reserved. (Last updated: 2022-01-20)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>

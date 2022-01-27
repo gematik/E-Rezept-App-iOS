@@ -197,6 +197,13 @@
       "warning": "undocumented"
     },
     {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/IDPToken.swift",
+      "line": 41,
+      "symbol": "IDPToken.idTokenPayload()",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/KKAppDirectory.swift",
       "line": 7,
       "symbol": "KKAppDirectory",

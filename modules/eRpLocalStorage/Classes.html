@@ -21,10 +21,10 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="index.html">
-           1.1.2
+           1.2.0
  Docs
         </a>
-         (33% documented)
+         (36% documented)
       </p>
     
       <p class="header-col--secondary">
@@ -102,6 +102,12 @@
                 <a class="nav-group-task-link" href="Classes/LocalStoreFactory.html">LocalStoreFactory</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/LocalStoreFactory/Failing.html">– Failing</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Classes/MigrationManager.html">MigrationManager</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Classes/ProfileCoreDataStore.html">ProfileCoreDataStore</a>
               </li>
               <li class="nav-group-task">
@@ -116,7 +122,7 @@
             <a class="nav-group-name-link" href="Enums.html">Enumerations</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="Enums/CoreDataStoreError.html">CoreDataStoreError</a>
+                <a class="nav-group-task-link" href="Enums/MigrationError.html">MigrationError</a>
               </li>
             </ul>
           </li>
@@ -141,7 +147,7 @@
                 <a class="nav-group-task-link" href="Protocols/CoreDataControllerFactory.html">CoreDataControllerFactory</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="Protocols/ProfileDataStore.html">ProfileDataStore</a>
+                <a class="nav-group-task-link" href="Protocols/ModelMigrating.html">ModelMigrating</a>
               </li>
             </ul>
           </li>
@@ -515,6 +521,34 @@ Guarantees to always return the same instance of <code><a href="Classes/CoreData
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:15eRpLocalStorage16MigrationManagerC"></a>
+                    <a name="//apple_ref/swift/Class/MigrationManager" class="dashAnchor"></a>
+                    <a class="token" href="#/s:15eRpLocalStorage16MigrationManagerC">MigrationManager</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                        <a href="Classes/MigrationManager.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">MigrationManager</span> <span class="p">:</span> <span class="kt"><a href="Protocols/ModelMigrating.html">ModelMigrating</a></span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:15eRpLocalStorage20ErxTaskCoreDataStoreC"></a>
                     <a name="//apple_ref/swift/Class/ErxTaskCoreDataStore" class="dashAnchor"></a>
                     <a class="token" href="#/s:15eRpLocalStorage20ErxTaskCoreDataStoreC">ErxTaskCoreDataStore</a>
@@ -533,11 +567,7 @@ Guarantees to always return the same instance of <code><a href="Classes/CoreData
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">ErxTaskCoreDataStore</span> <span class="p">:</span> <span class="kt">CoreDataCrudable</span></code></pre>
-<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">ErxTaskCoreDataStore</span><span class="p">:</span> <span class="kt">ErxAuditEventDataStore</span></code></pre>
-<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">ErxTaskCoreDataStore</span><span class="p">:</span> <span class="kt">ErxCommunicationDataStore</span></code></pre>
-<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">ErxTaskCoreDataStore</span><span class="p">:</span> <span class="kt">ErxMedicationDispenseDataStore</span></code></pre>
-<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">ErxTaskCoreDataStore</span><span class="p">:</span> <span class="kt">ErxTaskDataStore</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">ErxTaskCoreDataStore</span> <span class="p">:</span> <span class="kt">CoreDataCrudable</span><span class="p">,</span> <span class="kt">ErxLocalDataStore</span></code></pre>
 
                         </div>
                       </div>
@@ -565,7 +595,7 @@ Guarantees to always return the same instance of <code><a href="Classes/CoreData
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">ProfileCoreDataStore</span> <span class="p">:</span> <span class="kt"><a href="Protocols/ProfileDataStore.html">ProfileDataStore</a></span><span class="p">,</span> <span class="kt">CoreDataCrudable</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">ProfileCoreDataStore</span> <span class="p">:</span> <span class="kt">ProfileDataStore</span><span class="p">,</span> <span class="kt">CoreDataCrudable</span></code></pre>
 
                         </div>
                       </div>
@@ -608,7 +638,7 @@ Guarantees to always return the same instance of <code><a href="Classes/CoreData
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2021 <a class="link" href="https://www.gematik.de" target="_blank" rel="external">gematik GmbH</a>. All rights reserved. (Last updated: 2021-12-03)</p>
+      <p>&copy; 2022 <a class="link" href="https://www.gematik.de" target="_blank" rel="external">gematik GmbH</a>. All rights reserved. (Last updated: 2022-01-20)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>

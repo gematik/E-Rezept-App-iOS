@@ -21,10 +21,10 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-           1.1.2
+           1.2.0
  Docs
         </a>
-         (33% documented)
+         (36% documented)
       </p>
     
       <p class="header-col--secondary">
@@ -102,6 +102,12 @@
                 <a class="nav-group-task-link" href="../Classes/LocalStoreFactory.html">LocalStoreFactory</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/LocalStoreFactory/Failing.html">– Failing</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/MigrationManager.html">MigrationManager</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/ProfileCoreDataStore.html">ProfileCoreDataStore</a>
               </li>
               <li class="nav-group-task">
@@ -116,7 +122,7 @@
             <a class="nav-group-name-link" href="../Enums.html">Enumerations</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Enums/CoreDataStoreError.html">CoreDataStoreError</a>
+                <a class="nav-group-task-link" href="../Enums/MigrationError.html">MigrationError</a>
               </li>
             </ul>
           </li>
@@ -141,7 +147,7 @@
                 <a class="nav-group-task-link" href="../Protocols/CoreDataControllerFactory.html">CoreDataControllerFactory</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Protocols/ProfileDataStore.html">ProfileDataStore</a>
+                <a class="nav-group-task-link" href="../Protocols/ModelMigrating.html">ModelMigrating</a>
               </li>
             </ul>
           </li>
@@ -155,11 +161,7 @@
               <div class="declaration">
                 <div class="language">
                   
-                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">ErxTaskCoreDataStore</span> <span class="p">:</span> <span class="kt">CoreDataCrudable</span></code></pre>
-<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">ErxTaskCoreDataStore</span><span class="p">:</span> <span class="kt">ErxAuditEventDataStore</span></code></pre>
-<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">ErxTaskCoreDataStore</span><span class="p">:</span> <span class="kt">ErxCommunicationDataStore</span></code></pre>
-<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">ErxTaskCoreDataStore</span><span class="p">:</span> <span class="kt">ErxMedicationDispenseDataStore</span></code></pre>
-<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">ErxTaskCoreDataStore</span><span class="p">:</span> <span class="kt">ErxTaskDataStore</span></code></pre>
+                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">class</span> <span class="kt">ErxTaskCoreDataStore</span> <span class="p">:</span> <span class="kt">CoreDataCrudable</span><span class="p">,</span> <span class="kt">ErxLocalDataStore</span></code></pre>
 
                 </div>
               </div>
@@ -175,36 +177,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:15eRpLocalStorage20ErxTaskCoreDataStoreC5Errora"></a>
-                    <a name="//apple_ref/swift/Alias/Error" class="dashAnchor"></a>
-                    <a class="token" href="#/s:15eRpLocalStorage20ErxTaskCoreDataStoreC5Errora">Error</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Undocumented</p>
-
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">typealias</span> <span class="kt">Error</span> <span class="o">=</span> <span class="kt"><a href="../Enums/CoreDataStoreError.html">CoreDataStoreError</a></span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:15eRpLocalStorage20ErxTaskCoreDataStoreC9profileId04coreG17ControllerFactory15foregroundQueue010backgroundO0AC10Foundation4UUIDVSg_AA0fglM0_pSo17OS_dispatch_queueCANtcfc"></a>
+                    <a name="/s:15eRpLocalStorage20ErxTaskCoreDataStoreC9profileId04coreG17ControllerFactory15foregroundQueue010backgroundO0AC10Foundation4UUIDVSg_AA0fglM0_p17CombineSchedulers12AnySchedulerVySo17OS_dispatch_queueC8DispatchE0V8TimeTypeVAqRE0V7OptionsVGAWtcfc"></a>
                     <a name="//apple_ref/swift/Method/init(profileId:coreDataControllerFactory:foregroundQueue:backgroundQueue:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:15eRpLocalStorage20ErxTaskCoreDataStoreC9profileId04coreG17ControllerFactory15foregroundQueue010backgroundO0AC10Foundation4UUIDVSg_AA0fglM0_pSo17OS_dispatch_queueCANtcfc">init(profileId:<wbr>coreDataControllerFactory:<wbr>foregroundQueue:<wbr>backgroundQueue:<wbr>)</a>
+                    <a class="token" href="#/s:15eRpLocalStorage20ErxTaskCoreDataStoreC9profileId04coreG17ControllerFactory15foregroundQueue010backgroundO0AC10Foundation4UUIDVSg_AA0fglM0_p17CombineSchedulers12AnySchedulerVySo17OS_dispatch_queueC8DispatchE0V8TimeTypeVAqRE0V7OptionsVGAWtcfc">init(profileId:<wbr>coreDataControllerFactory:<wbr>foregroundQueue:<wbr>backgroundQueue:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -222,8 +197,9 @@
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span>
     <span class="nv">profileId</span><span class="p">:</span> <span class="kt">UUID</span><span class="p">?,</span>
     <span class="nv">coreDataControllerFactory</span><span class="p">:</span> <span class="kt"><a href="../Protocols/CoreDataControllerFactory.html">CoreDataControllerFactory</a></span><span class="p">,</span>
-    <span class="nv">foregroundQueue</span><span class="p">:</span> <span class="kt">DispatchQueue</span> <span class="o">=</span> <span class="kt">DispatchQueue</span><span class="o">.</span><span class="n">main</span><span class="p">,</span>
-    <span class="nv">backgroundQueue</span><span class="p">:</span> <span class="kt">DispatchQueue</span> <span class="o">=</span> <span class="kt">DispatchQueue</span><span class="p">(</span><span class="nv">label</span><span class="p">:</span> <span class="s">"erx-task-data-source-queue"</span><span class="p">,</span> <span class="nv">qos</span><span class="p">:</span> <span class="o">.</span><span class="n">userInitiated</span><span class="p">)</span>
+    <span class="nv">foregroundQueue</span><span class="p">:</span> <span class="kt">AnySchedulerOf</span><span class="o">&lt;</span><span class="kt">DispatchQueue</span><span class="o">&gt;</span> <span class="o">=</span> <span class="kt">AnyScheduler</span><span class="o">.</span><span class="n">main</span><span class="p">,</span>
+    <span class="nv">backgroundQueue</span><span class="p">:</span> <span class="kt">AnySchedulerOf</span><span class="o">&lt;</span><span class="kt">DispatchQueue</span><span class="o">&gt;</span> <span class="o">=</span> <span class="kt">DispatchQueue</span><span class="p">(</span><span class="nv">label</span><span class="p">:</span> <span class="s">"erx-task-data-source-queue"</span><span class="p">,</span>
+                                                                   <span class="nv">qos</span><span class="p">:</span> <span class="o">.</span><span class="n">userInitiated</span><span class="p">)</span><span class="o">.</span><span class="nf">eraseToAnyScheduler</span><span class="p">()</span>
 <span class="p">)</span></code></pre>
 
                         </div>
@@ -291,9 +267,9 @@ other queue (Default: DispatchQueue.main)</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:6eRpKit22ErxAuditEventDataStoreP05fetchdE02by7Combine12AnyPublisherVyAA0cdE0VSg9ErrorTypeQzGSS_tF"></a>
+                    <a name="/s:15eRpLocalStorage20ErxTaskCoreDataStoreC15fetchAuditEvent2by7Combine12AnyPublisherVy01eA3Kit0djK0VSgAI0bH5ErrorOGSS_tF"></a>
                     <a name="//apple_ref/swift/Method/fetchAuditEvent(by:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6eRpKit22ErxAuditEventDataStoreP05fetchdE02by7Combine12AnyPublisherVyAA0cdE0VSg9ErrorTypeQzGSS_tF">fetchAuditEvent(by:<wbr>)</a>
+                    <a class="token" href="#/s:15eRpLocalStorage20ErxTaskCoreDataStoreC15fetchAuditEvent2by7Combine12AnyPublisherVy01eA3Kit0djK0VSgAI0bH5ErrorOGSS_tF">fetchAuditEvent(by:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -301,15 +277,39 @@ other queue (Default: DispatchQueue.main)</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        
+                        <p>Fetch the ErxAuditEvent by its id when required by <code>Self</code></p>
+
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">fetchAuditEvent</span><span class="p">(</span><span class="n">by</span> <span class="nv">auditEventID</span><span class="p">:</span> <span class="kt">ErxAuditEvent</span><span class="o">.</span><span class="kt">ID</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">ErxAuditEvent</span><span class="p">?,</span> <span class="kt"><a href="../Classes/ErxTaskCoreDataStore.html#/s:15eRpLocalStorage20ErxTaskCoreDataStoreC5Errora">Error</a></span><span class="o">&gt;</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">fetchAuditEvent</span><span class="p">(</span><span class="n">by</span> <span class="nv">auditEventID</span><span class="p">:</span> <span class="kt">ErxAuditEvent</span><span class="o">.</span><span class="kt">ID</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">ErxAuditEvent</span><span class="p">?,</span> <span class="kt">LocalStoreError</span><span class="o">&gt;</span></code></pre>
 
                         </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>id</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>the ErxAuditEvent ID</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>Publisher for the fetch request</p>
                       </div>
                     </section>
                   </div>
@@ -317,9 +317,9 @@ other queue (Default: DispatchQueue.main)</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:6eRpKit22ErxAuditEventDataStoreP023fetchLatestTimestampForD6Events7Combine12AnyPublisherVySSSg9ErrorTypeQzGyF"></a>
+                    <a name="/s:15eRpLocalStorage20ErxTaskCoreDataStoreC34fetchLatestTimestampForAuditEvents7Combine12AnyPublisherVySSSg01eA3Kit0bH5ErrorOGyF"></a>
                     <a name="//apple_ref/swift/Method/fetchLatestTimestampForAuditEvents()" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6eRpKit22ErxAuditEventDataStoreP023fetchLatestTimestampForD6Events7Combine12AnyPublisherVySSSg9ErrorTypeQzGyF">fetchLatestTimestampForAuditEvents()</a>
+                    <a class="token" href="#/s:15eRpLocalStorage20ErxTaskCoreDataStoreC34fetchLatestTimestampForAuditEvents7Combine12AnyPublisherVySSSg01eA3Kit0bH5ErrorOGyF">fetchLatestTimestampForAuditEvents()</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -327,13 +327,14 @@ other queue (Default: DispatchQueue.main)</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        
+                        <p>Fetch the most recent <code>timestamp</code> of all <code>AuditEvent</code>s</p>
+
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">fetchLatestTimestampForAuditEvents</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">String</span><span class="p">?,</span> <span class="kt"><a href="../Classes/ErxTaskCoreDataStore.html#/s:15eRpLocalStorage20ErxTaskCoreDataStoreC5Errora">Error</a></span><span class="o">&gt;</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">fetchLatestTimestampForAuditEvents</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">String</span><span class="p">?,</span> <span class="kt">LocalStoreError</span><span class="o">&gt;</span></code></pre>
 
                         </div>
                       </div>
@@ -343,9 +344,9 @@ other queue (Default: DispatchQueue.main)</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:6eRpKit22ErxAuditEventDataStoreP07listAllD6Events5after3for7Combine12AnyPublisherVySayAA0cdE0VG9ErrorTypeQzGSSSg_APtF"></a>
-                    <a name="//apple_ref/swift/Method/listAllAuditEvents(after:for:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6eRpKit22ErxAuditEventDataStoreP07listAllD6Events5after3for7Combine12AnyPublisherVySayAA0cdE0VG9ErrorTypeQzGSSSg_APtF">listAllAuditEvents(after:<wbr>for:<wbr>)</a>
+                    <a name="/s:15eRpLocalStorage20ErxTaskCoreDataStoreC18listAllAuditEvents3for7Combine12AnyPublisherVySay01eA3Kit0dK5EventVGAI0bH5ErrorOGSSSg_tF"></a>
+                    <a name="//apple_ref/swift/Method/listAllAuditEvents(for:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:15eRpLocalStorage20ErxTaskCoreDataStoreC18listAllAuditEvents3for7Combine12AnyPublisherVySay01eA3Kit0dK5EventVGAI0bH5ErrorOGSSSg_tF">listAllAuditEvents(for:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -353,16 +354,39 @@ other queue (Default: DispatchQueue.main)</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        
+                        <p>List all audit events with the given local contained in the store</p>
+
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">listAllAuditEvents</span><span class="p">(</span><span class="n">after</span> <span class="nv">referenceDate</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
-                               <span class="k">for</span> <span class="nv">locale</span><span class="p">:</span> <span class="kt">String</span><span class="p">?)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="p">[</span><span class="kt">ErxAuditEvent</span><span class="p">],</span> <span class="kt"><a href="../Classes/ErxTaskCoreDataStore.html#/s:15eRpLocalStorage20ErxTaskCoreDataStoreC5Errora">Error</a></span><span class="o">&gt;</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">listAllAuditEvents</span><span class="p">(</span><span class="k">for</span> <span class="nv">locale</span><span class="p">:</span> <span class="kt">String</span><span class="p">?)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="p">[</span><span class="kt">ErxAuditEvent</span><span class="p">],</span> <span class="kt">LocalStoreError</span><span class="o">&gt;</span></code></pre>
 
                         </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>locale</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Location type of the language in which the result should be returned</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>Array of the fetched audit events or error</p>
                       </div>
                     </section>
                   </div>
@@ -370,9 +394,9 @@ other queue (Default: DispatchQueue.main)</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:6eRpKit22ErxAuditEventDataStoreP07listAllD6Events9forTaskID0K07Combine12AnyPublisherVySayAA0cdE0VG9ErrorTypeQzGSS_SSSgtF"></a>
+                    <a name="/s:15eRpLocalStorage20ErxTaskCoreDataStoreC18listAllAuditEvents03forE2ID0M07Combine12AnyPublisherVySay01eA3Kit0dK5EventVGAJ0bH5ErrorOGSS_SSSgtF"></a>
                     <a name="//apple_ref/swift/Method/listAllAuditEvents(forTaskID:for:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6eRpKit22ErxAuditEventDataStoreP07listAllD6Events9forTaskID0K07Combine12AnyPublisherVySayAA0cdE0VG9ErrorTypeQzGSS_SSSgtF">listAllAuditEvents(forTaskID:<wbr>for:<wbr>)</a>
+                    <a class="token" href="#/s:15eRpLocalStorage20ErxTaskCoreDataStoreC18listAllAuditEvents03forE2ID0M07Combine12AnyPublisherVySay01eA3Kit0dK5EventVGAJ0bH5ErrorOGSS_SSSgtF">listAllAuditEvents(forTaskID:<wbr>for:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -380,16 +404,48 @@ other queue (Default: DispatchQueue.main)</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        
+                        <p>Fetches all audit events related to a specific task id.</p>
+
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">listAllAuditEvents</span><span class="p">(</span><span class="n">forTaskID</span> <span class="nv">taskID</span><span class="p">:</span> <span class="kt">ErxTask</span><span class="o">.</span><span class="kt">ID</span><span class="p">,</span>
-                               <span class="k">for</span> <span class="nv">locale</span><span class="p">:</span> <span class="kt">String</span><span class="p">?)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="p">[</span><span class="kt">ErxAuditEvent</span><span class="p">],</span> <span class="kt"><a href="../Classes/ErxTaskCoreDataStore.html#/s:15eRpLocalStorage20ErxTaskCoreDataStoreC5Errora">Error</a></span><span class="o">&gt;</span></code></pre>
+                               <span class="k">for</span> <span class="nv">locale</span><span class="p">:</span> <span class="kt">String</span><span class="p">?)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="p">[</span><span class="kt">ErxAuditEvent</span><span class="p">],</span> <span class="kt">LocalStoreError</span><span class="o">&gt;</span></code></pre>
 
                         </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>taskID</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Identifier of the task to fetch the audit events for</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>locale</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Location type of the language in which the result should be returned</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
                       </div>
                     </section>
                   </div>
@@ -397,9 +453,9 @@ other queue (Default: DispatchQueue.main)</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:6eRpKit22ErxAuditEventDataStoreP4save11auditEvents7Combine12AnyPublisherVySb9ErrorTypeQzGSayAA0cdE0VG_tF"></a>
+                    <a name="/s:15eRpLocalStorage20ErxTaskCoreDataStoreC4save11auditEvents7Combine12AnyPublisherVySb01eA3Kit0bH5ErrorOGSayAI0D10AuditEventVG_tF"></a>
                     <a name="//apple_ref/swift/Method/save(auditEvents:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6eRpKit22ErxAuditEventDataStoreP4save11auditEvents7Combine12AnyPublisherVySb9ErrorTypeQzGSayAA0cdE0VG_tF">save(auditEvents:<wbr>)</a>
+                    <a class="token" href="#/s:15eRpLocalStorage20ErxTaskCoreDataStoreC4save11auditEvents7Combine12AnyPublisherVySb01eA3Kit0bH5ErrorOGSayAI0D10AuditEventVG_tF">save(auditEvents:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -407,15 +463,35 @@ other queue (Default: DispatchQueue.main)</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        
+                        <p>Creates or updates a sequence of audit events into the store</p>
+
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">save</span><span class="p">(</span><span class="nv">auditEvents</span><span class="p">:</span> <span class="p">[</span><span class="kt">ErxAuditEvent</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">Bool</span><span class="p">,</span> <span class="kt"><a href="../Classes/ErxTaskCoreDataStore.html#/s:15eRpLocalStorage20ErxTaskCoreDataStoreC5Errora">Error</a></span><span class="o">&gt;</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">save</span><span class="p">(</span><span class="nv">auditEvents</span><span class="p">:</span> <span class="p">[</span><span class="kt">ErxAuditEvent</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">Bool</span><span class="p">,</span> <span class="kt">LocalStoreError</span><span class="o">&gt;</span></code></pre>
 
                         </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>auditEvents</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Array of audit events that should be saved</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
                       </div>
                     </section>
                   </div>
@@ -423,9 +499,9 @@ other queue (Default: DispatchQueue.main)</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:6eRpKit25ErxCommunicationDataStoreP37fetchLatestTimestampForCommunications7Combine12AnyPublisherVySSSg9ErrorTypeQzGyF"></a>
+                    <a name="/s:15eRpLocalStorage20ErxTaskCoreDataStoreC37fetchLatestTimestampForCommunications7Combine12AnyPublisherVySSSg01eA3Kit0bH5ErrorOGyF"></a>
                     <a name="//apple_ref/swift/Method/fetchLatestTimestampForCommunications()" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6eRpKit25ErxCommunicationDataStoreP37fetchLatestTimestampForCommunications7Combine12AnyPublisherVySSSg9ErrorTypeQzGyF">fetchLatestTimestampForCommunications()</a>
+                    <a class="token" href="#/s:15eRpLocalStorage20ErxTaskCoreDataStoreC37fetchLatestTimestampForCommunications7Combine12AnyPublisherVySSSg01eA3Kit0bH5ErrorOGyF">fetchLatestTimestampForCommunications()</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -433,13 +509,14 @@ other queue (Default: DispatchQueue.main)</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        
+                        <p>Fetch the most recent <code>timestamp</code> of all <code>Communication</code>s</p>
+
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">fetchLatestTimestampForCommunications</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">String</span><span class="p">?,</span> <span class="kt"><a href="../Classes/ErxTaskCoreDataStore.html#/s:15eRpLocalStorage20ErxTaskCoreDataStoreC5Errora">Error</a></span><span class="o">&gt;</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">fetchLatestTimestampForCommunications</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">String</span><span class="p">?,</span> <span class="kt">LocalStoreError</span><span class="o">&gt;</span></code></pre>
 
                         </div>
                       </div>
@@ -449,9 +526,9 @@ other queue (Default: DispatchQueue.main)</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:6eRpKit25ErxCommunicationDataStoreP21listAllCommunications5after3for7Combine12AnyPublisherVySayAA0C4TaskV0D0VG9ErrorTypeQzGSSSg_AM7ProfileOtF"></a>
-                    <a name="//apple_ref/swift/Method/listAllCommunications(after:for:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6eRpKit25ErxCommunicationDataStoreP21listAllCommunications5after3for7Combine12AnyPublisherVySayAA0C4TaskV0D0VG9ErrorTypeQzGSSSg_AM7ProfileOtF">listAllCommunications(after:<wbr>for:<wbr>)</a>
+                    <a name="/s:15eRpLocalStorage20ErxTaskCoreDataStoreC21listAllCommunications3for7Combine12AnyPublisherVySay01eA3Kit0dE0V13CommunicationVGAI0bH5ErrorOGAM7ProfileO_tF"></a>
+                    <a name="//apple_ref/swift/Method/listAllCommunications(for:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:15eRpLocalStorage20ErxTaskCoreDataStoreC21listAllCommunications3for7Combine12AnyPublisherVySay01eA3Kit0dE0V13CommunicationVGAI0bH5ErrorOGAM7ProfileO_tF">listAllCommunications(for:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -459,18 +536,41 @@ other queue (Default: DispatchQueue.main)</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        
+                        <p>List all communications for the given profile contained in the store</p>
+
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">listAllCommunications</span><span class="p">(</span>
-    <span class="n">after</span> <span class="nv">_</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
     <span class="k">for</span> <span class="nv">profile</span><span class="p">:</span> <span class="kt">ErxTask</span><span class="o">.</span><span class="kt">Communication</span><span class="o">.</span><span class="kt">Profile</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="p">[</span><span class="kt">ErxTask</span><span class="o">.</span><span class="kt">Communication</span><span class="p">],</span> <span class="kt"><a href="../Classes/ErxTaskCoreDataStore.html#/s:15eRpLocalStorage20ErxTaskCoreDataStoreC5Errora">Error</a></span><span class="o">&gt;</span></code></pre>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="p">[</span><span class="kt">ErxTask</span><span class="o">.</span><span class="kt">Communication</span><span class="p">],</span> <span class="kt">LocalStoreError</span><span class="o">&gt;</span></code></pre>
 
                         </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>profile</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Filters for the passed Profile type</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>array of the fetched communications or error</p>
                       </div>
                     </section>
                   </div>
@@ -478,9 +578,9 @@ other queue (Default: DispatchQueue.main)</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:6eRpKit25ErxCommunicationDataStoreP28countAllUnreadCommunications3for7Combine12AnyPublisherVySi9ErrorTypeQzGAA0C4TaskV0D0V7ProfileO_tF"></a>
+                    <a name="/s:15eRpLocalStorage20ErxTaskCoreDataStoreC28countAllUnreadCommunications3for7Combine12AnyPublisherVySi01eA3Kit0bH5ErrorOGAI0dE0V13CommunicationV7ProfileO_tF"></a>
                     <a name="//apple_ref/swift/Method/countAllUnreadCommunications(for:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6eRpKit25ErxCommunicationDataStoreP28countAllUnreadCommunications3for7Combine12AnyPublisherVySi9ErrorTypeQzGAA0C4TaskV0D0V7ProfileO_tF">countAllUnreadCommunications(for:<wbr>)</a>
+                    <a class="token" href="#/s:15eRpLocalStorage20ErxTaskCoreDataStoreC28countAllUnreadCommunications3for7Combine12AnyPublisherVySi01eA3Kit0bH5ErrorOGAI0dE0V13CommunicationV7ProfileO_tF">countAllUnreadCommunications(for:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -488,7 +588,8 @@ other queue (Default: DispatchQueue.main)</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        
+                        <p>Returns a count for all unread communications for the given profile</p>
+
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
@@ -496,9 +597,28 @@ other queue (Default: DispatchQueue.main)</p>
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">countAllUnreadCommunications</span><span class="p">(</span>
     <span class="k">for</span> <span class="nv">profile</span><span class="p">:</span> <span class="kt">ErxTask</span><span class="o">.</span><span class="kt">Communication</span><span class="o">.</span><span class="kt">Profile</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">Int</span><span class="p">,</span> <span class="kt"><a href="../Classes/ErxTaskCoreDataStore.html#/s:15eRpLocalStorage20ErxTaskCoreDataStoreC5Errora">Error</a></span><span class="o">&gt;</span></code></pre>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">Int</span><span class="p">,</span> <span class="kt">LocalStoreError</span><span class="o">&gt;</span></code></pre>
 
                         </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>profile</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>profile for which you want to have the count</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
                       </div>
                     </section>
                   </div>
@@ -506,9 +626,9 @@ other queue (Default: DispatchQueue.main)</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:6eRpKit25ErxCommunicationDataStoreP4save14communications7Combine12AnyPublisherVySb9ErrorTypeQzGSayAA0C4TaskV0D0VG_tF"></a>
+                    <a name="/s:15eRpLocalStorage20ErxTaskCoreDataStoreC4save14communications7Combine12AnyPublisherVySb01eA3Kit0bH5ErrorOGSayAI0dE0V13CommunicationVG_tF"></a>
                     <a name="//apple_ref/swift/Method/save(communications:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6eRpKit25ErxCommunicationDataStoreP4save14communications7Combine12AnyPublisherVySb9ErrorTypeQzGSayAA0C4TaskV0D0VG_tF">save(communications:<wbr>)</a>
+                    <a class="token" href="#/s:15eRpLocalStorage20ErxTaskCoreDataStoreC4save14communications7Combine12AnyPublisherVySb01eA3Kit0bH5ErrorOGSayAI0dE0V13CommunicationVG_tF">save(communications:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -516,15 +636,39 @@ other queue (Default: DispatchQueue.main)</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        
+                        <p>Creates or updates the passes sequence of <code>ErxTaskCommunication</code>s</p>
+
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">save</span><span class="p">(</span><span class="nv">communications</span><span class="p">:</span> <span class="p">[</span><span class="kt">ErxTask</span><span class="o">.</span><span class="kt">Communication</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">Bool</span><span class="p">,</span> <span class="kt"><a href="../Classes/ErxTaskCoreDataStore.html#/s:15eRpLocalStorage20ErxTaskCoreDataStoreC5Errora">Error</a></span><span class="o">&gt;</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">save</span><span class="p">(</span><span class="nv">communications</span><span class="p">:</span> <span class="p">[</span><span class="kt">ErxTask</span><span class="o">.</span><span class="kt">Communication</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">Bool</span><span class="p">,</span> <span class="kt">LocalStoreError</span><span class="o">&gt;</span></code></pre>
 
                         </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>communications</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Array of communications that should be stored</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p><code>true</code> if save operation was successful</p>
                       </div>
                     </section>
                   </div>
@@ -532,89 +676,9 @@ other queue (Default: DispatchQueue.main)</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:6eRpKit30ErxMedicationDispenseDataStoreP026fetchLatestHandOverDateForD9Dispenses7Combine12AnyPublisherVySSSg9ErrorTypeQzGyF"></a>
-                    <a name="//apple_ref/swift/Method/fetchLatestHandOverDateForMedicationDispenses()" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6eRpKit30ErxMedicationDispenseDataStoreP026fetchLatestHandOverDateForD9Dispenses7Combine12AnyPublisherVySSSg9ErrorTypeQzGyF">fetchLatestHandOverDateForMedicationDispenses()</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">fetchLatestHandOverDateForMedicationDispenses</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">String</span><span class="p">?,</span> <span class="kt"><a href="../Classes/ErxTaskCoreDataStore.html#/s:15eRpLocalStorage20ErxTaskCoreDataStoreC5Errora">Error</a></span><span class="o">&gt;</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:6eRpKit30ErxMedicationDispenseDataStoreP07listAllD9Dispenses5after7Combine12AnyPublisherVySayAA0C4TaskV0dE0VG9ErrorTypeQzGSSSg_tF"></a>
-                    <a name="//apple_ref/swift/Method/listAllMedicationDispenses(after:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6eRpKit30ErxMedicationDispenseDataStoreP07listAllD9Dispenses5after7Combine12AnyPublisherVySayAA0C4TaskV0dE0VG9ErrorTypeQzGSSSg_tF">listAllMedicationDispenses(after:<wbr>)</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">listAllMedicationDispenses</span><span class="p">(</span>
-    <span class="n">after</span> <span class="nv">_</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="p">[</span><span class="kt">ErxTask</span><span class="o">.</span><span class="kt">MedicationDispense</span><span class="p">],</span> <span class="kt"><a href="../Classes/ErxTaskCoreDataStore.html#/s:15eRpLocalStorage20ErxTaskCoreDataStoreC5Errora">Error</a></span><span class="o">&gt;</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:6eRpKit30ErxMedicationDispenseDataStoreP4save19medicationDispenses7Combine12AnyPublisherVySb9ErrorTypeQzGSayAA0C4TaskV0dE0VG_tF"></a>
-                    <a name="//apple_ref/swift/Method/save(medicationDispenses:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6eRpKit30ErxMedicationDispenseDataStoreP4save19medicationDispenses7Combine12AnyPublisherVySb9ErrorTypeQzGSayAA0C4TaskV0dE0VG_tF">save(medicationDispenses:<wbr>)</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">save</span><span class="p">(</span><span class="nv">medicationDispenses</span><span class="p">:</span> <span class="p">[</span><span class="kt">ErxTask</span><span class="o">.</span><span class="kt">MedicationDispense</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">Bool</span><span class="p">,</span> <span class="kt"><a href="../Classes/ErxTaskCoreDataStore.html#/s:15eRpLocalStorage20ErxTaskCoreDataStoreC5Errora">Error</a></span><span class="o">&gt;</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/s:6eRpKit16ErxTaskDataStoreP05fetchD02by10accessCode7Combine12AnyPublisherVyAA0cD0VSg9ErrorTypeQzGSS_SSSgtF"></a>
+                    <a name="/s:15eRpLocalStorage20ErxTaskCoreDataStoreC05fetchE02by10accessCode7Combine12AnyPublisherVy01eA3Kit0dE0VSgAJ0bH5ErrorOGSS_SSSgtF"></a>
                     <a name="//apple_ref/swift/Method/fetchTask(by:accessCode:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6eRpKit16ErxTaskDataStoreP05fetchD02by10accessCode7Combine12AnyPublisherVyAA0cD0VSg9ErrorTypeQzGSS_SSSgtF">fetchTask(by:<wbr>accessCode:<wbr>)</a>
+                    <a class="token" href="#/s:15eRpLocalStorage20ErxTaskCoreDataStoreC05fetchE02by10accessCode7Combine12AnyPublisherVy01eA3Kit0dE0VSgAJ0bH5ErrorOGSS_SSSgtF">fetchTask(by:<wbr>accessCode:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -622,15 +686,51 @@ other queue (Default: DispatchQueue.main)</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        
+                        <p>Fetch the entire database (incl. other profiles) for an ErxTask by its id and accessCode</p>
+
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">fetchTask</span><span class="p">(</span><span class="n">by</span> <span class="nv">taskID</span><span class="p">:</span> <span class="kt">ErxTask</span><span class="o">.</span><span class="kt">ID</span><span class="p">,</span> <span class="nv">accessCode</span><span class="p">:</span> <span class="kt">String</span><span class="p">?)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">ErxTask</span><span class="p">?,</span> <span class="kt"><a href="../Classes/ErxTaskCoreDataStore.html#/s:15eRpLocalStorage20ErxTaskCoreDataStoreC5Errora">Error</a></span><span class="o">&gt;</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">fetchTask</span><span class="p">(</span><span class="n">by</span> <span class="nv">taskID</span><span class="p">:</span> <span class="kt">ErxTask</span><span class="o">.</span><span class="kt">ID</span><span class="p">,</span> <span class="nv">accessCode</span><span class="p">:</span> <span class="kt">String</span><span class="p">?)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">ErxTask</span><span class="p">?,</span> <span class="kt">LocalStoreError</span><span class="o">&gt;</span></code></pre>
 
                         </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>id</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>the ErxTask ID</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>accessCode</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>AccessCode, optional as required by implementing DataStore</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>Publisher for the fetch request</p>
                       </div>
                     </section>
                   </div>
@@ -638,9 +738,9 @@ other queue (Default: DispatchQueue.main)</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:6eRpKit16ErxTaskDataStoreP026fetchLatestLastModifiedForC5Tasks7Combine12AnyPublisherVySSSg9ErrorTypeQzGyF"></a>
+                    <a name="/s:15eRpLocalStorage20ErxTaskCoreDataStoreC026fetchLatestLastModifiedForD5Tasks7Combine12AnyPublisherVySSSg01eA3Kit0bH5ErrorOGyF"></a>
                     <a name="//apple_ref/swift/Method/fetchLatestLastModifiedForErxTasks()" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6eRpKit16ErxTaskDataStoreP026fetchLatestLastModifiedForC5Tasks7Combine12AnyPublisherVySSSg9ErrorTypeQzGyF">fetchLatestLastModifiedForErxTasks()</a>
+                    <a class="token" href="#/s:15eRpLocalStorage20ErxTaskCoreDataStoreC026fetchLatestLastModifiedForD5Tasks7Combine12AnyPublisherVySSSg01eA3Kit0bH5ErrorOGyF">fetchLatestLastModifiedForErxTasks()</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -648,13 +748,14 @@ other queue (Default: DispatchQueue.main)</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        
+                        <p>Fetch the most recent <code>lastModified</code> of all <code>ErxTask</code>s</p>
+
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">fetchLatestLastModifiedForErxTasks</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">String</span><span class="p">?,</span> <span class="kt"><a href="../Classes/ErxTaskCoreDataStore.html#/s:15eRpLocalStorage20ErxTaskCoreDataStoreC5Errora">Error</a></span><span class="o">&gt;</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">fetchLatestLastModifiedForErxTasks</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">String</span><span class="p">?,</span> <span class="kt">LocalStoreError</span><span class="o">&gt;</span></code></pre>
 
                         </div>
                       </div>
@@ -664,9 +765,9 @@ other queue (Default: DispatchQueue.main)</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:6eRpKit16ErxTaskDataStoreP12listAllTasks5after7Combine12AnyPublisherVySayAA0cD0VG9ErrorTypeQzGSSSg_tF"></a>
-                    <a name="//apple_ref/swift/Method/listAllTasks(after:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6eRpKit16ErxTaskDataStoreP12listAllTasks5after7Combine12AnyPublisherVySayAA0cD0VG9ErrorTypeQzGSSSg_tF">listAllTasks(after:<wbr>)</a>
+                    <a name="/s:15eRpLocalStorage20ErxTaskCoreDataStoreC12listAllTasks7Combine12AnyPublisherVySay01eA3Kit0dE0VGAH0bH5ErrorOGyF"></a>
+                    <a name="//apple_ref/swift/Method/listAllTasks()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:15eRpLocalStorage20ErxTaskCoreDataStoreC12listAllTasks7Combine12AnyPublisherVySay01eA3Kit0dE0VGAH0bH5ErrorOGyF">listAllTasks()</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -674,13 +775,14 @@ other queue (Default: DispatchQueue.main)</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        
+                        <p>List all tasks contained in the store</p>
+
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">listAllTasks</span><span class="p">(</span><span class="n">after</span> <span class="nv">_</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="p">[</span><span class="kt">ErxTask</span><span class="p">],</span> <span class="kt"><a href="../Classes/ErxTaskCoreDataStore.html#/s:15eRpLocalStorage20ErxTaskCoreDataStoreC5Errora">Error</a></span><span class="o">&gt;</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">listAllTasks</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="p">[</span><span class="kt">ErxTask</span><span class="p">],</span> <span class="kt">LocalStoreError</span><span class="o">&gt;</span></code></pre>
 
                         </div>
                       </div>
@@ -690,9 +792,9 @@ other queue (Default: DispatchQueue.main)</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:6eRpKit16ErxTaskDataStoreP26listAllTasksWithoutProfile7Combine12AnyPublisherVySayAA0cD0VG9ErrorTypeQzGyF"></a>
+                    <a name="/s:15eRpLocalStorage20ErxTaskCoreDataStoreC26listAllTasksWithoutProfile7Combine12AnyPublisherVySay01eA3Kit0dE0VGAH0bH5ErrorOGyF"></a>
                     <a name="//apple_ref/swift/Method/listAllTasksWithoutProfile()" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6eRpKit16ErxTaskDataStoreP26listAllTasksWithoutProfile7Combine12AnyPublisherVySayAA0cD0VG9ErrorTypeQzGyF">listAllTasksWithoutProfile()</a>
+                    <a class="token" href="#/s:15eRpLocalStorage20ErxTaskCoreDataStoreC26listAllTasksWithoutProfile7Combine12AnyPublisherVySay01eA3Kit0dE0VGAH0bH5ErrorOGyF">listAllTasksWithoutProfile()</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -700,13 +802,14 @@ other queue (Default: DispatchQueue.main)</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        
+                        <p>List all tasks without relationship to a <code>Profile</code></p>
+
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">listAllTasksWithoutProfile</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="p">[</span><span class="kt">ErxTask</span><span class="p">],</span> <span class="kt"><a href="../Classes/ErxTaskCoreDataStore.html#/s:15eRpLocalStorage20ErxTaskCoreDataStoreC5Errora">Error</a></span><span class="o">&gt;</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">listAllTasksWithoutProfile</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="p">[</span><span class="kt">ErxTask</span><span class="p">],</span> <span class="kt">LocalStoreError</span><span class="o">&gt;</span></code></pre>
 
                         </div>
                       </div>
@@ -716,9 +819,9 @@ other queue (Default: DispatchQueue.main)</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:6eRpKit16ErxTaskDataStoreP4save5tasks7Combine12AnyPublisherVySb9ErrorTypeQzGSayAA0cD0VG_tF"></a>
-                    <a name="//apple_ref/swift/Method/save(tasks:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6eRpKit16ErxTaskDataStoreP4save5tasks7Combine12AnyPublisherVySb9ErrorTypeQzGSayAA0cD0VG_tF">save(tasks:<wbr>)</a>
+                    <a name="/s:15eRpLocalStorage20ErxTaskCoreDataStoreC4save5tasks30updateProfileLastAuthenticated7Combine12AnyPublisherVySb01eA3Kit0bH5ErrorOGSayAJ0dE0VG_SbtF"></a>
+                    <a name="//apple_ref/swift/Method/save(tasks:updateProfileLastAuthenticated:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:15eRpLocalStorage20ErxTaskCoreDataStoreC4save5tasks30updateProfileLastAuthenticated7Combine12AnyPublisherVySb01eA3Kit0bH5ErrorOGSayAJ0dE0VG_SbtF">save(tasks:<wbr>updateProfileLastAuthenticated:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -726,15 +829,52 @@ other queue (Default: DispatchQueue.main)</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        
+                        <p>Creates or updates a sequence of tasks into the store</p>
+
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">save</span><span class="p">(</span><span class="nv">tasks</span><span class="p">:</span> <span class="p">[</span><span class="kt">ErxTask</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">Bool</span><span class="p">,</span> <span class="kt"><a href="../Classes/ErxTaskCoreDataStore.html#/s:15eRpLocalStorage20ErxTaskCoreDataStoreC5Errora">Error</a></span><span class="o">&gt;</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">save</span><span class="p">(</span><span class="nv">tasks</span><span class="p">:</span> <span class="p">[</span><span class="kt">ErxTask</span><span class="p">],</span> <span class="nv">updateProfileLastAuthenticated</span><span class="p">:</span> <span class="kt">Bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">Bool</span><span class="p">,</span> <span class="kt">LocalStoreError</span><span class="o">&gt;</span></code></pre>
 
                         </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>tasks</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Array of <code>ErxTasks</code>s that should be saved</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>updateProfileLastAuthenticated</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code>true</code> if the profile last authenticated should be updated, <code>false</code>
+otherwise.</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>A publisher that finishes with <code>true</code> on completion or fails with an error.</p>
                       </div>
                     </section>
                   </div>
@@ -742,9 +882,9 @@ other queue (Default: DispatchQueue.main)</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:6eRpKit16ErxTaskDataStoreP6delete5tasks7Combine12AnyPublisherVySb9ErrorTypeQzGSayAA0cD0VG_tF"></a>
+                    <a name="/s:15eRpLocalStorage20ErxTaskCoreDataStoreC6delete5tasks7Combine12AnyPublisherVySb01eA3Kit0bH5ErrorOGSayAI0dE0VG_tF"></a>
                     <a name="//apple_ref/swift/Method/delete(tasks:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6eRpKit16ErxTaskDataStoreP6delete5tasks7Combine12AnyPublisherVySb9ErrorTypeQzGSayAA0cD0VG_tF">delete(tasks:<wbr>)</a>
+                    <a class="token" href="#/s:15eRpLocalStorage20ErxTaskCoreDataStoreC6delete5tasks7Combine12AnyPublisherVySb01eA3Kit0bH5ErrorOGSayAI0dE0VG_tF">delete(tasks:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -752,13 +892,14 @@ other queue (Default: DispatchQueue.main)</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        
+                        <p>Deletes a sequence of tasks from the store</p>
+
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">delete</span><span class="p">(</span><span class="nv">tasks</span><span class="p">:</span> <span class="p">[</span><span class="kt">ErxTask</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">Bool</span><span class="p">,</span> <span class="kt"><a href="../Classes/ErxTaskCoreDataStore.html#/s:15eRpLocalStorage20ErxTaskCoreDataStoreC5Errora">Error</a></span><span class="o">&gt;</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">delete</span><span class="p">(</span><span class="nv">tasks</span><span class="p">:</span> <span class="p">[</span><span class="kt">ErxTask</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">Bool</span><span class="p">,</span> <span class="kt">LocalStoreError</span><span class="o">&gt;</span></code></pre>
 
                         </div>
                       </div>
@@ -768,9 +909,9 @@ other queue (Default: DispatchQueue.main)</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:6eRpKit16ErxTaskDataStoreP6redeem6orders7Combine12AnyPublisherVySb9ErrorTypeQzGSayAA0cD5OrderVG_tF"></a>
-                    <a name="//apple_ref/swift/Method/redeem(orders:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6eRpKit16ErxTaskDataStoreP6redeem6orders7Combine12AnyPublisherVySb9ErrorTypeQzGSayAA0cD5OrderVG_tF">redeem(orders:<wbr>)</a>
+                    <a name="/s:15eRpLocalStorage20ErxTaskCoreDataStoreC45fetchLatestHandOverDateForMedicationDispenses7Combine12AnyPublisherVySSSg01eA3Kit0bH5ErrorOGyF"></a>
+                    <a name="//apple_ref/swift/Method/fetchLatestHandOverDateForMedicationDispenses()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:15eRpLocalStorage20ErxTaskCoreDataStoreC45fetchLatestHandOverDateForMedicationDispenses7Combine12AnyPublisherVySSSg01eA3Kit0bH5ErrorOGyF">fetchLatestHandOverDateForMedicationDispenses()</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -778,13 +919,118 @@ other queue (Default: DispatchQueue.main)</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        
+                        <p>Fetch the most recent <code>handOverDate</code> of all <code>MedicationDispense</code>s</p>
+
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">redeem</span><span class="p">(</span><span class="n">orders</span> <span class="nv">_</span><span class="p">:</span> <span class="p">[</span><span class="kt">ErxTaskOrder</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">Bool</span><span class="p">,</span> <span class="kt"><a href="../Classes/ErxTaskCoreDataStore.html#/s:15eRpLocalStorage20ErxTaskCoreDataStoreC5Errora">Error</a></span><span class="o">&gt;</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">fetchLatestHandOverDateForMedicationDispenses</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">String</span><span class="p">?,</span> <span class="kt">LocalStoreError</span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:15eRpLocalStorage20ErxTaskCoreDataStoreC26listAllMedicationDispenses7Combine12AnyPublisherVySay01eA3Kit0dE0V0K8DispenseVGAH0bH5ErrorOGyF"></a>
+                    <a name="//apple_ref/swift/Method/listAllMedicationDispenses()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:15eRpLocalStorage20ErxTaskCoreDataStoreC26listAllMedicationDispenses7Combine12AnyPublisherVySay01eA3Kit0dE0V0K8DispenseVGAH0bH5ErrorOGyF">listAllMedicationDispenses()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>List all medication dispenses contained in the store</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">listAllMedicationDispenses</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="p">[</span><span class="kt">ErxTask</span><span class="o">.</span><span class="kt">MedicationDispense</span><span class="p">],</span> <span class="kt">LocalStoreError</span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:15eRpLocalStorage20ErxTaskCoreDataStoreC4save19medicationDispenses7Combine12AnyPublisherVySb01eA3Kit0bH5ErrorOGSayAI0dE0V18MedicationDispenseVG_tF"></a>
+                    <a name="//apple_ref/swift/Method/save(medicationDispenses:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:15eRpLocalStorage20ErxTaskCoreDataStoreC4save19medicationDispenses7Combine12AnyPublisherVySb01eA3Kit0bH5ErrorOGSayAI0dE0V18MedicationDispenseVG_tF">save(medicationDispenses:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Creates or updates the passed sequence of <code>ErxTask.MedicationDispense</code>s</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">save</span><span class="p">(</span><span class="nv">medicationDispenses</span><span class="p">:</span> <span class="p">[</span><span class="kt">ErxTask</span><span class="o">.</span><span class="kt">MedicationDispense</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">Bool</span><span class="p">,</span> <span class="kt">LocalStoreError</span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>medicationDispenses</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Array of medication dispenses that should be stored</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p><code>true</code> if save operation was successful</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:15eRpLocalStorage20ErxTaskCoreDataStoreC7failingACvpZ"></a>
+                    <a name="//apple_ref/swift/Variable/failing" class="dashAnchor"></a>
+                    <a class="token" href="#/s:15eRpLocalStorage20ErxTaskCoreDataStoreC7failingACvpZ">failing</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Initializes an instance of <code>ErxTaskCoreDataStore</code>with a failing CoreDataController</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">static</span> <span class="k">let</span> <span class="nv">failing</span><span class="p">:</span> <span class="kt">ErxTaskCoreDataStore</span></code></pre>
 
                         </div>
                       </div>
@@ -799,7 +1045,7 @@ other queue (Default: DispatchQueue.main)</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2021 <a class="link" href="https://www.gematik.de" target="_blank" rel="external">gematik GmbH</a>. All rights reserved. (Last updated: 2021-12-03)</p>
+      <p>&copy; 2022 <a class="link" href="https://www.gematik.de" target="_blank" rel="external">gematik GmbH</a>. All rights reserved. (Last updated: 2022-01-20)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>
