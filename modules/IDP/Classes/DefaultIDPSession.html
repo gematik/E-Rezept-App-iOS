@@ -21,7 +21,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-           1.2.0
+           1.2.1
  Docs
         </a>
          (78% documented)
@@ -198,6 +198,9 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/PairingData.html">PairingData</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs.html#/s:3IDP14PairingEntriesV">PairingEntries</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs.html#/s:3IDP12PairingEntryV">PairingEntry</a>
@@ -582,9 +585,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:3IDP10IDPSessionP16unregisterDevicey7Combine12AnyPublisherVySbAA8IDPErrorOGSSF"></a>
-                    <a name="//apple_ref/swift/Method/unregisterDevice(_:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:3IDP10IDPSessionP16unregisterDevicey7Combine12AnyPublisherVySbAA8IDPErrorOGSSF">unregisterDevice(_:<wbr>)</a>
+                    <a name="/s:3IDP10IDPSessionP16unregisterDevice_5token7Combine12AnyPublisherVySbAA8IDPErrorOGSS_AA8IDPTokenVtF"></a>
+                    <a name="//apple_ref/swift/Method/unregisterDevice(_:token:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP10IDPSessionP16unregisterDevice_5token7Combine12AnyPublisherVySbAA8IDPErrorOGSS_AA8IDPTokenVtF">unregisterDevice(_:<wbr>token:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -598,7 +601,33 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">unregisterDevice</span><span class="p">(</span><span class="n">_</span> <span class="nv">keyIdentifier</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">Bool</span><span class="p">,</span> <span class="kt"><a href="../Enums/IDPError.html">IDPError</a></span><span class="o">&gt;</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">unregisterDevice</span><span class="p">(</span><span class="n">_</span> <span class="nv">keyIdentifier</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="nv">token</span><span class="p">:</span> <span class="kt"><a href="../Structs/IDPToken.html">IDPToken</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">Bool</span><span class="p">,</span> <span class="kt"><a href="../Enums/IDPError.html">IDPError</a></span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP10IDPSessionP11listDevices5token7Combine12AnyPublisherVyAA14PairingEntriesVAA8IDPErrorOGAA8IDPTokenV_tF"></a>
+                    <a name="//apple_ref/swift/Method/listDevices(token:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP10IDPSessionP11listDevices5token7Combine12AnyPublisherVyAA14PairingEntriesVAA8IDPErrorOGAA8IDPTokenV_tF">listDevices(token:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">listDevices</span><span class="p">(</span><span class="nv">token</span><span class="p">:</span> <span class="kt"><a href="../Structs/IDPToken.html">IDPToken</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt"><a href="../Structs.html#/s:3IDP14PairingEntriesV">PairingEntries</a></span><span class="p">,</span> <span class="kt"><a href="../Enums/IDPError.html">IDPError</a></span><span class="o">&gt;</span></code></pre>
 
                         </div>
                       </div>
@@ -748,7 +777,7 @@
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2022 <a class="link" href="https://www.gematik.de" target="_blank" rel="external">gematik GmbH</a>. All rights reserved. (Last updated: 2022-01-20)</p>
+      <p>&copy; 2022 <a class="link" href="https://www.gematik.de" target="_blank" rel="external">gematik GmbH</a>. All rights reserved. (Last updated: 2022-01-27)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>

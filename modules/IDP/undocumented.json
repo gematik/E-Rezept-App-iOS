@@ -260,6 +260,13 @@
       "warning": "undocumented"
     },
     {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/PairingEntry.swift",
+      "line": 32,
+      "symbol": "PairingEntries",
+      "symbol_kind": "source.lang.swift.decl.struct",
+      "warning": "undocumented"
+    },
+    {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/RegistrationData.swift",
       "line": 13,
       "symbol": "RegistrationData.init(authCert:signedParingData:deviceInformation:)",
