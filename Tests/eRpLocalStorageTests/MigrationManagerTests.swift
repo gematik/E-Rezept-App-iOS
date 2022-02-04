@@ -306,6 +306,79 @@ final class MigrationManagerTests: XCTestCase {
 
         cancellable.cancel()
     }
+
+    func testMigrationFromVersion4ToVersion5WithoutAuditEvents() throws {
+        let userDataStore = MockUserDataStore()
+        let factory = MockCoreDataControllerFactory()
+        factory.loadCoreDataControllerValue = try loadCoreDataController()
+        let sut = MigrationManager(
+            factory: factory,
+            erxTaskCoreDataStore: ErxTaskCoreDataStore(profileId: nil,
+                                                       coreDataControllerFactory: factory,
+                                                       backgroundQueue: AnyScheduler.immediate),
+            userDataStore: userDataStore
+        )
+
+        var receivedCompletions = [Subscribers.Completion<MigrationError>]()
+        var receivedResults = [ModelVersion]()
+        let cancellable =
+            sut.startModelMigration(from: ModelVersion.profiles)
+                .sink(receiveCompletion: { completion in
+                    receivedCompletions.append(completion)
+                }, receiveValue: { modelVersion in
+                    receivedResults.append(modelVersion)
+                })
+
+        expect(receivedResults.count).toEventually(equal(1))
+        expect(receivedResults.first) == .auditEventsInProfile
+
+        cancellable.cancel()
+    }
+
+    func testMigrationFromVersion4ToVersion5WithAuditEvents() throws {
+        let userDataStore = MockUserDataStore()
+        let factory = MockCoreDataControllerFactory()
+        factory.loadCoreDataControllerValue = try loadCoreDataController()
+        let erxTaskStore = ErxTaskCoreDataStore(profileId: UUID(),
+                                                coreDataControllerFactory: factory,
+                                                backgroundQueue: AnyScheduler.immediate)
+        let sut = MigrationManager(
+            factory: factory,
+            erxTaskCoreDataStore: erxTaskStore,
+            userDataStore: userDataStore
+        )
+        // pre fill database with tasks and auditEvents
+        let tasks = tasksForPatientAnna + tasksForPatientLudger
+        let auditEvents = tasks.flatMap(\.auditEvents)
+        try erxTaskStore.add(auditEvents: auditEvents)
+
+        var receivedCompletions = [Subscribers.Completion<MigrationError>]()
+        var receivedResults = [ModelVersion]()
+        let cancellable =
+            sut.startModelMigration(from: ModelVersion.profiles)
+                .sink(receiveCompletion: { completion in
+                    receivedCompletions.append(completion)
+                }, receiveValue: { modelVersion in
+                    receivedResults.append(modelVersion)
+                })
+
+        expect(receivedResults.count).toEventually(equal(1))
+        expect(receivedResults.first) == .auditEventsInProfile
+
+        // verify that audit events have been deleted
+        var receivedAuditEventCompletions = [Subscribers.Completion<LocalStoreError>]()
+        var receivedAuditEventsResults = [ErxAuditEvent]()
+        _ = erxTaskStore.listAllAuditEvents(for: nil)
+            .first()
+            .sink(receiveCompletion: { completion in
+                receivedAuditEventCompletions.append(completion)
+            }, receiveValue: { auditEvents in
+                receivedAuditEventsResults = auditEvents
+            })
+        expect(receivedAuditEventsResults.count).toEventually(equal(0))
+
+        cancellable.cancel()
+    }
 }
 
 extension ErxTask {

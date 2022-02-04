@@ -78,7 +78,7 @@ final class AppStartDomainTests: XCTestCase {
                         prescriptionListState: GroupedPrescriptionListDomain.State()
                     ),
                     pharmacySearch: PharmacySearchDomain.State(erxTasks: []),
-                    messages: MessagesDomain.State(messageDomainStates: []),
+                    messages: MessagesDomain.State(communications: []),
                     settingsState: SettingsDomain.State(isDemoMode: false,
                                                         appSecurityState: .init(
                                                             availableSecurityOptions: [.password],
@@ -121,7 +121,7 @@ final class AppStartDomainTests: XCTestCase {
                         prescriptionListState: GroupedPrescriptionListDomain.State()
                     ),
                     pharmacySearch: PharmacySearchDomain.State(erxTasks: []),
-                    messages: MessagesDomain.State(messageDomainStates: []),
+                    messages: MessagesDomain.State(communications: []),
                     settingsState: .init(isDemoMode: false,
                                          appSecurityState: .init(
                                              availableSecurityOptions: [.password],
@@ -152,7 +152,7 @@ final class AppStartDomainTests: XCTestCase {
                         prescriptionListState: GroupedPrescriptionListDomain.State()
                     ),
                     pharmacySearch: PharmacySearchDomain.State(erxTasks: []),
-                    messages: MessagesDomain.State(messageDomainStates: []),
+                    messages: MessagesDomain.State(communications: []),
                     settingsState: .init(isDemoMode: false,
                                          appSecurityState:
                                          .init(availableSecurityOptions: [.password],

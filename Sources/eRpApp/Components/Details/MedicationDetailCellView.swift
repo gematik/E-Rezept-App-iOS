@@ -18,6 +18,7 @@
 
 import SwiftUI
 
+// TODO: type with only optional values is strange, refactor swiftlint:disable:this todo
 struct MedicationDetailCellView: View {
     let value: String?
     var subtitle: String?
@@ -28,7 +29,7 @@ struct MedicationDetailCellView: View {
         VStack(alignment: .leading, spacing: 12) {
             VStack(alignment: .leading, spacing: 4) {
                 HStack {
-                    Text(value ?? NSLocalizedString("prsc_fd_txt_na", comment: ""))
+                    Text(value ?? L10n.prscFdTxtNa.text)
                         .fixedSize(horizontal: false, vertical: true)
                     Spacer()
                 }

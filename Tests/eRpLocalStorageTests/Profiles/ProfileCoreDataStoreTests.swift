@@ -91,6 +91,9 @@ final class ProfileCoreDataStoreTests: XCTestCase {
         Profile(
             name: "Karl",
             identifier: UUID(),
+            givenName: "Karl",
+            familyName: "Heinz",
+            insurance: "Random BKK",
             insuranceId: "k1234",
             color: .grey,
             lastAuthenticated: Date()
@@ -101,6 +104,9 @@ final class ProfileCoreDataStoreTests: XCTestCase {
         Profile(
             name: "Karl",
             identifier: UUID(),
+            givenName: "Karl",
+            familyName: "Heinz",
+            insurance: "Random BKK",
             insuranceId: "k1234",
             color: .grey,
             emoji: "🤖",
@@ -139,6 +145,9 @@ final class ProfileCoreDataStoreTests: XCTestCase {
         let expectedResult = Profile(name: profileWithTasksAndAuditEvents.name,
                                      identifier: profileWithTasksAndAuditEvents.identifier,
                                      created: profileWithTasksAndAuditEvents.created,
+                                     givenName: profileWithTasksAndAuditEvents.givenName,
+                                     familyName: profileWithTasksAndAuditEvents.familyName,
+                                     insurance: profileWithTasksAndAuditEvents.insurance,
                                      insuranceId: profileWithTasksAndAuditEvents.insuranceId,
                                      color: profileWithTasksAndAuditEvents.color,
                                      emoji: profileWithTasksAndAuditEvents.emoji,
@@ -217,6 +226,9 @@ final class ProfileCoreDataStoreTests: XCTestCase {
         let updatedProfile = Profile(
             name: "New Karl",
             identifier: profileSimple.identifier,
+            givenName: "New",
+            familyName: "Karl",
+            insurance: "New BKK",
             insuranceId: "k1234",
             color: .red,
             lastAuthenticated: Date(),
@@ -240,6 +252,9 @@ final class ProfileCoreDataStoreTests: XCTestCase {
         expect(result?.identifier) == updatedProfile.identifier
         expect(result?.color) == updatedProfile.color
         expect(result?.name) == updatedProfile.name
+        expect(result?.givenName) == updatedProfile.givenName
+        expect(result?.familyName) == updatedProfile.familyName
+        expect(result?.insurance) == updatedProfile.insurance
         expect(result?.insuranceId) == updatedProfile.insuranceId
         expect(result?.lastAuthenticated) == updatedProfile.lastAuthenticated
         expect(result?.erxTasks) == [] // erxTasks should not be saved
@@ -435,6 +450,9 @@ final class ProfileCoreDataStoreTests: XCTestCase {
         }
         expect(profile.name) == profileWithTasksAndAuditEvents.name
         expect(profile.identifier) == profileWithTasksAndAuditEvents.identifier
+        expect(profile.givenName) == profileWithTasksAndAuditEvents.givenName
+        expect(profile.familyName) == profileWithTasksAndAuditEvents.familyName
+        expect(profile.insurance) == profileWithTasksAndAuditEvents.insurance
         expect(profile.erxTasks).to(contain(profileWithTasksAndAuditEvents.erxTasks))
         expect(profile.erxAuditEvents).to(contain(profileWithTasksAndAuditEvents.erxAuditEvents))
         cancellable.cancel()

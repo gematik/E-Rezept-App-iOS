@@ -58,81 +58,51 @@ extension NFCSignatureProviderError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .wrongCAN:
-            return Self.wrongCANDescription
+            return L10n.cdwTxtRcErrorWrongCanDescription.text
         case let .wrongPin(retryCount: retryCount):
-            return String(format: Self.wrongPinDescriptionFormat, String(retryCount))
+            return L10n.cdwTxtRcErrorWrongPinDescription("\(retryCount)").text
         default:
-            return Self.genericDescription
+            return L10n.cdwTxtRcErrorGenericCardDescription.text
         }
     }
 
     var recoverySuggestion: String? {
         switch self {
         case .wrongCAN:
-            return Self.wrongCANRecovery
+            return L10n.cdwTxtRcErrorWrongCanRecovery.text
         case let .wrongPin(retryCount: retryCount):
-            return String(format: Self.wrongPinRecoveryFormat, String(retryCount))
+            return L10n.cdwTxtRcErrorWrongPinRecovery("\(retryCount)").text
         default:
-            return Self.genericRecovery
+            return L10n.cdwTxtRcErrorGenericCardRecovery.text
         }
     }
-
-    static var wrongPinDescriptionFormat: String = NSLocalizedString(
-        "cdw_txt_rc_error_wrong_pin_description_%@",
-        comment: ""
-    )
-
-    static var wrongPinRecoveryFormat: String = NSLocalizedString(
-        "cdw_txt_rc_error_wrong_pin_recovery_%@",
-        comment: ""
-    )
-
-    static var wrongCANDescription: String = NSLocalizedString(
-        "cdw_txt_rc_error_wrong_can_description",
-        comment: ""
-    )
-
-    static var wrongCANRecovery: String = NSLocalizedString(
-        "cdw_txt_rc_error_wrong_can_recovery",
-        comment: ""
-    )
-
-    static var genericDescription: String = NSLocalizedString(
-        "cdw_txt_rc_error_generic_card_description",
-        comment: ""
-    )
-
-    static var genericRecovery: String = NSLocalizedString(
-        "cdw_txt_rc_error_generic_card_recovery",
-        comment: ""
-    )
 }
 
 extension EGKSignatureProvider {
-    static var systemNFCDialogOpenPACEMessage: String = NSLocalizedString(
-        "cdw_txt_rc_nfc_dialog_open_pace",
-        comment: "CardWall System NFC Dialog, info message"
-    )
-    static var systemNFCDialogVerifyPin: String = NSLocalizedString(
-        "cdw_txt_rc_nfc_dialog_verify_pin",
-        comment: "CardWall System NFC Dialog, info message"
-    )
-    static var systemNFCDialogSignChallenge: String = NSLocalizedString(
-        "cdw_txt_rc_nfc_dialog_sign_challenge",
-        comment: "CardWall System NFC Dialog, info message"
-    )
+    static var systemNFCDialogOpenPACEMessage: String {
+        L10n.cdwTxtRcNfcDialogOpenPace.text
+    }
+
+    static var systemNFCDialogVerifyPin: String {
+        L10n.cdwTxtRcNfcDialogVerifyPin.text
+    }
+
+    static var systemNFCDialogSignChallenge: String {
+        L10n.cdwTxtRcNfcDialogSignChallenge.text
+    }
+
+    // TODO: localization missing   swiftlint:disable:this todo
     static var systemNFCDialogSignAltAuth: String = NSLocalizedString(
         "Alternative Authentification",
         comment: "CardWall System NFC Dialog, info message"
     )
-    static var systemNFCDialogSuccess: String = NSLocalizedString(
-        "cdw_txt_rc_nfc_dialog_success",
-        comment: "CardWall System NFC Dialog, info message"
-    )
-    static var systemNFCDialogCancel: String = NSLocalizedString(
-        "cdw_txt_rc_nfc_dialog_cancel",
-        comment: "CardWall System NFC Dialog, info message"
-    )
+    static var systemNFCDialogSuccess: String {
+        L10n.cdwTxtRcNfcDialogSuccess.text
+    }
+
+    static var systemNFCDialogCancel: String {
+        L10n.cdwTxtRcNfcDialogCancel.text
+    }
 }
 
 class EGKSignatureSession: SignatureSession {
@@ -196,7 +166,7 @@ final class EGKSignatureProvider: NFCSignatureProvider {
             .publisher(messages: messages)
             .mapError { NFCSignatureProviderError.cardError($0) }
             .flatMap { session -> AnyPublisher<SignatureSession, NFCSignatureProviderError> in
-                session.updateAlert(message: Self.systemNFCDialogOpenPACEMessage)
+                session.updateAlert(message: L10n.cdwTxtRcNfcDialogOpenPace.text)
 
                 return session
                     .openSecureSession(can: can)
@@ -226,7 +196,7 @@ final class EGKSignatureProvider: NFCSignatureProvider {
 
     private func openSessionAndSignChallenge(can: CAN, pin: Format2Pin, challenge: IDPChallengeSession,
                                              session: NFCCardSession) -> AnyPublisher<SignedChallenge, Error> {
-        session.updateAlert(message: Self.systemNFCDialogOpenPACEMessage)
+        session.updateAlert(message: L10n.cdwTxtRcNfcDialogOpenPace.text)
 
         return session
             // swiftlint:disable:previous trailing_closure
@@ -269,18 +239,12 @@ extension Publisher {
 extension EGKSignatureProvider {
     var messages: NFCTagReaderSession.Messages {
         NFCTagReaderSession.Messages(
-            discoveryMessage: NSLocalizedString("cdw_txt_rc_nfc_message_discoveryMessage",
-                                                comment: "NFC System Sheet message"),
-            connectMessage: NSLocalizedString("cdw_txt_rc_nfc_message_connectMessage",
-                                              comment: "NFC System Sheet message"),
-            noCardMessage: NSLocalizedString("cdw_txt_rc_nfc_message_noCardMessage",
-                                             comment: "NFC System Sheet message"),
-            multipleCardsMessage: NSLocalizedString("cdw_txt_rc_nfc_message_multipleCardsMessage",
-                                                    comment: "NFC System Sheet message"),
-            unsupportedCardMessage: NSLocalizedString("cdw_txt_rc_nfc_message_unsupportedCardMessage",
-                                                      comment: "NFC System Sheet message"),
-            connectionErrorMessage: NSLocalizedString("cdw_txt_rc_nfc_message_connectionErrorMessage",
-                                                      comment: "NFC System Sheet message")
+            discoveryMessage: L10n.cdwTxtRcNfcMessageDiscoveryMessage.text,
+            connectMessage: L10n.cdwTxtRcNfcMessageConnectMessage.text,
+            noCardMessage: L10n.cdwTxtRcNfcMessageNoCardMessage.text,
+            multipleCardsMessage: L10n.cdwTxtRcNfcMessageMultipleCardsMessage.text,
+            unsupportedCardMessage: L10n.cdwTxtRcNfcMessageUnsupportedCardMessage.text,
+            connectionErrorMessage: L10n.cdwTxtRcNfcMessageConnectionErrorMessage.text
         )
     }
 }

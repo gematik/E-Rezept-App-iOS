@@ -68,12 +68,12 @@ extension ErxTaskScannerView {
             switch state {
             case .idle:
                 if !hasScannedBatches {
-                    return L10n.scnMsgScanningCode
+                    return L10n.scnMsgScanningCode.key
                 } else {
-                    return L10n.scnMsgScanningCodeConsecutive
+                    return L10n.scnMsgScanningCodeConsecutive.key
                 }
-            case .value: return L10n.scnMsgScannedCodeRecognized
-            case .loading: return L10n.scnMsgAnalysingCode
+            case .value: return L10n.scnMsgScannedCodeRecognized.key
+            case .loading: return L10n.scnMsgAnalysingCode.key
             case let .error(scanError): return LocalizedStringKey(scanError.localizedDescription)
             }
         }
@@ -185,8 +185,7 @@ extension ErxTaskScannerView {
                             Spacer()
                             Button(action: action) {
                                 HStack {
-                                    Text(String(format: NSLocalizedString("scn_btn_scanning_done",
-                                                                          comment: "Plural count is ignored"),
+                                    Text(String(format: L10n.scnBtnScanningDone.text, // Plural count is ignored
                                                 scannedBatches.count))
                                         .fontWeight(.semibold)
                                         .font(.system(size: 18))

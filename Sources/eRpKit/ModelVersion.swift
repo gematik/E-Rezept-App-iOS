@@ -24,6 +24,8 @@ public enum ModelVersion: Int, CaseIterable {
     case taskStatus = 3
     // Introduces `Profile` entity
     case profiles = 4
+    // Introduces audit events in `EditProfileDomain`.
+    case auditEventsInProfile = 5
 
     /// Creates a `ModelVersion` of the next case related to self
     /// - Returns: Returns the next case if it is not the last case or returns nil

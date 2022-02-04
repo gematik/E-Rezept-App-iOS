@@ -38,9 +38,9 @@ struct AppAuthenticationView: View {
         init(state: AppAuthenticationDomain.State) {
             showFailedAuthenticationsHint = state.failedAuthenticationsCount != 0
             failedAuthentications = state.failedAuthenticationsCount
-            hintTitle = NSLocalizedString("auth_txt_failed_login_hint_title", comment: "")
+            hintTitle = L10n.authTxtFailedLoginHintTitle.text
             hintMessage = String.localizedStringWithFormat(
-                NSLocalizedString("auth_txt_failed_login_hint_msg", comment: ""),
+                L10n.authTxtFailedLoginHintMsg.text,
                 state.failedAuthenticationsCount
             )
         }

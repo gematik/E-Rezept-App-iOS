@@ -156,7 +156,7 @@ extension DefaultHTTPClient {
 
 extension DefaultHTTPClient.ProxyDelegate {
     // swiftlint:disable force_unwrapping line_length
-    // Ceritifcates for debug builds, appcenter builds
+    // Certificates for debug builds, appcenter builds
 
     static var pinnedCertificates: [String: [Data]] = {
         [

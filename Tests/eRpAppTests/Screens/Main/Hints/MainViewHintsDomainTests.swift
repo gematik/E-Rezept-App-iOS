@@ -30,7 +30,7 @@ final class MainViewHintsDomainTests: XCTestCase {
         let fakeHintEventsStore = FakeHintEventsStore()
         let mockRouter = MockRouting()
         let schedulers = Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler())
-        let testStore = TestStore<MainViewHintsDomain.State,
+        let store = TestStore<MainViewHintsDomain.State,
             MainViewHintsDomain.State,
             MainViewHintsDomain.Action,
             MainViewHintsDomain.Action,
@@ -47,26 +47,25 @@ final class MainViewHintsDomainTests: XCTestCase {
         )
 
         let expectedHint = fakeHintProvider.currentHintReturn
-        testStore.assert(
-            .send(.subscribeToHintChanges) { state in
-                state.hint = nil
-            },
-            .do { self.testScheduler.advance() },
-            .receive(.hintChangeReceived(expectedHint)) { state in
-                state.hint = expectedHint
-            },
-            .send(.routeTo(.settings)) { _ in
-                expect(mockRouter.routeToCalled).to(beTrue())
-                expect(mockRouter.routeToParameter).to(equal(Endpoint.settings))
-            },
-            .send(.hideHint) { _ in
-                // sets the hintState to hide the current hint
-            },
-            .do { self.testScheduler.advance() },
-            .receive(.hintChangeReceived(nil)) { state in
-                state.hint = nil
-            },
-            .send(.removeSubscription)
-        )
+
+        store.send(.subscribeToHintChanges) { state in
+            state.hint = nil
+        }
+        testScheduler.advance()
+        store.receive(.hintChangeReceived(expectedHint)) { state in
+            state.hint = expectedHint
+        }
+        store.send(.routeTo(.settings)) { _ in
+            expect(mockRouter.routeToCalled).to(beTrue())
+            expect(mockRouter.routeToParameter).to(equal(Endpoint.settings))
+        }
+        store.send(.hideHint) { _ in
+            // sets the hintState to hide the current hint
+        }
+        testScheduler.advance()
+        store.receive(.hintChangeReceived(nil)) { state in
+            state.hint = nil
+        }
+        store.send(.removeSubscription)
     }
 }

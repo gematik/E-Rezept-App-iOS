@@ -30,6 +30,9 @@ extension ProfileEntity {
         identifier = profile.identifier
         name = profile.name
         created = profile.created
+        givenName = profile.givenName
+        familyName = profile.familyName
+        insurance = profile.insurance
         insuranceId = profile.insuranceId
         color = profile.color.rawValue
         emoji = profile.emoji
@@ -56,6 +59,9 @@ extension Profile {
             name: name,
             identifier: identifier,
             created: created,
+            givenName: entity.givenName,
+            familyName: entity.familyName,
+            insurance: entity.insurance,
             insuranceId: entity.insuranceId,
             color: profileColor,
             emoji: entity.emoji,

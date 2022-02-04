@@ -42,7 +42,7 @@ enum CreatePasswordDomain {
             }
 
             guard passwordStrength.passesMinimumThreshold else {
-                return NSLocalizedString("cpw_txt_password_strength_insufficient", comment: "")
+                return L10n.cpwTxtPasswordStrengthInsufficient.text
             }
 
             guard !passwordB.isEmpty else {
@@ -50,7 +50,7 @@ enum CreatePasswordDomain {
             }
 
             guard passwordA == passwordB else {
-                return NSLocalizedString("cpw_txt_passwords_dont_match", comment: "")
+                return L10n.onbAuthTxtPasswordsDontMatch.text
             }
 
             return nil

@@ -48,13 +48,11 @@ struct BiometricsAuthenticationChallengeProvider: AuthenticationChallengeProvide
         switch authenticationContext.biometryType {
         case .faceID:
             localizedReason = String(
-                format: NSLocalizedString("auth_txt_biometrics_reason",
-                                          comment: ""), "Face ID"
+                format: L10n.authTxtBiometricsReason.text, "Face ID"
             )
         case .touchID:
             localizedReason = String(
-                format: NSLocalizedString("auth_txt_biometrics_reason",
-                                          comment: ""), "Touch ID"
+                format: L10n.authTxtBiometricsReason.text, "Touch ID"
             )
         default:
             break

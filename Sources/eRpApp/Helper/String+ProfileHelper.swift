@@ -30,6 +30,6 @@ extension String {
     }
 
     func trimmed() -> String {
-        trimmingCharacters(in: .whitespaces)
+        trimmingCharacters(in: .whitespacesAndNewlines)
     }
 }

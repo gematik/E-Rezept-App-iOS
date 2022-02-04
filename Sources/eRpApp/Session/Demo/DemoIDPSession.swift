@@ -118,7 +118,12 @@ class DemoIDPSession: IDPSession {
             .eraseToAnyPublisher()
     }
 
-    func unregisterDevice(_: String) -> AnyPublisher<Bool, IDPError> {
+    func unregisterDevice(_: String, token _: IDPToken) -> AnyPublisher<Bool, IDPError> {
+        Fail(error: IDPError.internalError("not implemented for demo session"))
+            .eraseToAnyPublisher()
+    }
+
+    func listDevices(token _: IDPToken) -> AnyPublisher<PairingEntries, IDPError> {
         Fail(error: IDPError.internalError("not implemented for demo session"))
             .eraseToAnyPublisher()
     }

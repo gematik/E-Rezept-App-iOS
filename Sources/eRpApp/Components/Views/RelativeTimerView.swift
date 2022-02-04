@@ -59,7 +59,7 @@ struct RelativeTimerViewForToolbars: View {
             if date.timeIntervalSinceNow <= -59 {
                 self.formattedString = self.formatter.string(for: date)
             } else {
-                self.formattedString = NSLocalizedString("cpn_txt_relative_timer_view_last_update_recent", comment: "")
+                self.formattedString = L10n.cpnTxtRelativeTimerViewLastUpdateRecent.text
             }
         }
     }

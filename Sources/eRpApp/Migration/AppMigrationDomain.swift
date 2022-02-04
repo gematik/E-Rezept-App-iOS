@@ -98,7 +98,7 @@ enum AppMigrationDomain {
 
             state = .failed(
                 alertState(
-                    title: NSLocalizedString("amg_btn_alert_title", comment: ""),
+                    title: L10n.amgBtnAlertTitle.text,
                     message: error.localizedDescription
                 )
             )

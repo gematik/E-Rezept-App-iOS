@@ -63,13 +63,11 @@ final class AppSecurityDomainTests: XCTestCase {
 
         let store = testStore(for: availableSecurityOptions)
 
-        store.assert(
-            .send(.loadSecurityOption) {
-                $0.availableSecurityOptions = availableSecurityOptions
-            },
-            .do { self.testScheduler.advance() },
-            .receive(.loadSecurityOptionResponse(nil)) { _ in }
-        )
+        store.send(.loadSecurityOption) {
+            $0.availableSecurityOptions = availableSecurityOptions
+        }
+        testScheduler.advance()
+        store.receive(.loadSecurityOptionResponse(nil))
     }
 
     func testLoadingAvailableSecurityOptions_With_Biometry() {
@@ -77,13 +75,11 @@ final class AppSecurityDomainTests: XCTestCase {
 
         let store = testStore(for: availableSecurityOptions)
 
-        store.assert(
-            .send(.loadSecurityOption) {
-                $0.availableSecurityOptions = availableSecurityOptions
-            },
-            .do { self.testScheduler.advance() },
-            .receive(.loadSecurityOptionResponse(nil)) { _ in }
-        )
+        store.send(.loadSecurityOption) {
+            $0.availableSecurityOptions = availableSecurityOptions
+        }
+        testScheduler.advance()
+        store.receive(.loadSecurityOptionResponse(nil))
     }
 
     func testLoadingAvailableSecurityOptions_None_Selected() {
@@ -93,15 +89,13 @@ final class AppSecurityDomainTests: XCTestCase {
         let store = testStore(for: availableSecurityOptions,
                               selectedSecurityOption: preSelectedSecurityOption)
 
-        store.assert(
-            .send(.loadSecurityOption) {
-                $0.availableSecurityOptions = availableSecurityOptions
-            },
-            .do { self.testScheduler.advance() },
-            .receive(.loadSecurityOptionResponse(preSelectedSecurityOption)) {
-                $0.selectedSecurityOption = preSelectedSecurityOption
-            }
-        )
+        store.send(.loadSecurityOption) {
+            $0.availableSecurityOptions = availableSecurityOptions
+        }
+        testScheduler.advance()
+        store.receive(.loadSecurityOptionResponse(preSelectedSecurityOption)) {
+            $0.selectedSecurityOption = preSelectedSecurityOption
+        }
     }
 
     func testLoadingAvailableSecurityOptions_Biometry_Selected() {
@@ -111,15 +105,13 @@ final class AppSecurityDomainTests: XCTestCase {
         let store = testStore(for: availableSecurityOptions,
                               selectedSecurityOption: preSelectedSecurityOption)
 
-        store.assert(
-            .send(.loadSecurityOption) {
-                $0.availableSecurityOptions = availableSecurityOptions
-            },
-            .do { self.testScheduler.advance() },
-            .receive(.loadSecurityOptionResponse(preSelectedSecurityOption)) {
-                $0.selectedSecurityOption = preSelectedSecurityOption
-            }
-        )
+        store.send(.loadSecurityOption) {
+            $0.availableSecurityOptions = availableSecurityOptions
+        }
+        testScheduler.advance()
+        store.receive(.loadSecurityOptionResponse(preSelectedSecurityOption)) {
+            $0.selectedSecurityOption = preSelectedSecurityOption
+        }
     }
 
     func testLoadingAvailableSecurityOptions_Unsecured_Selected() {
@@ -129,15 +121,13 @@ final class AppSecurityDomainTests: XCTestCase {
         let store = testStore(for: availableSecurityOptions,
                               selectedSecurityOption: preSelectedSecurityOption)
 
-        store.assert(
-            .send(.loadSecurityOption) {
-                $0.availableSecurityOptions = availableSecurityOptions
-            },
-            .do { self.testScheduler.advance() },
-            .receive(.loadSecurityOptionResponse(preSelectedSecurityOption)) {
-                $0.selectedSecurityOption = preSelectedSecurityOption
-            }
-        )
+        store.send(.loadSecurityOption) {
+            $0.availableSecurityOptions = availableSecurityOptions
+        }
+        testScheduler.advance()
+        store.receive(.loadSecurityOptionResponse(preSelectedSecurityOption)) {
+            $0.selectedSecurityOption = preSelectedSecurityOption
+        }
     }
 
     func testSelectingAppSecurityOption_From_None_To_Unsecured() {
@@ -148,18 +138,16 @@ final class AppSecurityDomainTests: XCTestCase {
         let store = testStore(for: availableSecurityOptions,
                               selectedSecurityOption: preSelectedSecurityOption)
 
-        store.assert(
-            .send(.loadSecurityOption) {
-                $0.availableSecurityOptions = availableSecurityOptions
-            },
-            .do { self.testScheduler.advance() },
-            .receive(.loadSecurityOptionResponse(preSelectedSecurityOption)) {
-                $0.selectedSecurityOption = preSelectedSecurityOption
-            },
-            .send(.select(selectedSecurityOption)) {
-                $0.selectedSecurityOption = selectedSecurityOption
-            }
-        )
+        store.send(.loadSecurityOption) {
+            $0.availableSecurityOptions = availableSecurityOptions
+        }
+        testScheduler.advance()
+        store.receive(.loadSecurityOptionResponse(preSelectedSecurityOption)) {
+            $0.selectedSecurityOption = preSelectedSecurityOption
+        }
+        store.send(.select(selectedSecurityOption)) {
+            $0.selectedSecurityOption = selectedSecurityOption
+        }
     }
 
     func testSelectingAppSecurityOption_From_None_To_Biometry() {
@@ -170,18 +158,16 @@ final class AppSecurityDomainTests: XCTestCase {
         let store = testStore(for: availableSecurityOptions,
                               selectedSecurityOption: preSelectedSecurityOption)
 
-        store.assert(
-            .send(.loadSecurityOption) {
-                $0.availableSecurityOptions = availableSecurityOptions
-            },
-            .do { self.testScheduler.advance() },
-            .receive(.loadSecurityOptionResponse(preSelectedSecurityOption)) {
-                $0.selectedSecurityOption = preSelectedSecurityOption
-            },
-            .send(.select(selectedSecurityOption)) {
-                $0.selectedSecurityOption = selectedSecurityOption
-            }
-        )
+        store.send(.loadSecurityOption) {
+            $0.availableSecurityOptions = availableSecurityOptions
+        }
+        testScheduler.advance()
+        store.receive(.loadSecurityOptionResponse(preSelectedSecurityOption)) {
+            $0.selectedSecurityOption = preSelectedSecurityOption
+        }
+        store.send(.select(selectedSecurityOption)) {
+            $0.selectedSecurityOption = selectedSecurityOption
+        }
     }
 
     func testSelectingAppSecurityOption_From_None_To_Password() {
@@ -234,18 +220,16 @@ final class AppSecurityDomainTests: XCTestCase {
         let store = testStore(for: availableSecurityOptions,
                               selectedSecurityOption: preSelectedSecurityOption)
 
-        store.assert(
-            .send(.loadSecurityOption) {
-                $0.availableSecurityOptions = availableSecurityOptions
-            },
-            .do { self.testScheduler.advance() },
-            .receive(.loadSecurityOptionResponse(preSelectedSecurityOption)) {
-                $0.selectedSecurityOption = preSelectedSecurityOption
-            },
-            .send(.select(selectedSecurityOption)) {
-                $0.selectedSecurityOption = selectedSecurityOption
-            }
-        )
+        store.send(.loadSecurityOption) {
+            $0.availableSecurityOptions = availableSecurityOptions
+        }
+        testScheduler.advance()
+        store.receive(.loadSecurityOptionResponse(preSelectedSecurityOption)) {
+            $0.selectedSecurityOption = preSelectedSecurityOption
+        }
+        store.send(.select(selectedSecurityOption)) {
+            $0.selectedSecurityOption = selectedSecurityOption
+        }
     }
 
     func testSelectingAppSecurityOption_From_Biometry_To_Unsecured() {
@@ -256,18 +240,16 @@ final class AppSecurityDomainTests: XCTestCase {
         let store = testStore(for: availableSecurityOptions,
                               selectedSecurityOption: preSelectedSecurityOption)
 
-        store.assert(
-            .send(.loadSecurityOption) {
-                $0.availableSecurityOptions = availableSecurityOptions
-            },
-            .do { self.testScheduler.advance() },
-            .receive(.loadSecurityOptionResponse(preSelectedSecurityOption)) {
-                $0.selectedSecurityOption = preSelectedSecurityOption
-            },
-            .send(.select(selectedSecurityOption)) {
-                $0.selectedSecurityOption = selectedSecurityOption
-            }
-        )
+        store.send(.loadSecurityOption) {
+            $0.availableSecurityOptions = availableSecurityOptions
+        }
+        testScheduler.advance()
+        store.receive(.loadSecurityOptionResponse(preSelectedSecurityOption)) {
+            $0.selectedSecurityOption = preSelectedSecurityOption
+        }
+        store.send(.select(selectedSecurityOption)) {
+            $0.selectedSecurityOption = selectedSecurityOption
+        }
     }
 
     func testCloseCreatePasswordViewOnClose() {

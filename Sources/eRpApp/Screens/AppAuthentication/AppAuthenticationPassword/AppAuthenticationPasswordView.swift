@@ -94,17 +94,12 @@ struct AppAuthenticationPasswordView: View {
         var body: some View {
             VStack {
                 LinksAwareTextView(
-                    text: NSLocalizedString("auth_txt_biometrics_footer",
-                                            comment: ""),
+                    text: L10n.authTxtBiometricsFooter.text,
                     links: [
-                        NSLocalizedString("auth_txt_biometrics_footer_url_display",
-                                          comment: ""):
-                            NSLocalizedString("auth_txt_biometrics_footer_url_link",
-                                              comment: ""),
-                        NSLocalizedString("auth_txt_biometrics_footer_email_display",
-                                          comment: ""):
-                            NSLocalizedString("auth_txt_biometrics_footer_email_link",
-                                              comment: ""),
+                        L10n.authTxtBiometricsFooterUrlDisplay.text:
+                            L10n.authTxtBiometricsFooterUrlLink.text,
+                        L10n.authTxtBiometricsFooterEmailDisplay.text:
+                            L10n.authTxtBiometricsFooterEmailLink.text,
                     ],
                     calculatedHeight: $calculatedHeight
                 )

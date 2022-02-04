@@ -257,10 +257,20 @@ class StreamWrappedIDPSession: IDPSession {
             .eraseToAnyPublisher()
 	}
 
-	func unregisterDevice(_ keyIdentifier: String) -> AnyPublisher<Bool, IDPError> {
+	func unregisterDevice(_ keyIdentifier: String, token: IDPToken) -> AnyPublisher<Bool, IDPError> {
         stream
         	.map { $0.unregisterDevice(
-				keyIdentifier
+				keyIdentifier,
+				token: token
+            ) }
+            .switchToLatest()
+            .eraseToAnyPublisher()
+	}
+
+	func listDevices(token: IDPToken) -> AnyPublisher<PairingEntries, IDPError> {
+        stream
+        	.map { $0.listDevices(
+				token: token
             ) }
             .switchToLatest()
             .eraseToAnyPublisher()

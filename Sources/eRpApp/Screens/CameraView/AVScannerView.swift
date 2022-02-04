@@ -170,10 +170,10 @@ class AVScannerViewController: UIViewController, AVCaptureMetadataOutputObjectsD
     }
 
     private func presentInitializationErrorAlert() {
-        let alert = UIAlertController(title: NSLocalizedString("cam_init_fail_title", comment: ""),
-                                      message: NSLocalizedString("cam_init_fail_message", comment: ""),
+        let alert = UIAlertController(title: L10n.camInitFailTitle.text,
+                                      message: L10n.camInitFailMessage.text,
                                       preferredStyle: .alert)
-        let cancelAction = UIAlertAction(title: NSLocalizedString("alert_btn_close", comment: ""),
+        let cancelAction = UIAlertAction(title: L10n.alertBtnClose.text,
                                          style: .cancel) { _ in
             self.dismiss(animated: true, completion: nil)
         }

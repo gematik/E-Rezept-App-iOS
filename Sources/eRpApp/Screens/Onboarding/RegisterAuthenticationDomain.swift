@@ -50,7 +50,7 @@ enum RegisterAuthenticationDomain {
             }
 
             guard passwordStrength.passesMinimumThreshold else {
-                return NSLocalizedString("onb_auth_txt_password_strength_insufficient", comment: "")
+                return L10n.onbAuthTxtPasswordStrengthInsufficient.text
             }
 
             guard !passwordB.isEmpty else {
@@ -58,7 +58,7 @@ enum RegisterAuthenticationDomain {
             }
 
             guard passwordA == passwordB else {
-                return NSLocalizedString("onb_auth_txt_passwords_dont_match", comment: "")
+                return L10n.onbAuthTxtPasswordsDontMatch.text
             }
 
             return nil

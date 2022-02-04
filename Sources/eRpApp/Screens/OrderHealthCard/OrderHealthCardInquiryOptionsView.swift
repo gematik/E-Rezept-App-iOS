@@ -69,7 +69,7 @@ struct OrderHealthCardInquiryOptionsView: View {
                     imageName: nil,
                     accessibilityIdentifier: A11y.orderEGK.ogkBtnEgkInfo
                 ) {
-                    if let url = URL(string: NSLocalizedString("order_egk_txt_info_link", comment: "")) {
+                    if let url = URL(string: L10n.orderEgkTxtInfoLink.text) {
                         UIApplication.shared.open(url)
                     }
                 }

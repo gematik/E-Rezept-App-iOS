@@ -85,7 +85,7 @@ packages:
     version: 9.1.0
   ComposableArchitecture:
     url: https://github.com/pointfreeco/swift-composable-architecture
-    version: 0.29.0
+    version: 0.33.1
   CasePaths:
     url: https://github.com/pointfreeco/swift-case-paths
     version: 0.7.0
@@ -364,6 +364,7 @@ targets:
       - Tests/eRpKitTests
     dependencies:
       - target: eRpKit_${platform}
+      - target: TestUtils_${platform}
       - package: Nimble
   eRpLocalStorageTests:
     type: bundle.unit-test
@@ -494,6 +495,7 @@ targets:
       - target: IDP_${platform}
       - target: TrustStore_${platform}
       - target: TestUtils_${platform}
+      - target: VAUClient_${platform}
       - package: BundleKit
       - package: Nimble
 buildImplicitDependencies: true

@@ -82,8 +82,17 @@ public protocol IDPSession {
     func pairDevice(with registrationData: RegistrationData, token: IDPToken) -> AnyPublisher<PairingEntry, IDPError>
 
     /// Unregisters the devices key with the given identifier.
-    /// - Parameter keyIdentifier: Key identifier to unregister.
-    func unregisterDevice(_ keyIdentifier: String) -> AnyPublisher<Bool, IDPError>
+    /// - Parameters:
+    ///   - keyIdentifier: Key identifier to unregister.
+    ///   - token: Accesstoken for authentication and authorization for the new key.
+    /// - Returns: AnyPublisher with a`Bool` containing `true` upon success, `false` otherwise.
+    func unregisterDevice(_ keyIdentifier: String, token: IDPToken) -> AnyPublisher<Bool, IDPError>
+
+    /// Returns the list of all registered devices.
+    /// - Parameters:
+    ///   - token: Accesstoken for authentication and authorization for the new key.
+    /// - Returns: AnyPublisher with a`PairingEntries` containing all registered devices.
+    func listDevices(token: IDPToken) -> AnyPublisher<PairingEntries, IDPError>
 
     /// Verify a given challenge with the IDP using alternative authentication, a.k.a. biometric secured key.
     ///

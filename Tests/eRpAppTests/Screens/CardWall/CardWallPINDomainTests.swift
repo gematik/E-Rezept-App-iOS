@@ -102,75 +102,67 @@ final class CardWallPINDomainTests: XCTestCase {
         let store = testStore(for: "1234567")
 
         // when
-        store.assert(
-            .send(.advance) { sut in
-                // then
-                sut.showNextScreen = true
-            }
-        )
+        store.send(.advance) { sut in
+            // then
+            sut.showNextScreen = true
+        }
     }
 
     func testPINTooShort() {
         // given
         let store = testStore(for: "1234")
 
-        store.assert(
-            // when
-            .send(.advance) { sut in
-                // then
-                sut.showNextScreen = false
-                sut.doneButtonPressed = true
-            },
-            .send(.update(pin: "12345")) { sut in
-                // then
-                sut.pin = "12345"
-                sut.doneButtonPressed = false
-            },
-            // when
-            .send(.advance) { sut in
-                // then
-                sut.showNextScreen = false
-                sut.doneButtonPressed = true
-            },
-            // when
-            .send(.update(pin: "123456")) { sut in
-                // then
-                sut.pin = "123456"
-                sut.doneButtonPressed = false
-            },
-            // when
-            .send(.advance) { sut in
-                // then
-                sut.showNextScreen = true
-            }
-        )
+        // when
+        store.send(.advance) { sut in
+            // then
+            sut.showNextScreen = false
+            sut.doneButtonPressed = true
+        }
+        store.send(.update(pin: "12345")) { sut in
+            // then
+            sut.pin = "12345"
+            sut.doneButtonPressed = false
+        }
+        // when
+        store.send(.advance) { sut in
+            // then
+            sut.showNextScreen = false
+            sut.doneButtonPressed = true
+        }
+        // when
+        store.send(.update(pin: "123456")) { sut in
+            // then
+            sut.pin = "123456"
+            sut.doneButtonPressed = false
+        }
+        // when
+        store.send(.advance) { sut in
+            // then
+            sut.showNextScreen = true
+        }
     }
 
     func testPINTooLong() {
         // given
         let store = testStore(for: "123456789")
 
-        store.assert(
-            // when
-            .send(.advance) { sut in
-                // then
-                sut.showNextScreen = false
-                sut.doneButtonPressed = true
-            }
-        )
+        // when
+        store.send(.advance) { sut in
+            // then
+            sut.showNextScreen = false
+            sut.doneButtonPressed = true
+        }
     }
 
     func testPINNotNumeric() {
         // given
         let store = testStore(for: "123456a")
 
-        store.assert(
-            // when
-            .send(.advance) { sut in
-                // then
-                sut.showNextScreen = false
-                sut.doneButtonPressed = true
-            }
-        )
+        // when
+        store.send(.advance) { sut in
+            // then
+            sut.showNextScreen = false
+            sut.doneButtonPressed = true
+        }
     }
 }

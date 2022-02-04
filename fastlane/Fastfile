@@ -16,7 +16,7 @@
 # 
 #
 
-xcversion(version: ENV["FL_XCODE_VERSION"] || "12.5")
+xcversion(version: ENV["FL_XCODE_VERSION"] || "13.2.1")
 
 fastlane_version "2.187.0"
 

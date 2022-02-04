@@ -102,20 +102,18 @@ extension CardWallIntroductionView {
                             }
                             .foregroundColor(Colors.primary)
                             .accessibility(identifier: A11y.cardWall.intro.cdwBtnIntroMore)
-
-                            EmptyView()
-                                .fullScreenCover(isPresented: viewStore.binding(
-                                    get: \.isEGKOrderInfoViewPresented,
-                                    send: CardWallIntroductionDomain.Action.dismissEGKOrderInfoView
-                                )) {
-                                    NavigationView {
-                                        OrderHealthCardView {
-                                            viewStore.send(.dismissEGKOrderInfoView)
-                                        }
+                            .fullScreenCover(isPresented: viewStore.binding(
+                                get: \.isEGKOrderInfoViewPresented,
+                                send: CardWallIntroductionDomain.Action.dismissEGKOrderInfoView
+                            )) {
+                                NavigationView {
+                                    OrderHealthCardView {
+                                        viewStore.send(.dismissEGKOrderInfoView)
                                     }
-                                    .accentColor(Colors.primary700)
-                                    .navigationViewStyle(StackNavigationViewStyle())
                                 }
+                                .accentColor(Colors.primary700)
+                                .navigationViewStyle(StackNavigationViewStyle())
+                            }
                         }.padding()
 
                         VStack(alignment: .leading, spacing: 16) {

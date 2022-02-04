@@ -76,11 +76,11 @@ struct RedeemSuccessView: View {
     private func titlelForSource(_ option: RedeemOption) -> LocalizedStringKey {
         switch option {
         case .onPremise:
-            return L10n.rdmSccTxtOnpremiseTitle
+            return L10n.rdmSccTxtOnpremiseTitle.key
         case .delivery:
-            return L10n.rdmSccTxtDeliveryTitle
+            return L10n.rdmSccTxtDeliveryTitle.key
         case .shipment:
-            return L10n.rdmSccTxtShipmentTitle
+            return L10n.rdmSccTxtShipmentTitle.key
         }
     }
 

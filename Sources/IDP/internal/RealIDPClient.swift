@@ -324,6 +324,30 @@ class RealIDPClient: IDPClient {
             .eraseToAnyPublisher()
     }
 
+    func listDevices(token: IDPToken, using document: DiscoveryDocument) -> AnyPublisher<PairingEntries, IDPError> {
+        var request = URLRequest(
+            url: document.pairing.url,
+            cachePolicy: .reloadIgnoringCacheData
+        )
+        request.httpMethod = "GET"
+        request.addValue("application/json; charset=UTF-8", forHTTPHeaderField: "Accept")
+        request.setValue("\(token.tokenType) \(token.accessToken)", forHTTPHeaderField: "Authorization")
+
+        return httpClient.send(request: request)
+            .tryMap { body, _, status -> PairingEntries in
+                if status.isSuccessful {
+                    return try JSONDecoder().decode(PairingEntries.self, from: body)
+                } else {
+                    guard let responseError = try? JSONDecoder().decode(IDPError.ServerResponse.self, from: body) else {
+                        throw Self.fallbackServerResponse
+                    }
+                    throw IDPError.serverError(responseError)
+                }
+            }
+            .mapError { $0.asIDPError() }
+            .eraseToAnyPublisher()
+    }
+
     func altVerify(_ encryptedSignedChallenge: JWE,
                    using document: DiscoveryDocument) -> AnyPublisher<IDPExchangeToken, IDPError> {
         var request = URLRequest(url: document.authenticationPaired.url, cachePolicy: .reloadIgnoringCacheData)

@@ -16,12 +16,12 @@ import SwiftUI
   {% endif %}
   {% if string.key|contains:"%@" %}
   {% map string.key|split:"%@" into keyPlaceholders %}k{% endmap %}
-  {{accessModifier}} static func {{string.key|swiftIdentifier:"pretty"|lowerFirstWord|escapeReservedKeywords}}({% for child in keyPlaceholders %}{% if not forloop.first %}_ element{{ forloop.counter0 }}: String{% if not forloop.last %},{% endif %}{% endif%}{% endfor %}) -> LocalizedStringKey {
+  {{accessModifier}} static func {{string.key|swiftIdentifier:"pretty"|lowerFirstWord|escapeReservedKeywords}}({% for child in keyPlaceholders %}{% if not forloop.first %}_ element{{ forloop.counter0 }}: String{% if not forloop.last %},{% endif %}{% endif%}{% endfor %}) -> StringAsset {
     {% set replacement %}\(element{{ forloop.counter0 }}){% endset %}
-    LocalizedStringKey("{% for child in string.key|split:"%@" %}{{ child }}{% if not forloop.last %}\(element{{ forloop.counter }}){% endif%}{% endfor %}")
+    StringAsset("{{string.key}}", arguments: [{% for child in keyPlaceholders %}{% if not forloop.first %}element{{ forloop.counter0 }}{% if not forloop.last %}, {% endif %}{% endif%}{% endfor %}])
   }
   {% else %}
-  {{accessModifier}} static let {{string.key|swiftIdentifier:"pretty"|lowerFirstWord|escapeReservedKeywords}} = LocalizedStringKey("{{string.key}}")
+  {{accessModifier}} static let {{string.key|swiftIdentifier:"pretty"|lowerFirstWord|escapeReservedKeywords}} = StringAsset("{{string.key}}")
   {% endif %}
   {% endfor %}
   {% for child in item.children %}
@@ -40,8 +40,6 @@ import SwiftUI
   {% endif %}
 }
 // swiftlint:enable function_parameter_count identifier_name line_length type_body_length
-
 {% else %}
 // No string found
 {% endif %}
-

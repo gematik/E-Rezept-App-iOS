@@ -186,19 +186,15 @@ extension Sequence where Element == ScannedErxTask {
                 status: status,
                 accessCode: scannedTask.accessCode,
                 authoredOn: authoredOn,
-                author: NSLocalizedString("scn_txt_author", comment: ""),
+                author: L10n.scnTxtAuthor.text,
                 source: .scanner,
-                medication: ErxTask.Medication(name: String(format: medicationStringFormat, String(prescriptionCount)))
+                medication: ErxTask.Medication(name: L10n.scnTxtMedication(String(prescriptionCount)).text)
             )
             tasks.append(task)
             prescriptionCount += 1
         }
 
         return tasks
-    }
-
-    private var medicationStringFormat: String {
-        NSLocalizedString("scn_txt_medication_%@", comment: "")
     }
 }
 

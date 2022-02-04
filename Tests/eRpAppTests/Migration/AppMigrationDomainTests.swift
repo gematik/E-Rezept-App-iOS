@@ -66,6 +66,7 @@ final class AppMigrationDomainTests: XCTestCase {
         AppMigrationDomain.Environment
     >
 
+//    let testScheduler = DispatchQueue.test
     private func testStore(with state: AppMigrationDomain.State = .none) -> TestStore {
         TestStore(
             initialState: state,
@@ -105,15 +106,53 @@ final class AppMigrationDomainTests: XCTestCase {
         return factory
     }
 
-    func testMigrationWithMigratingOneStepHappyPath() {
+//    func testMigrationWithMigratingOneStepHappyPath() {
+//        let store = testStore()
+//        let startVersion: ModelVersion = .taskStatus
+//        let endVersion: ModelVersion = .auditEventsInProfile
+//        mockMigrationManager.startModelMigrationReturnValue = CurrentValueSubject(startVersion.next()!)
+//            .setFailureType(to: MigrationError.self)
+//            .eraseToAnyPublisher()
+//
+//        mockUserDataStore.underlyingLastCompatibleCoreDataModelVersion = startVersion
+//        store.send(.loadCurrentModelVersion) { state in
+//            state = .none
+//        }
+//        expect(self.mockUserDataStore.latestCompatibleCoreDataModelVersionCallsCount) == 1
+//        expect(self.mockMigrationManager.startModelMigrationCallsCount) == 1
+//        testScheduler.advance()
+//        store.receive(.startMigration(from: startVersion)) { state in
+//            state = .inProgress
+//        }
+//        mockUserDataStore.underlyingLastCompatibleCoreDataModelVersion = .profiles
+//        testScheduler.advance()
+//        store.receive(.startMigrationReceived(.success(.profiles))) { state in
+//            state = .finished
+//        }
+//        testScheduler.advance()
+//        store.receive(.startMigration(from: .profiles)) { state in
+//            state = .inProgress
+//        }
+//        mockUserDataStore.underlyingLastCompatibleCoreDataModelVersion = .auditEventsInProfile
+//        testScheduler.advance()
+//        store.receive(.startMigrationReceived(.success(.auditEventsInProfile))) { state in
+//            state = .finished
+//        }
+//        testScheduler.advance()
+//        expect(self.mockUserDataStore.latestCompatibleModelVersion) == endVersion
+//        expect(self.mockUserDataStore.latestCompatibleCoreDataModelVersionCallsCount) == 2
+//        expect(self.finishedMigrationCalledCount) == 1
+//    }
+
+    func testMigrationWithMigratingOneStepHappyPath_short() {
         let store = testStore()
-        let startVersion: ModelVersion = .taskStatus
-        mockUserDataStore.underlyingLastCompatibleCoreDataModelVersion = startVersion
-        let endVersion: ModelVersion = .profiles
-        mockMigrationManager.startModelMigrationReturnValue = CurrentValueSubject(endVersion)
+        let startVersion: ModelVersion = .profiles
+        let endVersion: ModelVersion = .auditEventsInProfile
+        mockMigrationManager.startModelMigrationReturnValue = CurrentValueSubject(startVersion.next()!)
             .setFailureType(to: MigrationError.self)
             .eraseToAnyPublisher()
 
+        mockUserDataStore.underlyingLastCompatibleCoreDataModelVersion = startVersion
         store.send(.loadCurrentModelVersion) { state in
             state = .none
         }
@@ -141,7 +180,7 @@ final class AppMigrationDomainTests: XCTestCase {
         store.receive(.startMigrationReceived(.failure(expectedError))) { state in
             state = .failed(
                 AppMigrationDomain.alertState(
-                    title: NSLocalizedString("amg_btn_alert_title", comment: ""),
+                    title: L10n.amgBtnAlertTitle.text,
                     message: expectedError.localizedDescription
                 )
             )
@@ -150,7 +189,7 @@ final class AppMigrationDomainTests: XCTestCase {
         store.send(.loadCurrentModelVersion) { state in
             state = .failed(
                 AppMigrationDomain.alertState(
-                    title: NSLocalizedString("amg_btn_alert_title", comment: ""),
+                    title: L10n.amgBtnAlertTitle.text,
                     message: expectedError.localizedDescription
                 )
             )
@@ -161,7 +200,7 @@ final class AppMigrationDomainTests: XCTestCase {
         store.receive(.startMigrationReceived(.failure(expectedError))) { state in
             state = .failed(
                 AppMigrationDomain.alertState(
-                    title: NSLocalizedString("amg_btn_alert_title", comment: ""),
+                    title: L10n.amgBtnAlertTitle.text,
                     message: expectedError.localizedDescription
                 )
             )

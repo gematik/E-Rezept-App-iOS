@@ -168,16 +168,29 @@ public class IDPSessionMock: IDPSession {
     }
 
     public var unregisterDevice_Publisher: AnyPublisher<Bool, IDPError>!
-    public var unregisterDevice_ReceivedArguments: String?
+    public var unregisterDevice_ReceivedArguments: (String, IDPToken)?
     public var unregisterDevice_CallsCount = 0
     public var unregisterDevice_Called: Bool {
         unregisterDevice_CallsCount > 0
     }
 
-    public func unregisterDevice(_ keyIdentifier: String) -> AnyPublisher<Bool, IDPError> {
+    public func unregisterDevice(_ keyIdentifier: String, token: IDPToken) -> AnyPublisher<Bool, IDPError> {
         unregisterDevice_CallsCount += 1
-        unregisterDevice_ReceivedArguments = keyIdentifier
+        unregisterDevice_ReceivedArguments = (keyIdentifier, token)
         return unregisterDevice_Publisher
+    }
+
+    public var listDevices_Publisher: AnyPublisher<PairingEntries, IDPError>!
+    public var listDevices_ReceivedArguments: IDPToken?
+    public var listDevices_CallsCount = 0
+    public var listDevices_Called: Bool {
+        listDevices_CallsCount > 0
+    }
+
+    public func listDevices(token: IDPToken) -> AnyPublisher<PairingEntries, IDPError> {
+        listDevices_CallsCount += 1
+        listDevices_ReceivedArguments = token
+        return listDevices_Publisher
     }
 
     public var altVerify_Publisher: AnyPublisher<IDPExchangeToken, IDPError>!

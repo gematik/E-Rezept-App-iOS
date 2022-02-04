@@ -49,10 +49,56 @@ final class LoopingVideoPlayerContainerView: UIViewRepresentable {
             }
         }
 
+        #if targetEnvironment(simulator)
+        lazy var placeholerLabel: UILabel = {
+            let label = UILabel(frame: CGRect(x: 16, y: 0, width: 200, height: 40))
+            label.text = "VideoPlayer Placeholder"
+            label.textAlignment = .center
+            label.font = UIFont.preferredFont(forTextStyle: .footnote)
+            label.textColor = .white
+            return label
+        }()
+
+        override func layoutSubviews() {
+            super.layoutSubviews()
+
+            placeholerLabel.frame = bounds
+        }
+        #endif
+
         init(withURL url: URL) {
             super.init(frame: .zero)
 
+            #if targetEnvironment(simulator)
+            if ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil {
+                backgroundColor = UIColor.gray
+                addSubview(placeholerLabel)
+            }
+            #endif
+
+            #if DEBUG
+            // Enable Subtitles
+            let playerItem = AVPlayerItem(url: url)
+            let asset = playerItem.asset
+
+            if let group = asset.mediaSelectionGroup(forMediaCharacteristic: AVMediaCharacteristic.legible) {
+                let locale = Locale(identifier: "eng")
+                let options =
+                    AVMediaSelectionGroup.mediaSelectionOptions(from: group.options, with: locale)
+                if let option = options.first {
+                    // Select Spanish-language subtitle option
+                    playerItem.select(option, in: group)
+                }
+            }
+
+            player = AVPlayer(playerItem: playerItem)
+            player?.appliesMediaSelectionCriteriaAutomatically = true
+            #else
+
             player = AVPlayer(playerItem: AVPlayerItem(url: url))
+
+            #endif
+
             if player?.currentItem?.currentTime() == player?.currentItem?.duration {
                 player?.currentItem?.seek(to: .zero, completionHandler: nil)
             }

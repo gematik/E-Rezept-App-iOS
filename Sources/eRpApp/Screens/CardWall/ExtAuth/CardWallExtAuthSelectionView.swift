@@ -86,7 +86,8 @@ struct CardWallExtAuthSelectionView: View {
                 }
                 .padding()
 
-                EmptyView()
+                Rectangle()
+                    .frame(width: 0, height: 0, alignment: .center)
                     .sheet(isPresented: viewStore.binding(
                         get: \.orderEgkVisible,
                         send: CardWallExtAuthSelectionDomain.Action.showOrderEgk
@@ -97,6 +98,8 @@ struct CardWallExtAuthSelectionView: View {
                             }
                         }.navigationViewStyle(StackNavigationViewStyle())
                     }
+                    .hidden()
+                    .accessibility(hidden: true)
             }
 
             NavigationLink(

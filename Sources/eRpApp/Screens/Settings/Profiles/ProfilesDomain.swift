@@ -69,7 +69,6 @@ enum ProfilesDomain {
         case selectedProfileReceived(UUID)
 
         case addNewProfile
-        case selectProfile(UserProfile)
         case editProfile(UserProfile)
 
         case profile(action: EditProfileDomain.Action)
@@ -116,10 +115,6 @@ enum ProfilesDomain {
             return .none
         case let .selectedProfileReceived(profileId):
             state.selectedProfileId = profileId
-            return .none
-        case let .selectProfile(profile):
-            state.selectedProfileId = profile.id
-            environment.userDataStore.set(selectedProfileId: profile.id)
             return .none
         case let .editProfile(profile):
             state.route = .editProfile(.init(profile: profile))

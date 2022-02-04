@@ -76,31 +76,26 @@ extension AppAuthenticationBiometricsDomain {
             switch self {
             case let .cannotEvaluatePolicy(error):
                 guard let error = error else {
-                    return NSLocalizedString("auth_txt_biometrics_failed_default", comment: "")
+                    return L10n.authTxtBiometricsFailedDefault.text
                 }
                 if LAError.Code(rawValue: error.code) == LAError.biometryLockout {
-                    return NSLocalizedString("auth_txt_biometrics_lockout", comment: "")
+                    return L10n.authTxtBiometricsLockout.text
                 } else {
                     return error.localizedDescription
                 }
             case let .failedEvaluatingPolicy(error):
                 guard let error = error else {
-                    return NSLocalizedString("auth_txt_biometrics_failed_default",
-                                             comment: "")
+                    return L10n.authTxtBiometricsFailedDefault.text
                 }
                 switch LAError.Code(rawValue: error.code) {
                 case LAError.authenticationFailed:
-                    return NSLocalizedString("auth_txt_biometrics_failed_authentication_failed",
-                                             comment: "")
+                    return L10n.authTxtBiometricsFailedAuthenticationFailed.text
                 case LAError.userFallback:
-                    return NSLocalizedString("auth_txt_biometrics_failed_user_fallback",
-                                             comment: "")
+                    return L10n.authTxtBiometricsFailedUserFallback.text
                 case LAError.biometryNotEnrolled:
-                    return NSLocalizedString("auth_txt_biometrics_failed_not_enrolled",
-                                             comment: "")
+                    return L10n.authTxtBiometricsFailedNotEnrolled.text
                 default:
-                    return NSLocalizedString("auth_txt_biometrics_failed_default",
-                                             comment: "")
+                    return L10n.authTxtBiometricsFailedDefault.text
                 }
             }
         }

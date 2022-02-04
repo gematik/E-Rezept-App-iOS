@@ -84,7 +84,8 @@ struct MainView: View {
 
                 // ScannerView sheet presentation; Work around not being able to use multiple `fullScreenCover` modifier
                 // at once. As soon as we drop iOS <= ~14.4, we may omit this.
-                EmptyView()
+                Rectangle()
+                    .frame(width: 0, height: 0, alignment: .center)
                     .fullScreenCover(isPresented: viewStore.binding(
                         get: \.isScannerViewPresented,
                         send: MainDomain.Action.dismissScannerView
@@ -97,10 +98,13 @@ struct MainView: View {
                             then: ErxTaskScannerView.init(store:)
                         )
                     }
+                    .hidden()
+                    .accessibility(hidden: true)
 
                 // Device security sheet presentation; Work around not being able to use multiple `fullScreenCover`
                 // modifier at once. As soon as we drop iOS <= ~14.4, we may omit this.
-                EmptyView()
+                Rectangle()
+                    .frame(width: 0, height: 0, alignment: .center)
                     .sheet(
                         isPresented: viewStore.binding(
                             get: \.isDeviceSecurityViewPresented,
@@ -115,8 +119,11 @@ struct MainView: View {
                             then: DeviceSecurityView.init(store:)
                         )
                     }
+                    .hidden()
+                    .accessibility(hidden: true)
 
-                EmptyView()
+                Rectangle()
+                    .frame(width: 0, height: 0, alignment: .center)
                     .sheet(isPresented: Binding<Bool>(get: {
                         viewStore.route?.tag == .selectProfile
                     }, set: { show in
@@ -133,6 +140,8 @@ struct MainView: View {
                             action: MainDomain.Action.selectProfile(action:)
                         ), then: ProfileSelectionView.init)
                     })
+                    .hidden()
+                    .accessibility(hidden: true)
             }
             .navigationBarTitleDisplayMode(.inline)
             .introspectNavigationController { navigationController in

@@ -82,7 +82,7 @@ extension ErxTaskFHIROperation: FHIRClientOperation {
         case let .deleteTask(taskId, _, _): return "Task/\(taskId)/$abort"
         case let .auditEventBy(auditEventId, _): return "AuditEvent/\(auditEventId)"
         case let .auditEvents(referenceDate, _, _):
-            var queryItems: [URLQueryItem] = [URLQueryItem(name: "_sort", value: "-date")]
+            var queryItems: [URLQueryItem] = [URLQueryItem(name: "_sort", value: "date")]
             if let referenceDate = referenceDate,
                let fhirDate = FHIRDateFormatter.shared.date(from: referenceDate) {
                 let dateItem = URLQueryItem(

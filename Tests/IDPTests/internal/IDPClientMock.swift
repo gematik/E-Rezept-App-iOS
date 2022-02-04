@@ -182,6 +182,20 @@ public class IDPClientMock: IDPClient {
         return unregisterDevice_Publisher
     }
 
+    public var listDevices_Publisher: AnyPublisher<PairingEntries, IDPError>!
+    public var listDevices_ReceivedArguments: (IDPToken, DiscoveryDocument)?
+    public var listDevices_CallsCount = 0
+    public var listDevices_Called: Bool {
+        listDevices_CallsCount > 0
+    }
+
+    public func listDevices(token: IDPToken,
+                            using document: DiscoveryDocument) -> AnyPublisher<PairingEntries, IDPError> {
+        listDevices_CallsCount += 1
+        listDevices_ReceivedArguments = (token, document)
+        return listDevices_Publisher
+    }
+
     public var altVerify_Publisher: AnyPublisher<IDPExchangeToken, IDPError>!
     public var altVerify_ReceivedArguments: (JWE, DiscoveryDocument)?
     public var altVerify_CallsCount = 0

@@ -53,8 +53,8 @@ struct PrescriptionLowDetailView: View {
                 if !viewStore.state.prescription.isArchived {
                     HintView<PrescriptionDetailDomain.Action>(
                         hint: Hint(id: A11y.prescriptionDetails.prscDtlHntKeepOverview,
-                                   title: NSLocalizedString("dtl_txt_hint_overview_title", comment: ""),
-                                   message: NSLocalizedString("dtl_txt_hint_overview_message", comment: ""),
+                                   title: L10n.dtlTxtHintOverviewTitle.text,
+                                   message: L10n.dtlTxtHintOverviewMessage.text,
                                    actionText: nil,
                                    action: nil,
                                    imageName: Asset.Prescriptions.Details.apothekerin.name,
@@ -70,7 +70,7 @@ struct PrescriptionLowDetailView: View {
 
                 MedicationProtocolView(
                     protocolEvents: [(uiFormattedDate(dateString: viewStore.state.prescription.authoredOn),
-                                      NSLocalizedString("dtl_txt_scanned_on", comment: ""))],
+                                      L10n.dtlTxtScannedOn.text)],
                     lastUpdated: uiFormattedDate(dateString: viewStore.state.prescription.redeemedOn)
                 )
 

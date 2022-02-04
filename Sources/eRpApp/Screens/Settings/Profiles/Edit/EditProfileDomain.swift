@@ -37,10 +37,12 @@ enum EditProfileDomain {
     enum Route: Equatable {
         case alert(AlertState<Action>)
         case token(IDPToken)
+        case auditEvents(AuditEventsDomain.State)
 
         enum Tag: Int {
             case alert
             case token
+            case auditEvents
         }
 
         var tag: Tag {
@@ -49,15 +51,19 @@ enum EditProfileDomain {
                 return .alert
             case .token:
                 return .token
+            case .auditEvents:
+                return .auditEvents
             }
         }
     }
 
     struct State: Equatable {
         let profileId: UUID
-
         var name: String
         var acronym: String
+        var fullName: String?
+        var insurance: String?
+        var insuranceId: String?
         var emoji: String?
         var color: ProfileColor
         var token: IDPToken?
@@ -66,6 +72,9 @@ enum EditProfileDomain {
 
         init(name: String,
              acronym: String,
+             fullName: String?,
+             insurance: String?,
+             insuranceId: String?,
              emoji: String? = nil,
              color: ProfileColor,
              profileId: UUID,
@@ -73,6 +82,9 @@ enum EditProfileDomain {
              route: Route? = nil) {
             self.name = name
             self.acronym = acronym
+            self.fullName = fullName
+            self.insurance = insurance
+            self.insuranceId = insuranceId
             self.emoji = emoji
             self.color = color
             self.profileId = profileId
@@ -85,6 +97,9 @@ enum EditProfileDomain {
             emoji = profile.emoji
             name = profile.name
             acronym = profile.name.acronym()
+            fullName = profile.fullName
+            insurance = profile.insurance
+            insuranceId = profile.insuranceId
             color = profile.color
         }
     }
@@ -104,7 +119,10 @@ enum EditProfileDomain {
         case registerListener
         case tokenReceived(IDPToken?)
 
+        case profileReceived(Result<Profile?, LocalStoreError>)
+
         case setNavigation(tag: Route.Tag?)
+        case auditEvents(action: AuditEventsDomain.Action)
     }
 
     struct Environment {
@@ -119,10 +137,25 @@ enum EditProfileDomain {
         switch action {
         case .registerListener:
             // [REQ:gemSpec_BSI_FdV:O.Tokn_9] observe token updates
-            return environment.subscribeToTokenUpdates(with: state.profileId)
-                .cancellable(id: Token.idpTokenListener, cancelInFlight: true)
+            return .concatenate(
+                environment.subscribeToTokenUpdates(with: state.profileId)
+                    .cancellable(id: Token.idpTokenListener, cancelInFlight: true),
+                environment.profileDataStore.fetchProfile(by: state.profileId)
+                    .first()
+                    .catchToEffect()
+                    .map(Action.profileReceived)
+                    .receive(on: environment.schedulers.main)
+                    .eraseToEffect()
+            )
         case let .tokenReceived(token):
             state.token = token
+            return .none
+        case let .profileReceived(.success(profile)):
+            state.insuranceId = profile?.insuranceId
+            state.insurance = profile?.insurance
+            state.fullName = profile?.fullName
+            return .none
+        case .profileReceived(.failure):
             return .none
         case let .setEmoji(emoji):
             state.emoji = emoji
@@ -191,14 +224,31 @@ enum EditProfileDomain {
                 state.route = .token(token)
             }
             return .none
+        case .setNavigation(tag: .auditEvents):
+            state.route = .auditEvents(.init(profileUUID: state.profileId))
+            return .none
         case .setNavigation:
+            return .none
+        case .auditEvents(action:):
             return .none
         }
     }
 
     static let reducer: Reducer = .combine(
+        auditEventsReducer,
         domainReducer
     )
+
+    private static let auditEventsReducer: Reducer =
+        AuditEventsDomain.reducer._pullback(
+            state: (\State.route).appending(path: /EditProfileDomain.Route.auditEvents),
+            action: /EditProfileDomain.Action.auditEvents(action:)
+        ) {
+            .init(
+                schedulers: $0.schedulers,
+                profileDataStore: $0.profileDataStore
+            )
+        }
 }
 
 extension EditProfileDomain.Environment {

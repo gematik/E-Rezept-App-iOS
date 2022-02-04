@@ -326,6 +326,86 @@ final class IDPIntegrationTests: XCTestCase {
         expect(success) == true
     }
 
+    func testGetPairedDevices() throws {
+        guard let signer = environment.brainpool256r1Signer else {
+            throw XCTSkip("Skip test because no signing entity available")
+        }
+
+        let storage = MemStorage()
+        let pairingIDPSessionConfiguration = DefaultIDPSession.Configuration(
+            clientId: "eRezeptApp",
+            redirectURI: environment.appConfiguration.redirectUri,
+            extAuthRedirectURI: environment.appConfiguration.extAuthRedirectUri,
+            discoveryURL: environment.appConfiguration.idp,
+            scopes: ["pairing", "openid"]
+        )
+        let schedulers = TestSchedulers(compute: DispatchQueue(label: "serial-test").eraseToAnyScheduler())
+        let httpClient = DefaultHTTPClient(
+            urlSessionConfiguration: .ephemeral,
+            interceptors: [
+                AdditionalHeaderInterceptor(additionalHeader: environment.appConfiguration.idpAdditionalHeader),
+                LoggingInterceptor(log: .body),
+            ]
+        )
+        let trustStoreSession = MockTrustStoreSession()
+
+        let pairingIDPSession = DefaultIDPSession(
+            config: pairingIDPSessionConfiguration,
+            storage: storage,
+            schedulers: schedulers,
+            httpClient: httpClient,
+            trustStoreSession: trustStoreSession,
+            extAuthRequestStorage: DummyExtAuthRequestStorage()
+        )
+        var success = false
+        var token: IDPToken!
+        pairingIDPSession.requestChallenge()
+            .flatMap { challenge in
+                challenge.sign(with: signer, using: signer.certificates)
+                    .mapError { $0.asIDPError() }
+            }
+            .flatMap { signedChallenge in
+                pairingIDPSession.verifyAndExchange(signedChallenge: signedChallenge,
+                                                    idTokenValidator: { _ in .success(true) })
+            }
+            .first()
+            .test(timeout: 10,
+                  failure: { error in
+                      fail("\(error)")
+                  },
+                  expectations: { idpToken in
+                      success = true
+                      Swift.print("token access", idpToken.accessToken)
+                      Swift.print("token id", idpToken.idToken)
+                      Swift.print("token sso: '\(idpToken.ssoToken ?? "<empty>")'")
+                      token = idpToken
+                  }, subscribeScheduler: DispatchQueue.global().eraseToAnyScheduler())
+        expect(success) == true
+
+        guard token != nil else {
+            fail("token must not be nil")
+            return
+        }
+        expect(token).toNot(beNil())
+
+        success = false
+        // Get registerd Devices
+        pairingIDPSession.listDevices(token: token)
+            .first()
+            .test(failure: { error in
+                      fail("\(error)")
+                  },
+                  expectations: { devices in
+                      success = true
+
+                      Swift.print("DEVICES: ")
+                      devices.pairingEntries.forEach { entry in
+                          Swift.print("Device: ", entry.name, entry.pairingEntryVersion)
+                      }
+                  }, subscribeScheduler: DispatchQueue.global().eraseToAnyScheduler())
+        expect(success) == true
+    }
+
     func testExternalAuthenticationLogin() throws {
         guard let idpsekServer = environment.idpsekURLServer else {
             throw XCTSkip("Skip test because no IDP Server was provided")

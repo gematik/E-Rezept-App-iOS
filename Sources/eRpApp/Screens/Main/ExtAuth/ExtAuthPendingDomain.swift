@@ -152,12 +152,17 @@ enum ExtAuthPendingDomain {
                 .eraseToEffect()
         case let .externalLoginReceived(.success(idpToken)):
             guard case let State.extAuthReceived(entry) = state else { return .none }
-            let insuranceId = try? idpToken.idTokenPayload().idNummer
+            let payload = try? idpToken.idTokenPayload()
             state = .extAuthSuccessful(entry)
-            return environment.saveInsuranceIdInProfile(insuranceId: insuranceId)
-                .delay(for: 2,
-                       scheduler: environment.schedulers.main.animation())
-                .eraseToEffect()
+            return environment.saveProfileWith(
+                insuranceId: payload?.idNummer,
+                insurance: payload?.organizationName,
+                givenName: payload?.givenName,
+                familyName: payload?.familyName
+            )
+            .delay(for: 2,
+                   scheduler: environment.schedulers.main.animation())
+            .eraseToEffect()
         case .saveProfile(error: _):
             state = .extAuthFailed(saveProfileAlert)
             return .none
@@ -218,14 +223,20 @@ enum ExtAuthPendingDomain {
 }
 
 extension ExtAuthPendingDomain.Environment {
-    func saveInsuranceIdInProfile(
-        insuranceId: String?
+    func saveProfileWith(
+        insuranceId: String?,
+        insurance: String?,
+        givenName: String?,
+        familyName: String?
     ) -> Effect<ExtAuthPendingDomain.Action, Never> {
         currentProfile
             .first()
             .flatMap { profile -> AnyPublisher<Bool, LocalStoreError> in
                 profileDataStore.update(profileId: profile.id) { profile in
                     profile.insuranceId = insuranceId
+                    profile.insurance = insurance
+                    profile.givenName = givenName
+                    profile.familyName = familyName
                 }
                 .eraseToAnyPublisher()
             }

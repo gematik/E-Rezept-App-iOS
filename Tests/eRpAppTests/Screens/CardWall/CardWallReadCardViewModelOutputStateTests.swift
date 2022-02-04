@@ -93,52 +93,6 @@ final class CardWallReadCardViewModelOutputStateTests: XCTestCase {
         expect(sut.nextButtonEnabled).to(beTrue())
         expect(sut.buttonTitle).to(equal(titleClose))
     }
-
-    func testCorrectTileState() {
-        var sut = CardWallReadCardDomain.State.Output.idle
-        expect(sut.challengeProgressTileState).to(equal(.idle))
-        expect(sut.signingProgressTileState).to(equal(.idle))
-        expect(sut.verifyProgressTileState).to(equal(.idle))
-
-        sut = CardWallReadCardDomain.State.Output.retrievingChallenge(.loading)
-        expect(sut.challengeProgressTileState).to(equal(.loading))
-        expect(sut.signingProgressTileState).to(equal(.idle))
-        expect(sut.verifyProgressTileState).to(equal(.idle))
-        sut = CardWallReadCardDomain.State.Output.retrievingChallenge(.error(.idpError(
-            IDPError.network(error: HTTPError.networkError("timeout"))
-        )))
-        expect(sut.challengeProgressTileState.isError).to(beTrue())
-
-        expect(sut.signingProgressTileState).to(equal(.idle))
-        expect(sut.verifyProgressTileState).to(equal(.idle))
-
-        sut = CardWallReadCardDomain.State.Output.signingChallenge(.loading)
-        expect(sut.challengeProgressTileState).to(equal(.done))
-        expect(sut.signingProgressTileState).to(equal(.loading))
-        expect(sut.verifyProgressTileState).to(equal(.idle))
-        sut = CardWallReadCardDomain.State.Output.signingChallenge(.error(.signChallengeError(NFCSignatureProviderError
-                .wrongCAN(HTTPError.networkError("timeout")))))
-        expect(sut.challengeProgressTileState).to(equal(.done))
-        expect(sut.signingProgressTileState.isError).to(beTrue())
-        expect(sut.verifyProgressTileState).to(equal(.idle))
-
-        sut = CardWallReadCardDomain.State.Output.verifying(.loading)
-        expect(sut.challengeProgressTileState).to(equal(.done))
-        expect(sut.signingProgressTileState).to(equal(.done))
-        expect(sut.verifyProgressTileState).to(equal(.loading))
-        sut = CardWallReadCardDomain.State.Output.verifying(.error(.idpError(
-            IDPError.network(error: HTTPError.networkError("timeout"))
-        )))
-        expect(sut.challengeProgressTileState).to(equal(.done))
-        expect(sut.signingProgressTileState).to(equal(.done))
-        expect(sut.verifyProgressTileState.isError).to(beTrue())
-
-        let idpToken = IDPToken(accessToken: "", expires: Date(), idToken: "")
-        sut = CardWallReadCardDomain.State.Output.loggedIn(idpToken)
-        expect(sut.challengeProgressTileState).to(equal(.done))
-        expect(sut.signingProgressTileState).to(equal(.done))
-        expect(sut.verifyProgressTileState).to(equal(.done))
-    }
 }
 
 extension ProgressTile.State {

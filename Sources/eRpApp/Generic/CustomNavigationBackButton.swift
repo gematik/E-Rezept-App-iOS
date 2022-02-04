@@ -19,7 +19,7 @@
 import SwiftUI
 
 struct CustomNavigationBackButton: View {
-    var label: LocalizedStringKey = L10n.navBack
+    var label: LocalizedStringKey = L10n.navBack.key
     let presentationMode: Binding<PresentationMode>
 
     var body: some View {

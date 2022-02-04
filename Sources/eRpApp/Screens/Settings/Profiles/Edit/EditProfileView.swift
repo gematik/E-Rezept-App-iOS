@@ -35,6 +35,9 @@ struct EditProfileView: View {
         let name: String
         let acronym: String
         let emoji: String?
+        let fullName: String?
+        let insurance: String?
+        let insuranceId: String?
         let color: ProfileColor
         let isLoggedIn: Bool
         let showEmptyNameWarning: Bool
@@ -43,6 +46,9 @@ struct EditProfileView: View {
             name = state.name
             acronym = state.acronym
             emoji = state.emoji
+            fullName = state.fullName
+            insurance = state.insurance
+            insuranceId = state.insuranceId
             color = state.color
             isLoggedIn = state.token != nil
             showEmptyNameWarning = state.name.lengthOfBytes(using: .utf8) == 0
@@ -66,8 +72,14 @@ struct EditProfileView: View {
                           )
                           .animation())
             }
+            .textCase(.none)
 
-            Section(header: EmptyProfileError(isVisible: viewStore.showEmptyNameWarning)) {}
+            if viewStore.showEmptyNameWarning {
+                Section(header: EmptyProfileError()) {}
+                    .textCase(.none)
+            }
+
+            Section(header: ConnectedProfile(viewStore: viewStore)) {}
                 .textCase(.none)
 
             Section(
@@ -111,6 +123,7 @@ struct EditProfileView: View {
                         .buttonStyle(DestructiveSecondaryButtonStyle())
                         .accessibility(identifier: A11y.settings.editProfile.stgBtnEditProfileLogin)
                 ) {}
+                    .textCase(.none)
             }
 
             Section(
@@ -119,6 +132,7 @@ struct EditProfileView: View {
                 }
                 .accessibility(identifier: A11y.settings.editProfile.stgBtnEditProfileDelete)
             ) {}
+                .textCase(.none)
         }
         .listStyle(InsetGroupedListStyle())
         // TODO: refactor, maybe custom gestur recognizer "ontouchesbegan" // swiftlint:disable:this todo
@@ -139,17 +153,40 @@ struct EditProfileView: View {
             viewStore.send(.registerListener)
         }
     }
+}
 
+extension EditProfileView {
     private struct EmptyProfileError: View {
-        let isVisible: Bool
+        var body: some View {
+            Text(L10n.stgTxtEditProfileEmptyNameErrorMessage)
+                .foregroundColor(Colors.red600)
+                .fixedSize(horizontal: false, vertical: true)
+                .transformEffect(.init(translationX: 0, y: -16))
+        }
+    }
+
+    private struct ConnectedProfile: View {
+        let viewStore: ViewStore<EditProfileView.ViewState, EditProfileDomain.Action>
 
         var body: some View {
-            if isVisible {
-                Text(L10n.stgTxtEditProfileEmptyNameErrorMessage)
-                    .foregroundColor(Colors.red600)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .transformEffect(.init(translationX: 0, y: -16))
-            }
+            Text(profileSubtitle)
+                .font(.footnote)
+                .foregroundColor(Color(.secondaryLabel))
+                .fixedSize(horizontal: false, vertical: true)
+                .transformEffect(.init(translationX: 0, y: -20))
+        }
+
+        var profileSubtitle: LocalizedStringKey {
+            let title = [
+                viewStore.state.fullName,
+                viewStore.state.insuranceId,
+                viewStore.state.insurance,
+            ]
+            .compactMap { $0 }
+            .joined(separator: "\n")
+
+            return !title.isEmpty ? L10n.stgTxtEditProfileNameConnection(title).key : L10n
+                .stgTxtEditProfileNameConnectionPlaceholder.key
         }
     }
 
@@ -212,10 +249,40 @@ struct EditProfileView: View {
                     }
                     .padding(.vertical, 8)
                     .accessibilityElement(children: .combine)
+                    .accessibility(identifier: A11y.settings.editProfile.stgBtnEditProfileSecuritySectionShowTokens)
+                }
+                .disabled(viewStore.state.token == nil)
+                NavigationLink(
+                    destination: IfLetStore(auditEventsStore) { auditEventsStore in
+                        AuditEventsView(store: auditEventsStore)
+                    },
+                    tag: EditProfileDomain.Route.Tag.auditEvents,
+                    selection: viewStore.binding(
+                        get: \.routeTag,
+                        send: EditProfileDomain.Action.setNavigation
+                    )
+                ) {
+                    HStack(spacing: 16) {
+                        Image(systemName: SFSymbolName.arrowUpArrowDown)
+                            .font(.body.weight(.bold))
+                            .foregroundColor(Colors.primary500)
+                            .frame(width: 16, height: 16)
+
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(L10n.stgTxtEditProfileSecurityShowAuditEventsLabel)
+                                .foregroundColor(Colors.systemLabel)
+                            Text(L10n.stgTxtEditProfileSecurityShowAuditEventsDescription)
+                                .font(.subheadline)
+                                .foregroundColor(Colors.systemLabelSecondary)
+                        }
+                    }
+                    .padding(.vertical, 8)
+                    .accessibilityElement(children: .combine)
+                    .accessibility(identifier: A11y.settings.editProfile
+                        .stgBtnEditProfileSecuritySectionShowAuditEvents)
                 }
             }
             .textCase(.none)
-            .disabled(viewStore.state.token == nil)
         }
 
         @ViewBuilder
@@ -239,13 +306,27 @@ struct EditProfileView: View {
                     .extract(from:)
             )
         }
+
+        private var auditEventsStore: Store<AuditEventsDomain.State?, AuditEventsDomain.Action> {
+            store.scope(
+                state: (\EditProfileDomain.State.route)
+                    .appending(path: /EditProfileDomain.Route.auditEvents)
+                    .extract(from:),
+                action: EditProfileDomain.Action.auditEvents(action:)
+            )
+        }
     }
 }
 
 struct ProfileView_Preview: PreviewProvider {
     static var previews: some View {
-        NavigationView {
-            EditProfileView(store: EditProfileDomain.Dummies.store)
+        Group {
+            NavigationView {
+                EditProfileView(store: EditProfileDomain.Dummies.store)
+            }
+            NavigationView {
+                EditProfileView(store: EditProfileDomain.Dummies.store)
+            }
         }
     }
 }

@@ -113,8 +113,7 @@ struct CardWallCANView<Content: View>: View {
                             .foregroundColor(Colors.systemLabelSecondary)
                             .accessibility(identifier: A11y.cardWall.canInput.cdwTxtCanInstruction)
                             .padding(.horizontal)
-
-                        EmptyView()
+                            .padding(.bottom, 20)
                             .fullScreenCover(isPresented: viewStore.binding(
                                 get: \.isEGKOrderInfoViewPresented,
                                 send: CardWallCANDomain.Action.dismissEGKOrderInfoView
@@ -130,8 +129,8 @@ struct CardWallCANView<Content: View>: View {
 
                         HintView<CardWallCANDomain.Action>(
                             hint: Hint(id: A11y.cardWall.canInput.cdwBtnCanMore,
-                                       title: NSLocalizedString("cdw_hint_can_order_egk_title", comment: ""),
-                                       message: NSLocalizedString("cdw_hint_can_order_egk_message", comment: ""),
+                                       title: L10n.cdwHintCanOrderEgkTitle.text,
+                                       message: L10n.cdwHintCanOrderEgkMessage.text,
                                        actionText: L10n.cdwHintCanOrderEgkBtn,
                                        action: CardWallCANDomain.Action.showEGKOrderInfoView,
                                        imageName: Asset.CardWall.apothekerin2.name,

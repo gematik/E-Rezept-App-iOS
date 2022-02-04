@@ -36,6 +36,9 @@ final class EditProfileSnapshotTests: XCTestCase {
                 initialState: .init(
                     name: "",
                     acronym: "",
+                    fullName: nil,
+                    insurance: nil,
+                    insuranceId: nil,
                     emoji: "👵🏻",
                     color: .green,
                     profileId: UUID()
@@ -62,6 +65,36 @@ final class EditProfileSnapshotTests: XCTestCase {
                 initialState: .init(
                     name: "Anna Vetter",
                     acronym: "AV",
+                    fullName: nil,
+                    insurance: nil,
+                    insuranceId: nil,
+                    color: .green,
+                    profileId: UUID()
+                ),
+                reducer: .empty,
+                environment: NewProfileDomain.Environment(
+                    schedulers: Schedulers(),
+                    userDataStore: MockUserDataStore(),
+                    profileDataStore: MockProfileDataStore()
+                )
+            )
+        )
+
+        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
+        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+    }
+
+    func testEditProfileFilledWithConnectedProfileSnapshot() {
+        let sut = EditProfileView(
+            store: .init(
+                initialState: .init(
+                    name: "Anna V",
+                    acronym: "AV",
+                    fullName: "Anne Vetter",
+                    insurance: "Gematik BKK",
+                    insuranceId: "X987654321",
+                    emoji: "👵🏻",
                     color: .green,
                     profileId: UUID()
                 ),

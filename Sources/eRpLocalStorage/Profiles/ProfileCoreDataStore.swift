@@ -89,6 +89,9 @@ public class ProfileCoreDataStore: ProfileDataStore, CoreDataCrudable {
                     profileEntity.name = profile.name
                     profileEntity.emoji = profile.emoji
                     profileEntity.insuranceId = profile.insuranceId
+                    profileEntity.insurance = profile.insurance
+                    profileEntity.givenName = profile.givenName
+                    profileEntity.familyName = profile.familyName
                     profileEntity.color = profile.color.rawValue
                     profileEntity.lastAuthenticated = profile.lastAuthenticated
                     return profileEntity
@@ -116,6 +119,9 @@ public class ProfileCoreDataStore: ProfileDataStore, CoreDataCrudable {
                 mutating(&profile)
                 profileEntity.name = profile.name
                 profileEntity.insuranceId = profile.insuranceId
+                profileEntity.insurance = profile.insurance
+                profileEntity.givenName = profile.givenName
+                profileEntity.familyName = profile.familyName
                 profileEntity.emoji = profile.emoji
                 profileEntity.color = profile.color.rawValue
                 profileEntity.lastAuthenticated = profile.lastAuthenticated

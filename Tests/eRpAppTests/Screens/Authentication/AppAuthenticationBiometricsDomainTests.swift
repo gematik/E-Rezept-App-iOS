@@ -63,33 +63,34 @@ final class AppAuthenticationBiometricsDomainTests: XCTestCase {
 
     func testPerformAuthenticationChallenge_FaceID_Success() {
         let store = testStore(for: .faceID, withResult: .success(true))
-        store
-            .assert(.send(.startAuthenticationChallenge) { _ in },
-                    .do { self.testScheduler.advance() },
-                    .receive(.authenticationChallengeResponse(.success(true))) {
-                        $0.authenticationResult = .success(true)
-                    })
+
+        store.send(.startAuthenticationChallenge)
+
+        testScheduler.advance()
+        store.receive(.authenticationChallengeResponse(.success(true))) {
+            $0.authenticationResult = .success(true)
+        }
     }
 
     func testPerformAuthenticationChallenge_FaceID_Failure_Cannot_Evaluate_Policy() {
         let store = testStore(for: .faceID, withResult: .failure(.cannotEvaluatePolicy(nil)))
-        store
-            .assert(.send(.startAuthenticationChallenge) { _ in },
-                    .do { self.testScheduler.advance() },
-                    .receive(.authenticationChallengeResponse(.failure(.cannotEvaluatePolicy(nil)))) {
-                        $0.authenticationResult = .failure(.cannotEvaluatePolicy(nil))
-                        $0.errorToDisplay = .cannotEvaluatePolicy(nil)
-                    })
+
+        store.send(.startAuthenticationChallenge)
+        testScheduler.advance()
+        store.receive(.authenticationChallengeResponse(.failure(.cannotEvaluatePolicy(nil)))) {
+            $0.authenticationResult = .failure(.cannotEvaluatePolicy(nil))
+            $0.errorToDisplay = .cannotEvaluatePolicy(nil)
+        }
     }
 
     func testPerformAuthenticationChallenge_FaceID_Failure_Failed_Evaluating_Policy() {
         let store = testStore(for: .faceID, withResult: .failure(.failedEvaluatingPolicy(nil)))
-        store
-            .assert(.send(.startAuthenticationChallenge) { _ in },
-                    .do { self.testScheduler.advance() },
-                    .receive(.authenticationChallengeResponse(.failure(.failedEvaluatingPolicy(nil)))) {
-                        $0.authenticationResult = .failure(.failedEvaluatingPolicy(nil))
-                        $0.errorToDisplay = .failedEvaluatingPolicy(nil)
-                    })
+
+        store.send(.startAuthenticationChallenge)
+        testScheduler.advance()
+        store.receive(.authenticationChallengeResponse(.failure(.failedEvaluatingPolicy(nil)))) {
+            $0.authenticationResult = .failure(.failedEvaluatingPolicy(nil))
+            $0.errorToDisplay = .failedEvaluatingPolicy(nil)
+        }
     }
 }

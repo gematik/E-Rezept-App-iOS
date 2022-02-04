@@ -103,9 +103,16 @@ class ConfiguredIDPSession: IDPSession {
             .eraseToAnyPublisher()
     }
 
-    func unregisterDevice(_ keyIdentifier: String) -> AnyPublisher<Bool, IDPError> {
+    func unregisterDevice(_ keyIdentifier: String, token: IDPToken) -> AnyPublisher<Bool, IDPError> {
         sessionProvider
-            .map { $0.unregisterDevice(keyIdentifier) }
+            .map { $0.unregisterDevice(keyIdentifier, token: token) }
+            .switchToLatest()
+            .eraseToAnyPublisher()
+    }
+
+    func listDevices(token: IDPToken) -> AnyPublisher<PairingEntries, IDPError> {
+        sessionProvider
+            .map { $0.listDevices(token: token) }
             .switchToLatest()
             .eraseToAnyPublisher()
     }

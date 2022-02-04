@@ -318,18 +318,16 @@ public class DefaultIDPSession: IDPSession {
     }
 
     // [REQ:gemSpec_IDP_Frontend:A_21576] deletion call
-    public func unregisterDevice(_ keyIdentifier: String) -> AnyPublisher<Bool, IDPError> {
+    public func unregisterDevice(_ keyIdentifier: String, token: IDPToken) -> AnyPublisher<Bool, IDPError> {
         loadDiscoveryDocument()
-            .zip(storage.token.setFailureType(to: IDPError.self).eraseToAnyPublisher())
-            .flatMap { document, token -> AnyPublisher<Bool, IDPError> in
-                guard let token = token else {
-                    return Fail(error: IDPError.tokenUnavailable).eraseToAnyPublisher()
-                }
+            .flatMap { document -> AnyPublisher<Bool, IDPError> in
                 // [REQ:gemSpec_IDP_Frontend:A_21443] Encrypt ACCESS_TOKEN when requesting the unregister endpoint
                 guard let tokenJWT = try? JWT(from: token.accessToken),
+                      let tokenPayload = try? tokenJWT.decodePayload(type: TokenPayload.AccesTokenPayload.self),
                       let tokenJWE = try? JWE.nest(jwt: tokenJWT,
                                                    with: document.encryptionPublicKey,
-                                                   using: self.cryptoBox),
+                                                   using: self.cryptoBox,
+                                                   expiry: tokenPayload.exp),
                       let encryptedAccessToken = tokenJWE.encoded().utf8string
                 else {
                     return Fail(error: IDPError.encryption).eraseToAnyPublisher()
@@ -337,6 +335,28 @@ public class DefaultIDPSession: IDPSession {
                 let encryptedToken = token.mutating(accessToken: encryptedAccessToken)
 
                 return self.client.unregisterDevice(keyIdentifier, token: encryptedToken, using: document)
+            }
+            .eraseToAnyPublisher()
+    }
+
+    public func listDevices(token: IDPToken) -> AnyPublisher<PairingEntries, IDPError> {
+        loadDiscoveryDocument()
+            .flatMap { document -> AnyPublisher<PairingEntries, IDPError> in
+                // [REQ:gemSpec_IDP_Frontend:A_21443] Encrypt ACCESS_TOKEN when requesting the list endpoint
+                guard let tokenJWT = try? JWT(from: token.accessToken),
+                      let tokenPayload = try? tokenJWT.decodePayload(type: TokenPayload.AccesTokenPayload.self),
+                      let tokenJWE = try? JWE.nest(jwt: tokenJWT,
+                                                   with: document.encryptionPublicKey,
+                                                   using: self.cryptoBox,
+                                                   expiry: tokenPayload.exp),
+                      let encryptedAccessToken = tokenJWE.encoded().utf8string
+                else {
+                    return Fail(error: IDPError.encryption).eraseToAnyPublisher()
+                }
+
+                let encryptedToken = token.mutating(accessToken: encryptedAccessToken)
+
+                return self.client.listDevices(token: encryptedToken, using: document)
             }
             .eraseToAnyPublisher()
     }

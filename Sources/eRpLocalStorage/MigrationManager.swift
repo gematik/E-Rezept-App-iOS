@@ -73,6 +73,8 @@ public class MigrationManager: ModelMigrating {
                         error.toMigrationError()
                     }
                     .eraseToAnyPublisher()
+            case .auditEventsInProfile:
+                return migrateToModelVersion5()
             case .taskStatus:
                 // no migration available to this version
                 return Just(toVersion)
@@ -170,6 +172,12 @@ extension MigrationManager: CoreDataCrudable {
                     }
                     .eraseToAnyPublisher()
             }
+            .eraseToAnyPublisher()
+    }
+
+    func migrateToModelVersion5() -> AnyPublisher<ModelVersion, MigrationError> {
+        deleteAllAuditEvents()
+            .map { _ in ModelVersion.auditEventsInProfile }
             .eraseToAnyPublisher()
     }
 

@@ -142,12 +142,10 @@ final class RedeemDomainTests: XCTestCase {
             groupedPrescription: groupedPrescription
         )
 
-        store.assert(
-            // when
-            .send(.openRedeemMatrixCodeView) { sut in
-                // then
-                sut.redeemMatrixCodeState = expectedState
-            }
-        )
+        // when
+        store.send(.openRedeemMatrixCodeView) { sut in
+            // then
+            sut.redeemMatrixCodeState = expectedState
+        }
     }
 }

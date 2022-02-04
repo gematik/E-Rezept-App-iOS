@@ -44,7 +44,8 @@ extension ErxAuditEvent {
             locale: entity.locale,
             text: entity.text,
             timestamp: entity.timestamp,
-            taskId: entity.task?.identifier
+            taskId: entity.task?.identifier,
+            title: entity.task?.medication?.name
         )
     }
 }

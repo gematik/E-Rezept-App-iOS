@@ -26,22 +26,14 @@ struct PrescriptionFullDetailView: View {
 
     var body: some View {
         WithViewStore(store) { viewStore in
-            EmptyView()
-                .sheet(isPresented: viewStore.binding(
-                    get: { $0.isSubstitutionReadMorePresented },
-                    send: PrescriptionDetailDomain.Action.dismissSubstitutionInfo
-                )) {
-                    SubstitutionInfoWebView()
-                }
-
             ScrollView(.vertical) {
                 // Noctu fee waiver hint
                 if viewStore.state.prescription.noctuFeeWaiver {
                     HintView(
                         hint: Hint<PrescriptionDetailDomain.Action>(
                             id: A11y.prescriptionDetails.prscDtlHntNoctuFeeWaiver,
-                            title: NSLocalizedString("prsc_fd_txt_noctu_title", comment: ""),
-                            message: NSLocalizedString("prsc_fd_txt_noctu_description", comment: ""),
+                            title: L10n.prscFdTxtNoctuTitle.text,
+                            message: L10n.prscFdTxtNoctuDescription.text,
                             imageName: Asset.Illustrations.pharmacistf1.name,
                             style: .neutral,
                             buttonStyle: .tertiary,
@@ -84,8 +76,8 @@ struct PrescriptionFullDetailView: View {
                         HintView(
                             hint: Hint(
                                 id: A11y.prescriptionDetails.prscDtlHntSubstitution,
-                                title: NSLocalizedString("prsc_fd_txt_substitution_title", comment: ""),
-                                message: NSLocalizedString("prsc_fd_txt_substitution_description", comment: ""),
+                                title: L10n.prscFdTxtSubstitutionTitle.text,
+                                message: L10n.prscFdTxtSubstitutionDescription.text,
                                 actionText: L10n.prscFdTxtSubstitutionReadFurther,
                                 action: PrescriptionDetailDomain.Action.openSubstitutionInfo,
                                 imageName: Asset.Illustrations.practitionerm1.name,
@@ -123,10 +115,7 @@ struct PrescriptionFullDetailView: View {
                             hint: Hint<PrescriptionDetailDomain.Action>(
                                 id: A11y.prescriptionDetails.prscDtlHntDosageInstructions,
                                 message: viewStore.state.prescription.actualMedication?
-                                    .dosageInstruction ?? NSLocalizedString(
-                                        "prsc_fd_txt_dosage_instructions_na",
-                                        comment: ""
-                                    ),
+                                    .dosageInstruction ?? L10n.prscFdTxtDosageInstructionsNa.text,
                                 imageName: Asset.Illustrations.practitionerf1.name,
                                 style: .neutral,
                                 buttonStyle: .tertiary,
@@ -209,6 +198,17 @@ struct PrescriptionFullDetailView: View {
                 viewStore.send(.loadMatrixCodeImage(screenSize: UIScreen.main.bounds.size))
             }
             .navigationBarTitle(Text(L10n.prscFdTxtNavigationTitle), displayMode: .inline)
+
+            Rectangle()
+                .frame(width: 0, height: 0)
+                .sheet(isPresented: viewStore.binding(
+                    get: { $0.isSubstitutionReadMorePresented },
+                    send: PrescriptionDetailDomain.Action.dismissSubstitutionInfo
+                )) {
+                    SubstitutionInfoWebView()
+                }
+                .hidden()
+                .accessibility(hidden: true)
         }
     }
 
@@ -300,7 +300,7 @@ struct PrescriptionFullDetailView: View {
                 let wkWebView = WKWebView()
                 wkWebView.configuration.defaultWebpagePreferences.allowsContentJavaScript = false
 
-                if let url = URL(string: NSLocalizedString("prsc_fd_txt_substitution_read_further_link", comment: "")) {
+                if let url = URL(string: L10n.prscFdTxtSubstitutionReadFurtherLink.text) {
                     wkWebView.load(URLRequest(url: url))
                 }
                 wkWebView.navigationDelegate = navigationController

@@ -100,16 +100,9 @@ extension CardWallPINDomain.State {
 
     var warningMessage: String {
         if enteredPINNotNumeric {
-            return NSLocalizedString(
-                "cdw_txt_pin_warning_char",
-                comment: "Cardwall - warning: PIN contains char."
-            )
+            return L10n.cdwTxtPinWarningChar.text
         } else {
-            return String(
-                format: NSLocalizedString("cdw_txt_pin_warning_count %@",
-                                          comment: "Cardwall - warning: PIN out of bounds."),
-                arguments: ["\(pin.lengthOfBytes(using: .utf8))"]
-            )
+            return L10n.cdwTxtPinWarningCount("\(pin.lengthOfBytes(using: .utf8))").text
         }
     }
 }

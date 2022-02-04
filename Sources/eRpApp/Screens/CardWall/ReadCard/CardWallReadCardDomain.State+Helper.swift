@@ -16,6 +16,7 @@
 //  
 //
 
+import ComposableArchitecture
 import IDP
 import SwiftUI
 
@@ -94,18 +95,18 @@ extension CardWallReadCardDomain.State {
             switch self {
             case .signingChallenge(.error(.inputError(.missingCAN))),
                  .signingChallenge(.error(.signChallengeError(.wrongCAN))):
-                return L10n.cdwBtnRcCorrectCan
+                return L10n.cdwBtnRcCorrectCan.key
             case .signingChallenge(.error(.inputError(.missingPIN))),
                  .signingChallenge(.error(.signChallengeError(.wrongPin))):
-                return L10n.cdwBtnRcCorrectPin
+                return L10n.cdwBtnRcCorrectPin.key
             case .retrievingChallenge(.error), .signingChallenge(.error), .verifying(.error):
-                return L10n.cdwBtnRcRetry
+                return L10n.cdwBtnRcRetry.key
             case .retrievingChallenge(.loading), .signingChallenge(.loading), .verifying(.loading):
-                return L10n.cdwBtnRcLoading
+                return L10n.cdwBtnRcLoading.key
             case .loggedIn:
-                return L10n.cdwBtnRcClose
+                return L10n.cdwBtnRcClose.key
             default:
-                return L10n.cdwBtnRcNext
+                return L10n.cdwBtnRcNext.key
             }
         }
 
@@ -132,48 +133,6 @@ extension CardWallReadCardDomain.State {
             }
         }
 
-        var isLoading: Bool {
-            switch self {
-            case .retrievingChallenge(.loading), .signingChallenge(.loading), .verifying(.loading):
-                return true
-            default:
-                return false
-            }
-        }
-
-        var challengeProgressTileState: ProgressTile.State {
-            switch self {
-            case .idle:
-                return .idle
-            case let .retrievingChallenge(subState):
-                return subState.progressTileState
-            default:
-                return .done
-            }
-        }
-
-        var signingProgressTileState: ProgressTile.State {
-            switch self {
-            case .idle, .retrievingChallenge, .challengeLoaded:
-                return .idle
-            case let .signingChallenge(subState):
-                return subState.progressTileState
-            default:
-                return .done
-            }
-        }
-
-        var verifyProgressTileState: ProgressTile.State {
-            switch self {
-            case .idle, .retrievingChallenge, .challengeLoaded, .signingChallenge:
-                return .idle
-            case let .verifying(subState):
-                return subState.progressTileState
-            default:
-                return .done
-            }
-        }
-
         enum StepState: Equatable {
             // swiftlint:disable:next operator_whitespace
             static func ==(
@@ -191,15 +150,6 @@ extension CardWallReadCardDomain.State {
 
             case loading
             case error(Error)
-
-            var progressTileState: ProgressTile.State {
-                switch self {
-                case .loading:
-                    return .loading
-                case let .error(error):
-                    return .error(title: error.localizedDescription, description: error.recoverySuggestion)
-                }
-            }
         }
     }
 }
@@ -253,6 +203,7 @@ extension CardWallReadCardDomain.State.Error: CustomStringConvertible, Localized
     }
 }
 
+// TODO: localization for keys is missing   swiftlint:disable:this todo
 extension CardWallReadCardDomain.State.Error.InputError: LocalizedError {
     var errorDescription: String? {
         switch self {

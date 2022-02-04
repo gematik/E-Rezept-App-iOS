@@ -51,14 +51,12 @@ final class SettingsDomainTests: XCTestCase {
     func testDemoModeToggleShouldSetDemoMode() {
         let store = testStore()
 
-        store.assert(
-            // when
-            .send(.toggleDemoModeSwitch) { sut in
-                // then
-                sut.isDemoMode = true
-                sut.alertState = SettingsDomain.demoModeOnAlertState
-            }
-        )
+        // when
+        store.send(.toggleDemoModeSwitch) { sut in
+            // then
+            sut.isDemoMode = true
+            sut.alertState = SettingsDomain.demoModeOnAlertState
+        }
     }
 
     func testDemoModeToggleShouldUnsetDemoMode() {
@@ -69,14 +67,12 @@ final class SettingsDomainTests: XCTestCase {
             )
         )
 
-        store.assert(
-            // when
-            .send(.toggleDemoModeSwitch) { sut in
-                // then
-                sut.isDemoMode = false
-                sut.alertState = SettingsDomain.demoModeOffAlertState
-            }
-        )
+        // when
+        store.send(.toggleDemoModeSwitch) { sut in
+            // then
+            sut.isDemoMode = false
+            sut.alertState = SettingsDomain.demoModeOffAlertState
+        }
     }
 
     func testAppTrackingOptInStartsComplyDialog() {
@@ -87,14 +83,12 @@ final class SettingsDomainTests: XCTestCase {
             )
         )
 
-        store.assert(
-            // when
-            .send(.toggleTrackingTapped(true)) { sut in
-                // then
-                sut.trackerOptIn = false
-                sut.showTrackerComplyView = true
-            }
-        )
+        // when
+        store.send(.toggleTrackingTapped(true)) { sut in
+            // then
+            sut.trackerOptIn = false
+            sut.showTrackerComplyView = true
+        }
     }
 
     func testAppTrackingOptInConfirmAlert() {
@@ -105,19 +99,17 @@ final class SettingsDomainTests: XCTestCase {
             )
         )
 
-        store.assert(
-            // when
-            .send(.toggleTrackingTapped(true)) { sut in
-                // then
-                sut.trackerOptIn = false
-                sut.showTrackerComplyView = true
-            },
-            .send(.confirmedOptInTracking) { sut in
-                sut.trackerOptIn = true
-                sut.trackerOptIn = UserDefaults.standard.kAppTrackingAllowed
-                sut.showTrackerComplyView = false
-            }
-        )
+        // when
+        store.send(.toggleTrackingTapped(true)) { sut in
+            // then
+            sut.trackerOptIn = false
+            sut.showTrackerComplyView = true
+        }
+        store.send(.confirmedOptInTracking) { sut in
+            sut.trackerOptIn = true
+            sut.trackerOptIn = UserDefaults.standard.kAppTrackingAllowed
+            sut.showTrackerComplyView = false
+        }
     }
 
     func testAppTrackingOptInCancelAlert() {
@@ -128,18 +120,16 @@ final class SettingsDomainTests: XCTestCase {
             )
         )
 
-        store.assert(
-            // when
-            .send(.toggleTrackingTapped(true)) { sut in
-                // then
-                sut.trackerOptIn = false
-                sut.showTrackerComplyView = true
-            },
-            .send(.confirmedOptInTracking) { sut in
-                sut.trackerOptIn = false
-                sut.trackerOptIn = UserDefaults.standard.kAppTrackingAllowed
-                sut.showTrackerComplyView = false
-            }
-        )
+        // when
+        store.send(.toggleTrackingTapped(true)) { sut in
+            // then
+            sut.trackerOptIn = false
+            sut.showTrackerComplyView = true
+        }
+        store.send(.confirmedOptInTracking) { sut in
+            sut.trackerOptIn = false
+            sut.trackerOptIn = UserDefaults.standard.kAppTrackingAllowed
+            sut.showTrackerComplyView = false
+        }
     }
 }

@@ -150,6 +150,7 @@ settings:
     - cpw_txt_section_update_title
   profiles:
     - stg_txt_header_profiles
+    - stg_btn_profile
     - stg_btn_new_profile
   editProfile:
     - stg_txt_edit_profile_bg_color_title
@@ -159,11 +160,21 @@ settings:
     - stg_btn_edit_profile_logout
     - stg_txt_edit_profile_security_section_title
     - stg_btn_edit_profile_security_section_show_tokens
+    - stg_btn_edit_profile_security_section_show_audit_events
     - stg_txt_edit_profile_security_show_tokens_hint
   newProfile:
     - stg_txt_new_profile_bg_color_title
     - stg_txt_new_profile_bg_color_picker
     - stg_btn_new_profile_save
+  auditEvents:
+    - stg_ctn_audit_events_events
+    - stg_ctn_audit_events_event_title
+    - stg_ctn_audit_events_event_description
+    - stg_ctn_audit_events_event_date
+    - stg_txt_audit_events_last_updated
+    - stg_txt_audit_events_activity_indicator
+    - stg_txt_audit_events_no_protocol_title
+    - stg_txt_audit_events_no_protocol_description
   legalNotice:
     - stg_lno_txt_header_legal_info
     - stg_lno_txt_legal_notice
@@ -209,6 +220,12 @@ messages:
 mainScreen:
   - erx_btn_refresh
   - erx_detailed_block
+  - erx_detailed_block_doctor
+  - erx_detailed_block_date
+  - erx_detailed_block_prescriptions
+  - erx_detailed_block_prescription_name
+  - erx_detailed_block_prescription_validity
+  - erx_detailed_block_redeem_all
   - erx_btn_profile
   - erx_btn_scn_prescription
   - erx_hnt_demo_mode_tour

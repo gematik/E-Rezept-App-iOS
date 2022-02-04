@@ -39,7 +39,8 @@ struct ProfileColorPicker: View {
                             }
                         }
                         .frame(maxWidth: .infinity)
-                        .accessibility(value: Text(color == self.color ? L10n.ctlTxtProfileColorPickerSelected : ""))
+                        .accessibility(value: Text(color == self.color ? L10n.ctlTxtProfileColorPickerSelected
+                                .key : ""))
                         .accessibility(label: Text(color.name))
                         .accessibility(addTraits: .isButton)
                 }
@@ -65,15 +66,15 @@ extension ProfileColor {
     var name: LocalizedStringKey {
         switch self {
         case .grey:
-            return L10n.ctlTxtProfileColorPickerGrey
+            return L10n.ctlTxtProfileColorPickerGrey.key
         case .yellow:
-            return L10n.ctlTxtProfileColorPickerYellow
+            return L10n.ctlTxtProfileColorPickerYellow.key
         case .red:
-            return L10n.ctlTxtProfileColorPickerPink
+            return L10n.ctlTxtProfileColorPickerPink.key
         case .green:
-            return L10n.ctlTxtProfileColorPickerGreen
+            return L10n.ctlTxtProfileColorPickerGreen.key
         case .blue:
-            return L10n.ctlTxtProfileColorPickerBlue
+            return L10n.ctlTxtProfileColorPickerBlue.key
         }
     }
 }

@@ -22,28 +22,24 @@ import SwiftUI
 
 struct MessagesView: View {
     let store: MessagesDomain.Store
-    @ObservedObject var viewStore: ViewStore<ViewState, MessagesDomain.Action>
+    @ObservedObject var viewStore: ViewStore<MessagesDomain.State, MessagesDomain.Action>
 
     init(store: MessagesDomain.Store) {
         self.store = store
-        viewStore = ViewStore(store.scope(state: ViewState.init))
+        viewStore = ViewStore(store)
     }
 
     var body: some View {
         NavigationView {
             VStack {
-                if !viewStore.messageDomainStates.isEmpty {
+                if !viewStore.state.communications.isEmpty {
                     ScrollView(.vertical) {
                         VStack(alignment: .leading, spacing: 8) {
-                            ForEachStore( // swiftlint:disable:this trailing_closure
-                                self.store.scope(
-                                    state: \.messageDomainStates,
-                                    action: MessagesDomain.Action.message
-                                ),
-                                content: { store in
-                                    MessageRowView(store: store)
-                                }
-                            )
+                            ForEach(viewStore.communications) { communication in
+                                Button(action: { viewStore.send(.didSelect(communication.id)) }, label: {
+                                    MessageRowView(communication: communication)
+                                })
+                            }
                         }
                         .padding(.top)
                         .padding(.bottom)
@@ -57,9 +53,30 @@ struct MessagesView: View {
             .accessibility(identifier: A11y.messages.list.msgsTxtTitle)
             .onAppear { viewStore.send(.subscribeToCommunicationChanges) }
             .onDisappear { viewStore.send(.removeSubscription) }
+            .alert(
+                self.store
+                    .scope(state: (\MessagesDomain.State.route).appending(path: /MessagesDomain.Route.alert)
+                        .extract(from:)),
+                dismiss: .setNavigation(tag: .none)
+            )
+            .sheet(isPresented: Binding<Bool>(
+                get: { viewStore.route?.tag == .pickupCode },
+                set: { show in
+                    if !show { viewStore.send(.setNavigation(tag: .none)) }
+                }
+            )) {
+                IfLetStore(pickupCodeStore, then: PickupCodeView.init(store:))
+            }
         }
         .accentColor(Colors.primary700)
         .navigationViewStyle(StackNavigationViewStyle())
+    }
+
+    var pickupCodeStore: Store<PickupCodeDomain.State?, PickupCodeDomain.Action> {
+        store.scope(
+            state: (\MessagesDomain.State.route).appending(path: /MessagesDomain.Route.pickupCode).extract(from:),
+            action: MessagesDomain.Action.pickupCode(action:)
+        )
     }
 
     struct NoMessagesView: View {
@@ -78,10 +95,12 @@ struct MessagesView: View {
 
 extension MessagesView {
     struct ViewState: Equatable {
-        let messageDomainStates: IdentifiedArrayOf<MessageDomain.State>
+        let communications: IdentifiedArrayOf<ErxTask.Communication>
+        let route: MessagesDomain.Route?
 
         init(state: MessagesDomain.State) {
-            messageDomainStates = state.messageDomainStates
+            communications = state.communications
+            route = state.route
         }
     }
 }
@@ -90,7 +109,7 @@ struct MessagesView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
             MessagesView(store: MessagesDomain.Dummies.store)
-            MessagesView(store: MessagesDomain.Dummies.storeFor(MessagesDomain.State(messageDomainStates: [])))
+            MessagesView(store: MessagesDomain.Dummies.storeFor(MessagesDomain.State(communications: [])))
         }
     }
 }

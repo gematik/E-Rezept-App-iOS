@@ -69,32 +69,30 @@ class PharmacySearchTests: XCTestCase {
         let testSearchText = "Apo"
         let expected: Result<[PharmacyLocation], PharmacyRepositoryError> = .success(TestData.pharmacies)
 
-        store.assert(
-            // when search text changes to valid search term...
-            .send(.searchTextChanged(testSearchText)) { state in
-                // ...expect it to be stored
-                state.searchText = testSearchText
-            },
-            // when user hits Enter on keyboard start search...
-            .send(.performSearch) { state in
-                // ...expect a search request to run
-                state.searchState = .searchRunning
-            },
-            .do { self.testScheduler.advance() },
-            // when search request is done...
-            .receive(.pharmaciesReceived(expected)) { state in
-                // expect it to deliver successful & results...
-                state.searchState = .searchResultOk(
-                    try expected.get().map {
-                        PharmacyLocationViewModel(
-                            pharmacy: $0,
-                            referenceLocation: nil,
-                            referenceDate: TestData.openHoursTestReferenceDate
-                        )
-                    }
-                )
-            }
-        )
+        // when search text changes to valid search term...
+        store.send(.searchTextChanged(testSearchText)) { state in
+            // ...expect it to be stored
+            state.searchText = testSearchText
+        }
+        // when user hits Enter on keyboard start search...
+        store.send(.performSearch) { state in
+            // ...expect a search request to run
+            state.searchState = .searchRunning
+        }
+        testScheduler.advance()
+        // when search request is done...
+        store.receive(.pharmaciesReceived(expected)) { state in
+            // expect it to deliver successful & results...
+            state.searchState = .searchResultOk(
+                try expected.get().map {
+                    PharmacyLocationViewModel(
+                        pharmacy: $0,
+                        referenceLocation: nil,
+                        referenceDate: TestData.openHoursTestReferenceDate
+                    )
+                }
+            )
+        }
     }
 
     func testSearchForPharmaciesEmptyResult() {
@@ -103,24 +101,22 @@ class PharmacySearchTests: XCTestCase {
         let testSearchText = "Apodfdfd"
         let expected: Result<[PharmacyLocation], PharmacyRepositoryError> = .success([])
 
-        store.assert(
-            // when search text changes to valid search term...
-            .send(.searchTextChanged(testSearchText)) { state in
-                // ...expect it to be stored
-                state.searchText = testSearchText
-            },
-            // when user hits Enter on keyboard start search...
-            .send(.performSearch) { state in
-                // ...expect a search request to run
-                state.searchState = .searchRunning
-            },
-            .do { self.testScheduler.advance() },
-            // when search request is done...
-            .receive(.pharmaciesReceived(expected)) { state in
-                // expect it to be empty...
-                state.searchState = .searchResultEmpty
-            }
-        )
+        // when search text changes to valid search term...
+        store.send(.searchTextChanged(testSearchText)) { state in
+            // ...expect it to be stored
+            state.searchText = testSearchText
+        }
+        // when user hits Enter on keyboard start search...
+        store.send(.performSearch) { state in
+            // ...expect a search request to run
+            state.searchState = .searchRunning
+        }
+        testScheduler.advance()
+        // when search request is done...
+        store.receive(.pharmaciesReceived(expected)) { state in
+            // expect it to be empty...
+            state.searchState = .searchResultEmpty
+        }
     }
 
     func testSearchForPharmaciesWithLocation() {
@@ -128,27 +124,25 @@ class PharmacySearchTests: XCTestCase {
         store = testStore(for: TestData.stateWithLocation)
         let expected: Result<[PharmacyLocation], PharmacyRepositoryError> = .success(TestData.pharmaciesWithLocations)
 
-        store.assert(
-            // when user hits Location button start search...
-            .send(.performSearch) { state in
-                // ...expect a search request to run
-                state.searchState = .searchRunning
-            },
-            .do { self.testScheduler.advance() },
-            // when search request is done...
-            .receive(.pharmaciesReceived(expected)) { state in
-                // expect it to deliver successful & results...
-                state.searchState = .searchResultOk(
-                    try expected.get().map {
-                        PharmacyLocationViewModel(
-                            pharmacy: $0,
-                            referenceLocation: state.currentLocation,
-                            referenceDate: TestData.openHoursTestReferenceDate
-                        )
-                    }
-                )
-            }
-        )
+        // when user hits Location button start search...
+        store.send(.performSearch) { state in
+            // ...expect a search request to run
+            state.searchState = .searchRunning
+        }
+        testScheduler.advance()
+        // when search request is done...
+        store.receive(.pharmaciesReceived(expected)) { state in
+            // expect it to deliver successful & results...
+            state.searchState = .searchResultOk(
+                try expected.get().map {
+                    PharmacyLocationViewModel(
+                        pharmacy: $0,
+                        referenceLocation: state.currentLocation,
+                        referenceDate: TestData.openHoursTestReferenceDate
+                    )
+                }
+            )
+        }
     }
 
     func testRequestLocationOnAppearWhenLocationAuthorizationAlreadyGranted() {

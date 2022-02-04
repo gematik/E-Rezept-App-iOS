@@ -113,7 +113,9 @@ struct GroupedPrescriptionListView: View {
             }.accessibility(hidden: true)
 
             // RedeemView sheet presentation
-            EmptyView()
+            Rectangle()
+                .frame(width: 10, height: 10, alignment: .center)
+
                 .fullScreenCover(isPresented: viewStore.binding(
                     get: { $0.isRedeemViewPresented },
                     send: GroupedPrescriptionListDomain.Action.dismissRedeemView
@@ -126,9 +128,11 @@ struct GroupedPrescriptionListView: View {
                         then: RedeemView.init(store:)
                     )
                 }
-
+                .accessibility(hidden: true)
+                .hidden()
             // CardWallView sheet presentation
-            EmptyView()
+            Rectangle()
+                .frame(width: 10, height: 10, alignment: .center)
                 .fullScreenCover(isPresented: viewStore.binding(
                     get: { $0.isCardWallPresented },
                     send: GroupedPrescriptionListDomain.Action.dismissCardWall
@@ -141,6 +145,8 @@ struct GroupedPrescriptionListView: View {
                         then: CardWallView.init(store:)
                     )
                 }
+                .accessibility(hidden: true)
+                .hidden()
         }
     }
 }
@@ -180,23 +186,6 @@ extension GroupedPrescriptionListView {
                         action: GroupedPrescriptionListDomain.Action.hint(action:)
                     ))
                         .hidden(viewStore.isHintViewHidden)
-
-                    if viewStore.groupedPrescriptionsOpen
-                        .isEmpty { HintView<GroupedPrescriptionListDomain.Action>(
-                        hint: Hint(id: A18n.mainScreen.erxHntShowCardWall,
-                                   title: NSLocalizedString("hint_txt_card_wall_title", comment: ""),
-                                   message: NSLocalizedString("hint_txt_card_wall", comment: ""),
-                                   actionText: L10n.hintBtnCardWall,
-                                   action: GroupedPrescriptionListDomain.Action.refresh,
-                                   imageName: Asset.Illustrations.egkBlau.name,
-                                   closeAction: nil,
-                                   style: .neutral,
-                                   buttonStyle: .tertiary,
-                                   imageStyle: .topAligned),
-                        textAction: { viewStore.send(.refresh) },
-                        closeAction: nil
-                    )
-                    }
 
                     CurrentSectionView(isLoading: viewStore.isLoading) {
                         viewStore.send(.refresh)

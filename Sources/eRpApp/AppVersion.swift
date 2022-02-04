@@ -30,10 +30,7 @@ struct AppVersion: Equatable {
     )
 
     var description: String {
-        String(
-            format: NSLocalizedString("stg_txt_version_%@_and_build_%@", comment: ""),
-            arguments: [productVersion, "\(buildNumber) (\(buildHash))"]
-        )
+        L10n.stgTxtVersionAndBuild(productVersion, "\(buildNumber) (\(buildHash))").text
     }
 }
 

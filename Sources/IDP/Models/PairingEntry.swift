@@ -42,3 +42,11 @@ public struct PairingEntry: Equatable, Codable {
         case pairingEntryVersion = "pairing_entry_version"
     }
 }
+
+public struct PairingEntries: Equatable, Codable {
+    let pairingEntries: [PairingEntry]
+
+    enum CodingKeys: String, CodingKey {
+        case pairingEntries = "pairing_entries"
+    }
+}

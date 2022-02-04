@@ -164,7 +164,7 @@ final class CardWallReadCardDomainTests: XCTestCase {
             state.output = .loggedIn(idpToken)
         }
         uiScheduler.advance()
-        sut.receive(.nothing)
+        sut.receive(.close)
     }
 
     func testWhenOnAppearIDPChallengeFails_ViewIsInErrorState() {
@@ -183,9 +183,13 @@ final class CardWallReadCardDomainTests: XCTestCase {
         passthrough.send(completion: .failure(idpError))
         networkScheduler.advance()
         uiScheduler.advance()
+
+        let error = CardWallReadCardDomain.State.Error.idpError(idpError)
+
         sut.receive(CardWallReadCardDomain.Action
-            .stateReceived(.retrievingChallenge(.error(.idpError(idpError))))) { state in
-                state.output = .retrievingChallenge(.error(.idpError(self.idpError)))
+            .stateReceived(.retrievingChallenge(.error(error)))) { state in
+                state.output = .retrievingChallenge(.error(error))
+                state.alertState = CardWallReadCardDomain.AlertStates.alertFor(error)
         }
     }
 
@@ -240,7 +244,7 @@ final class CardWallReadCardDomainTests: XCTestCase {
         sut.receive(.stateReceived(.loggedIn(IDPSessionMock.fixtureIDPToken))) { state in
             state.output = .loggedIn(IDPSessionMock.fixtureIDPToken)
         }
-        sut.receive(.nothing)
+        sut.receive(.close)
     }
 
     func testWhenIDPChallengeAvailable_SigningStates_PinError() {
@@ -263,6 +267,7 @@ final class CardWallReadCardDomainTests: XCTestCase {
         sut.receive(CardWallReadCardDomain.Action
             .stateReceived(.signingChallenge(.error(.signChallengeError(pinError))))) { state in
                 state.output = .signingChallenge(.error(.signChallengeError(pinError)))
+                state.alertState = CardWallReadCardDomain.AlertStates.wrongPIN(.signChallengeError(pinError))
         }
     }
 
@@ -289,6 +294,7 @@ final class CardWallReadCardDomainTests: XCTestCase {
                 .stateReceived(.signingChallenge(.error(.signChallengeError(canError))))
         ) { state in
             state.output = .signingChallenge(.error(.signChallengeError(canError)))
+            state.alertState = CardWallReadCardDomain.AlertStates.wrongCAN(.signChallengeError(canError))
         }
     }
 
@@ -359,6 +365,7 @@ final class CardWallReadCardDomainTests: XCTestCase {
         }
         sut.receive(.stateReceived(.verifying(.error(.profileValidation(expectedInternalError))))) { state in
             state.output = .verifying(.error(.profileValidation(expectedInternalError)))
+            state.alertState = CardWallReadCardDomain.AlertStates.alertFor(.profileValidation(expectedInternalError))
         }
     }
 }

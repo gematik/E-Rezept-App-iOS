@@ -105,6 +105,12 @@ internal enum A11y {
     internal enum mainScreen {
       static let erxBtnRefresh = "erx_btn_refresh"
       static let erxDetailedBlock = "erx_detailed_block"
+      static let erxDetailedBlockDoctor = "erx_detailed_block_doctor"
+      static let erxDetailedBlockDate = "erx_detailed_block_date"
+      static let erxDetailedBlockPrescriptions = "erx_detailed_block_prescriptions"
+      static let erxDetailedBlockPrescriptionName = "erx_detailed_block_prescription_name"
+      static let erxDetailedBlockPrescriptionValidity = "erx_detailed_block_prescription_validity"
+      static let erxDetailedBlockRedeemAll = "erx_detailed_block_redeem_all"
       static let erxBtnProfile = "erx_btn_profile"
       static let erxBtnScnPrescription = "erx_btn_scn_prescription"
       static let erxHntDemoModeTour = "erx_hnt_demo_mode_tour"
@@ -256,6 +262,16 @@ internal enum A11y {
       static let secBtnSystemRootDetectionDone = "sec_btn_system_root_detection_done"
   }
     internal enum settings { 
+    internal enum auditEvents {
+      static let stgCtnAuditEventsEvents = "stg_ctn_audit_events_events"
+      static let stgCtnAuditEventsEventTitle = "stg_ctn_audit_events_event_title"
+      static let stgCtnAuditEventsEventDescription = "stg_ctn_audit_events_event_description"
+      static let stgCtnAuditEventsEventDate = "stg_ctn_audit_events_event_date"
+      static let stgTxtAuditEventsLastUpdated = "stg_txt_audit_events_last_updated"
+      static let stgTxtAuditEventsActivityIndicator = "stg_txt_audit_events_activity_indicator"
+      static let stgTxtAuditEventsNoProtocolTitle = "stg_txt_audit_events_no_protocol_title"
+      static let stgTxtAuditEventsNoProtocolDescription = "stg_txt_audit_events_no_protocol_description"
+  }
     internal enum createPassword {
       static let cpwBtnSave = "cpw_btn_save"
       static let cpwBtnUpdate = "cpw_btn_update"
@@ -283,6 +299,7 @@ internal enum A11y {
       static let stgBtnEditProfileLogout = "stg_btn_edit_profile_logout"
       static let stgTxtEditProfileSecuritySectionTitle = "stg_txt_edit_profile_security_section_title"
       static let stgBtnEditProfileSecuritySectionShowTokens = "stg_btn_edit_profile_security_section_show_tokens"
+      static let stgBtnEditProfileSecuritySectionShowAuditEvents = "stg_btn_edit_profile_security_section_show_audit_events"
       static let stgTxtEditProfileSecurityShowTokensHint = "stg_txt_edit_profile_security_show_tokens_hint"
   }
     internal enum foss {
@@ -302,6 +319,7 @@ internal enum A11y {
   }
     internal enum profiles {
       static let stgTxtHeaderProfiles = "stg_txt_header_profiles"
+      static let stgBtnProfile = "stg_btn_profile"
       static let stgBtnNewProfile = "stg_btn_new_profile"
   }
     internal enum security {

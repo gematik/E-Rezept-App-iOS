@@ -37,9 +37,9 @@ struct LegalNoticeView: View {
                 )
                 LegalNoticeContactView(
                     title: L10n.stgLnoTxtTitleContact,
-                    webLink: URL(string: "\(NSLocalizedString("stg_lno_link_contact", comment: ""))"),
-                    emailLink: URL(string: "mailto:\(NSLocalizedString("stg_lno_mail_contact", comment: ""))"),
-                    phoneLink: URL(string: "tel:\(NSLocalizedString("stg_lno_phone_contact", comment: ""))")
+                    webLink: URL(string: "\(L10n.stgLnoLinkContact.text)"),
+                    emailLink: URL(string: "mailto:\(L10n.stgLnoMailContact.text)"),
+                    phoneLink: URL(string: "tel:\(L10n.stgLnoPhoneContact.text)")
                 )
                 LegalNoticeSectionView(
                     title: L10n.stgLnoTxtTitleNote,

@@ -133,8 +133,7 @@ enum AppSecurityManagerError: Error, Equatable {
             guard let error = error else { return nil }
 
             if error.code == LAError.Code.biometryNotEnrolled.rawValue {
-                return NSLocalizedString("auth_txt_biometrics_failed_not_enrolled",
-                                         comment: "")
+                return L10n.authTxtBiometricsFailedNotEnrolled.text
             }
 
             return error.localizedDescription

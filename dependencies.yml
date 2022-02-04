@@ -22,7 +22,7 @@
 - :name: ComposableArchitecture
   :url: https://github.com/pointfreeco/swift-composable-architecture
   :license_uri: https://raw.githubusercontent.com/pointfreeco/swift-composable-architecture/master/LICENSE
-  :version: 0.20.0
+  :version: 0.33.1
 - :name: CombineSchedulers
   :url: https://github.com/pointfreeco/combine-schedulers
   :license_uri: https://raw.githubusercontent.com/pointfreeco/combine-schedulers/master/LICENSE

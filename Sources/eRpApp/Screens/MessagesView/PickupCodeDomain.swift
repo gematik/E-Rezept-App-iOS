@@ -50,7 +50,7 @@ enum PickupCodeDomain: Equatable {
             // handled by parent domain
             return .none
         case let .loadMatrixCodeImage(screenSize):
-            guard let dmcCode = state.pickupCodeDMC, state.dmcImage == nil else {
+            guard let dmcCode = state.pickupCodeDMC, !dmcCode.isEmpty, state.dmcImage == nil else {
                 return .none
             }
             let size = environment.calcMatrixCodeSize(screenSize: screenSize)

@@ -120,7 +120,7 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
             state.passwordB = ""
             state.passwordStrength = .veryWeak
             let message = state.passwordErrorMessage
-            expect(message) == NSLocalizedString("onb_auth_txt_password_strength_insufficient", comment: "")
+            expect(message) == L10n.onbAuthTxtPasswordStrengthInsufficient.text
         }
         store.send(.setPasswordA("Secure Pass word")) { state in
             state.selectedSecurityOption = .password
@@ -170,7 +170,7 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
             state.passwordB = "ABC"
             state.passwordStrength = .strong
             let message = state.passwordErrorMessage
-            expect(message) == NSLocalizedString("onb_auth_txt_passwords_dont_match", comment: "")
+            expect(message) == L10n.onbAuthTxtPasswordsDontMatch.text
         }
         store.send(.setPasswordB("Secure Pass word")) { state in
             state.selectedSecurityOption = .password
@@ -478,7 +478,7 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
         store.send(.saveSelection) { state in
             state.showPasswordErrorMessage = true
             let message = state.passwordErrorMessage
-            expect(message) == NSLocalizedString("onb_auth_txt_password_strength_insufficient", comment: "")
+            expect(message) == L10n.onbAuthTxtPasswordStrengthInsufficient.text
         }
 
         expect(self.mockAppSecurityManager.savePasswordCallsCount).to(equal(0))

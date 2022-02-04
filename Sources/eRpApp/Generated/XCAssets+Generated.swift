@@ -118,6 +118,7 @@ internal enum Asset {
   internal enum TabIcon {
     internal static let appLogoTabItem = ImageAsset(name: "AppLogoTabItem")
     internal static let bubbleLeft = ImageAsset(name: "bubble.left")
+    internal static let gearshape = ImageAsset(name: "gearshape")
     internal static let mapPinAndEllipse = ImageAsset(name: "mapPinAndEllipse")
   }
   internal static let findCan = ImageAsset(name: "find_can")
@@ -220,16 +221,4 @@ internal extension ImageAsset.Image {
     #endif
   }
 }
-
-// swiftlint:disable convenience_type
-private final class BundleToken {
-  static let bundle: Bundle = {
-    #if SWIFT_PACKAGE
-    return Bundle.module
-    #else
-    return Bundle(for: BundleToken.self)
-    #endif
-  }()
-}
-// swiftlint:enable convenience_type
 

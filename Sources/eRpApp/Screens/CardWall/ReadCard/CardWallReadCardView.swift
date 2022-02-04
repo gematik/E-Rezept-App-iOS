@@ -75,68 +75,28 @@ extension CardWallReadCardView {
     private struct InformationBlockView: View {
         let store: CardWallReadCardDomain.Store
 
-        static var videoPlayer: AVPlayer? = {
-            guard let bundle = Bundle.main.path(forResource: "eRezept_eGK", ofType: "mp4") else {
-                return nil
-            }
-            let url = URL(fileURLWithPath: bundle)
-            return AVPlayer(url: url)
-        }()
+        // swiftlint:disable:next force_unwrapping
+        let videoURL: URL = Bundle.main.url(forResource: "eRezept_eGK", withExtension: "mp4")!
 
         var body: some View {
             ScrollView(.vertical, showsIndicators: true) {
-                VStack(alignment: .leading, spacing: 8) {
+                VStack(alignment: .leading, spacing: 16) {
                     Text(L10n.cdwTxtRcHeadline)
-                        .font(Font.title2.bold())
+                        .font(Font.title3.bold())
                         .accessibility(identifier: A11y.cardWall.readCard.cdwTxtRcHeadline)
                     Text(L10n.cdwTxtRcDescription)
-                        .font(.body)
+                        .font(.subheadline)
                         .accessibility(identifier: A11y.cardWall.readCard.cdwTxtRcDescription)
 
-                    VideoPlayer(player: Self.videoPlayer)
+                    LoopingVideoPlayerContainerView(withURL: videoURL)
                         .aspectRatio(16.0 / 9.0, contentMode: .fit)
                         .frame(minWidth: 100, maxWidth: .infinity)
-                        .onAppear {
-                            Self.videoPlayer?.play()
-                        }
                         .cornerRadius(16, corners: .allCorners)
-
-                    Text(L10n.cdwTxtRcStepsTitle)
-                        .font(Font.title3.bold())
-                        .foregroundColor(Colors.systemLabel)
-                        .padding(.top, 32)
-
-                    CardWallReadCardView.StepsBlockView(store: store)
-                        .layoutPriority(1)
+                        .padding(.top, 28)
                 }
                 .foregroundColor(Color(.label))
                 .padding([.horizontal])
                 .padding(.top, 40)
-            }
-        }
-    }
-}
-
-extension CardWallReadCardView {
-    private struct StepsBlockView: View {
-        let store: CardWallReadCardDomain.Store
-
-        var body: some View {
-            WithViewStore(store) { viewStore in
-                VStack(spacing: 16) {
-                    ProgressTile(icon: SFSymbolName.numbers1circle,
-                                 title: L10n.cdwTxtRcStepGetChallenge,
-                                 description: nil,
-                                 state: viewStore.output.challengeProgressTileState)
-                    ProgressTile(icon: SFSymbolName.numbers2circle,
-                                 title: L10n.cdwTxtRcStepSignChallenge,
-                                 description: nil,
-                                 state: viewStore.output.signingProgressTileState)
-                    ProgressTile(icon: SFSymbolName.numbers3circle,
-                                 title: L10n.cdwTxtRcStepVerifyAtIdp,
-                                 description: nil,
-                                 state: viewStore.output.verifyProgressTileState)
-                }
             }
         }
     }
@@ -150,6 +110,5 @@ struct CardWallReadCardView_Previews: PreviewProvider {
             )
         }
         .previewDevice("iPhone 11")
-        .generateVariations()
     }
 }

@@ -34,17 +34,11 @@ enum IDTokenValidatorError: Error, LocalizedError, Equatable {
     var errorDescription: String? {
         switch self {
         case .profileNotFound:
-            return NSLocalizedString("session_error_no_profile", comment: "")
+            return L10n.sessionErrorNoProfile.text
         case let .profileNotMatchingInsuranceId(kvnr):
-            return String(
-                format: NSLocalizedString("session_error_card_profile_mismatch_%@", comment: ""),
-                arguments: [kvnr ?? ""]
-            )
+            return L10n.sessionErrorCardProfileMismatch(kvnr ?? "").text
         case let .profileWithInsuranceIdExists(profileName):
-            return String(
-                format: NSLocalizedString("session_error_card_connected_with_other_profile_%@", comment: ""),
-                arguments: [profileName]
-            )
+            return L10n.sessionErrorCardConnectedWithOtherProfile(profileName).text
         case let .other(error: error):
             return error.localizedDescription
         }

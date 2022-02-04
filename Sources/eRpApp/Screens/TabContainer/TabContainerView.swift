@@ -59,11 +59,35 @@ struct TabContainerView: View {
                                        action: AppDomain.Action.main(action:))
                 )
                 .tabItem {
-                    Image(Asset.TabIcon.appLogoTabItem)
-                        .accessibility(hidden: true)
-                    Text(L10n.tabTxtMain)
+                    Label(L10n.tabTxtMain, image: Asset.TabIcon.appLogoTabItem.name)
                 }
                 .tag(AppDomain.Tab.main)
+
+                if #available(iOS 15.0, *) {
+                    Group {
+                        // Workaround for Xcode 13.2.1 Bug https://developer.apple.com/forums/thread/697070
+                        if #available(iOS 15.0, *) {
+                            MessagesView(
+                                store: store.scope(state: \.messages,
+                                                   action: AppDomain.Action.messages(action:))
+                            )
+                            .tabItem {
+                                Label(L10n.tabTxtMessages, image: Asset.TabIcon.bubbleLeft.name)
+                            }
+                            .badge(viewStore.unreadMessagesCount)
+                            .tag(AppDomain.Tab.messages)
+                        }
+                    }
+                } else {
+                    MessagesView(
+                        store: store.scope(state: \.messages,
+                                           action: AppDomain.Action.messages(action:))
+                    )
+                    .tabItem {
+                        Label(L10n.tabTxtMessages, image: Asset.TabIcon.bubbleLeft.name)
+                    }
+                    .tag(AppDomain.Tab.messages)
+                }
 
                 NavigationView {
                     PharmacySearchView(
@@ -77,22 +101,9 @@ struct TabContainerView: View {
                     .navigationBarTitleDisplayMode(.large)
                 }
                 .tabItem {
-                    Image(Asset.TabIcon.mapPinAndEllipse)
-                        .accessibility(hidden: true)
-                    Text(L10n.tabTxtPharmacySearch)
+                    Label(L10n.tabTxtPharmacySearch, image: Asset.TabIcon.mapPinAndEllipse.name)
                 }
                 .tag(AppDomain.Tab.pharmacySearch)
-
-                MessagesView(
-                    store: store.scope(state: \.messages,
-                                       action: AppDomain.Action.messages(action:))
-                )
-                .tabItem {
-                    Image(Asset.TabIcon.bubbleLeft)
-                        .accessibility(hidden: true)
-                    Text(L10n.tabTxtMessages)
-                }
-                .tag(AppDomain.Tab.messages)
 
                 #if ENABLE_DEBUG_VIEW
                 SettingsView(
@@ -106,9 +117,7 @@ struct TabContainerView: View {
                     )
                 )
                 .tabItem {
-                    Image(systemName: SFSymbolName.settings)
-                        .accessibility(hidden: true)
-                    Text(L10n.tabTxtSettings)
+                    Label(L10n.tabTxtSettings, image: Asset.TabIcon.gearshape.name)
                 }
                 .tag(AppDomain.Tab.settings)
                 #else
@@ -119,9 +128,7 @@ struct TabContainerView: View {
                     )
                 )
                 .tabItem {
-                    Image(systemName: SFSymbolName.settings)
-                        .accessibility(hidden: true)
-                    Text(L10n.tabTxtSettings)
+                    Label(L10n.tabTxtSettings, image: Asset.TabIcon.gearshape.name)
                 }
                 .tag(AppDomain.Tab.settings)
                 #endif
@@ -133,13 +140,15 @@ struct TabContainerView: View {
             .accentColor(Colors.primary700)
             .zIndex(0)
 
-            if viewStore.unreadMessagesCount > 0 {
+            if #available(iOS 15.0, *) {} else if viewStore.unreadMessagesCount > 0 {
                 MessagesBadgeView(badgeCount: viewStore.unreadMessagesCount)
             }
         }
     }
 
     struct MessagesBadgeView: View {
+        private let tabNumber: CGFloat = 2
+        private let tabCount: CGFloat = 4
         let badgeCount: Int
         var body: some View {
             GeometryReader { geometry in
@@ -150,7 +159,7 @@ struct TabContainerView: View {
                     .padding(2)
                     .background(Colors.red600)
                     .cornerRadius(16)
-                    .offset(x: 3 * geometry.size.width / 4, y: geometry.size.height - 33)
+                    .offset(x: (tabNumber * geometry.size.width / tabCount) - 40, y: geometry.size.height - 33)
             }.ignoresSafeArea(.keyboard) // prevent badge from floating when keyboard appears
         }
     }

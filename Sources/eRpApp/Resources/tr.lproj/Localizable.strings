@@ -69,6 +69,8 @@
 "cdw_btn_pin_cancel_label" = "İptal et";
 "cdw_btn_pin_done" = "İleri";
 "cdw_btn_pin_done_label" = "İleri";
+"cdw_btn_rc_alert_cancel" = "Abbrechen";
+"cdw_btn_rc_alert_close" = "Schließen";
 "cdw_btn_rc_alert_save_profile" = "Schließen";
 "cdw_btn_rc_cancel_label" = "İletişim kutusunu kapat";
 "cdw_btn_rc_close" = "Kapat";
@@ -256,8 +258,6 @@
 "hint_btn_open_scn" = "Tarayıcıyı aç";
 "hint_btn_try_demo_mode" = "Demo modunu başlat";
 "hint_btn_unread_messages" = "Yeni mesajları şimdi görüntüleyin";
-"hint_txt_card_wall" = "Daha birçok fonksiyonun kilidini açın.";
-"hint_txt_card_wall_title" = "Sağlık kartıyla oturum aç";
 "hint_txt_demo_mode" = "Demo modumuz size uygulamanın tüm fonksiyonlarını gösterir - hem de sağlık kartı olmadan.";
 "hint_txt_demo_mode_title" = "Bir keşif turuna ne dersiniz?";
 "hint_txt_open_scn" = "Eklemek için reçete kodunu tarayın.";
@@ -834,6 +834,12 @@
 "stg_txt_alert_message_demo_mode_off" = "Demo modu devre dışı";
 "stg_txt_alert_message_demo_mode_on" = "Demo modu etkin. Bir sağlık kartına veya internet bağlantısına ihtiyacınız yoktur. Görüntülenen test reçeteleri eczanede kullanılamaz.";
 "stg_txt_alert_title_demo_mode" = "Bir keşif turuna ne dersiniz?";
+"stg_txt_audit_events_missing_date" = "Kein Zeitstempel";
+"stg_txt_audit_events_missing_description" = "Keine Angabe";
+"stg_txt_audit_events_missing_title" = "Ohne Titel";
+"stg_txt_audit_events_no_protocol_description" = "Sie erhalten Zugriffsprotokolle, wenn Sie am Rezeptdienst angemeldet sind.";
+"stg_txt_audit_events_no_protocol_title" = "Keine Zugriffsprotokolle";
+"stg_txt_audit_events_title" = "Zugriffsprotokolle";
 "stg_txt_demo_mode" = "Demo modu";
 "stg_txt_edit_profile_background_section_title" = "Hintergrundfarbe";
 "stg_txt_edit_profile_delete_confirmation_message" = "Hiermit werden alle Daten auf diesem Gerät gelöscht. Ihre Rezepte im Gesundheitsnetzwerk bleiben erhalten.";
@@ -841,8 +847,12 @@
 "stg_txt_edit_profile_empty_name_error_message" = "Das Namensfeld darf nicht leer sein";
 "stg_txt_edit_profile_error_message_title" = "Fehler";
 "stg_txt_edit_profile_logout_info" = "Hiermit trennen Sie die Verbindung zum Gesundheitsnetzwerk. Sie erhalten keine neuen Rezepte oder Nachrichten.";
+"stg_txt_edit_profile_name_connection_%@" = "Verknüpft mit: %@";
+"stg_txt_edit_profile_name_connection_placeholder" = "Dieses Profil wurde noch nicht mit einer Versichertennummer verbunden. Hierfür müssen Sie sich am Rezeptserver anmelden.";
 "stg_txt_edit_profile_name_placeholder" = "Name eingeben";
 "stg_txt_edit_profile_security_section_title" = "Sicherheit";
+"stg_txt_edit_profile_security_show_audit_events_description" = "Wer hat wann auf Ihre Rezepte zugegriffen?";
+"stg_txt_edit_profile_security_show_audit_events_label" = "Zugriffsprotokolle anzeigen";
 "stg_txt_edit_profile_security_show_tokens_description" = "Zugangsschlüssel zum Rezeptdienst";
 "stg_txt_edit_profile_security_show_tokens_hint" = "Sie erhalten einen Token, wenn Sie am Rezeptdienst angemeldet sind.";
 "stg_txt_edit_profile_security_show_tokens_label" = "Tokens anzeigen";
@@ -866,4 +876,5 @@
 "stg_txt_version_%@_and_build_%@" = "Sürüm %@ • Yapı %@";
 "tab_txt_main" = "Reçeteler";
 "tab_txt_messages" = "Bildirimler";
+"tab_txt_pharmacy_search" = "Apotheken";
 "tab_txt_settings" = "Einstellungen";

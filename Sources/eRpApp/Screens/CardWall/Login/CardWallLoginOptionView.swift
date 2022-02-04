@@ -33,8 +33,6 @@ struct CardWallLoginOptionView<Content: View>: View {
     var body: some View {
         WithViewStore(store) { viewStore in
             VStack(alignment: .leading) {
-                PrivacyWarningViewContainer(store: store)
-
                 ScrollView(.vertical, showsIndicators: true) {
                     VStack(alignment: .leading) {
                         Text(L10n.cdwTxtBiometrySubtitle)
@@ -72,6 +70,8 @@ struct CardWallLoginOptionView<Content: View>: View {
                     )
                     .padding(.horizontal)
                     .border(Colors.systemGray5, cornerRadius: 16)
+
+                    PrivacyWarningViewContainer(store: store)
                 }
                 .padding()
 
@@ -122,7 +122,8 @@ struct CardWallLoginOptionView<Content: View>: View {
         var body: some View {
             WithViewStore(store) { viewStore in
                 VStack(alignment: .leading) {
-                    EmptyView()
+                    Rectangle()
+                        .frame(width: 0, height: 0, alignment: .center)
                         .sheet(isPresented: viewStore.binding(
                             get: { $0.isSecurityWarningPresented },
                             send: CardWallLoginOptionDomain.Action.dismissSecurityWarning
@@ -131,6 +132,8 @@ struct CardWallLoginOptionView<Content: View>: View {
                                 viewStore.send(.acceptSecurityWarning)
                             }
                         }
+                        .hidden()
+                        .accessibility(hidden: true)
                 }
             }
         }

@@ -51,8 +51,7 @@ extension SettingsView {
                         .padding(.bottom, 8)
 
                         if viewStore.state.selectedSecurityOption == nil {
-                            WarningView(text: NSLocalizedString("stg_txt_security_warning",
-                                                                comment: "stg_hnt_security_warning"))
+                            WarningView(text: L10n.stgTxtSecurityWarning.text)
                                 .accessibility(identifier: "")
                         }
 

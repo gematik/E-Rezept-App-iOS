@@ -93,16 +93,6 @@ final class ProfilesDomainTests: XCTestCase {
         sut.send(.unregisterListener)
     }
 
-    func testSelectProfile() {
-        let sut = testStore(for: .init(profiles: [Fixtures.profileA, Fixtures.profileB],
-                                       selectedProfileId: nil,
-                                       route: nil))
-
-        sut.send(.selectProfile(Fixtures.profileA)) { state in
-            state.selectedProfileId = Fixtures.profileA.id
-        }
-    }
-
     func testEditProfile() {
         let sut = testStore(for: .init(profiles: [Fixtures.profileA, Fixtures.profileB],
                                        selectedProfileId: nil,

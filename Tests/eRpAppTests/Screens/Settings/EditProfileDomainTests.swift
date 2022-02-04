@@ -306,6 +306,9 @@ extension EditProfileDomainTests {
         static let profileA = EditProfileDomain.State(
             name: "Anna Vetter",
             acronym: "AV",
+            fullName: nil,
+            insurance: nil,
+            insuranceId: nil,
             emoji: nil,
             color: .red,
             profileId: uuid,
@@ -315,6 +318,9 @@ extension EditProfileDomainTests {
         static let profileWithAlert = EditProfileDomain.State(
             name: "Anna Vetter",
             acronym: "AV",
+            fullName: nil,
+            insurance: nil,
+            insuranceId: nil,
             emoji: nil,
             color: .red,
             profileId: uuid,
@@ -324,6 +330,9 @@ extension EditProfileDomainTests {
         static let profileWithDeleteConfirmation = EditProfileDomain.State(
             name: "Anna Vetter",
             acronym: "AV",
+            fullName: nil,
+            insurance: nil,
+            insuranceId: nil,
             emoji: nil,
             color: .red,
             profileId: uuid,

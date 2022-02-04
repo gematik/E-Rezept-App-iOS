@@ -21,89 +21,65 @@ import eRpKit
 import SwiftUI
 
 struct MessageRowView: View {
-    let store: MessageDomain.Store
-    @ObservedObject var viewStore: ViewStore<ViewState, MessageDomain.Action>
+    let viewState: ViewState
 
-    init(store: MessageDomain.Store) {
-        self.store = store
-        viewStore = ViewStore(store.scope(state: ViewState.init))
+    init(communication: ErxTask.Communication) {
+        viewState = ViewState(communication: communication)
     }
 
     var body: some View {
-        Group {
-            Button(action: { viewStore.send(.didSelect) }, label: {
-                VStack(alignment: .leading, spacing: 4) {
-                    HStack {
-                        if !viewStore.isRead {
-                            Image(systemName: SFSymbolName.circleFill)
-                                .font(Font.subheadline.weight(.semibold))
-                                .foregroundColor(Colors.primary500)
-                        }
-                        Text(viewStore.title)
-                            .font(Font.body.weight(.semibold))
-                            .foregroundColor(Colors.systemLabel)
-
-                    }.padding(.horizontal)
-
-                    Text(viewStore.infoText)
-                        .padding(.horizontal)
-                        .foregroundColor(Colors.systemLabel)
-
-                    if let buttonText = viewStore.buttonText,
-                       let imageName = viewStore.imageName {
-                        HStack {
-                            Text(buttonText)
-                                .font(Font.subheadline.weight(.semibold))
-                            Spacer()
-                            Image(systemName: imageName)
-                        }
-                        .padding(.top, 4)
-                        .padding(.horizontal)
-                        .foregroundColor(Colors.primary600)
-                    }
-
-                    Divider()
-                        .padding(.top, 8)
-                        .padding(.leading)
+        VStack(alignment: .leading, spacing: 4) {
+            HStack {
+                if !viewState.isRead {
+                    Image(systemName: SFSymbolName.circleFill)
+                        .font(Font.subheadline.weight(.semibold))
+                        .foregroundColor(Colors.primary500)
                 }
-            })
+                Text(viewState.title)
+                    .font(Font.body.weight(.semibold))
+                    .multilineTextAlignment(.leading)
+                    .foregroundColor(Colors.systemLabel)
 
-            EmptyView()
-                .sheet(isPresented: viewStore.binding(
-                    get: { $0.isPickupCodeViewPresented },
-                    send: MessageDomain.Action.dismissPickupCodeView
-                )) {
-                    IfLetStore(
-                        store.scope(
-                            state: { $0.pickupCodeViewState },
-                            action: MessageDomain.Action.pickupCode(action:)
-                        ),
-                        then: PickupCodeView.init(store:)
-                    )
+            }.padding(.horizontal)
+
+            Text(viewState.infoText)
+                .multilineTextAlignment(.leading)
+                .padding(.horizontal)
+                .foregroundColor(Colors.systemLabel)
+
+            if let buttonText = viewState.buttonText,
+               let imageName = viewState.imageName {
+                HStack {
+                    Text(buttonText)
+                        .font(Font.subheadline.weight(.semibold))
+                    Spacer()
+                    Image(systemName: imageName)
                 }
+                .padding(.top, 4)
+                .padding(.horizontal)
+                .foregroundColor(Colors.primary600)
+            }
+
+            Divider()
+                .padding(.top, 8)
+                .padding(.leading)
         }
-        .alert(
-            self.store.scope(state: \.alertState),
-            dismiss: .alertDismissButtonTapped
-        )
         .fixedSize(horizontal: false, vertical: true)
     }
 
     struct ViewState: Equatable {
-        let isPickupCodeViewPresented: Bool
         let isRead: Bool
         let title: LocalizedStringKey
         let infoText: LocalizedStringKey
         let buttonText: LocalizedStringKey?
         let imageName: String?
 
-        init(state: MessageDomain.State) {
-            isRead = state.communication.isRead
-            isPickupCodeViewPresented = state.pickupCodeViewState != nil
-            guard let payload = state.communication.payload else {
-                title = L10n.msgsTxtFormatErrorTitle
-                infoText = L10n.msgsTxtFormatErrorMessage
-                buttonText = L10n.msgsBtnFormatError
+        init(communication: ErxTask.Communication) {
+            isRead = communication.isRead
+            guard let payload = communication.payload else {
+                title = L10n.msgsTxtFormatErrorTitle.key
+                infoText = L10n.msgsTxtFormatErrorMessage.key
+                buttonText = L10n.msgsBtnFormatError.key
                 imageName = SFSymbolName.arrowRight
                 return
             }
@@ -111,29 +87,29 @@ struct MessageRowView: View {
             if let text = payload.infoText, !text.isEmpty {
                 infoText = LocalizedStringKey(text)
             } else {
-                infoText = L10n.msgsTxtEmptyMessage
+                infoText = L10n.msgsTxtEmptyMessage.key
             }
 
             switch payload.supplyOptionsType {
             case .onPremise:
-                title = L10n.msgsTxtOnPremiseTitle
+                title = L10n.msgsTxtOnPremiseTitle.key
                 if payload.pickUpCodeHR != nil || payload.pickUpCodeDMC != nil {
-                    buttonText = L10n.msgsBtnOnPremise
+                    buttonText = L10n.msgsBtnOnPremise.key
                     imageName = SFSymbolName.qrCode
                 } else {
                     buttonText = nil
                     imageName = nil
                 }
             case .delivery:
-                title = L10n.msgsTxtDeliveryTitle
+                title = L10n.msgsTxtDeliveryTitle.key
                 buttonText = nil
                 imageName = nil
             case .shipment:
-                title = L10n.msgsTxtShipmentTitle
+                title = L10n.msgsTxtShipmentTitle.key
                 if let urlString = payload.url,
                    !urlString.isEmpty,
                    URL(string: urlString) != nil {
-                    buttonText = L10n.msgsBtnShipment
+                    buttonText = L10n.msgsBtnShipment.key
                     imageName = SFSymbolName.arrowUpForward
                 } else {
                     buttonText = nil

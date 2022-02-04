@@ -45,7 +45,6 @@ enum CardWallReadCardDomain {
         case signChallenge(IDPChallengeSession)
         case wrongCAN
         case wrongPIN
-        case nothing
 
         case stateReceived(State.Output)
         case saveError(LocalStoreError)
@@ -69,14 +68,35 @@ enum CardWallReadCardDomain {
                 .eraseToEffect()
                 .cancellable(id: Token.idpChallenge, cancelInFlight: true)
         case let .stateReceived(.loggedIn(idpToken)):
-            let insuranceId = try? idpToken.idTokenPayload().idNummer
+            let payload = try? idpToken.idTokenPayload()
             state.output = .loggedIn(idpToken)
-            return environment.saveInsuranceIdInProfile(insuranceId: insuranceId)
+            return environment.saveProfileWith(
+                insuranceId: payload?.idNummer,
+                insurance: payload?.organizationName,
+                givenName: payload?.givenName,
+                familyName: payload?.familyName
+            )
         case .saveError:
             state.alertState = saveProfileAlertState
             return .none
         case let .stateReceived(output):
             state.output = output
+
+            switch output {
+            case let .retrievingChallenge(.error(error)),
+                 let .signingChallenge(.error(error)),
+                 let .verifying(.error(error)):
+                switch error {
+                case .signChallengeError(.wrongPin):
+                    state.alertState = AlertStates.wrongPIN(error)
+                case .signChallengeError(.wrongCAN):
+                    state.alertState = AlertStates.wrongCAN(error)
+                default:
+                    state.alertState = AlertStates.alertFor(error)
+                }
+            default:
+                break
+            }
             return .none
         case .close:
             // This should be handled by the parent reducer
@@ -117,8 +137,6 @@ enum CardWallReadCardDomain {
         case .alertDismissButtonTapped:
             state.alertState = nil
             return .none
-        case .nothing:
-            return .none
         }
     }
 
@@ -129,6 +147,39 @@ enum CardWallReadCardDomain {
             dismissButton: .cancel(TextState(L10n.cdwBtnRcAlertSaveProfile))
         )
     }()
+}
+
+extension CardWallReadCardDomain {
+    enum AlertStates {
+        typealias Action = CardWallReadCardDomain.Action
+        typealias Error = CardWallReadCardDomain.State.Error
+
+        static func wrongCAN(_ error: Error) -> AlertState<Action> {
+            AlertState(
+                title: TextState(error.localizedDescription),
+                message: error.recoverySuggestion.map(TextState.init),
+                primaryButton: .default(TextState(L10n.cdwBtnRcCorrectCan), action: .send(.wrongCAN)),
+                secondaryButton: .cancel(TextState(L10n.cdwBtnRcAlertCancel), action: .send(.alertDismissButtonTapped))
+            )
+        }
+
+        static func wrongPIN(_ error: Error) -> AlertState<Action> {
+            AlertState(
+                title: TextState(error.localizedDescription),
+                message: error.recoverySuggestion.map(TextState.init),
+                primaryButton: .default(TextState(L10n.cdwBtnRcCorrectPin), action: .send(.wrongPIN)),
+                secondaryButton: .cancel(TextState(L10n.cdwBtnRcAlertCancel), action: .send(.alertDismissButtonTapped))
+            )
+        }
+
+        static func alertFor(_ error: Error) -> AlertState<Action> {
+            AlertState(
+                title: TextState(error.localizedDescription),
+                message: error.recoverySuggestion.map(TextState.init),
+                dismissButton: .default(TextState(L10n.cdwBtnRcAlertClose), action: .send(.alertDismissButtonTapped))
+            )
+        }
+    }
 }
 
 extension CardWallReadCardDomain {
@@ -150,19 +201,25 @@ extension CardWallReadCardDomain {
 }
 
 extension CardWallReadCardDomain.Environment {
-    func saveInsuranceIdInProfile(
-        insuranceId: String?
+    func saveProfileWith(
+        insuranceId: String?,
+        insurance: String?,
+        givenName: String?,
+        familyName: String?
     ) -> Effect<CardWallReadCardDomain.Action, Never> {
         currentProfile
             .first()
             .flatMap { profile -> AnyPublisher<Bool, LocalStoreError> in
                 profileDataStore.update(profileId: profile.id) { profile in
                     profile.insuranceId = insuranceId
+                    profile.insurance = insurance
+                    profile.givenName = givenName
+                    profile.familyName = familyName
                 }
                 .eraseToAnyPublisher()
             }
             .map { _ in
-                CardWallReadCardDomain.Action.nothing
+                CardWallReadCardDomain.Action.close
             }
             .catch { error in
                 Just(CardWallReadCardDomain.Action.saveError(error))

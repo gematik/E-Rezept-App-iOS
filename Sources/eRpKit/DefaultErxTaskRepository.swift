@@ -124,7 +124,7 @@ public class DefaultErxTaskRepository: ErxTaskRepository {
             .eraseToAnyPublisher()
     }
 
-    private func loadRemoteLatestAuditEvents(for locale: String?) -> AnyPublisher<Bool, ErrorType> {
+    internal func loadRemoteLatestAuditEvents(for locale: String?) -> AnyPublisher<Bool, ErrorType> {
         disk.fetchLatestTimestampForAuditEvents()
             .first() // only read once, we are interested in latest event to fetch all younger events.
             .mapError(ErrorType.local)
@@ -132,9 +132,17 @@ public class DefaultErxTaskRepository: ErxTaskRepository {
                 self.cloud.listAllAuditEvents(after: timestamp, for: locale)
                     .mapError(ErrorType.remote)
             }
-            .flatMap {
-                self.disk.save(auditEvents: $0)
+            .flatMap { auditEvents in
+                self.disk.save(auditEvents: auditEvents)
                     .mapError(ErrorType.local)
+                    .flatMap { result -> AnyPublisher<Bool, ErrorType> in
+                        if result, auditEvents.count > 25 {
+                            return self.loadRemoteLatestAuditEvents(for: locale)
+                        } else {
+                            return Just(result).setFailureType(to: ErrorType.self).eraseToAnyPublisher()
+                        }
+                    }
+                    .eraseToAnyPublisher()
             }
             .eraseToAnyPublisher()
     }

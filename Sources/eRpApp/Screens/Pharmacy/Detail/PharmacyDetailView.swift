@@ -38,8 +38,7 @@ struct PharmacyDetailView: View {
                         ErxReadinessBadge(detailedText: true)
                     }
 
-                    Text(viewStore.state.pharmacy.name ??
-                        NSLocalizedString("pha_detail_txt_subtitle_fallback", comment: ""))
+                    Text(viewStore.state.pharmacy.name ?? L10n.phaDetailTxtSubtitleFallback.text)
                         .foregroundColor(Colors.systemLabel)
                         .font(.title2)
                         .bold()
@@ -91,7 +90,7 @@ struct PharmacyDetailView: View {
                     if viewStore.pharmacy.isErxReady {
                         HintView<PharmacyDetailDomain.Action>(
                             hint: Hint(id: A11y.pharmacyDetail.phaDetailHint,
-                                       message: NSLocalizedString("pha_detail_hint_message", comment: ""),
+                                       message: L10n.phaDetailHintMessage.text,
                                        imageName: Asset.Illustrations.info.name)
                         )
                         .padding(.top, 12)
@@ -99,8 +98,8 @@ struct PharmacyDetailView: View {
                     } else {
                         HintView<PharmacyDetailDomain.Action>(
                             hint: Hint(id: A11y.pharmacyDetail.phaDetailHintNotErxReady,
-                                       title: NSLocalizedString("pha_detail_hint_not_erx_ready_title", comment: ""),
-                                       message: NSLocalizedString("pha_detail_hint_not_erx_ready_message", comment: ""),
+                                       title: L10n.phaDetailHintNotErxReadyTitle.text,
+                                       message: L10n.phaDetailHintNotErxReadyMessage.text,
                                        imageName: Asset.Illustrations.pharmacistArmRedCirle.name,
                                        style: .important)
                         )

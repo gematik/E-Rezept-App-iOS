@@ -81,18 +81,11 @@ struct PharmacyRedeemView: View {
                     .font(Font.title.bold())
                     .accessibility(identifier: A11y.pharmacyRedeem.phaRedeemTxtTitle)
 
-                Text(subtitle)
+                Text(L10n.phaRedeemTxtSubtitle(pharmacyName ?? ""))
                     .font(Font.subheadline.weight(.semibold))
                     .multilineTextAlignment(.center)
                     .accessibility(identifier: A11y.pharmacyRedeem.phaRedeemTxtSubtitle)
             }
-        }
-
-        private var subtitle: String {
-            String(
-                format: NSLocalizedString("pha_redeem_txt_subtitle_%@", comment: ""),
-                arguments: [pharmacyName ?? ""]
-            )
         }
     }
 
@@ -248,9 +241,9 @@ extension PharmacyRedeemView {
 
             init(_ task: ErxTask, isSelected: Bool) {
                 taskID = task.id
-                title = task.medication?.name ?? NSLocalizedString("prsc_fd_txt_na", comment: "")
+                title = task.medication?.name ?? L10n.prscFdTxtNa.text
                 subtitle = task
-                    .substitutionAllowed ? NSLocalizedString("pha_redeem_txt_prescription_sub", comment: "") : ""
+                    .substitutionAllowed ? L10n.phaRedeemTxtPrescriptionSub.text : ""
                 self.isSelected = isSelected
             }
         }
@@ -260,9 +253,9 @@ extension PharmacyRedeemView {
 extension RedeemOption {
     var localizedString: LocalizedStringKey {
         switch self {
-        case .onPremise: return L10n.phaRedeemTxtTitleReservation
-        case .delivery: return L10n.phaRedeemTxtTitleDelivery
-        case .shipment: return L10n.phaRedeemTxtTitleMail
+        case .onPremise: return L10n.phaRedeemTxtTitleReservation.key
+        case .delivery: return L10n.phaRedeemTxtTitleDelivery.key
+        case .shipment: return L10n.phaRedeemTxtTitleMail.key
         }
     }
 }

@@ -54,7 +54,8 @@ struct PharmacySearchView: View {
                 Spacer(minLength: 0)
 
                 // Search-Filter sheet presentation
-                EmptyView()
+                Rectangle()
+                    .frame(width: 0, height: 0, alignment: .center)
                     .sheet(isPresented: viewStore.binding(
                         get: { $0.pharmacyFilterState != nil },
                         send: PharmacySearchDomain.Action.dismissFilterSheetView
@@ -67,6 +68,8 @@ struct PharmacySearchView: View {
                             then: PharmacySearchFilterView.init(store:)
                         )
                     }
+                    .hidden()
+                    .accessibility(hidden: true)
             }
             .alert(
                 store.scope(state: \.alertState),
@@ -145,8 +148,8 @@ struct PharmacySearchView: View {
             HintView(
                 hint: Hint<PharmacySearchDomain.Action>(
                     id: A11y.prescriptionDetails.prscDtlHntNoctuFeeWaiver,
-                    title: NSLocalizedString("pha_search_txt_location_hint_title", comment: ""),
-                    message: NSLocalizedString("pha_search_txt_location_hint_message", comment: ""),
+                    title: L10n.phaSearchTxtLocationHintTitle.text,
+                    message: L10n.phaSearchTxtLocationHintMessage.text,
                     actionText: L10n.phaSearchBtnLocationHintAction,
                     imageName: Asset.Prescriptions.Details.apothekerin.name,
                     closeAction: .hintDismissButtonTapped,

@@ -24,6 +24,9 @@ public struct Profile: Identifiable, Hashable, Equatable {
         name: String,
         identifier: UUID = UUID(),
         created: Date = Date(),
+        givenName: String? = nil,
+        familyName: String? = nil,
+        insurance: String? = nil,
         insuranceId: String? = nil,
         color: Color = Color.next(),
         emoji: String? = nil,
@@ -34,6 +37,9 @@ public struct Profile: Identifiable, Hashable, Equatable {
         self.name = name
         self.identifier = identifier
         self.created = created
+        self.givenName = givenName
+        self.familyName = familyName
+        self.insurance = insurance
         self.insuranceId = insuranceId
         self.color = color
         self.emoji = emoji
@@ -49,12 +55,21 @@ public struct Profile: Identifiable, Hashable, Equatable {
     public var name: String
     public let identifier: UUID
     public let created: Date
+    public var givenName: String?
+    public var familyName: String?
+    public var insurance: String?
     public var insuranceId: String?
     public var color: Color
     public var emoji: String?
     public var lastAuthenticated: Date?
     public var erxTasks: [ErxTask]
     public let erxAuditEvents: [ErxAuditEvent]
+
+    public var fullName: String? {
+        [givenName, familyName]
+            .compactMap { $0 }
+            .joined(separator: " ")
+    }
 
     public enum Color: String, CaseIterable {
         case grey

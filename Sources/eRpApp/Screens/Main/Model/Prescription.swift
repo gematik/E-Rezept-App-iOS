@@ -65,47 +65,37 @@ extension GroupedPrescription {
             switch erxTask.status {
             case .ready:
                 guard erxTask.expiresOn != nil || erxTask.acceptedUntil != nil else {
-                    return .open(until: NSLocalizedString("prsc_fd_txt_na", comment: ""))
+                    return .open(until: L10n.prscFdTxtNa.text)
                 }
 
                 if let expiresDate = erxTask.expiresOn?.date,
                    let remainingDays = date.days(until: expiresDate),
                    remainingDays > 0 {
-                    let expiresInFormat: String = NSLocalizedString(
-                        "erx_txt_expires_in",
-                        comment: "erx_txt_expires_in string format to be found in Localized.stringsdict"
+                    let remainingDaysOfExpireString = String.localizedStringWithFormat(
+                        L10n.erxTxtExpiresIn.text,
+                        remainingDays
                     )
-                    let remainingDaysOfExpireString = String.localizedStringWithFormat(expiresInFormat, remainingDays)
                     return .open(until: remainingDaysOfExpireString)
                 }
 
                 if let acceptedUntilDate = erxTask.acceptedUntil?.date,
                    let remainingDays = date.days(until: acceptedUntilDate),
                    remainingDays > 0 {
-                    let acceptedUntilFormat: String = NSLocalizedString(
-                        "erx_txt_accepted_until",
-                        comment: "erx_txt_accepted_until string format to be found in Localized.stringsdict"
-                    )
                     let remainingDaysOfAcceptString = String.localizedStringWithFormat(
-                        acceptedUntilFormat,
+                        L10n.erxTxtAcceptedUntil.text,
                         remainingDays
                     )
                     return .open(until: remainingDaysOfAcceptString)
                 }
 
-                return .archived(message: NSLocalizedString("erx_txt_invalid", comment: ""))
+                return .archived(message: L10n.erxTxtInvalid.text)
 
             case .completed:
-                let redeemedOnFormat = NSLocalizedString("dtl_txt_med_redeemed_on_%@", comment: "")
                 if let redeemedOnDate = whenHandedOver?.date {
                     let localizedDateString = dateFormatter.string(from: redeemedOnDate)
-                    return .archived(message: String.localizedStringWithFormat(redeemedOnFormat, localizedDateString))
+                    return .archived(message: L10n.dtlTxtMedRedeemedOn(localizedDateString).text)
                 } else {
-                    let redeemedWithoutDate = String.localizedStringWithFormat(
-                        redeemedOnFormat,
-                        NSLocalizedString("prsc_fd_txt_na", comment: "")
-                    )
-                    return .archived(message: redeemedWithoutDate)
+                    return .archived(message: L10n.dtlTxtMedRedeemedOn(L10n.prscFdTxtNa.text).text)
                 }
             case .draft, .inProgress, .cancelled:
                 return .undefined
@@ -116,7 +106,7 @@ extension GroupedPrescription {
             switch viewStatus {
             case let .open(until: localizedString): return localizedString
             case let .archived(message: localizedString): return localizedString
-            case .undefined: return NSLocalizedString("prsc_fd_txt_na", comment: "")
+            case .undefined: return L10n.prscFdTxtNa.text
             }
         }
 

@@ -52,14 +52,13 @@ final class PickupCodeDomainTests: XCTestCase {
     func testWithHRCodeOnly() {
         let size = CGSize(width: 200, height: 200)
         let store = testStore(for: PickupCodeDomain.State(pickupCodeHR: "4711"))
-        store.assert(
-            .send(.loadMatrixCodeImage(screenSize: size)) {
-                $0.pickupCodeHR = "4711"
-                $0.pickupCodeDMC = nil
-                $0.dmcImage = nil
-                expect(self.matrixCodeGenerator.generateImageCallsCount) == 0
-            }
-        )
+
+        store.send(.loadMatrixCodeImage(screenSize: size)) {
+            $0.pickupCodeHR = "4711"
+            $0.pickupCodeDMC = nil
+            $0.dmcImage = nil
+            expect(self.matrixCodeGenerator.generateImageCallsCount) == 0
+        }
     }
 
     /// Use DMC publisher to generate an exact same image
@@ -82,20 +81,19 @@ final class PickupCodeDomainTests: XCTestCase {
         let expectedImage = generateMockDMCImage()
         let size = CGSize(width: 200, height: 200)
         let store = testStore(for: PickupCodeDomain.State(pickupCodeDMC: "Data Matrix Code Content", dmcImage: nil))
-        store.assert(
-            .send(.loadMatrixCodeImage(screenSize: size)) {
-                $0.pickupCodeHR = nil
-                $0.pickupCodeDMC = "Data Matrix Code Content"
-                $0.dmcImage = nil
-            },
-            .do { self.testScheduler.advance() },
-            .receive(.matrixCodeImageReceived(expectedImage)) {
-                $0.pickupCodeHR = nil
-                $0.pickupCodeDMC = "Data Matrix Code Content"
-                $0.dmcImage = expectedImage
-                expect(self.matrixCodeGenerator.generateImageCallsCount) == 2
-            }
-        )
+
+        store.send(.loadMatrixCodeImage(screenSize: size)) {
+            $0.pickupCodeHR = nil
+            $0.pickupCodeDMC = "Data Matrix Code Content"
+            $0.dmcImage = nil
+        }
+        testScheduler.advance()
+        store.receive(.matrixCodeImageReceived(expectedImage)) {
+            $0.pickupCodeHR = nil
+            $0.pickupCodeDMC = "Data Matrix Code Content"
+            $0.dmcImage = expectedImage
+            expect(self.matrixCodeGenerator.generateImageCallsCount) == 2
+        }
     }
 
     func testWithHRCodeAndDMCCode() {
@@ -106,24 +104,22 @@ final class PickupCodeDomainTests: XCTestCase {
             pickupCodeDMC: "Data Matrix Code Content",
             dmcImage: nil
         ))
-        store.assert(
-            .send(.loadMatrixCodeImage(screenSize: size)) {
-                $0.pickupCodeHR = "4711"
-                $0.pickupCodeDMC = "Data Matrix Code Content"
-                $0.dmcImage = nil
-            },
-            .do { self.testScheduler.advance() },
-            .receive(.matrixCodeImageReceived(expectedImage)) {
-                $0.pickupCodeHR = "4711"
-                $0.pickupCodeDMC = "Data Matrix Code Content"
-                $0.dmcImage = expectedImage
-                expect(self.matrixCodeGenerator.generateImageCallsCount) == 2
-            },
-            .send(.loadMatrixCodeImage(screenSize: size)) {
-                $0.pickupCodeHR = "4711"
-                $0.pickupCodeDMC = "Data Matrix Code Content"
-                $0.dmcImage = expectedImage
-            }
-        )
+        store.send(.loadMatrixCodeImage(screenSize: size)) {
+            $0.pickupCodeHR = "4711"
+            $0.pickupCodeDMC = "Data Matrix Code Content"
+            $0.dmcImage = nil
+        }
+        testScheduler.advance()
+        store.receive(.matrixCodeImageReceived(expectedImage)) {
+            $0.pickupCodeHR = "4711"
+            $0.pickupCodeDMC = "Data Matrix Code Content"
+            $0.dmcImage = expectedImage
+            expect(self.matrixCodeGenerator.generateImageCallsCount) == 2
+        }
+        store.send(.loadMatrixCodeImage(screenSize: size)) {
+            $0.pickupCodeHR = "4711"
+            $0.pickupCodeDMC = "Data Matrix Code Content"
+            $0.dmcImage = expectedImage
+        }
     }
 }

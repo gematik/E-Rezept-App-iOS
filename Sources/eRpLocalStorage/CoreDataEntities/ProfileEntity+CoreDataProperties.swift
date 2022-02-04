@@ -28,6 +28,9 @@ extension ProfileEntity {
     @NSManaged public var created: Date?
     @NSManaged public var emoji: String?
     @NSManaged public var identifier: UUID?
+    @NSManaged public var givenName: String?
+    @NSManaged public var familyName: String?
+    @NSManaged public var insurance: String?
     @NSManaged public var insuranceId: String?
     @NSManaged public var lastAuthenticated: Date?
     @NSManaged public var name: String?

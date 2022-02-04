@@ -107,9 +107,17 @@ public protocol IDPClient {
     ///   - keyIdentifier: Identifier of the key to remove.
     ///   - token: Authentication token to authenticate the removal.
     ///   - document: use this DiscoveryDocument to resolve the actual endpoint
+    /// - Returns: AnyPublisher with a`Bool` containing `true` upon success, `false` otherwise.
     func unregisterDevice(_ keyIdentifier: String,
                           token: IDPToken,
                           using document: DiscoveryDocument) -> AnyPublisher<Bool, IDPError>
+
+    /// List all registered devices.
+    /// - Parameters:
+    ///   - token: Authentication token to authenticate the removal.
+    ///   - document: use this DiscoveryDocument to resolve the actual endpoint
+    /// - Returns: AnyPublisher with a`PairingEntries` containing all registered devices.
+    func listDevices(token: IDPToken, using document: DiscoveryDocument) -> AnyPublisher<PairingEntries, IDPError>
 
     /// Verify a given challenge with the IDP using alternative authentication, a.k.a. biometric secured key.
     /// - Parameters:

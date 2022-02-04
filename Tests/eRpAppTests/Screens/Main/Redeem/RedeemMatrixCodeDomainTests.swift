@@ -96,19 +96,17 @@ final class RedeemMatrixCodeDomainTests: XCTestCase {
         let expected: LoadingState<UIImage, RedeemMatrixCodeDomain.LoadingImageError> =
             .value(generateMockDMCImage())
 
-        store.assert(
-            // when
-            .send(.loadMatrixCodeImage(screenSize: CGSize(width: 400, height: 800))) { sut in
-                // then
-                let copy = sut
-                expect(copy.loadingState).notTo(beNil())
-                // sut.loadingState = expected
-            },
-            .do { self.testScheduler.advance() },
-            .receive(.matrixCodeImageReceived(expected)) { sut in
-                sut.loadingState = expected
-            },
-            .receive(.redeemedOnSavedReceived(false))
-        )
+        // when
+        store.send(.loadMatrixCodeImage(screenSize: CGSize(width: 400, height: 800))) { sut in
+            // then
+            let copy = sut
+            expect(copy.loadingState).notTo(beNil())
+            // sut.loadingState = expected
+        }
+        testScheduler.advance()
+        store.receive(.matrixCodeImageReceived(expected)) { sut in
+            sut.loadingState = expected
+        }
+        store.receive(.redeemedOnSavedReceived(false))
     }
 }

@@ -70,18 +70,14 @@ struct CardWallCANInputView: View {
     }
 
     private var title: String {
-        NSLocalizedString("cdw_btn_can_done", comment: "Cardwall - CAN input done button")
+        L10n.cdwBtnCanDone.text
     }
 
     private var localizedAccessibility: String {
         if can.count != 6 {
-            let format = NSLocalizedString(
-                "cdw_btn_can_done_label_error_%@",
-                comment: "Cardwall - CAN input done on error accessibility label."
-            )
-            return String.localizedStringWithFormat(format, "\(can.count)")
+            return L10n.cdwBtnCanDoneLabelError("\(can.count)").text
         }
-        return NSLocalizedString("cdw_btn_can_done_label", comment: "Cardwall - CAN input done accessibility label.")
+        return L10n.cdwBtnCanDoneLabel.text
     }
 }
 

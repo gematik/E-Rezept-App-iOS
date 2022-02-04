@@ -92,31 +92,29 @@ final class GroupedPrescriptionListViewTests: XCTestCase {
         let expected: LoadingState<[GroupedPrescription], ErxRepositoryError> =
             .value(input)
 
-        store.assert(
-            // when
-            .send(.loadLocalGroupedPrescriptions) {
-                // then
-                $0.loadingState = .loading([])
-            },
-            // when
-            .do { self.testScheduler.advance() },
-            .receive(.loadLocalGroupedPrescriptionsReceived(expected)) { state in
-                // then
-                state.loadingState = expected
-                state.groupedPrescriptions = input
-            },
-            // when
-            .send(.loadLocalGroupedPrescriptions) {
-                // then
-                $0.loadingState = .loading(input)
-            },
-            // when
-            .do { self.testScheduler.advance() },
-            .receive(.loadLocalGroupedPrescriptionsReceived(expected)) { state in
-                // then
-                state.loadingState = expected
-            }
-        )
+        // when
+        store.send(.loadLocalGroupedPrescriptions) {
+            // then
+            $0.loadingState = .loading([])
+        }
+        // when
+        testScheduler.advance()
+        store.receive(.loadLocalGroupedPrescriptionsReceived(expected)) { state in
+            // then
+            state.loadingState = expected
+            state.groupedPrescriptions = input
+        }
+        // when
+        store.send(.loadLocalGroupedPrescriptions) {
+            // then
+            $0.loadingState = .loading(input)
+        }
+        // when
+        testScheduler.advance()
+        store.receive(.loadLocalGroupedPrescriptionsReceived(expected)) { state in
+            // then
+            state.loadingState = expected
+        }
     }
 
     func testLoadingPrescriptionsFromCloudTwoTimesWhenAuthenticated() {
@@ -127,31 +125,29 @@ final class GroupedPrescriptionListViewTests: XCTestCase {
 
         let expected: LoadingState<[GroupedPrescription], ErxRepositoryError> =
             .value(input)
-        store.assert(
-            // when
-            .send(.loadRemoteGroupedPrescriptionsAndSave) {
-                // then
-                $0.loadingState = .loading(nil)
-            },
-            // when
-            .do { self.testScheduler.advance() },
-            .receive(.loadRemoteGroupedPrescriptionsAndSaveReceived(expected)) { state in
-                // then
-                state.loadingState = expected
-                state.groupedPrescriptions = input
-            },
-            // when
-            .send(.loadRemoteGroupedPrescriptionsAndSave) {
-                // then
-                $0.loadingState = .loading(nil)
-            },
-            // when
-            .do { self.testScheduler.advance() },
-            .receive(.loadRemoteGroupedPrescriptionsAndSaveReceived(expected)) { state in
-                // then
-                state.loadingState = expected
-            }
-        )
+        // when
+        store.send(.loadRemoteGroupedPrescriptionsAndSave) {
+            // then
+            $0.loadingState = .loading(nil)
+        }
+        // when
+        testScheduler.advance()
+        store.receive(.loadRemoteGroupedPrescriptionsAndSaveReceived(expected)) { state in
+            // then
+            state.loadingState = expected
+            state.groupedPrescriptions = input
+        }
+        // when
+        store.send(.loadRemoteGroupedPrescriptionsAndSave) {
+            // then
+            $0.loadingState = .loading(nil)
+        }
+        // when
+        testScheduler.advance()
+        store.receive(.loadRemoteGroupedPrescriptionsAndSaveReceived(expected)) { state in
+            // then
+            state.loadingState = expected
+        }
     }
 
     func testLoadingPrescriptionsFromCloudTwoTimesWhenNotAuthenticated() {
@@ -163,30 +159,28 @@ final class GroupedPrescriptionListViewTests: XCTestCase {
 
         let expected: LoadingState<[GroupedPrescription], ErxRepositoryError> =
             .value([])
-        store.assert(
-            // when
-            .send(.loadRemoteGroupedPrescriptionsAndSave) {
-                // then
-                $0.loadingState = .loading(nil)
-            },
-            // when
-            .do { self.testScheduler.advance() },
-            .receive(.loadRemoteGroupedPrescriptionsAndSaveReceived(expected)) { state in
-                // then
-                state.loadingState = expected
-            },
-            // when
-            .send(.loadRemoteGroupedPrescriptionsAndSave) {
-                // then
-                $0.loadingState = .loading(nil)
-            },
-            // when
-            .do { self.testScheduler.advance() },
-            .receive(.loadRemoteGroupedPrescriptionsAndSaveReceived(expected)) { state in
-                // then
-                state.loadingState = expected
-            }
-        )
+        // when
+        store.send(.loadRemoteGroupedPrescriptionsAndSave) {
+            // then
+            $0.loadingState = .loading(nil)
+        }
+        // when
+        testScheduler.advance()
+        store.receive(.loadRemoteGroupedPrescriptionsAndSaveReceived(expected)) { state in
+            // then
+            state.loadingState = expected
+        }
+        // when
+        store.send(.loadRemoteGroupedPrescriptionsAndSave) {
+            // then
+            $0.loadingState = .loading(nil)
+        }
+        // when
+        testScheduler.advance()
+        store.receive(.loadRemoteGroupedPrescriptionsAndSaveReceived(expected)) { state in
+            // then
+            state.loadingState = expected
+        }
     }
 
     func testLoadingPrescriptionsFromDiskAndCloudWhenNotAuthenticated() {
@@ -200,29 +194,27 @@ final class GroupedPrescriptionListViewTests: XCTestCase {
             .value(input)
         let expectedValueForFetch: LoadingState<[GroupedPrescription], ErxRepositoryError> =
             .value([])
-        store.assert(
-            // when
-            .send(.loadLocalGroupedPrescriptions) {
-                // then
-                $0.loadingState = .loading([])
-            },
-            // when
-            .send(.loadRemoteGroupedPrescriptionsAndSave) {
-                // then
-                $0.loadingState = .loading(nil)
-            },
-            // when
-            .do { self.testScheduler.advance() },
-            .receive(.loadLocalGroupedPrescriptionsReceived(expectedValueForLoad)) { state in
-                // then
-                state.loadingState = expectedValueForLoad
-                state.groupedPrescriptions = input
-            },
-            .receive(.loadRemoteGroupedPrescriptionsAndSaveReceived(expectedValueForFetch)) { state in
-                // then
-                state.loadingState = expectedValueForFetch
-            }
-        )
+        // when
+        store.send(.loadLocalGroupedPrescriptions) {
+            // then
+            $0.loadingState = .loading([])
+        }
+        // when
+        store.send(.loadRemoteGroupedPrescriptionsAndSave) {
+            // then
+            $0.loadingState = .loading(nil)
+        }
+        // when
+        testScheduler.advance()
+        store.receive(.loadLocalGroupedPrescriptionsReceived(expectedValueForLoad)) { state in
+            // then
+            state.loadingState = expectedValueForLoad
+            state.groupedPrescriptions = input
+        }
+        store.receive(.loadRemoteGroupedPrescriptionsAndSaveReceived(expectedValueForFetch)) { state in
+            // then
+            state.loadingState = expectedValueForFetch
+        }
     }
 
     func testLoadingPrescriptionsFromDiskAndCloudWhenAuthenticated() {
@@ -235,29 +227,27 @@ final class GroupedPrescriptionListViewTests: XCTestCase {
         let expectedValueForLoad: LoadingState<[GroupedPrescription], ErxRepositoryError> =
             .value(input)
         let expectedValueForFetch = expectedValueForLoad
-        store.assert(
-            // when
-            .send(.loadLocalGroupedPrescriptions) {
-                // then
-                $0.loadingState = .loading([])
-            },
-            // when
-            .send(.loadRemoteGroupedPrescriptionsAndSave) {
-                // then
-                $0.loadingState = .loading(nil)
-            },
-            // when
-            .do { self.testScheduler.advance() },
-            .receive(.loadLocalGroupedPrescriptionsReceived(expectedValueForLoad)) { state in
-                // then
-                state.loadingState = expectedValueForLoad
-                state.groupedPrescriptions = input
-            },
-            .receive(.loadRemoteGroupedPrescriptionsAndSaveReceived(expectedValueForFetch)) { state in
-                // then
-                state.loadingState = expectedValueForFetch
-            }
-        )
+        // when
+        store.send(.loadLocalGroupedPrescriptions) {
+            // then
+            $0.loadingState = .loading([])
+        }
+        // when
+        store.send(.loadRemoteGroupedPrescriptionsAndSave) {
+            // then
+            $0.loadingState = .loading(nil)
+        }
+        // when
+        testScheduler.advance()
+        store.receive(.loadLocalGroupedPrescriptionsReceived(expectedValueForLoad)) { state in
+            // then
+            state.loadingState = expectedValueForLoad
+            state.groupedPrescriptions = input
+        }
+        store.receive(.loadRemoteGroupedPrescriptionsAndSaveReceived(expectedValueForFetch)) { state in
+            // then
+            state.loadingState = expectedValueForFetch
+        }
     }
 
     let loadingErrorTasks: ErxRepositoryError = .local(.notImplemented)
@@ -272,21 +262,19 @@ final class GroupedPrescriptionListViewTests: XCTestCase {
 
         let expected: LoadingState<[GroupedPrescription], ErxRepositoryError> =
             .error(loadingErrorTasks)
-        store.assert(
-            // when
-            .send(.loadLocalGroupedPrescriptions) {
-                // then
-                $0.loadingState = .loading([])
-                XCTAssert($0.loadingState.isError == false)
-            },
-            // when
-            .do { self.testScheduler.advance() },
-            .receive(.loadLocalGroupedPrescriptionsReceived(expected)) { state in
-                // then
-                state.loadingState = expected
-                XCTAssert(state.loadingState.isError == true)
-            }
-        )
+        // when
+        store.send(.loadLocalGroupedPrescriptions) {
+            // then
+            $0.loadingState = .loading([])
+            XCTAssert($0.loadingState.isError == false)
+        }
+        // when
+        testScheduler.advance()
+        store.receive(.loadLocalGroupedPrescriptionsReceived(expected)) { state in
+            // then
+            state.loadingState = expected
+            XCTAssert(state.loadingState.isError == true)
+        }
     }
 
     func testLoadingFromCloudWithError() {
@@ -298,18 +286,16 @@ final class GroupedPrescriptionListViewTests: XCTestCase {
         let expectedTasks: LoadingState<[GroupedPrescription], ErxRepositoryError> =
             .idle
 
-        store.assert(
-            .send(.loadRemoteGroupedPrescriptionsAndSave) {
-                $0.loadingState = .loading(nil)
-                XCTAssert($0.loadingState.isError == false)
-            },
-            .do { self.testScheduler.advance() },
-            .receive(.loadRemoteGroupedPrescriptionsAndSaveReceived(expectedTasks)) { state in
-                // then
-                state.loadingState = expectedTasks
-                XCTAssert(state.loadingState.isError == false)
-            }
-        )
+        store.send(.loadRemoteGroupedPrescriptionsAndSave) {
+            $0.loadingState = .loading(nil)
+            XCTAssert($0.loadingState.isError == false)
+        }
+        testScheduler.advance()
+        store.receive(.loadRemoteGroupedPrescriptionsAndSaveReceived(expectedTasks)) { state in
+            // then
+            state.loadingState = expectedTasks
+            XCTAssert(state.loadingState.isError == false)
+        }
     }
 
     func testRefreshShouldShowCardWallWhenNotAuthenticated() {
@@ -325,15 +311,13 @@ final class GroupedPrescriptionListViewTests: XCTestCase {
             pin: CardWallPINDomain.State(isDemoModus: false, pin: ""),
             loginOption: CardWallLoginOptionDomain.State(isDemoModus: false)
         )
-        store.assert(
-            .send(.refresh) {
-                $0.loadingState = .loading(nil)
-            },
-            .do { self.testScheduler.advance() },
-            .receive(.showCardWallReceived(expected)) { state in
-                state.cardWallState = expected
-            }
-        )
+        store.send(.refresh) {
+            $0.loadingState = .loading(nil)
+        }
+        testScheduler.advance()
+        store.receive(.showCardWallReceived(expected)) { state in
+            state.cardWallState = expected
+        }
     }
 
     func testRefreshShouldShowCardWallServerResponseIs403Forbidden() {
@@ -354,15 +338,13 @@ final class GroupedPrescriptionListViewTests: XCTestCase {
             pin: CardWallPINDomain.State(isDemoModus: false, pin: ""),
             loginOption: CardWallLoginOptionDomain.State(isDemoModus: false)
         )
-        store.assert(
-            .send(.refresh) {
-                $0.loadingState = .loading(nil)
-            },
-            .do { self.testScheduler.advance() },
-            .receive(.showCardWallReceived(expected)) { state in
-                state.cardWallState = expected
-            }
-        )
+        store.send(.refresh) {
+            $0.loadingState = .loading(nil)
+        }
+        testScheduler.advance()
+        store.receive(.showCardWallReceived(expected)) { state in
+            state.cardWallState = expected
+        }
     }
 
     func testRefreshShouldShowCardWallServerResponseIs401Unauthorized() {
@@ -384,15 +366,13 @@ final class GroupedPrescriptionListViewTests: XCTestCase {
             pin: CardWallPINDomain.State(isDemoModus: false, pin: ""),
             loginOption: CardWallLoginOptionDomain.State(isDemoModus: false)
         )
-        store.assert(
-            .send(.refresh) {
-                $0.loadingState = .loading(nil)
-            },
-            .do { self.testScheduler.advance() },
-            .receive(.showCardWallReceived(expected)) { state in
-                state.cardWallState = expected
-            }
-        )
+        store.send(.refresh) {
+            $0.loadingState = .loading(nil)
+        }
+        testScheduler.advance()
+        store.receive(.showCardWallReceived(expected)) { state in
+            state.cardWallState = expected
+        }
     }
 
     func testRefreshShouldLoadFromCloudWhenAuthenticated() {
@@ -404,16 +384,14 @@ final class GroupedPrescriptionListViewTests: XCTestCase {
         let expected: LoadingState<[GroupedPrescription], ErxRepositoryError> =
             .value(input)
 
-        store.assert(
-            .send(.refresh) {
-                $0.loadingState = .loading(nil)
-            },
-            .do { self.testScheduler.advance() },
-            .receive(.loadRemoteGroupedPrescriptionsAndSaveReceived(expected)) { state in
-                state.loadingState = expected
-                state.groupedPrescriptions = input
-            }
-        )
+        store.send(.refresh) {
+            $0.loadingState = .loading(nil)
+        }
+        testScheduler.advance()
+        store.receive(.loadRemoteGroupedPrescriptionsAndSaveReceived(expected)) { state in
+            state.loadingState = expected
+            state.groupedPrescriptions = input
+        }
     }
 
     func testNavigateIntoLowDetailPrescriptionDetails() {
@@ -435,14 +413,12 @@ final class GroupedPrescriptionListViewTests: XCTestCase {
             isArchived: false
         )
 
-        store.assert(
-            // when
-            .send(
-                .prescriptionDetailViewTapped(selectedPrescription: prescription)
-            ) {
-                // then
-                $0.selectedPrescriptionDetailState = expectedState
-            }
-        )
+        // when
+        store.send(
+            .prescriptionDetailViewTapped(selectedPrescription: prescription)
+        ) {
+            // then
+            $0.selectedPrescriptionDetailState = expectedState
+        }
     }
 }

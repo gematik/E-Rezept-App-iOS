@@ -72,7 +72,7 @@ struct OrderHealthCardView: View {
                                 ),
                                 isActive: $inquiryOptionViewVisible
                             ) {
-                                Text(viewModel.serviceInquiry?.localizedName ?? L10n.orderEgkTxtPickerServiceLabel)
+                                Text(viewModel.serviceInquiry?.localizedName ?? L10n.orderEgkTxtPickerServiceLabel.key)
                                     .foregroundColor(Color(.label))
                             }
                         }
@@ -115,8 +115,8 @@ struct OrderHealthCardView: View {
 
     private let hint = Hint<String>(
         id: A11y.orderEGK.ogkTxtNoSelectionHint,
-        title: NSLocalizedString("order_egk_txt_hint_no_contact_option_title", comment: ""),
-        message: NSLocalizedString("order_egk_txt_hint_no_contact_option_message", comment: ""),
+        title: L10n.orderEgkTxtHintNoContactOptionTitle.text,
+        message: L10n.orderEgkTxtHintNoContactOptionMessage.text,
         actionText: nil,
         action: nil,
         imageName: Asset.Illustrations.arztRedCircle.name,
@@ -152,7 +152,7 @@ struct OrderHealthCardView: View {
                         imageName: nil,
                         accessibilityIdentifier: A11y.orderEGK.ogkBtnEgkInfo
                     ) {
-                        if let url = URL(string: NSLocalizedString("order_egk_txt_info_link", comment: "")) {
+                        if let url = URL(string: L10n.orderEgkTxtInfoLink.text) {
                             UIApplication.shared.open(url)
                         }
                     }
@@ -259,17 +259,11 @@ struct OrderHealthCardView: View {
             let body: String
             let email: String
 
-            let subjectHealthCardAndPin = NSLocalizedString(
-                "order_egk_txt_mail_healthcard_and_pin_subject",
-                comment: ""
-            )
-            let bodyHealthCardAndPin = NSLocalizedString("order_egk_txt_mail_healthcard_and_pin_body", comment: "")
-
             switch serviceInquiry {
             case .healthCardAndPin,
                  .pin:
-                subject = subjectHealthCardAndPin
-                body = bodyHealthCardAndPin
+                subject = L10n.orderEgkTxtMailHealthcardAndPinSubject.text
+                body = L10n.orderEgkTxtMailHealthcardAndPinBody.text
                 email = healthCardAndPinMail
             }
 
@@ -295,8 +289,8 @@ struct OrderHealthCardView: View {
 
         var localizedName: LocalizedStringKey {
             switch self {
-            case .pin: return L10n.orderEgkTxtServiceInquiryOnlyPin
-            case .healthCardAndPin: return L10n.orderEgkTxtServiceInquiryHealthcardAndPin
+            case .pin: return L10n.orderEgkTxtServiceInquiryOnlyPin.key
+            case .healthCardAndPin: return L10n.orderEgkTxtServiceInquiryHealthcardAndPin.key
             }
         }
     }

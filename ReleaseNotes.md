@@ -1,3 +1,32 @@
+# Release 1.2.1
+
+### changed (5 changes)
+
+- Change CardWallReadCard screen to reflect latest ux decisions
+- Refactore old TCA test store syntax to new syntax
+- Change order of tabbar items
+- Change default Xcode to version 13.2.1 (and SDK 15.2)
+- Use StringAsset for all localizations (not just `LocalizedStringKey`)
+
+### fixed (4 changes)
+
+- Fix recipe block accessibility hierarchy
+- Fix uppercase letters for logout button
+- Fix showing the pickup code with DMC for unread messages
+- Fix crash when data matrix code message is empty
+
+### added (5 change)
+
+- Add implementation for retrieving list of registered biometric devices
+- Add AuditEvents to profiles screen
+- Add paging to AuditEvent API Calls
+- Add migration step for wiping all audit events so thay can be loaded again (with paging)
+- Add connection details (KVNR, name, insurance) for user profile
+
+### removed (1 change)
+
+- Remove main view authorisation hint
+
 # Release 1.2.0
 
 ### added (11 changes)

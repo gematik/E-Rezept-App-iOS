@@ -69,7 +69,7 @@ enum AppStartDomain {
                         prescriptionListState: GroupedPrescriptionListDomain.State()
                     ),
                     pharmacySearch: PharmacySearchDomain.State(erxTasks: []),
-                    messages: MessagesDomain.State(messageDomainStates: []),
+                    messages: MessagesDomain.State(communications: []),
                     settingsState: .init(
                         isDemoMode: environment.userSession.isDemoMode,
                         appSecurityState: .init(
@@ -109,7 +109,7 @@ enum AppStartDomain {
                         prescriptionListState: GroupedPrescriptionListDomain.State()
                     ),
                     pharmacySearch: PharmacySearchDomain.State(erxTasks: []),
-                    messages: MessagesDomain.State(messageDomainStates: []),
+                    messages: MessagesDomain.State(communications: []),
                     settingsState: .init(
                         isDemoMode: environment.userSession.isDemoMode,
                         appSecurityState: .init(

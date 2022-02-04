@@ -49,33 +49,27 @@ final class CardWallDomainTests: XCTestCase {
         let store = testStore()
 
         // when
-        store.assert(
-            .send(.canAction(action: .close)) { _ in },
-            // then
-            .receive(.close)
-        )
+        store.send(.canAction(action: .close))
+        // then
+        store.receive(.close)
     }
 
     func testPinCloseActionShouldBeForwarded() {
         let store = testStore()
 
         // when
-        store.assert(
-            .send(.pinAction(action: .close)) { _ in },
-            // then
-            .receive(.close)
-        )
+        store.send(.pinAction(action: .close))
+        // then
+        store.receive(.close)
     }
 
     func testIntroductionCloseActionShouldBeForwarded() {
         let store = testStore()
 
         // when
-        store.assert(
-            .send(.introduction(action: .close)) { _ in },
-            // then
-            .receive(.close)
-        )
+        store.send(.introduction(action: .close))
+        // then
+        store.receive(.close)
     }
 
     func testLoginOptionProceedWithBiometrie() {

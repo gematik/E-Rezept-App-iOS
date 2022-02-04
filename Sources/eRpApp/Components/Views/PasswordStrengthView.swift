@@ -62,16 +62,16 @@ struct PasswordStrengthView: View {
         switch strength {
         case .none,
              .veryWeak:
-            return L10n.ctlTxtPasswordStrengthAccessiblityValueVeryWeak
+            return L10n.ctlTxtPasswordStrengthAccessiblityValueVeryWeak.key
         case .weak:
-            return L10n.ctlTxtPasswordStrengthAccessiblityValueWeak
+            return L10n.ctlTxtPasswordStrengthAccessiblityValueWeak.key
         case .medium:
-            return L10n.ctlTxtPasswordStrengthAccessiblityValueMedium
+            return L10n.ctlTxtPasswordStrengthAccessiblityValueMedium.key
         case .strong:
-            return L10n.ctlTxtPasswordStrengthAccessiblityValueStrong
+            return L10n.ctlTxtPasswordStrengthAccessiblityValueStrong.key
         case .veryStrong,
              .excellent:
-            return L10n.ctlTxtPasswordStrengthAccessiblityValueVeryStrong
+            return L10n.ctlTxtPasswordStrengthAccessiblityValueVeryStrong.key
         }
     }
 
@@ -79,17 +79,17 @@ struct PasswordStrengthView: View {
         switch strength {
         case .none,
              .veryWeak:
-            return L10n.ctlTxtPasswordStrength0
+            return L10n.ctlTxtPasswordStrength0.key
         case .weak:
-            return L10n.ctlTxtPasswordStrength1
+            return L10n.ctlTxtPasswordStrength1.key
         case .medium:
-            return L10n.ctlTxtPasswordStrength2
+            return L10n.ctlTxtPasswordStrength2.key
         case .strong:
-            return L10n.ctlTxtPasswordStrength3
+            return L10n.ctlTxtPasswordStrength3.key
         case .veryStrong:
-            return L10n.ctlTxtPasswordStrength4
+            return L10n.ctlTxtPasswordStrength4.key
         case .excellent:
-            return L10n.ctlTxtPasswordStrength5
+            return L10n.ctlTxtPasswordStrength5.key
         }
     }
 

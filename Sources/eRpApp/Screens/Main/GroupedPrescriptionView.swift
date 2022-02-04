@@ -43,30 +43,34 @@ struct GroupedPrescriptionView: View {
                     .padding()
                     .layoutPriority(1)
                 }
-                ForEach(groupedPrescription.prescriptions.indices, id: \.self) { index in
-                    let prescription = groupedPrescription.prescriptions[index]
-                    if groupedPrescription.displayType == .lowDetail {
-                        LowDetailCellView(prescription: prescription) {
-                            viewStore.send(.prescriptionDetailViewTapped(selectedPrescription: prescription))
+                VStack(spacing: 0) {
+                    ForEach(groupedPrescription.prescriptions.indices, id: \.self) { index in
+                        let prescription = groupedPrescription.prescriptions[index]
+                        if groupedPrescription.displayType == .lowDetail {
+                            LowDetailCellView(prescription: prescription) {
+                                viewStore.send(.prescriptionDetailViewTapped(selectedPrescription: prescription))
+                            }
+                            .padding(.horizontal)
+                        } else {
+                            FullDetailCellView(prescription: prescription) {
+                                viewStore.send(.prescriptionDetailViewTapped(selectedPrescription: prescription))
+                            }
+                            .padding(.horizontal)
                         }
-                        .padding(.horizontal)
-                    } else {
-                        FullDetailCellView(prescription: prescription) {
-                            viewStore.send(.prescriptionDetailViewTapped(selectedPrescription: prescription))
-                        }
-                        .padding(.horizontal)
-                    }
 
-                    if index == groupedPrescription.prescriptions.count - 1 {
-                        Spacer()
-                            .frame(height: lastItemSpacerSize)
-                    } else {
-                        Divider()
-                            .padding(.leading)
-                            .padding(.top, 11.5)
-                            .padding(.bottom, 12)
+                        if index == groupedPrescription.prescriptions.count - 1 {
+                            Spacer()
+                                .frame(height: lastItemSpacerSize)
+                        } else {
+                            Divider()
+                                .padding(.leading)
+                                .padding(.top, 11.5)
+                                .padding(.bottom, 12)
+                        }
                     }
                 }
+                .accessibilityElement(children: .contain)
+                .accessibility(identifier: A18n.mainScreen.erxDetailedBlockPrescriptions)
                 if !groupedPrescription.isArchived {
                     FooterView {
                         viewStore.send(.redeemViewTapped(selectedGroupedPrescription: groupedPrescription))
@@ -74,11 +78,12 @@ struct GroupedPrescriptionView: View {
                     .padding(.top)
                 }
             }
+            .accessibilityElement(children: .contain)
+            .accessibility(identifier: A18n.mainScreen.erxDetailedBlock)
         }
         .background(Color(.tertiarySystemBackground))
         .border(Color(.opaqueSeparator), width: 0.5, cornerRadius: 16)
         .shadow(color: Color.black.opacity(0.08), radius: 8)
-        .accessibility(identifier: A18n.mainScreen.erxDetailedBlock)
     }
 
     struct FullDetailHeaderView: View {
@@ -97,9 +102,11 @@ struct GroupedPrescriptionView: View {
                 Text(text)
                     .font(Font.subheadline.weight(.semibold))
                     .multilineTextAlignment(.leading)
+                    .accessibility(identifier: A18n.mainScreen.erxDetailedBlockDoctor)
 
                 Spacer()
                 Text(dateFormatted)
+                    .accessibility(identifier: A18n.mainScreen.erxDetailedBlockDate)
                     .font(.footnote)
             }
             .foregroundColor(Color(.secondaryLabel))
@@ -123,11 +130,13 @@ struct GroupedPrescriptionView: View {
                     .font(Font.subheadline.weight(.semibold))
                     .multilineTextAlignment(.leading)
                     .foregroundColor(Colors.primary600)
+                    .accessibility(identifier: A18n.mainScreen.erxDetailedBlockDoctor)
                 Image(systemName: SFSymbolName.pencil)
                     .font(Font.subheadline.weight(.semibold))
                     .foregroundColor(Colors.primary600)
                 Spacer()
                 Text(dateFormatted)
+                    .accessibility(identifier: A18n.mainScreen.erxDetailedBlockDate)
                     .font(.footnote)
             }
             .foregroundColor(Color(.secondaryLabel))
@@ -150,9 +159,12 @@ struct GroupedPrescriptionView: View {
                             Text(prescription.actualMedication?.name, placeholder: L10n.erxTxtMedicationPlaceholder)
                                 .foregroundColor(Colors.systemLabel)
                                 .font(Font.body.weight(.semibold))
+                                .multilineTextAlignment(.leading)
+                                .accessibility(identifier: A18n.mainScreen.erxDetailedBlockPrescriptionName)
                             Text(prescription.statusMessage)
                                 .font(Font.subheadline.weight(.regular))
                                 .foregroundColor(Color(.secondaryLabel))
+                                .accessibility(identifier: A18n.mainScreen.erxDetailedBlockPrescriptionValidity)
                         }
                         Spacer()
                         Image(systemName: SFSymbolName.rightDisclosureIndicator)
@@ -160,7 +172,9 @@ struct GroupedPrescriptionView: View {
                             .foregroundColor(Color(.tertiaryLabel))
                     }
                 }
-            ).buttonStyle(DefaultButtonStyle())
+            )
+            .buttonStyle(DefaultButtonStyle())
+            .accessibilityElement(children: .contain)
         }
     }
 
@@ -182,6 +196,8 @@ struct GroupedPrescriptionView: View {
                             Text(prescription.actualMedication?.name, placeholder: L10n.erxTxtMedicationPlaceholder)
                                 .font(Font.body.weight(.semibold))
                                 .foregroundColor(Colors.systemLabel)
+                                .multilineTextAlignment(.leading)
+                                .accessibility(identifier: A18n.mainScreen.erxDetailedBlockPrescriptionName)
                             if prescription.isArchived {
                                 Text(prescription.statusMessage)
                                     .font(Font.subheadline.weight(.regular))
@@ -195,7 +211,9 @@ struct GroupedPrescriptionView: View {
                     }
                     .padding(.vertical, 8)
                 }
-            ).buttonStyle(PlainButtonStyle())
+            )
+            .buttonStyle(PlainButtonStyle())
+            .accessibilityElement(children: .contain)
         }
     }
 
@@ -210,6 +228,7 @@ struct GroupedPrescriptionView: View {
                     .font(Font.body.weight(.semibold))
                     .foregroundColor(Colors.primary)
                     .background(Color(.quaternarySystemFill))
+                    .accessibility(identifier: A18n.mainScreen.erxDetailedBlockRedeemAll)
             }
         }
     }

@@ -27,6 +27,10 @@ struct UserProfile: ProfileCellModel, Equatable, Identifiable {
     var name: String { profile.name }
     let acronym: String
 
+    var fullName: String? { profile.fullName }
+    var insurance: String? { profile.insurance }
+    var insuranceId: String? { profile.insuranceId }
+
     var emoji: String? { profile.emoji }
     var color: ProfileColor { profile.color.viewModelColor }
 
@@ -79,7 +83,10 @@ extension UserProfile {
                 name: "Spooky Dennis",
                 identifier: UUID(),
                 created: Date(),
-                insuranceId: nil,
+                givenName: "Dennis",
+                familyName: "Doe",
+                insurance: "Spooky BKK",
+                insuranceId: "X112233445",
                 color: .blue,
                 emoji: "🎃",
                 lastAuthenticated: Date().addingTimeInterval(-60 * 8),

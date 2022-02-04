@@ -104,8 +104,8 @@ extension CardWallPINView {
 
                         HintView<CardWallCANDomain.Action>(
                             hint: Hint(id: A11y.cardWall.pinInput.cdwHintGetPin,
-                                       title: NSLocalizedString("cdw_hint_pin_title", comment: ""),
-                                       message: NSLocalizedString("cdw_hint_pin_msg", comment: ""),
+                                       title: L10n.cdwHintPinTitle.text,
+                                       message: L10n.cdwHintPinMsg.text,
                                        actionText: nil, // L10n.cdwHintPinBtn
                                        action: nil,
                                        imageName: Asset.CardWall.arzt1.name,

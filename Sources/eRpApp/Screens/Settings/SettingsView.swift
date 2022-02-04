@@ -91,15 +91,19 @@ struct SettingsView: View {
                 .alert(profilesAlertStore, dismiss: .setNavigation(tag: nil))
 
                 // Tracking comply sheet presentation
-                EmptyView()
+                Rectangle()
+                    .frame(width: 0, height: 0, alignment: .center)
                     .sheet(isPresented: viewStore.binding(
                         get: { $0.showTrackerComplyView },
                         send: SettingsDomain.Action.dismissTrackerComplyView
                     )) {
                         TrackingComplyView(store: store)
                     }
+                    .hidden()
+                    .accessibility(hidden: true)
 
-                EmptyView()
+                Rectangle()
+                    .frame(width: 0, height: 0, alignment: .center)
                     .sheet(isPresented: Binding<Bool>(get: {
                         viewStore.route?.tag == .newProfile
                     }, set: { show in
@@ -111,6 +115,8 @@ struct SettingsView: View {
                     content: {
                         IfLetStore(newProfileStore, then: NewProfileView.init)
                     })
+                    .hidden()
+                    .accessibility(hidden: true)
 
                 NavigationLink(
                     destination: IfLetStore(profileStore) { profileStore in
@@ -278,12 +284,13 @@ extension SettingsView {
         @Binding var showDebugView: Bool
 
         var body: some View {
-            Section(header: SectionHeaderView(text: "Debug", a11y: "Debug").padding(.bottom, 8)) {
+            Section(header: SectionHeaderView(text: "Debug", a11y: "stg_txt_debug_title").padding(.bottom, 8)) {
                 NavigationLink(
                     destination: DebugView(store: store),
                     isActive: $showDebugView
                 ) {
                     ListCellView(sfSymbolName: SFSymbolName.ant, text: "Debug")
+                        .accessibility(identifier: "stg_btn_debug")
                 }
                 .border(Colors.systemColorClear, cornerRadius: 16)
             }

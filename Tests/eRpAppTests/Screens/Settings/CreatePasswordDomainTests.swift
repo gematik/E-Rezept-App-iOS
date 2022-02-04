@@ -62,7 +62,7 @@ final class CreatePasswordDomainTests: XCTestCase {
         store.receive(.comparePasswords) { state in
             state.showPasswordErrorMessage = true
             let message = state.passwordErrorMessage
-            expect(message) == NSLocalizedString("cpw_txt_password_strength_insufficient", comment: "")
+            expect(message) == L10n.cpwTxtPasswordStrengthInsufficient.text
         }
     }
 
@@ -89,7 +89,7 @@ final class CreatePasswordDomainTests: XCTestCase {
             state.showPasswordErrorMessage = true
             state.passwordStrength = .none
             let message = state.passwordErrorMessage
-            expect(message) == NSLocalizedString("cpw_txt_password_strength_insufficient", comment: "")
+            expect(message) == L10n.cpwTxtPasswordStrengthInsufficient.text
         }
         mockPasswordStrengthTester.passwordStrengthForReturnValue = PasswordStrength.strong
         store.send(.setPasswordA("Secure password")) { state in
@@ -111,7 +111,7 @@ final class CreatePasswordDomainTests: XCTestCase {
         store.receive(.comparePasswords) { state in
             state.showPasswordErrorMessage = true
             let message = state.passwordErrorMessage
-            expect(message) == NSLocalizedString("cpw_txt_passwords_dont_match", comment: "")
+            expect(message) == L10n.cpwTxtPasswordsDontMatch.text
         }
 
         store.send(.setPasswordB("Secure password")) { state in
@@ -209,7 +209,7 @@ final class CreatePasswordDomainTests: XCTestCase {
         store.send(.saveButtonTapped) { state in
             state.showPasswordErrorMessage = true
             let message = state.passwordErrorMessage
-            expect(message) == NSLocalizedString("cpw_txt_password_strength_insufficient", comment: "")
+            expect(message) == L10n.cpwTxtPasswordStrengthInsufficient.text
         }
         expect(self.mockPasswordManager.savePasswordCalled) == false
     }
@@ -325,7 +325,7 @@ final class CreatePasswordDomainTests: XCTestCase {
         store.send(.saveButtonTapped) { state in
             state.showPasswordErrorMessage = true
             let message = state.passwordErrorMessage
-            expect(message) == NSLocalizedString("cpw_txt_password_strength_insufficient", comment: "")
+            expect(message) == L10n.cpwTxtPasswordStrengthInsufficient.text
         }
         expect(self.mockPasswordManager.savePasswordCallsCount).to(equal(0))
     }

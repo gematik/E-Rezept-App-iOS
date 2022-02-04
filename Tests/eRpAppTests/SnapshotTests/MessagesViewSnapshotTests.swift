@@ -29,12 +29,16 @@ final class MessagesViewSnapshotTests: XCTestCase {
     }
 
     func testEmptyMessagesView() {
-        let sut = MessagesView(store: MessagesDomain.Dummies.storeFor(MessagesDomain.State(messageDomainStates: [])))
-        assertSnapshots(matching: sut, as: snapshotModi())
+        let sut = MessagesView(store: MessagesDomain.Dummies.storeFor(MessagesDomain.State(communications: [])))
+        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
+        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
     }
 
     func testMessagesView() {
         let sut = MessagesView(store: MessagesDomain.Dummies.store)
-        assertSnapshots(matching: sut, as: snapshotModi())
+        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
+        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
     }
 }

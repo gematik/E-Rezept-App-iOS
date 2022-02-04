@@ -53,8 +53,8 @@ class MainViewHintsProvider: HintsProvider {
 
     static var demoModeTourHint = Hint<MainViewHintsDomain.Action>(
         id: A18n.mainScreen.erxHntDemoModeTour,
-        title: NSLocalizedString("hint_txt_try_demo_mode_title", comment: ""),
-        message: NSLocalizedString("hint_txt_try_demo_mode", comment: ""),
+        title: L10n.hintTxtDemoModeTitle.text,
+        message: L10n.hintTxtTryDemoMode.text,
         actionText: L10n.hintBtnTryDemoMode,
         action: MainViewHintsDomain.Action.routeTo(.settings),
         imageName: Asset.Illustrations.womanBlueCircle.name,
@@ -66,8 +66,8 @@ class MainViewHintsProvider: HintsProvider {
 
     static var demoModeWelcomeHint = Hint<MainViewHintsDomain.Action>(
         id: A18n.mainScreen.erxHntDemoModeWelcome,
-        title: NSLocalizedString("hint_txt_demo_mode_title", comment: ""),
-        message: NSLocalizedString("hint_txt_demo_mode", comment: ""),
+        title: L10n.hintTxtDemoModeTitle.text,
+        message: L10n.hintTxtTryDemoMode.text,
         actionText: nil,
         action: nil,
         imageName: Asset.Illustrations.celebrationYellowCircle.name,
@@ -79,8 +79,8 @@ class MainViewHintsProvider: HintsProvider {
 
     static var openScannerHint = Hint<MainViewHintsDomain.Action>(
         id: A18n.mainScreen.erxHntOpenScanner,
-        title: NSLocalizedString("hint_txt_open_scn_title", comment: ""),
-        message: NSLocalizedString("hint_txt_open_scn", comment: ""),
+        title: L10n.hintTxtOpenScnTitle.text,
+        message: L10n.hintTxtOpenScn.text,
         actionText: L10n.hintBtnOpenScn,
         action: MainViewHintsDomain.Action.routeTo(.scanner),
         imageName: Asset.Illustrations.redWoman23.name,
@@ -92,8 +92,8 @@ class MainViewHintsProvider: HintsProvider {
 
     static var unreadMessagesHint = Hint<MainViewHintsDomain.Action>(
         id: A11y.mainScreen.erxHntUnreadMessages,
-        title: NSLocalizedString("hint_txt_unread_messages_title", comment: ""),
-        message: NSLocalizedString("hint_txt_unread_messages", comment: ""),
+        title: L10n.hintTxtUnreadMessagesTitle.text,
+        message: L10n.hintTxtUnreadMessages.text,
         actionText: L10n.hintBtnUnreadMessages,
         action: MainViewHintsDomain.Action.routeTo(.messages),
         imageName: Asset.Illustrations.pharmacistf1.name,

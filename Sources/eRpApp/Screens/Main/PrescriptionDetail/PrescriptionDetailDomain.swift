@@ -57,7 +57,7 @@ enum PrescriptionDetailDomain: Equatable {
 
         var auditEventsErrorText: String? {
             prescription.auditEvents
-                .isEmpty ? NSLocalizedString("prsc_fd_txt_protocol_download_error", comment: "") : nil
+                .isEmpty ? L10n.prscFdTxtProtocolDownloadError.text : nil
         }
     }
 

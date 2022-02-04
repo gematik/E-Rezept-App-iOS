@@ -56,95 +56,87 @@ final class PrescriptionDetailDomainTests: XCTestCase {
     func testCancelDeleteWithAlert() {
         let store = testStore()
 
-        store.assert(
-            // when
-            .send(.delete) { sut in
-                // then
-                sut.alertState = PrescriptionDetailDomain.confirmDeleteAlertState
-            },
-            .send(.cancelDelete) { sut in
-                // then
-                sut.alertState = nil
-            }
-        )
+        // when
+        store.send(.delete) { sut in
+            // then
+            sut.alertState = PrescriptionDetailDomain.confirmDeleteAlertState
+        }
+        store.send(.cancelDelete) { sut in
+            // then
+            sut.alertState = nil
+        }
     }
 
     /// Tests the case when delete was hit and in the alert 'Yes' was chosen.
     func testDeleteWithAlertSuccess() {
         let store = testStore()
 
-        store.assert(
-            // when
-            .send(.delete) { sut in
-                // then
-                sut.alertState = PrescriptionDetailDomain.confirmDeleteAlertState
-            },
-            .send(.confirmedDelete) { sut in
-                // then
-                sut.alertState = nil
-            },
-            .send(.taskDeletedReceived(Result.success(true))) { state in
-                // then
-                state.alertState = nil
-            },
-            .receive(.close) { state in
-                state.alertState = nil
-            }
-        )
+        // when
+        store.send(.delete) { sut in
+            // then
+            sut.alertState = PrescriptionDetailDomain.confirmDeleteAlertState
+        }
+        store.send(.confirmedDelete) { sut in
+            // then
+            sut.alertState = nil
+        }
+        store.send(.taskDeletedReceived(Result.success(true))) { state in
+            // then
+            state.alertState = nil
+        }
+        store.receive(.close) { state in
+            state.alertState = nil
+        }
     }
 
     /// Tests the case when delete was hit and deletion has failed and an alert is shown to user
     func testDeleteWithAlertFailure() {
         let store = testStore()
 
-        store.assert(
-            // when
-            .send(.delete) { sut in
-                // then
-                sut.alertState = PrescriptionDetailDomain.confirmDeleteAlertState
-            },
-            .send(.confirmedDelete) { sut in
-                // then
-                sut.alertState = nil
-            },
-            .send(.taskDeletedReceived(
-                Result.failure(ErxRepositoryError.local(.delete(error: IDPError.tokenUnavailable)))
-            )) { state in
-                // then
-                state.alertState = PrescriptionDetailDomain.deleteFailedAlertState(
-                    IDPError.tokenUnavailable.errorDescription ?? ""
-                )
-            },
-            .send(.alertDismissButtonTapped) { state in
-                state.alertState = nil
-            }
-        )
+        // when
+        store.send(.delete) { sut in
+            // then
+            sut.alertState = PrescriptionDetailDomain.confirmDeleteAlertState
+        }
+        store.send(.confirmedDelete) { sut in
+            // then
+            sut.alertState = nil
+        }
+        store.send(.taskDeletedReceived(
+            Result.failure(ErxRepositoryError.local(.delete(error: IDPError.tokenUnavailable)))
+        )) { state in
+            // then
+            state.alertState = PrescriptionDetailDomain.deleteFailedAlertState(
+                IDPError.tokenUnavailable.errorDescription ?? ""
+            )
+        }
+        store.send(.alertDismissButtonTapped) { state in
+            state.alertState = nil
+        }
     }
 
     /// Tests the case when delete was hit and deletion has failed but is silently ignored.
     func testDeleteWithAlertSilentFailure() {
         let store = testStore()
 
-        store.assert(
-            // when
-            .send(.delete) { sut in
-                // then
-                sut.alertState = PrescriptionDetailDomain.confirmDeleteAlertState
-            },
-            .send(.confirmedDelete) { sut in
-                // then
-                sut.alertState = nil
-            },
-            .send(.taskDeletedReceived(
-                Result.failure(ErxRepositoryError.local(.notImplemented))
-            )) { state in
-                // then
-                state.alertState = nil
-            },
-            .send(.alertDismissButtonTapped) { state in
-                state.alertState = nil
-            }
-        )
+        // when
+        store.send(.delete) { sut in
+            // then
+            sut.alertState = PrescriptionDetailDomain.confirmDeleteAlertState
+        }
+        store.send(.confirmedDelete) { sut in
+            // then
+            sut.alertState = nil
+        }
+        store.send(.taskDeletedReceived(
+            Result.failure(ErxRepositoryError.local(.notImplemented))
+        )) { state in
+            // then
+            state.alertState = nil
+        }
+        store.send(.alertDismissButtonTapped) { state in
+            state.alertState = nil
+        }
     }
 
     /// Test redeem low-detail prescriptions.
@@ -159,24 +151,22 @@ final class PrescriptionDetailDomainTests: XCTestCase {
         erxTask.update(with: expectedRedeemDate)
         let prescription = GroupedPrescription.Prescription(erxTask: ErxTask.Dummies.erxTaskReady)
         let expectedPrescription = GroupedPrescription.Prescription(erxTask: erxTask)
-        store.assert(
-            // when
-            .send(.toggleRedeemPrescription) { sut in
-                // then
-                sut.isArchived = true
-            },
-            .do { self.testScheduler.advance() },
-            .receive(.redeemedOnSavedReceived(true)) { state in
-                state.prescription = prescription
-            },
-            .send(.toggleRedeemPrescription) { sut in
-                // then
-                sut.isArchived = false
-            },
-            .do { self.testScheduler.advance() },
-            .receive(.redeemedOnSavedReceived(true)) { state in
-                state.prescription = expectedPrescription
-            }
-        )
+        // when
+        store.send(.toggleRedeemPrescription) { sut in
+            // then
+            sut.isArchived = true
+        }
+        testScheduler.advance()
+        store.receive(.redeemedOnSavedReceived(true)) { state in
+            state.prescription = prescription
+        }
+        store.send(.toggleRedeemPrescription) { sut in
+            // then
+            sut.isArchived = false
+        }
+        testScheduler.advance()
+        store.receive(.redeemedOnSavedReceived(true)) { state in
+            state.prescription = expectedPrescription
+        }
     }
 }

@@ -83,11 +83,11 @@ extension ScannerDomain {
 
         var errorDescription: String? {
             switch self {
-            case .duplicate: return NSLocalizedString("scn_msg_scanned_code_duplicate", comment: "")
-            case .empty, .invalid: return NSLocalizedString("scn_msg_scanned_code_failed", comment: "")
-            case .storeDuplicate: return NSLocalizedString("scn_msg_scanned_code_store_duplicate", comment: "")
+            case .duplicate: return L10n.scnMsgScannedCodeDuplicate.text
+            case .empty, .invalid: return L10n.scnMsgScannedCodeFailed.text
+            case .storeDuplicate: return L10n.scnMsgScannedCodeStoreDuplicate.text
             case let .scannedErxTask(error): return error.localizedDescription
-            case .unknown: return NSLocalizedString("scn_msg_scanned_code_failed", comment: "")
+            case .unknown: return L10n.scnMsgScannedCodeFailed.text
             }
         }
 

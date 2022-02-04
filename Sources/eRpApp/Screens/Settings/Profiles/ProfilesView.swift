@@ -41,6 +41,7 @@ struct ProfilesView: View {
                                 isSelected: profile.id == viewStore.selectedProfileId,
                                 showAsNavigationLink: true)
                 })
+                    .accessibility(identifier: A11y.settings.profiles.stgBtnProfile)
             }
             #if ENABLE_DEBUG_VIEW
             Button(action: {

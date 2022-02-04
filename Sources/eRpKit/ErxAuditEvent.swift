@@ -26,13 +26,15 @@ public struct ErxAuditEvent: Identifiable, Hashable {
         locale: String? = nil,
         text: String? = nil,
         timestamp: String? = nil,
-        taskId: String? = nil
+        taskId: String? = nil,
+        title: String? = nil
     ) {
         self.identifier = identifier
         self.locale = locale
         self.text = text
         self.timestamp = timestamp
         self.taskId = taskId
+        self.title = title
     }
 
     /// Id of the audit event
@@ -48,4 +50,6 @@ public struct ErxAuditEvent: Identifiable, Hashable {
     public let timestamp: String?
     /// Identifier of the referenced task in the audit event
     public let taskId: String?
+    /// Title for the AuditEvent, typically ErxTask name
+    public let title: String?
 }

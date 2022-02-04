@@ -25,14 +25,14 @@ struct MedicationNameView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             SectionViewString(
-                text: medicationText ?? NSLocalizedString("prsc_fd_txt_na", comment: ""),
+                text: medicationText ?? L10n.prscFdTxtNa.text,
                 a11y: medicationText ?? ""
             )
             .fixedSize(horizontal: false, vertical: true)
             .padding([.top, .horizontal])
 
             HStack {
-                Text(dateString ?? NSLocalizedString("prsc_fd_txt_na", comment: ""))
+                Text(dateString ?? L10n.prscFdTxtNa.text)
                 Spacer()
             }
             .font(Font.subheadline)

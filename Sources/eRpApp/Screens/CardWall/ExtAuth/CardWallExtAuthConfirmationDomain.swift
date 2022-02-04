@@ -146,7 +146,7 @@ extension CardWallExtAuthConfirmationDomain.Error: LocalizedError {
         case let .idpError(error):
             return error.errorDescription
         case .universalLinkFailed:
-            return NSLocalizedString("cdw_txt_extauth_confirm_universal_link_failed_error", comment: "")
+            return L10n.cdwTxtExtauthConfirmUniversalLinkFailedError.text
         }
     }
 }
