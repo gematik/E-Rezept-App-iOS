@@ -115,8 +115,7 @@ struct DebugLogView: View {
     func actionSheet() {
         let content = log.shareText
         let shareSheet = UIActivityViewController(activityItems: [content], applicationActivities: nil)
-        UIApplication.shared.windows[1].rootViewController?.presentedViewController?
-            .present(shareSheet, animated: true, completion: nil)
+        UIApplication.shared.windows.first?.rootViewController?.present(shareSheet, animated: true, completion: nil)
     }
 
     struct LongProperty: View {

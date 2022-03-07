@@ -66,6 +66,7 @@ final class RecordActionsForHintsTests: XCTestCase {
                 router: MockRouting(),
                 userSessionContainer: sessionContainer,
                 userSession: sessionContainer.userSession,
+                userDataStore: MockUserDataStore(),
                 schedulers: Schedulers(),
                 fhirDateFormatter: globals.fhirDateFormatter,
                 serviceLocator: ServiceLocator(),

@@ -59,6 +59,10 @@ class DemoUserDefaultsStore: UserDataStore {
 
     var serverEnvironmentConfiguration: AnyPublisher<String?, Never> = Just(nil).eraseToAnyPublisher()
 
+    var serverEnvironmentName: String? {
+        nil
+    }
+
     func set(serverEnvironmentConfiguration _: String?) {}
 
     /// The app security option

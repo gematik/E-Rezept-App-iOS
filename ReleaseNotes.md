@@ -1,3 +1,24 @@
+# Release 1.2.2
+
+### fixed (3 changes)
+
+- Fix UI for current profile on mainscreen
+- Fix app configuration to be observed from outside of StandardUserSession to solve memory leaks
+- Fix onboarding failing on simulator export due to missing entitlement
+
+### changed (1 change)
+
+- Change the PickeupCode view to only show when the payload string is not empty
+
+### added (2 changes)
+
+- Add paging to AuditEvent View and database access
+- Add test for task bundle version 1.2
+
+### internal (1 change)
+
+- Add StringAsset template for initializer overloads
+
 # Release 1.2.1
 
 ### changed (5 changes)

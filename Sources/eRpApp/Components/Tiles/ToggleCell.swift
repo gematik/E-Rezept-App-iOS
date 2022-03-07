@@ -18,6 +18,7 @@
 
 import SwiftUI
 
+/// sourcery: StringAssetInitialized
 struct ToggleCell: View {
     let text: LocalizedStringKey
     let a11y: String

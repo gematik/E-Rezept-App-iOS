@@ -167,10 +167,6 @@
 "cdw_txt_rc_nfc_message_multipleCardsMessage" = "Mehrere Gesundheitskarten gefunden";
 "cdw_txt_rc_nfc_message_noCardMessage" = "Keine Gesundheitskarte gefunden";
 "cdw_txt_rc_nfc_message_unsupportedCardMessage" = "Dieser Kartentyp wird nicht unterstützt";
-"cdw_txt_rc_step_get_challenge" = "Verbindung mit dem Server herstellen";
-"cdw_txt_rc_step_sign_challenge" = "Lesen der Gesundheitskarte";
-"cdw_txt_rc_step_verify_at_idp" = "Login Rezeptverzeichnis";
-"cdw_txt_rc_steps_title" = "Schritte";
 "cdw_txt_rc_title" = "Login";
 "cdw_txt_sel_description" = "Wählen Sie eine Anmeldemethode um automatisch Rezepte zu empfangen.";
 "cdw_txt_sel_egk_description" = "Sichere Anmeldung mit Ihrer neuen elektronischen Gesundheitskarte";
@@ -243,8 +239,6 @@
 "erx_btn_redeem" = "Alle einlösen";
 "erx_btn_refresh" = "Aktualisieren";
 "erx_btn_scn_prescription" = "Rezept-Scanner öffnen";
-"erx_btn_show_settings" = "Einstellungen öffnen";
-"erx_title" = "Rezepte";
 "erx_txt_accepted_until" = "This is a plural string handled by Localizable.stringdict!";
 "erx_txt_current" = "Aktuell";
 "erx_txt_expires_in" = "This is a plural string handled by Localizable.stringdict!";
@@ -254,7 +248,6 @@
 "erx_txt_not_yet_redeemed" = "Sie haben noch keine Rezepte eingelöst";
 "erx_txt_redeemed" = "Archiv";
 "erx_txt_refresh_loading" = "Wird geladen …";
-"hint_btn_card_wall" = "Jetzt anmelden";
 "hint_btn_open_scn" = "Scanner öffnen";
 "hint_btn_try_demo_mode" = "Demo-Modus starten";
 "hint_btn_unread_messages" = "Jetzt neue Nachrichten ansehen";
@@ -263,7 +256,6 @@
 "hint_txt_open_scn" = "Scannen Sie den Rezeptcode ab, um es hinzuzufügen.";
 "hint_txt_open_scn_title" = "Neues Rezept";
 "hint_txt_try_demo_mode" = "Unser Demo-Modus zeigt Ihnen alle Funktionen der App – ganz ohne Gesundheitskarte.";
-"hint_txt_try_demo_mode_title" = "Erkundungstour gefällig?";
 "hint_txt_unread_messages" = "Sie haben eine neue Nachricht aus dem Gesundheitsnetzwerk erhalten.";
 "hint_txt_unread_messages_title" = "Neue Nachrichten";
 "kbv_code_dosage_form_aeo" = "Ätherisches-Öl";
@@ -552,9 +544,6 @@
 "main_txt_pendingextauth_resolving_%@" = "Authentisierung für %@ wird verarbeitet";
 "main_txt_pendingextauth_retry" = "Wiederholen";
 "main_txt_pendingextauth_successful_%@" = "Authentisierung mit %@ erfolgreich";
-"mgm_fallback_profile_name" = "Profilname";
-"mgm_txt_alert_message_profile_creation" = "Es konnte kein Profil bei der Aktualisierung erstellt werden";
-"mgm_txt_alert_message_up_to_date" = "Die App ist bereits auf dem neusten Stand";
 "msgs_btn_format_error" = "Fehler melden";
 "msgs_btn_onPremise" = "Abholcode anzeigen";
 "msgs_btn_shipment" = "Warenkorb anzeigen";
@@ -576,7 +565,6 @@
 "msgs_txt_title" = "Mitteilungen";
 "nav_back" = "Zurück";
 "nav_cancel" = "Abbrechen";
-"nav_done" = "Fertig";
 "onb_auth_txt_alt_description" = "Machen Sie es Unbefugten schwerer an Ihre Daten zu gelangen und sichern Sie den Start der App.";
 "onb_auth_txt_divider" = "ODER";
 "onb_auth_txt_no_selection" = "Bitte wählen Sie eine Methode zum absichern der App aus:";
@@ -598,7 +586,6 @@
 "onb_prf_txt_alert_message" = "Das Namensfeld darf nicht leer sein";
 "onb_prf_txt_alert_title" = "Fehler";
 "onb_prf_txt_footnote" = "Das hilft Ihnen dabei, den Überblick zu behalten, wenn Sie die Rezepte für mehrere Personen verwalten möchten.";
-"onb_prf_txt_initial_name" = "Erstes Profil";
 "onb_prf_txt_placeholder" = "Vorname und Nachname";
 "onb_prf_txt_title" = "Wie sollen wir Sie nennen?";
 "onb_str_txt_subtitle" = "Digital. Schnell. Sicher.";
@@ -671,17 +658,12 @@
 "pha_search_btn_error_no_server_response" = "Erneut probieren";
 "pha_search_btn_location_hint_action" = "Standort freigeben";
 "pha_search_btn_show_filter_view" = "Filtern";
-"pha_search_btn_sort_alpha" = "Alphabetisch";
-"pha_search_btn_sort_distance" = "Entfernung";
 "pha_search_filter_txt_title" = "Filtern";
 "pha_search_txt_closed" = "Geschlossen";
 "pha_search_txt_closing_soon" = "Schließt demnächst";
-"pha_search_txt_error_alert_message" = "Die Kommunikation mit dem Apothekendienst scheint leider im Augenblick gestört zu sein.";
-"pha_search_txt_error_alert_title" = "Fehler";
 "pha_search_txt_error_no_server_response_headline" = "Server antwortet nicht";
 "pha_search_txt_error_no_server_response_subheadline" = "Bitte probieren Sie es in einigen Minuten erneut.";
 "pha_search_txt_filter_messenger" = "Botendienst";
-"pha_search_txt_filter_order" = "Versand";
 "pha_search_txt_hint_start_search" = "Starten Sie die Suche durch Tippen auf Öffnen auf der Tastatur";
 "pha_search_txt_location_alert_message" = "Geben Sie Ihren Standort frei, um Apotheken in Ihrer Nähe zu finden.";
 "pha_search_txt_location_alert_title" = "Standort freigeben";
@@ -834,11 +816,15 @@
 "stg_txt_alert_message_demo_mode_off" = "Demo-Modus ist deaktiviert";
 "stg_txt_alert_message_demo_mode_on" = "Demo-Modus ist aktiv. Sie benötigen keine Gesundheitskarte und keine Verbindung zum Internet. Die angezeigten Testrezepte können in einer Apotheke nicht eingelöst werden.";
 "stg_txt_alert_title_demo_mode" = "Erkundungstour gefällig?";
+"stg_txt_audit_events_last_updated_%@" = "Zuletzt aktualisiert: %@";
 "stg_txt_audit_events_missing_date" = "Kein Zeitstempel";
 "stg_txt_audit_events_missing_description" = "Keine Angabe";
 "stg_txt_audit_events_missing_title" = "Ohne Titel";
+"stg_txt_audit_events_next" = "Nächste";
 "stg_txt_audit_events_no_protocol_description" = "Sie erhalten Zugriffsprotokolle, wenn Sie am Rezeptdienst angemeldet sind.";
 "stg_txt_audit_events_no_protocol_title" = "Keine Zugriffsprotokolle";
+"stg_txt_audit_events_page_selection_%@_of_%@" = "Seite %@ von %@";
+"stg_txt_audit_events_previous" = "Vorherige";
 "stg_txt_audit_events_title" = "Zugriffsprotokolle";
 "stg_txt_demo_mode" = "Demo-Modus";
 "stg_txt_edit_profile_background_section_title" = "Hintergrundfarbe";
@@ -870,7 +856,6 @@
 "stg_txt_security_option_faceid_title" = "Face ID";
 "stg_txt_security_option_password_title" = "Kennwort";
 "stg_txt_security_option_touchid_title" = "Touch ID";
-"stg_txt_security_tokens" = "Tokens anzeigen";
 "stg_txt_security_warning" = "Diese App wurde bislang nicht abgesichert. Verbessern Sie den Schutz Ihrer Daten durch einen Fingerabdruck- oder Gesichts-Scan.";
 "stg_txt_title" = "Einstellungen";
 "stg_txt_version_%@_and_build_%@" = "Version %@ • Build %@";

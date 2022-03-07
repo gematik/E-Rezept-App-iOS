@@ -19,6 +19,8 @@
 import SwiftUI
 
 @dynamicMemberLookup
+// swiftlint:disable:next orphaned_doc_comment
+/// sourcery: StringAssetInitialized
 struct Hint<Action: Equatable>: Equatable, Identifiable {
     let id: String // swiftlint:disable:this identifier_name
     var title: String?

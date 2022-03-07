@@ -389,6 +389,41 @@ class StreamWrappedNFCSignatureProvider: NFCSignatureProvider {
 
 }
 
+class StreamWrappedPagedAuditEventsController: PagedAuditEventsController {
+    private var disposeBag: Set<AnyCancellable> = []
+	private let stream: AnyPublisher<PagedAuditEventsController, Never>
+	private var current: PagedAuditEventsController
+
+	init(stream: AnyPublisher<PagedAuditEventsController, Never>, current: PagedAuditEventsController) {
+		self.stream = stream
+		self.current = current
+
+
+		stream
+			.assign(to: \.current, on: self)
+			.store(in: &disposeBag)
+
+
+	}
+
+
+	func getPageContainer() -> PageContainer? {
+        current.getPageContainer(
+            )
+	}
+
+	func getPage(_ page: Page) -> AnyPublisher<[ErxAuditEvent], LocalStoreError> {
+        stream
+        	.map { $0.getPage(
+				page
+            ) }
+            .switchToLatest()
+            .eraseToAnyPublisher()
+	}
+
+
+}
+
 class StreamWrappedProfileDataStore: ProfileDataStore {
     private var disposeBag: Set<AnyCancellable> = []
 	private let stream: AnyPublisher<ProfileDataStore, Never>
@@ -440,6 +475,13 @@ class StreamWrappedProfileDataStore: ProfileDataStore {
         current.update(
 				profileId: profileId,
 				mutating: mutating
+            )
+	}
+
+	func pagedAuditEventsController(for profileId: UUID, with locale: String?) throws -> PagedAuditEventsController {
+        try current.pagedAuditEventsController(
+				for: profileId,
+				with: locale
             )
 	}
 
@@ -544,6 +586,7 @@ class StreamWrappedUserDataStore: UserDataStore {
 		self.current = current
 
 		self.isOnboardingHidden = current.isOnboardingHidden
+		self.serverEnvironmentName = current.serverEnvironmentName
 		self.latestCompatibleModelVersion = current.latestCompatibleModelVersion
 		self.appStartCounter = current.appStartCounter
 
@@ -554,6 +597,10 @@ class StreamWrappedUserDataStore: UserDataStore {
 		stream
 			.map(\.isOnboardingHidden)
 			.assign(to: \.isOnboardingHidden, on: self)
+			.store(in: &disposeBag)
+		stream
+			.map(\.serverEnvironmentName)
+			.assign(to: \.serverEnvironmentName, on: self)
 			.store(in: &disposeBag)
 
 	}
@@ -583,6 +630,7 @@ class StreamWrappedUserDataStore: UserDataStore {
 			.switchToLatest()
 			.eraseToAnyPublisher()
 	}
+	private(set) var serverEnvironmentName: String?
 	var appSecurityOption: AnyPublisher<Int, Never> {
 		return stream
 			.map { $0.appSecurityOption }

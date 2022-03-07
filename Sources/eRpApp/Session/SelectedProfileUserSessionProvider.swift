@@ -32,7 +32,7 @@ class SelectedProfileUserSessionProvider {
          schedulers: Schedulers,
          coreDataControllerFactory: CoreDataControllerFactory,
          profileDataStore: ProfileDataStore,
-         publisher: AnyPublisher<UUID, Never>) {
+         publisher: AnyPublisher<(profileId: UUID, config: AppConfiguration), Never>) {
         currentValueSubject = CurrentValueSubject(initialUserSession)
 
         userSession = StreamWrappedUserSession(
@@ -41,16 +41,17 @@ class SelectedProfileUserSessionProvider {
         )
 
         publisher
-            .sink { [currentValueSubject = self.currentValueSubject] uuid in
+            .sink { [currentValueSubject = self.currentValueSubject] profileId, config in
                 currentValueSubject.send(
                     StandardSessionContainer(
-                        for: uuid,
+                        for: profileId,
                         schedulers: schedulers,
                         erxTaskCoreDataStore: ErxTaskCoreDataStore(
-                            profileId: uuid,
+                            profileId: profileId,
                             coreDataControllerFactory: coreDataControllerFactory
                         ),
-                        profileDataStore: profileDataStore
+                        profileDataStore: profileDataStore,
+                        appConfiguration: config
                     )
                 )
             }

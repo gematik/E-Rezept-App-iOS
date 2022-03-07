@@ -19,6 +19,7 @@
 import SwiftUI
 
 // TODO: type with only optional values is strange, refactor swiftlint:disable:this todo
+/// sourcery: StringAssetInitialized
 struct MedicationDetailCellView: View {
     let value: String?
     var subtitle: String?

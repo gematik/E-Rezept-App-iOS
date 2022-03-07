@@ -35,6 +35,7 @@ final class SettingsViewSnapshotTests: XCTestCase {
                                        environment: DebugDomain.Environment(
                                            schedulers: Schedulers(),
                                            userSession: DemoSessionContainer(),
+                                           localUserStore: MockUserDataStore(),
                                            tracker: DummyTracker(),
                                            serverEnvironmentConfiguration: nil,
                                            signatureProvider: DummySecureEnclaveSignatureProvider(),

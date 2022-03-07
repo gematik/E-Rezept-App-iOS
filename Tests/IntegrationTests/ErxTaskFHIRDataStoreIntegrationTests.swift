@@ -156,6 +156,25 @@ final class ErxTaskFHIRDataStoreIntegrationTests: XCTestCase {
                 subscribeScheduler: DispatchQueue.global().eraseToAnyScheduler()
             )
         expect(success) == true
+
+        success = false
+
+        var cancellable = cloud.listAllAuditEvents(after: nil, for: nil)
+            .first()
+            .sink(receiveCompletion: { completion in
+                switch completion {
+                case let .failure(error):
+                    Swift.print(error)
+                default: break
+                }
+                Swift.print(completion)
+            }, receiveValue: { auditEvents in
+                Swift.print("auditEvents: #", auditEvents.count)
+                success = true
+            })
+        expect(success).toEventually(beTrue(), timeout: 300)
+
+        cancellable.cancel()
     }
 }
 

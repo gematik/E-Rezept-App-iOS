@@ -172,6 +172,10 @@ settings:
     - stg_ctn_audit_events_event_description
     - stg_ctn_audit_events_event_date
     - stg_txt_audit_events_last_updated
+    - stg_ctn_audit_events_navigation_container
+    - stg_ctn_audit_events_navigation_next
+    - stg_ctn_audit_events_navigation_page_indicator
+    - stg_ctn_audit_events_navigation_previous
     - stg_txt_audit_events_activity_indicator
     - stg_txt_audit_events_no_protocol_title
     - stg_txt_audit_events_no_protocol_description

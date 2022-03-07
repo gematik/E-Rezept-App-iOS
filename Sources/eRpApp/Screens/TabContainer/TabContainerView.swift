@@ -98,7 +98,7 @@ struct TabContainerView: View {
                         isModalView: false
                     )
                     .navigationTitle(L10n.tabTxtPharmacySearch)
-                    .navigationBarTitleDisplayMode(.large)
+                    .navigationBarTitleDisplayMode(.inline)
                 }
                 .tabItem {
                     Label(L10n.tabTxtPharmacySearch, image: Asset.TabIcon.mapPinAndEllipse.name)

@@ -22,6 +22,8 @@ import Foundation
 /// Interface to access user specific data
 /// sourcery: StreamWrapped
 public protocol UserDataStore: AnyObject {
+    // MARK: - Onboarding
+
     /// Publisher that returns if the onboarding screens should be displayed
     var hideOnboarding: AnyPublisher<Bool, Never> { get }
 
@@ -41,6 +43,8 @@ public protocol UserDataStore: AnyObject {
     /// - Parameter onboardingVersion: app version that was installed when onboarding has finished
     func set(onboardingVersion: String?)
 
+    // MARK: - CardWall
+
     /// Indicates if the card wall intro screen should be displayed
     var hideCardWallIntro: AnyPublisher<Bool, Never> { get }
 
@@ -49,11 +53,18 @@ public protocol UserDataStore: AnyObject {
     /// - Parameter hideCardWallIntro: `true`if it should be hidden, otherwise `false`
     func set(hideCardWallIntro: Bool)
 
+    // MARK: - Server configuration name
+
     /// Server environment name to use. Only available in non production builds.
     func set(serverEnvironmentConfiguration: String?)
 
     /// Server environment name to use. Only available in non production builds.
     var serverEnvironmentConfiguration: AnyPublisher<String?, Never> { get }
+
+    /// Get name for  server environment configuration without publisher
+    var serverEnvironmentName: String? { get }
+
+    // MARK: - App Security
 
     /// The app security option
     var appSecurityOption: AnyPublisher<Int, Never> { get }
@@ -78,9 +89,13 @@ public protocol UserDataStore: AnyObject {
     /// - Parameter ignoreDeviceNotSecuredWarningForSession: ignore the warning permanently
     func set(ignoreDeviceNotSecuredWarningPermanently: Bool)
 
+    // MARK: - Profile Selection
+
     var selectedProfileId: AnyPublisher<UUID?, Never> { get }
 
     func set(selectedProfileId: UUID)
+
+    // MARK: - General
 
     var latestCompatibleModelVersion: ModelVersion { get set }
 

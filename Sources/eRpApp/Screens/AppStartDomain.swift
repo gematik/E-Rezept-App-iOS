@@ -154,6 +154,7 @@ enum AppStartDomain {
                     router: appStartEnvironment.router,
                     userSessionContainer: appStartEnvironment.userSessionContainer,
                     userSession: appStartEnvironment.userSession,
+                    userDataStore: appStartEnvironment.userDataStore,
                     schedulers: appStartEnvironment.schedulers,
                     fhirDateFormatter: appStartEnvironment.fhirDateFormatter,
                     serviceLocator: appStartEnvironment.serviceLocator,

@@ -206,6 +206,7 @@ struct AltRegistrationView: View, KeyboardReadable {
         }
     }
 
+    /// sourcery: StringAssetInitialized
     struct BiometryButton: View {
         var text: LocalizedStringKey
         var image: Image
@@ -257,7 +258,7 @@ struct AltRegistrationView: View, KeyboardReadable {
             VStack {
                 VStack(alignment: .leading, spacing: 11) {
                     Divider()
-                    SecureFieldWithReveal(L10n.cpwInpPasswordAPlaceholder,
+                    SecureFieldWithReveal(titleKey: L10n.cpwInpPasswordAPlaceholder,
                                           text: passwordA,
                                           textContentType: .newPassword) {
                         viewStore.send(.enterButtonTapped)
@@ -282,7 +283,7 @@ struct AltRegistrationView: View, KeyboardReadable {
                     VStack(alignment: .leading, spacing: 11) {
                         Divider()
                         SecureFieldWithReveal(
-                            L10n.cpwInpPasswordBPlaceholder,
+                            titleKey: L10n.cpwInpPasswordBPlaceholder,
                             accessibilityLabelKey: L10n.cpwTxtPasswordBAccessibility,
                             text: passwordB,
                             textContentType: .newPassword

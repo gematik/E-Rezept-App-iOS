@@ -18,6 +18,7 @@
 
 import SwiftUI
 
+/// sourcery: StringAssetInitialized
 struct ListCellView: View {
     @ScaledMetric var iconSize: CGFloat = 22
     var sfSymbolName: String

@@ -18,6 +18,7 @@
 
 import SwiftUI
 
+/// sourcery: StringAssetInitialized
 struct OptInCell: View {
     let text: LocalizedStringKey
     @Binding var isOn: Bool

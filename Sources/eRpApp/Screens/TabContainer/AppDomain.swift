@@ -62,8 +62,8 @@ enum AppDomain {
     struct Environment {
         let router: Routing
         var userSessionContainer: UsersSessionContainer
-
         var userSession: UserSession
+        let userDataStore: UserDataStore
         var schedulers: Schedulers
         var fhirDateFormatter: FHIRDateFormatter
         var serviceLocator: ServiceLocator
@@ -181,6 +181,7 @@ enum AppDomain {
             DebugDomain.Environment(
                 schedulers: appEnvironment.schedulers,
                 userSession: appEnvironment.userSession,
+                localUserStore: appEnvironment.userDataStore,
                 tracker: appEnvironment.tracker,
                 signatureProvider: appEnvironment.signatureProvider,
                 serviceLocatorDebugAccess: ServiceLocatorDebugAccess(serviceLocator: appEnvironment.serviceLocator)
@@ -221,6 +222,7 @@ extension AppDomain {
             router: DummyRouter(),
             userSessionContainer: DummyUserSessionContainer(),
             userSession: DemoSessionContainer(),
+            userDataStore: DemoUserDefaultsStore(),
             schedulers: Schedulers(),
             fhirDateFormatter: globals.fhirDateFormatter,
             serviceLocator: ServiceLocator(),

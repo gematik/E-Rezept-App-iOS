@@ -18,6 +18,7 @@
 
 import SwiftUI
 
+/// sourcery: StringAssetInitialized
 struct SelectionCell: View {
     let text: LocalizedStringKey
     let description: LocalizedStringKey?

@@ -253,6 +253,7 @@ extension GroupedPrescriptionListView {
             }
         }
 
+        /// sourcery: StringAssetInitialized
         struct SectionPlaceholderView: View {
             let text: LocalizedStringKey
             var body: some View {
@@ -264,6 +265,7 @@ extension GroupedPrescriptionListView {
             }
         }
 
+        /// sourcery: StringAssetInitialized
         struct RefreshLoadingStateView: View {
             @ScaledMetric var scale: CGFloat = 1
             var text: LocalizedStringKey

@@ -114,4 +114,28 @@ final class MockProfileDataStore: ProfileDataStore {
         updateProfileIdMutatingReceivedInvocations.append((profileId: profileId, mutating: mutating))
         return updateProfileIdMutatingClosure.map { $0(profileId, mutating) } ?? updateProfileIdMutatingReturnValue
     }
+
+    // MARK: - pagedAuditEventsController
+
+    var pagedAuditEventsControllerForWithThrowableError: Error?
+    var pagedAuditEventsControllerForWithCallsCount = 0
+    var pagedAuditEventsControllerForWithCalled: Bool {
+        pagedAuditEventsControllerForWithCallsCount > 0
+    }
+
+    var pagedAuditEventsControllerForWithReceivedArguments: (profileId: UUID, locale: String?)?
+    var pagedAuditEventsControllerForWithReceivedInvocations: [(profileId: UUID, locale: String?)] = []
+    var pagedAuditEventsControllerForWithReturnValue: PagedAuditEventsController!
+    var pagedAuditEventsControllerForWithClosure: ((UUID, String?) throws -> PagedAuditEventsController)?
+
+    func pagedAuditEventsController(for profileId: UUID, with locale: String?) throws -> PagedAuditEventsController {
+        if let error = pagedAuditEventsControllerForWithThrowableError {
+            throw error
+        }
+        pagedAuditEventsControllerForWithCallsCount += 1
+        pagedAuditEventsControllerForWithReceivedArguments = (profileId: profileId, locale: locale)
+        pagedAuditEventsControllerForWithReceivedInvocations.append((profileId: profileId, locale: locale))
+        return try pagedAuditEventsControllerForWithClosure
+            .map { try $0(profileId, locale) } ?? pagedAuditEventsControllerForWithReturnValue
+    }
 }

@@ -25,7 +25,7 @@ class DemoProfileDataStore: ProfileDataStore {
                               identifier: UUID(),
                               insuranceId: "X123456789",
                               color: .red,
-                              lastAuthenticated: nil,
+                              lastAuthenticated: Date(),
                               erxTasks: [])
 
     private var dummyProfiles: [Profile] = [
@@ -71,6 +71,10 @@ class DemoProfileDataStore: ProfileDataStore {
         profilesPublisher.send(dummyProfiles)
 
         return Just(true).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
+    }
+
+    func pagedAuditEventsController(for _: UUID, with _: String?) throws -> PagedAuditEventsController {
+        DemoPagedAuditEventsController()
     }
 
     typealias ErrorType = LocalStoreError

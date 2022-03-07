@@ -18,6 +18,7 @@
 
 import SwiftUI
 
+/// sourcery: StringAssetInitialized
 struct ProgressTile: View {
     let icon: String
     var title: LocalizedStringKey

@@ -18,6 +18,7 @@
 
 import SwiftUI
 
+/// sourcery: StringAssetInitialized
 struct TertiaryListButton: View {
     var text: LocalizedStringKey
     var imageName: String? = SFSymbolName.refresh

@@ -42,15 +42,16 @@ class ChangeableUserSessionContainer: UsersSessionContainer {
 
     private var currentProfileUserSession: SelectedProfileUserSessionProvider
 
-    private let userStore = UserDefaultsStore(userDefaults: UserDefaults.standard)
+    private let userStore: UserDataStore
 
     init(initialUserSession: UserSession? = nil,
          profileId: UUID,
          schedulers: Schedulers,
          coreDataControllerFactory: CoreDataControllerFactory,
-         profileDataStore: ProfileDataStore) {
+         profileDataStore: ProfileDataStore,
+         userDataStore: UserDataStore) {
+        userStore = userDataStore
         let session: UserSession
-
         if let initialUserSession = initialUserSession {
             session = initialUserSession
         } else {
@@ -61,27 +62,34 @@ class ChangeableUserSessionContainer: UsersSessionContainer {
                     profileId: profileId,
                     coreDataControllerFactory: coreDataControllerFactory
                 ),
-                profileDataStore: profileDataStore
+                profileDataStore: profileDataStore,
+                appConfiguration: userStore.appConfiguration
             )
         }
-        currentSession = CurrentValueSubject(session)
+
         currentProfileUserSession = SelectedProfileUserSessionProvider(
             initialUserSession: session,
             schedulers: schedulers,
             coreDataControllerFactory: coreDataControllerFactory,
             profileDataStore: profileDataStore,
-            publisher: userStore.selectedProfileId.dropFirst().compactMap { $0 }.eraseToAnyPublisher()
+            publisher: userStore.selectedProfileId
+                .combineLatest(userStore.configuration)
+                .dropFirst()
+                .compactMap { uuid, config in
+                    guard let uuid = uuid else {
+                        return nil
+                    }
+                    return (uuid, config)
+                }
+                .eraseToAnyPublisher()
         )
+
+        currentSession = CurrentValueSubject(currentProfileUserSession.userSession)
 
         userSession = StreamWrappedUserSession(
             stream: currentSession.eraseToAnyPublisher(),
             current: session
         )
-        if let initialUserSession = initialUserSession {
-            currentSession.send(initialUserSession)
-        } else {
-            currentSession.send(currentProfileUserSession.userSession)
-        }
     }
 
     func switchToDemoMode() {

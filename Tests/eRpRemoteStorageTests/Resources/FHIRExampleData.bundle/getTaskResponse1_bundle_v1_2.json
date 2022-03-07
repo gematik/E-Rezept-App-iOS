@@ -1,0 +1,667 @@
+{
+  "id": "5c605b2b-7dda-4bd7-b98f-57c8ae4fd180",
+  "type": "collection",
+  "timestamp": "2022-01-25T11:17:21.294+00:00",
+  "resourceType": "Bundle",
+  "link": [
+    {
+      "relation": "self",
+      "url": "https://erp-ref.zentral.erp.splitdns.ti-dienste.de/Task/160.000.088.357.676.93"
+    }
+  ],
+  "entry": [
+    {
+      "fullUrl": "https://erp-ref.zentral.erp.splitdns.ti-dienste.de/Task/160.000.088.357.676.93",
+      "resource": {
+        "resourceType": "Task",
+        "id": "160.000.088.357.676.93",
+        "meta": {
+          "profile": [
+            "https://gematik.de/fhir/StructureDefinition/ErxTask|1.1.1"
+          ]
+        },
+        "identifier": [
+          {
+            "use": "official",
+            "system": "https://gematik.de/fhir/NamingSystem/PrescriptionID",
+            "value": "160.000.088.357.676.93"
+          },
+          {
+            "use": "official",
+            "system": "https://gematik.de/fhir/NamingSystem/AccessCode",
+            "value": "68db761b666f7e75a32090fd4d109e2766e02693741278ab6dc2df90f1cbb3af"
+          }
+        ],
+        "intent": "order",
+        "status": "ready",
+        "extension": [
+          {
+            "url": "https://gematik.de/fhir/StructureDefinition/PrescriptionType",
+            "valueCoding": {
+              "system": "https://gematik.de/fhir/CodeSystem/Flowtype",
+              "code": "160",
+              "display": "Muster 16 (Apothekenpflichtige Arzneimittel)"
+            }
+          },
+          {
+            "url": "https://gematik.de/fhir/StructureDefinition/ExpiryDate",
+            "valueDate": "2022-03-02"
+          },
+          {
+            "url": "https://gematik.de/fhir/StructureDefinition/AcceptDate",
+            "valueDate": "2021-12-28"
+          }
+        ],
+        "authoredOn": "2021-11-30T14:16:43.239+00:00",
+        "lastModified": "2021-11-30T14:17:39.222+00:00",
+        "performerType": [
+          {
+            "coding": [
+              {
+                "system": "urn:ietf:rfc:3986",
+                "code": "urn:oid:1.2.276.0.76.4.54",
+                "display": "Öffentliche Apotheke"
+              }
+            ],
+            "text": "Öffentliche Apotheke"
+          }
+        ],
+        "input": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "https://gematik.de/fhir/CodeSystem/Documenttype",
+                  "code": "1"
+                }
+              ]
+            },
+            "valueReference": {
+              "reference": "a02c3b44-0500-0000-0001-000000000000"
+            }
+          },
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "https://gematik.de/fhir/CodeSystem/Documenttype",
+                  "code": "2"
+                }
+              ]
+            },
+            "valueReference": {
+              "reference": "a02c3b44-0500-0000-0002-000000000000"
+            }
+          }
+        ],
+        "for": {
+          "identifier": {
+            "value": "X110498793",
+            "system": "http://fhir.de/NamingSystem/gkv/kvid-10"
+          }
+        }
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:a02c3b44-0500-0000-0002-000000000000",
+      "resource": {
+        "resourceType": "Bundle",
+        "id": "a02c3b44-0500-0000-0002-000000000000",
+        "meta": {
+          "lastUpdated": "2021-09-13T18:00:40+00:00",
+          "profile": [
+            "https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Bundle|1.0.2"
+          ]
+        },
+        "identifier": {
+          "system": "https://gematik.de/fhir/NamingSystem/PrescriptionID",
+          "value": "160.000.088.357.676.93"
+        },
+        "type": "document",
+        "timestamp": "2021-11-30T15:16:43+00:00",
+        "entry": [
+          {
+            "fullUrl": "http://testkrankenhaus.local/fhir/Composition/8cbabb0a-3253-4920-bec5-90359af6d157",
+            "resource": {
+              "resourceType": "Composition",
+              "id": "8cbabb0a-3253-4920-bec5-90359af6d157",
+              "meta": {
+                "profile": [
+                  "https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Composition|1.0.2"
+                ]
+              },
+              "extension": [
+                {
+                  "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_FOR_Legal_basis",
+                  "valueCoding": {
+                    "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_KBV_STATUSKENNZEICHEN",
+                    "code": "00"
+                  }
+                }
+              ],
+              "status": "final",
+              "type": {
+                "coding": [
+                  {
+                    "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_KBV_FORMULAR_ART",
+                    "code": "e16A"
+                  }
+                ]
+              },
+              "subject": {
+                "reference": "Patient/b390fcbb-de50-4ffa-b06c-85523e036300"
+              },
+              "date": "2021-11-30T15:16:32.534289+01:00",
+              "author": [
+                {
+                  "reference": "Practitioner/0c70b91c-b08f-49ae-840a-1522facb47a2",
+                  "type": "Practitioner"
+                },
+                {
+                  "type": "Device",
+                  "identifier": {
+                    "system": "https://fhir.kbv.de/NamingSystem/KBV_NS_FOR_Pruefnummer",
+                    "value": "Y/400/2012/01/777"
+                  }
+                }
+              ],
+              "title": "elektronische Arzneimittelverordnung",
+              "custodian": {
+                "reference": "Organization/83a776a8-0983-4a04-ac1b-d530297b1d69"
+              },
+              "section": [
+                {
+                  "code": {
+                    "coding": [
+                      {
+                        "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_ERP_Section_Type",
+                        "code": "Prescription"
+                      }
+                    ]
+                  },
+                  "entry": [
+                    {
+                      "reference": "MedicationRequest/9f07d01c-85aa-4b96-a377-df3fc3130efb"
+                    }
+                  ]
+                },
+                {
+                  "code": {
+                    "coding": [
+                      {
+                        "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_ERP_Section_Type",
+                        "code": "Coverage"
+                      }
+                    ]
+                  },
+                  "entry": [
+                    {
+                      "reference": "Coverage/40d36758-638e-43cd-b8a4-8d2d5b6863cb"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "fullUrl": "http://testkrankenhaus.local/fhir/MedicationRequest/9f07d01c-85aa-4b96-a377-df3fc3130efb",
+            "resource": {
+              "resourceType": "MedicationRequest",
+              "id": "9f07d01c-85aa-4b96-a377-df3fc3130efb",
+              "meta": {
+                "profile": [
+                  "https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Prescription|1.0.2"
+                ]
+              },
+              "extension": [
+                {
+                  "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_StatusCoPayment",
+                  "valueCoding": {
+                    "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_ERP_StatusCoPayment",
+                    "code": "0"
+                  }
+                },
+                {
+                  "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_EmergencyServicesFee",
+                  "valueBoolean": false
+                },
+                {
+                  "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_BVG",
+                  "valueBoolean": false
+                },
+                {
+                  "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Multiple_Prescription",
+                  "extension": [
+                    {
+                      "url": "Kennzeichen",
+                      "valueBoolean": false
+                    }
+                  ]
+                }
+              ],
+              "status": "active",
+              "intent": "order",
+              "medicationReference": {
+                "reference": "Medication/f0f9f06c-3864-444d-a642-dc6b9adb39fb"
+              },
+              "subject": {
+                "reference": "Patient/b390fcbb-de50-4ffa-b06c-85523e036300"
+              },
+              "authoredOn": "2021-11-30",
+              "requester": {
+                "reference": "Practitioner/0c70b91c-b08f-49ae-840a-1522facb47a2"
+              },
+              "insurance": [
+                {
+                  "reference": "Coverage/40d36758-638e-43cd-b8a4-8d2d5b6863cb"
+                }
+              ],
+              "note": [
+                {
+                  "text": "Patient erneut auf Anwendung der Schmelztabletten hinweisen"
+                }
+              ],
+              "dosageInstruction": [
+                {
+                  "extension": [
+                    {
+                      "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_DosageFlag",
+                      "valueBoolean": true
+                    }
+                  ],
+                  "text": "1x täglich"
+                }
+              ],
+              "dispenseRequest": {
+                "quantity": {
+                  "value": 1,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "{Package}"
+                }
+              },
+              "substitution": {
+                "allowedBoolean": false
+              }
+            }
+          },
+          {
+            "fullUrl": "http://testkrankenhaus.local/fhir/Medication/f0f9f06c-3864-444d-a642-dc6b9adb39fb",
+            "resource": {
+              "resourceType": "Medication",
+              "id": "f0f9f06c-3864-444d-a642-dc6b9adb39fb",
+              "meta": {
+                "profile": [
+                  "https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Medication_PZN|1.0.2"
+                ]
+              },
+              "extension": [
+                {
+                  "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Medication_Category",
+                  "valueCoding": {
+                    "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_ERP_Medication_Category",
+                    "code": "00"
+                  }
+                },
+                {
+                  "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Medication_Vaccine",
+                  "valueBoolean": false
+                },
+                {
+                  "url": "http://fhir.de/StructureDefinition/normgroesse",
+                  "valueCode": "N3"
+                }
+              ],
+              "code": {
+                "coding": [
+                  {
+                    "system": "http://fhir.de/CodeSystem/ifa/pzn",
+                    "code": "08850519"
+                  }
+                ],
+                "text": "Olanzapin Heumann 20mg"
+              },
+              "form": {
+                "coding": [
+                  {
+                    "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_KBV_DARREICHUNGSFORM",
+                    "code": "SMT"
+                  }
+                ]
+              },
+              "amount": {
+                "numerator": {
+                  "value": 70,
+                  "unit": "St"
+                },
+                "denominator": {
+                  "value": 1
+                }
+              }
+            }
+          },
+          {
+            "fullUrl": "http://testkrankenhaus.local/fhir/Patient/b390fcbb-de50-4ffa-b06c-85523e036300",
+            "resource": {
+              "resourceType": "Patient",
+              "id": "b390fcbb-de50-4ffa-b06c-85523e036300",
+              "meta": {
+                "profile": [
+                  "https://fhir.kbv.de/StructureDefinition/KBV_PR_FOR_Patient|1.0.3"
+                ]
+              },
+              "identifier": [
+                {
+                  "use": "official",
+                  "type": {
+                    "coding": [
+                      {
+                        "system": "http://fhir.de/CodeSystem/identifier-type-de-basis",
+                        "code": "GKV"
+                      }
+                    ]
+                  },
+                  "system": "http://fhir.de/NamingSystem/gkv/kvid-10",
+                  "value": "X110498793"
+                }
+              ],
+              "name": [
+                {
+                  "use": "official",
+                  "family": "Graf Freiherr von Schaumberg",
+                  "_family": {
+                    "extension": [
+                      {
+                        "url": "http://fhir.de/StructureDefinition/humanname-namenszusatz",
+                        "valueString": "Graf Freiherr"
+                      },
+                      {
+                        "url": "http://hl7.org/fhir/StructureDefinition/humanname-own-prefix",
+                        "valueString": "von"
+                      },
+                      {
+                        "url": "http://hl7.org/fhir/StructureDefinition/humanname-own-name",
+                        "valueString": "Schaumberg"
+                      }
+                    ]
+                  },
+                  "given": [
+                    "Karl-Friederich"
+                  ],
+                  "prefix": [
+                    "Prof. Dr."
+                  ],
+                  "_prefix": [
+                    {
+                      "extension": [
+                        {
+                          "url": "http://hl7.org/fhir/StructureDefinition/iso21090-EN-qualifier",
+                          "valueCode": "AC"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "birthDate": "1964-04-04",
+              "address": [
+                {
+                  "type": "both",
+                  "line": [
+                    "Siegburger Str. 155"
+                  ],
+                  "_line": [
+                    {
+                      "extension": [
+                        {
+                          "url": "http://hl7.org/fhir/StructureDefinition/iso21090-ADXP-streetName",
+                          "valueString": "Siegburger Str."
+                        },
+                        {
+                          "url": "http://hl7.org/fhir/StructureDefinition/iso21090-ADXP-houseNumber",
+                          "valueString": "155"
+                        }
+                      ]
+                    }
+                  ],
+                  "city": "Köln",
+                  "postalCode": "51105",
+                  "country": "D"
+                }
+              ]
+            }
+          },
+          {
+            "fullUrl": "http://testkrankenhaus.local/fhir/Practitioner/0c70b91c-b08f-49ae-840a-1522facb47a2",
+            "resource": {
+              "resourceType": "Practitioner",
+              "id": "0c70b91c-b08f-49ae-840a-1522facb47a2",
+              "meta": {
+                "profile": [
+                  "https://fhir.kbv.de/StructureDefinition/KBV_PR_FOR_Practitioner|1.0.3"
+                ]
+              },
+              "identifier": [
+                {
+                  "use": "official",
+                  "type": {
+                    "coding": [
+                      {
+                        "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                        "code": "LANR"
+                      }
+                    ]
+                  },
+                  "system": "https://fhir.kbv.de/NamingSystem/KBV_NS_Base_ANR",
+                  "value": "445588777"
+                }
+              ],
+              "name": [
+                {
+                  "use": "official",
+                  "family": "Popówitsch",
+                  "_family": {
+                    "extension": [
+                      {
+                        "url": "http://hl7.org/fhir/StructureDefinition/humanname-own-name",
+                        "valueString": "Popówitsch"
+                      }
+                    ]
+                  },
+                  "given": [
+                    "Hannelore"
+                  ],
+                  "prefix": [
+                    "Prof. Dr."
+                  ],
+                  "_prefix": [
+                    {
+                      "extension": [
+                        {
+                          "url": "http://hl7.org/fhir/StructureDefinition/iso21090-EN-qualifier",
+                          "valueCode": "AC"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "qualification": [
+                {
+                  "code": {
+                    "coding": [
+                      {
+                        "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_FOR_Qualification_Type",
+                        "code": "00"
+                      }
+                    ]
+                  }
+                },
+                {
+                  "code": {
+                    "text": "Innere und Allgemeinmedizin (Hausarzt)"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "fullUrl": "http://testkrankenhaus.local/fhir/Organization/83a776a8-0983-4a04-ac1b-d530297b1d69",
+            "resource": {
+              "resourceType": "Organization",
+              "id": "83a776a8-0983-4a04-ac1b-d530297b1d69",
+              "meta": {
+                "profile": [
+                  "https://fhir.kbv.de/StructureDefinition/KBV_PR_FOR_Organization|1.0.3"
+                ]
+              },
+              "identifier": [
+                {
+                  "use": "official",
+                  "type": {
+                    "coding": [
+                      {
+                        "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                        "code": "BSNR"
+                      }
+                    ]
+                  },
+                  "system": "https://fhir.kbv.de/NamingSystem/KBV_NS_Base_BSNR",
+                  "value": "998877665"
+                }
+              ],
+              "name": "Universitätsklinik Campus Süd",
+              "telecom": [
+                {
+                  "system": "phone",
+                  "value": "06841/7654321"
+                },
+                {
+                  "system": "fax",
+                  "value": "06841/4433221"
+                },
+                {
+                  "system": "email",
+                  "value": "unikliniksued@test.de"
+                }
+              ],
+              "address": [
+                {
+                  "type": "both",
+                  "line": [
+                    "Kirrberger Str. 100",
+                    "Campus Süd"
+                  ],
+                  "_line": [
+                    {
+                      "extension": [
+                        {
+                          "url": "http://hl7.org/fhir/StructureDefinition/iso21090-ADXP-streetName",
+                          "valueString": "Kirrberger Str."
+                        },
+                        {
+                          "url": "http://hl7.org/fhir/StructureDefinition/iso21090-ADXP-houseNumber",
+                          "valueString": "100"
+                        }
+                      ]
+                    },
+                    {
+                      "extension": [
+                        {
+                          "url": "http://hl7.org/fhir/StructureDefinition/iso21090-ADXP-additionalLocator",
+                          "valueString": "Campus Süd"
+                        }
+                      ]
+                    }
+                  ],
+                  "city": "Homburg",
+                  "postalCode": "66421",
+                  "country": "D"
+                }
+              ]
+            }
+          },
+          {
+            "fullUrl": "http://testkrankenhaus.local/fhir/Coverage/40d36758-638e-43cd-b8a4-8d2d5b6863cb",
+            "resource": {
+              "resourceType": "Coverage",
+              "id": "40d36758-638e-43cd-b8a4-8d2d5b6863cb",
+              "meta": {
+                "profile": [
+                  "https://fhir.kbv.de/StructureDefinition/KBV_PR_FOR_Coverage|1.0.3"
+                ]
+              },
+              "extension": [
+                {
+                  "url": "http://fhir.de/StructureDefinition/gkv/besondere-personengruppe",
+                  "valueCoding": {
+                    "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_KBV_PERSONENGRUPPE",
+                    "code": "00"
+                  }
+                },
+                {
+                  "url": "http://fhir.de/StructureDefinition/gkv/dmp-kennzeichen",
+                  "valueCoding": {
+                    "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_KBV_DMP",
+                    "code": "00"
+                  }
+                },
+                {
+                  "url": "http://fhir.de/StructureDefinition/gkv/wop",
+                  "valueCoding": {
+                    "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_ITA_WOP",
+                    "code": "38"
+                  }
+                },
+                {
+                  "url": "http://fhir.de/StructureDefinition/gkv/versichertenart",
+                  "valueCoding": {
+                    "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_KBV_VERSICHERTENSTATUS",
+                    "code": "1"
+                  }
+                }
+              ],
+              "status": "active",
+              "type": {
+                "coding": [
+                  {
+                    "system": "http://fhir.de/CodeSystem/versicherungsart-de-basis",
+                    "code": "GKV"
+                  }
+                ]
+              },
+              "beneficiary": {
+                "reference": "Patient/b390fcbb-de50-4ffa-b06c-85523e036300"
+              },
+              "payor": [
+                {
+                  "identifier": {
+                    "use": "official",
+                    "system": "http://fhir.de/NamingSystem/arge-ik/iknr",
+                    "value": "109519005"
+                  },
+                  "display": "AOK Nordost - Die Gesundheitskasse"
+                }
+              ]
+            }
+          }
+        ],
+        "signature": {
+          "type": [
+            {
+              "system": "urn:iso-astm:E1762-95:2013",
+              "code": "1.2.840.10065.1.12.1.5"
+            }
+          ],
+          "when": "2022-01-25T11:17:21.294+00:00",
+          "who": {
+            "reference": "https://erp-ref.zentral.erp.splitdns.ti-dienste.de/Device/1"
+          },
+          "sigFormat": "application/jose",
+          "data": "ZXlKaGJHY2lPaUpDVURJMU5sSXhJaXdpZURWMEkxTXlOVFlpT2lKTk1rbDNXbXBqZUZwWFJtbE5NbFV5V21wS2FrNTZRVE5hYW14b1RYcEthazFVWnpKTlIwMDBXVlJSZDA1SFZUUk5SMXBxVFhwck1WbHRVVEJQVjFFd1RYcEtiVmt5VFROTlJGVTFXbXBDYkUxVVZYcE5VU0lzSW5SNWNDSTZJbUZ3Y0d4cFkyRjBhVzl1TDJwdmMyVWlMQ0pqZEhraU9pSmhjSEJzYVdOaGRHbHZiaTltYUdseUsycHpiMjQ3WTJoaGNuTmxkRDExZEdZdE9DSXNJbmcxWXlJNld5Sk5TVWxETVdwRFEwRnVlV2RCZDBsQ1FXZEpRMGMwVFhkRFoxbEpTMjlhU1hwcU1FVkJkMGwzWjFsUmVFTjZRVXBDWjA1V1FrRlpWRUZyVWtaTlVqaDNTRkZaUkZaUlVVdEVRbHB1V2xjeGFHUkhiSEpKUldSMFdXdG5aMVJyT1ZWTVZscENWRVZzUlUxVVNYZE5RVmxFVmxGUlRFUkRiRXhpTWpGM1lqSTFiR0p1VW14aWFURkVVVk5DYTFwWVNXZFdSMVp6V2xjeGFHUkhiSEpoVnpWdFkyMUdlbVJJU2pGaE0xSXhZMnBGWjAxQ05FZEJNVlZGUVhkM1dGSXdWazVNYTNSUVZGWkJkRkV3UlhsUFEwSlZVbFpPVlV4Vk9VOVVSbXQzU0doalRrMXFSWGRPVkVWM1RVUm5lVTlVVlRWWGFHTk9UV3BaZDA1VVFUVk5SR2Q1VDFSVk5GZHFRbU5OVVhOM1ExRlpSRlpSVVVkRmQwcEZVbFJGYVUxRFFVZEJNVlZGUTJkM1dsTlZTazVKUmxKR1ZURlJkRlF3TlUxWFUwRjBTVVUxVUZaRE1WZFJWWGhLVWtSRldFMUNWVWRCTVZWRlFsSk5UMDFFWnpOT1JHTjBWV3hXVkZOVlkzZE5SRWw0UlVSQlQwSm5UbFpDUVUxTlFqSldlVnBZY0d4alNGRjNWMnBCVlVKblkzRm9hMnBQVUZGSlFrSm5hM0pLUVUxRVFXZG5Ra0ZSWTBSUlowRkZTR0k0TVhFellVUkxaRmhwUW1acFNGQlFWVFI2YzJSNEsweEhSMngxWmtGblRtdE5aM1pJTjJSSU5XeGxjemhaTjNKVk1sZDVSa3RRVlhWSGFtUTRlbGhRYlZkNU5tUmhiRTB2TUdZM1p6Tm1NWGhPVUV0UFEwRlJTWGRuWmpoM1NGRlpSRlpTTUU5Q1FsbEZSa2Q1TXpZMU5WVlhTbU5wZDJjeWFqZE5ZV3R0UzBWNWQzQnZaazFDT0VkQk1WVmtTWGRSV1UxQ1lVRkdRVUp4VDBwRWVtMWhOR2hxTVV4aE4zTkhUV0p2UTNSWlUweEtUVVU0UjBORGMwZEJVVlZHUW5kRlFrSkZUWGRSVkVFdlFtZG5ja0puUlVaQ1VXTjNRVmxaZW1GSVVqQmpSRzkyVERJNWFtTXpRWGxNV0ZKc1l6TlNlVnBYV1hWaE1qbDBZME14YWxsVE5UQmFWM2hzWWxkR01HRlhjM1JrUjFaNlpFTTVkbGt6VG5kTU1sWnFUVUUwUjBFeFZXUkVkMFZDTDNkUlJVRjNTVWhuUkVGb1FtZE9Wa2hUUVVWSGFrRlpUVUZ2UjBORGNVTkdRVUpOUWtsRmFrMUJiMGREUTNGRFJrRkNUVUpKUmt4TlFYZEhRVEZWWkVWM1JVSXZkMUZEVFVGQmQwdDNXVVpMZVZGSlFYZE5SVWxxUVdkTlFqUjNTRVJCWVUxQ1ozZERaM2RKVWxNeFUxcFljR3hqU0ZGM1EyZFpTVXR2U1ZWQlJYZEZaMmROZDBObldVbExiMXBKZW1vd1JVRjNTVVJUUVVGM1VsRkphRUZKUkhGTU1XTXlWU3M1Vld4V2FqZDBjVmxXVEVoelpHcFRVbWRYZFM5b1RVVXlTbmxSUkhwMFdWZFJRV2xCY0hkWk1HbFZNV3BCTlZkSk5FVjJaakJUZDB0NWFWZHVORUpOVUU5Q1dsQlplbWhtT1dkVGN5OUNRVDA5SWwxOS4uYTB0TllfeWtnUk1lX04yUHVmZGZPQkZPUFFJeXFzLXVNMVRvaGFEMEVZdW1TeHJOcTFrNVVqZVZyV3VlVThyNTZsUzVwT1lZeXUxbE10dWFKTEU4RkE=",
+          "targetFormat": "application/fhir+json"
+        }
+      }
+    }
+  ]
+}
+

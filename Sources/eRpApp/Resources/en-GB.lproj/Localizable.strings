@@ -167,10 +167,6 @@
 "cdw_txt_rc_nfc_message_multipleCardsMessage" = "Several medical cards found";
 "cdw_txt_rc_nfc_message_noCardMessage" = "No medical card found";
 "cdw_txt_rc_nfc_message_unsupportedCardMessage" = "This card type is not supported";
-"cdw_txt_rc_step_get_challenge" = "Connecting to the server";
-"cdw_txt_rc_step_sign_challenge" = "Reading medical card";
-"cdw_txt_rc_step_verify_at_idp" = "Login to prescription directory";
-"cdw_txt_rc_steps_title" = "Steps";
 "cdw_txt_rc_title" = "Login";
 "cdw_txt_sel_description" = "Wählen Sie eine Anmeldemethode um automatisch Rezepte zu empfangen.";
 "cdw_txt_sel_egk_description" = "Sichere Anmeldung mit Ihrer neuen elektronischen Gesundheitskarte";
@@ -243,8 +239,6 @@
 "erx_btn_redeem" = "Redeem all";
 "erx_btn_refresh" = "Update";
 "erx_btn_scn_prescription" = "Open prescription scanner";
-"erx_btn_show_settings" = "Open settings";
-"erx_title" = "Prescriptions";
 "erx_txt_accepted_until" = "This is a plural string handled by Localizable.stringdict!";
 "erx_txt_current" = "Current";
 "erx_txt_expires_in" = "This is a plural string handled by Localizable.stringdict!";
@@ -254,7 +248,6 @@
 "erx_txt_not_yet_redeemed" = "You haven't redeemed any prescriptions yet";
 "erx_txt_redeemed" = "Archive";
 "erx_txt_refresh_loading" = "Loading ...";
-"hint_btn_card_wall" = "Log in now";
 "hint_btn_open_scn" = "Open scanner";
 "hint_btn_try_demo_mode" = "Launch demo mode";
 "hint_btn_unread_messages" = "View new messages now";
@@ -263,7 +256,6 @@
 "hint_txt_open_scn" = "Scan the prescription code to add it.";
 "hint_txt_open_scn_title" = "New prescription";
 "hint_txt_try_demo_mode" = "Our demo mode shows you all the functions of the app – without a medical card.";
-"hint_txt_try_demo_mode_title" = "Would you like a tour of the app?";
 "hint_txt_unread_messages" = "You have received a new message from the health network.";
 "hint_txt_unread_messages_title" = "New messages";
 "kbv_code_dosage_form_aeo" = "Essential oil";
@@ -552,9 +544,6 @@
 "main_txt_pendingextauth_resolving_%@" = "Authentisierung für %@ wird verarbeitet";
 "main_txt_pendingextauth_retry" = "Wiederholen";
 "main_txt_pendingextauth_successful_%@" = "Authentisierung mit %@ erfolgreich";
-"mgm_fallback_profile_name" = "Profilname";
-"mgm_txt_alert_message_profile_creation" = "Es konnte kein Profil bei der Aktualisierung erstellt werden";
-"mgm_txt_alert_message_up_to_date" = "Die App ist bereits auf dem neusten Stand";
 "msgs_btn_format_error" = "Report error";
 "msgs_btn_onPremise" = "Show pickup code";
 "msgs_btn_shipment" = "Show shopping cart";
@@ -576,7 +565,6 @@
 "msgs_txt_title" = "Messages";
 "nav_back" = "Back";
 "nav_cancel" = "Cancel";
-"nav_done" = "Ready";
 "onb_auth_txt_alt_description" = "Machen Sie es Unbefugten schwerer an Ihre Daten zu gelangen und sichern Sie den Start der App.";
 "onb_auth_txt_divider" = "ODER";
 "onb_auth_txt_no_selection" = "Bitte wählen Sie eine Methode zum absichern der App aus:";
@@ -598,7 +586,6 @@
 "onb_prf_txt_alert_message" = "Das Namensfeld darf nicht leer sein";
 "onb_prf_txt_alert_title" = "Fehler";
 "onb_prf_txt_footnote" = "Das hilft Ihnen dabei, den Überblick zu behalten, wenn Sie die Rezepte für mehrere Personen verwalten möchten.";
-"onb_prf_txt_initial_name" = "Erstes Profil";
 "onb_prf_txt_placeholder" = "Vorname und Nachname";
 "onb_prf_txt_title" = "Wie sollen wir Sie nennen?";
 "onb_str_txt_subtitle" = "Digital. Fast. Secure.";
@@ -671,17 +658,12 @@
 "pha_search_btn_error_no_server_response" = "Erneut probieren";
 "pha_search_btn_location_hint_action" = "Share location";
 "pha_search_btn_show_filter_view" = "Filter";
-"pha_search_btn_sort_alpha" = "Alphabetical";
-"pha_search_btn_sort_distance" = "Distance";
 "pha_search_filter_txt_title" = "Filter";
 "pha_search_txt_closed" = "Closed";
 "pha_search_txt_closing_soon" = "Closing soon";
-"pha_search_txt_error_alert_message" = "Unfortunately, communication with the pharmacy service seems to be disrupted at the moment.";
-"pha_search_txt_error_alert_title" = "Error";
 "pha_search_txt_error_no_server_response_headline" = "Server antwortet nicht";
 "pha_search_txt_error_no_server_response_subheadline" = "Bitte probieren Sie es in einigen Minuten erneut.";
 "pha_search_txt_filter_messenger" = "Delivery service";
-"pha_search_txt_filter_order" = "Mail order";
 "pha_search_txt_hint_start_search" = "Start the search by tapping Open on the keypad";
 "pha_search_txt_location_alert_message" = "Share your location to find pharmacies near you.";
 "pha_search_txt_location_alert_title" = "Share location";
@@ -834,11 +816,15 @@
 "stg_txt_alert_message_demo_mode_off" = "Demo mode is disabled";
 "stg_txt_alert_message_demo_mode_on" = "Demo mode is active. You do not need a medical card or a connection to the Internet. The displayed test prescriptions cannot be redeemed in a pharmacy.";
 "stg_txt_alert_title_demo_mode" = "Would you like a tour of the app?";
+"stg_txt_audit_events_last_updated_%@" = "Zuletzt aktualisiert: %@";
 "stg_txt_audit_events_missing_date" = "Kein Zeitstempel";
 "stg_txt_audit_events_missing_description" = "Keine Angabe";
 "stg_txt_audit_events_missing_title" = "Ohne Titel";
+"stg_txt_audit_events_next" = "Nächste";
 "stg_txt_audit_events_no_protocol_description" = "Sie erhalten Zugriffsprotokolle, wenn Sie am Rezeptdienst angemeldet sind.";
 "stg_txt_audit_events_no_protocol_title" = "Keine Zugriffsprotokolle";
+"stg_txt_audit_events_page_selection_%@_of_%@" = "Seite %@ von %@";
+"stg_txt_audit_events_previous" = "Vorherige";
 "stg_txt_audit_events_title" = "Zugriffsprotokolle";
 "stg_txt_demo_mode" = "Demo mode";
 "stg_txt_edit_profile_background_section_title" = "Hintergrundfarbe";
@@ -870,7 +856,6 @@
 "stg_txt_security_option_faceid_title" = "Face ID";
 "stg_txt_security_option_password_title" = "Kennwort";
 "stg_txt_security_option_touchid_title" = "Touch ID";
-"stg_txt_security_tokens" = "Tokens anzeigen";
 "stg_txt_security_warning" = "This app has not yet been secured. Improve the protection of your data with a fingerprint or face scan.";
 "stg_txt_title" = "Settings";
 "stg_txt_version_%@_and_build_%@" = "Version %@ • Build %@";

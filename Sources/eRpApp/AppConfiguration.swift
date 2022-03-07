@@ -205,6 +205,14 @@ extension UserDataStore {
         }
         .eraseToAnyPublisher()
     }
+
+    var appConfiguration: AppConfiguration {
+        guard let name = serverEnvironmentName,
+              let configuration = configurations[name] else {
+            return defaultConfiguration
+        }
+        return configuration
+    }
 }
 #else
 
@@ -212,6 +220,10 @@ extension UserDataStore {
     var configuration: AnyPublisher<AppConfiguration, Never> {
         Just(defaultConfiguration)
             .eraseToAnyPublisher()
+    }
+
+    var appConfiguration: AppConfiguration {
+        defaultConfiguration
     }
 }
 

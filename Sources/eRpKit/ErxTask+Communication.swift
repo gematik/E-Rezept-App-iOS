@@ -104,6 +104,10 @@ extension ErxTask {
                 decoder.keyDecodingStrategy = .convertFromSnakeCase
                 return decoder
             }
+
+            public var isPickupCodeEmptyOrNil: Bool {
+                pickUpCodeHR?.isEmpty ?? true && pickUpCodeDMC?.isEmpty ?? true
+            }
         }
 
         public enum Profile: String, Codable {

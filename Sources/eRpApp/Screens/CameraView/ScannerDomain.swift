@@ -133,7 +133,7 @@ enum ScannerDomain {
         AlertState<Action>(
             title: TextState(L10n.camTxtWarnCancelTitle),
             primaryButton: .destructive(TextState(L10n.camTxtWarnContinue), action: nil),
-            secondaryButton: .default(TextState(L10n.camTxtWarnCancel), action: .send(.close))
+            secondaryButton: .cancel(TextState(L10n.camTxtWarnCancel), action: .send(.close))
         )
     }()
 

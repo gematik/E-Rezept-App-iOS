@@ -167,10 +167,6 @@
 "cdw_txt_rc_nfc_message_multipleCardsMessage" = "Birden fazla sağlık kartı bulundu";
 "cdw_txt_rc_nfc_message_noCardMessage" = "Sağlık kartı bulunamadı";
 "cdw_txt_rc_nfc_message_unsupportedCardMessage" = "Bu kart türü desteklenmiyor";
-"cdw_txt_rc_step_get_challenge" = "Sunucuya bağlan";
-"cdw_txt_rc_step_sign_challenge" = "Sağlık kartını okuma";
-"cdw_txt_rc_step_verify_at_idp" = "Giriş reçete dizini";
-"cdw_txt_rc_steps_title" = "Adımlar";
 "cdw_txt_rc_title" = "Giriş";
 "cdw_txt_sel_description" = "Wählen Sie eine Anmeldemethode um automatisch Rezepte zu empfangen.";
 "cdw_txt_sel_egk_description" = "Sichere Anmeldung mit Ihrer neuen elektronischen Gesundheitskarte";
@@ -243,8 +239,6 @@
 "erx_btn_redeem" = "Tümünü kullan";
 "erx_btn_refresh" = "Güncelleştir";
 "erx_btn_scn_prescription" = "Reçete tarayıcıyı aç";
-"erx_btn_show_settings" = "Ayarları aç";
-"erx_title" = "Reçeteler";
 "erx_txt_accepted_until" = "This is a plural string handled by Localizable.stringdict!";
 "erx_txt_current" = "Güncel";
 "erx_txt_expires_in" = "This is a plural string handled by Localizable.stringdict!";
@@ -254,7 +248,6 @@
 "erx_txt_not_yet_redeemed" = "Henüz herhangi bir reçete kullanmadınız";
 "erx_txt_redeemed" = "Arşiv";
 "erx_txt_refresh_loading" = "Yükleniyor …";
-"hint_btn_card_wall" = "Şimdi oturum aç";
 "hint_btn_open_scn" = "Tarayıcıyı aç";
 "hint_btn_try_demo_mode" = "Demo modunu başlat";
 "hint_btn_unread_messages" = "Yeni mesajları şimdi görüntüleyin";
@@ -263,7 +256,6 @@
 "hint_txt_open_scn" = "Eklemek için reçete kodunu tarayın.";
 "hint_txt_open_scn_title" = "Yeni reçete";
 "hint_txt_try_demo_mode" = "Demo modumuz size uygulamanın tüm fonksiyonlarını gösterir - hem de sağlık kartı olmadan.";
-"hint_txt_try_demo_mode_title" = "Bir keşif turuna ne dersiniz?";
 "hint_txt_unread_messages" = "Sağlık ağından yeni bir mesaj aldınız.";
 "hint_txt_unread_messages_title" = "Yeni mesajlar";
 "kbv_code_dosage_form_aeo" = "Uçucu yağ";
@@ -552,9 +544,6 @@
 "main_txt_pendingextauth_resolving_%@" = "Authentisierung für %@ wird verarbeitet";
 "main_txt_pendingextauth_retry" = "Wiederholen";
 "main_txt_pendingextauth_successful_%@" = "Authentisierung mit %@ erfolgreich";
-"mgm_fallback_profile_name" = "Profilname";
-"mgm_txt_alert_message_profile_creation" = "Es konnte kein Profil bei der Aktualisierung erstellt werden";
-"mgm_txt_alert_message_up_to_date" = "Die App ist bereits auf dem neusten Stand";
 "msgs_btn_format_error" = "Hata bildir";
 "msgs_btn_onPremise" = "Show pickup code";
 "msgs_btn_shipment" = "Alışveriş sepetini görüntüle";
@@ -576,7 +565,6 @@
 "msgs_txt_title" = "Bildirimler";
 "nav_back" = "Geri";
 "nav_cancel" = "İptal et";
-"nav_done" = "Hazır";
 "onb_auth_txt_alt_description" = "Machen Sie es Unbefugten schwerer an Ihre Daten zu gelangen und sichern Sie den Start der App.";
 "onb_auth_txt_divider" = "ODER";
 "onb_auth_txt_no_selection" = "Bitte wählen Sie eine Methode zum absichern der App aus:";
@@ -598,7 +586,6 @@
 "onb_prf_txt_alert_message" = "Das Namensfeld darf nicht leer sein";
 "onb_prf_txt_alert_title" = "Fehler";
 "onb_prf_txt_footnote" = "Das hilft Ihnen dabei, den Überblick zu behalten, wenn Sie die Rezepte für mehrere Personen verwalten möchten.";
-"onb_prf_txt_initial_name" = "Erstes Profil";
 "onb_prf_txt_placeholder" = "Vorname und Nachname";
 "onb_prf_txt_title" = "Wie sollen wir Sie nennen?";
 "onb_str_txt_subtitle" = "Dijital. Hızlı. Güvenli.";
@@ -671,17 +658,12 @@
 "pha_search_btn_error_no_server_response" = "Erneut probieren";
 "pha_search_btn_location_hint_action" = "Konumu paylaş";
 "pha_search_btn_show_filter_view" = "Filtrele";
-"pha_search_btn_sort_alpha" = "Alfabetik";
-"pha_search_btn_sort_distance" = "Mesafe";
 "pha_search_filter_txt_title" = "Filtrele";
 "pha_search_txt_closed" = "Kapalı";
 "pha_search_txt_closing_soon" = "Yakında kapanıyor";
-"pha_search_txt_error_alert_message" = "Ne yazık ki, eczane servisi ile iletişim şu anda kesintiye uğramış görünüyor.";
-"pha_search_txt_error_alert_title" = "Hata";
 "pha_search_txt_error_no_server_response_headline" = "Server antwortet nicht";
 "pha_search_txt_error_no_server_response_subheadline" = "Bitte probieren Sie es in einigen Minuten erneut.";
 "pha_search_txt_filter_messenger" = "Kurye hizmeti";
-"pha_search_txt_filter_order" = "Kargo";
 "pha_search_txt_hint_start_search" = "Klavyede Aç seçeneğine dokunarak aramayı başlatın";
 "pha_search_txt_location_alert_message" = "Yakınınızdaki eczaneleri bulmak için konumunuzu paylaşın.";
 "pha_search_txt_location_alert_title" = "Konumu paylaş";
@@ -834,11 +816,15 @@
 "stg_txt_alert_message_demo_mode_off" = "Demo modu devre dışı";
 "stg_txt_alert_message_demo_mode_on" = "Demo modu etkin. Bir sağlık kartına veya internet bağlantısına ihtiyacınız yoktur. Görüntülenen test reçeteleri eczanede kullanılamaz.";
 "stg_txt_alert_title_demo_mode" = "Bir keşif turuna ne dersiniz?";
+"stg_txt_audit_events_last_updated_%@" = "Zuletzt aktualisiert: %@";
 "stg_txt_audit_events_missing_date" = "Kein Zeitstempel";
 "stg_txt_audit_events_missing_description" = "Keine Angabe";
 "stg_txt_audit_events_missing_title" = "Ohne Titel";
+"stg_txt_audit_events_next" = "Nächste";
 "stg_txt_audit_events_no_protocol_description" = "Sie erhalten Zugriffsprotokolle, wenn Sie am Rezeptdienst angemeldet sind.";
 "stg_txt_audit_events_no_protocol_title" = "Keine Zugriffsprotokolle";
+"stg_txt_audit_events_page_selection_%@_of_%@" = "Seite %@ von %@";
+"stg_txt_audit_events_previous" = "Vorherige";
 "stg_txt_audit_events_title" = "Zugriffsprotokolle";
 "stg_txt_demo_mode" = "Demo modu";
 "stg_txt_edit_profile_background_section_title" = "Hintergrundfarbe";
@@ -870,7 +856,6 @@
 "stg_txt_security_option_faceid_title" = "Face ID";
 "stg_txt_security_option_password_title" = "Kennwort";
 "stg_txt_security_option_touchid_title" = "Touch ID";
-"stg_txt_security_tokens" = "Tokens anzeigen";
 "stg_txt_security_warning" = "Bu uygulama henüz güvenli hale getirilmedi. Parmak izi veya yüz taraması ile verilerinizin korumasını iyileştirin.";
 "stg_txt_title" = "Ayarlar";
 "stg_txt_version_%@_and_build_%@" = "Sürüm %@ • Yapı %@";

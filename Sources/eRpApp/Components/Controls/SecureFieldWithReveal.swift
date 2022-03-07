@@ -18,8 +18,9 @@
 
 import SwiftUI
 
+/// sourcery: StringAssetInitialized
 struct SecureFieldWithReveal: View {
-    internal init(_ titleKey: LocalizedStringKey,
+    internal init(titleKey: LocalizedStringKey,
                   accessibilityLabelKey: LocalizedStringKey? = nil,
                   text: Binding<String>,
                   textContentType: UITextContentType? = nil,
@@ -69,7 +70,7 @@ struct SecureFieldWithReveal_Preview: PreviewProvider {
     struct Wrapper: View {
         @State var text = "abc"
         var body: some View {
-            SecureFieldWithReveal("Passwort", text: $text) {}
+            SecureFieldWithReveal(titleKey: "Passwort", text: $text) {}
         }
     }
 

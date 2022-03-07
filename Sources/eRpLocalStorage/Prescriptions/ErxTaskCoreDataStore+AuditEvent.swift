@@ -20,6 +20,9 @@ import Combine
 import CoreData
 import eRpKit
 
+class PagedAuditEventsEntityController: PagedEntityController<ErxAuditEventEntity, ErxAuditEvent>,
+    PagedAuditEventsController {}
+
 /// AuditEvent related store interfaces
 extension ErxTaskCoreDataStore {
     /// Fetch the ErxAuditEvent by its id when required by `Self`

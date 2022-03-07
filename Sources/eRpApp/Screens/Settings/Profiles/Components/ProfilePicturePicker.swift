@@ -94,8 +94,8 @@ struct ProfilePicturePicker: View {
                     editEmoji = true
                 }
             }, label: {
-                Text(editEmoji ? L10n
-                    .ctlBtnProfilePickerSet :
+                Text(editEmoji ?
+                    L10n.ctlBtnProfilePickerSet :
                     (emoji != nil ? L10n.ctlBtnProfilePickerReset : L10n.ctlBtnProfilePickerEdit))
             })
                 .accessibility(identifier: A11y.controls.emojiPicker.ctlBtnEmojiPickerEditSave)

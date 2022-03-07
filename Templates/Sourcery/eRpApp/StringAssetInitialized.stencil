@@ -1,0 +1,70 @@
+// sourcery:file:eRpApp/Generated/StringAssetInitialized
+
+import SwiftUI
+
+/// AUTO GENERATED – DO NOT EDIT
+///
+/// use sourcery to update this file.
+
+/// # StringAssetInitialized
+///
+/// Creates Extensions with initializer overloads to accept `StringAsset` parameters for all `LocalizedStringKey`.
+///
+/// # Usage
+///
+/// - Add `/// sourcery: StringAssetInitialized` to any struct that should be extended.
+/// - Run `$ sourcery` to update or add extensions.
+
+{% macro getStringKey param %}{% if param.typeName|contains:"LocalizedStringKey" %}.key{% endif %}{% endmacro %}
+{% macro getStringKeyWithOptional param %}{% if param.typeName|contains:"LocalizedStringKey" %}{{ '?' if param.typeName.isOptional }}.key{% endif %}{% endmacro %}
+
+{% macro methodReceivedParameters method %}
+    {%if method.parameters.count == 1 %}
+        self.{{ method.callName }}{% for param in method.parameters %}{{ param.name }}{% endfor %}
+    {% else %}
+        {% if not method.parameters.count == 0 %}
+        self.{{ method.callName }}({% for param in method.parameters %}{{ param.name }}: {{ param.name }}{% call getStringKeyWithOptional param %}{% if not forloop.last%}, {% endif %}{% endfor %})
+        {% endif %}
+    {% endif %}
+{% endmacro %}
+
+{% macro modifyInitializer type %}
+    {% for method in type.initializers %}
+    {{ method.name|replace:"LocalizedStringKey","StringAsset" }} {
+    {% call methodReceivedParameters method %}
+    {% endfor %}}
+{% endmacro %}
+
+{% macro createInitializer type %}
+{% map type.storedVariables into parameters using var %}{{ var.name }}: {% if var.attributes.Binding %}Binding<{{ var.typeName}}>{% else %}{{ '@escaping ' if var.typeName.isClosure }}{{ var.typeName|replace:"LocalizedStringKey","StringAsset" }}{% endif %}{% if var.defaultValue %} = {{ var.defaultValue }}{% elif var.typeName.isOptional %} = nil{% endif %}{% endmap %}
+{# "If there is only one parameter with LocalizedStringKey, we need to make sure that the StringAsset initializer parameter is not optional otherwise the compiler gets confused with this and the structs default initializer" #}
+{% map type.storedVariables into keyCount using var %}{{ 'X' if var.typeName|contains:"LocalizedStringKey" }}{% endmap %}
+{% set helper %}{{keyCount|join:''}}{% endset %}
+{% if helper.count == 1 %}
+    {% map parameters into parameters using param %}{{ param|replace:"StringAsset? = nil","StringAsset" }}{% endmap %}
+    init({{ parameters|join:', ' }}) {
+        {% map type.storedVariables into initialize using var %}{{ var.name }}: {{ var.name }}{% call getStringKey var %}{% endmap %}
+        self.init({{ initialize|join:', ' }})
+{% else %}
+    init({{ parameters|join:', ' }}) {
+        {% map type.storedVariables into initialize using var %}{{ var.name }}: {{ var.name }}{% call getStringKeyWithOptional var %}{% endmap %}
+        self.init({{ initialize|join:', ' }})
+{% endif %}
+    }
+{% endmacro %}
+
+{% macro overloadExtension type %}
+extension {{ type.name }} {
+{% if type.initializers.count == 0 %}
+    {% call createInitializer type %}
+{% else %}
+    {% call modifyInitializer type %}
+{% endif%}
+}
+{% endmacro %}
+
+{% for type in types.structs where type|annotated:"StringAssetInitialized" %}
+{% call overloadExtension type %}
+{% endfor %}
+
+// sourcery:end

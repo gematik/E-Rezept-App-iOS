@@ -93,7 +93,7 @@ struct MessageRowView: View {
             switch payload.supplyOptionsType {
             case .onPremise:
                 title = L10n.msgsTxtOnPremiseTitle.key
-                if payload.pickUpCodeHR != nil || payload.pickUpCodeDMC != nil {
+                if !payload.isPickupCodeEmptyOrNil {
                     buttonText = L10n.msgsBtnOnPremise.key
                     imageName = SFSymbolName.qrCode
                 } else {

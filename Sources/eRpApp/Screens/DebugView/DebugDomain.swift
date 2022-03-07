@@ -18,6 +18,7 @@
 
 import Combine
 import ComposableArchitecture
+import eRpKit
 import IDP
 
 // swiftlint:disable:next superfluous_disable_command
@@ -121,6 +122,7 @@ enum DebugDomain {
     struct Environment {
         var schedulers: Schedulers
         var userSession: UserSession
+        let localUserStore: UserDataStore
         let tracker: Tracker
         var serverEnvironmentConfiguration: AppConfiguration?
 
@@ -132,15 +134,15 @@ enum DebugDomain {
         #if ENABLE_DEBUG_VIEW
         switch action {
         case .hideOnboardingToggleTapped:
-            environment.userSession.localUserStore.set(hideOnboarding: false)
-            environment.userSession.localUserStore.set(onboardingVersion: nil)
+            environment.localUserStore.set(hideOnboarding: false)
+            environment.localUserStore.set(onboardingVersion: nil)
             return .none
         case let .hideOnboardingReceived(onboardingVersion):
             state.hideOnboarding = onboardingVersion != nil
             return .none
         case .hideCardWallIntroToggleTapped:
             state.hideCardWallIntro.toggle()
-            environment.userSession.localUserStore.set(hideCardWallIntro: state.hideCardWallIntro)
+            environment.localUserStore.set(hideCardWallIntro: state.hideCardWallIntro)
             return .none
         case let .hideCardWallIntroReceived(hideCardWallIntro):
             state.hideCardWallIntro = hideCardWallIntro
@@ -203,7 +205,7 @@ enum DebugDomain {
             environment.userSession.trustStoreSession.reset()
             environment.userSession.secureUserStore.set(discovery: nil)
 
-            environment.userSession.localUserStore.set(serverEnvironmentConfiguration: name)
+            environment.localUserStore.set(serverEnvironmentConfiguration: name)
             return .none
         case .toggleTrackingTapped:
             environment.tracker.optOut.toggle()
@@ -255,14 +257,14 @@ enum DebugDomain {
 #if ENABLE_DEBUG_VIEW
 extension DebugDomain.Environment {
     func onReceiveHideOnboarding() -> Effect<DebugDomain.Action, Never> {
-        userSession.localUserStore.onboardingVersion
+        localUserStore.onboardingVersion
             .receive(on: schedulers.main)
             .map(DebugDomain.Action.hideOnboardingReceived)
             .eraseToEffect()
     }
 
     func onReceiveHideCardWallIntro() -> Effect<DebugDomain.Action, Never> {
-        userSession.localUserStore.hideCardWallIntro
+        localUserStore.hideCardWallIntro
             .receive(on: schedulers.main)
             .map(DebugDomain.Action.hideCardWallIntroReceived)
             .eraseToEffect()
@@ -288,7 +290,7 @@ extension DebugDomain.Environment {
 
     func onReceiveConfigurationName(for availableEnvironments: [DebugDomain.State.ServerEnvironment])
         -> Effect<DebugDomain.Action, Never> {
-        userSession.localUserStore.serverEnvironmentConfiguration
+        localUserStore.serverEnvironmentConfiguration
             .map { name in
                 let configuration = availableEnvironments.first { environment in
                     environment.name == name
@@ -320,6 +322,7 @@ extension DebugDomain {
         static let environment = Environment(
             schedulers: Schedulers(),
             userSession: DemoSessionContainer(),
+            localUserStore: DemoUserDefaultsStore(),
             tracker: DummyTracker(),
             signatureProvider: DummySecureEnclaveSignatureProvider(),
             serviceLocatorDebugAccess: ServiceLocatorDebugAccess(serviceLocator: ServiceLocator())

@@ -32,19 +32,23 @@ class StandardSessionContainer: UserSession {
     private var keychainStorage: KeychainStorage
     private let schedulers: Schedulers
     private var erxTaskCoreDataStore: ErxTaskCoreDataStore
-
+    let appConfiguration: AppConfiguration
     var profileDataStore: ProfileDataStore
 
     let profileId: UUID
 
-    init(for profileId: UUID,
-         schedulers: Schedulers,
-         erxTaskCoreDataStore: ErxTaskCoreDataStore,
-         profileDataStore: ProfileDataStore) {
+    init(
+        for profileId: UUID,
+        schedulers: Schedulers,
+        erxTaskCoreDataStore: ErxTaskCoreDataStore,
+        profileDataStore: ProfileDataStore,
+        appConfiguration: AppConfiguration
+    ) {
         self.profileId = profileId
         self.schedulers = schedulers
         self.erxTaskCoreDataStore = erxTaskCoreDataStore
         self.profileDataStore = profileDataStore
+        self.appConfiguration = appConfiguration
         keychainStorage = KeychainStorage(profileId: profileId)
     }
 
@@ -63,62 +67,46 @@ class StandardSessionContainer: UserSession {
             preconditionFailure("Could not create a filePath for the truststore storage.")
         }
         let trustStoreStorage = TrustStoreFileStorage(trustStoreStorageBaseFilePath: trustStoreStorageFilePath)
-        let configurationProvider = localUserStore.configuration.map { configuration in
-            ConfiguredTrustStoreSession.Configuration(
-                httpClient: self.trustStoreHttpClient(configuration: configuration),
-                serverURL: configuration.erp,
-                trustAnchor: configuration.trustAnchor
-            )
-        }
-        return ConfiguredTrustStoreSession(
-            configurationProvider.eraseToAnyPublisher(),
-            trustStoreStorage: trustStoreStorage
+        return DefaultTrustStoreSession(
+            serverURL: appConfiguration.erp,
+            trustAnchor: appConfiguration.trustAnchor,
+            trustStoreStorage: trustStoreStorage,
+            httpClient: trustStoreHttpClient
         )
     }()
 
     lazy var idpSession: IDPSession = {
-        let publishedConfig = localUserStore.configuration
-            .map { configuration -> ConfiguredIDPSession.Configuration in
-                ConfiguredIDPSession.Configuration(
-                    httpClient: self.idpHttpClient(configuration: configuration),
-                    idpSessionConfiguration:
-                    DefaultIDPSession.Configuration(
-                        clientId: configuration.clientId,
-                        redirectURI: configuration.redirectUri,
-                        extAuthRedirectURI: configuration.extAuthRedirectUri,
-                        discoveryURL: configuration.idp,
-                        scopes: ["e-rezept", "openid"]
-                    )
-                )
-            }
-        return ConfiguredIDPSession(
-            publishedConfig.eraseToAnyPublisher(),
+        let idpSessionConfig = DefaultIDPSession.Configuration(
+            clientId: appConfiguration.clientId,
+            redirectURI: appConfiguration.redirectUri,
+            extAuthRedirectURI: appConfiguration.extAuthRedirectUri,
+            discoveryURL: appConfiguration.idp,
+            scopes: ["e-rezept", "openid"]
+        )
+
+        return DefaultIDPSession(
+            config: idpSessionConfig,
             storage: secureUserStore, // [REQ:gemSpec_eRp_FdV:A_20184] Keychain storage encrypts session/ssl tokens
             schedulers: schedulers,
+            httpClient: idpHttpClient,
             trustStoreSession: trustStoreSession,
             extAuthRequestStorage: extAuthRequestStorage
         )
     }()
 
     lazy var biometrieIdpSession: IDPSession = {
-        let publishedConfig = localUserStore.configuration
-            .map { configuration -> ConfiguredIDPSession.Configuration in
-                ConfiguredIDPSession.Configuration(
-                    httpClient: self.idpHttpClient(configuration: configuration),
-                    idpSessionConfiguration:
-                    DefaultIDPSession.Configuration(
-                        clientId: configuration.clientId,
-                        redirectURI: configuration.redirectUri,
-                        extAuthRedirectURI: configuration.extAuthRedirectUri,
-                        discoveryURL: configuration.idp,
-                        scopes: ["pairing", "openid"]
-                    )
-                )
-            }
-        return ConfiguredIDPSession(
-            publishedConfig.eraseToAnyPublisher(),
+        let idpConfig = DefaultIDPSession.Configuration(
+            clientId: appConfiguration.clientId,
+            redirectURI: appConfiguration.redirectUri,
+            extAuthRedirectURI: appConfiguration.extAuthRedirectUri,
+            discoveryURL: appConfiguration.idp,
+            scopes: ["pairing", "openid"]
+        )
+        return DefaultIDPSession(
+            config: idpConfig,
             storage: MemoryStorage(), // [REQ:gemSpec_eRp_FdV:A_20184] No persistent storage for idp biometrics session
             schedulers: schedulers,
+            httpClient: idpHttpClient,
             trustStoreSession: trustStoreSession,
             extAuthRequestStorage: DummyExtAuthRequestStorage()
         )
@@ -180,32 +168,30 @@ class StandardSessionContainer: UserSession {
     }()
 
     lazy var pharmacyRepository: PharmacyRepository = {
-        ConfiguredPharmacyRepository(localUserStore.configuration)
+        DefaultPharmacyRepository(
+            cloud: PharmacyFHIRDataSource(
+                fhirClient: FHIRClient(
+                    server: appConfiguration.apoVzd,
+                    httpClient: pharmacyHttpClient
+                )
+            )
+        )
     }()
 
     lazy var erxTaskRepository: ErxTaskRepository = {
-        let disk = erxTaskCoreDataStore
-        let repositoryPublisher = localUserStore.configuration
-            .map { configuration -> ErxTaskRepository in
-                let vauUrl = configuration.erp
-                let serverUrl = configuration.base
+        let vauSession = VAUSession(
+            vauServer: appConfiguration.erp,
+            vauAccessTokenProvider: self.idpSession.asVAUAccessTokenProvider(),
+            vauStorage: self.vauStorage,
+            trustStoreSession: self.trustStoreSession
+        )
 
-                let vauSession = VAUSession(
-                    vauServer: vauUrl,
-                    vauAccessTokenProvider: self.idpSession.asVAUAccessTokenProvider(),
-                    vauStorage: self.vauStorage,
-                    trustStoreSession: self.trustStoreSession
-                )
-
-                let fhirClient = FHIRClient(
-                    server: serverUrl,
-                    httpClient: self.erpHttpClient(configuration: configuration, vau: vauSession)
-                )
-                let cloud = ErxTaskFHIRDataStore(fhirClient: fhirClient)
-                return DefaultErxTaskRepository(disk: disk, cloud: cloud)
-            }
-            .eraseToAnyPublisher()
-        return StreamWrappedErxTaskRepository(stream: repositoryPublisher)
+        let fhirClient = FHIRClient(
+            server: appConfiguration.base,
+            httpClient: self.erpHttpClient(vau: vauSession)
+        )
+        let cloud = ErxTaskFHIRDataStore(fhirClient: fhirClient)
+        return DefaultErxTaskRepository(disk: erxTaskCoreDataStore, cloud: cloud)
     }()
 
     lazy var appSecurityManager: AppSecurityManager = {
@@ -251,9 +237,9 @@ class IDPSessionTokenProvider: VAUAccessTokenProvider {
 }
 
 extension StandardSessionContainer {
-    func trustStoreHttpClient(configuration: AppConfiguration) -> HTTPClient {
+    var trustStoreHttpClient: HTTPClient {
         let interceptors: [Interceptor] = [
-            AdditionalHeaderInterceptor(additionalHeader: configuration.erpAdditionalHeader),
+            AdditionalHeaderInterceptor(additionalHeader: appConfiguration.erpAdditionalHeader),
             LoggingInterceptor(log: .body), // Logging interceptor (DEBUG ONLY)
             DebugLiveLogger.LogInterceptor(),
         ]
@@ -265,14 +251,14 @@ extension StandardSessionContainer {
         )
     }
 
-    func erpHttpClient(configuration: AppConfiguration, vau session: VAUSession) -> HTTPClient {
+    func erpHttpClient(vau session: VAUSession) -> HTTPClient {
         let interceptors: [Interceptor] = [
-            AdditionalHeaderInterceptor(additionalHeader: configuration.erpAdditionalHeader),
+            AdditionalHeaderInterceptor(additionalHeader: appConfiguration.erpAdditionalHeader),
             idpSession.httpInterceptor(delegate: nil),
             LoggingInterceptor(log: .body), // Logging interceptor (DEBUG ONLY)
             DebugLiveLogger.LogInterceptor(),
             session.provideInterceptor(),
-            AdditionalHeaderInterceptor(additionalHeader: configuration.erpAdditionalHeader),
+            AdditionalHeaderInterceptor(additionalHeader: appConfiguration.erpAdditionalHeader),
         ]
 
         // Remote FHIR data source configuration
@@ -282,9 +268,23 @@ extension StandardSessionContainer {
         )
     }
 
-    func idpHttpClient(configuration: AppConfiguration) -> HTTPClient {
+    var idpHttpClient: HTTPClient {
         let interceptors: [Interceptor] = [
-            AdditionalHeaderInterceptor(additionalHeader: configuration.idpAdditionalHeader),
+            AdditionalHeaderInterceptor(additionalHeader: appConfiguration.idpAdditionalHeader),
+            LoggingInterceptor(log: .body), // Logging interceptor (DEBUG ONLY)
+            DebugLiveLogger.LogInterceptor(),
+        ]
+
+        // Remote FHIR data source configuration
+        return DefaultHTTPClient(
+            urlSessionConfiguration: .ephemeral,
+            interceptors: interceptors
+        )
+    }
+
+    var pharmacyHttpClient: HTTPClient {
+        let interceptors: [Interceptor] = [
+            AdditionalHeaderInterceptor(additionalHeader: appConfiguration.apoVzdAdditionalHeader),
             LoggingInterceptor(log: .body), // Logging interceptor (DEBUG ONLY)
             DebugLiveLogger.LogInterceptor(),
         ]

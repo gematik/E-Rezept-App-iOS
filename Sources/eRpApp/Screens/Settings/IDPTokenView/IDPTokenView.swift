@@ -45,6 +45,7 @@ struct IDPTokenView: View {
         .navigationBarTitleDisplayMode(.automatic)
     }
 
+    /// sourcery: StringAssetInitialized
     struct TokenCell: View {
         let title: LocalizedStringKey
         let token: String

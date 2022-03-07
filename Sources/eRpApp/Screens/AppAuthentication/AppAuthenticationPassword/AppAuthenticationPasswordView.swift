@@ -46,7 +46,7 @@ struct AppAuthenticationPasswordView: View {
 
     var body: some View {
         VStack(alignment: .leading) {
-            SecureFieldWithReveal(L10n.authTxtPasswordPlaceholder,
+            SecureFieldWithReveal(titleKey: L10n.authTxtPasswordPlaceholder,
                                   accessibilityLabelKey: L10n.authTxtPasswordLabel,
                                   text: password,
                                   textContentType: .password) {

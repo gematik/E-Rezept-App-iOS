@@ -18,6 +18,7 @@
 
 import Combine
 import eRpKit
+import eRpLocalStorage
 import FHIRClient
 import Foundation
 import HTTPClient
@@ -73,7 +74,26 @@ class DemoSessionContainer: UserSession {
     }()
 
     lazy var pharmacyRepository: PharmacyRepository = {
-        ConfiguredPharmacyRepository(localUserStore.configuration)
+        let appConfiguration = UserDefaultsStore().appConfiguration
+        let interceptors: [Interceptor] = [
+            AdditionalHeaderInterceptor(additionalHeader: appConfiguration.apoVzdAdditionalHeader),
+            LoggingInterceptor(log: .body), // Logging interceptor (DEBUG ONLY)
+            DebugLiveLogger.LogInterceptor(),
+        ]
+
+        // Remote FHIR data source configuration
+        let client = DefaultHTTPClient(
+            urlSessionConfiguration: .ephemeral,
+            interceptors: interceptors
+        )
+        return DefaultPharmacyRepository(
+            cloud: PharmacyFHIRDataSource(
+                fhirClient: FHIRClient(
+                    server: appConfiguration.apoVzd,
+                    httpClient: client
+                )
+            )
+        )
     }()
 
     lazy var erxTaskRepository: ErxTaskRepository = {

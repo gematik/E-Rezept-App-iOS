@@ -203,12 +203,12 @@ private extension MainView {
                 if let profile = viewStore.profile {
                     HStack(alignment: .center, spacing: 8) {
                         Circle()
-                            .strokeBorder(profile.color.border, lineWidth: 2)
+                            .fill(profile.color.background)
                             .frame(width: 32, height: 32, alignment: .center)
-                            .background(Circle().fill(profile.color.background))
                             .overlay(
                                 Text(profile.emoji ?? profile.acronym)
-                                    .font(.system(size: 13))
+                                    .font(.system(size: 13).weight(.bold))
+                                    .foregroundColor(Color(.secondaryLabel))
                             )
                             .overlay(ProfileCell.ConnectionStatusCircle(status: profile.connectionStatus),
                                      alignment: .bottomTrailing)

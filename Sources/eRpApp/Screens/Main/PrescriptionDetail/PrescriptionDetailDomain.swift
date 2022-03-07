@@ -226,7 +226,7 @@ enum PrescriptionDetailDomain: Equatable {
             title: TextState(L10n.dtlTxtDeleteAlertTitle),
             message: TextState(L10n.dtlTxtDeleteAlertMessage),
             primaryButton: .destructive(TextState(L10n.dtlTxtDeleteYes), action: .send(.confirmedDelete)),
-            secondaryButton: .default(TextState(L10n.dtlTxtDeleteNo), action: .send(.cancelDelete))
+            secondaryButton: .cancel(TextState(L10n.dtlTxtDeleteNo), action: .send(.cancelDelete))
         )
     }()
 

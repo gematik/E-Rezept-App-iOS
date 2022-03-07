@@ -17,6 +17,7 @@
 //
 import SwiftUI
 
+/// sourcery: StringAssetInitialized
 struct PrimaryTextButton: View {
     var text: LocalizedStringKey
     var a11y: String
@@ -48,6 +49,7 @@ struct PrimaryTextButton: View {
     }
 }
 
+/// sourcery: StringAssetInitialized
 struct DestructiveTextButton: View {
     var text: LocalizedStringKey
     var isEnabled = true
@@ -71,6 +73,7 @@ struct DestructiveTextButton: View {
     }
 }
 
+/// sourcery: StringAssetInitialized
 struct PrimaryTextButtonBorder: View {
     var text: LocalizedStringKey
     var image: Image?
@@ -102,6 +105,7 @@ struct PrimaryTextButtonBorder: View {
     }
 }
 
+/// sourcery: StringAssetInitialized
 struct LoadingPrimaryButton: View {
     var text: LocalizedStringKey
     var isLoading: Bool

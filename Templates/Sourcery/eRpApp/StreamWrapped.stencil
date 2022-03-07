@@ -46,8 +46,8 @@ import VAUClient
             .eraseToAnyPublisher()
 	}
 			{% else %}
-	func {{ method.name }} -> {{ method.returnTypeName }} {
-        current.{{ method.callName }}({% call methodArguments method %}
+	func {{ method.name }}{% if method.throws %} throws{% endif %} -> {{ method.returnTypeName }} {
+        {% if method.throws %}try {% endif %}current.{{ method.callName }}({% call methodArguments method %}
             )
 	}
 			{% endif %}
@@ -76,7 +76,7 @@ import VAUClient
 		StreamWrapped{{property.typeName}}(stream: stream.map{ $0.{{property.name}} }.eraseToAnyPublisher(){% if not property.type.annotations.SkipCurrent %}, current: current.{{property.name}}{% endif %} )
 	}()
 			{% else %}
-	{% if not property.isMutable %}private(set) {% endif %}var {{ property.name }}: {{property.typeName}}{% if property.isMutable %} {
+	{% if not property.isMutable and not property.isComputed %}private(set) {% endif %}{% if not property.isComputed %}var {{ property.name }}: {{property.typeName}}{% endif %}{% if property.isMutable %} {
 		set { current.{{ property.name }} = newValue }
 		get { current.{{ property.name }} }
 	}
@@ -89,7 +89,7 @@ import VAUClient
 {% macro atomicPropertiesInitializer type %}
 	{% for property in type.variables %}
 		{% if property.typeName.generic.name != "AnyPublisher" %}
-			{% if property.type.annotations.StreamWrapped %}
+			{% if property.type.annotations.StreamWrapped or property.isComputed %}
 			{% else %}
 		self.{{property.name}} = current.{{property.name}}
 			{% endif %}
@@ -101,7 +101,7 @@ import VAUClient
 		{% if property.typeName.generic.name != "AnyPublisher" %}
 			{% if property.type.annotations.StreamWrapped %}
 			{% else %}
-				{% if not property.isMutable %} 
+				{% if not property.isMutable and not property.isComputed %} 
 		stream
 			.map(\.{{property.name}})
 			.assign(to: \.{{property.name}}, on: self)

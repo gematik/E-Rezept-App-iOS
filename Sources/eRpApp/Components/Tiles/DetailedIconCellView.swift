@@ -18,6 +18,7 @@
 
 import SwiftUI
 
+/// sourcery: StringAssetInitialized
 struct DetailedIconCellView: View {
     let title: LocalizedStringKey
     let value: String

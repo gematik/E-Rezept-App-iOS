@@ -16,28 +16,34 @@
 //  
 //
 
+import ComposableArchitecture
 import SwiftUI
 
-/// sourcery: StringAssetInitialized
-struct DefaultTextButton: View {
-    var text: LocalizedStringKey
-    var a11y: String
-    var style: Style = .primary
-    var action: () -> Void
+// MARK: - SwiftUI Views
 
-    var body: some View {
-        switch style {
-        case .primary:
-            PrimaryTextButton(text: text, a11y: a11y, image: nil, isEnabled: true) {
-                action()
-            }
-        case .secondary:
-            SecondaryTextButton(text: text, a11y: a11y, action: action)
-        }
+extension View {
+    func navigationBarTitle(
+        _ stringAsset: StringAsset,
+        displayMode: NavigationBarItem.TitleDisplayMode
+    ) -> some View {
+        navigationBarTitle(stringAsset.key, displayMode: displayMode)
     }
 
-    enum Style {
-        case primary
-        case secondary
+    func navigationTitle(_ stringAsset: StringAsset) -> some View {
+        navigationTitle(stringAsset.key)
+    }
+}
+
+extension ProgressView where CurrentValueLabel == EmptyView {
+    init(_ stringAsset: StringAsset) where Label == Text {
+        self.init(stringAsset.key)
+    }
+}
+
+// MARK: TCA components
+
+extension TextState {
+    init(_ stringAsset: StringAsset) {
+        self.init(stringAsset.key)
     }
 }

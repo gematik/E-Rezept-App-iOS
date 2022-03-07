@@ -54,7 +54,7 @@ struct CreatePasswordView: View {
                     ).padding(.bottom, 8),
                     footer: currentPasswordFooter()
                 ) {
-                    SecureFieldWithReveal(L10n.cpwInpCurrentPasswordPlaceholder,
+                    SecureFieldWithReveal(titleKey: L10n.cpwInpCurrentPasswordPlaceholder,
                                           text: currentPassword) {}
                         .accessibility(identifier: A11y.settings.createPassword.cpwInpCurrentPassword)
                 }
@@ -76,7 +76,7 @@ struct CreatePasswordView: View {
                 }
             ) {
                 VStack {
-                    SecureFieldWithReveal(L10n.cpwInpPasswordAPlaceholder,
+                    SecureFieldWithReveal(titleKey: L10n.cpwInpPasswordAPlaceholder,
                                           text: passwordA,
                                           textContentType: .newPassword) {}
                         .accessibility(identifier: A11y.settings.createPassword.cpwInpPasswordA)
@@ -85,7 +85,7 @@ struct CreatePasswordView: View {
             .textCase(.none)
 
             Section {
-                SecureFieldWithReveal(L10n.cpwInpPasswordBPlaceholder,
+                SecureFieldWithReveal(titleKey: L10n.cpwInpPasswordBPlaceholder,
                                       accessibilityLabelKey: L10n.cpwTxtPasswordBAccessibility,
                                       text: passwordB,
                                       textContentType: .newPassword) {

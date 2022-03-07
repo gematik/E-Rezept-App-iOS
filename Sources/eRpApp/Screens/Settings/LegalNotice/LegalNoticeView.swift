@@ -54,6 +54,7 @@ struct LegalNoticeView: View {
 }
 
 extension LegalNoticeView {
+    /// sourcery: StringAssetInitialized
     struct LegalNoticeSectionView: View {
         var title: LocalizedStringKey?
         var text: LocalizedStringKey
@@ -71,6 +72,7 @@ extension LegalNoticeView {
         }
     }
 
+    /// sourcery: StringAssetInitialized
     struct LegalNoticeContactView: View {
         @ScaledMetric var iconSize: CGFloat = 22
         var title: LocalizedStringKey?

@@ -185,8 +185,9 @@ extension EditProfileView {
             .compactMap { $0 }
             .joined(separator: "\n")
 
-            return !title.isEmpty ? L10n.stgTxtEditProfileNameConnection(title).key : L10n
-                .stgTxtEditProfileNameConnectionPlaceholder.key
+            return !title.isEmpty ?
+                L10n.stgTxtEditProfileNameConnection(title).key :
+                L10n.stgTxtEditProfileNameConnectionPlaceholder.key
         }
     }
 
@@ -278,8 +279,9 @@ extension EditProfileView {
                     }
                     .padding(.vertical, 8)
                     .accessibilityElement(children: .combine)
-                    .accessibility(identifier: A11y.settings.editProfile
-                        .stgBtnEditProfileSecuritySectionShowAuditEvents)
+                    .accessibility(
+                        identifier: A11y.settings.editProfile.stgBtnEditProfileSecuritySectionShowAuditEvents
+                    )
                 }
             }
             .textCase(.none)

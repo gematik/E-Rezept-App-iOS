@@ -18,6 +18,7 @@
 
 import SwiftUI
 
+/// sourcery: StringAssetInitialized
 struct PrimaryTextFieldView: View {
     var placeholder: LocalizedStringKey
     @Binding var text: String

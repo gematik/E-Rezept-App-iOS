@@ -207,7 +207,8 @@ extension SceneDelegate {
             profileId: initialProfileId,
             schedulers: schedulers,
             coreDataControllerFactory: coreDataControllerFactory,
-            profileDataStore: profileCoreDataStore
+            profileDataStore: profileCoreDataStore,
+            userDataStore: userDataStore
         )
 
         return changeableUserSessionContainer
@@ -232,8 +233,6 @@ extension SceneDelegate {
             storage: changeableUserSessionContainer.userSession.secureUserStore
         )
         #endif
-        // This must be raw userDefaults access, demo session should *not* interfere with user authentication
-        let standardUserDataStore = UserDefaultsStore(userDefaults: .standard)
 
         return .init(
             appVersion: AppVersion.current,
@@ -241,7 +240,7 @@ extension SceneDelegate {
             userSessionContainer: changeableUserSessionContainer,
             userSession: changeableUserSessionContainer.userSession,
             // This must be raw userDefaults access, demo session should *not* interfere with user authentication
-            userDataStore: standardUserDataStore,
+            userDataStore: userDataStore,
             schedulers: schedulers,
             fhirDateFormatter: globals.fhirDateFormatter,
             serviceLocator: ServiceLocator(),

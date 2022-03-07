@@ -136,8 +136,8 @@ enum EditProfileDomain {
     static let domainReducer = Reducer { state, action, environment in
         switch action {
         case .registerListener:
-            // [REQ:gemSpec_BSI_FdV:O.Tokn_9] observe token updates
-            return .concatenate(
+            return .merge(
+                // [REQ:gemSpec_BSI_FdV:O.Tokn_9] observe token updates
                 environment.subscribeToTokenUpdates(with: state.profileId)
                     .cancellable(id: Token.idpTokenListener, cancelInFlight: true),
                 environment.profileDataStore.fetchProfile(by: state.profileId)

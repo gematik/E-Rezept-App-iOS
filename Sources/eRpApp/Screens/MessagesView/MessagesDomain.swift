@@ -181,7 +181,7 @@ enum MessagesDomain: Equatable {
 
         switch payload.supplyOptionsType {
         case .onPremise:
-            if payload.pickUpCodeHR != nil || payload.pickUpCodeDMC != nil {
+            if !payload.isPickupCodeEmptyOrNil {
                 return Effect(value: MessagesDomain.Action.showPickupCode(
                     dmcCode: payload.pickUpCodeDMC,
                     hrCode: payload.pickUpCodeHR

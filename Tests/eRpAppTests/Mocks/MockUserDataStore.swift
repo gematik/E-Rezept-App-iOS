@@ -152,6 +152,24 @@ final class MockUserDataStore: UserDataStore {
         setServerEnvironmentConfigurationClosure?(serverEnvironmentConfiguration)
     }
 
+    var setServerEnvironmentNameCallsCount = 0
+    var setServerEnvironmentNameCalled: Bool {
+        setServerEnvironmentNameCallsCount > 0
+    }
+
+    var underlyingServerEnvironmentName: String?
+    var setServerEnvironmentNameReceivedInvocations: [String?] = []
+    var serverEnvironmentName: String? {
+        get {
+            setServerEnvironmentNameCallsCount += 1
+            return underlyingServerEnvironmentName
+        }
+        set {
+            underlyingServerEnvironmentName = newValue
+            setServerEnvironmentNameReceivedInvocations.append(newValue)
+        }
+    }
+
     // MARK: - set
 
     var setAppSecurityOptionCallsCount = 0

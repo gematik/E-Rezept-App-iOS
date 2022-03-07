@@ -19,6 +19,19 @@
 import Combine
 import Foundation
 
+/// Instances conforming to `PagedAuditEventsController` allow paged (database) access to `ErxAuditEvents`.
+///
+/// sourcery: StreamWrapped
+public protocol PagedAuditEventsController {
+    /// Returns a `PageContainer` for accessing `ErxAuditEvents` in a paged manner.
+    /// - Returns: `PageContainer` containing all available pages.
+    func getPageContainer() -> PageContainer?
+
+    /// Return a publisher for `[ErxAuditEvents]` that are on a given page.
+    /// - Returns: Publisher for `[ErxAuditEvents]`
+    func getPage(_ page: Page) -> AnyPublisher<[ErxAuditEvent], LocalStoreError>
+}
+
 /// Interface for the local data store
 public protocol ErxLocalDataStore {
     // MARK: - ErxTask interfaces

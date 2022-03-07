@@ -28,6 +28,8 @@ public class UserDefaultsStore: UserDataStore {
         self.userDefaults = userDefaults
     }
 
+    // MARK: - Onboarding
+
     public var hideOnboarding: AnyPublisher<Bool, Never> {
         userDefaults.publisher(for: \UserDefaults.shouldHideOnboarding)
             .eraseToAnyPublisher()
@@ -50,6 +52,8 @@ public class UserDefaultsStore: UserDataStore {
         userDefaults.onboardingVersion = onboardingVersion
     }
 
+    // MARK: - CardWall
+
     public var hideCardWallIntro: AnyPublisher<Bool, Never> {
         userDefaults.publisher(for: \UserDefaults.shouldHideCardWallIntro)
             .eraseToAnyPublisher()
@@ -57,6 +61,12 @@ public class UserDefaultsStore: UserDataStore {
 
     public func set(hideCardWallIntro: Bool) {
         userDefaults.shouldHideCardWallIntro = hideCardWallIntro
+    }
+
+    // MARK: - Server configuration name
+
+    public var serverEnvironmentName: String? {
+        userDefaults.serverEnvironmentConfiguration
     }
 
     public var serverEnvironmentConfiguration: AnyPublisher<String?, Never> {
@@ -67,6 +77,8 @@ public class UserDefaultsStore: UserDataStore {
     public func set(serverEnvironmentConfiguration: String?) {
         userDefaults.serverEnvironmentConfiguration = serverEnvironmentConfiguration
     }
+
+    // MARK: - App Security
 
     public var appSecurityOption: AnyPublisher<Int, Never> {
         userDefaults.publisher(for: \UserDefaults.appSecurityOption)
@@ -95,6 +107,8 @@ public class UserDefaultsStore: UserDataStore {
         userDefaults.ignoreDeviceNotSecuredWarningForSession = ignoreDeviceNotSecuredWarningPermanently
     }
 
+    // MARK: - Profile Selection
+
     public var selectedProfileId: AnyPublisher<UUID?, Never> {
         userDefaults.publisher(for: \UserDefaults.selectedProfileId).eraseToAnyPublisher()
     }
@@ -102,6 +116,8 @@ public class UserDefaultsStore: UserDataStore {
     public func set(selectedProfileId: UUID) {
         userDefaults.selectedProfileId = selectedProfileId
     }
+
+    // MARK: - General
 
     public var latestCompatibleModelVersion: ModelVersion {
         get {

@@ -296,12 +296,47 @@ final class EditProfileDomainTests: XCTestCase {
         expect(self.mockUserDataStore.setSelectedProfileIdReceivedInvocations)
             .to(contain(ProfilesDomainTests.Fixtures.erxProfileA.id))
     }
+
+    func testListenerUpdatesSetTokenAndProfile() {
+        let sut = testStore(for: Fixtures.profileA)
+
+        let fetchProfileByPublisher: AnyPublisher<Profile?, LocalStoreError> = CurrentValueSubject(Fixtures
+            .erxProfileWithTokenAndDetails)
+                    .setFailureType(to: LocalStoreError.self)
+                    .eraseToAnyPublisher()
+        mockProfileDataStore.fetchProfileByReturnValue = fetchProfileByPublisher
+
+        let mockSecureUserStore = MockSecureUserStore()
+        mockSecureUserStore.set(token: Fixtures.token)
+        mockProfileSecureDataWiper.secureStorageReturnValue = mockSecureUserStore
+
+        sut.send(.registerListener)
+
+        mainQueue.run()
+
+        sut.receive(.tokenReceived(Fixtures.token)) {
+            $0.token = Fixtures.token
+        }
+
+        sut.receive(.profileReceived(.success(Fixtures.erxProfileWithTokenAndDetails))) {
+            $0.insuranceId = Fixtures.erxProfileWithTokenAndDetails.insuranceId
+            $0.insurance = Fixtures.erxProfileWithTokenAndDetails.insurance
+            $0.fullName = Fixtures.erxProfileWithTokenAndDetails.fullName
+        }
+
+        expect(self.mockProfileSecureDataWiper.secureStorageCalled).to(beTrue())
+        expect(self.mockProfileDataStore.fetchProfileByCalled).to(beTrue())
+
+        sut.send(.close)
+    }
 }
 
 extension EditProfileDomainTests {
     enum Fixtures {
         static let uuid = UUID()
         static let createdA = Date()
+
+        static let token = IDPToken(accessToken: "", expires: Date(), idToken: "")
 
         static let profileA = EditProfileDomain.State(
             name: "Anna Vetter",
@@ -312,7 +347,7 @@ extension EditProfileDomainTests {
             emoji: nil,
             color: .red,
             profileId: uuid,
-            token: IDPToken(accessToken: "", expires: Date(), idToken: "")
+            token: token
         )
 
         static let profileWithAlert = EditProfileDomain.State(
@@ -336,7 +371,7 @@ extension EditProfileDomainTests {
             emoji: nil,
             color: .red,
             profileId: uuid,
-            token: IDPToken(accessToken: "", expires: Date(), idToken: ""),
+            token: token,
             route: .alert(EditProfileDomain.AlertStates.deleteProfile)
         )
 
@@ -348,6 +383,19 @@ extension EditProfileDomainTests {
             color: .red,
             emoji: nil,
             lastAuthenticated: nil,
+            erxTasks: [],
+            erxAuditEvents: []
+        )
+
+        static let erxProfileWithTokenAndDetails = Profile(
+            name: "Anna Vetter",
+            identifier: uuid,
+            created: createdA,
+            givenName: "Anna Regina",
+            familyName: "Vetter",
+            insurance: "Generic BKK",
+            insuranceId: "X987654321",
+            color: .red,
             erxTasks: [],
             erxAuditEvents: []
         )

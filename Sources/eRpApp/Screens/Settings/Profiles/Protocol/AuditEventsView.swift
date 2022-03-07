@@ -30,13 +30,15 @@ struct AuditEventsView: View {
     }
 
     var body: some View {
-        VStack {
+        VStack(spacing: 0) {
             if let entries = viewStore.entries,
                !entries.isEmpty {
+                PageNavigationControl(viewStore: viewStore)
+
                 ScrollView {
                     LazyVStack(alignment: .leading, spacing: 0) {
                         if let lastUpdated = viewStore.lastUpdated {
-                            Text(lastUpdated)
+                            Text(L10n.stgTxtAuditEventsLastUpdated(lastUpdated))
                                 .font(.footnote)
                                 .foregroundColor(Color(.secondaryLabel))
                                 .accessibility(identifier: A11y.settings.auditEvents.stgCtnAuditEventsEvents)
@@ -48,11 +50,13 @@ struct AuditEventsView: View {
                         Group {
                             ForEach(entries) { entry in
                                 VStack(alignment: .leading, spacing: 4) {
-                                    Text(entry.title, placeholder: L10n.stgTxtAuditEventsMissingTitle)
-                                        .font(.body.weight(.semibold))
-                                        .multilineTextAlignment(.leading)
-                                        .accessibility(identifier: A11y.settings.auditEvents
-                                            .stgCtnAuditEventsEventTitle)
+                                    if let title = entry.title {
+                                        Text(title, placeholder: L10n.stgTxtAuditEventsMissingTitle)
+                                            .font(.body.weight(.semibold))
+                                            .multilineTextAlignment(.leading)
+                                            .accessibility(identifier: A11y.settings.auditEvents
+                                                .stgCtnAuditEventsEventTitle)
+                                    }
                                     Text(entry.description, placeholder: L10n.stgTxtAuditEventsMissingDescription)
                                         .font(.subheadline)
                                         .multilineTextAlignment(.leading)
@@ -67,7 +71,7 @@ struct AuditEventsView: View {
                                 .padding(.horizontal)
                                 .padding(.vertical, 12)
                                 .accessibilityElement(children: .contain)
-                                .frame(maxWidth: .infinity, alignment: .center)
+                                .frame(maxWidth: .infinity, alignment: .leading)
                                 .background(Color(.systemBackground))
 
                                 GreyDivider()
@@ -107,10 +111,65 @@ struct AuditEventsView: View {
             }
         }
         .onAppear {
-            viewStore.send(.load)
+            viewStore.send(.loadPageList)
         }
         .navigationTitle(L10n.stgTxtAuditEventsTitle)
         .navigationBarTitleDisplayMode(.inline)
         .background(Color(.secondarySystemBackground).ignoresSafeArea())
+    }
+}
+
+extension AuditEventsView {
+    struct PageNavigationControl: View {
+        @ObservedObject
+        var viewStore: ViewStore<AuditEventsDomain.State, AuditEventsDomain.Action>
+
+        var body: some View {
+            HStack {
+                Button {
+                    if let previousPage = viewStore.previousPage {
+                        viewStore.send(.loadPage(previousPage))
+                    }
+                } label: {
+                    Text(L10n.stgTxtAuditEventsPrevious)
+                }
+                .disabled(viewStore.state.previousPage == nil)
+                .accessibility(identifier: A11y.settings.auditEvents.stgCtnAuditEventsNavigationPrevious)
+
+                Spacer()
+
+                Text(L10n.stgTxtAuditEventsPageSelectionOf(
+                    viewStore.selectedPage?.name ?? "",
+                    String(viewStore.state.pages?.count ?? 0)
+                ))
+                    .foregroundColor(Color(.secondaryLabel))
+                    .font(.subheadline)
+                    .accessibility(identifier: A11y.settings.auditEvents.stgCtnAuditEventsNavigationPageIndicator)
+
+                Spacer()
+
+                Button {
+                    if let nextPage = viewStore.nextPage {
+                        viewStore.send(.loadPage(nextPage))
+                    }
+                } label: {
+                    Text(L10n.stgTxtAuditEventsNext)
+                }
+                .disabled(viewStore.state.nextPage == nil)
+                .accessibility(identifier: A11y.settings.auditEvents.stgCtnAuditEventsNavigationNext)
+            }
+            .accessibilityElement(children: .contain)
+            .accessibility(identifier: A11y.settings.auditEvents.stgCtnAuditEventsEvents)
+            .accentColor(Colors.primary600)
+            .padding()
+        }
+    }
+}
+
+struct AuditsEventView_Preview: PreviewProvider {
+    static var previews: some View {
+        NavigationView {
+            AuditEventsView(store: AuditEventsDomain.Dummies.store)
+        }
     }
 }

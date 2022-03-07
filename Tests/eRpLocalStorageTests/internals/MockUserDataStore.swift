@@ -146,11 +146,14 @@ final class MockUserDataStore: UserDataStore {
     var setServerEnvironmentConfigurationClosure: ((String?) -> Void)?
 
     func set(serverEnvironmentConfiguration: String?) {
+        serverEnvironmentName = serverEnvironmentConfiguration
         setServerEnvironmentConfigurationCallsCount += 1
         setServerEnvironmentConfigurationReceivedServerEnvironmentConfiguration = serverEnvironmentConfiguration
         setServerEnvironmentConfigurationReceivedInvocations.append(serverEnvironmentConfiguration)
         setServerEnvironmentConfigurationClosure?(serverEnvironmentConfiguration)
     }
+
+    var serverEnvironmentName: String?
 
     // MARK: - set
 

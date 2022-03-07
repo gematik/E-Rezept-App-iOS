@@ -19,6 +19,7 @@
 import SwiftUI
 
 struct MedicationInfoView: View {
+    /// sourcery: StringAssetInitialized
     struct CodeInfo {
         let code: String?
         let codeTitle: LocalizedStringKey

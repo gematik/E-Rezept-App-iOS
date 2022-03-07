@@ -18,6 +18,7 @@
 
 import SwiftUI
 
+/// sourcery: StringAssetInitialized
 struct Tile: View {
     var iconSystemName: String?
     var iconName: String?

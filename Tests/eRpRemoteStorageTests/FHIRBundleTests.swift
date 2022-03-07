@@ -65,6 +65,63 @@ final class FHIRBundleTests: XCTestCase {
         expect(task.practitioner?.qualification) == "Hausarzt"
         expect(task.practitioner?.email).to(beNil())
         expect(task.practitioner?.address).to(beNil())
+        // organization
+        expect(task.organization?.name) == "Hausarztpraxis Dr. Topp-Glücklich"
+        expect(task.organization?.phone) == "0301234567"
+        expect(task.organization?.address) == "Musterstr. 2\n10623, Berlin"
+        expect(task.organization?.email).to(beNil())
+        expect(task.organization?.identifier) == "031234567"
+    }
+
+    func testParseErxTaskBundle1_v1_2() throws {
+        let gemFhirBundle = try decode(resource: "getTaskResponse1_bundle_v1_2.json")
+
+        guard let task = try gemFhirBundle.parseErxTasks().first else {
+            fail("Could not parse ModelsR4.Bundle into TaskBundle.")
+            return
+        }
+        // task
+        expect(task.id) == "160.000.088.357.676.93"
+        expect(task.status) == ErxTask.Status.ready
+        expect(task.source) == .server
+        expect(task.prescriptionId) == "160.000.088.357.676.93"
+        expect(task.accessCode) == "68db761b666f7e75a32090fd4d109e2766e02693741278ab6dc2df90f1cbb3af"
+        expect(task.fullUrl) == "https://erp-ref.zentral.erp.splitdns.ti-dienste.de/Task/160.000.088.357.676.93"
+        expect(task.authoredOn) == "2021-11-30"
+        expect(task.lastModified) == "2021-11-30T14:17:39.222+00:00"
+        expect(task.expiresOn) == "2022-03-02"
+        expect(task.acceptedUntil) == "2021-12-28"
+        expect(task.author) == "Universitätsklinik Campus Süd"
+        expect(task.noctuFeeWaiver) == false
+        expect(task.dispenseValidityEnd).to(beNil())
+        expect(task.substitutionAllowed) == false
+        // medication
+        expect(task.medication?.name) == "Olanzapin Heumann 20mg"
+        expect(task.medication?.dosageForm) == "SMT"
+        expect(task.medication?.dose) == "N3"
+        expect(task.medication?.pzn) == "08850519"
+        expect(task.medication?.amount) == 70
+        expect(task.medication?.dosageInstructions) == "1x täglich"
+        // patient
+        expect(task.patient?.name) == "Karl-Friederich Graf Freiherr von Schaumberg"
+        expect(task.patient?.address) == "Siegburger Str. 155\n51105 Köln"
+        expect(task.patient?.birthDate) == "1964-04-04"
+        expect(task.patient?.phone).to(beNil())
+        expect(task.patient?.status) == "1"
+        expect(task.patient?.insurance) == "AOK Nordost - Die Gesundheitskasse"
+        expect(task.patient?.insuranceId) == "X110498793"
+        // practitioner
+        expect(task.practitioner?.lanr) == "445588777"
+        expect(task.practitioner?.name) == "Hannelore Popówitsch"
+        expect(task.practitioner?.qualification) == "Innere und Allgemeinmedizin (Hausarzt)"
+        expect(task.practitioner?.email).to(beNil())
+        expect(task.practitioner?.address).to(beNil())
+        // organization
+        expect(task.organization?.name) == "Universitätsklinik Campus Süd"
+        expect(task.organization?.phone) == "06841/7654321"
+        expect(task.organization?.address) == "Kirrberger Str. 100\n66421, Homburg"
+        expect(task.organization?.email) == "unikliniksued@test.de"
+        expect(task.organization?.identifier) == "998877665"
     }
 
     func testParseAuditEventsFromSamplePayload() throws {
