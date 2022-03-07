@@ -1115,21 +1115,21 @@
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/UserStore/UserDefaultsStore.swift",
-      "line": 84,
+      "line": 98,
       "symbol": "UserDefaultsStore.selectedProfileId",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/UserStore/UserDefaultsStore.swift",
-      "line": 88,
+      "line": 102,
       "symbol": "UserDefaultsStore.set(selectedProfileId:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/UserStore/UserDefaultsStore.swift",
-      "line": 92,
+      "line": 108,
       "symbol": "UserDefaultsStore.latestCompatibleModelVersion",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"

@@ -44,63 +44,70 @@
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpKit/ErxTask+Communication.swift",
-      "line": 95,
+      "line": 94,
+      "symbol": "ErxTask.Communication.Payload.isPickupCodeEmptyOrNil",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpKit/ErxTask+Communication.swift",
+      "line": 99,
       "symbol": "ErxTask.Communication.Profile",
       "symbol_kind": "source.lang.swift.decl.enum",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpKit/ErxTask+Communication.swift",
-      "line": 96,
+      "line": 100,
       "symbol": "ErxTask.Communication.Profile.reply",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpKit/ErxTask+Communication.swift",
-      "line": 97,
+      "line": 101,
       "symbol": "ErxTask.Communication.Profile.dispReq",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpKit/ErxTask+Communication.swift",
-      "line": 98,
+      "line": 102,
       "symbol": "ErxTask.Communication.Profile.infoReq",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpKit/ErxTask+Communication.swift",
-      "line": 99,
+      "line": 103,
       "symbol": "ErxTask.Communication.Profile.representative",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpKit/ErxTask+Communication.swift",
-      "line": 100,
+      "line": 104,
       "symbol": "ErxTask.Communication.Profile.none",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpKit/ErxTask+Communication.swift",
-      "line": 101,
+      "line": 105,
       "symbol": "ErxTask.Communication.Profile.all",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpKit/ErxTask+Communication.swift",
-      "line": 103,
+      "line": 107,
       "symbol": "ErxTask.Communication.Profile.isReply",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpKit/ErxTask+Communication.swift",
-      "line": 107,
+      "line": 111,
       "symbol": "ErxTask.Communication.Profile.isAll",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
@@ -498,6 +505,62 @@
       "warning": "undocumented"
     },
     {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpKit/PageContainer.swift",
+      "line": 7,
+      "symbol": "PageContainer",
+      "symbol_kind": "source.lang.swift.decl.struct",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpKit/PageContainer.swift",
+      "line": 11,
+      "symbol": "PageContainer.numberOfPages",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpKit/PageContainer.swift",
+      "line": 15,
+      "symbol": "PageContainer.pages",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpKit/PageContainer.swift",
+      "line": 17,
+      "symbol": "PageContainer.init(forNumberOfElements:pageSize:)",
+      "symbol_kind": "source.lang.swift.decl.function.method.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpKit/PageContainer.swift",
+      "line": 29,
+      "symbol": "Page",
+      "symbol_kind": "source.lang.swift.decl.struct",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpKit/PageContainer.swift",
+      "line": 30,
+      "symbol": "Page.name",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpKit/PageContainer.swift",
+      "line": 31,
+      "symbol": "Page.offset",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpKit/PageContainer.swift",
+      "line": 32,
+      "symbol": "Page.size",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpKit/Profile.swift",
       "line": 9,
       "symbol": "Profile.init(name:identifier:created:givenName:familyName:insurance:insuranceId:color:emoji:lastAuthenticated:erxTasks:erxAuditEvents:)",
@@ -688,21 +751,21 @@
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpKit/UserDataStore.swift",
-      "line": 67,
+      "line": 80,
       "symbol": "UserDataStore.selectedProfileId",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpKit/UserDataStore.swift",
-      "line": 69,
+      "line": 82,
       "symbol": "UserDataStore.set(selectedProfileId:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpKit/UserDataStore.swift",
-      "line": 71,
+      "line": 86,
       "symbol": "UserDataStore.latestCompatibleModelVersion",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
