@@ -59,6 +59,28 @@ final class SettingsDomainTests: XCTestCase {
         }
     }
 
+    func testToggleHealthCardView() {
+        let store = testStore()
+
+        // when
+        store.send(.toggleOrderHealthCardView(true)) { sut in
+            // then
+            sut.showOrderHealthCardView = true
+        }
+
+        // when
+        store.send(.toggleOrderHealthCardView(true)) { sut in
+            // then
+            sut.showOrderHealthCardView = true
+        }
+
+        // when
+        store.send(.toggleOrderHealthCardView(false)) { sut in
+            // then
+            sut.showOrderHealthCardView = false
+        }
+    }
+
     func testDemoModeToggleShouldUnsetDemoMode() {
         let store = testStore(
             for: SettingsDomain.State(

@@ -757,6 +757,7 @@
 		92591C25545D3E3B563F3E5E /* CreatePasswordDomain.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAD8993DF4CA5AA244384B1A /* CreatePasswordDomain.swift */; };
 		9280776642114996262B23FD /* Nimble in Frameworks */ = {isa = PBXBuildFile; productRef = 66634CF40234879BA5A649A0 /* Nimble */; };
 		92D0B1EF99438341AAA255C0 /* IDPChallengeResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55C3F0F11CF5BB1F6E00530E /* IDPChallengeResponse.swift */; };
+		92FBA89FE19BA90A808FAAD2 /* Backport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A666A243D30A4E3461677A7 /* Backport.swift */; };
 		93644C69AD1DB4B5E00F073B /* SecKeyRandom.swift in Sources */ = {isa = PBXBuildFile; fileRef = 08F9E0C5BF30CE7C4FD7EEDA /* SecKeyRandom.swift */; };
 		938914B986341DBBE410F75D /* KeyValuePair.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C99962A3D8E7D68B5492BE4 /* KeyValuePair.swift */; };
 		9470AFDF87BB9CBCB8AD066A /* ProfileSecureDataWiper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9DB88F1F8895089118E79004 /* ProfileSecureDataWiper.swift */; };
@@ -2307,6 +2308,7 @@
 		1A085E9EB8C0079C5C25277B /* ProfilePicturePicker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfilePicturePicker.swift; sourceTree = "<group>"; };
 		1A0CB844E9AC9E894BD81188 /* TrustStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrustStore.swift; sourceTree = "<group>"; };
 		1A54FFBC638CE0003E042BBA /* de */ = {isa = PBXFileReference; name = de; path = de.lproj/DataPrivacy.html; sourceTree = "<group>"; };
+		1A666A243D30A4E3461677A7 /* Backport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Backport.swift; sourceTree = "<group>"; };
 		1AB10667B5052B686041B2DC /* DefaultTrustStoreSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultTrustStoreSession.swift; sourceTree = "<group>"; };
 		1AF29150ABF6A65096A151D1 /* LoggingInterceptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoggingInterceptor.swift; sourceTree = "<group>"; };
 		1B9A4B2CF4C74FF521BB01C9 /* AppAuthenticationViewSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppAuthenticationViewSnapshotTests.swift; sourceTree = "<group>"; };
@@ -2581,6 +2583,7 @@
 		7401EDA282F3E21E8BEFA461 /* MainHintView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainHintView.swift; sourceTree = "<group>"; };
 		742051B40935C33A411966C9 /* TestUtils.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = TestUtils.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		742FEDCC09D8B446DF14ADE9 /* DebugLogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugLogView.swift; sourceTree = "<group>"; };
+		74B6C10DF6D88EF55D991D23 /* tr */ = {isa = PBXFileReference; name = tr; path = tr.lproj/DataPrivacy.html; sourceTree = "<group>"; };
 		74DAFB5E18B338C408C10A73 /* AppSecurityDomainTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSecurityDomainTests.swift; sourceTree = "<group>"; };
 		753874F4809122D94EAA20BA /* OCSPListTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OCSPListTests.swift; sourceTree = "<group>"; };
 		754CD0950BC927CD8FD01E38 /* health_insurance_contacts.json */ = {isa = PBXFileReference; path = health_insurance_contacts.json; sourceTree = "<group>"; };
@@ -5127,6 +5130,7 @@
 		A45CBF9490A612617A5A558E /* Common */ = {
 			isa = PBXGroup;
 			children = (
+				1A666A243D30A4E3461677A7 /* Backport.swift */,
 				2C2ED0C4BF10CA6D03941F2F /* Date+Extension.swift */,
 				21C333FF08A6FCD6C95529E7 /* SFSymbolName.swift */,
 				1F2F082E4ED128CA07666BFE /* Hint */,
@@ -7971,6 +7975,7 @@
 				DEC60696F1F9265DFC597348 /* AppVersion.swift in Sources */,
 				457BCB7662F5CE08F6C50D22 /* AuditEventsDomain.swift in Sources */,
 				07AC0BDBB9C7880905FBB3A2 /* AuditEventsView.swift in Sources */,
+				92FBA89FE19BA90A808FAAD2 /* Backport.swift in Sources */,
 				7107BCE6545731E8161BB29E /* BarButtonItem.swift in Sources */,
 				32A9A218459181787B9055BC /* Binding+Extensions.swift in Sources */,
 				5574120D0DD3AD190390FABC /* BiometricsAuthenticationChallengeProvider.swift in Sources */,
@@ -9367,6 +9372,7 @@
 			children = (
 				1A54FFBC638CE0003E042BBA /* de */,
 				B673D2156AC1033F43828B42 /* en-GB */,
+				74B6C10DF6D88EF55D991D23 /* tr */,
 			);
 			name = DataPrivacy.html;
 			sourceTree = "<group>";

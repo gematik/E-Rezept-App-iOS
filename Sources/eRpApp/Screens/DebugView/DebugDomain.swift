@@ -60,7 +60,7 @@ enum DebugDomain {
         var vauUrlText: String = "http://some-service.com:8003/"
         var idpUrlText: String = "http://some-service.com:8003/"
 
-        #if TEST_ENVIRONMENT
+        #if TEST_ENVIRONMENT || DEFAULT_ENVIRONMENT_RU_DEV
         var availableEnvironments: [ServerEnvironment] = configurations
             .map { ServerEnvironment(name: $0.key, configuration: $0.value) }
             .sorted { $0.name < $1.name }

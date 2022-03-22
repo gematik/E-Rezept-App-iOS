@@ -65,35 +65,17 @@ struct TabContainerView: View {
                 }
                 .tag(AppDomain.Tab.main)
 
-                if #available(iOS 15.0, *) {
-                    Group {
-                        // Workaround for Xcode 13.2.1 Bug https://developer.apple.com/forums/thread/697070
-                        if #available(iOS 15.0, *) {
-                            MessagesView(
-                                store: store.scope(state: \.messages,
-                                                   action: AppDomain.Action.messages(action:)),
-                                profileSelectionToolbarItemStore: store.scope(state: \.profileSelection,
-                                                                              action: AppDomain.Action.profile(action:))
-                            )
-                            .tabItem {
-                                Label(L10n.tabTxtMessages, image: Asset.TabIcon.bubbleLeft.name)
-                            }
-                            .badge(viewStore.unreadMessagesCount)
-                            .tag(AppDomain.Tab.messages)
-                        }
-                    }
-                } else {
-                    MessagesView(
-                        store: store.scope(state: \.messages,
-                                           action: AppDomain.Action.messages(action:)),
-                        profileSelectionToolbarItemStore: store.scope(state: \.profileSelection,
-                                                                      action: AppDomain.Action.profile(action:))
-                    )
-                    .tabItem {
-                        Label(L10n.tabTxtMessages, image: Asset.TabIcon.bubbleLeft.name)
-                    }
-                    .tag(AppDomain.Tab.messages)
+                MessagesView(
+                    store: store.scope(state: \.messages,
+                                       action: AppDomain.Action.messages(action:)),
+                    profileSelectionToolbarItemStore: store.scope(state: \.profileSelection,
+                                                                  action: AppDomain.Action.profile(action:))
+                )
+                .tabItem {
+                    Label(L10n.tabTxtMessages, image: Asset.TabIcon.bubbleLeft.name)
                 }
+                .backport.badge(viewStore.unreadMessagesCount)
+                .tag(AppDomain.Tab.messages)
 
                 NavigationView {
                     PharmacySearchView(

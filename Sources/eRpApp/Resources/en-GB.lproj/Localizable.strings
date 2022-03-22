@@ -70,7 +70,7 @@
 "cdw_btn_pin_done" = "Next";
 "cdw_btn_pin_done_label" = "Next";
 "cdw_btn_rc_alert_cancel" = "Abbrechen";
-"cdw_btn_rc_alert_close" = "Close";
+"cdw_btn_rc_alert_close" = "Schließen";
 "cdw_btn_rc_alert_save_profile" = "Schließen";
 "cdw_btn_rc_back" = "Zurück";
 "cdw_btn_rc_cancel_label" = "Close dialog";
@@ -247,8 +247,8 @@
 "erx_btn_redeem" = "Redeem all";
 "erx_btn_refresh" = "Update";
 "erx_btn_scn_prescription" = "Open prescription scanner";
-"erx_title" = "Rezepte";
 "erx_txt_accepted_until" = "This is a plural string handled by Localizable.stringdict!";
+"erx_title" = "Prescriptions";
 "erx_txt_current" = "Current";
 "erx_txt_expires_in" = "This is a plural string handled by Localizable.stringdict!";
 "erx_txt_invalid" = "Nicht mehr gültig";
@@ -264,6 +264,9 @@
 "hint_txt_demo_mode_title" = "Would you like a tour of the app?";
 "hint_txt_open_scn" = "Scan the prescription code to add it.";
 "hint_txt_open_scn_title" = "New prescription";
+"hint_txt_order_egk" = "Für die Anmeldung benötigen Sie eine geeignete Karte mit NFC. Wir unterstützen Sie bei der Bestellung";
+"hint_txt_order_egk_button" = "Fortfahren";
+"hint_txt_order_egk_titel" = "Neue Gesundheitskarte bestellen";
 "hint_txt_try_demo_mode" = "Our demo mode shows you all the functions of the app – without a medical card.";
 "hint_txt_unread_messages" = "You have received a new message from the health network.";
 "hint_txt_unread_messages_title" = "New messages";
@@ -731,12 +734,12 @@
 "prsc_fd_txt_substitution_read_further" = "Find out more";
 "prsc_fd_txt_substitution_read_further_link" = "https://www.das-e-rezept-fuer-deutschland.de/fragen-antworten";
 "prsc_fd_txt_substitution_title" = "Substitute medication possible";
-"prsc_status_canceled" =  "Abgebrochen";
-"prsc_status_completed" =  "Eingelöst";
-"prsc_status_expired" =  "Abgelaufen";
-"prsc_status_in_progress" =  "In Einlösung";
+"prsc_status_canceled" = "Abgebrochen";
+"prsc_status_completed" = "Eingelöst";
+"prsc_status_expired" = "Abgelaufen";
+"prsc_status_in_progress" = "In Einlösung";
 "prsc_status_ready" = "Einlösbar";
-"prsc_status_undefined" =  "Unbekannt";
+"prsc_status_undefined" = "Unbekannt";
 "puc_txt_subtitle" = "Show this code at your pharmacy.";
 "puc_txt_title" = "Collection code";
 "rdm_btn_redeem_pharmacy_description" = "You are in a pharmacy and want to redeem your prescription.";

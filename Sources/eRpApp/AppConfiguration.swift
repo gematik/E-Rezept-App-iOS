@@ -101,7 +101,7 @@ struct AppConfiguration: Equatable {
 
 // MARK: - ## IDP
 
-#if TEST_ENVIRONMENT || (!DEFAULT_ENVIRONMENT_TU && !DEFAULT_ENVIRONMENT_RU)
+#if TEST_ENVIRONMENT || (!DEFAULT_ENVIRONMENT_TU && !DEFAULT_ENVIRONMENT_RU && !DEFAULT_ENVIRONMENT_RU_DEV)
 
 // [REQ:gemSpec_Krypt:A_21218] Gematik Root CA 3 as a trust anchor has to be set in the program code
 // swiftlint:disable:next force_try
@@ -125,7 +125,7 @@ MSEnNGbYegnfPFECIEUlFmjATBNklr35xvWQPZUMdIsy7SzUulwFDodpdGr/
 
 #endif
 
-#if TEST_ENVIRONMENT || DEFAULT_ENVIRONMENT_TU || DEFAULT_ENVIRONMENT_RU
+#if TEST_ENVIRONMENT || DEFAULT_ENVIRONMENT_TU || DEFAULT_ENVIRONMENT_RU || DEFAULT_ENVIRONMENT_RU_DEV
 // Note: This is temporary until the services use the Gematik Root CA3 in production.
 // swiftlint:disable:next force_try
 let TRUSTANCHOR_GemRootCa3TestOnly = try! TrustAnchor(withPEM: """
@@ -158,7 +158,7 @@ let IDP_RISE_PU = AppConfiguration.Server(
 
 // MARK: - ## ERP
 
-#if TEST_ENVIRONMENT || (!DEFAULT_ENVIRONMENT_TU && !DEFAULT_ENVIRONMENT_RU)
+#if TEST_ENVIRONMENT || (!DEFAULT_ENVIRONMENT_TU && !DEFAULT_ENVIRONMENT_RU && !DEFAULT_ENVIRONMENT_RU_DEV)
 
 let ERP_IBM_PU = AppConfiguration.Server(
     url: "https://erp.app.ti-dienste.de/",
@@ -170,7 +170,7 @@ let ERP_IBM_PU = AppConfiguration.Server(
 
 // MARK: - ## APOVZD
 
-#if TEST_ENVIRONMENT || (!DEFAULT_ENVIRONMENT_TU && !DEFAULT_ENVIRONMENT_RU)
+#if TEST_ENVIRONMENT || (!DEFAULT_ENVIRONMENT_TU && !DEFAULT_ENVIRONMENT_RU && !DEFAULT_ENVIRONMENT_RU_DEV)
 let APOVZD_PU = AppConfiguration.Server(
     url: "https://apovzd.app.ti-dienste.de/api/",
     header: ["X-API-KEY": "" +
@@ -178,7 +178,7 @@ let APOVZD_PU = AppConfiguration.Server(
 )
 #endif
 
-#if TEST_ENVIRONMENT || (!DEFAULT_ENVIRONMENT_TU && !DEFAULT_ENVIRONMENT_RU)
+#if TEST_ENVIRONMENT || (!DEFAULT_ENVIRONMENT_TU && !DEFAULT_ENVIRONMENT_RU && !DEFAULT_ENVIRONMENT_RU_DEV)
 
 let environmentPU = AppConfiguration(
     name: "PU",
@@ -196,7 +196,9 @@ let defaultConfiguration = environmentPU
 let configurations: [String: AppConfiguration] = [
     "PU": environmentPU,
 ]
+#endif
 
+#if TEST_ENVIRONMENT || DEFAULT_ENVIRONMENT_RU_DEV
 extension UserDataStore {
     var configuration: AnyPublisher<AppConfiguration, Never> {
         serverEnvironmentConfiguration.map { name in

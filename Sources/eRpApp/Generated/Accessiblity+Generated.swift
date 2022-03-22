@@ -321,6 +321,9 @@ internal enum A11y {
     internal enum foss {
       static let stgDprTxtFoss = "stg_dpr_txt_foss"
   }
+    internal enum hint {
+      static let hintTxtOrderEgk = "hint_txt_order_egk"
+  }
     internal enum legalNotice {
       static let stgLnoTxtHeaderLegalInfo = "stg_lno_txt_header_legal_info"
       static let stgLnoTxtLegalNotice = "stg_lno_txt_legal_notice"

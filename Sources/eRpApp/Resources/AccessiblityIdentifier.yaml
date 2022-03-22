@@ -132,6 +132,8 @@ auth:
   - auth_edt_password_input
   - auth_txt_failed_login_hint
 settings:
+  hint:
+    - hint_txt_order_egk
   demo:
     - nav_done
     - stg_txt_demo_mode

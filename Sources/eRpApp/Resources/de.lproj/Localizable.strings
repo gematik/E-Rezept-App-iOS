@@ -78,7 +78,7 @@
 "cdw_btn_rc_correct_can" = "Zugangsnummer korrigieren";
 "cdw_btn_rc_correct_pin" = "PIN korrigieren";
 "cdw_btn_rc_loading" = "Lade";
-"cdw_btn_rc_next" = "Weiter";
+"cdw_btn_rc_next" = "Karte verbinden";
 "cdw_btn_rc_next_hint" = "Direkt nach Drücken dieses Buttons wird die Gesundheitskarte über NFC eingelesen. Halten Sie die Karte dafür direkt ans Gerät. Im Falle einer erfolgreichen Verbindung erhalten Sie haptisches Feedback. Ein Abbruch der Verbindung oder Fehler werden ebenfalls über haptisches Feedback kommuniziert. Die Kommunikation mit der Gesundheitskarte kann bis zu zehn Sekunden dauern. Entfernen Sie anschließend die Gesundheitskarte vom Gerät.";
 "cdw_btn_rc_retry" = "Wiederholen";
 "cdw_btn_rc_video" = "Videoanleitung ansehen";
@@ -166,7 +166,7 @@
 "cdw_txt_rc_nfc_dialog_verify_pin" = "Überprüfung der PIN";
 "cdw_txt_rc_nfc_message_connectMessage" = "Gesundheitskarte gefunden. Bitte nicht bewegen.";
 "cdw_txt_rc_nfc_message_connectionErrorMessage" = "Verbindung fehlgeschlagen";
-"cdw_txt_rc_nfc_message_discoveryMessage" = "Halten Sie Ihre Gesundheitskarte an die Rückseite des Geräts";
+"cdw_txt_rc_nfc_message_discoveryMessage" = "Legen Sie Ihre Gesundheitskarte am oberen Ende des Displays auf die gestrichelte Linie.";
 "cdw_txt_rc_nfc_message_multipleCardsMessage" = "Mehrere Gesundheitskarten gefunden";
 "cdw_txt_rc_nfc_message_noCardMessage" = "Keine Gesundheitskarte gefunden";
 "cdw_txt_rc_nfc_message_unsupportedCardMessage" = "Dieser Kartentyp wird nicht unterstützt";
@@ -264,6 +264,9 @@
 "hint_txt_demo_mode_title" = "Erkundungstour gefällig?";
 "hint_txt_open_scn" = "Scannen Sie den Rezeptcode ab, um es hinzuzufügen.";
 "hint_txt_open_scn_title" = "Neues Rezept";
+"hint_txt_order_egk" = "Für die Anmeldung benötigen Sie eine geeignete Karte mit NFC. Wir unterstützen Sie bei der Bestellung";
+"hint_txt_order_egk_button" = "Fortfahren";
+"hint_txt_order_egk_titel" = "Neue Gesundheitskarte bestellen";
 "hint_txt_try_demo_mode" = "Unser Demo-Modus zeigt Ihnen alle Funktionen der App – ganz ohne Gesundheitskarte.";
 "hint_txt_unread_messages" = "Sie haben eine neue Nachricht aus dem Gesundheitsnetzwerk erhalten.";
 "hint_txt_unread_messages_title" = "Neue Nachrichten";
@@ -731,12 +734,12 @@
 "prsc_fd_txt_substitution_read_further" = "Mehr erfahren";
 "prsc_fd_txt_substitution_read_further_link" = "https://www.das-e-rezept-fuer-deutschland.de/fragen-antworten";
 "prsc_fd_txt_substitution_title" = "Ersatzpräparat möglich";
-"prsc_status_canceled" =  "Abgebrochen";
-"prsc_status_completed" =  "Eingelöst";
-"prsc_status_expired" =  "Abgelaufen";
-"prsc_status_in_progress" =  "In Einlösung";
+"prsc_status_canceled" = "Abgebrochen";
+"prsc_status_completed" = "Eingelöst";
+"prsc_status_expired" = "Abgelaufen";
+"prsc_status_in_progress" = "In Einlösung";
 "prsc_status_ready" = "Einlösbar";
-"prsc_status_undefined" =  "Unbekannt";
+"prsc_status_undefined" = "Unbekannt";
 "puc_txt_subtitle" = "Zeigen Sie diesen Code in Ihrer Apotheke vor.";
 "puc_txt_title" = "Abholcode";
 "rdm_btn_redeem_pharmacy_description" = "Sie stehen in einer Apotheke und möchten Ihr Rezept einlösen.";

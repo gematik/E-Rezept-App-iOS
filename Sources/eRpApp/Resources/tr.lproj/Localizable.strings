@@ -247,8 +247,8 @@
 "erx_btn_redeem" = "Tümünü kullan";
 "erx_btn_refresh" = "Güncelleştir";
 "erx_btn_scn_prescription" = "Reçete tarayıcıyı aç";
-"erx_title" = "Rezepte";
 "erx_txt_accepted_until" = "This is a plural string handled by Localizable.stringdict!";
+"erx_title" = "Reçeteler";
 "erx_txt_current" = "Güncel";
 "erx_txt_expires_in" = "This is a plural string handled by Localizable.stringdict!";
 "erx_txt_invalid" = "Nicht mehr gültig";
@@ -264,6 +264,9 @@
 "hint_txt_demo_mode_title" = "Bir keşif turuna ne dersiniz?";
 "hint_txt_open_scn" = "Eklemek için reçete kodunu tarayın.";
 "hint_txt_open_scn_title" = "Yeni reçete";
+"hint_txt_order_egk" = "Für die Anmeldung benötigen Sie eine geeignete Karte mit NFC. Wir unterstützen Sie bei der Bestellung";
+"hint_txt_order_egk_button" = "Fortfahren";
+"hint_txt_order_egk_titel" = "Neue Gesundheitskarte bestellen";
 "hint_txt_try_demo_mode" = "Demo modumuz size uygulamanın tüm fonksiyonlarını gösterir - hem de sağlık kartı olmadan.";
 "hint_txt_unread_messages" = "Sağlık ağından yeni bir mesaj aldınız.";
 "hint_txt_unread_messages_title" = "Yeni mesajlar";
@@ -731,12 +734,12 @@
 "prsc_fd_txt_substitution_read_further" = "Daha fazla bilgi edin";
 "prsc_fd_txt_substitution_read_further_link" = "https://www.das-e-rezept-fuer-deutschland.de/fragen-antworten";
 "prsc_fd_txt_substitution_title" = "Muadil mümkün";
-"prsc_status_canceled" =  "Abgebrochen";
-"prsc_status_completed" =  "Eingelöst";
-"prsc_status_expired" =  "Abgelaufen";
-"prsc_status_in_progress" =  "In Einlösung";
+"prsc_status_canceled" = "Abgebrochen";
+"prsc_status_completed" = "Eingelöst";
+"prsc_status_expired" = "Abgelaufen";
+"prsc_status_in_progress" = "In Einlösung";
 "prsc_status_ready" = "Einlösbar";
-"prsc_status_undefined" =  "Unbekannt";
+"prsc_status_undefined" = "Unbekannt";
 "puc_txt_subtitle" = "Bu kodu eczanenize gösterin.";
 "puc_txt_title" = "Teslim alma kodu";
 "rdm_btn_redeem_pharmacy_description" = "Bir eczanedesiniz ve reçetenizi kullanmak istiyorsunuz.";

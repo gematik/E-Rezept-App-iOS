@@ -45,6 +45,7 @@ enum SettingsDomain {
         var showFOSSView = false
         var showTermsOfUseView = false
         var showDebugView = false
+        var showOrderHealthCardView = false
         var appSecurityState: AppSecurityDomain.State
         var profiles = ProfilesDomain.State(profiles: [], selectedProfileId: nil, route: nil)
         var appVersion = AppVersion.current
@@ -66,6 +67,7 @@ enum SettingsDomain {
         case toggleFOSSView(Bool)
         case toggleTermsOfUseView(Bool)
         case toggleDebugView(Bool)
+        case toggleOrderHealthCardView(Bool)
         case appSecurity(action: AppSecurityDomain.Action)
         case profiles(action: ProfilesDomain.Action)
         case popToRootView
@@ -93,6 +95,9 @@ enum SettingsDomain {
             )
         case let .trackerStatusReceived(value):
             state.trackerOptIn = value
+            return .none
+        case let .toggleOrderHealthCardView(value):
+            state.showOrderHealthCardView = value
             return .none
         case .close:
             state.appSecurityState.availableSecurityOptions = []

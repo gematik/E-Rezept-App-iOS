@@ -163,7 +163,7 @@ internal enum L10n {
   internal static let cdwBtnPinDoneLabel = StringAsset("cdw_btn_pin_done_label")
   /// Abbrechen
   internal static let cdwBtnRcAlertCancel = StringAsset("cdw_btn_rc_alert_cancel")
-  /// Close
+  /// Schließen
   internal static let cdwBtnRcAlertClose = StringAsset("cdw_btn_rc_alert_close")
   /// Schließen
   internal static let cdwBtnRcAlertSaveProfile = StringAsset("cdw_btn_rc_alert_save_profile")
@@ -527,7 +527,7 @@ internal enum L10n {
   internal static let erxBtnRefresh = StringAsset("erx_btn_refresh")
   /// Open prescription scanner
   internal static let erxBtnScnPrescription = StringAsset("erx_btn_scn_prescription")
-  /// Rezepte
+  /// Prescriptions
   internal static let erxTitle = StringAsset("erx_title")
   /// Plural format key: "%#@variable_0@"
   internal static let erxTxtAcceptedUntil = StringAsset("erx_txt_accepted_until")
@@ -561,6 +561,12 @@ internal enum L10n {
   internal static let hintTxtOpenScn = StringAsset("hint_txt_open_scn")
   /// New prescription
   internal static let hintTxtOpenScnTitle = StringAsset("hint_txt_open_scn_title")
+  /// Für die Anmeldung benötigen Sie eine geeignete Karte mit NFC. Wir unterstützen Sie bei der Bestellung
+  internal static let hintTxtOrderEgk = StringAsset("hint_txt_order_egk")
+  /// Fortfahren
+  internal static let hintTxtOrderEgkButton = StringAsset("hint_txt_order_egk_button")
+  /// Neue Gesundheitskarte bestellen
+  internal static let hintTxtOrderEgkTitel = StringAsset("hint_txt_order_egk_titel")
   /// Our demo mode shows you all the functions of the app – without a medical card.
   internal static let hintTxtTryDemoMode = StringAsset("hint_txt_try_demo_mode")
   /// You have received a new message from the health network.

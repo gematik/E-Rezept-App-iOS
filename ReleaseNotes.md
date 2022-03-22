@@ -1,3 +1,14 @@
+# Release 1.2.4
+
+fixed (2 changes)
+
+  - Fix wrong URL forwarding
+  - Fix animation flicker within reservation animation and compress all videos a bit
+
+added (1 change)
+
+  - Add hint for ordering a new health card
+
 # Release 1.2.3
 
 fixed (12 changes)

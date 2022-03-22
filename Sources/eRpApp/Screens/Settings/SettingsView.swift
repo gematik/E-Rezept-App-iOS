@@ -51,6 +51,7 @@ struct SettingsView: View {
         let showTrackerComplyView: Bool
         let isDemoMode: Bool
         let routeTag: ProfilesDomain.Route.Tag?
+        let showOrderHealthCardView: Bool
 
         init(state: SettingsDomain.State) {
             #if ENABLE_DEBUG_VIEW
@@ -59,6 +60,7 @@ struct SettingsView: View {
             showTrackerComplyView = state.showTrackerComplyView
             isDemoMode = state.isDemoMode
             routeTag = state.profiles.route?.tag
+            showOrderHealthCardView = state.showOrderHealthCardView
         }
     }
 
@@ -66,6 +68,7 @@ struct SettingsView: View {
         NavigationView {
             ScrollView {
                 LazyVStack(spacing: 0) {
+                    EGKHint(store: store)
                     #if ENABLE_DEBUG_VIEW
                     DebugSectionView(store: debugStore,
                                      showDebugView: viewStore.binding(
@@ -87,6 +90,20 @@ struct SettingsView: View {
                     BottomSectionView(store: store)
                 }
                 .alert(profilesAlertStore, dismiss: .setNavigation(tag: nil))
+                Rectangle()
+                    .frame(width: 0, height: 0, alignment: .center)
+                    .sheet(isPresented: viewStore.binding(
+                        get: \.showOrderHealthCardView,
+                        send: SettingsDomain.Action.toggleOrderHealthCardView
+                    )) {
+                        NavigationView {
+                            OrderHealthCardView {
+                                viewStore.send(.toggleOrderHealthCardView(false))
+                            }
+                        }.navigationViewStyle(StackNavigationViewStyle())
+                    }
+                    .hidden()
+                    .accessibility(hidden: true)
 
                 // Tracking comply sheet presentation
                 Rectangle()
@@ -361,6 +378,39 @@ extension SettingsView {
             }
             .accentColor(Colors.primary700)
             .navigationViewStyle(StackNavigationViewStyle())
+        }
+    }
+
+    struct EGKHint: View {
+        let store: SettingsDomain.Store
+
+        @ObservedObject
+        var viewStore: ViewStore<Void, SettingsDomain.Action>
+
+        init(store: SettingsDomain.Store) {
+            self.store = store
+            viewStore = ViewStore(store.stateless)
+        }
+
+        var body: some View {
+            HintView(
+                hint: Hint<SettingsDomain.Action>(
+                    id: A11y.settings.hint.hintTxtOrderEgk,
+                    title: L10n.hintTxtOrderEgkTitel.text,
+                    message: L10n.hintTxtOrderEgk.text,
+                    actionText: L10n.hintTxtOrderEgkButton,
+                    imageName: Asset.Illustrations.boyCicrle.name,
+                    style: .awareness,
+                    buttonStyle: .quaternary,
+                    imageStyle: .topAligned
+                ),
+                textAction: {
+                    viewStore.send(SettingsDomain.Action.toggleOrderHealthCardView(true))
+                },
+                closeAction: nil
+            )
+            .listRowBackground(Color.clear)
+            .listRowInsets(EdgeInsets())
         }
     }
 }

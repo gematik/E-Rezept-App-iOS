@@ -57,18 +57,20 @@ struct PharmacySearchView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            SearchBar(
-                searchText: viewStore.binding(
-                    get: \.searchText,
-                    send: PharmacySearchDomain.Action.searchTextChanged
-                ),
-                prompt: L10n.phaSearchTxtSearchHint.key
-            ) {
-                viewStore.send(.performSearch)
-            }
-            .padding()
+            if #available(iOS 15.0, *) { /* see .backport.searchable() below */ } else {
+                SearchBar(
+                    searchText: viewStore.binding(
+                        get: \.searchText,
+                        send: PharmacySearchDomain.Action.searchTextChanged
+                    ),
+                    prompt: L10n.phaSearchTxtSearchHint.key
+                ) {
+                    viewStore.send(.performSearch)
+                }
+                .padding()
 
-            GreyDivider(topPadding: 0)
+                GreyDivider(topPadding: 0)
+            }
 
             PharmacyDetailViewNavigation(store: store, isModalView: isModalView)
 
@@ -77,7 +79,7 @@ struct PharmacySearchView: View {
                 List {
                     locationHintViewOrEmpty()
                         .buttonStyle(PlainButtonStyle())
-                        .listRowSeparatorHiddenAllEdges()
+                        .backport.listRowSeparatorHiddenAllEdges()
 
                     ForEach(viewStore.pharmacies, id: \.self) { pharmacyViewModel in
                         // todo rather than using a button, use directly a nav link
@@ -178,6 +180,15 @@ struct PharmacySearchView: View {
         }
         .navigationTitle(L10n.tabTxtPharmacySearch)
         .navigationBarTitleDisplayMode(.inline)
+        .backport.searchable(
+            text: viewStore.binding(
+                get: \.searchText,
+                send: PharmacySearchDomain.Action.searchTextChanged
+            ),
+            prompt: L10n.phaSearchTxtSearchHint.key
+        ) {
+            viewStore.send(.performSearch)
+        }
         .alert(
             store.scope(state: \.alertState),
             dismiss: .alertDismissButtonTapped
@@ -390,25 +401,6 @@ struct PharmacySearchView_Previews: PreviewProvider {
                     )
                 )
             }
-        }
-    }
-}
-
-// Workaround for Xcode 13.2.1 Bug https://developer.apple.com/forums/thread/697070
-@available(iOS 15.0, *)
-struct ListRowSeparatorModifierHiddenAllEdges: ViewModifier {
-    func body(content: Content) -> some View {
-        content.listRowSeparator(.hidden, edges: .all)
-    }
-}
-
-extension View {
-    @ViewBuilder
-    func listRowSeparatorHiddenAllEdges() -> some View {
-        if #available(iOS 15, *) {
-            self.modifier(ListRowSeparatorModifierHiddenAllEdges())
-        } else {
-            self
         }
     }
 }
