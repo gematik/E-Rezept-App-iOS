@@ -246,6 +246,34 @@
       "warning": "undocumented"
     },
     {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/Pharmacy/PharmacyLocation.swift",
+      "line": 232,
+      "symbol": "PharmacyLocation.Dummies",
+      "symbol_kind": "source.lang.swift.decl.enum",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/Pharmacy/PharmacyLocation.swift",
+      "line": 252,
+      "symbol": "PharmacyLocation.Dummies.pharmacy",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/Pharmacy/PharmacyLocation.swift",
+      "line": 270,
+      "symbol": "PharmacyLocation.Dummies.pharmacyInactive",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/Pharmacy/PharmacyLocation.swift",
+      "line": 289,
+      "symbol": "PharmacyLocation.Dummies.pharmacies",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/Pharmacy/PharmacyRepository.swift",
       "line": 16,
       "symbol": "PharmacyRepositoryError",

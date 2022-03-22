@@ -197,6 +197,321 @@
       "warning": "undocumented"
     },
     {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/IDPError.swift",
+      "line": 73,
+      "symbol": "IDPError.InternalError",
+      "symbol_kind": "source.lang.swift.decl.enum",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/IDPError.swift",
+      "line": 74,
+      "symbol": "IDPError.InternalError.loadDiscoveryDocumentUnexpectedNil",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/IDPError.swift",
+      "line": 75,
+      "symbol": "IDPError.InternalError.requestChallengeUnexpectedNil",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/IDPError.swift",
+      "line": 76,
+      "symbol": "IDPError.InternalError.constructingChallengeRequestUrl",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/IDPError.swift",
+      "line": 77,
+      "symbol": "IDPError.InternalError.getAndValidateUnexpectedNil",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/IDPError.swift",
+      "line": 78,
+      "symbol": "IDPError.InternalError.constructingRefreshWithSSOTokenRequest",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/IDPError.swift",
+      "line": 79,
+      "symbol": "IDPError.InternalError.refreshResponseMissingHeaderValue",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/IDPError.swift",
+      "line": 80,
+      "symbol": "IDPError.InternalError.challengeExpired",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/IDPError.swift",
+      "line": 81,
+      "symbol": "IDPError.InternalError.verifyUnexpectedNil",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/IDPError.swift",
+      "line": 82,
+      "symbol": "IDPError.InternalError.verifyResponseMissingHeaderValue",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/IDPError.swift",
+      "line": 83,
+      "symbol": "IDPError.InternalError.verifierCodeCreation",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/IDPError.swift",
+      "line": 84,
+      "symbol": "IDPError.InternalError.stateNonceCreation",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/IDPError.swift",
+      "line": 85,
+      "symbol": "IDPError.InternalError.signedChallengeEncoded",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/IDPError.swift",
+      "line": 86,
+      "symbol": "IDPError.InternalError.signedChallengeEncryption",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/IDPError.swift",
+      "line": 87,
+      "symbol": "IDPError.InternalError.altVerifyResponseMissingHeaderValue",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/IDPError.swift",
+      "line": 88,
+      "symbol": "IDPError.InternalError.encryptedSignedChallengeEncoding",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/IDPError.swift",
+      "line": 89,
+      "symbol": "IDPError.InternalError.exchangeUnexpectedNil",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/IDPError.swift",
+      "line": 90,
+      "symbol": "IDPError.InternalError.exchangeTokenUnexpectedNil",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/IDPError.swift",
+      "line": 91,
+      "symbol": "IDPError.InternalError.ssoLoginAndExchangeUnexpectedNil",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/IDPError.swift",
+      "line": 92,
+      "symbol": "IDPError.InternalError.registrationDataEncryption",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/IDPError.swift",
+      "line": 93,
+      "symbol": "IDPError.InternalError.keyVerifierEncoding",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/IDPError.swift",
+      "line": 94,
+      "symbol": "IDPError.InternalError.encryptedKeyVerifierEncoding",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/IDPError.swift",
+      "line": 95,
+      "symbol": "IDPError.InternalError.keyVerifierJweHeaderEncryption",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/IDPError.swift",
+      "line": 96,
+      "symbol": "IDPError.InternalError.keyVerifierJwePayloadEncryption",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/IDPError.swift",
+      "line": 97,
+      "symbol": "IDPError.InternalError.nestJwtInJwePayloadEncryption",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/IDPError.swift",
+      "line": 98,
+      "symbol": "IDPError.InternalError.invalidByteBuffer",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/IDPError.swift",
+      "line": 99,
+      "symbol": "IDPError.InternalError.generatingSecureRandom(length:)",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/IDPError.swift",
+      "line": 100,
+      "symbol": "IDPError.InternalError.registeredDeviceEncoding",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/IDPError.swift",
+      "line": 101,
+      "symbol": "IDPError.InternalError.signedAuthenticationDataEncryption",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/IDPError.swift",
+      "line": 102,
+      "symbol": "IDPError.InternalError.constructingExtAuthRequestUrl",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/IDPError.swift",
+      "line": 103,
+      "symbol": "IDPError.InternalError.refreshTokenUnexpectedNil",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/IDPError.swift",
+      "line": 104,
+      "symbol": "IDPError.InternalError.loadDirectoryKKAppsUnexpectedNil",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/IDPError.swift",
+      "line": 105,
+      "symbol": "IDPError.InternalError.extAuthVerifyResponseMissingHeaderValue",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/IDPError.swift",
+      "line": 106,
+      "symbol": "IDPError.InternalError.extAuthVerifierCodeCreation",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/IDPError.swift",
+      "line": 107,
+      "symbol": "IDPError.InternalError.extAuthStateNonceCreation",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/IDPError.swift",
+      "line": 108,
+      "symbol": "IDPError.InternalError.extAuthVerifyAndExchangeUnexpectedNil",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/IDPError.swift",
+      "line": 109,
+      "symbol": "IDPError.InternalError.extAuthVerifyAndExchangeMissingQueryItem",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/IDPError.swift",
+      "line": 110,
+      "symbol": "IDPError.InternalError.extAuthConstructingRedirectUri",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/IDPError.swift",
+      "line": 111,
+      "symbol": "IDPError.InternalError.startExtAuthUnexpectedNil",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/IDPError.swift",
+      "line": 112,
+      "symbol": "IDPError.InternalError.extAuthVerifyUnexpectedNil",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/IDPError.swift",
+      "line": 113,
+      "symbol": "IDPError.InternalError.pairDeviceUnexpectedNil",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/IDPError.swift",
+      "line": 114,
+      "symbol": "IDPError.InternalError.unregisterDeviceUnexpectedNil",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/IDPError.swift",
+      "line": 115,
+      "symbol": "IDPError.InternalError.listDevicesUnexpectedNil",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/IDPError.swift",
+      "line": 116,
+      "symbol": "IDPError.InternalError.altVerifyUnexpectedNil",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/IDPError.swift",
+      "line": 117,
+      "symbol": "IDPError.InternalError.notImplemented",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/IDP/Models/IDPToken.swift",
       "line": 41,
       "symbol": "IDPToken.idTokenPayload()",

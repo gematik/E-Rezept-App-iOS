@@ -23,7 +23,63 @@
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/TrustStore/TrustStoreError.swift",
-      "line": 36,
+      "line": 22,
+      "symbol": "TrustStoreError.InternalError",
+      "symbol_kind": "source.lang.swift.decl.enum",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/TrustStore/TrustStoreError.swift",
+      "line": 23,
+      "symbol": "TrustStoreError.InternalError.loadOCSPCheckedTrustStoreUnexpectedNil",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/TrustStore/TrustStoreError.swift",
+      "line": 24,
+      "symbol": "TrustStoreError.InternalError.loadCertListFromServerUnexpectedNil",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/TrustStore/TrustStoreError.swift",
+      "line": 25,
+      "symbol": "TrustStoreError.InternalError.loadOCSPListFromServerUnexpectedNil",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/TrustStore/TrustStoreError.swift",
+      "line": 26,
+      "symbol": "TrustStoreError.InternalError.trustStoreCertListUnexpectedNil",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/TrustStore/TrustStoreError.swift",
+      "line": 27,
+      "symbol": "TrustStoreError.InternalError.loadOCSPResponsesUnexpectedNil",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/TrustStore/TrustStoreError.swift",
+      "line": 28,
+      "symbol": "TrustStoreError.InternalError.missingSignerForEECertificate",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/TrustStore/TrustStoreError.swift",
+      "line": 29,
+      "symbol": "TrustStoreError.InternalError.notImplemented",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/TrustStore/TrustStoreError.swift",
+      "line": 46,
       "symbol": "TrustStoreError",
       "symbol_kind": "source.lang.swift.decl.extension",
       "warning": "undocumented"

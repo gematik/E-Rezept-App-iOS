@@ -1,0 +1,1472 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>InternalError Enumeration Reference</title>
+    <link rel="stylesheet" type="text/css" href="../../css/jazzy.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/highlight.css" />
+    <meta charset="utf-8">
+    <script src="../../js/jquery.min.js" defer></script>
+    <script src="../../js/jazzy.js" defer></script>
+    
+    <script src="../../js/lunr.min.js" defer></script>
+    <script src="../../js/typeahead.jquery.js" defer></script>
+    <script src="../../js/jazzy.search.js" defer></script>
+  </head>
+  <body>
+
+    <a name="//apple_ref/swift/Enum/InternalError" class="dashAnchor"></a>
+
+    <a title="InternalError Enumeration Reference"></a>
+
+    <header class="header">
+      <p class="header-col header-col--primary">
+        <a class="header-link" href="../../index.html">
+           1.2.3
+ Docs
+        </a>
+         (67% documented)
+      </p>
+    
+      <p class="header-col--secondary">
+        <form role="search" action="../../search.json">
+          <input type="text" placeholder="Search documentation" data-typeahead>
+        </form>
+      </p>
+    
+        <p class="header-col header-col--secondary">
+          <a class="header-link" href="https://github.com/gematik/E-Rezept-App-iOS">
+            <img class="header-icon" src="../../img/gh.png"/>
+            View on GitHub
+          </a>
+        </p>
+    
+    </header>
+
+    <p class="breadcrumbs">
+      <a class="breadcrumb" href="../../index.html"> Reference</a>
+      <img class="carat" src="../../img/carat.png" />
+      InternalError Enumeration Reference
+    </p>
+
+    <div class="content-wrapper">
+      <nav class="navigation">
+        <ul class="nav-groups">
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../../Guides.html">Guides</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../readme.html">Readme</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../../Classes.html">Classes</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Classes/DefaultIDPSession.html">DefaultIDPSession</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Classes/DefaultIDPSession/Configuration.html">– Configuration</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Classes/DefaultSecureEnclaveSignatureProvider.html">DefaultSecureEnclaveSignatureProvider</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Classes/IDPInterceptor.html">IDPInterceptor</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Classes.html#/s:3IDP14PairingSessionC">PairingSession</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../../Enums.html">Enumerations</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Enums/IDPCodeChallengeMode.html">IDPCodeChallengeMode</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Enums/IDPError.html">IDPError</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Enums/IDPError/ServerResponse.html">– ServerResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Enums/IDPError/InternalError.html">– InternalError</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Enums/SecureEnclaveSignatureProviderError.html">SecureEnclaveSignatureProviderError</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../../Extensions.html">Extensions</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Extensions/BrainpoolP256r1.html">BrainpoolP256r1</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Extensions/BrainpoolP256r1/KeyExchange.html">– KeyExchange</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../../Protocols.html">Protocols</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Protocols/ChallengeSession.html">ChallengeSession</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Protocols/ExtAuthRequestStorage.html">ExtAuthRequestStorage</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Protocols/IDPClient.html">IDPClient</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Protocols/IDPEndpoint.html">IDPEndpoint</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Protocols/IDPSchedulers.html">IDPSchedulers</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Protocols/IDPSession.html">IDPSession</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Protocols/IDPSessionDelegate.html">IDPSessionDelegate</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Protocols/IDPStorage.html">IDPStorage</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Protocols/SecureEGKCertificateStorage.html">SecureEGKCertificateStorage</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Protocols/SecureEnclaveSignatureProvider.html">SecureEnclaveSignatureProvider</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../../Structs.html">Structures</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Structs/AuthenticationData.html">AuthenticationData</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Structs/BiometricAuthenticationSession.html">BiometricAuthenticationSession</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Structs/DiscoveryDocument.html">DiscoveryDocument</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Structs/ExtAuthChallengeSession.html">ExtAuthChallengeSession</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Structs/IDPChallenge.html">IDPChallenge</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Structs/IDPChallenge/Claim.html">– Claim</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Structs/IDPChallenge/UserConsent.html">– UserConsent</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Structs/IDPChallengeResponse.html">IDPChallengeResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Structs/IDPChallengeSession.html">IDPChallengeSession</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Structs/IDPDirectoryKKApps.html">IDPDirectoryKKApps</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Structs/IDPExchangeToken.html">IDPExchangeToken</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Structs/IDPExtAuth.html">IDPExtAuth</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Structs/IDPExtAuthVerify.html">IDPExtAuthVerify</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Structs/IDPToken.html">IDPToken</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Structs/KKAppDirectory.html">KKAppDirectory</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Structs/KKAppDirectory/Entry.html">– Entry</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Structs/NestedJWT.html">NestedJWT</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Structs/PairingData.html">PairingData</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Structs.html#/s:3IDP14PairingEntriesV">PairingEntries</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Structs.html#/s:3IDP12PairingEntryV">PairingEntry</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Structs/PrivateKeyContainer.html">PrivateKeyContainer</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Structs/RegistrationData.html">RegistrationData</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Structs/RegistrationData/DeviceInformation.html">– DeviceInformation</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Structs/SignedAuthenticationData.html">SignedAuthenticationData</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Structs/SignedChallenge.html">SignedChallenge</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Structs/SignedPairingData.html">SignedPairingData</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../../Typealiases.html">Type Aliases</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Typealiases.html#/s:3IDP8IDPScopea">IDPScope</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Typealiases.html#/s:3IDP6Randoma">Random</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Typealiases.html#/s:3IDP12TimeProvidera">TimeProvider</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Typealiases.html#/s:3IDP12VerifierCodea">VerifierCode</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+      <article class="main-content">
+
+        <section class="section">
+          <div class="section-content top-matter">
+            <h1>InternalError</h1>
+              <div class="declaration">
+                <div class="language">
+                  
+                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">InternalError</span> <span class="p">:</span> <span class="kt">Swift</span><span class="o">.</span><span class="kt">Error</span></code></pre>
+
+                </div>
+              </div>
+            <p>Undocumented</p>
+
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-content">
+            <div class="task-group">
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO13InternalErrorO34loadDiscoveryDocumentUnexpectedNilyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/loadDiscoveryDocumentUnexpectedNil" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO13InternalErrorO34loadDiscoveryDocumentUnexpectedNilyA2EmF">loadDiscoveryDocumentUnexpectedNil</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">loadDiscoveryDocumentUnexpectedNil</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO13InternalErrorO29requestChallengeUnexpectedNilyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/requestChallengeUnexpectedNil" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO13InternalErrorO29requestChallengeUnexpectedNilyA2EmF">requestChallengeUnexpectedNil</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">requestChallengeUnexpectedNil</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO13InternalErrorO31constructingChallengeRequestUrlyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/constructingChallengeRequestUrl" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO13InternalErrorO31constructingChallengeRequestUrlyA2EmF">constructingChallengeRequestUrl</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">constructingChallengeRequestUrl</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO13InternalErrorO27getAndValidateUnexpectedNilyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/getAndValidateUnexpectedNil" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO13InternalErrorO27getAndValidateUnexpectedNilyA2EmF">getAndValidateUnexpectedNil</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">getAndValidateUnexpectedNil</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO13InternalErrorO38constructingRefreshWithSSOTokenRequestyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/constructingRefreshWithSSOTokenRequest" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO13InternalErrorO38constructingRefreshWithSSOTokenRequestyA2EmF">constructingRefreshWithSSOTokenRequest</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">constructingRefreshWithSSOTokenRequest</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO13InternalErrorO33refreshResponseMissingHeaderValueyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/refreshResponseMissingHeaderValue" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO13InternalErrorO33refreshResponseMissingHeaderValueyA2EmF">refreshResponseMissingHeaderValue</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">refreshResponseMissingHeaderValue</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO13InternalErrorO16challengeExpiredyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/challengeExpired" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO13InternalErrorO16challengeExpiredyA2EmF">challengeExpired</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">challengeExpired</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO13InternalErrorO19verifyUnexpectedNilyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/verifyUnexpectedNil" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO13InternalErrorO19verifyUnexpectedNilyA2EmF">verifyUnexpectedNil</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">verifyUnexpectedNil</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO13InternalErrorO32verifyResponseMissingHeaderValueyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/verifyResponseMissingHeaderValue" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO13InternalErrorO32verifyResponseMissingHeaderValueyA2EmF">verifyResponseMissingHeaderValue</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">verifyResponseMissingHeaderValue</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO13InternalErrorO20verifierCodeCreationyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/verifierCodeCreation" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO13InternalErrorO20verifierCodeCreationyA2EmF">verifierCodeCreation</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">verifierCodeCreation</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO13InternalErrorO18stateNonceCreationyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/stateNonceCreation" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO13InternalErrorO18stateNonceCreationyA2EmF">stateNonceCreation</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">stateNonceCreation</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO13InternalErrorO22signedChallengeEncodedyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/signedChallengeEncoded" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO13InternalErrorO22signedChallengeEncodedyA2EmF">signedChallengeEncoded</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">signedChallengeEncoded</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO13InternalErrorO25signedChallengeEncryptionyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/signedChallengeEncryption" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO13InternalErrorO25signedChallengeEncryptionyA2EmF">signedChallengeEncryption</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">signedChallengeEncryption</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO13InternalErrorO35altVerifyResponseMissingHeaderValueyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/altVerifyResponseMissingHeaderValue" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO13InternalErrorO35altVerifyResponseMissingHeaderValueyA2EmF">altVerifyResponseMissingHeaderValue</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">altVerifyResponseMissingHeaderValue</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO13InternalErrorO32encryptedSignedChallengeEncodingyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/encryptedSignedChallengeEncoding" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO13InternalErrorO32encryptedSignedChallengeEncodingyA2EmF">encryptedSignedChallengeEncoding</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">encryptedSignedChallengeEncoding</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO13InternalErrorO21exchangeUnexpectedNilyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/exchangeUnexpectedNil" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO13InternalErrorO21exchangeUnexpectedNilyA2EmF">exchangeUnexpectedNil</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">exchangeUnexpectedNil</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO13InternalErrorO26exchangeTokenUnexpectedNilyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/exchangeTokenUnexpectedNil" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO13InternalErrorO26exchangeTokenUnexpectedNilyA2EmF">exchangeTokenUnexpectedNil</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">exchangeTokenUnexpectedNil</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO13InternalErrorO32ssoLoginAndExchangeUnexpectedNilyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/ssoLoginAndExchangeUnexpectedNil" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO13InternalErrorO32ssoLoginAndExchangeUnexpectedNilyA2EmF">ssoLoginAndExchangeUnexpectedNil</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">ssoLoginAndExchangeUnexpectedNil</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO13InternalErrorO26registrationDataEncryptionyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/registrationDataEncryption" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO13InternalErrorO26registrationDataEncryptionyA2EmF">registrationDataEncryption</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">registrationDataEncryption</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO13InternalErrorO19keyVerifierEncodingyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/keyVerifierEncoding" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO13InternalErrorO19keyVerifierEncodingyA2EmF">keyVerifierEncoding</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">keyVerifierEncoding</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO13InternalErrorO28encryptedKeyVerifierEncodingyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/encryptedKeyVerifierEncoding" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO13InternalErrorO28encryptedKeyVerifierEncodingyA2EmF">encryptedKeyVerifierEncoding</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">encryptedKeyVerifierEncoding</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO13InternalErrorO30keyVerifierJweHeaderEncryptionyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/keyVerifierJweHeaderEncryption" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO13InternalErrorO30keyVerifierJweHeaderEncryptionyA2EmF">keyVerifierJweHeaderEncryption</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">keyVerifierJweHeaderEncryption</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO13InternalErrorO31keyVerifierJwePayloadEncryptionyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/keyVerifierJwePayloadEncryption" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO13InternalErrorO31keyVerifierJwePayloadEncryptionyA2EmF">keyVerifierJwePayloadEncryption</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">keyVerifierJwePayloadEncryption</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO13InternalErrorO29nestJwtInJwePayloadEncryptionyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/nestJwtInJwePayloadEncryption" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO13InternalErrorO29nestJwtInJwePayloadEncryptionyA2EmF">nestJwtInJwePayloadEncryption</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">nestJwtInJwePayloadEncryption</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO13InternalErrorO17invalidByteBufferyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/invalidByteBuffer" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO13InternalErrorO17invalidByteBufferyA2EmF">invalidByteBuffer</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">invalidByteBuffer</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO13InternalErrorO22generatingSecureRandomyAESi_tcAEmF"></a>
+                    <a name="//apple_ref/swift/Element/generatingSecureRandom(length:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO13InternalErrorO22generatingSecureRandomyAESi_tcAEmF">generatingSecureRandom(length:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="nf">generatingSecureRandom</span><span class="p">(</span><span class="nv">length</span><span class="p">:</span> <span class="kt">Int</span><span class="p">)</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO13InternalErrorO24registeredDeviceEncodingyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/registeredDeviceEncoding" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO13InternalErrorO24registeredDeviceEncodingyA2EmF">registeredDeviceEncoding</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">registeredDeviceEncoding</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO13InternalErrorO34signedAuthenticationDataEncryptionyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/signedAuthenticationDataEncryption" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO13InternalErrorO34signedAuthenticationDataEncryptionyA2EmF">signedAuthenticationDataEncryption</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">signedAuthenticationDataEncryption</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO13InternalErrorO29constructingExtAuthRequestUrlyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/constructingExtAuthRequestUrl" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO13InternalErrorO29constructingExtAuthRequestUrlyA2EmF">constructingExtAuthRequestUrl</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">constructingExtAuthRequestUrl</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO13InternalErrorO25refreshTokenUnexpectedNilyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/refreshTokenUnexpectedNil" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO13InternalErrorO25refreshTokenUnexpectedNilyA2EmF">refreshTokenUnexpectedNil</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">refreshTokenUnexpectedNil</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO13InternalErrorO32loadDirectoryKKAppsUnexpectedNilyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/loadDirectoryKKAppsUnexpectedNil" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO13InternalErrorO32loadDirectoryKKAppsUnexpectedNilyA2EmF">loadDirectoryKKAppsUnexpectedNil</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">loadDirectoryKKAppsUnexpectedNil</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO13InternalErrorO39extAuthVerifyResponseMissingHeaderValueyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/extAuthVerifyResponseMissingHeaderValue" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO13InternalErrorO39extAuthVerifyResponseMissingHeaderValueyA2EmF">extAuthVerifyResponseMissingHeaderValue</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">extAuthVerifyResponseMissingHeaderValue</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO13InternalErrorO27extAuthVerifierCodeCreationyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/extAuthVerifierCodeCreation" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO13InternalErrorO27extAuthVerifierCodeCreationyA2EmF">extAuthVerifierCodeCreation</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">extAuthVerifierCodeCreation</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO13InternalErrorO25extAuthStateNonceCreationyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/extAuthStateNonceCreation" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO13InternalErrorO25extAuthStateNonceCreationyA2EmF">extAuthStateNonceCreation</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">extAuthStateNonceCreation</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO13InternalErrorO37extAuthVerifyAndExchangeUnexpectedNilyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/extAuthVerifyAndExchangeUnexpectedNil" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO13InternalErrorO37extAuthVerifyAndExchangeUnexpectedNilyA2EmF">extAuthVerifyAndExchangeUnexpectedNil</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">extAuthVerifyAndExchangeUnexpectedNil</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO13InternalErrorO40extAuthVerifyAndExchangeMissingQueryItemyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/extAuthVerifyAndExchangeMissingQueryItem" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO13InternalErrorO40extAuthVerifyAndExchangeMissingQueryItemyA2EmF">extAuthVerifyAndExchangeMissingQueryItem</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">extAuthVerifyAndExchangeMissingQueryItem</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO13InternalErrorO30extAuthConstructingRedirectUriyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/extAuthConstructingRedirectUri" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO13InternalErrorO30extAuthConstructingRedirectUriyA2EmF">extAuthConstructingRedirectUri</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">extAuthConstructingRedirectUri</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO13InternalErrorO25startExtAuthUnexpectedNilyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/startExtAuthUnexpectedNil" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO13InternalErrorO25startExtAuthUnexpectedNilyA2EmF">startExtAuthUnexpectedNil</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">startExtAuthUnexpectedNil</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO13InternalErrorO26extAuthVerifyUnexpectedNilyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/extAuthVerifyUnexpectedNil" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO13InternalErrorO26extAuthVerifyUnexpectedNilyA2EmF">extAuthVerifyUnexpectedNil</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">extAuthVerifyUnexpectedNil</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO13InternalErrorO23pairDeviceUnexpectedNilyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/pairDeviceUnexpectedNil" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO13InternalErrorO23pairDeviceUnexpectedNilyA2EmF">pairDeviceUnexpectedNil</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">pairDeviceUnexpectedNil</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO13InternalErrorO29unregisterDeviceUnexpectedNilyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/unregisterDeviceUnexpectedNil" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO13InternalErrorO29unregisterDeviceUnexpectedNilyA2EmF">unregisterDeviceUnexpectedNil</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">unregisterDeviceUnexpectedNil</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO13InternalErrorO24listDevicesUnexpectedNilyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/listDevicesUnexpectedNil" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO13InternalErrorO24listDevicesUnexpectedNilyA2EmF">listDevicesUnexpectedNil</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">listDevicesUnexpectedNil</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO13InternalErrorO22altVerifyUnexpectedNilyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/altVerifyUnexpectedNil" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO13InternalErrorO22altVerifyUnexpectedNilyA2EmF">altVerifyUnexpectedNil</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">altVerifyUnexpectedNil</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO13InternalErrorO14notImplementedyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/notImplemented" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO13InternalErrorO14notImplementedyA2EmF">notImplemented</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Undocumented</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">notImplemented</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+      </article>
+    </div>
+    <section class="footer">
+      <p>&copy; 2022 <a class="link" href="https://www.gematik.de" target="_blank" rel="external">gematik GmbH</a>. All rights reserved. (Last updated: 2022-03-04)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+    </section>
+  </body>
+</div>
+</html>

@@ -20,9 +20,9 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="index.html">
-           1.2.2 Docs
+           1.2.3 Docs
         </a>
-         (90% documented)
+         (5% documented)
       </p>
     
       <p class="header-col--secondary">
@@ -57,6 +57,20 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="requirements.html">requirements</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="Enums.html">Enumerations</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Enums/Colors.html">Colors</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Enums/SFSymbolName.html">SFSymbolName</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Enums/UnicodeCharacter.html">UnicodeCharacter</a>
               </li>
             </ul>
           </li>
@@ -96,13 +110,13 @@
             <h1 id='requirements' class='heading'>Requirements</h1>
 <h2 id='gemspec_idp_frontend' class='heading'>gemSpec_IDP_Frontend</h2>
 <h3 id='a_19908-01' class='heading'>A_19908-01</h3>
-<h4 id='code-sources-idp-defaultidpsession-swift-549-code-signature-check' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:549</code>:  Signature check</h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-597-code-signature-check' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:597</code>:  Signature check</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_17207] Only implemented for brainpoolP256r1
 // [REQ:gemSpec_IDP_Frontend:A_19908-01] Signature check
 guard let verified = try? challenge.challenge.verify(with: document.authentication.cert),
 </code></pre>
 <h3 id='a_19937' class='heading'>A_19937</h3>
-<h4 id='code-sources-idp-internal-realidpclient-swift-488-code-decoding-server-errors' class='heading'><code>../Sources/IDP/internal/RealIDPClient.swift:488</code>:  Decoding server errors</h4>
+<h4 id='code-sources-idp-internal-realidpclient-swift-483-code-decoding-server-errors' class='heading'><code>../Sources/IDP/internal/RealIDPClient.swift:483</code>:  Decoding server errors</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_19937,A_20605] Decoding server errors
 private static func responseError(for body: Data) -&gt; IDPError {
 </code></pre>
@@ -110,16 +124,16 @@ private static func responseError(for body: Data) -&gt; IDPError {
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_19937,A_20605,A_20085] Error formatting
 public var description: String {
 </code></pre>
-<h4 id='code-sources-idp-models-idperror-swift-112-code-localized-description-of-server-errors' class='heading'><code>../Sources/IDP/Models/IDPError.swift:112</code>:  Localized description of server errors</h4>
+<h4 id='code-sources-idp-models-idperror-swift-161-code-localized-description-of-server-errors' class='heading'><code>../Sources/IDP/Models/IDPError.swift:161</code>:  Localized description of server errors</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_19937,A_20605,A_20085] Localized description of server errors
-case let .internalError(string): return "IDPError.internalError method \(String(describing: string))"
+case let .internal(error: error): return error.localizedDescription
 </code></pre>
 <h3 id='a_19938-01' class='heading'>A_19938-01</h3>
-<h4 id='code-sources-idp-defaultidpsession-swift-192-code-decrypt-fails-if-wrong-aes-key' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:192</code>:  Decrypt, fails if wrong aes key</h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-202-code-decrypt-fails-if-wrong-aes-key' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:202</code>:  Decrypt, fails if wrong aes key</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_19938-01,A_20283-01] Decrypt, fails if wrong aes key
-guard let decrypted = try? token.decrypted(with: cryptoBox.aesKey) else {
+guard let decrypted = try? token.decrypted(with: self.cryptoBox.aesKey) else {
 </code></pre>
-<h4 id='code-sources-idp-defaultidpsession-swift-215-code-usage' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:215</code>:  Usage</h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-225-code-usage' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:225</code>:  Usage</h4>
 <pre class="highlight plaintext"><code>idToken: decrypted.idToken, // [REQ:gemSpec_IDP_Frontend:A_19938-01] Usage
 ssoToken: exchange.sso,
 </code></pre>
@@ -130,7 +144,7 @@ ssoToken: exchange.sso,
 func urlSession(
 </code></pre>
 <h3 id='a_20079' class='heading'>A_20079</h3>
-<h4 id='code-sources-idp-internal-realidpclient-swift-256-code-network-timeouts-will-traverse-the-queue-as-code-httperror-code-s' class='heading'><code>../Sources/IDP/internal/RealIDPClient.swift:256</code>:  Network timeouts will traverse the queue as <code>HTTPError</code>s.</h4>
+<h4 id='code-sources-idp-internal-realidpclient-swift-253-code-network-timeouts-will-traverse-the-queue-as-code-httperror-code-s' class='heading'><code>../Sources/IDP/internal/RealIDPClient.swift:253</code>:  Network timeouts will traverse the queue as <code>HTTPError</code>s.</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20079] Network timeouts will traverse the queue as `HTTPError`s.
 $0.asIDPError()
 </code></pre>
@@ -139,29 +153,29 @@ $0.asIDPError()
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_19937,A_20605,A_20085] Error formatting
 public var description: String {
 </code></pre>
-<h4 id='code-sources-idp-models-idperror-swift-102-code-error-localization-is-not-done-yet-this-is-the-place-to-localize' class='heading'><code>../Sources/IDP/Models/IDPError.swift:102</code>:  Error localization is not done yet, this is the place to localize</h4>
+<h4 id='code-sources-idp-models-idperror-swift-151-code-error-localization-is-not-done-yet-this-is-the-place-to-localize' class='heading'><code>../Sources/IDP/Models/IDPError.swift:151</code>:  Error localization is not done yet, this is the place to localize</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20085] Error localization is not done yet, this is the place to localize
 // accordingly.
 switch self {
 </code></pre>
-<h4 id='code-sources-idp-models-idperror-swift-112-code-localized-description-of-server-errors' class='heading'><code>../Sources/IDP/Models/IDPError.swift:112</code>:  Localized description of server errors</h4>
+<h4 id='code-sources-idp-models-idperror-swift-161-code-localized-description-of-server-errors' class='heading'><code>../Sources/IDP/Models/IDPError.swift:161</code>:  Localized description of server errors</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_19937,A_20605,A_20085] Localized description of server errors
-case let .internalError(string): return "IDPError.internalError method \(String(describing: string))"
+case let .internal(error: error): return error.localizedDescription
 </code></pre>
 <h3 id='a_20283-01' class='heading'>A_20283-01</h3>
-<h4 id='code-sources-idp-defaultidpsession-swift-192-code-decrypt-fails-if-wrong-aes-key' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:192</code>:  Decrypt, fails if wrong aes key</h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-202-code-decrypt-fails-if-wrong-aes-key' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:202</code>:  Decrypt, fails if wrong aes key</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_19938-01,A_20283-01] Decrypt, fails if wrong aes key
-guard let decrypted = try? token.decrypted(with: cryptoBox.aesKey) else {
+guard let decrypted = try? token.decrypted(with: self.cryptoBox.aesKey) else {
 </code></pre>
-<h4 id='code-sources-idp-defaultidpsession-swift-213-code-usage' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:213</code>:  Usage</h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-223-code-usage' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:223</code>:  Usage</h4>
 <pre class="highlight plaintext"><code>accessToken: decrypted.accessToken, // [REQ:gemSpec_IDP_Frontend:A_20283-01] Usage
 expires: self.time().addingTimeInterval(TimeInterval(token.expiresIn)),
 </code></pre>
 <h3 id='a_20309' class='heading'>A_20309</h3>
-<h4 id='code-sources-idp-defaultidpsession-swift-528-code-generation-and-hashing-for-codechallenge' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:528</code>:  generation and hashing for codeChallenge</h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-577-code-generation-and-hashing-for-codechallenge' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:577</code>:  generation and hashing for codeChallenge</h4>
 <pre class="highlight plaintext"><code>// Generate a verifierCode
 // [REQ:gemSpec_IDP_Frontend:A_20309] generation and hashing for codeChallenge
-guard let verifierCode = try? cryptoBox.generateRandomVerifier(),
+guard let verifierCode = try? self.cryptoBox.generateRandomVerifier(),
 </code></pre>
 <h4 id='code-sources-idp-internal-idpcrypto-swift-61-code-verifierlength-is-32-bytes-encoded-to-base64-this-results-in-43-chars' class='heading'><code>../Sources/IDP/internal/IDPCrypto.swift:61</code>:  verifierLength is 32 bytes, encoded to base64 this results in 43 chars</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20309] verifierLength is 32 bytes, encoded to base64 this results in 43 chars
@@ -169,12 +183,12 @@ guard let verifierCode = try? cryptoBox.generateRandomVerifier(),
 try randomGenerator(verifierLength).encodeBase64urlsafe().utf8string
 </code></pre>
 <h3 id='a_20483' class='heading'>A_20483</h3>
-<h4 id='code-sources-idp-defaultidpsession-swift-537-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:537</code>:</h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-585-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:585</code>:</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20483]
 return self.client.requestChallenge(
 </code></pre>
 <h3 id='a_20499' class='heading'>A_20499</h3>
-<h4 id='code-sources-erpapp-session-keychainstorage-swift-234-code-deletion-of-sso_token-id_token-auth_token' class='heading'><code>../Sources/eRpApp/Session/KeychainStorage.swift:234</code>:  Deletion of SSO_TOKEN, ID_TOKEN, AUTH_TOKEN</h4>
+<h4 id='code-sources-erpapp-session-keychainstorage-swift-223-code-deletion-of-sso_token-id_token-auth_token' class='heading'><code>../Sources/eRpApp/Session/KeychainStorage.swift:223</code>:  Deletion of SSO_TOKEN, ID_TOKEN, AUTH_TOKEN</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20499] Deletion of SSO_TOKEN, ID_TOKEN, AUTH_TOKEN
 // [REQ:gemSpec_eRp_FdV:A_20186] Deletion of SSO_TOKEN, ID_TOKEN, AUTH_TOKEN
 set(can: nil)
@@ -186,7 +200,7 @@ set(can: nil)
 storage.wipe()
 </code></pre>
 <h3 id='a_20512' class='heading'>A_20512</h3>
-<h4 id='code-sources-idp-defaultidpsession-swift-249-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:249</code>:</h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-268-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:268</code>:</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20512]
 self.storage.set(discovery: nil)
 </code></pre>
@@ -195,12 +209,12 @@ self.storage.set(discovery: nil)
 func isValid(on date: Date) -&gt; Bool {
 </code></pre>
 <h3 id='a_20526-01' class='heading'>A_20526-01</h3>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-swift-238-code-sign-and-verify-with-idp' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.swift:238</code>:  sign and verify with idp</h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-swift-243-code-sign-and-verify-with-idp' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.swift:243</code>:  sign and verify with idp</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_20172]
 // [REQ:gemSpec_IDP_Frontend:A_20526-01] sign and verify with idp
 func signChallengeWithNFCCard(can: CAN,
 </code></pre>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-swift-265-code-verify-with-idp' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.swift:265</code>:  verify with idp</h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-swift-270-code-verify-with-idp' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.swift:270</code>:  verify with idp</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_20172]
 // [REQ:gemSpec_IDP_Frontend:A_20526-01] verify with idp
 private func verifyResultWithIDP(_ signedChallenge: SignedChallenge,
@@ -211,13 +225,14 @@ private func verifyResultWithIDP(_ signedChallenge: SignedChallenge,
 func sign(can: CAN, pin: Format2Pin, challenge: IDPChallengeSession)
 </code></pre>
 <h3 id='a_20527' class='heading'>A_20527</h3>
-<h4 id='code-sources-idp-defaultidpsession-swift-159-code-returning-the-authorization_code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:159</code>:  Returning the AUTHORIZATION_CODE</h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-164-code-returning-the-authorization_code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:164</code>:  Returning the AUTHORIZATION_CODE</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20527] Returning the AUTHORIZATION_CODE
 return Just(exchangeToken).setFailureType(to: IDPError.self).eraseToAnyPublisher()
 </code></pre>
 <h3 id='a_20529-01' class='heading'>A_20529-01</h3>
-<h4 id='code-sources-idp-defaultidpsession-swift-176-code-encryption' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:176</code>:  Encryption</h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-183-code-encryption' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:183</code>:  Encryption</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20529-01] Encryption
+// [REQ:gemSpec_IDP_Frontend:A_21323] Crypto box contains `Token-Key`
 guard let encryptedKeyVerifier = try? KeyVerifier(
 </code></pre>
 <h3 id='a_20600' class='heading'>A_20600</h3>
@@ -225,7 +240,7 @@ guard let encryptedKeyVerifier = try? KeyVerifier(
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20600]
 return IDPExchangeToken(code: code, sso: sso, state: state)
 </code></pre>
-<h4 id='code-sources-idp-internal-realidpclient-swift-476-code' class='heading'><code>../Sources/IDP/internal/RealIDPClient.swift:476</code>:</h4>
+<h4 id='code-sources-idp-internal-realidpclient-swift-471-code' class='heading'><code>../Sources/IDP/internal/RealIDPClient.swift:471</code>:</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20600]
 return IDPExchangeToken(code: code, sso: sso, state: state)
 </code></pre>
@@ -244,7 +259,7 @@ request.setValue("\(token.tokenType) \(token.accessToken)", forHTTPHeaderField: 
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20603,A_20601] transfer
 URLQueryItem(name: "client_id", value: clientConfig.clientId.urlPercentEscapedString()),
 </code></pre>
-<h4 id='code-sources-idp-internal-realidpclient-swift-242-code-transfer' class='heading'><code>../Sources/IDP/internal/RealIDPClient.swift:242</code>:  transfer</h4>
+<h4 id='code-sources-idp-internal-realidpclient-swift-239-code-transfer' class='heading'><code>../Sources/IDP/internal/RealIDPClient.swift:239</code>:  transfer</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20603] transfer
 "client_id": clientConfig.clientId,
 </code></pre>
@@ -252,13 +267,13 @@ URLQueryItem(name: "client_id", value: clientConfig.clientId.urlPercentEscapedSt
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20603] Actual ID
 private static let defaultClientId: String = "eRezeptApp"
 </code></pre>
-<h4 id='code-sources-erpapp-appconfiguration-swift-56-code-actual-id' class='heading'><code>../Sources/eRpApp/AppConfiguration.swift:56</code>:  Actual ID</h4>
+<h4 id='code-sources-erpapp-appconfiguration-swift-59-code-actual-id' class='heading'><code>../Sources/eRpApp/AppConfiguration.swift:59</code>:  Actual ID</h4>
 <pre class="highlight plaintext"><code>// clientId
 // [REQ:gemSpec_IDP_Frontend:A_20603] Actual ID
 let clientId: String = defaultClientId
 </code></pre>
 <h3 id='a_20605' class='heading'>A_20605</h3>
-<h4 id='code-sources-idp-internal-realidpclient-swift-488-code-decoding-server-errors' class='heading'><code>../Sources/IDP/internal/RealIDPClient.swift:488</code>:  Decoding server errors</h4>
+<h4 id='code-sources-idp-internal-realidpclient-swift-483-code-decoding-server-errors' class='heading'><code>../Sources/IDP/internal/RealIDPClient.swift:483</code>:  Decoding server errors</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_19937,A_20605] Decoding server errors
 private static func responseError(for body: Data) -&gt; IDPError {
 </code></pre>
@@ -266,9 +281,9 @@ private static func responseError(for body: Data) -&gt; IDPError {
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_19937,A_20605,A_20085] Error formatting
 public var description: String {
 </code></pre>
-<h4 id='code-sources-idp-models-idperror-swift-112-code-localized-description-of-server-errors' class='heading'><code>../Sources/IDP/Models/IDPError.swift:112</code>:  Localized description of server errors</h4>
+<h4 id='code-sources-idp-models-idperror-swift-161-code-localized-description-of-server-errors' class='heading'><code>../Sources/IDP/Models/IDPError.swift:161</code>:  Localized description of server errors</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_19937,A_20605,A_20085] Localized description of server errors
-case let .internalError(string): return "IDPError.internalError method \(String(describing: string))"
+case let .internal(error: error): return error.localizedDescription
 </code></pre>
 <h3 id='a_20606' class='heading'>A_20606</h3>
 <h4 id='code-sources-httpclient-defaulthttpclient-swift-38-code-live-urls-not-present-in-nsapptransportsecurity-exception-list-for-allowed' class='heading'><code>../Sources/HTTPClient/DefaultHTTPClient.swift:38</code>:  Live URLs not present in NSAppTransportSecurity exception list for allowed</h4>
@@ -309,20 +324,20 @@ func urlSession(
 func urlSession(
 </code></pre>
 <h3 id='a_20614' class='heading'>A_20614</h3>
-<h4 id='code-sources-idp-defaultidpsession-swift-242-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:242</code>:</h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-256-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:256</code>:</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20617-01,A_20623,A_20614]
 .validateOrNil(with: trustStoreSession, timeProvider: time)
 </code></pre>
 <h3 id='a_20617-01' class='heading'>A_20617-01</h3>
-<h4 id='code-sources-idp-defaultidpsession-swift-242-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:242</code>:</h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-256-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:256</code>:</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20617-01,A_20623,A_20614]
 .validateOrNil(with: trustStoreSession, timeProvider: time)
 </code></pre>
-<h4 id='code-sources-idp-defaultidpsession-swift-267-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:267</code>:</h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-286-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:286</code>:</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20617-01,A_20623]
 .validate(with: self.trustStoreSession, timeProvider: self.time)
 </code></pre>
-<h4 id='code-sources-idp-defaultidpsession-swift-607-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:607</code>:</h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-660-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:660</code>:</h4>
 <pre class="highlight plaintext"><code>/// Returns a Publisher that validates the input streams discoveryDocument against the given trustStoreSession. If
 /// the validity cannot be verified, the publisher fails with an `IDPError.trustStore` error.
 ///
@@ -334,7 +349,7 @@ func urlSession(
 /// - Returns: An AnyPublisher of `DiscoveryDocument`and `IDPError`
 func validate(with trustStoreSession: TrustStoreSession,
 </code></pre>
-<h4 id='code-sources-idp-defaultidpsession-swift-639-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:639</code>:</h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-692-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:692</code>:</h4>
 <pre class="highlight plaintext"><code>/// Returns a Publisher that validates the input streams discoveryDocument and returns nil if validity cannot be
 /// checked. All Errors are caught and result in an empty discoveryDocument.
 ///
@@ -353,15 +368,15 @@ func validateOrNil(with trustStoreSession: TrustStoreSession,
 func urlSession(
 </code></pre>
 <h3 id='a_20623' class='heading'>A_20623</h3>
-<h4 id='code-sources-idp-defaultidpsession-swift-242-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:242</code>:</h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-256-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:256</code>:</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20617-01,A_20623,A_20614]
 .validateOrNil(with: trustStoreSession, timeProvider: time)
 </code></pre>
-<h4 id='code-sources-idp-defaultidpsession-swift-267-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:267</code>:</h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-286-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:286</code>:</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20617-01,A_20623]
 .validate(with: self.trustStoreSession, timeProvider: self.time)
 </code></pre>
-<h4 id='code-sources-idp-defaultidpsession-swift-608-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:608</code>:</h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-661-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:661</code>:</h4>
 <pre class="highlight plaintext"><code>/// Returns a Publisher that validates the input streams discoveryDocument against the given trustStoreSession. If
 /// the validity cannot be verified, the publisher fails with an `IDPError.trustStore` error.
 ///
@@ -373,11 +388,11 @@ func urlSession(
 /// - Returns: An AnyPublisher of `DiscoveryDocument`and `IDPError`
 func validate(with trustStoreSession: TrustStoreSession,
 </code></pre>
-<h4 id='code-sources-idp-defaultidpsession-swift-611-code-validation-call' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:611</code>:  Validation call</h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-664-code-validation-call' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:664</code>:  Validation call</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20623] Validation call
 return trustStoreSession.validate(discoveryDocument: document)
 </code></pre>
-<h4 id='code-sources-idp-defaultidpsession-swift-639-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:639</code>:</h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-692-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:692</code>:</h4>
 <pre class="highlight plaintext"><code>/// Returns a Publisher that validates the input streams discoveryDocument and returns nil if validity cannot be
 /// checked. All Errors are caught and result in an empty discoveryDocument.
 ///
@@ -389,7 +404,7 @@ return trustStoreSession.validate(discoveryDocument: document)
 /// - Returns: An AnyPublisher of `DiscoveryDocument`and `Never`.
 func validateOrNil(with trustStoreSession: TrustStoreSession,
 </code></pre>
-<h4 id='code-sources-idp-defaultidpsession-swift-669-code-validation' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:669</code>:  Validation</h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-722-code-validation' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:722</code>:  Validation</h4>
 <pre class="highlight plaintext"><code>/// Returns a publisher that checks a discoveryDocument against the trust store. The Stream contains an output
 /// boolean for the plain check or an TrustStoreError in case the TrustStoreSession sub streams failed.
 ///
@@ -411,7 +426,7 @@ case oidIdpd // 1.2.276.0.76.4.260 == 0x06082A8214004C048204
 }
 </code></pre>
 <h3 id='a_20625' class='heading'>A_20625</h3>
-<h4 id='code-sources-idp-defaultidpsession-swift-199-code-validate-id_token-signature' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:199</code>:  Validate ID_TOKEN signature</h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-209-code-validate-id_token-signature' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:209</code>:  Validate ID_TOKEN signature</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20625] Validate ID_TOKEN signature
 guard let jwt = try? JWT(from: decrypted.idToken),
 </code></pre>
@@ -424,7 +439,7 @@ amr: [
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20700-07] sign with C.CH.AUT
 return challengeSession.sign(
 </code></pre>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-environment-biometrics-swift-119-code-c-ch-aut' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.Environment+Biometrics.swift:119</code>:  C.CH.AUT</h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-environment-biometrics-swift-120-code-c-ch-aut' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.Environment+Biometrics.swift:120</code>:  C.CH.AUT</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20700-07] C.CH.AUT
 // [REQ:gemF_Tokenverschlüsselung:A_20526-01] Smartcard signature
 // [REQ:gemF_Tokenverschlüsselung:A_20700-06] sign
@@ -449,11 +464,11 @@ card.sign(data: message)
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20740] transfer
 name: "redirect_uri",
 </code></pre>
-<h4 id='code-sources-idp-internal-realidpclient-swift-239-code-transfer' class='heading'><code>../Sources/IDP/internal/RealIDPClient.swift:239</code>:  transfer</h4>
+<h4 id='code-sources-idp-internal-realidpclient-swift-236-code-transfer' class='heading'><code>../Sources/IDP/internal/RealIDPClient.swift:236</code>:  transfer</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20740] transfer
 "redirect_uri": redirectURI ?? clientConfig.redirectURI.absoluteString,
 </code></pre>
-<h4 id='code-sources-erpapp-appconfiguration-swift-58-code-actual-redirect-uri' class='heading'><code>../Sources/eRpApp/AppConfiguration.swift:58</code>:  Actual redirect uri</h4>
+<h4 id='code-sources-erpapp-appconfiguration-swift-61-code-actual-redirect-uri' class='heading'><code>../Sources/eRpApp/AppConfiguration.swift:61</code>:  Actual redirect uri</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20740] Actual redirect uri
 let redirectUri = URL(string: "https://redirect.gematik.de/erezept")! // swiftlint:disable:this force_unwrapping
 let extAuthRedirectUri = URL(
@@ -468,17 +483,18 @@ let extAuthRedirectUri = URL(
 class KeychainStorage: SecureUserDataStore, IDPStorage, SecureEGKCertificateStorage {
 </code></pre>
 <h3 id='a_21323' class='heading'>A_21323</h3>
-<h4 id='code-sources-idp-defaultidpsession-swift-171-code-crypto-box-contains-code-token-key-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:171</code>:  Crypto box contains <code>Token-Key</code></h4>
-<pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_21323] Crypto box contains `Token-Key`
-let cryptoBox = self.cryptoBox
+<h4 id='code-sources-idp-defaultidpsession-swift-184-code-crypto-box-contains-code-token-key-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:184</code>:  Crypto box contains <code>Token-Key</code></h4>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20529-01] Encryption
+// [REQ:gemSpec_IDP_Frontend:A_21323] Crypto box contains `Token-Key`
+guard let encryptedKeyVerifier = try? KeyVerifier(
 </code></pre>
 <h3 id='a_21414' class='heading'>A_21414</h3>
-<h4 id='code-sources-idp-defaultidpsession-swift-289-code-encrypt-access_token-when-requesting-the-pairing-endpoint' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:289</code>:  Encrypt ACCESS_TOKEN when requesting the pairing endpoint</h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-310-code-encrypt-access_token-when-requesting-the-pairing-endpoint' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:310</code>:  Encrypt ACCESS_TOKEN when requesting the pairing endpoint</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_21414] Encrypt ACCESS_TOKEN when requesting the pairing endpoint
 guard let tokenJWT = try? JWT(from: token.accessToken),
 </code></pre>
 <h3 id='a_21416' class='heading'>A_21416</h3>
-<h4 id='code-sources-idp-defaultidpsession-swift-283-code-encryption' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:283</code>:  Encryption</h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-304-code-encryption' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:304</code>:  Encryption</h4>
 <pre class="highlight plaintext"><code>/// [REQ:gemSpec_IDP_Frontend:A_21416] Encryption
 guard let jwe = try? registrationData.encrypted(with: document.encryptionPublicKey,
 </code></pre>
@@ -494,7 +510,7 @@ public struct RegistrationData: Claims, Codable {
 func encrypted(with publicKey: BrainpoolP256r1.KeyExchange.PublicKey,
 </code></pre>
 <h3 id='a_21431' class='heading'>A_21431</h3>
-<h4 id='code-sources-idp-defaultidpsession-swift-355-code-encryption' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:355</code>:  Encryption</h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-384-code-encryption' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:384</code>:  Encryption</h4>
 <pre class="highlight plaintext"><code>/// [REQ:gemSpec_IDP_Frontend:A_21431] Encryption
 guard let jwe = try? signedChallenge.encrypted(with: document.encryptionPublicKey,
 </code></pre>
@@ -503,16 +519,16 @@ guard let jwe = try? signedChallenge.encrypted(with: document.encryptionPublicKe
 expiry: originalChallenge.challenge.exp,
 </code></pre>
 <h3 id='a_21443' class='heading'>A_21443</h3>
-<h4 id='code-sources-idp-defaultidpsession-swift-311-code-encrypt-access_token-when-requesting-the-unregister-endpoint' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:311</code>:  Encrypt ACCESS_TOKEN when requesting the unregister endpoint</h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-335-code-encrypt-access_token-when-requesting-the-unregister-endpoint' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:335</code>:  Encrypt ACCESS_TOKEN when requesting the unregister endpoint</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_21443] Encrypt ACCESS_TOKEN when requesting the unregister endpoint
 guard let tokenJWT = try? JWT(from: token.accessToken),
 </code></pre>
-<h4 id='code-sources-idp-defaultidpsession-swift-332-code-encrypt-access_token-when-requesting-the-list-endpoint' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:332</code>:  Encrypt ACCESS_TOKEN when requesting the list endpoint</h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-359-code-encrypt-access_token-when-requesting-the-list-endpoint' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:359</code>:  Encrypt ACCESS_TOKEN when requesting the list endpoint</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_21443] Encrypt ACCESS_TOKEN when requesting the list endpoint
 guard let tokenJWT = try? JWT(from: token.accessToken),
 </code></pre>
 <h3 id='a_21574' class='heading'>A_21574</h3>
-<h4 id='code-sources-erpapp-screens-cardwall-login-cardwallloginoptionview-swift-105-code-actual-view' class='heading'><code>../Sources/eRpApp/Screens/CardWall/Login/CardWallLoginOptionView.swift:105</code>:  Actual view</h4>
+<h4 id='code-sources-erpapp-screens-cardwall-login-cardwallloginoptionview-swift-104-code-actual-view' class='heading'><code>../Sources/eRpApp/Screens/CardWall/Login/CardWallLoginOptionView.swift:104</code>:  Actual view</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_21574] Actual view
 private struct PrivacyWarningViewContainer: View {
 </code></pre>
@@ -521,7 +537,7 @@ private struct PrivacyWarningViewContainer: View {
 return Effect(value: .presentSecurityWarning)
 </code></pre>
 <h3 id='a_21576' class='heading'>A_21576</h3>
-<h4 id='code-sources-idp-defaultidpsession-swift-307-code-deletion-call' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:307</code>:  deletion call</h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-328-code-deletion-call' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:328</code>:  deletion call</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_21576] deletion call
 public func unregisterDevice(_ keyIdentifier: String, token: IDPToken) -&gt; AnyPublisher&lt;Bool, IDPError&gt; {
 </code></pre>
@@ -630,9 +646,9 @@ certificateStorage.set(certificate: certificate)
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_21595] case deletion
 certificateStorage.set(certificate: nil)
 </code></pre>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-environment-biometrics-swift-182-code-failure-will-delete-paring-data' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.Environment+Biometrics.swift:182</code>:  Failure will delete paring data</h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-environment-biometrics-swift-184-code-failure-will-delete-paring-data' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.Environment+Biometrics.swift:184</code>:  Failure will delete paring data</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_21598,A_21595] Failure will delete paring data
-_ = try? self.signatureProvider.abort(pairingSession: pairingSession)
+_ = try? signatureProvider.abort(pairingSession: pairingSession)
 </code></pre>
 <h4 id='code-sources-erpapp-session-keychainstorage-swift-20-code-storage-implementation' class='heading'><code>../Sources/eRpApp/Session/KeychainStorage.swift:20</code>:  Storage Implementation</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_19186]
@@ -642,11 +658,11 @@ _ = try? self.signatureProvider.abort(pairingSession: pairingSession)
 // [REQ:gemSpec_IDP_Frontend:A_21595] Storage Implementation
 class KeychainStorage: SecureUserDataStore, IDPStorage, SecureEGKCertificateStorage {
 </code></pre>
-<h4 id='code-sources-erpapp-session-keychainstorage-swift-200-code-store-within-keychain' class='heading'><code>../Sources/eRpApp/Session/KeychainStorage.swift:200</code>:  Store within keychain</h4>
+<h4 id='code-sources-erpapp-session-keychainstorage-swift-193-code-store-within-keychain' class='heading'><code>../Sources/eRpApp/Session/KeychainStorage.swift:193</code>:  Store within keychain</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_21595] Store within keychain
 _ = try? keychainHelper.setGenericPassword(derBytes, for: egkAuthCertIdentifier)
 </code></pre>
-<h4 id='code-sources-erpapp-session-keychainstorage-swift-225-code-store-within-keychain' class='heading'><code>../Sources/eRpApp/Session/KeychainStorage.swift:225</code>:  Store within keychain</h4>
+<h4 id='code-sources-erpapp-session-keychainstorage-swift-214-code-store-within-keychain' class='heading'><code>../Sources/eRpApp/Session/KeychainStorage.swift:214</code>:  Store within keychain</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_21595] Store within keychain
 _ = try? keychainHelper.setGenericPassword(keyIdentifier, for: idpBiometricKeyIdentifier)
 </code></pre>
@@ -660,9 +676,9 @@ certificateStorage.set(certificate: certificate)
 // registration
 public func abort(pairingSession: PairingSession) throws {
 </code></pre>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-environment-biometrics-swift-182-code-failure-will-delete-paring-data' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.Environment+Biometrics.swift:182</code>:  Failure will delete paring data</h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-environment-biometrics-swift-184-code-failure-will-delete-paring-data' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.Environment+Biometrics.swift:184</code>:  Failure will delete paring data</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_21598,A_21595] Failure will delete paring data
-_ = try? self.signatureProvider.abort(pairingSession: pairingSession)
+_ = try? signatureProvider.abort(pairingSession: pairingSession)
 </code></pre>
 <h3 id='a_21600' class='heading'>A_21600</h3>
 <h4 id='code-sources-idp-uidevice-extension-swift-10-code' class='heading'><code>../Sources/IDP/UIDevice+Extension.swift:10</code>:</h4>
@@ -674,7 +690,7 @@ func deviceInformation() -&gt; RegistrationData.DeviceInformation {
 func deviceInformation() -&gt; RegistrationData.DeviceInformation {
 </code></pre>
 <h3 id='a_21603' class='heading'>A_21603</h3>
-<h4 id='code-sources-erpapp-session-keychainstorage-swift-238-code-certificate' class='heading'><code>../Sources/eRpApp/Session/KeychainStorage.swift:238</code>:  Certificate</h4>
+<h4 id='code-sources-erpapp-session-keychainstorage-swift-227-code-certificate' class='heading'><code>../Sources/eRpApp/Session/KeychainStorage.swift:227</code>:  Certificate</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_21603] Certificate
 set(certificate: nil)
 </code></pre>
@@ -695,7 +711,7 @@ _ = try? PrivateKeyContainer.deleteExistingKey(for: identifier)
 </code></pre>
 <h2 id='gemf_tokenverschlüsselung' class='heading'>gemF_Tokenverschlüsselung</h2>
 <h3 id='a_20526-01' class='heading'>A_20526-01</h3>
-<h4 id='code-sources-idp-defaultidpsession-swift-146-code-encryption-with-jwe' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:146</code>:  Encryption with JWE</h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-151-code-encryption-with-jwe' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:151</code>:  Encryption with JWE</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemF_Tokenverschlüsselung:A_20526-01] Encryption with JWE
 guard let jwe = try? signedChallenge.encrypt(with: document.encryptionPublicKey,
 </code></pre>
@@ -707,7 +723,7 @@ var request = URLRequest(url: document.authentication.url, cachePolicy: .reloadI
 <pre class="highlight plaintext"><code>// [REQ:gemF_Tokenverschlüsselung:A_20526-01] Embed certificate
 let header = JWT.Header(alg: alg, x5c: certificates, typ: "JWT", cty: "NJWT")
 </code></pre>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-environment-biometrics-swift-120-code-smartcard-signature' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.Environment+Biometrics.swift:120</code>:  Smartcard signature</h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-environment-biometrics-swift-121-code-smartcard-signature' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.Environment+Biometrics.swift:121</code>:  Smartcard signature</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20700-07] C.CH.AUT
 // [REQ:gemF_Tokenverschlüsselung:A_20526-01] Smartcard signature
 // [REQ:gemF_Tokenverschlüsselung:A_20700-06] sign
@@ -720,7 +736,7 @@ let header = JWT.Header(alg: alg, x5c: certificates, typ: "JWT", cty: "NJWT")
 .readAutCertificate()
 </code></pre>
 <h3 id='a_20700-06' class='heading'>A_20700-06</h3>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-environment-biometrics-swift-121-code-sign' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.Environment+Biometrics.swift:121</code>:  sign</h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-environment-biometrics-swift-122-code-sign' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.Environment+Biometrics.swift:122</code>:  sign</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20700-07] C.CH.AUT
 // [REQ:gemF_Tokenverschlüsselung:A_20526-01] Smartcard signature
 // [REQ:gemF_Tokenverschlüsselung:A_20700-06] sign
@@ -748,12 +764,12 @@ class KeychainStorage: SecureUserDataStore, IDPStorage, SecureEGKCertificateStor
 </code></pre>
 <h2 id='gemspec_krypt' class='heading'>gemSpec_Krypt</h2>
 <h3 id='a_17207' class='heading'>A_17207</h3>
-<h4 id='code-sources-idp-defaultidpsession-swift-256-code-only-implemented-for-brainpoolp256r1' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:256</code>:  Only implemented for brainpoolP256r1</h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-275-code-only-implemented-for-brainpoolp256r1' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:275</code>:  Only implemented for brainpoolP256r1</h4>
 <pre class="highlight plaintext"><code>// Validate JWT/DiscoveryDocument signature
 // [REQ:gemSpec_Krypt:A_17207] Only implemented for brainpoolP256r1
 guard (try? fetchedDocument.backing.verify(with: fetchedDocument.discKey)) ?? false else {
 </code></pre>
-<h4 id='code-sources-idp-defaultidpsession-swift-548-code-only-implemented-for-brainpoolp256r1' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:548</code>:  Only implemented for brainpoolP256r1</h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-596-code-only-implemented-for-brainpoolp256r1' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:596</code>:  Only implemented for brainpoolP256r1</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_17207] Only implemented for brainpoolP256r1
 // [REQ:gemSpec_IDP_Frontend:A_19908-01] Signature check
 guard let verified = try? challenge.challenge.verify(with: document.authentication.cert),
@@ -908,19 +924,19 @@ public struct OCSPList: Codable, Equatable {
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_21218,A_21222]
 extension DefaultTrustStoreSession: TrustStoreSession {
 </code></pre>
-<h4 id='code-sources-truststore-defaulttruststoresession-swift-165-code' class='heading'><code>../Sources/TrustStore/DefaultTrustStoreSession.swift:165</code>:</h4>
+<h4 id='code-sources-truststore-defaulttruststoresession-swift-178-code' class='heading'><code>../Sources/TrustStore/DefaultTrustStoreSession.swift:178</code>:</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_21218]
 func loadOCSPResponses() -&gt; AnyPublisher&lt;[OCSPResponse], TrustStoreError&gt; {
 </code></pre>
-<h4 id='code-sources-truststore-defaulttruststoresession-swift-176-code-if-only-ocsp-responses-gt-12h-available-we-must-request-new-ones' class='heading'><code>../Sources/TrustStore/DefaultTrustStoreSession.swift:176</code>:  If only OCSP responses &gt;12h available, we must request new ones</h4>
+<h4 id='code-sources-truststore-defaulttruststoresession-swift-191-code-if-only-ocsp-responses-gt-12h-available-we-must-request-new-ones' class='heading'><code>../Sources/TrustStore/DefaultTrustStoreSession.swift:191</code>:  If only OCSP responses &gt;12h available, we must request new ones</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_21218] If only OCSP responses &gt;12h available, we must request new ones
 ocspResponses
 </code></pre>
-<h4 id='code-sources-truststore-defaulttruststoresession-swift-191-code-if-only-ocsp-responses-gt-12h-available' class='heading'><code>../Sources/TrustStore/DefaultTrustStoreSession.swift:191</code>:  If only OCSP responses &gt;12h available, &hellip;</h4>
+<h4 id='code-sources-truststore-defaulttruststoresession-swift-209-code-if-only-ocsp-responses-gt-12h-available' class='heading'><code>../Sources/TrustStore/DefaultTrustStoreSession.swift:209</code>:  If only OCSP responses &gt;12h available, &hellip;</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_21218] If only OCSP responses &gt;12h available, ...
 ocspResponses
 </code></pre>
-<h4 id='code-sources-truststore-defaulttruststoresession-swift-215-code-if-only-ocsp-responses-gt-12h-available-we-must-request-new-ones' class='heading'><code>../Sources/TrustStore/DefaultTrustStoreSession.swift:215</code>:  If only OCSP responses &gt;12h available, we must request new ones</h4>
+<h4 id='code-sources-truststore-defaulttruststoresession-swift-233-code-if-only-ocsp-responses-gt-12h-available-we-must-request-new-ones' class='heading'><code>../Sources/TrustStore/DefaultTrustStoreSession.swift:233</code>:  If only OCSP responses &gt;12h available, we must request new ones</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_21218] If only OCSP responses &gt;12h available, we must request new ones
 func allSatisfyNotProducedBefore(date: Date) -&gt; Bool {
 </code></pre>
@@ -973,7 +989,7 @@ private static let caCertRegex =
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_21218:(4)] Check ee_certs against category A+B certificates
 typealias VauAndIpdCerts = (vauCerts: [X509], idpCerts: [X509])
 </code></pre>
-<h4 id='code-sources-erpapp-appconfiguration-swift-91-code-gematik-root-ca-3-as-a-trust-anchor-has-to-be-set-in-the-program-code' class='heading'><code>../Sources/eRpApp/AppConfiguration.swift:91</code>:  Gematik Root CA 3 as a trust anchor has to be set in the program code</h4>
+<h4 id='code-sources-erpapp-appconfiguration-swift-94-code-gematik-root-ca-3-as-a-trust-anchor-has-to-be-set-in-the-program-code' class='heading'><code>../Sources/eRpApp/AppConfiguration.swift:94</code>:  Gematik Root CA 3 as a trust anchor has to be set in the program code</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_21218] Gematik Root CA 3 as a trust anchor has to be set in the program code
 // swiftlint:disable:next force_try
 let TRUSTANCHOR_GemRootCa3 = try! TrustAnchor(withPEM: """
@@ -1070,12 +1086,12 @@ return environment.idpSession.startExtAuth(entry: state.selectedKK)
 state.selectedKK = entry
 </code></pre>
 <h3 id='a_22295' class='heading'>A_22295</h3>
-<h4 id='code-sources-idp-defaultidpsession-swift-398-code-usage-of-kk_app_id' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:398</code>:  Usage of kk_app_id</h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-434-code-usage-of-kk_app_id' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:434</code>:  Usage of kk_app_id</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Sek:A_22295] Usage of kk_app_id
 let extAuth = IDPExtAuth(kkAppId: entry.identifier,
 </code></pre>
 <h3 id='a_22296' class='heading'>A_22296</h3>
-<h4 id='code-sources-idp-defaultidpsession-swift-372-code-signature-verification' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:372</code>:  Signature verification</h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-406-code-signature-verification' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:406</code>:  Signature verification</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Sek:A_22296] Signature verification
 guard try jwtContainer.verify(with: document.discKey) == true else {
 </code></pre>
@@ -1084,7 +1100,7 @@ guard try jwtContainer.verify(with: document.discKey) == true else {
 return environment.idpSession.loadDirectoryKKApps()
 </code></pre>
 <h3 id='a_22299' class='heading'>A_22299</h3>
-<h4 id='code-sources-idp-defaultidpsession-swift-410-code-remember-state-parameter-for-later-verification' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:410</code>:  Remember State parameter for later verification</h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-446-code-remember-state-parameter-for-later-verification' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:446</code>:  Remember State parameter for later verification</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Sek:A_22299] Remember State parameter for later verification
 
 </code></pre>
@@ -1093,11 +1109,11 @@ return environment.idpSession.loadDirectoryKKApps()
 guard environment.canOpenURL(url) else {
 </code></pre>
 <h3 id='a_22301' class='heading'>A_22301</h3>
-<h4 id='code-sources-idp-defaultidpsession-swift-445-code-match-request-with-existing-state' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:445</code>:  Match request with existing state</h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-483-code-match-request-with-existing-state' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:483</code>:  Match request with existing state</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Sek:A_22301] Match request with existing state
 guard let challengeSession = extAuthRequestStorage.getExtAuthRequest(for: state) else {
 </code></pre>
-<h4 id='code-sources-idp-defaultidpsession-swift-450-code-send-authorization-request' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:450</code>:  Send authorization request</h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-488-code-send-authorization-request' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:488</code>:  Send authorization request</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Sek:A_22301] Send authorization request
 return extAuthVerify(verify)
 </code></pre>
@@ -1146,29 +1162,29 @@ public struct PairingData: Claims, Codable {
 </code></pre>
 <h2 id='gemspec_erp_fdv' class='heading'>gemSpec_eRp_FdV</h2>
 <h3 id='a_19092' class='heading'>A_19092</h3>
-<h4 id='code-sources-erpapp-screens-settings-settingsdomain-swift-105-code-optin-for-user-tracking' class='heading'><code>../Sources/eRpApp/Screens/Settings/SettingsDomain.swift:105</code>:  OptIn for user tracking</h4>
+<h4 id='code-sources-erpapp-screens-settings-settingsdomain-swift-106-code-optin-for-user-tracking' class='heading'><code>../Sources/eRpApp/Screens/Settings/SettingsDomain.swift:106</code>:  OptIn for user tracking</h4>
 <pre class="highlight plaintext"><code>// Tracking
 // [REQ:gemSpec_eRp_FdV:A_19089, A_19092, A_19097] OptIn for user tracking
 case let .toggleTrackingTapped(optIn):
 </code></pre>
 <h3 id='a_19097' class='heading'>A_19097</h3>
-<h4 id='code-sources-erpapp-screens-settings-settingsdomain-swift-105-code-optin-for-user-tracking' class='heading'><code>../Sources/eRpApp/Screens/Settings/SettingsDomain.swift:105</code>:  OptIn for user tracking</h4>
+<h4 id='code-sources-erpapp-screens-settings-settingsdomain-swift-106-code-optin-for-user-tracking' class='heading'><code>../Sources/eRpApp/Screens/Settings/SettingsDomain.swift:106</code>:  OptIn for user tracking</h4>
 <pre class="highlight plaintext"><code>// Tracking
 // [REQ:gemSpec_eRp_FdV:A_19089, A_19092, A_19097] OptIn for user tracking
 case let .toggleTrackingTapped(optIn):
 </code></pre>
 <h3 id='a_19089' class='heading'>A_19089</h3>
-<h4 id='code-sources-erpapp-screens-settings-settingsview-swift-241-code-user-info-for-usage-tracking' class='heading'><code>../Sources/eRpApp/Screens/Settings/SettingsView.swift:241</code>:  User info for usage tracking</h4>
+<h4 id='code-sources-erpapp-screens-settings-settingsview-swift-227-code-user-info-for-usage-tracking' class='heading'><code>../Sources/eRpApp/Screens/Settings/SettingsView.swift:227</code>:  User info for usage tracking</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_19089] User info for usage tracking
-HeadernoteView(
+Label(title: { Text(L10n.stgTrkTxtExplanation) }, icon: {})
 </code></pre>
-<h4 id='code-sources-erpapp-screens-settings-settingsdomain-swift-105-code-optin-for-user-tracking' class='heading'><code>../Sources/eRpApp/Screens/Settings/SettingsDomain.swift:105</code>:  OptIn for user tracking</h4>
+<h4 id='code-sources-erpapp-screens-settings-settingsdomain-swift-106-code-optin-for-user-tracking' class='heading'><code>../Sources/eRpApp/Screens/Settings/SettingsDomain.swift:106</code>:  OptIn for user tracking</h4>
 <pre class="highlight plaintext"><code>// Tracking
 // [REQ:gemSpec_eRp_FdV:A_19089, A_19092, A_19097] OptIn for user tracking
 case let .toggleTrackingTapped(optIn):
 </code></pre>
 <h3 id='a_19090' class='heading'>A_19090</h3>
-<h4 id='code-sources-erpapp-screens-settings-settingsdomain-swift-113-code' class='heading'><code>../Sources/eRpApp/Screens/Settings/SettingsDomain.swift:113</code>:</h4>
+<h4 id='code-sources-erpapp-screens-settings-settingsdomain-swift-114-code' class='heading'><code>../Sources/eRpApp/Screens/Settings/SettingsDomain.swift:114</code>:</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_19090]
 case .confirmedOptInTracking:
 </code></pre>
@@ -1298,16 +1314,16 @@ self.session.invalidateAccessToken()
 if Result.success(false) == isAuthenticated {
 </code></pre>
 <h3 id='a_20172' class='heading'>A_20172</h3>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-swift-218-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.swift:218</code>:</h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-swift-223-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.swift:223</code>:</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_20172]
 var idpChallengePublisher: Effect&lt;CardWallReadCardDomain.Action, Never&gt; {
 </code></pre>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-swift-237-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.swift:237</code>:</h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-swift-242-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.swift:242</code>:</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_20172]
 // [REQ:gemSpec_IDP_Frontend:A_20526-01] sign and verify with idp
 func signChallengeWithNFCCard(can: CAN,
 </code></pre>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-swift-264-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.swift:264</code>:</h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-swift-269-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.swift:269</code>:</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_20172]
 // [REQ:gemSpec_IDP_Frontend:A_20526-01] verify with idp
 private func verifyResultWithIDP(_ signedChallenge: SignedChallenge,
@@ -1327,7 +1343,7 @@ if Result.success(false) == isAuthenticated {
 /// - Returns: `AnyPublisher` that emits all `PharmacyLocation`s for the given `searchTerm`
 public func searchPharmacies(by searchTerm: String,
 </code></pre>
-<h4 id='code-sources-erpapp-screens-pharmacy-search-pharmacysearchdomain-swift-144-code-search-results-mirrored-verbatim-no-sorting-no-highlighting' class='heading'><code>../Sources/eRpApp/Screens/Pharmacy/Search/PharmacySearchDomain.swift:144</code>:  search results mirrored verbatim, no sorting, no highlighting</h4>
+<h4 id='code-sources-erpapp-screens-pharmacy-search-pharmacysearchdomain-swift-163-code-search-results-mirrored-verbatim-no-sorting-no-highlighting' class='heading'><code>../Sources/eRpApp/Screens/Pharmacy/Search/PharmacySearchDomain.swift:163</code>:  search results mirrored verbatim, no sorting, no highlighting</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_20183] search results mirrored verbatim, no sorting, no highlighting
 state.searchState = .searchRunning
 </code></pre>
@@ -1340,12 +1356,12 @@ schedulers: schedulers,
 <pre class="highlight plaintext"><code>storage: MemoryStorage(), // [REQ:gemSpec_eRp_FdV:A_20184] No persistent storage for idp biometrics session
 schedulers: schedulers,
 </code></pre>
-<h4 id='code-sources-erpapp-session-keychainstorage-swift-116-code' class='heading'><code>../Sources/eRpApp/Session/KeychainStorage.swift:116</code>:</h4>
+<h4 id='code-sources-erpapp-session-keychainstorage-swift-112-code' class='heading'><code>../Sources/eRpApp/Session/KeychainStorage.swift:112</code>:</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_20184]
 let success: Bool
 </code></pre>
 <h3 id='a_20186' class='heading'>A_20186</h3>
-<h4 id='code-sources-erpapp-session-keychainstorage-swift-235-code-deletion-of-sso_token-id_token-auth_token' class='heading'><code>../Sources/eRpApp/Session/KeychainStorage.swift:235</code>:  Deletion of SSO_TOKEN, ID_TOKEN, AUTH_TOKEN</h4>
+<h4 id='code-sources-erpapp-session-keychainstorage-swift-224-code-deletion-of-sso_token-id_token-auth_token' class='heading'><code>../Sources/eRpApp/Session/KeychainStorage.swift:224</code>:  Deletion of SSO_TOKEN, ID_TOKEN, AUTH_TOKEN</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20499] Deletion of SSO_TOKEN, ID_TOKEN, AUTH_TOKEN
 // [REQ:gemSpec_eRp_FdV:A_20186] Deletion of SSO_TOKEN, ID_TOKEN, AUTH_TOKEN
 set(can: nil)
@@ -1434,7 +1450,7 @@ struct IDPTokenView: View {
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2022 <a class="link" href="https://www.gematik.de" target="_blank" rel="external">gematik GmbH</a>. All rights reserved. (Last updated: 2022-02-07)</p>
+      <p>&copy; 2022 <a class="link" href="https://www.gematik.de" target="_blank" rel="external">gematik GmbH</a>. All rights reserved. (Last updated: 2022-03-04)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>
