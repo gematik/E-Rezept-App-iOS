@@ -148,7 +148,7 @@ struct DummyAppSecurityManager: AppSecurityManager {
     private let underlyingError: AppSecurityManagerError?
 
     init(
-        options: [AppSecurityOption] = [AppSecurityOption.password, AppSecurityOption.biometry(.faceID)],
+        options: [AppSecurityOption] = [AppSecurityOption.biometry(.faceID), AppSecurityOption.password],
         error: AppSecurityManagerError? = nil
     ) {
         underlyingOptions = options

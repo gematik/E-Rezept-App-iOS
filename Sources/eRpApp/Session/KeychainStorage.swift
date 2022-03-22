@@ -28,11 +28,9 @@ import OpenSSL
 // [REQ:gemF_Tokenverschlüsselung:A_21322] Storage implementation uses iOS Keychain
 // [REQ:gemSpec_IDP_Frontend:A_21595] Storage Implementation
 class KeychainStorage: SecureUserDataStore, IDPStorage, SecureEGKCertificateStorage {
-    @Injected(\.schedulers) var schedulers: Schedulers
+    private let schedulers: Schedulers
     @Published private var tokenState: IDPToken?
     @Published private var accessTokenState: String?
-
-    private var cancellable = Set<AnyCancellable>()
 
     internal var keychainHelper: KeychainAccessHelper = SystemKeychainAccessHelper()
 
@@ -42,13 +40,13 @@ class KeychainStorage: SecureUserDataStore, IDPStorage, SecureEGKCertificateStor
         "\(profileId.uuidString)."
     }
 
-    init(profileId: UUID) {
+    init(profileId: UUID, schedulers: Schedulers = Schedulers()) {
         self.profileId = profileId
+        self.schedulers = schedulers
 
         $tokenState.map { $0?.accessToken }
             .receive(on: schedulers.main)
-            .assign(to: \.accessTokenState, on: self)
-            .store(in: &cancellable)
+            .assign(to: &$accessTokenState)
     }
 
     var can: AnyPublisher<String?, Never> {
@@ -98,9 +96,8 @@ class KeychainStorage: SecureUserDataStore, IDPStorage, SecureEGKCertificateStor
     }
 
     private func retrieveCAN() -> AnyPublisher<String?, Never> {
-        Deferred { [weak self] () -> AnyPublisher<String?, Never> in
-            guard let self = self,
-                  let result = try? self.keychainHelper.genericPassword(for: self.egkPasswordIdentifier) as String?
+        Deferred { [keychainHelper, egkPasswordIdentifier] () -> AnyPublisher<String?, Never> in
+            guard let result = try? keychainHelper.genericPassword(for: egkPasswordIdentifier) as String?
             else { return Just(nil).eraseToAnyPublisher() }
 
             return Just(result).eraseToAnyPublisher()
@@ -113,9 +110,8 @@ class KeychainStorage: SecureUserDataStore, IDPStorage, SecureEGKCertificateStor
     private let tokenPassthrough = PassthroughSubject<IDPToken?, Never>()
 
     var token: AnyPublisher<IDPToken?, Never> {
-        Deferred { [weak self] () -> AnyPublisher<IDPToken?, Never> in
-            guard let self = self,
-                  let result = try? self.keychainHelper.genericPassword(for: self.idpTokenIdentifier) as Data?,
+        Deferred { [keychainHelper, idpTokenIdentifier] () -> AnyPublisher<IDPToken?, Never> in
+            guard let result = try? keychainHelper.genericPassword(for: idpTokenIdentifier) as Data?,
                   let token = try? JSONDecoder().decode(IDPToken.self, from: result)
             else { return Just(nil).eraseToAnyPublisher() }
 
@@ -146,10 +142,8 @@ class KeychainStorage: SecureUserDataStore, IDPStorage, SecureEGKCertificateStor
     private let discoveryPassthrough = PassthroughSubject<DiscoveryDocument?, Never>()
 
     private func retrieveDiscoveryDocument() -> AnyPublisher<DiscoveryDocument?, Never> {
-        Deferred { [weak self] () -> AnyPublisher<DiscoveryDocument?, Never> in
-            guard let self = self,
-                  let result = try? self.keychainHelper
-                  .genericPassword(for: self.idpDiscoveryDocumentIdentifier) as Data?,
+        Deferred { [keychainHelper, idpDiscoveryDocumentIdentifier] () -> AnyPublisher<DiscoveryDocument?, Never> in
+            guard let result = try? keychainHelper.genericPassword(for: idpDiscoveryDocumentIdentifier) as Data?,
                   let archiver = try? NSKeyedUnarchiver(forReadingFrom: result),
                   let document = try? archiver.decodeTopLevelDecodable(
                       DiscoveryDocument.self,
@@ -191,9 +185,8 @@ class KeychainStorage: SecureUserDataStore, IDPStorage, SecureEGKCertificateStor
     }
 
     private func retrieveCertificate() -> AnyPublisher<X509?, Never> {
-        Deferred { [weak self] () -> AnyPublisher<X509?, Never> in
-            guard let self = self,
-                  let derBytes = try? self.keychainHelper.genericPassword(for: self.egkAuthCertIdentifier) as Data?,
+        Deferred { [keychainHelper, egkAuthCertIdentifier] () -> AnyPublisher<X509?, Never> in
+            guard let derBytes = try? keychainHelper.genericPassword(for: egkAuthCertIdentifier) as Data?,
                   let certificate = try? X509(der: derBytes)
             else {
                 return Just(nil).eraseToAnyPublisher()
@@ -218,12 +211,8 @@ class KeychainStorage: SecureUserDataStore, IDPStorage, SecureEGKCertificateStor
     }
 
     private func retrieveKeyIdentifier() -> AnyPublisher<Data?, Never> {
-        Deferred { [weak self] () -> AnyPublisher<Data?, Never> in
-            guard let self = self else {
-                return Just(nil).eraseToAnyPublisher()
-            }
-
-            return Just(try? self.keychainHelper.genericPassword(for: self.idpBiometricKeyIdentifier))
+        Deferred { [keychainHelper, idpBiometricKeyIdentifier] () -> AnyPublisher<Data?, Never> in
+            Just(try? keychainHelper.genericPassword(for: idpBiometricKeyIdentifier))
                 .eraseToAnyPublisher()
         }
         .eraseToAnyPublisher()

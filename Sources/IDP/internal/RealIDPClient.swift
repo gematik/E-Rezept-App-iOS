@@ -125,7 +125,7 @@ class RealIDPClient: IDPClient {
         ]
         authenticationComponents?.percentEncodedQueryItems = queryItems
         guard let url = authenticationComponents?.url else {
-            return Fail(error: IDPError.internalError("Could not assemble GET authentication challenge request URL."))
+            return Fail(error: IDPError.internal(error: .constructingChallengeRequestUrl))
                 .eraseToAnyPublisher()
         }
         var request = URLRequest(url: url, cachePolicy: .reloadIgnoringCacheData)
@@ -160,7 +160,7 @@ class RealIDPClient: IDPClient {
         request.addValue("application/json", forHTTPHeaderField: "Accept")
 
         guard let signedChallengeJWEString = signedChallenge.encoded().utf8string else {
-            return Fail(error: IDPError.internalError("Unable to encode signed challenge as string."))
+            return Fail(error: IDPError.internal(error: .signedChallengeEncoded))
                 .eraseToAnyPublisher()
         }
 
@@ -176,7 +176,7 @@ class RealIDPClient: IDPClient {
                       let code = locationComponents.queryItemWithName("code")?.value,
                       let state = locationComponents.queryItemWithName("state")?.value
                 else {
-                    throw IDPError.internalError("IDP Verify response is missing a valid Location header")
+                    throw IDPError.internal(error: .verifyResponseMissingHeaderValue)
                 }
                 let sso = locationComponents.queryItemWithName("ssotoken")?.value
                 // [REQ:gemSpec_IDP_Frontend:A_20600]
@@ -199,9 +199,7 @@ class RealIDPClient: IDPClient {
 
         guard let unsignedChallenge = unsignedChallenge.challenge.serialize().urlPercentEscapedString(),
               let ssotoken = ssoToken.urlPercentEscapedString() else {
-            return Fail(error: IDPError
-                .internalError("Could not assemble POST authentication signed challenge request URL."))
-                            .eraseToAnyPublisher()
+            return Fail(error: IDPError.internal(error: .constructingRefreshWithSSOTokenRequest)).eraseToAnyPublisher()
         }
         request.setFormUrlEncodedHeader()
         request.setFormUrlEncodedBody(parameters: [
@@ -218,7 +216,7 @@ class RealIDPClient: IDPClient {
                       let code = locationComponents.queryItemWithName("code")?.value,
                       let state = locationComponents.queryItemWithName("state")?.value
                 else {
-                    throw IDPError.internalError("IDP Verify response is missing a valid Location header")
+                    throw IDPError.internal(error: .refreshResponseMissingHeaderValue)
                 }
                 let sso = locationComponents.queryItemWithName("ssotoken")?.value ?? ssoToken
                 return IDPExchangeToken(code: code, sso: sso, state: state)
@@ -241,8 +239,7 @@ class RealIDPClient: IDPClient {
         request.setFormUrlEncodedHeader()
 
         guard let keyVerifierJWEString: String = encryptedKeyVerifier.encoded().utf8string else {
-            return Fail(error: IDPError.internalError("Unable to encode encrypted key verifier as string."))
-                .eraseToAnyPublisher()
+            return Fail(error: IDPError.internal(error: .encryptedKeyVerifierEncoding)).eraseToAnyPublisher()
         }
 
         let parameters = [
@@ -280,8 +277,7 @@ class RealIDPClient: IDPClient {
         request.setValue("\(token.tokenType) \(token.accessToken)", forHTTPHeaderField: "Authorization")
 
         guard let encryptedRegistrationData = encryptedRegistration.encoded().utf8string else {
-            return Fail(error: IDPError.internalError("Unable to encode signed challenge as string."))
-                .eraseToAnyPublisher()
+            return Fail(error: IDPError.internal(error: .registeredDeviceEncoding)).eraseToAnyPublisher()
         }
 
         request.setFormUrlEncodedHeader()
@@ -355,7 +351,7 @@ class RealIDPClient: IDPClient {
         request.addValue("application/json", forHTTPHeaderField: "Accept")
 
         guard let encryptedSignedChallengeData = encryptedSignedChallenge.encoded().utf8string else {
-            return Fail(error: IDPError.internalError("Unable to encode signed challenge as string."))
+            return Fail(error: IDPError.internal(error: .encryptedSignedChallengeEncoding))
                 .eraseToAnyPublisher()
         }
 
@@ -372,7 +368,7 @@ class RealIDPClient: IDPClient {
                       let code = locationComponents.queryItemWithName("code")?.value,
                       let state = locationComponents.queryItemWithName("state")?.value
                 else {
-                    throw IDPError.internalError("IDP Verify response is missing a valid Location header")
+                    throw IDPError.internal(error: .altVerifyResponseMissingHeaderValue)
                 }
                 let sso = locationComponents.queryItemWithName("ssotoken")?.value
                 return IDPExchangeToken(code: code, sso: sso, state: state)
@@ -437,8 +433,7 @@ class RealIDPClient: IDPClient {
         ]
         components?.percentEncodedQueryItems = queryItems
         guard let url = components?.url else {
-            return Fail(error: IDPError.internalError("Could not assemble GET authentication challenge request URL."))
-                .eraseToAnyPublisher()
+            return Fail(error: IDPError.internal(error: .constructingExtAuthRequestUrl)).eraseToAnyPublisher()
         }
         let request = URLRequest(url: url, cachePolicy: .reloadIgnoringCacheData)
 
@@ -483,7 +478,7 @@ class RealIDPClient: IDPClient {
                       let code = locationComponents.queryItemWithName("code")?.value,
                       let state = locationComponents.queryItemWithName("state")?.value
                 else {
-                    throw IDPError.internalError("IDP Verify response is missing a valid Location header")
+                    throw IDPError.internal(error: .extAuthVerifyResponseMissingHeaderValue)
                 }
                 let sso = locationComponents.queryItemWithName("ssotoken")?.value
                 // [REQ:gemSpec_IDP_Frontend:A_20600]

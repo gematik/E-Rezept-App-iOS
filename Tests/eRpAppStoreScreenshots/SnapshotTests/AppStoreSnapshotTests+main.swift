@@ -33,7 +33,34 @@ extension AppStoreSnapshotTests {
             displayType: .fullDetail
         )
 
-        let testProfileTheoTestprofil = UserProfile(
+        let state = GroupedPrescriptionListDomain.State(
+            groupedPrescriptions: Array(
+                repeating: groupedPrescription,
+                count: 6
+            )
+        )
+
+        let profileSelectionStore = ProfileSelectionToolbarItemDomain.Store(
+            initialState: .init(
+                profile: UserProfile.Fixtures.theo,
+                profileSelectionState: .init()
+            ),
+            reducer: .empty,
+            environment: ProfileSelectionToolbarItemDomain.Dummies.environment
+        )
+
+        return MainView(
+            store: MainDomain.Dummies.storeFor(MainDomain.State(
+                prescriptionListState: state
+            )),
+            profileSelectionToolbarItemStore: profileSelectionStore
+        )
+    }
+}
+
+extension UserProfile {
+    enum Fixtures {
+        static let theo = UserProfile(
             profile: Profile(
                 name: "Theo Testprofil",
                 identifier: UUID(),
@@ -46,20 +73,6 @@ extension AppStoreSnapshotTests {
                 erxAuditEvents: []
             ),
             connectionStatus: .connected
-        )
-
-        let state = GroupedPrescriptionListDomain.State(
-            groupedPrescriptions: Array(
-                repeating: groupedPrescription,
-                count: 6
-            )
-        )
-
-        return MainView(
-            store: MainDomain.Dummies.storeFor(MainDomain.State(
-                prescriptionListState: state,
-                profile: testProfileTheoTestprofil
-            ))
         )
     }
 }

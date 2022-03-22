@@ -226,30 +226,6 @@ extension JWK {
     }
 }
 
-enum IDPRandom {
-    /// Generate random Data with given length
-    ///
-    /// - Parameters:
-    ///   - length: the number of bytes to generate
-    ///   - randomizer: the randomizer to be used. Default: kSecRandomDefault
-    /// - Returns: the random initialized Data
-    /// - Throws: `VAUError`
-    static func generateSecureRandom(length: Int, randomizer: SecRandomRef? = kSecRandomDefault) throws -> Data {
-        var randomBytesBuffer = [UInt8](repeating: 0x0, count: length)
-        let rcStatus: OSStatus = try randomBytesBuffer
-            .withUnsafeMutableBytes { (buffer: UnsafeMutableRawBufferPointer) in
-                guard let ptr = buffer.baseAddress else {
-                    throw IDPError.internalError("Invalid byte buffer")
-                }
-                return SecRandomCopyBytes(randomizer, length, ptr)
-            }
-        guard rcStatus == errSecSuccess else {
-            throw IDPError.internalError("Could not generate Random bytes. [Count: \(length)]")
-        }
-        return Data(randomBytesBuffer)
-    }
-}
-
 extension JWE {
     private static let delimiter = UInt8(0x2E)
 

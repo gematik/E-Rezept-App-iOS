@@ -144,23 +144,70 @@ public struct ErxTask: Identifiable, Hashable {
 
 extension ErxTask {
     /// All defined states of a task (see `gemSysL_eRp` chapter 2.4.6 "Konzept Status E-Rezept")
-    public enum Status: String {
+    public enum Status: Equatable {
         /// The task has been initialized but  is not yet ready to be acted upon.
         case draft
         /// The task is ready (open) to be performed, but no action has yet been taken.
         case ready
         /// The task has been started by a pharmacy but is not yet complete.
         /// If the task is in this state it is blocked for any operation (e.g. redeem or delete)
-        case inProgress = "in-progress"
+        case inProgress
         /// The task was not completed and has been deleted.
         case cancelled
         /// The task has been completed which means it has been accepted by a pharmacy
         case completed
+        /// The task state is not defined as subset of eRp status
+        case undefined(status: String)
     }
 
     public enum Source: String, Codable {
         case scanner
         case server
+    }
+}
+
+extension ErxTask.Status: RawRepresentable {
+    /// The associated `RawValue` type
+    public typealias RawValue = String
+
+    /// Creates a new instance with the specified raw value.
+    public init?(rawValue: RawValue) { // swiftlint:disable:this cyclomatic_complexity
+        switch rawValue {
+        case "draft": self = .draft
+        case "ready": self = .ready
+        case "in-progress": self = .inProgress
+        case "cancelled": self = .cancelled
+        case "completed": self = .completed
+        /// The task is ready to be acted upon and action is sought.
+        case "requested": self = .undefined(status: "requested")
+        /// A potential performer has claimed ownership of the task and is evaluating whether to perform it.
+        case "received": self = .undefined(status: "received")
+        /// The potential performer has agreed to execute the task but has not yet started work.
+        case "accepted": self = .undefined(status: "accepted")
+        /// The potential performer who claimed ownership of the task has decided
+        /// not to execute it prior to performing any action.
+        case "rejected": self = .undefined(status: "rejected")
+        /// The task has been started but work has been paused.
+        case "on-hold": self = .undefined(status: "on-hold")
+        /// The task was attempted but could not be completed due to some error.
+        case "failed": self = .undefined(status: "failed")
+        /// The task should never have existed and is retained only because of the possibility it may have used.
+        case "entered-in-error": self = .undefined(status: "entered-in-error")
+        default:
+            return nil
+        }
+    }
+
+    /// The corresponding value of the raw type.
+    public var rawValue: RawValue {
+        switch self {
+        case .draft: return "draft"
+        case .ready: return "ready"
+        case .inProgress: return "in-progress"
+        case .cancelled: return "cancelled"
+        case .completed: return "completed"
+        case let .undefined(status: status): return "undefined: \(status)"
+        }
     }
 }
 

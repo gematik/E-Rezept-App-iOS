@@ -23,36 +23,31 @@ struct ProfileColorPicker: View {
     var color: ProfileColor
 
     var body: some View {
-        VStack(spacing: 16) {
-            HStack {
-                ForEach(ProfileColor.allCases, id: \.self) { color in
-                    Image(systemName: SFSymbolName.checkmark)
-                        .opacity(color == self.color ? 1 : 0.01)
-                        .frame(width: 40, height: 40, alignment: .center)
-                        .background(
-                            Circle()
-                                .foregroundColor(color.background)
-                        )
-                        .onTapGesture {
-                            withAnimation {
-                                self.color = color
-                            }
+        HStack(spacing: 16) {
+            ForEach(ProfileColor.allCases, id: \.self) { color in
+                Image(systemName: SFSymbolName.checkmark)
+                    .font(.headline)
+                    .foregroundColor(Color(.secondaryLabel))
+                    .opacity(color == self.color ? 1 : 0.01)
+                    .frame(width: 40, height: 40, alignment: .center)
+                    .background(
+                        Circle()
+                            .foregroundColor(color.background)
+                    )
+                    .onTapGesture {
+                        withAnimation {
+                            self.color = color
                         }
-                        .frame(maxWidth: .infinity)
-                        .accessibility(value: Text(color == self.color ? L10n.ctlTxtProfileColorPickerSelected
-                                .key : ""))
-                        .accessibility(label: Text(color.name))
-                        .accessibility(addTraits: .isButton)
-                }
+                    }
+                    .accessibility(value: Text(color == self.color ? L10n.ctlTxtProfileColorPickerSelected
+                            .key : ""))
+                    .accessibility(label: Text(color.name))
+                    .accessibility(addTraits: .isButton)
             }
-
-            Text(self.color.name)
-                .font(.footnote)
-                .foregroundColor(Color(.secondaryLabel))
-                .frame(maxWidth: .infinity, alignment: .center)
         }
+        .frame(maxWidth: .infinity, alignment: .center)
         .buttonStyle(BorderlessButtonStyle())
-        .padding(.vertical)
+        .padding(.vertical, 24)
     }
 }
 

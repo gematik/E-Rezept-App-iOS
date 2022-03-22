@@ -1,6 +1,7 @@
 // sourcery:file:eRpApp/Generated/StringAssetInitialized
 
 import SwiftUI
+import eRpStyleKit
 
 /// AUTO GENERATED – DO NOT EDIT
 ///
@@ -19,20 +20,19 @@ import SwiftUI
 {% macro getStringKeyWithOptional param %}{% if param.typeName|contains:"LocalizedStringKey" %}{{ '?' if param.typeName.isOptional }}.key{% endif %}{% endmacro %}
 
 {% macro methodReceivedParameters method %}
-    {%if method.parameters.count == 1 %}
-        self.{{ method.callName }}{% for param in method.parameters %}{{ param.name }}{% endfor %}
-    {% else %}
-        {% if not method.parameters.count == 0 %}
-        self.{{ method.callName }}({% for param in method.parameters %}{{ param.name }}: {{ param.name }}{% call getStringKeyWithOptional param %}{% if not forloop.last%}, {% endif %}{% endfor %})
-        {% endif %}
+    {% if not method.parameters.count == 0 %}
+    self.{{ method.callName }}({% for param in method.parameters %}{{ param.name }}: {{ param.name }}{% call getStringKeyWithOptional param %}{% if not forloop.last%}, {% endif %}{% endfor %})
     {% endif %}
 {% endmacro %}
 
 {% macro modifyInitializer type %}
     {% for method in type.initializers %}
+    {% if method.name|contains:"LocalizedStringKey" %}
     {{ method.name|replace:"LocalizedStringKey","StringAsset" }} {
     {% call methodReceivedParameters method %}
-    {% endfor %}}
+    }
+    {% endif %}
+    {% endfor %}
 {% endmacro %}
 
 {% macro createInitializer type %}

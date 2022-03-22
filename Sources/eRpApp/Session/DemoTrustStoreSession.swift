@@ -22,11 +22,11 @@ import TrustStore
 
 class DemoTrustStoreSession: TrustStoreSession {
     func loadVauCertificate() -> AnyPublisher<X509, TrustStoreError> {
-        Fail(error: TrustStoreError.internalError("Not implemented in demo mode")).eraseToAnyPublisher()
+        Fail(error: TrustStoreError.internal(error: .notImplemented)).eraseToAnyPublisher()
     }
 
     func validate(certificate _: X509) -> AnyPublisher<Bool, TrustStoreError> {
-        Fail(error: TrustStoreError.internalError("Not implemented in demo mode")).eraseToAnyPublisher()
+        Fail(error: TrustStoreError.internal(error: .notImplemented)).eraseToAnyPublisher()
     }
 
     func reset() {}

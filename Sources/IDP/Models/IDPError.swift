@@ -47,7 +47,7 @@ public enum IDPError: Swift.Error {
     /// When decryption fails
     case decryption
     /// Internal error
-    case internalError(String)
+    case `internal`(error: InternalError)
     /// Issues related to Building or Verifying the trust store
     case trustStore(error: TrustStoreError)
 
@@ -83,9 +83,57 @@ public enum IDPError: Swift.Error {
             case code = "gematik_code"
         }
     }
+
+    public enum InternalError: Swift.Error {
+        case loadDiscoveryDocumentUnexpectedNil
+        case requestChallengeUnexpectedNil
+        case constructingChallengeRequestUrl
+        case getAndValidateUnexpectedNil
+        case constructingRefreshWithSSOTokenRequest
+        case refreshResponseMissingHeaderValue
+        case challengeExpired
+        case verifyUnexpectedNil
+        case verifyResponseMissingHeaderValue
+        case verifierCodeCreation
+        case stateNonceCreation
+        case signedChallengeEncoded
+        case signedChallengeEncryption
+        case altVerifyResponseMissingHeaderValue
+        case encryptedSignedChallengeEncoding
+        case exchangeUnexpectedNil
+        case exchangeTokenUnexpectedNil
+        case ssoLoginAndExchangeUnexpectedNil
+        case registrationDataEncryption
+        case keyVerifierEncoding
+        case encryptedKeyVerifierEncoding
+        case keyVerifierJweHeaderEncryption
+        case keyVerifierJwePayloadEncryption
+        case nestJwtInJwePayloadEncryption
+        case invalidByteBuffer
+        case generatingSecureRandom(length: Int)
+        case registeredDeviceEncoding
+        case signedAuthenticationDataEncryption
+        case constructingExtAuthRequestUrl
+        case refreshTokenUnexpectedNil
+        case loadDirectoryKKAppsUnexpectedNil
+        case extAuthVerifyResponseMissingHeaderValue
+        case extAuthVerifierCodeCreation
+        case extAuthStateNonceCreation
+        case extAuthVerifyAndExchangeUnexpectedNil
+        case extAuthVerifyAndExchangeMissingQueryItem
+        case extAuthConstructingRedirectUri
+        case startExtAuthUnexpectedNil
+        case extAuthVerifyUnexpectedNil
+        case pairDeviceUnexpectedNil
+        case unregisterDeviceUnexpectedNil
+        case listDevicesUnexpectedNil
+        case altVerifyUnexpectedNil
+        case notImplemented
+    }
 }
 
 extension IDPError: Equatable, LocalizedError {
+    // swiftlint:disable:next cyclomatic_complexity
     public static func ==(lhs: IDPError, rhs: IDPError) -> Bool {
         switch (lhs, rhs) {
         case let (.network(error: lhsError), .network(error: rhsError)): return lhsError
@@ -100,8 +148,9 @@ extension IDPError: Equatable, LocalizedError {
              (.noCertificateFound, .noCertificateFound),
              (.invalidDiscoveryDocument, .invalidDiscoveryDocument),
              (.extAuthOriginalRequestMissing, .extAuthOriginalRequestMissing): return true
-        case let (.internalError(lhsText), .internalError(rhsText)),
-             let (.invalidSignature(lhsText), .invalidSignature(rhsText)): return lhsText == rhsText
+        case let (.internal(error: lhsError), .internal(error: rhsError)):
+            return lhsError.localizedDescription == rhsError.localizedDescription
+        case let (.invalidSignature(lhsText), .invalidSignature(rhsText)): return lhsText == rhsText
         case let (.serverError(lhsError), .serverError(rhsError)): return lhsError == rhsError
         case let (.trustStore(lhsError), .trustStore(rhsError)): return lhsError == rhsError
         case let (.biometrics(lhsError), .biometrics(rhsError)):
@@ -123,7 +172,7 @@ extension IDPError: Equatable, LocalizedError {
         case .invalidDiscoveryDocument: return "IDPError.invalidDiscoveryDocument"
         case let .unsupported(string): return "IDPError.unsupported method \(String(describing: string))"
         // [REQ:gemSpec_IDP_Frontend:A_19937,A_20605,A_20085] Localized description of server errors
-        case let .internalError(string): return "IDPError.internalError method \(String(describing: string))"
+        case let .internal(error: error): return error.localizedDescription
         case let .serverError(error): return "IDPError.serverError '\(error)'"
         case .invalidStateParameter:
             return "IDPError.invalidStateParameter"

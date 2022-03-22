@@ -40,3 +40,6 @@ integrationtests:
 
 publish: setup
 	$(PROJECT_DIR)/scripts/publish ${BUILD_TYPE} ${DRY_RUN}
+
+sast:
+	$(PROJECT_DIR)/scripts/sast ${BUILD_TYPE}

@@ -33,7 +33,7 @@ class TrustStoreClientMock: TrustStoreClient {
         Deferred { () -> AnyPublisher<CertList, TrustStoreError> in
             self.loadCertListFromServer_CallsCount += 1
             guard let certList = self.certList else {
-                return Fail(error: TrustStoreError.internalError("No cert list available from TrustStoreClientMock"))
+                return Fail(error: TrustStoreError.internal(error: .loadCertListFromServerUnexpectedNil))
                     .eraseToAnyPublisher()
             }
             return Just(certList)
@@ -53,7 +53,7 @@ class TrustStoreClientMock: TrustStoreClient {
         Deferred { () -> AnyPublisher<OCSPList, TrustStoreError> in
             self.loadOCSPListFromServer_CallsCount += 1
             guard let ocspList = self.ocspList else {
-                return Fail(error: TrustStoreError.internalError("No OCSP list available from TrustStoreClientMock"))
+                return Fail(error: TrustStoreError.internal(error: .loadOCSPListFromServerUnexpectedNil))
                     .eraseToAnyPublisher()
             }
             return Just(ocspList)

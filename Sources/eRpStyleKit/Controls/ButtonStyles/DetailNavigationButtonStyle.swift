@@ -1,0 +1,192 @@
+//
+//  Copyright (c) 2022 gematik GmbH
+//  
+//  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
+//  the European Commission - subsequent versions of the EUPL (the Licence);
+//  You may not use this work except in compliance with the Licence.
+//  You may obtain a copy of the Licence at:
+//  
+//      https://joinup.ec.europa.eu/software/page/eupl
+//  
+//  Unless required by applicable law or agreed to in writing, software
+//  distributed under the Licence is distributed on an "AS IS" basis,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//  See the Licence for the specific language governing permissions and
+//  limitations under the Licence.
+//  
+//
+
+import SwiftUI
+
+/// `ButtonStyle` for navigation buttons with a chevron. This style must be applied manually to `Button`s that should be
+/// presented as navigational buttons. This style is not meant to be used with `NavigationLink`and will probably not
+/// work with these.
+public struct DetailNavigationButtonStyle: ButtonStyle {
+    let showSeparator: Bool
+
+    init(showSeparator: Bool) {
+        self.showSeparator = showSeparator
+    }
+
+    @Environment(\.isEnabled)
+    var isEnabled: Bool
+
+    public func makeBody(configuration: Configuration) -> some View {
+        HStack {
+            configuration.label
+                .opacity(isEnabled ? 1.0 : 0.5)
+                .keyValuePairStyle(SeparatedKeyValuePairStyle(showSeparator: showSeparator))
+                .labelStyle(DetailNavigationLabelStyle(showSeparator: showSeparator))
+        }
+        .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+        .foregroundColor(Color(.label))
+        .background(configuration.isPressed ?
+            Color(.systemGray5) :
+            Color(.tertiarySystemBackground))
+    }
+}
+
+public struct DetailNavigationLabelStyle: LabelStyle {
+    let showSeparator: Bool
+
+    init(showSeparator: Bool) {
+        self.showSeparator = showSeparator
+    }
+
+    public func makeBody(configuration: Configuration) -> some View {
+        Label(title: {
+            HStack(spacing: 0) {
+                configuration.title
+
+                Spacer(minLength: 16)
+
+                Image(systemName: "chevron.forward")
+                    .foregroundColor(Color(.secondaryLabel))
+            }
+        }, icon: {
+            configuration.icon
+        })
+            .labelStyle(SectionContainerLabelStyle(showSeparator: showSeparator))
+            .keyValuePairStyle(PlainKeyValuePairStyle())
+    }
+}
+
+public struct BottomDividerStyle: ViewModifier {
+    let showSeparator: Bool
+
+    init(showSeparator: Bool) {
+        self.showSeparator = showSeparator
+    }
+
+    public func body(content: Content) -> some View {
+        VStack(alignment: .leading, spacing: 0) {
+            content
+                .padding([.bottom, .trailing, .top])
+
+            if showSeparator {
+                Divider()
+            }
+        }
+        .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+    }
+}
+
+extension View {
+    func bottomDivider(showSeparator: Bool = true) -> some View {
+        modifier(BottomDividerStyle(showSeparator: showSeparator))
+    }
+}
+
+extension ButtonStyle where Self == DetailNavigationButtonStyle {
+    /// A button style that applies a navigation chevron and wraps the button with a divider.
+    ///
+    /// To apply this style to a button, or to a view that contains buttons, use
+    /// the ``View/buttonStyle(_:)`` modifier.
+    public static var navigation: DetailNavigationButtonStyle { DetailNavigationButtonStyle(showSeparator: true) }
+
+    /// A button style that applies a navigation chevron and optionally skips the divider.
+    ///
+    /// To apply this style to a button, or to a view that contains buttons, use
+    /// the ``View/buttonStyle(.navigation(showSeparator:))`` modifier.
+    public static func navigation(showSeparator: Bool = true) -> DetailNavigationButtonStyle {
+        DetailNavigationButtonStyle(showSeparator: showSeparator)
+    }
+}
+
+struct DetailNavigationButtonStyle_Preview: PreviewProvider {
+    static var previews: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 8) {
+                SectionContainer(header: {
+                    Text("Navigational Button")
+                }, content: {
+                    Button(action: {}, label: {
+                        Label(title: { Text("Simple Label without icon") }, icon: {})
+                    })
+                        .buttonStyle(.navigation)
+
+                    Button(action: {}, label: {
+                        Label("Simple Label", systemImage: "qrcode")
+                    })
+                        .buttonStyle(.navigation)
+
+                    Button(action: {}, label: {
+                        Text("Simple Text without icon needs manual padding and frame!")
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .bottomDivider()
+                    })
+                        .buttonStyle(.navigation)
+
+                    Button(action: {}, label: {
+                        Label(title: {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("You may use manual components")
+
+                                Text("as the `title` part of a `Label`.")
+                                    .font(.subheadline)
+                            }
+                        }, icon: {})
+                    })
+                        .buttonStyle(.navigation)
+
+                    Button(action: {}, label: {
+                        Label(title: {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("And pair them with an")
+
+                                Text("Icon to create beautiful buttons")
+                                    .font(.subheadline)
+                            }
+                        }, icon: {
+                            Image(systemName: "qrcode")
+                        })
+                    })
+                        .buttonStyle(.navigation)
+
+                    Toggle(isOn: .constant(true)) {
+                        Label {
+                            Text("Toggles may be navigational Items too!, just apply the `DetailNavigationButtonStyle`")
+                                .font(.footnote)
+                        } icon: {
+                            Image(systemName: "qrcode")
+                        }
+                    }
+                    .buttonStyle(.navigation)
+
+                    Toggle(isOn: .constant(true)) {
+                        Label {
+                            Text("Toggles may be navigational Items too!, just apply the `DetailNavigationButtonStyle`")
+                                .font(.footnote)
+                        } icon: {
+                            Image(systemName: "qrcode")
+                        }
+                    }
+                    .toggleStyle(.radio)
+                    .buttonStyle(.navigation)
+                })
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+        }
+        .background(Color(.secondarySystemBackground))
+    }
+}

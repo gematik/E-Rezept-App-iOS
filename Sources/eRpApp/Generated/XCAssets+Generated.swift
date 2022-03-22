@@ -28,6 +28,7 @@ internal enum Asset {
     internal static let cardwallCard = ImageAsset(name: "Cardwall_card")
     internal static let cardwallInitial = ImageAsset(name: "Cardwall_initial")
     internal static let ohNo = ImageAsset(name: "OhNo")
+    internal static let onScreenEgk = ImageAsset(name: "OnScreenEgk")
     internal static let previewAppIcon = ImageAsset(name: "PreviewAppIcon")
     internal static let apothekerin2 = ImageAsset(name: "apothekerin2")
     internal static let homescreenBg = ImageAsset(name: "homescreen_bg")
@@ -108,6 +109,7 @@ internal enum Asset {
     internal enum Details {
       internal static let apothekerin = ImageAsset(name: "apothekerin")
     }
+    internal static let checkmarkDouble = ImageAsset(name: "checkmarkDouble")
     internal static let initialPlaceholder = ImageAsset(name: "initialPlaceholder")
   }
   internal enum Settings {
@@ -172,7 +174,7 @@ internal extension ColorAsset.Color {
   init?(asset: ColorAsset) {
     let bundle = BundleToken.bundle
     #if os(iOS) || os(tvOS)
-    self.init(asset.name)
+    self.init(asset.name, bundle: bundle)
     #elseif os(macOS)
     self.init(named: NSColor.Name(asset.name), bundle: bundle)
     #elseif os(watchOS)

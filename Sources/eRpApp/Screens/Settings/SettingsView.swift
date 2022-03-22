@@ -17,6 +17,7 @@
 //
 
 import ComposableArchitecture
+import eRpStyleKit
 import IDP
 import SwiftUI
 
@@ -49,7 +50,6 @@ struct SettingsView: View {
         #endif
         let showTrackerComplyView: Bool
         let isDemoMode: Bool
-        let route: ProfilesDomain.Route?
         let routeTag: ProfilesDomain.Route.Tag?
 
         init(state: SettingsDomain.State) {
@@ -58,15 +58,14 @@ struct SettingsView: View {
             #endif
             showTrackerComplyView = state.showTrackerComplyView
             isDemoMode = state.isDemoMode
-            route = state.profiles.route
             routeTag = state.profiles.route?.tag
         }
     }
 
     var body: some View {
         NavigationView {
-            Group {
-                List {
+            ScrollView {
+                LazyVStack(spacing: 0) {
                     #if ENABLE_DEBUG_VIEW
                     DebugSectionView(store: debugStore,
                                      showDebugView: viewStore.binding(
@@ -75,19 +74,18 @@ struct SettingsView: View {
                                      ))
                     #endif
 
-                    ProfileSectionView(store: profilesStore)
+                    ProfilesView(store: profilesStore)
 
                     DemoModeSectionView(store: store)
 
-                    SecuritySectionView(store: store)
-
                     TrackerSectionView(store: store)
 
-                    LegalInfoSectionView(store: store)
+                    SecuritySectionView(store: store)
+
+                    SettingsLegalInfoView(store: store)
 
                     BottomSectionView(store: store)
                 }
-                .listStyle(InsetGroupedListStyle())
                 .alert(profilesAlertStore, dismiss: .setNavigation(tag: nil))
 
                 // Tracking comply sheet presentation
@@ -105,7 +103,7 @@ struct SettingsView: View {
                 Rectangle()
                     .frame(width: 0, height: 0, alignment: .center)
                     .sheet(isPresented: Binding<Bool>(get: {
-                        viewStore.route?.tag == .newProfile
+                        viewStore.routeTag == .newProfile
                     }, set: { show in
                         if !show {
                             viewStore.send(.profiles(action: .setNavigation(tag: nil)))
@@ -130,18 +128,17 @@ struct SettingsView: View {
                     .hidden()
                     .accessibility(hidden: true)
             }
-            .navigationBarTitle(Text(L10n.stgTxtTitle))
-            .edgesIgnoringSafeArea(.bottom)
+            .accentColor(Colors.primary700)
+            .background(Color(.secondarySystemBackground).ignoresSafeArea())
+            .navigationTitle(L10n.stgTxtTitle)
             .demoBanner(isPresented: viewStore.isDemoMode)
-        }
-        .accentColor(Colors.primary700)
-        .navigationViewStyle(StackNavigationViewStyle())
-        .alert(
-            self.store.scope(state: \.alertState),
-            dismiss: .alertDismissButtonTapped
-        )
-        .onAppear {
-            viewStore.send(.initSettings)
+            .alert(
+                self.store.scope(state: \.alertState),
+                dismiss: .alertDismissButtonTapped
+            )
+            .onAppear {
+                viewStore.send(.initSettings)
+            }
         }
     }
 }
@@ -167,29 +164,24 @@ extension SettingsView {
         }
 
         var body: some View {
-            Section(
-                header: SectionHeaderView(
-                    text: L10n.stgTxtHeaderDemoMode,
-                    a11y: A18n.settings.demo.stgTxtHeaderDemoMode
-                ).padding(.bottom, 8),
-                footer: FootnoteView(
-                    text: L10n.stgTxtFootnoteDemoMode,
-                    a11y: A18n.settings.demo.stgTxtFootnoteDemoMode
-                )
-            ) {
-                ToggleCell(
-                    text: L10n.stgTxtDemoMode,
-                    a11y: A18n.settings.demo.stgTxtDemoMode,
-                    systemImage: SFSymbolName.wandAndStars,
-                    backgroundColor: Colors.systemColorClear,
-                    isToggleOn: viewStore.binding(
+            SingleElementSectionContainer(
+                header: {
+                    Label(title: { Text(L10n.stgTxtHeaderDemoMode) }, icon: {})
+                        .accessibilityIdentifier(A18n.settings.demo.stgTxtHeaderDemoMode)
+                }, footer: {
+                    Label(title: { Text(L10n.stgTxtFootnoteDemoMode) }, icon: {})
+                        .accessibilityIdentifier(A18n.settings.demo.stgTxtFootnoteDemoMode)
+                }, content: {
+                    Toggle(isOn: viewStore.binding(
                         get: \.isDemoMode,
                         send: SettingsDomain.Action.toggleDemoModeSwitch
                     )
-                    .animation()
-                )
-            }
-            .textCase(.none)
+                    .animation()) {
+                            Label(L10n.stgTxtDemoMode, systemImage: SFSymbolName.wandAndStars)
+                    }
+                    .accessibilityIdentifier(A18n.settings.demo.stgTxtDemoMode)
+                }
+            )
         }
     }
 
@@ -215,65 +207,42 @@ extension SettingsView {
         }
 
         var body: some View {
-            Section(
-                header: HeaderView(),
-                footer: FootnoteView(
-                    text: viewStore.state.isDemoMode ?
-                        L10n.stgTrkTxtFootnoteDisabled : L10n.stgTrkTxtFootnote,
-                    a11y: A18n.settings.tracking.stgTrkTxtFootnote
+            SingleElementSectionContainer(header: {
+                HeaderView()
+            }, footer: {
+                Label(title: {
+                    Text(viewStore.state.isDemoMode ?
+                        L10n.stgTrkTxtFootnoteDisabled : L10n.stgTrkTxtFootnote)
+                }, icon: {})
+                    .accessibilityIdentifier(A18n.settings.tracking.stgTrkTxtFootnote)
+            }, content: {
+                Toggle(isOn: viewStore.binding(
+                    get: \.trackerOptIn,
+                    send: SettingsDomain.Action.toggleTrackingTapped
                 )
-            ) {
-                ToggleCell(
-                    text: L10n.stgTrkBtnTitle,
-                    a11y: A18n.settings.tracking.stgTrkBtnTitle,
-                    systemImage: SFSymbolName.wandAndStars,
-                    backgroundColor: Colors.systemColorClear,
-                    isToggleOn: viewStore.binding(
-                        get: \.trackerOptIn,
-                        send: SettingsDomain.Action.toggleTrackingTapped
-                    )
-                    .animation(),
-                    isDisabled: Binding(
-                        get: { viewStore.state.isDemoMode },
-                        set: { _, _ in }
-                    )
-                )
-            }
-            .textCase(.none)
+                .animation()) {
+                        Label(title: {
+                            Text(L10n.stgTrkBtnTitle)
+                        }, icon: { Image(systemName: SFSymbolName.waveformEcg) })
+                            .accessibilityIdentifier(A18n.settings.tracking.stgTrkBtnTitle)
+                }
+                .disabled(viewStore.state.isDemoMode)
+                .buttonStyle(.navigation)
+            })
         }
 
         private struct HeaderView: View {
             var body: some View {
-                VStack {
-                    SectionHeaderView(
-                        text: L10n.stgTrkTxtTitle,
-                        a11y: A11y.settings.tracking.stgTrkTxtTitle
-                    )
-                    .padding(.bottom, 8)
+                VStack(alignment: .leading, spacing: 16) {
+                    Label(title: { Text(L10n.stgTrkTxtTitle) }, icon: {})
+                        .accessibility(identifier: A11y.settings.tracking.stgTrkTxtTitle)
 
                     // [REQ:gemSpec_eRp_FdV:A_19089] User info for usage tracking
-                    HeadernoteView(
-                        text: L10n.stgTrkTxtExplanation,
-                        a11y: A11y.settings.tracking.stgTrkTxtExplanation
-                    )
+                    Label(title: { Text(L10n.stgTrkTxtExplanation) }, icon: {})
+                        .font(.body)
+                        .accessibilityIdentifier(A11y.settings.tracking.stgTrkTxtExplanation)
                 }
             }
-        }
-    }
-
-    private struct LegalInfoSectionView: View {
-        let store: SettingsDomain.Store
-
-        var body: some View {
-            Section(
-                header: SectionHeaderView(
-                    text: L10n.stgTxtHeaderLegalInfo,
-                    a11y: A18n.settings.legalNotice.stgLnoTxtHeaderLegalInfo
-                ).padding(.bottom, 8)
-            ) {
-                SettingsLegalInfoView(store: store)
-            }
-            .textCase(.none)
         }
     }
 
@@ -284,17 +253,21 @@ extension SettingsView {
         @Binding var showDebugView: Bool
 
         var body: some View {
-            Section(header: SectionHeaderView(text: "Debug", a11y: "stg_txt_debug_title").padding(.bottom, 8)) {
+            SingleElementSectionContainer(header: {
+                Label(title: {
+                    Text("Debug")
+                }, icon: {})
+                    .accessibilityIdentifier("stg_txt_debug_title")
+            }, content: {
                 NavigationLink(
                     destination: DebugView(store: store),
                     isActive: $showDebugView
                 ) {
-                    ListCellView(sfSymbolName: SFSymbolName.ant, text: "Debug")
+                    Label("Debug", systemImage: SFSymbolName.ant)
                         .accessibility(identifier: "stg_btn_debug")
                 }
-                .border(Colors.systemColorClear, cornerRadius: 16)
-            }
-            .textCase(.none)
+                .buttonStyle(.navigation)
+            })
         }
     }
     #endif
@@ -319,9 +292,11 @@ extension SettingsView {
         }
 
         var body: some View {
-            Section(header: Spacer(minLength: 64),
-                    footer: VersionInfoView(appVersion: viewStore.appVersion)
-                        .padding(.bottom)) {}
+            SingleElementSectionContainer(header: {
+                Spacer(minLength: 64)
+            }, footer: {
+                VersionInfoView(appVersion: viewStore.appVersion)
+            }, content: {})
         }
     }
 
@@ -387,6 +362,38 @@ extension SettingsView {
             .accentColor(Colors.primary700)
             .navigationViewStyle(StackNavigationViewStyle())
         }
+    }
+}
+
+extension SettingsView {
+    var profilesStore: ProfilesDomain.Store {
+        store.scope(state: \.profiles, action: SettingsDomain.Action.profiles)
+    }
+
+    var profileStore: Store<EditProfileDomain.State?, EditProfileDomain.Action> {
+        profilesStore.scope(
+            state: (\ProfilesDomain.State.route)
+                .appending(path: /ProfilesDomain.Route.editProfile)
+                .extract(from:),
+            action: ProfilesDomain.Action.profile(action:)
+        )
+    }
+
+    var profilesAlertStore: Store<AlertState<ProfilesDomain.Action>?, ProfilesDomain.Action> {
+        profilesStore.scope(
+            state: (\ProfilesDomain.State.route)
+                .appending(path: /ProfilesDomain.Route.alert)
+                .extract(from:)
+        )
+    }
+
+    var newProfileStore: Store<NewProfileDomain.State?, NewProfileDomain.Action> {
+        profilesStore.scope(
+            state: (\ProfilesDomain.State.route)
+                .appending(path: /ProfilesDomain.Route.newProfile)
+                .extract(from:),
+            action: ProfilesDomain.Action.newProfile(action:)
+        )
     }
 }
 

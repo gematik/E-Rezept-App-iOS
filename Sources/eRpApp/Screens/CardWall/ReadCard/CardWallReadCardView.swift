@@ -19,30 +19,96 @@
 import AVKit
 import Combine
 import ComposableArchitecture
+import eRpStyleKit
 import SwiftUI
 
 struct CardWallReadCardView: View {
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     let store: CardWallReadCardDomain.Store
 
+    static let height: CGFloat = {
+        // Compensate display scaling (Settings -> Display & Brightness -> Display -> Standard vs. Zoomed
+        180 * UIScreen.main.scale / UIScreen.main.nativeScale
+    }()
+
+    @State var showVideo = false
+
     var body: some View {
         WithViewStore(store) { viewStore in
             VStack(spacing: 0) {
-                InformationBlockView(store: store)
+                // Use overlay to also fill safe area but specify fixed height
+                VStack {}
+                    .frame(width: nil, height: Self.height, alignment: .top)
+                    .overlay(
+                        HStack {
+                            Image(Asset.CardWall.onScreenEgk)
+                                .scaledToFill()
+                                .frame(width: nil, height: Self.height, alignment: .bottom)
+                        }
+                    )
+
+                Line()
+                    .stroke(style: StrokeStyle(lineWidth: 2,
+                                               lineCap: CoreGraphics.CGLineCap.round,
+                                               lineJoin: CoreGraphics.CGLineJoin.round,
+                                               miterLimit: 2,
+                                               dash: [8, 8],
+                                               dashPhase: 0))
+                    .foregroundColor(Color(.opaqueSeparator))
+                    .frame(width: nil, height: 2, alignment: .center)
+
+                Text(L10n.cdwTxtRcPlacement)
+                    .font(.subheadline.bold())
+                    .foregroundColor(Color(.secondaryLabel))
+                    .padding(8)
+                    .padding(.bottom, 16)
+
+                Text(L10n.cdwTxtRcCta)
+                    .font(.title3.bold())
+                    .multilineTextAlignment(.center)
+                    .padding()
+                    .background(Color(.systemGray6))
+                    .cornerRadius(16)
+                    .padding()
+
+//                Button(action: {
+//                    // TODO: link correct video swiftlint:disable:this todo
+//                }, label: {
+//                    Label(L10n.cdwBtnRcVideo, systemImage: SFSymbolName.play)
+//                })
+//                    .font(.body.weight(.semibold))
+//                    .foregroundColor(Colors.primary)
+//                    .padding()
+//                    .frame(maxWidth: .infinity, minHeight: 52, alignment: .center)
+//                    .padding()
 
                 Spacer(minLength: 0)
 
                 GreyDivider()
 
-                LoadingPrimaryButton(
-                    text: viewStore.output.buttonTitle,
-                    isLoading: !viewStore.output.nextButtonEnabled
-                ) {
+                Button {
                     viewStore.send(viewStore.output.nextAction)
+                } label: {
+                    Label {
+                        Text(viewStore.output.buttonTitle)
+                    } icon: {
+                        if !viewStore.output.nextButtonEnabled {
+                            ProgressView()
+                                .progressViewStyle(CircularProgressViewStyle())
+                        }
+                    }
                 }
+                .buttonStyle(.primary(isEnabled: viewStore.output.nextButtonEnabled))
                 .accessibility(identifier: A11y.cardWall.readCard.cdwBtnRcNext)
                 .accessibility(hint: Text(L10n.cdwBtnRcNextHint))
-                .padding([.horizontal, .vertical])
+                .padding(.vertical)
+
+                Button(action: {
+                    presentationMode.wrappedValue.dismiss()
+                }, label: {
+                    Label(title: { Text(L10n.cdwBtnRcBack) }, icon: {})
+                })
+                    .buttonStyle(.secondary)
             }
             .demoBanner(isPresented: viewStore.isDemoModus) {
                 Text(L10n.cdwTxtRcDemoModeInfo)
@@ -51,60 +117,27 @@ struct CardWallReadCardView: View {
                 self.store.scope(state: \.alertState),
                 dismiss: .alertDismissButtonTapped
             )
-            .navigationBarTitle(L10n.cdwTxtRcTitle, displayMode: .inline)
-            .navigationBarBackButtonHidden(true)
-            .navigationBarItems(
-                leading: CustomNavigationBackButton(presentationMode: presentationMode),
-                trailing: NavigationBarCloseItem {
-                    viewStore.send(.close)
-                }
-                .accessibility(identifier: A11y.cardWall.readCard.cdwBtnRcCancel)
-                .accessibility(label: Text(L10n.cdwBtnRcCancelLabel))
-            )
             .onAppear {
                 viewStore.send(.getChallenge)
             }
-            .onDisappear {}
         }
+        .navigationBarHidden(true)
+        .statusBar(hidden: true)
     }
-}
 
-extension CardWallReadCardView {
-    // MARK: - screen related views
-
-    private struct InformationBlockView: View {
-        let store: CardWallReadCardDomain.Store
-
-        // swiftlint:disable:next force_unwrapping
-        let videoURL: URL = Bundle.main.url(forResource: "eRezept_eGK", withExtension: "mp4")!
-
-        var body: some View {
-            ScrollView(.vertical, showsIndicators: true) {
-                VStack(alignment: .leading, spacing: 16) {
-                    Text(L10n.cdwTxtRcHeadline)
-                        .font(Font.title3.bold())
-                        .accessibility(identifier: A11y.cardWall.readCard.cdwTxtRcHeadline)
-                    Text(L10n.cdwTxtRcDescription)
-                        .font(.subheadline)
-                        .accessibility(identifier: A11y.cardWall.readCard.cdwTxtRcDescription)
-
-                    LoopingVideoPlayerContainerView(withURL: videoURL)
-                        .aspectRatio(16.0 / 9.0, contentMode: .fit)
-                        .frame(minWidth: 100, maxWidth: .infinity)
-                        .cornerRadius(16, corners: .allCorners)
-                        .padding(.top, 28)
-                }
-                .foregroundColor(Color(.label))
-                .padding([.horizontal])
-                .padding(.top, 40)
-            }
+    struct Line: Shape {
+        func path(in rect: CGRect) -> Path {
+            var path = Path()
+            path.move(to: CGPoint(x: 0, y: rect.height * 0.5))
+            path.addLine(to: CGPoint(x: rect.width, y: rect.height * 0.5))
+            return path
         }
     }
 }
 
 struct CardWallReadCardView_Previews: PreviewProvider {
     static var previews: some View {
-        NavigationView {
+        NavigationView<CardWallReadCardView> {
             CardWallReadCardView(
                 store: CardWallReadCardDomain.Dummies.store
             )

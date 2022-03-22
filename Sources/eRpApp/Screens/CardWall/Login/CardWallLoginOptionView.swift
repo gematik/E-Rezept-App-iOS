@@ -75,16 +75,6 @@ struct CardWallLoginOptionView<Content: View>: View {
                 }
                 .padding()
 
-                NavigationLink(
-                    destination: nextView(),
-                    isActive: viewStore.binding(
-                        get: { $0.showNextScreen },
-                        send: CardWallLoginOptionDomain.Action.navigateBack
-                    )
-                ) {
-                    EmptyView()
-                }.accessibility(hidden: true)
-
                 Spacer()
 
                 GreyDivider()
@@ -97,6 +87,15 @@ struct CardWallLoginOptionView<Content: View>: View {
                 .accessibility(label: Text(L10n.cdwBtnBiometryContinueLabel))
                 .padding(.horizontal)
                 .padding(.bottom)
+                .fullScreenCover(isPresented: viewStore.binding(
+                    get: { $0.showNextScreen },
+                    send: CardWallLoginOptionDomain.Action.navigateBack
+                )) {
+                    nextView()
+                        .statusBar(hidden: true)
+                        .accentColor(Colors.primary700)
+                        .navigationViewStyle(StackNavigationViewStyle())
+                }
             }
             .demoBanner(isPresented: viewStore.isDemoModus) {
                 Text(L10n.cdwTxtBiometryDemoModeInfo)

@@ -54,7 +54,7 @@ final class ExtAuthPendingViewSnapshotTests: XCTestCase {
             initialState: .extAuthSuccessful(KKAppDirectory.Entry(name: "Gematik KK", identifier: "abc")),
             reducer: .empty,
             environment: ExtAuthPendingDomain.Environment(
-                idpSession: DemoIDPSession(storage: MemoryStorage()),
+                idpSession: DemoIDPSession(storage: MemoryStorage(schedulers: schedulers)),
                 schedulers: schedulers,
                 currentProfile: mockUserSession.profile(),
                 idTokenValidator: mockUserSession.idTokenValidator(),
@@ -79,7 +79,7 @@ final class ExtAuthPendingViewSnapshotTests: XCTestCase {
             initialState: .pendingExtAuth(KKAppDirectory.Entry(name: "Gematik KK", identifier: "abc")),
             reducer: .empty,
             environment: ExtAuthPendingDomain.Environment(
-                idpSession: DemoIDPSession(storage: MemoryStorage()),
+                idpSession: DemoIDPSession(storage: MemoryStorage(schedulers: schedulers)),
                 schedulers: schedulers,
                 currentProfile: mockUserSession.profile(),
                 idTokenValidator: mockUserSession.idTokenValidator(),

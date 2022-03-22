@@ -156,6 +156,8 @@ struct GroupedPrescriptionView: View {
                 label: {
                     HStack {
                         VStack(alignment: .leading, spacing: 4) {
+                            StatusView(prescription: prescription)
+                                .accessibility(identifier: A18n.mainScreen.erxDetailedBlockStatus)
                             Text(prescription.actualMedication?.name, placeholder: L10n.erxTxtMedicationPlaceholder)
                                 .foregroundColor(Colors.systemLabel)
                                 .font(Font.body.weight(.semibold))
@@ -193,6 +195,7 @@ struct GroupedPrescriptionView: View {
                             .font(Font.body.weight(.semibold))
                             .foregroundColor(Colors.primary500)
                         VStack(alignment: .leading, spacing: 4) {
+                            StatusView(prescription: prescription)
                             Text(prescription.actualMedication?.name, placeholder: L10n.erxTxtMedicationPlaceholder)
                                 .font(Font.body.weight(.semibold))
                                 .foregroundColor(Colors.systemLabel)
@@ -214,6 +217,24 @@ struct GroupedPrescriptionView: View {
             )
             .buttonStyle(PlainButtonStyle())
             .accessibilityElement(children: .contain)
+        }
+    }
+
+    struct StatusView: View {
+        let prescription: GroupedPrescription.Prescription
+
+        var body: some View {
+            HStack(spacing: 4) {
+                Text(prescription.title)
+                    .foregroundColor(prescription.titleTint)
+                prescription.image
+                    .font(Font.caption2.weight(.semibold))
+                    .foregroundColor(prescription.imageTint)
+            }
+            .font(Font.footnote)
+            .padding(.init(top: 2, leading: 8, bottom: 2, trailing: 8))
+            .background(prescription.backgroundTint)
+            .cornerRadius(8)
         }
     }
 
@@ -247,6 +268,13 @@ struct RezeptBlock_Previews: PreviewProvider {
         Group {
             GroupedPrescriptionView(
                 groupedPrescription: groupedPrescription,
+                store: GroupedPrescriptionListDomain.Dummies.store
+            )
+            .preferredColorScheme(.light)
+            .previewLayout(.fixed(width: 500.0, height: 300.0))
+            .padding()
+            GroupedPrescriptionView(
+                groupedPrescription: scannedGroupedPrescription,
                 store: GroupedPrescriptionListDomain.Dummies.store
             )
             .preferredColorScheme(.light)

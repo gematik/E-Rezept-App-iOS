@@ -26,7 +26,7 @@ enum MainDomain {
     typealias Reducer = ComposableArchitecture.Reducer<State, Action, Environment>
 
     enum Route: Equatable {
-        case selectProfile(ProfileSelectionDomain.State)
+        case selectProfile
 
         enum Tag: Int {
             case selectProfile
@@ -47,13 +47,11 @@ enum MainDomain {
         var extAuthPendingState = ExtAuthPendingDomain.State()
         var isDemoMode = false
 
-        var profile: UserProfile?
         var route: Route?
     }
 
     enum Token: CaseIterable, Hashable {
         case demoMode
-        case profileUpdates
     }
 
     enum Action: Equatable {
@@ -61,9 +59,6 @@ enum MainDomain {
         case showScannerView
         /// Hides the `ScannerView`
         case dismissScannerView
-        /// Presents the `SettingsView`
-        case showProfileSelection
-        /// Hides the `SettingsView`
         case loadDeviceSecurityView
         case loadDeviceSecurityViewReceived(DeviceSecurityDomain.State?)
         case dismissDeviceSecurityView
@@ -79,15 +74,10 @@ enum MainDomain {
         /// Tapping the demo mode banner can also turn the demo mode off
         case turnOffDemoMode
 
-        case registerProfileListener
-        case unregisterProfileListener
-        case profileReceived(Result<UserProfile, UserProfileServiceError>)
-
         case externalLogin(URL)
         case extAuthPending(action: ExtAuthPendingDomain.Action)
 
         case setNavigation(tag: Route.Tag?)
-        case selectProfile(action: ProfileSelectionDomain.Action)
     }
 
     enum Error: Swift.Error, Equatable {
@@ -124,20 +114,6 @@ enum MainDomain {
         case .turnOffDemoMode:
             environment.router.routeTo(.settings)
             return .none
-        case .unregisterProfileListener:
-            return .cancel(id: Token.profileUpdates)
-        case .registerProfileListener:
-            return environment.userProfileService.activeUserProfilePublisher()
-                .catchToEffect()
-                .map(Action.profileReceived)
-                .cancellable(id: Token.profileUpdates, cancelInFlight: true)
-                .receive(on: environment.schedulers.main)
-                .eraseToEffect()
-        case let .profileReceived(.failure(error)):
-            return .none
-        case let .profileReceived(.success(profile)):
-            state.profile = profile
-            return .none
         case .loadDeviceSecurityView:
             return environment.userSession.deviceSecurityManager.showSystemSecurityWarning
                 .map { type in
@@ -154,13 +130,9 @@ enum MainDomain {
         case let .loadDeviceSecurityViewReceived(deviceSecurityState):
             state.deviceSecurityState = deviceSecurityState
             return .none
-        case .selectProfile(action: .close):
-            state.route = nil
-            return .none
         case .prescriptionList,
              .scanner,
-             .extAuthPending,
-             .selectProfile:
+             .extAuthPending:
             return .none
         case .subscribeToDemoModeChange:
             return environment.userSessionContainer.isDemoMode
@@ -183,8 +155,8 @@ enum MainDomain {
             return Effect(value: .extAuthPending(action: .externalLogin(url)))
                 .delay(for: 5, scheduler: environment.schedulers.main)
                 .eraseToEffect()
-        case .showProfileSelection:
-            state.route = .selectProfile(.init(profiles: [], selectedProfileId: nil, route: nil))
+        case .setNavigation(tag: .selectProfile):
+            state.route = .selectProfile
             return .none
         case .setNavigation(tag: .none):
             state.route = nil
@@ -199,7 +171,6 @@ enum MainDomain {
         scannerPullbackReducer,
         deviceSecurityPullbackReducer,
         extAuthPendingReducer,
-        profileSelectionReducer,
         domainReducer
     )
 
@@ -259,17 +230,6 @@ enum MainDomain {
                 profileDataStore: $0.userSession.profileDataStore,
                 extAuthRequestStorage: $0.userSession.extAuthRequestStorage
             )
-        }
-
-    private static let profileSelectionReducer: Reducer =
-        ProfileSelectionDomain.reducer._pullback(
-            state: (\State.route).appending(path: /Route.selectProfile),
-            action: /Action.selectProfile(action:)
-        ) {
-            .init(schedulers: $0.schedulers,
-                  userDataStore: $0.userSession.localUserStore,
-                  userProfileService: $0.userProfileService,
-                  router: $0.router)
         }
 }
 

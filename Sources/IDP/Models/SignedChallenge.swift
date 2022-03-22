@@ -58,7 +58,7 @@ public struct SignedChallenge {
             let signedChallengeJWE = try? JWE(header: jweHeader,
                                               payload: jwePayload,
                                               nonceGenerator: cryptoBox.aesNonceGenerator) else {
-            throw IDPError.internalError("Unable to encrypt signed challenge")
+            throw IDPError.internal(error: .signedChallengeEncryption)
         }
 
         return signedChallengeJWE

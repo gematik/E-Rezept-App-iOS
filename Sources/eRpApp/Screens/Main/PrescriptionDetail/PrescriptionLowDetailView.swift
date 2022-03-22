@@ -77,11 +77,13 @@ struct PrescriptionLowDetailView: View {
                 MedicationInfoView(codeInfos: [
                     MedicationInfoView.CodeInfo(
                         code: viewStore.state.prescription.accessCode,
-                        codeTitle: L10n.dtlTxtAccessCode
+                        codeTitle: L10n.dtlTxtAccessCode,
+                        accessibilityId: A11y.prescriptionDetails.prscDtlTxtAccessCode
                     ),
                     MedicationInfoView.CodeInfo(
                         code: viewStore.state.prescription.id,
-                        codeTitle: L10n.dtlTxtTaskId
+                        codeTitle: L10n.dtlTxtTaskId,
+                        accessibilityId: A11y.prescriptionDetails.prscDtlTxtTaskId
                     ),
                 ])
 
@@ -102,7 +104,7 @@ struct PrescriptionLowDetailView: View {
 
     private func uiFormattedDate(dateString: String?) -> String? {
         if let dateString = dateString,
-           let date = globals.fhirDateFormatter.date(from: dateString, format: .yearMonthDay) {
+           let date = globals.fhirDateFormatter.date(from: dateString) {
             return globals.uiDateFormatter.string(from: date)
         }
         return dateString

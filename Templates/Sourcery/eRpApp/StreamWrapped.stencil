@@ -104,7 +104,7 @@ import VAUClient
 				{% if not property.isMutable and not property.isComputed %} 
 		stream
 			.map(\.{{property.name}})
-			.assign(to: \.{{property.name}}, on: self)
+			.weakAssign(to: \.{{property.name}}, on: self)
 			.store(in: &disposeBag)
 				{% endif %}
 			{% endif %}
@@ -135,7 +135,7 @@ class StreamWrapped{{ type.name }}: {{ type.name }} {
 
 		{% if not type.annotations.SkipCurrent %}
 		stream
-			.assign(to: \.current, on: self)
+			.weakAssign(to: \.current, on: self)
 			.store(in: &disposeBag)
 		{% endif %}	
 

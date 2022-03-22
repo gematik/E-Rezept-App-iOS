@@ -17,6 +17,7 @@
 //
 
 import ComposableArchitecture
+import eRpStyleKit
 import SwiftUI
 
 extension SettingsView {
@@ -32,10 +33,12 @@ extension SettingsView {
         }
 
         var body: some View {
-            Section(header: HeaderView(store: store)) {
-                AppSecuritySelectionView(store: store)
-            }
-            .textCase(.none)
+            SingleElementSectionContainer(
+                header: { HeaderView(store: store) },
+                content: {
+                    AppSecuritySelectionView(store: store)
+                }
+            )
         }
 
         private struct HeaderView: View {
@@ -43,22 +46,17 @@ extension SettingsView {
 
             var body: some View {
                 WithViewStore(store) { viewStore in
-                    VStack {
-                        SectionHeaderView(
-                            text: L10n.stgTxtHeaderSecurity,
-                            a11y: A18n.settings.security.stgTxtHeaderSecurity
-                        )
-                        .padding(.bottom, 8)
+                    Label(title: { Text(L10n.stgTxtHeaderSecurity) }, icon: {})
+                        .accessibilityIdentifier(A18n.settings.security.stgTxtHeaderSecurity)
 
-                        if viewStore.state.selectedSecurityOption == nil {
-                            WarningView(text: L10n.stgTxtSecurityWarning.text)
-                                .accessibility(identifier: "")
-                        }
+                    if viewStore.state.selectedSecurityOption == nil {
+                        WarningView(text: L10n.stgTxtSecurityWarning.text)
+                            .accessibility(identifier: "")
+                    }
 
-                        if let error = viewStore.state.errorToDisplay {
-                            WarningView(text: error.errorDescription ?? "")
-                                .accessibility(identifier: "stg_hnt_biometrics_warning")
-                        }
+                    if let error = viewStore.state.errorToDisplay {
+                        WarningView(text: error.errorDescription ?? "")
+                            .accessibility(identifier: "stg_hnt_biometrics_warning")
                     }
                 }
             }
@@ -125,21 +123,17 @@ extension SettingsView {
                 case let .biometry(biometryType):
                     switch biometryType {
                     case .faceID:
-                        SelectionCell(
-                            text: L10n.stgTxtSecurityOptionFaceidTitle,
-                            description: nil,
-                            a11y: A18n.settings.security.stgTxtSecurityFaceid,
-                            systemImage: SFSymbolName.faceId,
-                            isOn: binding
-                        )
+                        Toggle(isOn: binding) {
+                            Label(L10n.stgTxtSecurityOptionFaceidTitle, systemImage: SFSymbolName.faceId)
+                                .accessibility(identifier: A18n.settings.security.stgTxtSecurityFaceid)
+                        }
+                        .toggleStyle(.radio)
                     case .touchID:
-                        SelectionCell(
-                            text: L10n.stgTxtSecurityOptionTouchidTitle,
-                            description: nil,
-                            a11y: A18n.settings.security.stgTxtSecurityTouchid,
-                            systemImage: SFSymbolName.touchId,
-                            isOn: binding
-                        )
+                        Toggle(isOn: binding) {
+                            Label(L10n.stgTxtSecurityOptionTouchidTitle, systemImage: SFSymbolName.touchId)
+                                .accessibility(identifier: A18n.settings.security.stgTxtSecurityTouchid)
+                        }
+                        .toggleStyle(.radio)
                     }
                 case .password:
                     NavigationLink(
@@ -162,13 +156,15 @@ extension SettingsView {
                             }
                         )
                     ) {
-                        SelectionCell(
-                            text: L10n.stgTxtSecurityOptionPasswordTitle,
-                            description: nil,
-                            a11y: A18n.settings.security.stgTxtSecurityPassword,
-                            systemImage: SFSymbolName.rectangleAndPencilAndEllipsis,
-                            isOn: binding
-                        )
+                        Toggle(isOn: binding) {
+                            Label(
+                                L10n.stgTxtSecurityOptionPasswordTitle,
+                                systemImage: SFSymbolName.rectangleAndPencilAndEllipsis
+                            )
+                            .accessibility(identifier: A18n.settings.security.stgTxtSecurityPassword)
+                        }
+                        .toggleStyle(.radioWithNavigation(showSeparator: false))
+                        .modifier(SectionContainerCellModifier())
                     }
                 case .unsecured:
                     EmptyView()
@@ -180,10 +176,8 @@ extension SettingsView {
 
 struct AppSecuritySelectionView_Previews: PreviewProvider {
     static var previews: some View {
-        Group {
-            NavigationView {
-                SettingsView.AppSecuritySelectionView(store: AppSecurityDomain.Dummies.store)
-            }.generateVariations(selection: .devices, oneDark: true)
+        NavigationView {
+            SettingsView.SecuritySectionView(store: SettingsDomain.Dummies.store)
         }
     }
 }

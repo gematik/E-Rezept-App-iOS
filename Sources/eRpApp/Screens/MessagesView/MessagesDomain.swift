@@ -50,10 +50,12 @@ enum MessagesDomain: Equatable {
     enum Route: Equatable {
         case pickupCode(PickupCodeDomain.State)
         case alert(AlertState<Action>)
+        case selectProfile
 
         enum Tag: Int {
             case pickupCode
             case alert
+            case selectProfile
         }
 
         var tag: Tag {
@@ -62,6 +64,8 @@ enum MessagesDomain: Equatable {
                 return .pickupCode
             case .alert:
                 return .alert
+            case .selectProfile:
+                return .selectProfile
             }
         }
     }
@@ -141,7 +145,8 @@ enum MessagesDomain: Equatable {
         case let .showPickupCode(dmcCode: dmcCode, hrCode: hrCode):
             state.route = .pickupCode(.init(pickupCodeHR: hrCode, pickupCodeDMC: dmcCode))
             return .none
-        case .setNavigation(tag: .none), .pickupCode(action: .close):
+        case .setNavigation(tag: .none),
+             .pickupCode(action: .close):
             state.route = nil
             return .none
         case let .openUrl(url: url):
@@ -167,6 +172,9 @@ enum MessagesDomain: Equatable {
             } else {
                 state.route = .alert(openMailAlertState)
             }
+            return .none
+        case .setNavigation(tag: .selectProfile):
+            state.route = .selectProfile
             return .none
         case .setNavigation, .pickupCode:
             return .none
@@ -204,7 +212,9 @@ enum MessagesDomain: Equatable {
         pickupCodeReducer,
         domainReducer
     )
+}
 
+extension MessagesDomain {
     private static let pickupCodeReducer: Reducer =
         PickupCodeDomain.reducer
             ._pullback(

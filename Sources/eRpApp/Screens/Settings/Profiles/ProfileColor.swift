@@ -30,7 +30,7 @@ enum ProfileColor: Int, Equatable, CaseIterable {
     var background: SwiftUI.Color {
         switch self {
         case .grey:
-            return SwiftUI.Color(.systemGray5)
+            return SwiftUI.Color(.systemGray4)
         case .yellow:
             return Colors.yellow200
         case .red:

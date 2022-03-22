@@ -43,6 +43,81 @@ final class SettingsViewSnapshotTests: XCTestCase {
                                                serviceLocator: ServiceLocator()
                                            )
                                        ))
+    let appVersion = AppVersion(productVersion: "1.0", buildNumber: "LOCAL BUILD", buildHash: "LOCAL BUILD")
+
+    func testSettingsFigmaVariant1() {
+        let profiles = [
+            UserProfile(
+                from: Profile(
+                    name: "Dennis Weihnachtsgans",
+                    color: Profile.Color.blue
+                ),
+                isAuthenticated: true
+            ),
+            UserProfile(
+                from: Profile(
+                    name: "Merry Martin",
+                    color: Profile.Color.green,
+                    emoji: "🎄"
+                ),
+                isAuthenticated: false
+            ),
+            UserProfile(
+                from: Profile(
+                    name: "Schneebartz van Eltz",
+                    color: Profile.Color.red,
+                    emoji: "⛄️",
+                    lastAuthenticated: Date().addingTimeInterval(-60 * 60 * 24 * 31)
+                ),
+                isAuthenticated: false
+            ),
+        ]
+
+        let sut = SettingsView(store: SettingsDomain.Store(
+            initialState: configuredSettingsDomainState(
+                profiles: profiles,
+                withAvailableSecurityOptions: [.biometry(.faceID), .password],
+                andSelectedSecurityOption: .biometry(.faceID),
+                appVersion: AppVersion(productVersion: "1.0.1", buildNumber: "12", buildHash: "3130b2e"),
+                trackerOptIn: true
+            ),
+            reducer: SettingsDomain.Reducer.empty,
+            environment: SettingsDomain.Dummies.environment
+        ),
+        debugStore: debugStore)
+            .frame(width: 375, height: 2589, alignment: .center)
+
+        assertSnapshots(matching: sut, as: figmaReference())
+    }
+
+    func testSettingsFigmaVariant2() {
+        let profiles = [
+            UserProfile(
+                from: Profile(
+                    name: "Schneebartz van Eltz",
+                    color: Profile.Color.blue
+                ),
+                isAuthenticated: false
+            ),
+        ]
+
+        let sut = SettingsView(store: SettingsDomain.Store(
+            initialState: configuredSettingsDomainState(
+                profiles: profiles,
+                isDemoMode: true,
+                withAvailableSecurityOptions: [.biometry(.faceID), .password],
+                andSelectedSecurityOption: .biometry(.faceID),
+                appVersion: AppVersion(productVersion: "1.0.1", buildNumber: "12", buildHash: "3130b2e"),
+                trackerOptIn: true
+            ),
+            reducer: SettingsDomain.Reducer.empty,
+            environment: SettingsDomain.Dummies.environment
+        ),
+        debugStore: debugStore)
+            .frame(width: 375, height: 2589, alignment: .center)
+
+        assertSnapshots(matching: sut, as: figmaReference())
+    }
 
     func testSettingsView_App_Security_Biometry_Available_No_Selection() {
         let sut = SettingsView(store: SettingsDomain.Store(
@@ -122,7 +197,7 @@ final class SettingsViewSnapshotTests: XCTestCase {
     func testSettingsView_DemoMode_Disabled() {
         let sut = SettingsView(store: SettingsDomain.Store(
             initialState: configuredSettingsDomainState(
-                withAvailableSecurityOptions: [.password, .biometry(.faceID)],
+                withAvailableSecurityOptions: [.biometry(.faceID), .password],
                 andSelectedSecurityOption: nil
             ),
             reducer: SettingsDomain.Reducer.empty,
@@ -134,8 +209,6 @@ final class SettingsViewSnapshotTests: XCTestCase {
         assertSnapshots(matching: sut, as: snapshotModi())
     }
 
-    let appVersion = AppVersion(productVersion: "1.0", buildNumber: "LOCAL BUILD", buildHash: "LOCAL BUILD")
-
     func testSettingsView_DemoMode_Enabled() {
         let sut = SettingsView(store: SettingsDomain.Store(
             initialState: SettingsDomain.State(isDemoMode: true,
@@ -145,8 +218,8 @@ final class SettingsViewSnapshotTests: XCTestCase {
                                                appSecurityState: AppSecurityDomain
                                                    .State(
                                                        availableSecurityOptions: [
-                                                           .password,
                                                            .biometry(.faceID),
+                                                           .password,
                                                        ],
                                                        selectedSecurityOption: nil
                                                    ),
@@ -174,17 +247,23 @@ final class SettingsViewSnapshotTests: XCTestCase {
     }
 
     private func configuredSettingsDomainState(
+        // swiftlint:disable:next discouraged_optional_collection
+        profiles: [UserProfile]? = nil,
+        isDemoMode: Bool = false,
         withAvailableSecurityOptions availableSecurityOptions: [AppSecurityOption],
-        andSelectedSecurityOption selectedSecurityOption: AppSecurityOption?
+        andSelectedSecurityOption selectedSecurityOption: AppSecurityOption?,
+        appVersion: AppVersion? = nil,
+        trackerOptIn: Bool = false
     ) -> SettingsDomain.State {
-        let profiles = [
+        let profiles = profiles ?? [
             UserProfile(
                 from: Profile(name: "Super duper long name so that I get nervous", color: Profile.Color.blue),
                 isAuthenticated: true
             ),
             UserProfile(from: Profile(name: "Anna Vetter", color: Profile.Color.yellow), isAuthenticated: false),
         ]
-        return SettingsDomain.State(isDemoMode: false,
+
+        return SettingsDomain.State(isDemoMode: isDemoMode,
                                     showLegalNoticeView: false,
                                     showDataProtectionView: false,
                                     showTermsOfUseView: false,
@@ -197,6 +276,7 @@ final class SettingsViewSnapshotTests: XCTestCase {
                                         profiles: profiles,
                                         selectedProfileId: profiles.first!.id
                                     ),
-                                    appVersion: appVersion)
+                                    appVersion: appVersion ?? self.appVersion,
+                                    trackerOptIn: trackerOptIn)
     }
 }

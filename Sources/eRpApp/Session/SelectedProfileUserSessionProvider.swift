@@ -32,7 +32,7 @@ class SelectedProfileUserSessionProvider {
          schedulers: Schedulers,
          coreDataControllerFactory: CoreDataControllerFactory,
          profileDataStore: ProfileDataStore,
-         publisher: AnyPublisher<(profileId: UUID, config: AppConfiguration), Never>) {
+         publisher: AnyPublisher<(profileId: UUID, appConfig: AppConfiguration), Never>) {
         currentValueSubject = CurrentValueSubject(initialUserSession)
 
         userSession = StreamWrappedUserSession(
@@ -41,8 +41,8 @@ class SelectedProfileUserSessionProvider {
         )
 
         publisher
-            .sink { [currentValueSubject = self.currentValueSubject] profileId, config in
-                currentValueSubject.send(
+            .sink { [weak currentValue = self.currentValueSubject] profileId, appConfig in
+                currentValue?.send(
                     StandardSessionContainer(
                         for: profileId,
                         schedulers: schedulers,
@@ -51,7 +51,7 @@ class SelectedProfileUserSessionProvider {
                             coreDataControllerFactory: coreDataControllerFactory
                         ),
                         profileDataStore: profileDataStore,
-                        appConfiguration: config
+                        appConfiguration: appConfig
                     )
                 )
             }

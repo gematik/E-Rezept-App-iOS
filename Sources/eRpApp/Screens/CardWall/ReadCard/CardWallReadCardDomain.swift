@@ -26,17 +26,22 @@ enum CardWallReadCardDomain {
     typealias Store = ComposableArchitecture.Store<State, Action>
     typealias Reducer = ComposableArchitecture.Reducer<State, Action, Environment>
 
+    /// Provides an Effect that need to run whenever the state of this Domain is reset to nil
+    static func cleanup<T>() -> Effect<T, Never> {
+        Effect.cancel(token: CardWallReadCardDomain.Token.self)
+    }
+
+    enum Token: CaseIterable, Hashable {
+        case idpChallenge
+        case signAndVerify
+    }
+
     struct State: Equatable {
         let isDemoModus: Bool
         var pin: String
         var loginOption: LoginOption
         var output: Output
         var alertState: AlertState<Action>?
-    }
-
-    enum Token: CaseIterable, Hashable {
-        case idpChallenge
-        case signAndVerify
     }
 
     enum Action: Equatable {
@@ -100,7 +105,7 @@ enum CardWallReadCardDomain {
             return .none
         case .close:
             // This should be handled by the parent reducer
-            return .none
+            return cleanup()
         case let .signChallenge(challenge):
             let pin = state.pin
             let biometrieFlow = state.loginOption == .withBiometry

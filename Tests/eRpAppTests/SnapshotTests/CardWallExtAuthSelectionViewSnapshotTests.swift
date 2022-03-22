@@ -57,7 +57,7 @@ final class CardWallExtAuthSelectionViewSnapshotTests: XCTestCase {
         let sut = CardWallExtAuthSelectionView(
             store: store(for: .init(
                 kkList: Self.testDirectory,
-                error: IDPError.internalError("internalError Test Error"),
+                error: IDPError.internal(error: .notImplemented),
                 selectedKK: Self.testEntryB,
                 orderEgkVisible: false
             ))
@@ -66,7 +66,7 @@ final class CardWallExtAuthSelectionViewSnapshotTests: XCTestCase {
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
     }
 
-    static let testError = IDPError.internalError("TestError")
+    static let testError = IDPError.internal(error: .notImplemented)
 
     static let testEntryA = KKAppDirectory.Entry(name: "Test Entry A", identifier: "identifierA")
     static let testEntryB = KKAppDirectory.Entry(name: "Test Entry B", identifier: "identifierB")

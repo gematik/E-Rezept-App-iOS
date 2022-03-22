@@ -86,6 +86,7 @@ final class AppStartDomainTests: XCTestCase {
                                                             errorToDisplay: nil,
                                                             createPasswordState: nil
                                                         )),
+                    profileSelection: .init(),
                     debug: DebugDomain.State(trackingOptOut: DummyTracker().optOut),
                     unreadMessagesCount: 0,
                     isDemoMode: false
@@ -129,6 +130,7 @@ final class AppStartDomainTests: XCTestCase {
                                              errorToDisplay: nil,
                                              createPasswordState: nil
                                          )),
+                    profileSelection: .init(),
                     debug: DebugDomain.State(trackingOptOut: DummyTracker().optOut),
                     unreadMessagesCount: 0,
                     isDemoMode: false
@@ -159,6 +161,7 @@ final class AppStartDomainTests: XCTestCase {
                                                selectedSecurityOption: nil,
                                                errorToDisplay: nil,
                                                createPasswordState: nil)),
+                    profileSelection: .init(),
                     debug: DebugDomain.State(trackingOptOut: DummyTracker().optOut),
                     unreadMessagesCount: 0,
                     isDemoMode: false

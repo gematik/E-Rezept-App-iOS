@@ -119,8 +119,6 @@ struct RedeemView: View {
                         ),
                         then: { scopedStore in
                             PharmacySearchView(store: scopedStore)
-                                .navigationTitle(L10n.phaSearchTxtTitle)
-                                .navigationBarTitleDisplayMode(.inline)
                         }
                     ),
                     isActive: viewStore.binding(

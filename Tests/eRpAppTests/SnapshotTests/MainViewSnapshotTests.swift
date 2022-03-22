@@ -35,52 +35,36 @@ final class MainViewSnapshotTests: XCTestCase {
                          environment: MainDomain.Dummies.environment)
     }
 
-    private func store(for state: GroupedPrescriptionListDomain.State, profile: UserProfile? = nil)
+    private func store(for state: GroupedPrescriptionListDomain.State)
         -> MainDomain.Store {
         MainDomain.Store(
             initialState: MainDomain.State(
-                prescriptionListState: state,
-                profile: profile ?? testProfileTheoTestprofil
+                prescriptionListState: state
             ),
             reducer: MainDomain.Reducer.empty,
             environment: MainDomain.Dummies.environment
         )
     }
 
-    let testProfileTheoTestprofil = UserProfile(
-        profile: Profile(
-            name: "Theo Testprofil",
-            identifier: UUID(),
-            created: Date(),
-            insuranceId: nil,
-            color: .green,
-            emoji: "🌮",
-            lastAuthenticated: nil,
-            erxTasks: [],
-            erxAuditEvents: []
-        ),
-        connectionStatus: .connected
-    )
-
-    let testProfileOlafOffline = UserProfile(
-        profile: Profile(
-            name: "Olaf Offline",
-            identifier: UUID(),
-            created: Date(),
-            insuranceId: nil,
-            color: .red,
-            emoji: nil,
-            lastAuthenticated: nil,
-            erxTasks: [],
-            erxAuditEvents: []
-        ),
-        connectionStatus: .disconnected
-    )
+    private func store(for profile: UserProfile? = nil) -> ProfileSelectionToolbarItemDomain.Store {
+        ProfileSelectionToolbarItemDomain.Store(
+            initialState: .init(
+                profile: profile ?? UserProfile.Fixtures.theo,
+                profileSelectionState: .init(
+                    profiles: [],
+                    selectedProfileId: nil,
+                    route: nil
+                )
+            ),
+            reducer: .empty,
+            environment: ProfileSelectionToolbarItemDomain.Dummies.environment
+        )
+    }
 
     func testMainView_Empty() {
         let sut = MainView(store: store(for: GroupedPrescriptionListDomain.State(
             groupedPrescriptions: []
-        )))
+        )), profileSelectionToolbarItemStore: store(for: nil))
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
@@ -100,10 +84,10 @@ final class MainViewSnapshotTests: XCTestCase {
             groupedPrescriptions: [groupedPrescription]
         )
         let sut = MainView(
-            store: store(for: state, profile: testProfileOlafOffline)
+            store: store(for: state),
+            profileSelectionToolbarItemStore: store(for: UserProfile.Fixtures.olafOffline)
         )
         .frame(width: 320, height: 700)
-
         assertSnapshots(matching: sut, as: snapshotModi())
     }
 
@@ -120,9 +104,24 @@ final class MainViewSnapshotTests: XCTestCase {
             groupedPrescriptions: [groupedPrescription]
         )
         let sut = MainView(
-            store: store(for: state)
+            store: store(for: state),
+            profileSelectionToolbarItemStore: store(for: nil)
         )
         .frame(width: 320, height: 700)
+
+        assertSnapshots(matching: sut, as: snapshotModi())
+    }
+
+    func testMainView_LowDetailPrescriptions() {
+        let state = GroupedPrescriptionListDomain.State(
+            groupedPrescriptions: [GroupedPrescription.Dummies.twoScannedPrescriptions]
+        )
+
+        let sut = MainView(
+            store: store(for: state),
+            profileSelectionToolbarItemStore: store(for: nil)
+        )
+        .frame(width: 320, height: 1600)
 
         assertSnapshots(matching: sut, as: snapshotModi())
     }
@@ -144,9 +143,10 @@ final class MainViewSnapshotTests: XCTestCase {
         )
 
         let sut = MainView(
-            store: store(for: state)
+            store: store(for: state),
+            profileSelectionToolbarItemStore: store(for: nil)
         )
-        .frame(width: 320, height: 1400)
+        .frame(width: 320, height: 2000)
 
         assertSnapshots(matching: sut, as: snapshotModi())
     }

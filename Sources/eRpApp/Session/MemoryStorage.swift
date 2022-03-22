@@ -23,21 +23,19 @@ import IDP
 import OpenSSL
 
 class MemoryStorage: SecureUserDataStore, IDPStorage {
-    @Injected(\.schedulers) var schedulers: Schedulers
+    private let schedulers: Schedulers
     @Published private var canState: String?
     private var tokenState: CurrentValueSubject<IDPToken?, Never>
     @Published private var discoveryState: DiscoveryDocument?
     @Published private var accessTokenState: String?
 
-    private var cancellable = Set<AnyCancellable>()
-
-    init() {
+    init(schedulers: Schedulers = Schedulers()) {
+        self.schedulers = schedulers
         tokenState = CurrentValueSubject(nil)
 
         tokenState.map { $0?.accessToken }
             .receive(on: schedulers.main)
-            .assign(to: \.accessTokenState, on: self)
-            .store(in: &cancellable)
+            .assign(to: &$accessTokenState)
     }
 
     var can: AnyPublisher<String?, Never> {

@@ -1,3 +1,39 @@
+# Release 1.2.3
+
+fixed (12 changes)
+
+  - Fix settings view design
+  - Fix flaky test due to timezone offsets
+  - Fix low detail prescription status
+  - Fix current profile icon on main screen layout issues
+  - Fix Settings to popToRootview upon routing
+  - Fix log details are no longer visible
+  - Fix KeychainStore retain cycle
+  - Fix retain cycle in DEfaultTrustStoreSession
+  - Fix self retained assign
+  - Fix appearing card wall after switching from a profile that was authenticated...
+  - Fix self retained assign
+  - Fix pharmacy search to be streamwrapped so that user session changes will be propagated
+  - Fix button sizing and some colors according to figma
+
+added (3 changes)
+
+  - Add profile picker to pharmacy and messages tabs
+  - Add Accessibility Identifier and grouping for Prescription Details
+  - Add eRpStyleKit as a new shared library to style the app
+
+internal (1 changes)
+
+  - Add pinning for swiftpm dependencies
+
+changed (5 changes)
+
+  - Change CardWallReadCard to show eGK positioning
+  - Change NewProfileView to use new styling
+  - Change EditProfileView to use new eRpStyleKit
+  - Change UI for the profile picker
+  - Change order of loading from remote
+
 # Release 1.2.2
 
 ### fixed (3 changes)

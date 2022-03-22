@@ -17,98 +17,100 @@
 //
 import SwiftUI
 
-struct Colors {
+// swiftlint:disable missing_docs
+
+public enum Colors {
     // accent colors
-    static let primary = primary600
-    static let secondary = Color(.systemGray6)
-    static let tertiary = primary100
+    public static let primary: Color = primary600
+    public static let secondary = Color(.systemGray6)
+    public static let tertiary: Color = primary100
 
     // colors used for text
-    static let text = Color(.label)
-    static let textSecondary = Color(.secondaryLabel)
-    static let textTertiary = Color(.white)
+    public static let text = Color(.label)
+    public static let textSecondary = Color(.secondaryLabel)
+    public static let textTertiary = Color(.white)
 
     // colors used for screen backgrounds
-    static let backgroundNeutral = Color(.systemBackground)
-    static let backgroundSecondary = Color(.secondarySystemBackground)
+    public static let backgroundNeutral = Color(.systemBackground)
+    public static let backgroundSecondary = Color(.secondarySystemBackground)
 
-    static let alertNegativ = red600
-    static let alertPositiv = secondary600
+    public static let alertNegativ = red600
+    public static let alertPositiv = secondary600
 
-    static let opaqueSeparator = Color(UIColor.opaqueSeparator)
-    static let separator = Color(UIColor.separator)
-    static let blurOverlayColor = Color.black.opacity(0.6)
+    public static let opaqueSeparator = Color(UIColor.opaqueSeparator)
+    public static let separator = Color(UIColor.separator)
+    public static let blurOverlayColor = Color.black.opacity(0.6)
 }
 
 extension Colors {
     // disabled
-    static let disabled = Asset.Colors.disabled.color
+    public static let disabled: Color = Asset.Colors.disabled.color
     // primary == blue
-    static let primary900 = Asset.Colors.primary900.color
-    static let primary800 = Asset.Colors.primary800.color
-    static let primary700 = Asset.Colors.primary700.color
-    static let primary600 = Asset.Colors.primary600.color
-    static let primary500 = Asset.Colors.primary500.color
-    static let primary400 = Asset.Colors.primary400.color
-    static let primary300 = Asset.Colors.primary300.color
-    static let primary200 = Asset.Colors.primary200.color
-    static let primary100 = Asset.Colors.primary100.color
+    public static let primary900: Color = Asset.Colors.primary900.color
+    public static let primary800: Color = Asset.Colors.primary800.color
+    public static let primary700: Color = Asset.Colors.primary700.color
+    public static let primary600: Color = Asset.Colors.primary600.color
+    public static let primary500: Color = Asset.Colors.primary500.color
+    public static let primary400: Color = Asset.Colors.primary400.color
+    public static let primary300: Color = Asset.Colors.primary300.color
+    public static let primary200: Color = Asset.Colors.primary200.color
+    public static let primary100: Color = Asset.Colors.primary100.color
     // secondary == green
-    static let secondary900 = Asset.Colors.secondary900.color
-    static let secondary800 = Asset.Colors.secondary800.color
-    static let secondary700 = Asset.Colors.secondary700.color
-    static let secondary600 = Asset.Colors.secondary600.color
-    static let secondary500 = Asset.Colors.secondary500.color
-    static let secondary400 = Asset.Colors.secondary400.color
-    static let secondary300 = Asset.Colors.secondary300.color
-    static let secondary200 = Asset.Colors.secondary200.color
-    static let secondary100 = Asset.Colors.secondary100.color
+    public static let secondary900: Color = Asset.Colors.secondary900.color
+    public static let secondary800: Color = Asset.Colors.secondary800.color
+    public static let secondary700: Color = Asset.Colors.secondary700.color
+    public static let secondary600: Color = Asset.Colors.secondary600.color
+    public static let secondary500: Color = Asset.Colors.secondary500.color
+    public static let secondary400: Color = Asset.Colors.secondary400.color
+    public static let secondary300: Color = Asset.Colors.secondary300.color
+    public static let secondary200: Color = Asset.Colors.secondary200.color
+    public static let secondary100: Color = Asset.Colors.secondary100.color
     // red
-    static let red900 = Asset.Colors.red900.color
-    static let red800 = Asset.Colors.red800.color
-    static let red700 = Asset.Colors.red700.color
-    static let red600 = Asset.Colors.red600.color
-    static let red500 = Asset.Colors.red500.color
-    static let red400 = Asset.Colors.red400.color
-    static let red300 = Asset.Colors.red300.color
-    static let red200 = Asset.Colors.red200.color
-    static let red100 = Asset.Colors.red100.color
+    public static let red900: Color = Asset.Colors.red900.color
+    public static let red800: Color = Asset.Colors.red800.color
+    public static let red700: Color = Asset.Colors.red700.color
+    public static let red600: Color = Asset.Colors.red600.color
+    public static let red500: Color = Asset.Colors.red500.color
+    public static let red400: Color = Asset.Colors.red400.color
+    public static let red300: Color = Asset.Colors.red300.color
+    public static let red200: Color = Asset.Colors.red200.color
+    public static let red100: Color = Asset.Colors.red100.color
     // yellow
-    static let yellow900 = Asset.Colors.yellow900.color
-    static let yellow800 = Asset.Colors.yellow800.color
-    static let yellow700 = Asset.Colors.yellow700.color
-    static let yellow600 = Asset.Colors.yellow600.color
-    static let yellow500 = Asset.Colors.yellow500.color
-    static let yellow400 = Asset.Colors.yellow400.color
-    static let yellow300 = Asset.Colors.yellow300.color
-    static let yellow200 = Asset.Colors.yellow200.color
-    static let yellow100 = Asset.Colors.yellow100.color
+    public static let yellow900: Color = Asset.Colors.yellow900.color
+    public static let yellow800: Color = Asset.Colors.yellow800.color
+    public static let yellow700: Color = Asset.Colors.yellow700.color
+    public static let yellow600: Color = Asset.Colors.yellow600.color
+    public static let yellow500: Color = Asset.Colors.yellow500.color
+    public static let yellow400: Color = Asset.Colors.yellow400.color
+    public static let yellow300: Color = Asset.Colors.yellow300.color
+    public static let yellow200: Color = Asset.Colors.yellow200.color
+    public static let yellow100: Color = Asset.Colors.yellow100.color
 }
 
 extension Colors {
     // system gray colors
-    static let systemGray = Color(UIColor.systemGray)
-    static let systemGray2 = Color(UIColor.systemGray2)
-    static let systemGray3 = Color(UIColor.systemGray3)
-    static let systemGray4 = Color(UIColor.systemGray4)
-    static let systemGray5 = Color(UIColor.systemGray5)
-    static let systemGray6 = Color(UIColor.systemGray6)
+    public static let systemGray = Color(UIColor.systemGray)
+    public static let systemGray2 = Color(UIColor.systemGray2)
+    public static let systemGray3 = Color(UIColor.systemGray3)
+    public static let systemGray4 = Color(UIColor.systemGray4)
+    public static let systemGray5 = Color(UIColor.systemGray5)
+    public static let systemGray6 = Color(UIColor.systemGray6)
     // system background colors
-    static let systemBackground = Color(UIColor.systemBackground)
-    static let systemBackgroundSecondary = Color(UIColor.secondarySystemBackground)
-    static let systemBackgroundTertiary = Color(UIColor.tertiarySystemBackground)
+    public static let systemBackground = Color(UIColor.systemBackground)
+    public static let systemBackgroundSecondary = Color(UIColor.secondarySystemBackground)
+    public static let systemBackgroundTertiary = Color(UIColor.tertiarySystemBackground)
     // system fill colors
-    static let systemFill = Color(UIColor.systemFill)
-    static let systemFillSecondary = Color(UIColor.secondarySystemFill)
-    static let systemFillTertiary = Color(UIColor.tertiarySystemFill)
-    static let systemFillQuarternary = Color(UIColor.quaternarySystemFill)
+    public static let systemFill = Color(UIColor.systemFill)
+    public static let systemFillSecondary = Color(UIColor.secondarySystemFill)
+    public static let systemFillTertiary = Color(UIColor.tertiarySystemFill)
+    public static let systemFillQuarternary = Color(UIColor.quaternarySystemFill)
     // label colors
-    static let systemLabel = Color(UIColor.label)
-    static let systemLabelSecondary = Color(UIColor.secondaryLabel)
-    static let systemLabelTertiary = Color(UIColor.tertiaryLabel)
-    static let systemLabelQuarternary = Color(UIColor.quaternaryLabel)
+    public static let systemLabel = Color(UIColor.label)
+    public static let systemLabelSecondary = Color(UIColor.secondaryLabel)
+    public static let systemLabelTertiary = Color(UIColor.tertiaryLabel)
+    public static let systemLabelQuarternary = Color(UIColor.quaternaryLabel)
     // colors that are not dynamic
-    static let systemColorWhite = Color.white
-    static let systemColorBlack = Color.black
-    static let systemColorClear = Color.clear
+    public static let systemColorWhite = Color.white
+    public static let systemColorBlack = Color.black
+    public static let systemColorClear = Color.clear
 }

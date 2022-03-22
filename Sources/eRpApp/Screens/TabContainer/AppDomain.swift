@@ -39,6 +39,7 @@ enum AppDomain {
         var pharmacySearch: PharmacySearchDomain.State
         var messages: MessagesDomain.State
         var settingsState: SettingsDomain.State
+        var profileSelection: ProfileSelectionToolbarItemDomain.State
         var debug: DebugDomain.State
         var unreadMessagesCount: Int
 
@@ -51,6 +52,7 @@ enum AppDomain {
         case messages(action: MessagesDomain.Action)
         case settings(action: SettingsDomain.Action)
         case debug(action: DebugDomain.Action)
+        case profile(action: ProfileSelectionToolbarItemDomain.Action)
 
         case isDemoModeReceived(Bool)
         case registerDemoModeListener
@@ -75,11 +77,23 @@ enum AppDomain {
 
     private static let domainReducer = Reducer { state, action, environment in
         switch action {
+        case .profile(action: .profileSelection(action: .close)):
+            switch state.selectedTab {
+            case .main:
+                return Effect(value: .main(action: .setNavigation(tag: nil)))
+            case .messages:
+                return Effect(value: .messages(action: .setNavigation(tag: nil)))
+            case .pharmacySearch:
+                return Effect(value: .pharmacySearch(action: .setNavigation(tag: nil)))
+            default:
+                return .none
+            }
         case .main,
              .pharmacySearch,
              .messages,
              .settings,
-             .debug:
+             .debug,
+             .profile:
             return .none
         case let .isDemoModeReceived(isDemoMode):
             state.isDemoMode = isDemoMode
@@ -137,12 +151,12 @@ enum AppDomain {
         ) { appEnvironment in
             PharmacySearchDomain.Environment(
                 schedulers: appEnvironment.schedulers,
-                pharmacyRepository: appEnvironment.userSessionContainer.userSession.pharmacyRepository,
+                pharmacyRepository: appEnvironment.userSession.pharmacyRepository,
                 locationManager: .live,
                 fhirDateFormatter: appEnvironment.fhirDateFormatter,
                 openHoursCalculator: PharmacyOpenHoursCalculator(),
                 referenceDateForOpenHours: nil,
-                userSession: appEnvironment.userSessionContainer.userSession
+                userSession: appEnvironment.userSession
             )
         }
 
@@ -188,12 +202,30 @@ enum AppDomain {
             )
         }
 
+    private static let profileSelectionReducer: Reducer =
+        ProfileSelectionToolbarItemDomain.reducer.pullback(
+            state: \.profileSelection,
+            action: /Action.profile(action:)
+        ) {
+            .init(
+                schedulers: $0.schedulers,
+                userDataStore: $0.userSessionContainer.userSession.localUserStore,
+                userProfileService: DefaultUserProfileService(
+                    profileDataStore: $0.userSessionContainer.userSession.profileDataStore,
+                    profileOnlineChecker: DefaultProfileOnlineChecker(),
+                    userSession: $0.userSessionContainer.userSession
+                ),
+                router: $0.router
+            )
+        }
+
     static let reducer = Reducer.combine(
         mainPullbackReducer,
         pharmacySearchPullbackReducer,
         messagesPullbackReducer,
         settingsPullbackReducer,
         debugPullbackReducer,
+        profileSelectionReducer,
         domainReducer
     )
     .recordActionsForHints()
@@ -213,6 +245,7 @@ extension AppDomain {
             pharmacySearch: PharmacySearchDomain.Dummies.state,
             messages: MessagesDomain.Dummies.state,
             settingsState: SettingsDomain.Dummies.state,
+            profileSelection: ProfileSelectionToolbarItemDomain.Dummies.state,
             debug: DebugDomain.Dummies.state,
             unreadMessagesCount: 0,
             isDemoMode: false

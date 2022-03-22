@@ -172,7 +172,7 @@ struct KeyVerifier: Codable {
     func encrypted(with publicKey: BrainpoolP256r1.KeyExchange.PublicKey,
                    using cryptoBox: IDPCrypto) throws -> JWE {
         guard let keyVerifierEncoded = try? KeyVerifier.jsonEncoder.encode(self) else {
-            throw IDPError.internalError("constructing key verifier failed")
+            throw IDPError.internal(error: .keyVerifierEncoding)
         }
 
         let keyExchangeContext = JWE.Algorithm.KeyExchangeContext.bpp256r1(
@@ -183,13 +183,13 @@ struct KeyVerifier: Codable {
         guard let jweHeader = try? JWE.Header(algorithm: JWE.Algorithm.ecdh_es(keyExchangeContext),
                                               encryption: .a256gcm,
                                               contentType: "JWT") else {
-            throw IDPError.internalError("constructing jwe header failed")
+            throw IDPError.internal(error: .keyVerifierJweHeaderEncryption)
         }
 
         guard let jwe = try? JWE(header: jweHeader,
                                  payload: keyVerifierEncoded,
                                  nonceGenerator: cryptoBox.aesNonceGenerator) else {
-            throw IDPError.internalError("constructing inner jwe failed")
+            throw IDPError.internal(error: .keyVerifierJwePayloadEncryption)
         }
 
         return jwe

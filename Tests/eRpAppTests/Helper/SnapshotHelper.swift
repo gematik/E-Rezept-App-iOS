@@ -21,6 +21,13 @@ import SwiftUI
 import XCTest
 
 extension XCTestCase {
+    func figmaReference<T>() -> [String: Snapshotting<T, UIImage>] where T: SwiftUI.View {
+        [
+            "light": .image,
+            "dark": .image(precision: 1, traits: UITraitCollection(userInterfaceStyle: .dark)),
+        ]
+    }
+
     func snapshotModi<T>() -> [String: Snapshotting<T, UIImage>] where T: SwiftUI.View {
         [
             "light": .image,

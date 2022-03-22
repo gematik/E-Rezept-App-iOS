@@ -54,6 +54,9 @@ struct MedicationDetailCellView: View {
             }
         }
         .padding(.leading)
+        .accessibilityElement(children: .ignore)
+        .accessibilityValue(value ?? L10n.prscFdTxtNa.text)
+        .accessibilityLabel(title ?? LocalizedStringKey(subtitle ?? value ?? ""))
 
         if isLastInSection {
             Divider()

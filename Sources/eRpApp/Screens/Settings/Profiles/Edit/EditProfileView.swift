@@ -17,6 +17,7 @@
 //
 
 import ComposableArchitecture
+import eRpStyleKit
 import IDP
 import SwiftUI
 
@@ -56,89 +57,56 @@ struct EditProfileView: View {
     }
 
     var body: some View {
-        List {
-            Section(header: ProfilePicturePicker(emoji: viewStore
-                    .binding(get: \.emoji, send: EditProfileDomain.Action.setEmoji),
-                acronym: viewStore.acronym,
-                color: viewStore.color.background,
-                borderColor: viewStore.color.border)) {}
-                .textCase(.none)
+        ScrollView {
+            VStack(spacing: 8) {
+                ProfilePicturePicker(
+                    emoji: viewStore.binding(
+                        get: \.emoji,
+                        send: EditProfileDomain.Action.setEmoji
+                    ),
+                    acronym: viewStore.acronym,
+                    color: viewStore.color.background,
+                    borderColor: viewStore.color.border
+                )
+                .padding(.top, 24)
 
-            Section {
-                TextField(L10n.stgTxtEditProfileNamePlaceholder,
-                          text: viewStore.binding(
-                              get: \.name,
-                              send: EditProfileDomain.Action.setName
-                          )
-                          .animation())
-            }
-            .textCase(.none)
+                SingleElementSectionContainer(footer: {
+                    if viewStore.showEmptyNameWarning {
+                        EmptyProfileError()
+                    }
+                }, content: {
+                    FormTextField(L10n.stgTxtEditProfileNamePlaceholder.key,
+                                  text: viewStore.binding(
+                                      get: \.name,
+                                      send: EditProfileDomain.Action.setName
+                                  )
+                                  .animation())
+                })
 
-            if viewStore.showEmptyNameWarning {
-                Section(header: EmptyProfileError()) {}
-                    .textCase(.none)
-            }
-
-            Section(header: ConnectedProfile(viewStore: viewStore)) {}
-                .textCase(.none)
-
-            Section(
-                header: SectionHeaderView(
-                    text: L10n.stgTxtEditProfileBackgroundSectionTitle,
-                    a11y: A11y.settings.editProfile.stgTxtEditProfileBgColorTitle
-                ).padding(.bottom, 8)
-            ) {
                 ProfileColorPicker(color: viewStore.binding(get: \.color, send: EditProfileDomain.Action.setColor))
-                    .padding(.vertical)
                     .accessibility(identifier: A11y.settings.editProfile.stgTxtEditProfileBgColorPicker)
-            }
-            .textCase(.none)
+                    .background(Color(.tertiarySystemBackground))
+                    .cornerRadius(16)
+                    .padding([.horizontal, .bottom])
 
-            TokenSectionView(store: store)
+                ConnectedProfile(viewStore: viewStore)
 
-            if viewStore.isLoggedIn {
-                Section(
-                    header:
-                    Button(action: {
-                        viewStore.send(.logout)
-                    }, label: {
-                        Text(L10n.stgBtnEditProfileLogout)
-                    })
-                        .buttonStyle(DestructiveSecondaryButtonStyle())
-                        .accessibility(identifier: A11y.settings.editProfile.stgBtnEditProfileLogout),
-                    footer:
-                    Text(L10n.stgTxtEditProfileLogoutInfo)
-                        .font(.footnote)
-                        .foregroundColor(Color(.secondaryLabel))
-                ) {}
-                    .textCase(.none)
-            } else {
-                Section(
-                    header:
-                    Button(action: {
-                        viewStore.send(.login)
-                    }, label: {
-                        Text(L10n.stgBtnEditProfileLogin)
-                    })
-                        .buttonStyle(DestructiveSecondaryButtonStyle())
-                        .accessibility(identifier: A11y.settings.editProfile.stgBtnEditProfileLogin)
-                ) {}
-                    .textCase(.none)
-            }
+                TokenSectionView(store: store)
 
-            Section(
-                footer: DestructiveTextButton(text: L10n.stgBtnEditProfileDelete) {
+                Button {
                     viewStore.send(.delete)
+                } label: {
+                    Text(L10n.stgBtnEditProfileDelete)
                 }
+                .buttonStyle(eRpStyleKit.PrimaryButtonStyle(enabled: true, destructive: true))
                 .accessibility(identifier: A11y.settings.editProfile.stgBtnEditProfileDelete)
-            ) {}
-                .textCase(.none)
+                .padding(.vertical)
+            }
         }
-        .listStyle(InsetGroupedListStyle())
-        // TODO: refactor, maybe custom gestur recognizer "ontouchesbegan" // swiftlint:disable:this todo
-        //            .gesture(TapGesture().onEnded {
-        //                UIApplication.shared.dismissKeyboard()
-        //            })
+        .background(Color(.secondarySystemBackground).ignoresSafeArea())
+        .gesture(TapGesture().onEnded {
+            UIApplication.shared.dismissKeyboard()
+        })
         .navigationTitle(L10n.stgTxtEditProfileTitle)
         .alert(
             store.scope(
@@ -161,19 +129,72 @@ extension EditProfileView {
             Text(L10n.stgTxtEditProfileEmptyNameErrorMessage)
                 .foregroundColor(Colors.red600)
                 .fixedSize(horizontal: false, vertical: true)
-                .transformEffect(.init(translationX: 0, y: -16))
         }
     }
 
     private struct ConnectedProfile: View {
-        let viewStore: ViewStore<EditProfileView.ViewState, EditProfileDomain.Action>
+        @ObservedObject
+        var viewStore: ViewStore<EditProfileView.ViewState, EditProfileDomain.Action>
 
         var body: some View {
-            Text(profileSubtitle)
-                .font(.footnote)
-                .foregroundColor(Color(.secondaryLabel))
-                .fixedSize(horizontal: false, vertical: true)
-                .transformEffect(.init(translationX: 0, y: -20))
+            if viewStore.isLoggedIn {
+                SectionContainer(header: {
+                    Text(L10n.stgTxtEditProfileUserDataSectionTitle)
+                }, content: {
+                    if let fullName = viewStore.state.fullName {
+                        SubTitle(title: fullName, description: L10n.stgTxtEditProfileLabelName)
+                    }
+                    if let insurance = viewStore.state.insurance {
+                        SubTitle(title: insurance, description: L10n.stgTxtEditProfileLabelInsuranceCompany)
+                    }
+//                    Insert CAN here
+//                    if let insurance = viewStore.state.insurance {
+//                        SubTitle(title: insurance, description: L10n.stgTxtEditProfileLabelCan)
+//                    }
+                    if let insuranceId = viewStore.state.insuranceId {
+                        Button(action: {
+                            UIPasteboard.general.string = insuranceId
+                        }, label: {
+                            Label {
+                                SubTitle(title: insuranceId, description: L10n.stgTxtEditProfileLabelKvnr)
+                            } icon: {
+                                Image(systemName: SFSymbolName.copy)
+                            }
+                            .labelStyle(.trailingIcon)
+                        })
+                    }
+                })
+
+                Button(action: {
+                    viewStore.send(.logout)
+                }, label: {
+                    Text(L10n.stgBtnEditProfileLogout)
+                })
+                    .buttonStyle(eRpStyleKit.SecondaryButtonStyle(enabled: true, destructive: true))
+                    .accessibility(identifier: A11y.settings.editProfile.stgBtnEditProfileLogout)
+
+                Text(L10n.stgTxtEditProfileLogoutInfo)
+                    .padding(.horizontal)
+                    .font(.footnote)
+                    .foregroundColor(Color(.secondaryLabel))
+                    .padding(.bottom)
+            } else {
+                Text(L10n.stgTxtEditProfileUserDataSectionTitle)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .font(.headline)
+                    .padding(.horizontal)
+                    .padding(.top)
+                    .padding(.bottom, 8)
+
+                Button(action: {
+                    viewStore.send(.login)
+                }, label: {
+                    Text(L10n.stgBtnEditProfileLogin)
+                })
+                    .buttonStyle(.primary)
+                    .padding(.bottom)
+                    .accessibility(identifier: A11y.settings.editProfile.stgBtnEditProfileLogin)
+            }
         }
 
         var profileSubtitle: LocalizedStringKey {
@@ -215,76 +236,65 @@ extension EditProfileView {
         }
 
         var body: some View {
-            Section(
-                header: SectionHeaderView(
-                    text: L10n.stgTxtEditProfileSecuritySectionTitle,
-                    a11y: A11y.settings.editProfile.stgTxtEditProfileSecuritySectionTitle
-                ).padding(.bottom, 8),
-                footer: footnote
-            ) {
-                NavigationLink(
-                    destination: IfLetStore(tokenStore) { tokenStore in
-                        WithViewStore(tokenStore) { scopedViewStore in
-                            IDPTokenView(token: scopedViewStore.state)
-                        }
-                    },
-                    tag: EditProfileDomain.Route.Tag.token,
-                    selection: viewStore.binding(
-                        get: \.routeTag,
-                        send: EditProfileDomain.Action.setNavigation
-                    )
-                ) {
-                    HStack(spacing: 16) {
-                        Image(systemName: SFSymbolName.key)
-                            .font(.body.weight(.bold))
-                            .foregroundColor(viewStore.isLoggedIn ? Colors.primary500 : Colors.systemLabelSecondary)
-                            .frame(width: 16, height: 16)
+            SectionContainer(header: {
+                                 Text(L10n.stgTxtEditProfileSecuritySectionTitle)
+                                     .accessibilityIdentifier(A11y.settings.editProfile
+                                         .stgTxtEditProfileSecuritySectionTitle)
+                             },
+                             footer: {
+                                 footnote
+                             },
+                             content: {
+                                 NavigationLink(
+                                     destination: IfLetStore(tokenStore) { tokenStore in
+                                         WithViewStore(tokenStore) { scopedViewStore in
+                                             IDPTokenView(token: scopedViewStore.state)
+                                         }
+                                     },
+                                     tag: EditProfileDomain.Route.Tag.token,
+                                     selection: viewStore.binding(
+                                         get: \.routeTag,
+                                         send: EditProfileDomain.Action.setNavigation
+                                     )
+                                 ) {
+                                     Label(title: {
+                                         SubTitle(title: L10n.stgTxtEditProfileSecurityShowTokensLabel,
+                                                  description: L10n.stgTxtEditProfileSecurityShowTokensDescription)
+                                     }, icon: {
+                                         Image(systemName: SFSymbolName.key)
+                                     })
+                                 }
+                                 .accessibilityElement(children: .combine)
+                                 .accessibility(identifier: A11y.settings.editProfile
+                                     .stgBtnEditProfileSecuritySectionShowTokens)
+                                 .buttonStyle(.navigation)
+                                 .disabled(viewStore.state.token == nil)
 
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(L10n.stgTxtEditProfileSecurityShowTokensLabel)
-                                .foregroundColor(highlightColor)
-                            Text(L10n.stgTxtEditProfileSecurityShowTokensDescription)
-                                .font(.subheadline)
-                                .foregroundColor(Colors.systemLabelSecondary)
-                        }
-                    }
-                    .padding(.vertical, 8)
-                    .accessibilityElement(children: .combine)
-                    .accessibility(identifier: A11y.settings.editProfile.stgBtnEditProfileSecuritySectionShowTokens)
-                }
-                .disabled(viewStore.state.token == nil)
-                NavigationLink(
-                    destination: IfLetStore(auditEventsStore) { auditEventsStore in
-                        AuditEventsView(store: auditEventsStore)
-                    },
-                    tag: EditProfileDomain.Route.Tag.auditEvents,
-                    selection: viewStore.binding(
-                        get: \.routeTag,
-                        send: EditProfileDomain.Action.setNavigation
-                    )
-                ) {
-                    HStack(spacing: 16) {
-                        Image(systemName: SFSymbolName.arrowUpArrowDown)
-                            .font(.body.weight(.bold))
-                            .foregroundColor(Colors.primary500)
-                            .frame(width: 16, height: 16)
+                                 NavigationLink(
+                                     destination: IfLetStore(auditEventsStore) { auditEventsStore in
+                                         AuditEventsView(store: auditEventsStore)
+                                     },
+                                     tag: EditProfileDomain.Route.Tag.auditEvents,
+                                     selection: viewStore.binding(
+                                         get: \.routeTag,
+                                         send: EditProfileDomain.Action.setNavigation
+                                     )
+                                 ) {
+                                     Label(title: {
+                                         SubTitle(title: L10n.stgTxtEditProfileSecurityShowAuditEventsLabel,
+                                                  description: L10n.stgTxtEditProfileSecurityShowAuditEventsDescription)
+                                     }, icon: {
+                                         Image(systemName: SFSymbolName.arrowUpArrowDown)
+                                     })
+                                 }
+                                 .buttonStyle(.navigation)
+                                 .accessibilityElement(children: .combine)
+                                 .accessibility(
+                                     identifier: A11y.settings.editProfile
+                                         .stgBtnEditProfileSecuritySectionShowAuditEvents
+                                 )
 
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(L10n.stgTxtEditProfileSecurityShowAuditEventsLabel)
-                                .foregroundColor(Colors.systemLabel)
-                            Text(L10n.stgTxtEditProfileSecurityShowAuditEventsDescription)
-                                .font(.subheadline)
-                                .foregroundColor(Colors.systemLabelSecondary)
-                        }
-                    }
-                    .padding(.vertical, 8)
-                    .accessibilityElement(children: .combine)
-                    .accessibility(
-                        identifier: A11y.settings.editProfile.stgBtnEditProfileSecuritySectionShowAuditEvents
-                    )
-                }
-            }
-            .textCase(.none)
+                             })
         }
 
         @ViewBuilder
@@ -326,8 +336,11 @@ struct ProfileView_Preview: PreviewProvider {
             NavigationView {
                 EditProfileView(store: EditProfileDomain.Dummies.store)
             }
+
             NavigationView {
-                EditProfileView(store: EditProfileDomain.Dummies.store)
+                EditProfileView(store: EditProfileDomain.Store(initialState: EditProfileDomain.Dummies.onlineState,
+                                                               reducer: .empty,
+                                                               environment: EditProfileDomain.Dummies.environment))
             }
         }
     }

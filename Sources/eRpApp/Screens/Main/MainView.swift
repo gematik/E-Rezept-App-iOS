@@ -19,18 +19,21 @@
 import Combine
 import ComposableArchitecture
 import eRpKit
+import eRpStyleKit
 import Introspect
 import SwiftUI
 
 struct MainView: View {
     let store: MainDomain.Store
-    @ObservedObject var viewStore: ViewStore<ViewState, MainDomain.Action>
-    @State
-    var formattedString: String?
+    let profileSelectionToolbarItemStore: ProfileSelectionToolbarItemDomain.Store
 
-    init(store: MainDomain.Store) {
+    @ObservedObject
+    var viewStore: ViewStore<ViewState, MainDomain.Action>
+
+    init(store: MainDomain.Store, profileSelectionToolbarItemStore: ProfileSelectionToolbarItemDomain.Store) {
         self.store = store
         viewStore = ViewStore(store.scope(state: ViewState.init))
+        self.profileSelectionToolbarItemStore = profileSelectionToolbarItemStore
     }
 
     struct ViewState: Equatable {
@@ -38,15 +41,13 @@ struct MainView: View {
         let isDeviceSecurityViewPresented: Bool
         let isDemoModeEnabled: Bool
 
-        let route: MainDomain.Route?
-        let profile: UserProfile?
+        let routeTag: MainDomain.Route.Tag?
 
         init(state: MainDomain.State) {
             isScannerViewPresented = state.scannerState != nil
             isDeviceSecurityViewPresented = state.deviceSecurityState != nil
             isDemoModeEnabled = state.isDemoMode
-            route = state.route
-            profile = state.profile
+            routeTag = state.route?.tag
         }
     }
 
@@ -72,9 +73,10 @@ struct MainView: View {
                 }
                 .toolbar {
                     ToolbarItem(placement: .navigationBarLeading) {
-                        UserProfileSelectionItem(store: store, formattedString: $formattedString)
-                            .accessibility(value: Text(formattedString ?? ""))
-                            .accessibilityElement(children: .combine)
+                        UserProfileSelectionToolbarItem(store: profileSelectionToolbarItemStore) {
+                            viewStore.send(.setNavigation(tag: .selectProfile))
+                        }
+                        .accessibility(identifier: A18n.mainScreen.erxBtnProfile)
                     }
 
                     ToolbarItem(placement: .navigationBarTrailing) {
@@ -125,7 +127,7 @@ struct MainView: View {
                 Rectangle()
                     .frame(width: 0, height: 0, alignment: .center)
                     .sheet(isPresented: Binding<Bool>(get: {
-                        viewStore.route?.tag == .selectProfile
+                        viewStore.routeTag == .selectProfile
                     }, set: { show in
                         if !show {
                             viewStore.send(.setNavigation(tag: nil))
@@ -133,17 +135,17 @@ struct MainView: View {
                     }),
                     onDismiss: {},
                     content: {
-                        IfLetStore(store.scope(
-                            state: (\MainDomain.State.route)
-                                .appending(path: /MainDomain.Route.selectProfile)
-                                .extract(from:),
-                            action: MainDomain.Action.selectProfile(action:)
-                        ), then: ProfileSelectionView.init)
+                        ProfileSelectionView(
+                            store: profileSelectionToolbarItemStore
+                                .scope(state: \.profileSelectionState,
+                                       action: ProfileSelectionToolbarItemDomain.Action.profileSelection(action:))
+                        )
                     })
                     .hidden()
                     .accessibility(hidden: true)
             }
-            .navigationBarTitleDisplayMode(.inline)
+            .navigationTitle(Text(L10n.erxTitle))
+            .navigationBarTitleDisplayMode(viewStore.isDemoModeEnabled ? .inline : .automatic)
             .introspectNavigationController { navigationController in
                 let navigationBar = navigationController.navigationBar
                 navigationBar.barTintColor = UIColor(Colors.systemBackground)
@@ -156,12 +158,10 @@ struct MainView: View {
                 viewStore.send(MainDomain.Action.turnOffDemoMode)
             }
             .onAppear {
-                viewStore.send(.registerProfileListener)
                 viewStore.send(.subscribeToDemoModeChange)
                 viewStore.send(.loadDeviceSecurityView)
             }
             .onDisappear {
-                viewStore.send(.unregisterProfileListener)
                 viewStore.send(.unsubscribeFromDemoModeChange)
             }
         }
@@ -173,75 +173,6 @@ struct MainView: View {
 // swiftlint:disable no_extension_access_modifier
 private extension MainView {
     // MARK: - screen related views
-
-    struct UserProfileSelectionItem: View {
-        let store: MainDomain.Store
-        @ObservedObject var viewStore: ViewStore<ViewState, MainDomain.Action>
-
-        init(store: MainDomain.Store, formattedString: Binding<String?>) {
-            self.store = store
-            viewStore = ViewStore(store.scope(state: ViewState.init))
-            _formattedString = formattedString
-        }
-
-        struct ViewState: Equatable {
-            let profile: UserProfile?
-
-            init(state: MainDomain.State) {
-                profile = state.profile
-            }
-        }
-
-        @Binding
-        var formattedString: String?
-        let maxCharacterLength = 16
-
-        var body: some View {
-            Button(action: {
-                viewStore.send(.showProfileSelection)
-            }, label: {
-                if let profile = viewStore.profile {
-                    HStack(alignment: .center, spacing: 8) {
-                        Circle()
-                            .fill(profile.color.background)
-                            .frame(width: 32, height: 32, alignment: .center)
-                            .overlay(
-                                Text(profile.emoji ?? profile.acronym)
-                                    .font(.system(size: 13).weight(.bold))
-                                    .foregroundColor(Color(.secondaryLabel))
-                            )
-                            .overlay(ProfileCell.ConnectionStatusCircle(status: profile.connectionStatus),
-                                     alignment: .bottomTrailing)
-
-                        VStack(alignment: .leading, spacing: 0) {
-                            HStack(alignment: .center, spacing: 4) {
-                                Text(profile.name.prefix(maxCharacterLength).trimmingCharacters(in: .whitespaces))
-                                    .font(.subheadline.weight(.semibold))
-                                Image(systemName: SFSymbolName.chevronForward)
-                                    .font(.caption2.weight(.semibold))
-                            }
-                            .foregroundColor(Color(.label))
-
-                            if let date = profile.lastSuccessfulSync {
-                                RelativeTimerViewForToolbars(date: date, formattedString: $formattedString)
-                                    .foregroundColor(Color(.secondaryLabel))
-                                    .font(.caption)
-                            } else {
-                                Text(L10n.proTxtSelectionProfileNotConnected)
-                                    .foregroundColor(Color(.secondaryLabel))
-                                    .font(.caption)
-                            }
-                        }
-                    }
-                    .padding(.vertical, 8)
-                } else {
-                    ProgressView()
-                }
-            })
-                .contentShape(Rectangle())
-                .accessibility(identifier: A18n.mainScreen.erxBtnProfile)
-        }
-    }
 
     struct ScanItem: View {
         let action: () -> Void
@@ -268,7 +199,8 @@ struct MainView_Previews: PreviewProvider {
                     MainDomain.State(
                         prescriptionListState: GroupedPrescriptionListDomain.State()
                     )
-                )
+                ),
+                profileSelectionToolbarItemStore: ProfileSelectionToolbarItemDomain.Dummies.store
             )
             .preferredColorScheme(.light)
 
@@ -282,14 +214,17 @@ struct MainView_Previews: PreviewProvider {
                             )
                         )
                     )
-                )
+                ),
+                profileSelectionToolbarItemStore: ProfileSelectionToolbarItemDomain.Dummies.store
             )
             .preferredColorScheme(.light)
 
-            MainView(store: MainDomain.Dummies.store)
+            MainView(store: MainDomain.Dummies.store,
+                     profileSelectionToolbarItemStore: ProfileSelectionToolbarItemDomain.Dummies.store)
                 .preferredColorScheme(.light)
 
-            MainView(store: MainDomain.Dummies.store)
+            MainView(store: MainDomain.Dummies.store,
+                     profileSelectionToolbarItemStore: ProfileSelectionToolbarItemDomain.Dummies.store)
                 .previewDevice("iPod touch (7th generation)")
                 .preferredColorScheme(.dark)
                 .environment(\.sizeCategory, .extraExtraExtraLarge)

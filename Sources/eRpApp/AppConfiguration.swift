@@ -32,6 +32,7 @@ struct AppConfiguration: Equatable {
     internal init(name: String,
                   trustAnchor: TrustAnchor,
                   idp: Server,
+                  idpDefaultScopes: [String] = ["e-rezept", "openid"],
                   erp: Server,
                   base: String = "https://this.is.the.inner.vau.request/",
                   apoVzd: Server,
@@ -40,6 +41,7 @@ struct AppConfiguration: Equatable {
         self.trustAnchor = trustAnchor
         self.idp = idp.url
         idpAdditionalHeader = sharedHeader.merging(idp.header) { _, new in new }
+        self.idpDefaultScopes = idpDefaultScopes
         self.base = URL(string: base)! // swiftlint:disable:this force_unwrapping
         self.erp = erp.url
         erpAdditionalHeader = sharedHeader.merging(erp.header) { _, new in new }
@@ -54,6 +56,7 @@ struct AppConfiguration: Equatable {
     /// URL for the IDP discovery document
     let idp: URL
     let idpAdditionalHeader: [String: String]
+    let idpDefaultScopes: [String]
 
     let trustAnchor: TrustAnchor
     // erp fd

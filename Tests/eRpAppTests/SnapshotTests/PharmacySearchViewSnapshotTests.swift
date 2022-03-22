@@ -29,7 +29,9 @@ final class PharmacySearchViewSnapshotTests: XCTestCase {
     }
 
     func testPharmacySearch() {
-        let sut = PharmacySearchView(store: PharmacySearchDomain.Dummies.store)
+        let sut = NavigationView {
+            PharmacySearchView(store: PharmacySearchDomain.Dummies.store)
+        }
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
@@ -37,15 +39,19 @@ final class PharmacySearchViewSnapshotTests: XCTestCase {
     }
 
     func testPharmacySearch_searchResultEmpty() {
-        let sut = PharmacySearchView(
-            store: Self.storeFor(
-                state: .init(
-                    erxTasks: [],
-                    searchText: "Apothekesdfwerwerasdf",
-                    searchState: .searchResultEmpty
-                )
+        let sut = NavigationView {
+            PharmacySearchView(
+                store: Self.storeFor(
+                    state: .init(
+                        erxTasks: [],
+                        searchText: "Apothekesdfwerwerasdf",
+                        searchState: .searchResultEmpty
+                    )
+                ),
+                profileSelectionToolbarItemStore: Self.storeFor(profile: UserProfile.Dummies.profileA),
+                isModalView: false
             )
-        )
+        }
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
@@ -64,6 +70,19 @@ final class PharmacySearchViewSnapshotTests: XCTestCase {
                 openHoursCalculator: PharmacyOpenHoursCalculator(),
                 referenceDateForOpenHours: Date(),
                 userSession: MockUserSession()
+            )
+        )
+    }
+
+    static func storeFor(profile: UserProfile?) -> ProfileSelectionToolbarItemDomain.Store {
+        .init(
+            initialState: .init(profile: profile, profileSelectionState: .init()),
+            reducer: .empty,
+            environment: ProfileSelectionToolbarItemDomain.Environment(
+                schedulers: Schedulers(),
+                userDataStore: MockUserDataStore(),
+                userProfileService: MockUserProfileService(),
+                router: MockRouting()
             )
         )
     }

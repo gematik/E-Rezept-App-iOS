@@ -30,6 +30,30 @@ final class NewProfileSnapshotTests: XCTestCase {
         diffTool = "open"
     }
 
+    func testEditProfileFigmaVariant1() {
+        let sut = NavigationView {
+            NewProfileView(
+                store: .init(
+                    initialState: .init(
+                        name: "Spooky Dennis",
+                        acronym: "",
+                        emoji: "🎃",
+                        color: .blue
+                    ),
+                    reducer: .empty,
+                    environment: NewProfileDomain.Environment(
+                        schedulers: Schedulers(),
+                        userDataStore: MockUserDataStore(),
+                        profileDataStore: MockProfileDataStore()
+                    )
+                )
+            )
+        }
+        .frame(width: 375, height: 812, alignment: .top)
+
+        assertSnapshots(matching: sut, as: figmaReference())
+    }
+
     func testNewProfileFilledWithEmojiSnapshot() {
         let sut = NewProfileView(
             store: .init(

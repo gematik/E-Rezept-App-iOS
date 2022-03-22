@@ -76,16 +76,22 @@ enum CardWallDomain {
         let accessibilityAnnouncementReceiver: (String) -> Void
     }
 
+    static var dismissTimeout: DispatchQueue.SchedulerTimeType.Stride = 0.5
+
     static let domainReducer = Reducer { state, action, environment in
         switch action {
         case .close:
             // handled within parent view
             return .none
+        case .readCard(action: .close):
+            state.loginOption.showNextScreen = false
+            return Effect(value: .close)
+                .delay(for: dismissTimeout, scheduler: environment.schedulers.main)
+                .eraseToEffect()
         case .introduction(.close),
              .canAction(action: .close),
              .pinAction(action: .close),
              .loginOption(action: .close),
-             .readCard(action: .close),
              .insuranceSelection(action: .close):
             // closing a subscreen should close the whole stack -> forward to generic `.close`
             return Effect(value: .close)
@@ -123,10 +129,12 @@ enum CardWallDomain {
             state.can?.wrongCANEntered = true
             state.can?.showNextScreen = false
             state.pin.showNextScreen = false
+            state.loginOption.showNextScreen = false
             return .none
         case .readCard(action: .wrongPIN):
             state.pin.wrongPinEntered = true
             state.pin.showNextScreen = false
+            state.loginOption.showNextScreen = false
             return .none
         case .introduction,
              .canAction,

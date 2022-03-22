@@ -17,6 +17,7 @@
 //
 
 import ComposableArchitecture
+import eRpStyleKit
 import SwiftUI
 
 struct NewProfileView: View {
@@ -35,9 +36,9 @@ struct NewProfileView: View {
 
     var body: some View {
         NavigationView {
-            List {
-                Section(
-                    header: ProfilePicturePicker(
+            ScrollView {
+                VStack(spacing: 0) {
+                    ProfilePicturePicker(
                         emoji: viewStore.binding(
                             get: \.emoji,
                             send: NewProfileDomain.Action.setEmoji
@@ -47,25 +48,27 @@ struct NewProfileView: View {
                         borderColor: viewStore.color.border
                     )
                     .padding(.top)
-                ) {}
-                    .textCase(.none)
+                    .padding(.bottom, 8)
 
-                Section {
-                    TextField(
-                        L10n.stgTxtNewProfileNamePlaceholder,
-                        text: viewStore.binding(get: \.name, send: NewProfileDomain.Action.setName)
-                    )
+                    SingleElementSectionContainer {
+                        FormTextField(
+                            L10n.stgTxtNewProfileNamePlaceholder.key,
+                            text: viewStore.binding(get: \.name, send: NewProfileDomain.Action.setName)
+                        )
+                    }
+
+                    ProfileColorPicker(color: viewStore
+                        .binding(get: \.color, send: NewProfileDomain.Action.setColor))
+                                            .accessibility(identifier: A11y.settings.newProfile
+                                                .stgTxtNewProfileBgColorPicker)
+                                            .background(Color(.tertiarySystemBackground))
+                                            .cornerRadius(16)
+                                            .padding([.horizontal, .bottom])
                 }
 
-                Section(header: HeadernoteView(text: L10n.stgTxtNewProfileBackgroundSectionTitle,
-                                               a11y: A11y.settings.newProfile.stgTxtNewProfileBgColorTitle)) {
-                    ProfileColorPicker(color: viewStore.binding(get: \.color, send: NewProfileDomain.Action.setColor))
-                        .padding(.vertical)
-                        .accessibility(identifier: A11y.settings.newProfile.stgTxtNewProfileBgColorPicker)
-                }
-                .textCase(.none)
+                Spacer(minLength: 0)
             }
-            .listStyle(InsetGroupedListStyle())
+            .background(Color(.secondarySystemBackground).ignoresSafeArea())
             .gesture(TapGesture().onEnded {
                 UIApplication.shared.dismissKeyboard()
             })

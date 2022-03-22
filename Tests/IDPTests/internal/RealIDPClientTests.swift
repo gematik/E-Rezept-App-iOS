@@ -97,7 +97,7 @@ final class RealIDPClientTests: XCTestCase {
     func testLoadInvalidDiscoveryDocument() throws {
         guard let jwksPath = Bundle(for: Self.self)
             .path(forResource: "jwks-keys", ofType: "json", inDirectory: "JWT.bundle") else {
-            throw IDPError.internalError("Could not load test discovery document")
+            throw IDPError.internal(error: .loadDiscoveryDocumentUnexpectedNil)
         }
 
         var counter = 0
@@ -220,7 +220,7 @@ final class RealIDPClientTests: XCTestCase {
         let ssoString = ssoToken.asciiString!
 
         let privateKey = try! BrainpoolP256r1.KeyExchange.generateKey(compactRepresentable: true)
-        let nonce = try! IDPRandom.generateSecureRandom(length: 12)
+        let nonce = try! generateSecureRandom(length: 12)
         let cryptoBox = IDPCrypto(randomGenerator: { _ in Data(base64Encoded: "random")! },
                                   brainpoolKeyPairGenerator: { privateKey },
                                   aesNonceGenerator: { nonce },
@@ -293,7 +293,7 @@ final class RealIDPClientTests: XCTestCase {
 
     func dummyJwe() throws -> JWE {
         let privateKey = try! BrainpoolP256r1.KeyExchange.generateKey(compactRepresentable: true)
-        let nonce = try! IDPRandom.generateSecureRandom(length: 12)
+        let nonce = try! generateSecureRandom(length: 12)
         let cryptoBox = IDPCrypto(randomGenerator: { _ in Data(base64Encoded: "random")! },
                                   brainpoolKeyPairGenerator: { privateKey },
                                   aesNonceGenerator: { nonce },
@@ -602,7 +602,7 @@ final class RealIDPClientTests: XCTestCase {
 
     let cryptoBox: IDPCrypto = {
         let privateKey = try! BrainpoolP256r1.KeyExchange.generateKey(compactRepresentable: true)
-        let nonce = try! IDPRandom.generateSecureRandom(length: 12)
+        let nonce = try! generateSecureRandom(length: 12)
         let aesKeyData = try! Data(hex: "668D155004E1110DB6914BA40346A302312FA3F1AB647EC79FA12F96793E5205")
         return IDPCrypto(randomGenerator: { _ in "UWWzuvaSG".data(using: .utf8)! },
                          brainpoolKeyPairGenerator: { privateKey },

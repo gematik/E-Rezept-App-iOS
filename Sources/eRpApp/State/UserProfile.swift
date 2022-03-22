@@ -48,18 +48,37 @@ struct UserProfile: ProfileCellModel, Equatable, Identifiable {
 
 extension UserProfile {
     init(from profile: Profile, token: IDPToken?) {
-        self.init(profile: profile, connectionStatus: Self.connectionStatus(for: token))
+        self.init(profile: profile,
+                  connectionStatus: Self.connectionStatus(
+                      for: token, lastAuthenticated:
+                      profile.lastAuthenticated
+                  ))
     }
 
     init(from profile: Profile, isAuthenticated: Bool) {
-        self.init(profile: profile, connectionStatus: isAuthenticated ? .connected : .disconnected)
+        self.init(profile: profile,
+                  connectionStatus: Self.connectionStatus(
+                      for: isAuthenticated,
+                      lastAuthenticated: profile.lastAuthenticated
+                  ))
     }
 
     struct SSOTokenHeader: Claims, Decodable {
         public let exp: Date?
     }
 
-    private static func connectionStatus(for token: IDPToken?) -> ProfileConnectionStatus? {
+    private static func connectionStatus(for isAuthenticated: Bool,
+                                         lastAuthenticated: Date?) -> ProfileConnectionStatus? {
+        if isAuthenticated {
+            return .connected
+        }
+        if lastAuthenticated != nil {
+            return .disconnected
+        }
+        return nil
+    }
+
+    private static func connectionStatus(for token: IDPToken?, lastAuthenticated: Date?) -> ProfileConnectionStatus? {
         if let ssoToken = token?.ssoToken?.data(using: .utf8) {
             let elements = ssoToken.split(separator: 0x2E, omittingEmptySubsequences: false)
             if let header = elements.first,
@@ -72,7 +91,11 @@ extension UserProfile {
         if token?.expires.compare(Date()) == .orderedDescending {
             return .connected
         }
-        return .disconnected
+        if lastAuthenticated != nil {
+            return .disconnected
+        } else {
+            return nil
+        }
     }
 }
 

@@ -74,7 +74,7 @@ final class ErxTaskFHIRDataStoreIntegrationTests: XCTestCase {
             redirectURI: environment.appConfiguration.redirectUri,
             extAuthRedirectURI: environment.appConfiguration.extAuthRedirectUri,
             discoveryURL: environment.appConfiguration.idp,
-            scopes: ["e-rezept", "openid"]
+            scopes: environment.appConfiguration.idpDefaultScopes
         )
 
         let idpSession = DefaultIDPSession(

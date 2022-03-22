@@ -153,7 +153,7 @@ class StreamWrappedEventsStore: EventsStore {
 		self.hintState = current.hintState
 
 		stream
-			.assign(to: \.current, on: self)
+			.weakAssign(to: \.current, on: self)
 			.store(in: &disposeBag)
 
 
@@ -185,7 +185,7 @@ class StreamWrappedIDPSession: IDPSession {
 
 
 		stream
-			.assign(to: \.current, on: self)
+			.weakAssign(to: \.current, on: self)
 			.store(in: &disposeBag)
 
 
@@ -312,11 +312,6 @@ class StreamWrappedIDPSession: IDPSession {
             .eraseToAnyPublisher()
 	}
 
-	func asVAUAccessTokenProvider() -> VAUAccessTokenProvider {
-        current.asVAUAccessTokenProvider(
-            )
-	}
-
 	func verifyAndExchange(signedChallenge: SignedChallenge, idTokenValidator: @escaping (TokenPayload.IDTokenPayload) -> Result<Bool, Error>) -> AnyPublisher<IDPToken, IDPError> {
         stream
         	.map { $0.verifyAndExchange(
@@ -344,6 +339,11 @@ class StreamWrappedIDPSession: IDPSession {
             .eraseToAnyPublisher()
 	}
 
+	func asVAUAccessTokenProvider() -> VAUAccessTokenProvider {
+        current.asVAUAccessTokenProvider(
+            )
+	}
+
 
 }
 
@@ -358,7 +358,7 @@ class StreamWrappedNFCSignatureProvider: NFCSignatureProvider {
 
 
 		stream
-			.assign(to: \.current, on: self)
+			.weakAssign(to: \.current, on: self)
 			.store(in: &disposeBag)
 
 
@@ -400,7 +400,7 @@ class StreamWrappedPagedAuditEventsController: PagedAuditEventsController {
 
 
 		stream
-			.assign(to: \.current, on: self)
+			.weakAssign(to: \.current, on: self)
 			.store(in: &disposeBag)
 
 
@@ -424,6 +424,37 @@ class StreamWrappedPagedAuditEventsController: PagedAuditEventsController {
 
 }
 
+class StreamWrappedPharmacyRepository: PharmacyRepository {
+    private var disposeBag: Set<AnyCancellable> = []
+	private let stream: AnyPublisher<PharmacyRepository, Never>
+	private var current: PharmacyRepository
+
+	init(stream: AnyPublisher<PharmacyRepository, Never>, current: PharmacyRepository) {
+		self.stream = stream
+		self.current = current
+
+
+		stream
+			.weakAssign(to: \.current, on: self)
+			.store(in: &disposeBag)
+
+
+	}
+
+
+	func searchPharmacies(searchTerm: String, position: Position?) -> AnyPublisher<[PharmacyLocation], PharmacyRepositoryError> {
+        stream
+        	.map { $0.searchPharmacies(
+				searchTerm: searchTerm,
+				position: position
+            ) }
+            .switchToLatest()
+            .eraseToAnyPublisher()
+	}
+
+
+}
+
 class StreamWrappedProfileDataStore: ProfileDataStore {
     private var disposeBag: Set<AnyCancellable> = []
 	private let stream: AnyPublisher<ProfileDataStore, Never>
@@ -435,7 +466,7 @@ class StreamWrappedProfileDataStore: ProfileDataStore {
 
 
 		stream
-			.assign(to: \.current, on: self)
+			.weakAssign(to: \.current, on: self)
 			.store(in: &disposeBag)
 
 
@@ -499,7 +530,7 @@ class StreamWrappedSecureUserDataStore: SecureUserDataStore {
 
 
 		stream
-			.assign(to: \.current, on: self)
+			.weakAssign(to: \.current, on: self)
 			.store(in: &disposeBag)
 
 
@@ -591,16 +622,16 @@ class StreamWrappedUserDataStore: UserDataStore {
 		self.appStartCounter = current.appStartCounter
 
 		stream
-			.assign(to: \.current, on: self)
+			.weakAssign(to: \.current, on: self)
 			.store(in: &disposeBag)
 
 		stream
 			.map(\.isOnboardingHidden)
-			.assign(to: \.isOnboardingHidden, on: self)
+			.weakAssign(to: \.isOnboardingHidden, on: self)
 			.store(in: &disposeBag)
 		stream
 			.map(\.serverEnvironmentName)
-			.assign(to: \.serverEnvironmentName, on: self)
+			.weakAssign(to: \.serverEnvironmentName, on: self)
 			.store(in: &disposeBag)
 
 	}
@@ -731,7 +762,6 @@ class StreamWrappedUserSession: UserSession {
 		self.stream = stream
 		self.current = current
 
-		self.pharmacyRepository = current.pharmacyRepository
 		self.isDemoMode = current.isDemoMode
 		self.extAuthRequestStorage = current.extAuthRequestStorage
 		self.vauStorage = current.vauStorage
@@ -742,44 +772,40 @@ class StreamWrappedUserSession: UserSession {
 		self.profileSecureDataWiper = current.profileSecureDataWiper
 
 		stream
-			.assign(to: \.current, on: self)
+			.weakAssign(to: \.current, on: self)
 			.store(in: &disposeBag)
 
 		stream
-			.map(\.pharmacyRepository)
-			.assign(to: \.pharmacyRepository, on: self)
-			.store(in: &disposeBag)
-		stream
 			.map(\.isDemoMode)
-			.assign(to: \.isDemoMode, on: self)
+			.weakAssign(to: \.isDemoMode, on: self)
 			.store(in: &disposeBag)
 		stream
 			.map(\.extAuthRequestStorage)
-			.assign(to: \.extAuthRequestStorage, on: self)
+			.weakAssign(to: \.extAuthRequestStorage, on: self)
 			.store(in: &disposeBag)
 		stream
 			.map(\.vauStorage)
-			.assign(to: \.vauStorage, on: self)
+			.weakAssign(to: \.vauStorage, on: self)
 			.store(in: &disposeBag)
 		stream
 			.map(\.trustStoreSession)
-			.assign(to: \.trustStoreSession, on: self)
+			.weakAssign(to: \.trustStoreSession, on: self)
 			.store(in: &disposeBag)
 		stream
 			.map(\.appSecurityManager)
-			.assign(to: \.appSecurityManager, on: self)
+			.weakAssign(to: \.appSecurityManager, on: self)
 			.store(in: &disposeBag)
 		stream
 			.map(\.deviceSecurityManager)
-			.assign(to: \.deviceSecurityManager, on: self)
+			.weakAssign(to: \.deviceSecurityManager, on: self)
 			.store(in: &disposeBag)
 		stream
 			.map(\.profileId)
-			.assign(to: \.profileId, on: self)
+			.weakAssign(to: \.profileId, on: self)
 			.store(in: &disposeBag)
 		stream
 			.map(\.profileSecureDataWiper)
-			.assign(to: \.profileSecureDataWiper, on: self)
+			.weakAssign(to: \.profileSecureDataWiper, on: self)
 			.store(in: &disposeBag)
 
 	}
@@ -796,7 +822,9 @@ class StreamWrappedUserSession: UserSession {
 	lazy var profileDataStore: ProfileDataStore = {
 		StreamWrappedProfileDataStore(stream: stream.map{ $0.profileDataStore }.eraseToAnyPublisher(), current: current.profileDataStore )
 	}()
-	private(set) var pharmacyRepository: PharmacyRepository
+	lazy var pharmacyRepository: PharmacyRepository = {
+		StreamWrappedPharmacyRepository(stream: stream.map{ $0.pharmacyRepository }.eraseToAnyPublisher(), current: current.pharmacyRepository )
+	}()
 	lazy var localUserStore: UserDataStore = {
 		StreamWrappedUserDataStore(stream: stream.map{ $0.localUserStore }.eraseToAnyPublisher(), current: current.localUserStore )
 	}()

@@ -730,6 +730,7 @@ lane :compile_foss do
   require 'open-uri'
 
   dependencies = YAML.load_file("../dependencies.yml").map { |entry|
+    UI.message("Load #{entry[:name]}")
     license = ""
     open(entry[:license_uri]).read().each_line{|line| license += "#{line.strip}\n" }
     license = license.gsub(/\R{2}/, 'PARAGRAPH_BREAK')

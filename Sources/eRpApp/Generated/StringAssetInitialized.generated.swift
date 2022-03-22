@@ -2,6 +2,7 @@
 // DO NOT EDIT
 
 import SwiftUI
+import eRpStyleKit
 
 /// AUTO GENERATED – DO NOT EDIT
 ///
@@ -71,6 +72,14 @@ extension IDPTokenView.TokenCell {
         self.init(title: title.key, token: token)
     }
 }
+extension KeyValuePair {
+    init(key: StringAsset, value: StringAsset) {
+    self.init(key: key.key, value: value.key)
+    }
+    init(key: StringAsset, value: String) {
+    self.init(key: key.key, value: value)
+    }
+}
 extension LegalNoticeView.LegalNoticeContactView {
     init(iconSize: CGFloat = 22, title: StringAsset, webLink: URL? = nil, emailLink: URL? = nil, phoneLink: URL? = nil) {
         self.init(iconSize: iconSize, title: title.key, webLink: webLink, emailLink: emailLink, phoneLink: phoneLink)
@@ -97,8 +106,8 @@ extension MedicationDetailCellView {
     }
 }
 extension MedicationInfoView.CodeInfo {
-    init(code: String? = nil, codeTitle: StringAsset) {
-        self.init(code: code, codeTitle: codeTitle.key)
+    init(code: String? = nil, codeTitle: StringAsset, accessibilityId: String) {
+        self.init(code: code, codeTitle: codeTitle.key, accessibilityId: accessibilityId)
     }
 }
 extension MedicationRedeemView {
@@ -143,12 +152,28 @@ extension SectionHeaderView {
 }
 extension SecureFieldWithReveal {
     init(titleKey: StringAsset, accessibilityLabelKey: StringAsset? = nil, text: Binding<String>, textContentType: UITextContentType? = nil, onCommit: @escaping () -> Void) {
-        self.init(titleKey: titleKey.key, accessibilityLabelKey: accessibilityLabelKey?.key, text: text, textContentType: textContentType, onCommit: onCommit)
+    self.init(titleKey: titleKey.key, accessibilityLabelKey: accessibilityLabelKey?.key, text: text, textContentType: textContentType, onCommit: onCommit)
     }
 }
 extension SelectionCell {
     init(text: StringAsset, description: StringAsset? = nil, a11y: String, iconSize: CGFloat = 22, systemImage: String? = nil, isOn: Binding<Bool>) {
         self.init(text: text.key, description: description?.key, a11y: a11y, iconSize: iconSize, systemImage: systemImage, isOn: isOn)
+    }
+}
+extension SubTitle {
+    init(title: StringAsset, description: StringAsset? = nil, details: StringAsset? = nil) {
+    self.init(title: title.key, description: description?.key, details: details?.key)
+    }
+    init(title: String, description: StringAsset) {
+    self.init(title: title, description: description.key)
+    }
+    init(title: StringAsset, description: String) {
+    self.init(title: title.key, description: description)
+    }
+}
+extension SubTitleTop {
+    init(subject: StringAsset, title: StringAsset? = nil) {
+    self.init(subject: subject.key, title: title?.key)
     }
 }
 extension TertiaryListButton {
@@ -163,6 +188,6 @@ extension Tile {
 }
 extension ToggleCell {
     init(text: StringAsset, a11y: String, systemImage: String? = nil, textColor: Color = Colors.text, iconColor: Color = Colors.primary500, backgroundColor: Color = Colors.systemBackgroundTertiary, isToggleOn: Binding<Bool> = .constant(false), isDisabled: Binding<Bool> = .constant(false)) {
-        self.init(text: text.key, a11y: a11y, systemImage: systemImage, textColor: textColor, iconColor: iconColor, backgroundColor: backgroundColor, isToggleOn: isToggleOn, isDisabled: isDisabled)
+    self.init(text: text.key, a11y: a11y, systemImage: systemImage, textColor: textColor, iconColor: iconColor, backgroundColor: backgroundColor, isToggleOn: isToggleOn, isDisabled: isDisabled)
     }
 }

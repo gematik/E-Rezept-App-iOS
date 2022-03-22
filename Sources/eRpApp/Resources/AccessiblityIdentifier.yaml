@@ -2,6 +2,10 @@ controls:
   emojiPicker:
     - ctl_btn_emoji_picker_edit_save
     - ctl_btn_emoji_picker_edit
+  searchBar:
+    - ctl_txt_search_bar_field
+    - ctl_btn_search_bar_delete_text
+    - ctl_btn_search_bar_cancel
 migration:
   - amg_txt_and_spinner
 scanner:
@@ -230,6 +234,7 @@ mainScreen:
   - erx_detailed_block_prescription_name
   - erx_detailed_block_prescription_validity
   - erx_detailed_block_redeem_all
+  - erx_detailed_block_status
   - erx_btn_profile
   - erx_btn_scn_prescription
   - erx_hnt_demo_mode_tour
@@ -246,9 +251,15 @@ prescriptionDetails:
   - prsc_dtl_hnt_substitution
   - prsc_dtl_hnt_dosage_instructions
   - prsc_dtl_hnt_keep_overview
+  - prsc_dtl_txt_task_id
+  - prsc_dtl_txt_access_code
 pharmacySearch:
-  - pha_search_txt_search_field
   - pha_search_txt_result_list
+  - pha_search_search_running
+  - pha_search_localizing_device
+  - pha_search_start
+  - pha_search_no_results
+  - pha_search_error
 pharmacyDetail:
   - pha_detail_txt_subtitle
   - pha_detail_btn_organization

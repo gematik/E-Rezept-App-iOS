@@ -1,0 +1,39 @@
+#!/bin/sh
+
+# scripts/cibuild: Setup environment for CI and run tests. This is primarily
+#                 designed to run on the continuous integration server.
+
+BUILD_TYPE=${1-Release}
+
+set -ev
+
+cd "$(dirname "$0")/.."
+
+echo "Prepare fortify scan started at…"
+date "+%H:%M:%S"
+
+# Setup project
+scripts/setup ${BUILD_TYPE}
+
+for file in $(git grep -l "[g]ematik_private_code_block_begin")
+do
+    sed -i '' '/[g]ematik_private_code_block_begin/,/[g]ematik_private_code_block_end/ d' $file
+done
+
+if [ -f ".githubignore" ]; then
+  if [ -f ".gitignore" ]; then
+    printf "\n" >> .gitignore
+    cat .githubignore >> .gitignore
+  fi
+  rm -f .githubignore
+fi
+
+if [[ -z "${CIBUILD}" ]]; then
+  export SAST_FILENAME="scan_$(date '+%Y-%m-%d_%H:%M:%s').zip"
+  zip -r "$SAST_FILENAME" . -x ".git*" -x "DerivedData/*" -x "artifacts/*" -x "distribution/*" -x "*.ipa" -x "*.zip" -x "Carthage/Checkouts/*"
+else
+  rm -rf "./DerivedData" "./artifacts" "./distribution" "./*.ipa" "./*.zip" "./Carthage/Checkouts"
+fi
+
+echo "Done"
+date "+%H:%M:%S"

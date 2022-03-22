@@ -56,7 +56,7 @@ final class IDPIntegrationTests: XCTestCase {
             redirectURI: environment.appConfiguration.redirectUri,
             extAuthRedirectURI: environment.appConfiguration.extAuthRedirectUri,
             discoveryURL: environment.appConfiguration.idp,
-            scopes: ["e-rezept", "openid"]
+            scopes: environment.appConfiguration.idpDefaultScopes
         )
         let httpClient = DefaultHTTPClient(
             urlSessionConfiguration: .ephemeral,
@@ -254,7 +254,7 @@ final class IDPIntegrationTests: XCTestCase {
             redirectURI: environment.appConfiguration.redirectUri,
             extAuthRedirectURI: environment.appConfiguration.extAuthRedirectUri,
             discoveryURL: environment.appConfiguration.idp,
-            scopes: ["e-rezept", "openid"]
+            scopes: environment.appConfiguration.idpDefaultScopes
         )
         let altVerifyIDPSession = DefaultIDPSession(
             config: altVerifyIDPSessionConfiguration,
@@ -417,7 +417,7 @@ final class IDPIntegrationTests: XCTestCase {
             redirectURI: environment.appConfiguration.redirectUri,
             extAuthRedirectURI: environment.appConfiguration.extAuthRedirectUri,
             discoveryURL: environment.appConfiguration.idp,
-            scopes: ["e-rezept", "openid"]
+            scopes: environment.appConfiguration.idpDefaultScopes
         )
         let httpClient = DefaultHTTPClient(
             urlSessionConfiguration: .ephemeral,

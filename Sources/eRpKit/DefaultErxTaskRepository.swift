@@ -92,13 +92,13 @@ public class DefaultErxTaskRepository: ErxTaskRepository {
     public func loadRemoteAll(for locale: String?) -> AnyPublisher<[ErxTask], ErrorType> {
         loadRemoteLatestTasks()
             .flatMap { _ in
-                self.loadRemoteLatestAuditEvents(for: locale)
+                self.loadRemoteLatestMedicationDispenses()
             }
             .flatMap { _ in
                 self.loadRemoteLatestCommunications()
             }
             .flatMap { _ in
-                self.loadRemoteLatestMedicationDispenses()
+                self.loadRemoteLatestAuditEvents(for: locale)
             }
             .flatMap { _ -> AnyPublisher<[ErxTask], ErrorType> in
                 self.disk.listAllTasks()

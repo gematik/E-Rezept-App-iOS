@@ -76,7 +76,7 @@ final class CardWallExtAuthConfirmationViewSnapshotTests: XCTestCase {
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
     }
 
-    static let testError = IDPError.internalError("TestError")
+    static let testError = IDPError.internal(error: .notImplemented)
 
     static let testEntry = KKAppDirectory.Entry(name: "Dummy KK", identifier: "dummy_identifier")
 }

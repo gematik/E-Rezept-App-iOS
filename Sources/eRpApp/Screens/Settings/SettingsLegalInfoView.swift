@@ -17,6 +17,7 @@
 //
 
 import ComposableArchitecture
+import eRpStyleKit
 import SwiftUI
 
 struct SettingsLegalInfoView: View {
@@ -45,7 +46,10 @@ struct SettingsLegalInfoView: View {
     }
 
     var body: some View {
-        Group {
+        SectionContainer(header: {
+            Label(title: { Text(L10n.stgTxtHeaderLegalInfo) }, icon: {})
+                .accessibilityIdentifier(A18n.settings.legalNotice.stgLnoTxtHeaderLegalInfo)
+        }, content: {
             NavigationLink(
                 destination: LegalNoticeView(),
                 isActive: viewStore.binding(
@@ -53,12 +57,10 @@ struct SettingsLegalInfoView: View {
                     send: SettingsDomain.Action.toggleLegalNoticeView
                 )
             ) {
-                ListCellView(
-                    sfSymbolName: SFSymbolName.info,
-                    text: L10n.stgLnoTxtLegalNotice
-                )
+                Label(L10n.stgLnoTxtLegalNotice, systemImage: SFSymbolName.info)
             }
             .accessibility(identifier: A18n.settings.legalNotice.stgLnoTxtLegalNotice)
+            .buttonStyle(.navigation)
 
             NavigationLink(
                 destination: DataPrivacyView(),
@@ -67,12 +69,10 @@ struct SettingsLegalInfoView: View {
                     send: SettingsDomain.Action.toggleDataProtectionView
                 )
             ) {
-                ListCellView(
-                    sfSymbolName: SFSymbolName.shield,
-                    text: L10n.stgDpoTxtDataPrivacy
-                )
+                Label(L10n.stgDpoTxtDataPrivacy, systemImage: SFSymbolName.shield)
             }
             .accessibility(identifier: A18n.settings.dataPrivacy.stgDprTxtDataPrivacy)
+            .buttonStyle(.navigation)
 
             NavigationLink(
                 destination: FOSSView(),
@@ -81,12 +81,10 @@ struct SettingsLegalInfoView: View {
                     send: SettingsDomain.Action.toggleFOSSView
                 )
             ) {
-                ListCellView(
-                    sfSymbolName: SFSymbolName.heartTextSquare,
-                    text: L10n.stgDpoTxtFoss
-                )
+                Label(L10n.stgDpoTxtFoss, systemImage: SFSymbolName.heartTextSquare)
             }
             .accessibility(identifier: A18n.settings.foss.stgDprTxtFoss)
+            .buttonStyle(.navigation)
 
             NavigationLink(
                 destination: TermsOfUseView(),
@@ -95,13 +93,11 @@ struct SettingsLegalInfoView: View {
                     send: SettingsDomain.Action.toggleTermsOfUseView
                 )
             ) {
-                ListCellView(
-                    sfSymbolName: SFSymbolName.docPlaintext,
-                    text: L10n.stgDpoTxtTermsOfUse
-                )
+                Label(L10n.stgDpoTxtTermsOfUse, systemImage: SFSymbolName.docPlaintext)
             }
             .accessibility(identifier: A18n.settings.termsOfUse.stgTouTxtTermsOfUse)
-        }
+            .buttonStyle(.navigation)
+        })
     }
 }
 

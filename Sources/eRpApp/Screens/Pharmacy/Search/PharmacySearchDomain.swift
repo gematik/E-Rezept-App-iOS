@@ -37,6 +37,21 @@ enum PharmacySearchDomain: Equatable {
         case search
     }
 
+    enum Route: Equatable {
+        case selectProfile
+
+        enum Tag: Int {
+            case selectProfile
+        }
+
+        var tag: Tag {
+            switch self {
+            case .selectProfile:
+                return .selectProfile
+            }
+        }
+    }
+
     /// Same screen shows different UI elements based on the current state of the search
     enum SearchState: Equatable {
         case startView
@@ -92,6 +107,8 @@ enum PharmacySearchDomain: Equatable {
         var pharmacyFilterOptions: [PharmacySearchFilterDomain.PharmacyFilterOption] = []
         /// The current state the search is at
         var searchState: SearchState = .startView
+
+        var route: Route?
     }
 
     enum Action: Equatable {
@@ -118,6 +135,8 @@ enum PharmacySearchDomain: Equatable {
         // Device location
         case requestLocation
         case locationManager(LocationManager.Action)
+
+        case setNavigation(tag: Route.Tag?)
     }
 
     struct Environment {
@@ -156,14 +175,11 @@ enum PharmacySearchDomain: Equatable {
         case .performSearch:
             // [REQ:gemSpec_eRp_FdV:A_20183] search results mirrored verbatim, no sorting, no highlighting
             state.searchState = .searchRunning
-            return .concatenate(
-                .cancel(id: Token.search),
-                environment.searchPharmacies(
-                    searchTerm: state.searchText,
-                    location: state.currentLocation
-                )
-                .cancellable(id: Token.search)
+            return environment.searchPharmacies(
+                searchTerm: state.searchText,
+                location: state.currentLocation
             )
+            .cancellable(id: Token.search, cancelInFlight: true)
         case let .pharmaciesReceived(result):
             switch result {
             case let .success(pharmacies):
@@ -264,6 +280,12 @@ enum PharmacySearchDomain: Equatable {
             )
         case .locationManager:
             return .none
+        case .setNavigation(tag: .selectProfile):
+            state.route = .selectProfile
+            return .none
+        case .setNavigation(tag: nil):
+            state.route = nil
+            return .none
         }
     }
 
@@ -272,7 +294,9 @@ enum PharmacySearchDomain: Equatable {
         pharmacyDetailPullbackReducer,
         domainReducer
     )
+}
 
+extension PharmacySearchDomain {
     static let pharmacyFilterPullbackReducer: Reducer =
         PharmacySearchFilterDomain.reducer.optional().pullback(
             state: \.pharmacyFilterState,
@@ -310,6 +334,7 @@ extension PharmacySearchDomain.Environment {
             position = Position(lat: latitude, lon: longitude)
         }
         return pharmacyRepository.searchPharmacies(searchTerm: searchTerm, position: position)
+            .first()
             .catchToEffect()
             .map(PharmacySearchDomain.Action.pharmaciesReceived)
             .receive(on: schedulers.main.animation())
@@ -339,11 +364,6 @@ extension PharmacySearchDomain {
             searchText: "Apotheke",
             pharmacies: [],
             searchState: .searchRunning
-        )
-        static let stateSearchTermInsufficient = State(
-            erxTasks: [ErxTask.Dummies.erxTaskReady],
-            searchText: "Ap",
-            pharmacies: []
         )
         static let stateFilterItems = State(
             erxTasks: [ErxTask.Dummies.erxTaskReady],

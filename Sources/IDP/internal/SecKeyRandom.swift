@@ -32,12 +32,12 @@ public func generateSecureRandom(length: Int, randomizer: SecRandomRef? = kSecRa
     var randomBytesBuffer = [UInt8](repeating: 0x0, count: length)
     let rcStatus: OSStatus = try randomBytesBuffer.withUnsafeMutableBytes { (buffer: UnsafeMutableRawBufferPointer) in
         guard let ptr = buffer.baseAddress else {
-            throw IDPError.internalError("Invalid byte buffer")
+            throw IDPError.internal(error: .invalidByteBuffer)
         }
         return SecRandomCopyBytes(randomizer, length, ptr)
     }
     guard rcStatus == errSecSuccess else {
-        throw IDPError.internalError("Could not generate Random bytes. [Count: \(length)]")
+        throw IDPError.internal(error: .generatingSecureRandom(length: length))
     }
     return Data(randomBytesBuffer)
 }

@@ -131,7 +131,7 @@ extension X509TrustStore {
 
     private func retrieveSignerFromCaCertificates(eeCertificate: X509) throws -> X509 {
         guard let signer = caCerts.first(where: { $0.issued(eeCertificate) }) else {
-            throw TrustStoreError.internalError("Every ee certificate contained in trust store must have a signer.")
+            throw TrustStoreError.internal(error: .missingSignerForEECertificate)
         }
         return signer
     }

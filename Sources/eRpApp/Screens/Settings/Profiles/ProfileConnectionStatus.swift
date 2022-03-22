@@ -17,9 +17,16 @@
 //
 
 import Foundation
+import SwiftUI
 
 enum ProfileConnectionStatus: Equatable {
     case connected
     case inactiveConnected(String)
     case disconnected
+}
+
+extension ProfileConnectionStatus {
+    var statusColor: Color {
+        self == .connected ? Colors.secondary600 : Colors.red600
+    }
 }

@@ -129,7 +129,7 @@ public struct RegistrationData: Claims, Codable {
             let signedChallengeJWE = try? JWE(header: jweHeader,
                                               payload: jwePayload,
                                               nonceGenerator: cryptoBox.aesNonceGenerator) else {
-            throw IDPError.internalError("Unable to encrypt signed challenge")
+            throw IDPError.internal(error: .registrationDataEncryption)
         }
 
         return signedChallengeJWE

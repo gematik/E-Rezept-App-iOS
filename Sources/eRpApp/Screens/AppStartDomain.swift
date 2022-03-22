@@ -79,6 +79,7 @@ enum AppStartDomain {
                             createPasswordState: nil
                         )
                     ),
+                    profileSelection: .init(),
                     debug: DebugDomain.State(trackingOptOut: environment.tracker.optOut),
                     unreadMessagesCount: 0,
                     isDemoMode: false
@@ -119,6 +120,7 @@ enum AppStartDomain {
                             createPasswordState: nil
                         )
                     ),
+                    profileSelection: .init(),
                     debug: DebugDomain.State(trackingOptOut: environment.tracker.optOut),
                     unreadMessagesCount: 0,
                     isDemoMode: false
@@ -173,7 +175,10 @@ enum AppStartDomain {
     static let router: (Endpoint) -> Effect<Action, Never> = { route in
         switch route {
         case .settings:
-            return Effect(value: .app(action: .selectTab(.settings)))
+            return Effect.concatenate(
+                Effect(value: .app(action: .settings(action: .popToRootView))),
+                Effect(value: .app(action: .selectTab(.settings)))
+            )
         case .scanner:
             return Effect(value: .app(action: .main(action: .showScannerView)))
         case .messages:

@@ -56,7 +56,7 @@ struct IDPCrypto {
             try BrainpoolP256r1.KeyExchange.generateKey(compactRepresentable: true)
         },
         aesNonceGenerator: @escaping AESNonceGenerator = {
-            try IDPRandom.generateSecureRandom(length: IDPCrypto.AES256GCMSpec.nonceBytes)
+            try generateSecureRandom(length: IDPCrypto.AES256GCMSpec.nonceBytes)
         },
         aesKey: SymmetricKey = SymmetricKey(size: SymmetricKeySize(bitCount: 256))
     ) {

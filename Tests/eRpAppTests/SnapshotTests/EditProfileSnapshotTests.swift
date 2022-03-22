@@ -30,6 +30,98 @@ final class EditProfileSnapshotTests: XCTestCase {
         diffTool = "open"
     }
 
+    func testEditProfileFigmaVariant1() {
+        let sut = NavigationView {
+            EditProfileView(
+                store: .init(
+                    initialState: .init(
+                        name: "Spooky Dennis",
+                        acronym: "",
+                        fullName: nil,
+                        insurance: nil,
+                        insuranceId: nil,
+                        emoji: "🌸",
+                        color: .blue,
+                        profileId: UUID()
+                    ),
+                    reducer: .empty,
+                    environment: EditProfileDomain.Environment(
+                        schedulers: Schedulers(),
+                        profileDataStore: MockProfileDataStore(),
+                        userDataStore: MockUserDataStore(),
+                        profileSecureDataWiper: MockProfileSecureDataWiper(),
+                        router: MockRouting()
+                    )
+                )
+            )
+        }
+        .frame(width: 375, height: 1807, alignment: .center)
+
+        assertSnapshots(matching: sut, as: figmaReference())
+    }
+
+    func testEditProfileFigmaVariant2() {
+        let sut = NavigationView {
+            EditProfileView(
+                store: .init(
+                    initialState: .init(
+                        name: "Spooky Dennis",
+                        acronym: "",
+                        fullName: "Holger Muster",
+                        insurance: "AOK",
+                        insuranceId: "XY1234567890",
+                        emoji: "🎃",
+                        color: .blue,
+                        profileId: UUID(),
+                        token: IDPToken(accessToken: "", expires: Date(), idToken: "")
+                    ),
+                    reducer: .empty,
+                    environment: EditProfileDomain.Environment(
+                        schedulers: Schedulers(),
+                        profileDataStore: MockProfileDataStore(),
+                        userDataStore: MockUserDataStore(),
+                        profileSecureDataWiper: MockProfileSecureDataWiper(),
+                        router: MockRouting()
+                    )
+                )
+            )
+        }
+        .frame(width: 375, height: 1807, alignment: .center)
+
+        assertSnapshots(matching: sut, as: figmaReference())
+    }
+
+    func testEditProfileFigmaVariant3() {
+        let sut = NavigationView {
+            EditProfileView(
+                store: .init(
+                    initialState: .init(
+                        name: "",
+                        acronym: "",
+                        fullName: "Holger Muster",
+                        insurance: "AOK",
+                        insuranceId: "XY1234567890",
+                        emoji: "🎃",
+                        color: .blue,
+                        profileId: UUID(),
+                        token: IDPToken(accessToken: "", expires: Date(), idToken: "")
+                    ),
+                    reducer: .empty,
+                    environment: EditProfileDomain.Environment(
+                        schedulers: Schedulers(),
+                        profileDataStore: MockProfileDataStore(),
+                        userDataStore: MockUserDataStore(),
+                        profileSecureDataWiper: MockProfileSecureDataWiper(),
+                        router: MockRouting()
+                    )
+                )
+            )
+        }
+        .frame(width: 375, height: 1807, alignment: .center)
+
+        assertSnapshots(matching: sut, as: figmaReference())
+    }
+
     func testEditProfileFilledWithEmojiSnapshot() {
         let sut = EditProfileView(
             store: .init(
@@ -106,9 +198,8 @@ final class EditProfileSnapshotTests: XCTestCase {
                 )
             )
         )
+        .frame(width: 375, height: 1400)
 
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+        assertSnapshots(matching: sut, as: snapshotModi())
     }
 }

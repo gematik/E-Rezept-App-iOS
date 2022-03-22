@@ -41,7 +41,7 @@ extension JWE {
             let jwePayload = try? Self.defaultEncoder.encode(serialized),
             let jwe = try? JWE(header: jweHeader, payload: jwePayload, nonceGenerator: cryptoBox.aesNonceGenerator)
         else {
-            throw IDPError.internalError("Unable to encrypt given JWT")
+            throw IDPError.internal(error: .nestJwtInJwePayloadEncryption)
         }
 
         return jwe

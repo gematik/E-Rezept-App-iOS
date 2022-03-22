@@ -32,6 +32,10 @@ extension View {
     func navigationTitle(_ stringAsset: StringAsset) -> some View {
         navigationTitle(stringAsset.key)
     }
+
+    func accessibilityLabel(_ stringAsset: StringAsset) -> some View {
+        accessibilityLabel(stringAsset.key)
+    }
 }
 
 extension ProgressView where CurrentValueLabel == EmptyView {

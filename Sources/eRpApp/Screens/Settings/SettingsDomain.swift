@@ -68,6 +68,7 @@ enum SettingsDomain {
         case toggleDebugView(Bool)
         case appSecurity(action: AppSecurityDomain.Action)
         case profiles(action: ProfilesDomain.Action)
+        case popToRootView
     }
 
     struct Environment {
@@ -158,6 +159,16 @@ enum SettingsDomain {
             if !show {
                 return DebugDomain.cleanup()
             }
+            return .none
+        case .popToRootView:
+            state.profiles.route = nil
+            state.appSecurityState.createPasswordState = nil
+            state.showFOSSView = false
+            state.showDebugView = false
+            state.showTrackerComplyView = false
+            state.showLegalNoticeView = false
+            state.showDataProtectionView = false
+            state.showTermsOfUseView = false
             return .none
         }
     }

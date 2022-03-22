@@ -23,6 +23,7 @@ struct MedicationInfoView: View {
     struct CodeInfo {
         let code: String?
         let codeTitle: LocalizedStringKey
+        let accessibilityId: String
     }
 
     let codeInfos: [CodeInfo]
@@ -42,6 +43,7 @@ struct MedicationInfoView: View {
                     MedicationDetailCellView(value: codeInfos[index].code,
                                              title: codeInfos[index].codeTitle,
                                              isLastInSection: index == codeInfos.count - 1)
+                        .accessibilityIdentifier(codeInfos[index].accessibilityId)
                         .contextMenu {
                             Button(
                                 action: {
@@ -63,11 +65,13 @@ struct MedicationInfoView_Previews: PreviewProvider {
         MedicationInfoView(codeInfos: [
             MedicationInfoView.CodeInfo(
                 code: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
-                codeTitle: "Access-Code"
+                codeTitle: "Access-Code",
+                accessibilityId: ""
             ),
             MedicationInfoView.CodeInfo(
                 code: "0390f983-1e67-11b2-8555-63bf44e44fb8",
-                codeTitle: "Task-ID"
+                codeTitle: "Task-ID",
+                accessibilityId: ""
             ),
         ])
     }

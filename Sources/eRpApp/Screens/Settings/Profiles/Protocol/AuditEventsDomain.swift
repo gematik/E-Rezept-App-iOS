@@ -127,6 +127,7 @@ enum AuditEventsDomain {
                 .map {
                     $0
                         .getPage(page)
+                        .first()
                         .map {
                             $0
                                 .map {

@@ -101,6 +101,11 @@ internal enum A11y {
       static let ctlBtnEmojiPickerEditSave = "ctl_btn_emoji_picker_edit_save"
       static let ctlBtnEmojiPickerEdit = "ctl_btn_emoji_picker_edit"
   }
+    internal enum searchBar {
+      static let ctlTxtSearchBarField = "ctl_txt_search_bar_field"
+      static let ctlBtnSearchBarDeleteText = "ctl_btn_search_bar_delete_text"
+      static let ctlBtnSearchBarCancel = "ctl_btn_search_bar_cancel"
+  }
     }
     internal enum mainScreen {
       static let erxBtnRefresh = "erx_btn_refresh"
@@ -111,6 +116,7 @@ internal enum A11y {
       static let erxDetailedBlockPrescriptionName = "erx_detailed_block_prescription_name"
       static let erxDetailedBlockPrescriptionValidity = "erx_detailed_block_prescription_validity"
       static let erxDetailedBlockRedeemAll = "erx_detailed_block_redeem_all"
+      static let erxDetailedBlockStatus = "erx_detailed_block_status"
       static let erxBtnProfile = "erx_btn_profile"
       static let erxBtnScnPrescription = "erx_btn_scn_prescription"
       static let erxHntDemoModeTour = "erx_hnt_demo_mode_tour"
@@ -213,8 +219,12 @@ internal enum A11y {
       static let phaRedeemBtnRedeemFootnote = "pha_redeem_btn_redeem_footnote"
   }
     internal enum pharmacySearch {
-      static let phaSearchTxtSearchField = "pha_search_txt_search_field"
       static let phaSearchTxtResultList = "pha_search_txt_result_list"
+      static let phaSearchSearchRunning = "pha_search_search_running"
+      static let phaSearchLocalizingDevice = "pha_search_localizing_device"
+      static let phaSearchStart = "pha_search_start"
+      static let phaSearchNoResults = "pha_search_no_results"
+      static let phaSearchError = "pha_search_error"
   }
     internal enum prescriptionDetails {
       static let prscDtlTxtMedInfo = "prsc_dtl_txt_med_info"
@@ -225,6 +235,8 @@ internal enum A11y {
       static let prscDtlHntSubstitution = "prsc_dtl_hnt_substitution"
       static let prscDtlHntDosageInstructions = "prsc_dtl_hnt_dosage_instructions"
       static let prscDtlHntKeepOverview = "prsc_dtl_hnt_keep_overview"
+      static let prscDtlTxtTaskId = "prsc_dtl_txt_task_id"
+      static let prscDtlTxtAccessCode = "prsc_dtl_txt_access_code"
   }
     internal enum redeem { 
     internal enum matrixCode {

@@ -56,7 +56,9 @@ struct TabContainerView: View {
             )) {
                 MainView(
                     store: store.scope(state: \.main,
-                                       action: AppDomain.Action.main(action:))
+                                       action: AppDomain.Action.main(action:)),
+                    profileSelectionToolbarItemStore: store.scope(state: \.profileSelection,
+                                                                  action: AppDomain.Action.profile(action:))
                 )
                 .tabItem {
                     Label(L10n.tabTxtMain, image: Asset.TabIcon.appLogoTabItem.name)
@@ -69,7 +71,9 @@ struct TabContainerView: View {
                         if #available(iOS 15.0, *) {
                             MessagesView(
                                 store: store.scope(state: \.messages,
-                                                   action: AppDomain.Action.messages(action:))
+                                                   action: AppDomain.Action.messages(action:)),
+                                profileSelectionToolbarItemStore: store.scope(state: \.profileSelection,
+                                                                              action: AppDomain.Action.profile(action:))
                             )
                             .tabItem {
                                 Label(L10n.tabTxtMessages, image: Asset.TabIcon.bubbleLeft.name)
@@ -81,7 +85,9 @@ struct TabContainerView: View {
                 } else {
                     MessagesView(
                         store: store.scope(state: \.messages,
-                                           action: AppDomain.Action.messages(action:))
+                                           action: AppDomain.Action.messages(action:)),
+                        profileSelectionToolbarItemStore: store.scope(state: \.profileSelection,
+                                                                      action: AppDomain.Action.profile(action:))
                     )
                     .tabItem {
                         Label(L10n.tabTxtMessages, image: Asset.TabIcon.bubbleLeft.name)
@@ -95,10 +101,10 @@ struct TabContainerView: View {
                             state: \.pharmacySearch,
                             action: AppDomain.Action.pharmacySearch(action:)
                         ),
+                        profileSelectionToolbarItemStore: store.scope(state: \.profileSelection,
+                                                                      action: AppDomain.Action.profile(action:)),
                         isModalView: false
                     )
-                    .navigationTitle(L10n.tabTxtPharmacySearch)
-                    .navigationBarTitleDisplayMode(.inline)
                 }
                 .tabItem {
                     Label(L10n.tabTxtPharmacySearch, image: Asset.TabIcon.mapPinAndEllipse.name)
@@ -136,6 +142,10 @@ struct TabContainerView: View {
             .onAppear {
                 viewStore.send(.registerDemoModeListener)
                 viewStore.send(.registerUnreadMessagesListener)
+                viewStore.send(.profile(action: .registerProfileListener))
+            }
+            .onDisappear {
+                viewStore.send(.profile(action: .unregisterProfileListener))
             }
             .accentColor(Colors.primary700)
             .zIndex(0)

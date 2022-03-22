@@ -31,7 +31,17 @@ public enum TrustStoreError: Swift.Error {
     /// Other error cases
     case unspecified(error: Swift.Error)
     /// Internal error
-    case internalError(String)
+    case `internal`(error: InternalError)
+
+    public enum InternalError: Error {
+        case loadOCSPCheckedTrustStoreUnexpectedNil
+        case loadCertListFromServerUnexpectedNil
+        case loadOCSPListFromServerUnexpectedNil
+        case trustStoreCertListUnexpectedNil
+        case loadOCSPResponsesUnexpectedNil
+        case missingSignerForEECertificate
+        case notImplemented
+    }
 }
 
 extension Swift.Error {
@@ -57,7 +67,7 @@ extension TrustStoreError: Equatable, LocalizedError {
         case (.eeCertificateOCSPStatusVerification, .eeCertificateOCSPStatusVerification): return true
         case let (.unspecified(error: lhsError), .unspecified(error: rhsError)):
             return lhsError.localizedDescription == rhsError.localizedDescription
-        case let (.internalError(lhsError), .internalError(rhsError)): return lhsError == rhsError
+        case let (.internal(error: lhsError), .internal(error: rhsError)): return lhsError == rhsError
         default: return false
         }
     }
@@ -69,7 +79,7 @@ extension TrustStoreError: Equatable, LocalizedError {
         case .invalidOCSPResponse: return "TrustStoreError.noCertificateFound"
         case .eeCertificateOCSPStatusVerification: return "TrustStoreError.eeCertificateOCSPStatusVerification"
         case let .unspecified(error: error): return error.localizedDescription
-        case let .internalError(string): return "TrustStoreError.internalError method \(String(describing: string))"
+        case let .internal(error: error): return error.localizedDescription
         }
     }
 }

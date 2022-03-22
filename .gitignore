@@ -109,5 +109,6 @@ devops
 
 # See if added files should also be removed within github_publish_prepare
 Tests/IntegrationTests/Resources/Certificates.bundle
+Tests/IntegrationTests/PharmacyDataQualityIntegrationTests.swift
 Tests/IDPTests/Resources/Certificates.bundle
 

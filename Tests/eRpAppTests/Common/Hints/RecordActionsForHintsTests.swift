@@ -57,6 +57,10 @@ final class RecordActionsForHintsTests: XCTestCase {
                                          errorToDisplay: nil,
                                          createPasswordState: nil
                                      )),
+                profileSelection: .init(
+                    profile: UserProfile.Fixtures.theo,
+                    profileSelectionState: .init()
+                ),
                 debug: .init(trackingOptOut: true),
                 unreadMessagesCount: 0,
                 isDemoMode: false

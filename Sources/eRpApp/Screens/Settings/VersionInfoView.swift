@@ -43,7 +43,7 @@ struct VersionInfoView: View {
         }
         .frame(maxWidth: .infinity)
         .multilineTextAlignment(.center)
-        .font(.footnote)
+        .font(.subheadline)
         .foregroundColor(Color(.secondaryLabel))
     }
 }

@@ -107,7 +107,7 @@ final class CardWallExtAuthSelectionDomainTests: XCTestCase {
 
     // TODO: while adding the next screen, test confirmKK to push it swiftlint:disable:this todo
 
-    static let testError = IDPError.internalError("TestError")
+    static let testError = IDPError.internal(error: .notImplemented)
 
     static let testEntryA = KKAppDirectory.Entry(name: "Test Entry A", identifier: "identifierA")
     static let testEntryB = KKAppDirectory.Entry(name: "Test Entry B", identifier: "identifierB")

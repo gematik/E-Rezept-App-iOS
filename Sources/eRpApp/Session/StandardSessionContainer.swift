@@ -49,7 +49,7 @@ class StandardSessionContainer: UserSession {
         self.erxTaskCoreDataStore = erxTaskCoreDataStore
         self.profileDataStore = profileDataStore
         self.appConfiguration = appConfiguration
-        keychainStorage = KeychainStorage(profileId: profileId)
+        keychainStorage = KeychainStorage(profileId: profileId, schedulers: schedulers)
     }
 
     var isDemoMode: Bool {
@@ -81,7 +81,7 @@ class StandardSessionContainer: UserSession {
             redirectURI: appConfiguration.redirectUri,
             extAuthRedirectURI: appConfiguration.extAuthRedirectUri,
             discoveryURL: appConfiguration.idp,
-            scopes: ["e-rezept", "openid"]
+            scopes: appConfiguration.idpDefaultScopes
         )
 
         return DefaultIDPSession(

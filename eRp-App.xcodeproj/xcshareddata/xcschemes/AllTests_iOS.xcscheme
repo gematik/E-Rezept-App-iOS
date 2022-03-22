@@ -64,6 +64,16 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
+               BlueprintIdentifier = "1B94FB3EE23FE7C2A7816EC4"
+               BuildableName = "eRpStyleKitTests.xctest"
+               BlueprintName = "eRpStyleKitTests_iOS"
+               ReferencedContainer = "container:eRp-App.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
                BlueprintIdentifier = "3C8B6407EF79A2F927535DF2"
                BuildableName = "eRpLocalStorageTests.xctest"
                BlueprintName = "eRpLocalStorageTests_iOS"

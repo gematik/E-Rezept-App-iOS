@@ -18,6 +18,7 @@
 
 import eRpKit
 import Foundation
+import SwiftUI
 
 extension GroupedPrescription {
     /// `Prescription ` acts as an view model for an `ErxTask` to better fit the presentation logic
@@ -68,16 +69,6 @@ extension GroupedPrescription {
                     return .open(until: L10n.prscFdTxtNa.text)
                 }
 
-                if let expiresDate = erxTask.expiresOn?.date,
-                   let remainingDays = date.days(until: expiresDate),
-                   remainingDays > 0 {
-                    let remainingDaysOfExpireString = String.localizedStringWithFormat(
-                        L10n.erxTxtExpiresIn.text,
-                        remainingDays
-                    )
-                    return .open(until: remainingDaysOfExpireString)
-                }
-
                 if let acceptedUntilDate = erxTask.acceptedUntil?.date,
                    let remainingDays = date.days(until: acceptedUntilDate),
                    remainingDays > 0 {
@@ -86,6 +77,16 @@ extension GroupedPrescription {
                         remainingDays
                     )
                     return .open(until: remainingDaysOfAcceptString)
+                }
+
+                if let expiresDate = erxTask.expiresOn?.date,
+                   let remainingDays = date.days(until: expiresDate),
+                   remainingDays > 0 {
+                    let remainingDaysOfExpireString = String.localizedStringWithFormat(
+                        L10n.erxTxtExpiresIn.text,
+                        remainingDays
+                    )
+                    return .open(until: remainingDaysOfExpireString)
                 }
 
                 return .archived(message: L10n.erxTxtInvalid.text)
@@ -97,7 +98,7 @@ extension GroupedPrescription {
                 } else {
                     return .archived(message: L10n.dtlTxtMedRedeemedOn(L10n.prscFdTxtNa.text).text)
                 }
-            case .draft, .inProgress, .cancelled:
+            case .draft, .inProgress, .cancelled, .undefined:
                 return .undefined
             }
         }
@@ -158,6 +159,68 @@ extension GroupedPrescription {
                 dosageForm: medication.dosageForm,
                 handedOver: redeemedOn
             )
+        }
+    }
+}
+
+extension GroupedPrescription.Prescription {
+    var title: LocalizedStringKey {
+        switch (erxTask.status, viewStatus) {
+        case (.ready, .archived): return L10n.prscStatusExpired.key
+        case (.ready, _): return L10n.prscStatusReady.key
+        case (.inProgress, _): return L10n.prscStatusInProgress.key
+        case (.completed, _): return L10n.prscStatusCompleted.key
+        case (.cancelled, _): return L10n.prscStatusCanceled.key
+        case (.draft, _),
+             (.undefined, _): return L10n.prscStatusUndefined.key
+        }
+    }
+
+    var image: Image {
+        switch (erxTask.status, viewStatus) {
+        case (.ready, .archived): return Image(systemName: SFSymbolName.clockWarning)
+        case (.ready, _): return Image(systemName: SFSymbolName.checkmark)
+        case (.inProgress, _): return Image(systemName: SFSymbolName.hourglass)
+        case (.completed, _): return Image(Asset.Prescriptions.checkmarkDouble)
+        case (.cancelled, _): return Image(systemName: SFSymbolName.cross)
+        case (.draft, _),
+             (.undefined, _): return Image(systemName: SFSymbolName.calendarWarning)
+        }
+    }
+
+    var titleTint: Color {
+        switch (erxTask.status, viewStatus) {
+        case (.draft, _),
+             (.undefined, _),
+             (.completed, _),
+             (.ready, .archived): return Colors.systemGray
+        case (.ready, _): return Colors.secondary900
+        case (.inProgress, _): return Colors.yellow900
+        case (.cancelled, _): return Colors.red900
+        }
+    }
+
+    var imageTint: Color {
+        switch (erxTask.status, viewStatus) {
+        case (.draft, _),
+             (.undefined, _),
+             (.completed, _),
+             (.ready, .archived): return Colors.systemGray2
+        case (.ready, _): return Colors.secondary500
+        case (.inProgress, _): return Colors.yellow500
+        case (.cancelled, _): return Colors.red500
+        }
+    }
+
+    var backgroundTint: Color {
+        switch (erxTask.status, viewStatus) {
+        case (.draft, _),
+             (.undefined, _),
+             (.completed, _),
+             (.ready, .archived): return Colors.secondary
+        case (.ready, _): return Colors.secondary100
+        case (.inProgress, _): return Colors.yellow100
+        case (.cancelled, _): return Colors.red100
         }
     }
 }

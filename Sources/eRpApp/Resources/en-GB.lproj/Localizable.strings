@@ -72,6 +72,7 @@
 "cdw_btn_rc_alert_cancel" = "Abbrechen";
 "cdw_btn_rc_alert_close" = "Close";
 "cdw_btn_rc_alert_save_profile" = "Schließen";
+"cdw_btn_rc_back" = "Zurück";
 "cdw_btn_rc_cancel_label" = "Close dialog";
 "cdw_btn_rc_close" = "Close";
 "cdw_btn_rc_correct_can" = "Enter correct access number";
@@ -80,6 +81,7 @@
 "cdw_btn_rc_next" = "Next";
 "cdw_btn_rc_next_hint" = "As soon as this button is pressed, the medical card is read via NFC. To do this, hold the card directly against the device. If the connection is successful, you will receive tactile feedback. Any interruptions to the connection or errors are also communicated via tactile feedback. Communication with the medical card can take up to ten seconds. Then remove the medical card from the device.";
 "cdw_btn_rc_retry" = "Repeat";
+"cdw_btn_rc_video" = "Videoanleitung ansehen";
 "cdw_btn_sel_continue" = "Weiter";
 "cdw_edt_pin_input" = "Please enter your PIN here";
 "cdw_hint_can_order_egk_btn" = "Find out more";
@@ -147,6 +149,7 @@
 "cdw_txt_pin_warning_count %@" = "The PIN consists of 6 to 8 digits; you have entered %@.";
 "cdw_txt_rc_alert_message_save_profile" = "Ihre Gesundheitskarte konnte nicht mit dem Profil verknüpft werden.";
 "cdw_txt_rc_alert_title_save_profile" = "Fehler beim Speichern des Profils";
+"cdw_txt_rc_cta" = "Halten Sie jetzt Ihre Karte auf das Display und drücken Sie auf “Karte verbinden”";
 "cdw_txt_rc_demo_mode_info" = "You do not need a medical card in demo mode.";
 "cdw_txt_rc_description" = "Click Login and hold your card against the device as shown. Do not move the card once a connection has been established.";
 "cdw_txt_rc_error_generic_card_description" = "Error reading the medical card";
@@ -167,6 +170,7 @@
 "cdw_txt_rc_nfc_message_multipleCardsMessage" = "Several medical cards found";
 "cdw_txt_rc_nfc_message_noCardMessage" = "No medical card found";
 "cdw_txt_rc_nfc_message_unsupportedCardMessage" = "This card type is not supported";
+"cdw_txt_rc_placement" = "Hier anlegen 👆";
 "cdw_txt_rc_title" = "Login";
 "cdw_txt_sel_description" = "Wählen Sie eine Anmeldemethode um automatisch Rezepte zu empfangen.";
 "cdw_txt_sel_egk_description" = "Sichere Anmeldung mit Ihrer neuen elektronischen Gesundheitskarte";
@@ -197,6 +201,9 @@
 "ctl_btn_profile_picker_edit" = "Bild bearbeiten";
 "ctl_btn_profile_picker_reset" = "Bild zurücksetzen";
 "ctl_btn_profile_picker_set" = "Speichern";
+"ctl_btn_profile_toolbar_item" = "Aktuelles Profil";
+"ctl_btn_search_bar_cancel" = "Abbrechen";
+"ctl_btn_search_bar_delete_text_label" = "Text löschen";
 "ctl_txt_password_strength_0" = "Kennwortstärke";
 "ctl_txt_password_strength_1" = "Kennwortstärke";
 "ctl_txt_password_strength_2" = "Kennwortstärke ausreichend";
@@ -215,6 +222,7 @@
 "ctl_txt_profile_color_picker_pink" = "Rosa";
 "ctl_txt_profile_color_picker_selected" = "Ausgewählt";
 "ctl_txt_profile_color_picker_yellow" = "Gelb";
+"ctl_txt_search_bar_field_label" = "Suchfeld";
 "dtl_btn_copy_clipboard" = "Copy";
 "dtl_btn_delete_medication" = "Delete from this device";
 "dtl_btn_pharmacy_search" = "Order";
@@ -239,6 +247,7 @@
 "erx_btn_redeem" = "Redeem all";
 "erx_btn_refresh" = "Update";
 "erx_btn_scn_prescription" = "Open prescription scanner";
+"erx_title" = "Rezepte";
 "erx_txt_accepted_until" = "This is a plural string handled by Localizable.stringdict!";
 "erx_txt_current" = "Current";
 "erx_txt_expires_in" = "This is a plural string handled by Localizable.stringdict!";
@@ -722,6 +731,12 @@
 "prsc_fd_txt_substitution_read_further" = "Find out more";
 "prsc_fd_txt_substitution_read_further_link" = "https://www.das-e-rezept-fuer-deutschland.de/fragen-antworten";
 "prsc_fd_txt_substitution_title" = "Substitute medication possible";
+"prsc_status_canceled" =  "Abgebrochen";
+"prsc_status_completed" =  "Eingelöst";
+"prsc_status_expired" =  "Abgelaufen";
+"prsc_status_in_progress" =  "In Einlösung";
+"prsc_status_ready" = "Einlösbar";
+"prsc_status_undefined" =  "Unbekannt";
 "puc_txt_subtitle" = "Show this code at your pharmacy.";
 "puc_txt_title" = "Collection code";
 "rdm_btn_redeem_pharmacy_description" = "You are in a pharmacy and want to redeem your prescription.";
@@ -832,6 +847,10 @@
 "stg_txt_edit_profile_delete_confirmation_title" = "Profil löschen?";
 "stg_txt_edit_profile_empty_name_error_message" = "Das Namensfeld darf nicht leer sein";
 "stg_txt_edit_profile_error_message_title" = "Fehler";
+"stg_txt_edit_profile_label_can" = "Zugangsnummer (CAN)";
+"stg_txt_edit_profile_label_insurance_company" = "Versicherung";
+"stg_txt_edit_profile_label_kvnr" = "Versichertennummer";
+"stg_txt_edit_profile_label_name" = "Name";
 "stg_txt_edit_profile_logout_info" = "Hiermit trennen Sie die Verbindung zum Gesundheitsnetzwerk. Sie erhalten keine neuen Rezepte oder Nachrichten.";
 "stg_txt_edit_profile_name_connection_%@" = "Verknüpft mit: %@";
 "stg_txt_edit_profile_name_connection_placeholder" = "Dieses Profil wurde noch nicht mit einer Versichertennummer verbunden. Hierfür müssen Sie sich am Rezeptserver anmelden.";
@@ -843,6 +862,7 @@
 "stg_txt_edit_profile_security_show_tokens_hint" = "Sie erhalten einen Token, wenn Sie am Rezeptdienst angemeldet sind.";
 "stg_txt_edit_profile_security_show_tokens_label" = "Tokens anzeigen";
 "stg_txt_edit_profile_title" = "Profil";
+"stg_txt_edit_profile_user_data_section_title" = "Versichertendaten";
 "stg_txt_footnote_demo_mode" = "Our demo mode shows you all the functions of the app – without a medical card.";
 "stg_txt_header_demo_mode" = "Launch demo mode";
 "stg_txt_header_legal_info" = "Legal information";

@@ -386,13 +386,19 @@ extension EditProfileDomain {
 extension EditProfileDomain {
     enum Dummies {
         static let state = State(profile: UserProfile.Dummies.profileA)
+        static let onlineState: State = {
+            var state = State(profile: UserProfile.Dummies.profileA)
+            state.token = IDPToken(accessToken: "", expires: Date(), idToken: "")
+            return state
+        }()
+
         static let environment = Environment(schedulers: Schedulers(),
                                              profileDataStore: DemoProfileDataStore(),
                                              userDataStore: DemoUserDefaultsStore(),
                                              profileSecureDataWiper: DummyProfileSecureDataWiper(),
                                              router: DummyRouter())
 
-        static let store = Store(initialState: state,
+        static let store = Store(initialState: onlineState,
                                  reducer: reducer,
                                  environment: environment)
     }

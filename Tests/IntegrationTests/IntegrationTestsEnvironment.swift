@@ -50,4 +50,3 @@ let integrationTestsEnvironmentDummy = IntegrationTestsEnvironment(
     brainpool256r1Signer: nil,
     idpsekURLServer: nil
 )
-

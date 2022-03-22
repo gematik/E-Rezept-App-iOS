@@ -124,51 +124,64 @@ extension DefaultTrustStoreSession {
             .flatMap { [weak self] (ocspResponses: [OCSPResponse])
                 -> AnyPublisher<OCSPCheckedX509TrustStore, TrustStoreError> in
                 guard let self = self else {
-                    return Empty(completeImmediately: true).eraseToAnyPublisher()
+                    return Fail(error: TrustStoreError.internal(
+                        error: .loadOCSPCheckedTrustStoreUnexpectedNil
+                    )).eraseToAnyPublisher()
                 }
                 return self.trustStoreStorage.certList
                     .first()
                     .setFailureType(to: TrustStoreError.self)
-                    .flatMap { (certList: CertList?) -> AnyPublisher<OCSPCheckedX509TrustStore, TrustStoreError> in
-                        // if match(ocsp, storage.truststore) -> return storage.truststore
-                        if let certList = certList,
-                           let trustStore = try? X509TrustStore(trustAnchor: self.trustAnchor, certList: certList),
-                           let ocspValid = try? trustStore.checkEeCertificatesStatus(with: ocspResponses),
-                           ocspValid == true {
-                            return Just(OCSPCheckedX509TrustStore.from(trustStore: trustStore))
-                                .setFailureType(to: TrustStoreError.self)
-                                .eraseToAnyPublisher()
-                        }
-                        // else load trustStore from remote
-                        else {
-                            self.trustStoreStorage.set(certList: nil)
-                            return self.trustStoreClient // swiftlint:disable:this trailing_closure
-                                .loadCertListFromServer()
-                                .first()
-                                .tryMap { (certList: CertList)
-                                    -> (trustStore: X509TrustStore, certList: CertList) in
-                                    // if match(ocsp, network.truststore) -> return remote.truststore
-                                    guard let trustStore = try? X509TrustStore(
-                                        trustAnchor: self.trustAnchor,
-                                        certList: certList
-                                    ),
-                                        let ocspValid = try? trustStore
-                                        .checkEeCertificatesStatus(with: ocspResponses),
-                                        ocspValid == true
-                                    else {
-                                        throw TrustStoreError.eeCertificateOCSPStatusVerification
-                                    }
-                                    return (trustStore: trustStore, certList: certList)
+                    .flatMap { [weak self] (certList: CertList?) -> AnyPublisher<
+                        OCSPCheckedX509TrustStore,
+                        TrustStoreError
+                    > in
+                    guard let self = self else {
+                        return Fail(error: TrustStoreError.internal(
+                            error: .trustStoreCertListUnexpectedNil
+                        )).eraseToAnyPublisher()
+                    }
+                    // if match(ocsp, storage.truststore) -> return storage.truststore
+                    if let certList = certList,
+                       let trustStore = try? X509TrustStore(trustAnchor: self.trustAnchor, certList: certList),
+                       let ocspValid = try? trustStore.checkEeCertificatesStatus(with: ocspResponses),
+                       ocspValid == true {
+                        return Just(OCSPCheckedX509TrustStore.from(trustStore: trustStore))
+                            .setFailureType(to: TrustStoreError.self)
+                            .eraseToAnyPublisher()
+                    }
+                    // else load trustStore from remote
+                    else {
+                        self.trustStoreStorage.set(certList: nil)
+                        return self.trustStoreClient // swiftlint:disable:this trailing_closure
+                            .loadCertListFromServer()
+                            .first()
+                            .tryMap { [weak self] (certList: CertList)
+                                -> (trustStore: X509TrustStore, certList: CertList) in
+                                guard let self = self else {
+                                    throw TrustStoreError.internal(error: .loadCertListFromServerUnexpectedNil)
                                 }
-                                .handleEvents(receiveOutput: { [weak self] renewed in
-                                    self?.trustStoreStorage.set(certList: renewed.certList)
-                                })
-                                .map { (trustStore: X509TrustStore, _: CertList) -> OCSPCheckedX509TrustStore in
-                                    OCSPCheckedX509TrustStore.from(trustStore: trustStore)
+                                // if match(ocsp, network.truststore) -> return remote.truststore
+                                guard let trustStore = try? X509TrustStore(
+                                    trustAnchor: self.trustAnchor,
+                                    certList: certList
+                                ),
+                                    let ocspValid = try? trustStore
+                                    .checkEeCertificatesStatus(with: ocspResponses),
+                                    ocspValid == true
+                                else {
+                                    throw TrustStoreError.eeCertificateOCSPStatusVerification
                                 }
-                                .mapError { $0.asTrustStoreError() }
-                                .eraseToAnyPublisher()
-                        }
+                                return (trustStore: trustStore, certList: certList)
+                            }
+                            .handleEvents(receiveOutput: { [weak self] renewed in
+                                self?.trustStoreStorage.set(certList: renewed.certList)
+                            })
+                            .map { (trustStore: X509TrustStore, _: CertList) -> OCSPCheckedX509TrustStore in
+                                OCSPCheckedX509TrustStore.from(trustStore: trustStore)
+                            }
+                            .mapError { $0.asTrustStoreError() }
+                            .eraseToAnyPublisher()
+                    }
                     }
                     .eraseToAnyPublisher()
             }
@@ -182,7 +195,9 @@ extension DefaultTrustStoreSession {
             .setFailureType(to: TrustStoreError.self)
             .flatMap { [weak self] (ocspList: OCSPList?) -> AnyPublisher<[OCSPResponse], TrustStoreError> in
                 guard let self = self else {
-                    return Empty(completeImmediately: true).eraseToAnyPublisher()
+                    return Fail(error: TrustStoreError.internal(
+                        error: .loadOCSPResponsesUnexpectedNil
+                    )).eraseToAnyPublisher()
                 }
                 if let ocspList = ocspList,
                    let ocspResponses = try? ocspList.responses.map({ try OCSPResponse(der: $0) }),
@@ -198,7 +213,10 @@ extension DefaultTrustStoreSession {
                     return self.trustStoreClient // swiftlint:disable:this trailing_closure
                         .loadOCSPListFromServer()
                         .first()
-                        .tryMap { (ocspList: OCSPList) -> (ocspResponses: [OCSPResponse], ocspList: OCSPList) in
+                        .tryMap { [weak self] (ocspList: OCSPList) -> ([OCSPResponse], ocspList: OCSPList) in
+                            guard let self = self else {
+                                throw TrustStoreError.internal(error: .loadOCSPListFromServerUnexpectedNil)
+                            }
                             guard let ocspResponses = try? ocspList.responses
                                 .map({ try OCSPResponse(der: $0) }),
                                 // [REQ:gemSpec_Krypt:A_21218] If only OCSP responses >12h available, ...

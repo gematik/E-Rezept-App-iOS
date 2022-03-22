@@ -20,7 +20,6 @@ import ComposableArchitecture
 import SwiftUI
 import WebKit
 
-// swiftlint:disable:next type_body_length
 struct PrescriptionFullDetailView: View {
     let store: PrescriptionDetailDomain.Store
 
@@ -163,23 +162,17 @@ struct PrescriptionFullDetailView: View {
                         number: viewStore.state.prescription.workRelatedAccident?.workPlaceIdentifier
                     )
 
-                    MedicationProtocolView(
-                        protocolEvents: viewStore.state.prescription.auditEvents.map {
-                            ($0.text, uiFormattedDateTime(dateTimeString: $0.timestamp))
-                        },
-                        lastUpdated: uiFormattedDate(dateString: viewStore.state.auditEventsLastUpdated),
-                        errorText: viewStore.state.auditEventsErrorText
-                    )
-
                     // Task information details
                     MedicationInfoView(codeInfos: [
                         MedicationInfoView.CodeInfo(
                             code: viewStore.state.prescription.accessCode,
-                            codeTitle: L10n.dtlTxtAccessCode
+                            codeTitle: L10n.dtlTxtAccessCode,
+                            accessibilityId: A11y.prescriptionDetails.prscDtlTxtAccessCode
                         ),
                         MedicationInfoView.CodeInfo(
                             code: viewStore.state.prescription.id,
-                            codeTitle: L10n.dtlTxtTaskId
+                            codeTitle: L10n.dtlTxtTaskId,
+                            accessibilityId: A11y.prescriptionDetails.prscDtlTxtTaskId
                         ),
                     ])
                 }
@@ -233,8 +226,6 @@ struct PrescriptionFullDetailView: View {
                     )) { scopedStore in
                         NavigationView {
                             PharmacySearchView(store: scopedStore)
-                                .navigationTitle(L10n.phaSearchTxtTitle)
-                                .navigationBarTitleDisplayMode(.inline)
                         }
                         .accentColor(Colors.primary700)
                         .navigationViewStyle(StackNavigationViewStyle())

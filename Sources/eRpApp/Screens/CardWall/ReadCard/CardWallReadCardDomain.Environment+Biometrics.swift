@@ -79,13 +79,13 @@ extension CardWallReadCardDomain.Environment {
             .flatMap { idTokenValidator in
                 userSession.idpSession.requestChallenge()
                     .flatMap { (challenge: IDPChallengeSession) -> AnyPublisher<IDPToken, IDPError> in
-                        self.signatureProvider.authenticationData(for: challenge)
+                        signatureProvider.authenticationData(for: challenge)
                             .mapError(IDPError.pairing)
                             .flatMap { (signedAuthenticationData: SignedAuthenticationData)
                                 -> AnyPublisher<IDPToken, IDPError> in
-                                self.userSession.idpSession.altVerify(signedAuthenticationData)
+                                userSession.idpSession.altVerify(signedAuthenticationData)
                                     .flatMap { (exchangeToken: IDPExchangeToken) -> AnyPublisher<IDPToken, IDPError> in
-                                        self.userSession.idpSession.exchange(
+                                        userSession.idpSession.exchange(
                                             token: exchangeToken,
                                             challengeSession: challenge,
                                             redirectURI: nil,
@@ -117,9 +117,10 @@ extension CardWallReadCardDomain.Environment {
 
             return self.userSession.biometrieIdpSession
                 .requestChallenge() // AnyPublisher<IDPChallengeSession, IDPError>
+                .first()
                 .mapError(CardWallReadCardDomain.State.Error.idpError)
                 .flatMap { challengeSession -> AnyPublisher<IDPToken, CardWallReadCardDomain.State.Error> in
-                    self.userSession.nfcSessionProvider
+                    userSession.nfcSessionProvider
                         .openSecureSession(can: can,
                                            pin: pin) // -> AnyPublisher<EGKSignatureSession, NFCSignatureProviderError>
                         .flatMap { healthCard -> AnyPublisher<
@@ -137,7 +138,7 @@ extension CardWallReadCardDomain.Environment {
                             > in
                             healthCard
                                 .sign(
-                                    registerDataProvider: self.signatureProvider,
+                                    registerDataProvider: signatureProvider,
                                     in: pairingSession,
                                     signedChallenge: signedChallenge
                                 )
@@ -147,7 +148,7 @@ extension CardWallReadCardDomain.Environment {
                                 message: EGKSignatureProvider.systemNFCDialogSuccess
                             )
                             // The delay is needed to show the success message
-                            .delay(for: 0.01, scheduler: self.schedulers.main)
+                            .delay(for: 0.01, scheduler: schedulers.main)
                             .handleEvents(receiveOutput: { _ in
                                 healthCard.invalidateSession(with: nil)
                             }, receiveCompletion: { result in
@@ -159,6 +160,7 @@ extension CardWallReadCardDomain.Environment {
                             })
                             .eraseToAnyPublisher()
                         } // -> AnyPublisher<(SignedChallenge, RegistrationData), NFCSignatureProviderError>
+                        .first()
                         .mapError(CardWallReadCardDomain.State.Error.signChallengeError)
                         .flatMap { signedChallenge, registrationData -> AnyPublisher<
                             IDPToken,
@@ -167,11 +169,11 @@ extension CardWallReadCardDomain.Environment {
                         idTokenValidator
                             .mapError(CardWallReadCardDomain.State.Error.profileValidation)
                             .flatMap { idTokenValidator in
-                                self.userSession.biometrieIdpSession
+                                userSession.biometrieIdpSession
                                     .verifyAndExchange(signedChallenge: signedChallenge,
                                                        idTokenValidator: idTokenValidator.validate(idToken:))
                                     .flatMap { token -> AnyPublisher<IDPToken, IDPError> in
-                                        self.userSession.biometrieIdpSession.pairDevice(
+                                        userSession.biometrieIdpSession.pairDevice(
                                             with: registrationData,
                                             token: token
                                         )
@@ -182,7 +184,7 @@ extension CardWallReadCardDomain.Environment {
                                     .eraseToAnyPublisher()
                             }
                             .flatMap { _ -> AnyPublisher<IDPToken, CardWallReadCardDomain.State.Error> in
-                                self.loginWithBiometrics()
+                                loginWithBiometrics()
                             }
                             .eraseToAnyPublisher()
                         }
@@ -193,7 +195,7 @@ extension CardWallReadCardDomain.Environment {
                     if case let .failure(error) = completion {
                         subscriber.send(CardWallReadCardDomain.Action.stateReceived(.signingChallenge(.error(error))))
                         // [REQ:gemSpec_IDP_Frontend:A_21598,A_21595] Failure will delete paring data
-                        _ = try? self.signatureProvider.abort(pairingSession: pairingSession)
+                        _ = try? signatureProvider.abort(pairingSession: pairingSession)
                     }
                     subscriber.send(completion: .finished)
                 }, receiveValue: { value in

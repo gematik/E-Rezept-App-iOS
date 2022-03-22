@@ -51,7 +51,7 @@ public struct SignedAuthenticationData {
             let signedChallengeJWE = try? JWE(header: jweHeader,
                                               payload: jwePayload,
                                               nonceGenerator: cryptoBox.aesNonceGenerator) else {
-            throw IDPError.internalError("Unable to encrypt signed challenge")
+            throw IDPError.internal(error: .signedAuthenticationDataEncryption)
         }
 
         return signedChallengeJWE

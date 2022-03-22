@@ -18,45 +18,84 @@
 
 import CasePaths
 import ComposableArchitecture
+import eRpStyleKit
 import SwiftUI
 
 struct ProfilesView: View {
     let store: ProfilesDomain.Store
 
     @ObservedObject
-    private var viewStore: ViewStore<ProfilesDomain.State, ProfilesDomain.Action>
+    private var viewStore: ViewStore<ViewState, ProfilesDomain.Action>
 
     init(store: ProfilesDomain.Store) {
         self.store = store
-        viewStore = ViewStore(store)
+        viewStore = ViewStore(store.scope(state: ViewState.init))
+    }
+
+    struct ViewState: Equatable {
+        let profiles: [UserProfile]
+        let selectedProfileId: UUID?
+        init(state: ProfilesDomain.State) {
+            profiles = state.profiles
+            selectedProfileId = state.selectedProfileId
+        }
     }
 
     var body: some View {
-        Group {
+        SectionContainer(header: {
+            Label(title: {
+                Text(L10n.stgTxtHeaderProfiles)
+            }, icon: {})
+                .accessibility(identifier: A11y.settings.profiles.stgTxtHeaderProfiles)
+        }, content: {
             ForEach(viewStore.profiles) { profile in
                 Button(action: {
                     viewStore.send(.editProfile(profile))
                 }, label: {
-                    ProfileCell(profile: profile,
-                                isSelected: profile.id == viewStore.selectedProfileId,
-                                showAsNavigationLink: true)
+                    SingleProfileView(profile: profile, selectedProfileId: viewStore.selectedProfileId)
                 })
+                    .buttonStyle(.navigation)
                     .accessibility(identifier: A11y.settings.profiles.stgBtnProfile)
             }
+
             #if ENABLE_DEBUG_VIEW
             Button(action: {
                 viewStore.send(.addNewProfile)
             }, label: {
-                HStack(spacing: 16) {
-                    Image(systemName: SFSymbolName.plus)
-                    Text(L10n.stgBtnAddProfile)
-                }
-                .font(.body.weight(.semibold))
-                .accentColor(Colors.primary)
-                .padding(.vertical, 8)
+                Label(L10n.stgBtnAddProfile, systemImage: SFSymbolName.plus)
             })
+                .buttonStyle(.simple(showSeparator: false))
                 .accessibility(identifier: A11y.settings.profiles.stgBtnNewProfile)
+            #else
+            EmptyView()
             #endif
+        })
+    }
+
+    private struct SingleProfileView: View {
+        let profile: UserProfile
+        let selectedProfileId: UUID?
+
+        var body: some View {
+            Label(title: {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(profile.name)
+                    Group {
+                        if let date = profile.lastSuccessfulSync {
+                            RelativeTimerView(date: date)
+
+                        } else {
+                            Text(L10n.ctlTxtProfileCellNotConnected)
+                        }
+                    }
+                    .foregroundColor(Color(.secondaryLabel))
+                    .font(.subheadline)
+                }
+            }, icon: {
+                InitialsImage(backgroundColor: profile.color.background,
+                              text: profile.emoji ?? profile.acronym,
+                              size: .large)
+            })
         }
     }
 }
@@ -64,18 +103,7 @@ struct ProfilesView: View {
 struct ProfilesView_PreviewProvider: PreviewProvider {
     static var previews: some View {
         NavigationView {
-            List {
-                Section(
-                    header: SectionHeaderView(
-                        text: L10n.stgTxtHeaderProfiles,
-                        a11y: A11y.settings.profiles.stgTxtHeaderProfiles
-                    ).padding(.bottom, 8)
-                ) {
-                    ProfilesView(store: ProfilesDomain.Dummies.store)
-                }
-                .textCase(.none)
-            }
-            .listStyle(InsetGroupedListStyle())
-        }
+            ProfilesView(store: ProfilesDomain.Dummies.store)
+        }.background(Color(.secondarySystemBackground).ignoresSafeArea())
     }
 }

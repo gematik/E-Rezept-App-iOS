@@ -16,6 +16,7 @@
 //  
 //
 
+import eRpStyleKit
 import SwiftUI
 
 struct ProfileCell: View {
@@ -32,16 +33,12 @@ struct ProfileCell: View {
 
     var body: some View {
         HStack(alignment: .center, spacing: 8) {
-            Circle()
-                .strokeBorder(profile.color.border, lineWidth: isSelected ? 2 : 0)
-                .frame(width: 32, height: 32, alignment: .center)
-                .background(Circle().fill(profile.color.background))
-                .overlay(
-                    Text(profile.emoji ?? profile.acronym)
-                        .font(.system(size: 13))
-                )
-                .overlay(ConnectionStatusCircle(status: profile.connectionStatus),
-                         alignment: .bottomTrailing)
+            InitialsImage(
+                backgroundColor: profile.color.background,
+                text: profile.emoji ?? profile.acronym,
+                statusColor: nil,
+                size: .large
+            )
 
             VStack(alignment: .leading, spacing: 0) {
                 Text(profile.name)

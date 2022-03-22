@@ -18,6 +18,7 @@
 
 import CombineSchedulers
 @testable import eRpApp
+import eRpKit
 import SnapshotTesting
 import SwiftUI
 import XCTest
@@ -28,15 +29,32 @@ final class MessagesViewSnapshotTests: XCTestCase {
         diffTool = "open"
     }
 
+    private func profileStore(for profile: UserProfile? = nil) -> ProfileSelectionToolbarItemDomain.Store {
+        ProfileSelectionToolbarItemDomain.Store(
+            initialState: .init(
+                profile: profile ?? UserProfile.Fixtures.theo,
+                profileSelectionState: .init(
+                    profiles: [],
+                    selectedProfileId: nil,
+                    route: nil
+                )
+            ),
+            reducer: .empty,
+            environment: ProfileSelectionToolbarItemDomain.Dummies.environment
+        )
+    }
+
     func testEmptyMessagesView() {
-        let sut = MessagesView(store: MessagesDomain.Dummies.storeFor(MessagesDomain.State(communications: [])))
+        let sut = MessagesView(store: MessagesDomain.Dummies.storeFor(MessagesDomain.State(communications: [])),
+                               profileSelectionToolbarItemStore: profileStore())
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
     }
 
     func testMessagesView() {
-        let sut = MessagesView(store: MessagesDomain.Dummies.store)
+        let sut = MessagesView(store: MessagesDomain.Dummies.store,
+                               profileSelectionToolbarItemStore: profileStore())
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())

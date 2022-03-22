@@ -36,7 +36,7 @@ final class PharmacyIntegrationTests: XCTestCase {
            let integrationTestsEnvironment = integrationTestsAppConfigurations[integrationTestsEnvironmentString] {
             environment = integrationTestsEnvironment
         } else {
-            environment = integrationTestsEnvironmentRU // change me for manual testing
+            environment = integrationTestsEnvironmentDummy // change me for manual testing
         }
     }
 
@@ -75,5 +75,4 @@ final class PharmacyIntegrationTests: XCTestCase {
             )
         expect(success) == true
     }
-
 }

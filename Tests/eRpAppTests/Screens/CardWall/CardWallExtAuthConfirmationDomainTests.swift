@@ -138,7 +138,7 @@ final class CardWallExtAuthConfirmationDomainTests: XCTestCase {
         }
     }
 
-    static let testError = IDPError.internalError("TestError")
+    static let testError = IDPError.internal(error: .notImplemented)
 
     static let testEntry = KKAppDirectory.Entry(name: "Test Entry A", identifier: "identifierA")
 }
