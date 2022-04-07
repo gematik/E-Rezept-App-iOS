@@ -21,10 +21,10 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-           1.2.4
+           1.2.5
  Docs
         </a>
-         (67% documented)
+         (66% documented)
       </p>
     
       <p class="header-col--secondary">
@@ -203,10 +203,10 @@
                 <a class="nav-group-task-link" href="../Structs/PairingData.html">PairingData</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Structs.html#/s:3IDP14PairingEntriesV">PairingEntries</a>
+                <a class="nav-group-task-link" href="../Structs/PairingEntries.html">PairingEntries</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Structs.html#/s:3IDP12PairingEntryV">PairingEntry</a>
+                <a class="nav-group-task-link" href="../Structs/PairingEntry.html">PairingEntry</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/PrivateKeyContainer.html">PrivateKeyContainer</a>
@@ -476,9 +476,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:3IDP9IDPClientP7refresh4with8ssoToken5using7Combine12AnyPublisherVyAA011IDPExchangeF0VAA8IDPErrorOGAA12IDPChallengeV_SSAA17DiscoveryDocumentVtF"></a>
-                    <a name="//apple_ref/swift/Method/refresh(with:ssoToken:using:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:3IDP9IDPClientP7refresh4with8ssoToken5using7Combine12AnyPublisherVyAA011IDPExchangeF0VAA8IDPErrorOGAA12IDPChallengeV_SSAA17DiscoveryDocumentVtF">refresh(with:<wbr>ssoToken:<wbr>using:<wbr>)</a>
+                    <a name="/s:3IDP9IDPClientP7refresh4with8ssoToken5using3for7Combine12AnyPublisherVyAA011IDPExchangeF0VAA8IDPErrorOGAA12IDPChallengeV_SSAA17DiscoveryDocumentVSStF"></a>
+                    <a name="//apple_ref/swift/Method/refresh(with:ssoToken:using:for:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP9IDPClientP7refresh4with8ssoToken5using3for7Combine12AnyPublisherVyAA011IDPExchangeF0VAA8IDPErrorOGAA12IDPChallengeV_SSAA17DiscoveryDocumentVSStF">refresh(with:<wbr>ssoToken:<wbr>using:<wbr>for:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -496,7 +496,8 @@
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">refresh</span><span class="p">(</span><span class="n">with</span> <span class="nv">unsignedChallenge</span><span class="p">:</span> <span class="kt"><a href="../Structs/IDPChallenge.html">IDPChallenge</a></span><span class="p">,</span>
              <span class="nv">ssoToken</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
-             <span class="n">using</span> <span class="nv">document</span><span class="p">:</span> <span class="kt"><a href="../Structs/DiscoveryDocument.html">DiscoveryDocument</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/IDPExchangeToken.html">IDPExchangeToken</a></span><span class="p">,</span> <span class="kt"><a href="../Enums/IDPError.html">IDPError</a></span><span class="o">&gt;</span></code></pre>
+             <span class="n">using</span> <span class="nv">document</span><span class="p">:</span> <span class="kt"><a href="../Structs/DiscoveryDocument.html">DiscoveryDocument</a></span><span class="p">,</span>
+             <span class="k">for</span> <span class="nv">redirect</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/IDPExchangeToken.html">IDPExchangeToken</a></span><span class="p">,</span> <span class="kt"><a href="../Enums/IDPError.html">IDPError</a></span><span class="o">&gt;</span></code></pre>
 
                         </div>
                       </div>
@@ -538,6 +539,18 @@
                               <td>
                                 <div>
                                   <p>The discovery document to use.</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>redirect</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>The redirect that the refresh is requested for. Must match the initial SSO token redirect.</p>
                                 </div>
                               </td>
                             </tr>
@@ -674,7 +687,7 @@
                           <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">registerDevice</span><span class="p">(</span><span class="n">_</span> <span class="nv">jwe</span><span class="p">:</span> <span class="kt">JWE</span><span class="p">,</span>
                     <span class="nv">token</span><span class="p">:</span> <span class="kt"><a href="../Structs/IDPToken.html">IDPToken</a></span><span class="p">,</span>
                     <span class="n">using</span> <span class="nv">document</span><span class="p">:</span> <span class="kt"><a href="../Structs/DiscoveryDocument.html">DiscoveryDocument</a></span><span class="p">)</span>
-    <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt"><a href="../Structs.html#/s:3IDP12PairingEntryV">PairingEntry</a></span><span class="p">,</span> <span class="kt"><a href="../Enums/IDPError.html">IDPError</a></span><span class="o">&gt;</span></code></pre>
+    <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/PairingEntry.html">PairingEntry</a></span><span class="p">,</span> <span class="kt"><a href="../Enums/IDPError.html">IDPError</a></span><span class="o">&gt;</span></code></pre>
 
                         </div>
                       </div>
@@ -723,7 +736,7 @@
                       </div>
                       <div>
                         <h4>Return Value</h4>
-                        <p>AnyPublisher with a<code><a href="../Structs.html#/s:3IDP12PairingEntryV">PairingEntry</a></code> containing registration information upon success.</p>
+                        <p>AnyPublisher with a<code><a href="../Structs/PairingEntry.html">PairingEntry</a></code> containing registration information upon success.</p>
                       </div>
                     </section>
                   </div>
@@ -824,7 +837,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">listDevices</span><span class="p">(</span><span class="nv">token</span><span class="p">:</span> <span class="kt"><a href="../Structs/IDPToken.html">IDPToken</a></span><span class="p">,</span> <span class="n">using</span> <span class="nv">document</span><span class="p">:</span> <span class="kt"><a href="../Structs/DiscoveryDocument.html">DiscoveryDocument</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt"><a href="../Structs.html#/s:3IDP14PairingEntriesV">PairingEntries</a></span><span class="p">,</span> <span class="kt"><a href="../Enums/IDPError.html">IDPError</a></span><span class="o">&gt;</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">listDevices</span><span class="p">(</span><span class="nv">token</span><span class="p">:</span> <span class="kt"><a href="../Structs/IDPToken.html">IDPToken</a></span><span class="p">,</span> <span class="n">using</span> <span class="nv">document</span><span class="p">:</span> <span class="kt"><a href="../Structs/DiscoveryDocument.html">DiscoveryDocument</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/PairingEntries.html">PairingEntries</a></span><span class="p">,</span> <span class="kt"><a href="../Enums/IDPError.html">IDPError</a></span><span class="o">&gt;</span></code></pre>
 
                         </div>
                       </div>
@@ -861,7 +874,7 @@
                       </div>
                       <div>
                         <h4>Return Value</h4>
-                        <p>AnyPublisher with a<code><a href="../Structs.html#/s:3IDP14PairingEntriesV">PairingEntries</a></code> containing all registered devices.</p>
+                        <p>AnyPublisher with a<code><a href="../Structs/PairingEntries.html">PairingEntries</a></code> containing all registered devices.</p>
                       </div>
                     </section>
                   </div>
@@ -1101,7 +1114,7 @@
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2022 <a class="link" href="https://www.gematik.de" target="_blank" rel="external">gematik GmbH</a>. All rights reserved. (Last updated: 2022-03-14)</p>
+      <p>&copy; 2022 <a class="link" href="https://www.gematik.de" target="_blank" rel="external">gematik GmbH</a>. All rights reserved. (Last updated: 2022-03-22)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>
