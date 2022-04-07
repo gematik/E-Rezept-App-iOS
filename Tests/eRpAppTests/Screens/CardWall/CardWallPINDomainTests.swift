@@ -102,9 +102,9 @@ final class CardWallPINDomainTests: XCTestCase {
         let store = testStore(for: "1234567")
 
         // when
-        store.send(.advance) { sut in
+        store.send(.advance(.push)) { sut in
             // then
-            sut.showNextScreen = true
+            sut.showNextScreen = .push
         }
     }
 
@@ -113,9 +113,9 @@ final class CardWallPINDomainTests: XCTestCase {
         let store = testStore(for: "1234")
 
         // when
-        store.send(.advance) { sut in
+        store.send(.advance(.push)) { sut in
             // then
-            sut.showNextScreen = false
+            sut.showNextScreen = .none
             sut.doneButtonPressed = true
         }
         store.send(.update(pin: "12345")) { sut in
@@ -124,9 +124,9 @@ final class CardWallPINDomainTests: XCTestCase {
             sut.doneButtonPressed = false
         }
         // when
-        store.send(.advance) { sut in
+        store.send(.advance(.push)) { sut in
             // then
-            sut.showNextScreen = false
+            sut.showNextScreen = .none
             sut.doneButtonPressed = true
         }
         // when
@@ -136,9 +136,9 @@ final class CardWallPINDomainTests: XCTestCase {
             sut.doneButtonPressed = false
         }
         // when
-        store.send(.advance) { sut in
+        store.send(.advance(.push)) { sut in
             // then
-            sut.showNextScreen = true
+            sut.showNextScreen = .push
         }
     }
 
@@ -147,9 +147,9 @@ final class CardWallPINDomainTests: XCTestCase {
         let store = testStore(for: "123456789")
 
         // when
-        store.send(.advance) { sut in
+        store.send(.advance(.push)) { sut in
             // then
-            sut.showNextScreen = false
+            sut.showNextScreen = .none
             sut.doneButtonPressed = true
         }
     }
@@ -159,9 +159,9 @@ final class CardWallPINDomainTests: XCTestCase {
         let store = testStore(for: "123456a")
 
         // when
-        store.send(.advance) { sut in
+        store.send(.advance(.push)) { sut in
             // then
-            sut.showNextScreen = false
+            sut.showNextScreen = .none
             sut.doneButtonPressed = true
         }
     }

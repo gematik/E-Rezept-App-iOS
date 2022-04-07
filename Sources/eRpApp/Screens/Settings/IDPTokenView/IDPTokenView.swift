@@ -84,7 +84,8 @@ struct TokensView_Previews: PreviewProvider {
                     expires: Date(),
                     idToken: "123456",
                     ssoToken: "sso_token",
-                    tokenType: "ended"
+                    tokenType: "ended",
+                    redirect: ""
                 )
             )
         }

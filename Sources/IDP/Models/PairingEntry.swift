@@ -23,17 +23,17 @@ import OpenSSL
 /// Represents stored data within the idp.
 /// [REQ:gemF_Biometrie:A21450:Pairing_Entry]
 public struct PairingEntry: Equatable, Codable {
-    internal init(name: String, signedPairingData: String, creationTime: Date) {
+    public init(name: String, signedPairingData: String, creationTime: Date) {
         self.name = name
         self.signedPairingData = signedPairingData
         self.creationTime = creationTime
         pairingEntryVersion = "1.0"
     }
 
-    let name: String
-    let signedPairingData: String
-    let creationTime: Date
-    let pairingEntryVersion: String
+    public let name: String
+    public let signedPairingData: String
+    public let creationTime: Date
+    public let pairingEntryVersion: String
 
     enum CodingKeys: String, CodingKey {
         case name
@@ -44,7 +44,11 @@ public struct PairingEntry: Equatable, Codable {
 }
 
 public struct PairingEntries: Equatable, Codable {
-    let pairingEntries: [PairingEntry]
+    public let pairingEntries: [PairingEntry]
+
+    public init(pairingEntries: [PairingEntry]) {
+        self.pairingEntries = pairingEntries
+    }
 
     enum CodingKeys: String, CodingKey {
         case pairingEntries = "pairing_entries"

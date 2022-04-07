@@ -23,10 +23,14 @@ import UIKit
 struct CardWallPINView<Content: View>: View {
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     let store: CardWallPINDomain.Store
+    let transitionMode: CardWallPINDomain.TransitionMode
     let nextView: (String) -> Content
 
-    init(store: CardWallPINDomain.Store, @ViewBuilder nextView: @escaping (String) -> Content) {
+    init(store: CardWallPINDomain.Store,
+         transitionMode: CardWallPINDomain.TransitionMode = .push,
+         @ViewBuilder nextView: @escaping (String) -> Content) {
         self.store = store
+        self.transitionMode = transitionMode
         self.nextView = nextView
     }
 
@@ -38,7 +42,7 @@ struct CardWallPINView<Content: View>: View {
                 NavigationLink(
                     destination: nextView(viewStore.pin),
                     isActive: viewStore.binding(
-                        get: \.showNextScreen,
+                        get: { $0.showNextScreen == .push },
                         send: CardWallPINDomain.Action.reset
                     )
                 ) {
@@ -52,11 +56,20 @@ struct CardWallPINView<Content: View>: View {
                 PrimaryTextButton(text: L10n.cdwBtnPinDone,
                                   a11y: A11y.cardWall.pinInput.cdwBtnPinDone,
                                   isEnabled: viewStore.state.enteredPINValid) {
-                    viewStore.send(.advance)
+                    viewStore.send(.advance(transitionMode))
                 }
                 .accessibility(label: Text(L10n.cdwBtnPinDoneLabel))
                 .padding(.horizontal)
                 .padding(.bottom)
+                .fullScreenCover(isPresented: viewStore.binding(
+                    get: { $0.showNextScreen == .fullScreenCover },
+                    send: CardWallPINDomain.Action.reset
+                )) {
+                    nextView(viewStore.pin)
+                        .statusBar(hidden: true)
+                        .accentColor(Colors.primary700)
+                        .navigationViewStyle(StackNavigationViewStyle())
+                }
             }
             .demoBanner(isPresented: viewStore.isDemoModus) {
                 Text(L10n.cdwTxtPinDemoModeInfo)
@@ -73,10 +86,6 @@ struct CardWallPINView<Content: View>: View {
             )
         }
     }
-}
-
-extension CardWallPINView {
-    // MARK: - screen related views
 
     private struct PINView: View {
         let store: CardWallPINDomain.Store
@@ -98,7 +107,7 @@ extension CardWallPINView {
 
                         PINFieldView(store: store) {
                             withAnimation {
-                                viewStore.send(.advance)
+                                viewStore.send(.advance(.none))
                             }
                         }.padding(.bottom, 32)
 
@@ -201,20 +210,16 @@ extension CardWallPINView {
     }
 }
 
-struct MyPINView_Previews: PreviewProvider {
+struct CardWallPINView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            ForEach(["iPhone SE (1st generation)", "iPhone 11"], id: \.self) { deviceName in
-                NavigationView {
-                    CardWallPINView(
-                        store: CardWallPINDomain.Dummies.store
-                    ) { _ in
-                        EmptyView()
-                    }
+            NavigationView {
+                CardWallPINView(
+                    store: CardWallPINDomain.Dummies.store
+                ) { _ in
+                    EmptyView()
                 }
-                .previewDevice(PreviewDevice(rawValue: deviceName))
-                .previewDisplayName(deviceName)
             }
-        }
+        }.generateVariations()
     }
 }

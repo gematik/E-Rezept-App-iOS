@@ -40,7 +40,8 @@ public class MemStorage: IDPStorage, SecureEGKCertificateStorage, TrustStoreStor
             expires: Date.distantFuture,
             idToken: "",
             ssoToken: "",
-            tokenType: "Bearer"
+            tokenType: "Bearer",
+            redirect: "redirect"
         ))
     }
 

@@ -32,11 +32,6 @@ extension DefaultTextButton {
         self.init(text: text.key, a11y: a11y, style: style, action: action)
     }
 }
-extension DestructiveTextButton {
-    init(text: StringAsset, isEnabled: Bool = true, action: @escaping () -> Void) {
-        self.init(text: text.key, isEnabled: isEnabled, action: action)
-    }
-}
 extension DetailedIconCellView {
     init(title: StringAsset, value: String, imageName: String, a11y: String) {
         self.init(title: title.key, value: value, imageName: imageName, a11y: a11y)

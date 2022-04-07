@@ -85,7 +85,7 @@ struct TabContainerView: View {
                         ),
                         profileSelectionToolbarItemStore: store.scope(state: \.profileSelection,
                                                                       action: AppDomain.Action.profile(action:)),
-                        isModalView: false
+                        isRedeemRecipe: false
                     )
                 }
                 .tabItem {

@@ -1,3 +1,25 @@
+# Release 1.2.5
+
+added (5 changes)
+
+ - Delete device pairing from IDP and local in EditProfileDomain
+ - Add registered devices list to profiles
+ - Add new dosage form key
+ - Add UserSessionProvider to allow requests for non selected profiles
+ - Add edit profile login section
+
+fixed (5 changes)
+
+ - Fix SSO for ExtenalAuthentication
+ - Fix the RedeemSuccessView not displaying the content correctly
+ - Fix displaying hint in PharmacyDetailView
+ - Fix email content for contacting health insurance
+ - Fix display CAN in user profile
+
+changed (1 change)
+
+ - Change Profile to not parse the relation of audit events for performance reasons
+
 # Release 1.2.4
 
 fixed (2 changes)

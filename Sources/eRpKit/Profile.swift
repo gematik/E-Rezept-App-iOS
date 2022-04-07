@@ -31,8 +31,7 @@ public struct Profile: Identifiable, Hashable, Equatable {
         color: Color = Color.next(),
         emoji: String? = nil,
         lastAuthenticated: Date? = nil,
-        erxTasks: [ErxTask] = [],
-        erxAuditEvents: [ErxAuditEvent] = []
+        erxTasks: [ErxTask] = []
     ) {
         self.name = name
         self.identifier = identifier
@@ -45,7 +44,6 @@ public struct Profile: Identifiable, Hashable, Equatable {
         self.emoji = emoji
         self.lastAuthenticated = lastAuthenticated
         self.erxTasks = erxTasks
-        self.erxAuditEvents = erxAuditEvents
     }
 
     public var id: UUID { // swiftlint:disable:this identifier_name
@@ -63,7 +61,6 @@ public struct Profile: Identifiable, Hashable, Equatable {
     public var emoji: String?
     public var lastAuthenticated: Date?
     public var erxTasks: [ErxTask]
-    public let erxAuditEvents: [ErxAuditEvent]
 
     public var fullName: String? {
         [givenName, familyName]

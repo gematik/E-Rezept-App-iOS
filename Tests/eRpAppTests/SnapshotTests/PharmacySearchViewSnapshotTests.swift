@@ -49,7 +49,7 @@ final class PharmacySearchViewSnapshotTests: XCTestCase {
                     )
                 ),
                 profileSelectionToolbarItemStore: Self.storeFor(profile: UserProfile.Dummies.profileA),
-                isModalView: false
+                isRedeemRecipe: false
             )
         }
 

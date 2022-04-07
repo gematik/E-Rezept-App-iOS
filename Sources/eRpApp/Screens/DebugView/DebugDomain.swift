@@ -194,7 +194,7 @@ enum DebugDomain {
         case .setAccessCodeTextButtonTapped:
             let accessCodeText = state.accessCodeText
             let expireDate = Date(timeIntervalSinceNow: 3600 * 24)
-            let idpToken = IDPToken(accessToken: accessCodeText, expires: expireDate, idToken: "")
+            let idpToken = IDPToken(accessToken: accessCodeText, expires: expireDate, idToken: "", redirect: "todo")
             environment.userSession.secureUserStore.set(token: idpToken)
             return .none
         case let .configurationReceived(configuration):

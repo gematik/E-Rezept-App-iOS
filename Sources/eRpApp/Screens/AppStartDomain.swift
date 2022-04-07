@@ -57,6 +57,7 @@ enum AppStartDomain {
         let signatureProvider: SecureEnclaveSignatureProvider
         let appSecurityManager: AppSecurityManager
         let authenticationChallengeProvider: AuthenticationChallengeProvider
+        let userSessionProvider: UserSessionProvider
     }
 
     private static let domainReducer = Reducer { state, action, environment in
@@ -142,7 +143,8 @@ enum AppStartDomain {
                     profileStore: $0.userSession.profileDataStore,
                     schedulers: $0.schedulers,
                     appSecurityManager: $0.appSecurityManager,
-                    authenticationChallengeProvider: $0.authenticationChallengeProvider
+                    authenticationChallengeProvider: $0.authenticationChallengeProvider,
+                    userSession: $0.userSession
                 )
             }
 
@@ -162,7 +164,8 @@ enum AppStartDomain {
                     serviceLocator: appStartEnvironment.serviceLocator,
                     accessibilityAnnouncementReceiver: appStartEnvironment.accessibilityAnnouncementReceiver,
                     tracker: appStartEnvironment.tracker,
-                    signatureProvider: appStartEnvironment.signatureProvider
+                    signatureProvider: appStartEnvironment.signatureProvider,
+                    userSessionProvider: appStartEnvironment.userSessionProvider
                 )
             }
 

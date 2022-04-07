@@ -50,6 +50,10 @@ final class ExtAuthPendingViewSnapshotTests: XCTestCase {
             .setFailureType(to: LocalStoreError.self)
             .eraseToAnyPublisher()
         mockUserSession.mockUserDataStore.underlyingSelectedProfileId = Just(UUID()).eraseToAnyPublisher()
+        mockUserSession.mockProfileDataStore.listAllProfilesReturnValue =
+            Just([])
+                .setFailureType(to: LocalStoreError.self)
+                .eraseToAnyPublisher()
         let store = ExtAuthPendingDomain.Store(
             initialState: .extAuthSuccessful(KKAppDirectory.Entry(name: "Gematik KK", identifier: "abc")),
             reducer: .empty,
@@ -75,6 +79,10 @@ final class ExtAuthPendingViewSnapshotTests: XCTestCase {
             .setFailureType(to: LocalStoreError.self)
             .eraseToAnyPublisher()
         mockUserSession.mockUserDataStore.underlyingSelectedProfileId = Just(UUID()).eraseToAnyPublisher()
+        mockUserSession.mockProfileDataStore.listAllProfilesReturnValue =
+            Just([])
+                .setFailureType(to: LocalStoreError.self)
+                .eraseToAnyPublisher()
         let store = ExtAuthPendingDomain.Store(
             initialState: .pendingExtAuth(KKAppDirectory.Entry(name: "Gematik KK", identifier: "abc")),
             reducer: .empty,

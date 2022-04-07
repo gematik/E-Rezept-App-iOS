@@ -164,6 +164,7 @@ enum OnboardingDomain {
         let schedulers: Schedulers
         let appSecurityManager: AppSecurityManager
         let authenticationChallengeProvider: AuthenticationChallengeProvider
+        let userSession: UserSession
     }
 
     private static let domainReducer = Reducer { state, action, environment in
@@ -204,7 +205,8 @@ enum OnboardingDomain {
                 state.composition.setPage(.newProfile)
                 return .none
             }
-            let profile = Profile(name: name)
+            // On app install no profile is available, use the generated profileId for the initial profile.
+            let profile = Profile(name: name, identifier: environment.userSession.profileId)
             return environment.profileStore.save(profiles: [profile])
                 .catchToEffect()
                 .map { result in
@@ -276,7 +278,8 @@ extension OnboardingDomain {
             profileStore: DemoProfileDataStore(),
             schedulers: Schedulers(),
             appSecurityManager: DummyAppSecurityManager(),
-            authenticationChallengeProvider: BiometricsAuthenticationChallengeProvider()
+            authenticationChallengeProvider: BiometricsAuthenticationChallengeProvider(),
+            userSession: DemoSessionContainer()
         )
     }
 }

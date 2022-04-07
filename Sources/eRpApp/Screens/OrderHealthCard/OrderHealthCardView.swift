@@ -189,8 +189,8 @@ struct OrderHealthCardView: View {
             let insuranceCompanies: [HealthInsuranceCompany]
             if let url = Bundle.main.url(forResource: "health_insurance_contacts", withExtension: "json"),
                let data = try? Data(contentsOf: url),
-               let directory = try? decoder.decode(HealthInsuranceCompanyDirectory.self, from: data) {
-                insuranceCompanies = directory.entries
+               let directory = try? decoder.decode([HealthInsuranceCompany].self, from: data) {
+                insuranceCompanies = directory
             } else {
                 insuranceCompanies = []
             }
@@ -210,10 +210,6 @@ struct OrderHealthCardView: View {
         }
     }
 
-    struct HealthInsuranceCompanyDirectory: Decodable {
-        let entries: [HealthInsuranceCompany]
-    }
-
     struct HealthInsuranceCompany: Decodable, Identifiable, Hashable {
         let id = UUID() // swiftlint:disable:this identifier_name
 
@@ -222,6 +218,10 @@ struct OrderHealthCardView: View {
         let healthCardAndPinMail: String
         let healthCardAndPinUrl: String
         let pinUrl: String
+        let subjectCardAndPinMail: String
+        let bodyCardAndPinMail: String
+        let subjectPinMail: String
+        let bodyPinMail: String
 
         private enum CodingKeys: String, CodingKey {
             case name
@@ -229,6 +229,10 @@ struct OrderHealthCardView: View {
             case healthCardAndPinMail
             case healthCardAndPinUrl
             case pinUrl
+            case subjectCardAndPinMail
+            case bodyCardAndPinMail
+            case subjectPinMail
+            case bodyPinMail
         }
 
         var serviceInquiryOptions: [ServiceInquiry] {
@@ -237,6 +241,9 @@ struct OrderHealthCardView: View {
                 options.append(.healthCardAndPin)
             }
             if hasContactInformationForPin {
+                options.append(.pin)
+            }
+            if hasContactInformationForPinMail {
                 options.append(.pin)
             }
             return options
@@ -250,6 +257,10 @@ struct OrderHealthCardView: View {
             !pinUrl.isEmpty
         }
 
+        var hasContactInformationForPinMail: Bool {
+            !subjectPinMail.isEmpty || !bodyPinMail.isEmpty
+        }
+
         var hasContactInformationForHealthCardAndPin: Bool {
             !healthCardAndPinPhone.isEmpty || !healthCardAndPinMail.isEmpty || !healthCardAndPinUrl.isEmpty
         }
@@ -260,10 +271,13 @@ struct OrderHealthCardView: View {
             let email: String
 
             switch serviceInquiry {
-            case .healthCardAndPin,
-                 .pin:
-                subject = L10n.orderEgkTxtMailHealthcardAndPinSubject.text
-                body = L10n.orderEgkTxtMailHealthcardAndPinBody.text
+            case .healthCardAndPin:
+                subject = subjectCardAndPinMail
+                body = bodyCardAndPinMail
+                email = healthCardAndPinMail
+            case .pin:
+                subject = subjectPinMail
+                body = bodyPinMail
                 email = healthCardAndPinMail
             }
 
@@ -304,9 +318,9 @@ extension ContactOptionsRowView {
         switch serviceInquiry {
         case .pin:
             self.init(
-                phone: "",
+                phone: healthInsuranceCompany.healthCardAndPinPhone,
                 web: healthInsuranceCompany.pinUrl,
-                email: nil
+                email: healthInsuranceCompany.createEmailUrl(for: .pin)
             )
         case .healthCardAndPin:
             self.init(
@@ -335,7 +349,11 @@ extension OrderHealthCardView.HealthInsuranceCompany {
         healthCardAndPinPhone: "003012341234",
         healthCardAndPinMail: "app-feedback@gematik.de",
         healthCardAndPinUrl: "",
-        pinUrl: "www.gematik.de"
+        pinUrl: "www.gematik.de",
+        subjectCardAndPinMail: "#eGKPIN# Bestellung einer NFC-fähigen Gesundheitskarte und PIN",
+        bodyCardAndPinMail: "",
+        subjectPinMail: "#PIN# Bestellung einer PIN zur Gesundheitskarte",
+        bodyPinMail: ""
     )
 }
 

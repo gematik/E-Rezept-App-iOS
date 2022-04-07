@@ -39,6 +39,9 @@ extension SettingsView {
                     AppSecuritySelectionView(store: store)
                 }
             )
+            .onAppear {
+                viewStore.send(.loadSecurityOption)
+            }
         }
 
         private struct HeaderView: View {

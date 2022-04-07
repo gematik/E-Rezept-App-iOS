@@ -209,8 +209,6 @@ class StandardSessionContainer: UserSession {
             .compactMap { $0 }
             .eraseToAnyPublisher()
     }
-
-    lazy var profileSecureDataWiper: ProfileSecureDataWiper = DefaultProfileSecureDataWiper()
 }
 
 extension IDPSession {

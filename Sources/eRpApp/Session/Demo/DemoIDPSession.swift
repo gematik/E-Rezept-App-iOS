@@ -72,7 +72,7 @@ class DemoIDPSession: IDPSession {
 
     func verify(_: SignedChallenge)
         -> AnyPublisher<IDPExchangeToken, IDPError> {
-        Just(IDPExchangeToken(code: "SUPER_SECRET_AUTH_CODE", sso: nil, state: "state"))
+        Just(IDPExchangeToken(code: "SUPER_SECRET_AUTH_CODE", sso: nil, state: "state", redirect: ""))
             .setFailureType(to: IDPError.self)
             .delay(for: 1.5, scheduler: uiScheduler)
             .eraseToAnyPublisher()
@@ -80,7 +80,6 @@ class DemoIDPSession: IDPSession {
 
     func exchange(token: IDPExchangeToken,
                   challengeSession _: ChallengeSession,
-                  redirectURI _: String?,
                   idTokenValidator _: @escaping (TokenPayload.IDTokenPayload) -> Result<Bool, Error>) -> AnyPublisher<
         IDPToken,
         IDPError
@@ -90,7 +89,8 @@ class DemoIDPSession: IDPSession {
                 accessToken: "SECRET ACCESSTOKEN",
                 expires: Date.distantFuture,
                 idToken: "IDP TOKEN",
-                ssoToken: "SSO TOKEN"
+                ssoToken: "SSO TOKEN",
+                redirect: ""
             )
         )
         return currentValue // swiftlint:disable:this trailing_closure
@@ -106,7 +106,8 @@ class DemoIDPSession: IDPSession {
             accessToken: "SECRET ACCESSTOKEN",
             expires: Date.distantFuture,
             idToken: "IDP TOKEN",
-            ssoToken: "SSO TOKEN"
+            ssoToken: "SSO TOKEN",
+            redirect: ""
         ))
             .setFailureType(to: IDPError.self)
             .delay(for: 1.5, scheduler: uiScheduler)

@@ -71,7 +71,8 @@ final class GroupedPrescriptionListViewTests: XCTestCase {
                 schedulers: schedulers,
                 fhirDateFormatter: FHIRDateFormatter.shared,
                 loginHandler: loginHandler,
-                signatureProvider: DummySecureEnclaveSignatureProvider()
+                signatureProvider: DummySecureEnclaveSignatureProvider(),
+                userSessionProvider: DummyUserSessionProvider()
             )
         )
     }

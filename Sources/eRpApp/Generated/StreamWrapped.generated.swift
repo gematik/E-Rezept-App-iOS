@@ -43,7 +43,6 @@ class StreamWrappedErxTaskRepository: ErxTaskRepository {
 
 
 
-
 	}
 
 
@@ -150,8 +149,6 @@ class StreamWrappedEventsStore: EventsStore {
 		self.stream = stream
 		self.current = current
 
-		self.hintState = current.hintState
-
 		stream
 			.weakAssign(to: \.current, on: self)
 			.store(in: &disposeBag)
@@ -174,6 +171,51 @@ class StreamWrappedEventsStore: EventsStore {
 	/// AnyObject
 }
 
+class StreamWrappedExtAuthRequestStorage: ExtAuthRequestStorage {
+    private var disposeBag: Set<AnyCancellable> = []
+	private let stream: AnyPublisher<ExtAuthRequestStorage, Never>
+	private var current: ExtAuthRequestStorage
+
+	init(stream: AnyPublisher<ExtAuthRequestStorage, Never>, current: ExtAuthRequestStorage) {
+		self.stream = stream
+		self.current = current
+
+		stream
+			.weakAssign(to: \.current, on: self)
+			.store(in: &disposeBag)
+
+
+	}
+
+	var pendingExtAuthRequests: AnyPublisher<[ExtAuthChallengeSession], Never> {
+		return stream
+			.map { $0.pendingExtAuthRequests }
+			.switchToLatest()
+			.eraseToAnyPublisher()
+	}
+
+	func setExtAuthRequest(_ request: ExtAuthChallengeSession?, for state: String) -> Void {
+        current.setExtAuthRequest(
+				request,
+				for: state
+            )
+	}
+
+	func getExtAuthRequest(for state: String) -> ExtAuthChallengeSession? {
+        current.getExtAuthRequest(
+				for: state
+            )
+	}
+
+	func reset() -> Void {
+        current.reset(
+            )
+	}
+
+
+	/// AnyObject
+}
+
 class StreamWrappedIDPSession: IDPSession {
     private var disposeBag: Set<AnyCancellable> = []
 	private let stream: AnyPublisher<IDPSession, Never>
@@ -182,7 +224,6 @@ class StreamWrappedIDPSession: IDPSession {
 	init(stream: AnyPublisher<IDPSession, Never>, current: IDPSession) {
 		self.stream = stream
 		self.current = current
-
 
 		stream
 			.weakAssign(to: \.current, on: self)
@@ -226,12 +267,11 @@ class StreamWrappedIDPSession: IDPSession {
             .eraseToAnyPublisher()
 	}
 
-	func exchange(token: IDPExchangeToken, challengeSession: ChallengeSession, redirectURI: String?, idTokenValidator: @escaping (TokenPayload.IDTokenPayload) -> Result<Bool, Error>) -> AnyPublisher<IDPToken, IDPError> {
+	func exchange(token: IDPExchangeToken, challengeSession: ChallengeSession, idTokenValidator: @escaping (TokenPayload.IDTokenPayload) -> Result<Bool, Error>) -> AnyPublisher<IDPToken, IDPError> {
         stream
         	.map { $0.exchange(
 				token: token,
 				challengeSession: challengeSession,
-				redirectURI: redirectURI,
 				idTokenValidator: idTokenValidator
             ) }
             .switchToLatest()
@@ -328,12 +368,11 @@ class StreamWrappedIDPSession: IDPSession {
             )
 	}
 
-	func exchange(token: IDPExchangeToken, challengeSession: ChallengeSession, redirectURI: String?) -> AnyPublisher<IDPToken, IDPError> {
+	func exchange(token: IDPExchangeToken, challengeSession: ChallengeSession) -> AnyPublisher<IDPToken, IDPError> {
         stream
         	.map { $0.exchange(
 				token: token,
-				challengeSession: challengeSession,
-				redirectURI: redirectURI
+				challengeSession: challengeSession
             ) }
             .switchToLatest()
             .eraseToAnyPublisher()
@@ -355,7 +394,6 @@ class StreamWrappedNFCSignatureProvider: NFCSignatureProvider {
 	init(stream: AnyPublisher<NFCSignatureProvider, Never>, current: NFCSignatureProvider) {
 		self.stream = stream
 		self.current = current
-
 
 		stream
 			.weakAssign(to: \.current, on: self)
@@ -398,7 +436,6 @@ class StreamWrappedPagedAuditEventsController: PagedAuditEventsController {
 		self.stream = stream
 		self.current = current
 
-
 		stream
 			.weakAssign(to: \.current, on: self)
 			.store(in: &disposeBag)
@@ -433,7 +470,6 @@ class StreamWrappedPharmacyRepository: PharmacyRepository {
 		self.stream = stream
 		self.current = current
 
-
 		stream
 			.weakAssign(to: \.current, on: self)
 			.store(in: &disposeBag)
@@ -463,7 +499,6 @@ class StreamWrappedProfileDataStore: ProfileDataStore {
 	init(stream: AnyPublisher<ProfileDataStore, Never>, current: ProfileDataStore) {
 		self.stream = stream
 		self.current = current
-
 
 		stream
 			.weakAssign(to: \.current, on: self)
@@ -527,7 +562,6 @@ class StreamWrappedSecureUserDataStore: SecureUserDataStore {
 	init(stream: AnyPublisher<SecureUserDataStore, Never>, current: SecureUserDataStore) {
 		self.stream = stream
 		self.current = current
-
 
 		stream
 			.weakAssign(to: \.current, on: self)
@@ -616,33 +650,20 @@ class StreamWrappedUserDataStore: UserDataStore {
 		self.stream = stream
 		self.current = current
 
-		self.isOnboardingHidden = current.isOnboardingHidden
-		self.serverEnvironmentName = current.serverEnvironmentName
-		self.latestCompatibleModelVersion = current.latestCompatibleModelVersion
-		self.appStartCounter = current.appStartCounter
-
 		stream
 			.weakAssign(to: \.current, on: self)
 			.store(in: &disposeBag)
 
-		stream
-			.map(\.isOnboardingHidden)
-			.weakAssign(to: \.isOnboardingHidden, on: self)
-			.store(in: &disposeBag)
-		stream
-			.map(\.serverEnvironmentName)
-			.weakAssign(to: \.serverEnvironmentName, on: self)
-			.store(in: &disposeBag)
 
 	}
 
 	var hideOnboarding: AnyPublisher<Bool, Never> {
 		return stream
 			.map { $0.hideOnboarding }
-			.switchToLatest()
+			.switchToLatest() 
 			.eraseToAnyPublisher()
 	}
-	private(set) var isOnboardingHidden: Bool
+	var isOnboardingHidden: Bool { current.isOnboardingHidden }
 	var onboardingVersion: AnyPublisher<String?, Never> {
 		return stream
 			.map { $0.onboardingVersion }
@@ -661,7 +682,7 @@ class StreamWrappedUserDataStore: UserDataStore {
 			.switchToLatest()
 			.eraseToAnyPublisher()
 	}
-	private(set) var serverEnvironmentName: String?
+	var serverEnvironmentName: String? { current.serverEnvironmentName }
 	var appSecurityOption: AnyPublisher<Int, Never> {
 		return stream
 			.map { $0.appSecurityOption }
@@ -700,6 +721,7 @@ class StreamWrappedUserDataStore: UserDataStore {
 			.switchToLatest()
 			.eraseToAnyPublisher()
 	}
+	var appConfiguration: AppConfiguration { current.appConfiguration }
 
 	func set(hideOnboarding: Bool) -> Void {
         current.set(
@@ -762,51 +784,10 @@ class StreamWrappedUserSession: UserSession {
 		self.stream = stream
 		self.current = current
 
-		self.isDemoMode = current.isDemoMode
-		self.extAuthRequestStorage = current.extAuthRequestStorage
-		self.vauStorage = current.vauStorage
-		self.trustStoreSession = current.trustStoreSession
-		self.appSecurityManager = current.appSecurityManager
-		self.deviceSecurityManager = current.deviceSecurityManager
-		self.profileId = current.profileId
-		self.profileSecureDataWiper = current.profileSecureDataWiper
-
 		stream
 			.weakAssign(to: \.current, on: self)
 			.store(in: &disposeBag)
 
-		stream
-			.map(\.isDemoMode)
-			.weakAssign(to: \.isDemoMode, on: self)
-			.store(in: &disposeBag)
-		stream
-			.map(\.extAuthRequestStorage)
-			.weakAssign(to: \.extAuthRequestStorage, on: self)
-			.store(in: &disposeBag)
-		stream
-			.map(\.vauStorage)
-			.weakAssign(to: \.vauStorage, on: self)
-			.store(in: &disposeBag)
-		stream
-			.map(\.trustStoreSession)
-			.weakAssign(to: \.trustStoreSession, on: self)
-			.store(in: &disposeBag)
-		stream
-			.map(\.appSecurityManager)
-			.weakAssign(to: \.appSecurityManager, on: self)
-			.store(in: &disposeBag)
-		stream
-			.map(\.deviceSecurityManager)
-			.weakAssign(to: \.deviceSecurityManager, on: self)
-			.store(in: &disposeBag)
-		stream
-			.map(\.profileId)
-			.weakAssign(to: \.profileId, on: self)
-			.store(in: &disposeBag)
-		stream
-			.map(\.profileSecureDataWiper)
-			.weakAssign(to: \.profileSecureDataWiper, on: self)
-			.store(in: &disposeBag)
 
 	}
 
@@ -834,23 +815,24 @@ class StreamWrappedUserSession: UserSession {
 	lazy var secureUserStore: SecureUserDataStore = {
 		StreamWrappedSecureUserDataStore(stream: stream.map{ $0.secureUserStore }.eraseToAnyPublisher(), current: current.secureUserStore )
 	}()
-	private(set) var isDemoMode: Bool
+	var isDemoMode: Bool { current.isDemoMode }
 	lazy var nfcSessionProvider: NFCSignatureProvider = {
 		StreamWrappedNFCSignatureProvider(stream: stream.map{ $0.nfcSessionProvider }.eraseToAnyPublisher(), current: current.nfcSessionProvider )
 	}()
 	lazy var idpSession: IDPSession = {
 		StreamWrappedIDPSession(stream: stream.map{ $0.idpSession }.eraseToAnyPublisher(), current: current.idpSession )
 	}()
-	private(set) var extAuthRequestStorage: ExtAuthRequestStorage
+	lazy var extAuthRequestStorage: ExtAuthRequestStorage = {
+		StreamWrappedExtAuthRequestStorage(stream: stream.map{ $0.extAuthRequestStorage }.eraseToAnyPublisher(), current: current.extAuthRequestStorage )
+	}()
 	lazy var biometrieIdpSession: IDPSession = {
 		StreamWrappedIDPSession(stream: stream.map{ $0.biometrieIdpSession }.eraseToAnyPublisher(), current: current.biometrieIdpSession )
 	}()
-	private(set) var vauStorage: VAUStorage
-	private(set) var trustStoreSession: TrustStoreSession
-	private(set) var appSecurityManager: AppSecurityManager
-	private(set) var deviceSecurityManager: DeviceSecurityManager
-	private(set) var profileId: UUID
-	private(set) var profileSecureDataWiper: ProfileSecureDataWiper
+	var vauStorage: VAUStorage { current.vauStorage }
+	var trustStoreSession: TrustStoreSession { current.trustStoreSession }
+	var appSecurityManager: AppSecurityManager { current.appSecurityManager }
+	var deviceSecurityManager: DeviceSecurityManager { current.deviceSecurityManager }
+	var profileId: UUID { current.profileId }
 
 	func profile() -> AnyPublisher<Profile, LocalStoreError> {
         stream

@@ -45,7 +45,8 @@ final class OnboardingDomainTests: XCTestCase {
                 profileStore: mockProfileDataStore,
                 schedulers: Schedulers.immediate,
                 appSecurityManager: mockAppSecurityManager,
-                authenticationChallengeProvider: MockAuthenticationChallengeProvider(result: .success(true))
+                authenticationChallengeProvider: MockAuthenticationChallengeProvider(result: .success(true)),
+                userSession: MockUserSession()
             )
         )
     }

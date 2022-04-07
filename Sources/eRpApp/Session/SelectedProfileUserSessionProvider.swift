@@ -28,12 +28,16 @@ class SelectedProfileUserSessionProvider {
 
     private var disposeBag = Set<AnyCancellable>()
 
-    init(initialUserSession: UserSession,
-         schedulers: Schedulers,
-         coreDataControllerFactory: CoreDataControllerFactory,
-         profileDataStore: ProfileDataStore,
+    private let userSessionProvider: UserSessionProviderControl
+    var appConfiguration: AppConfiguration
+
+    init(appConfiguration: AppConfiguration,
+         initialUserSession: UserSession,
+         userSessionProvider: UserSessionProviderControl,
          publisher: AnyPublisher<(profileId: UUID, appConfig: AppConfiguration), Never>) {
         currentValueSubject = CurrentValueSubject(initialUserSession)
+        self.userSessionProvider = userSessionProvider
+        self.appConfiguration = appConfiguration
 
         userSession = StreamWrappedUserSession(
             stream: currentValueSubject.eraseToAnyPublisher(),
@@ -41,19 +45,19 @@ class SelectedProfileUserSessionProvider {
         )
 
         publisher
-            .sink { [weak currentValue = self.currentValueSubject] profileId, appConfig in
-                currentValue?.send(
-                    StandardSessionContainer(
-                        for: profileId,
-                        schedulers: schedulers,
-                        erxTaskCoreDataStore: ErxTaskCoreDataStore(
-                            profileId: profileId,
-                            coreDataControllerFactory: coreDataControllerFactory
-                        ),
-                        profileDataStore: profileDataStore,
-                        appConfiguration: appConfig
-                    )
-                )
+            .sink { [weak currentValue = self.currentValueSubject, weak self] profileId, configuration in
+                guard let self = self else {
+                    return
+                }
+
+                if configuration != self.appConfiguration {
+                    self.appConfiguration = configuration
+                    userSessionProvider.resetSession(with: configuration)
+                }
+
+                let newProfile = self.userSessionProvider.userSession(for: profileId)
+
+                currentValue?.send(newProfile)
             }
             .store(in: &disposeBag)
     }

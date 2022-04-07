@@ -32,13 +32,20 @@ public class IDPSessionMock: IDPSession {
         expires: Date(),
         idToken: "IDP TOKEN",
         ssoToken: "SSO TOKEN",
-        tokenType: "type"
+        tokenType: "type",
+        redirect: "redirect"
     )
 
     public var idpToken: CurrentValueSubject<IDPToken?, IDPError> = CurrentValueSubject(nil)
 
+    public var isLoggedIn_CallsCount = 0
+    public var isLoggedIn_Called: Bool {
+        isLoggedIn_CallsCount > 0
+    }
+
     public var isLoggedIn: AnyPublisher<Bool, IDPError> {
-        autoRefreshedToken.map { token in
+        isLoggedIn_CallsCount += 1
+        return autoRefreshedToken.map { token in
             token != nil
         }
         .eraseToAnyPublisher()
@@ -53,8 +60,14 @@ public class IDPSessionMock: IDPSession {
         invalidateAccessToken_CallsCount += 1
     }
 
+    public var autoRefreshedToken_CallsCount = 0
+    public var autoRefreshedToken_Called: Bool {
+        autoRefreshedToken_CallsCount > 0
+    }
+
     public var autoRefreshedToken: AnyPublisher<IDPToken?, IDPError> {
-        idpToken.eraseToAnyPublisher()
+        autoRefreshedToken_CallsCount += 1
+        return idpToken.eraseToAnyPublisher()
     }
 
     public var requestChallenge_Publisher: AnyPublisher<IDPChallengeSession, IDPError>! =
@@ -79,7 +92,7 @@ public class IDPSessionMock: IDPSession {
     }
 
     public var verify_Publisher: AnyPublisher<IDPExchangeToken, IDPError>! =
-        Just(IDPExchangeToken(code: "SUPER_SECRET_AUTH_CODE", sso: nil, state: "state"))
+        Just(IDPExchangeToken(code: "SUPER_SECRET_AUTH_CODE", sso: nil, state: "state", redirect: "redirect"))
             .setFailureType(to: IDPError.self)
             .eraseToAnyPublisher()
     public var verify_ReceivedArguments: SignedChallenge?
@@ -95,7 +108,7 @@ public class IDPSessionMock: IDPSession {
     }
 
     public var ssoLogin_Publisher: AnyPublisher<IDPExchangeToken, IDPError>! =
-        Just(IDPExchangeToken(code: "SUPER_SECRET_AUTH_CODE", sso: nil, state: "state"))
+        Just(IDPExchangeToken(code: "SUPER_SECRET_AUTH_CODE", sso: nil, state: "state", redirect: "redirect"))
             .setFailureType(to: IDPError.self)
             .eraseToAnyPublisher()
     public var ssoLogin_ReceivedArguments: (IDPChallengeSession, String)?
@@ -116,7 +129,6 @@ public class IDPSessionMock: IDPSession {
             .eraseToAnyPublisher()
     public var exchange_ReceivedArguments: (token: IDPExchangeToken,
                                             challengeSession: ChallengeSession,
-                                            redirectURI: String?,
                                             idTokenValidator: (TokenPayload.IDTokenPayload) -> Result<Bool, Error>)?
     public var exchange_CallsCount = 0
     public var exchange_Called: Bool {
@@ -126,13 +138,11 @@ public class IDPSessionMock: IDPSession {
     public func exchange(
         token: IDPExchangeToken,
         challengeSession: ChallengeSession,
-        redirectURI: String?,
         idTokenValidator: @escaping (TokenPayload.IDTokenPayload) -> Result<Bool, Error>
     ) -> AnyPublisher<IDPToken, IDPError> {
         exchange_CallsCount += 1
         exchange_ReceivedArguments = (token: token,
                                       challengeSession: challengeSession,
-                                      redirectURI: redirectURI,
                                       idTokenValidator: idTokenValidator)
         return exchange_Publisher
     }

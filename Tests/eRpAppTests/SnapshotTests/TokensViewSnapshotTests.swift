@@ -37,7 +37,8 @@ final class TokensViewSnapshotTests: XCTestCase {
                 expires: Date(),
                 idToken: "123456",
                 ssoToken: nil,
-                tokenType: "ended"
+                tokenType: "ended",
+                redirect: "redirect"
             )
         )
 
@@ -52,7 +53,8 @@ final class TokensViewSnapshotTests: XCTestCase {
                 expires: Date(),
                 idToken: "123456",
                 ssoToken: "sso_tokens_are_very_long",
-                tokenType: "ended"
+                tokenType: "ended",
+                redirect: "redirect"
             )
         )
 

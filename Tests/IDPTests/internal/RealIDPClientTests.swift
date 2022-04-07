@@ -273,7 +273,8 @@ final class RealIDPClientTests: XCTestCase {
         let expectedToken = IDPExchangeToken(
             code: exchangeToken.asciiString!,
             sso: ssoToken.asciiString,
-            state: state
+            state: state,
+            redirect: "http://redirect.com/path?query=something&extra=5"
         )
 
         RealIDPClient(client: config)
@@ -316,7 +317,7 @@ final class RealIDPClientTests: XCTestCase {
         return jwe
     }
 
-    let dummyIdpToken = IDPToken(accessToken: "accesToken", expires: Date(), idToken: "idToken")
+    let dummyIdpToken = IDPToken(accessToken: "accesToken", expires: Date(), idToken: "idToken", redirect: "redirect")
 
     func testRegisterDeviceSuccess() throws {
         let expected = PairingEntry(
@@ -446,7 +447,8 @@ final class RealIDPClientTests: XCTestCase {
         let expectedToken = IDPExchangeToken(
             code: exchangeToken.asciiString!,
             sso: ssoToken.asciiString,
-            state: state
+            state: state,
+            redirect: "http://redirect.com/path?query=something&extra=5"
         )
 
         RealIDPClient(client: config)
@@ -553,7 +555,8 @@ final class RealIDPClientTests: XCTestCase {
         let expectedToken = IDPExchangeToken(
             code: exchangeToken.asciiString!,
             sso: ssoToken,
-            state: state
+            state: state,
+            redirect: "redirect"
         )
 
         stub(condition: ssoRequestStubCondition) { _ in
@@ -568,7 +571,7 @@ final class RealIDPClientTests: XCTestCase {
         }
         // when I trigger a refresh
         RealIDPClient(client: config)
-            .refresh(with: challenge, ssoToken: ssoToken, using: localDiscoveryDocument)
+            .refresh(with: challenge, ssoToken: ssoToken, using: localDiscoveryDocument, for: "redirect")
             .test(expectations: { token in
                 // then I get a valid token
                 expect(token).to(equal(expectedToken))
@@ -593,7 +596,7 @@ final class RealIDPClientTests: XCTestCase {
         }
         // when I trigger a refresh
         RealIDPClient(client: config)
-            .refresh(with: challenge, ssoToken: ssoToken, using: localDiscoveryDocument)
+            .refresh(with: challenge, ssoToken: ssoToken, using: localDiscoveryDocument, for: "redirect")
             .test(failure: { error in
                 // then I get the error
                 expect(error).to(equal(IDPError.serverError(serverError)))
@@ -630,7 +633,12 @@ final class RealIDPClientTests: XCTestCase {
         let verifier = "123456789&=^"
         let keyVerifier = encryptedKeyVerifier(for: verifier)
         let keyVerifierString = keyVerifier.encoded().utf8string!
-        let exchangeTokenDummy = IDPExchangeToken(code: "exchange-code!", sso: nil, state: "state-123")
+        let exchangeTokenDummy = IDPExchangeToken(
+            code: "exchange-code!",
+            sso: nil,
+            state: "state-123",
+            redirect: "redirect"
+        )
         let parameters: [String: String] = [
             "key_verifier": keyVerifierString,
             "code": exchangeTokenDummy.code,
@@ -683,7 +691,12 @@ final class RealIDPClientTests: XCTestCase {
         let verifier = "123456789&=^"
         let keyVerifier = encryptedKeyVerifier(for: verifier)
         let keyVerifierString = keyVerifier.encoded().utf8string!
-        let exchangeTokenDummy = IDPExchangeToken(code: "exchange-code!", sso: nil, state: "state-123")
+        let exchangeTokenDummy = IDPExchangeToken(
+            code: "exchange-code!",
+            sso: nil,
+            state: "state-123",
+            redirect: "redirect"
+        )
         let parameters: [String: String] = [
             "key_verifier": keyVerifierString,
             "code": exchangeTokenDummy.code,
@@ -818,7 +831,8 @@ final class RealIDPClientTests: XCTestCase {
 
         let fixtureToken = IDPExchangeToken(code: "testcode",
                                             sso: "testsso",
-                                            state: "teststate")
+                                            state: "teststate",
+                                            redirect: "https://das-e-rezept-fuer-deutschland.de/extauth")
         let responseURL =
             URL(
                 string: "http://redirect.gematik.de/?code=\(fixtureToken.code)&state=\(fixtureToken.state)&ssotoken=\(fixtureToken.sso!)" // swiftlint:disable:this line_length

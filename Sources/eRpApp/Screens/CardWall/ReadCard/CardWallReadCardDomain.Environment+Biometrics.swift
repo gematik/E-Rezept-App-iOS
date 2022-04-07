@@ -73,22 +73,25 @@ extension HealthCardType {
 }
 
 extension CardWallReadCardDomain.Environment {
-    func loginWithBiometrics() -> AnyPublisher<IDPToken, CardWallReadCardDomain.State.Error> {
-        idTokenValidator
+    func loginWithBiometrics(for profileID: UUID) -> AnyPublisher<IDPToken, CardWallReadCardDomain.State.Error> {
+        sessionProvider.idTokenValidator(for: profileID)
             .mapError(CardWallReadCardDomain.State.Error.profileValidation)
             .flatMap { idTokenValidator in
-                userSession.idpSession.requestChallenge()
+                sessionProvider
+                    .idpSession(for: profileID)
+                    .requestChallenge()
                     .flatMap { (challenge: IDPChallengeSession) -> AnyPublisher<IDPToken, IDPError> in
                         signatureProvider.authenticationData(for: challenge)
                             .mapError(IDPError.pairing)
                             .flatMap { (signedAuthenticationData: SignedAuthenticationData)
                                 -> AnyPublisher<IDPToken, IDPError> in
-                                userSession.idpSession.altVerify(signedAuthenticationData)
+                                sessionProvider
+                                    .idpSession(for: profileID)
+                                    .altVerify(signedAuthenticationData)
                                     .flatMap { (exchangeToken: IDPExchangeToken) -> AnyPublisher<IDPToken, IDPError> in
-                                        userSession.idpSession.exchange(
+                                        sessionProvider.idpSession(for: profileID).exchange(
                                             token: exchangeToken,
                                             challengeSession: challenge,
-                                            redirectURI: nil,
                                             idTokenValidator: idTokenValidator.validate(idToken:)
                                         )
                                     }
@@ -102,8 +105,12 @@ extension CardWallReadCardDomain.Environment {
             .eraseToAnyPublisher()
     }
 
-    func signChallengeThenAltAuthWithNFCCard(can: CAN, pin: Format2Pin) // swiftlint:disable:this function_body_length
-        -> Effect<CardWallReadCardDomain.Action, Never> {
+    // swiftlint:disable:next function_body_length
+    func signChallengeThenAltAuthWithNFCCard(
+        can: CAN,
+        pin: Format2Pin,
+        profileID: UUID
+    ) -> Effect<CardWallReadCardDomain.Action, Never> {
         let pairingSession: PairingSession
         do {
             pairingSession = try signatureProvider.registerData()
@@ -115,12 +122,13 @@ extension CardWallReadCardDomain.Environment {
 
             subscriber.send(.stateReceived(.signingChallenge(.loading)))
 
-            return self.userSession.biometrieIdpSession
+            return sessionProvider
+                .biometrieIdpSession(for: profileID)
                 .requestChallenge() // AnyPublisher<IDPChallengeSession, IDPError>
                 .first()
                 .mapError(CardWallReadCardDomain.State.Error.idpError)
                 .flatMap { challengeSession -> AnyPublisher<IDPToken, CardWallReadCardDomain.State.Error> in
-                    userSession.nfcSessionProvider
+                    sessionProvider.signatureProvider(for: profileID)
                         .openSecureSession(can: can,
                                            pin: pin) // -> AnyPublisher<EGKSignatureSession, NFCSignatureProviderError>
                         .flatMap { healthCard -> AnyPublisher<
@@ -166,25 +174,28 @@ extension CardWallReadCardDomain.Environment {
                             IDPToken,
                             CardWallReadCardDomain.State.Error
                         > in
-                        idTokenValidator
+                        sessionProvider.idTokenValidator(for: profileID)
                             .mapError(CardWallReadCardDomain.State.Error.profileValidation)
                             .flatMap { idTokenValidator in
-                                userSession.biometrieIdpSession
+                                sessionProvider
+                                    .biometrieIdpSession(for: profileID)
                                     .verifyAndExchange(signedChallenge: signedChallenge,
                                                        idTokenValidator: idTokenValidator.validate(idToken:))
                                     .flatMap { token -> AnyPublisher<IDPToken, IDPError> in
-                                        userSession.biometrieIdpSession.pairDevice(
-                                            with: registrationData,
-                                            token: token
-                                        )
-                                        .map { _ in token }
-                                        .eraseToAnyPublisher()
+                                        sessionProvider
+                                            .biometrieIdpSession(for: profileID)
+                                            .pairDevice(
+                                                with: registrationData,
+                                                token: token
+                                            )
+                                            .map { _ in token }
+                                            .eraseToAnyPublisher()
                                     }
                                     .mapError(CardWallReadCardDomain.State.Error.idpError)
                                     .eraseToAnyPublisher()
                             }
                             .flatMap { _ -> AnyPublisher<IDPToken, CardWallReadCardDomain.State.Error> in
-                                loginWithBiometrics()
+                                loginWithBiometrics(for: profileID)
                             }
                             .eraseToAnyPublisher()
                         }

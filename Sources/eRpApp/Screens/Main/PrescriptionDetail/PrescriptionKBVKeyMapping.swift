@@ -47,6 +47,7 @@ struct PrescriptionKBVKeyMapping {
     // swiftlint:disable:next function_body_length
     internal static func localizedStringKeyForDosageFormKey(_ key: String) -> String? {
         let mapping = [
+            "---": "kbv_code_dosage_form_none",
             "aeo": "kbv_code_dosage_form_aeo",
             "amp": "kbv_code_dosage_form_amp",
             "apa": "kbv_code_dosage_form_apa",
@@ -69,6 +70,7 @@ struct PrescriptionKBVKeyMapping {
             "bta": "kbv_code_dosage_form_bta",
             "cre": "kbv_code_dosage_form_cre",
             "dfl": "kbv_code_dosage_form_dfl",
+            "dig": "kbv_code_dosage_form_dig",
             "dil": "kbv_code_dosage_form_dil",
             "dis": "kbv_code_dosage_form_dis",
             "dka": "kbv_code_dosage_form_dka",

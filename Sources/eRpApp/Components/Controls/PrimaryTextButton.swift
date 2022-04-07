@@ -50,30 +50,6 @@ struct PrimaryTextButton: View {
 }
 
 /// sourcery: StringAssetInitialized
-struct DestructiveTextButton: View {
-    var text: LocalizedStringKey
-    var isEnabled = true
-    let action: () -> Void
-
-    var body: some View {
-        Button(action: action) {
-            HStack {
-                Text(text)
-                    .fontWeight(.semibold)
-                    .font(.body)
-                    .multilineTextAlignment(.center)
-                    .foregroundColor(isEnabled ? Color(.white) : Color(.systemGray))
-                    .padding()
-                    .frame(maxWidth: .infinity, alignment: .center)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-        }
-        .buttonStyle(DestructiveButtonStyle(enabled: isEnabled))
-        .disabled(!isEnabled)
-    }
-}
-
-/// sourcery: StringAssetInitialized
 struct PrimaryTextButtonBorder: View {
     var text: LocalizedStringKey
     var image: Image?

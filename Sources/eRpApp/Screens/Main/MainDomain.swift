@@ -98,6 +98,7 @@ enum MainDomain {
         let userProfileService: UserProfileService
 
         var signatureProvider: SecureEnclaveSignatureProvider
+        var userSessionProvider: UserSessionProvider
 
         let tracker: Tracker
     }
@@ -193,7 +194,8 @@ enum MainDomain {
                     idpSession: mainDomainEnvironment.userSession.idpSession,
                     signatureProvider: mainDomainEnvironment.signatureProvider
                 ),
-                signatureProvider: mainDomainEnvironment.signatureProvider
+                signatureProvider: mainDomainEnvironment.signatureProvider,
+                userSessionProvider: mainDomainEnvironment.userSessionProvider
             )
         }
 
@@ -265,6 +267,7 @@ extension MainDomain {
             fhirDateFormatter: globals.fhirDateFormatter,
             userProfileService: DummyUserProfileService(),
             signatureProvider: DummySecureEnclaveSignatureProvider(),
+            userSessionProvider: DummyUserSessionProvider(),
             tracker: DummyTracker()
         )
     }

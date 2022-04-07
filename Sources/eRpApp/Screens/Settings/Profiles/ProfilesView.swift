@@ -70,6 +70,12 @@ struct ProfilesView: View {
             EmptyView()
             #endif
         })
+            .onAppear {
+                viewStore.send(.registerListener)
+            }
+            .onDisappear {
+                viewStore.send(.unregisterListener)
+            }
     }
 
     private struct SingleProfileView: View {

@@ -60,7 +60,7 @@ final class StandardUserSessionTests: XCTestCase {
         let otherProfile = Profile(name: "OtherProfile")
 
         let sut = MockUserSession()
-        sut.mockUserDataStore.underlyingSelectedProfileId = Just(currentProfile.id).eraseToAnyPublisher()
+        sut.profileId = currentProfile.id
         sut.mockProfileDataStore.listAllProfilesReturnValue = Just([currentProfile, otherProfile])
             .setFailureType(to: LocalStoreError.self)
             .eraseToAnyPublisher()
@@ -79,7 +79,7 @@ final class StandardUserSessionTests: XCTestCase {
         let otherProfile = Profile(name: "OtherProfile")
 
         let sut = MockUserSession()
-        sut.mockUserDataStore.underlyingSelectedProfileId = Just(currentProfile.id).eraseToAnyPublisher()
+        sut.profileId = currentProfile.id
         sut.mockProfileDataStore.listAllProfilesReturnValue = Just([currentProfile, otherProfile])
             .setFailureType(to: LocalStoreError.self)
             .eraseToAnyPublisher()

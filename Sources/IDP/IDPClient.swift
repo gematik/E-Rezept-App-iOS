@@ -69,9 +69,11 @@ public protocol IDPClient {
     ///               `requestChallenge`.
     ///   - sso: The SSO token from a prior successful login via `verify` and `exchange`.
     ///   - document: The discovery document to use.
+    ///   - redirect: The redirect that the refresh is requested for. Must match the initial SSO token redirect.
     func refresh(with unsignedChallenge: IDPChallenge,
                  ssoToken: String,
-                 using document: DiscoveryDocument) -> AnyPublisher<IDPExchangeToken, IDPError>
+                 using document: DiscoveryDocument,
+                 for redirect: String) -> AnyPublisher<IDPExchangeToken, IDPError>
 
     /// Exchange a token for an actual token
     ///

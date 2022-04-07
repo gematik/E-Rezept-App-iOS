@@ -114,7 +114,7 @@ public struct DefaultSubTitleStyle: SubTitleStyle {
 public struct SectionContainerSubTitleStyle: SubTitleStyle {
     let showSeparator: Bool
 
-    init(showSeparator: Bool) {
+    public init(showSeparator: Bool = false) {
         self.showSeparator = showSeparator
     }
 
@@ -142,6 +142,8 @@ public struct SectionContainerSubTitleStyle: SubTitleStyle {
 }
 
 public struct PlainSectionContainerSubTitleStyle: SubTitleStyle {
+    public init() {}
+
     public func makeBody(configuration: SubTitleConfiguration) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             configuration.title
@@ -173,7 +175,8 @@ public struct SubTitleViewModifier<Style: SubTitleStyle>: ViewModifier {
 }
 
 extension View {
-    func subTitleStyle<Style: SubTitleStyle>(_ style: Style) -> some View {
+    /// Sets the style of SubTitle within this view to a SubTitlyStyle with a custom appearance.
+    public func subTitleStyle<Style: SubTitleStyle>(_ style: Style) -> some View {
         modifier(SubTitleViewModifier(style: style))
     }
 }

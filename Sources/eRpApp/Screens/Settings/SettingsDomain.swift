@@ -80,19 +80,16 @@ enum SettingsDomain {
         let signatureProvider: SecureEnclaveSignatureProvider
         let appSecurityManager: AppSecurityManager
         let router: Routing
+        let userSessionProvider: UserSessionProvider
+        let accessibilityAnnouncementReceiver: (String) -> Void
     }
 
     private static let domainReducer = Reducer { state, action, environment in
         switch action {
         case .initSettings:
-            return Effect.merge(
-                UserDefaults.standard.publisher(for: \UserDefaults.kAppTrackingAllowed)
-                    .map(Action.trackerStatusReceived)
-                    .eraseToEffect(),
-                // loading within the specific domain triggeres multiple times, due to update mechanics within the table
-                Effect(value: .profiles(action: .registerListener)),
-                Effect(value: .appSecurity(action: .loadSecurityOption))
-            )
+            return UserDefaults.standard.publisher(for: \UserDefaults.kAppTrackingAllowed)
+                .map(Action.trackerStatusReceived)
+                .eraseToEffect()
         case let .trackerStatusReceived(value):
             state.trackerOptIn = value
             return .none
@@ -200,6 +197,7 @@ enum SettingsDomain {
             action: /SettingsDomain.Action.profiles(action:)
         ) {
             .init(
+                appSecurityManager: $0.appSecurityManager,
                 schedulers: $0.schedulers,
                 profileDataStore: $0.changeableUserSessionContainer.userSession.profileDataStore,
                 userDataStore: $0.changeableUserSessionContainer.userSession.localUserStore,
@@ -208,8 +206,14 @@ enum SettingsDomain {
                     profileOnlineChecker: DefaultProfileOnlineChecker(),
                     userSession: $0.changeableUserSessionContainer.userSession
                 ),
-                profileSecureDataWiper: $0.changeableUserSessionContainer.userSession.profileSecureDataWiper,
-                router: $0.router
+                profileSecureDataWiper: DefaultProfileSecureDataWiper(userSessionProvider: $0.userSessionProvider),
+                router: $0.router,
+                secureEnclaveSignatureProvider: $0.signatureProvider,
+                userSessionProvider: $0.userSessionProvider,
+                nfcSignatureProvider: $0.changeableUserSessionContainer.userSession.nfcSessionProvider,
+                userSession: $0.changeableUserSessionContainer.userSession,
+                signatureProvider: $0.signatureProvider,
+                accessibilityAnnouncementReceiver: $0.accessibilityAnnouncementReceiver
             )
         }
 
@@ -247,8 +251,9 @@ extension SettingsDomain {
             tracker: DummyTracker(),
             signatureProvider: DummySecureEnclaveSignatureProvider(),
             appSecurityManager: DummyAppSecurityManager(),
-            router: DummyRouter()
-        )
+            router: DummyRouter(),
+            userSessionProvider: DummyUserSessionProvider()
+        ) { _ in }
 
         static let store = Store(
             initialState: state,

@@ -44,34 +44,16 @@ class ChangeableUserSessionContainer: UsersSessionContainer {
 
     private let userStore: UserDataStore
 
-    init(initialUserSession: UserSession? = nil,
-         profileId: UUID,
-         schedulers: Schedulers,
-         coreDataControllerFactory: CoreDataControllerFactory,
-         profileDataStore: ProfileDataStore,
-         userDataStore: UserDataStore) {
+    init(initialUserSession: UserSession,
+         userDataStore: UserDataStore,
+         userSessionProvider: UserSessionProviderControl) {
         userStore = userDataStore
-        let session: UserSession
-        if let initialUserSession = initialUserSession {
-            session = initialUserSession
-        } else {
-            session = StandardSessionContainer(
-                for: profileId,
-                schedulers: schedulers,
-                erxTaskCoreDataStore: ErxTaskCoreDataStore(
-                    profileId: profileId,
-                    coreDataControllerFactory: coreDataControllerFactory
-                ),
-                profileDataStore: profileDataStore,
-                appConfiguration: userStore.appConfiguration
-            )
-        }
+        let session: UserSession = initialUserSession
 
         currentProfileUserSession = SelectedProfileUserSessionProvider(
+            appConfiguration: userDataStore.appConfiguration,
             initialUserSession: session,
-            schedulers: schedulers,
-            coreDataControllerFactory: coreDataControllerFactory,
-            profileDataStore: profileDataStore,
+            userSessionProvider: userSessionProvider,
             publisher: userStore.selectedProfileId
                 .combineLatest(userStore.configuration)
                 .dropFirst()

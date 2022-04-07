@@ -28,7 +28,7 @@ enum CardWallPINDomain {
         var pin: String = ""
         var wrongPinEntered = false
 
-        var showNextScreen = false
+        var showNextScreen: TransitionMode = .none
         var doneButtonPressed = false
         let pinPassRange = (6 ... 8)
     }
@@ -37,8 +37,13 @@ enum CardWallPINDomain {
         case update(pin: String)
         case reset
         case close
+        case advance(TransitionMode)
+    }
 
-        case advance
+    enum TransitionMode: Equatable {
+        case none
+        case push
+        case fullScreenCover
     }
 
     struct Environment {
@@ -58,13 +63,13 @@ enum CardWallPINDomain {
             return .none
         case .reset:
             state.pin = ""
-            state.showNextScreen = false
+            state.showNextScreen = .none
             return .none
         case .close:
             return .none
-        case .advance:
+        case let .advance(mode):
             if state.enteredPINValid {
-                state.showNextScreen = true
+                state.showNextScreen = mode
                 return .none
             } else {
                 state.doneButtonPressed = true

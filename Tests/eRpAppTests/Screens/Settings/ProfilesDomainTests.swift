@@ -36,18 +36,26 @@ final class ProfilesDomainTests: XCTestCase {
             initialState: state,
             reducer: ProfilesDomain.reducer,
             environment: ProfilesDomain.Environment(
+                appSecurityManager: mockAppSecurityManager,
                 schedulers: Schedulers(uiScheduler: mainQueue.eraseToAnyScheduler()),
                 profileDataStore: mockProfileDataStore,
                 userDataStore: mockUserDataStore,
                 userProfileService: mockUserProfileService,
                 profileSecureDataWiper: MockProfileSecureDataWiper(),
-                router: MockRouting()
+                router: MockRouting(),
+                secureEnclaveSignatureProvider: DummySecureEnclaveSignatureProvider(),
+                userSessionProvider: MockUserSessionProvider(),
+                nfcSignatureProvider: NFCSignatureProviderMock(),
+                userSession: MockUserSession(),
+                signatureProvider: DummySecureEnclaveSignatureProvider(),
+                accessibilityAnnouncementReceiver: { _ in }
             )
         )
     }
 
     let mainQueue = DispatchQueue.test
 
+    var mockAppSecurityManager: MockAppSecurityManager!
     var mockProfileDataStore: MockProfileDataStore!
     var mockUserDataStore: MockUserDataStore!
     var mockUserProfileService: MockUserProfileService!
@@ -55,6 +63,7 @@ final class ProfilesDomainTests: XCTestCase {
     override func setUp() {
         super.setUp()
 
+        mockAppSecurityManager = MockAppSecurityManager()
         mockProfileDataStore = MockProfileDataStore()
         mockUserDataStore = MockUserDataStore()
         mockUserProfileService = MockUserProfileService()

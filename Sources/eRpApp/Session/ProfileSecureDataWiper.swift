@@ -37,14 +37,21 @@ extension ProfileSecureDataWiper {
 }
 
 class DefaultProfileSecureDataWiper: ProfileSecureDataWiper {
+    var userSessionProvider: UserSessionProvider
+
+    init(userSessionProvider: UserSessionProvider) {
+        self.userSessionProvider = userSessionProvider
+    }
+
     func wipeSecureData(of profileId: UUID) -> AnyPublisher<Void, Never> {
-        let storage = KeychainStorage(profileId: profileId)
+        let storage = userSessionProvider.userSession(for: profileId).secureUserStore
         // [REQ:gemSpec_IDP_Frontend:A_20499] Deletion of SSO_TOKEN, ID_TOKEN, AUTH_TOKEN
         // [REQ:gemSpec_eRp_FdV:A_20186] Deletion of SSO_TOKEN, ID_TOKEN, AUTH_TOKEN
         // [REQ:gemSpec_IDP_Frontend:A_21603] Certificate
         storage.wipe()
 
         return storage.keyIdentifier
+            .first()
             .flatMap { identifier -> AnyPublisher<Void, Never> in
                 if let someIdentifier = identifier,
                    let identifier = Base64.urlSafe.encode(data: someIdentifier).utf8string {
@@ -64,7 +71,7 @@ class DefaultProfileSecureDataWiper: ProfileSecureDataWiper {
     }
 
     func secureStorage(of profileId: UUID) -> SecureUserDataStore {
-        KeychainStorage(profileId: profileId)
+        userSessionProvider.userSession(for: profileId).secureUserStore
     }
 }
 

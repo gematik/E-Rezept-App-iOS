@@ -73,6 +73,7 @@ enum AppDomain {
 
         let tracker: Tracker
         let signatureProvider: SecureEnclaveSignatureProvider
+        let userSessionProvider: UserSessionProvider
     }
 
     private static let domainReducer = Reducer { state, action, environment in
@@ -140,6 +141,7 @@ enum AppDomain {
                     userSession: appEnvironment.userSessionContainer.userSession
                 ),
                 signatureProvider: appEnvironment.signatureProvider,
+                userSessionProvider: appEnvironment.userSessionProvider,
                 tracker: appEnvironment.tracker
             )
         }
@@ -183,7 +185,9 @@ enum AppDomain {
                 tracker: appEnvironment.tracker,
                 signatureProvider: appEnvironment.signatureProvider,
                 appSecurityManager: appEnvironment.userSession.appSecurityManager,
-                router: appEnvironment.router
+                router: appEnvironment.router,
+                userSessionProvider: appEnvironment.userSessionProvider,
+                accessibilityAnnouncementReceiver: appEnvironment.accessibilityAnnouncementReceiver
             )
         }
 
@@ -261,7 +265,8 @@ extension AppDomain {
             serviceLocator: ServiceLocator(),
             accessibilityAnnouncementReceiver: { _ in },
             tracker: DummyTracker(),
-            signatureProvider: DummySecureEnclaveSignatureProvider()
+            signatureProvider: DummySecureEnclaveSignatureProvider(),
+            userSessionProvider: DummyUserSessionProvider()
         )
     }
 }

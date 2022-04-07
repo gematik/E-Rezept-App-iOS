@@ -46,6 +46,7 @@ final class CardWallReadCardDomainTests: XCTestCase {
     var mockProfileValidator: AnyPublisher<IDTokenValidator, IDTokenValidatorError>!
     var mockCurrentProfile: AnyPublisher<Profile, LocalStoreError>!
     var mockProfileDataStore = MockProfileDataStore()
+    var mockProfileBasedIdpSessionProvider = MockProfileBasedSessionProvider()
 
     let challenge = try! IDPChallengeSession(
         challenge: IDPChallenge(
@@ -83,6 +84,11 @@ final class CardWallReadCardDomainTests: XCTestCase {
         idpMock.requestChallenge_Publisher = Just(challenge)
             .setFailureType(to: IDPError.self)
             .eraseToAnyPublisher()
+        mockProfileBasedIdpSessionProvider.idpSessionForReturnValue = idpMock
+        mockProfileBasedIdpSessionProvider.signatureProviderForReturnValue = mockNFCSessionProvider
+        mockProfileBasedIdpSessionProvider.userDataStoreForReturnValue = mockUserSession.secureUserStore
+        mockProfileBasedIdpSessionProvider.biometrieIdpSessionForReturnValue = mockUserSession.biometrieIdpSession
+        mockProfileBasedIdpSessionProvider.idTokenValidatorForReturnValue = mockProfileValidator
     }
 
     lazy var signedChallenge: SignedChallenge = {
@@ -97,17 +103,16 @@ final class CardWallReadCardDomainTests: XCTestCase {
             ProfileValidator(currentProfile: testProfile, otherProfiles: [testProfile])
         ).setFailureType(to: IDTokenValidatorError.self).eraseToAnyPublisher()
         mockCurrentProfile = Just(testProfile).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
+        mockProfileBasedIdpSessionProvider.idTokenValidatorForReturnValue = mockProfileValidator
 
         return TestStore(
             initialState: initialState,
             reducer: CardWallReadCardDomain.reducer,
             environment: CardWallReadCardDomain.Environment(
-                userSession: mockUserSession,
                 schedulers: schedulers,
-                currentProfile: mockCurrentProfile,
-                idTokenValidator: mockProfileValidator,
                 profileDataStore: mockProfileDataStore,
-                signatureProvider: DummySecureEnclaveSignatureProvider()
+                signatureProvider: DummySecureEnclaveSignatureProvider(),
+                sessionProvider: mockProfileBasedIdpSessionProvider
             )
         )
     }
@@ -116,6 +121,7 @@ final class CardWallReadCardDomainTests: XCTestCase {
         let sut = testStore(
             initialState: CardWallReadCardDomain.State(
                 isDemoModus: false,
+                profileId: mockUserSession.profileId,
                 pin: "123456",
                 loginOption: .withoutBiometry,
                 output: .idle
@@ -137,6 +143,7 @@ final class CardWallReadCardDomainTests: XCTestCase {
         let sut = testStore(
             initialState: CardWallReadCardDomain.State(
                 isDemoModus: false,
+                profileId: mockUserSession.profileId,
                 pin: "123456",
                 loginOption: .withoutBiometry,
                 output: .challengeLoaded(challenge)
@@ -172,6 +179,7 @@ final class CardWallReadCardDomainTests: XCTestCase {
         idpMock.requestChallenge_Publisher = passthrough.eraseToAnyPublisher()
 
         let sut = testStore(initialState: CardWallReadCardDomain.State(isDemoModus: false,
+                                                                       profileId: mockUserSession.profileId,
                                                                        pin: "123456",
                                                                        loginOption: .withoutBiometry,
                                                                        output: .idle))
@@ -197,6 +205,7 @@ final class CardWallReadCardDomainTests: XCTestCase {
         let testStore = testStore(
             initialState: CardWallReadCardDomain.State(
                 isDemoModus: false,
+                profileId: mockUserSession.profileId,
                 pin: "123456",
                 loginOption: .withoutBiometry,
                 output: .retrievingChallenge(.error(.idpError(idpError)))
@@ -215,11 +224,12 @@ final class CardWallReadCardDomainTests: XCTestCase {
 
     func testWhenIDPChallengeAvailable_SigningStates_HappyPath() {
         let verifyPassthrough: PassthroughSubject<IDPExchangeToken, IDPError> = PassthroughSubject()
-        let exchangeToken = IDPExchangeToken(code: "abc", sso: "def", state: "ghi")
+        let exchangeToken = IDPExchangeToken(code: "abc", sso: "def", state: "ghi", redirect: "redirect")
 
         idpMock.verify_Publisher = verifyPassthrough.eraseToAnyPublisher()
 
         let sut = testStore(initialState: CardWallReadCardDomain.State(isDemoModus: false,
+                                                                       profileId: mockUserSession.profileId,
                                                                        pin: "123456",
                                                                        loginOption: .withoutBiometry,
                                                                        output: .challengeLoaded(challenge)))
@@ -250,6 +260,7 @@ final class CardWallReadCardDomainTests: XCTestCase {
     func testWhenIDPChallengeAvailable_SigningStates_PinError() {
         let sut = testStore(
             initialState: CardWallReadCardDomain.State(isDemoModus: false,
+                                                       profileId: mockUserSession.profileId,
                                                        pin: "123456",
                                                        loginOption: .withoutBiometry,
                                                        output: .challengeLoaded(challenge))
@@ -274,6 +285,7 @@ final class CardWallReadCardDomainTests: XCTestCase {
     func testWhenIDPChallengeAvailable_SigningStates_CanError() {
         let sut = testStore(
             initialState: CardWallReadCardDomain.State(isDemoModus: false,
+                                                       profileId: mockUserSession.profileId,
                                                        pin: "123456",
                                                        loginOption: .withoutBiometry,
                                                        output: .challengeLoaded(challenge))
@@ -302,6 +314,7 @@ final class CardWallReadCardDomainTests: XCTestCase {
         let sut = testStore(
             initialState: CardWallReadCardDomain.State(
                 isDemoModus: false,
+                profileId: mockUserSession.profileId,
                 pin: "123456",
                 loginOption: .withoutBiometry,
                 output: .challengeLoaded(challenge)
@@ -336,6 +349,7 @@ final class CardWallReadCardDomainTests: XCTestCase {
         let sut = testStore(
             initialState: CardWallReadCardDomain.State(
                 isDemoModus: false,
+                profileId: mockUserSession.profileId,
                 pin: "123456",
                 loginOption: .withoutBiometry,
                 output: .challengeLoaded(challenge)

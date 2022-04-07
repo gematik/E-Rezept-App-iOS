@@ -39,19 +39,14 @@ final class EditProfileSnapshotTests: XCTestCase {
                         acronym: "",
                         fullName: nil,
                         insurance: nil,
+                        can: nil,
                         insuranceId: nil,
                         emoji: "🌸",
                         color: .blue,
                         profileId: UUID()
                     ),
                     reducer: .empty,
-                    environment: EditProfileDomain.Environment(
-                        schedulers: Schedulers(),
-                        profileDataStore: MockProfileDataStore(),
-                        userDataStore: MockUserDataStore(),
-                        profileSecureDataWiper: MockProfileSecureDataWiper(),
-                        router: MockRouting()
-                    )
+                    environment: editProfileEnvironment
                 )
             )
         }
@@ -69,20 +64,15 @@ final class EditProfileSnapshotTests: XCTestCase {
                         acronym: "",
                         fullName: "Holger Muster",
                         insurance: "AOK",
+                        can: "123123",
                         insuranceId: "XY1234567890",
                         emoji: "🎃",
                         color: .blue,
                         profileId: UUID(),
-                        token: IDPToken(accessToken: "", expires: Date(), idToken: "")
+                        token: IDPToken(accessToken: "", expires: Date(), idToken: "", redirect: "redirect")
                     ),
                     reducer: .empty,
-                    environment: EditProfileDomain.Environment(
-                        schedulers: Schedulers(),
-                        profileDataStore: MockProfileDataStore(),
-                        userDataStore: MockUserDataStore(),
-                        profileSecureDataWiper: MockProfileSecureDataWiper(),
-                        router: MockRouting()
-                    )
+                    environment: editProfileEnvironment
                 )
             )
         }
@@ -100,20 +90,15 @@ final class EditProfileSnapshotTests: XCTestCase {
                         acronym: "",
                         fullName: "Holger Muster",
                         insurance: "AOK",
+                        can: "123123",
                         insuranceId: "XY1234567890",
                         emoji: "🎃",
                         color: .blue,
                         profileId: UUID(),
-                        token: IDPToken(accessToken: "", expires: Date(), idToken: "")
+                        token: IDPToken(accessToken: "", expires: Date(), idToken: "", redirect: "redirect")
                     ),
                     reducer: .empty,
-                    environment: EditProfileDomain.Environment(
-                        schedulers: Schedulers(),
-                        profileDataStore: MockProfileDataStore(),
-                        userDataStore: MockUserDataStore(),
-                        profileSecureDataWiper: MockProfileSecureDataWiper(),
-                        router: MockRouting()
-                    )
+                    environment: editProfileEnvironment
                 )
             )
         }
@@ -130,19 +115,14 @@ final class EditProfileSnapshotTests: XCTestCase {
                     acronym: "",
                     fullName: nil,
                     insurance: nil,
+                    can: nil,
                     insuranceId: nil,
                     emoji: "👵🏻",
                     color: .green,
                     profileId: UUID()
                 ),
                 reducer: .empty,
-                environment: EditProfileDomain.Environment(
-                    schedulers: Schedulers(),
-                    profileDataStore: MockProfileDataStore(),
-                    userDataStore: MockUserDataStore(),
-                    profileSecureDataWiper: MockProfileSecureDataWiper(),
-                    router: MockRouting()
-                )
+                environment: editProfileEnvironment
             )
         )
 
@@ -159,6 +139,7 @@ final class EditProfileSnapshotTests: XCTestCase {
                     acronym: "AV",
                     fullName: nil,
                     insurance: nil,
+                    can: nil,
                     insuranceId: nil,
                     color: .green,
                     profileId: UUID()
@@ -185,9 +166,10 @@ final class EditProfileSnapshotTests: XCTestCase {
                     acronym: "AV",
                     fullName: "Anne Vetter",
                     insurance: "Gematik BKK",
+                    can: "123123",
                     insuranceId: "X987654321",
                     emoji: "👵🏻",
-                    color: .green,
+                    color: .yellow,
                     profileId: UUID()
                 ),
                 reducer: .empty,
@@ -201,5 +183,24 @@ final class EditProfileSnapshotTests: XCTestCase {
         .frame(width: 375, height: 1400)
 
         assertSnapshots(matching: sut, as: snapshotModi())
+    }
+}
+
+extension EditProfileSnapshotTests {
+    var editProfileEnvironment: EditProfileDomain.Environment {
+        EditProfileDomain.Environment(
+            appSecurityManager: MockAppSecurityManager(),
+            schedulers: Schedulers(),
+            profileDataStore: MockProfileDataStore(),
+            userDataStore: MockUserDataStore(),
+            profileSecureDataWiper: MockProfileSecureDataWiper(),
+            router: MockRouting(),
+            userSession: MockUserSession(),
+            userSessionProvider: MockUserSessionProvider(),
+            secureEnclaveSignatureProvider: DummySecureEnclaveSignatureProvider(),
+            nfcSignatureProvider: NFCSignatureProviderMock(),
+            signatureProvider: DummySecureEnclaveSignatureProvider(),
+            accessibilityAnnouncementReceiver: { _ in }
+        )
     }
 }

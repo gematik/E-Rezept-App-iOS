@@ -42,6 +42,7 @@ struct EditProfileView: View {
         let color: ProfileColor
         let isLoggedIn: Bool
         let showEmptyNameWarning: Bool
+        let can: String?
 
         init(with state: EditProfileDomain.State) {
             name = state.name
@@ -49,10 +50,27 @@ struct EditProfileView: View {
             emoji = state.emoji
             fullName = state.fullName
             insurance = state.insurance
+            can = state.can
             insuranceId = state.insuranceId
             color = state.color
             isLoggedIn = state.token != nil
             showEmptyNameWarning = state.name.lengthOfBytes(using: .utf8) == 0
+        }
+
+        var hasConnectingData: Bool {
+            if let fullName = fullName, !fullName.isEmpty {
+                return true
+            }
+            if let insurance = insurance, insurance.isEmpty {
+                return true
+            }
+            if let insuranceId = insuranceId, !insuranceId.isEmpty {
+                return true
+            }
+            if let can = can, !can.isEmpty {
+                return true
+            }
+            return false
         }
     }
 
@@ -91,10 +109,12 @@ struct EditProfileView: View {
 
                 ConnectedProfile(viewStore: viewStore)
 
+                LoginSectionView(store: store)
+
                 TokenSectionView(store: store)
 
                 Button {
-                    viewStore.send(.delete)
+                    viewStore.send(.showDeleteProfileAlert)
                 } label: {
                     Text(L10n.stgBtnEditProfileDelete)
                 }
@@ -119,6 +139,7 @@ struct EditProfileView: View {
         )
         .onAppear {
             viewStore.send(.registerListener)
+            viewStore.send(.loadAvailableSecurityOptions)
         }
     }
 }
@@ -137,20 +158,19 @@ extension EditProfileView {
         var viewStore: ViewStore<EditProfileView.ViewState, EditProfileDomain.Action>
 
         var body: some View {
-            if viewStore.isLoggedIn {
+            if viewStore.hasConnectingData {
                 SectionContainer(header: {
                     Text(L10n.stgTxtEditProfileUserDataSectionTitle)
                 }, content: {
-                    if let fullName = viewStore.state.fullName {
+                    if let fullName = viewStore.state.fullName, !fullName.isEmpty {
                         SubTitle(title: fullName, description: L10n.stgTxtEditProfileLabelName)
                     }
                     if let insurance = viewStore.state.insurance {
                         SubTitle(title: insurance, description: L10n.stgTxtEditProfileLabelInsuranceCompany)
                     }
-//                    Insert CAN here
-//                    if let insurance = viewStore.state.insurance {
-//                        SubTitle(title: insurance, description: L10n.stgTxtEditProfileLabelCan)
-//                    }
+                    if let can = viewStore.state.can {
+                        SubTitle(title: can, description: L10n.stgTxtEditProfileLabelCan)
+                    }
                     if let insuranceId = viewStore.state.insuranceId {
                         Button(action: {
                             UIPasteboard.general.string = insuranceId
@@ -164,7 +184,16 @@ extension EditProfileView {
                         })
                     }
                 })
+            } else {
+                Text(L10n.stgTxtEditProfileUserDataSectionTitle)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .font(.headline)
+                    .padding(.horizontal)
+                    .padding(.top)
+                    .padding(.bottom, 8)
+            }
 
+            if viewStore.isLoggedIn {
                 Button(action: {
                     viewStore.send(.logout)
                 }, label: {
@@ -179,13 +208,6 @@ extension EditProfileView {
                     .foregroundColor(Color(.secondaryLabel))
                     .padding(.bottom)
             } else {
-                Text(L10n.stgTxtEditProfileUserDataSectionTitle)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .font(.headline)
-                    .padding(.horizontal)
-                    .padding(.top)
-                    .padding(.bottom, 8)
-
                 Button(action: {
                     viewStore.send(.login)
                 }, label: {
@@ -209,6 +231,130 @@ extension EditProfileView {
             return !title.isEmpty ?
                 L10n.stgTxtEditProfileNameConnection(title).key :
                 L10n.stgTxtEditProfileNameConnectionPlaceholder.key
+        }
+    }
+
+    private struct LoginSectionView: View {
+        let store: EditProfileDomain.Store
+
+        @ObservedObject
+        var viewStore: ViewStore<ViewState, EditProfileDomain.Action>
+
+        init(store: EditProfileDomain.Store) {
+            self.store = store
+            viewStore = ViewStore(store.scope(state: ViewState.init))
+        }
+
+        struct ViewState: Equatable {
+            let authType: EditProfileDomain.State.AuthenticationType
+            let routeTag: EditProfileDomain.Route.Tag?
+
+            init(state: EditProfileDomain.State) {
+                authType = state.authType
+                routeTag = state.route?.tag
+            }
+        }
+
+        var body: some View {
+            SectionContainer(header: {
+                Text(L10n.stgTxtEditProfileLoginSectionTitle)
+                    .accessibility(identifier: A11y.settings.editProfile.stgTxtEditProfileLoginSectionTitle)
+            }, footer: {
+                footer
+                    .accessibility(identifier: A11y.settings.editProfile.stgTxtEditProfileLoginSectionShowHint)
+            }, content: {
+                Group {
+                    switch viewStore.state.authType {
+                    case .biometric:
+                        Button(action: {
+                            viewStore.send(.showDeleteBiometricPairingAlert)
+                        }, label: {
+                            Label(title: {
+                                KeyValuePair(
+                                    key: L10n.stgTxtEditProfileLoginActivateDescription,
+                                    value: L10n.stgTxtEditProfileLoginActivateTitle
+                                )
+                            }, icon: {})
+                        })
+                    case .card:
+                        Button(action: {
+                            viewStore.send(.relogin)
+                        }, label: {
+                            Label(title: {
+                                KeyValuePair(
+                                    key: L10n.stgTxtEditProfileLoginActivateDescription,
+                                    value: L10n.stgTxtEditProfileLoginDeactivateTitle
+                                )
+                            }, icon: {})
+                        })
+                    case .none:
+                        Button(action: {
+                            viewStore.send(.login)
+                        }, label: {
+                            Label(title: {
+                                Text(L10n.stgTxtEditProfileLoginActivateDescription)
+                            }, icon: {})
+                        })
+                            .disabled(true)
+                    case .biometryNotEnrolled:
+                        Label(title: {
+                            Text(L10n.stgTxtEditProfileLoginActivateDescription)
+                                .foregroundColor(Colors.systemGray)
+                        }, icon: {})
+                    }
+                }
+                .accessibilityElement(children: .combine)
+                .accessibility(
+                    identifier: A11y.settings.editProfile.stgTxtEditProfileLoginSectionActivate
+                )
+
+                NavigationLink(
+                    destination: IfLetStore(registeredDevicesStore) { registeredDevicesStore in
+                        RegisteredDevicesView(store: registeredDevicesStore)
+                    },
+                    tag: EditProfileDomain.Route.Tag.registeredDevices,
+                    selection: viewStore.binding(
+                        get: \.routeTag,
+                        send: EditProfileDomain.Action.setNavigation
+                    )
+                ) {
+                    Label(title: {
+                        Text(L10n.stgBtnEditProfileRegisteredDevices)
+                    }, icon: {})
+                }
+                .buttonStyle(.navigation)
+                .accessibilityElement(children: .combine)
+                .accessibility(
+                    identifier: A11y.settings.editProfile
+                        .stgTxtEditProfileLoginSectionConnectedDevices
+                )
+            })
+        }
+
+        private var registeredDevicesStore: Store<RegisteredDevicesDomain.State?, RegisteredDevicesDomain.Action> {
+            store.scope(
+                state: (\EditProfileDomain.State.route)
+                    .appending(path: /EditProfileDomain.Route.registeredDevices)
+                    .extract(from:),
+                action: EditProfileDomain.Action.registeredDevices(action:)
+            )
+        }
+
+        @ViewBuilder
+        var footer: some View {
+            switch viewStore.authType {
+            case .biometryNotEnrolled:
+                Text(L10n.stgTxtEditProfileLoginFootnoteBiometry)
+                Button(action: {
+                    guard let url = URL(string: "https://www.gematik.de/anwendungen/e-rezept/faq/"),
+                          UIApplication.shared.canOpenURL(url) else { return }
+                    UIApplication.shared.open(url)
+                }, label: { Text(L10n.stgTxtEditProfileLoginFootnoteMore) })
+            case .card, .none:
+                Text(L10n.stgTxtEditProfileLoginFootnoteRetry)
+            case .biometric:
+                EmptyView()
+            }
         }
     }
 

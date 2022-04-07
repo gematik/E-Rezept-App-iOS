@@ -31,7 +31,7 @@ protocol LoginHandler {
     func isAuthenticatedOrAuthenticate() -> AnyPublisher<LoginResult, Never>
 }
 
-enum LoginHandlerError: Swift.Error, Equatable {
+enum LoginHandlerError: Swift.Error, Equatable, LocalizedError {
     static func ==(lhs: LoginHandlerError, rhs: LoginHandlerError) -> Bool {
         switch (lhs, rhs) {
         case (.biometrieFailed, .biometrieFailed),
@@ -48,13 +48,27 @@ enum LoginHandlerError: Swift.Error, Equatable {
 
     case biometrieFailed
     case biometrieFatal
-
     case ssoFailed
     case ssoExpired
-
     case idpError(IDPError)
-
     case network(Swift.Error)
+
+    var errorDescription: String? {
+        switch self {
+        case .biometrieFailed:
+            return "biometrieFailed"
+        case .biometrieFatal:
+            return "biometrieFatal"
+        case .ssoFailed:
+            return "ssoFailed"
+        case .ssoExpired:
+            return "ssoExpired"
+        case let .idpError(idpError):
+            return idpError.localizedDescription
+        case let .network(error):
+            return error.localizedDescription
+        }
+    }
 }
 
 class DefaultLoginHandler: LoginHandler {
@@ -118,8 +132,7 @@ class DefaultLoginHandler: LoginHandler {
                     .flatMap { exchangeToken in
                         self.idpSession.exchange(
                             token: exchangeToken,
-                            challengeSession: signedAuthenticationData.originalChallenge,
-                            redirectURI: nil
+                            challengeSession: signedAuthenticationData.originalChallenge
                         )
                         .map { _ in
                             // Receiving any IDPToken means we are logged in

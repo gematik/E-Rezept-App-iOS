@@ -46,7 +46,7 @@ public struct PairingData: Claims, Codable {
     let notAfter: Int
     let product: String
     let serialnumber: String
-    let keyIdentifier: String
+    public let keyIdentifier: String
     let seSubjectPublicKeyInfo: String
     let issuer: String
     let pairingDataVersion: String

@@ -213,7 +213,8 @@ final class IDPInterceptorTests: XCTestCase {
                                     expires: Date.distantFuture,
                                     idToken: "",
                                     ssoToken: "",
-                                    tokenType: "Bearer"))
+                                    tokenType: "Bearer",
+                                    redirect: "redirect"))
 
         chain.httpResponse = HTTPResponse(
             data: Data(),

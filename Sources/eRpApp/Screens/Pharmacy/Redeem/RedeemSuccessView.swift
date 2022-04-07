@@ -25,31 +25,40 @@ struct RedeemSuccessView: View {
 
     var body: some View {
         WithViewStore(store) { viewStore in
-            VStack(spacing: 16) {
-                if let url = videoURLforSource(viewStore.state.redeemOption) {
-                    LoopingVideoPlayerContainerView(withURL: url)
-                        .frame(width: 300, height: 300)
-                        .clipShape(Circle())
-                        .padding(.vertical, 8)
+            ScrollView {
+                VStack(spacing: 16) {
+                    if let url = videoURLforSource(viewStore.state.redeemOption) {
+                        LoopingVideoPlayerContainerView(withURL: url)
+                            .frame(
+                                minWidth: 160,
+                                idealWidth: 240,
+                                maxWidth: 300,
+                                minHeight: 160,
+                                idealHeight: 240,
+                                maxHeight: 300
+                            )
+                            .clipShape(Circle())
+                            .padding(.vertical, 8)
+                    }
+
+                    Text(titlelForSource(viewStore.state.redeemOption))
+                        .font(Font.title3.bold())
+
+                    ContentView(option: viewStore.state.redeemOption)
+
+                    Spacer()
+
+                    LoadingPrimaryButton(text: L10n.rdmSccBtnReturnToMain,
+                                         isLoading: false) {
+                        viewStore.send(.close)
+                    }
+                    .accessibility(identifier: A11y.pharmacyRedeem.phaRedeemBtnRedeem)
                 }
-
-                Text(titlelForSource(viewStore.state.redeemOption))
-                    .font(Font.title3.bold())
-
-                ContentView(option: viewStore.state.redeemOption)
-
-                Spacer()
-
-                LoadingPrimaryButton(text: L10n.rdmSccBtnReturnToMain,
-                                     isLoading: false) {
-                    viewStore.send(.close)
-                }
-                .accessibility(identifier: A11y.pharmacyRedeem.phaRedeemBtnRedeem)
+                .navigationBarBackButtonHidden(true)
+                .navigationTitle(L10n.phaSuccessRedeemTitle)
+                .navigationBarTitleDisplayMode(.inline)
+                .padding()
             }
-            .navigationBarBackButtonHidden(true)
-            .navigationTitle(L10n.phaSuccessRedeemTitle)
-            .navigationBarTitleDisplayMode(.inline)
-            .padding()
         }
     }
 

@@ -195,28 +195,51 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing {
     }()
 }
 
+import Combine
+
 extension SceneDelegate {
-    private func sessionContainer(with schedulers: Schedulers) -> ChangeableUserSessionContainer {
+    private func sessionContainer(with schedulers: Schedulers)
+        -> (ChangeableUserSessionContainer, UserSessionProvider) {
         let profileCoreDataStore = ProfileCoreDataStore(coreDataControllerFactory: coreDataControllerFactory)
 
+        // On app install, no profile is created yet, create a session with a random UUID. This UUID is reused upon
+        // onboarding completion, to create the actual profile. Both IDs MUST match. Mabe FIXME by creating an empty
+        // profile, that is updated upon onboarding completion. // swiftlint:disable:previous todo
         let initialProfileId = UUID(
             uuidString: UserDefaults.standard.string(forKey: UserDefaults.kSelectedProfileId) ?? ""
         ) ?? UUID()
 
-        let changeableUserSessionContainer = ChangeableUserSessionContainer(
-            profileId: initialProfileId,
+        let initialUserSession = StandardSessionContainer(
+            for: initialProfileId,
+            schedulers: schedulers,
+            erxTaskCoreDataStore: ErxTaskCoreDataStore(
+                profileId: initialProfileId,
+                coreDataControllerFactory: coreDataControllerFactory
+            ),
+            profileDataStore: profileCoreDataStore,
+            appConfiguration: userDataStore.appConfiguration
+        )
+
+        let userSessionProvider = DefaultUserSessionProvider(
+            initialUserSession: initialUserSession,
             schedulers: schedulers,
             coreDataControllerFactory: coreDataControllerFactory,
             profileDataStore: profileCoreDataStore,
-            userDataStore: userDataStore
+            appConfiguration: userDataStore.appConfiguration
         )
 
-        return changeableUserSessionContainer
+        let changeableUserSessionContainer = ChangeableUserSessionContainer(
+            initialUserSession: initialUserSession,
+            userDataStore: userDataStore,
+            userSessionProvider: userSessionProvider
+        )
+
+        return (changeableUserSessionContainer, userSessionProvider)
     }
 
     private func environment() -> AppStartDomain.Environment {
         let schedulers = Schedulers()
-        let changeableUserSessionContainer = sessionContainer(with: schedulers)
+        let (changeableUserSessionContainer, userSessionProvider) = sessionContainer(with: schedulers)
 
         let tracker = PiwikProTracker(
             optOutSetting: UserDefaults.standard.publisher(for: \UserDefaults.kAppTrackingAllowed).eraseToAnyPublisher()
@@ -251,7 +274,8 @@ extension SceneDelegate {
             tracker: tracker,
             signatureProvider: signatureProvider,
             appSecurityManager: DefaultAppSecurityManager(keychainAccess: SystemKeychainAccessHelper()),
-            authenticationChallengeProvider: BiometricsAuthenticationChallengeProvider()
+            authenticationChallengeProvider: BiometricsAuthenticationChallengeProvider(),
+            userSessionProvider: userSessionProvider
         )
     }
 }

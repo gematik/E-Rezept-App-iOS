@@ -25,6 +25,7 @@ enum CardWallCANDomain {
 
     struct State: Equatable {
         let isDemoModus: Bool
+        let profileId: UUID
 
         var can: String
         var wrongCANEntered = false
@@ -43,7 +44,7 @@ enum CardWallCANDomain {
     }
 
     struct Environment {
-        let userSession: UserSession
+        let sessionProvider: ProfileBasedSessionProvider
     }
 
     static let reducer = Reducer { state, action, environment in
@@ -59,7 +60,7 @@ enum CardWallCANDomain {
             guard state.can.lengthOfBytes(using: .utf8) == 6 else {
                 return .none
             }
-            environment.userSession.secureUserStore.set(can: state.can)
+            environment.sessionProvider.userDataStore(for: state.profileId).set(can: state.can)
             state.showNextScreen = true
             return .none
         case .close:
@@ -76,8 +77,8 @@ enum CardWallCANDomain {
 
 extension CardWallCANDomain {
     enum Dummies {
-        static let state = State(isDemoModus: true, can: "")
-        static let environment = Environment(userSession: DemoSessionContainer())
+        static let state = State(isDemoModus: true, profileId: UUID(), can: "")
+        static let environment = Environment(sessionProvider: DummyProfileBasedSessionProvider())
 
         static let store = storeFor(state)
 

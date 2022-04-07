@@ -27,16 +27,20 @@ public struct IDPExchangeToken {
     /// IDPChallengeSession state
     public let state: String
 
+    /// redirect to use for the token exchange.
+    public let redirect: String
+
     /// Initialize
     ///
     /// - Parameters:
     ///   - code: Exchange code
     ///   - sso: SSO token
     ///   - state: IDPChallengeSession state
-    public init(code: String, sso: String? = nil, state: String) {
+    public init(code: String, sso: String? = nil, state: String, redirect: String) {
         self.code = code
         self.sso = sso
         self.state = state
+        self.redirect = redirect
     }
 }
 

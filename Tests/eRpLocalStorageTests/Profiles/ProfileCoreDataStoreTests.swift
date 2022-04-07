@@ -100,7 +100,7 @@ final class ProfileCoreDataStoreTests: XCTestCase {
         )
     }()
 
-    private lazy var profileWithTasksAndAuditEvents: Profile = {
+    private lazy var profileWithTasks: Profile = {
         Profile(
             name: "Karl",
             identifier: UUID(),
@@ -112,19 +112,18 @@ final class ProfileCoreDataStoreTests: XCTestCase {
             emoji: "🤖",
             lastAuthenticated: Date(),
             erxTasks: [ErxTask(identifier: "id1", status: .ready, accessCode: "accessCode1"),
-                       ErxTask(identifier: "id2", status: .ready, accessCode: "accessCode2")],
-            erxAuditEvents: [ErxAuditEvent(identifier: "id1", text: "message")]
+                       ErxTask(identifier: "id2", status: .ready, accessCode: "accessCode2")]
         )
     }()
 
     func testSavingProfile() throws {
         let store = loadProfileCoreDataStore()
-        try store.add(profiles: [profileSimple, profileWithTasksAndAuditEvents])
+        try store.add(profiles: [profileSimple, profileWithTasks])
     }
 
     func testSavingProfileWillNotStoreTasksAndAuditEvents() throws {
         let store = loadProfileCoreDataStore()
-        try store.add(profiles: [profileSimple, profileWithTasksAndAuditEvents])
+        try store.add(profiles: [profileSimple, profileWithTasks])
 
         // verify result
         var receivedListAllProfileValues = [[Profile]]()
@@ -142,18 +141,17 @@ final class ProfileCoreDataStoreTests: XCTestCase {
         expect(receivedListAllProfileValues[0].count) == 2
         let receivedProfiles = receivedListAllProfileValues[0]
         expect(receivedProfiles).to(contain(profileSimple))
-        let expectedResult = Profile(name: profileWithTasksAndAuditEvents.name,
-                                     identifier: profileWithTasksAndAuditEvents.identifier,
-                                     created: profileWithTasksAndAuditEvents.created,
-                                     givenName: profileWithTasksAndAuditEvents.givenName,
-                                     familyName: profileWithTasksAndAuditEvents.familyName,
-                                     insurance: profileWithTasksAndAuditEvents.insurance,
-                                     insuranceId: profileWithTasksAndAuditEvents.insuranceId,
-                                     color: profileWithTasksAndAuditEvents.color,
-                                     emoji: profileWithTasksAndAuditEvents.emoji,
-                                     lastAuthenticated: profileWithTasksAndAuditEvents.lastAuthenticated,
-                                     erxTasks: [],
-                                     erxAuditEvents: [])
+        let expectedResult = Profile(name: profileWithTasks.name,
+                                     identifier: profileWithTasks.identifier,
+                                     created: profileWithTasks.created,
+                                     givenName: profileWithTasks.givenName,
+                                     familyName: profileWithTasks.familyName,
+                                     insurance: profileWithTasks.insurance,
+                                     insuranceId: profileWithTasks.insuranceId,
+                                     color: profileWithTasks.color,
+                                     emoji: profileWithTasks.emoji,
+                                     lastAuthenticated: profileWithTasks.lastAuthenticated,
+                                     erxTasks: [])
         expect(receivedProfiles).to(contain(expectedResult))
 
         cancellable.cancel()
@@ -262,19 +260,18 @@ final class ProfileCoreDataStoreTests: XCTestCase {
         cancellable.cancel()
     }
 
-    func testDeleteProfileWithTasksAndAuditEvents() throws {
+    func testDeleteProfileWithTasks() throws {
         // given when we store a profile and related tasks and audit events
         let store = loadProfileCoreDataStore()
-        try store.add(profiles: [profileWithTasksAndAuditEvents])
-        let erxTaskStore = try loadErxCoreDataStore(for: profileWithTasksAndAuditEvents.identifier)
+        try store.add(profiles: [profileWithTasks])
+        let erxTaskStore = try loadErxCoreDataStore(for: profileWithTasks.identifier)
         // task and audit events have to be stored separately
-        try erxTaskStore.add(tasks: profileWithTasksAndAuditEvents.erxTasks)
-        try erxTaskStore.add(auditEvents: profileWithTasksAndAuditEvents.erxAuditEvents)
+        try erxTaskStore.add(tasks: profileWithTasks.erxTasks)
 
         // when deleting the profile
         var receivedDeleteResults = [Bool]()
         var receivedDeleteCompletions = [Subscribers.Completion<LocalStoreError>]()
-        _ = store.delete(profiles: [profileWithTasksAndAuditEvents])
+        _ = store.delete(profiles: [profileWithTasks])
             .sink(receiveCompletion: { completion in
                 receivedDeleteCompletions.append(completion)
             }, receiveValue: { result in
@@ -422,14 +419,13 @@ final class ProfileCoreDataStoreTests: XCTestCase {
         cancellable.cancel()
     }
 
-    func testFetchingProfilesWithTasksAndAuditEvents() throws {
+    func testFetchingProfilesWithTasks() throws {
         // given
         let profileStore = loadProfileCoreDataStore()
-        try profileStore.add(profiles: [profileWithTasksAndAuditEvents])
-        let erxTaskStore = try loadErxCoreDataStore(for: profileWithTasksAndAuditEvents.identifier)
+        try profileStore.add(profiles: [profileWithTasks])
+        let erxTaskStore = try loadErxCoreDataStore(for: profileWithTasks.identifier)
         // task and audit events have to be stored separately
-        try erxTaskStore.add(tasks: profileWithTasksAndAuditEvents.erxTasks)
-        try erxTaskStore.add(auditEvents: profileWithTasksAndAuditEvents.erxAuditEvents)
+        try erxTaskStore.add(tasks: profileWithTasks.erxTasks)
 
         // when fetching ...
         var receivedListAllProfileValues = [[Profile]]()
@@ -448,13 +444,12 @@ final class ProfileCoreDataStoreTests: XCTestCase {
             fail("expected to receive a profile")
             return
         }
-        expect(profile.name) == profileWithTasksAndAuditEvents.name
-        expect(profile.identifier) == profileWithTasksAndAuditEvents.identifier
-        expect(profile.givenName) == profileWithTasksAndAuditEvents.givenName
-        expect(profile.familyName) == profileWithTasksAndAuditEvents.familyName
-        expect(profile.insurance) == profileWithTasksAndAuditEvents.insurance
-        expect(profile.erxTasks).to(contain(profileWithTasksAndAuditEvents.erxTasks))
-        expect(profile.erxAuditEvents).to(contain(profileWithTasksAndAuditEvents.erxAuditEvents))
+        expect(profile.name) == profileWithTasks.name
+        expect(profile.identifier) == profileWithTasks.identifier
+        expect(profile.givenName) == profileWithTasks.givenName
+        expect(profile.familyName) == profileWithTasks.familyName
+        expect(profile.insurance) == profileWithTasks.insurance
+        expect(profile.erxTasks).to(contain(profileWithTasks.erxTasks))
         cancellable.cancel()
     }
 }

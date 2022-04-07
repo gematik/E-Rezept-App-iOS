@@ -26,6 +26,9 @@ public struct SectionContainerButtonLabelStyle: LabelStyle {
         self.showSeparator = showSeparator
     }
 
+    @Environment(\.isEnabled)
+    var isEnabled: Bool
+
     public func makeBody(configuration: Configuration) -> some View {
         HStack(spacing: 16) {
             configuration.icon
@@ -42,7 +45,7 @@ public struct SectionContainerButtonLabelStyle: LabelStyle {
             }
         }
         .font(.body.weight(.semibold))
-        .foregroundColor(Colors.primary)
+        .foregroundColor(isEnabled ? Colors.primary : Color(.secondaryLabel))
         .padding(.leading)
         .frame(maxWidth: .infinity, alignment: .leading)
         .subTitleStyle(PlainSectionContainerSubTitleStyle())
@@ -60,6 +63,11 @@ struct SectionContainerButtonLabelStyle_Preview: PreviewProvider {
                     Button(action: {}, label: {
                         Label("Automatic usage usage within a button", systemImage: SFSymbolName.ant)
                     })
+
+                    Button(action: {}, label: {
+                        Label("Automatic usage usage within a button", systemImage: SFSymbolName.ant)
+                    })
+                        .disabled(true)
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)

@@ -106,7 +106,12 @@ final class CardWallSnapshotTests: XCTestCase {
     func testCANInputView() {
         let sut = CardWallCANView(
             store: CardWallCANDomain.Store(
-                initialState: CardWallCANDomain.State(isDemoModus: false, can: "", showNextScreen: false),
+                initialState: CardWallCANDomain.State(
+                    isDemoModus: false,
+                    profileId: UUID(),
+                    can: "",
+                    showNextScreen: false
+                ),
                 reducer: .empty,
                 environment: CardWallCANDomain.Dummies.environment
             ),
@@ -121,7 +126,12 @@ final class CardWallSnapshotTests: XCTestCase {
     func testCANInputViewInDemoMode() {
         let sut = CardWallCANView(
             store: CardWallCANDomain.Store(
-                initialState: CardWallCANDomain.State(isDemoModus: true, can: "", showNextScreen: false),
+                initialState: CardWallCANDomain.State(
+                    isDemoModus: true,
+                    profileId: UUID(),
+                    can: "",
+                    showNextScreen: false
+                ),
                 reducer: .empty,
                 environment: CardWallCANDomain.Dummies.environment
             ),
@@ -137,6 +147,7 @@ final class CardWallSnapshotTests: XCTestCase {
         let sut = CardWallCANView(
             store: CardWallCANDomain.Store(
                 initialState: CardWallCANDomain.State(isDemoModus: false,
+                                                      profileId: UUID(),
                                                       can: "",
                                                       wrongCANEntered: true,
                                                       showNextScreen: false),
@@ -243,12 +254,10 @@ final class CardWallSnapshotTests: XCTestCase {
             reducer:
             CardWallReadCardDomain.Reducer.empty,
             environment: CardWallReadCardDomain.Environment(
-                userSession: MockUserSession(),
                 schedulers: Schedulers(),
-                currentProfile: mockCurrentProfile,
-                idTokenValidator: mockProfileValidator,
                 profileDataStore: MockProfileDataStore(),
-                signatureProvider: DummySecureEnclaveSignatureProvider()
+                signatureProvider: DummySecureEnclaveSignatureProvider(),
+                sessionProvider: DummyProfileBasedSessionProvider()
             )
         )
     }
@@ -256,6 +265,7 @@ final class CardWallSnapshotTests: XCTestCase {
     private func readCardStore(for output: CardWallReadCardDomain.State.Output) -> CardWallReadCardDomain.Store {
         readCardStore(for: CardWallReadCardDomain.State(
             isDemoModus: false,
+            profileId: UUID(),
             pin: "000000",
             loginOption: .withoutBiometry,
             output: output
@@ -273,6 +283,7 @@ final class CardWallSnapshotTests: XCTestCase {
             store: readCardStore(
                 for: CardWallReadCardDomain.State(
                     isDemoModus: true,
+                    profileId: UUID(),
                     pin: "123456",
                     loginOption: .withoutBiometry,
                     output: .idle
@@ -305,7 +316,7 @@ final class CardWallSnapshotTests: XCTestCase {
     }
 
     func testReadCardViewDone() {
-        let idpToken = IDPToken(accessToken: "", expires: Date(), idToken: "")
+        let idpToken = IDPToken(accessToken: "", expires: Date(), idToken: "", redirect: "redirect")
         let sut = CardWallReadCardView(store: readCardStore(for: .loggedIn(idpToken)))
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())

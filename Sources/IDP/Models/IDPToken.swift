@@ -30,6 +30,8 @@ public struct IDPToken: Codable {
     public let ssoToken: String?
     /// Token type
     public let tokenType: String
+    /// Redirect the token is valid for. Must be the same for initial authentication and SSO.
+    public let redirect: String
 
     /// Initialize an IDPToken
     /// - Parameters:
@@ -43,18 +45,40 @@ public struct IDPToken: Codable {
         expires: Date,
         idToken: String,
         ssoToken: String? = nil,
-        tokenType: String = "Bearer"
+        tokenType: String = "Bearer",
+        redirect: String
     ) {
         self.accessToken = accessToken
         self.expires = expires
         self.idToken = idToken
         self.ssoToken = ssoToken
         self.tokenType = tokenType
+        self.redirect = redirect
     }
 
     public func idTokenPayload() throws -> TokenPayload.IDTokenPayload {
         let idTokenJWT = try JWT(from: idToken)
         return try idTokenJWT.decodePayload(type: TokenPayload.IDTokenPayload.self)
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case accessToken
+        case expires
+        case idToken
+        case ssoToken
+        case tokenType
+        case redirect
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        accessToken = try container.decode(String.self, forKey: .accessToken)
+        expires = try container.decode(Date.self, forKey: .expires)
+        idToken = try container.decode(String.self, forKey: .idToken)
+        ssoToken = try container.decodeIfPresent(String.self, forKey: .ssoToken)
+        tokenType = try container.decode(String.self, forKey: .tokenType)
+        redirect = try container
+            .decodeIfPresent(String.self, forKey: .redirect) ?? "https://redirect.gematik.de/erezept"
     }
 }
 

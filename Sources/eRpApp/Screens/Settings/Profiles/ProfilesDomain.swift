@@ -19,13 +19,17 @@
 import Combine
 import ComposableArchitecture
 import eRpKit
+import IDP
 
 enum ProfilesDomain {
     typealias Store = ComposableArchitecture.Store<State, Action>
     typealias Reducer = ComposableArchitecture.Reducer<State, Action, Environment>
 
     static func cleanup<T>() -> Effect<T, Never> {
-        Effect.cancel(token: Token.self)
+        .concatenate(
+            Effect.cancel(token: Token.self),
+            EditProfileDomain.cleanup()
+        )
     }
 
     enum Token: CaseIterable, Hashable {
@@ -78,12 +82,19 @@ enum ProfilesDomain {
     }
 
     struct Environment {
+        let appSecurityManager: AppSecurityManager
         let schedulers: Schedulers
         let profileDataStore: ProfileDataStore
         let userDataStore: UserDataStore
         let userProfileService: UserProfileService
         let profileSecureDataWiper: ProfileSecureDataWiper
         let router: Routing
+        let secureEnclaveSignatureProvider: SecureEnclaveSignatureProvider
+        let userSessionProvider: UserSessionProvider
+        let nfcSignatureProvider: NFCSignatureProvider
+        let userSession: UserSession
+        let signatureProvider: SecureEnclaveSignatureProvider
+        let accessibilityAnnouncementReceiver: (String) -> Void
     }
 
     static let domainReducer = Reducer { state, action, environment in
@@ -112,7 +123,7 @@ enum ProfilesDomain {
             return .none
         case .setNavigation(tag: .none):
             state.route = nil
-            return .none
+            return EditProfileDomain.cleanup()
         case let .selectedProfileReceived(profileId):
             state.selectedProfileId = profileId
             return .none
@@ -146,11 +157,18 @@ enum ProfilesDomain {
             state: (\State.route).appending(path: /ProfilesDomain.Route.editProfile),
             action: /ProfilesDomain.Action.profile(action:)
         ) {
-            .init(schedulers: $0.schedulers,
+            .init(appSecurityManager: $0.appSecurityManager,
+                  schedulers: $0.schedulers,
                   profileDataStore: $0.profileDataStore,
                   userDataStore: $0.userDataStore,
                   profileSecureDataWiper: $0.profileSecureDataWiper,
-                  router: $0.router)
+                  router: $0.router,
+                  userSession: $0.userSession,
+                  userSessionProvider: $0.userSessionProvider,
+                  secureEnclaveSignatureProvider: $0.secureEnclaveSignatureProvider,
+                  nfcSignatureProvider: $0.nfcSignatureProvider,
+                  signatureProvider: $0.signatureProvider,
+                  accessibilityAnnouncementReceiver: $0.accessibilityAnnouncementReceiver)
         }
 
     private static let newProfilePullback: Reducer =
@@ -205,13 +223,19 @@ extension ProfilesDomain {
         )
 
         static let environment = Environment(
+            appSecurityManager: DummyAppSecurityManager(),
             schedulers: Schedulers(),
             profileDataStore: DemoProfileDataStore(),
             userDataStore: DemoUserDefaultsStore(),
             userProfileService: DummyUserProfileService(),
             profileSecureDataWiper: DummyProfileSecureDataWiper(),
-            router: DummyRouter()
-        )
+            router: DummyRouter(),
+            secureEnclaveSignatureProvider: DummySecureEnclaveSignatureProvider(),
+            userSessionProvider: DummyUserSessionProvider(),
+            nfcSignatureProvider: DemoSignatureProvider(),
+            userSession: DemoSessionContainer(),
+            signatureProvider: DummySecureEnclaveSignatureProvider()
+        ) { _ in }
 
         static let store = Store(initialState: state,
                                  reducer: reducer,

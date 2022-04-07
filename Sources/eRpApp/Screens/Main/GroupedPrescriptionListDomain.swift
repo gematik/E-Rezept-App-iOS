@@ -55,6 +55,7 @@ enum GroupedPrescriptionListDomain {
 
         let loginHandler: LoginHandler
         let signatureProvider: SecureEnclaveSignatureProvider
+        let userSessionProvider: UserSessionProvider
     }
 
     struct State: Equatable {
@@ -242,6 +243,7 @@ enum GroupedPrescriptionListDomain {
                 CardWallDomain.Environment(
                     schedulers: globalEnvironment.schedulers,
                     userSession: globalEnvironment.userSession,
+                    sessionProvider: DefaultSessionProvider(userSessionProvider: globalEnvironment.userSessionProvider),
                     signatureProvider: globalEnvironment.signatureProvider,
                     accessibilityAnnouncementReceiver: globalEnvironment.accessibilityAnnouncementReceiver
                 )
@@ -263,6 +265,7 @@ extension GroupedPrescriptionListDomain.Environment {
                     isMinimalOS14: serviceLocator.deviceCapabilities.isMinimumOS14,
                     can: (can != nil) ? nil : CardWallCANDomain.State(
                         isDemoModus: self.userSession.isDemoMode,
+                        profileId: self.userSession.profileId,
                         can: ""
                     ),
                     pin: CardWallPINDomain.State(isDemoModus: self.userSession.isDemoMode, pin: ""),
@@ -408,7 +411,8 @@ extension GroupedPrescriptionListDomain {
             schedulers: Schedulers(),
             fhirDateFormatter: FHIRDateFormatter.shared,
             loginHandler: DummyLoginHandler(),
-            signatureProvider: DummySecureEnclaveSignatureProvider()
+            signatureProvider: DummySecureEnclaveSignatureProvider(),
+            userSessionProvider: DummyUserSessionProvider()
         )
         static let store = Store(initialState: state,
                                  reducer: domainReducer,

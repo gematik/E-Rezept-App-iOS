@@ -47,6 +47,7 @@ public struct ExtAuthChallengeSession: ChallengeSession, Equatable {
     }
 }
 
+/// sourcery: StreamWrapped
 public protocol ExtAuthRequestStorage: AnyObject {
     func setExtAuthRequest(_ request: ExtAuthChallengeSession?, for state: String)
     func getExtAuthRequest(for state: String) -> ExtAuthChallengeSession?

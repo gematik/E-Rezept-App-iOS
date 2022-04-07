@@ -106,8 +106,4 @@ extension UserMode: UserSession {
     func profile() -> AnyPublisher<Profile, LocalStoreError> {
         sessionContainer.profile()
     }
-
-    var profileSecureDataWiper: ProfileSecureDataWiper {
-        sessionContainer.profileSecureDataWiper
-    }
 }

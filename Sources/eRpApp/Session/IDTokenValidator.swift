@@ -76,28 +76,22 @@ struct ProfileValidator: IDTokenValidator {
 
 extension UserSession {
     func idTokenValidator() -> AnyPublisher<IDTokenValidator, IDTokenValidatorError> {
-        localUserStore.selectedProfileId
-            .setFailureType(to: IDTokenValidatorError.self)
+        profileDataStore.listAllProfiles()
             .first()
-            .flatMap { profileId -> AnyPublisher<IDTokenValidator, IDTokenValidatorError> in
-                self.profileDataStore.listAllProfiles()
-                    .first()
-                    .mapError(IDTokenValidatorError.other(error:))
-                    .flatMap { profiles -> AnyPublisher<IDTokenValidator, IDTokenValidatorError> in
-                        guard let currentProfile = profiles.first(where: { $0.identifier == profileId }) else {
-                            return Fail(error: IDTokenValidatorError.profileNotFound).eraseToAnyPublisher()
-                        }
-                        let otherProfiles = profiles.filter { $0.identifier != profileId }
-                        return Just(
-                            ProfileValidator(
-                                currentProfile: currentProfile,
-                                otherProfiles: otherProfiles
-                            )
-                        )
-                        .setFailureType(to: IDTokenValidatorError.self)
-                        .eraseToAnyPublisher()
-                    }
-                    .eraseToAnyPublisher()
+            .mapError(IDTokenValidatorError.other(error:))
+            .flatMap { [profileId = profileId] profiles -> AnyPublisher<IDTokenValidator, IDTokenValidatorError> in
+                guard let currentProfile = profiles.first(where: { $0.identifier == profileId }) else {
+                    return Fail(error: IDTokenValidatorError.profileNotFound).eraseToAnyPublisher()
+                }
+                let otherProfiles = profiles.filter { $0.identifier != profileId }
+                return Just(
+                    ProfileValidator(
+                        currentProfile: currentProfile,
+                        otherProfiles: otherProfiles
+                    )
+                )
+                .setFailureType(to: IDTokenValidatorError.self)
+                .eraseToAnyPublisher()
             }
             .eraseToAnyPublisher()
     }

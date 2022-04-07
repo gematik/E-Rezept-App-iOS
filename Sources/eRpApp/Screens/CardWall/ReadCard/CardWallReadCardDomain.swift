@@ -38,6 +38,7 @@ enum CardWallReadCardDomain {
 
     struct State: Equatable {
         let isDemoModus: Bool
+        let profileId: UUID
         var pin: String
         var loginOption: LoginOption
         var output: Output
@@ -57,25 +58,24 @@ enum CardWallReadCardDomain {
     }
 
     struct Environment {
-        let userSession: UserSession
         let schedulers: Schedulers
-        let currentProfile: AnyPublisher<Profile, LocalStoreError>
-        let idTokenValidator: AnyPublisher<IDTokenValidator, IDTokenValidatorError>
         let profileDataStore: ProfileDataStore
         let signatureProvider: SecureEnclaveSignatureProvider
+        var sessionProvider: ProfileBasedSessionProvider
     }
 
     static let reducer = Reducer { state, action, environment in
 
         switch action {
         case .getChallenge:
-            return environment.idpChallengePublisher
+            return environment.idpChallengePublisher(for: state.profileId)
                 .eraseToEffect()
                 .cancellable(id: Token.idpChallenge, cancelInFlight: true)
         case let .stateReceived(.loggedIn(idpToken)):
             let payload = try? idpToken.idTokenPayload()
             state.output = .loggedIn(idpToken)
             return environment.saveProfileWith(
+                profileId: state.profileId,
                 insuranceId: payload?.idNummer,
                 insurance: payload?.organizationName,
                 givenName: payload?.givenName,
@@ -109,10 +109,11 @@ enum CardWallReadCardDomain {
         case let .signChallenge(challenge):
             let pin = state.pin
             let biometrieFlow = state.loginOption == .withBiometry
+            let profileID = state.profileId
 
             return Effect.concatenate(
                 Effect.cancel(id: Token.idpChallenge),
-                environment.userSession.secureUserStore.can
+                environment.sessionProvider.userDataStore(for: state.profileId).can
                     .first()
                     .flatMap { can -> Effect<Action, Never> in
                         guard let can = can,
@@ -127,9 +128,18 @@ enum CardWallReadCardDomain {
                         }
 
                         if biometrieFlow {
-                            return environment.signChallengeThenAltAuthWithNFCCard(can: canData, pin: format2Pin)
+                            return environment.signChallengeThenAltAuthWithNFCCard(
+                                can: canData,
+                                pin: format2Pin,
+                                profileID: profileID
+                            )
                         }
-                        return environment.signChallengeWithNFCCard(can: canData, pin: format2Pin, challenge: challenge)
+                        return environment.signChallengeWithNFCCard(
+                            can: canData,
+                            pin: format2Pin,
+                            profileID: profileID,
+                            challenge: challenge
+                        )
                     }
                     .receive(on: environment.schedulers.main)
                     .eraseToEffect()
@@ -189,13 +199,17 @@ extension CardWallReadCardDomain {
 
 extension CardWallReadCardDomain {
     enum Dummies {
-        static let state = State(isDemoModus: false, pin: "", loginOption: .withoutBiometry, output: .idle)
-        static let environment = Environment(userSession: DemoSessionContainer(),
-                                             schedulers: Schedulers(),
-                                             currentProfile: DemoSessionContainer().profile(),
-                                             idTokenValidator: DemoSessionContainer().idTokenValidator(),
+        static let state = State(
+            isDemoModus: false,
+            profileId: DemoProfileDataStore.anna.id,
+            pin: "",
+            loginOption: .withoutBiometry,
+            output: .idle
+        )
+        static let environment = Environment(schedulers: Schedulers(),
                                              profileDataStore: DemoProfileDataStore(),
-                                             signatureProvider: DummySecureEnclaveSignatureProvider())
+                                             signatureProvider: DummySecureEnclaveSignatureProvider(),
+                                             sessionProvider: DummyProfileBasedSessionProvider())
 
         static let store = Store(
             initialState: state,
@@ -207,36 +221,34 @@ extension CardWallReadCardDomain {
 
 extension CardWallReadCardDomain.Environment {
     func saveProfileWith(
+        profileId: UUID,
         insuranceId: String?,
         insurance: String?,
         givenName: String?,
         familyName: String?
     ) -> Effect<CardWallReadCardDomain.Action, Never> {
-        currentProfile
-            .first()
-            .flatMap { profile -> AnyPublisher<Bool, LocalStoreError> in
-                profileDataStore.update(profileId: profile.id) { profile in
-                    profile.insuranceId = insuranceId
-                    profile.insurance = insurance
-                    profile.givenName = givenName
-                    profile.familyName = familyName
-                }
-                .eraseToAnyPublisher()
-            }
-            .map { _ in
-                CardWallReadCardDomain.Action.close
-            }
-            .catch { error in
-                Just(CardWallReadCardDomain.Action.saveError(error))
-            }
-            .receive(on: schedulers.main)
-            .eraseToEffect()
+        profileDataStore.update(profileId: profileId) { profile in
+            profile.insuranceId = insuranceId
+            profile.insurance = insurance
+            profile.givenName = givenName
+            profile.familyName = familyName
+        }
+        .map { _ in
+            CardWallReadCardDomain.Action.close
+        }
+        .catch { error in
+            Just(CardWallReadCardDomain.Action.saveError(error))
+        }
+        .receive(on: schedulers.main)
+        .eraseToEffect()
     }
 
     // [REQ:gemSpec_eRp_FdV:A_20172]
-    var idpChallengePublisher: Effect<CardWallReadCardDomain.Action, Never> {
+    func idpChallengePublisher(for profileID: UUID) -> Effect<CardWallReadCardDomain.Action, Never> {
         Effect<CardWallReadCardDomain.Action, Never>.run { subscriber -> Cancellable in
-            userSession.idpSession.requestChallenge()
+            sessionProvider
+                .idpSession(for: profileID)
+                .requestChallenge()
                 .map { CardWallReadCardDomain.State.Output.challengeLoaded($0) }
                 .catch { Just(CardWallReadCardDomain.State.Output.retrievingChallenge(.error(.idpError($0)))) }
                 .onSubscribe { _ in
@@ -255,17 +267,19 @@ extension CardWallReadCardDomain.Environment {
     // [REQ:gemSpec_IDP_Frontend:A_20526-01] sign and verify with idp
     func signChallengeWithNFCCard(can: CAN,
                                   pin: Format2Pin,
+                                  profileID: UUID,
                                   challenge: IDPChallengeSession) -> Effect<CardWallReadCardDomain.Action, Never> {
         Effect<CardWallReadCardDomain.Action, Never>.run { subscriber -> Cancellable in
 
             subscriber.send(.stateReceived(.signingChallenge(.loading)))
 
-            return self.userSession.nfcSessionProvider
+            return self.sessionProvider
+                .signatureProvider(for: profileID)
                 .sign(can: can, pin: pin, challenge: challenge)
                 .mapError(CardWallReadCardDomain.State.Error.signChallengeError)
                 .receive(on: self.schedulers.main)
                 .flatMap { signedChallenge in
-                    self.verifyResultWithIDP(signedChallenge, can: can, pin: pin)
+                    self.verifyResultWithIDP(signedChallenge, can: can, pin: pin, profileID: profileID)
                 }
                 .sink(receiveCompletion: { completion in
                     if case let .failure(error) = completion {
@@ -283,17 +297,18 @@ extension CardWallReadCardDomain.Environment {
     private func verifyResultWithIDP(_ signedChallenge: SignedChallenge,
                                      can _: CAN,
                                      pin _: Format2Pin,
+                                     profileID: UUID,
                                      registerBiometrics _: Bool = false)
         -> Effect<CardWallReadCardDomain.Action, Never> {
         Effect<CardWallReadCardDomain.Action, Never>.run { subscriber -> Cancellable in
             subscriber.send(.stateReceived(.verifying(.loading)))
-            return idTokenValidator
+            return sessionProvider.idTokenValidator(for: profileID)
                 .mapError(CardWallReadCardDomain.State.Error.profileValidation)
                 .flatMap { idTokenValidator in
-                    self.userSession.idpSession
+                    self.sessionProvider.idpSession(for: profileID)
                         .verify(signedChallenge)
                         .exchangeIDPToken(
-                            idp: self.userSession.idpSession,
+                            idp: sessionProvider.idpSession(for: profileID),
                             challengeSession: signedChallenge.originalChallenge,
                             idTokenValidator: idTokenValidator.validate(idToken:)
                         )

@@ -23,15 +23,16 @@ import OpenSSL
 /// Signed (with eGK) version of `PairingData`.
 /// [REQ:gemF_Biometrie:A_21415:Signed_Pairing_Data]
 public struct SignedPairingData {
-    let originalPairingData: PairingData
+    /// original
+    public let originalPairingData: PairingData
 
     let signedPairingData: JWT
 
     /// Initialize a SignedChallenge
     ///
     /// - Parameters:
-    ///   - originalChallenge: original challenge
-    ///   - signedChallenge: signed response
+    ///   - originalPairingData: unsigned PairingData that is signed within this container.
+    ///   - signedChallenge: signed PairingData as JWT representation.
     public init(originalPairingData: PairingData, signedPairingData: JWT) {
         self.originalPairingData = originalPairingData
         self.signedPairingData = signedPairingData
@@ -42,5 +43,13 @@ public struct SignedPairingData {
     /// - Returns: ASCII Encoded String
     public func serialize() -> String {
         signedPairingData.serialize()
+    }
+
+    /// Initializes with a given JWT String representing the `PairingData`.
+    /// - Parameter string: String representation of JWT Container with the signed `PairingData`.
+    public init(from string: String) throws {
+        let signedPairingData = try JWT(from: string)
+        originalPairingData = try signedPairingData.decodePayload(type: PairingData.self)
+        self.signedPairingData = signedPairingData
     }
 }

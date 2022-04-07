@@ -215,19 +215,31 @@ class KeychainStorage: SecureUserDataStore, IDPStorage, SecureEGKCertificateStor
             Just(try? keychainHelper.genericPassword(for: idpBiometricKeyIdentifier))
                 .eraseToAnyPublisher()
         }
+        .merge(with: keyIdentifierPassthrough)
         .eraseToAnyPublisher()
     }
 
+    // idp pairing identifier for registered device
     var keyIdentifier: AnyPublisher<Data?, Never> {
         retrieveKeyIdentifier()
     }
 
+    private let keyIdentifierPassthrough = PassthroughSubject<Data?, Never>()
+
     func set(keyIdentifier: Data?) {
-        if let keyIdentifier = keyIdentifier {
-            // [REQ:gemSpec_IDP_Frontend:A_21595] Store within keychain
-            _ = try? keychainHelper.setGenericPassword(keyIdentifier, for: idpBiometricKeyIdentifier)
-        } else {
-            _ = try? keychainHelper.unsetGenericPassword(for: idpBiometricKeyIdentifier)
+        let success: Bool
+        do {
+            if let keyIdentifier = keyIdentifier {
+                // [REQ:gemSpec_IDP_Frontend:A_21595] Store within keychain
+                success = try keychainHelper.setGenericPassword(keyIdentifier, for: idpBiometricKeyIdentifier)
+            } else {
+                success = try keychainHelper.unsetGenericPassword(for: idpBiometricKeyIdentifier)
+            }
+        } catch {
+            success = false
+        }
+        if success {
+            keyIdentifierPassthrough.send(keyIdentifier)
         }
     }
 

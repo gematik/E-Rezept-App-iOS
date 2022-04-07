@@ -43,7 +43,9 @@ final class SettingsDomainTests: XCTestCase {
                 tracker: DummyTracker(),
                 signatureProvider: DummySecureEnclaveSignatureProvider(),
                 appSecurityManager: DummyAppSecurityManager(),
-                router: MockRouting()
+                router: MockRouting(),
+                userSessionProvider: MockUserSessionProvider(),
+                accessibilityAnnouncementReceiver: { _ in }
             )
         )
     }

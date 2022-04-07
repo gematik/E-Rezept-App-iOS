@@ -113,8 +113,7 @@ extension UserProfile {
                 color: .blue,
                 emoji: "🎃",
                 lastAuthenticated: Date().addingTimeInterval(-60 * 8),
-                erxTasks: [],
-                erxAuditEvents: []
+                erxTasks: []
             ),
             isAuthenticated: true
         )
@@ -127,8 +126,7 @@ extension UserProfile {
                 color: .blue,
                 emoji: "💀",
                 lastAuthenticated: nil,
-                erxTasks: [],
-                erxAuditEvents: []
+                erxTasks: []
             ),
             isAuthenticated: false
         )
@@ -141,8 +139,7 @@ extension UserProfile {
                 color: .blue,
                 emoji: "🎃",
                 lastAuthenticated: Date().addingTimeInterval(-60 * 60 * 1.5),
-                erxTasks: [],
-                erxAuditEvents: []
+                erxTasks: []
             ),
             isAuthenticated: false
         )

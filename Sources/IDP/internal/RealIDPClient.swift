@@ -167,6 +167,8 @@ class RealIDPClient: IDPClient {
         request.setFormUrlEncodedHeader()
         request.setFormUrlEncodedBody(parameters: ["signed_challenge": signedChallengeJWEString])
 
+        let redirect = clientConfig.redirectURI.absoluteString
+
         return httpClient.send(request: request, interceptors: []) { _, _, completion in
             completion(nil) // Don't follow the redirect, but handle it
         }
@@ -180,7 +182,12 @@ class RealIDPClient: IDPClient {
                 }
                 let sso = locationComponents.queryItemWithName("ssotoken")?.value
                 // [REQ:gemSpec_IDP_Frontend:A_20600]
-                return IDPExchangeToken(code: code, sso: sso, state: state)
+                return IDPExchangeToken(
+                    code: code,
+                    sso: sso,
+                    state: state,
+                    redirect: redirect
+                )
             } else {
                 throw Self.responseError(for: body)
             }
@@ -191,7 +198,8 @@ class RealIDPClient: IDPClient {
 
     func refresh(with unsignedChallenge: IDPChallenge,
                  ssoToken: String,
-                 using document: DiscoveryDocument)
+                 using document: DiscoveryDocument,
+                 for redirect: String)
         -> AnyPublisher<IDPExchangeToken, IDPError> {
         var request = URLRequest(url: document.sso.url, cachePolicy: .reloadIgnoringCacheData)
         request.httpMethod = "POST"
@@ -219,7 +227,7 @@ class RealIDPClient: IDPClient {
                     throw IDPError.internal(error: .refreshResponseMissingHeaderValue)
                 }
                 let sso = locationComponents.queryItemWithName("ssotoken")?.value ?? ssoToken
-                return IDPExchangeToken(code: code, sso: sso, state: state)
+                return IDPExchangeToken(code: code, sso: sso, state: state, redirect: redirect)
             } else {
                 throw Self.responseError(for: data)
             }
@@ -310,10 +318,7 @@ class RealIDPClient: IDPClient {
                 if status.isSuccessful {
                     return true
                 } else {
-                    guard let responseError = try? JSONDecoder().decode(IDPError.ServerResponse.self, from: body) else {
-                        throw Self.fallbackServerResponse
-                    }
-                    throw IDPError.serverError(responseError)
+                    throw Self.responseError(for: body)
                 }
             }
             .mapError { $0.asIDPError() }
@@ -332,7 +337,9 @@ class RealIDPClient: IDPClient {
         return httpClient.send(request: request)
             .tryMap { body, _, status -> PairingEntries in
                 if status.isSuccessful {
-                    return try JSONDecoder().decode(PairingEntries.self, from: body)
+                    let decoder = JSONDecoder()
+                    decoder.dateDecodingStrategy = .secondsSince1970
+                    return try decoder.decode(PairingEntries.self, from: body)
                 } else {
                     guard let responseError = try? JSONDecoder().decode(IDPError.ServerResponse.self, from: body) else {
                         throw Self.fallbackServerResponse
@@ -362,7 +369,7 @@ class RealIDPClient: IDPClient {
         return httpClient.send(request: request, interceptors: []) { _, _, completion in
             completion(nil) // Don't follow the redirect, but handle it
         }
-        .tryMap { data, httpResponse, status -> IDPExchangeToken in
+        .tryMap { [redirect = clientConfig.redirectURI.absoluteString] data, httpResponse, status -> IDPExchangeToken in
             if status.isRedirect {
                 guard let locationComponents = httpResponse.locationComponents(),
                       let code = locationComponents.queryItemWithName("code")?.value,
@@ -371,7 +378,10 @@ class RealIDPClient: IDPClient {
                     throw IDPError.internal(error: .altVerifyResponseMissingHeaderValue)
                 }
                 let sso = locationComponents.queryItemWithName("ssotoken")?.value
-                return IDPExchangeToken(code: code, sso: sso, state: state)
+                return IDPExchangeToken(code: code,
+                                        sso: sso,
+                                        state: state,
+                                        redirect: redirect)
             } else {
                 throw Self.responseError(for: data)
             }
@@ -472,7 +482,8 @@ class RealIDPClient: IDPClient {
         return httpClient.send(request: request, interceptors: []) { _, _, completion in
             completion(nil) // Don't follow the redirect, but handle it
         }
-        .tryMap { body, httpResponse, status -> IDPExchangeToken in
+        .tryMap { [redirect = clientConfig.extAuthRedirectURI.absoluteString] body, httpResponse, status
+            -> IDPExchangeToken in
             if status.isRedirect {
                 guard let locationComponents = httpResponse.locationComponents(),
                       let code = locationComponents.queryItemWithName("code")?.value,
@@ -482,7 +493,10 @@ class RealIDPClient: IDPClient {
                 }
                 let sso = locationComponents.queryItemWithName("ssotoken")?.value
                 // [REQ:gemSpec_IDP_Frontend:A_20600]
-                return IDPExchangeToken(code: code, sso: sso, state: state)
+                return IDPExchangeToken(code: code,
+                                        sso: sso,
+                                        state: state,
+                                        redirect: redirect)
             } else {
                 throw Self.responseError(for: body)
             }

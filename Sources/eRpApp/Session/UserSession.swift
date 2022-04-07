@@ -85,6 +85,4 @@ protocol UserSession {
     var profileId: UUID { get }
 
     func profile() -> AnyPublisher<Profile, LocalStoreError>
-
-    var profileSecureDataWiper: ProfileSecureDataWiper { get }
 }

@@ -69,10 +69,9 @@ enum CardWallDomain {
 
     struct Environment {
         var schedulers: Schedulers
-
         var userSession: UserSession
+        var sessionProvider: ProfileBasedSessionProvider
         let signatureProvider: SecureEnclaveSignatureProvider
-
         let accessibilityAnnouncementReceiver: (String) -> Void
     }
 
@@ -96,7 +95,7 @@ enum CardWallDomain {
             // closing a subscreen should close the whole stack -> forward to generic `.close`
             return Effect(value: .close)
         case .pinAction(action: .advance):
-            if state.pin.showNextScreen {
+            if state.pin.showNextScreen != .none {
                 state.loginOption = CardWallLoginOptionDomain.State(
                     isDemoModus: environment.userSession.isDemoMode,
                     pin: state.pin.pin
@@ -113,6 +112,7 @@ enum CardWallDomain {
                 }
                 state.readCard = CardWallReadCardDomain.State(
                     isDemoModus: environment.userSession.isDemoMode,
+                    profileId: environment.userSession.profileId,
                     pin: state.pin.pin,
                     loginOption: loginOption,
                     output: .idle
@@ -123,17 +123,18 @@ enum CardWallDomain {
             if state.can == nil {
                 state.can = CardWallCANDomain.State(
                     isDemoModus: false,
+                    profileId: environment.userSession.profileId,
                     can: ""
                 )
             }
             state.can?.wrongCANEntered = true
             state.can?.showNextScreen = false
-            state.pin.showNextScreen = false
+            state.pin.showNextScreen = .none
             state.loginOption.showNextScreen = false
             return .none
         case .readCard(action: .wrongPIN):
             state.pin.wrongPinEntered = true
-            state.pin.showNextScreen = false
+            state.pin.showNextScreen = .none
             state.loginOption.showNextScreen = false
             return .none
         case .introduction,
@@ -159,7 +160,7 @@ enum CardWallDomain {
             state: \.can,
             action: /Action.canAction(action:)
         ) { environment in
-            CardWallCANDomain.Environment(userSession: environment.userSession)
+            CardWallCANDomain.Environment(sessionProvider: environment.sessionProvider)
         }
 
     static let pinPullbackReducer: Reducer =
@@ -189,12 +190,10 @@ enum CardWallDomain {
             action: /Action.readCard(action:)
         ) { environment in
             CardWallReadCardDomain.Environment(
-                userSession: environment.userSession,
                 schedulers: environment.schedulers,
-                currentProfile: environment.userSession.profile(),
-                idTokenValidator: environment.userSession.idTokenValidator(),
                 profileDataStore: environment.userSession.profileDataStore,
-                signatureProvider: environment.signatureProvider
+                signatureProvider: environment.signatureProvider,
+                sessionProvider: environment.sessionProvider
             )
         }
 
@@ -224,12 +223,13 @@ extension CardWallDomain {
             introAlreadyDisplayed: false,
             isNFCReady: true,
             isMinimalOS14: true,
-            can: CardWallCANDomain.State(isDemoModus: false, can: ""),
+            can: CardWallCANDomain.State(isDemoModus: false, profileId: UUID(), can: ""),
             pin: CardWallPINDomain.State(isDemoModus: false, pin: ""),
             loginOption: CardWallLoginOptionDomain.State(isDemoModus: false)
         )
         static let environment = Environment(schedulers: Schedulers(),
                                              userSession: DemoSessionContainer(),
+                                             sessionProvider: DummyProfileBasedSessionProvider(),
                                              signatureProvider: DummySecureEnclaveSignatureProvider()) { _ in }
         static let store = Store(
             initialState: state,

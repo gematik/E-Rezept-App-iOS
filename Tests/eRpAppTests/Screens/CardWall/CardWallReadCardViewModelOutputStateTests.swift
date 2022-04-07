@@ -88,7 +88,7 @@ final class CardWallReadCardViewModelOutputStateTests: XCTestCase {
         expect(sut.nextButtonEnabled).to(beTrue())
         expect(sut.buttonTitle).to(equal(titleRetry))
 
-        let idpToken = IDPToken(accessToken: "", expires: Date(), idToken: "")
+        let idpToken = IDPToken(accessToken: "", expires: Date(), idToken: "", redirect: "redirect")
         sut = CardWallReadCardDomain.State.Output.loggedIn(idpToken)
         expect(sut.nextButtonEnabled).to(beTrue())
         expect(sut.buttonTitle).to(equal(titleClose))

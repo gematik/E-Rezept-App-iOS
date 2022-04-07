@@ -169,4 +169,53 @@ final class KeychainStorageTests: XCTestCase {
 
         cancellable.cancel()
     }
+
+    func testTokenRetrievalOnAnotherSet() throws {
+        let keychainHelperMock = KeychainAccessHelperMock()
+        let sut = KeychainStorage(profileId: UUID())
+        sut.keychainHelper = keychainHelperMock
+
+        var receivedTokens: [IDPToken?] = []
+        let cancellable = sut.token.sink { idpToken in
+            receivedTokens.append(idpToken)
+        }
+
+        let inputToken = IDPToken(accessToken: "accessToken", expires: Date(), idToken: "idToken", redirect: "redirect")
+        let tokenData = try JSONEncoder().encode(inputToken)
+        keychainHelperMock.genericPassword = tokenData
+
+        expect(keychainHelperMock.setGenericPasswordCalled) == false
+        sut.set(token: inputToken)
+        expect(keychainHelperMock.setGenericPasswordCalled) == true
+
+        expect(receivedTokens.count).toEventually(equal(2), timeout: 5)
+        expect(receivedTokens[0]).to(beNil())
+        expect(receivedTokens[1]).to(equal(inputToken))
+
+        cancellable.cancel()
+    }
+
+    func testKeyIdentifierRetrievalOnAnotherSet() throws {
+        let keychainHelperMock = KeychainAccessHelperMock()
+        let sut = KeychainStorage(profileId: UUID())
+        sut.keychainHelper = keychainHelperMock
+
+        var receivedKeys: [Data?] = []
+        let cancellable = sut.keyIdentifier.sink { keyIdentifier in
+            receivedKeys.append(keyIdentifier)
+        }
+
+        let expected = "123456".data(using: .utf8)
+        keychainHelperMock.genericPassword = expected
+
+        expect(keychainHelperMock.setGenericPasswordCalled) == false
+        sut.set(keyIdentifier: expected)
+        expect(keychainHelperMock.setGenericPasswordCalled) == true
+
+        expect(receivedKeys.count).toEventually(equal(2), timeout: 5)
+        expect(receivedKeys[0]).to(beNil())
+        expect(receivedKeys[1]).to(equal(expected))
+
+        cancellable.cancel()
+    }
 }

@@ -25,6 +25,7 @@ import Foundation
 import IDP
 import OpenSSL
 import Pharmacy
+import TestUtils
 import TrustStore
 import VAUClient
 
@@ -53,9 +54,7 @@ class MockUserSession: UserSession {
         extAuthRequestStorageMock
     }
 
-    lazy var biometrieIdpSession: IDPSession = {
-        DemoIDPSession(storage: secureUserStore)
-    }()
+    var biometrieIdpSession: IDPSession = IDPSessionMock()
 
     lazy var vauStorage: VAUStorage = {
         DemoVAUStorage()

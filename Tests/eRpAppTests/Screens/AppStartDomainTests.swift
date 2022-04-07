@@ -52,7 +52,8 @@ final class AppStartDomainTests: XCTestCase {
                 tracker: DummyTracker(),
                 signatureProvider: DummySecureEnclaveSignatureProvider(),
                 appSecurityManager: MockAppSecurityManager(),
-                authenticationChallengeProvider: MockAuthenticationChallengeProvider(result: .success(true))
+                authenticationChallengeProvider: MockAuthenticationChallengeProvider(result: .success(true)),
+                userSessionProvider: MockUserSessionProvider()
             )
         )
     }

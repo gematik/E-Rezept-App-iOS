@@ -65,7 +65,6 @@ extension CoreDataCrudable {
         }
         return viewContext
             .publisher(for: request)
-            .subscribe(on: foregroundQueue)
             .mapError(Error.read)
             .eraseToAnyPublisher()
     }

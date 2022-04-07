@@ -76,7 +76,8 @@ final class RecordActionsForHintsTests: XCTestCase {
                 serviceLocator: ServiceLocator(),
                 accessibilityAnnouncementReceiver: { _ in },
                 tracker: DummyTracker(),
-                signatureProvider: DummySecureEnclaveSignatureProvider()
+                signatureProvider: DummySecureEnclaveSignatureProvider(),
+                userSessionProvider: MockUserSessionProvider()
             )
         )
     }

@@ -54,7 +54,7 @@ public class IDPClientMock: IDPClient {
     }
 
     var verify_Publisher: AnyPublisher<IDPExchangeToken, IDPError>! =
-        Just(IDPExchangeToken(code: "SUPER_SECRET_AUTH_CODE", sso: nil, state: "state"))
+        Just(IDPExchangeToken(code: "SUPER_SECRET_AUTH_CODE", sso: nil, state: "state", redirect: "redirect"))
             .setFailureType(to: IDPError.self)
             .eraseToAnyPublisher()
     var verify_ReceivedArguments: (
@@ -77,25 +77,30 @@ public class IDPClientMock: IDPClient {
     }
 
     var ssoLogin_Publisher: AnyPublisher<IDPExchangeToken, IDPError>! =
-        Just(IDPExchangeToken(code: "SUPER_SECRET_AUTH_CODE", sso: nil, state: "state"))
+        Just(IDPExchangeToken(code: "SUPER_SECRET_AUTH_CODE", sso: nil, state: "state", redirect: "redirect"))
             .setFailureType(to: IDPError.self)
             .eraseToAnyPublisher()
     var ssoLogin_ReceivedArguments: (
         unsignedChallenge: IDPChallenge,
         sso: String,
-        document: DiscoveryDocument
+        document: DiscoveryDocument,
+        redirect: String
     )?
     var ssoLogin_CallsCount = 0
     var ssoLogin_Called: Bool {
         ssoLogin_CallsCount > 0
     }
 
-    public func refresh(with unsignedChallenge: IDPChallenge, ssoToken: String, using document: DiscoveryDocument)
+    public func refresh(with unsignedChallenge: IDPChallenge,
+                        ssoToken: String,
+                        using document: DiscoveryDocument,
+                        for redirect: String)
         -> AnyPublisher<IDPExchangeToken, IDPError> {
         ssoLogin_CallsCount += 1
         ssoLogin_ReceivedArguments = (unsignedChallenge: unsignedChallenge,
                                       sso: ssoToken,
-                                      document: document)
+                                      document: document,
+                                      redirect: redirect)
         return ssoLogin_Publisher
     }
 

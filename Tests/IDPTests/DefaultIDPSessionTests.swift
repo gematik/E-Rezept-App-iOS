@@ -106,7 +106,8 @@ final class DefaultIDPSessionTests: XCTestCase {
             expires: issuedDate,
             idToken: decryptedTokenPayload.idToken,
             ssoToken: "sso-token",
-            tokenType: "Bearer"
+            tokenType: "Bearer",
+            redirect: "redirect"
         )
 
         storage = MemStorage()
@@ -300,7 +301,8 @@ final class DefaultIDPSessionTests: XCTestCase {
             expires: currentDate.advanced(by: 10),
             idToken: "id-token",
             ssoToken: "sso-token",
-            tokenType: "Bearer"
+            tokenType: "Bearer",
+            redirect: "redirect"
         )
         let idpClientMock = IDPClientMock()
         let storage = MemStorage()
@@ -514,7 +516,8 @@ final class DefaultIDPSessionTests: XCTestCase {
         let expectedToken = IDPExchangeToken(
             code: "exchange-token",
             sso: "sso-token",
-            state: "1234567890"
+            state: "1234567890",
+            redirect: "redirect"
         )
         idpClientMock.verify_Publisher = Just(expectedToken).setFailureType(to: IDPError.self).eraseToAnyPublisher()
         let signedJwt = try! JWT(from: Bundle(for: Self.self)
@@ -590,14 +593,15 @@ final class DefaultIDPSessionTests: XCTestCase {
         idpClientMock.exchange_Publisher = Just(encryptedTokenPayload)
             .setFailureType(to: IDPError.self).eraseToAnyPublisher()
 
-        let exchangeToken = IDPExchangeToken(code: "code", sso: "sso-token", state: "state")
+        let exchangeToken = IDPExchangeToken(code: "code", sso: "sso-token", state: "state", redirect: "redirect")
 
         // expected (decrypted) token result
         let expectedToken = IDPToken(
             accessToken: decryptedTokenPayload.accessToken,
             expires: issuedDate.addingTimeInterval(TimeInterval(expirationInterval)),
             idToken: decryptedTokenPayload.idToken,
-            ssoToken: exchangeToken.sso
+            ssoToken: exchangeToken.sso,
+            redirect: "redirect"
         )
 
         var receivedTokens: [IDPToken?] = []
@@ -622,7 +626,7 @@ final class DefaultIDPSessionTests: XCTestCase {
             state: "state",
             nonce: "5557577A7576615347" // nonce must be equal to the one in idToken
         )
-        sut.exchange(token: exchangeToken, challengeSession: challengeSession, redirectURI: nil)
+        sut.exchange(token: exchangeToken, challengeSession: challengeSession)
             .test(expectations: { token in
 
                 expect(token) == expectedToken
@@ -674,7 +678,8 @@ final class DefaultIDPSessionTests: XCTestCase {
             expires: issuedDate.addingTimeInterval(TimeInterval(expirationInterval * 2)),
             idToken: decryptedTokenPayload.idToken,
             ssoToken: "refreshed-sso-token",
-            tokenType: "Bearer"
+            tokenType: "Bearer",
+            redirect: "redirect"
         )
 
         let initialToken = IDPToken(
@@ -682,7 +687,8 @@ final class DefaultIDPSessionTests: XCTestCase {
             expires: issuedDate,
             idToken: decryptedTokenPayload.idToken,
             ssoToken: "sso-token",
-            tokenType: "Bearer"
+            tokenType: "Bearer",
+            redirect: "redirect"
         )
 
         // Set initial (valid) token
@@ -695,9 +701,12 @@ final class DefaultIDPSessionTests: XCTestCase {
             .eraseToAnyPublisher()
         idpClientMock.exchange_Publisher = Just(tokenPayload).setFailureType(to: IDPError.self).eraseToAnyPublisher()
         idpClientMock.ssoLogin_Publisher =
-            Just(IDPExchangeToken(code: "SUPER_SECRET_AUTH_CODE", sso: "refreshed-sso-token", state: "state"))
-                .setFailureType(to: IDPError.self)
-                .eraseToAnyPublisher()
+            Just(IDPExchangeToken(code: "SUPER_SECRET_AUTH_CODE",
+                                  sso: "refreshed-sso-token",
+                                  state: "state",
+                                  redirect: "redirect"))
+            .setFailureType(to: IDPError.self)
+            .eraseToAnyPublisher()
 
         var receivedTokens: [IDPToken?] = []
         let tokenSubscriber = storage.token
@@ -757,7 +766,8 @@ final class DefaultIDPSessionTests: XCTestCase {
             expires: issuedDate,
             idToken: decryptedTokenPayload.idToken,
             ssoToken: "sso-token",
-            tokenType: "Bearer"
+            tokenType: "Bearer",
+            redirect: "redirect"
         )
 
         let storage = MemStorage()
@@ -862,7 +872,8 @@ final class DefaultIDPSessionTests: XCTestCase {
         let idpExchangeToken = IDPExchangeToken(
             code: "exchange-token",
             sso: "sso-token",
-            state: "1234567890"
+            state: "1234567890",
+            redirect: "redirect"
         )
 
         idpClientMock.altVerify_Publisher =
@@ -1042,9 +1053,12 @@ final class DefaultIDPSessionTests: XCTestCase {
             "https://das-e-rezept-fuer-deutschland.de?state=mystate&code=testcode&kk_app_redirect_uri=kk_app_redirect_uri" // swiftlint:disable:this line_length
         )!
         idpClientMock.extAuthVerifyUsingReturnValue =
-            Just(IDPExchangeToken(code: "code", sso: nil, state: "state"))
-                .setFailureType(to: IDPError.self)
-                .eraseToAnyPublisher()
+            Just(IDPExchangeToken(code: "code",
+                                  sso: nil,
+                                  state: "state",
+                                  redirect: "https://das-e-rezept-fuer-deutschland.de"))
+            .setFailureType(to: IDPError.self)
+            .eraseToAnyPublisher()
 
         idpClientMock.exchange_Publisher = Just(encryptedTokenPayload)
             .setFailureType(to: IDPError.self)
@@ -1066,7 +1080,8 @@ final class DefaultIDPSessionTests: XCTestCase {
                                             expires: self.dateProvider().addingTimeInterval(300),
                                             idToken: self.decryptedTokenPayload.idToken,
                                             ssoToken: self.decryptedTokenPayload.ssoToken,
-                                            tokenType: self.decryptedTokenPayload.tokenType)
+                                            tokenType: self.decryptedTokenPayload.tokenType,
+                                            redirect: "https://das-e-rezept-fuer-deutschland.de")
                     expect(response).to(equal(expected))
                 }
             )

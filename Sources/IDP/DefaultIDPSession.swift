@@ -184,7 +184,6 @@ public class DefaultIDPSession: IDPSession {
     public func exchange(
         token exchange: IDPExchangeToken,
         challengeSession: ChallengeSession,
-        redirectURI: String?,
         idTokenValidator: @escaping (TokenPayload.IDTokenPayload) -> Result<Bool, Error>
     ) -> AnyPublisher<IDPToken, IDPError> {
         loadDiscoveryDocument() // swiftlint:disable:this trailing_closure
@@ -204,7 +203,7 @@ public class DefaultIDPSession: IDPSession {
                 return self.client.exchange(
                     token: exchange,
                     verifier: challengeSession.verifierCode,
-                    redirectURI: redirectURI,
+                    redirectURI: exchange.redirect,
                     encryptedKeyVerifier: encryptedKeyVerifier,
                     using: document
                 )
@@ -237,7 +236,8 @@ public class DefaultIDPSession: IDPSession {
                         expires: self.time().addingTimeInterval(TimeInterval(token.expiresIn)),
                         idToken: decrypted.idToken, // [REQ:gemSpec_IDP_Frontend:A_19938-01] Usage
                         ssoToken: exchange.sso,
-                        tokenType: decrypted.tokenType
+                        tokenType: decrypted.tokenType,
+                        redirect: exchange.redirect
                     )).setFailureType(to: IDPError.self).eraseToAnyPublisher()
                 }
                 .eraseToAnyPublisher()
@@ -258,7 +258,11 @@ public class DefaultIDPSession: IDPSession {
                     return Fail<IDPToken, IDPError>(error: IDPError.internal(error: .refreshTokenUnexpectedNil))
                         .eraseToAnyPublisher()
                 }
-                return self.ssoLoginAndExchange(challengeSession: challengeSession, ssoToken: ssoToken)
+                return self.ssoLoginAndExchange(
+                    challengeSession: challengeSession,
+                    ssoToken: ssoToken,
+                    redirect: token.redirect
+                )
             }
             .eraseToAnyPublisher()
     }
@@ -455,6 +459,7 @@ public class DefaultIDPSession: IDPSession {
 
                 // swiftlint:disable:next trailing_closure
                 return self.client.startExtAuth(extAuth, using: document)
+                    .first()
                     .handleEvents(receiveOutput: { redirectUrl in
                         // [REQ:gemSpec_IDP_Sek:A_22299] Remember State parameter for later verification
 
@@ -510,7 +515,6 @@ public class DefaultIDPSession: IDPSession {
                 return self.exchange(
                     token: token,
                     challengeSession: challengeSession,
-                    redirectURI: redirectURI,
                     idTokenValidator: idTokenValidator
                 )
                 .handleEvents(receiveOutput: { _ in
@@ -540,7 +544,8 @@ extension IDPToken {
             expires: expires,
             idToken: idToken,
             ssoToken: ssoToken,
-            tokenType: tokenType
+            tokenType: tokenType,
+            redirect: redirect
         )
     }
 }
@@ -630,7 +635,8 @@ extension DefaultIDPSession {
     }
 
     private func ssoLoginAndExchange(challengeSession: IDPChallengeSession,
-                                     ssoToken: String) -> AnyPublisher<IDPToken, IDPError> {
+                                     ssoToken: String,
+                                     redirect: String) -> AnyPublisher<IDPToken, IDPError> {
         let challenge = challengeSession.challenge
         return loadDiscoveryDocument()
             // swiftlint:disable:previous trailing_closure
@@ -640,11 +646,9 @@ extension DefaultIDPSession {
                         error: IDPError.internal(error: .ssoLoginAndExchangeUnexpectedNil)
                     ).eraseToAnyPublisher()
                 }
-                return self.client.refresh(with: challenge, ssoToken: ssoToken, using: document)
+                return self.client.refresh(with: challenge, ssoToken: ssoToken, using: document, for: redirect)
                     .flatMap { exchangeToken in
-                        self.exchange(token: exchangeToken,
-                                      challengeSession: challengeSession,
-                                      redirectURI: nil)
+                        self.exchange(token: exchangeToken, challengeSession: challengeSession)
                     }
                     .eraseToAnyPublisher()
             }

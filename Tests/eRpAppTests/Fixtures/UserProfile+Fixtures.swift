@@ -31,8 +31,7 @@ extension UserProfile {
                 color: .green,
                 emoji: "🌮",
                 lastAuthenticated: nil,
-                erxTasks: [],
-                erxAuditEvents: []
+                erxTasks: []
             ),
             connectionStatus: .connected
         )
@@ -46,8 +45,7 @@ extension UserProfile {
                 color: .red,
                 emoji: nil,
                 lastAuthenticated: nil,
-                erxTasks: [],
-                erxAuditEvents: []
+                erxTasks: []
             ),
             connectionStatus: .disconnected
         )

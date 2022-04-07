@@ -76,39 +76,22 @@ import VAUClient
 		StreamWrapped{{property.typeName}}(stream: stream.map{ $0.{{property.name}} }.eraseToAnyPublisher(){% if not property.type.annotations.SkipCurrent %}, current: current.{{property.name}}{% endif %} )
 	}()
 			{% else %}
-	{% if not property.isMutable and not property.isComputed %}private(set) {% endif %}{% if not property.isComputed %}var {{ property.name }}: {{property.typeName}}{% endif %}{% if property.isMutable %} {
+	{% if not property.isMutable %}
+	var {{ property.name }}: {{property.typeName}} { current.{{ property.name }} }
+	{% else %}
+	{% if not property.isComputed and not property.isMutable %}private(set) {% endif %}{% if not property.isComputed %}var {{ property.name }}: {{property.typeName}}{% endif %}{% if property.isMutable %} {
 		set { current.{{ property.name }} = newValue }
 		get { current.{{ property.name }} }
 	}
+	{% endif %}
 {% endif %}
 			{% endif %}
 		{% endif %}
 	{% endfor %}
 {% endmacro %}
 
-{% macro atomicPropertiesInitializer type %}
-	{% for property in type.variables %}
-		{% if property.typeName.generic.name != "AnyPublisher" %}
-			{% if property.type.annotations.StreamWrapped or property.isComputed %}
-			{% else %}
-		self.{{property.name}} = current.{{property.name}}
-			{% endif %}
-		{% endif %}
-	{% endfor %}
-{% endmacro %}
 {% macro atomicPropertiesListener type %}
 	{% for property in type.variables %}
-		{% if property.typeName.generic.name != "AnyPublisher" %}
-			{% if property.type.annotations.StreamWrapped %}
-			{% else %}
-				{% if not property.isMutable and not property.isComputed %} 
-		stream
-			.map(\.{{property.name}})
-			.weakAssign(to: \.{{property.name}}, on: self)
-			.store(in: &disposeBag)
-				{% endif %}
-			{% endif %}
-		{% endif %}
 	{% endfor %}
 {% endmacro %}
 
@@ -125,13 +108,6 @@ class StreamWrapped{{ type.name }}: {{ type.name }} {
 		{% if not type.annotations.SkipCurrent %}
 		self.current = current
 		{% endif %}
-
-	{% call atomicPropertiesInitializer type %}
-	{% for inheritedType in type.inheritedTypes %}
-		{% for subtype in types.protocols where subtype.name == inheritedType %}
-			{% call atomicPropertiesInitializer subtype %}
-		{% endfor %}
-	{% endfor %}
 
 		{% if not type.annotations.SkipCurrent %}
 		stream

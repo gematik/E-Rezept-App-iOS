@@ -31,7 +31,7 @@ public protocol SecureEGKCertificateStorage {
     /// - Parameter certificate: The certificate to store or `nil`if an existing certificate should be removed
     func set(certificate: X509?)
 
-    /// Retrieve the prior stored key identifier for biometrics use case
+    /// Retrieve the prior stored key identifier for biometric pairing use case
     var keyIdentifier: AnyPublisher<Data?, Never> { get }
 
     /// Set the stored certificate for this session or delete it, if `nil` is passed.

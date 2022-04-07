@@ -25,25 +25,25 @@ internal enum L10n {
   internal static let alertErrorMessageUnknown = StringAsset("alert_error_message_unknown")
   /// Error
   internal static let alertErrorTitle = StringAsset("alert_error_title")
-  /// Abbrechen
+  /// Cancel
   internal static let amgBtnAlertCancel = StringAsset("amg_btn_alert_cancel")
-  /// Daten löschen
+  /// Delete data
   internal static let amgBtnAlertDeleteDatabase = StringAsset("amg_btn_alert_delete_database")
-  /// Wiederholen
+  /// Repeat
   internal static let amgBtnAlertRetry = StringAsset("amg_btn_alert_retry")
-  /// Aktualisierung fehlgeschlagen
+  /// Update failed
   internal static let amgBtnAlertTitle = StringAsset("amg_btn_alert_title")
-  /// Falls dieser Fehler wiederholt auftritt, bitte die App löschen und neu installieren
+  /// If this error occurs repeatedly, please delete the app and reinstall it
   internal static let amgTxtAlertMessageDeleteDatabase = StringAsset("amg_txt_alert_message_delete_database")
-  /// Löschen fehlgeschlagen
+  /// Deletion failed
   internal static let amgTxtAlertTitleDeleteDatabase = StringAsset("amg_txt_alert_title_delete_database")
-  /// Aktualisieren...
+  /// Update...
   internal static let amgTxtInProgress = StringAsset("amg_txt_in_progress")
   /// Unlock with Face ID
   internal static let authBtnBiometricsFaceid = StringAsset("auth_btn_biometrics_faceid")
   /// Unlock with Touch ID
   internal static let authBtnBiometricsTouchid = StringAsset("auth_btn_biometrics_touchid")
-  /// Weiter
+  /// Continue
   internal static let authBtnPasswordContinue = StringAsset("auth_btn_password_continue")
   /// You have selected Face ID to secure your data.
   internal static let authTxtBiometricsFaceidDescription = StringAsset("auth_txt_biometrics_faceid_description")
@@ -67,7 +67,7 @@ internal enum L10n {
   internal static let authTxtBiometricsFooterUrlDisplay = StringAsset("auth_txt_biometrics_footer_url_display")
   /// https://www.das-e-rezept-fuer-deutschland.de
   internal static let authTxtBiometricsFooterUrlLink = StringAsset("auth_txt_biometrics_footer_url_link")
-  /// Sie hatten zu viele fehlerhafte Anmeldeversuche. Gehen Sie in die Einstellungen ihres iPhones und reaktivieren sie die FaceID oder TouchID Funktion durch eine PIN Eingabe.
+  /// You have had too many incorrect login attempts. Go to  your iPhone settings and reactivate the FaceID or TouchID function by entering a PIN.
   internal static let authTxtBiometricsLockout = StringAsset("auth_txt_biometrics_lockout")
   /// %@ is required to protect the app from unauthorised access.
   internal static let authTxtBiometricsReason = StringAsset("auth_txt_biometrics_reason")
@@ -79,17 +79,17 @@ internal enum L10n {
   internal static let authTxtBiometricsTouchidStart = StringAsset("auth_txt_biometrics_touchid_start")
   /// Plural format key: "%#@variable_0@"
   internal static let authTxtFailedLoginHintMsg = StringAsset("auth_txt_failed_login_hint_msg")
-  /// Erfolglose Anmeldeversuche
+  /// Unsuccessful login attempts
   internal static let authTxtFailedLoginHintTitle = StringAsset("auth_txt_failed_login_hint_title")
-  /// Falsches Kennwort. Bitte probieren Sie es erneut.
+  /// Incorrect password. Please try again.
   internal static let authTxtPasswordFailure = StringAsset("auth_txt_password_failure")
-  /// Eingabefeld Kennwort
+  /// Password input field
   internal static let authTxtPasswordLabel = StringAsset("auth_txt_password_label")
-  /// Kennwort eingeben
+  /// Enter password
   internal static let authTxtPasswordPlaceholder = StringAsset("auth_txt_password_placeholder")
   /// Demo mode enabled
   internal static let bnrTxtDemoMode = StringAsset("bnr_txt_demo_mode")
-  /// inaktiv
+  /// inactive
   internal static let buttonTxtIsInactiveValue = StringAsset("button_txt_is_inactive_value")
   /// To use the scanner, you must allow the app to access your camera in the system settings.
   internal static let camInitFailMessage = StringAsset("cam_init_fail_message")
@@ -125,23 +125,23 @@ internal enum L10n {
   internal static func cdwBtnCanDoneLabelError(_ element1: String) -> StringAsset {
     StringAsset("cdw_btn_can_done_label_error_%@", arguments: [element1])
   }
-  /// Schließen
+  /// Close
   internal static let cdwBtnExtauthAlertSaveProfile = StringAsset("cdw_btn_extauth_alert_save_profile")
-  /// Abbrechen
+  /// Cancel
   internal static let cdwBtnExtauthConfirmCancel = StringAsset("cdw_btn_extauth_confirm_cancel")
-  /// Technischen Kundendienst kontaktieren
+  /// Contact technical customer service
   internal static let cdwBtnExtauthConfirmContact = StringAsset("cdw_btn_extauth_confirm_contact")
-  /// Senden
+  /// Send
   internal static let cdwBtnExtauthConfirmSend = StringAsset("cdw_btn_extauth_confirm_send")
-  /// Gesundheitskarte bestellen
+  /// Order medical card
   internal static let cdwBtnExtauthFallbackOrderEgk = StringAsset("cdw_btn_extauth_fallback_order_egk")
-  /// Abbrechen
+  /// Cancel
   internal static let cdwBtnExtauthSelectionCancel = StringAsset("cdw_btn_extauth_selection_cancel")
-  /// Weiter
+  /// Continue
   internal static let cdwBtnExtauthSelectionContinue = StringAsset("cdw_btn_extauth_selection_continue")
-  /// Gesundheitskarte bestellen
+  /// Order medical card
   internal static let cdwBtnExtauthSelectionOrderEgk = StringAsset("cdw_btn_extauth_selection_order_egk")
-  /// Erneut versuchen
+  /// Try again
   internal static let cdwBtnExtauthSelectionRetry = StringAsset("cdw_btn_extauth_selection_retry")
   /// Close dialog
   internal static let cdwBtnIntroCancelLabel = StringAsset("cdw_btn_intro_cancel_label")
@@ -161,13 +161,13 @@ internal enum L10n {
   internal static let cdwBtnPinDone = StringAsset("cdw_btn_pin_done")
   /// Next
   internal static let cdwBtnPinDoneLabel = StringAsset("cdw_btn_pin_done_label")
-  /// Abbrechen
+  /// Cancel
   internal static let cdwBtnRcAlertCancel = StringAsset("cdw_btn_rc_alert_cancel")
-  /// Schließen
+  /// Close
   internal static let cdwBtnRcAlertClose = StringAsset("cdw_btn_rc_alert_close")
-  /// Schließen
+  /// Close
   internal static let cdwBtnRcAlertSaveProfile = StringAsset("cdw_btn_rc_alert_save_profile")
-  /// Zurück
+  /// Back
   internal static let cdwBtnRcBack = StringAsset("cdw_btn_rc_back")
   /// Close dialog
   internal static let cdwBtnRcCancelLabel = StringAsset("cdw_btn_rc_cancel_label")
@@ -179,15 +179,15 @@ internal enum L10n {
   internal static let cdwBtnRcCorrectPin = StringAsset("cdw_btn_rc_correct_pin")
   /// Loading
   internal static let cdwBtnRcLoading = StringAsset("cdw_btn_rc_loading")
-  /// Next
+  /// Connect card
   internal static let cdwBtnRcNext = StringAsset("cdw_btn_rc_next")
   /// As soon as this button is pressed, the medical card is read via NFC. To do this, hold the card directly against the device. If the connection is successful, you will receive tactile feedback. Any interruptions to the connection or errors are also communicated via tactile feedback. Communication with the medical card can take up to ten seconds. Then remove the medical card from the device.
   internal static let cdwBtnRcNextHint = StringAsset("cdw_btn_rc_next_hint")
   /// Repeat
   internal static let cdwBtnRcRetry = StringAsset("cdw_btn_rc_retry")
-  /// Videoanleitung ansehen
+  /// Watch video tutorial
   internal static let cdwBtnRcVideo = StringAsset("cdw_btn_rc_video")
-  /// Weiter
+  /// Next
   internal static let cdwBtnSelContinue = StringAsset("cdw_btn_sel_continue")
   /// Please enter your PIN here
   internal static let cdwEdtPinInput = StringAsset("cdw_edt_pin_input")
@@ -239,43 +239,43 @@ internal enum L10n {
   internal static let cdwTxtCanWarnWrongDescription = StringAsset("cdw_txt_can_warn_wrong_description")
   /// Incorrect CAN
   internal static let cdwTxtCanWarnWrongTitle = StringAsset("cdw_txt_can_warn_wrong_title")
-  /// Ihre Gesundheitskarte konnte nicht mit dem Profil verknüpft werden.
+  /// Your medical card could not be linked to the profile.
   internal static let cdwTxtExtauthAlertMessageSaveProfile = StringAsset("cdw_txt_extauth_alert_message_save_profile")
-  /// Fehler beim Speichern des Profils
+  /// Error saving profile
   internal static let cdwTxtExtauthAlertTitleSaveProfile = StringAsset("cdw_txt_extauth_alert_title_save_profile")
-  /// Mail
+  /// Email
   internal static let cdwTxtExtauthConfirmContactsheetMail = StringAsset("cdw_txt_extauth_confirm_contactsheet_mail")
-  /// Telefon
+  /// Phone
   internal static let cdwTxtExtauthConfirmContactsheetTelephone = StringAsset("cdw_txt_extauth_confirm_contactsheet_telephone")
-  /// Kundendienst kontaktieren
+  /// Contact customer service
   internal static let cdwTxtExtauthConfirmContactsheetTitle = StringAsset("cdw_txt_extauth_confirm_contactsheet_title")
-  /// Wir fragen nun die Authentisierung bei Ihrer Krankenversicherung an.
+  /// We will now request authentication from your health insurance company.
   internal static let cdwTxtExtauthConfirmDescription = StringAsset("cdw_txt_extauth_confirm_description")
-  /// Bitte erwähnen Sie diesen Fehler gegenüber unserem technischen Kundendienst, um die Suche nach einer Lösung zu erleichtern.
+  /// Please mention this error to our technical customer service to facilitate the search for a solution.
   internal static let cdwTxtExtauthConfirmErrorDescription = StringAsset("cdw_txt_extauth_confirm_error_description")
-  /// Authentisierung wird angefragt
+  /// Requesting  authentication
   internal static let cdwTxtExtauthConfirmHeadline = StringAsset("cdw_txt_extauth_confirm_headline")
-  /// E-Rezept
+  /// E-prescription
   internal static let cdwTxtExtauthConfirmOwnAppname = StringAsset("cdw_txt_extauth_confirm_own_appname")
-  /// Mit App anmelden
+  /// Log in with app
   internal static let cdwTxtExtauthConfirmTitle = StringAsset("cdw_txt_extauth_confirm_title")
-  /// Fehler beim Öffnen der Krankenkassenapp.
+  /// Error opening the health insurance app.
   internal static let cdwTxtExtauthConfirmUniversalLinkFailedError = StringAsset("cdw_txt_extauth_confirm_universal_link_failed_error")
-  /// Derzeit bereiten sich die Krankenkassen auf diese Funktion vor.
+  /// The health insurance companies are currently preparing for this function.
   internal static let cdwTxtExtauthFallbackDescription1 = StringAsset("cdw_txt_extauth_fallback_description1")
-  /// Sie wollen nicht warten? Die Anmeldung mit Gesundheitskarte wird bereits jetzt von jeder Krankenkasse unterstützt.
+  /// You don't want to wait? Registration with a medical card is already supported by every health insurance company.
   internal static let cdwTxtExtauthFallbackDescription2 = StringAsset("cdw_txt_extauth_fallback_description2")
-  /// Versicherung wählen
+  /// Select  insurance company
   internal static let cdwTxtExtauthFallbackHeadline = StringAsset("cdw_txt_extauth_fallback_headline")
-  /// Mit App anmelden
+  /// Log in with app
   internal static let cdwTxtExtauthFallbackTitle = StringAsset("cdw_txt_extauth_fallback_title")
-  /// Nicht fündig geworden? Diese Liste wird ständig erweitert. Die Anmeldung mit Gesundheitskarte wird bereits jetzt von jeder Krankenkasse unterstützt.
+  /// Didn't find what you were looking for? This list is constantly being expanded. Login with a medical card is already supported by every health insurance company.
   internal static let cdwTxtExtauthSelectionDescription = StringAsset("cdw_txt_extauth_selection_description")
-  /// Bitte probieren Sie es zu einem späteren Zeitpunkt erneut.
+  ///  Please try again later.
   internal static let cdwTxtExtauthSelectionErrorFallback = StringAsset("cdw_txt_extauth_selection_error_fallback")
-  /// Versicherung wählen
+  /// Select  insurance company
   internal static let cdwTxtExtauthSelectionHeadline = StringAsset("cdw_txt_extauth_selection_headline")
-  /// Mit App Anmelden
+  /// Log in with app
   internal static let cdwTxtExtauthSelectionTitle = StringAsset("cdw_txt_extauth_selection_title")
   /// To be able to use all functions of the app, log in with your medical card. You will receive this card and the required login details from your health insurance company.
   internal static let cdwTxtIntroDescription = StringAsset("cdw_txt_intro_description")
@@ -285,13 +285,13 @@ internal enum L10n {
   internal static let cdwTxtIntroHeaderTop = StringAsset("cdw_txt_intro_header_top")
   /// What you need:
   internal static let cdwTxtIntroListTitle = StringAsset("cdw_txt_intro_list_title")
-  /// A medical card with access number (CAN)
+  /// An NFC-enabled medical card with access number (CAN)
   internal static let cdwTxtIntroRequirementCard = StringAsset("cdw_txt_intro_requirement_card")
   /// An NFC-enabled device with iOS 14
   internal static let cdwTxtIntroRequirementPhone = StringAsset("cdw_txt_intro_requirement_phone")
   /// The PIN for the medical card
   internal static let cdwTxtIntroRequirementPin = StringAsset("cdw_txt_intro_requirement_pin")
-  /// Unfortunately, your device does not meet the minimum requirements for logging into the e-prescription app.
+  /// Unfortunately, your device does not meet the minimum requirements for logging into the e-prescription app. For secure authentication with your medical card, at least iOS 14 and an NFC chip are required.
   internal static let cdwTxtNfuDescription = StringAsset("cdw_txt_nfu_description")
   /// Why are there minimum requirements for logging on with your medical card?
   internal static let cdwTxtNfuFootnote = StringAsset("cdw_txt_nfu_footnote")
@@ -319,11 +319,11 @@ internal enum L10n {
   internal static func cdwTxtPinWarningCount(_ element1: String) -> StringAsset {
     StringAsset("cdw_txt_pin_warning_count %@", arguments: [element1])
   }
-  /// Ihre Gesundheitskarte konnte nicht mit dem Profil verknüpft werden.
+  /// Your medical card could not be linked to the profile.
   internal static let cdwTxtRcAlertMessageSaveProfile = StringAsset("cdw_txt_rc_alert_message_save_profile")
-  /// Fehler beim Speichern des Profils
+  /// Error saving profile
   internal static let cdwTxtRcAlertTitleSaveProfile = StringAsset("cdw_txt_rc_alert_title_save_profile")
-  /// Halten Sie jetzt Ihre Karte auf das Display und drücken Sie auf “Karte verbinden”
+  /// Now hold your card on the display and press "Connect card".
   internal static let cdwTxtRcCta = StringAsset("cdw_txt_rc_cta")
   /// You do not need a medical card in demo mode.
   internal static let cdwTxtRcDemoModeInfo = StringAsset("cdw_txt_rc_demo_mode_info")
@@ -361,7 +361,7 @@ internal enum L10n {
   internal static let cdwTxtRcNfcMessageConnectionErrorMessage = StringAsset("cdw_txt_rc_nfc_message_connectionErrorMessage")
   /// Medical card found. Please do not move.
   internal static let cdwTxtRcNfcMessageConnectMessage = StringAsset("cdw_txt_rc_nfc_message_connectMessage")
-  /// Hold your medical card to the back of the device
+  /// Place your medical card on the dotted line at the top of the display
   internal static let cdwTxtRcNfcMessageDiscoveryMessage = StringAsset("cdw_txt_rc_nfc_message_discoveryMessage")
   /// Several medical cards found
   internal static let cdwTxtRcNfcMessageMultipleCardsMessage = StringAsset("cdw_txt_rc_nfc_message_multipleCardsMessage")
@@ -369,113 +369,113 @@ internal enum L10n {
   internal static let cdwTxtRcNfcMessageNoCardMessage = StringAsset("cdw_txt_rc_nfc_message_noCardMessage")
   /// This card type is not supported
   internal static let cdwTxtRcNfcMessageUnsupportedCardMessage = StringAsset("cdw_txt_rc_nfc_message_unsupportedCardMessage")
-  /// Hier anlegen 👆
+  /// Create here 👆
   internal static let cdwTxtRcPlacement = StringAsset("cdw_txt_rc_placement")
   /// Login
   internal static let cdwTxtRcTitle = StringAsset("cdw_txt_rc_title")
-  /// Wählen Sie eine Anmeldemethode um automatisch Rezepte zu empfangen.
+  /// Select a login methid to receive prescriptions automatically.
   internal static let cdwTxtSelDescription = StringAsset("cdw_txt_sel_description")
-  /// Sichere Anmeldung mit Ihrer neuen elektronischen Gesundheitskarte
+  /// Secure login with your new electronic medical card
   internal static let cdwTxtSelEgkDescription = StringAsset("cdw_txt_sel_egk_description")
-  /// Mit Gesundheitskarte anmelden
+  /// Log in with medical card
   internal static let cdwTxtSelEgkTitle = StringAsset("cdw_txt_sel_egk_title")
-  /// Wie möchten Sie sich anmelden?
+  /// How would you like to log in?
   internal static let cdwTxtSelHeadline = StringAsset("cdw_txt_sel_headline")
-  /// Nutzen Sie eine App Ihrer Krankenversicherung zur Freischaltung
+  /// Use an app from your health insurance company for activation
   internal static let cdwTxtSelKkappComingSoonDescription = StringAsset("cdw_txt_sel_kkapp_coming_soon_description")
-  /// Nächstes Jahr: Mit Kassen-App anmelden
+  /// Next year: log in with health insurance app
   internal static let cdwTxtSelKkappComingSoonTitle = StringAsset("cdw_txt_sel_kkapp_coming_soon_title")
-  /// Nutzen Sie eine App Ihrer Krankenversicherung zur Freischaltung
+  /// Use an app from your health insurance company for activation
   internal static let cdwTxtSelKkappDescription = StringAsset("cdw_txt_sel_kkapp_description")
-  /// Mit Kassen-App anmelden
+  /// Log in with health insurance app
   internal static let cdwTxtSelKkappTitle = StringAsset("cdw_txt_sel_kkapp_title")
-  /// Anmeldung
+  /// Login
   internal static let cdwTxtSelTitle = StringAsset("cdw_txt_sel_title")
-  /// Zuletzt aktualisiert %@
+  /// Last updated %@
   internal static func cpnTxtRelativeTimerViewLastUpdate(_ element1: String) -> StringAsset {
     StringAsset("cpn_txt_relative_timer_view_last_update_%@", arguments: [element1])
   }
-  /// vor wenigen Sekunden
+  /// a few seconds ago
   internal static let cpnTxtRelativeTimerViewLastUpdateRecent = StringAsset("cpn_txt_relative_timer_view_last_update_recent")
-  /// Speichern
+  /// Save
   internal static let cpwBtnAltAuthSave = StringAsset("cpw_btn_alt_auth_save")
-  /// Neues Kennwort speichern
+  /// Save new password
   internal static let cpwBtnChange = StringAsset("cpw_btn_change")
-  /// Kennwort speichern
+  /// Save password
   internal static let cpwBtnSave = StringAsset("cpw_btn_save")
-  /// Aktuelles Kennwort
+  /// Current password
   internal static let cpwInpCurrentPasswordPlaceholder = StringAsset("cpw_inp_current_password_placeholder")
-  /// Kennwort eingeben
+  /// Enter password
   internal static let cpwInpPasswordAPlaceholder = StringAsset("cpw_inp_passwordA_placeholder")
-  /// Kennwort wiederholen
+  /// Repeat password
   internal static let cpwInpPasswordBPlaceholder = StringAsset("cpw_inp_passwordB_placeholder")
-  /// Das Kennwort ist falsch.
+  /// The password is incorrect.
   internal static let cpwTxtCurrentPasswordWrong = StringAsset("cpw_txt_current_password_wrong")
-  /// Empfehlung: Möglichst wenige Worte und keine Redewendungen verwenden.\nSymbole, Zahlen oder Großbuchstaben sind nicht notwendig.
+  /// Recommendation: Use as few words as possible and no idioms.\n Symbols, numbers or capital letters are not necessary.
   internal static let cpwTxtPasswordRecommendation = StringAsset("cpw_txt_password_recommendation")
-  /// Sicherheitsstufe des gewählten Kennworts nicht ausreichend
+  /// The security level of the chosen password is not sufficient
   internal static let cpwTxtPasswordStrengthInsufficient = StringAsset("cpw_txt_password_strength_insufficient")
-  /// Zweite Eingabe des Kennwortes, um Tippfehler zu erkennen
+  /// Second password input to detect any typos
   internal static let cpwTxtPasswordBAccessibility = StringAsset("cpw_txt_passwordB_accessibility")
-  /// Die Eingaben weichen voneinander ab.
+  /// The entries differ from each other.
   internal static let cpwTxtPasswordsDontMatch = StringAsset("cpw_txt_passwords_dont_match")
-  /// Neues Kennwort
+  /// New password
   internal static let cpwTxtSectionTitle = StringAsset("cpw_txt_section_title")
-  /// Altes Kennwort
+  /// Old password
   internal static let cpwTxtSectionUpdateTitle = StringAsset("cpw_txt_section_update_title")
-  /// Kennwort
+  /// Password
   internal static let cpwTxtTitle = StringAsset("cpw_txt_title")
-  /// Kennwort ändern
+  /// Change password
   internal static let cpwTxtUpdateTitle = StringAsset("cpw_txt_update_title")
-  /// Bild bearbeiten
+  /// Edit image
   internal static let ctlBtnProfilePickerEdit = StringAsset("ctl_btn_profile_picker_edit")
-  /// Bild zurücksetzen
+  /// Reset image
   internal static let ctlBtnProfilePickerReset = StringAsset("ctl_btn_profile_picker_reset")
-  /// Speichern
+  /// Save
   internal static let ctlBtnProfilePickerSet = StringAsset("ctl_btn_profile_picker_set")
-  /// Aktuelles Profil
+  /// Current profile
   internal static let ctlBtnProfileToolbarItem = StringAsset("ctl_btn_profile_toolbar_item")
-  /// Abbrechen
+  /// Cancel
   internal static let ctlBtnSearchBarCancel = StringAsset("ctl_btn_search_bar_cancel")
-  /// Text löschen
+  /// Delete text
   internal static let ctlBtnSearchBarDeleteTextLabel = StringAsset("ctl_btn_search_bar_delete_text_label")
-  /// Kennwortstärke
+  /// Password strength
   internal static let ctlTxtPasswordStrength0 = StringAsset("ctl_txt_password_strength_0")
-  /// Kennwortstärke
+  /// Password strength
   internal static let ctlTxtPasswordStrength1 = StringAsset("ctl_txt_password_strength_1")
-  /// Kennwortstärke ausreichend
+  /// Password strength sufficient
   internal static let ctlTxtPasswordStrength2 = StringAsset("ctl_txt_password_strength_2")
-  /// Kennwortstärke gut
+  /// Password strength good
   internal static let ctlTxtPasswordStrength3 = StringAsset("ctl_txt_password_strength_3")
-  /// Kennwortstärke sehr gut
+  /// Password strength very good
   internal static let ctlTxtPasswordStrength4 = StringAsset("ctl_txt_password_strength_4")
-  /// Kennwortstärke exzellent
+  /// Password strength excellent
   internal static let ctlTxtPasswordStrength5 = StringAsset("ctl_txt_password_strength_5")
-  /// Ok
+  /// OK
   internal static let ctlTxtPasswordStrengthAccessiblityValueMedium = StringAsset("ctl_txt_password_strength_accessiblity_value_medium")
-  /// Stark
+  /// Strong
   internal static let ctlTxtPasswordStrengthAccessiblityValueStrong = StringAsset("ctl_txt_password_strength_accessiblity_value_strong")
-  /// Sehr Stark
+  /// Very strong
   internal static let ctlTxtPasswordStrengthAccessiblityValueVeryStrong = StringAsset("ctl_txt_password_strength_accessiblity_value_very_strong")
-  /// Sehr schwach
+  /// Very weak
   internal static let ctlTxtPasswordStrengthAccessiblityValueVeryWeak = StringAsset("ctl_txt_password_strength_accessiblity_value_very_weak")
-  /// Schwach
+  /// Weak
   internal static let ctlTxtPasswordStrengthAccessiblityValueWeak = StringAsset("ctl_txt_password_strength_accessiblity_value_weak")
-  /// Nicht angemeldet
+  /// Not logged in
   internal static let ctlTxtProfileCellNotConnected = StringAsset("ctl_txt_profile__cell_not_connected")
-  /// Blau
+  /// Blue
   internal static let ctlTxtProfileColorPickerBlue = StringAsset("ctl_txt_profile_color_picker_blue")
-  /// Grün
+  /// Green
   internal static let ctlTxtProfileColorPickerGreen = StringAsset("ctl_txt_profile_color_picker_green")
-  /// Grau
+  /// Grey
   internal static let ctlTxtProfileColorPickerGrey = StringAsset("ctl_txt_profile_color_picker_grey")
-  /// Rosa
+  /// Pink
   internal static let ctlTxtProfileColorPickerPink = StringAsset("ctl_txt_profile_color_picker_pink")
-  /// Ausgewählt
+  /// Selected
   internal static let ctlTxtProfileColorPickerSelected = StringAsset("ctl_txt_profile_color_picker_selected")
-  /// Gelb
+  /// Yellow
   internal static let ctlTxtProfileColorPickerYellow = StringAsset("ctl_txt_profile_color_picker_yellow")
-  /// Suchfeld
+  /// Search box
   internal static let ctlTxtSearchBarFieldLabel = StringAsset("ctl_txt_search_bar_field_label")
   /// Copy
   internal static let dtlBtnCopyClipboard = StringAsset("dtl_btn_copy_clipboard")
@@ -509,7 +509,7 @@ internal enum L10n {
   internal static let dtlTxtMedInfo = StringAsset("dtl_txt_med_info")
   /// Log
   internal static let dtlTxtMedProtocol = StringAsset("dtl_txt_med_protocol")
-  /// Eingelöst: %@
+  /// Redeemed: %@
   internal static func dtlTxtMedRedeemedOn(_ element1: String) -> StringAsset {
     StringAsset("dtl_txt_med_redeemed_on_%@", arguments: [element1])
   }
@@ -519,7 +519,7 @@ internal enum L10n {
   internal static let dtlTxtTaskId = StringAsset("dtl_txt_task_id")
   /// Details
   internal static let dtlTxtTitle = StringAsset("dtl_txt_title")
-  /// Fehler beim Zugriff auf die Datenbank
+  /// Error accessing the database
   internal static let errTxtDatabaseAccess = StringAsset("err_txt_database_access")
   /// Redeem all
   internal static let erxBtnRedeem = StringAsset("erx_btn_redeem")
@@ -535,7 +535,7 @@ internal enum L10n {
   internal static let erxTxtCurrent = StringAsset("erx_txt_current")
   /// Plural format key: "%#@v1_days_variable@"
   internal static let erxTxtExpiresIn = StringAsset("erx_txt_expires_in")
-  /// Nicht mehr gültig
+  /// No longer valid
   internal static let erxTxtInvalid = StringAsset("erx_txt_invalid")
   /// Unknown medicine
   internal static let erxTxtMedicationPlaceholder = StringAsset("erx_txt_medication_placeholder")
@@ -561,11 +561,11 @@ internal enum L10n {
   internal static let hintTxtOpenScn = StringAsset("hint_txt_open_scn")
   /// New prescription
   internal static let hintTxtOpenScnTitle = StringAsset("hint_txt_open_scn_title")
-  /// Für die Anmeldung benötigen Sie eine geeignete Karte mit NFC. Wir unterstützen Sie bei der Bestellung
+  /// You need a suitable NFC-enabled card to log in. We will help you order one
   internal static let hintTxtOrderEgk = StringAsset("hint_txt_order_egk")
-  /// Fortfahren
+  /// Continue
   internal static let hintTxtOrderEgkButton = StringAsset("hint_txt_order_egk_button")
-  /// Neue Gesundheitskarte bestellen
+  /// Order new medical card
   internal static let hintTxtOrderEgkTitel = StringAsset("hint_txt_order_egk_titel")
   /// Our demo mode shows you all the functions of the app – without a medical card.
   internal static let hintTxtTryDemoMode = StringAsset("hint_txt_try_demo_mode")
@@ -617,6 +617,8 @@ internal enum L10n {
   internal static let kbvCodeDosageFormCre = StringAsset("kbv_code_dosage_form_cre")
   /// Vials
   internal static let kbvCodeDosageFormDfl = StringAsset("kbv_code_dosage_form_dfl")
+  /// Digitale Gesundheitsanwendungen
+  internal static let kbvCodeDosageFormDig = StringAsset("kbv_code_dosage_form_dig")
   /// Dilution
   internal static let kbvCodeDosageFormDil = StringAsset("kbv_code_dosage_form_dil")
   /// Depot injection suspension
@@ -839,6 +841,8 @@ internal enum L10n {
   internal static let kbvCodeDosageFormNaw = StringAsset("kbv_code_dosage_form_naw")
   /// Nasal dosing spray
   internal static let kbvCodeDosageFormNds = StringAsset("kbv_code_dosage_form_nds")
+  /// keine Darreichungsform
+  internal static let kbvCodeDosageFormNone = StringAsset("kbv_code_dosage_form_none")
   /// Nasal ointment
   internal static let kbvCodeDosageFormNsa = StringAsset("kbv_code_dosage_form_nsa")
   /// Nasal drops
@@ -1133,29 +1137,35 @@ internal enum L10n {
   internal static let kbvNormSizeNb = StringAsset("kbv_norm_size_nb")
   /// Other
   internal static let kbvNormSizeSonstiges = StringAsset("kbv_norm_size_sonstiges")
-  /// Abbrechen
+  /// Cancel
   internal static let mainTxtPendingextauthCancel = StringAsset("main_txt_pendingextauth_cancel")
-  /// Authentisierung mit %@ fehlgeschlagen
+  /// Authentication with %@ failed
   internal static func mainTxtPendingextauthFailed(_ element1: String) -> StringAsset {
     StringAsset("main_txt_pendingextauth_failed_%@", arguments: [element1])
   }
-  /// Authentisierung in %@ ausstehend
+  /// Authentication pending in %@
   internal static func mainTxtPendingextauthPending(_ element1: String) -> StringAsset {
     StringAsset("main_txt_pendingextauth_pending_%@", arguments: [element1])
   }
-  /// Authentisierung für %@ wird verarbeitet
+  /// Processing authentication for %@
   internal static func mainTxtPendingextauthResolving(_ element1: String) -> StringAsset {
     StringAsset("main_txt_pendingextauth_resolving_%@", arguments: [element1])
   }
-  /// Wiederholen
+  /// Repeat
   internal static let mainTxtPendingextauthRetry = StringAsset("main_txt_pendingextauth_retry")
-  /// Authentisierung mit %@ erfolgreich
+  /// Authentication with %@ successful
   internal static func mainTxtPendingextauthSuccessful(_ element1: String) -> StringAsset {
     StringAsset("main_txt_pendingextauth_successful_%@", arguments: [element1])
   }
+  /// Profilname
+  internal static let mgmFallbackProfileName = StringAsset("mgm_fallback_profile_name")
+  /// Es konnte kein Profil bei der Aktualisierung erstellt werden
+  internal static let mgmTxtAlertMessageProfileCreation = StringAsset("mgm_txt_alert_message_profile_creation")
+  /// Die App ist bereits auf dem neusten Stand
+  internal static let mgmTxtAlertMessageUpToDate = StringAsset("mgm_txt_alert_message_up_to_date")
   /// Report error
   internal static let msgsBtnFormatError = StringAsset("msgs_btn_format_error")
-  /// Show pickup code
+  /// Show collection code
   internal static let msgsBtnOnPremise = StringAsset("msgs_btn_onPremise")
   /// Show shopping cart
   internal static let msgsBtnShipment = StringAsset("msgs_btn_shipment")
@@ -1177,11 +1187,11 @@ internal enum L10n {
   internal static let msgsTxtMailBody1 = StringAsset("msgs_txt_mail_body1")
   /// You are sending us this information for purposes of troubleshooting. Please note that your email address and any name you include will also be transferred. If you do not wish to transfer this information either in full or in part, please remove it from this email. \n\nAll data will only be stored or processed by gematik GmbH or its appointed companies in order to deal with this error message. Deletion takes place automatically a maximum of 180 days after the ticket has been processed. We will use your email address exclusively to contact you regarding this error message. If you have any questions, or require an earlier deletion, you can contact the data protection representative responsible for the e-prescription system. You can find further information in the menu below the entry for data protection in the e-prescription app.
   internal static let msgsTxtMailBody2 = StringAsset("msgs_txt_mail_body2")
-  /// Fehler 40 42 67336
+  /// Error 40 42 67336
   internal static let msgsTxtMailError = StringAsset("msgs_txt_mail_error")
   /// Error message from the e-prescription app
   internal static let msgsTxtMailSubject = StringAsset("msgs_txt_mail_subject")
-  /// Received pickup code
+  /// Receive collection code
   internal static let msgsTxtOnPremiseTitle = StringAsset("msgs_txt_onPremise_title")
   /// The email app could not be opened. Please use the hotline
   internal static let msgsTxtOpenMailErrorMessage = StringAsset("msgs_txt_open_mail_error_message")
@@ -1195,17 +1205,17 @@ internal enum L10n {
   internal static let navBack = StringAsset("nav_back")
   /// Cancel
   internal static let navCancel = StringAsset("nav_cancel")
-  /// Machen Sie es Unbefugten schwerer an Ihre Daten zu gelangen und sichern Sie den Start der App.
+  /// Make it difficult for unauthorised users to access your data and make the app secure on launch.
   internal static let onbAuthTxtAltDescription = StringAsset("onb_auth_txt_alt_description")
-  /// ODER
+  /// OR
   internal static let onbAuthTxtDivider = StringAsset("onb_auth_txt_divider")
-  /// Bitte wählen Sie eine Methode zum absichern der App aus:
+  /// Please select a method to secure the app:
   internal static let onbAuthTxtNoSelection = StringAsset("onb_auth_txt_no_selection")
-  /// Sicherheitsstufe des gewählten Kennworts nicht ausreichend
+  /// The security level of the chosen password is not sufficient
   internal static let onbAuthTxtPasswordStrengthInsufficient = StringAsset("onb_auth_txt_password_strength_insufficient")
-  /// Die Eingaben weichen voneinander ab.
+  /// The entries differ from each other.
   internal static let onbAuthTxtPasswordsDontMatch = StringAsset("onb_auth_txt_passwords_dont_match")
-  /// Wie möchten Sie diese App absichern?
+  /// How would you like to secure this app?
   internal static let onbAuthTxtTitle = StringAsset("onb_auth_txt_title")
   /// Next
   internal static let onbBtnNextHint = StringAsset("onb_btn_next_hint")
@@ -1231,15 +1241,15 @@ internal enum L10n {
   internal static let onbLegTxtSubtitle = StringAsset("onb_leg_txt_subtitle")
   /// Terms of Use & Privacy Policy
   internal static let onbLegTxtTitle = StringAsset("onb_leg_txt_title")
-  /// Das Namensfeld darf nicht leer sein
+  /// The name field must not be empty
   internal static let onbPrfTxtAlertMessage = StringAsset("onb_prf_txt_alert_message")
-  /// Fehler
+  /// Error
   internal static let onbPrfTxtAlertTitle = StringAsset("onb_prf_txt_alert_title")
-  /// Das hilft Ihnen dabei, den Überblick zu behalten, wenn Sie die Rezepte für mehrere Personen verwalten möchten.
+  /// This helps you keep track if you want to manage the prescriptions for several people.
   internal static let onbPrfTxtFootnote = StringAsset("onb_prf_txt_footnote")
-  /// Vorname und Nachname
+  /// First name and surname
   internal static let onbPrfTxtPlaceholder = StringAsset("onb_prf_txt_placeholder")
-  /// Wie sollen wir Sie nennen?
+  /// What should we call you?
   internal static let onbPrfTxtTitle = StringAsset("onb_prf_txt_title")
   /// Digital. Fast. Secure.
   internal static let onbStrTxtSubtitle = StringAsset("onb_str_txt_subtitle")
@@ -1263,47 +1273,43 @@ internal enum L10n {
   internal static let onbWelTxtExplanation = StringAsset("onb_wel_txt_explanation")
   /// Welcome to the e-prescription app
   internal static let onbWelTxtTitle = StringAsset("onb_wel_txt_title")
-  /// So erkennen Sie eine NFC-fähige Gesundheitskarte
+  /// How to identify an NFC-enabled medical card
   internal static let orderEgkBtnInfoButton = StringAsset("order_egk_btn_info_button")
-  /// Mail
+  /// Email
   internal static let orderEgkTxtContactOptionMail = StringAsset("order_egk_txt_contact_option_mail")
-  /// Telefon
+  /// Phone
   internal static let orderEgkTxtContactOptionTelephone = StringAsset("order_egk_txt_contact_option_telephone")
-  /// Webseite
+  /// Website
   internal static let orderEgkTxtContactOptionWeb = StringAsset("order_egk_txt_contact_option_web")
-  /// Um sich in dieser App anmelden zu können, benötigen Sie eine NFC-fähige Gesundheitskarte sowie eine zugehörige PIN.
+  /// You can use an NFC-enabled medical card and the associated PIN to log into this app.
   internal static let orderEgkTxtDescription1 = StringAsset("order_egk_txt_description_1")
-  /// Diese erhalten Sie kostenfrei von Ihrer Krankenversicherung. Hierfür müssen Sie sich mittels amtlichem Ausweisdokument identifiziert haben.
+  /// You can obtain one free of charge from your health insurance company. You need to provide an official form of indentification as proof of identity.
   internal static let orderEgkTxtDescription2 = StringAsset("order_egk_txt_description_2")
-  /// Krankenversicherung kontaktieren
+  /// Contact health insurance company
   internal static let orderEgkTxtHeadline = StringAsset("order_egk_txt_headline")
-  /// Bitte nutzen Sie die üblichen Kanäle, um Ihre Versicherung zu kontaktieren.
+  /// Please contact your health insurance company via the usual channels.
   internal static let orderEgkTxtHintNoContactOptionMessage = StringAsset("order_egk_txt_hint_no_contact_option_message")
-  /// Keine Kontaktaufnahme über diese App möglich
+  /// Contact is not possible via this app
   internal static let orderEgkTxtHintNoContactOptionTitle = StringAsset("order_egk_txt_hint_no_contact_option_title")
   /// https://www.das-e-rezept-fuer-deutschland.de/fragen-antworten/woran-erkenne-ich-ob-ich-eine-nfc-faehige-gesundheitskarte-habe#c204
   internal static let orderEgkTxtInfoLink = StringAsset("order_egk_txt_info_link")
-  /// 
-  internal static let orderEgkTxtMailHealthcardAndPinBody = StringAsset("order_egk_txt_mail_healthcard_and_pin_body")
-  /// Bestellung einer NFC-fähigen Gesundheitskarte inklusive PIN
-  internal static let orderEgkTxtMailHealthcardAndPinSubject = StringAsset("order_egk_txt_mail_healthcard_and_pin_subject")
-  /// Krankenversicherung wählen
+  /// Select health insurance company
   internal static let orderEgkTxtPickerInsuranceHeader = StringAsset("order_egk_txt_picker_insurance_header")
-  /// Auswahl treffen
+  /// Make a selection
   internal static let orderEgkTxtPickerInsurancePlaceholder = StringAsset("order_egk_txt_picker_insurance_placeholder")
-  /// Was möchten Sie beantragen?
+  /// What would you like to apply for?
   internal static let orderEgkTxtPickerServiceHeader = StringAsset("order_egk_txt_picker_service_header")
-  /// Sollten Sie bereits über eine Gesundheitskarte mit NFC-Funktion verfügen, müssen Sie lediglich die Zusendung einer PIN beantragen.
+  /// If you already have a medical card with NFC function, all you have to do is ask for a PIN to be sent to you.
   internal static let orderEgkTxtPickerServiceInfoFootnote = StringAsset("order_egk_txt_picker_service_info_footnote")
-  /// Auswahl treffen
+  /// Make a selection
   internal static let orderEgkTxtPickerServiceLabel = StringAsset("order_egk_txt_picker_service_label")
-  /// Auswählen
+  /// Select
   internal static let orderEgkTxtPickerServiceNavigationTitle = StringAsset("order_egk_txt_picker_service_navigation_title")
-  /// Kontaktieren Sie Ihre Krankenversicherung
+  /// Contact your health insurance company
   internal static let orderEgkTxtSectionContactInsurance = StringAsset("order_egk_txt_section_contact_insurance")
-  /// Gesundheitskarte & PIN
+  /// Medical card & PIN
   internal static let orderEgkTxtServiceInquiryHealthcardAndPin = StringAsset("order_egk_txt_service_inquiry_healthcard_and_pin")
-  /// Nur PIN
+  /// PIN only
   internal static let orderEgkTxtServiceInquiryOnlyPin = StringAsset("order_egk_txt_service_inquiry_only_pin")
   /// Find out more
   internal static let phaDetailBtnFooter = StringAsset("pha_detail_btn_footer")
@@ -1377,7 +1383,7 @@ internal enum L10n {
   internal static let phaRedeemTxtTitleMail = StringAsset("pha_redeem_txt_title_mail")
   /// Reservation
   internal static let phaRedeemTxtTitleReservation = StringAsset("pha_redeem_txt_title_reservation")
-  /// Erneut probieren
+  /// Try again
   internal static let phaSearchBtnErrorNoServerResponse = StringAsset("pha_search_btn_error_no_server_response")
   /// Share location
   internal static let phaSearchBtnLocationHintAction = StringAsset("pha_search_btn_location_hint_action")
@@ -1389,9 +1395,9 @@ internal enum L10n {
   internal static let phaSearchTxtClosed = StringAsset("pha_search_txt_closed")
   /// Closing soon
   internal static let phaSearchTxtClosingSoon = StringAsset("pha_search_txt_closing_soon")
-  /// Server antwortet nicht
+  /// Server not responding
   internal static let phaSearchTxtErrorNoServerResponseHeadline = StringAsset("pha_search_txt_error_no_server_response_headline")
-  /// Bitte probieren Sie es in einigen Minuten erneut.
+  /// Please try again in a few minutes.
   internal static let phaSearchTxtErrorNoServerResponseSubheadline = StringAsset("pha_search_txt_error_no_server_response_subheadline")
   /// Delivery service
   internal static let phaSearchTxtFilterMessenger = StringAsset("pha_search_txt_filter_messenger")
@@ -1419,23 +1425,23 @@ internal enum L10n {
   internal static let phaSearchTxtProgressLocating = StringAsset("pha_search_txt_progress_locating")
   /// Searching...
   internal static let phaSearchTxtProgressSearch = StringAsset("pha_search_txt_progress_search")
-  /// Searched name, e.g. Spessart Pharmacy
+  /// Search for name or address
   internal static let phaSearchTxtSearchHint = StringAsset("pha_search_txt_search_hint")
   /// Select pharmacy
   internal static let phaSearchTxtTitle = StringAsset("pha_search_txt_title")
   /// Done! 🎉
   internal static let phaSuccessRedeemTitle = StringAsset("pha_success_redeem_title")
-  /// Fertig
+  /// Done
   internal static let proBtnSelectionClose = StringAsset("pro_btn_selection_close")
-  /// Profile bearbeiten
+  /// Edit profiles
   internal static let proBtnSelectionEdit = StringAsset("pro_btn_selection_edit")
-  /// Nicht angemeldet
+  /// Not logged in
   internal static let proTxtSelectionProfileNotConnected = StringAsset("pro_txt_selection_profile_not_connected")
-  /// Profil wählen
+  /// Select profile
   internal static let proTxtSelectionTitle = StringAsset("pro_txt_selection_title")
-  /// gesund.bund.de öffnen
+  /// Open gesund.bund.de
   internal static let prscDtlHntGesundBundDeBtn = StringAsset("prsc_dtl_hnt_gesund_bund_de_btn")
-  /// Fachlich geprüfte Informationen zu Krankheiten, ICD-Codes und zu Vorsorge- und Pflegethemen finden Sie im Nationalen Gesundheitsportal.
+  /// You can find professionally verified information on illnesses, ICD codes and issues to do with prevention and healthcare in the National Health Portal.
   internal static let prscDtlHntGesundBundDeText = StringAsset("prsc_dtl_hnt_gesund_bund_de_text")
   /// Date of accident
   internal static let prscFdTxtAccidentDate = StringAsset("prsc_fd_txt_accident_date")
@@ -1481,7 +1487,7 @@ internal enum L10n {
   internal static let prscFdTxtPatientBirthdate = StringAsset("prsc_fd_txt_patient_birthdate")
   /// Health insurance / cost unit
   internal static let prscFdTxtPatientInsurance = StringAsset("prsc_fd_txt_patient_insurance")
-  /// Insurance number
+  /// Policyholder number
   internal static let prscFdTxtPatientInsuranceId = StringAsset("prsc_fd_txt_patient_insurance_id")
   /// Name
   internal static let prscFdTxtPatientName = StringAsset("prsc_fd_txt_patient_name")
@@ -1511,17 +1517,17 @@ internal enum L10n {
   internal static let prscFdTxtSubstitutionReadFurtherLink = StringAsset("prsc_fd_txt_substitution_read_further_link")
   /// Substitute medication possible
   internal static let prscFdTxtSubstitutionTitle = StringAsset("prsc_fd_txt_substitution_title")
-  /// Abgebrochen
+  /// Cancelled
   internal static let prscStatusCanceled = StringAsset("prsc_status_canceled")
-  /// Eingelöst
+  /// Redeemed
   internal static let prscStatusCompleted = StringAsset("prsc_status_completed")
-  /// Abgelaufen
+  /// Expired
   internal static let prscStatusExpired = StringAsset("prsc_status_expired")
-  /// In Einlösung
+  /// Being redeemed
   internal static let prscStatusInProgress = StringAsset("prsc_status_in_progress")
-  /// Einlösbar
+  /// Redeemable
   internal static let prscStatusReady = StringAsset("prsc_status_ready")
-  /// Unbekannt
+  /// Unknown
   internal static let prscStatusUndefined = StringAsset("prsc_status_undefined")
   /// Show this code at your pharmacy.
   internal static let pucTxtSubtitle = StringAsset("puc_txt_subtitle")
@@ -1599,54 +1605,58 @@ internal enum L10n {
   }
   /// OK
   internal static let secBtnSystemPinDone = StringAsset("sec_btn_system_pin_done")
-  /// Okay
+  /// OK
   internal static let secBtnSystemRootDetectionDone = StringAsset("sec_btn_system_root_detection_done")
-  /// Mehr erfahren
+  /// Find out more
   internal static let secBtnSystemRootDetectionMore = StringAsset("sec_btn_system_root_detection_more")
-  /// Hinweis
+  /// Note
   internal static let secTxtSystemPinHeadline = StringAsset("sec_txt_system_pin_headline")
-  /// Wir empfehlen Ihnen, Ihre medizinischen Daten zusätzlich durch eine Gerätesicherung wie beispielsweise einen Code oder Biometrie zu schützen.
+  /// We recommend that you add additional protection for your medical data by securing your device for instance with a code or biometrics.
   internal static let secTxtSystemPinMessage = StringAsset("sec_txt_system_pin_message")
-  /// Diesen Hinweis in Zukunft nicht mehr anzeigen.
+  /// Do not show this message in future.
   internal static let secTxtSystemPinSelection = StringAsset("sec_txt_system_pin_selection")
-  /// Für dieses Gerät wurde keine Zugangssperre eingerichtet
+  /// No access lock has been set up for this device
   internal static let secTxtSystemPinTitle = StringAsset("sec_txt_system_pin_title")
-  /// Weshalb sind Geräte mit Root-Zugriff ein potentielles Sicherheitsrisiko?
+  /// Why are devices with root access a potential security risk?
   internal static let secTxtSystemRootDetectionFootnote = StringAsset("sec_txt_system_root_detection_footnote")
-  /// Warnung
+  /// Warning
   internal static let secTxtSystemRootDetectionHeadline = StringAsset("sec_txt_system_root_detection_headline")
-  /// Diese App sollte aus Sicherheitsgründen nicht auf gejailbreakten Geräten genutzt werden.
+  /// For security reasons, this app should not be used on jailbroken devices.
   internal static let secTxtSystemRootDetectionMessage = StringAsset("sec_txt_system_root_detection_message")
-  /// Ich nehme das erhöhte Risiko zur Kenntnis und möchte dennoch fortfahren.
+  /// I acknowledge the increased risk and would like to continue anyway.
   internal static let secTxtSystemRootDetectionSelection = StringAsset("sec_txt_system_root_detection_selection")
-  /// Eventuell wurde dieses Gerät gejailbreakt
+  /// This device may have been jailbroken
   internal static let secTxtSystemRootDetectionTitle = StringAsset("sec_txt_system_root_detection_title")
-  /// Ausgewählt
+  /// Selected
   internal static let sectionTxtIsActiveValue = StringAsset("section_txt_is_active_value")
-  /// Nicht Ausgewählt
+  /// Not selected
   internal static let sectionTxtIsInactiveValue = StringAsset("section_txt_is_inactive_value")
-  /// Ihre Gesundheitskarte ist bereits mit einem anderen Profil verbunden. Wechseln Sie zu Profil %@.
+  /// Your medical card is already linked to another profile. Switch to profile %@.
   internal static func sessionErrorCardConnectedWithOtherProfile(_ element1: String) -> StringAsset {
     StringAsset("session_error_card_connected_with_other_profile_%@", arguments: [element1])
   }
-  /// Das aktuelle Profil ist bereits mit einer anderen Gesundheitskarte (Krankenversichertennummer: %@) verbunden.
+  /// The current profile is already linked to another medical card (policyholder number: %@).
   internal static func sessionErrorCardProfileMismatch(_ element1: String) -> StringAsset {
     StringAsset("session_error_card_profile_mismatch_%@", arguments: [element1])
   }
-  /// Es konnte kein ausgewähltes Profil gefunden werden. Bitte wählen Sie ein Profil aus.
+  /// No selected profile could be found. Please select a profile.
   internal static let sessionErrorNoProfile = StringAsset("session_error_no_profile")
-  /// Profil hinzufügen
+  /// Add profile
   internal static let stgBtnAddProfile = StringAsset("stg_btn_add_profile")
-  /// Profil löschen
+  /// Delete profile
   internal static let stgBtnEditProfileDelete = StringAsset("stg_btn_edit_profile_delete")
-  /// Abbrechen
+  /// Cancel
   internal static let stgBtnEditProfileDeleteAlertCancel = StringAsset("stg_btn_edit_profile_delete_alert_cancel")
-  /// Anmelden
+  /// Log in
   internal static let stgBtnEditProfileLogin = StringAsset("stg_btn_edit_profile_login")
-  /// Abmelden
+  /// Log out
   internal static let stgBtnEditProfileLogout = StringAsset("stg_btn_edit_profile_logout")
-  /// Speichern
+  /// Verbundene Geräte
+  internal static let stgBtnEditProfileRegisteredDevices = StringAsset("stg_btn_edit_profile_registered_devices")
+  /// Save
   internal static let stgBtnNewProfileCreate = StringAsset("stg_btn_new_profile_create")
+  /// Authentifizieren
+  internal static let stgBtnRegDevicesLoad = StringAsset("stg_btn_reg_devices_load")
   /// Privacy Policy
   internal static let stgDpoTxtDataPrivacy = StringAsset("stg_dpo_txt_data_privacy")
   /// Open source licences
@@ -1685,11 +1695,11 @@ internal enum L10n {
   internal static let stgLnoTxtTitleResponsible = StringAsset("stg_lno_txt_title_responsible")
   /// Deutschlands moderne Plattform für digitale Medizin
   internal static let stgLnoYouKnowUs = StringAsset("stg_lno_you_know_us")
-  /// Access Token
+  /// Access token
   internal static let stgTknTxtAccessToken = StringAsset("stg_tkn_txt_access_token")
-  /// Token in Zwischenablage kopiert
+  /// Token copied to clipboard
   internal static let stgTknTxtCopyToClipboard = StringAsset("stg_tkn_txt_copy_to_clipboard")
-  /// SSO Token
+  /// SSO token
   internal static let stgTknTxtSsoToken = StringAsset("stg_tkn_txt_sso_token")
   /// Tokens
   internal static let stgTknTxtTitleTokens = StringAsset("stg_tkn_txt_title_tokens")
@@ -1717,75 +1727,99 @@ internal enum L10n {
   internal static let stgTxtAlertMessageDemoModeOn = StringAsset("stg_txt_alert_message_demo_mode_on")
   /// Would you like a tour of the app?
   internal static let stgTxtAlertTitleDemoMode = StringAsset("stg_txt_alert_title_demo_mode")
-  /// Zuletzt aktualisiert: %@
+  /// Last updated: %@
   internal static func stgTxtAuditEventsLastUpdated(_ element1: String) -> StringAsset {
     StringAsset("stg_txt_audit_events_last_updated_%@", arguments: [element1])
   }
-  /// Kein Zeitstempel
+  /// No timestamp
   internal static let stgTxtAuditEventsMissingDate = StringAsset("stg_txt_audit_events_missing_date")
-  /// Keine Angabe
+  /// Not specified
   internal static let stgTxtAuditEventsMissingDescription = StringAsset("stg_txt_audit_events_missing_description")
-  /// Ohne Titel
+  /// Untitled
   internal static let stgTxtAuditEventsMissingTitle = StringAsset("stg_txt_audit_events_missing_title")
-  /// Nächste
+  /// Next
   internal static let stgTxtAuditEventsNext = StringAsset("stg_txt_audit_events_next")
-  /// Sie erhalten Zugriffsprotokolle, wenn Sie am Rezeptdienst angemeldet sind.
+  /// You will receive access logs when you are logged in to the prescription service.
   internal static let stgTxtAuditEventsNoProtocolDescription = StringAsset("stg_txt_audit_events_no_protocol_description")
-  /// Keine Zugriffsprotokolle
+  /// No access logs
   internal static let stgTxtAuditEventsNoProtocolTitle = StringAsset("stg_txt_audit_events_no_protocol_title")
-  /// Seite %@ von %@
+  /// Page %@ of %@
   internal static func stgTxtAuditEventsPageSelectionOf(_ element1: String,_ element2: String) -> StringAsset {
     StringAsset("stg_txt_audit_events_page_selection_%@_of_%@", arguments: [element1, element2])
   }
-  /// Vorherige
+  /// Previous
   internal static let stgTxtAuditEventsPrevious = StringAsset("stg_txt_audit_events_previous")
-  /// Zugriffsprotokolle
+  /// Access logs
   internal static let stgTxtAuditEventsTitle = StringAsset("stg_txt_audit_events_title")
   /// Demo mode
   internal static let stgTxtDemoMode = StringAsset("stg_txt_demo_mode")
-  /// Hintergrundfarbe
+  /// Background colour
   internal static let stgTxtEditProfileBackgroundSectionTitle = StringAsset("stg_txt_edit_profile_background_section_title")
-  /// Hiermit werden alle Daten auf diesem Gerät gelöscht. Ihre Rezepte im Gesundheitsnetzwerk bleiben erhalten.
+  /// Profilname
+  internal static let stgTxtEditProfileDefaultName = StringAsset("stg_txt_edit_profile_default_name")
+  /// This will erase all data on this device. Your prescriptions in the health network will be retained.
   internal static let stgTxtEditProfileDeleteConfirmationMessage = StringAsset("stg_txt_edit_profile_delete_confirmation_message")
-  /// Profil löschen?
+  /// Delete profile?
   internal static let stgTxtEditProfileDeleteConfirmationTitle = StringAsset("stg_txt_edit_profile_delete_confirmation_title")
-  /// Das Namensfeld darf nicht leer sein
+  /// Zugangsdaten löschen
+  internal static let stgTxtEditProfileDeletePairing = StringAsset("stg_txt_edit_profile_delete_pairing")
+  /// Die Zugangsdaten konnten nicht vom Server gelöscht werden. Bitte versuchen Sie es erneut
+  internal static let stgTxtEditProfileDeletePairingError = StringAsset("stg_txt_edit_profile_delete_pairing_error")
+  /// Sie erhalten nicht mehr automatisch neue Rezepte.
+  internal static let stgTxtEditProfileDeletePairingMessage = StringAsset("stg_txt_edit_profile_delete_pairing_message")
+  /// The name field must not be empty
   internal static let stgTxtEditProfileEmptyNameErrorMessage = StringAsset("stg_txt_edit_profile_empty_name_error_message")
-  /// Fehler
+  /// Error
   internal static let stgTxtEditProfileErrorMessageTitle = StringAsset("stg_txt_edit_profile_error_message_title")
-  /// Zugangsnummer (CAN)
+  /// Access number
   internal static let stgTxtEditProfileLabelCan = StringAsset("stg_txt_edit_profile_label_can")
-  /// Versicherung
+  /// Insurance
   internal static let stgTxtEditProfileLabelInsuranceCompany = StringAsset("stg_txt_edit_profile_label_insurance_company")
-  /// Versichertennummer
+  /// Policyholder number
   internal static let stgTxtEditProfileLabelKvnr = StringAsset("stg_txt_edit_profile_label_kvnr")
   /// Name
   internal static let stgTxtEditProfileLabelName = StringAsset("stg_txt_edit_profile_label_name")
-  /// Hiermit trennen Sie die Verbindung zum Gesundheitsnetzwerk. Sie erhalten keine neuen Rezepte oder Nachrichten.
+  /// Zugangsdaten speichern
+  internal static let stgTxtEditProfileLoginActivateDescription = StringAsset("stg_txt_edit_profile_login_activate_description")
+  /// Aktiviert
+  internal static let stgTxtEditProfileLoginActivateTitle = StringAsset("stg_txt_edit_profile_login_activate_title")
+  /// Deaktiviert
+  internal static let stgTxtEditProfileLoginDeactivateTitle = StringAsset("stg_txt_edit_profile_login_deactivate_title")
+  /// Verbundene Geräte
+  internal static let stgTxtEditProfileLoginDeviceTitle = StringAsset("stg_txt_edit_profile_login_device_title")
+  /// Ihr Gerät entspricht nicht den Sicherheitsanforderungen für das dauerhafte Speichern von Zugangsdaten zum Rezepteserver.
+  internal static let stgTxtEditProfileLoginFootnoteBiometry = StringAsset("stg_txt_edit_profile_login_footnote_biometry")
+  /// Mehr erfahren
+  internal static let stgTxtEditProfileLoginFootnoteMore = StringAsset("stg_txt_edit_profile_login_footnote_more")
+  /// Wenn Sie sich erneut mit dem Gesundheitsnetz verbinden, können Sie während des Verbindungsvorganges die Zugangsdaten merken
+  internal static let stgTxtEditProfileLoginFootnoteRetry = StringAsset("stg_txt_edit_profile_login_footnote_retry")
+  /// Anmeldung
+  internal static let stgTxtEditProfileLoginSectionTitle = StringAsset("stg_txt_edit_profile_login_section_title")
+  /// This disconnects you from the health network. You will not receive any new prescriptions or messages.
   internal static let stgTxtEditProfileLogoutInfo = StringAsset("stg_txt_edit_profile_logout_info")
-  /// Verknüpft mit: %@
+  /// Connected to: %@
   internal static func stgTxtEditProfileNameConnection(_ element1: String) -> StringAsset {
     StringAsset("stg_txt_edit_profile_name_connection_%@", arguments: [element1])
   }
-  /// Dieses Profil wurde noch nicht mit einer Versichertennummer verbunden. Hierfür müssen Sie sich am Rezeptserver anmelden.
+  /// This profile has not yet been linked to a policyholder number. To do this, you must log in to the prescription server.
   internal static let stgTxtEditProfileNameConnectionPlaceholder = StringAsset("stg_txt_edit_profile_name_connection_placeholder")
-  /// Name eingeben
+  /// Enter name
   internal static let stgTxtEditProfileNamePlaceholder = StringAsset("stg_txt_edit_profile_name_placeholder")
-  /// Sicherheit
+  /// Security
   internal static let stgTxtEditProfileSecuritySectionTitle = StringAsset("stg_txt_edit_profile_security_section_title")
-  /// Wer hat wann auf Ihre Rezepte zugegriffen?
+  /// Who accessed your prescriptions and when?
   internal static let stgTxtEditProfileSecurityShowAuditEventsDescription = StringAsset("stg_txt_edit_profile_security_show_audit_events_description")
-  /// Zugriffsprotokolle anzeigen
+  /// Display access logs
   internal static let stgTxtEditProfileSecurityShowAuditEventsLabel = StringAsset("stg_txt_edit_profile_security_show_audit_events_label")
-  /// Zugangsschlüssel zum Rezeptdienst
+  /// Access key to the prescription service
   internal static let stgTxtEditProfileSecurityShowTokensDescription = StringAsset("stg_txt_edit_profile_security_show_tokens_description")
-  /// Sie erhalten einen Token, wenn Sie am Rezeptdienst angemeldet sind.
+  /// You will receive a token when you are logged in to the prescription service.
   internal static let stgTxtEditProfileSecurityShowTokensHint = StringAsset("stg_txt_edit_profile_security_show_tokens_hint")
-  /// Tokens anzeigen
+  /// Display tokens
   internal static let stgTxtEditProfileSecurityShowTokensLabel = StringAsset("stg_txt_edit_profile_security_show_tokens_label")
-  /// Profil
+  /// Profile
   internal static let stgTxtEditProfileTitle = StringAsset("stg_txt_edit_profile_title")
-  /// Versichertendaten
+  /// Policyholder details
   internal static let stgTxtEditProfileUserDataSectionTitle = StringAsset("stg_txt_edit_profile_user_data_section_title")
   /// Our demo mode shows you all the functions of the app – without a medical card.
   internal static let stgTxtFootnoteDemoMode = StringAsset("stg_txt_footnote_demo_mode")
@@ -1793,23 +1827,41 @@ internal enum L10n {
   internal static let stgTxtHeaderDemoMode = StringAsset("stg_txt_header_demo_mode")
   /// Legal information
   internal static let stgTxtHeaderLegalInfo = StringAsset("stg_txt_header_legal_info")
-  /// Profile
+  /// Profiles
   internal static let stgTxtHeaderProfiles = StringAsset("stg_txt_header_profiles")
   /// Security
   internal static let stgTxtHeaderSecurity = StringAsset("stg_txt_header_security")
-  /// Hintergrundfarbe
+  /// Background colour
   internal static let stgTxtNewProfileBackgroundSectionTitle = StringAsset("stg_txt_new_profile_background_section_title")
-  /// Fehler
+  /// Error
   internal static let stgTxtNewProfileErrorMessageTitle = StringAsset("stg_txt_new_profile_error_message_title")
-  /// Das Namensfeld darf nicht leer sein
+  /// The name field cannot be empty
   internal static let stgTxtNewProfileMissingNameError = StringAsset("stg_txt_new_profile_missing_name_error")
-  /// Name eingeben
+  /// Enter name
   internal static let stgTxtNewProfileNamePlaceholder = StringAsset("stg_txt_new_profile_name_placeholder")
-  /// Neues Profil anlegen
+  /// Create new profile
   internal static let stgTxtNewProfileTitle = StringAsset("stg_txt_new_profile_title")
+  /// Es sind keine Geräte mit dieser Gesundheitskarte verbunden.
+  internal static let stgTxtRegDevicesEmptyList = StringAsset("stg_txt_reg_devices_empty_list")
+  /// Keine Geräte
+  internal static let stgTxtRegDevicesEmptyListTitle = StringAsset("stg_txt_reg_devices_empty_list_title")
+  /// Zum Anzeigen der Geräte ist eine zusätzliche Authentifizierung nötig.
+  internal static let stgTxtRegDevicesInfo = StringAsset("stg_txt_reg_devices_info")
+  /// Authentifizierung notwendig
+  internal static let stgTxtRegDevicesInfoTitle = StringAsset("stg_txt_reg_devices_info_title")
+  /// Registriert seit %@
+  internal static func stgTxtRegDevicesRegisteredSince(_ element1: String) -> StringAsset {
+    StringAsset("stg_txt_reg_devices_registered_since_%@", arguments: [element1])
+  }
+  /// Registriert seit %@ (dieses Gerät)
+  internal static func stgTxtRegDevicesRegisteredSinceThisDevice(_ element1: String) -> StringAsset {
+    StringAsset("stg_txt_reg_devices_registered_since_%@_this_device", arguments: [element1])
+  }
+  /// Verbundene Geräte
+  internal static let stgTxtRegDevicesTitle = StringAsset("stg_txt_reg_devices_title")
   /// Face ID
   internal static let stgTxtSecurityOptionFaceidTitle = StringAsset("stg_txt_security_option_faceid_title")
-  /// Kennwort
+  /// Password
   internal static let stgTxtSecurityOptionPasswordTitle = StringAsset("stg_txt_security_option_password_title")
   /// Touch ID
   internal static let stgTxtSecurityOptionTouchidTitle = StringAsset("stg_txt_security_option_touchid_title")
@@ -1825,9 +1877,9 @@ internal enum L10n {
   internal static let tabTxtMain = StringAsset("tab_txt_main")
   /// Messages
   internal static let tabTxtMessages = StringAsset("tab_txt_messages")
-  /// Apotheken
+  /// Pharmacies
   internal static let tabTxtPharmacySearch = StringAsset("tab_txt_pharmacy_search")
-  /// Einstellungen
+  /// Settings
   internal static let tabTxtSettings = StringAsset("tab_txt_settings")
 }
 // swiftlint:enable function_parameter_count identifier_name line_length type_body_length

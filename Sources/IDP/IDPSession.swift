@@ -57,13 +57,11 @@ public protocol IDPSession {
     /// - Parameters:
     ///   - token: the exchange token
     ///   - challengeSession: A  challengeSession with verifier code for the challenge
-    ///   - redirectURI: optional redirect URI to use for the token exchange.
     ///   - idTokenValidator: Closure that validates the passed IDToken for the selected profile
     /// - Returns: Publisher of the received IDPToken
     func exchange(
         token: IDPExchangeToken,
         challengeSession: ChallengeSession,
-        redirectURI: String?,
         idTokenValidator: @escaping (TokenPayload.IDTokenPayload) -> Result<Bool, Error>
     ) -> AnyPublisher<IDPToken, IDPError>
 
@@ -132,7 +130,6 @@ extension IDPSession {
             .flatMap { exchangeToken in
                 self.exchange(token: exchangeToken,
                               challengeSession: signedChallenge.originalChallenge,
-                              redirectURI: nil,
                               idTokenValidator: idTokenValidator)
             }
             .eraseToAnyPublisher()
@@ -156,11 +153,9 @@ extension IDPSession {
     ///   - redirectURI: optional redirect URI to use for the token exchange.
     /// - Returns: Publisher of the received IDPToken
     public func exchange(token: IDPExchangeToken,
-                         challengeSession: ChallengeSession,
-                         redirectURI: String?)
+                         challengeSession: ChallengeSession)
         -> AnyPublisher<IDPToken, IDPError> {
         exchange(token: token,
-                 challengeSession: challengeSession,
-                 redirectURI: redirectURI) { _ in .success(true) }
+                 challengeSession: challengeSession) { _ in .success(true) }
     }
 }

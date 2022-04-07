@@ -156,7 +156,7 @@ struct SettingsView: View {
             .onAppear {
                 viewStore.send(.initSettings)
             }
-        }
+        }.navigationViewStyle(StackNavigationViewStyle())
     }
 }
 

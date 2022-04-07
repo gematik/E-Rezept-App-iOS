@@ -23,16 +23,16 @@ import SwiftUI
 struct PharmacySearchView: View {
     let store: PharmacySearchDomain.Store
     let profileSelectionToolbarItemStore: ProfileSelectionToolbarItemDomain.Store?
-    let isModalView: Bool
+    let isRedeemRecipe: Bool
 
     @ObservedObject
     var viewStore: ViewStore<ViewState, PharmacySearchDomain.Action>
 
     init(store: PharmacySearchDomain.Store,
          profileSelectionToolbarItemStore: ProfileSelectionToolbarItemDomain.Store? = nil,
-         isModalView: Bool = true) {
+         isRedeemRecipe: Bool = true) {
         self.store = store
-        self.isModalView = isModalView
+        self.isRedeemRecipe = isRedeemRecipe
         self.profileSelectionToolbarItemStore = profileSelectionToolbarItemStore
         viewStore = ViewStore(store.scope(state: ViewState.init))
     }
@@ -72,7 +72,7 @@ struct PharmacySearchView: View {
                 GreyDivider(topPadding: 0)
             }
 
-            PharmacyDetailViewNavigation(store: store, isModalView: isModalView)
+            PharmacyDetailViewNavigation(store: store, isRedeemRecipe: isRedeemRecipe)
 
             if case .searchResultOk = viewStore.searchState {
                 // List of (optional) location hint and populated search results >> location hint is scrollable
@@ -216,7 +216,7 @@ extension PharmacySearchView {
     @ViewBuilder
     private func trailingNavigationBarItem() -> some View {
         WithViewStore(store) { viewStore in
-            if isModalView {
+            if isRedeemRecipe {
                 NavigationBarCloseItem {
                     viewStore.send(.close)
                 }
@@ -265,7 +265,7 @@ extension PharmacySearchView {
 
     private struct PharmacyDetailViewNavigation: View {
         let store: PharmacySearchDomain.Store
-        let isModalView: Bool
+        let isRedeemRecipe: Bool
 
         var body: some View {
             WithViewStore(store) { viewStore in
@@ -276,7 +276,7 @@ extension PharmacySearchView {
                             action: PharmacySearchDomain.Action.pharmacyDetailView(action:)
                         )
                     ) { scopedStore in
-                        PharmacyDetailView(store: scopedStore, isModalView: isModalView)
+                        PharmacyDetailView(store: scopedStore, isRedeemRecipe: isRedeemRecipe)
                             .navigationBarTitle(L10n.phaDetailTxtTitle, displayMode: .inline)
                     },
                     isActive: viewStore.binding(

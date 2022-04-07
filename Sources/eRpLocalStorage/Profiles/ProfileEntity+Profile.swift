@@ -38,7 +38,6 @@ extension ProfileEntity {
         emoji = profile.emoji
         lastAuthenticated = profile.lastAuthenticated
         // Note: update of erxTasks is set when saving tasks in `save(tasks:)`
-        // Note: update of erxAuditEvents is set when saving audit events in `save(auditEvents:)`
     }
 }
 
@@ -69,12 +68,6 @@ extension Profile {
             erxTasks: entity.erxTasks?.compactMap { erxTaskEntity in
                 if let entity = erxTaskEntity as? ErxTaskEntity {
                     return ErxTask(entity: entity)
-                }
-                return nil
-            } ?? [],
-            erxAuditEvents: entity.auditEvents?.compactMap { erxAuditEventEntity in
-                if let entity = erxAuditEventEntity as? ErxAuditEventEntity {
-                    return ErxAuditEvent(entity: entity)
                 }
                 return nil
             } ?? []

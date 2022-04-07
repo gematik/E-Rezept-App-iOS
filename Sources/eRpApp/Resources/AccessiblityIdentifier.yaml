@@ -164,6 +164,10 @@ settings:
     - stg_btn_edit_profile_delete
     - stg_btn_edit_profile_login
     - stg_btn_edit_profile_logout
+    - stg_txt_edit_profile_login_section_title
+    - stg_txt_edit_profile_login_section_activate
+    - stg_txt_edit_profile_login_section_connected_devices
+    - stg_txt_edit_profile_login_section_show_hint
     - stg_txt_edit_profile_security_section_title
     - stg_btn_edit_profile_security_section_show_tokens
     - stg_btn_edit_profile_security_section_show_audit_events

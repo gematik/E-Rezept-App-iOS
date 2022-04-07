@@ -23,11 +23,11 @@ import SwiftUI
 
 struct PharmacyDetailView: View {
     let store: PharmacyDetailDomain.Store
-    let isModalView: Bool
+    let isRedeemRecipe: Bool
 
-    init(store: PharmacyDetailDomain.Store, isModalView: Bool = true) {
+    init(store: PharmacyDetailDomain.Store, isRedeemRecipe: Bool = true) {
         self.store = store
-        self.isModalView = isModalView
+        self.isRedeemRecipe = isRedeemRecipe
     }
 
     var body: some View {
@@ -88,13 +88,15 @@ struct PharmacyDetailView: View {
                     } // if viewStore.pharmacy.isErxReady
 
                     if viewStore.pharmacy.isErxReady {
-                        HintView<PharmacyDetailDomain.Action>(
-                            hint: Hint(id: A11y.pharmacyDetail.phaDetailHint,
-                                       message: L10n.phaDetailHintMessage.text,
-                                       imageName: Asset.Illustrations.info.name)
-                        )
-                        .padding(.top, 12)
-                        .padding(.bottom, 32)
+                        if isRedeemRecipe {
+                            HintView<PharmacyDetailDomain.Action>(
+                                hint: Hint(id: A11y.pharmacyDetail.phaDetailHint,
+                                           message: L10n.phaDetailHintMessage.text,
+                                           imageName: Asset.Illustrations.info.name)
+                            )
+                            .padding(.top, 12)
+                            .padding(.bottom, 32)
+                        }
                     } else {
                         HintView<PharmacyDetailDomain.Action>(
                             hint: Hint(id: A11y.pharmacyDetail.phaDetailHintNotErxReady,
@@ -137,7 +139,7 @@ struct PharmacyDetailView: View {
     @ViewBuilder
     private func trailingNavigationBarItem() -> some View {
         WithViewStore(store) { viewStore in
-            if isModalView {
+            if isRedeemRecipe {
                 NavigationBarCloseItem {
                     viewStore.send(.close)
                 }

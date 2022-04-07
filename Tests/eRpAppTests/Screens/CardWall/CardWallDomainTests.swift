@@ -40,6 +40,7 @@ final class CardWallDomainTests: XCTestCase {
                   environment: CardWallDomain.Environment(
                       schedulers: Schedulers(),
                       userSession: MockUserSession(),
+                      sessionProvider: DummyProfileBasedSessionProvider(),
                       signatureProvider: DummySecureEnclaveSignatureProvider(),
                       accessibilityAnnouncementReceiver: { _ in }
                   ))
@@ -92,6 +93,7 @@ final class CardWallDomainTests: XCTestCase {
 
         store.send(CardWallDomain.Action.loginOption(action: .advance)) { state in
             state.readCard = CardWallReadCardDomain.State(isDemoModus: false,
+                                                          profileId: store.environment.userSession.profileId,
                                                           pin: "",
                                                           loginOption: .withBiometry,
                                                           output: .idle)
@@ -119,6 +121,7 @@ final class CardWallDomainTests: XCTestCase {
         store.send(CardWallDomain.Action.loginOption(action: .advance)) { state in
             state.loginOption.showNextScreen = true
             state.readCard = CardWallReadCardDomain.State(isDemoModus: false,
+                                                          profileId: store.environment.userSession.profileId,
                                                           pin: "",
                                                           loginOption: .withoutBiometry,
                                                           output: .idle)
@@ -146,6 +149,7 @@ final class CardWallDomainTests: XCTestCase {
         store.send(CardWallDomain.Action.loginOption(action: .advance)) { state in
             state.loginOption.showNextScreen = true
             state.readCard = CardWallReadCardDomain.State(isDemoModus: false,
+                                                          profileId: store.environment.userSession.profileId,
                                                           pin: "",
                                                           loginOption: .withoutBiometry,
                                                           output: .idle)
