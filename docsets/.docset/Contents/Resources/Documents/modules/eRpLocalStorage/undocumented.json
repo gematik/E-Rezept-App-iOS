@@ -1016,6 +1016,97 @@
       "warning": "undocumented"
     },
     {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/CoreDataEntities/ShipmentInfoEntity+CoreDataClass.swift",
+      "line": 8,
+      "symbol": "ShipmentInfoEntity",
+      "symbol_kind": "source.lang.swift.decl.extension",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/CoreDataEntities/ShipmentInfoEntity+CoreDataClass.swift",
+      "line": 9,
+      "symbol": "ShipmentInfoEntity",
+      "symbol_kind": "source.lang.swift.decl.class",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/CoreDataEntities/ShipmentInfoEntity+CoreDataClass.swift",
+      "line": 24,
+      "symbol": "ShipmentInfoEntity",
+      "symbol_kind": "source.lang.swift.decl.extension",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/CoreDataEntities/ShipmentInfoEntity+CoreDataProperties.swift",
+      "line": 9,
+      "symbol": "ShipmentInfoEntity.fetchRequest()",
+      "symbol_kind": "source.lang.swift.decl.function.method.class",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/CoreDataEntities/ShipmentInfoEntity+CoreDataProperties.swift",
+      "line": 13,
+      "symbol": "ShipmentInfoEntity.name",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/CoreDataEntities/ShipmentInfoEntity+CoreDataProperties.swift",
+      "line": 14,
+      "symbol": "ShipmentInfoEntity.street",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/CoreDataEntities/ShipmentInfoEntity+CoreDataProperties.swift",
+      "line": 15,
+      "symbol": "ShipmentInfoEntity.addressDetail",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/CoreDataEntities/ShipmentInfoEntity+CoreDataProperties.swift",
+      "line": 16,
+      "symbol": "ShipmentInfoEntity.phone",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/CoreDataEntities/ShipmentInfoEntity+CoreDataProperties.swift",
+      "line": 17,
+      "symbol": "ShipmentInfoEntity.identifier",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/CoreDataEntities/ShipmentInfoEntity+CoreDataProperties.swift",
+      "line": 18,
+      "symbol": "ShipmentInfoEntity.zip",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/CoreDataEntities/ShipmentInfoEntity+CoreDataProperties.swift",
+      "line": 19,
+      "symbol": "ShipmentInfoEntity.city",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/CoreDataEntities/ShipmentInfoEntity+CoreDataProperties.swift",
+      "line": 20,
+      "symbol": "ShipmentInfoEntity.mail",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/CoreDataEntities/ShipmentInfoEntity+CoreDataProperties.swift",
+      "line": 21,
+      "symbol": "ShipmentInfoEntity.deliveryInfo",
+      "symbol_kind": "source.lang.swift.decl.var.instance",
+      "warning": "undocumented"
+    },
+    {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/FileManager+Backup.swift",
       "line": 8,
       "symbol": "FileManager.ExcludeFileError",
