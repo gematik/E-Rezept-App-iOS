@@ -55,6 +55,7 @@ struct NewProfileView: View {
                             L10n.stgTxtNewProfileNamePlaceholder.key,
                             text: viewStore.binding(get: \.name, send: NewProfileDomain.Action.setName)
                         )
+                        .accessibilityIdentifier(A11y.settings.newProfile.stgInpNewProfileName)
                     }
 
                     ProfileColorPicker(color: viewStore
@@ -78,6 +79,8 @@ struct NewProfileView: View {
                     NavigationBarCloseItem {
                         viewStore.send(.close)
                     }
+                    .accessibility(identifier: A11y.settings.newProfile.stgBtnNewProfileCancel)
+                    .embedToolbarContent()
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button(action: {
@@ -86,6 +89,7 @@ struct NewProfileView: View {
                         Text(L10n.stgBtnNewProfileCreate)
                     })
                         .accessibility(identifier: A11y.settings.newProfile.stgBtnNewProfileSave)
+                        .embedToolbarContent()
                 }
             }
             .alert(store.scope(state: \.alertState), dismiss: NewProfileDomain.Action.dismissAlert)

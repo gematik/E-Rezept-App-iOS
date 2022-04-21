@@ -24,11 +24,15 @@ struct ErxReadinessBadge: View {
     var body: some View {
         HStack {
             Image(Asset.Pharmacy.eRxReadinessBadge)
-                .accessibility(identifier: A11y.pharmacyGlobal.phaGlobalImgReadinessBadge)
+                .accessibilityRemoveTraits(.isImage)
+
             Text(detailedText ? L10n.phaGlobalTxtReadinessBadgeDetailed : L10n.phaGlobalTxtReadinessBadge)
-                .accessibility(identifier: A11y.pharmacyGlobal.phaGlobalTxtReadinessBadge)
                 .font(.subheadline)
         }
+        .accessibilityElement(children: .combine)
+        .accessibility(identifier: A11y.pharmacyGlobal.phaGlobalTxtReadinessBadge)
+        .accessibilityLabel(L10n.phaGlobalTxtReadinessBadgeDetailed)
+
         .padding(.vertical, 2)
         .padding(.horizontal, 10)
         .background(Colors.primary100)

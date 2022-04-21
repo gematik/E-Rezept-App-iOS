@@ -139,7 +139,7 @@ struct RedeemView: View {
                          discloseIcon: SFSymbolName.rightDisclosureIndicator)
                         .padding([.leading, .trailing], 16)
                 }
-                .accessibility(identifier: A18n.redeem.overview.rdmBtnPharmacyTile)
+                .accessibility(identifier: A18n.redeem.overview.rdmBtnDeliveryTile)
             }
         }
     }

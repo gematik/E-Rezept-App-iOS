@@ -128,7 +128,8 @@ final class IDPIntegrationTests: XCTestCase {
             expires: token.expires,
             idToken: token.idToken,
             ssoToken: newSSOToken,
-            tokenType: token.tokenType
+            tokenType: token.tokenType,
+            redirect: configuration.redirectURI.absoluteString
         )
 
         success = false
@@ -308,7 +309,7 @@ final class IDPIntegrationTests: XCTestCase {
                         altVerifyIDPSession.exchange(
                             token: exchangeToken,
                             challengeSession: signedAuthenticationData.originalChallenge,
-                            redirectURI: nil
+                            idTokenValidator: { _ in .success(true) }
                         )
                     }
             }

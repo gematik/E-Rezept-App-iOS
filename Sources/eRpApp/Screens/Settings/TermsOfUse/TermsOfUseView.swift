@@ -51,5 +51,6 @@ extension TermsOfUseView {
 struct TermsOfUseView_Previews: PreviewProvider {
     static var previews: some View {
         TermsOfUseView()
+            .accessibilityIdentifier(A11y.settings.termsOfUse.stgWwTermsOfUse)
     }
 }

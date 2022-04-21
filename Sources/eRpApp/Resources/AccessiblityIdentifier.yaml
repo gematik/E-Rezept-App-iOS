@@ -157,13 +157,20 @@ settings:
   profiles:
     - stg_txt_header_profiles
     - stg_btn_profile
+    - stg_con_profiles
     - stg_btn_new_profile
   editProfile:
+    - stg_txt_edit_profile_name_input
     - stg_txt_edit_profile_bg_color_title
     - stg_txt_edit_profile_bg_color_picker
     - stg_btn_edit_profile_delete
     - stg_btn_edit_profile_login
     - stg_btn_edit_profile_logout
+    - stg_txt_edit_profile_logout_info
+    - stg_txt_edit_profile_name
+    - stg_txt_edit_profile_insurance_company
+    - stg_txt_edit_profile_can
+    - stg_txt_edit_profile_insurance_id
     - stg_txt_edit_profile_login_section_title
     - stg_txt_edit_profile_login_section_activate
     - stg_txt_edit_profile_login_section_connected_devices
@@ -176,6 +183,8 @@ settings:
     - stg_txt_new_profile_bg_color_title
     - stg_txt_new_profile_bg_color_picker
     - stg_btn_new_profile_save
+    - stg_btn_new_profile_cancel
+    - stg_inp_new_profile_name
   auditEvents:
     - stg_ctn_audit_events_events
     - stg_ctn_audit_events_event_title
@@ -197,10 +206,14 @@ settings:
     - stg_lno_phone_contact
   dataPrivacy:
     - stg_dpr_txt_data_privacy
+    - stg_ww_data_privacy
+    - stg_btn_data_privacy_close
   foss:
     - stg_dpr_txt_foss
   termsOfUse:
     - stg_tou_txt_terms_of_use
+    - stg_ww_terms_of_use
+    - stg_btn_terms_of_use_close
   tracking:
     - stg_trk_txt_title
     - stg_trk_txt_explanation
@@ -216,6 +229,7 @@ redeem:
     - rdm_txt_pharmacy_title
     - rdm_txt_pharmacy_subtitle
     - rdm_btn_pharmacy_tile
+    - rdm_btn_delivery_tile
     - rdm_btn_close_button
   matrixCode:
     - rph_txt_title
@@ -248,6 +262,10 @@ mainScreen:
   - erx_hnt_open_scanner
   - erx_hnt_show_card_wall
   - erx_hnt_unread_messages
+profileSelection:
+  - pro_txt_selection_profile_list
+  - pro_txt_selection_profile_list_entry
+  - pro_btn_selection_edit
 prescriptionDetails:
   - prsc_dtl_txt_med_info
   - prsc_dtl_txt_med_dosage_instructions
@@ -261,6 +279,7 @@ prescriptionDetails:
   - prsc_dtl_txt_access_code
 pharmacySearch:
   - pha_search_txt_result_list
+  - pha_search_txt_result_list_entry
   - pha_search_search_running
   - pha_search_localizing_device
   - pha_search_start

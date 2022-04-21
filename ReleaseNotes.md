@@ -1,3 +1,18 @@
+# Release 1.2.6
+
+### fixed (2 changes)
+
+- Fix insurance contact data
+- Fix accessibility ids and behavior for various views
+
+### internal (1 change)
+
+- Add Domain Tests IDPCardWall
+
+### added (1 change)
+
+- Add store for ShipmentInfo
+
 # Release 1.2.5
 
 added (5 changes)

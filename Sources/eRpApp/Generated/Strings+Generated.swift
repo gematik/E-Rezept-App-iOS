@@ -475,6 +475,10 @@ internal enum L10n {
   internal static let ctlTxtProfileColorPickerSelected = StringAsset("ctl_txt_profile_color_picker_selected")
   /// Yellow
   internal static let ctlTxtProfileColorPickerYellow = StringAsset("ctl_txt_profile_color_picker_yellow")
+  /// Verbunden
+  internal static let ctlTxtProfileConnectionStatusConnected = StringAsset("ctl_txt_profile_connection_status_connected")
+  /// Nicht Verbunden
+  internal static let ctlTxtProfileConnectionStatusDisconnected = StringAsset("ctl_txt_profile_connection_status_disconnected")
   /// Search box
   internal static let ctlTxtSearchBarFieldLabel = StringAsset("ctl_txt_search_bar_field_label")
   /// Copy

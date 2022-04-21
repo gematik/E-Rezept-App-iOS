@@ -1,5 +1,5 @@
 [
-{
+  {
     "name": "AOK Baden-Württemberg",
     "healthCardAndPinPhone": "",
     "healthCardAndPinMail": "a99_egk@bw.aok.de",
@@ -103,11 +103,11 @@
     "healthCardAndPinPhone": "",
     "healthCardAndPinMail": "aok@rh.aok.de",
     "healthCardAndPinUrl": "",
-    "pinUrl": "",
+    "pinUrl": "https://www.aok.de/pk/rh/inhalt/pin-zur-elektronischen-gesundheitskarte-egk-5/",
     "subjectCardAndPinMail": "#eGKPIN# Bestellung einer NFC-fähigen Gesundheitskarte und PIN",
     "bodyCardAndPinMail": "Sehr geehrte Damen und Herren,\nich möchte die E-Rezept-App der gematik nutzen.\n\nName:\nVorname:\nVersichertennummer/ KVNR:\n\nBitte senden Sie mir hierfür eine NFC-fähige Gesundheitskarte zu. Ich benötige zu der Gesundheitskarte auch die PIN. Bitte senden Sie mir Informationen zu, wie ich die PIN erhalten kann.\n\nMit freundlichen Grüßen\nIhr Versicherter/ Ihre Versicherte",
-    "subjectPinMail": "#PIN# Bestellung einer PIN zur Gesundheitskarte",
-    "bodyPinMail": "Sehr geehrte Damen und Herren,\nich möchte die E-Rezept-App der gematik nutzen.\n\nName:\nVorname:\nVersichertennummer/ KVNR:\n\nIch benötige zu der Gesundheitskarte  die PIN. Bitte senden Sie mir Informationen zu, wie ich die PIN erhalten kann.\n\nMit freundlichen Grüßen\nIhr Versicherter/ Ihre Versicherte"
+    "subjectPinMail": "",
+    "bodyPinMail": ""
   },
   {
     "name": "AOK Rheinland-Pfalz/Saarland - Die Gesundheitskasse",

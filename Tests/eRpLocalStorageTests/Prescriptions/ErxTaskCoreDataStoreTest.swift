@@ -99,6 +99,33 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
         try store.add(tasks: [task])
     }
 
+    func testUpdatingPreviouslySavedTask() throws {
+        let store = loadErxCoreDataStore()
+        let task = ErxTask(identifier: "id", status: .ready, accessCode: "access")
+        try store.add(tasks: [task])
+
+        let updatedTask = ErxTask(identifier: "id", status: .ready, accessCode: "new access code")
+
+        // when updating a previously saved task with same id
+        try store.add(tasks: [updatedTask])
+
+        var receivedListAllTasksValues = [[ErxTask]]()
+        let cancellable = store.listAllTasks()
+            .sink(receiveCompletion: { _ in
+                fail("did not expect completion")
+            }, receiveValue: { erxTasks in
+                receivedListAllTasksValues.append(erxTasks)
+            })
+
+        // than there should be only one in store with the updated values
+        expect(receivedListAllTasksValues.count).toEventually(equal(1))
+        expect(receivedListAllTasksValues[0].count).to(equal(1))
+        let result = receivedListAllTasksValues[0].first
+        expect(result) == updatedTask
+
+        cancellable.cancel()
+    }
+
     func testSaveTasksWithFailingLoadingDatabase() throws {
         let factory = MockCoreDataControllerFactory()
         factory.loadCoreDataControllerError = LocalStoreError.notImplemented

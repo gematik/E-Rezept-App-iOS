@@ -41,15 +41,18 @@ struct PharmacySearchCell: View {
                 if pharmacy.pharmacyLocation.isErxReady {
                     ErxReadinessBadge(detailedText: false)
                         .padding([.top, .bottom], 1)
+                        .accessibilitySortPriority(10)
                 }
 
                 Text("\(pharmacy.pharmacyLocation.name ?? "")")
                     .fontWeight(.semibold)
                     .foregroundColor(Colors.systemLabel)
                     .padding([.top, .bottom], 1)
+                    .accessibilitySortPriority(100)
                 HStack {
                     Text(pharmacy.pharmacyLocation.address?.fullAddress ?? "")
                 }
+                .accessibilitySortPriority(90)
                 .foregroundColor(Colors.systemLabelSecondary)
 
                 Group {
@@ -81,8 +84,9 @@ struct PharmacySearchCell: View {
                 }
                 .padding(.top, 1)
                 .font(Font.subheadline.weight(.semibold))
+                .accessibilitySortPriority(80)
             }
-            .accessibilityElement(children: .combine)
+            .accessibilitySortPriority(1000)
             .padding([.top, .bottom], 8)
 
             Spacer()
@@ -92,12 +96,15 @@ struct PharmacySearchCell: View {
                     .font(Font.footnote.weight(.semibold))
                     .foregroundColor(Colors.systemLabelSecondary)
                     .padding([.leading, .trailing], 8)
+                    .accessibilitySortPriority(50)
             }
 
             Image(systemName: SFSymbolName.rightDisclosureIndicator)
                 .foregroundColor(Colors.systemLabelTertiary)
                 .unredacted()
+                .accessibility(hidden: true)
         }
+        .accessibilityElement(children: .combine)
     }
 }
 

@@ -61,6 +61,7 @@ struct SecureFieldWithReveal: View {
             })
                 .buttonStyle(PlainButtonStyle())
                 .foregroundColor(Color(.tertiaryLabel))
+                .accessibilityValue(showPassword ? "show" : "hide") // for UITests only
                 .accessibility(hidden: true)
         }
     }

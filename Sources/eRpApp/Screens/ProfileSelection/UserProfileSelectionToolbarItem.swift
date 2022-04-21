@@ -47,7 +47,7 @@ struct UserProfileSelectionToolbarItem: View {
         }
 
         if let fullName = profile.fullName {
-            return "\(profile.name); \(fullName)"
+            return "\(profile.name); \(fullName); \(profile.connectionStatus?.accessibilityValue ?? "")"
         }
 
         return profile.name
@@ -56,24 +56,17 @@ struct UserProfileSelectionToolbarItem: View {
     var body: some View {
         Button(action: action) {
             if let profile = viewStore.profile {
-                HStack {
-                    InitialsImage(
-                        backgroundColor: profile.color.background,
-                        text: profile.emoji ?? profile.acronym,
-                        statusColor: profile.connectionStatus?.statusColor,
-                        size: .large
-                    )
-                    .accessibilityLabel(L10n.ctlBtnProfileToolbarItem)
-                    .accessibilityValue(accessibilityValue)
-                    .padding(.vertical, 8)
-                    .frame(minWidth: 44, minHeight: 44, alignment: .leading)
-                    .contentShape(Rectangle())
-
-                    // HStack and Image is to work around iOS 14 Bug that removes styling in favor of system styled Text
-                    // button with initials only. 🤷
-                    Image(systemName: SFSymbolName.chevronForward)
-                        .foregroundColor(Color(.systemBackground))
-                }
+                InitialsImage(
+                    backgroundColor: profile.color.background,
+                    text: profile.emoji ?? profile.acronym,
+                    statusColor: profile.connectionStatus?.statusColor,
+                    size: .large
+                )
+                .accessibilityLabel(L10n.ctlBtnProfileToolbarItem)
+                .accessibilityValue(accessibilityValue)
+                .padding(.vertical, 8)
+                .frame(minWidth: 44, minHeight: 44, alignment: .leading)
+                .contentShape(Rectangle())
             } else {
                 ProgressView()
                     .frame(minWidth: 44, minHeight: 44, alignment: .center)

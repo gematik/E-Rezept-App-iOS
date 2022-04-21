@@ -46,6 +46,7 @@ struct ProfileSelectionView: View {
                         .font(.body.weight(.semibold))
                         .foregroundColor(Asset.Colors.primary600.color)
                     })
+                        .accessibility(identifier: A11y.profileSelection.proBtnSelectionEdit)
                         .padding(.vertical, 16)
                 ) {
                     ForEach(viewStore.profiles) { profile in
@@ -57,7 +58,12 @@ struct ProfileSelectionView: View {
                                 isSelected: profile.id == viewStore.selectedProfileId
                             )
                         })
+                            .accessibilityRemoveTraits(.isStaticText)
+                            .accessibilityAddTraits(.isButton)
+                            .accessibilityAddTraits(profile.id == viewStore.selectedProfileId ? .isSelected : .isButton)
+                            .accessibility(identifier: A11y.profileSelection.proTxtSelectionProfileListEntry)
                     }
+                    .accessibility(identifier: A11y.profileSelection.proTxtSelectionProfileList)
                 }
                 .textCase(.none)
             }

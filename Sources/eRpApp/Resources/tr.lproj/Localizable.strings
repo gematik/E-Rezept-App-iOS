@@ -222,6 +222,8 @@
 "ctl_txt_profile_color_picker_pink" = "Pembe";
 "ctl_txt_profile_color_picker_selected" = "Seçili";
 "ctl_txt_profile_color_picker_yellow" = "Sarı";
+"ctl_txt_profile_connection_status_connected" = "Verbunden";
+"ctl_txt_profile_connection_status_disconnected" = "Nicht Verbunden";
 "ctl_txt_search_bar_field_label" = "Arama alanı";
 "dtl_btn_copy_clipboard" = "Kopyala";
 "dtl_btn_delete_medication" = "Bu cihazdan sil";

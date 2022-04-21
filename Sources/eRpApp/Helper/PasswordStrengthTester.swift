@@ -18,6 +18,7 @@
 
 import Zxcvbn
 
+// tag::PasswordStrengthTester[]
 protocol PasswordStrengthTester {
     func passwordStrength(for password: String) -> PasswordStrength
 }
@@ -68,6 +69,8 @@ extension String {
         }
     }
 }
+
+// end::PasswordStrengthTester[]
 
 // MARK: - MockPasswordStrengthTester -
 

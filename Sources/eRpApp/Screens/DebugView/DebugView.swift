@@ -104,6 +104,8 @@ extension DebugView {
                                    get: \.hideCardWallIntro,
                                    send: DebugDomain.Action.hideCardWallIntroToggleTapped
                                ))
+                            .accessibilityIdentifier("debug_tog_hide_intro")
+
                         FootnoteView(
                             text: "CardWall Intro is only displayed until accepted once.",
                             a11y: "dummy_a11y_e"
@@ -166,6 +168,7 @@ extension DebugView {
                                send: DebugDomain.Action.toggleVirtualLogin
                            )
                            .animation())
+                                               .accessibilityIdentifier("debug_enable_virtual_egk")
                     if viewStore.useVirtualLogin {
                         FootnoteView(
                             // swiftlint:disable:next line_length
@@ -253,6 +256,7 @@ extension DebugView {
                             get: \.accessCodeText,
                             send: DebugDomain.Action.accessCodeTextReceived
                         ))
+                            .accessibilityIdentifier("debug_txt_access_token_write")
                             .frame(minHeight: 100, maxHeight: 100)
                             .background(Color(.systemGray5))
                             .foregroundColor(Colors.systemLabel)
@@ -267,6 +271,7 @@ extension DebugView {
                             viewStore.send(.setAccessCodeTextButtonTapped)
                         }
                     }
+                    .accessibilityIdentifier("debug_btn_login")
                     .foregroundColor((viewStore.isAuthenticated ?? false) ? .gray : .green)
                     .frame(maxWidth: .infinity)
                     .foregroundColor(.green)
@@ -283,6 +288,7 @@ extension DebugView {
                         .frame(maxWidth: .infinity, minHeight: 0, maxHeight: 100)
                         .foregroundColor(Colors.systemGray)
                         .background(Color(.systemGray5))
+                        .accessibilityIdentifier("debug_txt_access_token_read")
                     if let date = viewStore.token?.expires,
                        let expires = dateFormatter.string(from: date) {
                         FootnoteView(

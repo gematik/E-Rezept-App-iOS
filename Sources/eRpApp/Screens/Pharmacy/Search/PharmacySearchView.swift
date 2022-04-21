@@ -87,6 +87,7 @@ struct PharmacySearchView: View {
                             action: { viewStore.send(.showDetails(pharmacyViewModel)) },
                             label: { PharmacySearchCell(pharmacy: pharmacyViewModel) }
                         )
+                        .accessibility(identifier: A11y.pharmacySearch.phaSearchTxtResultListEntry)
                     }
                 }
                 .listStyle(PlainListStyle())

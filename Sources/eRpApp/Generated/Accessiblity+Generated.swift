@@ -220,6 +220,7 @@ internal enum A11y {
   }
     internal enum pharmacySearch {
       static let phaSearchTxtResultList = "pha_search_txt_result_list"
+      static let phaSearchTxtResultListEntry = "pha_search_txt_result_list_entry"
       static let phaSearchSearchRunning = "pha_search_search_running"
       static let phaSearchLocalizingDevice = "pha_search_localizing_device"
       static let phaSearchStart = "pha_search_start"
@@ -238,6 +239,11 @@ internal enum A11y {
       static let prscDtlTxtTaskId = "prsc_dtl_txt_task_id"
       static let prscDtlTxtAccessCode = "prsc_dtl_txt_access_code"
   }
+    internal enum profileSelection {
+      static let proTxtSelectionProfileList = "pro_txt_selection_profile_list"
+      static let proTxtSelectionProfileListEntry = "pro_txt_selection_profile_list_entry"
+      static let proBtnSelectionEdit = "pro_btn_selection_edit"
+  }
     internal enum redeem { 
     internal enum matrixCode {
       static let rphTxtTitle = "rph_txt_title"
@@ -250,6 +256,7 @@ internal enum A11y {
       static let rdmTxtPharmacyTitle = "rdm_txt_pharmacy_title"
       static let rdmTxtPharmacySubtitle = "rdm_txt_pharmacy_subtitle"
       static let rdmBtnPharmacyTile = "rdm_btn_pharmacy_tile"
+      static let rdmBtnDeliveryTile = "rdm_btn_delivery_tile"
       static let rdmBtnCloseButton = "rdm_btn_close_button"
   }
     }
@@ -300,6 +307,8 @@ internal enum A11y {
   }
     internal enum dataPrivacy {
       static let stgDprTxtDataPrivacy = "stg_dpr_txt_data_privacy"
+      static let stgWwDataPrivacy = "stg_ww_data_privacy"
+      static let stgBtnDataPrivacyClose = "stg_btn_data_privacy_close"
   }
     internal enum demo {
       static let navDone = "nav_done"
@@ -308,11 +317,17 @@ internal enum A11y {
       static let stgTxtFootnoteDemoMode = "stg_txt_footnote_demo_mode"
   }
     internal enum editProfile {
+      static let stgTxtEditProfileNameInput = "stg_txt_edit_profile_name_input"
       static let stgTxtEditProfileBgColorTitle = "stg_txt_edit_profile_bg_color_title"
       static let stgTxtEditProfileBgColorPicker = "stg_txt_edit_profile_bg_color_picker"
       static let stgBtnEditProfileDelete = "stg_btn_edit_profile_delete"
       static let stgBtnEditProfileLogin = "stg_btn_edit_profile_login"
       static let stgBtnEditProfileLogout = "stg_btn_edit_profile_logout"
+      static let stgTxtEditProfileLogoutInfo = "stg_txt_edit_profile_logout_info"
+      static let stgTxtEditProfileName = "stg_txt_edit_profile_name"
+      static let stgTxtEditProfileInsuranceCompany = "stg_txt_edit_profile_insurance_company"
+      static let stgTxtEditProfileCan = "stg_txt_edit_profile_can"
+      static let stgTxtEditProfileInsuranceId = "stg_txt_edit_profile_insurance_id"
       static let stgTxtEditProfileLoginSectionTitle = "stg_txt_edit_profile_login_section_title"
       static let stgTxtEditProfileLoginSectionActivate = "stg_txt_edit_profile_login_section_activate"
       static let stgTxtEditProfileLoginSectionConnectedDevices = "stg_txt_edit_profile_login_section_connected_devices"
@@ -339,10 +354,13 @@ internal enum A11y {
       static let stgTxtNewProfileBgColorTitle = "stg_txt_new_profile_bg_color_title"
       static let stgTxtNewProfileBgColorPicker = "stg_txt_new_profile_bg_color_picker"
       static let stgBtnNewProfileSave = "stg_btn_new_profile_save"
+      static let stgBtnNewProfileCancel = "stg_btn_new_profile_cancel"
+      static let stgInpNewProfileName = "stg_inp_new_profile_name"
   }
     internal enum profiles {
       static let stgTxtHeaderProfiles = "stg_txt_header_profiles"
       static let stgBtnProfile = "stg_btn_profile"
+      static let stgConProfiles = "stg_con_profiles"
       static let stgBtnNewProfile = "stg_btn_new_profile"
   }
     internal enum security {
@@ -354,6 +372,8 @@ internal enum A11y {
   }
     internal enum termsOfUse {
       static let stgTouTxtTermsOfUse = "stg_tou_txt_terms_of_use"
+      static let stgWwTermsOfUse = "stg_ww_terms_of_use"
+      static let stgBtnTermsOfUseClose = "stg_btn_terms_of_use_close"
   }
     internal enum tokens {
       static let stgTknTxtAccessToken = "stg_tkn_txt_access_token"

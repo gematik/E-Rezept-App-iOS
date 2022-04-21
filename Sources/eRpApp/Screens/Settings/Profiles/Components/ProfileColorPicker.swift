@@ -45,6 +45,7 @@ struct ProfileColorPicker: View {
                     .accessibility(addTraits: .isButton)
             }
         }
+        .accessibilityElement(children: .contain)
         .frame(maxWidth: .infinity, alignment: .center)
         .buttonStyle(BorderlessButtonStyle())
         .padding(.vertical, 24)

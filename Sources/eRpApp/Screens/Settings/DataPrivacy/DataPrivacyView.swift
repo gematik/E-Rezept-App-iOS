@@ -51,5 +51,6 @@ extension DataPrivacyView {
 struct DataProtectionView_Previews: PreviewProvider {
     static var previews: some View {
         DataPrivacyView()
+            .accessibilityIdentifier(A11y.settings.dataPrivacy.stgWwDataPrivacy)
     }
 }

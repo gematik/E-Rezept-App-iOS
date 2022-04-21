@@ -16,27 +16,8 @@
 //  
 //
 
+import CoreData
 import Foundation
-import SwiftUI
 
-enum ProfileConnectionStatus: Equatable {
-    case connected
-    case disconnected
-}
-
-extension ProfileConnectionStatus {
-    var statusColor: Color {
-        self == .connected ? Colors.secondary600 : Colors.red600
-    }
-}
-
-extension ProfileConnectionStatus {
-    var accessibilityValue: String {
-        switch self {
-        case .connected:
-            return L10n.ctlTxtProfileConnectionStatusConnected.text
-        case .disconnected:
-            return L10n.ctlTxtProfileConnectionStatusDisconnected.text
-        }
-    }
-}
+@objc(ShipmentInfoEntity)
+public class ShipmentInfoEntity: NSManagedObject {}

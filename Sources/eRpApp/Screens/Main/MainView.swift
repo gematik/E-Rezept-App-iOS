@@ -76,11 +76,13 @@ struct MainView: View {
                         UserProfileSelectionToolbarItem(store: profileSelectionToolbarItemStore) {
                             viewStore.send(.setNavigation(tag: .selectProfile))
                         }
+                        .embedToolbarContent()
                         .accessibility(identifier: A18n.mainScreen.erxBtnProfile)
                     }
 
                     ToolbarItem(placement: .navigationBarTrailing) {
                         ScanItem { viewStore.send(.showScannerView) }
+                            .embedToolbarContent()
                     }
                 }
 

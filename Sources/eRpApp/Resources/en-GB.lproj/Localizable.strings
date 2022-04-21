@@ -222,6 +222,8 @@
 "ctl_txt_profile_color_picker_pink" = "Pink";
 "ctl_txt_profile_color_picker_selected" = "Selected";
 "ctl_txt_profile_color_picker_yellow" = "Yellow";
+"ctl_txt_profile_connection_status_connected" = "Verbunden";
+"ctl_txt_profile_connection_status_disconnected" = "Nicht Verbunden";
 "ctl_txt_search_bar_field_label" = "Search box";
 "dtl_btn_copy_clipboard" = "Copy";
 "dtl_btn_delete_medication" = "Delete from this device";

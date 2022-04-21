@@ -117,6 +117,7 @@ extension OnboardingLegalInfoView {
                         TermsOfUseView()
                             .toolbar {
                                 CloseButton { showTermsOfUse = false }
+                                    .accessibilityIdentifier(A11y.settings.termsOfUse.stgBtnTermsOfUseClose)
                             }
                     }
                     .accentColor(Colors.primary700)
@@ -169,6 +170,7 @@ extension OnboardingLegalInfoView {
                             .toolbar {
                                 CloseButton { showTermsOfPrivacy = false }
                             }
+                            .accessibilityIdentifier(A11y.settings.dataPrivacy.stgBtnDataPrivacyClose)
                     }
                     .accentColor(Colors.primary700)
                     .navigationViewStyle(StackNavigationViewStyle())

@@ -69,16 +69,14 @@ enum IDPCardWallDomain {
 
     static let domainReducer = Reducer { state, action, environment in
         switch action {
-        case .pinAction(action: .advance):
-            if state.pin.showNextScreen == .fullScreenCover {
-                state.readCard = CardWallReadCardDomain.State(
-                    isDemoModus: environment.userSession.isDemoMode,
-                    profileId: state.profileId,
-                    pin: state.pin.pin,
-                    loginOption: .withoutBiometry,
-                    output: .idle
-                )
-            }
+        case .pinAction(action: .advance(.fullScreenCover)):
+            state.readCard = CardWallReadCardDomain.State(
+                isDemoModus: environment.userSession.isDemoMode,
+                profileId: state.profileId,
+                pin: state.pin.pin,
+                loginOption: .withoutBiometry,
+                output: .idle
+            )
             return .none
         case .readCard(action: .wrongCAN):
             if state.can == nil {
@@ -105,11 +103,11 @@ enum IDPCardWallDomain {
             return Effect(value: .finished)
                 .delay(for: dismissTimeout, scheduler: environment.schedulers.main)
                 .eraseToEffect()
-        case .canAction,
+        case .close,
+             .finished,
+             .canAction,
              .pinAction,
              .readCard:
-            return .none
-        case .close, .finished:
             return .none
         }
     }

@@ -16,27 +16,23 @@
 //  
 //
 
+import CoreData
 import Foundation
-import SwiftUI
 
-enum ProfileConnectionStatus: Equatable {
-    case connected
-    case disconnected
-}
-
-extension ProfileConnectionStatus {
-    var statusColor: Color {
-        self == .connected ? Colors.secondary600 : Colors.red600
+extension ShipmentInfoEntity {
+    @nonobjc public class func fetchRequest() -> NSFetchRequest<ShipmentInfoEntity> {
+        NSFetchRequest<ShipmentInfoEntity>(entityName: "ShipmentInfoEntity")
     }
+
+    @NSManaged public var name: String?
+    @NSManaged public var street: String?
+    @NSManaged public var addressDetail: String?
+    @NSManaged public var phone: String?
+    @NSManaged public var identifier: UUID?
+    @NSManaged public var zip: String?
+    @NSManaged public var city: String?
+    @NSManaged public var mail: String?
+    @NSManaged public var deliveryInfo: String?
 }
 
-extension ProfileConnectionStatus {
-    var accessibilityValue: String {
-        switch self {
-        case .connected:
-            return L10n.ctlTxtProfileConnectionStatusConnected.text
-        case .disconnected:
-            return L10n.ctlTxtProfileConnectionStatusDisconnected.text
-        }
-    }
-}
+extension ShipmentInfoEntity: Identifiable {}

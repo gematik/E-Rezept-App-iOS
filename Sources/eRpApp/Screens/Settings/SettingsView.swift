@@ -281,8 +281,8 @@ extension SettingsView {
                     isActive: $showDebugView
                 ) {
                     Label("Debug", systemImage: SFSymbolName.ant)
-                        .accessibility(identifier: "stg_btn_debug")
                 }
+                .accessibility(identifier: "stg_btn_debug")
                 .buttonStyle(.navigation)
             })
         }

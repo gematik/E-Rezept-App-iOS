@@ -106,6 +106,7 @@ Jenkinsfile
 Jenkinsfile_Archive
 devops
 .gitlab
+doc/security_review
 
 # See if added files should also be removed within github_publish_prepare
 Tests/IntegrationTests/Resources/Certificates.bundle

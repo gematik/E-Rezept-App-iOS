@@ -57,6 +57,8 @@ struct ProfilesView: View {
                     .buttonStyle(.navigation)
                     .accessibility(identifier: A11y.settings.profiles.stgBtnProfile)
             }
+            .accessibilityElement(children: .contain)
+            .accessibility(identifier: A11y.settings.profiles.stgConProfiles)
 
             #if ENABLE_DEBUG_VIEW
             Button(action: {

@@ -93,12 +93,15 @@ struct EditProfileView: View {
                         EmptyProfileError()
                     }
                 }, content: {
-                    FormTextField(L10n.stgTxtEditProfileNamePlaceholder.key,
-                                  text: viewStore.binding(
-                                      get: \.name,
-                                      send: EditProfileDomain.Action.setName
-                                  )
-                                  .animation())
+                    FormTextField(
+                        L10n.stgTxtEditProfileNamePlaceholder.key,
+                        text: viewStore.binding(
+                            get: \.name,
+                            send: EditProfileDomain.Action.setName
+                        )
+                        .animation()
+                    )
+                    .accessibility(identifier: A11y.settings.editProfile.stgTxtEditProfileNameInput)
                 })
 
                 ProfileColorPicker(color: viewStore.binding(get: \.color, send: EditProfileDomain.Action.setColor))
@@ -164,12 +167,24 @@ extension EditProfileView {
                 }, content: {
                     if let fullName = viewStore.state.fullName, !fullName.isEmpty {
                         SubTitle(title: fullName, description: L10n.stgTxtEditProfileLabelName)
+                            .accessibilityElement(children: .combine)
+                            .accessibility(label: Text(L10n.stgTxtEditProfileLabelName))
+                            .accessibility(value: Text(fullName))
+                            .accessibility(identifier: A11y.settings.editProfile.stgTxtEditProfileName)
                     }
                     if let insurance = viewStore.state.insurance {
                         SubTitle(title: insurance, description: L10n.stgTxtEditProfileLabelInsuranceCompany)
+                            .accessibilityElement(children: .combine)
+                            .accessibility(label: Text(L10n.stgTxtEditProfileLabelInsuranceCompany))
+                            .accessibility(value: Text(insurance))
+                            .accessibility(identifier: A11y.settings.editProfile.stgTxtEditProfileInsuranceCompany)
                     }
                     if let can = viewStore.state.can {
                         SubTitle(title: can, description: L10n.stgTxtEditProfileLabelCan)
+                            .accessibilityElement(children: .combine)
+                            .accessibility(label: Text(L10n.stgTxtEditProfileLabelCan))
+                            .accessibility(value: Text(can))
+                            .accessibility(identifier: A11y.settings.editProfile.stgTxtEditProfileCan)
                     }
                     if let insuranceId = viewStore.state.insuranceId {
                         Button(action: {
@@ -182,6 +197,9 @@ extension EditProfileView {
                             }
                             .labelStyle(.trailingIcon)
                         })
+                            .accessibility(label: Text(L10n.stgTxtEditProfileLabelKvnr))
+                            .accessibility(value: Text(insuranceId))
+                            .accessibility(identifier: A11y.settings.editProfile.stgTxtEditProfileInsuranceId)
                     }
                 })
             } else {
@@ -207,6 +225,7 @@ extension EditProfileView {
                     .font(.footnote)
                     .foregroundColor(Color(.secondaryLabel))
                     .padding(.bottom)
+                    .accessibility(identifier: A11y.settings.editProfile.stgTxtEditProfileLogoutInfo)
             } else {
                 Button(action: {
                     viewStore.send(.login)

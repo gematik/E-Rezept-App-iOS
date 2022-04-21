@@ -31,6 +31,7 @@ struct IDPTokenView: View {
                     token: accessToken
                 )
                 .accessibility(identifier: A11y.settings.tokens.stgTknTxtAccessToken)
+                .accessibilityValue(Text(accessToken))
             }
             if let ssoToken = token?.ssoToken {
                 TokenCell(
@@ -38,6 +39,7 @@ struct IDPTokenView: View {
                     token: ssoToken
                 )
                 .accessibility(identifier: A11y.settings.tokens.stgTknTxtSsoToken)
+                .accessibilityValue(Text(ssoToken))
             }
         }
         .listStyle(InsetGroupedListStyle())
