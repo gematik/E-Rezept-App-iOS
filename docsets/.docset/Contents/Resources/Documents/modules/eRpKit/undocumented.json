@@ -114,217 +114,273 @@
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpKit/ErxTask.swift",
-      "line": 149,
+      "line": 150,
+      "symbol": "ErxTask.Status.Error",
+      "symbol_kind": "source.lang.swift.decl.enum",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpKit/ErxTask.swift",
+      "line": 151,
+      "symbol": "ErxTask.Status.Error.decoding(message:)",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpKit/ErxTask.swift",
+      "line": 152,
+      "symbol": "ErxTask.Status.Error.unknown(message:)",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpKit/ErxTask.swift",
+      "line": 153,
+      "symbol": "ErxTask.Status.Error.missingStatus",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpKit/ErxTask.swift",
+      "line": 154,
+      "symbol": "ErxTask.Status.Error.missingPatientReceiptReference",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpKit/ErxTask.swift",
+      "line": 155,
+      "symbol": "ErxTask.Status.Error.missingPatientReceiptIdentifier",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpKit/ErxTask.swift",
+      "line": 156,
+      "symbol": "ErxTask.Status.Error.missingPatientReceiptBundle",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpKit/ErxTask.swift",
+      "line": 160,
       "symbol": "ErxTask.Source",
       "symbol_kind": "source.lang.swift.decl.enum",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpKit/ErxTask.swift",
-      "line": 150,
+      "line": 161,
       "symbol": "ErxTask.Source.scanner",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpKit/ErxTask.swift",
-      "line": 151,
+      "line": 162,
       "symbol": "ErxTask.Source.server",
       "symbol_kind": "source.lang.swift.decl.enumelement",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpKit/ErxTask.swift",
-      "line": 252,
+      "line": 219,
+      "symbol": "ErxTask.Status.Error",
+      "symbol_kind": "source.lang.swift.decl.extension",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpKit/ErxTask.swift",
+      "line": 308,
       "symbol": "ErxTask.Practitioner",
       "symbol_kind": "source.lang.swift.decl.struct",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpKit/ErxTask.swift",
-      "line": 253,
+      "line": 309,
       "symbol": "ErxTask.Practitioner.init(lanr:name:qualification:email:address:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpKit/ErxTask.swift",
-      "line": 265,
+      "line": 321,
       "symbol": "ErxTask.Practitioner.lanr",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpKit/ErxTask.swift",
-      "line": 266,
+      "line": 322,
       "symbol": "ErxTask.Practitioner.name",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpKit/ErxTask.swift",
-      "line": 267,
+      "line": 323,
       "symbol": "ErxTask.Practitioner.qualification",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpKit/ErxTask.swift",
-      "line": 268,
+      "line": 324,
       "symbol": "ErxTask.Practitioner.email",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpKit/ErxTask.swift",
-      "line": 269,
+      "line": 325,
       "symbol": "ErxTask.Practitioner.address",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpKit/ErxTask.swift",
-      "line": 272,
+      "line": 328,
       "symbol": "ErxTask.Patient",
       "symbol_kind": "source.lang.swift.decl.struct",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpKit/ErxTask.swift",
-      "line": 273,
+      "line": 329,
       "symbol": "ErxTask.Patient.init(name:address:birthDate:phone:status:insurance:insuranceId:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpKit/ErxTask.swift",
-      "line": 305,
+      "line": 361,
       "symbol": "ErxTask.Organization",
       "symbol_kind": "source.lang.swift.decl.struct",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpKit/ErxTask.swift",
-      "line": 306,
+      "line": 362,
       "symbol": "ErxTask.Organization.init(identifier:name:phone:email:address:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpKit/ErxTask.swift",
-      "line": 318,
+      "line": 374,
       "symbol": "ErxTask.Organization.identifier",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpKit/ErxTask.swift",
-      "line": 319,
+      "line": 375,
       "symbol": "ErxTask.Organization.name",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpKit/ErxTask.swift",
-      "line": 320,
+      "line": 376,
       "symbol": "ErxTask.Organization.phone",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpKit/ErxTask.swift",
-      "line": 321,
+      "line": 377,
       "symbol": "ErxTask.Organization.email",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpKit/ErxTask.swift",
-      "line": 322,
+      "line": 378,
       "symbol": "ErxTask.Organization.address",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpKit/ErxTask.swift",
-      "line": 325,
+      "line": 381,
       "symbol": "ErxTask.WorkRelatedAccident",
       "symbol_kind": "source.lang.swift.decl.struct",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpKit/ErxTask.swift",
-      "line": 326,
+      "line": 382,
       "symbol": "ErxTask.WorkRelatedAccident.init(workPlaceIdentifier:date:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpKit/ErxTask.swift",
-      "line": 332,
+      "line": 388,
       "symbol": "ErxTask.WorkRelatedAccident.workPlaceIdentifier",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpKit/ErxTask.swift",
-      "line": 333,
+      "line": 389,
       "symbol": "ErxTask.WorkRelatedAccident.date",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpKit/ErxTask.swift",
-      "line": 336,
+      "line": 392,
       "symbol": "ErxTask.Medication",
       "symbol_kind": "source.lang.swift.decl.struct",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpKit/ErxTask.swift",
-      "line": 337,
+      "line": 393,
       "symbol": "ErxTask.Medication.init(name:pzn:amount:dosageForm:dose:dosageInstructions:)",
       "symbol_kind": "source.lang.swift.decl.function.method.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpKit/ErxTask.swift",
-      "line": 351,
+      "line": 407,
       "symbol": "ErxTask.Medication.name",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpKit/ErxTask.swift",
-      "line": 352,
+      "line": 408,
       "symbol": "ErxTask.Medication.pzn",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpKit/ErxTask.swift",
-      "line": 353,
+      "line": 409,
       "symbol": "ErxTask.Medication.amount",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpKit/ErxTask.swift",
-      "line": 354,
+      "line": 410,
       "symbol": "ErxTask.Medication.dosageForm",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpKit/ErxTask.swift",
-      "line": 355,
+      "line": 411,
       "symbol": "ErxTask.Medication.dose",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpKit/ErxTask.swift",
-      "line": 356,
+      "line": 412,
       "symbol": "ErxTask.Medication.dosageInstructions",
       "symbol_kind": "source.lang.swift.decl.var.instance",
       "warning": "undocumented"

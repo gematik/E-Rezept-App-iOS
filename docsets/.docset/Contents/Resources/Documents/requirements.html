@@ -20,7 +20,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="index.html">
-           1.2.6 Docs
+           1.2.7 Docs
         </a>
          (5% documented)
       </p>
@@ -188,7 +188,7 @@ try randomGenerator(verifierLength).encodeBase64urlsafe().utf8string
 return self.client.requestChallenge(
 </code></pre>
 <h3 id='a_20499' class='heading'>A_20499</h3>
-<h4 id='code-sources-erpapp-session-keychainstorage-swift-235-code-deletion-of-sso_token-id_token-auth_token' class='heading'><code>../Sources/eRpApp/Session/KeychainStorage.swift:235</code>:  Deletion of SSO_TOKEN, ID_TOKEN, AUTH_TOKEN</h4>
+<h4 id='code-sources-erpapp-session-keychainstorage-swift-244-code-deletion-of-sso_token-id_token-auth_token' class='heading'><code>../Sources/eRpApp/Session/KeychainStorage.swift:244</code>:  Deletion of SSO_TOKEN, ID_TOKEN, AUTH_TOKEN</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20499] Deletion of SSO_TOKEN, ID_TOKEN, AUTH_TOKEN
 // [REQ:gemSpec_eRp_FdV:A_20186] Deletion of SSO_TOKEN, ID_TOKEN, AUTH_TOKEN
 set(can: nil)
@@ -209,12 +209,12 @@ self.storage.set(discovery: nil)
 func isValid(on date: Date) -&gt; Bool {
 </code></pre>
 <h3 id='a_20526-01' class='heading'>A_20526-01</h3>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-swift-255-code-sign-and-verify-with-idp' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.swift:255</code>:  sign and verify with idp</h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-swift-257-code-sign-and-verify-with-idp' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.swift:257</code>:  sign and verify with idp</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_20172]
 // [REQ:gemSpec_IDP_Frontend:A_20526-01] sign and verify with idp
 func signChallengeWithNFCCard(can: CAN,
 </code></pre>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-swift-284-code-verify-with-idp' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.swift:284</code>:  verify with idp</h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-swift-285-code-verify-with-idp' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.swift:285</code>:  verify with idp</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_20172]
 // [REQ:gemSpec_IDP_Frontend:A_20526-01] verify with idp
 private func verifyResultWithIDP(_ signedChallenge: SignedChallenge,
@@ -658,11 +658,11 @@ _ = try? signatureProvider.abort(pairingSession: pairingSession)
 // [REQ:gemSpec_IDP_Frontend:A_21595] Storage Implementation
 class KeychainStorage: SecureUserDataStore, IDPStorage, SecureEGKCertificateStorage {
 </code></pre>
-<h4 id='code-sources-erpapp-session-keychainstorage-swift-193-code-store-within-keychain' class='heading'><code>../Sources/eRpApp/Session/KeychainStorage.swift:193</code>:  Store within keychain</h4>
+<h4 id='code-sources-erpapp-session-keychainstorage-swift-202-code-store-within-keychain' class='heading'><code>../Sources/eRpApp/Session/KeychainStorage.swift:202</code>:  Store within keychain</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_21595] Store within keychain
 _ = try? keychainHelper.setGenericPassword(derBytes, for: egkAuthCertIdentifier)
 </code></pre>
-<h4 id='code-sources-erpapp-session-keychainstorage-swift-220-code-store-within-keychain' class='heading'><code>../Sources/eRpApp/Session/KeychainStorage.swift:220</code>:  Store within keychain</h4>
+<h4 id='code-sources-erpapp-session-keychainstorage-swift-229-code-store-within-keychain' class='heading'><code>../Sources/eRpApp/Session/KeychainStorage.swift:229</code>:  Store within keychain</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_21595] Store within keychain
 success = try keychainHelper.setGenericPassword(keyIdentifier, for: idpBiometricKeyIdentifier)
 </code></pre>
@@ -690,7 +690,7 @@ func deviceInformation() -&gt; RegistrationData.DeviceInformation {
 func deviceInformation() -&gt; RegistrationData.DeviceInformation {
 </code></pre>
 <h3 id='a_21603' class='heading'>A_21603</h3>
-<h4 id='code-sources-erpapp-session-keychainstorage-swift-239-code-certificate' class='heading'><code>../Sources/eRpApp/Session/KeychainStorage.swift:239</code>:  Certificate</h4>
+<h4 id='code-sources-erpapp-session-keychainstorage-swift-248-code-certificate' class='heading'><code>../Sources/eRpApp/Session/KeychainStorage.swift:248</code>:  Certificate</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_21603] Certificate
 set(certificate: nil)
 </code></pre>
@@ -1174,7 +1174,7 @@ case let .toggleTrackingTapped(optIn):
 case let .toggleTrackingTapped(optIn):
 </code></pre>
 <h3 id='a_19089' class='heading'>A_19089</h3>
-<h4 id='code-sources-erpapp-screens-settings-settingsview-swift-244-code-user-info-for-usage-tracking' class='heading'><code>../Sources/eRpApp/Screens/Settings/SettingsView.swift:244</code>:  User info for usage tracking</h4>
+<h4 id='code-sources-erpapp-screens-settings-settingsview-swift-246-code-user-info-for-usage-tracking' class='heading'><code>../Sources/eRpApp/Screens/Settings/SettingsView.swift:246</code>:  User info for usage tracking</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_19089] User info for usage tracking
 Label(title: { Text(L10n.stgTrkTxtExplanation) }, icon: {})
 </code></pre>
@@ -1224,12 +1224,12 @@ return vauAccessTokenProvider.vauBearerToken
 class KeychainStorage: SecureUserDataStore, IDPStorage, SecureEGKCertificateStorage {
 </code></pre>
 <h3 id='a_19229' class='heading'>A_19229</h3>
-<h4 id='code-sources-erpapp-screens-main-prescriptiondetail-prescriptiondetaildomain-swift-125-code' class='heading'><code>../Sources/eRpApp/Screens/Main/PrescriptionDetail/PrescriptionDetailDomain.swift:125</code>:</h4>
+<h4 id='code-sources-erpapp-screens-main-prescriptiondetail-prescriptiondetaildomain-swift-152-code' class='heading'><code>../Sources/eRpApp/Screens/Main/PrescriptionDetail/PrescriptionDetailDomain.swift:152</code>:</h4>
 <pre class="highlight plaintext"><code>// Delete
 // [REQ:gemSpec_eRp_FdV:A_19229]
 case .delete:
 </code></pre>
-<h4 id='code-sources-erpapp-screens-main-prescriptiondetail-prescriptiondetaildomain-swift-131-code' class='heading'><code>../Sources/eRpApp/Screens/Main/PrescriptionDetail/PrescriptionDetailDomain.swift:131</code>:</h4>
+<h4 id='code-sources-erpapp-screens-main-prescriptiondetail-prescriptiondetaildomain-swift-158-code' class='heading'><code>../Sources/eRpApp/Screens/Main/PrescriptionDetail/PrescriptionDetailDomain.swift:158</code>:</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_19229]
 case .confirmedDelete:
 </code></pre>
@@ -1309,26 +1309,26 @@ func urlSession(
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_20167] invalidate/delete unauthorized token
 self.session.invalidateAccessToken()
 </code></pre>
-<h4 id='code-sources-erpapp-screens-main-groupedprescriptionlistdomain-swift-299-code-no-token-not-authorized-show-authenticator-module' class='heading'><code>../Sources/eRpApp/Screens/Main/GroupedPrescriptionListDomain.swift:299</code>:  no token/not authorized, show authenticator module</h4>
+<h4 id='code-sources-erpapp-screens-main-groupedprescriptionlistdomain-swift-302-code-no-token-not-authorized-show-authenticator-module' class='heading'><code>../Sources/eRpApp/Screens/Main/GroupedPrescriptionListDomain.swift:302</code>:  no token/not authorized, show authenticator module</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_20167,A_20172] no token/not authorized, show authenticator module
 if Result.success(false) == isAuthenticated {
 </code></pre>
 <h3 id='a_20172' class='heading'>A_20172</h3>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-swift-233-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.swift:233</code>:</h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-swift-235-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.swift:235</code>:</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_20172]
 func idpChallengePublisher(for profileID: UUID) -&gt; Effect&lt;CardWallReadCardDomain.Action, Never&gt; {
 </code></pre>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-swift-254-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.swift:254</code>:</h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-swift-256-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.swift:256</code>:</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_20172]
 // [REQ:gemSpec_IDP_Frontend:A_20526-01] sign and verify with idp
 func signChallengeWithNFCCard(can: CAN,
 </code></pre>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-swift-283-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.swift:283</code>:</h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-swift-284-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.swift:284</code>:</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_20172]
 // [REQ:gemSpec_IDP_Frontend:A_20526-01] verify with idp
 private func verifyResultWithIDP(_ signedChallenge: SignedChallenge,
 </code></pre>
-<h4 id='code-sources-erpapp-screens-main-groupedprescriptionlistdomain-swift-299-code-no-token-not-authorized-show-authenticator-module' class='heading'><code>../Sources/eRpApp/Screens/Main/GroupedPrescriptionListDomain.swift:299</code>:  no token/not authorized, show authenticator module</h4>
+<h4 id='code-sources-erpapp-screens-main-groupedprescriptionlistdomain-swift-302-code-no-token-not-authorized-show-authenticator-module' class='heading'><code>../Sources/eRpApp/Screens/Main/GroupedPrescriptionListDomain.swift:302</code>:  no token/not authorized, show authenticator module</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_20167,A_20172] no token/not authorized, show authenticator module
 if Result.success(false) == isAuthenticated {
 </code></pre>
@@ -1348,20 +1348,20 @@ public func searchPharmacies(by searchTerm: String,
 state.searchState = .searchRunning
 </code></pre>
 <h3 id='a_20184' class='heading'>A_20184</h3>
-<h4 id='code-sources-erpapp-session-standardsessioncontainer-swift-76-code-keychain-storage-encrypts-session-ssl-tokens' class='heading'><code>../Sources/eRpApp/Session/StandardSessionContainer.swift:76</code>:  Keychain storage encrypts session/ssl tokens</h4>
+<h4 id='code-sources-erpapp-session-standardsessioncontainer-swift-79-code-keychain-storage-encrypts-session-ssl-tokens' class='heading'><code>../Sources/eRpApp/Session/StandardSessionContainer.swift:79</code>:  Keychain storage encrypts session/ssl tokens</h4>
 <pre class="highlight plaintext"><code>storage: secureUserStore, // [REQ:gemSpec_eRp_FdV:A_20184] Keychain storage encrypts session/ssl tokens
 schedulers: schedulers,
 </code></pre>
-<h4 id='code-sources-erpapp-session-standardsessioncontainer-swift-94-code-no-persistent-storage-for-idp-biometrics-session' class='heading'><code>../Sources/eRpApp/Session/StandardSessionContainer.swift:94</code>:  No persistent storage for idp biometrics session</h4>
+<h4 id='code-sources-erpapp-session-standardsessioncontainer-swift-97-code-no-persistent-storage-for-idp-biometrics-session' class='heading'><code>../Sources/eRpApp/Session/StandardSessionContainer.swift:97</code>:  No persistent storage for idp biometrics session</h4>
 <pre class="highlight plaintext"><code>storage: MemoryStorage(), // [REQ:gemSpec_eRp_FdV:A_20184] No persistent storage for idp biometrics session
 schedulers: schedulers,
 </code></pre>
-<h4 id='code-sources-erpapp-session-keychainstorage-swift-112-code' class='heading'><code>../Sources/eRpApp/Session/KeychainStorage.swift:112</code>:</h4>
+<h4 id='code-sources-erpapp-session-keychainstorage-swift-121-code' class='heading'><code>../Sources/eRpApp/Session/KeychainStorage.swift:121</code>:</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_20184]
 let success: Bool
 </code></pre>
 <h3 id='a_20186' class='heading'>A_20186</h3>
-<h4 id='code-sources-erpapp-session-keychainstorage-swift-236-code-deletion-of-sso_token-id_token-auth_token' class='heading'><code>../Sources/eRpApp/Session/KeychainStorage.swift:236</code>:  Deletion of SSO_TOKEN, ID_TOKEN, AUTH_TOKEN</h4>
+<h4 id='code-sources-erpapp-session-keychainstorage-swift-245-code-deletion-of-sso_token-id_token-auth_token' class='heading'><code>../Sources/eRpApp/Session/KeychainStorage.swift:245</code>:  Deletion of SSO_TOKEN, ID_TOKEN, AUTH_TOKEN</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20499] Deletion of SSO_TOKEN, ID_TOKEN, AUTH_TOKEN
 // [REQ:gemSpec_eRp_FdV:A_20186] Deletion of SSO_TOKEN, ID_TOKEN, AUTH_TOKEN
 set(can: nil)
@@ -1450,7 +1450,7 @@ struct IDPTokenView: View {
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2022 <a class="link" href="https://www.gematik.de" target="_blank" rel="external">gematik GmbH</a>. All rights reserved. (Last updated: 2022-04-04)</p>
+      <p>&copy; 2022 <a class="link" href="https://www.gematik.de" target="_blank" rel="external">gematik GmbH</a>. All rights reserved. (Last updated: 2022-04-19)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
     </section>
   </body>

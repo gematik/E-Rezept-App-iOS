@@ -1198,6 +1198,27 @@
       "warning": "undocumented"
     },
     {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/ShipmentInfo/ShipmentInfoCoreDataStore.swift",
+      "line": 139,
+      "symbol": "ShipmentInfoCoreDataStore.Error",
+      "symbol_kind": "source.lang.swift.decl.enum",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/ShipmentInfo/ShipmentInfoCoreDataStore.swift",
+      "line": 140,
+      "symbol": "ShipmentInfoCoreDataStore.Error.noMatchingEntity",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/ShipmentInfo/ShipmentInfoCoreDataStore.swift",
+      "line": 141,
+      "symbol": "ShipmentInfoCoreDataStore.Error.internalError",
+      "symbol_kind": "source.lang.swift.decl.enumelement",
+      "warning": "undocumented"
+    },
+    {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/UserStore/UserDefaultsStore.swift",
       "line": 13,
       "symbol": "UserDefaultsStore.init(userDefaults:)",

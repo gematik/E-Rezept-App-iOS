@@ -325,307 +325,314 @@
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpApp/Common/SFSymbolName.swift",
       "line": 54,
-      "symbol": "SFSymbolName.shield",
+      "symbol": "SFSymbolName.squareAndPencil",
       "symbol_kind": "source.lang.swift.decl.var.static",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpApp/Common/SFSymbolName.swift",
       "line": 55,
-      "symbol": "SFSymbolName.heartTextSquare",
+      "symbol": "SFSymbolName.shield",
       "symbol_kind": "source.lang.swift.decl.var.static",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpApp/Common/SFSymbolName.swift",
       "line": 56,
-      "symbol": "SFSymbolName.docPlaintext",
+      "symbol": "SFSymbolName.heartTextSquare",
       "symbol_kind": "source.lang.swift.decl.var.static",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpApp/Common/SFSymbolName.swift",
       "line": 57,
-      "symbol": "SFSymbolName.copy",
+      "symbol": "SFSymbolName.docPlaintext",
       "symbol_kind": "source.lang.swift.decl.var.static",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpApp/Common/SFSymbolName.swift",
       "line": 58,
-      "symbol": "SFSymbolName.map",
+      "symbol": "SFSymbolName.copy",
       "symbol_kind": "source.lang.swift.decl.var.static",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpApp/Common/SFSymbolName.swift",
       "line": 59,
-      "symbol": "SFSymbolName.arrowUpForward",
+      "symbol": "SFSymbolName.map",
       "symbol_kind": "source.lang.swift.decl.var.static",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpApp/Common/SFSymbolName.swift",
       "line": 60,
-      "symbol": "SFSymbolName.house",
+      "symbol": "SFSymbolName.arrowUpForward",
       "symbol_kind": "source.lang.swift.decl.var.static",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpApp/Common/SFSymbolName.swift",
       "line": 61,
-      "symbol": "SFSymbolName.key",
+      "symbol": "SFSymbolName.house",
       "symbol_kind": "source.lang.swift.decl.var.static",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpApp/Common/SFSymbolName.swift",
       "line": 62,
-      "symbol": "SFSymbolName.arrowUpArrowDown",
+      "symbol": "SFSymbolName.key",
       "symbol_kind": "source.lang.swift.decl.var.static",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpApp/Common/SFSymbolName.swift",
       "line": 63,
+      "symbol": "SFSymbolName.arrowUpArrowDown",
+      "symbol_kind": "source.lang.swift.decl.var.static",
+      "warning": "undocumented"
+    },
+    {
+      "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpApp/Common/SFSymbolName.swift",
+      "line": 64,
       "symbol": "SFSymbolName.play",
       "symbol_kind": "source.lang.swift.decl.var.static",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpApp/Common/SFSymbolName.swift",
-      "line": 65,
+      "line": 66,
       "symbol": "SFSymbolName.numbers1circle",
       "symbol_kind": "source.lang.swift.decl.var.static",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpApp/Common/SFSymbolName.swift",
-      "line": 66,
+      "line": 67,
       "symbol": "SFSymbolName.numbers2circle",
       "symbol_kind": "source.lang.swift.decl.var.static",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpApp/Common/SFSymbolName.swift",
-      "line": 67,
+      "line": 68,
       "symbol": "SFSymbolName.numbers3circle",
       "symbol_kind": "source.lang.swift.decl.var.static",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpApp/Common/SFSymbolName.swift",
-      "line": 69,
+      "line": 70,
       "symbol": "SFSymbolName.numbers1circleFill",
       "symbol_kind": "source.lang.swift.decl.var.static",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpApp/Common/SFSymbolName.swift",
-      "line": 70,
+      "line": 71,
       "symbol": "SFSymbolName.numbers2circleFill",
       "symbol_kind": "source.lang.swift.decl.var.static",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpApp/Common/SFSymbolName.swift",
-      "line": 71,
+      "line": 72,
       "symbol": "SFSymbolName.numbers3circleFill",
       "symbol_kind": "source.lang.swift.decl.var.static",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpApp/Common/SFSymbolName.swift",
-      "line": 73,
+      "line": 74,
       "symbol": "SFSymbolName.cross",
       "symbol_kind": "source.lang.swift.decl.var.static",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpApp/Common/SFSymbolName.swift",
-      "line": 74,
+      "line": 75,
       "symbol": "SFSymbolName.circle",
       "symbol_kind": "source.lang.swift.decl.var.static",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpApp/Common/SFSymbolName.swift",
-      "line": 75,
+      "line": 76,
       "symbol": "SFSymbolName.circleFill",
       "symbol_kind": "source.lang.swift.decl.var.static",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpApp/Common/SFSymbolName.swift",
-      "line": 76,
+      "line": 77,
       "symbol": "SFSymbolName.checkmarkCircle",
       "symbol_kind": "source.lang.swift.decl.var.static",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpApp/Common/SFSymbolName.swift",
-      "line": 77,
+      "line": 78,
       "symbol": "SFSymbolName.checkmarkCircleFill",
       "symbol_kind": "source.lang.swift.decl.var.static",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpApp/Common/SFSymbolName.swift",
-      "line": 78,
+      "line": 79,
       "symbol": "SFSymbolName.xmarkCircleFill",
       "symbol_kind": "source.lang.swift.decl.var.static",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpApp/Common/SFSymbolName.swift",
-      "line": 80,
+      "line": 81,
       "symbol": "SFSymbolName.faceId",
       "symbol_kind": "source.lang.swift.decl.var.static",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpApp/Common/SFSymbolName.swift",
-      "line": 81,
+      "line": 82,
       "symbol": "SFSymbolName.touchId",
       "symbol_kind": "source.lang.swift.decl.var.static",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpApp/Common/SFSymbolName.swift",
-      "line": 82,
+      "line": 83,
       "symbol": "SFSymbolName.lockOpen",
       "symbol_kind": "source.lang.swift.decl.var.static",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpApp/Common/SFSymbolName.swift",
-      "line": 83,
+      "line": 84,
       "symbol": "SFSymbolName.trash",
       "symbol_kind": "source.lang.swift.decl.var.static",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpApp/Common/SFSymbolName.swift",
-      "line": 84,
+      "line": 85,
       "symbol": "SFSymbolName.bag",
       "symbol_kind": "source.lang.swift.decl.var.static",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpApp/Common/SFSymbolName.swift",
-      "line": 85,
+      "line": 86,
       "symbol": "SFSymbolName.location",
       "symbol_kind": "source.lang.swift.decl.var.static",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpApp/Common/SFSymbolName.swift",
-      "line": 86,
+      "line": 87,
       "symbol": "SFSymbolName.locationFill",
       "symbol_kind": "source.lang.swift.decl.var.static",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpApp/Common/SFSymbolName.swift",
-      "line": 87,
+      "line": 88,
       "symbol": "SFSymbolName.chevronUp",
       "symbol_kind": "source.lang.swift.decl.var.static",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpApp/Common/SFSymbolName.swift",
-      "line": 88,
+      "line": 89,
       "symbol": "SFSymbolName.chevronDown",
       "symbol_kind": "source.lang.swift.decl.var.static",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpApp/Common/SFSymbolName.swift",
-      "line": 89,
+      "line": 90,
       "symbol": "SFSymbolName.chevronRight",
       "symbol_kind": "source.lang.swift.decl.var.static",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpApp/Common/SFSymbolName.swift",
-      "line": 90,
+      "line": 91,
       "symbol": "SFSymbolName.chevronLeft",
       "symbol_kind": "source.lang.swift.decl.var.static",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpApp/Common/SFSymbolName.swift",
-      "line": 91,
+      "line": 92,
       "symbol": "SFSymbolName.chevronForward",
       "symbol_kind": "source.lang.swift.decl.var.static",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpApp/Common/SFSymbolName.swift",
-      "line": 92,
+      "line": 93,
       "symbol": "SFSymbolName.chevronBackward",
       "symbol_kind": "source.lang.swift.decl.var.static",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpApp/Common/SFSymbolName.swift",
-      "line": 93,
+      "line": 94,
       "symbol": "SFSymbolName.filter",
       "symbol_kind": "source.lang.swift.decl.var.static",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpApp/Common/SFSymbolName.swift",
-      "line": 94,
+      "line": 95,
       "symbol": "SFSymbolName.rectangleAndPencilAndEllipsis",
       "symbol_kind": "source.lang.swift.decl.var.static",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpApp/Common/SFSymbolName.swift",
-      "line": 95,
+      "line": 96,
       "symbol": "SFSymbolName.eye",
       "symbol_kind": "source.lang.swift.decl.var.static",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpApp/Common/SFSymbolName.swift",
-      "line": 96,
+      "line": 97,
       "symbol": "SFSymbolName.eyeSlash",
       "symbol_kind": "source.lang.swift.decl.var.static",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpApp/Common/SFSymbolName.swift",
-      "line": 97,
+      "line": 98,
       "symbol": "SFSymbolName.calendarWarning",
       "symbol_kind": "source.lang.swift.decl.var.static",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpApp/Common/SFSymbolName.swift",
-      "line": 98,
+      "line": 99,
       "symbol": "SFSymbolName.clockWarning",
       "symbol_kind": "source.lang.swift.decl.var.static",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpApp/Common/SFSymbolName.swift",
-      "line": 99,
+      "line": 100,
       "symbol": "SFSymbolName.hourglass",
       "symbol_kind": "source.lang.swift.decl.var.static",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpApp/Common/SFSymbolName.swift",
-      "line": 102,
+      "line": 103,
       "symbol": "UnicodeCharacter",
       "symbol_kind": "source.lang.swift.decl.enum",
       "warning": "undocumented"
     },
     {
       "file": "/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpApp/Common/SFSymbolName.swift",
-      "line": 103,
+      "line": 104,
       "symbol": "UnicodeCharacter.bullet",
       "symbol_kind": "source.lang.swift.decl.var.static",
       "warning": "undocumented"
