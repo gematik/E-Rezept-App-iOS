@@ -123,7 +123,7 @@ extension RedeemMatrixCodeDomain.Environment {
 extension RedeemMatrixCodeDomain {
     enum Dummies {
         static let demoSessionContainer = DummyUserSessionContainer()
-        static let state = State(groupedPrescription: GroupedPrescription.Dummies.twoPrescriptions)
+        static let state = State(groupedPrescription: GroupedPrescription.Dummies.prescriptions)
         static let environment = Environment(
             schedulers: Schedulers(),
             matrixCodeGenerator: DefaultErxTaskMatrixCodeGenerator(),

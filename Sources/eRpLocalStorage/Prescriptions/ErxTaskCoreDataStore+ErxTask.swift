@@ -69,6 +69,7 @@ extension ErxTaskCoreDataStore {
             .eraseToAnyPublisher()
     }
 
+    // tag::ErxTaskCoreDataStoreExample1[]
     /// List all tasks contained in the store
     public func listAllTasks() -> AnyPublisher<[ErxTask], LocalStoreError> {
         let request: NSFetchRequest<ErxTaskEntity> = ErxTaskEntity.fetchRequest()
@@ -83,6 +84,8 @@ extension ErxTaskCoreDataStore {
             .map { list in list.compactMap(ErxTask.init) }
             .eraseToAnyPublisher()
     }
+
+    // end::ErxTaskCoreDataStoreExample1[]
 
     /// List all tasks without relationship to a `Profile`
     public func listAllTasksWithoutProfile() -> AnyPublisher<[ErxTask], LocalStoreError> {

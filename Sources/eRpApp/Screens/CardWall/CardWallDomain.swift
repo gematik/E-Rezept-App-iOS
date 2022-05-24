@@ -193,7 +193,8 @@ enum CardWallDomain {
                 schedulers: environment.schedulers,
                 profileDataStore: environment.userSession.profileDataStore,
                 signatureProvider: environment.signatureProvider,
-                sessionProvider: environment.sessionProvider
+                sessionProvider: environment.sessionProvider,
+                nfcSessionProvider: environment.userSession.nfcSessionProvider
             )
         }
 

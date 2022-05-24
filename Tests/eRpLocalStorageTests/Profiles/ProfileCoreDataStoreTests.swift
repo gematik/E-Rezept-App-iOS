@@ -137,7 +137,7 @@ final class ProfileCoreDataStoreTests: XCTestCase {
 
         expect(receivedCompletions.count) == 0
         expect(receivedListAllProfileValues.count).toEventually(equal(1))
-        // than two profiles should be received (without saving erxtTasks and erxAuditEvents)
+        // then two profiles should be received (without saving erxtTasks and erxAuditEvents)
         expect(receivedListAllProfileValues[0].count) == 2
         let receivedProfiles = receivedListAllProfileValues[0]
         expect(receivedProfiles).to(contain(profileSimple))
@@ -207,7 +207,7 @@ final class ProfileCoreDataStoreTests: XCTestCase {
 
         expect(receivedCompletions.count) == 0
         expect(receivedListAllProfileValues.count).toEventually(equal(1))
-        // than two profiles should be received
+        // then two profiles should be received
         expect(receivedListAllProfileValues[0].count) == 2
         let receivedProfiles = receivedListAllProfileValues[0]
         expect(receivedProfiles[0]) == heinz
@@ -243,7 +243,7 @@ final class ProfileCoreDataStoreTests: XCTestCase {
                 receivedListAllProfileValues.append(profiles)
             })
 
-        // than there should be only one in store with the updated values
+        // then there should be only one in store with the updated values
         expect(receivedListAllProfileValues.count).toEventually(equal(1))
         expect(receivedListAllProfileValues[0].count) == 1
         let result = receivedListAllProfileValues[0].first
@@ -282,7 +282,7 @@ final class ProfileCoreDataStoreTests: XCTestCase {
         expect(receivedDeleteCompletions.count).toEventually(equal(1))
         expect(receivedDeleteCompletions.first) == .finished
 
-        // than
+        // then
         var receivedListAllProfileValues = [[Profile]]()
         _ = store.listAllProfiles()
             .sink(receiveCompletion: { _ in
@@ -335,7 +335,7 @@ final class ProfileCoreDataStoreTests: XCTestCase {
                 receivedFetchResult = result
             })
 
-        // than it should be the one we expect
+        // then it should be the one we expect
         expect(receivedFetchResult).toEventually(equal(profileToFetch))
 
         cancellable.cancel()
@@ -354,7 +354,7 @@ final class ProfileCoreDataStoreTests: XCTestCase {
                 receivedNoResult = result == nil
             })
 
-        // than it should return none
+        // then it should return none
         expect(receivedNoResult).toEventually(beTrue())
 
         cancellable.cancel()
@@ -389,7 +389,7 @@ final class ProfileCoreDataStoreTests: XCTestCase {
                 receivedListAllProfileValues.append(profiles)
             })
 
-        // than
+        // then
         expect(receivedListAllProfileValues.count).toEventually(equal(1))
         expect(receivedListAllProfileValues.first?.count) == 1
         expect(receivedListAllProfileValues.first?.first) == expectedResult
@@ -438,7 +438,7 @@ final class ProfileCoreDataStoreTests: XCTestCase {
             })
         expect(receivedCompletions.count) == 0
         expect(receivedListAllProfileValues.count).toEventually(equal(1))
-        // than the stored profile with tasks and auditEvents should be returned
+        // then the stored profile with tasks and auditEvents should be returned
         expect(receivedListAllProfileValues.first?.count) == 1
         guard let profile = receivedListAllProfileValues.first?.first else {
             fail("expected to receive a profile")

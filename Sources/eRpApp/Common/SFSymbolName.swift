@@ -65,6 +65,7 @@ public enum SFSymbolName {
     public static let arrowRight = "arrow.right"
     public static let arrowRightCircleFill = "arrow.right.circle.fill"
     public static let pencil = "pencil"
+    public static let squareAndPencil = "square.and.pencil"
     public static let shield = "shield"
     public static let heartTextSquare = "heart.text.square"
     public static let docPlaintext = "doc.plaintext"

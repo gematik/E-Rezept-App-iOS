@@ -76,7 +76,7 @@ final class MainViewSnapshotTests: XCTestCase {
             id: "1",
             title: "Hausarztpraxis Dr. Topp-Glücklich",
             authoredOn: "2020-02-03",
-            prescriptions: [GroupedPrescription.Prescription(erxTask: ErxTask.Dummies.erxTaskReady)],
+            prescriptions: [GroupedPrescription.Prescription.Dummies.prescriptionReady],
             displayType: .fullDetail
         )
 
@@ -114,7 +114,7 @@ final class MainViewSnapshotTests: XCTestCase {
 
     func testMainView_LowDetailPrescriptions() {
         let state = GroupedPrescriptionListDomain.State(
-            groupedPrescriptions: [GroupedPrescription.Dummies.twoScannedPrescriptions]
+            groupedPrescriptions: [GroupedPrescription.Dummies.scannedPrescriptions]
         )
 
         let sut = MainView(

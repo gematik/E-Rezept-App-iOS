@@ -185,8 +185,7 @@ extension ErxTaskScannerView {
                             Spacer()
                             Button(action: action) {
                                 HStack {
-                                    Text(String(format: L10n.scnBtnScanningDone.text, // Plural count is ignored
-                                                scannedBatches.count))
+                                    Text(L10n.scnBtnScanningDone(scannedBatches.count).text) // Plural count is ignored
                                         .fontWeight(.semibold)
                                         .font(.system(size: 18))
                                         .foregroundColor(Colors.systemColorWhite)

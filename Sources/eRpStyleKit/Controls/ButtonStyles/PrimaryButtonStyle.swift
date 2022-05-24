@@ -75,50 +75,98 @@ extension ButtonStyle where Self == PrimaryButtonStyle {
 
 struct PrimaryButtonStyle_Preview: PreviewProvider {
     static var previews: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 16) {
-                Group {
-                    Text("Primary Plain")
-                        .font(.title)
-                        .padding(.horizontal)
+        Group {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 16) {
+                    Group {
+                        Text("Primary Plain")
+                            .font(.title)
+                            .padding(.horizontal)
 
-                    Button(action: {}, label: { Text("Simple") })
-                        .buttonStyle(PrimaryButtonStyle(enabled: true, destructive: false))
-                        .disabled(true)
+                        Button(action: {}, label: { Text("Simple") })
+                            .buttonStyle(PrimaryButtonStyle(enabled: true, destructive: false))
+                            .disabled(true)
 
-                    Button(action: {}, label: { Text("Simple") })
-                        .environment(\.isEnabled, false)
-                        .buttonStyle(PrimaryButtonStyle(enabled: false, destructive: false))
+                        Button(action: {}, label: { Text("Simple") })
+                            .environment(\.isEnabled, false)
+                            .buttonStyle(PrimaryButtonStyle(enabled: false, destructive: false))
 
-                    Button(action: {}, label: { Label("Label and Icon", systemImage: "qrcode") })
-                        .buttonStyle(PrimaryButtonStyle(enabled: true, destructive: false))
+                        Button(action: {}, label: { Label("Label and Icon", systemImage: "qrcode") })
+                            .buttonStyle(PrimaryButtonStyle(enabled: true, destructive: false))
 
-                    Button(action: {}, label: { Label("Label and Icon", systemImage: "qrcode") })
-                        .buttonStyle(PrimaryButtonStyle(enabled: false, destructive: false))
+                        Button(action: {}, label: { Label("Label and Icon", systemImage: "qrcode") })
+                            .buttonStyle(PrimaryButtonStyle(enabled: false, destructive: false))
+                    }
+
+                    Group {
+                        Text("Primary Destructive")
+                            .font(.title)
+                            .padding(.horizontal)
+
+                        Button(action: {}, label: { Text("Simple") })
+                            .buttonStyle(PrimaryButtonStyle(enabled: true, destructive: true))
+
+                        Button(action: {}, label: { Text("Simple") })
+                            .buttonStyle(PrimaryButtonStyle(enabled: false, destructive: true))
+
+                        Button(action: {}, label: { Label("Label and Icon", systemImage: "qrcode") })
+                            .buttonStyle(PrimaryButtonStyle(enabled: true, destructive: true))
+
+                        Button(action: {}, label: { Label("Label and Icon", systemImage: "qrcode") })
+                            .buttonStyle(PrimaryButtonStyle(enabled: false, destructive: true))
+                    }
+                    Spacer()
                 }
-
-                Group {
-                    Text("Primary Destructive")
-                        .font(.title)
-                        .padding(.horizontal)
-
-                    Button(action: {}, label: { Text("Simple") })
-                        .buttonStyle(PrimaryButtonStyle(enabled: true, destructive: true))
-
-                    Button(action: {}, label: { Text("Simple") })
-                        .buttonStyle(PrimaryButtonStyle(enabled: false, destructive: true))
-
-                    Button(action: {}, label: { Label("Label and Icon", systemImage: "qrcode") })
-                        .buttonStyle(PrimaryButtonStyle(enabled: true, destructive: true))
-
-                    Button(action: {}, label: { Label("Label and Icon", systemImage: "qrcode") })
-                        .buttonStyle(PrimaryButtonStyle(enabled: false, destructive: true))
-                }
-                Spacer()
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+            .preferredColorScheme(.dark)
+            .background(Color(.secondarySystemBackground))
+
+            ScrollView {
+                VStack(alignment: .leading, spacing: 16) {
+                    Group {
+                        Text("Primary Plain")
+                            .font(.title)
+                            .padding(.horizontal)
+
+                        Button(action: {}, label: { Text("Simple") })
+                            .buttonStyle(PrimaryButtonStyle(enabled: true, destructive: false))
+                            .disabled(true)
+
+                        Button(action: {}, label: { Text("Simple") })
+                            .environment(\.isEnabled, false)
+                            .buttonStyle(PrimaryButtonStyle(enabled: false, destructive: false))
+
+                        Button(action: {}, label: { Label("Label and Icon", systemImage: "qrcode") })
+                            .buttonStyle(PrimaryButtonStyle(enabled: true, destructive: false))
+
+                        Button(action: {}, label: { Label("Label and Icon", systemImage: "qrcode") })
+                            .buttonStyle(PrimaryButtonStyle(enabled: false, destructive: false))
+                    }
+
+                    Group {
+                        Text("Primary Destructive")
+                            .font(.title)
+                            .padding(.horizontal)
+
+                        Button(action: {}, label: { Text("Simple") })
+                            .buttonStyle(PrimaryButtonStyle(enabled: true, destructive: true))
+
+                        Button(action: {}, label: { Text("Simple") })
+                            .buttonStyle(PrimaryButtonStyle(enabled: false, destructive: true))
+
+                        Button(action: {}, label: { Label("Label and Icon", systemImage: "qrcode") })
+                            .buttonStyle(PrimaryButtonStyle(enabled: true, destructive: true))
+
+                        Button(action: {}, label: { Label("Label and Icon", systemImage: "qrcode") })
+                            .buttonStyle(PrimaryButtonStyle(enabled: false, destructive: false))
+                    }
+                    Spacer()
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+            }
+            .preferredColorScheme(.light)
+//            .background(Color(.secondarySystemBackground))
         }
-        .preferredColorScheme(.dark)
-        .background(Color(.secondarySystemBackground))
     }
 }

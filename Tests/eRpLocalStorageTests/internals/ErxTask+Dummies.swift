@@ -106,9 +106,9 @@ extension ErxTask {
             id: String,
             status: ErxTask.Status = .ready,
             authoredOn: String = FHIRDateFormatter.shared.stringWithLongUTCTimeZone(from: Date()),
-            practitioner: Practitioner,
-            patient: Patient,
-            organisation: Organization,
+            practitioner: Practitioner = demoPractitionerStorchhausen,
+            patient: Patient = demoPatientAnna,
+            organisation: Organization = demoOrganizationStorchhausen,
             medication _: ErxTask.Medication = ErxTask.Medication.Dummies.medication1,
             medicationDispense: ErxTask.MedicationDispense? = nil
         ) -> ErxTask {

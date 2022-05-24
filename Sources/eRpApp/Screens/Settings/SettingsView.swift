@@ -85,6 +85,8 @@ struct SettingsView: View {
 
                     SecuritySectionView(store: store)
 
+                    SettingsContactInfoView()
+
                     SettingsLegalInfoView(store: store)
 
                     BottomSectionView(store: store)

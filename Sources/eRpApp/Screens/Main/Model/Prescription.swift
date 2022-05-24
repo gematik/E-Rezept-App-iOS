@@ -21,13 +21,14 @@ import Foundation
 import SwiftUI
 
 extension GroupedPrescription {
-    /// `Prescription ` acts as an view model for an `ErxTask` to better fit the presentation logic
+    /// `Prescription` acts as a view model for an `ErxTask` to better fit the presentation logic
     @dynamicMemberLookup
     struct Prescription: Equatable, Hashable {
-        enum Status {
+        enum Status: Equatable {
             case open(until: String)
             case archived(message: String)
             case undefined
+            case error(message: String)
         }
 
         let erxTask: ErxTask
@@ -64,7 +65,7 @@ extension GroupedPrescription {
             dateFormatter: DateFormatter = globals.uiDateFormatter
         ) -> Status {
             switch erxTask.status {
-            case .ready:
+            case .ready, .inProgress:
                 guard erxTask.expiresOn != nil || erxTask.acceptedUntil != nil else {
                     return .open(until: L10n.prscFdTxtNa.text)
                 }
@@ -72,21 +73,13 @@ extension GroupedPrescription {
                 if let acceptedUntilDate = erxTask.acceptedUntil?.date,
                    let remainingDays = date.days(until: acceptedUntilDate),
                    remainingDays > 0 {
-                    let remainingDaysOfAcceptString = String.localizedStringWithFormat(
-                        L10n.erxTxtAcceptedUntil.text,
-                        remainingDays
-                    )
-                    return .open(until: remainingDaysOfAcceptString)
+                    return .open(until: L10n.erxTxtAcceptedUntil(remainingDays).text)
                 }
 
                 if let expiresDate = erxTask.expiresOn?.date,
                    let remainingDays = date.days(until: expiresDate),
                    remainingDays > 0 {
-                    let remainingDaysOfExpireString = String.localizedStringWithFormat(
-                        L10n.erxTxtExpiresIn.text,
-                        remainingDays
-                    )
-                    return .open(until: remainingDaysOfExpireString)
+                    return .open(until: L10n.erxTxtExpiresIn(remainingDays).text)
                 }
 
                 return .archived(message: L10n.erxTxtInvalid.text)
@@ -98,9 +91,26 @@ extension GroupedPrescription {
                 } else {
                     return .archived(message: L10n.dtlTxtMedRedeemedOn(L10n.prscFdTxtNa.text).text)
                 }
-            case .draft, .inProgress, .cancelled, .undefined:
+            case .draft, .cancelled, .undefined:
                 return .undefined
+            case .error:
+                if let authoredOn = erxTask.authoredOn?.date {
+                    let localizedDateString = dateFormatter.string(from: authoredOn)
+                    return .error(message: L10n.dtlTxtMedAuthoredOn(localizedDateString).text)
+                } else {
+                    return .error(message: L10n.dtlTxtMedRedeemedOn(L10n.prscFdTxtNa.text).text)
+                }
             }
+        }
+
+        var medicationText: String {
+            if let actualMedicationName = actualMedication?.name {
+                return actualMedicationName
+            }
+            if case .error = viewStatus {
+                return L10n.prscTxtFallbackName.text
+            }
+            return L10n.prscFdTxtNa.text
         }
 
         var statusMessage: String {
@@ -108,14 +118,26 @@ extension GroupedPrescription {
             case let .open(until: localizedString): return localizedString
             case let .archived(message: localizedString): return localizedString
             case .undefined: return L10n.prscFdTxtNa.text
+            case let .error(message: localizedString): return localizedString
             }
         }
 
         var isArchived: Bool {
             switch viewStatus {
             case .archived(message: _): return true
-            case .open(until: _), .undefined: return false
+            case .open(until: _),
+                 .undefined: return false
+            case .error: return false
             }
+        }
+
+        var errorString: String {
+            if case let .error(.decoding(message)) = erxTask.status {
+                return message
+            } else if case let .error(.unknown(message)) = erxTask.status {
+                return message
+            }
+            return "No error message available"
         }
 
         /// `true` if the medication has been dispensed and substituted by an alternative medication, `false` otherwise.
@@ -173,6 +195,7 @@ extension GroupedPrescription.Prescription {
         case (.cancelled, _): return L10n.prscStatusCanceled.key
         case (.draft, _),
              (.undefined, _): return L10n.prscStatusUndefined.key
+        case (.error, _): return L10n.prscStatusError.key
         }
     }
 
@@ -185,6 +208,7 @@ extension GroupedPrescription.Prescription {
         case (.cancelled, _): return Image(systemName: SFSymbolName.cross)
         case (.draft, _),
              (.undefined, _): return Image(systemName: SFSymbolName.calendarWarning)
+        case (.error, _): return Image(systemName: SFSymbolName.exclamationMark)
         }
     }
 
@@ -197,6 +221,7 @@ extension GroupedPrescription.Prescription {
         case (.ready, _): return Colors.secondary900
         case (.inProgress, _): return Colors.yellow900
         case (.cancelled, _): return Colors.red900
+        case (.error, _): return Colors.red900
         }
     }
 
@@ -209,6 +234,7 @@ extension GroupedPrescription.Prescription {
         case (.ready, _): return Colors.secondary500
         case (.inProgress, _): return Colors.yellow500
         case (.cancelled, _): return Colors.red500
+        case (.error, _): return Colors.red500
         }
     }
 
@@ -221,6 +247,7 @@ extension GroupedPrescription.Prescription {
         case (.ready, _): return Colors.secondary100
         case (.inProgress, _): return Colors.yellow100
         case (.cancelled, _): return Colors.red100
+        case (.error, _): return Colors.red100
         }
     }
 }
@@ -251,5 +278,13 @@ extension GroupedPrescription.Prescription: Comparable {
 
     public func hash(into hasher: inout Hasher) {
         hasher.combine(erxTask.identifier)
+    }
+}
+
+extension GroupedPrescription.Prescription {
+    enum Dummies {
+        static let prescriptionReady = GroupedPrescription.Prescription(erxTask: ErxTask.Dummies.erxTaskReady)
+        static let prescriptionError = GroupedPrescription.Prescription(erxTask: ErxTask.Dummies.erxTaskError)
+        static let prescriptions = ErxTask.Dummies.erxTasks.map { GroupedPrescription.Prescription(erxTask: $0) }
     }
 }

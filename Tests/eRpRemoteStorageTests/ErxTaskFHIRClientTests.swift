@@ -61,7 +61,8 @@ final class ErxTaskFHIRClientTests: XCTestCase {
 
                 expect(erxTaskBundle?.id) == "61704e3f-1e4f-11b2-80f4-b806a73c0cd0"
                 expect(erxTaskBundle?.status) == .ready
-                expect(erxTaskBundle?.accessCode) == "7eccd529292631f6a7cd120b57ded23062c35932cc721bfd32b08c5fb188b642"
+                expect(erxTaskBundle?.accessCode) ==
+                    "7eccd529292631f6a7cd120b57ded23062c35932cc721bfd32b08c5fb188b642"
                 expect(erxTaskBundle?.fullUrl).to(beNil())
                 expect(erxTaskBundle?.medication?.name) == "Sumatriptan-1a Pharma 100 mg Tabletten"
                 expect(erxTaskBundle?.authoredOn) == "2020-02-03T00:00:00+00:00"
@@ -71,6 +72,43 @@ final class ErxTaskFHIRClientTests: XCTestCase {
                 expect(erxTaskBundle?.author) == "Hausarztpraxis Dr. Topp-Glücklich"
                 expect(erxTaskBundle?.medication?.dosageForm) == "TAB"
                 expect(erxTaskBundle?.medication?.amount) == 12
+            })
+    }
+
+    func testFHIRClientTaskByIdInvalidFhirJson() {
+        let expectedResponse = load(resource: "getTaskResponse_invalid_fhir_61704e3f-1e4f-11b2-80f4-b806a73c0cd0")
+        let expectedErxTaskStatusDecodeErrorMessage =
+            """
+            authoredOn: 2021-03-24T08:35:32.311370977+00:00
+            pvsPruefnummer: Y/400/1910/36/346
+            JSON codingPath: entry.1.resource.entry.2.resource.extension.0.url.
+            debug description: Invalid URL string.
+            """
+
+        var counter = 0
+        stub(condition: isPath("/Task/61704e3f-1e4f-11b2-80f4-b806a73c0cd0") && isMethodGET() &&
+            hasHeaderNamed("X-AccessCode", value: "access-now") &&
+            hasHeaderNamed("Accept", value: "application/fhir+json")) { _ in
+                counter += 1
+                return fixture(filePath: expectedResponse, headers: ["Content-Type": "application/fhir+json"])
+        }
+
+        sut.fetchTask(by: "61704e3f-1e4f-11b2-80f4-b806a73c0cd0", accessCode: "access-now")
+            .test(expectations: { erxTaskBundle in
+                expect(counter) == 1
+
+                expect(erxTaskBundle?.id) == "61704e3f-1e4f-11b2-80f4-b806a73c0cd0"
+                expect(erxTaskBundle?.status) == .error(.decoding(message: expectedErxTaskStatusDecodeErrorMessage))
+                expect(erxTaskBundle?.accessCode) == "access-now"
+                expect(erxTaskBundle?.fullUrl).to(beNil())
+                expect(erxTaskBundle?.medication).to(beNil())
+                expect(erxTaskBundle?.authoredOn) == "2021-03-24T08:35:32.311370977+00:00"
+                expect(erxTaskBundle?.lastModified).to(beNil())
+                expect(erxTaskBundle?.expiresOn).to(beNil())
+                expect(erxTaskBundle?.acceptedUntil).to(beNil())
+                expect(erxTaskBundle?.author).to(beNil())
+                expect(erxTaskBundle?.medication?.dosageForm).to(beNil())
+                expect(erxTaskBundle?.medication?.amount).to(beNil())
             })
     }
 

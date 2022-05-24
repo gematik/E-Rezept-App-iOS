@@ -193,6 +193,17 @@ internal enum A11y {
       static let ogkTxtServiceSelectionHeader = "ogk_txt_service_selection_header"
       static let ogkTxtContactCompanyHeader = "ogk_txt_contact_company_header"
   }
+    internal enum pharmacyContact {
+      static let phaContactAddressName = "pha_contact_address_name"
+      static let phaContactAddressStreet = "pha_contact_address_street"
+      static let phaContactAddressDetail = "pha_contact_address_detail"
+      static let phaContactAddressZip = "pha_contact_address_zip"
+      static let phaContactAddressCity = "pha_contact_address_city"
+      static let phaContactAddressPhone = "pha_contact_address_phone"
+      static let phaContactAddressMail = "pha_contact_address_mail"
+      static let phaContactAddressInfo = "pha_contact_address_info"
+      static let phaContactBtnSave = "pha_contact_btn_save"
+  }
     internal enum pharmacyDetail {
       static let phaDetailTxtSubtitle = "pha_detail_txt_subtitle"
       static let phaDetailBtnOrganization = "pha_detail_btn_organization"
@@ -213,8 +224,19 @@ internal enum A11y {
       static let phaRedeemTxtTitle = "pha_redeem_txt_title"
       static let phaRedeemTxtSubtitle = "pha_redeem_txt_subtitle"
       static let phaRedeemTxtAddressTitle = "pha_redeem_txt_address_title"
-      static let phaRedeemTxtAddressFootnote = "pha_redeem_txt_address_footnote"
       static let phaRedeemTxtPrescriptionTitle = "pha_redeem_txt_prescription_title"
+      static let phaRedeemTxtMissingAddress = "pha_redeem_txt_missing_address"
+      static let phaRedeemAddressName = "pha_redeem_address_name"
+      static let phaRedeemAddressStreet = "pha_redeem_address_street"
+      static let phaRedeemAddressDetail = "pha_redeem_address_detail"
+      static let phaRedeemAddressZip = "pha_redeem_address_zip"
+      static let phaRedeemAddressCity = "pha_redeem_address_city"
+      static let phaRedeemAddressPhone = "pha_redeem_address_phone"
+      static let phaRedeemAddressMail = "pha_redeem_address_mail"
+      static let phaRedeemAddressInfo = "pha_redeem_address_info"
+      static let phaRedeemBtnAddAddress = "pha_redeem_btn_add_address"
+      static let phaRedeemBtnEditAddress = "pha_redeem_btn_edit_address"
+      static let phaRedeemTxtMissingPhone = "pha_redeem_txt_missing_phone"
       static let phaRedeemBtnRedeem = "pha_redeem_btn_redeem"
       static let phaRedeemBtnRedeemFootnote = "pha_redeem_btn_redeem_footnote"
   }
@@ -238,6 +260,7 @@ internal enum A11y {
       static let prscDtlHntKeepOverview = "prsc_dtl_hnt_keep_overview"
       static let prscDtlTxtTaskId = "prsc_dtl_txt_task_id"
       static let prscDtlTxtAccessCode = "prsc_dtl_txt_access_code"
+      static let prscDtlTxtMedError = "prsc_dtl_txt_med_error"
   }
     internal enum profileSelection {
       static let proTxtSelectionProfileList = "pro_txt_selection_profile_list"
@@ -294,6 +317,12 @@ internal enum A11y {
       static let stgTxtAuditEventsActivityIndicator = "stg_txt_audit_events_activity_indicator"
       static let stgTxtAuditEventsNoProtocolTitle = "stg_txt_audit_events_no_protocol_title"
       static let stgTxtAuditEventsNoProtocolDescription = "stg_txt_audit_events_no_protocol_description"
+  }
+    internal enum contact {
+      static let stgConHeaderContact = "stg_con_header_contact"
+      static let stgConHotlineContact = "stg_con_hotline_contact"
+      static let stgConTxtFootnote = "stg_con_txt_footnote"
+      static let stgConTxtMail = "stg_con_txt_mail"
   }
     internal enum createPassword {
       static let cpwBtnSave = "cpw_btn_save"

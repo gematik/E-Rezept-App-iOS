@@ -35,7 +35,7 @@ enum UserSessionError: Error, Equatable {
     }
 }
 
-/// `UserSession` defines a SceneDelegate environment variable that a \.userSession should conform to.
+/// An instance of `UserSession` holds all stores used by the app that need to be changeable per profile and demo user
 /// sourcery: StreamWrapped
 protocol UserSession {
     /// Last authentication state of the app. This value should not get stale as it should inform on the latest state.
@@ -44,6 +44,9 @@ protocol UserSession {
     var erxTaskRepository: ErxTaskRepository { get }
 
     var profileDataStore: ProfileDataStore { get }
+
+    /// Access to the store of `ShipmentInfo` objects
+    var shipmentInfoDataStore: ShipmentInfoDataStore { get }
 
     /// Access to the `PharmacyRepository`
     var pharmacyRepository: PharmacyRepository { get }

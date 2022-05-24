@@ -68,24 +68,28 @@ extension Sequence where Self.Element == GroupedPrescription {
 
 extension GroupedPrescription {
     enum Dummies {
-        static let twoPrescriptions: GroupedPrescription = {
-            GroupedPrescription(
-                id: "1",
-                title: "Hausarztpraxis Dr. med. Topp-Glücklich",
-                authoredOn: "2020-02-03",
-                prescriptions: ErxTask.Dummies.erxTasks.map { GroupedPrescription.Prescription(erxTask: $0) },
-                displayType: .fullDetail
-            )
-        }()
+        static let prescriptions = GroupedPrescription(
+            id: "1",
+            title: "Hausarztpraxis Dr. med. Topp-Glücklich",
+            authoredOn: "2020-02-03",
+            prescriptions: Prescription.Dummies.prescriptions,
+            displayType: .fullDetail
+        )
 
-        static let twoScannedPrescriptions: GroupedPrescription = {
-            GroupedPrescription(
-                id: "2",
-                title: "Scanned Prescription",
-                authoredOn: "2020-02-03",
-                prescriptions: ErxTask.Dummies.erxTasks.map { GroupedPrescription.Prescription(erxTask: $0) },
-                displayType: .lowDetail
-            )
-        }()
+        static let scannedPrescriptions = GroupedPrescription(
+            id: "2",
+            title: "Scanned Prescription",
+            authoredOn: "2020-02-03",
+            prescriptions: Prescription.Dummies.prescriptions,
+            displayType: .lowDetail
+        )
+
+        static let faultyPrescription = GroupedPrescription(
+            id: "3",
+            title: "",
+            authoredOn: "",
+            prescriptions: [Prescription.Dummies.prescriptionError],
+            displayType: .fullDetail
+        )
     }
 }

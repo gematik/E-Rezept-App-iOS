@@ -58,6 +58,10 @@ class DemoSessionContainer: UserSession {
         DemoUserDefaultsStore()
     }()
 
+    lazy var shipmentInfoDataStore: ShipmentInfoDataStore = {
+        DemoShipmentInfoStore()
+    }()
+
     lazy var hintEventsStore: EventsStore = {
         // In demo mode we need the same store as in the default session
         HintEventsStore()

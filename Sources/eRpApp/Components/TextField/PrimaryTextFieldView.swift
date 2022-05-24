@@ -37,3 +37,20 @@ struct PrimaryTextFieldView: View {
         .accessibility(identifier: a11y)
     }
 }
+
+struct PrimaryTextFieldView_Previews: PreviewProvider {
+    static var previews: some View {
+        Group {
+            VStack {
+                PrimaryTextFieldView(placeholder: "Placeholder", text: .constant(""), a11y: "")
+                PrimaryTextFieldView(placeholder: "Placeholder", text: .constant("Some text"), a11y: "")
+            }
+
+            VStack {
+                PrimaryTextFieldView(placeholder: "Placeholder", text: .constant(""), a11y: "")
+                PrimaryTextFieldView(placeholder: "Placeholder", text: .constant("Some text"), a11y: "")
+            }
+            .preferredColorScheme(.dark)
+        }
+    }
+}

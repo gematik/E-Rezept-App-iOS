@@ -142,7 +142,8 @@ enum IDPCardWallDomain {
                 schedulers: $0.schedulers,
                 profileDataStore: $0.userSession.profileDataStore,
                 signatureProvider: $0.secureEnclaveSignatureProvider,
-                sessionProvider: $0.sessionProvider
+                sessionProvider: $0.sessionProvider,
+                nfcSessionProvider: $0.userSession.nfcSessionProvider
             )
         }
 

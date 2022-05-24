@@ -39,7 +39,7 @@ final class RedeemViewSnapshotTests: XCTestCase {
         let sut = RedeemMatrixCodeView(
             store: RedeemMatrixCodeDomain.Dummies.storeFor(
                 RedeemMatrixCodeDomain.State(
-                    groupedPrescription: GroupedPrescription.Dummies.twoPrescriptions,
+                    groupedPrescription: GroupedPrescription.Dummies.prescriptions,
                     loadingState: .value(UIImage(testBundleNamed: "qrcode")!)
                 )
             )

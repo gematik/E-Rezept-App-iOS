@@ -28,7 +28,7 @@ final class FHIRBundleTests: XCTestCase {
     func testParseErxTasks() throws {
         let gemFhirBundle = try decode(resource: "getTaskResponse_5e00e907-1e4f-11b2-80be-b806a73c0cd0.json")
 
-        guard let task = try gemFhirBundle.parseErxTasks().first else {
+        guard let task = try gemFhirBundle.parseErxTask(taskId: "5e00e907-1e4f-11b2-80be-b806a73c0cd0") else {
             fail("Could not parse ModelsR4.Bundle into TaskBundle.")
             return
         }
@@ -76,7 +76,7 @@ final class FHIRBundleTests: XCTestCase {
     func testParseErxTaskBundle1_v1_2() throws {
         let gemFhirBundle = try decode(resource: "getTaskResponse1_bundle_v1_2.json")
 
-        guard let task = try gemFhirBundle.parseErxTasks().first else {
+        guard let task = try gemFhirBundle.parseErxTask(taskId: "160.000.088.357.676.93") else {
             fail("Could not parse ModelsR4.Bundle into TaskBundle.")
             return
         }

@@ -26,16 +26,19 @@ import Nimble
 import XCTest
 
 final class ShipmentInfoCoreDataStoreTests: XCTestCase {
+    private var userDefaults: UserDefaults!
     private var databaseFile: URL!
     private let fileManager = FileManager.default
     private var factory: CoreDataControllerFactory?
 
     override func setUp() {
         super.setUp()
+        userDefaults = UserDefaults(suiteName: #file)
         databaseFile = fileManager.temporaryDirectory.appendingPathComponent("database/\(UUID().uuidString)")
     }
 
     override func tearDown() {
+        userDefaults.removePersistentDomain(forName: #file)
         let folderUrl = databaseFile.deletingLastPathComponent()
         if fileManager.fileExists(atPath: folderUrl.path) {
             expect(try self.fileManager.removeItem(at: folderUrl)).toNot(throwError())
@@ -68,6 +71,7 @@ final class ShipmentInfoCoreDataStoreTests: XCTestCase {
 
     private func loadShipmentInfoCoreDataStore() -> ShipmentInfoCoreDataStore {
         ShipmentInfoCoreDataStore(
+            userDefaults: userDefaults,
             coreDataControllerFactory: loadFactory(),
             backgroundQueue: AnyScheduler.main
         )
@@ -83,6 +87,138 @@ final class ShipmentInfoCoreDataStoreTests: XCTestCase {
             phone: "+491771234567",
             mail: "anna.vetter@gematik.de"
         )
+    }
+
+    func testFetchShipmentInfoByIdSuccess() {
+        let sut = loadShipmentInfoCoreDataStore()
+        // given
+        let input = shipmentInfo()
+        sut.add(shipmentInfo: input)
+
+        // when we fetch that entity by id
+        var receivedFetchResult: ShipmentInfo?
+        let cancellable = sut.fetchShipmentInfo(by: input.identifier)
+            .sink(receiveCompletion: { completion in
+                expect(completion) == .finished
+            }, receiveValue: { result in
+                receivedFetchResult = result
+            })
+
+        // then it should be the one we expect
+        expect(receivedFetchResult).toEventually(equal(input))
+
+        cancellable.cancel()
+    }
+
+    func testFetchShipmentInfoByIdFailure() {
+        let sut = loadShipmentInfoCoreDataStore()
+        // given no Shipment in store
+
+        // when we fetch an entity that is not jet in store
+        var receivedNoResult = false
+        let cancellable = sut.fetchShipmentInfo(by: UUID())
+            .sink(receiveCompletion: { completion in
+                expect(completion) == .finished
+            }, receiveValue: { result in
+                receivedNoResult = result == nil
+            })
+
+        // then it should return no entry
+        expect(receivedNoResult).toEventually(beTrue())
+
+        cancellable.cancel()
+    }
+
+    func testFetchingsSelectedShipmentInfoBeforeSelectionToBeNil() {
+        let sut = loadShipmentInfoCoreDataStore()
+        let input = shipmentInfo()
+        // given an entity is in store while nothing is selected
+        sut.add(shipmentInfo: input)
+
+        var selectedShipmentInfoResults = [ShipmentInfo?]()
+        // when subscribing to the selectedShipmentInfo
+        let cancellable = sut.selectedShipmentInfo
+            .sink(receiveCompletion: { completion in
+                expect(completion) == .finished
+            }, receiveValue: { result in
+                selectedShipmentInfoResults.append(result)
+            })
+
+        // then nil should be returned
+        expect(selectedShipmentInfoResults.count).toEventually(equal(1))
+        expect(selectedShipmentInfoResults[0]).to(beNil())
+
+        cancellable.cancel()
+    }
+
+    func testFetchingsSelectedShipmentInfoAfterSelectionToBeTheValue() {
+        let sut = loadShipmentInfoCoreDataStore()
+        let input = shipmentInfo()
+        // given the entity is in store and selected
+        sut.add(shipmentInfo: input)
+        sut.set(selectedShipmentInfoId: input.id)
+
+        // when subscribing to the selectedShipmentInfo
+        var selectedShipmentInfoResults = [ShipmentInfo?]()
+        let cancellable = sut.selectedShipmentInfo
+            .sink(receiveCompletion: { completion in
+                expect(completion) == .finished
+            }, receiveValue: { result in
+                selectedShipmentInfoResults.append(result)
+            })
+
+        // then that entity should be returned
+        expect(selectedShipmentInfoResults.count).toEventually(equal(1))
+        expect(selectedShipmentInfoResults[0]) == input
+
+        cancellable.cancel()
+    }
+
+    func testSetSelectedShipmentInfoIdToTriggerThePublisher() {
+        let sut = loadShipmentInfoCoreDataStore()
+        let input = shipmentInfo()
+        // given the entity to be selected is in store
+        sut.add(shipmentInfo: input)
+
+        var selectedShipmentInfoResults = [ShipmentInfo?]()
+        let cancellable = sut.selectedShipmentInfo
+            .sink(receiveCompletion: { completion in
+                expect(completion) == .finished
+            }, receiveValue: { result in
+                selectedShipmentInfoResults.append(result)
+            })
+
+        // when setting the selected shipment info to that id
+        sut.set(selectedShipmentInfoId: input.id)
+
+        // then there should be an additional value be published
+        expect(selectedShipmentInfoResults.count).toEventually(equal(2))
+        expect(selectedShipmentInfoResults[0]).to(beNil())
+        expect(selectedShipmentInfoResults[1]) == input
+
+        cancellable.cancel()
+    }
+
+    func testSetSelectedShipmentInfoIdToAnIdNotInStoreToReturnNil() {
+        // given ShipmentInfo is not in store
+        let sut = loadShipmentInfoCoreDataStore()
+
+        // when setting the id to something not in store
+        sut.set(selectedShipmentInfoId: UUID())
+
+        var selectedShipmentInfoResults = [ShipmentInfo?]()
+        let cancellable = sut.selectedShipmentInfo
+            .sink(receiveCompletion: { completion in
+                expect(completion) == .finished
+            }, receiveValue: { result in
+                selectedShipmentInfoResults.append(result)
+            })
+
+        expect(selectedShipmentInfoResults.count).toEventually(equal(1))
+        // then there should be nil
+        expect(selectedShipmentInfoResults[0]).to(beNil())
+
+        cancellable.cancel()
     }
 
     func testListAllShipmentInfos() {
@@ -103,7 +239,7 @@ final class ShipmentInfoCoreDataStoreTests: XCTestCase {
         let shipmentInfo3 = shipmentInfo()
         sut.add(shipmentInfos: [shipmentInfo2, shipmentInfo3])
 
-        // than there should be only one in store with the updated values
+        // then there should be only one in store with the updated values
         expect(receivedListAllShipmentInfoValues.count).toEventually(equal(3))
         expect(receivedListAllShipmentInfoValues[0].count).to(equal(0))
         expect(receivedListAllShipmentInfoValues[1].count).to(equal(1))
@@ -125,7 +261,7 @@ final class ShipmentInfoCoreDataStoreTests: XCTestCase {
                 receivedListAllShipmentInfoValues.append(shipmentInfos)
             })
 
-        // than there should be only one in store with the updated values
+        // then there should be only one in store with the updated values
         expect(receivedListAllShipmentInfoValues.count).toEventually(equal(1))
         expect(receivedListAllShipmentInfoValues[0].count).to(equal(0))
 
@@ -173,7 +309,7 @@ final class ShipmentInfoCoreDataStoreTests: XCTestCase {
                 receivedListAllShipmentInfoValues.append(shipmentInfos)
             })
 
-        // than there should be only one in store with the updated values
+        // then there should be only one in store with the updated values
         expect(receivedListAllShipmentInfoValues.count).toEventually(equal(1))
         expect(receivedListAllShipmentInfoValues[0].count).to(equal(1))
         let result = receivedListAllShipmentInfoValues[0].first
@@ -202,7 +338,7 @@ final class ShipmentInfoCoreDataStoreTests: XCTestCase {
         expect(receivedDeleteCompletions.count).toEventually(equal(1))
         expect(receivedDeleteCompletions.first) == .finished
 
-        // than there should be no entry left in store
+        // then there should be no entry left in store
         var receivedListAllShipmentInfosValues = [[ShipmentInfo]]()
         _ = sut.listAllShipmentInfos()
             .sink(receiveCompletion: { _ in
@@ -237,7 +373,7 @@ final class ShipmentInfoCoreDataStoreTests: XCTestCase {
         expect(receivedDeleteCompletions.count).toEventually(equal(1))
         expect(receivedDeleteCompletions.first) == .finished
 
-        // than there should be no entry left in store
+        // then there should be no entry left in store
         var receivedListAllShipmentInfosValues = [[ShipmentInfo]]()
         _ = sut.listAllShipmentInfos()
             .sink(receiveCompletion: { _ in
@@ -248,6 +384,42 @@ final class ShipmentInfoCoreDataStoreTests: XCTestCase {
 
         expect(receivedListAllShipmentInfosValues.count).toEventually(equal(1))
         expect(receivedListAllShipmentInfosValues.first?.count) == 0
+    }
+
+    func testDeletingTheSelectedShipmentInfo() {
+        let sut = loadShipmentInfoCoreDataStore()
+        let shipmentToDelete = shipmentInfo()
+        // given one shipmentInfo in store which is selected
+        sut.add(shipmentInfo: shipmentToDelete)
+        sut.set(selectedShipmentInfoId: shipmentToDelete.id)
+
+        var selectedShipmentInfoResults = [ShipmentInfo?]()
+        let cancellable = sut.selectedShipmentInfo
+            .sink(receiveCompletion: { completion in
+                expect(completion) == .finished
+            }, receiveValue: { result in
+                selectedShipmentInfoResults.append(result)
+            })
+
+        expect(selectedShipmentInfoResults.count).toEventually(equal(1))
+        expect(selectedShipmentInfoResults[0]) == shipmentToDelete
+
+        // when deleting the selected entity
+        var receivedDeleteResults = [ShipmentInfo?]()
+        _ = sut.delete(shipmentInfo: shipmentToDelete)
+            .sink(receiveCompletion: { completion in
+                expect(completion) == .finished
+            }, receiveValue: { shipmentInfo in
+                receivedDeleteResults.append(shipmentInfo)
+            })
+        expect(receivedDeleteResults.count).toEventually(equal(1))
+        expect(receivedDeleteResults.first) == shipmentToDelete
+
+        expect(selectedShipmentInfoResults.count).toEventually(equal(2))
+        // then the selected shipment should return nil
+        expect(selectedShipmentInfoResults[1]).to(beNil())
+
+        cancellable.cancel()
     }
 
     func testUpdateShipmentInfoThatIsInStore() {
@@ -270,7 +442,7 @@ final class ShipmentInfoCoreDataStoreTests: XCTestCase {
         expect(receivedUpdateValues.count).toEventually(equal(1))
         expect(receivedUpdateValues.first) == expectedResult
 
-        // than the input shipment should be updated
+        // then the input shipment should be updated
         var receivedListAllShipmentInfosValues = [[ShipmentInfo]]()
         let cancellable = sut.listAllShipmentInfos()
             .sink(receiveCompletion: { _ in

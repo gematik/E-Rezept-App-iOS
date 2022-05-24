@@ -46,20 +46,15 @@ struct BiometricsAuthenticationChallengeProvider: AuthenticationChallengeProvide
 
         var localizedReason = ""
         switch authenticationContext.biometryType {
-        case .faceID:
-            localizedReason = String(
-                format: L10n.authTxtBiometricsReason.text, "Face ID"
-            )
-        case .touchID:
-            localizedReason = String(
-                format: L10n.authTxtBiometricsReason.text, "Touch ID"
-            )
+        case .faceID: localizedReason = "Face ID"
+        case .touchID: localizedReason = "Touch ID"
         default:
             break
         }
 
         authenticationContext.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics,
-                                             localizedReason: localizedReason) { success, error in
+                                             localizedReason: L10n.authTxtBiometricsReason(localizedReason)
+                                                 .text) { success, error in
             if success {
                 completion(.success(true))
             } else {

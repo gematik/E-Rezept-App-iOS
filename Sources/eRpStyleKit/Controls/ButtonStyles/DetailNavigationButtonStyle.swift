@@ -74,7 +74,7 @@ public struct DetailNavigationLabelStyle: LabelStyle {
 public struct BottomDividerStyle: ViewModifier {
     let showSeparator: Bool
 
-    init(showSeparator: Bool) {
+    public init(showSeparator: Bool) {
         self.showSeparator = showSeparator
     }
 

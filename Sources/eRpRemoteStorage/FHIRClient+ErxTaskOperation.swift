@@ -37,10 +37,35 @@ extension FHIRClient {
             let resource: ModelsR4.Bundle
             do {
                 resource = try decoder.decode(ModelsR4.Bundle.self, from: fhirResponse.body)
+            } catch let DecodingError.dataCorrupted(context) {
+                // todo hendrik fragen
+                // mit json parsen als dict
+                let pvsPruefnummer = fhirResponse.body.recoverPvsPruefnummer
+                let authoredOn = fhirResponse.body.recoverAuthoredOn
+                let prettyCodingPath = context.codingPath.reduce("") { partialResult, key -> String in
+                    partialResult + "\(key.intValue?.description ?? key.stringValue)."
+                }
+                return ErxTask(
+                    identifier: id,
+                    status: .error(.decoding(
+                        message: """
+                        authoredOn: \(authoredOn ?? "")
+                        pvsPruefnummer: \(pvsPruefnummer ?? "")
+                        JSON codingPath: \(prettyCodingPath)
+                        debug description: \(context.debugDescription)
+                        """
+                    )),
+                    accessCode: accessCode,
+                    authoredOn: authoredOn
+                )
             } catch {
-                throw Error.decoding(error)
+                return ErxTask(
+                    identifier: id,
+                    status: .error(.unknown(message: "\(error)")),
+                    accessCode: accessCode
+                )
             }
-            return try resource.parseErxTasks().first
+            return resource.parseErxTask(taskId: id)
         }
 
         return execute(operation: ErxTaskFHIROperation.taskBy(id: id, accessCode: accessCode, handler: handler))
@@ -88,7 +113,7 @@ extension FHIRClient {
                 } catch {
                     throw Error.decoding(error)
                 }
-                return try resource.parseErxTasks().isEmpty
+                return resource.parseErxTask(taskId: id) == nil
             }
         }
 
@@ -96,7 +121,7 @@ extension FHIRClient {
             .tryCatch { error -> AnyPublisher<Bool, FHIRClient.Error> in
                 // When the server responds with 404 we handle this as a success case for
                 // deletion. Obviously the server does not know the task which means we can
-                // savely delete it locally as well. Hence we return true so the task is
+                // safely delete it locally as well. Hence we return true so the task is
                 // subsequently also deleted locally on the device. Also see comments in ticket ERA-800.
                 if case let FHIRClient.Error.httpError(HTTPError.httpError(wrappedHttpError)) = error,
                    wrappedHttpError.code.rawValue == 404 {
@@ -104,7 +129,7 @@ extension FHIRClient {
                 }
                 throw error
             }
-            .mapError { $0 as? FHIRClient.Error ?? FHIRClient.Error.internalError("Uknown error") }
+            .mapError { $0 as? FHIRClient.Error ?? FHIRClient.Error.internalError("Unknown error") }
             .eraseToAnyPublisher()
     }
 
@@ -154,7 +179,7 @@ extension FHIRClient {
     }
 
     /// Convenience function for redeeming an `ErxTask` in a pharmacy
-    /// - Parameter order: The informations relevant for placing the order
+    /// - Parameter order: The information relevant for placing the order
     /// - Returns: `true` if the server responds without error and parsing has been successful, otherwise  error
     public func redeem(order: ErxTaskOrder) -> AnyPublisher<Bool, FHIRClient.Error> {
         let handler = DefaultFHIRResponseHandler { (fhirResponse: FHIRClient.Response) -> Bool in
@@ -212,5 +237,45 @@ extension FHIRClient {
 
     static var decoder: JSONDecoder {
         JSONDecoder()
+    }
+}
+
+extension Data {
+    var recoverPvsPruefnummer: String? {
+        if let json = try? JSONSerialization.jsonObject(with: self),
+           let jsonDict = json as? [String: Any],
+           let entries = jsonDict["entry"] as? [[String: Any]],
+           let kbvBundle = entries.first(
+               where: { ($0["resource"] as? [String: Any])?["resourceType"] as? String == .some("Bundle") }
+           ),
+           let kbvResource = kbvBundle["resource"] as? [String: Any],
+           let kbvEntries = kbvResource["entry"] as? [[String: Any]],
+           let composition = kbvEntries.first(
+               where: { ($0["resource"] as? [String: Any])?["resourceType"] as? String == .some("Composition") }
+           ),
+           let compositionResource = composition["resource"] as? [String: Any],
+           let author = compositionResource["author"] as? [[String: Any]],
+           let device = author.first(
+               where: { $0["type"] as? String == .some("Device") }
+           ),
+           let identifier = device["identifier"] as? [String: Any],
+           let value = identifier["value"] as? String {
+            return value
+        }
+        return nil
+    }
+
+    var recoverAuthoredOn: String? {
+        if let json = try? JSONSerialization.jsonObject(with: self),
+           let jsonDict = json as? [String: Any],
+           let entries = jsonDict["entry"] as? [[String: Any]],
+           let task = entries.first(
+               where: { ($0["resource"] as? [String: Any])?["resourceType"] as? String == .some("Task") }
+           ),
+           let taskResource = task["resource"] as? [String: Any],
+           let authoredOn = taskResource["authoredOn"] as? String {
+            return authoredOn
+        }
+        return nil
     }
 }

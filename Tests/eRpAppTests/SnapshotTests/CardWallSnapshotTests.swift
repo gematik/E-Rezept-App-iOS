@@ -257,7 +257,8 @@ final class CardWallSnapshotTests: XCTestCase {
                 schedulers: Schedulers(),
                 profileDataStore: MockProfileDataStore(),
                 signatureProvider: DummySecureEnclaveSignatureProvider(),
-                sessionProvider: DummyProfileBasedSessionProvider()
+                sessionProvider: DummyProfileBasedSessionProvider(),
+                nfcSessionProvider: NFCSignatureProviderMock()
             )
         )
     }

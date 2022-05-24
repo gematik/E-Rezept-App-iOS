@@ -26,7 +26,7 @@ struct TitleWithSubtitleCellView: View {
     var selectedImageName: String = SFSymbolName.checkmarkCircleFill
 
     var body: some View {
-        VStack(spacing: 0) {
+        VStack(alignment: .leading, spacing: 0) {
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(title)
@@ -48,8 +48,12 @@ struct TitleWithSubtitleCellView: View {
                         .font(Font.title3)
                         .foregroundColor(Colors.systemLabelTertiary)
                 }
-            }.padding(.vertical)
+            }
+            .padding(.horizontal)
+            .padding(.top)
             Divider()
+                .padding(.leading)
+                .padding(.top)
         }
     }
 }

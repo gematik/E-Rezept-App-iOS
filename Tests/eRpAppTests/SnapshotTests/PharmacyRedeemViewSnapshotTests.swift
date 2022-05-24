@@ -29,12 +29,13 @@ final class PharmacyRedeemViewSnapshotTests: XCTestCase {
         diffTool = "open"
     }
 
-    func testPharmacyRedeemViewTypeReservationServiceWithSelection() {
+    func testPharmacyRedeemViewMissingAddress() {
         let initialState = PharmacyRedeemDomain.State(
             redeemOption: .onPremise,
             erxTasks: ErxTask.Dummies.erxTasks,
             pharmacy: PharmacyLocation.Dummies.pharmacy,
-            selectedErxTasks: Set(ErxTask.Dummies.erxTasks)
+            selectedErxTasks: Set(ErxTask.Dummies.erxTasks),
+            profile: Profile(name: "Anna Vetter", color: Profile.Color.red)
         )
         let sut = NavigationView {
             PharmacyRedeemView(store: PharmacyRedeemDomain.Dummies.storeFor(initialState))
@@ -45,11 +46,23 @@ final class PharmacyRedeemViewSnapshotTests: XCTestCase {
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
     }
 
-    func testPharmacyRedeemViewTypeMailService() {
+    func testPharmacyRedeemViewFullAddress() {
         let initialState = PharmacyRedeemDomain.State(
             redeemOption: .shipment,
             erxTasks: ErxTask.Dummies.erxTasks,
-            pharmacy: PharmacyLocation.Dummies.pharmacy
+            pharmacy: PharmacyLocation.Dummies.pharmacy,
+            selectedErxTasks: Set([ErxTask.Dummies.erxTasks.first!]),
+            selectedShipmentInfo: ShipmentInfo(
+                name: "Anna Maria Vetter",
+                street: "Benzelrather Str. 29",
+                addressDetail: "Postfach 11122",
+                zip: "50226",
+                city: "Frechen",
+                phone: "+491771234567",
+                mail: "anna.vetter@gematik.de",
+                deliveryInfo: "Please do not hesitate to ring the bell twice"
+            ),
+            profile: Profile(name: "Anna Vetter", color: Profile.Color.red)
         )
         let sut = NavigationView {
             PharmacyRedeemView(store: PharmacyRedeemDomain.Dummies.storeFor(initialState))
@@ -60,11 +73,20 @@ final class PharmacyRedeemViewSnapshotTests: XCTestCase {
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
     }
 
-    func testPharmacyRedeemViewTypeDeliveryService() {
+    func testPharmacyRedeemViewTypeShipmentMissingPhone() {
         let initialState = PharmacyRedeemDomain.State(
             redeemOption: .shipment,
             erxTasks: ErxTask.Dummies.erxTasks,
-            pharmacy: PharmacyLocation.Dummies.pharmacy
+            pharmacy: PharmacyLocation.Dummies.pharmacy,
+            selectedErxTasks: Set([ErxTask.Dummies.erxTasks.first!]),
+            selectedShipmentInfo: ShipmentInfo(
+                name: "Anna Vetter",
+                street: "Benzelrather Str. 29",
+                zip: "50226",
+                city: "Frechen",
+                mail: "anna.vetter@gematik.de"
+            ),
+            profile: Profile(name: "Anna Vetter", color: Profile.Color.red)
         )
         let sut = NavigationView {
             PharmacyRedeemView(store: PharmacyRedeemDomain.Dummies.storeFor(initialState))

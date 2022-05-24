@@ -281,7 +281,10 @@ extension EditProfileDomain {
                 userSessionProvider: $0.userSessionProvider,
                 secureEnclaveSignatureProvider: $0.secureEnclaveSignatureProvider,
                 nfcSignatureProvider: $0.nfcSignatureProvider,
-                sessionProvider: RegisterSessionProvider(userSessionProvider: $0.userSessionProvider),
+                sessionProvider: RegisterSessionProvider(
+                    userSessionProvider: $0.userSessionProvider,
+                    userSession: $0.userSession
+                ),
                 accessibilityAnnouncementReceiver: $0.accessibilityAnnouncementReceiver,
                 registeredDevicesService: DefaultRegisteredDevicesService(userSessionProvider: $0.userSessionProvider)
             )

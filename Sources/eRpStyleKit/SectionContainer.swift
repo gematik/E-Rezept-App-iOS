@@ -19,6 +19,7 @@
 import SwiftUI
 
 public struct SectionContainer<Header: View, Content: View, Footer: View>: View {
+    @Environment(\.sectionContainerStyle) var style
     var content: Content
     var header: () -> Header?
     var footer: () -> Footer?
@@ -49,6 +50,7 @@ public struct SectionContainer<Header: View, Content: View, Footer: View>: View 
             .frame(maxWidth: .infinity, alignment: .center)
             .background(Color(.tertiarySystemBackground))
             .cornerRadius(16)
+            .border(style.content.borderColor, width: style.content.borderWidth, cornerRadius: 16)
             .padding()
 
             if let footer = footer() {
@@ -416,31 +418,35 @@ public extension SectionContainer {
 struct SectionContainer_Preview: PreviewProvider {
     static var previews: some View {
         ScrollView {
-            SectionContainer(content: {
-                Button(action: {}, label: {
-                    Label("Within a button", systemImage: "qrcode")
-                })
+            SectionContainer(
+                header: { Text("Header") },
+                footer: { Text("Footer") },
+                content: {
+                    Button(action: {}, label: {
+                        Label("Within a button", systemImage: "qrcode")
+                    })
 
-                Button(action: {}, label: {
-                    Label("Used for navigation", systemImage: "qrcode")
-                })
-                    .buttonStyle(DetailNavigationButtonStyle(showSeparator: true))
+                    Button(action: {}, label: {
+                        Label("Used for navigation", systemImage: "qrcode")
+                    })
+                        .buttonStyle(DetailNavigationButtonStyle(showSeparator: true))
 
-                Toggle(isOn: .constant(true)) {
-                    Label("Simple Toggle", systemImage: "qrcode")
+                    Toggle(isOn: .constant(true)) {
+                        Label("Simple Toggle", systemImage: "qrcode")
+                    }
+                    .toggleStyle(.plain)
+
+                    Toggle(isOn: .constant(true)) {
+                        Label("Radio toggle", systemImage: "qrcode")
+                    }
+                    .toggleStyle(.radio)
+
+                    Toggle(isOn: .constant(true)) {
+                        Label("Used for navigation", systemImage: "qrcode")
+                    }
+                    .toggleStyle(.radioWithNavigation)
                 }
-                .toggleStyle(.plain)
-
-                Toggle(isOn: .constant(true)) {
-                    Label("Radio toggle", systemImage: "qrcode")
-                }
-                .toggleStyle(.radio)
-
-                Toggle(isOn: .constant(true)) {
-                    Label("Used for navigation", systemImage: "qrcode")
-                }
-                .toggleStyle(.radioWithNavigation)
-            })
+            )
         }
         .background(Color(.secondarySystemBackground))
     }

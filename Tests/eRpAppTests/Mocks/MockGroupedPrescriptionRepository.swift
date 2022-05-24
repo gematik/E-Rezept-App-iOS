@@ -34,8 +34,8 @@ class MockGroupedPrescriptionRepository: GroupedPrescriptionRepository {
         loadRemoteAndSaveCallsCount > 0
     }
 
-    init(groups: [GroupedPrescription] = [GroupedPrescription.Dummies.twoPrescriptions,
-                                          GroupedPrescription.Dummies.twoPrescriptions]) {
+    init(groups: [GroupedPrescription] = [GroupedPrescription.Dummies.prescriptions,
+                                          GroupedPrescription.Dummies.prescriptions]) {
         prescriptions = groups
         loadLocalPublisher = Just(prescriptions)
             .setFailureType(to: ErxRepositoryError.self)

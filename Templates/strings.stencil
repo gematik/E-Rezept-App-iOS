@@ -9,37 +9,62 @@ import SwiftUI
 
 // MARK: - Strings
 
-{% macro recursiveBlock table item %}
-  {% for string in item.strings %}
-  {% if not param.noComments %}
-  /// {{string.translation}}
-  {% endif %}
-  {% if string.key|contains:"%@" %}
-  {% map string.key|split:"%@" into keyPlaceholders %}k{% endmap %}
-  {{accessModifier}} static func {{string.key|swiftIdentifier:"pretty"|lowerFirstWord|escapeReservedKeywords}}({% for child in keyPlaceholders %}{% if not forloop.first %}_ element{{ forloop.counter0 }}: String{% if not forloop.last %},{% endif %}{% endif%}{% endfor %}) -> StringAsset {
-    {% set replacement %}\(element{{ forloop.counter0 }}){% endset %}
-    StringAsset("{{string.key}}", arguments: [{% for child in keyPlaceholders %}{% if not forloop.first %}element{{ forloop.counter0 }}{% if not forloop.last %}, {% endif %}{% endif%}{% endfor %}])
+{% macro parametersBlock types %}{% filter removeNewlines:"leading" %}
+    {% for type in types %}
+      {% if type == "String" %}
+      _ element{{forloop.counter}}: String
+      {% else %}
+      _ element{{forloop.counter}}: {{type}}
+      {% endif %}
+      {{ ", " if not forloop.last }}
+    {% endfor %}
+  {% endfilter %}{% endmacro %}
+  {% macro argumentsBlock types %}{% filter removeNewlines:"leading" %}
+    {% for type in types %}
+      {% if type == "String" %}
+      element{{forloop.counter}}
+      {% elif type == "UnsafeRawPointer" %}
+      Int(bitPattern: p{{forloop.counter}})
+      {% else %}
+      element{{forloop.counter}}
+      {% endif %}
+      {{ ", " if not forloop.last }}
+    {% endfor %}
+  {% endfilter %}{% endmacro %}
+  {% macro recursiveBlock table item %}
+    {% for string in item.strings %}
+    {% if not param.noComments %}
+    {% for line in string.translation|split:"\n" %}
+    /// {{line}}
+    {% endfor %}
+    {% endif %}
+    {% if string.types %}
+    {{accessModifier}} static func {{string.key|swiftIdentifier:"pretty"|lowerFirstWord|escapeReservedKeywords}}({% call parametersBlock string.types %}) -> StringAsset {
+        StringAsset("{{string.key}}", arguments: [{% call argumentsBlock string.types %}])
+    }
+    {% elif param.lookupFunction %}
+    {# custom localization function is mostly used for in-app lang selection, so we want the loc to be recomputed at each call for those (hence the computed var) #}
+    {{accessModifier}} static var {{string.key|swiftIdentifier:"pretty"|lowerFirstWord|escapeReservedKeywords}}: StringAsset { return StringAsset("{{string.key}}") }
+    {% else %}
+    {{accessModifier}} static let {{string.key|swiftIdentifier:"pretty"|lowerFirstWord|escapeReservedKeywords}} = StringAsset("{{string.key}}")
+    {% endif %}
+    {% endfor %}
+    {% for child in item.children %}
+    {% call recursiveBlock table child %}
+    {% endfor %}
+  {% endmacro %}
+  // swiftlint:disable function_parameter_count identifier_name line_length type_body_length
+  {% set enumName %}{{param.enumName|default:"L10n"}}{% endset %}
+  {{accessModifier}} enum {{enumName}} {
+    {% if tables.count > 1 or param.forceFileNameEnum %}
+    {% for table in tables %}
+    {% call recursiveBlock table.name table.levels %}
+    {% endfor %}
+    {% else %}
+    {% call recursiveBlock tables.first.name tables.first.levels %}
+    {% endif %}
   }
+  // swiftlint:enable function_parameter_count identifier_name line_length type_body_length
   {% else %}
-  {{accessModifier}} static let {{string.key|swiftIdentifier:"pretty"|lowerFirstWord|escapeReservedKeywords}} = StringAsset("{{string.key}}")
+  // No string found
   {% endif %}
-  {% endfor %}
-  {% for child in item.children %}
-  {% call recursiveBlock table child %}
-  {% endfor %}
-{% endmacro %}
-// swiftlint:disable function_parameter_count identifier_name line_length type_body_length
-{% set enumName %}{{param.enumName|default:"L10n"}}{% endset %}
-{{accessModifier}} enum {{enumName}} {
-  {% if tables.count > 1 or param.forceFileNameEnum %}
-  {% for table in tables %}
-  {% call recursiveBlock table.name table.levels %}
-  {% endfor %}
-  {% else %}
-  {% call recursiveBlock tables.first.name tables.first.levels %}
-  {% endif %}
-}
-// swiftlint:enable function_parameter_count identifier_name line_length type_body_length
-{% else %}
-// No string found
-{% endif %}

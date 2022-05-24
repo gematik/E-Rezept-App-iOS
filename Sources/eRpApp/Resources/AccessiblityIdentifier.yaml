@@ -204,6 +204,11 @@ settings:
     - stg_lno_link_contact
     - stg_lno_mail_contact
     - stg_lno_phone_contact
+  contact:
+    - stg_con_header_contact
+    - stg_con_hotline_contact
+    - stg_con_txt_footnote
+    - stg_con_txt_mail
   dataPrivacy:
     - stg_dpr_txt_data_privacy
     - stg_ww_data_privacy
@@ -277,6 +282,7 @@ prescriptionDetails:
   - prsc_dtl_hnt_keep_overview
   - prsc_dtl_txt_task_id
   - prsc_dtl_txt_access_code
+  - prsc_dtl_txt_med_error
 pharmacySearch:
   - pha_search_txt_result_list
   - pha_search_txt_result_list_entry
@@ -300,10 +306,31 @@ pharmacyRedeem:
   - pha_redeem_txt_title
   - pha_redeem_txt_subtitle
   - pha_redeem_txt_address_title
-  - pha_redeem_txt_address_footnote
   - pha_redeem_txt_prescription_title
+  - pha_redeem_txt_missing_address
+  - pha_redeem_address_name
+  - pha_redeem_address_street
+  - pha_redeem_address_detail
+  - pha_redeem_address_zip
+  - pha_redeem_address_city
+  - pha_redeem_address_phone
+  - pha_redeem_address_mail
+  - pha_redeem_address_info
+  - pha_redeem_btn_add_address
+  - pha_redeem_btn_edit_address
+  - pha_redeem_txt_missing_phone
   - pha_redeem_btn_redeem
   - pha_redeem_btn_redeem_footnote
+pharmacyContact:
+  - pha_contact_address_name
+  - pha_contact_address_street
+  - pha_contact_address_detail
+  - pha_contact_address_zip
+  - pha_contact_address_city
+  - pha_contact_address_phone
+  - pha_contact_address_mail
+  - pha_contact_address_info
+  - pha_contact_btn_save
 pharmacyGlobal:
   - pha_global_img_readiness_badge
   - pha_global_txt_readiness_badge

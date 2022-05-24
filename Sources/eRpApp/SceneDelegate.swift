@@ -198,8 +198,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing {
 import Combine
 
 extension SceneDelegate {
-    private func sessionContainer(with schedulers: Schedulers)
-        -> (ChangeableUserSessionContainer, UserSessionProvider) {
+    private func sessionContainer(
+        with schedulers: Schedulers
+    ) -> (ChangeableUserSessionContainer, UserSessionProvider) {
         let profileCoreDataStore = ProfileCoreDataStore(coreDataControllerFactory: coreDataControllerFactory)
 
         // On app install, no profile is created yet, create a session with a random UUID. This UUID is reused upon
@@ -217,6 +218,7 @@ extension SceneDelegate {
                 coreDataControllerFactory: coreDataControllerFactory
             ),
             profileDataStore: profileCoreDataStore,
+            shipmentInfoDataStore: ShipmentInfoCoreDataStore(coreDataControllerFactory: coreDataControllerFactory),
             appConfiguration: userDataStore.appConfiguration
         )
 

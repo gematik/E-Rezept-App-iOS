@@ -22,8 +22,12 @@ import eRpKit
 import Foundation
 import GemCommonsKit
 
-/// Store for fetching, creating, updating or deleting `ErxTask`s and it‘s underlying types
+// tag::ErxTaskCoreDataStoreDescription[]
+/// Store for fetching, creating, updating or deleting `ErxTask`s and it‘s underlying types. Access to most entities is
+/// tied to the given profileId.
 public class ErxTaskCoreDataStore: CoreDataCrudable, ErxLocalDataStore {
+    // end::ErxTaskCoreDataStoreDescription[]
+
     let coreDataControllerFactory: CoreDataControllerFactory
     let foregroundQueue: AnySchedulerOf<DispatchQueue>
     let backgroundQueue: AnySchedulerOf<DispatchQueue>

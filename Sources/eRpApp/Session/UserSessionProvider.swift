@@ -74,6 +74,7 @@ class DefaultUserSessionProvider: UserSessionProvider, UserSessionProviderContro
                 coreDataControllerFactory: coreDataControllerFactory
             ),
             profileDataStore: profileDataStore,
+            shipmentInfoDataStore: ShipmentInfoCoreDataStore(coreDataControllerFactory: coreDataControllerFactory),
             appConfiguration: appConfiguration
         )
         userSessions[uuid] = session

@@ -26,7 +26,7 @@ import eRpRemoteStorage
 import FHIRClient
 import XCTest
 
-final class GroupedPrescriptionListViewTests: XCTestCase {
+final class GroupedPrescriptionListDomainTests: XCTestCase {
     let testScheduler = DispatchQueue.test
 
     typealias TestStore = ComposableArchitecture.TestStore<
@@ -120,7 +120,7 @@ final class GroupedPrescriptionListViewTests: XCTestCase {
 
     func testLoadingPrescriptionsFromCloudTwoTimesWhenAuthenticated() {
         // given
-        let input = [GroupedPrescription.Dummies.twoPrescriptions]
+        let input = [GroupedPrescription.Dummies.prescriptions]
         let store = testStore(groups: input,
                               auditEvents: [])
 
@@ -153,7 +153,7 @@ final class GroupedPrescriptionListViewTests: XCTestCase {
 
     func testLoadingPrescriptionsFromCloudTwoTimesWhenNotAuthenticated() {
         // given
-        let input = [GroupedPrescription.Dummies.twoPrescriptions]
+        let input = [GroupedPrescription.Dummies.prescriptions]
         let store = testStore(groups: input,
                               auditEvents: [],
                               isAuthenticated: false)
@@ -186,7 +186,7 @@ final class GroupedPrescriptionListViewTests: XCTestCase {
 
     func testLoadingPrescriptionsFromDiskAndCloudWhenNotAuthenticated() {
         // given
-        let input = [GroupedPrescription.Dummies.twoPrescriptions]
+        let input = [GroupedPrescription.Dummies.prescriptions]
         let store = testStore(groups: input,
                               auditEvents: [],
                               isAuthenticated: false)
@@ -220,7 +220,7 @@ final class GroupedPrescriptionListViewTests: XCTestCase {
 
     func testLoadingPrescriptionsFromDiskAndCloudWhenAuthenticated() {
         // given
-        let input = [GroupedPrescription.Dummies.twoPrescriptions]
+        let input = [GroupedPrescription.Dummies.prescriptions]
         let store = testStore(groups: input,
                               auditEvents: [],
                               isAuthenticated: true)
@@ -377,7 +377,7 @@ final class GroupedPrescriptionListViewTests: XCTestCase {
     }
 
     func testRefreshShouldLoadFromCloudWhenAuthenticated() {
-        let input = [GroupedPrescription.Dummies.twoPrescriptions]
+        let input = [GroupedPrescription.Dummies.prescriptions]
         let store = testStore(groups: input,
                               auditEvents: [],
                               isAuthenticated: true)

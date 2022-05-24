@@ -94,9 +94,9 @@ enum CardWallExtAuthConfirmationDomain {
             }
             .receive(on: environment.schedulers.main)
             .eraseToEffect()
-        case let .openURLReceived(successfull):
+        case let .openURLReceived(successful):
             state.loading = false
-            if successfull {
+            if successful {
                 return Effect(value: .close)
             } else {
                 state.error = Error.universalLinkFailed

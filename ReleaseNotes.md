@@ -1,3 +1,20 @@
+# Release 1.2.7
+
+### fixed (2 changes)
+
+- Fix demo mode using physical card
+- Fix string template for plurals
+ 
+### feature (1 change)
+ 
+- Parse faulty KBV FHIR bundle and display corresponding error messages
+
+### added (3 changes)
+
+- Add shipment info to PharmacyRedeemView
+- Add contact options in settings view
+- Add SelectionConfigurationStyle to support styling of a section borders
+
 # Release 1.2.6
 
 ### fixed (2 changes)

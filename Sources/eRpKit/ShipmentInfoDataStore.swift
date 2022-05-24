@@ -23,6 +23,19 @@ import Foundation
 ///
 /// sourcery: StreamWrapped
 public protocol ShipmentInfoDataStore {
+    /// Set the selectedShipmentInfoId.
+    /// The selected values of `ShipmentInfo` is published threw `selectedShipmentInfo`
+    /// - Parameter selectedShipmentInfoId: Identifier of the `ShipmentInfo` to be selected
+    func set(selectedShipmentInfoId: UUID)
+
+    /// Returns the selected `ShipmentInfo` if any has been selected.
+    /// Returns `nil` if nothing was selected
+    var selectedShipmentInfo: AnyPublisher<ShipmentInfo?, LocalStoreError> { get }
+
+    /// Fetches a `ShipmentInfo` by it's identifier
+    /// - Parameter identifier: Identifier of the `ShipmentInfo` to fetch
+    func fetchShipmentInfo(by identifier: UUID) -> AnyPublisher<ShipmentInfo?, LocalStoreError>
+
     /// List all `ShipmentInfo`s contained in the store
     func listAllShipmentInfos() -> AnyPublisher<[ShipmentInfo], LocalStoreError>
 

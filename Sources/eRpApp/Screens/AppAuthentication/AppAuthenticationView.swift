@@ -39,10 +39,7 @@ struct AppAuthenticationView: View {
             showFailedAuthenticationsHint = state.failedAuthenticationsCount != 0
             failedAuthentications = state.failedAuthenticationsCount
             hintTitle = L10n.authTxtFailedLoginHintTitle.text
-            hintMessage = String.localizedStringWithFormat(
-                L10n.authTxtFailedLoginHintMsg.text,
-                state.failedAuthenticationsCount
-            )
+            hintMessage = L10n.authTxtFailedLoginHintMsg(state.failedAuthenticationsCount).text
         }
     }
 

@@ -42,46 +42,49 @@ extension ModelsR4.Bundle {
         } ?? []
     }
 
-    /// Parse and extract all found ErxTasks from `Self`
+    /// Parse ModelsR4.Task and extract ErxTask from `Self`
     ///
-    /// - Returns: Array with all found and parsed tasks
+    /// - Returns: Parsed ErxTask, if available/parsable else nil
     /// - Throws: `ModelsR4.Bundle.Error`
-    func parseErxTasks() throws -> [ErxTask] {
-        // Collect and parse all ErxTasks
-        try entry?.compactMap {
-            guard let task = $0.resource?.get(if: ModelsR4.Task.self) else {
-                return nil
-            }
-            return try Self.parse(task: task, fullUrl: $0.fullUrl, from: self)
-        } ?? []
-    }
-
-    // swiftlint:disable function_body_length
-    static func parse(task: ModelsR4.Task,
-                      fullUrl: FHIRPrimitive<FHIRURI>?,
-                      from bundle: ModelsR4.Bundle) throws -> ErxTask {
-        let taskAccessCode = task.accessCode
-
-        guard let id = task.id?.value?.string else { // swiftlint:disable:this identifier_name
-            throw Error.parseError("Could not parse id from task.")
+    func parseErxTask(taskId: ErxTask.ID) -> ErxTask? {
+        // swiftlint:disable:previous function_body_length
+        // Collect and parse ErxTask
+        guard let entry = entry?.first, // for now we assume that there is only one task
+              let task = entry.resource?.get(if: ModelsR4.Task.self),
+              let taskId = task.id?.value?.string,
+              taskId == taskId
+        else {
+            return nil
         }
+
+        let fullUrl = entry.fullUrl
+        let bundle = self
+        let taskAccessCode = task.accessCode
 
         guard let status = task.status.value?.rawValue,
               let erxTaskStatus = ErxTask.Status(rawValue: status) else {
-            throw Error.parseError("Could not parse status from task.")
+            return ErxTask(identifier: taskId, status: .error(.missingStatus), accessCode: taskAccessCode)
         }
 
         // Find the patientReceipt document reference
         guard let patientReceiptReference = task.input?.firstPatientReceipt else {
-            throw Error.parseError("No patientReceipt Document reference found")
+            return ErxTask(
+                identifier: taskId,
+                status: .error(.missingPatientReceiptReference),
+                accessCode: taskAccessCode
+            )
         }
         guard let patientReceiptIdentifier = patientReceiptReference.value.identifierValue else {
-            throw Error.parseError("The patientReceipt Identifier could not be extracted")
+            return ErxTask(
+                identifier: taskId,
+                status: .error(.missingPatientReceiptIdentifier),
+                accessCode: taskAccessCode
+            )
         }
         // Find the Document Bundle
         guard let patientReceiptBundle = bundle
             .findResource(with: patientReceiptIdentifier, type: ModelsR4.Bundle.self) else {
-            throw Error.parseError("The patientReceipt Document could not be found")
+            return ErxTask(identifier: taskId, status: .error(.missingPatientReceiptBundle), accessCode: taskAccessCode)
         }
 
         let medication = patientReceiptBundle.medication
@@ -90,7 +93,7 @@ extension ModelsR4.Bundle {
         let organization = patientReceiptBundle.organization
 
         return ErxTask(
-            identifier: id,
+            identifier: taskId,
             status: erxTaskStatus,
             accessCode: taskAccessCode,
             fullUrl: fullUrl?.value?.url.absoluteString,

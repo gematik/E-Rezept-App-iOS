@@ -1,4 +1,4 @@
-// Generated using Sourcery 1.6.1 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 1.7.0 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 
 import SwiftUI
@@ -40,6 +40,11 @@ extension DetailedIconCellView {
 extension FootnoteView {
     init(text: StringAsset, a11y: String) {
         self.init(text: text.key, a11y: a11y)
+    }
+}
+extension FormTextFieldView {
+    init(placeholder: StringAsset? = nil, subtitle: StringAsset? = nil, text: Binding<String>, showSeparator: Bool = true) {
+    self.init(placeholder: placeholder?.key, subtitle: subtitle?.key, text: text, showSeparator: showSeparator)
     }
 }
 extension GroupedPrescriptionListView.ListView.RefreshLoadingStateView {

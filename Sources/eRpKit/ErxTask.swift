@@ -158,6 +158,17 @@ extension ErxTask {
         case completed
         /// The task state is not defined as subset of eRp status
         case undefined(status: String)
+        /// Extra error status (not FHIR)
+        case error(Error)
+
+        public enum Error: Swift.Error {
+            case decoding(message: String)
+            case unknown(message: String)
+            case missingStatus
+            case missingPatientReceiptReference
+            case missingPatientReceiptIdentifier
+            case missingPatientReceiptBundle
+        }
     }
 
     public enum Source: String, Codable {
@@ -170,6 +181,8 @@ extension ErxTask.Status: RawRepresentable {
     /// The associated `RawValue` type
     public typealias RawValue = String
 
+    private static let errorPrefix = "error: "
+
     /// Creates a new instance with the specified raw value.
     public init?(rawValue: RawValue) { // swiftlint:disable:this cyclomatic_complexity
         switch rawValue {
@@ -179,22 +192,27 @@ extension ErxTask.Status: RawRepresentable {
         case "cancelled": self = .cancelled
         case "completed": self = .completed
         /// The task is ready to be acted upon and action is sought.
-        case "requested": self = .undefined(status: "requested")
+        case "requested", "undefined: requested": self = .undefined(status: "requested")
         /// A potential performer has claimed ownership of the task and is evaluating whether to perform it.
-        case "received": self = .undefined(status: "received")
+        case "received", "undefined: received": self = .undefined(status: "received")
         /// The potential performer has agreed to execute the task but has not yet started work.
-        case "accepted": self = .undefined(status: "accepted")
+        case "accepted", "undefined: accepted": self = .undefined(status: "accepted")
         /// The potential performer who claimed ownership of the task has decided
         /// not to execute it prior to performing any action.
-        case "rejected": self = .undefined(status: "rejected")
+        case "rejected", "undefined: rejected": self = .undefined(status: "rejected")
         /// The task has been started but work has been paused.
-        case "on-hold": self = .undefined(status: "on-hold")
+        case "on-hold", "undefined: on-hold": self = .undefined(status: "on-hold")
         /// The task was attempted but could not be completed due to some error.
-        case "failed": self = .undefined(status: "failed")
+        case "failed", "undefined: failed": self = .undefined(status: "failed")
         /// The task should never have existed and is retained only because of the possibility it may have used.
-        case "entered-in-error": self = .undefined(status: "entered-in-error")
+        case "entered-in-error", "undefined: entered-in-error": self = .undefined(status: "entered-in-error")
         default:
-            return nil
+            if rawValue.hasPrefix(Self.errorPrefix) {
+                let errorRawValue = String(rawValue.dropFirst(Self.errorPrefix.count))
+                self = .error(.init(rawValue: errorRawValue))
+            } else {
+                return nil
+            }
         }
     }
 
@@ -207,6 +225,44 @@ extension ErxTask.Status: RawRepresentable {
         case .cancelled: return "cancelled"
         case .completed: return "completed"
         case let .undefined(status: status): return "undefined: \(status)"
+        case let .error(error): return Self.errorPrefix + error.rawValue
+        }
+    }
+}
+
+extension ErxTask.Status.Error: RawRepresentable {
+    public typealias RawValue = String
+
+    private static let decodingPrefix = "decoding "
+    private static let unknownPrefix = "unknown "
+
+    public init(rawValue: RawValue) {
+        switch rawValue {
+        case "missingStatus": self = .missingStatus
+        case "missingPatientReceiptReference": self = .missingPatientReceiptReference
+        case "missingPatientReceiptIdentifier": self = .missingPatientReceiptIdentifier
+        case "missingPatientReceiptBundle": self = .missingPatientReceiptBundle
+        default:
+            if rawValue.hasPrefix(Self.decodingPrefix) {
+                let message = String(rawValue.dropFirst(Self.decodingPrefix.count))
+                self = .decoding(message: message)
+            } else if rawValue.hasPrefix(Self.unknownPrefix) {
+                let message = String(rawValue.dropFirst(Self.unknownPrefix.count))
+                self = .unknown(message: message)
+            } else {
+                self = .unknown(message: "Unexpected raw value")
+            }
+        }
+    }
+
+    public var rawValue: RawValue {
+        switch self {
+        case let .decoding(message: message): return Self.decodingPrefix + message
+        case let .unknown(message: message): return Self.unknownPrefix + message
+        case .missingStatus: return "missingStatus"
+        case .missingPatientReceiptReference: return "missingPatientReceiptReference"
+        case .missingPatientReceiptIdentifier: return "missingPatientReceiptIdentifier"
+        case .missingPatientReceiptBundle: return "missingPatientReceiptBundle"
         }
     }
 }

@@ -25,16 +25,17 @@ protocol ProfileBasedSessionProvider {
     func idpSession(for profileId: UUID) -> IDPSession
     func biometrieIdpSession(for profileId: UUID) -> IDPSession
     func userDataStore(for profileId: UUID) -> SecureUserDataStore
-    func signatureProvider(for profileId: UUID) -> NFCSignatureProvider
     func idTokenValidator(for profileId: UUID) -> AnyPublisher<IDTokenValidator, IDTokenValidatorError>
 }
 
 struct DefaultSessionProvider: ProfileBasedSessionProvider {
-    init(userSessionProvider: UserSessionProvider) {
+    init(userSessionProvider: UserSessionProvider, userSession: UserSession) {
         self.userSessionProvider = userSessionProvider
+        self.userSession = userSession
     }
 
     private let userSessionProvider: UserSessionProvider
+    private let userSession: UserSession
 
     func idpSession(for profileId: UUID) -> IDPSession {
         userSession(for: profileId).idpSession
@@ -48,25 +49,27 @@ struct DefaultSessionProvider: ProfileBasedSessionProvider {
         userSession(for: profileId).secureUserStore
     }
 
-    func signatureProvider(for profileId: UUID) -> NFCSignatureProvider {
-        userSession(for: profileId).nfcSessionProvider
-    }
-
     func idTokenValidator(for profileId: UUID) -> AnyPublisher<IDTokenValidator, IDTokenValidatorError> {
         userSession(for: profileId).idTokenValidator()
     }
 
     private func userSession(for profileId: UUID) -> UserSession {
-        userSessionProvider.userSession(for: profileId)
+        // In case of demo mode, we need to use the original session, otherwise NFC will not be mocked
+        if userSession.isDemoMode {
+            return userSession
+        }
+        return userSessionProvider.userSession(for: profileId)
     }
 }
 
 struct RegisterSessionProvider: ProfileBasedSessionProvider {
-    init(userSessionProvider: UserSessionProvider) {
+    init(userSessionProvider: UserSessionProvider, userSession: UserSession) {
         self.userSessionProvider = userSessionProvider
+        self.userSession = userSession
     }
 
     private let userSessionProvider: UserSessionProvider
+    private let userSession: UserSession
 
     func idpSession(for profileId: UUID) -> IDPSession {
         userSession(for: profileId).biometrieIdpSession
@@ -80,16 +83,16 @@ struct RegisterSessionProvider: ProfileBasedSessionProvider {
         userSession(for: profileId).secureUserStore
     }
 
-    func signatureProvider(for profileId: UUID) -> NFCSignatureProvider {
-        userSession(for: profileId).nfcSessionProvider
-    }
-
     func idTokenValidator(for profileId: UUID) -> AnyPublisher<IDTokenValidator, IDTokenValidatorError> {
         userSession(for: profileId).idTokenValidator()
     }
 
     private func userSession(for profileId: UUID) -> UserSession {
-        userSessionProvider.userSession(for: profileId)
+        // In case of demo mode, we need to use the original session, otherwise NFC will not be mocked
+        if userSession.isDemoMode {
+            return userSession
+        }
+        return userSessionProvider.userSession(for: profileId)
     }
 }
 
@@ -106,10 +109,6 @@ class DummyProfileBasedSessionProvider: ProfileBasedSessionProvider {
 
     func userDataStore(for _: UUID) -> SecureUserDataStore {
         MemoryStorage()
-    }
-
-    func signatureProvider(for _: UUID) -> NFCSignatureProvider {
-        DemoSignatureProvider()
     }
 
     func idTokenValidator(for _: UUID) -> AnyPublisher<IDTokenValidator, IDTokenValidatorError> {

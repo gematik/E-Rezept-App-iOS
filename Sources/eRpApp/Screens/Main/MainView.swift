@@ -211,7 +211,7 @@ struct MainView_Previews: PreviewProvider {
                     MainDomain.State(
                         prescriptionListState: GroupedPrescriptionListDomain.State(
                             groupedPrescriptions: Array(
-                                repeating: GroupedPrescription.Dummies.twoPrescriptions,
+                                repeating: GroupedPrescription.Dummies.prescriptions,
                                 count: 2
                             )
                         )

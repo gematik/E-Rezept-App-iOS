@@ -68,6 +68,10 @@ class MockUserSession: UserSession {
         MockUserDataStore()
     }()
 
+    lazy var shipmentInfoDataStore: ShipmentInfoDataStore = {
+        MockShipmentInfoDataStore()
+    }()
+
     var localUserStore: UserDataStore {
         mockUserDataStore
     }

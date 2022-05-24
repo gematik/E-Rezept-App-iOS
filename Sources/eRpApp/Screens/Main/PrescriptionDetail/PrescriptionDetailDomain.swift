@@ -59,6 +59,31 @@ enum PrescriptionDetailDomain: Equatable {
             prescription.auditEvents
                 .isEmpty ? L10n.prscFdTxtProtocolDownloadError.text : nil
         }
+
+        var showPrescriptionStatus: Bool {
+            switch prescription.viewStatus {
+            case .open, .archived, .undefined: return false
+            case .error: return true
+            }
+        }
+
+        var showFullDetailBottomBanner: Bool {
+            switch prescription.viewStatus {
+            case .open, .archived, .undefined: return false
+            case .error: return true
+            }
+        }
+
+        func createReportEmail(body: String) -> URL? {
+            var urlString = URLComponents(string: "mailto:app-feedback@gematik.de")
+            var queryItems = [URLQueryItem]()
+            queryItems.append(URLQueryItem(name: "subject", value: "Fehlerreport iOS App"))
+            queryItems.append(URLQueryItem(name: "body", value: body))
+
+            urlString?.queryItems = queryItems
+
+            return urlString?.url
+        }
     }
 
     enum Action: Equatable {
@@ -92,6 +117,8 @@ enum PrescriptionDetailDomain: Equatable {
         case pharmacySearch(action: PharmacySearchDomain.Action)
         /// Dismiss pharmacy search domain
         case dismissPharmacySearch
+        case errorBannerButtonPressed
+        case openEmailClient(body: String)
     }
 
     struct Environment {
@@ -198,6 +225,14 @@ enum PrescriptionDetailDomain: Equatable {
             return PharmacySearchDomain.cleanup()
         case .pharmacySearch(action:):
             return .none
+        case .errorBannerButtonPressed:
+            return .init(value: .openEmailClient(body: state.prescription.errorString))
+        case let .openEmailClient(body):
+            guard let email = state.createReportEmail(body: body) else { return .none }
+            if UIApplication.shared.canOpenURL(email) {
+                UIApplication.shared.open(email)
+            }
+            return .none
         }
     }
 
@@ -266,7 +301,7 @@ extension PrescriptionDetailDomain {
     enum Dummies {
         static let demoSessionContainer = DummyUserSessionContainer()
         static let state = State(
-            prescription: GroupedPrescription.Prescription(erxTask: ErxTask.Dummies.erxTaskReady),
+            prescription: GroupedPrescription.Prescription.Dummies.prescriptionReady,
             isArchived: false
         )
         static let environment = Environment(

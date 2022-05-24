@@ -23,6 +23,7 @@ import eRpKit
 
 /// Store for fetching, creating, updating or deleting `ShipmentInfoEntity`s on the provided `CoreDataController`
 public class ShipmentInfoCoreDataStore: ShipmentInfoDataStore, CoreDataCrudable {
+    private let userDefaults: UserDefaults
     let coreDataControllerFactory: CoreDataControllerFactory
     let foregroundQueue: AnySchedulerOf<DispatchQueue>
     let backgroundQueue: AnySchedulerOf<DispatchQueue>
@@ -35,14 +36,53 @@ public class ShipmentInfoCoreDataStore: ShipmentInfoDataStore, CoreDataCrudable 
     ///   - backgroundQueue:
     ///     write queue (Default: DispatchQueue(label: "profile-queue", qos: .userInitiated))
     public init(
+        userDefaults: UserDefaults = UserDefaults.standard,
         coreDataControllerFactory: CoreDataControllerFactory,
         foregroundQueue: AnySchedulerOf<DispatchQueue> = AnyScheduler.main,
         backgroundQueue: AnySchedulerOf<DispatchQueue> = DispatchQueue(label: "shipmentInfo-queue", qos: .userInitiated)
             .eraseToAnyScheduler()
     ) {
+        self.userDefaults = userDefaults
         self.coreDataControllerFactory = coreDataControllerFactory
         self.foregroundQueue = foregroundQueue
         self.backgroundQueue = backgroundQueue
+    }
+
+    public func fetchShipmentInfo(by identifier: UUID) -> AnyPublisher<ShipmentInfo?, LocalStoreError> {
+        let request: NSFetchRequest<ShipmentInfoEntity> = ShipmentInfoEntity.fetchRequest()
+        request.predicate = NSPredicate(
+            format: "%K == %@",
+            argumentArray: [#keyPath(ShipmentInfoEntity.identifier), identifier]
+        )
+        request.sortDescriptors = [NSSortDescriptor(key: #keyPath(ShipmentInfoEntity.name), ascending: true)]
+        return fetch(request)
+            .map { results in
+                guard let shipmentInfoEntity = results.first else {
+                    return nil
+                }
+                if results.count > 1 {
+                    assertionFailure("error: there should always be just one ShipmentInfo per id in store")
+                }
+                return ShipmentInfo(entity: shipmentInfoEntity)
+            }
+            .eraseToAnyPublisher()
+    }
+
+    public func set(selectedShipmentInfoId: UUID) {
+        userDefaults.selectedShipmentInfoId = selectedShipmentInfoId
+    }
+
+    public var selectedShipmentInfo: AnyPublisher<ShipmentInfo?, LocalStoreError> {
+        userDefaults.publisher(for: \UserDefaults.selectedShipmentInfoId)
+            .setFailureType(to: LocalStoreError.self)
+            .flatMap { [weak self] selectedShipmentId -> AnyPublisher<ShipmentInfo?, LocalStoreError> in
+                guard let self = self,
+                      let identifier = selectedShipmentId else {
+                    return Just(nil).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
+                }
+                return self.fetchShipmentInfo(by: identifier)
+            }
+            .eraseToAnyPublisher()
     }
 
     public func listAllShipmentInfos() -> AnyPublisher<[ShipmentInfo], LocalStoreError> {
@@ -110,8 +150,24 @@ public class ShipmentInfoCoreDataStore: ShipmentInfoDataStore, CoreDataCrudable 
         .eraseToAnyPublisher()
     }
 
-    enum Error: Swift.Error {
+    public enum Error: Swift.Error {
         case noMatchingEntity
         case internalError
+    }
+}
+
+extension UserDefaults {
+    /// Stores the identifier of the selected `ShipmentInfo`
+    public static let kSelectedShipmentInfoId = "kSelectedShipmentInfoId"
+
+    /// Stores for the selected `ShipmentInfo` identifier
+    @objc public var selectedShipmentInfoId: UUID? {
+        get {
+            guard let uuidString = string(forKey: Self.kSelectedShipmentInfoId) else {
+                return nil
+            }
+            return UUID(uuidString: uuidString)
+        }
+        set { set(newValue?.uuidString, forKey: Self.kSelectedShipmentInfoId) }
     }
 }

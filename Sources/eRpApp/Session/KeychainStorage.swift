@@ -40,9 +40,11 @@ class KeychainStorage: SecureUserDataStore, IDPStorage, SecureEGKCertificateStor
         "\(profileId.uuidString)."
     }
 
+    // tag::KeychainStorageInitializerSignature[]
     init(profileId: UUID, schedulers: Schedulers = Schedulers()) {
         self.profileId = profileId
         self.schedulers = schedulers
+        // end::KeychainStorageInitializerSignature[]
 
         $tokenState.map { $0?.accessToken }
             .receive(on: schedulers.main)
@@ -53,15 +55,20 @@ class KeychainStorage: SecureUserDataStore, IDPStorage, SecureEGKCertificateStor
         retrieveCAN()
     }
 
+    // tag::KeychainStorageIdentifierExample1[]
     private static let egkPasswordIdentifier = "egk.can"
+    // end::KeychainStorageIdentifierExample1[]
     private static let idpTokenIdentifier = "idp.token"
     private static let idpDiscoveryDocumentIdentifier = "idp.discovery"
     private static let egkAuthCertIdentifier = "egk.authCert"
     private static let idpBiometricKeyIdentifier = "egk.biometricKeyIdentifier"
 
+    // tag::KeychainStorageIdentifierExample2[]
     var egkPasswordIdentifier: String {
         profilePrefix + Self.egkPasswordIdentifier
     }
+
+    // end::KeychainStorageIdentifierExample2[]
 
     var idpTokenIdentifier: String {
         profilePrefix + Self.idpTokenIdentifier
@@ -83,7 +90,9 @@ class KeychainStorage: SecureUserDataStore, IDPStorage, SecureEGKCertificateStor
         let success: Bool
         do {
             if let can = can {
+                // tag::KeychainStorageIdentifierExample3[]
                 success = try keychainHelper.setGenericPassword(can, for: egkPasswordIdentifier)
+                // end::KeychainStorageIdentifierExample3[]
             } else {
                 success = try keychainHelper.unsetGenericPassword(for: egkPasswordIdentifier)
             }

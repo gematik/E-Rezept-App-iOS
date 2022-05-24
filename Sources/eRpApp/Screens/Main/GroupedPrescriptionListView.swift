@@ -316,12 +316,25 @@ struct GroupedPrescriptionListView_Previews: PreviewProvider {
             .preferredColorScheme(.dark)
             .environment(\.sizeCategory, .extraExtraExtraLarge)
 
-            let state = GroupedPrescriptionListDomain.State(
-                groupedPrescriptions: [GroupedPrescription.Dummies.twoPrescriptions]
-            )
+            VStack {
+                GroupedPrescriptionListView(
+                    store: GroupedPrescriptionListDomain.Dummies.storeFor(
+                        GroupedPrescriptionListDomain.State(
+                            groupedPrescriptions: [GroupedPrescription.Dummies.prescriptions]
+                        )
+                    )
+                )
+            }
+            .preferredColorScheme(.light)
 
             VStack {
-                GroupedPrescriptionListView(store: GroupedPrescriptionListDomain.Dummies.storeFor(state))
+                GroupedPrescriptionListView(
+                    store: GroupedPrescriptionListDomain.Dummies.storeFor(
+                        GroupedPrescriptionListDomain.State(
+                            groupedPrescriptions: [GroupedPrescription.Dummies.faultyPrescription]
+                        )
+                    )
+                )
             }
             .preferredColorScheme(.light)
         }

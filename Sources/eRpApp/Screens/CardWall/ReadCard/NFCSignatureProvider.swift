@@ -59,8 +59,8 @@ extension NFCSignatureProviderError: LocalizedError {
         switch self {
         case .wrongCAN:
             return L10n.cdwTxtRcErrorWrongCanDescription.text
-        case let .wrongPin(retryCount: retryCount):
-            return L10n.cdwTxtRcErrorWrongPinDescription("\(retryCount)").text
+        case .wrongPin:
+            return L10n.cdwTxtRcErrorWrongPinDescription.text
         default:
             return L10n.cdwTxtRcErrorGenericCardDescription.text
         }

@@ -120,6 +120,99 @@ final class ListsSnapshotTests: XCTestCase {
 
         assertSnapshots(matching: sut, as: snapshotModi())
     }
+
+    func testBorderedListStyle() {
+        let sut = NavigationView {
+            ScrollView {
+                VStack(spacing: 8) {
+                    SectionContainer {
+                        NavigationLink(destination: Text("abc")) {
+                            Label("Impressum", systemImage: SFSymbolName.info)
+                        }
+                        .buttonStyle(.navigation)
+
+                        Toggle(isOn: .constant(false)) {
+                            Label("Impressum", systemImage: SFSymbolName.info)
+                        }
+                        .toggleStyle(.radio)
+
+                        Toggle(isOn: .constant(true)) {
+                            Label("Impressum", systemImage: SFSymbolName.info)
+                        }
+                        .toggleStyle(.radio)
+
+                        Toggle(isOn: .constant(true)) {
+                            Label("Impressum", systemImage: SFSymbolName.info)
+                        }
+
+                        Button(action: {}, label: {
+                            Label("Impressum", systemImage: SFSymbolName.info)
+                        })
+
+                        NavigationLink(destination: Text("abc")) {
+                            Label {
+                                SubTitle(title: "Impressum", description: "Noch 12 Tage gültig", details: nil)
+                            } icon: {
+                                Image(systemName: SFSymbolName.info)
+                            }
+                        }
+                        .buttonStyle(.navigation(showSeparator: false))
+                    }
+
+                    SectionContainer {
+                        NavigationLink(destination: Text("abc")) {
+                            Label {
+                                SubTitle(title: "Impressum", description: "Noch 12 Tage gültig", details: nil)
+                            } icon: {
+                                InitialsImage(backgroundColor: Colors.primary200, text: "SD", statusColor: nil)
+                            }
+                        }
+                        .buttonStyle(.navigation)
+
+                        NavigationLink(destination: Text("abc")) {
+                            Label {
+                                SubTitle(title: "Impressum", description: "Noch 12 Tage gültig", details: nil)
+                            } icon: {
+                                InitialsImage(backgroundColor: Colors.primary200,
+                                              text: "SD",
+                                              statusColor: nil,
+                                              size: .large)
+                            }
+                        }
+                        .buttonStyle(.navigation)
+
+                        NavigationLink(destination: Text("abc")) {
+                            Label(title: {
+                                KeyValuePair(key: "Impressum", value: "Detail")
+                            }, icon: {})
+                        }
+                        .buttonStyle(.navigation)
+
+                        NavigationLink(destination: Text("abc")) {
+                            Label(title: {
+                                SubTitle(title: "Impressum", description: "Noch 12 Tage gültig")
+                            }, icon: {})
+                        }
+                        .buttonStyle(.navigation)
+
+                        Toggle(isOn: .constant(false)) {
+                            Label(title: { Text("Impressum") }, icon: {})
+                        }
+                        .toggleStyle(.radio)
+
+                        Toggle(isOn: .constant(true)) {
+                            Label(title: { Text("Impressum") }, icon: {})
+                        }
+                    }
+                }
+            }
+            .sectionContainerStyle(BorderSectionContainerStyle())
+            .navigationBarTitle("Lists")
+        }
+        .frame(width: 375, height: 1400)
+
+        assertSnapshots(matching: sut, as: snapshotModi())
+    }
 }
 
 extension XCTestCase {

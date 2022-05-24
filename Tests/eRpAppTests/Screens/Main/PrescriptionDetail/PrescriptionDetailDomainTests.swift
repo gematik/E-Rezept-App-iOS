@@ -149,7 +149,7 @@ final class PrescriptionDetailDomainTests: XCTestCase {
         )
         var erxTask = ErxTask.Dummies.erxTaskReady
         erxTask.update(with: expectedRedeemDate)
-        let prescription = GroupedPrescription.Prescription(erxTask: ErxTask.Dummies.erxTaskReady)
+        let prescription = GroupedPrescription.Prescription.Dummies.prescriptionReady
         let expectedPrescription = GroupedPrescription.Prescription(erxTask: erxTask)
         // when
         store.send(.toggleRedeemPrescription) { sut in

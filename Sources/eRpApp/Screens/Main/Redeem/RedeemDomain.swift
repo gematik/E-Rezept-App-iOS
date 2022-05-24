@@ -133,7 +133,7 @@ enum RedeemDomain {
 extension RedeemDomain {
     enum Dummies {
         static let state = State(
-            groupedPrescription: GroupedPrescription.Dummies.twoPrescriptions
+            groupedPrescription: GroupedPrescription.Dummies.prescriptions
         )
         static let environment = Environment(
             schedulers: Schedulers(),

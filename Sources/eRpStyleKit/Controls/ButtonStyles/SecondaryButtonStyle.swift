@@ -72,6 +72,60 @@ extension ButtonStyle where Self == SecondaryButtonStyle {
     }
 }
 
+/// A button style that applies fg and bg color, as well as border radius.
+///
+/// To apply this style to a button, or to a view that contains buttons, use
+/// the ``View.buttonStyle(.secondary)`` modifier.
+public struct SecondaryAltButtonStyle: ButtonStyle {
+    private var isDestructive: Bool
+    private var isEnabled: Bool
+
+    public init(enabled: Bool = true, destructive: Bool = false) {
+        isEnabled = enabled
+        isDestructive = destructive
+    }
+
+    var foregroundColor: Color {
+        switch (isDestructive, isEnabled) {
+        case (false, true):
+            return Colors.primary
+        case (false, false):
+            return Color(.systemGray)
+        case (true, true):
+            return Colors.red600
+        case (true, false):
+            return Color(.systemGray)
+        }
+    }
+
+    public func makeBody(configuration: Self.Configuration) -> some View {
+        configuration.label
+            .font(.body.weight(.semibold))
+            .frame(maxWidth: .infinity, minHeight: 52, alignment: .center)
+            .opacity(configuration.isPressed ? 0.25 : 1)
+            .background(Color(.systemGray6))
+            .foregroundColor(foregroundColor)
+            .cornerRadius(16)
+            .padding(.horizontal)
+    }
+}
+
+extension ButtonStyle where Self == SecondaryAltButtonStyle {
+    /// A button style that applies fg and bg color, as well as border radius.
+    ///
+    /// To apply this style to a button, or to a view that contains buttons, use
+    /// the ``View.buttonStyle(.secondary)`` modifier.
+    public static var secondaryAlt: SecondaryAltButtonStyle { SecondaryAltButtonStyle() }
+
+    /// A button style that applies fg and bg color, as well as border radius.
+    ///
+    /// To apply this style to a button, or to a view that contains buttons, use
+    /// the ``View.buttonStyle(.secondaryAlt(isEnabled:,isDestructive: false))`` modifier.
+    public static func secondaryAlt(isEnabled: Bool = true, isDestructive: Bool = false) -> SecondaryAltButtonStyle {
+        SecondaryAltButtonStyle(enabled: isEnabled, destructive: isDestructive)
+    }
+}
+
 struct SecondaryButtonStyle_Preview: PreviewProvider {
     static var previews: some View {
         ScrollView {

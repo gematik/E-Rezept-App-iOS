@@ -39,8 +39,10 @@ struct PrescriptionLowDetailView: View {
                     .border(Colors.systemGray3, cornerRadius: 16)
                     .padding()
 
-                MedicationNameView(medicationText: viewStore.state.prescription.actualMedication?.name,
-                                   dateString: viewStore.state.prescription.statusMessage)
+                MedicationNameView(
+                    medicationText: viewStore.state.prescription.medicationText,
+                    statusMessage: viewStore.state.prescription.statusMessage
+                ).padding()
 
                 MedicationRedeemView(
                     text: viewStore.state.isArchived ? L10n.dtlBtnToogleMarkedRedeemed : L10n.dtlBtnToogleMarkRedeemed,

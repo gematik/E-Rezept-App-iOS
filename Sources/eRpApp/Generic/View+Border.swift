@@ -24,7 +24,7 @@ extension View {
     /// `clipShape` guarantees that it also works if the passed content has a colored background
     /// - Parameters:
     ///   - content: A view for which you plan to draw the border
-    ///   - width: line width of th drawn border, defaults to 1
+    ///   - width: line width of the drawn border, defaults to 1
     ///   - cornerRadius: radius of the corners
     /// - Returns: Returns a new view with a  rounded border
     func border<S>(_ content: S, width: CGFloat = 1, cornerRadius: CGFloat) -> some View where S: ShapeStyle {

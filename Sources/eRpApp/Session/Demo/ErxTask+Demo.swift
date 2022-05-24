@@ -112,6 +112,13 @@ extension ErxTask {
             )
         }()
 
+        static let erxTaskError: ErxTask = .init(
+            identifier: "2390f983-1e67-11b2-8555-63bf44e44fb8",
+            status: .error(.decoding(message: "error: decoding")),
+            accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
+            authoredOn: DemoDate.createDemoDate(.yesterday)
+        )
+
         static let erxTasks: [ErxTask] = {
             var demoPatient = ErxTask.Patient(
                 name: "Ludger Königsstein",

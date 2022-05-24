@@ -1,4 +1,4 @@
-// Generated using Sourcery 1.6.1 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 1.7.0 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 
 import Combine
@@ -641,6 +641,86 @@ class StreamWrappedSecureUserDataStore: SecureUserDataStore {
 
 }
 
+class StreamWrappedShipmentInfoDataStore: ShipmentInfoDataStore {
+    private var disposeBag: Set<AnyCancellable> = []
+	private let stream: AnyPublisher<ShipmentInfoDataStore, Never>
+	private var current: ShipmentInfoDataStore
+
+	init(stream: AnyPublisher<ShipmentInfoDataStore, Never>, current: ShipmentInfoDataStore) {
+		self.stream = stream
+		self.current = current
+
+		stream
+			.weakAssign(to: \.current, on: self)
+			.store(in: &disposeBag)
+
+
+	}
+
+	var selectedShipmentInfo: AnyPublisher<ShipmentInfo?, LocalStoreError> {
+		return stream
+			.map { $0.selectedShipmentInfo }
+			.switchToLatest()
+			.eraseToAnyPublisher()
+	}
+
+	func set(selectedShipmentInfoId: UUID) -> Void {
+        current.set(
+				selectedShipmentInfoId: selectedShipmentInfoId
+            )
+	}
+
+	func fetchShipmentInfo(by identifier: UUID) -> AnyPublisher<ShipmentInfo?, LocalStoreError> {
+        stream
+        	.map { $0.fetchShipmentInfo(
+				by: identifier
+            ) }
+            .switchToLatest()
+            .eraseToAnyPublisher()
+	}
+
+	func listAllShipmentInfos() -> AnyPublisher<[ShipmentInfo], LocalStoreError> {
+        stream
+        	.map { $0.listAllShipmentInfos(
+            ) }
+            .switchToLatest()
+            .eraseToAnyPublisher()
+	}
+
+	func save(shipmentInfos: [ShipmentInfo]) -> AnyPublisher<[ShipmentInfo], LocalStoreError> {
+        current.save(
+				shipmentInfos: shipmentInfos
+            )
+	}
+
+	func delete(shipmentInfos: [ShipmentInfo]) -> AnyPublisher<[ShipmentInfo], LocalStoreError> {
+        current.delete(
+				shipmentInfos: shipmentInfos
+            )
+	}
+
+	func update(identifier: UUID, mutating: @escaping (inout ShipmentInfo) -> Void) -> AnyPublisher<ShipmentInfo, LocalStoreError> {
+        current.update(
+				identifier: identifier,
+				mutating: mutating
+            )
+	}
+
+	func save(shipmentInfo: ShipmentInfo) -> AnyPublisher<ShipmentInfo?, LocalStoreError> {
+        current.save(
+				shipmentInfo: shipmentInfo
+            )
+	}
+
+	func delete(shipmentInfo: ShipmentInfo) -> AnyPublisher<ShipmentInfo?, LocalStoreError> {
+        current.delete(
+				shipmentInfo: shipmentInfo
+            )
+	}
+
+
+}
+
 class StreamWrappedUserDataStore: UserDataStore {
     private var disposeBag: Set<AnyCancellable> = []
 	private let stream: AnyPublisher<UserDataStore, Never>
@@ -660,7 +740,7 @@ class StreamWrappedUserDataStore: UserDataStore {
 	var hideOnboarding: AnyPublisher<Bool, Never> {
 		return stream
 			.map { $0.hideOnboarding }
-			.switchToLatest() 
+			.switchToLatest()
 			.eraseToAnyPublisher()
 	}
 	var isOnboardingHidden: Bool { current.isOnboardingHidden }
@@ -802,6 +882,9 @@ class StreamWrappedUserSession: UserSession {
 	}()
 	lazy var profileDataStore: ProfileDataStore = {
 		StreamWrappedProfileDataStore(stream: stream.map{ $0.profileDataStore }.eraseToAnyPublisher(), current: current.profileDataStore )
+	}()
+	lazy var shipmentInfoDataStore: ShipmentInfoDataStore = {
+		StreamWrappedShipmentInfoDataStore(stream: stream.map{ $0.shipmentInfoDataStore }.eraseToAnyPublisher(), current: current.shipmentInfoDataStore )
 	}()
 	lazy var pharmacyRepository: PharmacyRepository = {
 		StreamWrappedPharmacyRepository(stream: stream.map{ $0.pharmacyRepository }.eraseToAnyPublisher(), current: current.pharmacyRepository )

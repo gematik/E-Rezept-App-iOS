@@ -112,7 +112,8 @@ final class CardWallReadCardDomainTests: XCTestCase {
                 schedulers: schedulers,
                 profileDataStore: mockProfileDataStore,
                 signatureProvider: DummySecureEnclaveSignatureProvider(),
-                sessionProvider: mockProfileBasedIdpSessionProvider
+                sessionProvider: mockProfileBasedIdpSessionProvider,
+                nfcSessionProvider: mockNFCSessionProvider
             )
         )
     }

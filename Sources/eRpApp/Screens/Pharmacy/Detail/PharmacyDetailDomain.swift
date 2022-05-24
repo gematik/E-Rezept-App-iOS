@@ -145,7 +145,8 @@ enum PharmacyDetailDomain: Equatable {
             PharmacyRedeemDomain.Environment(
                 schedulers: environment.schedulers,
                 userSession: environment.userSession,
-                erxTaskRepository: environment.userSession.erxTaskRepository
+                erxTaskRepository: environment.userSession.erxTaskRepository,
+                shipmentInfoStore: environment.userSession.shipmentInfoDataStore
             )
         }
 

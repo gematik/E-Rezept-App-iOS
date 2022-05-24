@@ -243,7 +243,10 @@ enum GroupedPrescriptionListDomain {
                 CardWallDomain.Environment(
                     schedulers: globalEnvironment.schedulers,
                     userSession: globalEnvironment.userSession,
-                    sessionProvider: DefaultSessionProvider(userSessionProvider: globalEnvironment.userSessionProvider),
+                    sessionProvider: DefaultSessionProvider(
+                        userSessionProvider: globalEnvironment.userSessionProvider,
+                        userSession: globalEnvironment.userSession
+                    ),
                     signatureProvider: globalEnvironment.signatureProvider,
                     accessibilityAnnouncementReceiver: globalEnvironment.accessibilityAnnouncementReceiver
                 )
@@ -392,9 +395,9 @@ extension GroupedPrescriptionListDomain {
         static let demoSessionContainer = DummyUserSessionContainer()
         static let state = State()
         static let stateWithTwoPrescriptions = State(
-            loadingState: .value([GroupedPrescription.Dummies.twoPrescriptions]),
+            loadingState: .value([GroupedPrescription.Dummies.prescriptions]),
             cardWallState: nil,
-            groupedPrescriptions: [GroupedPrescription.Dummies.twoPrescriptions],
+            groupedPrescriptions: [GroupedPrescription.Dummies.prescriptions],
             selectedPrescriptionDetailState: nil,
             redeemState: nil,
             hintState: MainViewHintsDomain.Dummies.emptyState()

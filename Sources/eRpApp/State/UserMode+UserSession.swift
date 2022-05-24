@@ -52,6 +52,10 @@ extension UserMode: UserSession {
         sessionContainer.localUserStore
     }
 
+    var shipmentInfoDataStore: ShipmentInfoDataStore {
+        sessionContainer.shipmentInfoDataStore
+    }
+
     var secureUserStore: SecureUserDataStore {
         sessionContainer.secureUserStore
     }

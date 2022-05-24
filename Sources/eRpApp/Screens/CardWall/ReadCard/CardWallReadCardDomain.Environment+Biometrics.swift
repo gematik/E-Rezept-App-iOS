@@ -128,7 +128,7 @@ extension CardWallReadCardDomain.Environment {
                 .first()
                 .mapError(CardWallReadCardDomain.State.Error.idpError)
                 .flatMap { challengeSession -> AnyPublisher<IDPToken, CardWallReadCardDomain.State.Error> in
-                    sessionProvider.signatureProvider(for: profileID)
+                    self.nfcSessionProvider
                         .openSecureSession(can: can,
                                            pin: pin) // -> AnyPublisher<EGKSignatureSession, NFCSignatureProviderError>
                         .flatMap { healthCard -> AnyPublisher<

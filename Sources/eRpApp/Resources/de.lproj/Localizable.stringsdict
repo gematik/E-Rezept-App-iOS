@@ -2,7 +2,7 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>erx_txt_expires_in</key>
+	<key>erx_txt_accepted_until</key>
 	<dict>
 		<key>NSStringLocalizedFormatKey</key>
 		<string>%#@v1_days_variable@</string>
@@ -18,7 +18,7 @@
 			<string>Noch %u Tage gültig</string>
 		</dict>
 	</dict>
-	<key>erx_txt_accepted_until</key>
+	<key>erx_txt_expires_in</key>
 	<dict>
 		<key>NSStringLocalizedFormatKey</key>
 		<string>%#@variable_0@</string>

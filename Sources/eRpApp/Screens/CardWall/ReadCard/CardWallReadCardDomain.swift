@@ -61,7 +61,8 @@ enum CardWallReadCardDomain {
         let schedulers: Schedulers
         let profileDataStore: ProfileDataStore
         let signatureProvider: SecureEnclaveSignatureProvider
-        var sessionProvider: ProfileBasedSessionProvider
+        let sessionProvider: ProfileBasedSessionProvider
+        let nfcSessionProvider: NFCSignatureProvider
     }
 
     static let reducer = Reducer { state, action, environment in
@@ -209,7 +210,8 @@ extension CardWallReadCardDomain {
         static let environment = Environment(schedulers: Schedulers(),
                                              profileDataStore: DemoProfileDataStore(),
                                              signatureProvider: DummySecureEnclaveSignatureProvider(),
-                                             sessionProvider: DummyProfileBasedSessionProvider())
+                                             sessionProvider: DummyProfileBasedSessionProvider(),
+                                             nfcSessionProvider: DemoSignatureProvider())
 
         static let store = Store(
             initialState: state,
@@ -273,8 +275,7 @@ extension CardWallReadCardDomain.Environment {
 
             subscriber.send(.stateReceived(.signingChallenge(.loading)))
 
-            return self.sessionProvider
-                .signatureProvider(for: profileID)
+            return self.nfcSessionProvider
                 .sign(can: can, pin: pin, challenge: challenge)
                 .mapError(CardWallReadCardDomain.State.Error.signChallengeError)
                 .receive(on: self.schedulers.main)

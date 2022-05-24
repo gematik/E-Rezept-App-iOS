@@ -84,7 +84,7 @@ final class RecordActionsForHintsTests: XCTestCase {
 
     func testRecordActionsForHintsReducerHappyPath() {
         let mockSessionContainer = MockUserSessionContainer()
-        let groupedPrescriptions = GroupedPrescription.Dummies.twoPrescriptions
+        let groupedPrescriptions = GroupedPrescription.Dummies.prescriptions
         let prescriptionLoadingState =
             LoadingState<[GroupedPrescription], ErxRepositoryError>
                 .value([groupedPrescriptions])

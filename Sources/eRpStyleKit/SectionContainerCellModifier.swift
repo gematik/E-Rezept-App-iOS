@@ -30,7 +30,9 @@ extension EnvironmentValues {
 }
 
 extension View {
-    func sectionContainerIsLastElement(_ sectionContainerIsLastElement: Bool) -> some View {
+    /// Use on the content of a `SectionContainer` and pass `true` if the element is the last Element in list
+    /// This will remove the separator from the last element in the section.
+    public func sectionContainerIsLastElement(_ sectionContainerIsLastElement: Bool) -> some View {
         environment(\.sectionContainerIsLastElement, sectionContainerIsLastElement)
     }
 }
