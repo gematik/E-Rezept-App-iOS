@@ -1,0 +1,43 @@
+
+.flash g a polygon {
+    fill: lightgray;
+    font-weight: bold;
+
+    animation: blink 1s;
+    animation-iteration-count: 3;
+}
+
+.flash g a polygon + polygon {
+    stroke-width: 2.0;
+    fill: lightblue;
+}
+
+.flash g a polygon + polygon + text {
+    font-weight: bold;
+}
+
+@keyframes blink { 50% { fill: #f00; }  }
+
+.highlight {
+    fill: lightblue;
+}
+
+.highlight + text {
+    font-weight: bold;
+}
+
+.highlight + text + g {
+    font-weight: bold;
+}
+
+.highlight + text + g > a > polyline {
+    fill: lightblue;
+}
+
+g.edge.highlight {
+
+}
+
+g.edge.highlight path {
+    stroke-width: 3.0;
+}

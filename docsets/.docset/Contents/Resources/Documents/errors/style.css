@@ -1,0 +1,89 @@
+html {
+	background: #f0f0f0;
+}
+
+body {
+	max-width: 800px;
+	margin: 0 auto;
+	background: #fff;
+	padding: 32px;
+	border: 1px solid #e0e0e0;
+}
+
+h3 {
+	margin: 40px 0;
+}
+
+* {
+	font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+	color: #333;
+}
+
+code {
+  font-family: 'SF Mono', SFMono-Regular, ui-monospace, Menlo, monospace;
+  background: #eee;
+  display: inline-block;
+  padding: 0 5px;
+  margin:  2px;
+}
+
+pre {
+	overflow-x: auto;
+}
+pre code {
+  padding: 16px;
+  display: inline-block;
+}
+
+a {
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+a::after {
+	content: "🔗";
+	font-size: 60%;
+	vertical-align: top;
+}
+
+#TOC {
+	position: fixed;
+	background: #fff;
+	width: auto;
+	left: 0;
+	font-size: 1.2em;
+	line-height: 1.5em;
+	top: 0;
+	bottom: 0;
+	overflow: scroll;
+}
+
+#TOC ul {
+	padding-left: 1em;
+	list-style-type: none;
+}
+
+#TOC ul ul {
+	counter-reset: section;
+	font-size: 1.0em;
+	line-height: 1.5em;
+}
+
+#TOC ul ul ul {
+	font-size: 0.8em;
+	line-height: 1.5em;
+}
+
+ul {
+	counter-reset: section;
+	font-size: 1.0em;
+	line-height: 1.5em;
+}
+
+ul ul {
+	font-size: 0.9em;
+	line-height: 1.5em;
+}

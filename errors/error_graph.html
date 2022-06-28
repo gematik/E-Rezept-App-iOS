@@ -1,0 +1,115 @@
+<html>
+<head>
+    <style type="text/css">
+        #searchbar {
+            width:  100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            margin: 0;
+            padding: 16px;
+            background: #ddd;
+        }
+
+        h1 {
+            clear:  none;
+            float:  left;
+            padding: 4px;
+            margin: 0 16px 0 0;
+            font: 16px/20px bold Verdana,sans-serif;
+            font-weight: semibold;
+        }
+
+        input,button {
+            font: 16px/20px Verdana,sans-serif;
+        }
+
+        input[type=text] {
+            width: 50%;
+        }
+
+        .flash {
+            opacity: 0.1;
+            
+            animation: blink 1s;
+            animation-iteration-count: 3;
+        }
+
+        @keyframes blink { 50% { opacity: 1; }  }
+
+    </style>
+    <script type="text/javascript">
+        document.addEventListener("DOMContentLoaded", function(event) {
+        });
+
+        function search() {
+            let element = document.getElementsByName("search")[0]
+
+            console.log(element.value)
+
+            let searchString = element.value.toLowerCase()
+            let codes = searchString.split(",")
+
+            var svgObject = document.getElementById('svg-object').contentDocument;
+
+            // Find Matching Error Names
+            documentNodes = svgObject.getElementsByClassName("node")
+            nodes = Array.from(documentNodes);
+            nodes.forEach(node => {
+                node.classList.remove("flash")
+            })
+            matchingNodesByTitle = nodes.filter(node => node.id.toLowerCase().includes(searchString))
+            matchingNodesByContent = nodes.filter(node => {
+                let textContent = node.textContent.toLowerCase()
+                for (var i=0;i<codes.length;i++) {
+                    if (textContent.search(codes[i]) != -1) {
+                        return true
+                    }
+                }
+                return false
+            })
+
+            matchingNodes = matchingNodesByTitle.concat(matchingNodesByContent)
+            var matchingNode = matchingNodes[0]
+            if (matchingNode != null) {
+                document.body.scrollTop = matchingNode.getClientRects()[0].y - 100
+                document.body.scrollLeft = matchingNode.getClientRects()[0].x - 200
+            }
+            matchingNodes.forEach(node => {
+                node.classList.add("flash")
+            })
+
+            // Find matching error codes
+            let polylines = Array.from(svgObject.getElementsByTagName("polyline"))
+            let matchingPolylines = polylines.filter(element => {
+                return codes.find(code => element.nextSibling.nextSibling.textContent == code) || false
+            })
+            polylines.forEach(node =>  {
+                node.classList.remove("highlight")
+            })
+            matchingPolylines.forEach(node =>  {
+                node.classList.add("highlight")
+            })
+            let edges = Array.from(svgObject.getElementsByClassName("edge"))
+            let matchingEdges = edges.filter(edge => {
+                return codes.find(code => edge.id.toLowerCase() == code) || false
+            })
+            edges.forEach(node =>  {
+                node.classList.remove("highlight")
+            })
+            matchingEdges.forEach(node =>  {
+                node.classList.add("highlight")
+            })        
+        }
+    </script>
+</head>
+<body>
+    <div id="searchbar">
+        <h1>iOS Fehlermatrix</h1>
+        <input type="text" name="search" onchange="search()" onsubmit="search()" placeholder="Beispiel:i-01803,i-01305,i-10014,i-56001" />
+        <button onclick="search()">Suche Starten</input></button>
+    </div>
+    <br /><br /><br />
+    <object id="svg-object" data="error_graph.svg" type="image/svg+xml"></object>
+</body>
+</html>

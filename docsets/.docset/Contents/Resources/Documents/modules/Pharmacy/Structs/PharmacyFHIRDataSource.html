@@ -21,21 +21,21 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-           1.2.7
+           1.3.2
  Docs
         </a>
-         (52% documented)
+         (100% documented)
       </p>
     
-      <p class="header-col--secondary">
+      <div class="header-col--secondary">
         <form role="search" action="../search.json">
           <input type="text" placeholder="Search documentation" data-typeahead>
         </form>
-      </p>
+      </div>
     
         <p class="header-col header-col--secondary">
           <a class="header-link" href="https://github.com/gematik/E-Rezept-App-iOS">
-            <img class="header-icon" src="../img/gh.png"/>
+            <img class="header-icon" src="../img/gh.png" alt="GitHub"/>
             View on GitHub
           </a>
         </p>
@@ -44,7 +44,7 @@
 
     <p class="breadcrumbs">
       <a class="breadcrumb" href="../index.html"> Reference</a>
-      <img class="carat" src="../img/carat.png" />
+      <img class="carat" src="../img/carat.png" alt=""/>
       PharmacyFHIRDataSource Structure Reference
     </p>
 
@@ -63,10 +63,16 @@
             <a class="nav-group-name-link" href="../Enums.html">Enumerations</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/PharmacyBundleParsingError.html">PharmacyBundleParsingError</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Enums/PharmacyFHIROperation.html">PharmacyFHIROperation</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Enums/PharmacyRepositoryError.html">PharmacyRepositoryError</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/PharmacyRepositoryFilter.html">PharmacyRepositoryFilter</a>
               </li>
             </ul>
           </li>
@@ -78,12 +84,6 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/FHIRClient.html">FHIRClient</a>
-              </li>
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Extensions/ModelsR4.html">ModelsR4</a>
-              </li>
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Extensions/ModelsR4/Bundle.html">– Bundle</a>
               </li>
             </ul>
           </li>
@@ -109,6 +109,9 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/PharmacyLocation.html">PharmacyLocation</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/PharmacyLocation/AVSEndpoints.html">– AVSEndpoints</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/PharmacyLocation/Status.html">– Status</a>
@@ -208,9 +211,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:8Pharmacy0A14FHIRDataSourceV16searchPharmacies2by8position7Combine12AnyPublisherVySayAA0A8LocationVGAC5ErrorOGSS_AA8PositionVSgtF"></a>
-                    <a name="//apple_ref/swift/Method/searchPharmacies(by:position:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:8Pharmacy0A14FHIRDataSourceV16searchPharmacies2by8position7Combine12AnyPublisherVySayAA0A8LocationVGAC5ErrorOGSS_AA8PositionVSgtF">searchPharmacies(by:<wbr>position:<wbr>)</a>
+                    <a name="/s:8Pharmacy0A14FHIRDataSourceV16searchPharmacies2by8position6filter7Combine12AnyPublisherVySayAA0A8LocationVGAC5ErrorOGSS_AA8PositionVSgSDyS2SGtF"></a>
+                    <a name="//apple_ref/swift/Method/searchPharmacies(by:position:filter:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:8Pharmacy0A14FHIRDataSourceV16searchPharmacies2by8position6filter7Combine12AnyPublisherVySayAA0A8LocationVGAC5ErrorOGSS_AA8PositionVSgSDyS2SGtF">searchPharmacies(by:<wbr>position:<wbr>filter:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -228,7 +231,8 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">searchPharmacies</span><span class="p">(</span><span class="n">by</span> <span class="nv">searchTerm</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
-                             <span class="nv">position</span><span class="p">:</span> <span class="kt"><a href="../Structs/Position.html">Position</a></span><span class="p">?)</span>
+                             <span class="nv">position</span><span class="p">:</span> <span class="kt"><a href="../Structs/Position.html">Position</a></span><span class="p">?,</span>
+                             <span class="nv">filter</span><span class="p">:</span> <span class="p">[</span><span class="kt">String</span><span class="p">:</span> <span class="kt">String</span><span class="p">])</span>
     <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="p">[</span><span class="kt"><a href="../Structs/PharmacyLocation.html">PharmacyLocation</a></span><span class="p">],</span> <span class="kt"><a href="../Structs/PharmacyFHIRDataSource/Error.html">Error</a></span><span class="o">&gt;</span></code></pre>
 
                         </div>
@@ -284,8 +288,7 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
-
+                        
                         <a href="../Structs/PharmacyFHIRDataSource/Error.html" class="slightly-smaller">See more</a>
                       </div>
                       <div class="declaration">
@@ -307,9 +310,8 @@
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2022 <a class="link" href="https://www.gematik.de" target="_blank" rel="external">gematik GmbH</a>. All rights reserved. (Last updated: 2022-04-19)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+      <p>&copy; 2022 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2022-06-22)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>
-</div>
 </html>

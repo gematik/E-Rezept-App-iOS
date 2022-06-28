@@ -21,21 +21,21 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-           1.2.7
+           1.3.2
  Docs
         </a>
-         (66% documented)
+         (100% documented)
       </p>
     
-      <p class="header-col--secondary">
+      <div class="header-col--secondary">
         <form role="search" action="../search.json">
           <input type="text" placeholder="Search documentation" data-typeahead>
         </form>
-      </p>
+      </div>
     
         <p class="header-col header-col--secondary">
           <a class="header-link" href="https://github.com/gematik/E-Rezept-App-iOS">
-            <img class="header-icon" src="../img/gh.png"/>
+            <img class="header-icon" src="../img/gh.png" alt="GitHub"/>
             View on GitHub
           </a>
         </p>
@@ -44,7 +44,7 @@
 
     <p class="breadcrumbs">
       <a class="breadcrumb" href="../index.html"> Reference</a>
-      <img class="carat" src="../img/carat.png" />
+      <img class="carat" src="../img/carat.png" alt=""/>
       ErxLocalDataStore Protocol Reference
     </p>
 
@@ -62,9 +62,6 @@
           <li class="nav-group-name">
             <a class="nav-group-name-link" href="../Classes.html">Classes</a>
             <ul class="nav-group-tasks">
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Classes/DefaultErxTaskMatrixCodeGenerator.html">DefaultErxTaskMatrixCodeGenerator</a>
-              </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/DefaultErxTaskRepository.html">DefaultErxTaskRepository</a>
               </li>
@@ -111,9 +108,6 @@
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/String.html">String</a>
               </li>
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Extensions/ZXDataMatrixWriter.html">ZXDataMatrixWriter</a>
-              </li>
             </ul>
           </li>
           <li class="nav-group-name">
@@ -132,13 +126,7 @@
                 <a class="nav-group-task-link" href="../Protocols/ErxTaskMatrixCode.html">ErxTaskMatrixCode</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Protocols/ErxTaskMatrixCodeGenerator.html">ErxTaskMatrixCodeGenerator</a>
-              </li>
-              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Protocols/ErxTaskRepository.html">ErxTaskRepository</a>
-              </li>
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Protocols/MatrixCodeGenerator.html">MatrixCodeGenerator</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Protocols/PagedAuditEventsController.html">PagedAuditEventsController</a>
@@ -209,6 +197,9 @@
                 <a class="nav-group-task-link" href="../Structs/PageContainer.html">PageContainer</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/PagedContent.html">PagedContent</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/Profile.html">Profile</a>
               </li>
               <li class="nav-group-task">
@@ -260,7 +251,7 @@
                 <a name="//apple_ref/swift/Section/ErxTask interfaces" class="dashAnchor"></a>
                 <div class="section-name-container">
                   <a class="section-name-link" href="#/ErxTask%20interfaces"></a>
-                  <h3 class="section-name"><p>ErxTask interfaces</p>
+                  <h3 class="section-name"><span>ErxTask interfaces</span>
 </h3>
                 </div>
               </div>
@@ -285,7 +276,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">fetchTask</span><span class="p">(</span><span class="n">by</span> <span class="nv">id</span><span class="p">:</span> <span class="kt"><a href="../Structs/ErxTask.html">ErxTask</a></span><span class="o">.</span><span class="kt">ID</span><span class="p">,</span> <span class="nv">accessCode</span><span class="p">:</span> <span class="kt">String</span><span class="p">?)</span> <span class="c1">// swiftlint:disable:this identifier_name</span>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">fetchTask</span><span class="p">(</span><span class="n">by</span> <span class="nv">id</span><span class="p">:</span> <span class="kt"><a href="../Structs/ErxTask.html">ErxTask</a></span><span class="o">.</span><span class="kt">ID</span><span class="p">,</span> <span class="nv">accessCode</span><span class="p">:</span> <span class="kt">String</span><span class="p">?)</span>
     <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/ErxTask.html">ErxTask</a></span><span class="p">?,</span> <span class="kt"><a href="../Enums/LocalStoreError.html">LocalStoreError</a></span><span class="o">&gt;</span></code></pre>
 
                         </div>
@@ -507,7 +498,7 @@ otherwise.</p>
                 <a name="//apple_ref/swift/Section/Communication interfaces" class="dashAnchor"></a>
                 <div class="section-name-container">
                   <a class="section-name-link" href="#/Communication%20interfaces"></a>
-                  <h3 class="section-name"><p>Communication interfaces</p>
+                  <h3 class="section-name"><span>Communication interfaces</span>
 </h3>
                 </div>
               </div>
@@ -697,7 +688,7 @@ otherwise.</p>
                 <a name="//apple_ref/swift/Section/AuditEvent interfaces" class="dashAnchor"></a>
                 <div class="section-name-container">
                   <a class="section-name-link" href="#/AuditEvent%20interfaces"></a>
-                  <h3 class="section-name"><p>AuditEvent interfaces</p>
+                  <h3 class="section-name"><span>AuditEvent interfaces</span>
 </h3>
                 </div>
               </div>
@@ -722,7 +713,7 @@ otherwise.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">fetchAuditEvent</span><span class="p">(</span><span class="n">by</span> <span class="nv">id</span><span class="p">:</span> <span class="kt"><a href="../Structs/ErxAuditEvent.html">ErxAuditEvent</a></span><span class="o">.</span><span class="kt">ID</span><span class="p">)</span> <span class="c1">// swiftlint:disable:this identifier_name</span>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">fetchAuditEvent</span><span class="p">(</span><span class="n">by</span> <span class="nv">id</span><span class="p">:</span> <span class="kt"><a href="../Structs/ErxAuditEvent.html">ErxAuditEvent</a></span><span class="o">.</span><span class="kt">ID</span><span class="p">)</span>
     <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/ErxAuditEvent.html">ErxAuditEvent</a></span><span class="p">?,</span> <span class="kt"><a href="../Enums/LocalStoreError.html">LocalStoreError</a></span><span class="o">&gt;</span></code></pre>
 
                         </div>
@@ -943,7 +934,7 @@ otherwise.</p>
                 <a name="//apple_ref/swift/Section/MedicationDispense interfaces" class="dashAnchor"></a>
                 <div class="section-name-container">
                   <a class="section-name-link" href="#/MedicationDispense%20interfaces"></a>
-                  <h3 class="section-name"><p>MedicationDispense interfaces</p>
+                  <h3 class="section-name"><span>MedicationDispense interfaces</span>
 </h3>
                 </div>
               </div>
@@ -1060,9 +1051,8 @@ otherwise.</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2022 <a class="link" href="https://www.gematik.de" target="_blank" rel="external">gematik GmbH</a>. All rights reserved. (Last updated: 2022-04-19)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+      <p>&copy; 2022 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2022-06-22)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>
-</div>
 </html>

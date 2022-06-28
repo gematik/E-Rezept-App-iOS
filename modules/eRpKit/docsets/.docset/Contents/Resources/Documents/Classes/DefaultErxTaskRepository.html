@@ -21,21 +21,21 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-           1.2.7
+           1.3.2
  Docs
         </a>
-         (66% documented)
+         (100% documented)
       </p>
     
-      <p class="header-col--secondary">
+      <div class="header-col--secondary">
         <form role="search" action="../search.json">
           <input type="text" placeholder="Search documentation" data-typeahead>
         </form>
-      </p>
+      </div>
     
         <p class="header-col header-col--secondary">
           <a class="header-link" href="https://github.com/gematik/E-Rezept-App-iOS">
-            <img class="header-icon" src="../img/gh.png"/>
+            <img class="header-icon" src="../img/gh.png" alt="GitHub"/>
             View on GitHub
           </a>
         </p>
@@ -44,7 +44,7 @@
 
     <p class="breadcrumbs">
       <a class="breadcrumb" href="../index.html"> Reference</a>
-      <img class="carat" src="../img/carat.png" />
+      <img class="carat" src="../img/carat.png" alt=""/>
       DefaultErxTaskRepository Class Reference
     </p>
 
@@ -62,9 +62,6 @@
           <li class="nav-group-name">
             <a class="nav-group-name-link" href="../Classes.html">Classes</a>
             <ul class="nav-group-tasks">
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Classes/DefaultErxTaskMatrixCodeGenerator.html">DefaultErxTaskMatrixCodeGenerator</a>
-              </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/DefaultErxTaskRepository.html">DefaultErxTaskRepository</a>
               </li>
@@ -111,9 +108,6 @@
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/String.html">String</a>
               </li>
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Extensions/ZXDataMatrixWriter.html">ZXDataMatrixWriter</a>
-              </li>
             </ul>
           </li>
           <li class="nav-group-name">
@@ -132,13 +126,7 @@
                 <a class="nav-group-task-link" href="../Protocols/ErxTaskMatrixCode.html">ErxTaskMatrixCode</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Protocols/ErxTaskMatrixCodeGenerator.html">ErxTaskMatrixCodeGenerator</a>
-              </li>
-              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Protocols/ErxTaskRepository.html">ErxTaskRepository</a>
-              </li>
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Protocols/MatrixCodeGenerator.html">MatrixCodeGenerator</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Protocols/PagedAuditEventsController.html">PagedAuditEventsController</a>
@@ -207,6 +195,9 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/PageContainer.html">PageContainer</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/PagedContent.html">PagedContent</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/Profile.html">Profile</a>
@@ -362,7 +353,7 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">loadRemote</span><span class="p">(</span>
-    <span class="n">by</span> <span class="nv">id</span><span class="p">:</span> <span class="kt"><a href="../Structs/ErxTask.html">ErxTask</a></span><span class="o">.</span><span class="kt">ID</span><span class="p">,</span> <span class="c1">// swiftlint:disable:this identifier_name</span>
+    <span class="n">by</span> <span class="nv">id</span><span class="p">:</span> <span class="kt"><a href="../Structs/ErxTask.html">ErxTask</a></span><span class="o">.</span><span class="kt">ID</span><span class="p">,</span>
     <span class="nv">accessCode</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/ErxTask.html">ErxTask</a></span><span class="p">?,</span> <span class="kt"><a href="../Classes/DefaultErxTaskRepository.html#/s:6eRpKit24DefaultErxTaskRepositoryC9ErrorTypea">ErrorType</a></span><span class="o">&gt;</span></code></pre>
 
@@ -427,7 +418,7 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">loadLocal</span><span class="p">(</span>
-    <span class="n">by</span> <span class="nv">id</span><span class="p">:</span> <span class="kt"><a href="../Structs/ErxTask.html">ErxTask</a></span><span class="o">.</span><span class="kt">ID</span><span class="p">,</span> <span class="c1">// swiftlint:disable:this identifier_name</span>
+    <span class="n">by</span> <span class="nv">id</span><span class="p">:</span> <span class="kt"><a href="../Structs/ErxTask.html">ErxTask</a></span><span class="o">.</span><span class="kt">ID</span><span class="p">,</span>
     <span class="nv">accessCode</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/ErxTask.html">ErxTask</a></span><span class="p">?,</span> <span class="kt"><a href="../Classes/DefaultErxTaskRepository.html#/s:6eRpKit24DefaultErxTaskRepositoryC9ErrorTypea">ErrorType</a></span><span class="o">&gt;</span></code></pre>
 
@@ -655,9 +646,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:6eRpKit24DefaultErxTaskRepositoryC6redeem6orders7Combine12AnyPublisherVySbAA0dF5ErrorOGSayAA0dE5OrderVG_tF"></a>
-                    <a name="//apple_ref/swift/Method/redeem(orders:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6eRpKit24DefaultErxTaskRepositoryC6redeem6orders7Combine12AnyPublisherVySbAA0dF5ErrorOGSayAA0dE5OrderVG_tF">redeem(orders:<wbr>)</a>
+                    <a name="/s:6eRpKit24DefaultErxTaskRepositoryC6redeem5order7Combine12AnyPublisherVyAA0dE5OrderVAA0dF5ErrorOGAJ_tF"></a>
+                    <a name="//apple_ref/swift/Method/redeem(order:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:6eRpKit24DefaultErxTaskRepositoryC6redeem5order7Combine12AnyPublisherVyAA0dE5OrderVAA0dF5ErrorOGAJ_tF">redeem(order:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -673,7 +664,7 @@ Note: The response does not verify that the pharmacy has accepted the order</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">redeem</span><span class="p">(</span><span class="nv">orders</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Structs/ErxTaskOrder.html">ErxTaskOrder</a></span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">Bool</span><span class="p">,</span> <span class="kt"><a href="../Classes/DefaultErxTaskRepository.html#/s:6eRpKit24DefaultErxTaskRepositoryC9ErrorTypea">ErrorType</a></span><span class="o">&gt;</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">redeem</span><span class="p">(</span><span class="nv">order</span><span class="p">:</span> <span class="kt"><a href="../Structs/ErxTaskOrder.html">ErxTaskOrder</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/ErxTaskOrder.html">ErxTaskOrder</a></span><span class="p">,</span> <span class="kt"><a href="../Classes/DefaultErxTaskRepository.html#/s:6eRpKit24DefaultErxTaskRepositoryC9ErrorTypea">ErrorType</a></span><span class="o">&gt;</span></code></pre>
 
                         </div>
                       </div>
@@ -684,12 +675,12 @@ Note: The response does not verify that the pharmacy has accepted the order</p>
                             <tr>
                               <td>
                                 <code>
-                                <em>orders</em>
+                                <em>order</em>
                                 </code>
                               </td>
                               <td>
                                 <div>
-                                  <p>Array of an order that contains informations about the task,  redeem option
+                                  <p>Order that contains informations about the task,  redeem option
                 and the pharmacy where the task should be redeemed</p>
                                 </div>
                               </td>
@@ -699,7 +690,7 @@ Note: The response does not verify that the pharmacy has accepted the order</p>
                       </div>
                       <div>
                         <h4>Return Value</h4>
-                        <p><code>true</code> if the server has received the order</p>
+                        <p><code><a href="../Structs/ErxTaskOrder.html">ErxTaskOrder</a></code> if the server has received the order</p>
                       </div>
                     </section>
                   </div>
@@ -834,9 +825,8 @@ Note: The response does not verify that the pharmacy has accepted the order</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2022 <a class="link" href="https://www.gematik.de" target="_blank" rel="external">gematik GmbH</a>. All rights reserved. (Last updated: 2022-04-19)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+      <p>&copy; 2022 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2022-06-22)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>
-</div>
 </html>

@@ -21,21 +21,21 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-           1.2.7
+           1.3.2
  Docs
         </a>
-         (52% documented)
+         (100% documented)
       </p>
     
-      <p class="header-col--secondary">
+      <div class="header-col--secondary">
         <form role="search" action="../search.json">
           <input type="text" placeholder="Search documentation" data-typeahead>
         </form>
-      </p>
+      </div>
     
         <p class="header-col header-col--secondary">
           <a class="header-link" href="https://github.com/gematik/E-Rezept-App-iOS">
-            <img class="header-icon" src="../img/gh.png"/>
+            <img class="header-icon" src="../img/gh.png" alt="GitHub"/>
             View on GitHub
           </a>
         </p>
@@ -44,7 +44,7 @@
 
     <p class="breadcrumbs">
       <a class="breadcrumb" href="../index.html"> Reference</a>
-      <img class="carat" src="../img/carat.png" />
+      <img class="carat" src="../img/carat.png" alt=""/>
       PharmacyLocation Structure Reference
     </p>
 
@@ -63,10 +63,16 @@
             <a class="nav-group-name-link" href="../Enums.html">Enumerations</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/PharmacyBundleParsingError.html">PharmacyBundleParsingError</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Enums/PharmacyFHIROperation.html">PharmacyFHIROperation</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Enums/PharmacyRepositoryError.html">PharmacyRepositoryError</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Enums/PharmacyRepositoryFilter.html">PharmacyRepositoryFilter</a>
               </li>
             </ul>
           </li>
@@ -78,12 +84,6 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/FHIRClient.html">FHIRClient</a>
-              </li>
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Extensions/ModelsR4.html">ModelsR4</a>
-              </li>
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Extensions/ModelsR4/Bundle.html">– Bundle</a>
               </li>
             </ul>
           </li>
@@ -109,6 +109,9 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/PharmacyLocation.html">PharmacyLocation</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/PharmacyLocation/AVSEndpoints.html">– AVSEndpoints</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/PharmacyLocation/Status.html">– Status</a>
@@ -163,9 +166,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:8Pharmacy0A8LocationV2id6status11telematikID4name5types8position7address7telecom16hoursOfOperationACSS_AC6StatusOSgS2SSgSayAC0A4TypeOGAC8PositionVSgAC7AddressVSgAC7TelecomVSgSayAC05HoursmN0VGtcfc"></a>
-                    <a name="//apple_ref/swift/Method/init(id:status:telematikID:name:types:position:address:telecom:hoursOfOperation:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:8Pharmacy0A8LocationV2id6status11telematikID4name5types8position7address7telecom16hoursOfOperationACSS_AC6StatusOSgS2SSgSayAC0A4TypeOGAC8PositionVSgAC7AddressVSgAC7TelecomVSgSayAC05HoursmN0VGtcfc">init(id:<wbr>status:<wbr>telematikID:<wbr>name:<wbr>types:<wbr>position:<wbr>address:<wbr>telecom:<wbr>hoursOfOperation:<wbr>)</a>
+                    <a name="/s:8Pharmacy0A8LocationV2id6status11telematikID4name5types8position7address7telecom16hoursOfOperation12avsEndpoints0O12CertificatesACSS_AC6StatusOSgS2SSgSayAC0A4TypeOGAC8PositionVSgAC7AddressVSgAC7TelecomVSgSayAC05HoursmN0VGAC12AVSEndpointsVSgSay7OpenSSL4X509CGtcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(id:status:telematikID:name:types:position:address:telecom:hoursOfOperation:avsEndpoints:avsCertificates:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:8Pharmacy0A8LocationV2id6status11telematikID4name5types8position7address7telecom16hoursOfOperation12avsEndpoints0O12CertificatesACSS_AC6StatusOSgS2SSgSayAC0A4TypeOGAC8PositionVSgAC7AddressVSgAC7TelecomVSgSayAC05HoursmN0VGAC12AVSEndpointsVSgSay7OpenSSL4X509CGtcfc">init(id:<wbr>status:<wbr>telematikID:<wbr>name:<wbr>types:<wbr>position:<wbr>address:<wbr>telecom:<wbr>hoursOfOperation:<wbr>avsEndpoints:<wbr>avsCertificates:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -181,7 +184,7 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span>
-    <span class="nv">id</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span> <span class="c1">// swiftlint:disable:this identifier_name</span>
+    <span class="nv">id</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
     <span class="nv">status</span><span class="p">:</span> <span class="kt"><a href="../Structs/PharmacyLocation/Status.html">Status</a></span><span class="p">?,</span>
     <span class="nv">telematikID</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
     <span class="nv">name</span><span class="p">:</span> <span class="kt">String</span><span class="p">?,</span>
@@ -189,7 +192,9 @@
     <span class="nv">position</span><span class="p">:</span> <span class="kt"><a href="../Structs/PharmacyLocation/Position.html">Position</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
     <span class="nv">address</span><span class="p">:</span> <span class="kt"><a href="../Structs/PharmacyLocation/Address.html">Address</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
     <span class="nv">telecom</span><span class="p">:</span> <span class="kt"><a href="../Structs/PharmacyLocation/Telecom.html">Telecom</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
-    <span class="nv">hoursOfOperation</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Structs/PharmacyLocation/HoursOfOperation.html">HoursOfOperation</a></span><span class="p">]</span>
+    <span class="nv">hoursOfOperation</span><span class="p">:</span> <span class="p">[</span><span class="kt"><a href="../Structs/PharmacyLocation/HoursOfOperation.html">HoursOfOperation</a></span><span class="p">],</span>
+    <span class="nv">avsEndpoints</span><span class="p">:</span> <span class="kt"><a href="../Structs/PharmacyLocation/AVSEndpoints.html">AVSEndpoints</a></span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
+    <span class="nv">avsCertificates</span><span class="p">:</span> <span class="p">[</span><span class="kt">X509</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="p">)</span></code></pre>
 
                         </div>
@@ -205,7 +210,7 @@
                 <a name="//apple_ref/swift/Section/FHIR resources" class="dashAnchor"></a>
                 <div class="section-name-container">
                   <a class="section-name-link" href="#/FHIR%20resources"></a>
-                  <h3 class="section-name"><p>FHIR resources</p>
+                  <h3 class="section-name"><span>FHIR resources</span>
 </h3>
                 </div>
               </div>
@@ -457,6 +462,60 @@ NOTE: Is here used to indicate E-Rezept readiness</p>
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:8Pharmacy0A8LocationV12avsEndpointsAC12AVSEndpointsVSgvp"></a>
+                    <a name="//apple_ref/swift/Property/avsEndpoints" class="dashAnchor"></a>
+                    <a class="token" href="#/s:8Pharmacy0A8LocationV12avsEndpointsAC12AVSEndpointsVSgvp">avsEndpoints</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Container that holds urls to the AVS Endpoints and their certificates to send requests with the AVSModul</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">avsEndpoints</span><span class="p">:</span> <span class="kt"><a href="../Structs/PharmacyLocation/AVSEndpoints.html">AVSEndpoints</a></span><span class="p">?</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:8Pharmacy0A8LocationV15avsCertificatesSay7OpenSSL4X509CGvp"></a>
+                    <a name="//apple_ref/swift/Property/avsCertificates" class="dashAnchor"></a>
+                    <a class="token" href="#/s:8Pharmacy0A8LocationV15avsCertificatesSay7OpenSSL4X509CGvp">avsCertificates</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Array of certificates for all recipients</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">avsCertificates</span><span class="p">:</span> <span class="p">[</span><span class="kt">X509</span><span class="p">]</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:8Pharmacy0A8LocationV19canBeDisplayedInMapSbvp"></a>
                     <a name="//apple_ref/swift/Property/canBeDisplayedInMap" class="dashAnchor"></a>
                     <a class="token" href="#/s:8Pharmacy0A8LocationV19canBeDisplayedInMapSbvp">canBeDisplayedInMap</a>
@@ -467,8 +526,7 @@ NOTE: Is here used to indicate E-Rezept readiness</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
-
+                        
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
@@ -494,8 +552,7 @@ NOTE: Is here used to indicate E-Rezept readiness</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
-
+                        
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
@@ -521,7 +578,8 @@ NOTE: Is here used to indicate E-Rezept readiness</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Indicates if the delivery service via the <code>eRpRemoteStorage</code> module (Fachdienst) is present
+Note: Authentication via &ldquo;Fachdienst&rdquo; is required</p>
 
                       </div>
                       <div class="declaration">
@@ -538,9 +596,9 @@ NOTE: Is here used to indicate E-Rezept readiness</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:8Pharmacy0A8LocationV14hasMailServiceSbvp"></a>
-                    <a name="//apple_ref/swift/Property/hasMailService" class="dashAnchor"></a>
-                    <a class="token" href="#/s:8Pharmacy0A8LocationV14hasMailServiceSbvp">hasMailService</a>
+                    <a name="/s:8Pharmacy0A8LocationV18hasShipmentServiceSbvp"></a>
+                    <a name="//apple_ref/swift/Property/hasShipmentService" class="dashAnchor"></a>
+                    <a class="token" href="#/s:8Pharmacy0A8LocationV18hasShipmentServiceSbvp">hasShipmentService</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -548,14 +606,15 @@ NOTE: Is here used to indicate E-Rezept readiness</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Indicates if the shipment service via the <code>eRpRemoteStorage</code> module (Fachdienst) is present
+Note: Authentication via &ldquo;Fachdienst&rdquo; is required</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">hasMailService</span><span class="p">:</span> <span class="kt">Bool</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">hasShipmentService</span><span class="p">:</span> <span class="kt">Bool</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -575,7 +634,8 @@ NOTE: Is here used to indicate E-Rezept readiness</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Indicates if the reservation/onPremise service via the <code>eRpRemoteStorage</code> module (Fachdienst) is present
+Note: Authentication via &ldquo;Fachdienst&rdquo; is required</p>
 
                       </div>
                       <div class="declaration">
@@ -602,7 +662,8 @@ NOTE: Is here used to indicate E-Rezept readiness</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Indicates if the emergency service via the <code>eRpRemoteStorage</code> module (Fachdienst) is present
+Note: Authentication via &ldquo;Fachdienst&rdquo; is required</p>
 
                       </div>
                       <div class="declaration">
@@ -610,6 +671,117 @@ NOTE: Is here used to indicate E-Rezept readiness</p>
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">hasEmergencyService</span><span class="p">:</span> <span class="kt">Bool</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:8Pharmacy0A8LocationV21hasDeliveryAVSServiceSbvp"></a>
+                    <a name="//apple_ref/swift/Property/hasDeliveryAVSService" class="dashAnchor"></a>
+                    <a class="token" href="#/s:8Pharmacy0A8LocationV21hasDeliveryAVSServiceSbvp">hasDeliveryAVSService</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Indicates if the delivery service via the <code>AVS</code> module (ApothekenVerwaltunsSystem) is present
+Note: No authentication via &ldquo;Fachdienst&rdquo; is required</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">hasDeliveryAVSService</span><span class="p">:</span> <span class="kt">Bool</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:8Pharmacy0A8LocationV21hasShipmentAVSServiceSbvp"></a>
+                    <a name="//apple_ref/swift/Property/hasShipmentAVSService" class="dashAnchor"></a>
+                    <a class="token" href="#/s:8Pharmacy0A8LocationV21hasShipmentAVSServiceSbvp">hasShipmentAVSService</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Indicates if the shipment service via the <code>AVS</code> module (ApothekenVerwaltunsSystem) is present
+Note: No authentication via &ldquo;Fachdienst&rdquo; is required</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">hasShipmentAVSService</span><span class="p">:</span> <span class="kt">Bool</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:8Pharmacy0A8LocationV24hasReservationAVSServiceSbvp"></a>
+                    <a name="//apple_ref/swift/Property/hasReservationAVSService" class="dashAnchor"></a>
+                    <a class="token" href="#/s:8Pharmacy0A8LocationV24hasReservationAVSServiceSbvp">hasReservationAVSService</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Indicates if the reservation/onPremise service via the <code>AVS</code> module (ApothekenVerwaltunsSystem) is present
+Note: No authentication via &ldquo;Fachdienst&rdquo; is required</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">hasReservationAVSService</span><span class="p">:</span> <span class="kt">Bool</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:8Pharmacy0A8LocationV12AVSEndpointsV"></a>
+                    <a name="//apple_ref/swift/Struct/AVSEndpoints" class="dashAnchor"></a>
+                    <a class="token" href="#/s:8Pharmacy0A8LocationV12AVSEndpointsV">AVSEndpoints</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                        <a href="../Structs/PharmacyLocation/AVSEndpoints.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">struct</span> <span class="kt">AVSEndpoints</span></code></pre>
 
                         </div>
                       </div>
@@ -735,8 +907,7 @@ NOTE: Is here used to indicate E-Rezept readiness</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
-
+                        
                         <a href="../Structs/PharmacyLocation/PharmacyType.html" class="slightly-smaller">See more</a>
                       </div>
                       <div class="declaration">
@@ -763,8 +934,7 @@ NOTE: Is here used to indicate E-Rezept readiness</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
-
+                        
                         <a href="../Structs/PharmacyLocation/Position.html" class="slightly-smaller">See more</a>
                       </div>
                       <div class="declaration">
@@ -791,8 +961,7 @@ NOTE: Is here used to indicate E-Rezept readiness</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
-
+                        
                         <a href="../Structs/PharmacyLocation/Address.html" class="slightly-smaller">See more</a>
                       </div>
                       <div class="declaration">
@@ -819,8 +988,7 @@ NOTE: Is here used to indicate E-Rezept readiness</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
-
+                        
                         <a href="../Structs/PharmacyLocation/Telecom.html" class="slightly-smaller">See more</a>
                       </div>
                       <div class="declaration">
@@ -847,8 +1015,7 @@ NOTE: Is here used to indicate E-Rezept readiness</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
-
+                        
                         <a href="../Structs/PharmacyLocation/HoursOfOperation.html" class="slightly-smaller">See more</a>
                       </div>
                       <div class="declaration">
@@ -875,8 +1042,7 @@ NOTE: Is here used to indicate E-Rezept readiness</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
-
+                        
                         <a href="../Structs/PharmacyLocation/Dummies.html" class="slightly-smaller">See more</a>
                       </div>
                       <div class="declaration">
@@ -898,9 +1064,8 @@ NOTE: Is here used to indicate E-Rezept readiness</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2022 <a class="link" href="https://www.gematik.de" target="_blank" rel="external">gematik GmbH</a>. All rights reserved. (Last updated: 2022-04-19)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+      <p>&copy; 2022 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2022-06-22)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>
-</div>
 </html>
