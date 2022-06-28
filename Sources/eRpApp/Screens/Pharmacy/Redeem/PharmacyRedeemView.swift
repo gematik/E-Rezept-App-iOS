@@ -36,6 +36,7 @@ struct PharmacyRedeemView: View {
             ScrollView(.vertical) {
                 VStack {
                     Text(L10n.phaRedeemTxtSubtitle("**\(viewStore.pharmacy.name ?? "")**"))
+                        .padding([.horizontal, .top])
                         .font(Font.subheadline)
                         .multilineTextAlignment(.center)
                         .accessibility(identifier: A11y.pharmacyRedeem.phaRedeemTxtSubtitle)
@@ -105,10 +106,8 @@ extension PharmacyRedeemView {
         let action: () -> Void
         var body: some View {
             SingleElementSectionContainer(header: {
-                SectionHeaderView(
-                    text: L10n.phaRedeemTxtAddress,
-                    a11y: A11y.pharmacyRedeem.phaRedeemTxtAddressTitle
-                )
+                Label(L10n.phaRedeemTxtAddress)
+                    .accessibility(identifier: A11y.pharmacyRedeem.phaRedeemTxtAddressTitle)
             }, content: {
                 VStack(spacing: 16) {
                     HStack(alignment: .top, spacing: 0) {
@@ -152,8 +151,8 @@ extension PharmacyRedeemView {
         var body: some View {
             SingleElementSectionContainer(
                 header: {
-                    SectionHeaderView(text: L10n.phaRedeemTxtAddress,
-                                      a11y: A11y.pharmacyRedeem.phaRedeemTxtAddressTitle)
+                    Label(L10n.phaRedeemTxtAddress)
+                        .accessibility(identifier: A11y.pharmacyRedeem.phaRedeemTxtAddressTitle)
                 },
                 content: {
                     Button(action: action) {
@@ -161,11 +160,10 @@ extension PharmacyRedeemView {
                             HStack(alignment: .top, spacing: 16) {
                                 ProfileIcon(profile: profile)
                                 VStack(alignment: .leading) {
-                                    HStack {
+                                    HStack(spacing: 0) {
                                         if let name = shipmentInfo.name {
                                             Text(name)
-                                                .font(Font.subheadline.weight(.semibold))
-                                                .padding(.bottom, 8)
+                                                .font(Font.body.weight(.semibold))
                                                 .accessibility(identifier: A11y.pharmacyRedeem.phaRedeemAddressName)
                                         }
 
@@ -173,37 +171,32 @@ extension PharmacyRedeemView {
                                         Image(systemName: SFSymbolName.squareAndPencil)
                                             .font(Font.body.weight(.semibold))
                                             .foregroundColor(Colors.systemLabelSecondary)
-                                    }
+                                    }.padding(.bottom, 1)
 
                                     if let street = shipmentInfo.street {
                                         Text(street)
-                                            .font(.subheadline)
                                             .accessibility(identifier: A11y.pharmacyRedeem.phaRedeemAddressStreet)
                                     }
                                     if let addressDetail = shipmentInfo.addressDetail {
                                         Text(addressDetail)
-                                            .font(.subheadline)
                                             .accessibility(identifier: A11y.pharmacyRedeem.phaRedeemAddressDetail)
                                     }
                                     HStack {
                                         if let zip = shipmentInfo.zip {
                                             Text(zip)
-                                                .font(.subheadline)
                                                 .accessibility(identifier: A11y.pharmacyRedeem.phaRedeemAddressZip)
                                         }
                                         if let city = shipmentInfo.city {
                                             Text(city)
-                                                .font(.subheadline)
                                                 .accessibility(identifier: A11y.pharmacyRedeem.phaRedeemAddressCity)
                                         }
                                     }
                                     if let phone = shipmentInfo.phone {
                                         HStack {
                                             Image(systemName: SFSymbolName.phone)
-                                                .font(Font.footnote.weight(.semibold))
+                                                .font(Font.subheadline.weight(.semibold))
                                                 .foregroundColor(Colors.systemLabelSecondary)
                                             Text(phone)
-                                                .font(.subheadline)
                                         }
                                         .accessibility(identifier: A11y.pharmacyRedeem.phaRedeemAddressPhone)
                                         .padding(.horizontal, 8)
@@ -213,11 +206,10 @@ extension PharmacyRedeemView {
                                     }
                                     if let mail = shipmentInfo.mail {
                                         HStack {
-                                            Image(systemName: SFSymbolName.mail)
-                                                .font(Font.footnote.weight(.semibold))
+                                            Image(systemName: SFSymbolName.envelope)
+                                                .font(Font.subheadline.weight(.semibold))
                                                 .foregroundColor(Colors.systemLabelSecondary)
                                             Text(mail)
-                                                .font(.subheadline)
                                         }
                                         .accessibility(identifier: A11y.pharmacyRedeem.phaRedeemAddressMail)
                                         .padding(.horizontal, 8)
@@ -259,11 +251,11 @@ extension PharmacyRedeemView {
         var body: some View {
             SingleElementSectionContainer(
                 header: {
-                    SectionHeaderView(text: L10n.phaRedeemTxtPrescription,
-                                      a11y: A11y.pharmacyRedeem.phaRedeemTxtPrescriptionTitle)
+                    Label(L10n.phaRedeemTxtPrescription)
+                        .accessibility(identifier: A11y.pharmacyRedeem.phaRedeemTxtPrescriptionTitle)
                 },
                 content: {
-                    ForEach(viewStore.prescriptions.indices) { index in
+                    ForEach(viewStore.prescriptions.indices, id: \.self) { index in
                         Button(action: { viewStore.send(.didSelect(viewStore.prescriptions[index].taskID)) },
                                label: {
                                    TitleWithSubtitleCellView(
@@ -295,7 +287,7 @@ extension PharmacyRedeemView {
                     .padding(.horizontal)
                 } else {
                     LoadingPrimaryButton(text: L10n.phaRedeemBtnRedeem,
-                                         isLoading: viewStore.loadingState.isLoading) {
+                                         isLoading: viewStore.requests.inProgress) {
                         viewStore.send(.redeem)
                     }
                     .accessibility(identifier: A11y.pharmacyRedeem.phaRedeemBtnRedeem)
@@ -341,7 +333,7 @@ extension PharmacyRedeemView {
         let pharmacy: PharmacyLocation
         let prescriptions: [Prescription]
         let shipmentInfo: ShipmentInfo?
-        let loadingState: LoadingState<Bool, ErxRepositoryError>
+        let requests: IdentifiedArrayOf<OrderResponse>
         let profile: Profile?
         let showPharmacyContact: Bool
 
@@ -353,7 +345,7 @@ extension PharmacyRedeemView {
                 return Prescription($0, isSelected: isSelected)
             }
             shipmentInfo = state.selectedShipmentInfo
-            loadingState = state.loadingState
+            requests = state.orderResponses
             profile = state.profile
             showPharmacyContact = state.pharmacyContactState != nil
         }
@@ -363,7 +355,7 @@ extension PharmacyRedeemView {
         }
 
         struct Prescription: Equatable, Identifiable {
-            var id: String { taskID } // swiftlint:disable:this identifier_name
+            var id: String { taskID }
             let taskID: String
             let title: String
             let subtitle: String

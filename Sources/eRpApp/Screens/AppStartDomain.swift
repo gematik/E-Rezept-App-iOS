@@ -66,9 +66,7 @@ enum AppStartDomain {
             state = .app(
                 AppDomain.State(
                     selectedTab: .main,
-                    main: MainDomain.State(
-                        prescriptionListState: GroupedPrescriptionListDomain.State()
-                    ),
+                    main: .init(prescriptionListState: .init()),
                     pharmacySearch: PharmacySearchDomain.State(erxTasks: []),
                     messages: MessagesDomain.State(communications: []),
                     settingsState: .init(
@@ -107,9 +105,7 @@ enum AppStartDomain {
             state = .app(
                 AppDomain.State(
                     selectedTab: .main,
-                    main: MainDomain.State(
-                        prescriptionListState: GroupedPrescriptionListDomain.State()
-                    ),
+                    main: .init(prescriptionListState: .init()),
                     pharmacySearch: PharmacySearchDomain.State(erxTasks: []),
                     messages: MessagesDomain.State(communications: []),
                     settingsState: .init(

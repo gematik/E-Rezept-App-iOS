@@ -52,7 +52,8 @@ class MockErxTaskRepository: ErxTaskRepository {
         loadLocalCallsCount > 0
     }
 
-    var redeemPublisher: AnyPublisher<Bool, ErxRepositoryError>
+    var redeemClosure: ((ErxTaskOrder) -> AnyPublisher<ErxTaskOrder, ErxRepositoryError>)?
+    var redeemPublisher: AnyPublisher<ErxTaskOrder, ErxRepositoryError>
     var redeemCallsCount = 0
     var redeemCalled: Bool {
         redeemCallsCount > 0
@@ -81,7 +82,7 @@ class MockErxTaskRepository: ErxTaskRepository {
          saveErxTasks: AnyPublisher<Bool, ErxRepositoryError> = failing(),
          deleteErxTasks: AnyPublisher<Bool, ErxRepositoryError> = failing(),
          find: AnyPublisher<ErxTask?, ErxRepositoryError> = failing(),
-         redeemOrder: AnyPublisher<Bool, ErxRepositoryError> = failing(),
+         redeemOrder: AnyPublisher<ErxTaskOrder, ErxRepositoryError> = failing(),
          listCommunications: AnyPublisher<[ErxTask.Communication], ErxRepositoryError> = failing(),
          countCommunications: AnyPublisher<Int, ErxRepositoryError> = failing(),
          saveCommunications: AnyPublisher<Bool, ErxRepositoryError> = failing()) {
@@ -137,9 +138,9 @@ class MockErxTaskRepository: ErxTaskRepository {
         return loadLocalPublisher
     }
 
-    func redeem(orders _: [ErxTaskOrder]) -> AnyPublisher<Bool, ErxRepositoryError> {
+    func redeem(order: ErxTaskOrder) -> AnyPublisher<ErxTaskOrder, ErxRepositoryError> {
         redeemCallsCount += 1
-        return redeemPublisher
+        return redeemClosure.map { $0(order) } ?? redeemPublisher
     }
 
     func loadLocalCommunications(
@@ -172,6 +173,13 @@ class MockErxTaskRepository: ErxTaskRepository {
         Deferred { () -> AnyPublisher<Bool, ErxRepositoryError> in
             XCTFail("This publisher should not have run")
             return Just(false).setFailureType(to: ErxRepositoryError.self).eraseToAnyPublisher()
+        }.eraseToAnyPublisher()
+    }
+
+    static func failing() -> AnyPublisher<ErxTaskOrder, ErxRepositoryError> {
+        Deferred { () -> AnyPublisher<ErxTaskOrder, ErxRepositoryError> in
+            XCTFail("This publisher should not have run")
+            return Fail(error: ErxRepositoryError.remote(.notImplemented)).eraseToAnyPublisher()
         }.eraseToAnyPublisher()
     }
 

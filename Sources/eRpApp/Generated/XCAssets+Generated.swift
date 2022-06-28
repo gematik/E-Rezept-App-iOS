@@ -26,7 +26,6 @@ internal enum Asset {
     internal static let appIconPlaceholder = ImageAsset(name: "AppIconPlaceholder")
     internal static let arzt1 = ImageAsset(name: "Arzt1")
     internal static let cardwallCard = ImageAsset(name: "Cardwall_card")
-    internal static let cardwallInitial = ImageAsset(name: "Cardwall_initial")
     internal static let ohNo = ImageAsset(name: "OhNo")
     internal static let onScreenEgk = ImageAsset(name: "OnScreenEgk")
     internal static let previewAppIcon = ImageAsset(name: "PreviewAppIcon")
@@ -99,9 +98,13 @@ internal enum Asset {
     internal static let apotheker = ImageAsset(name: "Apotheker")
     internal static let appLogo = ImageAsset(name: "AppLogo")
     internal static let boyGrannyGrandpa = ImageAsset(name: "boyGrannyGrandpa")
+    internal static let developer = ImageAsset(name: "developer")
+    internal static let doctor = ImageAsset(name: "doctor")
     internal static let handMitKarte = ImageAsset(name: "handMitKarte")
     internal static let logoNeuFahne = ImageAsset(name: "logoNeuFahne")
     internal static let logoNeuGematik = ImageAsset(name: "logoNeuGematik")
+    internal static let paragraph = ImageAsset(name: "paragraph")
+    internal static let womanWithPhone = ImageAsset(name: "womanWithPhone")
   }
   internal enum Pharmacy {
     internal static let eRxReadinessBadge = ImageAsset(name: "eRxReadinessBadge")

@@ -79,8 +79,7 @@ public class IDPInterceptor: Interceptor {
                         // swiftlint:disable:previous trailing_closure
                         .proceed(request: request)
                         .handleEvents(receiveOutput: { httpResponse in
-                            if httpResponse.status == HTTPStatusCode.forbidden ||
-                                httpResponse.status == HTTPStatusCode.unauthorized {
+                            if httpResponse.status == HTTPStatusCode.unauthorized {
                                 // [REQ:gemSpec_eRp_FdV:A_20167] invalidate/delete unauthorized token
                                 self.session.invalidateAccessToken()
                             }

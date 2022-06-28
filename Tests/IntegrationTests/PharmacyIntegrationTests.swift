@@ -59,7 +59,7 @@ final class PharmacyIntegrationTests: XCTestCase {
         )
 
         var success = false
-        sut.searchPharmacies(searchTerm: "Adler", position: nil)
+        sut.searchPharmacies(searchTerm: "Adler", position: nil, filter: [])
             .test(
                 timeout: 120,
                 failure: { error in

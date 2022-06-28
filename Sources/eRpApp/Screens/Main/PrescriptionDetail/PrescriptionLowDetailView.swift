@@ -20,6 +20,7 @@ import ComposableArchitecture
 import SwiftUI
 
 struct PrescriptionLowDetailView: View {
+    @AppStorage("enable_avs_login") var enableAvsLogin = false
     let store: PrescriptionDetailDomain.Store
 
     var body: some View {
@@ -44,6 +45,11 @@ struct PrescriptionLowDetailView: View {
                     statusMessage: viewStore.state.prescription.statusMessage
                 ).padding()
 
+                if !viewStore.prescription.isArchived && enableAvsLogin {
+                    NavigateToPharmacySearchView(store: store)
+                        .padding([.leading, .trailing, .bottom])
+                }
+
                 MedicationRedeemView(
                     text: viewStore.state.isArchived ? L10n.dtlBtnToogleMarkedRedeemed : L10n.dtlBtnToogleMarkRedeemed,
                     a11y: A11y.prescriptionDetails.prscDtlBtnToggleRedeem,
@@ -59,7 +65,7 @@ struct PrescriptionLowDetailView: View {
                                    message: L10n.dtlTxtHintOverviewMessage.text,
                                    actionText: nil,
                                    action: nil,
-                                   imageName: Asset.Prescriptions.Details.apothekerin.name,
+                                   image: .init(name: Asset.Prescriptions.Details.apothekerin.name),
                                    closeAction: nil,
                                    style: .neutral,
                                    buttonStyle: .tertiary,
@@ -89,9 +95,21 @@ struct PrescriptionLowDetailView: View {
                     ),
                 ])
 
-                MedicationRemoveButton {
-                    viewStore.send(.delete)
-                }
+                Button(
+                    action: { viewStore.send(.delete) },
+                    label: {
+                        if viewStore.state.isDeleting {
+                            ProgressView()
+                                .progressViewStyle(CircularProgressViewStyle())
+                        } else {
+                            Label(L10n.dtlBtnDeleteMedication, systemImage: SFSymbolName.trash)
+                        }
+                    }
+                )
+                .disabled(viewStore.state.isDeleting)
+                .buttonStyle(.primary(isEnabled: !viewStore.state.isDeleting, isDestructive: true))
+                .accessibility(identifier: A11y.prescriptionDetails.prscDtlBtnDeleteMedication)
+                .padding(.top)
             }
             .alert(
                 self.store.scope(state: \.alertState),

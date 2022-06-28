@@ -23,7 +23,9 @@ import OpenSSL
 public struct TrustAnchor: Equatable {
     let certificate: X509
 
-    enum Error: Swift.Error {
+    // sourcery: CodedError = "562"
+    public enum Error: Swift.Error {
+        // sourcery: errorCode = "01"
         case invalidPEM
     }
 

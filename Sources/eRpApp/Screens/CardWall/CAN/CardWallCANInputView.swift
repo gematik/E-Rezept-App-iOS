@@ -21,16 +21,14 @@ import SwiftUI
 import UIKit
 
 struct CardWallCANInputView: View {
-    internal init(can: Binding<String>, pauseFirstResponder: Bool, completion: @escaping () -> Void) {
+    internal init(can: Binding<String>, completion: @escaping () -> Void) {
         self.completion = completion
-        self.pauseFirstResponder = pauseFirstResponder
 
         _can = can
     }
 
     @Binding var can: String
     let completion: () -> Void
-    let pauseFirstResponder: Bool
 
     var body: some View {
         ZStack {
@@ -58,7 +56,6 @@ struct CardWallCANInputView: View {
             }.accessibility(hidden: true)
 
             TextField("", text: $can.trimCAN(), onEditingChanged: { _ in }, onCommit: {})
-                .textFieldKeepFirstResponder(pause: pauseFirstResponder)
                 .textContentType(.oneTimeCode)
                 .keyboardType(.numberPad)
                 .foregroundColor(.clear)
@@ -90,7 +87,7 @@ extension Binding where Value == String {
 struct CardWallCANInputView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            CardWallCANInputView(can: .constant("321"), pauseFirstResponder: false) {}
+            CardWallCANInputView(can: .constant("321")) {}
                 .frame(width: 360, height: 200).fixedSize(horizontal: true, vertical: false)
         }
     }

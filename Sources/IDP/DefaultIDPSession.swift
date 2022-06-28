@@ -424,7 +424,7 @@ public class DefaultIDPSession: IDPSession {
                         guard try jwtContainer.verify(with: document.discKey) == true else {
                             throw IDPError.invalidSignature("kk_apps document signature wrong")
                         }
-                        return try jwtContainer.claims()
+                        return try jwtContainer.claims().sorted()
                     }
                     .mapError { $0.asIDPError() }
                     .eraseToAnyPublisher()
@@ -479,19 +479,13 @@ public class DefaultIDPSession: IDPSession {
         _ url: URL,
         idTokenValidator: @escaping (TokenPayload.IDTokenPayload) -> Result<Bool, Error>
     ) -> AnyPublisher<IDPToken, IDPError> {
-        guard var components = URLComponents(url: url, resolvingAgainstBaseURL: true),
+        guard let components = URLComponents(url: url, resolvingAgainstBaseURL: true),
               let code = components.queryItemWithName("code")?.value,
               let state = components.queryItemWithName("state")?.value,
               let kkAppRedirectURI = components.queryItemWithName("kk_app_redirect_uri")?.value else {
             return Fail(
                 error: IDPError.internal(error: .extAuthVerifyAndExchangeMissingQueryItem)
             ).eraseToAnyPublisher()
-        }
-
-        components.queryItems = nil
-        components.fragment = nil
-        guard let redirectURI = components.url?.absoluteString else {
-            return Fail(error: IDPError.internal(error: .extAuthConstructingRedirectUri)).eraseToAnyPublisher()
         }
 
         let verify = IDPExtAuthVerify(code: code,

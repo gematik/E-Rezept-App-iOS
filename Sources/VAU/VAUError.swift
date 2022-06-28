@@ -19,17 +19,24 @@
 import Foundation
 import HTTPClient
 
+// sourcery: CodedError = "550"
 public enum VAUError: Swift.Error {
+    // sourcery: errorCode = "01"
     /// In case of HTTP/Connection error
     case network(error: HTTPError)
+    // sourcery: errorCode = "02"
     /// When failed to extract a X.509 VAU certificate information
     case certificateDecoding
+    // sourcery: errorCode = "03"
     /// When internal cryptographic operations fail
     case internalCryptoError
+    // sourcery: errorCode = "04"
     /// In case a response (or request) could not be (cryptographically) verified
     case responseValidation
+    // sourcery: errorCode = "05"
     /// Other error cases
     case unspecified(error: Swift.Error)
+    // sourcery: errorCode = "06"
     /// Internal error
     case internalError(String)
 }

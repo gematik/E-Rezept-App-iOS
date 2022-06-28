@@ -115,32 +115,32 @@ class DemoIDPSession: IDPSession {
     }
 
     func pairDevice(with _: RegistrationData, token _: IDPToken) -> AnyPublisher<PairingEntry, IDPError> {
-        Fail(error: IDPError.internal(error: .notImplemented))
+        Fail(error: IDPError.notAvailableInDemoMode)
             .eraseToAnyPublisher()
     }
 
     func unregisterDevice(_: String, token _: IDPToken) -> AnyPublisher<Bool, IDPError> {
-        Fail(error: IDPError.internal(error: .notImplemented))
+        Fail(error: IDPError.notAvailableInDemoMode)
             .eraseToAnyPublisher()
     }
 
     func listDevices(token _: IDPToken) -> AnyPublisher<PairingEntries, IDPError> {
-        Fail(error: IDPError.internal(error: .notImplemented))
+        Fail(error: IDPError.notAvailableInDemoMode)
             .eraseToAnyPublisher()
     }
 
     func altVerify(_: SignedAuthenticationData) -> AnyPublisher<IDPExchangeToken, IDPError> {
-        Fail(error: IDPError.internal(error: .notImplemented))
+        Fail(error: IDPError.notAvailableInDemoMode)
             .eraseToAnyPublisher()
     }
 
     func loadDirectoryKKApps() -> AnyPublisher<KKAppDirectory, IDPError> {
-        Fail(error: IDPError.internal(error: .notImplemented))
+        Fail(error: IDPError.notAvailableInDemoMode)
             .eraseToAnyPublisher()
     }
 
     func startExtAuth(entry _: KKAppDirectory.Entry) -> AnyPublisher<URL, IDPError> {
-        Fail(error: IDPError.internal(error: .notImplemented))
+        Fail(error: IDPError.notAvailableInDemoMode)
             .eraseToAnyPublisher()
     }
 
@@ -148,7 +148,7 @@ class DemoIDPSession: IDPSession {
         _: URL,
         idTokenValidator _: @escaping (TokenPayload.IDTokenPayload) -> Result<Bool, Error>
     ) -> AnyPublisher<IDPToken, IDPError> {
-        Fail(error: IDPError.internal(error: .notImplemented))
+        Fail(error: IDPError.notAvailableInDemoMode)
             .eraseToAnyPublisher()
     }
 }

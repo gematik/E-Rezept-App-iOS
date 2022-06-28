@@ -28,6 +28,12 @@ extension Label where Title == Text, Icon == Image {
     }
 }
 
+extension Label where Title == Text, Icon == EmptyView {
+    init(_ stringAsset: StringAsset) {
+        self.init(title: { Text(stringAsset.key) }, icon: {})
+    }
+}
+
 extension TextField where Label == Text {
     init(
         _ stringAsset: StringAsset,
@@ -41,6 +47,16 @@ extension TextField where Label == Text {
             onEditingChanged: onEditingChanged,
             onCommit: onCommit
         )
+    }
+}
+
+extension SecureField where Label == Text {
+    init(
+        _ stringAsset: StringAsset,
+        text: Binding<String>,
+        onCommit: @escaping () -> Void
+    ) {
+        self.init(stringAsset.key, text: text, onCommit: onCommit)
     }
 }
 

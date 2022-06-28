@@ -23,7 +23,7 @@ import SwiftUI
 extension GroupedPrescription {
     /// `Prescription` acts as a view model for an `ErxTask` to better fit the presentation logic
     @dynamicMemberLookup
-    struct Prescription: Equatable, Hashable {
+    struct Prescription: Equatable, Hashable, Identifiable {
         enum Status: Equatable {
             case open(until: String)
             case archived(message: String)
@@ -34,6 +34,10 @@ extension GroupedPrescription {
         let erxTask: ErxTask
         let actualMedication: GroupedPrescription.Medication?
         let viewStatus: Status
+
+        var id: String {
+            erxTask.id
+        }
 
         init(
             erxTask: ErxTask,
@@ -272,10 +276,6 @@ extension GroupedPrescription.Prescription: Comparable {
         }
     }
 
-    public static func ==(lhs: GroupedPrescription.Prescription, rhs: GroupedPrescription.Prescription) -> Bool {
-        lhs.identifier == rhs.identifier
-    }
-
     public func hash(into hasher: inout Hasher) {
         hasher.combine(erxTask.identifier)
     }
@@ -283,8 +283,8 @@ extension GroupedPrescription.Prescription: Comparable {
 
 extension GroupedPrescription.Prescription {
     enum Dummies {
-        static let prescriptionReady = GroupedPrescription.Prescription(erxTask: ErxTask.Dummies.erxTaskReady)
-        static let prescriptionError = GroupedPrescription.Prescription(erxTask: ErxTask.Dummies.erxTaskError)
-        static let prescriptions = ErxTask.Dummies.erxTasks.map { GroupedPrescription.Prescription(erxTask: $0) }
+        static let prescriptionReady = GroupedPrescription.Prescription(erxTask: ErxTask.Demo.erxTaskReady)
+        static let prescriptionError = GroupedPrescription.Prescription(erxTask: ErxTask.Demo.erxTaskError)
+        static let prescriptions = ErxTask.Demo.erxTasks.map { GroupedPrescription.Prescription(erxTask: $0) }
     }
 }

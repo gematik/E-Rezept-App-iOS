@@ -66,7 +66,7 @@ public class PairingSession {
     }
 
     func sign(with signer: JWTSigner, certificate: X509, privateKeyContainer: PrivateKeyContainer)
-        -> AnyPublisher<RegistrationData, Swift.Error> {
+        -> AnyPublisher<RegistrationData, SecureEnclaveSignatureProviderError> {
         self.certificate = certificate
 
         guard let authCertRaw = certificate.derBytes,
@@ -83,6 +83,7 @@ public class PairingSession {
                         deviceInformation: self.deviceInformation
                     )
                 }
+                .mapError(SecureEnclaveSignatureProviderError.signing)
                 .eraseToAnyPublisher()
         } catch let error as SecureEnclaveSignatureProviderError {
             return Fail(error: error).eraseToAnyPublisher()

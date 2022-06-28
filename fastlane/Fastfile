@@ -16,7 +16,7 @@
 # 
 #
 
-xcversion(version: ENV["FL_XCODE_VERSION"] || "13.2.1")
+xcversion(version: ENV["FL_XCODE_VERSION"] || "13.3.1")
 
 fastlane_version "2.187.0"
 
@@ -81,7 +81,7 @@ lane :carthage_resolve_dependencies do |options|
 
   carthage(executable: carthage_mint, command: "bootstrap", no_build: true)
   # Create Xcodeproj when necessary for Carthage dependencies
-  sh("find", "../Carthage/Checkouts/", "-type", "d", "-mindepth", "1", "-maxdepth", "1", "!", "-exec", "sh", "-c", "test -e {}/*.xcodeproj/project.pbxproj", ";", "-execdir", "sh", "-c", "cd {}; if [ -e project.yml ]; then xcodegen; fi;", ";")
+  sh("find", "../Carthage/Checkouts/", "-type", "d", "-mindepth", "1", "-maxdepth", "1", "!", "-exec", "sh", "-c", "test -e {}/*.xcodeproj/project.pbxproj", ";", "-execdir", "sh", "-c", "cd {}; if [ -e project.yml ]; then mint run xcodegen; fi;", ";")
   sh("find", "../Carthage/Checkouts/", "-type", "d", "-mindepth", "1", "-maxdepth", "1", "!", "-exec", "sh", "-c", "test -e {}/*.xcodeproj/project.pbxproj", ";", "-execdir", "sh", "-c", "cd {}; if [ -e Package.swift ] && [ -e Package.xcconfig ]; then swift package generate-xcodeproj --xcconfig-overrides Package.xcconfig; elif [ -e Package.swift ]; then swift package generate-xcodeproj; fi;", ";")
   platforms = []
   if !skip_ios
@@ -126,7 +126,7 @@ desc "###Example:"
 desc "```\nfastlane xcodegen_generate_xcodeproj\n```"
 desc ""
 lane :xcodegen_generate_xcodeproj do |options|
-  sh("xcodegen", "generate", "--spec", "../project.yml")
+  sh("pushd ..; mint run xcodegen generate --spec project.yml; popd")
 end
 
 desc "Generate xcodeproj from Package.swift file"
@@ -513,9 +513,10 @@ end
 
 desc "Lane that (auto) genarates API documentation from inline comments."
 lane :generate_documentation do |options|
+  list_errors
   list_requirements
 
-  output = sh "cd .. && xcodebuild -quiet -list | grep _macOS | grep -v Test; cd - > /dev/null"
+  output = sh "cd .. && xcodebuild -quiet -list 2>/dev/null | grep _macOS | grep -v Test; cd - > /dev/null"
   schemes = output.split("\n").map { |e| e.strip }
 
   sh "mkdir -p ../build/docs"
@@ -609,6 +610,24 @@ lane :cibuild do |options|
   static_code_analysis options
   build_all options
   generate_documentation options
+end
+
+lane :list_errors do |options|
+  sh "mkdir -p ../docs/errors"
+
+  sh "cd .. && sourcery --config .sourcery-errors.yml"
+
+  # Text List
+  sh "cd .. && pandoc -s -f markdown -t html --toc --css style.css doc/errors/generated/errors.md > docs/errors/errors.html"
+
+  # Graph
+  sh "cd .. && dot -Tsvg -Kdot doc/errors/generated/errors.dot > docs/errors/error_graph.svg"
+  sh "cd .. && cp doc/errors/error_graph.html docs/errors/error_graph.html"
+  sh "cd .. && cp doc/errors/error_graph.css docs/errors/error_graph.css"
+  sh "cd .. && cp Templates/ERB/style.css docs/errors/style.css"
+
+  # CSV
+  sh "cd .. && cp doc/errors/generated/errors.csv docs/errors/errors.csv"
 end
 
 lane :list_requirements do |options|
@@ -754,8 +773,10 @@ end
 
 
 def notify_teams_channel(url = "no_hook", stream = "Unknown stream", success = true, optional_message = "")
-  images = {} # QR-codes and links
-  install_facts = []
+  images = { # QR-codes and links
+    "type" => "ColumnSet",
+    "columns" => []
+  }
   app_center_download_link = lane_context[SharedValues::APPCENTER_DOWNLOAD_LINK]
   if !lane_context[SharedValues::APPCENTER_BUILD_INFORMATION].nil?
     install_url = lane_context[SharedValues::APPCENTER_BUILD_INFORMATION]['install_url']
@@ -767,40 +788,126 @@ def notify_teams_channel(url = "no_hook", stream = "Unknown stream", success = t
     appcenter_url = "https://install.appcenter.ms/orgs/#{owner}/apps/#{app_name}/releases/#{id}"
     sh "cd .. && bundle exec qrencode -o distribution/appcenter_url.png \"#{appcenter_url}\"; cd -"
     base64_appcenter_url = sh "cd .. && base64 -i distribution/appcenter_url.png; cd - > /dev/null"
-    images = { 
-      "images" => [
-        { "image" => "data:image/png;base64,#{base64_install_url}" },
-        { "image" => "data:image/png;base64,#{base64_appcenter_url}" }
-      ] 
-    }
-    install_facts = [
-      {"name" => "Direct Install/Download", "value"=> "**1st** QR code (*only valid for next 24h*),  or download [raw .ipa](#{app_center_download_link})"},
-      {"name" => "AppCenter Link", "value"=> "**2nd** QR code #{appcenter_url}"}
-    ]
+    images = {
+            "type" => "ColumnSet",
+            "columns" => [
+                {
+                    "type" => "Column",
+                    "width" => "stretch",
+                    "items" => [
+                        {
+                            "type" => "Image",
+                            "url" => "data:image/png;base64,#{base64_install_url}"
+                        },
+                        {
+                            "type" => "TextBlock",
+                            "text" => "[Direktlink (24h gültig)](#{install_url})",
+                            "wrap" => true
+                        }
+                    ]
+                },
+                {
+                    "type" => "Column",
+                    "width" => "stretch",
+                    "items" => [
+                        {
+                            "type" => "Image",
+                            "url" => "data:image/png;base64,#{base64_appcenter_url}"
+                        },
+                        {
+                            "type" => "TextBlock",
+                            "text" => "[AppCenter](#{appcenter_url})",
+                            "wrap" => true
+                        }
+                    ]
+                }
+            ]
+        }
   end # QR-codes and links
 
   themeColor = success ? "00ff00" : "ff0000"
   activityImage = "data:image/png;base64," << (success ? "#{shiba_inu}" : "#{shiba_inu_mad}")
   text = "# " << (success ? "" : "FAILED! ") << stream << "\n\n #{optional_message}"
 
-  facts = [
-    {"name"=> "Branch (commit)", "value"=> "#{ENV['GIT_BRANCH']} (#{git_version})"}
-  ] + install_facts
-
   payload = {
-    "@type" => "MessageCard",
-    "@context" => "http://schema.org/extensions",
-    "summary" => "Notification from eRezeptApp-iOS",
-    "themeColor" => themeColor,
-    "sections"=> [
+    "type" => "message",
+    "width" => "stretch",
+    "attachments"=> [
       {
-        "activityTitle" => "Notification from eRezeptApp-iOS >> #{build_version} (#{git_version})",
-        "activitySubtitle" => "Build: #{ENV['JOB_NAME']} - #{ENV['BUILD_DISPLAY_NAME']} on worker #{ENV['NODE_NAME']}<br>Link: #{ENV['BUILD_URL']}",
-        "activityImage" => activityImage,
-        "text" => text,
-        "facts" => facts
+        "contentType" => "application/vnd.microsoft.card.adaptive",
+        "contentUrl" => nil,
+        "content" => {
+          "type" => "AdaptiveCard",
+          "msteams": {
+            "width": "Full"
+          },
+          "body" => [
+              {
+                  "type" => "TextBlock",
+                  "size" => "Medium",
+                  "weight" => "Bolder",
+                  "text" => "#{ENV['GIT_BRANCH']} (#{git_version})"
+              },
+              {
+                  "type" => "ColumnSet",
+                  "columns" => [
+                      {
+                          "type" => "Column",
+                          "items" => [
+                              {
+                                  "type" => "Image",
+                                  "url" => activityImage
+                              }
+                          ],
+                          "width" => "auto"
+                      },
+                      {
+                          "type" => "Column",
+                          "items" => [
+                              {
+                                  "type" => "TextBlock",
+                                  "weight" => "Bolder",
+                                  "text" => "Notification from eRezeptApp-iOS >> #{build_version} (#{git_version})",
+                                  "wrap" => true
+                              },
+                              {
+                                  "type" => "TextBlock",
+                                  "spacing" => "None",
+                                  "text" => "Build: `#{ENV['JOB_NAME']}` - `#{ENV['BUILD_DISPLAY_NAME']}` on worker `#{ENV['NODE_NAME']}`",
+                                  "isSubtle" => true,
+                                  "wrap" => true
+                              },
+                              {
+                                  "type" => "TextBlock",
+                                  "spacing" => "None",
+                                  "text" => "[GitLab](#{ENV['CHANGE_URL']}) [Jenkins](#{ENV['RUN_DISPLAY_URL']})",
+                                  "isSubtle" => true,
+                                  "wrap" => true
+                              },
+                              {
+                                "type" => "ActionSet",
+                                "actions" => [
+                                    {
+                                        "type" => "Action.ShowCard",
+                                        "title" => "QR-Codes Anzeigen",
+                                        "card" => {
+                                            "type" => "AdaptiveCard",
+                                            "body" => [images]
+                                        }
+                                    }
+                                ],
+                                "width" => "auto"
+                              }
+                          ],
+                          "width" => "stretch"
+                      }
+                  ]
+              }
+          ],
+          "$schema" => "http://adaptivecards.io/schemas/adaptive-card.json",
+          "version" => "1.4"
+        }
       }
-      .merge(images)
     ]
   }
 

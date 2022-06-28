@@ -24,20 +24,20 @@ import HTTPClient
 public enum PharmacyFHIROperation<Value, Handler: FHIRResponseHandler> where Handler.Value == Value {
     /// Search for pharmacies by name
     /// [REQ:gemSpec_eRp_FdV:A_20208]
-    case searchPharmacies(searchTerm: String, position: Position?, handler: Handler)
+    case searchPharmacies(searchTerm: String, position: Position?, filter: [String: String], handler: Handler)
 }
 
 extension PharmacyFHIROperation: FHIRClientOperation {
     public func handle(response: FHIRClient.Response) throws -> Value {
         switch self {
-        case let .searchPharmacies(_, _, handler):
+        case let .searchPharmacies(_, _, _, handler):
             return try handler.handle(response: response)
         }
     }
 
     public var relativeUrlString: String? {
         switch self {
-        case let .searchPharmacies(searchTerm, position, _):
+        case let .searchPharmacies(searchTerm, position, filter, _):
             var queryItems: [URLQueryItem] = []
             if !searchTerm.isEmpty {
                 for singleSearchTerm in searchTerm.components(separatedBy: " ") {
@@ -47,6 +47,9 @@ extension PharmacyFHIROperation: FHIRClientOperation {
             if position != nil, let latitude = position?.latitude, let longitude = position?.longitude {
                 queryItems.append(URLQueryItem(name: "near", value: "\(latitude)|\(longitude)|999|km"))
             }
+            queryItems.append(contentsOf: filter.map { key, value in
+                URLQueryItem(name: key, value: value)
+            })
             var urlComps = URLComponents(string: "Location")
             urlComps?.queryItems = queryItems
             return urlComps?.string
@@ -73,7 +76,7 @@ extension PharmacyFHIROperation: FHIRClientOperation {
 
     public var acceptFormat: FHIRAcceptFormat {
         switch self {
-        case let .searchPharmacies(_, _, handler):
+        case let .searchPharmacies(_, _, _, handler):
             return handler.acceptFormat
         }
     }

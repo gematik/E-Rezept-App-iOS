@@ -47,7 +47,7 @@ final class PrescriptionLowDetailSnapshotTests: XCTestCase {
             expiresOn: "2021-02-23T14:34:29+00:00",
             redeemedOn: nil,
             author: nil,
-            medication: ErxTask.Dummies.medication1
+            medication: ErxTask.Fixtures.medication1
         )
         let stateNotArchived = PrescriptionDetailDomain.State(
             prescription: GroupedPrescription.Prescription(erxTask: erxTask, date: now),
@@ -74,7 +74,7 @@ final class PrescriptionLowDetailSnapshotTests: XCTestCase {
             expiresOn: "2021-02-20T14:34:29+00:00",
             redeemedOn: nil,
             author: nil,
-            medication: ErxTask.Dummies.medication1
+            medication: ErxTask.Fixtures.medication1
         )
         let stateNotArchived = PrescriptionDetailDomain.State(
             prescription: GroupedPrescription.Prescription(erxTask: erxTask, date: now),
@@ -101,7 +101,7 @@ final class PrescriptionLowDetailSnapshotTests: XCTestCase {
             expiresOn: "24.6.2021",
             redeemedOn: "2021-02-20T14:34:29+00:00",
             author: nil,
-            medication: ErxTask.Dummies.medication1
+            medication: ErxTask.Fixtures.medication1
         )
         let stateRedeemed = PrescriptionDetailDomain.State(
             prescription: GroupedPrescription.Prescription(erxTask: erxTask, date: now),

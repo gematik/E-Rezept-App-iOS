@@ -119,7 +119,7 @@ struct OrderHealthCardView: View {
         message: L10n.orderEgkTxtHintNoContactOptionMessage.text,
         actionText: nil,
         action: nil,
-        imageName: Asset.Illustrations.arztRedCircle.name,
+        image: .init(name: Asset.Illustrations.arztRedCircle.name),
         closeAction: nil,
         style: .important,
         buttonStyle: .tertiary,
@@ -211,8 +211,7 @@ struct OrderHealthCardView: View {
     }
 
     struct HealthInsuranceCompany: Decodable, Identifiable, Hashable {
-        let id = UUID() // swiftlint:disable:this identifier_name
-
+        let id = UUID()
         let name: String
         let healthCardAndPinPhone: String
         let healthCardAndPinMail: String
@@ -243,9 +242,7 @@ struct OrderHealthCardView: View {
             if hasContactInformationForPin {
                 options.append(.pin)
             }
-            if hasContactInformationForPinMail {
-                options.append(.pin)
-            }
+
             return options
         }
 
@@ -254,11 +251,7 @@ struct OrderHealthCardView: View {
         }
 
         var hasContactInformationForPin: Bool {
-            !pinUrl.isEmpty
-        }
-
-        var hasContactInformationForPinMail: Bool {
-            !subjectPinMail.isEmpty || !bodyPinMail.isEmpty
+            !pinUrl.isEmpty || !subjectPinMail.isEmpty || !bodyPinMail.isEmpty
         }
 
         var hasContactInformationForHealthCardAndPin: Bool {
@@ -278,7 +271,7 @@ struct OrderHealthCardView: View {
             case .pin:
                 subject = subjectPinMail
                 body = bodyPinMail
-                email = healthCardAndPinMail
+                email = !subjectPinMail.isEmpty && !bodyPinMail.isEmpty ? healthCardAndPinMail : ""
             }
 
             guard !email.isEmpty else {
@@ -299,7 +292,7 @@ struct OrderHealthCardView: View {
         case pin
         case healthCardAndPin
 
-        var id: Int { rawValue } // swiftlint:disable:this identifier_name
+        var id: Int { rawValue }
 
         var localizedName: LocalizedStringKey {
             switch self {

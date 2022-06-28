@@ -31,6 +31,7 @@ enum CardWallPINDomain {
         var showNextScreen: TransitionMode = .none
         var doneButtonPressed = false
         let pinPassRange = (6 ... 8)
+        var isEGKOrderInfoViewPresented = false
     }
 
     enum Action: Equatable {
@@ -38,6 +39,8 @@ enum CardWallPINDomain {
         case reset
         case close
         case advance(TransitionMode)
+        case showEGKOrderInfoView
+        case dismissEGKOrderInfoView
     }
 
     enum TransitionMode: Equatable {
@@ -62,7 +65,6 @@ enum CardWallPINDomain {
             }
             return .none
         case .reset:
-            state.pin = ""
             state.showNextScreen = .none
             return .none
         case .close:
@@ -77,6 +79,12 @@ enum CardWallPINDomain {
             if state.showWarning {
                 environment.accessibilityAnnouncementReceiver(state.warningMessage)
             }
+            return .none
+        case .dismissEGKOrderInfoView:
+            state.isEGKOrderInfoViewPresented = false
+            return .none
+        case .showEGKOrderInfoView:
+            state.isEGKOrderInfoViewPresented = true
             return .none
         }
     }

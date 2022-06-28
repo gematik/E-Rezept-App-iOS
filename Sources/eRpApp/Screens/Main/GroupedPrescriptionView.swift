@@ -44,8 +44,7 @@ struct GroupedPrescriptionView: View {
                     .layoutPriority(1)
                 }
                 VStack(spacing: 0) {
-                    ForEach(groupedPrescription.prescriptions.indices, id: \.self) { index in
-                        let prescription = groupedPrescription.prescriptions[index]
+                    ForEach(groupedPrescription.prescriptions) { prescription in
                         if groupedPrescription.displayType == .lowDetail {
                             LowDetailCellView(prescription: prescription) {
                                 viewStore.send(.prescriptionDetailViewTapped(selectedPrescription: prescription))
@@ -58,7 +57,7 @@ struct GroupedPrescriptionView: View {
                             .padding(.horizontal)
                         }
 
-                        if index == groupedPrescription.prescriptions.count - 1 {
+                        if prescription == groupedPrescription.prescriptions.last {
                             Spacer()
                                 .frame(height: lastItemSpacerSize)
                         } else {

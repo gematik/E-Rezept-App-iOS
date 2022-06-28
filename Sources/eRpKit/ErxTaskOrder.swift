@@ -19,7 +19,7 @@
 import Foundation
 
 /// Data Model that holds all relevant informations for placing an order in a pharmacy
-public struct ErxTaskOrder {
+public struct ErxTaskOrder: Equatable {
     /// Task Id for the prescription
     public let erxTaskId: String
     /// Access Code of the prescription
@@ -45,13 +45,13 @@ public struct ErxTaskOrder {
         self.pharmacyTelematikId = pharmacyTelematikId
     }
 
-    public struct Payload: Codable {
-        let version: String
-        let supplyOptionsType: RedeemOption
-        let name: String
-        let address: [String]
-        var hint: String
-        var phone: String
+    public struct Payload: Codable, Equatable {
+        public let version: String
+        public let supplyOptionsType: RedeemOption
+        public let name: String
+        public let address: [String]
+        public var hint: String
+        public var phone: String
 
         public init(
             version: String = "1",
@@ -71,7 +71,7 @@ public struct ErxTaskOrder {
     }
 }
 
-public enum RedeemOption: String, Codable {
+public enum RedeemOption: String, Codable, Equatable {
     case onPremise
     case delivery
     case shipment

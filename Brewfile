@@ -1,2 +1,5 @@
 brew 'mint'
 brew 'qrencode'
+brew 'sourcery'
+brew 'pandoc'
+brew 'graphviz'

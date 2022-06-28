@@ -139,7 +139,6 @@ class DebugLiveLogger {
 #if ENABLE_DEBUG_VIEW
 extension DebugLiveLogger {
     struct RequestLog: Identifiable, Equatable {
-        // swiftlint:disable:next identifier_name
         var id: UUID
 
         let request: URLRequest

@@ -6,6 +6,7 @@
 docs
 /requirements.csv
 /requirements.html
+doc/errors/generated
 
 # AppCode project files
 .idea/
@@ -107,9 +108,13 @@ Jenkinsfile_Archive
 devops
 .gitlab
 doc/security_review
+doc/architecture
+Sources/AVS/useful_links.txt
 
 # See if added files should also be removed within github_publish_prepare
 Tests/IntegrationTests/Resources/Certificates.bundle
 Tests/IntegrationTests/PharmacyDataQualityIntegrationTests.swift
 Tests/IDPTests/Resources/Certificates.bundle
+Templates/Sourcery/Generic/errors.stencil
+docs/errors/errors.html
 

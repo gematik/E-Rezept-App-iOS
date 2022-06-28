@@ -19,8 +19,11 @@
 import Foundation
 
 extension FileManager {
+    // sourcery: CodedError = "503"
     public enum ExcludeFileError: Error {
+        // sourcery: errorCode = "01"
         case fileDoesNotExist
+        // sourcery: errorCode = "02"
         case error(String)
     }
 

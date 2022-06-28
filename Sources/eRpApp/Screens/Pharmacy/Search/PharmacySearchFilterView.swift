@@ -17,51 +17,54 @@
 //
 
 import ComposableArchitecture
+import eRpStyleKit
 import SwiftUI
 
 struct PharmacySearchFilterView: View {
     let store: PharmacySearchFilterDomain.Store
+    @ObservedObject
+    var viewStore: ViewStore<PharmacySearchFilterDomain.State, PharmacySearchFilterDomain.Action>
+
+    init(store: PharmacySearchFilterDomain.Store) {
+        self.store = store
+        viewStore = ViewStore(store)
+    }
 
     var body: some View {
-        NavigationView {
-            WithViewStore(store) { viewStore in
-                VStack(alignment: .center, spacing: 16) {
-                    Text(L10n.phaSearchFilterTxtTitle)
-                        .font(Font.headline.weight(.semibold))
-                    ForEach(PharmacySearchFilterDomain.PharmacyFilterOption.allCases, id: \.self) { filterOption in
-                        Button(
-                            action: { viewStore.send(.toggleFilter(filterOption)) },
-                            label: {
-                                PharmacyFilterCell(
-                                    filter: filterOption,
-                                    isActive: viewStore.state.pharmacyFilterOptions.contains(filterOption)
-                                )
+        ScrollView {
+            VStack(spacing: 8) {
+                SingleElementSectionContainer(
+                    header: {
+                        Text(L10n.psfTxtCommonSubheadline)
+                    }, content: {
+                        ForEach(PharmacySearchFilterDomain.PharmacyFilterOption.allCases, id: \.self) { filterOption in
+                            Toggle(isOn: viewStore.binding(get: { state in
+                                state.pharmacyFilterOptions.contains(filterOption)
+                            }, send: { _ in
+                                PharmacySearchFilterDomain.Action.toggleFilter(filterOption)
+                            })) {
+                                Label(title: { Text(filterOption.localizedStringKey) }, icon: {})
                             }
-                        )
-                        .foregroundColor(Colors.systemLabel)
-                        .padding([.leading, .trailing])
-
-                        Divider().padding(.leading)
+                            .toggleStyle(.radio(showSeparator: filterOption != PharmacySearchFilterDomain
+                                    .PharmacyFilterOption.allCases.last))
+                            .modifier(SectionContainerCellModifier())
+                        }
                     }
-                    Spacer()
-                }
-                .navigationBarItems(
-                    trailing: CloseButton { viewStore.send(.close(viewStore.state.pharmacyFilterOptions)) }
-                        .accessibility(identifier: A18n.redeem.overview.rdmBtnCloseButton)
                 )
-                .navigationBarTitleDisplayMode(.inline)
-                .introspectNavigationController { navigationController in
-                    let navigationBar = navigationController.navigationBar
-                    navigationBar.barTintColor = UIColor(Colors.systemBackground)
-                    let navigationBarAppearance = UINavigationBarAppearance()
-                    navigationBarAppearance.shadowColor = UIColor(Colors.systemColorClear)
-                    navigationBarAppearance.backgroundColor = UIColor(Colors.systemBackground)
-                    navigationBar.standardAppearance = navigationBarAppearance
-                }
             }
         }
-        .accentColor(Colors.primary700)
-        .navigationViewStyle(StackNavigationViewStyle())
+        .navigationTitle(L10n.psfTxtTitle)
+        .background(Color(.secondarySystemBackground).ignoresSafeArea(.all, edges: .bottom))
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button(action: {
+                    viewStore.send(.close(viewStore.state.pharmacyFilterOptions))
+                }, label: {
+                    Text(L10n.psfBtnAccept)
+                })
+            }
+        }
+        .navigationBarTitleDisplayMode(.inline)
     }
 
     private struct PharmacyFilterCell: View {
@@ -70,7 +73,7 @@ struct PharmacySearchFilterView: View {
 
         var body: some View {
             HStack {
-                Text(filter.localizedString())
+                Text(filter.localizedStringKey)
                 Spacer()
                 Image(systemName: isActive ? SFSymbolName.checkmarkCircleFill : SFSymbolName.circle)
                     .foregroundColor(isActive ? Colors.primary600 : Colors.systemGray)
@@ -81,6 +84,16 @@ struct PharmacySearchFilterView: View {
 
 struct PharmacySearchFilterView_Previews: PreviewProvider {
     static var previews: some View {
-        PharmacySearchFilterView(store: PharmacySearchFilterDomain.Dummies.store)
+        Text("abc")
+            .sheet(
+                isPresented: .constant(true),
+                onDismiss: {},
+                content: {
+                    NavigationView {
+                        PharmacySearchFilterView(store: PharmacySearchFilterDomain.Dummies.store)
+                    }
+                    .accentColor(Colors.primary700)
+                }
+            )
     }
 }

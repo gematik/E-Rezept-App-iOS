@@ -16,10 +16,12 @@
 //  
 //
 
+import AVS
 import Combine
 import ComposableArchitecture
 import Contacts
 import eRpKit
+import eRpLocalStorage
 import MapKit
 import Pharmacy
 import SwiftUI
@@ -28,20 +30,54 @@ enum PharmacyDetailDomain: Equatable {
     typealias Store = ComposableArchitecture.Store<State, Action>
     typealias Reducer = ComposableArchitecture.Reducer<State, Action, Environment>
 
+    /// Provides an Effect that needs to run whenever the state of this Domain is reset to nil
+    static func cleanup<T>() -> Effect<T, Never> {
+        Effect.concatenate(
+            PharmacyRedeemDomain.cleanup(),
+            Effect.cancel(token: Token.self)
+        )
+    }
+
+    /// Tokens for Cancellables
+    enum Token: CaseIterable, Hashable {
+        case loadProfile
+    }
+
+    enum Route: Equatable {
+        case redeemViaAVS(PharmacyRedeemDomain.State)
+        case redeemViaErxTaskRepository(PharmacyRedeemDomain.State)
+
+        enum Tag: Int {
+            case redeemViaAVS
+            case redeemViaErxTaskRepository
+        }
+
+        var tag: Tag {
+            switch self {
+            case .redeemViaAVS: return .redeemViaAVS
+            case .redeemViaErxTaskRepository: return .redeemViaErxTaskRepository
+            }
+        }
+    }
+
     struct State: Equatable {
         var erxTasks: [ErxTask]
-        // TODO: Change pharmacy detail model to also use pharmacyLocationViewModel
-        // swiftlint:disable:previous todo
         var pharmacyViewModel: PharmacyLocationViewModel
         var pharmacy: PharmacyLocation {
             pharmacyViewModel.pharmacyLocation
         }
 
-        var pharmacyRedeemState: PharmacyRedeemDomain.State?
-        var isPharmacyRedeemViewPresented: Bool { pharmacyRedeemState != nil }
+        var reservationService: RedeemServiceOption = .noService
+        var shipmentService: RedeemServiceOption = .noService
+        var deliveryService: RedeemServiceOption = .noService
+        var route: Route?
     }
 
     enum Action: Equatable {
+        /// load current profile
+        case loadCurrentProfile
+        /// receive current Profile
+        case currentProfileReceived(Profile?)
         /// Closes the details page
         case close
         /// Opens Map App with pharmacy location
@@ -52,12 +88,14 @@ enum PharmacyDetailDomain: Equatable {
         case openBrowserApp
         /// Opens Mail app with pharmacy email address
         case openMailApp
-        /// Shows `PharmacyRedeemView` in one of the available `RedeemOption` flavours
-        case showPharmacyRedeemView(RedeemOption)
-        /// Closes the `PharmacyRedeemView`
-        case dismissPharmacyRedeemView
-        /// Actions for PharmacyRedeemView
-        case pharmacyRedeem(action: PharmacyRedeemDomain.Action)
+        /// Selects  the `RedeemOption` to use and set the navigation tag accordingly
+        case showPharmacyRedeemOption(RedeemOption)
+        /// Actions for PharmacyRedeemView with the `ErxTaskRepositoryRedeemService`
+        case pharmacyRedeemViaErxTaskRepository(action: PharmacyRedeemDomain.Action)
+        /// Actions for PharmacyRedeemView with the `AVSRedeemService`
+        case pharmacyRedeemViaAVS(action: PharmacyRedeemDomain.Action)
+        /// Handles navigation
+        case setNavigation(tag: Route.Tag?)
     }
 
     struct Environment {
@@ -65,11 +103,33 @@ enum PharmacyDetailDomain: Equatable {
         let userSession: UserSession
     }
 
-    static let domainReducer = Reducer { state, action, _ in
+    static let domainReducer = Reducer { state, action, environment in
         switch action {
+        case .loadCurrentProfile:
+            return environment.userSession.profile()
+                .first()
+                .catchToEffect()
+                .map { result in
+                    if case let .success(profile) = result {
+                        return Action.currentProfileReceived(profile)
+                    }
+                    return Action.currentProfileReceived(nil)
+                }
+                .receive(on: environment.schedulers.main)
+                .eraseToEffect()
+                .cancellable(id: Token.loadProfile, cancelInFlight: true)
+        case let .currentProfileReceived(profile):
+            let provider = RedeemOptionProvider(
+                wasAuthenticatedBefore: profile?.insuranceId != nil,
+                pharmacy: state.pharmacy
+            )
+            state.reservationService = provider.reservationService
+            state.shipmentService = provider.shipmentService
+            state.deliveryService = provider.deliveryService
+            return .none
         case .close:
             // Note: closing is handled in parent reducer
-            return .none
+            return cleanup()
         case .openMapApp:
             guard let longitude = state.pharmacy.position?.longitude?.doubleValue,
                   let latitude = state.pharmacy.position?.latitude?.doubleValue else {
@@ -113,40 +173,70 @@ enum PharmacyDetailDomain: Equatable {
                 UIApplication.shared.open(url)
             }
             return .none
-        case let .showPharmacyRedeemView(method):
-            state.pharmacyRedeemState = PharmacyRedeemDomain.State(
-                redeemOption: method,
+        case let .showPharmacyRedeemOption(option):
+            let redeemState = PharmacyRedeemDomain.State(
+                redeemOption: option,
                 erxTasks: state.erxTasks,
                 pharmacy: state.pharmacy,
                 selectedErxTasks: Set(state.erxTasks)
             )
+            var route: Route
+            switch option {
+            case .onPremise:
+                state.route = state.reservationService.route(with: redeemState)
+            case .delivery:
+                state.route = state.deliveryService.route(with: redeemState)
+            case .shipment:
+                state.route = state.shipmentService.route(with: redeemState)
+            }
             return .none
-        case .dismissPharmacyRedeemView:
-            state.pharmacyRedeemState = nil
-            return .none
-        case .pharmacyRedeem(action: .close):
-            state.pharmacyRedeemState = nil
+        case .pharmacyRedeemViaErxTaskRepository(action: .close), .pharmacyRedeemViaAVS(action: .close):
+            state.route = nil
             return Effect(value: .close)
-        case .pharmacyRedeem:
+                // swiftlint:disable:next todo
+                // TODO: this is workaround to avoid `onAppear` of the the child view getting called
+                .delay(for: .seconds(0.1), scheduler: environment.schedulers.main)
+                .eraseToEffect()
+        case .setNavigation(tag: .none):
+            state.route = nil
+            return .none
+        case .pharmacyRedeemViaErxTaskRepository, .setNavigation, .pharmacyRedeemViaAVS:
             return .none
         }
     }
 
     static let reducer: Reducer = .combine(
-        pharmacyRedeemPullbackReducer,
+        pharmacyRedeemViaAVSPullbackReducer,
+        pharmacyRedeemViaRepositoryPullback,
         domainReducer
     )
 
-    static let pharmacyRedeemPullbackReducer: Reducer =
-        PharmacyRedeemDomain.reducer.optional().pullback(
-            state: \.pharmacyRedeemState,
-            action: /PharmacyDetailDomain.Action.pharmacyRedeem(action:)
+    static let pharmacyRedeemViaAVSPullbackReducer: Reducer =
+        PharmacyRedeemDomain.reducer._pullback(
+            state: (\State.route).appending(path: /PharmacyDetailDomain.Route.redeemViaAVS),
+            action: /PharmacyDetailDomain.Action.pharmacyRedeemViaAVS(action:)
         ) { environment in
             PharmacyRedeemDomain.Environment(
                 schedulers: environment.schedulers,
                 userSession: environment.userSession,
-                erxTaskRepository: environment.userSession.erxTaskRepository,
-                shipmentInfoStore: environment.userSession.shipmentInfoDataStore
+                shipmentInfoStore: environment.userSession.shipmentInfoDataStore,
+                redeemService: AVSRedeemService(avsSession: environment.userSession.avsSession)
+            )
+        }
+
+    static let pharmacyRedeemViaRepositoryPullback: Reducer =
+        PharmacyRedeemDomain.reducer._pullback(
+            state: (\State.route).appending(path: /PharmacyDetailDomain.Route.redeemViaErxTaskRepository),
+            action: /PharmacyDetailDomain.Action.pharmacyRedeemViaErxTaskRepository(action:)
+        ) { environment in
+            PharmacyRedeemDomain.Environment(
+                schedulers: environment.schedulers,
+                userSession: environment.userSession,
+                shipmentInfoStore: environment.userSession.shipmentInfoDataStore,
+                redeemService: ErxTaskRepositoryRedeemService(
+                    erxTaskRepository: environment.userSession.erxTaskRepository,
+                    isAuthenticated: environment.userSession.isAuthenticated
+                )
             )
         }
 
@@ -187,6 +277,19 @@ enum PharmacyDetailDomain: Equatable {
     }
 }
 
+extension RedeemServiceOption {
+    func route(with state: PharmacyRedeemDomain.State) -> PharmacyDetailDomain.Route? {
+        switch self {
+        case .avs:
+            return .redeemViaAVS(state)
+        case .erxTaskRepository, .erxTaskRepositoryAvailable:
+            return .redeemViaErxTaskRepository(state)
+        case .noService:
+            return nil
+        }
+    }
+}
+
 extension PharmacyDetailDomain {
     enum Dummies {
         static let address1 = PharmacyLocation.Address(
@@ -211,11 +314,14 @@ extension PharmacyDetailDomain {
             pharmacy: PharmacyLocation.Dummies.pharmacyInactive
         )
 
-        static let prescriptions = ErxTask.Dummies.erxTasks
+        static let prescriptions = ErxTask.Demo.erxTasks
 
         static let state = State(
             erxTasks: prescriptions,
-            pharmacyViewModel: pharmacyViewModel
+            pharmacyViewModel: pharmacyViewModel,
+            reservationService: .erxTaskRepository,
+            shipmentService: .erxTaskRepository,
+            deliveryService: .erxTaskRepository
         )
         static let environment = Environment(
             schedulers: Schedulers(),

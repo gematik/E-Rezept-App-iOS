@@ -27,7 +27,7 @@ public protocol ErxRemoteDataStore {
     ///   - id: the ErxTask ID
     ///   - accessCode: AccessCode, optional as required by implementing DataStore
     /// - Returns: Publisher for the fetch request
-    func fetchTask(by id: ErxTask.ID, accessCode: String?) // swiftlint:disable:this identifier_name
+    func fetchTask(by id: ErxTask.ID, accessCode: String?)
         -> AnyPublisher<ErxTask?, RemoteStoreError>
 
     /// List all tasks contained in the store
@@ -40,10 +40,10 @@ public protocol ErxRemoteDataStore {
 
     /// Sends a redeem request of  an `ErxTask` for the selected pharmacy
     /// Note: The response does not verify that the pharmacy has accepted the order
-    /// - Parameter orders: Array of an order that contains informations about the task,  redeem option
+    /// - Parameter order: Order that contains informations about the task,  redeem option
     ///                     and the pharmacy where the task should be redeemed
-    /// - Returns: `true` if the server has received the order
-    func redeem(orders: [ErxTaskOrder]) -> AnyPublisher<Bool, RemoteStoreError>
+    /// - Returns: The order that has been redeemed
+    func redeem(order: ErxTaskOrder) -> AnyPublisher<ErxTaskOrder, RemoteStoreError>
 
     /// Load All communications of the given profile
     /// - Parameters:
@@ -60,7 +60,7 @@ public protocol ErxRemoteDataStore {
     /// - Parameters:
     ///   - id: the ErxAuditEvent ID
     /// - Returns: Publisher for the fetch request
-    func fetchAuditEvent(by id: ErxAuditEvent.ID) // swiftlint:disable:this identifier_name
+    func fetchAuditEvent(by id: ErxAuditEvent.ID)
         -> AnyPublisher<ErxAuditEvent?, RemoteStoreError>
 
     /// List all audit events contained in the store
@@ -69,7 +69,15 @@ public protocol ErxRemoteDataStore {
     ///                             Pass `nil` for listing all
     ///   - locale: Location type of the language in which the result should be returned
     func listAllAuditEvents(after referenceDate: String?,
-                            for locale: String?) -> AnyPublisher<[ErxAuditEvent], RemoteStoreError>
+                            for locale: String?) -> AnyPublisher<PagedContent<[ErxAuditEvent]>, RemoteStoreError>
+
+    /// List all audit events contained in the store
+    /// - Parameters:
+    ///   - referenceDate: `AuditEvent`s with modification date great or equal  `referenceDate` will be listed.
+    ///                             Pass `nil` for listing all
+    ///   - locale: Location type of the language in which the result should be returned
+    func listAuditEventsNextPage(of previousPage: PagedContent<[ErxAuditEvent]>)
+        -> AnyPublisher<PagedContent<[ErxAuditEvent]>, RemoteStoreError>
 
     /// List all MedicationDispenses from the given reference date
     /// - Parameter referenceDate: `MedicationDispense`s with modification date great or equal  `referenceDate`

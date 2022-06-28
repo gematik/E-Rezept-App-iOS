@@ -51,6 +51,7 @@ enum SettingsDomain {
         var appVersion = AppVersion.current
         var trackerOptIn = false
         var showTrackerComplyView = false
+        var showEGKHint = false
     }
 
     enum Action: Equatable {
@@ -71,6 +72,7 @@ enum SettingsDomain {
         case appSecurity(action: AppSecurityDomain.Action)
         case profiles(action: ProfilesDomain.Action)
         case popToRootView
+        case showEGKHintReceived(Bool)
     }
 
     struct Environment {
@@ -87,9 +89,21 @@ enum SettingsDomain {
     private static let domainReducer = Reducer { state, action, environment in
         switch action {
         case .initSettings:
-            return UserDefaults.standard.publisher(for: \UserDefaults.kAppTrackingAllowed)
-                .map(Action.trackerStatusReceived)
-                .eraseToEffect()
+            return .merge(
+                UserDefaults.standard.publisher(for: \UserDefaults.kAppTrackingAllowed)
+                    .map(Action.trackerStatusReceived)
+                    .eraseToEffect(),
+                environment.changeableUserSessionContainer.userSession.profile()
+                    .map {
+                        $0.insuranceId == nil
+                    }
+                    .catch { _ in
+                        Just(false)
+                            .eraseToAnyPublisher()
+                    }
+                    .map(Action.showEGKHintReceived)
+                    .eraseToEffect()
+            )
         case let .trackerStatusReceived(value):
             state.trackerOptIn = value
             return .none
@@ -171,6 +185,9 @@ enum SettingsDomain {
             state.showLegalNoticeView = false
             state.showDataProtectionView = false
             state.showTermsOfUseView = false
+            return .none
+        case let .showEGKHintReceived(value):
+            state.showEGKHint = value
             return .none
         }
     }

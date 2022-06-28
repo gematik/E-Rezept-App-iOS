@@ -32,9 +32,9 @@ final class PharmacyRedeemViewSnapshotTests: XCTestCase {
     func testPharmacyRedeemViewMissingAddress() {
         let initialState = PharmacyRedeemDomain.State(
             redeemOption: .onPremise,
-            erxTasks: ErxTask.Dummies.erxTasks,
+            erxTasks: ErxTask.Fixtures.erxTasks,
             pharmacy: PharmacyLocation.Dummies.pharmacy,
-            selectedErxTasks: Set(ErxTask.Dummies.erxTasks),
+            selectedErxTasks: Set(ErxTask.Fixtures.erxTasks),
             profile: Profile(name: "Anna Vetter", color: Profile.Color.red)
         )
         let sut = NavigationView {
@@ -49,9 +49,9 @@ final class PharmacyRedeemViewSnapshotTests: XCTestCase {
     func testPharmacyRedeemViewFullAddress() {
         let initialState = PharmacyRedeemDomain.State(
             redeemOption: .shipment,
-            erxTasks: ErxTask.Dummies.erxTasks,
+            erxTasks: ErxTask.Fixtures.erxTasks,
             pharmacy: PharmacyLocation.Dummies.pharmacy,
-            selectedErxTasks: Set([ErxTask.Dummies.erxTasks.first!]),
+            selectedErxTasks: Set([ErxTask.Fixtures.erxTask1]),
             selectedShipmentInfo: ShipmentInfo(
                 name: "Anna Maria Vetter",
                 street: "Benzelrather Str. 29",
@@ -76,9 +76,9 @@ final class PharmacyRedeemViewSnapshotTests: XCTestCase {
     func testPharmacyRedeemViewTypeShipmentMissingPhone() {
         let initialState = PharmacyRedeemDomain.State(
             redeemOption: .shipment,
-            erxTasks: ErxTask.Dummies.erxTasks,
+            erxTasks: ErxTask.Fixtures.erxTasks,
             pharmacy: PharmacyLocation.Dummies.pharmacy,
-            selectedErxTasks: Set([ErxTask.Dummies.erxTasks.first!]),
+            selectedErxTasks: Set([ErxTask.Fixtures.erxTask1]),
             selectedShipmentInfo: ShipmentInfo(
                 name: "Anna Vetter",
                 street: "Benzelrather Str. 29",

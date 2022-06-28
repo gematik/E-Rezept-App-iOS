@@ -20,16 +20,19 @@ import SwiftUI
 
 struct HintView<Action: Equatable>: View {
     let hint: Hint<Action>
+    var closeAccessibilityLable: String?
     var textAction: (() -> Void)?
     var closeAction: (() -> Void)?
 
     var body: some View {
         HStack(alignment: hint.isTopAligned ? .top : .bottom, spacing: 0) {
-            Image(hint.imageName)
+            Image(hint.image.name)
                 .foregroundColor(hint.actionColor)
                 .font(.title3)
                 .padding(.leading)
                 .padding(.top, hint.isTopAligned ? 16 : 0)
+                .accessibility(label: Text(hint.image.accessibilityName ?? ""))
+                .accessibility(hidden: hint.image.accessibilityName == nil)
 
             HStack(alignment: .top, spacing: 0) {
                 VStack(alignment: .leading, spacing: 0) {
@@ -76,6 +79,7 @@ struct HintView<Action: Equatable>: View {
                             .padding(.trailing)
                             .padding(.top)
                     }
+                    .accessibility(label: Text(closeAccessibilityLable ?? L10n.hintBtnClose.text))
                 }
             }
             .frame(maxWidth: .infinity)

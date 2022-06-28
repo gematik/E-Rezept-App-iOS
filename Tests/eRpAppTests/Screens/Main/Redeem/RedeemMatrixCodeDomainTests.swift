@@ -46,7 +46,7 @@ final class RedeemMatrixCodeDomainTests: XCTestCase {
                 title: "Test-Prescription",
                 authoredOn: "1.1.2021",
                 isArchived: false,
-                prescriptions: [GroupedPrescription.Prescription(erxTask: ErxTask.Dummies.erxTaskRedeemed)],
+                prescriptions: [GroupedPrescription.Prescription(erxTask: ErxTask.Fixtures.erxTaskRedeemed)],
                 displayType: GroupedPrescription.DisplayType.fullDetail
             )
         )

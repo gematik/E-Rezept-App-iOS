@@ -57,7 +57,7 @@ class MainViewHintsProvider: HintsProvider {
         message: L10n.hintTxtTryDemoMode.text,
         actionText: L10n.hintBtnTryDemoMode,
         action: MainViewHintsDomain.Action.routeTo(.settings),
-        imageName: Asset.Illustrations.womanBlueCircle.name,
+        image: AccessibilityImage(name: Asset.Illustrations.womanBlueCircle.name),
         closeAction: MainViewHintsDomain.Action.hideHint,
         style: .neutral,
         buttonStyle: .tertiary,
@@ -70,7 +70,9 @@ class MainViewHintsProvider: HintsProvider {
         message: L10n.hintTxtTryDemoMode.text,
         actionText: nil,
         action: nil,
-        imageName: Asset.Illustrations.celebrationYellowCircle.name,
+        image: AccessibilityImage(
+            name: Asset.Illustrations.celebrationYellowCircle.name
+        ),
         closeAction: MainViewHintsDomain.Action.hideHint,
         style: .neutral,
         buttonStyle: .tertiary,
@@ -83,7 +85,10 @@ class MainViewHintsProvider: HintsProvider {
         message: L10n.hintTxtOpenScn.text,
         actionText: L10n.hintBtnOpenScn,
         action: MainViewHintsDomain.Action.routeTo(.scanner),
-        imageName: Asset.Illustrations.redWoman23.name,
+        image: AccessibilityImage(
+            name: Asset.Illustrations.redWoman23.name,
+            accessibilityName: L10n.hintPicScanner.text
+        ),
         closeAction: nil,
         style: .neutral,
         buttonStyle: .quaternary,
@@ -96,7 +101,7 @@ class MainViewHintsProvider: HintsProvider {
         message: L10n.hintTxtUnreadMessages.text,
         actionText: L10n.hintBtnUnreadMessages,
         action: MainViewHintsDomain.Action.routeTo(.messages),
-        imageName: Asset.Illustrations.pharmacistf1.name,
+        image: AccessibilityImage(name: Asset.Illustrations.pharmacistf1.name),
         style: .awareness,
         imageStyle: .bottomAligned
     )

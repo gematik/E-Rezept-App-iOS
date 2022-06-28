@@ -21,17 +21,48 @@ import ComposableArchitecture
 import ComposableCoreLocation
 import eRpKit
 import Pharmacy
+import SwiftUI
 
 enum PharmacySearchFilterDomain: Equatable {
     typealias Store = ComposableArchitecture.Store<State, Action>
     typealias Reducer = ComposableArchitecture.Reducer<State, Action, Environment>
 
     /// All filter options used with pharmacies search
-    enum PharmacyFilterOption: String, CaseIterable, Hashable {
-        case messenger = "pha_search_txt_filter_messenger"
+    enum PharmacyFilterOption: String, CaseIterable, Hashable, Identifiable {
+        case open
+        case ready
+        case delivery
+        case shipment
 
-        func localizedString() -> String {
-            NSLocalizedString(rawValue, comment: "")
+        private static let openIdentifier = UUID()
+        private static let readyIdentifier = UUID()
+        private static let deliveryIdentifier = UUID()
+        private static let shipmentIdentifier = UUID()
+
+        var id: UUID {
+            switch self {
+            case .open:
+                return Self.openIdentifier
+            case .ready:
+                return Self.readyIdentifier
+            case .delivery:
+                return Self.deliveryIdentifier
+            case .shipment:
+                return Self.shipmentIdentifier
+            }
+        }
+
+        var localizedStringKey: LocalizedStringKey {
+            switch self {
+            case .open:
+                return L10n.phaSearchTxtFilterOpen.key
+            case .ready:
+                return L10n.phaSearchTxtFilterReady.key
+            case .delivery:
+                return L10n.phaSearchTxtFilterDelivery.key
+            case .shipment:
+                return L10n.phaSearchTxtFilterShipment.key
+            }
         }
     }
 

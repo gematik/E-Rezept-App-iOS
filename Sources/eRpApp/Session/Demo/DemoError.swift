@@ -18,6 +18,8 @@
 
 import Foundation
 
+// sourcery: CodedError = "019"
 enum DemoError: Swift.Error {
+    // sourcery: errorCode = "01"
     case demo
 }

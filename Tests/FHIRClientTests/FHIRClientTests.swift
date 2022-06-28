@@ -118,10 +118,7 @@ final class FHIRClientTests: XCTestCase {
 
         let responseData = try! Data(contentsOf: url)
         let outcome = try! JSONDecoder().decode(ModelsR4.OperationOutcome.self, from: responseData)
-        let urlError = URLError(URLError.Code(rawValue: HTTPStatusCode.badRequest.rawValue),
-                                userInfo: ["body": outcome])
-        let expectedError = FHIRClient.Error.httpError(.httpError(urlError))
-
+        let expectedError = FHIRClient.Error.operationOutcome(outcome)
         var counter = 0
         stub(condition: isHost(host)
             && isPath(mockOperation.relativeUrlString!)
@@ -138,7 +135,7 @@ final class FHIRClientTests: XCTestCase {
             .test(failure: { error in
                 expect(counter) == 1
                 expect(mockOperation.handleResponse_Called).to(beFalse())
-                expect(error) == expectedError
+                expect(error.localizedDescription) == expectedError.localizedDescription
             }, expectations: { _ in
                 fail()
             })

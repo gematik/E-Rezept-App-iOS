@@ -40,6 +40,7 @@ enum RegisterAuthenticationDomain {
         let timeout: DispatchQueue.SchedulerTimeType.Stride = .seconds(0.5)
         var availableSecurityOptions: [AppSecurityOption]
         var selectedSecurityOption: AppSecurityOption?
+        var biometrySuccessful = false
         var passwordA: String = ""
         var passwordB: String = ""
         var passwordStrength = PasswordStrength.none
@@ -87,6 +88,7 @@ enum RegisterAuthenticationDomain {
     enum Action: Equatable {
         case loadAvailableSecurityOptions
         case select(_ option: AppSecurityOption)
+        case startBiometry
         case authenticationChallengeResponse(AppAuthenticationBiometricsDomain.AuthenticationResult)
         case alertDismissButtonTapped
         case setPasswordA(String)
@@ -111,11 +113,22 @@ enum RegisterAuthenticationDomain {
             let availableOptions = environment.appSecurityManager.availableSecurityOptions
             state.availableSecurityOptions = availableOptions.options
             state.securityOptionsError = availableOptions.error
+            if state.selectedSecurityOption == nil {
+                if availableOptions.options.contains(AppSecurityOption.biometry(.faceID)) {
+                    state.selectedSecurityOption = .biometry(.faceID)
+                } else if availableOptions.options.contains(AppSecurityOption.biometry(.touchID)) {
+                    state.selectedSecurityOption = .biometry(.touchID)
+                } else {
+                    state.selectedSecurityOption = .password
+                }
+            }
             return .none
         case let .select(option):
             state.selectedSecurityOption = option
             state.showNoSelectionMessage = false
-            if case .biometry = option {
+            return .none
+        case .startBiometry:
+            if case .biometry = state.selectedSecurityOption {
                 // reset password state when selecting biometry
                 state.passwordA = ""
                 state.passwordB = ""
@@ -132,9 +145,9 @@ enum RegisterAuthenticationDomain {
         case let .authenticationChallengeResponse(response):
             switch response {
             case .success(false):
-                state.selectedSecurityOption = nil
+                state.biometrySuccessful = false
             case let .failure(error):
-                state.selectedSecurityOption = nil
+                state.biometrySuccessful = false
                 if let errorMessage = error.errorDescription {
                     state.alertState = AlertState(
                         title: TextState(L10n.alertErrorTitle),
@@ -143,6 +156,7 @@ enum RegisterAuthenticationDomain {
                     )
                 }
             case .success(true):
+                state.biometrySuccessful = true
                 return .none
             }
             return .none
@@ -151,7 +165,6 @@ enum RegisterAuthenticationDomain {
             return .none
         case let .setPasswordA(string):
             state.passwordStrength = environment.passwordStrengthTester.passwordStrength(for: string)
-            state.selectedSecurityOption = .password
             state.showPasswordErrorMessage = false
             state.passwordA = string
             return Effect(value: .comparePasswords)
@@ -220,7 +233,10 @@ enum RegisterAuthenticationDomain {
 
 extension RegisterAuthenticationDomain {
     enum Dummies {
-        static let state = State(availableSecurityOptions: [.password, .biometry(.faceID)])
+        static let state = State(
+            availableSecurityOptions: [.password, .biometry(.faceID)],
+            selectedSecurityOption: .biometry(.faceID)
+        )
 
         static let environment = Environment(
             appSecurityManager: DummyAppSecurityManager(),

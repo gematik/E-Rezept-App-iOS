@@ -33,7 +33,8 @@ struct OnboardingNextButton: View {
                 .accessibility(identifier: A18n.onboarding.start.onbBtnNext)
                 .accessibility(hint: Text(L10n.onbBtnNextHint))
                 .accessibility(label: Text(L10n.onbBtnNextHint))
-                .padding(.all, 30)
+                .padding([.vertical, .leading], 30)
+                .padding(.trailing, 24)
         }
         .disabled(!isEnabled)
         .accentColor(isEnabled ? Colors.primary : Color(.systemGray))

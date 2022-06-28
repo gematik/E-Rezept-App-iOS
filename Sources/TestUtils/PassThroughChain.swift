@@ -18,7 +18,7 @@
 
 import Combine
 import Foundation
-@testable import HTTPClient
+import HTTPClient
 
 public class PassThroughChain: Chain {
     public private(set) var request: URLRequest
@@ -36,7 +36,8 @@ public class PassThroughChain: Chain {
 
     public func proceed(request: URLRequest) -> AnyPublisher<HTTPResponse, HTTPError> {
         incomingProceedRequests.append(request)
-        return Just(httpResponse ?? HTTPResponse(data: responseData, response: response, status: statusCode))
+        let fallback = HTTPResponse(data: responseData, response: response, status: statusCode)
+        return Just(httpResponse ?? fallback)
             .setFailureType(to: HTTPError.self)
             .eraseToAnyPublisher()
     }

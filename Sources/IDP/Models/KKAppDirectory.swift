@@ -43,4 +43,8 @@ public struct KKAppDirectory: Codable, Equatable, Claims {
             case identifier = "kk_app_id"
         }
     }
+
+    public func sorted() -> Self {
+        KKAppDirectory(apps: apps.sorted { $0.name.lowercased() < $1.name.lowercased() })
+    }
 }

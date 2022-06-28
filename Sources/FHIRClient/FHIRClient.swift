@@ -22,14 +22,22 @@ import HTTPClient
 import ModelsR4
 
 extension FHIRClient {
+    // sourcery: CodedError = "520"
     /// Error cases when using the `FHIRClient`
     public enum Error: Swift.Error, Equatable, CustomStringConvertible, LocalizedError {
+        // sourcery: errorCode = "01"
         case internalError(String)
+        // sourcery: errorCode = "02"
         case httpError(HTTPError)
+        // sourcery: errorCode = "03"
+        case operationOutcome(OperationOutcome)
+        // sourcery: errorCode = "04"
         /// When the server returned a successful response with inconsistent response data.
         /// E.g. no task(s) found in a Fetch response where we normally would have expected a HTTP 404 instead.
         case inconsistentResponse
+        // sourcery: errorCode = "05"
         case decoding(Swift.Error)
+        // sourcery: errorCode = "06"
         case unknown(Swift.Error)
 
         public var description: String {
@@ -39,6 +47,12 @@ extension FHIRClient {
             case .inconsistentResponse: return "inconsistent response error"
             case let .decoding(error): return error.localizedDescription
             case let .unknown(error): return error.localizedDescription
+            case let .operationOutcome(outcome):
+                guard let issue = outcome.issue.first else { return "missing error type" }
+                let code = issue.code.value?.rawValue ?? "missing code"
+                let text = issue.details?.text?.value?.string ?? "missing text"
+                let severity = issue.severity.value?.rawValue ?? "missing severity"
+                return "\(severity): \(text), code: \(code)"
             }
         }
 
@@ -49,6 +63,12 @@ extension FHIRClient {
             case .inconsistentResponse: return "inconsistent response error"
             case let .decoding(error): return error.localizedDescription
             case let .unknown(error): return error.localizedDescription
+            case let .operationOutcome(outcome):
+                guard let issue = outcome.issue.first else { return "missing error type" }
+                let code = issue.code.value?.rawValue ?? "missing code"
+                let text = issue.details?.text?.value?.string ?? "missing text"
+                let severity = issue.severity.value?.rawValue ?? "missing severity"
+                return "\(severity): \(text), code: \(code)"
             }
         }
 
@@ -99,9 +119,7 @@ public class FHIRClient {
 
                 guard response.status.isSuccessful else {
                     if let outcome = try? JSONDecoder().decode(ModelsR4.OperationOutcome.self, from: response.body) {
-                        let urlError = URLError(URLError.Code(rawValue: response.status.rawValue),
-                                                userInfo: ["body": outcome])
-                        throw Error.httpError(.httpError(urlError))
+                        throw Error.operationOutcome(outcome)
                     } else {
                         let urlError = URLError(URLError.Code(rawValue: response.status.rawValue),
                                                 userInfo: ["body": response.body])

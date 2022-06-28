@@ -66,14 +66,13 @@ enum OnboardingDomain {
 
     enum Page {
         case start
-        case welcome
         case features
         case newProfile
         case registerAuthentication
         case altRegisterAuthentication
         case legalInfo
 
-        static var all: [Page] = [.start, .welcome, .features, .newProfile, .registerAuthentication, .legalInfo]
+        static var all: [Page] = [.start, .features, .newProfile, .registerAuthentication, .legalInfo]
     }
 
     struct Composition: Equatable {

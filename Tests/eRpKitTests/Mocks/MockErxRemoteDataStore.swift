@@ -81,21 +81,21 @@ final class MockErxRemoteDataStore: ErxRemoteDataStore {
 
     // MARK: - redeem
 
-    var redeemOrdersCallsCount = 0
-    var redeemOrdersCalled: Bool {
-        redeemOrdersCallsCount > 0
+    var redeemOrderCallsCount = 0
+    var redeemOrderCalled: Bool {
+        redeemOrderCallsCount > 0
     }
 
-    var redeemOrdersReceivedOrders: [ErxTaskOrder]?
-    var redeemOrdersReceivedInvocations: [[ErxTaskOrder]] = []
-    var redeemOrdersReturnValue: AnyPublisher<Bool, RemoteStoreError>!
-    var redeemOrdersClosure: (([ErxTaskOrder]) -> AnyPublisher<Bool, RemoteStoreError>)?
+    var redeemOrderReceivedOrder: ErxTaskOrder?
+    var redeemOrderReceivedInvocations: [ErxTaskOrder] = []
+    var redeemOrderReturnValue: AnyPublisher<ErxTaskOrder, RemoteStoreError>!
+    var redeemOrderClosure: ((ErxTaskOrder) -> AnyPublisher<ErxTaskOrder, RemoteStoreError>)?
 
-    func redeem(orders: [ErxTaskOrder]) -> AnyPublisher<Bool, RemoteStoreError> {
-        redeemOrdersCallsCount += 1
-        redeemOrdersReceivedOrders = orders
-        redeemOrdersReceivedInvocations.append(orders)
-        return redeemOrdersClosure.map { $0(orders) } ?? redeemOrdersReturnValue
+    func redeem(order: ErxTaskOrder) -> AnyPublisher<ErxTaskOrder, RemoteStoreError> {
+        redeemOrderCallsCount += 1
+        redeemOrderReceivedOrder = order
+        redeemOrderReceivedInvocations.append(order)
+        return redeemOrderClosure.map { $0(order) } ?? redeemOrderReturnValue
     }
 
     // MARK: - listAllCommunications
@@ -155,16 +155,39 @@ final class MockErxRemoteDataStore: ErxRemoteDataStore {
 
     var listAllAuditEventsAfterForReceivedArguments: (referenceDate: String?, locale: String?)?
     var listAllAuditEventsAfterForReceivedInvocations: [(referenceDate: String?, locale: String?)] = []
-    var listAllAuditEventsAfterForReturnValue: AnyPublisher<[ErxAuditEvent], RemoteStoreError>!
-    var listAllAuditEventsAfterForClosure: ((String?, String?) -> AnyPublisher<[ErxAuditEvent], RemoteStoreError>)?
+    var listAllAuditEventsAfterForReturnValue: AnyPublisher<PagedContent<[ErxAuditEvent]>, RemoteStoreError>!
+    var listAllAuditEventsAfterForClosure: ((String?, String?)
+        -> AnyPublisher<PagedContent<[ErxAuditEvent]>, RemoteStoreError>)?
 
     func listAllAuditEvents(after referenceDate: String?,
-                            for locale: String?) -> AnyPublisher<[ErxAuditEvent], RemoteStoreError> {
+                            for locale: String?) -> AnyPublisher<PagedContent<[ErxAuditEvent]>, RemoteStoreError> {
         listAllAuditEventsAfterForCallsCount += 1
         listAllAuditEventsAfterForReceivedArguments = (referenceDate: referenceDate, locale: locale)
         listAllAuditEventsAfterForReceivedInvocations.append((referenceDate: referenceDate, locale: locale))
         return listAllAuditEventsAfterForClosure
             .map { $0(referenceDate, locale) } ?? listAllAuditEventsAfterForReturnValue
+    }
+
+    // MARK: - listAuditEventsNextPage
+
+    var listAuditEventsNextPageForCallsCount = 0
+    var listAuditEventsNextPageForCalled: Bool {
+        listAuditEventsNextPageForCallsCount > 0
+    }
+
+    var listAuditEventsNextPageForReceivedArguments: PagedContent<[ErxAuditEvent]>?
+    var listAuditEventsNextPageForReceivedInvocations: [PagedContent<[ErxAuditEvent]>] = []
+    var listAuditEventsNextPageForReturnValue: AnyPublisher<PagedContent<[ErxAuditEvent]>, RemoteStoreError>!
+    var listAuditEventsNextPageForClosure: ((PagedContent<[ErxAuditEvent]>)
+        -> AnyPublisher<PagedContent<[ErxAuditEvent]>, RemoteStoreError>)?
+
+    func listAuditEventsNextPage(of previousPage: PagedContent<[ErxAuditEvent]>)
+        -> AnyPublisher<PagedContent<[ErxAuditEvent]>, RemoteStoreError> {
+        listAuditEventsNextPageForCallsCount += 1
+        listAuditEventsNextPageForReceivedArguments = previousPage
+        listAuditEventsNextPageForReceivedInvocations.append(previousPage)
+        return listAuditEventsNextPageForClosure
+            .map { $0(previousPage) } ?? listAuditEventsNextPageForReturnValue
     }
 
     // MARK: - listAllMedicationDispenses

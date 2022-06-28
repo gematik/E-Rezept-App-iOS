@@ -114,7 +114,7 @@ final class RegisteredDevicesDomainTests: XCTestCase {
         testScheduler.run()
 
         store.receive(.loadDevicesReceived(.failure(RegisteredDevicesServiceError.missingToken))) { state in
-            state.route = .alert(RegisteredDevicesDomain.AlertStates.for(RegisteredDevicesServiceError.missingToken))
+            state.route = .alert(AlertState(for: RegisteredDevicesServiceError.missingToken))
         }
 
         store.receive(.deviceIdReceived(nil))

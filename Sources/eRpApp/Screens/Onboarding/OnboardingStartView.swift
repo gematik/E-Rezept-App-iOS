@@ -42,7 +42,7 @@ struct OnboardingStartView: View {
                         .accessibility(sortPriority: 1.0)
                         .padding(.bottom, -30)
                     Text(L10n.onbStrTxtTitle)
-                        .foregroundColor(Colors.primary900)
+                        .foregroundColor(Colors.systemLabel)
                         .font(Font.largeTitle.weight(.bold))
                         .accessibility(identifier: A18n.onboarding.start.onbTxtStartTitle)
                         .fixedSize(horizontal: false, vertical: true)

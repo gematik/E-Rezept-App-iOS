@@ -13,6 +13,8 @@ schemes:
       targets:
         eRpApp: all
     test:
+      language: de    
+      region: DE
       gatherCoverageData: true
       coverageTargets:
         - eRpApp
@@ -34,6 +36,8 @@ schemes:
       targets:
         eRpKit_macOS: test
     test:
+      language: de  
+      region: DE
       gatherCoverageData: true
       targets:
         - eRpKitTests_macOS
@@ -50,6 +54,8 @@ schemes:
       targets:
         IntegrationTests_iOS: test
     test:
+      language: de  
+      region: DE
       targets:
         - IntegrationTests_iOS
   StoreScreenshots_iOS:
@@ -57,6 +63,8 @@ schemes:
       targets:
         IntegrationTests_iOS: test
     test:
+      language: de 
+      region: DE 
       targets:
         - eRpAppStoreScreenshots
 packages:
@@ -68,7 +76,7 @@ packages:
     majorVersion: 0.0.2
   Nimble:
     url: https://github.com/Quick/Nimble
-    majorVersion: 8.0.1
+    majorVersion: 10.0.0
   ZXingObjC:
     url: https://github.com/zxingify/zxingify-objc
     majorVersion: 3.6.7
@@ -115,7 +123,7 @@ targets:
     type: application
     platform: iOS
     preBuildScripts:
-      - script: "swiftgen"
+      - script: "mint run swiftgen"
         name: Swiftgen
     settings:
       base:
@@ -137,6 +145,7 @@ targets:
       - target: FHIRClient_iOS
       - target: TrustStore_iOS
       - target: VAUClient_iOS
+      - target: AVS_iOS
       - framework: Carthage/Build/OpenSSL.xcframework
       - framework: Carthage/Build/DataKit.xcframework
       - framework: Carthage/Build/GemCommonsKit.xcframework
@@ -146,9 +155,11 @@ targets:
       - framework: Carthage/Build/ASN1Kit.xcframework
       - framework: Carthage/Build/HealthCardAccess.xcframework
       - framework: Carthage/Build/HealthCardControl.xcframework
+      - framework: Carthage/Build/Helper.xcframework
       - sdk: CoreNFC.framework
       - sdk: Combine.framework
       - sdk: SwiftUI.framework
+      - package: ZXingObjC
       - package: SwiftUI-Introspect
         product: Introspect
       - package: CombineSchedulers
@@ -164,6 +175,23 @@ targets:
       testTargets:
         - eRpAppTests
       gatherCoverageData: false
+  AVS:
+    settings:
+      PRODUCT_NAME: AVS
+      INFOPLIST_FILE: Sources/AVS/Resources/Info.plist
+    type: framework
+    platform: [iOS,macOS]
+    sources:
+      - Sources/AVS
+    dependencies:
+      - target: HTTPClient_${platform}
+      - framework: Carthage/Build/GemCommonsKit.xcframework
+      - framework: Carthage/Build/DataKit.xcframework
+      - framework: Carthage/Build/OpenSSL.xcframework
+    scheme:
+      testTargets:
+        - AVSTests_${platform}
+      gatherCoverageData: true
   eRpStyleKit:
     settings:
       PRODUCT_NAME: eRpStyleKit
@@ -193,7 +221,6 @@ targets:
       - Sources/eRpKit
     dependencies:
       - target: IDP_${platform}
-      - package: ZXingObjC
       - package: BundleKit
     scheme:
       testTargets:
@@ -219,7 +246,7 @@ targets:
     settings:
       PRODUCT_NAME: eRpRemoteStorage
       INFOPLIST_FILE: Sources/eRpRemoteStorage/Resources/Info.plist
-    type: framework
+    type: library.static
     platform: [iOS,macOS]
     sources:
       - Sources/eRpRemoteStorage
@@ -237,7 +264,7 @@ targets:
     settings:
       PRODUCT_NAME: Pharmacy
       INFOPLIST_FILE: Sources/Pharmacy/Resources/Info.plist
-    type: framework
+    type: library.static
     platform: [iOS,macOS]
     sources:
       - Sources/Pharmacy
@@ -348,6 +375,22 @@ targets:
       testTargets:
         - TrustStoreTests_${platform}
       gatherCoverageData: true
+  AVSTests:
+    type: bundle.unit-test
+    platform: [iOS,macOS]
+    settings:
+      INFOPLIST_FILE: Tests/AVSTests/Resources/Info.plist
+    sources:
+      - Tests/AVSTests
+    dependencies:
+      - target: AVS_${platform}
+      - target: TestUtils_${platform}
+      - framework: Carthage/Build/DataKit.xcframework
+      - framework: Carthage/Build/GemCommonsKit.xcframework
+      - package: Nimble
+      - package: BundleKit
+      - package: OHHTTPStubs
+        product: OHHTTPStubsSwift
   eRpAppTests:
     type: bundle.unit-test
     platform: iOS
@@ -521,6 +564,7 @@ targets:
     sources:
       - Tests/IntegrationTests
     dependencies:
+      - target: AVS_${platform}
       - target: eRpKit_${platform}
       - target: eRpApp
       - target: IDP_${platform}

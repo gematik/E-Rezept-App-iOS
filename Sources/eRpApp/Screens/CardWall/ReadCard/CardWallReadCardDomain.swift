@@ -20,7 +20,9 @@ import Combine
 import ComposableArchitecture
 import eRpKit
 import HealthCardAccess
+import Helper
 import IDP
+import UIKit
 
 enum CardWallReadCardDomain {
     typealias Store = ComposableArchitecture.Store<State, Action>
@@ -55,6 +57,7 @@ enum CardWallReadCardDomain {
         case stateReceived(State.Output)
         case saveError(LocalStoreError)
         case alertDismissButtonTapped
+        case openMail(String)
     }
 
     struct Environment {
@@ -63,6 +66,7 @@ enum CardWallReadCardDomain {
         let signatureProvider: SecureEnclaveSignatureProvider
         let sessionProvider: ProfileBasedSessionProvider
         let nfcSessionProvider: NFCSignatureProvider
+        let application: ResourceHandler
     }
 
     static let reducer = Reducer { state, action, environment in
@@ -83,20 +87,29 @@ enum CardWallReadCardDomain {
                 familyName: payload?.familyName
             )
         case .saveError:
-            state.alertState = saveProfileAlertState
+            state.alertState = AlertStates.saveProfile
             return .none
         case let .stateReceived(output):
             state.output = output
+            defer { CommandLogger.commands = [] }
 
             switch output {
             case let .retrievingChallenge(.error(error)),
                  let .signingChallenge(.error(error)),
                  let .verifying(.error(error)):
                 switch error {
+                case .signChallengeError(.cardError(.userCancelled)):
+                    // do not present error when user cancelled the session
+                    break
+                case .signChallengeError(.wrongPin(0)):
+                    state.alertState = AlertStates.alertFor(error)
                 case .signChallengeError(.wrongPin):
                     state.alertState = AlertStates.wrongPIN(error)
                 case .signChallengeError(.wrongCAN):
                     state.alertState = AlertStates.wrongCAN(error)
+                case let .signChallengeError(error):
+                    let report = createNfcReadingReport(with: error, commands: CommandLogger.commands)
+                    state.alertState = AlertStates.alertWithReportButton(report, error: error)
                 default:
                     state.alertState = AlertStates.alertFor(error)
                 }
@@ -153,22 +166,29 @@ enum CardWallReadCardDomain {
         case .alertDismissButtonTapped:
             state.alertState = nil
             return .none
+        case let .openMail(message):
+            let mailState = EmailState(subject: L10n.cdwTxtMailSubject.text, body: message)
+            guard let url = mailState.createEmailUrl() else { return .none }
+            if environment.application.canOpenURL(url) {
+                environment.application.open(url)
+            }
+            return .none
         }
     }
-
-    static var saveProfileAlertState: AlertState<Action> = {
-        AlertState(
-            title: TextState(L10n.cdwTxtRcAlertTitleSaveProfile),
-            message: TextState(L10n.cdwTxtRcAlertMessageSaveProfile),
-            dismissButton: .cancel(TextState(L10n.cdwBtnRcAlertSaveProfile))
-        )
-    }()
 }
 
 extension CardWallReadCardDomain {
     enum AlertStates {
         typealias Action = CardWallReadCardDomain.Action
         typealias Error = CardWallReadCardDomain.State.Error
+
+        static var saveProfile: AlertState<Action> = {
+            AlertState(
+                title: TextState(L10n.cdwTxtRcAlertTitleSaveProfile),
+                message: TextState(L10n.cdwTxtRcAlertMessageSaveProfile),
+                dismissButton: .cancel(TextState(L10n.cdwBtnRcAlertSaveProfile))
+            )
+        }()
 
         static func wrongCAN(_ error: Error) -> AlertState<Action> {
             AlertState(
@@ -195,6 +215,57 @@ extension CardWallReadCardDomain {
                 dismissButton: .default(TextState(L10n.cdwBtnRcAlertClose), action: .send(.alertDismissButtonTapped))
             )
         }
+
+        static func alertWithReportButton(_ report: String, error: NFCSignatureProviderError) -> AlertState<Action> {
+            AlertState(
+                for: error,
+                primaryButton: .default(TextState(L10n.cdwBtnRcAlertReport), action: .send(.openMail(report)))
+            )
+        }
+    }
+
+    static func createNfcReadingReport(
+        with error: NFCSignatureProviderError,
+        commands: [Command]
+    ) -> String {
+        var description = "Vielen Dank für das Senden dieses Reports. Der Report enthält keine privaten Daten."
+
+        description += "# NFC Reading error iOS E-Rezept App\n\n"
+
+        description += "Date: \(Date().description)\n"
+
+        description += "\n# RESULT\n\n"
+
+        description += "Finished with error message: '\(error.localizedDescriptionWithErrorList)'\n"
+        description += "actual error: \(error)\n"
+
+        description += "\n# COMMANDS\n"
+
+        guard !commands.isEmpty else {
+            description += "No commands between smart card and device have been sent!\n"
+            return description
+        }
+
+        for command in commands {
+            switch command.type {
+            case .send:
+                description += "SEND:\n"
+                description += "\(command.message.prefix(100))\n"
+            case .sendSecureChannel:
+                description += "SEND (secure channel, header only):\n"
+                description += "\(command.message.prefix(12))\n\n"
+            case .response:
+                description += "\nRESPONSE:\n"
+                description += "\(command.message.prefix(100))...\n\n"
+            case .responseSecureChannel:
+                description += "RESPONSE (secure channel):\n"
+                description += "\(command.message.prefix(8))...\n\n"
+            case .description:
+                description += "\n*** \(command.message) ***\n\n"
+            default: break
+            }
+        }
+        return description
     }
 }
 
@@ -211,7 +282,8 @@ extension CardWallReadCardDomain {
                                              profileDataStore: DemoProfileDataStore(),
                                              signatureProvider: DummySecureEnclaveSignatureProvider(),
                                              sessionProvider: DummyProfileBasedSessionProvider(),
-                                             nfcSessionProvider: DemoSignatureProvider())
+                                             nfcSessionProvider: DemoSignatureProvider(),
+                                             application: UIApplication.shared)
 
         static let store = Store(
             initialState: state,

@@ -10,6 +10,7 @@ import OpenSSL
 import Pharmacy
 import TrustStore
 import VAUClient
+import AVS
 
 /// AUTO GENERATED – DO NOT EDIT
 ///

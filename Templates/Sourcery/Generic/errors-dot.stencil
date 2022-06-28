@@ -1,0 +1,99 @@
+// sourcery:file:errors.dot
+digraph {
+    rankdir="LR";
+    ranksep="0.2 equally"
+    node [
+        shape=plaintext
+    ];
+    stylesheet="error_graph.css"
+{% macro listAssociatedValuesConnections enum %}
+    {% typed enum as Enum %}
+    {% for enumCase in enum.cases %}
+        {% for assocValue in enumCase.associatedValues %}
+            {% if assocValue.typeName|contains:"String" or assocValue.typeName|contains:"Swift.Error" or assocValue.typeName|contains:"NSError" or assocValue.typeName|contains:"URL" %}
+            {% else %}
+                {% if assocValue.type and ((assocValue.type.rawTypeName and assocValue.type.rawTypeName|contains:"Error") or assocValue.type.inheritedTypes|join:","|contains:"Error") %}
+                    {{ enum.name|swiftIdentifier }}:{{ enumCase.name|swiftIdentifier }} -> {{ assocValue.type.name|swiftIdentifier }}:{{ assocValue.type.name|swiftIdentifier }} [
+                        id="i-{{ enum.annotations.CodedError }}{{ enumCase.annotations.errorCode }}"
+                    ]
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+    {% endfor %}
+{% endmacro %}
+
+{% macro printCaseCell enum enumCase %}
+    {% typed enum as Enum %}
+    {% typed enumCase as EnumCase %}
+<TR>
+    <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-{{ enum.annotations.CodedError }}{{ enumCase.annotations.errorCode }}</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="{{ enumCase.name|swiftIdentifier }}" HREF="#" TOOLTIP="{{ enumCase.documentation }}"><FONT POINT-SIZE="10">{{ enumCase.name }}</FONT></TD>
+</TR>
+{% endmacro %}
+
+{% macro listEnumCasesWithAssocErrorValues enum showOnlyAssocErrors %}
+    {% typed enum as Enum %}
+    {% for enumCase in enum.cases %}
+        {% if enumCase.associatedValues %}
+            {% for assocValue in enumCase.associatedValues %}
+                {% if assocValue.typeName|contains:"String" or assocValue.typeName|contains:"Swift.Error" or assocValue.typeName|contains:"NSError" or assocValue.typeName|contains:"URL" %}
+                    {% if not showOnlyAssocErrors %}
+                        {% call printCaseCell enum enumCase %}
+                    {% endif %}
+                {% else %}
+                    {% if assocValue.type and ((assocValue.type.rawTypeName and assocValue.type.rawTypeName|contains:"Error") or assocValue.type.inheritedTypes|join:","|contains:"Error") %}
+                        {% if showOnlyAssocErrors %}
+                            {% call printCaseCell enum enumCase %}
+                        {% endif %}
+                    {% else %}
+                        {% if not showOnlyAssocErrors %}
+                            {% call printCaseCell enum enumCase %}
+                        {% endif %}
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        {% else %}
+            {% if not showOnlyAssocErrors %}
+                {% call printCaseCell enum enumCase %}
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+{% endmacro %}
+{% macro printErrorEnumLabel enum %}
+    {% typed enum as Enum %}<
+<TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0">
+  <TR>
+    <TD BGCOLOR="lightgray" PORT="{{ enum.name|swiftIdentifier }}" width="200" COLSPAN="2" ID="{{ enum.name }}"><FONT POINT-SIZE="16.0">{{ enum.name }}</FONT></TD>
+  </TR>
+{% call listEnumCasesWithAssocErrorValues enum true %}
+{% call listEnumCasesWithAssocErrorValues enum false %}
+</TABLE>
+>
+{% endmacro %}
+{% macro printErrorEnum enum %}
+    {% typed enum as Enum %}
+
+    "{{ enum.name|swiftIdentifier }}" [
+        label={% call printErrorEnumLabel enum %}
+        id="{{ enum.name | swiftIdentifier }}"
+        fontsize="10pt"
+        href="errors.html#{{ enum.name | lowercase }}"
+    ];
+    
+    {% call listAssociatedValuesConnections enum %}
+{% endmacro %}
+{% for type in types.enums|sorted:"path" %}
+    {% if type.rawTypeName and type.rawTypeName|contains:"Swift.Error" %}
+          {% call printErrorEnum type %}
+    {% elif type.inheritedTypes|join:","|contains:"Error" == true %}
+      {% call printErrorEnum type %}
+    {% else %}
+        {% for k,v in type.basedTypes %}
+          {% if v.globalName == "Swift.Error" %}
+          {% call printErrorEnum type %}
+          {% endif %}
+        {% endfor %}
+    {% endif %}
+{% endfor %}
+}
+// sourcery:end

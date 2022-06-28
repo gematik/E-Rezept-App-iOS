@@ -94,7 +94,7 @@ struct NewProfileView: View {
             }
             .alert(store.scope(state: \.alertState), dismiss: NewProfileDomain.Action.dismissAlert)
         }
-        .accentColor(Colors.primary700)
+        .accentColor(Colors.primary600)
     }
 }
 

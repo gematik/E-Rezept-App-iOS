@@ -93,8 +93,8 @@ struct EditProfileView: View {
                         EmptyProfileError()
                     }
                 }, content: {
-                    FormTextField(
-                        L10n.stgTxtEditProfileNamePlaceholder.key,
+                    TextFieldWithDelete(
+                        title: L10n.stgTxtEditProfileNamePlaceholder.key,
                         text: viewStore.binding(
                             get: \.name,
                             send: EditProfileDomain.Action.setName
@@ -195,7 +195,7 @@ extension EditProfileView {
                             } icon: {
                                 Image(systemName: SFSymbolName.copy)
                             }
-                            .labelStyle(.trailingIcon)
+                            .labelStyle(.trailingIconCell)
                         })
                             .accessibility(label: Text(L10n.stgTxtEditProfileLabelKvnr))
                             .accessibility(value: Text(insuranceId))

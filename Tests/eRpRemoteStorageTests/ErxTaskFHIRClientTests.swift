@@ -23,6 +23,7 @@ import eRpKit
 import FHIRClient
 import Foundation
 import HTTPClient
+import ModelsR4
 import Nimble
 import OHHTTPStubs
 import OHHTTPStubsSwift
@@ -99,7 +100,7 @@ final class ErxTaskFHIRClientTests: XCTestCase {
 
                 expect(erxTaskBundle?.id) == "61704e3f-1e4f-11b2-80f4-b806a73c0cd0"
                 expect(erxTaskBundle?.status) == .error(.decoding(message: expectedErxTaskStatusDecodeErrorMessage))
-                expect(erxTaskBundle?.accessCode) == "access-now"
+                expect(erxTaskBundle?.accessCode) == "7eccd529292631f6a7cd120b57ded23062c35932cc721bfd32b08c5fb188b642"
                 expect(erxTaskBundle?.fullUrl).to(beNil())
                 expect(erxTaskBundle?.medication).to(beNil())
                 expect(erxTaskBundle?.authoredOn) == "2021-03-24T08:35:32.311370977+00:00"
@@ -168,11 +169,11 @@ final class ErxTaskFHIRClientTests: XCTestCase {
             .test { error in
                 fail("unexpected fail with error: \(error)")
             } expectations: { auditEvents in
-                expect(auditEvents.count) == 4
-                expect(auditEvents[0].identifier) == "64c4f143-1de0-11b2-80eb-443cac489883"
-                expect(auditEvents[1].identifier) == "64c4f1af-1de0-11b2-80ec-443cac489883"
-                expect(auditEvents[2].identifier) == "64c4f1cc-1de0-11b2-80ed-443cac489883"
-                expect(auditEvents[3].identifier) == "64c4f1ea-1de0-11b2-80ee-443cac489883"
+                expect(auditEvents.content.count) == 4
+                expect(auditEvents.content[0].identifier) == "64c4f143-1de0-11b2-80eb-443cac489883"
+                expect(auditEvents.content[1].identifier) == "64c4f1af-1de0-11b2-80ec-443cac489883"
+                expect(auditEvents.content[2].identifier) == "64c4f1cc-1de0-11b2-80ed-443cac489883"
+                expect(auditEvents.content[3].identifier) == "64c4f1ea-1de0-11b2-80ee-443cac489883"
             }
         expect(counter) == 1
     }
@@ -196,24 +197,29 @@ final class ErxTaskFHIRClientTests: XCTestCase {
             .test { error in
                 fail("unexpected fail with error: \(error)")
             } expectations: { auditEvents in
-                expect(auditEvents.count) == 4
+                expect(auditEvents.content.count) == 4
             }
         expect(counter) == 1
     }
 
     /// Tests a failure delete, e.g. when task has already been deleted on the server.
-    /// The server will then respond with a http status code of 404.
+    /// The server will then respond with a http status code of 404 but the delete operation should be successful.
     func testDeleteTasks404() {
-        let errorResponse = load(resource: "errorFHIRResponse")
+        // given a response with a 404 (not found) failure
+        let errorResponsePath = load(resource: "operationOutcome")
 
         stub(condition: isHost(host) && pathEndsWith("$abort")) { _ in
-            fixture(filePath: errorResponse, status: 404, headers: ["Accept": "application/fhir+json"])
+            fixture(filePath: errorResponsePath, status: 404, headers: ["Accept": "application/fhir+json"])
         }
 
         let erxTask = ErxTask(identifier: "1", status: .ready, accessCode: "12")
 
+        // when deleting a task
         sut.deleteTask(by: erxTask.id, accessCode: erxTask.accessCode)
-            .test(expectations: { success in
+            .test(failure: { error in
+                fail("unexpected error \(error)")
+            }, expectations: { success in
+                // then the operations should be successful even if the remote call returns a 404
                 expect(success) == true
             })
     }
@@ -232,9 +238,9 @@ final class ErxTaskFHIRClientTests: XCTestCase {
         sut.redeem(order: inputOrder)
             .test { error in
                 fail("unexpected fail with error: \(error)")
-            } expectations: { isSuccessful in
+            } expectations: { order in
                 expect(counter) == 1
-                expect(isSuccessful).to(beTrue())
+                expect(order).to(equal(self.inputOrder))
             }
     }
 

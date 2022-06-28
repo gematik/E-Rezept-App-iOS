@@ -28,18 +28,6 @@ struct CapabilitiesView: View {
                 ScrollView(.vertical, showsIndicators: true) {
                     MinimumRequirementsView().padding()
                 }
-
-                Spacer()
-
-                GreyDivider()
-
-                PrimaryTextButton(text: L10n.cdwBtnNfuDone,
-                                  a11y: A11y.cardWall.notForYou.cdwBtnNfuDone) {
-                    viewStore.send(.close)
-                }
-                .accessibility(label: Text(L10n.cdwBtnPinDoneLabel))
-                .padding(.horizontal)
-                .padding(.bottom)
             }
             .navigationBarTitle(L10n.cdwTxtNfuTitle, displayMode: .inline)
             .navigationBarItems(
@@ -59,15 +47,9 @@ extension CapabilitiesView {
     private struct MinimumRequirementsView: View {
         var body: some View {
             VStack(alignment: .leading, spacing: 8) {
-                Image(Asset.CardWall.ohNo)
-                    .resizable()
-                    .scaledToFit()
-                    .padding()
-                    .accessibility(identifier: A11y.cardWall.notForYou.cdwImgNfu)
-
                 Text(L10n.cdwTxtNfuSubtitle)
                     .foregroundColor(Colors.systemLabel)
-                    .font(.title3)
+                    .font(.title)
                     .bold()
                     .accessibility(identifier: A11y.cardWall.notForYou.cdwTxtNfuSubtitle)
 
@@ -76,19 +58,13 @@ extension CapabilitiesView {
                     .foregroundColor(Colors.systemLabel)
                     .accessibility(identifier: A11y.cardWall.notForYou.cdwTxtNfuDescription)
 
-                Text(L10n.cdwTxtNfuFootnote)
-                    .font(.footnote)
-                    .foregroundColor(Colors.systemLabelSecondary.opacity(0.6))
-                    .accessibility(identifier: A11y.cardWall.notForYou.cdwTxtNfuFootnote)
-
-                // TODO: implement this when there is a destination for the button //swiftlint:disable:this todo
-//                HStack {
-//                    Spacer()
-//                    Text(L10n.cdwBtnNfuMore)
-//                        .font(.footnote)
-//                        .foregroundColor(Colors.primary600)
-//                        .accessibility(identifier: A11y.cardWall.notForYou.cdwBtnNfuMore)
-//                }
+                Button(L10n.cdwBtnNfuMore) {
+                    guard let url = URL(string: "https://www.das-e-rezept-fuer-deutschland.de/fragen-antworten"),
+                          UIApplication.shared.canOpenURL(url) else { return }
+                    UIApplication.shared.open(url)
+                }
+                .frame(maxWidth: .infinity, alignment: .trailing)
+                .accessibility(identifier: A11y.cardWall.notForYou.cdwBtnNfuMore)
             }
         }
     }

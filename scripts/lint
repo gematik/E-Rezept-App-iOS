@@ -13,7 +13,7 @@ echo "==> Running static analysis…"
 mint run swiftformat . --config .swiftformat --lint
 mint run swiftlint lint --strict --quiet
 
-[[ ! "$(swiftgen config run)" =~ "written" ]] || {
+[[ ! "$(mint run swiftgen config run)" =~ "written" ]] || {
  echo "Linting failed: uncommitted swiftgen changes.\nRun:\tswiftgen\nand commit your changes."
  exit 1
 }

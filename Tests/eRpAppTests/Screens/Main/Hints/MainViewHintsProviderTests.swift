@@ -38,7 +38,7 @@ final class MainViewHintsProviderTests: XCTestCase {
 
         let hint = sut.currentHint(for: HintState(hasScannedPrescriptionsBefore: true), isDemoMode: false)
 
-        expect(hint).notTo(be(MainViewHintsProvider.openScannerHint))
+        expect(hint).notTo(equal(MainViewHintsProvider.openScannerHint))
     }
 
     func testDemoModeAdvertiseHintWhenItShouldBePresented() {

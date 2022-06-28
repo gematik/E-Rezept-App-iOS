@@ -52,28 +52,35 @@ struct PrimaryTextButton: View {
 /// sourcery: StringAssetInitialized
 struct PrimaryTextButtonBorder: View {
     var text: LocalizedStringKey
+    var note: LocalizedStringKey?
     var image: Image?
     var isEnabled = true
     let action: () -> Void
 
     var body: some View {
         Button(action: action) {
-            HStack(spacing: 8) {
-                Spacer()
-                if let image = image {
-                    image
+            VStack {
+                HStack(spacing: 8) {
+                    Spacer()
+                    if let image = image {
+                        image
+                            .foregroundColor(isEnabled ? Colors.primary : Colors.disabled)
+                            .font(.body.weight(.semibold))
+                    }
+                    Text(text)
+                        .fontWeight(.semibold)
+                        .font(.body)
+                        .multilineTextAlignment(.center)
                         .foregroundColor(isEnabled ? Colors.primary : Colors.disabled)
-                        .font(.body.weight(.semibold))
+                        .fixedSize(horizontal: false, vertical: true)
+                    Spacer()
                 }
-                Text(text)
-                    .fontWeight(.semibold)
-                    .font(.body)
-                    .multilineTextAlignment(.center)
-                    .foregroundColor(isEnabled ? Colors.primary : Colors.disabled)
-                    .fixedSize(horizontal: false, vertical: true)
-                Spacer()
-            }
-            .padding()
+                if let note = note {
+                    Text(note)
+                        .font(.footnote)
+                        .foregroundColor(isEnabled ? Colors.primary : Colors.disabled)
+                }
+            }.padding()
         }
         .buttonStyle(PrimaryBorderButtonStyle(enabled: isEnabled))
         .if(!isEnabled) { $0.accessibility(value: Text(L10n.buttonTxtIsInactiveValue)) }
@@ -194,9 +201,11 @@ struct PrimaryButton_Previews: PreviewProvider {
                 .preferredColorScheme(.dark)
                 .environment(\.sizeCategory, .extraExtraLarge)
             PrimaryTextButtonBorder(text: "Peter picked a peck of pickled peppers",
+                                    note: "You must be logged in",
                                     image: Image(systemName: SFSymbolName.safari)) {}
                 .previewLayout(.fixed(width: 350.0, height: 150.0))
             PrimaryTextButtonBorder(text: "Peter picked a peck of pickled peppers",
+                                    note: "You must be logged in to use this feature",
                                     image: Image(systemName: SFSymbolName.safari),
                                     isEnabled: false) {}
                 .previewLayout(.fixed(width: 350.0, height: 150.0))

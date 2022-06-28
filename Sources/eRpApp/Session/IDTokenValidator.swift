@@ -25,10 +25,15 @@ protocol IDTokenValidator {
     func validate(idToken: TokenPayload.IDTokenPayload) -> Result<Bool, Error>
 }
 
+// sourcery: CodedError = "021"
 enum IDTokenValidatorError: Error, LocalizedError, Equatable {
+    // sourcery: errorCode = "01"
     case profileNotFound
+    // sourcery: errorCode = "02"
     case profileNotMatchingInsuranceId(String?)
+    // sourcery: errorCode = "03"
     case profileWithInsuranceIdExists(String)
+    // sourcery: errorCode = "04"
     case other(error: Swift.Error)
 
     var errorDescription: String? {

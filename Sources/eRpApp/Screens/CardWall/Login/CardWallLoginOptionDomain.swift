@@ -18,6 +18,8 @@
 
 import Combine
 import ComposableArchitecture
+import LocalAuthentication
+import UIKit
 
 enum CardWallLoginOptionDomain {
     typealias Store = ComposableArchitecture.Store<State, Action>
@@ -29,6 +31,7 @@ enum CardWallLoginOptionDomain {
         var selectedLoginOption = LoginOption.notSelected
         var isSecurityWarningPresented = false
         var showNextScreen = false
+        var alertState: AlertState<Action>?
     }
 
     enum Action: Equatable {
@@ -39,23 +42,54 @@ enum CardWallLoginOptionDomain {
         case presentSecurityWarning
         case acceptSecurityWarning
         case dismissSecurityWarning
+        case dismissAlert
+        case openAppSpecificSettings
     }
 
     struct Environment {
         let userSession: UserSession
+
+        let canUseBiometrics: () -> Bool = {
+            var error: NSError?
+            let authenticationContext = LAContext()
+            return authenticationContext.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics,
+                                                           error: &error) == true
+        }
+
+        let openURL: (URL, [UIApplication.OpenExternalURLOptionsKey: Any], ((Bool) -> Void)?) -> Void
     }
 
-    static let reducer = Reducer { state, action, _ in
+    static let reducer = Reducer { state, action, environment in
         switch action {
         case let .select(option: option):
             if state.selectedLoginOption == option, option.hasSelection {
                 return .none
             }
             if option.isWithBiometry {
+                guard environment.canUseBiometrics() else {
+                    state.alertState = AlertState(
+                        title: TextState(L10n.cdwTxtBiometrySetupIncomplete),
+                        message: nil,
+                        primaryButton: .cancel(TextState(L10n.alertBtnOk)),
+                        secondaryButton: .default(
+                            TextState(L10n.tabTxtSettings),
+                            action: .send(.openAppSpecificSettings)
+                        )
+                    )
+                    return .none
+                }
                 // [REQ:gemSpec_IDP_Frontend:A_21574] Present user information
                 return Effect(value: .presentSecurityWarning)
             }
             state.selectedLoginOption = option
+            return .none
+        case .dismissAlert:
+            state.alertState = nil
+            return .none
+        case .openAppSpecificSettings:
+            if let url = URL(string: UIApplication.openSettingsURLString) {
+                environment.openURL(url, [:], nil)
+            }
             return .none
         case .advance:
             state.showNextScreen = true
@@ -100,7 +134,10 @@ enum LoginOption {
 extension CardWallLoginOptionDomain {
     enum Dummies {
         static let state = State(isDemoModus: false)
-        static let environment = Environment(userSession: DemoSessionContainer())
+        static let environment = Environment(
+            userSession: DemoSessionContainer(),
+            openURL: UIApplication.shared.open(_:options:completionHandler:)
+        )
 
         static let store = Store(initialState: state,
                                  reducer: reducer,

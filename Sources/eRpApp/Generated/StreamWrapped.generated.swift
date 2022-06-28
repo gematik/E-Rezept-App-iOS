@@ -1,4 +1,4 @@
-// Generated using Sourcery 1.7.0 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 1.8.1 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 
 import Combine
@@ -11,6 +11,7 @@ import OpenSSL
 import Pharmacy
 import TrustStore
 import VAUClient
+import AVS
 
 /// AUTO GENERATED – DO NOT EDIT
 ///
@@ -101,10 +102,10 @@ class StreamWrappedErxTaskRepository: ErxTaskRepository {
             .eraseToAnyPublisher()
 	}
 
-	func redeem(orders: [ErxTaskOrder]) -> AnyPublisher<Bool, ErxRepositoryError> {
+	func redeem(order: ErxTaskOrder) -> AnyPublisher<ErxTaskOrder, ErxRepositoryError> {
         stream
         	.map { $0.redeem(
-				orders: orders
+				order: order
             ) }
             .switchToLatest()
             .eraseToAnyPublisher()
@@ -478,11 +479,12 @@ class StreamWrappedPharmacyRepository: PharmacyRepository {
 	}
 
 
-	func searchPharmacies(searchTerm: String, position: Position?) -> AnyPublisher<[PharmacyLocation], PharmacyRepositoryError> {
+	func searchPharmacies(searchTerm: String, position: Position?, filter: [PharmacyRepositoryFilter]) -> AnyPublisher<[PharmacyLocation], PharmacyRepositoryError> {
         stream
         	.map { $0.searchPharmacies(
 				searchTerm: searchTerm,
-				position: position
+				position: position,
+				filter: filter
             ) }
             .switchToLatest()
             .eraseToAnyPublisher()
@@ -916,6 +918,7 @@ class StreamWrappedUserSession: UserSession {
 	var appSecurityManager: AppSecurityManager { current.appSecurityManager }
 	var deviceSecurityManager: DeviceSecurityManager { current.deviceSecurityManager }
 	var profileId: UUID { current.profileId }
+	var avsSession: AVSSession { current.avsSession }
 
 	func profile() -> AnyPublisher<Profile, LocalStoreError> {
         stream

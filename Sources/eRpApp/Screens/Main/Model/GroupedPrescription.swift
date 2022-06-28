@@ -23,7 +23,7 @@ import Foundation
 /// which acts as the view model for `ErxTask`s
 struct GroupedPrescription: Identifiable, Equatable, Hashable {
     init(
-        id: String, // swiftlint:disable:this identifier_name
+        id: String,
         title: String,
         authoredOn: String,
         isArchived: Bool = false,
@@ -38,7 +38,7 @@ struct GroupedPrescription: Identifiable, Equatable, Hashable {
         self.displayType = displayType
     }
 
-    let id: String // swiftlint:disable:this identifier_name
+    let id: String
     let title: String
     let authoredOn: String
     let isArchived: Bool

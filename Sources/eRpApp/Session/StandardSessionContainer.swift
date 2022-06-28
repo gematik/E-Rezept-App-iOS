@@ -16,6 +16,7 @@
 //  
 //
 
+import AVS
 import Combine
 import eRpKit
 import eRpLocalStorage
@@ -133,7 +134,7 @@ class StandardSessionContainer: UserSession {
 
     lazy var isAuthenticated: AnyPublisher<Bool, UserSessionError> = {
         idpSession.isLoggedIn
-            .mapError { UserSessionError.networkError(error: $0) }
+            .mapError { UserSessionError.idpError(error: $0) }
             .eraseToAnyPublisher()
     }()
 
@@ -212,6 +213,10 @@ class StandardSessionContainer: UserSession {
             .compactMap { $0 }
             .eraseToAnyPublisher()
     }
+
+    lazy var avsSession: AVSSession = {
+        DefaultAVSSession(httpClient: avsHttpClient)
+    }()
 }
 
 extension IDPSession {
@@ -286,6 +291,19 @@ extension StandardSessionContainer {
     var pharmacyHttpClient: HTTPClient {
         let interceptors: [Interceptor] = [
             AdditionalHeaderInterceptor(additionalHeader: appConfiguration.apoVzdAdditionalHeader),
+            LoggingInterceptor(log: .body), // Logging interceptor (DEBUG ONLY)
+            DebugLiveLogger.LogInterceptor(),
+        ]
+
+        // Remote FHIR data source configuration
+        return DefaultHTTPClient(
+            urlSessionConfiguration: .ephemeral,
+            interceptors: interceptors
+        )
+    }
+
+    var avsHttpClient: HTTPClient {
+        let interceptors: [Interceptor] = [
             LoggingInterceptor(log: .body), // Logging interceptor (DEBUG ONLY)
             DebugLiveLogger.LogInterceptor(),
         ]

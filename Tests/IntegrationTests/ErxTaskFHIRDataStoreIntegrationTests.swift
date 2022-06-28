@@ -159,7 +159,7 @@ final class ErxTaskFHIRDataStoreIntegrationTests: XCTestCase {
 
         success = false
 
-        var cancellable = cloud.listAllAuditEvents(after: nil, for: nil)
+        let cancellable = cloud.listAllAuditEvents(after: nil, for: nil)
             .first()
             .sink(receiveCompletion: { completion in
                 switch completion {
@@ -169,10 +169,10 @@ final class ErxTaskFHIRDataStoreIntegrationTests: XCTestCase {
                 }
                 Swift.print(completion)
             }, receiveValue: { auditEvents in
-                Swift.print("auditEvents: #", auditEvents.count)
+                Swift.print("auditEvents: #", auditEvents.content.count)
                 success = true
             })
-        expect(success).toEventually(beTrue(), timeout: 300)
+        expect(success).toEventually(beTrue(), timeout: .seconds(300))
 
         cancellable.cancel()
     }

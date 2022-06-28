@@ -50,7 +50,7 @@ struct PharmacySearchCell: View {
                     .padding([.top, .bottom], 1)
                     .accessibilitySortPriority(100)
                 HStack {
-                    Text(pharmacy.pharmacyLocation.address?.fullAddress ?? "")
+                    Text(pharmacy.pharmacyLocation.address?.fullAddressBreak ?? "")
                 }
                 .accessibilitySortPriority(90)
                 .foregroundColor(Colors.systemLabelSecondary)

@@ -18,6 +18,7 @@
 
 import Foundation
 
+// sourcery: CodedError = "204"
 /// Remote store error cases
 public enum RemoteStoreError: Swift.Error, LocalizedError, Equatable {
     public static func ==(lhs: RemoteStoreError, rhs: RemoteStoreError) -> Bool {
@@ -29,7 +30,9 @@ public enum RemoteStoreError: Swift.Error, LocalizedError, Equatable {
         }
     }
 
+    // sourcery: errorCode = "01"
     case fhirClientError(Error)
+    // sourcery: errorCode = "02"
     case notImplemented
 
     public var errorDescription: String? {

@@ -31,6 +31,7 @@ protocol LoginHandler {
     func isAuthenticatedOrAuthenticate() -> AnyPublisher<LoginResult, Never>
 }
 
+// sourcery: CodedError = "013"
 enum LoginHandlerError: Swift.Error, Equatable, LocalizedError {
     static func ==(lhs: LoginHandlerError, rhs: LoginHandlerError) -> Bool {
         switch (lhs, rhs) {
@@ -46,11 +47,17 @@ enum LoginHandlerError: Swift.Error, Equatable, LocalizedError {
         }
     }
 
+    // sourcery: errorCode = "01"
     case biometrieFailed
+    // sourcery: errorCode = "02"
     case biometrieFatal
+    // sourcery: errorCode = "03"
     case ssoFailed
+    // sourcery: errorCode = "04"
     case ssoExpired
+    // sourcery: errorCode = "05"
     case idpError(IDPError)
+    // sourcery: errorCode = "06"
     case network(Swift.Error)
 
     var errorDescription: String? {

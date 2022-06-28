@@ -19,10 +19,10 @@
 import Combine
 import Foundation
 
-class BiometricsSHA256Signer: JWTSigner {
+public class BiometricsSHA256Signer: JWTSigner {
     let privateKeyContainer: PrivateKeyContainer
 
-    init(privateKeyContainer: PrivateKeyContainer) {
+    public init(privateKeyContainer: PrivateKeyContainer) {
         self.privateKeyContainer = privateKeyContainer
     }
 
@@ -30,12 +30,15 @@ class BiometricsSHA256Signer: JWTSigner {
         [Data()]
     }
 
-    enum Error: Swift.Error {
+    // sourcery: CodedError = "102"
+    public enum Error: Swift.Error {
+        // sourcery: errorCode = "01"
         case sessionClosed
+        // sourcery: errorCode = "02"
         case signatureFailed
     }
 
-    func sign(message: Data) -> AnyPublisher<Data, Swift.Error> {
+    public func sign(message: Data) -> AnyPublisher<Data, Swift.Error> {
         Future { [weak self] promise in
             promise(Result {
                 guard let result = try self?.privateKeyContainer.sign(data: message) else {

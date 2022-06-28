@@ -66,5 +66,21 @@
 			<string>Fertig, Rezepte hinzufügen</string>
 		</dict>
 	</dict>
+	<key>pha_redeem_alert_title_failure</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>Das ausgewählte Rezept konnte nicht eingelöst werden</string>
+			<key>other</key>
+			<string>%d Rezepte konnten nicht eingelöst werden</string>
+		</dict>
+	</dict>
 </dict>
 </plist>

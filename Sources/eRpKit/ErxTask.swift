@@ -74,7 +74,7 @@ public struct ErxTask: Identifiable, Hashable {
     // MARK: gematik profiled FHIR resources
 
     /// Id of the task
-    public var id: String { identifier } // swiftlint:disable:this identifier_name
+    public var id: String { identifier }
 
     /// Idenditifer of the task
     public let identifier: String
@@ -161,12 +161,19 @@ extension ErxTask {
         /// Extra error status (not FHIR)
         case error(Error)
 
+        // sourcery: CodedError = "201"
         public enum Error: Swift.Error {
+            // sourcery: errorCode = "01"
             case decoding(message: String)
+            // sourcery: errorCode = "02"
             case unknown(message: String)
+            // sourcery: errorCode = "03"
             case missingStatus
+            // sourcery: errorCode = "04"
             case missingPatientReceiptReference
+            // sourcery: errorCode = "05"
             case missingPatientReceiptIdentifier
+            // sourcery: errorCode = "06"
             case missingPatientReceiptBundle
         }
     }

@@ -55,7 +55,6 @@ final class CardWallPINDomainTests: XCTestCase {
         expect(sut.enteredPINTooShort).to(beFalse())
         expect(sut.enteredPINTooLong).to(beFalse())
         expect(sut.enteredPINValid).to(beFalse())
-        expect(sut.showWarning).to(beTrue())
     }
 
     func testStateHelper_enteredPINTooShort() {
@@ -65,7 +64,6 @@ final class CardWallPINDomainTests: XCTestCase {
         expect(sut.enteredPINTooShort).to(beTrue())
         expect(sut.enteredPINTooLong).to(beFalse())
         expect(sut.enteredPINValid).to(beFalse())
-        expect(sut.showWarning).to(beFalse())
 
         var sut2 = sut
         sut2.doneButtonPressed = true
@@ -74,7 +72,6 @@ final class CardWallPINDomainTests: XCTestCase {
         expect(sut2.enteredPINTooShort).to(beTrue())
         expect(sut2.enteredPINTooLong).to(beFalse())
         expect(sut2.enteredPINValid).to(beFalse())
-        expect(sut2.showWarning).to(beTrue())
     }
 
     func testStateHelper_enteredPINTooLong() {
@@ -84,7 +81,6 @@ final class CardWallPINDomainTests: XCTestCase {
         expect(sut.enteredPINTooShort).to(beFalse())
         expect(sut.enteredPINTooLong).to(beTrue())
         expect(sut.enteredPINValid).to(beFalse())
-        expect(sut.showWarning).to(beTrue())
     }
 
     func testStateHelper_enteredPINValid() {
@@ -94,7 +90,6 @@ final class CardWallPINDomainTests: XCTestCase {
         expect(sut.enteredPINTooShort).to(beFalse())
         expect(sut.enteredPINTooLong).to(beFalse())
         expect(sut.enteredPINValid).to(beTrue())
-        expect(sut.showWarning).to(beFalse())
     }
 
     func testPINValid() {

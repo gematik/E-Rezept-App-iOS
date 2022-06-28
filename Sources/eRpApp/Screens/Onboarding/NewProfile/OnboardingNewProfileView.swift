@@ -33,31 +33,47 @@ struct OnboardingNewProfileView: View {
 
     var body: some View {
         ScrollView(.vertical, showsIndicators: true) {
-            VStack {
+            VStack(alignment: .leading, spacing: 0) {
                 TitleView()
+
+                Text(L10n.onbPrfTxtFootnote)
+                    .font(.body.weight(.regular))
+                    .foregroundColor(.secondary)
+                    .padding(.top, 6)
+                    .accessibilityIdentifier(A11y.onboarding.newProfile.onbPrfTxtFootnote)
+
                 PrimaryTextFieldView(
                     placeholder: L10n.onbPrfTxtPlaceholder,
                     text: viewStore.binding(get: \.name, send: OnboardingNewProfileDomain.Action.setName),
                     a11y: A11y.onboarding.newProfile.onbPrfTxtField
                 )
+                .textContentType(.name)
+                .padding(.top, 24)
 
-                FootnoteView(text: L10n.onbPrfTxtFootnote, a11y: A11y.onboarding.newProfile.onbPrfTxtFootnote)
+                Spacer(minLength: 110)
             }
-            .padding()
         }
+        .padding([.leading, .top, .trailing])
         .alert(store.scope(state: \.alertState), dismiss: OnboardingNewProfileDomain.Action.dismissAlert)
     }
 
     private struct TitleView: View {
         var body: some View {
-            Text(L10n.onbPrfTxtTitle)
-                .multilineTextAlignment(.center)
-                .foregroundColor(Colors.primary900)
-                .font(Font.title2.weight(.bold))
-                .accessibility(identifier: A11y.onboarding.newProfile.onbPrfTxtTitle)
-                .fixedSize(horizontal: false, vertical: true)
-                .padding(.bottom, 32)
-                .padding(.top)
+            VStack(alignment: .leading, spacing: 0) {
+                HStack {
+                    Image(decorative: Asset.Onboarding.doctor)
+                    Spacer()
+                }
+                .padding(.top, 10)
+
+                Text(L10n.onbPrfTxtTitle)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .multilineTextAlignment(.leading)
+                    .font(Font.title.weight(.bold))
+                    .accessibility(identifier: A11y.onboarding.newProfile.onbPrfTxtTitle)
+                    .padding(.top, 22)
+            }
         }
     }
 }

@@ -68,8 +68,11 @@ enum AppAuthenticationBiometricsDomain {
 }
 
 extension AppAuthenticationBiometricsDomain {
+    // sourcery: CodedError = "003"
     enum Error: Swift.Error, LocalizedError, Equatable {
+        // sourcery: errorCode = "01"
         case cannotEvaluatePolicy(NSError?)
+        // sourcery: errorCode = "02"
         case failedEvaluatingPolicy(NSError?)
 
         var errorDescription: String? {

@@ -28,7 +28,7 @@ public protocol ErxTaskRepository {
     ///   - id: the ErxTask ID
     ///   - accessCode: when nil only load from local store(s)
     /// - Returns: Publisher for the load request
-    func loadRemote(by id: ErxTask.ID, // swiftlint:disable:this identifier_name
+    func loadRemote(by id: ErxTask.ID,
                     accessCode: String?) -> AnyPublisher<ErxTask?, ErxRepositoryError>
 
     /// Loads the `ErxTask` by its id and accessCode from disk
@@ -36,7 +36,7 @@ public protocol ErxTaskRepository {
     ///   - id: the `ErxTask` ID
     ///   - accessCode: when nil only look for the `id`
     /// - Returns: Publisher for the load request
-    func loadLocal(by id: ErxTask.ID, // swiftlint:disable:this identifier_name
+    func loadLocal(by id: ErxTask.ID,
                    accessCode: String?) -> AnyPublisher<ErxTask?, ErxRepositoryError>
 
     /// Load all local tasks (from disk)
@@ -61,10 +61,10 @@ public protocol ErxTaskRepository {
 
     /// Set a redeem request of  an `ErxTask` in the selected pharmacy
     /// Note: The response does not verify that the pharmacy has accepted the order
-    /// - Parameter orders: Array of orders that contain informations about the task,  redeem option
-    ///                     and the pharmacy where the tasks should be redeemed
-    /// - Returns: `true` if the server has received the order
-    func redeem(orders: [ErxTaskOrder]) -> AnyPublisher<Bool, ErxRepositoryError>
+    /// - Parameter order: Order that contains informations about the task,  redeem option
+    ///                     and the pharmacy where the task should be redeemed
+    /// - Returns: The `ErxTaskOrder` that has been redeemed
+    func redeem(order: ErxTaskOrder) -> AnyPublisher<ErxTaskOrder, ErxRepositoryError>
 
     /// Load All communications of the given profile
     /// - Returns: Array of all unread loaded `ErxTaskCommunication` sorted by timestamp

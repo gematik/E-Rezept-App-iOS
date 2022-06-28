@@ -63,7 +63,8 @@ final class CardWallSnapshotTests: XCTestCase {
     func testIntroductionView() {
         let sut = CardWallIntroductionView(
             store: CardWallIntroductionDomain.Dummies.store,
-            nextView: { EmptyView() }
+            nextView: { EmptyView() },
+            fastTrackView: { EmptyView() }
         )
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
@@ -258,7 +259,8 @@ final class CardWallSnapshotTests: XCTestCase {
                 profileDataStore: MockProfileDataStore(),
                 signatureProvider: DummySecureEnclaveSignatureProvider(),
                 sessionProvider: DummyProfileBasedSessionProvider(),
-                nfcSessionProvider: NFCSignatureProviderMock()
+                nfcSessionProvider: NFCSignatureProviderMock(),
+                application: MockUIApplication()
             )
         )
     }

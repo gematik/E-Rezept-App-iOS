@@ -188,7 +188,7 @@ final class KeychainStorageTests: XCTestCase {
         sut.set(token: inputToken)
         expect(keychainHelperMock.setGenericPasswordCalled) == true
 
-        expect(receivedTokens.count).toEventually(equal(2), timeout: 5)
+        expect(receivedTokens.count).toEventually(equal(2), timeout: .seconds(5))
         expect(receivedTokens[0]).to(beNil())
         expect(receivedTokens[1]).to(equal(inputToken))
 
@@ -212,7 +212,7 @@ final class KeychainStorageTests: XCTestCase {
         sut.set(keyIdentifier: expected)
         expect(keychainHelperMock.setGenericPasswordCalled) == true
 
-        expect(receivedKeys.count).toEventually(equal(2), timeout: 5)
+        expect(receivedKeys.count).toEventually(equal(2), timeout: .seconds(5))
         expect(receivedKeys[0]).to(beNil())
         expect(receivedKeys[1]).to(equal(expected))
 

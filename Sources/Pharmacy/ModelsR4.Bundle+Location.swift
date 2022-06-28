@@ -19,11 +19,13 @@
 import Foundation
 import ModelsR4
 
-extension ModelsR4.Bundle {
-    public enum Error: Swift.Error {
-        case parseError(String)
-    }
+// sourcery: CodedError = "510"
+public enum PharmacyBundleParsingError: Swift.Error {
+    // sourcery: errorCode = "01"
+    case parseError(String)
+}
 
+extension ModelsR4.Bundle {
     /// Parse and extract all found Pharmacy Locations from `Self`
     ///
     /// - Returns: Array with all found and parsed pharmacies
@@ -41,14 +43,14 @@ extension ModelsR4.Bundle {
     static func parse(location: ModelsR4.Location,
                       _: FHIRPrimitive<FHIRURI>?,
                       from _: ModelsR4.Bundle) throws -> PharmacyLocation {
-        guard let id = location.id?.value?.string else { // swiftlint:disable:this identifier_name
-            throw Error.parseError("Could not parse id from pharmacy.")
+        guard let id = location.id?.value?.string else {
+            throw PharmacyBundleParsingError.parseError("Could not parse id from pharmacy.")
         }
 
         let status = location.pharmacyLocationStatus
 
         guard let telematikID = location.telematikID else {
-            throw Error.parseError("Could not parse telematikID from pharmacy.")
+            throw PharmacyBundleParsingError.parseError("Could not parse telematikID from pharmacy.")
         }
 
         // swiftlint:disable:next todo
@@ -115,9 +117,10 @@ extension ModelsR4.Bundle {
                             pharmacyTypes.append(
                                 PharmacyLocation.PharmacyType.emergency
                             )
+                        // [[REQ:gemSpec_eRp_APOVZD:A_21779] delivery pharmacy
                         case "498":
                             pharmacyTypes.append(
-                                PharmacyLocation.PharmacyType.mobl
+                                PharmacyLocation.PharmacyType.delivery
                             )
                         default:
                             // do nothing
@@ -169,10 +172,12 @@ extension ModelsR4.Location {
                     pharmacyTypes.append(
                         PharmacyLocation.PharmacyType.pharm
                     )
+                // [[REQ:gemSpec_eRp_APOVZD:A_21779] Map pickup pharmacy
                 case "OUTPHARM":
                     pharmacyTypes.append(
                         PharmacyLocation.PharmacyType.outpharm
                     )
+                // [[REQ:gemSpec_eRp_APOVZD:A_21779] Map shipping pharmacy
                 case "MOBL":
                     pharmacyTypes.append(
                         PharmacyLocation.PharmacyType.mobl

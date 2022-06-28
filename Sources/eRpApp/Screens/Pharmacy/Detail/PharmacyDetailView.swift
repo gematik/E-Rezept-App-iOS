@@ -56,32 +56,61 @@ struct PharmacyDetailView: View {
 
                     if viewStore.pharmacy.isErxReady && !viewStore.erxTasks.isEmpty {
                         VStack(spacing: 8) {
-                            if viewStore.state.pharmacy.hasReservationService {
-                                DefaultTextButton(text: L10n.phaDetailBtnLocation,
-                                                  a11y: A11y.pharmacyDetail.phaDetailBtnLocation,
-                                                  style: .primary) {
-                                    viewStore.send(.showPharmacyRedeemView(.onPremise))
+                            if viewStore.reservationService.hasService {
+                                if viewStore.reservationService.hasServiceAfterLogin {
+                                    PrimaryTextButtonBorder(
+                                        text: L10n.phaDetailBtnLocation.key,
+                                        note: L10n.phaDetailBtnLoginNote.key
+                                    ) {
+                                        viewStore.send(.showPharmacyRedeemOption(.onPremise))
+                                    }
+                                    .accessibility(identifier: A11y.pharmacyDetail.phaDetailBtnLocation)
+                                } else {
+                                    DefaultTextButton(text: L10n.phaDetailBtnLocation,
+                                                      a11y: A11y.pharmacyDetail.phaDetailBtnLocation,
+                                                      style: .primary) {
+                                        viewStore.send(.showPharmacyRedeemOption(.onPremise))
+                                    }
+                                }
+                            }
+                            if viewStore.deliveryService.hasService {
+                                if viewStore.deliveryService.hasServiceAfterLogin {
+                                    PrimaryTextButtonBorder(
+                                        text: L10n.phaDetailBtnHealthcareService.key,
+                                        note: L10n.phaDetailBtnLoginNote.key
+                                    ) {
+                                        viewStore.send(.showPharmacyRedeemOption(.delivery))
+                                    }
+                                    .accessibility(identifier: A11y.pharmacyDetail.phaDetailBtnHealthcareService)
+                                } else {
+                                    DefaultTextButton(
+                                        text: L10n.phaDetailBtnHealthcareService,
+                                        a11y: A11y.pharmacyDetail.phaDetailBtnHealthcareService,
+                                        style: viewStore.reservationService.hasService ? .secondary : .primary
+                                    ) {
+                                        viewStore.send(.showPharmacyRedeemOption(.delivery))
+                                    }
                                 }
                             }
 
-                            if viewStore.state.pharmacy.hasDeliveryService {
-                                DefaultTextButton(
-                                    text: L10n.phaDetailBtnHealthcareService,
-                                    a11y: A11y.pharmacyDetail.phaDetailBtnHealthcareService,
-                                    style: viewStore.state.pharmacy.hasReservationService ? .secondary : .primary
-                                ) {
-                                    viewStore.send(.showPharmacyRedeemView(.delivery))
-                                }
-                            }
-
-                            if viewStore.state.pharmacy.hasMailService {
-                                DefaultTextButton(
-                                    text: L10n.phaDetailBtnOrganization,
-                                    a11y: A11y.pharmacyDetail.phaDetailBtnOrganization,
-                                    style: (!viewStore.state.pharmacy.hasReservationService &&
-                                        !viewStore.state.pharmacy.hasDeliveryService) ? .primary : .secondary
-                                ) {
-                                    viewStore.send(.showPharmacyRedeemView(.shipment))
+                            if viewStore.shipmentService.hasService {
+                                if viewStore.shipmentService.hasServiceAfterLogin {
+                                    PrimaryTextButtonBorder(
+                                        text: L10n.phaDetailBtnOrganization.key,
+                                        note: L10n.phaDetailBtnLoginNote.key
+                                    ) {
+                                        viewStore.send(.showPharmacyRedeemOption(.shipment))
+                                    }
+                                    .accessibility(identifier: A11y.pharmacyDetail.phaDetailBtnOrganization)
+                                } else {
+                                    DefaultTextButton(
+                                        text: L10n.phaDetailBtnOrganization,
+                                        a11y: A11y.pharmacyDetail.phaDetailBtnOrganization,
+                                        style: (!viewStore.reservationService.hasService &&
+                                            !viewStore.deliveryService.hasService) ? .primary : .secondary
+                                    ) {
+                                        viewStore.send(.showPharmacyRedeemOption(.shipment))
+                                    }
                                 }
                             }
                         }
@@ -92,7 +121,7 @@ struct PharmacyDetailView: View {
                             HintView<PharmacyDetailDomain.Action>(
                                 hint: Hint(id: A11y.pharmacyDetail.phaDetailHint,
                                            message: L10n.phaDetailHintMessage.text,
-                                           imageName: Asset.Illustrations.info.name)
+                                           image: .init(name: Asset.Illustrations.info.name))
                             )
                             .padding(.top, 12)
                             .padding(.bottom, 32)
@@ -102,7 +131,10 @@ struct PharmacyDetailView: View {
                             hint: Hint(id: A11y.pharmacyDetail.phaDetailHintNotErxReady,
                                        title: L10n.phaDetailHintNotErxReadyTitle.text,
                                        message: L10n.phaDetailHintNotErxReadyMessage.text,
-                                       imageName: Asset.Illustrations.pharmacistArmRedCirle.name,
+                                       image: .init(
+                                           name: Asset.Illustrations.pharmacistArmRedCirle.name,
+                                           accessibilityName: L10n.phaDetailHintNotErxReadyPic.text
+                                       ),
                                        style: .important)
                         )
                     }
@@ -117,8 +149,12 @@ struct PharmacyDetailView: View {
                     Footer()
                         .padding(.top, 4)
 
-                    RedeemViewPresentation(store: store).accessibility(hidden: true)
+                    RedeemViewViaErxTaskRepoNavigation(store: store).accessibility(hidden: true)
+                    RedeemViewViaAVSNavigation(store: store).accessibility(hidden: true)
                 }.padding()
+            }
+            .onAppear {
+                viewStore.send(.loadCurrentProfile)
             }
             .navigationBarItems(
                 trailing: trailingNavigationBarItem()
@@ -148,7 +184,9 @@ struct PharmacyDetailView: View {
             }
         }
     }
+}
 
+extension PharmacyDetailView {
     struct OpeningHoursView: View {
         let dailyOpenHours: [PharmacyLocationViewModel.DailyOpenHours]
 
@@ -163,10 +201,14 @@ struct PharmacyDetailView: View {
                     Text(dailyOpenHour.dayOfWeekLocalizedDisplayName)
                         .font(Font.body)
                         .foregroundColor(dailyOpenHour.openingState.isOpen ? Colors.secondary600 : Colors.systemLabel)
+                        .accessibility(hint: dailyOpenHour.openingState
+                            .isOpen ? Text(L10n.phaDetailOpeningToday) : Text(""))
                     Spacer(minLength: 0)
                     VStack(alignment: .trailing) {
                         ForEach(dailyOpenHour.entries, id: \.self) { hop in
                             Text("\(hop.openingTime ?? "") - \(hop.closingTime ?? "")")
+                                .accessibility(label: makeAccessibilityText(opening: hop.openingTime ?? "",
+                                                                            closing: hop.closingTime ?? ""))
                                 .font(Font.monospacedDigit(.body)())
                                 .foregroundColor(
                                     hop.openingState.isOpen ?
@@ -178,6 +220,16 @@ struct PharmacyDetailView: View {
                 .padding(.vertical, 8)
                 Divider()
             }
+        }
+
+        func makeAccessibilityText(opening: String, closing: String) -> Text {
+            Text("""
+            \(opening)
+            \(L10n.phaDetailOpeningTimeVoice.text)
+            \(L10n.phaDetailOpeningUntil.text)
+            \(closing)
+            \(L10n.phaDetailOpeningTimeVoice.text)
+            """)
         }
     }
 
@@ -218,24 +270,71 @@ struct PharmacyDetailView: View {
         }
     }
 
-    struct RedeemViewPresentation: View {
+    struct RedeemViewViaAVSNavigation: View {
         let store: PharmacyDetailDomain.Store
         var body: some View {
             WithViewStore(store) { viewStore in
-                NavigationLink(destination: IfLetStore(
-                    store.scope(
-                        state: { $0.pharmacyRedeemState },
-                        action: PharmacyDetailDomain.Action.pharmacyRedeem(action:)
-                    ),
-                    then: PharmacyRedeemView.init(store:)
-                ),
-                isActive: viewStore.binding(
-                    get: { $0.isPharmacyRedeemViewPresented },
-                    send: PharmacyDetailDomain.Action.dismissPharmacyRedeemView
-                )) {
-                    EmptyView()
-                }
+                NavigationLink(
+                    destination: destination,
+                    tag: PharmacyDetailDomain.Route.Tag.redeemViaAVS,
+                    selection: viewStore.binding(
+                        get: { $0.route?.tag },
+                        send: { .setNavigation(tag: $0) }
+                    )
+                ) {}
+                    .hidden()
+                    .accessibility(hidden: true)
             }
+        }
+
+        var destination: some View {
+            IfLetStore(
+                scopedStore,
+                then: PharmacyRedeemView.init(store:)
+            )
+        }
+
+        var scopedStore: Store<PharmacyRedeemDomain.State?, PharmacyRedeemDomain.Action> {
+            store.scope(
+                state: (\PharmacyDetailDomain.State.route)
+                    .appending(path: /PharmacyDetailDomain.Route.redeemViaAVS)
+                    .extract(from:),
+                action: PharmacyDetailDomain.Action.pharmacyRedeemViaAVS(action:)
+            )
+        }
+    }
+
+    struct RedeemViewViaErxTaskRepoNavigation: View {
+        let store: PharmacyDetailDomain.Store
+        var body: some View {
+            WithViewStore(store) { viewStore in
+                NavigationLink(
+                    destination: destination,
+                    tag: PharmacyDetailDomain.Route.Tag.redeemViaErxTaskRepository,
+                    selection: viewStore.binding(
+                        get: { $0.route?.tag },
+                        send: { .setNavigation(tag: $0) }
+                    )
+                ) {}
+                    .hidden()
+                    .accessibility(hidden: true)
+            }
+        }
+
+        var destination: some View {
+            IfLetStore(
+                scopedStore,
+                then: PharmacyRedeemView.init(store:)
+            )
+        }
+
+        var scopedStore: Store<PharmacyRedeemDomain.State?, PharmacyRedeemDomain.Action> {
+            store.scope(
+                state: (\PharmacyDetailDomain.State.route)
+                    .appending(path: /PharmacyDetailDomain.Route.redeemViaErxTaskRepository)
+                    .extract(from:),
+                action: PharmacyDetailDomain.Action.pharmacyRedeemViaErxTaskRepository(action:)
+            )
         }
     }
 
@@ -261,7 +360,7 @@ struct PharmacyDetailView: View {
                         .multilineTextAlignment(.leading)
                 })
                 Button(action: {
-                    guard let url = URL(string: "https://www.gematik.de/anwendungen/e-rezept/faq/meine_apotheke/"),
+                    guard let url = URL(string: "https://www.gematik.de/anwendungen/e-rezept/faq/meine-apotheke/"),
                           UIApplication.shared.canOpenURL(url) else { return }
 
                     UIApplication.shared.open(url)

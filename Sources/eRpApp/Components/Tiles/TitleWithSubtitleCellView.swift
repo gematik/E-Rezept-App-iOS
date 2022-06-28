@@ -30,7 +30,6 @@ struct TitleWithSubtitleCellView: View {
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
                     Text(title)
-                        .font(Font.body.weight(.semibold))
                         .foregroundColor(Colors.systemLabel)
                     if !subtitle.isEmpty {
                         Text(subtitle)

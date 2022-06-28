@@ -27,7 +27,7 @@ import IDP
 
 final class NFCSignatureProviderMock: NFCSignatureProvider {
     func openSecureSession(can _: CAN, pin _: Format2Pin) -> AnyPublisher<SignatureSession, NFCSignatureProviderError> {
-        Fail(error: NFCSignatureProviderError.signingFailure(nil)).eraseToAnyPublisher()
+        Fail(error: NFCSignatureProviderError.signingFailure(.unsupportedAlgorithm)).eraseToAnyPublisher()
     }
 
     // MARK: - sign

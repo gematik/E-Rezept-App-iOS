@@ -21,6 +21,19 @@ import Foundation
 import ModelsR4
 
 extension ModelsR4.Bundle {
+    func parseErxAuditEventsContainer() throws -> PagedContent<[ErxAuditEvent]> {
+        PagedContent(content: try parseErxAuditEvents(),
+                     next: parseNext())
+    }
+
+    func parseNext() -> URL? {
+        link?
+            .first { $0.relation.value?.string == "next" }?
+            .url
+            .value?
+            .url
+    }
+
     /// Parse and extract all found ErxAuditEvents from `Self`
     ///
     /// - Returns: Array with all found audit events
@@ -31,7 +44,7 @@ extension ModelsR4.Bundle {
                 return nil
             }
             guard let identifier = auditEvent.id?.value?.string else {
-                throw Error.parseError("Could not parse id from audit event.")
+                throw RemoteStorageBundleParsingError.parseError("Could not parse id from audit event.")
             }
 
             var text: String?

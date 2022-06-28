@@ -53,7 +53,7 @@ class DemoSignatureProvider: NFCSignatureProvider {
     func sign(can _: CAN, pin _: Format2Pin,
               registrationDataProvider _: SecureEnclaveSignatureProvider)
         -> AnyPublisher<RegistrationData, NFCSignatureProviderError> {
-        Fail(error: NFCSignatureProviderError.signingFailure(nil))
+        Fail(error: NFCSignatureProviderError.signingFailure(.unsupportedAlgorithm))
             .delay(for: 3, scheduler: DispatchQueue.main)
             .eraseToAnyPublisher()
     }

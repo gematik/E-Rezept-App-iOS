@@ -125,7 +125,9 @@ public class CoreDataController {
 }
 
 extension CoreDataController {
+    // sourcery: CodedError = "500"
     public enum Error: Swift.Error, LocalizedError, Equatable {
+        // sourcery: errorCode = "01"
         case initialization(error: Swift.Error)
 
         public var errorDescription: String? {

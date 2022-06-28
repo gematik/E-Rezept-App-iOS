@@ -33,12 +33,11 @@ final class ShipmentInfoCoreDataStoreTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        userDefaults = UserDefaults(suiteName: #file)
+        userDefaults = MockUserDefaults()
         databaseFile = fileManager.temporaryDirectory.appendingPathComponent("database/\(UUID().uuidString)")
     }
 
     override func tearDown() {
-        userDefaults.removePersistentDomain(forName: #file)
         let folderUrl = databaseFile.deletingLastPathComponent()
         if fileManager.fileExists(atPath: folderUrl.path) {
             expect(try self.fileManager.removeItem(at: folderUrl)).toNot(throwError())

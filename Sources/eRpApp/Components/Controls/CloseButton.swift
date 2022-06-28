@@ -24,9 +24,9 @@ struct CloseButton: View {
     var body: some View {
         Button(action: action) {
             Image(systemName: SFSymbolName.crossIconPlain)
-                .font(Font.subheadline.weight(.semibold))
-                .frame(minWidth: 24, minHeight: 24)
+                .font(Font.caption.weight(.bold))
                 .foregroundColor(Color(.secondaryLabel))
+                .padding(6)
                 .background(Circle().foregroundColor(Color(.systemGray6)))
                 .padding()
         }

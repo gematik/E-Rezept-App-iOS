@@ -22,6 +22,7 @@ import eRpKit
 import eRpLocalStorage
 import eRpRemoteStorage
 import Foundation
+import IdentifiedCollections
 
 class DemoErxTaskRepository: ErxTaskRepository {
     typealias ErrorType = ErxRepositoryError
@@ -38,13 +39,13 @@ class DemoErxTaskRepository: ErxTaskRepository {
         self.schedulers = schedulers
     }
 
-    func loadRemote(by id: ErxTask.ID, // swiftlint:disable:this identifier_name
+    func loadRemote(by id: ErxTask.ID,
                     accessCode: String?) -> AnyPublisher<ErxTask?, ErrorType> {
         loadLocal(by: id, accessCode: accessCode)
     }
 
     func loadLocal(
-        by id: ErxTask.ID, // swiftlint:disable:this identifier_name
+        by id: ErxTask.ID,
         accessCode _: String?
     ) -> AnyPublisher<ErxTask?, ErxRepositoryError> {
         if let result = store.first(where: { $0.id == id }) {
@@ -82,8 +83,8 @@ class DemoErxTaskRepository: ErxTaskRepository {
         return Just(true).setFailureType(to: ErrorType.self).eraseToAnyPublisher()
     }
 
-    func redeem(orders _: [ErxTaskOrder]) -> AnyPublisher<Bool, ErrorType> {
-        Just(true).setFailureType(to: ErrorType.self).eraseToAnyPublisher()
+    func redeem(order: ErxTaskOrder) -> AnyPublisher<ErxTaskOrder, ErrorType> {
+        Just(order).setFailureType(to: ErrorType.self).eraseToAnyPublisher()
     }
 
     func loadLocalCommunications(for _: ErxTask.Communication
@@ -104,7 +105,7 @@ class DemoErxTaskRepository: ErxTaskRepository {
     }
 
     private lazy var store: Set<ErxTask> = {
-        Set(ErxTask.Dummies.erxTasks)
+        Set(ErxTask.Demo.erxTasks)
     }()
 
     /// Demo data is loaded in iterations. With every refresh a next chunk is loaded.

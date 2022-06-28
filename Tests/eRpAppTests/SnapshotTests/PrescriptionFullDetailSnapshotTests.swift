@@ -18,6 +18,7 @@
 
 import CombineSchedulers
 @testable import eRpApp
+import eRpKit
 import SnapshotTesting
 import SwiftUI
 import XCTest
@@ -25,13 +26,23 @@ import XCTest
 final class PrescriptionFullDetailSnapshotTests: XCTestCase {
     override func setUp() {
         super.setUp()
-
         diffTool = "open"
     }
 
     func testPrescriptionFullDetailView_Show() {
         let sut = PrescriptionFullDetailView(store: PrescriptionDetailDomain.Dummies.store)
             .frame(width: 320, height: 4000)
+        assertSnapshots(matching: sut, as: snapshotModi())
+    }
+
+    func testPrescriptionFullDetailView_WithInProgressPrescription() {
+        let inProgressPrescription = GroupedPrescription.Prescription(erxTask: ErxTask.Fixtures.erxTaskInProgress)
+        let sut = PrescriptionFullDetailView(
+            store: PrescriptionDetailDomain.Dummies.storeFor(
+                PrescriptionDetailDomain.State(prescription: inProgressPrescription, isArchived: false)
+            )
+        )
+        .frame(width: 320, height: 4000)
         assertSnapshots(matching: sut, as: snapshotModi())
     }
 }

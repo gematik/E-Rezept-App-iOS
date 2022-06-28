@@ -65,18 +65,25 @@ extension HTTPClient {
     }
 }
 
+// sourcery: CodedError = "530"
 /// HTTP Error
 public enum HTTPError: Swift.Error, Equatable, LocalizedError {
+    // sourcery: errorCode = "01"
     /// Internal error in the request/chain handling
     case internalError(String)
+    // sourcery: errorCode = "02"
     /// The server responded with an error
     case httpError(URLError)
+    // sourcery: errorCode = "03"
     /// The connection to the server has gone bad
     case networkError(String)
+    // sourcery: errorCode = "04"
     /// Authentication error
     case authentication(Swift.Error)
+    // sourcery: errorCode = "05"
     /// Error emitted by the VAU client
     case vauError(Swift.Error)
+    // sourcery: errorCode = "06"
     /// Unclassified error
     case unknown(Swift.Error)
 

@@ -20,6 +20,7 @@ import Combine
 import ComposableArchitecture
 import HealthCardAccess
 import IDP
+import UIKit
 
 enum IDPCardWallDomain {
     typealias Store = ComposableArchitecture.Store<State, Action>
@@ -143,7 +144,8 @@ enum IDPCardWallDomain {
                 profileDataStore: $0.userSession.profileDataStore,
                 signatureProvider: $0.secureEnclaveSignatureProvider,
                 sessionProvider: $0.sessionProvider,
-                nfcSessionProvider: $0.userSession.nfcSessionProvider
+                nfcSessionProvider: $0.userSession.nfcSessionProvider,
+                application: UIApplication.shared
             )
         }
 

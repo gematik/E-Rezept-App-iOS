@@ -22,7 +22,7 @@ import Foundation
 import IDP
 
 struct UserProfile: ProfileCellModel, Equatable, Identifiable {
-    var id: UUID { profile.id } // swiftlint:disable:this identifier_name
+    var id: UUID { profile.id }
 
     var name: String { profile.name }
     let acronym: String

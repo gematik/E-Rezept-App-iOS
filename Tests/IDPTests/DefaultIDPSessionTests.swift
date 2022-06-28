@@ -936,8 +936,8 @@ final class DefaultIDPSessionTests: XCTestCase {
             )
         let fixture = KKAppDirectory(
             apps: [
-                KKAppDirectory.Entry(name: "Gematik KK", identifier: "kkAppId001"),
                 KKAppDirectory.Entry(name: "Andere KK", identifier: "kkAppId002"),
+                KKAppDirectory.Entry(name: "Gematik KK", identifier: "kkAppId001"),
             ]
         )
 

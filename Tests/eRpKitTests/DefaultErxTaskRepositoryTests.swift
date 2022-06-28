@@ -34,18 +34,6 @@ final class DefaultErxTaskRepositoryTests: XCTestCase {
                 return Just(nil)
                     .setFailureType(to: LocalStoreError.self)
                     .eraseToAnyPublisher()
-            } else if mockLocalDataStore.fetchLatestTimestampForAuditEventsCallsCount == 2 {
-                return Just(Fixtures.auditEventPageA.last?.timestamp)
-                    .setFailureType(to: LocalStoreError.self)
-                    .eraseToAnyPublisher()
-            } else if mockLocalDataStore.fetchLatestTimestampForAuditEventsCallsCount == 3 {
-                return Just(Fixtures.auditEventPageB.last?.timestamp)
-                    .setFailureType(to: LocalStoreError.self)
-                    .eraseToAnyPublisher()
-            } else if mockLocalDataStore.fetchLatestTimestampForAuditEventsCallsCount == 4 {
-                return Just(Fixtures.auditEventPageC.last?.timestamp)
-                    .setFailureType(to: LocalStoreError.self)
-                    .eraseToAnyPublisher()
             } else {
                 return Fail(error: LocalStoreError.notImplemented).eraseToAnyPublisher()
             }
@@ -54,9 +42,18 @@ final class DefaultErxTaskRepositoryTests: XCTestCase {
         mockRemoteDataStore.listAllAuditEventsAfterForClosure = { timestamp, _ in
             if timestamp == nil {
                 return Just(Fixtures.auditEventPageA).setFailureType(to: RemoteStoreError.self).eraseToAnyPublisher()
-            } else if timestamp == Fixtures.auditEventPageA.last?.timestamp {
+            } else {
+                return Fail(error: RemoteStoreError.notImplemented).eraseToAnyPublisher()
+            }
+        }
+
+        mockRemoteDataStore.listAuditEventsNextPageForClosure = { previousePage in
+            guard let next = previousePage.next else {
+                return Fail(error: RemoteStoreError.notImplemented).eraseToAnyPublisher()
+            }
+            if next == Fixtures.auditEventPageA.next {
                 return Just(Fixtures.auditEventPageB).setFailureType(to: RemoteStoreError.self).eraseToAnyPublisher()
-            } else if timestamp == Fixtures.auditEventPageB.last?.timestamp {
+            } else if next == Fixtures.auditEventPageB.next {
                 return Just(Fixtures.auditEventPageC).setFailureType(to: RemoteStoreError.self).eraseToAnyPublisher()
             } else {
                 return Fail(error: RemoteStoreError.notImplemented).eraseToAnyPublisher()
@@ -74,9 +71,9 @@ final class DefaultErxTaskRepositoryTests: XCTestCase {
             })
 
         expect(mockLocalDataStore.saveAuditEventsCallsCount).to(equal(3))
-        expect(mockLocalDataStore.saveAuditEventsReceivedInvocations).to(equal([Fixtures.auditEventPageA,
-                                                                                Fixtures.auditEventPageB,
-                                                                                Fixtures.auditEventPageC]))
+        expect(mockLocalDataStore.saveAuditEventsReceivedInvocations).to(equal([Fixtures.auditEventPageA.content,
+                                                                                Fixtures.auditEventPageB.content,
+                                                                                Fixtures.auditEventPageC.content]))
     }
 
     func testLoadingFromRemoteToCallInCorrectOrder() throws {
@@ -152,7 +149,8 @@ final class DefaultErxTaskRepositoryTests: XCTestCase {
 
         mockRemoteDataStore.listAllAuditEventsAfterForClosure = { _, _ in
             actualCallOrder.append("listAllAuditEventsRemote")
-            return Just([]).setFailureType(to: RemoteStoreError.self).eraseToAnyPublisher()
+            return Just(PagedContent(content: [], next: nil)).setFailureType(to: RemoteStoreError.self)
+                .eraseToAnyPublisher()
         }
 
         mockLocalDataStore.saveAuditEventsClosure = { _ in
@@ -173,34 +171,31 @@ final class DefaultErxTaskRepositoryTests: XCTestCase {
 
 extension DefaultErxTaskRepositoryTests {
     enum Fixtures {
-        static let auditEventPageA: [ErxAuditEvent] = {
-            let range = 0 ... 49
-            return range.map { index in
-                ErxAuditEvent(
-                    identifier: "auditEvent\(1 + index)",
-                    timestamp: String(format: "2021-01-21T00:%02d:00Z", index)
-                )
-            }
-        }()
+        static let auditEvent1 = ErxAuditEvent(identifier: "auditEvent1", timestamp: "2021-01-21T09:00:00Z")
+        static let auditEvent2 = ErxAuditEvent(identifier: "auditEvent2", timestamp: "2021-01-21T10:00:00Z")
+        static let auditEvent3 = ErxAuditEvent(identifier: "auditEvent3", timestamp: "2021-01-21T11:00:00Z")
+        static let auditEvent4 = ErxAuditEvent(identifier: "auditEvent4", timestamp: "2021-01-21T12:00:00Z")
+        static let auditEvent5 = ErxAuditEvent(identifier: "auditEvent5", timestamp: "2021-01-21T13:00:00Z")
+        static let auditEvent6 = ErxAuditEvent(identifier: "auditEvent6", timestamp: "2021-01-21T14:00:00Z")
+        static let auditEvent7 = ErxAuditEvent(identifier: "auditEvent7", timestamp: "2021-01-21T15:00:00Z")
+        static let auditEvent8 = ErxAuditEvent(identifier: "auditEvent8", timestamp: "2021-01-21T16:00:00Z")
+        static let auditEvent9 = ErxAuditEvent(identifier: "auditEvent9", timestamp: "2021-01-21T17:00:00Z")
 
-        static let auditEventPageB: [ErxAuditEvent] = {
-            let range = 0 ... 49
-            return range.map { index in
-                ErxAuditEvent(
-                    identifier: "auditEvent\(51 + index)",
-                    timestamp: String(format: "2021-01-22T00:%02d:00Z", index)
-                )
-            }
-        }()
-
-        static let auditEventPageC: [ErxAuditEvent] = {
-            let range = 0 ... 4
-            return range.map { index in
-                ErxAuditEvent(
-                    identifier: "auditEvent\(101 + index)",
-                    timestamp: String(format: "2021-01-23T00:%02d:00Z", index)
-                )
-            }
-        }()
+        static let auditEventPageA: PagedContent<[ErxAuditEvent]> = PagedContent(content: [
+            auditEvent1,
+            auditEvent2,
+            auditEvent3,
+            auditEvent4,
+            auditEvent5,
+        ], next: URL(string: "https://localhost/page/2"))
+        static let auditEventPageB: PagedContent<[ErxAuditEvent]> = PagedContent(content: [
+            auditEvent6,
+            auditEvent7,
+            auditEvent8,
+            auditEvent9,
+        ], next: URL(string: "https://localhost/page/3"))
+        static let auditEventPageC: PagedContent<[ErxAuditEvent]> = PagedContent(content: [
+            auditEvent9,
+        ], next: nil)
     }
 }

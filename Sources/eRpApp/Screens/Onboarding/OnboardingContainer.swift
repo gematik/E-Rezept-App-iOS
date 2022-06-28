@@ -66,14 +66,12 @@ struct OnboardingContainer: View, KeyboardReadable {
                 } else {
                     OnboardingStartView()
                         .tag(0)
-                    OnboardingWelcomeView()
-                        .tag(1)
                     OnboardingFeaturesView()
-                        .tag(2)
+                        .tag(1)
                     OnboardingNewProfileView(store: store.scope(state: { $0.newProfileState },
                                                                 action: { .newProfile(action: $0) }))
                         .gesture(viewStore.isDragEnabled ? nil : DragGesture())
-                        .tag(3)
+                        .tag(2)
 
                     // [REQ:gemSpec_BSI_FdV:A_20834] view to register authentication in onboarding process
                     OnboardingRegisterAuthenticationView(
@@ -81,10 +79,10 @@ struct OnboardingContainer: View, KeyboardReadable {
                                            action: { .registerAuthentication(action: $0) })
                     )
                     .gesture(viewStore.isDragEnabled ? nil : DragGesture())
-                    .tag(4)
+                    .tag(3)
 
                     OnboardingLegalInfoView { withAnimation { viewStore.send(.saveAuthenticationAndProfile) } }
-                        .tag(5)
+                        .tag(4)
                 }
             }
             .background(Colors.systemBackground)
@@ -109,6 +107,24 @@ struct OnboardingContainer: View, KeyboardReadable {
                 self.isKeyboardVisible = isKeyboardVisible
             }
             .animation(.easeInOut)
+        }
+    }
+}
+
+struct OnboardingContainerView_Previews: PreviewProvider {
+    static var previews: some View {
+        Group {
+            OnboardingContainer(store: .init(
+                initialState: OnboardingDomain.Dummies.state,
+                reducer: OnboardingDomain.reducer,
+                environment: OnboardingDomain.Dummies.environment
+            ))
+            OnboardingContainer(store: .init(
+                initialState: OnboardingDomain.Dummies.state,
+                reducer: OnboardingDomain.reducer,
+                environment: OnboardingDomain.Dummies.environment
+            ))
+                .preferredColorScheme(.dark)
         }
     }
 }

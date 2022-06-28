@@ -88,13 +88,21 @@ public class MigrationManager: ModelMigrating {
     }
 }
 
+// sourcery: CodedError = "501"
 public enum MigrationError: Swift.Error, LocalizedError, Equatable {
+    // sourcery: errorCode = "01"
     case isLatestVersion
+    // sourcery: errorCode = "02"
     case missingProfile
+    // sourcery: errorCode = "03"
     case write(error: Swift.Error)
+    // sourcery: errorCode = "04"
     case read(error: Swift.Error)
+    // sourcery: errorCode = "05"
     case delete(error: Swift.Error)
+    // sourcery: errorCode = "06"
     case unspecified(error: Swift.Error)
+    // sourcery: errorCode = "07"
     case initialization(error: Swift.Error)
 
     public var errorDescription: String? {

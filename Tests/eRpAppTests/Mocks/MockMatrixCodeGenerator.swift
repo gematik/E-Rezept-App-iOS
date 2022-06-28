@@ -16,7 +16,7 @@
 //  
 //
 
-import eRpKit
+import eRpApp
 import UIKit
 import ZXingObjC
 

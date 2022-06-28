@@ -52,6 +52,7 @@ struct SettingsView: View {
         let isDemoMode: Bool
         let routeTag: ProfilesDomain.Route.Tag?
         let showOrderHealthCardView: Bool
+        let showEGKHint: Bool
 
         init(state: SettingsDomain.State) {
             #if ENABLE_DEBUG_VIEW
@@ -61,14 +62,17 @@ struct SettingsView: View {
             isDemoMode = state.isDemoMode
             routeTag = state.profiles.route?.tag
             showOrderHealthCardView = state.showOrderHealthCardView
+            showEGKHint = state.showEGKHint
         }
     }
 
     var body: some View {
         NavigationView {
             ScrollView {
-                LazyVStack(spacing: 0) {
-                    EGKHint(store: store)
+                VStack(spacing: 0) {
+                    if viewStore.state.showEGKHint {
+                        EGKHint(store: store)
+                    }
                     #if ENABLE_DEBUG_VIEW
                     DebugSectionView(store: debugStore,
                                      showDebugView: viewStore.binding(
@@ -147,7 +151,7 @@ struct SettingsView: View {
                     .hidden()
                     .accessibility(hidden: true)
             }
-            .accentColor(Colors.primary700)
+            .accentColor(Colors.primary600)
             .background(Color(.secondarySystemBackground).ignoresSafeArea())
             .navigationTitle(L10n.stgTxtTitle)
             .demoBanner(isPresented: viewStore.isDemoMode)
@@ -378,7 +382,7 @@ extension SettingsView {
                     navigationBar.standardAppearance = navigationBarAppearance
                 }
             }
-            .accentColor(Colors.primary700)
+            .accentColor(Colors.primary600)
             .navigationViewStyle(StackNavigationViewStyle())
         }
     }
@@ -401,7 +405,7 @@ extension SettingsView {
                     title: L10n.hintTxtOrderEgkTitel.text,
                     message: L10n.hintTxtOrderEgk.text,
                     actionText: L10n.hintTxtOrderEgkButton,
-                    imageName: Asset.Illustrations.boyCicrle.name,
+                    image: .init(name: Asset.Illustrations.boyCicrle.name),
                     style: .awareness,
                     buttonStyle: .quaternary,
                     imageStyle: .topAligned
@@ -413,6 +417,7 @@ extension SettingsView {
             )
             .listRowBackground(Color.clear)
             .listRowInsets(EdgeInsets())
+            .padding()
         }
     }
 }

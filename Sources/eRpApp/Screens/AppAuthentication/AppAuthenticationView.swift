@@ -60,7 +60,7 @@ struct AppAuthenticationView: View {
                                 id: A11y.auth.authTxtFailedLoginHint,
                                 title: viewStore.hintTitle,
                                 message: viewStore.hintMessage,
-                                imageName: Asset.Illustrations.girlRedCircle.name,
+                                image: .init(name: Asset.Illustrations.girlRedCircle.name),
                                 style: Hint.Style.important,
                                 imageStyle: Hint.ImageStyle.topAligned
                             )

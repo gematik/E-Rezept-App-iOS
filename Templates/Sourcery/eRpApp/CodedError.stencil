@@ -1,0 +1,88 @@
+// sourcery:file:eRpApp/Generated/CodedError
+
+import AVS
+import Combine
+import eRpKit
+import eRpLocalStorage
+import eRpRemoteStorage
+import FHIRClient
+import Foundation
+import HealthCardAccess
+import HealthCardControl
+import HTTPClient
+import IDP
+import ModelsR4
+import OpenSSL
+import Pharmacy
+import TrustStore
+import VAUClient
+import ZXingObjC
+
+protocol CodedError: Swift.Error {
+    var erpErrorCode: String { get }
+    var erpErrorCodeList: [String] { get }
+}
+
+extension CodedError {
+    var localizedDescriptionWithErrorList: String {
+        localizedDescription + "\n\n" + L10n.errCodesPrefix.text + "\n" + erpErrorCodeList.joined(separator: ", ")
+    }
+}
+{% macro listCaseErrorCodes enum %}
+    {% typed enum as Enum %}
+    {% for case in enum.cases where case.annotations.errorCode %}
+            case .{{ case.name }}:
+                return "i-{{ enum.annotations.CodedError}}{{ case.annotations.errorCode}}"
+    {% endfor %}
+    {% for case in enum.cases where not case.annotations.errorCode %}
+            case .{{ case.name }}:
+                return ""
+                #error("case .{{ case.name }} is missing an error code annotation")
+    {% endfor %}            
+{% endmacro %}
+{% macro caseAssocValuesList case %}{% typed case as EnumCase %}{% for value in case.associatedValues %}{% if value.type.annotations.CodedError %}error{% else %}_{% endif %}{% if not forloop.last %}, {% endif %}{% endfor %}{% endmacro %}
+{% macro listCaseErrorCodesLists enum %}
+    {% typed enum as Enum %}
+    {% for case in enum.cases where case.hasAssociatedValue %}
+        {% if case.associatedValues[0].type|annotated:"CodedError" %}
+            case let .{{ case.name }}({% call caseAssocValuesList case %}):
+                return [erpErrorCode] + error.erpErrorCodeList
+        {% else %}
+        	{% if case.associatedValues[0].type.name == "Swift.Error" %}
+            case let .{{ case.name }}(error as CodedError):
+                return [erpErrorCode] + error.erpErrorCodeList
+        	{% endif %}
+            case .{{ case.name }}:
+                return [erpErrorCode]
+        {% endif %}
+    {% endfor %}
+    {% for case in enum.cases where not case.hasAssociatedValue %}
+        {% if forloop.first %}
+            default:
+                return [erpErrorCode]
+        {% endif %}
+    {% endfor %}
+{% endmacro %}
+{% macro wrap enum %}
+    {% typed enum as Enum %}
+    
+extension {{ type.name }}: CodedError {
+    var erpErrorCode: String {
+        switch self {
+            {% call listCaseErrorCodes enum %}
+        }
+    }
+    
+    var erpErrorCodeList: [String] {
+        switch self {
+            {% call listCaseErrorCodesLists enum %}
+        }
+    }
+}
+
+{% endmacro %}
+{% for type in types.enums where type|annotated:"CodedError" %}
+	{% call wrap type %}
+{% endfor %}
+
+// sourcery:end

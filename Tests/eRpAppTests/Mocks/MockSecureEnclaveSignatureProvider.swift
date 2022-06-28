@@ -75,12 +75,15 @@ final class MockSecureEnclaveSignatureProvider: SecureEnclaveSignatureProvider {
     )?
     var signPairingSessionWithCertificateReceivedInvocations: [(pairingSession: PairingSession, signer: JWTSigner,
                                                                 certificate: X509)] = []
-    var signPairingSessionWithCertificateReturnValue: AnyPublisher<RegistrationData, Swift.Error>!
+    var signPairingSessionWithCertificateReturnValue: AnyPublisher<
+        RegistrationData,
+        SecureEnclaveSignatureProviderError
+    >!
     var signPairingSessionWithCertificateClosure: ((PairingSession, JWTSigner, X509)
-        -> AnyPublisher<RegistrationData, Swift.Error>)?
+        -> AnyPublisher<RegistrationData, SecureEnclaveSignatureProviderError>)?
 
     func signPairingSession(_ pairingSession: PairingSession, with signer: JWTSigner,
-                            certificate: X509) -> AnyPublisher<RegistrationData, Swift.Error> {
+                            certificate: X509) -> AnyPublisher<RegistrationData, SecureEnclaveSignatureProviderError> {
         signPairingSessionWithCertificateCallsCount += 1
         signPairingSessionWithCertificateReceivedArguments = (
             pairingSession: pairingSession,

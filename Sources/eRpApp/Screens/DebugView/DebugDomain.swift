@@ -82,7 +82,6 @@ enum DebugDomain {
             let name: String
             let configuration: AppConfiguration
 
-            // swiftlint:disable:next identifier_name
             var id: UUID {
                 configuration.uuid
             }
@@ -97,6 +96,7 @@ enum DebugDomain {
         case hideCardWallIntroReceived(Bool)
         case resetCanButtonTapped
         case resetEGKAuthCertButtonTapped
+        case resetOcspAndCertListButtonTapped
         case useDebugDeviceCapabilitiesToggleTapped
         case nfcReadyToggleTapped
         case isMinimumOS14ToggleTapped
@@ -152,6 +152,9 @@ enum DebugDomain {
             return .none
         case .resetEGKAuthCertButtonTapped:
             environment.userSession.secureUserStore.set(certificate: nil)
+            return .none
+        case .resetOcspAndCertListButtonTapped:
+            environment.userSession.trustStoreSession.reset()
             return .none
         case .useDebugDeviceCapabilitiesToggleTapped:
             state.useDebugDeviceCapabilities.toggle()

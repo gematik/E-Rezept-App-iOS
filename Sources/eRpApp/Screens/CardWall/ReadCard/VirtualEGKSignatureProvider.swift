@@ -67,7 +67,8 @@ class VirtualEGKSignatureProvider: NFCSignatureProvider {
                     }
                     .eraseToAnyPublisher()
             } catch {
-                return Fail(outputType: SignedChallenge.self, failure: NFCSignatureProviderError.signingFailure(error))
+                return Fail(outputType: SignedChallenge.self,
+                            failure: NFCSignatureProviderError.signingFailure(.certificate(error)))
                     .eraseToAnyPublisher()
             }
         }
@@ -82,19 +83,18 @@ class VirtualEGKSignatureProvider: NFCSignatureProvider {
                     key: encodedPrivateKey
                 )
                 guard let certificate = signer.certificates.first else {
-                    return Fail(error: NFCSignatureProviderError.signingFailure(nil)).eraseToAnyPublisher()
+                    return Fail(
+                        error: NFCSignatureProviderError.signingFailure(.missingCertificate)
+                    ).eraseToAnyPublisher()
                 }
                 let cert = try X509(der: certificate)
                 return registerDataProvider
                     .signPairingSession(pairingSession, with: signer, certificate: cert)
-                    .mapError { error in
-                        print(error)
-                        return error.asNFCSignatureError()
-                    }
+                    .mapError(NFCSignatureProviderError.secureEnclaveError)
                     .map { (signedChallenge, $0) }
                     .eraseToAnyPublisher()
             } catch {
-                return Fail(error: NFCSignatureProviderError.signingFailure(error)).eraseToAnyPublisher()
+                return Fail(error: NFCSignatureProviderError.signingFailure(.certificate(error))).eraseToAnyPublisher()
             }
         }
 

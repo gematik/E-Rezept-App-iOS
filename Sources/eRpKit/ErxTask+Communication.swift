@@ -40,7 +40,7 @@ extension ErxTask {
         /// Parsed `payloadJSON` into `Payload` or nil if format is wrong
         public let payload: Payload?
 
-        public var id: String { // swiftlint:disable:this identifier_name
+        public var id: String {
             identifier
         }
 

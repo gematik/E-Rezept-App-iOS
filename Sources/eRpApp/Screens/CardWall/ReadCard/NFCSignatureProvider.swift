@@ -33,25 +33,67 @@ protocol NFCSignatureProvider {
         -> AnyPublisher<SignedChallenge, NFCSignatureProviderError>
 }
 
+// sourcery: CodedError = "004"
 enum NFCSignatureProviderError: Error {
+    // sourcery: errorCode = "01"
     // Error while establishing a connection to the card
     case cardError(NFCTagReaderSession.Error)
+    // sourcery: errorCode = "02"
     // Error while establishing a secure channel, might be a `HealthCard.Error`
     case authenticationError(Swift.Error)
+    // sourcery: errorCode = "03"
     // Error while verifying the CAN
     case wrongCAN(Swift.Error)
+    // sourcery: errorCode = "04"
     // Error while establishing Secure channel or card connection
     case cardConnectionError(Swift.Error)
 
+    // sourcery: errorCode = "05"
     // generic verify card error while testing for correct PIN, but not wrong pin
     case verifyCardError(Swift.Error)
+    // sourcery: errorCode = "06"
     // ESIGN Failed
-    case signingFailure(Swift.Error?)
+    case signingFailure(SigningError)
+    // sourcery: errorCode = "07"
     // Wrong pin while opening secure channel
     case wrongPin(retryCount: Int)
 
+    // sourcery: errorCode = "08"
     // Generic error while trying to sign the challenge
     case genericError(Swift.Error)
+
+    // sourcery: errorCode = "09"
+    // Generic error while reading something from the card
+    case cardReadingError(Swift.Error)
+
+    // sourcery: errorCode = "10"
+    // Generic error while reading something from the card
+    case secureEnclaveError(SecureEnclaveSignatureProviderError)
+
+    // sourcery: CodedError = "005"
+    enum SigningError: Error, LocalizedError {
+        // sourcery: errorCode = "01"
+        case unsupportedAlgorithm
+        // sourcery: errorCode = "02"
+        case responseStatus(ResponseStatus)
+        // sourcery: errorCode = "03"
+        case certificate(Swift.Error)
+        // sourcery: errorCode = "04"
+        case missingCertificate
+
+        var errorDescription: String? {
+            switch self {
+            case .unsupportedAlgorithm:
+                return "Unsupported Algorithm"
+            case let .responseStatus(status):
+                return "Signing failed with status: \(status)"
+            case let .certificate(error):
+                return "Unable to construct the certificate. Error \(error.localizedDescription)"
+            case .missingCertificate:
+                return "missing certificate"
+            }
+        }
+    }
 }
 
 extension NFCSignatureProviderError: LocalizedError {
@@ -59,8 +101,19 @@ extension NFCSignatureProviderError: LocalizedError {
         switch self {
         case .wrongCAN:
             return L10n.cdwTxtRcErrorWrongCanDescription.text
+        case .wrongPin(retryCount: 0):
+            return L10n.cdwTxtRcErrorCardLockedDescription.text
         case .wrongPin:
             return L10n.cdwTxtRcErrorWrongPinDescription.text
+        case .secureEnclaveError:
+            return L10n.cdwTxtRcErrorSecureEnclaveIssue.text
+        // discuss if error should be localized
+//        case let .cardError(error): return error.localizedDescription
+//        case let .authenticationError(error): return error.localizedDescription
+//        case let .cardConnectionError(error): return error.localizedDescription
+//        case let .verifyCardError(error): return error.localizedDescription
+//        case let .signingFailure(error): return error.localizedDescription
+//        case let .genericError(error): return error.localizedDescription
         default:
             return L10n.cdwTxtRcErrorGenericCardDescription.text
         }
@@ -70,6 +123,8 @@ extension NFCSignatureProviderError: LocalizedError {
         switch self {
         case .wrongCAN:
             return L10n.cdwTxtRcErrorWrongCanRecovery.text
+        case .wrongPin(retryCount: 0):
+            return L10n.cdwTxtRcErrorCardLockedRecovery.text
         case let .wrongPin(retryCount: retryCount):
             return L10n.cdwTxtRcErrorWrongPinRecovery("\(retryCount)").text
         default:
@@ -292,7 +347,9 @@ extension Publisher where Self.Output == HealthCardType, Self.Failure == NFCSign
                 .flatMap { certificate -> AnyPublisher<SignedChallenge, Swift.Error> in
                     // [REQ:gemSpec_Krypt:A_17207] Assure only brainpoolP256r1 is used
                     guard let alg = certificate.info.algorithm.alg else {
-                        return Fail(error: NFCSignatureProviderError.signingFailure(nil)).eraseToAnyPublisher()
+                        return Fail(
+                            error: NFCSignatureProviderError.signingFailure(.unsupportedAlgorithm)
+                        ).eraseToAnyPublisher()
                     }
                     // [REQ:gemSpec_IDP_Frontend:A_20700-07] sign with C.CH.AUT
                     return session.sign(
@@ -331,7 +388,7 @@ class EGKSigner: JWTSigner {
                 if response.responseStatus == ResponseStatus.success, let signature = response.data {
                     return signature
                 } else {
-                    throw NFCSignatureProviderError.signingFailure(nil)
+                    throw NFCSignatureProviderError.signingFailure(.responseStatus(response.responseStatus))
                 }
             }
             .eraseToAnyPublisher()

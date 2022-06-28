@@ -1,0 +1,43 @@
+// sourcery:file:errors.csv
+Error Code,Technical Name,Description/Reason,Referenced Error
+{% macro listEnumCasesWithAssocErrorValues enum %}
+    {% typed enum as Enum %}
+    {% for enumCase in enum.cases %}
+        {% if enumCase.associatedValues %}
+            {% for assocValue in enumCase.associatedValues %}
+                {% if assocValue.typeName|contains:"String" or assocValue.typeName|contains:"Swift.Error" or assocValue.typeName|contains:"NSError" or assocValue.typeName|contains:"URL" %}
+i-{{ enum.annotations.CodedError }}{{ enumCase.annotations.errorCode }},"{{ enum.name}}.{{enumCase.name}}","{{ enumCase.documentation|join:"\n" }}",
+                {% else %}
+                    {% if assocValue.type and ((assocValue.type.rawTypeName and assocValue.type.rawTypeName|contains:"Error") or assocValue.type.inheritedTypes|join:","|contains:"Error") %}
+i-{{ enum.annotations.CodedError }}{{ enumCase.annotations.errorCode }},"{{ enum.name}}.{{enumCase.name}}","{{ enumCase.documentation|join:"\n" }}",{{ enumCase.associatedValues[0].type.name }}
+                    {% else %}
+                        {% if showOnlyAssocErrors %}
+                        {% else %}
+i-{{ enum.annotations.CodedError }}{{ enumCase.annotations.errorCode }},"{{ enum.name}}.{{enumCase.name}}","{{ enumCase.documentation|join:"\n" }}",
+                        {% endif %}
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        {% else %}
+i-{{ enum.annotations.CodedError }}{{ enumCase.annotations.errorCode }},"{{ enum.name}}.{{enumCase.name}}","{{ enumCase.documentation|join:"\n" }}",
+        {% endif %}
+    {% endfor %}
+{% endmacro %}
+{% macro printErrorEnum enum %}
+    {% typed enum as Enum %}
+    {% call listEnumCasesWithAssocErrorValues enum %}
+{% endmacro %}
+{% for type in types.enums|sorted:"path" %}
+    {% if type.rawTypeName and type.rawTypeName|contains:"Swift.Error" %}
+          {% call printErrorEnum type %}
+    {% elif type.inheritedTypes|join:","|contains:"Error" == true %}
+      {% call printErrorEnum type %}
+    {% else %}
+        {% for k,v in type.basedTypes %}
+          {% if v.globalName == "Swift.Error" %}
+          {% call printErrorEnum type %}
+          {% endif %}
+        {% endfor %}
+    {% endif %}
+{% endfor %}
+// sourcery:end

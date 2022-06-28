@@ -42,7 +42,7 @@ public protocol ErxLocalDataStore {
     ///   - id: the ErxTask ID
     ///   - accessCode: AccessCode, optional as required by implementing DataStore
     /// - Returns: Publisher for the fetch request
-    func fetchTask(by id: ErxTask.ID, accessCode: String?) // swiftlint:disable:this identifier_name
+    func fetchTask(by id: ErxTask.ID, accessCode: String?)
         -> AnyPublisher<ErxTask?, LocalStoreError>
 
     /// List all tasks contained in the store
@@ -94,7 +94,7 @@ public protocol ErxLocalDataStore {
     /// - Parameters:
     ///   - id: the ErxAuditEvent ID
     /// - Returns: Publisher for the fetch request
-    func fetchAuditEvent(by id: ErxAuditEvent.ID) // swiftlint:disable:this identifier_name
+    func fetchAuditEvent(by id: ErxAuditEvent.ID)
         -> AnyPublisher<ErxAuditEvent?, LocalStoreError>
 
     /// Fetches all audit events related to a specific task id.

@@ -22,9 +22,11 @@ import Pharmacy
 
 /// Adds additional properties to the PharmacyLocation entity that are used in the view.
 struct PharmacyLocationViewModel: Equatable, Hashable {
-    init(pharmacy: PharmacyLocation,
-         referenceLocation: Location? = nil,
-         referenceDate: Date? = Date()) {
+    init(
+        pharmacy: PharmacyLocation,
+        referenceLocation: Location? = nil,
+        referenceDate: Date? = Date()
+    ) {
         let openHoursCalculator = PharmacyOpenHoursCalculator()
         let hoursOfOperationNonNil = pharmacy.hoursOfOperation.compactMap(\.daysOfWeek.first)
         pharmacyLocation = pharmacy

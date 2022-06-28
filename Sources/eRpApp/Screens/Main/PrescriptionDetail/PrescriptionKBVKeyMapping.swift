@@ -18,7 +18,6 @@
 
 import eRpKit
 import Foundation
-import ModelsR4
 
 // swiftlint:disable:next type_body_length
 struct PrescriptionKBVKeyMapping {

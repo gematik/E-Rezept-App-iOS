@@ -20,11 +20,13 @@ import eRpKit
 import Foundation
 import ModelsR4
 
-extension ModelsR4.Bundle {
-    public enum Error: Swift.Error {
-        case parseError(String)
-    }
+// sourcery: CodedError = "580"
+public enum RemoteStorageBundleParsingError: Swift.Error {
+    // sourcery: errorCode = "01"
+    case parseError(String)
+}
 
+extension ModelsR4.Bundle {
     /// Parse and extract all found ErxTask IDs from `Self`
     ///
     /// - Returns: Array with all found task ID's
@@ -36,7 +38,7 @@ extension ModelsR4.Bundle {
                 return nil
             }
             guard let identifier = task.id?.value?.string else {
-                throw Error.parseError("Could not parse id from task.")
+                throw RemoteStorageBundleParsingError.parseError("Could not parse id from task.")
             }
             return identifier
         } ?? []

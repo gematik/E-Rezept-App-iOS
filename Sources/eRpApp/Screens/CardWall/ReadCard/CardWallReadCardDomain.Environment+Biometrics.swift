@@ -29,7 +29,9 @@ extension HealthCardType {
             .flatMap { certificate -> AnyPublisher<SignedChallenge, NFCSignatureProviderError> in
                 // [REQ:gemSpec_Krypt:A_17207] Assure only brainpoolP256r1 is used
                 guard let alg = certificate.info.algorithm.alg else {
-                    return Fail(error: NFCSignatureProviderError.signingFailure(nil)).eraseToAnyPublisher()
+                    return Fail(
+                        error: NFCSignatureProviderError.signingFailure(.unsupportedAlgorithm)
+                    ).eraseToAnyPublisher()
                 }
                 // [REQ:gemSpec_IDP_Frontend:A_20700-07] sign with C.CH.AUT
                 return challengeSession.sign(
@@ -48,11 +50,13 @@ extension HealthCardType {
               signedChallenge: SignedChallenge)
         -> AnyPublisher<(SignedChallenge, RegistrationData), NFCSignatureProviderError> {
         readAutCertificate() // AnyPublisher<HealthCardControl.AutCertificateResponse, Error>
-            .mapError { $0.asNFCSignatureError() }
-            .flatMap { certificate -> AnyPublisher<RegistrationData, Swift.Error> in
+            .mapError(NFCSignatureProviderError.cardReadingError)
+            .flatMap { certificate -> AnyPublisher<RegistrationData, NFCSignatureProviderError> in
                 // [REQ:gemSpec_Krypt:A_17207] Assure only brainpoolP256r1 is used
                 guard certificate.info.algorithm.alg == .bp256r1 else {
-                    return Fail(error: NFCSignatureProviderError.signingFailure(nil)).eraseToAnyPublisher()
+                    return Fail(
+                        error: NFCSignatureProviderError.signingFailure(.unsupportedAlgorithm)
+                    ).eraseToAnyPublisher()
                 }
 
                 do {
@@ -60,13 +64,14 @@ extension HealthCardType {
 
                     return registerDataProvider
                         .signPairingSession(pairingSession, with: EGKSigner(card: self), certificate: cert)
-                        .mapError { $0 as Swift.Error }
+                        .mapError(NFCSignatureProviderError.secureEnclaveError)
                         .eraseToAnyPublisher()
                 } catch {
-                    return Fail(error: NFCSignatureProviderError.signingFailure(error)).eraseToAnyPublisher()
+                    return Fail(
+                        error: NFCSignatureProviderError.signingFailure(.certificate(error))
+                    ).eraseToAnyPublisher()
                 }
             }
-            .mapError { $0.asNFCSignatureError() }
             .map { (signedChallenge, $0) }
             .eraseToAnyPublisher()
     }

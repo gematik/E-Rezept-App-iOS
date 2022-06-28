@@ -111,9 +111,13 @@ public struct TokenPayload: Codable {
 }
 
 extension TokenPayload {
-    enum Error: Swift.Error {
+    // sourcery: CodedError = "106"
+    public enum Error: Swift.Error {
+        // sourcery: errorCode = "01"
         case dataEncoding
+        // sourcery: errorCode = "02"
         case stringConversion
+        // sourcery: errorCode = "03"
         case decryption(Swift.Error)
     }
 
@@ -146,7 +150,7 @@ extension TokenPayload {
 
 extension TokenPayload: Equatable {}
 
-struct KeyVerifier: Codable {
+public struct KeyVerifier: Codable {
     /// data string key that is used by the server to encrypt the access token response
     let tokenKey: String
     ///  random generated verifier code that was created and sent with the request challenge API call
@@ -165,7 +169,9 @@ struct KeyVerifier: Codable {
         case verifierCode = "code_verifier"
     }
 
-    enum Error: Swift.Error {
+    // sourcery: CodedError = "105"
+    public enum Error: Swift.Error {
+        // sourcery: errorCode = "01"
         case stringConversion
     }
 

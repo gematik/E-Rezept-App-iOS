@@ -23,11 +23,43 @@ import Foundation
 public protocol PharmacyRepository {
     /// Loads pharmacies with `searchTerm`
     func searchPharmacies(searchTerm: String,
-                          position: Position?)
+                          position: Position?,
+                          filter: [PharmacyRepositoryFilter])
         -> AnyPublisher<[PharmacyLocation], PharmacyRepositoryError>
 }
 
+/// Available filters for the Pharmacy Repository
+public enum PharmacyRepositoryFilter {
+    /// Matching pharmacies are marked as E-Rezept ready
+    case ready
+    /// Matching pharmacies provide online service for ordering medications
+    case shipment
+    /// Matching pharmacies provide local delivery services (Botendienst)
+    case delivery
+}
+
+extension PharmacyRepositoryFilter {
+    var asAPIFilter: (String, String)? {
+        switch self {
+        case .ready:
+            return ("status", "active")
+        case .shipment:
+            return ("type", "mobl")
+        case .delivery:
+            return nil
+        }
+    }
+}
+
+extension Collection where Element == PharmacyRepositoryFilter {
+    func asAPIFilter() -> [String: String] {
+        Dictionary(uniqueKeysWithValues: compactMap(\.asAPIFilter))
+    }
+}
+
+// sourcery: CodedError = "571"
 public enum PharmacyRepositoryError: Error, Equatable {
+    // sourcery: errorCode = "01"
     case remote(PharmacyFHIRDataSource.Error)
 }
 
@@ -52,9 +84,15 @@ public struct DefaultPharmacyRepository: PharmacyRepository {
         self.cloud = cloud
     }
 
-    public func searchPharmacies(searchTerm: String, position: Position?)
+    public func searchPharmacies(searchTerm: String, position: Position?, filter: [PharmacyRepositoryFilter])
         -> AnyPublisher<[PharmacyLocation], PharmacyRepositoryError> {
-        cloud.searchPharmacies(by: searchTerm, position: position)
+        cloud.searchPharmacies(by: searchTerm, position: position, filter: filter.asAPIFilter())
+            .map { pharmacies in
+                if filter.contains(.delivery) {
+                    return pharmacies.filter(\.hasDeliveryService)
+                }
+                return pharmacies
+            }
             .mapError { PharmacyRepositoryError.remote($0) }
             .eraseToAnyPublisher()
     }

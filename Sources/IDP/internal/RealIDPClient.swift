@@ -533,7 +533,7 @@ extension RealIDPClient {
                 error: "Missing Server Feature",
                 errorText: "Endpoint not available within Discovery Document. Change environment or reset DD",
                 timestamp: Int(round(Date().timeIntervalSince1970)),
-                uuid: "unknonw",
+                uuid: "unknown",
                 code: "-1"
             )
         )

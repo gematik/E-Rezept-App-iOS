@@ -69,8 +69,7 @@ enum RegisteredDevicesDomain {
         }
 
         struct Entry: Identifiable, Equatable {
-            let id: Int // swiftlint:disable:this identifier_name
-
+            let id: Int
             let name: String
             let date: String
 
@@ -106,7 +105,9 @@ enum RegisteredDevicesDomain {
         case deviceIdReceived(String?)
     }
 
+    // sourcery: CodedError = "017"
     enum Error: Swift.Error, Equatable {
+        // sourcery: errorCode = "01"
         case generic(String)
     }
 
@@ -146,7 +147,7 @@ enum RegisteredDevicesDomain {
             )
             return .none
         case let .loadDevicesReceived(.failure(error)):
-            state.route = .alert(AlertStates.for(error))
+            state.route = .alert(AlertState(for: error))
             return .none
         case let .deviceIdReceived(keyIdentifier):
             state.thisDeviceKeyIdentifier = keyIdentifier

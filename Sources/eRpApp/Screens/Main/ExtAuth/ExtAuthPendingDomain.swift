@@ -57,10 +57,13 @@ enum ExtAuthPendingDomain {
         }
     }
 
+    // sourcery: CodedError = "014"
     /// `ExtAuthPendingDomain` error types
     enum Error: Swift.Error, Equatable {
+        // sourcery: errorCode = "01"
         /// Underlying `IDPError` for the external authentication agains `URL`
         case idpError(IDPError, URL)
+        // sourcery: errorCode = "02"
         /// Error when `Profile` validation with the given authentication fails.
         /// Error is produces within the `IDPError.unspecified` error before saving the IDPToken
         case profileValidation(error: IDTokenValidatorError)

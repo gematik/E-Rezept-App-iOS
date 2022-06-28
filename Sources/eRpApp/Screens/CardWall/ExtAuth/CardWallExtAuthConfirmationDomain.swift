@@ -40,8 +40,11 @@ enum CardWallExtAuthConfirmationDomain {
         var contactActionSheet: ConfirmationDialogState<Action>?
     }
 
+    // sourcery: CodedError = "012"
     enum Error: Swift.Error, Equatable {
+        // sourcery: errorCode = "01"
         case idpError(IDPError)
+        // sourcery: errorCode = "02"
         case universalLinkFailed
     }
 
@@ -144,7 +147,7 @@ extension CardWallExtAuthConfirmationDomain.Error: LocalizedError {
     var errorDescription: String? {
         switch self {
         case let .idpError(error):
-            return error.errorDescription
+            return error.localizedDescription
         case .universalLinkFailed:
             return L10n.cdwTxtExtauthConfirmUniversalLinkFailedError.text
         }

@@ -38,7 +38,6 @@ struct CardWallCANView<Content: View>: View {
         WithViewStore(store) { viewStore in
             VStack(alignment: .leading) {
                 CANView(store: store)
-
                 NavigationLink(destination: nextView(),
                                isActive: viewStore.binding(
                                    get: \.showNextScreen,
@@ -76,105 +75,120 @@ struct CardWallCANView<Content: View>: View {
 
     private struct CANView: View {
         var store: CardWallCANDomain.Store
-
+        @State var showAnimation = true
         var body: some View {
             WithViewStore(store) { viewStore in
                 ScrollView(.vertical, showsIndicators: true) {
                     if viewStore.state.wrongCANEntered {
-                        WorngCANEnteredWarningView().padding()
+                        WorngCANEnteredWarningView()
+                            .padding()
                     }
-
                     VStack(alignment: .leading) {
+                        if showAnimation {
+                            HStack(alignment: .center) {
+                                Spacer()
+                                Image(Asset.CardWall.cardwallCard)
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(maxWidth: 343, maxHeight: 215, alignment: .center)
+                                    .accessibility(identifier: A11y.cardWall.canInput.cdwImgCanCard)
+                                    .accessibility(label: Text(L10n.cdwImgCanCardLabel))
+                                    .padding(.bottom, 24)
+                                    .transition(.asymmetric(insertion: .move(edge: .trailing),
+                                                            removal: .move(edge: .leading)))
+
+                                Spacer()
+                            }
+                        }
                         Text(L10n.cdwTxtCanSubtitle)
                             .foregroundColor(Colors.systemLabel)
-                            .font(.title3)
+                            .font(.title2)
                             .bold()
-                            .accessibility(identifier: A11y.cardWall.intro.cdwTxtIntroHeaderBottom)
-                            .padding()
+                            .padding(.top)
+                            .accessibility(identifier: A11y.cardWall.canInput.cdwTctCanHeader)
 
-                        HStack(alignment: .center) {
-                            Spacer()
-                            Image(Asset.CardWall.cardwallCard)
-                                .frame(width: 231, height: 145, alignment: .center)
-                                .accessibility(identifier: A11y.cardWall.canInput.cdwImgCanCard)
-                                .accessibility(label: Text(L10n.cdwImgCanCardLabel))
-                                .padding(.bottom, 24)
-                            Spacer()
-                        }
-
-                        CardWallCANInputView(can: viewStore.binding(get: \.can) { .update(can: $0) },
-                                             pauseFirstResponder: viewStore.isEGKOrderInfoViewPresented) {
-                            viewStore.send(.advance)
-                        }.padding(.horizontal)
-
-                        Text(L10n.cdwTxtCanInputLabel)
-                            .font(.footnote)
-                            .fixedSize(horizontal: false, vertical: true)
-                            .foregroundColor(Colors.systemLabelSecondary)
+                        Text(L10n.cdwTxtCanDescription)
+                            .foregroundColor(Colors.systemLabel)
+                            .font(.body)
                             .accessibility(identifier: A11y.cardWall.canInput.cdwTxtCanInstruction)
-                            .padding(.horizontal)
-                            .padding(.bottom, 20)
-                            .fullScreenCover(isPresented: viewStore.binding(
-                                get: \.isEGKOrderInfoViewPresented,
-                                send: CardWallCANDomain.Action.dismissEGKOrderInfoView
-                            )) {
-                                NavigationView {
-                                    OrderHealthCardView {
-                                        viewStore.send(.dismissEGKOrderInfoView)
-                                    }
-                                }
-                                .accentColor(Colors.primary700)
-                                .navigationViewStyle(StackNavigationViewStyle())
-                            }
 
-                        HintView<CardWallCANDomain.Action>(
-                            hint: Hint(id: A11y.cardWall.canInput.cdwBtnCanMore,
-                                       title: L10n.cdwHintCanOrderEgkTitle.text,
-                                       message: L10n.cdwHintCanOrderEgkMessage.text,
-                                       actionText: L10n.cdwHintCanOrderEgkBtn,
-                                       action: CardWallCANDomain.Action.showEGKOrderInfoView,
-                                       imageName: Asset.CardWall.apothekerin2.name,
-                                       closeAction: nil,
-                                       style: .neutral,
-                                       buttonStyle: .tertiary,
-                                       imageStyle: .bottomAligned),
-                            textAction: { viewStore.send(.showEGKOrderInfoView) },
-                            closeAction: nil
-                        )
-                        .padding()
-                    }
-                }.respectKeyboardInsets()
-            }
+                    }.padding([.leading, .top, .trailing])
+
+                    VStack(alignment: .trailing, spacing: 8) {
+                        Button(L10n.cdwBtnNoCan) {
+                            viewStore.send(.showEGKOrderInfoView)
+                            UIApplication.shared.dismissKeyboard()
+                        }
+                        .font(.system(size: 16))
+                        .foregroundColor(Colors.primary)
+                        .accessibility(identifier: A11y.cardWall.canInput.cdwBtnCanMore)
+                        .fullScreenCover(isPresented: viewStore.binding(
+                            get: \.isEGKOrderInfoViewPresented,
+                            send: CardWallCANDomain.Action.dismissEGKOrderInfoView
+                        )) {
+                            NavigationView {
+                                OrderHealthCardView {
+                                    viewStore.send(.dismissEGKOrderInfoView)
+                                }
+                            }
+                            .accentColor(Colors.primary700)
+                            .navigationViewStyle(StackNavigationViewStyle())
+                        }
+                    }.padding(.bottom)
+
+                    CardWallCANInputView(
+                        can: viewStore.binding(get: \.can) { .update(can: $0) }
+                    ) {
+                        viewStore.send(.advance)
+                    }.padding(.top)
+                }
+                .onReceive(NotificationCenter.default
+                    .publisher(for: UIResponder.keyboardDidShowNotification)) { _ in
+                        withAnimation {
+                            showAnimation = false
+                        }
+                }
+                .onReceive(NotificationCenter.default
+                    .publisher(for: UIResponder.keyboardDidHideNotification)) { _ in
+                        UIApplication.shared.dismissKeyboard()
+                        withAnimation {
+                            showAnimation = true
+                        }
+                }
+            }.respectKeyboardInsets()
+                .onTapGesture {
+                    UIApplication.shared.dismissKeyboard()
+                }
         }
     }
+}
 
-    private struct WorngCANEnteredWarningView: View {
-        var body: some View {
-            HStack(alignment: .center, spacing: 0) {
-                Image(systemName: SFSymbolName.exclamationMark)
-                    .foregroundColor(Colors.red900)
-                    .font(.title3)
-                    .padding(8)
-
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(L10n.cdwTxtCanWarnWrongTitle)
-                        .font(Font.subheadline.weight(.semibold))
-                        .foregroundColor(Colors.red900)
-                        .fixedSize(horizontal: false, vertical: true)
-                    Text(L10n.cdwTxtCanWarnWrongDescription)
-                        .font(Font.subheadline)
-                        .foregroundColor(Colors.red900)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
+private struct WorngCANEnteredWarningView: View {
+    var body: some View {
+        HStack(alignment: .center, spacing: 0) {
+            Image(systemName: SFSymbolName.exclamationMark)
+                .foregroundColor(Colors.red900)
+                .font(.title3)
                 .padding(8)
 
-                Spacer()
+            VStack(alignment: .leading, spacing: 4) {
+                Text(L10n.cdwTxtCanWarnWrongTitle)
+                    .font(Font.subheadline.weight(.semibold))
+                    .foregroundColor(Colors.red900)
+                    .fixedSize(horizontal: false, vertical: true)
+                Text(L10n.cdwTxtCanWarnWrongDescription)
+                    .font(Font.subheadline)
+                    .foregroundColor(Colors.red900)
+                    .fixedSize(horizontal: false, vertical: true)
             }
-            .frame(maxWidth: .infinity)
             .padding(8)
-            .background(RoundedRectangle(cornerRadius: 16).fill(Colors.red100))
-            .border(Colors.red300, width: 0.5, cornerRadius: 16)
+
+            Spacer()
         }
+        .frame(maxWidth: .infinity)
+        .padding(8)
+        .background(RoundedRectangle(cornerRadius: 16).fill(Colors.red100))
+        .border(Colors.red300, width: 0.5, cornerRadius: 16)
     }
 }
 

@@ -183,8 +183,11 @@ class AVScannerViewController: UIViewController, AVCaptureMetadataOutputObjectsD
 }
 
 extension AVScannerViewController: AVScannerViewErrorDelegate {
+    // sourcery: CodedError = "002"
     enum Error: Swift.Error {
+        // sourcery: errorCode = "01"
         case initalizationError
+        // sourcery: errorCode = "02"
         case other(Swift.Error)
 
         static var kAuthorizaionErrorCode = -11852

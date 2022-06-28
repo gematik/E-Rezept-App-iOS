@@ -38,7 +38,7 @@ struct PharmacyContactView: View {
                         SingleElementSectionContainer(header: {
                             Text(L10n.phaContactTitleContact)
                         }, content: {
-                            FormTextFieldView(placeholder: L10n.phaContactPlaceholder,
+                            FormTextFieldView(placeholder: L10n.phaContactPlaceholder.text,
                                               subtitle: L10n.phaContactTxtPhone,
                                               text: viewStore.binding(\.$contactInfo.phone),
                                               showSeparator: false)
@@ -50,38 +50,38 @@ struct PharmacyContactView: View {
                         SectionContainer(header: {
                             Text(L10n.phaContactTitleAddress)
                         }, content: {
-                            FormTextFieldView(placeholder: L10n.phaContactPlaceholder,
+                            FormTextFieldView(placeholder: L10n.phaContactPlaceholder.text,
                                               subtitle: L10n.phaContactTxtName,
                                               text: viewStore.binding(\.$contactInfo.name))
                                 .textContentType(.name)
                                 .accessibility(identifier: A11y.pharmacyContact.phaContactAddressName)
 
-                            FormTextFieldView(placeholder: L10n.phaContactPlaceholder,
+                            FormTextFieldView(placeholder: L10n.phaContactPlaceholder.text,
                                               subtitle: L10n.phaContactTxtStreet,
                                               text: viewStore.binding(\.$contactInfo.street))
                                 .textContentType(.streetAddressLine1)
                                 .accessibility(identifier: A11y.pharmacyContact.phaContactAddressStreet)
 
-                            FormTextFieldView(placeholder: L10n.phaContactPlaceholderAddress,
+                            FormTextFieldView(placeholder: L10n.phaContactPlaceholderAddress.text,
                                               subtitle: L10n.phaContactTxtAddressDetails,
                                               text: viewStore.binding(\.$contactInfo.addressDetail))
                                 .textContentType(.streetAddressLine2)
                                 .accessibility(identifier: A11y.pharmacyContact.phaContactAddressDetail)
 
-                            FormTextFieldView(placeholder: L10n.phaContactPlaceholder,
+                            FormTextFieldView(placeholder: L10n.phaContactPlaceholder.text,
                                               subtitle: L10n.phaContactTxtZip,
                                               text: viewStore.binding(\.$contactInfo.zip))
                                 .textContentType(.postalCode)
                                 .keyboardType(.numberPad)
                                 .accessibility(identifier: A11y.pharmacyContact.phaContactAddressZip)
 
-                            FormTextFieldView(placeholder: L10n.phaContactPlaceholder,
+                            FormTextFieldView(placeholder: L10n.phaContactPlaceholder.text,
                                               subtitle: L10n.phaContactTxtCity,
                                               text: viewStore.binding(\.$contactInfo.city))
                                 .textContentType(.addressCity)
                                 .accessibility(identifier: A11y.pharmacyContact.phaContactAddressCity)
 
-                            FormTextFieldView(placeholder: L10n.phaContactPlaceholderDeliveryInfo,
+                            FormTextFieldView(placeholder: L10n.phaContactPlaceholderDeliveryInfo.text,
                                               subtitle: L10n.phaContactTxtDeliveryInfo,
                                               text: viewStore.binding(\.$contactInfo.deliveryInfo),
                                               showSeparator: false)
@@ -89,7 +89,7 @@ struct PharmacyContactView: View {
                         })
                     }
                 }
-                .accentColor(Colors.primary700)
+                .accentColor(Colors.primary600)
                 .background(Color(.secondarySystemBackground).ignoresSafeArea())
                 .navigationBarTitle(L10n.phaContactTitleContact, displayMode: .inline)
                 .navigationBarItems(

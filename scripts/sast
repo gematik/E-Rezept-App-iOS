@@ -28,6 +28,8 @@ if [ -f ".githubignore" ]; then
   rm -f .githubignore
 fi
 
+rm "eRp-App.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved"
+
 if [[ -z "${CIBUILD}" ]]; then
   export SAST_FILENAME="scan_$(date '+%Y-%m-%d_%H:%M:%s').zip"
   zip -r "$SAST_FILENAME" . -x ".git*" -x "DerivedData/*" -x "artifacts/*" -x "distribution/*" -x "*.ipa" -x "*.zip" -x "Carthage/Checkouts/*"

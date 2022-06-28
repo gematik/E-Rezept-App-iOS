@@ -21,4 +21,5 @@
 [REQ:gemSpec_IDP_Frontend:A_21585] Default behaviour for all apps when using private access group (https://developer.apple.com/documentation/security/keychain_services/keychain_items/sharing_access_to_keychain_items_among_a_collection_of_apps)
 [REQ:gemSpec_IDP_Frontend:A_21586] iOS will delete all user related data after user-accout reset. Key-Chain data is not beeing synced with iCloud since `kSecAttrSynchronizable` is not applied  
 [REQ:gemSpec_IDP_Frontend:A_21590] References of `SecureEnclaveSignatureProvider` is limited to registration and altVerify usage.
-
+[REQ:gemSpec_IDP_Frontend:A_20608,A_20608-01,A_20609,A_20618,A_20068-01]: Implemented with ATS within `Info.plist`, path: `NSAppTransportSecurity.NSPinnedDomains`
+[REQ:gemSpec_eRp_FdV:A_20033,A_19739] Implemented with ATS within `Info.plist`, path: `NSAppTransportSecurity.NSPinnedDomains`

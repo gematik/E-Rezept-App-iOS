@@ -89,6 +89,19 @@ enum AppDomain {
             default:
                 return .none
             }
+        case .settings(action: .profiles(action: .profile(action: .confirmDeleteProfile))),
+             .settings(action: .profiles(action: .newProfile(action: .saveReceived(.success)))):
+            return .concatenate(
+                .init(value: .main(action: .setNavigation(tag: nil))),
+                .init(value: .messages(action: .setNavigation(tag: nil))),
+                .init(value: .pharmacySearch(action: .setNavigation(tag: nil)))
+            )
+        case .profile(action: .profileSelection(action: .selectProfile)):
+            return .concatenate(
+                .init(value: .main(action: .setNavigation(tag: nil))),
+                .init(value: .messages(action: .setNavigation(tag: nil))),
+                .init(value: .pharmacySearch(action: .setNavigation(tag: nil)))
+            )
         case .main,
              .pharmacySearch,
              .messages,

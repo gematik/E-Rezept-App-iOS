@@ -56,11 +56,6 @@ struct RedeemMatrixCodeView: View {
             }
             .navigationBarItems(
                 trailing: CloseButton {
-                    // TODO: use alert when scanned prescriptions are redeemed swiftlint:disable:this todo
-                    // as scanned perscriptions are not saved yet, we need to skipt the alert for now
-                    // self.showAlert = true
-
-                    // fallback to dismiss immediately
                     viewStore.send(.close)
                 }
                 .accessibility(identifier: A18n.redeem.matrixCode.rphBtnCloseButton)
@@ -73,7 +68,6 @@ struct RedeemMatrixCodeView: View {
                         viewStore.send(.close)
                     },
                     secondaryButton: Alert.Button.destructive(Text(L10n.rphBtnCloseAlertMarkRedeemed)) {
-                        // TODO: mark as redeemed  swiftlint:disable:this todo
                         viewStore.send(.close)
                     }
                 )

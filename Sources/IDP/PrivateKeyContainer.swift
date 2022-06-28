@@ -24,13 +24,21 @@ import Security
 
 /// Represents a (SecureEnclave) private key, namely `PrK_SE_AUT`, secured by iOS Biometrics.
 public struct PrivateKeyContainer {
-    enum Error: Swift.Error {
+    // sourcery: CodedError = "108"
+    public enum Error: Swift.Error {
+        // sourcery: errorCode = "01"
         case keyNotFound(String)
+        // sourcery: errorCode = "02"
         case unknownError(String)
+        // sourcery: errorCode = "03"
         case retrievingPublicKeyFailed
+        // sourcery: errorCode = "04"
         case creationFromBiometrie(Swift.Error?)
+        // sourcery: errorCode = "05"
         case creationWithoutBiometrie(Swift.Error?)
+        // sourcery: errorCode = "06"
         case convertingKey(Swift.Error?)
+        // sourcery: errorCode = "07"
         case signing(Swift.Error?)
     }
 
@@ -240,7 +248,9 @@ public struct PrivateKeyContainer {
     }
 }
 
-enum ConversionError: Swift.Error {
+// sourcery: CodedError = "107"
+public enum ConversionError: Swift.Error {
+    // sourcery: errorCode = "01"
     case generic(String?)
 }
 

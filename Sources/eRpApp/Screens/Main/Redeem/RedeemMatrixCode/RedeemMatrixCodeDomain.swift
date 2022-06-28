@@ -20,6 +20,7 @@ import Combine
 import ComposableArchitecture
 import eRpKit
 import SwiftUI
+import ZXingObjC
 
 enum RedeemMatrixCodeDomain {
     typealias Store = ComposableArchitecture.Store<State, Action>
@@ -35,7 +36,9 @@ enum RedeemMatrixCodeDomain {
         case redeemAndSaveErxTasks
     }
 
+    // sourcery: CodedError = "023"
     enum LoadingImageError: Error, Equatable, LocalizedError {
+        // sourcery: errorCode = "01"
         case matrixCodeGenerationFailed
     }
 
@@ -126,7 +129,7 @@ extension RedeemMatrixCodeDomain {
         static let state = State(groupedPrescription: GroupedPrescription.Dummies.prescriptions)
         static let environment = Environment(
             schedulers: Schedulers(),
-            matrixCodeGenerator: DefaultErxTaskMatrixCodeGenerator(),
+            matrixCodeGenerator: DefaultErxTaskMatrixCodeGenerator(matrixCodeGenerator: ZXDataMatrixWriter()),
             taskRepository: demoSessionContainer.userSession.erxTaskRepository,
             fhirDateFormatter: FHIRDateFormatter.shared
         )

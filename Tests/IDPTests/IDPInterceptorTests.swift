@@ -175,7 +175,7 @@ final class IDPInterceptorTests: XCTestCase {
             })
     }
 
-    func testCallWith403ForbiddenResponseInvalidatesAccessToken() {
+    func testCallWith401UnauthorizedResponseInvalidatesAccessToken() {
         let idpClientMock = IDPClientMock()
         let storage = MemStorage(accessToken: token)
         let session = DefaultIDPSession(
@@ -190,31 +190,11 @@ final class IDPInterceptorTests: XCTestCase {
         let delegate = TestDelegate()
         delegate.shouldAuthorize = true
 
-        chain.httpResponse = HTTPResponse(data: Data(), response: HTTPURLResponse(), status: HTTPStatusCode.forbidden)
+        let sut = session.httpInterceptor(delegate: delegate)
 
         storage.token.first().test(expectations: { token in
             expect(token).toNot(beNil())
         })
-
-        let sut = session.httpInterceptor(delegate: delegate)
-        sut.intercept(chain: chain)
-            .test(expectations: { _, _, _ in
-                expect(chain.incomingProceedRequests.count) == 1
-                expect(chain.incomingProceedRequests[0].allHTTPHeaderFields?["Authorization"]) == "Bearer \(token)"
-                expect(delegate.incomingRequests[0]) == request
-                expect(delegate.incomingRequests.count) == 1
-            })
-
-        storage.token.first().test(expectations: { token in
-            expect(token).to(beNil())
-        })
-
-        storage.set(token: IDPToken(accessToken: token,
-                                    expires: Date.distantFuture,
-                                    idToken: "",
-                                    ssoToken: "",
-                                    tokenType: "Bearer",
-                                    redirect: "redirect"))
 
         chain.httpResponse = HTTPResponse(
             data: Data(),
@@ -222,16 +202,12 @@ final class IDPInterceptorTests: XCTestCase {
             status: HTTPStatusCode.unauthorized
         )
 
-        storage.token.first().test(expectations: { token in
-            expect(token).toNot(beNil())
-        })
-
         sut.intercept(chain: chain)
             .test(expectations: { _, _, _ in
-                expect(chain.incomingProceedRequests.count) == 2
+                expect(chain.incomingProceedRequests.count) == 1
                 expect(chain.incomingProceedRequests[0].allHTTPHeaderFields?["Authorization"]) == "Bearer \(token)"
                 expect(delegate.incomingRequests[0]) == request
-                expect(delegate.incomingRequests.count) == 2
+                expect(delegate.incomingRequests.count) == 1
             })
 
         storage.token.first().test(expectations: { token in

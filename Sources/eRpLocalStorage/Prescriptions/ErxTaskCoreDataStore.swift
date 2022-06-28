@@ -31,7 +31,7 @@ public class ErxTaskCoreDataStore: CoreDataCrudable, ErxLocalDataStore {
     let coreDataControllerFactory: CoreDataControllerFactory
     let foregroundQueue: AnySchedulerOf<DispatchQueue>
     let backgroundQueue: AnySchedulerOf<DispatchQueue>
-    let profileId: UUID? // TODO: make private and let after refactoring // swiftlint:disable:this todo
+    let profileId: UUID?
 
     /// Initialize an ErxTask Core Data Store
     /// - Parameters:

@@ -53,7 +53,6 @@ enum CardWallCANDomain {
             state.can = can
             return .none
         case .reset:
-            state.can = ""
             state.showNextScreen = false
             return .none
         case .advance:
@@ -69,7 +68,7 @@ enum CardWallCANDomain {
             state.isEGKOrderInfoViewPresented = false
             return .none
         case .showEGKOrderInfoView:
-            state.isEGKOrderInfoViewPresented.toggle()
+            state.isEGKOrderInfoViewPresented = true
             return .none
         }
     }

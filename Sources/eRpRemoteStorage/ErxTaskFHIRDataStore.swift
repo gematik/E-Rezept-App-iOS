@@ -32,7 +32,7 @@ public class ErxTaskFHIRDataStore: ErxRemoteDataStore {
 
     // MARK: - ErxTasks
 
-    public func fetchTask(by id: ErxTask.ID, // swiftlint:disable:this identifier_name
+    public func fetchTask(by id: ErxTask.ID,
                           accessCode: String?)
         -> AnyPublisher<ErxTask?, RemoteStoreError> {
         fhirClient.fetchTask(by: id, accessCode: accessCode)
@@ -73,7 +73,7 @@ public class ErxTaskFHIRDataStore: ErxRemoteDataStore {
 
         // In case of error...
         guard tasks.count == 1,
-              let id = tasks.first?.id, // swiftlint:disable:this identifier_name
+              let id = tasks.first?.id,
               let accessCode = tasks.first?.accessCode
         else {
             var fhirClientError = FHIRClient.Error.unknown(RemoteStoreError.notImplemented)
@@ -99,33 +99,35 @@ public class ErxTaskFHIRDataStore: ErxRemoteDataStore {
             .eraseToAnyPublisher()
     }
 
-    public func redeem(orders: [ErxTaskOrder]) -> AnyPublisher<Bool, RemoteStoreError> {
-        let redeemOrderPublishers: [AnyPublisher<Bool, RemoteStoreError>] =
-            orders.map { order in
-                self.fhirClient.redeem(order: order)
-                    .first()
-                    .mapError { RemoteStoreError.fhirClientError($0) }
-                    .eraseToAnyPublisher()
-            }
-
-        return Publishers.MergeMany(redeemOrderPublishers)
-            .collect()
-            .map { _ in true } // always returns true or throws an error
+    public func redeem(order: ErxTaskOrder) -> AnyPublisher<ErxTaskOrder, RemoteStoreError> {
+        fhirClient.redeem(order: order)
+            .first()
+            .mapError { RemoteStoreError.fhirClientError($0) }
             .eraseToAnyPublisher()
     }
 
     // MARK: - AuditEvent
 
-    public func fetchAuditEvent(by id: ErxAuditEvent.ID) // swiftlint:disable:this identifier_name
+    public func fetchAuditEvent(by id: ErxAuditEvent.ID)
         -> AnyPublisher<ErxAuditEvent?, RemoteStoreError> {
         fhirClient.fetchAuditEvent(by: id)
             .mapError { RemoteStoreError.fhirClientError($0) }
             .eraseToAnyPublisher()
     }
 
-    public func listAllAuditEvents(after referenceDate: String? = nil,
-                                   for locale: String? = nil) -> AnyPublisher<[ErxAuditEvent], RemoteStoreError> {
+    public func listAllAuditEvents(
+        after referenceDate: String? = nil,
+        for locale: String? = nil
+    ) -> AnyPublisher<PagedContent<[ErxAuditEvent]>, RemoteStoreError> {
         fhirClient.fetchAllAuditEvents(after: referenceDate, for: locale)
+            .mapError { RemoteStoreError.fhirClientError($0) }
+            .first()
+            .eraseToAnyPublisher()
+    }
+
+    public func listAuditEventsNextPage(of previousPage: PagedContent<[ErxAuditEvent]>)
+        -> AnyPublisher<PagedContent<[ErxAuditEvent]>, RemoteStoreError> {
+        fhirClient.fetchAuditEventsNextPage(of: previousPage)
             .mapError { RemoteStoreError.fhirClientError($0) }
             .first()
             .eraseToAnyPublisher()

@@ -11,3 +11,4 @@ While eRpApp has no public API and thus no documentation, individual documentati
   - [Pharmacy](modules/Pharmacy/index.html)
   - [TrustStore](modules/TrustStore/index.html)
   - [VAUClient](modules/VAUClient/index.html)
+  - [AVS](modules/AVS/index.html)

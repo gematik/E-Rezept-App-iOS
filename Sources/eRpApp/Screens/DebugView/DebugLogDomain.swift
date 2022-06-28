@@ -37,7 +37,6 @@ enum DebugLogDomain {
         var filter: String = ""
 
         enum Sort: String, Equatable, CaseIterable, Identifiable {
-            // swiftlint:disable:next identifier_name
             var id: Sort { self }
 
             case byNameAsc = "by name ↑"

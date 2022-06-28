@@ -1,0 +1,17 @@
+{
+  "resourceType": "OperationOutcome",
+  "meta": {
+    "profile": [
+      "http://hl7.org/fhir/StructureDefinition/OperationOutcome"
+    ]
+  },
+  "issue": [
+    {
+      "severity": "error",
+      "code": "not-found",
+      "details": {
+        "text": "Task does not exist"
+      }
+    }
+  ]
+}

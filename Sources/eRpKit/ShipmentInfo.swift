@@ -20,7 +20,7 @@ import Foundation
 
 /// Represents the shipment informations needed for redeeming a prescription in a pharmacy
 public struct ShipmentInfo: Identifiable, Hashable, Equatable {
-    public var id: UUID { // swiftlint:disable:this identifier_name
+    public var id: UUID {
         identifier
     }
 
@@ -54,5 +54,22 @@ public struct ShipmentInfo: Identifiable, Hashable, Equatable {
         self.phone = phone
         self.mail = mail
         self.deliveryInfo = deliveryInfo
+    }
+
+    public var address: [String] {
+        var address: [String] = []
+        if let street = street {
+            address.append(street)
+        }
+        if let detail = addressDetail {
+            address.append(detail)
+        }
+        if let zip = zip {
+            address.append(zip)
+        }
+        if let city = city {
+            address.append(city)
+        }
+        return address
     }
 }

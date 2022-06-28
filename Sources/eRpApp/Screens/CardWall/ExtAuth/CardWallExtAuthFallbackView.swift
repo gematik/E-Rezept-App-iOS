@@ -55,7 +55,7 @@ struct CardWallExtAuthFallbackView: View {
                         presentOderEGK = false
                     }
                 }
-                .accentColor(Colors.primary700)
+                .accentColor(Colors.primary600)
                 .navigationViewStyle(StackNavigationViewStyle())
             }
         }

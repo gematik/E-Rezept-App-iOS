@@ -44,7 +44,7 @@ public class DefaultErxTaskRepository: ErxTaskRepository {
     ///   - accessCode: When nil only load from local store(s)
     /// - Returns: AnyPublisher that emits the requested `ErxTask` or `DefaultErxTaskRepository.Error`
     public func loadRemote(
-        by id: ErxTask.ID, // swiftlint:disable:this identifier_name
+        by id: ErxTask.ID,
         accessCode: String?
     ) -> AnyPublisher<ErxTask?, ErrorType> {
         if let accessCode = accessCode {
@@ -68,7 +68,7 @@ public class DefaultErxTaskRepository: ErxTaskRepository {
     ///   - accessCode: String representing the accessCode. Can be nil
     /// - Returns: AnyPublisher that emits the requested `ErxTask` or `DefaultErxTaskRepository.Error`
     public func loadLocal(
-        by id: ErxTask.ID, // swiftlint:disable:this identifier_name
+        by id: ErxTask.ID,
         accessCode: String?
     ) -> AnyPublisher<ErxTask?, ErrorType> {
         disk.fetchTask(by: id, accessCode: accessCode)
@@ -133,11 +133,30 @@ public class DefaultErxTaskRepository: ErxTaskRepository {
                     .mapError(ErrorType.remote)
             }
             .flatMap { auditEvents in
-                self.disk.save(auditEvents: auditEvents)
+                self.disk.save(auditEvents: auditEvents.content)
                     .mapError(ErrorType.local)
                     .flatMap { result -> AnyPublisher<Bool, ErrorType> in
-                        if result, auditEvents.count > 25 {
-                            return self.loadRemoteLatestAuditEvents(for: locale)
+                        if result, auditEvents.next != nil {
+                            return self.loadRemoteAuditEventsPage(of: auditEvents)
+                        } else {
+                            return Just(result).setFailureType(to: ErrorType.self).eraseToAnyPublisher()
+                        }
+                    }
+                    .eraseToAnyPublisher()
+            }
+            .eraseToAnyPublisher()
+    }
+
+    internal func loadRemoteAuditEventsPage(of lastPage: PagedContent<[ErxAuditEvent]>)
+        -> AnyPublisher<Bool, ErrorType> {
+        cloud.listAuditEventsNextPage(of: lastPage)
+            .mapError(ErrorType.remote)
+            .flatMap { auditEvents in
+                self.disk.save(auditEvents: auditEvents.content)
+                    .mapError(ErrorType.local)
+                    .flatMap { result -> AnyPublisher<Bool, ErrorType> in
+                        if result, auditEvents.next != nil {
+                            return self.loadRemoteAuditEventsPage(of: auditEvents)
                         } else {
                             return Just(result).setFailureType(to: ErrorType.self).eraseToAnyPublisher()
                         }
@@ -214,11 +233,11 @@ public class DefaultErxTaskRepository: ErxTaskRepository {
 
     /// Sends a redeem request of  an `ErxTask` for the selected pharmacy
     /// Note: The response does not verify that the pharmacy has accepted the order
-    /// - Parameter orders: Array of an order that contains informations about the task,  redeem option
+    /// - Parameter order: Order that contains informations about the task,  redeem option
     ///                     and the pharmacy where the task should be redeemed
-    /// - Returns: `true` if the server has received the order
-    public func redeem(orders: [ErxTaskOrder]) -> AnyPublisher<Bool, ErrorType> {
-        cloud.redeem(orders: orders)
+    /// - Returns: `ErxTaskOrder` if the server has received the order
+    public func redeem(order: ErxTaskOrder) -> AnyPublisher<ErxTaskOrder, ErrorType> {
+        cloud.redeem(order: order)
             .mapError(ErrorType.remote)
             .eraseToAnyPublisher()
     }

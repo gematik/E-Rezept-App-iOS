@@ -29,7 +29,10 @@ enum PharmacySearchDomain: Equatable {
 
     /// Provides an Effect that needs to run whenever the state of this Domain is reset to nil
     static func cleanup<T>() -> Effect<T, Never> {
-        Effect.cancel(token: Token.self)
+        Effect.concatenate(
+            PharmacyDetailDomain.cleanup(),
+            Effect.cancel(token: Token.self)
+        )
     }
 
     /// Tokens for Cancellables
@@ -39,15 +42,23 @@ enum PharmacySearchDomain: Equatable {
 
     enum Route: Equatable {
         case selectProfile
+        case pharmacy(PharmacyDetailDomain.State)
+        case filter(PharmacySearchFilterDomain.State)
 
         enum Tag: Int {
             case selectProfile
+            case pharmacy
+            case filter
         }
 
         var tag: Tag {
             switch self {
             case .selectProfile:
                 return .selectProfile
+            case .pharmacy:
+                return .pharmacy
+            case .filter:
+                return .filter
             }
         }
     }
@@ -101,8 +112,6 @@ enum PharmacySearchDomain: Equatable {
 
         /// TCA Detail-State for navigation
         var pharmacyDetailState: PharmacyDetailDomain.State?
-        /// Used to navigate into filter details sheet
-        var pharmacyFilterState: PharmacySearchFilterDomain.State?
         /// Store for the active filter options the user has chosen
         var pharmacyFilterOptions: [PharmacySearchFilterDomain.PharmacyFilterOption] = []
         /// The current state the search is at
@@ -125,11 +134,8 @@ enum PharmacySearchDomain: Equatable {
         case hintDismissButtonTapped
         // Pharmacy details
         case showDetails(PharmacyLocationViewModel)
-        case dismissPharmacyDetailView
         case pharmacyDetailView(action: PharmacyDetailDomain.Action)
         // Filter
-        case showPharmacyFilterView
-        case dismissFilterSheetView
         case removeFilterOption(PharmacySearchFilterDomain.PharmacyFilterOption)
         case pharmacyFilterView(action: PharmacySearchFilterDomain.Action)
         // Device location
@@ -177,7 +183,8 @@ enum PharmacySearchDomain: Equatable {
             state.searchState = .searchRunning
             return environment.searchPharmacies(
                 searchTerm: state.searchText,
-                location: state.currentLocation
+                location: state.currentLocation,
+                filter: state.pharmacyFilterOptions
             )
             .cancellable(id: Token.search, cancelInFlight: true)
         case let .pharmaciesReceived(result):
@@ -190,6 +197,7 @@ enum PharmacySearchDomain: Equatable {
                         referenceDate: environment.referenceDateForOpenHours
                     )
                 }
+                .filter(by: state.pharmacyFilterOptions)
 
                 state.searchState = pharmacies.isEmpty ? .searchResultEmpty : .searchResultOk(state.pharmacies)
             case let .failure(error):
@@ -207,37 +215,33 @@ enum PharmacySearchDomain: Equatable {
 
         // Details
         case let .showDetails(pharmacyLocation):
-            state.pharmacyDetailState = PharmacyDetailDomain.State(
+            state.route = .pharmacy(PharmacyDetailDomain.State(
                 erxTasks: state.erxTasks,
                 pharmacyViewModel: pharmacyLocation
-            )
-            return .none
-        case .dismissPharmacyDetailView:
-            state.pharmacyDetailState = nil
+            ))
             return .none
         case .pharmacyDetailView(action: .close):
-            state.pharmacyDetailState = nil
+            state.route = nil
             return Effect(value: .close)
+                // swiftlint:disable:next todo
+                // TODO: this is workaround to avoid `onAppear` of the the child view getting called
+                .delay(for: .seconds(0.1), scheduler: environment.schedulers.main)
+                .eraseToEffect()
         case .pharmacyDetailView:
             return .none
 
-        // Filter
-        case .showPharmacyFilterView:
-            state.pharmacyFilterState = PharmacySearchFilterDomain.State(
-                pharmacyFilterOptions: state.pharmacyFilterOptions
-            )
-            return .none
         case let .pharmacyFilterView(.close(filterOptions)):
-            state.pharmacyFilterOptions = filterOptions
-            state.pharmacyFilterState = nil
-            return .none
-        case .dismissFilterSheetView:
+            state.route = nil
+            if state.pharmacyFilterOptions != filterOptions {
+                state.pharmacyFilterOptions = filterOptions
+                return .init(value: .performSearch)
+            }
             return .none
         case let .removeFilterOption(filterOption):
             if let index = state.pharmacyFilterOptions.firstIndex(of: filterOption) {
                 state.pharmacyFilterOptions.remove(at: index)
             }
-            return .none
+            return .init(value: .performSearch)
         case .pharmacyFilterView:
             return .none
 
@@ -283,8 +287,13 @@ enum PharmacySearchDomain: Equatable {
         case .setNavigation(tag: .selectProfile):
             state.route = .selectProfile
             return .none
+        case .setNavigation(tag: .filter):
+            state.route = .filter(.init(pharmacyFilterOptions: state.pharmacyFilterOptions))
+            return .none
         case .setNavigation(tag: nil):
             state.route = nil
+            return .none
+        case .setNavigation:
             return .none
         }
     }
@@ -298,17 +307,17 @@ enum PharmacySearchDomain: Equatable {
 
 extension PharmacySearchDomain {
     static let pharmacyFilterPullbackReducer: Reducer =
-        PharmacySearchFilterDomain.reducer.optional().pullback(
-            state: \.pharmacyFilterState,
+        PharmacySearchFilterDomain.reducer._pullback(
+            state: (\State.route).appending(path: /PharmacySearchDomain.Route.filter),
             action: /PharmacySearchDomain.Action.pharmacyFilterView(action:)
         ) { environment in
             PharmacySearchFilterDomain.Environment(schedulers: environment.schedulers)
         }
 
     static let pharmacyDetailPullbackReducer: Reducer =
-        PharmacyDetailDomain.reducer.optional().pullback(
-            state: \.pharmacyDetailState,
-            action: /PharmacySearchDomain.Action.pharmacyDetailView(action:)
+        PharmacyDetailDomain.reducer._pullback(
+            state: (\State.route).appending(path: /Route.pharmacy),
+            action: /Action.pharmacyDetailView(action:)
         ) { environment in
             PharmacyDetailDomain.Environment(
                 schedulers: environment.schedulers,
@@ -326,19 +335,61 @@ extension PharmacySearchDomain {
 }
 
 extension PharmacySearchDomain.Environment {
-    func searchPharmacies(searchTerm: String, location: ComposableCoreLocation.Location?)
+    func searchPharmacies(
+        searchTerm: String,
+        location: ComposableCoreLocation.Location?,
+        filter: [PharmacySearchFilterDomain.PharmacyFilterOption]
+    )
         -> Effect<PharmacySearchDomain.Action, Never> {
         var position: Position?
         if let latitude = location?.coordinate.latitude,
            let longitude = location?.coordinate.longitude {
             position = Position(lat: latitude, lon: longitude)
         }
-        return pharmacyRepository.searchPharmacies(searchTerm: searchTerm, position: position)
-            .first()
-            .catchToEffect()
-            .map(PharmacySearchDomain.Action.pharmaciesReceived)
-            .receive(on: schedulers.main.animation())
-            .eraseToEffect()
+        return pharmacyRepository.searchPharmacies(
+            searchTerm: searchTerm,
+            position: position,
+            filter: filter.asPharmacyRepositoryFilters
+        )
+        .first()
+        .catchToEffect()
+        .map(PharmacySearchDomain.Action.pharmaciesReceived)
+        .receive(on: schedulers.main.animation())
+        .eraseToEffect()
+    }
+}
+
+extension Array where Element == PharmacyLocationViewModel {
+    func filter(by filterOptions: [PharmacySearchFilterDomain.PharmacyFilterOption]) -> [PharmacyLocationViewModel] {
+        // Filter Pharmacies that are closed
+        if filterOptions.contains(.open) {
+            return filter { location in
+                switch location.todayOpeningState {
+                case .open:
+                    return true
+                default:
+                    return false
+                }
+            }
+        }
+        return self
+    }
+}
+
+extension Collection where Element == PharmacySearchFilterDomain.PharmacyFilterOption {
+    var asPharmacyRepositoryFilters: [PharmacyRepositoryFilter] {
+        compactMap { option in
+            switch option {
+            case .ready:
+                return PharmacyRepositoryFilter.ready
+            case .shipment:
+                return PharmacyRepositoryFilter.shipment
+            case .delivery:
+                return PharmacyRepositoryFilter.delivery
+            case .open:
+                return nil
+            }
+        }
     }
 }
 
@@ -354,31 +405,31 @@ extension PharmacySearchDomain {
             }
 
         static let stateEmpty = State(
-            erxTasks: [ErxTask.Dummies.erxTaskReady],
+            erxTasks: [ErxTask.Demo.erxTaskReady],
             searchText: "Apothekesdfwerwerasdf",
             pharmacies: [],
             searchState: .searchResultEmpty
         )
         static let stateSearchRunning = State(
-            erxTasks: [ErxTask.Dummies.erxTaskReady],
+            erxTasks: [ErxTask.Demo.erxTaskReady],
             searchText: "Apotheke",
             pharmacies: [],
             searchState: .searchRunning
         )
         static let stateFilterItems = State(
-            erxTasks: [ErxTask.Dummies.erxTaskReady],
+            erxTasks: [ErxTask.Demo.erxTaskReady],
             pharmacies: [],
             pharmacyFilterOptions: [
-                PharmacySearchFilterDomain.PharmacyFilterOption.messenger,
+                PharmacySearchFilterDomain.PharmacyFilterOption.delivery,
             ]
         )
         static let stateError = State(
-            erxTasks: [ErxTask.Dummies.erxTaskReady],
+            erxTasks: [ErxTask.Demo.erxTaskReady],
             pharmacies: [],
             searchState: .error
         )
         static let state = State(
-            erxTasks: [ErxTask.Dummies.erxTaskReady],
+            erxTasks: [ErxTask.Demo.erxTaskReady],
             searchText: "Apotheke",
             pharmacies: pharmaciesLocationViewModel,
             searchState: .searchResultOk(pharmaciesLocationViewModel)

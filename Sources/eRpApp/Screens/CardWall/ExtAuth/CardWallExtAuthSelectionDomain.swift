@@ -122,7 +122,7 @@ enum CardWallExtAuthSelectionDomain {
 }
 
 extension KKAppDirectory.Entry: Identifiable {
-    public var id: String { // swiftlint:disable:this identifier_name
+    public var id: String {
         identifier
     }
 }

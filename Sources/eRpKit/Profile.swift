@@ -46,7 +46,7 @@ public struct Profile: Identifiable, Hashable, Equatable {
         self.erxTasks = erxTasks
     }
 
-    public var id: UUID { // swiftlint:disable:this identifier_name
+    public var id: UUID {
         identifier
     }
 

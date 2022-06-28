@@ -23,6 +23,7 @@ internal enum A11y {
     internal enum cardWall { 
     internal enum canInput {
       static let cdwTxtCanInput = "cdw_txt_can_input"
+      static let cdwTctCanHeader = "cdw_tct_can_header"
       static let cdwTxtCanInstruction = "cdw_txt_can_instruction"
       static let cdwImgCanCard = "cdw_img_can_card"
       static let cdwBtnCanCancel = "cdw_btn_can_cancel"
@@ -69,20 +70,20 @@ internal enum A11y {
     internal enum notForYou {
       static let cdwBtnNfuDone = "cdw_btn_nfu_done"
       static let cdwBtnNfuCancel = "cdw_btn_nfu_cancel"
-      static let cdwImgNfu = "cdw_img_nfu"
       static let cdwTxtNfuSubtitle = "cdw_txt_nfu_subtitle"
       static let cdwTxtNfuDescription = "cdw_txt_nfu_description"
-      static let cdwTxtNfuFootnote = "cdw_txt_nfu_footnote"
       static let cdwBtnNfuMore = "cdw_btn_nfu_more"
   }
     internal enum pinInput {
       static let cdwTxtPinSubtitle = "cdw_txt_pin_subtitle"
+      static let cdwTxtPinDescription = "cdw_txt_pin_description"
       static let cdwBtnPinCancel = "cdw_btn_pin_cancel"
       static let cdwBtnPinDone = "cdw_btn_pin_done"
       static let cdwEdtPinInput = "cdw_edt_pin_input"
-      static let cdwTxtPinHint = "cdw_txt_pin_hint"
-      static let cdwTxtPinWarning = "cdw_txt_pin_warning"
+      static let cdwBtnPinNoPin = "cdw_btn_pin_no_pin"
       static let cdwHintGetPin = "cdw_hint_get_pin"
+      static let cdwTxtPinWarning = "cdw_txt_pin_warning"
+      static let cdwTxtPinHint = "cdw_txt_pin_hint"
   }
     internal enum readCard {
       static let cdwBtnRcNext = "cdw_btn_rc_next"
@@ -105,6 +106,9 @@ internal enum A11y {
       static let ctlTxtSearchBarField = "ctl_txt_search_bar_field"
       static let ctlBtnSearchBarDeleteText = "ctl_btn_search_bar_delete_text"
       static let ctlBtnSearchBarCancel = "ctl_btn_search_bar_cancel"
+  }
+    internal enum textfieldwithdelete {
+      static let ctlBtnTextfieldDelete = "ctl_btn_textfield_delete"
   }
     }
     internal enum mainScreen {
@@ -248,6 +252,9 @@ internal enum A11y {
       static let phaSearchStart = "pha_search_start"
       static let phaSearchNoResults = "pha_search_no_results"
       static let phaSearchError = "pha_search_error"
+      static let phaFilterBar = "pha_filter_bar"
+      static let phaFilterOpenFilter = "pha_filter_open_filter"
+      static let phaFilterFilterList = "pha_filter_filter_list"
   }
     internal enum prescriptionDetails {
       static let prscDtlTxtMedInfo = "prsc_dtl_txt_med_info"
@@ -261,6 +268,7 @@ internal enum A11y {
       static let prscDtlTxtTaskId = "prsc_dtl_txt_task_id"
       static let prscDtlTxtAccessCode = "prsc_dtl_txt_access_code"
       static let prscDtlTxtMedError = "prsc_dtl_txt_med_error"
+      static let prscDtlTxtDeleteDisabledNote = "prsc_dtl_txt_delete_disabled_note"
   }
     internal enum profileSelection {
       static let proTxtSelectionProfileList = "pro_txt_selection_profile_list"

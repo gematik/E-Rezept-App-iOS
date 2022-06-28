@@ -42,7 +42,9 @@ class DummyUserProfileService: UserProfileService {
     static let dummyProfile = Profile(name: "Dummy Profile")
 }
 
+// sourcery: CodedError = "022"
 enum UserProfileServiceError: Error, Equatable {
+    // sourcery: errorCode = "01"
     case localStoreError(LocalStoreError)
 }
 

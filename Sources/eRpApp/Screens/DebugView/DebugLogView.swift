@@ -21,6 +21,7 @@ import SwiftUI
 
 #if ENABLE_DEBUG_VIEW
 struct DebugLogView: View {
+    @State var showShareSheet = false
     let log: DebugLiveLogger.RequestLog
 
     var body: some View {
@@ -106,16 +107,19 @@ struct DebugLogView: View {
                     }
                 }
             }
-        }.navigationTitle("Logs")
-            .navigationBarItems(trailing: Button(action: self.actionSheet) {
-                Image(systemName: "square.and.arrow.up")
-            })
-    }
-
-    func actionSheet() {
-        let content = log.shareText
-        let shareSheet = UIActivityViewController(activityItems: [content], applicationActivities: nil)
-        UIApplication.shared.windows.first?.rootViewController?.present(shareSheet, animated: true, completion: nil)
+        }
+        .sheet(isPresented: $showShareSheet) {
+            ShareViewController(itemsToShare: [log.shareText])
+        }
+        .navigationTitle("Logs")
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button(
+                    action: { showShareSheet = true },
+                    label: { Image(systemName: "square.and.arrow.up") }
+                )
+            }
+        }
     }
 
     struct LongProperty: View {

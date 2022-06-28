@@ -48,6 +48,7 @@ struct SelectionCell: View {
 
                         if let description = description {
                             Text(description)
+                                .multilineTextAlignment(.leading)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                                 .font(.subheadline)
                                 .foregroundColor(Colors.systemLabelTertiary)

@@ -180,7 +180,8 @@ enum CardWallDomain {
             action: /Action.loginOption(action:)
         ) { environment in
             CardWallLoginOptionDomain.Environment(
-                userSession: environment.userSession
+                userSession: environment.userSession,
+                openURL: UIApplication.shared.open(_:options:completionHandler:)
             )
         }
 
@@ -194,7 +195,8 @@ enum CardWallDomain {
                 profileDataStore: environment.userSession.profileDataStore,
                 signatureProvider: environment.signatureProvider,
                 sessionProvider: environment.sessionProvider,
-                nfcSessionProvider: environment.userSession.nfcSessionProvider
+                nfcSessionProvider: environment.userSession.nfcSessionProvider,
+                application: UIApplication.shared
             )
         }
 

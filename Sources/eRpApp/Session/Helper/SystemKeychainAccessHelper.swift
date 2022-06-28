@@ -52,10 +52,14 @@ protocol KeychainAccessHelper {
     func setGenericPassword(_ password: Data, for account: Data, service: Data) throws -> Bool
 }
 
+// sourcery: CodedError = "020"
 /// Errors used by KeychainAccessHelper for password retrieval.
 enum KeychainAccessHelperError: Swift.Error, Equatable {
+    // sourcery: errorCode = "01"
     case illegalArgument
+    // sourcery: errorCode = "02"
     case keyChainError(status: OSStatus, message: String?)
+    // sourcery: errorCode = "03"
     case decodingError
 }
 

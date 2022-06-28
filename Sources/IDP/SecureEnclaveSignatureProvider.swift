@@ -20,12 +20,19 @@ import Combine
 import Foundation
 import OpenSSL
 
+// sourcery: CodedError = "109"
 public enum SecureEnclaveSignatureProviderError: Swift.Error {
+    // sourcery: errorCode = "01"
     case fetchingPrivateKey(Swift.Error?)
+    // sourcery: errorCode = "02"
     case signing(Swift.Error?)
+    // sourcery: errorCode = "03"
     case packagingAuthCertificate
+    // sourcery: errorCode = "04"
     case packagingSeCertificate
+    // sourcery: errorCode = "05"
     case gatheringPairingData(Swift.Error)
+    // sourcery: errorCode = "06"
     case `internal`(String, Swift.Error?)
 }
 
@@ -61,7 +68,7 @@ public protocol SecureEnclaveSignatureProvider {
     ///   - signer: The `JWTSigner` that is used to authenticate the key that is paired. Usually this is a eGK.
     ///   - certificate: Certificate of the signer that is used to sign the `PairingData`.
     func signPairingSession(_ pairingSession: PairingSession, with signer: JWTSigner, certificate: X509)
-        -> AnyPublisher<RegistrationData, Swift.Error>
+        -> AnyPublisher<RegistrationData, SecureEnclaveSignatureProviderError>
 
     /// Cancels the signing session and delete all temporary data, such as `PrK_SE_AUT` and `PuK_SE_AUT`.
     ///

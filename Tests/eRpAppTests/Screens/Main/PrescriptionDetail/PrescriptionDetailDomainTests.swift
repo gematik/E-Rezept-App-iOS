@@ -26,6 +26,7 @@ import XCTest
 
 final class PrescriptionDetailDomainTests: XCTestCase {
     let testScheduler = DispatchQueue.test
+    let initialState = PrescriptionDetailDomain.Dummies.state
 
     typealias TestStore = ComposableArchitecture.TestStore<
         PrescriptionDetailDomain.State,
@@ -35,19 +36,20 @@ final class PrescriptionDetailDomainTests: XCTestCase {
         PrescriptionDetailDomain.Environment
     >
 
-    func testStore() -> TestStore {
+    func testStore(dateProvider: @escaping (() -> Date) = Date.init) -> TestStore {
         let schedulers = Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler())
-        let erxTaskRespository = PrescriptionDetailDomain.Dummies
+        let erxTaskRepository = PrescriptionDetailDomain.Dummies
             .demoSessionContainer.userSession.erxTaskRepository
         return TestStore(
-            initialState: PrescriptionDetailDomain.Dummies.state,
+            initialState: initialState,
             reducer: PrescriptionDetailDomain.reducer,
             environment: PrescriptionDetailDomain.Environment(
                 schedulers: schedulers,
-                taskRepository: erxTaskRespository,
+                taskRepository: erxTaskRepository,
                 fhirDateFormatter: FHIRDateFormatter.shared,
                 pharmacyRepository: MockPharmacyRepository(),
-                userSession: MockUserSession()
+                userSession: MockUserSession(),
+                dateProvider: dateProvider
             )
         )
     }
@@ -78,10 +80,12 @@ final class PrescriptionDetailDomainTests: XCTestCase {
         }
         store.send(.confirmedDelete) { sut in
             // then
+            sut.isDeleting = true
             sut.alertState = nil
         }
         store.send(.taskDeletedReceived(Result.success(true))) { state in
             // then
+            state.isDeleting = false
             state.alertState = nil
         }
         store.receive(.close) { state in
@@ -89,8 +93,8 @@ final class PrescriptionDetailDomainTests: XCTestCase {
         }
     }
 
-    /// Tests the case when delete was hit and deletion has failed and an alert is shown to user
-    func testDeleteWithAlertFailure() {
+    /// Tests the case when delete was hit and deletion has failed when not being logged in
+    func testDeleteWhenNotLoggedIn() {
         let store = testStore()
 
         // when
@@ -101,22 +105,22 @@ final class PrescriptionDetailDomainTests: XCTestCase {
         store.send(.confirmedDelete) { sut in
             // then
             sut.alertState = nil
+            sut.isDeleting = true
         }
         store.send(.taskDeletedReceived(
-            Result.failure(ErxRepositoryError.local(.delete(error: IDPError.tokenUnavailable)))
+            Result.failure(ErxRepositoryError.remote(.fhirClientError(IDPError.tokenUnavailable)))
         )) { state in
             // then
-            state.alertState = PrescriptionDetailDomain.deleteFailedAlertState(
-                IDPError.tokenUnavailable.errorDescription ?? ""
-            )
+            state.alertState = PrescriptionDetailDomain.missingTokenAlertState()
+            state.isDeleting = false
         }
         store.send(.alertDismissButtonTapped) { state in
             state.alertState = nil
         }
     }
 
-    /// Tests the case when delete was hit and deletion has failed but is silently ignored.
-    func testDeleteWithAlertSilentFailure() {
+    /// Tests the case when delete was hit and deletion has failed with other errors.
+    func testDeleteWithOtherErrorMessage() {
         let store = testStore()
 
         // when
@@ -126,13 +130,15 @@ final class PrescriptionDetailDomainTests: XCTestCase {
         }
         store.send(.confirmedDelete) { sut in
             // then
+            sut.isDeleting = true
             sut.alertState = nil
         }
         store.send(.taskDeletedReceived(
             Result.failure(ErxRepositoryError.local(.notImplemented))
         )) { state in
             // then
-            state.alertState = nil
+            state.isDeleting = false
+            state.alertState = PrescriptionDetailDomain.deleteFailedAlertState(L10n.dtlTxtDeleteFallbackMessage.text)
         }
         store.send(.alertDismissButtonTapped) { state in
             state.alertState = nil
@@ -141,32 +147,33 @@ final class PrescriptionDetailDomainTests: XCTestCase {
 
     /// Test redeem low-detail prescriptions.
     func testRedeemLowDetail() {
-        let store = testStore()
+        let dateToday = Date()
 
-        let expectedRedeemDate = FHIRDateFormatter.shared.string(
-            from: Date(),
-            format: .yearMonthDayTime
-        )
-        var erxTask = ErxTask.Dummies.erxTaskReady
+        let store = testStore(dateProvider: { dateToday })
+
+        let expectedRedeemDate = FHIRDateFormatter.shared.stringWithLongUTCTimeZone(from: dateToday)
+        var erxTask = initialState.prescription.erxTask
+        let prescription = GroupedPrescription.Prescription(erxTask: erxTask, date: dateToday)
         erxTask.update(with: expectedRedeemDate)
-        let prescription = GroupedPrescription.Prescription.Dummies.prescriptionReady
-        let expectedPrescription = GroupedPrescription.Prescription(erxTask: erxTask)
+        let expectedPrescription = GroupedPrescription.Prescription(erxTask: erxTask, date: dateToday)
         // when
         store.send(.toggleRedeemPrescription) { sut in
             // then
+            sut.prescription = expectedPrescription
             sut.isArchived = true
         }
         testScheduler.advance()
         store.receive(.redeemedOnSavedReceived(true)) { state in
-            state.prescription = prescription
+            state.prescription = expectedPrescription
         }
         store.send(.toggleRedeemPrescription) { sut in
             // then
+            sut.prescription = prescription
             sut.isArchived = false
         }
         testScheduler.advance()
         store.receive(.redeemedOnSavedReceived(true)) { state in
-            state.prescription = expectedPrescription
+            state.prescription = prescription
         }
     }
 }

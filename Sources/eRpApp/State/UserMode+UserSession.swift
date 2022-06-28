@@ -16,6 +16,7 @@
 //  
 //
 
+import AVS
 import Combine
 import eRpKit
 import Foundation
@@ -109,5 +110,9 @@ extension UserMode: UserSession {
 
     func profile() -> AnyPublisher<Profile, LocalStoreError> {
         sessionContainer.profile()
+    }
+
+    var avsSession: AVSSession {
+        sessionContainer.avsSession
     }
 }

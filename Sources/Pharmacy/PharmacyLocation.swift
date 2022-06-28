@@ -16,13 +16,15 @@
 //  
 //
 
+import eRpKit
 import Foundation
+import OpenSSL
 
 /// Represents all information needed for searching for pharmacies.
 public struct PharmacyLocation: Identifiable, Hashable, Equatable {
     /// Pharmacy default initializer
     public init(
-        id: String, // swiftlint:disable:this identifier_name
+        id: String,
         status: Status?,
         telematikID: String,
         name: String?,
@@ -30,7 +32,9 @@ public struct PharmacyLocation: Identifiable, Hashable, Equatable {
         position: Position? = nil,
         address: Address? = nil,
         telecom: Telecom? = nil,
-        hoursOfOperation: [HoursOfOperation]
+        hoursOfOperation: [HoursOfOperation],
+        avsEndpoints: AVSEndpoints? = nil,
+        avsCertificates: [X509] = []
     ) {
         self.id = id
         self.status = status
@@ -41,12 +45,14 @@ public struct PharmacyLocation: Identifiable, Hashable, Equatable {
         self.address = address
         self.telecom = telecom
         self.hoursOfOperation = hoursOfOperation
+        self.avsEndpoints = avsEndpoints
+        self.avsCertificates = avsCertificates
     }
 
     // MARK: FHIR resources
 
     /// Id of the FHIR Location
-    public var id: String // swiftlint:disable:this identifier_name
+    public var id: String
     /// LocationStatus
     /// NOTE: Is here used to indicate E-Rezept readiness
     public let status: Status?
@@ -64,6 +70,10 @@ public struct PharmacyLocation: Identifiable, Hashable, Equatable {
     public let telecom: Telecom?
     /// HoursOfOperation (opening hours)
     public let hoursOfOperation: [HoursOfOperation]
+    /// Container that holds urls to the AVS Endpoints and their certificates to send requests with the AVSModul
+    public let avsEndpoints: AVSEndpoints?
+    /// Array of certificates for all recipients
+    public let avsCertificates: [X509]
 
     public var canBeDisplayedInMap: Bool {
         position?.latitude != nil && position?.longitude != nil
@@ -77,20 +87,76 @@ public struct PharmacyLocation: Identifiable, Hashable, Equatable {
         }
     }
 
+    /// Indicates if the delivery service via the `eRpRemoteStorage` module (Fachdienst) is present
+    /// Note: Authentication via "Fachdienst" is required
     public var hasDeliveryService: Bool {
         types.contains { $0.isDeliveryService }
     }
 
-    public var hasMailService: Bool {
-        types.contains { $0.isMail }
+    /// Indicates if the shipment service via the `eRpRemoteStorage` module (Fachdienst) is present
+    /// Note: Authentication via "Fachdienst" is required
+    public var hasShipmentService: Bool {
+        types.contains { $0.isShipment }
     }
 
+    /// Indicates if the reservation/onPremise service via the `eRpRemoteStorage` module (Fachdienst) is present
+    /// Note: Authentication via "Fachdienst" is required
     public var hasReservationService: Bool {
         types.contains { $0.isReservation }
     }
 
+    /// Indicates if the emergency service via the `eRpRemoteStorage` module (Fachdienst) is present
+    /// Note: Authentication via "Fachdienst" is required
     public var hasEmergencyService: Bool {
         types.contains { $0.isEmergency }
+    }
+
+    /// Indicates if the delivery service via the `AVS` module (ApothekenVerwaltunsSystem) is present
+    /// Note: No authentication via "Fachdienst" is required
+    public var hasDeliveryAVSService: Bool {
+        avsEndpoints?.deliveryUrl != nil && !avsCertificates.isEmpty
+    }
+
+    /// Indicates if the shipment service via the `AVS` module (ApothekenVerwaltunsSystem) is present
+    /// Note: No authentication via "Fachdienst" is required
+    public var hasShipmentAVSService: Bool {
+        avsEndpoints?.shipmentUrl != nil && !avsCertificates.isEmpty
+    }
+
+    /// Indicates if the reservation/onPremise service via the `AVS` module (ApothekenVerwaltunsSystem) is present
+    /// Note: No authentication via "Fachdienst" is required
+    public var hasReservationAVSService: Bool {
+        avsEndpoints?.onPremiseUrl != nil && !avsCertificates.isEmpty
+    }
+
+    public struct AVSEndpoints {
+        public let onPremiseUrl: URL?
+        public let shipmentUrl: URL?
+        public let deliveryUrl: URL?
+        public let certificatesURL: URL?
+
+        public init(
+            onPremiseUrl: URL? = nil,
+            shipmentUrl: URL? = nil,
+            deliveryUrl: URL? = nil,
+            certificatesURL: URL? = nil
+        ) {
+            self.onPremiseUrl = onPremiseUrl
+            self.shipmentUrl = shipmentUrl
+            self.deliveryUrl = deliveryUrl
+            self.certificatesURL = certificatesURL
+        }
+
+        public func url(for redeemOption: RedeemOption) -> URL? {
+            switch redeemOption {
+            case .onPremise:
+                return onPremiseUrl
+            case .delivery:
+                return deliveryUrl
+            case .shipment:
+                return shipmentUrl
+            }
+        }
     }
 }
 
@@ -130,23 +196,30 @@ extension PharmacyLocation {
     public enum PharmacyType: Hashable {
         /// Pharmacy
         case pharm
+
         /// Outpatient pharmacy
-        /// NOTE: Is here used to indicate (publicly accessible) brick and mortar pharmacies
+        /// NOTE: Is here used to indicate (publicly accessible) brick and mortar pharmacies that offer pickup service.
         case outpharm
+
         /// Mobile Unit
         /// NOTE: Is here used to indicate pharmacies offering mail order service
         case mobl
+
+        /// NOTE: Is here used to indicate (publicly accessible) brick and mortar pharmacies that offer delivery
+        /// (a.k.a. Botendienst)
+        case delivery
+
         case emergency
 
         var isDeliveryService: Bool {
-            self == .mobl
+            self == .delivery
         }
 
         var isReservation: Bool {
-            self == .pharm
+            self == .outpharm
         }
 
-        var isMail: Bool {
+        var isShipment: Bool {
             self == .mobl
         }
 
@@ -196,6 +269,25 @@ extension PharmacyLocation {
                     address += ", \(zip) \(city)"
                 } else {
                     address += ", \(city)"
+                }
+            }
+            return address
+        }
+
+        public var fullAddressBreak: String {
+            var address = ""
+            if let street = street {
+                address = street
+            }
+            if let number = houseNumber {
+                address += " \(number)"
+            }
+
+            if let city = city {
+                if let zip = zip {
+                    address += ",\n\(zip) \(city)"
+                } else {
+                    address += ",\n\(city)"
                 }
             }
             return address

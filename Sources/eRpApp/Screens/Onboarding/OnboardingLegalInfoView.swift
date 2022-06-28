@@ -30,18 +30,15 @@ struct OnboardingLegalInfoView: View {
     }
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading) {
-                Text(L10n.onbLegTxtTitle)
-                    .foregroundColor(Colors.primary900)
-                    .font(Font.title3.weight(.bold))
-                    .accessibility(identifier: A18n.onboarding.legalInfo.onbTxtLegalInfoTitle)
-                    .padding([.leading, .trailing, .top], 24)
+        ScrollView(.vertical, showsIndicators: true) {
+            VStack(alignment: .leading, spacing: 0) {
+                TitleView()
+
                 Text(L10n.onbLegTxtSubtitle)
                     .fixedSize(horizontal: false, vertical: true)
-                    .padding(24)
+                    .padding(.vertical, 8)
 
-                VStack(alignment: .leading) {
+                VStack {
                     OnboardingTermsOfUseView(
                         action: action,
                         iconSize: iconSize,
@@ -56,6 +53,7 @@ struct OnboardingLegalInfoView: View {
                         showTermsOfPrivacy: $showTermsOfPrivacy
                     )
                 }
+                .padding(.top, 34)
 
                 HStack {
                     Spacer()
@@ -71,13 +69,14 @@ struct OnboardingLegalInfoView: View {
                     .foregroundColor(isDoneButtonDisabled ? Colors.systemGray : Colors.systemColorWhite)
                     .background(isDoneButtonDisabled ? Colors.systemGray5 : Colors.primary600)
                     .cornerRadius(16)
-                    .padding()
 
                     Spacer()
                 }
 
                 Spacer()
             }
+            .padding()
+            .padding(.bottom, 32)
         }
         .onAppear {
             withAnimation {
@@ -88,6 +87,26 @@ struct OnboardingLegalInfoView: View {
 }
 
 extension OnboardingLegalInfoView {
+    struct TitleView: View {
+        var body: some View {
+            VStack(alignment: .leading, spacing: 0) {
+                HStack {
+                    Image(decorative: Asset.Onboarding.paragraph)
+                    Spacer()
+                }
+                .padding(.top, 10)
+
+                Text(L10n.onbLegTxtTitle)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .multilineTextAlignment(.leading)
+                    .font(Font.title.weight(.bold))
+                    .accessibility(identifier: A18n.onboarding.legalInfo.onbTxtLegalInfoTitle)
+                    .padding(.top, 22)
+            }
+        }
+    }
+
     struct OnboardingTermsOfUseView: View {
         var action: () -> Void
         @ScaledMetric var iconSize: CGFloat
@@ -107,6 +126,7 @@ extension OnboardingLegalInfoView {
                                 + Text(L10n.onbTxtTermsOfUseSuffix)
                                 .foregroundColor(Colors.systemLabel)
                         }
+                        .multilineTextAlignment(.leading)
                         .fixedSize(horizontal: false, vertical: true)
                         .lineLimit(3)
                         .accessibilityIdentifier(A18n.onboarding.legalInfo.onbTxtTermsOfUse)
@@ -117,10 +137,11 @@ extension OnboardingLegalInfoView {
                         TermsOfUseView()
                             .toolbar {
                                 CloseButton { showTermsOfUse = false }
+                                    .embedToolbarContent()
                                     .accessibilityIdentifier(A11y.settings.termsOfUse.stgBtnTermsOfUseClose)
                             }
                     }
-                    .accentColor(Colors.primary700)
+                    .accentColor(Colors.primary600)
                     .navigationViewStyle(StackNavigationViewStyle())
                 }
 
@@ -133,10 +154,12 @@ extension OnboardingLegalInfoView {
                     label: {
                         OnboardingLegalInfoCheckmarkView(isAccepted: $isUseAccepted)
                     }
-                ).accessibility(identifier: A18n.onboarding.legalInfo.onbBtnAcceptTermsOfUse)
-                    .accessibility(hint: Text(L10n.onbLegBtnTermsOfUseHint))
+                )
+                .accessibility(identifier: A18n.onboarding.legalInfo.onbBtnAcceptTermsOfUse)
+                .accessibility(hint: Text(L10n.onbLegBtnTermsOfUseHint))
+                .padding(.trailing, 6)
             }
-            .padding([.leading, .trailing, .bottom], 24)
+            .padding(.bottom, 16)
         }
     }
 
@@ -159,6 +182,7 @@ extension OnboardingLegalInfoView {
                                 + Text(L10n.onbTxtTermsOfPrivacySuffix)
                                 .foregroundColor(Colors.systemLabel)
                         }
+                        .multilineTextAlignment(.leading)
                         .fixedSize(horizontal: false, vertical: true)
                         .lineLimit(3)
                         .accessibilityIdentifier(A18n.onboarding.legalInfo.onbTxtTermsOfPrivacy)
@@ -169,10 +193,11 @@ extension OnboardingLegalInfoView {
                         DataPrivacyView()
                             .toolbar {
                                 CloseButton { showTermsOfPrivacy = false }
+                                    .embedToolbarContent()
+                                    .accessibilityIdentifier(A11y.settings.dataPrivacy.stgBtnDataPrivacyClose)
                             }
-                            .accessibilityIdentifier(A11y.settings.dataPrivacy.stgBtnDataPrivacyClose)
                     }
-                    .accentColor(Colors.primary700)
+                    .accentColor(Colors.primary600)
                     .navigationViewStyle(StackNavigationViewStyle())
                 }
 
@@ -185,10 +210,13 @@ extension OnboardingLegalInfoView {
                     label: {
                         OnboardingLegalInfoCheckmarkView(isAccepted: $isPrivacyAccepted)
                     }
-                ).accessibility(identifier: A18n.onboarding.legalInfo.onbBtnAcceptPrivacy)
-                    .accessibility(hint: Text(L10n.onbLegBtnPrivacyHint))
+                )
+                .accessibility(identifier: A18n.onboarding.legalInfo.onbBtnAcceptPrivacy)
+                .accessibility(hint: Text(L10n.onbLegBtnPrivacyHint))
+                .padding(.trailing, 6)
             }
-            .padding([.leading, .trailing, .bottom], 24)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.bottom, 40)
         }
     }
 }

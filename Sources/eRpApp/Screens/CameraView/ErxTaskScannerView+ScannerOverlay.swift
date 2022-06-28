@@ -18,7 +18,7 @@
 
 import Combine
 import ComposableArchitecture
-import eRpKit // TODO: don't use in view classes, remove in next iteration // swiftlint:disable:this todo
+import eRpKit
 import SwiftUI
 
 extension ErxTaskScannerView {

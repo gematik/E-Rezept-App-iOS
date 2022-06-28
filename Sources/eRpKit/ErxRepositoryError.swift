@@ -18,9 +18,12 @@
 
 import Foundation
 
+// sourcery: CodedError = "200"
 /// Repository error cases
 public enum ErxRepositoryError: Swift.Error, LocalizedError, Equatable {
+    // sourcery: errorCode = "01"
     case local(LocalStoreError)
+    // sourcery: errorCode = "02"
     case remote(RemoteStoreError)
 
     public var errorDescription: String? {

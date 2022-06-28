@@ -37,17 +37,18 @@ extension ModelsR4.Bundle {
     static func parse(_ communication: ModelsR4.Communication,
                       from _: ModelsR4.Bundle) throws -> ErxTask.Communication? {
         guard let identifier = communication.id?.value?.string else {
-            throw Error.parseError("Could not parse id from communication.")
+            throw RemoteStorageBundleParsingError.parseError("Could not parse id from communication.")
         }
 
         guard let profileUrl = communication.meta?.profile?.first?.value?.url.absoluteString,
               let profile = ErxTask.Communication.Profile(rawValue: profileUrl) else {
-            throw Error.parseError("Could not parse the communication profile")
+            throw RemoteStorageBundleParsingError.parseError("Could not parse the communication profile")
         }
 
         guard let reference = communication.basedOn?.first?.reference?.value?.string,
               let task = TaskCheck(taskString: reference) else {
-            throw Error.parseError("Could not parse reference or extract task id and access code from communication.")
+            throw RemoteStorageBundleParsingError
+                .parseError("Could not parse reference or extract task id and access code from communication.")
         }
 
         guard let telematikId = communication.telematikId(for: profile) else {
@@ -55,15 +56,15 @@ extension ModelsR4.Bundle {
         }
 
         guard let userKVID = communication.kvID(for: profile) else {
-            throw Error.parseError("Could not parse userKVID from communication")
+            throw RemoteStorageBundleParsingError.parseError("Could not parse userKVID from communication")
         }
 
         guard let timestamp = communication.sent?.value?.description else {
-            throw Error.parseError("Could not parse sent value from communication")
+            throw RemoteStorageBundleParsingError.parseError("Could not parse sent value from communication")
         }
 
         guard let payloadContent = communication.payloadContent else {
-            throw Error.parseError("Could not parse payload value from communication")
+            throw RemoteStorageBundleParsingError.parseError("Could not parse payload value from communication")
         }
 
         return ErxTask.Communication(
@@ -127,7 +128,7 @@ extension ModelsR4.Communication {
 
 private struct TaskCheck: Identifiable, Hashable {
     /// Id of the task
-    let id: String // swiftlint:disable:this identifier_name
+    let id: String
     /// Access code authorizing for the task
     let accessCode: String?
 

@@ -36,23 +36,23 @@ extension ModelsR4.Bundle {
 
     static func parse(_ medicationDispense: ModelsR4.MedicationDispense) throws -> ErxTask.MedicationDispense {
         guard let taskId = medicationDispense.taskId else {
-            throw Error.parseError("Could not parse task id from medication dispense.")
+            throw RemoteStorageBundleParsingError.parseError("Could not parse task id from medication dispense.")
         }
 
         guard let insuranceId = medicationDispense.insuranceIdentifier else {
-            throw Error.parseError("Could not parse kvnr from medication dispense.")
+            throw RemoteStorageBundleParsingError.parseError("Could not parse kvnr from medication dispense.")
         }
 
         guard let productNumber = medicationDispense.medicationPZN else {
-            throw Error.parseError("Could not parse pzn number from medication dispense.")
+            throw RemoteStorageBundleParsingError.parseError("Could not parse pzn number from medication dispense.")
         }
 
         guard let performerID = medicationDispense.firstPerformerID else {
-            throw Error.parseError("Could not parse performerID from medication dispense.")
+            throw RemoteStorageBundleParsingError.parseError("Could not parse performerID from medication dispense.")
         }
 
         guard let handedOverDateString = medicationDispense.handOverDate else {
-            throw Error.parseError("Could not parse whenHandedOver from medication dispense.")
+            throw RemoteStorageBundleParsingError.parseError("Could not parse whenHandedOver from medication dispense.")
         }
 
         return ErxTask.MedicationDispense(

@@ -38,7 +38,7 @@ final class PrescriptionViewStatusTests: XCTestCase {
                 noctuFeeWaiver: true,
                 substitutionAllowed: true,
                 medication: medication,
-                auditEvents: ErxAuditEvent.Dummies.auditEvents)
+                auditEvents: ErxAuditEvent.Fixtures.auditEvents)
     }
 
     let medication: ErxTask.Medication = {
@@ -58,7 +58,7 @@ final class PrescriptionViewStatusTests: XCTestCase {
         // when
         let sut = GroupedPrescription.Prescription(erxTask: task)
         // then
-        expect(sut.viewStatus).to(equal(.open(until: "Still valid for 28 days")))
+        expect(sut.viewStatus).to(equal(.open(until: "Noch 28 Tage gültig")))
     }
 
     func testTaskIsInProgress() { // ACCEPT
@@ -67,7 +67,7 @@ final class PrescriptionViewStatusTests: XCTestCase {
         // when
         let sut = GroupedPrescription.Prescription(erxTask: task)
         // then
-        expect(sut.viewStatus).to(equal(.open(until: "Still valid for 28 days")))
+        expect(sut.viewStatus).to(equal(.open(until: "Noch 28 Tage gültig")))
     }
 
     func testTaskIsClosed() { // CLOSE
@@ -76,7 +76,7 @@ final class PrescriptionViewStatusTests: XCTestCase {
         // when
         let sut = GroupedPrescription.Prescription(erxTask: task)
         // then
-        expect(sut.viewStatus).to(equal(.archived(message: "Redeemed: Today")))
+        expect(sut.viewStatus).to(equal(.archived(message: "Eingelöst: Heute")))
     }
 
     func testTaskIsReadyAndNotAcceptedAnymore() {
@@ -95,7 +95,7 @@ final class PrescriptionViewStatusTests: XCTestCase {
         // when
         let sut = GroupedPrescription.Prescription(erxTask: task)
         // then
-        expect(sut.viewStatus).to(equal(.open(until: "Not specified")))
+        expect(sut.viewStatus).to(equal(.open(until: "Keine Angabe")))
     }
 
     func testTaskIsReadyExpiredAndRedeemYourselfExpired() {
@@ -105,7 +105,7 @@ final class PrescriptionViewStatusTests: XCTestCase {
         // when
         let sut = GroupedPrescription.Prescription(erxTask: task)
         // then
-        expect(sut.viewStatus).to(equal(.archived(message: "No longer valid")))
+        expect(sut.viewStatus).to(equal(.archived(message: "Nicht mehr gültig")))
     }
 
     func testTaskIsClosedWithoutRedeemedDate() {
@@ -114,7 +114,7 @@ final class PrescriptionViewStatusTests: XCTestCase {
         // when
         let sut = GroupedPrescription.Prescription(erxTask: task)
         // then
-        expect(sut.viewStatus).to(equal(.archived(message: "Redeemed: Not specified")))
+        expect(sut.viewStatus).to(equal(.archived(message: "Eingelöst: Keine Angabe")))
     }
 
     func testTaskIsUndefined() {

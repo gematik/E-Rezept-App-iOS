@@ -47,6 +47,7 @@ final class CardWallReadCardDomainTests: XCTestCase {
     var mockCurrentProfile: AnyPublisher<Profile, LocalStoreError>!
     var mockProfileDataStore = MockProfileDataStore()
     var mockProfileBasedIdpSessionProvider = MockProfileBasedSessionProvider()
+    var mockApplication = MockUIApplication()
 
     let challenge = try! IDPChallengeSession(
         challenge: IDPChallenge(
@@ -113,7 +114,8 @@ final class CardWallReadCardDomainTests: XCTestCase {
                 profileDataStore: mockProfileDataStore,
                 signatureProvider: DummySecureEnclaveSignatureProvider(),
                 sessionProvider: mockProfileBasedIdpSessionProvider,
-                nfcSessionProvider: mockNFCSessionProvider
+                nfcSessionProvider: mockNFCSessionProvider,
+                application: mockApplication
             )
         )
     }
@@ -311,6 +313,55 @@ final class CardWallReadCardDomainTests: XCTestCase {
         }
     }
 
+    func testWhenIDPChallengeAvailable_SigningStates_Error_To_Report() {
+        let sut = testStore(
+            initialState: CardWallReadCardDomain.State(isDemoModus: false,
+                                                       profileId: mockUserSession.profileId,
+                                                       pin: "123456",
+                                                       loginOption: .withoutBiometry,
+                                                       output: .challengeLoaded(challenge))
+        )
+
+        let error = NFCSignatureProviderError.signingFailure(.unsupportedAlgorithm)
+        sut.send(.signChallenge(challenge))
+        uiScheduler.advance()
+        sut.receive(.stateReceived(.signingChallenge(.loading))) { state in
+            state.output = .signingChallenge(.loading)
+        }
+        mockNFCSessionProvider.signResult.send(completion: .failure(error))
+        mockNFCSessionProvider.signResult.send(completion: .finished)
+        uiScheduler.advance()
+        let report = CardWallReadCardDomain.createNfcReadingReport(with: error, commands: [])
+        sut.receive(
+            CardWallReadCardDomain.Action.stateReceived(.signingChallenge(.error(.signChallengeError(error))))
+        ) { state in
+            state.output = .signingChallenge(.error(.signChallengeError(error)))
+
+            state.alertState = CardWallReadCardDomain.AlertStates.alertWithReportButton(report, error: error)
+        }
+    }
+
+    func testSendingMail() {
+        let sut = testStore(
+            initialState: CardWallReadCardDomain.State(isDemoModus: false,
+                                                       profileId: mockUserSession.profileId,
+                                                       pin: "123456",
+                                                       loginOption: .withoutBiometry,
+                                                       output: .challengeLoaded(challenge))
+        )
+        let error = NFCSignatureProviderError.signingFailure(.unsupportedAlgorithm)
+        let report = CardWallReadCardDomain.createNfcReadingReport(with: error, commands: [])
+        let mailState = EmailState(subject: L10n.cdwTxtMailSubject.text, body: report)
+        let expectedUrl = mailState.createEmailUrl()
+
+        expect(self.mockApplication.canOpenURLCalled).to(beFalse())
+        expect(self.mockApplication.openCalled).to(beFalse())
+        sut.send(.openMail(report))
+        expect(self.mockApplication.canOpenURLCalled).to(beTrue())
+        expect(self.mockApplication.openCalled).to(beTrue())
+        expect(self.mockApplication.openUrlParameter?.absoluteString) == expectedUrl?.absoluteString
+    }
+
     func testUpdateProfileSaveError() {
         let sut = testStore(
             initialState: CardWallReadCardDomain.State(
@@ -342,7 +393,7 @@ final class CardWallReadCardDomainTests: XCTestCase {
         }
         uiScheduler.advance()
         sut.receive(.saveError(.notImplemented)) { state in
-            state.alertState = CardWallReadCardDomain.saveProfileAlertState
+            state.alertState = CardWallReadCardDomain.AlertStates.saveProfile
         }
     }
 

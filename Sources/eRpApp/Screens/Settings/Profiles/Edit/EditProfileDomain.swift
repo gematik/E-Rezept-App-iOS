@@ -177,15 +177,19 @@ extension EditProfileDomain {
             state.route = .alert(AlertStates.deleteProfile)
             return .none
         case .confirmDeleteProfile:
-            return environment
-                .deleteProfile(with: state.profileId)
-                .map { result in
-                    switch result {
-                    case .success: return Action.close
-                    case let .failure(error): return Action.updateProfileReceived(.failure(error))
-                    }
-                }
-                .eraseToEffect()
+            return
+                .concatenate(
+                    cleanup(),
+                    environment
+                        .deleteProfile(with: state.profileId)
+                        .map { result in
+                            switch result {
+                            case .success: return Action.close
+                            case let .failure(error): return Action.updateProfileReceived(.failure(error))
+                            }
+                        }
+                        .eraseToEffect()
+                )
         case .updateProfileReceived(.success):
             return .none
         case let .updateProfileReceived(.failure(error)):

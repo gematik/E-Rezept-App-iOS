@@ -19,9 +19,12 @@
 import Combine
 import ComposableArchitecture
 import eRpKit
+import FHIRClient
+import HTTPClient
 import IDP
 import Pharmacy
 import SwiftUI
+import ZXingObjC
 
 enum PrescriptionDetailDomain: Equatable {
     typealias Store = ComposableArchitecture.Store<State, Action>
@@ -38,7 +41,9 @@ enum PrescriptionDetailDomain: Equatable {
         case saveErxTask
     }
 
+    // sourcery: CodedError = "016"
     enum LoadingImageError: Error, Equatable, LocalizedError {
+        // sourcery: errorCode = "01"
         case matrixCodeGenerationFailed
     }
 
@@ -47,32 +52,10 @@ enum PrescriptionDetailDomain: Equatable {
         var loadingState: LoadingState<UIImage, LoadingImageError> = .idle
         var alertState: AlertState<Action>?
         var isArchived: Bool
+        var isDeleting = false
         var isSubstitutionReadMorePresented = false
         // pharmacy state
         var pharmacySearchState: PharmacySearchDomain.State?
-
-        var auditEventsLastUpdated: String? {
-            prescription.auditEvents.first?.timestamp
-        }
-
-        var auditEventsErrorText: String? {
-            prescription.auditEvents
-                .isEmpty ? L10n.prscFdTxtProtocolDownloadError.text : nil
-        }
-
-        var showPrescriptionStatus: Bool {
-            switch prescription.viewStatus {
-            case .open, .archived, .undefined: return false
-            case .error: return true
-            }
-        }
-
-        var showFullDetailBottomBanner: Bool {
-            switch prescription.viewStatus {
-            case .open, .archived, .undefined: return false
-            case .error: return true
-            }
-        }
 
         func createReportEmail(body: String) -> URL? {
             var urlString = URLComponents(string: "mailto:app-feedback@gematik.de")
@@ -124,10 +107,12 @@ enum PrescriptionDetailDomain: Equatable {
     struct Environment {
         let schedulers: Schedulers
         let taskRepository: ErxTaskRepository
-        let matrixCodeGenerator = DefaultErxTaskMatrixCodeGenerator()
+        let matrixCodeGenerator = DefaultErxTaskMatrixCodeGenerator(matrixCodeGenerator: ZXDataMatrixWriter())
         let fhirDateFormatter: FHIRDateFormatter
         let pharmacyRepository: PharmacyRepository
         let userSession: UserSession
+
+        var dateProvider: (() -> Date) = Date.init
     }
 
     static let domainReducer = Reducer { state, action, environment in
@@ -171,6 +156,7 @@ enum PrescriptionDetailDomain: Equatable {
         // [REQ:gemSpec_eRp_FdV:A_19229]
         case .confirmedDelete:
             state.alertState = nil
+            state.isDeleting = true
             return environment.taskRepository.delete(erxTasks: [state.prescription.erxTask])
                 .first()
                 .receive(on: environment.schedulers.main)
@@ -178,12 +164,18 @@ enum PrescriptionDetailDomain: Equatable {
                 .map(Action.taskDeletedReceived)
                 .cancellable(id: Token.deleteErxTask)
         case let .taskDeletedReceived(.failure(fail)):
-            if case ErxRepositoryError.local(.delete(IDPError.tokenUnavailable)) = fail {
-                // Only show error message when token is not available
-                state.alertState = deleteFailedAlertState(fail.localizedDescription)
+            state.isDeleting = false
+            if fail == .remote(.fhirClientError(IDPError.tokenUnavailable)) {
+                state.alertState = missingTokenAlertState()
+            } else if case let ErxRepositoryError.remote(error) = fail,
+                      let outcome = error.fhirClientOperationOutcome {
+                state.alertState = deleteFailedAlertState(outcome)
+            } else {
+                state.alertState = deleteFailedAlertState(L10n.dtlTxtDeleteFallbackMessage.text)
             }
             return cleanup()
         case let .taskDeletedReceived(.success(success)):
+            state.isDeleting = false
             if success {
                 return Effect(value: .close)
             }
@@ -194,7 +186,9 @@ enum PrescriptionDetailDomain: Equatable {
             state.isArchived.toggle()
             var erxTask = state.prescription.erxTask
             if state.isArchived {
-                let redeemedOn = environment.fhirDateFormatter.stringWithLongUTCTimeZone(from: Date())
+                let redeemedOn = environment.fhirDateFormatter.stringWithLongUTCTimeZone(
+                    from: environment.dateProvider()
+                )
                 erxTask.update(with: redeemedOn)
             } else {
                 erxTask.update(with: nil)
@@ -228,6 +222,7 @@ enum PrescriptionDetailDomain: Equatable {
         case .errorBannerButtonPressed:
             return .init(value: .openEmailClient(body: state.prescription.errorString))
         case let .openEmailClient(body):
+            state.alertState = nil
             guard let email = state.createReportEmail(body: body) else { return .none }
             if UIApplication.shared.canOpenURL(email) {
                 UIApplication.shared.open(email)
@@ -265,12 +260,33 @@ enum PrescriptionDetailDomain: Equatable {
         )
     }()
 
-    static func deleteFailedAlertState(_: String) -> AlertState<Action> {
+    static func deleteFailedAlertState(_ localizedError: String) -> AlertState<Action> {
+        AlertState(
+            title: TextState(L10n.dtlTxtDeleteMissingTokenAlertTitle),
+            message: TextState(localizedError),
+            primaryButton: .default(TextState(L10n.prscFdBtnErrorBanner),
+                                    action: .send(.openEmailClient(body: localizedError))),
+            secondaryButton: .default(TextState(L10n.alertBtnOk), action: .send(.alertDismissButtonTapped))
+        )
+    }
+
+    static func missingTokenAlertState() -> AlertState<Action> {
         AlertState(
             title: TextState(L10n.dtlTxtDeleteMissingTokenAlertTitle),
             message: TextState(L10n.dtlTxtDeleteMissingTokenAlertMessage),
             dismissButton: .default(TextState(L10n.alertBtnOk), action: .send(.alertDismissButtonTapped))
         )
+    }
+}
+
+extension RemoteStoreError {
+    var fhirClientOperationOutcome: String? {
+        guard case let .fhirClientError(error) = self,
+              let fhirClientError = error as? FHIRClient.Error,
+              case let .operationOutcome(outcome) = fhirClientError else {
+            return nil
+        }
+        return outcome.issue.first?.details?.text?.value?.string
     }
 }
 
@@ -289,7 +305,7 @@ extension PrescriptionDetailDomain.Environment {
         -> Effect<PrescriptionDetailDomain.Action, Never> {
         taskRepository.save(erxTasks: erxTasks)
             .first()
-            .receive(on: schedulers.main)
+            .receive(on: schedulers.main.animation())
             .replaceError(with: false)
             .map(PrescriptionDetailDomain.Action.redeemedOnSavedReceived)
             .eraseToEffect()

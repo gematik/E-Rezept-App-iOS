@@ -18,63 +18,27 @@
 
 import SwiftUI
 
-/// `LabelStyle` applying font and color for full width action buttons within `SectionContainer`s. This style is applied
-/// automatically within `SectionContainer`.
+/// `LabelStyle` switching the icon to be trailing instead of leading.
 public struct TrailingIconLabelStyle: LabelStyle {
-    @Environment(\.sectionContainerIsLastElement)
-    var isLastElement: Bool
-
     public func makeBody(configuration: Configuration) -> some View {
-        VStack(alignment: .leading, spacing: 0) {
-            HStack(alignment: .center, spacing: 16) {
-                configuration.title
-                    .foregroundColor(Color(.label))
-                    .frame(maxWidth: .infinity, alignment: .leading)
-
-                configuration.icon
-                    .foregroundColor(Color(.tertiaryLabel))
-                    .frame(width: 22, height: 22, alignment: .center)
-                    .font(.body.weight(.semibold))
-            }
-            .padding([.bottom, .trailing, .top])
-
-            if !isLastElement {
-                Divider()
-            }
+        HStack {
+            configuration.title
+            configuration.icon
         }
-
-        .subTitleStyle(PlainSectionContainerSubTitleStyle())
-        .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
-        .padding([.leading])
     }
 }
 
-extension LabelStyle where Self == SectionContainerLabelStyle {
-    /// A label style that applies standard border artwork based on the
-    /// button's context.
+extension LabelStyle where Self == TrailingIconLabelStyle {
+    /// A label style that switches the icon to be trailing instead of leading.
     ///
     /// To apply this style to a button, or to a view that contains buttons, use
-    /// the ``View/buttonStyle(_:)`` modifier.
+    /// the ``Label/labelStyle(_:)`` modifier.
     public static var trailingIcon: TrailingIconLabelStyle { TrailingIconLabelStyle() }
 }
 
 struct TrailingIconLabelStyle_Preview: PreviewProvider {
     static var previews: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 8) {
-                SectionContainer {
-                    Label("Simple Label", systemImage: SFSymbolName.ant)
-                        .labelStyle(.trailingIcon)
-
-                    Label("Simple Label", systemImage: SFSymbolName.ant)
-                        .labelStyle(.trailingIcon)
-
-                    Label("Simple Label", systemImage: SFSymbolName.ant)
-                        .labelStyle(.trailingIcon)
-                }
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        }
-        .background(Color(.secondarySystemBackground))
+        Label("Simple Label", systemImage: SFSymbolName.ant)
+            .labelStyle(.trailingIcon)
     }
 }

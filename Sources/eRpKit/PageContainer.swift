@@ -45,5 +45,5 @@ public struct Page: Equatable, Identifiable, Hashable {
     public let offset: Int
     public let size: Int
 
-    public let id = UUID() // swiftlint:disable:this identifier_name
+    public let id = UUID()
 }

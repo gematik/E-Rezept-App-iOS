@@ -44,60 +44,23 @@ struct CardWallView: View {
         }
     }
 
-    @AppStorage("enable_fast_track") var enableFastTrack = false
-    @AppStorage("enable_fast_track_preview") var enableFastTrackPreview = true
-
     var body: some View {
         NavigationView {
-            if !enableFastTrack {
-                VStack {
-                    if viewStore.introAlreadyDisplayed {
-                        afterIntroductionView()
-                    } else {
-                        CardWallIntroductionView(
-                            store: store.scope(
-                                state: \.introduction,
-                                action: CardWallDomain.Action.introduction(action:)
-                            )
-                        ) {
-                            afterIntroductionView()
-                        }
-                    }
+            CardWallIntroductionView(
+                store: store.scope(
+                    state: \.introduction,
+                    action: CardWallDomain.Action.introduction(action:)
+                ), nextView: {
+                    afterIntroductionView()
+                }, fastTrackView: {
+                    CardWallExtAuthSelectionView(
+                        store: store.scope(
+                            state: \.insuranceSelectionState,
+                            action: CardWallDomain.Action.insuranceSelection(action:)
+                        )
+                    )
                 }
-            } else {
-                VStack(alignment: .leading) {
-                    CardWallLoginSelectionView {
-                        CardWallIntroductionView(
-                            store: store.scope(
-                                state: \.introduction,
-                                action: CardWallDomain.Action.introduction(action:)
-                            )
-                        ) {
-                            afterIntroductionView()
-                        }
-                    } kkApp: {
-                        if enableFastTrackPreview {
-                            CardWallExtAuthFallbackView {
-                                viewStore.send(.close)
-                            }
-                        } else {
-                            CardWallExtAuthSelectionView(
-                                store: store.scope(
-                                    state: \.insuranceSelectionState,
-                                    action: CardWallDomain.Action.insuranceSelection(action:)
-                                )
-                            )
-                        }
-                    }
-                }
-                .navigationBarItems(
-                    trailing: NavigationBarCloseItem {
-                        viewStore.send(.close)
-                    }
-                    .accessibility(identifier: A11y.cardWall.intro.cdwBtnIntroCancel)
-                    .accessibility(label: Text(L10n.cdwBtnIntroCancelLabel))
-                )
-            }
+            )
         }
         .accentColor(Colors.primary)
     }

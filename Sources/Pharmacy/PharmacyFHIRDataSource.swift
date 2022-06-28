@@ -38,16 +38,19 @@ public struct PharmacyFHIRDataSource {
     /// - Parameter position: Position (latitude and longitude) of pharmacy
     /// - Returns: `AnyPublisher` that emits all `PharmacyLocation`s for the given `searchTerm`
     public func searchPharmacies(by searchTerm: String,
-                                 position: Position?)
+                                 position: Position?,
+                                 filter: [String: String])
         -> AnyPublisher<[PharmacyLocation], Error> {
-        fhirClient.searchPharmacies(by: searchTerm, position: position)
+        fhirClient.searchPharmacies(by: searchTerm, position: position, filter: filter)
             .mapError { Error.fhirClient($0) }
             .eraseToAnyPublisher()
     }
 }
 
 extension PharmacyFHIRDataSource {
+    // sourcery: CodedError = "570"
     public enum Error: Swift.Error, LocalizedError, Equatable {
+        // sourcery: errorCode = "01"
         case fhirClient(FHIRClient.Error)
     }
 }

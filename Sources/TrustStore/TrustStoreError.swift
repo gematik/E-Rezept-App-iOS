@@ -19,27 +19,42 @@
 import Foundation
 import HTTPClient
 
+// sourcery: CodedError = "560"
 public enum TrustStoreError: Swift.Error {
+    // sourcery: errorCode = "01"
     /// In case of HTTP/Connection error
     case network(error: HTTPError)
+    // sourcery: errorCode = "02"
     /// When failed to extract a certificate from the CertList
     case noCertificateFound
+    // sourcery: errorCode = "03"
     /// When one (or more) OCSP response(s) can not be parsed or do not meet expiry conditions
     case invalidOCSPResponse
+    // sourcery: errorCode = "04"
     /// When one (or more) end entity certificate cannot be status verified by given OCSP responses
     case eeCertificateOCSPStatusVerification
+    // sourcery: errorCode = "05"
     /// Other error cases
     case unspecified(error: Swift.Error)
+    // sourcery: errorCode = "06"
     /// Internal error
     case `internal`(error: InternalError)
 
-    public enum InternalError: Error {
+    // sourcery: CodedError = "561"
+    public enum InternalError: Swift.Error {
+        // sourcery: errorCode = 90-20-02001
         case loadOCSPCheckedTrustStoreUnexpectedNil
+        // sourcery: errorCode = 90-20-02002
         case loadCertListFromServerUnexpectedNil
+        // sourcery: errorCode = 90-20-02003
         case loadOCSPListFromServerUnexpectedNil
+        // sourcery: errorCode = 90-20-02004
         case trustStoreCertListUnexpectedNil
+        // sourcery: errorCode = 90-20-02005
         case loadOCSPResponsesUnexpectedNil
+        // sourcery: errorCode = 90-20-02006
         case missingSignerForEECertificate
+        // sourcery: errorCode = 90-20-02007
         case notImplemented
     }
 }

@@ -37,12 +37,6 @@ final class OnboardingSnapshotTests: XCTestCase {
         assertSnapshots(matching: sut, as: snapshotModi())
     }
 
-    func testOnboardingWelcomeView() {
-        let sut = OnboardingWelcomeView()
-            .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
-        assertSnapshots(matching: sut, as: snapshotModi())
-    }
-
     func testOnboardingFeaturesView() {
         let sut = OnboardingFeaturesView()
             .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)

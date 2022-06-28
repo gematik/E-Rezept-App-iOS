@@ -39,7 +39,7 @@ extension ScannerDomain {
         }
 
         static func createScannedErxTasks(from scanOutput: [ScanOutput]) throws -> [ScannedErxTask] {
-            guard let firstCode = scanOutput.first else { // TODO: handle other scans // swiftlint:disable:this todo
+            guard let firstCode = scanOutput.first else {
                 throw Error.empty
             }
 
@@ -59,12 +59,19 @@ extension ScannerDomain {
         }
     }
 
+    // sourcery: CodedError = "001"
     enum Error: Swift.Error, Equatable, LocalizedError {
+        // sourcery: errorCode = "01"
         case duplicate
+        // sourcery: errorCode = "02"
         case empty
+        // sourcery: errorCode = "03"
         case invalid
+        // sourcery: errorCode = "04"
         case storeDuplicate
+        // sourcery: errorCode = "05"
         case scannedErxTask(ScannedErxTask.Error)
+        // sourcery: errorCode = "06"
         case unknown
 
         var isFailure: Bool {

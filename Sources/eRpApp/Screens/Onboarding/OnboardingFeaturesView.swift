@@ -20,61 +20,55 @@ import SwiftUI
 
 struct OnboardingFeaturesView: View {
     var body: some View {
-        GeometryReader { geometry in
-            ScrollView {
-                VStack {
-                    Image(decorative: Asset.Onboarding.handMitKarte)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .padding([.top, .leading], 8)
-                        .accessibility(identifier: A18n.onboarding.features.onbImgHandWithCard)
-                        .accessibility(hint: Text(L10n.onbImgGematikLogo))
-                        .accessibility(sortPriority: 1.0)
-                        .padding()
-                        .frame(maxHeight: geometry.size.height * 0.5)
+        ScrollView(.vertical, showsIndicators: true) {
+            VStack(alignment: .leading, spacing: 0) {
+                TitleView()
 
-                    Text(L10n.onbFeaTxtTitle)
-                        .multilineTextAlignment(.center)
-                        .foregroundColor(Colors.primary900)
-                        .font(Font.title3.weight(.bold))
-                        .fixedSize(horizontal: false, vertical: true)
-                        .accessibility(identifier: A18n.onboarding.features.onbTxtFeaturesTitle)
-                        .padding([.leading, .trailing])
+                FeatureView(title: L10n.onbFeaTxtFeature1, systemImage: SFSymbolName.paperplane)
+                FeatureView(title: L10n.onbFeaTxtFeature2, systemImage: SFSymbolName.pills)
+                FeatureView(title: L10n.onbFeaTxtFeature3, systemImage: SFSymbolName.trayAndArrowDown)
 
-                    VStack(spacing: 8) {
-                        VStack(alignment: .leading) {
-                            HStack(alignment: .top) {
-                                OnboardingFeatureCheckmarkView()
+                Spacer(minLength: 110)
+            }
+            .padding()
+            .labelStyle(.plain)
+        }
+    }
 
-                                Text(L10n.onbFeaTxtFeature1)
-                                    .fixedSize(horizontal: false, vertical: true)
-                            }
-                            .padding()
-
-                            HStack(alignment: .top) {
-                                OnboardingFeatureCheckmarkView()
-
-                                Text(L10n.onbFeaTxtFeature2)
-                                    .fixedSize(horizontal: false, vertical: true)
-                            }
-                            .padding([.leading, .trailing])
-
-                            HStack(alignment: .top) {
-                                OnboardingFeatureCheckmarkView()
-
-                                Text(L10n.onbFeaTxtFeature3)
-                                    .fixedSize(horizontal: false, vertical: true)
-                            }
-                            .padding()
-                        }
-
-                    }.padding([.leading, .trailing])
-                        .accessibilityElement(children: .combine)
-                        .accessibility(sortPriority: 2.0)
-
+    private struct TitleView: View {
+        var body: some View {
+            VStack(alignment: .leading, spacing: 0) {
+                HStack {
+                    Image(decorative: Asset.Onboarding.womanWithPhone)
                     Spacer()
                 }
+                .padding(.top, 10)
+
+                Text(L10n.onbWelTxtTitle)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .multilineTextAlignment(.leading)
+                    .font(Font.title.weight(.bold))
+                    .accessibility(identifier: A18n.onboarding.welcome.onbTxtWelcomeTitle)
+                    .padding(.top, 22)
+                    .padding(.bottom, 14)
             }
+        }
+    }
+
+    private struct FeatureView: View {
+        let title: StringAsset
+        let systemImage: String
+
+        var body: some View {
+            HStack {
+                Image(systemName: systemImage)
+                    .font(Font.headline.weight(.semibold))
+                    .foregroundColor(Colors.primary)
+                    .padding(.trailing)
+                Text(title)
+            }
+            .padding(.vertical, 10)
         }
     }
 }

@@ -45,7 +45,7 @@ enum AuditEventsDomain {
         var lastUpdated: String?
 
         struct AuditEvent: Equatable, Identifiable {
-            let id: String // swiftlint:disable:this identifier_name
+            let id: String
             let title: String?
             let description: String?
             let date: String?

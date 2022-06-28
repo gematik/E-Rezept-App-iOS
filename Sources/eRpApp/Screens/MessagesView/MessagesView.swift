@@ -94,6 +94,7 @@ struct MessagesView: View {
                     UserProfileSelectionToolbarItem(store: profileSelectionToolbarItemStore) {
                         viewStore.send(.setNavigation(tag: .selectProfile))
                     }
+                    .embedToolbarContent()
                     .accessibility(identifier: A18n.mainScreen.erxBtnProfile)
                 }
             }
@@ -104,7 +105,7 @@ struct MessagesView: View {
                 dismiss: .setNavigation(tag: .none)
             )
         }
-        .accentColor(Colors.primary700)
+        .accentColor(Colors.primary600)
         .navigationViewStyle(StackNavigationViewStyle())
     }
 

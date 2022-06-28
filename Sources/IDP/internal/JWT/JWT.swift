@@ -243,11 +243,17 @@ extension JWT {
 }
 
 extension JWT {
-    enum Error: Swift.Error, LocalizedError {
+    // sourcery: CodedError = "104"
+    public enum Error: Swift.Error, LocalizedError {
+        // sourcery: errorCode = "01"
         case malformedJWT
+        // sourcery: errorCode = "02"
         case noSignature
+        // sourcery: errorCode = "03"
         case encodingError
+        // sourcery: errorCode = "04"
         case invalidSignature
+        // sourcery: errorCode = "05"
         case invalidExpirationDate
 
         public var errorDescription: String? {

@@ -114,8 +114,11 @@ public struct JWE {
 }
 
 extension JWE {
-    enum Error: Swift.Error {
+    // sourcery: CodedError = "103"
+    public enum Error: Swift.Error {
+        // sourcery: errorCode = "01"
         case invalidJWE // Must contain 5 parts (4 dots)
+        // sourcery: errorCode = "02"
         case encodingError
     }
 }

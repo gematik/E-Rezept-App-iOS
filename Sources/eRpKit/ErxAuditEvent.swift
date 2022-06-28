@@ -38,7 +38,7 @@ public struct ErxAuditEvent: Identifiable, Hashable {
     }
 
     /// Id of the audit event
-    public var id: String { identifier } // swiftlint:disable:this identifier_name
+    public var id: String { identifier }
 
     /// Identifier of the audit event
     public let identifier: String

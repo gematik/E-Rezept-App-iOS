@@ -25,11 +25,13 @@ enum CardWallIntroductionDomain {
 
     struct State: Equatable {
         var showNextScreen = false
+        var showFastTrackScreen = false
         var isEGKOrderInfoViewPresented = false
     }
 
     enum Action: Equatable {
         case advance(forward: Bool)
+        case advanceExtAuth(forward: Bool)
         case showEGKOrderInfoView
         case dismissEGKOrderInfoView
         case close
@@ -46,6 +48,9 @@ enum CardWallIntroductionDomain {
             if forward {
                 environment.userSession.localUserStore.set(hideCardWallIntro: true)
             }
+            return .none
+        case let .advanceExtAuth(forward):
+            state.showFastTrackScreen = forward
             return .none
         case .close:
             return .none

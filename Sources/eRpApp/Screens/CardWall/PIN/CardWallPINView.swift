@@ -67,7 +67,7 @@ struct CardWallPINView<Content: View>: View {
                 )) {
                     nextView(viewStore.pin)
                         .statusBar(hidden: true)
-                        .accentColor(Colors.primary700)
+                        .accentColor(Colors.primary600)
                         .navigationViewStyle(StackNavigationViewStyle())
                 }
             }
@@ -100,66 +100,47 @@ struct CardWallPINView<Content: View>: View {
                     VStack(alignment: .leading) {
                         Text(L10n.cdwTxtPinSubtitle)
                             .foregroundColor(Colors.systemLabel)
-                            .font(.title3)
+                            .font(.title)
                             .bold()
                             .accessibility(identifier: A11y.cardWall.pinInput.cdwTxtPinSubtitle)
                             .padding(.bottom, 16)
 
-                        PINFieldView(store: store) {
-                            withAnimation {
-                                viewStore.send(.advance(.none))
-                            }
-                        }.padding(.bottom, 32)
-
-                        HintView<CardWallCANDomain.Action>(
-                            hint: Hint(id: A11y.cardWall.pinInput.cdwHintGetPin,
-                                       title: L10n.cdwHintPinTitle.text,
-                                       message: L10n.cdwHintPinMsg.text,
-                                       actionText: nil, // L10n.cdwHintPinBtn
-                                       action: nil,
-                                       imageName: Asset.CardWall.arzt1.name,
-                                       closeAction: nil,
-                                       style: .neutral,
-                                       buttonStyle: .tertiary,
-                                       imageStyle: .topAligned),
-                            textAction: {},
-                            closeAction: nil
-                        )
+                        Text(L10n.cdwTxtPinDescription)
+                            .foregroundColor(Colors.systemLabel)
+                            .font(.title3)
+                            .accessibility(identifier: A11y.cardWall.pinInput.cdwBtnPinNoPin)
                     }
-                }
-                .respectKeyboardInsets()
-            }
-        }
-    }
 
-    private struct PINFieldView: View {
-        let store: CardWallPINDomain.Store
+                    Button(L10n.cdwBtnPinNoPin) {
+                        viewStore.send(.showEGKOrderInfoView)
+                    }.fullScreenCover(isPresented: viewStore.binding(
+                        get: \.isEGKOrderInfoViewPresented,
+                        send: CardWallPINDomain.Action.dismissEGKOrderInfoView
+                    )) {
+                        NavigationView {
+                            OrderHealthCardView {
+                                viewStore.send(.dismissEGKOrderInfoView)
+                            }
+                        }
+                        .accentColor(Colors.primary600)
+                        .navigationViewStyle(StackNavigationViewStyle())
+                    }
+                    .padding([.bottom, .top], 6)
+                    .frame(maxWidth: .infinity, alignment: .trailing)
 
-        let completion: () -> Void
-
-        var body: some View {
-            VStack(alignment: .leading) {
-                WithViewStore(store) { viewStore in
-                    SecureField(
-                        L10n.cdwEdtPinInput,
-                        text: viewStore.binding(get: \.pin, send: CardWallPINDomain.Action.update(pin:)).animation()
-                    )
-                    .textContentType(.oneTimeCode)
-                    .multilineTextAlignment(.center)
-                    .keyboardType(.numberPad)
-                    .padding()
-                    .font(Font.title3.bold())
-                    .background(Colors.systemGray5)
-                    .cornerRadius(8)
-                    .textFieldKeepFirstResponder()
-                    .accessibility(identifier: A11y.cardWall.pinInput.cdwEdtPinInput)
-                    .accessibility(label: Text(L10n.cdwTxtPinInputLabel))
+                    PINFieldView(store: store) {
+                        withAnimation {
+                            viewStore.send(.advance(.none))
+                        }
+                    }.padding([.top, .bottom])
 
                     if !viewStore.showWarning {
                         Text(L10n.cdwTxtPinHint)
                             .font(.footnote)
                             .foregroundColor(Colors.systemLabelSecondary)
                             .accessibility(identifier: A11y.cardWall.pinInput.cdwTxtPinHint)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+
                     } else {
                         // PIN count out-of-bounds warn message // todo styling
                         HStack(spacing: 4) {
@@ -175,6 +156,35 @@ struct CardWallPINView<Content: View>: View {
                             Spacer()
                         }
                     }
+                }
+                .respectKeyboardInsets()
+            }
+        }
+    }
+
+    private struct PINFieldView: View {
+        let store: CardWallPINDomain.Store
+
+        let completion: () -> Void
+
+        var body: some View {
+            VStack(alignment: .leading) {
+                WithViewStore(store) { viewStore in
+                    SecureFieldWithReveal(
+                        titleKey: L10n.cdwEdtPinInput,
+                        accessibilityLabelKey: L10n.cdwTxtPinInputLabel,
+                        text: viewStore.binding(get: \.pin, send: CardWallPINDomain.Action.update(pin:)).animation(),
+                        textContentType: .password
+                    ) {}
+                        .textContentType(.oneTimeCode)
+                        .multilineTextAlignment(.leading)
+                        .keyboardType(.numberPad)
+                        .padding()
+                        .font(Font.title3)
+                        .background(Colors.systemGray5)
+                        .cornerRadius(8)
+                        .textFieldKeepFirstResponder()
+                        .accessibility(identifier: A11y.cardWall.pinInput.cdwEdtPinInput)
                 }
             }
         }

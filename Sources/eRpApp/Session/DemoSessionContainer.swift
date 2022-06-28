@@ -16,6 +16,7 @@
 //  
 //
 
+import AVS
 import Combine
 import eRpKit
 import eRpLocalStorage
@@ -69,7 +70,7 @@ class DemoSessionContainer: UserSession {
 
     lazy var isAuthenticated: AnyPublisher<Bool, UserSessionError> = {
         idpSession.isLoggedIn
-            .mapError { UserSessionError.networkError(error: $0) }
+            .mapError { UserSessionError.idpError(error: $0) }
             .eraseToAnyPublisher()
     }()
 
@@ -132,4 +133,8 @@ class DemoSessionContainer: UserSession {
     }
 
     lazy var profileSecureDataWiper: ProfileSecureDataWiper = DemoProfileSecureDataWiper()
+
+    lazy var avsSession: AVSSession = {
+        DemoAVSSession()
+    }()
 }

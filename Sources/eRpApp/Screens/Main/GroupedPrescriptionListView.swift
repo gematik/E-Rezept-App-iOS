@@ -34,20 +34,11 @@ struct GroupedPrescriptionListView: View {
         let isLoading: Bool
         let showError: Bool
         let error: ErxRepositoryError?
-        let showPrescriptionDetails: Bool
-
-        let isRedeemViewPresented: Bool
-        let isCardWallPresented: Bool
 
         init(state: GroupedPrescriptionListDomain.State) {
             isLoading = state.loadingState.isLoading
             showError = state.loadingState.error != nil
             error = state.loadingState.error
-
-            showPrescriptionDetails = state.selectedPrescriptionDetailState != nil
-
-            isRedeemViewPresented = state.redeemState != nil
-            isCardWallPresented = state.cardWallState != nil
         }
     }
 
@@ -69,12 +60,10 @@ struct GroupedPrescriptionListView: View {
                         refreshControl.endRefreshing()
                     }
                 }
-                .accessibility(hidden: viewStore.isRedeemViewPresented)
                 .onAppear {
                     viewStore.send(.loadLocalGroupedPrescriptions)
                     viewStore.send(.loadRemoteGroupedPrescriptionsAndSave)
                 }
-                .onDisappear { viewStore.send(.removeSubscriptions) }
                 .alert(isPresented: viewStore.binding(
                     get: \.showError,
                     send: GroupedPrescriptionListDomain.Action.alertDismissButtonTapped
@@ -82,71 +71,12 @@ struct GroupedPrescriptionListView: View {
                     Alert(
                         title: Text(L10n.alertErrorTitle),
                         message: Text(viewStore.error?
-                            .localizedDescription ?? "alert_error_message_unknown"),
+                            .localizedDescriptionWithErrorList ?? "alert_error_message_unknown"),
                         dismissButton: .default(Text(L10n.alertBtnOk)) {
                             viewStore.send(.alertDismissButtonTapped)
                         }
                     )
                 }
-
-            // Navigation into details
-            NavigationLink(
-                destination: IfLetStore(
-                    store.scope(
-                        state: { $0.selectedPrescriptionDetailState },
-                        action: GroupedPrescriptionListDomain.Action.prescriptionDetailAction(action:)
-                    )
-                ) { scopedStore in
-                    WithViewStore(scopedStore.scope(state: \.prescription.source)) { viewStore in
-                        switch viewStore.state {
-                        case .scanner: PrescriptionLowDetailView(store: scopedStore)
-                        case .server: PrescriptionFullDetailView(store: scopedStore)
-                        }
-                    }
-                },
-                isActive: viewStore.binding(
-                    get: \.showPrescriptionDetails,
-                    send: GroupedPrescriptionListDomain.Action.dismissPrescriptionDetailView
-                )
-            ) {
-                EmptyView()
-            }.accessibility(hidden: true)
-
-            // RedeemView sheet presentation
-            Rectangle()
-                .frame(width: 10, height: 10, alignment: .center)
-
-                .fullScreenCover(isPresented: viewStore.binding(
-                    get: { $0.isRedeemViewPresented },
-                    send: GroupedPrescriptionListDomain.Action.dismissRedeemView
-                )) {
-                    IfLetStore(
-                        store.scope(
-                            state: { $0.redeemState },
-                            action: GroupedPrescriptionListDomain.Action.redeemView(action:)
-                        ),
-                        then: RedeemView.init(store:)
-                    )
-                }
-                .accessibility(hidden: true)
-                .hidden()
-            // CardWallView sheet presentation
-            Rectangle()
-                .frame(width: 10, height: 10, alignment: .center)
-                .fullScreenCover(isPresented: viewStore.binding(
-                    get: { $0.isCardWallPresented },
-                    send: GroupedPrescriptionListDomain.Action.dismissCardWall
-                )) {
-                    IfLetStore(
-                        store.scope(
-                            state: { $0.cardWallState },
-                            action: GroupedPrescriptionListDomain.Action.cardWall(action:)
-                        ),
-                        then: CardWallView.init(store:)
-                    )
-                }
-                .accessibility(hidden: true)
-                .hidden()
         }
     }
 }

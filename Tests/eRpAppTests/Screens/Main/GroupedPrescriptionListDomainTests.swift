@@ -316,9 +316,7 @@ final class GroupedPrescriptionListDomainTests: XCTestCase {
             $0.loadingState = .loading(nil)
         }
         testScheduler.advance()
-        store.receive(.showCardWallReceived(expected)) { state in
-            state.cardWallState = expected
-        }
+        store.receive(.showCardWallReceived(expected))
     }
 
     func testRefreshShouldShowCardWallServerResponseIs403Forbidden() {
@@ -343,9 +341,7 @@ final class GroupedPrescriptionListDomainTests: XCTestCase {
             $0.loadingState = .loading(nil)
         }
         testScheduler.advance()
-        store.receive(.showCardWallReceived(expected)) { state in
-            state.cardWallState = expected
-        }
+        store.receive(.showCardWallReceived(expected))
     }
 
     func testRefreshShouldShowCardWallServerResponseIs401Unauthorized() {
@@ -371,9 +367,7 @@ final class GroupedPrescriptionListDomainTests: XCTestCase {
             $0.loadingState = .loading(nil)
         }
         testScheduler.advance()
-        store.receive(.showCardWallReceived(expected)) { state in
-            state.cardWallState = expected
-        }
+        store.receive(.showCardWallReceived(expected))
     }
 
     func testRefreshShouldLoadFromCloudWhenAuthenticated() {
@@ -417,9 +411,6 @@ final class GroupedPrescriptionListDomainTests: XCTestCase {
         // when
         store.send(
             .prescriptionDetailViewTapped(selectedPrescription: prescription)
-        ) {
-            // then
-            $0.selectedPrescriptionDetailState = expectedState
-        }
+        )
     }
 }

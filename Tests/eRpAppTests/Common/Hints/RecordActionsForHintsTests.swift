@@ -44,7 +44,6 @@ final class RecordActionsForHintsTests: XCTestCase {
             initialState: AppDomain.State(
                 selectedTab: .main,
                 main: MainDomain.State(
-                    scannerState: nil,
                     prescriptionListState: groupedPrescriptionListState,
                     isDemoMode: false
                 ),
@@ -90,9 +89,7 @@ final class RecordActionsForHintsTests: XCTestCase {
                 .value([groupedPrescriptions])
         let groupedPrescriptionListState = GroupedPrescriptionListDomain.State(
             loadingState: prescriptionLoadingState,
-            cardWallState: nil,
-            groupedPrescriptions: [groupedPrescriptions],
-            redeemState: nil
+            groupedPrescriptions: [groupedPrescriptions]
         )
         let store = testStore(sessionContainer: mockSessionContainer,
                               for: groupedPrescriptionListState)

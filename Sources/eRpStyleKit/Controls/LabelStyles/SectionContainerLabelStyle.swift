@@ -57,9 +57,18 @@ extension LabelStyle where Self == SectionContainerLabelStyle {
     /// A label style that applies standard border artwork based on the
     /// button's context.
     ///
-    /// To apply this style to a button, or to a view that contains buttons, use
-    /// the ``View/buttonStyle(_:)`` modifier.
-    public static var sectionContainer: SectionContainerLabelStyle { SectionContainerLabelStyle(showSeparator: false) }
+    /// To apply this style to a label, or to a view that contains a label, use
+    /// the ``View/labelStyle(_:)`` modifier.
+    public static var plain: SectionContainerLabelStyle { SectionContainerLabelStyle(showSeparator: false) }
+
+    /// A label style that applies standard border artwork based on the
+    /// button's context.
+    ///
+    /// To apply this style to a label, or to a view that contains a label, use
+    /// the ``View/labelStyle(.plain(showSeparator:))`` modifier.
+    public static func plain(showSeparator: Bool = true) -> SectionContainerLabelStyle {
+        SectionContainerLabelStyle(showSeparator: showSeparator)
+    }
 }
 
 struct SectionContainerLabelStyle_Preview: PreviewProvider {

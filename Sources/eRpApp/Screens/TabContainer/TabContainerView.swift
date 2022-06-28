@@ -129,10 +129,10 @@ struct TabContainerView: View {
             .onDisappear {
                 viewStore.send(.profile(action: .unregisterProfileListener))
             }
-            .accentColor(Colors.primary700)
+            .accentColor(Colors.primary600)
             .zIndex(0)
 
-            if #available(iOS 15.0, *) {} else if viewStore.unreadMessagesCount > 0 {
+            if #unavailable(iOS 15.0), viewStore.unreadMessagesCount > 0 {
                 MessagesBadgeView(badgeCount: viewStore.unreadMessagesCount)
             }
         }

@@ -16,6 +16,7 @@
 //  
 //
 
+import AVS
 import Combine
 import eRpKit
 import Foundation
@@ -24,15 +25,10 @@ import Pharmacy
 import TrustStore
 import VAUClient
 
+// sourcery: CodedError = "008"
 enum UserSessionError: Error, Equatable {
-    case networkError(error: Error)
-
-    static func ==(lhs: UserSessionError, rhs: UserSessionError) -> Bool {
-        switch (lhs, rhs) {
-        case let (.networkError(lhsError), .networkError(rhsError)):
-            return lhsError.localizedDescription == rhsError.localizedDescription
-        }
-    }
+    // sourcery: errorCode = "01"
+    case idpError(error: IDPError)
 }
 
 /// An instance of `UserSession` holds all stores used by the app that need to be changeable per profile and demo user
@@ -88,4 +84,6 @@ protocol UserSession {
     var profileId: UUID { get }
 
     func profile() -> AnyPublisher<Profile, LocalStoreError>
+
+    var avsSession: AVSSession { get }
 }

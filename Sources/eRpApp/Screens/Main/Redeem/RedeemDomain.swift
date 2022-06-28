@@ -19,6 +19,7 @@
 import Combine
 import ComposableArchitecture
 import eRpKit
+import ZXingObjC
 
 enum RedeemDomain {
     typealias Store = ComposableArchitecture.Store<State, Action>
@@ -108,7 +109,7 @@ enum RedeemDomain {
         ) { redeemEnv in
             RedeemMatrixCodeDomain.Environment(
                 schedulers: redeemEnv.schedulers,
-                matrixCodeGenerator: DefaultErxTaskMatrixCodeGenerator(),
+                matrixCodeGenerator: DefaultErxTaskMatrixCodeGenerator(matrixCodeGenerator: ZXDataMatrixWriter()),
                 taskRepository: redeemEnv.userSession.erxTaskRepository,
                 fhirDateFormatter: redeemEnv.fhirDateFormatter
             )

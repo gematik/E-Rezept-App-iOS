@@ -1,4 +1,4 @@
-// Generated using Sourcery 1.7.0 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 1.8.1 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 
 import SwiftUI
@@ -43,8 +43,8 @@ extension FootnoteView {
     }
 }
 extension FormTextFieldView {
-    init(placeholder: StringAsset? = nil, subtitle: StringAsset? = nil, text: Binding<String>, showSeparator: Bool = true) {
-    self.init(placeholder: placeholder?.key, subtitle: subtitle?.key, text: text, showSeparator: showSeparator)
+    init(placeholder: String? = nil, subtitle: StringAsset? = nil, text: Binding<String>, showSeparator: Bool = true) {
+    self.init(placeholder: placeholder, subtitle: subtitle?.key, text: text, showSeparator: showSeparator)
     }
 }
 extension GroupedPrescriptionListView.ListView.RefreshLoadingStateView {
@@ -63,8 +63,8 @@ extension HeadernoteView {
     }
 }
 extension Hint {
-    init(id: String, title: String? = nil, message: String? = nil, actionText: StringAsset, action: Action? = nil, imageName: String, closeAction: Action? = nil, style: Style = .neutral, buttonStyle: ButtonStyle = .quaternary, imageStyle: ImageStyle = .topAligned) {
-        self.init(id: id, title: title, message: message, actionText: actionText.key, action: action, imageName: imageName, closeAction: closeAction, style: style, buttonStyle: buttonStyle, imageStyle: imageStyle)
+    init(id: String, title: String? = nil, message: String? = nil, actionText: StringAsset, action: Action? = nil, image: AccessibilityImage, closeAction: Action? = nil, style: Style = .neutral, buttonStyle: ButtonStyle = .quaternary, imageStyle: ImageStyle = .topAligned) {
+        self.init(id: id, title: title, message: message, actionText: actionText.key, action: action, image: image, closeAction: closeAction, style: style, buttonStyle: buttonStyle, imageStyle: imageStyle)
     }
 }
 extension IDPTokenView.TokenCell {
@@ -131,8 +131,8 @@ extension PrimaryTextButton {
     }
 }
 extension PrimaryTextButtonBorder {
-    init(text: StringAsset, image: Image? = nil, isEnabled: Bool = true, action: @escaping () -> Void) {
-        self.init(text: text.key, image: image, isEnabled: isEnabled, action: action)
+    init(text: StringAsset, note: StringAsset? = nil, image: Image? = nil, isEnabled: Bool = true, action: @escaping () -> Void) {
+        self.init(text: text.key, note: note?.key, image: image, isEnabled: isEnabled, action: action)
     }
 }
 extension PrimaryTextFieldView {
@@ -179,6 +179,11 @@ extension SubTitleTop {
 extension TertiaryListButton {
     init(text: StringAsset, imageName: String? = SFSymbolName.refresh, accessibilityIdentifier: String, action: @escaping () -> Void) {
         self.init(text: text.key, imageName: imageName, accessibilityIdentifier: accessibilityIdentifier, action: action)
+    }
+}
+extension TextFieldWithDelete {
+    init(title: StringAsset, text: Binding<String>, accessibilityLabelKey: StringAsset? = nil) {
+    self.init(title: title.key, text: text, accessibilityLabelKey: accessibilityLabelKey?.key)
     }
 }
 extension Tile {

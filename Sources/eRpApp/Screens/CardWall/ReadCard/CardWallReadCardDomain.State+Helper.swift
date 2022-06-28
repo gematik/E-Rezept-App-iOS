@@ -21,23 +21,32 @@ import IDP
 import SwiftUI
 
 extension CardWallReadCardDomain.State {
+    // sourcery: CodedError = "010"
     enum Error: Swift.Error, Equatable {
+        // sourcery: errorCode = "01"
         /// `IDPError` thrown within the `CardWallReadCardDomain`
         case idpError(IDPError)
+        // sourcery: errorCode = "02"
         /// Possible user input errors thrown within the `CardWallReadCardDomain`
         case inputError(InputError)
+        // sourcery: errorCode = "03"
         /// NFC signature errors thrown within the `CardWallReadCardDomain`
         case signChallengeError(NFCSignatureProviderError)
+        // sourcery: errorCode = "04"
         /// Error that can occur during authentication with biometry
         case biometrieError(Swift.Error)
+        // sourcery: errorCode = "05"
         /// Error when `Profile` validation with the given authentication fails.
         /// Error is produces within the `IDPError.unspecified` error before saving the IDPToken
         case profileValidation(IDTokenValidatorError)
 
+        // sourcery: CodedError = "011"
         /// User input error
         enum InputError: Swift.Error {
+            // sourcery: errorCode = "01"
             /// User input for PIN is incorrect
             case missingPIN
+            // sourcery: errorCode = "02"
             /// User input for CAN is incorrect
             case missingCAN
         }
@@ -76,6 +85,8 @@ extension CardWallReadCardDomain.State {
             if case let .signingChallenge(signingState) = self,
                case let .error(error) = signingState {
                 switch error {
+                case .signChallengeError(.wrongPin(0)):
+                    return .close // TODO: call action for correcting pin here // swiftlint:disable:this todo
                 case .signChallengeError(.wrongPin),
                      .inputError(.missingPIN):
                     return .wrongPIN
@@ -93,6 +104,9 @@ extension CardWallReadCardDomain.State {
 
         var buttonTitle: LocalizedStringKey {
             switch self {
+            case .loggedIn,
+                 .signingChallenge(.error(.signChallengeError(.wrongPin(0)))):
+                return L10n.cdwBtnRcClose.key
             case .signingChallenge(.error(.inputError(.missingCAN))),
                  .signingChallenge(.error(.signChallengeError(.wrongCAN))):
                 return L10n.cdwBtnRcCorrectCan.key
@@ -103,8 +117,6 @@ extension CardWallReadCardDomain.State {
                 return L10n.cdwBtnRcRetry.key
             case .retrievingChallenge(.loading), .signingChallenge(.loading), .verifying(.loading):
                 return L10n.cdwBtnRcLoading.key
-            case .loggedIn:
-                return L10n.cdwBtnRcClose.key
             default:
                 return L10n.cdwBtnRcNext.key
             }

@@ -32,11 +32,29 @@ protocol RegisteredDevicesService {
     func cardWall(for profileId: UUID) -> AnyPublisher<IDPCardWallDomain.State, Never>
 }
 
+// sourcery: CodedError = "018"
 enum RegisteredDevicesServiceError: Swift.Error, Equatable, LocalizedError {
+    // sourcery: errorCode = "01"
     case missingAuthentication
+    // sourcery: errorCode = "02"
     case missingToken
+    // sourcery: errorCode = "03"
     case loginHandlerError(LoginHandlerError)
+    // sourcery: errorCode = "04"
     case idpError(IDPError)
+
+    var errorDescription: String? {
+        switch self {
+        case .missingAuthentication:
+            return "Authentication expected but failed, logout to proceed"
+        case .missingToken:
+            return "SSO for existing Token failed, logout and retry"
+        case let .loginHandlerError(error):
+            return error.localizedDescription
+        case let .idpError(error):
+            return "IDP Error: \(error.localizedDescription)"
+        }
+    }
 }
 
 struct DefaultRegisteredDevicesService: RegisteredDevicesService {

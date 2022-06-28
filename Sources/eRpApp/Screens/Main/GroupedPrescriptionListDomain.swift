@@ -61,16 +61,8 @@ enum GroupedPrescriptionListDomain {
     struct State: Equatable {
         var loadingState: LoadingState<[GroupedPrescription], ErxRepositoryError> =
             .idle
-
-        // sub states
-        var cardWallState: CardWallDomain.State?
         var groupedPrescriptions: [GroupedPrescription] = []
 
-        // details state
-        var selectedPrescriptionDetailState: PrescriptionDetailDomain.State?
-
-        // redeem state
-        var redeemState: RedeemDomain.State?
         var hintState = MainViewHintsDomain.State()
     }
 
@@ -90,26 +82,17 @@ enum GroupedPrescriptionListDomain {
         case alertDismissButtonTapped
         /// Response from `refresh` that presents the CardWall sheet
         case showCardWallReceived(CardWallDomain.State)
-        /// Hides the `CardWallView` sheet
-        case dismissCardWall
-        /// Removes all subscriptions
-        case removeSubscriptions
-        /// Child view actions of the `CardWallDomain`
-        case cardWall(action: CardWallDomain.Action)
 
         /// Details actions
         case prescriptionDetailViewTapped(selectedPrescription: GroupedPrescription.Prescription)
-        case dismissPrescriptionDetailView
-        case prescriptionDetailAction(action: PrescriptionDetailDomain.Action)
 
         /// Redeem actions
         case redeemViewTapped(selectedGroupedPrescription: GroupedPrescription)
-        /// Dismisses the redeem view
-        case dismissRedeemView
-        case redeemView(action: RedeemDomain.Action)
 
         /// Actions related to hint
         case hint(action: MainViewHintsDomain.Action)
+
+        case errorReceived(LoginHandlerError)
     }
 
     static let domainReducer = Reducer { state, action, environment in
@@ -140,54 +123,22 @@ enum GroupedPrescriptionListDomain {
         case .refresh:
             state.loadingState = .loading(nil)
             return environment.refreshOrShowCardWall().cancellable(id: Token.refreshId, cancelInFlight: true)
-        case .removeSubscriptions:
-            return cleanup()
         case .alertDismissButtonTapped:
             state.loadingState = .idle
             return .none
-        case let .showCardWallReceived(cardWallState):
-            state.cardWallState = cardWallState
+        case .hint:
             return .none
-        case .dismissCardWall, .cardWall(action: .close):
-            state.cardWallState = nil
-            return .concatenate(
-                CardWallDomain.cleanup(),
-                Effect(value: .loadRemoteGroupedPrescriptionsAndSave)
-            )
-        case .cardWall, .hint:
+        case .showCardWallReceived,
+             .prescriptionDetailViewTapped,
+             .redeemViewTapped:
             return .none
-
-        // details view
-        case let .prescriptionDetailViewTapped(prescription):
-            state.selectedPrescriptionDetailState = PrescriptionDetailDomain.State(
-                prescription: prescription,
-                isArchived: prescription.isArchived
-            )
-            return .none
-        case .dismissPrescriptionDetailView, .prescriptionDetailAction(.close):
-            state.selectedPrescriptionDetailState = nil
-            return PrescriptionDetailDomain.cleanup()
-        case let .prescriptionDetailAction(action):
-            return .none
-
-        // redeem view
-        case let .redeemViewTapped(selectedGroupedPrescription):
-            state.redeemState = RedeemDomain.State(
-                groupedPrescription: selectedGroupedPrescription
-            )
-            return .none
-        case .dismissRedeemView, .redeemView(action: .close):
-            state.redeemState = nil
-            return RedeemDomain.cleanup()
-        case .redeemView(action:):
-            return .none
+        case .errorReceived:
+            state.loadingState = .idle
+            return .none // Handled in parent domain
         }
     }
 
     static let reducer: Reducer = .combine(
-        prescriptionDetailPullbackReducer,
-        redeemViewPullbackReducer,
-        cardWallPullbackReducer,
         hintsPullbackReducer,
         domainReducer
     )
@@ -206,54 +157,11 @@ enum GroupedPrescriptionListDomain {
                     hintProvider: MainViewHintsProvider()
                 )
             }
-
-    static let prescriptionDetailPullbackReducer: Reducer =
-        PrescriptionDetailDomain.reducer.optional().pullback(
-            state: \.selectedPrescriptionDetailState,
-            action: /GroupedPrescriptionListDomain.Action.prescriptionDetailAction(action:)
-        ) { environment in
-            PrescriptionDetailDomain.Environment(
-                schedulers: environment.schedulers,
-                taskRepository: environment.userSession.erxTaskRepository,
-                fhirDateFormatter: environment.fhirDateFormatter,
-                pharmacyRepository: environment.userSession.pharmacyRepository,
-                userSession: environment.userSession
-            )
-        }
-
-    static let redeemViewPullbackReducer: Reducer =
-        RedeemDomain.reducer.optional().pullback(
-            state: \.redeemState,
-            action: /GroupedPrescriptionListDomain.Action.redeemView(action:)
-        ) { environment in
-            RedeemDomain.Environment(
-                schedulers: environment.schedulers,
-                userSession: environment.userSession,
-                fhirDateFormatter: environment.fhirDateFormatter
-            )
-        }
-
-    static let cardWallPullbackReducer: Reducer =
-        CardWallDomain.reducer
-            .optional()
-            .pullback(
-                state: \.cardWallState,
-                action: /GroupedPrescriptionListDomain.Action.cardWall(action:)
-            ) { globalEnvironment in
-                CardWallDomain.Environment(
-                    schedulers: globalEnvironment.schedulers,
-                    userSession: globalEnvironment.userSession,
-                    sessionProvider: DefaultSessionProvider(
-                        userSessionProvider: globalEnvironment.userSessionProvider,
-                        userSession: globalEnvironment.userSession
-                    ),
-                    signatureProvider: globalEnvironment.signatureProvider,
-                    accessibilityAnnouncementReceiver: globalEnvironment.accessibilityAnnouncementReceiver
-                )
-            }
 }
 
 extension GroupedPrescriptionListDomain.Environment {
+    typealias Action = GroupedPrescriptionListDomain.Action
+
     func cardWall() -> AnyPublisher<CardWallDomain.State, Never> {
         let hideCardWallIntro = userSession.localUserStore.hideCardWallIntro
         let canAvailable = userSession.secureUserStore.can
@@ -320,25 +228,8 @@ extension GroupedPrescriptionListDomain.Environment {
                         .eraseToEffect()
                 }
                 if case let Result.failure(error) = isAuthenticated {
-                    // TODO: error type mapping is bogus // swiftlint:disable:this todo
-                    return Just(GroupedPrescriptionListDomain.Action
-                        .loadRemoteGroupedPrescriptionsAndSaveReceived(
-                            LoadingState.error(ErxRepositoryError.local(.initialization(error: error)))
-                        ))
+                    return Just(GroupedPrescriptionListDomain.Action.errorReceived(error))
                         .eraseToEffect()
-
-//                    switch error {
-//                    case .biometrieFatal:
-//                    case .biometrieFailed:
-//                        Just(GroupedPrescriptionListDomain.Action
-//                            .loadRemoteGroupedPrescriptionsAndSaveReceived(LoadingState.error(error)))
-//                    case .biometrieFatal:
-//                        <#code#>
-//                    case .ssoFailed:
-//                        <#code#>
-//                    case .ssoExpired:
-//                        <#code#>
-//                    }
                 } else {
                     return groupedPrescriptionStore.loadRemoteAndSave(for: locale)
                         .receive(on: schedulers.main)
@@ -396,10 +287,7 @@ extension GroupedPrescriptionListDomain {
         static let state = State()
         static let stateWithTwoPrescriptions = State(
             loadingState: .value([GroupedPrescription.Dummies.prescriptions]),
-            cardWallState: nil,
             groupedPrescriptions: [GroupedPrescription.Dummies.prescriptions],
-            selectedPrescriptionDetailState: nil,
-            redeemState: nil,
             hintState: MainViewHintsDomain.Dummies.emptyState()
         )
 

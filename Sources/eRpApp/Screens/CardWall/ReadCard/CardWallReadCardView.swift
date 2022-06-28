@@ -71,17 +71,6 @@ struct CardWallReadCardView: View {
                     .cornerRadius(16)
                     .padding()
 
-//                Button(action: {
-//                    // TODO: link correct video swiftlint:disable:this todo
-//                }, label: {
-//                    Label(L10n.cdwBtnRcVideo, systemImage: SFSymbolName.play)
-//                })
-//                    .font(.body.weight(.semibold))
-//                    .foregroundColor(Colors.primary)
-//                    .padding()
-//                    .frame(maxWidth: .infinity, minHeight: 52, alignment: .center)
-//                    .padding()
-
                 Spacer(minLength: 0)
 
                 GreyDivider()

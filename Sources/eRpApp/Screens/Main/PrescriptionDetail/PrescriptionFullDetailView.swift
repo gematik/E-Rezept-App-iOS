@@ -25,245 +25,290 @@ import WebKit
 struct PrescriptionFullDetailView: View {
     let store: PrescriptionDetailDomain.Store
 
+    @ObservedObject
+    var viewStore: ViewStore<ViewState, PrescriptionDetailDomain.Action>
+
+    init(store: PrescriptionDetailDomain.Store) {
+        self.store = store
+        viewStore = ViewStore(store.scope(state: ViewState.init))
+    }
+
+    struct ViewState: Equatable {
+        let prescription: GroupedPrescription.Prescription
+        let isDeleting: Bool
+        let isSubstitutionReadMorePresented: Bool
+        let dataMatrixCode: UIImage?
+
+        init(state: PrescriptionDetailDomain.State) {
+            prescription = state.prescription
+            isDeleting = state.isDeleting
+            dataMatrixCode = state.loadingState.value
+            isSubstitutionReadMorePresented = state.isSubstitutionReadMorePresented
+        }
+
+        var auditEventsLastUpdated: String? {
+            prescription.auditEvents.first?.timestamp
+        }
+
+        var auditEventsErrorText: String? {
+            prescription.auditEvents
+                .isEmpty ? L10n.prscFdTxtProtocolDownloadError.text : nil
+        }
+
+        var showPrescriptionStatus: Bool {
+            switch prescription.viewStatus {
+            case .open, .archived, .undefined: return false
+            case .error: return true
+            }
+        }
+
+        var showFullDetailBottomBanner: Bool {
+            switch prescription.viewStatus {
+            case .open, .archived, .undefined: return false
+            case .error: return true
+            }
+        }
+
+        var isDeleteButtonDisabled: Bool {
+            // [REQ:gemSpec_FD_eRp:A_19145] prevent deletion while task is in progress
+            isDeleting || prescription.erxTask.status == .inProgress
+        }
+    }
+
     var body: some View {
-        WithViewStore(store) { viewStore in
-            VStack(spacing: 0) {
-                ScrollView(.vertical) {
-                    // Noctu fee waiver hint
-                    if viewStore.state.prescription.noctuFeeWaiver {
+        VStack(spacing: 0) {
+            ScrollView(.vertical) {
+                // Noctu fee waiver hint
+                if viewStore.prescription.noctuFeeWaiver {
+                    HintView(
+                        hint: Hint<PrescriptionDetailDomain.Action>(
+                            id: A11y.prescriptionDetails.prscDtlHntNoctuFeeWaiver,
+                            title: L10n.prscFdTxtNoctuTitle.text,
+                            message: L10n.prscFdTxtNoctuDescription.text,
+                            image: AccessibilityImage(
+                                name: Asset.Illustrations.pharmacistf1.name,
+                                accessibilityName: L10n.prscFdHintNoctuPic.text
+                            ),
+                            style: .neutral,
+                            buttonStyle: .tertiary,
+                            imageStyle: .bottomAligned
+                        ),
+                        textAction: nil,
+                        closeAction: nil
+                    )
+                    .padding([.top, .horizontal])
+                }
+
+                Group {
+                    // QR Code
+                    VStack {
+                        if let image = viewStore.dataMatrixCode {
+                            Image(uiImage: image)
+                                .resizable()
+                                .scaledToFit()
+                                .padding()
+                                .background(Colors.systemColorWhite) // No darkmode to get contrast
+                                .accessibility(label: Text(L10n.rphTxtMatrixcodeHint))
+                                .accessibility(identifier: A11y.redeem.matrixCode.rphImgMatrixcode)
+                        } else {
+                            ProgressView()
+                        }
+                    }
+                    .frame(minWidth: 0, maxWidth: .infinity)
+                    .border(Colors.separator, width: 0.5, cornerRadius: 16)
+                    .padding([.top, .horizontal])
+
+                    VStack(alignment: .leading, spacing: 0) {
+                        // Show PrescriptionStatus if error
+                        if viewStore.showPrescriptionStatus {
+                            PrescriptionStatusView(prescription: viewStore.prescription)
+                        }
+
+                        // Medication name
+                        MedicationNameView(medicationText: viewStore.prescription.medicationText,
+                                           statusMessage: viewStore.prescription.statusMessage)
+                    }
+                    .padding()
+
+                    if !viewStore.prescription.isArchived {
+                        NavigateToPharmacySearchView(store: store)
+                            .padding([.leading, .trailing, .bottom])
+                    }
+
+                    // Substitution hint
+                    if viewStore.prescription.substitutionAllowed {
                         HintView(
-                            hint: Hint<PrescriptionDetailDomain.Action>(
-                                id: A11y.prescriptionDetails.prscDtlHntNoctuFeeWaiver,
-                                title: L10n.prscFdTxtNoctuTitle.text,
-                                message: L10n.prscFdTxtNoctuDescription.text,
-                                imageName: Asset.Illustrations.pharmacistf1.name,
+                            hint: Hint(
+                                id: A11y.prescriptionDetails.prscDtlHntSubstitution,
+                                title: L10n.prscFdTxtSubstitutionTitle.text,
+                                message: L10n.prscFdTxtSubstitutionDescription.text,
+                                actionText: L10n.prscFdTxtSubstitutionReadFurther,
+                                action: PrescriptionDetailDomain.Action.openSubstitutionInfo,
+                                image: AccessibilityImage(
+                                    name: Asset.Illustrations.practitionerm1.name,
+                                    accessibilityName: L10n.prscFdHintSubstitutionPic.text
+                                ),
                                 style: .neutral,
                                 buttonStyle: .tertiary,
-                                imageStyle: .bottomAligned
+                                imageStyle: .topAligned
+                            ),
+                            textAction: { viewStore.send(PrescriptionDetailDomain.Action.openSubstitutionInfo) },
+                            closeAction: nil
+                        )
+                        .padding(.horizontal)
+                    }
+                }
+
+                Group {
+                    // Medication details
+                    MedicationDetailsView(
+                        dosageForm: localizedStringForDosageFormKey(viewStore.prescription.actualMedication?
+                            .dosageForm),
+                        dose: composedDoseInfoFrom(
+                            doseKey: viewStore.prescription.actualMedication?.dose,
+                            amount: viewStore.prescription.actualMedication?.amount,
+                            dosageKey: viewStore.prescription.actualMedication?.dosageForm
+                        ),
+                        pzn: viewStore.prescription.actualMedication?.pzn
+                    )
+
+                    // Dosage instructions
+                    Group {
+                        SectionHeaderView(
+                            text: L10n.prscFdTxtDosageInstructionsTitle,
+                            a11y: A11y.prescriptionDetails.prscDtlTxtMedDosageInstructions
+                        )
+                        HintView(
+                            hint: Hint<PrescriptionDetailDomain.Action>(
+                                id: A11y.prescriptionDetails.prscDtlHntDosageInstructions,
+                                message: viewStore.prescription.actualMedication?
+                                    .dosageInstruction ?? L10n.prscFdTxtDosageInstructionsNa.text,
+                                image: AccessibilityImage(
+                                    name: Asset.Illustrations.practitionerf1.name,
+                                    accessibilityName: L10n.prscFdHintDosageInstructionsPic.text
+                                ),
+                                style: .neutral,
+                                buttonStyle: .tertiary,
+                                imageStyle: .topAligned
                             ),
                             textAction: nil,
                             closeAction: nil
                         )
-                        .padding([.top, .horizontal])
                     }
+                    .padding([.horizontal, .top])
 
-                    Group {
-                        // QR Code
-                        VStack {
-                            if let image = viewStore.loadingState.value {
-                                Image(uiImage: image)
-                                    .resizable()
-                                    .scaledToFit()
-                                    .padding()
-                                    .background(Colors.systemColorWhite) // No darkmode to get contrast
-                                    .accessibility(label: Text(L10n.rphTxtMatrixcodeHint))
-                                    .accessibility(identifier: A18n.redeem.matrixCode.rphImgMatrixcode)
-                            }
-                        }
-                        .frame(minWidth: 0, maxWidth: .infinity)
-                        .border(Colors.separator, width: 0.5, cornerRadius: 16)
-                        .padding([.top, .horizontal])
+                    DosageHint()
 
-                        VStack(alignment: .leading, spacing: 0) {
-                            // Show PrescriptionStatus if error
-                            if viewStore.state.showPrescriptionStatus {
-                                PrescriptionStatusView(prescription: viewStore.state.prescription)
-                            }
+                    // Patient details
+                    MedicationPatientView(
+                        name: viewStore.prescription.patient?.name,
+                        address: viewStore.prescription.patient?.address,
+                        dateOfBirth: uiFormattedDate(dateString: viewStore.prescription.patient?.birthDate),
+                        phone: viewStore.prescription.patient?.phone,
+                        healthInsurance: viewStore.prescription.patient?.insurance,
+                        healthInsuranceState: viewStore.prescription.patient?.status,
+                        healthInsuranceNumber: viewStore.prescription.patient?.insuranceId
+                    )
 
-                            // Medication name
-                            MedicationNameView(medicationText: viewStore.state.prescription.medicationText,
-                                               statusMessage: viewStore.state.prescription.statusMessage)
-                        }
-                        .padding()
+                    // Practitioner details
+                    MedicationPractitionerView(
+                        name: viewStore.prescription.practitioner?.name,
+                        medicalSpeciality: viewStore.prescription.practitioner?.qualification,
+                        lanr: viewStore.prescription.practitioner?.lanr
+                    )
 
-                        if !viewStore.state.prescription.isArchived {
-                            NavigateToPharmacySearchView(store: store)
-                                .padding([.leading, .trailing, .bottom])
-                        }
+                    // Organization details
+                    MedicationOrganizationView(
+                        name: viewStore.prescription.organization?.name,
+                        address: viewStore.prescription.organization?.address,
+                        bsnr: viewStore.prescription.organization?.identifier,
+                        phone: viewStore.prescription.organization?.phone,
+                        email: viewStore.prescription.organization?.email
+                    )
 
-                        // Substitution hint
-                        if viewStore.state.prescription.substitutionAllowed {
-                            HintView(
-                                hint: Hint(
-                                    id: A11y.prescriptionDetails.prscDtlHntSubstitution,
-                                    title: L10n.prscFdTxtSubstitutionTitle.text,
-                                    message: L10n.prscFdTxtSubstitutionDescription.text,
-                                    actionText: L10n.prscFdTxtSubstitutionReadFurther,
-                                    action: PrescriptionDetailDomain.Action.openSubstitutionInfo,
-                                    imageName: Asset.Illustrations.practitionerm1.name,
-                                    style: .neutral,
-                                    buttonStyle: .tertiary,
-                                    imageStyle: .topAligned
-                                ),
-                                textAction: { viewStore.send(PrescriptionDetailDomain.Action.openSubstitutionInfo) },
-                                closeAction: nil
-                            )
-                            .padding(.horizontal)
-                        }
-                    }
+                    // Work-related accident details
+                    MedicationWorkAccidentView(
+                        accidentDate: uiFormattedDate(dateString: viewStore.prescription.workRelatedAccident?
+                            .date),
+                        number: viewStore.prescription.workRelatedAccident?.workPlaceIdentifier
+                    )
 
-                    Group {
-                        // Medication details
-                        MedicationDetailsView(
-                            dosageForm: localizedStringForDosageFormKey(viewStore.state.prescription.actualMedication?
-                                .dosageForm),
-                            dose: composedDoseInfoFrom(
-                                doseKey: viewStore.state.prescription.actualMedication?.dose,
-                                amount: viewStore.state.prescription.actualMedication?.amount,
-                                dosageKey: viewStore.state.prescription.actualMedication?.dosageForm
-                            ),
-                            pzn: viewStore.state.prescription.actualMedication?.pzn
-                        )
-
-                        // Dosage instructions
-                        Group {
-                            SectionHeaderView(
-                                text: L10n.prscFdTxtDosageInstructionsTitle,
-                                a11y: A18n.prescriptionDetails.prscDtlTxtMedDosageInstructions
-                            )
-                            HintView(
-                                hint: Hint<PrescriptionDetailDomain.Action>(
-                                    id: A11y.prescriptionDetails.prscDtlHntDosageInstructions,
-                                    message: viewStore.state.prescription.actualMedication?
-                                        .dosageInstruction ?? L10n.prscFdTxtDosageInstructionsNa.text,
-                                    imageName: Asset.Illustrations.practitionerf1.name,
-                                    style: .neutral,
-                                    buttonStyle: .tertiary,
-                                    imageStyle: .topAligned
-                                ),
-                                textAction: nil,
-                                closeAction: nil
-                            )
-                        }
-                        .padding([.horizontal, .top])
-
-                        DosageHint()
-
-                        // Patient details
-                        MedicationPatientView(
-                            name: viewStore.state.prescription.patient?.name,
-                            address: viewStore.state.prescription.patient?.address,
-                            dateOfBirth: uiFormattedDate(dateString: viewStore.state.prescription.patient?.birthDate),
-                            phone: viewStore.state.prescription.patient?.phone,
-                            healthInsurance: viewStore.state.prescription.patient?.insurance,
-                            healthInsuranceState: viewStore.state.prescription.patient?.status,
-                            healthInsuranceNumber: viewStore.state.prescription.patient?.insuranceId
-                        )
-
-                        // Practitioner details
-                        MedicationPractitionerView(
-                            name: viewStore.state.prescription.practitioner?.name,
-                            medicalSpeciality: viewStore.state.prescription.practitioner?.qualification,
-                            lanr: viewStore.state.prescription.practitioner?.lanr
-                        )
-
-                        // Organization details
-                        MedicationOrganizationView(
-                            name: viewStore.state.prescription.organization?.name,
-                            address: viewStore.state.prescription.organization?.address,
-                            bsnr: viewStore.state.prescription.organization?.identifier,
-                            phone: viewStore.state.prescription.organization?.phone,
-                            email: viewStore.state.prescription.organization?.email
-                        )
-
-                        // Work-related accident details
-                        MedicationWorkAccidentView(
-                            accidentDate: uiFormattedDate(dateString: viewStore.state.prescription.workRelatedAccident?
-                                .date),
-                            number: viewStore.state.prescription.workRelatedAccident?.workPlaceIdentifier
-                        )
-
-                        // Task information details
-                        MedicationInfoView(codeInfos: [
-                            MedicationInfoView.CodeInfo(
-                                code: viewStore.state.prescription.accessCode,
-                                codeTitle: L10n.dtlTxtAccessCode,
-                                accessibilityId: A11y.prescriptionDetails.prscDtlTxtAccessCode
-                            ),
-                            MedicationInfoView.CodeInfo(
-                                code: viewStore.state.prescription.id,
-                                codeTitle: L10n.dtlTxtTaskId,
-                                accessibilityId: A11y.prescriptionDetails.prscDtlTxtTaskId
-                            ),
-                        ])
-                    }
-
-                    // Task delete button
-                    MedicationRemoveButton {
-                        viewStore.send(.delete)
-                    }
-                    .padding(.top, 16)
+                    // Task information details
+                    MedicationInfoView(codeInfos: [
+                        MedicationInfoView.CodeInfo(
+                            code: viewStore.prescription.accessCode,
+                            codeTitle: L10n.dtlTxtAccessCode,
+                            accessibilityId: A11y.prescriptionDetails.prscDtlTxtAccessCode
+                        ),
+                        MedicationInfoView.CodeInfo(
+                            code: viewStore.prescription.id,
+                            codeTitle: L10n.dtlTxtTaskId,
+                            accessibilityId: A11y.prescriptionDetails.prscDtlTxtTaskId
+                        ),
+                    ])
                 }
 
-                // BottomBanner
-                if viewStore.state.showFullDetailBottomBanner {
-                    HStack(spacing: 0) {
-                        Text(L10n.prscFdTxtErrorBannerMessage)
-
-                        Button {
-                            viewStore.send(.errorBannerButtonPressed)
-                        } label: {
-                            Text(L10n.prscFdBtnErrorBanner)
-                        }
-                        .buttonStyle(BottomReportButtonStyle())
-                        .accessibility(identifier: A11y.prescriptionDetails.prscDtlTxtMedError)
-                        .padding()
+                // Task delete button
+                Button(action: { viewStore.send(.delete) }, label: {
+                    if viewStore.isDeleting {
+                        ProgressView()
+                            .progressViewStyle(CircularProgressViewStyle())
+                    } else {
+                        Label(L10n.dtlBtnDeleteMedication, systemImage: SFSymbolName.trash)
                     }
+                })
+                    .disabled(viewStore.isDeleteButtonDisabled)
+                    .buttonStyle(.primary(isEnabled: !viewStore.isDeleteButtonDisabled, isDestructive: true))
+                    .accessibility(identifier: A11y.prescriptionDetails.prscDtlBtnDeleteMedication)
+                    .padding(.top)
+
+                if viewStore.state.prescription.erxTask.status == .inProgress {
+                    Text(L10n.dtlBtnDeleteDisabledNote)
+                        .font(.footnote)
+                        .multilineTextAlignment(.center)
+                        .foregroundColor(Colors.systemLabelSecondary)
+                        .padding(.horizontal)
+                        .accessibility(identifier: A11y.prescriptionDetails.prscDtlTxtDeleteDisabledNote)
+                }
+            }
+
+            // BottomBanner
+            if viewStore.showFullDetailBottomBanner {
+                HStack(spacing: 0) {
+                    Text(L10n.prscFdTxtErrorBannerMessage)
+
+                    Button {
+                        viewStore.send(.errorBannerButtonPressed)
+                    } label: {
+                        Text(L10n.prscFdBtnErrorBanner)
+                    }
+                    .buttonStyle(BottomReportButtonStyle())
+                    .accessibility(identifier: A11y.prescriptionDetails.prscDtlTxtMedError)
                     .padding()
-                    .topBorder(strokeWith: 1, color: Colors.separator)
                 }
-            }
-
-            .alert(
-                self.store.scope(state: \.alertState),
-                dismiss: .alertDismissButtonTapped
-            )
-            .onAppear {
-                viewStore.send(.loadMatrixCodeImage(screenSize: UIScreen.main.bounds.size))
-            }
-            .navigationBarTitle(Text(L10n.prscFdTxtNavigationTitle), displayMode: .inline)
-
-            Rectangle()
-                .frame(width: 0, height: 0)
-                .sheet(isPresented: viewStore.binding(
-                    get: { $0.isSubstitutionReadMorePresented },
-                    send: PrescriptionDetailDomain.Action.dismissSubstitutionInfo
-                )) {
-                    SubstitutionInfoWebView()
-                }
-                .hidden()
-                .accessibility(hidden: true)
-        }
-    }
-
-    private struct NavigateToPharmacySearchView: View {
-        let store: PrescriptionDetailDomain.Store
-
-        var body: some View {
-            WithViewStore(store) { viewStore in
-                PrimaryTextButton(
-                    text: L10n.dtlBtnPharmacySearch,
-                    a11y: A11y.prescriptionDetails.prscDtlHntSubstitution
-                ) {
-                    viewStore.send(.showPharmacySearch)
-                }
-                .fullScreenCover(isPresented: viewStore.binding(
-                    get: { $0.pharmacySearchState != nil },
-                    send: PrescriptionDetailDomain.Action.dismissPharmacySearch
-                )) {
-                    IfLetStore(store.scope(
-                        state: { $0.pharmacySearchState },
-                        action: PrescriptionDetailDomain.Action.pharmacySearch(action:)
-                    )) { scopedStore in
-                        NavigationView {
-                            PharmacySearchView(store: scopedStore)
-                        }
-                        .accentColor(Colors.primary700)
-                        .navigationViewStyle(StackNavigationViewStyle())
-                    }
-                }
+                .padding()
+                .topBorder(strokeWith: 1, color: Colors.separator)
             }
         }
+        .alert(
+            self.store.scope(state: \.alertState),
+            dismiss: .alertDismissButtonTapped
+        )
+        .onAppear {
+            viewStore.send(.loadMatrixCodeImage(screenSize: UIScreen.main.bounds.size))
+        }
+        .navigationBarTitle(Text(L10n.prscFdTxtNavigationTitle), displayMode: .inline)
+
+        Rectangle()
+            .frame(width: 0, height: 0)
+            .sheet(isPresented: viewStore.binding(
+                get: { $0.isSubstitutionReadMorePresented },
+                send: PrescriptionDetailDomain.Action.dismissSubstitutionInfo
+            )) {
+                SubstitutionInfoWebView()
+            }
+            .hidden()
+            .accessibility(hidden: true)
     }
 
     private func localizedStringForDosageFormKey(_ key: String?) -> String? {
@@ -342,6 +387,36 @@ struct PrescriptionFullDetailView: View {
                         return
                     }
                     decisionHandler(.allow, webView.configuration.defaultWebpagePreferences)
+                }
+            }
+        }
+    }
+}
+
+struct NavigateToPharmacySearchView: View {
+    let store: PrescriptionDetailDomain.Store
+
+    var body: some View {
+        WithViewStore(store) { viewStore in
+            PrimaryTextButton(
+                text: L10n.dtlBtnPharmacySearch,
+                a11y: A11y.prescriptionDetails.prscDtlHntSubstitution
+            ) {
+                viewStore.send(.showPharmacySearch)
+            }
+            .fullScreenCover(isPresented: viewStore.binding(
+                get: { $0.pharmacySearchState != nil },
+                send: PrescriptionDetailDomain.Action.dismissPharmacySearch
+            )) {
+                IfLetStore(store.scope(
+                    state: { $0.pharmacySearchState },
+                    action: PrescriptionDetailDomain.Action.pharmacySearch(action:)
+                )) { scopedStore in
+                    NavigationView {
+                        PharmacySearchView(store: scopedStore)
+                    }
+                    .accentColor(Colors.primary600)
+                    .navigationViewStyle(StackNavigationViewStyle())
                 }
             }
         }

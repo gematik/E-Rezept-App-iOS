@@ -29,7 +29,9 @@ protocol UserSessionProviderControl: UserSessionProvider {
     func resetSession(with config: AppConfiguration)
 }
 
+// sourcery: CodedError = "007"
 enum UserSessionProviderError: Error {
+    // sourcery: errorCode = "01"
     case unavailable
 }
 

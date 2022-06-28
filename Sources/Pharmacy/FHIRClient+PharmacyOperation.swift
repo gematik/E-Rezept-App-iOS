@@ -32,7 +32,8 @@ extension FHIRClient {
     ///   - position: Pharmacy position (latitude and longitude)
     /// - Returns: `AnyPublisher` that emits a list of pharmacies or nil when not found
     public func searchPharmacies(by searchTerm: String,
-                                 position: Position?)
+                                 position: Position?,
+                                 filter: [String: String])
         -> AnyPublisher<[PharmacyLocation], FHIRClient.Error> {
         let handler = DefaultFHIRResponseHandler(
             acceptFormat: FHIRAcceptFormat.json
@@ -50,6 +51,7 @@ extension FHIRClient {
             operation: PharmacyFHIROperation.searchPharmacies(
                 searchTerm: searchTerm,
                 position: position,
+                filter: filter,
                 handler: handler
             )
         )

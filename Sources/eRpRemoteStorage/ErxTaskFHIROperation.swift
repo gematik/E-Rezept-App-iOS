@@ -29,13 +29,10 @@ public enum ErxTaskFHIROperation<Value, Handler: FHIRResponseHandler> where Hand
     case allTasks(referenceDate: String?, handler: Handler)
     /// Request a specific task from the service in a certain format
     case taskBy(id: ErxTask.ID, accessCode: String?, handler: Handler)
-    // swiftlint:disable:previous identifier_name
     /// Delete(/Abort) a specific task by it's taskID and accessCode
     case deleteTask(id: ErxTask.ID, accessCode: String?, handler: Handler)
-    // swiftlint:disable:previous identifier_name
     /// Request a specific audit event from the service in a certain format
     case auditEventBy(id: ErxAuditEvent.ID, handler: Handler)
-    // swiftlint:disable:previous identifier_name
     /// Request all audit events for a specific language after a specific reference date from the service
     case auditEvents(referenceDate: String?, language: String?, handler: Handler)
     /// Request to redeem a `ErxTaskOrder` in a pharmacy
@@ -44,6 +41,8 @@ public enum ErxTaskFHIROperation<Value, Handler: FHIRResponseHandler> where Hand
     case allCommunications(referenceDate: String?, handler: Handler)
     /// Load all medication dispenses since reference date
     case allMedicationDispenses(referenceDate: String?, handler: Handler)
+    /// Loads content for a given url. Used for paging.
+    case next(url: URL, handler: Handler)
 }
 
 extension ErxTaskFHIROperation: FHIRClientOperation {
@@ -57,7 +56,8 @@ extension ErxTaskFHIROperation: FHIRClientOperation {
              let .auditEvents(_, _, handler),
              let .redeem(order: _, handler),
              let .allCommunications(_, handler),
-             let .allMedicationDispenses(_, handler: handler):
+             let .allMedicationDispenses(_, handler: handler),
+             let .next(url: _, handler: handler):
             return try handler.handle(response: response)
         }
     }
@@ -117,6 +117,8 @@ extension ErxTaskFHIROperation: FHIRClientOperation {
                 components?.queryItems = [whenHandOverItem]
             }
             return components?.string
+        case let .next(url: url, handler: _):
+            return url.absoluteString
         }
     }
 
@@ -159,7 +161,8 @@ extension ErxTaskFHIROperation: FHIRClientOperation {
              .auditEvents,
              .auditEventBy,
              .allCommunications,
-             .allMedicationDispenses:
+             .allMedicationDispenses,
+             .next:
             return nil
         case let .redeem(order: order, _):
             return try? order.asCommunicationResource()
@@ -176,7 +179,8 @@ extension ErxTaskFHIROperation: FHIRClientOperation {
              let .auditEvents(_, _, handler),
              let .redeem(_, handler),
              let .allCommunications(_, handler),
-             let .allMedicationDispenses(_, handler: handler):
+             let .allMedicationDispenses(_, handler: handler),
+             let .next(url: _, handler: handler):
             return handler.acceptFormat
         }
     }

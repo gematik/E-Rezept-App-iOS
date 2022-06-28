@@ -1,3 +1,68 @@
+# Release 1.3.2
+
+### fixed
+
+  - Fix prescription status not being updated
+  - Fix pharmacies showing wrong service types
+  - Fix error message for invalidated biometric keys
+  - Fix saving the CAN and PIN after failed eGK connection
+  - Fix UI of the Pharmacy address
+  - Fix CapabilitiesView UI
+  - Fix OrderEGK Hint only displayed if not logged in
+
+### added
+
+  - Add check for finished biometric setup before usage
+  - Add validation to AVSMessage
+  - Add AVS redeem service to PharmacyRedeemDomain
+  - Add error identifier for all errors with annotations
+
+### changed
+
+  - Onboarding redesign
+
+# Release 1.3.1 (not tagged)
+
+### changed
+
+  - Change audit events paging to respect FHIR paging mechanism
+  - Upgrade Xcode version to 13.3.1
+
+### added
+
+  - Add DebugView for redeeming via AVS module
+  - Alternative Zuweisung: AVS-Modul
+
+### fixed
+
+  - Fix recipes showing for no longer selected profile
+  - Fix the insurance contact list
+  - Fix textfield focus state in forms
+  - Fix dependency problem of FHIR SPM package
+
+# Release 1.3.0 (not tagged)
+
+### fixed
+
+  - Fix various voice over bugs
+  - Fix the mail option to reset pin to displayed correctly
+  - Fix profile name usability with delete Button
+  - Fix pharmacy faq url
+  - Fix task deletion when task status is `in-progress`
+  - Fix layout and spelling issues within redeem screens
+
+### added
+
+  - Add possibility to report NFC card reader session error via e-mail
+  - Add support for suggested passwords created by icloud keychain
+  - Enable FastTrack for all users
+
+### changed
+
+  - Change OpenHealthCardKit dependency to version 3.0.7
+  - Refactor ErxTask: Dummies, Demo, Fixture
+  - Add usage of mint for xcodegen and swiftgen
+
 # Release 1.2.7
 
 ### fixed (2 changes)

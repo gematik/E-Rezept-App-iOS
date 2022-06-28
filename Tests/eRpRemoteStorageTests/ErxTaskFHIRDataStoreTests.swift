@@ -141,8 +141,8 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
 
         sut.listAllAuditEvents()
             .test(expectations: { erxTasks in
-                expect(erxTasks.count).to(equal(4))
-                let sortedIds = erxTasks.map(\.id).sorted()
+                expect(erxTasks.content.count).to(equal(4))
+                let sortedIds = erxTasks.content.map(\.id).sorted()
                 expect(sortedIds)
                     .to(equal(["64c4f143-1de0-11b2-80eb-443cac489883",
                                "64c4f1af-1de0-11b2-80ec-443cac489883",
@@ -196,34 +196,29 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
                 return fixture(filePath: redeemOrderResponse, headers: ["Content-Type": "application/json"])
         }
 
-        sut.redeem(orders: [inputOrder, inputOrder])
+        sut.redeem(order: inputOrder)
             .test { error in
                 fail("unexpected fail with error: \(error)")
-            } expectations: { isSuccessful in
-                expect(counter) == 2
-                expect(isSuccessful).to(beTrue())
+            } expectations: { order in
+                expect(counter) == 1
+                expect(order).to(equal(self.inputOrder))
             }
     }
 
-    func testRedeemTwoOrdersWithOneSuccessAndOneErrorToFail() {
+    func testRedeemOrderWithFailure() {
         let expectedError = URLError(.notConnectedToInternet)
-        let redeemOrderResponse = load(resource: "redeemOrderResponse")
 
         var counter = 0
         stub(condition: isPath("/Communication")
             && isMethodPOST()
             && hasBody(expectedRequestBody)) { _ in
                 counter += 1
-                if counter == 1 {
-                    return fixture(filePath: redeemOrderResponse, headers: ["Content-Type": "application/json"])
-                } else {
-                    return HTTPStubsResponse(error: expectedError)
-                }
+                return HTTPStubsResponse(error: expectedError)
         }
 
-        sut.redeem(orders: [inputOrder, inputOrder])
+        sut.redeem(order: inputOrder)
             .test { error in
-                expect(counter) == 2
+                expect(counter) == 1
                 expect(error) == .fhirClientError(FHIRClient.Error.httpError(.httpError(expectedError)))
             } expectations: { _ in
                 fail("this test should rase an error instead")

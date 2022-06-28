@@ -18,6 +18,7 @@
 
 import SwiftUI
 
+@available(*, deprecated, message: "Use ProgressView instead")
 struct ActivityIndicator: UIViewRepresentable {
     let shouldAnimate: Bool
     var hideWhenStopped = false

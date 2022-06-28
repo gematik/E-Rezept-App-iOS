@@ -90,7 +90,7 @@ enum AppSecurityOption: Identifiable, Equatable {
     case biometry(BiometryType)
     case password
 
-    var id: Int { // swiftlint:disable:this identifier_name
+    var id: Int {
         switch self {
         case .unsecured:
             return -1
@@ -106,7 +106,7 @@ enum AppSecurityOption: Identifiable, Equatable {
         }
     }
 
-    init?(fromId id: Int) { // swiftlint:disable:this identifier_name
+    init?(fromId id: Int) {
         switch id {
         case -1:
             self = .unsecured
@@ -122,9 +122,13 @@ enum AppSecurityOption: Identifiable, Equatable {
     }
 }
 
+// sourcery: CodedError = "006"
 enum AppSecurityManagerError: Error, Equatable {
+    // sourcery: errorCode = "01"
     case savePasswordFailed
+    // sourcery: errorCode = "02"
     case retrievePasswordFailed
+    // sourcery: errorCode = "03"
     case localAuthenticationContext(NSError?)
 
     var errorDescription: String? {

@@ -150,8 +150,11 @@ public class ShipmentInfoCoreDataStore: ShipmentInfoDataStore, CoreDataCrudable 
         .eraseToAnyPublisher()
     }
 
+    // sourcery: CodedError = "504"
     public enum Error: Swift.Error {
+        // sourcery: errorCode = "01"
         case noMatchingEntity
+        // sourcery: errorCode = "02"
         case internalError
     }
 }

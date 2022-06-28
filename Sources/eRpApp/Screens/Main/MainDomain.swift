@@ -27,27 +27,67 @@ enum MainDomain {
 
     enum Route: Equatable {
         case selectProfile
+        case scanner(ScannerDomain.State)
+        case deviceSecurity(DeviceSecurityDomain.State)
+        case cardWall(CardWallDomain.State)
+        case prescriptionDetail(PrescriptionDetailDomain.State)
+        case redeem(RedeemDomain.State)
+        case alert(AlertState<Action>)
 
         enum Tag: Int {
             case selectProfile
+            case scanner
+            case deviceSecurity
+            case cardWall
+            case prescriptionDetail
+            case redeem
+            case alert
         }
 
         var tag: Tag {
             switch self {
             case .selectProfile:
                 return .selectProfile
+            case .scanner:
+                return .scanner
+            case .deviceSecurity:
+                return .deviceSecurity
+            case .cardWall:
+                return .cardWall
+            case .prescriptionDetail:
+                return .prescriptionDetail
+            case .redeem:
+                return .redeem
+            case .alert:
+                return .alert
             }
         }
     }
 
     struct State: Equatable {
-        var scannerState: ScannerDomain.State?
-        var deviceSecurityState: DeviceSecurityDomain.State?
         var prescriptionListState: GroupedPrescriptionListDomain.State
         var extAuthPendingState = ExtAuthPendingDomain.State()
         var isDemoMode = false
 
         var route: Route?
+    }
+
+    /// Provides an Effect that need to run whenever the state of this Domain is reset to nil
+    static func cleanup<T>() -> Effect<T, Never> {
+        .concatenate(
+            Effect.cancel(token: Token.self),
+            cleanupSubDomains()
+        )
+    }
+
+    private static func cleanupSubDomains<T>() -> Effect<T, Never> {
+        .concatenate(
+            ProfileSelectionDomain.cleanup(),
+            DeviceSecurityDomain.cleanup(),
+            CardWallDomain.cleanup(),
+            PrescriptionDetailDomain.cleanup(),
+            RedeemDomain.cleanup()
+        )
     }
 
     enum Token: CaseIterable, Hashable {
@@ -58,15 +98,8 @@ enum MainDomain {
         /// Presents the `ScannerView`
         case showScannerView
         /// Hides the `ScannerView`
-        case dismissScannerView
         case loadDeviceSecurityView
         case loadDeviceSecurityViewReceived(DeviceSecurityDomain.State?)
-        case dismissDeviceSecurityView
-        /// Child view actions for the `GroupedPrescriptionListDomain`
-        case prescriptionList(action: GroupedPrescriptionListDomain.Action)
-        /// Child view actions for the `ScannerDomain`
-        case scanner(action: ScannerDomain.Action)
-        case deviceSecurity(action: DeviceSecurityDomain.Action)
         /// Start listening to demo mode changes
         case subscribeToDemoModeChange
         case unsubscribeFromDemoModeChange
@@ -78,10 +111,23 @@ enum MainDomain {
         case extAuthPending(action: ExtAuthPendingDomain.Action)
 
         case setNavigation(tag: Route.Tag?)
+
+        // Child Domain Actions
+        /// Child view actions for the `GroupedPrescriptionListDomain`
+        case prescriptionList(action: GroupedPrescriptionListDomain.Action)
+        /// Child view actions for the `ScannerDomain`
+        case scanner(action: ScannerDomain.Action)
+        case deviceSecurity(action: DeviceSecurityDomain.Action)
+        case prescriptionDetailAction(action: PrescriptionDetailDomain.Action)
+        case redeemView(action: RedeemDomain.Action)
+        case cardWall(action: CardWallDomain.Action)
     }
 
+    // sourcery: CodedError = "015"
     enum Error: Swift.Error, Equatable {
+        // sourcery: errorCode = "01"
         case localStoreError(LocalStoreError)
+        // sourcery: errorCode = "02"
         case userSessionError(UserSessionError)
     }
 
@@ -106,11 +152,10 @@ enum MainDomain {
     static let domainReducer = Reducer { state, action, environment in
         switch action {
         case .showScannerView:
-            state.scannerState = ScannerDomain.State()
+            state.route = .scanner(ScannerDomain.State())
             return .none
-        case .dismissScannerView,
-             .scanner(action: .close):
-            state.scannerState = nil
+        case .scanner(action: .close):
+            state.route = nil
             return ScannerDomain.cleanup()
         case .turnOffDemoMode:
             environment.router.routeTo(.settings)
@@ -129,11 +174,9 @@ enum MainDomain {
                 .receive(on: environment.schedulers.main)
                 .eraseToEffect()
         case let .loadDeviceSecurityViewReceived(deviceSecurityState):
-            state.deviceSecurityState = deviceSecurityState
-            return .none
-        case .prescriptionList,
-             .scanner,
-             .extAuthPending:
+            if let deviceSecurityState = deviceSecurityState {
+                state.route = .deviceSecurity(deviceSecurityState)
+            }
             return .none
         case .subscribeToDemoModeChange:
             return environment.userSessionContainer.isDemoMode
@@ -145,11 +188,10 @@ enum MainDomain {
             state.isDemoMode = demoModeValue
             return .none
         case .unsubscribeFromDemoModeChange:
-            return .cancel(id: Token.demoMode)
-        case .deviceSecurity(.close),
-             .dismissDeviceSecurityView:
-            state.deviceSecurityState = nil
-            return Effect.cancel(token: DeviceSecurityDomain.Token.self)
+            return cleanup()
+        case .deviceSecurity(.close):
+            state.route = nil
+            return cleanupSubDomains()
         case .deviceSecurity:
             return .none
         case let .externalLogin(url):
@@ -161,8 +203,67 @@ enum MainDomain {
             return .none
         case .setNavigation(tag: .none):
             state.route = nil
-            return ProfileSelectionDomain.cleanup()
+            return cleanupSubDomains()
+        case .setNavigation(tag: .cardWall):
+            state.route = .cardWall(
+                .init(
+                    introAlreadyDisplayed: true,
+                    isNFCReady: true,
+                    isMinimalOS14: true,
+                    pin: .init(isDemoModus: false),
+                    loginOption: .init(isDemoModus: false)
+                )
+            )
+            return .none
         case .setNavigation:
+            return .none
+        case let .prescriptionList(action: .errorReceived(error)):
+            let alertState: AlertState<Action>
+            switch error {
+            case .idpError(.biometrics):
+                alertState = AlertState(
+                    for: error,
+                    title: L10n.errTitleLoginNecessary,
+                    primaryButton: .default(
+                        TextState(L10n.erxBtnAlertLogin),
+                        action: .send(Action.setNavigation(tag: .cardWall))
+                    )
+                )
+            default:
+                alertState = AlertState(for: error)
+            }
+            state.route = .alert(alertState)
+            return .none
+        case let .prescriptionList(action: .showCardWallReceived(cardWallState)):
+            state.route = .cardWall(cardWallState)
+            return .none
+        case let .prescriptionList(action: .prescriptionDetailViewTapped(prescription)):
+            state.route = .prescriptionDetail(PrescriptionDetailDomain.State(
+                prescription: prescription,
+                isArchived: prescription.isArchived
+            ))
+            return .none
+        case let .prescriptionList(action: .redeemViewTapped(selectedGroupedPrescription)):
+            state.route = .redeem(RedeemDomain.State(
+                groupedPrescription: selectedGroupedPrescription
+            ))
+            return .none
+        case .cardWall(action: .close):
+            state.route = nil
+            return .concatenate(
+                CardWallDomain.cleanup(),
+                Effect(value: .prescriptionList(action: .loadRemoteGroupedPrescriptionsAndSave))
+            )
+        case .redeemView(action: .close),
+             .prescriptionDetailAction(action: .close):
+            state.route = nil
+            return cleanupSubDomains()
+        case .prescriptionList,
+             .scanner,
+             .extAuthPending,
+             .redeemView,
+             .cardWall,
+             .prescriptionDetailAction:
             return .none
         }
     }
@@ -171,10 +272,15 @@ enum MainDomain {
         groupedPrescriptionListPullback,
         scannerPullbackReducer,
         deviceSecurityPullbackReducer,
+        prescriptionDetailPullbackReducer,
+        redeemViewPullbackReducer,
+        cardWallPullbackReducer,
         extAuthPendingReducer,
         domainReducer
     )
+}
 
+extension MainDomain {
     private static let groupedPrescriptionListPullback: Reducer =
         GroupedPrescriptionListDomain.reducer.pullback(
             state: \.prescriptionListState,
@@ -200,8 +306,8 @@ enum MainDomain {
         }
 
     private static let scannerPullbackReducer: Reducer =
-        ScannerDomain.domainReducer.optional().pullback(
-            state: \.scannerState,
+        ScannerDomain.domainReducer._pullback(
+            state: (\State.route).appending(path: /Route.scanner),
             action: /MainDomain.Action.scanner(action:)
         ) { globalEnvironment in
             ScannerDomain.Environment(repository: globalEnvironment.erxTaskRepository,
@@ -210,8 +316,8 @@ enum MainDomain {
         }
 
     private static let deviceSecurityPullbackReducer: Reducer =
-        DeviceSecurityDomain.reducer.optional().pullback(
-            state: \.deviceSecurityState,
+        DeviceSecurityDomain.reducer._pullback(
+            state: (\State.route).appending(path: /Route.deviceSecurity),
             action: /MainDomain.Action.deviceSecurity(action:)
         ) {
             DeviceSecurityDomain.Environment(
@@ -231,6 +337,49 @@ enum MainDomain {
                 idTokenValidator: $0.userSession.idTokenValidator(),
                 profileDataStore: $0.userSession.profileDataStore,
                 extAuthRequestStorage: $0.userSession.extAuthRequestStorage
+            )
+        }
+
+    static let cardWallPullbackReducer: Reducer =
+        CardWallDomain.reducer._pullback(
+            state: (\State.route).appending(path: /Route.cardWall),
+            action: /MainDomain.Action.cardWall(action:)
+        ) { globalEnvironment in
+            CardWallDomain.Environment(
+                schedulers: globalEnvironment.schedulers,
+                userSession: globalEnvironment.userSession,
+                sessionProvider: DefaultSessionProvider(
+                    userSessionProvider: globalEnvironment.userSessionProvider,
+                    userSession: globalEnvironment.userSession
+                ),
+                signatureProvider: globalEnvironment.signatureProvider,
+                accessibilityAnnouncementReceiver: globalEnvironment.accessibilityAnnouncementReceiver
+            )
+        }
+
+    static let prescriptionDetailPullbackReducer: Reducer =
+        PrescriptionDetailDomain.reducer._pullback(
+            state: (\State.route).appending(path: /Route.prescriptionDetail),
+            action: /MainDomain.Action.prescriptionDetailAction(action:)
+        ) { environment in
+            PrescriptionDetailDomain.Environment(
+                schedulers: environment.schedulers,
+                taskRepository: environment.userSession.erxTaskRepository,
+                fhirDateFormatter: environment.fhirDateFormatter,
+                pharmacyRepository: environment.userSession.pharmacyRepository,
+                userSession: environment.userSession
+            )
+        }
+
+    static let redeemViewPullbackReducer: Reducer =
+        RedeemDomain.reducer._pullback(
+            state: (\State.route).appending(path: /Route.redeem),
+            action: /MainDomain.Action.redeemView(action:)
+        ) { environment in
+            RedeemDomain.Environment(
+                schedulers: environment.schedulers,
+                userSession: environment.userSession,
+                fhirDateFormatter: environment.fhirDateFormatter
             )
         }
 }

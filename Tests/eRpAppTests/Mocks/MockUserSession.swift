@@ -16,6 +16,7 @@
 //  
 //
 
+import AVS
 import Combine
 @testable import eRpApp
 import eRpKit
@@ -118,6 +119,10 @@ class MockUserSession: UserSession {
     }
 
     var profileSecureDataWiper: ProfileSecureDataWiper = MockProfileSecureDataWiper()
+
+    lazy var avsSession: AVSSession = {
+        MockAVSSession()
+    }()
 }
 
 class MockHintEventsStore: EventsStore {
@@ -196,7 +201,9 @@ extension MockSecureUserStore: IDPStorage {
 }
 
 class MockPharmacyRepository: PharmacyRepository {
-    func searchPharmacies(searchTerm: String, position: Position?)
+    func searchPharmacies(searchTerm: String,
+                          position: Position?,
+                          filter _: [PharmacyRepositoryFilter])
         -> AnyPublisher<[PharmacyLocation], PharmacyRepositoryError> {
         let filteredResult = store.filter { pharmacy in
             if !searchTerm.isEmpty,
@@ -231,7 +238,7 @@ class FakeErxTaskRepository: ErxTaskRepository {
     }
 
     func loadRemote(
-        by id: ErxTask.ID, // swiftlint:disable:this identifier_name
+        by id: ErxTask.ID,
         accessCode _: String?
     ) -> AnyPublisher<ErxTask?, ErrorType> {
         if let result = store[id] {
@@ -246,7 +253,7 @@ class FakeErxTaskRepository: ErxTaskRepository {
         return Just(erxTasks).setFailureType(to: ErrorType.self).eraseToAnyPublisher()
     }
 
-    func loadLocal(by id: ErxTask.ID, // swiftlint:disable:this identifier_name
+    func loadLocal(by id: ErxTask.ID,
                    accessCode _: String?) -> AnyPublisher<ErxTask?, ErrorType> {
         let erxTask = store[id]
         return Just(erxTask).setFailureType(to: ErrorType.self).eraseToAnyPublisher()
@@ -271,8 +278,8 @@ class FakeErxTaskRepository: ErxTaskRepository {
         return Just(true).setFailureType(to: ErrorType.self).eraseToAnyPublisher()
     }
 
-    func redeem(orders _: [ErxTaskOrder]) -> AnyPublisher<Bool, ErrorType> {
-        Just(true).setFailureType(to: ErrorType.self).eraseToAnyPublisher()
+    func redeem(order: ErxTaskOrder) -> AnyPublisher<ErxTaskOrder, ErrorType> {
+        Just(order).setFailureType(to: ErrorType.self).eraseToAnyPublisher()
     }
 
     func loadLocalCommunications(for _: ErxTask.Communication

@@ -18,12 +18,18 @@
 
 import Foundation
 
+// sourcery: CodedError = "203"
 /// Local store error cases
 public enum LocalStoreError: Swift.Error, LocalizedError, Equatable {
+    // sourcery: errorCode = "01"
     case notImplemented
+    // sourcery: errorCode = "02"
     case initialization(error: Swift.Error)
+    // sourcery: errorCode = "03"
     case write(error: Swift.Error)
+    // sourcery: errorCode = "04"
     case delete(error: Swift.Error)
+    // sourcery: errorCode = "05"
     case read(error: Swift.Error)
 
     public var errorDescription: String? {

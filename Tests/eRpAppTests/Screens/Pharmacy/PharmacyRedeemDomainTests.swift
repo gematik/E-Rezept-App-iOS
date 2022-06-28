@@ -27,8 +27,9 @@ import XCTest
 class PharmacyRedeemDomainTests: XCTestCase {
     let testScheduler = DispatchQueue.immediate
     var mockShipmentInfoDataStore: MockShipmentInfoDataStore!
-    var mockErxTaskRepository: MockErxTaskRepository!
     var mockUserSession: MockUserSession!
+    var mockRedeemService: MockRedeemService!
+
     typealias TestStore = ComposableArchitecture.TestStore<
         PharmacyRedeemDomain.State,
         PharmacyRedeemDomain.State,
@@ -41,8 +42,8 @@ class PharmacyRedeemDomainTests: XCTestCase {
     override func setUp() {
         super.setUp()
         mockUserSession = MockUserSession()
-        mockErxTaskRepository = MockErxTaskRepository()
         mockShipmentInfoDataStore = MockShipmentInfoDataStore()
+        mockRedeemService = MockRedeemService()
     }
 
     override func tearDownWithError() throws {
@@ -58,8 +59,8 @@ class PharmacyRedeemDomainTests: XCTestCase {
             environment: PharmacyRedeemDomain.Environment(
                 schedulers: Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler()),
                 userSession: mockUserSession,
-                erxTaskRepository: mockErxTaskRepository,
-                shipmentInfoStore: mockShipmentInfoDataStore
+                shipmentInfoStore: mockShipmentInfoDataStore,
+                redeemService: mockRedeemService
             )
         )
     }
@@ -74,12 +75,14 @@ class PharmacyRedeemDomainTests: XCTestCase {
             position: nil,
             address: nil,
             telecom: nil,
-            hoursOfOperation: []
+            hoursOfOperation: [],
+            avsEndpoints: PharmacyLocation.AVSEndpoints(onPremiseUrl: URL(string: "http://onpremise.de")),
+            avsCertificates: []
         )
     }
 
     func testRedeemingWhenNotLoggedIn() {
-        let inputTasks = ErxTask.Dummies.erxTasks
+        let inputTasks = ErxTask.Fixtures.erxTasks
         let sut = testStore(for: PharmacyRedeemDomain.State(
             redeemOption: .onPremise,
             erxTasks: inputTasks,
@@ -97,41 +100,7 @@ class PharmacyRedeemDomainTests: XCTestCase {
         mockShipmentInfoDataStore.selectedShipmentInfoReturnValue = Just(expectedShipmentInfo)
             .setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
         mockUserSession.isLoggedIn = false
-
-        sut.send(.registerSelectedShipmentInfoListener)
-        sut.receive(.selectedShipmentInfoReceived(.success(expectedShipmentInfo))) {
-            $0.selectedShipmentInfo = expectedShipmentInfo
-        }
-
-        sut.send(.redeem) {
-            $0.loadingState = .loading(nil)
-        }
-        sut.receive(.redeemReceived(.value(false))) {
-            $0.loadingState = .value(false)
-            $0.alertState = PharmacyRedeemDomain.loginAlertState
-        }
-    }
-
-    func testRedeemHappyPath() {
-        let inputTasks = ErxTask.Dummies.erxTasks
-        let sut = testStore(for: PharmacyRedeemDomain.State(
-            redeemOption: .onPremise,
-            erxTasks: inputTasks,
-            pharmacy: pharmacy,
-            selectedErxTasks: Set(inputTasks)
-        ))
-
-        let expectedShipmentInfo = ShipmentInfo(
-            identifier: UUID(),
-            name: "Ludger Königsstein",
-            street: "Musterstr. 1",
-            zip: "10623",
-            city: "Berlin"
-        )
-        mockShipmentInfoDataStore.selectedShipmentInfoReturnValue = Just(expectedShipmentInfo)
-            .setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
-        mockUserSession.isLoggedIn = true
-        mockErxTaskRepository.redeemPublisher = Just(true).setFailureType(to: ErxRepositoryError.self)
+        mockRedeemService.redeemReturnValue = Fail(error: RedeemServiceError.noTokenAvailable)
             .eraseToAnyPublisher()
 
         sut.send(.registerSelectedShipmentInfoListener)
@@ -139,17 +108,93 @@ class PharmacyRedeemDomainTests: XCTestCase {
             $0.selectedShipmentInfo = expectedShipmentInfo
         }
 
-        sut.send(.redeem) {
-            $0.loadingState = .loading(nil)
+        sut.send(.redeem)
+        sut.receive(.redeemReceived(.failure(RedeemServiceError.noTokenAvailable))) {
+            $0.orderResponses = []
+            $0.alertState = PharmacyRedeemDomain.AlertStates.alert(for: .noTokenAvailable)
         }
-        sut.receive(.redeemReceived(.value(true))) {
-            $0.loadingState = .value(true)
+    }
+
+    func testRedeemHappyPath() {
+        let inputTasks = ErxTask.Fixtures.erxTasks
+        let initialState = PharmacyRedeemDomain.State(
+            redeemOption: .onPremise,
+            erxTasks: inputTasks,
+            pharmacy: pharmacy,
+            selectedErxTasks: Set(inputTasks)
+        )
+        let sut = testStore(for: initialState)
+
+        let expectedShipmentInfo = ShipmentInfo(
+            identifier: UUID(),
+            name: "Ludger Königsstein",
+            street: "Musterstr. 1",
+            addressDetail: "Postfach 1212",
+            zip: "10623",
+            city: "Berlin",
+            phone: "0177123456",
+            mail: "mail@gematik.de",
+            deliveryInfo: "Bitte klingeln."
+        )
+
+        mockShipmentInfoDataStore.selectedShipmentInfoReturnValue = Just(expectedShipmentInfo)
+            .setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
+        mockUserSession.isLoggedIn = true
+
+        var expectedOrderResponses = IdentifiedArrayOf<OrderResponse>()
+        mockRedeemService.redeemOrdersClosure = { orders in
+            let orderResponses = orders.map { order in
+                OrderResponse(requested: order, result: .success(true))
+            }
+            expectedOrderResponses = IdentifiedArrayOf(uniqueElements: orderResponses)
+            return Just(expectedOrderResponses)
+                .setFailureType(to: RedeemServiceError.self)
+                .eraseToAnyPublisher()
+        }
+
+        sut.send(.registerSelectedShipmentInfoListener)
+        sut.receive(.selectedShipmentInfoReceived(.success(expectedShipmentInfo))) {
+            $0.selectedShipmentInfo = expectedShipmentInfo
+        }
+
+        sut.send(.redeem) { state in
+            let orders = state.orders
+            for task in inputTasks {
+                let order = orders.first { $0.taskID == task.id }
+                expect(order?.name) == expectedShipmentInfo.name
+                expect(order?.address) == expectedShipmentInfo.address
+                expect(order?.hint) == expectedShipmentInfo.deliveryInfo
+                expect(order?.phone) == expectedShipmentInfo.phone
+                expect(order?.mail) == expectedShipmentInfo.mail
+                expect(order?.text).to(beNil())
+                expect(order?.redeemType) == initialState.redeemOption
+                expect(order?.accessCode) == task.accessCode
+                expect(order?.telematikId) == self.pharmacy.telematikID
+                expect(order?.endpoint) == self.pharmacy.avsEndpoints?.url(for: initialState.redeemOption)
+            }
+        }
+        sut.receive(.redeemReceived(.success(expectedOrderResponses))) {
+            $0.orderResponses = expectedOrderResponses
             $0.successViewState = RedeemSuccessDomain.State(redeemOption: .onPremise)
+
+            for task in inputTasks {
+                let response = $0.orderResponses.first { $0.requested.taskID == task.id }
+                expect(response?.requested.name) == expectedShipmentInfo.name
+                expect(response?.requested.address) == expectedShipmentInfo.address
+                expect(response?.requested.hint) == expectedShipmentInfo.deliveryInfo
+                expect(response?.requested.phone) == expectedShipmentInfo.phone
+                expect(response?.requested.mail) == expectedShipmentInfo.mail
+                expect(response?.requested.text).to(beNil())
+                expect(response?.requested.redeemType) == initialState.redeemOption
+                expect(response?.requested.accessCode) == task.accessCode
+                expect(response?.requested.telematikId) == self.pharmacy.telematikID
+                expect(response?.requested.endpoint) == self.pharmacy.avsEndpoints?.url(for: initialState.redeemOption)
+            }
         }
     }
 
     func testLoadingProfile() {
-        let inputTasks = ErxTask.Dummies.erxTasks
+        let inputTasks = ErxTask.Fixtures.erxTasks
         let sut = testStore(for: PharmacyRedeemDomain.State(
             redeemOption: .onPremise,
             erxTasks: inputTasks,
@@ -169,7 +214,7 @@ class PharmacyRedeemDomainTests: XCTestCase {
     }
 
     func testRedeemWithMissingPhone() {
-        let inputTasks = ErxTask.Dummies.erxTasks
+        let inputTasks = ErxTask.Fixtures.erxTasks
         let sut = testStore(for: PharmacyRedeemDomain.State(
             redeemOption: .shipment,
             erxTasks: inputTasks,
@@ -194,13 +239,12 @@ class PharmacyRedeemDomainTests: XCTestCase {
         }
 
         sut.send(.redeem) {
-            $0.loadingState = .loading(nil)
-            $0.alertState = PharmacyRedeemDomain.missingPhoneState
+            $0.alertState = PharmacyRedeemDomain.AlertStates.missingPhoneState
         }
     }
 
     func testGeneratingShipmentInfoFromErxTask() {
-        let erxTask = ErxTask.Dummies.erxTasks.first!
+        let erxTask = ErxTask.Fixtures.erxTask1
         let identifier = UUID()
 
         let sut = erxTask.patient?.shipmentInfo(with: identifier)
@@ -214,4 +258,10 @@ class PharmacyRedeemDomainTests: XCTestCase {
         expect(sut?.mail).to(beNil())
         expect(sut?.deliveryInfo).to(beNil())
     }
+}
+
+extension Order {
+    static var fixture: Order = {
+        Order(redeemType: .shipment, taskID: "task_id_0", accessCode: "access_code_0", telematikId: "k123456789")
+    }()
 }

@@ -115,8 +115,11 @@ extension DebugView {
                     DebugView.ResetButton(text: "Reset CAN") {
                         viewStore.send(.resetCanButtonTapped)
                     }
-                    DebugView.ResetButton(text: "reset eGK Certificate") {
+                    DebugView.ResetButton(text: "Reset eGK Certificate") {
                         viewStore.send(.resetEGKAuthCertButtonTapped)
+                    }
+                    DebugView.ResetButton(text: "Reset CERT- and OCSP-Lists") {
+                        viewStore.send(.resetOcspAndCertListButtonTapped)
                     }
                     Toggle("Fake Device Capabilities",
                            isOn: viewStore.binding(
@@ -393,23 +396,27 @@ extension DebugView {
         }
 
         private struct FeatureFlags: View {
-            @AppStorage("enable_fast_track") var enableFastTrack = false
-            @AppStorage("enable_fast_track_preview") var enableFastTrackPreview = true
+            @AppStorage("enable_avs_login") var enableAvsLogin = false
+            @AppStorage("show_debug_pharmacies") var showDebugPharmacies = false
 
             var body: some View {
                 List {
-                    Toggle("FastTrack", isOn: $enableFastTrack)
+                    Toggle("Zuweisen ohne TI", isOn: $enableAvsLogin)
 
                     VStack(alignment: .leading) {
-                        Toggle("FastTrack Preview", isOn: $enableFastTrackPreview)
-                            .foregroundColor(enableFastTrack ? Color(.label) : Color(.secondaryLabel))
-                        Text("Wenn FastTrack eingeschaltet ist, kann hier zwischen 'aktiv' und 'preview' Modus " +
-                            "gewechselt werden.")
+                        Toggle("Show Debug Pharmacies", isOn: $showDebugPharmacies)
+                            .foregroundColor(enableAvsLogin ? Color(.label) : Color(.secondaryLabel))
+                        Text("Zeigt die unter 'Debug Pharmacies' hinterlegten Apotheken in der Apothekensuche an")
                             .font(.footnote)
-                            .foregroundColor(enableFastTrack ? Color(.secondaryLabel) : Color(.tertiaryLabel))
+                            .foregroundColor(enableAvsLogin ? Color(.secondaryLabel) : Color(.tertiaryLabel))
                     }
-                    .disabled(!enableFastTrack)
-                    .padding(.leading)
+
+                    NavigationLink(destination: AVSDebugView()) {
+                        Text("Debug Pharmacies")
+                    }.disabled(!enableAvsLogin)
+                }
+                .onChange(of: self.enableAvsLogin) { newValue in
+                    showDebugPharmacies = newValue
                 }
             }
         }

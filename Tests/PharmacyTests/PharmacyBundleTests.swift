@@ -87,7 +87,7 @@ final class PharmacyBundleTests: XCTestCase {
         let ids = parsedPharmacyLocations.map(\.id)
         expect(ids) == expectedPharmacyIDs
 
-        let expectedTypes = [PharmacyLocation.PharmacyType.mobl,
+        let expectedTypes = [PharmacyLocation.PharmacyType.delivery,
                              PharmacyLocation.PharmacyType.emergency]
         let pharmacyTypes = parsedPharmacyLocations.flatMap(\.types)
         expect(pharmacyTypes) == expectedTypes

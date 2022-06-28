@@ -97,10 +97,10 @@ class PharmacyContactDomainTests: XCTestCase {
         expect(self.mockShipmentInfoDataStore.saveShipmentInfoCallsCount).to(equal(1))
         sut.receive(.shipmentInfoSaved(.failure(expectedError))) {
             $0.alertState = AlertState(
-                title: TextState("Error"),
-                message: TextState("The operation couldn’t be completed. (eRpApp.DemoError error 0.)"),
+                title: TextState("Fehler"),
+                message: TextState("Der Vorgang konnte nicht abgeschlossen werden. (eRpApp.DemoError-Fehler 0.)"),
                 dismissButton: AlertState.Button.default(
-                    TextState("OK"),
+                    TextState("Okay"),
                     action: AlertState.ButtonAction.send(PharmacyContactDomain.Action.alertDismissButtonTapped)
                 )
             )

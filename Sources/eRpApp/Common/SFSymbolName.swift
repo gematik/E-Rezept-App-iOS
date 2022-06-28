@@ -76,6 +76,9 @@ public enum SFSymbolName {
     public static let key = "key"
     public static let arrowUpArrowDown = "arrow.up.arrow.down"
     public static let play = "play"
+    public static let paperplane = "paperplane"
+    public static let pills = "pills"
+    public static let trayAndArrowDown = "tray.and.arrow.down"
 
     public static let numbers1circle = "1.circle"
     public static let numbers2circle = "2.circle"
@@ -105,12 +108,34 @@ public enum SFSymbolName {
     public static let chevronLeft = "chevron.left"
     public static let chevronForward = "chevron.forward"
     public static let chevronBackward = "chevron.backward"
-    public static let filter = "slider.horizontal.3"
+
+    public static var filter: String {
+        if #available(iOS 15.0, *) {
+            return "line.3.horizontal.decrease.circle"
+        } else {
+            return "line.horizontal.3.decrease.circle"
+        }
+    }
+
     public static let rectangleAndPencilAndEllipsis = "rectangle.and.pencil.and.ellipsis"
     public static let eye = "eye"
     public static let eyeSlash = "eye.slash"
-    public static let calendarWarning = "calendar.badge.exclamationmark"
-    public static let clockWarning = "clock.badge.exclamationmark"
+    public static var calendarWarning: String {
+        if #available(iOS 15.0, *) {
+            return "calendar.badge.exclamationmark"
+        } else {
+            return "calendar"
+        }
+    }
+
+    public static var clockWarning: String {
+        if #available(iOS 15.0, *) {
+            return "clock.badge.exclamationmark"
+        } else {
+            return "clock"
+        }
+    }
+
     public static let hourglass = "hourglass"
 }
 

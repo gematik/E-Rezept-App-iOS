@@ -37,15 +37,11 @@ struct MainView: View {
     }
 
     struct ViewState: Equatable {
-        let isScannerViewPresented: Bool
-        let isDeviceSecurityViewPresented: Bool
         let isDemoModeEnabled: Bool
 
         let routeTag: MainDomain.Route.Tag?
 
         init(state: MainDomain.State) {
-            isScannerViewPresented = state.scannerState != nil
-            isDeviceSecurityViewPresented = state.deviceSecurityState != nil
             isDemoModeEnabled = state.isDemoMode
             routeTag = state.route?.tag
         }
@@ -62,7 +58,7 @@ struct MainView: View {
                         // Workaround to get correct accessibility while activating voice over *after* presentation of
                         // settings dialog. As soon as we can use multiple `fullScreenCover` (drop iOS <= ~14.4) we may
                         // omit this modifier and the `EmptyView()`.
-                        .accessibility(hidden: viewStore.isScannerViewPresented)
+                        .accessibility(hidden: viewStore.routeTag != nil)
 
                     ExtAuthPendingView(
                         store: store.scope(
@@ -90,18 +86,26 @@ struct MainView: View {
                 // at once. As soon as we drop iOS <= ~14.4, we may omit this.
                 Rectangle()
                     .frame(width: 0, height: 0, alignment: .center)
-                    .fullScreenCover(isPresented: viewStore.binding(
-                        get: \.isScannerViewPresented,
-                        send: MainDomain.Action.dismissScannerView
-                    )) {
+                    .fullScreenCover(isPresented: Binding<Bool>(
+                        get: { viewStore.routeTag == .scanner },
+                        set: { show in
+                            if !show {
+                                viewStore.send(.setNavigation(tag: nil))
+                            }
+                        }
+                    ),
+                    onDismiss: {},
+                    content: {
                         IfLetStore(
                             store.scope(
-                                state: { $0.scannerState },
+                                state: (\MainDomain.State.route)
+                                    .appending(path: /MainDomain.Route.scanner)
+                                    .extract(from:),
                                 action: MainDomain.Action.scanner(action:)
                             ),
                             then: ErxTaskScannerView.init(store:)
                         )
-                    }
+                    })
                     .hidden()
                     .accessibility(hidden: true)
 
@@ -110,19 +114,27 @@ struct MainView: View {
                 Rectangle()
                     .frame(width: 0, height: 0, alignment: .center)
                     .sheet(
-                        isPresented: viewStore.binding(
-                            get: \.isDeviceSecurityViewPresented,
-                            send: MainDomain.Action.dismissDeviceSecurityView
-                        )
-                    ) {
-                        IfLetStore(
-                            store.scope(
-                                state: { $0.deviceSecurityState },
-                                action: MainDomain.Action.deviceSecurity(action:)
-                            ),
-                            then: DeviceSecurityView.init(store:)
-                        )
-                    }
+                        isPresented: Binding<Bool>(
+                            get: { viewStore.routeTag == .deviceSecurity },
+                            set: { show in
+                                if !show {
+                                    viewStore.send(.setNavigation(tag: nil))
+                                }
+                            }
+                        ),
+                        onDismiss: {},
+                        content: {
+                            IfLetStore(
+                                store.scope(
+                                    state: (\MainDomain.State.route)
+                                        .appending(path: /MainDomain.Route.deviceSecurity)
+                                        .extract(from:),
+                                    action: MainDomain.Action.deviceSecurity(action:)
+                                ),
+                                then: DeviceSecurityView.init(store:)
+                            )
+                        }
+                    )
                     .hidden()
                     .accessibility(hidden: true)
 
@@ -145,6 +157,83 @@ struct MainView: View {
                     })
                     .hidden()
                     .accessibility(hidden: true)
+
+                // Navigation into details
+                NavigationLink(
+                    destination: IfLetStore(
+                        store.scope(
+                            state: (\MainDomain.State.route)
+                                .appending(path: /MainDomain.Route.prescriptionDetail)
+                                .extract(from:),
+                            action: MainDomain.Action.prescriptionDetailAction(action:)
+                        )
+                    ) { scopedStore in
+                        WithViewStore(scopedStore.scope(state: \.prescription.source)) { viewStore in
+                            switch viewStore.state {
+                            case .scanner: PrescriptionLowDetailView(store: scopedStore)
+                            case .server: PrescriptionFullDetailView(store: scopedStore)
+                            }
+                        }
+                    },
+                    tag: MainDomain.Route.Tag.prescriptionDetail,
+                    selection: viewStore.binding(
+                        get: \.routeTag,
+                        send: MainDomain.Action.setNavigation
+                    )
+                ) {
+                    EmptyView()
+                }.accessibility(hidden: true)
+
+                // RedeemView sheet presentation
+                Rectangle()
+                    .frame(width: 0, height: 0, alignment: .center)
+                    .fullScreenCover(isPresented: Binding<Bool>(
+                        get: { viewStore.routeTag == .redeem },
+                        set: { show in
+                            if !show {
+                                viewStore.send(.setNavigation(tag: nil))
+                            }
+                        }
+                    ),
+                    onDismiss: {},
+                    content: {
+                        IfLetStore(
+                            store.scope(
+                                state: (\MainDomain.State.route)
+                                    .appending(path: /MainDomain.Route.redeem)
+                                    .extract(from:),
+                                action: MainDomain.Action.redeemView(action:)
+                            ),
+                            then: RedeemView.init(store:)
+                        )
+                    })
+                    .accessibility(hidden: true)
+                    .hidden()
+                // CardWallView sheet presentation
+                Rectangle()
+                    .frame(width: 0, height: 0, alignment: .center)
+                    .fullScreenCover(isPresented: Binding<Bool>(
+                        get: { viewStore.routeTag == .cardWall },
+                        set: { show in
+                            if !show {
+                                viewStore.send(.setNavigation(tag: nil))
+                            }
+                        }
+                    ),
+                    onDismiss: {},
+                    content: {
+                        IfLetStore(
+                            store.scope(
+                                state: (\MainDomain.State.route)
+                                    .appending(path: /MainDomain.Route.cardWall)
+                                    .extract(from:),
+                                action: MainDomain.Action.cardWall(action:)
+                            ),
+                            then: CardWallView.init(store:)
+                        )
+                    })
+                    .accessibility(hidden: true)
+                    .hidden()
             }
             .navigationTitle(Text(L10n.erxTitle))
             .navigationBarTitleDisplayMode(viewStore.isDemoModeEnabled ? .inline : .automatic)
@@ -166,8 +255,14 @@ struct MainView: View {
             .onDisappear {
                 viewStore.send(.unsubscribeFromDemoModeChange)
             }
+            .alert(
+                self.store
+                    .scope(state: (\MainDomain.State.route).appending(path: /MainDomain.Route.alert)
+                        .extract(from:)),
+                dismiss: .setNavigation(tag: .none)
+            )
         }
-        .accentColor(Colors.primary700)
+        .accentColor(Colors.primary600)
         .navigationViewStyle(StackNavigationViewStyle())
     }
 }

@@ -66,8 +66,7 @@ struct KeyboardModifier: ViewModifier {
     func body(content: Content) -> some View {
         content.introspectScrollView { scrollView in
 
-            if #available(iOS 14.0, *) {
-            } else {
+            if #unavailable(iOS 14.0) {
                 let edgeInsets: UIEdgeInsets
 
                 if self.keyboardHeight.height == 0 {

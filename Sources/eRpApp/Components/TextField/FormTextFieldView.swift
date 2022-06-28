@@ -21,12 +21,14 @@ import SwiftUI
 
 /// sourcery: StringAssetInitialized
 struct FormTextFieldView: View {
-    let placeholder: LocalizedStringKey?
+    let placeholder: String?
     var subtitle: LocalizedStringKey?
     @Binding var text: String
     var showSeparator: Bool
 
-    init(placeholder: LocalizedStringKey? = nil,
+    @State private var isFirstResponder = false
+
+    init(placeholder: String? = nil,
          subtitle: LocalizedStringKey? = nil,
          text: Binding<String>,
          showSeparator: Bool = true) {
@@ -42,26 +44,27 @@ struct FormTextFieldView: View {
 
             HStack {
                 VStack(alignment: .leading, spacing: 0) {
-                    TextField(
-                        placeholder ?? "",
-                        text: _text
+                    FocusTextField(
+                        placeholder: placeholder,
+                        text: _text,
+                        isFirstResponder: $isFirstResponder
                     )
 
                     if let title = subtitle {
                         Text(title)
                             .font(.subheadline)
+                            .fixedSize(horizontal: false, vertical: true)
                             .foregroundColor(Colors.textSecondary)
                     }
                 }
 
-                if !text.isEmpty {
+                if !text.isEmpty && isFirstResponder {
                     Spacer()
                     Image(systemName: SFSymbolName.crossIconFill)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(Color(.tertiaryLabel))
                         .onTapGesture {
                             text = ""
                         }
-                        .padding(.horizontal, 16)
                 }
             }
             .modifier(BottomDividerStyle(showSeparator: showSeparator))
@@ -73,11 +76,21 @@ struct FormTextFieldView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
             VStack {
-                FormTextFieldView(placeholder: "Placeholder", subtitle: nil, text: .constant(""), showSeparator: true)
-                FormTextFieldView(placeholder: nil, subtitle: "Subtitle", text: .constant(""), showSeparator: true)
                 FormTextFieldView(
                     placeholder: "Placeholder",
+                    subtitle: "",
+                    text: .constant(""),
+                    showSeparator: true
+                )
+                FormTextFieldView(
+                    placeholder: nil,
                     subtitle: "Subtitle",
+                    text: .constant(""),
+                    showSeparator: true
+                )
+                FormTextFieldView(
+                    placeholder: "Very long placeholder with some text in it",
+                    subtitle: "Very long subtitle with even more text in it, to check if it truncates correctly",
                     text: .constant(""),
                     showSeparator: true
                 )
@@ -88,10 +101,19 @@ struct FormTextFieldView_Previews: PreviewProvider {
                     showSeparator: false
                 )
             }
-
             VStack {
-                FormTextFieldView(placeholder: "Placeholder", subtitle: nil, text: .constant(""), showSeparator: true)
-                FormTextFieldView(placeholder: nil, subtitle: "Subtitle", text: .constant(""), showSeparator: true)
+                FormTextFieldView(
+                    placeholder: "Placeholder",
+                    subtitle: "",
+                    text: .constant(""),
+                    showSeparator: true
+                )
+                FormTextFieldView(
+                    placeholder: nil,
+                    subtitle: "Subtitle",
+                    text: .constant(""),
+                    showSeparator: true
+                )
                 FormTextFieldView(
                     placeholder: "Placeholder",
                     subtitle: "Subtitle",

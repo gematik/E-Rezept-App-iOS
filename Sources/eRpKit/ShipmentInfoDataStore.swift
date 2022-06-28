@@ -24,7 +24,7 @@ import Foundation
 /// sourcery: StreamWrapped
 public protocol ShipmentInfoDataStore {
     /// Set the selectedShipmentInfoId.
-    /// The selected values of `ShipmentInfo` is published threw `selectedShipmentInfo`
+    /// The selected values of `ShipmentInfo` is published through `selectedShipmentInfo`
     /// - Parameter selectedShipmentInfoId: Identifier of the `ShipmentInfo` to be selected
     func set(selectedShipmentInfoId: UUID)
 

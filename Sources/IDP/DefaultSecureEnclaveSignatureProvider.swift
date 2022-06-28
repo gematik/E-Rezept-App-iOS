@@ -60,7 +60,7 @@ class DefaultSecureEnclaveSignatureProvider: SecureEnclaveSignatureProvider {
     }
 
     public func signPairingSession(_ pairingSession: PairingSession, with signer: JWTSigner, certificate: X509)
-        -> AnyPublisher<RegistrationData, Swift.Error> {
+        -> AnyPublisher<RegistrationData, SecureEnclaveSignatureProviderError> {
         // [REQ:gemSpec_IDP_Frontend:A_21598,A_21595,A_21595] Store pairing data
         certificateStorage.set(certificate: certificate)
         certificateStorage.set(keyIdentifier: pairingSession.tempKeyIdentifier)

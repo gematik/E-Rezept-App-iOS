@@ -16,10 +16,13 @@
 //  
 //
 
+import AVS
 import Combine
 import ComposableArchitecture
 import eRpKit
+import IdentifiedCollections
 import MapKit
+import OpenSSL
 import Pharmacy
 import SwiftUI
 
@@ -28,7 +31,10 @@ enum PharmacyRedeemDomain: Equatable {
     typealias Reducer = ComposableArchitecture.Reducer<State, Action, Environment>
 
     static func cleanup<T>() -> Effect<T, Never> {
-        Effect.cancel(token: PharmacyRedeemDomain.Token.self)
+        Effect.concatenate(
+            PharmacyContactDomain.cleanup(),
+            Effect.cancel(token: PharmacyRedeemDomain.Token.self)
+        )
     }
 
     enum Token: CaseIterable, Hashable {
@@ -41,7 +47,7 @@ enum PharmacyRedeemDomain: Equatable {
         var erxTasks: [ErxTask]
         var pharmacy: PharmacyLocation
         var selectedErxTasks: Set<ErxTask> = []
-        var loadingState: LoadingState<Bool, ErxRepositoryError> = .idle
+        var orderResponses: IdentifiedArrayOf<OrderResponse> = []
         var alertState: AlertState<Action>?
         var successViewState: RedeemSuccessDomain.State?
         var selectedShipmentInfo: ShipmentInfo?
@@ -62,7 +68,7 @@ enum PharmacyRedeemDomain: Equatable {
         /// Redeem the selected prescriptions
         case redeem
         /// Called when redeem network call finishes
-        case redeemReceived(LoadingState<Bool, ErxRepositoryError>)
+        case redeemReceived(Result<IdentifiedArrayOf<OrderResponse>, RedeemServiceError>)
         /// Called when a prescription has been selected
         case didSelect(String)
         case alertDismissButtonTapped
@@ -78,8 +84,8 @@ enum PharmacyRedeemDomain: Equatable {
     struct Environment {
         var schedulers: Schedulers
         var userSession: UserSession
-        var erxTaskRepository: ErxTaskRepository
         let shipmentInfoStore: ShipmentInfoDataStore
+        let redeemService: RedeemService
     }
 
     static let domainReducer = Reducer { state, action, environment in
@@ -118,32 +124,28 @@ enum PharmacyRedeemDomain: Equatable {
             // closing is handled in parent reducer
             return cleanup()
         case .redeem:
+            state.orderResponses = []
             guard !state.selectedErxTasks.isEmpty else {
                 return .none
             }
-            state.loadingState = .loading()
             let orders = state.orders
             guard !orders.isEmpty else {
-                state.alertState = missingPhoneState
+                state.alertState = AlertStates.missingPhoneState
                 return .none
             }
             return environment.redeem(orders: orders)
                 .map(Action.redeemReceived)
-        case let .redeemReceived(loadingState):
-            state.loadingState = loadingState
-            if let isLoggedIn = loadingState.value, isLoggedIn == false {
-                state.alertState = loginAlertState
+        case let .redeemReceived(.success(orderResponses)):
+            state.orderResponses = orderResponses
+            if orderResponses.arePartiallySuccessful || orderResponses.areFailing {
+                state.alertState = AlertStates.failingRequest(count: orderResponses.failedCount)
                 return .none
+            } else if orderResponses.areSuccessful {
+                state.successViewState = RedeemSuccessDomain.State(redeemOption: state.redeemOption)
             }
-            if let error = loadingState.error {
-                state.alertState = AlertState(
-                    title: TextState(L10n.alertErrorTitle),
-                    message: TextState(error.localizedDescription),
-                    dismissButton: .default(TextState(L10n.alertBtnOk), action: .send(.alertDismissButtonTapped))
-                )
-                return .none
-            }
-            state.successViewState = RedeemSuccessDomain.State(redeemOption: state.redeemOption)
+            return .none
+        case let .redeemReceived(.failure(error)):
+            state.alertState = AlertStates.alert(for: error)
             return .none
         case let .didSelect(taskID):
             if let erxTask = state.erxTasks.first(where: { $0.id == taskID }) {
@@ -155,7 +157,6 @@ enum PharmacyRedeemDomain: Equatable {
             }
             return .none
         case .alertDismissButtonTapped:
-            state.loadingState = .idle
             state.alertState = nil
             return .none
         case .alertShowPharmacyContactButtonTapped:
@@ -195,86 +196,83 @@ enum PharmacyRedeemDomain: Equatable {
                 shipmentInfoStore: environment.shipmentInfoStore
             )
         }
+}
 
-    static var loginAlertState: AlertState<Action> = {
-        AlertState(
-            title: TextState(L10n.alertErrorTitle),
-            message: TextState(L10n.phaRedeemTxtNotLoggedIn),
-            dismissButton: .default(TextState(L10n.alertBtnOk), action: .send(.alertDismissButtonTapped))
-        )
-    }()
+extension PharmacyRedeemDomain {
+    enum AlertStates {
+        static func alert(for error: RedeemServiceError) -> AlertState<Action> {
+            guard let message = error.recoverySuggestion else {
+                return AlertState(
+                    title: TextState(error.localizedDescription),
+                    dismissButton: .default(TextState(L10n.alertBtnOk), action: .send(.alertDismissButtonTapped))
+                )
+            }
+            return AlertState(
+                title: TextState(error.localizedDescription),
+                message: TextState(message),
+                dismissButton: .default(TextState(L10n.alertBtnOk), action: .send(.alertDismissButtonTapped))
+            )
+        }
 
-    static var missingPhoneState: AlertState<Action> = {
-        AlertState(
-            title: TextState(L10n.phaRedeemAlertTitleMissingPhone),
-            message: TextState(L10n.phaRedeemAlertMessageMissingPhone),
-            primaryButton: .default(
-                TextState(L10n.phaRedeemBtnAlertComplete),
-                action: .send(.alertShowPharmacyContactButtonTapped)
-            ),
-            secondaryButton: .cancel(TextState(L10n.phaRedeemBtnAlertCancel), action: .send(.alertDismissButtonTapped))
-        )
-    }()
+        static var missingPhoneState: AlertState<Action> = {
+            AlertState(
+                title: TextState(L10n.phaRedeemAlertTitleMissingPhone),
+                message: TextState(L10n.phaRedeemAlertMessageMissingPhone),
+                primaryButton: .default(
+                    TextState(L10n.phaRedeemBtnAlertComplete),
+                    action: .send(.alertShowPharmacyContactButtonTapped)
+                ),
+                secondaryButton: .cancel(
+                    TextState(L10n.phaRedeemBtnAlertCancel),
+                    action: .send(.alertDismissButtonTapped)
+                )
+            )
+        }()
+
+        static func failingRequest(count: Int) -> AlertState<Action> {
+            AlertState(
+                title: TextState(L10n.phaRedeemAlertTitleFailure(count)),
+                message: TextState(L10n.phaRedeemAlertMessageFailure),
+                dismissButton: .default(TextState(L10n.alertBtnOk), action: .send(.alertDismissButtonTapped))
+            )
+        }
+    }
 }
 
 extension PharmacyRedeemDomain.State {
-    var orders: [ErxTaskOrder] {
-        if redeemOption.isPhoneRequired, selectedShipmentInfo?.phone == nil {
+    var orders: [Order] {
+        if redeemOption.isPhoneRequired,
+           selectedShipmentInfo?.phone == nil { // TODO: handle error //swiftlint:disable:this todo
             return []
         }
-        var address: [String] = []
-        if let name = selectedShipmentInfo?.name {
-            address.append(name)
-        }
-        if let street = selectedShipmentInfo?.street {
-            address.append(street)
-        }
-        if let zip = selectedShipmentInfo?.zip {
-            address.append(zip)
-        }
-        if let city = selectedShipmentInfo?.city {
-            address.append(city)
-        }
-        if let detail = selectedShipmentInfo?.addressDetail {
-            address.append(detail)
-        }
-        return selectedErxTasks.compactMap { task in
-            let payload = ErxTaskOrder.Payload(
-                supplyOptionsType: redeemOption,
-                name: selectedShipmentInfo?.name ?? "",
-                address: address,
-                hint: selectedShipmentInfo?.deliveryInfo ?? "",
-                phone: selectedShipmentInfo?.phone ?? ""
-            )
-            return ErxTaskOrder(
-                erxTaskId: task.id,
+
+        return selectedErxTasks.map { task in
+            Order(
+                redeemType: redeemOption,
+                name: selectedShipmentInfo?.name,
+                address: selectedShipmentInfo?.address,
+                hint: selectedShipmentInfo?.deliveryInfo,
+                text: nil, // TODO: other ticket //swiftlint:disable:this todo
+                phone: selectedShipmentInfo?.phone,
+                mail: selectedShipmentInfo?.mail,
+                transactionID: UUID(),
+                taskID: task.id,
                 accessCode: task.accessCode ?? "",
-                pharmacyTelematikId: pharmacy.telematikID,
-                payload: payload
+                endpoint: pharmacy.avsEndpoints?.url(for: redeemOption),
+                recipients: pharmacy.avsCertificates,
+                telematikId: pharmacy.telematikID
             )
         }
     }
 }
 
 extension PharmacyRedeemDomain.Environment {
-    func redeem(orders: [ErxTaskOrder]) -> Effect<LoadingState<Bool, ErxRepositoryError>, Never> {
-        userSession
-            .isAuthenticated
-            .mapError { ErxRepositoryError.local(.initialization(error: $0)) }
-            .first()
-            .flatMap { isAuthenticated -> AnyPublisher<Bool, ErxRepositoryError> in
-                if isAuthenticated {
-                    return erxTaskRepository.redeem(orders: orders)
-                        .first()
-                        .eraseToAnyPublisher()
-                } else {
-                    return Just(false)
-                        .setFailureType(to: ErxRepositoryError.self)
-                        .eraseToAnyPublisher()
-                }
-            }
+    func redeem(
+        orders: [Order]
+    ) -> Effect<Result<IdentifiedArrayOf<OrderResponse>, RedeemServiceError>, Never> {
+        redeemService.redeem(orders)
             .receive(on: schedulers.main.animation())
-            .catchToLoadingStateEffect()
+            .catchToEffect()
     }
 }
 
@@ -324,7 +322,7 @@ extension PharmacyRedeemDomain {
 
         static let state = State(
             redeemOption: .shipment,
-            erxTasks: ErxTask.Dummies.erxTasks,
+            erxTasks: ErxTask.Demo.erxTasks,
             pharmacy: pharmacy,
             selectedShipmentInfo: ShipmentInfo(
                 name: "Marta Maquise",
@@ -341,8 +339,8 @@ extension PharmacyRedeemDomain {
         static let environment = Environment(
             schedulers: Schedulers(),
             userSession: DemoSessionContainer(),
-            erxTaskRepository: DemoSessionContainer().erxTaskRepository,
-            shipmentInfoStore: DemoShipmentInfoStore()
+            shipmentInfoStore: DemoShipmentInfoStore(),
+            redeemService: DemoRedeemService()
         )
         static let store = Store(initialState: state,
                                  reducer: reducer,

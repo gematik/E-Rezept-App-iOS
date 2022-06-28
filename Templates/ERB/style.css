@@ -23,6 +23,8 @@ code {
   font-family: 'SF Mono', SFMono-Regular, ui-monospace, Menlo, monospace;
   background: #eee;
   display: inline-block;
+  padding: 0 5px;
+  margin:  2px;
 }
 
 pre {
@@ -72,5 +74,16 @@ a::after {
 
 #TOC ul ul ul {
 	font-size: 0.8em;
+	line-height: 1.5em;
+}
+
+ul {
+	counter-reset: section;
+	font-size: 1.0em;
+	line-height: 1.5em;
+}
+
+ul ul {
+	font-size: 0.9em;
 	line-height: 1.5em;
 }

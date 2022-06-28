@@ -18,15 +18,20 @@
 
 import Combine
 import ComposableArchitecture
+import eRpStyleKit
 import SwiftUI
 
-struct CardWallIntroductionView<Content: View>: View {
+struct CardWallIntroductionView<Content: View, Content2: View>: View {
     let store: CardWallIntroductionDomain.Store
     let nextView: () -> Content
+    let fastTrackView: () -> Content2
 
-    init(store: CardWallIntroductionDomain.Store, @ViewBuilder nextView: @escaping () -> Content) {
+    init(store: CardWallIntroductionDomain.Store,
+         @ViewBuilder nextView: @escaping () -> Content,
+         @ViewBuilder fastTrackView: @escaping () -> Content2) {
         self.store = store
         self.nextView = nextView
+        self.fastTrackView = fastTrackView
     }
 
     var body: some View {
@@ -42,7 +47,24 @@ struct CardWallIntroductionView<Content: View>: View {
                     PrimaryTextButton(text: L10n.cdwBtnIntroNext,
                                       a11y: A11y.cardWall.intro.cdwBtnIntroLater) {
                         viewStore.send(.advance(forward: true))
-                    }.padding()
+                    }
+                    .padding(.horizontal)
+                    .padding(.vertical, 8)
+
+                    Button(action: {
+                        viewStore.send(.advanceExtAuth(forward: true))
+                    }, label: {
+                        Group {
+                            Text(L10n.cdwBtnIntroFasttrackLeading)
+                                .foregroundColor(Color(.label)) +
+                                Text(L10n.cdwBtnIntroFasttrackCenter) +
+                                Text(L10n.cdwBtnIntroFasttrackTrailing)
+                                .foregroundColor(Color(.label))
+                        }
+                        .multilineTextAlignment(.center)
+                        .padding([.horizontal, .bottom])
+                        .frame(maxWidth: .infinity, alignment: .center)
+                    })
 
                     NavigationLink(
                         destination: nextView(),
@@ -53,9 +75,26 @@ struct CardWallIntroductionView<Content: View>: View {
                     ) {
                         EmptyView()
                     }.accessibility(hidden: true)
+
+                    NavigationLink(
+                        destination: fastTrackView(),
+                        isActive: viewStore.binding(
+                            get: \.showFastTrackScreen,
+                            send: CardWallIntroductionDomain.Action.advanceExtAuth(forward:)
+                        )
+                    ) {
+                        EmptyView()
+                    }.accessibility(hidden: true)
+
+                    NavigationLink(
+                        destination: EmptyView(),
+                        isActive: .constant(false)
+                    ) {
+                        EmptyView()
+                    }.accessibility(hidden: true)
                 }
             }
-            .navigationBarTitle(L10n.cdwTxtIntroHeaderTop, displayMode: .inline)
+            .navigationBarTitle(L10n.cdwTxtIntroHeaderTop, displayMode: .large)
             .navigationBarItems(
                 trailing: NavigationBarCloseItem {
                     viewStore.send(.close)
@@ -76,72 +115,82 @@ extension CardWallIntroductionView {
             WithViewStore(store) { viewStore in
                 ScrollView(.vertical, showsIndicators: true) {
                     VStack(alignment: .leading) {
-                        Image(Asset.CardWall.cardwallInitial)
-                            .resizable()
-                            .scaledToFit()
-                            .background(RoundedCorner(radius: 16, corners: [.bottomLeft, .bottomRight])
-                                .foregroundColor(Colors.primary100))
-                            .accessibility(identifier: A11y.cardWall.intro.cdwImgIntroMain)
-                            .accessibility(label: Text(L10n.cdwImgIntroMainLabel))
-                            .padding(.bottom, 8)
-
                         VStack(alignment: .leading, spacing: 8) {
-                            Text(L10n.cdwTxtIntroHeaderBottom)
-                                .foregroundColor(Colors.systemLabel)
-                                .font(.title3)
-                                .bold()
-                                .accessibility(identifier: A11y.cardWall.intro.cdwTxtIntroHeaderBottom)
-
-                            Text(L10n.cdwTxtIntroDescription)
+                            Text(L10n.cdwTxtIntroDescriptionNew)
                                 .font(.body)
                                 .foregroundColor(Colors.systemLabel)
                                 .accessibility(identifier: A11y.cardWall.intro.cdwTxtIntroDescription)
 
-                            Button(L10n.cdwBtnIntroMore) {
-                                viewStore.send(.showEGKOrderInfoView)
-                            }
-                            .foregroundColor(Colors.primary)
-                            .accessibility(identifier: A11y.cardWall.intro.cdwBtnIntroMore)
-                            .fullScreenCover(isPresented: viewStore.binding(
-                                get: \.isEGKOrderInfoViewPresented,
-                                send: CardWallIntroductionDomain.Action.dismissEGKOrderInfoView
-                            )) {
-                                NavigationView {
-                                    OrderHealthCardView {
-                                        viewStore.send(.dismissEGKOrderInfoView)
-                                    }
-                                }
-                                .accentColor(Colors.primary700)
-                                .navigationViewStyle(StackNavigationViewStyle())
-                            }
-                        }.padding()
+                            VStack(alignment: .leading, spacing: 16) {
+                                Text(L10n.cdwTxtIntroNeededSubheadline)
+                                    .font(Font.body.weight(.semibold))
 
-                        VStack(alignment: .leading, spacing: 16) {
-                            Text(L10n.cdwTxtIntroListTitle)
-                                .font(Font.body.weight(.semibold))
-                                .accessibility(identifier: A11y.cardWall.intro.cdwTxtIntroListTitle)
-                            HStack(alignment: .top, spacing: 16) {
-                                Image(systemName: SFSymbolName.checkmarkCircleFill)
-                                    .font(Font.title3.bold())
-                                    .foregroundColor(Colors.secondary600)
-                                Text(L10n.cdwTxtIntroRequirementCard)
-                                    .accessibility(identifier: A11y.cardWall.intro.cdwTxtIntroRequirementCard)
+                                Link(
+                                    destination: URL( // swiftlint:disable:next line_length
+                                        string: "https://www.das-e-rezept-fuer-deutschland.de/fragen-antworten/woran-erkenne-ich-ob-ich-eine-nfc-faehige-gesundheitskarte-habe#c204"
+                                    )! // swiftlint:disable:this force_unwrapping
+                                ) {
+                                    HStack {
+                                        Label(title: {
+                                            Text(L10n.cdwTxtIntroEgkCheckmark)
+                                                .foregroundColor(Color(.label))
+                                        }, icon: {
+                                            Image(systemName: SFSymbolName.checkmarkCircleFill)
+                                                .foregroundColor(Colors.secondary500)
+                                                .font(.title3)
+                                        })
+                                            .frame(maxWidth: .infinity, alignment: .leading)
+
+                                        Image(systemName: SFSymbolName.info)
+                                            .font(Font.title3)
+                                    }
+                                    .padding(16)
+                                    .background(Color(.systemGray6))
+                                    .cornerRadius(16)
+                                }
+
+                                Label(title: {
+                                    Text(L10n.cdwTxtIntroPinCheckmark)
+                                }, icon: {
+                                    Image(systemName: SFSymbolName.checkmarkCircleFill)
+                                        .foregroundColor(Colors.secondary500)
+                                        .font(.title3)
+                                })
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .padding(16)
+                                    .background(Color(.systemGray6))
+                                    .cornerRadius(16)
+
+                                VStack(spacing: 8) {
+                                    Text(L10n.cdwTxtIntroFootnote)
+                                        .foregroundColor(Color(.secondaryLabel))
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+
+                                    Button(action: {
+                                        viewStore.send(.showEGKOrderInfoView)
+                                    }, label: {
+                                        Text(L10n.cdwBtnIntroFootnote)
+                                    })
+                                        .frame(maxWidth: .infinity, alignment: .trailing)
+                                        .foregroundColor(Colors.primary)
+                                        .accessibility(identifier: A11y.cardWall.intro.cdwBtnIntroMore)
+                                        .fullScreenCover(isPresented: viewStore.binding(
+                                            get: \.isEGKOrderInfoViewPresented,
+                                            send: CardWallIntroductionDomain.Action.dismissEGKOrderInfoView
+                                        )) {
+                                            NavigationView {
+                                                OrderHealthCardView {
+                                                    viewStore.send(.dismissEGKOrderInfoView)
+                                                }
+                                            }
+                                            .accentColor(Colors.primary600)
+                                            .navigationViewStyle(StackNavigationViewStyle())
+                                        }
+                                }
+                                .font(.subheadline)
                             }
-                            HStack(alignment: .top, spacing: 16) {
-                                Image(systemName: SFSymbolName.checkmarkCircleFill)
-                                    .font(Font.title3.bold())
-                                    .foregroundColor(Colors.secondary600)
-                                Text(L10n.cdwTxtIntroRequirementPin)
-                                    .accessibility(identifier: A11y.cardWall.intro.cdwTxtIntroRequirementPin)
-                            }
-                            HStack(alignment: .top, spacing: 16) {
-                                Image(systemName: SFSymbolName.checkmarkCircleFill)
-                                    .font(Font.title3.bold())
-                                    .foregroundColor(Colors.secondary600)
-                                Text(L10n.cdwTxtIntroRequirementPhone)
-                                    .accessibility(identifier: A11y.cardWall.intro.cdwTxtIntroRequirementPhone)
-                            }
-                        }.padding(.horizontal)
+                            .padding(.top, 32)
+                        }.padding()
                     }
                 }
             }
@@ -156,7 +205,9 @@ struct IntroductionView_Previews: PreviewProvider {
                 store: CardWallIntroductionDomain.Dummies.store
             ) {
                 EmptyView()
+            } fastTrackView: {
+                EmptyView()
             }
-        }.generateVariations()
+        }
     }
 }

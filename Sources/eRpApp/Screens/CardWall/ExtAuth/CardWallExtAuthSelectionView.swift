@@ -38,8 +38,20 @@ struct CardWallExtAuthSelectionView: View {
                 }
                 .padding()
             } else {
-                List {
-                    if let kkList = viewStore.kkList {
+                if viewStore.kkList == nil {
+                    List {
+                        Section(header: CenteredActivityIndicator()) {}
+                            .listStyle(GroupedListStyle())
+                            .introspectTableView { tableView in
+                                tableView.separatorStyle = .none
+                                tableView.tableHeaderView = nil
+                                tableView.backgroundColor = UIColor.systemBackground
+                            }
+                            .listStyle(PlainListStyle())
+                    }
+                } else if let kkList = viewStore.kkList,
+                          !kkList.apps.isEmpty {
+                    List {
                         Section(header: Header {
                             viewStore.send(.showOrderEgk(true))
                         }) {
@@ -61,17 +73,28 @@ struct CardWallExtAuthSelectionView: View {
                             }
                         }
                         .textCase(.none)
-                    } else {
-                        Section(header: CenteredActivityIndicator()) {}
                     }
+                    .listStyle(GroupedListStyle())
+                    .introspectTableView { tableView in
+                        tableView.separatorStyle = .none
+                        tableView.tableHeaderView = nil
+                        tableView.backgroundColor = UIColor.systemBackground
+                    }
+                    .listStyle(PlainListStyle())
+                } else {
+                    VStack(spacing: 8) {
+                        Text(L10n.cdwTxtExtauthSelectionEmptyListHeadline)
+                            .multilineTextAlignment(.center)
+                            .font(.headline)
+
+                        Text(L10n.cdwTxtExtauthSelectionEmptyListDescription)
+                            .multilineTextAlignment(.center)
+                            .font(.subheadline)
+                            .foregroundColor(Color(.secondaryLabel))
+                    }
+                    .padding()
+                    .frame(maxHeight: .infinity, alignment: .center)
                 }
-                .listStyle(GroupedListStyle())
-                .introspectTableView { tableView in
-                    tableView.separatorStyle = .none
-                    tableView.tableHeaderView = nil
-                    tableView.backgroundColor = UIColor.systemBackground
-                }
-                .listStyle(PlainListStyle())
 
                 Spacer()
 
@@ -135,7 +158,7 @@ struct CardWallExtAuthSelectionView: View {
         var body: some View {
             HStack {
                 Spacer()
-                ActivityIndicator(shouldAnimate: true, hideWhenStopped: true)
+                ProgressView()
                 Spacer()
             }
         }
@@ -170,12 +193,12 @@ struct CardWallExtAuthSelectionView: View {
 
 extension CardWallExtAuthSelectionView {
     private struct ErrorView: View {
-        let error: LocalizedError
+        let error: IDPError
         let action: () -> Void
 
         var body: some View {
             VStack(spacing: 8) {
-                Text(error.localizedDescription)
+                Text(error.localizedDescriptionWithErrorList)
                     .multilineTextAlignment(.center)
                     .font(.headline)
 
@@ -191,11 +214,16 @@ extension CardWallExtAuthSelectionView {
                         .foregroundColor(Color(.secondaryLabel))
                 }
 
-                Button(action: action) {
-                    Text(L10n.cdwBtnExtauthSelectionRetry)
-                        .font(.subheadline)
+                switch error {
+                case .notAvailableInDemoMode:
+                    EmptyView()
+                default:
+                    Button(action: action) {
+                        Text(L10n.cdwBtnExtauthSelectionRetry)
+                            .font(.subheadline)
+                    }
+                    .accessibility(identifier: A11y.cardWall.extAuthSelection.cdwBtnExtauthSelectionRetry)
                 }
-                .accessibility(identifier: A11y.cardWall.extAuthSelection.cdwBtnExtauthSelectionRetry)
             }
         }
     }
@@ -207,9 +235,9 @@ struct CardWallExtAuthSelectionView_Previews: PreviewProvider {
             CardWallExtAuthSelectionView(store: CardWallExtAuthSelectionDomain.Store(
                 initialState:
                 .init(kkList: .init(apps: [
-                    .init(name: "Gematik KK", identifier: "abc"),
-                    .init(name: "Other KK", identifier: "def"),
-                    .init(name: "Yet Another KK", identifier: "ghi"),
+                    //                    .init(name: "Gematik KK", identifier: "abc"),
+//                    .init(name: "Other KK", identifier: "def"),
+//                    .init(name: "Yet Another KK", identifier: "ghi"),
                 ]),
                 error: nil,
                 selectedKK: .init(name: "Other KK", identifier: "def")),

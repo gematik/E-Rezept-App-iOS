@@ -30,7 +30,7 @@ extension FHIRClient {
     ///   - id: The ID of the task to be requested
     ///   - accessCode: code to access the given `id` or nil when not required due to (previous|other) authorization
     /// - Returns: `AnyPublisher` that emits the task or nil when not found
-    public func fetchTask(by id: ErxTask.ID, // swiftlint:disable:this identifier_name
+    public func fetchTask(by id: ErxTask.ID,
                           accessCode: String?) -> AnyPublisher<ErxTask?, FHIRClient.Error> {
         let handler = DefaultFHIRResponseHandler { (fhirResponse: FHIRClient.Response) -> ErxTask? in
             let decoder = JSONDecoder()
@@ -38,8 +38,8 @@ extension FHIRClient {
             do {
                 resource = try decoder.decode(ModelsR4.Bundle.self, from: fhirResponse.body)
             } catch let DecodingError.dataCorrupted(context) {
-                // todo hendrik fragen
-                // mit json parsen als dict
+                // fall back to JSON dictionary parsing
+                let accessCode = fhirResponse.body.recoverAccessCode
                 let pvsPruefnummer = fhirResponse.body.recoverPvsPruefnummer
                 let authoredOn = fhirResponse.body.recoverAuthoredOn
                 let prettyCodingPath = context.codingPath.reduce("") { partialResult, key -> String in
@@ -99,7 +99,7 @@ extension FHIRClient {
     ///   - id: The ID of the task to be requested
     ///   - accessCode: code to access the given `id` or nil when not required due to (previous|other) authorization
     /// - Returns: `AnyPublisher` that emits the task or nil when not found
-    public func deleteTask(by id: ErxTask.ID, // swiftlint:disable:this identifier_name
+    public func deleteTask(by id: ErxTask.ID,
                            accessCode: String?) -> AnyPublisher<Bool, FHIRClient.Error> {
         let handler = DefaultFHIRResponseHandler { (fhirResponse: FHIRClient.Response) -> Bool in
             let resource: ModelsR4.Bundle
@@ -123,8 +123,9 @@ extension FHIRClient {
                 // deletion. Obviously the server does not know the task which means we can
                 // safely delete it locally as well. Hence we return true so the task is
                 // subsequently also deleted locally on the device. Also see comments in ticket ERA-800.
-                if case let FHIRClient.Error.httpError(HTTPError.httpError(wrappedHttpError)) = error,
-                   wrappedHttpError.code.rawValue == 404 {
+                if case let FHIRClient.Error.operationOutcome(outcome) = error,
+                   let type = outcome.issue.first?.code,
+                   type == IssueType.notFound {
                     return Just(true).setFailureType(to: FHIRClient.Error.self).eraseToAnyPublisher()
                 }
                 throw error
@@ -140,7 +141,6 @@ extension FHIRClient {
     ///   - accessCode: code to access the given `id` or nil when not required due to (previous|other) authorization
     /// - Returns: `AnyPublisher` that emits the audit event or nil when not found
     public func fetchAuditEvent(by id: ErxAuditEvent.ID) -> AnyPublisher<ErxAuditEvent?, FHIRClient.Error> {
-        // swiftlint:disable:previous identifier_name
         let handler = DefaultFHIRResponseHandler { (fhirResponse: FHIRClient.Response) -> ErxAuditEvent? in
             let resource: ModelsR4.Bundle
             do {
@@ -162,34 +162,62 @@ extension FHIRClient {
     ///                   Pass `nil` for fetching all audit events
     ///   - locale: Locale key for which language the audit events will be fetched.
     ///             Nil if all languages should be fetched
-    public func fetchAllAuditEvents(after referenceDate: String? = nil,
-                                    for locale: String? = nil) -> AnyPublisher<[ErxAuditEvent], FHIRClient.Error> {
-        let handler = DefaultFHIRResponseHandler { (fhirResponse: FHIRClient.Response) -> [ErxAuditEvent] in
-            do {
-                let resource = try FHIRClient.decoder.decode(ModelsR4.Bundle.self, from: fhirResponse.body)
-                return try resource.parseErxAuditEvents()
-            } catch {
-                throw Error.decoding(error)
+    public func fetchAllAuditEvents(
+        after referenceDate: String? = nil,
+        for locale: String? = nil
+    ) -> AnyPublisher<PagedContent<[ErxAuditEvent]>, FHIRClient.Error> {
+        let handler =
+            DefaultFHIRResponseHandler { (fhirResponse: FHIRClient.Response) -> PagedContent<[ErxAuditEvent]> in
+                do {
+                    let resource = try FHIRClient.decoder.decode(ModelsR4.Bundle.self, from: fhirResponse.body)
+                    return try resource.parseErxAuditEventsContainer()
+                } catch {
+                    throw Error.decoding(error)
+                }
             }
-        }
 
         return execute(operation: ErxTaskFHIROperation.auditEvents(referenceDate: referenceDate,
                                                                    language: locale,
                                                                    handler: handler))
     }
 
+    /// Convenience function for requesting audit events
+    ///
+    /// - Returns: `AnyPublisher` that emits the audit events
+    /// - Parameters:
+    ///   - previousPage: The previous page of the requested one.
+    public func fetchAuditEventsNextPage(of previousPage: PagedContent<[ErxAuditEvent]>)
+        -> AnyPublisher<PagedContent<[ErxAuditEvent]>, FHIRClient.Error> {
+        let handler =
+            DefaultFHIRResponseHandler { (fhirResponse: FHIRClient.Response) -> PagedContent<[ErxAuditEvent]> in
+                do {
+                    let resource = try FHIRClient.decoder.decode(ModelsR4.Bundle.self, from: fhirResponse.body)
+                    return try resource.parseErxAuditEventsContainer()
+                } catch {
+                    throw Error.decoding(error)
+                }
+            }
+
+        guard let url = previousPage.next else {
+            return Fail(error: FHIRClient.Error.internalError("Requesting next page without link."))
+                .eraseToAnyPublisher()
+        }
+
+        return execute(operation: ErxTaskFHIROperation.next(url: url, handler: handler))
+    }
+
     /// Convenience function for redeeming an `ErxTask` in a pharmacy
     /// - Parameter order: The information relevant for placing the order
     /// - Returns: `true` if the server responds without error and parsing has been successful, otherwise  error
-    public func redeem(order: ErxTaskOrder) -> AnyPublisher<Bool, FHIRClient.Error> {
-        let handler = DefaultFHIRResponseHandler { (fhirResponse: FHIRClient.Response) -> Bool in
+    public func redeem(order: ErxTaskOrder) -> AnyPublisher<ErxTaskOrder, FHIRClient.Error> {
+        let handler = DefaultFHIRResponseHandler { (fhirResponse: FHIRClient.Response) -> ErxTaskOrder in
             do {
                 _ = try FHIRClient.decoder.decode(ModelsR4.Communication.self, from: fhirResponse.body)
             } catch {
                 throw Error.decoding(error)
             }
 
-            return true
+            return order
         }
 
         return execute(operation: ErxTaskFHIROperation.redeem(order: order, handler: handler))
@@ -260,6 +288,24 @@ extension Data {
            ),
            let identifier = device["identifier"] as? [String: Any],
            let value = identifier["value"] as? String {
+            return value
+        }
+        return nil
+    }
+
+    var recoverAccessCode: String? {
+        if let json = try? JSONSerialization.jsonObject(with: self),
+           let jsonDict = json as? [String: Any],
+           let entries = jsonDict["entry"] as? [[String: Any]],
+           let task = entries.first(
+               where: { ($0["resource"] as? [String: Any])?["resourceType"] as? String == .some("Task") }
+           ),
+           let taskResource = task["resource"] as? [String: Any],
+           let identifierEntries = taskResource["identifier"] as? [[String: Any]],
+           let accessCode = identifierEntries.first(
+               where: { $0["system"] as? String == .some("https://gematik.de/fhir/NamingSystem/AccessCode") }
+           ),
+           let value = accessCode["value"] as? String {
             return value
         }
         return nil

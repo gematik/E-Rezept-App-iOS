@@ -6,6 +6,8 @@ controls:
     - ctl_txt_search_bar_field
     - ctl_btn_search_bar_delete_text
     - ctl_btn_search_bar_cancel
+  textfieldwithdelete:
+    - ctl_btn_textfield_delete
 migration:
   - amg_txt_and_spinner
 scanner:
@@ -54,13 +56,12 @@ cardWall:
   notForYou:
     - cdw_btn_nfu_done
     - cdw_btn_nfu_cancel
-    - cdw_img_nfu
     - cdw_txt_nfu_subtitle
     - cdw_txt_nfu_description
-    - cdw_txt_nfu_footnote
     - cdw_btn_nfu_more
   canInput:
     - cdw_txt_can_input
+    - cdw_tct_can_header
     - cdw_txt_can_instruction
     - cdw_img_can_card
     - cdw_btn_can_cancel
@@ -68,12 +69,14 @@ cardWall:
     - cdw_btn_can_more
   pinInput:
     - cdw_txt_pin_subtitle
+    - cdw_txt_pin_description
     - cdw_btn_pin_cancel
     - cdw_btn_pin_done
     - cdw_edt_pin_input
-    - cdw_txt_pin_hint
-    - cdw_txt_pin_warning
+    - cdw_btn_pin_no_pin
     - cdw_hint_get_pin
+    - cdw_txt_pin_warning
+    - cdw_txt_pin_hint
   loginOption:
     - cdw_txt_loginOption_subtitle
     - cdw_btn_loginOption_cancel
@@ -283,6 +286,7 @@ prescriptionDetails:
   - prsc_dtl_txt_task_id
   - prsc_dtl_txt_access_code
   - prsc_dtl_txt_med_error
+  - prsc_dtl_txt_delete_disabled_note
 pharmacySearch:
   - pha_search_txt_result_list
   - pha_search_txt_result_list_entry
@@ -291,6 +295,9 @@ pharmacySearch:
   - pha_search_start
   - pha_search_no_results
   - pha_search_error
+  - pha_filter_bar
+  - pha_filter_open_filter
+  - pha_filter_filter_list
 pharmacyDetail:
   - pha_detail_txt_subtitle
   - pha_detail_btn_organization

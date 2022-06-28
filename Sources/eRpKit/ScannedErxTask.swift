@@ -21,7 +21,7 @@ import Foundation
 /// Represents a scanned eRx task holding the information of its ID and accessCode
 public struct ScannedErxTask: Identifiable, Hashable {
     /// Id of the task
-    public let id: String // swiftlint:disable:this identifier_name
+    public let id: String
 
     /// Access code authorizing for the task
     public let accessCode: String
@@ -41,7 +41,7 @@ public struct ScannedErxTask: Identifiable, Hashable {
         try! NSRegularExpression(pattern: taskStringPattern) // swiftlint:disable:this force_try
     }()
 
-    init(id: String, accessCode: String) { // swiftlint:disable:this identifier_name
+    init(id: String, accessCode: String) {
         self.id = id
         self.accessCode = accessCode
     }
@@ -70,11 +70,16 @@ public struct ScannedErxTask: Identifiable, Hashable {
 }
 
 extension ScannedErxTask {
+    // sourcery: CodedError = "205"
     /// Error cases for the ScannedErxTask
     public enum Error: Swift.Error, LocalizedError, Equatable {
+        // sourcery: errorCode = "01"
         case format
+        // sourcery: errorCode = "02"
         case invalidID
+        // sourcery: errorCode = "03"
         case invalidAccessCode
+        // sourcery: errorCode = "04"
         case invalidJSON(Swift.Error)
 
         public var errorDescription: String? {

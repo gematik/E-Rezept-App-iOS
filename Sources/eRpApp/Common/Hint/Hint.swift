@@ -22,12 +22,12 @@ import SwiftUI
 // swiftlint:disable:next orphaned_doc_comment
 /// sourcery: StringAssetInitialized
 struct Hint<Action: Equatable>: Equatable, Identifiable {
-    let id: String // swiftlint:disable:this identifier_name
+    let id: String
     var title: String?
     var message: String?
     var actionText: LocalizedStringKey?
     var action: Action?
-    let imageName: String
+    let image: AccessibilityImage
     var closeAction: Action?
     var style: Style = .neutral
     var buttonStyle: ButtonStyle = .quaternary

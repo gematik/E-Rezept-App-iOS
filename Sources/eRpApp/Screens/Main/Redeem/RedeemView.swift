@@ -21,6 +21,11 @@ import SwiftUI
 
 struct RedeemView: View {
     let store: RedeemDomain.Store
+    @AppStorage("enable_avs_login") var enableAvsLogin = false
+
+    init(store: RedeemDomain.Store) {
+        self.store = store
+    }
 
     var body: some View {
         NavigationView {
@@ -38,7 +43,7 @@ struct RedeemView: View {
                         .accessibility(identifier: A18n.redeem.overview.rdmTxtPharmacySubtitle)
 
                     NavigateToRedeemView(store: store)
-                    if viewStore.state.prescriptionsAreAllFullDetail {
+                    if viewStore.state.prescriptionsAreAllFullDetail || enableAvsLogin {
                         NavigateToPharmacySearchView(store: store)
                         // This is a workaround due to a SwiftUI bug where never 2 NavigationLink
                         // should be on the same view. See:
@@ -64,7 +69,7 @@ struct RedeemView: View {
                 }
             }
         }
-        .accentColor(Colors.primary700)
+        .accentColor(Colors.primary600)
         .navigationViewStyle(StackNavigationViewStyle())
     }
 
