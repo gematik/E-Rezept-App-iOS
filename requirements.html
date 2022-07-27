@@ -20,7 +20,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="index.html">
-           1.3.2 Docs
+           1.3.3 Docs
         </a>
          (100% documented)
       </p>
@@ -312,6 +312,9 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Extensions.html#/s:10TrustStore0aB5ErrorO">TrustStoreError</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Extensions/UserDefaults.html">UserDefaults</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Extensions.html#/s:6eRpApp23UserProfileServiceErrorO">UserProfileServiceError</a>
@@ -734,52 +737,52 @@ return Effect(value: .presentSecurityWarning)
 public func unregisterDevice(_ keyIdentifier: String, token: IDPToken) -&gt; AnyPublisher&lt;Bool, IDPError&gt; {
 </code></pre>
 <h3 id='a_21578' class='heading'>A_21578</h3>
-<h4 id='code-sources-idp-privatekeycontainer-swift-135-code-enforced-via-access-attribute' class='heading'><code>../Sources/IDP/PrivateKeyContainer.swift:135</code>:  Enforced via access attribute</h4>
+<h4 id='code-sources-idp-privatekeycontainer-swift-137-code-enforced-via-access-attribute' class='heading'><code>../Sources/IDP/PrivateKeyContainer.swift:137</code>:  Enforced via access attribute</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_21578,A_21579,A_21580,A_21583] Enforced via access attribute
 kSecAttrTokenID as String: kSecAttrTokenIDSecureEnclave,
 </code></pre>
 <h3 id='a_21579' class='heading'>A_21579</h3>
-<h4 id='code-sources-idp-privatekeycontainer-swift-135-code-enforced-via-access-attribute' class='heading'><code>../Sources/IDP/PrivateKeyContainer.swift:135</code>:  Enforced via access attribute</h4>
+<h4 id='code-sources-idp-privatekeycontainer-swift-137-code-enforced-via-access-attribute' class='heading'><code>../Sources/IDP/PrivateKeyContainer.swift:137</code>:  Enforced via access attribute</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_21578,A_21579,A_21580,A_21583] Enforced via access attribute
 kSecAttrTokenID as String: kSecAttrTokenIDSecureEnclave,
 </code></pre>
 <h3 id='a_21580' class='heading'>A_21580</h3>
-<h4 id='code-sources-idp-privatekeycontainer-swift-135-code-enforced-via-access-attribute' class='heading'><code>../Sources/IDP/PrivateKeyContainer.swift:135</code>:  Enforced via access attribute</h4>
+<h4 id='code-sources-idp-privatekeycontainer-swift-137-code-enforced-via-access-attribute' class='heading'><code>../Sources/IDP/PrivateKeyContainer.swift:137</code>:  Enforced via access attribute</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_21578,A_21579,A_21580,A_21583] Enforced via access attribute
 kSecAttrTokenID as String: kSecAttrTokenIDSecureEnclave,
 </code></pre>
 <h3 id='a_21581' class='heading'>A_21581</h3>
-<h4 id='code-sources-idp-privatekeycontainer-swift-131-code-algorithm-selection' class='heading'><code>../Sources/IDP/PrivateKeyContainer.swift:131</code>:  Algorithm selection</h4>
+<h4 id='code-sources-idp-privatekeycontainer-swift-133-code-algorithm-selection' class='heading'><code>../Sources/IDP/PrivateKeyContainer.swift:133</code>:  Algorithm selection</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_21581,A_21589] Algorithm selection
 kSecAttrKeyType as String: kSecAttrKeyTypeECSECPrimeRandom,
 </code></pre>
 <h3 id='a_21582' class='heading'>A_21582</h3>
-<h4 id='code-sources-idp-privatekeycontainer-swift-120-code-method-selection' class='heading'><code>../Sources/IDP/PrivateKeyContainer.swift:120</code>:  method selection</h4>
+<h4 id='code-sources-idp-privatekeycontainer-swift-122-code-method-selection' class='heading'><code>../Sources/IDP/PrivateKeyContainer.swift:122</code>:  method selection</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_21582] method selection
 // [REQ:gemSpec_IDP_Frontend:A_21587] via `.privateKeyUsage`
 [.privateKeyUsage,
 </code></pre>
 <h3 id='a_21583' class='heading'>A_21583</h3>
-<h4 id='code-sources-idp-privatekeycontainer-swift-135-code-enforced-via-access-attribute' class='heading'><code>../Sources/IDP/PrivateKeyContainer.swift:135</code>:  Enforced via access attribute</h4>
+<h4 id='code-sources-idp-privatekeycontainer-swift-137-code-enforced-via-access-attribute' class='heading'><code>../Sources/IDP/PrivateKeyContainer.swift:137</code>:  Enforced via access attribute</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_21578,A_21579,A_21580,A_21583] Enforced via access attribute
 kSecAttrTokenID as String: kSecAttrTokenIDSecureEnclave,
 </code></pre>
 <h3 id='a_21584' class='heading'>A_21584</h3>
-<h4 id='code-sources-idp-privatekeycontainer-swift-226-code-private-key-usage-triggers-biometric-unlock' class='heading'><code>../Sources/IDP/PrivateKeyContainer.swift:226</code>:  private key usage triggers biometric unlock</h4>
+<h4 id='code-sources-idp-privatekeycontainer-swift-228-code-private-key-usage-triggers-biometric-unlock' class='heading'><code>../Sources/IDP/PrivateKeyContainer.swift:228</code>:  private key usage triggers biometric unlock</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_21584] private key usage triggers biometric unlock
 guard let signature = SecKeyCreateSignature(privateKey,
 </code></pre>
 <h3 id='a_21586' class='heading'>A_21586</h3>
-<h4 id='code-sources-idp-privatekeycontainer-swift-117-code-prevents-migration-to-other-devices' class='heading'><code>../Sources/IDP/PrivateKeyContainer.swift:117</code>:  prevents migration to other devices</h4>
+<h4 id='code-sources-idp-privatekeycontainer-swift-119-code-prevents-migration-to-other-devices' class='heading'><code>../Sources/IDP/PrivateKeyContainer.swift:119</code>:  prevents migration to other devices</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_21586] prevents migration to other devices
 kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly,
 </code></pre>
-<h4 id='code-sources-idp-privatekeycontainer-swift-122-code-invalidates-biometry-after-changes' class='heading'><code>../Sources/IDP/PrivateKeyContainer.swift:122</code>:  invalidates biometry after changes</h4>
+<h4 id='code-sources-idp-privatekeycontainer-swift-124-code-invalidates-biometry-after-changes' class='heading'><code>../Sources/IDP/PrivateKeyContainer.swift:124</code>:  invalidates biometry after changes</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_21586] invalidates biometry after changes
 .biometryCurrentSet], &amp;error) else {
 </code></pre>
 <h3 id='a_21587' class='heading'>A_21587</h3>
-<h4 id='code-sources-idp-privatekeycontainer-swift-121-code-via-code-privatekeyusage-code' class='heading'><code>../Sources/IDP/PrivateKeyContainer.swift:121</code>:  via <code>.privateKeyUsage</code></h4>
+<h4 id='code-sources-idp-privatekeycontainer-swift-123-code-via-code-privatekeyusage-code' class='heading'><code>../Sources/IDP/PrivateKeyContainer.swift:123</code>:  via <code>.privateKeyUsage</code></h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_21582] method selection
 // [REQ:gemSpec_IDP_Frontend:A_21587] via `.privateKeyUsage`
 [.privateKeyUsage,
@@ -798,11 +801,11 @@ let keyIdentifier = try keyIdentifierGenerator()
 guard let someIdentifier = identifier,
 </code></pre>
 <h3 id='a_21589' class='heading'>A_21589</h3>
-<h4 id='code-sources-idp-privatekeycontainer-swift-131-code-algorithm-selection' class='heading'><code>../Sources/IDP/PrivateKeyContainer.swift:131</code>:  Algorithm selection</h4>
+<h4 id='code-sources-idp-privatekeycontainer-swift-133-code-algorithm-selection' class='heading'><code>../Sources/IDP/PrivateKeyContainer.swift:133</code>:  Algorithm selection</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_21581,A_21589] Algorithm selection
 kSecAttrKeyType as String: kSecAttrKeyTypeECSECPrimeRandom,
 </code></pre>
-<h4 id='code-sources-idp-privatekeycontainer-swift-133-code-key-length' class='heading'><code>../Sources/IDP/PrivateKeyContainer.swift:133</code>:  Key length</h4>
+<h4 id='code-sources-idp-privatekeycontainer-swift-135-code-key-length' class='heading'><code>../Sources/IDP/PrivateKeyContainer.swift:135</code>:  Key length</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_21589] Key length
 kSecAttrKeySizeInBits as String: 256,
 </code></pre>
@@ -1381,16 +1384,18 @@ case let .toggleTrackingTapped(optIn):
 case .confirmedOptInTracking:
 </code></pre>
 <h3 id='a_19095' class='heading'>A_19095</h3>
-<h4 id='code-sources-erpapp-tracking-piwikprotracker-swift-23-code-user-session-is-randomly-created-by-piwik-see-visitorid' class='heading'><code>../Sources/eRpApp/Tracking/PiwikProTracker.swift:23</code>:  user session is randomly created by piwik - See visitorID.</h4>
-<pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_19095] user session is randomly created by piwik - See visitorID.
+<h4 id='code-sources-erpapp-tracking-tracker-swift-31-code-user-session-is-randomly-created-see-visitorid' class='heading'><code>../Sources/eRpApp/Tracking/Tracker.swift:31</code>:  user session is randomly created - See visitorID.</h4>
+<pre class="highlight plaintext"><code>// TODO: make sure these are true //swiftlint:disable:this todo
+// [REQ:gemSpec_eRp_FdV:A_19095] user session is randomly created - See visitorID.
 // [REQ:gemSpec_eRp_FdV:A_19096] new visitorID is generated when app is reinstalled.
-tracker = PiwikTracker.sharedInstance(siteID: siteId, baseURL: baseURL)
+}
 </code></pre>
 <h3 id='a_19096' class='heading'>A_19096</h3>
-<h4 id='code-sources-erpapp-tracking-piwikprotracker-swift-24-code-new-visitorid-is-generated-when-app-is-reinstalled' class='heading'><code>../Sources/eRpApp/Tracking/PiwikProTracker.swift:24</code>:  new visitorID is generated when app is reinstalled.</h4>
-<pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_19095] user session is randomly created by piwik - See visitorID.
+<h4 id='code-sources-erpapp-tracking-tracker-swift-32-code-new-visitorid-is-generated-when-app-is-reinstalled' class='heading'><code>../Sources/eRpApp/Tracking/Tracker.swift:32</code>:  new visitorID is generated when app is reinstalled.</h4>
+<pre class="highlight plaintext"><code>// TODO: make sure these are true //swiftlint:disable:this todo
+// [REQ:gemSpec_eRp_FdV:A_19095] user session is randomly created - See visitorID.
 // [REQ:gemSpec_eRp_FdV:A_19096] new visitorID is generated when app is reinstalled.
-tracker = PiwikTracker.sharedInstance(siteID: siteId, baseURL: baseURL)
+}
 </code></pre>
 <h3 id='a_19186' class='heading'>A_19186</h3>
 <h4 id='code-sources-erpapp-session-keychainstorage-swift-16-code' class='heading'><code>../Sources/eRpApp/Session/KeychainStorage.swift:16</code>:</h4>
@@ -1515,11 +1520,11 @@ public func searchPharmacies(by searchTerm: String,
 state.searchState = .searchRunning
 </code></pre>
 <h3 id='a_20184' class='heading'>A_20184</h3>
-<h4 id='code-sources-erpapp-session-standardsessioncontainer-swift-80-code-keychain-storage-encrypts-session-ssl-tokens' class='heading'><code>../Sources/eRpApp/Session/StandardSessionContainer.swift:80</code>:  Keychain storage encrypts session/ssl tokens</h4>
+<h4 id='code-sources-erpapp-session-standardsessioncontainer-swift-83-code-keychain-storage-encrypts-session-ssl-tokens' class='heading'><code>../Sources/eRpApp/Session/StandardSessionContainer.swift:83</code>:  Keychain storage encrypts session/ssl tokens</h4>
 <pre class="highlight plaintext"><code>storage: secureUserStore, // [REQ:gemSpec_eRp_FdV:A_20184] Keychain storage encrypts session/ssl tokens
 schedulers: schedulers,
 </code></pre>
-<h4 id='code-sources-erpapp-session-standardsessioncontainer-swift-98-code-no-persistent-storage-for-idp-biometrics-session' class='heading'><code>../Sources/eRpApp/Session/StandardSessionContainer.swift:98</code>:  No persistent storage for idp biometrics session</h4>
+<h4 id='code-sources-erpapp-session-standardsessioncontainer-swift-101-code-no-persistent-storage-for-idp-biometrics-session' class='heading'><code>../Sources/eRpApp/Session/StandardSessionContainer.swift:101</code>:  No persistent storage for idp biometrics session</h4>
 <pre class="highlight plaintext"><code>storage: MemoryStorage(), // [REQ:gemSpec_eRp_FdV:A_20184] No persistent storage for idp biometrics session
 schedulers: schedulers,
 </code></pre>
@@ -1637,7 +1642,7 @@ isDeleting || prescription.erxTask.status == .inProgress
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2022 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2022-06-22)</p>
+      <p>&copy; 2022 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2022-07-26)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>
