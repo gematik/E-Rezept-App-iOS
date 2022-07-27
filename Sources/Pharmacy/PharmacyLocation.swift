@@ -285,9 +285,9 @@ extension PharmacyLocation {
 
             if let city = city {
                 if let zip = zip {
-                    address += ",\n\(zip) \(city)"
+                    address += "\n\(zip) \(city)"
                 } else {
-                    address += ",\n\(city)"
+                    address += "\n\(city)"
                 }
             }
             return address

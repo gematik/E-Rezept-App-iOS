@@ -18,16 +18,6 @@ import TrustStore
 import VAUClient
 import ZXingObjC
 
-protocol CodedError: Swift.Error {
-    var erpErrorCode: String { get }
-    var erpErrorCodeList: [String] { get }
-}
-
-extension CodedError {
-    var localizedDescriptionWithErrorList: String {
-        localizedDescription + "\n\n" + L10n.errCodesPrefix.text + "\n" + erpErrorCodeList.joined(separator: ", ")
-    }
-}
 {% macro listCaseErrorCodes enum %}
     {% typed enum as Enum %}
     {% for case in enum.cases where case.annotations.errorCode %}

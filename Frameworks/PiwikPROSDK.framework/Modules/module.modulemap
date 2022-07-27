@@ -1,6 +1,0 @@
-framework module PiwikPROSDK {
-  umbrella header "PiwikPROSDK.h"
-
-  export *
-  module * { export * }
-}

@@ -16,26 +16,21 @@
 //  
 //
 
-import SwiftUI
+import Foundation
 
-@available(*, deprecated, message: "Use ProgressView instead")
-struct ActivityIndicator: UIViewRepresentable {
-    let shouldAnimate: Bool
-    var hideWhenStopped = false
-    var style: UIActivityIndicatorView.Style = .large
+protocol CodedError: Swift.Error {
+    var erpErrorCode: String { get }
+    var erpErrorCodeList: [String] { get }
+}
 
-    func makeUIView(context _: Context) -> UIActivityIndicatorView {
-        let activityView = UIActivityIndicatorView(style: style)
-        activityView.hidesWhenStopped = hideWhenStopped
-        return activityView
+extension CodedError {
+    var localizedDescriptionWithErrorList: String {
+        localizedDescription + "\n\n" + L10n.errCodesPrefix.text + "\n" + erpErrorCodeList.joined(separator: ", ")
     }
+}
 
-    func updateUIView(_ uiView: UIActivityIndicatorView,
-                      context _: Context) {
-        if shouldAnimate {
-            uiView.startAnimating()
-        } else {
-            uiView.stopAnimating()
-        }
+extension CodedError {
+    func contains(_ error: CodedError) -> Bool {
+        erpErrorCodeList.contains(error.erpErrorCode)
     }
 }

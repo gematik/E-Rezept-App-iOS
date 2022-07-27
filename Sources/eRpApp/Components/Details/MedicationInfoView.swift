@@ -39,7 +39,7 @@ struct MedicationInfoView: View {
             VStack(alignment: .leading, spacing: 12) {
                 Divider()
 
-                ForEach(codeInfos.indices) { index in
+                ForEach(codeInfos.indices, id: \.self) { index in
                     MedicationDetailCellView(value: codeInfos[index].code,
                                              title: codeInfos[index].codeTitle,
                                              isLastInSection: index == codeInfos.count - 1)

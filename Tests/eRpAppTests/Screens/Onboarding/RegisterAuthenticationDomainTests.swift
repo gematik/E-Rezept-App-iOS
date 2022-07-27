@@ -216,6 +216,8 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
         store.receive(.authenticationChallengeResponse(.success(true))) { state in
             state.biometrySuccessful = true
         }
+        testScheduler.advance(by: 1)
+        store.receive(.continueBiometry)
     }
 
     func testSelectingFaceIDWithCancelation() {
@@ -300,6 +302,8 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
             state.selectedSecurityOption = .biometry(.faceID)
             state.showNoSelectionMessage = false
         }
+        testScheduler.advance(by: 1)
+        store.receive(.continueBiometry)
     }
 
     func testSaveSelectionPasswordNoEntry() {

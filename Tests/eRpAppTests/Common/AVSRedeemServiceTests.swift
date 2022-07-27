@@ -16,10 +16,11 @@
 //  
 //
 
-import AVS
+@testable import AVS
 import Combine
 import DataKit
 @testable import eRpApp
+import eRpKit
 import Foundation
 import IdentifiedCollections
 import Nimble
@@ -29,51 +30,44 @@ import TestUtils
 import XCTest
 
 final class AVSRedeemServiceTests: XCTestCase {
-    let mockAVSService = MockAVSSession()
+    var mockAVSService: MockAVSSession!
+    var mockAVSTransactionDataStore: MockAVSTransactionDataStore!
 
-    // swiftlint:disable line_length
-    var derBase64Cert: String {
-        """
-        MIIE4TCCA8mgAwIBAgIDD0vlMA0GCSqGSIb3DQEBCwUAMIGuMQswCQYDVQQGEwJERTEzMDEGA1UECgwqQXRvcyBJbmZvcm1hdGlvbiBUZWNobm9sb2d5IEdtYkggTk9ULVZBTElEMUgwRgYDVQQLDD9JbnN0aXR1dGlvbiBkZXMgR2VzdW5kaGVpdHN3ZXNlbnMtQ0EgZGVyIFRlbGVtYXRpa2luZnJhc3RydWt0dXIxIDAeBgNVBAMMF0FUT1MuU01DQi1DQTMgVEVTVC1PTkxZMB4XDTE5MDkxNzEyMzYxNloXDTI0MDkxNzEyMzYxNlowXDELMAkGA1UEBhMCREUxIDAeBgNVBAoMFzEtMjExMjM0NTY3ODkgTk9ULVZBTElEMSswKQYDVQQDDCJBcnp0cHJheGlzIERyLiBBxJ9hb8SfbHUgVEVTVC1PTkxZMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAmdmUeBLB6UDh4u8FAvi7B3hpAhJYXBlx+IJXLiSrhgCu/T/L5vVlCQb+1gYybWhHT5YlxafTJpOcXSfcixJbFWGxn+iQLqo+LCp/ljLBz5JoU+IXIxRKZCi5SZ9APeglGs4R0/xpPBtsJzihFXVu+B8qGm2oqmvVV91u+MoJ5asC6C+rVOecLxqy/OdmeKfaNSgH2NxVzNc19VmFUkFDGUFJjG4ZgatW4V6AuAhiPnDkEg8gfXr5L7ycQRZUNlEGMmDhh+noHU/doxSU2cgBaiTZNmu17FJLXlBLRISpWcQitcjOkjrJDt4Z0Yta64yZe13+a5dANh32Zeeg5jDQRQIDAQABo4IBVzCCAVMwHQYDVR0OBBYEFF/uDhGziRKzsUC9Nkat5xQojOUZMA4GA1UdDwEB/wQEAwIEMDAMBgNVHRMBAf8EAjAAMCAGA1UdIAQZMBcwCQYHKoIUAEwETDAKBggqghQATASBIzBMBgNVHR8ERTBDMEGgP6A9hjtodHRwOi8vY3JsLXNtY2IuZWdrLXRlc3QtdHNwLmRlL0FUT1MuU01DQi1DQTNfVEVTVC1PTkxZLmNybDA8BggrBgEFBQcBAQQwMC4wLAYIKwYBBQUHMAGGIGh0dHA6Ly9vY3NwLXNtY2IuZWdrLXRlc3QtdHNwLmRlMB8GA1UdIwQYMBaAFD+eHl4mKtYMlaF4nqrz1drzQaf8MEUGBSskCAMDBDwwOjA4MDYwNDAyMBYMFEJldHJpZWJzc3TDpHR0ZSBBcnp0MAkGByqCFABMBDITDTEtMjExMjM0NTY3ODkwDQYJKoZIhvcNAQELBQADggEBACUnL3MxjyoEyUBRxcBAjl7FdePW0O1/UCeDAbH2b4ob9GjMGjL5OoBmhj9GsUORg/K4cIiqTot2TcPtdooKCI5a5Jupp0nYoAuzdrNlvGYEm0S/cvlyYJXjfhrEIHmlDY0/hpJX3S/hYgkniJ1Wg70MfLLcib05+31OijZmEzpChioIm4KmumEKU4ODsLWr/4OEw9KCYfuNpjiSyyAEd2pMgnGU8MKCJhrR/ZKSteAxAPKTXVtNTKndbptvcsaEZPp//vNdbBh+k8P642P2DHYfeDoUgivEYXdE5ABixtG9sk1Q2DPfTXoS+CKv45ae0vejBnRjuA28lmkmuIp+f+s=
-        """
+    override func setUp() {
+        super.setUp()
+
+        mockAVSService = {
+            let mockAVSService = MockAVSSession()
+            mockAVSService.redeemMessageEndpointRecipientsClosure = { message, _, _ in
+                Just(.init(message: message, httpStatusCode: 200))
+                    .setFailureType(to: AVSError.self)
+                    .eraseToAnyPublisher()
+            }
+            return mockAVSService
+        }()
+
+        mockAVSTransactionDataStore = {
+            let mockAVSTransactionDataStore = MockAVSTransactionDataStore()
+            mockAVSTransactionDataStore.saveAvsTransactionsClosure = { _ in
+                Just([
+                    AVSTransaction.Fixtures.transaction1,
+                ])
+                    .setFailureType(to: LocalStoreError.self)
+                    .eraseToAnyPublisher()
+            }
+            return mockAVSTransactionDataStore
+        }()
     }
 
-    // swiftlint:enable line_length
-
     func testRedeemViaAVSResponses_Success() throws {
-        let sut = AVSRedeemService(avsSession: mockAVSService)
-
-        let endpoint = URL(string: "http://some-service.com:8003/")!
-        let X509Cert = try cert(from: derBase64Cert)
-        let certificates = [X509Cert]
-
-        mockAVSService.redeemMessageEndpointRecipientClosure = { message in
-            Just(message)
-                .setFailureType(to: AVSError.self)
-                .eraseToAnyPublisher()
-        }
-
-        let order1 = Order(
-            redeemType: .onPremise,
-            taskID: "task_id_1",
-            accessCode: "access_code_1",
-            endpoint: endpoint,
-            recipients: certificates
+        let sut = AVSRedeemService(
+            avsSession: mockAVSService,
+            avsTransactionDataStore: mockAVSTransactionDataStore
         )
-        let order2 = Order(
-            redeemType: .onPremise,
-            taskID: "task_id_2",
-            accessCode: "access_code_2",
-            endpoint: endpoint,
-            recipients: certificates
-        )
-        let order3 = Order(
-            redeemType: .onPremise,
-            taskID: "task_id_3",
-            accessCode: "access_code_3",
-            endpoint: endpoint,
-            recipients: certificates
-        )
+
+        let order1: Order = .Fixtures.order1
+        let order2: Order = .Fixtures.order2
+        let order3: Order = .Fixtures.order3
 
         var receivedResponses: [IdentifiedArrayOf<OrderResponse>] = []
         sut.redeem([order1, order2, order3])
@@ -127,49 +121,33 @@ final class AVSRedeemServiceTests: XCTestCase {
         expect(thirdResponse[1].requested).to(equal(order2))
         expect(thirdResponse[2].isSuccess).to(beTrue())
         expect(thirdResponse[2].requested).to(equal(order3))
+
+        expect(self.mockAVSTransactionDataStore.saveAvsTransactionsCalled) == true
+        expect(self.mockAVSTransactionDataStore.saveAvsTransactionsCallsCount) == 3
     }
 
     func testRedeemViaAVSResponses_PartialSuccess() throws {
-        let sut = AVSRedeemService(avsSession: mockAVSService)
-
-        let endpoint = URL(string: "http://some-service.com:8003/")!
-        let X509Cert = try cert(from: derBase64Cert)
-        let certificates = [X509Cert]
+        let sut = AVSRedeemService(
+            avsSession: mockAVSService,
+            avsTransactionDataStore: mockAVSTransactionDataStore
+        )
 
         var callsCount = 0
-        mockAVSService.redeemMessageEndpointRecipientClosure = { message in
+        mockAVSService.redeemMessageEndpointRecipientsClosure = { message, _, _ in
             callsCount += 1
             if callsCount == 1 {
                 return Fail(error: AVSError.internal(error: AVSError.InternalError.cmsContentCreation))
                     .eraseToAnyPublisher()
             } else {
-                return Just(message)
+                return Just(.init(message: message, httpStatusCode: 200))
                     .setFailureType(to: AVSError.self)
                     .eraseToAnyPublisher()
             }
         }
 
-        let order1 = Order(
-            redeemType: .onPremise,
-            taskID: "task_id_1",
-            accessCode: "access_code_1",
-            endpoint: endpoint,
-            recipients: certificates
-        )
-        let order2 = Order(
-            redeemType: .onPremise,
-            taskID: "task_id_2",
-            accessCode: "access_code_2",
-            endpoint: endpoint,
-            recipients: certificates
-        )
-        let order3 = Order(
-            redeemType: .onPremise,
-            taskID: "task_id_3",
-            accessCode: "access_code_3",
-            endpoint: endpoint,
-            recipients: certificates
-        )
+        let order1: Order = .Fixtures.order1
+        let order2: Order = .Fixtures.order2
+        let order3: Order = .Fixtures.order3
 
         var receivedResponses: [IdentifiedArrayOf<OrderResponse>] = []
         sut.redeem([order1, order2, order3])
@@ -223,41 +201,25 @@ final class AVSRedeemServiceTests: XCTestCase {
         expect(thirdResponse[1].requested).to(equal(order2))
         expect(thirdResponse[2].isSuccess).to(beTrue())
         expect(thirdResponse[2].requested).to(equal(order3))
+
+        expect(self.mockAVSTransactionDataStore.saveAvsTransactionsCalled) == true
+        expect(self.mockAVSTransactionDataStore.saveAvsTransactionsCallsCount) == 2
     }
 
     func testRedeemViaAVSResponses_All_Fail() throws {
-        let sut = AVSRedeemService(avsSession: mockAVSService)
+        let sut = AVSRedeemService(
+            avsSession: mockAVSService,
+            avsTransactionDataStore: mockAVSTransactionDataStore
+        )
 
-        let endpoint = URL(string: "http://some-service.com:8003/")!
-        let X509Cert = try cert(from: derBase64Cert)
-        let certificates = [X509Cert]
-
-        mockAVSService.redeemMessageEndpointRecipientClosure = { _ in
+        mockAVSService.redeemMessageEndpointRecipientsClosure = { _, _, _ in
             Fail(error: AVSError.internal(error: AVSError.InternalError.cmsContentCreation))
                 .eraseToAnyPublisher()
         }
 
-        let order1 = Order(
-            redeemType: .onPremise,
-            taskID: "task_id_1",
-            accessCode: "access_code_1",
-            endpoint: endpoint,
-            recipients: certificates
-        )
-        let order2 = Order(
-            redeemType: .onPremise,
-            taskID: "task_id_2",
-            accessCode: "access_code_2",
-            endpoint: endpoint,
-            recipients: certificates
-        )
-        let order3 = Order(
-            redeemType: .onPremise,
-            taskID: "task_id_3",
-            accessCode: "access_code_3",
-            endpoint: endpoint,
-            recipients: certificates
-        )
+        let order1: Order = .Fixtures.order1
+        let order2: Order = .Fixtures.order2
+        let order3: Order = .Fixtures.order3
 
         var receivedResponses: [IdentifiedArrayOf<OrderResponse>] = []
         sut.redeem([order1, order2, order3])
@@ -311,41 +273,88 @@ final class AVSRedeemServiceTests: XCTestCase {
         expect(thirdResponse[1].requested).to(equal(order2))
         expect(thirdResponse[2].isFailure).to(beTrue())
         expect(thirdResponse[2].requested).to(equal(order3))
+
+        expect(self.mockAVSTransactionDataStore.saveAvsTransactionsCalled) == false
     }
 
     func testRedeemViaAVSResponses_SetupFailure() throws {
-        let sut = AVSRedeemService(avsSession: mockAVSService)
-
-        let endpoint = URL(string: "http://some-service.com:8003/")!
-        let X509Cert = try cert(from: derBase64Cert)
-        let certificates = [X509Cert]
-
-        mockAVSService.redeemMessageEndpointRecipientClosure = { message in
-            Just(message)
-                .setFailureType(to: AVSError.self)
-                .eraseToAnyPublisher()
-        }
-
-        let order1 = Order(redeemType: .shipment, taskID: "task_id_1", accessCode: "access_code_1")
-        let order2 = Order(redeemType: .shipment, taskID: "task_id_2", accessCode: "access_code_2")
-        let order3 = Order(
-            redeemType: .shipment,
-            taskID: "task_id_3",
-            accessCode: "access_code_3",
-            endpoint: endpoint,
-            recipients: certificates
+        let sut = AVSRedeemService(
+            avsSession: mockAVSService,
+            avsTransactionDataStore: mockAVSTransactionDataStore
         )
 
-        sut.redeem([order1, order2, order3])
+        let order: Order = .Fixtures.orderNoEndpoint
+
+        sut.redeem([order])
             .test(failure: { error in
                 expect(error).to(equal(RedeemServiceError.internalError(.missingAVSEndpoint)))
             }, expectations: { _ in
                 fail("no order response expected")
             })
+
+        expect(self.mockAVSTransactionDataStore.saveAvsTransactionsCalled) == false
     }
 
-    private func cert(from derBase64: String) throws -> X509 {
-        let derBytes = try Base64.decode(string: derBase64)
-        return try X509(der: derBytes)
+    func testGroupedOrdersHaveSameRedeemDateAndGroudRedemptionID() throws {
+        let sut = AVSRedeemService(
+            avsSession: mockAVSService,
+            avsTransactionDataStore: mockAVSTransactionDataStore
+        )
+
+        let orders: [Order] = [.Fixtures.order1, .Fixtures.order2, .Fixtures.order3]
+
+        // redeem once
+        sut.redeem(orders)
+            .test(
+                failure: { error in
+                    print(error)
+                    fail("no error expected")
+                },
+                expectations: { _ in }
+            )
+
+        expect(self.mockAVSTransactionDataStore.saveAvsTransactionsCalled) == true
+        expect(self.mockAVSTransactionDataStore.saveAvsTransactionsCallsCount) == 3
+
+        expect(self.mockAVSTransactionDataStore.saveAvsTransactionsReceivedInvocations.count) == 3
+        let firstRedeemDateTime = mockAVSTransactionDataStore.saveAvsTransactionsReceivedInvocations[0][0]
+            .groupedRedeemTime
+        expect(self.mockAVSTransactionDataStore.saveAvsTransactionsReceivedInvocations.allSatisfy {
+            $0[0].groupedRedeemTime == firstRedeemDateTime
+        }) == true
+
+        let firstGroupedRedeemID = mockAVSTransactionDataStore.saveAvsTransactionsReceivedInvocations[0][0]
+            .groupedRedeemID
+        expect(self.mockAVSTransactionDataStore.saveAvsTransactionsReceivedInvocations.allSatisfy {
+            $0[0].groupedRedeemID == firstGroupedRedeemID
+        }) == true
+
+        // redeem again
+        sut.redeem(orders)
+            .test(
+                failure: { error in
+                    print(error)
+                    fail("no error expected")
+                },
+                expectations: { _ in }
+            )
+
+        expect(self.mockAVSTransactionDataStore.saveAvsTransactionsCalled) == true
+        expect(self.mockAVSTransactionDataStore.saveAvsTransactionsCallsCount) == 6
+
+        expect(self.mockAVSTransactionDataStore.saveAvsTransactionsReceivedInvocations.count) == 6
+        let secondRedeemDateTime = mockAVSTransactionDataStore.saveAvsTransactionsReceivedInvocations[3][0]
+            .groupedRedeemTime
+        expect(self.mockAVSTransactionDataStore.saveAvsTransactionsReceivedInvocations[3 ..< 6].allSatisfy {
+            $0[0].groupedRedeemTime == secondRedeemDateTime
+        }) == true
+        expect(firstRedeemDateTime) < secondRedeemDateTime
+
+        let secondGroupedRedeemID = mockAVSTransactionDataStore.saveAvsTransactionsReceivedInvocations[3][0]
+            .groupedRedeemID
+        expect(self.mockAVSTransactionDataStore.saveAvsTransactionsReceivedInvocations[3 ..< 6].allSatisfy {
+            $0[0].groupedRedeemID == secondGroupedRedeemID
+        }) == true
+        expect(firstGroupedRedeemID) != secondGroupedRedeemID
     }
 }

@@ -76,7 +76,8 @@ struct CardWallExtAuthConfirmationView: View {
                 }
 
                 if viewStore.loading {
-                    ActivityIndicator(shouldAnimate: true)
+                    ProgressView()
+                        .progressViewStyle(.circular)
                         .padding()
                 }
             }

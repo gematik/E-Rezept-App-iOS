@@ -90,7 +90,7 @@ enum SettingsDomain {
         switch action {
         case .initSettings:
             return .merge(
-                UserDefaults.standard.publisher(for: \UserDefaults.kAppTrackingAllowed)
+                UserDefaults.standard.publisher(for: \UserDefaults.appTrackingAllowed)
                     .map(Action.trackerStatusReceived)
                     .eraseToEffect(),
                 environment.changeableUserSessionContainer.userSession.profile()
@@ -137,13 +137,13 @@ enum SettingsDomain {
                 state.showTrackerComplyView = true
             } else {
                 state.trackerOptIn = false
-                UserDefaults.standard.setValue(state.trackerOptIn, forKey: UserDefaults.kAppTrackingAllowed)
+                environment.tracker.optIn = false
             }
             return .none
         // [REQ:gemSpec_eRp_FdV:A_19090]
         case .confirmedOptInTracking:
             state.trackerOptIn = true
-            UserDefaults.standard.setValue(state.trackerOptIn, forKey: UserDefaults.kAppTrackingAllowed)
+            environment.tracker.optIn = true
             state.showTrackerComplyView = false
             return .none
         case .dismissTrackerComplyView:

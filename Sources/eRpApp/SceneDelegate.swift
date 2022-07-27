@@ -219,6 +219,7 @@ extension SceneDelegate {
             ),
             profileDataStore: profileCoreDataStore,
             shipmentInfoDataStore: ShipmentInfoCoreDataStore(coreDataControllerFactory: coreDataControllerFactory),
+            avsTransactionDataStore: AVSTransactionCoreDataStore(coreDataControllerFactory: coreDataControllerFactory),
             appConfiguration: userDataStore.appConfiguration
         )
 
@@ -243,9 +244,7 @@ extension SceneDelegate {
         let schedulers = Schedulers()
         let (changeableUserSessionContainer, userSessionProvider) = sessionContainer(with: schedulers)
 
-        let tracker = PiwikProTracker(
-            optOutSetting: UserDefaults.standard.publisher(for: \UserDefaults.kAppTrackingAllowed).eraseToAnyPublisher()
-        )
+        let tracker = PlaceholderTracker() // TODO: replace with new tracker //swiftlint:disable:this todo
 
         #if ENABLE_DEBUG_VIEW && targetEnvironment(simulator)
         // swiftlint:disable:next trailing_closure

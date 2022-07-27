@@ -31,7 +31,12 @@ protocol RedeemService {
 
 struct AVSRedeemService: RedeemService {
     let avsSession: AVSSession
+    let avsTransactionDataStore: AVSTransactionDataStore
 
+    let groupedRedeemTimeProvider: () -> Date = { Date() }
+    let groupedRedeemIDProvider: () -> UUID = { UUID() }
+
+    // swiftlint:disable:next function_body_length
     func redeem(_ orders: [Order]) -> AnyPublisher<IdentifiedArrayOf<OrderResponse>, RedeemServiceError> {
         guard orders.allSatisfy({ $0.endpoint != nil }),
               let endpoint = orders.first?.endpoint else {
@@ -53,23 +58,45 @@ struct AVSRedeemService: RedeemService {
             }
             responses.append(OrderResponse(requested: order, result: .progress(.loading)))
         }
-        let redeemMessagePublishers: [AnyPublisher<OrderResponse, RedeemServiceError>] =
-            orderAndMessages.map { order, message in
+
+        let groupedRedeemTime: Date = groupedRedeemTimeProvider()
+        let groupedRedeemID: UUID = groupedRedeemIDProvider()
+
+        let redeemMessagePublishers: [AnyPublisher<OrderResponse, Never>] =
+            orderAndMessages.map { order, message -> AnyPublisher<OrderResponse, Never> in
                 avsSession.redeem(message: message, endpoint: AVSEndpoint(url: endpoint), recipients: recipients)
-                    .map { _ in
-                        OrderResponse(requested: order, result: .success(true))
+                    .mapError { RedeemServiceError.from($0) }
+                    .flatMap { avsSessionResponse -> AnyPublisher<OrderResponse, RedeemServiceError> in
+                        let httpStatusCode = avsSessionResponse.httpStatusCode
+                        guard 200 ..< 300 ~= httpStatusCode else {
+                            return Fail(error: .from(RedeemServiceError.InternalError.unexpectedHTTPStatusCode))
+                                .eraseToAnyPublisher()
+                        }
+                        let orderResponse = OrderResponse(requested: order, result: .success(true))
+                        return avsTransactionDataStore.save(
+                            avsTransaction: .init(
+                                transactionID: orderResponse.requested.transactionID,
+                                httpStatusCode: Int32(httpStatusCode),
+                                groupedRedeemTime: groupedRedeemTime,
+                                groupedRedeemID: groupedRedeemID,
+                                telematikID: orderResponse.requested.telematikId
+                            )
+                        )
+                        .map { _ in orderResponse }
+                        .mapError { .from(RedeemServiceError.InternalError.localStoreError($0)) }
+                        .eraseToAnyPublisher()
                     }
-                    .catch { error -> AnyPublisher<OrderResponse, Never> in
+                    .catch { error -> AnyPublisher<OrderResponse, Never> in // erase the RedeemServiceError to Never
                         Just(
-                            OrderResponse(requested: order, result: .failure(RedeemServiceError.avs(error)))
+                            OrderResponse(requested: order, result: .failure(error))
                         )
                         .eraseToAnyPublisher()
                     }
-                    .setFailureType(to: RedeemServiceError.self)
                     .eraseToAnyPublisher()
             }
 
         return Publishers.MergeMany(redeemMessagePublishers)
+            .setFailureType(to: RedeemServiceError.self)
             .tryMap { response in
                 guard let index = responses.firstIndex(where: { $0.id == response.id }) else {
                     throw RedeemServiceError.InternalError.idMissmatch
@@ -117,23 +144,26 @@ struct ErxTaskRepositoryRedeemService: RedeemService {
             responses.append(OrderResponse(requested: order, result: .progress(.loading)))
         }
 
-        let redeemErxTaskPublishers: [AnyPublisher<OrderResponse, RedeemServiceError>] =
+        let redeemErxTaskPublishers: [AnyPublisher<OrderResponse, Never>] =
             erxTaskOrders.map { erxTaskOrder, order in
                 erxTaskRepository.redeem(order: erxTaskOrder)
                     .map { _ in
                         OrderResponse(requested: order, result: .success(true))
                     }
-                    .catch { error -> AnyPublisher<OrderResponse, Never> in
-                        let response = OrderResponse(
-                            requested: order,
-                            result: .failure(RedeemServiceError.eRxRepository(error))
+                    .catch { error in
+                        Just(
+                            OrderResponse(
+                                requested: order,
+                                result: .failure(RedeemServiceError.eRxRepository(error))
+                            )
                         )
-                        return Just(response).eraseToAnyPublisher()
+                        .eraseToAnyPublisher()
                     }
-                    .setFailureType(to: RedeemServiceError.self)
                     .eraseToAnyPublisher()
             }
+
         return Publishers.MergeMany(redeemErxTaskPublishers)
+            .setFailureType(to: RedeemServiceError.self)
             .tryMap { response in
                 guard let index = responses.firstIndex(where: { $0.id == response.id }) else {
                     throw RedeemServiceError.InternalError.idMissmatch

@@ -63,6 +63,7 @@ extension AVSError: Equatable {
         case let (.network(error: lhsError), .network(error: rhsError)):
             return lhsError == rhsError
         case (.invalidAVSMessageInput, .invalidAVSMessageInput): return true
+        case (.invalidX509Input, .invalidX509Input): return true
         case let (.unspecified(error: lhsError), .unspecified(error: rhsError)):
             return lhsError.localizedDescription == rhsError.localizedDescription
         case let (.internal(error: lhsError), .internal(error: rhsError)): return lhsError == rhsError

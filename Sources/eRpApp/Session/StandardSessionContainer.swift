@@ -36,6 +36,7 @@ class StandardSessionContainer: UserSession {
     let appConfiguration: AppConfiguration
     var profileDataStore: ProfileDataStore
     let shipmentInfoDataStore: ShipmentInfoDataStore
+    let avsTransactionDataStore: AVSTransactionDataStore
 
     let profileId: UUID
 
@@ -45,6 +46,7 @@ class StandardSessionContainer: UserSession {
         erxTaskCoreDataStore: ErxTaskCoreDataStore,
         profileDataStore: ProfileDataStore,
         shipmentInfoDataStore: ShipmentInfoDataStore,
+        avsTransactionDataStore: AVSTransactionDataStore,
         appConfiguration: AppConfiguration
     ) {
         self.profileId = profileId
@@ -52,6 +54,7 @@ class StandardSessionContainer: UserSession {
         self.erxTaskCoreDataStore = erxTaskCoreDataStore
         self.profileDataStore = profileDataStore
         self.shipmentInfoDataStore = shipmentInfoDataStore
+        self.avsTransactionDataStore = avsTransactionDataStore
         self.appConfiguration = appConfiguration
         keychainStorage = KeychainStorage(profileId: profileId, schedulers: schedulers)
     }

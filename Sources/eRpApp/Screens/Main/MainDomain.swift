@@ -148,7 +148,9 @@ enum MainDomain {
 
         let tracker: Tracker
     }
+}
 
+extension MainDomain {
     static let domainReducer = Reducer { state, action, environment in
         switch action {
         case .showScannerView:
@@ -220,6 +222,8 @@ enum MainDomain {
         case let .prescriptionList(action: .errorReceived(error)):
             let alertState: AlertState<Action>
             switch error {
+            case .idpError(.biometrics) where error.contains(PrivateKeyContainer.Error.canceledByUser):
+                alertState = AlertState(for: error, title: L10n.errSpecificI10808Title)
             case .idpError(.biometrics):
                 alertState = AlertState(
                     for: error,

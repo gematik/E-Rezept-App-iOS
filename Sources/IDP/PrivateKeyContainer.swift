@@ -40,6 +40,8 @@ public struct PrivateKeyContainer {
         case convertingKey(Swift.Error?)
         // sourcery: errorCode = "07"
         case signing(Swift.Error?)
+        // sourcery: errorCode = "08"
+        case canceledByUser
     }
 
     let privateKey: SecKey
@@ -241,7 +243,14 @@ public struct PrivateKeyContainer {
                                                     algorithm,
                                                     data as CFData,
                                                     &error) as Data? else {
-            throw Error.signing(error?.takeRetainedValue())
+            let error = error?.takeRetainedValue()
+
+            if let error = error,
+               CFErrorGetDomain(error) as String? == "com.apple.LocalAuthentication" {
+                throw Error.canceledByUser
+            }
+
+            throw Error.signing(error)
         }
 
         return try signature.derToConcat()

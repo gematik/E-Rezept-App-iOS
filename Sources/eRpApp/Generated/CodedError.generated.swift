@@ -19,16 +19,6 @@ import TrustStore
 import VAUClient
 import ZXingObjC
 
-protocol CodedError: Swift.Error {
-    var erpErrorCode: String { get }
-    var erpErrorCodeList: [String] { get }
-}
-
-extension CodedError {
-    var localizedDescriptionWithErrorList: String {
-        localizedDescription + "\n\n" + L10n.errCodesPrefix.text + "\n" + erpErrorCodeList.joined(separator: ", ")
-    }
-}
 extension AVSError: CodedError {
     var erpErrorCode: String {
         switch self {
@@ -1044,6 +1034,8 @@ extension PrivateKeyContainer.Error: CodedError {
                 return "i-10806"
             case .signing:
                 return "i-10807"
+            case .canceledByUser:
+                return "i-10808"
         }
     }
     var erpErrorCodeList: [String] {
@@ -1158,10 +1150,16 @@ extension RedeemServiceError.InternalError: CodedError {
                 return "i-02505"
             case .noService:
                 return "i-02506"
+            case .unexpectedHTTPStatusCode:
+                return "i-02507"
+            case .localStoreError:
+                return "i-02508"
         }
     }
     var erpErrorCodeList: [String] {
         switch self {
+            case let .localStoreError(error):
+                return [erpErrorCode] + error.erpErrorCodeList
             default:
                 return [erpErrorCode]
         }

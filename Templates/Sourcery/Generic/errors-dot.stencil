@@ -27,7 +27,7 @@ digraph {
     {% typed enumCase as EnumCase %}
 <TR>
     <TD SIDES="TLB" ALIGN="RIGHT"><FONT COLOR="GRAY" POINT-SIZE="8">i-{{ enum.annotations.CodedError }}{{ enumCase.annotations.errorCode }}</FONT></TD>
-    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="{{ enumCase.name|swiftIdentifier }}" HREF="#" TOOLTIP="{{ enumCase.documentation }}"><FONT POINT-SIZE="10">{{ enumCase.name }}</FONT></TD>
+    <TD SIDES="TRB" ALIGN="LEFT" WIDTH="200" PORT="{{ enumCase.name|swiftIdentifier }}" HREF="#" TOOLTIP="{{ enumCase.documentation|join:", "|replace:"<","&lt;"|replace:">","&gt;" }}"><FONT POINT-SIZE="10">{{ enumCase.name }}</FONT></TD>
 </TR>
 {% endmacro %}
 

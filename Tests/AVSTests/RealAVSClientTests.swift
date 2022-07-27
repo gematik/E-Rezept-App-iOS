@@ -37,7 +37,6 @@ final class RealAVSClientTests: XCTestCase {
         // given
         var counter = 0
         let endPoint = AVSEndpoint(url: URL(string: avsURLString)!)
-        let uuid = UUID(uuidString: "A37E7651-427C-4899-9508-5660677F103C")!
         stub(
             condition: isAbsoluteURLString(avsURLString)
                 && isMethodPOST()
@@ -51,10 +50,10 @@ final class RealAVSClientTests: XCTestCase {
         let sut = RealAVSClient()
 
         // then
-        sut.send(data: Data(), to: endPoint, transactionId: uuid)
+        sut.send(data: Data(), to: endPoint)
             .test(
-                expectations: { retUuid in
-                    expect(retUuid) == uuid
+                expectations: { httpResponse in
+                    expect(httpResponse.status) == .ok
                 }
             )
         expect(counter) == 1
@@ -65,7 +64,6 @@ final class RealAVSClientTests: XCTestCase {
         var counter = 0
         let status = 400
         let endPoint = AVSEndpoint(url: URL(string: avsURLString)!)
-        let uuid = UUID(uuidString: "A37E7651-427C-4899-9508-5660677F103C")!
         stub(condition: isAbsoluteURLString(avsURLString) && isMethodPOST()) { _ in
             counter += 1
             return fixture(filePath: "", status: Int32(status), headers: nil)
@@ -75,10 +73,12 @@ final class RealAVSClientTests: XCTestCase {
         let sut = RealAVSClient()
 
         // then
-        sut.send(data: Data(), to: endPoint, transactionId: uuid)
+        sut.send(data: Data(), to: endPoint)
             .test(
                 failure: { error in
                     expect(error) == .network(error: HTTPError.httpError(URLError(.init(rawValue: status))))
+                },
+                expectations: { _ in
                 }
             )
         expect(counter) == 1

@@ -176,9 +176,6 @@ enum MessagesDomain: Equatable {
         case .setNavigation(tag: .selectProfile):
             state.route = .selectProfile
             return .none
-        case .setNavigation(tag: nil):
-            state.route = nil
-            return .none
         case .setNavigation, .pickupCode:
             return .none
         }

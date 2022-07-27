@@ -30,7 +30,7 @@ final class SettingsViewSnapshotTests: XCTestCase {
         diffTool = "open"
     }
 
-    let debugStore = DebugDomain.Store(initialState: DebugDomain.State(trackingOptOut: true),
+    let debugStore = DebugDomain.Store(initialState: DebugDomain.State(trackingOptIn: true),
                                        reducer: .empty,
                                        environment: DebugDomain.Environment(
                                            schedulers: Schedulers(),

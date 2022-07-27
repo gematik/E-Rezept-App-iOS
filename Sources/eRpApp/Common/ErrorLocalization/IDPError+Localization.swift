@@ -50,6 +50,8 @@ extension IDPError: LocalizedError {
             return "Trust store error: \(error)"
         case let .pairing(error):
             return "Pairing error: \(error)"
+        case .biometrics where contains(PrivateKeyContainer.Error.canceledByUser):
+            return L10n.errSpecificI10808Description.text
         case .biometrics:
             return L10n.errSpecificI10018Description.text
         case .extAuthOriginalRequestMissing:

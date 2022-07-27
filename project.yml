@@ -70,7 +70,7 @@ schemes:
 packages:
   FHIRModels:
     url: https://github.com/apple/FHIRModels
-    version: 0.1.0
+    version: 0.4.0
   BundleKit:
     url: https://github.com/SwiftCommon/BundleKit
     majorVersion: 0.0.2
@@ -125,6 +125,7 @@ targets:
     preBuildScripts:
       - script: "mint run swiftgen"
         name: Swiftgen
+        shell: "/bin/sh -l"
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: ${GEM_PRODUCT_BUNDLE_IDENTIFIER}
@@ -169,8 +170,6 @@ targets:
         product: ComposableCoreLocation
       - package: Zxcvbn
         product: Zxcvbn
-      - framework: Frameworks/PiwikPROSDK.framework
-        embed: false
     scheme:
       testTargets:
         - eRpAppTests

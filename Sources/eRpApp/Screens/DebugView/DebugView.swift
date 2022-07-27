@@ -84,7 +84,7 @@ extension DebugView {
                     }
                     Toggle("Tracking OptOut",
                            isOn: viewStore.binding(
-                               get: { state in state.trackingOptOut },
+                               get: { state in state.trackingOptIn },
                                send: DebugDomain.Action.toggleTrackingTapped
                            ))
                 }

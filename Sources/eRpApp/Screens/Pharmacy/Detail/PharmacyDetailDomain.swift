@@ -220,7 +220,10 @@ enum PharmacyDetailDomain: Equatable {
                 schedulers: environment.schedulers,
                 userSession: environment.userSession,
                 shipmentInfoStore: environment.userSession.shipmentInfoDataStore,
-                redeemService: AVSRedeemService(avsSession: environment.userSession.avsSession)
+                redeemService: AVSRedeemService(
+                    avsSession: environment.userSession.avsSession,
+                    avsTransactionDataStore: environment.userSession.avsTransactionDataStore
+                )
             )
         }
 

@@ -115,4 +115,8 @@ extension UserMode: UserSession {
     var avsSession: AVSSession {
         sessionContainer.avsSession
     }
+
+    var avsTransactionDataStore: AVSTransactionDataStore {
+        sessionContainer.avsTransactionDataStore
+    }
 }

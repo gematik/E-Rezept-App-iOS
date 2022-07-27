@@ -104,7 +104,8 @@ class DemoSessionContainer: UserSession {
     lazy var erxTaskRepository: ErxTaskRepository = {
         DemoErxTaskRepository(
             requestDelayInSeconds: 0.9,
-            schedulers: Schedulers()
+            schedulers: Schedulers(),
+            secureUserStore: secureUserStore
         )
     }()
 
@@ -136,5 +137,9 @@ class DemoSessionContainer: UserSession {
 
     lazy var avsSession: AVSSession = {
         DemoAVSSession()
+    }()
+
+    lazy var avsTransactionDataStore: AVSTransactionDataStore = {
+        DemoAVSTransactionDataStore()
     }()
 }

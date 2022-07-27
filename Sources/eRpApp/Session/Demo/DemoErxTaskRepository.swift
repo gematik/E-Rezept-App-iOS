@@ -34,9 +34,14 @@ class DemoErxTaskRepository: ErxTaskRepository {
         schedulers.main
     }
 
-    init(requestDelayInSeconds: Double = 0.1, schedulers: Schedulers = Schedulers()) {
+    private let secureUserStore: SecureUserDataStore
+
+    init(requestDelayInSeconds: Double = 0.1,
+         schedulers: Schedulers = Schedulers(),
+         secureUserStore: SecureUserDataStore) {
         delay = requestDelayInSeconds
         self.schedulers = schedulers
+        self.secureUserStore = secureUserStore
     }
 
     func loadRemote(by id: ErxTask.ID,
@@ -63,9 +68,19 @@ class DemoErxTaskRepository: ErxTaskRepository {
     }
 
     func loadRemoteAll(for _: String?) -> AnyPublisher<[ErxTask], ErrorType> {
-        currentValue.send(nextChunkFromStore())
-        return currentValue
-            .delay(for: .seconds(delay), scheduler: uiScheduler, options: .none)
+        secureUserStore.token
+            .flatMap { [weak self] token -> AnyPublisher<[ErxTask], ErrorType> in
+                guard let self = self else {
+                    return Fail(error: ErrorType.remote(RemoteStoreError.notImplemented))
+                        .eraseToAnyPublisher()
+                }
+                if token != nil {
+                    self.currentValue.send(self.nextChunkFromStore())
+                }
+                return self.currentValue
+                    .delay(for: .seconds(self.delay), scheduler: self.uiScheduler, options: .none)
+                    .eraseToAnyPublisher()
+            }
             .eraseToAnyPublisher()
     }
 

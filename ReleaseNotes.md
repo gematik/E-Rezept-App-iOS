@@ -1,3 +1,24 @@
+# Release 1.3.3
+
+### added (2 changes)
+
+- Add fallback CA for IDP
+- Save Information of transaction with the AVS
+
+### fixed (3 changes)
+
+- Fix demo mode sometimes starting with recipes, despite being not logged in
+- Fix wrong error message when biometric check fails due to user
+- Fix the typos
+
+### changed (1 change)
+
+- Upgrade FHIR Dependency and remove several warnings
+
+### removec (1 change)
+
+- Change delete piwik tracker
+
 # Release 1.3.2
 
 ### fixed

@@ -281,6 +281,8 @@
 "err_btn_cancel" = "Abbrechen";
 "err_codes_prefix" = "Fehlernummern: ";
 "err_specific_i10018_description" = "Ihre biometrischen Daten haben sich geändert. Wurde z.B. ein Fingerabdruck hinzugefügt? Aus Sicherheitsgründen müssen Sie sich erneut mit Ihrer Gesundheitskarte anmelden.";
+"err_specific_i10808_description" = "Bitte probieren Sie es erneut.";
+"err_specific_i10808_title" = "Das hat leider nicht geklappt";
 "err_title_generic" = "Ein Fehler ist aufgetreten";
 "err_title_login_necessary" = "Anmeldung erforderlich";
 "err_txt_database_access" = "Error accessing the database";

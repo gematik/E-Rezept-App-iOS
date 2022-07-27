@@ -37,7 +37,7 @@ enum DebugDomain {
     }
 
     struct State: Equatable {
-        var trackingOptOut: Bool
+        var trackingOptIn: Bool
 
         #if ENABLE_DEBUG_VIEW
         var hideOnboarding = true
@@ -211,8 +211,8 @@ enum DebugDomain {
             environment.localUserStore.set(serverEnvironmentConfiguration: name)
             return .none
         case .toggleTrackingTapped:
-            environment.tracker.optOut.toggle()
-            state.trackingOptOut = environment.tracker.optOut
+            environment.tracker.optIn.toggle()
+            state.trackingOptIn = environment.tracker.optIn
 
             return .none
         case let .showAlert(showAlert):
@@ -222,7 +222,7 @@ enum DebugDomain {
             state.alertText = nil
             return .none
         case .appear:
-            state.trackingOptOut = environment.tracker.optOut
+            state.trackingOptIn = environment.tracker.optIn
             return Effect.merge(
                 environment.onReceiveHideOnboarding(),
                 environment.onReceiveHideCardWallIntro(),
@@ -320,7 +320,7 @@ extension DebugDomain.Environment {
 
 extension DebugDomain {
     enum Dummies {
-        static let state = State(trackingOptOut: false)
+        static let state = State(trackingOptIn: false)
 
         static let environment = Environment(
             schedulers: Schedulers(),

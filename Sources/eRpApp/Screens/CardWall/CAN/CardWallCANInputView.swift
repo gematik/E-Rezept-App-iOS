@@ -33,7 +33,7 @@ struct CardWallCANInputView: View {
     var body: some View {
         ZStack {
             HStack(alignment: .center, spacing: 8) {
-                ForEach(Array(self.can), id: \.self) { digit in
+                ForEach(Array(self.can).prefix(6), id: \.self) { digit in
                     Text(String(digit))
                         .font(.headline)
                         .fontWeight(.bold)
@@ -42,7 +42,7 @@ struct CardWallCANInputView: View {
                         .background(Color(.systemGray5))
                         .cornerRadius(8)
                 }
-                ForEach(self.can.count ..< 6, id: \.self) { index in
+                ForEach(min(self.can.count, 6) ..< 6, id: \.self) { index in
                     Rectangle()
                         .fill(Colors.systemGray5)
                         .frame(minWidth: 32, maxWidth: 48, minHeight: 56, maxHeight: 64)
@@ -64,6 +64,9 @@ struct CardWallCANInputView: View {
                 .accessibility(hint: Text("cdw_txt_can_title_hint"))
                 .accessibility(identifier: A11y.cardWall.canInput.cdwTxtCanInput)
         }
+        .onChange(of: can) { newValue in
+            can = String(newValue.prefix(6))
+        }
     }
 
     private var title: String {
@@ -80,7 +83,7 @@ struct CardWallCANInputView: View {
 
 extension Binding where Value == String {
     func trimCAN() -> Self {
-        filterCharacters().prefix(6)
+        filterCharacters()
     }
 }
 

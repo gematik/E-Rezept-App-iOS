@@ -28,7 +28,7 @@ final class FHIRBundleTests: XCTestCase {
     func testParseErxTasks() throws {
         let gemFhirBundle = try decode(resource: "getTaskResponse_5e00e907-1e4f-11b2-80be-b806a73c0cd0.json")
 
-        guard let task = try gemFhirBundle.parseErxTask(taskId: "5e00e907-1e4f-11b2-80be-b806a73c0cd0") else {
+        guard let task = gemFhirBundle.parseErxTask(taskId: "5e00e907-1e4f-11b2-80be-b806a73c0cd0") else {
             fail("Could not parse ModelsR4.Bundle into TaskBundle.")
             return
         }

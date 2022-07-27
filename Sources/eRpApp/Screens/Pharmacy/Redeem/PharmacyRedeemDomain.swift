@@ -75,7 +75,7 @@ enum PharmacyRedeemDomain: Equatable {
         case alertShowPharmacyContactButtonTapped
         case redeemSuccessView(action: RedeemSuccessDomain.Action)
         case dismissRedeemSuccessView
-        /// Called when contact has deen selected
+        /// Called when contact has been selected
         case showPharmacyContact
         case pharmacyContact(action: PharmacyContactDomain.Action)
         case dismissPharmacyContactView

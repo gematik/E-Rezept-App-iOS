@@ -20,6 +20,7 @@
 import Combine
 import DataKit
 import Foundation
+import HTTPClient
 import Nimble
 import OpenSSL
 import XCTest
@@ -28,13 +29,24 @@ final class DefaultAVSSessionTests: XCTestCase {
     func testRedeem() {
         // given
         let message = AVSMessage.Fixtures.completeExample
-        let endpoint = AVSEndpoint(url: URL(string: "https://beispielurlversand.de/")!)
+        let url = URL(string: "https://beispielurlversand.de/")!
+        let endpoint = AVSEndpoint(url: url)
         let mockAvsMessageConverter = MockAVSMessageConverter()
         mockAvsMessageConverter.convertRecipientsReturnValue = Data([0x00])
 
         let mockAvsClient = MockAVSClient()
-        mockAvsClient.sendDataToTransactionIdReturnValue = Just(message.transactionID).setFailureType(to: AVSError.self)
+        mockAvsClient.sendDataToTransactionIdClosure = { _, _ in
+            Just(
+                (
+                    data: Data(),
+                    response: HTTPURLResponse(url: url, statusCode: 200, httpVersion: nil, headerFields: nil)!,
+                    status: .ok
+                )
+            )
+            .setFailureType(to: AVSError.self)
             .eraseToAnyPublisher()
+        }
+
         let sut = DefaultAVSSession(
             avsMessageConverter: mockAvsMessageConverter,
             avsClient: mockAvsClient
@@ -43,8 +55,8 @@ final class DefaultAVSSessionTests: XCTestCase {
         // then
         sut.redeem(message: message, endpoint: endpoint, recipients: [])
             .test(
-                expectations: { uuid in
-                    expect(uuid) == message.transactionID
+                expectations: { avsSessionResponse in
+                    expect(avsSessionResponse.httpStatusCode) == 200
                     expect(mockAvsMessageConverter.convertRecipientsCalled) == true
                     expect(mockAvsMessageConverter.convertRecipientsCallsCount) == 1
                     expect(mockAvsClient.sendDataToTransactionIdCalled) == true

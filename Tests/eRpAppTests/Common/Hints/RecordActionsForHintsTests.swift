@@ -60,7 +60,7 @@ final class RecordActionsForHintsTests: XCTestCase {
                     profile: UserProfile.Fixtures.theo,
                     profileSelectionState: .init()
                 ),
-                debug: .init(trackingOptOut: true),
+                debug: .init(trackingOptIn: true),
                 unreadMessagesCount: 0,
                 isDemoMode: false
             ),

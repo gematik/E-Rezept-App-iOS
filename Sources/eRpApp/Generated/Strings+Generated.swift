@@ -611,6 +611,10 @@ import SwiftUI
     internal static let errCodesPrefix = StringAsset("err_codes_prefix")
     /// Ihre biometrischen Daten haben sich geändert. Wurde z.B. ein Fingerabdruck hinzugefügt? Aus Sicherheitsgründen müssen Sie sich erneut mit Ihrer Gesundheitskarte anmelden.
     internal static let errSpecificI10018Description = StringAsset("err_specific_i10018_description")
+    /// Bitte probieren Sie es erneut.
+    internal static let errSpecificI10808Description = StringAsset("err_specific_i10808_description")
+    /// Das hat leider nicht geklappt
+    internal static let errSpecificI10808Title = StringAsset("err_specific_i10808_title")
     /// Ein Fehler ist aufgetreten
     internal static let errTitleGeneric = StringAsset("err_title_generic")
     /// Anmeldung erforderlich

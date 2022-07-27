@@ -61,7 +61,8 @@ struct ExtAuthPendingView: View {
         switch viewStore.state {
         case .pendingExtAuth,
              .extAuthReceived:
-            ActivityIndicator(shouldAnimate: true, style: .medium)
+            ProgressView()
+                .progressViewStyle(.circular)
         case .extAuthSuccessful:
             Image(systemName: SFSymbolName.checkmark)
                 .font(.subheadline)

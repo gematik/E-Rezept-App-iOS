@@ -31,7 +31,16 @@ public protocol AVSSession {
     ///   - endpoint: (wrapped) `URL` to send the request to
     ///   - recipients: the message will potentially be prepared (encrypted) for them
     /// - Returns: `AnyPublisher` that emits the sent `AVSMessage` if successful, else `AVSError`
-    func redeem(message: AVSMessage, endpoint: AVSEndpoint, recipients: [X509]) -> AnyPublisher<AVSMessage, AVSError>
+    func redeem(message: AVSMessage, endpoint: AVSEndpoint, recipients: [X509])
+        -> AnyPublisher<AVSSessionResponse, AVSError>
+}
+
+/// Contains the response information from an `AVSSession`
+public struct AVSSessionResponse {
+    /// The original `AVSMessage` that was sent to the `AVSSession`
+    public let message: AVSMessage
+    /// Tne status code of the response
+    public let httpStatusCode: Int
 }
 
 public class DefaultAVSSession: AVSSession {
@@ -59,15 +68,25 @@ public class DefaultAVSSession: AVSSession {
         message: AVSMessage,
         endpoint: AVSEndpoint,
         recipients: [X509]
-    ) -> AnyPublisher<AVSMessage, AVSError> {
+    ) -> AnyPublisher<AVSSessionResponse, AVSError> {
         Just((message, recipients))
             .tryMap(avsMessageConverter.convert)
             .mapError {
                 $0.asAVSError()
             }
-            .flatMap { restMessage -> AnyPublisher<AVSMessage, AVSError> in
-                self.avsClient.send(data: restMessage, to: endpoint, transactionId: message.transactionID)
-                    .map { _ in message }
+            .flatMap { restMessage -> AnyPublisher<AVSSessionResponse, AVSError> in
+                self.avsClient.send(data: restMessage, to: endpoint)
+                    .tryMap { httpResponse in
+                        guard httpResponse.status.isSuccessful else {
+                            let urlError = URLError(URLError.Code(rawValue: httpResponse.status.rawValue))
+                            throw HTTPError.httpError(urlError)
+                        }
+                        return .init(
+                            message: message,
+                            httpStatusCode: httpResponse.status.rawValue
+                        )
+                    }
+                    .mapError { $0.asAVSError() }
                     .eraseToAnyPublisher()
             }
             .eraseToAnyPublisher()
@@ -81,7 +100,9 @@ public class DemoAVSSession: AVSSession {
         message: AVSMessage,
         endpoint _: AVSEndpoint,
         recipients _: [X509]
-    ) -> AnyPublisher<AVSMessage, AVSError> {
-        Just(message).setFailureType(to: AVSError.self).eraseToAnyPublisher()
+    ) -> AnyPublisher<AVSSessionResponse, AVSError> {
+        Just(.init(message: message, httpStatusCode: 200))
+            .setFailureType(to: AVSError.self)
+            .eraseToAnyPublisher()
     }
 }

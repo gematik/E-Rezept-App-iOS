@@ -150,8 +150,6 @@ extension UserDefaults {
     private static let kShouldHideCardWallIntro = "kShouldHideCardWallIntro"
     private static let kAppSecurityOption = "kAppSecurityOption"
     private static let kIgnoreDeviceNotSecuredWarningForSession = "kIgnoreDeviceNotSecuredWarningForSession"
-    /// Key for app tracking settings `UserDefaults`
-    public static let kAppTrackingAllowed = "kAppTrackingAllowed"
     /// Key for storing if app-install event has been sent to tracking server in `UserDefaults`
     public static let kAppInstallSent = "kAppInstallSent"
     /// Key for storing failedAppAuthentications
@@ -195,12 +193,6 @@ extension UserDefaults {
     @objc var ignoreDeviceNotSecuredWarningForSession: Bool {
         get { bool(forKey: Self.kIgnoreDeviceNotSecuredWarningForSession) }
         set { set(newValue, forKey: Self.kIgnoreDeviceNotSecuredWarningForSession) }
-    }
-
-    /// Store users setting for app tracking
-    @objc public var kAppTrackingAllowed: Bool {
-        get { bool(forKey: Self.kAppTrackingAllowed) }
-        set { set(newValue, forKey: Self.kAppTrackingAllowed) }
     }
 
     /// Store if app-install event has been sent to tracking server

@@ -19,6 +19,7 @@
 @testable import AVS
 import Combine
 import Foundation
+import HTTPClient
 
 // swiftlint:disable all
 final class MockAVSClient: AVSClient {
@@ -29,17 +30,17 @@ final class MockAVSClient: AVSClient {
         sendDataToTransactionIdCallsCount > 0
     }
 
-    var sendDataToTransactionIdReceivedArguments: (data: Data, endpoint: AVSEndpoint, transactionId: UUID)?
-    var sendDataToTransactionIdReceivedInvocations: [(data: Data, endpoint: AVSEndpoint, transactionId: UUID)] = []
-    var sendDataToTransactionIdReturnValue: AnyPublisher<UUID, AVSError>!
-    var sendDataToTransactionIdClosure: ((Data, AVSEndpoint, UUID) -> AnyPublisher<UUID, AVSError>)?
+    var sendDataToTransactionIdReceivedArguments: (data: Data, endpoint: AVSEndpoint)?
+    var sendDataToTransactionIdReceivedInvocations: [(data: Data, endpoint: AVSEndpoint)] = []
+    var sendDataToTransactionIdReturnValue: AnyPublisher<HTTPResponse, AVSError>!
+    var sendDataToTransactionIdClosure: ((Data, AVSEndpoint) -> AnyPublisher<HTTPResponse, AVSError>)?
 
-    func send(data: Data, to endpoint: AVSEndpoint, transactionId: UUID) -> AnyPublisher<UUID, AVSError> {
+    func send(data: Data, to endpoint: AVSEndpoint) -> AnyPublisher<HTTPResponse, AVSError> {
         sendDataToTransactionIdCallsCount += 1
-        sendDataToTransactionIdReceivedArguments = (data: data, endpoint: endpoint, transactionId: transactionId)
+        sendDataToTransactionIdReceivedArguments = (data: data, endpoint: endpoint)
         sendDataToTransactionIdReceivedInvocations
-            .append((data: data, endpoint: endpoint, transactionId: transactionId))
+            .append((data: data, endpoint: endpoint))
         return sendDataToTransactionIdClosure
-            .map { $0(data, endpoint, transactionId) } ?? sendDataToTransactionIdReturnValue
+            .map { $0(data, endpoint) } ?? sendDataToTransactionIdReturnValue
     }
 }

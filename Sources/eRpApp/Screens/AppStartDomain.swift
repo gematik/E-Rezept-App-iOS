@@ -79,7 +79,7 @@ enum AppStartDomain {
                         )
                     ),
                     profileSelection: .init(),
-                    debug: DebugDomain.State(trackingOptOut: environment.tracker.optOut),
+                    debug: DebugDomain.State(trackingOptIn: environment.tracker.optIn),
                     unreadMessagesCount: 0,
                     isDemoMode: false
                 )
@@ -118,7 +118,7 @@ enum AppStartDomain {
                         )
                     ),
                     profileSelection: .init(),
-                    debug: DebugDomain.State(trackingOptOut: environment.tracker.optOut),
+                    debug: DebugDomain.State(trackingOptIn: environment.tracker.optIn),
                     unreadMessagesCount: 0,
                     isDemoMode: false
                 )

@@ -35,6 +35,67 @@ import AVS
 
 
 
+class StreamWrappedAVSTransactionDataStore: AVSTransactionDataStore {
+    private var disposeBag: Set<AnyCancellable> = []
+	private let stream: AnyPublisher<AVSTransactionDataStore, Never>
+	private var current: AVSTransactionDataStore
+
+	init(stream: AnyPublisher<AVSTransactionDataStore, Never>, current: AVSTransactionDataStore) {
+		self.stream = stream
+		self.current = current
+
+		stream
+			.weakAssign(to: \.current, on: self)
+			.store(in: &disposeBag)
+
+
+	}
+
+
+	func fetchAVSTransaction(by identifier: UUID) -> AnyPublisher<AVSTransaction?, LocalStoreError> {
+        stream
+        	.map { $0.fetchAVSTransaction(
+				by: identifier
+            ) }
+            .switchToLatest()
+            .eraseToAnyPublisher()
+	}
+
+	func listAllAVSTransactions() -> AnyPublisher<[AVSTransaction], LocalStoreError> {
+        stream
+        	.map { $0.listAllAVSTransactions(
+            ) }
+            .switchToLatest()
+            .eraseToAnyPublisher()
+	}
+
+	func save(avsTransactions: [AVSTransaction]) -> AnyPublisher<[AVSTransaction], LocalStoreError> {
+        current.save(
+				avsTransactions: avsTransactions
+            )
+	}
+
+	func delete(avsTransactions: [AVSTransaction]) -> AnyPublisher<[AVSTransaction], LocalStoreError> {
+        current.delete(
+				avsTransactions: avsTransactions
+            )
+	}
+
+	func save(avsTransaction: AVSTransaction) -> AnyPublisher<AVSTransaction?, LocalStoreError> {
+        current.save(
+				avsTransaction: avsTransaction
+            )
+	}
+
+	func delete(avsTransaction: AVSTransaction) -> AnyPublisher<AVSTransaction?, LocalStoreError> {
+        current.delete(
+				avsTransaction: avsTransaction
+            )
+	}
+
+
+}
+
 class StreamWrappedErxTaskRepository: ErxTaskRepository {
     private var disposeBag: Set<AnyCancellable> = []
 	private let stream: AnyPublisher<ErxTaskRepository, Never>
@@ -919,6 +980,9 @@ class StreamWrappedUserSession: UserSession {
 	var deviceSecurityManager: DeviceSecurityManager { current.deviceSecurityManager }
 	var profileId: UUID { current.profileId }
 	var avsSession: AVSSession { current.avsSession }
+	lazy var avsTransactionDataStore: AVSTransactionDataStore = {
+		StreamWrappedAVSTransactionDataStore(stream: stream.map{ $0.avsTransactionDataStore }.eraseToAnyPublisher(), current: current.avsTransactionDataStore )
+	}()
 
 	func profile() -> AnyPublisher<Profile, LocalStoreError> {
         stream

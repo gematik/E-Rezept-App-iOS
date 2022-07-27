@@ -34,6 +34,7 @@ enum RegisterAuthenticationDomain {
 
     enum Token: CaseIterable, Hashable {
         case comparePasswords
+        case continueBiometry
     }
 
     struct State: Equatable {
@@ -97,6 +98,7 @@ enum RegisterAuthenticationDomain {
         case enterButtonTapped
         case saveSelection
         case saveSelectionSuccess
+        case continueBiometry
     }
 
     struct Environment {
@@ -157,7 +159,16 @@ enum RegisterAuthenticationDomain {
                 }
             case .success(true):
                 state.biometrySuccessful = true
-                return .none
+
+                switch state.selectedSecurityOption {
+                case .biometry:
+                    return Effect(value: .continueBiometry)
+                        .delay(for: state.timeout, scheduler: environment.schedulers.main.animation())
+                        .eraseToEffect()
+                        .cancellable(id: Token.continueBiometry, cancelInFlight: true)
+                default:
+                    return .none
+                }
             }
             return .none
         case .alertDismissButtonTapped:
@@ -220,7 +231,8 @@ enum RegisterAuthenticationDomain {
                 environment.userDataStore.set(appSecurityOption: selectedOption.id)
                 return Effect(value: .saveSelectionSuccess)
             }
-        case .saveSelectionSuccess:
+        case .saveSelectionSuccess,
+             .continueBiometry:
             // handled by OnboardingDomain
             return .none
         }

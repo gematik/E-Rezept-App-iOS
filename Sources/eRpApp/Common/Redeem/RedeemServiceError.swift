@@ -32,14 +32,14 @@ enum RedeemServiceError: Swift.Error, Equatable, LocalizedError {
     /// When an internal error occurs which most likely is a programming error
     case internalError(InternalError)
     // sourcery: errorCode = "04"
-    /// When error conversion into `RedeemServoceSelectorError` fails
+    /// When error conversion into `RedeemServiceError` fails
     case unspecified(error: Swift.Error)
     // sourcery: errorCode = "05"
     /// When the user has no valid token available while trying to redeem via Fachdienst
     case noTokenAvailable
 
     // sourcery: CodedError = "025"
-    enum InternalError: Swift.Error, LocalizedError {
+    enum InternalError: Swift.Error, Equatable, LocalizedError {
         // sourcery: errorCode = "01"
         /// When the AVS endpoint for the selected redeem option is missing
         case missingAVSEndpoint
@@ -58,6 +58,12 @@ enum RedeemServiceError: Swift.Error, Equatable, LocalizedError {
         // sourcery: errorCode = "06"
         /// When no service can be found for the selected pharmacy
         case noService
+        // sourcery: errorCode = "07"
+        /// When the status code is not in [200..<300] but the service did not return an error beforehand
+        case unexpectedHTTPStatusCode
+        // sourcery: errorCode = "08"
+        /// When persisting/extracting information from the store went wrong
+        case localStoreError(LocalStoreError)
 
         var errorDescription: String? {
             // TODO: pass error ID instead describing self // swiftlint:disable:this todo

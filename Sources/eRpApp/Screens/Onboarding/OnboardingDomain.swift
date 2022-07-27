@@ -224,7 +224,8 @@ enum OnboardingDomain {
             return Effect(value: .dismissOnboarding)
         case let .saveProfileReceived(.failure(error)):
             state.newProfileState.alertState = OnboardingNewProfileDomain.AlertStates.for(error)
-            state.composition.setPage(.newProfile)
+            state.composition
+                .setPage(.newProfile)
             return .none
         case .dismissOnboarding:
             environment.localUserStore.set(hideOnboarding: true)
@@ -232,6 +233,8 @@ enum OnboardingDomain {
             return RegisterAuthenticationDomain.cleanup()
         case .registerAuthentication(action: .saveSelectionSuccess):
             return Effect(value: .dismissOnboarding)
+        case .registerAuthentication(action: .continueBiometry):
+            return Effect(value: .nextPage)
         case .registerAuthentication:
             return .none
         case .newProfile:

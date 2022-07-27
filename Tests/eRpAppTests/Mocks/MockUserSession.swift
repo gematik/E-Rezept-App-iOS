@@ -123,6 +123,10 @@ class MockUserSession: UserSession {
     lazy var avsSession: AVSSession = {
         MockAVSSession()
     }()
+
+    lazy var avsTransactionDataStore: AVSTransactionDataStore = {
+        MockAVSTransactionDataStore()
+    }()
 }
 
 class MockHintEventsStore: EventsStore {

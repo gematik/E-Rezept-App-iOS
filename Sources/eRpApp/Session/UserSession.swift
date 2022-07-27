@@ -86,4 +86,6 @@ protocol UserSession {
     func profile() -> AnyPublisher<Profile, LocalStoreError>
 
     var avsSession: AVSSession { get }
+
+    var avsTransactionDataStore: AVSTransactionDataStore { get }
 }

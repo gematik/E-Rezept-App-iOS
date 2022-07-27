@@ -21,25 +21,37 @@ import Combine
 import Foundation
 import OpenSSL
 
-class MockAVSSession: AVSSession {
-    init() {}
+// swiftlint:disable large_tuple
+final class MockAVSSession: AVSSession {
+    // MARK: - redeem
 
-    var redeemCallsCount = 0
-    var redeemCalled: Bool {
-        redeemCallsCount > 0
+    var redeemMessageEndpointRecipientsCallsCount = 0
+    var redeemMessageEndpointRecipientsCalled: Bool {
+        redeemMessageEndpointRecipientsCallsCount > 0
     }
 
-    var redeemParameters: (AVSMessage, AVSEndpoint, [X509])? // swiftlint:disable:this large_tuple
-    var redeemReturnValue: AnyPublisher<AVSMessage, AVSError>!
-    var redeemMessageEndpointRecipientClosure: ((AVSMessage) -> AnyPublisher<AVSMessage, AVSError>)?
-
-    func redeem(
+    var redeemMessageEndpointRecipientsReceivedArguments: (
         message: AVSMessage,
         endpoint: AVSEndpoint,
         recipients: [X509]
-    ) -> AnyPublisher<AVSMessage, AVSError> {
-        redeemCallsCount += 1
-        redeemParameters = (message, endpoint, recipients)
-        return redeemMessageEndpointRecipientClosure.map { $0(message) } ?? redeemReturnValue
+    )?
+    var redeemMessageEndpointRecipientsReceivedInvocations: [(message: AVSMessage, endpoint: AVSEndpoint,
+                                                              recipients: [X509])] = []
+    var redeemMessageEndpointRecipientsReturnValue: AnyPublisher<AVSSessionResponse, AVSError>!
+    var redeemMessageEndpointRecipientsClosure: ((AVSMessage, AVSEndpoint, [X509])
+        -> AnyPublisher<AVSSessionResponse, AVSError>)?
+
+    func redeem(message: AVSMessage, endpoint: AVSEndpoint,
+                recipients: [X509]) -> AnyPublisher<AVSSessionResponse, AVSError> {
+        redeemMessageEndpointRecipientsCallsCount += 1
+        redeemMessageEndpointRecipientsReceivedArguments = (
+            message: message,
+            endpoint: endpoint,
+            recipients: recipients
+        )
+        redeemMessageEndpointRecipientsReceivedInvocations
+            .append((message: message, endpoint: endpoint, recipients: recipients))
+        return redeemMessageEndpointRecipientsClosure
+            .map { $0(message, endpoint, recipients) } ?? redeemMessageEndpointRecipientsReturnValue
     }
 }

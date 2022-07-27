@@ -16,12 +16,55 @@
 //  
 //
 
+import Combine
 import Foundation
 
 protocol Tracker: AnyObject {
-    var optOut: Bool { get set }
+    var optIn: Bool { get set }
+    var optInPublisher: AnyPublisher<Bool, Never> { get }
 }
 
 class DummyTracker: Tracker {
-    var optOut = true
+    var optInPublisher: AnyPublisher<Bool, Never> {
+        Just(optIn).eraseToAnyPublisher()
+    }
+
+    var optIn = false
+}
+
+class PlaceholderTracker: Tracker {
+    private let userDefaults: UserDefaults
+
+    init(userDefaults: UserDefaults = UserDefaults.standard) {
+        self.userDefaults = userDefaults
+
+        // TODO: make sure these are true //swiftlint:disable:this todo
+        // [REQ:gemSpec_eRp_FdV:A_19095] user session is randomly created - See visitorID.
+        // [REQ:gemSpec_eRp_FdV:A_19096] new visitorID is generated when app is reinstalled.
+    }
+
+    var optIn: Bool {
+        get {
+            userDefaults.appTrackingAllowed
+        }
+        set {
+            userDefaults.appTrackingAllowed = newValue
+        }
+    }
+
+    var optInPublisher: AnyPublisher<Bool, Never> {
+        userDefaults.publisher(for: \UserDefaults.appTrackingAllowed)
+            .eraseToAnyPublisher()
+    }
+}
+
+extension UserDefaults {
+    /// Key for app tracking settings `UserDefaults`
+    public static let kAppTrackingAllowed = "kAppTrackingAllowed"
+
+    /// Store users setting for app tracking
+    @objc public var appTrackingAllowed: Bool {
+        get { bool(forKey: Self.kAppTrackingAllowed) }
+        set { set(newValue, forKey: Self.kAppTrackingAllowed) }
+    }
 }

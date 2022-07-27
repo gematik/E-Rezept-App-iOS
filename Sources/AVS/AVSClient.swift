@@ -21,7 +21,7 @@ import Foundation
 import HTTPClient
 
 protocol AVSClient {
-    func send(data: Data, to endpoint: AVSEndpoint, transactionId: UUID) -> AnyPublisher<UUID, AVSError>
+    func send(data: Data, to endpoint: AVSEndpoint) -> AnyPublisher<HTTPResponse, AVSError>
 }
 
 class RealAVSClient {
@@ -33,20 +33,13 @@ class RealAVSClient {
 }
 
 extension RealAVSClient: AVSClient {
-    func send(data: Data, to endpoint: AVSEndpoint, transactionId: UUID) -> AnyPublisher<UUID, AVSError> {
+    func send(data: Data, to endpoint: AVSEndpoint) -> AnyPublisher<HTTPResponse, AVSError> {
         var request = URLRequest(url: endpoint.url, cachePolicy: .reloadIgnoringLocalAndRemoteCacheData)
         request.httpMethod = "POST"
         request.addValue("application/pkcs7-mime", forHTTPHeaderField: "Content-Type")
         request.httpBody = data
         return httpClient
             .send(request: request)
-            .tryMap { httpResponse in
-                guard httpResponse.status == .ok else {
-                    let urlError = URLError(URLError.Code(rawValue: httpResponse.status.rawValue))
-                    throw HTTPError.httpError(urlError)
-                }
-                return transactionId
-            }
             .mapError {
                 $0.asAVSError()
             }

@@ -18,9 +18,11 @@
 
 import ComposableArchitecture
 @testable import eRpApp
+import Nimble
 import XCTest
 
 final class SettingsDomainTests: XCTestCase {
+    var mockTracker = MockTracker()
     typealias TestStore = ComposableArchitecture.TestStore<
         SettingsDomain.State,
         SettingsDomain.State,
@@ -40,7 +42,7 @@ final class SettingsDomainTests: XCTestCase {
             environment: SettingsDomain.Environment(
                 changeableUserSessionContainer: MockUserSessionContainer(),
                 schedulers: Schedulers(uiScheduler: DispatchQueue.test.eraseToAnyScheduler()),
-                tracker: DummyTracker(),
+                tracker: mockTracker,
                 signatureProvider: DummySecureEnclaveSignatureProvider(),
                 appSecurityManager: DummyAppSecurityManager(),
                 router: MockRouting(),
@@ -123,6 +125,8 @@ final class SettingsDomainTests: XCTestCase {
             )
         )
 
+        mockTracker.optIn = false
+
         // when
         store.send(.toggleTrackingTapped(true)) { sut in
             // then
@@ -131,9 +135,34 @@ final class SettingsDomainTests: XCTestCase {
         }
         store.send(.confirmedOptInTracking) { sut in
             sut.trackerOptIn = true
-            sut.trackerOptIn = UserDefaults.standard.kAppTrackingAllowed
             sut.showTrackerComplyView = false
         }
+
+        expect(self.mockTracker.optInCalled).to(beTrue())
+        expect(self.mockTracker.optIn).to(beTrue())
+        expect(self.mockTracker.optInPublisherCalled).to(beFalse())
+    }
+
+    func testAppTrackingOptInDisableAferConfirm() {
+        let store = testStore(
+            for: SettingsDomain.State(
+                isDemoMode: false,
+                appSecurityState: AppSecurityDomain.State(availableSecurityOptions: [.password])
+            )
+        )
+
+        mockTracker.optIn = true
+
+        // when
+        store.send(.toggleTrackingTapped(false)) { sut in
+            // then
+            sut.trackerOptIn = false
+            sut.showTrackerComplyView = false
+        }
+
+        expect(self.mockTracker.optInCalled).to(beTrue())
+        expect(self.mockTracker.optIn).to(beFalse())
+        expect(self.mockTracker.optInPublisherCalled).to(beFalse())
     }
 
     func testAppTrackingOptInCancelAlert() {
@@ -143,6 +172,7 @@ final class SettingsDomainTests: XCTestCase {
                 appSecurityState: AppSecurityDomain.State(availableSecurityOptions: [.password])
             )
         )
+        mockTracker.optIn = false
 
         // when
         store.send(.toggleTrackingTapped(true)) { sut in
@@ -150,10 +180,13 @@ final class SettingsDomainTests: XCTestCase {
             sut.trackerOptIn = false
             sut.showTrackerComplyView = true
         }
-        store.send(.confirmedOptInTracking) { sut in
+        store.send(.dismissTrackerComplyView) { sut in
             sut.trackerOptIn = false
-            sut.trackerOptIn = UserDefaults.standard.kAppTrackingAllowed
             sut.showTrackerComplyView = false
         }
+
+        expect(self.mockTracker.optInCalled).to(beTrue())
+        expect(self.mockTracker.optIn).to(beFalse())
+        expect(self.mockTracker.optInPublisherCalled).to(beFalse())
     }
 }

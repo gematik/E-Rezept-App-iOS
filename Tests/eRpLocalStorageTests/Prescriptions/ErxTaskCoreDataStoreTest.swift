@@ -117,7 +117,7 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
                 receivedListAllTasksValues.append(erxTasks)
             })
 
-        // than there should be only one in store with the updated values
+        // then there should be only one in store with the updated values
         expect(receivedListAllTasksValues.count).toEventually(equal(1))
         expect(receivedListAllTasksValues[0].count).to(equal(1))
         let result = receivedListAllTasksValues[0].first

@@ -18,7 +18,7 @@
 
 import Foundation
 
-/// Represents the shipment informations needed for redeeming a prescription in a pharmacy
+/// Represents the shipment information needed for redeeming a prescription in a pharmacy
 public struct ShipmentInfo: Identifiable, Hashable, Equatable {
     public var id: UUID {
         identifier

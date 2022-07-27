@@ -403,14 +403,9 @@ final class GroupedPrescriptionListDomainTests: XCTestCase {
                               auditEvents: [],
                               isAuthenticated: true)
 
-        let expectedState = PrescriptionDetailDomain.State(
-            prescription: prescription,
-            isArchived: false
-        )
-
         // when
-        store.send(
-            .prescriptionDetailViewTapped(selectedPrescription: prescription)
-        )
+        store.send(.prescriptionDetailViewTapped(selectedPrescription: prescription))
+
+        // nothing happens, as this is currently supposed to be handled in the parent domain
     }
 }
