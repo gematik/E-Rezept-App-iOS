@@ -29,10 +29,6 @@
 id="toc-avserror.internalerror"><code>AVSError.InternalError</code></a></li>
 <li><a href="#zxdatamatrixwriter.error"
 id="toc-zxdatamatrixwriter.error"><code>ZXDataMatrixWriter.Error</code></a></li>
-<li><a href="#redeemserviceerror"
-id="toc-redeemserviceerror"><code>RedeemServiceError</code></a></li>
-<li><a href="#redeemserviceerror.internalerror"
-id="toc-redeemserviceerror.internalerror"><code>RedeemServiceError.InternalError</code></a></li>
 <li><a href="#appauthenticationbiometricsdomain.error"
 id="toc-appauthenticationbiometricsdomain.error"><code>AppAuthenticationBiometricsDomain.Error</code></a></li>
 <li><a href="#avscannerviewcontroller.error"
@@ -59,6 +55,10 @@ id="toc-maindomain.error"><code>MainDomain.Error</code></a></li>
 id="toc-prescriptiondetaildomain.loadingimageerror"><code>PrescriptionDetailDomain.LoadingImageError</code></a></li>
 <li><a href="#redeemmatrixcodedomain.loadingimageerror"
 id="toc-redeemmatrixcodedomain.loadingimageerror"><code>RedeemMatrixCodeDomain.LoadingImageError</code></a></li>
+<li><a href="#redeemserviceerror"
+id="toc-redeemserviceerror"><code>RedeemServiceError</code></a></li>
+<li><a href="#redeemserviceerror.internalerror"
+id="toc-redeemserviceerror.internalerror"><code>RedeemServiceError.InternalError</code></a></li>
 <li><a href="#registereddevicesdomain.error"
 id="toc-registereddevicesdomain.error"><code>RegisteredDevicesDomain.Error</code></a></li>
 <li><a href="#registereddevicesserviceerror"
@@ -77,6 +77,8 @@ id="toc-erxrepositoryerror"><code>ErxRepositoryError</code></a></li>
 id="toc-erxtask.status.error"><code>ErxTask.Status.Error</code></a></li>
 <li><a href="#defaultdatamatrixstringencodererror"
 id="toc-defaultdatamatrixstringencodererror"><code>DefaultDataMatrixStringEncoderError</code></a></li>
+<li><a href="#erxtaskorder.error"
+id="toc-erxtaskorder.error"><code>ErxTaskOrder.Error</code></a></li>
 <li><a href="#localstoreerror"
 id="toc-localstoreerror"><code>LocalStoreError</code></a></li>
 <li><a href="#remotestoreerror"
@@ -169,58 +171,6 @@ href="/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepar
 <li><code>cgImgageConvertion</code> (i-00901):
 <ul>
 <li><a href="#string">String</a></li>
-</ul></li>
-</ul>
-<h2 id="redeemserviceerror"><code>RedeemServiceError</code></h2>
-<p><em>Source:</em> <a
-href="/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpApp/Common/Redeem/RedeemServiceError.swift">RedeemServiceError.swift</a></p>
-<ul>
-<li><code>eRxRepository</code> (i-02401): [When redeeming a task via
-Fachdienst]
-<ul>
-<li><a href="#erxrepositoryerror">ErxRepositoryError</a></li>
-</ul></li>
-<li><code>avs</code> (i-02402): [When redeeming a task via AVS]
-<ul>
-<li><a href="#avserror">AVSError</a></li>
-</ul></li>
-<li><code>internalError</code> (i-02403): [When an internal error occurs
-which most likely is a programming error]
-<ul>
-<li><a href="#internalerror">InternalError</a></li>
-</ul></li>
-<li><code>unspecified</code> (i-02404): [When error conversion into
-<code>RedeemServiceError</code> fails]
-<ul>
-<li><a href="#swift.error">Swift.Error</a></li>
-</ul></li>
-<li><code>noTokenAvailable</code> (i-02405): [When the user has no valid
-token available while trying to redeem via Fachdienst]</li>
-</ul>
-<h2
-id="redeemserviceerror.internalerror"><code>RedeemServiceError.InternalError</code></h2>
-<p><em>Source:</em> <a
-href="/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpApp/Common/Redeem/RedeemServiceError.swift">RedeemServiceError.swift</a></p>
-<ul>
-<li><code>missingAVSEndpoint</code> (i-02501): [When the AVS endpoint
-for the selected redeem option is missing]</li>
-<li><code>missingAVSCertificate</code> (i-02502): [When the required AVS
-certificates for redeeming via AVS are missing]</li>
-<li><code>missingTelematikId</code> (i-02503): [When the Telematik-ID of
-the pharmacy to redeem in is missing]</li>
-<li><code>conversionVersionNumber</code> (i-02504): [When converting AVS
-Version number]</li>
-<li><code>idMissmatch</code> (i-02505): [When no order can be found to
-the received response]</li>
-<li><code>noService</code> (i-02506): [When no service can be found for
-the selected pharmacy]</li>
-<li><code>unexpectedHTTPStatusCode</code> (i-02507): [When the status
-code is not in [200..&lt;300] but the service did not return an error
-beforehand]</li>
-<li><code>localStoreError</code> (i-02508): [When persisting/extracting
-information from the store went wrong]
-<ul>
-<li><a href="#localstoreerror">LocalStoreError</a></li>
 </ul></li>
 </ul>
 <h2
@@ -444,6 +394,58 @@ href="/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepar
 <ul>
 <li><code>matrixCodeGenerationFailed</code> (i-02301):</li>
 </ul>
+<h2 id="redeemserviceerror"><code>RedeemServiceError</code></h2>
+<p><em>Source:</em> <a
+href="/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpApp/Screens/Pharmacy/RedeemService/RedeemServiceError.swift">RedeemServiceError.swift</a></p>
+<ul>
+<li><code>eRxRepository</code> (i-02401): [When redeeming a task via
+Fachdienst]
+<ul>
+<li><a href="#erxrepositoryerror">ErxRepositoryError</a></li>
+</ul></li>
+<li><code>avs</code> (i-02402): [When redeeming a task via AVS]
+<ul>
+<li><a href="#avserror">AVSError</a></li>
+</ul></li>
+<li><code>internalError</code> (i-02403): [When an internal error occurs
+which most likely is a programming error]
+<ul>
+<li><a href="#internalerror">InternalError</a></li>
+</ul></li>
+<li><code>unspecified</code> (i-02404): [When error conversion into
+<code>RedeemServiceError</code> fails]
+<ul>
+<li><a href="#swift.error">Swift.Error</a></li>
+</ul></li>
+<li><code>noTokenAvailable</code> (i-02405): [When the user has no valid
+token available while trying to redeem via Fachdienst]</li>
+</ul>
+<h2
+id="redeemserviceerror.internalerror"><code>RedeemServiceError.InternalError</code></h2>
+<p><em>Source:</em> <a
+href="/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpApp/Screens/Pharmacy/RedeemService/RedeemServiceError.swift">RedeemServiceError.swift</a></p>
+<ul>
+<li><code>missingAVSEndpoint</code> (i-02501): [When the AVS endpoint
+for the selected redeem option is missing]</li>
+<li><code>missingAVSCertificate</code> (i-02502): [When the required AVS
+certificates for redeeming via AVS are missing]</li>
+<li><code>missingTelematikId</code> (i-02503): [When the Telematik-ID of
+the pharmacy to redeem in is missing]</li>
+<li><code>conversionVersionNumber</code> (i-02504): [When converting AVS
+Version number]</li>
+<li><code>idMissmatch</code> (i-02505): [When no order can be found to
+the received response]</li>
+<li><code>noService</code> (i-02506): [When no service can be found for
+the selected pharmacy]</li>
+<li><code>unexpectedHTTPStatusCode</code> (i-02507): [When the status
+code is not in [200..&lt;300] but the service did not return an error
+beforehand]</li>
+<li><code>localStoreError</code> (i-02508): [When persisting/extracting
+information from the store went wrong]
+<ul>
+<li><a href="#localstoreerror">LocalStoreError</a></li>
+</ul></li>
+</ul>
 <h2
 id="registereddevicesdomain.error"><code>RegisteredDevicesDomain.Error</code></h2>
 <p><em>Source:</em> <a
@@ -554,6 +556,18 @@ href="/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepar
 <ul>
 <li><code>stringEncoding</code> (i-20201): [Generic error while encoding
 the string.]
+<ul>
+<li><a href="#string">String</a></li>
+</ul></li>
+</ul>
+<h2 id="erxtaskorder.error"><code>ErxTaskOrder.Error</code></h2>
+<p><em>Source:</em> <a
+href="/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpKit/ErxTaskOrder.swift">ErxTaskOrder.swift</a></p>
+<ul>
+<li><code>unableToConstructCommunicationRequest</code> (i-20601):
+[Unable to construct communication request]</li>
+<li><code>invalidErxTaskOrderInput</code> (i-20601): [Invalid
+ErxTaskOrder though previous validation checks have been passed]
 <ul>
 <li><a href="#string">String</a></li>
 </ul></li>

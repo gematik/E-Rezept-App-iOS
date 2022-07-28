@@ -6,19 +6,6 @@ i-54004,"AVSError.unspecified","Conversion error when trying to cast to `AVSErro
 i-54005,"AVSError.`internal`","Internal error",AVSError.InternalError
 i-54101,"AVSError.InternalError.cmsContentCreation","",
 i-00901,"ZXDataMatrixWriter.Error.cgImgageConvertion","",
-i-02401,"RedeemServiceError.eRxRepository","When redeeming a task via Fachdienst",ErxRepositoryError
-i-02402,"RedeemServiceError.avs","When redeeming a task via AVS",AVSError
-i-02403,"RedeemServiceError.internalError","When an internal error occurs which most likely is a programming error",RedeemServiceError.InternalError
-i-02404,"RedeemServiceError.unspecified","When error conversion into `RedeemServiceError` fails",
-i-02405,"RedeemServiceError.noTokenAvailable","When the user has no valid token available while trying to redeem via Fachdienst",
-i-02501,"RedeemServiceError.InternalError.missingAVSEndpoint","When the AVS endpoint for the selected redeem option is missing",
-i-02502,"RedeemServiceError.InternalError.missingAVSCertificate","When the required AVS certificates for redeeming via AVS are missing",
-i-02503,"RedeemServiceError.InternalError.missingTelematikId","When the Telematik-ID of the pharmacy to redeem in is missing",
-i-02504,"RedeemServiceError.InternalError.conversionVersionNumber","When converting AVS Version number",
-i-02505,"RedeemServiceError.InternalError.idMissmatch","When no order can be found to the received response",
-i-02506,"RedeemServiceError.InternalError.noService","When no service can be found for the selected pharmacy",
-i-02507,"RedeemServiceError.InternalError.unexpectedHTTPStatusCode","When the status code is not in [200..<300] but the service did not return an error beforehand",
-i-02508,"RedeemServiceError.InternalError.localStoreError","When persisting/extracting information from the store went wrong",LocalStoreError
 i-00301,"AppAuthenticationBiometricsDomain.Error.cannotEvaluatePolicy","",
 i-00302,"AppAuthenticationBiometricsDomain.Error.failedEvaluatingPolicy","",
 i-00201,"AVScannerViewController.Error.initalizationError","",
@@ -65,6 +52,19 @@ i-01501,"MainDomain.Error.localStoreError","",LocalStoreError
 i-01502,"MainDomain.Error.userSessionError","",UserSessionError
 i-01601,"PrescriptionDetailDomain.LoadingImageError.matrixCodeGenerationFailed","",
 i-02301,"RedeemMatrixCodeDomain.LoadingImageError.matrixCodeGenerationFailed","",
+i-02401,"RedeemServiceError.eRxRepository","When redeeming a task via Fachdienst",ErxRepositoryError
+i-02402,"RedeemServiceError.avs","When redeeming a task via AVS",AVSError
+i-02403,"RedeemServiceError.internalError","When an internal error occurs which most likely is a programming error",RedeemServiceError.InternalError
+i-02404,"RedeemServiceError.unspecified","When error conversion into `RedeemServiceError` fails",
+i-02405,"RedeemServiceError.noTokenAvailable","When the user has no valid token available while trying to redeem via Fachdienst",
+i-02501,"RedeemServiceError.InternalError.missingAVSEndpoint","When the AVS endpoint for the selected redeem option is missing",
+i-02502,"RedeemServiceError.InternalError.missingAVSCertificate","When the required AVS certificates for redeeming via AVS are missing",
+i-02503,"RedeemServiceError.InternalError.missingTelematikId","When the Telematik-ID of the pharmacy to redeem in is missing",
+i-02504,"RedeemServiceError.InternalError.conversionVersionNumber","When converting AVS Version number",
+i-02505,"RedeemServiceError.InternalError.idMissmatch","When no order can be found to the received response",
+i-02506,"RedeemServiceError.InternalError.noService","When no service can be found for the selected pharmacy",
+i-02507,"RedeemServiceError.InternalError.unexpectedHTTPStatusCode","When the status code is not in [200..<300] but the service did not return an error beforehand",
+i-02508,"RedeemServiceError.InternalError.localStoreError","When persisting/extracting information from the store went wrong",LocalStoreError
 i-01701,"RegisteredDevicesDomain.Error.generic","",
 i-01801,"RegisteredDevicesServiceError.missingAuthentication","",
 i-01802,"RegisteredDevicesServiceError.missingToken","",
@@ -93,6 +93,8 @@ i-20104,"ErxTask.Status.Error.missingPatientReceiptReference","",
 i-20105,"ErxTask.Status.Error.missingPatientReceiptIdentifier","",
 i-20106,"ErxTask.Status.Error.missingPatientReceiptBundle","",
 i-20201,"DefaultDataMatrixStringEncoderError.stringEncoding","Generic error while encoding the string.",
+i-20601,"ErxTaskOrder.Error.unableToConstructCommunicationRequest","Unable to construct communication request",
+i-20601,"ErxTaskOrder.Error.invalidErxTaskOrderInput","Invalid ErxTaskOrder though previous validation checks have been passed",
 i-20301,"LocalStoreError.notImplemented","",
 i-20302,"LocalStoreError.initialization","",
 i-20303,"LocalStoreError.write","",
