@@ -52,21 +52,7 @@ public struct AVSMessage: Encodable, Equatable {
         transactionID: UUID,
         taskID: String,
         accessCode: String
-    ) throws {
-        guard Validator.isValidAVSMessageInput(
-            version: version,
-            supplyOptionsType: supplyOptionsType,
-            name: name,
-            address: address,
-            hint: hint,
-            text: text,
-            phone: phone,
-            mail: mail
-        )
-        else {
-            throw AVSError.invalidAVSMessageInput
-        }
-
+    ) {
         self.version = version
         self.supplyOptionsType = supplyOptionsType
         self.name = name
@@ -78,103 +64,5 @@ public struct AVSMessage: Encodable, Equatable {
         self.transactionID = transactionID
         self.taskID = taskID
         self.accessCode = accessCode
-    }
-}
-
-extension AVSMessage {
-    /// Collection of input validation functions
-    /// [gemF_eRp_altern_Zuweisung:A_22784]
-    public enum Validator {
-        // swiftlint:disable missing_docs
-        // Constraints defined in [gemF_eRp_altern_Zuweisung:A_22784]
-        static func isValidAVSMessageInput( // swiftlint:disable:this function_parameter_count
-            version: Int,
-            supplyOptionsType: SupplyOptionsType,
-            name: String?,
-            // swiftlint:disable:next discouraged_optional_collection
-            address: [String]?,
-            hint: String?,
-            text: String?,
-            phone: String?,
-            mail: String?
-        ) -> Bool {
-            [
-                isValid(version: version),
-                isValid(name: name),
-                isValid(address: address),
-                isValid(hint: hint),
-                isValid(text: text),
-                isValid(phone: phone),
-                isValid(mail: mail),
-                ifDeliveryOrShipmentThenIsNonEmptyPhoneOrNonEmptyMail(
-                    supplyOptionsType: supplyOptionsType,
-                    phone: phone,
-                    mail: mail
-                ),
-            ]
-            .allSatisfy { $0 == true }
-        }
-
-        public static func isValid(version: Int) -> Bool {
-            version > 0 && version < 1_000_000
-        }
-
-        public static func isValid(name: String?) -> Bool {
-            name?.countIsLessOrEqual(50) ?? true
-        }
-
-        // swiftlint:disable:next discouraged_optional_collection
-        public static func isValid(address: [String]?) -> Bool {
-            address?.allSatisfy { $0.countIsLessOrEqual(50) } ?? true
-        }
-
-        public static func isValid(hint: String?) -> Bool {
-            hint?.countIsLessOrEqual(500) ?? true
-        }
-
-        public static func isValid(text: String?) -> Bool {
-            text?.countIsLessOrEqual(500) ?? true
-        }
-
-        public static func isValid(phone: String?) -> Bool {
-            phone?.countIsLessOrEqual(25) ?? true
-        }
-
-        public static func isValid(mail: String?) -> Bool {
-            if let mail = mail {
-                return mail.isValidEmail || mail.isEmpty
-            }
-            return true
-        }
-
-        public static func ifDeliveryOrShipmentThenIsNonEmptyPhoneOrNonEmptyMail(
-            supplyOptionsType: SupplyOptionsType,
-            phone: String?,
-            mail: String?
-        ) -> Bool {
-            [SupplyOptionsType.delivery, SupplyOptionsType.shipment].contains(supplyOptionsType) ?
-                isNonEmptyPhoneOrNonEmptyMail(phone: phone, mail: mail) : true
-        }
-
-        static func isNonEmptyPhoneOrNonEmptyMail(phone: String?, mail: String?) -> Bool {
-            switch (phone, mail) {
-            case (nil, nil): return false
-            case let (phone?, mail?): return !phone.isEmpty || !mail.isEmpty
-            case let (phone?, nil): return !phone.isEmpty
-            case let (nil, mail?): return !mail.isEmpty
-            }
-        }
-        // swiftlint:enable missing_docs
-    }
-}
-
-extension String {
-    func countIsLessOrEqual(_ limit: Int) -> Bool {
-        count < limit
-    }
-
-    var isValidEmail: Bool {
-        let emailRegex = "^[^@\\s]+@[^@\\s.]+.[^@\\s.]+$"
-        return NSPredicate(format: "SELF MATCHES %@", emailRegex).evaluate(with: self)
     }
 }

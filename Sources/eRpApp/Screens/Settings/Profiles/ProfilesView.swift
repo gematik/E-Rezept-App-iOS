@@ -60,7 +60,6 @@ struct ProfilesView: View {
             .accessibilityElement(children: .contain)
             .accessibility(identifier: A11y.settings.profiles.stgConProfiles)
 
-            #if ENABLE_DEBUG_VIEW
             Button(action: {
                 viewStore.send(.addNewProfile)
             }, label: {
@@ -68,9 +67,6 @@ struct ProfilesView: View {
             })
                 .buttonStyle(.simple(showSeparator: false))
                 .accessibility(identifier: A11y.settings.profiles.stgBtnNewProfile)
-            #else
-            EmptyView()
-            #endif
         })
             .onAppear {
                 viewStore.send(.registerListener)

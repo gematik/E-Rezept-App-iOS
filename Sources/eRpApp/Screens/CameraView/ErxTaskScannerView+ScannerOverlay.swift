@@ -74,7 +74,7 @@ extension ErxTaskScannerView {
                 }
             case .value: return L10n.scnMsgScannedCodeRecognized.key
             case .loading: return L10n.scnMsgAnalysingCode.key
-            case let .error(scanError): return LocalizedStringKey(scanError.localizedDescription)
+            case let .error(scanError): return LocalizedStringKey(scanError.localizedDescriptionWithErrorList)
             }
         }
 

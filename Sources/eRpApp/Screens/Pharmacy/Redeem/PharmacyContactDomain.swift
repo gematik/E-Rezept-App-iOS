@@ -19,6 +19,7 @@
 import Combine
 import ComposableArchitecture
 import eRpKit
+import Foundation
 
 enum PharmacyContactDomain {
     typealias Store = ComposableArchitecture.Store<State, Action>
@@ -33,23 +34,31 @@ enum PharmacyContactDomain {
     }
 
     struct State: Equatable {
-        @BindableState var contactInfo: ContactInfo
+        var contactInfo: ContactInfo
         var alertState: AlertState<Action>?
+        let service: RedeemServiceOption
 
         private let originalContactInfo: ContactInfo?
         var isNewContactInfo: Bool {
             contactInfo != originalContactInfo
         }
 
-        init(shipmentInfo: ShipmentInfo?) {
+        init(shipmentInfo: ShipmentInfo?, service: RedeemServiceOption) {
             let shipmentInfo = shipmentInfo ?? ShipmentInfo()
+            self.service = service
             contactInfo = .init(shipmentInfo)
             originalContactInfo = .init(shipmentInfo)
         }
     }
 
-    enum Action: BindableAction, Equatable {
-        case binding(BindingAction<PharmacyContactDomain.State>)
+    enum Action: Equatable {
+        case setName(String)
+        case setStreet(String)
+        case setZip(String)
+        case setCity(String)
+        case setPhone(String)
+        case setMail(String)
+        case setDeliveryInfo(String)
 
         case save
         case shipmentInfoSaved(Result<ShipmentInfo?, LocalStoreError>)
@@ -60,13 +69,16 @@ enum PharmacyContactDomain {
     struct Environment {
         let schedulers: Schedulers
         let shipmentInfoStore: ShipmentInfoDataStore
+        let validator: RedeemInputValidator
     }
 
     static let domainReducer = Reducer { state, action, environment in
         switch action {
-        case .binding:
-            return .none
         case .save:
+            if case let .invalid(errorMessage) = environment.validator.validate(state.contactInfo) {
+                state.alertState = invalidInputAlert(with: errorMessage)
+                return .none
+            }
             return environment.shipmentInfoStore.save(shipmentInfo: state.contactInfo.shipmentInfo)
                 .catchToEffect()
                 .map(Action.shipmentInfoSaved)
@@ -81,7 +93,7 @@ enum PharmacyContactDomain {
         case let .shipmentInfoSaved(.failure(error)):
             state.alertState = AlertState(
                 title: TextState(L10n.alertErrorTitle),
-                message: TextState(error.localizedDescription),
+                message: TextState(error.localizedDescriptionWithErrorList),
                 dismissButton: .default(TextState(L10n.alertBtnOk), action: .send(.alertDismissButtonTapped))
             )
             return .none
@@ -90,21 +102,110 @@ enum PharmacyContactDomain {
             return .none
         case .close:
             return cleanup()
+        case let .setName(name):
+            if case let .invalid(error) = environment.validator.isValid(name: name) {
+                state.alertState = invalidInputAlert(with: error)
+                return .none
+            }
+            state.contactInfo.name = name
+            return .none
+        case let .setStreet(street):
+            if case let .invalid(error) = environment.validator.isValid(street: street) {
+                state.alertState = invalidInputAlert(with: error)
+                return .none
+            }
+            state.contactInfo.street = street
+            return .none
+        case let .setZip(zip):
+            if case let .invalid(error) = environment.validator.isValid(zip: zip) {
+                state.alertState = invalidInputAlert(with: error)
+                return .none
+            }
+            state.contactInfo.zip = zip
+            return .none
+        case let .setCity(city):
+            if case let .invalid(error) = environment.validator.isValid(city: city) {
+                state.alertState = invalidInputAlert(with: error)
+                return .none
+            }
+            state.contactInfo.city = city
+            return .none
+        case let .setPhone(phone):
+            state.contactInfo.phone = phone
+            return .none
+        case let .setMail(mail):
+            state.contactInfo.mail = mail
+            return .none
+        case let .setDeliveryInfo(info):
+            if case let .invalid(error) = environment.validator.isValid(hint: info) {
+                state.alertState = invalidInputAlert(with: error)
+                return .none
+            }
+            state.contactInfo.deliveryInfo = info
+            return .none
         }
     }
-    .binding()
+
+    static func invalidInputAlert(with message: String) -> AlertState<Action> {
+        AlertState(
+            title: TextState(L10n.alertErrorTitle),
+            message: TextState(message),
+            dismissButton: .default(TextState(L10n.alertBtnOk), action: .send(Action.alertDismissButtonTapped))
+        )
+    }
 
     static let reducer: Reducer = .combine(
         domainReducer
     )
 }
 
+extension RedeemInputValidator {
+    func validate(_ contactInfo: PharmacyContactDomain.State.ContactInfo) -> Validity {
+        if isValid(name: contactInfo.name) != .valid {
+            return isValid(name: contactInfo.name)
+        }
+        if isValid(street: contactInfo.street) != .valid {
+            return isValid(street: contactInfo.street)
+        }
+        if isValid(zip: contactInfo.zip) != .valid {
+            return isValid(zip: contactInfo.zip)
+        }
+        if isValid(city: contactInfo.city) != .valid {
+            return isValid(city: contactInfo.city)
+        }
+        if isValid(hint: contactInfo.deliveryInfo) != .valid {
+            return isValid(hint: contactInfo.deliveryInfo)
+        }
+        if isValid(phone: contactInfo.phone) != .valid {
+            return isValid(phone: contactInfo.phone)
+        }
+        if isValid(mail: contactInfo.mail) != .valid {
+            return isValid(mail: contactInfo.mail)
+        }
+
+        return .valid
+    }
+}
+
 extension PharmacyContactDomain.State {
     struct ContactInfo: Equatable {
+        static func ==(
+            lhs: PharmacyContactDomain.State.ContactInfo,
+            rhs: PharmacyContactDomain.State.ContactInfo
+        ) -> Bool {
+            lhs.identifier == rhs.identifier &&
+                lhs.name == rhs.name &&
+                lhs.street == rhs.street &&
+                lhs.zip == rhs.zip &&
+                lhs.city == rhs.city &&
+                lhs.phone == rhs.phone &&
+                lhs.mail == rhs.mail &&
+                lhs.deliveryInfo == rhs.deliveryInfo
+        }
+
         let identifier: UUID
         var name: String
         var street: String
-        var addressDetail: String
         var zip: String
         var city: String
         var phone: String
@@ -115,7 +216,6 @@ extension PharmacyContactDomain.State {
             identifier = shipmentInfo?.identifier ?? UUID()
             name = shipmentInfo?.name ?? ""
             street = shipmentInfo?.street ?? ""
-            addressDetail = shipmentInfo?.addressDetail ?? ""
             zip = shipmentInfo?.zip ?? ""
             city = shipmentInfo?.city ?? ""
             phone = shipmentInfo?.phone ?? ""
@@ -127,7 +227,6 @@ extension PharmacyContactDomain.State {
             ShipmentInfo(identifier: identifier,
                          name: name.isEmpty ? nil : name,
                          street: street.isEmpty ? nil : street,
-                         addressDetail: addressDetail.isEmpty ? nil : addressDetail,
                          zip: zip.isEmpty ? nil : zip,
                          city: city.isEmpty ? nil : city,
                          phone: phone.isEmpty ? nil : phone,
@@ -146,12 +245,14 @@ extension PharmacyContactDomain {
                                 zip: "102837",
                                 city: "Berlin",
                                 phone: "0987654321",
-                                deliveryInfo: "im Hinterhaus")
+                                deliveryInfo: "im Hinterhaus"),
+            service: DemoRedeemInputValidator().service
         )
 
         static let environment = Environment(
             schedulers: Schedulers(),
-            shipmentInfoStore: DemoShipmentInfoStore()
+            shipmentInfoStore: DemoShipmentInfoStore(),
+            validator: DemoRedeemInputValidator()
         )
 
         static let store = Store(initialState: state,

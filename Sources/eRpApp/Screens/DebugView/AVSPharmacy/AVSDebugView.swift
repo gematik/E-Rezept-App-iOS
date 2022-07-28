@@ -25,28 +25,31 @@ import SwiftUI
 struct AVSDebugView: View {
     @AppStorage("debug_pharmacies") var debugPharmacies: [DebugPharmacy] = []
 
+    @State
+    var importViaQRCode = false
+
     var body: some View {
         List {
-            ForEach($debugPharmacies) { pharmacy in
-                NavigationLink(destination: DebugPharmacyView(pharmacy: pharmacy)) {
+            ForEach($debugPharmacies) { $pharmacy in
+                NavigationLink(destination: DebugPharmacyView(pharmacy: $pharmacy)) {
                     VStack(alignment: .leading) {
-                        Text(pharmacy.wrappedValue.name)
+                        Text(pharmacy.name)
                             .font(.headline)
                             .padding(.bottom, 2)
-                        if let onPremise = pharmacy.onPremiseUrl.wrappedValue, !onPremise.isEmpty {
+                        if let onPremise = pharmacy.onPremiseUrl.url, !onPremise.isEmpty {
                             TextWithValue("OnPremise", value: onPremise)
                         }
-                        if let shipment = pharmacy.shipmentUrl.wrappedValue, !shipment.isEmpty {
+                        if let shipment = pharmacy.shipmentUrl.url, !shipment.isEmpty {
                             TextWithValue("Shipment", value: shipment)
                         }
-                        if let delivery = pharmacy.deliveryUrl.wrappedValue, !delivery.isEmpty {
+                        if let delivery = pharmacy.deliveryUrl.url, !delivery.isEmpty {
                             TextWithValue("Delivery", value: delivery)
                         }
                     }
                     .contextMenu {
                         Button(
                             action: {
-                                UIPasteboard.general.string = pharmacy.wrappedValue.description
+                                UIPasteboard.general.string = pharmacy.description
                             }, label: {
                                 Label(L10n.dtlBtnCopyClipboard,
                                       systemImage: SFSymbolName.copy)
@@ -68,6 +71,26 @@ struct AVSDebugView: View {
                     },
                     label: { Image(systemName: "plus") }
                 )
+            }
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button(
+                    action: {
+                        withAnimation {
+                            importViaQRCode = true
+                        }
+                    },
+                    label: { Image(systemName: SFSymbolName.qrCode) }
+                )
+            }
+        }
+        .sheet(isPresented: $importViaQRCode) {
+            DebugQRCodeImporter<DebugPharmacy>(scan: $importViaQRCode) { newPharmacy in
+                // Rewrite id to enable multiple scans of the same pharmacy. If two pharmacies with the same ID are
+                // present, SwiftUI will have a hard time figuring out, what pharmacy is edited.
+                var newPharmacy = newPharmacy
+                newPharmacy.id = UUID()
+                debugPharmacies.append(newPharmacy)
+                importViaQRCode = false
             }
         }
     }
@@ -100,40 +123,60 @@ struct AVSDebugView: View {
 
                     Section(header: Text("Urls")) {
                         NavigationLink(destination: {
-                            EditUrlView(url: $pharmacy.onPremiseUrl)
+                            EditUrlView(endpoint: $pharmacy.onPremiseUrl)
                         }, label: {
-                            TextWithValue("OnPremise URL", value: pharmacy.onPremiseUrl)
+                            TextWithValue("OnPremise URL", value: pharmacy.onPremiseUrl.url)
                         }).padding(.bottom, 4)
 
                         NavigationLink(destination: {
-                            EditUrlView(url: $pharmacy.shipmentUrl)
+                            EditUrlView(endpoint: $pharmacy.shipmentUrl)
                         }, label: {
-                            TextWithValue("Shipment URL", value: pharmacy.shipmentUrl)
+                            TextWithValue("Shipment URL", value: pharmacy.shipmentUrl.url)
                         }).padding(.bottom, 4)
 
                         NavigationLink(destination: {
-                            EditUrlView(url: $pharmacy.deliveryUrl)
+                            EditUrlView(endpoint: $pharmacy.deliveryUrl)
                         }, label: {
-                            TextWithValue("Delivery URL", value: pharmacy.deliveryUrl)
+                            TextWithValue("Delivery URL", value: pharmacy.deliveryUrl.url)
                         })
                     }
 
                     Section(header: Text("Zertifikate")) {
-                        ForEach($pharmacy.certificates) { certificate in
+                        ForEach($pharmacy.certificates) { $certificate in
                             NavigationLink(destination: {
-                                EditCertificateView(name: certificate.name, value: certificate.derBase64)
+                                EditCertificateView(name: $certificate.name, value: $certificate.derBase64)
                             }, label: {
-                                TextWithValue(certificate.name.wrappedValue, value: certificate.derBase64.wrappedValue)
+                                TextWithValue(certificate.name, value: certificate.derBase64)
                             })
                         }
                         .onDelete(perform: onDelete)
 
                         Button("Zertifikat hinzufügen") {
                             withAnimation {
-                                pharmacy.certificates
+                                $pharmacy.certificates.wrappedValue
                                     .append(DebugPharmacy.Certificate(name: "Neues Zertifikat", derBase64: ""))
                             }
                         }
+                    }
+
+                    Section(
+                        header: Text("Export this Pharamcy"),
+                        footer: Text("""
+                        Use \(Image(systemName: SFSymbolName.qrCode)) on previous screen for import.
+
+                        **Note: Certificates are stripped, to reduce QR-Code size.**
+                        """)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    ) {
+                        NavigationLink(destination: {
+                            DebugQRCodeExporter(content: { () -> DebugPharmacy in
+                                var pharmacy = pharmacy
+                                pharmacy.certificates = []
+                                return pharmacy
+                            }())
+                        }, label: {
+                            Text("Export")
+                        })
                     }
                 }
             }
@@ -174,7 +217,7 @@ struct AVSDebugView_Previews: PreviewProvider {
                     debugPharmacies: [
                         DebugPharmacy(
                             name: "Test",
-                            onPremiseUrl: "https://dummy.url.com",
+                            onPremiseUrl: .init(url: "https://dummy.url.com"),
                             certificates: [
                                 DebugPharmacy.Certificate(name: "Some name", derBase64: "asldfhaksdufhkasdjhf"),
                             ]
@@ -187,7 +230,7 @@ struct AVSDebugView_Previews: PreviewProvider {
                 debugPharmacies: [
                     DebugPharmacy(
                         name: "Test",
-                        onPremiseUrl: "https://dummy.url.com",
+                        onPremiseUrl: .init(url: "https://dummy.url.com"),
                         certificates: [
                             DebugPharmacy.Certificate(name: "Some name", derBase64: "asldfhaksdufhkasdjhf"),
                         ]

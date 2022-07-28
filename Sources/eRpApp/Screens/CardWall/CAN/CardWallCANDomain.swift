@@ -29,9 +29,11 @@ enum CardWallCANDomain {
 
         var can: String
         var wrongCANEntered = false
+        var scannedCAN: String?
 
         var showNextScreen = false
         var isEGKOrderInfoViewPresented = false
+        var isScannerViewPresented = false
     }
 
     enum Action: Equatable {
@@ -41,6 +43,8 @@ enum CardWallCANDomain {
         case showEGKOrderInfoView
         case dismissEGKOrderInfoView
         case close
+        case showScannerView
+        case dismissScannerView
     }
 
     struct Environment {
@@ -69,6 +73,12 @@ enum CardWallCANDomain {
             return .none
         case .showEGKOrderInfoView:
             state.isEGKOrderInfoViewPresented = true
+            return .none
+        case .showScannerView:
+            state.isScannerViewPresented = true
+            return .none
+        case .dismissScannerView:
+            state.isScannerViewPresented = false
             return .none
         }
     }

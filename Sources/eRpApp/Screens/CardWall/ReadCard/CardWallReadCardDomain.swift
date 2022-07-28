@@ -192,7 +192,7 @@ extension CardWallReadCardDomain {
 
         static func wrongCAN(_ error: Error) -> AlertState<Action> {
             AlertState(
-                title: TextState(error.localizedDescription),
+                title: TextState(error.localizedDescriptionWithErrorList),
                 message: error.recoverySuggestion.map(TextState.init),
                 primaryButton: .default(TextState(L10n.cdwBtnRcCorrectCan), action: .send(.wrongCAN)),
                 secondaryButton: .cancel(TextState(L10n.cdwBtnRcAlertCancel), action: .send(.alertDismissButtonTapped))
@@ -201,7 +201,7 @@ extension CardWallReadCardDomain {
 
         static func wrongPIN(_ error: Error) -> AlertState<Action> {
             AlertState(
-                title: TextState(error.localizedDescription),
+                title: TextState(error.localizedDescriptionWithErrorList),
                 message: error.recoverySuggestion.map(TextState.init),
                 primaryButton: .default(TextState(L10n.cdwBtnRcCorrectPin), action: .send(.wrongPIN)),
                 secondaryButton: .cancel(TextState(L10n.cdwBtnRcAlertCancel), action: .send(.alertDismissButtonTapped))
@@ -210,7 +210,7 @@ extension CardWallReadCardDomain {
 
         static func alertFor(_ error: Error) -> AlertState<Action> {
             AlertState(
-                title: TextState(error.localizedDescription),
+                title: TextState(error.localizedDescriptionWithErrorList),
                 message: error.recoverySuggestion.map(TextState.init),
                 dismissButton: .default(TextState(L10n.cdwBtnRcAlertClose), action: .send(.alertDismissButtonTapped))
             )

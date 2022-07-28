@@ -87,7 +87,7 @@ extension ModelsR4.Patient {
 
     var insuranceId: String? {
         identifier?.first { identifier in
-            identifier.system?.value?.url.absoluteString == FHIRResponseKeys.kvIDKey
+            Prescription.Key.kvIDKeys.contains { $0.value == identifier.system?.value?.url.absoluteString }
         }?.value?.value?.string
     }
 }

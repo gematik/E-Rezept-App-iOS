@@ -31,12 +31,15 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing {
     private let userDataStore = UserDefaultsStore(userDefaults: .standard)
     private lazy var routerStore = RouterStore(
         initialState: .init(),
-        reducer: AppStartDomain.reducer,
+        reducer: AppStartDomain.reducer.notifyUserInteraction(),
         environment: environment(),
         router: AppStartDomain.router
     )
 
     private lazy var migrationCoordinator = MigrationCoordinator(userDataStore: userDataStore)
+
+    // Timer that counts down until the app will be locked
+    var appLockTimer: Timer?
 
     private struct MigrationCoordinator {
         let userDataStore: UserDataStore
@@ -70,6 +73,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing {
                 )
                 self.mainWindow?.makeKeyAndVisible()
                 self.presentAppAuthenticationDomain(scene: scene)
+                self.setupNotifications(scene: scene)
             }
         } else {
             migrationCoordinator.set(latestCompatibleModel: .latestVersion)
@@ -77,6 +81,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing {
                 rootView: AppStartView(store: routerStore.wrappedStore)
             )
             mainWindow?.makeKeyAndVisible()
+            setupNotifications(scene: scene)
         }
     }
 
@@ -132,6 +137,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing {
             mainWindow?.rootViewController = nil
             return
         }
+        invalidateTimer()
 
         let authenticationProvider = AppAuthenticationDomain.DefaultAuthenticationProvider(
             userDataStore: userDataStore
@@ -145,7 +151,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing {
                 appAuthenticationProvider: authenticationProvider,
                 appSecurityPasswordManager: DefaultAppSecurityManager(keychainAccess: SystemKeychainAccessHelper()),
                 authenticationChallengeProvider: BiometricsAuthenticationChallengeProvider()
-            ) { [weak self] in
+            ) { [weak self, weak scene] in
                 guard let self = self else { return }
                 self.mainWindow?.accessibilityElementsHidden = false
                 self.mainWindow?.makeKeyAndVisible()
@@ -153,6 +159,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing {
                 self.mainWindow?.backgroundColor = UIColor.black
                 self.authenticationWindow?.rootViewController = nil
                 self.authenticationWindow = nil
+                self.setupNotifications(scene: scene)
             }
         )
 
@@ -279,4 +286,51 @@ extension SceneDelegate {
             userSessionProvider: userSessionProvider
         )
     }
+}
+
+extension SceneDelegate {
+    func setupNotifications(scene: UIScene?) {
+        setupTimer(scene: scene)
+
+        NotificationCenter.default.addObserver(
+            forName: .userInteractionDetected,
+            object: nil,
+            queue: OperationQueue.main
+        ) { [weak self, weak scene] _ in
+            self?.setupTimer(scene: scene)
+        }
+    }
+
+    func invalidateTimer() {
+        appLockTimer?.invalidate()
+        appLockTimer = nil
+    }
+
+    func setupTimer(scene: UIScene?) {
+        invalidateTimer()
+
+        appLockTimer = Timer.scheduledTimer(
+            withTimeInterval: 60 * 10,
+            repeats: false
+        ) { [weak self, weak scene] timer in
+            timer.invalidate()
+
+            self?.presentAppAuthenticationDomain(scene: scene)
+        }
+    }
+}
+
+extension Reducer where Action: Equatable {
+    fileprivate func notifyUserInteraction( // swiftlint:disable:this strict_fileprivate
+    ) -> Reducer<State, Action, Environment> {
+        .init { state, action, environment in
+            NotificationCenter.default.post(name: .userInteractionDetected, object: nil, userInfo: nil)
+
+            return self.run(&state, action, environment)
+        }
+    }
+}
+
+extension Notification.Name {
+    static let userInteractionDetected = Self(rawValue: "USER_INTERACTION_DETECTED")
 }

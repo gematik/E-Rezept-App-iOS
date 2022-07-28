@@ -1,0 +1,151 @@
+{
+    "resourceType": "Bundle",
+    "type": "searchset",
+    "entry": [
+        {
+            "resource": {
+                "resourceType": "Communication",
+                "id": "8ca3c379-ac86-470f-bc12-178c9008f5c9",
+                "meta": {
+                    "profile": [
+                        "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_PR_Communication_InfoReq|1.2"
+                    ],
+                    "tag": [
+                        {
+                            "display": "Communication message sent by patient to pharmacy to ask for availybility of medicine WITHOUT providing the AccessCode"
+                        }
+                    ]
+                },
+                "status": "unknown",
+                "recipient": [
+                    {
+                        "identifier": {
+                            "system": "https://gematik.de/fhir/sid/telematik-id",
+                            "value": "3-SMC-B-Testkarte-883110000123465"
+                        }
+                    }
+                ],
+                "contained": [
+                    {
+                        "resourceType": "Medication",
+                        "id": "001413e4-a5e9-48da-9b07-c17bab476407",
+                        "meta": {
+                            "profile": [
+                                "https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Medication_PZN|1.0.2"
+                            ]
+                        },
+                        "extension": [
+                            {
+                                "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Medication_Category",
+                                "valueCoding": {
+                                    "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_ERP_Medication_Category",
+                                    "code": "00"
+                                }
+                            },
+                            {
+                                "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Medication_Vaccine",
+                                "valueBoolean": false
+                            },
+                            {
+                                "url": "http://fhir.de/StructureDefinition/normgroesse",
+                                "valueCode": "N1"
+                            }
+                        ],
+                        "code": {
+                            "coding": [
+                                {
+                                    "system": "http://fhir.de/CodeSystem/ifa/pzn",
+                                    "code": "06313728"
+                                }
+                            ],
+                            "text": "Sumatriptan-1a Pharma 100 mg Tabletten"
+                        },
+                        "form": {
+                            "coding": [
+                                {
+                                    "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_KBV_DARREICHUNGSFORM",
+                                    "code": "TAB"
+                                }
+                            ]
+                        },
+                        "amount": {
+                            "numerator": {
+                                "value": 20,
+                                "unit": "St"
+                            },
+                            "denominator": {
+                                "value": 1
+                            }
+                        }
+                    }
+                ],
+                "basedOn": [
+                    {
+                        "reference": "Task/160.000.033.491.280.78"
+                    }
+                ],
+                "about": [
+                    {
+                        "reference": "#001413e4-a5e9-48da-9b07-c17bab476407"
+                    }
+                ],
+                "sender": {
+                    "identifier": {
+                        "system": "http://fhir.de/sid/gkv/kvid-10",
+                        "value": "X234567890"
+                    }
+                },
+                "sent": "2020-04-29T13:43:30.128+02:00",
+                "payload": [
+                    {
+                        "extension": [
+                            {
+                                "url": "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_EX_InsuranceProvider",
+                                "valueIdentifier": {
+                                    "system": "http://fhir.de/sid/arge-ik/iknr",
+                                    "value": "109500969"
+                                }
+                            },
+                            {
+                                "url": "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_EX_SubstitutionAllowedType",
+                                "valueBoolean": false
+                            },
+                            {
+                                "url": "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_EX_PrescriptionType",
+                                "valueCoding": {
+                                    "system": "https://gematik.de/fhir/erp/CodeSystem/GEM_ERP_CS_FlowType",
+                                    "code": "160"
+                                }
+                            },
+                            {
+                                "url": "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_EX_PackageQuantity",
+                                "valueQuantity": {
+                                    "system": "http://unitsofmeasure.org",
+                                    "value": 1
+                                }
+                            },
+                            {
+                                "url": "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_EX_SupplyOptionsType",
+                                "extension": [
+                                    {
+                                        "url": "onPremise",
+                                        "valueBoolean": true
+                                    },
+                                    {
+                                        "url": "shipment",
+                                        "valueBoolean": false
+                                    },
+                                    {
+                                        "url": "delivery",
+                                        "valueBoolean": true
+                                    }
+                                ]
+                            }
+                        ],
+                        "contentString": "U.N.V.E.U."
+                    }
+                ]
+            }
+        }
+    ]
+}

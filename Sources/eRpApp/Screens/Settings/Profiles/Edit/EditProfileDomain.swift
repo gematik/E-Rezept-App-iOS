@@ -346,7 +346,7 @@ extension EditProfileDomain.State {
 
     var authType: AuthenticationType {
         if let error = securityOptionsError {
-            return .biometryNotEnrolled(error.localizedDescription)
+            return .biometryNotEnrolled(error.localizedDescriptionWithErrorList)
         }
         if hasBiometricKeyID == true {
             return .biometric
@@ -545,7 +545,7 @@ extension EditProfileDomain {
         static func `for`(_ error: LocalStoreError) -> AlertState<Action> {
             AlertState(
                 title: TextState(L10n.stgTxtEditProfileErrorMessageTitle),
-                message: TextState(error.localizedDescription),
+                message: TextState(error.localizedDescriptionWithErrorList),
                 dismissButton: .default(TextState(L10n.alertBtnOk))
             )
         }
@@ -572,7 +572,7 @@ extension EditProfileDomain {
                   ))
 
         static func deleteBiometricPairingFailed(with error: IDPError) -> AlertState<Action> {
-            .init(title: TextState(error.localizedDescription),
+            .init(title: TextState(error.localizedDescriptionWithErrorList),
                   message: TextState(
                       "Die Zugangsdaten konnten nicht vom Server gelöscht werden. Bitte versuchen Sie es erneut"
                   ),

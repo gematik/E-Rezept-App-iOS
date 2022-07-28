@@ -53,8 +53,8 @@ extension ModelsR4.Bundle {
         // Collect and parse ErxTask
         guard let entry = entry?.first, // for now we assume that there is only one task
               let task = entry.resource?.get(if: ModelsR4.Task.self),
-              let taskId = task.id?.value?.string,
-              taskId == taskId
+              let taskIdentifier = task.id?.value?.string,
+              taskId == taskIdentifier
         else {
             return nil
         }
@@ -73,20 +73,42 @@ extension ModelsR4.Bundle {
             return ErxTask(
                 identifier: taskId,
                 status: .error(.missingPatientReceiptReference),
-                accessCode: taskAccessCode
+                accessCode: taskAccessCode,
+                fullUrl: fullUrl?.value?.url.absoluteString,
+                authoredOn: task.authoredOn?.value?.description,
+                lastModified: task.lastModified?.value?.description,
+                expiresOn: task.expiryDate,
+                acceptedUntil: task.acceptDate,
+                prescriptionId: task.prescriptionId
             )
         }
         guard let patientReceiptIdentifier = patientReceiptReference.value.identifierValue else {
             return ErxTask(
                 identifier: taskId,
                 status: .error(.missingPatientReceiptIdentifier),
-                accessCode: taskAccessCode
+                accessCode: taskAccessCode,
+                fullUrl: fullUrl?.value?.url.absoluteString,
+                authoredOn: task.authoredOn?.value?.description,
+                lastModified: task.lastModified?.value?.description,
+                expiresOn: task.expiryDate,
+                acceptedUntil: task.acceptDate,
+                prescriptionId: task.prescriptionId
             )
         }
         // Find the Document Bundle
         guard let patientReceiptBundle = bundle
             .findResource(with: patientReceiptIdentifier, type: ModelsR4.Bundle.self) else {
-            return ErxTask(identifier: taskId, status: .error(.missingPatientReceiptBundle), accessCode: taskAccessCode)
+            return ErxTask(
+                identifier: taskId,
+                status: .error(.missingPatientReceiptBundle),
+                accessCode: taskAccessCode,
+                fullUrl: fullUrl?.value?.url.absoluteString,
+                authoredOn: task.authoredOn?.value?.description,
+                lastModified: task.lastModified?.value?.description,
+                expiresOn: task.expiryDate,
+                acceptedUntil: task.acceptDate,
+                prescriptionId: task.prescriptionId
+            )
         }
 
         let medication = patientReceiptBundle.medication
@@ -167,22 +189,22 @@ extension ModelsR4.FHIRPrimitive where PrimitiveType == ModelsR4.FHIRString {
 
 extension ModelsR4.Task {
     var prescriptionId: String? {
-        identifier?.first {
-            $0.system?.value?.url.absoluteString == FHIRResponseKeys.prescriptionIdKey
+        identifier?.first { identifier in
+            Workflow.Key.prescriptionIdKeys.contains { $0.value == identifier.system?.value?.url.absoluteString }
         }?.value?.value?.string
     }
 
     var accessCode: String? {
-        identifier?.first {
-            $0.system?.value?.url.absoluteString == FHIRResponseKeys.accessCodeKey
+        identifier?.first { identifier in
+            Workflow.Key.accessCodeKeys.contains { $0.value == identifier.system?.value?.url.absoluteString }
         }?.value?.value?.string
     }
 
     /// Date until which a prescription can be redeemed in the pharmacy without paying
     /// the entire prescription. Note that `acceptDate <= expireDate`
     var acceptDate: String? {
-        `extension`?.first {
-            $0.url.value?.url.absoluteString == FHIRResponseKeys.acceptDateKey
+        `extension`?.first { anExtension in
+            Workflow.Key.acceptDateKeys.contains { $0.value == anExtension.url.value?.url.absoluteString }
         }
         .flatMap {
             if let valueX = $0.value,
@@ -197,8 +219,8 @@ extension ModelsR4.Task {
     /// Date until which a prescription can be redeemed in the pharmacy.
     /// if the current date is > `acceptDate` the customer has to pay the entire prescription
     var expiryDate: String? {
-        `extension`?.first {
-            $0.url.value?.url.absoluteString == FHIRResponseKeys.expiryDateKey
+        `extension`?.first { anExtension in
+            Workflow.Key.expiryDateKeys.contains { $0.value == anExtension.url.value?.url.absoluteString }
         }
         .flatMap {
             if let valueX = $0.value,
@@ -260,7 +282,7 @@ extension ModelsR4.Bundle {
 
     var coverageStatus: String? {
         coverage?.extension?.first {
-            $0.url.value?.url.absoluteString == FHIRResponseKeys.coverageStatusKey
+            $0.url.value?.url.absoluteString == Prescription.Key.coverageStatusKey
         }
         .flatMap {
             if let valueX = $0.value,
@@ -275,7 +297,7 @@ extension ModelsR4.Bundle {
     var dosageInstructions: String? {
         medicationRequest?.dosageInstruction?.first {
             $0.extension?.first {
-                $0.url.value == FHIRResponseKeys.dosageFlag
+                $0.url.value?.url.absoluteString == Prescription.Key.dosageFlag
             }
             .map {
                 if let valueX = $0.value,
@@ -294,7 +316,7 @@ extension ModelsR4.Bundle {
 extension ModelsR4.MedicationRequest {
     var noctuFeeWaiver: Bool {
         `extension`?.first {
-            $0.url.value == FHIRResponseKeys.noctuFeeWaiverKey
+            $0.url.value?.url.absoluteString == Prescription.Key.noctuFeeWaiverKey
         }
         .map {
             if let valueX = $0.value,
@@ -307,7 +329,7 @@ extension ModelsR4.MedicationRequest {
 
     var workRelatedAccident: ErxTask.WorkRelatedAccident? {
         guard let accident = `extension`?.first(where: {
-            $0.url.value == FHIRResponseKeys.workRelatedAccidentKey
+            $0.url.value?.url.absoluteString == Prescription.Key.workRelatedAccidentKey
         }) else {
             return nil
         }
@@ -360,7 +382,7 @@ extension ModelsR4.Medication {
 
     var dosageForm: String? {
         form?.coding?.first {
-            $0.system?.value?.url.absoluteString == FHIRResponseKeys.dosageFormKey
+            $0.system?.value?.url.absoluteString == Prescription.Key.dosageFormKey
         }?.code?.value?.string
     }
 
@@ -372,7 +394,7 @@ extension ModelsR4.Medication {
 
     var dose: String? {
         `extension`?.first {
-            $0.url.value == FHIRResponseKeys.medicationDoesKey
+            $0.url.value?.url.absoluteString == Prescription.Key.medicationDoesKey
         }
         .flatMap {
             if let valueX = $0.value,
@@ -386,7 +408,7 @@ extension ModelsR4.Medication {
 
     var pzn: String? {
         code?.coding?.first {
-            $0.system?.value == FHIRResponseKeys.pznKey
+            $0.system?.value?.url.absoluteString == Prescription.Key.pznKey
         }?.code?.value?.string
     }
 }
@@ -410,8 +432,9 @@ extension ModelsR4.TaskInput.ValueX {
 
 extension ModelsR4.TaskInput {
     var isPatientReceiptDocumentType: Bool {
-        type.coding?.contains {
-            $0.system?.value == FHIRResponseKeys.documentTypeKey && $0.code?.value == "2"
+        type.coding?.contains { coding in
+            Workflow.Key.documentTypeKeys.contains { $0.value == coding.system?.value?.url.absoluteString } &&
+                coding.code?.value == "2"
         } ?? false
     }
 }
@@ -428,22 +451,4 @@ extension Sequence where Element == ModelsR4.PractitionerQualification {
     var qualificationText: String? {
         first { $0.code.text != nil }?.code.text?.value?.string
     }
-}
-
-internal enum FHIRResponseKeys {
-    static let organisationIdentifierKey: FHIRURI = "https://fhir.kbv.de/NamingSystem/KBV_NS_Base_BSNR"
-    static let medicationDoesKey: FHIRURI = "http://fhir.de/StructureDefinition/normgroesse"
-    static let workRelatedAccidentKey: FHIRURI = "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Accident"
-    static let pznKey: FHIRURI = "http://fhir.de/CodeSystem/ifa/pzn"
-    static let documentTypeKey: FHIRURI = "https://gematik.de/fhir/CodeSystem/Documenttype"
-    static let coverageStatusKey = "http://fhir.de/StructureDefinition/gkv/versichertenart"
-    static let prescriptionIdKey = "https://gematik.de/fhir/NamingSystem/PrescriptionID"
-    static let accessCodeKey = "https://gematik.de/fhir/NamingSystem/AccessCode"
-    static let acceptDateKey = "https://gematik.de/fhir/StructureDefinition/AcceptDate"
-    static let expiryDateKey = "https://gematik.de/fhir/StructureDefinition/ExpiryDate"
-    static let noctuFeeWaiverKey: FHIRURI = "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_EmergencyServicesFee"
-    static let dosageFlag: FHIRURI = "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_DosageFlag"
-    static let kvIDKey = "http://fhir.de/NamingSystem/gkv/kvid-10"
-    static let dosageFormKey = "https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_KBV_DARREICHUNGSFORM"
-    static let telematikIdKey = "https://gematik.de/fhir/NamingSystem/TelematikID"
 }

@@ -123,9 +123,9 @@ extension ProfileSelectionDomain {
     enum AlertStates {
         typealias Action = ProfileSelectionDomain.Action
 
-        static func `for`(_ error: LocalizedError) -> AlertState<Action> {
+        static func `for`(_ error: LocalizedError & CodedError) -> AlertState<Action> {
             AlertState(title: TextState(L10n.errTxtDatabaseAccess),
-                       message: TextState(error.localizedDescription),
+                       message: TextState(error.localizedDescriptionWithErrorList),
                        dismissButton: .default(TextState(L10n.alertBtnOk)))
         }
     }

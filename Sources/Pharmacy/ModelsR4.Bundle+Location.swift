@@ -230,7 +230,6 @@ extension ModelsR4.Location {
 }
 
 internal enum FHIRResponseKeys {
-    static let accessCodeKey = "https://gematik.de/fhir/NamingSystem/AccessCode"
     static let telematikIDKey = "https://gematik.de/fhir/NamingSystem/TelematikID"
     static let typeIDKey = "http://terminology.hl7.org/ValueSet/v3-ServiceDeliveryLocationRoleType"
     static let serviceTypeIDKey = "http://terminology.hl7.org/CodeSystem/service-type"

@@ -305,7 +305,7 @@ final class ExtAuthPendingDomainTests: XCTestCase {
             state = .extAuthFailed(
                 ExtAuthPendingDomain.alertState(
                     title: healthInsurance.name,
-                    message: expectedInternalError.localizedDescription
+                    message: expectedInternalError.localizedDescriptionWithErrorList
                 )
             )
         }

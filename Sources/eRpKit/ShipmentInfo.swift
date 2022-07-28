@@ -55,21 +55,4 @@ public struct ShipmentInfo: Identifiable, Hashable, Equatable {
         self.mail = mail
         self.deliveryInfo = deliveryInfo
     }
-
-    public var address: [String] {
-        var address: [String] = []
-        if let street = street {
-            address.append(street)
-        }
-        if let detail = addressDetail {
-            address.append(detail)
-        }
-        if let zip = zip {
-            address.append(zip)
-        }
-        if let city = city {
-            address.append(city)
-        }
-        return address
-    }
 }

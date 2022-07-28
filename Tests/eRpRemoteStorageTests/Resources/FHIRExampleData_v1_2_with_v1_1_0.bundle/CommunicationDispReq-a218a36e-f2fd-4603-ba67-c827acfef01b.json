@@ -1,0 +1,48 @@
+{
+    "resourceType": "Bundle",
+    "type": "searchset",
+    "entry": [
+        {
+            "resource": {
+                "resourceType": "Communication",
+                "id": "a218a36e-f2fd-4603-ba67-c827acfef01b",
+                "meta": {
+                    "profile": [
+                        "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_PR_Communication_DispReq|1.2"
+                    ],
+                    "tag": [
+                        {
+                            "display": "Communication message sent by patient to pharmacy to request the dispensation of medicine by providing the AccessCode"
+                        }
+                    ]
+                },
+                "status": "unknown",
+                "recipient": [
+                    {
+                        "identifier": {
+                            "system": "https://gematik.de/fhir/sid/telematik-id",
+                            "value": "3-SMC-B-Testkarte-883110000123465"
+                        }
+                    }
+                ],
+                "basedOn": [
+                    {
+                        "reference": "Task/160.000.033.491.280.78/$accept?ac=777bea0e13cc9c42ceec14aec3ddee2263325dc2c6c699db115f58fe423607ea"
+                    }
+                ],
+                "sender": {
+                    "identifier": {
+                        "system": "http://fhir.de/sid/gkv/kvid-10",
+                        "value": "X234567890"
+                    }
+                },
+                "sent": "2020-04-29T13:44:30.128+02:00",
+                "payload": [
+                    {
+                        "contentString": "{ \"version\": \"1\", \"supplyOptionsType\": \"delivery\", \"name\": \"Dr. Maximilian von Muster\", \"address\": [ \"wohnhaft bei Emilia Fischer\", \"Bundesallee 312\", \"123. OG\", \"12345 Berlin\" ], \"hint\": \"Bitte im Morsecode klingeln: -.-.\", \"phone\": \"004916094858168\" }"
+                    }
+                ]
+            }
+        }
+    ]
+}

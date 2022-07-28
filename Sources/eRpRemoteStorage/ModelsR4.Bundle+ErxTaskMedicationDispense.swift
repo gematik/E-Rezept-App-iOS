@@ -72,13 +72,15 @@ extension ModelsR4.Bundle {
 
 extension ModelsR4.MedicationDispense {
     var taskId: String? {
-        identifier?.first {
-            $0.system?.value?.url.absoluteString == FHIRResponseKeys.prescriptionIdKey
+        identifier?.first { identifier in
+            Workflow.Key.prescriptionIdKeys.contains { $0.value == identifier.system?.value?.url.absoluteString }
         }?.value?.value?.string
     }
 
     var insuranceIdentifier: String? {
-        guard subject?.identifier?.system?.value?.url.absoluteString == FHIRResponseKeys.kvIDKey else {
+        guard Workflow.Key.kvIDKeys.contains(
+            where: { $0.value == subject?.identifier?.system?.value?.url.absoluteString }
+        ) else {
             return nil
         }
         return subject?.identifier?.value?.value?.string

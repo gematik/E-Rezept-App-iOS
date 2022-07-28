@@ -32,20 +32,20 @@ final class ErxTaskRepositoryRedeemServiceTests: XCTestCase {
     let mockRepository = MockErxTaskRepository()
 
     lazy var order1 = Order(
-        redeemType: .shipment,
+        redeemType: .onPremise,
         taskID: "task_id_1",
         accessCode: "access_code_1",
         telematikId: "telematik_id_1"
     )
 
     lazy var order2 = Order(
-        redeemType: .shipment,
+        redeemType: .onPremise,
         taskID: "task_id_2",
         accessCode: "access_code_2",
         telematikId: "telematik_id_2"
     )
     lazy var order3 = Order(
-        redeemType: .shipment,
+        redeemType: .onPremise,
         taskID: "task_id_3",
         accessCode: "access_code_3",
         telematikId: "telematik_id_3"

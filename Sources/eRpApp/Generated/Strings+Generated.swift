@@ -153,6 +153,8 @@ import SwiftUI
     internal static func cdwBtnCanDoneLabelError(_ element1: String) -> StringAsset {
         StringAsset("cdw_btn_can_done_label_error_%@", arguments: [element1])
     }
+    /// Zugangsnummer mit Kamera einlesen
+    internal static let cdwBtnCanScanner = StringAsset("cdw_btn_can_scanner")
     /// Close
     internal static let cdwBtnExtauthAlertSaveProfile = StringAsset("cdw_btn_extauth_alert_save_profile")
     /// Cancel
@@ -231,6 +233,14 @@ import SwiftUI
     internal static let cdwBtnRcVideo = StringAsset("cdw_btn_rc_video")
     /// Next
     internal static let cdwBtnSelContinue = StringAsset("cdw_btn_sel_continue")
+    /// Scannen abbrechen
+    internal static let cdwCanScanBtnClose = StringAsset("cdw_can_scan_btn_close")
+    /// Übernehmen
+    internal static let cdwCanScanBtnConfirm = StringAsset("cdw_can_scan_btn_confirm")
+    /// Platzieren Sie die Gesundheitskarte innerhalb des Ausschnitts
+    internal static let cdwCanScanTxtHint = StringAsset("cdw_can_scan_txt_hint")
+    /// Zugangsnummer erkannt:
+    internal static let cdwCanScanTxtResult = StringAsset("cdw_can_scan_txt_result")
     /// Pin eingeben
     internal static let cdwEdtPinInput = StringAsset("cdw_edt_pin_input")
     /// Find out more
@@ -1435,16 +1445,12 @@ import SwiftUI
     internal static let phaContactBtnSave = StringAsset("pha_contact_btn_save")
     /// Bitte eingeben
     internal static let phaContactPlaceholder = StringAsset("pha_contact_placeholder")
-    /// z.B. Postfach
-    internal static let phaContactPlaceholderAddress = StringAsset("pha_contact_placeholder_address")
     /// z.B. Hinterhaus
     internal static let phaContactPlaceholderDeliveryInfo = StringAsset("pha_contact_placeholder_deliveryInfo")
     /// Lieferadresse
     internal static let phaContactTitleAddress = StringAsset("pha_contact_title_address")
     /// Kontakt
     internal static let phaContactTitleContact = StringAsset("pha_contact_title_contact")
-    /// Zusätzliche Adressinformationen (optional)
-    internal static let phaContactTxtAddressDetails = StringAsset("pha_contact_txt_address_details")
     /// Ort
     internal static let phaContactTxtCity = StringAsset("pha_contact_txt_city")
     /// Lieferanweisungen (optional)
@@ -1771,6 +1777,66 @@ import SwiftUI
     internal static let rdmTxtSubtitle = StringAsset("rdm_txt_subtitle")
     /// Redeem
     internal static let rdmTxtTitle = StringAsset("rdm_txt_title")
+    /// Die eingegebene Stadt überschrietet die erlaubte Maximallänge von %@ Zeichen.
+    internal static func rivAvsInvalidCity(_ element1: String) -> StringAsset {
+        StringAsset("riv_avs_invalid_city_%@", arguments: [element1])
+    }
+    /// Der eingegebene Hinweis überschreitet die erlaubte Maximallänge von %@ Zeichen.
+    internal static func rivAvsInvalidHint(_ element1: String) -> StringAsset {
+        StringAsset("riv_avs_invalid_hint_%@", arguments: [element1])
+    }
+    /// Die eingegebene E-Mail-Adresse ist ungültig. Bitte korrigieren Sie Ihre Angabe.
+    internal static let rivAvsInvalidMail = StringAsset("riv_avs_invalid_mail_%@")
+    /// Für die gewählte Versandoption muss eine gültige Telefonnummer oder E-Mail Adresse angegeben werden.
+    internal static let rivAvsInvalidMissingContact = StringAsset("riv_avs_invalid_missing_contact_%@")
+    /// Der gewählte Name überscheitet die Maximallänge von %@ Zeichen.
+    internal static func rivAvsInvalidName(_ element1: String) -> StringAsset {
+        StringAsset("riv_avs_invalid_name_%@", arguments: [element1])
+    }
+    /// Die gewählte Telefonummer ist ungültig. Bitte korrigieren Sie Ihre Angabe.
+    internal static let rivAvsInvalidPhone = StringAsset("riv_avs_invalid_phone_%@")
+    /// Die eingegebene Straße überschrietet die erlaubte Maximallänge von %@ Zeichen.
+    internal static func rivAvsInvalidStreet(_ element1: String) -> StringAsset {
+        StringAsset("riv_avs_invalid_street_%@", arguments: [element1])
+    }
+    /// Der eingegebene Text überschreitet die erlaubte Maximallänge von %@ Zeichen.
+    internal static func rivAvsInvalidText(_ element1: String) -> StringAsset {
+        StringAsset("riv_avs_invalid_text_%@", arguments: [element1])
+    }
+    /// Die eingegebene Postleitzahl überschrietet die erlaubte Maximallänge von %@ Zeichen.
+    internal static func rivAvsInvalidZip(_ element1: String) -> StringAsset {
+        StringAsset("riv_avs_invalid_zip_%@", arguments: [element1])
+    }
+    /// Ungültige Versionsnummer.
+    internal static let rivAvsWrongVersion = StringAsset("riv_avs_wrong_version")
+    /// Die eingegebene Stadt überschrietet die erlaubte Maximallänge von %@ Zeichen.
+    internal static func rivTiInvalidCity(_ element1: String) -> StringAsset {
+        StringAsset("riv_ti_invalid_city_%@", arguments: [element1])
+    }
+    /// Der eingegebene Hinweis überschreitet die erlaubte Maximallänge von %@ Zeichen.
+    internal static func rivTiInvalidHint(_ element1: String) -> StringAsset {
+        StringAsset("riv_ti_invalid_hint_%@", arguments: [element1])
+    }
+    /// Die eingegebene E-Mail-Adresse ist ungültig. Bitte korrigieren Sie Ihre Angabe.
+    internal static let rivTiInvalidMail = StringAsset("riv_ti_invalid_mail_%@")
+    /// Für die gewählte Versandoption muss eine gültige Telefonnummer angegeben werden.
+    internal static let rivTiInvalidMissingContact = StringAsset("riv_ti_invalid_missing_contact_%@")
+    /// Der gewählte Name überscheitet die Maximallänge von %@ Zeichen.
+    internal static func rivTiInvalidName(_ element1: String) -> StringAsset {
+        StringAsset("riv_ti_invalid_name_%@", arguments: [element1])
+    }
+    /// Die gewählte Telefonummer ist ungültig. Bitte korrigieren Sie Ihre Angabe.
+    internal static let rivTiInvalidPhone = StringAsset("riv_ti_invalid_phone_%@")
+    /// Die eingegebene Straße überschrietet die erlaubte Maximallänge von %@ Zeichen.
+    internal static func rivTiInvalidStreet(_ element1: String) -> StringAsset {
+        StringAsset("riv_ti_invalid_street_%@", arguments: [element1])
+    }
+    /// Die eingegebene Postleitzahl überschrietet die erlaubte Maximallänge von %@ Zeichen.
+    internal static func rivTiInvalidZip(_ element1: String) -> StringAsset {
+        StringAsset("riv_ti_invalid_zip_%@", arguments: [element1])
+    }
+    /// Ungültige Versionsnummer.
+    internal static let rivTiWrongVersion = StringAsset("riv_ti_wrong_version")
     /// Not redeemed
     internal static let rphBtnCloseAlertKeep = StringAsset("rph_btn_close_alert_keep")
     /// Redeemed
@@ -2112,6 +2178,8 @@ import SwiftUI
     internal static let tabTxtPharmacySearch = StringAsset("tab_txt_pharmacy_search")
     /// Settings
     internal static let tabTxtSettings = StringAsset("tab_txt_settings")
+    /// cdw_btn_can_scanner
+    internal static let zugangsnummerMitKameraEinlesen = StringAsset("Zugangsnummer mit Kamera einlesen")
   }
   // swiftlint:enable function_parameter_count identifier_name line_length type_body_length
   

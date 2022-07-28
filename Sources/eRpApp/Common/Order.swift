@@ -20,12 +20,13 @@ import AVS
 import eRpKit
 import Foundation
 import OpenSSL
+import Pharmacy
 
 protocol eRpRemoteStorageOrder {
     var version: String { get }
     var redeemType: RedeemOption { get }
     var name: String? { get }
-    var address: [String]? { get } // swiftlint:disable:this discouraged_optional_collection
+    var address: Address? { get }
     var hint: String? { get }
     var phone: String? { get }
     var mail: String? { get }
@@ -38,7 +39,7 @@ protocol AVSOrder {
     var version: String { get }
     var redeemType: RedeemOption { get }
     var name: String? { get }
-    var address: [String]? { get } // swiftlint:disable:this discouraged_optional_collection
+    var address: Address? { get }
     var hint: String? { get }
     var text: String? { get }
     var phone: String? { get }
@@ -46,15 +47,35 @@ protocol AVSOrder {
     var transactionID: UUID { get }
     var taskID: String { get }
     var accessCode: String { get }
-    var endpoint: URL? { get }
+    var endpoint: PharmacyLocation.AVSEndpoints.Endpoint? { get }
     var recipients: [X509] { get }
+}
+
+struct Address: Equatable {
+    let street: String?
+    let zip: String?
+    let city: String?
+
+    func asArray() -> [String] {
+        var address = [String]()
+        if let street = street {
+            address.append(street)
+        }
+        if let zip = zip {
+            address.append(zip)
+        }
+        if let city = city {
+            address.append(city)
+        }
+        return address
+    }
 }
 
 struct Order: eRpRemoteStorageOrder, AVSOrder, Equatable {
     let redeemType: RedeemOption
     let version: String
     let name: String?
-    let address: [String]? // swiftlint:disable:this discouraged_optional_collection
+    let address: Address?
     let hint: String?
     let text: String?
     let phone: String?
@@ -62,7 +83,7 @@ struct Order: eRpRemoteStorageOrder, AVSOrder, Equatable {
     let transactionID: UUID
     let taskID: String
     let accessCode: String
-    let endpoint: URL?
+    let endpoint: PharmacyLocation.AVSEndpoints.Endpoint?
     let recipients: [X509]
     let telematikId: String?
 
@@ -70,7 +91,7 @@ struct Order: eRpRemoteStorageOrder, AVSOrder, Equatable {
         version: String = "1",
         redeemType: RedeemOption,
         name: String? = nil,
-        address: [String]? = nil, // swiftlint:disable:this discouraged_optional_collection
+        address: Address? = nil,
         hint: String? = nil,
         text: String? = nil,
         phone: String? = nil,
@@ -78,7 +99,7 @@ struct Order: eRpRemoteStorageOrder, AVSOrder, Equatable {
         transactionID: UUID = UUID(),
         taskID: String,
         accessCode: String,
-        endpoint: URL? = nil,
+        endpoint: PharmacyLocation.AVSEndpoints.Endpoint? = nil,
         recipients: [X509] = [],
         telematikId: String? = nil
     ) {
@@ -96,40 +117,6 @@ struct Order: eRpRemoteStorageOrder, AVSOrder, Equatable {
         self.endpoint = endpoint
         self.recipients = recipients
         self.telematikId = telematikId
-    }
-}
-
-extension Order {
-    init(_ message: AVSMessage, endpoint: URL, recipients: [X509]) {
-        self.init(
-            version: String(message.version),
-            redeemType: message.supplyOptionsType.asRedeemOption,
-            name: message.name,
-            address: message.address,
-            hint: message.hint,
-            text: message.text,
-            phone: message.phone,
-            mail: message.mail,
-            transactionID: message.transactionID,
-            taskID: message.taskID,
-            accessCode: message.accessCode,
-            endpoint: endpoint,
-            recipients: recipients
-        )
-    }
-
-    init(_ erxTaskOrder: ErxTaskOrder) {
-        self.init(
-            version: erxTaskOrder.payload.version,
-            redeemType: erxTaskOrder.payload.supplyOptionsType,
-            name: erxTaskOrder.payload.name,
-            address: erxTaskOrder.payload.address,
-            hint: erxTaskOrder.payload.hint,
-            phone: erxTaskOrder.payload.phone,
-            taskID: erxTaskOrder.erxTaskId,
-            accessCode: erxTaskOrder.accessCode,
-            telematikId: erxTaskOrder.pharmacyTelematikId
-        )
     }
 }
 
@@ -158,10 +145,24 @@ extension ErxTaskOrder {
         guard let telematikId = order.telematikId else {
             throw RedeemServiceError.internalError(.missingTelematikId)
         }
+        let version = 1
+        if case let .invalid(error) = Validator().isValidErxTaskOrderInput(
+            version: version,
+            redeemOption: order.redeemType,
+            name: order.name,
+            address: order.address,
+            hint: order.hint,
+            phone: order.phone,
+            mail: order.mail
+        ) {
+            throw ErxTaskOrder.Error.invalidErxTaskOrderInput(error)
+        }
+
         let payload = ErxTaskOrder.Payload(
+            version: String(version),
             supplyOptionsType: order.redeemType,
             name: order.name ?? "",
-            address: order.address ?? [],
+            address: order.address?.asArray() ?? [],
             hint: order.hint ?? "",
             phone: order.phone ?? ""
         )
@@ -179,11 +180,25 @@ extension AVSMessage {
         guard let version = Int(order.version) else {
             throw RedeemServiceError.InternalError.conversionVersionNumber
         }
-        try self.init(
+        guard Validator().isValidAVSMessageInput(
             version: version,
             supplyOptionsType: order.redeemType.asSupplyOptionType,
             name: order.name,
             address: order.address,
+            hint: order.hint,
+            text: order.text,
+            phone: order.phone,
+            mail: order.mail
+        ) == .valid
+        else {
+            throw AVSError.invalidAVSMessageInput
+        }
+
+        self.init(
+            version: version,
+            supplyOptionsType: order.redeemType.asSupplyOptionType,
+            name: order.name,
+            address: order.address?.asArray(),
             hint: order.hint,
             text: order.text,
             phone: order.phone,

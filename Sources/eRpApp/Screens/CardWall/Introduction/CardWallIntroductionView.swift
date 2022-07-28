@@ -165,6 +165,7 @@ extension CardWallIntroductionView {
                                     Text(L10n.cdwTxtIntroFootnote)
                                         .foregroundColor(Color(.secondaryLabel))
                                         .frame(maxWidth: .infinity, alignment: .leading)
+                                        .fixedSize(horizontal: false, vertical: true)
 
                                     Button(action: {
                                         viewStore.send(.showEGKOrderInfoView)

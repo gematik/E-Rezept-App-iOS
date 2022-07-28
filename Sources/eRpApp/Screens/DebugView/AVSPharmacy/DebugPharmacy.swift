@@ -24,16 +24,30 @@ import Pharmacy
 struct DebugPharmacy: Identifiable, Codable, CustomStringConvertible, Equatable, Hashable {
     var id = UUID()
     var name: String = "New Pharmacy"
-    var onPremiseUrl: String = ""
-    var shipmentUrl: String = ""
-    var deliveryUrl: String = ""
+    var onPremiseUrl = Endpoint()
+    var shipmentUrl = Endpoint()
+    var deliveryUrl = Endpoint()
     var certificates: [Certificate] = []
 
     struct Certificate: Identifiable, Codable, CustomStringConvertible, Equatable, Hashable {
-        var id = UUID()
+        private(set) var id = UUID()
         var name: String
         // Base64 DER representation of a HCI encryption certificate (C.HCI.ENC)
         var derBase64: String
+
+        init(id: UUID = UUID(), name: String, derBase64: String) {
+            self.id = id
+            self.name = name
+            self.derBase64 = derBase64
+        }
+
+        init(from decoder: Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+
+            id = (try? container.decode(UUID.self, forKey: .id)) ?? UUID()
+            name = try container.decode(String.self, forKey: .name)
+            derBase64 = try container.decode(String.self, forKey: .derBase64)
+        }
 
         var x509: X509? {
             guard let base64 = try? Base64.decode(string: derBase64) else { return nil }
@@ -59,6 +73,26 @@ struct DebugPharmacy: Identifiable, Codable, CustomStringConvertible, Equatable,
         certificates: \(certificates.description)
         """
     }
+
+    struct Endpoint: Codable, Equatable, Hashable {
+        var url: String = ""
+        var additionalHeaders: [Header] = []
+
+        var additionalHeadersDict: [String: String] {
+            additionalHeaders.reduce([String: String]()) { partialResult, header in
+                var partialResult = partialResult
+                partialResult[header.key] = header.value
+                return partialResult
+            }
+        }
+
+        struct Header: Codable, Equatable, Hashable, Identifiable {
+            var key: String = ""
+            var value: String = ""
+
+            private(set) var id = UUID()
+        }
+    }
 }
 
 extension DebugPharmacy {
@@ -69,12 +103,15 @@ extension DebugPharmacy {
                 status: .active,
                 telematikID: "telematik-id",
                 name: name,
-                types: [.mobl, .outpharm, .pharm],
+                types: [],
                 hoursOfOperation: [],
                 avsEndpoints: PharmacyLocation.AVSEndpoints(
-                    onPremiseUrl: URL(string: onPremiseUrl),
-                    shipmentUrl: URL(string: shipmentUrl),
-                    deliveryUrl: URL(string: deliveryUrl)
+                    onPremiseUrl: onPremiseUrl.url,
+                    onPremiseUrlAdditionalHeaders: onPremiseUrl.additionalHeadersDict,
+                    shipmentUrl: shipmentUrl.url,
+                    shipmentUrlAdditionalHeaders: shipmentUrl.additionalHeadersDict,
+                    deliveryUrl: deliveryUrl.url,
+                    deliveryUrlAdditionalHeaders: deliveryUrl.additionalHeadersDict
                 ),
                 avsCertificates: certificates.compactMap(\.x509)
             )

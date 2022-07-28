@@ -24,7 +24,13 @@ import ModelsR4
 import Nimble
 import XCTest
 
+// FHIRBundle tests with
+// - workflow bundle version: 1.0.0, 1.1.1 and
+// - prescription (KBV) bundle version 1.1.0
 final class FHIRBundleTests: XCTestCase {
+    /// FHIRBundle test with
+    /// - workflow bundle version: 1.0.0 and
+    /// - prescription (KBV) bundle version 1.0.1
     func testParseErxTasks() throws {
         let gemFhirBundle = try decode(resource: "getTaskResponse_5e00e907-1e4f-11b2-80be-b806a73c0cd0.json")
 
@@ -73,10 +79,13 @@ final class FHIRBundleTests: XCTestCase {
         expect(task.organization?.identifier) == "031234567"
     }
 
-    func testParseErxTaskBundle1_v1_2() throws {
-        let gemFhirBundle = try decode(resource: "getTaskResponse1_bundle_v1_2.json")
+    /// FHIRBundle test with
+    /// - workflow bundle version: 1.1.1 and
+    /// - prescription (KBV) bundle version 1.0.2
+    func testParseErxTaskBundle1_v1_1_1() throws {
+        let gemFhirBundle = try decode(resource: "getTaskResponse1_bundle_v1_1_1.json")
 
-        guard let task = try gemFhirBundle.parseErxTask(taskId: "160.000.088.357.676.93") else {
+        guard let task = gemFhirBundle.parseErxTask(taskId: "160.000.088.357.676.93") else {
             fail("Could not parse ModelsR4.Bundle into TaskBundle.")
             return
         }
@@ -209,9 +218,12 @@ final class FHIRBundleTests: XCTestCase {
         expect(first.dose).to(beNil())
     }
 
-    private func decode(resource file: String) throws -> ModelsR4.Bundle {
+    private func decode(
+        resource file: String,
+        from bundle: String = "FHIRExampleData.bundle"
+    ) throws -> ModelsR4.Bundle {
         try Bundle(for: Self.self)
-            .bundleFromResources(name: "FHIRExampleData.bundle")
+            .bundleFromResources(name: bundle)
             .decode(ModelsR4.Bundle.self, from: file)
     }
 }

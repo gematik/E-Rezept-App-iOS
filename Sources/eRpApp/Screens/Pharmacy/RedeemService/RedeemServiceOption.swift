@@ -36,6 +36,14 @@ enum RedeemServiceOption {
     var hasServiceAfterLogin: Bool {
         self == .erxTaskRepositoryAvailable
     }
+
+    var isAVS: Bool {
+        self == .avs
+    }
+
+    var isErxTaskRepository: Bool {
+        self == .erxTaskRepository || self == .erxTaskRepositoryAvailable
+    }
 }
 
 struct RedeemOptionProvider: Equatable {

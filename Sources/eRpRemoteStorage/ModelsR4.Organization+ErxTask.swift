@@ -23,7 +23,7 @@ import ModelsR4
 extension ModelsR4.Organization {
     var organizationIdentifier: String? {
         identifier?.first {
-            $0.system?.value == FHIRResponseKeys.organisationIdentifierKey
+            $0.system?.value?.url.absoluteString == Prescription.Key.organisationIdentifierKey
         }?.value?.value?.string
     }
 

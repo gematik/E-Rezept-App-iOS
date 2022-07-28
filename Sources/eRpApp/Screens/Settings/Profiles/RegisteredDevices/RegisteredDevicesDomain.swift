@@ -244,8 +244,8 @@ extension RegisteredDevicesDomain {
     enum AlertStates {
         typealias Action = RegisteredDevicesDomain.Action
 
-        static func `for`(_ error: LocalizedError) -> AlertState<Action> {
-            AlertState(title: TextState(error.localizedDescription),
+        static func `for`(_ error: LocalizedError & CodedError) -> AlertState<Action> {
+            AlertState(title: TextState(error.localizedDescriptionWithErrorList),
                        message: error.recoverySuggestion.map(TextState.init),
                        dismissButton: .default(TextState(L10n.alertBtnOk)))
         }

@@ -176,7 +176,7 @@ enum ExtAuthPendingDomain {
             return .none
         case let .externalLoginReceived(.failure(.profileValidation(error: error))):
             guard case let State.extAuthReceived(entry) = state else { return .none }
-            let alertState = alertState(title: entry.name, message: error.localizedDescription)
+            let alertState = alertState(title: entry.name, message: error.localizedDescriptionWithErrorList)
             state = .extAuthFailed(alertState)
             return .none
         case .hide:

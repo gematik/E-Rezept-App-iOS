@@ -71,6 +71,18 @@ public struct ErxTaskOrder: Equatable {
     }
 }
 
+extension ErxTaskOrder {
+    // sourcery: CodedError = "206"
+    public enum Error: Swift.Error {
+        // sourcery: errorCode = "01"
+        /// Unable to construct communication request
+        case unableToConstructCommunicationRequest
+        // sourcery: errorCode = "01"
+        /// Invalid ErxTaskOrder though previous validation checks have been passed
+        case invalidErxTaskOrderInput(String)
+    }
+}
+
 public enum RedeemOption: String, Codable, Equatable {
     case onPremise
     case delivery
@@ -86,5 +98,16 @@ public enum RedeemOption: String, Codable, Equatable {
 
     public var isOnPremise: Bool {
         self == .onPremise
+    }
+}
+
+extension String {
+    func countIsLessOrEqual(_ limit: Int) -> Bool {
+        count < limit
+    }
+
+    var isValidEmail: Bool {
+        let emailRegex = "^[^@\\s]+@[^@\\s.]+.[^@\\s.]+$"
+        return NSPredicate(format: "SELF MATCHES %@", emailRegex).evaluate(with: self)
     }
 }

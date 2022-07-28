@@ -64,7 +64,7 @@ struct AVSRedeemService: RedeemService {
 
         let redeemMessagePublishers: [AnyPublisher<OrderResponse, Never>] =
             orderAndMessages.map { order, message -> AnyPublisher<OrderResponse, Never> in
-                avsSession.redeem(message: message, endpoint: AVSEndpoint(url: endpoint), recipients: recipients)
+                avsSession.redeem(message: message, endpoint: endpoint.asEndpoint(), recipients: recipients)
                     .mapError { RedeemServiceError.from($0) }
                     .flatMap { avsSessionResponse -> AnyPublisher<OrderResponse, RedeemServiceError> in
                         let httpStatusCode = avsSessionResponse.httpStatusCode
@@ -106,6 +106,12 @@ struct AVSRedeemService: RedeemService {
             }
             .mapError(RedeemServiceError.from)
             .eraseToAnyPublisher()
+    }
+}
+
+extension PharmacyLocation.AVSEndpoints.Endpoint {
+    func asEndpoint() -> AVSEndpoint {
+        AVSEndpoint(url: url, additionalHeaders: additionalHeaders)
     }
 }
 

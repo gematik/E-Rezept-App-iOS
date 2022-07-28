@@ -22,7 +22,7 @@ import ModelsR4
 
 extension ErxTaskOrder {
     func asCommunicationResource(encoder: JSONEncoder = JSONEncoder()) throws -> Data {
-        let communication = createFHIRCommunication()
+        let communication = try createFHIRCommunication()
         return try encoder.encode(communication)
     }
 
@@ -30,14 +30,21 @@ extension ErxTaskOrder {
         "Task/\(erxTaskId)/$accept?ac=\(accessCode)"
     }
 
-    private func createFHIRCommunication() -> Communication {
-        let meta = Meta(profile: [
-            "https://gematik.de/fhir/StructureDefinition/ErxCommunicationDispReq",
-        ])
+    private func createFHIRCommunication() throws -> Communication {
+        #warning(
+            "Version should be updated after 1.1.23 to v1_2_0. More informations: https://github.com/gematik/api-erp/blob/master/docs/erp_fhirversion.adoc#versionsübergang-31122022--01012023" // swiftlint:disable:this line_length
+        )
+        guard let communicationDispReq = Workflow.Key.communicationDispReq[.v1_1_1]?.asFHIRCanonicalPrimitive() else {
+            throw ErxTaskOrder.Error.unableToConstructCommunicationRequest
+        }
+        let meta = Meta(profile: [communicationDispReq])
         let reference = Reference(reference: taskIdAndAccessCode.asFHIRStringPrimitive())
         let payloadString = payload.asJsonString().asFHIRStringPrimitive()
         let payload = CommunicationPayload(content: .string(payloadString))
-        let telematikUri = "https://gematik.de/fhir/NamingSystem/TelematikID".asFHIRURIPrimitive()
+        #warning(
+            "Version should be updated after 1.1.23 to v1_2_0. More informations: https://github.com/gematik/api-erp/blob/master/docs/erp_fhirversion.adoc#versionsübergang-31122022--01012023" // swiftlint:disable:this line_length
+        )
+        let telematikUri = Workflow.Key.telematikIdKeys[.v1_1_1]?.asFHIRURIPrimitive()
         let identifier = Identifier(system: telematikUri,
                                     value: pharmacyTelematikId.asFHIRStringPrimitive())
         let recipient = Reference(identifier: identifier)

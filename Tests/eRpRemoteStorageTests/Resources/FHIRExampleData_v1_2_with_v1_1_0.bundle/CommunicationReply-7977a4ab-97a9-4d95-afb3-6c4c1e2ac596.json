@@ -1,0 +1,74 @@
+{
+    "resourceType": "Bundle",
+    "type": "searchset",
+    "entry": [
+        {
+            "resource": {
+                "resourceType": "Communication",
+                "id": "7977a4ab-97a9-4d95-afb3-6c4c1e2ac596",
+                "meta": {
+                    "profile": [
+                        "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_PR_Communication_Reply|1.2"
+                    ],
+                    "tag": [
+                        {
+                            "display": "Communication message sent by pharmacy to patient in response to a previous Task-related message"
+                        }
+                    ]
+                },
+                "status": "unknown",
+                "basedOn": [
+                    {
+                        "reference": "Task/160.000.033.491.280.78"
+                    }
+                ],
+                "sender": {
+                    "identifier": {
+                        "system": "https://gematik.de/fhir/sid/telematik-id",
+                        "value": "3-SMC-B-Testkarte-883110000123465"
+                    }
+                },
+                "recipient": [
+                    {
+                        "identifier": {
+                            "system": "http://fhir.de/sid/gkv/kvid-10",
+                            "value": "X234567890"
+                        }
+                    }
+                ],
+                "sent": "2020-04-29T13:46:30.128+02:00",
+                "payload": [
+                    {
+                        "extension": [
+                            {
+                                "url": "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_EX_AvailabilityState",
+                                "valueCoding": {
+                                    "system": "https://gematik.de/fhir/erp/CodeSystem/GEM_ERP_CS_AvailabilityStatus",
+                                    "code": "20"
+                                }
+                            },
+                            {
+                                "url": "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_EX_SupplyOptionsType",
+                                "extension": [
+                                    {
+                                        "url": "onPremise",
+                                        "valueBoolean": true
+                                    },
+                                    {
+                                        "url": "shipment",
+                                        "valueBoolean": false
+                                    },
+                                    {
+                                        "url": "delivery",
+                                        "valueBoolean": true
+                                    }
+                                ]
+                            }
+                        ],
+                        "contentString": "Eisern"
+                    }
+                ]
+            }
+        }
+    ]
+}

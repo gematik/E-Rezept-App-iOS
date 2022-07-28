@@ -30,23 +30,43 @@ struct PharmacyDetailView: View {
         self.isRedeemRecipe = isRedeemRecipe
     }
 
+    struct ViewState: Equatable {
+        let isErxReady: Bool
+        let hasTasks: Bool
+        let pharmacy: PharmacyLocation
+        let reservationService: RedeemServiceOption
+        let deliveryService: RedeemServiceOption
+        let shipmentService: RedeemServiceOption
+        let pharmacyViewModel: PharmacyLocationViewModel
+
+        init(state: PharmacyDetailDomain.State) {
+            isErxReady = state.pharmacy.isErxReady
+            hasTasks = !state.erxTasks.isEmpty
+            pharmacy = state.pharmacy
+            reservationService = state.reservationService
+            deliveryService = state.deliveryService
+            shipmentService = state.shipmentService
+            pharmacyViewModel = state.pharmacyViewModel
+        }
+    }
+
     var body: some View {
-        WithViewStore(store) { viewStore in
+        WithViewStore(store.scope(state: ViewState.init)) { viewStore in
             ScrollView {
                 VStack(alignment: .leading, spacing: 4) {
-                    if viewStore.pharmacy.isErxReady {
+                    if viewStore.isErxReady {
                         ErxReadinessBadge(detailedText: true)
                     }
 
-                    Text(viewStore.state.pharmacy.name ?? L10n.phaDetailTxtSubtitleFallback.text)
+                    Text(viewStore.pharmacy.name ?? L10n.phaDetailTxtSubtitleFallback.text)
                         .foregroundColor(Colors.systemLabel)
                         .font(.title2)
                         .bold()
                         .accessibility(identifier: A11y.pharmacyDetail.phaDetailTxtSubtitle)
 
-                    if let address = viewStore.state.pharmacy.address?.fullAddress {
+                    if let address = viewStore.pharmacy.address?.fullAddress {
                         TertiaryButton(text: LocalizedStringKey(address),
-                                       isEnabled: viewStore.state.pharmacy.canBeDisplayedInMap,
+                                       isEnabled: viewStore.pharmacy.canBeDisplayedInMap,
                                        imageName: SFSymbolName.map) {
                             viewStore.send(.openMapApp)
                         }
@@ -54,7 +74,7 @@ struct PharmacyDetailView: View {
                         .padding(.bottom, 24)
                     }
 
-                    if viewStore.pharmacy.isErxReady && !viewStore.erxTasks.isEmpty {
+                    if viewStore.isErxReady && viewStore.hasTasks {
                         VStack(spacing: 8) {
                             if viewStore.reservationService.hasService {
                                 if viewStore.reservationService.hasServiceAfterLogin {
@@ -174,7 +194,7 @@ struct PharmacyDetailView: View {
     // also `trailingNavigationBarItem` and alike are deprecating (Use `toolbar(content:)`)
     @ViewBuilder
     private func trailingNavigationBarItem() -> some View {
-        WithViewStore(store) { viewStore in
+        WithViewStore(store.stateless) { viewStore in
             if isRedeemRecipe {
                 NavigationBarCloseItem {
                     viewStore.send(.close)
@@ -237,34 +257,35 @@ extension PharmacyDetailView {
         let store: PharmacyDetailDomain.Store
         var body: some View {
             VStack {
-                WithViewStore(store) { viewStore in
-                    SectionHeaderView(text: L10n.phaDetailContact,
-                                      a11y: A11y.pharmacyDetail.phaDetailContact)
+                WithViewStore(store
+                    .scope(state: \.pharmacy.telecom)) { viewStore in
+                        SectionHeaderView(text: L10n.phaDetailContact,
+                                          a11y: A11y.pharmacyDetail.phaDetailContact)
 
-                    if let phone = viewStore.state.pharmacy.telecom?.phone {
-                        Button(action: { viewStore.send(.openPhoneApp) }, label: {
-                            DetailedIconCellView(title: L10n.phaDetailPhone,
-                                                 value: phone,
-                                                 imageName: SFSymbolName.phone,
-                                                 a11y: A11y.pharmacyDetail.phaDetailPhone)
-                        })
-                    }
-                    if let email = viewStore.state.pharmacy.telecom?.email {
-                        Button(action: { viewStore.send(.openMailApp) }, label: {
-                            DetailedIconCellView(title: L10n.phaDetailMail,
-                                                 value: email,
-                                                 imageName: SFSymbolName.mail,
-                                                 a11y: A11y.pharmacyDetail.phaDetailMail)
-                        })
-                    }
-                    if let web = viewStore.state.pharmacy.telecom?.web {
-                        Button(action: { viewStore.send(.openBrowserApp) }, label: {
-                            DetailedIconCellView(title: L10n.phaDetailWeb,
-                                                 value: web,
-                                                 imageName: SFSymbolName.arrowUpForward,
-                                                 a11y: A11y.pharmacyDetail.phaDetailWeb)
-                        })
-                    }
+                        if let phone = viewStore.state?.phone {
+                            Button(action: { viewStore.send(.openPhoneApp) }, label: {
+                                DetailedIconCellView(title: L10n.phaDetailPhone,
+                                                     value: phone,
+                                                     imageName: SFSymbolName.phone,
+                                                     a11y: A11y.pharmacyDetail.phaDetailPhone)
+                            })
+                        }
+                        if let email = viewStore.state?.email {
+                            Button(action: { viewStore.send(.openMailApp) }, label: {
+                                DetailedIconCellView(title: L10n.phaDetailMail,
+                                                     value: email,
+                                                     imageName: SFSymbolName.mail,
+                                                     a11y: A11y.pharmacyDetail.phaDetailMail)
+                            })
+                        }
+                        if let web = viewStore.state?.web {
+                            Button(action: { viewStore.send(.openBrowserApp) }, label: {
+                                DetailedIconCellView(title: L10n.phaDetailWeb,
+                                                     value: web,
+                                                     imageName: SFSymbolName.arrowUpForward,
+                                                     a11y: A11y.pharmacyDetail.phaDetailWeb)
+                            })
+                        }
                 }
             }
         }
@@ -273,12 +294,12 @@ extension PharmacyDetailView {
     struct RedeemViewViaAVSNavigation: View {
         let store: PharmacyDetailDomain.Store
         var body: some View {
-            WithViewStore(store) { viewStore in
+            WithViewStore(store.scope(state: \.route?.tag)) { viewStore in
                 NavigationLink(
                     destination: destination,
                     tag: PharmacyDetailDomain.Route.Tag.redeemViaAVS,
                     selection: viewStore.binding(
-                        get: { $0.route?.tag },
+                        get: { $0 },
                         send: { .setNavigation(tag: $0) }
                     )
                 ) {}
@@ -307,12 +328,12 @@ extension PharmacyDetailView {
     struct RedeemViewViaErxTaskRepoNavigation: View {
         let store: PharmacyDetailDomain.Store
         var body: some View {
-            WithViewStore(store) { viewStore in
+            WithViewStore(store.scope(state: \.route?.tag)) { viewStore in
                 NavigationLink(
                     destination: destination,
                     tag: PharmacyDetailDomain.Route.Tag.redeemViaErxTaskRepository,
                     selection: viewStore.binding(
-                        get: { $0.route?.tag },
+                        get: { $0 },
                         send: { .setNavigation(tag: $0) }
                     )
                 ) {}

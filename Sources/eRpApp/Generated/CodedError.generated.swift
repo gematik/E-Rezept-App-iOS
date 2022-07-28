@@ -322,6 +322,25 @@ extension ErxTask.Status.Error: CodedError {
     }
 }
 
+extension ErxTaskOrder.Error: CodedError {
+    var erpErrorCode: String {
+        switch self {
+            case .unableToConstructCommunicationRequest:
+                return "i-20601"
+            case .invalidErxTaskOrderInput:
+                return "i-20601"
+        }
+    }
+    var erpErrorCodeList: [String] {
+        switch self {
+            case .invalidErxTaskOrderInput:
+                return [erpErrorCode]
+            default:
+                return [erpErrorCode]
+        }
+    }
+}
+
 extension ExtAuthPendingDomain.Error: CodedError {
     var erpErrorCode: String {
         switch self {

@@ -29,6 +29,11 @@ internal enum A11y {
       static let cdwBtnCanCancel = "cdw_btn_can_cancel"
       static let cdwBtnCanDone = "cdw_btn_can_done"
       static let cdwBtnCanMore = "cdw_btn_can_more"
+      static let cdwBtnCanScan = "cdw_btn_can_scan"
+  }
+    internal enum canScanner {
+      static let cdwScnBtnClose = "cdw_scn_btn_close"
+      static let cdwScnBtnDone = "cdw_scn_btn_done"
   }
     internal enum extAuthConfirmation {
       static let cdwBtnExtauthConfirmSend = "cdw_btn_extauth_confirm_send"
@@ -200,7 +205,6 @@ internal enum A11y {
     internal enum pharmacyContact {
       static let phaContactAddressName = "pha_contact_address_name"
       static let phaContactAddressStreet = "pha_contact_address_street"
-      static let phaContactAddressDetail = "pha_contact_address_detail"
       static let phaContactAddressZip = "pha_contact_address_zip"
       static let phaContactAddressCity = "pha_contact_address_city"
       static let phaContactAddressPhone = "pha_contact_address_phone"

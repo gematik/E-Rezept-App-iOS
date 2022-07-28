@@ -302,9 +302,9 @@ extension Data {
            ),
            let taskResource = task["resource"] as? [String: Any],
            let identifierEntries = taskResource["identifier"] as? [[String: Any]],
-           let accessCode = identifierEntries.first(
-               where: { $0["system"] as? String == .some("https://gematik.de/fhir/NamingSystem/AccessCode") }
-           ),
+           let accessCode = identifierEntries.first(where: { identifier in
+               Workflow.Key.accessCodeKeys.contains { $0.value == identifier["system"] as? String }
+           }),
            let value = accessCode["value"] as? String {
             return value
         }

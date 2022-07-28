@@ -111,12 +111,12 @@ extension ErxTask {
         }
 
         public enum Profile: String, Codable {
-            case reply = "https://gematik.de/fhir/StructureDefinition/ErxCommunicationReply"
-            case dispReq = "https://gematik.de/fhir/StructureDefinition/ErxCommunicationDispReq"
-            case infoReq = "https://gematik.de/fhir/StructureDefinition/ErxCommunicationInfoReq"
-            case representative = "https://gematik.de/fhir/StructureDefinition/ErxCommunicationRepresentative"
-            case none
+            case reply
+            case dispReq
+            case infoReq
+            case representative
             case all
+            case none
 
             public var isReply: Bool {
                 self == .reply

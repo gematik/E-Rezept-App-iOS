@@ -21,9 +21,11 @@ import Foundation
 /// Wrapper for an URL
 public struct AVSEndpoint: Equatable {
     let url: URL
+    let additionalHeaders: [String: String]
 
     /// Public initializer that can be invoked by more convenient ones.
-    public init(url: URL) {
+    public init(url: URL, additionalHeaders: [String: String] = [:]) {
         self.url = url
+        self.additionalHeaders = additionalHeaders
     }
 }

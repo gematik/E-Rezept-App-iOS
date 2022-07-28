@@ -223,7 +223,8 @@ enum PharmacyDetailDomain: Equatable {
                 redeemService: AVSRedeemService(
                     avsSession: environment.userSession.avsSession,
                     avsTransactionDataStore: environment.userSession.avsTransactionDataStore
-                )
+                ),
+                inputValidator: AVSMessage.Validator()
             )
         }
 
@@ -239,7 +240,8 @@ enum PharmacyDetailDomain: Equatable {
                 redeemService: ErxTaskRepositoryRedeemService(
                     erxTaskRepository: environment.userSession.erxTaskRepository,
                     isAuthenticated: environment.userSession.isAuthenticated
-                )
+                ),
+                inputValidator: ErxTaskOrder.Validator()
             )
         }
 

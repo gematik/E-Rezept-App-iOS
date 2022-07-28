@@ -37,6 +37,9 @@ extension RealAVSClient: AVSClient {
         var request = URLRequest(url: endpoint.url, cachePolicy: .reloadIgnoringLocalAndRemoteCacheData)
         request.httpMethod = "POST"
         request.addValue("application/pkcs7-mime", forHTTPHeaderField: "Content-Type")
+        for (key, value) in endpoint.additionalHeaders {
+            request.addValue(value, forHTTPHeaderField: key)
+        }
         request.httpBody = data
         return httpClient
             .send(request: request)

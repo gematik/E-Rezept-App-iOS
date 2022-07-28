@@ -1,3 +1,20 @@
+# Release 1.4.0
+
+### fixed (2 changes)
+
+- Fix the footnote is multiline for iOS 14
+- Fix the insurance contact list
+
+### added (7 changes)
+
+- Enable profiles
+- Add timer for locking an app without user interaction and enable profiles for live app
+- Add Validator to PharmacyRedeemDomain and PharmacyContactDomain
+- Add camera scanner to read the CAN from an eGK
+- Improve error handling for redeem via AVS
+- Add support for additional http header for debugging purposes
+- Add workflow version 1.2.0 and prescription version 1.1.0 tests and examples
+
 # Release 1.3.3
 
 ### added (2 changes)

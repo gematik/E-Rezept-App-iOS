@@ -29,6 +29,7 @@ class PharmacyRedeemDomainTests: XCTestCase {
     var mockShipmentInfoDataStore: MockShipmentInfoDataStore!
     var mockUserSession: MockUserSession!
     var mockRedeemService: MockRedeemService!
+    var mockRedeemValidator: MockRedeemInputValidator!
 
     typealias TestStore = ComposableArchitecture.TestStore<
         PharmacyRedeemDomain.State,
@@ -44,6 +45,7 @@ class PharmacyRedeemDomainTests: XCTestCase {
         mockUserSession = MockUserSession()
         mockShipmentInfoDataStore = MockShipmentInfoDataStore()
         mockRedeemService = MockRedeemService()
+        mockRedeemValidator = MockRedeemInputValidator()
     }
 
     override func tearDownWithError() throws {
@@ -60,7 +62,8 @@ class PharmacyRedeemDomainTests: XCTestCase {
                 schedulers: Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler()),
                 userSession: mockUserSession,
                 shipmentInfoStore: mockShipmentInfoDataStore,
-                redeemService: mockRedeemService
+                redeemService: mockRedeemService,
+                inputValidator: mockRedeemValidator
             )
         )
     }
@@ -76,7 +79,7 @@ class PharmacyRedeemDomainTests: XCTestCase {
             address: nil,
             telecom: nil,
             hoursOfOperation: [],
-            avsEndpoints: PharmacyLocation.AVSEndpoints(onPremiseUrl: URL(string: "http://onpremise.de")),
+            avsEndpoints: PharmacyLocation.AVSEndpoints(onPremiseUrl: "http://onpremise.de"),
             avsCertificates: []
         )
     }
@@ -97,6 +100,7 @@ class PharmacyRedeemDomainTests: XCTestCase {
             zip: "10623",
             city: "Berlin"
         )
+        mockRedeemValidator.returnValue = .valid
         mockShipmentInfoDataStore.selectedShipmentInfoReturnValue = Just(expectedShipmentInfo)
             .setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
         mockUserSession.isLoggedIn = false
@@ -136,6 +140,7 @@ class PharmacyRedeemDomainTests: XCTestCase {
             mail: "mail@gematik.de",
             deliveryInfo: "Bitte klingeln."
         )
+        mockRedeemValidator.returnValue = .valid
 
         mockShipmentInfoDataStore.selectedShipmentInfoReturnValue = Just(expectedShipmentInfo)
             .setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
@@ -162,7 +167,11 @@ class PharmacyRedeemDomainTests: XCTestCase {
             for task in inputTasks {
                 let order = orders.first { $0.taskID == task.id }
                 expect(order?.name) == expectedShipmentInfo.name
-                expect(order?.address) == expectedShipmentInfo.address
+                expect(order?.address) == Address(
+                    street: expectedShipmentInfo.street,
+                    zip: expectedShipmentInfo.zip,
+                    city: expectedShipmentInfo.city
+                )
                 expect(order?.hint) == expectedShipmentInfo.deliveryInfo
                 expect(order?.phone) == expectedShipmentInfo.phone
                 expect(order?.mail) == expectedShipmentInfo.mail
@@ -170,7 +179,11 @@ class PharmacyRedeemDomainTests: XCTestCase {
                 expect(order?.redeemType) == initialState.redeemOption
                 expect(order?.accessCode) == task.accessCode
                 expect(order?.telematikId) == self.pharmacy.telematikID
-                expect(order?.endpoint) == self.pharmacy.avsEndpoints?.url(for: initialState.redeemOption)
+                expect(order?.endpoint) == self.pharmacy.avsEndpoints?.url(
+                    for: initialState.redeemOption,
+                    transactionId: "",
+                    telematikId: order?.telematikId ?? ""
+                )
             }
         }
         sut.receive(.redeemReceived(.success(expectedOrderResponses))) {
@@ -180,7 +193,11 @@ class PharmacyRedeemDomainTests: XCTestCase {
             for task in inputTasks {
                 let response = $0.orderResponses.first { $0.requested.taskID == task.id }
                 expect(response?.requested.name) == expectedShipmentInfo.name
-                expect(response?.requested.address) == expectedShipmentInfo.address
+                expect(response?.requested.address) == Address(
+                    street: expectedShipmentInfo.street,
+                    zip: expectedShipmentInfo.zip,
+                    city: expectedShipmentInfo.city
+                )
                 expect(response?.requested.hint) == expectedShipmentInfo.deliveryInfo
                 expect(response?.requested.phone) == expectedShipmentInfo.phone
                 expect(response?.requested.mail) == expectedShipmentInfo.mail
@@ -188,7 +205,11 @@ class PharmacyRedeemDomainTests: XCTestCase {
                 expect(response?.requested.redeemType) == initialState.redeemOption
                 expect(response?.requested.accessCode) == task.accessCode
                 expect(response?.requested.telematikId) == self.pharmacy.telematikID
-                expect(response?.requested.endpoint) == self.pharmacy.avsEndpoints?.url(for: initialState.redeemOption)
+                expect(response?.requested.endpoint) == self.pharmacy.avsEndpoints?.url(
+                    for: initialState.redeemOption,
+                    transactionId: "",
+                    telematikId: self.pharmacy.telematikID
+                )
             }
         }
     }
@@ -213,7 +234,7 @@ class PharmacyRedeemDomainTests: XCTestCase {
         }
     }
 
-    func testRedeemWithMissingPhone() {
+    func testRedeemWithInvalidInput() {
         let inputTasks = ErxTask.Fixtures.erxTasks
         let sut = testStore(for: PharmacyRedeemDomain.State(
             redeemOption: .shipment,
@@ -238,8 +259,10 @@ class PharmacyRedeemDomainTests: XCTestCase {
             $0.selectedShipmentInfo = expectedShipmentInfo
         }
 
+        mockRedeemValidator.returnValue = .invalid("Invalid Input")
+
         sut.send(.redeem) {
-            $0.alertState = PharmacyRedeemDomain.AlertStates.missingPhoneState
+            $0.alertState = PharmacyRedeemDomain.AlertStates.missingContactInfo(with: "Invalid Input")
         }
     }
 

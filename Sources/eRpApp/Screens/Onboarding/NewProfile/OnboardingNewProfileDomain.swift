@@ -74,7 +74,7 @@ extension OnboardingNewProfileDomain {
         static func `for`(_ error: LocalStoreError) -> AlertState<Action> {
             AlertState(
                 title: TextState(L10n.onbPrfTxtAlertTitle),
-                message: TextState(error.localizedDescription),
+                message: TextState(error.localizedDescriptionWithErrorList),
                 dismissButton: .default(TextState(L10n.alertBtnOk))
             )
         }

@@ -16,10 +16,12 @@
 //  
 //
 
+import AVS
 import DataKit
 @testable import eRpApp
 import Foundation
 import OpenSSL
+import Pharmacy
 
 extension Order {
     enum Fixtures {
@@ -49,7 +51,7 @@ extension Order {
 
         static let orderNoEndpoint = Order(redeemType: .onPremise, taskID: "task_id_1", accessCode: "access_code_1")
 
-        static let endpoint = URL(string: "http://some-service.com:8003/")!
+        static let endpoint = PharmacyLocation.AVSEndpoints.Endpoint(url: URL(string: "http://some-service.com:8003/")!)
         static let certificates = [x509]
 
         static let x509: X509 = {

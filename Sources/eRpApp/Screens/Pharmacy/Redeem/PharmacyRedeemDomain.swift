@@ -86,6 +86,7 @@ enum PharmacyRedeemDomain: Equatable {
         var userSession: UserSession
         let shipmentInfoStore: ShipmentInfoDataStore
         let redeemService: RedeemService
+        let inputValidator: RedeemInputValidator
     }
 
     static let domainReducer = Reducer { state, action, environment in
@@ -128,12 +129,13 @@ enum PharmacyRedeemDomain: Equatable {
             guard !state.selectedErxTasks.isEmpty else {
                 return .none
             }
-            let orders = state.orders
-            guard !orders.isEmpty else {
-                state.alertState = AlertStates.missingPhoneState
+
+            if case let .invalid(error) = environment.inputValidator
+                .validate(state.selectedShipmentInfo, for: state.redeemOption) {
+                state.alertState = AlertStates.missingContactInfo(with: error)
                 return .none
             }
-            return environment.redeem(orders: orders)
+            return environment.redeem(orders: state.orders)
                 .map(Action.redeemReceived)
         case let .redeemReceived(.success(orderResponses)):
             state.orderResponses = orderResponses
@@ -161,7 +163,10 @@ enum PharmacyRedeemDomain: Equatable {
             return .none
         case .alertShowPharmacyContactButtonTapped:
             state.alertState = nil
-            state.pharmacyContactState = .init(shipmentInfo: state.selectedShipmentInfo)
+            state.pharmacyContactState = .init(
+                shipmentInfo: state.selectedShipmentInfo,
+                service: environment.inputValidator.service
+            )
             return .none
         case .dismissRedeemSuccessView:
             state.successViewState = nil
@@ -170,7 +175,10 @@ enum PharmacyRedeemDomain: Equatable {
             state.successViewState = nil
             return Effect(value: .close)
         case .showPharmacyContact:
-            state.pharmacyContactState = .init(shipmentInfo: state.selectedShipmentInfo)
+            state.pharmacyContactState = .init(
+                shipmentInfo: state.selectedShipmentInfo,
+                service: environment.inputValidator.service
+            )
             return .none
         case .pharmacyContact(.close),
              .dismissPharmacyContactView:
@@ -193,7 +201,8 @@ enum PharmacyRedeemDomain: Equatable {
         ) { environment in
             PharmacyContactDomain.Environment(
                 schedulers: environment.schedulers,
-                shipmentInfoStore: environment.shipmentInfoStore
+                shipmentInfoStore: environment.shipmentInfoStore,
+                validator: environment.inputValidator
             )
         }
 }
@@ -203,21 +212,21 @@ extension PharmacyRedeemDomain {
         static func alert(for error: RedeemServiceError) -> AlertState<Action> {
             guard let message = error.recoverySuggestion else {
                 return AlertState(
-                    title: TextState(error.localizedDescription),
+                    title: TextState(error.localizedDescriptionWithErrorList),
                     dismissButton: .default(TextState(L10n.alertBtnOk), action: .send(.alertDismissButtonTapped))
                 )
             }
             return AlertState(
-                title: TextState(error.localizedDescription),
+                title: TextState(error.localizedDescriptionWithErrorList),
                 message: TextState(message),
                 dismissButton: .default(TextState(L10n.alertBtnOk), action: .send(.alertDismissButtonTapped))
             )
         }
 
-        static var missingPhoneState: AlertState<Action> = {
+        static func missingContactInfo(with localizedMessage: String) -> AlertState<Action> {
             AlertState(
                 title: TextState(L10n.phaRedeemAlertTitleMissingPhone),
-                message: TextState(L10n.phaRedeemAlertMessageMissingPhone),
+                message: TextState(localizedMessage),
                 primaryButton: .default(
                     TextState(L10n.phaRedeemBtnAlertComplete),
                     action: .send(.alertShowPharmacyContactButtonTapped)
@@ -227,7 +236,7 @@ extension PharmacyRedeemDomain {
                     action: .send(.alertDismissButtonTapped)
                 )
             )
-        }()
+        }
 
         static func failingRequest(count: Int) -> AlertState<Action> {
             AlertState(
@@ -241,24 +250,28 @@ extension PharmacyRedeemDomain {
 
 extension PharmacyRedeemDomain.State {
     var orders: [Order] {
-        if redeemOption.isPhoneRequired,
-           selectedShipmentInfo?.phone == nil { // TODO: handle error //swiftlint:disable:this todo
-            return []
-        }
-
-        return selectedErxTasks.map { task in
-            Order(
+        selectedErxTasks.map { task in
+            let transactionId = UUID()
+            return Order(
                 redeemType: redeemOption,
                 name: selectedShipmentInfo?.name,
-                address: selectedShipmentInfo?.address,
+                address: Address(
+                    street: selectedShipmentInfo?.street,
+                    zip: selectedShipmentInfo?.zip,
+                    city: selectedShipmentInfo?.city
+                ),
                 hint: selectedShipmentInfo?.deliveryInfo,
                 text: nil, // TODO: other ticket //swiftlint:disable:this todo
                 phone: selectedShipmentInfo?.phone,
                 mail: selectedShipmentInfo?.mail,
-                transactionID: UUID(),
+                transactionID: transactionId,
                 taskID: task.id,
                 accessCode: task.accessCode ?? "",
-                endpoint: pharmacy.avsEndpoints?.url(for: redeemOption),
+                endpoint: pharmacy.avsEndpoints?.url(
+                    for: redeemOption,
+                    transactionId: transactionId.uuidString,
+                    telematikId: pharmacy.telematikID
+                ),
                 recipients: pharmacy.avsCertificates,
                 telematikId: pharmacy.telematikID
             )
@@ -302,6 +315,49 @@ extension ErxTask.Patient {
     }
 }
 
+extension RedeemInputValidator {
+    func validate(_ shipmentInfo: ShipmentInfo?, for redeemOption: RedeemOption) -> Validity {
+        if isValid(name: shipmentInfo?.name) != .valid {
+            return isValid(name: shipmentInfo?.name)
+        }
+        if isValid(street: shipmentInfo?.street) != .valid {
+            return isValid(street: shipmentInfo?.street)
+        }
+        if isValid(zip: shipmentInfo?.zip) != .valid {
+            return isValid(zip: shipmentInfo?.zip)
+        }
+        if isValid(city: shipmentInfo?.city) != .valid {
+            return isValid(city: shipmentInfo?.city)
+        }
+        if isValid(hint: shipmentInfo?.deliveryInfo) != .valid {
+            return isValid(hint: shipmentInfo?.deliveryInfo)
+        }
+        // TODO: Ticket ERA-5598 //swiftlint:disable:this todo
+//        if isValid(text: shipmentInfo.text) != .valid {
+//            return isValid(text: shipmentInfo.text)
+//        }
+        if isValid(phone: shipmentInfo?.phone) != .valid {
+            return isValid(phone: shipmentInfo?.phone)
+        }
+        if isValid(mail: shipmentInfo?.mail) != .valid {
+            return isValid(mail: shipmentInfo?.mail)
+        }
+
+        if ifDeliveryOrShipmentThenIsNonEmptyPhoneOrNonEmptyMail(
+            optionType: redeemOption,
+            phone: shipmentInfo?.phone,
+            mail: shipmentInfo?.mail
+        ) != .valid {
+            return ifDeliveryOrShipmentThenIsNonEmptyPhoneOrNonEmptyMail(
+                optionType: redeemOption,
+                phone: shipmentInfo?.phone,
+                mail: shipmentInfo?.mail
+            )
+        }
+        return .valid
+    }
+}
+
 extension PharmacyRedeemDomain {
     enum Dummies {
         static let address1 = PharmacyLocation.Address(
@@ -340,7 +396,8 @@ extension PharmacyRedeemDomain {
             schedulers: Schedulers(),
             userSession: DemoSessionContainer(),
             shipmentInfoStore: DemoShipmentInfoStore(),
-            redeemService: DemoRedeemService()
+            redeemService: DemoRedeemService(),
+            inputValidator: DemoRedeemInputValidator()
         )
         static let store = Store(initialState: state,
                                  reducer: reducer,

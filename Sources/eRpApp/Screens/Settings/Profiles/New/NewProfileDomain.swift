@@ -123,7 +123,7 @@ extension NewProfileDomain {
         static func `for`(_ error: LocalStoreError) -> AlertState<Action> {
             AlertState(
                 title: TextState(L10n.stgTxtNewProfileErrorMessageTitle),
-                message: TextState(error.localizedDescription),
+                message: TextState(error.localizedDescriptionWithErrorList),
                 dismissButton: .default(TextState(L10n.alertBtnOk))
             )
         }

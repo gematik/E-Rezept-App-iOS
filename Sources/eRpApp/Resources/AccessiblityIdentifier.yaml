@@ -67,6 +67,10 @@ cardWall:
     - cdw_btn_can_cancel
     - cdw_btn_can_done
     - cdw_btn_can_more
+    - cdw_btn_can_scan
+  canScanner:
+    - cdw_scn_btn_close
+    - cdw_scn_btn_done
   pinInput:
     - cdw_txt_pin_subtitle
     - cdw_txt_pin_description
@@ -331,7 +335,6 @@ pharmacyRedeem:
 pharmacyContact:
   - pha_contact_address_name
   - pha_contact_address_street
-  - pha_contact_address_detail
   - pha_contact_address_zip
   - pha_contact_address_city
   - pha_contact_address_phone

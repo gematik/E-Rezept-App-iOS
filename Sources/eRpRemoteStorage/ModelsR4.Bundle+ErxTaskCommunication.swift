@@ -84,12 +84,16 @@ extension ModelsR4.Communication {
     func telematikId(for profile: ErxTask.Communication.Profile) -> String? {
         switch profile {
         case .reply:
-            if sender?.identifier?.system?.value?.url.absoluteString == FHIRResponseKeys.telematikIdKey {
+            if Workflow.Key.telematikIdKeys.contains(
+                where: { $0.value == sender?.identifier?.system?.value?.url.absoluteString }
+            ) {
                 return sender?.identifier?.value?.value?.string
             }
         case .dispReq:
             return recipient?.first { recipient in
-                recipient.identifier?.system?.value?.url.absoluteString == FHIRResponseKeys.telematikIdKey
+                Workflow.Key.telematikIdKeys.contains {
+                    $0.value == recipient.identifier?.system?.value?.url.absoluteString
+                }
             }?.identifier?.value?.value?.string
         case .infoReq, .representative, .none, .all:
             return nil
@@ -102,10 +106,14 @@ extension ModelsR4.Communication {
         switch profile {
         case .reply:
             return recipient?.first { recipient in
-                recipient.identifier?.system?.value?.url.absoluteString == FHIRResponseKeys.kvIDKey
+                Workflow.Key.kvIDKeys.contains {
+                    $0.value == recipient.identifier?.system?.value?.url.absoluteString
+                }
             }?.identifier?.value?.value?.string
         case .dispReq:
-            if sender?.identifier?.system?.value?.url.absoluteString == FHIRResponseKeys.kvIDKey {
+            if Workflow.Key.kvIDKeys.contains(
+                where: { $0.value == sender?.identifier?.system?.value?.url.absoluteString }
+            ) {
                 return sender?.identifier?.value?.value?.string
             }
         case .infoReq, .representative, .none, .all:
@@ -123,6 +131,27 @@ extension ModelsR4.Communication {
                 return nil
             }
         }.first
+    }
+}
+
+extension ErxTask.Communication.Profile {
+    init?(rawValue: RawValue) {
+        switch rawValue {
+        case Workflow.Key.communicationReply[.v1_1_1],
+             Workflow.Key.communicationReply[.v1_2_0]:
+            self = .reply
+        case Workflow.Key.communicationDispReq[.v1_1_1],
+             Workflow.Key.communicationDispReq[.v1_2_0]:
+            self = .dispReq
+        case Workflow.Key.communicationInfoReq[.v1_1_1],
+             Workflow.Key.communicationInfoReq[.v1_2_0]:
+            self = .infoReq
+        case Workflow.Key.communicationRepresentative[.v1_1_1],
+             Workflow.Key.communicationRepresentative[.v1_2_0]:
+            self = .representative
+        default:
+            self = .none
+        }
     }
 }
 

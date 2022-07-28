@@ -130,24 +130,57 @@ public struct PharmacyLocation: Identifiable, Hashable, Equatable {
     }
 
     public struct AVSEndpoints {
-        public let onPremiseUrl: URL?
-        public let shipmentUrl: URL?
-        public let deliveryUrl: URL?
+        public let onPremiseUrl: String?
+        public let onPremiseUrlAdditionalHeaders: [String: String]
+        public let shipmentUrl: String?
+        public let shipmentUrlAdditionalHeaders: [String: String]
+        public let deliveryUrl: String?
+        public let deliveryUrlAdditionalHeaders: [String: String]
         public let certificatesURL: URL?
 
+        public struct Endpoint: Equatable {
+            public let url: URL
+            public let additionalHeaders: [String: String]
+
+            public init(url: URL, additionalHeaders: [String: String] = [:]) {
+                self.url = url
+                self.additionalHeaders = additionalHeaders
+            }
+        }
+
         public init(
-            onPremiseUrl: URL? = nil,
-            shipmentUrl: URL? = nil,
-            deliveryUrl: URL? = nil,
+            onPremiseUrl: String? = nil,
+            onPremiseUrlAdditionalHeaders: [String: String] = [:],
+            shipmentUrl: String? = nil,
+            shipmentUrlAdditionalHeaders: [String: String] = [:],
+            deliveryUrl: String? = nil,
+            deliveryUrlAdditionalHeaders: [String: String] = [:],
             certificatesURL: URL? = nil
         ) {
             self.onPremiseUrl = onPremiseUrl
+            self.onPremiseUrlAdditionalHeaders = onPremiseUrlAdditionalHeaders
             self.shipmentUrl = shipmentUrl
+            self.shipmentUrlAdditionalHeaders = shipmentUrlAdditionalHeaders
             self.deliveryUrl = deliveryUrl
+            self.deliveryUrlAdditionalHeaders = deliveryUrlAdditionalHeaders
             self.certificatesURL = certificatesURL
         }
 
-        public func url(for redeemOption: RedeemOption) -> URL? {
+        public func url(for redeemOption: RedeemOption, transactionId: String, telematikId: String) -> Endpoint? {
+            guard let sanatizedUrl = url(for: redeemOption)?
+                .replacingOccurrences(of: "<ti_id>", with: telematikId.urlPercentEscapedString() ?? "")
+                .replacingOccurrences(of: "<transactionID>", with: transactionId.urlPercentEscapedString() ?? "") else {
+                return nil
+            }
+
+            guard let url = URL(string: sanatizedUrl) else {
+                return nil
+            }
+
+            return Endpoint(url: url, additionalHeaders: additionalHeaders(for: redeemOption))
+        }
+
+        private func url(for redeemOption: RedeemOption) -> String? {
             switch redeemOption {
             case .onPremise:
                 return onPremiseUrl
@@ -155,6 +188,17 @@ public struct PharmacyLocation: Identifiable, Hashable, Equatable {
                 return deliveryUrl
             case .shipment:
                 return shipmentUrl
+            }
+        }
+
+        private func additionalHeaders(for redeemOption: RedeemOption) -> [String: String] {
+            switch redeemOption {
+            case .onPremise:
+                return onPremiseUrlAdditionalHeaders
+            case .delivery:
+                return deliveryUrlAdditionalHeaders
+            case .shipment:
+                return shipmentUrlAdditionalHeaders
             }
         }
     }

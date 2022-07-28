@@ -38,7 +38,7 @@ struct CardWallExtAuthConfirmationView: View {
                 if let error = viewStore.error {
                     VStack(alignment: .leading, spacing: 8) {
                         Group {
-                            Text(error.localizedDescription)
+                            Text(error.localizedDescriptionWithErrorList)
                                 .font(.headline)
                                 .fixedSize(horizontal: false, vertical: true)
 

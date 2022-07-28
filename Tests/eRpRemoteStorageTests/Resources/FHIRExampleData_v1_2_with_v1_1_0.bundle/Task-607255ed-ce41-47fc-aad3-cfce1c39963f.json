@@ -1,0 +1,101 @@
+{
+    "resourceType": "Bundle",
+    "type": "searchset",
+    "entry": [
+        {
+            "resource": {
+                "resourceType": "Task",
+                "id": "607255ed-ce41-47fc-aad3-cfce1c39963f",
+                "meta": {
+                    "profile": [
+                        "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_PR_Task|1.2"
+                    ],
+                    "tag": [
+                        {
+                            "display": "Task in READY state activated by (Z)PVS/KIS via $activate operation"
+                        }
+                    ]
+                },
+                "intent": "order",
+                "extension": [
+                    {
+                        "url": "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_EX_PrescriptionType",
+                        "valueCoding": {
+                            "code": "160",
+                            "system": "https://gematik.de/fhir/erp/CodeSystem/GEM_ERP_CS_FlowType",
+                            "display": "Muster 16 (Apothekenpflichtige Arzneimittel)"
+                        }
+                    },
+                    {
+                        "url": "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_EX_AcceptDate",
+                        "valueDate": "2022-04-02"
+                    },
+                    {
+                        "url": "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_EX_ExpiryDate",
+                        "valueDate": "2022-06-02"
+                    }
+                ],
+                "identifier": [
+                    {
+                        "system": "https://gematik.de/fhir/erp/NamingSystem/GEM_ERP_NS_PrescriptionId",
+                        "value": "160.000.033.491.280.78"
+                    },
+                    {
+                        "system": "https://gematik.de/fhir/erp/NamingSystem/GEM_ERP_NS_AccessCode",
+                        "value": "777bea0e13cc9c42ceec14aec3ddee2263325dc2c6c699db115f58fe423607ea"
+                    }
+                ],
+                "status": "ready",
+                "authoredOn": "2022-03-18T15:26:00+00:00",
+                "performerType": [
+                    {
+                        "coding": [
+                            {
+                                "code": "urn:oid:1.2.276.0.76.4.54",
+                                "system": "urn:ietf:rfc:3986",
+                                "display": "Öffentliche Apotheke"
+                            }
+                        ]
+                    }
+                ],
+                "for": {
+                    "identifier": {
+                        "system": "http://fhir.de/sid/gkv/kvid-10",
+                        "value": "X123456789"
+                    }
+                },
+                "lastModified": "2022-03-18T15:27:00+00:00",
+                "input": [
+                    {
+                        "type": {
+                            "coding": [
+                                {
+                                    "code": "1",
+                                    "system": "https://gematik.de/fhir/erp/CodeSystem/GEM_ERP_CS_DocumentType",
+                                    "display": "Health Care Provider Prescription"
+                                }
+                            ]
+                        },
+                        "valueReference": {
+                            "reference": "281a985c-f25b-4aae-91a6-41ad744080b0"
+                        }
+                    },
+                    {
+                        "type": {
+                            "coding": [
+                                {
+                                    "code": "2",
+                                    "system": "https://gematik.de/fhir/erp/CodeSystem/GEM_ERP_CS_DocumentType",
+                                    "display": "Patient Confirmation"
+                                }
+                            ]
+                        },
+                        "valueReference": {
+                            "reference": "f8c2298f-7c00-4a68-af29-8a2862d55d43"
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+}

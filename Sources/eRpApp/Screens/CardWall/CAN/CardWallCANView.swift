@@ -76,6 +76,8 @@ struct CardWallCANView<Content: View>: View {
     private struct CANView: View {
         var store: CardWallCANDomain.Store
         @State var showAnimation = true
+        @State var scannedcan: ScanCAN?
+
         var body: some View {
             WithViewStore(store) { viewStore in
                 ScrollView(.vertical, showsIndicators: true) {
@@ -83,7 +85,7 @@ struct CardWallCANView<Content: View>: View {
                         WorngCANEnteredWarningView()
                             .padding()
                     }
-                    VStack(alignment: .leading) {
+                    VStack(alignment: .leading, spacing: 8) {
                         if showAnimation {
                             HStack(alignment: .center) {
                                 Spacer()
@@ -112,35 +114,55 @@ struct CardWallCANView<Content: View>: View {
                             .font(.body)
                             .accessibility(identifier: A11y.cardWall.canInput.cdwTxtCanInstruction)
 
-                    }.padding([.leading, .top, .trailing])
-
-                    VStack(alignment: .trailing, spacing: 8) {
-                        Button(L10n.cdwBtnNoCan) {
+                        Button(action: {
                             viewStore.send(.showEGKOrderInfoView)
                             UIApplication.shared.dismissKeyboard()
-                        }
-                        .font(.system(size: 16))
-                        .foregroundColor(Colors.primary)
-                        .accessibility(identifier: A11y.cardWall.canInput.cdwBtnCanMore)
-                        .fullScreenCover(isPresented: viewStore.binding(
-                            get: \.isEGKOrderInfoViewPresented,
-                            send: CardWallCANDomain.Action.dismissEGKOrderInfoView
-                        )) {
-                            NavigationView {
-                                OrderHealthCardView {
-                                    viewStore.send(.dismissEGKOrderInfoView)
+                        }, label: {
+                            Text(L10n.cdwBtnNoCan)
+                                .multilineTextAlignment(.trailing)
+                        })
+                            .frame(maxWidth: .infinity, alignment: .trailing)
+                            .font(.system(size: 16))
+                            .foregroundColor(Colors.primary)
+                            .accessibility(identifier: A11y.cardWall.canInput.cdwBtnCanMore)
+                            .fullScreenCover(isPresented: viewStore.binding(
+                                get: \.isEGKOrderInfoViewPresented,
+                                send: CardWallCANDomain.Action.dismissEGKOrderInfoView
+                            )) {
+                                NavigationView {
+                                    OrderHealthCardView {
+                                        viewStore.send(.dismissEGKOrderInfoView)
+                                    }
                                 }
+                                .accentColor(Colors.primary700)
+                                .navigationViewStyle(StackNavigationViewStyle())
                             }
-                            .accentColor(Colors.primary700)
-                            .navigationViewStyle(StackNavigationViewStyle())
-                        }
-                    }.padding(.bottom)
+                    }.padding()
 
                     CardWallCANInputView(
                         can: viewStore.binding(get: \.can) { .update(can: $0) }
                     ) {
                         viewStore.send(.advance)
                     }.padding(.top)
+
+                    TertiaryListButton(
+                        text: L10n.cdwBtnCanScanner,
+                        imageName: SFSymbolName.camera,
+                        accessibilityIdentifier: A11y.cardWall.canInput.cdwBtnCanScan
+                    ) {
+                        viewStore.send(.showScannerView)
+                    }
+                    .padding()
+                    .fullScreenCover(isPresented: viewStore.binding(
+                        get: \.isScannerViewPresented,
+                        send: CardWallCANDomain.Action.dismissScannerView
+                    )) {
+                        NavigationView {
+                            CANCameraScanner(store: store, canScan: $scannedcan)
+                        }
+                        .accentColor(Colors.primary700)
+                        .navigationViewStyle(StackNavigationViewStyle())
+                    }
                 }
                 .onReceive(NotificationCenter.default
                     .publisher(for: UIResponder.keyboardDidShowNotification)) { _ in
