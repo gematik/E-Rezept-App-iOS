@@ -108,6 +108,8 @@ public enum SFSymbolName {
     public static let chevronLeft = "chevron.left"
     public static let chevronForward = "chevron.forward"
     public static let chevronBackward = "chevron.backward"
+    public static let lightbulb = "lightbulb"
+    public static let lightbulbSlash = "lightbulb.slash"
 
     public static var filter: String {
         if #available(iOS 15.0, *) {

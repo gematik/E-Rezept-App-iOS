@@ -55,12 +55,13 @@ extension ErxTaskEntity {
                                                  in: context)
         workRelatedAccident = ErxTaskWorkRelatedAccidentEntity(accident: task.workRelatedAccident,
                                                                in: context)
-        // Note: auditEvents, communications and medicationDispense is not set here
-        // since it is loaded asynchronous from remote
+        // Note: auditEvents, communications and medicationDispenses are not set here
+        // since they are loaded asynchronous from remote
     }
 }
 
 extension ErxTask {
+    // swiftlint:disable:next function_body_length
     init?(entity: ErxTaskEntity) {
         guard let identifier = entity.identifier else {
             return nil
@@ -108,7 +109,15 @@ extension ErxTask {
                     }
                 }
                 .sorted { $0.timestamp < $1.timestamp } ?? [],
-            medicationDispense: MedicationDispense(entity: entity.medicationDispense)
+            medicationDispenses: entity.medicationDispenses?
+                .compactMap { medicationDispense in
+                    if let entity = medicationDispense as? ErxTaskMedicationDispenseEntity {
+                        return ErxTask.MedicationDispense(entity: entity)
+                    } else {
+                        return nil
+                    }
+                }
+                .sorted { $0.identifier < $1.identifier } ?? []
         )
     }
 }

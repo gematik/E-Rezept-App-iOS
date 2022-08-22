@@ -28,7 +28,9 @@ extension ErxTask {
             amount: 10,
             dosageForm: "PUL",
             dose: "N1",
-            dosageInstructions: nil
+            dosageInstructions: nil,
+            lot: "TOTO-5236-VL",
+            expiresOn: nil
         )
 
         static let medication2: ErxTask.Medication = .init(
@@ -37,7 +39,9 @@ extension ErxTask {
             amount: 12,
             dosageForm: "FDA",
             dose: "N2",
-            dosageInstructions: nil
+            dosageInstructions: nil,
+            lot: "ACDC-5236-VL",
+            expiresOn: nil
         )
 
         static let medication3: ErxTask.Medication = .init(
@@ -46,7 +50,9 @@ extension ErxTask {
             amount: 1,
             dosageForm: "ELI",
             dose: "KTP",
-            dosageInstructions: nil
+            dosageInstructions: nil,
+            lot: "ABBA-5236-VL",
+            expiresOn: nil
         )
 
         static let medication4: ErxTask.Medication = .init(
@@ -55,7 +61,9 @@ extension ErxTask {
             amount: 1,
             dosageForm: "AEO",
             dose: "KA",
-            dosageInstructions: nil
+            dosageInstructions: nil,
+            lot: "DODO-5236-VL",
+            expiresOn: nil
         )
 
         static let medication5: ErxTask.Medication = .init(
@@ -64,7 +72,9 @@ extension ErxTask {
             amount: 2,
             dosageForm: "GEL",
             dose: "sonstiges",
-            dosageInstructions: nil
+            dosageInstructions: nil,
+            lot: nil,
+            expiresOn: nil
         )
 
         static let medication6: ErxTask.Medication = .init(
@@ -73,7 +83,9 @@ extension ErxTask {
             amount: 5,
             dosageForm: "INH",
             dose: "N2",
-            dosageInstructions: nil
+            dosageInstructions: nil,
+            lot: nil,
+            expiresOn: nil
         )
 
         static let medication7: ErxTask.Medication = .init(
@@ -82,7 +94,9 @@ extension ErxTask {
             amount: 20,
             dosageForm: "TAB",
             dose: "N3",
-            dosageInstructions: nil
+            dosageInstructions: nil,
+            lot: nil,
+            expiresOn: nil
         )
 
         static let medication8: ErxTask.Medication = .init(
@@ -91,7 +105,41 @@ extension ErxTask {
             amount: 8,
             dosageForm: "INS",
             dose: "NB",
-            dosageInstructions: nil
+            dosageInstructions: nil,
+            lot: nil,
+            expiresOn: nil
+        )
+
+        static let medicationDispense1: ErxTask.MedicationDispense = .init(
+            identifier: "taskId-1",
+            taskId: "53210f983-1e67-22c5-8955-63bf44e44fb8",
+            insuranceId: "A123456789",
+            pzn: "06876519",
+            name: "Vita-Tee",
+            dose: "NB",
+            dosageForm: "INS",
+            dosageInstruction: nil,
+            amount: 4,
+            telematikId: "11b2-8555",
+            whenHandedOver: DemoDate.createDemoDate(.today) ?? "",
+            lot: nil,
+            expiresOn: nil
+        )
+
+        static let medicationDispense2: ErxTask.MedicationDispense = .init(
+            identifier: "taskId-2",
+            taskId: "53210f983-1e67-22c5-8955-63bf44e44fb8",
+            insuranceId: "A123456789",
+            pzn: "06876519",
+            name: "Vita-Tee",
+            dose: "NB",
+            dosageForm: "INS",
+            dosageInstruction: nil,
+            amount: 4,
+            telematikId: "11b2-8555",
+            whenHandedOver: DemoDate.createDemoDate(.today) ?? "",
+            lot: nil,
+            expiresOn: nil
         )
 
         static let erxTaskReady = erxTask1
@@ -99,6 +147,8 @@ extension ErxTask {
         static let erxTaskInProgress = erxTask14
 
         static let erxTaskRedeemed = erxTask10
+
+        static let erxTaskCompleted = erxTask15
 
         static let erxTaskError: ErxTask = .init(
             identifier: "2390f983-1e67-11b2-8555-63bf44e44fb8",
@@ -384,6 +434,28 @@ extension ErxTask {
             organization: demoOrganization,
             workRelatedAccident: demoWorkRelatedAccident,
             auditEvents: ErxAuditEvent.Dummies.auditEvents
+        )
+
+        static let erxTask15: ErxTask = .init(
+            identifier: "53210f983-1e67-22c5-8955-63bf44e44fb8",
+            status: .completed,
+            accessCode: "e46ab30336811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
+            fullUrl: nil,
+            authoredOn: DemoDate.createDemoDate(.thirtyDaysBefore),
+            expiresOn: DemoDate.createDemoDate(.weekBefore),
+            acceptedUntil: DemoDate.createDemoDate(.weekBefore),
+            redeemedOn: DemoDate.createDemoDate(.yesterday),
+            author: "Dr. Dr. med. Carsten van Storchhausen",
+            medication: medication8,
+            patient: demoPatient,
+            practitioner: demoPractitioner,
+            organization: demoOrganization,
+            workRelatedAccident: demoWorkRelatedAccident,
+            auditEvents: ErxAuditEvent.Dummies.auditEvents,
+            medicationDispenses: [
+                medicationDispense1,
+                medicationDispense2,
+            ]
         )
 
         static let erxTasks: [ErxTask] =

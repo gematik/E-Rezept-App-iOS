@@ -118,9 +118,6 @@ public protocol ErxLocalDataStore {
 
     // MARK: - MedicationDispense interfaces
 
-    /// Fetch the most recent `handOverDate` of all `MedicationDispense`s
-    func fetchLatestHandOverDateForMedicationDispenses() -> AnyPublisher<String?, LocalStoreError>
-
     /// List all medication dispenses contained in the store
     func listAllMedicationDispenses() -> AnyPublisher<[ErxTask.MedicationDispense], LocalStoreError>
 

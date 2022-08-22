@@ -30,4 +30,6 @@ extension ErxTaskMedicationEntity {
     @NSManaged public var dose: String?
     @NSManaged public var name: String?
     @NSManaged public var pzn: String?
+    @NSManaged public var lot: String?
+    @NSManaged public var expiresOn: String?
 }

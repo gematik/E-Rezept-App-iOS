@@ -18,31 +18,40 @@
 
 import SwiftUI
 
-struct MedicationNameView: View {
-    let medicationText: String
-    let statusMessage: String
+struct MedicationTitleView: View {
+    let title: String
+    let statusMessage: String?
+
+    init(title: String, statusMessage: String? = nil) {
+        self.title = title
+        self.statusMessage = statusMessage
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             SectionViewString(
-                text: medicationText,
-                a11y: medicationText
+                text: title,
+                a11y: A11y.prescriptionDetails.prscDtlTxtTitle
             )
             .fixedSize(horizontal: false, vertical: true)
 
-            HStack {
-                Text(statusMessage)
-                Spacer()
+            if let message = statusMessage {
+                HStack {
+                    Text(message)
+                    Spacer()
+                }
+                .font(Font.subheadline)
+                .foregroundColor(Colors.systemLabelSecondary)
             }
-            .font(Font.subheadline)
-            .foregroundColor(Colors.systemLabelSecondary)
         }
     }
 }
 
-struct MedicationNameView_Previews: PreviewProvider {
+struct MedicationTitleView_Previews: PreviewProvider {
     static var previews: some View {
-        MedicationNameView(medicationText: "Medication 3",
-                           statusMessage: "Noch einlösbar bis zum 16.01.2021")
+        MedicationTitleView(title: "Medication 3",
+                            statusMessage: "Noch einlösbar bis zum 16.01.2021")
+
+        MedicationTitleView(title: "Medication 4")
     }
 }

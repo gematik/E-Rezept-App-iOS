@@ -537,7 +537,8 @@ class FakeErxTaskRepository: ErxTaskRepository {
                     lanr: "987654321",
                     name: "Dr. Black"
                 ),
-                medicationDispense: ErxTask.MedicationDispense(
+                medicationDispenses: [ErxTask.MedicationDispense(
+                    identifier: "3456789987654",
                     taskId: "7390f983-1e67-11b2-8555-63bf44e44f6c",
                     insuranceId: "ABC",
                     pzn: "X123456",
@@ -547,8 +548,10 @@ class FakeErxTaskRepository: ErxTaskRepository {
                     dosageInstruction: "",
                     amount: 11,
                     telematikId: "1234567",
-                    whenHandedOver: handedOverAWeekBefore!
-                )
+                    whenHandedOver: handedOverAWeekBefore!,
+                    lot: nil,
+                    expiresOn: nil
+                )]
             ),
             "14": ErxTask(
                 identifier: "7390f983-1e67-11b2-8555-63bf44e44f7c",
@@ -566,18 +569,38 @@ class FakeErxTaskRepository: ErxTaskRepository {
                 practitioner: ErxTask.Practitioner(
                     lanr: "987654322"
                 ),
-                medicationDispense: ErxTask.MedicationDispense(
-                    taskId: "7390f983-1e67-11b2-8555-63bf44e44f7c",
-                    insuranceId: "ABC",
-                    pzn: "X123456",
-                    name: "Brausepulver 3",
-                    dose: "",
-                    dosageForm: "TAB",
-                    dosageInstruction: "",
-                    amount: 11,
-                    telematikId: "1234567",
-                    whenHandedOver: handedOverAWeekBefore!
-                )
+                medicationDispenses: [
+                    ErxTask.MedicationDispense(
+                        identifier: "098767825647892",
+                        taskId: "7390f983-1e67-11b2-8555-63bf44e44f7c",
+                        insuranceId: "ABC",
+                        pzn: "X123456",
+                        name: "Brausepulver 3",
+                        dose: "",
+                        dosageForm: "TAB",
+                        dosageInstruction: "",
+                        amount: 5,
+                        telematikId: "1234567",
+                        whenHandedOver: handedOverAWeekBefore!,
+                        lot: nil,
+                        expiresOn: nil
+                    ),
+                    ErxTask.MedicationDispense(
+                        identifier: "098767825647892-2",
+                        taskId: "7390f983-1e67-11b2-8555-63bf44e44f7c",
+                        insuranceId: "ABC",
+                        pzn: "X123456",
+                        name: "Brausepulver 3",
+                        dose: "",
+                        dosageForm: "TAB",
+                        dosageInstruction: "",
+                        amount: 5,
+                        telematikId: "1234567",
+                        whenHandedOver: handedOverAWeekBefore!,
+                        lot: nil,
+                        expiresOn: nil
+                    ),
+                ]
             ),
         ]
     }()

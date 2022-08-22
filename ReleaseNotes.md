@@ -1,3 +1,22 @@
+# Release 1.4.2
+
+### added (4 changes)
+
+- Add new localizations for uk, ar, pl and ru
+- Adds LOT number and expiration date to prescription details
+- Add flashlight when using the camera
+- Add ReadCardHelpView to help connect with eGK
+- Add multiple medication dispenses
+
+### changed (1 change)
+
+- Change loading medication dispenses after status change
+
+### internal (1 change)
+
+- Add AVS integration test
+
+
 # Release 1.4.0
 
 ### fixed (2 changes)

@@ -92,9 +92,6 @@ public class DefaultErxTaskRepository: ErxTaskRepository {
     public func loadRemoteAll(for locale: String?) -> AnyPublisher<[ErxTask], ErrorType> {
         loadRemoteLatestTasks()
             .flatMap { _ in
-                self.loadRemoteLatestMedicationDispenses()
-            }
-            .flatMap { _ in
                 self.loadRemoteLatestCommunications()
             }
             .flatMap { _ in
@@ -117,6 +114,7 @@ public class DefaultErxTaskRepository: ErxTaskRepository {
                 self.cloud.listAllTasks(after: lastModified)
                     .mapError(ErrorType.remote)
             }
+            .flatMap(loadRemoteMedicationDispenses(for:))
             .flatMap {
                 self.disk.save(tasks: $0, updateProfileLastAuthenticated: true)
                     .mapError(ErrorType.local)
@@ -181,18 +179,28 @@ public class DefaultErxTaskRepository: ErxTaskRepository {
             .eraseToAnyPublisher()
     }
 
-    private func loadRemoteLatestMedicationDispenses() -> AnyPublisher<Bool, ErrorType> {
-        disk.fetchLatestHandOverDateForMedicationDispenses()
-            .first()
-            .mapError(ErrorType.local)
-            .flatMap { timestamp in
-                self.cloud.listAllMedicationDispenses(after: timestamp)
-                    .mapError(ErrorType.remote)
+    private func loadRemoteMedicationDispenses(for tasks: [ErxTask]) -> AnyPublisher<[ErxTask], ErrorType> {
+        let taskPublishers: [AnyPublisher<ErxTask, ErrorType>] =
+            tasks.compactMap { task in
+                if task.status == .completed {
+                    return self.cloud.listMedicationDispenses(for: task.id)
+                        .mapError(ErrorType.remote)
+                        .flatMap {
+                            self.disk.save(medicationDispenses: $0)
+                                .mapError(ErrorType.local)
+                                .map { _ in task }
+                                .eraseToAnyPublisher()
+                        }
+                        .eraseToAnyPublisher()
+                } else {
+                    return Just(task)
+                        .setFailureType(to: ErrorType.self)
+                        .eraseToAnyPublisher()
+                }
             }
-            .flatMap {
-                self.disk.save(medicationDispenses: $0)
-                    .mapError(ErrorType.local)
-            }
+
+        return Publishers.MergeMany(taskPublishers)
+            .collect()
             .eraseToAnyPublisher()
     }
 

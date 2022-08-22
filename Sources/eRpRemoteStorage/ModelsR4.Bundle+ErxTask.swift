@@ -136,7 +136,9 @@ extension ModelsR4.Bundle {
                                            amount: medication?.decimalAmount,
                                            dosageForm: medication?.dosageForm,
                                            dose: medication?.dose,
-                                           dosageInstructions: patientReceiptBundle.dosageInstructions),
+                                           dosageInstructions: patientReceiptBundle.dosageInstructions,
+                                           lot: medication?.lot,
+                                           expiresOn: medication?.expiresOn),
             patient: ErxTask.Patient(
                 name: patient?.fullName,
                 address: patient?.completeAddress,
@@ -410,6 +412,14 @@ extension ModelsR4.Medication {
         code?.coding?.first {
             $0.system?.value?.url.absoluteString == Prescription.Key.pznKey
         }?.code?.value?.string
+    }
+
+    var lot: String? {
+        batch?.lotNumber?.value?.string
+    }
+
+    var expiresOn: String? {
+        batch?.expirationDate?.value?.description
     }
 }
 

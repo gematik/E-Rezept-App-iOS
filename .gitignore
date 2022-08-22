@@ -103,6 +103,9 @@ iOSInjectionProject/
 # R.swift generated
 #*.generated.swift
 
+# own
+.urls
+
 Jenkinsfile
 Jenkinsfile_Archive
 devops

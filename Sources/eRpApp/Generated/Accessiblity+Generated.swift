@@ -95,6 +95,8 @@ internal enum A11y {
       static let cdwBtnRcCancel = "cdw_btn_rc_cancel"
       static let cdwTxtRcHeadline = "cdw_txt_rc_headline"
       static let cdwTxtRcDescription = "cdw_txt_rc_description"
+      static let cdwBtnRcHelpNextTip = "cdw_btn_rc_help_next_tip"
+      static let cdwBtnRcHelpNext = "cdw_btn_rc_help_next"
   }
     internal enum select {
       static let cdwBtnSelContinue = "cdw_btn_sel_continue"
@@ -261,7 +263,9 @@ internal enum A11y {
       static let phaFilterFilterList = "pha_filter_filter_list"
   }
     internal enum prescriptionDetails {
+      static let prscDtlTxtTitle = "prsc_dtl_txt_title"
       static let prscDtlTxtMedInfo = "prsc_dtl_txt_med_info"
+      static let prscDtlTxtMedInfoList = "prsc_dtl_txt_med_info_list"
       static let prscDtlTxtMedDosageInstructions = "prsc_dtl_txt_med_dosage_instructions"
       static let prscDtlBtnDeleteMedication = "prsc_dtl_btn_delete_medication"
       static let prscDtlBtnToggleRedeem = "prsc_dtl_btn_toggle_redeem"

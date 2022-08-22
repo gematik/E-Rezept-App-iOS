@@ -44,7 +44,7 @@ public struct ErxTask: Identifiable, Hashable {
         workRelatedAccident: WorkRelatedAccident? = nil,
         auditEvents: [ErxAuditEvent] = [],
         communications: [Communication] = [],
-        medicationDispense: MedicationDispense? = nil
+        medicationDispenses: [MedicationDispense] = []
     ) {
         self.identifier = identifier
         self.status = status
@@ -68,7 +68,7 @@ public struct ErxTask: Identifiable, Hashable {
         self.workRelatedAccident = workRelatedAccident
         self.auditEvents = auditEvents
         self.communications = communications
-        self.medicationDispense = medicationDispense
+        self.medicationDispenses = medicationDispenses
     }
 
     // MARK: gematik profiled FHIR resources
@@ -124,8 +124,8 @@ public struct ErxTask: Identifiable, Hashable {
     public let auditEvents: [ErxAuditEvent]
     /// List of all  communications for  the task, sorted by timestamp
     public let communications: [Communication]
-    /// The actual medication dispense
-    public let medicationDispense: MedicationDispense?
+    /// List of actual medication dispenses
+    public let medicationDispenses: [MedicationDispense]
 
     /// Changes status of `ErxTask` and updates the manual changed `redeemedOn` property
     /// Use this method only for scanned `ErxTask`s that have been manually redeemed by the user
@@ -317,7 +317,7 @@ extension ErxTask: Comparable {
             lhs.workRelatedAccident == rhs.workRelatedAccident &&
             lhs.auditEvents.elementsEqual(rhs.auditEvents) &&
             lhs.communications.elementsEqual(rhs.communications) &&
-            lhs.medicationDispense == rhs.medicationDispense
+            lhs.medicationDispenses == rhs.medicationDispenses
     }
 
     public func hash(into hasher: inout Hasher) {
@@ -416,13 +416,17 @@ extension ErxTask {
                     amount: Decimal? = nil,
                     dosageForm: String? = nil,
                     dose: String? = nil,
-                    dosageInstructions: String? = nil) {
+                    dosageInstructions: String? = nil,
+                    lot: String? = nil,
+                    expiresOn: String? = nil) {
             self.name = name
             self.pzn = pzn
             self.amount = amount
             self.dosageForm = dosageForm
             self.dose = dose
             self.dosageInstructions = dosageInstructions
+            self.lot = lot
+            self.expiresOn = expiresOn
         }
 
         public let name: String?
@@ -431,5 +435,7 @@ extension ErxTask {
         public let dosageForm: String?
         public let dose: String?
         public let dosageInstructions: String?
+        public let lot: String?
+        public let expiresOn: String?
     }
 }

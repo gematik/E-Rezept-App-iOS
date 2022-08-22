@@ -35,6 +35,10 @@ extension ModelsR4.Bundle {
     }
 
     static func parse(_ medicationDispense: ModelsR4.MedicationDispense) throws -> ErxTask.MedicationDispense {
+        guard let identifier = medicationDispense.id?.value?.string else {
+            throw RemoteStorageBundleParsingError.parseError("Could not parse identifier from medication dispense.")
+        }
+
         guard let taskId = medicationDispense.taskId else {
             throw RemoteStorageBundleParsingError.parseError("Could not parse task id from medication dispense.")
         }
@@ -56,6 +60,7 @@ extension ModelsR4.Bundle {
         }
 
         return ErxTask.MedicationDispense(
+            identifier: identifier,
             taskId: taskId,
             insuranceId: insuranceId,
             pzn: productNumber,
@@ -65,7 +70,9 @@ extension ModelsR4.Bundle {
             dosageInstruction: medicationDispense.firstDosageInstruction,
             amount: medicationDispense.medicationAmount,
             telematikId: performerID,
-            whenHandedOver: handedOverDateString
+            whenHandedOver: handedOverDateString,
+            lot: medicationDispense.lot,
+            expiresOn: medicationDispense.expiresOn
         )
     }
 }
@@ -126,5 +133,13 @@ extension ModelsR4.MedicationDispense {
 
     var handOverDate: String? {
         whenHandedOver?.value?.description
+    }
+
+    var lot: String? {
+        medication?.lot
+    }
+
+    var expiresOn: String? {
+        medication?.expiresOn
     }
 }

@@ -119,6 +119,12 @@ class DemoErxTaskRepository: ErxTaskRepository {
         Just(0).setFailureType(to: ErrorType.self).eraseToAnyPublisher()
     }
 
+    func loadRemoteMedicationDispenses(
+        for _: [ErxTask]
+    ) -> AnyPublisher<[ErxTask], ErxRepositoryError> {
+        Just([]).setFailureType(to: ErrorType.self).eraseToAnyPublisher()
+    }
+
     private lazy var store: Set<ErxTask> = {
         Set(ErxTask.Demo.erxTasks)
     }()

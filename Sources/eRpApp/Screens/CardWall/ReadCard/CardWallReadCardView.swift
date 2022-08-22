@@ -25,6 +25,16 @@ import SwiftUI
 struct CardWallReadCardView: View {
     @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     let store: CardWallReadCardDomain.Store
+    struct ViewState: Equatable {
+        let routeTag: CardWallReadCardDomain.Route.Tag?
+        let output: CardWallReadCardDomain.State.Output
+        let isDemoModus: Bool
+        init(state: CardWallReadCardDomain.State) {
+            routeTag = state.route?.tag
+            output = state.output
+            isDemoModus = state.isDemoModus
+        }
+    }
 
     static let height: CGFloat = {
         // Compensate display scaling (Settings -> Display & Brightness -> Display -> Standard vs. Zoomed
@@ -34,44 +44,73 @@ struct CardWallReadCardView: View {
     @State var showVideo = false
 
     var body: some View {
-        WithViewStore(store) { viewStore in
+        WithViewStore(store.scope(state: ViewState.init)) { viewStore in
             VStack(spacing: 0) {
-                // Use overlay to also fill safe area but specify fixed height
-                VStack {}
-                    .frame(width: nil, height: Self.height, alignment: .top)
-                    .overlay(
-                        HStack {
-                            Image(Asset.CardWall.onScreenEgk)
-                                .scaledToFill()
-                                .frame(width: nil, height: Self.height, alignment: .bottom)
+                ScrollView {
+                    VStack(spacing: 0) {
+                        // Use overlay to also fill safe area but specify fixed height
+                        VStack {}
+                            .frame(width: nil, height: Self.height, alignment: .top)
+                            .overlay(
+                                HStack {
+                                    Image(Asset.CardWall.onScreenEgk)
+                                        .scaledToFill()
+                                        .frame(width: nil, height: Self.height, alignment: .bottom)
+                                }
+                            )
+                        Line()
+                            .stroke(style: StrokeStyle(lineWidth: 2,
+                                                       lineCap: CoreGraphics.CGLineCap.round,
+                                                       lineJoin: CoreGraphics.CGLineJoin.round,
+                                                       miterLimit: 2,
+                                                       dash: [8, 8],
+                                                       dashPhase: 0))
+                            .foregroundColor(Color(.opaqueSeparator))
+                            .frame(width: nil, height: 2, alignment: .center)
+                    }
+                    Text(L10n.cdwTxtRcPlacement)
+                        .font(.subheadline.bold())
+                        .foregroundColor(Color(.secondaryLabel))
+                        .padding(8)
+                        .padding(.bottom, 16)
+
+                    Text(L10n.cdwTxtRcCta)
+                        .font(.title3.bold())
+                        .multilineTextAlignment(.center)
+                        .padding()
+                        .background(Color(.systemGray6))
+                        .cornerRadius(16)
+                        .padding()
+
+                    TertiaryButton(text: L10n.cdwBtnRcHelp.key, imageName: "questionmark.circle") {
+                        viewStore.send(.openHelpViewScreen)
+                    }
+                    .fullScreenCover(isPresented: Binding<Bool>(
+                        get: { viewStore.state.routeTag == .help },
+                        set: { show in
+                            if !show {
+                                viewStore.send(.setNavigation(tag: nil))
+                            }
                         }
-                    )
-
-                Line()
-                    .stroke(style: StrokeStyle(lineWidth: 2,
-                                               lineCap: CoreGraphics.CGLineCap.round,
-                                               lineJoin: CoreGraphics.CGLineJoin.round,
-                                               miterLimit: 2,
-                                               dash: [8, 8],
-                                               dashPhase: 0))
-                    .foregroundColor(Color(.opaqueSeparator))
-                    .frame(width: nil, height: 2, alignment: .center)
-
-                Text(L10n.cdwTxtRcPlacement)
-                    .font(.subheadline.bold())
-                    .foregroundColor(Color(.secondaryLabel))
-                    .padding(8)
-                    .padding(.bottom, 16)
-
-                Text(L10n.cdwTxtRcCta)
-                    .font(.title3.bold())
-                    .multilineTextAlignment(.center)
+                    ),
+                    onDismiss: {},
+                    content: {
+                        NavigationView {
+                            IfLetStore(
+                                store.scope(
+                                    state: (\CardWallReadCardDomain.State.route)
+                                        .appending(path: /CardWallReadCardDomain.Route.help)
+                                        .extract(from:)
+                                ),
+                                then: ReadCardHelpView.init(store:)
+                            )
+                        }
+                        .accentColor(Colors.primary700)
+                        .navigationViewStyle(StackNavigationViewStyle())
+                    })
                     .padding()
-                    .background(Color(.systemGray6))
-                    .cornerRadius(16)
-                    .padding()
-
-                Spacer(minLength: 0)
+                }
+                Spacer()
 
                 GreyDivider()
 
@@ -103,8 +142,11 @@ struct CardWallReadCardView: View {
                 Text(L10n.cdwTxtRcDemoModeInfo)
             }
             .alert(
-                self.store.scope(state: \.alertState),
-                dismiss: .alertDismissButtonTapped
+                self.store
+                    .scope(state: (\CardWallReadCardDomain.State.route)
+                        .appending(path: /CardWallReadCardDomain.Route.alert)
+                        .extract(from:)),
+                dismiss: .setNavigation(tag: .none)
             )
             .onAppear {
                 viewStore.send(.getChallenge)

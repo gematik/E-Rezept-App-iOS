@@ -242,12 +242,11 @@ extension FHIRClient {
             .allCommunications(referenceDate: referenceDate, handler: handler))
     }
 
-    /// Requests all medication dispenses available since `referenceDate`
-    /// - Parameter referenceDate: MedicationDispense with date greater or equal `referenceDate` will be fetched.
-    ///                            Pass `nil` for fetching all audit events
-    /// - Returns: MedicationDispenses with `whenHandedOver` great or equal `referenceDate` will be fetched
-    public func fetchAllMedicationDispenses(
-        after referenceDate: String?
+    /// Requests medication dispenses for a specific `Prescription`
+    /// - Parameter id: MedicationDispense for the corresponding `ErxTask.ID` will be fetched.
+    /// - Returns: `AnyPublisher` that emits `MedicationDispense`s
+    public func fetchMedicationDispenses(
+        for id: ErxTask.ID
     ) -> AnyPublisher<[ErxTask.MedicationDispense], FHIRClient.Error> {
         let handler =
             DefaultFHIRResponseHandler { (fhirResponse: FHIRClient.Response) -> [ErxTask.MedicationDispense] in
@@ -260,7 +259,7 @@ extension FHIRClient {
             }
 
         return execute(operation: ErxTaskFHIROperation
-            .allMedicationDispenses(referenceDate: referenceDate, handler: handler))
+            .medicationDispenses(id: id, handler: handler))
     }
 
     static var decoder: JSONDecoder {

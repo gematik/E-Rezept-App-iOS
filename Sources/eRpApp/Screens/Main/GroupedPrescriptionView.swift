@@ -157,7 +157,7 @@ struct GroupedPrescriptionView: View {
                         VStack(alignment: .leading, spacing: 4) {
                             PrescriptionStatusView(prescription: prescription)
                                 .accessibility(identifier: A18n.mainScreen.erxDetailedBlockStatus)
-                            Text(prescription.actualMedication?.name, placeholder: L10n.erxTxtMedicationPlaceholder)
+                            Text(prescription.prescribedMedication?.name, placeholder: L10n.erxTxtMedicationPlaceholder)
                                 .foregroundColor(Colors.systemLabel)
                                 .font(Font.body.weight(.semibold))
                                 .multilineTextAlignment(.leading)
@@ -167,6 +167,7 @@ struct GroupedPrescriptionView: View {
                                 .foregroundColor(Color(.secondaryLabel))
                                 .accessibility(identifier: A18n.mainScreen.erxDetailedBlockPrescriptionValidity)
                         }
+                        .multilineTextAlignment(.leading)
                         Spacer()
                         Image(systemName: SFSymbolName.rightDisclosureIndicator)
                             .font(Font.headline.weight(.semibold))
@@ -195,7 +196,7 @@ struct GroupedPrescriptionView: View {
                             .foregroundColor(Colors.primary500)
                         VStack(alignment: .leading, spacing: 4) {
                             PrescriptionStatusView(prescription: prescription)
-                            Text(prescription.actualMedication?.name, placeholder: L10n.erxTxtMedicationPlaceholder)
+                            Text(prescription.prescribedMedication?.name, placeholder: L10n.erxTxtMedicationPlaceholder)
                                 .font(Font.body.weight(.semibold))
                                 .foregroundColor(Colors.systemLabel)
                                 .multilineTextAlignment(.leading)

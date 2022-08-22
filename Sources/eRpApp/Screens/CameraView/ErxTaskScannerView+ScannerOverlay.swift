@@ -16,6 +16,7 @@
 //  
 //
 
+import AVFoundation
 import Combine
 import ComposableArchitecture
 import eRpKit
@@ -30,10 +31,30 @@ extension ErxTaskScannerView {
             WithViewStore(store) { viewStore in
                 VStack {
                     HStack {
-                        Spacer()
                         CloseButton { viewStore.send(.closeWithoutSave) }
                             .accessibility(identifier: A11y.scanner.scnBtnCancelScan)
                             .accessibility(label: Text(L10n.scnBtnCancelScan))
+
+                        Spacer()
+
+                        if (AVCaptureDevice.default(for: AVMediaType.video)?.hasTorch) != nil {
+                            Button(action: {
+                                viewStore.send(.toggleFlashLight)
+                                toggleFlashlight(status: viewStore.isFlashOn)
+                            }, label: {
+                                HStack {
+                                    Image(systemName: viewStore.state.isFlashOn ? SFSymbolName.lightbulb : SFSymbolName
+                                        .lightbulbSlash).foregroundColor(Colors.systemColorWhite)
+                                    Text(viewStore.state.isFlashOn ? L10n.scnBtnLightOn : L10n.scnBtnLightOff)
+                                        .foregroundColor(Colors.systemColorWhite)
+                                }
+                            })
+                                .padding(.horizontal)
+                                .padding(.vertical, 8)
+                                .background(Color(.systemGray5))
+                                .cornerRadius(8)
+                                .padding()
+                        }
                     }
 
                     InfoView(localizedTextKey: textLabel(for: viewStore.scanState,
@@ -60,6 +81,21 @@ extension ErxTaskScannerView {
                 }.onAppear {
                     self.isImageScaled.toggle()
                 }
+            }
+        }
+
+        private func toggleFlashlight(status: Bool) {
+            guard
+                let device = AVCaptureDevice.default(for: AVMediaType.video),
+                device.hasTorch
+            else { return }
+
+            do {
+                try device.lockForConfiguration()
+                device.torchMode = status ? .on : .off
+                device.unlockForConfiguration()
+            } catch {
+                print("Torch could not be used")
             }
         }
 

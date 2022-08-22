@@ -38,13 +38,33 @@ enum CardWallReadCardDomain {
         case signAndVerify
     }
 
+    enum Route: Equatable {
+        case alert(AlertState<Action>)
+        case help(Int)
+
+        enum Tag: Int {
+            case alert
+            case help
+        }
+
+        var tag: Tag {
+            switch self {
+            case .alert:
+                return .alert
+            case .help:
+                return .help
+            }
+        }
+    }
+
     struct State: Equatable {
         let isDemoModus: Bool
         let profileId: UUID
         var pin: String
         var loginOption: LoginOption
         var output: Output
-        var alertState: AlertState<Action>?
+
+        var route: Route?
     }
 
     enum Action: Equatable {
@@ -56,8 +76,11 @@ enum CardWallReadCardDomain {
 
         case stateReceived(State.Output)
         case saveError(LocalStoreError)
-        case alertDismissButtonTapped
         case openMail(String)
+        case openHelpViewScreen
+        case updatePageIndex(index: Int)
+        case navigateToIntro
+        case setNavigation(tag: Route.Tag?)
     }
 
     struct Environment {
@@ -87,7 +110,7 @@ enum CardWallReadCardDomain {
                 familyName: payload?.familyName
             )
         case .saveError:
-            state.alertState = AlertStates.saveProfile
+            state.route = .alert(AlertStates.saveProfile)
             return .none
         case let .stateReceived(output):
             state.output = output
@@ -102,16 +125,16 @@ enum CardWallReadCardDomain {
                     // do not present error when user cancelled the session
                     break
                 case .signChallengeError(.wrongPin(0)):
-                    state.alertState = AlertStates.alertFor(error)
+                    state.route = .alert(AlertStates.alertFor(error))
                 case .signChallengeError(.wrongPin):
-                    state.alertState = AlertStates.wrongPIN(error)
+                    state.route = .alert(AlertStates.wrongPIN(error))
                 case .signChallengeError(.wrongCAN):
-                    state.alertState = AlertStates.wrongCAN(error)
+                    state.route = .alert(AlertStates.wrongCAN(error))
                 case let .signChallengeError(error):
                     let report = createNfcReadingReport(with: error, commands: CommandLogger.commands)
-                    state.alertState = AlertStates.alertWithReportButton(report, error: error)
+                    state.route = .alert(AlertStates.alertWithReportButton(report, error: error))
                 default:
-                    state.alertState = AlertStates.alertFor(error)
+                    state.route = .alert(AlertStates.alertFor(error))
                 }
             default:
                 break
@@ -163,15 +186,27 @@ enum CardWallReadCardDomain {
             return .none
         case .wrongPIN:
             return .none
-        case .alertDismissButtonTapped:
-            state.alertState = nil
-            return .none
         case let .openMail(message):
             let mailState = EmailState(subject: L10n.cdwTxtMailSubject.text, body: message)
             guard let url = mailState.createEmailUrl() else { return .none }
             if environment.application.canOpenURL(url) {
                 environment.application.open(url)
             }
+            return .none
+        case .openHelpViewScreen:
+            state.route = .help(0)
+            return .none
+        case let .updatePageIndex(index):
+            guard state.route?.tag == .help else { return .none }
+            state.route = .help(index)
+            return .none
+        case .navigateToIntro:
+            state.route = nil
+            return .none
+        case .setNavigation(tag: .none):
+            state.route = nil
+            return .none
+        case .setNavigation:
             return .none
         }
     }
@@ -195,7 +230,7 @@ extension CardWallReadCardDomain {
                 title: TextState(error.localizedDescriptionWithErrorList),
                 message: error.recoverySuggestion.map(TextState.init),
                 primaryButton: .default(TextState(L10n.cdwBtnRcCorrectCan), action: .send(.wrongCAN)),
-                secondaryButton: .cancel(TextState(L10n.cdwBtnRcAlertCancel), action: .send(.alertDismissButtonTapped))
+                secondaryButton: .cancel(TextState(L10n.cdwBtnRcAlertCancel), action: .send(.setNavigation(tag: .none)))
             )
         }
 
@@ -204,7 +239,7 @@ extension CardWallReadCardDomain {
                 title: TextState(error.localizedDescriptionWithErrorList),
                 message: error.recoverySuggestion.map(TextState.init),
                 primaryButton: .default(TextState(L10n.cdwBtnRcCorrectPin), action: .send(.wrongPIN)),
-                secondaryButton: .cancel(TextState(L10n.cdwBtnRcAlertCancel), action: .send(.alertDismissButtonTapped))
+                secondaryButton: .cancel(TextState(L10n.cdwBtnRcAlertCancel), action: .send(.setNavigation(tag: .none)))
             )
         }
 
@@ -212,7 +247,7 @@ extension CardWallReadCardDomain {
             AlertState(
                 title: TextState(error.localizedDescriptionWithErrorList),
                 message: error.recoverySuggestion.map(TextState.init),
-                dismissButton: .default(TextState(L10n.cdwBtnRcAlertClose), action: .send(.alertDismissButtonTapped))
+                dismissButton: .default(TextState(L10n.cdwBtnRcAlertClose), action: .send(.setNavigation(tag: .none)))
             )
         }
 

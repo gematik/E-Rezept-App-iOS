@@ -24,6 +24,7 @@ extension ErxTask {
     public struct MedicationDispense: Equatable {
         /// Default initializer for a MedicationDispense which represent a ModulesR4.MedicationDispense
         /// - Parameters:
+        ///   - identifier: unique id in each `ErxTask`
         ///   - taskId: id of the related `ErkTask`
         ///   - insuranceId: KVNR of the user
         ///   - pzn: Product number of a medication
@@ -32,7 +33,10 @@ extension ErxTask {
         ///   - dosageInstruction: Instructions for the dosage of the medication
         ///   - telematikId: Telematik-ID of the pharmacy performing the dispense
         ///   - whenHandedOver: Date string representing the actual time of performing the dispense
+        ///   - lot: Identification number assigned to a particular quantity or lot of medication
+        ///   - expiresOn: Date string for expiry of the medication
         public init(
+            identifier: String,
             taskId: String,
             insuranceId: String,
             pzn: String,
@@ -42,8 +46,11 @@ extension ErxTask {
             dosageInstruction: String?,
             amount: Decimal?,
             telematikId: String,
-            whenHandedOver: String
+            whenHandedOver: String,
+            lot: String?,
+            expiresOn: String?
         ) {
+            self.identifier = identifier
             self.taskId = taskId
             self.insuranceId = insuranceId
             self.pzn = pzn
@@ -54,8 +61,12 @@ extension ErxTask {
             self.amount = amount
             self.telematikId = telematikId
             self.whenHandedOver = whenHandedOver
+            self.lot = lot
+            self.expiresOn = expiresOn
         }
 
+        /// unique identifier in each `ErxTask`
+        public let identifier: String
         /// id of the related `ErkTask` can also be used as the ID of the MedicationDispense
         public let taskId: String
         /// KVNR of the user (e.g.: "X110461389")
@@ -76,5 +87,9 @@ extension ErxTask {
         public let telematikId: String
         /// Date string representing the actual time of performing the dispense
         public let whenHandedOver: String
+        /// Identification number assigned to a particular quantity or lot of medication
+        public let lot: String?
+        /// Date string for expiry of the medication
+        public let expiresOn: String?
     }
 }

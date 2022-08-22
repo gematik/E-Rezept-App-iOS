@@ -78,6 +78,8 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
                 expect(erxTask.medication?.amount).toNot(beNil())
                 expect(erxTask.medication?.amount) == 12
                 expect(erxTask.medication?.dosageInstructions) == "1-0-1-0"
+                expect(erxTask.medication?.lot) == "1234567890abcde"
+                expect(erxTask.medication?.expiresOn) == "2020-02-03T00:00:00+00:00"
             })
 
         // test if sub has been called
@@ -268,7 +270,7 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
             }
     }
 
-    func testListAllMedicationDispensesWithSuccess() {
+    func testListMedicationDispensesForTaskWithSuccess() {
         let expectedResponse = load(resource: "medicationDispenseBundle")
         var counter = 0
 
@@ -279,7 +281,7 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
                 return fixture(filePath: expectedResponse, headers: ["Accept": "application/fhir+json"])
         }
 
-        sut.listAllMedicationDispenses(after: nil)
+        sut.listMedicationDispenses(for: "160.000.000.014.285.76")
             .test { error in
                 fail("unexpected fail with error: \(error)")
             } expectations: { medicationDispenses in
@@ -291,7 +293,7 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
             }
     }
 
-    func testListAllAllMedicationDispensesWithFailure() {
+    func testListMedicationDispensesForTaskWithFailure() {
         let expectedError = URLError(.notConnectedToInternet)
 
         var counter = 0
@@ -302,7 +304,7 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
                 return HTTPStubsResponse(error: expectedError)
         }
 
-        sut.listAllMedicationDispenses(after: nil)
+        sut.listMedicationDispenses(for: "160.000.000.014.285.76")
             .test { error in
                 expect(counter) == 1
                 expect(error) == .fhirClientError(FHIRClient.Error.httpError(.httpError(expectedError)))

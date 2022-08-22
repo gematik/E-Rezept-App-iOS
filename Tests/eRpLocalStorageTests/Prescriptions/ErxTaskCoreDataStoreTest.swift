@@ -687,6 +687,7 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
 
     lazy var medicationDispense1: ErxTask.MedicationDispense = {
         ErxTask.MedicationDispense(
+            identifier: "0987654321",
             taskId: "id_1",
             insuranceId: "insurance_id_1",
             pzn: "pzn_number_1",
@@ -696,12 +697,15 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
             dosageInstruction: "dosage_instructions_1",
             amount: 8.0,
             telematikId: "telematik_id_1",
-            whenHandedOver: "2021-07-20T10:55:04+02:00"
+            whenHandedOver: "2021-07-20T10:55:04+02:00",
+            lot: "TOTO-5236-01",
+            expiresOn: "2049-07-10T10:55:04+02:00"
         )
     }()
 
     lazy var medicationDispense2: ErxTask.MedicationDispense = {
         ErxTask.MedicationDispense(
+            identifier: "1234567890",
             taskId: "id_2",
             insuranceId: "insurance_id_2",
             pzn: "pzn_number_2",
@@ -711,7 +715,9 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
             dosageInstruction: "dosage_instructions_2",
             amount: 10.0,
             telematikId: "telematik_id_2",
-            whenHandedOver: "2021-07-23T10:55:04+02:00"
+            whenHandedOver: "2021-07-23T10:55:04+02:00",
+            lot: "TOTO-5236-02",
+            expiresOn: "2050-07-10T10:55:04+02:00"
         )
     }()
 
@@ -738,6 +744,7 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
         try store.add(medicationDispenses: [medicationDispense1])
 
         let updatedMedicationDispense = ErxTask.MedicationDispense(
+            identifier: medicationDispense1.identifier,
             taskId: medicationDispense1.taskId,
             insuranceId: "Updated insurance_id",
             pzn: "Updated pzn_number",
@@ -747,7 +754,9 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
             dosageInstruction: "Updated dosage_instructions",
             amount: 16.0,
             telematikId: "Updated telematik_id",
-            whenHandedOver: "Updated 2021-07-23T10:55:04+02:00"
+            whenHandedOver: "Updated 2021-07-23T10:55:04+02:00",
+            lot: "Updated TOTO-5236-01",
+            expiresOn: "Updated 2049-07-10T10:55:04+02:00"
         )
 
         // when updating the same medication dispense (when taskId is equal)
@@ -763,62 +772,47 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
         cancellable.cancel()
     }
 
-    func testFetchingLatestMedicationDispense() throws {
+    func testFetchingMedicationDispense() throws {
         let store = loadErxCoreDataStore()
-        // given two medicationDispenses with different dates that have been saved
+        // given two medicationDispenses that have been saved
         try store.add(medicationDispenses: [medicationDispense1, medicationDispense2])
 
-        // when fetching the latest `handOverDate` of all `MedicationDispense`s
-        var receivedHandOverValues = [String?]()
-        _ = store.fetchLatestHandOverDateForMedicationDispenses()
-            .sink(receiveCompletion: { _ in
-                fail("did not expect to receive a completion")
-            }, receiveValue: { timestamp in
-                receivedHandOverValues.append(timestamp)
-            })
-
-        expect(receivedHandOverValues.count).toEventually(equal(1))
-        // then the latest date has to be returned
-        expect(receivedHandOverValues.first) == medicationDispense2.whenHandedOver
-
         // verify that two medicationDispenses have been in store
-        var receivedValues = [[ErxTask.MedicationDispense]]()
+        var receivedValues = [ErxTask.MedicationDispense]()
         let cancellable = store.listAllMedicationDispenses()
             .sink(receiveCompletion: { _ in
                 fail("did not expect to receive a completion")
             }, receiveValue: { medicationDispense in
-                receivedValues.append(medicationDispense)
+                receivedValues.append(contentsOf: medicationDispense)
             })
 
-        expect(receivedValues.count).toEventually(equal(1))
-        expect(receivedValues[0].count).toEventually(equal(2))
-
+        expect(receivedValues.count).toEventually(equal(2))
         cancellable.cancel()
     }
 
-    func testFetchingLatestMedicationDispenseWithProfileRelationship() throws {
+    func testFetchingMedicationDispensesWithProfileRelationship() throws {
         // given
         let testProfile = Profile(name: "TestProfile")
         try prepareStores(profiles: [testProfile], medicationDispenses: [medicationDispense2])
 
         let store = loadErxCoreDataStore(for: testProfile.id)
         let task = ErxTask(identifier: medicationDispense1.taskId, status: .ready)
-        try store.add(tasks: [task]) // there must be a related task with a relationship to the profile
         try store.add(medicationDispenses: [medicationDispense1])
+        try store.add(tasks: [task]) // there must be a related task with a relationship to the profile
 
         // when
-        var receivedLatesValues = [String?]()
-        _ = store.fetchLatestHandOverDateForMedicationDispenses()
+        var receivedValues = [ErxTask.MedicationDispense]()
+        _ = store.listAllMedicationDispenses()
             .sink(receiveCompletion: { _ in
                 fail("unexpected complete")
-            }, receiveValue: { timestamp in
-                receivedLatesValues.append(timestamp)
+            }, receiveValue: { result in
+                receivedValues.append(contentsOf: result)
             })
 
         // then the timestamp of the medicationDispense with a relationship is returned even though
         // there is a newer medicationDispense in store
-        expect(receivedLatesValues.count).toEventually(equal(1))
-        expect(receivedLatesValues.first) == medicationDispense1.whenHandedOver
+        expect(receivedValues.count).toEventually(equal(1))
+        expect(receivedValues.first) == medicationDispense1
         expect(self.medicationDispense1.whenHandedOver.date) < medicationDispense2.whenHandedOver.date!
     }
 
@@ -831,8 +825,8 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
         let store = loadErxCoreDataStore(for: testProfile.id)
 
         let task = ErxTask(identifier: medicationDispense2.taskId, status: .ready)
-        try store.add(tasks: [task]) // there must be a related task with a relationship to the profile
         try store.add(medicationDispenses: [medicationDispense2])
+        try store.add(tasks: [task]) // there must be a related task with a relationship to the profile
 
         // then listing medicationDispense for that profile
         var receivedListAllValues = [[ErxTask.MedicationDispense]]()

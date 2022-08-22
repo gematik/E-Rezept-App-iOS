@@ -147,10 +147,10 @@ public class ErxTaskFHIRDataStore: ErxRemoteDataStore {
 
     // MARK: - MedicationDispense
 
-    public func listAllMedicationDispenses(
-        after referenceDate: String?
+    public func listMedicationDispenses(
+        for taskId: String
     ) -> AnyPublisher<[ErxTask.MedicationDispense], RemoteStoreError> {
-        fhirClient.fetchAllMedicationDispenses(after: referenceDate)
+        fhirClient.fetchMedicationDispenses(for: taskId)
             .mapError { RemoteStoreError.fhirClientError($0) }
             .first()
             .eraseToAnyPublisher()

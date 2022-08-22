@@ -303,22 +303,6 @@ final class MockErxLocalDataStore: ErxLocalDataStore {
         return saveAuditEventsClosure.map { $0(auditEvents) } ?? saveAuditEventsReturnValue
     }
 
-    // MARK: - fetchLatestHandOverDateForMedicationDispenses
-
-    var fetchLatestHandOverDateForMedicationDispensesCallsCount = 0
-    var fetchLatestHandOverDateForMedicationDispensesCalled: Bool {
-        fetchLatestHandOverDateForMedicationDispensesCallsCount > 0
-    }
-
-    var fetchLatestHandOverDateForMedicationDispensesReturnValue: AnyPublisher<String?, LocalStoreError>!
-    var fetchLatestHandOverDateForMedicationDispensesClosure: (() -> AnyPublisher<String?, LocalStoreError>)?
-
-    func fetchLatestHandOverDateForMedicationDispenses() -> AnyPublisher<String?, LocalStoreError> {
-        fetchLatestHandOverDateForMedicationDispensesCallsCount += 1
-        return fetchLatestHandOverDateForMedicationDispensesClosure
-            .map { $0() } ?? fetchLatestHandOverDateForMedicationDispensesReturnValue
-    }
-
     // MARK: - listAllMedicationDispenses
 
     var listAllMedicationDispensesCallsCount = 0

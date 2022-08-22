@@ -40,8 +40,8 @@ struct PrescriptionLowDetailView: View {
                     .border(Colors.systemGray3, cornerRadius: 16)
                     .padding()
 
-                MedicationNameView(
-                    medicationText: viewStore.state.prescription.medicationText,
+                MedicationTitleView(
+                    title: viewStore.state.prescription.title(for: viewStore.state.prescription.prescribedMedication),
                     statusMessage: viewStore.state.prescription.statusMessage
                 ).padding()
 

@@ -120,7 +120,11 @@ extension ErxTaskCoreDataStore {
                     #keyPath(ErxTaskMedicationDispenseEntity.taskId),
                     task.identifier
                 )
-                taskEntity.medicationDispense = try? request.execute().first
+
+                _ = try? request.execute().map {
+                    taskEntity.addToMedicationDispenses($0)
+                }
+
                 if let profileEntity = profileEntity {
                     if profileEntity.insuranceId == nil || task.patient?.insuranceId == nil {
                         taskEntity.profile = profileEntity

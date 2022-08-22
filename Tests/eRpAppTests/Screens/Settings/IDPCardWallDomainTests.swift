@@ -82,8 +82,7 @@ final class IDPCardWallDomainTests: XCTestCase {
                 profileId: self.testProfileId,
                 pin: "",
                 loginOption: LoginOption.withoutBiometry,
-                output: CardWallReadCardDomain.State.Output.idle,
-                alertState: nil
+                output: CardWallReadCardDomain.State.Output.idle
             )
         }
     }

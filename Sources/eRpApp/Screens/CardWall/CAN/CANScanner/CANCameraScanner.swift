@@ -16,9 +16,8 @@
 //  
 //
 
+import AVFoundation
 import ComposableArchitecture
-import eRpKit
-import GemCommonsKit
 import SwiftUI
 
 struct CANCameraScanner: View {
@@ -67,11 +66,56 @@ struct CANCameraScanner: View {
                     .padding(.bottom)
                 }
                 .padding()
-            }.navigationBarItems(trailing: CloseButton {
+            }.navigationBarItems(leading: CloseButton {
                 viewStore.send(.dismissScannerView)
+                toggleFlashlight(status: false)
+            },
+            trailing: LightSwitch(store: store)
+                .accessibility(identifier: A11y.cardWall.canScanner.cdwScnBtnClose)
+                .accessibility(label: Text(L10n.cdwCanScanBtnClose)))
+        }
+    }
+}
+
+private func toggleFlashlight(status: Bool) {
+    guard
+        let device = AVCaptureDevice.default(for: AVMediaType.video),
+        device.hasTorch
+    else { return }
+
+    do {
+        try device.lockForConfiguration()
+        device.torchMode = status ? .on : .off
+        device.unlockForConfiguration()
+    } catch {
+        print("Torch could not be used")
+    }
+}
+
+struct LightSwitch: View {
+    let store: CardWallCANDomain.Store
+    var body: some View {
+        WithViewStore(store) { viewStore in
+
+            if (AVCaptureDevice.default(for: AVMediaType.video)?.hasTorch) != nil {
+                Button(action: {
+                    viewStore.send(.toggleFlashLight)
+                    toggleFlashlight(status: viewStore.isFlashOn)
+                }, label: {
+                    HStack {
+                        Image(systemName: viewStore.state.isFlashOn ? SFSymbolName.lightbulb : SFSymbolName
+                            .lightbulbSlash).foregroundColor(Colors.systemColorWhite)
+                        Text(viewStore.state.isFlashOn ? L10n.scnBtnLightOn : L10n.scnBtnLightOff)
+                            .foregroundColor(Colors.systemColorWhite)
+                            .padding(.trailing)
+                    }
+                })
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 2)
+                    .background(Color(.systemGray5))
+                    .cornerRadius(8)
+                    .padding()
             }
-            .accessibility(identifier: A11y.cardWall.canScanner.cdwScnBtnClose)
-            .accessibility(label: Text(L10n.cdwCanScanBtnClose)))
         }
     }
 }

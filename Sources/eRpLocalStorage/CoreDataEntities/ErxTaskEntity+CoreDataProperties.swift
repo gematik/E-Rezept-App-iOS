@@ -42,12 +42,12 @@ extension ErxTaskEntity {
     @NSManaged public var substitutionAllowed: Bool
     @NSManaged public var auditEvents: NSSet?
     @NSManaged public var communications: NSSet?
+    @NSManaged public var medicationDispenses: NSSet?
     @NSManaged public var medication: ErxTaskMedicationEntity?
     @NSManaged public var organization: ErxTaskOrganizationEntity?
     @NSManaged public var patient: ErxTaskPatientEntity?
     @NSManaged public var practitioner: ErxTaskPractitionerEntity?
     @NSManaged public var workRelatedAccident: ErxTaskWorkRelatedAccidentEntity?
-    @NSManaged public var medicationDispense: ErxTaskMedicationDispenseEntity?
     @NSManaged public var profile: ProfileEntity?
 }
 
@@ -81,6 +81,22 @@ extension ErxTaskEntity {
 
     @objc(removeCommunications:)
     @NSManaged public func removeFromCommunications(_ values: NSSet)
+}
+
+// MARK: Generated accessors for medicationDispenses
+
+extension ErxTaskEntity {
+    @objc(addMedicationDispensesObject:)
+    @NSManaged public func addToMedicationDispenses(_ value: ErxTaskMedicationDispenseEntity)
+
+    @objc(removeMedicationDispensesObject:)
+    @NSManaged public func removeFromMedicationDispenses(_ value: ErxTaskMedicationDispenseEntity)
+
+    @objc(addMedicationDispenses:)
+    @NSManaged public func addToMedicationDispenses(_ values: NSSet)
+
+    @objc(removeMedicationDispenses:)
+    @NSManaged public func removeFromMedicationDispenses(_ values: NSSet)
 }
 
 extension ErxTaskEntity: Identifiable {}

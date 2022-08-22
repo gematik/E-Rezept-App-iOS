@@ -23,15 +23,18 @@ class IntegrationTestsEnvironment {
     let appConfiguration: AppConfiguration
     let brainpool256r1Signer: Brainpool256r1Signer?
     let idpsekURLServer: AppConfiguration.Server?
+    let gemDevAvsConfiguration: AVSIntegrationTestConfiguration?
 
     init(
         appConfiguration: AppConfiguration,
         brainpool256r1Signer: Brainpool256r1Signer? = nil,
-        idpsekURLServer: AppConfiguration.Server? = nil
+        idpsekURLServer: AppConfiguration.Server? = nil,
+        gemDevAvsConfiguration: AVSIntegrationTestConfiguration? = nil
     ) {
         self.appConfiguration = appConfiguration
         self.brainpool256r1Signer = brainpool256r1Signer
         self.idpsekURLServer = idpsekURLServer
+        self.gemDevAvsConfiguration = gemDevAvsConfiguration
     }
 }
 
@@ -48,5 +51,6 @@ let integrationTestsEnvironmentDummy = IntegrationTestsEnvironment(
         apoVzd: AppConfiguration.Server(url: "http://dummy.apo-vzd.server", header: [:])
     ),
     brainpool256r1Signer: nil,
-    idpsekURLServer: nil
+    idpsekURLServer: nil,
+    gemDevAvsConfiguration: nil
 )

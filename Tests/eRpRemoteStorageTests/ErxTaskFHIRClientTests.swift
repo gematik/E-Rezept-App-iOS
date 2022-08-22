@@ -326,17 +326,19 @@ final class ErxTaskFHIRClientTests: XCTestCase {
             }
     }
 
-    func testFetchAllMedicationDispensesWithSuccess() {
+    func testFetchMedicationDispensesForTask() {
         let expectedResponse = load(resource: "medicationDispenseBundle")
+        let taskId = "160.000.000.014.285.76"
 
         var counter = 0
         stub(condition: isPath("/MedicationDispense")
+            && containsQueryParams(["identifier": "\(Workflow.Key.prescriptionIdKeys[.v1_1_1] ?? "")|\(taskId)"])
             && isMethodGET()) { _ in
                 counter += 1
                 return fixture(filePath: expectedResponse, headers: ["Content-Type": "application/json"])
         }
 
-        sut.fetchAllMedicationDispenses(after: nil)
+        sut.fetchMedicationDispenses(for: taskId)
             .test { error in
                 fail("unexpected fail with error: \(error)")
             } expectations: { medicationDispenses in
@@ -346,30 +348,7 @@ final class ErxTaskFHIRClientTests: XCTestCase {
             }
     }
 
-    func testFetchAllMedicationDispensesWithReferenceDate() {
-        let expectedResponse = load(resource: "medicationDispenseBundle")
-
-        let timestamp = "2021-07-23T10:55:04+02:00"
-        let dateString = FHIRDateFormatter.shared.date(from: timestamp)!.fhirFormattedString(with: .yearMonthDayTime)
-
-        var counter = 0
-        stub(condition: isPath("/MedicationDispense")
-            && containsQueryParams(["whenHandedOver": "ge\(dateString)"])
-            && isMethodGET()) { _ in
-                counter += 1
-                return fixture(filePath: expectedResponse, headers: ["Content-Type": "application/json"])
-        }
-
-        sut.fetchAllMedicationDispenses(after: timestamp)
-            .test { error in
-                fail("unexpected fail with error: \(error)")
-            } expectations: { medicationDispenses in
-                expect(counter) == 1
-                expect(medicationDispenses.count) == 2
-            }
-    }
-
-    func testFetchAllMedicationDispensesWithError() {
+    func testFetchMedicationDispensesForTaskWithError() {
         let expectedError = URLError(.notConnectedToInternet)
 
         var counter = 0
@@ -379,7 +358,7 @@ final class ErxTaskFHIRClientTests: XCTestCase {
                 return HTTPStubsResponse(error: expectedError)
         }
 
-        sut.fetchAllMedicationDispenses(after: nil)
+        sut.fetchMedicationDispenses(for: "160.000.000.014.285.76")
             .test { error in
                 expect(counter) == 1
                 expect(error) == .httpError(.httpError(expectedError))

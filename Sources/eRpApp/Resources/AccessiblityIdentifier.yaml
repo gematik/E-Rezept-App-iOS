@@ -96,6 +96,8 @@ cardWall:
     - cdw_btn_rc_cancel
     - cdw_txt_rc_headline
     - cdw_txt_rc_description
+    - cdw_btn_rc_help_next_tip
+    - cdw_btn_rc_help_next
 onboarding:
   start:
     - onb_txt_start_title
@@ -279,7 +281,9 @@ profileSelection:
   - pro_txt_selection_profile_list_entry
   - pro_btn_selection_edit
 prescriptionDetails:
+  - prsc_dtl_txt_title
   - prsc_dtl_txt_med_info
+  - prsc_dtl_txt_med_info_list
   - prsc_dtl_txt_med_dosage_instructions
   - prsc_dtl_btn_delete_medication
   - prsc_dtl_btn_toggle_redeem

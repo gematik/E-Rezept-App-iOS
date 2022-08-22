@@ -60,7 +60,8 @@ final class DefaultErxTaskRepositoryTests: XCTestCase {
             }
         }
 
-        mockLocalDataStore.saveAuditEventsReturnValue = Just(true).setFailureType(to: LocalStoreError.self)
+        mockLocalDataStore.saveAuditEventsReturnValue = Just(true)
+            .setFailureType(to: LocalStoreError.self)
             .eraseToAnyPublisher()
 
         sut.loadRemoteLatestAuditEvents(for: nil)
@@ -84,10 +85,9 @@ final class DefaultErxTaskRepositoryTests: XCTestCase {
         let expectedCallOrder = [
             "lastModifiedErxTaskLocal",
             "listTasksRemote",
-            "saveTasksLocal",
-            "latestHandOverMDLocal",
-            "listAllMDRemote",
+            "listMDRemote",
             "saveMDLocal",
+            "saveTasksLocal",
             "latestTimestampCommunicationLocal",
             "listAllCommunicationsRemote",
             "saveCommunicationsLocal",
@@ -98,33 +98,35 @@ final class DefaultErxTaskRepositoryTests: XCTestCase {
         ]
         var actualCallOrder = [String]()
 
-        // Tasks
+        // tasks
         mockLocalDataStore.fetchLatestLastModifiedForErxTasksClosure = {
             actualCallOrder.append("lastModifiedErxTaskLocal")
             return Just(nil).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
         }
         mockRemoteDataStore.listAllTasksAfterClosure = { _ in
             actualCallOrder.append("listTasksRemote")
-            return Just([]).setFailureType(to: RemoteStoreError.self).eraseToAnyPublisher()
+            return Just([Fixtures.taskCompleted]).setFailureType(to: RemoteStoreError.self).eraseToAnyPublisher()
         }
 
+        // medication dispenses
+        mockRemoteDataStore.listMedicationDispensesClosure = { _ in
+            actualCallOrder.append("listMDRemote")
+            return Just([Fixtures.medicationDispense1]).setFailureType(to: RemoteStoreError.self).eraseToAnyPublisher()
+        }
+        mockLocalDataStore.saveMedicationDispensesClosure = { _ in
+            actualCallOrder.append("saveMDLocal")
+            return Just(true).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
+        }
+
+        // tasks
         mockLocalDataStore.saveTasksUpdateProfileLastAuthenticatedClosure = { _, _ in
             actualCallOrder.append("saveTasksLocal")
             return Just(true).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
         }
 
-        // Medication dispense
-        mockLocalDataStore.fetchLatestHandOverDateForMedicationDispensesClosure = {
-            actualCallOrder.append("latestHandOverMDLocal")
-            return Just(nil).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
-        }
-        mockRemoteDataStore.listAllMedicationDispensesAfterClosure = { _ in
-            actualCallOrder.append("listAllMDRemote")
-            return Just([]).setFailureType(to: RemoteStoreError.self).eraseToAnyPublisher()
-        }
-        mockLocalDataStore.saveMedicationDispensesClosure = { _ in
-            actualCallOrder.append("saveMDLocal")
-            return Just(true).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
+        mockLocalDataStore.listAllTasksClosure = {
+            actualCallOrder.append("listAllTasksLocal")
+            return Just([]).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
         }
 
         // communications
@@ -158,11 +160,6 @@ final class DefaultErxTaskRepositoryTests: XCTestCase {
             return Just(true).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
         }
 
-        mockLocalDataStore.listAllTasksClosure = {
-            actualCallOrder.append("listAllTasksLocal")
-            return Just([]).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
-        }
-
         let result = try awaitPublisher(sut.loadRemoteAll(for: nil))
         expect(result) == []
         expect(actualCallOrder) == expectedCallOrder
@@ -171,6 +168,8 @@ final class DefaultErxTaskRepositoryTests: XCTestCase {
 
 extension DefaultErxTaskRepositoryTests {
     enum Fixtures {
+        static let taskCompleted = ErxTask(identifier: "6543212345", status: .completed)
+
         static let auditEvent1 = ErxAuditEvent(identifier: "auditEvent1", timestamp: "2021-01-21T09:00:00Z")
         static let auditEvent2 = ErxAuditEvent(identifier: "auditEvent2", timestamp: "2021-01-21T10:00:00Z")
         static let auditEvent3 = ErxAuditEvent(identifier: "auditEvent3", timestamp: "2021-01-21T11:00:00Z")
@@ -197,5 +196,21 @@ extension DefaultErxTaskRepositoryTests {
         static let auditEventPageC: PagedContent<[ErxAuditEvent]> = PagedContent(content: [
             auditEvent9,
         ], next: nil)
+
+        static let medicationDispense1 = ErxTask.MedicationDispense(
+            identifier: "6543212345-2",
+            taskId: "6543212345",
+            insuranceId: "987652345",
+            pzn: "123124",
+            name: nil,
+            dose: nil,
+            dosageForm: nil,
+            dosageInstruction: nil,
+            amount: 1,
+            telematikId: "1234521231234345456",
+            whenHandedOver: "2022-02-02",
+            lot: nil,
+            expiresOn: nil
+        )
     }
 }

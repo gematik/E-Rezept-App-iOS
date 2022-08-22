@@ -79,10 +79,10 @@ public protocol ErxRemoteDataStore {
     func listAuditEventsNextPage(of previousPage: PagedContent<[ErxAuditEvent]>)
         -> AnyPublisher<PagedContent<[ErxAuditEvent]>, RemoteStoreError>
 
-    /// List all MedicationDispenses from the given reference date
-    /// - Parameter referenceDate: `MedicationDispense`s with modification date great or equal  `referenceDate`
-    ///                             will be listed. Pass `nil` for listing all
-    func listAllMedicationDispenses(
-        after referenceDate: String?
+    /// List all medication dispenses for a specific `Prescription` /  `ErxTask`
+    /// - Parameter id: MedicationDispense for the corresponding `ErxTask.ID` will be fetched.
+    /// - Returns: `MedicationDispense`s
+    func listMedicationDispenses(
+        for id: ErxTask.ID
     ) -> AnyPublisher<[ErxTask.MedicationDispense], RemoteStoreError>
 }

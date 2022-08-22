@@ -137,6 +137,12 @@ enum CardWallDomain {
             state.pin.showNextScreen = .none
             state.loginOption.showNextScreen = false
             return .none
+        case .readCard(action: .navigateToIntro):
+            state.loginOption.showNextScreen = false
+            state.pin.showNextScreen = .none
+            state.can?.showNextScreen = false
+            state.introduction.showFastTrackScreen = true
+            return .none
         case .introduction,
              .canAction,
              .pinAction,

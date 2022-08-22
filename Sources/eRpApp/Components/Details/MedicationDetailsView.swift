@@ -19,18 +19,23 @@
 import SwiftUI
 
 struct MedicationDetailsView: View {
+    let title: String?
     let dosageForm: String?
     let dose: String?
     let pzn: String?
+    let isArchived: Bool
+    let lot: String?
+    let expiresOn: String?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            SectionHeaderView(
-                text: L10n.prscFdTxtDetailsTitle,
-                a11y: A18n.prescriptionDetails.prscDtlTxtMedInfo
-            )
-            .padding([.top, .horizontal])
-
+            if let title = title {
+                SectionHeaderView(
+                    text: LocalizedStringKey(title),
+                    a11y: A18n.prescriptionDetails.prscDtlTxtMedInfo
+                )
+                .padding([.top, .horizontal])
+            }
             VStack(alignment: .leading, spacing: 12) {
                 Divider()
 
@@ -40,7 +45,14 @@ struct MedicationDetailsView: View {
                                          title: L10n.prscFdTxtDetailsDose)
                 MedicationDetailCellView(value: pzn,
                                          title: L10n.prscFdTxtDetailsPzn,
-                                         isLastInSection: true)
+                                         isLastInSection: !isArchived)
+                if isArchived {
+                    MedicationDetailCellView(value: lot,
+                                             title: L10n.prscFdTxtDetailsLot)
+                    MedicationDetailCellView(value: expiresOn,
+                                             title: L10n.prscFdTxtDetailsExpiresOn,
+                                             isLastInSection: true)
+                }
             }
         }
     }
@@ -49,12 +61,20 @@ struct MedicationDetailsView: View {
 struct MedicationDetailsView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            MedicationDetailsView(dosageForm: "Filmtabletten",
+            MedicationDetailsView(title: "Details about this medicine",
+                                  dosageForm: "Filmtabletten",
                                   dose: "N1 12 Stück",
-                                  pzn: "06876512")
-            MedicationDetailsView(dosageForm: "Filmtabletten",
+                                  pzn: "06876512",
+                                  isArchived: false,
+                                  lot: "TOTO-5236-VL",
+                                  expiresOn: "12.12.2024")
+            MedicationDetailsView(title: "Details about this medicine",
+                                  dosageForm: "Filmtabletten",
                                   dose: "N1 12 Stück",
-                                  pzn: "06876512")
+                                  pzn: "06876512",
+                                  isArchived: true,
+                                  lot: "TOTO-5236-VL",
+                                  expiresOn: "12.12.2024")
                 .preferredColorScheme(.dark)
         }
     }

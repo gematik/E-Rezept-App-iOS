@@ -49,6 +49,8 @@ enum ScannerDomain {
         var acceptedTaskBatches = Set<[ScannedErxTask]>()
         /// Used to present an alert
         var alertState: AlertState<Action>?
+        /// Bool to handle the flashlight state
+        var isFlashOn = false
     }
 
     enum Action: Equatable {
@@ -68,6 +70,8 @@ enum ScannerDomain {
         case resetScannerState
         /// Sets the `alertState` back to nil (which hides the alert)
         case alertDismissButtonTapped
+        /// Toggles the flashlight
+        case toggleFlashLight
     }
 
     static let domainReducer = Reducer { state, action, environment in
@@ -126,6 +130,9 @@ enum ScannerDomain {
                 state.alertState = closeAlertState
                 return .none
             }
+        case .toggleFlashLight:
+            state.isFlashOn.toggle()
+            return .none
         }
     }
 

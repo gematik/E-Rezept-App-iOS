@@ -45,4 +45,15 @@ final class PrescriptionFullDetailSnapshotTests: XCTestCase {
         .frame(width: 320, height: 4000)
         assertSnapshots(matching: sut, as: snapshotModi())
     }
+
+    func testPrescriptionFullDetailView_WithCompletedPrescription() {
+        let completed = GroupedPrescription.Prescription(erxTask: ErxTask.Fixtures.erxTaskCompleted)
+        let sut = PrescriptionFullDetailView(
+            store: PrescriptionDetailDomain.Dummies.storeFor(
+                PrescriptionDetailDomain.State(prescription: completed, isArchived: false)
+            )
+        )
+        .frame(width: 320, height: 4000)
+        assertSnapshots(matching: sut, as: snapshotModi())
+    }
 }

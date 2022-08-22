@@ -32,6 +32,7 @@ extension ErxTaskMedicationDispenseEntity {
     ) {
         self.init(context: context)
 
+        identifier = medicationDispense.identifier
         taskId = medicationDispense.taskId
         insuranceId = medicationDispense.insuranceId
         pzn = medicationDispense.pzn
@@ -44,12 +45,15 @@ extension ErxTaskMedicationDispenseEntity {
         }
         telematikId = medicationDispense.telematikId
         whenHandedOver = medicationDispense.whenHandedOver
+        lot = medicationDispense.lot
+        expiresOn = medicationDispense.expiresOn
     }
 }
 
 extension ErxTask.MedicationDispense {
     init?(entity: ErxTaskMedicationDispenseEntity?) {
         guard let entity = entity,
+              let id = entity.identifier,
               let taskId = entity.taskId,
               let insuranceId = entity.insuranceId,
               let pzn = entity.pzn,
@@ -59,6 +63,7 @@ extension ErxTask.MedicationDispense {
         }
 
         self.init(
+            identifier: id,
             taskId: taskId,
             insuranceId: insuranceId,
             pzn: pzn,
@@ -68,7 +73,9 @@ extension ErxTask.MedicationDispense {
             dosageInstruction: entity.dosageInstruction,
             amount: entity.amount as Decimal?,
             telematikId: telematikId,
-            whenHandedOver: whenHandedOver
+            whenHandedOver: whenHandedOver,
+            lot: entity.lot,
+            expiresOn: entity.expiresOn
         )
     }
 }

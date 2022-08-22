@@ -28,7 +28,9 @@ extension ErxTask {
             amount: 10,
             dosageForm: "PUL",
             dose: "N1",
-            dosageInstructions: nil
+            dosageInstructions: nil,
+            lot: "TOTO-5236-VL",
+            expiresOn: "12.12.2024"
         )
 
         static let medication2: ErxTask.Medication = .init(
@@ -37,7 +39,9 @@ extension ErxTask {
             amount: 12,
             dosageForm: "FDA",
             dose: "N2",
-            dosageInstructions: nil
+            dosageInstructions: nil,
+            lot: nil,
+            expiresOn: nil
         )
 
         static let medication3: ErxTask.Medication = .init(
@@ -46,7 +50,9 @@ extension ErxTask {
             amount: 1,
             dosageForm: "ELI",
             dose: "KTP",
-            dosageInstructions: nil
+            dosageInstructions: nil,
+            lot: nil,
+            expiresOn: nil
         )
 
         static let medication4: ErxTask.Medication = .init(
@@ -55,7 +61,9 @@ extension ErxTask {
             amount: 1,
             dosageForm: "AEO",
             dose: "KA",
-            dosageInstructions: nil
+            dosageInstructions: nil,
+            lot: nil,
+            expiresOn: nil
         )
 
         static let medication5: ErxTask.Medication = .init(
@@ -64,7 +72,9 @@ extension ErxTask {
             amount: 2,
             dosageForm: "GEL",
             dose: "sonstiges",
-            dosageInstructions: nil
+            dosageInstructions: nil,
+            lot: nil,
+            expiresOn: nil
         )
 
         static let medication6: ErxTask.Medication = .init(
@@ -73,7 +83,9 @@ extension ErxTask {
             amount: 5,
             dosageForm: "INH",
             dose: "N2",
-            dosageInstructions: nil
+            dosageInstructions: nil,
+            lot: nil,
+            expiresOn: nil
         )
 
         static let medication7: ErxTask.Medication = .init(
@@ -82,7 +94,9 @@ extension ErxTask {
             amount: 20,
             dosageForm: "TAB",
             dose: "N3",
-            dosageInstructions: nil
+            dosageInstructions: nil,
+            lot: nil,
+            expiresOn: nil
         )
 
         static let medication8: ErxTask.Medication = .init(
@@ -91,7 +105,9 @@ extension ErxTask {
             amount: 8,
             dosageForm: "INS",
             dose: "NB",
-            dosageInstructions: nil
+            dosageInstructions: nil,
+            lot: nil,
+            expiresOn: nil
         )
 
         static let erxTaskReady = erxTask1
@@ -142,8 +158,8 @@ extension ErxTask {
             accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
             fullUrl: nil,
             authoredOn: DemoDate.createDemoDate(.today),
-            expiresOn: DemoDate.createDemoDate(.tomorrow),
-            acceptedUntil: DemoDate.createDemoDate(.ninetyTwoDaysAhead),
+            expiresOn: DemoDate.createDemoDate(.ninetyTwoDaysAhead),
+            acceptedUntil: DemoDate.createDemoDate(.tomorrow),
             author: "Dr. Dr. med. Carsten van Storchhausen",
             noctuFeeWaiver: true,
             substitutionAllowed: true,
@@ -161,8 +177,8 @@ extension ErxTask {
             accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
             fullUrl: nil,
             authoredOn: DemoDate.createDemoDate(.today),
-            expiresOn: DemoDate.createDemoDate(.twentyEightDaysAhead),
-            acceptedUntil: DemoDate.createDemoDate(.ninetyTwoDaysAhead),
+            expiresOn: DemoDate.createDemoDate(.ninetyTwoDaysAhead),
+            acceptedUntil: DemoDate.createDemoDate(.twentyEightDaysAhead),
             author: "Dr. Dr. med. Carsten van Storchhausen",
             substitutionAllowed: true,
             medication: medication2,
@@ -179,8 +195,8 @@ extension ErxTask {
             accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
             fullUrl: nil,
             authoredOn: DemoDate.createDemoDate(.yesterday),
-            expiresOn: DemoDate.createDemoDate(.twelveDaysAhead),
-            acceptedUntil: DemoDate.createDemoDate(.ninetyTwoDaysAhead),
+            expiresOn: DemoDate.createDemoDate(.ninetyTwoDaysAhead),
+            acceptedUntil: DemoDate.createDemoDate(.twelveDaysAhead),
             author: "Dr. Dr. med. Carsten van Storchhausen",
             noctuFeeWaiver: true,
             medication: medication3,
@@ -197,8 +213,8 @@ extension ErxTask {
             accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
             fullUrl: nil,
             authoredOn: DemoDate.createDemoDate(.dayBeforeYesterday),
-            expiresOn: DemoDate.createDemoDate(.twentyEightDaysAhead),
-            acceptedUntil: DemoDate.createDemoDate(.ninetyTwoDaysAhead),
+            expiresOn: DemoDate.createDemoDate(.ninetyTwoDaysAhead),
+            acceptedUntil: DemoDate.createDemoDate(.twentyEightDaysAhead),
             author: "Dr. Dr. med. Carsten van Storchhausen",
             medication: medication4,
             patient: demoPatient,
@@ -214,8 +230,8 @@ extension ErxTask {
             accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
             fullUrl: nil,
             authoredOn: DemoDate.createDemoDate(.sixteenDaysBefore),
-            expiresOn: DemoDate.createDemoDate(.yesterday),
-            acceptedUntil: DemoDate.createDemoDate(.ninetyTwoDaysAhead),
+            expiresOn: DemoDate.createDemoDate(.ninetyTwoDaysAhead),
+            acceptedUntil: DemoDate.createDemoDate(.yesterday),
             author: "Dr. Dr. med. Carsten van Storchhausen",
             medication: medication5,
             patient: demoPatient,
@@ -231,8 +247,8 @@ extension ErxTask {
             accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
             fullUrl: nil,
             authoredOn: DemoDate.createDemoDate(.thirtyDaysBefore),
-            expiresOn: DemoDate.createDemoDate(.dayBeforeYesterday),
-            acceptedUntil: DemoDate.createDemoDate(.ninetyTwoDaysAhead),
+            expiresOn: DemoDate.createDemoDate(.ninetyTwoDaysAhead),
+            acceptedUntil: DemoDate.createDemoDate(.dayBeforeYesterday),
             author: "Praxis Dr. med. Karin Hasenbein",
             noctuFeeWaiver: true,
             medication: medication6,
@@ -249,8 +265,8 @@ extension ErxTask {
             accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
             fullUrl: nil,
             authoredOn: DemoDate.createDemoDate(.sixteenDaysBefore),
-            expiresOn: DemoDate.createDemoDate(.twentyEightDaysAhead),
-            acceptedUntil: DemoDate.createDemoDate(.ninetyTwoDaysAhead),
+            expiresOn: DemoDate.createDemoDate(.ninetyTwoDaysAhead),
+            acceptedUntil: DemoDate.createDemoDate(.twentyEightDaysAhead),
             author: "Dr. Dr. med. Carsten van Storchhausen",
             medication: medication7,
             patient: demoPatient,
@@ -267,7 +283,7 @@ extension ErxTask {
             fullUrl: nil,
             authoredOn: DemoDate.createDemoDate(.sixteenDaysBefore),
             expiresOn: DemoDate.createDemoDate(.yesterday),
-            acceptedUntil: DemoDate.createDemoDate(.yesterday),
+            acceptedUntil: DemoDate.createDemoDate(.dayBeforeYesterday),
             author: "Dr. Dr. med. Carsten van Storchhausen",
             medication: medication8,
             patient: demoPatient,

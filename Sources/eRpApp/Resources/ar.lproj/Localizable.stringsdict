@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>erx_txt_accepted_until</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@v1_days_variable@</string>
+		<key>v1_days_variable</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>zero</key>
+			<string>سار اليوم فقط</string>
+			<key>one</key>
+			<string>سار لمدة  %u يوم فقط</string>
+			<key>two</key>
+			<string>فارغ</string>
+			<key>few</key>
+			<string>فارغ</string>
+			<key>many</key>
+			<string>فارغ</string>
+			<key>other</key>
+			<string>سار لمدة  %u أيام فقط</string>
+		</dict>
+	</dict>
+	<key>erx_txt_expires_in</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>zero</key>
+			<string>فارغ</string>
+			<key>one</key>
+			<string>قابل للصرف اليوم فقط كدافع ذاتي</string>
+			<key>two</key>
+			<string>فارغ</string>
+			<key>few</key>
+			<string>فارغ</string>
+			<key>many</key>
+			<string>فارغ</string>
+			<key>other</key>
+			<string>قابل للصرف فقط حتى %u كدافع ذاتي</string>
+		</dict>
+	</dict>
+	<key>scn_btn_scanning_done</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>zero</key>
+			<string>فارغ</string>
+			<key>one</key>
+			<string>انتهى، إضافة وصفة طبية</string>
+			<key>two</key>
+			<string>فارغ</string>
+			<key>few</key>
+			<string>فارغ</string>
+			<key>many</key>
+			<string>.</string>
+			<key>other</key>
+			<string>انتهى، إضافة وصفات طبية</string>
+		</dict>
+	</dict>
+	<key>pha_redeem_alert_title_failure</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>zero</key>
+			<string></string>
+			<key>one</key>
+			<string>Das ausgewählte Rezept konnte nicht eingelöst werden</string>
+			<key>other</key>
+			<string>%li Rezepte konnten nicht eingelöst werden</string>
+		</dict>
+	</dict>
+	<key>auth_txt_failed_login_hint_msg</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>zero</key>
+			<string>فارغ</string>
+			<key>one</key>
+			<string>تبين وجود محاولة تسجيل خاطئة</string>
+			<key>two</key>
+			<string>فارغ</string>
+			<key>few</key>
+			<string>فارغ</string>
+			<key>many</key>
+			<string>فارغ</string>
+			<key>other</key>
+			<string>تبين وجود عدد %u محاولة تسجيل خاطئة</string>
+		</dict>
+	</dict>
+	<key>prsc_fd_txt_details_actual_medication_title</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>one</key>
+			<string>Erhaltenes Medikament</string>
+			<key>other</key>
+			<string>Erhaltene Medikamente</string>
+		</dict>
+	</dict>
+</dict>
+</plist>

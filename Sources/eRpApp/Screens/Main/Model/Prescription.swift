@@ -32,7 +32,9 @@ extension GroupedPrescription {
         }
 
         let erxTask: ErxTask
-        let actualMedication: GroupedPrescription.Medication?
+        let prescribedMedication: GroupedPrescription.Medication?
+        let actualMedications: [GroupedPrescription.Medication]
+
         let viewStatus: Status
 
         var id: String {
@@ -45,15 +47,16 @@ extension GroupedPrescription {
             dateFormatter: DateFormatter = globals.uiDateFormatter
         ) {
             self.erxTask = erxTask
-            if let medicationDispense = erxTask.medicationDispense {
-                actualMedication = Medication.from(medicationDispense: medicationDispense)
-            } else if let taskMedication = erxTask.medication {
-                actualMedication = Medication.from(medication: taskMedication, redeemedOn: erxTask.redeemedOn)
+            actualMedications = erxTask.medicationDispenses.map(Medication.from(medicationDispense:))
+
+            if let taskMedication = erxTask.medication {
+                prescribedMedication = Medication.from(medication: taskMedication, redeemedOn: erxTask.redeemedOn)
             } else {
-                actualMedication = nil
+                prescribedMedication = nil
             }
             viewStatus = Self.evaluateViewStatus(for: erxTask,
-                                                 whenHandedOver: actualMedication?.handedOver,
+                                                 whenHandedOver: actualMedications.first?
+                                                     .handedOver ?? prescribedMedication?.handedOver,
                                                  date: date,
                                                  dateFormatter: dateFormatter)
         }
@@ -107,16 +110,6 @@ extension GroupedPrescription {
             }
         }
 
-        var medicationText: String {
-            if let actualMedicationName = actualMedication?.name {
-                return actualMedicationName
-            }
-            if case .error = viewStatus {
-                return L10n.prscTxtFallbackName.text
-            }
-            return L10n.prscFdTxtNa.text
-        }
-
         var statusMessage: String {
             switch viewStatus {
             case let .open(until: localizedString): return localizedString
@@ -147,10 +140,21 @@ extension GroupedPrescription {
         /// `true` if the medication has been dispensed and substituted by an alternative medication, `false` otherwise.
         var isMedicationSubstituted: Bool {
             guard let medicationPZN = erxTask.medication?.pzn,
-                  let medicationDispPZN = erxTask.medicationDispense?.pzn else {
+                  let medicationDispPZN = erxTask.medicationDispenses.first?.pzn
+            else { // TODO: change for all medicationDispenses, // swiftlint:disable:this todo
                 return false
             }
             return medicationPZN != medicationDispPZN
+        }
+
+        func title(for medication: GroupedPrescription.Medication?) -> String {
+            if let name = medication?.name {
+                return name
+            }
+            if case .error = viewStatus {
+                return L10n.prscTxtFallbackName.text
+            }
+            return L10n.prscFdTxtNa.text
         }
     }
 
@@ -162,6 +166,8 @@ extension GroupedPrescription {
         let dosageInstruction: String?
         let dosageForm: String?
         let handedOver: String?
+        let lot: String?
+        let expiresOn: String?
 
         static func from(medicationDispense: ErxTask.MedicationDispense) -> Medication {
             self.init(
@@ -171,7 +177,9 @@ extension GroupedPrescription {
                 name: medicationDispense.name,
                 dosageInstruction: medicationDispense.dosageInstruction,
                 dosageForm: medicationDispense.dosageForm,
-                handedOver: medicationDispense.whenHandedOver
+                handedOver: medicationDispense.whenHandedOver,
+                lot: medicationDispense.lot,
+                expiresOn: medicationDispense.expiresOn
             )
         }
 
@@ -183,7 +191,9 @@ extension GroupedPrescription {
                 name: medication.name,
                 dosageInstruction: medication.dosageInstructions,
                 dosageForm: medication.dosageForm,
-                handedOver: redeemedOn
+                handedOver: redeemedOn,
+                lot: medication.lot,
+                expiresOn: medication.expiresOn
             )
         }
     }
@@ -258,26 +268,40 @@ extension GroupedPrescription.Prescription {
 
 extension GroupedPrescription.Prescription: Comparable {
     public static func <(lhs: GroupedPrescription.Prescription, rhs: GroupedPrescription.Prescription) -> Bool {
-        switch (lhs.actualMedication?.name, rhs.actualMedication?.name) {
-        case (nil, nil): return true
+        compare(lhs: lhs.prescribedMedication, rhs: rhs.prescribedMedication) {
+            compare(lhs: lhs.actualMedications.first, rhs: rhs.actualMedications.first) {
+                compare(lhs: lhs.expiresOn, rhs: rhs.expiresOn) {
+                    false
+                }
+            }
+        }
+    }
+
+    public static func compare<T: Comparable>(lhs: T?, rhs: T?, onEqual: () -> Bool) -> Bool {
+        switch (lhs, rhs) {
+        case (nil, nil): return onEqual()
         case (_, nil): return true
         case (nil, _): return false
         case let (.some(lhsValue), .some(rhsValue)):
             if lhsValue != rhsValue {
                 return lhsValue < rhsValue
             }
-
-            switch (lhs.expiresOn, rhs.expiresOn) {
-            case (nil, nil): return true
-            case (_, nil): return true
-            case (nil, _): return false
-            case let (.some(lhsValue), .some(rhsValue)): return lhsValue < rhsValue
-            }
+            return onEqual()
         }
     }
 
     public func hash(into hasher: inout Hasher) {
         hasher.combine(erxTask.identifier)
+    }
+}
+
+extension GroupedPrescription.Medication: Comparable {
+    public static func <(lhs: GroupedPrescription.Medication, rhs: GroupedPrescription.Medication) -> Bool {
+        switch (lhs.name, rhs.name) {
+        case (_, nil): return true
+        case (nil, _): return false
+        case let (.some(lhsValue), .some(rhsValue)): return lhsValue < rhsValue
+        }
     }
 }
 

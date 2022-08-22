@@ -34,6 +34,7 @@ enum CardWallCANDomain {
         var showNextScreen = false
         var isEGKOrderInfoViewPresented = false
         var isScannerViewPresented = false
+        var isFlashOn = false
     }
 
     enum Action: Equatable {
@@ -45,6 +46,7 @@ enum CardWallCANDomain {
         case close
         case showScannerView
         case dismissScannerView
+        case toggleFlashLight
     }
 
     struct Environment {
@@ -78,7 +80,11 @@ enum CardWallCANDomain {
             state.isScannerViewPresented = true
             return .none
         case .dismissScannerView:
+            state.isFlashOn = false
             state.isScannerViewPresented = false
+            return .none
+        case .toggleFlashLight:
+            state.isFlashOn.toggle()
             return .none
         }
     }

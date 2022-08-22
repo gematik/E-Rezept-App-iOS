@@ -192,23 +192,22 @@ final class MockErxRemoteDataStore: ErxRemoteDataStore {
 
     // MARK: - listAllMedicationDispenses
 
-    var listAllMedicationDispensesAfterCallsCount = 0
-    var listAllMedicationDispensesAfterCalled: Bool {
-        listAllMedicationDispensesAfterCallsCount > 0
+    var listMedicationDispensesCallsCount = 0
+    var listMedicationDispensesCalled: Bool {
+        listMedicationDispensesCallsCount > 0
     }
 
-    var listAllMedicationDispensesAfterReceivedReferenceDate: String?
-    var listAllMedicationDispensesAfterReceivedInvocations: [String?] = []
-    var listAllMedicationDispensesAfterReturnValue: AnyPublisher<[ErxTask.MedicationDispense], RemoteStoreError>!
-    var listAllMedicationDispensesAfterClosure: ((String?)
+    var listMedicationDispensesReceivedTaskId: String?
+    var listMedicationDispensesReceivedInvocations: [String?] = []
+    var listMedicationDispensesReturnValue: AnyPublisher<[ErxTask.MedicationDispense], RemoteStoreError>!
+    var listMedicationDispensesClosure: ((String?)
         -> AnyPublisher<[ErxTask.MedicationDispense], RemoteStoreError>)?
 
-    func listAllMedicationDispenses(after referenceDate: String?)
-        -> AnyPublisher<[ErxTask.MedicationDispense], RemoteStoreError> {
-        listAllMedicationDispensesAfterCallsCount += 1
-        listAllMedicationDispensesAfterReceivedReferenceDate = referenceDate
-        listAllMedicationDispensesAfterReceivedInvocations.append(referenceDate)
-        return listAllMedicationDispensesAfterClosure
-            .map { $0(referenceDate) } ?? listAllMedicationDispensesAfterReturnValue
+    func listMedicationDispenses(for id: ErxTask.ID) -> AnyPublisher<[ErxTask.MedicationDispense], RemoteStoreError> {
+        listMedicationDispensesCallsCount += 1
+        listMedicationDispensesReceivedTaskId = id
+        listMedicationDispensesReceivedInvocations.append(id)
+        return listMedicationDispensesClosure
+            .map { $0(id) } ?? listMedicationDispensesReturnValue
     }
 }

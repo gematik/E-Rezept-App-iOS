@@ -200,7 +200,7 @@ final class CardWallReadCardDomainTests: XCTestCase {
         sut.receive(CardWallReadCardDomain.Action
             .stateReceived(.retrievingChallenge(.error(error)))) { state in
                 state.output = .retrievingChallenge(.error(error))
-                state.alertState = CardWallReadCardDomain.AlertStates.alertFor(error)
+                state.route = .alert(CardWallReadCardDomain.AlertStates.alertFor(error))
         }
     }
 
@@ -281,7 +281,7 @@ final class CardWallReadCardDomainTests: XCTestCase {
         sut.receive(CardWallReadCardDomain.Action
             .stateReceived(.signingChallenge(.error(.signChallengeError(pinError))))) { state in
                 state.output = .signingChallenge(.error(.signChallengeError(pinError)))
-                state.alertState = CardWallReadCardDomain.AlertStates.wrongPIN(.signChallengeError(pinError))
+                state.route = .alert(CardWallReadCardDomain.AlertStates.wrongPIN(.signChallengeError(pinError)))
         }
     }
 
@@ -309,7 +309,7 @@ final class CardWallReadCardDomainTests: XCTestCase {
                 .stateReceived(.signingChallenge(.error(.signChallengeError(canError))))
         ) { state in
             state.output = .signingChallenge(.error(.signChallengeError(canError)))
-            state.alertState = CardWallReadCardDomain.AlertStates.wrongCAN(.signChallengeError(canError))
+            state.route = .alert(CardWallReadCardDomain.AlertStates.wrongCAN(.signChallengeError(canError)))
         }
     }
 
@@ -337,7 +337,7 @@ final class CardWallReadCardDomainTests: XCTestCase {
         ) { state in
             state.output = .signingChallenge(.error(.signChallengeError(error)))
 
-            state.alertState = CardWallReadCardDomain.AlertStates.alertWithReportButton(report, error: error)
+            state.route = .alert(CardWallReadCardDomain.AlertStates.alertWithReportButton(report, error: error))
         }
     }
 
@@ -393,7 +393,7 @@ final class CardWallReadCardDomainTests: XCTestCase {
         }
         uiScheduler.advance()
         sut.receive(.saveError(.notImplemented)) { state in
-            state.alertState = CardWallReadCardDomain.AlertStates.saveProfile
+            state.route = .alert(CardWallReadCardDomain.AlertStates.saveProfile)
         }
     }
 
@@ -431,7 +431,7 @@ final class CardWallReadCardDomainTests: XCTestCase {
         }
         sut.receive(.stateReceived(.verifying(.error(.profileValidation(expectedInternalError))))) { state in
             state.output = .verifying(.error(.profileValidation(expectedInternalError)))
-            state.alertState = CardWallReadCardDomain.AlertStates.alertFor(.profileValidation(expectedInternalError))
+            state.route = .alert(CardWallReadCardDomain.AlertStates.alertFor(.profileValidation(expectedInternalError)))
         }
     }
 }

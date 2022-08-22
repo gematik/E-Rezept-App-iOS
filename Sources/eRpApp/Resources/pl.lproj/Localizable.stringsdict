@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>erx_txt_accepted_until</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@v1_days_variable@</string>
+		<key>v1_days_variable</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>one</key>
+			<string>Ważna jeszcze %u dzień</string>
+			<key>few</key>
+			<string>Ważne jeszcze %u dni</string>
+			<key>many</key>
+			<string>Ważne jeszcze %u dni</string>
+			<key>other</key>
+			<string>Ważne jeszcze %u dni</string>
+		</dict>
+	</dict>
+	<key>erx_txt_expires_in</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>one</key>
+			<string>Możliwość zrealizowania jako płatnik indywidualny jeszcze tylko dzisiaj</string>
+			<key>few</key>
+			<string>Możliwość zrealizowania jako płatnik indywidualny jeszcze tylko przez jeden dzień</string>
+			<key>many</key>
+			<string>Możliwość zrealizowania jako płatnik indywidualny jeszcze tylko przez %u dni</string>
+			<key>other</key>
+			<string>Noch %u Tage als Selbstzahler einlösbar</string>
+		</dict>
+	</dict>
+	<key>scn_btn_scanning_done</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>one</key>
+			<string>Gotowe, dodaj receptę</string>
+			<key>few</key>
+			<string>Gotowe dodaj recepty</string>
+			<key>many</key>
+			<string>Gotowe, dodaj recepty</string>
+			<key>other</key>
+			<string>Gotowe, dodaj recepty</string>
+		</dict>
+	</dict>
+	<key>pha_redeem_alert_title_failure</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>zero</key>
+			<string></string>
+			<key>one</key>
+			<string>Das ausgewählte Rezept konnte nicht eingelöst werden</string>
+			<key>other</key>
+			<string>%li Rezepte konnten nicht eingelöst werden</string>
+		</dict>
+	</dict>
+	<key>auth_txt_failed_login_hint_msg</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>one</key>
+			<string>Wykryto jedną nieudaną próbę logowania</string>
+			<key>few</key>
+			<string>Wykryto %u nieudane próby logowania</string>
+			<key>many</key>
+			<string>Wykryto %u nieudanych prób logowania</string>
+			<key>other</key>
+			<string>Es wurden %u erfolglose Anmeldeversuche festgestellt</string>
+		</dict>
+	</dict>
+	<key>prsc_fd_txt_details_actual_medication_title</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>one</key>
+			<string>Erhaltenes Medikament</string>
+			<key>other</key>
+			<string>Erhaltene Medikamente</string>
+		</dict>
+	</dict>
+</dict>
+</plist>

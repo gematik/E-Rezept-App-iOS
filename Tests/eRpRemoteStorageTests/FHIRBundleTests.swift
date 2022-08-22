@@ -56,6 +56,8 @@ final class FHIRBundleTests: XCTestCase {
         expect(task.medication?.pzn) == "06313728"
         expect(task.medication?.amount) == 12
         expect(task.medication?.dosageInstructions) == "1-0-1-0"
+        expect(task.medication?.lot) == "1234567890abcde"
+        expect(task.medication?.expiresOn) == "2020-02-03T00:00:00+00:00"
         expect(task.noctuFeeWaiver) == false
         expect(task.substitutionAllowed) == true
         expect(task.source) == .server
@@ -111,6 +113,8 @@ final class FHIRBundleTests: XCTestCase {
         expect(task.medication?.pzn) == "08850519"
         expect(task.medication?.amount) == 70
         expect(task.medication?.dosageInstructions) == "1x täglich"
+        expect(task.medication?.lot).to(beNil())
+        expect(task.medication?.expiresOn).to(beNil())
         // patient
         expect(task.patient?.name) == "Karl-Friederich Graf Freiherr von Schaumberg"
         expect(task.patient?.address) == "Siegburger Str. 155\n51105 Köln"
@@ -206,6 +210,7 @@ final class FHIRBundleTests: XCTestCase {
             fail("expected to have this medicationDispenses")
             return
         }
+        expect(first.identifier) == "160.000.000.014.285.76.1"
         expect(first.taskId) == "160.000.000.014.285.76"
         expect(first.insuranceId) == "X114428530"
         expect(first.pzn) == "03273514"
@@ -216,6 +221,8 @@ final class FHIRBundleTests: XCTestCase {
         expect(first.whenHandedOver) == "2021-07-23T10:55:04+02:00"
         expect(first.amount) == 12.0
         expect(first.dose).to(beNil())
+        expect(first.lot).to(beNil())
+        expect(first.expiresOn).to(beNil())
     }
 
     private func decode(

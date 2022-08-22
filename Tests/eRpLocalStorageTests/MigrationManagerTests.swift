@@ -417,7 +417,7 @@ extension ErxTask {
             workRelatedAccident: workRelatedAccident,
             auditEvents: [],
             communications: communications,
-            medicationDispense: medicationDispense
+            medicationDispenses: medicationDispenses
         )
     }
 }

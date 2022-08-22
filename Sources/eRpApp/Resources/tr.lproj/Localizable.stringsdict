@@ -34,22 +34,6 @@
 			<string>Noch %u Tage als Selbstzahler einlösbar</string>
 		</dict>
 	</dict>
-	<key>auth_txt_failed_login_hint_msg</key>
-	<dict>
-		<key>NSStringLocalizedFormatKey</key>
-		<string>%#@variable_0@</string>
-		<key>variable_0</key>
-		<dict>
-			<key>NSStringFormatSpecTypeKey</key>
-			<string>NSStringPluralRuleType</string>
-			<key>NSStringFormatValueTypeKey</key>
-			<string>u</string>
-			<key>one</key>
-			<string>Es wurde ein erfolgloser Anmeldeversuch festgestellt</string>
-			<key>other</key>
-			<string>Es wurden %u erfolglose Anmeldeversuche festgestellt</string>
-		</dict>
-	</dict>
 	<key>scn_btn_scanning_done</key>
 	<dict>
 		<key>NSStringLocalizedFormatKey</key>
@@ -59,7 +43,7 @@
 			<key>NSStringFormatSpecTypeKey</key>
 			<string>NSStringPluralRuleType</string>
 			<key>NSStringFormatValueTypeKey</key>
-			<string>d</string>
+			<string>li</string>
 			<key>one</key>
 			<string>Tamamlandı, reçete ekle</string>
 			<key>other</key>
@@ -80,6 +64,38 @@
 			<string>Das ausgewählte Rezept konnte nicht eingelöst werden</string>
 			<key>other</key>
 			<string>%d Rezepte konnten nicht eingelöst werden</string>
+		</dict>
+	</dict>
+	<key>auth_txt_failed_login_hint_msg</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>u</string>
+			<key>one</key>
+			<string>Es wurde ein erfolgloser Anmeldeversuch festgestellt</string>
+			<key>other</key>
+			<string>Es wurden %u erfolglose Anmeldeversuche festgestellt</string>
+		</dict>
+	</dict>
+	<key>prsc_fd_txt_details_actual_medication_title</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>one</key>
+			<string>Erhaltenes Medikament</string>
+			<key>other</key>
+			<string>Erhaltene Medikamente</string>
 		</dict>
 	</dict>
 </dict>

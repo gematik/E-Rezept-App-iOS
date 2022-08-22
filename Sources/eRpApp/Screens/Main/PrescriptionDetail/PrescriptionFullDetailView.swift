@@ -125,8 +125,19 @@ struct PrescriptionFullDetailView: View {
                         }
 
                         // Medication name
-                        MedicationNameView(medicationText: viewStore.prescription.medicationText,
-                                           statusMessage: viewStore.prescription.statusMessage)
+                        if !viewStore.prescription.isArchived {
+                            MedicationTitleView(
+                                title: viewStore.prescription.title(for: viewStore.prescription.prescribedMedication),
+                                statusMessage: viewStore.prescription.statusMessage
+                            )
+                        } else if !viewStore.prescription.actualMedications.isEmpty {
+                            MedicationTitleView(
+                                title: L10n
+                                    .prscFdTxtDetailsActualMedicationTitle(viewStore.prescription.actualMedications
+                                        .count).text,
+                                statusMessage: viewStore.prescription.statusMessage
+                            )
+                        }
                     }
                     .padding()
 
@@ -160,42 +171,24 @@ struct PrescriptionFullDetailView: View {
                 }
 
                 Group {
-                    // Medication details
-                    MedicationDetailsView(
-                        dosageForm: localizedStringForDosageFormKey(viewStore.prescription.actualMedication?
-                            .dosageForm),
-                        dose: composedDoseInfoFrom(
-                            doseKey: viewStore.prescription.actualMedication?.dose,
-                            amount: viewStore.prescription.actualMedication?.amount,
-                            dosageKey: viewStore.prescription.actualMedication?.dosageForm
-                        ),
-                        pzn: viewStore.prescription.actualMedication?.pzn
-                    )
-
-                    // Dosage instructions
-                    Group {
-                        SectionHeaderView(
-                            text: L10n.prscFdTxtDosageInstructionsTitle,
-                            a11y: A11y.prescriptionDetails.prscDtlTxtMedDosageInstructions
-                        )
-                        HintView(
-                            hint: Hint<PrescriptionDetailDomain.Action>(
-                                id: A11y.prescriptionDetails.prscDtlHntDosageInstructions,
-                                message: viewStore.prescription.actualMedication?
-                                    .dosageInstruction ?? L10n.prscFdTxtDosageInstructionsNa.text,
-                                image: AccessibilityImage(
-                                    name: Asset.Illustrations.practitionerf1.name,
-                                    accessibilityName: L10n.prscFdHintDosageInstructionsPic.text
-                                ),
-                                style: .neutral,
-                                buttonStyle: .tertiary,
-                                imageStyle: .topAligned
-                            ),
-                            textAction: nil,
-                            closeAction: nil
-                        )
+                    // Actual medication details (multiple)
+                    ForEach(viewStore.prescription.actualMedications, id: \.self) { medication in
+                        MedicationDetails(prescription: viewStore.prescription, medication: medication)
                     }
-                    .padding([.horizontal, .top])
+                    .accessibilityElement(children: .contain)
+                    .accessibility(identifier: A11y.prescriptionDetails.prscDtlTxtMedInfoList)
+
+                    // Prescriped medication details
+                    if viewStore.prescription.isArchived {
+                        MedicationTitleView(title: L10n.prscFdTxtDetailsPrescripedMedicationTitle.text,
+                                            statusMessage: viewStore.prescription.statusMessage)
+                            .padding()
+                    }
+
+                    MedicationDetails(
+                        prescription: viewStore.prescription,
+                        medication: viewStore.prescription.prescribedMedication
+                    )
 
                     DosageHint()
 
@@ -203,7 +196,7 @@ struct PrescriptionFullDetailView: View {
                     MedicationPatientView(
                         name: viewStore.prescription.patient?.name,
                         address: viewStore.prescription.patient?.address,
-                        dateOfBirth: uiFormattedDate(dateString: viewStore.prescription.patient?.birthDate),
+                        dateOfBirth: Self.uiFormattedDate(dateString: viewStore.prescription.patient?.birthDate),
                         phone: viewStore.prescription.patient?.phone,
                         healthInsurance: viewStore.prescription.patient?.insurance,
                         healthInsuranceState: viewStore.prescription.patient?.status,
@@ -228,7 +221,7 @@ struct PrescriptionFullDetailView: View {
 
                     // Work-related accident details
                     MedicationWorkAccidentView(
-                        accidentDate: uiFormattedDate(dateString: viewStore.prescription.workRelatedAccident?
+                        accidentDate: Self.uiFormattedDate(dateString: viewStore.prescription.workRelatedAccident?
                             .date),
                         number: viewStore.prescription.workRelatedAccident?.workPlaceIdentifier
                     )
@@ -311,15 +304,15 @@ struct PrescriptionFullDetailView: View {
             .accessibility(hidden: true)
     }
 
-    private func localizedStringForDosageFormKey(_ key: String?) -> String? {
+    private static func localizedStringForDosageFormKey(_ key: String?) -> String? {
         guard let key = key,
               let string = PrescriptionKBVKeyMapping.localizedStringKeyForDosageFormKey(key) else { return nil }
         return NSLocalizedString(string, comment: "")
     }
 
-    private func composedDoseInfoFrom(doseKey: String?,
-                                      amount: Decimal?,
-                                      dosageKey: String?) -> String? {
+    private static func composedDoseInfoFrom(doseKey: String?,
+                                             amount: Decimal?,
+                                             dosageKey: String?) -> String? {
         guard let doseKey = doseKey,
               let amount = amount,
               let dosageKey = dosageKey,
@@ -328,7 +321,7 @@ struct PrescriptionFullDetailView: View {
         return "\(doseKey) \(amount) \(NSLocalizedString(dosageString, comment: ""))"
     }
 
-    private func uiFormattedDate(dateString: String?) -> String? {
+    private static func uiFormattedDate(dateString: String?) -> String? {
         if let dateString = dateString,
            let date = globals.fhirDateFormatter.date(from: dateString,
                                                      format: .yearMonthDay) {
@@ -393,36 +386,6 @@ struct PrescriptionFullDetailView: View {
     }
 }
 
-struct NavigateToPharmacySearchView: View {
-    let store: PrescriptionDetailDomain.Store
-
-    var body: some View {
-        WithViewStore(store) { viewStore in
-            PrimaryTextButton(
-                text: L10n.dtlBtnPharmacySearch,
-                a11y: A11y.prescriptionDetails.prscDtlHntSubstitution
-            ) {
-                viewStore.send(.showPharmacySearch)
-            }
-            .fullScreenCover(isPresented: viewStore.binding(
-                get: { $0.pharmacySearchState != nil },
-                send: PrescriptionDetailDomain.Action.dismissPharmacySearch
-            )) {
-                IfLetStore(store.scope(
-                    state: { $0.pharmacySearchState },
-                    action: PrescriptionDetailDomain.Action.pharmacySearch(action:)
-                )) { scopedStore in
-                    NavigationView {
-                        PharmacySearchView(store: scopedStore)
-                    }
-                    .accentColor(Colors.primary600)
-                    .navigationViewStyle(StackNavigationViewStyle())
-                }
-            }
-        }
-    }
-}
-
 extension PrescriptionFullDetailView {
     private struct DosageHint: View {
         var body: some View {
@@ -449,6 +412,61 @@ extension PrescriptionFullDetailView {
             .font(.footnote)
             .padding(.horizontal)
             .padding(.top, 8)
+        }
+    }
+
+    private struct MedicationDetails: View {
+        let prescription: GroupedPrescription.Prescription
+        let medication: GroupedPrescription.Medication?
+
+        var title: String {
+            if prescription.isArchived {
+                return prescription.title(for: medication)
+            } else {
+                return L10n.prscFdTxtDetailsPrescripedMedicationTitle.text
+            }
+        }
+
+        var body: some View {
+            MedicationDetailsView(
+                title: title,
+                dosageForm: localizedStringForDosageFormKey(medication?
+                    .dosageForm),
+                dose: composedDoseInfoFrom(
+                    doseKey: medication?.dose,
+                    amount: medication?.amount,
+                    dosageKey: medication?.dosageForm
+                ),
+                pzn: medication?.pzn,
+                isArchived: prescription.isArchived,
+                lot: medication?.lot,
+                expiresOn: uiFormattedDate(dateString: medication?.expiresOn)
+            )
+
+            // Dosage instructions
+            Group {
+                SectionHeaderView(
+                    text: L10n.prscFdTxtDosageInstructionsTitle,
+                    a11y: A11y.prescriptionDetails.prscDtlTxtMedDosageInstructions
+                )
+                HintView(
+                    hint: Hint<PrescriptionDetailDomain.Action>(
+                        id: A11y.prescriptionDetails.prscDtlHntDosageInstructions,
+                        message: medication?
+                            .dosageInstruction ?? L10n.prscFdTxtDosageInstructionsNa.text,
+                        image: AccessibilityImage(
+                            name: Asset.Illustrations.practitionerf1.name,
+                            accessibilityName: L10n.prscFdHintDosageInstructionsPic.text
+                        ),
+                        style: .neutral,
+                        buttonStyle: .tertiary,
+                        imageStyle: .topAligned
+                    ),
+                    textAction: nil,
+                    closeAction: nil
+                )
+            }
+            .padding([.horizontal, .top])
         }
     }
 }

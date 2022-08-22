@@ -21,6 +21,10 @@ internal typealias AssetImageTypeAlias = ImageAsset.Image
 
 // swiftlint:disable identifier_name line_length nesting type_body_length type_name
 internal enum Asset {
+  internal enum CardReader {
+    internal static let cardReadVideo = ImageAsset(name: "CardReadVideo")
+    internal static let cardReading = ImageAsset(name: "CardReading")
+  }
   internal enum CardWall {
     internal static let apotheker1 = ImageAsset(name: "Apotheker1")
     internal static let appIconPlaceholder = ImageAsset(name: "AppIconPlaceholder")

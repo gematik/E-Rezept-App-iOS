@@ -39,6 +39,8 @@ public enum ErxTaskFHIROperation<Value, Handler: FHIRResponseHandler> where Hand
     case redeem(order: ErxTaskOrder, handler: Handler)
     /// Load communication resource from server
     case allCommunications(referenceDate: String?, handler: Handler)
+    /// Request all medication dispenses from a specific prescription
+    case medicationDispenses(id: ErxTask.ID, handler: Handler)
     /// Load all medication dispenses since reference date
     case allMedicationDispenses(referenceDate: String?, handler: Handler)
     /// Loads content for a given url. Used for paging.
@@ -56,6 +58,7 @@ extension ErxTaskFHIROperation: FHIRClientOperation {
              let .auditEvents(_, _, handler),
              let .redeem(order: _, handler),
              let .allCommunications(_, handler),
+             let .medicationDispenses(_, handler),
              let .allMedicationDispenses(_, handler: handler),
              let .next(url: _, handler: handler):
             return try handler.handle(response: response)
@@ -105,6 +108,21 @@ extension ErxTaskFHIROperation: FHIRClientOperation {
                 )
                 components?.queryItems = [sentItem]
             }
+            return components?.string
+        case let .medicationDispenses(taskId, handler: _):
+            var components = URLComponents(string: "MedicationDispense")
+            #warning(
+                "Version should be updated after 1.1.23 to v1_2_0. More informations: https://github.com/gematik/api-erp/blob/master/docs/erp_fhirversion.adoc#versionsübergang-31122022--01012023" // swiftlint:disable:this line_length
+            )
+            guard let key = Workflow.Key.prescriptionIdKeys[.v1_1_1] else {
+                assertionFailure("Missing FHIR resource key")
+                return components?.string
+            }
+            let item = URLQueryItem(
+                name: "identifier",
+                value: "\(key)|\(taskId)"
+            )
+            components?.queryItems = [item]
             return components?.string
         case let .allMedicationDispenses(referenceDate, handler: _):
             var components = URLComponents(string: "MedicationDispense")
@@ -161,6 +179,7 @@ extension ErxTaskFHIROperation: FHIRClientOperation {
              .auditEvents,
              .auditEventBy,
              .allCommunications,
+             .medicationDispenses,
              .allMedicationDispenses,
              .next:
             return nil
@@ -179,6 +198,7 @@ extension ErxTaskFHIROperation: FHIRClientOperation {
              let .auditEvents(_, _, handler),
              let .redeem(_, handler),
              let .allCommunications(_, handler),
+             let .medicationDispenses(_, handler),
              let .allMedicationDispenses(_, handler: handler),
              let .next(url: _, handler: handler):
             return handler.acceptFormat

@@ -324,4 +324,30 @@ final class CardWallSnapshotTests: XCTestCase {
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
     }
+
+    func testReadCardHelpCardView() {
+        let sut =
+            ReadCardHelpView(store: .init(initialState: 0,
+                                          reducer: .empty,
+                                          environment: CardWallReadCardDomain.Dummies.environment))
+
+        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
+    }
+
+    func testReadCardHelpListView() {
+        let sut =
+            ReadCardHelpView(store: .init(initialState: 1,
+                                          reducer: .empty,
+                                          environment: CardWallReadCardDomain.Dummies.environment))
+
+        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
+    }
+
+    func testReadCardHelpVideoView() {
+        let sut = ReadCardHelpView(store: .init(initialState: 2,
+                                                reducer: .empty,
+                                                environment: CardWallReadCardDomain.Dummies.environment))
+
+        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
+    }
 }

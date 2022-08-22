@@ -110,7 +110,7 @@ extension ErxTask {
             patient: Patient = demoPatientAnna,
             organisation: Organization = demoOrganizationStorchhausen,
             medication _: ErxTask.Medication = ErxTask.Medication.Dummies.medication1,
-            medicationDispense: ErxTask.MedicationDispense? = nil
+            medicationDispenses: [ErxTask.MedicationDispense] = []
         ) -> ErxTask {
             ErxTask(
                 identifier: id,
@@ -126,7 +126,7 @@ extension ErxTask {
                 dispenseValidityEnd: "2021-06-10T10:55:04+02:00",
                 noctuFeeWaiver: true,
                 prescriptionId: id,
-                substitutionAllowed: medicationDispense != nil,
+                substitutionAllowed: !medicationDispenses.isEmpty,
                 source: .server,
                 medication: ErxTask.Medication.Dummies.medication1,
                 patient: patient,
@@ -138,7 +138,7 @@ extension ErxTask {
                     for: id,
                     insuranceId: patient.insuranceId!
                 )],
-                medicationDispense: medicationDispense
+                medicationDispenses: medicationDispenses
             )
         }
 
@@ -186,7 +186,9 @@ extension ErxTask.Medication {
                 amount: 10,
                 dosageForm: "PUL",
                 dose: "N1",
-                dosageInstructions: nil
+                dosageInstructions: nil,
+                lot: nil,
+                expiresOn: nil
             )
         }()
 
@@ -197,17 +199,23 @@ extension ErxTask.Medication {
                 amount: 12,
                 dosageForm: "FDA",
                 dose: "N2",
-                dosageInstructions: nil
+                dosageInstructions: nil,
+                lot: nil,
+                expiresOn: nil
             )
         }()
 
         static let medication3: ErxTask.Medication = {
-            ErxTask.Medication(name: "Lebenselixir 9000",
-                               pzn: "06876513",
-                               amount: 1,
-                               dosageForm: "ELI",
-                               dose: "KTP",
-                               dosageInstructions: nil)
+            ErxTask.Medication(
+                name: "Lebenselixir 9000",
+                pzn: "06876513",
+                amount: 1,
+                dosageForm: "ELI",
+                dose: "KTP",
+                dosageInstructions: nil,
+                lot: nil,
+                expiresOn: nil
+            )
         }()
     }
 }
@@ -216,6 +224,7 @@ extension ErxTask.MedicationDispense {
     enum Dummies {
         static func medicationDispense(for taskId: String, insuranceId: String) -> ErxTask.MedicationDispense {
             ErxTask.MedicationDispense(
+                identifier: "4567890123",
                 taskId: taskId,
                 insuranceId: insuranceId,
                 pzn: "06876513",
@@ -225,7 +234,9 @@ extension ErxTask.MedicationDispense {
                 dosageInstruction: "Not too much",
                 amount: 2.0,
                 telematikId: "12345678",
-                whenHandedOver: "2021-07-20T10:55:04+02:00"
+                whenHandedOver: "2021-07-20T10:55:04+02:00",
+                lot: nil,
+                expiresOn: nil
             )
         }
     }

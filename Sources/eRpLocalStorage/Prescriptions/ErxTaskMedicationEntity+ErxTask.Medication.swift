@@ -34,6 +34,8 @@ extension ErxTaskMedicationEntity {
         dose = medication.dose
         dosageInstructions = medication.dosageInstructions
         pzn = medication.pzn
+        lot = medication.lot
+        expiresOn = medication.expiresOn
     }
 }
 
@@ -47,7 +49,9 @@ extension ErxTask.Medication {
             amount: entity.amount as Decimal?,
             dosageForm: entity.dosageForm,
             dose: entity.dose,
-            dosageInstructions: entity.dosageInstructions
+            dosageInstructions: entity.dosageInstructions,
+            lot: entity.lot,
+            expiresOn: entity.expiresOn
         )
     }
 }

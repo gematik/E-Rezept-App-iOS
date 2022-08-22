@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>erx_txt_accepted_until</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@v1_days_variable@</string>
+		<key>v1_days_variable</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>one</key>
+			<string>Осталось дней: %u</string>
+			<key>few</key>
+			<string></string>
+			<key>many</key>
+			<string></string>
+			<key>other</key>
+			<string>Осталось дней: %u</string>
+		</dict>
+	</dict>
+	<key>erx_txt_expires_in</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>one</key>
+			<string>Можно выкупить в качестве самостоятельного плательщика только сегодня</string>
+			<key>few</key>
+			<string>Можно выкупить в качестве самостоятельного плательщика только в течение %u дней</string>
+			<key>many</key>
+			<string>Можно выкупить в качестве самостоятельного плательщика только в течение %u дней</string>
+			<key>other</key>
+			<string>Можно выкупить в качестве самостоятельного плательщика только в течение %u дней</string>
+		</dict>
+	</dict>
+	<key>scn_btn_scanning_done</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>one</key>
+			<string>Готово, добавьте рецепт</string>
+			<key>few</key>
+			<string></string>
+			<key>many</key>
+			<string></string>
+			<key>other</key>
+			<string>Готово, добавьте рецепты</string>
+		</dict>
+	</dict>
+	<key>pha_redeem_alert_title_failure</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>zero</key>
+			<string></string>
+			<key>one</key>
+			<string>Das ausgewählte Rezept konnte nicht eingelöst werden</string>
+			<key>other</key>
+			<string>%li Rezepte konnten nicht eingelöst werden</string>
+		</dict>
+	</dict>
+	<key>auth_txt_failed_login_hint_msg</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>one</key>
+			<string>Зафиксирована неудачная попытка входа</string>
+			<key>few</key>
+			<string>Зафиксированы %u неудачные попытки входа</string>
+			<key>many</key>
+			<string>Зафиксировано %u неудачных попыток входа</string>
+			<key>other</key>
+			<string>Зафиксировано %u неудачных попыток входа</string>
+		</dict>
+	</dict>
+	<key>prsc_fd_txt_details_actual_medication_title</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@variable_0@</string>
+		<key>variable_0</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>li</string>
+			<key>one</key>
+			<string>Erhaltenes Medikament</string>
+			<key>other</key>
+			<string>Erhaltene Medikamente</string>
+		</dict>
+	</dict>
+</dict>
+</plist>

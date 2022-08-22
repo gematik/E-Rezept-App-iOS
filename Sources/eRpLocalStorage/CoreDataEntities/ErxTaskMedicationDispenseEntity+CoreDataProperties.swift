@@ -24,6 +24,7 @@ extension ErxTaskMedicationDispenseEntity {
         NSFetchRequest<ErxTaskMedicationDispenseEntity>(entityName: "ErxTaskMedicationDispenseEntity")
     }
 
+    @NSManaged public var identifier: String?
     @NSManaged public var taskId: String?
     @NSManaged public var insuranceId: String?
     @NSManaged public var pzn: String?
@@ -34,6 +35,8 @@ extension ErxTaskMedicationDispenseEntity {
     @NSManaged public var amount: NSDecimalNumber?
     @NSManaged public var telematikId: String?
     @NSManaged public var whenHandedOver: String?
+    @NSManaged public var lot: String?
+    @NSManaged public var expiresOn: String?
     @NSManaged public var task: ErxTaskEntity?
 }
 
