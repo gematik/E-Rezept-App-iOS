@@ -21,7 +21,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-           1.4.0
+           1.4.2
  Docs
         </a>
          (100% documented)
@@ -681,9 +681,9 @@ Note: The response does not verify that the pharmacy has accepted the order</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:6eRpKit18ErxRemoteDataStoreP26listAllMedicationDispenses5after7Combine12AnyPublisherVySayAA0C4TaskV0I8DispenseVGAA0dF5ErrorOGSSSg_tF"></a>
-                    <a name="//apple_ref/swift/Method/listAllMedicationDispenses(after:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6eRpKit18ErxRemoteDataStoreP26listAllMedicationDispenses5after7Combine12AnyPublisherVySayAA0C4TaskV0I8DispenseVGAA0dF5ErrorOGSSSg_tF">listAllMedicationDispenses(after:<wbr>)</a>
+                    <a name="/s:6eRpKit18ErxRemoteDataStoreP23listMedicationDispenses3for7Combine12AnyPublisherVySayAA0C4TaskV0H8DispenseVGAA0dF5ErrorOGSS_tF"></a>
+                    <a name="//apple_ref/swift/Method/listMedicationDispenses(for:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:6eRpKit18ErxRemoteDataStoreP23listMedicationDispenses3for7Combine12AnyPublisherVySayAA0C4TaskV0H8DispenseVGAA0dF5ErrorOGSS_tF">listMedicationDispenses(for:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -691,15 +691,15 @@ Note: The response does not verify that the pharmacy has accepted the order</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>List all MedicationDispenses from the given reference date</p>
+                        <p>List all medication dispenses for a specific <code>Prescription</code> /  <code><a href="../Structs/ErxTask.html">ErxTask</a></code></p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">listAllMedicationDispenses</span><span class="p">(</span>
-    <span class="n">after</span> <span class="nv">referenceDate</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">listMedicationDispenses</span><span class="p">(</span>
+    <span class="k">for</span> <span class="nv">id</span><span class="p">:</span> <span class="kt"><a href="../Structs/ErxTask.html">ErxTask</a></span><span class="o">.</span><span class="kt">ID</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="p">[</span><span class="kt"><a href="../Structs/ErxTask.html">ErxTask</a></span><span class="o">.</span><span class="kt">MedicationDispense</span><span class="p">],</span> <span class="kt"><a href="../Enums/RemoteStoreError.html">RemoteStoreError</a></span><span class="o">&gt;</span></code></pre>
 
                         </div>
@@ -711,18 +711,21 @@ Note: The response does not verify that the pharmacy has accepted the order</p>
                             <tr>
                               <td>
                                 <code>
-                                <em>referenceDate</em>
+                                <em>id</em>
                                 </code>
                               </td>
                               <td>
                                 <div>
-                                  <p><code>MedicationDispense</code>s with modification date great or equal  <code>referenceDate</code>
-                        will be listed. Pass <code>nil</code> for listing all</p>
+                                  <p>MedicationDispense for the corresponding <code>ErxTask.ID</code> will be fetched.</p>
                                 </div>
                               </td>
                             </tr>
                           </tbody>
                         </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p><code>MedicationDispense</code>s</p>
                       </div>
                     </section>
                   </div>
@@ -735,7 +738,7 @@ Note: The response does not verify that the pharmacy has accepted the order</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2022 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2022-07-27)</p>
+      <p>&copy; 2022 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2022-08-05)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>
