@@ -9,7 +9,7 @@
     code{white-space: pre-wrap;}
     span.smallcaps{font-variant: small-caps;}
     div.columns{display: flex; gap: min(4vw, 1.5em);}
-    div.column{flex: 1;}
+    div.column{flex: auto; overflow-x: auto;}
     div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
     ul.task-list{list-style: none;}
     ul.task-list li input[type="checkbox"] {
@@ -64,6 +64,8 @@ id="toc-redeemmatrixcodedomain.loadingimageerror"><code>RedeemMatrixCodeDomain.L
 id="toc-redeemserviceerror"><code>RedeemServiceError</code></a></li>
 <li><a href="#redeemserviceerror.internalerror"
 id="toc-redeemserviceerror.internalerror"><code>RedeemServiceError.InternalError</code></a></li>
+<li><a href="#resetretrycountercontrollererror"
+id="toc-resetretrycountercontrollererror"><code>ResetRetryCounterControllerError</code></a></li>
 <li><a href="#registereddevicesdomain.error"
 id="toc-registereddevicesdomain.error"><code>RegisteredDevicesDomain.Error</code></a></li>
 <li><a href="#registereddevicesserviceerror"
@@ -90,6 +92,8 @@ id="toc-localstoreerror"><code>LocalStoreError</code></a></li>
 id="toc-remotestoreerror"><code>RemoteStoreError</code></a></li>
 <li><a href="#scannederxtask.error"
 id="toc-scannederxtask.error"><code>ScannedErxTask.Error</code></a></li>
+<li><a href="#sharedtask.error"
+id="toc-sharedtask.error"><code>SharedTask.Error</code></a></li>
 <li><a href="#avstransactioncoredatastore.error"
 id="toc-avstransactioncoredatastore.error"><code>AVSTransactionCoreDataStore.Error</code></a></li>
 <li><a href="#coredatacontroller.error"
@@ -384,6 +388,8 @@ href="/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepar
 <ul>
 <li><a href="#usersessionerror">UserSessionError</a></li>
 </ul></li>
+<li><code>importDuplicate</code> (i-01503): [Import of shared Task
+failed due to being a duplicate already existing within the app]</li>
 </ul>
 <h2
 id="prescriptiondetaildomain.loadingimageerror"><code>PrescriptionDetailDomain.LoadingImageError</code></h2>
@@ -450,6 +456,26 @@ information from the store went wrong]
 <ul>
 <li><a href="#localstoreerror">LocalStoreError</a></li>
 </ul></li>
+</ul>
+<h2
+id="resetretrycountercontrollererror"><code>ResetRetryCounterControllerError</code></h2>
+<p><em>Source:</em> <a
+href="/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpApp/Screens/Settings/HealthCard/ResetRetryCounter/ResetRetryCounterReadCard/NFCResetRetryCounterController.swift">NFCResetRetryCounterController.swift</a></p>
+<ul>
+<li><code>cardError</code> (i-02601):
+<ul>
+<li><a
+href="#nfctagreadersession.error">NFCTagReaderSession.Error</a></li>
+</ul></li>
+<li><code>openSecureSession</code> (i-02602):
+<ul>
+<li><a href="#swift.error">Swift.Error</a></li>
+</ul></li>
+<li><code>resetRetryCounter</code> (i-02603):
+<ul>
+<li><a href="#swift.error">Swift.Error</a></li>
+</ul></li>
+<li><code>wrongCan</code> (i-02604):</li>
 </ul>
 <h2
 id="registereddevicesdomain.error"><code>RegisteredDevicesDomain.Error</code></h2>
@@ -619,6 +645,23 @@ href="/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepar
 <li><code>invalidJSON</code> (i-20504):
 <ul>
 <li><a href="#swift.error">Swift.Error</a></li>
+</ul></li>
+</ul>
+<h2 id="sharedtask.error"><code>SharedTask.Error</code></h2>
+<p><em>Source:</em> <a
+href="/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpKit/SharedTask.swift">SharedTask.swift</a></p>
+<ul>
+<li><code>missingSeparator</code> (i-20701):
+<ul>
+<li><a href="#string">String</a></li>
+</ul></li>
+<li><code>failedDecodingEmptyString</code> (i-20702):
+<ul>
+<li><a href="#string">String</a></li>
+</ul></li>
+<li><code>tooManyComponents</code> (i-20703):
+<ul>
+<li><a href="#string">String</a></li>
 </ul></li>
 </ul>
 <h2

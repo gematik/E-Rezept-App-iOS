@@ -21,7 +21,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../../index.html">
-           1.4.2
+           1.4.3
  Docs
         </a>
          (100% documented)
@@ -106,6 +106,9 @@
                 <a class="nav-group-task-link" href="../../Extensions/KVNR.html">KVNR</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Extensions/Sequence.html">Sequence</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../../Extensions/String.html">String</a>
               </li>
             </ul>
@@ -173,6 +176,9 @@
                 <a class="nav-group-task-link" href="../../Structs/ErxTask/Status.html">– Status</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Structs/ErxTask/FlowType.html">– FlowType</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../../Structs/ErxTask/Source.html">– Source</a>
               </li>
               <li class="nav-group-task">
@@ -219,6 +225,12 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../../Structs/ScannedErxTask/Error.html">– Error</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Structs/SharedTask.html">SharedTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Structs/SharedTask/Error.html">– Error</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../../Structs/ShipmentInfo.html">ShipmentInfo</a>
@@ -394,6 +406,33 @@
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:6eRpKit7ErxTaskV13CommunicationV7orderIdSSSgvp"></a>
+                    <a name="//apple_ref/swift/Property/orderId" class="dashAnchor"></a>
+                    <a class="token" href="#/s:6eRpKit7ErxTaskV13CommunicationV7orderIdSSSgvp">orderId</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Id for every order of prescriptions</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">orderId</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:6eRpKit7ErxTaskV13CommunicationV9timestampSSvp"></a>
                     <a name="//apple_ref/swift/Property/timestamp" class="dashAnchor"></a>
                     <a class="token" href="#/s:6eRpKit7ErxTaskV13CommunicationV9timestampSSvp">timestamp</a>
@@ -528,9 +567,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:6eRpKit7ErxTaskV13CommunicationV10identifier7profile6taskId04userI009telematikI09timestamp11payloadJSON6isReadAESS_AE7ProfileOS5SSbtcfc"></a>
-                    <a name="//apple_ref/swift/Method/init(identifier:profile:taskId:userId:telematikId:timestamp:payloadJSON:isRead:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6eRpKit7ErxTaskV13CommunicationV10identifier7profile6taskId04userI009telematikI09timestamp11payloadJSON6isReadAESS_AE7ProfileOS5SSbtcfc">init(identifier:<wbr>profile:<wbr>taskId:<wbr>userId:<wbr>telematikId:<wbr>timestamp:<wbr>payloadJSON:<wbr>isRead:<wbr>)</a>
+                    <a name="/s:6eRpKit7ErxTaskV13CommunicationV10identifier7profile6taskId04userI009telematikI005orderI09timestamp11payloadJSON6isReadAESS_AE7ProfileOS4SSgS2SSbtcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(identifier:profile:taskId:userId:telematikId:orderId:timestamp:payloadJSON:isRead:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:6eRpKit7ErxTaskV13CommunicationV10identifier7profile6taskId04userI009telematikI005orderI09timestamp11payloadJSON6isReadAESS_AE7ProfileOS4SSgS2SSbtcfc">init(identifier:<wbr>profile:<wbr>taskId:<wbr>userId:<wbr>telematikId:<wbr>orderId:<wbr>timestamp:<wbr>payloadJSON:<wbr>isRead:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -551,6 +590,7 @@
     <span class="nv">taskId</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
     <span class="nv">userId</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
     <span class="nv">telematikId</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
+    <span class="nv">orderId</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
     <span class="nv">timestamp</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
     <span class="nv">payloadJSON</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
     <span class="nv">isRead</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">false</span>
@@ -619,6 +659,18 @@
                               <td>
                                 <div>
                                   <p>Telematik id of the sender</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>orderId</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Id for every order of prescriptions</p>
                                 </div>
                               </td>
                             </tr>
@@ -726,7 +778,7 @@
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2022 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2022-08-05)</p>
+      <p>&copy; 2022 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2022-08-29)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>

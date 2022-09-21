@@ -21,7 +21,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-           1.4.2
+           1.4.3
  Docs
         </a>
          (100% documented)
@@ -106,6 +106,9 @@
                 <a class="nav-group-task-link" href="../Extensions/KVNR.html">KVNR</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions/Sequence.html">Sequence</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/String.html">String</a>
               </li>
             </ul>
@@ -173,6 +176,9 @@
                 <a class="nav-group-task-link" href="../Structs/ErxTask/Status.html">– Status</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/ErxTask/FlowType.html">– FlowType</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/ErxTask/Source.html">– Source</a>
               </li>
               <li class="nav-group-task">
@@ -221,6 +227,12 @@
                 <a class="nav-group-task-link" href="../Structs/ScannedErxTask/Error.html">– Error</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/SharedTask.html">SharedTask</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/SharedTask/Error.html">– Error</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/ShipmentInfo.html">ShipmentInfo</a>
               </li>
             </ul>
@@ -256,6 +268,33 @@
           <div class="section-content">
             <div class="task-group">
               <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:6eRpKit12ErxTaskOrderV10identifierSSvp"></a>
+                    <a name="//apple_ref/swift/Property/identifier" class="dashAnchor"></a>
+                    <a class="token" href="#/s:6eRpKit12ErxTaskOrderV10identifierSSvp">identifier</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p><code>ErxTaskOrder</code> identifier</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">identifier</span><span class="p">:</span> <span class="kt">String</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
                 <li class="item">
                   <div>
                     <code>
@@ -367,9 +406,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:6eRpKit12ErxTaskOrderV03erxD2Id10accessCode017pharmacyTelematikG07payloadACSS_S2SAC7PayloadVtcfc"></a>
-                    <a name="//apple_ref/swift/Method/init(erxTaskId:accessCode:pharmacyTelematikId:payload:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6eRpKit12ErxTaskOrderV03erxD2Id10accessCode017pharmacyTelematikG07payloadACSS_S2SAC7PayloadVtcfc">init(erxTaskId:<wbr>accessCode:<wbr>pharmacyTelematikId:<wbr>payload:<wbr>)</a>
+                    <a name="/s:6eRpKit12ErxTaskOrderV10identifier03erxD2Id10accessCode017pharmacyTelematikH07payloadACSS_S3SAC7PayloadVtcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(identifier:erxTaskId:accessCode:pharmacyTelematikId:payload:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:6eRpKit12ErxTaskOrderV10identifier03erxD2Id10accessCode017pharmacyTelematikH07payloadACSS_S3SAC7PayloadVtcfc">init(identifier:<wbr>erxTaskId:<wbr>accessCode:<wbr>pharmacyTelematikId:<wbr>payload:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -384,7 +423,8 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">erxTaskId</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="nf">init</span><span class="p">(</span><span class="nv">identifier</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
+            <span class="nv">erxTaskId</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
             <span class="nv">accessCode</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
             <span class="nv">pharmacyTelematikId</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
             <span class="nv">payload</span><span class="p">:</span> <span class="kt"><a href="../Structs/ErxTaskOrder/Payload.html">Payload</a></span><span class="p">)</span></code></pre>
@@ -395,6 +435,18 @@
                         <h4>Parameters</h4>
                         <table class="graybox">
                           <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>identifier</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p><code>ErxTaskOrder</code> identifier</p>
+                                </div>
+                              </td>
+                            </tr>
                             <tr>
                               <td>
                                 <code>
@@ -511,7 +563,7 @@
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2022 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2022-08-05)</p>
+      <p>&copy; 2022 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2022-08-29)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>

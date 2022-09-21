@@ -50,6 +50,7 @@ i-01401,"ExtAuthPendingDomain.Error.idpError","Underlying `IDPError` for the ext
 i-01402,"ExtAuthPendingDomain.Error.profileValidation","Error when `Profile` validation with the given authentication fails.\nError is produces within the `IDPError.unspecified` error before saving the IDPToken",IDTokenValidatorError
 i-01501,"MainDomain.Error.localStoreError","",LocalStoreError
 i-01502,"MainDomain.Error.userSessionError","",UserSessionError
+i-01503,"MainDomain.Error.importDuplicate","Import of shared Task failed due to being a duplicate already existing within the app",
 i-01601,"PrescriptionDetailDomain.LoadingImageError.matrixCodeGenerationFailed","",
 i-02301,"RedeemMatrixCodeDomain.LoadingImageError.matrixCodeGenerationFailed","",
 i-02401,"RedeemServiceError.eRxRepository","When redeeming a task via Fachdienst",ErxRepositoryError
@@ -65,6 +66,10 @@ i-02505,"RedeemServiceError.InternalError.idMissmatch","When no order can be fou
 i-02506,"RedeemServiceError.InternalError.noService","When no service can be found for the selected pharmacy",
 i-02507,"RedeemServiceError.InternalError.unexpectedHTTPStatusCode","When the status code is not in [200..<300] but the service did not return an error beforehand",
 i-02508,"RedeemServiceError.InternalError.localStoreError","When persisting/extracting information from the store went wrong",LocalStoreError
+i-02601,"ResetRetryCounterControllerError.cardError","",NFCTagReaderSession.Error
+i-02602,"ResetRetryCounterControllerError.openSecureSession","",
+i-02603,"ResetRetryCounterControllerError.resetRetryCounter","",
+i-02604,"ResetRetryCounterControllerError.wrongCan","",
 i-01701,"RegisteredDevicesDomain.Error.generic","",
 i-01801,"RegisteredDevicesServiceError.missingAuthentication","",
 i-01802,"RegisteredDevicesServiceError.missingToken","",
@@ -106,6 +111,9 @@ i-20501,"ScannedErxTask.Error.format","",
 i-20502,"ScannedErxTask.Error.invalidID","",
 i-20503,"ScannedErxTask.Error.invalidAccessCode","",
 i-20504,"ScannedErxTask.Error.invalidJSON","",
+i-20701,"SharedTask.Error.missingSeparator","",
+i-20702,"SharedTask.Error.failedDecodingEmptyString","",
+i-20703,"SharedTask.Error.tooManyComponents","",
 i-,"AVSTransactionCoreDataStore.Error.noMatchingEntity","",
 i-,"AVSTransactionCoreDataStore.Error.internalError","",
 i-50001,"CoreDataController.Error.initialization","",
