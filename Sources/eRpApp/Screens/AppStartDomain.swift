@@ -193,7 +193,14 @@ enum AppStartDomain {
                 return Effect(value: .app(action: .selectTab(.main)))
             }
         case let .universalLink(url):
-            return Effect(value: .app(action: .main(action: .externalLogin(url))))
+            switch url.path {
+            case "/extauth":
+                return Effect(value: .app(action: .main(action: .externalLogin(url))))
+            case "/prescription":
+                return Effect(value: .app(action: .main(action: .importTaskByUrl(url))))
+            default:
+                return .none
+            }
         }
     }
 }

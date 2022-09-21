@@ -73,6 +73,7 @@ extension ModelsR4.Bundle {
             return ErxTask(
                 identifier: taskId,
                 status: .error(.missingPatientReceiptReference),
+                flowType: ErxTask.FlowType(rawValue: task.flowTypeCode),
                 accessCode: taskAccessCode,
                 fullUrl: fullUrl?.value?.url.absoluteString,
                 authoredOn: task.authoredOn?.value?.description,
@@ -86,6 +87,7 @@ extension ModelsR4.Bundle {
             return ErxTask(
                 identifier: taskId,
                 status: .error(.missingPatientReceiptIdentifier),
+                flowType: ErxTask.FlowType(rawValue: task.flowTypeCode),
                 accessCode: taskAccessCode,
                 fullUrl: fullUrl?.value?.url.absoluteString,
                 authoredOn: task.authoredOn?.value?.description,
@@ -101,6 +103,7 @@ extension ModelsR4.Bundle {
             return ErxTask(
                 identifier: taskId,
                 status: .error(.missingPatientReceiptBundle),
+                flowType: ErxTask.FlowType(rawValue: task.flowTypeCode),
                 accessCode: taskAccessCode,
                 fullUrl: fullUrl?.value?.url.absoluteString,
                 authoredOn: task.authoredOn?.value?.description,
@@ -119,6 +122,7 @@ extension ModelsR4.Bundle {
         return ErxTask(
             identifier: taskId,
             status: erxTaskStatus,
+            flowType: ErxTask.FlowType(rawValue: task.flowTypeCode),
             accessCode: taskAccessCode,
             fullUrl: fullUrl?.value?.url.absoluteString,
             authoredOn: patientReceiptBundle.medicationRequest?.authoredOn?.value?.description,
@@ -229,6 +233,21 @@ extension ModelsR4.Task {
                case let Extension.ValueX.date(date) = valueX,
                let expiryDateString = date.value?.description {
                 return expiryDateString
+            }
+            return nil
+        }
+    }
+
+    var flowTypeCode: String? {
+        `extension`?.first { anExtension in
+            Workflow.Key.prescriptionTypeKeys.contains { $0.value == anExtension.url.value?.url.absoluteString }
+        }
+        .flatMap {
+            if let valueX = $0.value,
+               case let Extension.ValueX.coding(codingValue) = valueX,
+               Workflow.Key.flowTypeKeys.contains(where: { $0.value == codingValue.system?.value?.url.absoluteString }),
+               let code = codingValue.code?.value?.description {
+                return code
             }
             return nil
         }

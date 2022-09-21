@@ -449,12 +449,12 @@ extension PharmacySearchDomain {
 
         static let environment = Environment(
             schedulers: Schedulers(),
-            pharmacyRepository: DemoSessionContainer().pharmacyRepository,
+            pharmacyRepository: DummySessionContainer().pharmacyRepository,
             locationManager: .live,
             fhirDateFormatter: FHIRDateFormatter.shared,
             openHoursCalculator: PharmacyOpenHoursCalculator(),
             referenceDateForOpenHours: openHoursReferenceDate,
-            userSession: DemoSessionContainer()
+            userSession: DummySessionContainer()
         )
         static let store = Store(initialState: state,
                                  reducer: reducer,

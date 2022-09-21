@@ -18,29 +18,51 @@
 
 import Combine
 import ComposableArchitecture
+import IDP
+import SwiftUI
 
 enum CardWallPINDomain {
     typealias Store = ComposableArchitecture.Store<State, Action>
     typealias Reducer = ComposableArchitecture.Reducer<State, Action, Environment>
 
+    indirect enum Route: Equatable {
+        case login(CardWallLoginOptionDomain.State)
+        case egk
+
+        enum Tag: Int {
+            case login
+            case egk
+        }
+
+        var tag: Tag {
+            switch self {
+            case .login:
+                return .login
+            case .egk:
+                return .egk
+            }
+        }
+    }
+
     struct State: Equatable {
         let isDemoModus: Bool
         var pin: String = ""
         var wrongPinEntered = false
-
-        var showNextScreen: TransitionMode = .none
         var doneButtonPressed = false
         let pinPassRange = (6 ... 8)
-        var isEGKOrderInfoViewPresented = false
+
+        var route: Route?
     }
 
-    enum Action: Equatable {
+    indirect enum Action: Equatable {
         case update(pin: String)
-        case reset
         case close
-        case advance(TransitionMode)
+        case advance
         case showEGKOrderInfoView
-        case dismissEGKOrderInfoView
+        case setNavigation(tag: Route.Tag?)
+        case login(action: CardWallLoginOptionDomain.Action)
+        case navigateToIntro
+        case wrongCanClose
     }
 
     enum TransitionMode: Equatable {
@@ -51,11 +73,13 @@ enum CardWallPINDomain {
 
     struct Environment {
         let userSession: UserSession
-
+        var schedulers: Schedulers
+        var sessionProvider: ProfileBasedSessionProvider
+        let signatureProvider: SecureEnclaveSignatureProvider
         let accessibilityAnnouncementReceiver: (String) -> Void
     }
 
-    static let reducer = Reducer { state, action, environment in
+    static let domainReducer = Reducer { state, action, environment in
         switch action {
         case let .update(pin: pin):
             state.pin = pin
@@ -64,14 +88,12 @@ enum CardWallPINDomain {
                 environment.accessibilityAnnouncementReceiver(state.warningMessage)
             }
             return .none
-        case .reset:
-            state.showNextScreen = .none
-            return .none
         case .close:
             return .none
-        case let .advance(mode):
+        case .advance:
             if state.enteredPINValid {
-                state.showNextScreen = mode
+                state.route = .login(.init(isDemoModus: state.isDemoModus,
+                                           pin: state.pin))
                 return .none
             } else {
                 state.doneButtonPressed = true
@@ -80,14 +102,48 @@ enum CardWallPINDomain {
                 environment.accessibilityAnnouncementReceiver(state.warningMessage)
             }
             return .none
-        case .dismissEGKOrderInfoView:
-            state.isEGKOrderInfoViewPresented = false
-            return .none
         case .showEGKOrderInfoView:
-            state.isEGKOrderInfoViewPresented = true
+            state.route = .egk
+            return .none
+        case .setNavigation(tag: .none):
+            state.route = nil
+            return .none
+        case .login(.wrongCanClose):
+            return Effect(value: .wrongCanClose)
+                // Delay for before CardWallCanView is displayed, Workaround for TCA pullback problem
+                .delay(for: 0.01, scheduler: environment.schedulers.main)
+                .eraseToEffect()
+        case .login(.wrongPinClose):
+            state.route = nil
+            return .none
+        case .login(.close):
+            return Effect(value: .close)
+        case .login(.navigateToIntro):
+            return Effect(value: .navigateToIntro)
+        case .setNavigation,
+             .login,
+             .navigateToIntro,
+             .wrongCanClose:
             return .none
         }
     }
+
+    static let loginPullbackReducer: Reducer =
+        CardWallLoginOptionDomain.reducer._pullback(
+            state: (\State.route).appending(path: /Route.login),
+            action: /Action.login(action:)
+        ) { environment in
+            CardWallLoginOptionDomain.Environment(userSession: environment.userSession,
+                                                  schedulers: environment.schedulers,
+                                                  sessionProvider: environment.sessionProvider,
+                                                  signatureProvider: environment.signatureProvider,
+                                                  openURL: UIApplication.shared.open(_:options:completionHandler:))
+        }
+
+    static let reducer = Reducer.combine(
+        loginPullbackReducer,
+        domainReducer
+    )
 }
 
 extension CardWallPINDomain.State {
@@ -123,10 +179,19 @@ extension CardWallPINDomain.State {
 extension CardWallPINDomain {
     enum Dummies {
         static let state = State(isDemoModus: false, pin: "")
-        static let environment = Environment(userSession: DemoSessionContainer()) { _ in }
+        static let environment = Environment(
+            userSession: DemoSessionContainer(schedulers: Schedulers()),
+            schedulers: Schedulers(),
+            sessionProvider: DummyProfileBasedSessionProvider(),
+            signatureProvider: DummySecureEnclaveSignatureProvider()
+        ) { _ in }
 
-        static let store = Store(initialState: state,
-                                 reducer: reducer,
-                                 environment: environment)
+        static let store = storeFor(state)
+
+        static func storeFor(_ state: State) -> Store {
+            Store(initialState: state,
+                  reducer: reducer,
+                  environment: environment)
+        }
     }
 }

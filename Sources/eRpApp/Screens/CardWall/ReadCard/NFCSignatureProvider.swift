@@ -218,7 +218,7 @@ final class EGKSignatureProvider: NFCSignatureProvider {
 
     func openSecureSession(can: CAN, pin: Format2Pin) -> AnyPublisher<SignatureSession, NFCSignatureProviderError> {
         NFCTagReaderSession
-            .publisher(messages: messages)
+            .publisher(messages: .defaultMessages)
             .mapError { NFCSignatureProviderError.cardError($0) }
             .flatMap { session -> AnyPublisher<SignatureSession, NFCSignatureProviderError> in
                 session.updateAlert(message: L10n.cdwTxtRcNfcDialogOpenPace.text)
@@ -241,7 +241,7 @@ final class EGKSignatureProvider: NFCSignatureProvider {
     func sign(can: CAN, pin: Format2Pin, challenge: IDPChallengeSession)
         -> AnyPublisher<SignedChallenge, Error> {
         NFCTagReaderSession
-            .publisher(messages: messages)
+            .publisher(messages: .defaultMessages)
             .mapError { Error.cardError($0) }
             .flatMap { session in
                 self.openSessionAndSignChallenge(can: can, pin: pin, challenge: challenge, session: session)
@@ -291,17 +291,15 @@ extension Publisher {
     }
 }
 
-extension EGKSignatureProvider {
-    var messages: NFCTagReaderSession.Messages {
-        NFCTagReaderSession.Messages(
-            discoveryMessage: L10n.cdwTxtRcNfcMessageDiscoveryMessage.text,
-            connectMessage: L10n.cdwTxtRcNfcMessageConnectMessage.text,
-            noCardMessage: L10n.cdwTxtRcNfcMessageNoCardMessage.text,
-            multipleCardsMessage: L10n.cdwTxtRcNfcMessageMultipleCardsMessage.text,
-            unsupportedCardMessage: L10n.cdwTxtRcNfcMessageUnsupportedCardMessage.text,
-            connectionErrorMessage: L10n.cdwTxtRcNfcMessageConnectionErrorMessage.text
-        )
-    }
+extension NFCTagReaderSession.Messages {
+    static let defaultMessages: Self = .init(
+        discoveryMessage: L10n.cdwTxtRcNfcMessageDiscoveryMessage.text,
+        connectMessage: L10n.cdwTxtRcNfcMessageConnectMessage.text,
+        noCardMessage: L10n.cdwTxtRcNfcMessageNoCardMessage.text,
+        multipleCardsMessage: L10n.cdwTxtRcNfcMessageMultipleCardsMessage.text,
+        unsupportedCardMessage: L10n.cdwTxtRcNfcMessageUnsupportedCardMessage.text,
+        connectionErrorMessage: L10n.cdwTxtRcNfcMessageConnectionErrorMessage.text
+    )
 }
 
 extension NFCCardSession {

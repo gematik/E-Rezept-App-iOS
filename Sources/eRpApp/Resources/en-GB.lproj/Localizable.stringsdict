@@ -98,5 +98,21 @@
 			<string>Erhaltene Medikamente</string>
 		</dict>
 	</dict>
+    <key>stg_txt_card_reset_rc_alert_wrong_puk_message</key>
+    <dict>
+        <key>NSStringLocalizedFormatKey</key>
+        <string>%#@variable_0@</string>
+        <key>variable_0</key>
+        <dict>
+            <key>NSStringFormatSpecTypeKey</key>
+            <string>NSStringPluralRuleType</string>
+            <key>NSStringFormatValueTypeKey</key>
+            <string>li</string>
+            <key>one</key>
+            <string>Sie haben noch einen Versuch um die PUK einzugeben.</string>
+            <key>other</key>
+            <string>Sie haben noch %u Versuche um die PUK einzugeben.</string>
+        </dict>
+    </dict>
 </dict>
 </plist>

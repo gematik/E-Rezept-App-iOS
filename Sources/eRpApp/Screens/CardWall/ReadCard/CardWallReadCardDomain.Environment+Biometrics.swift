@@ -118,7 +118,7 @@ extension CardWallReadCardDomain.Environment {
     ) -> Effect<CardWallReadCardDomain.Action, Never> {
         let pairingSession: PairingSession
         do {
-            pairingSession = try signatureProvider.registerData()
+            pairingSession = try signatureProvider.createPairingSession()
         } catch {
             return Just(.stateReceived(.retrievingChallenge(.error(.biometrieError(error))))).eraseToEffect()
         }

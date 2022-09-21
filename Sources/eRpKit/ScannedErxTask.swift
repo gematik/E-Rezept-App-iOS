@@ -104,10 +104,10 @@ extension ScannedErxTask {
     /// - Parameter tasks: token of above mentioned form
     /// - Returns: Array of `ScannedErxTask`s parsed from given URLs.
     public static func from(
-        tasks json: String,
+        tasks codeContent: String,
         jsonDecoder: JSONDecoder = JSONDecoder()
     ) throws -> [ScannedErxTask] {
-        guard let jsonData = json.data(using: .utf8) else {
+        guard let jsonData = codeContent.data(using: .utf8) else {
             throw Error.format
         }
         var erxToken: ErxToken
@@ -115,6 +115,12 @@ extension ScannedErxTask {
             // [REQ:gemspec_eRp_FdV:A_19984] validate data matrix code structure
             erxToken = try jsonDecoder.decode(ErxToken.self, from: jsonData)
         } catch {
+            if let url = URL(string: codeContent),
+               let components = URLComponents(url: url, resolvingAgainstBaseURL: true),
+               let fragment = components.fragment?.data(using: .utf8),
+               let codes = try? jsonDecoder.decode([SharedTask].self, from: fragment) {
+                return codes.compactMap { ScannedErxTask(id: $0.id, accessCode: $0.accessCode) }
+            }
             throw Error.invalidJSON(error)
         }
         return try erxToken.urls.compactMap(ScannedErxTask.init)

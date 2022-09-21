@@ -115,6 +115,7 @@ extension ErxTask {
             ErxTask(
                 identifier: id,
                 status: status,
+                flowType: ErxTask.FlowType.pharmacyOnly,
                 accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
                 fullUrl: "some/full/url",
                 authoredOn: authoredOn,
@@ -148,6 +149,7 @@ extension ErxTask {
             ErxTask(
                 identifier: id,
                 status: .ready,
+                flowType: ErxTask.FlowType(rawValue: String(id.prefix(3))),
                 accessCode: accessCode,
                 authoredOn: authoredOn,
                 author: NSLocalizedString("scn_txt_author", comment: ""),

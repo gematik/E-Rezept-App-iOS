@@ -104,6 +104,10 @@ class MockUserSession: UserSession {
         NFCSignatureProviderMock()
     }()
 
+    lazy var nfcResetRetryCounterController: NFCResetRetryCounterController = {
+        MockNFCResetRetryCounterController()
+    }()
+
     lazy var appSecurityManager: AppSecurityManager = {
         MockAppSecurityManager()
     }()

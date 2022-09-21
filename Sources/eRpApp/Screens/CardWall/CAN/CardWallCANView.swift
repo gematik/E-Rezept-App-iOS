@@ -23,28 +23,25 @@ import eRpKit
 import eRpLocalStorage
 import SwiftUI
 
-struct CardWallCANView<Content: View>: View {
-    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
+struct CardWallCANView: View {
     let store: CardWallCANDomain.Store
 
-    let nextView: () -> Content
+    struct ViewState: Equatable {
+        let can: String
+        let isDemoModus: Bool
+        let routeTag: CardWallCANDomain.Route.Tag?
 
-    init(store: CardWallCANDomain.Store, @ViewBuilder nextView: @escaping () -> Content) {
-        self.store = store
-        self.nextView = nextView
+        init(state: CardWallCANDomain.State) {
+            can = state.can
+            routeTag = state.route?.tag
+            isDemoModus = state.isDemoModus
+        }
     }
 
     var body: some View {
-        WithViewStore(store) { viewStore in
-            VStack(alignment: .leading) {
+        WithViewStore(store.scope(state: ViewState.init)) { viewStore in
+            VStack(alignment: .leading, spacing: 8) {
                 CANView(store: store)
-                NavigationLink(destination: nextView(),
-                               isActive: viewStore.binding(
-                                   get: \.showNextScreen,
-                                   send: CardWallCANDomain.Action.reset
-                               )) {
-                    EmptyView()
-                }.accessibility(hidden: true)
 
                 Spacer()
 
@@ -55,15 +52,32 @@ struct CardWallCANView<Content: View>: View {
                                   isEnabled: viewStore.state.can.count == 6) {
                     viewStore.send(.advance)
                 }.padding(.horizontal)
-                    .padding(.bottom)
+
+                NavigationLink(
+                    destination: IfLetStore(
+                        store.scope(
+                            state: (\CardWallCANDomain.State.route)
+                                .appending(path: /CardWallCANDomain.Route.pin)
+                                .extract(from:),
+                            action: CardWallCANDomain.Action.pinAction(action:)
+                        ),
+                        then: CardWallPINView.init(store:)
+                    ),
+                    tag: CardWallCANDomain.Route.Tag.pin,
+                    selection: viewStore.binding(
+                        get: \.routeTag
+                    ) {
+                        .setNavigation(tag: $0)
+                    }
+                ) {}
+                    .hidden()
+                    .accessibility(hidden: true)
             }
             .demoBanner(isPresented: viewStore.isDemoModus) {
                 Text(L10n.cdwTxtCanDemoModeInfo)
             }
             .navigationBarTitle(L10n.cdwTxtCanTitle, displayMode: .inline)
-            .navigationBarBackButtonHidden(true)
             .navigationBarItems(
-                leading: CustomNavigationBackButton(presentationMode: presentationMode),
                 trailing: NavigationBarCloseItem {
                     viewStore.send(.close)
                 }
@@ -78,8 +92,20 @@ struct CardWallCANView<Content: View>: View {
         @State var showAnimation = true
         @State var scannedcan: ScanCAN?
 
+        struct ViewState: Equatable {
+            let routeTag: CardWallCANDomain.Route.Tag?
+            let wrongCANEntered: Bool
+            let can: String
+
+            init(state: CardWallCANDomain.State) {
+                routeTag = state.route?.tag
+                wrongCANEntered = state.wrongCANEntered
+                can = state.can
+            }
+        }
+
         var body: some View {
-            WithViewStore(store) { viewStore in
+            WithViewStore(store.scope(state: ViewState.init)) { viewStore in
                 ScrollView(.vertical, showsIndicators: true) {
                     if viewStore.state.wrongCANEntered {
                         WorngCANEnteredWarningView()
@@ -125,18 +151,24 @@ struct CardWallCANView<Content: View>: View {
                             .font(.system(size: 16))
                             .foregroundColor(Colors.primary)
                             .accessibility(identifier: A11y.cardWall.canInput.cdwBtnCanMore)
-                            .fullScreenCover(isPresented: viewStore.binding(
-                                get: \.isEGKOrderInfoViewPresented,
-                                send: CardWallCANDomain.Action.dismissEGKOrderInfoView
-                            )) {
-                                NavigationView {
-                                    OrderHealthCardView {
-                                        viewStore.send(.dismissEGKOrderInfoView)
+                            .fullScreenCover(isPresented: Binding<Bool>(
+                                get: { viewStore.state.routeTag == .egk },
+                                set: { show in
+                                    if !show {
+                                        viewStore.send(.setNavigation(tag: nil))
                                     }
                                 }
-                                .accentColor(Colors.primary700)
-                                .navigationViewStyle(StackNavigationViewStyle())
-                            }
+                            ),
+                            onDismiss: {},
+                            content: {
+                                NavigationView {
+                                    OrderHealthCardView {
+                                        viewStore.send(.setNavigation(tag: nil))
+                                    }
+                                    .accentColor(Colors.primary700)
+                                    .navigationViewStyle(StackNavigationViewStyle())
+                                }
+                            })
                     }.padding()
 
                     CardWallCANInputView(
@@ -153,16 +185,22 @@ struct CardWallCANView<Content: View>: View {
                         viewStore.send(.showScannerView)
                     }
                     .padding()
-                    .fullScreenCover(isPresented: viewStore.binding(
-                        get: \.isScannerViewPresented,
-                        send: CardWallCANDomain.Action.dismissScannerView
-                    )) {
+                    .fullScreenCover(isPresented: Binding<Bool>(
+                        get: { viewStore.state.routeTag == .scanner },
+                        set: { show in
+                            if !show {
+                                viewStore.send(.setNavigation(tag: nil))
+                            }
+                        }
+                    ),
+                    onDismiss: {},
+                    content: {
                         NavigationView {
                             CANCameraScanner(store: store, canScan: $scannedcan)
                         }
                         .accentColor(Colors.primary700)
                         .navigationViewStyle(StackNavigationViewStyle())
-                    }
+                    })
                 }
                 .onReceive(NotificationCenter.default
                     .publisher(for: UIResponder.keyboardDidShowNotification)) { _ in
@@ -183,34 +221,34 @@ struct CardWallCANView<Content: View>: View {
                 }
         }
     }
-}
 
-private struct WorngCANEnteredWarningView: View {
-    var body: some View {
-        HStack(alignment: .center, spacing: 0) {
-            Image(systemName: SFSymbolName.exclamationMark)
-                .foregroundColor(Colors.red900)
-                .font(.title3)
+    private struct WorngCANEnteredWarningView: View {
+        var body: some View {
+            HStack(alignment: .center, spacing: 0) {
+                Image(systemName: SFSymbolName.exclamationMark)
+                    .foregroundColor(Colors.red900)
+                    .font(.title3)
+                    .padding(8)
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(L10n.cdwTxtCanWarnWrongTitle)
+                        .font(Font.subheadline.weight(.semibold))
+                        .foregroundColor(Colors.red900)
+                        .fixedSize(horizontal: false, vertical: true)
+                    Text(L10n.cdwTxtCanWarnWrongDescription)
+                        .font(Font.subheadline)
+                        .foregroundColor(Colors.red900)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
                 .padding(8)
 
-            VStack(alignment: .leading, spacing: 4) {
-                Text(L10n.cdwTxtCanWarnWrongTitle)
-                    .font(Font.subheadline.weight(.semibold))
-                    .foregroundColor(Colors.red900)
-                    .fixedSize(horizontal: false, vertical: true)
-                Text(L10n.cdwTxtCanWarnWrongDescription)
-                    .font(Font.subheadline)
-                    .foregroundColor(Colors.red900)
-                    .fixedSize(horizontal: false, vertical: true)
+                Spacer()
             }
+            .frame(maxWidth: .infinity)
             .padding(8)
-
-            Spacer()
+            .background(RoundedRectangle(cornerRadius: 16).fill(Colors.red100))
+            .border(Colors.red300, width: 0.5, cornerRadius: 16)
         }
-        .frame(maxWidth: .infinity)
-        .padding(8)
-        .background(RoundedRectangle(cornerRadius: 16).fill(Colors.red100))
-        .border(Colors.red300, width: 0.5, cornerRadius: 16)
     }
 }
 
@@ -220,9 +258,7 @@ struct CardWallCANView_Previews: PreviewProvider {
             NavigationView {
                 CardWallCANView(
                     store: CardWallCANDomain.Dummies.store
-                ) {
-                    EmptyView()
-                }
+                )
             }.generateVariations()
         }
     }

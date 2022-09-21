@@ -241,7 +241,8 @@ extension SceneDelegate {
         let changeableUserSessionContainer = ChangeableUserSessionContainer(
             initialUserSession: initialUserSession,
             userDataStore: userDataStore,
-            userSessionProvider: userSessionProvider
+            userSessionProvider: userSessionProvider,
+            schedulers: schedulers
         )
 
         return (changeableUserSessionContainer, userSessionProvider)

@@ -168,7 +168,7 @@ final class DefaultErxTaskRepositoryTests: XCTestCase {
 
 extension DefaultErxTaskRepositoryTests {
     enum Fixtures {
-        static let taskCompleted = ErxTask(identifier: "6543212345", status: .completed)
+        static let taskCompleted = ErxTask(identifier: "6543212345", status: .completed, flowType: .pharmacyOnly)
 
         static let auditEvent1 = ErxAuditEvent(identifier: "auditEvent1", timestamp: "2021-01-21T09:00:00Z")
         static let auditEvent2 = ErxAuditEvent(identifier: "auditEvent2", timestamp: "2021-01-21T10:00:00Z")

@@ -20,18 +20,23 @@ import ComposableArchitecture
 import SwiftUI
 import UIKit
 
-struct CardWallLoginOptionView<Content: View>: View {
-    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
+struct CardWallLoginOptionView: View {
     let store: CardWallLoginOptionDomain.Store
-    let nextView: () -> Content
 
-    init(store: CardWallLoginOptionDomain.Store, @ViewBuilder nextView: @escaping () -> Content) {
-        self.store = store
-        self.nextView = nextView
+    struct ViewState: Equatable {
+        let routeTag: CardWallLoginOptionDomain.Route.Tag?
+        let isDemoModus: Bool
+        var selectedLoginOption = LoginOption.notSelected
+
+        init(state: CardWallLoginOptionDomain.State) {
+            routeTag = state.route?.tag
+            isDemoModus = state.isDemoModus
+            selectedLoginOption = state.selectedLoginOption
+        }
     }
 
     var body: some View {
-        WithViewStore(store) { viewStore in
+        WithViewStore(store.scope(state: ViewState.init)) { viewStore in
             VStack(alignment: .leading) {
                 ScrollView(.vertical, showsIndicators: true) {
                     VStack(alignment: .leading) {
@@ -75,7 +80,13 @@ struct CardWallLoginOptionView<Content: View>: View {
                         .frame(width: 0, height: 0, alignment: .center)
                         .hidden()
                         .accessibility(hidden: true)
-                        .alert(store.scope(state: \.alertState), dismiss: .dismissAlert)
+                        .alert(
+                            self.store
+                                .scope(state: (\CardWallLoginOptionDomain.State.route)
+                                    .appending(path: /CardWallLoginOptionDomain.Route.alert)
+                                    .extract(from:)),
+                            dismiss: .setNavigation(tag: .none)
+                        )
 
                     PrivacyWarningViewContainer(store: store)
                 }
@@ -91,26 +102,33 @@ struct CardWallLoginOptionView<Content: View>: View {
                     viewStore.send(.advance)
                 }
                 .accessibility(label: Text(L10n.cdwBtnBiometryContinueLabel))
-                .padding(.horizontal)
-                .padding(.bottom)
-                .fullScreenCover(isPresented: viewStore.binding(
-                    get: { $0.showNextScreen },
-                    send: CardWallLoginOptionDomain.Action.navigateBack
-                )) {
-                    nextView()
-                        .statusBar(hidden: true)
-                        .accentColor(Colors.primary600)
-                        .navigationViewStyle(StackNavigationViewStyle())
-                }
+                .padding([.bottom, .leading, .trailing])
+
+                NavigationLink(
+                    destination: IfLetStore(
+                        store.scope(
+                            state: (\CardWallLoginOptionDomain.State.route)
+                                .appending(path: /CardWallLoginOptionDomain.Route.readcard)
+                                .extract(from:),
+                            action: CardWallLoginOptionDomain.Action.readcardAction(action:)
+                        ),
+                        then: CardWallReadCardView.init(store:)
+                    ),
+                    tag: CardWallLoginOptionDomain.Route.Tag.readcard,
+                    selection: viewStore.binding(
+                        get: \.routeTag
+                    ) {
+                        .setNavigation(tag: $0)
+                    }
+                ) {}
+                    .hidden()
+                    .accessibility(hidden: true)
             }
             .demoBanner(isPresented: viewStore.isDemoModus) {
                 Text(L10n.cdwTxtBiometryDemoModeInfo)
             }
             .navigationBarTitle(L10n.cdwTxtBiometryTitle, displayMode: .inline)
-            .navigationBarBackButtonHidden(true)
             .navigationBarItems(
-                leading: CustomNavigationBackButton(presentationMode: presentationMode)
-                    .accessibility(identifier: A11y.cardWall.loginOption.cdwBtnLoginOptionBack),
                 trailing: NavigationBarCloseItem {
                     viewStore.send(.close)
                 }
@@ -124,14 +142,26 @@ struct CardWallLoginOptionView<Content: View>: View {
     struct PrivacyWarningViewContainer: View {
         let store: CardWallLoginOptionDomain.Store
 
+        struct ViewState: Equatable {
+            let routeTag: CardWallLoginOptionDomain.Route.Tag?
+
+            init(state: CardWallLoginOptionDomain.State) {
+                routeTag = state.route?.tag
+            }
+        }
+
         var body: some View {
-            WithViewStore(store) { viewStore in
+            WithViewStore(store.scope(state: ViewState.init)) { viewStore in
                 VStack(alignment: .leading) {
                     Rectangle()
                         .frame(width: 0, height: 0, alignment: .center)
-                        .sheet(isPresented: viewStore.binding(
-                            get: { $0.isSecurityWarningPresented },
-                            send: CardWallLoginOptionDomain.Action.dismissSecurityWarning
+                        .fullScreenCover(isPresented: Binding<Bool>(
+                            get: { viewStore.state.routeTag == .warning },
+                            set: { show in
+                                if !show {
+                                    viewStore.send(.setNavigation(tag: nil))
+                                }
+                            }
                         )) {
                             CardWallLoginOptionView.PrivacyWarningViewContainer.PrivacyWarningView {
                                 viewStore.send(.acceptSecurityWarning)
@@ -200,9 +230,7 @@ struct CardWallBiometryView_Previews: PreviewProvider {
                 NavigationView {
                     CardWallLoginOptionView(
                         store: CardWallLoginOptionDomain.Dummies.store
-                    ) {
-                        EmptyView()
-                    }
+                    )
                 }
                 .previewDevice(PreviewDevice(rawValue: deviceName))
                 .previewDisplayName(deviceName)

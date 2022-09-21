@@ -35,7 +35,12 @@ final class CardWallPINDomainTests: XCTestCase {
         TestStore(
             initialState: state,
             reducer: CardWallPINDomain.reducer,
-            environment: CardWallPINDomain.Environment(userSession: MockUserSession()) { _ in }
+            environment: CardWallPINDomain.Environment(
+                userSession: MockUserSession(),
+                schedulers: Schedulers(),
+                sessionProvider: DummyProfileBasedSessionProvider(),
+                signatureProvider: DummySecureEnclaveSignatureProvider()
+            ) { _ in }
         )
     }
 
@@ -97,9 +102,9 @@ final class CardWallPINDomainTests: XCTestCase {
         let store = testStore(for: "1234567")
 
         // when
-        store.send(.advance(.push)) { sut in
+        store.send(.advance) { sut in
             // then
-            sut.showNextScreen = .push
+            sut.route = .login(CardWallLoginOptionDomain.State(isDemoModus: false, pin: "1234567"))
         }
     }
 
@@ -108,9 +113,9 @@ final class CardWallPINDomainTests: XCTestCase {
         let store = testStore(for: "1234")
 
         // when
-        store.send(.advance(.push)) { sut in
+        store.send(.advance) { sut in
             // then
-            sut.showNextScreen = .none
+            sut.route = .none
             sut.doneButtonPressed = true
         }
         store.send(.update(pin: "12345")) { sut in
@@ -119,9 +124,9 @@ final class CardWallPINDomainTests: XCTestCase {
             sut.doneButtonPressed = false
         }
         // when
-        store.send(.advance(.push)) { sut in
+        store.send(.advance) { sut in
             // then
-            sut.showNextScreen = .none
+            sut.route = .none
             sut.doneButtonPressed = true
         }
         // when
@@ -131,9 +136,9 @@ final class CardWallPINDomainTests: XCTestCase {
             sut.doneButtonPressed = false
         }
         // when
-        store.send(.advance(.push)) { sut in
+        store.send(.advance) { sut in
             // then
-            sut.showNextScreen = .push
+            sut.route = .login(CardWallLoginOptionDomain.State(isDemoModus: false, pin: "123456"))
         }
     }
 
@@ -142,9 +147,9 @@ final class CardWallPINDomainTests: XCTestCase {
         let store = testStore(for: "123456789")
 
         // when
-        store.send(.advance(.push)) { sut in
+        store.send(.advance) { sut in
             // then
-            sut.showNextScreen = .none
+            sut.route = .none
             sut.doneButtonPressed = true
         }
     }
@@ -154,9 +159,9 @@ final class CardWallPINDomainTests: XCTestCase {
         let store = testStore(for: "123456a")
 
         // when
-        store.send(.advance(.push)) { sut in
+        store.send(.advance) { sut in
             // then
-            sut.showNextScreen = .none
+            sut.route = .none
             sut.doneButtonPressed = true
         }
     }

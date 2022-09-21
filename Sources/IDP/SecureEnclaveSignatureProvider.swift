@@ -59,7 +59,7 @@ public protocol SecureEnclaveSignatureProvider {
     /// aborted with `abort` when the registration process was unsuccessfull.
     /// - Throws: SecureEnclaveSignatureProviderError
     /// - Returns: Instance of `PairingSession`
-    func registerData() throws -> PairingSession
+    func createPairingSession() throws -> PairingSession
 
     /// Creates a RegistrationData object using a `JWTSigner` to sign the `PairingData`.
     ///

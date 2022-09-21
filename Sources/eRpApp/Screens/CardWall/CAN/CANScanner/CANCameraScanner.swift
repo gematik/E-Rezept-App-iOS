@@ -59,7 +59,7 @@ struct CANCameraScanner: View {
                         if canScan != nil {
                             if let canScan = canScan {
                                 viewStore.send(.update(can: canScan))
-                                viewStore.send(.dismissScannerView)
+                                viewStore.send(.setNavigation(tag: .none))
                             }
                         }
                     }
@@ -67,7 +67,7 @@ struct CANCameraScanner: View {
                 }
                 .padding()
             }.navigationBarItems(leading: CloseButton {
-                viewStore.send(.dismissScannerView)
+                viewStore.send(.setNavigation(tag: .none))
                 toggleFlashlight(status: false)
             },
             trailing: LightSwitch(store: store)

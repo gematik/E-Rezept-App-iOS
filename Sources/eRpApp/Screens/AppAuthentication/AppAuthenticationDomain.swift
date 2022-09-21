@@ -209,11 +209,11 @@ extension AppAuthenticationDomain {
         static let state = State()
 
         static let environment = Environment(
-            userDataStore: DemoSessionContainer().localUserStore,
+            userDataStore: DummySessionContainer().localUserStore,
             schedulers: Schedulers(),
             appAuthenticationProvider:
             AppAuthenticationDomain.DefaultAuthenticationProvider(
-                userDataStore: DemoSessionContainer().localUserStore
+                userDataStore: DummySessionContainer().localUserStore
             ),
             appSecurityPasswordManager: DummyAppSecurityManager(),
             authenticationChallengeProvider: BiometricsAuthenticationChallengeProvider()

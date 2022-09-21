@@ -81,6 +81,7 @@ enum CardWallReadCardDomain {
         case updatePageIndex(index: Int)
         case navigateToIntro
         case setNavigation(tag: Route.Tag?)
+        case singleClose
     }
 
     struct Environment {
@@ -206,7 +207,8 @@ enum CardWallReadCardDomain {
         case .setNavigation(tag: .none):
             state.route = nil
             return .none
-        case .setNavigation:
+        case .setNavigation,
+             .singleClose:
             return .none
         }
     }

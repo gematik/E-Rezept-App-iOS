@@ -141,8 +141,6 @@ auth:
   - auth_edt_password_input
   - auth_txt_failed_login_hint
 settings:
-  hint:
-    - hint_txt_order_egk
   demo:
     - nav_done
     - stg_txt_demo_mode
@@ -168,6 +166,25 @@ settings:
     - stg_btn_profile
     - stg_con_profiles
     - stg_btn_new_profile
+  card:
+    - stg_txt_card_unlock_card
+    - stg_txt_card_custom_pin
+    - stg_txt_card_order_new_card
+    - stg_btn_card_reset_advance
+    - stg_txt_card_reset_intro_unlock_card
+    - stg_txt_card_reset_intro_custom_pin
+    - stg_txt_card_reset_intro_need_your_card
+    - stg_txt_card_reset_intro_need_your_cards_puk
+    - stg_txt_card_reset_puk_headline
+    - stg_txt_card_reset_puk_hint
+    - stg_edt_card_reset_puk_input
+    - stg_txt_card_reset_pin_headline
+    - stg_txt_card_reset_pin_hint
+    - stg_txt_card_reset_pin_hint_message
+    - stg_txt_card_reset_pin_warning
+    - stg_edt_card_reset_pin_input_pin1
+    - stg_edt_card_reset_pin_input_pin2
+    - stg_btn_card_reset_read
   editProfile:
     - stg_txt_edit_profile_name_input
     - stg_txt_edit_profile_bg_color_title
@@ -218,6 +235,7 @@ settings:
     - stg_con_hotline_contact
     - stg_con_txt_footnote
     - stg_con_txt_mail
+    - stg_con_txt_survey
   dataPrivacy:
     - stg_dpr_txt_data_privacy
     - stg_ww_data_privacy
@@ -295,6 +313,8 @@ prescriptionDetails:
   - prsc_dtl_txt_access_code
   - prsc_dtl_txt_med_error
   - prsc_dtl_txt_delete_disabled_note
+  - prsc_dtl_btn_share
+  - prsc_dtl_btn_direct_assignment
 pharmacySearch:
   - pha_search_txt_result_list
   - pha_search_txt_result_list_entry
@@ -317,6 +337,10 @@ pharmacyDetail:
   - pha_detail_web
   - pha_detail_mail
   - pha_detail_phone
+directAssignment:
+  - dav_txt_direct_assignment_title
+  - dav_txt_direct_assignment_hint
+  - dav_btn_close
 pharmacyRedeem:
   - pha_redeem_txt_title
   - pha_redeem_txt_subtitle

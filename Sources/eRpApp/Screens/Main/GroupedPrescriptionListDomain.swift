@@ -81,7 +81,7 @@ enum GroupedPrescriptionListDomain {
         /// Dismisses the alert that showing loading errors
         case alertDismissButtonTapped
         /// Response from `refresh` that presents the CardWall sheet
-        case showCardWallReceived(CardWallDomain.State)
+        case showCardWallReceived(CardWallIntroductionDomain.State)
 
         /// Details actions
         case prescriptionDetailViewTapped(selectedPrescription: GroupedPrescription.Prescription)
@@ -162,25 +162,16 @@ enum GroupedPrescriptionListDomain {
 extension GroupedPrescriptionListDomain.Environment {
     typealias Action = GroupedPrescriptionListDomain.Action
 
-    func cardWall() -> AnyPublisher<CardWallDomain.State, Never> {
+    func cardWall() -> AnyPublisher<CardWallIntroductionDomain.State, Never> {
         let hideCardWallIntro = userSession.localUserStore.hideCardWallIntro
         let canAvailable = userSession.secureUserStore.can
 
         return canAvailable
             .combineLatest(hideCardWallIntro)
             .first()
-            .map { can, hideCardWallIntro in
-                CardWallDomain.State(
-                    introAlreadyDisplayed: hideCardWallIntro,
-                    isNFCReady: serviceLocator.deviceCapabilities.isNFCReady,
-                    isMinimalOS14: serviceLocator.deviceCapabilities.isMinimumOS14,
-                    can: (can != nil) ? nil : CardWallCANDomain.State(
-                        isDemoModus: self.userSession.isDemoMode,
-                        profileId: self.userSession.profileId,
-                        can: ""
-                    ),
-                    pin: CardWallPINDomain.State(isDemoModus: self.userSession.isDemoMode, pin: ""),
-                    loginOption: CardWallLoginOptionDomain.State(isDemoModus: self.userSession.isDemoMode)
+            .map { _, _ in
+                CardWallIntroductionDomain.State(
+                    isNFCReady: serviceLocator.deviceCapabilities.isNFCReady
                 )
             }
             .eraseToAnyPublisher()

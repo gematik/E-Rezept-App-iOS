@@ -20,6 +20,7 @@ import Combine
 import ComposableArchitecture
 @testable import eRpApp
 import eRpKit
+import Nimble
 import XCTest
 
 final class AppStartDomainTests: XCTestCase {
@@ -169,5 +170,47 @@ final class AppStartDomainTests: XCTestCase {
                 )
             )
         }
+    }
+
+    func testRouterSharingDeepLinkRouting() {
+        let sut = AppStartDomain.router
+
+        let url = URL(string: "https://das-e-rezept-fuer-deutschland.de/prescription#")!
+
+        let expected = AppStartDomain.Action.app(action: .main(action: .importTaskByUrl(url)))
+
+        var success = false
+
+        sut(Endpoint.universalLink(url)).test(
+            failure: { _ in
+                // cannot happen, is never
+            }, expectations: { action in
+                expect(action).to(equal(expected))
+                success = true
+            }
+        )
+
+        expect(success).to(equal(true))
+    }
+
+    func testRouterSharingDeepExtAuth() {
+        let sut = AppStartDomain.router
+
+        let url = URL(string: "https://das-e-rezept-fuer-deutschland.de/extauth/")!
+
+        let expected = AppStartDomain.Action.app(action: .main(action: .externalLogin(url)))
+
+        var success = false
+
+        sut(Endpoint.universalLink(url)).test(
+            failure: { _ in
+                // cannot happen, is never
+            }, expectations: { action in
+                expect(action).to(equal(expected))
+                success = true
+            }
+        )
+
+        expect(success).to(equal(true))
     }
 }

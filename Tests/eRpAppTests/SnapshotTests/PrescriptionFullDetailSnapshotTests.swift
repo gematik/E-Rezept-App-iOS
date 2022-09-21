@@ -56,4 +56,16 @@ final class PrescriptionFullDetailSnapshotTests: XCTestCase {
         .frame(width: 320, height: 4000)
         assertSnapshots(matching: sut, as: snapshotModi())
     }
+
+    func testPrescriptionFullDetailView_WithDirectAssignedPrescription() {
+        let inProgressDirectAssignedTask = GroupedPrescription
+            .Prescription(erxTask: ErxTask.Fixtures.erxTaskDirectAssigned)
+        let sut = PrescriptionFullDetailView(
+            store: PrescriptionDetailDomain.Dummies.storeFor(
+                PrescriptionDetailDomain.State(prescription: inProgressDirectAssignedTask, isArchived: false)
+            )
+        )
+        .frame(width: 320, height: 3000)
+        assertSnapshots(matching: sut, as: snapshotModi())
+    }
 }

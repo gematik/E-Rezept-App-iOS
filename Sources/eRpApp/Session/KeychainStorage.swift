@@ -260,5 +260,7 @@ class KeychainStorage: SecureUserDataStore, IDPStorage, SecureEGKCertificateStor
         set(discovery: nil)
         // [REQ:gemSpec_IDP_Frontend:A_21603] Certificate
         set(certificate: nil)
+        // `keyIdentifier` is not wiped here because it's deletion is done asynchron
+        // together with the secure enclave representative in `ProfileSecureDataWiper`
     }
 }

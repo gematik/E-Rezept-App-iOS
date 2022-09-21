@@ -1,4 +1,4 @@
-// Generated using Sourcery 1.8.1 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 1.8.2 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 
 import AVS
@@ -827,6 +827,8 @@ extension MainDomain.Error: CodedError {
                 return "i-01501"
             case .userSessionError:
                 return "i-01502"
+            case .importDuplicate:
+                return "i-01503"
         }
     }
     var erpErrorCodeList: [String] {
@@ -835,6 +837,8 @@ extension MainDomain.Error: CodedError {
                 return [erpErrorCode] + error.erpErrorCodeList
             case let .userSessionError(error):
                 return [erpErrorCode] + error.erpErrorCodeList
+            default:
+                return [erpErrorCode]
         }
     }
 }
@@ -1259,6 +1263,37 @@ extension RemoteStoreError: CodedError {
     }
 }
 
+extension ResetRetryCounterControllerError: CodedError {
+    var erpErrorCode: String {
+        switch self {
+            case .cardError:
+                return "i-02601"
+            case .openSecureSession:
+                return "i-02602"
+            case .resetRetryCounter:
+                return "i-02603"
+            case .wrongCan:
+                return "i-02604"
+        }
+    }
+    var erpErrorCodeList: [String] {
+        switch self {
+            case .cardError:
+                return [erpErrorCode]
+            case let .openSecureSession(error as CodedError):
+                return [erpErrorCode] + error.erpErrorCodeList
+            case .openSecureSession:
+                return [erpErrorCode]
+            case let .resetRetryCounter(error as CodedError):
+                return [erpErrorCode] + error.erpErrorCodeList
+            case .resetRetryCounter:
+                return [erpErrorCode]
+            default:
+                return [erpErrorCode]
+        }
+    }
+}
+
 extension ScannedErxTask.Error: CodedError {
     var erpErrorCode: String {
         switch self {
@@ -1345,6 +1380,29 @@ extension SecureEnclaveSignatureProviderError: CodedError {
             case .`internal`:
                 return [erpErrorCode]
             default:
+                return [erpErrorCode]
+        }
+    }
+}
+
+extension SharedTask.Error: CodedError {
+    var erpErrorCode: String {
+        switch self {
+            case .missingSeparator:
+                return "i-20701"
+            case .failedDecodingEmptyString:
+                return "i-20702"
+            case .tooManyComponents:
+                return "i-20703"
+        }
+    }
+    var erpErrorCodeList: [String] {
+        switch self {
+            case .missingSeparator:
+                return [erpErrorCode]
+            case .failedDecodingEmptyString:
+                return [erpErrorCode]
+            case .tooManyComponents:
                 return [erpErrorCode]
         }
     }

@@ -40,6 +40,7 @@ final class FHIRBundleTests_v1_2_with_v1_1_0: XCTestCase {
 
         expect(task.id) == "607255ed-ce41-47fc-aad3-cfce1c39963f"
         expect(task.status) == ErxTask.Status.error(.missingPatientReceiptBundle)
+        expect(task.flowType) == .pharmacyOnly
         expect(task.fullUrl).to(beNil())
         expect(task.accessCode) == "777bea0e13cc9c42ceec14aec3ddee2263325dc2c6c699db115f58fe423607ea"
         expect(task.authoredOn) == "2022-03-18T15:26:00+00:00"
@@ -59,6 +60,7 @@ final class FHIRBundleTests_v1_2_with_v1_1_0: XCTestCase {
         // task
         expect(task.id) == "09330307-16ce-4cdc-810a-ca24ef80dde3"
         expect(task.status) == ErxTask.Status.completed
+        expect(task.flowType) == .pharmacyOnly
         expect(task.source) == .server
         expect(task.fullUrl).to(beNil())
         expect(task.accessCode) == "777bea0e13cc9c42ceec14aec3ddee2263325dc2c6c699db115f58fe423607ea"

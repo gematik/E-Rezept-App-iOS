@@ -20,7 +20,7 @@ import ComposableArchitecture
 import SwiftUI
 
 struct CapabilitiesView: View {
-    let store: CardWallDomain.Store
+    let store: CardWallIntroductionDomain.Store
 
     var body: some View {
         WithViewStore(store) { viewStore in
@@ -74,7 +74,7 @@ struct NotForYouView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
             CapabilitiesView(
-                store: CardWallDomain.Dummies.store
+                store: CardWallIntroductionDomain.Dummies.store
             )
         }.generateVariations()
     }

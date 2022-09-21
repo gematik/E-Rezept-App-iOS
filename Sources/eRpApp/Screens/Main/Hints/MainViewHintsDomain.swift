@@ -119,7 +119,6 @@ extension MainViewHintsDomain {
                  imageStyle: .topAligned)
         }
 
-        static let demoSessionContainer = DemoSessionContainer()
         static func state(with style: Hint<MainViewHintsDomain.Action>.Style) -> State {
             State(hint: hintBottomAligned(with: style))
         }
@@ -130,7 +129,7 @@ extension MainViewHintsDomain {
 
         static let environment = Environment(
             router: DummyRouter(),
-            userSession: demoSessionContainer,
+            userSession: DummySessionContainer(),
             schedulers: Schedulers(),
             hintEventsStore: DemoHintsStateStore(),
             hintProvider: MainViewHintsProvider()

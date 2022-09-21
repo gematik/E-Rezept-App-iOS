@@ -35,6 +35,7 @@ extension ErxTaskCommunicationEntity {
         taskId = communication.taskId
         profile = communication.profile.rawValue
         telematikId = communication.telematikId
+        orderId = communication.orderId
         timestamp = communication.timestamp
         insuranceId = communication.insuranceId
         payload = communication.payloadJSON
@@ -51,6 +52,7 @@ extension ErxTask.Communication {
             taskId: entity.taskId ?? entity.task?.identifier ?? "",
             userId: entity.insuranceId ?? "",
             telematikId: entity.telematikId ?? "",
+            orderId: entity.orderId,
             timestamp: entity.timestamp ?? "",
             payloadJSON: entity.payload ?? "",
             isRead: entity.isRead

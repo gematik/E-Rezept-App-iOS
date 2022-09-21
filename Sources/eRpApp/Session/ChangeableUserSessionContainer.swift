@@ -44,9 +44,14 @@ class ChangeableUserSessionContainer: UsersSessionContainer {
 
     private let userStore: UserDataStore
 
-    init(initialUserSession: UserSession,
-         userDataStore: UserDataStore,
-         userSessionProvider: UserSessionProviderControl) {
+    private let schedulers: Schedulers
+
+    init(
+        initialUserSession: UserSession,
+        userDataStore: UserDataStore,
+        userSessionProvider: UserSessionProviderControl,
+        schedulers: Schedulers
+    ) {
         userStore = userDataStore
         let session: UserSession = initialUserSession
 
@@ -66,6 +71,7 @@ class ChangeableUserSessionContainer: UsersSessionContainer {
                 .eraseToAnyPublisher()
         )
 
+        self.schedulers = schedulers
         currentSession = CurrentValueSubject(currentProfileUserSession.userSession)
 
         userSession = StreamWrappedUserSession(
@@ -76,7 +82,7 @@ class ChangeableUserSessionContainer: UsersSessionContainer {
 
     func switchToDemoMode() {
         DLog("will switch to demo mode")
-        currentSession.send(UserMode.demo(DemoSessionContainer()))
+        currentSession.send(UserMode.demo(DemoSessionContainer(schedulers: schedulers)))
     }
 
     func switchToStandardMode() {
@@ -86,7 +92,7 @@ class ChangeableUserSessionContainer: UsersSessionContainer {
 }
 
 class DummyUserSessionContainer: UsersSessionContainer {
-    var userSession: UserSession = DemoSessionContainer()
+    var userSession: UserSession = DummySessionContainer()
 
     var isDemoMode: AnyPublisher<Bool, Never> = Just(false).eraseToAnyPublisher()
 

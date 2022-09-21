@@ -112,6 +112,6 @@ class DummyProfileBasedSessionProvider: ProfileBasedSessionProvider {
     }
 
     func idTokenValidator(for _: UUID) -> AnyPublisher<IDTokenValidator, IDTokenValidatorError> {
-        DemoSessionContainer().idTokenValidator()
+        DummySessionContainer().idTokenValidator()
     }
 }

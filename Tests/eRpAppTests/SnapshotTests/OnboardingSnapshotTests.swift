@@ -136,22 +136,4 @@ final class OnboardingSnapshotTests: XCTestCase {
             .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
         assertSnapshots(matching: sut, as: snapshotModi())
     }
-
-    func testOnboardingNewProfileViewWithName() {
-        let store = OnboardingNewProfileDomain.Dummies.store(
-            with: OnboardingNewProfileDomain.State(name: "Anna Vetter")
-        )
-        let sut = OnboardingNewProfileView(store: store)
-            .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
-        assertSnapshots(matching: sut, as: snapshotModi())
-    }
-
-    func testOnboardingNewProfileViewWithoutName() {
-        let store = OnboardingNewProfileDomain.Dummies.store(
-            with: OnboardingNewProfileDomain.State(name: "")
-        )
-        let sut = OnboardingNewProfileView(store: store)
-            .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
-        assertSnapshots(matching: sut, as: snapshotModi())
-    }
 }

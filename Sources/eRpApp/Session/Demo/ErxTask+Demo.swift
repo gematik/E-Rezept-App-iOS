@@ -115,7 +115,7 @@ extension ErxTask {
         static let erxTaskRedeemed = erxTask10
 
         static let erxTaskError: ErxTask = .init(
-            identifier: "2390f983-1e67-11b2-8555-63bf44e44fb8",
+            identifier: "1690f983-1e67-11b2-8555-63bf44e44fb8",
             status: .error(.decoding(message: "error: decoding")),
             accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
             authoredOn: DemoDate.createDemoDate(.yesterday)
@@ -207,8 +207,9 @@ extension ErxTask {
             auditEvents: ErxAuditEvent.Dummies.auditEvents
         )
 
+        // Direktzuweisung
         static let erxTask4: ErxTask = .init(
-            identifier: "1390f983-1e67-11b2-8555-63bf44e44fb8",
+            identifier: "169.000.000.000.021.02",
             status: .ready,
             accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
             fullUrl: nil,

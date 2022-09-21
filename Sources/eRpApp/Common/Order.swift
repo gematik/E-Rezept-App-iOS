@@ -30,6 +30,7 @@ protocol eRpRemoteStorageOrder {
     var hint: String? { get }
     var phone: String? { get }
     var mail: String? { get }
+    var transactionID: UUID { get }
     var taskID: String { get }
     var accessCode: String { get }
     var telematikId: String? { get }
@@ -167,6 +168,7 @@ extension ErxTaskOrder {
             phone: order.phone ?? ""
         )
         self.init(
+            identifier: order.transactionID.uuidString,
             erxTaskId: order.taskID,
             accessCode: order.accessCode,
             pharmacyTelematikId: telematikId,

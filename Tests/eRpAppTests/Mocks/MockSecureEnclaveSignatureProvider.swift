@@ -53,7 +53,7 @@ final class MockSecureEnclaveSignatureProvider: SecureEnclaveSignatureProvider {
     var registerDataReturnValue: PairingSession!
     var registerDataClosure: (() throws -> PairingSession)?
 
-    func registerData() throws -> PairingSession {
+    func createPairingSession() throws -> PairingSession {
         if let error = registerDataThrowableError {
             throw error
         }

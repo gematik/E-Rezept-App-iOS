@@ -20,6 +20,8 @@ import Foundation
 
 /// Data Model that holds all relevant informations for placing an order in a pharmacy
 public struct ErxTaskOrder: Equatable {
+    /// `ErxTaskOrder` identifier
+    public let identifier: String
     /// Task Id for the prescription
     public let erxTaskId: String
     /// Access Code of the prescription
@@ -31,14 +33,17 @@ public struct ErxTaskOrder: Equatable {
 
     /// Default initializer to instantiate an ErxTask order.
     /// - Parameters:
+    ///   - identifier: `ErxTaskOrder` identifier
     ///   - erxTaskId: Id of the ErxTask to order
     ///   - accessCode: AccessCode of the prescription that should be redeemed
     ///   - pharmacyTelematikId: Telematik-ID for the pharmacy in which the order will be placed
     ///   - payloadJSON: Informations about the users address and the selected redeem option
-    public init(erxTaskId: String,
+    public init(identifier: String,
+                erxTaskId: String,
                 accessCode: String,
                 pharmacyTelematikId: String,
                 payload: Payload) {
+        self.identifier = identifier
         self.payload = payload
         self.erxTaskId = erxTaskId
         self.accessCode = accessCode

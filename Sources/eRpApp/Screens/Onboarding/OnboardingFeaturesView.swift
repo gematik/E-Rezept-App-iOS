@@ -24,9 +24,9 @@ struct OnboardingFeaturesView: View {
             VStack(alignment: .leading, spacing: 0) {
                 TitleView()
 
-                FeatureView(title: L10n.onbFeaTxtFeature1, systemImage: SFSymbolName.paperplane)
-                FeatureView(title: L10n.onbFeaTxtFeature2, systemImage: SFSymbolName.pills)
-                FeatureView(title: L10n.onbFeaTxtFeature3, systemImage: SFSymbolName.trayAndArrowDown)
+                Label(L10n.onbFeaTxtFeature1, systemImage: SFSymbolName.paperplane)
+                Label(L10n.onbFeaTxtFeature2, systemImage: SFSymbolName.pills)
+                Label(L10n.onbFeaTxtFeature3, systemImage: SFSymbolName.trayAndArrowDown)
 
                 Spacer(minLength: 110)
             }
@@ -53,22 +53,6 @@ struct OnboardingFeaturesView: View {
                     .padding(.top, 22)
                     .padding(.bottom, 14)
             }
-        }
-    }
-
-    private struct FeatureView: View {
-        let title: StringAsset
-        let systemImage: String
-
-        var body: some View {
-            HStack {
-                Image(systemName: systemImage)
-                    .font(Font.headline.weight(.semibold))
-                    .foregroundColor(Colors.primary)
-                    .padding(.trailing)
-                Text(title)
-            }
-            .padding(.vertical, 10)
         }
     }
 }

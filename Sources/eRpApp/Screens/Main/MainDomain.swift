@@ -29,7 +29,7 @@ enum MainDomain {
         case selectProfile
         case scanner(ScannerDomain.State)
         case deviceSecurity(DeviceSecurityDomain.State)
-        case cardWall(CardWallDomain.State)
+        case cardWall(CardWallIntroductionDomain.State)
         case prescriptionDetail(PrescriptionDetailDomain.State)
         case redeem(RedeemDomain.State)
         case alert(AlertState<Action>)
@@ -84,7 +84,7 @@ enum MainDomain {
         .concatenate(
             ProfileSelectionDomain.cleanup(),
             DeviceSecurityDomain.cleanup(),
-            CardWallDomain.cleanup(),
+            CardWallIntroductionDomain.cleanup(),
             PrescriptionDetailDomain.cleanup(),
             RedeemDomain.cleanup()
         )
@@ -92,6 +92,7 @@ enum MainDomain {
 
     enum Token: CaseIterable, Hashable {
         case demoMode
+        case checkForTaskDuplicates
     }
 
     enum Action: Equatable {
@@ -108,7 +109,10 @@ enum MainDomain {
         case turnOffDemoMode
 
         case externalLogin(URL)
+        case importTaskByUrl(URL)
         case extAuthPending(action: ExtAuthPendingDomain.Action)
+
+        case importReceived(Result<[SharedTask], Error>)
 
         case setNavigation(tag: Route.Tag?)
 
@@ -120,7 +124,7 @@ enum MainDomain {
         case deviceSecurity(action: DeviceSecurityDomain.Action)
         case prescriptionDetailAction(action: PrescriptionDetailDomain.Action)
         case redeemView(action: RedeemDomain.Action)
-        case cardWall(action: CardWallDomain.Action)
+        case cardWall(action: CardWallIntroductionDomain.Action)
     }
 
     // sourcery: CodedError = "015"
@@ -129,6 +133,10 @@ enum MainDomain {
         case localStoreError(LocalStoreError)
         // sourcery: errorCode = "02"
         case userSessionError(UserSessionError)
+
+        // sourcery: errorCode = "03"
+        /// Import of shared Task failed due to being a duplicate already existing within the app
+        case importDuplicate
     }
 
     struct Environment {
@@ -142,7 +150,7 @@ enum MainDomain {
         var schedulers: Schedulers
         var fhirDateFormatter: FHIRDateFormatter
         let userProfileService: UserProfileService
-
+        let secureDataWiper: ProfileSecureDataWiper
         var signatureProvider: SecureEnclaveSignatureProvider
         var userSessionProvider: UserSessionProvider
 
@@ -200,6 +208,33 @@ extension MainDomain {
             return Effect(value: .extAuthPending(action: .externalLogin(url)))
                 .delay(for: 5, scheduler: environment.schedulers.main)
                 .eraseToEffect()
+        case let .importTaskByUrl(url):
+            guard let components = URLComponents(url: url, resolvingAgainstBaseURL: true),
+                  components.path.contains("prescription"),
+                  let fragment = components.fragment?.data(using: .utf8),
+                  let sharedTasks = try? JSONDecoder().decode([SharedTask].self, from: fragment) else {
+                return .none
+            }
+
+            return environment.checkForTaskDuplicatesInStore(sharedTasks)
+                .cancellable(id: Token.checkForTaskDuplicates)
+        case let .importReceived(.success(tasks)):
+            let authoredOn = environment.fhirDateFormatter.stringWithLongUTCTimeZone(from: Date())
+
+            return environment.erxTaskRepository.save(
+                erxTasks: tasks.asErxTasks(
+                    status: .ready,
+                    with: authoredOn,
+                    author: L10n.scnTxtAuthor.text
+                ) { L10n.scnTxtMedication($0).text }
+            )
+            .receive(on: environment.schedulers.main)
+            .eraseToEffect()
+            .cancellable(id: Token.checkForTaskDuplicates)
+            .fireAndForget()
+        case let .importReceived(.failure(error)):
+            state.route = .alert(.init(for: error))
+            return .none
         case .setNavigation(tag: .selectProfile):
             state.route = .selectProfile
             return .none
@@ -207,16 +242,8 @@ extension MainDomain {
             state.route = nil
             return cleanupSubDomains()
         case .setNavigation(tag: .cardWall):
-            state.route = .cardWall(
-                .init(
-                    introAlreadyDisplayed: true,
-                    isNFCReady: true,
-                    isMinimalOS14: true,
-                    pin: .init(isDemoModus: false),
-                    loginOption: .init(isDemoModus: false)
-                )
-            )
-            return .none
+            state.route = .cardWall(.init(isNFCReady: true))
+            return environment.secureDataWiper.wipeSecureData(of: environment.userSession.profileId).fireAndForget()
         case .setNavigation:
             return .none
         case let .prescriptionList(action: .errorReceived(error)):
@@ -224,7 +251,7 @@ extension MainDomain {
             switch error {
             case .idpError(.biometrics) where error.contains(PrivateKeyContainer.Error.canceledByUser):
                 alertState = AlertState(for: error, title: L10n.errSpecificI10808Title)
-            case .idpError(.biometrics):
+            case .idpError(.biometrics), .idpError(.serverError):
                 alertState = AlertState(
                     for: error,
                     title: L10n.errTitleLoginNecessary,
@@ -255,7 +282,7 @@ extension MainDomain {
         case .cardWall(action: .close):
             state.route = nil
             return .concatenate(
-                CardWallDomain.cleanup(),
+                CardWallIntroductionDomain.cleanup(),
                 Effect(value: .prescriptionList(action: .loadRemoteGroupedPrescriptionsAndSave))
             )
         case .redeemView(action: .close),
@@ -282,6 +309,37 @@ extension MainDomain {
         extAuthPendingReducer,
         domainReducer
     )
+}
+
+extension MainDomain.Environment {
+    func checkForTaskDuplicatesInStore(_ sharedTasks: [SharedTask]) -> Effect<MainDomain.Action, Never> {
+        let findPublishers: [AnyPublisher<SharedTask?, Never>] = sharedTasks.map { sharedTask in
+            self.erxTaskRepository.loadLocal(by: sharedTask.id, accessCode: sharedTask.accessCode)
+                .first()
+                .map { erxTask -> SharedTask? in
+                    if erxTask != nil {
+                        return nil // by returning nil we sort out previously stored tasks
+                    } else {
+                        return sharedTask
+                    }
+                }
+                .catch { _ in Just(.none) }
+                .eraseToAnyPublisher()
+        }
+
+        return Publishers.MergeMany(findPublishers)
+            .collect(findPublishers.count)
+            .map { optionalTasks in
+                let tasks = optionalTasks.compactMap { $0 }
+                if tasks.isEmpty {
+                    return .importReceived(.failure(.importDuplicate))
+                } else {
+                    return .importReceived(.success(tasks))
+                }
+            }
+            .receive(on: schedulers.main)
+            .eraseToEffect()
+    }
 }
 
 extension MainDomain {
@@ -345,17 +403,17 @@ extension MainDomain {
         }
 
     static let cardWallPullbackReducer: Reducer =
-        CardWallDomain.reducer._pullback(
+        CardWallIntroductionDomain.reducer._pullback(
             state: (\State.route).appending(path: /Route.cardWall),
             action: /MainDomain.Action.cardWall(action:)
         ) { globalEnvironment in
-            CardWallDomain.Environment(
-                schedulers: globalEnvironment.schedulers,
+            CardWallIntroductionDomain.Environment(
                 userSession: globalEnvironment.userSession,
                 sessionProvider: DefaultSessionProvider(
                     userSessionProvider: globalEnvironment.userSessionProvider,
                     userSession: globalEnvironment.userSession
                 ),
+                schedulers: globalEnvironment.schedulers,
                 signatureProvider: globalEnvironment.signatureProvider,
                 accessibilityAnnouncementReceiver: globalEnvironment.accessibilityAnnouncementReceiver
             )
@@ -411,14 +469,15 @@ extension MainDomain {
         static let environment = Environment(
             router: DummyRouter(),
             userSessionContainer: DummyUserSessionContainer(),
-            userSession: DemoSessionContainer(),
+            userSession: DummySessionContainer(),
             appSecurityManager: DemoAppSecurityPasswordManager(),
             serviceLocator: ServiceLocator(),
             accessibilityAnnouncementReceiver: { _ in },
-            erxTaskRepository: DemoSessionContainer().erxTaskRepository,
+            erxTaskRepository: DummySessionContainer().erxTaskRepository,
             schedulers: Schedulers(),
             fhirDateFormatter: globals.fhirDateFormatter,
             userProfileService: DummyUserProfileService(),
+            secureDataWiper: DummyProfileSecureDataWiper(),
             signatureProvider: DummySecureEnclaveSignatureProvider(),
             userSessionProvider: DummyUserSessionProvider(),
             tracker: DummyTracker()

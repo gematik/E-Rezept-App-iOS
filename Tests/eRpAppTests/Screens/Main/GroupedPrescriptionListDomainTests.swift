@@ -305,12 +305,8 @@ final class GroupedPrescriptionListDomainTests: XCTestCase {
                               auditEvents: [],
                               isAuthenticated: false)
 
-        let expected = CardWallDomain.State(
-            introAlreadyDisplayed: false,
-            isNFCReady: true,
-            isMinimalOS14: true,
-            pin: CardWallPINDomain.State(isDemoModus: false, pin: ""),
-            loginOption: CardWallLoginOptionDomain.State(isDemoModus: false)
+        let expected = CardWallIntroductionDomain.State(
+            isNFCReady: true
         )
         store.send(.refresh) {
             $0.loadingState = .loading(nil)
@@ -330,12 +326,8 @@ final class GroupedPrescriptionListDomainTests: XCTestCase {
         let store = testStore(for: repository,
                               isAuthenticated: true)
 
-        let expected = CardWallDomain.State(
-            introAlreadyDisplayed: false,
-            isNFCReady: true,
-            isMinimalOS14: true,
-            pin: CardWallPINDomain.State(isDemoModus: false, pin: ""),
-            loginOption: CardWallLoginOptionDomain.State(isDemoModus: false)
+        let expected = CardWallIntroductionDomain.State(
+            isNFCReady: true
         )
         store.send(.refresh) {
             $0.loadingState = .loading(nil)
@@ -356,12 +348,8 @@ final class GroupedPrescriptionListDomainTests: XCTestCase {
         let store = testStore(for: repository,
                               isAuthenticated: true)
 
-        let expected = CardWallDomain.State(
-            introAlreadyDisplayed: false,
-            isNFCReady: true,
-            isMinimalOS14: true,
-            pin: CardWallPINDomain.State(isDemoModus: false, pin: ""),
-            loginOption: CardWallLoginOptionDomain.State(isDemoModus: false)
+        let expected = CardWallIntroductionDomain.State(
+            isNFCReady: true
         )
         store.send(.refresh) {
             $0.loadingState = .loading(nil)

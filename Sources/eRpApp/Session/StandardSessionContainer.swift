@@ -153,6 +153,10 @@ class StandardSessionContainer: UserSession {
         #endif
     }()
 
+    lazy var nfcResetRetryCounterController: NFCResetRetryCounterController = {
+        DefaultNFCResetRetryCounterController(schedulers: schedulers)
+    }()
+
     #if ENABLE_DEBUG_VIEW
     lazy var switchedSignatureProvider: NFCSignatureProvider = {
         SwitchSignatureProvider(defaultSignatureProvider: EGKSignatureProvider(schedulers: self.schedulers),

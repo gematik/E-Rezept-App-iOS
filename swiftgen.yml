@@ -31,9 +31,9 @@ xcassets:
 ## Generate Accessibility Identifiers from reference file
 yaml:
   inputs:
-    - AccessiblityIdentifier.yaml
+    - AccessibilityIdentifier.yaml
   outputs:
     - templatePath: Templates/accessibility.stencil
       params:
         enumName: "A11y"
-      output: Accessiblity+Generated.swift
+      output: Accessibility+Generated.swift

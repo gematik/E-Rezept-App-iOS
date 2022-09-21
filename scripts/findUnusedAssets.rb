@@ -101,7 +101,7 @@ def removeL10nElementsFromFile(elements, file)
 end
 
 def removeA11yElements(elements)
-  file = "./Sources/eRpApp/Resources/AccessiblityIdentifier.yaml"
+  file = "./Sources/eRpApp/Resources/AccessibilityIdentifier.yaml"
 
   input_lines = File.readlines(file)
 
@@ -141,7 +141,7 @@ removeL10nElements(l10nElements)
 
 puts "\nFind unused ACCESSIBILITY identifier:\n\n"
 
-accessibilityInputFile = YAML.load_file("./Sources/eRpApp/Resources/AccessiblityIdentifier.yaml")
+accessibilityInputFile = YAML.load_file("./Sources/eRpApp/Resources/AccessibilityIdentifier.yaml")
 accessibilityInput = transform([], accessibilityInputFile)
 
 a11yElements = testElements(accessibilityInput)

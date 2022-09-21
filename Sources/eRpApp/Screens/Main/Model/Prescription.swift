@@ -34,7 +34,8 @@ extension GroupedPrescription {
         let erxTask: ErxTask
         let prescribedMedication: GroupedPrescription.Medication?
         let actualMedications: [GroupedPrescription.Medication]
-
+        // [REQ:gemSpec_FD_eRp:A_21267] direct assignment
+        let isDirectAssigned: Bool
         let viewStatus: Status
 
         var id: String {
@@ -46,6 +47,8 @@ extension GroupedPrescription {
             date: Date = Date(),
             dateFormatter: DateFormatter = globals.uiDateFormatter
         ) {
+            isDirectAssigned = erxTask.flowType == .directAssignment ? true : erxTask.id
+                .starts(with: ErxTask.FlowType.Code.kDirectAssignment)
             self.erxTask = erxTask
             actualMedications = erxTask.medicationDispenses.map(Medication.from(medicationDispense:))
 
@@ -55,6 +58,7 @@ extension GroupedPrescription {
                 prescribedMedication = nil
             }
             viewStatus = Self.evaluateViewStatus(for: erxTask,
+                                                 isDirectAssigned: isDirectAssigned,
                                                  whenHandedOver: actualMedications.first?
                                                      .handedOver ?? prescribedMedication?.handedOver,
                                                  date: date,
@@ -67,6 +71,7 @@ extension GroupedPrescription {
 
         static func evaluateViewStatus(
             for erxTask: ErxTask,
+            isDirectAssigned _: Bool,
             whenHandedOver: String?,
             date: Date = Date(),
             dateFormatter: DateFormatter = globals.uiDateFormatter
@@ -111,6 +116,9 @@ extension GroupedPrescription {
         }
 
         var statusMessage: String {
+            guard !isDirectAssigned else {
+                return L10n.prscRedeemNoteDirectAssignment.text
+            }
             switch viewStatus {
             case let .open(until: localizedString): return localizedString
             case let .archived(message: localizedString): return localizedString
@@ -123,9 +131,37 @@ extension GroupedPrescription {
             switch viewStatus {
             case .archived(message: _): return true
             case .open(until: _),
-                 .undefined: return false
-            case .error: return false
+                 .undefined,
+                 .error:
+                return false
             }
+        }
+
+        var isRedeemable: Bool {
+            // [REQ:gemSpec_FD_eRp:A_21360] no redeem informations available for flowtype 169
+            guard !isDirectAssigned else {
+                return false
+            }
+
+            if case .archived = viewStatus {
+                return false
+            }
+
+            return true
+        }
+
+        var isDeleteabel: Bool {
+            guard !isDirectAssigned else {
+                // [REQ:gemSpec_FD_eRp:A_22102] prevent deletion of tasks with flowtype 169 while not completed
+                return erxTask.status == .completed
+            }
+
+            if isArchived {
+                return true
+            }
+
+            // [REQ:gemSpec_FD_eRp:A_19145] prevent deletion while task is in progress
+            return erxTask.status != .inProgress
         }
 
         var errorString: String {
@@ -145,16 +181,6 @@ extension GroupedPrescription {
                 return false
             }
             return medicationPZN != medicationDispPZN
-        }
-
-        func title(for medication: GroupedPrescription.Medication?) -> String {
-            if let name = medication?.name {
-                return name
-            }
-            if case .error = viewStatus {
-                return L10n.prscTxtFallbackName.text
-            }
-            return L10n.prscFdTxtNa.text
         }
     }
 
@@ -200,7 +226,16 @@ extension GroupedPrescription {
 }
 
 extension GroupedPrescription.Prescription {
-    var title: LocalizedStringKey {
+    var statusTitle: LocalizedStringKey {
+        guard !isDirectAssigned else {
+            switch viewStatus {
+            case .open, .undefined, .error:
+                return L10n.prscStatusDirectAssigned.key
+            case .archived:
+                return L10n.prscStatusExpired.key
+            }
+        }
+
         switch (erxTask.status, viewStatus) {
         case (.ready, .archived): return L10n.prscStatusExpired.key
         case (.ready, _): return L10n.prscStatusReady.key
@@ -214,6 +249,15 @@ extension GroupedPrescription.Prescription {
     }
 
     var image: Image {
+        guard !isDirectAssigned else {
+            switch viewStatus {
+            case .open, .undefined, .error:
+                return Image(systemName: SFSymbolName.clockWarning)
+            case .archived:
+                return Image(systemName: SFSymbolName.hourglass)
+            }
+        }
+
         switch (erxTask.status, viewStatus) {
         case (.ready, .archived): return Image(systemName: SFSymbolName.clockWarning)
         case (.ready, _): return Image(systemName: SFSymbolName.checkmark)
@@ -227,6 +271,10 @@ extension GroupedPrescription.Prescription {
     }
 
     var titleTint: Color {
+        guard !isDirectAssigned else {
+            return Colors.systemGray
+        }
+
         switch (erxTask.status, viewStatus) {
         case (.draft, _),
              (.undefined, _),
@@ -240,6 +288,10 @@ extension GroupedPrescription.Prescription {
     }
 
     var imageTint: Color {
+        guard !isDirectAssigned else {
+            return Colors.systemGray2
+        }
+
         switch (erxTask.status, viewStatus) {
         case (.draft, _),
              (.undefined, _),
@@ -253,6 +305,10 @@ extension GroupedPrescription.Prescription {
     }
 
     var backgroundTint: Color {
+        guard !isDirectAssigned else {
+            return Colors.secondary
+        }
+
         switch (erxTask.status, viewStatus) {
         case (.draft, _),
              (.undefined, _),

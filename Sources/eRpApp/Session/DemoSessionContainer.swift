@@ -29,19 +29,29 @@ import TrustStore
 import VAUClient
 
 class DemoSessionContainer: UserSession {
+    internal init(schedulers: Schedulers,
+                  extAuthRequestStorage: ExtAuthRequestStorage = DummyExtAuthRequestStorage(),
+                  profileDataStore: ProfileDataStore = DemoProfileDataStore()) {
+        self.schedulers = schedulers
+        self.extAuthRequestStorage = extAuthRequestStorage
+        self.profileDataStore = profileDataStore
+    }
+
     private lazy var memoryStorage = MemoryStorage()
 
     var isDemoMode: Bool {
         true
     }
 
+    private let schedulers: Schedulers
+
     lazy var idpSession: IDPSession = {
         DemoIDPSession(storage: secureUserStore)
     }()
 
-    var extAuthRequestStorage: ExtAuthRequestStorage = DummyExtAuthRequestStorage()
+    var extAuthRequestStorage: ExtAuthRequestStorage
 
-    var profileDataStore: ProfileDataStore = DemoProfileDataStore()
+    var profileDataStore: ProfileDataStore
 
     lazy var biometrieIdpSession: IDPSession = {
         DemoIDPSession(storage: secureUserStore)
@@ -78,6 +88,10 @@ class DemoSessionContainer: UserSession {
         DemoSignatureProvider()
     }()
 
+    lazy var nfcResetRetryCounterController: NFCResetRetryCounterController = {
+        DefaultNFCResetRetryCounterController(schedulers: schedulers)
+    }()
+
     lazy var pharmacyRepository: PharmacyRepository = {
         let appConfiguration = UserDefaultsStore().appConfiguration
         let interceptors: [Interceptor] = [
@@ -104,7 +118,7 @@ class DemoSessionContainer: UserSession {
     lazy var erxTaskRepository: ErxTaskRepository = {
         DemoErxTaskRepository(
             requestDelayInSeconds: 0.9,
-            schedulers: Schedulers(),
+            schedulers: schedulers,
             secureUserStore: secureUserStore
         )
     }()
@@ -142,4 +156,10 @@ class DemoSessionContainer: UserSession {
     lazy var avsTransactionDataStore: AVSTransactionDataStore = {
         DemoAVSTransactionDataStore()
     }()
+}
+
+class DummySessionContainer: DemoSessionContainer {
+    init() {
+        super.init(schedulers: Schedulers())
+    }
 }

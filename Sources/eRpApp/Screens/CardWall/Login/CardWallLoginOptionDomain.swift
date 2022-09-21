@@ -18,6 +18,7 @@
 
 import Combine
 import ComposableArchitecture
+import IDP
 import LocalAuthentication
 import UIKit
 
@@ -25,29 +26,56 @@ enum CardWallLoginOptionDomain {
     typealias Store = ComposableArchitecture.Store<State, Action>
     typealias Reducer = ComposableArchitecture.Reducer<State, Action, Environment>
 
+    enum Route: Equatable {
+        case alert(AlertState<Action>)
+        case readcard(CardWallReadCardDomain.State)
+        case warning
+
+        enum Tag: Int {
+            case alert
+            case readcard
+            case warning
+            case can
+        }
+
+        var tag: Tag {
+            switch self {
+            case .alert:
+                return .alert
+            case .readcard:
+                return .readcard
+            case .warning:
+                return .warning
+            }
+        }
+    }
+
     struct State: Equatable {
         let isDemoModus: Bool
         var pin: String = ""
         var selectedLoginOption = LoginOption.notSelected
-        var isSecurityWarningPresented = false
-        var showNextScreen = false
-        var alertState: AlertState<Action>?
+        var route: Route?
     }
 
-    enum Action: Equatable {
+    indirect enum Action: Equatable {
         case select(option: LoginOption)
         case advance
-        case navigateBack
         case close
         case presentSecurityWarning
         case acceptSecurityWarning
-        case dismissSecurityWarning
-        case dismissAlert
         case openAppSpecificSettings
+        case setNavigation(tag: Route.Tag?)
+        case readcardAction(action: CardWallReadCardDomain.Action)
+        case wrongCanClose
+        case wrongPinClose
+        case navigateToIntro
     }
 
     struct Environment {
         let userSession: UserSession
+        var schedulers: Schedulers
+        var sessionProvider: ProfileBasedSessionProvider
+        let signatureProvider: SecureEnclaveSignatureProvider
 
         let canUseBiometrics: () -> Bool = {
             var error: NSError?
@@ -59,7 +87,7 @@ enum CardWallLoginOptionDomain {
         let openURL: (URL, [UIApplication.OpenExternalURLOptionsKey: Any], ((Bool) -> Void)?) -> Void
     }
 
-    static let reducer = Reducer { state, action, environment in
+    static let domainReducer = Reducer { state, action, environment in
         switch action {
         case let .select(option: option):
             if state.selectedLoginOption == option, option.hasSelection {
@@ -67,7 +95,7 @@ enum CardWallLoginOptionDomain {
             }
             if option.isWithBiometry {
                 guard environment.canUseBiometrics() else {
-                    state.alertState = AlertState(
+                    state.route = .alert(AlertState(
                         title: TextState(L10n.cdwTxtBiometrySetupIncomplete),
                         message: nil,
                         primaryButton: .cancel(TextState(L10n.alertBtnOk)),
@@ -75,7 +103,7 @@ enum CardWallLoginOptionDomain {
                             TextState(L10n.tabTxtSettings),
                             action: .send(.openAppSpecificSettings)
                         )
-                    )
+                    ))
                     return .none
                 }
                 // [REQ:gemSpec_IDP_Frontend:A_21574] Present user information
@@ -83,34 +111,78 @@ enum CardWallLoginOptionDomain {
             }
             state.selectedLoginOption = option
             return .none
-        case .dismissAlert:
-            state.alertState = nil
-            return .none
         case .openAppSpecificSettings:
             if let url = URL(string: UIApplication.openSettingsURLString) {
                 environment.openURL(url, [:], nil)
             }
             return .none
         case .advance:
-            state.showNextScreen = true
-            return .none
-        case .navigateBack:
-            state.showNextScreen = false
+            state.route = .readcard(.init(isDemoModus: state.isDemoModus,
+                                          profileId: environment.userSession.profileId,
+                                          pin: state.pin,
+                                          loginOption: state.selectedLoginOption,
+                                          output: .idle))
             return .none
         case .close:
             return .none
         case .presentSecurityWarning:
-            state.isSecurityWarningPresented = true
+            state.route = .warning
             return .none
         case .acceptSecurityWarning:
             state.selectedLoginOption = .withBiometry
-            state.isSecurityWarningPresented = false
+            state.route = nil
             return .none
-        case .dismissSecurityWarning:
-            state.isSecurityWarningPresented = false
+        case .setNavigation(tag: .none):
+            state.route = nil
+            return .none
+        case .readcardAction(.close):
+            return Effect(value: .close)
+                // Delay for waiting the close animation Workaround for TCA pullback problem
+                .delay(for: 0.5, scheduler: environment.schedulers.main)
+                .eraseToEffect()
+        case .readcardAction(.singleClose):
+            state.route = nil
+            return .none
+        case .readcardAction(.wrongCAN):
+            return Effect(value: .wrongCanClose)
+                // Delay for waiting the close animation Workaround for TCA pullback problem
+                .delay(for: 0.1, scheduler: environment.schedulers.main)
+                .eraseToEffect()
+        case .readcardAction(.wrongPIN):
+            return Effect(value: .wrongPinClose)
+        case .readcardAction(.navigateToIntro):
+            return Effect(value: .navigateToIntro)
+                // Delay for waiting the close animation Workaround for TCA pullback problem
+                .delay(for: 1.1, scheduler: environment.schedulers.main)
+                .eraseToEffect()
+        case .setNavigation,
+             .readcardAction,
+             .wrongCanClose,
+             .wrongPinClose,
+             .navigateToIntro:
             return .none
         }
     }
+
+    static let readCardPullbackReducer: Reducer =
+        CardWallReadCardDomain.reducer._pullback(
+            state: (\State.route).appending(path: /Route.readcard),
+            action: /Action.readcardAction(action:)
+        ) { environment in
+            CardWallReadCardDomain.Environment(
+                schedulers: environment.schedulers,
+                profileDataStore: environment.userSession.profileDataStore,
+                signatureProvider: environment.signatureProvider,
+                sessionProvider: environment.sessionProvider,
+                nfcSessionProvider: environment.userSession.nfcSessionProvider,
+                application: UIApplication.shared
+            )
+        }
+
+    static let reducer = Reducer.combine(
+        readCardPullbackReducer,
+        domainReducer
+    )
 }
 
 enum LoginOption {
@@ -135,12 +207,19 @@ extension CardWallLoginOptionDomain {
     enum Dummies {
         static let state = State(isDemoModus: false)
         static let environment = Environment(
-            userSession: DemoSessionContainer(),
+            userSession: DummySessionContainer(),
+            schedulers: Schedulers(),
+            sessionProvider: DummyProfileBasedSessionProvider(),
+            signatureProvider: DummySecureEnclaveSignatureProvider(),
             openURL: UIApplication.shared.open(_:options:completionHandler:)
         )
 
-        static let store = Store(initialState: state,
-                                 reducer: reducer,
-                                 environment: environment)
+        static let store = storeFor(state)
+
+        static func storeFor(_ state: State) -> Store {
+            Store(initialState: state,
+                  reducer: reducer,
+                  environment: environment)
+        }
     }
 }

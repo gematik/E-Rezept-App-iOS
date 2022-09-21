@@ -607,7 +607,7 @@ extension EditProfileDomain {
             userDataStore: DemoUserDefaultsStore(),
             profileSecureDataWiper: DummyProfileSecureDataWiper(),
             router: DummyRouter(),
-            userSession: DemoSessionContainer(),
+            userSession: DummySessionContainer(),
             userSessionProvider: DummyUserSessionProvider(),
             secureEnclaveSignatureProvider: DummySecureEnclaveSignatureProvider(),
             nfcSignatureProvider: DemoSignatureProvider(),

@@ -23,7 +23,7 @@ import OpenSSL
 class DummySecureEnclaveSignatureProvider: SecureEnclaveSignatureProvider {
     var isBiometrieRegistered: AnyPublisher<Bool, Never> = Just(false).eraseToAnyPublisher()
 
-    func registerData() throws -> PairingSession {
+    func createPairingSession() throws -> PairingSession {
         throw SecureEnclaveSignatureProviderError.packagingAuthCertificate
     }
 

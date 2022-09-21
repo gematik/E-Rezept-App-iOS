@@ -50,9 +50,10 @@ struct SettingsView: View {
         #endif
         let showTrackerComplyView: Bool
         let isDemoMode: Bool
-        let routeTag: ProfilesDomain.Route.Tag?
+        let profilesRouteTag: ProfilesDomain.Route.Tag?
         let showOrderHealthCardView: Bool
-        let showEGKHint: Bool
+
+        let routeTag: SettingsDomain.Route.Tag?
 
         init(state: SettingsDomain.State) {
             #if ENABLE_DEBUG_VIEW
@@ -60,9 +61,9 @@ struct SettingsView: View {
             #endif
             showTrackerComplyView = state.showTrackerComplyView
             isDemoMode = state.isDemoMode
-            routeTag = state.profiles.route?.tag
+            profilesRouteTag = state.profiles.route?.tag
             showOrderHealthCardView = state.showOrderHealthCardView
-            showEGKHint = state.showEGKHint
+            routeTag = state.route?.tag
         }
     }
 
@@ -70,9 +71,6 @@ struct SettingsView: View {
         NavigationView {
             ScrollView {
                 VStack(spacing: 0) {
-                    if viewStore.state.showEGKHint {
-                        EGKHint(store: store)
-                    }
                     #if ENABLE_DEBUG_VIEW
                     DebugSectionView(store: debugStore,
                                      showDebugView: viewStore.binding(
@@ -85,6 +83,8 @@ struct SettingsView: View {
 
                     DemoModeSectionView(store: store)
 
+                    HealthCardSectionView(store: store)
+
                     TrackerSectionView(store: store)
 
                     SecuritySectionView(store: store)
@@ -96,20 +96,6 @@ struct SettingsView: View {
                     BottomSectionView(store: store)
                 }
                 .alert(profilesAlertStore, dismiss: .setNavigation(tag: nil))
-                Rectangle()
-                    .frame(width: 0, height: 0, alignment: .center)
-                    .sheet(isPresented: viewStore.binding(
-                        get: \.showOrderHealthCardView,
-                        send: SettingsDomain.Action.toggleOrderHealthCardView
-                    )) {
-                        NavigationView {
-                            OrderHealthCardView {
-                                viewStore.send(.toggleOrderHealthCardView(false))
-                            }
-                        }.navigationViewStyle(StackNavigationViewStyle())
-                    }
-                    .hidden()
-                    .accessibility(hidden: true)
 
                 // Tracking comply sheet presentation
                 Rectangle()
@@ -126,7 +112,7 @@ struct SettingsView: View {
                 Rectangle()
                     .frame(width: 0, height: 0, alignment: .center)
                     .sheet(isPresented: Binding<Bool>(get: {
-                        viewStore.routeTag == .newProfile
+                        viewStore.profilesRouteTag == .newProfile
                     }, set: { show in
                         if !show {
                             viewStore.send(.profiles(action: .setNavigation(tag: nil)))
@@ -144,7 +130,7 @@ struct SettingsView: View {
                         EditProfileView(store: profileStore)
                     },
                     tag: ProfilesDomain.Route.Tag.details, // swiftlint:disable:next trailing_closure
-                    selection: viewStore.binding(get: \.routeTag, send: { tag in
+                    selection: viewStore.binding(get: \.profilesRouteTag, send: { tag in
                         SettingsDomain.Action.profiles(action: .setNavigation(tag: tag))
                     })
                 ) {}
@@ -384,40 +370,6 @@ extension SettingsView {
             }
             .accentColor(Colors.primary600)
             .navigationViewStyle(StackNavigationViewStyle())
-        }
-    }
-
-    struct EGKHint: View {
-        let store: SettingsDomain.Store
-
-        @ObservedObject
-        var viewStore: ViewStore<Void, SettingsDomain.Action>
-
-        init(store: SettingsDomain.Store) {
-            self.store = store
-            viewStore = ViewStore(store.stateless)
-        }
-
-        var body: some View {
-            HintView(
-                hint: Hint<SettingsDomain.Action>(
-                    id: A11y.settings.hint.hintTxtOrderEgk,
-                    title: L10n.hintTxtOrderEgkTitel.text,
-                    message: L10n.hintTxtOrderEgk.text,
-                    actionText: L10n.hintTxtOrderEgkButton,
-                    image: .init(name: Asset.Illustrations.boyCicrle.name),
-                    style: .awareness,
-                    buttonStyle: .quaternary,
-                    imageStyle: .topAligned
-                ),
-                textAction: {
-                    viewStore.send(SettingsDomain.Action.toggleOrderHealthCardView(true))
-                },
-                closeAction: nil
-            )
-            .listRowBackground(Color.clear)
-            .listRowInsets(EdgeInsets())
-            .padding()
         }
     }
 }

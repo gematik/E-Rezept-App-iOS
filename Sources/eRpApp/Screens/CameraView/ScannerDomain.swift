@@ -98,7 +98,7 @@ enum ScannerDomain {
             state.scanState = .loading(nil)
             do {
                 let scannedTasks = try CodeAnalyser.analyse(scanOutput: scanOutput, with: state.acceptedTaskBatches)
-                return environment.checkForDuplicatesInStore(scannedTasks)
+                return environment.checkForTaskDuplicatesInStore(scannedTasks)
                     .cancellable(id: Token.loadErxTask)
             } catch let error as ScannerDomain.Error {
                 return Effect(value: .analyseReceived(.error(error)))
@@ -154,7 +154,7 @@ enum ScannerDomain {
 }
 
 extension ScannerDomain.Environment {
-    func checkForDuplicatesInStore(_ scannedTasks: [ScannedErxTask]) -> Effect<ScannerDomain.Action, Never> {
+    func checkForTaskDuplicatesInStore(_ scannedTasks: [ScannedErxTask]) -> Effect<ScannerDomain.Action, Never> {
         let findPublishers: [AnyPublisher<ScannedErxTask?, Never>] = scannedTasks.map { scannedTask in
             self.repository.loadLocal(by: scannedTask.id, accessCode: scannedTask.accessCode)
                 .map { erxTask -> ScannedErxTask? in
@@ -219,7 +219,7 @@ extension ScannerDomain {
 
         static let state = State()
 
-        static let environment = Environment(repository: DemoSessionContainer().erxTaskRepository,
+        static let environment = Environment(repository: DummySessionContainer().erxTaskRepository,
                                              dateFormatter: globals.fhirDateFormatter,
                                              scheduler: Schedulers())
     }

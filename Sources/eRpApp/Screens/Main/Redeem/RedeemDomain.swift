@@ -138,7 +138,7 @@ extension RedeemDomain {
         )
         static let environment = Environment(
             schedulers: Schedulers(),
-            userSession: DemoSessionContainer(),
+            userSession: DummySessionContainer(),
             fhirDateFormatter: FHIRDateFormatter.shared
         )
         static let store = Store(initialState: state,

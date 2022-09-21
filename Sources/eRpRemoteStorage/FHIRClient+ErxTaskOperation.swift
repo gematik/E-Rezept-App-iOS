@@ -41,6 +41,7 @@ extension FHIRClient {
                 // fall back to JSON dictionary parsing
                 let accessCode = fhirResponse.body.recoverAccessCode
                 let pvsPruefnummer = fhirResponse.body.recoverPvsPruefnummer
+                let recoverdFlowType = fhirResponse.body.recoverFlowType
                 let authoredOn = fhirResponse.body.recoverAuthoredOn
                 let prettyCodingPath = context.codingPath.reduce("") { partialResult, key -> String in
                     partialResult + "\(key.intValue?.description ?? key.stringValue)."
@@ -55,6 +56,7 @@ extension FHIRClient {
                         debug description: \(context.debugDescription)
                         """
                     )),
+                    flowType: ErxTask.FlowType(rawValue: recoverdFlowType),
                     accessCode: accessCode,
                     authoredOn: authoredOn
                 )
@@ -62,6 +64,7 @@ extension FHIRClient {
                 return ErxTask(
                     identifier: id,
                     status: .error(.unknown(message: "\(error)")),
+                    flowType: ErxTask.FlowType(rawValue: String(id.prefix(3))),
                     accessCode: accessCode
                 )
             }
@@ -320,6 +323,26 @@ extension Data {
            let taskResource = task["resource"] as? [String: Any],
            let authoredOn = taskResource["authoredOn"] as? String {
             return authoredOn
+        }
+        return nil
+    }
+
+    var recoverFlowType: String? {
+        if let json = try? JSONSerialization.jsonObject(with: self),
+           let jsonDict = json as? [String: Any],
+           let entries = jsonDict["entry"] as? [[String: Any]],
+           let task = entries.first(
+               where: { ($0["resource"] as? [String: Any])?["resourceType"] as? String == .some("Task") }
+           ),
+           let taskResource = task["resource"] as? [String: Any],
+           let extensionEntities = taskResource["extension"] as? [[String: Any]],
+           let flowExtension = extensionEntities.first(where: { anExtension in
+               Workflow.Key.prescriptionTypeKeys.contains { $0.value == anExtension["url"] as? String }
+           }),
+           let valueCoding = flowExtension["valueCoding"] as? [String: String],
+           Workflow.Key.flowTypeKeys.contains(where: { $0.value == valueCoding["system"] }),
+           let flowType = valueCoding["code"] {
+            return flowType
         }
         return nil
     }

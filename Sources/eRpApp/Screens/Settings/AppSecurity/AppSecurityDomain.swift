@@ -155,7 +155,7 @@ extension AppSecurityDomain {
     enum Dummies {
         static let state = State(availableSecurityOptions: [], selectedSecurityOption: .biometry(.faceID))
 
-        static let environment = Environment(userDataStore: DemoSessionContainer().localUserStore,
+        static let environment = Environment(userDataStore: DummySessionContainer().localUserStore,
                                              appSecurityManager: DummyAppSecurityManager(),
                                              schedulers: Schedulers())
 

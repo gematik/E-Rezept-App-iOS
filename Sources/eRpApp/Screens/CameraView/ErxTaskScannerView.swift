@@ -31,7 +31,7 @@ struct ErxTaskScannerView: View {
     var body: some View {
         WithViewStore(store) { viewStore in
             ZStack {
-                AVScannerView(erxCodeTypes: [.dataMatrix],
+                AVScannerView(erxCodeTypes: [.dataMatrix, .qr],
                               supportedCodeTypes: [.dataMatrix, .qr, .aztec],
                               scanning: viewStore.scanState.isIdle) {
                     if viewStore.state.scanState.isIdle {

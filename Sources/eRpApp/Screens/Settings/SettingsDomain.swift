@@ -22,14 +22,41 @@ import DataKit
 import eRpKit
 import IDP
 
+// swiftlint:disable:next type_body_length
 enum SettingsDomain {
     typealias Store = ComposableArchitecture.Store<State, Action>
     typealias Reducer = ComposableArchitecture.Reducer<State, Action, Environment>
 
+    enum Route: Equatable {
+        case healthCardResetCounterNoNewSecret(ResetRetryCounterDomain.State)
+        case healthCardResetCounterWithNewSecret(ResetRetryCounterDomain.State)
+
+        enum Tag: Int {
+            case healthCardResetCounterNoNewSecret
+            case healthCardResetCounterWithNewSecret
+        }
+
+        var tag: Tag {
+            switch self {
+            case .healthCardResetCounterNoNewSecret:
+                return .healthCardResetCounterNoNewSecret
+            case .healthCardResetCounterWithNewSecret:
+                return .healthCardResetCounterWithNewSecret
+            }
+        }
+    }
+
     static func cleanup<T>() -> Effect<T, Never> {
         .concatenate(
             .cancel(token: Token.self),
-            ProfilesDomain.cleanup()
+            cleanupSubDomains()
+        )
+    }
+
+    private static func cleanupSubDomains<T>() -> Effect<T, Never> {
+        .concatenate(
+            ProfilesDomain.cleanup(),
+            ResetRetryCounterDomain.cleanup()
         )
     }
 
@@ -51,7 +78,8 @@ enum SettingsDomain {
         var appVersion = AppVersion.current
         var trackerOptIn = false
         var showTrackerComplyView = false
-        var showEGKHint = false
+
+        var route: Route?
     }
 
     enum Action: Equatable {
@@ -71,8 +99,11 @@ enum SettingsDomain {
         case toggleOrderHealthCardView(Bool)
         case appSecurity(action: AppSecurityDomain.Action)
         case profiles(action: ProfilesDomain.Action)
+        case healthCardResetCounterNoNewSecret(action: ResetRetryCounterDomain.Action)
+        case healthCardResetCounterWithNewSecret(action: ResetRetryCounterDomain.Action)
         case popToRootView
-        case showEGKHintReceived(Bool)
+
+        case setNavigation(tag: Route.Tag?)
     }
 
     struct Environment {
@@ -80,6 +111,7 @@ enum SettingsDomain {
         let schedulers: Schedulers
         let tracker: Tracker
         let signatureProvider: SecureEnclaveSignatureProvider
+        let nfcResetRetryCounterController: NFCResetRetryCounterController
         let appSecurityManager: AppSecurityManager
         let router: Routing
         let userSessionProvider: UserSessionProvider
@@ -89,21 +121,9 @@ enum SettingsDomain {
     private static let domainReducer = Reducer { state, action, environment in
         switch action {
         case .initSettings:
-            return .merge(
-                UserDefaults.standard.publisher(for: \UserDefaults.appTrackingAllowed)
-                    .map(Action.trackerStatusReceived)
-                    .eraseToEffect(),
-                environment.changeableUserSessionContainer.userSession.profile()
-                    .map {
-                        $0.insuranceId == nil
-                    }
-                    .catch { _ in
-                        Just(false)
-                            .eraseToAnyPublisher()
-                    }
-                    .map(Action.showEGKHintReceived)
-                    .eraseToEffect()
-            )
+            return UserDefaults.standard.publisher(for: \UserDefaults.appTrackingAllowed)
+                .map(Action.trackerStatusReceived)
+                .eraseToEffect()
         case let .trackerStatusReceived(value):
             state.trackerOptIn = value
             return .none
@@ -168,6 +188,26 @@ enum SettingsDomain {
         case .appSecurity,
              .profiles:
             return .none
+        case .healthCardResetCounterNoNewSecret(.readCard(.navigateToSettings)),
+             .healthCardResetCounterWithNewSecret(.readCard(.navigateToSettings)):
+            state.route = nil
+            return cleanupSubDomains()
+
+        case .healthCardResetCounterNoNewSecret,
+             .healthCardResetCounterWithNewSecret:
+            return .none
+
+        case .setNavigation(tag: .healthCardResetCounterNoNewSecret):
+            state.route = .healthCardResetCounterNoNewSecret(.init(withNewPin: false))
+            return .none
+        case .setNavigation(tag: .healthCardResetCounterWithNewSecret):
+            state.route = .healthCardResetCounterWithNewSecret(.init(withNewPin: true))
+            return .none
+        case .setNavigation(tag: nil):
+            state.route = nil
+            return cleanup()
+        case .setNavigation:
+            return .none
 
         // Debug
         case let .toggleDebugView(show):
@@ -186,15 +226,14 @@ enum SettingsDomain {
             state.showDataProtectionView = false
             state.showTermsOfUseView = false
             return .none
-        case let .showEGKHintReceived(value):
-            state.showEGKHint = value
-            return .none
         }
     }
 
     static let reducer: Reducer = .combine(
         appSecurityPullbackReducer,
         profilesPullbackReducer,
+        healthCardResetPinCounterNoNewSecretPullbackReducer,
+        healthCardResetPinCounterWithNewSecretPullbackReducer,
         domainReducer
     )
 
@@ -234,6 +273,30 @@ enum SettingsDomain {
             )
         }
 
+    // swiftlint:disable:next identifier_name
+    private static let healthCardResetPinCounterNoNewSecretPullbackReducer: Reducer =
+        ResetRetryCounterDomain.reducer._pullback(
+            state: (\State.route).appending(path: /Route.healthCardResetCounterNoNewSecret),
+            action: /SettingsDomain.Action.healthCardResetCounterNoNewSecret(action:)
+        ) {
+            .init(
+                schedulers: $0.schedulers,
+                nfcSessionController: $0.nfcResetRetryCounterController
+            )
+        }
+
+    // swiftlint:disable:next identifier_name
+    private static let healthCardResetPinCounterWithNewSecretPullbackReducer: Reducer =
+        ResetRetryCounterDomain.reducer._pullback(
+            state: (\State.route).appending(path: /Route.healthCardResetCounterWithNewSecret),
+            action: /SettingsDomain.Action.healthCardResetCounterWithNewSecret(action:)
+        ) {
+            .init(
+                schedulers: $0.schedulers,
+                nfcSessionController: $0.nfcResetRetryCounterController
+            )
+        }
+
     static var demoModeOnAlertState: AlertState<Action> = {
         AlertState<Action>(
             title: TextState(L10n.stgTxtAlertTitleDemoMode),
@@ -267,6 +330,7 @@ extension SettingsDomain {
             schedulers: Schedulers(),
             tracker: DummyTracker(),
             signatureProvider: DummySecureEnclaveSignatureProvider(),
+            nfcResetRetryCounterController: DummyResetRetryCounterController(),
             appSecurityManager: DummyAppSecurityManager(),
             router: DummyRouter(),
             userSessionProvider: DummyUserSessionProvider()

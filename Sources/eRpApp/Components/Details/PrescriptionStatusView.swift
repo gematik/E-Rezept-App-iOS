@@ -23,7 +23,7 @@ struct PrescriptionStatusView: View {
 
     var body: some View {
         HStack(spacing: 4) {
-            Text(prescription.title)
+            Text(prescription.statusTitle)
                 .foregroundColor(prescription.titleTint)
             prescription.image
                 .font(Font.caption2.weight(.semibold))

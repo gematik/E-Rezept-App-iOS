@@ -149,6 +149,51 @@
           }
         ]
       }
+    },
+    {
+        "fullUrl": "https://erp-test.zentral.erp.splitdns.ti-dienste.de/Communication/01eb8e09-19d2-eea0-a14f-ed08a549fae3",
+        "resource": {
+            "resourceType": "Communication",
+            "meta": {
+                "profile": [
+                "https://gematik.de/fhir/StructureDefinition/ErxCommunicationDispReq"      ]
+            },
+            "identifier": [
+                {
+                    "system": "https://gematik.de/fhir/NamingSystem/OrderID",
+                    "value": "d58894dd-c93c-4841-b6f6-4ac4cda4922f"
+                }
+            ],
+            "basedOn": [
+                {
+                    "reference": "Task/160.000.000.030.106.46/$accept?ac=1f525873972d58684614393d7bdfe08e0fd74882dc6246ab421f81628d80fcff"
+                }
+            ],
+            "status": "unknown",
+            "recipient": [
+                {
+                    "identifier": {
+                        "system": "https://gematik.de/fhir/NamingSystem/TelematikID",
+                        "value": "3-15.2.010873.824"
+                    }
+                }
+            ],
+            "payload": [
+                {
+                    "contentString": "{do something else}"
+                }
+            ],
+            "sender": {
+                "identifier": {
+                    "value": "X110495330",
+                    "system": "http://fhir.de/NamingSystem/gkv/kvid-10"      }
+            },
+            "sent": "2022-07-19T16:48:24.036+00:00",
+            "id": "01eb8e09-19d2-eea0-a14f-ed08a549fae3"
+        },
+        "search": {
+            "mode": "match"
+        }
     }
   ]
 }

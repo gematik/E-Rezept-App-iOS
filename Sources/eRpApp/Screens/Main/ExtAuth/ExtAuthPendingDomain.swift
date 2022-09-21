@@ -259,8 +259,8 @@ extension ExtAuthPendingDomain {
         static let state = State()
         static let environment = Environment(idpSession: DemoIDPSession(storage: MemoryStorage()),
                                              schedulers: Schedulers(),
-                                             currentProfile: DemoSessionContainer().profile(),
-                                             idTokenValidator: DemoSessionContainer().idTokenValidator(),
+                                             currentProfile: DummySessionContainer().profile(),
+                                             idTokenValidator: DummySessionContainer().idTokenValidator(),
                                              profileDataStore: DemoProfileDataStore(),
                                              extAuthRequestStorage: DummyExtAuthRequestStorage())
 

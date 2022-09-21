@@ -61,6 +61,14 @@ enum Workflow {
 
     /// Collection of defined keys within the e-rezept-workflow profiles (begins with `gematik.de/fhir/`)
     enum Key {
+        static let prescriptionTypeKeys: [Version: String] = [
+            .v1_1_1: "https://gematik.de/fhir/StructureDefinition/PrescriptionType",
+            .v1_2_0: "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_EX_PrescriptionType",
+        ]
+        static let flowTypeKeys: [Version: String] = [
+            .v1_1_1: "https://gematik.de/fhir/CodeSystem/Flowtype",
+            .v1_2_0: "https://gematik.de/fhir/erp/CodeSystem/GEM_ERP_CS_FlowType",
+        ]
         static let documentTypeKeys: [Version: String] = [
             .v1_1_1: "https://gematik.de/fhir/CodeSystem/Documenttype",
             .v1_2_0: "https://gematik.de/fhir/erp/CodeSystem/GEM_ERP_CS_DocumentType",
@@ -104,6 +112,9 @@ enum Workflow {
         static let kvIDKeys: [Version: String] = [
             .v1_1_1: "http://fhir.de/NamingSystem/gkv/kvid-10",
             .v1_2_0: "http://fhir.de/sid/gkv/kvid-10",
+        ]
+        static let orderIdKeys: [Version: String] = [
+            .v1_1_1: "https://gematik.de/fhir/NamingSystem/OrderID",
         ]
     }
 }

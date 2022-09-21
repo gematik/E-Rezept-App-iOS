@@ -23,25 +23,27 @@ import eRpStyleKit
 import SwiftUI
 
 struct CardWallReadCardView: View {
-    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
     let store: CardWallReadCardDomain.Store
+    static let height: CGFloat = {
+        // Compensate display scaling (Settings -> Display & Brightness -> Display -> Standard vs. Zoomed
+        180 * UIScreen.main.scale / UIScreen.main.nativeScale
+    }()
+
+    init(store: CardWallReadCardDomain.Store) {
+        self.store = store
+    }
+
     struct ViewState: Equatable {
         let routeTag: CardWallReadCardDomain.Route.Tag?
         let output: CardWallReadCardDomain.State.Output
         let isDemoModus: Bool
+
         init(state: CardWallReadCardDomain.State) {
             routeTag = state.route?.tag
             output = state.output
             isDemoModus = state.isDemoModus
         }
     }
-
-    static let height: CGFloat = {
-        // Compensate display scaling (Settings -> Display & Brightness -> Display -> Standard vs. Zoomed
-        180 * UIScreen.main.scale / UIScreen.main.nativeScale
-    }()
-
-    @State var showVideo = false
 
     var body: some View {
         WithViewStore(store.scope(state: ViewState.init)) { viewStore in
@@ -82,7 +84,7 @@ struct CardWallReadCardView: View {
                         .cornerRadius(16)
                         .padding()
 
-                    TertiaryButton(text: L10n.cdwBtnRcHelp.key, imageName: "questionmark.circle") {
+                    TertiaryButton(text: L10n.cdwBtnRcHelp.key, imageName: SFSymbolName.questionmarkCircle) {
                         viewStore.send(.openHelpViewScreen)
                     }
                     .fullScreenCover(isPresented: Binding<Bool>(
@@ -132,7 +134,7 @@ struct CardWallReadCardView: View {
                 .padding(.vertical)
 
                 Button(action: {
-                    presentationMode.wrappedValue.dismiss()
+                    viewStore.send(.singleClose)
                 }, label: {
                     Label(title: { Text(L10n.cdwBtnRcBack) }, icon: {})
                 })

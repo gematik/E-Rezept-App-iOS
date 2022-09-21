@@ -34,7 +34,7 @@ final class SettingsViewSnapshotTests: XCTestCase {
                                        reducer: .empty,
                                        environment: DebugDomain.Environment(
                                            schedulers: Schedulers(),
-                                           userSession: DemoSessionContainer(),
+                                           userSession: DummySessionContainer(),
                                            localUserStore: MockUserDataStore(),
                                            tracker: DummyTracker(),
                                            serverEnvironmentConfiguration: nil,

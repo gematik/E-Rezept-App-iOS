@@ -44,7 +44,7 @@ class DefaultSecureEnclaveSignatureProvider: SecureEnclaveSignatureProvider {
             .eraseToAnyPublisher()
     }
 
-    public func registerData() throws -> PairingSession {
+    public func createPairingSession() throws -> PairingSession {
         do {
             // [REQ:gemSpec_IDP_Frontend:A_21588] Key generation
             let keyIdentifier = try keyIdentifierGenerator()

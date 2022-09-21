@@ -73,6 +73,7 @@ extension ModelsR4.Bundle {
             taskId: task.id,
             userId: userKVID,
             telematikId: telematikId,
+            orderId: communication.orderId,
             timestamp: timestamp,
             payloadJSON: payloadContent,
             isRead: false
@@ -120,6 +121,14 @@ extension ModelsR4.Communication {
             return nil
         }
         return nil
+    }
+
+    var orderId: String? {
+        identifier?.first { identifier in
+            Workflow.Key.orderIdKeys.contains {
+                $0.value == identifier.system?.value?.url.absoluteString
+            }
+        }?.value?.value?.string
     }
 
     var payloadContent: String? {

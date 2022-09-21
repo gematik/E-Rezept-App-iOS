@@ -115,8 +115,8 @@ extension DebugView {
                     DebugView.ResetButton(text: "Reset CAN") {
                         viewStore.send(.resetCanButtonTapped)
                     }
-                    DebugView.ResetButton(text: "Reset eGK Certificate") {
-                        viewStore.send(.resetEGKAuthCertButtonTapped)
+                    DebugView.ResetButton(text: "Reset Biometrie (Key and Cert)") {
+                        viewStore.send(.deleteKeyAndEGKAuthCertForBiometric)
                     }
                     DebugView.ResetButton(text: "Reset CERT- and OCSP-Lists") {
                         viewStore.send(.resetOcspAndCertListButtonTapped)
@@ -240,15 +240,22 @@ extension DebugView {
                         Text("Logged in:")
                         if viewStore.isAuthenticated ?? false {
                             Text("YES").bold().foregroundColor(.green)
+                            Spacer()
+                            Button("Logout") {
+                                viewStore.send(.logoutButtonTapped)
+                            }
+                            .foregroundColor(.red)
                         } else {
                             Text("NO").bold().foregroundColor(.red)
+                            Spacer()
+                            Button("Login") {
+                                withAnimation {
+                                    UIApplication.shared.dismissKeyboard()
+                                    viewStore.send(.loginWithToken)
+                                }
+                            }
+                            .foregroundColor(.green)
                         }
-                        Spacer()
-                        Button("Logout") {
-                            viewStore.send(.logoutButtonTapped)
-                        }
-                        .disabled(!(viewStore.isAuthenticated ?? false))
-                        .foregroundColor((viewStore.isAuthenticated ?? false) ? .red : .gray)
                     }
 
                     VirtualEGKLogin(store: store)
@@ -265,19 +272,12 @@ extension DebugView {
                             .foregroundColor(Colors.systemLabel)
                             .keyboardType(.default)
                             .disableAutocorrection(true)
-                        FootnoteView(text: "Initial access token only for internal IDP", a11y: "")
+                        FootnoteView(
+                            text: "Initial access token can only be used for internal IDP. Will be updated to the latest used access token after using logout here",
+                            // swiftlint:disable:previous line_length
+                            a11y: ""
+                        )
                     }
-
-                    Button("Login") {
-                        withAnimation {
-                            UIApplication.shared.dismissKeyboard()
-                            viewStore.send(.setAccessCodeTextButtonTapped)
-                        }
-                    }
-                    .accessibilityIdentifier("debug_btn_login")
-                    .foregroundColor((viewStore.isAuthenticated ?? false) ? .gray : .green)
-                    .frame(maxWidth: .infinity)
-                    .foregroundColor(.green)
 
                     SectionHeaderView(text: "Current access token", a11y: "dummy_a11y_i")
                     Text(viewStore.token?.accessToken ?? "*** No valid token available ***")
@@ -398,9 +398,12 @@ extension DebugView {
         private struct FeatureFlags: View {
             @AppStorage("enable_avs_login") var enableAvsLogin = false
             @AppStorage("show_debug_pharmacies") var showDebugPharmacies = false
+            @AppStorage("enable_prescription_sharing") var isPrescriptionSharingEnabled = false
 
             var body: some View {
                 List {
+                    Toggle("Rezepte Teilen", isOn: $isPrescriptionSharingEnabled)
+
                     Toggle("Zuweisen ohne TI", isOn: $enableAvsLogin)
 
                     VStack(alignment: .leading) {

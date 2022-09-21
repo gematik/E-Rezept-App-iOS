@@ -37,7 +37,7 @@ enum UserSessionProviderError: Error {
 
 class DummyUserSessionProvider: UserSessionProvider {
     func userSession(for _: UUID) -> UserSession {
-        DemoSessionContainer()
+        DummySessionContainer()
     }
 }
 

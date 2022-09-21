@@ -84,27 +84,44 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
     lazy var task1: ErxTask = {
         ErxTask(identifier: "id_1",
                 status: .ready,
+                flowType: ErxTask.FlowType.pharmacyOnly,
                 lastModified: "2021-07-10T10:55:04+02:00")
     }()
 
     lazy var task2: ErxTask = {
         ErxTask(identifier: "id_2",
                 status: .ready,
+                flowType: ErxTask.FlowType.pharmacyOnly,
                 lastModified: "2021-07-20T10:55:04+02:00")
     }()
 
     func testSaveTasks() throws {
         let store = loadErxCoreDataStore()
-        let task = ErxTask(identifier: "id", status: .ready, accessCode: "access")
+        let task = ErxTask(
+            identifier: "id",
+            status: .ready,
+            flowType: ErxTask.FlowType.pharmacyOnly,
+            accessCode: "access"
+        )
         try store.add(tasks: [task])
     }
 
     func testUpdatingPreviouslySavedTask() throws {
         let store = loadErxCoreDataStore()
-        let task = ErxTask(identifier: "id", status: .ready, accessCode: "access")
+        let task = ErxTask(
+            identifier: "id",
+            status: .ready,
+            flowType: ErxTask.FlowType.pharmacyOnly,
+            accessCode: "access"
+        )
         try store.add(tasks: [task])
 
-        let updatedTask = ErxTask(identifier: "id", status: .ready, accessCode: "new access code")
+        let updatedTask = ErxTask(
+            identifier: "id",
+            status: .ready,
+            flowType: ErxTask.FlowType.pharmacyOnly,
+            accessCode: "new access code"
+        )
 
         // when updating a previously saved task with same id
         try store.add(tasks: [updatedTask])
@@ -157,7 +174,7 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
     func testFetchTaskByIdCodeSuccess() throws {
         let store = loadErxCoreDataStore()
         // given
-        let taskToFetch = ErxTask(identifier: "id_1", status: .ready)
+        let taskToFetch = ErxTask(identifier: "id_1", status: .ready, flowType: ErxTask.FlowType.pharmacyOnly)
         try store.add(tasks: [taskToFetch])
 
         // when
@@ -178,7 +195,12 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
     func testFetchTaskByIdWithAccessCodeSuccess() throws {
         let store = loadErxCoreDataStore()
         // given
-        let taskToFetch = ErxTask(identifier: "id_1", status: .ready, accessCode: "accessCode_1")
+        let taskToFetch = ErxTask(
+            identifier: "id_1",
+            status: .ready,
+            flowType: .pharmacyOnly,
+            accessCode: "accessCode_1"
+        )
         try store.add(tasks: [taskToFetch])
 
         // when
@@ -198,7 +220,7 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
 
     func testFetchTaskByIdNoResults() throws {
         let store = loadErxCoreDataStore()
-        let taskToFetch = ErxTask(identifier: "id_1", status: .ready)
+        let taskToFetch = ErxTask(identifier: "id_1", status: .ready, flowType: .pharmacyOnly)
 
         var receivedNoResult = false
         // when fetching a profile that has not been added to the store
@@ -218,12 +240,12 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
     func testFetchTaskByIdWithRelationshipToProfile() throws {
         // given
         let testProfile = Profile(name: "TestProfile")
-        let tasks = [ErxTask(identifier: "id1", status: .ready, accessCode: "accessCode1"),
-                     ErxTask(identifier: "id2", status: .ready, accessCode: "accessCode2")]
+        let tasks = [ErxTask(identifier: "id1", status: .ready, flowType: .pharmacyOnly, accessCode: "accessCode1"),
+                     ErxTask(identifier: "id2", status: .ready, flowType: .pharmacyOnly, accessCode: "accessCode2")]
         try prepareStores(with: tasks, profiles: [testProfile])
 
         let store = loadErxCoreDataStore(for: testProfile.id)
-        let taskRelatedToProfile = ErxTask(identifier: "id3", status: .ready)
+        let taskRelatedToProfile = ErxTask(identifier: "id3", status: .ready, flowType: .pharmacyOnly)
         try store.add(tasks: [taskRelatedToProfile])
 
         // when
@@ -243,8 +265,8 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
 
     func testFetchTaskByIdWhichDoesNotBelongToProfile() throws {
         // given
-        let tasks = [ErxTask(identifier: "id1", status: .ready, accessCode: "accessCode1"),
-                     ErxTask(identifier: "id2", status: .ready, accessCode: "accessCode2")]
+        let tasks = [ErxTask(identifier: "id1", status: .ready, flowType: .pharmacyOnly, accessCode: "accessCode1"),
+                     ErxTask(identifier: "id2", status: .ready, flowType: .pharmacyOnly, accessCode: "accessCode2")]
         try prepareStores(with: tasks, profiles: [])
 
         // when setting the profile of the store
@@ -270,7 +292,7 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
         let testProfile = Profile(name: "Anna", insuranceId: patient.insuranceId)
         let profileStore = loadProfileCoreDataStore()
         try profileStore.add(profiles: [testProfile])
-        let tasks = [ErxTask(identifier: "id1", status: .ready, patient: patient)]
+        let tasks = [ErxTask(identifier: "id1", status: .ready, flowType: .pharmacyOnly, patient: patient)]
 
         // when
         let store = loadErxCoreDataStore(for: testProfile.id)
@@ -293,7 +315,7 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
     func testListAllTasks() throws {
         // given
         let store = loadErxCoreDataStore()
-        let task = ErxTask(identifier: "id", status: .ready, accessCode: "access")
+        let task = ErxTask(identifier: "id", status: .ready, flowType: .pharmacyOnly, accessCode: "access")
         try store.add(tasks: [task])
 
         // when
@@ -318,7 +340,7 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
     func testFetchingLatestTask() throws {
         let store = loadErxCoreDataStore()
         // given
-        try store.add(tasks: [task1, task2, ErxTask(identifier: "taskId_3", status: .ready)])
+        try store.add(tasks: [task1, task2, ErxTask(identifier: "taskId_3", status: .ready, flowType: .pharmacyOnly)])
         var receivedLatesValues = [String?]()
         _ = store.fetchLatestLastModifiedForErxTasks()
             .sink(receiveCompletion: { _ in
@@ -349,7 +371,10 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
     func testFetchingLatestTaskWithProfileRelationship() throws {
         // given
         let testProfile = Profile(name: "TestProfile")
-        try prepareStores(with: [task2, ErxTask(identifier: "taskId_3", status: .ready)], profiles: [testProfile])
+        try prepareStores(
+            with: [task2, ErxTask(identifier: "taskId_3", status: .ready, flowType: .pharmacyOnly)],
+            profiles: [testProfile]
+        )
 
         let store = loadErxCoreDataStore(for: testProfile.id)
         try store.add(tasks: [task1])
@@ -374,13 +399,18 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
         // given having a profile in store
         let testProfile = Profile(name: "TestProfile")
         // and having tasks that do not belong to that profile
-        let tasks = [ErxTask(identifier: "id1", status: .ready, accessCode: "accessCode1"),
-                     ErxTask(identifier: "id2", status: .ready, accessCode: "accessCode2")]
+        let tasks = [ErxTask(identifier: "id1", status: .ready, flowType: .pharmacyOnly, accessCode: "accessCode1"),
+                     ErxTask(identifier: "id2", status: .ready, flowType: .pharmacyOnly, accessCode: "accessCode2")]
         try prepareStores(with: tasks, profiles: [testProfile])
 
         // when accessing the store with a profile and saving a task to that profile
         let store = loadErxCoreDataStore(for: testProfile.id)
-        let taskWithProfile = ErxTask(identifier: "id3", status: .ready, accessCode: "accessCode3")
+        let taskWithProfile = ErxTask(
+            identifier: "id3",
+            status: .ready,
+            flowType: .pharmacyOnly,
+            accessCode: "accessCode3"
+        )
         try store.add(tasks: [taskWithProfile])
 
         // then listing tasks for that profile
@@ -403,12 +433,27 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
     func testListingAllTasksWithoutProfile() throws {
         // given
         let testProfile = Profile(name: "TestProfile")
-        let tasks = [ErxTask(identifier: "id1", status: .ready, authoredOn: "2021-07-10T10:55:04+02:00"),
-                     ErxTask(identifier: "id2", status: .ready, authoredOn: "2021-07-12T10:55:04+02:00")]
+        let tasks = [
+            ErxTask(identifier: "id1",
+                    status: .ready,
+                    flowType: .pharmacyOnly,
+                    authoredOn: "2021-07-10T10:55:04+02:00"),
+            ErxTask(
+                identifier: "id2",
+                status: .ready,
+                flowType: .pharmacyOnly,
+                authoredOn: "2021-07-12T10:55:04+02:00"
+            ),
+        ]
         try prepareStores(with: tasks, profiles: [testProfile])
 
         let store = loadErxCoreDataStore(for: testProfile.id)
-        let taskWithProfile = ErxTask(identifier: "id3", status: .ready, accessCode: "accessCode3")
+        let taskWithProfile = ErxTask(
+            identifier: "id3",
+            status: .ready,
+            flowType: .pharmacyOnly,
+            accessCode: "accessCode3"
+        )
         try store.add(tasks: [taskWithProfile])
 
         var receivedListAllValues = [[ErxTask]]()

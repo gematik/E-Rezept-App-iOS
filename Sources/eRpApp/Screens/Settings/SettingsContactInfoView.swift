@@ -24,14 +24,14 @@ struct SettingsContactInfoView: View {
     var body: some View {
         SectionContainer(header: {
             Label(title: { Text(L10n.stgTxtHeaderContactInfo) }, icon: {})
-                .accessibilityIdentifier(A18n.settings.contact.stgConHeaderContact)
+                .accessibilityIdentifier(A11y.settings.contact.stgConHeaderContact)
         }, footer: {
             Label(title: {
                 Text(
                     L10n.stgConHotlineAva
                 )
             }, icon: {})
-                .accessibilityIdentifier(A18n.settings.contact.stgConTxtFootnote)
+                .accessibilityIdentifier(A11y.settings.contact.stgConTxtFootnote)
         }, content: {
             Button(action: {
                 if let email: URL = Self.createEmailUrl() {
@@ -42,7 +42,18 @@ struct SettingsContactInfoView: View {
             }, label: {
                 Label(L10n.stgConTextMail, systemImage: SFSymbolName.mail)
             })
-                .accessibility(identifier: A18n.settings.contact.stgConTxtMail)
+                .accessibility(identifier: A11y.settings.contact.stgConTxtMail)
+                .buttonStyle(.navigation)
+
+            Button(action: {
+                guard let url = URL(string: "https://gematik.shortcm.li/E-Rezept-App_Feedback"),
+                      UIApplication.shared.canOpenURL(url) else { return }
+
+                UIApplication.shared.open(url)
+            }, label: {
+                Label(L10n.stgConTextSurvey, systemImage: SFSymbolName.clipboardDoc)
+            })
+                .accessibility(identifier: A11y.settings.contact.stgConTxtSurvey)
                 .buttonStyle(.navigation)
 
             Button(action: {
@@ -52,7 +63,7 @@ struct SettingsContactInfoView: View {
             }, label: {
                 Label(L10n.stgConTextContactHotline, systemImage: SFSymbolName.phone)
             })
-                .accessibility(identifier: A18n.settings.contact.stgConHotlineContact)
+                .accessibility(identifier: A11y.settings.contact.stgConHotlineContact)
                 .buttonStyle(.navigation)
         })
     }

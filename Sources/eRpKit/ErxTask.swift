@@ -24,6 +24,7 @@ public struct ErxTask: Identifiable, Hashable {
     public init(
         identifier: String,
         status: Status,
+        flowType: FlowType? = nil,
         accessCode: String? = nil,
         fullUrl: String? = nil,
         authoredOn: String? = nil,
@@ -48,6 +49,7 @@ public struct ErxTask: Identifiable, Hashable {
     ) {
         self.identifier = identifier
         self.status = status
+        self.flowType = flowType
         self.prescriptionId = prescriptionId
         self.accessCode = accessCode
         self.fullUrl = fullUrl
@@ -80,6 +82,9 @@ public struct ErxTask: Identifiable, Hashable {
     public let identifier: String
     /// Status of the current task
     public var status: Status
+    /// FlowType describes type of task (e.G. Direktzuweisung).
+    /// Usually the flowtype is identical to the beginning of the task id
+    public var flowType: FlowType?
     /// Prescription Id of the task
     public let prescriptionId: String?
     /// Access code authorizing for the task
@@ -175,6 +180,71 @@ extension ErxTask {
             case missingPatientReceiptIdentifier
             // sourcery: errorCode = "06"
             case missingPatientReceiptBundle
+        }
+    }
+
+    public enum FlowType: Equatable, RawRepresentable {
+        public enum Code {
+            public static var kPharmacyOnly = "160"
+            public static var kNarcotic = "165"
+            public static var kTPrescription = "166"
+            public static var kDirectAssignment = "169"
+            public static var kPharmacyOnlyForPKV = "200"
+            public static var kNarcoticForPKV = "205"
+            public static var kTPrescriptionForPKV = "206"
+            public static var kDirectAssignmentForPKV = "209"
+        }
+
+        public typealias RawValue = String?
+        /// Muster 16 (Apothekenpflichtige Arzneimittel)
+        case pharmacyOnly
+        /// Muster 16 (Betäubungsmittel)
+        case narcotic
+        /// Muster 16 (T-Rezepte)
+        case tPrescription
+        /// Muster 16 (Direkte Zuweisung)
+        /// [REQ:gemSpec_FD_eRp: A_21267] FlowType 169, some operations are not allowed (e.g. deleting)
+        /// Indicates if a prescription has been assigned directly after prescription (a.k.a Direktzuweisung)
+        /// AccessCode will not be available for theses Tasks
+        case directAssignment
+        /// Privatkrankenversicherte (Apothekenpflichtige Arzneimittel)
+        case pharmacyOnlyForPKV
+        /// Privatkrankenversicherte  (Betäubungsmittel)
+        case narcoticForPKV
+        /// Privatkrankenversicherte  (T-Rezepte)
+        case tPrescriptionForPKV
+        /// Privatkrankenversicherte  (Direkte Zuweisung)
+        case directAssignmentForPKV
+        /// all other (unknown) cases
+        case unknown(String)
+
+        public init?(rawValue: RawValue) {
+            guard let rawValue = rawValue else { return nil }
+            switch rawValue {
+            case Code.kPharmacyOnly: self = .pharmacyOnly
+            case Code.kNarcotic: self = .narcotic
+            case Code.kTPrescription: self = .tPrescription
+            case Code.kDirectAssignment: self = .directAssignment
+            case Code.kPharmacyOnlyForPKV: self = .pharmacyOnlyForPKV
+            case Code.kNarcoticForPKV: self = .narcoticForPKV
+            case Code.kTPrescriptionForPKV: self = .tPrescriptionForPKV
+            case Code.kDirectAssignmentForPKV: self = .directAssignmentForPKV
+            default: self = .unknown(rawValue)
+            }
+        }
+
+        public var rawValue: String? {
+            switch self {
+            case .pharmacyOnly: return Code.kPharmacyOnly
+            case .narcotic: return Code.kNarcotic
+            case .tPrescription: return Code.kTPrescription
+            case .directAssignment: return Code.kDirectAssignment
+            case .pharmacyOnlyForPKV: return Code.kPharmacyOnlyForPKV
+            case .narcoticForPKV: return Code.kNarcoticForPKV
+            case .tPrescriptionForPKV: return Code.kTPrescriptionForPKV
+            case .directAssignmentForPKV: return Code.kDirectAssignmentForPKV
+            case let .unknown(type): return type
+            }
         }
     }
 

@@ -47,15 +47,43 @@ enum PrescriptionDetailDomain: Equatable {
         case matrixCodeGenerationFailed
     }
 
+    enum Route: Equatable {
+        case alert(AlertState<Action>)
+        case pharmacySearch(PharmacySearchDomain.State)
+        case sharePrescription(URL)
+        case directAssignment
+
+        var tag: Tag {
+            switch self {
+            case .alert:
+                return .alert
+            case .pharmacySearch:
+                return .pharmacySearch
+            case .sharePrescription:
+                return .sharePrescription
+            case .directAssignment:
+                return .directAssignment
+            }
+        }
+
+        enum Tag: Int {
+            case alert
+            case pharmacySearch
+            case sharePrescription
+            case directAssignment
+        }
+    }
+
     struct State: Equatable {
         var prescription: GroupedPrescription.Prescription
         var loadingState: LoadingState<UIImage, LoadingImageError> = .idle
-        var alertState: AlertState<Action>?
         var isArchived: Bool
         var isDeleting = false
         var isSubstitutionReadMorePresented = false
-        // pharmacy state
-        var pharmacySearchState: PharmacySearchDomain.State?
+
+        var userActivity: NSUserActivity?
+
+        var route: Route?
 
         func createReportEmail(body: String) -> URL? {
             var urlString = URLComponents(string: "mailto:app-feedback@gematik.de")
@@ -81,11 +109,7 @@ enum PrescriptionDetailDomain: Equatable {
         /// User has confirmed to delete task
         case confirmedDelete
         /// When user chooses to not delete
-        case cancelDelete
-        /// Response when deletion was executed
         case taskDeletedReceived(Result<Bool, ErxRepositoryError>)
-        /// Sets the `alertState` back to nil (which hides the alert)
-        case alertDismissButtonTapped
         /// Responds after save
         case redeemedOnSavedReceived(Bool)
         /// Toggle medication redeem state
@@ -98,10 +122,12 @@ enum PrescriptionDetailDomain: Equatable {
         case showPharmacySearch
         /// Child view actions for the `PharmacySearch`
         case pharmacySearch(action: PharmacySearchDomain.Action)
-        /// Dismiss pharmacy search domain
-        case dismissPharmacySearch
+
+        case showDirectAssignment
         case errorBannerButtonPressed
         case openEmailClient(body: String)
+
+        case setNavigation(tag: Route.Tag?)
     }
 
     struct Environment {
@@ -124,6 +150,8 @@ enum PrescriptionDetailDomain: Equatable {
 
         // Matrix Code
         case let .loadMatrixCodeImage(screenSize):
+            state.userActivity = environment.updateActivity(with: state.prescription.erxTask)
+
             return environment.matrixCodeGenerator.publishedMatrixCode(
                 for: [state.prescription.erxTask],
                 with: environment.calcMatrixCodeSize(screenSize: screenSize)
@@ -141,21 +169,14 @@ enum PrescriptionDetailDomain: Equatable {
             state.loadingState = loadingState
             return .none
 
-        case .alertDismissButtonTapped:
-            state.alertState = nil
-            return .none
-
         // Delete
         // [REQ:gemSpec_eRp_FdV:A_19229]
         case .delete:
-            state.alertState = confirmDeleteAlertState
-            return .none
-        case .cancelDelete:
-            state.alertState = nil
+            state.route = .alert(confirmDeleteAlertState)
             return .none
         // [REQ:gemSpec_eRp_FdV:A_19229]
         case .confirmedDelete:
-            state.alertState = nil
+            state.route = nil
             state.isDeleting = true
             return environment.taskRepository.delete(erxTasks: [state.prescription.erxTask])
                 .first()
@@ -166,12 +187,12 @@ enum PrescriptionDetailDomain: Equatable {
         case let .taskDeletedReceived(.failure(fail)):
             state.isDeleting = false
             if fail == .remote(.fhirClientError(IDPError.tokenUnavailable)) {
-                state.alertState = missingTokenAlertState()
+                state.route = .alert(missingTokenAlertState())
             } else if case let ErxRepositoryError.remote(error) = fail,
                       let outcome = error.fhirClientOperationOutcome {
-                state.alertState = deleteFailedAlertState(outcome)
+                state.route = .alert(deleteFailedAlertState(outcome))
             } else {
-                state.alertState = deleteFailedAlertState(L10n.dtlTxtDeleteFallbackMessage.text)
+                state.route = .alert(deleteFailedAlertState(L10n.dtlTxtDeleteFallbackMessage.text))
             }
             return cleanup()
         case let .taskDeletedReceived(.success(success)):
@@ -209,24 +230,38 @@ enum PrescriptionDetailDomain: Equatable {
 
         // Pharmacy
         case .showPharmacySearch:
-            state.pharmacySearchState = PharmacySearchDomain.State(
+            state.route = .pharmacySearch(.init(
                 erxTasks: [state.prescription.erxTask],
                 pharmacies: []
-            )
+            ))
             return .none
-        case .dismissPharmacySearch, .pharmacySearch(action: .close):
-            state.pharmacySearchState = nil
+        case .pharmacySearch(action: .close):
+            state.route = nil
             return PharmacySearchDomain.cleanup()
         case .pharmacySearch(action:):
             return .none
         case .errorBannerButtonPressed:
             return .init(value: .openEmailClient(body: state.prescription.errorString))
         case let .openEmailClient(body):
-            state.alertState = nil
+            state.route = nil
             guard let email = state.createReportEmail(body: body) else { return .none }
             if UIApplication.shared.canOpenURL(email) {
                 UIApplication.shared.open(email)
             }
+            return .none
+
+        case .setNavigation(tag: .sharePrescription):
+            guard let url = state.prescription.erxTask.shareUrl() else { return .none }
+
+            state.route = .sharePrescription(url)
+            return .none
+        case .setNavigation(tag: nil):
+            state.route = nil
+            return .none
+        case .setNavigation:
+            return .none
+        case .showDirectAssignment:
+            state.route = .directAssignment
             return .none
         }
     }
@@ -237,8 +272,8 @@ enum PrescriptionDetailDomain: Equatable {
     )
 
     static let pharmacySearchPullbackReducer: Reducer =
-        PharmacySearchDomain.reducer.optional().pullback(
-            state: \.pharmacySearchState,
+        PharmacySearchDomain.reducer._pullback(
+            state: (\State.route).appending(path: /Route.pharmacySearch),
             action: /PrescriptionDetailDomain.Action.pharmacySearch(action:)
         ) { environment in
             PharmacySearchDomain.Environment(
@@ -256,7 +291,7 @@ enum PrescriptionDetailDomain: Equatable {
             title: TextState(L10n.dtlTxtDeleteAlertTitle),
             message: TextState(L10n.dtlTxtDeleteAlertMessage),
             primaryButton: .destructive(TextState(L10n.dtlTxtDeleteYes), action: .send(.confirmedDelete)),
-            secondaryButton: .cancel(TextState(L10n.dtlTxtDeleteNo), action: .send(.cancelDelete))
+            secondaryButton: .cancel(TextState(L10n.dtlTxtDeleteNo), action: .send(.setNavigation(tag: nil)))
         )
     }()
 
@@ -266,7 +301,7 @@ enum PrescriptionDetailDomain: Equatable {
             message: TextState(localizedError),
             primaryButton: .default(TextState(L10n.prscFdBtnErrorBanner),
                                     action: .send(.openEmailClient(body: localizedError))),
-            secondaryButton: .default(TextState(L10n.alertBtnOk), action: .send(.alertDismissButtonTapped))
+            secondaryButton: .default(TextState(L10n.alertBtnOk), action: .send(.setNavigation(tag: nil)))
         )
     }
 
@@ -274,7 +309,7 @@ enum PrescriptionDetailDomain: Equatable {
         AlertState(
             title: TextState(L10n.dtlTxtDeleteMissingTokenAlertTitle),
             message: TextState(L10n.dtlTxtDeleteMissingTokenAlertMessage),
-            dismissButton: .default(TextState(L10n.alertBtnOk), action: .send(.alertDismissButtonTapped))
+            dismissButton: .default(TextState(L10n.alertBtnOk), action: .send(.setNavigation(tag: nil)))
         )
     }
 }
@@ -313,6 +348,35 @@ extension PrescriptionDetailDomain.Environment {
     }
 }
 
+extension ErxTask {
+    func shareUrl() -> URL? {
+        let sharedTask = SharedTask(with: self)
+        guard let encoded = try? JSONEncoder().encode([sharedTask]),
+              var urlComponents = URLComponents(string: "https://das-e-rezept-fuer-deutschland.de/prescription") else {
+            return nil
+        }
+        urlComponents.fragment = String(data: encoded, encoding: .utf8)
+
+        return urlComponents.url
+    }
+}
+
+extension PrescriptionDetailDomain.Environment {
+    func updateActivity(with task: ErxTask) -> NSUserActivity? {
+        guard let url = task.shareUrl() else {
+            return nil
+        }
+
+        let activity = NSUserActivity(activityType: "de.gematik.erp4ios.eRezept.Share")
+        activity.title = "Share with other stuff"
+        activity.isEligibleForHandoff = true
+        activity.webpageURL = url
+        activity.becomeCurrent()
+
+        return activity
+    }
+}
+
 extension PrescriptionDetailDomain {
     enum Dummies {
         static let demoSessionContainer = DummyUserSessionContainer()
@@ -324,8 +388,8 @@ extension PrescriptionDetailDomain {
             schedulers: Schedulers(),
             taskRepository: demoSessionContainer.userSession.erxTaskRepository,
             fhirDateFormatter: FHIRDateFormatter.shared,
-            pharmacyRepository: DemoSessionContainer().pharmacyRepository,
-            userSession: DemoSessionContainer()
+            pharmacyRepository: DummySessionContainer().pharmacyRepository,
+            userSession: DummySessionContainer()
         )
         static let store = Store(initialState: state,
                                  reducer: reducer,

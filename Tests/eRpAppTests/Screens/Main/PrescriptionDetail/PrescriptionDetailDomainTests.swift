@@ -61,11 +61,11 @@ final class PrescriptionDetailDomainTests: XCTestCase {
         // when
         store.send(.delete) { sut in
             // then
-            sut.alertState = PrescriptionDetailDomain.confirmDeleteAlertState
+            sut.route = .alert(PrescriptionDetailDomain.confirmDeleteAlertState)
         }
-        store.send(.cancelDelete) { sut in
+        store.send(.setNavigation(tag: .none)) { sut in
             // then
-            sut.alertState = nil
+            sut.route = nil
         }
     }
 
@@ -76,20 +76,20 @@ final class PrescriptionDetailDomainTests: XCTestCase {
         // when
         store.send(.delete) { sut in
             // then
-            sut.alertState = PrescriptionDetailDomain.confirmDeleteAlertState
+            sut.route = .alert(PrescriptionDetailDomain.confirmDeleteAlertState)
         }
         store.send(.confirmedDelete) { sut in
             // then
             sut.isDeleting = true
-            sut.alertState = nil
+            sut.route = nil
         }
         store.send(.taskDeletedReceived(Result.success(true))) { state in
             // then
             state.isDeleting = false
-            state.alertState = nil
+            state.route = nil
         }
         store.receive(.close) { state in
-            state.alertState = nil
+            state.route = nil
         }
     }
 
@@ -100,22 +100,22 @@ final class PrescriptionDetailDomainTests: XCTestCase {
         // when
         store.send(.delete) { sut in
             // then
-            sut.alertState = PrescriptionDetailDomain.confirmDeleteAlertState
+            sut.route = .alert(PrescriptionDetailDomain.confirmDeleteAlertState)
         }
         store.send(.confirmedDelete) { sut in
             // then
-            sut.alertState = nil
+            sut.route = nil
             sut.isDeleting = true
         }
         store.send(.taskDeletedReceived(
             Result.failure(ErxRepositoryError.remote(.fhirClientError(IDPError.tokenUnavailable)))
         )) { state in
             // then
-            state.alertState = PrescriptionDetailDomain.missingTokenAlertState()
+            state.route = .alert(PrescriptionDetailDomain.missingTokenAlertState())
             state.isDeleting = false
         }
-        store.send(.alertDismissButtonTapped) { state in
-            state.alertState = nil
+        store.send(.setNavigation(tag: .none)) { state in
+            state.route = nil
         }
     }
 
@@ -126,22 +126,24 @@ final class PrescriptionDetailDomainTests: XCTestCase {
         // when
         store.send(.delete) { sut in
             // then
-            sut.alertState = PrescriptionDetailDomain.confirmDeleteAlertState
+            sut.route = .alert(PrescriptionDetailDomain.confirmDeleteAlertState)
         }
         store.send(.confirmedDelete) { sut in
             // then
             sut.isDeleting = true
-            sut.alertState = nil
+            sut.route = nil
         }
         store.send(.taskDeletedReceived(
             Result.failure(ErxRepositoryError.local(.notImplemented))
         )) { state in
             // then
             state.isDeleting = false
-            state.alertState = PrescriptionDetailDomain.deleteFailedAlertState(L10n.dtlTxtDeleteFallbackMessage.text)
+            state.route = .alert(
+                PrescriptionDetailDomain.deleteFailedAlertState(L10n.dtlTxtDeleteFallbackMessage.text)
+            )
         }
-        store.send(.alertDismissButtonTapped) { state in
-            state.alertState = nil
+        store.send(.setNavigation(tag: nil)) { state in
+            state.route = nil
         }
     }
 

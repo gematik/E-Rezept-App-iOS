@@ -68,7 +68,6 @@ enum CardWallExtAuthSelectionDomain {
             state.selectedKK = nil
             // [REQ:gemSpec_IDP_Sek:A_22296] Load available apps
             return environment.idpSession.loadDirectoryKKApps()
-                .delay(for: 2.0, scheduler: environment.schedulers.main)
                 .catchToEffect()
                 .map(Action.loadKKListReceived)
                 .receive(on: environment.schedulers.main.animation())

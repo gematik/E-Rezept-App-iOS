@@ -55,9 +55,7 @@ struct IDPCardWallView: View {
     @ViewBuilder
     func canView() -> some View {
         IfLetStore(canStore) { store in
-            CardWallCANView(store: store) {
-                pinView()
-            }
+            CardWallCANView(store: store)
         }
     }
 
@@ -70,9 +68,7 @@ struct IDPCardWallView: View {
 
     @ViewBuilder
     func pinView() -> some View {
-        CardWallPINView(store: pinStore, transitionMode: .fullScreenCover) { _ in
-            readCardView()
-        }
+        CardWallPINView(store: pinStore)
     }
 
     private var pinStore: Store<CardWallPINDomain.State, CardWallPINDomain.Action> {

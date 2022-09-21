@@ -394,7 +394,7 @@ extension PharmacyRedeemDomain {
         )
         static let environment = Environment(
             schedulers: Schedulers(),
-            userSession: DemoSessionContainer(),
+            userSession: DummySessionContainer(),
             shipmentInfoStore: DemoShipmentInfoStore(),
             redeemService: DemoRedeemService(),
             inputValidator: DemoRedeemInputValidator()

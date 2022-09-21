@@ -14,7 +14,7 @@
       <% dependencies.each do |dependency| %>
             <li><a href="#<%= dependency[:name] %>"><%= dependency[:name] %> <%= dependency[:version] %></a></li>
       <% end %>
-
+            <li><a href="#OpenStreetMaps">OpenStreetMaps</a></li>
       </ul>
 
       <h2>Lizenzen</h2>
@@ -27,5 +27,17 @@
       <section class="license"><%= dependency[:license] %></section>
 
       <% end %>
+
+      <h4 id="OpenStreetMaps">Open Street Maps</h4>
+      
+      <p>For searching pharmacies the pharmacy service uses geocoordinates which have been evaluated with the help of OpenStreetMap.</p>
+
+      <p><a href="www.openstreetmap.org/copyright">www.openstreetmap.org/copyright</a></p>
+      
+      <section class="license"><p>Open Data Commons Open Database License (ODbL)</p>
+
+      <p>Copyright (c) Open Street Maps</p>
+
+      </section>
 
 </body>

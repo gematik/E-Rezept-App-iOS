@@ -68,10 +68,6 @@ struct OnboardingContainer: View, KeyboardReadable {
                         .tag(0)
                     OnboardingFeaturesView()
                         .tag(1)
-                    OnboardingNewProfileView(store: store.scope(state: { $0.newProfileState },
-                                                                action: { .newProfile(action: $0) }))
-                        .gesture(viewStore.isDragEnabled ? nil : DragGesture())
-                        .tag(2)
 
                     // [REQ:gemSpec_BSI_FdV:A_20834] view to register authentication in onboarding process
                     OnboardingRegisterAuthenticationView(
@@ -79,15 +75,16 @@ struct OnboardingContainer: View, KeyboardReadable {
                                            action: { .registerAuthentication(action: $0) })
                     )
                     .gesture(viewStore.isDragEnabled ? nil : DragGesture())
-                    .tag(3)
+                    .tag(2)
 
                     OnboardingLegalInfoView { withAnimation { viewStore.send(.saveAuthenticationAndProfile) } }
-                        .tag(4)
+                        .tag(3)
                 }
             }
             .background(Colors.systemBackground)
             .tabViewStyle(PageTabViewStyle(indexDisplayMode: viewStore.isDragEnabled ? .always : .never))
             .indexViewStyle(PageIndexViewStyle(backgroundDisplayMode: viewStore.isDragEnabled ? .always : .never))
+            .alert(store.scope(state: \.alertState), dismiss: .dismissAlert)
 
             ZStack {
                 if viewStore.isShowingNextButton {

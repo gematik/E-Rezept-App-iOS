@@ -330,7 +330,7 @@ extension PharmacyDetailDomain {
         )
         static let environment = Environment(
             schedulers: Schedulers(),
-            userSession: DemoSessionContainer()
+            userSession: DummySessionContainer()
         )
         static let store = Store(initialState: state,
                                  reducer: reducer,

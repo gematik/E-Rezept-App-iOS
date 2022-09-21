@@ -19,7 +19,7 @@
 import SwiftUI
 
 /// ``SectionContainer`` variation with a single element. This exists due to generic conformance deciding between
-/// `Tuple` and any other  `View` impelementation.
+/// `Tuple` and any other `View` implementation.
 public struct SingleElementSectionContainer<Header: View, Content: View, Footer: View>: View {
     var content: Content
     var header: () -> Header?
@@ -43,7 +43,7 @@ public struct SingleElementSectionContainer<Header: View, Content: View, Footer:
 
 extension SingleElementSectionContainer {
     /// ``SectionContainer`` variation with a single element. This exists due to generic conformance deciding between
-    /// `Tuple` and any other  `View` impelementation.
+    /// `Tuple` and any other `View` implementation.
     public init<SingleElement: View>(
         @ViewBuilder footer: @escaping () -> Footer,
         @ViewBuilder content: @escaping () -> SingleElement
@@ -53,7 +53,7 @@ extension SingleElementSectionContainer {
     }
 
     /// ``SectionContainer`` variation with a single element. This exists due to generic conformance deciding between
-    /// `Tuple` and any other  `View` impelementation.
+    /// `Tuple` and any other `View` implementation.
     public init<SingleElement: View>(
         @ViewBuilder header: @escaping () -> Header,
         @ViewBuilder content: @escaping () -> SingleElement
@@ -63,7 +63,7 @@ extension SingleElementSectionContainer {
     }
 
     /// ``SectionContainer`` variation with a single element. This exists due to generic conformance deciding between
-    /// `Tuple` and any other  `View` impelementation.
+    /// `Tuple` and any other `View` implementation.
     public init<SingleElement: View>(
         @ViewBuilder content: @escaping () -> SingleElement
     )

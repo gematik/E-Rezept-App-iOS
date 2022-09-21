@@ -291,7 +291,7 @@ extension RegisteredDevicesDomain {
 
         static let environment = Environment(
             schedulers: Schedulers(),
-            userSession: DemoSessionContainer(),
+            userSession: DummySessionContainer(),
             userSessionProvider: DummyUserSessionProvider(),
             secureEnclaveSignatureProvider: DummySecureEnclaveSignatureProvider(),
             nfcSignatureProvider: DemoSignatureProvider(),

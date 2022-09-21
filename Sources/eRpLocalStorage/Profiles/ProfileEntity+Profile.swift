@@ -54,6 +54,20 @@ extension Profile {
             profileColor = Profile.Color(rawValue: color) ?? .grey
         }
 
+        let tasks: [ErxTask]
+
+        if let inputTasks = entity.erxTasks {
+            let mapped: [ErxTask] = inputTasks.compactMap { erxTaskEntity in
+                if let entity = erxTaskEntity as? ErxTaskEntity {
+                    return ErxTask(entity: entity)
+                }
+                return nil
+            }
+            tasks = mapped
+        } else {
+            tasks = []
+        }
+
         self.init(
             name: name,
             identifier: identifier,
@@ -65,12 +79,7 @@ extension Profile {
             color: profileColor,
             emoji: entity.emoji,
             lastAuthenticated: entity.lastAuthenticated,
-            erxTasks: entity.erxTasks?.compactMap { erxTaskEntity in
-                if let entity = erxTaskEntity as? ErxTaskEntity {
-                    return ErxTask(entity: entity)
-                }
-                return nil
-            } ?? []
+            erxTasks: tasks
         )
     }
 }

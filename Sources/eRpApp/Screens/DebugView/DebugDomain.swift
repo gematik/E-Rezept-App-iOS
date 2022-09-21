@@ -53,6 +53,8 @@ enum DebugDomain {
         var token: IDPToken?
         var accessCodeText: String = "" +
             ""
+        var lastIDPToken: IDPToken?
+
         var useVirtualLogin: Bool = UserDefaults.standard.isVirtualEGKEnabled
         var virtualLoginPrivateKey: String = UserDefaults.standard.virtualEGKPrkCHAut ?? ""
         var virtualLoginCertKey: String = UserDefaults.standard.virtualEGKCCHAut ?? ""
@@ -95,7 +97,7 @@ enum DebugDomain {
         case hideCardWallIntroToggleTapped
         case hideCardWallIntroReceived(Bool)
         case resetCanButtonTapped
-        case resetEGKAuthCertButtonTapped
+        case deleteKeyAndEGKAuthCertForBiometric
         case resetOcspAndCertListButtonTapped
         case useDebugDeviceCapabilitiesToggleTapped
         case nfcReadyToggleTapped
@@ -106,7 +108,7 @@ enum DebugDomain {
         case toggleVirtualLogin(Bool)
         case virtualPrkCHAutReceived(String)
         case virtualCCHAutReceived(String)
-        case setAccessCodeTextButtonTapped
+        case loginWithToken
         case toggleTrackingTapped
         case tokenReceived(IDPToken?)
         case configurationReceived(State.ServerEnvironment?)
@@ -150,7 +152,8 @@ enum DebugDomain {
         case .resetCanButtonTapped:
             environment.userSession.secureUserStore.set(can: nil)
             return .none
-        case .resetEGKAuthCertButtonTapped:
+        case .deleteKeyAndEGKAuthCertForBiometric:
+            environment.userSession.secureUserStore.set(keyIdentifier: nil)
             environment.userSession.secureUserStore.set(certificate: nil)
             return .none
         case .resetOcspAndCertListButtonTapped:
@@ -176,9 +179,6 @@ enum DebugDomain {
         case let .isAuthenticatedReceived(isAuthenticated):
             state.isAuthenticated = isAuthenticated
             return .none
-        case .logoutButtonTapped:
-            environment.userSession.secureUserStore.set(token: nil)
-            return .none
         case let .toggleVirtualLogin(useVirtualLogin):
             state.useVirtualLogin = useVirtualLogin
             UserDefaults.standard.isVirtualEGKEnabled = useVirtualLogin
@@ -194,11 +194,25 @@ enum DebugDomain {
         case let .accessCodeTextReceived(accessCodeText):
             state.accessCodeText = accessCodeText
             return .none
-        case .setAccessCodeTextButtonTapped:
-            let accessCodeText = state.accessCodeText
-            let expireDate = Date(timeIntervalSinceNow: 3600 * 24)
-            let idpToken = IDPToken(accessToken: accessCodeText, expires: expireDate, idToken: "", redirect: "todo")
-            environment.userSession.secureUserStore.set(token: idpToken)
+        case .loginWithToken:
+            if let idpToken = state.lastIDPToken {
+                environment.userSession.secureUserStore.set(token: idpToken)
+            } else {
+                let idpToken = IDPToken(
+                    accessToken: state.accessCodeText,
+                    expires: Date(timeIntervalSinceNow: 3600 * 24),
+                    idToken: "",
+                    redirect: "todo"
+                )
+                environment.userSession.secureUserStore.set(token: idpToken)
+            }
+            return .none
+        case .logoutButtonTapped:
+            if let token = state.token {
+                state.lastIDPToken = token
+                state.accessCodeText = token.accessToken
+            }
+            environment.userSession.secureUserStore.set(token: nil)
             return .none
         case let .configurationReceived(configuration):
             state.selectedEnvironment = configuration
@@ -324,7 +338,7 @@ extension DebugDomain {
 
         static let environment = Environment(
             schedulers: Schedulers(),
-            userSession: DemoSessionContainer(),
+            userSession: DummySessionContainer(),
             localUserStore: DemoUserDefaultsStore(),
             tracker: DummyTracker(),
             signatureProvider: DummySecureEnclaveSignatureProvider(),

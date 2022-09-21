@@ -31,6 +31,8 @@ extension ErxTask {
         public let insuranceId: String
         /// Telematik id of the sender (e.g. "3-09.2.S.10.743")
         public let telematikId: String
+        /// Id for every order of prescriptions
+        public let orderId: String?
         /// Date time string representing the time of sending the communication
         public let timestamp: String
         /// `true` if user has interacted with this communication, otherwise false if loaded from server
@@ -51,6 +53,7 @@ extension ErxTask {
         ///   - taskId: Id for the task this communication is related to
         ///   - userId: KVNR of the use
         ///   - telematikId: Telematik id of the sender
+        ///   - orderId: Id for every order of prescriptions
         ///   - timestamp: Date time string representing the time of sending the communication
         ///   - payloadJSON: Payload contains informations about the actual message
         ///   - isRead: Indicates if the user has interacted (true) with this communication resource
@@ -60,6 +63,7 @@ extension ErxTask {
             taskId: String,
             userId: String,
             telematikId: String,
+            orderId: String? = nil,
             timestamp: String,
             payloadJSON: String,
             isRead: Bool = false
@@ -68,6 +72,7 @@ extension ErxTask {
             self.taskId = taskId
             insuranceId = userId
             self.telematikId = telematikId
+            self.orderId = orderId
             self.timestamp = timestamp
             self.payloadJSON = payloadJSON
             self.isRead = isRead

@@ -1,4 +1,4 @@
-// Generated using Sourcery 1.8.1 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 1.8.2 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 
 import Combine
@@ -965,6 +965,7 @@ class StreamWrappedUserSession: UserSession {
 	lazy var nfcSessionProvider: NFCSignatureProvider = {
 		StreamWrappedNFCSignatureProvider(stream: stream.map{ $0.nfcSessionProvider }.eraseToAnyPublisher(), current: current.nfcSessionProvider )
 	}()
+	var nfcResetRetryCounterController: NFCResetRetryCounterController { current.nfcResetRetryCounterController }
 	lazy var idpSession: IDPSession = {
 		StreamWrappedIDPSession(stream: stream.map{ $0.idpSession }.eraseToAnyPublisher(), current: current.idpSession )
 	}()

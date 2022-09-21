@@ -29,6 +29,7 @@ extension ErxTaskEntity {
     convenience init(task: ErxTask, in context: NSManagedObjectContext) {
         self.init(context: context)
         identifier = task.identifier
+        flowType = task.flowType?.rawValue
         prescriptionId = task.prescriptionId
         accessCode = task.accessCode
         fullUrl = task.fullUrl
@@ -74,6 +75,7 @@ extension ErxTask {
         self.init(
             identifier: identifier,
             status: erxTaskStatus,
+            flowType: ErxTask.FlowType(rawValue: entity.flowType),
             accessCode: entity.accessCode,
             fullUrl: entity.fullUrl,
             authoredOn: entity.authoredOn,

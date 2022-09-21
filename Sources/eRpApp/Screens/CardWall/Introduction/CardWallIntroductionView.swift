@@ -21,87 +21,133 @@ import ComposableArchitecture
 import eRpStyleKit
 import SwiftUI
 
-struct CardWallIntroductionView<Content: View, Content2: View>: View {
+struct CardWallIntroductionView: View {
     let store: CardWallIntroductionDomain.Store
-    let nextView: () -> Content
-    let fastTrackView: () -> Content2
 
-    init(store: CardWallIntroductionDomain.Store,
-         @ViewBuilder nextView: @escaping () -> Content,
-         @ViewBuilder fastTrackView: @escaping () -> Content2) {
-        self.store = store
-        self.nextView = nextView
-        self.fastTrackView = fastTrackView
+    struct ViewState: Equatable {
+        let routeTag: CardWallIntroductionDomain.Route.Tag?
+
+        init(state: CardWallIntroductionDomain.State) {
+            routeTag = state.route?.tag
+        }
     }
 
     var body: some View {
-        WithViewStore(store) { viewStore in
-            VStack(alignment: .leading, spacing: 0) {
-                InformationBlockView(store: store)
+        WithViewStore(store.scope(state: ViewState.init)) { viewStore in
+            NavigationView {
+                VStack(alignment: .leading, spacing: 0) {
+                    InformationBlockView(store: store)
 
-                Spacer(minLength: 0)
+                    Spacer(minLength: 0)
 
-                GreyDivider()
+                    GreyDivider()
 
-                Group {
-                    PrimaryTextButton(text: L10n.cdwBtnIntroNext,
-                                      a11y: A11y.cardWall.intro.cdwBtnIntroLater) {
-                        viewStore.send(.advance(forward: true))
-                    }
-                    .padding(.horizontal)
-                    .padding(.vertical, 8)
-
-                    Button(action: {
-                        viewStore.send(.advanceExtAuth(forward: true))
-                    }, label: {
-                        Group {
-                            Text(L10n.cdwBtnIntroFasttrackLeading)
-                                .foregroundColor(Color(.label)) +
-                                Text(L10n.cdwBtnIntroFasttrackCenter) +
-                                Text(L10n.cdwBtnIntroFasttrackTrailing)
-                                .foregroundColor(Color(.label))
+                    Group {
+                        PrimaryTextButton(text: L10n.cdwBtnIntroNext,
+                                          a11y: A11y.cardWall.intro.cdwBtnIntroLater) {
+                            viewStore.send(.advance)
                         }
-                        .multilineTextAlignment(.center)
-                        .padding([.horizontal, .bottom])
-                        .frame(maxWidth: .infinity, alignment: .center)
-                    })
+                        .padding(.horizontal)
+                        .padding(.vertical, 8)
 
-                    NavigationLink(
-                        destination: nextView(),
-                        isActive: viewStore.binding(
-                            get: \.showNextScreen,
-                            send: CardWallIntroductionDomain.Action.advance(forward:)
-                        )
-                    ) {
-                        EmptyView()
-                    }.accessibility(hidden: true)
+                        NavigationLink(
+                            destination: IfLetStore(
+                                store.scope(
+                                    state: (\CardWallIntroductionDomain.State.route)
+                                        .appending(path: /CardWallIntroductionDomain.Route.can)
+                                        .extract(from:),
+                                    action: CardWallIntroductionDomain.Action.canAction(action:)
+                                ),
+                                then: CardWallCANView.init(store:)
+                            ),
+                            tag: CardWallIntroductionDomain.Route.Tag.can,
+                            selection: viewStore.binding(
+                                get: \.routeTag
+                            ) {
+                                .setNavigation(tag: $0)
+                            }
+                        ) {}
+                            .hidden()
+                            .accessibility(hidden: true)
 
-                    NavigationLink(
-                        destination: fastTrackView(),
-                        isActive: viewStore.binding(
-                            get: \.showFastTrackScreen,
-                            send: CardWallIntroductionDomain.Action.advanceExtAuth(forward:)
-                        )
-                    ) {
-                        EmptyView()
-                    }.accessibility(hidden: true)
+                        NavigationLink(
+                            destination: IfLetStore(
+                                store.scope(
+                                    state: (\CardWallIntroductionDomain.State.route)
+                                        .appending(path: /CardWallIntroductionDomain.Route.pin)
+                                        .extract(from:),
+                                    action: CardWallIntroductionDomain.Action.pinAction(action:)
+                                ),
+                                then: CardWallPINView.init(store:)
+                            ),
+                            tag: CardWallIntroductionDomain.Route.Tag.pin,
+                            selection: viewStore.binding(
+                                get: \.routeTag
+                            ) {
+                                .setNavigation(tag: $0)
+                            }
+                        ) {}
+                            .hidden()
+                            .accessibility(hidden: true)
 
-                    NavigationLink(
-                        destination: EmptyView(),
-                        isActive: .constant(false)
-                    ) {
-                        EmptyView()
-                    }.accessibility(hidden: true)
+                        NavigationLink(
+                            destination: CapabilitiesView(store: store),
+                            tag: CardWallIntroductionDomain.Route.Tag.notCapable,
+                            selection: viewStore.binding(
+                                get: \.routeTag
+                            ) {
+                                .setNavigation(tag: $0)
+                            }
+                        ) {}
+                            .hidden()
+                            .accessibility(hidden: true)
+
+                        Button(action: {
+                            viewStore.send(.setNavigation(tag: .fasttrack))
+                        }, label: {
+                            Group {
+                                Text(L10n.cdwBtnIntroFasttrackLeading)
+                                    .foregroundColor(Color(.label)) +
+                                    Text(L10n.cdwBtnIntroFasttrackCenter) +
+                                    Text(L10n.cdwBtnIntroFasttrackTrailing)
+                                    .foregroundColor(Color(.label))
+                            }
+                            .multilineTextAlignment(.center)
+                            .padding([.horizontal, .bottom])
+                            .frame(maxWidth: .infinity, alignment: .center)
+
+                            NavigationLink(
+                                destination: IfLetStore(
+                                    store.scope(
+                                        state: (\CardWallIntroductionDomain.State.route)
+                                            .appending(path: /CardWallIntroductionDomain.Route.fasttrack)
+                                            .extract(from:),
+                                        action: CardWallIntroductionDomain.Action.fasttrack(action:)
+                                    ),
+                                    then: CardWallExtAuthSelectionView.init(store:)
+                                ),
+                                tag: CardWallIntroductionDomain.Route.Tag.fasttrack,
+                                selection: viewStore.binding(
+                                    get: \.routeTag
+                                ) {
+                                    .setNavigation(tag: $0)
+                                }
+                            ) {}
+                                .hidden()
+                                .accessibility(hidden: true)
+                        })
+                    }
                 }
-            }
-            .navigationBarTitle(L10n.cdwTxtIntroHeaderTop, displayMode: .large)
-            .navigationBarItems(
-                trailing: NavigationBarCloseItem {
-                    viewStore.send(.close)
-                }
-                .accessibility(identifier: A11y.cardWall.intro.cdwBtnIntroCancel)
-                .accessibility(label: Text(L10n.cdwBtnIntroCancelLabel))
-            )
+                .navigationBarTitle(L10n.cdwTxtIntroHeaderTop, displayMode: .large)
+                .navigationBarItems(
+                    trailing: NavigationBarCloseItem {
+                        viewStore.send(.close)
+                    }
+                    .accessibility(identifier: A11y.cardWall.intro.cdwBtnIntroCancel)
+                    .accessibility(label: Text(L10n.cdwBtnIntroCancelLabel))
+                )
+            }.accentColor(Colors.primary700)
+                .navigationViewStyle(StackNavigationViewStyle())
         }
     }
 }
@@ -111,8 +157,17 @@ extension CardWallIntroductionView {
 
     private struct InformationBlockView: View {
         let store: CardWallIntroductionDomain.Store
+
+        struct ViewState: Equatable {
+            let routeTag: CardWallIntroductionDomain.Route.Tag?
+
+            init(state: CardWallIntroductionDomain.State) {
+                routeTag = state.route?.tag
+            }
+        }
+
         var body: some View {
-            WithViewStore(store) { viewStore in
+            WithViewStore(store.scope(state: ViewState.init)) { viewStore in
                 ScrollView(.vertical, showsIndicators: true) {
                     VStack(alignment: .leading) {
                         VStack(alignment: .leading, spacing: 8) {
@@ -175,18 +230,24 @@ extension CardWallIntroductionView {
                                         .frame(maxWidth: .infinity, alignment: .trailing)
                                         .foregroundColor(Colors.primary)
                                         .accessibility(identifier: A11y.cardWall.intro.cdwBtnIntroMore)
-                                        .fullScreenCover(isPresented: viewStore.binding(
-                                            get: \.isEGKOrderInfoViewPresented,
-                                            send: CardWallIntroductionDomain.Action.dismissEGKOrderInfoView
-                                        )) {
-                                            NavigationView {
-                                                OrderHealthCardView {
-                                                    viewStore.send(.dismissEGKOrderInfoView)
+                                        .fullScreenCover(isPresented: Binding<Bool>(
+                                            get: { viewStore.state.routeTag == .egk },
+                                            set: { show in
+                                                if !show {
+                                                    viewStore.send(.setNavigation(tag: nil))
                                                 }
                                             }
-                                            .accentColor(Colors.primary600)
+                                        ),
+                                        onDismiss: {},
+                                        content: {
+                                            NavigationView {
+                                                OrderHealthCardView {
+                                                    viewStore.send(.setNavigation(tag: nil))
+                                                }
+                                            }
+                                            .accentColor(Colors.primary700)
                                             .navigationViewStyle(StackNavigationViewStyle())
-                                        }
+                                        })
                                 }
                                 .font(.subheadline)
                             }
@@ -204,11 +265,7 @@ struct IntroductionView_Previews: PreviewProvider {
         NavigationView {
             CardWallIntroductionView(
                 store: CardWallIntroductionDomain.Dummies.store
-            ) {
-                EmptyView()
-            } fastTrackView: {
-                EmptyView()
-            }
+            )
         }
     }
 }

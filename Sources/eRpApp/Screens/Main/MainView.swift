@@ -209,7 +209,7 @@ struct MainView: View {
                     })
                     .accessibility(hidden: true)
                     .hidden()
-                // CardWallView sheet presentation
+                // CardWallIntroductionView sheet presentation
                 Rectangle()
                     .frame(width: 0, height: 0, alignment: .center)
                     .fullScreenCover(isPresented: Binding<Bool>(
@@ -229,7 +229,7 @@ struct MainView: View {
                                     .extract(from:),
                                 action: MainDomain.Action.cardWall(action:)
                             ),
-                            then: CardWallView.init(store:)
+                            then: CardWallIntroductionView.init(store:)
                         )
                     })
                     .accessibility(hidden: true)

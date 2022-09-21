@@ -26,6 +26,7 @@ extension ErxTaskEntity {
 
     @NSManaged public var accessCode: String?
     @NSManaged public var status: String?
+    @NSManaged public var flowType: String?
     @NSManaged public var author: String?
     @NSManaged public var authoredOn: String?
     @NSManaged public var lastModified: String?

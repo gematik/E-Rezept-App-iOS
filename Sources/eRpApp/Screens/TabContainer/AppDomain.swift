@@ -153,6 +153,7 @@ enum AppDomain {
                     profileOnlineChecker: DefaultProfileOnlineChecker(),
                     userSession: appEnvironment.userSessionContainer.userSession
                 ),
+                secureDataWiper: DefaultProfileSecureDataWiper(userSessionProvider: appEnvironment.userSessionProvider),
                 signatureProvider: appEnvironment.signatureProvider,
                 userSessionProvider: appEnvironment.userSessionProvider,
                 tracker: appEnvironment.tracker
@@ -197,6 +198,7 @@ enum AppDomain {
                 schedulers: appEnvironment.schedulers,
                 tracker: appEnvironment.tracker,
                 signatureProvider: appEnvironment.signatureProvider,
+                nfcResetRetryCounterController: appEnvironment.userSession.nfcResetRetryCounterController,
                 appSecurityManager: appEnvironment.userSession.appSecurityManager,
                 router: appEnvironment.router,
                 userSessionProvider: appEnvironment.userSessionProvider,
@@ -271,7 +273,7 @@ extension AppDomain {
         static let environment = Environment(
             router: DummyRouter(),
             userSessionContainer: DummyUserSessionContainer(),
-            userSession: DemoSessionContainer(),
+            userSession: DummySessionContainer(),
             userDataStore: DemoUserDefaultsStore(),
             schedulers: Schedulers(),
             fhirDateFormatter: globals.fhirDateFormatter,

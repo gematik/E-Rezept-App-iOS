@@ -23,6 +23,7 @@ import SwiftUI
 public enum SFSymbolName {
     public static let checkmark = "checkmark"
     public static let cardIcon = "creditcard"
+    public static let cardIconAnd123 = "creditcard.and.123"
     public static let back = "chevron.left"
     public static let threeDots = "ellipsis.circle"
     public static let ellipsis = "ellipsis"
@@ -66,6 +67,7 @@ public enum SFSymbolName {
     public static let arrowRightCircleFill = "arrow.right.circle.fill"
     public static let pencil = "pencil"
     public static let squareAndPencil = "square.and.pencil"
+    public static let share = "square.and.arrow.up"
     public static let shield = "shield"
     public static let heartTextSquare = "heart.text.square"
     public static let docPlaintext = "doc.plaintext"
@@ -79,6 +81,7 @@ public enum SFSymbolName {
     public static let paperplane = "paperplane"
     public static let pills = "pills"
     public static let trayAndArrowDown = "tray.and.arrow.down"
+    public static let clipboardDoc = "doc.text.below.ecg"
 
     public static let numbers1circle = "1.circle"
     public static let numbers2circle = "2.circle"
@@ -98,6 +101,7 @@ public enum SFSymbolName {
     public static let faceId = "faceid"
     public static let touchId = "touchid"
     public static let lockOpen = "lock.open"
+    public static let lockRotation = "lock.rotation"
     public static let trash = "trash"
     public static let bag = "bag"
     public static let location = "location"
@@ -110,6 +114,7 @@ public enum SFSymbolName {
     public static let chevronBackward = "chevron.backward"
     public static let lightbulb = "lightbulb"
     public static let lightbulbSlash = "lightbulb.slash"
+    public static let questionmarkCircle = "questionmark.circle"
 
     public static var filter: String {
         if #available(iOS 15.0, *) {

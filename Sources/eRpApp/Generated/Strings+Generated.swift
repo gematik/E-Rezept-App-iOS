@@ -197,6 +197,8 @@ import SwiftUI
     internal static let cdwBtnNfuMore = StringAsset("cdw_btn_nfu_more")
     /// Meine Karte verfügt über keine Zugangsnummer
     internal static let cdwBtnNoCan = StringAsset("cdw_btn_no_can")
+    /// Zurück
+    internal static let cdwBtnPinBack = StringAsset("cdw_btn_pin_back")
     /// Cancel
     internal static let cdwBtnPinCancelLabel = StringAsset("cdw_btn_pin_cancel_label")
     /// Next
@@ -310,7 +312,7 @@ import SwiftUI
     internal static let cdwTxtCanSubtitle = StringAsset("cdw_txt_can_subtitle")
     /// Login
     internal static let cdwTxtCanTitle = StringAsset("cdw_txt_can_title")
-    /// Ihre Kartenzugangsnummer (Card Access Number, kurz: CAN) hat 6 Stellen. Sie finden die CAN in der rechten oberen Ecke der Vorderseite Ihrer Gesundheitskarte. Steht hier keine sechsstellige Zugangsnummer, benötigen Sie eine neue Gesundheitskarte von Ihrer Krankenversicherung.
+    /// Geben Sie hier Ihre Kartenzugangsnummer ein. Sie hat 6 Stellen. Sie finden die Zugangsnummer in der rechten oberen Ecke der Vorderseite Ihrer Gesundheitskarte. Sie können die CAN über die Kamera einlesen. Steht hier keine 6-stellige Zugangsnummer, benötigen Sie eine neue Gesundheitskarte von Ihrer Krankenversicherung. Zum bearbeiten doppeltippen.
     internal static let cdwTxtCanTitleHint = StringAsset("cdw_txt_can_title_hint")
     /// Unfortunately, the CAN entered does not match the recognised card. Please enter the CAN again. Thank you!
     internal static let cdwTxtCanWarnWrongDescription = StringAsset("cdw_txt_can_warn_wrong_description")
@@ -609,6 +611,12 @@ import SwiftUI
     internal static let ctlTxtProfileConnectionStatusDisconnected = StringAsset("ctl_txt_profile_connection_status_disconnected")
     /// Search box
     internal static let ctlTxtSearchBarFieldLabel = StringAsset("ctl_txt_search_bar_field_label")
+    /// Bei einer Direktzuweisungen wird ein Rezept von einer Praxis oder einem Krankenhaus direkt bei einer Apotheke eingelöst. Versicherte müssen hierbei nicht tätig werden und können nicht in den Einlösungsprozess eingreifen.
+    /// 
+    /// Direktzuweisungen werden in der E-Rezept App aufgeführt, um Ihre Behandlung für Sie transparenter zu machen.
+    internal static let davTxtDirectAssignmentHint = StringAsset("dav_txt_direct_assignment_hint")
+    /// Was ist eine Direktzuweisung?
+    internal static let davTxtDirectAssignmentTitle = StringAsset("dav_txt_direct_assignment_title")
     /// Copy
     internal static let dtlBtnCopyClipboard = StringAsset("dtl_btn_copy_clipboard")
     /// The prescription is currently being processed by a pharmacy and cannot be deleted.
@@ -691,6 +699,8 @@ import SwiftUI
     internal static func erxTxtAcceptedUntil(_ element1: Int) -> StringAsset {
         StringAsset("erx_txt_accepted_until", arguments: [element1])
     }
+    /// Ausgestellt
+    internal static let erxTxtAuthored = StringAsset("erx_txt_authored")
     /// Current
     internal static let erxTxtCurrent = StringAsset("erx_txt_current")
     /// Plural format key: "%#@variable_0@"
@@ -727,12 +737,6 @@ import SwiftUI
     internal static let hintTxtOpenScn = StringAsset("hint_txt_open_scn")
     /// New prescription
     internal static let hintTxtOpenScnTitle = StringAsset("hint_txt_open_scn_title")
-    /// You need a suitable NFC-enabled card to log in. We will help you order one
-    internal static let hintTxtOrderEgk = StringAsset("hint_txt_order_egk")
-    /// Continue
-    internal static let hintTxtOrderEgkButton = StringAsset("hint_txt_order_egk_button")
-    /// Order new medical card
-    internal static let hintTxtOrderEgkTitel = StringAsset("hint_txt_order_egk_titel")
     /// Our demo mode shows you all the functions of the app – without a medical card.
     internal static let hintTxtTryDemoMode = StringAsset("hint_txt_try_demo_mode")
     /// You have received a new message from the health network.
@@ -1423,6 +1427,8 @@ import SwiftUI
     internal static let onbPrfTxtPlaceholder = StringAsset("onb_prf_txt_placeholder")
     /// What should we call you?
     internal static let onbPrfTxtTitle = StringAsset("onb_prf_txt_title")
+    /// Profil 1
+    internal static let onbProfileName = StringAsset("onb_profile_name")
     /// Digital. Fast. Secure.
     internal static let onbStrTxtSubtitle = StringAsset("onb_str_txt_subtitle")
     /// The e-prescription
@@ -1677,6 +1683,12 @@ import SwiftUI
     internal static let proTxtSelectionProfileNotConnected = StringAsset("pro_txt_selection_profile_not_connected")
     /// Select profile
     internal static let proTxtSelectionTitle = StringAsset("pro_txt_selection_title")
+    /// Dieses Rezept wird im Rahmen einer Behandlung für Sie eingelöst und kann währenddessen nicht gelöscht werden.
+    internal static let prscDeleteNoteDirectAssignment = StringAsset("prsc_delete_note_direct_assignment")
+    /// Direktzuweisung
+    internal static let prscDtlBtnDirectAssignment = StringAsset("prsc_dtl_btn_direct_assignment")
+    /// Teilen
+    internal static let prscDtlBtnShareTitle = StringAsset("prsc_dtl_btn_share_title")
     /// Open gesund.bund.de
     internal static let prscDtlHntGesundBundDeBtn = StringAsset("prsc_dtl_hnt_gesund_bund_de_btn")
     /// You can find professionally verified information on illnesses, ICD codes and issues to do with prevention and healthcare in the National Health Portal.
@@ -1703,7 +1715,7 @@ import SwiftUI
     internal static let prscFdTxtDetailsDosageForm = StringAsset("prsc_fd_txt_details_dosage_form")
     /// Package size
     internal static let prscFdTxtDetailsDose = StringAsset("prsc_fd_txt_details_dose")
-    /// Verwendbar bis
+    /// Use by
     internal static let prscFdTxtDetailsExpiresOn = StringAsset("prsc_fd_txt_details_expires_on")
     /// Chargenbezeichnung
     internal static let prscFdTxtDetailsLot = StringAsset("prsc_fd_txt_details_lot")
@@ -1775,10 +1787,14 @@ import SwiftUI
     internal static let prscFdTxtSubstitutionReadFurtherLink = StringAsset("prsc_fd_txt_substitution_read_further_link")
     /// Substitute medication possible
     internal static let prscFdTxtSubstitutionTitle = StringAsset("prsc_fd_txt_substitution_title")
+    /// Dieses Rezept wird im Rahmen einer Behandlung für Sie eingelöst.
+    internal static let prscRedeemNoteDirectAssignment = StringAsset("prsc_redeem_note_direct_assignment")
     /// Cancelled
     internal static let prscStatusCanceled = StringAsset("prsc_status_canceled")
     /// Redeemed
     internal static let prscStatusCompleted = StringAsset("prsc_status_completed")
+    /// Wird für Sie eingelöst
+    internal static let prscStatusDirectAssigned = StringAsset("prsc_status_direct_assigned")
     /// Defective prescription
     internal static let prscStatusError = StringAsset("prsc_status_error")
     /// Expired
@@ -1979,6 +1995,12 @@ import SwiftUI
     internal static let sessionErrorNoProfile = StringAsset("session_error_no_profile")
     /// Add profile
     internal static let stgBtnAddProfile = StringAsset("stg_btn_add_profile")
+    /// Weiter
+    internal static let stgBtnCardResetAdvance = StringAsset("stg_btn_card_reset_advance")
+    /// OK
+    internal static let stgBtnCardResetRcAlertOk = StringAsset("stg_btn_card_reset_rc_alert_ok")
+    /// Karte verbinden
+    internal static let stgBtnCardResetRead = StringAsset("stg_btn_card_reset_read")
     /// Delete profile
     internal static let stgBtnEditProfileDelete = StringAsset("stg_btn_edit_profile_delete")
     /// Cancel
@@ -2005,12 +2027,22 @@ import SwiftUI
     internal static let stgConTextContactHotline = StringAsset("stg_con_text_contact_hotline")
     /// Write email
     internal static let stgConTextMail = StringAsset("stg_con_text_mail")
+    /// An Umfrage teilnehmen
+    internal static let stgConTextSurvey = StringAsset("stg_con_text_survey")
     /// Privacy Policy
     internal static let stgDpoTxtDataPrivacy = StringAsset("stg_dpo_txt_data_privacy")
     /// Open source licences
     internal static let stgDpoTxtFoss = StringAsset("stg_dpo_txt_foss")
     /// Terms of Use
     internal static let stgDpoTxtTermsOfUse = StringAsset("stg_dpo_txt_terms_of_use")
+    /// Neue PIN eingeben
+    internal static let stgEdtCardResetPinInputPin1 = StringAsset("stg_edt_card_reset_pin_input_pin1")
+    /// PIN wiederholen
+    internal static let stgEdtCardResetPinInputPin2 = StringAsset("stg_edt_card_reset_pin_input_pin2")
+    /// PUK eingeben
+    internal static let stgEdtCardResetPukInput = StringAsset("stg_edt_card_reset_puk_input")
+    /// Mit Ihrer PIN haben Sie eine 8-stellige PUK von Ihrer Versicherung erhalten.
+    internal static let stgEdtCardResetPukInputLabel = StringAsset("stg_edt_card_reset_puk_input_label")
     /// https://www.das-e-rezept-fuer-deutschland.de/
     internal static let stgLnoLinkContact = StringAsset("stg_lno_link_contact")
     /// Open website
@@ -2106,6 +2138,80 @@ import SwiftUI
     internal static let stgTxtAuditEventsPrevious = StringAsset("stg_txt_audit_events_previous")
     /// Access logs
     internal static let stgTxtAuditEventsTitle = StringAsset("stg_txt_audit_events_title")
+    /// Wunsch-PIN wählen
+    internal static let stgTxtCardCustomPin = StringAsset("stg_txt_card_custom_pin")
+    /// Neue Karte bestellen
+    internal static let stgTxtCardOrderNewCard = StringAsset("stg_txt_card_order_new_card")
+    /// Wunsch-PIN wählen
+    internal static let stgTxtCardResetIntroCustomPin = StringAsset("stg_txt_card_reset_intro_custom_pin")
+    /// Mit Ihrer PIN haben Sie eine 8-stellige PUK von Ihrer Versicherung erhalten.
+    internal static let stgTxtCardResetIntroHint = StringAsset("stg_txt_card_reset_intro_hint")
+    /// Ihre Gesundheitskarte
+    internal static let stgTxtCardResetIntroNeedYourCard = StringAsset("stg_txt_card_reset_intro_need_your_card")
+    /// PUK Ihrer Gesundheitskarte
+    internal static let stgTxtCardResetIntroNeedYourCardsPuk = StringAsset("stg_txt_card_reset_intro_need_your_cards_puk")
+    /// Was Sie benötigen:
+    internal static let stgTxtCardResetIntroSubheadline = StringAsset("stg_txt_card_reset_intro_subheadline")
+    /// Karte entsperren
+    internal static let stgTxtCardResetIntroUnlockCard = StringAsset("stg_txt_card_reset_intro_unlock_card")
+    /// Wunsch-PIN wählen
+    internal static let stgTxtCardResetPinHeadline = StringAsset("stg_txt_card_reset_pin_headline")
+    /// Ihre neue persönliche Identifikationsnummer (PIN) können Sie selbst wählen (6 bis 8 Stellen).
+    internal static let stgTxtCardResetPinHint = StringAsset("stg_txt_card_reset_pin_hint")
+    /// Bitte notieren Sie sich Ihre PIN und bewahren Sie diese an einem sicheren Ort auf.
+    internal static let stgTxtCardResetPinHintMessage = StringAsset("stg_txt_card_reset_pin_hint_message")
+    /// PIN gemerkt?
+    internal static let stgTxtCardResetPinHintTitle = StringAsset("stg_txt_card_reset_pin_hint_title")
+    /// Die Eingaben weichen voneinander ab.
+    internal static let stgTxtCardResetPinWarning = StringAsset("stg_txt_card_reset_pin_warning")
+    /// PUK eingeben
+    internal static let stgTxtCardResetPukHeadline = StringAsset("stg_txt_card_reset_puk_headline")
+    /// Mit Ihrer PIN haben Sie eine 8-stellige PUK von Ihrer Versicherung erhalten.
+    internal static let stgTxtCardResetPukHint = StringAsset("stg_txt_card_reset_puk_hint")
+    /// Sie können eine PUK für bis zu 10 Entsperrvorgänge nutzen.
+    internal static let stgTxtCardResetRcAlertCardUnlockedMessage = StringAsset("stg_txt_card_reset_rc_alert_card_unlocked_message")
+    /// Karte entsperrt
+    internal static let stgTxtCardResetRcAlertCardUnlockedTitle = StringAsset("stg_txt_card_reset_rc_alert_card_unlocked_title")
+    /// Sie können eine PUK für bis zu 10 Entsperrvorgänge nutzen.
+    internal static let stgTxtCardResetRcAlertCardUnlockedWithPinMessage = StringAsset("stg_txt_card_reset_rc_alert_card_unlocked_with_pin_message")
+    /// Wunsch-PIN gespeichert
+    internal static let stgTxtCardResetRcAlertCardUnlockedWithPinTitle = StringAsset("stg_txt_card_reset_rc_alert_card_unlocked_with_pin_title")
+    /// Sie haben mit dieser PUK die maximale Anzahl an Karten-Entsperrungen erreicht oder sie wiederholt falsch eingegeben. Bitte wenden Sie sich an Ihre Versicherung.
+    internal static let stgTxtCardResetRcAlertCounterExhaustedMessage = StringAsset("stg_txt_card_reset_rc_alert_counter_exhausted_message")
+    /// Entsperren nicht möglich
+    internal static let stgTxtCardResetRcAlertCounterExhaustedTitle = StringAsset("stg_txt_card_reset_rc_alert_counter_exhausted_title")
+    /// Sie haben mit dieser PUK die maximale Anzahl an Karten-Entsperrungen erreicht oder sie wiederholt falsch eingegeben. Bitte wenden Sie sich an Ihre Versicherung.
+    internal static let stgTxtCardResetRcAlertCounterExhaustedWithPinMessage = StringAsset("stg_txt_card_reset_rc_alert_counter_exhausted_with_pin_message")
+    /// Speichern der Wunsch-PIN nicht möglich
+    internal static let stgTxtCardResetRcAlertCounterExhaustedWithPinTitle = StringAsset("stg_txt_card_reset_rc_alert_counter_exhausted_with_pin_title")
+    /// Bitte probieren Sie es erneut.
+    internal static let stgTxtCardResetRcAlertUnknownErrorMessage = StringAsset("stg_txt_card_reset_rc_alert_unknown_error_message")
+    /// Ein Fehler ist aufgetreten
+    internal static let stgTxtCardResetRcAlertUnknownErrorTitle = StringAsset("stg_txt_card_reset_rc_alert_unknown_error_title")
+    /// Bitte korrigieren Sie Ihre Zugangsnummer (CAN)
+    internal static let stgTxtCardResetRcAlertWrongCanMessage = StringAsset("stg_txt_card_reset_rc_alert_wrong_can_message")
+    /// Falsche CAN
+    internal static let stgTxtCardResetRcAlertWrongCanTitle = StringAsset("stg_txt_card_reset_rc_alert_wrong_can_title")
+    /// Plural format key: "%#@variable_0@"
+    internal static func stgTxtCardResetRcAlertWrongPukMessage(_ element1: Int) -> StringAsset {
+        StringAsset("stg_txt_card_reset_rc_alert_wrong_puk_message", arguments: [element1])
+    }
+    /// PUK falsch eingegeben
+    internal static let stgTxtCardResetRcAlertWrongPukTitle = StringAsset("stg_txt_card_reset_rc_alert_wrong_puk_title")
+    /// Sie haben leider keine weiteren Versuche Ihre PUK einzugeben. Bitte wenden Sie sich an Ihre Krankenversicherung.
+    internal static let stgTxtCardResetRcAlertWrongPukZeroRetriesMessage = StringAsset("stg_txt_card_reset_rc_alert_wrong_puk_zero_retries_message")
+    /// Keine weitere Eingabe möglich
+    internal static let stgTxtCardResetRcAlertWrongPukZeroRetriesTitle = StringAsset("stg_txt_card_reset_rc_alert_wrong_puk_zero_retries_title")
+    /// Nicht erfolgreich
+    internal static let stgTxtCardResetRcNfcDialogError = StringAsset("stg_txt_card_reset_rc_nfc_dialog_error")
+    /// Entsperre Karte
+    internal static let stgTxtCardResetRcNfcDialogUnlockCard = StringAsset("stg_txt_card_reset_rc_nfc_dialog_unlock_card")
+    /// Setze PIN
+    internal static let stgTxtCardResetRcNfcDialogUnlockCardWithPin = StringAsset("stg_txt_card_reset_rc_nfc_dialog_unlock_card_with_pin")
+    /// Gesundheitskarte
+    internal static let stgTxtCardSectionHeader = StringAsset("stg_txt_card_section_header")
+    /// Karte entsperren
+    internal static let stgTxtCardUnlockCard = StringAsset("stg_txt_card_unlock_card")
     /// Demo mode
     internal static let stgTxtDemoMode = StringAsset("stg_txt_demo_mode")
     /// Background colour

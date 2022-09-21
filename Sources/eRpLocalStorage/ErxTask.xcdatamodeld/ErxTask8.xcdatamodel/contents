@@ -191,7 +191,7 @@
     <elements>
         <element name="AVSTransactionEntity" positionX="-685.3320922851562" positionY="60.96815490722656" width="128" height="119"/>
         <element name="ErxAuditEventEntity" positionX="-238.599609375" positionY="-448.2824096679688" width="128" height="133"/>
-        <element name="ErxTaskCommunicationEntity" positionX="128.634033203125" positionY="-604.8466491699219" width="182.8237915039062" height="178"/>
+        <element name="ErxTaskCommunicationEntity" positionX="128.634033203125" positionY="-604.8466491699219" width="182.8237915039062" height="164"/>
         <element name="ErxTaskEntity" positionX="-442.3972778320313" positionY="-292.7961730957031" width="128" height="419"/>
         <element name="ErxTaskMedicationDispenseEntity" positionX="128.8935546875" positionY="-385.2161254882813" width="187.7998657226562" height="239"/>
         <element name="ErxTaskMedicationEntity" positionX="159.633056640625" positionY="11.07156372070312" width="128" height="164"/>

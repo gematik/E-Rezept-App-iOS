@@ -60,7 +60,6 @@ struct CardWallCANInputView: View {
                 .keyboardType(.numberPad)
                 .foregroundColor(.clear)
                 .accentColor(.clear)
-                .accessibility(label: Text("cdw_txt_can_input_label"))
                 .accessibility(hint: Text("cdw_txt_can_title_hint"))
                 .accessibility(identifier: A11y.cardWall.canInput.cdwTxtCanInput)
         }

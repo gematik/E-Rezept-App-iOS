@@ -6,6 +6,12 @@
             "https://gematik.de/fhir/StructureDefinition/ErxCommunicationDispReq"
         ]
     },
+    "identifier": [
+        {
+            "system": "https://gematik.de/fhir/NamingSystem/OrderID",
+            "value": "d58894dd-c93c-4841-b6f6-4ac4cda4922f"
+        }
+    ],
     "basedOn": [
         {
             "reference": "Task/39c67d5b-1df3-11b2-80b4-783a425d8e87"

@@ -118,6 +118,11 @@ internal enum A11y {
       static let ctlBtnTextfieldDelete = "ctl_btn_textfield_delete"
   }
     }
+    internal enum directAssignment {
+      static let davTxtDirectAssignmentTitle = "dav_txt_direct_assignment_title"
+      static let davTxtDirectAssignmentHint = "dav_txt_direct_assignment_hint"
+      static let davBtnClose = "dav_btn_close"
+  }
     internal enum mainScreen {
       static let erxBtnRefresh = "erx_btn_refresh"
       static let erxDetailedBlock = "erx_detailed_block"
@@ -277,6 +282,8 @@ internal enum A11y {
       static let prscDtlTxtAccessCode = "prsc_dtl_txt_access_code"
       static let prscDtlTxtMedError = "prsc_dtl_txt_med_error"
       static let prscDtlTxtDeleteDisabledNote = "prsc_dtl_txt_delete_disabled_note"
+      static let prscDtlBtnShare = "prsc_dtl_btn_share"
+      static let prscDtlBtnDirectAssignment = "prsc_dtl_btn_direct_assignment"
   }
     internal enum profileSelection {
       static let proTxtSelectionProfileList = "pro_txt_selection_profile_list"
@@ -334,11 +341,32 @@ internal enum A11y {
       static let stgTxtAuditEventsNoProtocolTitle = "stg_txt_audit_events_no_protocol_title"
       static let stgTxtAuditEventsNoProtocolDescription = "stg_txt_audit_events_no_protocol_description"
   }
+    internal enum card {
+      static let stgTxtCardUnlockCard = "stg_txt_card_unlock_card"
+      static let stgTxtCardCustomPin = "stg_txt_card_custom_pin"
+      static let stgTxtCardOrderNewCard = "stg_txt_card_order_new_card"
+      static let stgBtnCardResetAdvance = "stg_btn_card_reset_advance"
+      static let stgTxtCardResetIntroUnlockCard = "stg_txt_card_reset_intro_unlock_card"
+      static let stgTxtCardResetIntroCustomPin = "stg_txt_card_reset_intro_custom_pin"
+      static let stgTxtCardResetIntroNeedYourCard = "stg_txt_card_reset_intro_need_your_card"
+      static let stgTxtCardResetIntroNeedYourCardsPuk = "stg_txt_card_reset_intro_need_your_cards_puk"
+      static let stgTxtCardResetPukHeadline = "stg_txt_card_reset_puk_headline"
+      static let stgTxtCardResetPukHint = "stg_txt_card_reset_puk_hint"
+      static let stgEdtCardResetPukInput = "stg_edt_card_reset_puk_input"
+      static let stgTxtCardResetPinHeadline = "stg_txt_card_reset_pin_headline"
+      static let stgTxtCardResetPinHint = "stg_txt_card_reset_pin_hint"
+      static let stgTxtCardResetPinHintMessage = "stg_txt_card_reset_pin_hint_message"
+      static let stgTxtCardResetPinWarning = "stg_txt_card_reset_pin_warning"
+      static let stgEdtCardResetPinInputPin1 = "stg_edt_card_reset_pin_input_pin1"
+      static let stgEdtCardResetPinInputPin2 = "stg_edt_card_reset_pin_input_pin2"
+      static let stgBtnCardResetRead = "stg_btn_card_reset_read"
+  }
     internal enum contact {
       static let stgConHeaderContact = "stg_con_header_contact"
       static let stgConHotlineContact = "stg_con_hotline_contact"
       static let stgConTxtFootnote = "stg_con_txt_footnote"
       static let stgConTxtMail = "stg_con_txt_mail"
+      static let stgConTxtSurvey = "stg_con_txt_survey"
   }
     internal enum createPassword {
       static let cpwBtnSave = "cpw_btn_save"
@@ -384,9 +412,6 @@ internal enum A11y {
   }
     internal enum foss {
       static let stgDprTxtFoss = "stg_dpr_txt_foss"
-  }
-    internal enum hint {
-      static let hintTxtOrderEgk = "hint_txt_order_egk"
   }
     internal enum legalNotice {
       static let stgLnoTxtHeaderLegalInfo = "stg_lno_txt_header_legal_info"

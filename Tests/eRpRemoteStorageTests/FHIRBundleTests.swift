@@ -41,6 +41,7 @@ final class FHIRBundleTests: XCTestCase {
 
         expect(task.id) == "5e00e907-1e4f-11b2-80be-b806a73c0cd0"
         expect(task.status) == ErxTask.Status.ready
+        expect(task.flowType) == .pharmacyOnly
         expect(task.prescriptionId) == "160.000.711.572.601.54"
         expect(task.accessCode) == "9d6f58a2c5a89c0681f91cbd69dd666f365443e3ae114d7d9ca9162181f7d34d"
         expect(task.fullUrl).to(beNil())
@@ -94,6 +95,7 @@ final class FHIRBundleTests: XCTestCase {
         // task
         expect(task.id) == "160.000.088.357.676.93"
         expect(task.status) == ErxTask.Status.ready
+        expect(task.flowType) == .pharmacyOnly
         expect(task.source) == .server
         expect(task.prescriptionId) == "160.000.088.357.676.93"
         expect(task.accessCode) == "68db761b666f7e75a32090fd4d109e2766e02693741278ab6dc2df90f1cbb3af"
@@ -176,6 +178,7 @@ final class FHIRBundleTests: XCTestCase {
         expect(first.timestamp) == "2021-05-26T10:59:37.098245933+00:00"
         expect(first.insuranceId) == "X234567890"
         expect(first.telematikId) == "3-09.2.S.10.743"
+        expect(first.orderId).to(beNil())
 
         // test payload parsing for all possible variations of payload
         expect(first.payloadJSON) == "{\"version\": \"1\",\"supplyOptionsType\": \"shipment\",\"info_text\": \"\"}"
@@ -185,7 +188,7 @@ final class FHIRBundleTests: XCTestCase {
         let communicationBundle = try decode(resource: "erxCommunicationDispReqResponse.json")
 
         let communications = try communicationBundle.parseErxTaskCommunications()
-        expect(communications.count) == 4
+        expect(communications.count) == 5
         guard let first = communications.first else {
             fail("expected to have this communication")
             return
@@ -196,9 +199,22 @@ final class FHIRBundleTests: XCTestCase {
         expect(first.timestamp) == "2021-05-03T08:13:38.389015396+00:00"
         expect(first.insuranceId) == "X110461389"
         expect(first.telematikId) == "3-09.2.S.10.743"
-
+        expect(first.orderId).to(beNil())
         // test payload parsing for all possible variations of payload
         expect(first.payloadJSON) == "{do something}"
+
+        guard let fifth = communications.last else {
+            fail("expected to have this communication")
+            return
+        }
+        expect(fifth.identifier) == "01eb8e09-19d2-eea0-a14f-ed08a549fae3"
+        expect(fifth.taskId) == "160.000.000.030.106.46"
+        expect(fifth.profile) == .dispReq
+        expect(fifth.timestamp) == "2022-07-19T16:48:24.036+00:00"
+        expect(fifth.insuranceId) == "X110495330"
+        expect(fifth.telematikId) == "3-15.2.010873.824"
+        expect(fifth.orderId) == "d58894dd-c93c-4841-b6f6-4ac4cda4922f"
+        expect(fifth.payloadJSON) == "{do something else}"
     }
 
     func testParseErxTaskMedicationDispense() throws {

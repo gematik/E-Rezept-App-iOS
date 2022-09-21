@@ -277,7 +277,7 @@ final class IDPIntegrationTests: XCTestCase {
             privateKeyContainer
         }
 
-        let pairingSession = try! secureEnclaveSignatureProvider.registerData()
+        let pairingSession = try! secureEnclaveSignatureProvider.createPairingSession()
 
         secureEnclaveSignatureProvider.signPairingSession(pairingSession, with: signer, certificate: cert)
             .mapError { $0.asIDPError() }

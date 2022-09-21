@@ -31,17 +31,13 @@ final class CardWallSnapshotTests: XCTestCase {
     }
 
     func testSelectionView() {
-        let sut = CardWallView(
-            store: CardWallDomain.Store(
+        let sut = CardWallIntroductionView(
+            store: CardWallIntroductionDomain.Store(
                 initialState: .init(
-                    introAlreadyDisplayed: false,
-                    isNFCReady: true,
-                    isMinimalOS14: true,
-                    pin: .init(isDemoModus: false),
-                    loginOption: .init(isDemoModus: false)
+                    isNFCReady: true
                 ),
                 reducer: .empty,
-                environment: CardWallDomain.Dummies.environment
+                environment: CardWallIntroductionDomain.Dummies.environment
             )
         )
 
@@ -62,9 +58,7 @@ final class CardWallSnapshotTests: XCTestCase {
 
     func testIntroductionView() {
         let sut = CardWallIntroductionView(
-            store: CardWallIntroductionDomain.Dummies.store,
-            nextView: { EmptyView() },
-            fastTrackView: { EmptyView() }
+            store: CardWallIntroductionDomain.Dummies.store
         )
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
@@ -74,7 +68,7 @@ final class CardWallSnapshotTests: XCTestCase {
 
     func testNotForYouViewWithCapabilties() {
         let sut = CapabilitiesView(
-            store: CardWallDomain.Dummies.store
+            store: CardWallIntroductionDomain.Dummies.store
         )
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
@@ -84,18 +78,14 @@ final class CardWallSnapshotTests: XCTestCase {
 
     func testNotForYouViewWithoutCapabilties() {
         let sut = CapabilitiesView(
-            store: CardWallDomain.Store(
-                initialState: CardWallDomain
+            store: CardWallIntroductionDomain.Store(
+                initialState: CardWallIntroductionDomain
                     .State(
-                        introAlreadyDisplayed: true,
                         isNFCReady: false,
-                        isMinimalOS14: true,
-                        can: nil,
-                        pin: CardWallPINDomain.State(isDemoModus: false, pin: ""),
-                        loginOption: CardWallLoginOptionDomain.State(isDemoModus: false)
+                        route: .notCapable
                     ),
-                reducer: CardWallDomain.reducer,
-                environment: CardWallDomain.Dummies.environment
+                reducer: CardWallIntroductionDomain.reducer,
+                environment: CardWallIntroductionDomain.Dummies.environment
             )
         )
 
@@ -110,13 +100,11 @@ final class CardWallSnapshotTests: XCTestCase {
                 initialState: CardWallCANDomain.State(
                     isDemoModus: false,
                     profileId: UUID(),
-                    can: "",
-                    showNextScreen: false
+                    can: ""
                 ),
                 reducer: .empty,
                 environment: CardWallCANDomain.Dummies.environment
-            ),
-            nextView: { EmptyView() }
+            )
         )
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
@@ -130,13 +118,11 @@ final class CardWallSnapshotTests: XCTestCase {
                 initialState: CardWallCANDomain.State(
                     isDemoModus: true,
                     profileId: UUID(),
-                    can: "",
-                    showNextScreen: false
+                    can: ""
                 ),
                 reducer: .empty,
                 environment: CardWallCANDomain.Dummies.environment
-            ),
-            nextView: { EmptyView() }
+            )
         )
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
@@ -150,12 +136,10 @@ final class CardWallSnapshotTests: XCTestCase {
                 initialState: CardWallCANDomain.State(isDemoModus: false,
                                                       profileId: UUID(),
                                                       can: "",
-                                                      wrongCANEntered: true,
-                                                      showNextScreen: false),
+                                                      wrongCANEntered: true),
                 reducer: .empty,
                 environment: CardWallCANDomain.Dummies.environment
-            ),
-            nextView: { EmptyView() }
+            )
         )
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
@@ -169,7 +153,7 @@ final class CardWallSnapshotTests: XCTestCase {
                 initialState: CardWallPINDomain.State(isDemoModus: false, pin: ""),
                 reducer: .empty,
                 environment: CardWallPINDomain.Dummies.environment
-            ), nextView: { _ in EmptyView() }
+            )
         )
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
@@ -183,8 +167,7 @@ final class CardWallSnapshotTests: XCTestCase {
                 initialState: CardWallPINDomain.State(isDemoModus: true, pin: "123"),
                 reducer: .empty,
                 environment: CardWallPINDomain.Dummies.environment
-            ),
-            nextView: { _ in EmptyView() }
+            )
         )
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
@@ -201,7 +184,7 @@ final class CardWallSnapshotTests: XCTestCase {
                 initialState: state,
                 reducer: .empty,
                 environment: CardWallPINDomain.Dummies.environment
-            ), nextView: { _ in EmptyView() }
+            )
         )
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
@@ -216,8 +199,7 @@ final class CardWallSnapshotTests: XCTestCase {
                                                               selectedLoginOption: .withoutBiometry),
                 reducer: .empty,
                 environment: CardWallLoginOptionDomain.Dummies.environment
-            ),
-            nextView: { EmptyView() }
+            )
         )
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
@@ -232,8 +214,7 @@ final class CardWallSnapshotTests: XCTestCase {
                                                               selectedLoginOption: .withoutBiometry),
                 reducer: .empty,
                 environment: CardWallLoginOptionDomain.Dummies.environment
-            ),
-            nextView: { EmptyView() }
+            )
         )
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())

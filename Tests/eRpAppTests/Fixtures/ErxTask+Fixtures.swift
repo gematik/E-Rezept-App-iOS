@@ -150,6 +150,25 @@ extension ErxTask {
 
         static let erxTaskCompleted = erxTask15
 
+        static let erxTaskDirectAssigned = ErxTask(
+            identifier: "169.123.456.789.123.58",
+            status: .inProgress,
+            flowType: .directAssignment,
+            accessCode: nil, // must be nil with flowtype directAssignment
+            fullUrl: nil,
+            authoredOn: DemoDate.createDemoDate(.thirtyDaysBefore),
+            expiresOn: DemoDate.createDemoDate(.ninetyTwoDaysAhead),
+            acceptedUntil: DemoDate.createDemoDate(.twentyEightDaysAhead),
+            redeemedOn: nil,
+            author: "Dr. Dr. med. Carsten van Storchhausen",
+            medication: medication4,
+            patient: demoPatient,
+            practitioner: demoPractitioner,
+            organization: demoOrganization,
+            workRelatedAccident: demoWorkRelatedAccident,
+            auditEvents: ErxAuditEvent.Dummies.auditEvents
+        )
+
         static let erxTaskError: ErxTask = .init(
             identifier: "2390f983-1e67-11b2-8555-63bf44e44fb8",
             status: .error(.decoding(message: "error: decoding")),

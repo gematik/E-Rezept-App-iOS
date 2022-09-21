@@ -63,6 +63,7 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
                 }
                 expect(erxTask.id) == "61704e3f-1e4f-11b2-80f4-b806a73c0cd0"
                 expect(erxTask.status) == .ready
+                expect(erxTask.flowType) == .pharmacyOnly
                 expect(erxTask.accessCode) == "7eccd529292631f6a7cd120b57ded23062c35932cc721bfd32b08c5fb188b642"
                 expect(erxTask.medication?.name).toNot(beNil())
                 expect(erxTask.medication?.name) == "Sumatriptan-1a Pharma 100 mg Tabletten"
@@ -162,7 +163,7 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
         stub(condition: isHost(host) && pathEndsWith("$abort")) { _ in
             fixture(filePath: emptyResponse, status: 204, headers: ["Accept": "application/fhir+json"])
         }
-        let erxTask = ErxTask(identifier: "1", status: .ready, accessCode: "12")
+        let erxTask = ErxTask(identifier: "1", status: .ready, flowType: .pharmacyOnly, accessCode: "12")
         sut.delete(tasks: [erxTask])
             .test(expectations: { response in
                 expect(response) == true
@@ -176,7 +177,7 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
             return HTTPStubsResponse(error: error)
         }
 
-        let erxTask = ErxTask(identifier: "1", status: .ready, accessCode: "12")
+        let erxTask = ErxTask(identifier: "1", status: .ready, flowType: .pharmacyOnly, accessCode: "12")
 
         sut.delete(tasks: [erxTask])
             .test(failure: { error in
@@ -322,7 +323,8 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
                                                      "Rumänien"],
                                            hint: "Nur bei Tageslicht liefern!",
                                            phone: "666 999 666")
-        return ErxTaskOrder(erxTaskId: "39c67d5b-1df3-11b2-80b4-783a425d8e87",
+        return ErxTaskOrder(identifier: "d58894dd-c93c-4841-b6f6-4ac4cda4922f",
+                            erxTaskId: "39c67d5b-1df3-11b2-80b4-783a425d8e87",
                             accessCode: "777bea0e13cc9c42ceec14aec3ddee2263325dc2c6c699db115f58fe423607ea",
                             pharmacyTelematikId: "606358757",
                             payload: payload)
@@ -331,7 +333,7 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
     // swiftlint:disable line_length
     private var expectedRequestBody: Data = {
         String(
-            "{\"status\":\"unknown\",\"payload\":[{\"contentString\":\"{\\\"address\\\":[\\\"Schloss Bran\\\",\\\"Strada General Traian Moșoiu 24\\\",\\\"Bran 507025\\\",\\\"Rumänien\\\"],\\\"phone\\\":\\\"666 999 666\\\",\\\"supplyOptionsType\\\":\\\"shipment\\\",\\\"hint\\\":\\\"Nur bei Tageslicht liefern!\\\",\\\"name\\\":\\\"Graf Dracula\\\",\\\"version\\\":\\\"1\\\"}\"}],\"recipient\":[{\"identifier\":{\"system\":\"https:\\/\\/gematik.de\\/fhir\\/NamingSystem\\/TelematikID\",\"value\":\"606358757\"}}],\"meta\":{\"profile\":[\"https:\\/\\/gematik.de\\/fhir\\/StructureDefinition\\/ErxCommunicationDispReq\"]},\"resourceType\":\"Communication\",\"basedOn\":[{\"reference\":\"Task\\/39c67d5b-1df3-11b2-80b4-783a425d8e87\\/$accept?ac=777bea0e13cc9c42ceec14aec3ddee2263325dc2c6c699db115f58fe423607ea\"}]}"
+            "{\"status\":\"unknown\",\"basedOn\":[{\"reference\":\"Task\\/39c67d5b-1df3-11b2-80b4-783a425d8e87\\/$accept?ac=777bea0e13cc9c42ceec14aec3ddee2263325dc2c6c699db115f58fe423607ea\"}],\"payload\":[{\"contentString\":\"{\\\"address\\\":[\\\"Schloss Bran\\\",\\\"Strada General Traian Moșoiu 24\\\",\\\"Bran 507025\\\",\\\"Rumänien\\\"],\\\"phone\\\":\\\"666 999 666\\\",\\\"supplyOptionsType\\\":\\\"shipment\\\",\\\"hint\\\":\\\"Nur bei Tageslicht liefern!\\\",\\\"name\\\":\\\"Graf Dracula\\\",\\\"version\\\":\\\"1\\\"}\"}],\"meta\":{\"profile\":[\"https:\\/\\/gematik.de\\/fhir\\/StructureDefinition\\/ErxCommunicationDispReq\"]},\"recipient\":[{\"identifier\":{\"system\":\"https:\\/\\/gematik.de\\/fhir\\/NamingSystem\\/TelematikID\",\"value\":\"606358757\"}}],\"identifier\":[{\"system\":\"https:\\/\\/gematik.de\\/fhir\\/NamingSystem\\/OrderID\",\"value\":\"d58894dd-c93c-4841-b6f6-4ac4cda4922f\"}],\"resourceType\":\"Communication\"}"
         ).data(using: .utf8)!
     }()
 

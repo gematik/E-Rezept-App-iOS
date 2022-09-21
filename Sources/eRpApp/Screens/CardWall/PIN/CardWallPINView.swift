@@ -20,34 +20,25 @@ import ComposableArchitecture
 import SwiftUI
 import UIKit
 
-struct CardWallPINView<Content: View>: View {
-    @Environment(\.presentationMode) var presentationMode: Binding<PresentationMode>
+struct CardWallPINView: View {
     let store: CardWallPINDomain.Store
-    let transitionMode: CardWallPINDomain.TransitionMode
-    let nextView: (String) -> Content
 
-    init(store: CardWallPINDomain.Store,
-         transitionMode: CardWallPINDomain.TransitionMode = .push,
-         @ViewBuilder nextView: @escaping (String) -> Content) {
-        self.store = store
-        self.transitionMode = transitionMode
-        self.nextView = nextView
+    struct ViewState: Equatable {
+        let routeTag: CardWallPINDomain.Route.Tag?
+        let enteredPINValid: Bool
+        let isDemoModus: Bool
+
+        init(state: CardWallPINDomain.State) {
+            routeTag = state.route?.tag
+            enteredPINValid = state.enteredPINValid
+            isDemoModus = state.isDemoModus
+        }
     }
 
     var body: some View {
-        WithViewStore(store) { viewStore in
+        WithViewStore(store.scope(state: ViewState.init)) { viewStore in
             VStack(alignment: .leading) {
                 PINView(store: store).padding()
-
-                NavigationLink(
-                    destination: nextView(viewStore.pin),
-                    isActive: viewStore.binding(
-                        get: { $0.showNextScreen == .push },
-                        send: CardWallPINDomain.Action.reset
-                    )
-                ) {
-                    EmptyView()
-                }.accessibility(hidden: true)
 
                 Spacer()
 
@@ -56,28 +47,37 @@ struct CardWallPINView<Content: View>: View {
                 PrimaryTextButton(text: L10n.cdwBtnPinDone,
                                   a11y: A11y.cardWall.pinInput.cdwBtnPinDone,
                                   isEnabled: viewStore.state.enteredPINValid) {
-                    viewStore.send(.advance(transitionMode))
+                    viewStore.send(.advance)
                 }
                 .accessibility(label: Text(L10n.cdwBtnPinDoneLabel))
                 .padding(.horizontal)
                 .padding(.bottom)
-                .fullScreenCover(isPresented: viewStore.binding(
-                    get: { $0.showNextScreen == .fullScreenCover },
-                    send: CardWallPINDomain.Action.reset
-                )) {
-                    nextView(viewStore.pin)
-                        .statusBar(hidden: true)
-                        .accentColor(Colors.primary600)
-                        .navigationViewStyle(StackNavigationViewStyle())
-                }
+
+                NavigationLink(
+                    destination: IfLetStore(
+                        store.scope(
+                            state: (\CardWallPINDomain.State.route)
+                                .appending(path: /CardWallPINDomain.Route.login)
+                                .extract(from:),
+                            action: CardWallPINDomain.Action.login(action:)
+                        ),
+                        then: CardWallLoginOptionView.init(store:)
+                    ),
+                    tag: CardWallPINDomain.Route.Tag.login,
+                    selection: viewStore.binding(
+                        get: \.routeTag
+                    ) {
+                        .setNavigation(tag: $0)
+                    }
+                ) {}
+                    .hidden()
+                    .accessibility(hidden: true)
             }
             .demoBanner(isPresented: viewStore.isDemoModus) {
                 Text(L10n.cdwTxtPinDemoModeInfo)
             }
             .navigationBarTitle(L10n.cdwTxtPinTitle, displayMode: .inline)
-            .navigationBarBackButtonHidden(true)
             .navigationBarItems(
-                leading: CustomNavigationBackButton(presentationMode: presentationMode),
                 trailing: NavigationBarCloseItem {
                     viewStore.send(.close)
                 }
@@ -90,10 +90,24 @@ struct CardWallPINView<Content: View>: View {
     private struct PINView: View {
         let store: CardWallPINDomain.Store
 
+        struct ViewState: Equatable {
+            let routeTag: CardWallPINDomain.Route.Tag?
+            let wrongPinEntered: Bool
+            let showWarning: Bool
+            let warningMessage: String
+
+            init(state: CardWallPINDomain.State) {
+                routeTag = state.route?.tag
+                wrongPinEntered = state.wrongPinEntered
+                showWarning = state.showWarning
+                warningMessage = state.warningMessage
+            }
+        }
+
         var body: some View {
-            WithViewStore(store) { viewStore in
+            WithViewStore(store.scope(state: ViewState.init)) { viewStore in
                 ScrollView(.vertical, showsIndicators: true) {
-                    if viewStore.state.wrongPinEntered {
+                    if viewStore.wrongPinEntered {
                         WorngPINEnteredWarningView().padding()
                     }
 
@@ -113,24 +127,30 @@ struct CardWallPINView<Content: View>: View {
 
                     Button(L10n.cdwBtnPinNoPin) {
                         viewStore.send(.showEGKOrderInfoView)
-                    }.fullScreenCover(isPresented: viewStore.binding(
-                        get: \.isEGKOrderInfoViewPresented,
-                        send: CardWallPINDomain.Action.dismissEGKOrderInfoView
-                    )) {
-                        NavigationView {
-                            OrderHealthCardView {
-                                viewStore.send(.dismissEGKOrderInfoView)
+                    }.fullScreenCover(isPresented: Binding<Bool>(
+                        get: { viewStore.state.routeTag == .egk },
+                        set: { show in
+                            if !show {
+                                viewStore.send(.setNavigation(tag: nil))
                             }
                         }
-                        .accentColor(Colors.primary600)
+                    ),
+                    onDismiss: {},
+                    content: {
+                        NavigationView {
+                            OrderHealthCardView {
+                                viewStore.send(.setNavigation(tag: .none))
+                            }
+                        }
+                        .accentColor(Colors.primary700)
                         .navigationViewStyle(StackNavigationViewStyle())
-                    }
-                    .padding([.bottom, .top], 6)
-                    .frame(maxWidth: .infinity, alignment: .trailing)
+                    })
+                        .padding([.bottom, .top], 6)
+                        .frame(maxWidth: .infinity, alignment: .trailing)
 
                     PINFieldView(store: store) {
                         withAnimation {
-                            viewStore.send(.advance(.none))
+                            viewStore.send(.advance)
                         }
                     }.padding([.top, .bottom])
 
@@ -226,9 +246,7 @@ struct CardWallPINView_Previews: PreviewProvider {
             NavigationView {
                 CardWallPINView(
                     store: CardWallPINDomain.Dummies.store
-                ) { _ in
-                    EmptyView()
-                }
+                )
             }
         }.generateVariations()
     }

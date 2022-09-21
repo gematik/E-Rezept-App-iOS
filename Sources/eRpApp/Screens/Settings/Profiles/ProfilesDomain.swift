@@ -233,7 +233,7 @@ extension ProfilesDomain {
             secureEnclaveSignatureProvider: DummySecureEnclaveSignatureProvider(),
             userSessionProvider: DummyUserSessionProvider(),
             nfcSignatureProvider: DemoSignatureProvider(),
-            userSession: DemoSessionContainer(),
+            userSession: DummySessionContainer(),
             signatureProvider: DummySecureEnclaveSignatureProvider()
         ) { _ in }
 

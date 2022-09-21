@@ -70,7 +70,7 @@ enum IDPCardWallDomain {
 
     static let domainReducer = Reducer { state, action, environment in
         switch action {
-        case .pinAction(action: .advance(.fullScreenCover)):
+        case .pinAction(action: .advance):
             state.readCard = CardWallReadCardDomain.State(
                 isDemoModus: environment.userSession.isDemoMode,
                 profileId: state.profileId,
@@ -88,19 +88,19 @@ enum IDPCardWallDomain {
                 )
             }
             state.can?.wrongCANEntered = true
-            state.can?.showNextScreen = false
-            state.pin.showNextScreen = .none
+            state.pin.route = nil
+            state.can?.route = nil
             return .none
         case .readCard(action: .wrongPIN):
             state.pin.wrongPinEntered = true
-            state.pin.showNextScreen = .none
+            state.pin.route = nil
             return .none
         case .canAction(action: .close),
              .pinAction(action: .close):
             // closing a subscreen should close the whole stack -> forward to generic `.close`
             return Effect(value: .close)
         case .readCard(action: .close):
-            state.pin.showNextScreen = .none
+            state.pin.route = nil
             return Effect(value: .finished)
                 .delay(for: dismissTimeout, scheduler: environment.schedulers.main)
                 .eraseToEffect()
@@ -119,7 +119,11 @@ enum IDPCardWallDomain {
             action: /Action.canAction(action:)
         ) {
             .init(
-                sessionProvider: $0.sessionProvider
+                sessionProvider: $0.sessionProvider,
+                signatureProvider: $0.secureEnclaveSignatureProvider,
+                userSession: $0.userSession,
+                accessibilityAnnouncementReceiver: $0.accessibilityAnnouncementReceiver,
+                schedulers: $0.schedulers
             )
         }
 
@@ -130,6 +134,9 @@ enum IDPCardWallDomain {
         ) {
             .init(
                 userSession: $0.userSession,
+                schedulers: $0.schedulers,
+                sessionProvider: $0.sessionProvider,
+                signatureProvider: $0.secureEnclaveSignatureProvider,
                 accessibilityAnnouncementReceiver: $0.accessibilityAnnouncementReceiver
             )
         }
@@ -167,7 +174,7 @@ extension IDPCardWallDomain {
 
         static let environment = Environment(
             schedulers: Schedulers(),
-            userSession: DemoSessionContainer(),
+            userSession: DummySessionContainer(),
             userSessionProvider: DummyUserSessionProvider(),
             secureEnclaveSignatureProvider: DummySecureEnclaveSignatureProvider(),
             nfcSignatureProvider: DemoSignatureProvider(),

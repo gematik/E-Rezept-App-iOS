@@ -45,11 +45,18 @@ extension ErxTaskOrder {
             "Version should be updated after 1.1.23 to v1_2_0. More informations: https://github.com/gematik/api-erp/blob/master/docs/erp_fhirversion.adoc#versionsübergang-31122022--01012023" // swiftlint:disable:this line_length
         )
         let telematikUri = Workflow.Key.telematikIdKeys[.v1_1_1]?.asFHIRURIPrimitive()
-        let identifier = Identifier(system: telematikUri,
-                                    value: pharmacyTelematikId.asFHIRStringPrimitive())
-        let recipient = Reference(identifier: identifier)
+        let telematikId = Identifier(system: telematikUri,
+                                     value: pharmacyTelematikId.asFHIRStringPrimitive())
+        #warning(
+            "Version should be updated after 1.1.23 to v1_2_0. More informations: https://github.com/gematik/api-erp/blob/master/docs/erp_fhirversion.adoc#versionsübergang-31122022--01012023" // swiftlint:disable:this line_length
+        )
+        let orderUri = Workflow.Key.orderIdKeys[.v1_1_1]?.asFHIRURIPrimitive()
+        let orderId = Identifier(system: orderUri,
+                                 value: identifier.asFHIRStringPrimitive())
+        let recipient = Reference(identifier: telematikId)
         return Communication(
             basedOn: [reference],
+            identifier: [orderId],
             meta: meta,
             payload: [payload],
             recipient: [recipient],

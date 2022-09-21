@@ -32,6 +32,7 @@ extension ErxTaskCommunicationEntity {
     @NSManaged public var timestamp: String?
     @NSManaged public var payload: String?
     @NSManaged public var isRead: Bool
+    @NSManaged public var orderId: String?
     @NSManaged public var task: ErxTaskEntity?
 }
 
