@@ -51,6 +51,7 @@ i-01402,"ExtAuthPendingDomain.Error.profileValidation","Error when `Profile` val
 i-01501,"MainDomain.Error.localStoreError","",LocalStoreError
 i-01502,"MainDomain.Error.userSessionError","",UserSessionError
 i-01503,"MainDomain.Error.importDuplicate","Import of shared Task failed due to being a duplicate already existing within the app",
+i-01504,"MainDomain.Error.repositoryError","Saving or retrieving data failed",ErxRepositoryError
 i-01601,"PrescriptionDetailDomain.LoadingImageError.matrixCodeGenerationFailed","",
 i-02301,"RedeemMatrixCodeDomain.LoadingImageError.matrixCodeGenerationFailed","",
 i-02401,"RedeemServiceError.eRxRepository","When redeeming a task via Fachdienst",ErxRepositoryError
@@ -126,6 +127,7 @@ i-50104,"MigrationError.read","",
 i-50105,"MigrationError.delete","",
 i-50106,"MigrationError.unspecified","",
 i-50107,"MigrationError.initialization","",
+i-,"PharmacyCoreDataStore.Error.noMatchingEntity","",
 i-50201,"ProfileCoreDataStore.Error.noMatchingEntity","",
 i-50202,"ProfileCoreDataStore.Error.initialization","",
 i-50401,"ShipmentInfoCoreDataStore.Error.noMatchingEntity","",
@@ -238,7 +240,8 @@ i-10906,"SecureEnclaveSignatureProviderError.`internal`","",
 i-10906,"SecureEnclaveSignatureProviderError.`internal`","",
 i-51001,"PharmacyBundleParsingError.parseError","",
 i-57001,"PharmacyFHIRDataSource.Error.fhirClient","",FHIRClient.Error
-i-57101,"PharmacyRepositoryError.remote","",PharmacyFHIRDataSource.Error
+i-57101,"PharmacyRepositoryError.local","",LocalStoreError
+i-57102,"PharmacyRepositoryError.remote","",PharmacyFHIRDataSource.Error
 i-56201,"TrustAnchor.Error.invalidPEM","",
 i-56001,"TrustStoreError.network","In case of HTTP/Connection error",HTTPError
 i-56002,"TrustStoreError.noCertificateFound","When failed to extract a certificate from the CertList",

@@ -20,7 +20,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="index.html">
-           1.4.3 Docs
+           1.4.4 Docs
         </a>
          (100% documented)
       </p>
@@ -251,7 +251,10 @@
                 <a class="nav-group-task-link" href="Extensions.html#/KeyVerifier">KeyVerifier</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="Extensions.html#/MainDomain">MainDomain</a>
+                <a class="nav-group-task-link" href="Extensions/MainDomain.html">MainDomain</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Extensions/MainDomain.html#/s:6eRpApp10MainDomainO5ErrorO">– Error</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Extensions/NFCCardError.html">NFCCardError</a>
@@ -669,17 +672,17 @@ return challengeSession.sign(
 // [REQ:gemF_Tokenverschlüsselung:A_20700-06] sign
 .sign(challengeSession: challengeSession)
 </code></pre>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-330-code-c-ch-aut' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:330</code>:  C.CH.AUT</h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-331-code-c-ch-aut' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:331</code>:  C.CH.AUT</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20700-07] C.CH.AUT
 // [REQ:gemF_Tokenverschlüsselung:A_20526-01] Smartcard signature
 // [REQ:gemF_Tokenverschlüsselung:A_20700-06] sign
 .readAutCertificate()
 </code></pre>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-339-code-sign-with-c-ch-aut' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:339</code>:  sign with C.CH.AUT</h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-340-code-sign-with-c-ch-aut' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:340</code>:  sign with C.CH.AUT</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20700-07] sign with C.CH.AUT
 return session.sign(
 </code></pre>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-370-code-perform-signature-with-openhealthcardkit' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:370</code>:  perform signature with OpenHealthCardKit</h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-371-code-perform-signature-with-openhealthcardkit' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:371</code>:  perform signature with OpenHealthCardKit</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20700-07] perform signature with OpenHealthCardKit
 card.sign(data: message)
 </code></pre>
@@ -953,7 +956,7 @@ let header = JWT.Header(alg: alg, x5c: certificates, typ: "JWT", cty: "NJWT")
 // [REQ:gemF_Tokenverschlüsselung:A_20700-06] sign
 .sign(challengeSession: challengeSession)
 </code></pre>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-331-code-smartcard-signature' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:331</code>:  Smartcard signature</h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-332-code-smartcard-signature' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:332</code>:  Smartcard signature</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20700-07] C.CH.AUT
 // [REQ:gemF_Tokenverschlüsselung:A_20526-01] Smartcard signature
 // [REQ:gemF_Tokenverschlüsselung:A_20700-06] sign
@@ -971,7 +974,7 @@ let header = JWT.Header(alg: alg, x5c: certificates, typ: "JWT", cty: "NJWT")
 // [REQ:gemF_Tokenverschlüsselung:A_20700-06] sign
 func sign(can: CAN, pin: Format2Pin, challenge: IDPChallengeSession)
 </code></pre>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-332-code-sign' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:332</code>:  sign</h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-333-code-sign' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:333</code>:  sign</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20700-07] C.CH.AUT
 // [REQ:gemF_Tokenverschlüsselung:A_20526-01] Smartcard signature
 // [REQ:gemF_Tokenverschlüsselung:A_20700-06] sign
@@ -1014,11 +1017,11 @@ guard let alg = certificate.info.algorithm.alg else {
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_17207] Assure only brainpoolP256r1 is used
 guard certificate.info.algorithm.alg == .bp256r1 else {
 </code></pre>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-333-code-assure-only-brainpoolp256r1-is-used' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:333</code>:  Assure only brainpoolP256r1 is used</h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-334-code-assure-only-brainpoolp256r1-is-used' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:334</code>:  Assure only brainpoolP256r1 is used</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_17207] Assure only brainpoolP256r1 is used
 guard let alg = certificate.info.algorithm.alg else {
 </code></pre>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-384-code-assure-only-brainpoolp256r1-is-used' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:384</code>:  Assure only brainpoolP256r1 is used</h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-385-code-assure-only-brainpoolp256r1-is-used' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:385</code>:  Assure only brainpoolP256r1 is used</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_17207] Assure only brainpoolP256r1 is used
 var alg: JWT.Algorithm? {
 </code></pre>
@@ -1479,7 +1482,7 @@ func loadVauCertificate() -&gt; AnyPublisher&lt;X509, TrustStoreError&gt;
 func validate(certificate: X509) -&gt; AnyPublisher&lt;Bool, TrustStoreError&gt;
 </code></pre>
 <h3 id='a_19984' class='heading'>A_19984</h3>
-<h4 id='code-sources-pharmacy-fhirclient-pharmacyoperation-swift-22-code-validate-pharmacy-data-format-conforming-to-fhir' class='heading'><code>../Sources/Pharmacy/FHIRClient+PharmacyOperation.swift:22</code>:  validate pharmacy data format conforming to FHIR</h4>
+<h4 id='code-sources-pharmacy-fhirclient-pharmacyoperation-swift-23-code-validate-pharmacy-data-format-conforming-to-fhir' class='heading'><code>../Sources/Pharmacy/FHIRClient+PharmacyOperation.swift:23</code>:  validate pharmacy data format conforming to FHIR</h4>
 <pre class="highlight plaintext"><code>/// Convenience function for searching for pharmacies
 ///
 /// [REQ:gemSpec_eRp_FdV:A_19984] validate pharmacy data format conforming to FHIR
@@ -1487,7 +1490,7 @@ func validate(certificate: X509) -&gt; AnyPublisher&lt;Bool, TrustStoreError&gt;
 /// - Parameters:
 ///   - searchTerm: Search term
 ///   - position: Pharmacy position (latitude and longitude)
-/// - Returns: `AnyPublisher` that emits a list of pharmacies or nil when not found
+/// - Returns: `AnyPublisher` that emits a list of `PharmacyLocation`s or is empty when not found
 public func searchPharmacies(by searchTerm: String,
 </code></pre>
 <h4 id='code-sources-erpkit-scannederxtask-swift-48-code-parse-task-id-and-access-code' class='heading'><code>../Sources/eRpKit/ScannedErxTask.swift:48</code>:  parse task id and access code</h4>
@@ -1534,26 +1537,38 @@ private func verifyResultWithIDP(_ signedChallenge: SignedChallenge,
 if Result.success(false) == isAuthenticated {
 </code></pre>
 <h3 id='a_20183' class='heading'>A_20183</h3>
-<h4 id='code-sources-pharmacy-pharmacyfhirdatasource-swift-28-code' class='heading'><code>../Sources/Pharmacy/PharmacyFHIRDataSource.swift:28</code>:</h4>
+<h4 id='code-sources-pharmacy-pharmacyfhirdatasource-swift-30-code' class='heading'><code>../Sources/Pharmacy/PharmacyFHIRDataSource.swift:30</code>:</h4>
 <pre class="highlight plaintext"><code>/// API for requesting pharmacies with the passed search term
 ///
 /// [REQ:gemSpec_eRp_FdV:A_20183]
 ///
 /// - Parameter searchTerm: String that send to the server for filtering the pharmacies response
 /// - Parameter position: Position (latitude and longitude) of pharmacy
+/// - Parameter filter: further filter parameters for pharmacies
 /// - Returns: `AnyPublisher` that emits all `PharmacyLocation`s for the given `searchTerm`
 public func searchPharmacies(by searchTerm: String,
+</code></pre>
+<h4 id='code-sources-pharmacy-pharmacyremotedatastore-swift-21-code' class='heading'><code>../Sources/Pharmacy/PharmacyRemoteDataStore.swift:21</code>:</h4>
+<pre class="highlight plaintext"><code>/// API for requesting pharmacies with the passed search term
+///
+/// [REQ:gemSpec_eRp_FdV:A_20183]
+///
+/// - Parameter searchTerm: String that send to the server for filtering the pharmacies response
+/// - Parameter position: Position (latitude and longitude) of pharmacy
+/// - Parameter filter: further filter parameters for pharmacies
+/// - Returns: `AnyPublisher` that emits all `PharmacyLocation`s for the given `searchTerm`
+func searchPharmacies(by searchTerm: String,
 </code></pre>
 <h4 id='code-sources-erpapp-screens-pharmacy-search-pharmacysearchdomain-swift-169-code-search-results-mirrored-verbatim-no-sorting-no-highlighting' class='heading'><code>../Sources/eRpApp/Screens/Pharmacy/Search/PharmacySearchDomain.swift:169</code>:  search results mirrored verbatim, no sorting, no highlighting</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_20183] search results mirrored verbatim, no sorting, no highlighting
 state.searchState = .searchRunning
 </code></pre>
 <h3 id='a_20184' class='heading'>A_20184</h3>
-<h4 id='code-sources-erpapp-session-standardsessioncontainer-swift-83-code-keychain-storage-encrypts-session-ssl-tokens' class='heading'><code>../Sources/eRpApp/Session/StandardSessionContainer.swift:83</code>:  Keychain storage encrypts session/ssl tokens</h4>
+<h4 id='code-sources-erpapp-session-standardsessioncontainer-swift-86-code-keychain-storage-encrypts-session-ssl-tokens' class='heading'><code>../Sources/eRpApp/Session/StandardSessionContainer.swift:86</code>:  Keychain storage encrypts session/ssl tokens</h4>
 <pre class="highlight plaintext"><code>storage: secureUserStore, // [REQ:gemSpec_eRp_FdV:A_20184] Keychain storage encrypts session/ssl tokens
 schedulers: schedulers,
 </code></pre>
-<h4 id='code-sources-erpapp-session-standardsessioncontainer-swift-101-code-no-persistent-storage-for-idp-biometrics-session' class='heading'><code>../Sources/eRpApp/Session/StandardSessionContainer.swift:101</code>:  No persistent storage for idp biometrics session</h4>
+<h4 id='code-sources-erpapp-session-standardsessioncontainer-swift-104-code-no-persistent-storage-for-idp-biometrics-session' class='heading'><code>../Sources/eRpApp/Session/StandardSessionContainer.swift:104</code>:  No persistent storage for idp biometrics session</h4>
 <pre class="highlight plaintext"><code>storage: MemoryStorage(), // [REQ:gemSpec_eRp_FdV:A_20184] No persistent storage for idp biometrics session
 schedulers: schedulers,
 </code></pre>
@@ -1606,15 +1621,15 @@ func checkEeCertificatesStatus(with ocspResponses: [OCSPResponse]) throws -&gt; 
 </code></pre>
 <h2 id='gemspec_erp_apovzd' class='heading'>gemSpec_eRp_APOVZD</h2>
 <h3 id='a_21779' class='heading'>A_21779</h3>
-<h4 id='code-sources-pharmacy-modelsr4-bundle-location-swift-107-code-delivery-pharmacy' class='heading'><code>../Sources/Pharmacy/ModelsR4.Bundle+Location.swift:107</code>:  delivery pharmacy</h4>
+<h4 id='code-sources-pharmacy-modelsr4-bundle-location-swift-108-code-delivery-pharmacy' class='heading'><code>../Sources/Pharmacy/ModelsR4.Bundle+Location.swift:108</code>:  delivery pharmacy</h4>
 <pre class="highlight plaintext"><code>// [[REQ:gemSpec_eRp_APOVZD:A_21779] delivery pharmacy
 case "498":
 </code></pre>
-<h4 id='code-sources-pharmacy-modelsr4-bundle-location-swift-162-code-map-pickup-pharmacy' class='heading'><code>../Sources/Pharmacy/ModelsR4.Bundle+Location.swift:162</code>:  Map pickup pharmacy</h4>
+<h4 id='code-sources-pharmacy-modelsr4-bundle-location-swift-163-code-map-pickup-pharmacy' class='heading'><code>../Sources/Pharmacy/ModelsR4.Bundle+Location.swift:163</code>:  Map pickup pharmacy</h4>
 <pre class="highlight plaintext"><code>// [[REQ:gemSpec_eRp_APOVZD:A_21779] Map pickup pharmacy
 case "OUTPHARM":
 </code></pre>
-<h4 id='code-sources-pharmacy-modelsr4-bundle-location-swift-167-code-map-shipping-pharmacy' class='heading'><code>../Sources/Pharmacy/ModelsR4.Bundle+Location.swift:167</code>:  Map shipping pharmacy</h4>
+<h4 id='code-sources-pharmacy-modelsr4-bundle-location-swift-168-code-map-shipping-pharmacy' class='heading'><code>../Sources/Pharmacy/ModelsR4.Bundle+Location.swift:168</code>:  Map shipping pharmacy</h4>
 <pre class="highlight plaintext"><code>// [[REQ:gemSpec_eRp_APOVZD:A_21779] Map shipping pharmacy
 case "MOBL":
 </code></pre>
@@ -1663,7 +1678,7 @@ OnboardingAltRegisterAuthenticationView(
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_BSI_FdV:A_20834] view to register authentication in onboarding process
 OnboardingRegisterAuthenticationView(
 </code></pre>
-<h4 id='code-sources-erpapp-scenedelegate-swift-156-code-mandatory-app-authentication' class='heading'><code>../Sources/eRpApp/SceneDelegate.swift:156</code>:  mandatory app authentication</h4>
+<h4 id='code-sources-erpapp-scenedelegate-swift-161-code-mandatory-app-authentication' class='heading'><code>../Sources/eRpApp/SceneDelegate.swift:161</code>:  mandatory app authentication</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_BSI_FdV:A_20834] mandatory app authentication
 rootView: AppAuthenticationView(store: appAuthenticationStore)
 </code></pre>
@@ -1694,7 +1709,7 @@ struct IDPTokenView: View {
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2022 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2022-08-29)</p>
+      <p>&copy; 2022 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2022-10-11)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>
