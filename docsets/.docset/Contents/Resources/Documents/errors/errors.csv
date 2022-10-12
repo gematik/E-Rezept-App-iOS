@@ -5,7 +5,7 @@ i-54003,"AVSError.invalidX509Input","When an X509 certificate was of unexpected 
 i-54004,"AVSError.unspecified","Conversion error when trying to cast to `AVSError` but error type was different",
 i-54005,"AVSError.`internal`","Internal error",AVSError.InternalError
 i-54101,"AVSError.InternalError.cmsContentCreation","",
-i-00901,"ZXDataMatrixWriter.Error.cgImgageConvertion","",
+i-00901,"ZXDataMatrixWriter.Error.cgImageConversion","",
 i-00301,"AppAuthenticationBiometricsDomain.Error.cannotEvaluatePolicy","",
 i-00302,"AppAuthenticationBiometricsDomain.Error.failedEvaluatingPolicy","",
 i-00201,"AVScannerViewController.Error.initalizationError","",
@@ -32,7 +32,6 @@ i-01304,"LoginHandlerError.ssoExpired","",
 i-01305,"LoginHandlerError.idpError","",IDPError
 i-01306,"LoginHandlerError.network","",
 i-00401,"NFCSignatureProviderError.cardError","",NFCTagReaderSession.Error
-i-00402,"NFCSignatureProviderError.authenticationError","",
 i-00403,"NFCSignatureProviderError.wrongCAN","",
 i-00404,"NFCSignatureProviderError.cardConnectionError","",
 i-00405,"NFCSignatureProviderError.verifyCardError","",
@@ -67,10 +66,11 @@ i-02505,"RedeemServiceError.InternalError.idMissmatch","When no order can be fou
 i-02506,"RedeemServiceError.InternalError.noService","When no service can be found for the selected pharmacy",
 i-02507,"RedeemServiceError.InternalError.unexpectedHTTPStatusCode","When the status code is not in [200..<300] but the service did not return an error beforehand",
 i-02508,"RedeemServiceError.InternalError.localStoreError","When persisting/extracting information from the store went wrong",LocalStoreError
-i-02601,"ResetRetryCounterControllerError.cardError","",NFCTagReaderSession.Error
-i-02602,"ResetRetryCounterControllerError.openSecureSession","",
-i-02603,"ResetRetryCounterControllerError.resetRetryCounter","",
-i-02604,"ResetRetryCounterControllerError.wrongCan","",
+i-02601,"NFCHealthCardPasswordControllerError.cardError","",NFCTagReaderSession.Error
+i-02602,"NFCHealthCardPasswordControllerError.openSecureSession","",
+i-02603,"NFCHealthCardPasswordControllerError.resetRetryCounter","",
+i-02604,"NFCHealthCardPasswordControllerError.wrongCan","",
+i-02605,"NFCHealthCardPasswordControllerError.changeReferenceData","",
 i-01701,"RegisteredDevicesDomain.Error.generic","",
 i-01801,"RegisteredDevicesServiceError.missingAuthentication","",
 i-01802,"RegisteredDevicesServiceError.missingToken","",

@@ -21,7 +21,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-           1.4.4
+           1.4.5
  Docs
         </a>
          (100% documented)
@@ -208,9 +208,9 @@ tied to the given profileId.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:15eRpLocalStorage20ErxTaskCoreDataStoreC9profileId04coreG17ControllerFactory15foregroundQueue010backgroundO0AC10Foundation4UUIDVSg_AA0fglM0_p17CombineSchedulers12AnySchedulerVySo17OS_dispatch_queueC8DispatchE0V8TimeTypeVAqRE0V7OptionsVGAWtcfc"></a>
-                    <a name="//apple_ref/swift/Method/init(profileId:coreDataControllerFactory:foregroundQueue:backgroundQueue:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:15eRpLocalStorage20ErxTaskCoreDataStoreC9profileId04coreG17ControllerFactory15foregroundQueue010backgroundO0AC10Foundation4UUIDVSg_AA0fglM0_p17CombineSchedulers12AnySchedulerVySo17OS_dispatch_queueC8DispatchE0V8TimeTypeVAqRE0V7OptionsVGAWtcfc">init(profileId:<wbr>coreDataControllerFactory:<wbr>foregroundQueue:<wbr>backgroundQueue:<wbr>)</a>
+                    <a name="/s:15eRpLocalStorage20ErxTaskCoreDataStoreC9profileId04coreG17ControllerFactory15foregroundQueue010backgroundO012dateProviderAC10Foundation4UUIDVSg_AA0fglM0_p17CombineSchedulers12AnySchedulerVySo17OS_dispatch_queueC8DispatchE0X8TimeTypeVArSE0X7OptionsVGAxI4DateVyctcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(profileId:coreDataControllerFactory:foregroundQueue:backgroundQueue:dateProvider:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:15eRpLocalStorage20ErxTaskCoreDataStoreC9profileId04coreG17ControllerFactory15foregroundQueue010backgroundO012dateProviderAC10Foundation4UUIDVSg_AA0fglM0_p17CombineSchedulers12AnySchedulerVySo17OS_dispatch_queueC8DispatchE0X8TimeTypeVArSE0X7OptionsVGAxI4DateVyctcfc">init(profileId:<wbr>coreDataControllerFactory:<wbr>foregroundQueue:<wbr>backgroundQueue:<wbr>dateProvider:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -230,7 +230,8 @@ tied to the given profileId.</p>
     <span class="nv">coreDataControllerFactory</span><span class="p">:</span> <span class="kt"><a href="../Protocols/CoreDataControllerFactory.html">CoreDataControllerFactory</a></span><span class="p">,</span>
     <span class="nv">foregroundQueue</span><span class="p">:</span> <span class="kt">AnySchedulerOf</span><span class="o">&lt;</span><span class="kt">DispatchQueue</span><span class="o">&gt;</span> <span class="o">=</span> <span class="kt">AnyScheduler</span><span class="o">.</span><span class="n">main</span><span class="p">,</span>
     <span class="nv">backgroundQueue</span><span class="p">:</span> <span class="kt">AnySchedulerOf</span><span class="o">&lt;</span><span class="kt">DispatchQueue</span><span class="o">&gt;</span> <span class="o">=</span> <span class="kt">DispatchQueue</span><span class="p">(</span><span class="nv">label</span><span class="p">:</span> <span class="s">"erx-task-data-source-queue"</span><span class="p">,</span>
-                                                                   <span class="nv">qos</span><span class="p">:</span> <span class="o">.</span><span class="n">userInitiated</span><span class="p">)</span><span class="o">.</span><span class="nf">eraseToAnyScheduler</span><span class="p">()</span>
+                                                                   <span class="nv">qos</span><span class="p">:</span> <span class="o">.</span><span class="n">userInitiated</span><span class="p">)</span><span class="o">.</span><span class="nf">eraseToAnyScheduler</span><span class="p">(),</span>
+    <span class="nv">dateProvider</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">Date</span> <span class="o">=</span> <span class="p">{</span> <span class="kt">Date</span><span class="p">()</span> <span class="p">}</span>
 <span class="p">)</span></code></pre>
 
                         </div>
@@ -609,9 +610,9 @@ other queue (Default: DispatchQueue.main)</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:15eRpLocalStorage20ErxTaskCoreDataStoreC28countAllUnreadCommunications3for7Combine12AnyPublisherVySi01eA3Kit0bH5ErrorOGAI0dE0V13CommunicationV7ProfileO_tF"></a>
-                    <a name="//apple_ref/swift/Method/countAllUnreadCommunications(for:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:15eRpLocalStorage20ErxTaskCoreDataStoreC28countAllUnreadCommunications3for7Combine12AnyPublisherVySi01eA3Kit0bH5ErrorOGAI0dE0V13CommunicationV7ProfileO_tF">countAllUnreadCommunications(for:<wbr>)</a>
+                    <a name="/s:15eRpLocalStorage20ErxTaskCoreDataStoreC23allUnreadCommunications3for7Combine12AnyPublisherVySay01eA3Kit0dE0V13CommunicationVGAI0bH5ErrorOGAM7ProfileO_tF"></a>
+                    <a name="//apple_ref/swift/Method/allUnreadCommunications(for:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:15eRpLocalStorage20ErxTaskCoreDataStoreC23allUnreadCommunications3for7Combine12AnyPublisherVySay01eA3Kit0dE0V13CommunicationVGAI0bH5ErrorOGAM7ProfileO_tF">allUnreadCommunications(for:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -619,16 +620,16 @@ other queue (Default: DispatchQueue.main)</p>
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Returns a count for all unread communications for the given profile</p>
+                        <p>Returns all unread communications for the given profile</p>
 
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">countAllUnreadCommunications</span><span class="p">(</span>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">allUnreadCommunications</span><span class="p">(</span>
     <span class="k">for</span> <span class="nv">profile</span><span class="p">:</span> <span class="kt">ErxTask</span><span class="o">.</span><span class="kt">Communication</span><span class="o">.</span><span class="kt">Profile</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">Int</span><span class="p">,</span> <span class="kt">LocalStoreError</span><span class="o">&gt;</span></code></pre>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="p">[</span><span class="kt">ErxTask</span><span class="o">.</span><span class="kt">Communication</span><span class="p">],</span> <span class="kt">LocalStoreError</span><span class="o">&gt;</span></code></pre>
 
                         </div>
                       </div>
@@ -1049,7 +1050,7 @@ otherwise.</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2022 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2022-10-11)</p>
+      <p>&copy; 2022 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2022-10-12)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>
