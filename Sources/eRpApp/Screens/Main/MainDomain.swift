@@ -112,7 +112,7 @@ enum MainDomain {
         case importTaskByUrl(URL)
         case extAuthPending(action: ExtAuthPendingDomain.Action)
 
-        case importReceived(Result<[SharedTask], Error>)
+        case importReceived(Result<[ErxTask], Error>)
 
         case setNavigation(tag: Route.Tag?)
 
@@ -137,6 +137,10 @@ enum MainDomain {
         // sourcery: errorCode = "03"
         /// Import of shared Task failed due to being a duplicate already existing within the app
         case importDuplicate
+
+        // sourcery: errorCode = "04"
+        /// Saving or retrieving data failed
+        case repositoryError(ErxRepositoryError)
     }
 
     struct Environment {
@@ -216,24 +220,14 @@ extension MainDomain {
                 return .none
             }
 
-            return environment.checkForTaskDuplicatesInStore(sharedTasks)
+            return environment.checkForTaskDuplicatesThenSave(sharedTasks)
                 .cancellable(id: Token.checkForTaskDuplicates)
-        case let .importReceived(.success(tasks)):
-            let authoredOn = environment.fhirDateFormatter.stringWithLongUTCTimeZone(from: Date())
+        case .importReceived(.success):
+            state.route = .alert(.init(title: TextState(L10n.erxTxtPrescriptionAddedAlertTitle.text)))
 
-            return environment.erxTaskRepository.save(
-                erxTasks: tasks.asErxTasks(
-                    status: .ready,
-                    with: authoredOn,
-                    author: L10n.scnTxtAuthor.text
-                ) { L10n.scnTxtMedication($0).text }
-            )
-            .receive(on: environment.schedulers.main)
-            .eraseToEffect()
-            .cancellable(id: Token.checkForTaskDuplicates)
-            .fireAndForget()
+            return .none
         case let .importReceived(.failure(error)):
-            state.route = .alert(.init(for: error))
+            state.route = .alert(.init(for: error, title: L10n.erxTxtPrescriptionDuplicateAlertTitle))
             return .none
         case .setNavigation(tag: .selectProfile):
             state.route = .selectProfile
@@ -312,7 +306,32 @@ extension MainDomain {
 }
 
 extension MainDomain.Environment {
-    func checkForTaskDuplicatesInStore(_ sharedTasks: [SharedTask]) -> Effect<MainDomain.Action, Never> {
+    func checkForTaskDuplicatesThenSave(_ sharedTasks: [SharedTask]) -> Effect<MainDomain.Action, Never> {
+        let authoredOn = fhirDateFormatter.stringWithLongUTCTimeZone(from: Date())
+        let erxTaskRepository = self.erxTaskRepository
+
+        return checkForTaskDuplicatesInStore(sharedTasks)
+            .flatMap { tasks -> AnyPublisher<[ErxTask], MainDomain.Error> in
+                let erxTasks = tasks.asErxTasks(
+                    status: .ready,
+                    with: authoredOn,
+                    author: L10n.scnTxtAuthor.text
+                ) { L10n.scnTxtMedication($0).text }
+
+                return erxTaskRepository.save(
+                    erxTasks: erxTasks
+                )
+                .map { _ in erxTasks }
+                .mapError(MainDomain.Error.repositoryError)
+                .eraseToAnyPublisher()
+            }
+            .catchToEffect()
+            .map(MainDomain.Action.importReceived)
+            .receive(on: schedulers.main)
+            .eraseToEffect()
+    }
+
+    func checkForTaskDuplicatesInStore(_ sharedTasks: [SharedTask]) -> AnyPublisher<[SharedTask], MainDomain.Error> {
         let findPublishers: [AnyPublisher<SharedTask?, Never>] = sharedTasks.map { sharedTask in
             self.erxTaskRepository.loadLocal(by: sharedTask.id, accessCode: sharedTask.accessCode)
                 .first()
@@ -329,16 +348,19 @@ extension MainDomain.Environment {
 
         return Publishers.MergeMany(findPublishers)
             .collect(findPublishers.count)
-            .map { optionalTasks in
+            .flatMap { optionalTasks -> AnyPublisher<[SharedTask], MainDomain.Error> in
                 let tasks = optionalTasks.compactMap { $0 }
                 if tasks.isEmpty {
-                    return .importReceived(.failure(.importDuplicate))
+                    return Fail(error: MainDomain.Error.importDuplicate)
+                        .eraseToAnyPublisher()
                 } else {
-                    return .importReceived(.success(tasks))
+                    return Just(tasks)
+                        .setFailureType(to: MainDomain.Error.self)
+                        .eraseToAnyPublisher()
                 }
             }
             .receive(on: schedulers.main)
-            .eraseToEffect()
+            .eraseToAnyPublisher()
     }
 }
 

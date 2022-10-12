@@ -17,8 +17,8 @@
 //
 
 import ComposableArchitecture
+import eRpKit
 import MapKit
-import Pharmacy
 import SwiftUI
 
 struct PharmacyDetailView: View {

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="20086" systemVersion="21F79" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="20086" systemVersion="21G83" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="AVSTransactionEntity" representedClassName="AVSTransactionEntity" syncable="YES">
         <attribute name="groupedRedeemID" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="groupedRedeemTime" attributeType="Date" usesScalarValueType="NO"/>

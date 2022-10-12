@@ -308,7 +308,8 @@ extension NFCCardSession {
             .openSecureSession(can: can, writeTimeout: 0, readTimeout: 0)
             .map { $0 as HealthCardType }
             .mapError { error in
-                if let error = error as? HealthCardControl.KeyAgreement.Error {
+                if let error = error as? HealthCardControl.KeyAgreement.Error,
+                   case .macPcdVerificationFailedOnCard = error {
                     return NFCSignatureProviderError.wrongCAN(error)
                 }
                 return NFCSignatureProviderError.cardConnectionError(error)

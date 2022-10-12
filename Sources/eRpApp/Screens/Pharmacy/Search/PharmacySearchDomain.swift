@@ -346,7 +346,7 @@ extension PharmacySearchDomain.Environment {
            let longitude = location?.coordinate.longitude {
             position = Position(lat: latitude, lon: longitude)
         }
-        return pharmacyRepository.searchPharmacies(
+        return pharmacyRepository.searchRemote(
             searchTerm: searchTerm,
             position: position,
             filter: filter.asPharmacyRepositoryFilters

@@ -27,6 +27,8 @@ import OpenSSL
 import TestUtils
 import XCTest
 
+final class AVSIntegrationTests: XCTestCase {}
+
 struct AVSIntegrationTestConfiguration {
     let url: String
     let additionalHeaders: [String: String]
@@ -34,7 +36,7 @@ struct AVSIntegrationTestConfiguration {
 
 extension AVSMessage {
     enum Fixtures {
-        static let completeExample: AVSMessage = try! .init(
+        static let completeExample = AVSMessage(
             version: 2,
             supplyOptionsType: .delivery,
             name: "Dr. Maximilian von Muster",

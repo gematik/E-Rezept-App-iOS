@@ -17,15 +17,55 @@
 //
 
 import Combine
+import eRpKit
 import Foundation
 
+/// Interface for the app to the Pharmacy data layer
 /// sourcery: StreamWrapped
 public protocol PharmacyRepository {
-    /// Loads pharmacies with `searchTerm`
-    func searchPharmacies(searchTerm: String,
-                          position: Position?,
-                          filter: [PharmacyRepositoryFilter])
+    /// Loads the `PharmacyLocation` by its telematik ID from disk or if not present from a remote (server).
+    ///
+    /// - Parameters:
+    ///   - telematikId: the telematik ID of the pharmacy
+    /// - Returns: Publisher for the load request
+    func loadCached(by telematikId: String)
+        -> AnyPublisher<PharmacyLocation?, PharmacyRepositoryError>
+
+    /// Loads `PharmacyLocation`s  with search term from a remote (server).
+    ///
+    /// - Parameters:
+    ///   - searchTerm: the `searchTerm` for the pharmacy
+    ///   - position: the Position which is used as a search point for an "around me" search
+    ///   - filter: further filter parameters for pharmacies
+    /// - Returns: `AnyPublisher` that emits a list of `PharmacyLocation`s or is empty when not found
+    func searchRemote(searchTerm: String,
+                      position: Position?,
+                      filter: [PharmacyRepositoryFilter])
         -> AnyPublisher<[PharmacyLocation], PharmacyRepositoryError>
+
+    /// Loads the `PharmacyLocation` by its telematik ID from disk
+    ///
+    /// - Parameters:
+    ///   - telematikId: the telematik ID of the pharmacy
+    /// - Returns: Publisher for the load request
+    func loadLocal(by telematikId: String)
+        -> AnyPublisher<PharmacyLocation?, PharmacyRepositoryError>
+
+    /// Load all local `PharmacyLocation`s (from disk)
+    /// - Returns: Publisher for the load request
+    func loadLocalAll() -> AnyPublisher<[PharmacyLocation], PharmacyRepositoryError>
+
+    /// Saves an array of `PharmacyLocation`s
+    /// - Parameters:
+    ///   - pharmacies: the `PharmacyLocation`s to be saved
+    /// - Returns: `AnyPublisher` that emits a boolean on success or fails with a `PharmacyRepositoryError`
+    func save(pharmacies: [PharmacyLocation]) -> AnyPublisher<Bool, PharmacyRepositoryError>
+
+    /// Delete an array of `PharmacyLocation`s
+    /// - Parameters:
+    ///   - pharmacies: the `PharmacyLocation`s to be deleted
+    /// - Returns: `AnyPublisher` that emits a boolean on success or fails with a `PharmacyRepositoryError`
+    func delete(pharmacies: [PharmacyLocation]) -> AnyPublisher<Bool, PharmacyRepositoryError>
 }
 
 /// Available filters for the Pharmacy Repository
@@ -51,16 +91,12 @@ extension PharmacyRepositoryFilter {
     }
 }
 
-extension Collection where Element == PharmacyRepositoryFilter {
+// swiftlint:disable:next no_extension_access_modifier
+public extension Collection where Element == PharmacyRepositoryFilter {
+    /// Group elements for `PharmacyRepositoryFilter` elements
     func asAPIFilter() -> [String: String] {
         Dictionary(uniqueKeysWithValues: compactMap(\.asAPIFilter))
     }
-}
-
-// sourcery: CodedError = "571"
-public enum PharmacyRepositoryError: Error, Equatable {
-    // sourcery: errorCode = "01"
-    case remote(PharmacyFHIRDataSource.Error)
 }
 
 /// Position which is used as a search point for an "around me" search.
@@ -75,25 +111,4 @@ public struct Position {
     public let latitude: Double
     /// Longitude coordinate of search point
     public let longitude: Double
-}
-
-public struct DefaultPharmacyRepository: PharmacyRepository {
-    private let cloud: PharmacyFHIRDataSource
-
-    public init(cloud: PharmacyFHIRDataSource) {
-        self.cloud = cloud
-    }
-
-    public func searchPharmacies(searchTerm: String, position: Position?, filter: [PharmacyRepositoryFilter])
-        -> AnyPublisher<[PharmacyLocation], PharmacyRepositoryError> {
-        cloud.searchPharmacies(by: searchTerm, position: position, filter: filter.asAPIFilter())
-            .map { pharmacies in
-                if filter.contains(.delivery) {
-                    return pharmacies.filter(\.hasDeliveryService)
-                }
-                return pharmacies
-            }
-            .mapError { PharmacyRepositoryError.remote($0) }
-            .eraseToAnyPublisher()
-    }
 }

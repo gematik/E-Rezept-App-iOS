@@ -192,7 +192,7 @@ enum PrescriptionDetailDomain: Equatable {
                       let outcome = error.fhirClientOperationOutcome {
                 state.route = .alert(deleteFailedAlertState(outcome))
             } else {
-                state.route = .alert(deleteFailedAlertState(L10n.dtlTxtDeleteFallbackMessage.text))
+                state.route = .alert(deleteFailedAlertState(fail.localizedDescriptionWithErrorList))
             }
             return cleanup()
         case let .taskDeletedReceived(.success(success)):

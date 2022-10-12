@@ -33,6 +33,7 @@ class StandardSessionContainer: UserSession {
     private var keychainStorage: KeychainStorage
     private let schedulers: Schedulers
     private var erxTaskCoreDataStore: ErxTaskCoreDataStore
+    private var pharmacyCoreDataStore: PharmacyCoreDataStore
     let appConfiguration: AppConfiguration
     var profileDataStore: ProfileDataStore
     let shipmentInfoDataStore: ShipmentInfoDataStore
@@ -44,6 +45,7 @@ class StandardSessionContainer: UserSession {
         for profileId: UUID,
         schedulers: Schedulers,
         erxTaskCoreDataStore: ErxTaskCoreDataStore,
+        pharmacyCoreDataStore: PharmacyCoreDataStore,
         profileDataStore: ProfileDataStore,
         shipmentInfoDataStore: ShipmentInfoDataStore,
         avsTransactionDataStore: AVSTransactionDataStore,
@@ -52,6 +54,7 @@ class StandardSessionContainer: UserSession {
         self.profileId = profileId
         self.schedulers = schedulers
         self.erxTaskCoreDataStore = erxTaskCoreDataStore
+        self.pharmacyCoreDataStore = pharmacyCoreDataStore
         self.profileDataStore = profileDataStore
         self.shipmentInfoDataStore = shipmentInfoDataStore
         self.avsTransactionDataStore = avsTransactionDataStore
@@ -180,6 +183,7 @@ class StandardSessionContainer: UserSession {
 
     lazy var pharmacyRepository: PharmacyRepository = {
         DefaultPharmacyRepository(
+            disk: pharmacyCoreDataStore,
             cloud: PharmacyFHIRDataSource(
                 fhirClient: FHIRClient(
                     server: appConfiguration.apoVzd,

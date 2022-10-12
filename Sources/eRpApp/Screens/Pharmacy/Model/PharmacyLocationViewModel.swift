@@ -17,8 +17,8 @@
 //
 
 import ComposableCoreLocation
+import eRpKit
 import Foundation
-import Pharmacy
 
 /// Adds additional properties to the PharmacyLocation entity that are used in the view.
 struct PharmacyLocationViewModel: Equatable, Hashable {

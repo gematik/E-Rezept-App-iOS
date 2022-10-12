@@ -98,7 +98,7 @@
 "cdw_btn_rc_help" = "Pomoc";
 "cdw_btn_rc_help_back" = "Powrót";
 "cdw_btn_rc_help_close" = "Zamknij";
-"cdw_btn_rc_help_url" = "https://youtu.be/5roKp2hRVKE";
+"cdw_btn_rc_help_url" = "https://www.youtube.com/watch?v=EqY6tF7UU-c";
 "cdw_btn_rc_loading" = "Wczytaj";
 "cdw_btn_rc_next" = "Nawiąż połączenie z kartą";
 "cdw_btn_rc_next_hint" = "Po naciśnięciu tego przycisku karta zdrowia jest odczytywana przez NFC. W tym celu przyłóż kartę bezpośrednio do urządzenia. Po nawiązaniu połączenia otrzymasz powiadomienie haptyczne. Przerwanie połączenia lub błąd także zostanie zakomunikowany poprzez powiadomienie haptyczne. Nawiązanie połączenia z kartą zdrowia może trwać do dziesięciu sekund. Następnie odsuń kartę zdrowia od urządzenia.";
@@ -326,6 +326,9 @@
 "erx_txt_medication_placeholder" = "Nieznany lek";
 "erx_txt_no_current_prescriptions" = "Nie masz aktualnych recept";
 "erx_txt_not_yet_redeemed" = "Nie zrealizowano jeszcze żadnych recept";
+"erx_txt_prescription_added_alert_title" = "Rezept erfolgreich hinzugefügt";
+"erx_txt_prescription_duplicate_alert_message" = "Das Rezept wurde bereits importiert.";
+"erx_txt_prescription_duplicate_alert_title" = "Rezept nicht hinzugefügt";
 "erx_txt_redeemed" = "Archiwum";
 "erx_txt_refresh_loading" = "Ładowanie ...";
 "hint_btn_close" = "zamknij";
@@ -801,9 +804,9 @@
 "pro_btn_selection_edit" = "Edytuj profile";
 "pro_txt_selection_profile_not_connected" = "Nie zalogowano";
 "pro_txt_selection_title" = "Wybierz profil";
-"prsc_dtl_btn_share_title" = "Teilen";
 "prsc_delete_note_direct_assignment" = "Dieses Rezept wird im Rahmen einer Behandlung für Sie eingelöst und kann währenddessen nicht gelöscht werden.";
 "prsc_dtl_btn_direct_assignment" = "Direktzuweisung";
+"prsc_dtl_btn_share_title" = "Teilen";
 "prsc_dtl_hnt_gesund_bund_de_btn" = "Otwórz gesund.bund.de";
 "prsc_dtl_hnt_gesund_bund_de_text" = "Zweryfikowane przez ekspertów informacje dotyczące chorób, kodów ICD i tematów związanych z profilaktyką i opieką znajdziesz na Krajowym Portalu Zdrowia.";
 "prsc_fd_btn_error_banner" = "Zgłoś";

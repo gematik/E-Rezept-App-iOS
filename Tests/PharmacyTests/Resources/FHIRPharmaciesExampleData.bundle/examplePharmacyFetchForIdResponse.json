@@ -1,0 +1,77 @@
+{
+    "id": "2ad1fbed-065e-484f-a2a5-a08924cc6729",
+    "meta": {
+        "lastUpdated": "2022-08-18T14:43:03.467235+02:00"
+    },
+    "resourceType": "Bundle",
+    "type": "searchset",
+    "total": 1,
+    "link": [
+        {
+            "relation": "self",
+            "url": "Bundle2ad1fbed-065e-484f-a2a5-a08924cc6729"
+        }
+    ],
+    "entry": [
+        {
+            "resource": {
+                "id": "29cc8022-ed2d-4313-8d74-74196a2b1168",
+                "meta": {
+                    "lastUpdated": "2022-07-19T10:24:47+02:00"
+                },
+                "resourceType": "Location",
+                "address": {
+                    "use": "work",
+                    "type": "physical",
+                    "line": [
+                        "Unter den Linden 69d"
+                    ],
+                    "postalCode": "10117",
+                    "city": "Berlin",
+                    "country": "de"
+                },
+                "hoursOfOperation": [],
+                "identifier": [
+                    {
+                        "system": "https://gematik.de/fhir/NamingSystem/TelematikID",
+                        "value": "3-03.2.1010380000.10.703"
+                    },
+                    {
+                        "system": "https://ngda.de/fhir/NamingSystem/NID",
+                        "value": "APO1155309"
+                    }
+                ],
+                "name": "Brandenburger Tor Apotheke",
+                "position": {
+                    "latitude": 52.51623,
+                    "longitude": 13.3816
+                },
+                "status": "active",
+                "telecom": [],
+                "type": [
+                    {
+                        "coding": [
+                            {
+                                "system": "http://terminology.hl7.org/CodeSystem/v3-RoleCode",
+                                "code": "PHARM",
+                                "display": "pharmacy"
+                            }
+                        ]
+                    },
+                    {
+                        "coding": [
+                            {
+                                "system": "http://terminology.hl7.org/CodeSystem/v3-RoleCode",
+                                "code": "OUTPHARM",
+                                "display": "outpatient pharmacy"
+                            }
+                        ]
+                    }
+                ]
+            },
+            "search": {
+                "mode": "match"
+            }
+        }
+    ]
+}

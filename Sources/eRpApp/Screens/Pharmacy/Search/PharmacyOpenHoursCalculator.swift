@@ -17,8 +17,8 @@
 //
 
 import Combine
+import eRpKit
 import Foundation
-import Pharmacy
 
 struct PharmacyOpenHoursCalculator {
     enum TodaysOpeningState: Hashable, Equatable {

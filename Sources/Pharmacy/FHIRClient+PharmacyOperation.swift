@@ -17,6 +17,7 @@
 //
 
 import Combine
+import eRpKit
 import FHIRClient
 import Foundation
 import HTTPClient
@@ -30,7 +31,7 @@ extension FHIRClient {
     /// - Parameters:
     ///   - searchTerm: Search term
     ///   - position: Pharmacy position (latitude and longitude)
-    /// - Returns: `AnyPublisher` that emits a list of pharmacies or nil when not found
+    /// - Returns: `AnyPublisher` that emits a list of `PharmacyLocation`s or is empty when not found
     public func searchPharmacies(by searchTerm: String,
                                  position: Position?,
                                  filter: [String: String])
@@ -52,6 +53,33 @@ extension FHIRClient {
                 searchTerm: searchTerm,
                 position: position,
                 filter: filter,
+                handler: handler
+            )
+        )
+    }
+
+    /// Convenience function for requesting a certain pharmacy by ID
+    ///
+    /// - Parameters:
+    ///   - telematikId: The Telematik-ID of the pharmacy to be requested
+    /// - Returns: `AnyPublisher` that emits the `PharmacyLocation` or nil when not found
+    public func fetchPharmacy(by telematikId: String)
+        -> AnyPublisher<PharmacyLocation?, Error> {
+        let handler = DefaultFHIRResponseHandler(
+            acceptFormat: FHIRAcceptFormat.json
+        ) { (fhirResponse: FHIRClient.Response) -> PharmacyLocation? in
+            let decoder = JSONDecoder()
+            let resource: ModelsR4.Bundle
+            do {
+                resource = try decoder.decode(ModelsR4.Bundle.self, from: fhirResponse.body)
+            } catch {
+                throw Error.decoding(error)
+            }
+            return try resource.parsePharmacyLocations().first
+        }
+        return execute(
+            operation: PharmacyFHIROperation.fetchPharmacy(
+                telematikId: telematikId,
                 handler: handler
             )
         )

@@ -523,6 +523,62 @@ class StreamWrappedPagedAuditEventsController: PagedAuditEventsController {
 
 }
 
+class StreamWrappedPharmacyLocalDataStore: PharmacyLocalDataStore {
+    private var disposeBag: Set<AnyCancellable> = []
+	private let stream: AnyPublisher<PharmacyLocalDataStore, Never>
+	private var current: PharmacyLocalDataStore
+
+	init(stream: AnyPublisher<PharmacyLocalDataStore, Never>, current: PharmacyLocalDataStore) {
+		self.stream = stream
+		self.current = current
+
+		stream
+			.weakAssign(to: \.current, on: self)
+			.store(in: &disposeBag)
+
+
+	}
+
+
+	func fetchPharmacy(by telematikId: String) -> AnyPublisher<PharmacyLocation?, LocalStoreError> {
+        stream
+        	.map { $0.fetchPharmacy(
+				by: telematikId
+            ) }
+            .switchToLatest()
+            .eraseToAnyPublisher()
+	}
+
+	func listAllPharmacies() -> AnyPublisher<[PharmacyLocation], LocalStoreError> {
+        stream
+        	.map { $0.listAllPharmacies(
+            ) }
+            .switchToLatest()
+            .eraseToAnyPublisher()
+	}
+
+	func save(pharmacies: [PharmacyLocation]) -> AnyPublisher<Bool, LocalStoreError> {
+        current.save(
+				pharmacies: pharmacies
+            )
+	}
+
+	func delete(pharmacies: [PharmacyLocation]) -> AnyPublisher<Bool, LocalStoreError> {
+        current.delete(
+				pharmacies: pharmacies
+            )
+	}
+
+	func update(identifier: String, mutating: @escaping (inout PharmacyLocation) -> Void) -> AnyPublisher<Bool, LocalStoreError> {
+        current.update(
+				identifier: identifier,
+				mutating: mutating
+            )
+	}
+
+
+}
+
 class StreamWrappedPharmacyRepository: PharmacyRepository {
     private var disposeBag: Set<AnyCancellable> = []
 	private let stream: AnyPublisher<PharmacyRepository, Never>
@@ -540,12 +596,56 @@ class StreamWrappedPharmacyRepository: PharmacyRepository {
 	}
 
 
-	func searchPharmacies(searchTerm: String, position: Position?, filter: [PharmacyRepositoryFilter]) -> AnyPublisher<[PharmacyLocation], PharmacyRepositoryError> {
+	func loadCached(by telematikId: String) -> AnyPublisher<PharmacyLocation?, PharmacyRepositoryError> {
         stream
-        	.map { $0.searchPharmacies(
+        	.map { $0.loadCached(
+				by: telematikId
+            ) }
+            .switchToLatest()
+            .eraseToAnyPublisher()
+	}
+
+	func searchRemote(searchTerm: String, position: Position?, filter: [PharmacyRepositoryFilter]) -> AnyPublisher<[PharmacyLocation], PharmacyRepositoryError> {
+        stream
+        	.map { $0.searchRemote(
 				searchTerm: searchTerm,
 				position: position,
 				filter: filter
+            ) }
+            .switchToLatest()
+            .eraseToAnyPublisher()
+	}
+
+	func loadLocal(by telematikId: String) -> AnyPublisher<PharmacyLocation?, PharmacyRepositoryError> {
+        stream
+        	.map { $0.loadLocal(
+				by: telematikId
+            ) }
+            .switchToLatest()
+            .eraseToAnyPublisher()
+	}
+
+	func loadLocalAll() -> AnyPublisher<[PharmacyLocation], PharmacyRepositoryError> {
+        stream
+        	.map { $0.loadLocalAll(
+            ) }
+            .switchToLatest()
+            .eraseToAnyPublisher()
+	}
+
+	func save(pharmacies: [PharmacyLocation]) -> AnyPublisher<Bool, PharmacyRepositoryError> {
+        stream
+        	.map { $0.save(
+				pharmacies: pharmacies
+            ) }
+            .switchToLatest()
+            .eraseToAnyPublisher()
+	}
+
+	func delete(pharmacies: [PharmacyLocation]) -> AnyPublisher<Bool, PharmacyRepositoryError> {
+        stream
+        	.map { $0.delete(
+				pharmacies: pharmacies
             ) }
             .switchToLatest()
             .eraseToAnyPublisher()
@@ -911,6 +1011,11 @@ class StreamWrappedUserDataStore: UserDataStore {
 	func set(selectedProfileId: UUID) -> Void {
         current.set(
 				selectedProfileId: selectedProfileId
+            )
+	}
+
+	func wipeAll() -> Void {
+        current.wipeAll(
             )
 	}
 

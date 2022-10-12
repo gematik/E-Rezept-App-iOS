@@ -1,0 +1,142 @@
+//
+//  Copyright (c) 2022 gematik GmbH
+//  
+//  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
+//  the European Commission - subsequent versions of the EUPL (the Licence);
+//  You may not use this work except in compliance with the Licence.
+//  You may obtain a copy of the Licence at:
+//  
+//      https://joinup.ec.europa.eu/software/page/eupl
+//  
+//  Unless required by applicable law or agreed to in writing, software
+//  distributed under the Licence is distributed on an "AS IS" basis,
+//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//  See the Licence for the specific language governing permissions and
+//  limitations under the Licence.
+//  
+//
+
+import Combine
+import CombineSchedulers
+import CoreData
+import eRpKit
+
+/// Store for fetching, creating, updating or deleting `PharmacyLocation`s on the provided `CoreDataController`
+public class PharmacyCoreDataStore: PharmacyLocalDataStore, CoreDataCrudable {
+    let coreDataControllerFactory: CoreDataControllerFactory
+    let foregroundQueue: AnySchedulerOf<DispatchQueue>
+    let backgroundQueue: AnySchedulerOf<DispatchQueue>
+
+    /// Initialize a Pharmacy Core Data Store
+    /// - Parameters:
+    ///   - coreDataControllerFactory: Factory that is capable of providing a CoreDataController
+    ///   - foregroundQueue: read queue, remember never to access the read NSManagedObjects properties/relations on any
+    ///     other queue (Default: DispatchQueue.main)
+    ///   - backgroundQueue:
+    ///     write queue (Default: DispatchQueue(label: "pharmacy-queue", qos: .userInitiated))
+    public init(
+        coreDataControllerFactory: CoreDataControllerFactory,
+        foregroundQueue: AnySchedulerOf<DispatchQueue> = AnyScheduler.main,
+        backgroundQueue: AnySchedulerOf<DispatchQueue> = DispatchQueue(label: "pharmacy-queue", qos: .userInitiated)
+            .eraseToAnyScheduler()
+    ) {
+        self.coreDataControllerFactory = coreDataControllerFactory
+        self.foregroundQueue = foregroundQueue
+        self.backgroundQueue = backgroundQueue
+    }
+
+    public func fetchPharmacy(by telematikId: String) -> AnyPublisher<PharmacyLocation?, LocalStoreError> {
+        let request: NSFetchRequest<PharmacyEntity> = PharmacyEntity.fetchRequest()
+        request.predicate = NSPredicate(
+            format: "%K == %@",
+            argumentArray: [#keyPath(PharmacyEntity.telematikId), telematikId]
+        )
+        request.sortDescriptors = [NSSortDescriptor(key: #keyPath(PharmacyEntity.name), ascending: false)]
+
+        return fetch(request)
+            .map { results in
+                guard let entity = results.first else {
+                    return nil
+                }
+                if results.count > 1 {
+                    assertionFailure("error: there should always be just one pharmacy per telematik id in store")
+                }
+                return PharmacyLocation(entity: entity)
+            }
+            .eraseToAnyPublisher()
+    }
+
+    public func listAllPharmacies() -> AnyPublisher<[PharmacyLocation], LocalStoreError> {
+        let request: NSFetchRequest<PharmacyEntity> = PharmacyEntity.fetchRequest()
+        request.sortDescriptors = [NSSortDescriptor(key: #keyPath(PharmacyEntity.name), ascending: false)]
+
+        return fetch(request)
+            .map { list in list.compactMap(PharmacyLocation.init) }
+            .eraseToAnyPublisher()
+    }
+
+    public func save(pharmacies: [PharmacyLocation]) -> AnyPublisher<Bool, LocalStoreError> {
+        save(mergePolicy: NSMergePolicy.error) { moc in
+            _ = pharmacies.map { pharmacy -> PharmacyEntity in
+                let request: NSFetchRequest<PharmacyEntity> = PharmacyEntity.fetchRequest()
+                request.predicate = NSPredicate(
+                    format: "%K == %@",
+                    argumentArray: [#keyPath(PharmacyEntity.identifier), pharmacy.id]
+                )
+
+                if let pharmacyEntity = try? moc.fetch(request).first {
+                    pharmacyEntity.telematikId = pharmacy.telematikID
+                    pharmacyEntity.name = pharmacy.name
+                    pharmacyEntity.email = pharmacy.telecom?.email
+                    pharmacyEntity.phone = pharmacy.telecom?.phone
+                    pharmacyEntity.fax = pharmacy.telecom?.fax
+                    pharmacyEntity.web = pharmacy.telecom?.web
+                    pharmacyEntity.latitude = pharmacy.position?.latitude as? NSDecimalNumber
+                    pharmacyEntity.longitude = pharmacy.position?.longitude as? NSDecimalNumber
+                    return pharmacyEntity
+                } else {
+                    return PharmacyEntity.from(pharmacyLocation: pharmacy, in: moc)
+                }
+            }
+        }
+    }
+
+    public func update(identifier: String,
+                       mutating: @escaping (inout PharmacyLocation) -> Void) -> AnyPublisher<Bool, LocalStoreError> {
+        save(mergePolicy: NSMergePolicy.error) { moc in
+            let request: NSFetchRequest<PharmacyEntity> = PharmacyEntity.fetchRequest()
+            request.fetchLimit = 1
+            request.predicate = NSPredicate(
+                format: "%K == %@",
+                argumentArray: [#keyPath(PharmacyEntity.identifier), identifier]
+            )
+
+            if let pharmacyEntity = try? moc.fetch(request).first,
+               var pharmacy = PharmacyLocation(entity: pharmacyEntity) {
+                mutating(&pharmacy)
+                pharmacyEntity.telematikId = pharmacy.telematikID
+                pharmacyEntity.name = pharmacy.name
+                pharmacyEntity.email = pharmacy.telecom?.email
+                pharmacyEntity.phone = pharmacy.telecom?.phone
+                pharmacyEntity.fax = pharmacy.telecom?.fax
+                pharmacyEntity.web = pharmacy.telecom?.web
+                pharmacyEntity.latitude = pharmacy.position?.latitude as? NSDecimalNumber
+                pharmacyEntity.longitude = pharmacy.position?.longitude as? NSDecimalNumber
+            } else {
+                throw Error.noMatchingEntity
+            }
+        }
+    }
+
+    public func delete(pharmacies: [PharmacyLocation]) -> AnyPublisher<Bool, LocalStoreError> {
+        let request: NSFetchRequest<PharmacyEntity> = PharmacyEntity.fetchRequest()
+        let ids = pharmacies.map(\.id)
+        request.predicate = NSPredicate(format: "%K in %@", #keyPath(PharmacyEntity.identifier), ids)
+        request.sortDescriptors = [NSSortDescriptor(key: #keyPath(PharmacyEntity.name), ascending: false)]
+        return delete(resultsOf: request)
+    }
+
+    public enum Error: Swift.Error {
+        case noMatchingEntity
+    }
+}

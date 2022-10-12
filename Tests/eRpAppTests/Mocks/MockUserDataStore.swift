@@ -292,4 +292,13 @@ final class MockUserDataStore: UserDataStore {
             underlyingAppStartCounter = newValue
         }
     }
+
+    var wipeAllCallsCount = 0
+    var wipeAllCalled: Bool {
+        wipeAllCallsCount > 0
+    }
+
+    func wipeAll() {
+        wipeAllCallsCount += 1
+    }
 }

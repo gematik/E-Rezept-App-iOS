@@ -32,12 +32,13 @@ final class ProfileCoreDataStoreTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        databaseFile = fileManager.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        databaseFile = fileManager.temporaryDirectory.appendingPathComponent("testDB")
     }
 
     override func tearDown() {
-        if fileManager.fileExists(atPath: databaseFile.absoluteString) {
-            expect(try self.fileManager.removeItem(at: self.databaseFile)).toNot(throwError())
+        // important to destory the store so that each test starts with an empty database
+        if let controller = try? factory?.loadCoreDataController() {
+            expect(try controller.destroyPersistentStore(at: self.databaseFile)).toNot(throwError())
         }
 
         super.tearDown()
@@ -115,6 +116,34 @@ final class ProfileCoreDataStoreTests: XCTestCase {
                        ErxTask(identifier: "id2", status: .ready, accessCode: "accessCode2")]
         )
     }()
+
+    func testHasProfileWithoutProfiles() throws {
+        let store = loadProfileCoreDataStore()
+
+        let hasProfile = try store.hasProfile()
+        expect(hasProfile) == false
+    }
+
+    func testHasProfileWithProfileInStore() throws {
+        let store = loadProfileCoreDataStore()
+        let newProfile = Profile(name: "Test")
+        try store.add(profiles: [newProfile])
+
+        let hasProfile = try store.hasProfile()
+        expect(hasProfile) == true
+    }
+
+    func testCreateProfilWithName() throws {
+        let store = loadProfileCoreDataStore()
+        let hasProfileBefore = try store.hasProfile()
+        expect(hasProfileBefore) == false
+
+        let profile = try store.createProfile(with: "Test Name")
+
+        let hasProfile = try store.hasProfile()
+        expect(hasProfile) == true
+        expect(profile.name) == "Test Name"
+    }
 
     func testSavingProfile() throws {
         let store = loadProfileCoreDataStore()

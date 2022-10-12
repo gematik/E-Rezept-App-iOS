@@ -23,12 +23,17 @@ import IDP
 import SwiftUI
 import UIKit
 
-class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing {
+protocol SceneDelegateDependencies {
+    var coreDataControllerFactory: CoreDataControllerFactory { get }
+    var userDataStore: UserDataStore { get }
+}
+
+class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing, SceneDelegateDependencies {
     var mainWindow: UIWindow?
     var authenticationWindow: UIWindow?
-    private let coreDataControllerFactory: CoreDataControllerFactory = LocalStoreFactory()
+    var coreDataControllerFactory: CoreDataControllerFactory = LocalStoreFactory()
     // This must be raw userDefaults access, demo session should *not* interfere with user authentication
-    private let userDataStore = UserDefaultsStore(userDefaults: .standard)
+    var userDataStore: UserDataStore = UserDefaultsStore(userDefaults: .standard)
     private lazy var routerStore = RouterStore(
         initialState: .init(),
         reducer: AppStartDomain.reducer.notifyUserInteraction(),
@@ -205,25 +210,40 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing {
 import Combine
 
 extension SceneDelegate {
+    // The app needs at least one `Profile` in order to function correctly. If there is no Profile we assume
+    // that the app is in the initial state for which also the `UserDataStore` should be in initial state
+    func sanatizeDatabases(store: ProfileCoreDataStore) throws {
+        let hasProfile = (try? store.hasProfile()) ?? false
+        if !hasProfile {
+            userDataStore.set(hideOnboarding: false)
+
+            let profile = try store.createProfile(with: L10n.onbProfileName.text)
+            userDataStore.set(selectedProfileId: profile.id)
+        }
+    }
+
     private func sessionContainer(
         with schedulers: Schedulers
     ) -> (ChangeableUserSessionContainer, UserSessionProvider) {
         let profileCoreDataStore = ProfileCoreDataStore(coreDataControllerFactory: coreDataControllerFactory)
 
-        // On app install, no profile is created yet, create a session with a random UUID. This UUID is reused upon
-        // onboarding completion, to create the actual profile. Both IDs MUST match. Mabe FIXME by creating an empty
-        // profile, that is updated upon onboarding completion. // swiftlint:disable:previous todo
-        let initialProfileId = UUID(
-            uuidString: UserDefaults.standard.string(forKey: UserDefaults.kSelectedProfileId) ?? ""
-        ) ?? UUID()
+        do {
+            try sanatizeDatabases(store: profileCoreDataStore)
+        } catch {
+            assertionFailure(error.localizedDescription)
+        }
+
+        // After sanatizeing the database there should be a profile available which is set as the selected profile
+        let selectedProfileId = UserDefaults.standard.selectedProfileId ?? UUID()
 
         let initialUserSession = StandardSessionContainer(
-            for: initialProfileId,
+            for: selectedProfileId,
             schedulers: schedulers,
             erxTaskCoreDataStore: ErxTaskCoreDataStore(
-                profileId: initialProfileId,
+                profileId: selectedProfileId,
                 coreDataControllerFactory: coreDataControllerFactory
             ),
+            pharmacyCoreDataStore: PharmacyCoreDataStore(coreDataControllerFactory: coreDataControllerFactory),
             profileDataStore: profileCoreDataStore,
             shipmentInfoDataStore: ShipmentInfoCoreDataStore(coreDataControllerFactory: coreDataControllerFactory),
             avsTransactionDataStore: AVSTransactionCoreDataStore(coreDataControllerFactory: coreDataControllerFactory),

@@ -24,8 +24,15 @@ struct CANCameraScanner: View {
     let store: CardWallCANDomain.Store
     @Binding var canScan: ScanCAN?
 
+    struct ViewState: Equatable {
+        let flashLightState: Bool
+        init(state: CardWallCANDomain.State) {
+            flashLightState = state.isFlashOn
+        }
+    }
+
     var body: some View {
-        WithViewStore(store) { viewStore in
+        WithViewStore(store.scope(state: ViewState.init)) { viewStore in
             ZStack(alignment: .top) {
                 VisionView(can: $canScan)
                     .edgesIgnoringSafeArea([.top, .bottom])
@@ -66,13 +73,20 @@ struct CANCameraScanner: View {
                     .padding(.bottom)
                 }
                 .padding()
-            }.navigationBarItems(leading: CloseButton {
+            }.onReceive(NotificationCenter.default
+                .publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+                    viewStore.send(.flashLightOff)
+            }
+            .navigationBarItems(leading: CloseButton {
                 viewStore.send(.setNavigation(tag: .none))
-                toggleFlashlight(status: false)
             },
             trailing: LightSwitch(store: store)
                 .accessibility(identifier: A11y.cardWall.canScanner.cdwScnBtnClose)
                 .accessibility(label: Text(L10n.cdwCanScanBtnClose)))
+            .onChange(of: viewStore.flashLightState) { state in
+                state ? UIImpactFeedbackGenerator(style: .light)
+                    .impactOccurred() : UIImpactFeedbackGenerator(style: .light).impactOccurred()
+            }
         }
     }
 }
@@ -103,9 +117,9 @@ struct LightSwitch: View {
                     toggleFlashlight(status: viewStore.isFlashOn)
                 }, label: {
                     HStack {
-                        Image(systemName: viewStore.state.isFlashOn ? SFSymbolName.lightbulb : SFSymbolName
+                        Image(systemName: !viewStore.state.isFlashOn ? SFSymbolName.lightbulb : SFSymbolName
                             .lightbulbSlash).foregroundColor(Colors.systemColorWhite)
-                        Text(viewStore.state.isFlashOn ? L10n.scnBtnLightOn : L10n.scnBtnLightOff)
+                        Text(!viewStore.state.isFlashOn ? L10n.scnBtnLightOn : L10n.scnBtnLightOff)
                             .foregroundColor(Colors.systemColorWhite)
                             .padding(.trailing)
                     }

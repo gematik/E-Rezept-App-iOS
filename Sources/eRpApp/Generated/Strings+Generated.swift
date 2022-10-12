@@ -231,7 +231,7 @@ import SwiftUI
     internal static let cdwBtnRcHelpBack = StringAsset("cdw_btn_rc_help_back")
     /// Close
     internal static let cdwBtnRcHelpClose = StringAsset("cdw_btn_rc_help_close")
-    /// https://youtu.be/5roKp2hRVKE
+    /// https://www.youtube.com/watch?v=EqY6tF7UU-c
     internal static let cdwBtnRcHelpUrl = StringAsset("cdw_btn_rc_help_url")
     /// Loading
     internal static let cdwBtnRcLoading = StringAsset("cdw_btn_rc_loading")
@@ -715,6 +715,12 @@ import SwiftUI
     internal static let erxTxtNoCurrentPrescriptions = StringAsset("erx_txt_no_current_prescriptions")
     /// You haven't redeemed any prescriptions yet
     internal static let erxTxtNotYetRedeemed = StringAsset("erx_txt_not_yet_redeemed")
+    /// Rezept erfolgreich hinzugefügt
+    internal static let erxTxtPrescriptionAddedAlertTitle = StringAsset("erx_txt_prescription_added_alert_title")
+    /// Das Rezept wurde bereits importiert.
+    internal static let erxTxtPrescriptionDuplicateAlertMessage = StringAsset("erx_txt_prescription_duplicate_alert_message")
+    /// Rezept nicht hinzugefügt
+    internal static let erxTxtPrescriptionDuplicateAlertTitle = StringAsset("erx_txt_prescription_duplicate_alert_title")
     /// Archive
     internal static let erxTxtRedeemed = StringAsset("erx_txt_redeemed")
     /// Loading ...

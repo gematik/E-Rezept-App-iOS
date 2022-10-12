@@ -123,7 +123,8 @@ struct ResetRetryCounterPinView: View {
                 SecureFieldWithReveal(
                     titleKey: L10n.stgEdtCardResetPinInputPin1,
                     text: binding.animation(),
-                    textContentType: .password
+                    textContentType: .password,
+                    backgroundColor: Colors.systemGray5
                 ) {}
                     .textContentType(.oneTimeCode)
                     .multilineTextAlignment(.leading)
@@ -146,7 +147,8 @@ struct ResetRetryCounterPinView: View {
                 SecureFieldWithReveal(
                     titleKey: L10n.stgEdtCardResetPinInputPin2,
                     text: binding.animation(),
-                    textContentType: .password
+                    textContentType: .password,
+                    backgroundColor: Colors.systemGray5
                 ) {}
                     .textContentType(.oneTimeCode)
                     .multilineTextAlignment(.leading)

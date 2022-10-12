@@ -51,6 +51,7 @@ final class ErxTaskFHIRDataStoreIntegrationTests: XCTestCase {
         guard let signer = environment.brainpool256r1Signer else {
             throw XCTSkip("Skip test because no signing entity available")
         }
+
         let schedulers = TestSchedulers(compute: DispatchQueue(label: "serial-test").eraseToAnyScheduler())
         let memStorage = MemStorage()
 

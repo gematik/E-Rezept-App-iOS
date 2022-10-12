@@ -58,6 +58,10 @@ schemes:
       region: DE
       targets:
         - IntegrationTests_iOS
+      environmentVariables:
+        - variable: APP_CONF
+          value: $(APP_CONF)
+          isEnabled: true
   StoreScreenshots_iOS:
     build:
       targets:
@@ -272,6 +276,7 @@ targets:
         product: ModelsR4
       - target: HTTPClient_${platform}
       - target: FHIRClient_${platform}
+      - target: eRpKit_${platform}
     scheme:
       testTargets:
         - PharmacyTests_${platform}

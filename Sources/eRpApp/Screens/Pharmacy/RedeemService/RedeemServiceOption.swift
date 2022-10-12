@@ -16,8 +16,8 @@
 //  
 //
 
+import eRpKit
 import Foundation
-import Pharmacy
 
 enum RedeemServiceOption {
     /// `ErxTaskRepository`  has been used before and should now be used over  `avs`

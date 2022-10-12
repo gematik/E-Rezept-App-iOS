@@ -17,6 +17,7 @@
 //
 
 import BundleKit
+import eRpKit
 import Foundation
 import ModelsR4
 import Nimble

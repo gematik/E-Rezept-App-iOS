@@ -17,11 +17,12 @@
 //
 
 import Combine
+import eRpKit
 import FHIRClient
 import Foundation
 
 /// The remote data source for any pharmacy requests
-public struct PharmacyFHIRDataSource {
+public struct PharmacyFHIRDataSource: PharmacyRemoteDataStore {
     private let fhirClient: FHIRClient
 
     /// Default initializer of `PharmacyFHIRDataSource`
@@ -36,12 +37,25 @@ public struct PharmacyFHIRDataSource {
     ///
     /// - Parameter searchTerm: String that send to the server for filtering the pharmacies response
     /// - Parameter position: Position (latitude and longitude) of pharmacy
+    /// - Parameter filter: further filter parameters for pharmacies
     /// - Returns: `AnyPublisher` that emits all `PharmacyLocation`s for the given `searchTerm`
     public func searchPharmacies(by searchTerm: String,
                                  position: Position?,
                                  filter: [String: String])
         -> AnyPublisher<[PharmacyLocation], Error> {
         fhirClient.searchPharmacies(by: searchTerm, position: position, filter: filter)
+            .mapError { Error.fhirClient($0) }
+            .eraseToAnyPublisher()
+    }
+
+    /// Convenience function for requesting a certain pharmacy by ID
+    ///
+    /// - Parameters:
+    ///   - telematikId: The Telematik-ID of the pharmacy to be requested
+    /// - Returns: `AnyPublisher` that emits the pharmacy or nil when not found
+    public func fetchPharmacy(by telematikId: String)
+        -> AnyPublisher<PharmacyLocation?, Error> {
+        fhirClient.fetchPharmacy(by: telematikId)
             .mapError { Error.fhirClient($0) }
             .eraseToAnyPublisher()
     }

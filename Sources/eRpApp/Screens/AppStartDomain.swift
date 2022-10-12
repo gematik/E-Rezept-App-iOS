@@ -136,7 +136,6 @@ enum AppStartDomain {
                 OnboardingDomain.Environment(
                     appVersion: $0.appVersion,
                     localUserStore: $0.userDataStore,
-                    profileStore: $0.userSession.profileDataStore,
                     schedulers: $0.schedulers,
                     appSecurityManager: $0.appSecurityManager,
                     authenticationChallengeProvider: $0.authenticationChallengeProvider,

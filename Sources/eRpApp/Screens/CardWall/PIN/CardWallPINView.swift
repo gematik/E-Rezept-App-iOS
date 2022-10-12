@@ -194,7 +194,8 @@ struct CardWallPINView: View {
                         titleKey: L10n.cdwEdtPinInput,
                         accessibilityLabelKey: L10n.cdwTxtPinInputLabel,
                         text: viewStore.binding(get: \.pin, send: CardWallPINDomain.Action.update(pin:)).animation(),
-                        textContentType: .password
+                        textContentType: .password,
+                        backgroundColor: Colors.systemGray5
                     ) {}
                         .textContentType(.oneTimeCode)
                         .multilineTextAlignment(.leading)

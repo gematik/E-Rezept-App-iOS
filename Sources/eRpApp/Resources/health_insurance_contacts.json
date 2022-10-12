@@ -971,7 +971,7 @@
     "name": "Mobil Krankenkasse",
     "healthCardAndPinPhone": "+498002550800",
     "healthCardAndPinMail": "",
-    "healthCardAndPinUrl": "https://mobil-krankenkasse.de/unser-service/e-rezept.html",
+    "healthCardAndPinUrl": "https://mobil-krankenkasse.de/unser-service/elektronische-gesundheitskarte/pin-puk-egk.html",
     "pinUrl": "",
     "subjectCardAndPinMail": "",
     "bodyCardAndPinMail": "",
@@ -1124,7 +1124,7 @@
   {
     "name": "vivida bkk",
     "healthCardAndPinPhone": "+49800375537555",
-    "healthCardAndPinMail": "Info@vividabkk.de",
+    "healthCardAndPinMail": "kundencenter@vividabkk.de",
     "healthCardAndPinUrl": "https://www.vividabkk.de/de/service/e-rezept-info",
     "pinUrl": "https://www.vividabkk.de/de/service/e-rezept-info",
     "subjectCardAndPinMail": "#eGKPIN# Bestellung einer NFC-fähigen Gesundheitskarte und PIN",

@@ -101,4 +101,7 @@ public protocol UserDataStore: AnyObject {
 
     /// Counter that is increased every time the app has been opened
     var appStartCounter: Int { get set }
+
+    /// Deletes all data stored in the `UserDataStore`
+    func wipeAll()
 }

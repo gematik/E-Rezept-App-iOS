@@ -120,4 +120,6 @@ class DemoUserDefaultsStore: UserDataStore {
         get { appStartCounterValue }
         set { appStartCounterValue = newValue }
     }
+
+    func wipeAll() {}
 }

@@ -1,3 +1,26 @@
+# Release 1.4.4
+
+### added (5 changes)
+
+- Add direct assignment (Direktzuweisung) to prescription details
+- Add flowType to ErxTask
+- Add sharing and importing of prescriptions
+- Add unlock eGK via PUK/custom PIN
+- Add copyright info for OpenStreetMaps to FOSS.html
+
+### fixed (3 changes)
+
+- Fix Voiceover for CANInput Field
+- Fix navigation of CardWallLoginOptionView
+- Fix linting and dependency issues for published code
+
+### internal (4 change)
+
+- Refactor CardWall to use routes
+- Add entity identifiers for prescription orders
+- Inject Schedulers into DemoSessionContainer
+- Refactor PrescriptionDetailDomain to use Routes
+
 # Release 1.4.3
 
 ### added (5 changes)

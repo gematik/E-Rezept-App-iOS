@@ -105,13 +105,15 @@ class DemoSessionContainer: UserSession {
             urlSessionConfiguration: .ephemeral,
             interceptors: interceptors
         )
-        return DefaultPharmacyRepository(
+        return DemoPharmacyRepository(
             cloud: PharmacyFHIRDataSource(
                 fhirClient: FHIRClient(
                     server: appConfiguration.apoVzd,
                     httpClient: client
                 )
-            )
+            ),
+            requestDelayInSeconds: 0.9,
+            schedulers: Schedulers()
         )
     }()
 

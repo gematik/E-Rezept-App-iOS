@@ -99,7 +99,7 @@
 "cdw_btn_rc_help" = "Help";
 "cdw_btn_rc_help_back" = "Back";
 "cdw_btn_rc_help_close" = "Close";
-"cdw_btn_rc_help_url" = "https://youtu.be/5roKp2hRVKE";
+"cdw_btn_rc_help_url" = "https://www.youtube.com/watch?v=EqY6tF7UU-c";
 "cdw_btn_rc_loading" = "Loading";
 "cdw_btn_rc_next" = "Connect card";
 "cdw_btn_rc_next_hint" = "As soon as this button is pressed, the medical card is read via NFC. To do this, hold the card directly against the device. If the connection is successful, you will receive tactile feedback. Any interruptions to the connection or errors are also communicated via tactile feedback. Communication with the medical card can take up to ten seconds. Then remove the medical card from the device.";
@@ -327,6 +327,9 @@
 "erx_txt_medication_placeholder" = "Unknown medicine";
 "erx_txt_no_current_prescriptions" = "You do not have any current prescriptions";
 "erx_txt_not_yet_redeemed" = "You haven't redeemed any prescriptions yet";
+"erx_txt_prescription_added_alert_title" = "Rezept erfolgreich hinzugefügt";
+"erx_txt_prescription_duplicate_alert_message" = "Das Rezept wurde bereits importiert.";
+"erx_txt_prescription_duplicate_alert_title" = "Rezept nicht hinzugefügt";
 "erx_txt_redeemed" = "Archive";
 "erx_txt_refresh_loading" = "Loading ...";
 "hint_btn_close" = "close";
@@ -802,9 +805,9 @@
 "pro_btn_selection_edit" = "Edit profiles";
 "pro_txt_selection_profile_not_connected" = "Not logged in";
 "pro_txt_selection_title" = "Select profile";
-"prsc_dtl_btn_share_title" = "Teilen";
 "prsc_delete_note_direct_assignment" = "Dieses Rezept wird im Rahmen einer Behandlung für Sie eingelöst und kann währenddessen nicht gelöscht werden.";
 "prsc_dtl_btn_direct_assignment" = "Direktzuweisung";
+"prsc_dtl_btn_share_title" = "Teilen";
 "prsc_dtl_hnt_gesund_bund_de_btn" = "Open gesund.bund.de";
 "prsc_dtl_hnt_gesund_bund_de_text" = "You can find professionally verified information on illnesses, ICD codes and issues to do with prevention and healthcare in the National Health Portal.";
 "prsc_fd_btn_error_banner" = "Report";

@@ -25,6 +25,15 @@ import Foundation
 // MARK: - MockUserDataStore -
 
 final class MockUserDataStore: UserDataStore {
+    var wipeAllCallsCount = 0
+    var wipeAllCalled: Bool {
+        wipeAllCallsCount > 0
+    }
+
+    func wipeAll() {
+        wipeAllCallsCount += 1
+    }
+
     // MARK: - hideOnboarding
 
     var isOnboardingHidden = false

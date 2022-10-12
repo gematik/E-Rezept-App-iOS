@@ -26,6 +26,12 @@ import XCTest
 final class UserDefaultsStoreTest: XCTestCase {
     let userDefaults = UserDefaults()
 
+    override func tearDown() {
+        let store = UserDefaultsStore(userDefaults: userDefaults)
+        store.wipeAll()
+        super.tearDown()
+    }
+
     func testShouldHideOnboarding() {
         let sut = UserDefaultsStore(userDefaults: userDefaults)
         sut.hideOnboarding.first().test(expectations: { shouldHide in
@@ -85,5 +91,22 @@ final class UserDefaultsStoreTest: XCTestCase {
         expect(count) == 3
         expect(receivedEnvironments) == [environmentName0, environmentName1, environmentName2]
         cancellable.cancel()
+    }
+
+    func testWipeAppUserDefaults() {
+        let sut = UserDefaultsStore(userDefaults: userDefaults)
+        sut.set(hideOnboarding: true)
+        sut.set(onboardingVersion: "1.0.0")
+        let profileId = UUID()
+        sut.set(selectedProfileId: profileId)
+
+        expect(self.userDefaults.shouldHideOnboarding) == true
+        expect(self.userDefaults.onboardingVersion) == "1.0.0"
+        expect(self.userDefaults.selectedProfileId) == profileId
+
+        sut.wipeAll()
+        expect(self.userDefaults.shouldHideOnboarding) == false
+        expect(self.userDefaults.onboardingVersion) == nil
+        expect(self.userDefaults.selectedProfileId) == nil
     }
 }

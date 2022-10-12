@@ -76,6 +76,8 @@ enum RegisterAuthenticationDomain {
             }
             if selectedSecurityOption == .password {
                 return hasValidPasswordEntries
+            } else if selectedSecurityOption == .biometry(.faceID) {
+                return biometrySuccessful
             } else {
                 return true
             }

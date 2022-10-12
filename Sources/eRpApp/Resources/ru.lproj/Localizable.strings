@@ -98,7 +98,7 @@
 "cdw_btn_rc_help" = "Справка";
 "cdw_btn_rc_help_back" = "Назад";
 "cdw_btn_rc_help_close" = "Закрыть";
-"cdw_btn_rc_help_url" = "https://youtu.be/5roKp2hRVKE";
+"cdw_btn_rc_help_url" = "https://www.youtube.com/watch?v=EqY6tF7UU-c";
 "cdw_btn_rc_loading" = "Загрузка";
 "cdw_btn_rc_next" = "Привязать карточку";
 "cdw_btn_rc_next_hint" = "Сразу же после нажатия этой кнопки медицинская карточка считывается через NFC. Для этого поднесите карточку непосредственно к устройству. После установления соединения вы получите тактильную обратную связь. Если соединение прерывается или возникают ошибки, об этом также сообщается с помощью тактильной обратной связи. Обмен данными с медицинской карточкой может занять до десяти секунд. Затем уберите медицинскую карточку от устройства.";
@@ -326,6 +326,9 @@
 "erx_txt_medication_placeholder" = "Неизвестный препарат";
 "erx_txt_no_current_prescriptions" = "У вас нет активных рецептов";
 "erx_txt_not_yet_redeemed" = "Вы еще не выкупили ни одного рецепта";
+"erx_txt_prescription_added_alert_title" = "Rezept erfolgreich hinzugefügt";
+"erx_txt_prescription_duplicate_alert_message" = "Das Rezept wurde bereits importiert.";
+"erx_txt_prescription_duplicate_alert_title" = "Rezept nicht hinzugefügt";
 "erx_txt_redeemed" = "Архив";
 "erx_txt_refresh_loading" = "Загрузка…";
 "hint_btn_close" = "закрыть";
@@ -801,9 +804,9 @@
 "pro_btn_selection_edit" = "Редактирование профилей";
 "pro_txt_selection_profile_not_connected" = "Вход не выполнен";
 "pro_txt_selection_title" = "Выбрать профиль";
-"prsc_dtl_btn_share_title" = "Teilen";
 "prsc_delete_note_direct_assignment" = "Dieses Rezept wird im Rahmen einer Behandlung für Sie eingelöst und kann währenddessen nicht gelöscht werden.";
 "prsc_dtl_btn_direct_assignment" = "Direktzuweisung";
+"prsc_dtl_btn_share_title" = "Teilen";
 "prsc_dtl_hnt_gesund_bund_de_btn" = "Перейти по адресу gesund.bund.de";
 "prsc_dtl_hnt_gesund_bund_de_text" = "На национальном портале здравоохранения вы найдете проверенную специалистами информацию о болезнях, кодах МКБ, профилактике и уходе за больными.";
 "prsc_fd_btn_error_banner" = "Сообщить";

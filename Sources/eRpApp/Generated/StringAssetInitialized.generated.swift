@@ -151,8 +151,8 @@ extension SectionHeaderView {
     }
 }
 extension SecureFieldWithReveal {
-    init(titleKey: StringAsset, accessibilityLabelKey: StringAsset? = nil, text: Binding<String>, textContentType: UITextContentType? = nil, onCommit: @escaping () -> Void) {
-    self.init(titleKey: titleKey.key, accessibilityLabelKey: accessibilityLabelKey?.key, text: text, textContentType: textContentType, onCommit: onCommit)
+    init(titleKey: StringAsset, accessibilityLabelKey: StringAsset? = nil, text: Binding<String>, textContentType: UITextContentType? = nil, backgroundColor: Color = Color(.systemBackground), onCommit: @escaping () -> Void) {
+    self.init(titleKey: titleKey.key, accessibilityLabelKey: accessibilityLabelKey?.key, text: text, textContentType: textContentType, backgroundColor: backgroundColor, onCommit: onCommit)
     }
 }
 extension SelectionCell {

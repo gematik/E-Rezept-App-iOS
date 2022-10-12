@@ -43,9 +43,10 @@ extension ErxTaskScannerView {
                                 toggleFlashlight(status: viewStore.isFlashOn)
                             }, label: {
                                 HStack {
-                                    Image(systemName: viewStore.state.isFlashOn ? SFSymbolName.lightbulb : SFSymbolName
+                                    Image(systemName: !viewStore.state.isFlashOn ? SFSymbolName
+                                        .lightbulb : SFSymbolName
                                         .lightbulbSlash).foregroundColor(Colors.systemColorWhite)
-                                    Text(viewStore.state.isFlashOn ? L10n.scnBtnLightOn : L10n.scnBtnLightOff)
+                                    Text(!viewStore.state.isFlashOn ? L10n.scnBtnLightOn : L10n.scnBtnLightOff)
                                         .foregroundColor(Colors.systemColorWhite)
                                 }
                             })
@@ -80,6 +81,10 @@ extension ErxTaskScannerView {
                     }
                 }.onAppear {
                     self.isImageScaled.toggle()
+                }
+                .onReceive(NotificationCenter.default
+                    .publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+                        viewStore.send(.flashLightOff)
                 }
             }
         }

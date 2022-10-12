@@ -16,7 +16,7 @@
 //  
 //
 
-import Pharmacy
+import eRpKit
 import SwiftUI
 
 struct PharmacySearchCell: View {
@@ -113,13 +113,13 @@ struct PharmacySearchCell_Previews: PreviewProvider {
         VStack {
             PharmacySearchCell(
                 pharmacy: PharmacyLocationViewModel(
-                    pharmacy: Pharmacy.PharmacyLocation.Dummies.pharmacy
+                    pharmacy: PharmacyLocation.Dummies.pharmacy
                 )
             )
 
             PharmacySearchCell(
                 pharmacy: PharmacyLocationViewModel(
-                    pharmacy: Pharmacy.PharmacyLocation.Dummies.pharmacyInactive
+                    pharmacy: PharmacyLocation.Dummies.pharmacyInactive
                 )
             )
         }

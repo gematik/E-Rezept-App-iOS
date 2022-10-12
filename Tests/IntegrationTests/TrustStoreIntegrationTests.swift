@@ -30,7 +30,7 @@ import XCTest
 /// Runs TrustStore Integration Tests.
 /// Set `APP_CONF` in runtime environment to setup the execution environment.
 final class TrustStoreIntegrationTests: XCTestCase {
-    func testCompleteFlow() {
+    func testCompleteFlow() throws {
         var environment: IntegrationTestsEnvironment!
 
         if let integrationTestsEnvironmentString = ProcessInfo.processInfo.environment["APP_CONF"],

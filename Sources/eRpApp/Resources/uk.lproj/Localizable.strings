@@ -98,7 +98,7 @@
 "cdw_btn_rc_help" = "Довідка";
 "cdw_btn_rc_help_back" = "Назад";
 "cdw_btn_rc_help_close" = "Закрити";
-"cdw_btn_rc_help_url" = "https://youtu.be/5roKp2hRVKE";
+"cdw_btn_rc_help_url" = "https://www.youtube.com/watch?v=EqY6tF7UU-c";
 "cdw_btn_rc_loading" = "Завантаження";
 "cdw_btn_rc_next" = "Підключити картку";
 "cdw_btn_rc_next_hint" = "Відразу після натискання цієї кнопки картка здоров’я зчитується через NFC. Для цього тримайте картку безпосередньо на пристрої. У разі успішного підключення ви відчуєте тактильний зворотний зв'язок. Збій підключення або помилки також повідомляються за допомогою тактильного зворотного зв’язку. Обмін даними із карткою здоров’я може тривати до десяти секунд. Потім заберіть картку здоров’я з пристрою.";
@@ -326,6 +326,9 @@
 "erx_txt_medication_placeholder" = "Невідомий препарат";
 "erx_txt_no_current_prescriptions" = "У вас немає поточних рецептів";
 "erx_txt_not_yet_redeemed" = "Ви ще не погашено жодного рецепта";
+"erx_txt_prescription_added_alert_title" = "Rezept erfolgreich hinzugefügt";
+"erx_txt_prescription_duplicate_alert_message" = "Das Rezept wurde bereits importiert.";
+"erx_txt_prescription_duplicate_alert_title" = "Rezept nicht hinzugefügt";
 "erx_txt_redeemed" = "Архів";
 "erx_txt_refresh_loading" = "Триває завантаження…";
 "hint_btn_close" = "Закрити";
@@ -801,9 +804,9 @@
 "pro_btn_selection_edit" = "Редагувати профілі";
 "pro_txt_selection_profile_not_connected" = "Не в системі";
 "pro_txt_selection_title" = "Вибрати профіль";
-"prsc_dtl_btn_share_title" = "Teilen";
 "prsc_delete_note_direct_assignment" = "Dieses Rezept wird im Rahmen einer Behandlung für Sie eingelöst und kann währenddessen nicht gelöscht werden.";
 "prsc_dtl_btn_direct_assignment" = "Direktzuweisung";
+"prsc_dtl_btn_share_title" = "Teilen";
 "prsc_dtl_hnt_gesund_bund_de_btn" = "Відкрити gesund.bund.de";
 "prsc_dtl_hnt_gesund_bund_de_text" = "На Національному порталі охорони здоров’я можна знайти фахово перевірену інформацію про хвороби, коди МКХ та питання щодо профілактики та догляду.";
 "prsc_fd_btn_error_banner" = "Повідомити про порушення";

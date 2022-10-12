@@ -139,7 +139,9 @@ final class PrescriptionDetailDomainTests: XCTestCase {
             // then
             state.isDeleting = false
             state.route = .alert(
-                PrescriptionDetailDomain.deleteFailedAlertState(L10n.dtlTxtDeleteFallbackMessage.text)
+                PrescriptionDetailDomain.deleteFailedAlertState(
+                    ErxRepositoryError.local(.notImplemented).localizedDescriptionWithErrorList
+                )
             )
         }
         store.send(.setNavigation(tag: nil)) { state in

@@ -19,9 +19,9 @@
 import AVS
 import DataKit
 @testable import eRpApp
+import eRpKit
 import Foundation
 import OpenSSL
-import Pharmacy
 
 extension Order {
     enum Fixtures {

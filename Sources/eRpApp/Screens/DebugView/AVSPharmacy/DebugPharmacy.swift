@@ -17,9 +17,9 @@
 //
 
 import DataKit
+import eRpKit
 import Foundation
 import OpenSSL
-import Pharmacy
 
 struct DebugPharmacy: Identifiable, Codable, CustomStringConvertible, Equatable, Hashable {
     var id = UUID()

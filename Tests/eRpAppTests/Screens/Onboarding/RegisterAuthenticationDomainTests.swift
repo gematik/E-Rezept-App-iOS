@@ -369,6 +369,7 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
             with: RegisterAuthenticationDomain.State(
                 availableSecurityOptions: [.biometry(.faceID)],
                 selectedSecurityOption: .biometry(.faceID),
+                biometrySuccessful: true,
                 passwordA: "",
                 passwordB: "",
                 showPasswordErrorMessage: false,

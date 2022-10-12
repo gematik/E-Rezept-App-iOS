@@ -829,6 +829,8 @@ extension MainDomain.Error: CodedError {
                 return "i-01502"
             case .importDuplicate:
                 return "i-01503"
+            case .repositoryError:
+                return "i-01504"
         }
     }
     var erpErrorCodeList: [String] {
@@ -836,6 +838,8 @@ extension MainDomain.Error: CodedError {
             case let .localStoreError(error):
                 return [erpErrorCode] + error.erpErrorCodeList
             case let .userSessionError(error):
+                return [erpErrorCode] + error.erpErrorCodeList
+            case let .repositoryError(error):
                 return [erpErrorCode] + error.erpErrorCodeList
             default:
                 return [erpErrorCode]
@@ -1013,12 +1017,16 @@ extension PharmacyFHIRDataSource.Error: CodedError {
 extension PharmacyRepositoryError: CodedError {
     var erpErrorCode: String {
         switch self {
-            case .remote:
+            case .local:
                 return "i-57101"
+            case .remote:
+                return "i-57102"
         }
     }
     var erpErrorCodeList: [String] {
         switch self {
+            case let .local(error):
+                return [erpErrorCode] + error.erpErrorCodeList
             case let .remote(error):
                 return [erpErrorCode] + error.erpErrorCodeList
         }

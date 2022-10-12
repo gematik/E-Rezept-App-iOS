@@ -141,9 +141,7 @@ enum OnboardingDomain {
     }
 
     enum Action: Equatable {
-        case saveAuthenticationAndProfile
-        case saveProfile
-        case saveProfileReceived(Result<UUID, LocalStoreError>)
+        case saveAuthentication
         case dismissOnboarding
         case setPage(index: Int)
         case registerAuthentication(action: RegisterAuthenticationDomain.Action)
@@ -154,7 +152,6 @@ enum OnboardingDomain {
     struct Environment {
         let appVersion: AppVersion
         let localUserStore: UserDataStore
-        let profileStore: ProfileDataStore
         let schedulers: Schedulers
         let appSecurityManager: AppSecurityManager
         let authenticationChallengeProvider: AuthenticationChallengeProvider
@@ -169,7 +166,7 @@ enum OnboardingDomain {
         case let .setPage(index):
             state.composition.setPage(index: index)
             return .none
-        case .saveAuthenticationAndProfile:
+        case .saveAuthentication:
             guard state.registerAuthenticationState.hasValidSelection,
                   let selectedOption = state.registerAuthenticationState.selectedSecurityOption else {
                 state.composition.setPage(.registerAuthentication)
@@ -187,33 +184,11 @@ enum OnboardingDomain {
                     return .none
                 }
                 environment.localUserStore.set(appSecurityOption: selectedOption.id)
-                return Effect(value: .saveProfile)
+                return Effect(value: .dismissOnboarding)
             } else {
                 environment.localUserStore.set(appSecurityOption: selectedOption.id)
-                return Effect(value: .saveProfile)
+                return Effect(value: .dismissOnboarding)
             }
-        case .saveProfile:
-            // On app install no profile is available, use the generated profileId for the initial profile.
-            let profile = Profile(name: L10n.onbProfileName.text, identifier: environment.userSession.profileId)
-            return environment.profileStore.save(profiles: [profile])
-                .catchToEffect()
-                .map { result in
-                    switch result {
-                    case let .success(profileId):
-                        return Action.saveProfileReceived(.success(profile.id))
-                    case let .failure(error):
-                        return Action.saveProfileReceived(.failure(error))
-                    }
-                }
-                .receive(on: environment.schedulers.main)
-                .eraseToEffect()
-
-        case let .saveProfileReceived(.success(profileId)):
-            environment.localUserStore.set(selectedProfileId: profileId)
-            return Effect(value: .dismissOnboarding)
-        case let .saveProfileReceived(.failure(error)):
-            state.alertState = AlertState(for: error)
-            return .none
         case .dismissOnboarding:
             environment.localUserStore.set(hideOnboarding: true)
             environment.localUserStore.set(onboardingVersion: environment.appVersion.productVersion)
@@ -256,7 +231,6 @@ extension OnboardingDomain {
         static let environment = Environment(
             appVersion: AppVersion.current,
             localUserStore: DummyUserSessionContainer().userSession.localUserStore,
-            profileStore: DemoProfileDataStore(),
             schedulers: Schedulers(),
             appSecurityManager: DummyAppSecurityManager(),
             authenticationChallengeProvider: BiometricsAuthenticationChallengeProvider(),

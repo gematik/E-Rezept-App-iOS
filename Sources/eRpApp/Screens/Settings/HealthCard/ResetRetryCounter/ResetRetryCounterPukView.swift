@@ -106,7 +106,8 @@ struct ResetRetryCounterPukView: View {
                         accessibilityLabelKey: L10n.stgEdtCardResetPukInputLabel,
                         text: viewStore.binding(get: \.puk, send: ResetRetryCounterDomain.Action.pukUpdatePuk)
                             .animation(),
-                        textContentType: .password
+                        textContentType: .password,
+                        backgroundColor: Colors.systemGray5
                     ) {}
                         .textContentType(.oneTimeCode)
                         .multilineTextAlignment(.leading)

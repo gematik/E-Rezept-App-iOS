@@ -68,6 +68,7 @@ enum CardWallCANDomain {
         case pinAction(action: CardWallPINDomain.Action)
         case setNavigation(tag: Route.Tag?)
         case navigateToIntro
+        case flashLightOff
     }
 
     struct Environment {
@@ -118,6 +119,9 @@ enum CardWallCANDomain {
         case .setNavigation,
              .navigateToIntro,
              .pinAction:
+            return .none
+        case .flashLightOff:
+            state.isFlashOn = false
             return .none
         }
     }

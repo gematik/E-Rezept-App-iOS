@@ -77,7 +77,7 @@ struct OnboardingContainer: View, KeyboardReadable {
                     .gesture(viewStore.isDragEnabled ? nil : DragGesture())
                     .tag(2)
 
-                    OnboardingLegalInfoView { withAnimation { viewStore.send(.saveAuthenticationAndProfile) } }
+                    OnboardingLegalInfoView { withAnimation { viewStore.send(.saveAuthentication) } }
                         .tag(3)
                 }
             }

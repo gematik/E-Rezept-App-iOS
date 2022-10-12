@@ -16,7 +16,6 @@
 //  
 //
 
-import eRpKit
 import Foundation
 import OpenSSL
 
@@ -27,6 +26,7 @@ public struct PharmacyLocation: Identifiable, Hashable, Equatable {
         id: String,
         status: Status?,
         telematikID: String,
+        created: Date = Date(),
         name: String?,
         types: [PharmacyType],
         position: Position? = nil,
@@ -39,6 +39,7 @@ public struct PharmacyLocation: Identifiable, Hashable, Equatable {
         self.id = id
         self.status = status
         self.telematikID = telematikID
+        self.created = created
         self.name = name
         self.types = types
         self.position = position
@@ -55,11 +56,13 @@ public struct PharmacyLocation: Identifiable, Hashable, Equatable {
     public var id: String
     /// LocationStatus
     /// NOTE: Is here used to indicate E-Rezept readiness
-    public let status: Status?
+    public var status: Status?
     /// Identifier of the pharmacy
-    public let telematikID: String
+    public var telematikID: String
+    /// date of local client creation
+    public let created: Date
     /// Name of pharmacy
-    public let name: String?
+    public var name: String?
     /// A pharmacy can have multiple types. In FHIR the code are e.g. "PHARM" and "OUTPHARM" and "MOBL"
     public let types: [PharmacyType]
     /// Position, i.e. Latitude and Longitude of the pharmacy's address
@@ -226,7 +229,7 @@ extension PharmacyLocation: Comparable {
 
 extension PharmacyLocation {
     /// Mode of operation / eRx-readiness status
-    public enum Status {
+    public enum Status: String, Codable {
         /// The location is operational.
         /// /// NOTE: Is here used to indicate eRx-readiness.
         case active
@@ -237,7 +240,7 @@ extension PharmacyLocation {
         case inactive
     }
 
-    public enum PharmacyType: Hashable {
+    public enum PharmacyType: String, Codable, Hashable {
         /// Pharmacy
         case pharm
 

@@ -209,9 +209,13 @@ extension MockSecureUserStore: IDPStorage {
 }
 
 class MockPharmacyRepository: PharmacyRepository {
-    func searchPharmacies(searchTerm: String,
-                          position: Position?,
-                          filter _: [PharmacyRepositoryFilter])
+    func loadCached(by telematikId: String) -> AnyPublisher<PharmacyLocation?, PharmacyRepositoryError> {
+        let result = store.first(where: { $0.telematikID == telematikId })
+        return Just(result).setFailureType(to: PharmacyRepositoryError.self).eraseToAnyPublisher()
+    }
+
+    func searchRemote(searchTerm: String, position: Position?,
+                      filter _: [PharmacyRepositoryFilter])
         -> AnyPublisher<[PharmacyLocation], PharmacyRepositoryError> {
         let filteredResult = store.filter { pharmacy in
             if !searchTerm.isEmpty,
@@ -232,6 +236,25 @@ class MockPharmacyRepository: PharmacyRepository {
             }
         }
         return Just(filteredResult).setFailureType(to: PharmacyRepositoryError.self).eraseToAnyPublisher()
+    }
+
+    func loadLocal(by telematikId: String) -> AnyPublisher<PharmacyLocation?, PharmacyRepositoryError> {
+        let result = store.first(where: { $0.telematikID == telematikId })
+        return Just(result).setFailureType(to: PharmacyRepositoryError.self).eraseToAnyPublisher()
+    }
+
+    func loadLocalAll() -> AnyPublisher<[PharmacyLocation], PharmacyRepositoryError> {
+        Just(store).setFailureType(to: PharmacyRepositoryError.self).eraseToAnyPublisher()
+    }
+
+    func save(pharmacies: [PharmacyLocation]) -> AnyPublisher<Bool, PharmacyRepositoryError> {
+        store.append(contentsOf: pharmacies.filter { !store.contains($0) })
+        return Just(true).setFailureType(to: PharmacyRepositoryError.self).eraseToAnyPublisher()
+    }
+
+    func delete(pharmacies: [PharmacyLocation]) -> AnyPublisher<Bool, PharmacyRepositoryError> {
+        store.removeAll(where: { pharmacies.contains($0) })
+        return Just(true).setFailureType(to: PharmacyRepositoryError.self).eraseToAnyPublisher()
     }
 
     var store: [PharmacyLocation] = PharmacyLocation.Dummies.pharmacies
@@ -281,7 +304,7 @@ class FakeErxTaskRepository: ErxTaskRepository {
 
     func delete(erxTasks: [ErxTask]) -> AnyPublisher<Bool, ErrorType> {
         erxTasks.forEach { task in
-            store[task.identifier] = task
+            store.removeValue(forKey: task.identifier)
         }
         return Just(true).setFailureType(to: ErrorType.self).eraseToAnyPublisher()
     }

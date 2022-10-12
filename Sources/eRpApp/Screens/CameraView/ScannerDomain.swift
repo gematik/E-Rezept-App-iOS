@@ -72,6 +72,8 @@ enum ScannerDomain {
         case alertDismissButtonTapped
         /// Toggles the flashlight
         case toggleFlashLight
+        /// set isFlashOn to false
+        case flashLightOff
     }
 
     static let domainReducer = Reducer { state, action, environment in
@@ -132,6 +134,9 @@ enum ScannerDomain {
             }
         case .toggleFlashLight:
             state.isFlashOn.toggle()
+            return .none
+        case .flashLightOff:
+            state.isFlashOn = false
             return .none
         }
     }

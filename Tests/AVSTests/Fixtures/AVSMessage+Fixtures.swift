@@ -22,7 +22,7 @@ import OpenSSL
 
 extension AVSMessage {
     enum Fixtures {
-        static let completeExample: AVSMessage = try! .init(
+        static let completeExample = AVSMessage(
             version: 2,
             supplyOptionsType: .delivery,
             name: "Dr. Maximilian von Muster",

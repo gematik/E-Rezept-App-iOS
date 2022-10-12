@@ -99,7 +99,7 @@
 "cdw_btn_rc_help" = "Hilfe";
 "cdw_btn_rc_help_back" = "Zurück";
 "cdw_btn_rc_help_close" = "Schließen";
-"cdw_btn_rc_help_url" = "https://youtu.be/5roKp2hRVKE";
+"cdw_btn_rc_help_url" = "https://www.youtube.com/watch?v=EqY6tF7UU-c";
 "cdw_btn_rc_loading" = "Lade";
 "cdw_btn_rc_next" = "Karte verbinden";
 "cdw_btn_rc_next_hint" = "Direkt nach Drücken dieses Buttons wird die Gesundheitskarte über NFC eingelesen. Halten Sie die Karte dafür direkt ans Gerät. Im Falle einer erfolgreichen Verbindung erhalten Sie haptisches Feedback. Ein Abbruch der Verbindung oder Fehler werden ebenfalls über haptisches Feedback kommuniziert. Die Kommunikation mit der Gesundheitskarte kann bis zu zehn Sekunden dauern. Entfernen Sie anschließend die Gesundheitskarte vom Gerät.";
@@ -294,7 +294,7 @@
 "dtl_txt_delete_alert_message" = "Möchten Sie dieses Rezept unwiderruflich löschen?";
 "dtl_txt_delete_alert_title" = "Dieses Rezept löschen?";
 "dtl_txt_delete_fallback_message" = "Ein unerwarteter Fehler ist aufgetreten. Bitte veruchen Sie es erneut.";
-"dtl_txt_delete_missing_token_alert_message" = "Die Verbindung zum Server wurde unterbrochen. Bitte melden Sie erneut an.";
+"dtl_txt_delete_missing_token_alert_message" = "Die Verbindung zum Server wurde unterbrochen. Bitte melden Sie sich erneut an.";
 "dtl_txt_delete_missing_token_alert_title" = "Löschen fehlgeschlagen";
 "dtl_txt_delete_no" = "Abbrechen";
 "dtl_txt_delete_yes" = "Löschen";
@@ -327,6 +327,9 @@
 "erx_txt_medication_placeholder" = "Unbekanntes Medikament";
 "erx_txt_no_current_prescriptions" = "Sie haben keine aktuellen Rezepte";
 "erx_txt_not_yet_redeemed" = "Sie haben noch keine Rezepte eingelöst";
+"erx_txt_prescription_added_alert_title" = "Rezept erfolgreich hinzugefügt";
+"erx_txt_prescription_duplicate_alert_message" = "Das Rezept wurde bereits importiert.";
+"erx_txt_prescription_duplicate_alert_title" = "Rezept nicht hinzugefügt";
 "erx_txt_redeemed" = "Archiv";
 "erx_txt_refresh_loading" = "Wird geladen …";
 "hint_btn_close" = "schließen";
@@ -802,9 +805,9 @@
 "pro_btn_selection_edit" = "Profile bearbeiten";
 "pro_txt_selection_profile_not_connected" = "Nicht angemeldet";
 "pro_txt_selection_title" = "Profil wählen";
-"prsc_dtl_btn_share_title" = "Teilen";
 "prsc_delete_note_direct_assignment" = "Dieses Rezept wird im Rahmen einer Behandlung für Sie eingelöst und kann währenddessen nicht gelöscht werden.";
 "prsc_dtl_btn_direct_assignment" = "Direktzuweisung";
+"prsc_dtl_btn_share_title" = "Teilen";
 "prsc_dtl_hnt_gesund_bund_de_btn" = "gesund.bund.de öffnen";
 "prsc_dtl_hnt_gesund_bund_de_text" = "Fachlich geprüfte Informationen zu Krankheiten, ICD-Codes und zu Vorsorge- und Pflegethemen finden Sie im Nationalen Gesundheitsportal.";
 "prsc_fd_btn_error_banner" = "Melden";

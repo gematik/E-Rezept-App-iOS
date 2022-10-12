@@ -66,6 +66,38 @@ public class ProfileCoreDataStore: ProfileDataStore, CoreDataCrudable {
             .eraseToAnyPublisher()
     }
 
+    public func hasProfile() throws -> Bool {
+        let request: NSFetchRequest<ProfileEntity> = ProfileEntity.fetchRequest()
+        let coreData = try coreDataControllerFactory.loadCoreDataController()
+        let moc = coreData.container.newBackgroundContext()
+
+        let result = try moc.count(for: request)
+        return result > 0
+    }
+
+    public func createProfile(with name: String) throws -> Profile {
+        let coreData = try coreDataControllerFactory.loadCoreDataController()
+        let moc = coreData.container.newBackgroundContext()
+
+        var saveError: Error?
+        let newProfile = Profile(name: name)
+        moc.performAndWait {
+            _ = ProfileEntity(profile: newProfile, in: moc)
+            do {
+                try moc.save()
+            } catch {
+                saveError = Error.initialization(error: error)
+            }
+            moc.reset()
+        }
+
+        if let error = saveError {
+            throw error
+        }
+
+        return newProfile
+    }
+
     public func listAllProfiles() -> AnyPublisher<[Profile], LocalStoreError> {
         let request: NSFetchRequest<ProfileEntity> = ProfileEntity.fetchRequest()
         request.sortDescriptors = [NSSortDescriptor(key: #keyPath(ProfileEntity.created), ascending: true)]

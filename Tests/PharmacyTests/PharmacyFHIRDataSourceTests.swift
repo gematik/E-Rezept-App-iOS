@@ -18,6 +18,7 @@
 
 import BundleKit
 import Combine
+import eRpKit
 import FHIRClient
 import Foundation
 import HTTPClient
@@ -46,6 +47,60 @@ final class PharmacyFHIRDataSourceTests: XCTestCase {
     override func tearDown() {
         HTTPStubs.removeAllStubs()
         super.tearDown()
+    }
+
+    func testFetchPharmacyForIdWithSuccess() {
+        let responseResource = path(for: "examplePharmacyFetchForIdResponse")
+
+        var counter = 0
+        let telematikId = "3-03.2.1010380000.10.703"
+        let parameter = "?identifier=\(telematikId)"
+        let path = "/Location"
+        stub(condition: isAbsoluteURLString(service.absoluteString + path + parameter)) { _ in
+            counter += 1
+            return fixture(filePath: responseResource, headers: ["Content-Type": "application/fhir+json"])
+        }
+
+        sut.fetchPharmacy(by: telematikId)
+            .test(failure: { error in
+                fail("Test unexpectedly failed with error: \(error)")
+            }, expectations: { pharmacy in
+                expect(counter) == 1
+                let expectedLocation = PharmacyLocation(
+                    id: "29cc8022-ed2d-4313-8d74-74196a2b1168",
+                    status: .active,
+                    telematikID: "3-03.2.1010380000.10.703",
+                    name: "Brandenburger Tor Apotheke",
+                    types: [
+                        PharmacyLocation.PharmacyType.pharm,
+                        PharmacyLocation.PharmacyType.outpharm,
+                    ],
+                    address: nil,
+                    telecom: nil,
+                    hoursOfOperation: []
+                )
+                expect(pharmacy) == expectedLocation
+            })
+    }
+
+    func testFetchPharmacyForIdWithFailure() {
+        let expectedError = URLError(.notConnectedToInternet)
+        var counter = 0
+        let telematikId = "3-03.2.1010380000.10.703"
+        let parameter = "?identifier=\(telematikId)"
+        let path = "/Location"
+        stub(condition: isAbsoluteURLString(service.absoluteString + path + parameter) && isMethodGET()) { _ in
+            counter += 1
+            return HTTPStubsResponse(error: expectedError)
+        }
+
+        sut.fetchPharmacy(by: telematikId)
+            .test(failure: { error in
+                expect(counter) == 1
+                expect(error) == .fhirClient(.httpError(.httpError(expectedError)))
+            }, expectations: { _ in
+                fail("Test should throw an error")
+            })
     }
 
     func testSearchPharmacyWithSuccess() {

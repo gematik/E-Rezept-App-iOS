@@ -99,7 +99,7 @@
 "cdw_btn_rc_help" = "Hilfe";
 "cdw_btn_rc_help_back" = "Geri";
 "cdw_btn_rc_help_close" = "Kapat";
-"cdw_btn_rc_help_url" = "https://youtu.be/5roKp2hRVKE";
+"cdw_btn_rc_help_url" = "https://www.youtube.com/watch?v=EqY6tF7UU-c";
 "cdw_btn_rc_loading" = "Yükle";
 "cdw_btn_rc_next" = "Kartı bağlayın";
 "cdw_btn_rc_next_hint" = "Bu düğmeye basıldıktan hemen sonra sağlık kartı NFC üzerinden okunur. Bunu yapmak için kartı doğrudan cihaza tutun. Bağlantı başarılı olursa dokunsal geri bildirim alacaksınız. Bağlantıda bir kesinti veya hatalar da dokunsal geri bildirim yoluyla iletilir. Sağlık kartıyla iletişim on saniye kadar sürebilir. Ardından sağlık kartını cihazdan çıkarın.";
@@ -327,6 +327,9 @@
 "erx_txt_medication_placeholder" = "Bilinmeyen ilaç";
 "erx_txt_no_current_prescriptions" = "Güncel reçeteniz yok";
 "erx_txt_not_yet_redeemed" = "Henüz herhangi bir reçete kullanmadınız";
+"erx_txt_prescription_added_alert_title" = "Rezept erfolgreich hinzugefügt";
+"erx_txt_prescription_duplicate_alert_message" = "Das Rezept wurde bereits importiert.";
+"erx_txt_prescription_duplicate_alert_title" = "Rezept nicht hinzugefügt";
 "erx_txt_redeemed" = "Arşiv";
 "erx_txt_refresh_loading" = "Yükleniyor …";
 "hint_btn_close" = "Kapat";
@@ -802,9 +805,9 @@
 "pro_btn_selection_edit" = "Profilleri düzenle";
 "pro_txt_selection_profile_not_connected" = "Oturum açılmadı";
 "pro_txt_selection_title" = "Profil seç";
-"prsc_dtl_btn_share_title" = "Teilen";
 "prsc_delete_note_direct_assignment" = "Dieses Rezept wird im Rahmen einer Behandlung für Sie eingelöst und kann währenddessen nicht gelöscht werden.";
 "prsc_dtl_btn_direct_assignment" = "Direktzuweisung";
+"prsc_dtl_btn_share_title" = "Teilen";
 "prsc_dtl_hnt_gesund_bund_de_btn" = "gesund.bund.de aç";
 "prsc_dtl_hnt_gesund_bund_de_text" = "Das Nationale Gesundheitsportal'da hastalıklar, ICD kodları ve önleme ve bakım konularında uzmanlar tarafından doğrulanmış bilgileri bulabilirsiniz.";
 "prsc_fd_btn_error_banner" = "Bildir";

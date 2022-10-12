@@ -488,7 +488,7 @@ extension Publisher where Failure == LocalStoreError, Output == Bool {
             // Create a new profile, if this deletion would result in no profile available
             .flatMap { profiles -> AnyPublisher<Bool, LocalStoreError> in
                 if profiles.count == 1 {
-                    let profile = Profile(name: "Profilname",
+                    let profile = Profile(name: L10n.onbProfileName.text,
                                           identifier: UUID(),
                                           insuranceId: nil,
                                           color: .blue,

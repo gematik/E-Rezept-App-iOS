@@ -32,13 +32,13 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        databaseFile = fileManager.temporaryDirectory.appendingPathComponent("database/\(UUID().uuidString)")
+        databaseFile = fileManager.temporaryDirectory.appendingPathComponent("testDB")
     }
 
     override func tearDown() {
-        let folderUrl = databaseFile.deletingLastPathComponent()
-        if fileManager.fileExists(atPath: folderUrl.path) {
-            expect(try self.fileManager.removeItem(at: folderUrl)).toNot(throwError())
+        // important to destory the store so that each test starts with an empty database
+        if let controller = try? coreDataFactory?.loadCoreDataController() {
+            expect(try controller.destroyPersistentStore(at: self.databaseFile)).toNot(throwError())
         }
 
         super.tearDown()

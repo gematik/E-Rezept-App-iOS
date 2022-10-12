@@ -133,6 +133,16 @@ public class UserDefaultsStore: UserDataStore {
         get { userDefaults.appStartCounter }
         set { userDefaults.appStartCounter = newValue }
     }
+
+    public func wipeAll() {
+        guard let bundleIdentifier = Bundle.main.bundleIdentifier else {
+            userDefaults.dictionaryRepresentation().keys.forEach { key in
+                userDefaults.removeObject(forKey: key)
+            }
+            return
+        }
+        userDefaults.removePersistentDomain(forName: bundleIdentifier)
+    }
 }
 
 extension UserDefaults {

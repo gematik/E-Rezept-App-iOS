@@ -75,6 +75,7 @@ class DefaultUserSessionProvider: UserSessionProvider, UserSessionProviderContro
                 profileId: uuid,
                 coreDataControllerFactory: coreDataControllerFactory
             ),
+            pharmacyCoreDataStore: PharmacyCoreDataStore(coreDataControllerFactory: coreDataControllerFactory),
             profileDataStore: profileDataStore,
             shipmentInfoDataStore: ShipmentInfoCoreDataStore(coreDataControllerFactory: coreDataControllerFactory),
             avsTransactionDataStore: AVSTransactionCoreDataStore(coreDataControllerFactory: coreDataControllerFactory),

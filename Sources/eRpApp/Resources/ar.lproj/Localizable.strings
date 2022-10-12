@@ -98,7 +98,7 @@
 "cdw_btn_rc_help" = "المساعدة";
 "cdw_btn_rc_help_back" = "تراجع";
 "cdw_btn_rc_help_close" = "إغلاق";
-"cdw_btn_rc_help_url" = "https://youtu.be/5roKp2hRVKE";
+"cdw_btn_rc_help_url" = "https://www.youtube.com/watch?v=EqY6tF7UU-c";
 "cdw_btn_rc_loading" = "تحميل";
 "cdw_btn_rc_next" = "توصيل البطاقة";
 "cdw_btn_rc_next_hint" = "بعد الضغط على هذا الزر مباشرة، تتم قراءة البطاقة الصحية عبر NFC. للقيام بذلك ضع البطاقة أمام الجهاز مباشرة. إذا كان الاتصال ناجحًا، فسوف تحصل على رد فعل لمسي. يتم أيضًا الإبلاغ عن انقطاع الاتصال أو حدوث أخطاء عبررد فعل لمسي. يمكن أن يستغرق الاتصال بالبطاقة الصحية ما يصل إلى عشر ثوانٍ. قم بعد ذلك بإزالة البطاقة الصحية من الجهاز.";
@@ -326,6 +326,9 @@
 "erx_txt_medication_placeholder" = "دواء غير معروف";
 "erx_txt_no_current_prescriptions" = "ليس لديك أي وصفات طبية في الوقت الراهن";
 "erx_txt_not_yet_redeemed" = "لم تقم بصرف أي وصفات حتى الآن";
+"erx_txt_prescription_added_alert_title" = "Rezept erfolgreich hinzugefügt";
+"erx_txt_prescription_duplicate_alert_message" = "Das Rezept wurde bereits importiert.";
+"erx_txt_prescription_duplicate_alert_title" = "Rezept nicht hinzugefügt";
 "erx_txt_redeemed" = "أرشيف";
 "erx_txt_refresh_loading" = "جاري التحميل ...";
 "hint_btn_close" = "إغلاق";
@@ -801,9 +804,9 @@
 "pro_btn_selection_edit" = "معالجة الصفحات الشخصية";
 "pro_txt_selection_profile_not_connected" = "لم يتم تسجيل الدخول";
 "pro_txt_selection_title" = "اختر الصفحة الشخصية";
-"prsc_dtl_btn_share_title" = "Teilen";
 "prsc_delete_note_direct_assignment" = "Dieses Rezept wird im Rahmen einer Behandlung für Sie eingelöst und kann währenddessen nicht gelöscht werden.";
 "prsc_dtl_btn_direct_assignment" = "Direktzuweisung";
+"prsc_dtl_btn_share_title" = "Teilen";
 "prsc_dtl_hnt_gesund_bund_de_btn" = "افتح gesund.bund.de";
 "prsc_dtl_hnt_gesund_bund_de_text" = "تجدون في البوابة الوطنية للصحة معلومات مُراجعة  تخصصيًا عن الأمراض وأكواد ICD وموضوعات الرعاية والتمريض.";
 "prsc_fd_btn_error_banner" = "الإبلاغ";

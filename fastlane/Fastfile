@@ -423,8 +423,20 @@ lane :build_ios do |options|
   end
 end
 
-desc "Test the integration of the app with external dependencies e.g. IDP/FD. Runs targets, that are excluded from"
-desc "normal CI builds."
+desc "Pre-build AllIntegrationTest scheme."
+lane :integration_tests_setup do
+  puts "Build scheme for testing."
+  scan(
+    project: "eRp-App.xcodeproj",
+    scheme: "AllIntegrationTests_iOS",
+    sdk: "iphonesimulator",
+    configuration: "Debug",
+    build_for_testing: true
+  )
+end
+
+desc "Test the integration of the app with external dependencies e.g. IDP/FD."
+desc "Runs targets, that are excluded from normal CI builds."
 lane :integration_tests do |options|
   reset_simulator_contents
 
@@ -436,41 +448,22 @@ lane :integration_tests do |options|
     app_conf = "NO_APP_CONF_INJECTED_INTO_FASTFILE_INTEGRATION_TESTS_LANE"
   end
 
-  # Build scheme for testing and output a xctestrun file.
+  # Set environment variable to be read from `Swift.ProcessInfo.processInfo.environment`
+  ENV["APP_CONF"] = "#{app_conf}"
+
+  puts "========== Run the tests for env: #{app_conf} =========="
   scan(
     project: "eRp-App.xcodeproj",
     scheme: "AllIntegrationTests_iOS",
     sdk: "iphonesimulator",
     configuration: "Debug",
-    output_xctestrun: true,
-    build_for_testing: true
-  )
-  
-  # According to the `xcodebuild` manual the previous step "will also produce an xctestrun file", but the actual output filename is undefined.
-  # Wokraround: Take the copy `settings.xctestrun` that fastlane produces and proceed with that file.
-  derived_data=lane_context[SharedValues::SCAN_DERIVED_DATA_PATH]
-  xctestrun_file = "#{derived_data}/Build/Products/Current.xctestrun" 
-  sh("cp test_output/settings.xctestrun ../#{xctestrun_file}")
-
-  # Inject the environment as variable to the test run
-  sh("/usr/libexec/PlistBuddy -c \"Delete :IntegrationTests_iOS:TestingEnvironmentVariables:APP_CONF\" ../#{xctestrun_file} || true")
-  sh("/usr/libexec/PlistBuddy -c \"Add :IntegrationTests_iOS:TestingEnvironmentVariables:APP_CONF string '#{app_conf}'\" ../#{xctestrun_file}")
-
-  # Run the tests given the modified `xctestrun` file.
-  scan(
-    project: "eRp-App.xcodeproj",
-    scheme: "AllIntegrationTests_iOS",
-    sdk: "iphonesimulator",
-    configuration: "Debug",
-    output_xctestrun: true,
-    xctestrun: xctestrun_file,
     test_without_building: true
   )
   # TODO remove(?)
   message = "Successful Integration Tests for configuration: #{app_conf}"
   notify_teams_channel(ENV["TEAMS_WEBHOOK_INT"], "Integration Tests", true, message)
 rescue => ex
-  message = "Failed Integration Tests for configuration: #{app_conf} \n\n #{ex}"
+  message = "Failed Integration Tests for configuration! #{app_conf} \n\nReason:\n\n #{ex}"
   notify_teams_channel(
     url = ENV["TEAMS_WEBHOOK_INT"],
     stream = "Integration Tests",
@@ -912,7 +905,6 @@ def notify_teams_channel(url = "no_hook", stream = "Unknown stream", success = t
   }
 
   # Send message
-  UI.message("Send notification to #{url}")
   require 'net/http'
   require 'uri'
   json_headers = { 'Content-Type' => 'application/json' }

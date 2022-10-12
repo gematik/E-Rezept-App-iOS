@@ -25,12 +25,15 @@ public enum PharmacyFHIROperation<Value, Handler: FHIRResponseHandler> where Han
     /// Search for pharmacies by name
     /// [REQ:gemSpec_eRp_FdV:A_20208]
     case searchPharmacies(searchTerm: String, position: Position?, filter: [String: String], handler: Handler)
+    /// Search for pharmacies by telematikId
+    case fetchPharmacy(telematikId: String, handler: Handler)
 }
 
 extension PharmacyFHIROperation: FHIRClientOperation {
     public func handle(response: FHIRClient.Response) throws -> Value {
         switch self {
-        case let .searchPharmacies(_, _, _, handler):
+        case let .searchPharmacies(_, _, _, handler),
+             let .fetchPharmacy(_, handler):
             return try handler.handle(response: response)
         }
     }
@@ -53,6 +56,14 @@ extension PharmacyFHIROperation: FHIRClientOperation {
             var urlComps = URLComponents(string: "Location")
             urlComps?.queryItems = queryItems
             return urlComps?.string
+        case let .fetchPharmacy(telematikId, _):
+            var components = URLComponents(string: "Location")
+            let item = URLQueryItem(
+                name: "identifier",
+                value: "\(telematikId)"
+            )
+            components?.queryItems = [item]
+            return components?.string
         }
     }
 
@@ -76,7 +87,8 @@ extension PharmacyFHIROperation: FHIRClientOperation {
 
     public var acceptFormat: FHIRAcceptFormat {
         switch self {
-        case let .searchPharmacies(_, _, _, handler):
+        case let .searchPharmacies(_, _, _, handler),
+             let .fetchPharmacy(_, handler):
             return handler.acceptFormat
         }
     }

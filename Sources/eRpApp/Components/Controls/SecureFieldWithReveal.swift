@@ -24,18 +24,21 @@ struct SecureFieldWithReveal: View {
                   accessibilityLabelKey: LocalizedStringKey? = nil,
                   text: Binding<String>,
                   textContentType: UITextContentType? = nil,
+                  backgroundColor: Color = Color(.systemBackground),
                   onCommit: @escaping () -> Void) {
         self.titleKey = titleKey
         self.accessibilityLabelKey = accessibilityLabelKey ?? titleKey
-        self.textContentType = textContentType
         _text = text
+        self.textContentType = textContentType
+        self.backgroundColor = backgroundColor
         self.onCommit = onCommit
     }
 
     let titleKey: LocalizedStringKey
     let accessibilityLabelKey: LocalizedStringKey
-    let textContentType: UITextContentType?
     @Binding var text: String
+    let textContentType: UITextContentType?
+    let backgroundColor: Color
     let onCommit: () -> Void
 
     @State var showPassword = false
@@ -44,7 +47,7 @@ struct SecureFieldWithReveal: View {
         ZStack(alignment: .trailing) {
             SecureField(titleKey, text: $text, onCommit: onCommit)
                 .font(Font.body)
-                .foregroundColor(!showPassword ? Color(.label) : Color(.systemBackground))
+                .foregroundColor(!showPassword ? Color(.label) : self.backgroundColor)
                 .accessibility(label: Text(accessibilityLabelKey))
                 .textContentType(textContentType)
 
