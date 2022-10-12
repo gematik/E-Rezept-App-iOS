@@ -133,3 +133,48 @@ extension ErxTask {
         }
     }
 }
+
+extension ErxTask.Communication: Comparable, Hashable {
+    struct Unique: Equatable, Hashable {
+        public let profile: Profile
+        public let payload: String
+        public let insuranceId: String
+        public let telematikId: String
+        public let orderId: String
+    }
+
+    public static func <(lhs: ErxTask.Communication, rhs: ErxTask.Communication) -> Bool {
+        lhs.timestamp > rhs.timestamp
+    }
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(identifier)
+    }
+}
+
+extension Collection where Element == ErxTask.Communication {
+    /// Returns a filtered result of `[ErxTask.Communication]` that are unique for there properties:
+    /// `profile`, `payload`, `insuranceId`, `telematikId`and `orderId`
+    ///  The element is also unique if the `orderId` is `nil`
+    ///
+    /// - Returns: `[ErxTask.Communication]` that are unique in there filtered properties
+    public func filterUnique()
+        -> [ErxTask.Communication] {
+        var seen = Set<ErxTask.Communication.Unique>()
+        // sort by timestamp to filter newer elements
+        let filteredResult = sorted { $0.timestamp < $1.timestamp }.filter { element in
+            guard seen.insert(
+                ErxTask.Communication.Unique(
+                    profile: element.profile,
+                    payload: element.payloadJSON,
+                    insuranceId: element.insuranceId,
+                    telematikId: element.telematikId,
+                    orderId: element.orderId ?? UUID().uuidString
+                )
+            )
+            .inserted else { return false }
+            return true
+        }
+        return filteredResult
+    }
+}

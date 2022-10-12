@@ -42,7 +42,7 @@ extension ProfileEntity {
 }
 
 extension Profile {
-    init?(entity: ProfileEntity) {
+    init?(entity: ProfileEntity, dateProvider: () -> Date) {
         guard let identifier = entity.identifier,
               let name = entity.name,
               let created = entity.created else {
@@ -59,7 +59,7 @@ extension Profile {
         if let inputTasks = entity.erxTasks {
             let mapped: [ErxTask] = inputTasks.compactMap { erxTaskEntity in
                 if let entity = erxTaskEntity as? ErxTaskEntity {
-                    return ErxTask(entity: entity)
+                    return ErxTask(entity: entity, dateProvider: dateProvider)
                 }
                 return nil
             }

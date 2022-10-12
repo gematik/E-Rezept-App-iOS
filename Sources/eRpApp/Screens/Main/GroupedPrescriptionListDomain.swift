@@ -171,7 +171,8 @@ extension GroupedPrescriptionListDomain.Environment {
             .first()
             .map { _, _ in
                 CardWallIntroductionDomain.State(
-                    isNFCReady: serviceLocator.deviceCapabilities.isNFCReady
+                    isNFCReady: serviceLocator.deviceCapabilities.isNFCReady,
+                    profileId: userSession.profileId
                 )
             }
             .eraseToAnyPublisher()

@@ -188,23 +188,63 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
             })
     }
 
-    func testRedeemOrderWithSuccess() {
+    func testRedeemShipmentOrderWithSuccess() {
         let redeemOrderResponse = load(resource: "redeemOrderResponse")
 
         var counter = 0
         stub(condition: isPath("/Communication")
             && isMethodPOST()
-            && hasBody(expectedRequestBody)) { _ in
+            && hasBody(expectedShipmentRequestBody)) { _ in
                 counter += 1
                 return fixture(filePath: redeemOrderResponse, headers: ["Content-Type": "application/json"])
         }
 
-        sut.redeem(order: inputOrder)
+        sut.redeem(order: shipmentOrder)
             .test { error in
                 fail("unexpected fail with error: \(error)")
             } expectations: { order in
                 expect(counter) == 1
-                expect(order).to(equal(self.inputOrder))
+                expect(order).to(equal(self.shipmentOrder))
+            }
+    }
+
+    func testRedeemDeliveryOrderWithSuccess() {
+        let redeemOrderResponse = load(resource: "redeemOrderResponse")
+
+        var counter = 0
+        stub(condition: isPath("/Communication")
+            && isMethodPOST()
+            && hasBody(expectedDeliveryRequestBody)) { _ in
+                counter += 1
+                return fixture(filePath: redeemOrderResponse, headers: ["Content-Type": "application/json"])
+        }
+
+        sut.redeem(order: deliveryOrder)
+            .test { error in
+                fail("unexpected fail with error: \(error)")
+            } expectations: { order in
+                expect(counter) == 1
+                expect(order).to(equal(self.deliveryOrder))
+            }
+    }
+
+    func testRedeemOnPremiseOrderWithSuccess() {
+        let redeemOrderResponse = load(resource: "redeemOrderResponse")
+
+        var counter = 0
+        stub(condition: isPath("/Communication")
+            && isMethodPOST()
+            && hasBody(expectedOnPremiseRequestBody)) { _ in
+                counter += 1
+                return fixture(filePath: redeemOrderResponse, headers: ["Content-Type": "application/json"])
+        }
+
+        sut.redeem(order: onPremiseOrder)
+            .test { error in
+                fail("unexpected fail with error: \(error)")
+            } expectations: { order in
+                expect(counter) == 1
+                expect(order).to(equal(self.onPremiseOrder))
             }
     }
 
@@ -214,12 +254,12 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
         var counter = 0
         stub(condition: isPath("/Communication")
             && isMethodPOST()
-            && hasBody(expectedRequestBody)) { _ in
+            && hasBody(expectedShipmentRequestBody)) { _ in
                 counter += 1
                 return HTTPStubsResponse(error: expectedError)
         }
 
-        sut.redeem(order: inputOrder)
+        sut.redeem(order: shipmentOrder)
             .test { error in
                 expect(counter) == 1
                 expect(error) == .fhirClientError(FHIRClient.Error.httpError(.httpError(expectedError)))
@@ -314,7 +354,7 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
             }
     }
 
-    private var inputOrder: ErxTaskOrder = {
+    private var shipmentOrder: ErxTaskOrder = {
         let payload = ErxTaskOrder.Payload(supplyOptionsType: .shipment,
                                            name: "Graf Dracula",
                                            address: ["Schloss Bran",
@@ -330,10 +370,54 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
                             payload: payload)
     }()
 
+    private var deliveryOrder: ErxTaskOrder = {
+        let payload = ErxTaskOrder.Payload(supplyOptionsType: .delivery,
+                                           name: "Graf Dracula",
+                                           address: ["Schloss Bran",
+                                                     "Strada General Traian Moșoiu 24",
+                                                     "Bran 507025",
+                                                     "Rumänien"],
+                                           hint: "Nur bei Tageslicht liefern!",
+                                           phone: "666 999 666")
+        return ErxTaskOrder(identifier: "d58894dd-c93c-4841-b6f6-4ac4cda4922f",
+                            erxTaskId: "39c67d5b-1df3-11b2-80b4-783a425d8e87",
+                            accessCode: "777bea0e13cc9c42ceec14aec3ddee2263325dc2c6c699db115f58fe423607ea",
+                            pharmacyTelematikId: "606358757",
+                            payload: payload)
+    }()
+
+    private var onPremiseOrder: ErxTaskOrder = {
+        let payload = ErxTaskOrder.Payload(supplyOptionsType: .onPremise,
+                                           name: "Graf Dracula",
+                                           address: ["Schloss Bran",
+                                                     "Strada General Traian Moșoiu 24",
+                                                     "Bran 507025",
+                                                     "Rumänien"],
+                                           hint: "Nur bei Tageslicht liefern!",
+                                           phone: "666 999 666")
+        return ErxTaskOrder(identifier: "d58894dd-c93c-4841-b6f6-4ac4cda4922f",
+                            erxTaskId: "39c67d5b-1df3-11b2-80b4-783a425d8e87",
+                            accessCode: "777bea0e13cc9c42ceec14aec3ddee2263325dc2c6c699db115f58fe423607ea",
+                            pharmacyTelematikId: "606358757",
+                            payload: payload)
+    }()
+
     // swiftlint:disable line_length
-    private var expectedRequestBody: Data = {
+    private var expectedShipmentRequestBody: Data = {
         String(
             "{\"status\":\"unknown\",\"basedOn\":[{\"reference\":\"Task\\/39c67d5b-1df3-11b2-80b4-783a425d8e87\\/$accept?ac=777bea0e13cc9c42ceec14aec3ddee2263325dc2c6c699db115f58fe423607ea\"}],\"payload\":[{\"contentString\":\"{\\\"address\\\":[\\\"Schloss Bran\\\",\\\"Strada General Traian Moșoiu 24\\\",\\\"Bran 507025\\\",\\\"Rumänien\\\"],\\\"phone\\\":\\\"666 999 666\\\",\\\"supplyOptionsType\\\":\\\"shipment\\\",\\\"hint\\\":\\\"Nur bei Tageslicht liefern!\\\",\\\"name\\\":\\\"Graf Dracula\\\",\\\"version\\\":\\\"1\\\"}\"}],\"meta\":{\"profile\":[\"https:\\/\\/gematik.de\\/fhir\\/StructureDefinition\\/ErxCommunicationDispReq\"]},\"recipient\":[{\"identifier\":{\"system\":\"https:\\/\\/gematik.de\\/fhir\\/NamingSystem\\/TelematikID\",\"value\":\"606358757\"}}],\"identifier\":[{\"system\":\"https:\\/\\/gematik.de\\/fhir\\/NamingSystem\\/OrderID\",\"value\":\"d58894dd-c93c-4841-b6f6-4ac4cda4922f\"}],\"resourceType\":\"Communication\"}"
+        ).data(using: .utf8)!
+    }()
+
+    private var expectedDeliveryRequestBody: Data = {
+        String(
+            "{\"status\":\"unknown\",\"basedOn\":[{\"reference\":\"Task\\/39c67d5b-1df3-11b2-80b4-783a425d8e87\\/$accept?ac=777bea0e13cc9c42ceec14aec3ddee2263325dc2c6c699db115f58fe423607ea\"}],\"payload\":[{\"contentString\":\"{\\\"address\\\":[\\\"Schloss Bran\\\",\\\"Strada General Traian Moșoiu 24\\\",\\\"Bran 507025\\\",\\\"Rumänien\\\"],\\\"phone\\\":\\\"666 999 666\\\",\\\"supplyOptionsType\\\":\\\"delivery\\\",\\\"hint\\\":\\\"Nur bei Tageslicht liefern!\\\",\\\"name\\\":\\\"Graf Dracula\\\",\\\"version\\\":\\\"1\\\"}\"}],\"meta\":{\"profile\":[\"https:\\/\\/gematik.de\\/fhir\\/StructureDefinition\\/ErxCommunicationDispReq\"]},\"recipient\":[{\"identifier\":{\"system\":\"https:\\/\\/gematik.de\\/fhir\\/NamingSystem\\/TelematikID\",\"value\":\"606358757\"}}],\"identifier\":[{\"system\":\"https:\\/\\/gematik.de\\/fhir\\/NamingSystem\\/OrderID\",\"value\":\"d58894dd-c93c-4841-b6f6-4ac4cda4922f\"}],\"resourceType\":\"Communication\"}"
+        ).data(using: .utf8)!
+    }()
+
+    private var expectedOnPremiseRequestBody: Data = {
+        String(
+            "{\"status\":\"unknown\",\"basedOn\":[{\"reference\":\"Task\\/39c67d5b-1df3-11b2-80b4-783a425d8e87\\/$accept?ac=777bea0e13cc9c42ceec14aec3ddee2263325dc2c6c699db115f58fe423607ea\"}],\"payload\":[{\"contentString\":\"{\\\"address\\\":[\\\"Schloss Bran\\\",\\\"Strada General Traian Moșoiu 24\\\",\\\"Bran 507025\\\",\\\"Rumänien\\\"],\\\"phone\\\":\\\"666 999 666\\\",\\\"supplyOptionsType\\\":\\\"onPremise\\\",\\\"hint\\\":\\\"Nur bei Tageslicht liefern!\\\",\\\"name\\\":\\\"Graf Dracula\\\",\\\"version\\\":\\\"1\\\"}\"}],\"meta\":{\"profile\":[\"https:\\/\\/gematik.de\\/fhir\\/StructureDefinition\\/ErxCommunicationDispReq\"]},\"recipient\":[{\"identifier\":{\"system\":\"https:\\/\\/gematik.de\\/fhir\\/NamingSystem\\/TelematikID\",\"value\":\"606358757\"}}],\"identifier\":[{\"system\":\"https:\\/\\/gematik.de\\/fhir\\/NamingSystem\\/OrderID\",\"value\":\"d58894dd-c93c-4841-b6f6-4ac4cda4922f\"}],\"resourceType\":\"Communication\"}"
         ).data(using: .utf8)!
     }()
 

@@ -21,3 +21,5 @@ import Foundation
 
 @objc(AVSTransactionEntity)
 public class AVSTransactionEntity: NSManagedObject {}
+
+extension AVSTransactionEntity: Identifiable {}

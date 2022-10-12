@@ -21,3 +21,5 @@ import Foundation
 
 @objc(ErxTaskCommunicationEntity)
 public class ErxTaskCommunicationEntity: NSManagedObject {}
+
+extension ErxTaskCommunicationEntity: Identifiable {}

@@ -141,17 +141,6 @@ internal enum A11y {
       static let erxHntShowCardWall = "erx_hnt_show_card_wall"
       static let erxHntUnreadMessages = "erx_hnt_unread_messages"
   }
-    internal enum messages { 
-    internal enum list {
-      static let msgsTxtEmptyList = "msgs_txt_empty_list"
-      static let msgsTxtTitle = "msgs_txt_title"
-  }
-    internal enum pickupCode {
-      static let pucTxtTitle = "puc_txt_title"
-      static let pucTxtSubtitle = "puc_txt_subtitle"
-      static let pucTxtHrCode = "puc_txt_hrCode"
-  }
-    }
     internal enum migration {
       static let amgTxtAndSpinner = "amg_txt_and_spinner"
   }
@@ -197,6 +186,22 @@ internal enum A11y {
       static let onbImgFrau1 = "onb_img_frau1"
   }
     }
+    internal enum orderDetail { 
+    internal enum list {
+      static let ordDetailTitle = "ord_detail_title"
+      static let ordDetailTxtMsgList = "ord_detail_txt_msg_list"
+      static let ordDetailTxtMedList = "ord_detail_txt_med_list"
+      static let ordDetailBtnContact = "ord_detail_btn_contact"
+      static let ordDetailBtnContactMap = "ord_detail_btn_contact_map"
+      static let ordDetailBtnContactPhone = "ord_detail_btn_contact_phone"
+      static let ordDetailBtnContactEmail = "ord_detail_btn_contact_email"
+  }
+    internal enum pickupCode {
+      static let pucTxtTitle = "puc_txt_title"
+      static let pucTxtSubtitle = "puc_txt_subtitle"
+      static let pucTxtHrCode = "puc_txt_hrCode"
+  }
+    }
     internal enum orderEGK {
       static let ogkTxtHeadline = "ogk_txt_headline"
       static let ogkBtnCancel = "ogk_btn_cancel"
@@ -209,6 +214,13 @@ internal enum A11y {
       static let ogkTxtServiceSelectionHeader = "ogk_txt_service_selection_header"
       static let ogkTxtContactCompanyHeader = "ogk_txt_contact_company_header"
   }
+    internal enum orders { 
+    internal enum list {
+      static let ordTxtEmptyList = "ord_txt_empty_list"
+      static let ordTxtList = "ord_txt_list"
+      static let ordTxtTitle = "ord_txt_title"
+  }
+    }
     internal enum pharmacyContact {
       static let phaContactAddressName = "pha_contact_address_name"
       static let phaContactAddressStreet = "pha_contact_address_street"
@@ -349,10 +361,14 @@ internal enum A11y {
       static let stgTxtCardResetIntroUnlockCard = "stg_txt_card_reset_intro_unlock_card"
       static let stgTxtCardResetIntroCustomPin = "stg_txt_card_reset_intro_custom_pin"
       static let stgTxtCardResetIntroNeedYourCard = "stg_txt_card_reset_intro_need_your_card"
+      static let stgTxtCardResetIntroNeedYourCardsPin = "stg_txt_card_reset_intro_need_your_cards_pin"
       static let stgTxtCardResetIntroNeedYourCardsPuk = "stg_txt_card_reset_intro_need_your_cards_puk"
       static let stgTxtCardResetPukHeadline = "stg_txt_card_reset_puk_headline"
       static let stgTxtCardResetPukHint = "stg_txt_card_reset_puk_hint"
       static let stgEdtCardResetPukInput = "stg_edt_card_reset_puk_input"
+      static let stgTxtCardResetOldpinHeadline = "stg_txt_card_reset_oldpin_headline"
+      static let stgTxtCardResetOldpinHint = "stg_txt_card_reset_oldpin_hint"
+      static let stgEdtCardResetOldpinInput = "stg_edt_card_reset_oldpin_input"
       static let stgTxtCardResetPinHeadline = "stg_txt_card_reset_pin_headline"
       static let stgTxtCardResetPinHint = "stg_txt_card_reset_pin_hint"
       static let stgTxtCardResetPinHintMessage = "stg_txt_card_reset_pin_hint_message"

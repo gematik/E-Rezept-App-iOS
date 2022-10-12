@@ -3,8 +3,6 @@
 import Combine
 import eRpKit
 import Foundation
-import HealthCardAccess
-import HealthCardControl
 import IDP
 import OpenSSL
 import Pharmacy

@@ -17,8 +17,6 @@
 //
 
 import Combine
-import HealthCardAccess
-import HealthCardControl
 import IDP
 
 extension Publisher where Self.Output == IDPExchangeToken, Failure == IDPError {

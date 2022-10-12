@@ -39,6 +39,7 @@ final class CardWallIntroductionDomainTests: XCTestCase {
                   reducer: CardWallIntroductionDomain.domainReducer,
                   environment: CardWallIntroductionDomain.Environment(
                       userSession: MockUserSession(),
+                      userSessionProvider: DummyUserSessionProvider(),
                       sessionProvider: DummyProfileBasedSessionProvider(),
                       schedulers: schedulers,
                       signatureProvider: DummySecureEnclaveSignatureProvider(),
@@ -72,16 +73,6 @@ final class CardWallIntroductionDomainTests: XCTestCase {
 
         // when
         store.send(.canAction(action: .close))
-        uiScheduler.run()
-        // then
-        store.receive(.close)
-    }
-
-    func testPinCloseActionShouldBeForwarded() {
-        let store = testStore()
-
-        // when
-        store.send(.pinAction(action: .close))
         uiScheduler.run()
         // then
         store.receive(.close)

@@ -26,6 +26,7 @@ public class ProfileCoreDataStore: ProfileDataStore, CoreDataCrudable {
     let coreDataControllerFactory: CoreDataControllerFactory
     let foregroundQueue: AnySchedulerOf<DispatchQueue>
     let backgroundQueue: AnySchedulerOf<DispatchQueue>
+    let dateProvider: () -> Date
 
     /// Initialize a Profile Core Data Store
     /// - Parameters:
@@ -38,11 +39,13 @@ public class ProfileCoreDataStore: ProfileDataStore, CoreDataCrudable {
         coreDataControllerFactory: CoreDataControllerFactory,
         foregroundQueue: AnySchedulerOf<DispatchQueue> = AnyScheduler.main,
         backgroundQueue: AnySchedulerOf<DispatchQueue> = DispatchQueue(label: "profile-queue", qos: .userInitiated)
-            .eraseToAnyScheduler()
+            .eraseToAnyScheduler(),
+        dateProvider: @escaping () -> Date = { Date() }
     ) {
         self.coreDataControllerFactory = coreDataControllerFactory
         self.foregroundQueue = foregroundQueue
         self.backgroundQueue = backgroundQueue
+        self.dateProvider = dateProvider
     }
 
     public func fetchProfile(by identifier: Profile.ID)
@@ -61,7 +64,7 @@ public class ProfileCoreDataStore: ProfileDataStore, CoreDataCrudable {
                 if results.count > 1 {
                     assertionFailure("error: there should always be just one profile per id in store")
                 }
-                return Profile(entity: profileEntity)
+                return Profile(entity: profileEntity, dateProvider: self.dateProvider)
             }
             .eraseToAnyPublisher()
     }
@@ -103,7 +106,7 @@ public class ProfileCoreDataStore: ProfileDataStore, CoreDataCrudable {
         request.sortDescriptors = [NSSortDescriptor(key: #keyPath(ProfileEntity.created), ascending: true)]
 
         return fetch(request)
-            .map { list in list.compactMap(Profile.init) }
+            .map { list in list.compactMap { Profile(entity: $0, dateProvider: self.dateProvider) } }
             .eraseToAnyPublisher()
     }
 
@@ -147,7 +150,7 @@ public class ProfileCoreDataStore: ProfileDataStore, CoreDataCrudable {
             )
 
             if let profileEntity = try? moc.fetch(request).first,
-               var profile = Profile(entity: profileEntity) {
+               var profile = Profile(entity: profileEntity, dateProvider: self.dateProvider) {
                 mutating(&profile)
                 profileEntity.name = profile.name
                 profileEntity.insuranceId = profile.insuranceId

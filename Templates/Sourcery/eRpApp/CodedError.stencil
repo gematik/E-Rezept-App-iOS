@@ -7,8 +7,6 @@ import eRpLocalStorage
 import eRpRemoteStorage
 import FHIRClient
 import Foundation
-import HealthCardAccess
-import HealthCardControl
 import HTTPClient
 import IDP
 import ModelsR4

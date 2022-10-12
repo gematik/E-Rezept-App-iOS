@@ -1,3 +1,29 @@
+# Release 1.4.5
+
+### added (4 changes)
+
+- Add setting custom PIN via command ChangeReferenceData (without PUK)
+- Add temporary status feedback after redeeming (via TI and via AVS)
+- Add custom alert messages for nfc tag connection issues
+- Add alert when custom PIN is too long
+
+### fixed (2 changes)
+
+- Fix TransitionMode for CardWallLoginView
+- Fix that CANView now displays the saved CAN
+
+### changed (3 changes)
+
+- Change messages are now grouped into orders with a corresponding timeline
+- Change UI for order and subviews
+- Change redeeming to only work on task of status `ready`
+
+### internal (3 change)
+
+- Update OHCKit dependency
+- Add integration test for redeeming via TI
+- Fix integration tests
+
 # Release 1.4.4
 
 ### added (5 changes)

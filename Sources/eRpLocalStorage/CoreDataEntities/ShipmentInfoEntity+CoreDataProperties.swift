@@ -24,15 +24,13 @@ extension ShipmentInfoEntity {
         NSFetchRequest<ShipmentInfoEntity>(entityName: "ShipmentInfoEntity")
     }
 
-    @NSManaged public var name: String?
-    @NSManaged public var street: String?
     @NSManaged public var addressDetail: String?
-    @NSManaged public var phone: String?
-    @NSManaged public var identifier: UUID?
-    @NSManaged public var zip: String?
     @NSManaged public var city: String?
-    @NSManaged public var mail: String?
     @NSManaged public var deliveryInfo: String?
+    @NSManaged public var identifier: UUID?
+    @NSManaged public var mail: String?
+    @NSManaged public var name: String?
+    @NSManaged public var phone: String?
+    @NSManaged public var street: String?
+    @NSManaged public var zip: String?
 }
-
-extension ShipmentInfoEntity: Identifiable {}

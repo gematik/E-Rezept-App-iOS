@@ -81,14 +81,14 @@ enum RedeemDomain {
             )
         case .openRedeemMatrixCodeView:
             state.redeemMatrixCodeState =
-                RedeemMatrixCodeDomain.State(groupedPrescription: state.groupedPrescription)
+                RedeemMatrixCodeDomain.State(erxTasks: state.groupedPrescription.redeemablePrescriptions.map(\.erxTask))
             return .none
         case .redeemMatrixCodeAction(action:):
             return .none
         // Pharmacy Search
         case .openPharmacySearchView:
             state.pharmacySearchState = PharmacySearchDomain.State(
-                erxTasks: state.groupedPrescription.prescriptions.map(\.erxTask)
+                erxTasks: state.groupedPrescription.redeemablePrescriptions.map(\.erxTask)
             )
             return .none
         case .dismissPharmacySearchView:

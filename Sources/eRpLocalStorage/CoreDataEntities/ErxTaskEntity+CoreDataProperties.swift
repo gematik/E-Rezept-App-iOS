@@ -24,32 +24,33 @@ extension ErxTaskEntity {
         NSFetchRequest<ErxTaskEntity>(entityName: "ErxTaskEntity")
     }
 
+    @NSManaged public var acceptedUntil: String?
     @NSManaged public var accessCode: String?
-    @NSManaged public var status: String?
-    @NSManaged public var flowType: String?
     @NSManaged public var author: String?
     @NSManaged public var authoredOn: String?
-    @NSManaged public var lastModified: String?
     @NSManaged public var dispenseValidityEnd: String?
     @NSManaged public var expiresOn: String?
-    @NSManaged public var acceptedUntil: String?
+    @NSManaged public var flowType: String?
     @NSManaged public var form: String?
     @NSManaged public var fullUrl: String?
     @NSManaged public var identifier: String?
+    @NSManaged public var lastModified: String?
     @NSManaged public var noctuFeeWaiver: Bool
     @NSManaged public var prescriptionId: String?
     @NSManaged public var redeemedOn: String?
     @NSManaged public var source: String?
+    @NSManaged public var status: String?
     @NSManaged public var substitutionAllowed: Bool
     @NSManaged public var auditEvents: NSSet?
+    @NSManaged public var avsTransaction: NSSet?
     @NSManaged public var communications: NSSet?
-    @NSManaged public var medicationDispenses: NSSet?
     @NSManaged public var medication: ErxTaskMedicationEntity?
+    @NSManaged public var medicationDispenses: NSSet?
     @NSManaged public var organization: ErxTaskOrganizationEntity?
     @NSManaged public var patient: ErxTaskPatientEntity?
     @NSManaged public var practitioner: ErxTaskPractitionerEntity?
-    @NSManaged public var workRelatedAccident: ErxTaskWorkRelatedAccidentEntity?
     @NSManaged public var profile: ProfileEntity?
+    @NSManaged public var workRelatedAccident: ErxTaskWorkRelatedAccidentEntity?
 }
 
 // MARK: Generated accessors for auditEvents
@@ -66,6 +67,22 @@ extension ErxTaskEntity {
 
     @objc(removeAuditEvents:)
     @NSManaged public func removeFromAuditEvents(_ values: NSSet)
+}
+
+// MARK: Generated accessors for avsTransaction
+
+extension ErxTaskEntity {
+    @objc(addAvsTransactionObject:)
+    @NSManaged public func addToAvsTransaction(_ value: AVSTransactionEntity)
+
+    @objc(removeAvsTransactionObject:)
+    @NSManaged public func removeFromAvsTransaction(_ value: AVSTransactionEntity)
+
+    @objc(addAvsTransaction:)
+    @NSManaged public func addToAvsTransaction(_ values: NSSet)
+
+    @objc(removeAvsTransaction:)
+    @NSManaged public func removeFromAvsTransaction(_ values: NSSet)
 }
 
 // MARK: Generated accessors for communications
@@ -99,5 +116,3 @@ extension ErxTaskEntity {
     @objc(removeMedicationDispenses:)
     @NSManaged public func removeFromMedicationDispenses(_ values: NSSet)
 }
-
-extension ErxTaskEntity: Identifiable {}

@@ -169,6 +169,7 @@ class PharmacyRedeemDomainTests: XCTestCase {
                 expect(order?.name) == expectedShipmentInfo.name
                 expect(order?.address) == Address(
                     street: expectedShipmentInfo.street,
+                    detail: expectedShipmentInfo.addressDetail,
                     zip: expectedShipmentInfo.zip,
                     city: expectedShipmentInfo.city
                 )
@@ -195,6 +196,7 @@ class PharmacyRedeemDomainTests: XCTestCase {
                 expect(response?.requested.name) == expectedShipmentInfo.name
                 expect(response?.requested.address) == Address(
                     street: expectedShipmentInfo.street,
+                    detail: expectedShipmentInfo.addressDetail,
                     zip: expectedShipmentInfo.zip,
                     city: expectedShipmentInfo.city
                 )

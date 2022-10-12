@@ -28,20 +28,24 @@ enum SettingsDomain {
     typealias Reducer = ComposableArchitecture.Reducer<State, Action, Environment>
 
     enum Route: Equatable {
-        case healthCardResetCounterNoNewSecret(ResetRetryCounterDomain.State)
-        case healthCardResetCounterWithNewSecret(ResetRetryCounterDomain.State)
+        case healthCardPasswordUnlockCard(HealthCardPasswordDomain.State)
+        case healthCardPasswordForgotPin(HealthCardPasswordDomain.State)
+        case healthCardPasswordSetCustomPin(HealthCardPasswordDomain.State)
 
         enum Tag: Int {
-            case healthCardResetCounterNoNewSecret
-            case healthCardResetCounterWithNewSecret
+            case healthCardPasswordUnlockCard
+            case healthCardPasswordForgotPin
+            case healthCardPasswordSetCustomPin
         }
 
         var tag: Tag {
             switch self {
-            case .healthCardResetCounterNoNewSecret:
-                return .healthCardResetCounterNoNewSecret
-            case .healthCardResetCounterWithNewSecret:
-                return .healthCardResetCounterWithNewSecret
+            case .healthCardPasswordUnlockCard:
+                return .healthCardPasswordUnlockCard
+            case .healthCardPasswordForgotPin:
+                return .healthCardPasswordForgotPin
+            case .healthCardPasswordSetCustomPin:
+                return .healthCardPasswordSetCustomPin
             }
         }
     }
@@ -56,7 +60,7 @@ enum SettingsDomain {
     private static func cleanupSubDomains<T>() -> Effect<T, Never> {
         .concatenate(
             ProfilesDomain.cleanup(),
-            ResetRetryCounterDomain.cleanup()
+            HealthCardPasswordDomain.cleanup()
         )
     }
 
@@ -99,8 +103,9 @@ enum SettingsDomain {
         case toggleOrderHealthCardView(Bool)
         case appSecurity(action: AppSecurityDomain.Action)
         case profiles(action: ProfilesDomain.Action)
-        case healthCardResetCounterNoNewSecret(action: ResetRetryCounterDomain.Action)
-        case healthCardResetCounterWithNewSecret(action: ResetRetryCounterDomain.Action)
+        case healthCardPasswordUnlockCard(action: HealthCardPasswordDomain.Action)
+        case healthCardPasswordForgotPin(action: HealthCardPasswordDomain.Action)
+        case healthCardPasswordSetCustomPin(action: HealthCardPasswordDomain.Action)
         case popToRootView
 
         case setNavigation(tag: Route.Tag?)
@@ -111,7 +116,7 @@ enum SettingsDomain {
         let schedulers: Schedulers
         let tracker: Tracker
         let signatureProvider: SecureEnclaveSignatureProvider
-        let nfcResetRetryCounterController: NFCResetRetryCounterController
+        let nfcHealthCardPasswordController: NFCHealthCardPasswordController
         let appSecurityManager: AppSecurityManager
         let router: Routing
         let userSessionProvider: UserSessionProvider
@@ -188,20 +193,25 @@ enum SettingsDomain {
         case .appSecurity,
              .profiles:
             return .none
-        case .healthCardResetCounterNoNewSecret(.readCard(.navigateToSettings)),
-             .healthCardResetCounterWithNewSecret(.readCard(.navigateToSettings)):
+        case .healthCardPasswordUnlockCard(.readCard(.navigateToSettings)),
+             .healthCardPasswordForgotPin(.readCard(.navigateToSettings)),
+             .healthCardPasswordSetCustomPin(.readCard(.navigateToSettings)):
             state.route = nil
             return cleanupSubDomains()
 
-        case .healthCardResetCounterNoNewSecret,
-             .healthCardResetCounterWithNewSecret:
+        case .healthCardPasswordUnlockCard,
+             .healthCardPasswordForgotPin,
+             .healthCardPasswordSetCustomPin:
             return .none
 
-        case .setNavigation(tag: .healthCardResetCounterNoNewSecret):
-            state.route = .healthCardResetCounterNoNewSecret(.init(withNewPin: false))
+        case .setNavigation(tag: .healthCardPasswordUnlockCard):
+            state.route = .healthCardPasswordUnlockCard(.init(withNewPin: false))
             return .none
-        case .setNavigation(tag: .healthCardResetCounterWithNewSecret):
-            state.route = .healthCardResetCounterWithNewSecret(.init(withNewPin: true))
+        case .setNavigation(tag: .healthCardPasswordForgotPin):
+            state.route = .healthCardPasswordForgotPin(.init(withNewPin: true))
+            return .none
+        case .setNavigation(tag: .healthCardPasswordSetCustomPin):
+            state.route = .healthCardPasswordSetCustomPin(.init(withNewPin: true))
             return .none
         case .setNavigation(tag: nil):
             state.route = nil
@@ -232,8 +242,8 @@ enum SettingsDomain {
     static let reducer: Reducer = .combine(
         appSecurityPullbackReducer,
         profilesPullbackReducer,
-        healthCardResetPinCounterNoNewSecretPullbackReducer,
-        healthCardResetPinCounterWithNewSecretPullbackReducer,
+        healthCardPasswordUnlockCardPullbackReducer,
+        healthCardPasswordSetCustomPinPullbackReducer,
         domainReducer
     )
 
@@ -274,26 +284,26 @@ enum SettingsDomain {
         }
 
     // swiftlint:disable:next identifier_name
-    private static let healthCardResetPinCounterNoNewSecretPullbackReducer: Reducer =
-        ResetRetryCounterDomain.reducer._pullback(
-            state: (\State.route).appending(path: /Route.healthCardResetCounterNoNewSecret),
-            action: /SettingsDomain.Action.healthCardResetCounterNoNewSecret(action:)
+    private static let healthCardPasswordUnlockCardPullbackReducer: Reducer =
+        HealthCardPasswordDomain.reducer._pullback(
+            state: (\State.route).appending(path: /Route.healthCardPasswordUnlockCard),
+            action: /SettingsDomain.Action.healthCardPasswordUnlockCard(action:)
         ) {
             .init(
                 schedulers: $0.schedulers,
-                nfcSessionController: $0.nfcResetRetryCounterController
+                nfcSessionController: $0.nfcHealthCardPasswordController
             )
         }
 
     // swiftlint:disable:next identifier_name
-    private static let healthCardResetPinCounterWithNewSecretPullbackReducer: Reducer =
-        ResetRetryCounterDomain.reducer._pullback(
-            state: (\State.route).appending(path: /Route.healthCardResetCounterWithNewSecret),
-            action: /SettingsDomain.Action.healthCardResetCounterWithNewSecret(action:)
+    private static let healthCardPasswordSetCustomPinPullbackReducer: Reducer =
+        HealthCardPasswordDomain.reducer._pullback(
+            state: (\State.route).appending(path: /Route.healthCardPasswordSetCustomPin),
+            action: /SettingsDomain.Action.healthCardPasswordSetCustomPin(action:)
         ) {
             .init(
                 schedulers: $0.schedulers,
-                nfcSessionController: $0.nfcResetRetryCounterController
+                nfcSessionController: $0.nfcHealthCardPasswordController
             )
         }
 
@@ -330,7 +340,7 @@ extension SettingsDomain {
             schedulers: Schedulers(),
             tracker: DummyTracker(),
             signatureProvider: DummySecureEnclaveSignatureProvider(),
-            nfcResetRetryCounterController: DummyResetRetryCounterController(),
+            nfcHealthCardPasswordController: DummyNFCHealthCardPasswordController(),
             appSecurityManager: DummyAppSecurityManager(),
             router: DummyRouter(),
             userSessionProvider: DummyUserSessionProvider()

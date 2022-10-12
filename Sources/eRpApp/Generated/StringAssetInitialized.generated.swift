@@ -160,6 +160,11 @@ extension SelectionCell {
         self.init(text: text.key, description: description?.key, a11y: a11y, iconSize: iconSize, systemImage: systemImage, isOn: isOn)
     }
 }
+extension StatusView {
+    init(title: StringAsset, foregroundColor: Color = Colors.systemLabel, backgroundColor: Color = Colors.systemBackgroundSecondary) {
+        self.init(title: title.key, foregroundColor: foregroundColor, backgroundColor: backgroundColor)
+    }
+}
 extension SubTitle {
     init(title: StringAsset, description: StringAsset? = nil, details: StringAsset? = nil) {
     self.init(title: title.key, description: description?.key, details: details?.key)

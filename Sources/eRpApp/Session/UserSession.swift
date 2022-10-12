@@ -63,7 +63,7 @@ protocol UserSession {
     var nfcSessionProvider: NFCSignatureProvider { get }
 
     /// The controller for resetting the reset counter of the password MR.PIN home on eGKs
-    var nfcResetRetryCounterController: NFCResetRetryCounterController { get }
+    var nfcHealthCardPasswordController: NFCHealthCardPasswordController { get }
 
     /// IDP Authentication session
     var idpSession: IDPSession { get }

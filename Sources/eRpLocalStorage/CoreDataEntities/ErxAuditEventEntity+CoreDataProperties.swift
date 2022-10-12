@@ -28,6 +28,6 @@ extension ErxAuditEventEntity {
     @NSManaged public var locale: String?
     @NSManaged public var text: String?
     @NSManaged public var timestamp: String?
-    @NSManaged public var task: ErxTaskEntity?
     @NSManaged public var profile: ProfileEntity?
+    @NSManaged public var task: ErxTaskEntity?
 }

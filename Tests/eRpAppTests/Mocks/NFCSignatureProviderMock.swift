@@ -19,14 +19,13 @@
 import Combine
 @testable import eRpApp
 import Foundation
-import HealthCardAccess
-import HealthCardControl
 import IDP
 
 // MARK: - NFCSignatureProviderMock -
 
 final class NFCSignatureProviderMock: NFCSignatureProvider {
-    func openSecureSession(can _: CAN, pin _: Format2Pin) -> AnyPublisher<SignatureSession, NFCSignatureProviderError> {
+    func openSecureSession(can _: String,
+                           pin _: String) -> AnyPublisher<SignatureSession, NFCSignatureProviderError> {
         Fail(error: NFCSignatureProviderError.signingFailure(.unsupportedAlgorithm)).eraseToAnyPublisher()
     }
 
@@ -39,7 +38,7 @@ final class NFCSignatureProviderMock: NFCSignatureProvider {
         signCalledCount > 0
     }
 
-    func sign(can _: CAN, pin _: Format2Pin,
+    func sign(can _: String, pin _: String,
               challenge _: IDPChallengeSession) -> AnyPublisher<SignedChallenge, NFCSignatureProviderError> {
         signCalledCount += 1
         return signResult
@@ -54,22 +53,22 @@ final class NFCSignatureProviderMock: NFCSignatureProvider {
     }
 
     var signRegistrationDataReceivedArguments: ( // swiftlint:disable:this large_tuple
-        can: CAN,
-        pin: Format2Pin,
+        can: String,
+        pin: String,
         registrationDataProvider: SecureEnclaveSignatureProvider
     )?
     var signRegistrationDataReceivedInvocations: [( // swiftlint:disable:this large_tuple
-        can: CAN,
-        pin: Format2Pin,
+        can: String,
+        pin: String,
         registrationDataProvider: SecureEnclaveSignatureProvider
     )] = [
     ]
     var signRegistrationDataReturnValue: AnyPublisher<RegistrationData, NFCSignatureProviderError>!
-    var signRegistrationDataClosure: ((CAN, Format2Pin, SecureEnclaveSignatureProvider)
+    var signRegistrationDataClosure: ((String, String, SecureEnclaveSignatureProvider)
         -> AnyPublisher<RegistrationData, NFCSignatureProviderError>)?
 
-    func sign(can: CAN,
-              pin: Format2Pin,
+    func sign(can: String,
+              pin: String,
               registrationDataProvider: SecureEnclaveSignatureProvider)
         -> AnyPublisher<RegistrationData, NFCSignatureProviderError> {
         signRegistrationDataCallsCount += 1

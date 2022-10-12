@@ -27,10 +27,12 @@ enum CardWallPINDomain {
 
     indirect enum Route: Equatable {
         case login(CardWallLoginOptionDomain.State)
+        case loginPush(CardWallLoginOptionDomain.State)
         case egk
 
         enum Tag: Int {
             case login
+            case loginPush
             case egk
         }
 
@@ -38,6 +40,8 @@ enum CardWallPINDomain {
             switch self {
             case .login:
                 return .login
+            case .loginPush:
+                return .loginPush
             case .egk:
                 return .egk
             }
@@ -50,14 +54,14 @@ enum CardWallPINDomain {
         var wrongPinEntered = false
         var doneButtonPressed = false
         let pinPassRange = (6 ... 8)
-
+        var transition: TransitionMode
         var route: Route?
     }
 
     indirect enum Action: Equatable {
         case update(pin: String)
         case close
-        case advance
+        case advance(TransitionMode)
         case showEGKOrderInfoView
         case setNavigation(tag: Route.Tag?)
         case login(action: CardWallLoginOptionDomain.Action)
@@ -90,8 +94,9 @@ enum CardWallPINDomain {
             return .none
         case .close:
             return .none
-        case .advance:
+        case let .advance(mode):
             if state.enteredPINValid {
+                state.transition = mode
                 state.route = .login(.init(isDemoModus: state.isDemoModus,
                                            pin: state.pin))
                 return .none
@@ -178,7 +183,7 @@ extension CardWallPINDomain.State {
 
 extension CardWallPINDomain {
     enum Dummies {
-        static let state = State(isDemoModus: false, pin: "")
+        static let state = State(isDemoModus: false, pin: "", transition: .push)
         static let environment = Environment(
             userSession: DemoSessionContainer(schedulers: Schedulers()),
             schedulers: Schedulers(),

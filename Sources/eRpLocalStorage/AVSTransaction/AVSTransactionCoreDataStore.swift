@@ -78,7 +78,16 @@ public class AVSTransactionCoreDataStore: AVSTransactionDataStore, CoreDataCruda
     public func save(avsTransactions: [AVSTransaction]) -> AnyPublisher<[AVSTransaction], LocalStoreError> {
         save(mergePolicy: NSMergePolicy.mergeByPropertyObjectTrump) { moc in
             for avsTransaction in avsTransactions {
-                _ = AVSTransactionEntity.from(avsTransaction: avsTransaction, in: moc)
+                let transaction = AVSTransactionEntity.from(avsTransaction: avsTransaction, in: moc)
+
+                let request = ErxTaskEntity.fetchRequest()
+                guard let taskId = avsTransaction.taskId else { return }
+                request.predicate = .init(format: "%K == %@", #keyPath(ErxTaskEntity.identifier), taskId)
+
+                let result = try moc.fetch(request)
+
+                guard let task = result.first else { continue }
+                transaction.erxTask = task
             }
         }
         .map { _ in avsTransactions }

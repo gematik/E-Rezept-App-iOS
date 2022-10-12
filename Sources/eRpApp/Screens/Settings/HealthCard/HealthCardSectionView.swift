@@ -52,14 +52,14 @@ struct HealthCardSectionView: View {
                     destination: IfLetStore(
                         store.scope(
                             state: (\SettingsDomain.State.route)
-                                .appending(path: /SettingsDomain.Route.healthCardResetCounterNoNewSecret)
+                                .appending(path: /SettingsDomain.Route.healthCardPasswordUnlockCard)
                                 .extract(from:),
-                            action: SettingsDomain.Action.healthCardResetCounterNoNewSecret(action:)
+                            action: SettingsDomain.Action.healthCardPasswordUnlockCard(action:)
                         )
                     ) { scopedStore in
-                        ResetRetryCounterView(store: scopedStore)
+                        HealthCardPasswordView(store: scopedStore)
                     },
-                    tag: SettingsDomain.Route.Tag.healthCardResetCounterNoNewSecret,
+                    tag: SettingsDomain.Route.Tag.healthCardPasswordUnlockCard,
                     selection: viewStore.binding(
                         get: \.routeTag,
                         send: SettingsDomain.Action.setNavigation
@@ -70,19 +70,19 @@ struct HealthCardSectionView: View {
                 .accessibility(identifier: A11y.settings.card.stgTxtCardUnlockCard)
                 .buttonStyle(.navigation)
 
-                // Destination: "Unlock health card and set a new PIN in the process"
+                // Destination: "Set a custom PIN"
                 NavigationLink(
                     destination: IfLetStore(
                         store.scope(
                             state: (\SettingsDomain.State.route)
-                                .appending(path: /SettingsDomain.Route.healthCardResetCounterWithNewSecret)
+                                .appending(path: /SettingsDomain.Route.healthCardPasswordSetCustomPin)
                                 .extract(from:),
-                            action: SettingsDomain.Action.healthCardResetCounterWithNewSecret(action:)
+                            action: SettingsDomain.Action.healthCardPasswordSetCustomPin(action:)
                         )
                     ) { scopedStore in
-                        ResetRetryCounterView(store: scopedStore)
+                        HealthCardPasswordView(store: scopedStore)
                     },
-                    tag: SettingsDomain.Route.Tag.healthCardResetCounterWithNewSecret,
+                    tag: SettingsDomain.Route.Tag.healthCardPasswordSetCustomPin,
                     selection: viewStore.binding(
                         get: \.routeTag,
                         send: SettingsDomain.Action.setNavigation

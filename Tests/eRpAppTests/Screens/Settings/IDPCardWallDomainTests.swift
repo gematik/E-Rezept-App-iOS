@@ -75,7 +75,7 @@ final class IDPCardWallDomainTests: XCTestCase {
             pin: CardWallPINDomain.Dummies.state
         ))
 
-        store.send(.pinAction(action: .advance)) { state in
+        store.send(.pinAction(action: .advance(.fullScreenCover))) { state in
             state.pin.doneButtonPressed = true
             state.readCard = CardWallReadCardDomain.State(
                 isDemoModus: false,
@@ -107,7 +107,8 @@ final class IDPCardWallDomainTests: XCTestCase {
         let store = testStore(for: .init(
             profileId: testProfileId,
             can: nil,
-            pin: .init(isDemoModus: false)
+            pin: .init(isDemoModus: false,
+                       transition: .fullScreenCover)
         ))
 
         store.send(.readCard(action: .wrongCAN)) { state in

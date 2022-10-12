@@ -23,7 +23,14 @@ import SwiftUI
 public enum SFSymbolName {
     public static let checkmark = "checkmark"
     public static let cardIcon = "creditcard"
-    public static let cardIconAnd123 = "creditcard.and.123"
+    public static var cardIconAnd123: String {
+        if #available(iOS 15.0, *) {
+            return "creditcard.and.123"
+        } else {
+            return "creditcard"
+        }
+    }
+
     public static let back = "chevron.left"
     public static let threeDots = "ellipsis.circle"
     public static let ellipsis = "ellipsis"

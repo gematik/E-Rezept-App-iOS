@@ -8,8 +8,6 @@ import eRpLocalStorage
 import eRpRemoteStorage
 import FHIRClient
 import Foundation
-import HealthCardAccess
-import HealthCardControl
 import HTTPClient
 import IDP
 import ModelsR4
@@ -894,13 +892,48 @@ extension MigrationError: CodedError {
     }
 }
 
+extension NFCHealthCardPasswordControllerError: CodedError {
+    var erpErrorCode: String {
+        switch self {
+            case .cardError:
+                return "i-02601"
+            case .openSecureSession:
+                return "i-02602"
+            case .resetRetryCounter:
+                return "i-02603"
+            case .wrongCan:
+                return "i-02604"
+            case .changeReferenceData:
+                return "i-02605"
+        }
+    }
+    var erpErrorCodeList: [String] {
+        switch self {
+            case .cardError:
+                return [erpErrorCode]
+            case let .openSecureSession(error as CodedError):
+                return [erpErrorCode] + error.erpErrorCodeList
+            case .openSecureSession:
+                return [erpErrorCode]
+            case let .resetRetryCounter(error as CodedError):
+                return [erpErrorCode] + error.erpErrorCodeList
+            case .resetRetryCounter:
+                return [erpErrorCode]
+            case let .changeReferenceData(error as CodedError):
+                return [erpErrorCode] + error.erpErrorCodeList
+            case .changeReferenceData:
+                return [erpErrorCode]
+            default:
+                return [erpErrorCode]
+        }
+    }
+}
+
 extension NFCSignatureProviderError: CodedError {
     var erpErrorCode: String {
         switch self {
             case .cardError:
                 return "i-00401"
-            case .authenticationError:
-                return "i-00402"
             case .wrongCAN:
                 return "i-00403"
             case .cardConnectionError:
@@ -922,10 +955,6 @@ extension NFCSignatureProviderError: CodedError {
     var erpErrorCodeList: [String] {
         switch self {
             case .cardError:
-                return [erpErrorCode]
-            case let .authenticationError(error as CodedError):
-                return [erpErrorCode] + error.erpErrorCodeList
-            case .authenticationError:
                 return [erpErrorCode]
             case let .wrongCAN(error as CodedError):
                 return [erpErrorCode] + error.erpErrorCodeList
@@ -1271,37 +1300,6 @@ extension RemoteStoreError: CodedError {
     }
 }
 
-extension ResetRetryCounterControllerError: CodedError {
-    var erpErrorCode: String {
-        switch self {
-            case .cardError:
-                return "i-02601"
-            case .openSecureSession:
-                return "i-02602"
-            case .resetRetryCounter:
-                return "i-02603"
-            case .wrongCan:
-                return "i-02604"
-        }
-    }
-    var erpErrorCodeList: [String] {
-        switch self {
-            case .cardError:
-                return [erpErrorCode]
-            case let .openSecureSession(error as CodedError):
-                return [erpErrorCode] + error.erpErrorCodeList
-            case .openSecureSession:
-                return [erpErrorCode]
-            case let .resetRetryCounter(error as CodedError):
-                return [erpErrorCode] + error.erpErrorCodeList
-            case .resetRetryCounter:
-                return [erpErrorCode]
-            default:
-                return [erpErrorCode]
-        }
-    }
-}
-
 extension ScannedErxTask.Error: CodedError {
     var erpErrorCode: String {
         switch self {
@@ -1612,13 +1610,13 @@ extension VAUError: CodedError {
 extension ZXDataMatrixWriter.Error: CodedError {
     var erpErrorCode: String {
         switch self {
-            case .cgImgageConvertion:
+            case .cgImageConversion:
                 return "i-00901"
         }
     }
     var erpErrorCodeList: [String] {
         switch self {
-            case .cgImgageConvertion:
+            case .cgImageConversion:
                 return [erpErrorCode]
         }
     }

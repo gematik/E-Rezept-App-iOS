@@ -26,7 +26,8 @@ class DemoAVSTransactionDataStore: AVSTransactionDataStore {
         httpStatusCode: 200,
         groupedRedeemTime: Date(),
         groupedRedeemID: UUID(),
-        telematikID: "telematik-id"
+        telematikID: "telematik-id",
+        taskId: "12345.6789.101112"
     )
 
     init() {}

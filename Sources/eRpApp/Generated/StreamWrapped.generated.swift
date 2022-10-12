@@ -4,8 +4,6 @@
 import Combine
 import eRpKit
 import Foundation
-import HealthCardAccess
-import HealthCardControl
 import IDP
 import OpenSSL
 import Pharmacy
@@ -465,7 +463,7 @@ class StreamWrappedNFCSignatureProvider: NFCSignatureProvider {
 	}
 
 
-	func openSecureSession(can: CAN, pin: Format2Pin) -> AnyPublisher<SignatureSession, NFCSignatureProviderError> {
+	func openSecureSession(can: String, pin: String) -> AnyPublisher<SignatureSession, NFCSignatureProviderError> {
         stream
         	.map { $0.openSecureSession(
 				can: can,
@@ -475,7 +473,7 @@ class StreamWrappedNFCSignatureProvider: NFCSignatureProvider {
             .eraseToAnyPublisher()
 	}
 
-	func sign(can: CAN, pin: Format2Pin, challenge: IDPChallengeSession) -> AnyPublisher<SignedChallenge, NFCSignatureProviderError> {
+	func sign(can: String, pin: String, challenge: IDPChallengeSession) -> AnyPublisher<SignedChallenge, NFCSignatureProviderError> {
         stream
         	.map { $0.sign(
 				can: can,
@@ -1070,7 +1068,7 @@ class StreamWrappedUserSession: UserSession {
 	lazy var nfcSessionProvider: NFCSignatureProvider = {
 		StreamWrappedNFCSignatureProvider(stream: stream.map{ $0.nfcSessionProvider }.eraseToAnyPublisher(), current: current.nfcSessionProvider )
 	}()
-	var nfcResetRetryCounterController: NFCResetRetryCounterController { current.nfcResetRetryCounterController }
+	var nfcHealthCardPasswordController: NFCHealthCardPasswordController { current.nfcHealthCardPasswordController }
 	lazy var idpSession: IDPSession = {
 		StreamWrappedIDPSession(stream: stream.map{ $0.idpSession }.eraseToAnyPublisher(), current: current.idpSession )
 	}()

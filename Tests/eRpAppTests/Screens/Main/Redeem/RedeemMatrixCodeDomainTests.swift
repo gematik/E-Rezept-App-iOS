@@ -41,14 +41,7 @@ final class RedeemMatrixCodeDomainTests: XCTestCase {
         let schedulers = Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler())
 
         let testState = RedeemMatrixCodeDomain.State(
-            groupedPrescription: GroupedPrescription(
-                id: "1",
-                title: "Test-Prescription",
-                authoredOn: "1.1.2021",
-                isArchived: false,
-                prescriptions: [GroupedPrescription.Prescription(erxTask: ErxTask.Fixtures.erxTaskRedeemed)],
-                displayType: GroupedPrescription.DisplayType.fullDetail
-            )
+            erxTasks: [ErxTask.Fixtures.erxTaskRedeemed]
         )
         let savingError: ErxRepositoryError = .local(.notImplemented)
         let saveErxTaskPublisher = Fail<Bool, ErxRepositoryError>(error: savingError).eraseToAnyPublisher()
@@ -76,7 +69,7 @@ final class RedeemMatrixCodeDomainTests: XCTestCase {
     func generateMockDMCImage() -> UIImage {
         var generatedImage: UIImage?
         _ = mockDMCGenerator.publishedMatrixCode(
-            for: RedeemMatrixCodeDomain.Dummies.state.groupedPrescription.prescriptions.map(\.erxTask),
+            for: [ErxTask.Fixtures.erxTaskRedeemed],
             with: CGSize(width: 400, height: 800)
         )
         .sink(

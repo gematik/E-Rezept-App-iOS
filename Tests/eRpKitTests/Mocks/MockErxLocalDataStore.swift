@@ -209,6 +209,25 @@ final class MockErxLocalDataStore: ErxLocalDataStore {
         return countAllUnreadCommunicationsForClosure.map { $0(profile) } ?? countAllUnreadCommunicationsForReturnValue
     }
 
+    var allUnreadCommunicationsForCallsCount = 0
+    var allUnreadCommunicationsForCalled: Bool {
+        allUnreadCommunicationsForCallsCount > 0
+    }
+
+    var allUnreadCommunicationsForReceivedProfile: ErxTask.Communication.Profile?
+    var allUnreadCommunicationsForReceivedInvocations: [ErxTask.Communication.Profile] = []
+    var allUnreadCommunicationsForReturnValue: AnyPublisher<[ErxTask.Communication], LocalStoreError>!
+    var allUnreadCommunicationsForClosure: ((ErxTask.Communication.Profile)
+        -> AnyPublisher<[ErxTask.Communication], LocalStoreError>)?
+
+    func allUnreadCommunications(for profile: ErxTask.Communication
+        .Profile) -> AnyPublisher<[ErxTask.Communication], LocalStoreError> {
+        allUnreadCommunicationsForCallsCount += 1
+        allUnreadCommunicationsForReceivedProfile = profile
+        allUnreadCommunicationsForReceivedInvocations.append(profile)
+        return allUnreadCommunicationsForClosure.map { $0(profile) } ?? allUnreadCommunicationsForReturnValue
+    }
+
     // MARK: - fetchAuditEvent
 
     var fetchAuditEventByCallsCount = 0

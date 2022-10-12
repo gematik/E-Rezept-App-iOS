@@ -29,4 +29,5 @@ extension ErxTaskOrganizationEntity {
     @NSManaged public var name: String?
     @NSManaged public var organizationIdentifier: String?
     @NSManaged public var phone: String?
+    @NSManaged public var task: ErxTaskEntity?
 }

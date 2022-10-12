@@ -34,7 +34,6 @@ struct AVSRedeemService: RedeemService {
     let avsTransactionDataStore: AVSTransactionDataStore
 
     let groupedRedeemTimeProvider: () -> Date = { Date() }
-    let groupedRedeemIDProvider: () -> UUID = { UUID() }
 
     // swiftlint:disable:next function_body_length
     func redeem(_ orders: [Order]) -> AnyPublisher<IdentifiedArrayOf<OrderResponse>, RedeemServiceError> {
@@ -60,7 +59,6 @@ struct AVSRedeemService: RedeemService {
         }
 
         let groupedRedeemTime: Date = groupedRedeemTimeProvider()
-        let groupedRedeemID: UUID = groupedRedeemIDProvider()
 
         let redeemMessagePublishers: [AnyPublisher<OrderResponse, Never>] =
             orderAndMessages.map { order, message -> AnyPublisher<OrderResponse, Never> in
@@ -75,11 +73,12 @@ struct AVSRedeemService: RedeemService {
                         let orderResponse = OrderResponse(requested: order, result: .success(true))
                         return avsTransactionDataStore.save(
                             avsTransaction: .init(
-                                transactionID: orderResponse.requested.transactionID,
+                                transactionID: order.transactionID,
                                 httpStatusCode: Int32(httpStatusCode),
                                 groupedRedeemTime: groupedRedeemTime,
-                                groupedRedeemID: groupedRedeemID,
-                                telematikID: orderResponse.requested.telematikId
+                                groupedRedeemID: order.orderID,
+                                telematikID: order.telematikId,
+                                taskId: order.taskID
                             )
                         )
                         .map { _ in orderResponse }

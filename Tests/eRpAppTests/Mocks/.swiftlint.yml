@@ -11,3 +11,4 @@ disabled_rules:
   - trailing_closure
   - type_body_length
   - type_name
+  - large_tuple

@@ -27,11 +27,13 @@ struct CardWallPINView: View {
         let routeTag: CardWallPINDomain.Route.Tag?
         let enteredPINValid: Bool
         let isDemoModus: Bool
+        let transitionMode: CardWallPINDomain.TransitionMode
 
         init(state: CardWallPINDomain.State) {
             routeTag = state.route?.tag
             enteredPINValid = state.enteredPINValid
             isDemoModus = state.isDemoModus
+            transitionMode = state.transition
         }
     }
 
@@ -47,31 +49,57 @@ struct CardWallPINView: View {
                 PrimaryTextButton(text: L10n.cdwBtnPinDone,
                                   a11y: A11y.cardWall.pinInput.cdwBtnPinDone,
                                   isEnabled: viewStore.state.enteredPINValid) {
-                    viewStore.send(.advance)
+                    viewStore.send(.advance(viewStore.transitionMode))
                 }
                 .accessibility(label: Text(L10n.cdwBtnPinDoneLabel))
                 .padding(.horizontal)
                 .padding(.bottom)
-
-                NavigationLink(
-                    destination: IfLetStore(
-                        store.scope(
-                            state: (\CardWallPINDomain.State.route)
-                                .appending(path: /CardWallPINDomain.Route.login)
-                                .extract(from:),
-                            action: CardWallPINDomain.Action.login(action:)
-                        ),
-                        then: CardWallLoginOptionView.init(store:)
-                    ),
-                    tag: CardWallPINDomain.Route.Tag.login,
-                    selection: viewStore.binding(
-                        get: \.routeTag
-                    ) {
-                        .setNavigation(tag: $0)
+                .fullScreenCover(isPresented: Binding<Bool>(
+                    get: { viewStore.routeTag == .login && viewStore.transitionMode == .fullScreenCover },
+                    set: { show in
+                        if !show {
+                            viewStore.send(.setNavigation(tag: nil))
+                        }
                     }
-                ) {}
-                    .hidden()
-                    .accessibility(hidden: true)
+                ),
+                onDismiss: {},
+                content: {
+                    NavigationView {
+                        IfLetStore(
+                            store.scope(
+                                state: (\CardWallPINDomain.State.route)
+                                    .appending(path: /CardWallPINDomain.Route.login)
+                                    .extract(from:),
+                                action: CardWallPINDomain.Action.login(action:)
+                            ),
+                            then: CardWallLoginOptionView.init(store:)
+                        )
+                    }
+                    .accentColor(Colors.primary700)
+                    .navigationViewStyle(StackNavigationViewStyle())
+                })
+
+                if viewStore.transitionMode == .push {
+                    NavigationLink(
+                        destination: IfLetStore(
+                            store.scope(
+                                state: (\CardWallPINDomain.State.route)
+                                    .appending(path: /CardWallPINDomain.Route.login)
+                                    .extract(from:),
+                                action: CardWallPINDomain.Action.login(action:)
+                            ),
+                            then: CardWallLoginOptionView.init(store:)
+                        ),
+                        tag: CardWallPINDomain.Route.Tag.login,
+                        selection: viewStore.binding(
+                            get: \.routeTag
+                        ) {
+                            .setNavigation(tag: $0)
+                        }
+                    ) {}
+                        .hidden()
+                        .accessibility(hidden: true)
+                }
             }
             .demoBanner(isPresented: viewStore.isDemoModus) {
                 Text(L10n.cdwTxtPinDemoModeInfo)
@@ -150,7 +178,7 @@ struct CardWallPINView: View {
 
                     PINFieldView(store: store) {
                         withAnimation {
-                            viewStore.send(.advance)
+                            viewStore.send(.advance(.none))
                         }
                     }.padding([.top, .bottom])
 

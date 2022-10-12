@@ -88,8 +88,8 @@ extension UserMode: UserSession {
         sessionContainer.nfcSessionProvider
     }
 
-    var nfcResetRetryCounterController: NFCResetRetryCounterController {
-        sessionContainer.nfcResetRetryCounterController
+    var nfcHealthCardPasswordController: NFCHealthCardPasswordController {
+        sessionContainer.nfcHealthCardPasswordController
     }
 
     var vauStorage: VAUStorage {

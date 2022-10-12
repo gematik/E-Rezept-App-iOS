@@ -76,6 +76,42 @@ public struct ErxTaskOrder: Equatable {
     }
 }
 
+public struct Address: Codable, Equatable {
+    public let street: String?
+    public let detail: String?
+    public let zip: String?
+    public let city: String?
+
+    public init(
+        street: String? = nil,
+        detail: String? = nil,
+        zip: String? = nil,
+        city: String? = nil
+    ) {
+        self.street = street
+        self.detail = detail
+        self.zip = zip
+        self.city = city
+    }
+
+    public func asArray() -> [String] {
+        var address = [String]()
+        if let street = street {
+            address.append(street)
+        }
+        if let detail = detail {
+            address.append(detail)
+        }
+        if let zip = zip {
+            address.append(zip)
+        }
+        if let city = city {
+            address.append(city)
+        }
+        return address
+    }
+}
+
 extension ErxTaskOrder {
     // sourcery: CodedError = "206"
     public enum Error: Swift.Error {
@@ -88,7 +124,7 @@ extension ErxTaskOrder {
     }
 }
 
-public enum RedeemOption: String, Codable, Equatable {
+public enum RedeemOption: String, Codable, Equatable, CaseIterable {
     case onPremise
     case delivery
     case shipment

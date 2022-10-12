@@ -112,8 +112,8 @@ extension CardWallReadCardDomain.Environment {
 
     // swiftlint:disable:next function_body_length
     func signChallengeThenAltAuthWithNFCCard(
-        can: CAN,
-        pin: Format2Pin,
+        can: String,
+        pin: String,
         profileID: UUID
     ) -> Effect<CardWallReadCardDomain.Action, Never> {
         let pairingSession: PairingSession

@@ -1,19 +1,8 @@
 {
   "images" : [
     {
-      "filename" : "mapPinAndEllipse@1x.png",
-      "idiom" : "universal",
-      "scale" : "1x"
-    },
-    {
-      "filename" : "mapPinAndEllipse@2x.png",
-      "idiom" : "universal",
-      "scale" : "2x"
-    },
-    {
-      "filename" : "mapPinAndEllipse@3x.png",
-      "idiom" : "universal",
-      "scale" : "3x"
+      "filename" : "mappin.svg",
+      "idiom" : "universal"
     }
   ],
   "info" : {

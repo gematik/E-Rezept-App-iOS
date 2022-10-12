@@ -91,27 +91,6 @@ final class MainViewSnapshotTests: XCTestCase {
         assertSnapshots(matching: sut, as: snapshotModi())
     }
 
-    func testMainView_NoPrescriptions() {
-        let groupedPrescription = GroupedPrescription(
-            id: "1",
-            title: "Hausarztpraxis Dr. Topp-Glücklich",
-            authoredOn: "2020-02-03",
-            prescriptions: [],
-            displayType: .fullDetail
-        )
-
-        let state = GroupedPrescriptionListDomain.State(
-            groupedPrescriptions: [groupedPrescription]
-        )
-        let sut = MainView(
-            store: store(for: state),
-            profileSelectionToolbarItemStore: store(for: nil)
-        )
-        .frame(width: 320, height: 700)
-
-        assertSnapshots(matching: sut, as: snapshotModi())
-    }
-
     func testMainView_LowDetailPrescriptions() {
         let state = GroupedPrescriptionListDomain.State(
             groupedPrescriptions: [GroupedPrescription.Dummies.scannedPrescriptions]

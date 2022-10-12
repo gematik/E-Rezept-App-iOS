@@ -24,12 +24,10 @@ extension AVSTransactionEntity {
         NSFetchRequest<AVSTransactionEntity>(entityName: "AVSTransactionEntity")
     }
 
+    @NSManaged public var groupedRedeemID: UUID?
+    @NSManaged public var groupedRedeemTime: Date?
+    @NSManaged public var httpStatusCode: Int32
     @NSManaged public var telematikID: String?
     @NSManaged public var transactionID: UUID?
-    @NSManaged public var groupedRedeemTime: Date?
-    @NSManaged public var groupedRedeemID: UUID?
-    @NSManaged public var httpStatusCode: Int32
     @NSManaged public var erxTask: ErxTaskEntity?
 }
-
-extension AVSTransactionEntity: Identifiable {}

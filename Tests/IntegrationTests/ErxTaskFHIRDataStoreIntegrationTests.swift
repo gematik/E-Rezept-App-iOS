@@ -24,8 +24,10 @@ import eRpRemoteStorage
 import FHIRClient
 import Foundation
 import HTTPClient
+import IdentifiedCollections
 import IDP
 import Nimble
+import Pharmacy
 import TestUtils
 import TrustStore
 import VAUClient
@@ -47,16 +49,9 @@ final class ErxTaskFHIRDataStoreIntegrationTests: XCTestCase {
         }
     }
 
-    func testCompleteFlow() throws {
-        guard let signer = environment.brainpool256r1Signer else {
-            throw XCTSkip("Skip test because no signing entity available")
-        }
-
-        let schedulers = TestSchedulers(compute: DispatchQueue(label: "serial-test").eraseToAnyScheduler())
-        let memStorage = MemStorage()
-
-        // TrustStore Session
-        let trustStoreSession = DefaultTrustStoreSession(
+    let memStorage = MemStorage()
+    lazy var trustStoreSession: TrustStoreSession = {
+        DefaultTrustStoreSession(
             serverURL: environment.appConfiguration.erp,
             trustAnchor: environment.appConfiguration.trustAnchor,
             trustStoreStorage: memStorage,
@@ -68,6 +63,10 @@ final class ErxTaskFHIRDataStoreIntegrationTests: XCTestCase {
                 ]
             )
         )
+    }()
+
+    lazy var idpSession: IDPSession = {
+        let schedulers = TestSchedulers(compute: DispatchQueue(label: "serial-test").eraseToAnyScheduler())
 
         // IDP Session
         let idpSessionConfiguration = DefaultIDPSession.Configuration(
@@ -78,7 +77,7 @@ final class ErxTaskFHIRDataStoreIntegrationTests: XCTestCase {
             scopes: environment.appConfiguration.idpDefaultScopes
         )
 
-        let idpSession = DefaultIDPSession(
+        return DefaultIDPSession(
             config: idpSessionConfiguration,
             storage: memStorage,
             schedulers: schedulers,
@@ -92,36 +91,9 @@ final class ErxTaskFHIRDataStoreIntegrationTests: XCTestCase {
             trustStoreSession: trustStoreSession,
             extAuthRequestStorage: PersistentExtAuthRequestStorage()
         )
+    }()
 
-        // VAU Session
-        let vauAccessTokenProvider = IntegrationTestsIDPSessionTokenProvider(
-            idpSession: idpSession,
-            signer: signer
-        )
-
-        var vauAccessTokenProviderSuccess = false
-        vauAccessTokenProvider.vauBearerToken
-            .test(
-                timeout: 300,
-                failure: { error in
-                    fail("Failed with error: \(error)")
-                },
-                expectations: { vauBearerToken in
-                    vauAccessTokenProviderSuccess = true
-                    Swift.print("vauBearerToken", vauBearerToken)
-
-                },
-                subscribeScheduler: DispatchQueue.global().eraseToAnyScheduler()
-            )
-        expect(vauAccessTokenProviderSuccess) == true
-
-        let vauSession = VAUSession(
-            vauServer: environment.appConfiguration.erp,
-            vauAccessTokenProvider: idpSession.asVAUAccessTokenProvider(),
-            vauStorage: memStorage,
-            trustStoreSession: trustStoreSession
-        )
-
+    lazy var cloudStorage: ErxRemoteDataStore = {
         // eRx task FHIR data store (Fachdienst)
         let erpHttpClient = DefaultHTTPClient(
             urlSessionConfiguration: .ephemeral,
@@ -140,27 +112,172 @@ final class ErxTaskFHIRDataStoreIntegrationTests: XCTestCase {
             httpClient: erpHttpClient
         )
 
+        return ErxTaskFHIRDataStore(fhirClient: fhirClient)
+    }()
+
+    lazy var vauSession: VAUSession = {
+        VAUSession(
+            vauServer: environment.appConfiguration.erp,
+            vauAccessTokenProvider: idpSession.asVAUAccessTokenProvider(),
+            vauStorage: memStorage,
+            trustStoreSession: trustStoreSession
+        )
+    }()
+
+    func testLoadingDataFromRemote() throws {
+        guard let signer = environment.brainpool256r1Signer else {
+            throw XCTSkip("Skip test because no signing entity available")
+        }
+
+        let didLogin = login(with: signer)
+        expect(didLogin).to(beTrue())
+
+        _ = loadAllTasks()
+
+        let success = loadAllAuditEvents()
+        expect(success).to(beTrue())
+
+        let didLoadCommunications = loadAllCommunications()
+        expect(didLoadCommunications).to(beTrue())
+    }
+
+    func testRedeemFlow() throws {
+        guard let signer = environment.brainpool256r1Signer else {
+            throw XCTSkip("Skip test because no signing entity available")
+        }
+
+        let didLogin = login(with: signer)
+        expect(didLogin).to(beTrue())
+
+        let receivedErxTasks = loadAllTasks()
+        expect(receivedErxTasks.count).to(beGreaterThan(0))
+
+        let erxTasks = receivedErxTasks.filter { $0.status == .ready }
+        guard let erxTask = erxTasks.first else {
+            fail("There is no task at the fachdienst that can be used to redeem it for the integration test")
+            return
+        }
+
+        let didSendRedeem = redeem(erxTask)
+        expect(didSendRedeem).to(beTrue())
+    }
+
+    func redeem(_ erxTask: ErxTask) -> Bool {
+        let order = erxTask.asOrder(orderId: UUID(), .shipment, for: testPharmacy, with: shipmentInfo)
+
+        // eRx task FHIR data store (Fachdienst)
+        let erpHttpClient = DefaultHTTPClient(
+            urlSessionConfiguration: .ephemeral,
+            interceptors: [
+                AdditionalHeaderInterceptor(additionalHeader: environment.appConfiguration.erpAdditionalHeader),
+                idpSession.httpInterceptor(delegate: nil),
+                LoggingInterceptor(log: .body),
+                ExceptionInterceptor(order: order),
+                vauSession.provideInterceptor(),
+                AdditionalHeaderInterceptor(additionalHeader: environment.appConfiguration.erpAdditionalHeader),
+                LoggingInterceptor(log: .body),
+            ]
+        )
+
+        let fhirClient = FHIRClient(
+            server: environment.appConfiguration.base,
+            httpClient: erpHttpClient
+        )
         let cloud = ErxTaskFHIRDataStore(fhirClient: fhirClient)
 
+        let erxTaskRepository = DefaultErxTaskRepository(
+            disk: MockErxLocalDataStore(),
+            cloud: cloud
+        )
+
+        let redeemService = ErxTaskRepositoryRedeemService(
+            erxTaskRepository: erxTaskRepository,
+            isAuthenticated: idpSession.isLoggedIn
+                .mapError { UserSessionError.idpError(error: $0) }
+                .eraseToAnyPublisher()
+        )
+
+        var receivedOrderResponses: [IdentifiedArrayOf<OrderResponse>] = []
+        // Actual redeem call
         var success = false
-        cloud.listAllTasks(after: nil)
+        let cancellable = redeemService.redeem([order])
+            .first()
+            .sink(receiveCompletion: { completion in
+                switch completion {
+                case let .failure(error):
+                    fail("expected to receive a response ")
+                    success = false
+                    Swift.print(error)
+                default: break
+                }
+                Swift.print(completion)
+            }, receiveValue: { orderResponses in
+                receivedOrderResponses.append(orderResponses)
+                Swift.print("✅ Sent \(orderResponses.count) erxTask orders")
+            })
+
+        expect(receivedOrderResponses.count).toEventually(equal(1))
+        if let orderResponses = receivedOrderResponses.first {
+            expect(orderResponses.count) == 1
+            expect(orderResponses.first) == OrderResponse(requested: order, result: ProgressResponse.success(true))
+            success = true
+        } else {
+            fail("expected to have an orderResponse in the received order Resposes array")
+        }
+
+        cancellable.cancel()
+        return success
+    }
+
+    private func login(with signer: Brainpool256r1Signer) -> Bool {
+        let vauAccessTokenProvider = IntegrationTestsIDPSessionTokenProvider(
+            idpSession: idpSession,
+            signer: signer
+        )
+
+        var vauAccessTokenProviderSuccess = false
+        vauAccessTokenProvider.vauBearerToken
+            .test(
+                timeout: 300,
+                failure: { error in
+                    fail("Failed with error: \(error)")
+                },
+                expectations: { vauBearerToken in
+                    vauAccessTokenProviderSuccess = true
+                    Swift.print("✅ Loaded vauBearerToken:", vauBearerToken)
+                },
+                subscribeScheduler: DispatchQueue.global().eraseToAnyScheduler()
+            )
+        expect(vauAccessTokenProviderSuccess).toEventually(equal(true))
+        return vauAccessTokenProviderSuccess
+    }
+
+    private func loadAllTasks() -> [ErxTask] {
+        var success = false
+        var receivedErxTasks: [ErxTask] = []
+        cloudStorage.listAllTasks(after: nil)
             .first()
             .test(
                 timeout: 300,
                 failure: { error in
                     fail("Failed with error: \(error)")
                 },
-                expectations: { erxTasks in
+                expectations: { tasks in
+                    receivedErxTasks = tasks
                     success = true
-                    Swift.print("erxTasks", erxTasks)
+                    Swift.print("✅ Loaded \(tasks.count) erxTasks!")
                 },
                 subscribeScheduler: DispatchQueue.global().eraseToAnyScheduler()
             )
-        expect(success) == true
 
-        success = false
+        expect(success).toEventually(beTrue(), timeout: .seconds(300))
+        return receivedErxTasks
+    }
 
-        let cancellable = cloud.listAllAuditEvents(after: nil, for: nil)
+    private func loadAllAuditEvents() -> Bool {
+        var success = false
+
+        let cancellable = cloudStorage.listAllAuditEvents(after: nil, for: nil)
             .first()
             .sink(receiveCompletion: { completion in
                 switch completion {
@@ -170,13 +287,95 @@ final class ErxTaskFHIRDataStoreIntegrationTests: XCTestCase {
                 }
                 Swift.print(completion)
             }, receiveValue: { auditEvents in
-                Swift.print("auditEvents: #", auditEvents.content.count)
+                Swift.print("✅ Loaded \(auditEvents.content.count) auditEvents!")
                 success = true
             })
         expect(success).toEventually(beTrue(), timeout: .seconds(300))
-
         cancellable.cancel()
+        return success
     }
+
+    private func loadAllCommunications() -> Bool {
+        var success = false
+
+        let cancellable = cloudStorage.listAllCommunications(after: nil, for: .all)
+            .first()
+            .sink(receiveCompletion: { completion in
+                switch completion {
+                case let .failure(error):
+                    Swift.print(error)
+                default: break
+                }
+                Swift.print(completion)
+            }, receiveValue: { communications in
+                Swift.print("✅ Loaded \(communications.count) communications!")
+                success = true
+            })
+        expect(success).toEventually(beTrue(), timeout: .seconds(300))
+        cancellable.cancel()
+        return success
+    }
+
+    // swiftlint:disable line_length
+    class ExceptionInterceptor: Interceptor {
+        let order: Order
+
+        init(order: Order) {
+            self.order = order
+        }
+
+        func intercept(chain: Chain) -> AnyPublisher<HTTPResponse, HTTPError> {
+            if chain.request.url!.absoluteString.contains("Communication"),
+               let body = chain.request.httpBody,
+               let bodyString = String(data: body, encoding: .utf8) {
+                expect(bodyString) == """
+                {"status":"unknown","basedOn":[{"reference":"Task\\/\(order.taskID)\\/$accept?ac=\(order
+                    .accessCode)"}],"payload":[{"contentString":"{\\"address\\":[\\"Intergation Test Str. 1\\",\\"Address Details\\",\\"12345\\",\\"Berlin\\"],\\"phone\\":\\"01772345674\\",\\"supplyOptionsType\\":\\"\(order
+                    .redeemType
+                    .rawValue)\\",\\"hint\\":\\"Please use the key\\",\\"name\\":\\"Integration Test\\",\\"version\\":\\"1\\"}"}],"meta":{"profile":["https:\\/\\/gematik.de\\/fhir\\/StructureDefinition\\/ErxCommunicationDispReq"]},"recipient":[{"identifier":{"system":"https:\\/\\/gematik.de\\/fhir\\/NamingSystem\\/TelematikID","value":"3-SMC-B-Testkarte-883110000094055"}}],"identifier":[{"system":"https:\\/\\/gematik.de\\/fhir\\/NamingSystem\\/OrderID","value":"\(order
+                    .orderID)"}],"resourceType":"Communication"}
+                """
+            }
+            return chain.proceed(request: chain.request)
+                .map { response in
+                    if response.response.url!.absoluteString.contains("Communication"),
+                       response.status.rawValue == 201,
+                       let dataString = String(data: response.data, encoding: .utf8) {
+                        expect(
+                            dataString.contains(
+                                """
+                                "payload":[{"contentString":"{\\"address\\":[\\"Intergation Test Str. 1\\",\\"Address Details\\",\\"12345\\",\\"Berlin\\"],\\"phone\\":\\"01772345674\\",\\"supplyOptionsType\\":\\"shipment\\",\\"hint\\":\\"Please use the key\\",\\"name\\":\\"Integration Test\\",\\"version\\":\\"1\\"}"}]
+                                """
+                            )
+                        ).to(beTrue())
+                    }
+                    return response
+                }
+                .eraseToAnyPublisher()
+        }
+    }
+
+    // swiftlint:enable line_length
+
+    let shipmentInfo = ShipmentInfo(
+        name: "Integration Test",
+        street: "Intergation Test Str. 1",
+        addressDetail: "Address Details",
+        zip: "12345",
+        city: "Berlin",
+        phone: "01772345674",
+        mail: "mail@gematik.de",
+        deliveryInfo: "Please use the key"
+    )
+
+    let testPharmacy = PharmacyLocation(
+        id: "test",
+        status: .active,
+        telematikID: "3-SMC-B-Testkarte-883110000094055",
+        name: "Adler ApothekeTEST-ONLY",
+        types: [.pharm, .outpharm, .mobl],
+        hoursOfOperation: []
+    )
 }
 
 class IntegrationTestsIDPSessionTokenProvider: VAUAccessTokenProvider {

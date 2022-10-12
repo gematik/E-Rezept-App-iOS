@@ -286,7 +286,7 @@ extension RegisteredDevicesDomain {
         static let cardWallState = State(
             profileId: UUID(),
             route: .cardWall(.init(profileId: UUID(),
-                                   pin: .init(isDemoModus: false)))
+                                   pin: .init(isDemoModus: false, transition: .fullScreenCover)))
         )
 
         static let environment = Environment(

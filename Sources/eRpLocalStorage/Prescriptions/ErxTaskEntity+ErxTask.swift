@@ -62,15 +62,73 @@ extension ErxTaskEntity {
 }
 
 extension ErxTask {
+    private static func updatedStatusForAVSRedeemedTask(_ entity: ErxTaskEntity, currentDate now: Date) -> ErxTask
+        .Status? {
+        if let avsTransactions = entity.avsTransaction {
+            let transactions = avsTransactions.filter { transaction in
+                guard let transaction = transaction as? AVSTransactionEntity,
+                      let redeemTime = transaction.groupedRedeemTime else {
+                    return false
+                }
+                return now.timeIntervalSince(redeemTime) > ErxTask.scannedTaskMinIntervalForCompletion
+            }
+            if !transactions.isEmpty {
+                return .completed
+            } else if !Array(avsTransactions).isEmpty {
+                return .inProgress
+            }
+        }
+        return nil
+    }
+
+    private static func updatedStatusForTask(
+        _: ErxTaskEntity,
+        with communications: [ErxTask.Communication],
+        currentDate now: Date
+    ) -> ErxTask.Status? {
+        let comms = communications.filter { communication in
+            guard communication.profile == .dispReq,
+                  let redeemTime = communication.timestamp.date else {
+                return false
+            }
+            let redeemedTimeInterval = now.timeIntervalSince(redeemTime)
+            return redeemedTimeInterval < ErxTask.scannedTaskMinIntervalForCompletion &&
+                redeemedTimeInterval > 0
+        }
+        if !comms.isEmpty {
+            return .inProgress
+        }
+        return nil
+    }
+
+    static let scannedTaskMinIntervalForCompletion: TimeInterval = 600
     // swiftlint:disable:next function_body_length
-    init?(entity: ErxTaskEntity) {
+    init?(entity: ErxTaskEntity, dateProvider: () -> Date) {
         guard let identifier = entity.identifier else {
             return nil
         }
 
+        let now = dateProvider()
+        let source = Source(rawValue: entity.source ?? "") ?? .server
         var erxTaskStatus: ErxTask.Status = .ready
         if let status = entity.status {
             erxTaskStatus = ErxTask.Status(rawValue: status) ?? .ready
+        }
+        let mappedCommunications: [ErxTask.Communication] = entity.communications?
+            .compactMap { entity in
+                if let communicationEntity = entity as? ErxTaskCommunicationEntity {
+                    return ErxTask.Communication(entity: communicationEntity)
+                } else {
+                    return nil
+                }
+            } ?? []
+        if erxTaskStatus == .ready {
+            if source == .scanner {
+                erxTaskStatus = ErxTask.updatedStatusForAVSRedeemedTask(entity, currentDate: now) ?? erxTaskStatus
+            } else if source == .server {
+                erxTaskStatus = ErxTask
+                    .updatedStatusForTask(entity, with: mappedCommunications, currentDate: now) ?? erxTaskStatus
+            }
         }
         self.init(
             identifier: identifier,
@@ -88,7 +146,7 @@ extension ErxTask {
             noctuFeeWaiver: entity.noctuFeeWaiver,
             prescriptionId: entity.prescriptionId,
             substitutionAllowed: entity.substitutionAllowed,
-            source: Source(rawValue: entity.source ?? "") ?? .server,
+            source: source,
             medication: Medication(entity: entity.medication),
             patient: Patient(entity: entity.patient),
             practitioner: Practitioner(entity: entity.practitioner),
@@ -102,15 +160,8 @@ extension ErxTask {
                     return nil
                 }
                 .sorted { $0.timestamp ?? "" > $1.timestamp ?? "" } ?? [],
-            communications: entity.communications?
-                .compactMap { entity in
-                    if let communicationEntity = entity as? ErxTaskCommunicationEntity {
-                        return ErxTask.Communication(entity: communicationEntity)
-                    } else {
-                        return nil
-                    }
-                }
-                .sorted { $0.timestamp < $1.timestamp } ?? [],
+            communications: mappedCommunications
+                .sorted { $0.timestamp < $1.timestamp },
             medicationDispenses: entity.medicationDispenses?
                 .compactMap { medicationDispense in
                     if let entity = medicationDispense as? ErxTaskMedicationDispenseEntity {

@@ -18,6 +18,7 @@
 
 import AVS
 @testable import eRpApp
+import eRpKit
 import Foundation
 import Nimble
 import XCTest

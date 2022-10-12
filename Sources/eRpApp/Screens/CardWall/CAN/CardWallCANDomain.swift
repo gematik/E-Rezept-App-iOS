@@ -89,7 +89,7 @@ enum CardWallCANDomain {
                 return .none
             }
             environment.sessionProvider.userDataStore(for: state.profileId).set(can: state.can)
-            state.route = .pin(CardWallPINDomain.State(isDemoModus: state.isDemoModus))
+            state.route = .pin(CardWallPINDomain.State(isDemoModus: state.isDemoModus, transition: .push))
             return .none
         case .close:
             return .none

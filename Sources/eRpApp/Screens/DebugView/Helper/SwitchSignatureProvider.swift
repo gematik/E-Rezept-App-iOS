@@ -18,7 +18,6 @@
 
 import Combine
 import Foundation
-import HealthCardAccess
 import IDP
 
 #if ENABLE_DEBUG_VIEW
@@ -31,7 +30,7 @@ class SwitchSignatureProvider: NFCSignatureProvider {
         self.alternativeSignatureProvider = alternativeSignatureProvider
     }
 
-    func openSecureSession(can: CAN, pin: Format2Pin) -> AnyPublisher<SignatureSession, NFCSignatureProviderError> {
+    func openSecureSession(can: String, pin: String) -> AnyPublisher<SignatureSession, NFCSignatureProviderError> {
         if UserDefaults.standard.isVirtualEGKEnabled {
             return alternativeSignatureProvider.openSecureSession(can: can, pin: pin)
         } else {
@@ -39,7 +38,7 @@ class SwitchSignatureProvider: NFCSignatureProvider {
         }
     }
 
-    func sign(can: CAN, pin: Format2Pin,
+    func sign(can: String, pin: String,
               challenge: IDPChallengeSession) -> AnyPublisher<SignedChallenge, NFCSignatureProviderError> {
         if UserDefaults.standard.isVirtualEGKEnabled {
             return alternativeSignatureProvider.sign(can: can, pin: pin, challenge: challenge)

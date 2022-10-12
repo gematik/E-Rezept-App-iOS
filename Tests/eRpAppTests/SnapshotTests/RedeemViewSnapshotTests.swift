@@ -17,6 +17,7 @@
 //
 
 @testable import eRpApp
+import eRpKit
 import SnapshotTesting
 import SwiftUI
 import XCTest
@@ -39,7 +40,7 @@ final class RedeemViewSnapshotTests: XCTestCase {
         let sut = RedeemMatrixCodeView(
             store: RedeemMatrixCodeDomain.Dummies.storeFor(
                 RedeemMatrixCodeDomain.State(
-                    groupedPrescription: GroupedPrescription.Dummies.prescriptions,
+                    erxTasks: ErxTask.Demo.erxTasks,
                     loadingState: .value(UIImage(testBundleNamed: "qrcode")!)
                 )
             )

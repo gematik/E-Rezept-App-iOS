@@ -24,7 +24,7 @@ extension ZXDataMatrixWriter: MatrixCodeGenerator {
     // sourcery: CodedError = "009"
     enum Error: Swift.Error {
         // sourcery: errorCode = "01"
-        case cgImgageConvertion(String)
+        case cgImageConversion(String)
     }
 
     public func generateImage(for contents: String,
@@ -39,7 +39,7 @@ extension ZXDataMatrixWriter: MatrixCodeGenerator {
         if let cgImage = ZXImage(matrix: matrix).cgimage {
             return cgImage
         } else {
-            throw Error.cgImgageConvertion("Could not create a cgImage from the encoded matrix code")
+            throw Error.cgImageConversion("Could not create a cgImage from the encoded matrix code")
         }
     }
 }

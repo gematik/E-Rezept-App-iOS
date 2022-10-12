@@ -22,7 +22,7 @@ import Foundation
 enum Endpoint: Equatable {
     case settings
     case scanner
-    case messages
+    case orders
     case mainScreen(MainScreen?)
     case universalLink(URL)
 

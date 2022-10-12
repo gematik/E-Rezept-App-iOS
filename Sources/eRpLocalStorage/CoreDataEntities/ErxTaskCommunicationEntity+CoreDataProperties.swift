@@ -25,15 +25,13 @@ extension ErxTaskCommunicationEntity {
     }
 
     @NSManaged public var identifier: String?
-    @NSManaged public var profile: String?
     @NSManaged public var insuranceId: String?
+    @NSManaged public var isRead: Bool
+    @NSManaged public var orderId: String?
+    @NSManaged public var payload: String?
+    @NSManaged public var profile: String?
     @NSManaged public var taskId: String?
     @NSManaged public var telematikId: String?
     @NSManaged public var timestamp: String?
-    @NSManaged public var payload: String?
-    @NSManaged public var isRead: Bool
-    @NSManaged public var orderId: String?
     @NSManaged public var task: ErxTaskEntity?
 }
-
-extension ErxTaskCommunicationEntity: Identifiable {}

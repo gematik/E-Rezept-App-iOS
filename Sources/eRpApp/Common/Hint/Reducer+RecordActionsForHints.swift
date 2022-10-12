@@ -38,8 +38,8 @@ extension Reducer where Action == AppDomain.Action, State == AppDomain.State, En
     private func recordActionsAfterStateChange() -> Self {
         .init { state, action, environment in
             switch action {
-            case let .unreadMessagesReceived(unreadMessageCount):
-                if unreadMessageCount > 0 {
+            case let .newOrderMessageReceived(unreadOrderMessageCount):
+                if unreadOrderMessageCount > 0 {
                     environment.userSession.hintEventsStore.hintState.hasUnreadMessages = true
                 } else {
                     environment.userSession.hintEventsStore.hintState.hasUnreadMessages = false

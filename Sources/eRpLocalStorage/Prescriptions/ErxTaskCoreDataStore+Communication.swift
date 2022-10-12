@@ -68,15 +68,17 @@ extension ErxTaskCoreDataStore {
         }
         request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: subPredicates)
         return fetch(request)
-            .map { list in list.map(ErxTask.Communication.init(entity:)) }
+            .map { list in
+                list.map(ErxTask.Communication.init(entity:))
+            }
             .eraseToAnyPublisher()
     }
 
-    /// Returns a count for all unread communications for the given profile
+    /// Returns all unread communications for the given profile
     /// - Parameter profile: profile for which you want to have the count
-    public func countAllUnreadCommunications(
+    public func allUnreadCommunications(
         for profile: ErxTask.Communication.Profile
-    ) -> AnyPublisher<Int, LocalStoreError> {
+    ) -> AnyPublisher<[ErxTask.Communication], LocalStoreError> {
         let request: NSFetchRequest<ErxTaskCommunicationEntity> = ErxTaskCommunicationEntity.fetchRequest()
         request.sortDescriptors = []
         var predicates = [NSPredicate]()
@@ -111,7 +113,9 @@ extension ErxTaskCoreDataStore {
         }
         request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
         return fetch(request)
-            .map { list in list.count }
+            .map { list in
+                list.map(ErxTask.Communication.init(entity:))
+            }
             .eraseToAnyPublisher()
     }
 
@@ -119,7 +123,7 @@ extension ErxTaskCoreDataStore {
     /// - Parameter communications: Array of communications that should be stored
     /// - Returns: `true` if save operation was successful
     public func save(communications: [ErxTask.Communication]) -> AnyPublisher<Bool, LocalStoreError> {
-        save(mergePolicy: .error) { moc in
+        save(mergePolicy: .error) { [weak self] moc in
             _ = communications.map { erxTaskCommunication -> ErxTaskCommunicationEntity in
 
                 let request: NSFetchRequest<ErxTaskCommunicationEntity> = ErxTaskCommunicationEntity
@@ -142,17 +146,70 @@ extension ErxTaskCoreDataStore {
                         in: moc
                     )
 
+                    // stores the oderId of a dispReq communication in the related reply communication
+                    // swiftlint:disable:next todo
+                    // FIXME: This is potentially broken. Currently it`s possible to redeem a task several times.
+                    // That can cause a wrong match between the dispReq and the reply
+                    if newCommunicationEntity.profile == ErxTask.Communication.Profile.reply.rawValue {
+                        // check if in the new communications is also the related disp req
+                        var communicationDispReq = communications
+                            .first { $0.profile == .dispReq &&
+                                $0.taskId == newCommunicationEntity.taskId &&
+                                $0.telematikId == newCommunicationEntity.telematikId
+                            }
+                        if communicationDispReq == nil {
+                            communicationDispReq = self?.fetchCommunication(
+                                for: .dispReq,
+                                with: erxTaskCommunication.taskId,
+                                telematikId: erxTaskCommunication.telematikId,
+                                on: moc
+                            )
+                        }
+                        newCommunicationEntity.orderId = communicationDispReq?.orderId
+                    }
+
                     let requestTask: NSFetchRequest<ErxTaskEntity> = ErxTaskEntity.fetchRequest()
                     requestTask.predicate = NSPredicate(
                         format: "%K == %@",
                         #keyPath(ErxTaskEntity.identifier),
                         erxTaskCommunication.taskId
                     )
-                    let taskEntity = try? requestTask.execute().first
+                    let taskEntity = try? moc.fetch(requestTask).first
                     taskEntity?.addToCommunications(newCommunicationEntity)
                     return newCommunicationEntity
                 }
             }
         }
+    }
+
+    private func fetchCommunication(for profile: ErxTask.Communication.Profile,
+                                    with taskId: ErxTask.ID,
+                                    telematikId: String,
+                                    on moc: NSManagedObjectContext) -> ErxTask.Communication? {
+        let request: NSFetchRequest<ErxTaskCommunicationEntity> = ErxTaskCommunicationEntity.fetchRequest()
+
+        var predicates = [NSPredicate]()
+        if let identifier = profileId {
+            let profilePredicate = NSPredicate(
+                format: "%K == %@",
+                argumentArray: [#keyPath(ErxTaskCommunicationEntity.task.profile.identifier), identifier]
+            )
+            predicates.append(profilePredicate)
+        }
+        predicates.append(
+            NSPredicate(
+                format: "%K == %@ AND %K == %@ AND %K == %@",
+                argumentArray: [
+                    #keyPath(ErxTaskCommunicationEntity.taskId),
+                    taskId,
+                    #keyPath(ErxTaskCommunicationEntity.telematikId),
+                    telematikId,
+                    #keyPath(ErxTaskCommunicationEntity.profile),
+                    profile.rawValue,
+                ]
+            )
+        )
+        let entity = try? moc.fetch(request).first
+        return entity.map(ErxTask.Communication.init(entity:))
     }
 }

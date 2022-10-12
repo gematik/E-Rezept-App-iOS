@@ -49,6 +49,35 @@ extension Order {
             recipients: certificates
         )
 
+        static func orders(with id: UUID) -> [Order] {
+            [
+                Order(
+                    orderID: id,
+                    redeemType: .onPremise,
+                    taskID: "task_id_1",
+                    accessCode: "access_code_1",
+                    endpoint: endpoint,
+                    recipients: certificates
+                ),
+                Order(
+                    orderID: id,
+                    redeemType: .onPremise,
+                    taskID: "task_id_2",
+                    accessCode: "access_code_2",
+                    endpoint: endpoint,
+                    recipients: certificates
+                ),
+                Order(
+                    orderID: id,
+                    redeemType: .onPremise,
+                    taskID: "task_id_3",
+                    accessCode: "access_code_3",
+                    endpoint: endpoint,
+                    recipients: certificates
+                ),
+            ]
+        }
+
         static let orderNoEndpoint = Order(redeemType: .onPremise, taskID: "task_id_1", accessCode: "access_code_1")
 
         static let endpoint = PharmacyLocation.AVSEndpoints.Endpoint(url: URL(string: "http://some-service.com:8003/")!)

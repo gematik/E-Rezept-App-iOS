@@ -68,7 +68,7 @@ enum AppStartDomain {
                     selectedTab: .main,
                     main: .init(prescriptionListState: .init()),
                     pharmacySearch: PharmacySearchDomain.State(erxTasks: []),
-                    messages: MessagesDomain.State(communications: []),
+                    orders: OrdersDomain.State(orders: []),
                     settingsState: .init(
                         isDemoMode: environment.userSession.isDemoMode,
                         appSecurityState: .init(
@@ -80,7 +80,7 @@ enum AppStartDomain {
                     ),
                     profileSelection: .init(),
                     debug: DebugDomain.State(trackingOptIn: environment.tracker.optIn),
-                    unreadMessagesCount: 0,
+                    unreadOrderMessageCount: 0,
                     isDemoMode: false
                 )
             )
@@ -107,7 +107,7 @@ enum AppStartDomain {
                     selectedTab: .main,
                     main: .init(prescriptionListState: .init()),
                     pharmacySearch: PharmacySearchDomain.State(erxTasks: []),
-                    messages: MessagesDomain.State(communications: []),
+                    orders: OrdersDomain.State(orders: []),
                     settingsState: .init(
                         isDemoMode: environment.userSession.isDemoMode,
                         appSecurityState: .init(
@@ -119,7 +119,7 @@ enum AppStartDomain {
                     ),
                     profileSelection: .init(),
                     debug: DebugDomain.State(trackingOptIn: environment.tracker.optIn),
-                    unreadMessagesCount: 0,
+                    unreadOrderMessageCount: 0,
                     isDemoMode: false
                 )
             )
@@ -179,8 +179,8 @@ enum AppStartDomain {
             )
         case .scanner:
             return Effect(value: .app(action: .main(action: .showScannerView)))
-        case .messages:
-            return Effect(value: .app(action: .selectTab(.messages)))
+        case .orders:
+            return Effect(value: .app(action: .selectTab(.orders)))
         case let .mainScreen(endpoint):
             switch endpoint {
             case .login:

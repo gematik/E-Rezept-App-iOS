@@ -19,18 +19,16 @@
 import Combine
 import CoreNFC
 import Foundation
-import HealthCardAccess
-import HealthCardControl
 import IDP
 import NFCCardReaderProvider
 
 class DemoSignatureProvider: NFCSignatureProvider {
-    func openSecureSession(can _: CAN,
-                           pin _: Format2Pin) -> AnyPublisher<SignatureSession, NFCSignatureProviderError> {
+    func openSecureSession(can _: String,
+                           pin _: String) -> AnyPublisher<SignatureSession, NFCSignatureProviderError> {
         Fail(error: NFCSignatureProviderError.cardError(NFCTagReaderSession.Error.unsupportedTag)).eraseToAnyPublisher()
     }
 
-    func sign(can _: CAN, pin _: Format2Pin,
+    func sign(can _: String, pin _: String,
               challenge: IDPChallengeSession) -> AnyPublisher<SignedChallenge, NFCSignatureProviderError> {
         do {
             let jwt = try JWT(
@@ -50,7 +48,7 @@ class DemoSignatureProvider: NFCSignatureProvider {
         }
     }
 
-    func sign(can _: CAN, pin _: Format2Pin,
+    func sign(can _: String, pin _: String,
               registrationDataProvider _: SecureEnclaveSignatureProvider)
         -> AnyPublisher<RegistrationData, NFCSignatureProviderError> {
         Fail(error: NFCSignatureProviderError.signingFailure(.unsupportedAlgorithm))

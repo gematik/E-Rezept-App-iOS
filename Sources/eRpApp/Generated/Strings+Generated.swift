@@ -277,6 +277,10 @@ import SwiftUI
     internal static let cdwImgCanCardLabel = StringAsset("cdw_img_can_card_label")
     /// Illustration of a user holding their medical card to the back of their smartphone.
     internal static let cdwImgIntroMainLabel = StringAsset("cdw_img_intro_main_label")
+    /// Dauerhafte Verbindungsproblem?
+    internal static let cdwRcTxtErrorBadCardDescription = StringAsset("cdw_rc_txt_error_bad_card_description")
+    /// Einige Karten haben schwache Antennen. Bitte melden Sie uns Ihre Karte, damit wir gemeinsam mit den Kassen an einer Verbesserung arbeiten können.
+    internal static let cdwRcTxtErrorBadCardRecovery = StringAsset("cdw_rc_txt_error_bad_card_recovery")
     /// Your selection will not be saved.
     internal static let cdwTxtBiometryDemoModeInfo = StringAsset("cdw_txt_biometry_demo_mode_info")
     /// Log in conveniently with fingerprint or face scan
@@ -1343,50 +1347,26 @@ import SwiftUI
     internal static let mgmTxtAlertMessageProfileCreation = StringAsset("mgm_txt_alert_message_profile_creation")
     /// The app is already up to date
     internal static let mgmTxtAlertMessageUpToDate = StringAsset("mgm_txt_alert_message_up_to_date")
-    /// Report error
-    internal static let msgsBtnFormatError = StringAsset("msgs_btn_format_error")
-    /// Show collection code
-    internal static let msgsBtnOnPremise = StringAsset("msgs_btn_onPremise")
-    /// Show shopping cart
-    internal static let msgsBtnShipment = StringAsset("msgs_btn_shipment")
-    /// Message received
-    internal static let msgsTxtDeliveryTitle = StringAsset("msgs_txt_delivery_title")
-    /// app-fehlermeldung@ti-support.de
-    internal static let msgsTxtEmailSupport = StringAsset("msgs_txt_email_support")
-    /// You haven't received any messages yet
-    internal static let msgsTxtEmptyListMessage = StringAsset("msgs_txt_empty_list_message")
-    /// No messages
-    internal static let msgsTxtEmptyListTitle = StringAsset("msgs_txt_empty_list_title")
-    /// Unfortunately, your pharmacy's message was empty. Please contact your pharmacy.
-    internal static let msgsTxtEmptyMessage = StringAsset("msgs_txt_empty_message")
-    /// A pharmacy has sent a message in an incorrect format.
-    internal static let msgsTxtFormatErrorMessage = StringAsset("msgs_txt_format_error_message")
-    /// Defective message received
-    internal static let msgsTxtFormatErrorTitle = StringAsset("msgs_txt_format_error_title")
-    /// Dear Service Team, I received a message from a pharmacy. Unfortunately, however, I could not pass the message on to my user because I did not understand it. Please check what happened here and help us. Thank you very much! The e-prescription app
-    internal static let msgsTxtMailBody1 = StringAsset("msgs_txt_mail_body1")
-    /// You are sending us this information for purposes of troubleshooting. Please note that your email address and any name you include will also be transferred. If you do not wish to transfer this information either in full or in part, please remove it from this email. 
-    /// 
-    /// All data will only be stored or processed by gematik GmbH or its appointed companies in order to deal with this error message. Deletion takes place automatically a maximum of 180 days after the ticket has been processed. We will use your email address exclusively to contact you regarding this error message. If you have any questions, or require an earlier deletion, you can contact the data protection representative responsible for the e-prescription system. You can find further information in the menu below the entry for data protection in the e-prescription app.
-    internal static let msgsTxtMailBody2 = StringAsset("msgs_txt_mail_body2")
-    /// Error 40 42 67336
-    internal static let msgsTxtMailError = StringAsset("msgs_txt_mail_error")
-    /// Error message from the e-prescription app
-    internal static let msgsTxtMailSubject = StringAsset("msgs_txt_mail_subject")
-    /// Receive collection code
-    internal static let msgsTxtOnPremiseTitle = StringAsset("msgs_txt_onPremise_title")
-    /// The email app could not be opened. Please use the hotline
-    internal static let msgsTxtOpenMailErrorMessage = StringAsset("msgs_txt_open_mail_error_message")
-    /// Error
-    internal static let msgsTxtOpenMailErrorTitle = StringAsset("msgs_txt_open_mail_error_title")
-    /// Your shopping cart is ready
-    internal static let msgsTxtShipmentTitle = StringAsset("msgs_txt_shipment_title")
-    /// Messages
-    internal static let msgsTxtTitle = StringAsset("msgs_txt_title")
     /// Back
     internal static let navBack = StringAsset("nav_back")
     /// Cancel
     internal static let navCancel = StringAsset("nav_cancel")
+    /// Verbindung abgebrochen
+    internal static let ohcTxtNfcErrorInvalidatedDescription = StringAsset("ohc_txt_nfc_error_invalidated_description")
+    /// Die NFC-Verbindung wurde unerwartet abgebrochen, bitte versuchen Sie es erneut.
+    internal static let ohcTxtNfcErrorInvalidatedRecovery = StringAsset("ohc_txt_nfc_error_invalidated_recovery")
+    /// Karte nicht gefunden
+    internal static let ohcTxtNfcErrorSessionTimeoutDescription = StringAsset("ohc_txt_nfc_error_session_timeout_description")
+    /// Legen Sie die Karte oben auf das Display. Eine schwache Antenne in Ihrer Karte kann zu Problemen führen. Sollte dies wiederholt passieren, melden Sie uns Ihre Karte.
+    internal static let ohcTxtNfcErrorSessionTimeoutRecovery = StringAsset("ohc_txt_nfc_error_session_timeout_recovery")
+    /// Verbindung zur Karte unterbrochen
+    internal static let ohcTxtNfcErrorTagLostDescription = StringAsset("ohc_txt_nfc_error_tag_lost_description")
+    /// Bitte probieren Sie es erneut. Halten Sie die Karte möglichst ruhig bis eine Erfolgsmeldung erscheint.
+    internal static let ohcTxtNfcErrorTagLostRecovery = StringAsset("ohc_txt_nfc_error_tag_lost_recovery")
+    /// NFC nicht verfügbar
+    internal static let ohcTxtNfcErrorUnsupportedDescription = StringAsset("ohc_txt_nfc_error_unsupported_description")
+    /// Der NFC-Leser Ihres Geräts ist nicht verfügbar.
+    internal static let ohcTxtNfcErrorUnsupportedRecovery = StringAsset("ohc_txt_nfc_error_unsupported_recovery")
     /// Make it difficult for unauthorised users to access your data and make the app secure on launch.
     internal static let onbAuthTxtAltDescription = StringAsset("onb_auth_txt_alt_description")
     /// OR
@@ -1457,6 +1437,80 @@ import SwiftUI
     internal static let onbWelTxtExplanation = StringAsset("onb_wel_txt_explanation")
     /// Welcome to the e-prescription app
     internal static let onbWelTxtTitle = StringAsset("onb_wel_txt_title")
+    /// Fehler melden
+    internal static let ordDetailBtnError = StringAsset("ord_detail_btn_error")
+    /// Abholcode anzeigen
+    internal static let ordDetailBtnOnPremise = StringAsset("ord_detail_btn_onPremise")
+    /// Warenkorb-Link anzeigen
+    internal static let ordDetailBtnShipment = StringAsset("ord_detail_btn_shipment")
+    /// Leider war die Nachricht Ihrer Apotheke leer. Bitte kontaktieren Sie Ihre Apotheke.
+    internal static let ordDetailMsgsTxtEmpty = StringAsset("ord_detail_msgs_txt_empty")
+    /// Warenkorb steht bereit
+    internal static let ordDetailSheetTitle = StringAsset("ord_detail_sheet_title")
+    /// Abholcode erhalten
+    internal static let ordDetailSheetTitleOnPremise = StringAsset("ord_detail_sheet_title_on_premise")
+    /// Warenkorb steht bereit
+    internal static let ordDetailSheetTitleShipment = StringAsset("ord_detail_sheet_title_shipment")
+    /// Warenkorb öffnen
+    internal static let ordDetailShipmentLinkBtn = StringAsset("ord_detail_shipment_link_btn")
+    /// Bitte wechseln Sie nun auf die Website der Apotheke, um die Bestellung abzuschließen.
+    internal static let ordDetailShipmentLinkText = StringAsset("ord_detail_shipment_link_text")
+    /// %@ an %@ gesendet.
+    internal static func ordDetailTxtSendTo(_ element1: String, _ element2: String) -> StringAsset {
+        StringAsset("ord_detail_txt_%@_send_to_%@", arguments: [element1, element2])
+    }
+    /// Kontakt Optionen
+    internal static let ordDetailTxtContact = StringAsset("ord_detail_txt_contact")
+    /// Mail schreiben
+    internal static let ordDetailTxtContactEmail = StringAsset("ord_detail_txt_contact_email")
+    /// Route anzeigen
+    internal static let ordDetailTxtContactMap = StringAsset("ord_detail_txt_contact_map")
+    /// Anrufen
+    internal static let ordDetailTxtContactPhone = StringAsset("ord_detail_txt_contact_phone")
+    /// app-fehlermeldung@ti-support.de
+    internal static let ordDetailTxtEmailSupport = StringAsset("ord_detail_txt_email_support")
+    /// Eine Apotheke hat eine Mitteilung in einem fehlerhaften Format versendet.
+    internal static let ordDetailTxtError = StringAsset("ord_detail_txt_error")
+    /// Fehlerhafte Mitteilung erhalten
+    internal static let ordDetailTxtErrorTitle = StringAsset("ord_detail_txt_error_title")
+    /// Verlauf
+    internal static let ordDetailTxtHistory = StringAsset("ord_detail_txt_history")
+    /// Liebes Service-Team, ich habe eine Nachricht von einer Apotheke erhalten. Leider konnte ich meinem Nutzer die Nachricht aber nicht mitteilen, da ich sie nicht verstanden habe. Bitte prüft, was hier passiert ist, und helft uns. Vielen Dank! Die E-Rezept App
+    internal static let ordDetailTxtMailBody1 = StringAsset("ord_detail_txt_mail_body1")
+    /// Sie senden uns diese Informationen zum Zwecke der Fehlersuche. Bitte beachten Sie, dass auch Ihre Mailadresse sowie ggf. Ihr darin enthaltener Name übertragen wird. Wenn Sie diese Informationen ganz oder teilweise nicht übermitteln möchten, löschen Sie diese bitte aus dieser Mail. 
+    /// 
+    /// Alle Daten werden von der gematik GmbH oder deren beauftragten Unternehmen nur zur Bearbeitung dieser Fehlermeldung gespeichert und verarbeitet. Die Löschung erfolgt automatisiert, spätestens 180 Tage nach Bearbeitung des Tickets. Ihre Mailadresse nutzen wir ausschließlich, um mit Ihnen Kontakt in Bezug auf diese Fehlermeldung aufzunehmen. Für Fragen oder eine vorzeitige Löschung können Sie sich jederzeit an den Datenschutzverantwortlichen des E-Rezept Systems wenden. Sie finden weitere Informationen in der E-Rezept App im Menü unter dem Datenschutz-Eintrag.
+    internal static let ordDetailTxtMailBody2 = StringAsset("ord_detail_txt_mail_body2")
+    /// Fehler 40 42 67336
+    internal static let ordDetailTxtMailError = StringAsset("ord_detail_txt_mail_error")
+    /// Fehlermeldung aus der E-Rezept App
+    internal static let ordDetailTxtMailSubject = StringAsset("ord_detail_txt_mail_subject")
+    /// Die Mail-App konnte nicht geöffnet werden. Nutzen Sie bitte die Hotline
+    internal static let ordDetailTxtOpenMailError = StringAsset("ord_detail_txt_open_mail_error")
+    /// Fehler
+    internal static let ordDetailTxtOpenMailErrorTitle = StringAsset("ord_detail_txt_open_mail_error_title")
+    /// Bestellung
+    internal static let ordDetailTxtOrders = StringAsset("ord_detail_txt_orders")
+    /// Plural format key: "%#@variable_0@"
+    internal static func ordDetailTxtPresc(_ element1: Int) -> StringAsset {
+        StringAsset("ord_detail_txt_presc", arguments: [element1])
+    }
+    /// Bestellübersicht
+    internal static let ordDetailTxtTitle = StringAsset("ord_detail_txt_title")
+    /// Plural format key: "%#@variable_0@"
+    internal static func ordListStatusCount(_ element1: Int) -> StringAsset {
+        StringAsset("ord_list_status_count", arguments: [element1])
+    }
+    /// Neu
+    internal static let ordListStatusNew = StringAsset("ord_list_status_new")
+    /// Sie haben noch keine Mitteilungen erhalten
+    internal static let ordTxtEmptyListMessage = StringAsset("ord_txt_empty_list_message")
+    /// Keine Bestellungen
+    internal static let ordTxtEmptyListTitle = StringAsset("ord_txt_empty_list_title")
+    /// Unbekannte Apotheke
+    internal static let ordTxtNoPharmacyName = StringAsset("ord_txt_no_pharmacy_name")
+    /// Bestellungen
+    internal static let ordTxtTitle = StringAsset("ord_txt_title")
     /// How to identify an NFC-enabled medical card
     internal static let orderEgkBtnInfoButton = StringAsset("order_egk_btn_info_button")
     /// Email
@@ -1721,7 +1775,7 @@ import SwiftUI
     internal static let prscFdTxtDetailsDosageForm = StringAsset("prsc_fd_txt_details_dosage_form")
     /// Package size
     internal static let prscFdTxtDetailsDose = StringAsset("prsc_fd_txt_details_dose")
-    /// Use by
+    /// Verwendbar bis
     internal static let prscFdTxtDetailsExpiresOn = StringAsset("prsc_fd_txt_details_expires_on")
     /// Chargenbezeichnung
     internal static let prscFdTxtDetailsLot = StringAsset("prsc_fd_txt_details_lot")
@@ -1821,9 +1875,11 @@ import SwiftUI
     internal static let psfTxtCommonTitle = StringAsset("psf_txt_common_title")
     /// Filters
     internal static let psfTxtTitle = StringAsset("psf_txt_title")
-    /// Show this code at your pharmacy.
-    internal static let pucTxtSubtitle = StringAsset("puc_txt_subtitle")
-    /// Collection code
+    /// Zeigen Sie diesen Abholcode in der %@ vor.
+    internal static func pucTxtSubtitle(_ element1: String) -> StringAsset {
+        StringAsset("puc_txt_subtitle_%@", arguments: [element1])
+    }
+    /// Abholcode erhalten
     internal static let pucTxtTitle = StringAsset("puc_txt_title")
     /// You are in a pharmacy and want to redeem your prescription.
     internal static let rdmBtnRedeemPharmacyDescription = StringAsset("rdm_btn_redeem_pharmacy_description")
@@ -2004,6 +2060,8 @@ import SwiftUI
     /// Weiter
     internal static let stgBtnCardResetAdvance = StringAsset("stg_btn_card_reset_advance")
     /// OK
+    internal static let stgBtnCardResetPinAlertOk = StringAsset("stg_btn_card_reset_pin_alert_ok")
+    /// OK
     internal static let stgBtnCardResetRcAlertOk = StringAsset("stg_btn_card_reset_rc_alert_ok")
     /// Karte verbinden
     internal static let stgBtnCardResetRead = StringAsset("stg_btn_card_reset_read")
@@ -2041,6 +2099,8 @@ import SwiftUI
     internal static let stgDpoTxtFoss = StringAsset("stg_dpo_txt_foss")
     /// Terms of Use
     internal static let stgDpoTxtTermsOfUse = StringAsset("stg_dpo_txt_terms_of_use")
+    /// PIN eingeben
+    internal static let stgEdtCardResetOldpinInput = StringAsset("stg_edt_card_reset_oldpin_input")
     /// Neue PIN eingeben
     internal static let stgEdtCardResetPinInputPin1 = StringAsset("stg_edt_card_reset_pin_input_pin1")
     /// PIN wiederholen
@@ -2152,14 +2212,26 @@ import SwiftUI
     internal static let stgTxtCardResetIntroCustomPin = StringAsset("stg_txt_card_reset_intro_custom_pin")
     /// Mit Ihrer PIN haben Sie eine 8-stellige PUK von Ihrer Versicherung erhalten.
     internal static let stgTxtCardResetIntroHint = StringAsset("stg_txt_card_reset_intro_hint")
+    /// Mit Ihrer Karte haben Sie eine 6-stellige PIN von Ihrer Versicherung erhalten.
+    internal static let stgTxtCardResetIntroHintCustomPin = StringAsset("stg_txt_card_reset_intro_hint_custom_pin")
     /// Ihre Gesundheitskarte
     internal static let stgTxtCardResetIntroNeedYourCard = StringAsset("stg_txt_card_reset_intro_need_your_card")
+    /// PIN Ihrer Gesundheitskarte
+    internal static let stgTxtCardResetIntroNeedYourCardsPin = StringAsset("stg_txt_card_reset_intro_need_your_cards_pin")
     /// PUK Ihrer Gesundheitskarte
     internal static let stgTxtCardResetIntroNeedYourCardsPuk = StringAsset("stg_txt_card_reset_intro_need_your_cards_puk")
     /// Was Sie benötigen:
     internal static let stgTxtCardResetIntroSubheadline = StringAsset("stg_txt_card_reset_intro_subheadline")
     /// Karte entsperren
     internal static let stgTxtCardResetIntroUnlockCard = StringAsset("stg_txt_card_reset_intro_unlock_card")
+    /// Aktuelle PIN eingeben
+    internal static let stgTxtCardResetOldpinHeadline = StringAsset("stg_txt_card_reset_oldpin_headline")
+    /// Bitte geben Sie aus Sicherheitsgründen Ihre aktuelle PIN ein.
+    internal static let stgTxtCardResetOldpinHint = StringAsset("stg_txt_card_reset_oldpin_hint")
+    /// Eine PIN darf nur 6-8 Zeichen lang sein.
+    internal static let stgTxtCardResetPinAlertPinTooLongMessage = StringAsset("stg_txt_card_reset_pin_alert_pin_too_long_message")
+    /// Maximale Länge erreicht
+    internal static let stgTxtCardResetPinAlertPinTooLongTitle = StringAsset("stg_txt_card_reset_pin_alert_pin_too_long_title")
     /// Wunsch-PIN wählen
     internal static let stgTxtCardResetPinHeadline = StringAsset("stg_txt_card_reset_pin_headline")
     /// Ihre neue persönliche Identifikationsnummer (PIN) können Sie selbst wählen (6 bis 8 Stellen).
@@ -2174,6 +2246,8 @@ import SwiftUI
     internal static let stgTxtCardResetPukHeadline = StringAsset("stg_txt_card_reset_puk_headline")
     /// Mit Ihrer PIN haben Sie eine 8-stellige PUK von Ihrer Versicherung erhalten.
     internal static let stgTxtCardResetPukHint = StringAsset("stg_txt_card_reset_puk_hint")
+    /// Wunsch-PIN gespeichert
+    internal static let stgTxtCardResetRcAlertCardSetNewPinTitle = StringAsset("stg_txt_card_reset_rc_alert_card_set_new_pin_title")
     /// Sie können eine PUK für bis zu 10 Entsperrvorgänge nutzen.
     internal static let stgTxtCardResetRcAlertCardUnlockedMessage = StringAsset("stg_txt_card_reset_rc_alert_card_unlocked_message")
     /// Karte entsperrt
@@ -2190,6 +2264,10 @@ import SwiftUI
     internal static let stgTxtCardResetRcAlertCounterExhaustedWithPinMessage = StringAsset("stg_txt_card_reset_rc_alert_counter_exhausted_with_pin_message")
     /// Speichern der Wunsch-PIN nicht möglich
     internal static let stgTxtCardResetRcAlertCounterExhaustedWithPinTitle = StringAsset("stg_txt_card_reset_rc_alert_counter_exhausted_with_pin_title")
+    /// Entsperren Sie Ihre Karte unter Einstellungen > Karte entsperren.
+    internal static let stgTxtCardResetRcAlertPinCounterExhaustedMessage = StringAsset("stg_txt_card_reset_rc_alert_pin_counter_exhausted_message")
+    /// Karte gesperrt
+    internal static let stgTxtCardResetRcAlertPinCounterExhaustedTitle = StringAsset("stg_txt_card_reset_rc_alert_pin_counter_exhausted_title")
     /// Bitte probieren Sie es erneut.
     internal static let stgTxtCardResetRcAlertUnknownErrorMessage = StringAsset("stg_txt_card_reset_rc_alert_unknown_error_message")
     /// Ein Fehler ist aufgetreten
@@ -2198,6 +2276,12 @@ import SwiftUI
     internal static let stgTxtCardResetRcAlertWrongCanMessage = StringAsset("stg_txt_card_reset_rc_alert_wrong_can_message")
     /// Falsche CAN
     internal static let stgTxtCardResetRcAlertWrongCanTitle = StringAsset("stg_txt_card_reset_rc_alert_wrong_can_title")
+    /// Plural format key: "%#@variable_0@"
+    internal static func stgTxtCardResetRcAlertWrongPinMessage(_ element1: Int) -> StringAsset {
+        StringAsset("stg_txt_card_reset_rc_alert_wrong_pin_message", arguments: [element1])
+    }
+    /// PIN falsch eingegeben
+    internal static let stgTxtCardResetRcAlertWrongPinTitle = StringAsset("stg_txt_card_reset_rc_alert_wrong_pin_title")
     /// Plural format key: "%#@variable_0@"
     internal static func stgTxtCardResetRcAlertWrongPukMessage(_ element1: Int) -> StringAsset {
         StringAsset("stg_txt_card_reset_rc_alert_wrong_puk_message", arguments: [element1])
@@ -2208,6 +2292,8 @@ import SwiftUI
     internal static let stgTxtCardResetRcAlertWrongPukZeroRetriesMessage = StringAsset("stg_txt_card_reset_rc_alert_wrong_puk_zero_retries_message")
     /// Keine weitere Eingabe möglich
     internal static let stgTxtCardResetRcAlertWrongPukZeroRetriesTitle = StringAsset("stg_txt_card_reset_rc_alert_wrong_puk_zero_retries_title")
+    /// Setze Wunsch-PIN
+    internal static let stgTxtCardResetRcNfcDialogChangeReferenceData = StringAsset("stg_txt_card_reset_rc_nfc_dialog_change_reference_data")
     /// Nicht erfolgreich
     internal static let stgTxtCardResetRcNfcDialogError = StringAsset("stg_txt_card_reset_rc_nfc_dialog_error")
     /// Entsperre Karte
@@ -2344,8 +2430,8 @@ import SwiftUI
     }
     /// Prescriptions
     internal static let tabTxtMain = StringAsset("tab_txt_main")
-    /// Messages
-    internal static let tabTxtMessages = StringAsset("tab_txt_messages")
+    /// Bestellungen
+    internal static let tabTxtOrders = StringAsset("tab_txt_orders")
     /// Pharmacies
     internal static let tabTxtPharmacySearch = StringAsset("tab_txt_pharmacy_search")
     /// Settings

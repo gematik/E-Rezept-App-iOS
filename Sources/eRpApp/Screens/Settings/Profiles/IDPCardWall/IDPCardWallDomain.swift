@@ -18,7 +18,6 @@
 
 import Combine
 import ComposableArchitecture
-import HealthCardAccess
 import IDP
 import UIKit
 
@@ -70,7 +69,7 @@ enum IDPCardWallDomain {
 
     static let domainReducer = Reducer { state, action, environment in
         switch action {
-        case .pinAction(action: .advance):
+        case .pinAction(action: .advance(.fullScreenCover)):
             state.readCard = CardWallReadCardDomain.State(
                 isDemoModus: environment.userSession.isDemoMode,
                 profileId: state.profileId,
@@ -169,7 +168,7 @@ extension IDPCardWallDomain {
         static let state = State(
             profileId: DemoProfileDataStore.anna.id,
             can: CardWallCANDomain.State(isDemoModus: false, profileId: UUID(), can: ""),
-            pin: CardWallPINDomain.State(isDemoModus: false, pin: "")
+            pin: CardWallPINDomain.State(isDemoModus: false, pin: "", transition: .fullScreenCover)
         )
 
         static let environment = Environment(

@@ -29,7 +29,7 @@ enum AppDomain {
     enum Tab {
         case main
         case pharmacySearch
-        case messages
+        case orders
         case settings
     }
 
@@ -37,11 +37,11 @@ enum AppDomain {
         var selectedTab: Tab
         var main: MainDomain.State
         var pharmacySearch: PharmacySearchDomain.State
-        var messages: MessagesDomain.State
+        var orders: OrdersDomain.State
         var settingsState: SettingsDomain.State
         var profileSelection: ProfileSelectionToolbarItemDomain.State
         var debug: DebugDomain.State
-        var unreadMessagesCount: Int
+        var unreadOrderMessageCount: Int
 
         var isDemoMode: Bool
     }
@@ -49,15 +49,15 @@ enum AppDomain {
     enum Action: Equatable {
         case main(action: MainDomain.Action)
         case pharmacySearch(action: PharmacySearchDomain.Action)
-        case messages(action: MessagesDomain.Action)
+        case orders(action: OrdersDomain.Action)
         case settings(action: SettingsDomain.Action)
         case debug(action: DebugDomain.Action)
         case profile(action: ProfileSelectionToolbarItemDomain.Action)
 
         case isDemoModeReceived(Bool)
         case registerDemoModeListener
-        case registerUnreadMessagesListener
-        case unreadMessagesReceived(Int)
+        case registerNewOrderMessageListener
+        case newOrderMessageReceived(Int)
         case selectTab(Tab)
     }
 
@@ -82,8 +82,8 @@ enum AppDomain {
             switch state.selectedTab {
             case .main:
                 return Effect(value: .main(action: .setNavigation(tag: nil)))
-            case .messages:
-                return Effect(value: .messages(action: .setNavigation(tag: nil)))
+            case .orders:
+                return Effect(value: .orders(action: .setNavigation(tag: nil)))
             case .pharmacySearch:
                 return Effect(value: .pharmacySearch(action: .setNavigation(tag: nil)))
             default:
@@ -93,18 +93,18 @@ enum AppDomain {
              .settings(action: .profiles(action: .newProfile(action: .saveReceived(.success)))):
             return .concatenate(
                 .init(value: .main(action: .setNavigation(tag: nil))),
-                .init(value: .messages(action: .setNavigation(tag: nil))),
+                .init(value: .orders(action: .setNavigation(tag: nil))),
                 .init(value: .pharmacySearch(action: .setNavigation(tag: nil)))
             )
         case .profile(action: .profileSelection(action: .selectProfile)):
             return .concatenate(
                 .init(value: .main(action: .setNavigation(tag: nil))),
-                .init(value: .messages(action: .setNavigation(tag: nil))),
+                .init(value: .orders(action: .setNavigation(tag: nil))),
                 .init(value: .pharmacySearch(action: .setNavigation(tag: nil)))
             )
         case .main,
              .pharmacySearch,
-             .messages,
+             .orders,
              .settings,
              .debug,
              .profile:
@@ -117,15 +117,15 @@ enum AppDomain {
             return environment.userSessionContainer.isDemoMode
                 .map(AppDomain.Action.isDemoModeReceived)
                 .eraseToEffect()
-        case .registerUnreadMessagesListener:
+        case .registerNewOrderMessageListener:
             return environment.userSessionContainer.userSession.erxTaskRepository
-                .countAllUnreadCommunications(for: ErxTask.Communication.Profile.reply)
+                .countAllUnreadCommunications(for: ErxTask.Communication.Profile.all)
                 .receive(on: environment.schedulers.main.animation())
-                .map(AppDomain.Action.unreadMessagesReceived)
+                .map(AppDomain.Action.newOrderMessageReceived)
                 .catch { _ in Effect.none }
                 .eraseToEffect()
-        case let .unreadMessagesReceived(countUnreadMessages):
-            state.unreadMessagesCount = countUnreadMessages
+        case let .newOrderMessageReceived(unreadOrderMessageCount):
+            state.unreadOrderMessageCount = unreadOrderMessageCount
             return .none
         case let .selectTab(tab):
             state.selectedTab = tab
@@ -176,15 +176,17 @@ enum AppDomain {
             )
         }
 
-    private static let messagesPullbackReducer: AppDomain.Reducer =
-        MessagesDomain.reducer.pullback(
-            state: \.messages,
-            action: /AppDomain.Action.messages(action:)
+    private static let ordersPullbackReducer: AppDomain.Reducer =
+        OrdersDomain.reducer.pullback(
+            state: \.orders,
+            action: /AppDomain.Action.orders(action:)
         ) { appEnvironment in
-            MessagesDomain.Environment(
+            OrdersDomain.Environment(
                 schedulers: appEnvironment.schedulers,
+                userSession: appEnvironment.userSessionContainer.userSession,
+                fhirDateFormatter: appEnvironment.fhirDateFormatter,
                 erxTaskRepository: appEnvironment.userSessionContainer.userSession.erxTaskRepository,
-                application: UIApplication.shared
+                pharmacyRepository: appEnvironment.userSession.pharmacyRepository
             )
         }
 
@@ -198,7 +200,7 @@ enum AppDomain {
                 schedulers: appEnvironment.schedulers,
                 tracker: appEnvironment.tracker,
                 signatureProvider: appEnvironment.signatureProvider,
-                nfcResetRetryCounterController: appEnvironment.userSession.nfcResetRetryCounterController,
+                nfcHealthCardPasswordController: appEnvironment.userSession.nfcHealthCardPasswordController,
                 appSecurityManager: appEnvironment.userSession.appSecurityManager,
                 router: appEnvironment.router,
                 userSessionProvider: appEnvironment.userSessionProvider,
@@ -241,7 +243,7 @@ enum AppDomain {
     static let reducer = Reducer.combine(
         mainPullbackReducer,
         pharmacySearchPullbackReducer,
-        messagesPullbackReducer,
+        ordersPullbackReducer,
         settingsPullbackReducer,
         debugPullbackReducer,
         profileSelectionReducer,
@@ -262,11 +264,11 @@ extension AppDomain {
             selectedTab: .main,
             main: MainDomain.Dummies.state,
             pharmacySearch: PharmacySearchDomain.Dummies.state,
-            messages: MessagesDomain.Dummies.state,
+            orders: OrdersDomain.Dummies.state,
             settingsState: SettingsDomain.Dummies.state,
             profileSelection: ProfileSelectionToolbarItemDomain.Dummies.state,
             debug: DebugDomain.Dummies.state,
-            unreadMessagesCount: 0,
+            unreadOrderMessageCount: 0,
             isDemoMode: false
         )
 

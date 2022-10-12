@@ -156,7 +156,7 @@ class StandardSessionContainer: UserSession {
         #endif
     }()
 
-    lazy var nfcResetRetryCounterController: NFCResetRetryCounterController = {
+    lazy var nfcHealthCardPasswordController: NFCHealthCardPasswordController = {
         DefaultNFCResetRetryCounterController(schedulers: schedulers)
     }()
 

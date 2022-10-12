@@ -66,20 +66,35 @@ final class AVSTransactionCoreDataStoreTests: XCTestCase {
         return factory
     }
 
+    let coreDataBackgroundQueue: AnySchedulerOf<DispatchQueue> = AnyScheduler.main
+
     private func loadAVSTransactionCoreDataStore() -> AVSTransactionCoreDataStore {
         AVSTransactionCoreDataStore(
             coreDataControllerFactory: loadFactory(),
-            backgroundQueue: AnyScheduler.main
+            backgroundQueue: coreDataBackgroundQueue
         )
     }
 
-    private func avsTransaction(with id: UUID = UUID()) -> AVSTransaction {
+    private let profileUUID = UUID()
+    private var date = Date()
+
+    private func loadErxTaskCoreDataStore() -> ErxTaskCoreDataStore {
+        ErxTaskCoreDataStore(
+            profileId: profileUUID,
+            coreDataControllerFactory: loadFactory(),
+            backgroundQueue: coreDataBackgroundQueue,
+            dateProvider: { self.date }
+        )
+    }
+
+    private func avsTransaction(with id: UUID = UUID(), taskId: String = "") -> AVSTransaction {
         AVSTransaction(
             transactionID: id,
             httpStatusCode: true,
             groupedRedeemTime: Date(),
             groupedRedeemID: UUID(),
-            telematikID: nil
+            telematikID: nil,
+            taskId: taskId
         )
     }
 
@@ -195,7 +210,8 @@ final class AVSTransactionCoreDataStoreTests: XCTestCase {
             httpStatusCode: avsTransaction.httpStatusCode,
             groupedRedeemTime: avsTransaction.groupedRedeemTime,
             groupedRedeemID: avsTransaction.groupedRedeemID,
-            telematikID: avsTransaction.telematikID
+            telematikID: avsTransaction.telematikID,
+            taskId: ""
         )
 
         // when updating the avsTransaction with the same id
@@ -216,6 +232,53 @@ final class AVSTransactionCoreDataStoreTests: XCTestCase {
         expect(result) == updatedAVSTransaction
 
         cancellable.cancel()
+    }
+
+    func testSavingAVSTransactionUpdatesErxTask() {
+        let task = ErxTask(identifier: "12345", status: .ready, source: .scanner)
+
+        let erxTaskStore = loadErxTaskCoreDataStore()
+        _ = erxTaskStore.save(
+            tasks: [task],
+            updateProfileLastAuthenticated: false
+        )
+        .sink { result in
+            print(result)
+        } receiveValue: { value in
+            print(value)
+        }
+
+        let sut = loadAVSTransactionCoreDataStore()
+
+        let avsTransaction = avsTransaction(with: UUID(), taskId: "12345")
+
+        sut.add(avsTransaction: avsTransaction)
+
+        var success = false
+
+        date = avsTransaction.groupedRedeemTime.addingTimeInterval(60)
+
+        _ = erxTaskStore.fetchTask(by: "12345", accessCode: nil)
+            .sink(receiveCompletion: { _ in
+            }, receiveValue: { task in
+                success = true
+                expect(task?.identifier).to(equal("12345"))
+                expect(task?.status).to(equal(.inProgress))
+            })
+
+        expect(success).to(beTrue())
+        date = avsTransaction.groupedRedeemTime.addingTimeInterval(601)
+        success = false
+
+        _ = erxTaskStore.fetchTask(by: "12345", accessCode: nil)
+            .sink(receiveCompletion: { _ in
+            }, receiveValue: { task in
+                success = true
+                expect(task?.identifier).to(equal("12345"))
+                expect(task?.status).to(equal(.completed))
+            })
+
+        expect(success).to(beTrue())
     }
 
     func testDeleteOneAVSTransaction() {

@@ -44,7 +44,7 @@ final class SettingsDomainTests: XCTestCase {
                 schedulers: Schedulers(uiScheduler: DispatchQueue.test.eraseToAnyScheduler()),
                 tracker: mockTracker,
                 signatureProvider: DummySecureEnclaveSignatureProvider(),
-                nfcResetRetryCounterController: DummyResetRetryCounterController(),
+                nfcHealthCardPasswordController: DummyNFCHealthCardPasswordController(),
                 appSecurityManager: DummyAppSecurityManager(),
                 router: MockRouting(),
                 userSessionProvider: MockUserSessionProvider(),

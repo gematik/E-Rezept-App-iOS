@@ -32,6 +32,7 @@ public class ErxTaskCoreDataStore: CoreDataCrudable, ErxLocalDataStore {
     let foregroundQueue: AnySchedulerOf<DispatchQueue>
     let backgroundQueue: AnySchedulerOf<DispatchQueue>
     let profileId: UUID?
+    let dateProvider: () -> Date
 
     /// Initialize an ErxTask Core Data Store
     /// - Parameters:
@@ -47,12 +48,14 @@ public class ErxTaskCoreDataStore: CoreDataCrudable, ErxLocalDataStore {
         coreDataControllerFactory: CoreDataControllerFactory,
         foregroundQueue: AnySchedulerOf<DispatchQueue> = AnyScheduler.main,
         backgroundQueue: AnySchedulerOf<DispatchQueue> = DispatchQueue(label: "erx-task-data-source-queue",
-                                                                       qos: .userInitiated).eraseToAnyScheduler()
+                                                                       qos: .userInitiated).eraseToAnyScheduler(),
+        dateProvider: @escaping () -> Date = { Date() }
     ) {
         self.profileId = profileId
         self.coreDataControllerFactory = coreDataControllerFactory
         self.foregroundQueue = foregroundQueue
         self.backgroundQueue = backgroundQueue
+        self.dateProvider = dateProvider
     }
 
     func fetchProfile(in context: NSManagedObjectContext) -> ProfileEntity? {

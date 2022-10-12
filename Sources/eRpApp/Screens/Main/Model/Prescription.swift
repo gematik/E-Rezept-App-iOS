@@ -147,7 +147,7 @@ extension GroupedPrescription {
                 return false
             }
 
-            return true
+            return erxTask.status == .ready
         }
 
         var isDeleteabel: Bool {

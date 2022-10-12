@@ -26,7 +26,8 @@ extension AVSTransaction {
             httpStatusCode: 200,
             groupedRedeemTime: .init(timeIntervalSince1970: 1_615_823_464),
             groupedRedeemID: UUID(uuidString: "00000000-0000-0000-0000-000000000000")!,
-            telematikID: "123456789"
+            telematikID: "123456789",
+            taskId: "12345.6789.101112"
         )
     }
 }

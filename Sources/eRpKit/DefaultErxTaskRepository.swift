@@ -271,8 +271,13 @@ public class DefaultErxTaskRepository: ErxTaskRepository {
     public func countAllUnreadCommunications(
         for profile: ErxTask.Communication.Profile
     ) -> AnyPublisher<Int, ErrorType> {
-        disk.countAllUnreadCommunications(for: profile)
+        disk.listAllCommunications(for: profile)
             .mapError(ErrorType.local)
+            .map { communications in
+                // filter for unique communications
+                communications.filterUnique()
+            }
+            .map { $0.filter { $0.isRead == false }.count }
             .eraseToAnyPublisher()
     }
 }

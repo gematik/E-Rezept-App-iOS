@@ -26,4 +26,5 @@ extension ErxTaskWorkRelatedAccidentEntity {
 
     @NSManaged public var date: String?
     @NSManaged public var workPlaceIdentifier: String?
+    @NSManaged public var task: ErxTaskEntity?
 }

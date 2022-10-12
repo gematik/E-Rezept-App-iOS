@@ -166,24 +166,7 @@ extension CardWallReadCardDomain.State {
     }
 }
 
-extension CardWallReadCardDomain.State.Error: CustomStringConvertible, LocalizedError {
-    var description: String {
-        switch self {
-        case let .idpError(error):
-            return "idpError: \(error.localizedDescription)"
-        case let .signChallengeError(error):
-            return "cardError: \(error.localizedDescription)"
-        case let .inputError(error):
-            return error.localizedDescription
-        case let .biometrieError(error as LocalizedError):
-            return error.localizedDescription
-        case let .biometrieError(error):
-            return "biometrie error \(error)"
-        case let .profileValidation(error):
-            return "validation error: \(error.localizedDescription)"
-        }
-    }
-
+extension CardWallReadCardDomain.State.Error: LocalizedError {
     var errorDescription: String? {
         switch self {
         case let .idpError(error):

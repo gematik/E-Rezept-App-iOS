@@ -139,7 +139,7 @@ final class RedeemDomainTests: XCTestCase {
         let store = testStore()
 
         let expectedState = RedeemMatrixCodeDomain.State(
-            groupedPrescription: groupedPrescription
+            erxTasks: [erxTask]
         )
 
         // when

@@ -301,7 +301,8 @@ final class AVSRedeemServiceTests: XCTestCase {
             avsTransactionDataStore: mockAVSTransactionDataStore
         )
 
-        let orders: [Order] = [.Fixtures.order1, .Fixtures.order2, .Fixtures.order3]
+        let orderId = UUID()
+        let orders: [Order] = Order.Fixtures.orders(with: orderId)
 
         // redeem once
         sut.redeem(orders)
@@ -323,38 +324,8 @@ final class AVSRedeemServiceTests: XCTestCase {
             $0[0].groupedRedeemTime == firstRedeemDateTime
         }) == true
 
-        let firstGroupedRedeemID = mockAVSTransactionDataStore.saveAvsTransactionsReceivedInvocations[0][0]
-            .groupedRedeemID
         expect(self.mockAVSTransactionDataStore.saveAvsTransactionsReceivedInvocations.allSatisfy {
-            $0[0].groupedRedeemID == firstGroupedRedeemID
+            $0[0].groupedRedeemID == orderId
         }) == true
-
-        // redeem again
-        sut.redeem(orders)
-            .test(
-                failure: { error in
-                    print(error)
-                    fail("no error expected")
-                },
-                expectations: { _ in }
-            )
-
-        expect(self.mockAVSTransactionDataStore.saveAvsTransactionsCalled) == true
-        expect(self.mockAVSTransactionDataStore.saveAvsTransactionsCallsCount) == 6
-
-        expect(self.mockAVSTransactionDataStore.saveAvsTransactionsReceivedInvocations.count) == 6
-        let secondRedeemDateTime = mockAVSTransactionDataStore.saveAvsTransactionsReceivedInvocations[3][0]
-            .groupedRedeemTime
-        expect(self.mockAVSTransactionDataStore.saveAvsTransactionsReceivedInvocations[3 ..< 6].allSatisfy {
-            $0[0].groupedRedeemTime == secondRedeemDateTime
-        }) == true
-        expect(firstRedeemDateTime) < secondRedeemDateTime
-
-        let secondGroupedRedeemID = mockAVSTransactionDataStore.saveAvsTransactionsReceivedInvocations[3][0]
-            .groupedRedeemID
-        expect(self.mockAVSTransactionDataStore.saveAvsTransactionsReceivedInvocations[3 ..< 6].allSatisfy {
-            $0[0].groupedRedeemID == secondGroupedRedeemID
-        }) == true
-        expect(firstGroupedRedeemID) != secondGroupedRedeemID
     }
 }

@@ -174,10 +174,14 @@ settings:
     - stg_txt_card_reset_intro_unlock_card
     - stg_txt_card_reset_intro_custom_pin
     - stg_txt_card_reset_intro_need_your_card
+    - stg_txt_card_reset_intro_need_your_cards_pin
     - stg_txt_card_reset_intro_need_your_cards_puk
     - stg_txt_card_reset_puk_headline
     - stg_txt_card_reset_puk_hint
     - stg_edt_card_reset_puk_input
+    - stg_txt_card_reset_oldpin_headline
+    - stg_txt_card_reset_oldpin_hint
+    - stg_edt_card_reset_oldpin_input
     - stg_txt_card_reset_pin_headline
     - stg_txt_card_reset_pin_hint
     - stg_txt_card_reset_pin_hint_message
@@ -269,10 +273,20 @@ redeem:
     - rph_img_matrixcode_loading_indicator
     - rph_img_matrixcode
     - rph_btn_close_button
-messages:
+orders:
   list:
-    - msgs_txt_empty_list
-    - msgs_txt_title
+    - ord_txt_empty_list
+    - ord_txt_list
+    - ord_txt_title
+orderDetail:
+  list:
+    - ord_detail_title
+    - ord_detail_txt_msg_list
+    - ord_detail_txt_med_list
+    - ord_detail_btn_contact
+    - ord_detail_btn_contact_map
+    - ord_detail_btn_contact_phone
+    - ord_detail_btn_contact_email
   pickupCode:
     - puc_txt_title
     - puc_txt_subtitle

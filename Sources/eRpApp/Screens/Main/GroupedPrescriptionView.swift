@@ -70,7 +70,7 @@ struct GroupedPrescriptionView: View {
                 }
                 .accessibilityElement(children: .contain)
                 .accessibility(identifier: A18n.mainScreen.erxDetailedBlockPrescriptions)
-                if !groupedPrescription.isArchived {
+                if groupedPrescription.isRedeemable {
                     FooterView {
                         viewStore.send(.redeemViewTapped(selectedGroupedPrescription: groupedPrescription))
                     }

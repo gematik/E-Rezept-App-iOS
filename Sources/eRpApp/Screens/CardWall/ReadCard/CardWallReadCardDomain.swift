@@ -18,10 +18,11 @@
 
 import Combine
 import ComposableArchitecture
+import CoreNFC
 import eRpKit
-import HealthCardAccess
 import Helper
 import IDP
+import NFCCardReaderProvider
 import UIKit
 
 enum CardWallReadCardDomain {
@@ -97,6 +98,7 @@ enum CardWallReadCardDomain {
 
         switch action {
         case .getChallenge:
+            state.route = nil
             return environment.idpChallengePublisher(for: state.profileId)
                 .eraseToEffect()
                 .cancellable(id: Token.idpChallenge, cancelInFlight: true)
@@ -122,18 +124,35 @@ enum CardWallReadCardDomain {
                  let .signingChallenge(.error(error)),
                  let .verifying(.error(error)):
                 switch error {
-                case .signChallengeError(.cardError(.userCancelled)):
-                    // do not present error when user cancelled the session
-                    break
                 case .signChallengeError(.wrongPin(0)):
                     state.route = .alert(AlertStates.alertFor(error))
                 case .signChallengeError(.wrongPin):
                     state.route = .alert(AlertStates.wrongPIN(error))
                 case .signChallengeError(.wrongCAN):
                     state.route = .alert(AlertStates.wrongCAN(error))
-                case let .signChallengeError(error):
-                    let report = createNfcReadingReport(with: error, commands: CommandLogger.commands)
-                    state.route = .alert(AlertStates.alertWithReportButton(report, error: error))
+                case let .signChallengeError(.cardError(.nfcTag(error: tagError))):
+                    if let errorAlert = AlertStates.alert(for: tagError) {
+                        state.route = .alert(errorAlert)
+                    }
+                case let .signChallengeError(.cardConnectionError(nfcError)),
+                     let .signChallengeError(.verifyCardError(nfcError)),
+                     let .signChallengeError(.genericError(nfcError)):
+                    switch nfcError {
+                    case let cardError as NFCCardError:
+                        if case let .nfcTag(error: tagError) = cardError,
+                           let errorAlert = AlertStates.alert(for: tagError) {
+                            state.route = .alert(errorAlert)
+                        }
+                    case let readerError as NFCTagReaderSession.Error:
+                        if case let .nfcTag(error: tagError) = readerError,
+                           let errorAlert = AlertStates.alert(for: tagError) {
+                            state.route = .alert(errorAlert)
+                        }
+                    default:
+                        state.route = .alert(AlertStates.alertFor(error))
+                    }
+                case let .signChallengeError(challengeError):
+                    state.route = .alert(AlertStates.alertWithReportButton(error: challengeError))
                 default:
                     state.route = .alert(AlertStates.alertFor(error))
                 }
@@ -154,27 +173,22 @@ enum CardWallReadCardDomain {
                 environment.sessionProvider.userDataStore(for: state.profileId).can
                     .first()
                     .flatMap { can -> Effect<Action, Never> in
-                        guard let can = can,
-                              let canData = try? CAN.from(Data(can.utf8)) else {
+                        guard let can = can else {
                             return Just(Action
                                 .stateReceived(State.Output.retrievingChallenge(.error(.inputError(.missingCAN)))))
                                                             .eraseToEffect()
                         }
-                        guard let format2Pin = try? Format2Pin(pincode: pin) else {
-                            return Just(Action.stateReceived(.retrievingChallenge(.error(.inputError(.missingPIN)))))
-                                .eraseToEffect()
-                        }
 
                         if biometrieFlow {
                             return environment.signChallengeThenAltAuthWithNFCCard(
-                                can: canData,
-                                pin: format2Pin,
+                                can: can,
+                                pin: pin,
                                 profileID: profileID
                             )
                         }
                         return environment.signChallengeWithNFCCard(
-                            can: canData,
-                            pin: format2Pin,
+                            can: can,
+                            pin: pin,
                             profileID: profileID,
                             challenge: challenge
                         )
@@ -236,6 +250,27 @@ extension CardWallReadCardDomain {
             )
         }
 
+        static var tagConnectionLostCount = 0
+        static func tagConnectionLost(_ error: CoreNFCError) -> AlertState<Action> {
+            Self.tagConnectionLostCount += 1
+            if tagConnectionLostCount <= 3 {
+                return AlertState(
+                    title: TextState(error.localizedDescription),
+                    message: TextState(error.recoverySuggestion ?? error.localizedDescription),
+                    primaryButton: .default(TextState(L10n.cdwBtnRcHelp), action: .send(.openHelpViewScreen)),
+                    secondaryButton: .cancel(.init(L10n.cdwBtnRcRetry), action: .send(.getChallenge))
+                )
+            } else {
+                let report = createNfcReadingReport(with: error, commands: CommandLogger.commands)
+                return AlertState(
+                    title: TextState(L10n.cdwRcTxtErrorBadCardDescription),
+                    message: TextState(L10n.cdwRcTxtErrorBadCardRecovery),
+                    primaryButton: .default(TextState(L10n.cdwBtnRcAlertReport), action: .send(.openMail(report))),
+                    secondaryButton: .cancel(.init(L10n.cdwBtnRcRetry), action: .send(.getChallenge))
+                )
+            }
+        }
+
         static func wrongPIN(_ error: Error) -> AlertState<Action> {
             AlertState(
                 title: TextState(error.localizedDescriptionWithErrorList),
@@ -245,7 +280,7 @@ extension CardWallReadCardDomain {
             )
         }
 
-        static func alertFor(_ error: Error) -> AlertState<Action> {
+        static func alertFor(_ error: CodedError) -> AlertState<Action> {
             AlertState(
                 title: TextState(error.localizedDescriptionWithErrorList),
                 message: error.recoverySuggestion.map(TextState.init),
@@ -253,28 +288,48 @@ extension CardWallReadCardDomain {
             )
         }
 
-        static func alertWithReportButton(_ report: String, error: NFCSignatureProviderError) -> AlertState<Action> {
-            AlertState(
-                for: error,
-                primaryButton: .default(TextState(L10n.cdwBtnRcAlertReport), action: .send(.openMail(report)))
+        static func alertWithReportButton(error: CodedError) -> AlertState<Action> {
+            let report = createNfcReadingReport(with: error, commands: CommandLogger.commands)
+            return AlertState(
+                title: TextState(error.localizedDescription),
+                message: TextState(error.recoverySuggestionWithErrorList),
+                primaryButton: .default(TextState(L10n.cdwBtnRcAlertReport), action: .send(.openMail(report))),
+                secondaryButton: .cancel(.init(L10n.cdwBtnRcRetry), action: .send(.getChallenge))
             )
+        }
+
+        static func alert(for tagError: CoreNFCError) -> AlertState<CardWallReadCardDomain.Action>? {
+            switch tagError {
+            case .tagConnectionLost:
+                return CardWallReadCardDomain.AlertStates.tagConnectionLost(tagError)
+            case .sessionTimeout, .sessionInvalidated, .other, .unknown:
+                return CardWallReadCardDomain.AlertStates.alertWithReportButton(error: tagError)
+            case .unsupportedFeature:
+                return CardWallReadCardDomain.AlertStates.alertFor(tagError)
+            default: return nil
+            }
         }
     }
 
     static func createNfcReadingReport(
-        with error: NFCSignatureProviderError,
+        with error: CodedError,
         commands: [Command]
     ) -> String {
-        var description = "Vielen Dank für das Senden dieses Reports. Der Report enthält keine privaten Daten."
+        var description = "Teilen Sie uns den Namen Ihrer Krankenversicherung mit:\n"
+        description += "\nWelchen Gesundheitskartentyp haben Sie "
+        description += "(dies steht i.d.R. seitlich auf der Rückseite Ihrer Karte z.B. IDEMIA oder G&D):\n"
 
+        description = "\nVielen Dank für das Senden dieses Reports. Der generierte Report enthält keine privaten Daten:"
         description += "# NFC Reading error iOS E-Rezept App\n\n"
 
         description += "Date: \(Date().description)\n"
 
         description += "\n# RESULT\n\n"
+        description += "Tag connections lost count: \(CardWallReadCardDomain.AlertStates.tagConnectionLostCount)"
 
-        description += "Finished with error message: '\(error.localizedDescriptionWithErrorList)'\n"
-        description += "actual error: \(error)\n"
+        description +=
+            "Finished with error message: '\(error.localizedDescription) \(error.recoverySuggestionWithErrorList)'\n"
+        description += "actual error: \(String(describing: error))\n"
 
         description += "\n# COMMANDS\n"
 
@@ -376,8 +431,8 @@ extension CardWallReadCardDomain.Environment {
 
     // [REQ:gemSpec_eRp_FdV:A_20172]
     // [REQ:gemSpec_IDP_Frontend:A_20526-01] sign and verify with idp
-    func signChallengeWithNFCCard(can: CAN,
-                                  pin: Format2Pin,
+    func signChallengeWithNFCCard(can: String,
+                                  pin: String,
                                   profileID: UUID,
                                   challenge: IDPChallengeSession) -> Effect<CardWallReadCardDomain.Action, Never> {
         Effect<CardWallReadCardDomain.Action, Never>.run { subscriber -> Cancellable in
@@ -405,8 +460,8 @@ extension CardWallReadCardDomain.Environment {
     // [REQ:gemSpec_eRp_FdV:A_20172]
     // [REQ:gemSpec_IDP_Frontend:A_20526-01] verify with idp
     private func verifyResultWithIDP(_ signedChallenge: SignedChallenge,
-                                     can _: CAN,
-                                     pin _: Format2Pin,
+                                     can _: String,
+                                     pin _: String,
                                      profileID: UUID,
                                      registerBiometrics _: Bool = false)
         -> Effect<CardWallReadCardDomain.Action, Never> {

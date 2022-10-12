@@ -21,73 +21,56 @@ import ComposableArchitecture
 import SwiftUI
 
 struct CANCameraScanner: View {
-    let store: CardWallCANDomain.Store
     @Binding var canScan: ScanCAN?
-
-    struct ViewState: Equatable {
-        let flashLightState: Bool
-        init(state: CardWallCANDomain.State) {
-            flashLightState = state.isFlashOn
-        }
-    }
+    var closeAction: (ScanCAN?) -> Void
 
     var body: some View {
-        WithViewStore(store.scope(state: ViewState.init)) { viewStore in
-            ZStack(alignment: .top) {
-                VisionView(can: $canScan)
-                    .edgesIgnoringSafeArea([.top, .bottom])
-                    .onAppear {
-                        canScan = nil
-                    }
+        ZStack(alignment: .top) {
+            VisionView(can: $canScan)
+                .edgesIgnoringSafeArea([.top, .bottom])
+                .onAppear {
+                    canScan = nil
+                }
 
-                VStack {
-                    if let canScan = canScan {
-                        Text("\(L10n.cdwCanScanTxtResult.text) \n\(canScan)")
-                            .padding()
-                            .background(Color(.systemBackground))
-                            .cornerRadius(8)
-                            .lineLimit(2)
-                            .multilineTextAlignment(.center)
-                            .font(.system(size: 20))
-                    } else {
-                        Text(L10n.cdwCanScanTxtHint.text)
-                            .padding()
-                            .background(Color(.systemBackground))
-                            .cornerRadius(8)
-                            .lineLimit(nil)
-                            .multilineTextAlignment(.center)
-                            .font(.system(size: 20))
-                    }
+            VStack {
+                if let canScan = canScan {
+                    Text("\(L10n.cdwCanScanTxtResult.text) \n\(canScan)")
+                        .padding()
+                        .background(Color(.systemBackground))
+                        .cornerRadius(8)
+                        .lineLimit(2)
+                        .multilineTextAlignment(.center)
+                        .font(.system(size: 20))
+                } else {
+                    Text(L10n.cdwCanScanTxtHint.text)
+                        .padding()
+                        .background(Color(.systemBackground))
+                        .cornerRadius(8)
+                        .lineLimit(nil)
+                        .multilineTextAlignment(.center)
+                        .font(.system(size: 20))
+                }
 
-                    Spacer()
-                    PrimaryTextButton(text: L10n.cdwCanScanBtnConfirm,
-                                      a11y: A11y.cardWall.canScanner.cdwScnBtnDone,
-                                      isEnabled: canScan != nil) {
-                        if canScan != nil {
-                            if let canScan = canScan {
-                                viewStore.send(.update(can: canScan))
-                                viewStore.send(.setNavigation(tag: .none))
-                            }
+                Spacer()
+                PrimaryTextButton(text: L10n.cdwCanScanBtnConfirm,
+                                  a11y: A11y.cardWall.canScanner.cdwScnBtnDone,
+                                  isEnabled: canScan != nil) {
+                    if canScan != nil {
+                        if let canScan = canScan {
+                            closeAction(canScan)
                         }
                     }
-                    .padding(.bottom)
                 }
-                .padding()
-            }.onReceive(NotificationCenter.default
-                .publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
-                    viewStore.send(.flashLightOff)
+                .padding(.bottom)
             }
-            .navigationBarItems(leading: CloseButton {
-                viewStore.send(.setNavigation(tag: .none))
-            },
-            trailing: LightSwitch(store: store)
-                .accessibility(identifier: A11y.cardWall.canScanner.cdwScnBtnClose)
-                .accessibility(label: Text(L10n.cdwCanScanBtnClose)))
-            .onChange(of: viewStore.flashLightState) { state in
-                state ? UIImpactFeedbackGenerator(style: .light)
-                    .impactOccurred() : UIImpactFeedbackGenerator(style: .light).impactOccurred()
-            }
-        }
+            .padding()
+        }.navigationBarItems(leading: CloseButton {
+            closeAction(nil)
+            toggleFlashlight(status: false)
+        },
+        trailing: LightSwitch(isFlashOn: false)
+            .accessibility(identifier: A11y.cardWall.canScanner.cdwScnBtnClose)
+            .accessibility(label: Text(L10n.cdwCanScanBtnClose)))
     }
 }
 
@@ -107,19 +90,23 @@ private func toggleFlashlight(status: Bool) {
 }
 
 struct LightSwitch: View {
-    let store: CardWallCANDomain.Store
-    var body: some View {
-        WithViewStore(store) { viewStore in
+    @State
+    var isFlashOn: Bool {
+        didSet {
+            toggleFlashlight(status: isFlashOn)
+        }
+    }
 
+    var body: some View {
+        VStack {
             if (AVCaptureDevice.default(for: AVMediaType.video)?.hasTorch) != nil {
                 Button(action: {
-                    viewStore.send(.toggleFlashLight)
-                    toggleFlashlight(status: viewStore.isFlashOn)
+                    isFlashOn.toggle()
                 }, label: {
                     HStack {
-                        Image(systemName: !viewStore.state.isFlashOn ? SFSymbolName.lightbulb : SFSymbolName
+                        Image(systemName: !isFlashOn ? SFSymbolName.lightbulb : SFSymbolName
                             .lightbulbSlash).foregroundColor(Colors.systemColorWhite)
-                        Text(!viewStore.state.isFlashOn ? L10n.scnBtnLightOn : L10n.scnBtnLightOff)
+                        Text(!isFlashOn ? L10n.scnBtnLightOn : L10n.scnBtnLightOff)
                             .foregroundColor(Colors.systemColorWhite)
                             .padding(.trailing)
                     }
@@ -130,6 +117,13 @@ struct LightSwitch: View {
                     .cornerRadius(8)
                     .padding()
             }
+        }.onReceive(NotificationCenter.default
+            .publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+                isFlashOn = false
+        }
+        .onChange(of: isFlashOn) { state in
+            state ? UIImpactFeedbackGenerator(style: .light)
+                .impactOccurred() : UIImpactFeedbackGenerator(style: .light).impactOccurred()
         }
     }
 }
@@ -137,7 +131,7 @@ struct LightSwitch: View {
 struct KVNRCameraScanner_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
-            CANCameraScanner(store: CardWallCANDomain.Dummies.store, canScan: .constant("123123"))
+            CANCameraScanner(canScan: .constant("123123")) { _ in }
         }
     }
 }

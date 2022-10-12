@@ -39,13 +39,15 @@ final class ErxTaskRepositoryRedeemServiceTests: XCTestCase {
     )
 
     lazy var order2 = Order(
-        redeemType: .onPremise,
+        redeemType: .shipment,
+        phone: "1234567",
         taskID: "task_id_2",
         accessCode: "access_code_2",
         telematikId: "telematik_id_2"
     )
     lazy var order3 = Order(
-        redeemType: .onPremise,
+        redeemType: .delivery,
+        phone: "1234567",
         taskID: "task_id_3",
         accessCode: "access_code_3",
         telematikId: "telematik_id_3"

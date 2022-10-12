@@ -27,31 +27,15 @@ extension ProfileEntity {
     @NSManaged public var color: String?
     @NSManaged public var created: Date?
     @NSManaged public var emoji: String?
-    @NSManaged public var identifier: UUID?
-    @NSManaged public var givenName: String?
     @NSManaged public var familyName: String?
+    @NSManaged public var givenName: String?
+    @NSManaged public var identifier: UUID?
     @NSManaged public var insurance: String?
     @NSManaged public var insuranceId: String?
     @NSManaged public var lastAuthenticated: Date?
     @NSManaged public var name: String?
-    @NSManaged public var erxTasks: NSSet?
     @NSManaged public var auditEvents: NSSet?
-}
-
-// MARK: Generated accessors for erxTasks
-
-extension ProfileEntity {
-    @objc(addErxTasksObject:)
-    @NSManaged public func addToErxTasks(_ value: ErxTaskEntity)
-
-    @objc(removeErxTasksObject:)
-    @NSManaged public func removeFromErxTasks(_ value: ErxTaskEntity)
-
-    @objc(addErxTasks:)
-    @NSManaged public func addToErxTasks(_ values: NSSet)
-
-    @objc(removeErxTasks:)
-    @NSManaged public func removeFromErxTasks(_ values: NSSet)
+    @NSManaged public var erxTasks: NSSet?
 }
 
 // MARK: Generated accessors for auditEvents
@@ -70,4 +54,18 @@ extension ProfileEntity {
     @NSManaged public func removeFromAuditEvents(_ values: NSSet)
 }
 
-extension ProfileEntity: Identifiable {}
+// MARK: Generated accessors for erxTasks
+
+extension ProfileEntity {
+    @objc(addErxTasksObject:)
+    @NSManaged public func addToErxTasks(_ value: ErxTaskEntity)
+
+    @objc(removeErxTasksObject:)
+    @NSManaged public func removeFromErxTasks(_ value: ErxTaskEntity)
+
+    @objc(addErxTasks:)
+    @NSManaged public func addToErxTasks(_ values: NSSet)
+
+    @objc(removeErxTasks:)
+    @NSManaged public func removeFromErxTasks(_ values: NSSet)
+}

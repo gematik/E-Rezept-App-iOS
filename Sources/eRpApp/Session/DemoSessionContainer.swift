@@ -88,7 +88,7 @@ class DemoSessionContainer: UserSession {
         DemoSignatureProvider()
     }()
 
-    lazy var nfcResetRetryCounterController: NFCResetRetryCounterController = {
+    lazy var nfcHealthCardPasswordController: NFCHealthCardPasswordController = {
         DefaultNFCResetRetryCounterController(schedulers: schedulers)
     }()
 

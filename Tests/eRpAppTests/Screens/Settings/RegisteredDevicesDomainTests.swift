@@ -74,7 +74,10 @@ final class RegisteredDevicesDomainTests: XCTestCase {
 
     func testLoadDevicesTriggersCardwall() {
         let store = testStore(for: .init(profileId: testProfileId))
-        let cardWallState = IDPCardWallDomain.State(profileId: testProfileId, pin: .init(isDemoModus: false))
+        let cardWallState = IDPCardWallDomain.State(
+            profileId: testProfileId,
+            pin: .init(isDemoModus: false, transition: .fullScreenCover)
+        )
 
         mockRegisteredDevicesService.registeredDevicesForReturnValue =
             Fail(error: RegisteredDevicesServiceError.missingAuthentication)

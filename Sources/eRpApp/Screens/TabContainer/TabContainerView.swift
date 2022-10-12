@@ -32,11 +32,11 @@ struct TabContainerView: View {
 
     struct ViewState: Equatable {
         let selectedTab: AppDomain.Tab
-        let unreadMessagesCount: Int
+        let unreadOrderMessageCount: Int
 
         init(state: AppDomain.State) {
             selectedTab = state.selectedTab
-            unreadMessagesCount = state.unreadMessagesCount
+            unreadOrderMessageCount = state.unreadOrderMessageCount
         }
     }
 
@@ -65,18 +65,6 @@ struct TabContainerView: View {
                 }
                 .tag(AppDomain.Tab.main)
 
-                MessagesView(
-                    store: store.scope(state: \.messages,
-                                       action: AppDomain.Action.messages(action:)),
-                    profileSelectionToolbarItemStore: store.scope(state: \.profileSelection,
-                                                                  action: AppDomain.Action.profile(action:))
-                )
-                .tabItem {
-                    Label(L10n.tabTxtMessages, image: Asset.TabIcon.bubbleLeft.name)
-                }
-                .backport.badge(viewStore.unreadMessagesCount)
-                .tag(AppDomain.Tab.messages)
-
                 NavigationView {
                     PharmacySearchView(
                         store: store.scope(
@@ -92,6 +80,18 @@ struct TabContainerView: View {
                     Label(L10n.tabTxtPharmacySearch, image: Asset.TabIcon.mapPinAndEllipse.name)
                 }
                 .tag(AppDomain.Tab.pharmacySearch)
+
+                OrdersView(
+                    store: store.scope(state: \.orders,
+                                       action: AppDomain.Action.orders(action:)),
+                    profileSelectionToolbarItemStore: store.scope(state: \.profileSelection,
+                                                                  action: AppDomain.Action.profile(action:))
+                )
+                .tabItem {
+                    Label(L10n.tabTxtOrders, image: Asset.TabIcon.bag.name)
+                }
+                .backport.badge(viewStore.unreadOrderMessageCount)
+                .tag(AppDomain.Tab.orders)
 
                 #if ENABLE_DEBUG_VIEW
                 SettingsView(
@@ -123,7 +123,7 @@ struct TabContainerView: View {
             }
             .onAppear {
                 viewStore.send(.registerDemoModeListener)
-                viewStore.send(.registerUnreadMessagesListener)
+                viewStore.send(.registerNewOrderMessageListener)
                 viewStore.send(.profile(action: .registerProfileListener))
             }
             .onDisappear {
@@ -132,14 +132,14 @@ struct TabContainerView: View {
             .accentColor(Colors.primary600)
             .zIndex(0)
 
-            if #unavailable(iOS 15.0), viewStore.unreadMessagesCount > 0 {
-                MessagesBadgeView(badgeCount: viewStore.unreadMessagesCount)
+            if #unavailable(iOS 15.0), viewStore.unreadOrderMessageCount > 0 {
+                MessagesBadgeView(badgeCount: viewStore.unreadOrderMessageCount)
             }
         }
     }
 
     struct MessagesBadgeView: View {
-        private let tabNumber: CGFloat = 2
+        private let tabNumber: CGFloat = 3
         private let tabCount: CGFloat = 4
         let badgeCount: Int
         var body: some View {

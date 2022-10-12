@@ -339,6 +339,12 @@ extension PharmacyDetailView {
                 ) {}
                     .hidden()
                     .accessibility(hidden: true)
+                // This is a workaround due to a SwiftUI bug where never 2 NavigationLink
+                // should be on the same view. See:
+                // https://forums.swift.org/t/14-5-beta3-navigationlink-unexpected-pop/45279
+                NavigationLink(destination: EmptyView()) {
+                    EmptyView()
+                }.accessibility(hidden: true)
             }
         }
 

@@ -29,4 +29,5 @@ extension ErxTaskPractitionerEntity {
     @NSManaged public var lanr: String?
     @NSManaged public var name: String?
     @NSManaged public var qualification: String?
+    @NSManaged public var task: ErxTaskEntity?
 }

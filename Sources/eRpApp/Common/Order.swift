@@ -52,27 +52,8 @@ protocol AVSOrder {
     var recipients: [X509] { get }
 }
 
-struct Address: Equatable {
-    let street: String?
-    let zip: String?
-    let city: String?
-
-    func asArray() -> [String] {
-        var address = [String]()
-        if let street = street {
-            address.append(street)
-        }
-        if let zip = zip {
-            address.append(zip)
-        }
-        if let city = city {
-            address.append(city)
-        }
-        return address
-    }
-}
-
 struct Order: eRpRemoteStorageOrder, AVSOrder, Equatable {
+    let orderID: UUID
     let redeemType: RedeemOption
     let version: String
     let name: String?
@@ -89,6 +70,7 @@ struct Order: eRpRemoteStorageOrder, AVSOrder, Equatable {
     let telematikId: String?
 
     init(
+        orderID: UUID = UUID(),
         version: String = "1",
         redeemType: RedeemOption,
         name: String? = nil,
@@ -104,6 +86,7 @@ struct Order: eRpRemoteStorageOrder, AVSOrder, Equatable {
         recipients: [X509] = [],
         telematikId: String? = nil
     ) {
+        self.orderID = orderID
         self.version = version
         self.redeemType = redeemType
         self.name = name
@@ -168,7 +151,7 @@ extension ErxTaskOrder {
             phone: order.phone ?? ""
         )
         self.init(
-            identifier: order.transactionID.uuidString,
+            identifier: order.orderID.uuidString,
             erxTaskId: order.taskID,
             accessCode: order.accessCode,
             pharmacyTelematikId: telematikId,

@@ -19,13 +19,13 @@
 import Combine
 import DataKit
 import Foundation
-import HealthCardAccess
 import IDP
 import OpenSSL
 
 #if ENABLE_DEBUG_VIEW
 class VirtualEGKSignatureProvider: NFCSignatureProvider {
-    func openSecureSession(can _: CAN, pin _: Format2Pin) -> AnyPublisher<SignatureSession, NFCSignatureProviderError> {
+    func openSecureSession(can _: String,
+                           pin _: String) -> AnyPublisher<SignatureSession, NFCSignatureProviderError> {
         let cchaut = UserDefaults.standard.virtualEGKCCHAut ?? ""
         let prkchaut = UserDefaults.standard.virtualEGKPrkCHAut ?? ""
 
@@ -34,8 +34,8 @@ class VirtualEGKSignatureProvider: NFCSignatureProvider {
         return Just(signatureSession).setFailureType(to: NFCSignatureProviderError.self).eraseToAnyPublisher()
     }
 
-    func sign(can: CAN,
-              pin: Format2Pin,
+    func sign(can: String,
+              pin: String,
               challenge: IDPChallengeSession) -> AnyPublisher<SignedChallenge, NFCSignatureProviderError> {
         openSecureSession(can: can, pin: pin)
             .flatMap { session in

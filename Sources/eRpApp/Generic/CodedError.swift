@@ -18,7 +18,7 @@
 
 import Foundation
 
-protocol CodedError: Swift.Error {
+protocol CodedError: LocalizedError {
     var erpErrorCode: String { get }
     var erpErrorCodeList: [String] { get }
 }
@@ -26,6 +26,14 @@ protocol CodedError: Swift.Error {
 extension CodedError {
     var localizedDescriptionWithErrorList: String {
         localizedDescription + "\n\n" + L10n.errCodesPrefix.text + "\n" + erpErrorCodeList.joined(separator: ", ")
+    }
+
+    var recoverySuggestionWithErrorList: String {
+        if let suggestion = recoverySuggestion {
+            return suggestion + "\n\n" + L10n.errCodesPrefix.text + "\n" + erpErrorCodeList.joined(separator: ", ")
+        } else {
+            return "\n\n" + L10n.errCodesPrefix.text + "\n" + erpErrorCodeList.joined(separator: ", ")
+        }
     }
 }
 

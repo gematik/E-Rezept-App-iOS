@@ -45,6 +45,14 @@ struct GroupedPrescription: Identifiable, Equatable, Hashable {
     let prescriptions: [Prescription]
     let displayType: DisplayType
 
+    var isRedeemable: Bool {
+        prescriptions.contains { $0.isRedeemable }
+    }
+
+    var redeemablePrescriptions: [Prescription] {
+        prescriptions.filter(\.isRedeemable)
+    }
+
     enum DisplayType {
         case lowDetail
         case fullDetail

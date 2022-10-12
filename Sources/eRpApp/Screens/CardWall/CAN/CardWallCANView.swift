@@ -196,7 +196,12 @@ struct CardWallCANView: View {
                     onDismiss: {},
                     content: {
                         NavigationView {
-                            CANCameraScanner(store: store, canScan: $scannedcan)
+                            CANCameraScanner(canScan: $scannedcan) { canScan in
+                                if let canScan = scannedcan {
+                                    viewStore.send(.update(can: canScan))
+                                }
+                                viewStore.send(.setNavigation(tag: .none))
+                            }
                         }
                         .accentColor(Colors.primary700)
                         .navigationViewStyle(StackNavigationViewStyle())

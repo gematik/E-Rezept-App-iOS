@@ -71,26 +71,6 @@ struct CardWallIntroductionView: View {
                             .accessibility(hidden: true)
 
                         NavigationLink(
-                            destination: IfLetStore(
-                                store.scope(
-                                    state: (\CardWallIntroductionDomain.State.route)
-                                        .appending(path: /CardWallIntroductionDomain.Route.pin)
-                                        .extract(from:),
-                                    action: CardWallIntroductionDomain.Action.pinAction(action:)
-                                ),
-                                then: CardWallPINView.init(store:)
-                            ),
-                            tag: CardWallIntroductionDomain.Route.Tag.pin,
-                            selection: viewStore.binding(
-                                get: \.routeTag
-                            ) {
-                                .setNavigation(tag: $0)
-                            }
-                        ) {}
-                            .hidden()
-                            .accessibility(hidden: true)
-
-                        NavigationLink(
                             destination: CapabilitiesView(store: store),
                             tag: CardWallIntroductionDomain.Route.Tag.notCapable,
                             selection: viewStore.binding(

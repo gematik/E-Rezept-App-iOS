@@ -34,7 +34,8 @@ final class CardWallSnapshotTests: XCTestCase {
         let sut = CardWallIntroductionView(
             store: CardWallIntroductionDomain.Store(
                 initialState: .init(
-                    isNFCReady: true
+                    isNFCReady: true,
+                    profileId: UUID()
                 ),
                 reducer: .empty,
                 environment: CardWallIntroductionDomain.Dummies.environment
@@ -81,7 +82,8 @@ final class CardWallSnapshotTests: XCTestCase {
             store: CardWallIntroductionDomain.Store(
                 initialState: CardWallIntroductionDomain
                     .State(
-                        isNFCReady: false,
+                        isNFCReady: true,
+                        profileId: UUID(),
                         route: .notCapable
                     ),
                 reducer: CardWallIntroductionDomain.reducer,
@@ -150,7 +152,7 @@ final class CardWallSnapshotTests: XCTestCase {
     func testPINInputView() {
         let sut = CardWallPINView(
             store: CardWallPINDomain.Store(
-                initialState: CardWallPINDomain.State(isDemoModus: false, pin: ""),
+                initialState: CardWallPINDomain.State(isDemoModus: false, pin: "", transition: .fullScreenCover),
                 reducer: .empty,
                 environment: CardWallPINDomain.Dummies.environment
             )
@@ -164,7 +166,7 @@ final class CardWallSnapshotTests: XCTestCase {
     func testPINInputViewInDemoMode() {
         let sut = CardWallPINView(
             store: CardWallPINDomain.Store(
-                initialState: CardWallPINDomain.State(isDemoModus: true, pin: "123"),
+                initialState: CardWallPINDomain.State(isDemoModus: true, pin: "123", transition: .fullScreenCover),
                 reducer: .empty,
                 environment: CardWallPINDomain.Dummies.environment
             )
@@ -177,7 +179,8 @@ final class CardWallSnapshotTests: XCTestCase {
 
     func testPINInputWrongPINEnteredView() {
         var state = CardWallPINDomain.State(isDemoModus: false,
-                                            pin: "")
+                                            pin: "",
+                                            transition: .fullScreenCover)
         state.wrongPinEntered = true
         let sut = CardWallPINView(
             store: CardWallPINDomain.Store(

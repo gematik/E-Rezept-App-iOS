@@ -306,7 +306,8 @@ final class GroupedPrescriptionListDomainTests: XCTestCase {
                               isAuthenticated: false)
 
         let expected = CardWallIntroductionDomain.State(
-            isNFCReady: true
+            isNFCReady: true,
+            profileId: userSession.profileId
         )
         store.send(.refresh) {
             $0.loadingState = .loading(nil)
@@ -327,7 +328,8 @@ final class GroupedPrescriptionListDomainTests: XCTestCase {
                               isAuthenticated: true)
 
         let expected = CardWallIntroductionDomain.State(
-            isNFCReady: true
+            isNFCReady: true,
+            profileId: userSession.profileId
         )
         store.send(.refresh) {
             $0.loadingState = .loading(nil)
@@ -349,7 +351,8 @@ final class GroupedPrescriptionListDomainTests: XCTestCase {
                               isAuthenticated: true)
 
         let expected = CardWallIntroductionDomain.State(
-            isNFCReady: true
+            isNFCReady: true,
+            profileId: userSession.profileId
         )
         store.send(.refresh) {
             $0.loadingState = .loading(nil)

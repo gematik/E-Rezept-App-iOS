@@ -49,7 +49,8 @@ extension AVSTransaction {
             httpStatusCode: entity.httpStatusCode,
             groupedRedeemTime: groupedRedeemTime,
             groupedRedeemID: groupedRedeemID,
-            telematikID: entity.telematikID
+            telematikID: entity.telematikID,
+            taskId: entity.erxTask?.identifier ?? ""
         )
     }
 }

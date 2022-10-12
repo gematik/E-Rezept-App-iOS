@@ -27,9 +27,9 @@ import OpenSSL
 
 /// sourcery: StreamWrapped
 protocol NFCSignatureProvider {
-    func openSecureSession(can: CAN, pin: Format2Pin) -> AnyPublisher<SignatureSession, NFCSignatureProviderError>
+    func openSecureSession(can: String, pin: String) -> AnyPublisher<SignatureSession, NFCSignatureProviderError>
 
-    func sign(can: CAN, pin: Format2Pin, challenge: IDPChallengeSession)
+    func sign(can: String, pin: String, challenge: IDPChallengeSession)
         -> AnyPublisher<SignedChallenge, NFCSignatureProviderError>
 }
 
@@ -38,9 +38,6 @@ enum NFCSignatureProviderError: Error {
     // sourcery: errorCode = "01"
     // Error while establishing a connection to the card
     case cardError(NFCTagReaderSession.Error)
-    // sourcery: errorCode = "02"
-    // Error while establishing a secure channel, might be a `HealthCard.Error`
-    case authenticationError(Swift.Error)
     // sourcery: errorCode = "03"
     // Error while verifying the CAN
     case wrongCAN(Swift.Error)
@@ -107,13 +104,21 @@ extension NFCSignatureProviderError: LocalizedError {
             return L10n.cdwTxtRcErrorWrongPinDescription.text
         case .secureEnclaveError:
             return L10n.cdwTxtRcErrorSecureEnclaveIssue.text
-        // discuss if error should be localized
-//        case let .cardError(error): return error.localizedDescription
-//        case let .authenticationError(error): return error.localizedDescription
-//        case let .cardConnectionError(error): return error.localizedDescription
-//        case let .verifyCardError(error): return error.localizedDescription
+        case let .cardError(.nfcTag(error: tagError)):
+            return tagError.localizedDescription
+        case let .cardConnectionError(error),
+             let .verifyCardError(error),
+             let .genericError(error):
+            if let cardError = error as? NFCCardError,
+               case let .nfcTag(error: tagError) = cardError {
+                return tagError.localizedDescription
+            } else if let readerError = error as? NFCTagReaderSession.Error,
+                      case let .nfcTag(error: tagError) = readerError {
+                return tagError.localizedDescription
+            } else {
+                return L10n.cdwTxtRcErrorGenericCardDescription.text
+            }
 //        case let .signingFailure(error): return error.localizedDescription
-//        case let .genericError(error): return error.localizedDescription
         default:
             return L10n.cdwTxtRcErrorGenericCardDescription.text
         }
@@ -127,6 +132,20 @@ extension NFCSignatureProviderError: LocalizedError {
             return L10n.cdwTxtRcErrorCardLockedRecovery.text
         case let .wrongPin(retryCount: retryCount):
             return L10n.cdwTxtRcErrorWrongPinRecovery("\(retryCount)").text
+        case let .cardError(.nfcTag(error: tagError)):
+            return tagError.recoverySuggestion
+        case let .cardConnectionError(error),
+             let .verifyCardError(error),
+             let .genericError(error):
+            if let cardError = error as? NFCCardError,
+               case let .nfcTag(error: tagError) = cardError {
+                return tagError.recoverySuggestion
+            } else if let readerError = error as? NFCTagReaderSession.Error,
+                      case let .nfcTag(error: tagError) = readerError {
+                return tagError.recoverySuggestion
+            } else {
+                return L10n.cdwTxtRcErrorGenericCardRecovery.text
+            }
         default:
             return L10n.cdwTxtRcErrorGenericCardRecovery.text
         }
@@ -216,7 +235,7 @@ final class EGKSignatureProvider: NFCSignatureProvider {
         schedulers.main
     }
 
-    func openSecureSession(can: CAN, pin: Format2Pin) -> AnyPublisher<SignatureSession, NFCSignatureProviderError> {
+    func openSecureSession(can: String, pin: String) -> AnyPublisher<SignatureSession, NFCSignatureProviderError> {
         NFCTagReaderSession
             .publisher(messages: .defaultMessages)
             .mapError { NFCSignatureProviderError.cardError($0) }
@@ -238,7 +257,7 @@ final class EGKSignatureProvider: NFCSignatureProvider {
 
     // [REQ:gemSpec_IDP_Frontend:A_20526-01] sign
     // [REQ:gemF_Tokenverschlüsselung:A_20700-06] sign
-    func sign(can: CAN, pin: Format2Pin, challenge: IDPChallengeSession)
+    func sign(can: String, pin: String, challenge: IDPChallengeSession)
         -> AnyPublisher<SignedChallenge, Error> {
         NFCTagReaderSession
             .publisher(messages: .defaultMessages)
@@ -249,7 +268,7 @@ final class EGKSignatureProvider: NFCSignatureProvider {
             .eraseToAnyPublisher()
     }
 
-    private func openSessionAndSignChallenge(can: CAN, pin: Format2Pin, challenge: IDPChallengeSession,
+    private func openSessionAndSignChallenge(can: String, pin: String, challenge: IDPChallengeSession,
                                              session: NFCCardSession) -> AnyPublisher<SignedChallenge, Error> {
         session.updateAlert(message: L10n.cdwTxtRcNfcDialogOpenPace.text)
 
@@ -303,7 +322,7 @@ extension NFCTagReaderSession.Messages {
 }
 
 extension NFCCardSession {
-    func openSecureSession(can: CAN) -> AnyPublisher<HealthCardType, NFCSignatureProviderError> {
+    func openSecureSession(can: String) -> AnyPublisher<HealthCardType, NFCSignatureProviderError> {
         card
             .openSecureSession(can: can, writeTimeout: 0, readTimeout: 0)
             .map { $0 as HealthCardType }
@@ -319,15 +338,21 @@ extension NFCCardSession {
 }
 
 extension Publisher where Self.Output == HealthCardType, Self.Failure == NFCSignatureProviderError {
-    func verifyCard(pin: Format2Pin) -> AnyPublisher<HealthCardType, Failure> {
+    func verifyCard(pin: String) -> AnyPublisher<HealthCardType, Failure> {
         flatMap { secureCard in
-            secureCard.verify(pin: pin, type: EgkFileSystem.Pin.mrpinHome)
+            secureCard.verify(pin: pin, affectedPassword: .mrPinHomeNoDfSpecific)
                 .mapError(NFCSignatureProviderError.verifyCardError)
                 .tryMap { response -> HealthCardType in
-                    if case let VerifyPinResponse.failed(retryCount: count) = response {
+                    switch response {
+                    case .success:
+                        return secureCard
+                    case let .wrongSecretWarning(retryCount: count):
                         throw NFCSignatureProviderError.wrongPin(retryCount: count)
+                    default:
+                        // swiftlint:disable:next todo
+                        // TODO: here we can react to more cases; should do maybe passwordBlocked
+                        throw NFCSignatureProviderError.wrongPin(retryCount: 0)
                     }
-                    return secureCard
                 }
                 .mapError { error -> NFCSignatureProviderError in
                     error.asNFCSignatureError()

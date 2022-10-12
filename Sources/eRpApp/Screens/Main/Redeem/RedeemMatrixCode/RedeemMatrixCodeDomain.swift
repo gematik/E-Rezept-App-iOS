@@ -44,7 +44,7 @@ enum RedeemMatrixCodeDomain {
 
     struct State: Equatable {
         var isShowAlert = false
-        var groupedPrescription: GroupedPrescription
+        var erxTasks: [ErxTask]
         var loadingState: LoadingState<UIImage, LoadingImageError> = .idle
     }
 
@@ -67,7 +67,7 @@ enum RedeemMatrixCodeDomain {
         switch action {
         case let .loadMatrixCodeImage(screenSize):
             return environment.matrixCodeGenerator.publishedMatrixCode(
-                for: state.groupedPrescription.prescriptions.map(\.erxTask),
+                for: state.erxTasks,
                 with: environment.calcMatrixCodeSize(screenSize: screenSize)
             )
             .mapError { _ in
@@ -84,9 +84,7 @@ enum RedeemMatrixCodeDomain {
             UIScreen.main.brightness = CGFloat(1.0)
             // User story defines that scanned erxTasks should be automatically
             // redeemed when this screen was successfully shown.
-            return environment.redeemAndSaveErxTasks(
-                erxTasks: state.groupedPrescription.prescriptions.map(\.erxTask)
-            )
+            return environment.redeemAndSaveErxTasks(erxTasks: state.erxTasks)
         case let .redeemedOnSavedReceived(success):
             return .none
         case .close:
@@ -126,7 +124,7 @@ extension RedeemMatrixCodeDomain.Environment {
 extension RedeemMatrixCodeDomain {
     enum Dummies {
         static let demoSessionContainer = DummyUserSessionContainer()
-        static let state = State(groupedPrescription: GroupedPrescription.Dummies.prescriptions)
+        static let state = State(erxTasks: GroupedPrescription.Prescription.Dummies.prescriptions.map(\.erxTask))
         static let environment = Environment(
             schedulers: Schedulers(),
             matrixCodeGenerator: DefaultErxTaskMatrixCodeGenerator(matrixCodeGenerator: ZXDataMatrixWriter()),

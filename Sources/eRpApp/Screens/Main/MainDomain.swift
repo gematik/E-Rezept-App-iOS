@@ -236,8 +236,8 @@ extension MainDomain {
             state.route = nil
             return cleanupSubDomains()
         case .setNavigation(tag: .cardWall):
-            state.route = .cardWall(.init(isNFCReady: true))
-            return environment.secureDataWiper.wipeSecureData(of: environment.userSession.profileId).fireAndForget()
+            state.route = .cardWall(.init(isNFCReady: true, profileId: environment.userSession.profileId))
+            return .none
         case .setNavigation:
             return .none
         case let .prescriptionList(action: .errorReceived(error)):
@@ -431,6 +431,7 @@ extension MainDomain {
         ) { globalEnvironment in
             CardWallIntroductionDomain.Environment(
                 userSession: globalEnvironment.userSession,
+                userSessionProvider: globalEnvironment.userSessionProvider,
                 sessionProvider: DefaultSessionProvider(
                     userSessionProvider: globalEnvironment.userSessionProvider,
                     userSession: globalEnvironment.userSession

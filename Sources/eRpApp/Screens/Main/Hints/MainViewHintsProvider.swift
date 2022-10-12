@@ -100,7 +100,7 @@ class MainViewHintsProvider: HintsProvider {
         title: L10n.hintTxtUnreadMessagesTitle.text,
         message: L10n.hintTxtUnreadMessages.text,
         actionText: L10n.hintBtnUnreadMessages,
-        action: MainViewHintsDomain.Action.routeTo(.messages),
+        action: MainViewHintsDomain.Action.routeTo(.orders),
         image: AccessibilityImage(name: Asset.Illustrations.pharmacistf1.name),
         style: .awareness,
         imageStyle: .bottomAligned

@@ -21,8 +21,6 @@ import CombineSchedulers
 import ComposableArchitecture
 @testable import eRpApp
 import eRpKit
-import HealthCardAccess
-import HealthCardControl
 import HTTPClient
 import IDP
 import Nimble
@@ -337,7 +335,7 @@ final class CardWallReadCardDomainTests: XCTestCase {
         ) { state in
             state.output = .signingChallenge(.error(.signChallengeError(error)))
 
-            state.route = .alert(CardWallReadCardDomain.AlertStates.alertWithReportButton(report, error: error))
+            state.route = .alert(CardWallReadCardDomain.AlertStates.alertWithReportButton(error: error))
         }
     }
 
@@ -431,7 +429,9 @@ final class CardWallReadCardDomainTests: XCTestCase {
         }
         sut.receive(.stateReceived(.verifying(.error(.profileValidation(expectedInternalError))))) { state in
             state.output = .verifying(.error(.profileValidation(expectedInternalError)))
-            state.route = .alert(CardWallReadCardDomain.AlertStates.alertFor(.profileValidation(expectedInternalError)))
+            state
+                .route = .alert(CardWallReadCardDomain.AlertStates
+                    .alertFor(CardWallReadCardDomain.State.Error.profileValidation(expectedInternalError)))
         }
     }
 }

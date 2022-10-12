@@ -48,7 +48,7 @@ extension ErxTaskCoreDataStore {
                 guard let task = results.first else {
                     return nil
                 }
-                return ErxTask(entity: task)
+                return ErxTask(entity: task, dateProvider: self.dateProvider)
             }
             .eraseToAnyPublisher()
     }
@@ -81,7 +81,7 @@ extension ErxTaskCoreDataStore {
             )
         }
         return fetch(request)
-            .map { list in list.compactMap(ErxTask.init) }
+            .map { list in list.compactMap { ErxTask(entity: $0, dateProvider: self.dateProvider) } }
             .eraseToAnyPublisher()
     }
 
@@ -93,7 +93,7 @@ extension ErxTaskCoreDataStore {
         request.sortDescriptors = [NSSortDescriptor(key: #keyPath(ErxTaskEntity.authoredOn), ascending: false)]
         request.predicate = NSPredicate(format: "%K == nil", #keyPath(ErxTaskEntity.profile))
         return fetch(request)
-            .map { list in list.compactMap(ErxTask.init) }
+            .map { list in list.compactMap { ErxTask(entity: $0, dateProvider: self.dateProvider) } }
             .eraseToAnyPublisher()
     }
 

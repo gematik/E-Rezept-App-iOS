@@ -81,11 +81,11 @@ public protocol ErxLocalDataStore {
     /// - Returns: `true` if save operation was successful
     func save(communications: [ErxTask.Communication]) -> AnyPublisher<Bool, LocalStoreError>
 
-    /// Returns a count for all unread communications for the given profile
+    /// Returns all unread communications for the given profile
     /// - Parameter profile: profile for which you want to have the count
-    func countAllUnreadCommunications(
+    func allUnreadCommunications(
         for profile: ErxTask.Communication.Profile
-    ) -> AnyPublisher<Int, LocalStoreError>
+    ) -> AnyPublisher<[ErxTask.Communication], LocalStoreError>
 
     // MARK: - AuditEvent interfaces
 

@@ -80,7 +80,7 @@ final class AppStartDomainTests: XCTestCase {
                         prescriptionListState: GroupedPrescriptionListDomain.State()
                     ),
                     pharmacySearch: PharmacySearchDomain.State(erxTasks: []),
-                    messages: MessagesDomain.State(communications: []),
+                    orders: OrdersDomain.State(orders: []),
                     settingsState: SettingsDomain.State(isDemoMode: false,
                                                         appSecurityState: .init(
                                                             availableSecurityOptions: [.password],
@@ -90,7 +90,7 @@ final class AppStartDomainTests: XCTestCase {
                                                         )),
                     profileSelection: .init(),
                     debug: DebugDomain.State(trackingOptIn: DummyTracker().optIn),
-                    unreadMessagesCount: 0,
+                    unreadOrderMessageCount: 0,
                     isDemoMode: false
                 )
             )
@@ -124,7 +124,7 @@ final class AppStartDomainTests: XCTestCase {
                         prescriptionListState: GroupedPrescriptionListDomain.State()
                     ),
                     pharmacySearch: PharmacySearchDomain.State(erxTasks: []),
-                    messages: MessagesDomain.State(communications: []),
+                    orders: OrdersDomain.State(orders: []),
                     settingsState: .init(isDemoMode: false,
                                          appSecurityState: .init(
                                              availableSecurityOptions: [.password],
@@ -134,7 +134,7 @@ final class AppStartDomainTests: XCTestCase {
                                          )),
                     profileSelection: .init(),
                     debug: DebugDomain.State(trackingOptIn: DummyTracker().optIn),
-                    unreadMessagesCount: 0,
+                    unreadOrderMessageCount: 0,
                     isDemoMode: false
                 )
             )
@@ -156,7 +156,7 @@ final class AppStartDomainTests: XCTestCase {
                         prescriptionListState: GroupedPrescriptionListDomain.State()
                     ),
                     pharmacySearch: PharmacySearchDomain.State(erxTasks: []),
-                    messages: MessagesDomain.State(communications: []),
+                    orders: OrdersDomain.State(orders: []),
                     settingsState: .init(isDemoMode: false,
                                          appSecurityState:
                                          .init(availableSecurityOptions: [.password],
@@ -165,7 +165,7 @@ final class AppStartDomainTests: XCTestCase {
                                                createPasswordState: nil)),
                     profileSelection: .init(),
                     debug: DebugDomain.State(trackingOptIn: DummyTracker().optIn),
-                    unreadMessagesCount: 0,
+                    unreadOrderMessageCount: 0,
                     isDemoMode: false
                 )
             )

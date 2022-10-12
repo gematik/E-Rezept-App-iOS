@@ -35,17 +35,21 @@ public struct AVSTransaction: Identifiable, Hashable, Equatable {
     /// ID of receiving AVS (Apothekenverzeichnisdienst)
     public let telematikID: String?
 
+    public let taskId: String?
+
     public init(
         transactionID: UUID = UUID(),
         httpStatusCode: Int32,
         groupedRedeemTime: Date,
         groupedRedeemID: UUID,
-        telematikID: String? = nil
+        telematikID: String? = nil,
+        taskId: String
     ) {
         self.transactionID = transactionID
         self.httpStatusCode = httpStatusCode
         self.groupedRedeemTime = groupedRedeemTime
         self.groupedRedeemID = groupedRedeemID
         self.telematikID = telematikID
+        self.taskId = taskId
     }
 }

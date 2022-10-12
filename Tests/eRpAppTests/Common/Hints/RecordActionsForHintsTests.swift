@@ -48,7 +48,7 @@ final class RecordActionsForHintsTests: XCTestCase {
                     isDemoMode: false
                 ),
                 pharmacySearch: PharmacySearchDomain.State(erxTasks: []),
-                messages: MessagesDomain.State(communications: []),
+                orders: OrdersDomain.State(orders: []),
                 settingsState: .init(isDemoMode: false,
                                      appSecurityState: .init(
                                          availableSecurityOptions: [],
@@ -61,7 +61,7 @@ final class RecordActionsForHintsTests: XCTestCase {
                     profileSelectionState: .init()
                 ),
                 debug: .init(trackingOptIn: true),
-                unreadMessagesCount: 0,
+                unreadOrderMessageCount: 0,
                 isDemoMode: false
             ),
             reducer: reducer,

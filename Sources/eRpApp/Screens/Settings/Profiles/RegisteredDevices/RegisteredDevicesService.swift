@@ -146,7 +146,11 @@ struct DefaultRegisteredDevicesService: RegisteredDevicesService {
                         profileId: userSession.profileId,
                         can: ""
                     ),
-                    pin: CardWallPINDomain.State(isDemoModus: userSession.isDemoMode, pin: "")
+                    pin: CardWallPINDomain.State(
+                        isDemoModus: userSession.isDemoMode,
+                        pin: "",
+                        transition: .fullScreenCover
+                    )
                 )
             }
             .eraseToAnyPublisher()
