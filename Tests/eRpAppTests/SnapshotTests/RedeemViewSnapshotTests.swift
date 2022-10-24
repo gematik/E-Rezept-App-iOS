@@ -29,7 +29,7 @@ final class RedeemViewSnapshotTests: XCTestCase {
     }
 
     func testRedeemViewSnapshot() {
-        let sut = RedeemView(store: RedeemDomain.Dummies.store)
+        let sut = RedeemMethodsView(store: RedeemMethodsDomain.Dummies.store)
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())

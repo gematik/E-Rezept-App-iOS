@@ -440,8 +440,28 @@ import SwiftUI
     internal static let cdwTxtRcErrorGenericCardDescription = StringAsset("cdw_txt_rc_error_generic_card_description")
     /// Please try again
     internal static let cdwTxtRcErrorGenericCardRecovery = StringAsset("cdw_txt_rc_error_generic_card_recovery")
+    /// Schreibvorgang nicht erfolgreich
+    internal static let cdwTxtRcErrorMemoryFailureDescription = StringAsset("cdw_txt_rc_error_memory_failure_description")
+    /// PIN konnte nicht gespeichert werden.
+    internal static let cdwTxtRcErrorMemoryFailureRecovery = StringAsset("cdw_txt_rc_error_memory_failure_recovery")
+    /// Eigene PIN vergeben
+    internal static let cdwTxtRcErrorOwnPinDescription = StringAsset("cdw_txt_rc_error_own_pin_description")
+    /// Die Karte ist mit einer PIN Ihrer Krankenkasse (Transport-PIN) gesichert, bitte vergeben Sie eine eigene PIN.
+    internal static let cdwTxtRcErrorOwnPinRecovery = StringAsset("cdw_txt_rc_error_own_pin_recovery")
+    /// Passwort nicht gefunden
+    internal static let cdwTxtRcErrorPasswordMissingDescription = StringAsset("cdw_txt_rc_error_password_missing_description")
+    /// Es ist kein Passwort auf Ihrer Karte hinterlegt.
+    internal static let cdwTxtRcErrorPasswordMissingRecovery = StringAsset("cdw_txt_rc_error_password_missing_recovery")
+    /// Zugriffsregel verletzt
+    internal static let cdwTxtRcErrorSecStatusDescription = StringAsset("cdw_txt_rc_error_sec_status_description")
+    /// Sie haben nicht die Berechtigung, auf das Kartenverzeichnis zuzugreifen.
+    internal static let cdwTxtRcErrorSecStatusRecovery = StringAsset("cdw_txt_rc_error_sec_status_recovery")
     /// Zugangsdaten speichern nicht möglich. Richten Sie zuvor auf Ihrem Gerät eine biometrische Absicherung mit Face ID oder Touch ID ein.
     internal static let cdwTxtRcErrorSecureEnclaveIssue = StringAsset("cdw_txt_rc_error_secure_enclave_issue")
+    /// Unbekannter Kartenfehler
+    internal static let cdwTxtRcErrorUnknownFailureDescription = StringAsset("cdw_txt_rc_error_unknown_failure_description")
+    /// Die Karte antwortet mit einem nicht spezifizierten Fehler.
+    internal static let cdwTxtRcErrorUnknownFailureRecovery = StringAsset("cdw_txt_rc_error_unknown_failure_recovery")
     /// Incorrect access number
     internal static let cdwTxtRcErrorWrongCanDescription = StringAsset("cdw_txt_rc_error_wrong_can_description")
     /// Please enter the correct access number (CAN)
@@ -1543,6 +1563,8 @@ import SwiftUI
     internal static let orderEgkTxtPickerServiceLabel = StringAsset("order_egk_txt_picker_service_label")
     /// Select
     internal static let orderEgkTxtPickerServiceNavigationTitle = StringAsset("order_egk_txt_picker_service_navigation_title")
+    /// Nach Krankenkasse suchen
+    internal static let orderEgkTxtSearchPrompt = StringAsset("order_egk_txt_search_prompt")
     /// Contact your health insurance company
     internal static let orderEgkTxtSectionContactInsurance = StringAsset("order_egk_txt_section_contact_insurance")
     /// Medical card & PIN

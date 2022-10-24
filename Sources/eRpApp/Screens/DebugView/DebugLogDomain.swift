@@ -18,6 +18,7 @@
 
 import Combine
 import ComposableArchitecture
+import Foundation
 import HTTPClient
 
 #if ENABLE_DEBUG_VIEW

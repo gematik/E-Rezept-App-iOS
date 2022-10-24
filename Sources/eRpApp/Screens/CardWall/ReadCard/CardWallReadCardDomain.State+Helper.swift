@@ -85,9 +85,9 @@ extension CardWallReadCardDomain.State {
             if case let .signingChallenge(signingState) = self,
                case let .error(error) = signingState {
                 switch error {
-                case .signChallengeError(.wrongPin(0)):
+                case .signChallengeError(.verifyCardError(.passwordBlocked)):
                     return .close // TODO: call action for correcting pin here // swiftlint:disable:this todo
-                case .signChallengeError(.wrongPin),
+                case .signChallengeError(.verifyCardError(.wrongSecretWarning)),
                      .inputError(.missingPIN):
                     return .wrongPIN
                 case .signChallengeError(.wrongCAN),
@@ -105,13 +105,14 @@ extension CardWallReadCardDomain.State {
         var buttonTitle: LocalizedStringKey {
             switch self {
             case .loggedIn,
-                 .signingChallenge(.error(.signChallengeError(.wrongPin(0)))):
+                 .signingChallenge(.error(.signChallengeError(.verifyCardError(.passwordBlocked)))),
+                 .signingChallenge(.error(.signChallengeError(.verifyCardError(.wrongSecretWarning(retryCount: 0))))):
                 return L10n.cdwBtnRcClose.key
             case .signingChallenge(.error(.inputError(.missingCAN))),
                  .signingChallenge(.error(.signChallengeError(.wrongCAN))):
                 return L10n.cdwBtnRcCorrectCan.key
             case .signingChallenge(.error(.inputError(.missingPIN))),
-                 .signingChallenge(.error(.signChallengeError(.wrongPin))):
+                 .signingChallenge(.error(.signChallengeError(.verifyCardError(.wrongSecretWarning)))):
                 return L10n.cdwBtnRcCorrectPin.key
             case .retrievingChallenge(.error), .signingChallenge(.error), .verifying(.error):
                 return L10n.cdwBtnRcRetry.key
@@ -130,7 +131,8 @@ extension CardWallReadCardDomain.State {
             case .signingChallenge(.error(.inputError(.missingCAN))),
                  .signingChallenge(.error(.inputError(.missingPIN))),
                  .signingChallenge(.error(.signChallengeError(.wrongCAN))),
-                 .signingChallenge(.error(.signChallengeError(.wrongPin))):
+                 .signingChallenge(.error(.signChallengeError(.verifyCardError(.wrongSecretWarning)))),
+                 .signingChallenge(.error(.signChallengeError(.verifyCardError(.passwordBlocked)))):
                 return true
             case .retrievingChallenge(.error), // enable button for retry
                  .verifying(.error),

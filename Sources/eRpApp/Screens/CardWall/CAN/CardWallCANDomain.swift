@@ -18,6 +18,7 @@
 
 import Combine
 import ComposableArchitecture
+import Foundation
 import IDP
 
 enum CardWallCANDomain {
@@ -114,7 +115,7 @@ enum CardWallCANDomain {
             state.route = nil
             return Effect(value: .navigateToIntro)
                 // Delay for the switch to CardWallExthView, Workaround for TCA pullback problem
-                .delay(for: 0.01, scheduler: environment.schedulers.main)
+                .delay(for: 0.05, scheduler: environment.schedulers.main)
                 .eraseToEffect()
         case .setNavigation,
              .navigateToIntro,

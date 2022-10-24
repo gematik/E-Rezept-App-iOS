@@ -18,6 +18,7 @@
 
 import Combine
 import ComposableArchitecture
+import Foundation
 import IDP
 
 enum CardWallIntroductionDomain {
@@ -117,7 +118,7 @@ enum CardWallIntroductionDomain {
             state.route = nil
             return Effect(value: .close)
                 // Delay for closing all views, Workaround for TCA pullback problem
-                .delay(for: 0.01, scheduler: environment.schedulers.main)
+                .delay(for: 0.05, scheduler: environment.schedulers.main)
                 .eraseToEffect()
         case .setNavigation,
              .canAction,

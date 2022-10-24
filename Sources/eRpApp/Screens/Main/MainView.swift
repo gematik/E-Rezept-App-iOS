@@ -184,7 +184,7 @@ struct MainView: View {
                     EmptyView()
                 }.accessibility(hidden: true)
 
-                // RedeemView sheet presentation
+                // RedeemMethodsView sheet presentation
                 Rectangle()
                     .frame(width: 0, height: 0, alignment: .center)
                     .fullScreenCover(isPresented: Binding<Bool>(
@@ -202,9 +202,9 @@ struct MainView: View {
                                 state: (\MainDomain.State.route)
                                     .appending(path: /MainDomain.Route.redeem)
                                     .extract(from:),
-                                action: MainDomain.Action.redeemView(action:)
+                                action: MainDomain.Action.redeemMethods(action:)
                             ),
-                            then: RedeemView.init(store:)
+                            then: RedeemMethodsView.init(store:)
                         )
                     })
                     .accessibility(hidden: true)

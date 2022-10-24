@@ -65,8 +65,6 @@ struct PharmacyRedeemView: View {
                     self.store.scope(state: \.alertState),
                     dismiss: .alertDismissButtonTapped
                 )
-
-            RedeemSuccessViewPresentation(store: store).accessibility(hidden: true)
         }
         .onAppear {
             viewStore.send(.registerSelectedShipmentInfoListener)
@@ -85,18 +83,7 @@ struct PharmacyRedeemView: View {
             navigationBarAppearance.backgroundColor = UIColor(Colors.systemBackground)
             navigationBar.standardAppearance = navigationBarAppearance
         }
-        .fullScreenCover(isPresented: viewStore.binding(
-            get: { $0.showPharmacyContact },
-            send: PharmacyRedeemDomain.Action.dismissPharmacyContactView
-        )) {
-            IfLetStore(
-                store.scope(
-                    state: { $0.pharmacyContactState },
-                    action: PharmacyRedeemDomain.Action.pharmacyContact(action:)
-                ),
-                then: PharmacyContactView.init(store:)
-            )
-        }
+        .routes(for: store)
     }
 }
 
@@ -305,25 +292,79 @@ extension PharmacyRedeemView {
         }
     }
 
-    struct RedeemSuccessViewPresentation: View {
+    struct Router: ViewModifier {
         let store: PharmacyRedeemDomain.Store
-        var body: some View {
-            WithViewStore(self.store) { viewStore in
-                NavigationLink(destination: IfLetStore(
-                    store.scope(
-                        state: { $0.successViewState },
-                        action: PharmacyRedeemDomain.Action.redeemSuccessView(action:)
-                    ),
-                    then: RedeemSuccessView.init(store:)
-                ),
-                isActive: viewStore.binding(
-                    get: { $0.successViewState != nil },
-                    send: PharmacyRedeemDomain.Action.dismissRedeemSuccessView
-                )) {
-                    EmptyView()
-                }
+        @ObservedObject var viewStore: ViewStore<ViewState, PharmacyRedeemDomain.Action>
+
+        init(store: PharmacyRedeemDomain.Store) {
+            self.store = store
+            viewStore = ViewStore(store.scope(state: ViewState.init))
+        }
+
+        struct ViewState: Equatable {
+            let routeTag: PharmacyRedeemDomain.Route.Tag?
+
+            init(state: PharmacyRedeemDomain.State) {
+                routeTag = state.route?.tag
             }
         }
+
+        func body(content: Content) -> some View {
+            Group {
+                content
+
+                NavigationLink(
+                    destination: redeemSuccessDestination,
+                    tag: PharmacyRedeemDomain.Route.Tag.redeemSuccess,
+                    selection: viewStore.binding(get: \.routeTag) { .setNavigation(tag: $0) }
+                ) {}
+                    .hidden()
+                    .accessibility(hidden: true)
+            }
+            .fullScreenCover(
+                isPresented: Binding<Bool>(
+                    get: { viewStore.state.routeTag == .contact },
+                    set: { show in
+                        if !show {
+                            viewStore.send(.setNavigation(tag: nil))
+                        }
+                    }
+                ),
+                onDismiss: {},
+                content: { pharmacyContactDestination }
+            )
+        }
+
+        private var redeemSuccessDestination: some View {
+            IfLetStore(
+                self.store.scope(
+                    state: (\PharmacyRedeemDomain.State.route)
+                        .appending(path: /PharmacyRedeemDomain.Route.redeemSuccess)
+                        .extract(from:),
+                    action: PharmacyRedeemDomain.Action.redeemSuccessView(action:)
+                ),
+                then: RedeemSuccessView.init(store:)
+            )
+        }
+
+        private var pharmacyContactDestination: some View {
+            IfLetStore(
+                self.store.scope(
+                    state: (\PharmacyRedeemDomain.State.route).appending(path: /PharmacyRedeemDomain.Route.contact)
+                        .extract(from:),
+                    action: PharmacyRedeemDomain.Action.pharmacyContact(action:)
+                ),
+                then: PharmacyContactView.init(store:)
+            )
+        }
+    }
+}
+
+extension View {
+    func routes(for store: PharmacyRedeemDomain.Store) -> some View {
+        modifier(
+            PharmacyRedeemView.Router(store: store)
+        )
     }
 }
 
@@ -335,7 +376,6 @@ extension PharmacyRedeemView {
         let shipmentInfo: ShipmentInfo?
         let requests: IdentifiedArrayOf<OrderResponse>
         let profile: Profile?
-        let showPharmacyContact: Bool
 
         init(state: PharmacyRedeemDomain.State) {
             redeemType = state.redeemOption
@@ -347,7 +387,6 @@ extension PharmacyRedeemView {
             shipmentInfo = state.selectedShipmentInfo
             requests = state.orderResponses
             profile = state.profile
-            showPharmacyContact = state.pharmacyContactState != nil
         }
 
         var isRedeemButtonEnabled: Bool {

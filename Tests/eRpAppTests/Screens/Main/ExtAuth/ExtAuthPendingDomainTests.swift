@@ -230,9 +230,7 @@ final class ExtAuthPendingDomainTests: XCTestCase {
             .eraseToAnyPublisher()
         sut.send(.registerListener)
         uiScheduler.run()
-        sut.receive(.pendingExtAuthRequestsReceived(pendingRequests)) { state in
-            state = .pendingExtAuth(healthInsurance)
-        }
+        sut.receive(.pendingExtAuthRequestsReceived(pendingRequests))
         expect(self.extAuthRequestStorageMock.resetCalled).to(beFalse())
         sut.send(.cancelAllPendingRequests) { state in
             state = .empty

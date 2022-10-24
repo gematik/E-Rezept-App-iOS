@@ -46,9 +46,9 @@
   {
     "name": "AOK - Die Gesundheitskasse Hessen",
     "healthCardAndPinPhone": "",
-    "healthCardAndPinMail": "service@he.aok.de",
-    "healthCardAndPinUrl": "",
-    "pinUrl": "",
+    "healthCardAndPinMail": "",
+    "healthCardAndPinUrl": "https://www.aok.de/pk/versichertenservice/pin-zur-elektronischen-gesundheitskarte/?reg=hessen",
+    "pinUrl": "https://www.aok.de/pk/versichertenservice/pin-zur-elektronischen-gesundheitskarte/?reg=hessen",
     "subjectCardAndPinMail": "",
     "bodyCardAndPinMail": "",
     "subjectPinMail": "",

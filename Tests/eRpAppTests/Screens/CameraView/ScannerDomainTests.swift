@@ -308,17 +308,10 @@ final class ScannerDomainTests: XCTestCase {
         )
 
         // when
-        store.send(.saveAndClose(initialState.acceptedTaskBatches)) {
-            $0.scanState = .idle
-            $0.alertState = nil
-            $0.acceptedTaskBatches = initialState.acceptedTaskBatches
-            expect(repository.saveCalled).to(beTrue())
-        }
+        store.send(.saveAndClose(initialState.acceptedTaskBatches))
         testScheduler.advance()
         // then
-        store.receive(.close) { state in
-            state = initialState
-        }
+        store.receive(.close)
     }
 
     func testFailureSavingAndClosingScannedErxTasks() {
@@ -347,11 +340,7 @@ final class ScannerDomainTests: XCTestCase {
         let expectedAlert = ScannerDomain.savingAlertState
 
         // when
-        store.send(.saveAndClose(initialState.acceptedTaskBatches)) {
-            $0.scanState = .idle
-            $0.alertState = nil
-            $0.acceptedTaskBatches = initialState.acceptedTaskBatches
-        }
+        store.send(.saveAndClose(initialState.acceptedTaskBatches))
         testScheduler.advance()
         // then
         store.receive(.saveAndCloseReceived(savingError)) { state in
@@ -388,12 +377,7 @@ final class ScannerDomainTests: XCTestCase {
             $0.acceptedTaskBatches = initialState.acceptedTaskBatches
         }
         // when the ok button is tapped
-        store.send(.close) {
-            // then the alert state should be nil already
-            $0.scanState = .idle
-            $0.alertState = nil
-            $0.acceptedTaskBatches = initialState.acceptedTaskBatches
-        }
+        store.send(.close)
     }
 }
 

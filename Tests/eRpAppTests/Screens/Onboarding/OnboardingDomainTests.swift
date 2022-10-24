@@ -117,13 +117,7 @@ final class OnboardingDomainTests: XCTestCase {
                                          registerAuthenticationState: authenticationState)
         )
 
-        store.send(.saveAuthentication) { state in
-            state.composition.setPage(index: 0)
-            state.registerAuthenticationState.selectedSecurityOption = .password
-            state.registerAuthenticationState.passwordA = "ABC"
-            state.registerAuthenticationState.passwordB = "ABC"
-            state.registerAuthenticationState.showNoSelectionMessage = false
-        }
+        store.send(.saveAuthentication)
         expect(self.mockAppSecurityManager.savePasswordCallsCount) == 1
         expect(self.mockAppSecurityManager.savePasswordReturnValue).to(beTrue())
         expect(self.mockUserDataStore.setAppSecurityOptionReceivedAppSecurityOption) == selectedOption.id
@@ -152,10 +146,7 @@ final class OnboardingDomainTests: XCTestCase {
             )
         )
 
-        store.send(.saveAuthentication) { state in
-            state.composition.setPage(index: 0)
-            state.registerAuthenticationState.selectedSecurityOption = selectedOption
-        }
+        store.send(.saveAuthentication)
         expect(self.mockUserDataStore.setAppSecurityOptionReceivedAppSecurityOption) == selectedOption.id
         expect(self.mockUserDataStore.setAppSecurityOptionCallsCount) == 1
 

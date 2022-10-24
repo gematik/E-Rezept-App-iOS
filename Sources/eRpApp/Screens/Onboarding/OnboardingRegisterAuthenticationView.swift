@@ -97,15 +97,17 @@ struct OnboardingRegisterAuthenticationView: View, KeyboardReadable {
                     PasswordView(store: store)
                 case .biometry(.faceID):
                     FaceIDView(isSelected: viewStore.biometrySuccessful, message: viewStore.biometryErrorMessage) {
-                        withAnimation {
-                            viewStore.send(.startBiometry)
-                        }
+                        viewStore.send(
+                            .startBiometry,
+                            animation: Animation.default
+                        )
                     }
                 case .biometry(.touchID):
                     TouchIDView(isSelected: viewStore.biometrySuccessful, message: viewStore.biometryErrorMessage) {
-                        withAnimation {
-                            viewStore.send(.startBiometry)
-                        }
+                        viewStore.send(
+                            .startBiometry,
+                            animation: Animation.default
+                        )
                     }
                 default:
                     EmptyView()

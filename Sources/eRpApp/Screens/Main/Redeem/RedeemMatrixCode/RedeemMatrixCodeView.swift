@@ -23,6 +23,10 @@ struct RedeemMatrixCodeView: View {
     let store: RedeemMatrixCodeDomain.Store
     @State var originalBrightness: CGFloat?
 
+    init(store: RedeemMatrixCodeDomain.Store) {
+        self.store = store
+    }
+
     var body: some View {
         WithViewStore(store) { viewStore in
             VStack {

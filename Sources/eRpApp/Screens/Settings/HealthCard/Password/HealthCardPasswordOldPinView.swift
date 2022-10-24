@@ -24,11 +24,23 @@ import SwiftUI
 
 struct HealthCardPasswordOldPinView: View {
     let store: HealthCardPasswordDomain.Store
-    @ObservedObject var viewStore: ViewStore<HealthCardPasswordDomain.State, HealthCardPasswordDomain.Action>
+    @ObservedObject var viewStore: ViewStore<ViewState, HealthCardPasswordDomain.Action>
 
     init(store: HealthCardPasswordDomain.Store) {
         self.store = store
-        viewStore = ViewStore(store)
+        viewStore = ViewStore(store.scope(state: ViewState.init))
+    }
+
+    struct ViewState: Equatable {
+        let oldPin: String
+        let oldPinMayAdvance: Bool
+        let routeTag: HealthCardPasswordDomain.Route.Tag
+
+        init(state: HealthCardPasswordDomain.State) {
+            oldPin = state.oldPin
+            oldPinMayAdvance = state.oldPinMayAdvance
+            routeTag = state.route.tag
+        }
     }
 
     var body: some View {
@@ -64,10 +76,10 @@ struct HealthCardPasswordOldPinView: View {
             NavigationLink(
                 isActive: .init(
                     get: {
-                        viewStore.state.route != .introduction &&
-                            viewStore.state.route != .can &&
-                            viewStore.state.route != .puk &&
-                            viewStore.state.route != .oldPin
+                        viewStore.routeTag != .introduction &&
+                            viewStore.routeTag != .can &&
+                            viewStore.routeTag != .puk &&
+                            viewStore.routeTag != .oldPin
                     },
                     set: { active in
                         if active {

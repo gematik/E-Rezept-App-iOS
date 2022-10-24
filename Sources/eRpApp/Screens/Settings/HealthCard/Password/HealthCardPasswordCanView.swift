@@ -24,11 +24,23 @@ import SwiftUI
 
 struct HealthCardPasswordCanView: View {
     let store: HealthCardPasswordDomain.Store
-    @ObservedObject var viewStore: ViewStore<HealthCardPasswordDomain.State, HealthCardPasswordDomain.Action>
+    @ObservedObject var viewStore: ViewStore<ViewState, HealthCardPasswordDomain.Action>
 
     init(store: HealthCardPasswordDomain.Store) {
         self.store = store
-        viewStore = ViewStore(store)
+        viewStore = ViewStore(store.scope(state: ViewState.init))
+    }
+
+    struct ViewState: Equatable {
+        let withNewPin: Bool
+        let canMayAdvance: Bool
+        let routeTag: HealthCardPasswordDomain.Route.Tag
+
+        init(state: HealthCardPasswordDomain.State) {
+            withNewPin = state.withNewPin
+            canMayAdvance = state.canMayAdvance
+            routeTag = state.route.tag
+        }
     }
 
     var body: some View {
@@ -40,16 +52,17 @@ struct HealthCardPasswordCanView: View {
             GreyDivider()
 
             if !viewStore.withNewPin {
+                // Unlock card
                 NavigationLink(
                     isActive: .init(
                         get: {
-                            viewStore.state.route != HealthCardPasswordDomain.Route.introduction &&
-                                viewStore.state.route != HealthCardPasswordDomain.Route.can &&
-                                viewStore.state.route != HealthCardPasswordDomain.Route.scanner
+                            viewStore.routeTag != .introduction &&
+                                viewStore.routeTag != .can &&
+                                viewStore.routeTag != .scanner
                         },
                         set: { active in
                             if active {
-                                // is handled by button below
+                                // is handled by store
                             } else {
                                 viewStore.send(.setNavigation(tag: .can))
                             }
@@ -63,19 +76,18 @@ struct HealthCardPasswordCanView: View {
                     }
                 )
                 .accessibility(hidden: true)
-            }
-
-            if viewStore.withNewPin {
+            } else {
+                // Set custom PIN
                 NavigationLink(
                     isActive: .init(
                         get: {
-                            viewStore.state.route != HealthCardPasswordDomain.Route.introduction &&
-                                viewStore.state.route != HealthCardPasswordDomain.Route.can &&
-                                viewStore.state.route != HealthCardPasswordDomain.Route.scanner
+                            viewStore.routeTag != .introduction &&
+                                viewStore.routeTag != .can &&
+                                viewStore.routeTag != .scanner
                         },
                         set: { active in
                             if active {
-                                // is handled by button below
+                                // is handled by store
                             } else {
                                 viewStore.send(.setNavigation(tag: .can))
                             }

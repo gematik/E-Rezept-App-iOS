@@ -143,7 +143,7 @@ final class RegisteredDevicesDomainTests: XCTestCase {
                 .setFailureType(to: RegisteredDevicesServiceError.self)
                 .eraseToAnyPublisher()
 
-        store.send(RegisteredDevicesDomain.Action.deleteDevice(deviceId)) { _ in }
+        store.send(RegisteredDevicesDomain.Action.deleteDevice(deviceId))
 
         testScheduler.run()
 
@@ -172,7 +172,7 @@ final class RegisteredDevicesDomainTests: XCTestCase {
             Fail(error: RegisteredDevicesServiceError.missingToken)
                 .eraseToAnyPublisher()
 
-        store.send(RegisteredDevicesDomain.Action.deleteDevice(deviceId)) { _ in }
+        store.send(RegisteredDevicesDomain.Action.deleteDevice(deviceId))
 
         testScheduler.run()
 

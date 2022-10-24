@@ -20,6 +20,7 @@ import Combine
 import ComposableArchitecture
 import eRpKit
 import eRpLocalStorage
+import Foundation
 
 enum AppMigrationDomain {
     typealias Store = ComposableArchitecture.Store<State, Action>

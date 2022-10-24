@@ -77,8 +77,13 @@ struct OnboardingContainer: View, KeyboardReadable {
                     .gesture(viewStore.isDragEnabled ? nil : DragGesture())
                     .tag(2)
 
-                    OnboardingLegalInfoView { withAnimation { viewStore.send(.saveAuthentication) } }
-                        .tag(3)
+                    OnboardingLegalInfoView {
+                        viewStore.send(
+                            .saveAuthentication,
+                            animation: Animation.default
+                        )
+                    }
+                    .tag(3)
                 }
             }
             .background(Colors.systemBackground)
@@ -95,7 +100,10 @@ struct OnboardingContainer: View, KeyboardReadable {
                         if isKeyboardVisible {
                             UIApplication.shared.dismissKeyboard()
                         } else {
-                            withAnimation { viewStore.send(.nextPage) }
+                            viewStore.send(
+                                .nextPage,
+                                animation: Animation.default
+                            )
                         }
                     }
                 }

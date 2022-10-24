@@ -19,6 +19,7 @@
 import Combine
 import ComposableArchitecture
 import eRpKit
+import Foundation
 import IDP
 
 enum MainDomain {
@@ -31,7 +32,7 @@ enum MainDomain {
         case deviceSecurity(DeviceSecurityDomain.State)
         case cardWall(CardWallIntroductionDomain.State)
         case prescriptionDetail(PrescriptionDetailDomain.State)
-        case redeem(RedeemDomain.State)
+        case redeem(RedeemMethodsDomain.State)
         case alert(AlertState<Action>)
 
         enum Tag: Int {
@@ -86,7 +87,7 @@ enum MainDomain {
             DeviceSecurityDomain.cleanup(),
             CardWallIntroductionDomain.cleanup(),
             PrescriptionDetailDomain.cleanup(),
-            RedeemDomain.cleanup()
+            RedeemMethodsDomain.cleanup()
         )
     }
 
@@ -123,7 +124,7 @@ enum MainDomain {
         case scanner(action: ScannerDomain.Action)
         case deviceSecurity(action: DeviceSecurityDomain.Action)
         case prescriptionDetailAction(action: PrescriptionDetailDomain.Action)
-        case redeemView(action: RedeemDomain.Action)
+        case redeemMethods(action: RedeemMethodsDomain.Action)
         case cardWall(action: CardWallIntroductionDomain.Action)
     }
 
@@ -269,9 +270,9 @@ extension MainDomain {
             ))
             return .none
         case let .prescriptionList(action: .redeemViewTapped(selectedGroupedPrescription)):
-            state.route = .redeem(RedeemDomain.State(
-                groupedPrescription: selectedGroupedPrescription
-            ))
+            state.route = .redeem(
+                RedeemMethodsDomain.State(erxTasks: selectedGroupedPrescription.redeemablePrescriptions.map(\.erxTask))
+            )
             return .none
         case .cardWall(action: .close):
             state.route = nil
@@ -279,14 +280,14 @@ extension MainDomain {
                 CardWallIntroductionDomain.cleanup(),
                 Effect(value: .prescriptionList(action: .loadRemoteGroupedPrescriptionsAndSave))
             )
-        case .redeemView(action: .close),
+        case .redeemMethods(action: .close),
              .prescriptionDetailAction(action: .close):
             state.route = nil
             return cleanupSubDomains()
         case .prescriptionList,
              .scanner,
              .extAuthPending,
-             .redeemView,
+             .redeemMethods,
              .cardWall,
              .prescriptionDetailAction:
             return .none
@@ -298,7 +299,7 @@ extension MainDomain {
         scannerPullbackReducer,
         deviceSecurityPullbackReducer,
         prescriptionDetailPullbackReducer,
-        redeemViewPullbackReducer,
+        redeemMethodsPullbackReducer,
         cardWallPullbackReducer,
         extAuthPendingReducer,
         domainReducer
@@ -451,17 +452,16 @@ extension MainDomain {
                 schedulers: environment.schedulers,
                 taskRepository: environment.userSession.erxTaskRepository,
                 fhirDateFormatter: environment.fhirDateFormatter,
-                pharmacyRepository: environment.userSession.pharmacyRepository,
                 userSession: environment.userSession
             )
         }
 
-    static let redeemViewPullbackReducer: Reducer =
-        RedeemDomain.reducer._pullback(
+    static let redeemMethodsPullbackReducer: Reducer =
+        RedeemMethodsDomain.reducer._pullback(
             state: (\State.route).appending(path: /Route.redeem),
-            action: /MainDomain.Action.redeemView(action:)
+            action: /MainDomain.Action.redeemMethods(action:)
         ) { environment in
-            RedeemDomain.Environment(
+            RedeemMethodsDomain.Environment(
                 schedulers: environment.schedulers,
                 userSession: environment.userSession,
                 fhirDateFormatter: environment.fhirDateFormatter

@@ -46,14 +46,14 @@ enum NFCSignatureProviderError: Error {
     case cardConnectionError(Swift.Error)
 
     // sourcery: errorCode = "05"
-    // generic verify card error while testing for correct PIN, but not wrong pin
-    case verifyCardError(Swift.Error)
+    // Any error related to PIN verification
+    case verifyCardError(VerifyPINError)
     // sourcery: errorCode = "06"
     // ESIGN Failed
     case signingFailure(SigningError)
     // sourcery: errorCode = "07"
     // Wrong pin while opening secure channel
-    case wrongPin(retryCount: Int)
+//    case wrongPin(retryCount: Int)
 
     // sourcery: errorCode = "08"
     // Generic error while trying to sign the challenge
@@ -91,6 +91,85 @@ enum NFCSignatureProviderError: Error {
             }
         }
     }
+
+    // sourcery: CodedError = "006"
+    enum VerifyPINError: Error, LocalizedError {
+        // sourcery: errorCode = "01"
+        // Pin verification failed, retry count is the number of retries left for the given `EgkFileSystem.Pin` type
+        case wrongSecretWarning(retryCount: Int)
+        // sourcery: errorCode = "02"
+        // Access rule evaluation failure
+        case securityStatusNotSatisfied
+        // sourcery: errorCode = "03"
+        // Write action unsuccessful
+        case memoryFailure
+        // sourcery: errorCode = "04"
+        // Exhausted retry counter
+        case passwordBlocked
+        // sourcery: errorCode = "05"
+        // Password is transport protected
+        case passwordNotUsable
+        // sourcery: errorCode = "06"
+        // Referenced password could not be found
+        case passwordNotFound
+        // sourcery: errorCode = "07"
+        // Any (unexpected) error not specified in gemSpec_COS 14.6.6.2
+        case unknownFailure
+
+        static func from(_ response: VerifyPinResponse) -> VerifyPINError? {
+            switch response {
+            case .success: return nil
+            case let .wrongSecretWarning(retryCount: retryCount): return .wrongSecretWarning(retryCount: retryCount)
+            case .securityStatusNotSatisfied: return .securityStatusNotSatisfied
+            case .memoryFailure: return .memoryFailure
+            case .passwordBlocked: return .passwordBlocked
+            case .passwordNotUsable: return .passwordNotUsable
+            case .passwordNotFound: return .passwordNotFound
+            case .unknownFailure: return .unknownFailure
+            @unknown default:
+                assertionFailure("There are missing cases that need to be implemented")
+                return nil
+            }
+        }
+
+        var errorDescription: String? {
+            switch self {
+            case .passwordBlocked, .wrongSecretWarning(retryCount: 0):
+                return L10n.cdwTxtRcErrorCardLockedDescription.text
+            case .wrongSecretWarning:
+                return L10n.cdwTxtRcErrorWrongPinDescription.text
+            case .securityStatusNotSatisfied:
+                return L10n.cdwTxtRcErrorSecStatusDescription.text
+            case .memoryFailure:
+                return L10n.cdwTxtRcErrorMemoryFailureDescription.text
+            case .passwordNotUsable:
+                return L10n.cdwTxtRcErrorOwnPinDescription.text
+            case .passwordNotFound:
+                return L10n.cdwTxtRcErrorPasswordMissingDescription.text
+            case .unknownFailure:
+                return L10n.cdwTxtRcErrorUnknownFailureDescription.text
+            }
+        }
+
+        var recoverySuggestion: String? {
+            switch self {
+            case .passwordBlocked, .wrongSecretWarning(retryCount: 0):
+                return L10n.cdwTxtRcErrorCardLockedRecovery.text
+            case let .wrongSecretWarning(retryCount: retryCount):
+                return L10n.cdwTxtRcErrorWrongPinRecovery("\(retryCount)").text
+            case .securityStatusNotSatisfied:
+                return L10n.cdwTxtRcErrorSecStatusRecovery.text
+            case .memoryFailure:
+                return L10n.cdwTxtRcErrorMemoryFailureRecovery.text
+            case .passwordNotUsable:
+                return L10n.cdwTxtRcErrorOwnPinRecovery.text
+            case .passwordNotFound:
+                return L10n.cdwTxtRcErrorPasswordMissingRecovery.text
+            case .unknownFailure:
+                return L10n.cdwTxtRcErrorUnknownFailureRecovery.text
+            }
+        }
+    }
 }
 
 extension NFCSignatureProviderError: LocalizedError {
@@ -98,16 +177,13 @@ extension NFCSignatureProviderError: LocalizedError {
         switch self {
         case .wrongCAN:
             return L10n.cdwTxtRcErrorWrongCanDescription.text
-        case .wrongPin(retryCount: 0):
-            return L10n.cdwTxtRcErrorCardLockedDescription.text
-        case .wrongPin:
-            return L10n.cdwTxtRcErrorWrongPinDescription.text
         case .secureEnclaveError:
             return L10n.cdwTxtRcErrorSecureEnclaveIssue.text
         case let .cardError(.nfcTag(error: tagError)):
             return tagError.localizedDescription
+        case let .verifyCardError(pinError):
+            return pinError.localizedDescription
         case let .cardConnectionError(error),
-             let .verifyCardError(error),
              let .genericError(error):
             if let cardError = error as? NFCCardError,
                case let .nfcTag(error: tagError) = cardError {
@@ -128,14 +204,11 @@ extension NFCSignatureProviderError: LocalizedError {
         switch self {
         case .wrongCAN:
             return L10n.cdwTxtRcErrorWrongCanRecovery.text
-        case .wrongPin(retryCount: 0):
-            return L10n.cdwTxtRcErrorCardLockedRecovery.text
-        case let .wrongPin(retryCount: retryCount):
-            return L10n.cdwTxtRcErrorWrongPinRecovery("\(retryCount)").text
         case let .cardError(.nfcTag(error: tagError)):
             return tagError.recoverySuggestion
+        case let .verifyCardError(pinError):
+            return pinError.recoverySuggestion
         case let .cardConnectionError(error),
-             let .verifyCardError(error),
              let .genericError(error):
             if let cardError = error as? NFCCardError,
                case let .nfcTag(error: tagError) = cardError {
@@ -341,23 +414,19 @@ extension Publisher where Self.Output == HealthCardType, Self.Failure == NFCSign
     func verifyCard(pin: String) -> AnyPublisher<HealthCardType, Failure> {
         flatMap { secureCard in
             secureCard.verify(pin: pin, affectedPassword: .mrPinHomeNoDfSpecific)
-                .mapError(NFCSignatureProviderError.verifyCardError)
                 .tryMap { response -> HealthCardType in
-                    switch response {
-                    case .success:
+                    if case .success = response {
                         return secureCard
-                    case let .wrongSecretWarning(retryCount: count):
-                        throw NFCSignatureProviderError.wrongPin(retryCount: count)
-                    default:
-                        // swiftlint:disable:next todo
-                        // TODO: here we can react to more cases; should do maybe passwordBlocked
-                        throw NFCSignatureProviderError.wrongPin(retryCount: 0)
+                    } else {
+                        guard let verifyPINError = NFCSignatureProviderError.VerifyPINError.from(response) else {
+                            return secureCard
+                        }
+                        throw NFCSignatureProviderError.verifyCardError(verifyPINError)
                     }
                 }
                 .mapError { error -> NFCSignatureProviderError in
                     error.asNFCSignatureError()
                 }
-                .eraseToAnyPublisher()
         }.eraseToAnyPublisher()
     }
 

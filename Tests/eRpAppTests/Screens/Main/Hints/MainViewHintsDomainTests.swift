@@ -48,20 +48,13 @@ final class MainViewHintsDomainTests: XCTestCase {
 
         let expectedHint = fakeHintProvider.currentHintReturn
 
-        store.send(.subscribeToHintChanges) { state in
-            state.hint = nil
-        }
+        store.send(.subscribeToHintChanges)
         testScheduler.advance()
         store.receive(.hintChangeReceived(expectedHint)) { state in
             state.hint = expectedHint
         }
-        store.send(.routeTo(.settings)) { _ in
-            expect(mockRouter.routeToCalled).to(beTrue())
-            expect(mockRouter.routeToParameter).to(equal(Endpoint.settings))
-        }
-        store.send(.hideHint) { _ in
-            // sets the hintState to hide the current hint
-        }
+        store.send(.routeTo(.settings))
+        store.send(.hideHint)
         testScheduler.advance()
         store.receive(.hintChangeReceived(nil)) { state in
             state.hint = nil

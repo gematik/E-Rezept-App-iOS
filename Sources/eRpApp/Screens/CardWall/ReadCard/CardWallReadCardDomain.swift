@@ -124,9 +124,10 @@ enum CardWallReadCardDomain {
                  let .signingChallenge(.error(error)),
                  let .verifying(.error(error)):
                 switch error {
-                case .signChallengeError(.wrongPin(0)):
+                case .signChallengeError(.verifyCardError(.passwordBlocked)),
+                     .signChallengeError(.verifyCardError(.wrongSecretWarning(retryCount: 0))):
                     state.route = .alert(AlertStates.alertFor(error))
-                case .signChallengeError(.wrongPin):
+                case .signChallengeError(.verifyCardError(.wrongSecretWarning)):
                     state.route = .alert(AlertStates.wrongPIN(error))
                 case .signChallengeError(.wrongCAN):
                     state.route = .alert(AlertStates.wrongCAN(error))
@@ -135,7 +136,6 @@ enum CardWallReadCardDomain {
                         state.route = .alert(errorAlert)
                     }
                 case let .signChallengeError(.cardConnectionError(nfcError)),
-                     let .signChallengeError(.verifyCardError(nfcError)),
                      let .signChallengeError(.genericError(nfcError)):
                     switch nfcError {
                     case let cardError as NFCCardError:
@@ -273,7 +273,7 @@ extension CardWallReadCardDomain {
 
         static func wrongPIN(_ error: Error) -> AlertState<Action> {
             AlertState(
-                title: TextState(error.localizedDescriptionWithErrorList),
+                title: TextState(error.localizedDescription),
                 message: error.recoverySuggestion.map(TextState.init),
                 primaryButton: .default(TextState(L10n.cdwBtnRcCorrectPin), action: .send(.wrongPIN)),
                 secondaryButton: .cancel(TextState(L10n.cdwBtnRcAlertCancel), action: .send(.setNavigation(tag: .none)))
@@ -282,8 +282,8 @@ extension CardWallReadCardDomain {
 
         static func alertFor(_ error: CodedError) -> AlertState<Action> {
             AlertState(
-                title: TextState(error.localizedDescriptionWithErrorList),
-                message: error.recoverySuggestion.map(TextState.init),
+                title: TextState(error.localizedDescription),
+                message: TextState(error.recoverySuggestionWithErrorList),
                 dismissButton: .default(TextState(L10n.cdwBtnRcAlertClose), action: .send(.setNavigation(tag: .none)))
             )
         }

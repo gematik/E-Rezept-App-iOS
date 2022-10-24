@@ -334,9 +334,7 @@ final class EditProfileDomainTests: XCTestCase {
 
         mainQueue.run()
 
-        sut.receive(.tokenReceived(Fixtures.token)) {
-            $0.token = Fixtures.token
-        }
+        sut.receive(.tokenReceived(Fixtures.token))
 
         sut.receive(.biometricKeyIDReceived(false)) {
             $0.hasBiometricKeyID = false
@@ -420,10 +418,7 @@ final class EditProfileDomainTests: XCTestCase {
         mainQueue.run()
 
         let result = Result<Bool, IDPError>.success(true)
-        sut.receive(.deleteBiometricPairingReceived(result)) { state in
-            state.token = Fixtures.token
-            state.hasBiometricKeyID = true
-        }
+        sut.receive(.deleteBiometricPairingReceived(result))
 
         expect(self.mockProfileSecureDataWiper.wipeSecureDataOfCallsCount).to(equal(1))
     }

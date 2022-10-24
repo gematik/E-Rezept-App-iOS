@@ -49,7 +49,6 @@ enum PrescriptionDetailDomain: Equatable {
 
     enum Route: Equatable {
         case alert(AlertState<Action>)
-        case pharmacySearch(PharmacySearchDomain.State)
         case sharePrescription(URL)
         case directAssignment
 
@@ -57,8 +56,6 @@ enum PrescriptionDetailDomain: Equatable {
             switch self {
             case .alert:
                 return .alert
-            case .pharmacySearch:
-                return .pharmacySearch
             case .sharePrescription:
                 return .sharePrescription
             case .directAssignment:
@@ -68,7 +65,6 @@ enum PrescriptionDetailDomain: Equatable {
 
         enum Tag: Int {
             case alert
-            case pharmacySearch
             case sharePrescription
             case directAssignment
         }
@@ -118,11 +114,6 @@ enum PrescriptionDetailDomain: Equatable {
         case openSubstitutionInfo
         /// Dismiss substitution info
         case dismissSubstitutionInfo
-        /// Show pharmacy search view
-        case showPharmacySearch
-        /// Child view actions for the `PharmacySearch`
-        case pharmacySearch(action: PharmacySearchDomain.Action)
-
         case showDirectAssignment
         case errorBannerButtonPressed
         case openEmailClient(body: String)
@@ -135,9 +126,7 @@ enum PrescriptionDetailDomain: Equatable {
         let taskRepository: ErxTaskRepository
         let matrixCodeGenerator = DefaultErxTaskMatrixCodeGenerator(matrixCodeGenerator: ZXDataMatrixWriter())
         let fhirDateFormatter: FHIRDateFormatter
-        let pharmacyRepository: PharmacyRepository
         let userSession: UserSession
-
         var dateProvider: (() -> Date) = Date.init
     }
 
@@ -227,19 +216,6 @@ enum PrescriptionDetailDomain: Equatable {
         case .dismissSubstitutionInfo:
             state.isSubstitutionReadMorePresented = false
             return .none
-
-        // Pharmacy
-        case .showPharmacySearch:
-            state.route = .pharmacySearch(.init(
-                erxTasks: [state.prescription.erxTask],
-                pharmacies: []
-            ))
-            return .none
-        case .pharmacySearch(action: .close):
-            state.route = nil
-            return PharmacySearchDomain.cleanup()
-        case .pharmacySearch(action:):
-            return .none
         case .errorBannerButtonPressed:
             return .init(value: .openEmailClient(body: state.prescription.errorString))
         case let .openEmailClient(body):
@@ -267,24 +243,8 @@ enum PrescriptionDetailDomain: Equatable {
     }
 
     static let reducer: Reducer = .combine(
-        pharmacySearchPullbackReducer,
         domainReducer
     )
-
-    static let pharmacySearchPullbackReducer: Reducer =
-        PharmacySearchDomain.reducer._pullback(
-            state: (\State.route).appending(path: /Route.pharmacySearch),
-            action: /PrescriptionDetailDomain.Action.pharmacySearch(action:)
-        ) { environment in
-            PharmacySearchDomain.Environment(
-                schedulers: environment.schedulers,
-                pharmacyRepository: environment.pharmacyRepository,
-                fhirDateFormatter: environment.fhirDateFormatter,
-                openHoursCalculator: PharmacyOpenHoursCalculator(),
-                referenceDateForOpenHours: nil,
-                userSession: environment.userSession
-            )
-        }
 
     static var confirmDeleteAlertState: AlertState<Action> = {
         AlertState<Action>(
@@ -388,7 +348,6 @@ extension PrescriptionDetailDomain {
             schedulers: Schedulers(),
             taskRepository: demoSessionContainer.userSession.erxTaskRepository,
             fhirDateFormatter: FHIRDateFormatter.shared,
-            pharmacyRepository: DummySessionContainer().pharmacyRepository,
             userSession: DummySessionContainer()
         )
         static let store = Store(initialState: state,

@@ -18,6 +18,7 @@
 
 import ComposableArchitecture
 import eRpKit
+import Foundation
 
 enum NewProfileDomain {
     typealias Store = ComposableArchitecture.Store<State, Action>

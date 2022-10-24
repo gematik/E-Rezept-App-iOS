@@ -86,7 +86,7 @@ packages:
     majorVersion: 3.6.7
   SnapshotTesting:
     url: https://github.com/pointfreeco/swift-snapshot-testing
-    majorVersion: 1.8.2
+    majorVersion: 1.10.0
   CombineSchedulers:
     url: https://github.com/pointfreeco/combine-schedulers
     majorVersion: 0.5.3

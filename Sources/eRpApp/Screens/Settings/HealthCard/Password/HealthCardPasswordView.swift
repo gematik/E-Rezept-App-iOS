@@ -21,7 +21,7 @@ import ComposableArchitecture
 import eRpKit
 import SwiftUI
 
-/// Root screen for the Reset Retry Counter views
+/// Root screen for the HealthCardPassword views
 struct HealthCardPasswordView: View {
     let store: HealthCardPasswordDomain.Store
     @ObservedObject var viewStore: ViewStore<ViewState, HealthCardPasswordDomain.Action>

@@ -20,6 +20,7 @@
 
 import CasePaths
 import ComposableArchitecture
+import Foundation
 
 protocol TCAPath {
     associatedtype Root

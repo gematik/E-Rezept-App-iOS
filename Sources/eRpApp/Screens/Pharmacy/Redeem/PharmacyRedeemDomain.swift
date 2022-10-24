@@ -32,9 +32,34 @@ enum PharmacyRedeemDomain: Equatable {
 
     static func cleanup<T>() -> Effect<T, Never> {
         Effect.concatenate(
-            PharmacyContactDomain.cleanup(),
+            cleanupSubviews(),
             Effect.cancel(token: PharmacyRedeemDomain.Token.self)
         )
+    }
+
+    static func cleanupSubviews<T>() -> Effect<T, Never> {
+        Effect.concatenate(
+            PharmacyContactDomain.cleanup()
+        )
+    }
+
+    enum Route: Equatable {
+        case redeemSuccess(RedeemSuccessDomain.State)
+        case contact(PharmacyContactDomain.State)
+
+        enum Tag: Int {
+            case redeemSuccess
+            case contact
+        }
+
+        var tag: Tag {
+            switch self {
+            case .redeemSuccess:
+                return .redeemSuccess
+            case .contact:
+                return .contact
+            }
+        }
     }
 
     enum Token: CaseIterable, Hashable {
@@ -50,10 +75,9 @@ enum PharmacyRedeemDomain: Equatable {
         var selectedErxTasks: Set<ErxTask> = []
         var orderResponses: IdentifiedArrayOf<OrderResponse> = []
         var alertState: AlertState<Action>?
-        var successViewState: RedeemSuccessDomain.State?
         var selectedShipmentInfo: ShipmentInfo?
         var profile: Profile?
-        var pharmacyContactState: PharmacyContactDomain.State?
+        var route: Route?
     }
 
     enum Action: Equatable {
@@ -75,11 +99,10 @@ enum PharmacyRedeemDomain: Equatable {
         case alertDismissButtonTapped
         case alertShowPharmacyContactButtonTapped
         case redeemSuccessView(action: RedeemSuccessDomain.Action)
-        case dismissRedeemSuccessView
         /// Called when contact has been selected
         case showPharmacyContact
         case pharmacyContact(action: PharmacyContactDomain.Action)
-        case dismissPharmacyContactView
+        case setNavigation(tag: Route.Tag?)
     }
 
     struct Environment {
@@ -124,7 +147,7 @@ enum PharmacyRedeemDomain: Equatable {
         case .close:
             state.alertState = nil
             // closing is handled in parent reducer
-            return cleanup()
+            return cleanupSubviews()
         case .redeem:
             state.orderResponses = []
             guard !state.selectedErxTasks.isEmpty else {
@@ -145,7 +168,7 @@ enum PharmacyRedeemDomain: Equatable {
                 state.alertState = AlertStates.failingRequest(count: orderResponses.failedCount)
                 return .none
             } else if orderResponses.areSuccessful {
-                state.successViewState = RedeemSuccessDomain.State(redeemOption: state.redeemOption)
+                state.route = .redeemSuccess(RedeemSuccessDomain.State(redeemOption: state.redeemOption))
             }
             return .none
         case let .redeemReceived(.failure(error)):
@@ -165,40 +188,38 @@ enum PharmacyRedeemDomain: Equatable {
             return .none
         case .alertShowPharmacyContactButtonTapped:
             state.alertState = nil
-            state.pharmacyContactState = .init(
-                shipmentInfo: state.selectedShipmentInfo,
-                service: environment.inputValidator.service
+            state.route = .contact(
+                .init(shipmentInfo: state.selectedShipmentInfo, service: environment.inputValidator.service)
             )
-            return .none
-        case .dismissRedeemSuccessView:
-            state.successViewState = nil
             return .none
         case .redeemSuccessView(action: .close):
-            state.successViewState = nil
+            state.route = nil
             return Effect(value: .close)
         case .showPharmacyContact:
-            state.pharmacyContactState = .init(
-                shipmentInfo: state.selectedShipmentInfo,
-                service: environment.inputValidator.service
+            state.route = .contact(
+                .init(shipmentInfo: state.selectedShipmentInfo, service: environment.inputValidator.service)
             )
             return .none
-        case .pharmacyContact(.close),
-             .dismissPharmacyContactView:
-            state.pharmacyContactState = nil
+        case .pharmacyContact(.close):
+            state.route = nil
+            return cleanupSubviews()
+        case .setNavigation(tag: nil):
+            state.route = nil
             return .none
-        case .pharmacyContact:
+        case .setNavigation, .pharmacyContact, .redeemSuccessView:
             return .none
         }
     }
 
     static let reducer: Reducer = .combine(
         pharmacyContactPullbackReducer,
+        redeemSuccessPullbackReducer,
         domainReducer
     )
 
     static let pharmacyContactPullbackReducer: Reducer =
-        PharmacyContactDomain.reducer.optional().pullback(
-            state: \.pharmacyContactState,
+        PharmacyContactDomain.reducer._pullback(
+            state: (\State.route).appending(path: /Route.contact),
             action: /PharmacyRedeemDomain.Action.pharmacyContact(action:)
         ) { environment in
             PharmacyContactDomain.Environment(
@@ -207,6 +228,12 @@ enum PharmacyRedeemDomain: Equatable {
                 validator: environment.inputValidator
             )
         }
+
+    static let redeemSuccessPullbackReducer: Reducer =
+        RedeemSuccessDomain.reducer._pullback(
+            state: (\State.route).appending(path: /Route.redeemSuccess),
+            action: /PharmacyRedeemDomain.Action.redeemSuccessView(action:)
+        ) { _ in RedeemSuccessDomain.Environment() }
 }
 
 extension PharmacyRedeemDomain {

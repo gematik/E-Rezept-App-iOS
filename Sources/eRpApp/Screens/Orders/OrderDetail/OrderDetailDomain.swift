@@ -212,7 +212,7 @@ enum OrderDetailDomain: Equatable {
             return .none
         case .openPhoneApp:
             if let phone = state.order.pharmacy?.telecom?.phone,
-               let number = URL(string: "tel://\(phone)") {
+               let number = URL(phoneNumber: phone) {
                 UIApplication.shared.open(number)
             }
             return .none
@@ -306,7 +306,6 @@ extension OrderDetailDomain {
                 schedulers: environment.schedulers,
                 taskRepository: environment.userSession.erxTaskRepository,
                 fhirDateFormatter: environment.fhirDateFormatter,
-                pharmacyRepository: environment.userSession.pharmacyRepository,
                 userSession: environment.userSession
             )
         }

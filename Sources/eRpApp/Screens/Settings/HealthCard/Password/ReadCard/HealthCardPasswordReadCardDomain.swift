@@ -124,11 +124,15 @@ enum HealthCardPasswordReadCardDomain {
                 state.route = .alert(AlertStates.pinCounterExhausted)
 
             // error: others
-            case (.passwordNotFound, _),
-                 (.securityStatusNotSatisfied, _),
-                 (.memoryFailure, _),
-                 (.wrongPasswordLength, _),
-                 (.unknownFailure, _):
+            case (.passwordNotFound, _):
+                state.route = .alert(AlertStates.notFound)
+            case (.securityStatusNotSatisfied, _):
+                state.route = .alert(AlertStates.securityStatusNotSatisfied)
+            case (.memoryFailure, _):
+                state.route = .alert(AlertStates.memoryFailure)
+            case (.unknownFailure, _):
+                state.route = .alert(AlertStates.unknownFailure)
+            case (.wrongPasswordLength, _):
                 state.route = .alert(AlertStates.unknownError)
             }
             return .none

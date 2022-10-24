@@ -177,9 +177,10 @@ struct CardWallPINView: View {
                         .frame(maxWidth: .infinity, alignment: .trailing)
 
                     PINFieldView(store: store) {
-                        withAnimation {
-                            viewStore.send(.advance(.none))
-                        }
+                        viewStore.send(
+                            .advance(.none),
+                            animation: Animation.default
+                        )
                     }.padding([.top, .bottom])
 
                     if !viewStore.showWarning {

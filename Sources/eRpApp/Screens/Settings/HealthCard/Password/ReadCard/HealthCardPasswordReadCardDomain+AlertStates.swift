@@ -59,6 +59,46 @@ extension HealthCardPasswordReadCardDomain {
             )
         )
 
+        // error: passwort not found
+        static let notFound: AlertState<Action> = .init(
+            title: .init(L10n.cdwTxtRcErrorPasswordMissingDescription),
+            message: .init(L10n.cdwTxtRcErrorPasswordMissingRecovery),
+            dismissButton: .default(
+                .init(L10n.stgBtnCardResetRcAlertOk),
+                action: .send(.okButtonTapped)
+            )
+        )
+
+        // error: security Status Not Satisfied
+        static let securityStatusNotSatisfied: AlertState<Action> = .init(
+            title: .init(L10n.cdwTxtRcErrorSecStatusDescription),
+            message: .init(L10n.cdwTxtRcErrorSecStatusRecovery),
+            dismissButton: .default(
+                .init(L10n.stgBtnCardResetRcAlertOk),
+                action: .send(.okButtonTapped)
+            )
+        )
+
+        // error: memory failure
+        static let memoryFailure: AlertState<Action> = .init(
+            title: .init(L10n.cdwTxtRcErrorMemoryFailureDescription),
+            message: .init(L10n.cdwTxtRcErrorMemoryFailureRecovery),
+            dismissButton: .default(
+                .init(L10n.stgBtnCardResetRcAlertOk),
+                action: .send(.okButtonTapped)
+            )
+        )
+
+        // error: unknown failure
+        static let unknownFailure: AlertState<Action> = .init(
+            title: .init(L10n.cdwTxtRcErrorUnknownFailureDescription),
+            message: .init(L10n.cdwTxtRcErrorUnknownFailureRecovery),
+            dismissButton: .default(
+                .init(L10n.stgBtnCardResetRcAlertOk),
+                action: .send(.okButtonTapped)
+            )
+        )
+
         static let pukCounterExhaustedWithSetNewPin: AlertState<Action> = .init(
             title: .init(L10n.stgTxtCardResetRcAlertCounterExhaustedWithPinTitle),
             message: .init(L10n.stgTxtCardResetRcAlertCounterExhaustedWithPinMessage),

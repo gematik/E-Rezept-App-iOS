@@ -98,7 +98,6 @@
 		0E91F2581B685CB11013CCD4 /* ErxTask+MedicationDispense.swift in Sources */ = {isa = PBXBuildFile; fileRef = 130F3E6ABEC1B3269177284C /* ErxTask+MedicationDispense.swift */; };
 		0EB453D8F6B102A23905F29C /* ErxTaskOrder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BD01AE4070D6C910B56E3C7 /* ErxTaskOrder.swift */; };
 		0EB9227D3E6130E78686B7AF /* SectionContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4041623261FFC50C6E036362 /* SectionContainer.swift */; };
-		0ED278A56ECC7D8F7FA4541F /* RedeemDomain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9966E0E604C1C5D10156C9BB /* RedeemDomain.swift */; };
 		0F5FD20CAC90F2F0EA253A69 /* TrustStoreSessionMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9D781AEEB167F44CB1ABA18 /* TrustStoreSessionMock.swift */; };
 		0FA6D5DCEFA6FF7F0FDAA9C5 /* IDPCardWallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D61D80856DF8A8A78EA94A7 /* IDPCardWallView.swift */; };
 		0FB067E80D1920C72870C5FF /* ExtAuthRequestStorageMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 982FCA1A3777A131AA23A993 /* ExtAuthRequestStorageMock.swift */; };
@@ -110,7 +109,6 @@
 		1046820B7FE85123296390CA /* PharmacyRemoteDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 59943E7370AF5F95E44301B7 /* PharmacyRemoteDataStore.swift */; };
 		10779DBBCDFA03BA9A1C385E /* ErxTaskMatrixCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC2400037F51BC92ECC2AA6A /* ErxTaskMatrixCode.swift */; };
 		1091B751BA4FB50F5EC9B033 /* GemCommonsKit.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = F384326304629BF0F91DCF3F /* GemCommonsKit.xcframework */; };
-		10BC684A940CDAC2DCF1BBA8 /* RedeemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADEDA0DBF97A9793BEEE234E /* RedeemView.swift */; };
 		10D67F96628E7A96AB97C810 /* MedicationPractitionerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F601048DA800A2130141F963 /* MedicationPractitionerView.swift */; };
 		112C43D5F4E5AF517FF49241 /* ErxTaskMedicationEntity+ErxTask.Medication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35B89298D8A96442BE77B133 /* ErxTaskMedicationEntity+ErxTask.Medication.swift */; };
 		118575AEAE306FBD4F197CEA /* ErxAuditEventEntity+ErxAuditEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 140D09BF85CF2706356AD760 /* ErxAuditEventEntity+ErxAuditEvent.swift */; };
@@ -747,10 +745,10 @@
 		799D9D9FAB855725504EFD28 /* SystemKeychainAccessHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = C96A047E4B7E4F46072EAEB6 /* SystemKeychainAccessHelper.swift */; };
 		79D1B0689BCCC1E00E56274C /* TrustStore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DAB2C6B897720DE79FF465D8 /* TrustStore.framework */; };
 		79D81FAC50DCC4558483A527 /* OHHTTPStubsSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 95266458D73A6E7732A639A8 /* OHHTTPStubsSwift */; };
+		7A23CC5A944DD5F327538523 /* RedeemMethodsDomain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49C1B8EF28C10BB8873E03D1 /* RedeemMethodsDomain.swift */; };
 		7A4AD7561E92FCCBB724E784 /* PharmacyLocationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6357B4AB1B99611F132B2D8E /* PharmacyLocationViewModel.swift */; };
 		7A797E66AE611F39EC35C317 /* TrustStore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DAB2C6B897720DE79FF465D8 /* TrustStore.framework */; };
 		7A7E7F2F652FC5D3BC1297F0 /* JWT.bundle in Resources */ = {isa = PBXBuildFile; fileRef = FD7CE652874042120266D59B /* JWT.bundle */; };
-		7B8AF1303E0D0BEC945F2F53 /* RedeemDomainTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D6E211ACC2336782C311F23 /* RedeemDomainTests.swift */; };
 		7B900F1E30E6793C194356C9 /* GemCommonsKit.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = F384326304629BF0F91DCF3F /* GemCommonsKit.xcframework */; };
 		7BEBB4BDD7704692D622A3AF /* SectionContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4041623261FFC50C6E036362 /* SectionContainer.swift */; };
 		7C06BE467A16BE9EB2558084 /* DemoSignatureProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB42B849D85B4DA168F560A0 /* DemoSignatureProvider.swift */; };
@@ -1004,6 +1002,7 @@
 		A6A3CEF4A72D4FC5A42A8A22 /* DefaultErxTaskRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E63347D309F1C28B89528A1 /* DefaultErxTaskRepositoryTests.swift */; };
 		A6B057F3E3030ABFFD6964C9 /* CreatePasswordDomainTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EE6356818B683D96AA205E6 /* CreatePasswordDomainTests.swift */; };
 		A6B554F67B722002A56D56A7 /* OCSPListTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 753874F4809122D94EAA20BA /* OCSPListTests.swift */; };
+		A6DDAFB7DC653924EF38F22F /* URLHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0E107F70031B234B33E59222 /* URLHelperTests.swift */; };
 		A7735D4E2F4B3A606E138D2C /* ErxTaskWorkRelatedAccidentEntity+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BAE5C0726B8139FBEFD2531 /* ErxTaskWorkRelatedAccidentEntity+CoreDataClass.swift */; };
 		A777F55557858CCC1A404199 /* FormToggleStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32F7B71F40FF1DBF78E8536C /* FormToggleStyle.swift */; };
 		A77883F98EC2A96BEB9B51A5 /* IDPToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 493272BDAB63A633B6FFA00E /* IDPToken.swift */; };
@@ -1325,6 +1324,7 @@
 		DCAD13E03CB1C24BA21DD831 /* ProfilePicturePicker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A085E9EB8C0079C5C25277B /* ProfilePicturePicker.swift */; };
 		DCE517A9F3EA98B227A645A3 /* TrustStoreIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C1C3910C4E2DF5855776C4C3 /* TrustStoreIntegrationTests.swift */; };
 		DD1C45C0E3C2E78263D908AA /* BundleKit in Frameworks */ = {isa = PBXBuildFile; productRef = AB61A9F97B4CA571771081F7 /* BundleKit */; };
+		DD484E7EA82E8B3E7AFED0B7 /* RedeemMethodsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02CD6680A98389CC25E06C58 /* RedeemMethodsView.swift */; };
 		DD723D9C81BC36B5A7EA9F44 /* TertiaryButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 471D36AA2A1EB2620CCADB3C /* TertiaryButtonStyle.swift */; };
 		DD7ACC495B5C4E5B04062ED2 /* ErxTaskMedicationEntity+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDB1C0F175CA90F0831E451 /* ErxTaskMedicationEntity+CoreDataClass.swift */; };
 		DD8AE47D948F6DE72558FA79 /* BundleKit in Frameworks */ = {isa = PBXBuildFile; productRef = A80E4F151FAC96491A6829CE /* BundleKit */; };
@@ -1381,6 +1381,7 @@
 		EAADEE25895588B8BAFAD0E0 /* TrustStore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DAB2C6B897720DE79FF465D8 /* TrustStore.framework */; };
 		EAAF4314D9886C14AA31E210 /* VAUClient.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = C27907ED6FD1868CA89816A2 /* VAUClient.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		EAED3A10AE21B1F01F06A52A /* DummyLoginHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DAB2DC85933C536E56FC5E5 /* DummyLoginHandler.swift */; };
+		EAF5C52EA855837E42E3BC48 /* URL+PhoneHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73016A91743629EC5A2C5E79 /* URL+PhoneHelper.swift */; };
 		EB18205DCA6F9862C8DCE738 /* DemoProfileDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFFFB434361ED56B2CF7B48B /* DemoProfileDataStore.swift */; };
 		EB5F0C358ABB1BAC8311D0A8 /* BundleToken+Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B3C71BAE49F12C2310DBEBB /* BundleToken+Helper.swift */; };
 		EBA3CA383C08A1E84520C6F3 /* ErxTaskFHIRClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABB47494B7415C3158F28A89 /* ErxTaskFHIRClientTests.swift */; };
@@ -1445,6 +1446,7 @@
 		F473913C54672686E7F3FDFC /* SectionContainer+Generics.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFFD2FF97998F244ED013F1A /* SectionContainer+Generics.swift */; };
 		F47BC9F673F2B9769E7EFB49 /* TrustStoreStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3614F6F071B4FC4439C061BC /* TrustStoreStorage.swift */; };
 		F4AF6E7B329B862FD22A799E /* URLRequestChain.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3C9BF54A88B387F3CC3D7A /* URLRequestChain.swift */; };
+		F4E6140A977FC53B7DBE6E58 /* RedeemMethodsDomainTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 83DEDFFCC8454BFD2221387F /* RedeemMethodsDomainTests.swift */; };
 		F50C3CC5AB03D4E5BD081E36 /* AVSTransactionCoreDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B76AD0236A10385E84E1B85 /* AVSTransactionCoreDataStore.swift */; };
 		F5186EEA979629AD4EE165DC /* TokenPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34E534A860D2358C30A99A9A /* TokenPayload.swift */; };
 		F5E433B27BBB21154FC6251E /* ASN1Kit.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1F13CC9A61AB1FE3D5A85BEC /* ASN1Kit.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -2550,6 +2552,7 @@
 		019F2031D67C2753AF7739FC /* SecKeyRandomTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecKeyRandomTests.swift; sourceTree = "<group>"; };
 		02209C8AA6786AAEBAF7F056 /* TrustStoreSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrustStoreSession.swift; sourceTree = "<group>"; };
 		0267576B0FC2D97110FAB8FA /* ErxReadinessBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErxReadinessBadge.swift; sourceTree = "<group>"; };
+		02CD6680A98389CC25E06C58 /* RedeemMethodsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedeemMethodsView.swift; sourceTree = "<group>"; };
 		0309E778474BE4EE2620BB84 /* ScannerDomain+Helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ScannerDomain+Helper.swift"; sourceTree = "<group>"; };
 		03DCBD6B2C683735017901B9 /* DemoDeviceSecurityManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoDeviceSecurityManager.swift; sourceTree = "<group>"; };
 		0439F6DBD74BA9FB1CBCA261 /* IDPChallengeSessionTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IDPChallengeSessionTest.swift; sourceTree = "<group>"; };
@@ -2592,11 +2595,11 @@
 		0D32C2B1C062BD2CFD967C11 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		0D405B598B52F58161C18EBD /* NFCSignatureProviderMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NFCSignatureProviderMock.swift; sourceTree = "<group>"; };
 		0D63ED38E4D8C7337584DD69 /* MockPharmacyRemoteDataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockPharmacyRemoteDataStore.swift; sourceTree = "<group>"; };
-		0D6E211ACC2336782C311F23 /* RedeemDomainTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedeemDomainTests.swift; sourceTree = "<group>"; };
 		0DA788BB2498AEE9CF633CC8 /* TopBorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TopBorder.swift; sourceTree = "<group>"; };
 		0DB4F0307BEDF6110AB3B9A1 /* release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = release.xcconfig; sourceTree = "<group>"; };
 		0DD315AF33C64824A444DC36 /* PharmacyBundleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PharmacyBundleTests.swift; sourceTree = "<group>"; };
 		0DE6CD6B7D9BF369BA31612E /* ErxTaskCoreDataStoreTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErxTaskCoreDataStoreTest.swift; sourceTree = "<group>"; };
+		0E107F70031B234B33E59222 /* URLHelperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = URLHelperTests.swift; sourceTree = "<group>"; };
 		0E40BF58C7098749C0E8AB4A /* UIDevice+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIDevice+Extension.swift"; sourceTree = "<group>"; };
 		0EB731F15FC5E83AF7900967 /* VAUSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VAUSession.swift; sourceTree = "<group>"; };
 		0F041F3B4E54637B7B4C703D /* UserProfile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfile.swift; sourceTree = "<group>"; };
@@ -2840,6 +2843,7 @@
 		49921F7A5E580CC209472006 /* GenericTestError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericTestError.swift; sourceTree = "<group>"; };
 		49AF82922523A29806499D1F /* OrderHealthCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderHealthCardView.swift; sourceTree = "<group>"; };
 		49B81752928FC120C2AF496F /* ErxTaskFHIROperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErxTaskFHIROperation.swift; sourceTree = "<group>"; };
+		49C1B8EF28C10BB8873E03D1 /* RedeemMethodsDomain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedeemMethodsDomain.swift; sourceTree = "<group>"; };
 		49DE74ADEFFA1755459D17F4 /* CardWallExtAuthSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardWallExtAuthSelectionView.swift; sourceTree = "<group>"; };
 		49E2DB8966D70660F39F8554 /* IDPCardWallDomain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IDPCardWallDomain.swift; sourceTree = "<group>"; };
 		4B3C71BAE49F12C2310DBEBB /* BundleToken+Helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BundleToken+Helper.swift"; sourceTree = "<group>"; };
@@ -2981,6 +2985,7 @@
 		725AB7BA3C10AE597278B115 /* NFCCardReaderProvider+LocalizedError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NFCCardReaderProvider+LocalizedError.swift"; sourceTree = "<group>"; };
 		729713F640E2109CE1424841 /* UserDefaultsStoreTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsStoreTest.swift; sourceTree = "<group>"; };
 		72AC06AB2A42DFDDADD565E2 /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = tr; path = tr.lproj/Localizable.strings; sourceTree = "<group>"; };
+		73016A91743629EC5A2C5E79 /* URL+PhoneHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URL+PhoneHelper.swift"; sourceTree = "<group>"; };
 		7401EDA282F3E21E8BEFA461 /* MainHintView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainHintView.swift; sourceTree = "<group>"; };
 		742051B40935C33A411966C9 /* TestUtils.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = TestUtils.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		742FEDCC09D8B446DF14ADE9 /* DebugLogView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugLogView.swift; sourceTree = "<group>"; };
@@ -3051,6 +3056,7 @@
 		82E1B9DA7E0ECF357B203EB0 /* ModelsR4.Bundle+ErxTaskCommunication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ModelsR4.Bundle+ErxTaskCommunication.swift"; sourceTree = "<group>"; };
 		837B2A9170445B373345051C /* HealthCardPasswordReadCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthCardPasswordReadCardView.swift; sourceTree = "<group>"; };
 		83854DA06794400A1E3D7FB3 /* CameraViewSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraViewSnapshotTests.swift; sourceTree = "<group>"; };
+		83DEDFFCC8454BFD2221387F /* RedeemMethodsDomainTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedeemMethodsDomainTests.swift; sourceTree = "<group>"; };
 		840755BE7DBBEC615A364BF1 /* PageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageViewController.swift; sourceTree = "<group>"; };
 		8419E7C9F7A181EAF8289D56 /* AVScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVScannerView.swift; sourceTree = "<group>"; };
 		844B4363C2694B6811BA2F8C /* VAUCrypto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VAUCrypto.swift; sourceTree = "<group>"; };
@@ -3130,7 +3136,6 @@
 		9916A4D3589404EE608FA1CF /* FHIRClient.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = FHIRClient.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		994A028C460E5A821329FB50 /* MockErxTaskMatrixCodeGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockErxTaskMatrixCodeGenerator.swift; sourceTree = "<group>"; };
 		9955D01E7E8EE5C6AEADD861 /* EventsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventsStore.swift; sourceTree = "<group>"; };
-		9966E0E604C1C5D10156C9BB /* RedeemDomain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedeemDomain.swift; sourceTree = "<group>"; };
 		998F8635DEFC19F3491F0851 /* uk */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = uk; path = uk.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
 		99907629ADF35B77DCCB680A /* TextFieldWithDelete.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldWithDelete.swift; sourceTree = "<group>"; };
 		99D413EF06D84B2B29EFDA71 /* RealIDPClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealIDPClient.swift; sourceTree = "<group>"; };
@@ -3202,7 +3207,6 @@
 		ACF6CFB9867403248600DBA1 /* DebugLogsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugLogsView.swift; sourceTree = "<group>"; };
 		AD799637C537370715E09802 /* ProfileCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileCell.swift; sourceTree = "<group>"; };
 		ADD0453E4703153661F77800 /* PairingData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PairingData.swift; sourceTree = "<group>"; };
-		ADEDA0DBF97A9793BEEE234E /* RedeemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedeemView.swift; sourceTree = "<group>"; };
 		AE37AE58C2FED8D512809CB4 /* ProfileEntity+Profile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ProfileEntity+Profile.swift"; sourceTree = "<group>"; };
 		AE6AF38C46DC23AD91507D3C /* CardWallReadCardDomain.State+Helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CardWallReadCardDomain.State+Helper.swift"; sourceTree = "<group>"; };
 		AEFBA4A5E23A65093974AE24 /* ErxTask.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ErxTask.xcdatamodel; sourceTree = "<group>"; };
@@ -4438,8 +4442,8 @@
 		1E0AA18110DF30E99866750B /* Redeem */ = {
 			isa = PBXGroup;
 			children = (
-				9966E0E604C1C5D10156C9BB /* RedeemDomain.swift */,
-				ADEDA0DBF97A9793BEEE234E /* RedeemView.swift */,
+				49C1B8EF28C10BB8873E03D1 /* RedeemMethodsDomain.swift */,
+				02CD6680A98389CC25E06C58 /* RedeemMethodsView.swift */,
 				2718B50A7C6CBB8453F9BD87 /* RedeemMatrixCode */,
 			);
 			path = Redeem;
@@ -5112,8 +5116,8 @@
 		587DC8D13ADA70AB78781C30 /* Redeem */ = {
 			isa = PBXGroup;
 			children = (
-				0D6E211ACC2336782C311F23 /* RedeemDomainTests.swift */,
 				F21DEB407C7056502153DA43 /* RedeemMatrixCodeDomainTests.swift */,
+				83DEDFFCC8454BFD2221387F /* RedeemMethodsDomainTests.swift */,
 			);
 			path = Redeem;
 			sourceTree = "<group>";
@@ -5724,6 +5728,7 @@
 				6D1C0D51078301217E9902A1 /* DefaultAppSecurityPasswordManagerTests.swift */,
 				9EF5F292A687C50E32EB60B2 /* SnapshotHelper.swift */,
 				065B6211B234F5E7FAE3550C /* StringHelperTests.swift */,
+				0E107F70031B234B33E59222 /* URLHelperTests.swift */,
 			);
 			path = Helper;
 			sourceTree = "<group>";
@@ -5968,6 +5973,7 @@
 				785DC00DF15A1507CF93FF64 /* Publisher+Helper.swift */,
 				FC4FABDD9F05F811047D0F35 /* String+Helper.swift */,
 				D3F468F3FAD528C0426FD2C9 /* String+ProfileHelper.swift */,
+				73016A91743629EC5A2C5E79 /* URL+PhoneHelper.swift */,
 				E20749C07120263801FBC142 /* Swiftgen */,
 			);
 			path = Helper;
@@ -8708,8 +8714,8 @@
 				6FCA2629CC915D69E81B6BA9 /* ProfileValidatorTests.swift in Sources */,
 				0BB81FF73517ADA6B7F4FC16 /* ProfilesDomainTests.swift in Sources */,
 				05AB29E20BEBBC5B3EA3AD16 /* RecordActionsForHintsTests.swift in Sources */,
-				7B8AF1303E0D0BEC945F2F53 /* RedeemDomainTests.swift in Sources */,
 				394FE539170A89F2E23E55B1 /* RedeemMatrixCodeDomainTests.swift in Sources */,
+				F4E6140A977FC53B7DBE6E58 /* RedeemMethodsDomainTests.swift in Sources */,
 				11D67797A9BC68977E46D027 /* RedeemSuccessViewSnapshotTests.swift in Sources */,
 				044718808F49DF9A1AC1EFA3 /* RedeemViewSnapshotTests.swift in Sources */,
 				B46DF82D7C46E0903CB7124F /* RegisterAuthenticationDomainTests.swift in Sources */,
@@ -8725,6 +8731,7 @@
 				F0777D6DE652FB3A6D27754E /* SystemKeychainAccessHelperTests.swift in Sources */,
 				8FEAB2BB62E1D4ED4345C823 /* TokensViewSnapshotTests.swift in Sources */,
 				2D2A4D8AB7179530EE5A3ED5 /* UIApplicationOpenURLMock.swift in Sources */,
+				A6DDAFB7DC653924EF38F22F /* URLHelperTests.swift in Sources */,
 				3BEA0B820FB2DBF6A741B432 /* UserProfile+Fixtures.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -9402,16 +9409,16 @@
 				40776CF7A633B90DA5519472 /* ReadCardHelpListView.swift in Sources */,
 				83B29B3947CDD8EFCAF3594B /* ReadCardHelpVideoView.swift in Sources */,
 				B3225FE363F4BD05D662BE1A /* ReadCardHelpView.swift in Sources */,
-				0ED278A56ECC7D8F7FA4541F /* RedeemDomain.swift in Sources */,
 				29E0417E46E45A43BC1DF141 /* RedeemInputValidator.swift in Sources */,
 				3137BAC7ECB0C760275F4FDB /* RedeemMatrixCodeDomain.swift in Sources */,
 				B0E13B43A71DFF2B802EF5CF /* RedeemMatrixCodeView.swift in Sources */,
+				7A23CC5A944DD5F327538523 /* RedeemMethodsDomain.swift in Sources */,
+				DD484E7EA82E8B3E7AFED0B7 /* RedeemMethodsView.swift in Sources */,
 				E7E10B9AA0B804056D631A44 /* RedeemService.swift in Sources */,
 				C1ED2779DE2B84A0A871DC35 /* RedeemServiceError.swift in Sources */,
 				C7773B4F6BF5E9A387ED016B /* RedeemServiceOption.swift in Sources */,
 				23D321CAF8D4DEA06F2C1366 /* RedeemSuccessDomain.swift in Sources */,
 				95C4FD5E323C2257D9D7CC0F /* RedeemSuccessView.swift in Sources */,
-				10BC684A940CDAC2DCF1BBA8 /* RedeemView.swift in Sources */,
 				36E7FC7908F0B15645E99BFE /* Reducer+RecordActionsForHints.swift in Sources */,
 				B877755169CA1381FECB51A4 /* RefreshControl.swift in Sources */,
 				175B1DA676FF0C8C2679A5D8 /* RegisterAuthenticationDomain.swift in Sources */,
@@ -9469,6 +9476,7 @@
 				3ADD8148F1D4182D1DD9B1B0 /* TransparentHostingController.swift in Sources */,
 				38FFC39BCE8EE5008CDF150A /* TransparentTextButtonStyle.swift in Sources */,
 				C316C84A0F0A9BFCDAFEE8E5 /* UIApplication+Keyboard.swift in Sources */,
+				EAF5C52EA855837E42E3BC48 /* URL+PhoneHelper.swift in Sources */,
 				6B371F30269063C500E3318E /* UnknownError.swift in Sources */,
 				BD108F99C703EAFB887A74D6 /* UserMode+UserSession.swift in Sources */,
 				58B1FB083807D797DFCE1E77 /* UserMode.swift in Sources */,
@@ -13296,7 +13304,7 @@
 			repositoryURL = "https://github.com/pointfreeco/swift-snapshot-testing";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 1.8.2;
+				minimumVersion = 1.10.0;
 			};
 		};
 		9D7282129EAE5BBE02CA90FA /* XCRemoteSwiftPackageReference "SwiftUI-Introspect" */ = {

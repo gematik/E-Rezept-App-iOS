@@ -19,6 +19,7 @@
 import Combine
 import ComposableArchitecture
 import eRpKit
+import Foundation
 import IDP
 
 // swiftlint:disable:next superfluous_disable_command

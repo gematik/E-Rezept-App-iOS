@@ -23,29 +23,38 @@ import SwiftUI
 struct OrderHealthCardView: View {
     @StateObject var viewModel = ViewModel()
     let closeAction: () -> Void
-    @State var inquiryOptionViewVisible = false
+    @State var inquiryOptionViewVisible = true
+    @State var showPickerView = false
+    var textColor: Color {
+        viewModel.insuranceCompany != nil ? Colors.systemLabel : Colors.primary700
+    }
 
     var body: some View {
-        List {
+        ScrollView(showsIndicators: true) {
             Section(header: Header()) {}
                 .textCase(.none)
 
             Section(
                 header: SectionHeaderView(
                     text: L10n.orderEgkTxtPickerInsuranceHeader,
-                    a11y: A11y.orderEGK.ogkTxtInsuranceCompanyHeader
-                ).padding(.bottom, 8),
-                footer: Group {}
+                    a11y: A11y.orderEGK.ogkTxtServiceSelectionHeader
+                ).padding(.bottom, 8)
             ) {
-                Picker(
-                    selection: $viewModel.healthInsuranceCompanyId,
-                    label: Group {
-                        Text(L10n.orderEgkTxtPickerInsurancePlaceholder)
-                            .foregroundColor(Color(.label))
-                    }
+                NavigationLink(
+                    destination:
+                    PickerSearch(insuranceCompanies: viewModel.insuranceCompanies) { selectedInsurance in
+                        viewModel.healthInsuranceCompanyId = selectedInsurance.id
+                        showPickerView = false
+                    },
+                    isActive: $showPickerView
                 ) {
-                    ForEach(viewModel.insuranceCompanies) { insurance in
-                        Text(insurance.name).tag(insurance.id)
+                    HStack {
+                        Text(viewModel.insuranceCompany?.name ?? L10n.orderEgkTxtPickerInsurancePlaceholder.text)
+                            .foregroundColor(textColor)
+                        Spacer()
+                        Image(systemName: SFSymbolName.chevronRight)
+                            .padding(0)
+                            .foregroundColor(textColor)
                     }
                 }
             }
@@ -61,7 +70,7 @@ struct OrderHealthCardView: View {
                             header: SectionHeaderView(
                                 text: L10n.orderEgkTxtPickerServiceHeader,
                                 a11y: A11y.orderEGK.ogkTxtServiceSelectionHeader
-                            ).padding(.bottom, 8)
+                            ).padding([.bottom, .top], 8)
                         ) {
                             NavigationLink(
                                 destination:
@@ -73,7 +82,11 @@ struct OrderHealthCardView: View {
                                 isActive: $inquiryOptionViewVisible
                             ) {
                                 Text(viewModel.serviceInquiry?.localizedName ?? L10n.orderEgkTxtPickerServiceLabel.key)
-                                    .foregroundColor(Color(.label))
+                                    .foregroundColor(textColor)
+                                Spacer()
+                                Image(systemName: SFSymbolName.chevronRight)
+                                    .padding(0)
+                                    .foregroundColor(textColor)
                             }
                         }
                         .textCase(.none)
@@ -84,7 +97,7 @@ struct OrderHealthCardView: View {
                             header: SectionHeaderView(
                                 text: L10n.orderEgkTxtSectionContactInsurance,
                                 a11y: A11y.orderEGK.ogkTxtContactCompanyHeader
-                            ).padding(.bottom, 8),
+                            ).padding([.bottom, .top], 8),
                             footer: ContactOptionsRowView(
                                 healthInsuranceCompany: insuranceCompany,
                                 serviceInquiry: serviceInquiry
@@ -97,11 +110,7 @@ struct OrderHealthCardView: View {
                 }
             }
         }
-        .listStyle(GroupedListStyle())
-        .introspectTableView { tableView in
-            tableView.backgroundColor = UIColor.systemBackground
-            tableView.separatorStyle = .none
-        }
+        .padding()
         .respectKeyboardInsets()
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarItems(
@@ -126,44 +135,8 @@ struct OrderHealthCardView: View {
         imageStyle: .topAligned
     )
 
-    struct Header: View {
-        var body: some View {
-            VStack(spacing: 8) {
-                Text(L10n.orderEgkTxtHeadline)
-                    .foregroundColor(Color(.label))
-                    .font(Font.title.bold())
-                    .multilineTextAlignment(.center)
-                    .padding(.bottom, 16)
-                    .accessibility(identifier: A11y.orderEGK.ogkTxtHeadline)
-
-                VStack(alignment: .leading, spacing: 8) {
-                    Group {
-                        Text(L10n.orderEgkTxtDescription1)
-                            .fixedSize(horizontal: false, vertical: true)
-                        Text(L10n.orderEgkTxtDescription2)
-                            .fixedSize(horizontal: false, vertical: true)
-                    }
-                    .foregroundColor(Color(.label))
-                    .font(Font.body)
-                    .accessibilityElement(children: .combine)
-
-                    TertiaryListButton(
-                        text: L10n.orderEgkBtnInfoButton,
-                        imageName: nil,
-                        accessibilityIdentifier: A11y.orderEGK.ogkBtnEgkInfo
-                    ) {
-                        if let url = URL(string: L10n.orderEgkTxtInfoLink.text) {
-                            UIApplication.shared.open(url)
-                        }
-                    }
-                }
-            }
-            .padding(.top, 16)
-        }
-    }
-
     class ViewModel: ObservableObject {
-        let insuranceCompanies: [HealthInsuranceCompany]
+        var insuranceCompanies: [HealthInsuranceCompany]
         var insuranceCompany: HealthInsuranceCompany?
         var serviceInquiry: ServiceInquiry?
 
@@ -298,6 +271,102 @@ struct OrderHealthCardView: View {
             switch self {
             case .pin: return L10n.orderEgkTxtServiceInquiryOnlyPin.key
             case .healthCardAndPin: return L10n.orderEgkTxtServiceInquiryHealthcardAndPin.key
+            }
+        }
+    }
+}
+
+extension OrderHealthCardView {
+    struct PickerSearch: View {
+        @State var searchText: String = ""
+        @State var searchHealthInsurance = [HealthInsuranceCompany]()
+        let insuranceCompanies: [HealthInsuranceCompany]
+        let closeAction: (HealthInsuranceCompany) -> Void
+
+        var body: some View {
+            VStack {
+                SearchBar(
+                    searchText: $searchText,
+                    prompt: L10n.orderEgkTxtSearchPrompt.key
+                ) {
+                    searchHealthInsurance = insuranceSearch(searchText: searchText)
+                }
+                .padding()
+
+                List {
+                    if !searchHealthInsurance.isEmpty {
+                        ForEach(searchHealthInsurance) { insurance in
+                            Button(insurance.name) {
+                                closeAction(insurance)
+                            }
+                        }
+                    } else {
+                        VStack {
+                            Text(L10n.phaSearchTxtNoResultsTitle)
+                                .font(.headline)
+                                .padding(.bottom, 1)
+                            Text(L10n.phaSearchTxtNoResults)
+                                .font(.subheadline)
+                                .foregroundColor(Colors.textSecondary)
+                                .multilineTextAlignment(.center)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                        .frame(maxWidth: .infinity)
+                    }
+                }.listStyle(PlainListStyle())
+            }.onChange(of: searchText) { _ in
+                if searchText.isEmpty {
+                    searchHealthInsurance = insuranceCompanies
+                }
+            }
+            .onAppear {
+                searchHealthInsurance = insuranceCompanies
+            }
+        }
+
+        func insuranceSearch(searchText: String) -> [HealthInsuranceCompany] {
+            var result = [HealthInsuranceCompany]()
+
+            for insurance in insuranceCompanies {
+                if insurance.name.lowercased().contains(searchText.lowercased()) {
+                    result.append(insurance)
+                }
+            }
+            return result
+        }
+    }
+
+    struct Header: View {
+        var body: some View {
+            VStack(spacing: 8) {
+                Text(L10n.orderEgkTxtHeadline)
+                    .foregroundColor(Color(.label))
+                    .font(Font.title.bold())
+                    .multilineTextAlignment(.center)
+                    .padding(.bottom, 16)
+                    .accessibility(identifier: A11y.orderEGK.ogkTxtHeadline)
+
+                VStack(alignment: .leading, spacing: 8) {
+                    Group {
+                        Text(L10n.orderEgkTxtDescription1)
+                            .fixedSize(horizontal: false, vertical: true)
+                        Text(L10n.orderEgkTxtDescription2)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    .foregroundColor(Color(.label))
+                    .font(Font.body)
+                    .accessibilityElement(children: .combine)
+
+                    TertiaryListButton(
+                        text: L10n.orderEgkBtnInfoButton,
+                        imageName: nil,
+                        accessibilityIdentifier: A11y.orderEGK.ogkBtnEgkInfo
+                    ) {
+                        if let url = URL(string: L10n.orderEgkTxtInfoLink.text) {
+                            UIApplication.shared.open(url)
+                        }
+                    }
+                }
             }
         }
     }

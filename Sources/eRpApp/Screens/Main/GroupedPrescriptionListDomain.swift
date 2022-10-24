@@ -20,6 +20,7 @@ import Combine
 import ComposableArchitecture
 import eRpKit
 import FHIRClient
+import Foundation
 import IDP
 
 enum GroupedPrescriptionListDomain {

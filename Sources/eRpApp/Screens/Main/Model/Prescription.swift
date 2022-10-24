@@ -232,7 +232,7 @@ extension GroupedPrescription.Prescription {
             case .open, .undefined, .error:
                 return L10n.prscStatusDirectAssigned.key
             case .archived:
-                return L10n.prscStatusExpired.key
+                return L10n.prscStatusCompleted.key
             }
         }
 

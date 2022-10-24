@@ -18,6 +18,7 @@
 
 import Combine
 import ComposableArchitecture
+import Foundation
 import HealthCardAccess
 import IDP
 import OpenSSL

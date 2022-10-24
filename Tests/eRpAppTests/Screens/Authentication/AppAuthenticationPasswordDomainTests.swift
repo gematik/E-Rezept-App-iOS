@@ -73,9 +73,7 @@ final class AppAuthenticationPasswordDomainTests: XCTestCase {
         mockAppSecurityPasswordManager.matchesPasswordReturnValue = false
 
         expect(self.mockAppSecurityPasswordManager.matchesPasswordCalled).to(beFalse())
-        store.send(.loginButtonTapped) { state in
-            state.lastMatchResultSuccessful = nil
-        }
+        store.send(.loginButtonTapped)
         store.receive(.passwordVerificationReceived(false)) { state in
             state.lastMatchResultSuccessful = false
         }

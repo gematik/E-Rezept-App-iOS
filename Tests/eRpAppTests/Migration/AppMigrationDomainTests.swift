@@ -153,9 +153,7 @@ final class AppMigrationDomainTests: XCTestCase {
             .eraseToAnyPublisher()
 
         mockUserDataStore.underlyingLastCompatibleCoreDataModelVersion = startVersion
-        store.send(.loadCurrentModelVersion) { state in
-            state = .none
-        }
+        store.send(.loadCurrentModelVersion)
         expect(self.mockUserDataStore.latestCompatibleCoreDataModelVersionCallsCount) == 1
         expect(self.mockMigrationManager.startModelMigrationCallsCount) == 1
         store.receive(.startMigration(from: startVersion)) { state in
@@ -186,14 +184,7 @@ final class AppMigrationDomainTests: XCTestCase {
             )
         }
         // retry after error
-        store.send(.loadCurrentModelVersion) { state in
-            state = .failed(
-                AppMigrationDomain.alertState(
-                    title: L10n.amgBtnAlertTitle.text,
-                    message: expectedError.localizedDescription
-                )
-            )
-        }
+        store.send(.loadCurrentModelVersion)
         store.receive(.startMigration(from: .taskStatus)) { state in
             state = .inProgress
         }

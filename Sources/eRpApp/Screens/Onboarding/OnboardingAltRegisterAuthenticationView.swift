@@ -108,16 +108,18 @@ struct AltRegistrationView: View, KeyboardReadable {
 
                 if viewStore.hasFaceIdOption {
                     FaceIDView(isSelected: viewStore.selectedOption == .biometry(.faceID)) {
-                        withAnimation {
-                            viewStore.send(.select(.biometry(.faceID)))
-                        }
+                        viewStore.send(
+                            .select(.biometry(.faceID)),
+                            animation: Animation.default
+                        )
                     }
 
                 } else if viewStore.hasTouchIdOption {
                     TouchIDView(isSelected: viewStore.selectedOption == .biometry(.touchID)) {
-                        withAnimation {
-                            viewStore.send(.select(.biometry(.touchID)))
-                        }
+                        viewStore.send(
+                            .select(.biometry(.touchID)),
+                            animation: Animation.default
+                        )
                     }
                 } else if let message = viewStore.biometryErrorMessage {
                     Text(message)
@@ -137,9 +139,10 @@ struct AltRegistrationView: View, KeyboardReadable {
         )
         .onReceive(keyboardPublisher) { isKeyboardVisible in
             if isKeyboardVisible {
-                withAnimation {
-                    viewStore.send(.select(.password))
-                }
+                viewStore.send(
+                    .select(.password),
+                    animation: Animation.default
+                )
             }
         }
         .onAppear {

@@ -98,20 +98,19 @@ final class RecordActionsForHintsTests: XCTestCase {
         expect(mockSessionContainer.userSession.hintEventsStore.hintState.hasTasksInLocalStore).to(beFalse())
 
         // when toggling the demo mode
-        store.send(.settings(action: .toggleDemoModeSwitch)) { _ in
-            // than the hint state should be changed from the `recordActionsForHints` reducer
-            expect(mockSessionContainer.userSession.hintEventsStore.hintState.hasDemoModeBeenToggledBefore)
-                .to(beTrue())
-        }
+        store.send(.settings(action: .toggleDemoModeSwitch))
+        // than the hint state should be changed from the `recordActionsForHints` reducer
+        expect(mockSessionContainer.userSession.hintEventsStore.hintState.hasDemoModeBeenToggledBefore)
+            .to(beTrue())
+
         // when prescriptions were loaded and have results
         store.send(
             .main(
                 action: .prescriptionList(action: .loadLocalGroupedPrescriptionsReceived(prescriptionLoadingState))
             )
-        ) { _ in
-            // than hint state should change from the `recordActionsForHints` reducer
-            expect(mockSessionContainer.userSession.hintEventsStore.hintState.hasTasksInLocalStore).to(beTrue())
-        }
+        )
+        // than hint state should change from the `recordActionsForHints` reducer
+        expect(mockSessionContainer.userSession.hintEventsStore.hintState.hasTasksInLocalStore).to(beTrue())
     }
 
     func testRecordActionsForHintsReducerWhenThereAreNoTasksInLocalStore() {
@@ -121,9 +120,8 @@ final class RecordActionsForHintsTests: XCTestCase {
         expect(sessionContainer.userSession.hintEventsStore.hintState.hasTasksInLocalStore).to(beFalse())
         // when prescriptions were loaded and have no results
         store.send(.main(action: .prescriptionList(action: .loadLocalGroupedPrescriptionsReceived(LoadingState
-                .idle)))) { _ in
-                // than hint state should not be changed from the `recordActionsForHints` reducer
-                expect(sessionContainer.userSession.hintEventsStore.hintState.hasTasksInLocalStore).to(beFalse())
-        }
+                .idle))))
+        // than hint state should not be changed from the `recordActionsForHints` reducer
+        expect(sessionContainer.userSession.hintEventsStore.hintState.hasTasksInLocalStore).to(beFalse())
     }
 }

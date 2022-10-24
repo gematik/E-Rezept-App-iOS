@@ -942,8 +942,6 @@ extension NFCSignatureProviderError: CodedError {
                 return "i-00405"
             case .signingFailure:
                 return "i-00406"
-            case .wrongPin:
-                return "i-00407"
             case .genericError:
                 return "i-00408"
             case .cardReadingError:
@@ -964,14 +962,10 @@ extension NFCSignatureProviderError: CodedError {
                 return [erpErrorCode] + error.erpErrorCodeList
             case .cardConnectionError:
                 return [erpErrorCode]
-            case let .verifyCardError(error as CodedError):
+            case let .verifyCardError(error):
                 return [erpErrorCode] + error.erpErrorCodeList
-            case .verifyCardError:
-                return [erpErrorCode]
             case let .signingFailure(error):
                 return [erpErrorCode] + error.erpErrorCodeList
-            case .wrongPin:
-                return [erpErrorCode]
             case let .genericError(error as CodedError):
                 return [erpErrorCode] + error.erpErrorCodeList
             case .genericError:
@@ -1006,6 +1000,35 @@ extension NFCSignatureProviderError.SigningError: CodedError {
             case let .certificate(error as CodedError):
                 return [erpErrorCode] + error.erpErrorCodeList
             case .certificate:
+                return [erpErrorCode]
+            default:
+                return [erpErrorCode]
+        }
+    }
+}
+
+extension NFCSignatureProviderError.VerifyPINError: CodedError {
+    var erpErrorCode: String {
+        switch self {
+            case .wrongSecretWarning:
+                return "i-00601"
+            case .securityStatusNotSatisfied:
+                return "i-00602"
+            case .memoryFailure:
+                return "i-00603"
+            case .passwordBlocked:
+                return "i-00604"
+            case .passwordNotUsable:
+                return "i-00605"
+            case .passwordNotFound:
+                return "i-00606"
+            case .unknownFailure:
+                return "i-00607"
+        }
+    }
+    var erpErrorCodeList: [String] {
+        switch self {
+            case .wrongSecretWarning:
                 return [erpErrorCode]
             default:
                 return [erpErrorCode]

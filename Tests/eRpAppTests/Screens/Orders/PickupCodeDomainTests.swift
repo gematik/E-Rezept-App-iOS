@@ -53,12 +53,7 @@ final class PickupCodeDomainTests: XCTestCase {
         let size = CGSize(width: 200, height: 200)
         let store = testStore(for: PickupCodeDomain.State(pickupCodeHR: "4711"))
 
-        store.send(.loadMatrixCodeImage(screenSize: size)) {
-            $0.pickupCodeHR = "4711"
-            $0.pickupCodeDMC = nil
-            $0.dmcImage = nil
-            expect(self.matrixCodeGenerator.generateImageCallsCount) == 0
-        }
+        store.send(.loadMatrixCodeImage(screenSize: size))
     }
 
     /// Use DMC publisher to generate an exact same image
@@ -82,11 +77,7 @@ final class PickupCodeDomainTests: XCTestCase {
         let size = CGSize(width: 200, height: 200)
         let store = testStore(for: PickupCodeDomain.State(pickupCodeDMC: "Data Matrix Code Content", dmcImage: nil))
 
-        store.send(.loadMatrixCodeImage(screenSize: size)) {
-            $0.pickupCodeHR = nil
-            $0.pickupCodeDMC = "Data Matrix Code Content"
-            $0.dmcImage = nil
-        }
+        store.send(.loadMatrixCodeImage(screenSize: size))
         testScheduler.advance()
         store.receive(.matrixCodeImageReceived(expectedImage)) {
             $0.pickupCodeHR = nil
@@ -104,11 +95,7 @@ final class PickupCodeDomainTests: XCTestCase {
             pickupCodeDMC: "Data Matrix Code Content",
             dmcImage: nil
         ))
-        store.send(.loadMatrixCodeImage(screenSize: size)) {
-            $0.pickupCodeHR = "4711"
-            $0.pickupCodeDMC = "Data Matrix Code Content"
-            $0.dmcImage = nil
-        }
+        store.send(.loadMatrixCodeImage(screenSize: size))
         testScheduler.advance()
         store.receive(.matrixCodeImageReceived(expectedImage)) {
             $0.pickupCodeHR = "4711"
@@ -116,10 +103,6 @@ final class PickupCodeDomainTests: XCTestCase {
             $0.dmcImage = expectedImage
             expect(self.matrixCodeGenerator.generateImageCallsCount) == 2
         }
-        store.send(.loadMatrixCodeImage(screenSize: size)) {
-            $0.pickupCodeHR = "4711"
-            $0.pickupCodeDMC = "Data Matrix Code Content"
-            $0.dmcImage = expectedImage
-        }
+        store.send(.loadMatrixCodeImage(screenSize: size))
     }
 }

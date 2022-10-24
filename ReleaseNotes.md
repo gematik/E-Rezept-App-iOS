@@ -1,3 +1,27 @@
+# Release 1.4.6
+
+### added (2 changes)
+
+- Add more error cases for PIN verification
+- Add feature to search for insurances in OrderHealthCardView
+
+### changed (2 changes)
+
+- Change to use a router for navigation in pharmacy redeem domain
+- Change RedeemDomain into RedeemMethodsDomain and use router
+
+### fixed (3 changes)
+
+- Fix phone number URL's
+- Fix health insurance list
+- Fix iOS 16 navigation crash by raising publisher delay
+
+### internal (3 changes)
+
+- Change HealthCardPasswordDomain by introducing ViewStates and RouteTags
+- Change swift snapshot testing to version 1.10.0
+- Change The Composable Architecture to Version 0.40.2
+
 # Release 1.4.5
 
 ### added (4 changes)

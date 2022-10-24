@@ -22,6 +22,7 @@ import ComposableArchitecture
 import DataKit
 import eRpKit
 import eRpLocalStorage
+import Foundation
 import IDP
 
 enum EditProfileDomain {

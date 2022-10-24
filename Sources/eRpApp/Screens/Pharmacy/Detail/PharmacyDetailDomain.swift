@@ -38,6 +38,12 @@ enum PharmacyDetailDomain: Equatable {
         )
     }
 
+    static func cleanupSubviews<T>() -> Effect<T, Never> {
+        Effect.concatenate(
+            PharmacyRedeemDomain.cleanup()
+        )
+    }
+
     /// Tokens for Cancellables
     enum Token: CaseIterable, Hashable {
         case loadProfile
@@ -157,7 +163,7 @@ enum PharmacyDetailDomain: Equatable {
             return .none
         case .openPhoneApp:
             if let phone = state.pharmacy.telecom?.phone,
-               let number = URL(string: "tel://\(phone)") {
+               let number = URL(phoneNumber: phone) {
                 UIApplication.shared.open(number)
             }
             return .none
@@ -192,11 +198,14 @@ enum PharmacyDetailDomain: Equatable {
             return .none
         case .pharmacyRedeemViaErxTaskRepository(action: .close), .pharmacyRedeemViaAVS(action: .close):
             state.route = nil
-            return Effect(value: .close)
-                // swiftlint:disable:next todo
-                // TODO: this is workaround to avoid `onAppear` of the the child view getting called
-                .delay(for: .seconds(0.1), scheduler: environment.schedulers.main)
-                .eraseToEffect()
+            return Effect.concatenate(
+                cleanupSubviews(),
+                Effect(value: .close)
+                    // swiftlint:disable:next todo
+                    // TODO: this is workaround to avoid `onAppear` of the the child view getting called
+                    .delay(for: .seconds(0.1), scheduler: environment.schedulers.main)
+                    .eraseToEffect()
+            )
         case .setNavigation(tag: .none):
             state.route = nil
             return .none

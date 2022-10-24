@@ -245,10 +245,7 @@ final class GroupedPrescriptionListDomainTests: XCTestCase {
             state.loadingState = expectedValueForLoad
             state.groupedPrescriptions = input
         }
-        store.receive(.loadRemoteGroupedPrescriptionsAndSaveReceived(expectedValueForFetch)) { state in
-            // then
-            state.loadingState = expectedValueForFetch
-        }
+        store.receive(.loadRemoteGroupedPrescriptionsAndSaveReceived(expectedValueForFetch))
     }
 
     let loadingErrorTasks: ErxRepositoryError = .local(.notImplemented)

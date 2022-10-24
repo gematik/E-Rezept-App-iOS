@@ -24,16 +24,34 @@ import SwiftUI
 
 struct HealthCardPasswordPinView: View {
     let store: HealthCardPasswordDomain.Store
-    @ObservedObject var viewStore: ViewStore<HealthCardPasswordDomain.State, HealthCardPasswordDomain.Action>
+    @ObservedObject var viewStore: ViewStore<ViewState, HealthCardPasswordDomain.Action>
 
     init(store: HealthCardPasswordDomain.Store) {
         self.store = store
-        viewStore = ViewStore(store)
+        viewStore = ViewStore(store.scope(state: ViewState.init))
+    }
+
+    struct ViewState: Equatable {
+        let withNewPin: Bool
+        let newPin1: String
+        let newPin2: String
+        let pinMayAdvance: Bool
+        let pinShowWarning: Bool
+        let routeTag: HealthCardPasswordDomain.Route.Tag
+
+        init(state: HealthCardPasswordDomain.State) {
+            withNewPin = state.withNewPin
+            newPin1 = state.newPin1
+            newPin2 = state.newPin2
+            pinMayAdvance = state.pinMayAdvance
+            pinShowWarning = state.pinShowWarning
+            routeTag = state.route.tag
+        }
     }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            PINView(store: store).padding()
+            PINView(viewStore: viewStore).padding()
 
             Spacer(minLength: 0)
 
@@ -49,74 +67,73 @@ struct HealthCardPasswordPinView: View {
             .padding(.horizontal)
             .padding(.vertical, 8)
         }
+        .navigationBarTitleDisplayMode(.inline)
+        .alert(
+            store.scope(
+                state: \HealthCardPasswordDomain.State.pinAlertState
+            ),
+            dismiss: .nothing
+        )
     }
 
     private struct PINView: View {
-        let store: HealthCardPasswordDomain.Store
+        @ObservedObject
+        var viewStore: ViewStore<HealthCardPasswordPinView.ViewState, HealthCardPasswordDomain.Action>
 
         var body: some View {
-            WithViewStore(store) { viewStore in
-                ScrollView(.vertical, showsIndicators: true) {
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text(L10n.stgTxtCardResetPinHeadline)
-                            .foregroundColor(Colors.systemLabel)
-                            .font(.headline.bold())
-                            .accessibility(identifier: A11y.settings.card.stgTxtCardResetPinHeadline)
-                            .padding(.bottom)
+            ScrollView(.vertical, showsIndicators: true) {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text(L10n.stgTxtCardResetPinHeadline)
+                        .foregroundColor(Colors.systemLabel)
+                        .font(.headline.bold())
+                        .accessibility(identifier: A11y.settings.card.stgTxtCardResetPinHeadline)
+                        .padding(.bottom)
 
-                        PINField1View(
-                            binding: viewStore.binding(
-                                get: \.newPin1,
-                                send: HealthCardPasswordDomain.Action.pinUpdateNewPin1
-                            )
+                    PINField1View(
+                        binding: viewStore.binding(
+                            get: \.newPin1,
+                            send: HealthCardPasswordDomain.Action.pinUpdateNewPin1
                         )
+                    )
 
-                        Text(L10n.stgTxtCardResetPinHint)
+                    Text(L10n.stgTxtCardResetPinHint)
+                        .font(.footnote)
+                        .foregroundColor(Colors.systemLabelSecondary)
+                        .accessibility(identifier: A11y.settings.card.stgTxtCardResetPinHint)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+
+                    PINField2View(
+                        binding: viewStore.binding(
+                            get: \.newPin2,
+                            send: HealthCardPasswordDomain.Action.pinUpdateNewPin2
+                        )
+                    )
+
+                    if viewStore.pinShowWarning {
+                        Text(L10n.stgTxtCardResetPinWarning)
                             .font(.footnote)
-                            .foregroundColor(Colors.systemLabelSecondary)
-                            .accessibility(identifier: A11y.settings.card.stgTxtCardResetPinHint)
+                            .foregroundColor(Colors.red700)
+                            .accessibility(identifier: A11y.settings.card.stgTxtCardResetPinWarning)
                             .frame(maxWidth: .infinity, alignment: .leading)
-
-                        PINField2View(
-                            binding: viewStore.binding(
-                                get: \.newPin2,
-                                send: HealthCardPasswordDomain.Action.pinUpdateNewPin2
-                            )
-                        )
-
-                        if viewStore.pinShowWarning {
-                            Text(L10n.stgTxtCardResetPinWarning)
-                                .font(.footnote)
-                                .foregroundColor(Colors.red700)
-                                .accessibility(identifier: A11y.settings.card.stgTxtCardResetPinWarning)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                        }
-
-                        HintView(
-                            hint: Hint<SettingsDomain.Action>(
-                                id: A11y.settings.card.stgTxtCardResetPinHintMessage,
-                                title: L10n.stgTxtCardResetPinHintTitle.text,
-                                message: L10n.stgTxtCardResetPinHintMessage.text,
-                                image: .init(name: Asset.Illustrations.info.name),
-                                style: .neutral,
-                                buttonStyle: .quaternary,
-                                imageStyle: .topAligned
-                            ),
-                            textAction: nil,
-                            closeAction: nil
-                        )
-                        .listRowBackground(Color.clear)
-                        .listRowInsets(EdgeInsets())
-                        .padding()
                     }
+
+                    HintView(
+                        hint: Hint<SettingsDomain.Action>(
+                            id: A11y.settings.card.stgTxtCardResetPinHintMessage,
+                            title: L10n.stgTxtCardResetPinHintTitle.text,
+                            message: L10n.stgTxtCardResetPinHintMessage.text,
+                            image: .init(name: Asset.Illustrations.info.name),
+                            style: .neutral,
+                            buttonStyle: .quaternary,
+                            imageStyle: .topAligned
+                        ),
+                        textAction: nil,
+                        closeAction: nil
+                    )
+                    .listRowBackground(Color.clear)
+                    .listRowInsets(EdgeInsets())
+                    .padding()
                 }
-                .navigationBarTitleDisplayMode(.inline)
-                .alert(
-                    store.scope(
-                        state: \HealthCardPasswordDomain.State.pinAlertState
-                    ),
-                    dismiss: .nothing
-                )
             }
         }
     }

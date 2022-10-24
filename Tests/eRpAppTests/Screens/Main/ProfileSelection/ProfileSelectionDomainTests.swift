@@ -121,8 +121,7 @@ final class ProfileSelectionDomainTests: XCTestCase {
             )
         )
 
-        store.send(.editProfiles) { _ in
-        }
+        store.send(.editProfiles)
 
         expect(self.mockRouting.routeToParameter).to(equal(Endpoint.settings))
 

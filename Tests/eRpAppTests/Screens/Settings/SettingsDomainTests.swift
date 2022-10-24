@@ -74,10 +74,7 @@ final class SettingsDomainTests: XCTestCase {
         }
 
         // when
-        store.send(.toggleOrderHealthCardView(true)) { sut in
-            // then
-            sut.showOrderHealthCardView = true
-        }
+        store.send(.toggleOrderHealthCardView(true))
 
         // when
         store.send(.toggleOrderHealthCardView(false)) { sut in
@@ -154,12 +151,7 @@ final class SettingsDomainTests: XCTestCase {
 
         mockTracker.optIn = true
 
-        // when
-        store.send(.toggleTrackingTapped(false)) { sut in
-            // then
-            sut.trackerOptIn = false
-            sut.showTrackerComplyView = false
-        }
+        store.send(.toggleTrackingTapped(false))
 
         expect(self.mockTracker.optInCalled).to(beTrue())
         expect(self.mockTracker.optIn).to(beFalse())

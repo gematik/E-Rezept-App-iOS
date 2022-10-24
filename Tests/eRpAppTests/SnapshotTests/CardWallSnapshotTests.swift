@@ -290,7 +290,11 @@ final class CardWallSnapshotTests: XCTestCase {
     func testReadCardViewFailedStep2() {
         let sut =
             CardWallReadCardView(
-                store: readCardStore(for: .signingChallenge(.error(.signChallengeError(.wrongPin(retryCount: 2)))))
+                store: readCardStore(
+                    for: .signingChallenge(
+                        .error(.signChallengeError(.verifyCardError(.wrongSecretWarning(retryCount: 2))))
+                    )
+                )
             )
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())

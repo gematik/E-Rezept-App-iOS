@@ -184,15 +184,7 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
             expect(message).to(beNil())
         }
         testScheduler.run()
-        store.receive(.comparePasswords) { state in
-            state.showPasswordErrorMessage = false
-            state.selectedSecurityOption = .password
-            state.passwordA = "Secure Pass word"
-            state.passwordB = "Secure Pass word"
-            state.passwordStrength = .strong
-            let message = state.passwordErrorMessage
-            expect(message).to(beNil())
-        }
+        store.receive(.comparePasswords)
     }
 
     func testSelectingFaceIDWithPreviousPasswordSelection() {
@@ -231,9 +223,7 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
 
         store.send(.startBiometry)
         testScheduler.advance()
-        store.receive(.authenticationChallengeResponse(.success(false))) { state in
-            state.biometrySuccessful = false
-        }
+        store.receive(.authenticationChallengeResponse(.success(false)))
     }
 
     struct MockError: Error, LocalizedError {
@@ -253,9 +243,7 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
             challengeResponse: expectedResponse
         )
 
-        store.send(.startBiometry) { state in
-            state.selectedSecurityOption = .biometry(.touchID)
-        }
+        store.send(.startBiometry)
         testScheduler.advance()
         store.receive(.authenticationChallengeResponse(expectedResponse)) { state in
             state.biometrySuccessful = false
@@ -298,10 +286,7 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
         }
         store.send(.startBiometry)
         testScheduler.advance()
-        store.receive(.authenticationChallengeResponse(.success(true))) { state in
-            state.selectedSecurityOption = .biometry(.faceID)
-            state.showNoSelectionMessage = false
-        }
+        store.receive(.authenticationChallengeResponse(.success(true)))
         testScheduler.advance(by: 1)
         store.receive(.continueBiometry)
     }

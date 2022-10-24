@@ -218,8 +218,12 @@ final class ListsSnapshotTests: XCTestCase {
 extension XCTestCase {
     func snapshotModi<T>() -> [String: Snapshotting<T, UIImage>] where T: SwiftUI.View {
         [
-            "light": .image,
-            "dark": .image(precision: 1, traits: UITraitCollection(userInterfaceStyle: .dark)),
+            "light": .image(perceptualPrecision: 0.98),
+            "dark": .image(
+                precision: 1,
+                perceptualPrecision: 0.98,
+                traits: UITraitCollection(userInterfaceStyle: .dark)
+            ),
         ]
     }
 }

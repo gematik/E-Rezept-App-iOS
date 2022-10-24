@@ -93,9 +93,7 @@ final class AppSecurityDomainTests: XCTestCase {
             $0.availableSecurityOptions = availableSecurityOptions
         }
         testScheduler.advance()
-        store.receive(.loadSecurityOptionResponse(preSelectedSecurityOption)) {
-            $0.selectedSecurityOption = preSelectedSecurityOption
-        }
+        store.receive(.loadSecurityOptionResponse(preSelectedSecurityOption))
     }
 
     func testLoadingAvailableSecurityOptions_Biometry_Selected() {
@@ -142,9 +140,7 @@ final class AppSecurityDomainTests: XCTestCase {
             $0.availableSecurityOptions = availableSecurityOptions
         }
         testScheduler.advance()
-        store.receive(.loadSecurityOptionResponse(preSelectedSecurityOption)) {
-            $0.selectedSecurityOption = preSelectedSecurityOption
-        }
+        store.receive(.loadSecurityOptionResponse(preSelectedSecurityOption))
         store.send(.select(selectedSecurityOption)) {
             $0.selectedSecurityOption = selectedSecurityOption
         }
@@ -162,9 +158,7 @@ final class AppSecurityDomainTests: XCTestCase {
             $0.availableSecurityOptions = availableSecurityOptions
         }
         testScheduler.advance()
-        store.receive(.loadSecurityOptionResponse(preSelectedSecurityOption)) {
-            $0.selectedSecurityOption = preSelectedSecurityOption
-        }
+        store.receive(.loadSecurityOptionResponse(preSelectedSecurityOption))
         store.send(.select(selectedSecurityOption)) {
             $0.selectedSecurityOption = selectedSecurityOption
         }

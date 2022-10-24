@@ -75,8 +75,7 @@ final class CardWallExtAuthSelectionDomainTests: XCTestCase {
             .setFailureType(to: IDPError.self)
             .eraseToAnyPublisher()
 
-        sut.send(.loadKKList) { _ in
-        }
+        sut.send(.loadKKList)
         uiScheduler.run()
         sut.receive(.loadKKListReceived(.success(Self.testDirectory))) { state in
             state.kkList = Self.testDirectory
@@ -89,8 +88,7 @@ final class CardWallExtAuthSelectionDomainTests: XCTestCase {
         idpSessionMock.loadDirectoryKKApps_Publisher = Fail(error: Self.testError)
             .eraseToAnyPublisher()
 
-        sut.send(.loadKKList) { _ in
-        }
+        sut.send(.loadKKList)
         uiScheduler.run()
         sut.receive(.loadKKListReceived(.failure(Self.testError))) { state in
             state.error = Self.testError

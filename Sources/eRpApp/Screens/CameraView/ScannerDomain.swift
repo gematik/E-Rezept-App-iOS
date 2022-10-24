@@ -19,6 +19,7 @@
 import Combine
 import ComposableArchitecture
 import eRpKit
+import Foundation
 
 enum ScannerDomain {
     typealias Store = ComposableArchitecture.Store<State, Action>

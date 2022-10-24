@@ -22,6 +22,9 @@
 import SnapshotTesting
 import SwiftUI
 
+/// The default `perceptualPrecision` to use if a specific value is not provided.
+private let defaultPerceptualPrecision: Float = 0.97
+
 struct SnapshotConfig {
     let viewImageConfig: ViewImageConfig
 }
@@ -47,13 +50,17 @@ func assertAppStoreSnapshots<SnapshotContent: View>(
         withTransaction(transaction) {
             assertSnapshot(
                 matching: AppStorePreview(
-                    .image(layout: .device(config: config)),
+                    .image(perceptualPrecision: defaultPerceptualPrecision, layout: .device(config: config)),
                     backgroundColor: backgroundColor
                 ) {
                     view
                 }
                 .environment(\.colorScheme, colorScheme),
-                as: .image(precision: precision, layout: .device(config: config)),
+                as: .image(
+                    precision: precision,
+                    perceptualPrecision: defaultPerceptualPrecision,
+                    layout: .device(config: config)
+                ),
                 named: name,
                 file: file,
                 testName: testName,

@@ -84,8 +84,7 @@ final class ProfilesDomainTests: XCTestCase {
                                        selectedProfileId: nil,
                                        route: nil))
 
-        sut.send(.registerListener) { _ in
-        }
+        sut.send(.registerListener)
 
         mainQueue.advance()
 

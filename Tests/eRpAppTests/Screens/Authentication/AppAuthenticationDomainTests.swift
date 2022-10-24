@@ -76,12 +76,7 @@ final class AppAuthenticationDomainTests: XCTestCase {
         userDataStore.underlyingFailedAppAuthentications.send(0) // no failed authentications
 
         store.send(.onAppear)
-        store.receive(.failedAppAuthenticationsReceived(0)) {
-            $0.biometrics = nil
-            $0.password = nil
-            $0.failedAuthenticationsCount = 0
-            $0.didCompleteAuthentication = false
-        }
+        store.receive(.failedAppAuthenticationsReceived(0))
         store.receive(.loadAppAuthenticationOptionResponse(.biometry(.faceID), 0)) {
             $0.biometrics = AppAuthenticationBiometricsDomain.State(
                 biometryType: .faceID,
@@ -161,12 +156,7 @@ final class AppAuthenticationDomainTests: XCTestCase {
         userDataStore.appSecurityOption = Just(3).eraseToAnyPublisher()
 
         testStore.send(.onAppear)
-        testStore.receive(.failedAppAuthenticationsReceived(0)) {
-            $0.biometrics = nil
-            $0.password = nil
-            $0.failedAuthenticationsCount = 0
-            $0.didCompleteAuthentication = false
-        }
+        testStore.receive(.failedAppAuthenticationsReceived(0))
         testStore.receive(.loadAppAuthenticationOptionResponse(.password, 0)) { state in
             state.password = AppAuthenticationPasswordDomain.State()
         }

@@ -21,36 +21,57 @@ import ComposableArchitecture
 import eRpKit
 import ZXingObjC
 
-enum RedeemDomain {
+enum RedeemMethodsDomain {
     typealias Store = ComposableArchitecture.Store<State, Action>
     typealias Reducer = ComposableArchitecture.Reducer<State, Action, Environment>
 
     /// Provides an Effect that need to run whenever the state of this Domain is reset to nil
     static func cleanup<T>() -> Effect<T, Never> {
-        Effect.cancel(token: Token.self)
+        Effect.concatenate(
+            RedeemMatrixCodeDomain.cleanup(),
+            PharmacySearchDomain.cleanup(),
+            Effect.cancel(token: Token.self)
+        )
+    }
+
+    static func cleanupSubviews<T>() -> Effect<T, Never> {
+        Effect.concatenate(
+            RedeemMatrixCodeDomain.cleanup(),
+            PharmacySearchDomain.cleanup()
+        )
     }
 
     enum Token: CaseIterable, Hashable {}
 
-    struct State: Equatable {
-        var groupedPrescription: GroupedPrescription
-        var redeemMatrixCodeState: RedeemMatrixCodeDomain.State?
-        var pharmacySearchState: PharmacySearchDomain.State?
-        var prescriptionsAreAllFullDetail: Bool {
-            groupedPrescription.prescriptions.allSatisfy {
-                $0.erxTask.source == ErxTask.Source.server
+    enum Route: Equatable {
+        case matrixCode(RedeemMatrixCodeDomain.State)
+        case pharmacySearch(PharmacySearchDomain.State)
+
+        enum Tag: Int, CaseIterable {
+            case matrixCode
+            case pharmacySearch
+        }
+
+        var tag: Tag {
+            switch self {
+            case .matrixCode:
+                return .matrixCode
+            case .pharmacySearch:
+                return .pharmacySearch
             }
         }
     }
 
+    struct State: Equatable {
+        var erxTasks: [ErxTask]
+        var route: Route?
+    }
+
     enum Action: Equatable {
         case close
-        case dismissRedeemMatrixCodeView
-        case openRedeemMatrixCodeView
         case redeemMatrixCodeAction(action: RedeemMatrixCodeDomain.Action)
         case pharmacySearchAction(action: PharmacySearchDomain.Action)
-        case openPharmacySearchView
-        case dismissPharmacySearchView
+        case setNavigation(tag: Route.Tag?)
     }
 
     struct Environment {
@@ -69,42 +90,40 @@ enum RedeemDomain {
         switch action {
         case .close:
             return .none
-        case .dismissRedeemMatrixCodeView:
-            state.redeemMatrixCodeState = nil
-            return RedeemMatrixCodeDomain.cleanup()
         case .redeemMatrixCodeAction(.close):
-            state.redeemMatrixCodeState = nil
+            state.route = nil
             // Cleanup of child & running close action on parent reducer
             return Effect.concatenate(
                 RedeemMatrixCodeDomain.cleanup(),
                 Effect(value: .close)
             )
-        case .openRedeemMatrixCodeView:
-            state.redeemMatrixCodeState =
-                RedeemMatrixCodeDomain.State(erxTasks: state.groupedPrescription.redeemablePrescriptions.map(\.erxTask))
-            return .none
         case .redeemMatrixCodeAction(action:):
             return .none
-        // Pharmacy Search
-        case .openPharmacySearchView:
-            state.pharmacySearchState = PharmacySearchDomain.State(
-                erxTasks: state.groupedPrescription.redeemablePrescriptions.map(\.erxTask)
-            )
-            return .none
-        case .dismissPharmacySearchView:
-            state.pharmacySearchState = nil
-            return PharmacySearchDomain.cleanup()
         case .pharmacySearchAction(action: .close):
-            state.pharmacySearchState = nil
-            return Effect(value: .close)
+            state.route = nil
+            return Effect.concatenate(
+                PharmacySearchDomain.cleanup(),
+                Effect(value: .close)
+            )
         case .pharmacySearchAction:
+            return .none
+        case let .setNavigation(tag: tag):
+            switch tag {
+            case .matrixCode:
+                state.route = .matrixCode(RedeemMatrixCodeDomain.State(erxTasks: state.erxTasks))
+            case .pharmacySearch:
+                state.route = .pharmacySearch(PharmacySearchDomain.State(erxTasks: state.erxTasks))
+            case .none:
+                state.route = nil
+                return cleanupSubviews()
+            }
             return .none
         }
     }
 
     static let redeemMatrixCodePullbackReducer: Reducer =
-        RedeemMatrixCodeDomain.reducer.optional().pullback(
-            state: \.redeemMatrixCodeState,
+        RedeemMatrixCodeDomain.reducer._pullback(
+            state: (\State.route).appending(path: /Route.matrixCode),
             action: /Action.redeemMatrixCodeAction(action:)
         ) { redeemEnv in
             RedeemMatrixCodeDomain.Environment(
@@ -116,9 +135,9 @@ enum RedeemDomain {
         }
 
     static let pharmacySearchPullbackReducer: Reducer =
-        PharmacySearchDomain.reducer.optional().pullback(
-            state: \.pharmacySearchState,
-            action: /RedeemDomain.Action.pharmacySearchAction(action:)
+        PharmacySearchDomain.reducer._pullback(
+            state: (\State.route).appending(path: /Route.pharmacySearch),
+            action: /RedeemMethodsDomain.Action.pharmacySearchAction(action:)
         ) { environment in
             PharmacySearchDomain.Environment(
                 schedulers: environment.schedulers,
@@ -131,10 +150,10 @@ enum RedeemDomain {
         }
 }
 
-extension RedeemDomain {
+extension RedeemMethodsDomain {
     enum Dummies {
         static let state = State(
-            groupedPrescription: GroupedPrescription.Dummies.prescriptions
+            erxTasks: ErxTask.Demo.erxTasks
         )
         static let environment = Environment(
             schedulers: Schedulers(),
@@ -146,7 +165,7 @@ extension RedeemDomain {
                                  environment: environment)
         static func storeFor(_ state: State) -> Store {
             Store(initialState: state,
-                  reducer: RedeemDomain.Reducer.empty,
+                  reducer: RedeemMethodsDomain.Reducer.empty,
                   environment: environment)
         }
     }

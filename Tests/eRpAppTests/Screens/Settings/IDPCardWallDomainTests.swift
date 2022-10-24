@@ -88,7 +88,15 @@ final class IDPCardWallDomainTests: XCTestCase {
     }
 
     func testReadCardActionWrongPIN() {
-        let store = testStore()
+        let store = testStore(for: .init(
+            profileId: testProfileId,
+            can: nil,
+            pin: .init(
+                isDemoModus: false,
+                transition: .fullScreenCover
+            ),
+            readCard: CardWallReadCardDomain.Dummies.state
+        ))
 
         store.send(.readCard(action: .wrongPIN)) { state in
             state.pin.wrongPinEntered = true
@@ -96,10 +104,26 @@ final class IDPCardWallDomainTests: XCTestCase {
     }
 
     func testReadCardActionWrongCAN() {
-        let store = testStore()
+        let store = testStore(for: .init(
+            profileId: testProfileId,
+            can: nil,
+            pin: .init(
+                isDemoModus: false,
+                transition: .fullScreenCover
+            ),
+            readCard: CardWallReadCardDomain.Dummies.state
+        ))
 
         store.send(.readCard(action: .wrongCAN)) { state in
-            state.can?.wrongCANEntered = true
+            state.can = CardWallCANDomain.State(
+                isDemoModus: false,
+                profileId: self.testProfileId,
+                can: "",
+                wrongCANEntered: true,
+                scannedCAN: nil,
+                isFlashOn: false,
+                route: nil
+            )
         }
     }
 
@@ -107,8 +131,11 @@ final class IDPCardWallDomainTests: XCTestCase {
         let store = testStore(for: .init(
             profileId: testProfileId,
             can: nil,
-            pin: .init(isDemoModus: false,
-                       transition: .fullScreenCover)
+            pin: .init(
+                isDemoModus: false,
+                transition: .fullScreenCover
+            ),
+            readCard: CardWallReadCardDomain.Dummies.state
         ))
 
         store.send(.readCard(action: .wrongCAN)) { state in
@@ -140,11 +167,17 @@ final class IDPCardWallDomainTests: XCTestCase {
     }
 
     func testReadCardCloseAction() {
-        let store = testStore()
+        let store = testStore(for: .init(
+            profileId: testProfileId,
+            can: nil,
+            pin: .init(
+                isDemoModus: false,
+                transition: .fullScreenCover
+            ),
+            readCard: CardWallReadCardDomain.Dummies.state
+        ))
 
-        store.send(.readCard(action: .close)) { state in
-            state.pin.route = nil
-        }
+        store.send(.readCard(action: .close))
         testScheduler.run()
 
         store.receive(.finished)

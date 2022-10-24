@@ -47,7 +47,6 @@ final class PrescriptionDetailDomainTests: XCTestCase {
                 schedulers: schedulers,
                 taskRepository: erxTaskRepository,
                 fhirDateFormatter: FHIRDateFormatter.shared,
-                pharmacyRepository: MockPharmacyRepository(),
                 userSession: MockUserSession(),
                 dateProvider: dateProvider
             )
@@ -88,9 +87,7 @@ final class PrescriptionDetailDomainTests: XCTestCase {
             state.isDeleting = false
             state.route = nil
         }
-        store.receive(.close) { state in
-            state.route = nil
-        }
+        store.receive(.close)
     }
 
     /// Tests the case when delete was hit and deletion has failed when not being logged in
@@ -167,17 +164,13 @@ final class PrescriptionDetailDomainTests: XCTestCase {
             sut.isArchived = true
         }
         testScheduler.advance()
-        store.receive(.redeemedOnSavedReceived(true)) { state in
-            state.prescription = expectedPrescription
-        }
+        store.receive(.redeemedOnSavedReceived(true))
         store.send(.toggleRedeemPrescription) { sut in
             // then
             sut.prescription = prescription
             sut.isArchived = false
         }
         testScheduler.advance()
-        store.receive(.redeemedOnSavedReceived(true)) { state in
-            state.prescription = prescription
-        }
+        store.receive(.redeemedOnSavedReceived(true))
     }
 }

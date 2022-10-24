@@ -98,29 +98,19 @@ final class CreatePasswordDomainTests: XCTestCase {
         }
 
         testScheduler.run()
-        store.receive(.comparePasswords) { state in
-            state.showPasswordErrorMessage = true
-            let message = state.passwordErrorMessage
-            expect(message).to(beNil())
-        }
+        store.receive(.comparePasswords)
 
         store.send(.setPasswordB("MyPasswordB")) { state in
             state.passwordB = "MyPasswordB"
         }
         testScheduler.run()
-        store.receive(.comparePasswords) { state in
-            state.showPasswordErrorMessage = true
-            let message = state.passwordErrorMessage
-            expect(message) == L10n.cpwTxtPasswordsDontMatch.text
-        }
+        store.receive(.comparePasswords)
 
         store.send(.setPasswordB("Secure password")) { state in
             state.passwordB = "Secure password"
         }
         testScheduler.run()
-        store.receive(.comparePasswords) { state in
-            state.showPasswordErrorMessage = true
-        }
+        store.receive(.comparePasswords)
     }
 
     func testShowPasswordsNotEqualMessageTiming() {

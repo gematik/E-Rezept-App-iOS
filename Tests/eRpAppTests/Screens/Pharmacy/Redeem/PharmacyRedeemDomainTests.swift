@@ -162,34 +162,10 @@ class PharmacyRedeemDomainTests: XCTestCase {
             $0.selectedShipmentInfo = expectedShipmentInfo
         }
 
-        sut.send(.redeem) { state in
-            let orders = state.orders
-            for task in inputTasks {
-                let order = orders.first { $0.taskID == task.id }
-                expect(order?.name) == expectedShipmentInfo.name
-                expect(order?.address) == Address(
-                    street: expectedShipmentInfo.street,
-                    detail: expectedShipmentInfo.addressDetail,
-                    zip: expectedShipmentInfo.zip,
-                    city: expectedShipmentInfo.city
-                )
-                expect(order?.hint) == expectedShipmentInfo.deliveryInfo
-                expect(order?.phone) == expectedShipmentInfo.phone
-                expect(order?.mail) == expectedShipmentInfo.mail
-                expect(order?.text).to(beNil())
-                expect(order?.redeemType) == initialState.redeemOption
-                expect(order?.accessCode) == task.accessCode
-                expect(order?.telematikId) == self.pharmacy.telematikID
-                expect(order?.endpoint) == self.pharmacy.avsEndpoints?.url(
-                    for: initialState.redeemOption,
-                    transactionId: "",
-                    telematikId: order?.telematikId ?? ""
-                )
-            }
-        }
+        sut.send(.redeem)
         sut.receive(.redeemReceived(.success(expectedOrderResponses))) {
             $0.orderResponses = expectedOrderResponses
-            $0.successViewState = RedeemSuccessDomain.State(redeemOption: .onPremise)
+            $0.route = .redeemSuccess(RedeemSuccessDomain.State(redeemOption: .onPremise))
 
             for task in inputTasks {
                 let response = $0.orderResponses.first { $0.requested.taskID == task.id }

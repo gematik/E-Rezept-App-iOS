@@ -20,6 +20,7 @@ import Combine
 import ComposableArchitecture
 import DataKit
 import eRpKit
+import Foundation
 import IDP
 
 // swiftlint:disable:next type_body_length

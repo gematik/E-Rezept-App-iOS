@@ -23,6 +23,7 @@ import ComposableArchitecture
 import eRpKit
 import HTTPClient
 import IDP
+import NFCCardReaderProvider
 import Nimble
 import TestUtils
 import XCTest
@@ -118,6 +119,14 @@ final class CardWallReadCardDomainTests: XCTestCase {
         )
     }
 
+    var defaultState: CardWallReadCardDomain.State {
+        CardWallReadCardDomain.State(isDemoModus: false,
+                                     profileId: mockUserSession.profileId,
+                                     pin: "123456",
+                                     loginOption: .withoutBiometry,
+                                     output: .challengeLoaded(challenge))
+    }
+
     func testOnAppearTriggersRequestIDPChallenge() {
         let sut = testStore(
             initialState: CardWallReadCardDomain.State(
@@ -141,15 +150,7 @@ final class CardWallReadCardDomainTests: XCTestCase {
     }
 
     func testHappyPathSigning() {
-        let sut = testStore(
-            initialState: CardWallReadCardDomain.State(
-                isDemoModus: false,
-                profileId: mockUserSession.profileId,
-                pin: "123456",
-                loginOption: .withoutBiometry,
-                output: .challengeLoaded(challenge)
-            )
-        )
+        let sut = testStore(initialState: defaultState)
         mockProfileDataStore.updateProfileIdMutatingReturnValue = Just(true)
             .setFailureType(to: LocalStoreError.self)
             .eraseToAnyPublisher()
@@ -229,11 +230,7 @@ final class CardWallReadCardDomainTests: XCTestCase {
 
         idpMock.verify_Publisher = verifyPassthrough.eraseToAnyPublisher()
 
-        let sut = testStore(initialState: CardWallReadCardDomain.State(isDemoModus: false,
-                                                                       profileId: mockUserSession.profileId,
-                                                                       pin: "123456",
-                                                                       loginOption: .withoutBiometry,
-                                                                       output: .challengeLoaded(challenge)))
+        let sut = testStore(initialState: defaultState)
 
         mockProfileDataStore.updateProfileIdMutatingReturnValue = Just(true)
             .setFailureType(to: LocalStoreError.self)
@@ -259,15 +256,9 @@ final class CardWallReadCardDomainTests: XCTestCase {
     }
 
     func testWhenIDPChallengeAvailable_SigningStates_PinError() {
-        let sut = testStore(
-            initialState: CardWallReadCardDomain.State(isDemoModus: false,
-                                                       profileId: mockUserSession.profileId,
-                                                       pin: "123456",
-                                                       loginOption: .withoutBiometry,
-                                                       output: .challengeLoaded(challenge))
-        )
+        let sut = testStore(initialState: defaultState)
 
-        let pinError = NFCSignatureProviderError.wrongPin(retryCount: 2)
+        let pinError = NFCSignatureProviderError.verifyCardError(.wrongSecretWarning(retryCount: 2))
         sut.send(.signChallenge(challenge))
         uiScheduler.advance()
         sut.receive(.stateReceived(.signingChallenge(.loading))) { state in
@@ -284,13 +275,7 @@ final class CardWallReadCardDomainTests: XCTestCase {
     }
 
     func testWhenIDPChallengeAvailable_SigningStates_CanError() {
-        let sut = testStore(
-            initialState: CardWallReadCardDomain.State(isDemoModus: false,
-                                                       profileId: mockUserSession.profileId,
-                                                       pin: "123456",
-                                                       loginOption: .withoutBiometry,
-                                                       output: .challengeLoaded(challenge))
-        )
+        let sut = testStore(initialState: defaultState)
 
         let canError = NFCSignatureProviderError.wrongCAN(GenericTestError.genericError)
 
@@ -312,13 +297,7 @@ final class CardWallReadCardDomainTests: XCTestCase {
     }
 
     func testWhenIDPChallengeAvailable_SigningStates_Error_To_Report() {
-        let sut = testStore(
-            initialState: CardWallReadCardDomain.State(isDemoModus: false,
-                                                       profileId: mockUserSession.profileId,
-                                                       pin: "123456",
-                                                       loginOption: .withoutBiometry,
-                                                       output: .challengeLoaded(challenge))
-        )
+        let sut = testStore(initialState: defaultState)
 
         let error = NFCSignatureProviderError.signingFailure(.unsupportedAlgorithm)
         sut.send(.signChallenge(challenge))
@@ -329,7 +308,6 @@ final class CardWallReadCardDomainTests: XCTestCase {
         mockNFCSessionProvider.signResult.send(completion: .failure(error))
         mockNFCSessionProvider.signResult.send(completion: .finished)
         uiScheduler.advance()
-        let report = CardWallReadCardDomain.createNfcReadingReport(with: error, commands: [])
         sut.receive(
             CardWallReadCardDomain.Action.stateReceived(.signingChallenge(.error(.signChallengeError(error))))
         ) { state in
@@ -340,13 +318,8 @@ final class CardWallReadCardDomainTests: XCTestCase {
     }
 
     func testSendingMail() {
-        let sut = testStore(
-            initialState: CardWallReadCardDomain.State(isDemoModus: false,
-                                                       profileId: mockUserSession.profileId,
-                                                       pin: "123456",
-                                                       loginOption: .withoutBiometry,
-                                                       output: .challengeLoaded(challenge))
-        )
+        let sut = testStore(initialState: defaultState)
+
         let error = NFCSignatureProviderError.signingFailure(.unsupportedAlgorithm)
         let report = CardWallReadCardDomain.createNfcReadingReport(with: error, commands: [])
         let mailState = EmailState(subject: L10n.cdwTxtMailSubject.text, body: report)
@@ -361,15 +334,8 @@ final class CardWallReadCardDomainTests: XCTestCase {
     }
 
     func testUpdateProfileSaveError() {
-        let sut = testStore(
-            initialState: CardWallReadCardDomain.State(
-                isDemoModus: false,
-                profileId: mockUserSession.profileId,
-                pin: "123456",
-                loginOption: .withoutBiometry,
-                output: .challengeLoaded(challenge)
-            )
-        )
+        let sut = testStore(initialState: defaultState)
+
         mockProfileDataStore.updateProfileIdMutatingReturnValue = Fail(error: .notImplemented).eraseToAnyPublisher()
 
         let idpToken = IDPSessionMock.fixtureIDPToken
@@ -396,15 +362,7 @@ final class CardWallReadCardDomainTests: XCTestCase {
     }
 
     func testValidateProfileFailure() {
-        let sut = testStore(
-            initialState: CardWallReadCardDomain.State(
-                isDemoModus: false,
-                profileId: mockUserSession.profileId,
-                pin: "123456",
-                loginOption: .withoutBiometry,
-                output: .challengeLoaded(challenge)
-            )
-        )
+        let sut = testStore(initialState: defaultState)
 
         let expectedInternalError = IDTokenValidatorError.profileNotMatchingInsuranceId("X12345")
         mockProfileDataStore.updateProfileIdMutatingReturnValue = Just(true)
@@ -432,6 +390,177 @@ final class CardWallReadCardDomainTests: XCTestCase {
             state
                 .route = .alert(CardWallReadCardDomain.AlertStates
                     .alertFor(CardWallReadCardDomain.State.Error.profileValidation(expectedInternalError)))
+        }
+    }
+
+    func testExpectedErrorAlertForPasswordNotFound() {
+        let sut = testStore(initialState: defaultState)
+
+        let error = NFCSignatureProviderError.verifyCardError(.passwordNotFound)
+        sut.send(.signChallenge(challenge))
+        uiScheduler.advance()
+        sut.receive(.stateReceived(.signingChallenge(.loading))) { state in
+            state.output = .signingChallenge(.loading)
+        }
+        mockNFCSessionProvider.signResult.send(completion: .failure(error))
+        mockNFCSessionProvider.signResult.send(completion: .finished)
+        uiScheduler.advance()
+        sut.receive(
+            CardWallReadCardDomain.Action.stateReceived(.signingChallenge(.error(.signChallengeError(error))))
+        ) { state in
+            state.output = .signingChallenge(.error(.signChallengeError(error)))
+
+            state.route = .alert(CardWallReadCardDomain.AlertStates.alertWithReportButton(error: error))
+        }
+    }
+
+    func testExpectedErrorAlertForPasswordNotUsable() {
+        let sut = testStore(initialState: defaultState)
+
+        let error = NFCSignatureProviderError.verifyCardError(.passwordNotUsable)
+        sut.send(.signChallenge(challenge))
+        uiScheduler.advance()
+        sut.receive(.stateReceived(.signingChallenge(.loading))) { state in
+            state.output = .signingChallenge(.loading)
+        }
+        mockNFCSessionProvider.signResult.send(completion: .failure(error))
+        mockNFCSessionProvider.signResult.send(completion: .finished)
+        uiScheduler.advance()
+        sut.receive(
+            CardWallReadCardDomain.Action.stateReceived(.signingChallenge(.error(.signChallengeError(error))))
+        ) { state in
+            state.output = .signingChallenge(.error(.signChallengeError(error)))
+
+            state.route = .alert(CardWallReadCardDomain.AlertStates.alertWithReportButton(error: error))
+        }
+    }
+
+    func testExpectedErrorAlertForSecurityStatusNotSatisfied() {
+        let sut = testStore(initialState: defaultState)
+
+        let error = NFCSignatureProviderError.verifyCardError(.securityStatusNotSatisfied)
+        sut.send(.signChallenge(challenge))
+        uiScheduler.advance()
+        sut.receive(.stateReceived(.signingChallenge(.loading))) { state in
+            state.output = .signingChallenge(.loading)
+        }
+        mockNFCSessionProvider.signResult.send(completion: .failure(error))
+        mockNFCSessionProvider.signResult.send(completion: .finished)
+        uiScheduler.advance()
+        sut.receive(
+            CardWallReadCardDomain.Action.stateReceived(.signingChallenge(.error(.signChallengeError(error))))
+        ) { state in
+            state.output = .signingChallenge(.error(.signChallengeError(error)))
+
+            state.route = .alert(CardWallReadCardDomain.AlertStates.alertWithReportButton(error: error))
+        }
+    }
+
+    func testExpectedErrorAlertForMemoryFailure() {
+        let sut = testStore(initialState: defaultState)
+
+        let error = NFCSignatureProviderError.verifyCardError(.memoryFailure)
+        sut.send(.signChallenge(challenge))
+        uiScheduler.advance()
+        sut.receive(.stateReceived(.signingChallenge(.loading))) { state in
+            state.output = .signingChallenge(.loading)
+        }
+        mockNFCSessionProvider.signResult.send(completion: .failure(error))
+        mockNFCSessionProvider.signResult.send(completion: .finished)
+        uiScheduler.advance()
+        sut.receive(
+            CardWallReadCardDomain.Action.stateReceived(.signingChallenge(.error(.signChallengeError(error))))
+        ) { state in
+            state.output = .signingChallenge(.error(.signChallengeError(error)))
+
+            state.route = .alert(CardWallReadCardDomain.AlertStates.alertWithReportButton(error: error))
+        }
+    }
+
+    func testExpectedErrorAlertForUnknownFailure() {
+        let sut = testStore(initialState: defaultState)
+
+        let error = NFCSignatureProviderError.verifyCardError(.unknownFailure)
+        sut.send(.signChallenge(challenge))
+        uiScheduler.advance()
+        sut.receive(.stateReceived(.signingChallenge(.loading))) { state in
+            state.output = .signingChallenge(.loading)
+        }
+        mockNFCSessionProvider.signResult.send(completion: .failure(error))
+        mockNFCSessionProvider.signResult.send(completion: .finished)
+        uiScheduler.advance()
+        sut.receive(
+            CardWallReadCardDomain.Action.stateReceived(.signingChallenge(.error(.signChallengeError(error))))
+        ) { state in
+            state.output = .signingChallenge(.error(.signChallengeError(error)))
+
+            state.route = .alert(CardWallReadCardDomain.AlertStates.alertWithReportButton(error: error))
+        }
+    }
+
+    func testExpectedErrorAlertForWrongPIN() {
+        let sut = testStore(initialState: defaultState)
+
+        let error = NFCSignatureProviderError.verifyCardError(.wrongSecretWarning(retryCount: 2))
+        let stateError = CardWallReadCardDomain.State.Error.signChallengeError(error)
+        sut.send(.signChallenge(challenge))
+        uiScheduler.advance()
+        sut.receive(.stateReceived(.signingChallenge(.loading))) { state in
+            state.output = .signingChallenge(.loading)
+        }
+        mockNFCSessionProvider.signResult.send(completion: .failure(error))
+        mockNFCSessionProvider.signResult.send(completion: .finished)
+        uiScheduler.advance()
+        sut.receive(
+            CardWallReadCardDomain.Action.stateReceived(.signingChallenge(.error(.signChallengeError(error))))
+        ) { state in
+            state.output = .signingChallenge(.error(.signChallengeError(error)))
+
+            state.route = .alert(CardWallReadCardDomain.AlertStates.wrongPIN(stateError))
+        }
+    }
+
+    func testExpectedErrorAlertForWrongPINAndNoRetry() {
+        let sut = testStore(initialState: defaultState)
+
+        let error = NFCSignatureProviderError.verifyCardError(.wrongSecretWarning(retryCount: 0))
+        let stateError = CardWallReadCardDomain.State.Error.signChallengeError(error)
+        sut.send(.signChallenge(challenge))
+        uiScheduler.advance()
+        sut.receive(.stateReceived(.signingChallenge(.loading))) { state in
+            state.output = .signingChallenge(.loading)
+        }
+        mockNFCSessionProvider.signResult.send(completion: .failure(error))
+        mockNFCSessionProvider.signResult.send(completion: .finished)
+        uiScheduler.advance()
+        sut.receive(
+            CardWallReadCardDomain.Action.stateReceived(.signingChallenge(.error(.signChallengeError(error))))
+        ) { state in
+            state.output = .signingChallenge(.error(.signChallengeError(error)))
+
+            state.route = .alert(CardWallReadCardDomain.AlertStates.alertFor(stateError))
+        }
+    }
+
+    func testExpectedErrorAlertForPasswordBlocked() {
+        let sut = testStore(initialState: defaultState)
+
+        let error = NFCSignatureProviderError.verifyCardError(.passwordBlocked)
+        let stateError = CardWallReadCardDomain.State.Error.signChallengeError(error)
+        sut.send(.signChallenge(challenge))
+        uiScheduler.advance()
+        sut.receive(.stateReceived(.signingChallenge(.loading))) { state in
+            state.output = .signingChallenge(.loading)
+        }
+        mockNFCSessionProvider.signResult.send(completion: .failure(error))
+        mockNFCSessionProvider.signResult.send(completion: .finished)
+        uiScheduler.advance()
+        sut.receive(
+            CardWallReadCardDomain.Action.stateReceived(.signingChallenge(.error(stateError)))
+        ) { state in
+            state.output = .signingChallenge(.error(.signChallengeError(error)))
+
+            state.route = .alert(CardWallReadCardDomain.AlertStates.alertFor(stateError))
         }
     }
 }
