@@ -34,9 +34,8 @@ i-01306,"LoginHandlerError.network","",
 i-00401,"NFCSignatureProviderError.cardError","",NFCTagReaderSession.Error
 i-00403,"NFCSignatureProviderError.wrongCAN","",
 i-00404,"NFCSignatureProviderError.cardConnectionError","",
-i-00405,"NFCSignatureProviderError.verifyCardError","",
+i-00405,"NFCSignatureProviderError.verifyCardError","",NFCSignatureProviderError.VerifyPINError
 i-00406,"NFCSignatureProviderError.signingFailure","",NFCSignatureProviderError.SigningError
-i-00407,"NFCSignatureProviderError.wrongPin","",
 i-00408,"NFCSignatureProviderError.genericError","",
 i-00409,"NFCSignatureProviderError.cardReadingError","",
 i-00410,"NFCSignatureProviderError.secureEnclaveError","",SecureEnclaveSignatureProviderError
@@ -44,6 +43,13 @@ i-00501,"NFCSignatureProviderError.SigningError.unsupportedAlgorithm","",
 i-00502,"NFCSignatureProviderError.SigningError.responseStatus","",
 i-00503,"NFCSignatureProviderError.SigningError.certificate","",
 i-00504,"NFCSignatureProviderError.SigningError.missingCertificate","",
+i-00601,"NFCSignatureProviderError.VerifyPINError.wrongSecretWarning","",
+i-00602,"NFCSignatureProviderError.VerifyPINError.securityStatusNotSatisfied","",
+i-00603,"NFCSignatureProviderError.VerifyPINError.memoryFailure","",
+i-00604,"NFCSignatureProviderError.VerifyPINError.passwordBlocked","",
+i-00605,"NFCSignatureProviderError.VerifyPINError.passwordNotUsable","",
+i-00606,"NFCSignatureProviderError.VerifyPINError.passwordNotFound","",
+i-00607,"NFCSignatureProviderError.VerifyPINError.unknownFailure","",
 i-01401,"ExtAuthPendingDomain.Error.idpError","Underlying `IDPError` for the external authentication agains `URL`",IDPError
 i-01401,"ExtAuthPendingDomain.Error.idpError","Underlying `IDPError` for the external authentication agains `URL`",
 i-01402,"ExtAuthPendingDomain.Error.profileValidation","Error when `Profile` validation with the given authentication fails.\nError is produces within the `IDPError.unspecified` error before saving the IDPToken",IDTokenValidatorError

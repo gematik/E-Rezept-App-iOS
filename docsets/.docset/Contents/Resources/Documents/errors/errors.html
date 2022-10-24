@@ -52,6 +52,8 @@ id="toc-loginhandlererror"><code>LoginHandlerError</code></a></li>
 id="toc-nfcsignatureprovidererror"><code>NFCSignatureProviderError</code></a></li>
 <li><a href="#nfcsignatureprovidererror.signingerror"
 id="toc-nfcsignatureprovidererror.signingerror"><code>NFCSignatureProviderError.SigningError</code></a></li>
+<li><a href="#nfcsignatureprovidererror.verifypinerror"
+id="toc-nfcsignatureprovidererror.verifypinerror"><code>NFCSignatureProviderError.VerifyPINError</code></a></li>
 <li><a href="#extauthpendingdomain.error"
 id="toc-extauthpendingdomain.error"><code>ExtAuthPendingDomain.Error</code></a></li>
 <li><a href="#maindomain.error"
@@ -317,15 +319,11 @@ href="#nfctagreadersession.error">NFCTagReaderSession.Error</a></li>
 </ul></li>
 <li><code>verifyCardError</code> (i-00405):
 <ul>
-<li><a href="#swift.error">Swift.Error</a></li>
+<li><a href="#verifypinerror">VerifyPINError</a></li>
 </ul></li>
 <li><code>signingFailure</code> (i-00406):
 <ul>
 <li><a href="#signingerror">SigningError</a></li>
-</ul></li>
-<li><code>wrongPin</code> (i-00407):
-<ul>
-<li><a href="#int">Int</a></li>
 </ul></li>
 <li><code>genericError</code> (i-00408):
 <ul>
@@ -356,6 +354,22 @@ href="/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepar
 <li><a href="#swift.error">Swift.Error</a></li>
 </ul></li>
 <li><code>missingCertificate</code> (i-00504):</li>
+</ul>
+<h2
+id="nfcsignatureprovidererror.verifypinerror"><code>NFCSignatureProviderError.VerifyPINError</code></h2>
+<p><em>Source:</em> <a
+href="/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift">NFCSignatureProvider.swift</a></p>
+<ul>
+<li><code>wrongSecretWarning</code> (i-00601):
+<ul>
+<li><a href="#int">Int</a></li>
+</ul></li>
+<li><code>securityStatusNotSatisfied</code> (i-00602):</li>
+<li><code>memoryFailure</code> (i-00603):</li>
+<li><code>passwordBlocked</code> (i-00604):</li>
+<li><code>passwordNotUsable</code> (i-00605):</li>
+<li><code>passwordNotFound</code> (i-00606):</li>
+<li><code>unknownFailure</code> (i-00607):</li>
 </ul>
 <h2
 id="extauthpendingdomain.error"><code>ExtAuthPendingDomain.Error</code></h2>
