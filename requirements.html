@@ -20,7 +20,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="index.html">
-           1.4.6 Docs
+           1.4.7 Docs
         </a>
          (100% documented)
       </p>
@@ -1519,11 +1519,19 @@ private let rootCa: X509
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_20167] invalidate/delete unauthorized token
 self.session.invalidateAccessToken()
 </code></pre>
-<h4 id='code-sources-erpapp-screens-main-groupedprescriptionlistdomain-swift-203-code-no-token-not-authorized-show-authenticator-module' class='heading'><code>../Sources/eRpApp/Screens/Main/GroupedPrescriptionListDomain.swift:203</code>:  no token/not authorized, show authenticator module</h4>
+<h4 id='code-sources-erpapp-screens-pharmacy-redeemservice-redeemservice-swift-113-code-no-token-not-authorized-show-authenticator-module' class='heading'><code>../Sources/eRpApp/Screens/Pharmacy/RedeemService/RedeemService.swift:113</code>:  no token/not authorized, show authenticator module</h4>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_20167,A_20172] no token/not authorized, show authenticator module
+if Result.success(false) == authenticated {
+</code></pre>
+<h4 id='code-sources-erpapp-screens-main-groupedprescriptionlistdomain-swift-204-code-no-token-not-authorized-show-authenticator-module' class='heading'><code>../Sources/eRpApp/Screens/Main/GroupedPrescriptionListDomain.swift:204</code>:  no token/not authorized, show authenticator module</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_20167,A_20172] no token/not authorized, show authenticator module
 if Result.success(false) == isAuthenticated {
 </code></pre>
 <h3 id='a_20172' class='heading'>A_20172</h3>
+<h4 id='code-sources-erpapp-screens-pharmacy-redeemservice-redeemservice-swift-113-code-no-token-not-authorized-show-authenticator-module' class='heading'><code>../Sources/eRpApp/Screens/Pharmacy/RedeemService/RedeemService.swift:113</code>:  no token/not authorized, show authenticator module</h4>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_20167,A_20172] no token/not authorized, show authenticator module
+if Result.success(false) == authenticated {
+</code></pre>
 <h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-swift-399-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.swift:399</code>:</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_20172]
 func idpChallengePublisher(for profileID: UUID) -&gt; Effect&lt;CardWallReadCardDomain.Action, Never&gt; {
@@ -1538,7 +1546,7 @@ func signChallengeWithNFCCard(can: String,
 // [REQ:gemSpec_IDP_Frontend:A_20526-01] verify with idp
 private func verifyResultWithIDP(_ signedChallenge: SignedChallenge,
 </code></pre>
-<h4 id='code-sources-erpapp-screens-main-groupedprescriptionlistdomain-swift-203-code-no-token-not-authorized-show-authenticator-module' class='heading'><code>../Sources/eRpApp/Screens/Main/GroupedPrescriptionListDomain.swift:203</code>:  no token/not authorized, show authenticator module</h4>
+<h4 id='code-sources-erpapp-screens-main-groupedprescriptionlistdomain-swift-204-code-no-token-not-authorized-show-authenticator-module' class='heading'><code>../Sources/eRpApp/Screens/Main/GroupedPrescriptionListDomain.swift:204</code>:  no token/not authorized, show authenticator module</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_20167,A_20172] no token/not authorized, show authenticator module
 if Result.success(false) == isAuthenticated {
 </code></pre>
@@ -1565,7 +1573,7 @@ public func searchPharmacies(by searchTerm: String,
 /// - Returns: `AnyPublisher` that emits all `PharmacyLocation`s for the given `searchTerm`
 func searchPharmacies(by searchTerm: String,
 </code></pre>
-<h4 id='code-sources-erpapp-screens-pharmacy-search-pharmacysearchdomain-swift-169-code-search-results-mirrored-verbatim-no-sorting-no-highlighting' class='heading'><code>../Sources/eRpApp/Screens/Pharmacy/Search/PharmacySearchDomain.swift:169</code>:  search results mirrored verbatim, no sorting, no highlighting</h4>
+<h4 id='code-sources-erpapp-screens-pharmacy-search-pharmacysearchdomain-swift-184-code-search-results-mirrored-verbatim-no-sorting-no-highlighting' class='heading'><code>../Sources/eRpApp/Screens/Pharmacy/Search/PharmacySearchDomain.swift:184</code>:  search results mirrored verbatim, no sorting, no highlighting</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_20183] search results mirrored verbatim, no sorting, no highlighting
 state.searchState = .searchRunning
 </code></pre>
@@ -1715,7 +1723,7 @@ struct IDPTokenView: View {
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2022 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2022-10-12)</p>
+      <p>&copy; 2022 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2022-10-20)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>

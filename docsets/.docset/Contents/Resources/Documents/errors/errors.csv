@@ -64,6 +64,7 @@ i-02402,"RedeemServiceError.avs","When redeeming a task via AVS",AVSError
 i-02403,"RedeemServiceError.internalError","When an internal error occurs which most likely is a programming error",RedeemServiceError.InternalError
 i-02404,"RedeemServiceError.unspecified","When error conversion into `RedeemServiceError` fails",
 i-02405,"RedeemServiceError.noTokenAvailable","When the user has no valid token available while trying to redeem via Fachdienst",
+i-02406,"RedeemServiceError.loginHandler","When receiving an error while doing a login",LoginHandlerError
 i-02501,"RedeemServiceError.InternalError.missingAVSEndpoint","When the AVS endpoint for the selected redeem option is missing",
 i-02502,"RedeemServiceError.InternalError.missingAVSCertificate","When the required AVS certificates for redeeming via AVS are missing",
 i-02503,"RedeemServiceError.InternalError.missingTelematikId","When the Telematik-ID of the pharmacy to redeem in is missing",
