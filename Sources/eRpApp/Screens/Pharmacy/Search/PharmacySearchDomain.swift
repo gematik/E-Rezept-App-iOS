@@ -20,9 +20,12 @@ import Combine
 import ComposableArchitecture
 import ComposableCoreLocation
 import eRpKit
+import IDP
 import Pharmacy
 import SwiftUI
 
+// body will be shorter with ne ReducerProtocol
+// swiftlint:disable type_body_length
 enum PharmacySearchDomain: Equatable {
     typealias Store = ComposableArchitecture.Store<State, Action>
     typealias Reducer = ComposableArchitecture.Reducer<State, Action, Environment>
@@ -44,11 +47,13 @@ enum PharmacySearchDomain: Equatable {
         case selectProfile
         case pharmacy(PharmacyDetailDomain.State)
         case filter(PharmacySearchFilterDomain.State)
+        case alert(AlertState<Action>)
 
         enum Tag: Int {
             case selectProfile
             case pharmacy
             case filter
+            case alert
         }
 
         var tag: Tag {
@@ -59,6 +64,8 @@ enum PharmacySearchDomain: Equatable {
                 return .pharmacy
             case .filter:
                 return .filter
+            case .alert:
+                return .alert
             }
         }
     }
@@ -68,7 +75,7 @@ enum PharmacySearchDomain: Equatable {
         case startView
         case searchRunning
         case searchResultEmpty
-        case searchResultOk([PharmacyLocationViewModel])
+        case searchResultOk
         case searchAfterLocalizationWasAuthorized
         case localizingDevice
         case error
@@ -87,15 +94,6 @@ enum PharmacySearchDomain: Equatable {
         var currentLocation: Location?
         /// Store for the search result
         var pharmacies: [PharmacyLocationViewModel] = []
-        /// We show an alert when the user taps the "location" icon but has not allowed to share the device location
-        var alertState: AlertState<Action>?
-        /// Visibility of location hint
-        var isLocationServiceAuthorized = false
-        var hintDismissButtonTapped = false
-        var showLocationHint: Bool {
-            !hintDismissButtonTapped && !isLocationServiceAuthorized
-        }
-
         /// A valid search terms should at least consist of 3 chars
         var searchTextValid: Bool {
             searchText.count > 2
@@ -118,20 +116,18 @@ enum PharmacySearchDomain: Equatable {
         var searchState: SearchState = .startView
 
         var route: Route?
+
+        var searchHistory: [String] = []
     }
 
     enum Action: Equatable {
         case close
         case onAppear
-        // Alert
-        case alertDismissButtonTapped
         // Search
         case searchTextChanged(String)
         case performSearch
+        case quickSearch(filters: [PharmacySearchFilterDomain.PharmacyFilterOption])
         case pharmaciesReceived(Result<[PharmacyLocation], PharmacyRepositoryError>)
-        // Hint
-        case hintButtonTapped
-        case hintDismissButtonTapped
         // Pharmacy details
         case showDetails(PharmacyLocationViewModel)
         case pharmacyDetailView(action: PharmacyDetailDomain.Action)
@@ -143,6 +139,7 @@ enum PharmacySearchDomain: Equatable {
         case locationManager(LocationManager.Action)
 
         case setNavigation(tag: Route.Tag?)
+        case openAppSpecificSettings
     }
 
     struct Environment {
@@ -154,31 +151,49 @@ enum PharmacySearchDomain: Equatable {
         // Control the current time for opening/closing determination. When not set current device time is used.
         let referenceDateForOpenHours: Date?
         let userSession: UserSession
+        let openURL: (URL, [UIApplication.OpenExternalURLOptionsKey: Any], ((Bool) -> Void)?) -> Void
+        var searchHistory: SearchHistory = DefaultSearchHistory.pharmacySearch
+        let signatureProvider: SecureEnclaveSignatureProvider
+        let accessibilityAnnouncementReceiver: (String) -> Void
+        let userSessionProvider: UserSessionProvider
+        var timeOnlyFormatter: DateFormatter = {
+            let dateFormatter = DateFormatter()
+            if let preferredLang = Locale.preferredLanguages.first,
+               preferredLang.starts(with: "de") {
+                dateFormatter.dateFormat = "HH:mm 'Uhr'"
+            } else {
+                dateFormatter.timeStyle = .short
+                dateFormatter.dateStyle = .none
+            }
+            return dateFormatter
+        }()
     }
 
     static let domainReducer = Reducer { state, action, environment in
         switch action {
         case .close:
+            state.route = nil
             return cleanup()
         case .onAppear:
-            state.isLocationServiceAuthorized = environment.locationManager.isLocationServiceAuthorized
-            if state.isLocationServiceAuthorized, state.searchState == .startView {
-                state.searchState = .searchAfterLocalizationWasAuthorized
+            state.searchHistory = environment.searchHistory.historyItems()
+
+            if state.searchState == .searchAfterLocalizationWasAuthorized {
                 return .init(value: .requestLocation)
-            } else {
-                return .none
             }
 
-        // Alert
-        case .alertDismissButtonTapped:
-            state.alertState = nil
             return .none
-
         // Search
         case let .searchTextChanged(changedText):
             state.searchText = changedText
+            if changedText.lengthOfBytes(using: .utf8) == 0 {
+                state.searchState = .startView
+            }
             return .none
         case .performSearch:
+            // append history item
+            environment.searchHistory.addHistoryItem(state.searchText)
+            state.searchHistory = environment.searchHistory.historyItems()
+
             // [REQ:gemSpec_eRp_FdV:A_20183] search results mirrored verbatim, no sorting, no highlighting
             state.searchState = .searchRunning
             return environment.searchPharmacies(
@@ -194,23 +209,16 @@ enum PharmacySearchDomain: Equatable {
                     PharmacyLocationViewModel(
                         pharmacy: $0,
                         referenceLocation: state.currentLocation,
-                        referenceDate: environment.referenceDateForOpenHours
+                        referenceDate: environment.referenceDateForOpenHours,
+                        timeOnlyFormatter: environment.timeOnlyFormatter
                     )
                 }
                 .filter(by: state.pharmacyFilterOptions)
 
-                state.searchState = pharmacies.isEmpty ? .searchResultEmpty : .searchResultOk(state.pharmacies)
+                state.searchState = pharmacies.isEmpty ? .searchResultEmpty : .searchResultOk
             case let .failure(error):
                 state.searchState = .error
             }
-            return .none
-
-        // Hint
-        case .hintButtonTapped:
-            state.searchState = .searchAfterLocalizationWasAuthorized
-            return .init(value: .requestLocation)
-        case .hintDismissButtonTapped:
-            state.hintDismissButtonTapped = true
             return .none
 
         // Details
@@ -229,22 +237,34 @@ enum PharmacySearchDomain: Equatable {
                 .eraseToEffect()
         case .pharmacyDetailView:
             return .none
-
-        case let .pharmacyFilterView(.close(filterOptions)):
-            state.route = nil
-            if state.pharmacyFilterOptions != filterOptions {
-                state.pharmacyFilterOptions = filterOptions
-                return .init(value: .performSearch)
-            }
-            return .none
         case let .removeFilterOption(filterOption):
             if let index = state.pharmacyFilterOptions.firstIndex(of: filterOption) {
                 state.pharmacyFilterOptions.remove(at: index)
             }
             return .init(value: .performSearch)
+                .eraseToEffect()
+        case let .quickSearch(filterOptions):
+            state.pharmacyFilterOptions = filterOptions
+
+            if filterOptions.contains(.currentLocation) {
+                state.searchState = .searchAfterLocalizationWasAuthorized
+
+                return .init(value: .requestLocation)
+                    .receive(on: environment.schedulers.main.animation())
+                    .eraseToEffect()
+            }
+            return .init(value: .performSearch)
+                .receive(on: environment.schedulers.main.animation())
+                .eraseToEffect()
+        case let .pharmacyFilterView(.close(filterOptions)):
+            state.route = nil
+            state.searchState = .searchRunning
+
+            return .init(value: .quickSearch(filters: filterOptions))
+                .delay(for: 0.5, scheduler: environment.schedulers.main.animation())
+                .eraseToEffect()
         case .pharmacyFilterView:
             return .none
-
         // Location
         case .requestLocation:
             return .merge(
@@ -257,7 +277,6 @@ enum PharmacySearchDomain: Equatable {
             )
         case .locationManager(.didChangeAuthorization(.authorizedAlways)),
              .locationManager(.didChangeAuthorization(.authorizedWhenInUse)):
-            state.isLocationServiceAuthorized = true
             if state.searchState == .searchAfterLocalizationWasAuthorized {
                 if state.currentLocation != nil {
                     return Effect(value: .performSearch)
@@ -270,9 +289,8 @@ enum PharmacySearchDomain: Equatable {
             return .none
         case .locationManager(.didChangeAuthorization(.denied)),
              .locationManager(.didChangeAuthorization(.restricted)):
-            state.isLocationServiceAuthorized = true
             if state.searchState == .searchAfterLocalizationWasAuthorized {
-                state.alertState = locationPermissionAlertState
+                state.route = .alert(locationPermissionAlertState)
             }
             return .none
         case let .locationManager(.didUpdateLocations(locations)):
@@ -295,17 +313,28 @@ enum PharmacySearchDomain: Equatable {
             return .none
         case .setNavigation:
             return .none
+        case .openAppSpecificSettings:
+            environment.openSettings()
+            return .none
         }
     }
+}
 
+extension PharmacySearchDomain.Environment {
+    func openSettings() {
+        if let url = URL(string: UIApplication.openSettingsURLString) {
+            openURL(url, [:], nil)
+        }
+    }
+}
+
+extension PharmacySearchDomain {
     static let reducer: Reducer = .combine(
         pharmacyFilterPullbackReducer,
         pharmacyDetailPullbackReducer,
         domainReducer
     )
-}
 
-extension PharmacySearchDomain {
     static let pharmacyFilterPullbackReducer: Reducer =
         PharmacySearchFilterDomain.reducer._pullback(
             state: (\State.route).appending(path: /PharmacySearchDomain.Route.filter),
@@ -321,7 +350,10 @@ extension PharmacySearchDomain {
         ) { environment in
             PharmacyDetailDomain.Environment(
                 schedulers: environment.schedulers,
-                userSession: environment.userSession
+                userSession: environment.userSession,
+                signatureProvider: environment.signatureProvider,
+                accessibilityAnnouncementReceiver: environment.accessibilityAnnouncementReceiver,
+                userSessionProvider: environment.userSessionProvider
             )
         }
 
@@ -329,7 +361,11 @@ extension PharmacySearchDomain {
         AlertState(
             title: TextState(L10n.phaSearchTxtLocationAlertTitle),
             message: TextState(L10n.phaSearchTxtLocationAlertMessage),
-            dismissButton: .default(TextState(L10n.alertBtnOk), action: .send(.alertDismissButtonTapped))
+            primaryButton: .default(
+                TextState(L10n.alertBtnOk),
+                action: .send(.removeFilterOption(.currentLocation), animation: .default)
+            ),
+            secondaryButton: .default(TextState("Settings"), action: .send(.openAppSpecificSettings))
         )
     }()
 }
@@ -376,23 +412,6 @@ extension Array where Element == PharmacyLocationViewModel {
     }
 }
 
-extension Collection where Element == PharmacySearchFilterDomain.PharmacyFilterOption {
-    var asPharmacyRepositoryFilters: [PharmacyRepositoryFilter] {
-        compactMap { option in
-            switch option {
-            case .ready:
-                return PharmacyRepositoryFilter.ready
-            case .shipment:
-                return PharmacyRepositoryFilter.shipment
-            case .delivery:
-                return PharmacyRepositoryFilter.delivery
-            case .open:
-                return nil
-            }
-        }
-    }
-}
-
 extension PharmacySearchDomain {
     enum Dummies {
         static let pharmaciesLocationViewModel =
@@ -430,9 +449,9 @@ extension PharmacySearchDomain {
         )
         static let state = State(
             erxTasks: [ErxTask.Demo.erxTaskReady],
-            searchText: "Apotheke",
+            searchText: "",
             pharmacies: pharmaciesLocationViewModel,
-            searchState: .searchResultOk(pharmaciesLocationViewModel)
+            searchState: .startView // .searchResultOk(pharmaciesLocationViewModel)
         )
         static var openHoursReferenceDate: Date? {
             // Current dummy-time is set to 10:00am on 16th (WED) June 2021...
@@ -454,7 +473,11 @@ extension PharmacySearchDomain {
             fhirDateFormatter: FHIRDateFormatter.shared,
             openHoursCalculator: PharmacyOpenHoursCalculator(),
             referenceDateForOpenHours: openHoursReferenceDate,
-            userSession: DummySessionContainer()
+            userSession: DummySessionContainer(),
+            openURL: UIApplication.shared.open(_:options:completionHandler:),
+            signatureProvider: DummySecureEnclaveSignatureProvider(),
+            accessibilityAnnouncementReceiver: { _ in },
+            userSessionProvider: DummyUserSessionProvider()
         )
         static let store = Store(initialState: state,
                                  reducer: reducer,

@@ -111,6 +111,7 @@ internal enum Asset {
     internal static let womanWithPhone = ImageAsset(name: "womanWithPhone")
   }
   internal enum Pharmacy {
+    internal static let pharmacyPlaceholder = ImageAsset(name: "PharmacyPlaceholder")
     internal static let eRxReadinessBadge = ImageAsset(name: "eRxReadinessBadge")
   }
   internal enum Prescriptions {

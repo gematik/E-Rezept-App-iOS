@@ -273,7 +273,7 @@ extension DebugView {
                             .keyboardType(.default)
                             .disableAutocorrection(true)
                         FootnoteView(
-                            text: "Initial access token can only be used for internal IDP. Will be updated to the latest used access token after using logout here",
+                            text: "Initial access token can only be used for gematik IDP. Token will be updated to the latest used token after using logout here",
                             // swiftlint:disable:previous line_length
                             a11y: ""
                         )
@@ -300,6 +300,9 @@ extension DebugView {
                         )
                     } else {
                         FootnoteView(text: "No valid access token available", a11y: "dummy_a11y_i")
+                    }
+                    DebugView.ResetButton(text: "Delete SSOToken and expire current access token") {
+                        viewStore.send(.deleteSSOToken)
                     }
                 }
             }

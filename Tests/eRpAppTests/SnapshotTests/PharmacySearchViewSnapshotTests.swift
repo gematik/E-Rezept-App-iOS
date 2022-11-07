@@ -23,8 +23,12 @@ import SwiftUI
 import XCTest
 
 final class PharmacySearchViewSnapshotTests: XCTestCase {
-    override class func setUp() {
+    var uiApplicationMock: UIApplicationOpenURLMock!
+
+    override func setUp() {
         super.setUp()
+
+        uiApplicationMock = UIApplicationOpenURLMock()
         diffTool = "open"
     }
 
@@ -41,14 +45,14 @@ final class PharmacySearchViewSnapshotTests: XCTestCase {
     func testPharmacySearch_searchResultEmpty() {
         let sut = NavigationView {
             PharmacySearchView(
-                store: Self.storeFor(
+                store: storeFor(
                     state: .init(
                         erxTasks: [],
                         searchText: "Apothekesdfwerwerasdf",
                         searchState: .searchResultEmpty
                     )
                 ),
-                profileSelectionToolbarItemStore: Self.storeFor(profile: UserProfile.Dummies.profileA),
+                profileSelectionToolbarItemStore: storeFor(profile: UserProfile.Dummies.profileA),
                 isRedeemRecipe: false
             )
         }
@@ -58,7 +62,28 @@ final class PharmacySearchViewSnapshotTests: XCTestCase {
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
     }
 
-    static func storeFor(state: PharmacySearchDomain.State) -> PharmacySearchDomain.Store {
+    func testPharmacySearch_searchResultSuccess() {
+        let sut = NavigationView {
+            PharmacySearchView(
+                store: storeFor(
+                    state: .init(
+                        erxTasks: [],
+                        searchText: "Adler Apo",
+                        pharmacies: PharmacyLocationViewModel.Fixtures.pharmacies,
+                        searchState: .searchResultOk
+                    )
+                ),
+                profileSelectionToolbarItemStore: storeFor(profile: UserProfile.Dummies.profileA),
+                isRedeemRecipe: false
+            )
+        }
+
+        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
+        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+    }
+
+    func storeFor(state: PharmacySearchDomain.State) -> PharmacySearchDomain.Store {
         .init(
             initialState: state,
             reducer: .empty,
@@ -69,12 +94,16 @@ final class PharmacySearchViewSnapshotTests: XCTestCase {
                 fhirDateFormatter: FHIRDateFormatter.shared,
                 openHoursCalculator: PharmacyOpenHoursCalculator(),
                 referenceDateForOpenHours: Date(),
-                userSession: MockUserSession()
+                userSession: MockUserSession(),
+                openURL: uiApplicationMock.openURL,
+                signatureProvider: MockSecureEnclaveSignatureProvider(),
+                accessibilityAnnouncementReceiver: { _ in },
+                userSessionProvider: MockUserSessionProvider()
             )
         )
     }
 
-    static func storeFor(profile: UserProfile?) -> ProfileSelectionToolbarItemDomain.Store {
+    func storeFor(profile: UserProfile?) -> ProfileSelectionToolbarItemDomain.Store {
         .init(
             initialState: .init(profile: profile, profileSelectionState: .init()),
             reducer: .empty,

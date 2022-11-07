@@ -20,7 +20,10 @@ import AVS
 import Combine
 import ComposableArchitecture
 import eRpKit
+import FHIRClient
+import HTTPClient
 import IdentifiedCollections
+import IDP
 import MapKit
 import OpenSSL
 import Pharmacy
@@ -39,17 +42,22 @@ enum PharmacyRedeemDomain: Equatable {
 
     static func cleanupSubviews<T>() -> Effect<T, Never> {
         Effect.concatenate(
-            PharmacyContactDomain.cleanup()
+            PharmacyContactDomain.cleanup(),
+            CardWallIntroductionDomain.cleanup()
         )
     }
 
     enum Route: Equatable {
         case redeemSuccess(RedeemSuccessDomain.State)
         case contact(PharmacyContactDomain.State)
+        case cardWall(CardWallIntroductionDomain.State)
+        case alert(AlertState<Action>)
 
         enum Tag: Int {
             case redeemSuccess
             case contact
+            case cardWall
+            case alert
         }
 
         var tag: Tag {
@@ -58,6 +66,10 @@ enum PharmacyRedeemDomain: Equatable {
                 return .redeemSuccess
             case .contact:
                 return .contact
+            case .cardWall:
+                return .cardWall
+            case .alert:
+                return .alert
             }
         }
     }
@@ -74,7 +86,6 @@ enum PharmacyRedeemDomain: Equatable {
         var pharmacy: PharmacyLocation
         var selectedErxTasks: Set<ErxTask> = []
         var orderResponses: IdentifiedArrayOf<OrderResponse> = []
-        var alertState: AlertState<Action>?
         var selectedShipmentInfo: ShipmentInfo?
         var profile: Profile?
         var route: Route?
@@ -87,22 +98,21 @@ enum PharmacyRedeemDomain: Equatable {
         case selectedShipmentInfoReceived(Result<ShipmentInfo?, LocalStoreError>)
         /// Register selected profile listener
         case registerSelectedProfileListener
+        /// Called when the selected profile changes
         case selectedProfileReceived(Result<Profile, LocalStoreError>)
-        /// Closes the details page
-        case close
         /// Redeem the selected prescriptions
         case redeem
         /// Called when redeem network call finishes
         case redeemReceived(Result<IdentifiedArrayOf<OrderResponse>, RedeemServiceError>)
-        /// Called when a prescription has been selected
+        /// Called when a prescription has been selected or deselected
         case didSelect(String)
-        case alertDismissButtonTapped
-        case alertShowPharmacyContactButtonTapped
+        /// Actions for subdomains and navigation
         case redeemSuccessView(action: RedeemSuccessDomain.Action)
-        /// Called when contact has been selected
-        case showPharmacyContact
         case pharmacyContact(action: PharmacyContactDomain.Action)
+        case cardWall(action: CardWallIntroductionDomain.Action)
         case setNavigation(tag: Route.Tag?)
+        /// Closes action used by parent domains to close the entire navigationn stack
+        case close
     }
 
     struct Environment {
@@ -111,6 +121,10 @@ enum PharmacyRedeemDomain: Equatable {
         let shipmentInfoStore: ShipmentInfoDataStore
         let redeemService: RedeemService
         let inputValidator: RedeemInputValidator
+        let serviceLocator: ServiceLocator
+        let signatureProvider: SecureEnclaveSignatureProvider
+        let userSessionProvider: UserSessionProvider
+        let accessibilityAnnouncementReceiver: (String) -> Void
     }
 
     static let domainReducer = Reducer { state, action, environment in
@@ -122,8 +136,8 @@ enum PharmacyRedeemDomain: Equatable {
                 .cancellable(id: Token.shipmentInfoStore, cancelInFlight: true)
                 .receive(on: environment.schedulers.main)
                 .eraseToEffect()
-        case let .selectedShipmentInfoReceived(.success(shipmentInfo)):
-            if let selectedShipmentInfo = shipmentInfo {
+        case let .selectedShipmentInfoReceived(result):
+            if case let .success(shipmentInfo) = result, let selectedShipmentInfo = shipmentInfo {
                 state.selectedShipmentInfo = selectedShipmentInfo
             } else {
                 state.selectedShipmentInfo = state.erxTasks.compactMap { $0.patient?.shipmentInfo() }.first
@@ -141,13 +155,6 @@ enum PharmacyRedeemDomain: Equatable {
         case let .selectedProfileReceived(.success(profile)):
             state.profile = profile
             return .none
-        case .selectedShipmentInfoReceived(.failure):
-            state.selectedShipmentInfo = state.erxTasks.compactMap { $0.patient?.shipmentInfo() }.first
-            return .none
-        case .close:
-            state.alertState = nil
-            // closing is handled in parent reducer
-            return cleanupSubviews()
         case .redeem:
             state.orderResponses = []
             guard !state.selectedErxTasks.isEmpty else {
@@ -156,23 +163,21 @@ enum PharmacyRedeemDomain: Equatable {
 
             if case let .invalid(error) = environment.inputValidator
                 .validate(state.selectedShipmentInfo, for: state.redeemOption) {
-                state.alertState = AlertStates.missingContactInfo(with: error)
+                state.route = .alert(AlertStates.missingContactInfo(with: error))
                 return .none
             }
             return environment.redeem(orders: state.orders)
-                .map(Action.redeemReceived)
                 .cancellable(id: Token.redeem, cancelInFlight: true)
         case let .redeemReceived(.success(orderResponses)):
             state.orderResponses = orderResponses
             if orderResponses.arePartiallySuccessful || orderResponses.areFailing {
-                state.alertState = AlertStates.failingRequest(count: orderResponses.failedCount)
-                return .none
+                state.route = .alert(AlertStates.failingRequest(count: orderResponses.failedCount))
             } else if orderResponses.areSuccessful {
                 state.route = .redeemSuccess(RedeemSuccessDomain.State(redeemOption: state.redeemOption))
             }
             return .none
         case let .redeemReceived(.failure(error)):
-            state.alertState = AlertStates.alert(for: error)
+            state.route = .alert(AlertStates.alert(for: error))
             return .none
         case let .didSelect(taskID):
             if let erxTask = state.erxTasks.first(where: { $0.id == taskID }) {
@@ -183,35 +188,40 @@ enum PharmacyRedeemDomain: Equatable {
                 }
             }
             return .none
-        case .alertDismissButtonTapped:
-            state.alertState = nil
-            return .none
-        case .alertShowPharmacyContactButtonTapped:
-            state.alertState = nil
-            state.route = .contact(
-                .init(shipmentInfo: state.selectedShipmentInfo, service: environment.inputValidator.service)
-            )
-            return .none
         case .redeemSuccessView(action: .close):
             state.route = nil
             return Effect(value: .close)
-        case .showPharmacyContact:
-            state.route = .contact(
-                .init(shipmentInfo: state.selectedShipmentInfo, service: environment.inputValidator.service)
-            )
-            return .none
-        case .pharmacyContact(.close):
+        case .pharmacyContact(.close), .cardWall(.close):
             state.route = nil
             return cleanupSubviews()
-        case .setNavigation(tag: nil):
-            state.route = nil
+        case let .setNavigation(tag: tag):
+            switch tag {
+            case .contact:
+                state.route = .contact(
+                    .init(shipmentInfo: state.selectedShipmentInfo, service: environment.inputValidator.service)
+                )
+            case .redeemSuccess:
+                state.route = .redeemSuccess(RedeemSuccessDomain.State(redeemOption: state.redeemOption))
+            case .cardWall:
+                state.route = .cardWall(CardWallIntroductionDomain.State(
+                    isNFCReady: environment.serviceLocator.deviceCapabilities.isNFCReady,
+                    profileId: environment.userSession.profileId
+                ))
+            case .alert: break
+            case .none: state.route = nil
+            }
             return .none
-        case .setNavigation, .pharmacyContact, .redeemSuccessView:
+        case .close:
+            state.route = nil
+            // closing is handled in parent reducer
+            return cleanupSubviews()
+        case .cardWall, .pharmacyContact, .redeemSuccessView:
             return .none
         }
     }
 
     static let reducer: Reducer = .combine(
+        cardWallPullbackReducer,
         pharmacyContactPullbackReducer,
         redeemSuccessPullbackReducer,
         domainReducer
@@ -234,6 +244,24 @@ enum PharmacyRedeemDomain: Equatable {
             state: (\State.route).appending(path: /Route.redeemSuccess),
             action: /PharmacyRedeemDomain.Action.redeemSuccessView(action:)
         ) { _ in RedeemSuccessDomain.Environment() }
+
+    static let cardWallPullbackReducer: Reducer =
+        CardWallIntroductionDomain.reducer._pullback(
+            state: (\State.route).appending(path: /Route.cardWall),
+            action: /PharmacyRedeemDomain.Action.cardWall(action:)
+        ) { globalEnvironment in
+            CardWallIntroductionDomain.Environment(
+                userSession: globalEnvironment.userSession,
+                userSessionProvider: globalEnvironment.userSessionProvider,
+                sessionProvider: DefaultSessionProvider(
+                    userSessionProvider: globalEnvironment.userSessionProvider,
+                    userSession: globalEnvironment.userSession
+                ),
+                schedulers: globalEnvironment.schedulers,
+                signatureProvider: globalEnvironment.signatureProvider,
+                accessibilityAnnouncementReceiver: globalEnvironment.accessibilityAnnouncementReceiver
+            )
+        }
 }
 
 extension PharmacyRedeemDomain {
@@ -242,13 +270,13 @@ extension PharmacyRedeemDomain {
             guard let message = error.recoverySuggestion else {
                 return AlertState(
                     title: TextState(error.localizedDescriptionWithErrorList),
-                    dismissButton: .default(TextState(L10n.alertBtnOk), action: .send(.alertDismissButtonTapped))
+                    dismissButton: .default(TextState(L10n.alertBtnOk), action: .send(.setNavigation(tag: .none)))
                 )
             }
             return AlertState(
                 title: TextState(error.localizedDescriptionWithErrorList),
                 message: TextState(message),
-                dismissButton: .default(TextState(L10n.alertBtnOk), action: .send(.alertDismissButtonTapped))
+                dismissButton: .default(TextState(L10n.alertBtnOk), action: .send(.setNavigation(tag: .none)))
             )
         }
 
@@ -258,11 +286,11 @@ extension PharmacyRedeemDomain {
                 message: TextState(localizedMessage),
                 primaryButton: .default(
                     TextState(L10n.phaRedeemBtnAlertComplete),
-                    action: .send(.alertShowPharmacyContactButtonTapped)
+                    action: .send(.setNavigation(tag: .contact))
                 ),
                 secondaryButton: .cancel(
                     TextState(L10n.phaRedeemBtnAlertCancel),
-                    action: .send(.alertDismissButtonTapped)
+                    action: .send(.setNavigation(tag: .none))
                 )
             )
         }
@@ -271,7 +299,7 @@ extension PharmacyRedeemDomain {
             AlertState(
                 title: TextState(L10n.phaRedeemAlertTitleFailure(count)),
                 message: TextState(L10n.phaRedeemAlertMessageFailure),
-                dismissButton: .default(TextState(L10n.alertBtnOk), action: .send(.alertDismissButtonTapped))
+                dismissButton: .default(TextState(L10n.alertBtnOk), action: .send(.setNavigation(tag: .none)))
             )
         }
     }
@@ -284,56 +312,23 @@ extension PharmacyRedeemDomain.State {
     }
 }
 
-extension Sequence where Self.Element == ErxTask {
-    func asOrders(
-        orderId: UUID,
-        _ redeemOption: RedeemOption,
-        for pharmacy: PharmacyLocation,
-        with shipmentInfo: ShipmentInfo?
-    ) -> [Order] {
-        map { $0.asOrder(orderId: orderId, redeemOption, for: pharmacy, with: shipmentInfo) }
-    }
-}
-
-extension ErxTask {
-    func asOrder(orderId: UUID, _ redeemOption: RedeemOption, for pharmacy: PharmacyLocation,
-                 with shipmentInfo: ShipmentInfo?) -> Order {
-        let transactionId = UUID()
-        return Order(
-            orderID: orderId,
-            redeemType: redeemOption,
-            name: shipmentInfo?.name,
-            address: Address(
-                street: shipmentInfo?.street,
-                detail: shipmentInfo?.addressDetail,
-                zip: shipmentInfo?.zip,
-                city: shipmentInfo?.city
-            ),
-            hint: shipmentInfo?.deliveryInfo,
-            text: nil, // TODO: other ticket //swiftlint:disable:this todo
-            phone: shipmentInfo?.phone,
-            mail: shipmentInfo?.mail,
-            transactionID: transactionId,
-            taskID: id,
-            accessCode: accessCode ?? "",
-            endpoint: pharmacy.avsEndpoints?.url(
-                for: redeemOption,
-                transactionId: transactionId.uuidString,
-                telematikId: pharmacy.telematikID
-            ),
-            recipients: pharmacy.avsCertificates,
-            telematikId: pharmacy.telematikID
-        )
-    }
-}
-
 extension PharmacyRedeemDomain.Environment {
     func redeem(
         orders: [Order]
-    ) -> Effect<Result<IdentifiedArrayOf<OrderResponse>, RedeemServiceError>, Never> {
-        redeemService.redeem(orders)
+    ) -> Effect<PharmacyRedeemDomain.Action, Never> {
+        redeemService.redeem(orders) // -> AnyPublisher<IdentifiedArrayOf<OrderResponse>, RedeemServiceError>
+            .map { orderResponses -> PharmacyRedeemDomain.Action in
+                PharmacyRedeemDomain.Action.redeemReceived(.success(orderResponses))
+            }
+            .catch { redeemError -> Effect<PharmacyRedeemDomain.Action, Never> in
+                if redeemError == .noTokenAvailable {
+                    return Effect(value: PharmacyRedeemDomain.Action.setNavigation(tag: .cardWall))
+                } else {
+                    return Effect(value: PharmacyRedeemDomain.Action.redeemReceived(.failure(redeemError)))
+                }
+            }
             .receive(on: schedulers.main.animation())
-            .catchToEffect()
+            .eraseToEffect()
     }
 }
 
@@ -445,8 +440,11 @@ extension PharmacyRedeemDomain {
             userSession: DummySessionContainer(),
             shipmentInfoStore: DemoShipmentInfoStore(),
             redeemService: DemoRedeemService(),
-            inputValidator: DemoRedeemInputValidator()
-        )
+            inputValidator: DemoRedeemInputValidator(),
+            serviceLocator: ServiceLocator(),
+            signatureProvider: DummySecureEnclaveSignatureProvider(),
+            userSessionProvider: DummyUserSessionProvider()
+        ) { _ in }
         static let store = Store(initialState: state,
                                  reducer: reducer,
                                  environment: environment)

@@ -66,11 +66,11 @@ struct PharmacyFilterBar<FilterType: Identifiable>: View {
                     .accessibility(identifier: A11y.pharmacySearch.phaFilterFilterList)
                 }
             }
-            .introspectScrollView { view in
-                view.clipsToBounds = false
-                view.alwaysBounceHorizontal = false
-            }
             .padding(.vertical, 8)
+        }
+        .introspectScrollView { view in
+            view.clipsToBounds = false
+            view.alwaysBounceHorizontal = false
         }
         .accessibility(identifier: A11y.pharmacySearch.phaFilterBar)
         .accentColor(Colors.primary)

@@ -63,7 +63,11 @@ class PharmacyRedeemDomainTests: XCTestCase {
                 userSession: mockUserSession,
                 shipmentInfoStore: mockShipmentInfoDataStore,
                 redeemService: mockRedeemService,
-                inputValidator: mockRedeemValidator
+                inputValidator: mockRedeemValidator,
+                serviceLocator: ServiceLocator(),
+                signatureProvider: MockSecureEnclaveSignatureProvider(),
+                userSessionProvider: MockUserSessionProvider(),
+                accessibilityAnnouncementReceiver: { _ in }
             )
         )
     }
@@ -113,11 +117,28 @@ class PharmacyRedeemDomainTests: XCTestCase {
         }
 
         sut.send(.redeem)
-        sut.receive(.redeemReceived(.failure(RedeemServiceError.noTokenAvailable))) {
-            $0.orderResponses = []
-            $0.alertState = PharmacyRedeemDomain.AlertStates.alert(for: .noTokenAvailable)
+
+        let expectedCardWallState = CardWallIntroductionDomain.State(
+            isNFCReady: true,
+            profileId: mockUserSession.profileId,
+            route: nil
+        )
+        sut.receive(.setNavigation(tag: .cardWall)) {
+            $0.route = PharmacyRedeemDomain.Route.cardWall(expectedCardWallState)
         }
     }
+
+    let shipmentInfo = ShipmentInfo(
+        identifier: UUID(),
+        name: "Ludger Königsstein",
+        street: "Musterstr. 1",
+        addressDetail: "Postfach 1212",
+        zip: "10623",
+        city: "Berlin",
+        phone: "0177123456",
+        mail: "mail@gematik.de",
+        deliveryInfo: "Bitte klingeln."
+    )
 
     func testRedeemHappyPath() {
         let inputTasks = ErxTask.Fixtures.erxTasks
@@ -129,19 +150,8 @@ class PharmacyRedeemDomainTests: XCTestCase {
         )
         let sut = testStore(for: initialState)
 
-        let expectedShipmentInfo = ShipmentInfo(
-            identifier: UUID(),
-            name: "Ludger Königsstein",
-            street: "Musterstr. 1",
-            addressDetail: "Postfach 1212",
-            zip: "10623",
-            city: "Berlin",
-            phone: "0177123456",
-            mail: "mail@gematik.de",
-            deliveryInfo: "Bitte klingeln."
-        )
+        let expectedShipmentInfo = shipmentInfo
         mockRedeemValidator.returnValue = .valid
-
         mockShipmentInfoDataStore.selectedShipmentInfoReturnValue = Just(expectedShipmentInfo)
             .setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
         mockUserSession.isLoggedIn = true
@@ -170,12 +180,7 @@ class PharmacyRedeemDomainTests: XCTestCase {
             for task in inputTasks {
                 let response = $0.orderResponses.first { $0.requested.taskID == task.id }
                 expect(response?.requested.name) == expectedShipmentInfo.name
-                expect(response?.requested.address) == Address(
-                    street: expectedShipmentInfo.street,
-                    detail: expectedShipmentInfo.addressDetail,
-                    zip: expectedShipmentInfo.zip,
-                    city: expectedShipmentInfo.city
-                )
+                expect(response?.requested.address) == expectedShipmentInfo.address
                 expect(response?.requested.hint) == expectedShipmentInfo.deliveryInfo
                 expect(response?.requested.phone) == expectedShipmentInfo.phone
                 expect(response?.requested.mail) == expectedShipmentInfo.mail
@@ -192,14 +197,83 @@ class PharmacyRedeemDomainTests: XCTestCase {
         }
     }
 
-    func testLoadingProfile() {
+    func testRedeemWithPartialSuccess() {
+        // given
         let inputTasks = ErxTask.Fixtures.erxTasks
-        let sut = testStore(for: PharmacyRedeemDomain.State(
+        let initialState = PharmacyRedeemDomain.State(
             redeemOption: .onPremise,
             erxTasks: inputTasks,
             pharmacy: pharmacy,
             selectedErxTasks: Set(inputTasks)
-        ))
+        )
+        let sut = testStore(for: initialState)
+
+        let expectedShipmentInfo = shipmentInfo
+        mockRedeemValidator.returnValue = .valid
+        mockShipmentInfoDataStore.selectedShipmentInfoReturnValue = Just(expectedShipmentInfo)
+            .setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
+        mockUserSession.isLoggedIn = true
+
+        let expectedError = RedeemServiceError.eRxRepository(.remote(.notImplemented))
+        var expectedOrderResponses = IdentifiedArrayOf<OrderResponse>()
+        mockRedeemService.redeemOrdersClosure = { orders in
+            var orderResponses = orders.map { order in
+                OrderResponse(requested: order, result: .success(true))
+            }
+            // let one of the response be failing
+            orderResponses[0] = OrderResponse(requested: orderResponses[0].requested, result: .failure(expectedError))
+            expectedOrderResponses = IdentifiedArrayOf(uniqueElements: orderResponses)
+            return Just(expectedOrderResponses)
+                .setFailureType(to: RedeemServiceError.self)
+                .eraseToAnyPublisher()
+        }
+
+        // when redeeming
+        sut.send(.redeem)
+        sut.receive(.redeemReceived(.success(expectedOrderResponses))) {
+            $0.orderResponses = expectedOrderResponses
+            $0
+                .route = .alert(PharmacyRedeemDomain.AlertStates
+                    .failingRequest(count: expectedOrderResponses.failedCount))
+        }
+    }
+
+    func testRedeemWithFailure() {
+        // given
+        let inputTasks = ErxTask.Fixtures.erxTasks
+        let initialState = PharmacyRedeemDomain.State(
+            redeemOption: .onPremise,
+            erxTasks: inputTasks,
+            pharmacy: pharmacy,
+            selectedErxTasks: Set(inputTasks)
+        )
+        let sut = testStore(for: initialState)
+
+        let expectedShipmentInfo = shipmentInfo
+        mockRedeemValidator.returnValue = .valid
+        mockShipmentInfoDataStore.selectedShipmentInfoReturnValue = Just(expectedShipmentInfo)
+            .setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
+        mockUserSession.isLoggedIn = true
+        let expectedError = RedeemServiceError.internalError(.missingTelematikId)
+        mockRedeemService.redeemReturnValue = Fail(error: expectedError).eraseToAnyPublisher()
+
+        // when redeeming
+        sut.send(.redeem)
+        sut.receive(.redeemReceived(.failure(expectedError))) {
+            $0.route = .alert(PharmacyRedeemDomain.AlertStates.alert(for: expectedError))
+        }
+    }
+
+    func testLoadingProfile() {
+        let inputTasks = ErxTask.Fixtures.erxTasks
+        let sut = testStore(
+            for: PharmacyRedeemDomain.State(
+                redeemOption: .onPremise,
+                erxTasks: inputTasks,
+                pharmacy: pharmacy,
+                selectedErxTasks: Set(inputTasks)
+            )
+        )
 
         let expectedProfile = Profile(name: "Anna Vetter", color: Profile.Color.yellow)
         mockUserSession.profileReturnValue = Just(expectedProfile).setFailureType(to: LocalStoreError.self)
@@ -214,12 +288,14 @@ class PharmacyRedeemDomainTests: XCTestCase {
 
     func testRedeemWithInvalidInput() {
         let inputTasks = ErxTask.Fixtures.erxTasks
-        let sut = testStore(for: PharmacyRedeemDomain.State(
-            redeemOption: .shipment,
-            erxTasks: inputTasks,
-            pharmacy: pharmacy,
-            selectedErxTasks: Set(inputTasks)
-        ))
+        let sut = testStore(
+            for: PharmacyRedeemDomain.State(
+                redeemOption: .shipment,
+                erxTasks: inputTasks,
+                pharmacy: pharmacy,
+                selectedErxTasks: Set(inputTasks)
+            )
+        )
 
         let expectedShipmentInfo = ShipmentInfo(
             identifier: UUID(),
@@ -240,7 +316,7 @@ class PharmacyRedeemDomainTests: XCTestCase {
         mockRedeemValidator.returnValue = .invalid("Invalid Input")
 
         sut.send(.redeem) {
-            $0.alertState = PharmacyRedeemDomain.AlertStates.missingContactInfo(with: "Invalid Input")
+            $0.route = .alert(PharmacyRedeemDomain.AlertStates.missingContactInfo(with: "Invalid Input"))
         }
     }
 

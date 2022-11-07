@@ -33,11 +33,13 @@ enum PharmacySearchFilterDomain: Equatable {
         case ready
         case delivery
         case shipment
+        case currentLocation
 
         private static let openIdentifier = UUID()
         private static let readyIdentifier = UUID()
         private static let deliveryIdentifier = UUID()
         private static let shipmentIdentifier = UUID()
+        private static let currentLocationIdentifier = UUID()
 
         var id: UUID {
             switch self {
@@ -49,6 +51,8 @@ enum PharmacySearchFilterDomain: Equatable {
                 return Self.deliveryIdentifier
             case .shipment:
                 return Self.shipmentIdentifier
+            case .currentLocation:
+                return Self.currentLocationIdentifier
             }
         }
 
@@ -62,6 +66,8 @@ enum PharmacySearchFilterDomain: Equatable {
                 return L10n.phaSearchTxtFilterDelivery.key
             case .shipment:
                 return L10n.phaSearchTxtFilterShipment.key
+            case .currentLocation:
+                return L10n.phaSearchTxtFilterCurrentLocation.key
             }
         }
     }
@@ -91,6 +97,24 @@ enum PharmacySearchFilterDomain: Equatable {
                 state.pharmacyFilterOptions.append(filterOption)
             }
             return .none
+        }
+    }
+}
+
+extension Collection where Element == PharmacySearchFilterDomain.PharmacyFilterOption {
+    var asPharmacyRepositoryFilters: [PharmacyRepositoryFilter] {
+        compactMap { option in
+            switch option {
+            case .ready:
+                return PharmacyRepositoryFilter.ready
+            case .shipment:
+                return PharmacyRepositoryFilter.shipment
+            case .delivery:
+                return PharmacyRepositoryFilter.delivery
+            case .open,
+                 .currentLocation:
+                return nil
+            }
         }
     }
 }

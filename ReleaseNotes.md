@@ -1,3 +1,25 @@
+# Release 1.4.7
+
+### added (2 changes)
+
+- Add card wall to pharmacy redeem view
+- Add forgot PIN to settings view
+
+### changed (1 change)
+
+- Apply new style to PharmacySearchView
+
+### fixed (4 changes)
+
+- Fix using login option .loginWithBiometry when using DemoMode
+- Fix "Direktzuweisung" in demo mode to not have an access code
+- Fix redeem success video player
+- Fix missing eRpKit dependency for Pharmacy module
+
+### internal (1 change)
+
+- Add order and order detail domain tests
+
 # Release 1.4.6
 
 ### added (2 changes)

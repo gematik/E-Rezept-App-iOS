@@ -68,6 +68,41 @@ extension Backport where Content: View {
             content
         }
     }
+
+    @ViewBuilder
+    func searchable<Suggestions: View>(
+        text: Binding<String>,
+        prompt: LocalizedStringKey,
+        displayModeAlways: Bool = true,
+        @ViewBuilder suggestions: () -> Suggestions,
+        onSubmitOfSearch: @escaping () -> Void
+    ) -> some View {
+        if #available(iOS 15, *) {
+            // content
+            //  .searchable(text: text, placement: .navigationBarDrawer(displayMode: .always), prompt: prompt)
+            //  .onSubmit(of: .search, onSubmitOfSearch)
+            content.modifier(
+                SearchableModifier(
+                    text: text,
+                    prompt: prompt,
+                    displayMode: displayModeAlways ? .always : .automatic,
+                    onSubmitOfSearch: onSubmitOfSearch,
+                    suggestions: suggestions
+                )
+            )
+        } else {
+            content
+        }
+    }
+
+    @ViewBuilder
+    func searchCompletion(_ completion: String) -> some View {
+        if #available(iOS 15.0, *) {
+            content.searchCompletion(completion)
+        } else {
+            content
+        }
+    }
 }
 
 // Workaround for Xcode 13.2.1 Bug https://developer.apple.com/forums/thread/697070
@@ -90,13 +125,48 @@ struct ListRowSeparatorHiddenAllEdgesModifier: ViewModifier {
 
 // Workaround for Xcode 13.2.1 Bug https://developer.apple.com/forums/thread/697070
 @available(iOS 15.0, *)
-struct SearchableModifier: ViewModifier {
+struct SearchableModifier<Suggestions: View>: ViewModifier {
+    internal init(
+        text: Binding<String>,
+        prompt: LocalizedStringKey,
+        displayMode: SearchFieldPlacement.NavigationBarDrawerDisplayMode = .always,
+        onSubmitOfSearch: @escaping () -> Void,
+        @ViewBuilder suggestions: () -> Suggestions
+    ) {
+        self.text = text
+        self.prompt = prompt
+        self.onSubmitOfSearch = onSubmitOfSearch
+        self.suggestions = suggestions()
+        self.displayMode = displayMode
+    }
+
+    internal init(
+        text: Binding<String>,
+        prompt: LocalizedStringKey,
+        displayMode: SearchFieldPlacement.NavigationBarDrawerDisplayMode = .always,
+        onSubmitOfSearch: @escaping () -> Void
+    )
+        where Suggestions == EmptyView {
+        self.text = text
+        self.prompt = prompt
+        self.onSubmitOfSearch = onSubmitOfSearch
+        suggestions = EmptyView()
+        self.displayMode = displayMode
+    }
+
     let text: Binding<String>
     let prompt: LocalizedStringKey
     let onSubmitOfSearch: () -> Void
+    let suggestions: Suggestions
+    let displayMode: SearchFieldPlacement.NavigationBarDrawerDisplayMode
+
     func body(content: Content) -> some View {
         content
-            .searchable(text: text, placement: .navigationBarDrawer(displayMode: .always), prompt: prompt)
+            .searchable(text: text,
+                        placement: .navigationBarDrawer(displayMode: displayMode),
+                        prompt: prompt) {
+                suggestions
+            }
             .onSubmit(of: .search, onSubmitOfSearch)
     }
 }

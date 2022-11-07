@@ -19,27 +19,22 @@
 import AVKit
 import SwiftUI
 
-final class LoopingVideoPlayerContainerView: UIViewRepresentable {
+struct LoopingVideoPlayerContainerView: UIViewRepresentable {
     typealias UIViewType = PlayerView
 
     let url: URL
-    var player: PlayerView?
 
     init(withURL url: URL) {
         self.url = url
     }
 
     func makeUIView(context _: Context) -> PlayerView {
-        let newPlayer = PlayerView(withURL: url)
-        player = newPlayer
-        return newPlayer
+        PlayerView(withURL: url)
     }
 
-    func updateUIView(_ playerView: PlayerView, context _: Context) {
-        player = playerView
-    }
+    func updateUIView(_: PlayerView, context _: Context) {}
 
-    class PlayerView: UIView {
+    final class PlayerView: UIView {
         var player: AVPlayer? {
             get {
                 playerLayer?.player

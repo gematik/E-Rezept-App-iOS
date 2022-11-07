@@ -354,12 +354,12 @@ internal enum A11y {
       static let stgTxtAuditEventsNoProtocolDescription = "stg_txt_audit_events_no_protocol_description"
   }
     internal enum card {
-      static let stgTxtCardUnlockCard = "stg_txt_card_unlock_card"
+      static let stgTxtCardForgotPin = "stg_txt_card_forgot_pin"
       static let stgTxtCardCustomPin = "stg_txt_card_custom_pin"
+      static let stgTxtCardUnlockCard = "stg_txt_card_unlock_card"
       static let stgTxtCardOrderNewCard = "stg_txt_card_order_new_card"
       static let stgBtnCardResetAdvance = "stg_btn_card_reset_advance"
-      static let stgTxtCardResetIntroUnlockCard = "stg_txt_card_reset_intro_unlock_card"
-      static let stgTxtCardResetIntroCustomPin = "stg_txt_card_reset_intro_custom_pin"
+      static let stgTxtCardResetIntroHeadline = "stg_txt_card_reset_intro_headline"
       static let stgTxtCardResetIntroNeedYourCard = "stg_txt_card_reset_intro_need_your_card"
       static let stgTxtCardResetIntroNeedYourCardsPin = "stg_txt_card_reset_intro_need_your_cards_pin"
       static let stgTxtCardResetIntroNeedYourCardsPuk = "stg_txt_card_reset_intro_need_your_cards_puk"

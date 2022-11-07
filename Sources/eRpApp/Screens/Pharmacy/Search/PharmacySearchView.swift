@@ -17,8 +17,10 @@
 //
 
 import ComposableArchitecture
+import eRpStyleKit
 import Pharmacy
 import SwiftUI
+import UIKit
 
 struct PharmacySearchView: View {
     @AppStorage("debug_pharmacies") var debugPharmacies: [DebugPharmacy] = []
@@ -40,7 +42,6 @@ struct PharmacySearchView: View {
     }
 
     struct ViewState: Equatable {
-        let showLocationHint: Bool
         let routeTag: PharmacySearchDomain.Route.Tag?
         let searchText: String
         let searchState: PharmacySearchDomain.SearchState
@@ -48,8 +49,9 @@ struct PharmacySearchView: View {
         let filter: [PharmacyFilterBar<PharmacySearchFilterDomain.PharmacyFilterOption>
             .Filter<PharmacySearchFilterDomain.PharmacyFilterOption>]
 
+        let searchHistory: [String]
+
         init(state: PharmacySearchDomain.State) {
-            showLocationHint = state.showLocationHint
             routeTag = state.route?.tag
             searchText = state.searchText
             searchState = state.searchState
@@ -61,6 +63,16 @@ struct PharmacySearchView: View {
                     accessibilityIdentifier: option.rawValue
                 )
             }
+            searchHistory = searchText.lengthOfBytes(using: .utf8) == 0 ? state.searchHistory : []
+        }
+    }
+
+    var showFilterBar: Bool {
+        switch viewStore.searchState {
+        case .startView:
+            return false
+        default:
+            return true
         }
     }
 
@@ -83,12 +95,15 @@ struct PharmacySearchView: View {
 
             PharmacyDetailViewNavigation(store: store, isRedeemRecipe: isRedeemRecipe)
 
-            PharmacyFilterBar(openFiltersAction: {
-                viewStore.send(.setNavigation(tag: .filter), animation: .default)
-            }, removeFilter: { option in
-                viewStore.send(.removeFilterOption(option.element), animation: .default)
-            }, elements: viewStore.filter)
-                .padding(.horizontal)
+            if showFilterBar {
+                PharmacyFilterBar(openFiltersAction: {
+                    viewStore.send(.setNavigation(tag: .filter), animation: .default)
+                }, removeFilter: { option in
+                    viewStore.send(.removeFilterOption(option.element), animation: .default)
+                }, elements: viewStore.filter)
+                    .padding(.horizontal)
+                    .transition(.move(edge: .top).combined(with: .opacity))
+            }
 
             if showDebugPharmacies, !debugPharmacies.isEmpty {
                 List {
@@ -104,57 +119,28 @@ struct PharmacySearchView: View {
                 .listStyle(PlainListStyle())
             }
 
-            if case .searchResultOk = viewStore.searchState {
-                // List of (optional) location hint and populated search results >> location hint is scrollable
-                List {
-                    locationHintViewOrEmpty()
-                        .buttonStyle(PlainButtonStyle())
-                        .backport.listRowSeparatorHiddenAllEdges()
-
-                    ForEach(viewStore.pharmacies, id: \.self) { pharmacyViewModel in
-                        // todo rather than using a button, use directly a nav link
-                        Button(
-                            action: { viewStore.send(.showDetails(pharmacyViewModel)) },
-                            label: { PharmacySearchCell(pharmacy: pharmacyViewModel) }
-                        )
-                        .fixedSize(horizontal: false, vertical: true)
-                        .accessibility(identifier: A11y.pharmacySearch.phaSearchTxtResultListEntry)
-                    }
-                }
-                .listStyle(PlainListStyle())
-                .accessibility(identifier: A11y.pharmacySearch.phaSearchTxtResultList)
-            } else {
-                // Stack of (optional) location hint and further search result states (empty, error, etc.)
-                VStack {
-                    locationHintViewOrEmpty()
-                        .padding(.horizontal)
-                        .padding(.top, 6)
-
-                    Group {
-                        switch viewStore.searchState {
-                        case .searchRunning:
-                            SearchRunningView()
-                                .accessibility(identifier: A11y.pharmacySearch.phaSearchSearchRunning)
-                        case .localizingDevice:
-                            LocalizingDeviceView()
-                                .accessibility(identifier: A11y.pharmacySearch.phaSearchLocalizingDevice)
-                        case .startView:
-                            StartView()
-                                .accessibility(identifier: A11y.pharmacySearch.phaSearchLocalizingDevice)
-                        case .searchResultEmpty:
-                            NoResultsView()
-                                .accessibility(identifier: A11y.pharmacySearch.phaSearchNoResults)
-                                .padding(.horizontal, 30)
-                        case .searchAfterLocalizationWasAuthorized:
-                            EmptyView()
-                        case .error:
-                            ErrorView { viewStore.send(.performSearch) }
-                                .accessibility(identifier: A11y.pharmacySearch.phaSearchError)
-                        case .searchResultOk: // This case was already considered within `List` further above
-                            EmptyView()
-                        }
-                    }
-                    .frame(maxHeight: .infinity)
+            // Stack of (optional) location hint and further search result states (empty, error, etc.)
+            ScrollView {
+                switch viewStore.searchState {
+                case .searchRunning:
+                    SearchRunningView()
+                        .accessibility(identifier: A11y.pharmacySearch.phaSearchSearchRunning)
+                case .searchAfterLocalizationWasAuthorized,
+                     .localizingDevice:
+                    LocalizingDeviceView()
+                        .accessibility(identifier: A11y.pharmacySearch.phaSearchLocalizingDevice)
+                case .startView:
+                    PharmacySearchQuickFilterView(store: store.stateless)
+                        .accessibility(identifier: A11y.pharmacySearch.phaSearchLocalizingDevice)
+                case .searchResultEmpty:
+                    NoResultsView()
+                        .accessibility(identifier: A11y.pharmacySearch.phaSearchNoResults)
+                        .padding(.horizontal, 30)
+                case .error:
+                    ErrorView { viewStore.send(.performSearch) }
+                        .accessibility(identifier: A11y.pharmacySearch.phaSearchError)
+                case .searchResultOk: // This case was already considered within `List` further above
+                    ResultsView(viewStore: viewStore)
                 }
             }
 
@@ -221,31 +207,86 @@ struct PharmacySearchView: View {
             }
         }
         .navigationTitle(L10n.tabTxtPharmacySearch)
-        .navigationBarTitleDisplayMode(.inline)
         .backport.searchable(
-            text: viewStore.binding(
-                get: \.searchText,
-                send: PharmacySearchDomain.Action.searchTextChanged
-            ),
-            prompt: L10n.phaSearchTxtSearchHint.key
-        ) {
-            viewStore.send(.performSearch)
-        }
+            text: searchText,
+            prompt: L10n.phaSearchTxtSearchHint.key,
+            displayModeAlways: true,
+            suggestions: {
+                Suggestions(viewStore: viewStore)
+            },
+            onSubmitOfSearch: {
+                viewStore.send(.performSearch, animation: .default)
+            }
+        )
         .alert(
-            store.scope(state: \.alertState),
-            dismiss: .alertDismissButtonTapped
+            store.scope(state: (\PharmacySearchDomain.State.route)
+                .appending(path: /PharmacySearchDomain.Route.alert)
+                .extract(from:)),
+            dismiss: .setNavigation(tag: .none)
         )
         .introspectNavigationController { navigationController in
-            let navigationBar = navigationController.navigationBar
-            navigationBar.barTintColor = UIColor(Colors.systemBackground)
-            let navigationBarAppearance = UINavigationBarAppearance()
-            navigationBarAppearance.shadowColor = UIColor(Colors.systemColorClear)
-            navigationBarAppearance.backgroundColor = UIColor(Colors.systemBackground)
-            navigationBar.standardAppearance = navigationBarAppearance
+            if let items = navigationController.navigationBar.items {
+                for item in items {
+                    if let searchController = item.searchController {
+                        searchController.searchBar.setShowsCancelButton(
+                            viewStore.searchState != .startView,
+                            animated: true
+                        )
+                    }
+                }
+            }
         }
         .onAppear {
             viewStore.send(.onAppear)
         }
+        .onReceive(NotificationCenter.default
+            .publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+                viewStore.send(.onAppear)
+        }
+    }
+
+    struct Suggestions: View {
+        @ObservedObject
+        var viewStore: ViewStore<ViewState, PharmacySearchDomain.Action>
+
+        struct Suggestion: View {
+            internal init(_ text: String) {
+                self.text = text
+            }
+
+            let text: String
+
+            var body: some View {
+                VStack(alignment: .leading, spacing: 0) {
+                    Text(text)
+                        .backport.searchCompletion(text)
+                        .padding(.vertical, 8)
+                        .foregroundColor(Colors.systemLabel)
+                }
+            }
+        }
+
+        var body: some View {
+            if !viewStore.searchHistory.isEmpty {
+                Text(L10n.phaSearchTxtHistoryTitle)
+                    .font(.headline)
+                    .padding(.bottom)
+                    .padding(.top, 24)
+
+                ForEach(viewStore.searchHistory, id: \.hash) { item in
+                    Suggestion(item)
+                }
+            } else {
+                EmptyView()
+            }
+        }
+    }
+
+    var searchText: Binding<String> {
+        viewStore.binding(
+            get: \.searchText,
+            send: PharmacySearchDomain.Action.searchTextChanged
+        )
     }
 
     var pharmacySearchFilterStore: Store<PharmacySearchFilterDomain.State?, PharmacySearchFilterDomain.Action> {
@@ -259,44 +300,6 @@ struct PharmacySearchView: View {
 }
 
 extension PharmacySearchView {
-    @ViewBuilder
-    private func locationHintViewOrEmpty() -> some View {
-        WithViewStore(store) { viewStore in
-            if viewStore.state.showLocationHint {
-                LocalizationHintView(
-                    textAction: { viewStore.send(.hintButtonTapped) },
-                    closeAction: { viewStore.send(.hintDismissButtonTapped) }
-                )
-            } else {
-                EmptyView()
-            }
-        }
-    }
-
-    private struct LocalizationHintView: View {
-        let textAction: () -> Void
-        let closeAction: () -> Void
-
-        var body: some View {
-            HintView(
-                hint: Hint<PharmacySearchDomain.Action>(
-                    id: A11y.prescriptionDetails.prscDtlHntNoctuFeeWaiver,
-                    title: L10n.phaSearchTxtLocationHintTitle.text,
-                    message: L10n.phaSearchTxtLocationHintMessage.text,
-                    actionText: L10n.phaSearchBtnLocationHintAction,
-                    image: .init(name: Asset.Prescriptions.Details.apothekerin.name),
-                    closeAction: .hintDismissButtonTapped,
-                    style: .neutral,
-                    buttonStyle: .tertiary,
-                    imageStyle: .topAligned
-                ),
-                closeAccessibilityLable: L10n.phaSearchHintTxtClose.text,
-                textAction: textAction,
-                closeAction: closeAction
-            )
-        }
-    }
-
     private struct PharmacyDetailViewNavigation: View {
         let store: PharmacySearchDomain.Store
         let isRedeemRecipe: Bool
@@ -327,6 +330,28 @@ extension PharmacySearchView {
         }
     }
 
+    private struct ResultsView: View {
+        @ObservedObject
+        var viewStore: ViewStore<ViewState, PharmacySearchDomain.Action>
+
+        var body: some View {
+            SingleElementSectionContainer {
+                ForEach(viewStore.pharmacies, id: \.self) { pharmacyViewModel in
+                    Button(
+                        action: { viewStore.send(.showDetails(pharmacyViewModel)) },
+                        label: { Label(title: { PharmacySearchCell(pharmacy: pharmacyViewModel) }, icon: {}) }
+                    )
+                    .fixedSize(horizontal: false, vertical: true)
+                    .accessibility(identifier: A11y.pharmacySearch.phaSearchTxtResultListEntry)
+                    .buttonStyle(.navigation(showSeparator: true))
+                    .modifier(SectionContainerCellModifier(last: false))
+                }
+            }
+            .sectionContainerStyle(.inline)
+            .accessibility(identifier: A11y.pharmacySearch.phaSearchTxtResultList)
+        }
+    }
+
     private struct SearchRunningView: View {
         var body: some View {
             VStack(alignment: .leading) {
@@ -337,28 +362,27 @@ extension PharmacySearchView {
                         .padding()
                     Spacer()
                 }
+
                 Spacer()
             }
+            .transition(.opacity)
         }
     }
 
     private struct LocalizingDeviceView: View {
         var body: some View {
-            HStack {
-                ProgressView()
-                    .padding([.horizontal])
-                Text(L10n.phaSearchTxtProgressLocating)
-                    .padding()
+            VStack {
+                HStack {
+                    ProgressView()
+                        .padding(.horizontal)
+                    Text(L10n.phaSearchTxtProgressLocating)
+                        .padding()
+                    Spacer()
+                }
+
                 Spacer()
             }
-        }
-    }
-
-    private struct StartView: View {
-        var body: some View {
-            Text(L10n.phaSearchTxtMinSearchChars)
-                .padding()
-                .multilineTextAlignment(.center)
+            .transition(.opacity)
         }
     }
 
@@ -402,43 +426,10 @@ extension PharmacySearchView {
 
 struct PharmacySearchView_Previews: PreviewProvider {
     static var previews: some View {
-        Group {
-            // Search with result
-            NavigationView {
-                PharmacySearchView(store: PharmacySearchDomain.Dummies.store,
-                                   profileSelectionToolbarItemStore: ProfileSelectionToolbarItemDomain.Dummies.store,
-                                   isRedeemRecipe: false)
-            }
-            // Search with empty Result
-            NavigationView {
-                PharmacySearchView(
-                    store: PharmacySearchDomain.Dummies.storeFor(
-                        PharmacySearchDomain.Dummies.stateEmpty
-                    )
-                )
-            }
-            // Search running
-            NavigationView {
-                PharmacySearchView(
-                    store: PharmacySearchDomain.Dummies.storeFor(
-                        PharmacySearchDomain.Dummies.stateSearchRunning
-                    )
-                )
-            }
-            // Search with result dark mode
-            NavigationView {
-                PharmacySearchView(store: PharmacySearchDomain.Dummies.store)
-            }
-            .preferredColorScheme(.dark)
-
-            // Search with filtered elements
-            NavigationView {
-                PharmacySearchView(
-                    store: PharmacySearchDomain.Dummies.storeFor(
-                        PharmacySearchDomain.Dummies.stateFilterItems
-                    )
-                )
-            }
+        NavigationView {
+            PharmacySearchView(store: PharmacySearchDomain.Dummies.store,
+                               profileSelectionToolbarItemStore: ProfileSelectionToolbarItemDomain.Dummies.store,
+                               isRedeemRecipe: false)
         }
         .accentColor(Colors.primary700)
     }

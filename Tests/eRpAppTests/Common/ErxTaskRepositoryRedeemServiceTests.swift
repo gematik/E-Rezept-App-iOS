@@ -56,9 +56,7 @@ final class ErxTaskRepositoryRedeemServiceTests: XCTestCase {
     func testRedeemResponses_Success() throws {
         let sut = ErxTaskRepositoryRedeemService(
             erxTaskRepository: mockRepository,
-            isAuthenticated: Just(true)
-                .setFailureType(to: UserSessionError.self)
-                .eraseToAnyPublisher()
+            loginHandler: loginHandlerMock(authenticated: true)
         )
 
         mockRepository.redeemClosure = { erxTaskOrder in
@@ -124,9 +122,7 @@ final class ErxTaskRepositoryRedeemServiceTests: XCTestCase {
     func testRedeemResponses_PartialSuccess() throws {
         let sut = ErxTaskRepositoryRedeemService(
             erxTaskRepository: mockRepository,
-            isAuthenticated: Just(true)
-                .setFailureType(to: UserSessionError.self)
-                .eraseToAnyPublisher()
+            loginHandler: loginHandlerMock(authenticated: true)
         )
 
         var callsCount = 0
@@ -199,9 +195,7 @@ final class ErxTaskRepositoryRedeemServiceTests: XCTestCase {
     func testRedeemResponses_All_Fail() throws {
         let sut = ErxTaskRepositoryRedeemService(
             erxTaskRepository: mockRepository,
-            isAuthenticated: Just(true)
-                .setFailureType(to: UserSessionError.self)
-                .eraseToAnyPublisher()
+            loginHandler: loginHandlerMock(authenticated: true)
         )
 
         mockRepository.redeemClosure = { _ in
@@ -266,9 +260,7 @@ final class ErxTaskRepositoryRedeemServiceTests: XCTestCase {
     func testRedeemResponses_InputFailure() throws {
         let sut = ErxTaskRepositoryRedeemService(
             erxTaskRepository: mockRepository,
-            isAuthenticated: Just(true)
-                .setFailureType(to: UserSessionError.self)
-                .eraseToAnyPublisher()
+            loginHandler: loginHandlerMock(authenticated: true)
         )
 
         mockRepository.redeemClosure = { erxTaskOrder in
@@ -294,9 +286,7 @@ final class ErxTaskRepositoryRedeemServiceTests: XCTestCase {
     func testRedeemResponses_When_Not_Authenticated() throws {
         let sut = ErxTaskRepositoryRedeemService(
             erxTaskRepository: mockRepository,
-            isAuthenticated: Just(false)
-                .setFailureType(to: UserSessionError.self)
-                .eraseToAnyPublisher()
+            loginHandler: loginHandlerMock(authenticated: false)
         )
 
         mockRepository.redeemClosure = { erxTaskOrder in
@@ -311,5 +301,37 @@ final class ErxTaskRepositoryRedeemServiceTests: XCTestCase {
             }, expectations: { _ in
                 fail("not expected to receive any response")
             })
+    }
+
+    func testRedeemResponses_With_Error_From_LoginHanler() throws {
+        let loginHandlerMock = LoginHandlerMock()
+        let expectedError = LoginHandlerError.idpError(.biometrics(.packagingAuthCertificate))
+        loginHandlerMock.isAuthenticatedOrAuthenticateReturnValue = Just(LoginResult.failure(expectedError))
+            .eraseToAnyPublisher()
+        let sut = ErxTaskRepositoryRedeemService(
+            erxTaskRepository: mockRepository,
+            loginHandler: loginHandlerMock
+        )
+
+        mockRepository.redeemClosure = { erxTaskOrder in
+            Just(erxTaskOrder)
+                .setFailureType(to: ErxRepositoryError.self)
+                .eraseToAnyPublisher()
+        }
+
+        sut.redeem([order1, order2])
+            .test(failure: { error in
+                expect(error).to(equal(RedeemServiceError.loginHandler(error: expectedError)))
+            }, expectations: { _ in
+                fail("not expected to receive any response")
+            })
+    }
+
+    private func loginHandlerMock(authenticated: Bool) -> LoginHandlerMock {
+        let loginHandlerMock = LoginHandlerMock()
+        loginHandlerMock.isAuthenticatedReturnValue = Just(LoginResult.success(authenticated)).eraseToAnyPublisher()
+        loginHandlerMock.isAuthenticatedOrAuthenticateReturnValue = Just(LoginResult.success(authenticated))
+            .eraseToAnyPublisher()
+        return loginHandlerMock
     }
 }

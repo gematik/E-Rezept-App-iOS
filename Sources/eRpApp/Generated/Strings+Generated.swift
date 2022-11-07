@@ -1719,6 +1719,8 @@ import SwiftUI
     internal static let phaSearchTxtErrorNoServerResponseHeadline = StringAsset("pha_search_txt_error_no_server_response_headline")
     /// Please try again in a few minutes.
     internal static let phaSearchTxtErrorNoServerResponseSubheadline = StringAsset("pha_search_txt_error_no_server_response_subheadline")
+    /// In meiner Nähe
+    internal static let phaSearchTxtFilterCurrentLocation = StringAsset("pha_search_txt_filter_current_location")
     /// Delivery service
     internal static let phaSearchTxtFilterDelivery = StringAsset("pha_search_txt_filter_delivery")
     /// Open now
@@ -1729,6 +1731,8 @@ import SwiftUI
     internal static let phaSearchTxtFilterShipment = StringAsset("pha_search_txt_filter_shipment")
     /// Start the search by tapping Open on the keypad
     internal static let phaSearchTxtHintStartSearch = StringAsset("pha_search_txt_hint_start_search")
+    /// Zuletzt gesucht
+    internal static let phaSearchTxtHistoryTitle = StringAsset("pha_search_txt_history_title")
     /// Share your location to find pharmacies near you.
     internal static let phaSearchTxtLocationAlertMessage = StringAsset("pha_search_txt_location_alert_message")
     /// Share location
@@ -1751,6 +1755,16 @@ import SwiftUI
     internal static let phaSearchTxtProgressLocating = StringAsset("pha_search_txt_progress_locating")
     /// Searching...
     internal static let phaSearchTxtProgressSearch = StringAsset("pha_search_txt_progress_search")
+    /// Botendienst
+    internal static let phaSearchTxtQuickFilterDelivery = StringAsset("pha_search_txt_quick_filter_delivery")
+    /// Aktuell geöffnet und in meiner Nähe
+    internal static let phaSearchTxtQuickFilterNearbyAndOpen = StringAsset("pha_search_txt_quick_filter_nearby_and_open")
+    /// Filtern nach ...
+    internal static let phaSearchTxtQuickFilterOpenFilters = StringAsset("pha_search_txt_quick_filter_open_filters")
+    /// Filter
+    internal static let phaSearchTxtQuickFilterSectionTitle = StringAsset("pha_search_txt_quick_filter_section_title")
+    /// Versand
+    internal static let phaSearchTxtQuickFilterShipment = StringAsset("pha_search_txt_quick_filter_shipment")
     /// Search for name or address
     internal static let phaSearchTxtSearchHint = StringAsset("pha_search_txt_search_hint")
     /// Select pharmacy
@@ -2228,10 +2242,14 @@ import SwiftUI
     internal static let stgTxtAuditEventsTitle = StringAsset("stg_txt_audit_events_title")
     /// Wunsch-PIN wählen
     internal static let stgTxtCardCustomPin = StringAsset("stg_txt_card_custom_pin")
+    /// PIN vergessen
+    internal static let stgTxtCardForgotPin = StringAsset("stg_txt_card_forgot_pin")
     /// Neue Karte bestellen
     internal static let stgTxtCardOrderNewCard = StringAsset("stg_txt_card_order_new_card")
     /// Wunsch-PIN wählen
     internal static let stgTxtCardResetIntroCustomPin = StringAsset("stg_txt_card_reset_intro_custom_pin")
+    /// PIN vergessen
+    internal static let stgTxtCardResetIntroForgotPin = StringAsset("stg_txt_card_reset_intro_forgot_pin")
     /// Mit Ihrer PIN haben Sie eine 8-stellige PUK von Ihrer Versicherung erhalten.
     internal static let stgTxtCardResetIntroHint = StringAsset("stg_txt_card_reset_intro_hint")
     /// Mit Ihrer Karte haben Sie eine 6-stellige PIN von Ihrer Versicherung erhalten.

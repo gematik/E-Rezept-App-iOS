@@ -172,7 +172,11 @@ enum AppDomain {
                 fhirDateFormatter: appEnvironment.fhirDateFormatter,
                 openHoursCalculator: PharmacyOpenHoursCalculator(),
                 referenceDateForOpenHours: nil,
-                userSession: appEnvironment.userSession
+                userSession: appEnvironment.userSession,
+                openURL: UIApplication.shared.open(_:options:completionHandler:),
+                signatureProvider: appEnvironment.signatureProvider,
+                accessibilityAnnouncementReceiver: appEnvironment.accessibilityAnnouncementReceiver,
+                userSessionProvider: appEnvironment.userSessionProvider
             )
         }
 

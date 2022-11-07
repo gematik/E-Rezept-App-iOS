@@ -21,6 +21,7 @@ import ComposableArchitecture
 import eRpKit
 import FHIRClient
 import Foundation
+import HTTPClient
 import IDP
 
 enum GroupedPrescriptionListDomain {
@@ -260,7 +261,8 @@ extension Publisher where Output == GroupedPrescriptionListDomain.Action, Failur
         > in
         if case let ErxRepositoryError
             .remote(.fhirClientError(FHIRClient.Error.httpError(.httpError(urlError)))) = error,
-            urlError.code.rawValue == 403 || urlError.code.rawValue == 401 {
+            urlError.code.rawValue == HTTPStatusCode.forbidden.rawValue ||
+            urlError.code.rawValue == HTTPStatusCode.unauthorized.rawValue {
             return environment.cardWall()
                 .receive(on: environment.schedulers.main.animation())
                 .map(GroupedPrescriptionListDomain.Action.showCardWallReceived)

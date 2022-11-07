@@ -413,9 +413,9 @@ extension PharmacyLocation {
             telecom: telecom,
             hoursOfOperation: [
                 PharmacyLocation.HoursOfOperation(
-                    daysOfWeek: ["mon", "tue"],
+                    daysOfWeek: ["tue", "wed"],
                     openingTime: "08:00:00", // Invalid opening times to not fail snapshot tests
-                    closingTime: "07:00:00"
+                    closingTime: "18:00:00"
                 ),
             ]
         )
@@ -439,6 +439,18 @@ extension PharmacyLocation {
                 ]
             )
 
+        public static let referenceDate: Date = {
+            let dateComponents = DateComponents(
+                calendar: Calendar.current,
+                year: 2022,
+                hour: 13,
+                minute: 45,
+                weekday: 3,
+                weekOfYear: 25
+            ) // tue, 13:45
+            return dateComponents.date! // swiftlint:disable:this force_unwrapping
+        }()
+
         public static let pharmacies = [
             pharmacy,
             pharmacyInactive,
@@ -451,13 +463,35 @@ extension PharmacyLocation {
                         PharmacyLocation.PharmacyType.mobl],
                 address: address1,
                 telecom: telecom,
-                hoursOfOperation: []
+                hoursOfOperation: [
+                    PharmacyLocation.HoursOfOperation(
+                        daysOfWeek: ["mon", "tue", "wed"],
+                        openingTime: "07:00:00",
+                        closingTime: "14:00:00"
+                    ),
+                ]
             ),
             PharmacyLocation(
                 id: "4",
                 status: .inactive,
                 telematikID: "3-09.2.dfs.126",
                 name: "Eulenapotheke",
+                types: [PharmacyLocation.PharmacyType.outpharm],
+                address: address2,
+                telecom: telecom,
+                hoursOfOperation: [
+                    PharmacyLocation.HoursOfOperation(
+                        daysOfWeek: ["tue"],
+                        openingTime: "07:00:00",
+                        closingTime: "13:00:00"
+                    ),
+                ]
+            ),
+            PharmacyLocation(
+                id: "5",
+                status: .inactive,
+                telematikID: "3-09.2.dfs.127",
+                name: "Eulenapotheke 2",
                 types: [PharmacyLocation.PharmacyType.outpharm],
                 address: address2,
                 telecom: telecom,

@@ -32,7 +32,7 @@ struct HealthCardPasswordPinView: View {
     }
 
     struct ViewState: Equatable {
-        let withNewPin: Bool
+        let mode: HealthCardPasswordDomain.Mode
         let newPin1: String
         let newPin2: String
         let pinMayAdvance: Bool
@@ -40,7 +40,7 @@ struct HealthCardPasswordPinView: View {
         let routeTag: HealthCardPasswordDomain.Route.Tag
 
         init(state: HealthCardPasswordDomain.State) {
-            withNewPin = state.withNewPin
+            mode = state.mode
             newPin1 = state.newPin1
             newPin2 = state.newPin2
             pinMayAdvance = state.pinMayAdvance

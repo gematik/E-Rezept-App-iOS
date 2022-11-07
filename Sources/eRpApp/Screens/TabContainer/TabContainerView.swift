@@ -126,6 +126,17 @@ struct TabContainerView: View {
                 viewStore.send(.registerNewOrderMessageListener)
                 viewStore.send(.profile(action: .registerProfileListener))
             }
+            // Fix tabbar background becomming 100% transparent for dynamic views, in our case using quick filters
+            // within pharmacy search
+            // Source: https://www.hackingwithswift.com/forums/ios/tab-bar-transparent/10549
+            .onAppear {
+                if #available(iOS 15.0, *) {
+                    // correct the transparency bug for Tab bars
+                    let tabBarAppearance = UITabBarAppearance()
+                    tabBarAppearance.configureWithOpaqueBackground()
+                    UITabBar.appearance().scrollEdgeAppearance = tabBarAppearance
+                }
+            }
             .onDisappear {
                 viewStore.send(.profile(action: .unregisterProfileListener))
             }

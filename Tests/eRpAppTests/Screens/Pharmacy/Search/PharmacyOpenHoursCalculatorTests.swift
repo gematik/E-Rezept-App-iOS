@@ -15,6 +15,7 @@
 //  limitations under the Licence.
 //  
 //
+
 import ComposableArchitecture
 import ComposableCoreLocation
 @testable import eRpApp
@@ -26,22 +27,23 @@ import XCTest
 class PharmacyOpenHoursCalculatorTests: XCTestCase {
     let openHoursCalculator = PharmacyOpenHoursCalculator()
 
+    override func setUp() {
+        super.setUp()
+
+        mockDateFormatter = MockERPDateFormatter()
+    }
+
+    var mockDateFormatter: MockERPDateFormatter!
+
     func testOpenNow() throws {
         // When current test-time is set to 9:00am on 17th June 2021...
-        var dateComponents = DateComponents()
-        dateComponents.year = 2021
-        dateComponents.month = 6
-        dateComponents.day = 17
-        dateComponents.timeZone = TimeZone.current
-        dateComponents.hour = 9
-        dateComponents.minute = 00
-        let cal = Calendar(identifier: .gregorian)
-        let currentTestDateTime = cal.date(from: dateComponents)!
+        let currentTestDateTime = testDate(9, 00)
 
         // And closing time of pharmacy is set to 10:00 am on 17th June 2021...
-        dateComponents.hour = 10
-        dateComponents.minute = 00
-        let closingDateTime = cal.date(from: dateComponents)!
+        let closingDateTime = testDate(10, 00)
+
+        mockDateFormatter.stringFromReturnValue = "10:00 Uhr"
+
         // And test hours-of-operation are 8am to 10am for the same day...
         let hop = [
             PharmacyLocation.HoursOfOperation(
@@ -53,29 +55,17 @@ class PharmacyOpenHoursCalculatorTests: XCTestCase {
         // then expect pharmacy be open (for another 60 minutes)...
         expect(
             self.openHoursCalculator.determineOpeningState(
-                for: currentTestDateTime, hoursOfOperation: hop
+                for: currentTestDateTime,
+                hoursOfOperation: hop,
+                timeOnlyFormatter: self.mockDateFormatter
             )
-        ).to(
-            equal(
-                PharmacyOpenHoursCalculator.TodaysOpeningState.open(
-                    minutesTilClose: 60,
-                    closingDateTime: closingDateTime
-                )
-            )
-        )
+        ).to(equal(.open(closingDateTime: "10:00 Uhr")))
+        expect(self.mockDateFormatter.stringFromReceivedInvocations).to(equal([closingDateTime]))
     }
 
     func testClosedNow() throws {
         // When current test-time is set to 11:00am on 17th June 2021...
-        var dateComponents = DateComponents()
-        dateComponents.year = 2021
-        dateComponents.month = 6
-        dateComponents.day = 17
-        dateComponents.timeZone = TimeZone.current
-        dateComponents.hour = 11
-        dateComponents.minute = 00
-        let cal = Calendar(identifier: .gregorian)
-        let currentTestDateTime = cal.date(from: dateComponents)!
+        let currentTestDateTime = testDate(11, 00)
 
         // And test hours-of-operation are 8am to 10am for the same day...
         let hop = [
@@ -88,31 +78,41 @@ class PharmacyOpenHoursCalculatorTests: XCTestCase {
         // then expect pharmacy be closed...
         expect(
             self.openHoursCalculator.determineOpeningState(
-                for: currentTestDateTime, hoursOfOperation: hop
+                for: currentTestDateTime,
+                hoursOfOperation: hop,
+                timeOnlyFormatter: self.mockDateFormatter
             )
-        ).to(
-            equal(
-                PharmacyOpenHoursCalculator.TodaysOpeningState.closed
+        ).to(equal(.closed))
+    }
+
+    func testPharmacyIsMarkedClosedOnDifferentDays() throws {
+        // When current test-time is set to 11:00am on 17th June 2021...
+        let currentTestDateTime = testDate(11, 00)
+
+        // And test hours-of-operation are 8am to 10am for the same day...
+        let hop = [
+            PharmacyLocation.HoursOfOperation(
+                daysOfWeek: ["fri"],
+                openingTime: "8:00:00",
+                closingTime: "10:00:00"
+            ),
+        ]
+        // then expect pharmacy be closed...
+        expect(
+            self.openHoursCalculator.determineOpeningState(
+                for: currentTestDateTime,
+                hoursOfOperation: hop,
+                timeOnlyFormatter: self.mockDateFormatter
             )
-        )
+        ).to(equal(.closed))
     }
 
     func testOpenAfternoon() throws {
         // When current test-time is set to 16:00 on 17th June 2021...
-        var dateComponents = DateComponents()
-        dateComponents.year = 2021
-        dateComponents.month = 6
-        dateComponents.day = 17
-        dateComponents.timeZone = TimeZone.current
-        dateComponents.hour = 16
-        dateComponents.minute = 00
-        let cal = Calendar(identifier: .gregorian)
-        let currentTestDateTime = cal.date(from: dateComponents)!
+        let currentTestDateTime = testDate(16, 00)
 
         // And closing time of pharmacy is set to 10:00 and again to 18:00 on 17th June 2021...
-        dateComponents.hour = 18
-        dateComponents.minute = 00
-        let closingDateTime = cal.date(from: dateComponents)!
+        let closingDateTime = testDate(18, 00)
         // And test hours-of-operation are 8am to 10am and 15 to 18 for the same day...
         let hop = [
             PharmacyLocation.HoursOfOperation(
@@ -126,37 +126,98 @@ class PharmacyOpenHoursCalculatorTests: XCTestCase {
                 closingTime: "18:00:00"
             ),
         ]
+        mockDateFormatter.stringFromReturnValue = "18:00 Uhr"
         // then expect pharmacy be open (for another 120 minutes)...
         expect(
             self.openHoursCalculator.determineOpeningState(
-                for: currentTestDateTime, hoursOfOperation: hop
+                for: currentTestDateTime,
+                hoursOfOperation: hop,
+                timeOnlyFormatter: self.mockDateFormatter
             )
-        ).to(
-            equal(
-                PharmacyOpenHoursCalculator.TodaysOpeningState.open(
-                    minutesTilClose: 120,
-                    closingDateTime: closingDateTime
-                )
-            )
+        ).to(equal(.open(closingDateTime: "18:00 Uhr")))
+        expect(self.mockDateFormatter.stringFromReceivedInvocations).to(equal([closingDateTime]))
+    }
+
+    private func testDate(_ hour: Int, _ minutes: Int = 0) -> Date {
+        let dateComponents = DateComponents(
+            calendar: Calendar(identifier: .gregorian),
+            timeZone: .current,
+            year: 2021,
+            month: 6,
+            day: 17,
+            hour: hour,
+            minute: minutes
         )
+
+        return dateComponents.date!
+    }
+
+    func testOpenAfternoonMultipleDays() throws {
+        // When current test-time is set to 16:00 on 17th June 2021...
+        let currentTestDateTime = testDate(16, 00)
+
+        // And closing time of pharmacy is set to 10:00 and again to 18:00 on 17th June 2021...
+        let closingDateTime = testDate(18, 00)
+        // And test hours-of-operation are 8am to 10am and 15 to 18 for the same day...
+        let hop = [
+            PharmacyLocation.HoursOfOperation(
+                daysOfWeek: ["mon", "thu"],
+                openingTime: "8:00:00",
+                closingTime: "10:00:00"
+            ),
+            PharmacyLocation.HoursOfOperation(
+                daysOfWeek: ["mon", "thu"],
+                openingTime: "15:00:00",
+                closingTime: "18:00:00"
+            ),
+        ]
+        mockDateFormatter.stringFromReturnValue = "18:00 Uhr"
+        // then expect pharmacy be open (for another 120 minutes)...
+        expect(
+            self.openHoursCalculator.determineOpeningState(
+                for: currentTestDateTime,
+                hoursOfOperation: hop,
+                timeOnlyFormatter: self.mockDateFormatter
+            )
+        ).to(equal(.open(closingDateTime: "18:00 Uhr")))
+        expect(self.mockDateFormatter.stringFromReceivedInvocations).to(equal([closingDateTime]))
+    }
+
+    func testOpenAfternoonUnequalHoursMultipleDays() throws {
+        // When current test-time is set to 16:00 on 17th June 2021...
+        let currentTestDateTime = testDate(16, 00)
+
+        // And closing time of pharmacy is set to 10:00 and again to 18:00 on 17th June 2021...
+        let closingDateTime = testDate(18, 00)
+        // And test hours-of-operation are 8am to 10am and 15 to 18 for the same day...
+        let hop = [
+            PharmacyLocation.HoursOfOperation(
+                daysOfWeek: ["thu"],
+                openingTime: "8:00:00",
+                closingTime: "10:00:00"
+            ),
+            PharmacyLocation.HoursOfOperation(
+                daysOfWeek: ["mon", "thu"],
+                openingTime: "15:00:00",
+                closingTime: "18:00:00"
+            ),
+        ]
+        mockDateFormatter.stringFromReturnValue = "18:00 Uhr"
+        // then expect pharmacy be open (for another 120 minutes)...
+        expect(
+            self.openHoursCalculator.determineOpeningState(
+                for: currentTestDateTime,
+                hoursOfOperation: hop,
+                timeOnlyFormatter: self.mockDateFormatter
+            )
+        ).to(equal(.open(closingDateTime: "18:00 Uhr")))
+        expect(self.mockDateFormatter.stringFromReceivedInvocations).to(equal([closingDateTime]))
     }
 
     func testOpenSoon() throws {
         // When current test-time is set to 14:30 on 17th June 2021...
-        var dateComponents = DateComponents()
-        dateComponents.year = 2021
-        dateComponents.month = 6
-        dateComponents.day = 17
-        dateComponents.timeZone = TimeZone.current
-        dateComponents.hour = 14
-        dateComponents.minute = 30
-        let cal = Calendar(identifier: .gregorian)
-        let currentTestDateTime = cal.date(from: dateComponents)!
+        let currentTestDateTime = testDate(14, 30)
 
-        // And pharmacy openingDateTime to 15:00 on 17th June 2021...
-        dateComponents.hour = 15
-        dateComponents.minute = 00
-        let openingDateTime = cal.date(from: dateComponents)!
         // And test hours-of-operation are 8am to 10am and 15 to 18 for the same day...
         let hop = [
             PharmacyLocation.HoursOfOperation(
@@ -170,44 +231,30 @@ class PharmacyOpenHoursCalculatorTests: XCTestCase {
                 closingTime: "18:00:00"
             ),
         ]
+        mockDateFormatter.stringFromReturnValue = "15:00 Uhr"
         // then expect pharmacy be open soon (in 30 minutes)...
         expect(
             self.openHoursCalculator.determineOpeningState(
-                for: currentTestDateTime, hoursOfOperation: hop
+                for: currentTestDateTime,
+                hoursOfOperation: hop,
+                timeOnlyFormatter: self.mockDateFormatter
             )
-        ).to(
-            equal(
-                PharmacyOpenHoursCalculator.TodaysOpeningState.willOpen(
-                    minutesTilOpen: 30,
-                    openingDateTime: openingDateTime
-                )
-            )
-        )
+        ).to(equal(.willOpen(minutesTilOpen: 30, openingDateTime: "15:00 Uhr")))
     }
 
     func testOpenUnknownBecausOfEmptyHoursOfOperation() throws {
         // When current test-time is set to 14:30 on 17th June 2021...
-        var dateComponents = DateComponents()
-        dateComponents.year = 2021
-        dateComponents.month = 6
-        dateComponents.day = 17
-        dateComponents.timeZone = TimeZone.current
-        dateComponents.hour = 14
-        dateComponents.minute = 30
-        let cal = Calendar(identifier: .gregorian)
-        let currentTestDateTime = cal.date(from: dateComponents)!
+        let currentTestDateTime = testDate(14, 30)
 
         // And test hours-of-operation are empty
         let hop: [PharmacyLocation.HoursOfOperation] = []
         // then expect pharmacy be open soon (in 30 minutes)...
         expect(
             self.openHoursCalculator.determineOpeningState(
-                for: currentTestDateTime, hoursOfOperation: hop
+                for: currentTestDateTime,
+                hoursOfOperation: hop,
+                timeOnlyFormatter: self.mockDateFormatter
             )
-        ).to(
-            equal(
-                PharmacyOpenHoursCalculator.TodaysOpeningState.unknown
-            )
-        )
+        ).to(equal(.unknown))
     }
 }

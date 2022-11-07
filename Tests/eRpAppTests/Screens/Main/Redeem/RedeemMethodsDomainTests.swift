@@ -111,7 +111,10 @@ final class RedeemMethodsDomainTests: XCTestCase {
             environment: RedeemMethodsDomain.Environment(
                 schedulers: schedulers,
                 userSession: MockUserSession(),
-                fhirDateFormatter: FHIRDateFormatter.shared
+                fhirDateFormatter: FHIRDateFormatter.shared,
+                signatureProvider: MockSecureEnclaveSignatureProvider(),
+                userSessionProvider: MockUserSessionProvider(),
+                accessibilityAnnouncementReceiver: { _ in }
             )
         )
     }

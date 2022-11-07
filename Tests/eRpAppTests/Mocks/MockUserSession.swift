@@ -208,58 +208,6 @@ extension MockSecureUserStore: IDPStorage {
     }
 }
 
-class MockPharmacyRepository: PharmacyRepository {
-    func loadCached(by telematikId: String) -> AnyPublisher<PharmacyLocation?, PharmacyRepositoryError> {
-        let result = store.first(where: { $0.telematikID == telematikId })
-        return Just(result).setFailureType(to: PharmacyRepositoryError.self).eraseToAnyPublisher()
-    }
-
-    func searchRemote(searchTerm: String, position: Position?,
-                      filter _: [PharmacyRepositoryFilter])
-        -> AnyPublisher<[PharmacyLocation], PharmacyRepositoryError> {
-        let filteredResult = store.filter { pharmacy in
-            if !searchTerm.isEmpty,
-               let pharmName = pharmacy.name,
-               let position = position {
-                return pharmName.lowercased().contains(searchTerm.lowercased())
-                    && pharmacy.position?.latitude?.doubleValue == position.latitude
-                    && pharmacy.position?.longitude?.doubleValue == position.longitude
-            } else if !searchTerm.isEmpty,
-                      let pharmName = pharmacy.name {
-                return pharmName.lowercased().contains(searchTerm.lowercased())
-            } else if let position = position,
-                      let aLat = pharmacy.position?.latitude?.doubleValue,
-                      let aLon = pharmacy.position?.longitude?.doubleValue {
-                return fabs(aLat - position.latitude) < 0.1 && fabs(aLon - position.longitude) < 0.1
-            } else {
-                return false
-            }
-        }
-        return Just(filteredResult).setFailureType(to: PharmacyRepositoryError.self).eraseToAnyPublisher()
-    }
-
-    func loadLocal(by telematikId: String) -> AnyPublisher<PharmacyLocation?, PharmacyRepositoryError> {
-        let result = store.first(where: { $0.telematikID == telematikId })
-        return Just(result).setFailureType(to: PharmacyRepositoryError.self).eraseToAnyPublisher()
-    }
-
-    func loadLocalAll() -> AnyPublisher<[PharmacyLocation], PharmacyRepositoryError> {
-        Just(store).setFailureType(to: PharmacyRepositoryError.self).eraseToAnyPublisher()
-    }
-
-    func save(pharmacies: [PharmacyLocation]) -> AnyPublisher<Bool, PharmacyRepositoryError> {
-        store.append(contentsOf: pharmacies.filter { !store.contains($0) })
-        return Just(true).setFailureType(to: PharmacyRepositoryError.self).eraseToAnyPublisher()
-    }
-
-    func delete(pharmacies: [PharmacyLocation]) -> AnyPublisher<Bool, PharmacyRepositoryError> {
-        store.removeAll(where: { pharmacies.contains($0) })
-        return Just(true).setFailureType(to: PharmacyRepositoryError.self).eraseToAnyPublisher()
-    }
-
-    var store: [PharmacyLocation] = PharmacyLocation.Dummies.pharmacies
-}
-
 class FakeErxTaskRepository: ErxTaskRepository {
     typealias ErrorType = ErxRepositoryError
 

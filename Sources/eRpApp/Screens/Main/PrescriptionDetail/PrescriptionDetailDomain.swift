@@ -245,7 +245,9 @@ enum PrescriptionDetailDomain: Equatable {
     static let reducer: Reducer = .combine(
         domainReducer
     )
+}
 
+extension PrescriptionDetailDomain {
     static var confirmDeleteAlertState: AlertState<Action> = {
         AlertState<Action>(
             title: TextState(L10n.dtlTxtDeleteAlertTitle),

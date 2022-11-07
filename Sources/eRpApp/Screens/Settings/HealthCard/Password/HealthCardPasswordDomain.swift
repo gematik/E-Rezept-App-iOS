@@ -72,13 +72,13 @@ enum HealthCardPasswordDomain {
     }
 
     enum Mode {
-        case healthCardResetPinCounterNoNewSecret
-        case healthCardResetPinCounterWithNewSecret
-        case healthCardSetNewPinSecret
+        case forgotPin
+        case setCustomPin
+        case unlockCard
     }
 
     struct State: Equatable {
-        let withNewPin: Bool
+        let mode: HealthCardPasswordDomain.Mode
 
         var can = ""
         var puk = ""
@@ -90,8 +90,8 @@ enum HealthCardPasswordDomain {
 
         var route: Route = .introduction
 
-        init(withNewPin: Bool) {
-            self.withNewPin = withNewPin
+        init(mode: HealthCardPasswordDomain.Mode) {
+            self.mode = mode
         }
     }
 
@@ -146,7 +146,14 @@ enum HealthCardPasswordDomain {
             return .none
 
         case .readCard(.close):
-            state.route = state.withNewPin ? .pin : .puk
+            switch state.mode {
+            case .forgotPin:
+                state.route = .pin
+            case .setCustomPin:
+                state.route = .pin
+            case .unlockCard:
+                state.route = .puk
+            }
             return cleanupSubDomains()
         case .readCard(.navigateToSettings):
             state.route = .introduction
@@ -160,19 +167,52 @@ enum HealthCardPasswordDomain {
                 state.route = .can
                 return .none
             case .can:
-                state.route = state.withNewPin ? .oldPin : .puk
+                switch state.mode {
+                case .forgotPin:
+                    state.route = .puk
+                case .setCustomPin:
+                    state.route = .oldPin
+                case .unlockCard:
+                    state.route = .puk
+                }
                 return .none
             case .puk:
-                state.route =
-                    .readCard(.init(mode: .healthCardResetPinCounterNoNewSecret(can: state.can, puk: state.puk)))
+                switch state.mode {
+                case .forgotPin:
+                    state.route = .pin
+                case .setCustomPin:
+                    // inconsistent state
+                    break
+                case .unlockCard:
+                    state.route =
+                        .readCard(.init(mode: .healthCardResetPinCounterNoNewSecret(can: state.can, puk: state.puk)))
+                }
                 return .none
             case .oldPin:
                 state.route = .pin
                 return .none
             case .pin:
-                state.route = .readCard(
-                    .init(mode: .healthCardSetNewPinSecret(can: state.can, oldPin: state.oldPin, newPin: state.newPin1))
-                )
+                switch state.mode {
+                case .forgotPin:
+                    state.route = .readCard(.init(
+                        mode: .healthCardResetPinCounterWithNewSecret(
+                            can: state.can,
+                            puk: state.puk,
+                            newPin: state.newPin1
+                        )
+                    ))
+                case .setCustomPin:
+                    state.route = .readCard(.init(
+                        mode: .healthCardSetNewPinSecret(
+                            can: state.can,
+                            oldPin: state.oldPin,
+                            newPin: state.newPin1
+                        )
+                    ))
+                case .unlockCard:
+                    // inconsistent state
+                    break
+                }
                 return .none
             case .readCard,
                  .scanner:
@@ -195,13 +235,24 @@ enum HealthCardPasswordDomain {
             state.route = .pin
             return .none
         case .setNavigation(tag: .readCard):
-            state.route = state.withNewPin ?
-                .readCard(
+            switch state.mode {
+            case .forgotPin:
+                state.route = .readCard(.init(
+                    mode: .healthCardResetPinCounterWithNewSecret(
+                        can: state.can,
+                        puk: state.puk,
+                        newPin: state.newPin1
+                    )
+                ))
+            case .setCustomPin:
+                state.route = .readCard(
                     .init(mode: .healthCardSetNewPinSecret(can: state.can, oldPin: state.oldPin, newPin: state.newPin1))
-                ) :
-                .readCard(
+                )
+            case .unlockCard:
+                state.route = .readCard(
                     .init(mode: .healthCardResetPinCounterNoNewSecret(can: state.can, puk: state.puk))
                 )
+            }
             return .none
         case .setNavigation(tag: .scanner):
             state.route = .scanner
@@ -274,7 +325,7 @@ extension HealthCardPasswordDomain {
 
 extension HealthCardPasswordDomain {
     enum Dummies {
-        static let state = State(withNewPin: false)
+        static let state = State(mode: .unlockCard)
         static let environment = Environment(
             schedulers: Schedulers(),
             nfcSessionController: DummyNFCHealthCardPasswordController()

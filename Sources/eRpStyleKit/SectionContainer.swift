@@ -40,8 +40,7 @@ public struct SectionContainer<Header: View, Content: View, Footer: View>: View 
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .font(.headline)
-                .padding(.horizontal)
-                .padding(.top)
+                .padding(style.content.headerEdgeInsets)
             }
 
             VStack(spacing: 0) {
@@ -49,9 +48,13 @@ public struct SectionContainer<Header: View, Content: View, Footer: View>: View 
             }
             .frame(maxWidth: .infinity, alignment: .center)
             .background(Color(.tertiarySystemBackground))
-            .cornerRadius(16)
-            .border(style.content.borderColor, width: style.content.borderWidth, cornerRadius: 16)
-            .padding()
+            .cornerRadius(style.content.cornerRadius)
+            .border(
+                style.content.borderColor,
+                width: style.content.borderWidth,
+                cornerRadius: style.content.cornerRadius
+            )
+            .padding(style.content.edgeInsets)
 
             if let footer = footer() {
                 Group {

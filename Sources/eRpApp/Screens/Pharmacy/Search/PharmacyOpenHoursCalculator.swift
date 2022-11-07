@@ -24,8 +24,9 @@ struct PharmacyOpenHoursCalculator {
     enum TodaysOpeningState: Hashable, Equatable {
         case unknown
         case closed
-        case open(minutesTilClose: Int?, closingDateTime: Date)
-        case willOpen(minutesTilOpen: Int?, openingDateTime: Date)
+        case open(closingDateTime: String)
+        case closingSoon(closingDateTime: String)
+        case willOpen(minutesTilOpen: Int?, openingDateTime: String)
 
         var isOpen: Bool {
             if case .open = self {
@@ -35,14 +36,38 @@ struct PharmacyOpenHoursCalculator {
         }
     }
 
+    static let minimumOpenMinutesLeftBeforeWarn = 30
+
     func determineOpeningState(for date: Date,
-                               hoursOfOperation: [PharmacyLocation.HoursOfOperation])
+                               hoursOfOperation: [PharmacyLocation.HoursOfOperation],
+                               timeOnlyFormatter: ERPDateFormatter)
         -> TodaysOpeningState {
         let timeFormatter = createTimeFormatter()
 
+        // Map sets of days into single elements to reliably group entries for each day
+        // [(["mon", "tue"], 15:00 - 16:00)]
+        // ->
+        // [
+        //   (["mon"], 15:00 - 16:00),
+        //   (["tue"], 15:00 - 16:00)
+        // ]
+        let hoursOfOperation = hoursOfOperation.flatMap { hours in
+            hours.daysOfWeek.map { day in
+                PharmacyLocation.HoursOfOperation(
+                    daysOfWeek: [day],
+                    openingTime: hours.openingTime,
+                    closingTime: hours.closingTime
+                )
+            }
+        }
+
         let groupedByWeekday = Dictionary(grouping: hoursOfOperation) { $0.daysOfWeek.first }
         let todaysHoursOfOperation = groupedByWeekday[weekDayAs3CharString(from: date)]
-        var result = TodaysOpeningState.unknown
+
+        guard !hoursOfOperation.isEmpty else {
+            return TodaysOpeningState.unknown
+        }
+        var result = TodaysOpeningState.closed
 
         for hop in todaysHoursOfOperation ?? [] {
             if let openTimeString = hop.openingTime,
@@ -53,21 +78,26 @@ struct PharmacyOpenHoursCalculator {
                let closingDateTime = date.createSameDay(with: closingTime) {
                 // Is open right now?
                 if date > openingDateTime, date < closingDateTime {
-                    let minutesTilClose = Calendar.current.dateComponents([.minute], from: date, to: closingDateTime)
-                    result = TodaysOpeningState.open(
-                        minutesTilClose: minutesTilClose.minute,
-                        closingDateTime: closingDateTime
-                    )
-                    break // when it's open do not compare any other times
+                    let timeSpanTillClose = Calendar.current.dateComponents([.minute], from: date, to: closingDateTime)
+
+                    if let minutesTillClose = timeSpanTillClose.minute,
+                       minutesTillClose < Self.minimumOpenMinutesLeftBeforeWarn {
+                        return TodaysOpeningState.closingSoon(
+                            closingDateTime: timeOnlyFormatter.string(from: closingDateTime)
+                        )
+                    } else {
+                        return TodaysOpeningState.open(
+                            closingDateTime: timeOnlyFormatter.string(from: closingDateTime)
+                        )
+                    }
+
                     // if not open right now maybe opens later?
                 } else if openingDateTime > date {
                     let minutesTilOpen = Calendar.current.dateComponents([.minute], from: date, to: openingDateTime)
                     result = TodaysOpeningState.willOpen(
                         minutesTilOpen: minutesTilOpen.minute,
-                        openingDateTime: openingDateTime
+                        openingDateTime: timeOnlyFormatter.string(from: openingDateTime)
                     )
-                } else {
-                    result = TodaysOpeningState.closed
                 }
             }
         }

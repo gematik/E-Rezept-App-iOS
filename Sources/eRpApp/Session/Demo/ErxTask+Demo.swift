@@ -211,7 +211,7 @@ extension ErxTask {
         static let erxTask4: ErxTask = .init(
             identifier: "169.000.000.000.021.02",
             status: .ready,
-            accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
+            accessCode: nil, // A Direktzuweisung (169) does not have an access code
             fullUrl: nil,
             authoredOn: DemoDate.createDemoDate(.dayBeforeYesterday),
             expiresOn: DemoDate.createDemoDate(.ninetyTwoDaysAhead),

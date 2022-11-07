@@ -32,12 +32,12 @@ struct HealthCardPasswordCanView: View {
     }
 
     struct ViewState: Equatable {
-        let withNewPin: Bool
+        let mode: HealthCardPasswordDomain.Mode
         let canMayAdvance: Bool
         let routeTag: HealthCardPasswordDomain.Route.Tag
 
         init(state: HealthCardPasswordDomain.State) {
-            withNewPin = state.withNewPin
+            mode = state.mode
             canMayAdvance = state.canMayAdvance
             routeTag = state.route.tag
         }
@@ -51,8 +51,8 @@ struct HealthCardPasswordCanView: View {
 
             GreyDivider()
 
-            if !viewStore.withNewPin {
-                // Unlock card
+            if viewStore.mode == .forgotPin {
+                // Unlock card and set new secret
                 NavigationLink(
                     isActive: .init(
                         get: {
@@ -76,7 +76,8 @@ struct HealthCardPasswordCanView: View {
                     }
                 )
                 .accessibility(hidden: true)
-            } else {
+            }
+            if viewStore.mode == .setCustomPin {
                 // Set custom PIN
                 NavigationLink(
                     isActive: .init(
@@ -95,6 +96,32 @@ struct HealthCardPasswordCanView: View {
                     ),
                     destination: {
                         HealthCardPasswordOldPinView(store: store)
+                    },
+                    label: {
+                        EmptyView()
+                    }
+                )
+                .accessibility(hidden: true)
+            }
+            if viewStore.mode == .unlockCard {
+                // Unlock card
+                NavigationLink(
+                    isActive: .init(
+                        get: {
+                            viewStore.routeTag != .introduction &&
+                                viewStore.routeTag != .can &&
+                                viewStore.routeTag != .scanner
+                        },
+                        set: { active in
+                            if active {
+                                // is handled by store
+                            } else {
+                                viewStore.send(.setNavigation(tag: .can))
+                            }
+                        }
+                    ),
+                    destination: {
+                        HealthCardPasswordPukView(store: store)
                     },
                     label: {
                         EmptyView()

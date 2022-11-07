@@ -22,6 +22,7 @@ import ComposableArchitecture
 import Contacts
 import eRpKit
 import eRpLocalStorage
+import IDP
 import MapKit
 import Pharmacy
 import SwiftUI
@@ -44,7 +45,6 @@ enum PharmacyDetailDomain: Equatable {
         )
     }
 
-    /// Tokens for Cancellables
     enum Token: CaseIterable, Hashable {
         case loadProfile
     }
@@ -107,6 +107,9 @@ enum PharmacyDetailDomain: Equatable {
     struct Environment {
         var schedulers: Schedulers
         let userSession: UserSession
+        let signatureProvider: SecureEnclaveSignatureProvider
+        let accessibilityAnnouncementReceiver: (String) -> Void
+        let userSessionProvider: UserSessionProvider
     }
 
     static let domainReducer = Reducer { state, action, environment in
@@ -233,7 +236,11 @@ enum PharmacyDetailDomain: Equatable {
                     avsSession: environment.userSession.avsSession,
                     avsTransactionDataStore: environment.userSession.avsTransactionDataStore
                 ),
-                inputValidator: AVSMessage.Validator()
+                inputValidator: AVSMessage.Validator(),
+                serviceLocator: ServiceLocator(),
+                signatureProvider: environment.signatureProvider,
+                userSessionProvider: environment.userSessionProvider,
+                accessibilityAnnouncementReceiver: environment.accessibilityAnnouncementReceiver
             )
         }
 
@@ -248,12 +255,21 @@ enum PharmacyDetailDomain: Equatable {
                 shipmentInfoStore: environment.userSession.shipmentInfoDataStore,
                 redeemService: ErxTaskRepositoryRedeemService(
                     erxTaskRepository: environment.userSession.erxTaskRepository,
-                    isAuthenticated: environment.userSession.isAuthenticated
+                    loginHandler: DefaultLoginHandler(
+                        idpSession: environment.userSession.idpSession,
+                        signatureProvider: environment.signatureProvider
+                    )
                 ),
-                inputValidator: ErxTaskOrder.Validator()
+                inputValidator: ErxTaskOrder.Validator(),
+                serviceLocator: ServiceLocator(),
+                signatureProvider: environment.signatureProvider,
+                userSessionProvider: environment.userSessionProvider,
+                accessibilityAnnouncementReceiver: environment.accessibilityAnnouncementReceiver
             )
         }
+}
 
+extension PharmacyDetailDomain {
     private static func createEmailUrl(to email: String, subject: String? = nil, body: String? = nil) -> URL? {
         var gmailUrlString = "googlegmail://co?to=\(email)"
         var outlookIUrlString = "ms-outlook://compose?to=\(email)"
@@ -339,7 +355,10 @@ extension PharmacyDetailDomain {
         )
         static let environment = Environment(
             schedulers: Schedulers(),
-            userSession: DummySessionContainer()
+            userSession: DummySessionContainer(),
+            signatureProvider: DummySecureEnclaveSignatureProvider(),
+            accessibilityAnnouncementReceiver: { _ in },
+            userSessionProvider: DummyUserSessionProvider()
         )
         static let store = Store(initialState: state,
                                  reducer: reducer,

@@ -167,12 +167,12 @@ settings:
     - stg_con_profiles
     - stg_btn_new_profile
   card:
-    - stg_txt_card_unlock_card
+    - stg_txt_card_forgot_pin
     - stg_txt_card_custom_pin
+    - stg_txt_card_unlock_card
     - stg_txt_card_order_new_card
     - stg_btn_card_reset_advance
-    - stg_txt_card_reset_intro_unlock_card
-    - stg_txt_card_reset_intro_custom_pin
+    - stg_txt_card_reset_intro_headline
     - stg_txt_card_reset_intro_need_your_card
     - stg_txt_card_reset_intro_need_your_cards_pin
     - stg_txt_card_reset_intro_need_your_cards_puk

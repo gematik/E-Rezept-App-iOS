@@ -47,27 +47,40 @@ struct HealthCardSectionView: View {
                 Text(L10n.stgTxtCardSectionHeader)
             },
             content: {
-                // Destination: "Unlock health card"
+                // Destination: "Order health card"
+                NavigationLink(
+                    destination: OrderHealthCardView { viewStore.send(.toggleOrderHealthCardView(false)) },
+                    isActive: viewStore.binding(
+                        get: \.showOrderHealthCardView,
+                        send: SettingsDomain.Action.toggleOrderHealthCardView
+                    )
+                ) {
+                    Label(L10n.stgTxtCardOrderNewCard, systemImage: SFSymbolName.cardIcon)
+                }
+                .accessibility(identifier: A11y.settings.card.stgTxtCardOrderNewCard)
+                .buttonStyle(.navigation)
+
+                // Destination: "Forgot PIN"
                 NavigationLink(
                     destination: IfLetStore(
                         store.scope(
                             state: (\SettingsDomain.State.route)
-                                .appending(path: /SettingsDomain.Route.healthCardPasswordUnlockCard)
+                                .appending(path: /SettingsDomain.Route.healthCardPasswordForgotPin)
                                 .extract(from:),
-                            action: SettingsDomain.Action.healthCardPasswordUnlockCard(action:)
+                            action: SettingsDomain.Action.healthCardPasswordForgotPin(action:)
                         )
                     ) { scopedStore in
                         HealthCardPasswordView(store: scopedStore)
                     },
-                    tag: SettingsDomain.Route.Tag.healthCardPasswordUnlockCard,
+                    tag: SettingsDomain.Route.Tag.healthCardPasswordForgotPin,
                     selection: viewStore.binding(
                         get: \.routeTag,
                         send: SettingsDomain.Action.setNavigation
                     )
                 ) {
-                    Label(L10n.stgTxtCardUnlockCard, systemImage: SFSymbolName.lockRotation)
+                    Label(L10n.stgTxtCardForgotPin, systemImage: SFSymbolName.questionmarkCircle)
                 }
-                .accessibility(identifier: A11y.settings.card.stgTxtCardUnlockCard)
+                .accessibility(identifier: A11y.settings.card.stgTxtCardForgotPin)
                 .buttonStyle(.navigation)
 
                 // Destination: "Set a custom PIN"
@@ -93,16 +106,27 @@ struct HealthCardSectionView: View {
                 .accessibility(identifier: A11y.settings.card.stgTxtCardCustomPin)
                 .buttonStyle(.navigation)
 
+                // Destination: "Unlock health card"
                 NavigationLink(
-                    destination: OrderHealthCardView { viewStore.send(.toggleOrderHealthCardView(false)) },
-                    isActive: viewStore.binding(
-                        get: \.showOrderHealthCardView,
-                        send: SettingsDomain.Action.toggleOrderHealthCardView
+                    destination: IfLetStore(
+                        store.scope(
+                            state: (\SettingsDomain.State.route)
+                                .appending(path: /SettingsDomain.Route.healthCardPasswordUnlockCard)
+                                .extract(from:),
+                            action: SettingsDomain.Action.healthCardPasswordUnlockCard(action:)
+                        )
+                    ) { scopedStore in
+                        HealthCardPasswordView(store: scopedStore)
+                    },
+                    tag: SettingsDomain.Route.Tag.healthCardPasswordUnlockCard,
+                    selection: viewStore.binding(
+                        get: \.routeTag,
+                        send: SettingsDomain.Action.setNavigation
                     )
                 ) {
-                    Label(L10n.stgTxtCardOrderNewCard, systemImage: SFSymbolName.cardIcon)
+                    Label(L10n.stgTxtCardUnlockCard, systemImage: SFSymbolName.lockRotation)
                 }
-                .accessibility(identifier: A11y.settings.card.stgTxtCardOrderNewCard)
+                .accessibility(identifier: A11y.settings.card.stgTxtCardUnlockCard)
                 .buttonStyle(.navigation)
             }
         )

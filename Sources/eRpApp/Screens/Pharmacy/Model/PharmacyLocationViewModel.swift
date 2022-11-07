@@ -25,60 +25,47 @@ struct PharmacyLocationViewModel: Equatable, Hashable {
     init(
         pharmacy: PharmacyLocation,
         referenceLocation: Location? = nil,
-        referenceDate: Date? = Date()
+        referenceDate: Date? = nil,
+        timeOnlyFormatter: ERPDateFormatter? = nil
     ) {
-        let openHoursCalculator = PharmacyOpenHoursCalculator()
-        let hoursOfOperationNonNil = pharmacy.hoursOfOperation.compactMap(\.daysOfWeek.first)
+        let referenceDate = referenceDate ?? Date()
         pharmacyLocation = pharmacy
-        openHoursReferenceDate = referenceDate
-        openingState = PharmacyOpenHoursCalculator.TodaysOpeningState.unknown
-        days = initHoursOfOperation(
+        let openingHours = Self.initHoursOfOperation(
             pharmacy: pharmacy,
-            referenceDate: referenceDate ?? Date(),
-            hoursOfOperation: hoursOfOperationNonNil,
-            openHoursCalculator: openHoursCalculator
+            referenceDate: referenceDate,
+            timeOnlyFormatter: timeOnlyFormatter
         )
+        self.openingHours = openingHours
+
+        todayOpeningState = {
+            let currentDay: String = Self.dayNameParseFormatter.string(from: referenceDate).lowercased()
+
+            guard !openingHours.isEmpty else {
+                // No opening hours in general -> do not display anything
+                return .unknown
+            }
+            guard let currentDayOpeningHours = openingHours.first(where: { $0.dayOfWeek == currentDay }) else {
+                // Day does not exist in Data -> display closed
+                return .closed
+            }
+            return currentDayOpeningHours.openingState
+        }()
         if let pharmacyPosition = pharmacy.position {
             distanceInKm = initDistance(pharmacyPosition: pharmacyPosition, referenceLocation: referenceLocation)
         }
     }
 
     var pharmacyLocation: PharmacyLocation
-    var openHoursReferenceDate: Date?
-    var openingState: PharmacyOpenHoursCalculator.TodaysOpeningState
-    var days: [DailyOpenHours] = []
+    var openingHours: [OpeningHoursDay] = []
     var distanceInKm: Double?
 
-    var todayOpeningState: PharmacyOpenHoursCalculator.TodaysOpeningState {
-        days.first { day -> Bool in
-            if case .open = day.openingState {
-                return true
-            }
-            return false
-        }?.openingState ?? PharmacyOpenHoursCalculator.TodaysOpeningState.unknown
-    }
+    let todayOpeningState: PharmacyOpenHoursCalculator.TodaysOpeningState
 
-    struct DailyOpenHours: Equatable, Hashable {
-        let daysOfWeek: String
-        let entries: [OpenCloseTimes]
-        var openingState: PharmacyOpenHoursCalculator.TodaysOpeningState {
-            entries.compactMap { entry in
-                switch entry.openingState {
-                case .unknown, .closed:
-                    return nil
-                case .open, .willOpen:
-                    return entry.openingState
-                }
-            }.first ?? .closed
-        }
+    struct OpeningHoursDay: Equatable, Hashable {
+        internal init(dayOfWeek: String, entries: [PharmacyLocationViewModel.OpeningHoursDay.Timespan]) {
+            self.dayOfWeek = dayOfWeek
+            self.entries = entries
 
-        struct OpenCloseTimes: Equatable, Hashable {
-            let openingState: PharmacyOpenHoursCalculator.TodaysOpeningState
-            let openingTime: String?
-            let closingTime: String?
-        }
-
-        var dayOfWeekLocalizedDisplayName: String {
             // At this point dayOfWeek is of format 'EEE' in "en_US" locale
             let dayNameParseFormatter: DateFormatter = {
                 let dateFormatter = DateFormatter()
@@ -92,39 +79,92 @@ struct PharmacyLocationViewModel: Equatable, Hashable {
                 dateFormatter.dateFormat = "EEEE"
                 return dateFormatter
             }()
-            guard let date = dayNameParseFormatter.date(from: daysOfWeek) else {
-                return daysOfWeek.uppercased()
+            if let date = dayNameParseFormatter.date(from: dayOfWeek) {
+                dayOfWeekLocalizedDisplayName = localizesDisplayNameFormatter.string(from: date)
+                // .weekday starts with 1 being sunday, +5 % 7 to let monday be 0 and the first day
+                dayOfWeekNumber = (Calendar.current.component(.weekday, from: date) + 5) % 7
+            } else {
+                dayOfWeekLocalizedDisplayName = dayOfWeek.uppercased()
+                dayOfWeekNumber = 0
             }
-            return localizesDisplayNameFormatter.string(from: date)
         }
+
+        let dayOfWeekNumber: Int
+        let dayOfWeek: String
+        let entries: [Timespan]
+        var openingState: PharmacyOpenHoursCalculator.TodaysOpeningState {
+            entries.compactMap { entry in
+                switch entry.openingState {
+                case .unknown, .closed:
+                    return nil
+                case .open, .willOpen, .closingSoon:
+                    return entry.openingState
+                }
+            }.first ?? .closed // Day exists, but is not about to open today
+        }
+
+        struct Timespan: Equatable, Hashable {
+            let openingState: PharmacyOpenHoursCalculator.TodaysOpeningState
+            let openingTime: String?
+            let closingTime: String?
+        }
+
+        let dayOfWeekLocalizedDisplayName: String
     }
 
-    mutating func initHoursOfOperation(
+    private static let defaultTimeOnlyFormatter: ERPDateFormatter = {
+        let dateFormatter = DateFormatter()
+        if let preferredLang = Locale.preferredLanguages.first,
+           preferredLang.starts(with: "de") {
+            dateFormatter.dateFormat = "HH:mm 'Uhr'"
+        } else {
+            dateFormatter.timeStyle = .short
+            dateFormatter.dateStyle = .none
+        }
+        return dateFormatter
+    }()
+
+    private static let dayNameParseFormatter: DateFormatter = {
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = Locale(identifier: "en_US")
+        dateFormatter.dateFormat = "EEE"
+        return dateFormatter
+    }()
+
+    static func initHoursOfOperation(
         pharmacy: PharmacyLocation,
         referenceDate: Date,
-        hoursOfOperation: [String],
-        openHoursCalculator: PharmacyOpenHoursCalculator
-    ) -> [DailyOpenHours] {
-        days = Dictionary(grouping: pharmacy.hoursOfOperation) {
+        timeOnlyFormatter: ERPDateFormatter?
+    ) -> [OpeningHoursDay] {
+        let openHoursCalculator = PharmacyOpenHoursCalculator()
+        let timeOnlyFormatter = timeOnlyFormatter ?? Self.defaultTimeOnlyFormatter
+
+        let expandedDays = pharmacy.hoursOfOperation.flatMap { timeSet in
+            timeSet.daysOfWeek.map { day in
+                PharmacyLocation.HoursOfOperation(daysOfWeek: [day],
+                                                  openingTime: timeSet.openingTime,
+                                                  closingTime: timeSet.closingTime)
+            }
+        }
+        let days = Dictionary(grouping: expandedDays) {
+            // as expandedDays is used, `daysOfWeek` is always a single element Array
             $0.daysOfWeek.first
         }
-        .map { day, hours -> DailyOpenHours in
-            let hop = hours.map { hour in
-                DailyOpenHours.OpenCloseTimes(
+        .map { day, hours -> OpeningHoursDay in
+            let timespans = hours.map { hour in
+                OpeningHoursDay.Timespan(
                     openingState: openHoursCalculator.determineOpeningState(
                         for: referenceDate,
-                        hoursOfOperation: [hour]
+                        hoursOfOperation: [hour],
+                        timeOnlyFormatter: timeOnlyFormatter
                     ),
                     openingTime: hour.openTimeWithoutSeconds,
                     closingTime: hour.closeTimeWithoutSeconds
                 )
             }
-            return DailyOpenHours(daysOfWeek: day ?? "", entries: hop)
+            return OpeningHoursDay(dayOfWeek: day ?? "", entries: timespans)
         }
-        .sorted {
-            hoursOfOperation.firstIndex(of: $0.daysOfWeek) ?? -1
-                < hoursOfOperation.firstIndex(of: $1.daysOfWeek) ?? -1
-        }
+        .sorted { $0.dayOfWeekNumber < $1.dayOfWeekNumber }
         return days
     }
 
@@ -190,5 +230,28 @@ extension PharmacyLocation.HoursOfOperation {
             )
         }
         return closingTime ?? ""
+    }
+}
+
+extension PharmacyLocationViewModel {
+    enum Dummies {
+        static let pharmacy = PharmacyLocationViewModel(
+            pharmacy: PharmacyLocation.Dummies.pharmacy,
+            referenceDate: PharmacyLocation.Dummies.referenceDate
+        )
+
+        static let pharmacyInactive = PharmacyLocationViewModel(
+            pharmacy: PharmacyLocation.Dummies.pharmacyInactive,
+            referenceDate: PharmacyLocation.Dummies.referenceDate
+        )
+
+        static let pharmacies = {
+            PharmacyLocation.Dummies.pharmacies.map { pharmacy in
+                PharmacyLocationViewModel(
+                    pharmacy: pharmacy,
+                    referenceDate: PharmacyLocation.Dummies.referenceDate
+                )
+            }
+        }()
     }
 }

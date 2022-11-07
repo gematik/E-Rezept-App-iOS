@@ -20,108 +20,108 @@ import eRpKit
 import SwiftUI
 
 struct PharmacySearchCell: View {
-    static let minimumOpenMinutesLeftBeforeWarn = 30
-
     let pharmacy: PharmacyLocationViewModel
-    var timeOnlyFormatter: DateFormatter = {
-        let dateFormatter = DateFormatter()
-        if let preferredLang = Locale.preferredLanguages.first,
-           preferredLang.starts(with: "de") {
-            dateFormatter.dateFormat = "HH:mm 'Uhr'"
-        } else {
-            dateFormatter.timeStyle = .short
-            dateFormatter.dateStyle = .none
-        }
-        return dateFormatter
-    }()
 
     var body: some View {
-        HStack {
-            VStack(alignment: .leading) {
-                if pharmacy.pharmacyLocation.isErxReady {
-                    ErxReadinessBadge(detailedText: false)
-                        .padding([.top, .bottom], 1)
-                        .accessibilitySortPriority(10)
-                }
+        HStack(spacing: 16) {
+            Image(Asset.Pharmacy.pharmacyPlaceholder)
+                .frame(width: 64, height: 64, alignment: .center)
+                .cornerRadius(8)
 
-                Text("\(pharmacy.pharmacyLocation.name ?? "")")
+            VStack(alignment: .leading, spacing: 4) {
+                Text(pharmacy.pharmacyLocation.name ?? "")
                     .fontWeight(.semibold)
                     .foregroundColor(Colors.systemLabel)
                     .padding([.top, .bottom], 1)
                     .accessibilitySortPriority(100)
+                    .fixedSize(horizontal: false, vertical: true)
                 HStack {
-                    Text(pharmacy.pharmacyLocation.address?.fullAddressBreak ?? "")
+                    Text(pharmacy.pharmacyLocation.address?.fullAddress ?? "")
+                        .lineLimit(1)
                 }
                 .accessibilitySortPriority(90)
                 .foregroundColor(Colors.systemLabelSecondary)
 
-                Group {
-                    if case let PharmacyOpenHoursCalculator.TodaysOpeningState
-                        .open(minutesLeft, closingDateTime) = pharmacy.todayOpeningState {
-                        if let minutesLeft = minutesLeft,
-                           minutesLeft < Self.minimumOpenMinutesLeftBeforeWarn {
-                            Group {
-                                Text(L10n.phaSearchTxtClosingSoon) +
-                                    Text(" - \(timeOnlyFormatter.string(from: closingDateTime))")
-                            }.foregroundColor(Colors.yellow700)
-                        } else {
-                            Group {
-                                Text(L10n.phaSearchTxtOpenUntil) +
-                                    Text(" \(timeOnlyFormatter.string(from: closingDateTime))")
-                            }.foregroundColor(Colors.secondary600)
-                        }
-                    } else if case let PharmacyOpenHoursCalculator.TodaysOpeningState
-                        .willOpen(_, openingDateTime) = pharmacy.todayOpeningState {
-                        Group {
-                            Text(L10n.phaSearchTxtOpensAt) +
-                                Text(" \(timeOnlyFormatter.string(from: openingDateTime))")
-                        }.foregroundColor(Colors.yellow700)
-                    } else if case PharmacyOpenHoursCalculator.TodaysOpeningState.closed =
-                        pharmacy.todayOpeningState {
-                        Text(L10n.phaSearchTxtClosed)
-                            .foregroundColor(Colors.systemLabelSecondary)
-                    }
-                }
-                .padding(.top, 1)
-                .font(Font.subheadline.weight(.semibold))
-                .accessibilitySortPriority(80)
+                ColoredOpeningHours(openingState: pharmacy.todayOpeningState)
+                    .padding(.top, 1)
+                    .accessibilitySortPriority(80)
             }
             .accessibilitySortPriority(1000)
-            .padding([.top, .bottom], 8)
-
-            Spacer()
 
             if let distance = pharmacy.distanceInKm {
+                Spacer()
+
                 Text(String(format: "%.2f km", distance))
                     .font(Font.footnote.weight(.semibold))
                     .foregroundColor(Colors.systemLabelSecondary)
                     .padding([.leading, .trailing], 8)
                     .accessibilitySortPriority(50)
             }
-
-            Image(systemName: SFSymbolName.rightDisclosureIndicator)
-                .foregroundColor(Colors.systemLabelTertiary)
-                .unredacted()
-                .accessibility(hidden: true)
         }
         .accessibilityElement(children: .combine)
     }
+
+    static let minimumOpenMinutesLeftBeforeWarn = 30
+
+    struct ColoredOpeningHours: View {
+        let openingState: PharmacyOpenHoursCalculator.TodaysOpeningState
+
+        var body: some View {
+            Group {
+                switch openingState {
+                case let .open(closingDateTime: time):
+                    Group {
+                        Text(L10n.phaSearchTxtOpenUntil) +
+                            Text(" \(time)")
+                    }.foregroundColor(Colors.secondary600)
+                case let .closingSoon(closingDateTime: time):
+                    Group {
+                        Text(L10n.phaSearchTxtClosingSoon) +
+                            Text(" - \(time)")
+                    }.foregroundColor(Colors.yellow700)
+                case let .willOpen(_, openingDateTime):
+                    Group {
+                        Text(L10n.phaSearchTxtOpensAt) +
+                            Text(" \(openingDateTime)")
+                    }.foregroundColor(Colors.yellow700)
+                case .closed:
+                    Text(L10n.phaSearchTxtClosed)
+                        .foregroundColor(Colors.systemLabelSecondary)
+                default:
+                    EmptyView()
+                }
+            }
+
+            .font(Font.subheadline.weight(.semibold))
+        }
+    }
 }
+
+import eRpStyleKit
 
 struct PharmacySearchCell_Previews: PreviewProvider {
     static var previews: some View {
-        VStack {
-            PharmacySearchCell(
-                pharmacy: PharmacyLocationViewModel(
-                    pharmacy: PharmacyLocation.Dummies.pharmacy
-                )
+        ScrollView {
+            SingleElementSectionContainer(
+                header: {
+                    Text("container")
+                },
+                content: {
+                    ForEach(PharmacyLocationViewModel.Dummies.pharmacies, id: \.self) { pharmacyViewModel in
+                        Button(
+                            action: {},
+                            label: { Label(title: { PharmacySearchCell(pharmacy: pharmacyViewModel) }, icon: {}) }
+                        )
+                        .fixedSize(horizontal: false, vertical: true)
+                        .accessibility(identifier: A11y.pharmacySearch.phaSearchTxtResultListEntry)
+                        .buttonStyle(.navigation(showSeparator: true))
+                        .modifier(SectionContainerCellModifier(last: false))
+                    }
+                }
             )
-
-            PharmacySearchCell(
-                pharmacy: PharmacyLocationViewModel(
-                    pharmacy: PharmacyLocation.Dummies.pharmacyInactive
-                )
-            )
+            .sectionContainerStyle(.inline)
         }
+        .background(Colors.backgroundSecondary)
+        .environment(\.locale, Locale(identifier: "de_DE"))
     }
 }

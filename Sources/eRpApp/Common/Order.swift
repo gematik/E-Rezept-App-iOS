@@ -194,3 +194,46 @@ extension AVSMessage {
         )
     }
 }
+
+extension Sequence where Self.Element == ErxTask {
+    func asOrders(
+        orderId: UUID,
+        _ redeemOption: RedeemOption,
+        for pharmacy: PharmacyLocation,
+        with shipmentInfo: ShipmentInfo?
+    ) -> [Order] {
+        map { $0.asOrder(orderId: orderId, redeemOption, for: pharmacy, with: shipmentInfo) }
+    }
+}
+
+extension ErxTask {
+    func asOrder(orderId: UUID, _ redeemOption: RedeemOption, for pharmacy: PharmacyLocation,
+                 with shipmentInfo: ShipmentInfo?) -> Order {
+        let transactionId = UUID()
+        return Order(
+            orderID: orderId,
+            redeemType: redeemOption,
+            name: shipmentInfo?.name,
+            address: Address(
+                street: shipmentInfo?.street,
+                detail: shipmentInfo?.addressDetail,
+                zip: shipmentInfo?.zip,
+                city: shipmentInfo?.city
+            ),
+            hint: shipmentInfo?.deliveryInfo,
+            text: nil, // TODO: other ticket //swiftlint:disable:this todo
+            phone: shipmentInfo?.phone,
+            mail: shipmentInfo?.mail,
+            transactionID: transactionId,
+            taskID: id,
+            accessCode: accessCode ?? "",
+            endpoint: pharmacy.avsEndpoints?.url(
+                for: redeemOption,
+                transactionId: transactionId.uuidString,
+                telematikId: pharmacy.telematikID
+            ),
+            recipients: pharmacy.avsCertificates,
+            telematikId: pharmacy.telematikID
+        )
+    }
+}

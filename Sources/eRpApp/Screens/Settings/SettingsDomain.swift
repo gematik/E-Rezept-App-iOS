@@ -29,14 +29,14 @@ enum SettingsDomain {
     typealias Reducer = ComposableArchitecture.Reducer<State, Action, Environment>
 
     enum Route: Equatable {
-        case healthCardPasswordUnlockCard(HealthCardPasswordDomain.State)
         case healthCardPasswordForgotPin(HealthCardPasswordDomain.State)
         case healthCardPasswordSetCustomPin(HealthCardPasswordDomain.State)
+        case healthCardPasswordUnlockCard(HealthCardPasswordDomain.State)
 
         enum Tag: Int {
-            case healthCardPasswordUnlockCard
             case healthCardPasswordForgotPin
             case healthCardPasswordSetCustomPin
+            case healthCardPasswordUnlockCard
         }
 
         var tag: Tag {
@@ -205,14 +205,14 @@ enum SettingsDomain {
              .healthCardPasswordSetCustomPin:
             return .none
 
-        case .setNavigation(tag: .healthCardPasswordUnlockCard):
-            state.route = .healthCardPasswordUnlockCard(.init(withNewPin: false))
-            return .none
         case .setNavigation(tag: .healthCardPasswordForgotPin):
-            state.route = .healthCardPasswordForgotPin(.init(withNewPin: true))
+            state.route = .healthCardPasswordForgotPin(.init(mode: .forgotPin))
             return .none
         case .setNavigation(tag: .healthCardPasswordSetCustomPin):
-            state.route = .healthCardPasswordSetCustomPin(.init(withNewPin: true))
+            state.route = .healthCardPasswordSetCustomPin(.init(mode: .setCustomPin))
+            return .none
+        case .setNavigation(tag: .healthCardPasswordUnlockCard):
+            state.route = .healthCardPasswordUnlockCard(.init(mode: .unlockCard))
             return .none
         case .setNavigation(tag: nil):
             state.route = nil
@@ -243,8 +243,9 @@ enum SettingsDomain {
     static let reducer: Reducer = .combine(
         appSecurityPullbackReducer,
         profilesPullbackReducer,
-        healthCardPasswordUnlockCardPullbackReducer,
+        healthCardPasswordForgotPinPullbackReducer,
         healthCardPasswordSetCustomPinPullbackReducer,
+        healthCardPasswordUnlockCardPullbackReducer,
         domainReducer
     )
 
@@ -285,10 +286,10 @@ enum SettingsDomain {
         }
 
     // swiftlint:disable:next identifier_name
-    private static let healthCardPasswordUnlockCardPullbackReducer: Reducer =
+    private static let healthCardPasswordForgotPinPullbackReducer: Reducer =
         HealthCardPasswordDomain.reducer._pullback(
-            state: (\State.route).appending(path: /Route.healthCardPasswordUnlockCard),
-            action: /SettingsDomain.Action.healthCardPasswordUnlockCard(action:)
+            state: (\State.route).appending(path: /Route.healthCardPasswordForgotPin),
+            action: /SettingsDomain.Action.healthCardPasswordForgotPin(action:)
         ) {
             .init(
                 schedulers: $0.schedulers,
@@ -301,6 +302,18 @@ enum SettingsDomain {
         HealthCardPasswordDomain.reducer._pullback(
             state: (\State.route).appending(path: /Route.healthCardPasswordSetCustomPin),
             action: /SettingsDomain.Action.healthCardPasswordSetCustomPin(action:)
+        ) {
+            .init(
+                schedulers: $0.schedulers,
+                nfcSessionController: $0.nfcHealthCardPasswordController
+            )
+        }
+
+    // swiftlint:disable:next identifier_name
+    private static let healthCardPasswordUnlockCardPullbackReducer: Reducer =
+        HealthCardPasswordDomain.reducer._pullback(
+            state: (\State.route).appending(path: /Route.healthCardPasswordUnlockCard),
+            action: /SettingsDomain.Action.healthCardPasswordUnlockCard(action:)
         ) {
             .init(
                 schedulers: $0.schedulers,

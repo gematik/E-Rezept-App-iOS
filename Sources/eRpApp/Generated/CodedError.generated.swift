@@ -1,4 +1,4 @@
-// Generated using Sourcery 1.8.2 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 1.9.0 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 
 import AVS
@@ -1198,6 +1198,8 @@ extension RedeemServiceError: CodedError {
                 return "i-02404"
             case .noTokenAvailable:
                 return "i-02405"
+            case .loginHandler:
+                return "i-02406"
         }
     }
     var erpErrorCodeList: [String] {
@@ -1212,6 +1214,8 @@ extension RedeemServiceError: CodedError {
                 return [erpErrorCode] + error.erpErrorCodeList
             case .unspecified:
                 return [erpErrorCode]
+            case let .loginHandler(error):
+                return [erpErrorCode] + error.erpErrorCodeList
             default:
                 return [erpErrorCode]
         }

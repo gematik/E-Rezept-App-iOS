@@ -42,19 +42,21 @@ enum LoginHandlerError: Swift.Error, Equatable, LocalizedError {
             return true
         case let (.network(lhsError), .network(rhsError)):
             return lhsError.localizedDescription == rhsError.localizedDescription
+        case let (.idpError(lhsError), .idpError(rhsError)):
+            return lhsError.localizedDescription == rhsError.localizedDescription
         default:
             return false
         }
     }
 
     // sourcery: errorCode = "01"
-    case biometrieFailed
+    case biometrieFailed // TODO: case is unused //swiftlint:disable:this todo
     // sourcery: errorCode = "02"
-    case biometrieFatal
+    case biometrieFatal // TODO: case is unused //swiftlint:disable:this todo
     // sourcery: errorCode = "03"
-    case ssoFailed
+    case ssoFailed // TODO: case is unused //swiftlint:disable:this todo
     // sourcery: errorCode = "04"
-    case ssoExpired
+    case ssoExpired // TODO: case is unused //swiftlint:disable:this todo
     // sourcery: errorCode = "05"
     case idpError(IDPError)
     // sourcery: errorCode = "06"

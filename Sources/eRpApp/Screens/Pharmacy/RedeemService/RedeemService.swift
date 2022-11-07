@@ -116,20 +116,24 @@ extension PharmacyLocation.AVSEndpoints.Endpoint {
 
 struct ErxTaskRepositoryRedeemService: RedeemService {
     let erxTaskRepository: ErxTaskRepository
-    let isAuthenticated: AnyPublisher<Bool, UserSessionError>
+    let loginHandler: LoginHandler
 
     func redeem(_ orders: [Order]) -> AnyPublisher<IdentifiedArrayOf<OrderResponse>, RedeemServiceError> {
-        isAuthenticated
-            .catch { _ in
-                Fail(error: RedeemServiceError.noTokenAvailable).eraseToAnyPublisher()
-            }
+        loginHandler
+            .isAuthenticatedOrAuthenticate()
+            .first()
             .flatMap { authenticated -> AnyPublisher<IdentifiedArrayOf<OrderResponse>, RedeemServiceError> in
-                guard authenticated else {
+                // [REQ:gemSpec_eRp_FdV:A_20167,A_20172] no token/not authorized, show authenticator module
+                if Result.success(false) == authenticated {
                     return Fail(error: RedeemServiceError.noTokenAvailable).eraseToAnyPublisher()
                 }
-                return redeemViaRepository(orders: orders)
-                    .mapError(RedeemServiceError.from)
-                    .eraseToAnyPublisher()
+                if case let Result.failure(error) = authenticated {
+                    return Fail(error: RedeemServiceError.loginHandler(error: error)).eraseToAnyPublisher()
+                } else {
+                    return redeemViaRepository(orders: orders)
+                        .mapError(RedeemServiceError.from)
+                        .eraseToAnyPublisher()
+                }
             }
             .eraseToAnyPublisher()
     }

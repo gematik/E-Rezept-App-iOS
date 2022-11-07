@@ -160,7 +160,7 @@ struct PharmacyDetailView: View {
                     }
 
                     if !viewStore.state.pharmacy.hoursOfOperation.isEmpty {
-                        OpeningHoursView(dailyOpenHours: viewStore.state.pharmacyViewModel.days)
+                        OpeningHoursView(dailyOpenHours: viewStore.state.pharmacyViewModel.openingHours)
                             .padding(.bottom, 8)
                     }
 
@@ -208,7 +208,7 @@ struct PharmacyDetailView: View {
 
 extension PharmacyDetailView {
     struct OpeningHoursView: View {
-        let dailyOpenHours: [PharmacyLocationViewModel.DailyOpenHours]
+        let dailyOpenHours: [PharmacyLocationViewModel.OpeningHoursDay]
 
         var body: some View {
             SectionHeaderView(

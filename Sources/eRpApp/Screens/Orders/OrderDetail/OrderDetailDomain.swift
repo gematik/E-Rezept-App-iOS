@@ -213,13 +213,13 @@ enum OrderDetailDomain: Equatable {
         case .openPhoneApp:
             if let phone = state.order.pharmacy?.telecom?.phone,
                let number = URL(phoneNumber: phone) {
-                UIApplication.shared.open(number)
+                environment.application.open(number)
             }
             return .none
         case .openMailApp:
             if let email = state.order.pharmacy?.telecom?.email,
                let url = createEmailUrl(to: email) {
-                UIApplication.shared.open(url)
+                environment.application.open(url)
             }
             return .none
         case .setNavigation(tag: .none),

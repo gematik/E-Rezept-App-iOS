@@ -17,6 +17,7 @@
 //
 
 @testable import eRpApp
+import eRpKit
 import SnapshotTesting
 import SwiftUI
 import XCTest
@@ -28,7 +29,7 @@ final class PharmacyDetailViewSnapshotTests: XCTestCase {
     }
 
     func testPharmacyDetailWithAllButtons() {
-        let sut = PharmacyDetailView(store: PharmacyDetailDomain.Dummies.store)
+        let sut = PharmacyDetailView(store: store(for: PharmacyDetailViewSnapshotTests.Fixtures.allOptionsState))
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
@@ -48,5 +49,37 @@ final class PharmacyDetailViewSnapshotTests: XCTestCase {
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+    }
+
+    func store(for state: PharmacyDetailDomain.State) -> PharmacyDetailDomain.Store {
+        .init(initialState: state,
+              reducer: .empty,
+              environment: PharmacyDetailDomain.Environment(
+                  schedulers: Schedulers(),
+                  userSession: MockUserSession(),
+                  signatureProvider: MockSecureEnclaveSignatureProvider(),
+                  accessibilityAnnouncementReceiver: { _ in },
+                  userSessionProvider: MockUserSessionProvider()
+              ))
+    }
+}
+
+extension PharmacyDetailViewSnapshotTests {
+    enum Fixtures {
+        static let allOptionsState = PharmacyDetailDomain.State(
+            erxTasks: ErxTask.Fixtures.erxTasks,
+            pharmacyViewModel: PharmacyLocationViewModel.Fixtures.pharmacyA,
+            reservationService: .erxTaskRepository,
+            shipmentService: .erxTaskRepository,
+            deliveryService: .erxTaskRepository
+        )
+
+        static let inactiveState = PharmacyDetailDomain.State(
+            erxTasks: ErxTask.Fixtures.erxTasks,
+            pharmacyViewModel: PharmacyLocationViewModel.Fixtures.pharmacyInactive,
+            reservationService: .erxTaskRepository,
+            shipmentService: .erxTaskRepository,
+            deliveryService: .erxTaskRepository
+        )
     }
 }

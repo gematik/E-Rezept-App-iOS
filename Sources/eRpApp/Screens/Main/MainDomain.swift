@@ -464,7 +464,10 @@ extension MainDomain {
             RedeemMethodsDomain.Environment(
                 schedulers: environment.schedulers,
                 userSession: environment.userSession,
-                fhirDateFormatter: environment.fhirDateFormatter
+                fhirDateFormatter: environment.fhirDateFormatter,
+                signatureProvider: environment.signatureProvider,
+                userSessionProvider: environment.userSessionProvider,
+                accessibilityAnnouncementReceiver: environment.accessibilityAnnouncementReceiver
             )
         }
 }

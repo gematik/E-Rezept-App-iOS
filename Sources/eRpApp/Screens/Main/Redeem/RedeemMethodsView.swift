@@ -21,11 +21,20 @@ import SwiftUI
 
 struct RedeemMethodsView: View {
     let store: RedeemMethodsDomain.Store
-    @ObservedObject var viewStore: ViewStore<Void, RedeemMethodsDomain.Action>
+    @ObservedObject var viewStore: ViewStore<ViewState, RedeemMethodsDomain.Action>
+    @AppStorage("enable_avs_login") var enableAvsLogin = false
 
     init(store: RedeemMethodsDomain.Store) {
         self.store = store
-        viewStore = ViewStore(store.stateless)
+        viewStore = ViewStore(store.scope(state: ViewState.init))
+    }
+
+    struct ViewState: Equatable {
+        let prescriptionsAreAllFullDetail: Bool
+
+        init(state: RedeemMethodsDomain.State) {
+            prescriptionsAreAllFullDetail = state.erxTasks.allSatisfy { $0.source == .server }
+        }
     }
 
     var body: some View {
@@ -51,15 +60,16 @@ struct RedeemMethodsView: View {
                 })
                     .accessibility(identifier: A18n.redeem.overview.rdmBtnPharmacyTile)
 
-                Button(action: { viewStore.send(.setNavigation(tag: .pharmacySearch)) }, label: {
-                    Tile(iconSystemName: SFSymbolName.bag,
-                         title: L10n.rdmBtnRedeemSearchPharmacyTitle,
-                         description: L10n.rdmBtnRedeemSearchPharmacyDescription,
-                         discloseIcon: SFSymbolName.rightDisclosureIndicator)
-                        .padding([.leading, .trailing], 16)
-                })
-                    .accessibility(identifier: A18n.redeem.overview.rdmBtnDeliveryTile)
-
+                if viewStore.prescriptionsAreAllFullDetail || enableAvsLogin {
+                    Button(action: { viewStore.send(.setNavigation(tag: .pharmacySearch)) }, label: {
+                        Tile(iconSystemName: SFSymbolName.bag,
+                             title: L10n.rdmBtnRedeemSearchPharmacyTitle,
+                             description: L10n.rdmBtnRedeemSearchPharmacyDescription,
+                             discloseIcon: SFSymbolName.rightDisclosureIndicator)
+                            .padding([.leading, .trailing], 16)
+                    })
+                        .accessibility(identifier: A18n.redeem.overview.rdmBtnDeliveryTile)
+                }
                 Spacer()
             }
             .routes(for: store)

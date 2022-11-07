@@ -19,6 +19,8 @@
 import Combine
 import ComposableArchitecture
 import eRpKit
+import IDP
+import UIKit
 import ZXingObjC
 
 enum RedeemMethodsDomain {
@@ -78,6 +80,9 @@ enum RedeemMethodsDomain {
         let schedulers: Schedulers
         let userSession: UserSession
         let fhirDateFormatter: FHIRDateFormatter
+        let signatureProvider: SecureEnclaveSignatureProvider
+        let userSessionProvider: UserSessionProvider
+        let accessibilityAnnouncementReceiver: (String) -> Void
     }
 
     static let reducer: Reducer = .combine(
@@ -86,7 +91,7 @@ enum RedeemMethodsDomain {
         redeemReducer
     )
 
-    static let redeemReducer = Reducer { state, action, _ in
+    static let redeemReducer = Reducer { state, action, environment in
         switch action {
         case .close:
             return .none
@@ -95,7 +100,7 @@ enum RedeemMethodsDomain {
             // Cleanup of child & running close action on parent reducer
             return Effect.concatenate(
                 RedeemMatrixCodeDomain.cleanup(),
-                Effect(value: .close)
+                Effect(value: .close).delay(for: 0.1, scheduler: environment.schedulers.main).eraseToEffect()
             )
         case .redeemMatrixCodeAction(action:):
             return .none
@@ -103,7 +108,7 @@ enum RedeemMethodsDomain {
             state.route = nil
             return Effect.concatenate(
                 PharmacySearchDomain.cleanup(),
-                Effect(value: .close)
+                Effect(value: .close).delay(for: 0.1, scheduler: environment.schedulers.main).eraseToEffect()
             )
         case .pharmacySearchAction:
             return .none
@@ -145,7 +150,11 @@ enum RedeemMethodsDomain {
                 fhirDateFormatter: environment.fhirDateFormatter,
                 openHoursCalculator: PharmacyOpenHoursCalculator(),
                 referenceDateForOpenHours: nil,
-                userSession: environment.userSession
+                userSession: environment.userSession,
+                openURL: UIApplication.shared.open(_:options:completionHandler:),
+                signatureProvider: environment.signatureProvider,
+                accessibilityAnnouncementReceiver: environment.accessibilityAnnouncementReceiver,
+                userSessionProvider: environment.userSessionProvider
             )
         }
 }
@@ -158,8 +167,10 @@ extension RedeemMethodsDomain {
         static let environment = Environment(
             schedulers: Schedulers(),
             userSession: DummySessionContainer(),
-            fhirDateFormatter: FHIRDateFormatter.shared
-        )
+            fhirDateFormatter: FHIRDateFormatter.shared,
+            signatureProvider: DummySecureEnclaveSignatureProvider(),
+            userSessionProvider: DummyUserSessionProvider()
+        ) { _ in }
         static let store = Store(initialState: state,
                                  reducer: reducer,
                                  environment: environment)

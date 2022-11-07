@@ -52,7 +52,7 @@ final class MockUserDataStore: UserDataStore {
         set(value) { underlyingHideCardWallIntro = value }
     }
 
-    private var underlyingHideCardWallIntro: AnyPublisher<Bool, Never>!
+    var underlyingHideCardWallIntro: AnyPublisher<Bool, Never>!
 
     // MARK: - serverEnvironmentConfiguration
 

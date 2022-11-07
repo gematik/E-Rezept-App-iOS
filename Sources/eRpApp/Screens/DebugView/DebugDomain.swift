@@ -99,6 +99,7 @@ enum DebugDomain {
         case hideCardWallIntroReceived(Bool)
         case resetCanButtonTapped
         case deleteKeyAndEGKAuthCertForBiometric
+        case deleteSSOToken
         case resetOcspAndCertListButtonTapped
         case useDebugDeviceCapabilitiesToggleTapped
         case nfcReadyToggleTapped
@@ -152,6 +153,18 @@ enum DebugDomain {
             return .none
         case .resetCanButtonTapped:
             environment.userSession.secureUserStore.set(can: nil)
+            return .none
+        case .deleteSSOToken:
+            if let token = state.token {
+                let modifiedToken = IDPToken(
+                    accessToken: token.accessToken,
+                    expires: Date(),
+                    idToken: token.idToken,
+                    ssoToken: nil,
+                    redirect: token.redirect
+                )
+                environment.userSession.secureUserStore.set(token: modifiedToken)
+            }
             return .none
         case .deleteKeyAndEGKAuthCertForBiometric:
             environment.userSession.secureUserStore.set(keyIdentifier: nil)

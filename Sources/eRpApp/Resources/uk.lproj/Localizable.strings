@@ -814,11 +814,13 @@
 "pha_search_txt_closing_soon" = "Незабаром закривається";
 "pha_search_txt_error_no_server_response_headline" = "Сервер не відповідає";
 "pha_search_txt_error_no_server_response_subheadline" = "Спробуйте ще раз через кілька хвилин.";
+"pha_search_txt_filter_current_location" = "In meiner Nähe";
 "pha_search_txt_filter_delivery" = "Кур'єрська служба";
 "pha_search_txt_filter_open" = "Наразі відчинено";
 "pha_search_txt_filter_ready" = "Готовий до E-Rezept";
 "pha_search_txt_filter_shipment" = "Розсилання";
 "pha_search_txt_hint_start_search" = "Почніть пошук, натиснувши Відкрити на клавіатурі";
+"pha_search_txt_history_title" = "Zuletzt gesucht";
 "pha_search_txt_location_alert_message" = "Поділіться своїм місцем розташування, щоб знайти аптеки поблизу.";
 "pha_search_txt_location_alert_title" = "Поділитися місцем розташування";
 "pha_search_txt_location_hint_message" = "Поділіться місцем розташування та знайдіть аптеки у вашому регіоні";
@@ -830,6 +832,11 @@
 "pha_search_txt_opens_at" = "Відчиняється о";
 "pha_search_txt_progress_locating" = "Триває визначення геолокації пристрою...";
 "pha_search_txt_progress_search" = "Пошук триває...";
+"pha_search_txt_quick_filter_delivery" = "Botendienst";
+"pha_search_txt_quick_filter_nearby_and_open" = "Aktuell geöffnet und in meiner Nähe";
+"pha_search_txt_quick_filter_open_filters" = "Filtern nach ...";
+"pha_search_txt_quick_filter_section_title" = "Filter";
+"pha_search_txt_quick_filter_shipment" = "Versand";
 "pha_search_txt_search_hint" = "Пошук за прізвищем або адресою";
 "pha_search_txt_title" = "Вибрати аптеку";
 "pha_success_redeem_title" = "Готово! 🎉";
@@ -1044,8 +1051,10 @@
 "stg_txt_audit_events_previous" = "Попередня";
 "stg_txt_audit_events_title" = "Протоколи доступу";
 "stg_txt_card_custom_pin" = "Wunsch-PIN wählen";
+"stg_txt_card_forgot_pin" = "PIN vergessen";
 "stg_txt_card_order_new_card" = "Neue Karte bestellen";
 "stg_txt_card_reset_intro_custom_pin" = "Wunsch-PIN wählen";
+"stg_txt_card_reset_intro_forgot_pin" = "PIN vergessen";
 "stg_txt_card_reset_intro_hint" = "Mit Ihrer PIN haben Sie eine 8-stellige PUK von Ihrer Versicherung erhalten.";
 "stg_txt_card_reset_intro_hint_custom_pin" = "Mit Ihrer Karte haben Sie eine 6-stellige PIN von Ihrer Versicherung erhalten.";
 "stg_txt_card_reset_intro_need_your_card" = "Ihre Gesundheitskarte";

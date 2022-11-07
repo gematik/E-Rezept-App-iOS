@@ -30,19 +30,48 @@ public enum SectionContainerContentStyle {
     case plain
     /// bordered content style
     case border(color: Color, width: CGFloat)
+    /// integrated list content style without leading/trailing padding
+    case inline
 
     var borderWidth: CGFloat {
         switch self {
-        case .plain:
+        case .plain, .inline:
             return 0.0
         case let .border(color: _, width: width):
             return width
         }
     }
 
+    var cornerRadius: CGFloat {
+        switch self {
+        case .inline:
+            return 0.0
+        default:
+            return 16.0
+        }
+    }
+
+    var edgeInsets: EdgeInsets {
+        switch self {
+        case .inline:
+            return EdgeInsets(top: 0, leading: 0, bottom: 16, trailing: 0)
+        default:
+            return EdgeInsets(top: 16, leading: 16, bottom: 16, trailing: 16)
+        }
+    }
+
+    var headerEdgeInsets: EdgeInsets {
+        switch self {
+        case .inline:
+            return EdgeInsets(top: 16, leading: 0, bottom: 16, trailing: 0)
+        default:
+            return EdgeInsets(top: 16, leading: 16, bottom: 0, trailing: 16)
+        }
+    }
+
     var borderColor: Color {
         switch self {
-        case .plain:
+        case .plain, .inline:
             return Colors.systemColorClear
         case let .border(color: color, width: _):
             return color
@@ -52,6 +81,10 @@ public enum SectionContainerContentStyle {
 
 struct DefaultSectionContainerStyle: SectionContainerStyle {
     var content = SectionContainerContentStyle.plain
+}
+
+public struct InlineSectionContainerStyle: SectionContainerStyle {
+    public var content = SectionContainerContentStyle.inline
 }
 
 /// The border style of the `content` of a `SectionContainer`
@@ -96,6 +129,15 @@ extension SectionContainerStyle where Self == BorderSectionContainerStyle {
     /// To apply this style to a `SectionContainer` use the ``View/sectionContainerStyle(_:)`` modifier.
     public static var bordered: BorderSectionContainerStyle {
         BorderSectionContainerStyle()
+    }
+}
+
+extension SectionContainerStyle where Self == InlineSectionContainerStyle {
+    /// A integrated `SectionContainerStyle` without leading/trailing padding and without borders.
+    ///
+    /// To apply this style to a `SectionContainer` use the ``View/sectionContainerStyle(_:)`` modifier.
+    public static var inline: SectionContainerStyle {
+        InlineSectionContainerStyle()
     }
 }
 

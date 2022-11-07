@@ -32,12 +32,12 @@ struct HealthCardPasswordPukView: View {
     }
 
     struct ViewState: Equatable {
-        let withNewPin: Bool
+        let mode: HealthCardPasswordDomain.Mode
         let pukMayAdvance: Bool
         let routeTag: HealthCardPasswordDomain.Route.Tag
 
         init(state: HealthCardPasswordDomain.State) {
-            withNewPin = state.withNewPin
+            mode = state.mode
             pukMayAdvance = state.pukMayAdvance
             routeTag = state.route.tag
         }
@@ -68,32 +68,31 @@ struct HealthCardPasswordPukView: View {
 
             GreyDivider()
 
-            // TODO: next MR if viewStore.mode == .withNewPin // swiftlint:disable:this todo
-//            if viewStore.withNewPin {
-//                NavigationLink(
-//                    isActive: .init(
-//                        get: {
-//                            viewStore.state.route != .introduction &&
-//                                viewStore.state.route != .can &&
-//                                viewStore.state.route != .puk
-//                        },
-//                        set: { active in
-//                            if active {
-//                                // is handled by button below
-//                            } else {
-//                                viewStore.send(.setNavigation(tag: .puk))
-//                            }
-//                        }
-//                    ),
-//                    destination: {
-//                        HealthCardPasswordPinView(store: store)
-//                    },
-//                    label: {
-//                        EmptyView()
-//                    }
-//                )
-//                .accessibility(hidden: true)
-//            }
+            if viewStore.mode == .forgotPin {
+                NavigationLink(
+                    isActive: .init(
+                        get: {
+                            viewStore.state.routeTag != .introduction &&
+                                viewStore.state.routeTag != .can &&
+                                viewStore.state.routeTag != .puk
+                        },
+                        set: { active in
+                            if active {
+                                // is handled by store
+                            } else {
+                                viewStore.send(.setNavigation(tag: .puk))
+                            }
+                        }
+                    ),
+                    destination: {
+                        HealthCardPasswordPinView(store: store)
+                    },
+                    label: {
+                        EmptyView()
+                    }
+                )
+                .accessibility(hidden: true)
+            }
 
             Button(
                 action: { viewStore.send(.advance) },

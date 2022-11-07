@@ -59,6 +59,10 @@ public class UserDefaultsStore: UserDataStore {
             .eraseToAnyPublisher()
     }
 
+    public var isCardWallIntroHidden: Bool {
+        userDefaults.shouldHideCardWallIntro
+    }
+
     public func set(hideCardWallIntro: Bool) {
         userDefaults.shouldHideCardWallIntro = hideCardWallIntro
     }

@@ -120,7 +120,7 @@ enum CardWallLoginOptionDomain {
             state.route = .readcard(.init(isDemoModus: state.isDemoModus,
                                           profileId: environment.userSession.profileId,
                                           pin: state.pin,
-                                          loginOption: state.selectedLoginOption,
+                                          loginOption: state.isDemoModus ? .withoutBiometry : state.selectedLoginOption,
                                           output: .idle))
             return .none
         case .close:

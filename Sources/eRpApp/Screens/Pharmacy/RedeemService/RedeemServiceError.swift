@@ -37,6 +37,24 @@ enum RedeemServiceError: Swift.Error, Equatable, LocalizedError {
     // sourcery: errorCode = "05"
     /// When the user has no valid token available while trying to redeem via Fachdienst
     case noTokenAvailable
+    // sourcery: errorCode = "06"
+    /// When receiving an error while doing a login
+    case loginHandler(error: LoginHandlerError)
+
+    static func ==(lhs: RedeemServiceError, rhs: RedeemServiceError) -> Bool {
+        switch (lhs, rhs) {
+        case let (.eRxRepository(lhsError), .eRxRepository(rhsError)): return lhsError == rhsError
+        case let (.avs(lhsError), .avs(rhsError)): return lhsError == rhsError
+        case let (.unspecified(error: lhsError), .unspecified(error: rhsError)):
+            return lhsError.localizedDescription == rhsError.localizedDescription
+        case let (.internalError(lhsError), .internalError(rhsError)): return lhsError == rhsError
+        case (.noTokenAvailable, .noTokenAvailable): return true
+        case let (.loginHandler(error: lhsError), .loginHandler(error: rhsError)):
+            return lhsError.localizedDescription == rhsError.localizedDescription
+        default:
+            return false
+        }
+    }
 
     // sourcery: CodedError = "025"
     enum InternalError: Swift.Error, Equatable, LocalizedError {
@@ -87,6 +105,8 @@ enum RedeemServiceError: Swift.Error, Equatable, LocalizedError {
             return L10n.phaRedeemTxtNotLoggedInTitle.text
         case let .unspecified(error: error):
             return error.localizedDescription
+        case let .loginHandler(error: error):
+            return error.localizedDescription
         }
     }
 
@@ -107,6 +127,8 @@ enum RedeemServiceError: Swift.Error, Equatable, LocalizedError {
             } else {
                 return L10n.phaRedeemTxtInternalErrRecovery.text
             }
+        case let .loginHandler(error: error):
+            return error.recoverySuggestion
         }
     }
 
@@ -121,19 +143,6 @@ enum RedeemServiceError: Swift.Error, Equatable, LocalizedError {
             return serviceError
         } else {
             return .unspecified(error: error)
-        }
-    }
-
-    static func ==(lhs: RedeemServiceError, rhs: RedeemServiceError) -> Bool {
-        switch (lhs, rhs) {
-        case let (.eRxRepository(lhsError), .eRxRepository(rhsError)): return lhsError == rhsError
-        case let (.avs(lhsError), .avs(rhsError)): return lhsError == rhsError
-        case let (.unspecified(error: lhsError), .unspecified(error: rhsError)):
-            return lhsError.localizedDescription == rhsError.localizedDescription
-        case let (.internalError(lhsError), .internalError(rhsError)): return lhsError == rhsError
-        case (.noTokenAvailable, .noTokenAvailable): return true
-        default:
-            return false
         }
     }
 }

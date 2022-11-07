@@ -32,11 +32,11 @@ struct HealthCardPasswordIntroductionView: View {
     }
 
     struct ViewState: Equatable {
-        let withNewPin: Bool
+        let mode: HealthCardPasswordDomain.Mode
         let routeTag: HealthCardPasswordDomain.Route.Tag
 
         init(state: HealthCardPasswordDomain.State) {
-            withNewPin = state.withNewPin
+            mode = state.mode
             routeTag = state.route.tag
         }
     }
@@ -46,19 +46,17 @@ struct HealthCardPasswordIntroductionView: View {
             ScrollView(.vertical, showsIndicators: true) {
                 VStack(alignment: .leading) {
                     VStack(alignment: .leading, spacing: 8) {
-                        if viewStore.withNewPin {
-                            Text(L10n.stgTxtCardResetIntroCustomPin)
-                                .font(.title.bold())
-                                .accessibility(identifier: A11y.settings.card.stgTxtCardResetIntroCustomPin)
-                        } else {
-                            Text(L10n.stgTxtCardResetIntroUnlockCard)
-                                .font(.title.bold())
-                                .accessibility(identifier: A11y.settings.card.stgTxtCardResetIntroUnlockCard)
-                        }
+                        // headline
+                        viewStore.mode.headLineText
+                            .font(.title.bold())
+                            .accessibility(identifier: A11y.settings.card.stgTxtCardResetIntroHeadline)
+
                         VStack(alignment: .leading, spacing: 16) {
+                            // subheadline
                             Text(L10n.stgTxtCardResetIntroSubheadline)
                                 .font(Font.body.weight(.semibold))
 
+                            // 1st checkmark
                             Label(
                                 title: { Text(L10n.stgTxtCardResetIntroNeedYourCard) },
                                 icon: {
@@ -71,48 +69,27 @@ struct HealthCardPasswordIntroductionView: View {
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(8)
 
-                            if viewStore.withNewPin {
-                                Label(
-                                    title: { Text(L10n.stgTxtCardResetIntroNeedYourCardsPin) },
-                                    icon: {
-                                        Image(systemName: SFSymbolName.checkmarkCircleFill)
-                                            .foregroundColor(Colors.secondary500)
-                                            .font(.title3)
-                                    }
-                                )
-                                .accessibility(identifier: A11y.settings.card.stgTxtCardResetIntroNeedYourCardsPin)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(8)
-
-                                VStack(spacing: 8) {
-                                    Text(L10n.stgTxtCardResetIntroHintCustomPin)
-                                        .foregroundColor(Color(.secondaryLabel))
-                                        .frame(maxWidth: .infinity, alignment: .leading)
-                                        .fixedSize(horizontal: false, vertical: true)
+                            // 2nd checkmark
+                            Label(
+                                title: { viewStore.mode.checkmarkText },
+                                icon: {
+                                    Image(systemName: SFSymbolName.checkmarkCircleFill)
+                                        .foregroundColor(Colors.secondary500)
+                                        .font(.title3)
                                 }
-                                .font(.subheadline)
-                            } else {
-                                Label(
-                                    title: { Text(L10n.stgTxtCardResetIntroNeedYourCardsPuk) },
-                                    icon: {
-                                        Image(systemName: SFSymbolName.checkmarkCircleFill)
-                                            .foregroundColor(Colors.secondary500)
-                                            .font(.title3)
-                                    }
-                                )
-                                .accessibility(identifier: A11y.settings.card
-                                    .stgTxtCardResetIntroNeedYourCardsPuk)
-                                .frame(maxWidth: .infinity, alignment: .leading)
-                                .padding(8)
+                            )
+                            .accessibility(identifier: A11y.settings.card.stgTxtCardResetIntroNeedYourCardsPin)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(8)
 
-                                VStack(spacing: 8) {
-                                    Text(L10n.stgTxtCardResetIntroHint)
-                                        .foregroundColor(Color(.secondaryLabel))
-                                        .frame(maxWidth: .infinity, alignment: .leading)
-                                        .fixedSize(horizontal: false, vertical: true)
-                                }
-                                .font(.subheadline)
+                            // Hint
+                            VStack(spacing: 8) {
+                                viewStore.mode.hintText
+                                    .foregroundColor(Color(.secondaryLabel))
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .fixedSize(horizontal: false, vertical: true)
                             }
+                            .font(.subheadline)
                         }
                         .padding(.top, 32)
                     }.padding()
@@ -149,6 +126,32 @@ struct HealthCardPasswordIntroductionView: View {
             .padding(.vertical, 8)
         }
         .navigationBarTitleDisplayMode(.inline)
+    }
+}
+
+private extension HealthCardPasswordDomain.Mode { // swiftlint:disable:this no_extension_access_modifier
+    var headLineText: Text {
+        switch self {
+        case .forgotPin: return Text(L10n.stgTxtCardResetIntroForgotPin)
+        case .setCustomPin: return Text(L10n.stgTxtCardResetIntroCustomPin)
+        case .unlockCard: return Text(L10n.stgTxtCardResetIntroUnlockCard)
+        }
+    }
+
+    var checkmarkText: Text {
+        switch self {
+        case .forgotPin: return Text(L10n.stgTxtCardResetIntroNeedYourCardsPuk)
+        case .setCustomPin: return Text(L10n.stgTxtCardResetIntroNeedYourCardsPin)
+        case .unlockCard: return Text(L10n.stgTxtCardResetIntroNeedYourCardsPuk)
+        }
+    }
+
+    var hintText: Text {
+        switch self {
+        case .forgotPin: return Text(L10n.stgTxtCardResetIntroHint)
+        case .setCustomPin: return Text(L10n.stgTxtCardResetIntroHintCustomPin)
+        case .unlockCard: return Text(L10n.stgTxtCardResetIntroHint)
+        }
     }
 }
 

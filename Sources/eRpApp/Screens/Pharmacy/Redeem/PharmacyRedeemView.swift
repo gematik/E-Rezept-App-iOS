@@ -47,23 +47,26 @@ struct PharmacyRedeemView: View {
                             redeemOption: viewStore.redeemType,
                             profile: viewStore.profile
                         ) {
-                            viewStore.send(.showPharmacyContact)
+                            viewStore.send(.setNavigation(tag: .contact))
                         }
                     } else {
                         MissingAddressView(profile: viewStore.profile) {
-                            viewStore.send(.showPharmacyContact)
+                            viewStore.send(.setNavigation(tag: .contact))
                         }
                     }
                     PrescriptionView(viewStore: viewStore)
                 }
             }
+            .redeemNavigation(for: store)
 
             Spacer()
 
             RedeemButton(viewStore: viewStore)
                 .alert(
-                    self.store.scope(state: \.alertState),
-                    dismiss: .alertDismissButtonTapped
+                    self.store
+                        .scope(state: (\PharmacyRedeemDomain.State.route)
+                            .appending(path: /PharmacyRedeemDomain.Route.alert).extract(from:)),
+                    dismiss: .setNavigation(tag: .none)
                 )
         }
         .onAppear {
@@ -83,7 +86,6 @@ struct PharmacyRedeemView: View {
             navigationBarAppearance.backgroundColor = UIColor(Colors.systemBackground)
             navigationBar.standardAppearance = navigationBarAppearance
         }
-        .routes(for: store)
     }
 }
 
@@ -292,7 +294,7 @@ extension PharmacyRedeemView {
         }
     }
 
-    struct Router: ViewModifier {
+    struct RedeemNavigation: ViewModifier {
         let store: PharmacyRedeemDomain.Store
         @ObservedObject var viewStore: ViewStore<ViewState, PharmacyRedeemDomain.Action>
 
@@ -320,6 +322,25 @@ extension PharmacyRedeemView {
                 ) {}
                     .hidden()
                     .accessibility(hidden: true)
+
+                Rectangle()
+                    .frame(width: 0, height: 0, alignment: .center)
+                    .fullScreenCover(
+                        isPresented: Binding<Bool>(
+                            get: { viewStore.routeTag == .cardWall },
+                            set: { show in
+                                if !show {
+                                    viewStore.send(.setNavigation(tag: nil))
+                                }
+                            }
+                        ),
+                        onDismiss: {},
+                        content: {
+                            cardWallDestination
+                        }
+                    )
+                    .accessibility(hidden: true)
+                    .hidden()
             }
             .fullScreenCover(
                 isPresented: Binding<Bool>(
@@ -357,13 +378,24 @@ extension PharmacyRedeemView {
                 then: PharmacyContactView.init(store:)
             )
         }
+
+        private var cardWallDestination: some View {
+            IfLetStore(
+                self.store.scope(
+                    state: (\PharmacyRedeemDomain.State.route).appending(path: /PharmacyRedeemDomain.Route.cardWall)
+                        .extract(from:),
+                    action: PharmacyRedeemDomain.Action.cardWall(action:)
+                ),
+                then: CardWallIntroductionView.init(store:)
+            )
+        }
     }
 }
 
 extension View {
-    func routes(for store: PharmacyRedeemDomain.Store) -> some View {
+    func redeemNavigation(for store: PharmacyRedeemDomain.Store) -> some View {
         modifier(
-            PharmacyRedeemView.Router(store: store)
+            PharmacyRedeemView.RedeemNavigation(store: store)
         )
     }
 }

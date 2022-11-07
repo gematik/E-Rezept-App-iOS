@@ -69,7 +69,7 @@ final class CardWallLoginDomainTests: XCTestCase {
                                                                  profileId: store.environment.userSession
                                                                      .profileId,
                                                                  pin: "",
-                                                                 loginOption: .withBiometry,
+                                                                 loginOption: .withoutBiometry,
                                                                  output: .idle))
         }
     }
