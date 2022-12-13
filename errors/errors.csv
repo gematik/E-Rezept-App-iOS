@@ -134,7 +134,7 @@ i-50104,"MigrationError.read","",
 i-50105,"MigrationError.delete","",
 i-50106,"MigrationError.unspecified","",
 i-50107,"MigrationError.initialization","",
-i-,"PharmacyCoreDataStore.Error.noMatchingEntity","",
+i-50501,"PharmacyCoreDataStore.Error.noMatchingEntity","",
 i-50201,"ProfileCoreDataStore.Error.noMatchingEntity","",
 i-50202,"ProfileCoreDataStore.Error.initialization","",
 i-50401,"ShipmentInfoCoreDataStore.Error.noMatchingEntity","",
@@ -247,6 +247,7 @@ i-10906,"SecureEnclaveSignatureProviderError.`internal`","",
 i-10906,"SecureEnclaveSignatureProviderError.`internal`","",
 i-51001,"PharmacyBundleParsingError.parseError","",
 i-57001,"PharmacyFHIRDataSource.Error.fhirClient","",FHIRClient.Error
+i-57002,"PharmacyFHIRDataSource.Error.notFound","",
 i-57101,"PharmacyRepositoryError.local","",LocalStoreError
 i-57102,"PharmacyRepositoryError.remote","",PharmacyFHIRDataSource.Error
 i-56201,"TrustAnchor.Error.invalidPEM","",

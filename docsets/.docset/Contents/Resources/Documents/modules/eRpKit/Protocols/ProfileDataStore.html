@@ -21,7 +21,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-           1.4.7
+           1.4.9
  Docs
         </a>
          (100% documented)
@@ -182,7 +182,13 @@
                 <a class="nav-group-task-link" href="../Structs/ErxTask/Communication.html">– Communication</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/ErxTask/Medication.html">– Medication</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/ErxTask/MedicationDispense.html">– MedicationDispense</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/ErxTask/MultiplePrescription.html">– MultiplePrescription</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/ErxTask/Status.html">– Status</a>
@@ -204,9 +210,6 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/ErxTask/WorkRelatedAccident.html">– WorkRelatedAccident</a>
-              </li>
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Structs/ErxTask/Medication.html">– Medication</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/ErxTaskOrder.html">ErxTaskOrder</a>
@@ -233,6 +236,9 @@
                 <a class="nav-group-task-link" href="../Structs/PharmacyLocation/AVSEndpoints.html">– AVSEndpoints</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Structs/PharmacyLocation/Dummies.html">– Dummies</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/PharmacyLocation/Status.html">– Status</a>
               </li>
               <li class="nav-group-task">
@@ -249,9 +255,6 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/PharmacyLocation/HoursOfOperation.html">– HoursOfOperation</a>
-              </li>
-              <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Structs/PharmacyLocation/Dummies.html">– Dummies</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Structs/Profile.html">Profile</a>
@@ -572,6 +575,108 @@
                     </section>
                   </div>
                 </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:6eRpKit16ProfileDataStorePAAE4save7profile7Combine12AnyPublisherVySbAA05LocalE5ErrorOGAA0C0V_tF"></a>
+                    <a name="//apple_ref/swift/Method/save(profile:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:6eRpKit16ProfileDataStorePAAE4save7profile7Combine12AnyPublisherVySbAA05LocalE5ErrorOGAA0C0V_tF">save(profile:<wbr>)</a>
+                    </code>
+                      <span class="declaration-note">
+                        Extension method
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Creates or updates a <code><a href="../Structs/Profile.html">Profile</a></code> into the store. Updates if the identifier does already exist in store</p>
+
+<p>sourcery: SkipStreamWrapped</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">save</span><span class="p">(</span><span class="nv">profile</span><span class="p">:</span> <span class="kt"><a href="../Structs/Profile.html">Profile</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">Bool</span><span class="p">,</span> <span class="kt"><a href="../Enums/LocalStoreError.html">LocalStoreError</a></span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>profile</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Instance of <code><a href="../Structs/Profile.html">Profile</a></code> to be saved</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:6eRpKit16ProfileDataStorePAAE6delete7profile7Combine12AnyPublisherVySbAA05LocalE5ErrorOGAA0C0V_tF"></a>
+                    <a name="//apple_ref/swift/Method/delete(profile:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:6eRpKit16ProfileDataStorePAAE6delete7profile7Combine12AnyPublisherVySbAA05LocalE5ErrorOGAA0C0V_tF">delete(profile:<wbr>)</a>
+                    </code>
+                      <span class="declaration-note">
+                        Extension method
+                      </span>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Deletes a <code><a href="../Structs/Profile.html">Profile</a></code> from the store with the related identifier</p>
+
+<p>sourcery: SkipStreamWrapped</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">delete</span><span class="p">(</span><span class="nv">profile</span><span class="p">:</span> <span class="kt"><a href="../Structs/Profile.html">Profile</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">Bool</span><span class="p">,</span> <span class="kt"><a href="../Enums/LocalStoreError.html">LocalStoreError</a></span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>profile</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Instance of <code><a href="../Structs/Profile.html">Profile</a></code> to be deleted</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
               </ul>
             </div>
           </div>
@@ -580,8 +685,8 @@
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2022 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2022-10-20)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
+      <p>&copy; 2022 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2022-12-14)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.3</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>
 </html>

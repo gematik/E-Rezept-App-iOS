@@ -21,7 +21,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-           1.4.7
+           1.4.9
  Docs
         </a>
          (100% documented)
@@ -94,6 +94,9 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/ErxTaskMedicationEntity.html">ErxTaskMedicationEntity</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/ErxTaskMultiplePrescriptionEntity.html">ErxTaskMultiplePrescriptionEntity</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/ErxTaskOrganizationEntity.html">ErxTaskOrganizationEntity</a>
@@ -207,9 +210,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:15eRpLocalStorage21PharmacyCoreDataStoreC04coreF17ControllerFactory15foregroundQueue010backgroundL0AcA0efiJ0_p_17CombineSchedulers12AnySchedulerVySo17OS_dispatch_queueC8DispatchE0Q8TimeTypeVAlME0Q7OptionsVGARtcfc"></a>
+                    <a name="/s:15eRpLocalStorage21PharmacyCoreDataStoreCyXeXecfc"></a>
                     <a name="//apple_ref/swift/Method/init(coreDataControllerFactory:foregroundQueue:backgroundQueue:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:15eRpLocalStorage21PharmacyCoreDataStoreC04coreF17ControllerFactory15foregroundQueue010backgroundL0AcA0efiJ0_p_17CombineSchedulers12AnySchedulerVySo17OS_dispatch_queueC8DispatchE0Q8TimeTypeVAlME0Q7OptionsVGARtcfc">init(coreDataControllerFactory:<wbr>foregroundQueue:<wbr>backgroundQueue:<wbr>)</a>
+                    <a class="token" href="#/s:15eRpLocalStorage21PharmacyCoreDataStoreCyXeXecfc">init(coreDataControllerFactory:<wbr>foregroundQueue:<wbr>backgroundQueue:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -283,9 +286,9 @@ other queue (Default: DispatchQueue.main)</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:6eRpKit22PharmacyLocalDataStoreP05fetchC02by7Combine12AnyPublisherVyAA0C8LocationVSgAA0dF5ErrorOGSS_tF"></a>
+                    <a name="/s:15eRpLocalStorage21PharmacyCoreDataStoreC05fetchD0yXeXeF"></a>
                     <a name="//apple_ref/swift/Method/fetchPharmacy(by:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6eRpKit22PharmacyLocalDataStoreP05fetchC02by7Combine12AnyPublisherVyAA0C8LocationVSgAA0dF5ErrorOGSS_tF">fetchPharmacy(by:<wbr>)</a>
+                    <a class="token" href="#/s:15eRpLocalStorage21PharmacyCoreDataStoreC05fetchD0yXeXeF">fetchPharmacy(by:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -309,9 +312,9 @@ other queue (Default: DispatchQueue.main)</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:6eRpKit22PharmacyLocalDataStoreP17listAllPharmacies7Combine12AnyPublisherVySayAA0C8LocationVGAA0dF5ErrorOGyF"></a>
-                    <a name="//apple_ref/swift/Method/listAllPharmacies()" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6eRpKit22PharmacyLocalDataStoreP17listAllPharmacies7Combine12AnyPublisherVySayAA0C8LocationVGAA0dF5ErrorOGyF">listAllPharmacies()</a>
+                    <a name="/s:15eRpLocalStorage21PharmacyCoreDataStoreC14listPharmaciesyXeXeF"></a>
+                    <a name="//apple_ref/swift/Method/listPharmacies(count:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:15eRpLocalStorage21PharmacyCoreDataStoreC14listPharmaciesyXeXeF">listPharmacies(count:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -325,7 +328,7 @@ other queue (Default: DispatchQueue.main)</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">listAllPharmacies</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="p">[</span><span class="kt">PharmacyLocation</span><span class="p">],</span> <span class="kt">LocalStoreError</span><span class="o">&gt;</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">listPharmacies</span><span class="p">(</span><span class="nv">count</span><span class="p">:</span> <span class="kt">Int</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="p">[</span><span class="kt">PharmacyLocation</span><span class="p">],</span> <span class="kt">LocalStoreError</span><span class="o">&gt;</span></code></pre>
 
                         </div>
                       </div>
@@ -335,9 +338,9 @@ other queue (Default: DispatchQueue.main)</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:6eRpKit22PharmacyLocalDataStoreP4save10pharmacies7Combine12AnyPublisherVySbAA0dF5ErrorOGSayAA0C8LocationVG_tF"></a>
+                    <a name="/s:15eRpLocalStorage21PharmacyCoreDataStoreC4saveyXeXeF"></a>
                     <a name="//apple_ref/swift/Method/save(pharmacies:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6eRpKit22PharmacyLocalDataStoreP4save10pharmacies7Combine12AnyPublisherVySbAA0dF5ErrorOGSayAA0C8LocationVG_tF">save(pharmacies:<wbr>)</a>
+                    <a class="token" href="#/s:15eRpLocalStorage21PharmacyCoreDataStoreC4saveyXeXeF">save(pharmacies:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -361,9 +364,9 @@ other queue (Default: DispatchQueue.main)</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:6eRpKit22PharmacyLocalDataStoreP6update10identifier8mutating7Combine12AnyPublisherVySbAA0dF5ErrorOGSS_yAA0C8LocationVzctF"></a>
-                    <a name="//apple_ref/swift/Method/update(identifier:mutating:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6eRpKit22PharmacyLocalDataStoreP6update10identifier8mutating7Combine12AnyPublisherVySbAA0dF5ErrorOGSS_yAA0C8LocationVzctF">update(identifier:<wbr>mutating:<wbr>)</a>
+                    <a name="/s:15eRpLocalStorage21PharmacyCoreDataStoreC6updateyXeXeF"></a>
+                    <a name="//apple_ref/swift/Method/update(telematikId:mutating:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:15eRpLocalStorage21PharmacyCoreDataStoreC6updateyXeXeF">update(telematikId:<wbr>mutating:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -377,8 +380,9 @@ other queue (Default: DispatchQueue.main)</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">update</span><span class="p">(</span><span class="nv">identifier</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
-                   <span class="nv">mutating</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="k">inout</span> <span class="kt">PharmacyLocation</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">Bool</span><span class="p">,</span> <span class="kt">LocalStoreError</span><span class="o">&gt;</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">update</span><span class="p">(</span><span class="nv">telematikId</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
+                   <span class="nv">mutating</span><span class="p">:</span> <span class="kd">@escaping</span> <span class="p">(</span><span class="k">inout</span> <span class="kt">PharmacyLocation</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">Void</span><span class="p">)</span>
+    <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">PharmacyLocation</span><span class="p">,</span> <span class="kt">LocalStoreError</span><span class="o">&gt;</span></code></pre>
 
                         </div>
                       </div>
@@ -388,9 +392,9 @@ other queue (Default: DispatchQueue.main)</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:6eRpKit22PharmacyLocalDataStoreP6delete10pharmacies7Combine12AnyPublisherVySbAA0dF5ErrorOGSayAA0C8LocationVG_tF"></a>
+                    <a name="/s:15eRpLocalStorage21PharmacyCoreDataStoreC6deleteyXeXeF"></a>
                     <a name="//apple_ref/swift/Method/delete(pharmacies:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6eRpKit22PharmacyLocalDataStoreP6delete10pharmacies7Combine12AnyPublisherVySbAA0dF5ErrorOGSayAA0C8LocationVG_tF">delete(pharmacies:<wbr>)</a>
+                    <a class="token" href="#/s:15eRpLocalStorage21PharmacyCoreDataStoreC6deleteyXeXeF">delete(pharmacies:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -446,8 +450,8 @@ other queue (Default: DispatchQueue.main)</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2022 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2022-10-20)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
+      <p>&copy; 2022 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2022-12-14)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.3</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>
 </html>
