@@ -17,10 +17,14 @@
 //
 
 import eRpKit
+import eRpStyleKit
 import SwiftUI
 
 struct PharmacySearchCell: View {
-    let pharmacy: PharmacyLocationViewModel
+    var pharmacy: PharmacyLocationViewModel
+    var isFavorite = false
+    let showDistance: Bool
+    var loading = false
 
     var body: some View {
         HStack(spacing: 16) {
@@ -46,22 +50,30 @@ struct PharmacySearchCell: View {
                     .padding(.top, 1)
                     .accessibilitySortPriority(80)
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
             .accessibilitySortPriority(1000)
+            .padding(.trailing, showDistance && pharmacy.distanceInM != nil ? 0 : 16)
 
-            if let distance = pharmacy.distanceInKm {
-                Spacer()
-
-                Text(String(format: "%.2f km", distance))
+            if showDistance,
+               let distance = pharmacy.formattedDistance {
+                Text(distance)
                     .font(Font.footnote.weight(.semibold))
                     .foregroundColor(Colors.systemLabelSecondary)
-                    .padding([.leading, .trailing], 8)
                     .accessibilitySortPriority(50)
+                    .padding(.trailing, 4)
+            }
+
+            if isFavorite {
+                Image(systemName: SFSymbolName.starFill).foregroundColor(Colors.starYellow)
+                    .accessibilitySortPriority(60)
+            }
+
+            if loading {
+                ProgressView()
             }
         }
         .accessibilityElement(children: .combine)
     }
-
-    static let minimumOpenMinutesLeftBeforeWarn = 30
 
     struct ColoredOpeningHours: View {
         let openingState: PharmacyOpenHoursCalculator.TodaysOpeningState
@@ -97,8 +109,6 @@ struct PharmacySearchCell: View {
     }
 }
 
-import eRpStyleKit
-
 struct PharmacySearchCell_Previews: PreviewProvider {
     static var previews: some View {
         ScrollView {
@@ -110,11 +120,18 @@ struct PharmacySearchCell_Previews: PreviewProvider {
                     ForEach(PharmacyLocationViewModel.Dummies.pharmacies, id: \.self) { pharmacyViewModel in
                         Button(
                             action: {},
-                            label: { Label(title: { PharmacySearchCell(pharmacy: pharmacyViewModel) }, icon: {}) }
+                            label: {
+                                Label(
+                                    title: {
+                                        PharmacySearchCell(pharmacy: pharmacyViewModel, showDistance: true)
+                                    },
+                                    icon: {}
+                                )
+                            }
                         )
                         .fixedSize(horizontal: false, vertical: true)
                         .accessibility(identifier: A11y.pharmacySearch.phaSearchTxtResultListEntry)
-                        .buttonStyle(.navigation(showSeparator: true))
+                        .buttonStyle(.navigation(showSeparator: true, minChevronSpacing: 0))
                         .modifier(SectionContainerCellModifier(last: false))
                     }
                 }

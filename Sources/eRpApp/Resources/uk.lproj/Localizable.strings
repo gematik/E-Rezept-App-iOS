@@ -1,3 +1,6 @@
+"add_btn_save" = "Speichern";
+"add_txt_profile1" = "Profile 1";
+"add_txt_title" = "Name eingeben";
 "alert_btn_close" = "Відхилити";
 "alert_btn_ok" = "Ok";
 "alert_error_message_unknown" = "Невідомий";
@@ -267,6 +270,7 @@
 "cpw_txt_title" = "Пароль";
 "cpw_txt_update_title" = "Змінити пароль";
 "ctl_btn_profile_picker_edit" = "Редагувати зображення";
+"ctl_btn_profile_picker_picture_a11y_label" = "Profilbild";
 "ctl_btn_profile_picker_reset" = "Скинути зображення";
 "ctl_btn_profile_picker_set" = "Зберегти";
 "ctl_btn_profile_toolbar_item" = "Поточний профіль";
@@ -341,6 +345,7 @@
 "erx_txt_prescription_added_alert_title" = "Rezept erfolgreich hinzugefügt";
 "erx_txt_prescription_duplicate_alert_message" = "Das Rezept wurde bereits importiert.";
 "erx_txt_prescription_duplicate_alert_title" = "Rezept nicht hinzugefügt";
+"erx_txt_redeem_at_%@" = "Einlösbar ab %@";
 "erx_txt_redeemed" = "Архів";
 "erx_txt_refresh_loading" = "Триває завантаження…";
 "hint_btn_close" = "Закрити";
@@ -821,6 +826,9 @@
 "pha_search_txt_filter_shipment" = "Розсилання";
 "pha_search_txt_hint_start_search" = "Почніть пошук, натиснувши Відкрити на клавіатурі";
 "pha_search_txt_history_title" = "Zuletzt gesucht";
+"pha_search_txt_local_pharm_err_not_found" = "Apotheke nicht gefunden";
+"pha_search_txt_local_pharm_err_not_found_recovery" = "Bitte erneut über Apothekensuche hinzufügen.";
+"pha_search_txt_local_pharm_title" = "Meine Apotheken";
 "pha_search_txt_location_alert_message" = "Поділіться своїм місцем розташування, щоб знайти аптеки поблизу.";
 "pha_search_txt_location_alert_title" = "Поділитися місцем розташування";
 "pha_search_txt_location_hint_message" = "Поділіться місцем розташування та знайдіть аптеки у вашому регіоні";
@@ -901,6 +909,7 @@
 "prsc_status_error" = "Невірний рецепт";
 "prsc_status_expired" = "Термін дії минув";
 "prsc_status_in_progress" = "Погашається";
+"prsc_status_multiple_prsc" = "Später einlösbar";
 "prsc_status_ready" = "Можна погасити";
 "prsc_status_undefined" = "Невідомо";
 "prsc_txt_fallback_name" = "Медикамент";

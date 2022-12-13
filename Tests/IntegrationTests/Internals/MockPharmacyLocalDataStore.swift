@@ -20,39 +20,47 @@ import Combine
 import eRpKit
 @testable import Pharmacy
 
+// swiftlint:disable discouraged_optional_collection
+
+// MARK: - MockPharmacyLocalDataStore -
+
 final class MockPharmacyLocalDataStore: PharmacyLocalDataStore {
     // MARK: - fetchPharmacy
 
-    var fetchByTelematikIdCallsCount = 0
-    var fetchByTelematikIdCalled: Bool {
-        fetchByTelematikIdCallsCount > 0
+    var fetchPharmacyByCallsCount = 0
+    var fetchPharmacyByCalled: Bool {
+        fetchPharmacyByCallsCount > 0
     }
 
-    var fetchByTelematikIdReceivedArgument: String?
-    var fetchByTelematikIdReceivedInvocations: [String] = []
-    var fetchByTelematikIdReturnValue: AnyPublisher<PharmacyLocation?, LocalStoreError>!
-    var fetchByTelematikIdClosure: ((String) -> AnyPublisher<PharmacyLocation?, LocalStoreError>)?
+    var fetchPharmacyByReceivedTelematikId: String?
+    var fetchPharmacyByReceivedInvocations: [String] = []
+    var fetchPharmacyByReturnValue: AnyPublisher<PharmacyLocation?, LocalStoreError>!
+    var fetchPharmacyByClosure: ((String) -> AnyPublisher<PharmacyLocation?, LocalStoreError>)?
 
     func fetchPharmacy(by telematikId: String) -> AnyPublisher<PharmacyLocation?, LocalStoreError> {
-        fetchByTelematikIdCallsCount += 1
-        fetchByTelematikIdReceivedArgument = telematikId
-        fetchByTelematikIdReceivedInvocations.append(telematikId)
-        return fetchByTelematikIdClosure.map { $0(telematikId) } ?? fetchByTelematikIdReturnValue
+        fetchPharmacyByCallsCount += 1
+        fetchPharmacyByReceivedTelematikId = telematikId
+        fetchPharmacyByReceivedInvocations.append(telematikId)
+        return fetchPharmacyByClosure.map { $0(telematikId) } ?? fetchPharmacyByReturnValue
     }
 
-    // MARK: - listAllPharmacies
+    // MARK: - listPharmacies
 
-    var listAllPharmaciesCallsCount = 0
-    var listAllPharmaciesCalled: Bool {
-        listAllPharmaciesCallsCount > 0
+    var listPharmaciesCountCallsCount = 0
+    var listPharmaciesCountCalled: Bool {
+        listPharmaciesCountCallsCount > 0
     }
 
-    var listAllPharmaciesReturnValue: AnyPublisher<[PharmacyLocation], LocalStoreError>!
-    var listAllPharmaciesClosure: (() -> AnyPublisher<[PharmacyLocation], LocalStoreError>)?
+    var listPharmaciesCountReceivedCount: Int?
+    var listPharmaciesCountReceivedInvocations: [Int?] = []
+    var listPharmaciesCountReturnValue: AnyPublisher<[PharmacyLocation], LocalStoreError>!
+    var listPharmaciesCountClosure: ((Int?) -> AnyPublisher<[PharmacyLocation], LocalStoreError>)?
 
-    func listAllPharmacies() -> AnyPublisher<[PharmacyLocation], LocalStoreError> {
-        listAllPharmaciesCallsCount += 1
-        return listAllPharmaciesClosure.map { $0() } ?? listAllPharmaciesReturnValue
+    func listPharmacies(count: Int?) -> AnyPublisher<[PharmacyLocation], LocalStoreError> {
+        listPharmaciesCountCallsCount += 1
+        listPharmaciesCountReceivedCount = count
+        listPharmaciesCountReceivedInvocations.append(count)
+        return listPharmaciesCountClosure.map { $0(count) } ?? listPharmaciesCountReturnValue
     }
 
     // MARK: - save
@@ -62,14 +70,14 @@ final class MockPharmacyLocalDataStore: PharmacyLocalDataStore {
         savePharmaciesCallsCount > 0
     }
 
-    var savePharmaciesReceivedArgument: [PharmacyLocation] = []
+    var savePharmaciesReceivedPharmacies: [PharmacyLocation]?
     var savePharmaciesReceivedInvocations: [[PharmacyLocation]] = []
     var savePharmaciesReturnValue: AnyPublisher<Bool, LocalStoreError>!
     var savePharmaciesClosure: (([PharmacyLocation]) -> AnyPublisher<Bool, LocalStoreError>)?
 
     func save(pharmacies: [PharmacyLocation]) -> AnyPublisher<Bool, LocalStoreError> {
         savePharmaciesCallsCount += 1
-        savePharmaciesReceivedArgument = pharmacies
+        savePharmaciesReceivedPharmacies = pharmacies
         savePharmaciesReceivedInvocations.append(pharmacies)
         return savePharmaciesClosure.map { $0(pharmacies) } ?? savePharmaciesReturnValue
     }
@@ -81,39 +89,39 @@ final class MockPharmacyLocalDataStore: PharmacyLocalDataStore {
         deletePharmaciesCallsCount > 0
     }
 
-    var deletePharmaciesReceivedArgument: [PharmacyLocation] = []
+    var deletePharmaciesReceivedPharmacies: [PharmacyLocation]?
     var deletePharmaciesReceivedInvocations: [[PharmacyLocation]] = []
     var deletePharmaciesReturnValue: AnyPublisher<Bool, LocalStoreError>!
     var deletePharmaciesClosure: (([PharmacyLocation]) -> AnyPublisher<Bool, LocalStoreError>)?
 
     func delete(pharmacies: [PharmacyLocation]) -> AnyPublisher<Bool, LocalStoreError> {
         deletePharmaciesCallsCount += 1
-        deletePharmaciesReceivedArgument = pharmacies
+        deletePharmaciesReceivedPharmacies = pharmacies
         deletePharmaciesReceivedInvocations.append(pharmacies)
         return deletePharmaciesClosure.map { $0(pharmacies) } ?? deletePharmaciesReturnValue
     }
 
     // MARK: - update
 
-    var updatePharmacyIdMutatingCallsCount = 0
-    var updatePharmacyIdMutatingCalled: Bool {
-        updatePharmacyIdMutatingCallsCount > 0
+    var updateTelematikIdMutatingCallsCount = 0
+    var updateTelematikIdMutatingCalled: Bool {
+        updateTelematikIdMutatingCallsCount > 0
     }
 
-    var updatePharmacyIdMutatingReceivedArguments: (pharmacyId: String, mutating: (inout PharmacyLocation) -> Void)?
-    var updatePharmacyIdMutatingReceivedInvocations: [
-        (pharmacyId: String, mutating: (inout PharmacyLocation) -> Void)
-    ] =
-        []
-    var updatePharmacyIdMutatingReturnValue: AnyPublisher<Bool, LocalStoreError>!
-    var updatePharmacyIdMutatingClosure: ((String, @escaping (inout PharmacyLocation) -> Void)
-        -> AnyPublisher<Bool, LocalStoreError>)?
+    var updateTelematikIdMutatingReceivedArguments: (telematikId: String, mutating: (inout PharmacyLocation) -> Void)?
+    var updateTelematikIdMutatingReceivedInvocations: [(telematikId: String,
+                                                        mutating: (inout PharmacyLocation) -> Void)] = []
+    var updateTelematikIdMutatingReturnValue: AnyPublisher<PharmacyLocation, LocalStoreError>!
+    var updateTelematikIdMutatingClosure: ((String, @escaping (inout PharmacyLocation) -> Void)
+        -> AnyPublisher<PharmacyLocation, LocalStoreError>)?
 
-    func update(identifier: String,
-                mutating: @escaping (inout PharmacyLocation) -> Void) -> AnyPublisher<Bool, LocalStoreError> {
-        updatePharmacyIdMutatingCallsCount += 1
-        updatePharmacyIdMutatingReceivedArguments = (identifier, mutating)
-        updatePharmacyIdMutatingReceivedInvocations.append((identifier, mutating))
-        return updatePharmacyIdMutatingClosure.map { $0(identifier, mutating) } ?? updatePharmacyIdMutatingReturnValue
+    func update(telematikId: String,
+                mutating: @escaping (inout PharmacyLocation) -> Void)
+        -> AnyPublisher<PharmacyLocation, LocalStoreError> {
+        updateTelematikIdMutatingCallsCount += 1
+        updateTelematikIdMutatingReceivedArguments = (telematikId: telematikId, mutating: mutating)
+        updateTelematikIdMutatingReceivedInvocations.append((telematikId: telematikId, mutating: mutating))
+        return updateTelematikIdMutatingClosure
+            .map { $0(telematikId, mutating) } ?? updateTelematikIdMutatingReturnValue
     }
 }

@@ -23,6 +23,7 @@ import eRpKit
 @testable import eRpLocalStorage
 import Foundation
 import Nimble
+import OpenSSL
 import XCTest
 
 final class PharmacyCoreDataStoreTests: XCTestCase {
@@ -71,6 +72,26 @@ final class PharmacyCoreDataStoreTests: XCTestCase {
     }
 
     private lazy var pharmacySimple: PharmacyLocation = {
+        let telecom = PharmacyLocation.Telecom(
+            phone: "09876543",
+            fax: "123456789",
+            email: "app-feedback@gematik.de",
+            web: "https://www.das-e-rezept-fuer-deutschland.de"
+        )
+
+        return PharmacyLocation(
+            id: "1234",
+            status: nil,
+            telematikID: "T.S-1",
+            name: "Simple Pharmacy",
+            types: [],
+            position: nil,
+            telecom: telecom,
+            hoursOfOperation: []
+        )
+    }()
+
+    private lazy var completePharmacy: PharmacyLocation = {
         let position = PharmacyLocation.Position(
             latitude: 52.52249912396821024,
             longitude: -13.38754943050812048
@@ -82,15 +103,40 @@ final class PharmacyCoreDataStoreTests: XCTestCase {
             web: "https://www.das-e-rezept-fuer-deutschland.de"
         )
 
+        let operationHours = [PharmacyLocation.HoursOfOperation(
+            daysOfWeek: ["mon"],
+            openingTime: "08:00:00",
+            closingTime: "18:30:00"
+        )]
+
+        let derCert =
+            Data(
+                base64Encoded: "MIIE4TCCA8mgAwIBAgIDD0vlMA0GCSqGSIb3DQEBCwUAMIGuMQswCQYDVQQGEwJERTEzMDEGA1UECgwqQXRvcyBJbmZvcm1hdGlvbiBUZWNobm9sb2d5IEdtYkggTk9ULVZBTElEMUgwRgYDVQQLDD9JbnN0aXR1dGlvbiBkZXMgR2VzdW5kaGVpdHN3ZXNlbnMtQ0EgZGVyIFRlbGVtYXRpa2luZnJhc3RydWt0dXIxIDAeBgNVBAMMF0FUT1MuU01DQi1DQTMgVEVTVC1PTkxZMB4XDTE5MDkxNzEyMzYxNloXDTI0MDkxNzEyMzYxNlowXDELMAkGA1UEBhMCREUxIDAeBgNVBAoMFzEtMjExMjM0NTY3ODkgTk9ULVZBTElEMSswKQYDVQQDDCJBcnp0cHJheGlzIERyLiBBxJ9hb8SfbHUgVEVTVC1PTkxZMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAmdmUeBLB6UDh4u8FAvi7B3hpAhJYXBlx+IJXLiSrhgCu/T/L5vVlCQb+1gYybWhHT5YlxafTJpOcXSfcixJbFWGxn+iQLqo+LCp/ljLBz5JoU+IXIxRKZCi5SZ9APeglGs4R0/xpPBtsJzihFXVu+B8qGm2oqmvVV91u+MoJ5asC6C+rVOecLxqy/OdmeKfaNSgH2NxVzNc19VmFUkFDGUFJjG4ZgatW4V6AuAhiPnDkEg8gfXr5L7ycQRZUNlEGMmDhh+noHU/doxSU2cgBaiTZNmu17FJLXlBLRISpWcQitcjOkjrJDt4Z0Yta64yZe13+a5dANh32Zeeg5jDQRQIDAQABo4IBVzCCAVMwHQYDVR0OBBYEFF/uDhGziRKzsUC9Nkat5xQojOUZMA4GA1UdDwEB/wQEAwIEMDAMBgNVHRMBAf8EAjAAMCAGA1UdIAQZMBcwCQYHKoIUAEwETDAKBggqghQATASBIzBMBgNVHR8ERTBDMEGgP6A9hjtodHRwOi8vY3JsLXNtY2IuZWdrLXRlc3QtdHNwLmRlL0FUT1MuU01DQi1DQTNfVEVTVC1PTkxZLmNybDA8BggrBgEFBQcBAQQwMC4wLAYIKwYBBQUHMAGGIGh0dHA6Ly9vY3NwLXNtY2IuZWdrLXRlc3QtdHNwLmRlMB8GA1UdIwQYMBaAFD+eHl4mKtYMlaF4nqrz1drzQaf8MEUGBSskCAMDBDwwOjA4MDYwNDAyMBYMFEJldHJpZWJzc3TDpHR0ZSBBcnp0MAkGByqCFABMBDITDTEtMjExMjM0NTY3ODkwDQYJKoZIhvcNAQELBQADggEBACUnL3MxjyoEyUBRxcBAjl7FdePW0O1/UCeDAbH2b4ob9GjMGjL5OoBmhj9GsUORg/K4cIiqTot2TcPtdooKCI5a5Jupp0nYoAuzdrNlvGYEm0S/cvlyYJXjfhrEIHmlDY0/hpJX3S/hYgkniJ1Wg70MfLLcib05+31OijZmEzpChioIm4KmumEKU4ODsLWr/4OEw9KCYfuNpjiSyyAEd2pMgnGU8MKCJhrR/ZKSteAxAPKTXVtNTKndbptvcsaEZPp//vNdbBh+k8P642P2DHYfeDoUgivEYXdE5ABixtG9sk1Q2DPfTXoS+CKv45ae0vejBnRjuA28lmkmuIp+f+s=" // swiftlint:disable:this line_length
+            )!
+        let avsCert = try! X509(der: derCert)
+
         return PharmacyLocation(
-            id: "1234",
+            id: "012876",
             status: .active,
-            telematikID: "T.S-1",
-            name: "Simple Pharmacy",
-            types: [],
+            telematikID: "T.S-1-34",
+            created: Date(),
+            name: "Full pharmacy",
+            types: [.pharm, .outpharm, .delivery],
             position: position,
+            address: PharmacyLocation.Address(
+                street: "Pharmacy Street",
+                houseNumber: "2",
+                zip: "13267",
+                city: "Berlin"
+            ),
             telecom: telecom,
-            hoursOfOperation: []
+            lastUsed: Date(),
+            isFavorite: true,
+            imagePath: "path/to/image",
+            countUsage: 1,
+            hoursOfOperation: operationHours,
+            avsEndpoints: PharmacyLocation.AVSEndpoints(),
+            avsCertificates: [avsCert]
         )
     }()
 
@@ -116,11 +162,11 @@ final class PharmacyCoreDataStoreTests: XCTestCase {
 
     func testSavingPharmacyWillNotStoreAllValues() throws {
         let store = loadPharmacyCoreDataStore()
-        try store.add(pharmacies: [pharmacyWithTypeAndHours, pharmacySimple])
+        try store.add(pharmacies: [completePharmacy, pharmacySimple])
 
         var receivedListAllPharmacyValues = [[PharmacyLocation]]()
         var receivedCompletions = [Subscribers.Completion<LocalStoreError>]()
-        let cancellable = store.listAllPharmacies()
+        let cancellable = store.listPharmacies()
             .sink(receiveCompletion: { completion in
                 receivedCompletions.append(completion)
             }, receiveValue: { pharmacies in
@@ -129,7 +175,8 @@ final class PharmacyCoreDataStoreTests: XCTestCase {
 
         expect(receivedCompletions.count) == 0
         expect(receivedListAllPharmacyValues.count).toEventually(equal(1))
-        // then two pharmacies should be received (without saving status, types and hoursOfOperation) for know
+        // then two pharmacies should be received
+        // (without saving status, types, hoursOfOperation, avsEndpoints, avsCertificates)
         expect(receivedListAllPharmacyValues[0].count) == 2
         let first = receivedListAllPharmacyValues[0].first(where: { $0.telematikID == pharmacySimple.telematikID })
         expect(first?.id).to(equal(pharmacySimple.id))
@@ -137,29 +184,34 @@ final class PharmacyCoreDataStoreTests: XCTestCase {
         expect(first?.created).to(equal(pharmacySimple.created))
         expect(first?.name).to(equal(pharmacySimple.name))
         expect(first?.types).to(equal(pharmacySimple.types))
-        // Position should be present here
-        guard let lat = first?.position?.latitude?.doubleValue,
-              let long = first?.position?.longitude?.doubleValue,
-              let pharmacySimpleLat = pharmacySimple.position?.latitude?.doubleValue,
-              let pharmacySimpleLong = pharmacySimple.position?.longitude?.doubleValue else {
-            throw LocalStoreError.notImplemented
-        }
-        expect(lat).to(beCloseTo(pharmacySimpleLat))
-        expect(long).to(beCloseTo(pharmacySimpleLong))
-        expect(first?.telecom).to(equal(pharmacySimple.telecom))
-        expect(first?.hoursOfOperation).to(equal(pharmacySimple.hoursOfOperation))
+        expect(first?.position).to(beNil())
 
         let second = receivedListAllPharmacyValues[0]
-            .first(where: { $0.telematikID == pharmacyWithTypeAndHours.telematikID })
-        expect(second?.id).to(equal(pharmacyWithTypeAndHours.id))
+            .first(where: { $0.telematikID == completePharmacy.telematikID })
+        expect(second?.id).to(equal(completePharmacy.id))
+        expect(second?.created).to(equal(completePharmacy.created))
+        expect(second?.name).to(equal(completePharmacy.name))
+        expect(second?.telecom).to(equal(completePharmacy.telecom))
+        expect(second?.address).to(equal(completePharmacy.address))
+        expect(second?.telematikID).to(equal(completePharmacy.telematikID))
+        expect(second?.lastUsed).to(equal(completePharmacy.lastUsed))
+        expect(second?.countUsage).to(equal(completePharmacy.countUsage))
+        expect(second?.imagePath).to(equal(completePharmacy.imagePath))
+        expect(second?.isFavorite).to(equal(completePharmacy.isFavorite))
+        guard let lat = second?.position?.latitude?.doubleValue,
+              let long = second?.position?.longitude?.doubleValue,
+              let secondPharmacyLat = completePharmacy.position?.latitude?.doubleValue,
+              let secondPharmacyLong = completePharmacy.position?.longitude?.doubleValue else {
+            throw LocalStoreError.notImplemented
+        }
+        expect(lat).to(beCloseTo(secondPharmacyLat))
+        expect(long).to(beCloseTo(secondPharmacyLong))
+        // these are not stored so must be empty
         expect(second?.status).to(beNil())
-        expect(second?.created).to(equal(pharmacyWithTypeAndHours.created))
-        expect(second?.name).to(equal(pharmacyWithTypeAndHours.name))
         expect(second?.types).to(beEmpty())
-        expect(second?.position).to(beNil())
-        expect(second?.telecom).to(beNil())
         expect(second?.hoursOfOperation).to(beEmpty())
-
+        expect(second?.avsCertificates).to(beEmpty())
+        expect(second?.avsEndpoints).to(beNil())
         cancellable.cancel()
     }
 
@@ -197,16 +249,24 @@ final class PharmacyCoreDataStoreTests: XCTestCase {
 
         let updatedPharmacy = PharmacyLocation(
             id: pharmacySimple.id,
-            status: nil,
+            status: nil, // not stored
             telematikID: "S.0815",
+            created: pharmacySimple.created,
             name: "New Pharmacy",
-            types: [],
+            types: [], // not stored
+            position: nil,
+            address: PharmacyLocation.Address(street: "Test Street"),
+            telecom: PharmacyLocation.Telecom(phone: "1234567"),
+            lastUsed: Date(),
+            isFavorite: true,
+            imagePath: "path/to/image",
+            countUsage: 1,
             hoursOfOperation: []
         )
         try store.add(pharmacies: [updatedPharmacy])
 
         var receivedListAllPharmacyValues = [[PharmacyLocation]]()
-        let cancellable = store.listAllPharmacies()
+        let cancellable = store.listPharmacies()
             .sink(receiveCompletion: { _ in
                 fail("did not expect completion")
             }, receiveValue: { pharmacies in
@@ -217,11 +277,7 @@ final class PharmacyCoreDataStoreTests: XCTestCase {
         expect(receivedListAllPharmacyValues.count).toEventually(equal(1))
         expect(receivedListAllPharmacyValues[0].count) == 1
         let result = receivedListAllPharmacyValues[0].first
-        expect(result?.status).to(beNil())
-        expect(result?.created).to(equal(pharmacySimple.created))
-        expect(result?.telematikID) == updatedPharmacy.telematikID
-        expect(result?.name) == updatedPharmacy.name
-
+        expect(result).to(equal(updatedPharmacy))
         cancellable.cancel()
     }
 
@@ -246,7 +302,7 @@ final class PharmacyCoreDataStoreTests: XCTestCase {
 
         // then
         var receivedListAllPharmacyValues = [[PharmacyLocation]]()
-        _ = store.listAllPharmacies()
+        _ = store.listPharmacies()
             .sink(receiveCompletion: { _ in
                 fail("did not expect to complete")
             }, receiveValue: { pharmacies in
@@ -302,12 +358,22 @@ final class PharmacyCoreDataStoreTests: XCTestCase {
         try store.add(pharmacies: [pharmacySimple])
 
         // when
-        var receivedUpdateValues = [Bool]()
+        var receivedUpdateValues = [PharmacyLocation]()
         var expectedResult: PharmacyLocation?
-        _ = store.update(identifier: pharmacySimple.id) { pharmacy in
-            pharmacy.status = .suspended
+        _ = store.update(telematikId: pharmacySimple.telematikID) { pharmacy in
+            pharmacy.status = nil // not stored
             pharmacy.name = "Updated Pharmacy"
             pharmacy.telematikID = "---"
+            pharmacy.address = PharmacyLocation.Address(
+                street: "Hey Street",
+                houseNumber: "1",
+                zip: "123",
+                city: "Straguuns"
+            )
+            pharmacy.lastUsed = Date()
+            pharmacy.isFavorite = true
+            pharmacy.imagePath = "path/to/image"
+            pharmacy.countUsage = 1
             expectedResult = pharmacy
         }
         .sink(receiveCompletion: { completion in
@@ -320,7 +386,7 @@ final class PharmacyCoreDataStoreTests: XCTestCase {
 
         var receivedListAllPharmacyValues = [[PharmacyLocation]]()
         // we observe all store changes
-        let cancellable = store.listAllPharmacies()
+        let cancellable = store.listPharmacies()
             .sink(receiveCompletion: { _ in
                 fail("did not expect to complete")
             }, receiveValue: { pharmacies in
@@ -337,10 +403,10 @@ final class PharmacyCoreDataStoreTests: XCTestCase {
 
     func testUpdatePharmacyWithoutMatchingInStore() throws {
         let store = loadPharmacyCoreDataStore()
-        var receivedUpdateValues = [Bool]()
+        var receivedUpdateValues = [PharmacyLocation]()
         var receivedCompletions = [Subscribers.Completion<LocalStoreError>]()
 
-        let cancellable = store.update(identifier: pharmacySimple.id) { _ in
+        let cancellable = store.update(telematikId: pharmacySimple.telematikID) { _ in
             fail("should not be called if an error fetching pharmacy occurs")
         }
         .sink(receiveCompletion: { completion in
@@ -371,7 +437,7 @@ extension PharmacyCoreDataStore {
             })
 
         expect(receivedSaveResults.count).toEventually(equal(1))
-        expect(receivedSaveResults.last).to(beTrue())
+        expect(receivedSaveResults.allSatisfy { $0 == true }).to(beTrue())
         expect(receivedSaveCompletions.count).toEventually(equal(1))
         expect(receivedSaveCompletions.first) == .finished
 

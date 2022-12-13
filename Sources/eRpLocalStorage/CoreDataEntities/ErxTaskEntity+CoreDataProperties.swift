@@ -51,6 +51,7 @@ extension ErxTaskEntity {
     @NSManaged public var practitioner: ErxTaskPractitionerEntity?
     @NSManaged public var profile: ProfileEntity?
     @NSManaged public var workRelatedAccident: ErxTaskWorkRelatedAccidentEntity?
+    @NSManaged public var multiplePrescription: ErxTaskMultiplePrescriptionEntity?
 }
 
 // MARK: Generated accessors for auditEvents

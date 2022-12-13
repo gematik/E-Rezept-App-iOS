@@ -28,7 +28,7 @@ class DataPrivacyTermsOfUseNavigationDelegate: NSObject, WKNavigationDelegate {
             if url.scheme?.lowercased() == "file" {
                 decisionHandler(.allow, webView.configuration.defaultWebpagePreferences)
                 return
-            } else {
+            } else if url.scheme?.lowercased() == "https" {
                 UIApplication.shared.open(url)
             }
         }

@@ -32,6 +32,10 @@ public struct PharmacyLocation: Identifiable, Hashable, Equatable {
         position: Position? = nil,
         address: Address? = nil,
         telecom: Telecom? = nil,
+        lastUsed: Date? = nil,
+        isFavorite: Bool = false,
+        imagePath: String? = nil,
+        countUsage: Int = 0,
         hoursOfOperation: [HoursOfOperation],
         avsEndpoints: AVSEndpoints? = nil,
         avsCertificates: [X509] = []
@@ -45,6 +49,10 @@ public struct PharmacyLocation: Identifiable, Hashable, Equatable {
         self.position = position
         self.address = address
         self.telecom = telecom
+        self.lastUsed = lastUsed
+        self.isFavorite = isFavorite
+        self.imagePath = imagePath
+        self.countUsage = countUsage
         self.hoursOfOperation = hoursOfOperation
         self.avsEndpoints = avsEndpoints
         self.avsCertificates = avsCertificates
@@ -60,23 +68,31 @@ public struct PharmacyLocation: Identifiable, Hashable, Equatable {
     /// Identifier of the pharmacy
     public var telematikID: String
     /// date of local client creation
-    public let created: Date
+    public var created: Date
     /// Name of pharmacy
     public var name: String?
     /// A pharmacy can have multiple types. In FHIR the code are e.g. "PHARM" and "OUTPHARM" and "MOBL"
-    public let types: [PharmacyType]
+    public var types: [PharmacyType]
     /// Position, i.e. Latitude and Longitude of the pharmacy's address
-    public let position: Position?
+    public var position: Position?
     /// Address
-    public let address: Address?
+    public var address: Address?
     /// Telecom
-    public let telecom: Telecom?
+    public var telecom: Telecom?
+    /// Bate of latest use for redeeming
+    public var lastUsed: Date?
+    /// Bool indicating if user has marked this pharmacy as favorite
+    public var isFavorite: Bool
+    /// Path to an image of the pharmacy
+    public var imagePath: String?
+    /// Number of times this pharmacy has been used for redeeming
+    public var countUsage: Int
     /// HoursOfOperation (opening hours)
-    public let hoursOfOperation: [HoursOfOperation]
+    public var hoursOfOperation: [HoursOfOperation]
     /// Container that holds urls to the AVS Endpoints and their certificates to send requests with the AVSModul
-    public let avsEndpoints: AVSEndpoints?
+    public var avsEndpoints: AVSEndpoints?
     /// Array of certificates for all recipients
-    public let avsCertificates: [X509]
+    public var avsCertificates: [X509]
 
     public var canBeDisplayedInMap: Bool {
         position?.latitude != nil && position?.longitude != nil
@@ -132,7 +148,7 @@ public struct PharmacyLocation: Identifiable, Hashable, Equatable {
         avsEndpoints?.onPremiseUrl != nil && !avsCertificates.isEmpty
     }
 
-    public struct AVSEndpoints {
+    public struct AVSEndpoints: Equatable {
         public let onPremiseUrl: String?
         public let onPremiseUrlAdditionalHeaders: [String: String]
         public let shipmentUrl: String?
@@ -218,10 +234,6 @@ extension PharmacyLocation: Comparable {
         }
     }
 
-    public static func ==(lhs: PharmacyLocation, rhs: PharmacyLocation) -> Bool {
-        lhs.telematikID == rhs.telematikID
-    }
-
     public func hash(into hasher: inout Hasher) {
         hasher.combine(telematikID)
     }
@@ -275,7 +287,7 @@ extension PharmacyLocation {
         }
     }
 
-    public struct Position: Hashable {
+    public struct Position: Equatable, Hashable {
         public init(latitude: Decimal? = nil,
                     longitude: Decimal? = nil) {
             self.latitude = latitude
@@ -377,132 +389,5 @@ extension Decimal {
     /// Returns a `Double`type for this decimal type
     public var doubleValue: Double {
         NSDecimalNumber(decimal: self).doubleValue
-    }
-}
-
-// swiftlint:disable missing_docs
-extension PharmacyLocation {
-    public enum Dummies {
-        static let address1 = PharmacyLocation.Address(
-            street: "Hinter der Bahn",
-            houseNumber: "6",
-            zip: "12345",
-            city: "Buxtehude"
-        )
-        static let address2 = PharmacyLocation.Address(
-            street: "Meisenweg",
-            houseNumber: "23",
-            zip: "54321",
-            city: "Linsengericht"
-        )
-        static let telecom = PharmacyLocation.Telecom(
-            phone: "555-Schuh",
-            fax: "555-123456",
-            email: "info@gematik.de",
-            web: "http://www.gematik.de"
-        )
-
-        public static let pharmacy = PharmacyLocation(
-            id: "1",
-            status: .active,
-            telematikID: "3-06.2.ycl.123",
-            name: "Apotheke am Wäldchen",
-            types: [.pharm, .emergency, .mobl, .outpharm],
-            position: Position(latitude: 49.2470345, longitude: 8.8668786),
-            address: address1,
-            telecom: telecom,
-            hoursOfOperation: [
-                PharmacyLocation.HoursOfOperation(
-                    daysOfWeek: ["tue", "wed"],
-                    openingTime: "08:00:00", // Invalid opening times to not fail snapshot tests
-                    closingTime: "18:00:00"
-                ),
-            ]
-        )
-
-        public static let pharmacyInactive =
-            PharmacyLocation(
-                id: "2",
-                status: .inactive,
-                telematikID: "3-09.2.S.10.124",
-                name: "Apotheke hinter der Bahn",
-                types: [PharmacyLocation.PharmacyType.pharm,
-                        PharmacyLocation.PharmacyType.outpharm],
-                address: address2,
-                telecom: telecom,
-                hoursOfOperation: [
-                    PharmacyLocation.HoursOfOperation(
-                        daysOfWeek: ["wed"],
-                        openingTime: "08:00:00", // Invalid opening times to not fail snapshot tests
-                        closingTime: "07:00:00"
-                    ),
-                ]
-            )
-
-        public static let referenceDate: Date = {
-            let dateComponents = DateComponents(
-                calendar: Calendar.current,
-                year: 2022,
-                hour: 13,
-                minute: 45,
-                weekday: 3,
-                weekOfYear: 25
-            ) // tue, 13:45
-            return dateComponents.date! // swiftlint:disable:this force_unwrapping
-        }()
-
-        public static let pharmacies = [
-            pharmacy,
-            pharmacyInactive,
-            PharmacyLocation(
-                id: "3",
-                status: .active,
-                telematikID: "3-09.2.sdf.125",
-                name: "Apotheke Elise mit langem Vor- und Zunamen am Rathaus",
-                types: [PharmacyLocation.PharmacyType.pharm,
-                        PharmacyLocation.PharmacyType.mobl],
-                address: address1,
-                telecom: telecom,
-                hoursOfOperation: [
-                    PharmacyLocation.HoursOfOperation(
-                        daysOfWeek: ["mon", "tue", "wed"],
-                        openingTime: "07:00:00",
-                        closingTime: "14:00:00"
-                    ),
-                ]
-            ),
-            PharmacyLocation(
-                id: "4",
-                status: .inactive,
-                telematikID: "3-09.2.dfs.126",
-                name: "Eulenapotheke",
-                types: [PharmacyLocation.PharmacyType.outpharm],
-                address: address2,
-                telecom: telecom,
-                hoursOfOperation: [
-                    PharmacyLocation.HoursOfOperation(
-                        daysOfWeek: ["tue"],
-                        openingTime: "07:00:00",
-                        closingTime: "13:00:00"
-                    ),
-                ]
-            ),
-            PharmacyLocation(
-                id: "5",
-                status: .inactive,
-                telematikID: "3-09.2.dfs.127",
-                name: "Eulenapotheke 2",
-                types: [PharmacyLocation.PharmacyType.outpharm],
-                address: address2,
-                telecom: telecom,
-                hoursOfOperation: [
-                    PharmacyLocation.HoursOfOperation(
-                        daysOfWeek: ["fri"],
-                        openingTime: "07:00:00",
-                        closingTime: "13:00:00"
-                    ),
-                ]
-            ),
-        ]
     }
 }

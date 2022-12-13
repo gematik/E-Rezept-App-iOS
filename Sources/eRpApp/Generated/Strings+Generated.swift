@@ -17,6 +17,12 @@ import SwiftUI
     internal static let nsCameraUsageDescription = StringAsset("NSCameraUsageDescription")
     /// E-Rezept uses FaceID to protect your app from unauthorized access.
     internal static let nsFaceIDUsageDescription = StringAsset("NSFaceIDUsageDescription")
+    /// Speichern
+    internal static let addBtnSave = StringAsset("add_btn_save")
+    /// Profile 1
+    internal static let addTxtProfile1 = StringAsset("add_txt_profile1")
+    /// Name eingeben
+    internal static let addTxtTitle = StringAsset("add_txt_title")
     /// Reject
     internal static let alertBtnClose = StringAsset("alert_btn_close")
     /// OK
@@ -583,6 +589,8 @@ import SwiftUI
     internal static let cpwTxtUpdateTitle = StringAsset("cpw_txt_update_title")
     /// Edit image
     internal static let ctlBtnProfilePickerEdit = StringAsset("ctl_btn_profile_picker_edit")
+    /// Profilbild
+    internal static let ctlBtnProfilePickerPictureA11yLabel = StringAsset("ctl_btn_profile_picker_picture_a11y_label")
     /// Reset image
     internal static let ctlBtnProfilePickerReset = StringAsset("ctl_btn_profile_picker_reset")
     /// Save
@@ -745,6 +753,10 @@ import SwiftUI
     internal static let erxTxtPrescriptionDuplicateAlertMessage = StringAsset("erx_txt_prescription_duplicate_alert_message")
     /// Rezept nicht hinzugefügt
     internal static let erxTxtPrescriptionDuplicateAlertTitle = StringAsset("erx_txt_prescription_duplicate_alert_title")
+    /// Einlösbar ab %@
+    internal static func erxTxtRedeemAt(_ element1: String) -> StringAsset {
+        StringAsset("erx_txt_redeem_at_%@", arguments: [element1])
+    }
     /// Archive
     internal static let erxTxtRedeemed = StringAsset("erx_txt_redeemed")
     /// Loading ...
@@ -1733,6 +1745,12 @@ import SwiftUI
     internal static let phaSearchTxtHintStartSearch = StringAsset("pha_search_txt_hint_start_search")
     /// Zuletzt gesucht
     internal static let phaSearchTxtHistoryTitle = StringAsset("pha_search_txt_history_title")
+    /// Apotheke nicht gefunden
+    internal static let phaSearchTxtLocalPharmErrNotFound = StringAsset("pha_search_txt_local_pharm_err_not_found")
+    /// Bitte erneut über Apothekensuche hinzufügen.
+    internal static let phaSearchTxtLocalPharmErrNotFoundRecovery = StringAsset("pha_search_txt_local_pharm_err_not_found_recovery")
+    /// Meine Apotheken
+    internal static let phaSearchTxtLocalPharmTitle = StringAsset("pha_search_txt_local_pharm_title")
     /// Share your location to find pharmacies near you.
     internal static let phaSearchTxtLocationAlertMessage = StringAsset("pha_search_txt_location_alert_message")
     /// Share location
@@ -1897,6 +1915,8 @@ import SwiftUI
     internal static let prscStatusExpired = StringAsset("prsc_status_expired")
     /// Being redeemed
     internal static let prscStatusInProgress = StringAsset("prsc_status_in_progress")
+    /// Später einlösbar
+    internal static let prscStatusMultiplePrsc = StringAsset("prsc_status_multiple_prsc")
     /// Redeemable
     internal static let prscStatusReady = StringAsset("prsc_status_ready")
     /// Unknown

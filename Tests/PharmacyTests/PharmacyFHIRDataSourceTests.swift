@@ -66,20 +66,28 @@ final class PharmacyFHIRDataSourceTests: XCTestCase {
                 fail("Test unexpectedly failed with error: \(error)")
             }, expectations: { pharmacy in
                 expect(counter) == 1
-                let expectedLocation = PharmacyLocation(
-                    id: "29cc8022-ed2d-4313-8d74-74196a2b1168",
-                    status: .active,
-                    telematikID: "3-03.2.1010380000.10.703",
-                    name: "Brandenburger Tor Apotheke",
-                    types: [
-                        PharmacyLocation.PharmacyType.pharm,
-                        PharmacyLocation.PharmacyType.outpharm,
-                    ],
-                    address: nil,
-                    telecom: nil,
-                    hoursOfOperation: []
+                expect(pharmacy?.id).to(equal("29cc8022-ed2d-4313-8d74-74196a2b1168"))
+                expect(pharmacy?.telematikID).to(equal("3-03.2.1010380000.10.703"))
+                expect(pharmacy?.name).to(equal("Brandenburger Tor Apotheke"))
+                expect(pharmacy?.status).to(equal(.active))
+                expect(pharmacy?.types).to(equal([.pharm, .outpharm]))
+                expect(pharmacy?.position?.latitude?.doubleValue).to(beCloseTo(52.51623))
+                expect(pharmacy?.position?.longitude).to(equal(13.3816))
+                let expectedAddress = PharmacyLocation.Address(
+                    street: "Unter den Linden 69d",
+                    zip: "10117",
+                    city: "Berlin"
                 )
-                expect(pharmacy) == expectedLocation
+                expect(pharmacy?.address).to(equal(expectedAddress))
+                expect(pharmacy?.telecom)
+                    .to(equal(PharmacyLocation.Telecom(phone: nil, fax: nil, email: nil, web: nil)))
+                expect(pharmacy?.lastUsed).to(beNil())
+                expect(pharmacy?.countUsage).to(equal(0))
+                expect(pharmacy?.imagePath).to(beNil())
+                expect(pharmacy?.isFavorite).to(equal(false))
+                expect(pharmacy?.hoursOfOperation).to(beEmpty())
+                expect(pharmacy?.avsCertificates).to(beEmpty())
+                expect(pharmacy?.avsEndpoints).to(beNil())
             })
     }
 
@@ -121,17 +129,8 @@ final class PharmacyFHIRDataSourceTests: XCTestCase {
             }, expectations: { pharmacyLocations in
                 expect(counter) == 1
                 expect(pharmacyLocations.count) == 5
-                let expectedLocation = PharmacyLocation(
-                    id: "a4d2a2ca-8b79-4792-a2be-3b72e1ccdedb",
-                    status: .inactive,
-                    telematikID: "3-06.2.ycl.216",
-                    name: "Adler Apotheke",
-                    types: [PharmacyLocation.PharmacyType.pharm],
-                    address: nil,
-                    telecom: nil,
-                    hoursOfOperation: []
-                )
-                expect(pharmacyLocations.first) == expectedLocation
+                expect(pharmacyLocations.first?.id).to(equal("a4d2a2ca-8b79-4792-a2be-3b72e1ccdedb"))
+                expect(pharmacyLocations.first?.telematikID).to(equal("3-06.2.ycl.216"))
             })
     }
 

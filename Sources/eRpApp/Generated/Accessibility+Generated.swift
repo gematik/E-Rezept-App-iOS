@@ -131,6 +131,7 @@ internal enum A11y {
       static let erxDetailedBlockPrescriptions = "erx_detailed_block_prescriptions"
       static let erxDetailedBlockPrescriptionName = "erx_detailed_block_prescription_name"
       static let erxDetailedBlockPrescriptionValidity = "erx_detailed_block_prescription_validity"
+      static let erxDetailedBlockMultiplePrescriptionIndex = "erx_detailed_block_multiple_prescription_index"
       static let erxDetailedBlockRedeemAll = "erx_detailed_block_redeem_all"
       static let erxDetailedBlockStatus = "erx_detailed_block_status"
       static let erxBtnProfile = "erx_btn_profile"
@@ -279,6 +280,17 @@ internal enum A11y {
       static let phaFilterOpenFilter = "pha_filter_open_filter"
       static let phaFilterFilterList = "pha_filter_filter_list"
   }
+    internal enum pharmacySearchStart {
+      static let phaSearchTxtQuickFilterTitle = "pha_search_txt_quick_filter_title"
+      static let phaSearchBtnQuickFilterNearby = "pha_search_btn_quick_filter_nearby"
+      static let phaSearchBtnQuickFilterDelivery = "pha_search_btn_quick_filter_delivery"
+      static let phaSearchBtnQuickFilterShipment = "pha_search_btn_quick_filter_shipment"
+      static let phaSearchBtnQuickFilterOpen = "pha_search_btn_quick_filter_open"
+      static let phaSearchQuickFilterSection = "pha_search_quick_filter_section"
+      static let phaSearchTxtLocalPharmTitle = "pha_search_txt_local_pharm_title"
+      static let phaSearchTxtLocalPharmEntry = "pha_search_txt_local_pharm_entry"
+      static let phaSearchLocalPharmSection = "pha_search_local_pharm_section"
+  }
     internal enum prescriptionDetails {
       static let prscDtlTxtTitle = "prsc_dtl_txt_title"
       static let prscDtlTxtMedInfo = "prsc_dtl_txt_med_info"
@@ -301,6 +313,9 @@ internal enum A11y {
       static let proTxtSelectionProfileList = "pro_txt_selection_profile_list"
       static let proTxtSelectionProfileListEntry = "pro_txt_selection_profile_list_entry"
       static let proBtnSelectionEdit = "pro_btn_selection_edit"
+      static let proBtnSelectionProfileEntry = "pro_btn_selection_profile_entry"
+      static let proBtnSelectionProfileRow = "pro_btn_selection_profile_row"
+      static let proBtnSelectionAddProfile = "pro_btn_selection_add_profile"
   }
     internal enum redeem { 
     internal enum matrixCode {

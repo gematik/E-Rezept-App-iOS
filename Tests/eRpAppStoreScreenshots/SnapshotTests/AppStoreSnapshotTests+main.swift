@@ -40,24 +40,16 @@ extension AppStoreSnapshotTests {
             )
         )
 
-        let profileSelectionStore = ProfileSelectionToolbarItemDomain.Store(
-            initialState: .init(
-                profile: UserProfile.Fixtures.theo,
-                profileSelectionState: .init()
-            ),
-            reducer: .empty,
-            environment: ProfileSelectionToolbarItemDomain.Dummies.environment
-        )
-
         return MainView(
             store: MainDomain.Store(
                 initialState: MainDomain.State(
-                    prescriptionListState: state
+                    prescriptionListState: state,
+                    horizontalProfileSelectionState: HorizontalProfileSelectionDomain
+                        .State(profiles: [UserProfile.Fixtures.theo], selectedProfileId: UserProfile.Fixtures.theo.id)
                 ),
                 reducer: MainDomain.Reducer.empty,
                 environment: MainDomain.Dummies.environment
-            ),
-            profileSelectionToolbarItemStore: profileSelectionStore
+            )
         )
     }
 }

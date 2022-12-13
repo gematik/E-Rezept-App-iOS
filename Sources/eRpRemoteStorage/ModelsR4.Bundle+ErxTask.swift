@@ -115,6 +115,7 @@ extension ModelsR4.Bundle {
         }
 
         let medication = patientReceiptBundle.medication
+        let multiplePrescription = patientReceiptBundle.medicationRequest?.multiplePrescription
         let patient = patientReceiptBundle.patient
         let practitioner = patientReceiptBundle.practitioner
         let organization = patientReceiptBundle.organization
@@ -135,14 +136,23 @@ extension ModelsR4.Bundle {
             prescriptionId: task.prescriptionId,
             substitutionAllowed: patientReceiptBundle.medicationRequest?.substitutionAllowed ?? false,
             source: .server,
-            medication: ErxTask.Medication(name: medication?.medicationText,
-                                           pzn: medication?.pzn,
-                                           amount: medication?.decimalAmount,
-                                           dosageForm: medication?.dosageForm,
-                                           dose: medication?.dose,
-                                           dosageInstructions: patientReceiptBundle.dosageInstructions,
-                                           lot: medication?.lot,
-                                           expiresOn: medication?.expiresOn),
+            medication: ErxTask.Medication(
+                name: medication?.medicationText,
+                pzn: medication?.pzn,
+                amount: medication?.decimalAmount,
+                dosageForm: medication?.dosageForm,
+                dose: medication?.dose,
+                dosageInstructions: patientReceiptBundle.dosageInstructions,
+                lot: medication?.lot,
+                expiresOn: medication?.expiresOn
+            ),
+            multiplePrescription: ErxTask.MultiplePrescription(
+                mark: multiplePrescription?.mark ?? false,
+                numbering: multiplePrescription?.numbering,
+                totalNumber: multiplePrescription?.totalNumber,
+                startPeriod: multiplePrescription?.startPeriod,
+                endPeriod: multiplePrescription?.endPeriod
+            ),
             patient: ErxTask.Patient(
                 name: patient?.fullName,
                 address: patient?.completeAddress,
@@ -331,62 +341,6 @@ extension ModelsR4.Bundle {
         .flatMap {
             $0.text?.value?.string
         }
-    }
-}
-
-extension ModelsR4.MedicationRequest {
-    var noctuFeeWaiver: Bool {
-        `extension`?.first {
-            $0.url.value?.url.absoluteString == Prescription.Key.noctuFeeWaiverKey
-        }
-        .map {
-            if let valueX = $0.value,
-               case Extension.ValueX.boolean(true) = valueX {
-                return true
-            }
-            return false
-        } ?? false
-    }
-
-    var workRelatedAccident: ErxTask.WorkRelatedAccident? {
-        guard let accident = `extension`?.first(where: {
-            $0.url.value?.url.absoluteString == Prescription.Key.workRelatedAccidentKey
-        }) else {
-            return nil
-        }
-
-        let identifier: String? = accident.extension?.first {
-            $0.url.value?.url.absoluteString == "unfallbetrieb"
-        }
-        .flatMap {
-            if let valueX = $0.value,
-               case let Extension.ValueX.string(str) = valueX {
-                return str.value?.string
-            }
-            return nil
-        }
-
-        let date: String? = accident.extension?.first {
-            $0.url.value?.url.absoluteString == "unfalltag"
-        }
-        .flatMap {
-            if let valueX = $0.value,
-               case let Extension.ValueX.date(date) = valueX,
-               let dateString = date.value?.description {
-                return dateString
-            }
-            return nil
-        }
-
-        return ErxTask.WorkRelatedAccident(workPlaceIdentifier: identifier,
-                                           date: date)
-    }
-
-    var substitutionAllowed: Bool {
-        if case .boolean(booleanLiteral: true) = substitution?.allowed {
-            return true
-        }
-        return false
     }
 }
 

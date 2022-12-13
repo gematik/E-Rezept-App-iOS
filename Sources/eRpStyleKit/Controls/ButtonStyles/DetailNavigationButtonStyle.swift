@@ -23,9 +23,11 @@ import SwiftUI
 /// work with these.
 public struct DetailNavigationButtonStyle: ButtonStyle {
     let showSeparator: Bool
+    let minChevronSpacing: CGFloat
 
-    init(showSeparator: Bool) {
+    init(showSeparator: Bool, minChevronSpacing: CGFloat? = nil) {
         self.showSeparator = showSeparator
+        self.minChevronSpacing = minChevronSpacing ?? 16
     }
 
     @Environment(\.isEnabled)
@@ -36,7 +38,10 @@ public struct DetailNavigationButtonStyle: ButtonStyle {
             configuration.label
                 .opacity(isEnabled ? 1.0 : 0.5)
                 .keyValuePairStyle(SeparatedKeyValuePairStyle(showSeparator: showSeparator))
-                .labelStyle(DetailNavigationLabelStyle(showSeparator: showSeparator))
+                .labelStyle(DetailNavigationLabelStyle(
+                    showSeparator: showSeparator,
+                    minChevronSpacing: minChevronSpacing
+                ))
         }
         .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
         .foregroundColor(Color(.label))
@@ -48,9 +53,11 @@ public struct DetailNavigationButtonStyle: ButtonStyle {
 
 public struct DetailNavigationLabelStyle: LabelStyle {
     let showSeparator: Bool
+    let minChevronSpacing: CGFloat
 
-    init(showSeparator: Bool) {
+    init(showSeparator: Bool, minChevronSpacing: CGFloat) {
         self.showSeparator = showSeparator
+        self.minChevronSpacing = minChevronSpacing
     }
 
     public func makeBody(configuration: Configuration) -> some View {
@@ -58,10 +65,11 @@ public struct DetailNavigationLabelStyle: LabelStyle {
             HStack(spacing: 0) {
                 configuration.title
 
-                Spacer(minLength: 16)
+                Spacer(minLength: minChevronSpacing)
 
-                Image(systemName: "chevron.forward")
-                    .foregroundColor(Color(.secondaryLabel))
+                Image(systemName: SFSymbolName.chevronForward)
+                    .foregroundColor(Color(.tertiaryLabel))
+                    .font(.body.weight(.semibold))
             }
         }, icon: {
             configuration.icon
@@ -108,8 +116,9 @@ extension ButtonStyle where Self == DetailNavigationButtonStyle {
     ///
     /// To apply this style to a button, or to a view that contains buttons, use
     /// the ``View/buttonStyle(.navigation(showSeparator:))`` modifier.
-    public static func navigation(showSeparator: Bool = true) -> DetailNavigationButtonStyle {
-        DetailNavigationButtonStyle(showSeparator: showSeparator)
+    public static func navigation(showSeparator: Bool = true,
+                                  minChevronSpacing: CGFloat? = nil) -> DetailNavigationButtonStyle {
+        DetailNavigationButtonStyle(showSeparator: showSeparator, minChevronSpacing: minChevronSpacing)
     }
 }
 

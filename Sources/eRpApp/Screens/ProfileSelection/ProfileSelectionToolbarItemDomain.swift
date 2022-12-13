@@ -32,7 +32,6 @@ enum ProfileSelectionToolbarItemDomain {
 
     enum Action: Equatable {
         case profileSelection(action: ProfileSelectionDomain.Action)
-
         case registerProfileListener
         case unregisterProfileListener
         case profileReceived(Result<UserProfile, UserProfileServiceError>)

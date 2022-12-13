@@ -166,6 +166,17 @@ struct GroupedPrescriptionView: View {
                                 .font(Font.subheadline.weight(.regular))
                                 .foregroundColor(Color(.secondaryLabel))
                                 .accessibility(identifier: A18n.mainScreen.erxDetailedBlockPrescriptionValidity)
+                            if let status = prescription.multiplePrescriptionStatus {
+                                Text(status)
+                                    .font(Font.footnote)
+                                    .padding(.init(top: 2, leading: 8, bottom: 2, trailing: 8))
+                                    .foregroundColor(Colors.systemLabelSecondary)
+                                    .background(Colors.backgroundSecondary)
+                                    .cornerRadius(8)
+                                    .padding(.top, 8)
+                                    .accessibility(identifier: A18n.mainScreen
+                                        .erxDetailedBlockMultiplePrescriptionIndex)
+                            }
                         }
                         .multilineTextAlignment(.leading)
                         Spacer()

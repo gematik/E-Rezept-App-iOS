@@ -16,6 +16,7 @@
 //  
 //
 
+import CasePaths
 import Combine
 import ComposableArchitecture
 import ComposableCoreLocation
@@ -41,6 +42,10 @@ enum PharmacySearchDomain: Equatable {
     /// Tokens for Cancellables
     enum Token: CaseIterable, Hashable {
         case search
+        case loadLocalPharmacies
+        case updateLocalPharmacy
+        case deleteAndLoad
+        case delete
     }
 
     enum Route: Equatable {
@@ -72,13 +77,27 @@ enum PharmacySearchDomain: Equatable {
 
     /// Same screen shows different UI elements based on the current state of the search
     enum SearchState: Equatable {
-        case startView
+        case startView(loading: Bool)
         case searchRunning
         case searchResultEmpty
         case searchResultOk
         case searchAfterLocalizationWasAuthorized
         case localizingDevice
         case error
+
+        var isStartView: Bool {
+            if case .startView(loading: _) = self {
+                return true
+            }
+            return false
+        }
+
+        var isStartViewLoading: Bool {
+            if case let .startView(loading: isLoading) = self {
+                return isLoading
+            }
+            return false
+        }
     }
 
     // A unique identifier for our location manager, just in case we want to use
@@ -92,8 +111,10 @@ enum PharmacySearchDomain: Equatable {
         var searchText = ""
         /// Stores the current device location when determined by Core-Location
         var currentLocation: Location?
-        /// Store for the search result
+        /// Store for the remote search result
         var pharmacies: [PharmacyLocationViewModel] = []
+        /// Store for the local pharmacies
+        var localPharmacies: [PharmacyLocationViewModel] = []
         /// A valid search terms should at least consist of 3 chars
         var searchTextValid: Bool {
             searchText.count > 2
@@ -113,11 +134,13 @@ enum PharmacySearchDomain: Equatable {
         /// Store for the active filter options the user has chosen
         var pharmacyFilterOptions: [PharmacySearchFilterDomain.PharmacyFilterOption] = []
         /// The current state the search is at
-        var searchState: SearchState = .startView
+        var searchState: SearchState = .startView(loading: false)
 
         var route: Route?
 
         var searchHistory: [String] = []
+
+        var selectedPharmacy: PharmacyLocation?
     }
 
     enum Action: Equatable {
@@ -129,6 +152,9 @@ enum PharmacySearchDomain: Equatable {
         case quickSearch(filters: [PharmacySearchFilterDomain.PharmacyFilterOption])
         case pharmaciesReceived(Result<[PharmacyLocation], PharmacyRepositoryError>)
         // Pharmacy details
+        case loadLocalPharmaciesReceived(Result<[PharmacyLocation], PharmacyRepositoryError>)
+        case loadAndNavigateToPharmacy(PharmacyLocation)
+        case loadAndNavigateToPharmacyReceived(Result<PharmacyLocation, PharmacyRepositoryError>)
         case showDetails(PharmacyLocationViewModel)
         case pharmacyDetailView(action: PharmacyDetailDomain.Action)
         // Filter
@@ -176,17 +202,31 @@ enum PharmacySearchDomain: Equatable {
             return cleanup()
         case .onAppear:
             state.searchHistory = environment.searchHistory.historyItems()
+            return environment.pharmacyRepository.loadLocal(count: 5)
+                .first()
+                .receive(on: environment.schedulers.main.animation())
+                .catchToEffect()
+                .map(PharmacySearchDomain.Action.loadLocalPharmaciesReceived)
+                .cancellable(id: Token.loadLocalPharmacies, cancelInFlight: true)
 
-            if state.searchState == .searchAfterLocalizationWasAuthorized {
-                return .init(value: .requestLocation)
+        case let .loadLocalPharmaciesReceived(.success(pharmacies)):
+            state.localPharmacies = pharmacies.map {
+                PharmacyLocationViewModel(
+                    pharmacy: $0,
+                    referenceLocation: state.currentLocation,
+                    referenceDate: environment.referenceDateForOpenHours,
+                    timeOnlyFormatter: environment.timeOnlyFormatter
+                )
             }
-
+            return .none
+        case let .loadLocalPharmaciesReceived(.failure(error)):
+            state.route = .alert(AlertState(for: error))
             return .none
         // Search
         case let .searchTextChanged(changedText):
             state.searchText = changedText
             if changedText.lengthOfBytes(using: .utf8) == 0 {
-                state.searchState = .startView
+                state.searchState = .startView(loading: false)
             }
             return .none
         case .performSearch:
@@ -221,11 +261,50 @@ enum PharmacySearchDomain: Equatable {
             }
             return .none
 
+        case let .loadAndNavigateToPharmacy(pharmacyLocation):
+            state.searchState = .startView(loading: true)
+            state.selectedPharmacy = pharmacyLocation
+            return environment.pharmacyRepository.updateFromRemote(by: pharmacyLocation.telematikID)
+                .first()
+                .receive(on: environment.schedulers.main)
+                .catchToEffect()
+                .map(PharmacySearchDomain.Action.loadAndNavigateToPharmacyReceived)
+                .cancellable(id: Token.updateLocalPharmacy, cancelInFlight: true)
+        case let .loadAndNavigateToPharmacyReceived(result):
+            state.searchState = .startView(loading: false)
+            switch result {
+            case let .success(pharmacy):
+                let viewModel = PharmacyLocationViewModel(pharmacy: pharmacy,
+                                                          referenceLocation: state.currentLocation,
+                                                          referenceDate: environment.referenceDateForOpenHours,
+                                                          timeOnlyFormatter: environment.timeOnlyFormatter)
+                state.route = .pharmacy(
+                    PharmacyDetailDomain.State(erxTasks: state.erxTasks, pharmacyViewModel: viewModel)
+                )
+            case let .failure(error):
+                state.route = .alert(AlertStates.alert(for: error))
+                if PharmacyRepositoryError.remote(.notFound) == error,
+                   let pharmacyLocation = state.selectedPharmacy {
+                    if let index = state.localPharmacies
+                        .firstIndex(where: { $0.telematikID == pharmacyLocation.telematikID }) {
+                        state.localPharmacies.remove(at: index)
+                    }
+                    state.selectedPharmacy = nil
+                    return environment.pharmacyRepository.delete(pharmacy: pharmacyLocation)
+                        .first()
+                        .receive(on: environment.schedulers.main.animation())
+                        .eraseToEffect()
+                        .fireAndForget()
+                        .cancellable(id: Token.delete, cancelInFlight: true)
+                }
+            }
+            state.selectedPharmacy = nil
+            return .none
         // Details
-        case let .showDetails(pharmacyLocation):
+        case let .showDetails(viewModel):
             state.route = .pharmacy(PharmacyDetailDomain.State(
                 erxTasks: state.erxTasks,
-                pharmacyViewModel: pharmacyLocation
+                pharmacyViewModel: viewModel
             ))
             return .none
         case .pharmacyDetailView(action: .close):
@@ -258,11 +337,17 @@ enum PharmacySearchDomain: Equatable {
                 .eraseToEffect()
         case let .pharmacyFilterView(.close(filterOptions)):
             state.route = nil
+            return .none
+        case .pharmacyFilterView(.toggleFilter):
             state.searchState = .searchRunning
 
-            return .init(value: .quickSearch(filters: filterOptions))
-                .delay(for: 0.5, scheduler: environment.schedulers.main.animation())
-                .eraseToEffect()
+            if let filterState = (/PharmacySearchDomain.Route.filter).extract(from: state.route) {
+                return .init(value: .quickSearch(filters: filterState.pharmacyFilterOptions))
+                    .delay(for: 0.5, scheduler: environment.schedulers.main.animation())
+                    .eraseToEffect()
+            }
+
+            return .none
         case .pharmacyFilterView:
             return .none
         // Location
@@ -318,13 +403,57 @@ enum PharmacySearchDomain: Equatable {
             return .none
         }
     }
+
+    enum AlertStates {
+        static func alert(for error: PharmacyRepositoryError) -> AlertState<Action> {
+            guard let message = error.recoverySuggestion else {
+                return AlertState(for: error)
+            }
+            return AlertState(
+                title: TextState(error.localizedDescription),
+                message: TextState(message),
+                dismissButton: .default(TextState(L10n.alertBtnOk), action: .send(.setNavigation(tag: .none)))
+            )
+        }
+    }
 }
 
 extension PharmacySearchDomain.Environment {
+    func loadLocalPharmacies() -> Effect<PharmacySearchDomain.Action, Never> {
+        pharmacyRepository.loadLocal(count: 5)
+            .first()
+            .receive(on: schedulers.main.animation())
+            .catchToEffect()
+            .map(PharmacySearchDomain.Action.loadLocalPharmaciesReceived)
+    }
+
     func openSettings() {
         if let url = URL(string: UIApplication.openSettingsURLString) {
             openURL(url, [:], nil)
         }
+    }
+
+    func searchPharmacies(
+        searchTerm: String,
+        location: ComposableCoreLocation.Location?,
+        filter: [PharmacySearchFilterDomain.PharmacyFilterOption]
+    )
+        -> Effect<PharmacySearchDomain.Action, Never> {
+        var position: Position?
+        if let latitude = location?.coordinate.latitude,
+           let longitude = location?.coordinate.longitude {
+            position = Position(lat: latitude, lon: longitude)
+        }
+        return pharmacyRepository.searchRemote(
+            searchTerm: searchTerm,
+            position: position,
+            filter: filter.asPharmacyRepositoryFilters
+        )
+        .first()
+        .catchToEffect()
+        .map(PharmacySearchDomain.Action.pharmaciesReceived)
+        .receive(on: schedulers.main.animation())
+        .eraseToEffect()
     }
 }
 
@@ -353,7 +482,8 @@ extension PharmacySearchDomain {
                 userSession: environment.userSession,
                 signatureProvider: environment.signatureProvider,
                 accessibilityAnnouncementReceiver: environment.accessibilityAnnouncementReceiver,
-                userSessionProvider: environment.userSessionProvider
+                userSessionProvider: environment.userSessionProvider,
+                pharmacyRepository: environment.pharmacyRepository
             )
         }
 
@@ -368,137 +498,4 @@ extension PharmacySearchDomain {
             secondaryButton: .default(TextState("Settings"), action: .send(.openAppSpecificSettings))
         )
     }()
-}
-
-extension PharmacySearchDomain.Environment {
-    func searchPharmacies(
-        searchTerm: String,
-        location: ComposableCoreLocation.Location?,
-        filter: [PharmacySearchFilterDomain.PharmacyFilterOption]
-    )
-        -> Effect<PharmacySearchDomain.Action, Never> {
-        var position: Position?
-        if let latitude = location?.coordinate.latitude,
-           let longitude = location?.coordinate.longitude {
-            position = Position(lat: latitude, lon: longitude)
-        }
-        return pharmacyRepository.searchRemote(
-            searchTerm: searchTerm,
-            position: position,
-            filter: filter.asPharmacyRepositoryFilters
-        )
-        .first()
-        .catchToEffect()
-        .map(PharmacySearchDomain.Action.pharmaciesReceived)
-        .receive(on: schedulers.main.animation())
-        .eraseToEffect()
-    }
-}
-
-extension Array where Element == PharmacyLocationViewModel {
-    func filter(by filterOptions: [PharmacySearchFilterDomain.PharmacyFilterOption]) -> [PharmacyLocationViewModel] {
-        // Filter Pharmacies that are closed
-        if filterOptions.contains(.open) {
-            return filter { location in
-                switch location.todayOpeningState {
-                case .open:
-                    return true
-                default:
-                    return false
-                }
-            }
-        }
-        return self
-    }
-}
-
-extension PharmacySearchDomain {
-    enum Dummies {
-        static let pharmaciesLocationViewModel =
-            PharmacyLocation.Dummies.pharmacies.map {
-                PharmacyLocationViewModel(
-                    pharmacy: $0,
-                    referenceLocation: nil,
-                    referenceDate: openHoursReferenceDate
-                )
-            }
-
-        static let stateEmpty = State(
-            erxTasks: [ErxTask.Demo.erxTaskReady],
-            searchText: "Apothekesdfwerwerasdf",
-            pharmacies: [],
-            searchState: .searchResultEmpty
-        )
-        static let stateSearchRunning = State(
-            erxTasks: [ErxTask.Demo.erxTaskReady],
-            searchText: "Apotheke",
-            pharmacies: [],
-            searchState: .searchRunning
-        )
-        static let stateFilterItems = State(
-            erxTasks: [ErxTask.Demo.erxTaskReady],
-            pharmacies: [],
-            pharmacyFilterOptions: [
-                PharmacySearchFilterDomain.PharmacyFilterOption.delivery,
-            ]
-        )
-        static let stateError = State(
-            erxTasks: [ErxTask.Demo.erxTaskReady],
-            pharmacies: [],
-            searchState: .error
-        )
-        static let state = State(
-            erxTasks: [ErxTask.Demo.erxTaskReady],
-            searchText: "",
-            pharmacies: pharmaciesLocationViewModel,
-            searchState: .startView // .searchResultOk(pharmaciesLocationViewModel)
-        )
-        static var openHoursReferenceDate: Date? {
-            // Current dummy-time is set to 10:00am on 16th (WED) June 2021...
-            var dateComponents = DateComponents()
-            dateComponents.year = 2021
-            dateComponents.month = 6
-            dateComponents.day = 16
-            dateComponents.timeZone = TimeZone.current
-            dateComponents.hour = 10
-            dateComponents.minute = 00
-            let cal = Calendar(identifier: .gregorian)
-            return cal.date(from: dateComponents)
-        }
-
-        static let environment = Environment(
-            schedulers: Schedulers(),
-            pharmacyRepository: DummySessionContainer().pharmacyRepository,
-            locationManager: .live,
-            fhirDateFormatter: FHIRDateFormatter.shared,
-            openHoursCalculator: PharmacyOpenHoursCalculator(),
-            referenceDateForOpenHours: openHoursReferenceDate,
-            userSession: DummySessionContainer(),
-            openURL: UIApplication.shared.open(_:options:completionHandler:),
-            signatureProvider: DummySecureEnclaveSignatureProvider(),
-            accessibilityAnnouncementReceiver: { _ in },
-            userSessionProvider: DummyUserSessionProvider()
-        )
-        static let store = Store(initialState: state,
-                                 reducer: reducer,
-                                 environment: environment)
-        static func storeFor(_ state: State) -> Store {
-            Store(initialState: state,
-                  reducer: PharmacySearchDomain.Reducer.empty,
-                  environment: environment)
-        }
-    }
-}
-
-extension LocationManager {
-    var isLocationServiceAuthorized: Bool {
-        if !locationServicesEnabled() {
-            return false
-        }
-        switch authorizationStatus() {
-        case .notDetermined, .restricted, .denied: return false
-        case .authorizedAlways, .authorizedWhenInUse: return true
-        @unknown default: return false
-        }
-    }
 }

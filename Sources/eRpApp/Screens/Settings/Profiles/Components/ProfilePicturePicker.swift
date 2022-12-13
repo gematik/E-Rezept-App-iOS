@@ -57,7 +57,7 @@ struct ProfilePicturePicker: View {
                     }
                     .accessibility(identifier: A11y.controls.emojiPicker.ctlBtnEmojiPickerEditSave)
                     .accessibility(value: Text(emoji ?? acronym))
-                    .accessibility(label: Text("Profile Picture"))
+                    .accessibility(label: Text(L10n.ctlBtnProfilePickerPictureA11yLabel))
                     .accessibility(removeTraits: .isHeader)
                     .accessibility(addTraits: .isButton)
 

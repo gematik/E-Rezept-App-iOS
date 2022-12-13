@@ -1,3 +1,6 @@
+"add_btn_save" = "Speichern";
+"add_txt_profile1" = "Profile 1";
+"add_txt_title" = "Name eingeben";
 "alert_btn_close" = "Odrzuć";
 "alert_btn_ok" = "OK";
 "alert_error_message_unknown" = "Nieznane";
@@ -267,6 +270,7 @@
 "cpw_txt_title" = "Hasło";
 "cpw_txt_update_title" = "Zmień hasło";
 "ctl_btn_profile_picker_edit" = "Edytuj zdjęcie";
+"ctl_btn_profile_picker_picture_a11y_label" = "Profilbild";
 "ctl_btn_profile_picker_reset" = "Zresetuj zdjęcie";
 "ctl_btn_profile_picker_set" = "Zapisz";
 "ctl_btn_profile_toolbar_item" = "Aktualny profil";
@@ -341,6 +345,7 @@
 "erx_txt_prescription_added_alert_title" = "Rezept erfolgreich hinzugefügt";
 "erx_txt_prescription_duplicate_alert_message" = "Das Rezept wurde bereits importiert.";
 "erx_txt_prescription_duplicate_alert_title" = "Rezept nicht hinzugefügt";
+"erx_txt_redeem_at_%@" = "Einlösbar ab %@";
 "erx_txt_redeemed" = "Archiwum";
 "erx_txt_refresh_loading" = "Ładowanie ...";
 "hint_btn_close" = "zamknij";
@@ -821,6 +826,9 @@
 "pha_search_txt_filter_shipment" = "Wysyłka";
 "pha_search_txt_hint_start_search" = "Rozpocznij wyszukiwanie, dotykając przycisku Otwórz na klawiaturze";
 "pha_search_txt_history_title" = "Zuletzt gesucht";
+"pha_search_txt_local_pharm_err_not_found" = "Apotheke nicht gefunden";
+"pha_search_txt_local_pharm_err_not_found_recovery" = "Bitte erneut über Apothekensuche hinzufügen.";
+"pha_search_txt_local_pharm_title" = "Meine Apotheken";
 "pha_search_txt_location_alert_message" = "Podaj swoją lokalizację, aby znaleźć apteki w pobliżu.";
 "pha_search_txt_location_alert_title" = "Podaj lokalizację";
 "pha_search_txt_location_hint_message" = "Zatwierdź lokalizację i znajdź aptekę w okolicy";
@@ -901,6 +909,7 @@
 "prsc_status_error" = "Błędna recepta";
 "prsc_status_expired" = "Upłynął termin";
 "prsc_status_in_progress" = "W realizacji";
+"prsc_status_multiple_prsc" = "Später einlösbar";
 "prsc_status_ready" = "Gotowe do odbioru";
 "prsc_status_undefined" = "Nieznane";
 "prsc_txt_fallback_name" = "Lek";

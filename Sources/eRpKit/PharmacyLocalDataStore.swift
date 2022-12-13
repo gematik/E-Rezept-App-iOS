@@ -28,7 +28,8 @@ public protocol PharmacyLocalDataStore {
     func fetchPharmacy(by telematikId: String) -> AnyPublisher<PharmacyLocation?, LocalStoreError>
 
     /// List all pharmacies contained in the store
-    func listAllPharmacies() -> AnyPublisher<[PharmacyLocation], LocalStoreError>
+    /// /// - Parameter count: Number of pharmacies to fetch, nil if no limit should be applied
+    func listPharmacies(count: Int?) -> AnyPublisher<[PharmacyLocation], LocalStoreError>
 
     /// Creates or updates a sequence of pharmacies into the store
     /// - Parameter pharmacies: Array of pharmacies to be saved
@@ -44,12 +45,12 @@ public protocol PharmacyLocalDataStore {
 
     /// Updates a Pharmacy entity
     /// - Parameters:
-    ///   - identifier: Identifier of the Pharmacy to update
+    ///   - telematikId: telematik id of the Pharmacy to update
     ///   - mutating: Closure with the actual pharmacy to be updated
     ///
     /// sourcery: SkipStreamWrapped
     func update(
-        identifier: String,
+        telematikId: String,
         mutating: @escaping (inout PharmacyLocation) -> Void
-    ) -> AnyPublisher<Bool, LocalStoreError>
+    ) -> AnyPublisher<PharmacyLocation, LocalStoreError>
 }

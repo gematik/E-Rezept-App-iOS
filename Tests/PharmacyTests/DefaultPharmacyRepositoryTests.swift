@@ -139,6 +139,9 @@ final class DefaultPharmacyRepositoryTests: XCTestCase {
     func testSearchRemoteWithDeliveryOption() {
         let mockLocalDataStore = MockPharmacyLocalDataStore()
         let mockRemoteDataStore = MockPharmacyRemoteDataStore()
+        mockLocalDataStore.listPharmaciesReturnValue = Just([])
+            .setFailureType(to: LocalStoreError.self)
+            .eraseToAnyPublisher()
 
         let sut = DefaultPharmacyRepository(disk: mockLocalDataStore, cloud: mockRemoteDataStore)
 
@@ -161,6 +164,40 @@ final class DefaultPharmacyRepositoryTests: XCTestCase {
                 expect(pharmacies).to(equal([Fixtures.pharmacy2]))
             })
     }
+
+    func testSearchRemoteWithPharmacyInLocalStore() {
+        let mockLocalDataStore = MockPharmacyLocalDataStore()
+        let createDate = Date()
+        var storedPharmacy = Fixtures.storedPharmacy2
+        storedPharmacy.created = createDate
+        var remotePharmacy = Fixtures.pharmacy2
+        remotePharmacy.created = createDate
+        mockLocalDataStore.listPharmaciesReturnValue = Just([storedPharmacy])
+            .setFailureType(to: LocalStoreError.self)
+            .eraseToAnyPublisher()
+        let mockRemoteDataStore = MockPharmacyRemoteDataStore()
+
+        let sut = DefaultPharmacyRepository(disk: mockLocalDataStore, cloud: mockRemoteDataStore)
+
+        mockRemoteDataStore.searchByTermPositionFilterClosure = { _, _, filter in
+            if filter.isEmpty,
+               mockRemoteDataStore.searchByTermPositionFilterCallsCount == 1 {
+                return Just([Fixtures.pharmacy1, remotePharmacy])
+                    .setFailureType(to: PharmacyFHIRDataSource.Error.self)
+                    .eraseToAnyPublisher()
+            } else {
+                return Fail(error: PharmacyFHIRDataSource.Error.fhirClient(.internalError("notImplemented")))
+                    .eraseToAnyPublisher()
+            }
+        }
+
+        sut.searchRemote(searchTerm: "", position: nil, filter: [])
+            .first()
+            .test(failure: { _ in
+            }, expectations: { pharmacies in
+                expect(pharmacies).to(equal([Fixtures.pharmacy1, storedPharmacy]))
+            })
+    }
 }
 
 extension DefaultPharmacyRepositoryTests {
@@ -180,6 +217,21 @@ extension DefaultPharmacyRepositoryTests {
             telematikID: "S.-3456",
             name: "Pharmacy 2",
             types: [.delivery],
+            hoursOfOperation: []
+        )
+
+        // equal telematic id
+        static let storedPharmacy2 = PharmacyLocation(
+            id: "345",
+            status: .active,
+            telematikID: "S.-3456",
+            created: Date(),
+            name: "Pharmacy 2",
+            types: [.delivery],
+            address: nil,
+            telecom: nil,
+            lastUsed: Date(),
+            isFavorite: true,
             hoursOfOperation: []
         )
     }

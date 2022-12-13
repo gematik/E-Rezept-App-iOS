@@ -57,3 +57,23 @@ public protocol ProfileDataStore {
     /// - Returns: PagedAuditEventsController that can handle page based audit events access.
     func pagedAuditEventsController(for profileId: UUID, with locale: String?) throws -> PagedAuditEventsController
 }
+
+extension ProfileDataStore {
+    /// Creates or updates a `Profile` into the store. Updates if the identifier does already exist in store
+    /// - Parameter profile: Instance of `Profile` to be saved
+    ///
+    /// sourcery: SkipStreamWrapped
+    public func save(profile: Profile) -> AnyPublisher<Bool, LocalStoreError> {
+        save(profiles: [profile])
+            .eraseToAnyPublisher()
+    }
+
+    /// Deletes a `Profile` from the store with the related identifier
+    /// - Parameter profile: Instance of `Profile` to be deleted
+    ///
+    /// sourcery: SkipStreamWrapped
+    public func delete(profile: Profile) -> AnyPublisher<Bool, LocalStoreError> {
+        delete(profiles: [profile])
+            .eraseToAnyPublisher()
+    }
+}

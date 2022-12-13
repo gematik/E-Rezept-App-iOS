@@ -45,21 +45,6 @@ struct GroupedPrescriptionListView: View {
     var body: some View {
         Group {
             ListView(store: store)
-                .introspectScrollView { scrollView in
-                    let refreshControl: RefreshControl
-                    if let control = scrollView.refreshControl as? RefreshControl {
-                        refreshControl = control
-                    } else {
-                        refreshControl = RefreshControl()
-                        scrollView.refreshControl = refreshControl
-                    }
-                    refreshControl.onRefreshAction = {
-                        viewStore.send(.refresh)
-                    }
-                    if !viewStore.isLoading, refreshControl.isRefreshing {
-                        refreshControl.endRefreshing()
-                    }
-                }
                 .onAppear {
                     viewStore.send(.loadLocalGroupedPrescriptions)
                     viewStore.send(.loadRemoteGroupedPrescriptionsAndSave)
@@ -110,47 +95,60 @@ extension GroupedPrescriptionListView {
 
         var body: some View {
             ScrollView(.vertical, showsIndicators: true) {
-                VStack(spacing: 16) {
-                    MainHintView(store: store.scope(
-                        state: { $0.hintState },
-                        action: GroupedPrescriptionListDomain.Action.hint(action:)
-                    ))
-                        .hidden(viewStore.isHintViewHidden)
+                VStack(spacing: 0) {
+                    GeometryReader { proxy in
+                        Color.clear.preference(key: ViewOffsetKey.self,
+                                               value: proxy.frame(in: .named("scroll2")).origin.y)
+                    }.frame(width: 0, height: 0)
 
-                    CurrentSectionView(isLoading: viewStore.isLoading) {
-                        viewStore.send(.refresh)
-                    }
+                    Image(systemName: SFSymbolName.personCirclePlus)
+                        .padding(.vertical, 4)
+                        .padding()
+                        .hidden()
 
-                    if !viewStore.groupedPrescriptionsOpen.isEmpty {
-                        VStack(spacing: 16) {
-                            ForEach(viewStore.groupedPrescriptionsOpen) { groupedPrescription in
-                                GroupedPrescriptionView(
-                                    groupedPrescription: groupedPrescription,
-                                    store: store
-                                )
-                            }
+                    VStack(spacing: 16) {
+                        MainHintView(store: store.scope(
+                            state: { $0.hintState },
+                            action: GroupedPrescriptionListDomain.Action.hint(action:)
+                        ))
+                            .hidden(viewStore.isHintViewHidden)
+
+                        CurrentSectionView(isLoading: viewStore.isLoading) {
+                            viewStore.send(.refresh)
                         }
-                    } else {
-                        SectionPlaceholderView(text: L10n.erxTxtNoCurrentPrescriptions)
-                    }
 
-                    RedeemSectionView()
-
-                    if !viewStore.groupedPrescriptionsArchived.isEmpty {
-                        VStack(spacing: 16) {
-                            ForEach(viewStore.groupedPrescriptionsArchived) { groupedRedeemedPrescription in
-                                GroupedPrescriptionView(
-                                    groupedPrescription: groupedRedeemedPrescription,
-                                    store: store
-                                )
+                        if !viewStore.groupedPrescriptionsOpen.isEmpty {
+                            VStack(spacing: 16) {
+                                ForEach(viewStore.groupedPrescriptionsOpen) { groupedPrescription in
+                                    GroupedPrescriptionView(
+                                        groupedPrescription: groupedPrescription,
+                                        store: store
+                                    )
+                                }
                             }
+                        } else {
+                            SectionPlaceholderView(text: L10n.erxTxtNoCurrentPrescriptions)
                         }
-                    } else {
-                        SectionPlaceholderView(text: L10n.erxTxtNotYetRedeemed)
-                    }
 
-                }.padding()
+                        RedeemSectionView()
+
+                        if !viewStore.groupedPrescriptionsArchived.isEmpty {
+                            VStack(spacing: 16) {
+                                ForEach(viewStore.groupedPrescriptionsArchived) { groupedRedeemedPrescription in
+                                    GroupedPrescriptionView(
+                                        groupedPrescription: groupedRedeemedPrescription,
+                                        store: store
+                                    )
+                                }
+                            }
+                        } else {
+                            SectionPlaceholderView(text: L10n.erxTxtNotYetRedeemed)
+                        }
+                    }
+                }
+                .padding([.bottom, .trailing, .leading])
             }
+            .coordinateSpace(name: "scroll2")
         }
 
         struct CurrentSectionView: View {
@@ -169,7 +167,6 @@ extension GroupedPrescriptionListView {
                                            action: buttonPressed)
                     }
                 }
-                .padding(.top, 24)
             }
         }
 

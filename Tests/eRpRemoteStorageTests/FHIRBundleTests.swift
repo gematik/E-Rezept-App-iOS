@@ -59,6 +59,11 @@ final class FHIRBundleTests: XCTestCase {
         expect(task.medication?.dosageInstructions) == "1-0-1-0"
         expect(task.medication?.lot) == "1234567890abcde"
         expect(task.medication?.expiresOn) == "2020-02-03T00:00:00+00:00"
+        expect(task.multiplePrescription?.mark) == true
+        expect(task.multiplePrescription?.numbering) == 2
+        expect(task.multiplePrescription?.totalNumber) == 4
+        expect(task.multiplePrescription?.startPeriod) == "2021-01-02"
+        expect(task.multiplePrescription?.endPeriod) == "2021-03-30"
         expect(task.noctuFeeWaiver) == false
         expect(task.substitutionAllowed) == true
         expect(task.source) == .server
@@ -117,6 +122,12 @@ final class FHIRBundleTests: XCTestCase {
         expect(task.medication?.dosageInstructions) == "1x täglich"
         expect(task.medication?.lot).to(beNil())
         expect(task.medication?.expiresOn).to(beNil())
+        // multiple prescription
+        expect(task.multiplePrescription?.mark) == false
+        expect(task.multiplePrescription?.numbering).to(beNil())
+        expect(task.multiplePrescription?.totalNumber).to(beNil())
+        expect(task.multiplePrescription?.startPeriod).to(beNil())
+        expect(task.multiplePrescription?.endPeriod).to(beNil())
         // patient
         expect(task.patient?.name) == "Karl-Friederich Graf Freiherr von Schaumberg"
         expect(task.patient?.address) == "Siegburger Str. 155\n51105 Köln"

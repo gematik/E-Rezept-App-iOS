@@ -156,6 +156,7 @@ enum AppDomain {
                 secureDataWiper: DefaultProfileSecureDataWiper(userSessionProvider: appEnvironment.userSessionProvider),
                 signatureProvider: appEnvironment.signatureProvider,
                 userSessionProvider: appEnvironment.userSessionProvider,
+                userDataStore: appEnvironment.userDataStore,
                 tracker: appEnvironment.tracker
             )
         }

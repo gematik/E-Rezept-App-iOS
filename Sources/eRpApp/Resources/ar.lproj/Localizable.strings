@@ -1,3 +1,6 @@
+"add_btn_save" = "Speichern";
+"add_txt_profile1" = "Profile 1";
+"add_txt_title" = "Name eingeben";
 "alert_btn_close" = "رفض";
 "alert_btn_ok" = "موافق";
 "alert_error_message_unknown" = "غير معروف";
@@ -267,6 +270,7 @@
 "cpw_txt_title" = "كلمة المرور";
 "cpw_txt_update_title" = "تغيير كلمة المرور";
 "ctl_btn_profile_picker_edit" = "تعديل الصورة";
+"ctl_btn_profile_picker_picture_a11y_label" = "Profilbild";
 "ctl_btn_profile_picker_reset" = "إعادة تعيين الصورة";
 "ctl_btn_profile_picker_set" = "حفظ";
 "ctl_btn_profile_toolbar_item" = "الملف الشخصي الحالي";
@@ -341,6 +345,7 @@
 "erx_txt_prescription_added_alert_title" = "Rezept erfolgreich hinzugefügt";
 "erx_txt_prescription_duplicate_alert_message" = "Das Rezept wurde bereits importiert.";
 "erx_txt_prescription_duplicate_alert_title" = "Rezept nicht hinzugefügt";
+"erx_txt_redeem_at_%@" = "Einlösbar ab %@";
 "erx_txt_redeemed" = "أرشيف";
 "erx_txt_refresh_loading" = "جاري التحميل ...";
 "hint_btn_close" = "إغلاق";
@@ -821,6 +826,9 @@
 "pha_search_txt_filter_shipment" = "الإرسال";
 "pha_search_txt_hint_start_search" = "ابدأ البحث بالنقر فوق زر افتح على لوحة المفاتيح";
 "pha_search_txt_history_title" = "Zuletzt gesucht";
+"pha_search_txt_local_pharm_err_not_found" = "Apotheke nicht gefunden";
+"pha_search_txt_local_pharm_err_not_found_recovery" = "Bitte erneut über Apothekensuche hinzufügen.";
+"pha_search_txt_local_pharm_title" = "Meine Apotheken";
 "pha_search_txt_location_alert_message" = "اذكر مكانك لكي تجد الصيدليات الموجودة بالقرب منك.";
 "pha_search_txt_location_alert_title" = "إتاحة المقر";
 "pha_search_txt_location_hint_message" = "حدد موقعك وابحث عن الصيدليات في منطقتك";
@@ -901,6 +909,7 @@
 "prsc_status_error" = "وصفة غير صحيحة";
 "prsc_status_expired" = "انتهت مدة الصلاحية";
 "prsc_status_in_progress" = "قيد الصرف";
+"prsc_status_multiple_prsc" = "Später einlösbar";
 "prsc_status_ready" = "قابلة للصرف";
 "prsc_status_undefined" = "غير معروف";
 "prsc_txt_fallback_name" = "الدواء";

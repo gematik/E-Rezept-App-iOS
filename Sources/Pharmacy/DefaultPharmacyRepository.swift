@@ -38,6 +38,38 @@ public struct DefaultPharmacyRepository: PharmacyRepository {
         self.cloud = cloud
     }
 
+    public func updateFromRemote(by telematikId: String) -> AnyPublisher<PharmacyLocation, PharmacyRepositoryError> {
+        cloud.fetchPharmacy(by: telematikId)
+            .mapError(PharmacyRepositoryError.remote)
+            .flatMap { pharmacy -> AnyPublisher<PharmacyLocation, PharmacyRepositoryError> in
+                guard let remotePharmacy = pharmacy else {
+                    return Fail(error: PharmacyRepositoryError.remote(.notFound)).eraseToAnyPublisher()
+                }
+                return disk.update(telematikId: telematikId) { pharmacyInStore in
+                    // update only data that comes from remote and stored localy
+                    pharmacyInStore.name = remotePharmacy.name
+                    pharmacyInStore.telecom = remotePharmacy.telecom
+                    pharmacyInStore.position = remotePharmacy.position
+                    pharmacyInStore.address = remotePharmacy.address
+
+                    pharmacyInStore.id = remotePharmacy.id
+                }
+                .map { pharmacyInStore in
+                    // return a pharmacy with the stored data and the remote data
+                    var updatedPharmacy = pharmacyInStore
+                    updatedPharmacy.types = remotePharmacy.types
+                    updatedPharmacy.status = remotePharmacy.status
+                    updatedPharmacy.hoursOfOperation = remotePharmacy.hoursOfOperation
+                    updatedPharmacy.avsEndpoints = remotePharmacy.avsEndpoints
+                    updatedPharmacy.avsCertificates = remotePharmacy.avsCertificates
+                    return updatedPharmacy
+                }
+                .mapError(PharmacyRepositoryError.local)
+                .eraseToAnyPublisher()
+            }
+            .eraseToAnyPublisher()
+    }
+
     public func loadCached(by telematikId: String) -> AnyPublisher<PharmacyLocation?, PharmacyRepositoryError> {
         disk.fetchPharmacy(by: telematikId)
             .first()
@@ -73,14 +105,33 @@ public struct DefaultPharmacyRepository: PharmacyRepository {
         PharmacyRepositoryError
     > {
         cloud.searchPharmacies(by: searchTerm, position: position, filter: filter.asAPIFilter())
-            .map { pharmacies in
-                if filter.contains(.delivery) {
-                    // server filtering is not supported for delivery, hence do it manually until available
-                    return pharmacies.filter(\.hasDeliveryService)
-                }
-                return pharmacies
-            }
             .mapError(PharmacyRepositoryError.remote)
+            .flatMap { remotePharmacies in
+                disk.listPharmacies(count: nil) // AnyPublisher<[PharmacyLocation], LocalStoreError>
+                    .map { [remotePharmacies] localPharmacies in
+                        var updatedPharamacies = remotePharmacies
+                        localPharmacies.forEach { pharmacy in
+                            if let index = updatedPharamacies
+                                .firstIndex(where: { $0.telematikID == pharmacy.telematikID }) {
+                                updatedPharamacies[index].created = pharmacy.created
+                                updatedPharamacies[index].isFavorite = pharmacy.isFavorite
+                                updatedPharamacies[index].lastUsed = pharmacy.lastUsed
+                                updatedPharamacies[index].imagePath = pharmacy.imagePath
+                                updatedPharamacies[index].countUsage = pharmacy.countUsage
+                            }
+                        }
+                        return updatedPharamacies
+                    }
+                    .map { pharmacies in
+                        if filter.contains(.delivery) {
+                            // server filtering is not supported for delivery, hence do it manually until available
+                            return pharmacies.filter(\.hasDeliveryService)
+                        }
+                        return pharmacies
+                    }
+                    .mapError(PharmacyRepositoryError.local)
+                    .eraseToAnyPublisher()
+            }
             .eraseToAnyPublisher()
     }
 
@@ -90,8 +141,8 @@ public struct DefaultPharmacyRepository: PharmacyRepository {
             .eraseToAnyPublisher()
     }
 
-    public func loadLocalAll() -> AnyPublisher<[PharmacyLocation], PharmacyRepositoryError> {
-        disk.listAllPharmacies()
+    public func loadLocal(count: Int?) -> AnyPublisher<[PharmacyLocation], PharmacyRepositoryError> {
+        disk.listPharmacies(count: count)
             .mapError(PharmacyRepositoryError.local)
             .eraseToAnyPublisher()
     }

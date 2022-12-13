@@ -32,9 +32,59 @@ final class PharmacySearchViewSnapshotTests: XCTestCase {
         diffTool = "open"
     }
 
-    func testPharmacySearch() {
+    let environment = PharmacySearchDomain.Environment(
+        schedulers: Schedulers(),
+        pharmacyRepository: MockPharmacyRepository(),
+        locationManager: .live,
+        fhirDateFormatter: FHIRDateFormatter.shared,
+        openHoursCalculator: PharmacyOpenHoursCalculator(),
+        referenceDateForOpenHours: PharmacySearchDomainTests.TestData.openHoursTestReferenceDate,
+        userSession: DummySessionContainer(),
+        openURL: { _, _, _ in },
+        signatureProvider: DummySecureEnclaveSignatureProvider(),
+        accessibilityAnnouncementReceiver: { _ in },
+        userSessionProvider: DummyUserSessionProvider()
+    )
+
+    func testPharmacySearchStartView_WithoutLocalPharmacies() {
         let sut = NavigationView {
-            PharmacySearchView(store: PharmacySearchDomain.Dummies.store)
+            PharmacySearchView(
+                store: PharmacySearchDomain.Store(
+                    initialState: PharmacySearchDomainTests.TestData.stateWithStartView,
+                    reducer: .empty,
+                    environment: environment
+                )
+            )
+        }
+
+        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
+        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+    }
+
+    func testPharmacySearchStartView_WithLocalPharmacies() {
+        let pharmacies = PharmacySearchDomainTests.TestData.pharmacies.map { pharmacies in
+            PharmacyLocationViewModel(
+                pharmacy: pharmacies,
+                referenceLocation: nil,
+                referenceDate: PharmacySearchDomainTests.TestData.openHoursTestReferenceDate
+            )
+        }
+        let state = PharmacySearchDomain.State(
+            erxTasks: [ErxTask.Fixtures.erxTaskReady],
+            searchText: "",
+            pharmacies: pharmacies,
+            localPharmacies: pharmacies,
+            searchState: .startView(loading: false)
+        )
+        let sut = NavigationView {
+            PharmacySearchView(
+                store: PharmacySearchDomain.Store(
+                    initialState: state,
+                    reducer: .empty,
+                    environment: environment
+                )
+            )
         }
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())

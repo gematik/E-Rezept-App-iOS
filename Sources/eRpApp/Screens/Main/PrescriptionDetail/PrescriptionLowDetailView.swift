@@ -57,7 +57,7 @@ struct PrescriptionLowDetailView: View {
         var deletionNote: String? {
             guard !prescription.isDeleteabel else { return nil }
 
-            if prescription.isDirectAssigned {
+            if prescription.type == .directAssignment {
                 return L10n.prscDeleteNoteDirectAssignment.text
             }
 
@@ -77,7 +77,7 @@ struct PrescriptionLowDetailView: View {
                     .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlTxtTitle)
                     .fixedSize(horizontal: false, vertical: true)
 
-                if viewStore.prescription.isDirectAssigned {
+                if viewStore.prescription.type == .directAssignment {
                     DirectAssignedHintView(store: store)
                         .padding(.vertical)
                 }
@@ -91,7 +91,7 @@ struct PrescriptionLowDetailView: View {
             }
             .padding()
 
-            if !viewStore.prescription.isDirectAssigned {
+            if viewStore.prescription.type != .directAssignment {
                 DataMatrixCodeView(uiImage: viewStore.dataMatrixCode)
                     .padding(.horizontal)
             }

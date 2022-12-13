@@ -38,6 +38,14 @@ extension PharmacyEntity {
         web = pharmacyLocation.telecom?.web
         latitude = pharmacyLocation.position?.latitude as? NSDecimalNumber
         longitude = pharmacyLocation.position?.longitude as? NSDecimalNumber
+        lastUsed = pharmacyLocation.lastUsed
+        street = pharmacyLocation.address?.street
+        zip = pharmacyLocation.address?.zip
+        houseNumber = pharmacyLocation.address?.houseNumber
+        city = pharmacyLocation.address?.city
+        isFavorite = pharmacyLocation.isFavorite
+        imagePath = pharmacyLocation.imagePath
+        countUsage = Int32(pharmacyLocation.countUsage)
     }
 }
 
@@ -68,6 +76,16 @@ extension PharmacyLocation {
             )
         }
 
+        var address: PharmacyLocation.Address?
+        if entity.street != nil || entity.houseNumber != nil || entity.zip != nil || entity.city != nil {
+            address = Address(
+                street: entity.street,
+                houseNumber: entity.houseNumber,
+                zip: entity.zip,
+                city: entity.city
+            )
+        }
+
         self.init(
             id: identifier,
             status: nil,
@@ -76,7 +94,12 @@ extension PharmacyLocation {
             name: entity.name,
             types: [],
             position: position,
+            address: address,
             telecom: telecom,
+            lastUsed: entity.lastUsed,
+            isFavorite: entity.isFavorite,
+            imagePath: entity.imagePath,
+            countUsage: Int(entity.countUsage),
             hoursOfOperation: []
         )
     }

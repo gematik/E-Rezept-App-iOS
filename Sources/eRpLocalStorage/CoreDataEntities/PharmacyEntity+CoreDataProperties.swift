@@ -35,6 +35,14 @@ extension PharmacyEntity {
     @NSManaged public var web: String?
     @NSManaged public var latitude: NSDecimalNumber?
     @NSManaged public var longitude: NSDecimalNumber?
+    @NSManaged public var lastUsed: Date?
+    @NSManaged public var street: String?
+    @NSManaged public var zip: String?
+    @NSManaged public var houseNumber: String?
+    @NSManaged public var city: String?
+    @NSManaged public var isFavorite: Bool
+    @NSManaged public var imagePath: String?
+    @NSManaged public var countUsage: Int32
 }
 
 extension PharmacyEntity: Identifiable {}

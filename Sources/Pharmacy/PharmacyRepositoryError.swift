@@ -20,18 +20,9 @@ import eRpKit
 import Foundation
 
 // sourcery: CodedError = "571"
-public enum PharmacyRepositoryError: Error, LocalizedError, Equatable {
+public enum PharmacyRepositoryError: Error, Equatable {
     // sourcery: errorCode = "01"
     case local(LocalStoreError)
     // sourcery: errorCode = "02"
     case remote(PharmacyFHIRDataSource.Error)
-
-    public var errorDescription: String? {
-        switch self {
-        case let .local(localError):
-            return localError.localizedDescription
-        case let .remote(remoteError):
-            return remoteError.localizedDescription
-        }
-    }
 }

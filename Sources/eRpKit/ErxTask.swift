@@ -39,6 +39,7 @@ public struct ErxTask: Identifiable, Hashable {
         substitutionAllowed: Bool = false,
         source: Source = .server,
         medication: Medication? = nil,
+        multiplePrescription: MultiplePrescription? = nil,
         patient: Patient? = nil,
         practitioner: Practitioner? = nil,
         organization: Organization? = nil,
@@ -64,6 +65,7 @@ public struct ErxTask: Identifiable, Hashable {
         self.source = source
         self.dispenseValidityEnd = dispenseValidityEnd
         self.medication = medication
+        self.multiplePrescription = multiplePrescription
         self.patient = patient
         self.practitioner = practitioner
         self.organization = organization
@@ -117,6 +119,8 @@ public struct ErxTask: Identifiable, Hashable {
     public let dispenseValidityEnd: String?
     /// The prescribed medication
     public let medication: Medication?
+    /// Information about multiple tasks (e.g. prescription)
+    public let multiplePrescription: MultiplePrescription?
     /// Patient for whom the prescription is issued
     public let patient: Patient?
     /// Practitioner who issued the prescription
@@ -381,6 +385,7 @@ extension ErxTask: Comparable {
             lhs.source == rhs.source &&
             lhs.dispenseValidityEnd == rhs.dispenseValidityEnd &&
             lhs.medication == rhs.medication &&
+            lhs.multiplePrescription == rhs.multiplePrescription &&
             lhs.patient == rhs.patient &&
             lhs.practitioner == rhs.practitioner &&
             lhs.organization == rhs.organization &&
@@ -478,34 +483,5 @@ extension ErxTask {
 
         public let workPlaceIdentifier: String?
         public let date: String?
-    }
-
-    public struct Medication: Hashable {
-        public init(name: String? = nil,
-                    pzn: String? = nil,
-                    amount: Decimal? = nil,
-                    dosageForm: String? = nil,
-                    dose: String? = nil,
-                    dosageInstructions: String? = nil,
-                    lot: String? = nil,
-                    expiresOn: String? = nil) {
-            self.name = name
-            self.pzn = pzn
-            self.amount = amount
-            self.dosageForm = dosageForm
-            self.dose = dose
-            self.dosageInstructions = dosageInstructions
-            self.lot = lot
-            self.expiresOn = expiresOn
-        }
-
-        public let name: String?
-        public let pzn: String?
-        public let amount: Decimal?
-        public let dosageForm: String?
-        public let dose: String?
-        public let dosageInstructions: String?
-        public let lot: String?
-        public let expiresOn: String?
     }
 }

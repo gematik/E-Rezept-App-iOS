@@ -23,6 +23,12 @@ import XCTest
 /// The default `perceptualPrecision` to use if a specific value is not provided.
 private let defaultPerceptualPrecision: Float = 0.93
 
+extension ViewImageConfig {
+    func noInsets() -> Self {
+        .init(safeArea: .zero, size: size, traits: traits)
+    }
+}
+
 extension XCTestCase {
     func figmaReference<T>() -> [String: Snapshotting<T, UIImage>] where T: SwiftUI.View {
         [
@@ -44,7 +50,7 @@ extension XCTestCase {
                 traits: UITraitCollection(userInterfaceStyle: .dark)
             ),
             "accessibilityBig": .image(perceptualPrecision: defaultPerceptualPrecision, traits:
-                UITraitCollection(preferredContentSizeCategory: .accessibilityExtraExtraExtraLarge)),
+                UITraitCollection(preferredContentSizeCategory: .extraExtraExtraLarge)),
             "accessibilitySmall": .image(
                 perceptualPrecision: defaultPerceptualPrecision,
                 traits: UITraitCollection(preferredContentSizeCategory: .extraSmall)
@@ -58,25 +64,25 @@ extension XCTestCase {
             "iPhoneSe.light":
                 .image(
                     perceptualPrecision: defaultPerceptualPrecision,
-                    layout: .device(config: ViewImageConfig.iPhoneSe),
+                    layout: .device(config: ViewImageConfig.iPhoneSe.noInsets()),
                     traits: UITraitCollection(preferredContentSizeCategory: .medium)
                 ),
             "iPhone8.light":
                 .image(
                     perceptualPrecision: defaultPerceptualPrecision,
-                    layout: .device(config: ViewImageConfig.iPhone8),
+                    layout: .device(config: ViewImageConfig.iPhone8.noInsets()),
                     traits: UITraitCollection(preferredContentSizeCategory: .medium)
                 ),
             "iPhoneX.light":
                 .image(
                     perceptualPrecision: defaultPerceptualPrecision,
-                    layout: .device(config: ViewImageConfig.iPhoneX),
+                    layout: .device(config: ViewImageConfig.iPhoneX.noInsets()),
                     traits: UITraitCollection(preferredContentSizeCategory: .medium)
                 ),
             "iPhoneXsMax.light":
                 .image(
                     perceptualPrecision: defaultPerceptualPrecision,
-                    layout: .device(config: ViewImageConfig.iPhoneXsMax),
+                    layout: .device(config: ViewImageConfig.iPhoneXsMax.noInsets()),
                     traits: UITraitCollection(preferredContentSizeCategory: .medium)
                 ),
         ]
@@ -88,14 +94,9 @@ extension XCTestCase {
             "iPhoneX.light.xs":
                 .image(
                     perceptualPrecision: defaultPerceptualPrecision,
-                    layout: .device(config: ViewImageConfig.iPhoneX),
+                    layout: .device(config: ViewImageConfig.iPhoneX.noInsets()),
                     traits: UITraitCollection(preferredContentSizeCategory: .extraSmall)
                 ),
-//            "iPhoneX.light.xxxl":
-//                .image(
-//                    layout: .device(config: ViewImageConfig.iPhoneX),
-//                    traits: UITraitCollection(preferredContentSizeCategory: .accessibilityExtraExtraExtraLarge)
-//                ),
         ]
     }
 
@@ -105,7 +106,7 @@ extension XCTestCase {
             "iPhoneX.\(mode == .dark ? "dark" : "light")":
                 .image(
                     perceptualPrecision: defaultPerceptualPrecision,
-                    layout: .device(config: ViewImageConfig.iPhoneX),
+                    layout: .device(config: ViewImageConfig.iPhoneX.noInsets()),
                     traits: UITraitCollection(traitsFrom: [
                         UITraitCollection(userInterfaceStyle: mode),
                         UITraitCollection(preferredContentSizeCategory: .medium),

@@ -1051,17 +1051,36 @@ extension PharmacyBundleParsingError: CodedError {
     }
 }
 
+extension PharmacyCoreDataStore.Error: CodedError {
+    var erpErrorCode: String {
+        switch self {
+            case .noMatchingEntity:
+                return "i-50501"
+        }
+    }
+    var erpErrorCodeList: [String] {
+        switch self {
+            default:
+                return [erpErrorCode]
+        }
+    }
+}
+
 extension PharmacyFHIRDataSource.Error: CodedError {
     var erpErrorCode: String {
         switch self {
             case .fhirClient:
                 return "i-57001"
+            case .notFound:
+                return "i-57002"
         }
     }
     var erpErrorCodeList: [String] {
         switch self {
             case let .fhirClient(error):
                 return [erpErrorCode] + error.erpErrorCodeList
+            default:
+                return [erpErrorCode]
         }
     }
 }

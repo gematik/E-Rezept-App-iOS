@@ -150,6 +150,8 @@ extension ErxTask {
 
         static let erxTaskCompleted = erxTask15
 
+        static let erxTaskRedeemAt = erxTask16
+
         static let erxTaskDirectAssigned = ErxTask(
             identifier: "169.123.456.789.123.58",
             status: .inProgress,
@@ -205,6 +207,14 @@ extension ErxTask {
         static let demoWorkRelatedAccident = ErxTask.WorkRelatedAccident(
             workPlaceIdentifier: "1234567890",
             date: "9.4.2021"
+        )
+
+        static let demoMultiplePrescription = ErxTask.MultiplePrescription(
+            mark: true,
+            numbering: 2,
+            totalNumber: 4,
+            startPeriod: "2323-01-26T15:23:21+00:00",
+            endPeriod: "2323-04-26T15:23:21+00:00"
         )
 
         static let erxTask1: ErxTask = .init(
@@ -477,6 +487,25 @@ extension ErxTask {
             ]
         )
 
+        static let erxTask16: ErxTask = .init(
+            identifier: "34235f983-1e67-22c5-8955-63bf44e44fb8",
+            status: .ready,
+            accessCode: "e46ab30336811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
+            fullUrl: nil,
+            authoredOn: DemoDate.createDemoDate(.yesterday),
+            expiresOn: DemoDate.createDemoDate(.ninetyTwoDaysAhead),
+            acceptedUntil: DemoDate.createDemoDate(.ninetyTwoDaysAhead),
+            redeemedOn: nil,
+            author: "Dr. Dr. med. Carsten van Storchhausen",
+            medication: medication8,
+            multiplePrescription: demoMultiplePrescription,
+            patient: demoPatient,
+            practitioner: demoPractitioner,
+            organization: demoOrganization,
+            workRelatedAccident: demoWorkRelatedAccident,
+            auditEvents: ErxAuditEvent.Dummies.auditEvents
+        )
+
         static let erxTasks: [ErxTask] =
             [
                 erxTask1,
@@ -492,6 +521,7 @@ extension ErxTask {
                 erxTask11,
                 erxTask12,
                 erxTask13,
+                erxTask16,
             ]
     }
 }

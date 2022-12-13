@@ -102,6 +102,39 @@ extension CoreDataCrudable {
         .eraseToAnyPublisher()
     }
 
+    func save<T>(
+        mergePolicy: NSMergePolicy,
+        in context: @escaping (NSManagedObjectContext) throws -> T
+    ) -> AnyPublisher<T, Error> {
+        let coreData: CoreDataController
+        do {
+            coreData = try coreDataControllerFactory.loadCoreDataController()
+        } catch {
+            return Fail(error: Error.initialization(error: error)).eraseToAnyPublisher()
+        }
+
+        return Deferred {
+            Future { promise in
+                let moc = coreData.container.newBackgroundContext()
+                moc.mergePolicy = mergePolicy
+                moc.performAndWait {
+                    do {
+                        let result = try context(moc)
+                        try moc.save()
+                        promise(.success(result))
+                        moc.reset()
+                    } catch {
+                        promise(.failure(error))
+                        moc.reset()
+                    }
+                }
+            }
+        }
+        .subscribe(on: backgroundQueue)
+        .mapError(Error.write)
+        .eraseToAnyPublisher()
+    }
+
     func delete<Entity: NSManagedObject>(resultsOf fetchRequest: NSFetchRequest<Entity>) -> AnyPublisher<Bool, Error> {
         let coreData: CoreDataController
         do {

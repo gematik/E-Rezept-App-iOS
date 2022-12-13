@@ -19,21 +19,20 @@
 import Combine
 import CombineSchedulers
 import eRpKit
+import eRpLocalStorage
 import Foundation
+import OrderedCollections
 import Pharmacy
 
 class DemoPharmacyRepository: PharmacyRepository {
     private let delay: Double
-    private let currentValue: CurrentValueSubject<[PharmacyLocation], PharmacyRepositoryError> = CurrentValueSubject([])
     private let cloud: PharmacyFHIRDataSource
     private let schedulers: Schedulers
     private var uiScheduler: AnySchedulerOf<DispatchQueue> {
         schedulers.main
     }
 
-    private lazy var store: Set<PharmacyLocation> = {
-        Set(PharmacyLocation.Dummies.pharmacies)
-    }()
+    private var store = OrderedSet<PharmacyLocation>()
 
     init(cloud: PharmacyFHIRDataSource,
          requestDelayInSeconds: Double = 0.1,
@@ -41,6 +40,31 @@ class DemoPharmacyRepository: PharmacyRepository {
         self.cloud = cloud
         delay = requestDelayInSeconds
         self.schedulers = schedulers
+    }
+
+    func updateFromRemote(by telematikId: String) -> AnyPublisher<PharmacyLocation, PharmacyRepositoryError> {
+        cloud.fetchPharmacy(by: telematikId)
+            .mapError(PharmacyRepositoryError.remote)
+            .flatMap { pharmacy -> AnyPublisher<PharmacyLocation, PharmacyRepositoryError> in
+                guard let pharmacy = pharmacy else {
+                    return Fail(error: PharmacyRepositoryError.remote(.notFound)).eraseToAnyPublisher()
+                }
+                let storedPharmacy = self.store.first { $0.telematikID == telematikId }
+                guard var storedPharmacy = storedPharmacy else {
+                    return Fail(error: PharmacyRepositoryError
+                        .local(.read(error: PharmacyCoreDataStore.Error.noMatchingEntity))).eraseToAnyPublisher()
+                }
+                storedPharmacy.telecom = pharmacy.telecom
+                storedPharmacy.address = pharmacy.address
+                storedPharmacy.types = pharmacy.types
+                storedPharmacy.position = pharmacy.position
+                storedPharmacy.hoursOfOperation = pharmacy.hoursOfOperation
+                self.store.updateOrAppend(storedPharmacy)
+                return Just(storedPharmacy)
+                    .setFailureType(to: PharmacyRepositoryError.self)
+                    .eraseToAnyPublisher()
+            }
+            .eraseToAnyPublisher()
     }
 
     func loadCached(by telematikId: String) -> AnyPublisher<PharmacyLocation?, PharmacyRepositoryError> {
@@ -68,18 +92,16 @@ class DemoPharmacyRepository: PharmacyRepository {
         }
     }
 
-    func loadLocalAll() -> AnyPublisher<[PharmacyLocation], PharmacyRepositoryError> {
-        currentValue
+    func loadLocal(count _: Int?) -> AnyPublisher<[PharmacyLocation], PharmacyRepositoryError> {
+        Just(Array(store))
+            .setFailureType(to: PharmacyRepositoryError.self)
             .first()
-            .delay(for: .seconds(delay), scheduler: uiScheduler)
             .eraseToAnyPublisher()
     }
 
     func save(pharmacies: [PharmacyLocation]) -> AnyPublisher<Bool, PharmacyRepositoryError> {
         pharmacies.forEach { pharmacy in
-            if store.contains(pharmacy) {
-                store.update(with: pharmacy)
-            }
+            store.updateOrAppend(pharmacy)
         }
         return Just(true).setFailureType(to: PharmacyRepositoryError.self).eraseToAnyPublisher()
     }
@@ -87,5 +109,68 @@ class DemoPharmacyRepository: PharmacyRepository {
     func delete(pharmacies: [PharmacyLocation]) -> AnyPublisher<Bool, PharmacyRepositoryError> {
         store.formUnion(Set(pharmacies))
         return Just(true).setFailureType(to: PharmacyRepositoryError.self).eraseToAnyPublisher()
+    }
+}
+
+struct DummyPharmacyRepository: PharmacyRepository {
+    func updateFromRemote(by _: String) -> AnyPublisher<eRpKit.PharmacyLocation, Pharmacy.PharmacyRepositoryError> {
+        Just(
+            PharmacyLocation(
+                id: "",
+                status: .active,
+                telematikID: "dummy_id",
+                name: "Test-Apo",
+                types: [.outpharm],
+                hoursOfOperation: []
+            )
+        )
+        .setFailureType(to: PharmacyRepositoryError.self)
+        .eraseToAnyPublisher()
+    }
+
+    func save(pharmacies _: [eRpKit.PharmacyLocation]) -> AnyPublisher<Bool, PharmacyRepositoryError> {
+        Just(true).setFailureType(to: PharmacyRepositoryError.self).eraseToAnyPublisher()
+    }
+
+    func loadCached(by _: String) -> AnyPublisher<PharmacyLocation?, PharmacyRepositoryError> {
+        Just(nil).setFailureType(to: PharmacyRepositoryError.self).eraseToAnyPublisher()
+    }
+
+    func searchRemote(
+        searchTerm _: String,
+        position _: Position?,
+        filter _: [PharmacyRepositoryFilter]
+    ) -> AnyPublisher<[PharmacyLocation], PharmacyRepositoryError> {
+        Just([]).setFailureType(to: PharmacyRepositoryError.self).eraseToAnyPublisher()
+    }
+
+    func loadLocal(by _: String) -> AnyPublisher<PharmacyLocation?, PharmacyRepositoryError> {
+        Just(nil).setFailureType(to: PharmacyRepositoryError.self).eraseToAnyPublisher()
+    }
+
+    func loadLocal(count _: Int?) -> AnyPublisher<[PharmacyLocation], PharmacyRepositoryError> {
+        Just([]).setFailureType(to: PharmacyRepositoryError.self).eraseToAnyPublisher()
+    }
+
+    func updateLocal(
+        for _: String,
+        mutating _: @escaping (inout PharmacyLocation) -> Void
+    ) -> AnyPublisher<PharmacyLocation, PharmacyRepositoryError> {
+        Just(
+            PharmacyLocation(
+                id: "",
+                status: .active,
+                telematikID: "dummy_id",
+                name: "Test-Apo",
+                types: [.outpharm],
+                hoursOfOperation: []
+            )
+        )
+        .setFailureType(to: PharmacyRepositoryError.self)
+        .eraseToAnyPublisher()
+    }
+
+    func delete(pharmacies _: [PharmacyLocation]) -> AnyPublisher<Bool, PharmacyRepositoryError> {
+        Just(true).setFailureType(to: PharmacyRepositoryError.self).eraseToAnyPublisher()
     }
 }

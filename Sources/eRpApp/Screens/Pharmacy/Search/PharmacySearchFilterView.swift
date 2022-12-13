@@ -30,31 +30,69 @@ struct PharmacySearchFilterView: View {
         viewStore = ViewStore(store)
     }
 
-    var body: some View {
-        ScrollView {
-            VStack(spacing: 8) {
-                SingleElementSectionContainer(
-                    header: {
-                        Text(L10n.psfTxtCommonSubheadline)
-                    }, content: {
-                        ForEach(PharmacySearchFilterDomain.PharmacyFilterOption.allCases, id: \.self) { filterOption in
-                            Toggle(isOn: viewStore.binding(get: { state in
-                                state.pharmacyFilterOptions.contains(filterOption)
-                            }, send: { _ in
-                                PharmacySearchFilterDomain.Action.toggleFilter(filterOption)
-                            })) {
-                                Label(title: { Text(filterOption.localizedStringKey) }, icon: {})
-                            }
-                            .toggleStyle(.radio(showSeparator: filterOption != PharmacySearchFilterDomain
-                                    .PharmacyFilterOption.allCases.last))
-                            .modifier(SectionContainerCellModifier())
-                        }
-                    }
-                )
+    struct FilterView: View {
+        let title: LocalizedStringKey
+        @Binding var isEnabled: Bool
+
+        var body: some View {
+            Button(action: {
+                isEnabled.toggle()
+            }, label: {
+                Text(title)
+                    .padding(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
+                    .foregroundColor(isEnabled ? Colors.systemBackground : Colors.systemLabelSecondary)
+                    .background(isEnabled ? Colors.primary : Colors.systemGray6)
+                    .cornerRadius(8)
+            })
+        }
+    }
+
+    typealias Filter = PharmacySearchFilterDomain.PharmacyFilterOption
+
+    struct FilterRow: View {
+        @ObservedObject
+        var viewStore: ViewStore<PharmacySearchFilterDomain.State, PharmacySearchFilterDomain.Action>
+
+        let filters: [PharmacySearchFilterDomain.PharmacyFilterOption]
+
+        var body: some View {
+            HStack {
+                ForEach(filters, id: \.self) { filterOption in
+                    FilterView(
+                        title: filterOption.localizedStringKey,
+                        isEnabled: viewStore.binding(get: { state in
+                            state.pharmacyFilterOptions.contains(filterOption)
+                        }, send: { _ in
+                            PharmacySearchFilterDomain.Action.toggleFilter(filterOption)
+                        })
+                    )
+                }
             }
         }
-        .navigationTitle(L10n.psfTxtTitle)
-        .background(Color(.secondarySystemBackground).ignoresSafeArea(.all, edges: .bottom))
+    }
+
+    var body: some View {
+        VStack(spacing: 24) {
+            Text(L10n.psfTxtTitle)
+                .font(.subheadline.weight(.bold))
+
+            VStack(alignment: .leading, spacing: 8) {
+                FilterRow(viewStore: viewStore, filters: [.currentLocation, .open])
+                FilterRow(viewStore: viewStore, filters: [.ready])
+                FilterRow(viewStore: viewStore, filters: [.delivery, .shipment])
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+
+            Button(action: {
+                viewStore.send(.close(viewStore.state.pharmacyFilterOptions))
+            }, label: {
+                Text(L10n.psfBtnAccept)
+            })
+                .frame(idealWidth: 120, alignment: .center)
+                .buttonStyle(.secondaryAlt)
+        }
+        .padding()
+        .background(Color(.systemBackground).ignoresSafeArea(.all, edges: .bottom))
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button(action: {
@@ -85,14 +123,11 @@ struct PharmacySearchFilterView: View {
 struct PharmacySearchFilterView_Previews: PreviewProvider {
     static var previews: some View {
         Text("abc")
-            .sheet(
+            .smallSheet(
                 isPresented: .constant(true),
                 onDismiss: {},
                 content: {
-                    NavigationView {
-                        PharmacySearchFilterView(store: PharmacySearchFilterDomain.Dummies.store)
-                    }
-                    .accentColor(Colors.primary700)
+                    PharmacySearchFilterView(store: PharmacySearchFilterDomain.Dummies.store)
                 }
             )
     }

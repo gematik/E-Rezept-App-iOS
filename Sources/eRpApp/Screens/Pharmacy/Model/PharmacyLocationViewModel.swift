@@ -21,7 +21,8 @@ import eRpKit
 import Foundation
 
 /// Adds additional properties to the PharmacyLocation entity that are used in the view.
-struct PharmacyLocationViewModel: Equatable, Hashable {
+@dynamicMemberLookup
+struct PharmacyLocationViewModel: Equatable, Hashable, Identifiable {
     init(
         pharmacy: PharmacyLocation,
         referenceLocation: Location? = nil,
@@ -40,8 +41,8 @@ struct PharmacyLocationViewModel: Equatable, Hashable {
         todayOpeningState = {
             let currentDay: String = Self.dayNameParseFormatter.string(from: referenceDate).lowercased()
 
-            guard !openingHours.isEmpty else {
-                // No opening hours in general -> do not display anything
+            // No opening hours in general -> do not display anything
+            if openingHours.isEmpty {
                 return .unknown
             }
             guard let currentDayOpeningHours = openingHours.first(where: { $0.dayOfWeek == currentDay }) else {
@@ -51,13 +52,42 @@ struct PharmacyLocationViewModel: Equatable, Hashable {
             return currentDayOpeningHours.openingState
         }()
         if let pharmacyPosition = pharmacy.position {
-            distanceInKm = initDistance(pharmacyPosition: pharmacyPosition, referenceLocation: referenceLocation)
+            distanceInM = initDistance(pharmacyPosition: pharmacyPosition, referenceLocation: referenceLocation)
+            let distanceFormatter = MeasurementFormatter()
+            distanceFormatter.locale = Locale.current
+            distanceFormatter.unitStyle = .short
+            distanceFormatter.unitOptions = .providedUnit
+            distanceFormatter.numberFormatter.maximumFractionDigits = 1
+            distanceFormatter.numberFormatter.minimumFractionDigits = 0
+
+            if let distanceInM = distanceInM {
+                if distanceInM > 100 {
+                    let distanceInKM = distanceInM / 1000.0
+                    if distanceInKM > 20 {
+                        distanceFormatter.numberFormatter.maximumFractionDigits = 0
+                    }
+                    formattedDistance = distanceFormatter
+                        .string(from: .init(value: distanceInM / 1000.0, unit: UnitLength.kilometers))
+                } else {
+                    formattedDistance = distanceFormatter
+                        .string(from: .init(value: distanceInM, unit: UnitLength.meters))
+                }
+            }
         }
+    }
+
+    subscript<A>(dynamicMember keyPath: KeyPath<PharmacyLocation, A>) -> A {
+        pharmacyLocation[keyPath: keyPath]
+    }
+
+    var id: String {
+        pharmacyLocation.id
     }
 
     var pharmacyLocation: PharmacyLocation
     var openingHours: [OpeningHoursDay] = []
-    var distanceInKm: Double?
+    var distanceInM: Double?
+    var formattedDistance: String?
 
     let todayOpeningState: PharmacyOpenHoursCalculator.TodaysOpeningState
 
@@ -66,20 +96,13 @@ struct PharmacyLocationViewModel: Equatable, Hashable {
             self.dayOfWeek = dayOfWeek
             self.entries = entries
 
-            // At this point dayOfWeek is of format 'EEE' in "en_US" locale
-            let dayNameParseFormatter: DateFormatter = {
-                let dateFormatter = DateFormatter()
-                dateFormatter.locale = Locale(identifier: "en_US")
-                dateFormatter.dateFormat = "EEE"
-                return dateFormatter
-            }()
             let localizesDisplayNameFormatter: DateFormatter = {
                 let dateFormatter = DateFormatter()
                 dateFormatter.locale = .current
                 dateFormatter.dateFormat = "EEEE"
                 return dateFormatter
             }()
-            if let date = dayNameParseFormatter.date(from: dayOfWeek) {
+            if let date = PharmacyLocationViewModel.dayNameParseFormatter.date(from: dayOfWeek) {
                 dayOfWeekLocalizedDisplayName = localizesDisplayNameFormatter.string(from: date)
                 // .weekday starts with 1 being sunday, +5 % 7 to let monday be 0 and the first day
                 dayOfWeekNumber = (Calendar.current.component(.weekday, from: date) + 5) % 7
@@ -173,7 +196,7 @@ struct PharmacyLocationViewModel: Equatable, Hashable {
            let pharmacyLon = pharmacyPosition.longitude?.doubleValue {
             let pharmacyCLLocation = CLLocation(latitude: pharmacyLat, longitude: pharmacyLon)
             if let distanceInMeter = referenceLocation?.rawValue.distance(from: pharmacyCLLocation) {
-                return distanceInMeter / 1000.0
+                return round(distanceInMeter)
             }
         }
         return nil
@@ -233,6 +256,23 @@ extension PharmacyLocation.HoursOfOperation {
     }
 }
 
+extension Array where Element == PharmacyLocationViewModel {
+    func filter(by filterOptions: [PharmacySearchFilterDomain.PharmacyFilterOption]) -> [PharmacyLocationViewModel] {
+        // Filter Pharmacies that are closed
+        if filterOptions.contains(.open) {
+            return filter { location in
+                switch location.todayOpeningState {
+                case .open:
+                    return true
+                default:
+                    return false
+                }
+            }
+        }
+        return self
+    }
+}
+
 extension PharmacyLocationViewModel {
     enum Dummies {
         static let pharmacy = PharmacyLocationViewModel(
@@ -249,6 +289,15 @@ extension PharmacyLocationViewModel {
             PharmacyLocation.Dummies.pharmacies.map { pharmacy in
                 PharmacyLocationViewModel(
                     pharmacy: pharmacy,
+                    referenceLocation: .init(
+                        altitude: 5,
+                        coordinate: .init(latitude: 49.247034, longitude: 8.8668786),
+                        course: 0,
+                        horizontalAccuracy: 0.0,
+                        speed: 0.0,
+                        timestamp: Date(),
+                        verticalAccuracy: 0
+                    ),
                     referenceDate: PharmacyLocation.Dummies.referenceDate
                 )
             }

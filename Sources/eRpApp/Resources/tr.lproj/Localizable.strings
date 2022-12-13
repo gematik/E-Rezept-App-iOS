@@ -1,3 +1,6 @@
+"add_btn_save" = "Speichern";
+"add_txt_profile1" = "Profile 1";
+"add_txt_title" = "Name eingeben";
 "alert_btn_close" = "Reddet";
 "alert_btn_ok" = "Tamam";
 "alert_error_message_unknown" = "Bilinmiyor";
@@ -268,6 +271,7 @@
 "cpw_txt_title" = "Şifre";
 "cpw_txt_update_title" = "Şifreyi değiştir";
 "ctl_btn_profile_picker_edit" = "Resmi düzenle";
+"ctl_btn_profile_picker_picture_a11y_label" = "Profilbild";
 "ctl_btn_profile_picker_reset" = "Resmi sıfırla";
 "ctl_btn_profile_picker_set" = "Kaydet";
 "ctl_btn_profile_toolbar_item" = "Güncel profil";
@@ -342,6 +346,7 @@
 "erx_txt_prescription_added_alert_title" = "Rezept erfolgreich hinzugefügt";
 "erx_txt_prescription_duplicate_alert_message" = "Das Rezept wurde bereits importiert.";
 "erx_txt_prescription_duplicate_alert_title" = "Rezept nicht hinzugefügt";
+"erx_txt_redeem_at_%@" = "Einlösbar ab %@";
 "erx_txt_redeemed" = "Arşiv";
 "erx_txt_refresh_loading" = "Yükleniyor …";
 "hint_btn_close" = "Kapat";
@@ -822,6 +827,9 @@
 "pha_search_txt_filter_shipment" = "Kargo";
 "pha_search_txt_hint_start_search" = "Klavyede Aç seçeneğine dokunarak aramayı başlatın";
 "pha_search_txt_history_title" = "Zuletzt gesucht";
+"pha_search_txt_local_pharm_err_not_found" = "Apotheke nicht gefunden";
+"pha_search_txt_local_pharm_err_not_found_recovery" = "Bitte erneut über Apothekensuche hinzufügen.";
+"pha_search_txt_local_pharm_title" = "Meine Apotheken";
 "pha_search_txt_location_alert_message" = "Yakınınızdaki eczaneleri bulmak için konumunuzu paylaşın.";
 "pha_search_txt_location_alert_title" = "Konumu paylaş";
 "pha_search_txt_location_hint_message" = "Konumunuzu paylaşın ve bölgenizdeki eczaneleri bulun";
@@ -902,6 +910,7 @@
 "prsc_status_error" = "Hatalı reçete";
 "prsc_status_expired" = "Süresi dolmuş";
 "prsc_status_in_progress" = "Kullanılmakta";
+"prsc_status_multiple_prsc" = "Später einlösbar";
 "prsc_status_ready" = "Kullanılabilir";
 "prsc_status_undefined" = "Bilinmiyor";
 "prsc_txt_fallback_name" = "İlaç";

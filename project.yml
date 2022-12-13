@@ -126,10 +126,6 @@ targets:
   eRpApp:
     type: application
     platform: iOS
-    preBuildScripts:
-      - script: "mint run swiftgen"
-        name: Swiftgen
-        shell: "/bin/sh -l"
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: ${GEM_PRODUCT_BUNDLE_IDENTIFIER}

@@ -78,6 +78,7 @@ enum PharmacyRedeemDomain: Equatable {
         case shipmentInfoStore
         case profileUpdates
         case redeem
+        case savePharmacy
     }
 
     struct State: Equatable {
@@ -125,6 +126,7 @@ enum PharmacyRedeemDomain: Equatable {
         let signatureProvider: SecureEnclaveSignatureProvider
         let userSessionProvider: UserSessionProvider
         let accessibilityAnnouncementReceiver: (String) -> Void
+        let pharmacyRepository: PharmacyRepository
     }
 
     static let domainReducer = Reducer { state, action, environment in
@@ -175,10 +177,14 @@ enum PharmacyRedeemDomain: Equatable {
             } else if orderResponses.areSuccessful {
                 state.route = .redeemSuccess(RedeemSuccessDomain.State(redeemOption: state.redeemOption))
             }
-            return .none
+            return environment.save(pharmacy: state.pharmacy)
+                .cancellable(id: Token.savePharmacy, cancelInFlight: true)
+                .fireAndForget()
         case let .redeemReceived(.failure(error)):
             state.route = .alert(AlertStates.alert(for: error))
-            return .none
+            return environment.save(pharmacy: state.pharmacy)
+                .cancellable(id: Token.savePharmacy, cancelInFlight: true)
+                .fireAndForget()
         case let .didSelect(taskID):
             if let erxTask = state.erxTasks.first(where: { $0.id == taskID }) {
                 if state.selectedErxTasks.contains(erxTask) {
@@ -330,6 +336,16 @@ extension PharmacyRedeemDomain.Environment {
             .receive(on: schedulers.main.animation())
             .eraseToEffect()
     }
+
+    func save(pharmacy: PharmacyLocation) -> Effect<Bool, PharmacyRepositoryError> {
+        var pharmacy = pharmacy
+        pharmacy.lastUsed = Date()
+        pharmacy.countUsage += 1
+        return pharmacyRepository.save(pharmacy: pharmacy)
+            .first()
+            .receive(on: schedulers.main)
+            .eraseToEffect()
+    }
 }
 
 extension ErxTask.Patient {
@@ -443,8 +459,10 @@ extension PharmacyRedeemDomain {
             inputValidator: DemoRedeemInputValidator(),
             serviceLocator: ServiceLocator(),
             signatureProvider: DummySecureEnclaveSignatureProvider(),
-            userSessionProvider: DummyUserSessionProvider()
-        ) { _ in }
+            userSessionProvider: DummyUserSessionProvider(),
+            accessibilityAnnouncementReceiver: { _ in },
+            pharmacyRepository: DummyPharmacyRepository()
+        )
         static let store = Store(initialState: state,
                                  reducer: reducer,
                                  environment: environment)

@@ -1,3 +1,29 @@
+# Release 1.4.8
+
+### added (8 changes)
+
+- Add multiple prescriptions UI
+- Add feature to mark and unmark pharmacies as favorite
+- Add new "New Profile" dialog to main screen
+- Add last used pharmacies to start search view
+- Add fields to PharmacyLocation and PharmacyLocationEntity that are used for the favorite feature
+- Add multiple prescription information
+- Add saving pharmacy location after redeem
+- Add smallSheet modifier for presenting smaller sheets
+
+### changed (3 changes)
+
+- Change pharmacy search filters to be within a smallSheet
+- Change SDK Version to 16 and Xcode to 14.0.0
+- Change pharmacy search screen appearance
+
+### fixed (4 changes)
+
+- Fix missing localization for profile picture
+- Fix password autofill preventing custom password within onboarding
+- Fix iOS 16 keyboard safearea bug
+- Fix tests failing due to actual time usage
+
 # Release 1.4.7
 
 ### added (2 changes)

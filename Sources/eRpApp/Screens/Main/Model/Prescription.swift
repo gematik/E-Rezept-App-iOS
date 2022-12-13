@@ -26,6 +26,7 @@ extension GroupedPrescription {
     struct Prescription: Equatable, Hashable, Identifiable {
         enum Status: Equatable {
             case open(until: String)
+            case redeem(at: String) // swiftlint:disable:this identifier_name
             case archived(message: String)
             case undefined
             case error(message: String)
@@ -35,8 +36,14 @@ extension GroupedPrescription {
         let prescribedMedication: GroupedPrescription.Medication?
         let actualMedications: [GroupedPrescription.Medication]
         // [REQ:gemSpec_FD_eRp:A_21267] direct assignment
-        let isDirectAssigned: Bool
+        var type: PrescriptionType = .regular
         let viewStatus: Status
+
+        public enum PrescriptionType {
+            case regular
+            case directAssignment
+            case multiplePrescription
+        }
 
         var id: String {
             erxTask.id
@@ -47,8 +54,13 @@ extension GroupedPrescription {
             date: Date = Date(),
             dateFormatter: DateFormatter = globals.uiDateFormatter
         ) {
-            isDirectAssigned = erxTask.flowType == .directAssignment ? true : erxTask.id
-                .starts(with: ErxTask.FlowType.Code.kDirectAssignment)
+            if erxTask.multiplePrescription?.mark == true {
+                type = .multiplePrescription
+            }
+            if erxTask.flowType == .directAssignment ? true : erxTask.id
+                .starts(with: ErxTask.FlowType.Code.kDirectAssignment) {
+                type = .directAssignment
+            }
             self.erxTask = erxTask
             actualMedications = erxTask.medicationDispenses.map(Medication.from(medicationDispense:))
 
@@ -58,7 +70,7 @@ extension GroupedPrescription {
                 prescribedMedication = nil
             }
             viewStatus = Self.evaluateViewStatus(for: erxTask,
-                                                 isDirectAssigned: isDirectAssigned,
+                                                 type: type,
                                                  whenHandedOver: actualMedications.first?
                                                      .handedOver ?? prescribedMedication?.handedOver,
                                                  date: date,
@@ -71,7 +83,7 @@ extension GroupedPrescription {
 
         static func evaluateViewStatus(
             for erxTask: ErxTask,
-            isDirectAssigned _: Bool,
+            type: PrescriptionType,
             whenHandedOver: String?,
             date: Date = Date(),
             dateFormatter: DateFormatter = globals.uiDateFormatter
@@ -80,6 +92,13 @@ extension GroupedPrescription {
             case .ready, .inProgress:
                 guard erxTask.expiresOn != nil || erxTask.acceptedUntil != nil else {
                     return .open(until: L10n.prscFdTxtNa.text)
+                }
+
+                if type == .multiplePrescription,
+                   erxTask.multiplePrescription?.isRedeemable == false,
+                   let startDate = erxTask.multiplePrescription?.startDate {
+                    let localizedDateString = dateFormatter.string(from: startDate)
+                    return .redeem(at: L10n.erxTxtRedeemAt(localizedDateString).text)
                 }
 
                 if let acceptedUntilDate = erxTask.acceptedUntil?.date,
@@ -116,11 +135,14 @@ extension GroupedPrescription {
         }
 
         var statusMessage: String {
-            guard !isDirectAssigned else {
+            guard type != .directAssignment
+            else {
                 return L10n.prscRedeemNoteDirectAssignment.text
             }
+
             switch viewStatus {
             case let .open(until: localizedString): return localizedString
+            case let .redeem(at: localizedString): return localizedString
             case let .archived(message: localizedString): return localizedString
             case .undefined: return L10n.prscFdTxtNa.text
             case let .error(message: localizedString): return localizedString
@@ -131,6 +153,7 @@ extension GroupedPrescription {
             switch viewStatus {
             case .archived(message: _): return true
             case .open(until: _),
+                 .redeem(at: _),
                  .undefined,
                  .error:
                 return false
@@ -139,22 +162,26 @@ extension GroupedPrescription {
 
         var isRedeemable: Bool {
             // [REQ:gemSpec_FD_eRp:A_21360] no redeem informations available for flowtype 169
-            guard !isDirectAssigned else {
-                return false
-            }
+            guard type != .directAssignment
+            else { return false }
 
-            if case .archived = viewStatus {
-                return false
+            switch (erxTask.status, viewStatus) {
+            case (_, .archived),
+                 (_, .redeem): return false
+            case (.ready, _): return true
+            case (.draft, _),
+                 (.inProgress, _),
+                 (.cancelled, _),
+                 (.completed, _),
+                 (.undefined, _),
+                 (.error, _): return false
             }
-
-            return erxTask.status == .ready
         }
 
         var isDeleteabel: Bool {
-            guard !isDirectAssigned else {
-                // [REQ:gemSpec_FD_eRp:A_22102] prevent deletion of tasks with flowtype 169 while not completed
-                return erxTask.status == .completed
-            }
+            // [REQ:gemSpec_FD_eRp:A_22102] prevent deletion of tasks with flowtype 169 while not completed
+            guard type != .directAssignment
+            else { return erxTask.status == .completed }
 
             if isArchived {
                 return true
@@ -181,6 +208,14 @@ extension GroupedPrescription {
                 return false
             }
             return medicationPZN != medicationDispPZN
+        }
+
+        var multiplePrescriptionStatus: String? {
+            guard let index = erxTask.multiplePrescription?.numbering,
+                  let count = erxTask.multiplePrescription?.totalNumber
+            else { return nil }
+
+            return "\(index)/\(count)"
         }
     }
 
@@ -225,11 +260,29 @@ extension GroupedPrescription {
     }
 }
 
+extension ErxTask.MultiplePrescription {
+    var isRedeemable: Bool {
+        guard let startDate = startDate,
+              let daysUntilStartDate = Date().days(until: startDate)
+        else { return false }
+
+        return daysUntilStartDate <= 0
+    }
+
+    var startDate: Date? {
+        guard let start = startPeriod,
+              let startDate = globals.fhirDateFormatter.date(from: start, format: .yearMonthDay)
+        else { return nil }
+
+        return startDate
+    }
+}
+
 extension GroupedPrescription.Prescription {
     var statusTitle: LocalizedStringKey {
-        guard !isDirectAssigned else {
+        guard type != .directAssignment else {
             switch viewStatus {
-            case .open, .undefined, .error:
+            case .open, .redeem, .undefined, .error:
                 return L10n.prscStatusDirectAssigned.key
             case .archived:
                 return L10n.prscStatusCompleted.key
@@ -237,6 +290,7 @@ extension GroupedPrescription.Prescription {
         }
 
         switch (erxTask.status, viewStatus) {
+        case (.ready, .redeem): return L10n.prscStatusMultiplePrsc.key
         case (.ready, .archived): return L10n.prscStatusExpired.key
         case (.ready, _): return L10n.prscStatusReady.key
         case (.inProgress, _): return L10n.prscStatusInProgress.key
@@ -249,9 +303,9 @@ extension GroupedPrescription.Prescription {
     }
 
     var image: Image {
-        guard !isDirectAssigned else {
+        guard type != .directAssignment else {
             switch viewStatus {
-            case .open, .undefined, .error:
+            case .open, .redeem, .undefined, .error:
                 return Image(systemName: SFSymbolName.clockWarning)
             case .archived:
                 return Image(systemName: SFSymbolName.hourglass)
@@ -259,6 +313,7 @@ extension GroupedPrescription.Prescription {
         }
 
         switch (erxTask.status, viewStatus) {
+        case (.ready, .redeem): return Image(systemName: SFSymbolName.calendarClock)
         case (.ready, .archived): return Image(systemName: SFSymbolName.clockWarning)
         case (.ready, _): return Image(systemName: SFSymbolName.checkmark)
         case (.inProgress, _): return Image(systemName: SFSymbolName.hourglass)
@@ -271,51 +326,51 @@ extension GroupedPrescription.Prescription {
     }
 
     var titleTint: Color {
-        guard !isDirectAssigned else {
-            return Colors.systemGray
-        }
+        guard type != .directAssignment
+        else { return Colors.systemGray }
 
         switch (erxTask.status, viewStatus) {
         case (.draft, _),
              (.undefined, _),
              (.completed, _),
              (.ready, .archived): return Colors.systemGray
+        case (.ready, .redeem),
+             (.inProgress, _): return Colors.yellow900
         case (.ready, _): return Colors.secondary900
-        case (.inProgress, _): return Colors.yellow900
         case (.cancelled, _): return Colors.red900
         case (.error, _): return Colors.red900
         }
     }
 
     var imageTint: Color {
-        guard !isDirectAssigned else {
-            return Colors.systemGray2
-        }
+        guard type != .directAssignment
+        else { return Colors.systemGray2 }
 
         switch (erxTask.status, viewStatus) {
         case (.draft, _),
              (.undefined, _),
              (.completed, _),
              (.ready, .archived): return Colors.systemGray2
+        case (.ready, .redeem),
+             (.inProgress, _): return Colors.yellow500
         case (.ready, _): return Colors.secondary500
-        case (.inProgress, _): return Colors.yellow500
         case (.cancelled, _): return Colors.red500
         case (.error, _): return Colors.red500
         }
     }
 
     var backgroundTint: Color {
-        guard !isDirectAssigned else {
-            return Colors.secondary
-        }
+        guard type != .directAssignment
+        else { return Colors.secondary }
 
         switch (erxTask.status, viewStatus) {
         case (.draft, _),
              (.undefined, _),
              (.completed, _),
              (.ready, .archived): return Colors.secondary
+        case (.ready, .redeem),
+             (.inProgress, _): return Colors.yellow100
         case (.ready, _): return Colors.secondary100
-        case (.inProgress, _): return Colors.yellow100
         case (.cancelled, _): return Colors.red100
         case (.error, _): return Colors.red100
         }

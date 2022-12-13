@@ -96,7 +96,7 @@ struct PharmacyFilterBar<FilterType: Identifiable>: View {
             .background(Color(.systemGray6))
             .cornerRadius(8)
             .foregroundColor(Color(.label))
-            .font(.footnote)
+            .font(.subheadline)
         }
     }
 }

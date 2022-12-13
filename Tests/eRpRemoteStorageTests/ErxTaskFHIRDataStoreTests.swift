@@ -81,6 +81,11 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
                 expect(erxTask.medication?.dosageInstructions) == "1-0-1-0"
                 expect(erxTask.medication?.lot) == "1234567890abcde"
                 expect(erxTask.medication?.expiresOn) == "2020-02-03T00:00:00+00:00"
+                expect(erxTask.multiplePrescription?.mark) == true
+                expect(erxTask.multiplePrescription?.numbering) == 2
+                expect(erxTask.multiplePrescription?.totalNumber) == 4
+                expect(erxTask.multiplePrescription?.startPeriod) == "2021-01-02"
+                expect(erxTask.multiplePrescription?.endPeriod) == "2021-03-30"
             })
 
         // test if sub has been called

@@ -1,3 +1,6 @@
+"add_btn_save" = "Speichern";
+"add_txt_profile1" = "Profile 1";
+"add_txt_title" = "Name eingeben";
 "alert_btn_close" = "Reject";
 "alert_btn_ok" = "OK";
 "alert_error_message_unknown" = "Unknown";
@@ -268,6 +271,7 @@
 "cpw_txt_title" = "Password";
 "cpw_txt_update_title" = "Change password";
 "ctl_btn_profile_picker_edit" = "Edit image";
+"ctl_btn_profile_picker_picture_a11y_label" = "Profilbild";
 "ctl_btn_profile_picker_reset" = "Reset image";
 "ctl_btn_profile_picker_set" = "Save";
 "ctl_btn_profile_toolbar_item" = "Current profile";
@@ -342,6 +346,7 @@
 "erx_txt_prescription_added_alert_title" = "Rezept erfolgreich hinzugefügt";
 "erx_txt_prescription_duplicate_alert_message" = "Das Rezept wurde bereits importiert.";
 "erx_txt_prescription_duplicate_alert_title" = "Rezept nicht hinzugefügt";
+"erx_txt_redeem_at_%@" = "Einlösbar ab %@";
 "erx_txt_redeemed" = "Archive";
 "erx_txt_refresh_loading" = "Loading ...";
 "hint_btn_close" = "close";
@@ -822,6 +827,9 @@
 "pha_search_txt_filter_shipment" = "Mail order";
 "pha_search_txt_hint_start_search" = "Start the search by tapping Open on the keypad";
 "pha_search_txt_history_title" = "Zuletzt gesucht";
+"pha_search_txt_local_pharm_err_not_found" = "Apotheke nicht gefunden";
+"pha_search_txt_local_pharm_err_not_found_recovery" = "Bitte erneut über Apothekensuche hinzufügen.";
+"pha_search_txt_local_pharm_title" = "Meine Apotheken";
 "pha_search_txt_location_alert_message" = "Share your location to find pharmacies near you.";
 "pha_search_txt_location_alert_title" = "Share location";
 "pha_search_txt_location_hint_message" = "Share your location and find pharmacies in your area";
@@ -905,6 +913,7 @@
 "prsc_status_error" = "Defective prescription";
 "prsc_status_expired" = "Expired";
 "prsc_status_in_progress" = "Being redeemed";
+"prsc_status_multiple_prsc" = "Später einlösbar";
 "prsc_status_ready" = "Redeemable";
 "prsc_status_undefined" = "Unknown";
 "prsc_txt_fallback_name" = "Medicine";

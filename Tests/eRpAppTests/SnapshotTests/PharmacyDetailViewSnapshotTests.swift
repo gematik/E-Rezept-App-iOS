@@ -41,7 +41,7 @@ final class PharmacyDetailViewSnapshotTests: XCTestCase {
             store: PharmacyDetailDomain.Dummies.storeFor(
                 PharmacyDetailDomain.State(
                     erxTasks: PharmacyDetailDomain.Dummies.prescriptions,
-                    pharmacyViewModel: PharmacyDetailDomain.Dummies.pharmacyInactiveViewModel
+                    pharmacyViewModel: PharmacyLocationViewModel.Fixtures.pharmacyInactive
                 )
             )
         )
@@ -59,7 +59,8 @@ final class PharmacyDetailViewSnapshotTests: XCTestCase {
                   userSession: MockUserSession(),
                   signatureProvider: MockSecureEnclaveSignatureProvider(),
                   accessibilityAnnouncementReceiver: { _ in },
-                  userSessionProvider: MockUserSessionProvider()
+                  userSessionProvider: MockUserSessionProvider(),
+                  pharmacyRepository: MockPharmacyRepository()
               ))
     }
 }

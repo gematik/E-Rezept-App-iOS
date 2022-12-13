@@ -121,3 +121,5 @@ Tests/IDPTests/Resources/Certificates.bundle
 Templates/Sourcery/Generic/errors.stencil
 docs/errors/errors.html
 
+.gitattributes
+

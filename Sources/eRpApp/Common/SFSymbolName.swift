@@ -93,6 +93,8 @@ public enum SFSymbolName {
     public static let pills = "pills"
     public static let trayAndArrowDown = "tray.and.arrow.down"
     public static let clipboardDoc = "doc.text.below.ecg"
+    public static let star = "star"
+    public static let starFill = "star.fill"
 
     public static let numbers1circle = "1.circle"
     public static let numbers2circle = "2.circle"
@@ -108,6 +110,7 @@ public enum SFSymbolName {
     public static let checkmarkCircle = "checkmark.circle"
     public static let checkmarkCircleFill = "checkmark.circle.fill"
     public static let xmarkCircleFill = "xmark.circle.fill"
+    public static let plusCircleFill = "plus.circle.fill"
 
     public static let faceId = "faceid"
     public static let touchId = "touchid"
@@ -126,6 +129,7 @@ public enum SFSymbolName {
     public static let lightbulb = "lightbulb"
     public static let lightbulbSlash = "lightbulb.slash"
     public static let questionmarkCircle = "questionmark.circle"
+    public static let personCirclePlus = "person.crop.circle.badge.plus"
 
     public static var filter: String {
         if #available(iOS 15.0, *) {
@@ -138,6 +142,7 @@ public enum SFSymbolName {
     public static let rectangleAndPencilAndEllipsis = "rectangle.and.pencil.and.ellipsis"
     public static let eye = "eye"
     public static let eyeSlash = "eye.slash"
+    public static let calendarClock = "calendar.badge.clock"
     public static var calendarWarning: String {
         if #available(iOS 15.0, *) {
             return "calendar.badge.exclamationmark"

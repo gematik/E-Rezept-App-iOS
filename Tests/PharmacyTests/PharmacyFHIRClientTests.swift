@@ -32,7 +32,6 @@ import XCTest
 final class PharmacyFHIRClientTests: XCTestCase {
     var host: String!
     var service: URL!
-    var fhirClient: FHIRClient!
     var sut: FHIRClient!
 
     override func setUpWithError() throws {
@@ -40,7 +39,6 @@ final class PharmacyFHIRClientTests: XCTestCase {
 
         host = "some-fhir-service.com"
         service = URL(string: "http://\(host ?? "")")!
-        fhirClient = FHIRClient(server: service, httpClient: DefaultHTTPClient(urlSessionConfiguration: .default))
         sut = FHIRClient(server: service, httpClient: DefaultHTTPClient(urlSessionConfiguration: .default))
     }
 
@@ -66,20 +64,8 @@ final class PharmacyFHIRClientTests: XCTestCase {
                 fail("Test unexpectedly failed with error: \(error)")
             }, expectations: { pharmacy in
                 expect(counter) == 1
-                let expectedLocation = PharmacyLocation(
-                    id: "29cc8022-ed2d-4313-8d74-74196a2b1168",
-                    status: .active,
-                    telematikID: "3-03.2.1010380000.10.703",
-                    name: "Brandenburger Tor Apotheke",
-                    types: [
-                        PharmacyLocation.PharmacyType.pharm,
-                        PharmacyLocation.PharmacyType.outpharm,
-                    ],
-                    address: nil,
-                    telecom: nil,
-                    hoursOfOperation: []
-                )
-                expect(pharmacy) == expectedLocation
+                expect(pharmacy?.id).to(equal("29cc8022-ed2d-4313-8d74-74196a2b1168"))
+                expect(pharmacy?.telematikID).to(equal("3-03.2.1010380000.10.703"))
             })
     }
 
@@ -121,17 +107,8 @@ final class PharmacyFHIRClientTests: XCTestCase {
             }, expectations: { pharmacyLocations in
                 expect(counter) == 1
                 expect(pharmacyLocations.count) == 5
-                let expectedLocation = PharmacyLocation(
-                    id: "a4d2a2ca-8b79-4792-a2be-3b72e1ccdedb",
-                    status: .inactive,
-                    telematikID: "3-06.2.ycl.216",
-                    name: "Adler Apotheke",
-                    types: [PharmacyLocation.PharmacyType.pharm],
-                    address: nil,
-                    telecom: nil,
-                    hoursOfOperation: []
-                )
-                expect(pharmacyLocations.first) == expectedLocation
+                expect(pharmacyLocations.first?.id).to(equal("a4d2a2ca-8b79-4792-a2be-3b72e1ccdedb"))
+                expect(pharmacyLocations.first?.telematikID).to(equal("3-06.2.ycl.216"))
             })
     }
 

@@ -56,6 +56,9 @@ extension ErxTaskEntity {
                                                  in: context)
         workRelatedAccident = ErxTaskWorkRelatedAccidentEntity(accident: task.workRelatedAccident,
                                                                in: context)
+        multiplePrescription = ErxTaskMultiplePrescriptionEntity(multiplePrescription: task.multiplePrescription,
+                                                                 in: context)
+
         // Note: auditEvents, communications and medicationDispenses are not set here
         // since they are loaded asynchronous from remote
     }
@@ -148,6 +151,7 @@ extension ErxTask {
             substitutionAllowed: entity.substitutionAllowed,
             source: source,
             medication: Medication(entity: entity.medication),
+            multiplePrescription: MultiplePrescription(entity: entity.multiplePrescription),
             patient: Patient(entity: entity.patient),
             practitioner: Practitioner(entity: entity.practitioner),
             organization: Organization(entity: entity.organization),

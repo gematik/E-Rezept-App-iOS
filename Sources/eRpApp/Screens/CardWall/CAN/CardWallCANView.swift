@@ -50,6 +50,10 @@ struct CardWallCANView: View {
                 PrimaryTextButton(text: L10n.cdwBtnCanDone,
                                   a11y: A11y.cardWall.canInput.cdwBtnCanDone,
                                   isEnabled: viewStore.state.can.count == 6) {
+                    // workaround: dismiss keyboard to fix safearea bug for iOS 16
+                    if #available(iOS 16, *) {
+                        UIApplication.shared.dismissKeyboard()
+                    }
                     viewStore.send(.advance)
                 }.padding(.horizontal)
 

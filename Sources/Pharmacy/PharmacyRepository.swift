@@ -23,6 +23,14 @@ import Foundation
 /// Interface for the app to the Pharmacy data layer
 /// sourcery: StreamWrapped
 public protocol PharmacyRepository {
+    /// Loads the `PharmacyLocation` by its telematik ID from a remote server and updates *only* properties
+    /// that are loaded from remote. If pharmacy is not jet in local store this method will return an error
+    ///
+    /// - Parameters:
+    ///   - telematikId: The telematik ID of the pharmacy
+    /// - Returns: Publisher for the load and saved request or fails
+    func updateFromRemote(by telematikId: String) -> AnyPublisher<PharmacyLocation, PharmacyRepositoryError>
+
     /// Loads the `PharmacyLocation` by its telematik ID from disk or if not present from a remote (server).
     ///
     /// - Parameters:
@@ -51,9 +59,10 @@ public protocol PharmacyRepository {
     func loadLocal(by telematikId: String)
         -> AnyPublisher<PharmacyLocation?, PharmacyRepositoryError>
 
-    /// Load all local `PharmacyLocation`s (from disk)
+    /// Load `count` local `PharmacyLocation`s (from disk)
+    /// - Parameter count: Count of pharmacies to fetch, Nil if no fetch limit should be applied
     /// - Returns: Publisher for the load request
-    func loadLocalAll() -> AnyPublisher<[PharmacyLocation], PharmacyRepositoryError>
+    func loadLocal(count: Int?) -> AnyPublisher<[PharmacyLocation], PharmacyRepositoryError>
 
     /// Saves an array of `PharmacyLocation`s
     /// - Parameters:
@@ -66,6 +75,26 @@ public protocol PharmacyRepository {
     ///   - pharmacies: the `PharmacyLocation`s to be deleted
     /// - Returns: `AnyPublisher` that emits a boolean on success or fails with a `PharmacyRepositoryError`
     func delete(pharmacies: [PharmacyLocation]) -> AnyPublisher<Bool, PharmacyRepositoryError>
+}
+
+extension PharmacyRepository {
+    /// Creates or updates a `PharmacyLocation` into the store. Updates if the identifier does already exist in store
+    /// - Parameter pharmacy: Instance of `PharmacyLocation` to be saved
+    ///
+    /// sourcery: SkipStreamWrapped
+    public func save(pharmacy: PharmacyLocation) -> AnyPublisher<Bool, PharmacyRepositoryError> {
+        save(pharmacies: [pharmacy])
+            .eraseToAnyPublisher()
+    }
+
+    /// Deletes a `PharmacyLocation` from the store with the related identifier
+    /// - Parameter pharmacy: Instance of `PharmacyLocation` to be deleted
+    ///
+    /// sourcery: SkipStreamWrapped
+    public func delete(pharmacy: PharmacyLocation) -> AnyPublisher<Bool, PharmacyRepositoryError> {
+        delete(pharmacies: [pharmacy])
+            .eraseToAnyPublisher()
+    }
 }
 
 /// Available filters for the Pharmacy Repository

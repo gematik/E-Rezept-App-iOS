@@ -57,7 +57,7 @@ struct PrescriptionFullDetailView: View {
 
         var showFullDetailBottomBanner: Bool {
             switch prescription.viewStatus {
-            case .open, .archived, .undefined: return false
+            case .open, .redeem, .archived, .undefined: return false
             case .error: return true
             }
         }
@@ -87,7 +87,7 @@ struct PrescriptionFullDetailView: View {
         var deletionNote: String? {
             guard !prescription.isDeleteabel else { return nil }
 
-            if prescription.isDirectAssigned {
+            if prescription.type == .directAssignment {
                 return L10n.prscDeleteNoteDirectAssignment.text
             }
 
@@ -108,7 +108,7 @@ struct PrescriptionFullDetailView: View {
                         .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlTxtTitle)
                         .fixedSize(horizontal: false, vertical: true)
 
-                    if viewStore.prescription.isDirectAssigned {
+                    if viewStore.prescription.type == .directAssignment {
                         DirectAssignedHintView(store: store)
                             .padding(.vertical)
                     }
@@ -144,7 +144,7 @@ struct PrescriptionFullDetailView: View {
                         .padding(.horizontal)
                     }
 
-                    if !viewStore.prescription.isDirectAssigned {
+                    if viewStore.prescription.type != .directAssignment {
                         DataMatrixCodeView(uiImage: viewStore.dataMatrixCode)
                             .padding(.horizontal)
                     }

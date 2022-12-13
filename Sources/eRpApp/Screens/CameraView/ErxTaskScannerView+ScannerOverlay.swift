@@ -144,7 +144,7 @@ extension ErxTaskScannerView {
                             .padding()
                     }
                     .frame(minWidth: 0, maxWidth: .infinity)
-                    .background(BlurEffectView(style: .systemUltraThinMaterial))
+                    .background(BlurEffectView(style: .systemUltraThinMaterial, isEnabled: true))
                     .cornerRadius(16)
                     .padding(.horizontal)
                 }

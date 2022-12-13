@@ -21,18 +21,14 @@ import UIKit
 
 struct BlurEffectView: UIViewRepresentable {
     let style: UIBlurEffect.Style
+    let isEnabled: Bool
 
     func makeUIView(context _: UIViewRepresentableContext<Self>)
-        -> UIVisualEffectView { UIVisualEffectView(effect: UIBlurEffect(style: style))
+        -> UIVisualEffectView {
+        UIVisualEffectView(effect: isEnabled ? UIBlurEffect(style: style) : nil)
     }
 
     func updateUIView(_ uiVisualEffectView: UIVisualEffectView, context _: UIViewRepresentableContext<Self>) {
-        uiVisualEffectView.effect = UIBlurEffect(style: style)
-    }
-}
-
-extension View {
-    func blurEffect(_ sytle: UIBlurEffect.Style) -> some View {
-        BlurEffectView(style: sytle)
+        uiVisualEffectView.effect = isEnabled ? UIBlurEffect(style: style) : nil
     }
 }

@@ -60,7 +60,14 @@ class MockPharmacyRepository: PharmacyRepository {
         deleteCallsCount > 0
     }
 
+    var loadRemoteAndSavePublisher: AnyPublisher<PharmacyLocation, PharmacyRepositoryError>
+    var loadRemoteAndSaveCallsCount = 0
+    var loadRemoteAndSaveCalled: Bool {
+        loadRemoteAndSaveCallsCount > 0
+    }
+
     init(stored pharmacies: [PharmacyLocation] = [],
+         loadRemoteAndSave: AnyPublisher<PharmacyLocation, PharmacyRepositoryError> = failing(),
          loadCachedById: AnyPublisher<PharmacyLocation?, PharmacyRepositoryError> = failing(),
          searchRemote: AnyPublisher<[PharmacyLocation], PharmacyRepositoryError> = failing(),
          savePharmacies: AnyPublisher<Bool, PharmacyRepositoryError> = failing(),
@@ -74,6 +81,12 @@ class MockPharmacyRepository: PharmacyRepository {
         savePublisher = savePharmacies
         loadLocalByIdPublisher = loadLocalById
         deletePublisher = deletePharmacies
+        loadRemoteAndSavePublisher = loadRemoteAndSave
+    }
+
+    func updateFromRemote(by _: String) -> AnyPublisher<PharmacyLocation, PharmacyRepositoryError> {
+        loadRemoteAndSaveCallsCount += 1
+        return loadRemoteAndSavePublisher
     }
 
     func loadCached(by _: String) -> AnyPublisher<PharmacyLocation?, PharmacyRepositoryError> {
@@ -93,7 +106,7 @@ class MockPharmacyRepository: PharmacyRepository {
         return loadLocalByIdPublisher
     }
 
-    func loadLocalAll() -> AnyPublisher<[PharmacyLocation], PharmacyRepositoryError> {
+    func loadLocal(count _: Int?) -> AnyPublisher<[PharmacyLocation], PharmacyRepositoryError> {
         loadLocalAllCallsCount += 1
         return loadLocalAllPublisher
     }
@@ -126,6 +139,13 @@ class MockPharmacyRepository: PharmacyRepository {
         Deferred { () -> AnyPublisher<[PharmacyLocation], PharmacyRepositoryError> in
             XCTFail("This publisher should not have run")
             return Just([]).setFailureType(to: PharmacyRepositoryError.self).eraseToAnyPublisher()
+        }.eraseToAnyPublisher()
+    }
+
+    static func failing() -> AnyPublisher<PharmacyLocation, PharmacyRepositoryError> {
+        Deferred { () -> AnyPublisher<PharmacyLocation, PharmacyRepositoryError> in
+            XCTFail("This publisher should not have run")
+            return Fail(error: PharmacyRepositoryError.remote(.notFound)).eraseToAnyPublisher()
         }.eraseToAnyPublisher()
     }
 }

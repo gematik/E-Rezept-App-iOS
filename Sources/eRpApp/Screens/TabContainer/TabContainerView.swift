@@ -56,9 +56,7 @@ struct TabContainerView: View {
             )) {
                 MainView(
                     store: store.scope(state: \.main,
-                                       action: AppDomain.Action.main(action:)),
-                    profileSelectionToolbarItemStore: store.scope(state: \.profileSelection,
-                                                                  action: AppDomain.Action.profile(action:))
+                                       action: AppDomain.Action.main(action:))
                 )
                 .tabItem {
                     Label(L10n.tabTxtMain, image: Asset.TabIcon.appLogoTabItem.name)

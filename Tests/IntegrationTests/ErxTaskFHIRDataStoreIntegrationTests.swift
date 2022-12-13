@@ -192,9 +192,10 @@ final class ErxTaskFHIRDataStoreIntegrationTests: XCTestCase {
 
         let redeemService = ErxTaskRepositoryRedeemService(
             erxTaskRepository: erxTaskRepository,
-            isAuthenticated: idpSession.isLoggedIn
-                .mapError { UserSessionError.idpError(error: $0) }
-                .eraseToAnyPublisher()
+            loginHandler: DefaultLoginHandler(
+                idpSession: idpSession,
+                signatureProvider: DefaultSecureEnclaveSignatureProvider(storage: memStorage)
+            )
         )
 
         var receivedOrderResponses: [IdentifiedArrayOf<OrderResponse>] = []
@@ -252,29 +253,34 @@ final class ErxTaskFHIRDataStoreIntegrationTests: XCTestCase {
         return vauAccessTokenProviderSuccess
     }
 
-    private func loadAllTasks() -> [ErxTask] {
+    private func loadAllTasks(file: FileString = #file, line: UInt = #line) -> [ErxTask] {
         var success = false
+        var finished = false
         var receivedErxTasks: [ErxTask] = []
         cloudStorage.listAllTasks(after: nil)
             .first()
             .test(
                 timeout: 300,
                 failure: { error in
-                    fail("Failed with error: \(error)")
+                    fail("Failed with error: \(error)", file: file, line: line)
+                    finished = true
                 },
                 expectations: { tasks in
                     receivedErxTasks = tasks
                     success = true
+                    finished = true
                     Swift.print("✅ Loaded \(tasks.count) erxTasks!")
                 },
                 subscribeScheduler: DispatchQueue.global().eraseToAnyScheduler()
             )
 
-        expect(success).toEventually(beTrue(), timeout: .seconds(300))
+        expect(file: file, line: line, finished).toEventually(beTrue(), timeout: .seconds(300))
+        expect(file: file, line: line, success).to(beTrue())
         return receivedErxTasks
     }
 
-    private func loadAllAuditEvents() -> Bool {
+    private func loadAllAuditEvents(file: FileString = #file, line: UInt = #line) -> Bool {
+        var finished = false
         var success = false
 
         let cancellable = cloudStorage.listAllAuditEvents(after: nil, for: nil)
@@ -286,16 +292,20 @@ final class ErxTaskFHIRDataStoreIntegrationTests: XCTestCase {
                 default: break
                 }
                 Swift.print(completion)
+                finished = true
             }, receiveValue: { auditEvents in
                 Swift.print("✅ Loaded \(auditEvents.content.count) auditEvents!")
                 success = true
+                finished = true
             })
-        expect(success).toEventually(beTrue(), timeout: .seconds(300))
+        expect(file: file, line: line, finished).toEventually(beTrue(), timeout: .seconds(300))
+        expect(file: file, line: line, success).to(beTrue())
         cancellable.cancel()
         return success
     }
 
-    private func loadAllCommunications() -> Bool {
+    private func loadAllCommunications(file: FileString = #file, line: UInt = #line) -> Bool {
+        var finished = false
         var success = false
 
         let cancellable = cloudStorage.listAllCommunications(after: nil, for: .all)
@@ -307,11 +317,14 @@ final class ErxTaskFHIRDataStoreIntegrationTests: XCTestCase {
                 default: break
                 }
                 Swift.print(completion)
+                finished = true
             }, receiveValue: { communications in
                 Swift.print("✅ Loaded \(communications.count) communications!")
                 success = true
+                finished = true
             })
-        expect(success).toEventually(beTrue(), timeout: .seconds(300))
+        expect(file: file, line: line, finished).toEventually(beTrue(), timeout: .seconds(300))
+        expect(file: file, line: line, success).to(beTrue())
         cancellable.cancel()
         return success
     }

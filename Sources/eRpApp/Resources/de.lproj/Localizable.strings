@@ -1,3 +1,6 @@
+"add_btn_save" = "Speichern";
+"add_txt_profile1" = "Profile 1";
+"add_txt_title" = "Name eingeben";
 "alert_btn_close" = "Ablehnen";
 "alert_btn_ok" = "Okay";
 "alert_error_message_unknown" = "Unbekannt";
@@ -268,6 +271,7 @@
 "cpw_txt_title" = "Kennwort";
 "cpw_txt_update_title" = "Kennwort ändern";
 "ctl_btn_profile_picker_edit" = "Bild bearbeiten";
+"ctl_btn_profile_picker_picture_a11y_label" = "Profilbild";
 "ctl_btn_profile_picker_reset" = "Bild zurücksetzen";
 "ctl_btn_profile_picker_set" = "Speichern";
 "ctl_btn_profile_toolbar_item" = "Aktuelles Profil";
@@ -342,6 +346,7 @@
 "erx_txt_prescription_added_alert_title" = "Rezept erfolgreich hinzugefügt";
 "erx_txt_prescription_duplicate_alert_message" = "Das Rezept wurde bereits importiert.";
 "erx_txt_prescription_duplicate_alert_title" = "Rezept nicht hinzugefügt";
+"erx_txt_redeem_at_%@" = "Einlösbar ab %@";
 "erx_txt_redeemed" = "Archiv";
 "erx_txt_refresh_loading" = "Wird geladen …";
 "hint_btn_close" = "schließen";
@@ -822,6 +827,9 @@
 "pha_search_txt_filter_shipment" = "Versand";
 "pha_search_txt_hint_start_search" = "Starten Sie die Suche durch Tippen auf Öffnen auf der Tastatur";
 "pha_search_txt_history_title" = "Zuletzt gesucht";
+"pha_search_txt_local_pharm_err_not_found" = "Apotheke nicht gefunden";
+"pha_search_txt_local_pharm_err_not_found_recovery" = "Bitte erneut über Apothekensuche hinzufügen.";
+"pha_search_txt_local_pharm_title" = "Meine Apotheken";
 "pha_search_txt_location_alert_message" = "Geben Sie Ihren Standort frei, um Apotheken in Ihrer Nähe zu finden.";
 "pha_search_txt_location_alert_title" = "Standort freigeben";
 "pha_search_txt_location_hint_message" = "Standort freigeben und Apotheken in Ihrer Umgebung finden";
@@ -902,6 +910,7 @@
 "prsc_status_error" = "Fehlerhaftes Rezept";
 "prsc_status_expired" = "Abgelaufen";
 "prsc_status_in_progress" = "In Einlösung";
+"prsc_status_multiple_prsc" = "Später einlösbar";
 "prsc_status_ready" = "Einlösbar";
 "prsc_status_undefined" = "Unbekannt";
 "prsc_txt_fallback_name" = "Medikament";

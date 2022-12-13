@@ -47,21 +47,25 @@ enum PharmacyDetailDomain: Equatable {
 
     enum Token: CaseIterable, Hashable {
         case loadProfile
+        case savePharmacy
     }
 
     enum Route: Equatable {
         case redeemViaAVS(PharmacyRedeemDomain.State)
         case redeemViaErxTaskRepository(PharmacyRedeemDomain.State)
+        case alert(AlertState<PharmacyRedeemDomain.State>)
 
         enum Tag: Int {
             case redeemViaAVS
             case redeemViaErxTaskRepository
+            case alert
         }
 
         var tag: Tag {
             switch self {
             case .redeemViaAVS: return .redeemViaAVS
             case .redeemViaErxTaskRepository: return .redeemViaErxTaskRepository
+            case .alert: return .alert
             }
         }
     }
@@ -102,6 +106,10 @@ enum PharmacyDetailDomain: Equatable {
         case pharmacyRedeemViaAVS(action: PharmacyRedeemDomain.Action)
         /// Handles navigation
         case setNavigation(tag: Route.Tag?)
+        /// Changes favorite state of pharmacy or creates a local pharmacy
+        case toggleIsFavorite
+
+        case toggleIsFavoriteReceived(Result<PharmacyLocationViewModel, PharmacyRepositoryError>)
     }
 
     struct Environment {
@@ -110,6 +118,7 @@ enum PharmacyDetailDomain: Equatable {
         let signatureProvider: SecureEnclaveSignatureProvider
         let accessibilityAnnouncementReceiver: (String) -> Void
         let userSessionProvider: UserSessionProvider
+        let pharmacyRepository: PharmacyRepository
     }
 
     static let domainReducer = Reducer { state, action, environment in
@@ -214,6 +223,25 @@ enum PharmacyDetailDomain: Equatable {
             return .none
         case .pharmacyRedeemViaErxTaskRepository, .setNavigation, .pharmacyRedeemViaAVS:
             return .none
+        case .toggleIsFavorite:
+            var pharmacyViewModel = state.pharmacyViewModel
+            pharmacyViewModel.pharmacyLocation.isFavorite.toggle()
+            return environment.pharmacyRepository.save(pharmacy: pharmacyViewModel.pharmacyLocation)
+                .first()
+                .receive(on: environment.schedulers.main.animation())
+                .map { _ in pharmacyViewModel }
+                .catchToEffect()
+                .map(Action.toggleIsFavoriteReceived)
+                .cancellable(id: Token.savePharmacy, cancelInFlight: true)
+
+        case let .toggleIsFavoriteReceived(result):
+            switch result {
+            case let .success(viewModel):
+                state.pharmacyViewModel = viewModel
+            case let .failure(error):
+                state.route = .alert(AlertState(for: error))
+            }
+            return .none
         }
     }
 
@@ -240,7 +268,8 @@ enum PharmacyDetailDomain: Equatable {
                 serviceLocator: ServiceLocator(),
                 signatureProvider: environment.signatureProvider,
                 userSessionProvider: environment.userSessionProvider,
-                accessibilityAnnouncementReceiver: environment.accessibilityAnnouncementReceiver
+                accessibilityAnnouncementReceiver: environment.accessibilityAnnouncementReceiver,
+                pharmacyRepository: environment.pharmacyRepository
             )
         }
 
@@ -264,7 +293,8 @@ enum PharmacyDetailDomain: Equatable {
                 serviceLocator: ServiceLocator(),
                 signatureProvider: environment.signatureProvider,
                 userSessionProvider: environment.userSessionProvider,
-                accessibilityAnnouncementReceiver: environment.accessibilityAnnouncementReceiver
+                accessibilityAnnouncementReceiver: environment.accessibilityAnnouncementReceiver,
+                pharmacyRepository: environment.pharmacyRepository
             )
         }
 }
@@ -358,7 +388,8 @@ extension PharmacyDetailDomain {
             userSession: DummySessionContainer(),
             signatureProvider: DummySecureEnclaveSignatureProvider(),
             accessibilityAnnouncementReceiver: { _ in },
-            userSessionProvider: DummyUserSessionProvider()
+            userSessionProvider: DummyUserSessionProvider(),
+            pharmacyRepository: DummyPharmacyRepository()
         )
         static let store = Store(initialState: state,
                                  reducer: reducer,

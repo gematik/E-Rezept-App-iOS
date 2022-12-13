@@ -45,6 +45,7 @@ final class RecordActionsForHintsTests: XCTestCase {
                 selectedTab: .main,
                 main: MainDomain.State(
                     prescriptionListState: groupedPrescriptionListState,
+                    horizontalProfileSelectionState: HorizontalProfileSelectionDomain.State(),
                     isDemoMode: false
                 ),
                 pharmacySearch: PharmacySearchDomain.State(erxTasks: []),

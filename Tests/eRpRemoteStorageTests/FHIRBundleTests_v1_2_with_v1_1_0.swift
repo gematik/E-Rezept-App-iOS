@@ -79,6 +79,12 @@ final class FHIRBundleTests_v1_2_with_v1_1_0: XCTestCase {
         expect(task.medication?.pzn) == "02532741"
         expect(task.medication?.amount).to(beNil())
         expect(task.medication?.dosageInstructions).to(beNil())
+        // multiple task info
+        expect(task.multiplePrescription?.mark) == true
+        expect(task.multiplePrescription?.numbering) == 4
+        expect(task.multiplePrescription?.totalNumber) == 4
+        expect(task.multiplePrescription?.startPeriod) == "2022-12-01"
+        expect(task.multiplePrescription?.endPeriod) == "2023-03-31"
         // patient
         expect(task.patient?.name) == "Eva Kluge"
         expect(task.patient?.address) == "Pflasterhofweg 111B\n50999 Köln"

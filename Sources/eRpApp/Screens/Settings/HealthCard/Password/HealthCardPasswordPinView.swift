@@ -58,7 +58,13 @@ struct HealthCardPasswordPinView: View {
             GreyDivider()
 
             Button(
-                action: { viewStore.send(.advance) },
+                action: {
+                    // workaround: dismiss keyboard to fix safearea bug for iOS 16
+                    if #available(iOS 16, *) {
+                        UIApplication.shared.dismissKeyboard()
+                    }
+                    viewStore.send(.advance)
+                },
                 label: { Text(L10n.stgBtnCardResetAdvance) }
             )
             .disabled(!viewStore.pinMayAdvance)

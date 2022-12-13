@@ -49,6 +49,10 @@ struct CardWallPINView: View {
                 PrimaryTextButton(text: L10n.cdwBtnPinDone,
                                   a11y: A11y.cardWall.pinInput.cdwBtnPinDone,
                                   isEnabled: viewStore.state.enteredPINValid) {
+                    // workaround: dismiss keyboard to fix safearea bug for iOS 16
+                    if #available(iOS 16, *) {
+                        UIApplication.shared.dismissKeyboard()
+                    }
                     viewStore.send(.advance(viewStore.transitionMode))
                 }
                 .accessibility(label: Text(L10n.cdwBtnPinDoneLabel))

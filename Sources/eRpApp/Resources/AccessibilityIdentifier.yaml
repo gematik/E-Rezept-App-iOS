@@ -299,6 +299,7 @@ mainScreen:
   - erx_detailed_block_prescriptions
   - erx_detailed_block_prescription_name
   - erx_detailed_block_prescription_validity
+  - erx_detailed_block_multiple_prescription_index
   - erx_detailed_block_redeem_all
   - erx_detailed_block_status
   - erx_btn_profile
@@ -312,6 +313,9 @@ profileSelection:
   - pro_txt_selection_profile_list
   - pro_txt_selection_profile_list_entry
   - pro_btn_selection_edit
+  - pro_btn_selection_profile_entry
+  - pro_btn_selection_profile_row
+  - pro_btn_selection_add_profile
 prescriptionDetails:
   - prsc_dtl_txt_title
   - prsc_dtl_txt_med_info
@@ -340,6 +344,16 @@ pharmacySearch:
   - pha_filter_bar
   - pha_filter_open_filter
   - pha_filter_filter_list
+pharmacySearchStart:
+  - pha_search_txt_quick_filter_title
+  - pha_search_btn_quick_filter_nearby
+  - pha_search_btn_quick_filter_delivery
+  - pha_search_btn_quick_filter_shipment
+  - pha_search_btn_quick_filter_open
+  - pha_search_quick_filter_section
+  - pha_search_txt_local_pharm_title
+  - pha_search_txt_local_pharm_entry
+  - pha_search_local_pharm_section
 pharmacyDetail:
   - pha_detail_txt_subtitle
   - pha_detail_btn_organization

@@ -63,8 +63,10 @@ public struct PharmacyFHIRDataSource: PharmacyRemoteDataStore {
 
 extension PharmacyFHIRDataSource {
     // sourcery: CodedError = "570"
-    public enum Error: Swift.Error, LocalizedError, Equatable {
+    public enum Error: Swift.Error, Equatable {
         // sourcery: errorCode = "01"
         case fhirClient(FHIRClient.Error)
+        // sourcery: errorCode = "02"
+        case notFound
     }
 }

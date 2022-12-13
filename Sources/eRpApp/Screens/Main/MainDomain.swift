@@ -21,13 +21,13 @@ import ComposableArchitecture
 import eRpKit
 import Foundation
 import IDP
-
+// swiftlint: disable file_length
 enum MainDomain {
     typealias Store = ComposableArchitecture.Store<State, Action>
     typealias Reducer = ComposableArchitecture.Reducer<State, Action, Environment>
 
     enum Route: Equatable {
-        case selectProfile
+        case addProfile(AddProfileDomain.State)
         case scanner(ScannerDomain.State)
         case deviceSecurity(DeviceSecurityDomain.State)
         case cardWall(CardWallIntroductionDomain.State)
@@ -36,7 +36,7 @@ enum MainDomain {
         case alert(AlertState<Action>)
 
         enum Tag: Int {
-            case selectProfile
+            case addProfile
             case scanner
             case deviceSecurity
             case cardWall
@@ -47,8 +47,8 @@ enum MainDomain {
 
         var tag: Tag {
             switch self {
-            case .selectProfile:
-                return .selectProfile
+            case .addProfile:
+                return .addProfile
             case .scanner:
                 return .scanner
             case .deviceSecurity:
@@ -68,8 +68,9 @@ enum MainDomain {
     struct State: Equatable {
         var prescriptionListState: GroupedPrescriptionListDomain.State
         var extAuthPendingState = ExtAuthPendingDomain.State()
+        var horizontalProfileSelectionState: HorizontalProfileSelectionDomain.State
+        var addprofileState = AddProfileDomain.State()
         var isDemoMode = false
-
         var route: Route?
     }
 
@@ -83,7 +84,6 @@ enum MainDomain {
 
     private static func cleanupSubDomains<T>() -> Effect<T, Never> {
         .concatenate(
-            ProfileSelectionDomain.cleanup(),
             DeviceSecurityDomain.cleanup(),
             CardWallIntroductionDomain.cleanup(),
             PrescriptionDetailDomain.cleanup(),
@@ -108,15 +108,12 @@ enum MainDomain {
         case demoModeChangeReceived(Bool)
         /// Tapping the demo mode banner can also turn the demo mode off
         case turnOffDemoMode
-
         case externalLogin(URL)
         case importTaskByUrl(URL)
         case extAuthPending(action: ExtAuthPendingDomain.Action)
-
         case importReceived(Result<[ErxTask], Error>)
-
         case setNavigation(tag: Route.Tag?)
-
+        case horizontalProfileSelection(action: HorizontalProfileSelectionDomain.Action)
         // Child Domain Actions
         /// Child view actions for the `GroupedPrescriptionListDomain`
         case prescriptionList(action: GroupedPrescriptionListDomain.Action)
@@ -126,19 +123,18 @@ enum MainDomain {
         case prescriptionDetailAction(action: PrescriptionDetailDomain.Action)
         case redeemMethods(action: RedeemMethodsDomain.Action)
         case cardWall(action: CardWallIntroductionDomain.Action)
+        case refreshPrescription
+        case addProfileAction(action: AddProfileDomain.Action)
     }
-
     // sourcery: CodedError = "015"
     enum Error: Swift.Error, Equatable {
         // sourcery: errorCode = "01"
         case localStoreError(LocalStoreError)
         // sourcery: errorCode = "02"
         case userSessionError(UserSessionError)
-
         // sourcery: errorCode = "03"
         /// Import of shared Task failed due to being a duplicate already existing within the app
         case importDuplicate
-
         // sourcery: errorCode = "04"
         /// Saving or retrieving data failed
         case repositoryError(ErxRepositoryError)
@@ -158,7 +154,7 @@ enum MainDomain {
         let secureDataWiper: ProfileSecureDataWiper
         var signatureProvider: SecureEnclaveSignatureProvider
         var userSessionProvider: UserSessionProvider
-
+        var userDataStore: UserDataStore
         let tracker: Tracker
     }
 }
@@ -207,8 +203,6 @@ extension MainDomain {
         case .deviceSecurity(.close):
             state.route = nil
             return cleanupSubDomains()
-        case .deviceSecurity:
-            return .none
         case let .externalLogin(url):
             return Effect(value: .extAuthPending(action: .externalLogin(url)))
                 .delay(for: 5, scheduler: environment.schedulers.main)
@@ -220,26 +214,19 @@ extension MainDomain {
                   let sharedTasks = try? JSONDecoder().decode([SharedTask].self, from: fragment) else {
                 return .none
             }
-
             return environment.checkForTaskDuplicatesThenSave(sharedTasks)
                 .cancellable(id: Token.checkForTaskDuplicates)
         case .importReceived(.success):
             state.route = .alert(.init(title: TextState(L10n.erxTxtPrescriptionAddedAlertTitle.text)))
-
             return .none
         case let .importReceived(.failure(error)):
             state.route = .alert(.init(for: error, title: L10n.erxTxtPrescriptionDuplicateAlertTitle))
-            return .none
-        case .setNavigation(tag: .selectProfile):
-            state.route = .selectProfile
             return .none
         case .setNavigation(tag: .none):
             state.route = nil
             return cleanupSubDomains()
         case .setNavigation(tag: .cardWall):
             state.route = .cardWall(.init(isNFCReady: true, profileId: environment.userSession.profileId))
-            return .none
-        case .setNavigation:
             return .none
         case let .prescriptionList(action: .errorReceived(error)):
             let alertState: AlertState<Action>
@@ -281,15 +268,28 @@ extension MainDomain {
                 Effect(value: .prescriptionList(action: .loadRemoteGroupedPrescriptionsAndSave))
             )
         case .redeemMethods(action: .close),
-             .prescriptionDetailAction(action: .close):
+             .prescriptionDetailAction(action: .close),
+             .addProfileAction(action: .close):
             state.route = nil
             return cleanupSubDomains()
-        case .prescriptionList,
+        case let .horizontalProfileSelection(action: .loadReceived(.failure(error))):
+            state.route = .alert(AlertStates.for(error))
+            return .none
+        case .refreshPrescription:
+            return Effect(value: .prescriptionList(action: .refresh))
+        case .horizontalProfileSelection(action: .showAddProfileView):
+            state.route = .addProfile(AddProfileDomain.State())
+            return .none
+        case .deviceSecurity,
+             .setNavigation,
+             .prescriptionList,
              .scanner,
              .extAuthPending,
              .redeemMethods,
              .cardWall,
-             .prescriptionDetailAction:
+             .horizontalProfileSelection,
+             .prescriptionDetailAction,
+             .addProfileAction:
             return .none
         }
     }
@@ -302,6 +302,8 @@ extension MainDomain {
         redeemMethodsPullbackReducer,
         cardWallPullbackReducer,
         extAuthPendingReducer,
+        horizontalProfileSelectionReducer,
+        addProfilePullbackReducer,
         domainReducer
     )
 }
@@ -362,6 +364,18 @@ extension MainDomain.Environment {
             }
             .receive(on: schedulers.main)
             .eraseToAnyPublisher()
+    }
+}
+
+extension MainDomain {
+    enum AlertStates {
+        typealias Action = MainDomain.Action
+
+        static func `for`(_ error: LocalizedError & CodedError) -> AlertState<Action> {
+            AlertState(title: TextState(L10n.errTxtDatabaseAccess),
+                       message: TextState(error.localizedDescriptionWithErrorList),
+                       dismissButton: .default(TextState(L10n.alertBtnOk)))
+        }
     }
 }
 
@@ -470,6 +484,31 @@ extension MainDomain {
                 accessibilityAnnouncementReceiver: environment.accessibilityAnnouncementReceiver
             )
         }
+
+    static let horizontalProfileSelectionReducer: Reducer =
+        HorizontalProfileSelectionDomain.reducer.pullback(
+            state: \.horizontalProfileSelectionState,
+            action: /MainDomain.Action.horizontalProfileSelection(action:)
+        ) {
+            .init(
+                schedulers: $0.schedulers,
+                userDataStore: $0.userDataStore,
+                userProfileService: $0.userProfileService
+            )
+        }
+
+    private static let addProfilePullbackReducer: Reducer =
+        AddProfileDomain.reducer._pullback(
+            state: (\State.route).appending(path: /Route.addProfile),
+            action: /MainDomain.Action.addProfileAction(action:)
+        ) { environment in
+            AddProfileDomain.Environment(
+                localUserStore: environment.userSession.localUserStore,
+                profileStore: environment.userSession.profileDataStore,
+                schedulers: environment.schedulers,
+                userSession: environment.userSession
+            )
+        }
 }
 
 extension MainDomain {
@@ -479,9 +518,9 @@ extension MainDomain {
             reducer: reducer,
             environment: Dummies.environment
         )
-
         static let state = State(
-            prescriptionListState: GroupedPrescriptionListDomain.Dummies.state
+            prescriptionListState: GroupedPrescriptionListDomain.Dummies.state,
+            horizontalProfileSelectionState: HorizontalProfileSelectionDomain.Dummies.state
         )
 
         static func storeFor(_ state: State) -> Store {
@@ -506,6 +545,7 @@ extension MainDomain {
             secureDataWiper: DummyProfileSecureDataWiper(),
             signatureProvider: DummySecureEnclaveSignatureProvider(),
             userSessionProvider: DummyUserSessionProvider(),
+            userDataStore: DemoUserDefaultsStore(),
             tracker: DummyTracker()
         )
     }

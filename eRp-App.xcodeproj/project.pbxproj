@@ -63,12 +63,14 @@
 		097209DBDD54DA3F80457893 /* ErxReadinessBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0267576B0FC2D97110FAB8FA /* ErxReadinessBadge.swift */; };
 		098FD1610B88D518CD842245 /* ErxAuditEventEntity+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 329E97B1EEA433F9C6FA6C91 /* ErxAuditEventEntity+CoreDataProperties.swift */; };
 		09A5BD4EB81209349EA15343 /* CardWallIntroductionDomainTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87760785F114B1DAD762824F /* CardWallIntroductionDomainTests.swift */; };
+		0A1C628D4BF48EBDD5D2AF7E /* SmallSheetContainerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E4A25E301DCD843362354C9 /* SmallSheetContainerViewController.swift */; };
 		0A3EB47E4081424C42231EC1 /* CoreDataCrudable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8881F1883352CD46E98DE07F /* CoreDataCrudable.swift */; };
 		0A4E803B8938333043839302 /* CardWallLoginOptionDomain.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFDF6C20FCB525EBD0A84A13 /* CardWallLoginOptionDomain.swift */; };
 		0A52FDC5302E99A69713167D /* PageContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A8FF15990C6728F723F348B /* PageContainer.swift */; };
 		0A5F4E3E568F0D8F9C0C8A9A /* CANCameraScannerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 12E3D4E429A8242C357BBFFA /* CANCameraScannerViewController.swift */; };
 		0A7C795E34FFD74332E92A0F /* ErxTaskCommunicationEntity+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 811117CDE0A4B4E85C9314A9 /* ErxTaskCommunicationEntity+CoreDataProperties.swift */; };
 		0ADEB8607A5DE72627A2F9F0 /* URLRequestExtSerializeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B25F4E5F75314DAC9664342 /* URLRequestExtSerializeTests.swift */; };
+		0AEFA6D4201D94A5EE8F2590 /* SmallSheetPresentationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C588DED5900C3BCAF2DD983 /* SmallSheetPresentationController.swift */; };
 		0B07117222D3A3E039F6AF23 /* SharedTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FA7D47F8F758950F1B99722 /* SharedTask.swift */; };
 		0B283C3BCD3B7FA4D0AF9C1E /* ProfileEntity+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4E632E31BE24C19402F52308 /* ProfileEntity+CoreDataProperties.swift */; };
 		0B651ADBF6D1B11D1F553346 /* RouterStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA2F2F9B3E243DE13D25BABF /* RouterStore.swift */; };
@@ -124,6 +126,7 @@
 		12BF07C94A481CF153986D1B /* FHIRPharmaciesExampleData.bundle in Resources */ = {isa = PBXBuildFile; fileRef = A721A2DE621B65CAF21ED54B /* FHIRPharmaciesExampleData.bundle */; };
 		12C667B8F3AB83958057EC33 /* AVSMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C8D05C8021B248FFF3C84C5 /* AVSMessage.swift */; };
 		12D1DBE2B10161E15D5E0E73 /* ErxTaskEntity+ErxTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = BD2D77AA524A78DD170EE5A9 /* ErxTaskEntity+ErxTask.swift */; };
+		130816B5234A02EF672A1370 /* PharmacyDetailDomainTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9C4C59430B62AD3FCBC3E8A /* PharmacyDetailDomainTests.swift */; };
 		130A95F833D8017E2C88B9D7 /* TestUtils.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 75F5D67595B4F5F353D7C7E3 /* TestUtils.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		131C06F67864DA35EE84DA2F /* ErxTaskMedicationDispenseEntity+ErxTask.MedicationDispense.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5BCF29D03A47C9DAB0624D2 /* ErxTaskMedicationDispenseEntity+ErxTask.MedicationDispense.swift */; };
 		132946270D60BDBB0E1E0F99 /* EditCertificateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B396BB60B0CEA471D5AE11F9 /* EditCertificateView.swift */; };
@@ -161,10 +164,12 @@
 		18BE7915F3B53446CBB89704 /* HTTPClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A4CB8BB325F399E5191C288D /* HTTPClient.framework */; };
 		193C921423D986EB946A5125 /* BundleKit in Frameworks */ = {isa = PBXBuildFile; productRef = FC36D165AD72F1AB5DF46026 /* BundleKit */; };
 		19436D749B486E2EAFCE010E /* MockUserDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2613AFE46EF17486A3C183B2 /* MockUserDataStore.swift */; };
+		19DF6A5BE95936EED782C5DF /* AddProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50637A4CB5438A33520374C1 /* AddProfileView.swift */; };
 		1A31E9A1A630AA185F0A1B29 /* ErxTaskCommunicationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE06F6DF4A179596DEA1C9F7 /* ErxTaskCommunicationTests.swift */; };
 		1A5D920694CF37B9EFBAB1C5 /* OrderHealthCardViewSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AC3B84B0FB42534D16FE1FB0 /* OrderHealthCardViewSnapshotTests.swift */; };
 		1A5DDD0B0EAA41CA36222417 /* DataPrivacyTermsOfUseNavigationDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B4A58963AF30510EAD26BEC3 /* DataPrivacyTermsOfUseNavigationDelegate.swift */; };
 		1A87122F366089DF5AD17902 /* AppMigrationDomain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2805FB185B4304260CFB6320 /* AppMigrationDomain.swift */; };
+		1A8E7FB67E309EA92BA5266E /* PharmacySearchDomain+Dummies.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC121822851A6240CE8160BD /* PharmacySearchDomain+Dummies.swift */; };
 		1A992CB76BF6486F7E40FC69 /* IDP.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = E1306451DE649F27B7ECE332 /* IDP.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1AA60A21C70B54A3D4E9F131 /* VAUCertList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6944DB1FAFD86DE481C1FF2D /* VAUCertList.swift */; };
 		1AAB8A9ED4C92B5D7B6FFD95 /* SFSymbolName.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21C333FF08A6FCD6C95529E7 /* SFSymbolName.swift */; };
@@ -226,6 +231,7 @@
 		23C9A53E38235C2CE2740D11 /* PrivateKeyContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E07FCA7F8606D238B70CA299 /* PrivateKeyContainer.swift */; };
 		23D321CAF8D4DEA06F2C1366 /* RedeemSuccessDomain.swift in Sources */ = {isa = PBXBuildFile; fileRef = F92A1A5C0D6AE604F66CBCF6 /* RedeemSuccessDomain.swift */; };
 		23DCD9A715D286A9AC535382 /* JWETests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 935220A12E0B4DC525F7C877 /* JWETests.swift */; };
+		23E3D4D08ABF9A30F3E63C64 /* AddProfileViewSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F60B23C05C384C4910BF0DEC /* AddProfileViewSnapshotTests.swift */; };
 		23E9EA860933C31EA3B190CC /* CertList.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 85320BC05B9D0A81C47CB2CD /* CertList.bundle */; };
 		23F6F7E7EB2EAE5903C02F44 /* eRpKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CE55C211D7E7DDA60C85298E /* eRpKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		24375BE8C16C05DB68E811F2 /* ErxTaskMatrixCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC2400037F51BC92ECC2AA6A /* ErxTaskMatrixCode.swift */; };
@@ -273,7 +279,6 @@
 		2B4879463C8C8FAA3C4B385C /* PharmacySearchFilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AE947239E767B38586843F2 /* PharmacySearchFilterView.swift */; };
 		2B51C3EA6C9E0A2900B772BB /* eRpKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE55C211D7E7DDA60C85298E /* eRpKit.framework */; };
 		2B598C7E80EEC5154219B7DF /* XCTestCase+AwaitPublisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEFED08139A6E8D6240CF347 /* XCTestCase+AwaitPublisher.swift */; };
-		2B65EB79C1CB095B987212AC /* PharmacySearchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 113803FB143AB8C79BEE7DF7 /* PharmacySearchTests.swift */; };
 		2B7A65089512653FA98EB192 /* CustomNavigationBackButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = FE9FAAFCBA93BBEB5FFD88D4 /* CustomNavigationBackButton.swift */; };
 		2B88F4E6B3F11F966B3BB45E /* MockProfileBasedSessionProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE344A86A78C635FE026DB43 /* MockProfileBasedSessionProvider.swift */; };
 		2BA9D5B31F2ECC50FF6D71AF /* ErxTask+MedicationDispense.swift in Sources */ = {isa = PBXBuildFile; fileRef = 130F3E6ABEC1B3269177284C /* ErxTask+MedicationDispense.swift */; };
@@ -368,6 +373,7 @@
 		3BDB11AB6BE743F4985ABC8C /* VAUStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 440ED78516A54D8673225DF4 /* VAUStorage.swift */; };
 		3BEA0B820FB2DBF6A741B432 /* UserProfile+Fixtures.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA968BC07146B642599018CA /* UserProfile+Fixtures.swift */; };
 		3C0633B8D8AE04FB538ED27A /* ErxTaskFHIRClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABB47494B7415C3158F28A89 /* ErxTaskFHIRClientTests.swift */; };
+		3C45B18B51DDCCC23D60AF22 /* ErxTask+MultiplePrescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 405243E439D97C1584284AC2 /* ErxTask+MultiplePrescription.swift */; };
 		3C530C1A22BE0BE616CECCAE /* PrescriptionStatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ED86BA80FEBA3F063FFEC10 /* PrescriptionStatusView.swift */; };
 		3C6065209D71D1DE096EB4FD /* ModelsR4.Practitioner+ErxTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1FC6BE6856BDB6840C67366E /* ModelsR4.Practitioner+ErxTask.swift */; };
 		3C82EE53CAB22766A979080C /* ShareViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31A59CC1A7A57614AF0AF56D /* ShareViewController.swift */; };
@@ -382,6 +388,7 @@
 		3D5A083F90A80F6438835E01 /* eRpStyleKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 768961DD91A07C97EC644956 /* eRpStyleKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3D95EDA1BAD9CBBF5CC66082 /* VAUClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C27907ED6FD1868CA89816A2 /* VAUClient.framework */; };
 		3DA47C7695091EBB4AD42AB3 /* HealthCardPasswordReadCardDomain+AlertStates.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C7ED09FA3E5B8E20C29FFB1 /* HealthCardPasswordReadCardDomain+AlertStates.swift */; };
+		3DB62F4F00C3B85D3B9B9DE2 /* ErxTask+Medication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D76E65F87DDAFAD0A5DC1A4 /* ErxTask+Medication.swift */; };
 		3DCCD9CD7E5BE0AA32454651 /* IDP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E1306451DE649F27B7ECE332 /* IDP.framework */; };
 		3DDAC742840E113E12475250 /* ErxTaskCommunicationEntity+ErxTaskCommunication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39AFE99AC9627CE744F536DB /* ErxTaskCommunicationEntity+ErxTaskCommunication.swift */; };
 		3E80749AD422329DC952001B /* DebugDomain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97777EF79E1144983FF8F2BC /* DebugDomain.swift */; };
@@ -434,6 +441,7 @@
 		46949381BDFC009AE5D07FE1 /* MockProfileDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4ECB47E13CEF74CA7DCAB63 /* MockProfileDataStore.swift */; };
 		46B9CA602A2835204A6C9B7B /* eRpKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF9C9E519BC7B2F67FBC3704 /* eRpKit.framework */; };
 		46BFD4D501114E634033C375 /* AVSClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 753661E417C4FF0F8426CD44 /* AVSClient.swift */; };
+		46D9BE6466C5914F4E00DEDE /* PharmacyLocation+Dummies.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A5C20060EC2CA5CC552E709 /* PharmacyLocation+Dummies.swift */; };
 		4769A6C3B9842E598465A5C3 /* MedicationOrganizationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 34C397996577EB573A4D6832 /* MedicationOrganizationView.swift */; };
 		47B330678B4B2BDAE602BD1F /* CertsList.bundle in Resources */ = {isa = PBXBuildFile; fileRef = F2446182B4D941E8D50485CF /* CertsList.bundle */; };
 		47B7AE741F1C44DFF9370232 /* CardWallCANDomain.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC027D6BB78C0575C046C185 /* CardWallCANDomain.swift */; };
@@ -472,6 +480,7 @@
 		4C16A378EE5FC1EEFDCD73F0 /* PagedEntityController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE3EB15CDAB635424F6405A5 /* PagedEntityController.swift */; };
 		4C20730740D4487ED4926D62 /* CardWallLoginDomainTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EB0908455EF25359E8C3D7CC /* CardWallLoginDomainTests.swift */; };
 		4C2E13E028BD1C1DE460C831 /* OpenSSL.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DD4921BA0619E88A69676CF /* OpenSSL.xcframework */; };
+		4C3679F92179D2DC239A0B36 /* ErxTask+Medication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D76E65F87DDAFAD0A5DC1A4 /* ErxTask+Medication.swift */; };
 		4C399709DDCF31BA98B2F071 /* MockPharmacyRemoteDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0D63ED38E4D8C7337584DD69 /* MockPharmacyRemoteDataStore.swift */; };
 		4C42A68FCECDBF9B0B8FBF6E /* KeychainStorageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E16E945F72293EE445FB1E40 /* KeychainStorageTests.swift */; };
 		4C5C63572E23EA4DB117A9EF /* ProfileEntity+Profile.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE37AE58C2FED8D512809CB4 /* ProfileEntity+Profile.swift */; };
@@ -495,6 +504,7 @@
 		4F8CDF5D76B704147AEA930A /* FormRadioToggleStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A38DCE951BA3667C2B5929C /* FormRadioToggleStyle.swift */; };
 		4F964A5FD9F910CB77E5DA8A /* TestUtils.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 742051B40935C33A411966C9 /* TestUtils.framework */; };
 		501157922CEAB5BB69B66A22 /* ErxTaskCoreDataStoreTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DE6CD6B7D9BF369BA31612E /* ErxTaskCoreDataStoreTest.swift */; };
+		50378E06E1F04DDC3CC8BC00 /* ModelsR4.MedicationRequest+ErxTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEC880FCF33DD9D5BB3048F4 /* ModelsR4.MedicationRequest+ErxTask.swift */; };
 		504A19FBABCCC6C5FCA5B6DF /* FHIRExampleData.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 6A60C8EDC96DFDD9A8950398 /* FHIRExampleData.bundle */; };
 		504A4F9D24365924EE584819 /* Label+StringAsset.swift in Sources */ = {isa = PBXBuildFile; fileRef = 131465F20BD2EA1B39B84C9B /* Label+StringAsset.swift */; };
 		50A239C5BBF7F876C771EBF9 /* AVS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BB68D1E6A6E40A228759F4A2 /* AVS.framework */; };
@@ -581,6 +591,7 @@
 		5DAADEA7CAF8B700BC0E85EF /* ErxTaskCoreDataStore+AuditEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9008597F5D8B57503EBFC9FB /* ErxTaskCoreDataStore+AuditEvent.swift */; };
 		5DAC0038AEA97F3118FCA7FE /* testSimpleList.light.png in Resources */ = {isa = PBXBuildFile; fileRef = 917F9E4AE434959DE9792BF8 /* testSimpleList.light.png */; };
 		5E0F57EAACEAB1C7C4CD24EC /* FHIRClient+PharmacyOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAF89DA819533269D1FDAD81 /* FHIRClient+PharmacyOperation.swift */; };
+		5EF3687E5969636D8AE57D8E /* HorizontalProfileSelectionDomain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84384DD7F2E58325A869D339 /* HorizontalProfileSelectionDomain.swift */; };
 		5EF94FDCD01F06CEA2DE6EA2 /* SecureUserDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FED7914C1B5EC98F3A40D9E /* SecureUserDataStore.swift */; };
 		5F6F3B7FBBBB477CD66C85FB /* SectionContainerColoredIconLabelStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = F487EF7EDE9E2E9AA549A5C5 /* SectionContainerColoredIconLabelStyle.swift */; };
 		5F7F879B42518E27C7EECC59 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 058F6B8CD5B90C2D0F9B7A3D /* CoreData.framework */; };
@@ -693,8 +704,10 @@
 		705FA82818E9D00D26CDD95C /* XCAssets+Generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F099EC6DD73BF9458D89F94 /* XCAssets+Generated.swift */; };
 		706FBAECC50D68EB7B6FA6AE /* ErxTaskMedicationDispenseEntity+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9BDDEBF7FD04F9CCD26DFA9 /* ErxTaskMedicationDispenseEntity+CoreDataClass.swift */; };
 		707935DFE7F2E6F5D5B966BB /* AppAuthenticationPasswordDomain.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF9CE37698D8503C4B6401C1 /* AppAuthenticationPasswordDomain.swift */; };
+		7080AEE6D5031682F10A574F /* SmallSheetPresentationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C588DED5900C3BCAF2DD983 /* SmallSheetPresentationController.swift */; };
 		70C8747A19EFFE109B22CEBD /* SFSymbolName.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21C333FF08A6FCD6C95529E7 /* SFSymbolName.swift */; };
 		70E6036FB4E1433840BABFAB /* eRpKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF9C9E519BC7B2F67FBC3704 /* eRpKit.framework */; };
+		70F1C6EF02F04DEE2D4D5E60 /* PharmacySearchDomainTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEA28B6FF2D0DD7B5CA30DE4 /* PharmacySearchDomainTests.swift */; };
 		7107BCE6545731E8161BB29E /* BarButtonItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20E2C939CDBD1D9470631E6C /* BarButtonItem.swift */; };
 		712B24CA0D76A1AC0122BB40 /* Nimble in Frameworks */ = {isa = PBXBuildFile; productRef = CA5A5BEA72C9A7A1C23B760A /* Nimble */; };
 		7143A08731A5ACC5A863FE07 /* EditProfileDomainTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EAD4F4622AA96E33EC02A3B /* EditProfileDomainTests.swift */; };
@@ -724,10 +737,12 @@
 		75186A0788C3D1A416A2CDBF /* IDPDirectoryKKApps.swift in Sources */ = {isa = PBXBuildFile; fileRef = E66C71B93971B7CF39007FC2 /* IDPDirectoryKKApps.swift */; };
 		7523542E49AAF4D3C9B8BE0E /* JWE+Encryption.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18151F621AC9CCA2DE7C41B9 /* JWE+Encryption.swift */; };
 		754B3434473E98475F229CE0 /* RoundedCorner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04BE0EC8DE461AA2F3875BF5 /* RoundedCorner.swift */; };
+		757EE481A3F35DA95CF5827A /* ErxTaskMultiplePrescriptionEntity+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = A91322631548A2C07D5901DF /* ErxTaskMultiplePrescriptionEntity+CoreDataProperties.swift */; };
 		7594FF1A987B675E2F1582D6 /* FHIRExampleData.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 6A60C8EDC96DFDD9A8950398 /* FHIRExampleData.bundle */; };
 		7599D6FB0D0337BBEBC4EFFA /* ListCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93278744702E0891FB52B4BC /* ListCellView.swift */; };
 		764128CB5D93C06A79532F2F /* BundleKit in Frameworks */ = {isa = PBXBuildFile; productRef = DF965F728E67A78BEABF3E6D /* BundleKit */; };
 		76CCEC577E1FB5362012AF4B /* ErxTaskPatientEntity+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0CF84F2EB409A6BB09BAD73 /* ErxTaskPatientEntity+CoreDataProperties.swift */; };
+		76EF29902CB802B1EEB77FE8 /* ModelsR4.MedicationRequest+ErxTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEC880FCF33DD9D5BB3048F4 /* ModelsR4.MedicationRequest+ErxTask.swift */; };
 		77679AAC25F6B5A7AF47668E /* DeviceSecurityManagerSessionStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC10DFDF89DBBAABF0B4B500 /* DeviceSecurityManagerSessionStorage.swift */; };
 		77750F2A6C20D3CEE7EF06E8 /* Injected.swift in Sources */ = {isa = PBXBuildFile; fileRef = BECE7E241A5E749FF290FF99 /* Injected.swift */; };
 		779F8DC1CFE316E790ABD435 /* MockGroupedPrescriptionRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C38C6551E00FA9976D2B19A6 /* MockGroupedPrescriptionRepository.swift */; };
@@ -781,6 +796,7 @@
 		7F6C91AE17D40850BBDB27A9 /* ErxTaskCoreDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6E8E3B5A2F0B8B9BE3AB1EE4 /* ErxTaskCoreDataStore.swift */; };
 		7F7D37986BB4FBA13497753A /* ErxTaskOrderValidatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E18F9878E29178CD586AF600 /* ErxTaskOrderValidatorTests.swift */; };
 		7F80A398E9F5AC0AE781973F /* SectionContainerButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 133D0C966506000D21553ABE /* SectionContainerButtonStyle.swift */; };
+		7F945B2CC9FEC2096D6D4A47 /* MainDomainTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12A447409BC6A343DDD4823 /* MainDomainTests.swift */; };
 		7FB5CC10C4CAC3448BFFDF28 /* ModelsR4.Patient+ErxTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = B34388B1DCFAFDFAC9360434 /* ModelsR4.Patient+ErxTask.swift */; };
 		7FE6F1D1C7FFABB56FBD5542 /* EmailState.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCEDF22DBB3701D7B617FE4B /* EmailState.swift */; };
 		80203930C6D38F9D4FC36444 /* DefaultAVSSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFB9AAF1A3A32F20C4E1F8DD /* DefaultAVSSessionTests.swift */; };
@@ -799,6 +815,7 @@
 		81A546C55B4FABAC8D7D0692 /* AVSRedeemServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA535C52AD8D81AA04F297D1 /* AVSRedeemServiceTests.swift */; };
 		81C45770F9ED9877E5F32E3F /* OpenSSL.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DD4921BA0619E88A69676CF /* OpenSSL.xcframework */; };
 		81E38207D04F13171F9154C9 /* TestUtils.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 75F5D67595B4F5F353D7C7E3 /* TestUtils.framework */; };
+		828A0F5575EF084179E2B65E /* PharmacyLocation+Dummies.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A5C20060EC2CA5CC552E709 /* PharmacyLocation+Dummies.swift */; };
 		82A1FA98DDF172BEDB10EE02 /* testButtons.dark.png in Resources */ = {isa = PBXBuildFile; fileRef = D2E0D76D2B2E4C543AD4F8DE /* testButtons.dark.png */; };
 		82B69DFBA88576539D6E5F63 /* PrimaryButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE931739CFB247BDEBDF7FE8 /* PrimaryButtonStyle.swift */; };
 		82B9E6370D556E5842B6C7C0 /* PharmacyFilterBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = D68A05AC7075C7460CD7FC9D /* PharmacyFilterBar.swift */; };
@@ -824,7 +841,6 @@
 		851D1747861D732530C6429A /* VAUAccessTokenProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = F274B44D1B28F027C2521D71 /* VAUAccessTokenProvider.swift */; };
 		85223E9E4E30279B86BE7B6A /* TestUtils.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 75F5D67595B4F5F353D7C7E3 /* TestUtils.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		8526E20A6CDBA4B7C50D8350 /* IDP.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EBFDA63DD0B10A2BC96A3CF1 /* IDP.framework */; };
-		852A5E3E5EAE02A787AB41C1 /* PharmacySearchQuickFilterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CDEC20D2A15AA64B7F20ED6 /* PharmacySearchQuickFilterView.swift */; };
 		85AD19CF01FE9F38A17F6B7E /* ProgressResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 859F92720583DCF2D65E06D4 /* ProgressResponse.swift */; };
 		85C64EC2009EB047B81D47E3 /* DataKit.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = BA33ACC0740EF453EF921B33 /* DataKit.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		85E51DD06D2117C72819D028 /* CardWallExtAuthSelectionDomainTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 482952D781E532AA95C093E0 /* CardWallExtAuthSelectionDomainTests.swift */; };
@@ -915,7 +931,9 @@
 		965F2EEC2CCAAA555AE5607A /* IDPExchangeToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A0A7F65F2ED017BF1B185D6 /* IDPExchangeToken.swift */; };
 		96653A534E269C10D79AEEC1 /* Localizable.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = 86EAD4B00CFDEACC9C832C60 /* Localizable.stringsdict */; };
 		96B040BE1FA238D9F7BDA7AA /* SecondaryButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFB0B7FFEF573294C1FEF513 /* SecondaryButtonStyle.swift */; };
+		96C40C985E43401F57AD0F1B /* ErxTaskMultiplePrescriptionEntity+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = A91322631548A2C07D5901DF /* ErxTaskMultiplePrescriptionEntity+CoreDataProperties.swift */; };
 		971191FE2130B9E0A435236D /* AppSecurityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DC2C118B5E76E7113AEF513 /* AppSecurityManager.swift */; };
+		9754676F9F311FE1507CFE6D /* ErxTaskMultiplePrescriptionEntity+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61BE3010F752DDF26DA966F3 /* ErxTaskMultiplePrescriptionEntity+CoreDataClass.swift */; };
 		9777101DA8A90A5A41D84ADE /* AppStoreSnapshotTests+onboarding.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3CFEA771E3D13C579F2D533 /* AppStoreSnapshotTests+onboarding.swift */; };
 		978BAE730F9D824ED5BE25B3 /* IDPInterceptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3575B5EB521EE0EB98D66BD3 /* IDPInterceptor.swift */; };
 		97CC780224B136C1C330F568 /* ErxLocalDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14D5A6F7515D675F2E6B5EC9 /* ErxLocalDataStore.swift */; };
@@ -953,6 +971,7 @@
 		9C1CD692BB1AD7FBB77B133F /* GemCommonsKit.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = F384326304629BF0F91DCF3F /* GemCommonsKit.xcframework */; };
 		9C5079F3C9C6804DD6D6EA65 /* ProfileTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AE01DC7475FA1D63C9AE8EC /* ProfileTests.swift */; };
 		9C5853F46FDD4FC13CB74945 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 433F13E0884223D8150716F3 /* XCTest.framework */; };
+		9C7CC4D2EE1C132B0ED1BB97 /* HorizontalProfileSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49AB95638DDF4059C1E59C4A /* HorizontalProfileSelectionView.swift */; };
 		9C91D8BC0AE1870F035DE572 /* VAUClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 88A7FBBDF7C62426D4FD9606 /* VAUClient.framework */; };
 		9CB8BE341CF64AF8D3509DA1 /* AccessibilityIdentifier.yaml in Resources */ = {isa = PBXBuildFile; fileRef = 5229FCFF78B19C04046ED76E /* AccessibilityIdentifier.yaml */; };
 		9D3661328E5C71DA55DDE869 /* DefaultSecureEnclaveSignatureProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8B0430F775F6AF8AF162A50 /* DefaultSecureEnclaveSignatureProvider.swift */; };
@@ -1065,6 +1084,7 @@
 		B1BF5873E5616D279D40B47F /* TrustAnchor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41DD580233ADFE3A5546AA6B /* TrustAnchor.swift */; };
 		B1D82CE51A8C5E7875E28C50 /* IDPChallengeSessionTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0439F6DBD74BA9FB1CBCA261 /* IDPChallengeSessionTest.swift */; };
 		B232C5C2982DD0498B64F115 /* UserDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAD1FFDF1E2F286BE3DFDA25 /* UserDataStore.swift */; };
+		B28DD1864E9CC06DC79EBF81 /* PharmacySearchFilterViewSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D097178A546608AD9A6F7A6F /* PharmacySearchFilterViewSnapshotTests.swift */; };
 		B295F148AEC368C24AAD0F4A /* EditProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EAB7349F7F1559A3B7D7AEAB /* EditProfileView.swift */; };
 		B2BD062CCE709B4456D0359E /* PagedEntityController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE3EB15CDAB635424F6405A5 /* PagedEntityController.swift */; };
 		B2FCAFA72C7374EF740F62C0 /* ErxTaskFHIROperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 49B81752928FC120C2AF496F /* ErxTaskFHIROperation.swift */; };
@@ -1079,6 +1099,7 @@
 		B48E3DB69972C20B46BA75AA /* ErxTaskOrganizationEntity+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = B210017D7A9CCBB83B1FEBA5 /* ErxTaskOrganizationEntity+CoreDataClass.swift */; };
 		B4CC342FFD2D70ECEBE6CE5D /* OnboardingFeaturesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80CCEF31D6FA4410C4744A1B /* OnboardingFeaturesView.swift */; };
 		B4E5F7FADD563925763E64F0 /* RemoteStoreError.swift in Sources */ = {isa = PBXBuildFile; fileRef = D38D3671B360BB42269EC5CD /* RemoteStoreError.swift */; };
+		B4E89C74076FEBEA4F92B7B6 /* ErxTaskMultiplePrescriptionEntity+ErxTask.MultiplePrescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4A37D508A1363E15E42841D /* ErxTaskMultiplePrescriptionEntity+ErxTask.MultiplePrescription.swift */; };
 		B508757E6E137B27E451B1C6 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E9F25FB07E1CF48A7E9A01EA /* MainView.swift */; };
 		B51826A40F4CF8A23B635497 /* eRpKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CE55C211D7E7DDA60C85298E /* eRpKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		B5308299159BB72BEB3894BD /* ScanOutput.swift in Sources */ = {isa = PBXBuildFile; fileRef = C85155DB3591DBE669826EB2 /* ScanOutput.swift */; };
@@ -1202,6 +1223,7 @@
 		C62A2951F835DF730EC80157 /* eRpKit.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = BF9C9E519BC7B2F67FBC3704 /* eRpKit.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		C66173CF1934C79A2F0A79BB /* DefaultHTTPClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2697B303332FD2DAC40EC6EC /* DefaultHTTPClientTests.swift */; };
 		C6658E66F958C1893B6986F9 /* CreatePasswordViewSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BAC402B33A6330D487A477A /* CreatePasswordViewSnapshotTests.swift */; };
+		C6AE27099043186B440A52C7 /* ErxTask+MultiplePrescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = 405243E439D97C1584284AC2 /* ErxTask+MultiplePrescription.swift */; };
 		C6E7AFC79C50FFBFE3118830 /* GemCommonsKit.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F384326304629BF0F91DCF3F /* GemCommonsKit.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		C70E039C2D509983D35A96F5 /* DataKit.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BA33ACC0740EF453EF921B33 /* DataKit.xcframework */; };
 		C76EC9218AB2FB9F1B73C138 /* ShipmentInfoEntity+ShipmentInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB174A387366A4C1022EC223 /* ShipmentInfoEntity+ShipmentInfo.swift */; };
@@ -1230,6 +1252,7 @@
 		CB1BB286249996BFF6223E3F /* PrescriptionHintView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 436B088C9CDB1F4493184974 /* PrescriptionHintView.swift */; };
 		CB36A5F92C2A4923D654952D /* CardWallExtAuthFallbackView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2273F8621F697B332CBE6A55 /* CardWallExtAuthFallbackView.swift */; };
 		CB4B251209C612ECDF811164 /* AVSMessageValidatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A85E017521D1603250C4E8EF /* AVSMessageValidatorTests.swift */; };
+		CB567A0088F13325E9EF1975 /* View+SmallSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEE0E04A0BFDC11B084294D9 /* View+SmallSheet.swift */; };
 		CB6BE836AEAD6CA923B58E0D /* ErxTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2696BF61BB171A6137D34972 /* ErxTask.swift */; };
 		CBA5C09903FAB6226C173A81 /* TertiaryListButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAEC4C377A935AD9817FD027 /* TertiaryListButton.swift */; };
 		CBA84565F7788E97DD28CC5D /* ERPDateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A2726385ACB940B6BD0EF231 /* ERPDateFormatter.swift */; };
@@ -1291,6 +1314,7 @@
 		D6A5C9ABF0C6CAE7D63E19EA /* SectionContainer+Generics.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFFD2FF97998F244ED013F1A /* SectionContainer+Generics.swift */; };
 		D6C62A247C84196A11B13981 /* ActionNavigationLink.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6EE6DECF86372FB53D25D33D /* ActionNavigationLink.swift */; };
 		D6D1D7C830FD38BF3D2A7BFF /* Zxcvbn in Frameworks */ = {isa = PBXBuildFile; productRef = A72D3218F8BE590BFD3A7F84 /* Zxcvbn */; };
+		D6D83C82401127931AC1E628 /* PharmacySearchStartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8E9FA46E7A3DA7F98E064346 /* PharmacySearchStartView.swift */; };
 		D6DD30B8E279AED7A18AADCD /* AVS.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 97A5EFF738D0690B42412E6A /* AVS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		D708B44FD36222B4170C7E0A /* GemCommonsKit.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = F384326304629BF0F91DCF3F /* GemCommonsKit.xcframework */; };
 		D71AF6B239581FC9DA234700 /* HealthCardSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8ECE3DD44A3A8BD9FE34780 /* HealthCardSectionView.swift */; };
@@ -1321,6 +1345,7 @@
 		DB0DEEB121CECD09A44FDF34 /* Publisher+Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 785DC00DF15A1507CF93FF64 /* Publisher+Helper.swift */; };
 		DB306814800158E9E24FA2BA /* CertsList.bundle in Resources */ = {isa = PBXBuildFile; fileRef = F2446182B4D941E8D50485CF /* CertsList.bundle */; };
 		DB3E38F710EC4E2BBA31C3DB /* ASN1Kit.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1F13CC9A61AB1FE3D5A85BEC /* ASN1Kit.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		DB7624514A5452E5828E3B50 /* View+SmallSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = AEE0E04A0BFDC11B084294D9 /* View+SmallSheet.swift */; };
 		DBEB6A194484D6CFDBC9CBFE /* TestUtils.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 75F5D67595B4F5F353D7C7E3 /* TestUtils.framework */; };
 		DBF22C26EDEB3E7A9B1C189A /* AppMigrationDomainTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 802DFCDC99B1DA98D1F37827 /* AppMigrationDomainTests.swift */; };
 		DC153F36CC7771911D2451AC /* CameraAuthorizationAlertViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A2386B5B34148D58190DD2A /* CameraAuthorizationAlertViewModel.swift */; };
@@ -1335,10 +1360,12 @@
 		DD7ACC495B5C4E5B04062ED2 /* ErxTaskMedicationEntity+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CDB1C0F175CA90F0831E451 /* ErxTaskMedicationEntity+CoreDataClass.swift */; };
 		DD8AE47D948F6DE72558FA79 /* BundleKit in Frameworks */ = {isa = PBXBuildFile; productRef = A80E4F151FAC96491A6829CE /* BundleKit */; };
 		DD96A6DD70CC1924533128BC /* SingleElementSectionContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 117CF112B99870C8E6FD6C2F /* SingleElementSectionContainer.swift */; };
+		DE504B4FE63A10CCE0EF03AD /* PharmacyFHIRDataSourceError+LocalizedError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 128796EE5281115D4C37F38D /* PharmacyFHIRDataSourceError+LocalizedError.swift */; };
 		DE56D5C4726127AF71228C5D /* OnboardingLegalInfoCheckmarkView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4E8B4DEBFCA486C59AFADB2 /* OnboardingLegalInfoCheckmarkView.swift */; };
 		DE6146CECDF92FFB749E4C63 /* TestUtils.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 742051B40935C33A411966C9 /* TestUtils.framework */; };
 		DE813B1790BAB9FCD75EB399 /* MainHintView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7401EDA282F3E21E8BEFA461 /* MainHintView.swift */; };
 		DE85C3BB077DB80FC2DC9A69 /* KVNR.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23840304CB98BFD7C4F8FB85 /* KVNR.swift */; };
+		DEC15339D88B320E2544BCB9 /* AddProfileDomain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D1340686AE4BD6AE121519D /* AddProfileDomain.swift */; };
 		DEC60696F1F9265DFC597348 /* AppVersion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0892F5E7976AEB533C6BC482 /* AppVersion.swift */; };
 		DED4ED3D64CD5B5C38B54844 /* testSimpleList.light.png in Resources */ = {isa = PBXBuildFile; fileRef = 917F9E4AE434959DE9792BF8 /* testSimpleList.light.png */; };
 		DF1CFE0B09EB17AD670985E4 /* ScannerDomain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85E1AC794FBDB4850470FEB0 /* ScannerDomain.swift */; };
@@ -1361,6 +1388,7 @@
 		E37DCECA4259502E0192FDC2 /* JWTSignatureVerifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCEE1EB78FDC0C75C8296235 /* JWTSignatureVerifier.swift */; };
 		E3A4FA6DE2AFA72D96D806E6 /* ErxTaskPatientEntity+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = DEBCF953E344ECEBFDF6708A /* ErxTaskPatientEntity+CoreDataClass.swift */; };
 		E4157F438C056248B1FEA06D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8324E6B0CD1B337D5F926A4 /* AppDelegate.swift */; };
+		E42B9609928EF01AB582DE2D /* SmallSheetContainerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E4A25E301DCD843362354C9 /* SmallSheetContainerViewController.swift */; };
 		E46A7DC4131884365536AFC1 /* HealthCardAccess.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = C22ECE837E3E204526A3554A /* HealthCardAccess.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		E4742DD78DA483DF8A05BEEA /* SnapshotTesting in Frameworks */ = {isa = PBXBuildFile; productRef = E2F7A5973FE61D1E28C58668 /* SnapshotTesting */; };
 		E4923F13337E16E873936F08 /* RsaOnlyAVSCmsEncrypterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF36232184A9E2587E510ED6 /* RsaOnlyAVSCmsEncrypterTests.swift */; };
@@ -1386,6 +1414,7 @@
 		EA217012D517C7A569656A4C /* ProfileSelectionDomainTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 15F593F40CB21FD09A1682FD /* ProfileSelectionDomainTests.swift */; };
 		EAADEE25895588B8BAFAD0E0 /* TrustStore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DAB2C6B897720DE79FF465D8 /* TrustStore.framework */; };
 		EAAF4314D9886C14AA31E210 /* VAUClient.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = C27907ED6FD1868CA89816A2 /* VAUClient.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		EAC514C73B53429AD25E3D20 /* ErxTaskMultiplePrescriptionEntity+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61BE3010F752DDF26DA966F3 /* ErxTaskMultiplePrescriptionEntity+CoreDataClass.swift */; };
 		EAED3A10AE21B1F01F06A52A /* DummyLoginHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DAB2DC85933C536E56FC5E5 /* DummyLoginHandler.swift */; };
 		EAF5C52EA855837E42E3BC48 /* URL+PhoneHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73016A91743629EC5A2C5E79 /* URL+PhoneHelper.swift */; };
 		EB18205DCA6F9862C8DCE738 /* DemoProfileDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFFFB434361ED56B2CF7B48B /* DemoProfileDataStore.swift */; };
@@ -1468,6 +1497,7 @@
 		F7A90AEA037DF1FF16102B9D /* OCSPList.swift in Sources */ = {isa = PBXBuildFile; fileRef = D6ED6CC47AD864F1D1BE1899 /* OCSPList.swift */; };
 		F8021A94529E70EB49C609A2 /* ASN1Kit.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1F13CC9A61AB1FE3D5A85BEC /* ASN1Kit.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F802687BC9150D9147617A7E /* ListsSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9F8AB6CE4AE74270533B786B /* ListsSnapshotTests.swift */; };
+		F81C57EFFFFC262AC6756EE9 /* ErxTaskMultiplePrescriptionEntity+ErxTask.MultiplePrescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4A37D508A1363E15E42841D /* ErxTaskMultiplePrescriptionEntity+ErxTask.MultiplePrescription.swift */; };
 		F82E35F8B91C6E7D88E57484 /* DefaultAppSecurityPasswordManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D1C0D51078301217E9902A1 /* DefaultAppSecurityPasswordManagerTests.swift */; };
 		F8424574BF77E06B941F0C28 /* ButtonsSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5CF0AC1E8B7A9A477ABD318 /* ButtonsSnapshotTests.swift */; };
 		F8BEC2AF44AD687B00AA05A7 /* AVS.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = BB68D1E6A6E40A228759F4A2 /* AVS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -2581,6 +2611,7 @@
 		0670A5DF9ABAAB04E6E34941 /* DemoIDPSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoIDPSession.swift; sourceTree = "<group>"; };
 		06F4DAA3FE69AD22C3B0359A /* CameraAuthorizationAlertView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraAuthorizationAlertView.swift; sourceTree = "<group>"; };
 		07501C2FEE308F85341DBB8D /* ar */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ar; path = ar.lproj/Localizable.strings; sourceTree = "<group>"; };
+		077B3BF11F66AF2935A9A17D /* ErxTask11.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ErxTask11.xcdatamodel; sourceTree = "<group>"; };
 		07BE9C33E69A61B534A42761 /* SelectedProfileUserSessionProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectedProfileUserSessionProvider.swift; sourceTree = "<group>"; };
 		07F5310C62AD40D6BA527173 /* SectionContainerLabelStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionContainerLabelStyle.swift; sourceTree = "<group>"; };
 		08013C0E719B9EFAF89937D7 /* NavigationBarCloseItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationBarCloseItem.swift; sourceTree = "<group>"; };
@@ -2626,9 +2657,9 @@
 		106D49C132B51109AEDF471B /* MatrixCodeGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatrixCodeGenerator.swift; sourceTree = "<group>"; };
 		10856B28299503F69A922EA7 /* RefreshControl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RefreshControl.swift; sourceTree = "<group>"; };
 		10B8E82FB7380D253F3EECBD /* PharmacyIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PharmacyIntegrationTests.swift; sourceTree = "<group>"; };
-		113803FB143AB8C79BEE7DF7 /* PharmacySearchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PharmacySearchTests.swift; sourceTree = "<group>"; };
 		115D004115D487A1A3449E3B /* HintsProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HintsProvider.swift; sourceTree = "<group>"; };
 		117CF112B99870C8E6FD6C2F /* SingleElementSectionContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleElementSectionContainer.swift; sourceTree = "<group>"; };
+		128796EE5281115D4C37F38D /* PharmacyFHIRDataSourceError+LocalizedError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PharmacyFHIRDataSourceError+LocalizedError.swift"; sourceTree = "<group>"; };
 		12E3D4E429A8242C357BBFFA /* CANCameraScannerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CANCameraScannerViewController.swift; sourceTree = "<group>"; };
 		130F3E6ABEC1B3269177284C /* ErxTask+MedicationDispense.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ErxTask+MedicationDispense.swift"; sourceTree = "<group>"; };
 		131465F20BD2EA1B39B84C9B /* Label+StringAsset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Label+StringAsset.swift"; sourceTree = "<group>"; };
@@ -2661,6 +2692,7 @@
 		1AB10667B5052B686041B2DC /* DefaultTrustStoreSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultTrustStoreSession.swift; sourceTree = "<group>"; };
 		1AF29150ABF6A65096A151D1 /* LoggingInterceptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoggingInterceptor.swift; sourceTree = "<group>"; };
 		1B9A4B2CF4C74FF521BB01C9 /* AppAuthenticationViewSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppAuthenticationViewSnapshotTests.swift; sourceTree = "<group>"; };
+		1C588DED5900C3BCAF2DD983 /* SmallSheetPresentationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmallSheetPresentationController.swift; sourceTree = "<group>"; };
 		1C6CA6CCA93D7CB6B9885D9D /* ProfileDataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileDataStore.swift; sourceTree = "<group>"; };
 		1C6CB54F1142CF4F2FD7FE27 /* PharmacyFHIROperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PharmacyFHIROperation.swift; sourceTree = "<group>"; };
 		1CDFBBCC3A2DB4C8B542E5BE /* useful_links.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = useful_links.txt; sourceTree = "<group>"; };
@@ -2726,6 +2758,7 @@
 		2A3479042A01CBAF3E6B44C9 /* GroupedPrescription+Fixtures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GroupedPrescription+Fixtures.swift"; sourceTree = "<group>"; };
 		2A48CB893D735B267931069B /* UserMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserMode.swift; sourceTree = "<group>"; };
 		2A4A1D459E863BC81192C77A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		2A5C20060EC2CA5CC552E709 /* PharmacyLocation+Dummies.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PharmacyLocation+Dummies.swift"; sourceTree = "<group>"; };
 		2A80B1C0DF1FBC0428F48960 /* CardWallIntroductionDomain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardWallIntroductionDomain.swift; sourceTree = "<group>"; };
 		2A8E6649C5BB6D5964D48395 /* animation_reservierung.mp4 */ = {isa = PBXFileReference; path = animation_reservierung.mp4; sourceTree = "<group>"; };
 		2AACEB77F6E4029CD5409BB8 /* PassThroughChain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PassThroughChain.swift; sourceTree = "<group>"; };
@@ -2816,6 +2849,7 @@
 		3F7D69C3C8F93C324338D8EE /* MedicationPatientView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MedicationPatientView.swift; sourceTree = "<group>"; };
 		3FA486976E89B930B80D873D /* HintViewSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HintViewSnapshotTests.swift; sourceTree = "<group>"; };
 		4041623261FFC50C6E036362 /* SectionContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionContainer.swift; sourceTree = "<group>"; };
+		405243E439D97C1584284AC2 /* ErxTask+MultiplePrescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ErxTask+MultiplePrescription.swift"; sourceTree = "<group>"; };
 		4061F622A9D51CB2C4533E08 /* AVSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AVSTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		40DA93958738F25DD5BC84FC /* PrescriptionFullDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrescriptionFullDetailView.swift; sourceTree = "<group>"; };
 		411DBE4CFD857E7B579647E6 /* GreyDivider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GreyDivider.swift; sourceTree = "<group>"; };
@@ -2856,6 +2890,7 @@
 		493272BDAB63A633B6FFA00E /* IDPToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IDPToken.swift; sourceTree = "<group>"; };
 		494FA0905872756E18BC1A15 /* DefaultIDPSessionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultIDPSessionTests.swift; sourceTree = "<group>"; };
 		49921F7A5E580CC209472006 /* GenericTestError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericTestError.swift; sourceTree = "<group>"; };
+		49AB95638DDF4059C1E59C4A /* HorizontalProfileSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HorizontalProfileSelectionView.swift; sourceTree = "<group>"; };
 		49AF82922523A29806499D1F /* OrderHealthCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderHealthCardView.swift; sourceTree = "<group>"; };
 		49B81752928FC120C2AF496F /* ErxTaskFHIROperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErxTaskFHIROperation.swift; sourceTree = "<group>"; };
 		49C1B8EF28C10BB8873E03D1 /* RedeemMethodsDomain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedeemMethodsDomain.swift; sourceTree = "<group>"; };
@@ -2865,6 +2900,7 @@
 		4B6770A26FC96CDC67BE71DB /* LegalNoticeSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LegalNoticeSnapshotTests.swift; sourceTree = "<group>"; };
 		4C7ED09FA3E5B8E20C29FFB1 /* HealthCardPasswordReadCardDomain+AlertStates.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HealthCardPasswordReadCardDomain+AlertStates.swift"; sourceTree = "<group>"; };
 		4CDB1C0F175CA90F0831E451 /* ErxTaskMedicationEntity+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ErxTaskMedicationEntity+CoreDataClass.swift"; sourceTree = "<group>"; };
+		4D1340686AE4BD6AE121519D /* AddProfileDomain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddProfileDomain.swift; sourceTree = "<group>"; };
 		4D6222374F161B81CA68BD30 /* DemoTrustStoreSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoTrustStoreSession.swift; sourceTree = "<group>"; };
 		4DC2F4DCB87126BF8A14AE25 /* DemoShipmentInfoStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoShipmentInfoStore.swift; sourceTree = "<group>"; };
 		4E6120043BC3020919263412 /* Data+Base64.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+Base64.swift"; sourceTree = "<group>"; };
@@ -2876,6 +2912,7 @@
 		4FAB2E55880B0EC0F1FA9973 /* AppStoreSnapshotTests+camera.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppStoreSnapshotTests+camera.swift"; sourceTree = "<group>"; };
 		4FDABB58950E1F7D3C41E3C8 /* TertiaryButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TertiaryButton.swift; sourceTree = "<group>"; };
 		5012BF69BCA9B190BDA5992E /* MockMatrixCodeGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockMatrixCodeGenerator.swift; sourceTree = "<group>"; };
+		50637A4CB5438A33520374C1 /* AddProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddProfileView.swift; sourceTree = "<group>"; };
 		508264E0DB1449EF06A65909 /* SystemKeychainAccessHelperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SystemKeychainAccessHelperTests.swift; sourceTree = "<group>"; };
 		50E9EA4B80B7CE219BA86B87 /* VAUSessionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VAUSessionTests.swift; sourceTree = "<group>"; };
 		50F06F3BA912F1B6B36EE10E /* TextFieldWithDoneButtonToolbar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextFieldWithDoneButtonToolbar.swift; sourceTree = "<group>"; };
@@ -2925,11 +2962,11 @@
 		5C814A9F84C01E3A17E93F67 /* ar */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = ar; path = ar.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
 		5C96B9DE3ACA8B2D7EA405B0 /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-GB"; path = "en-GB.lproj/LaunchScreen.strings"; sourceTree = "<group>"; };
 		5CC0BF540D6EE81A1F55C7DA /* AVSMessage+Fixtures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AVSMessage+Fixtures.swift"; sourceTree = "<group>"; };
-		5CDEC20D2A15AA64B7F20ED6 /* PharmacySearchQuickFilterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PharmacySearchQuickFilterView.swift; sourceTree = "<group>"; };
 		5D16D33F6C9B3046E3214013 /* EmojiTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiTextField.swift; sourceTree = "<group>"; };
 		5D688FA73516A8FB59E36406 /* DemoBannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoBannerView.swift; sourceTree = "<group>"; };
 		5D6D06C92D90AF7DCD188861 /* OnboardingNewProfileDomainTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingNewProfileDomainTests.swift; sourceTree = "<group>"; };
 		5DFD3E8419BCE6816D1CE93A /* UserProfileSelectionToolbarItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileSelectionToolbarItem.swift; sourceTree = "<group>"; };
+		5E4A25E301DCD843362354C9 /* SmallSheetContainerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SmallSheetContainerViewController.swift; sourceTree = "<group>"; };
 		5EAD4F4622AA96E33EC02A3B /* EditProfileDomainTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditProfileDomainTests.swift; sourceTree = "<group>"; };
 		5EDBA66063D6D6FC6BC8B668 /* en-GB */ = {isa = PBXFileReference; lastKnownFileType = text.html; name = "en-GB"; path = "en-GB.lproj/TermsOfUse.html"; sourceTree = "<group>"; };
 		5EFE990C889AD0D3723D9B50 /* ServiceLocator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServiceLocator.swift; sourceTree = "<group>"; };
@@ -2941,6 +2978,7 @@
 		6116E435A41DE821F0948BB5 /* PickupCodeViewSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PickupCodeViewSnapshotTests.swift; sourceTree = "<group>"; };
 		6172CDC66740CF467B3E44D1 /* MockErxLocalDataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockErxLocalDataStore.swift; sourceTree = "<group>"; };
 		617321506E5F9BC537BF80E2 /* FootnoteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FootnoteView.swift; sourceTree = "<group>"; };
+		61BE3010F752DDF26DA966F3 /* ErxTaskMultiplePrescriptionEntity+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ErxTaskMultiplePrescriptionEntity+CoreDataClass.swift"; sourceTree = "<group>"; };
 		620D0F24567AD87B171FA831 /* ErxTask+Demo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ErxTask+Demo.swift"; sourceTree = "<group>"; };
 		624D2D9FFF329EB09EABCCAA /* FHIRClient+Response.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FHIRClient+Response.swift"; sourceTree = "<group>"; };
 		6260AA580CE10A2F81AD80EE /* AppSecuritySelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSecuritySelectionView.swift; sourceTree = "<group>"; };
@@ -3076,6 +3114,7 @@
 		83DEDFFCC8454BFD2221387F /* RedeemMethodsDomainTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedeemMethodsDomainTests.swift; sourceTree = "<group>"; };
 		840755BE7DBBEC615A364BF1 /* PageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageViewController.swift; sourceTree = "<group>"; };
 		8419E7C9F7A181EAF8289D56 /* AVScannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVScannerView.swift; sourceTree = "<group>"; };
+		84384DD7F2E58325A869D339 /* HorizontalProfileSelectionDomain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HorizontalProfileSelectionDomain.swift; sourceTree = "<group>"; };
 		844B4363C2694B6811BA2F8C /* VAUCrypto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VAUCrypto.swift; sourceTree = "<group>"; };
 		846AA3A74369250FF9554E44 /* ScanCAN.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScanCAN.swift; sourceTree = "<group>"; };
 		84C0E508F07F391958283E47 /* ProfileColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileColor.swift; sourceTree = "<group>"; };
@@ -3110,9 +3149,11 @@
 		8BD01AE4070D6C910B56E3C7 /* ErxTaskOrder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErxTaskOrder.swift; sourceTree = "<group>"; };
 		8C19A7CA67213869EC5F0CB9 /* MainDomain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainDomain.swift; sourceTree = "<group>"; };
 		8D4EB3ADC5C0351F6ADDA39E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		8D76E65F87DDAFAD0A5DC1A4 /* ErxTask+Medication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ErxTask+Medication.swift"; sourceTree = "<group>"; };
 		8DAB2DC85933C536E56FC5E5 /* DummyLoginHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DummyLoginHandler.swift; sourceTree = "<group>"; };
 		8E0B2670697A6BDE97483A33 /* IDPClientMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IDPClientMock.swift; sourceTree = "<group>"; };
 		8E9E1659056A6A4A535F298A /* ErxTaskMatrixCodeGenerator+Combine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ErxTaskMatrixCodeGenerator+Combine.swift"; sourceTree = "<group>"; };
+		8E9FA46E7A3DA7F98E064346 /* PharmacySearchStartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PharmacySearchStartView.swift; sourceTree = "<group>"; };
 		8F64BFA4EAD2C1BCF4A1EBCA /* CardWallPINDomain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardWallPINDomain.swift; sourceTree = "<group>"; };
 		9008597F5D8B57503EBFC9FB /* ErxTaskCoreDataStore+AuditEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ErxTaskCoreDataStore+AuditEvent.swift"; sourceTree = "<group>"; };
 		90755E21D5D00E12E7B864E0 /* ProfileConnectionStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileConnectionStatus.swift; sourceTree = "<group>"; };
@@ -3209,6 +3250,7 @@
 		A85E017521D1603250C4E8EF /* AVSMessageValidatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVSMessageValidatorTests.swift; sourceTree = "<group>"; };
 		A8B47A6289A221CFDC782DAD /* Image+ImageAsset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Image+ImageAsset.swift"; sourceTree = "<group>"; };
 		A90690D69831911980F649B2 /* CardWallReadCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardWallReadCardView.swift; sourceTree = "<group>"; };
+		A91322631548A2C07D5901DF /* ErxTaskMultiplePrescriptionEntity+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ErxTaskMultiplePrescriptionEntity+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		A9805650D4497610A459BBC8 /* FHIRExampleData.bundle */ = {isa = PBXFileReference; lastKnownFileType = wrapper.cfbundle; path = FHIRExampleData.bundle; sourceTree = "<group>"; };
 		A9BD7D55792DB240908B46BE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		A9EC644F9407B03959CFD543 /* DemoHintsStateStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoHintsStateStore.swift; sourceTree = "<group>"; };
@@ -3228,6 +3270,7 @@
 		ADD0453E4703153661F77800 /* PairingData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PairingData.swift; sourceTree = "<group>"; };
 		AE37AE58C2FED8D512809CB4 /* ProfileEntity+Profile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ProfileEntity+Profile.swift"; sourceTree = "<group>"; };
 		AE6AF38C46DC23AD91507D3C /* CardWallReadCardDomain.State+Helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CardWallReadCardDomain.State+Helper.swift"; sourceTree = "<group>"; };
+		AEE0E04A0BFDC11B084294D9 /* View+SmallSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+SmallSheet.swift"; sourceTree = "<group>"; };
 		AEFBA4A5E23A65093974AE24 /* ErxTask.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ErxTask.xcdatamodel; sourceTree = "<group>"; };
 		AF0126CBE05CA4E0027BB788 /* MockUserSessionContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockUserSessionContainer.swift; sourceTree = "<group>"; };
 		AF6F262E2DBC63E2163E8B8B /* PrescriptionFullDetailView+Views.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PrescriptionFullDetailView+Views.swift"; sourceTree = "<group>"; };
@@ -3355,8 +3398,10 @@
 		CEE7278297027939A599C849 /* JWTTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JWTTests.swift; sourceTree = "<group>"; };
 		CF12E6A0498086F39D7CA7EF /* GroupedPrescriptionListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupedPrescriptionListView.swift; sourceTree = "<group>"; };
 		D0436A762D11E8751FAAE285 /* JWKS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JWKS.swift; sourceTree = "<group>"; };
+		D097178A546608AD9A6F7A6F /* PharmacySearchFilterViewSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PharmacySearchFilterViewSnapshotTests.swift; sourceTree = "<group>"; };
 		D0F3EF8870669FCD96DD1FB7 /* TitleWithSubtitleCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TitleWithSubtitleCellView.swift; sourceTree = "<group>"; };
 		D11F11821F2699E0C384E677 /* PharmacySearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PharmacySearchView.swift; sourceTree = "<group>"; };
+		D12A447409BC6A343DDD4823 /* MainDomainTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainDomainTests.swift; sourceTree = "<group>"; };
 		D1C608A7B2E493B3DEDC9A2F /* AVSIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVSIntegrationTests.swift; sourceTree = "<group>"; };
 		D1C9B8CCA2DE427A845CF9D7 /* DataPrivacyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataPrivacyView.swift; sourceTree = "<group>"; };
 		D1CAC79192E30AE1AB46F4D8 /* RedeemSuccessView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedeemSuccessView.swift; sourceTree = "<group>"; };
@@ -3372,6 +3417,7 @@
 		D3F468F3FAD528C0426FD2C9 /* String+ProfileHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+ProfileHelper.swift"; sourceTree = "<group>"; };
 		D405C5D1D9C2CEBBACF1BDC0 /* IDPSchedulers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IDPSchedulers.swift; sourceTree = "<group>"; };
 		D40BA613256CC05FB6A3E777 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		D4A37D508A1363E15E42841D /* ErxTaskMultiplePrescriptionEntity+ErxTask.MultiplePrescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ErxTaskMultiplePrescriptionEntity+ErxTask.MultiplePrescription.swift"; sourceTree = "<group>"; };
 		D4BFF09975DFBB8104813511 /* KVNRTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KVNRTests.swift; sourceTree = "<group>"; };
 		D5BCF29D03A47C9DAB0624D2 /* ErxTaskMedicationDispenseEntity+ErxTask.MedicationDispense.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ErxTaskMedicationDispenseEntity+ErxTask.MedicationDispense.swift"; sourceTree = "<group>"; };
 		D687C5D50B0C08B96D3F7238 /* Data+SHA256.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+SHA256.swift"; sourceTree = "<group>"; };
@@ -3390,6 +3436,7 @@
 		D939CE0D6A293E8E7C3049EC /* MockRegisteredDevicesService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockRegisteredDevicesService.swift; sourceTree = "<group>"; };
 		D9568E643627F7F93133EB43 /* RegisteredDevicesDomainTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisteredDevicesDomainTests.swift; sourceTree = "<group>"; };
 		D976A3537666A5E2AB4872D4 /* AppDomain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDomain.swift; sourceTree = "<group>"; };
+		D9C4C59430B62AD3FCBC3E8A /* PharmacyDetailDomainTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PharmacyDetailDomainTests.swift; sourceTree = "<group>"; };
 		DA49C9B0EF14D5A88C468DAB /* PharmacyEntity+PharmacyLocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PharmacyEntity+PharmacyLocation.swift"; sourceTree = "<group>"; };
 		DA727E7E87AB9F862ADB2324 /* CodedError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodedError.swift; sourceTree = "<group>"; };
 		DA9ED4D64DC8D3D0C7FC3A5A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -3398,6 +3445,7 @@
 		DB4890194528B0F4199DDC26 /* MockSecureEnclaveSignatureProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockSecureEnclaveSignatureProvider.swift; sourceTree = "<group>"; };
 		DB76D147259760B2FBC01D9D /* PrimaryTextFieldView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrimaryTextFieldView.swift; sourceTree = "<group>"; };
 		DB9D186FA0E9143AD53C3980 /* AVSSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVSSession.swift; sourceTree = "<group>"; };
+		DC121822851A6240CE8160BD /* PharmacySearchDomain+Dummies.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PharmacySearchDomain+Dummies.swift"; sourceTree = "<group>"; };
 		DC16829950ECAC3202EF0FD4 /* LoginHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginHandler.swift; sourceTree = "<group>"; };
 		DC21859C2B14CEAE05E28A3A /* IDPError+Localization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "IDPError+Localization.swift"; sourceTree = "<group>"; };
 		DC7BD2480D118A6070609760 /* DemoAppSecurityPasswordManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoAppSecurityPasswordManager.swift; sourceTree = "<group>"; };
@@ -3414,6 +3462,7 @@
 		DE6E4DF0ABAF353EDB6A05D9 /* OptInCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OptInCell.swift; sourceTree = "<group>"; };
 		DE747DB7A3A02B1020092D61 /* SubTitleTop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubTitleTop.swift; sourceTree = "<group>"; };
 		DE9F89C7A9389D20ECE35E6A /* AVSTransaction+Fixtures.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AVSTransaction+Fixtures.swift"; sourceTree = "<group>"; };
+		DEA28B6FF2D0DD7B5CA30DE4 /* PharmacySearchDomainTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PharmacySearchDomainTests.swift; sourceTree = "<group>"; };
 		DEBCF953E344ECEBFDF6708A /* ErxTaskPatientEntity+CoreDataClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ErxTaskPatientEntity+CoreDataClass.swift"; sourceTree = "<group>"; };
 		DEC5F95D20A1E3CDE2E4145F /* DebugLogDomain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugLogDomain.swift; sourceTree = "<group>"; };
 		DECB74F7ACF745AABE27A013 /* VAURandom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VAURandom.swift; sourceTree = "<group>"; };
@@ -3514,6 +3563,7 @@
 		F5895B86203E666C87CD5374 /* ModelsR4.Bundle+ErxTaskMedicationDispense.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ModelsR4.Bundle+ErxTaskMedicationDispense.swift"; sourceTree = "<group>"; };
 		F5E0CE476FE3F0305F6B462C /* ModelsR4.Organization+ErxTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ModelsR4.Organization+ErxTask.swift"; sourceTree = "<group>"; };
 		F601048DA800A2130141F963 /* MedicationPractitionerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MedicationPractitionerView.swift; sourceTree = "<group>"; };
+		F60B23C05C384C4910BF0DEC /* AddProfileViewSnapshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddProfileViewSnapshotTests.swift; sourceTree = "<group>"; };
 		F66A6CED810C9CBED4D76F7F /* ErxTask4.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ErxTask4.xcdatamodel; sourceTree = "<group>"; };
 		F6BD70C90A4E85A590F87769 /* OrderMedicationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderMedicationView.swift; sourceTree = "<group>"; };
 		F7188DF5B3578D425431CE5F /* Schedulers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Schedulers.swift; sourceTree = "<group>"; };
@@ -3554,6 +3604,7 @@
 		FE9FAAFCBA93BBEB5FFD88D4 /* CustomNavigationBackButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomNavigationBackButton.swift; sourceTree = "<group>"; };
 		FEBE854F47C706B5E3FC1E3C /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		FEC48B5583A694B47BCD2EDC /* PageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageView.swift; sourceTree = "<group>"; };
+		FEC880FCF33DD9D5BB3048F4 /* ModelsR4.MedicationRequest+ErxTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ModelsR4.MedicationRequest+ErxTask.swift"; sourceTree = "<group>"; };
 		FEE499A7A59DB2839014D9AF /* LoginHandlerMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginHandlerMock.swift; sourceTree = "<group>"; };
 		FF19A3FBDECD49E0A0493C91 /* pl */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = pl; path = pl.lproj/Localizable.stringsdict; sourceTree = "<group>"; };
 		FF3D0AA972C0F2EFFEB73E33 /* DemoAVSTransactionDataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoAVSTransactionDataStore.swift; sourceTree = "<group>"; };
@@ -4121,6 +4172,7 @@
 				BD2D77AA524A78DD170EE5A9 /* ErxTaskEntity+ErxTask.swift */,
 				D5BCF29D03A47C9DAB0624D2 /* ErxTaskMedicationDispenseEntity+ErxTask.MedicationDispense.swift */,
 				35B89298D8A96442BE77B133 /* ErxTaskMedicationEntity+ErxTask.Medication.swift */,
+				D4A37D508A1363E15E42841D /* ErxTaskMultiplePrescriptionEntity+ErxTask.MultiplePrescription.swift */,
 				6F3CEAD5EF88153A222A1A42 /* ErxTaskOrganizationEntity+ErxTask.Organization.swift */,
 				7B57D475B9E3D633A91B5BBA /* ErxTaskPatientEntity+ErxTask.Patient.swift */,
 				CD7ECC85A9B7C085D4469931 /* ErxTaskPractitionerEntity+ErxTask.Practitioner.swift */,
@@ -4187,6 +4239,7 @@
 				3EBE42C2C8E5999345E9C7EC /* SectionContainerStyle.swift */,
 				117CF112B99870C8E6FD6C2F /* SingleElementSectionContainer.swift */,
 				E05A082F97E1A15A5B8905DF /* Controls */,
+				5CA399B337F677D5BA1052BA /* Presentation */,
 				CBEE4CAFB72B48842148748A /* Resources */,
 				C52FFA4BC35166254C042298 /* Views */,
 			);
@@ -4368,6 +4421,8 @@
 		15A1FA1CF322F903A3FA1E6D /* Main */ = {
 			isa = PBXGroup;
 			children = (
+				4D1340686AE4BD6AE121519D /* AddProfileDomain.swift */,
+				50637A4CB5438A33520374C1 /* AddProfileView.swift */,
 				66A8CA147AB3148B5E0F0E1A /* GroupedPrescriptionListDomain.swift */,
 				CF12E6A0498086F39D7CA7EF /* GroupedPrescriptionListView.swift */,
 				9A6BE0C7A64ED7B0571F2E24 /* GroupedPrescriptionView.swift */,
@@ -4399,6 +4454,7 @@
 		15F636768F22E33F1E938A98 /* Pharmacy */ = {
 			isa = PBXGroup;
 			children = (
+				EF39A089E97224FA96C69784 /* Detail */,
 				C35B69162DEEA55D16D75CC1 /* Redeem */,
 				4F738AB909691643DCA1D78F /* RedeemService */,
 				8977E1F298E0D75CF277787C /* Search */,
@@ -5161,6 +5217,7 @@
 				0CBA990CF848A5CB8117C3E3 /* ModelsR4.Bundle+ErxTask.swift */,
 				82E1B9DA7E0ECF357B203EB0 /* ModelsR4.Bundle+ErxTaskCommunication.swift */,
 				F5895B86203E666C87CD5374 /* ModelsR4.Bundle+ErxTaskMedicationDispense.swift */,
+				FEC880FCF33DD9D5BB3048F4 /* ModelsR4.MedicationRequest+ErxTask.swift */,
 				F5E0CE476FE3F0305F6B462C /* ModelsR4.Organization+ErxTask.swift */,
 				B34388B1DCFAFDFAC9360434 /* ModelsR4.Patient+ErxTask.swift */,
 				1FC6BE6856BDB6840C67366E /* ModelsR4.Practitioner+ErxTask.swift */,
@@ -5185,6 +5242,8 @@
 				BC4370BD97AAF4C92FCE0EB2 /* ErxTaskMedicationDispenseEntity+CoreDataProperties.swift */,
 				4CDB1C0F175CA90F0831E451 /* ErxTaskMedicationEntity+CoreDataClass.swift */,
 				6687060F5F14E0B34BAFFB42 /* ErxTaskMedicationEntity+CoreDataProperties.swift */,
+				61BE3010F752DDF26DA966F3 /* ErxTaskMultiplePrescriptionEntity+CoreDataClass.swift */,
+				A91322631548A2C07D5901DF /* ErxTaskMultiplePrescriptionEntity+CoreDataProperties.swift */,
 				B210017D7A9CCBB83B1FEBA5 /* ErxTaskOrganizationEntity+CoreDataClass.swift */,
 				C6D5DB9877175F101CA4C945 /* ErxTaskOrganizationEntity+CoreDataProperties.swift */,
 				DEBCF953E344ECEBFDF6708A /* ErxTaskPatientEntity+CoreDataClass.swift */,
@@ -5212,6 +5271,16 @@
 				96A64FDA9102A33CEA3C3AC0 /* testDestructiveButtons.light.png */,
 			);
 			path = ButtonsSnapshotTests;
+			sourceTree = "<group>";
+		};
+		5CA399B337F677D5BA1052BA /* Presentation */ = {
+			isa = PBXGroup;
+			children = (
+				5E4A25E301DCD843362354C9 /* SmallSheetContainerViewController.swift */,
+				1C588DED5900C3BCAF2DD983 /* SmallSheetPresentationController.swift */,
+				AEE0E04A0BFDC11B084294D9 /* View+SmallSheet.swift */,
+			);
+			path = Presentation;
 			sourceTree = "<group>";
 		};
 		5CDB4E62BF4FB0BDB6B47A0F /* eRpAppTests */ = {
@@ -5266,9 +5335,10 @@
 				52FEECF859D9BC7E312E0797 /* PharmacyOpenHoursCalculator.swift */,
 				45406E2F05B3CEF4B61B93CB /* PharmacySearchCell.swift */,
 				25C19D3A1A94999FAC7B1455 /* PharmacySearchDomain.swift */,
+				DC121822851A6240CE8160BD /* PharmacySearchDomain+Dummies.swift */,
 				B8DCEA99777908BA0965551D /* PharmacySearchFilterDomain.swift */,
 				8AE947239E767B38586843F2 /* PharmacySearchFilterView.swift */,
-				5CDEC20D2A15AA64B7F20ED6 /* PharmacySearchQuickFilterView.swift */,
+				8E9FA46E7A3DA7F98E064346 /* PharmacySearchStartView.swift */,
 				D11F11821F2699E0C384E677 /* PharmacySearchView.swift */,
 			);
 			path = Search;
@@ -5286,6 +5356,7 @@
 			isa = PBXGroup;
 			children = (
 				0267576B0FC2D97110FAB8FA /* ErxReadinessBadge.swift */,
+				128796EE5281115D4C37F38D /* PharmacyFHIRDataSourceError+LocalizedError.swift */,
 				2D3E0C89E32378B25B69B81D /* Detail */,
 				B3090200E851C52B1CFEBD0D /* Model */,
 				09D9E04B5D75D8F6AA579781 /* Redeem */,
@@ -5498,6 +5569,8 @@
 		79883B4F7A7FDE62B512ED23 /* ProfileSelection */ = {
 			isa = PBXGroup;
 			children = (
+				84384DD7F2E58325A869D339 /* HorizontalProfileSelectionDomain.swift */,
+				49AB95638DDF4059C1E59C4A /* HorizontalProfileSelectionView.swift */,
 				7DAE68C962234031EF5130D2 /* ProfileSelectionDomain.swift */,
 				89F1944FDA8B5C7C7DCBBB6D /* ProfileSelectionToolbarItemDomain.swift */,
 				0164208FF07B97C9A1F12EAD /* ProfileSelectionView.swift */,
@@ -5670,7 +5743,7 @@
 			isa = PBXGroup;
 			children = (
 				A17D4AA151B713338A4F14EC /* PharmacyOpenHoursCalculatorTests.swift */,
-				113803FB143AB8C79BEE7DF7 /* PharmacySearchTests.swift */,
+				DEA28B6FF2D0DD7B5CA30DE4 /* PharmacySearchDomainTests.swift */,
 			);
 			path = Search;
 			sourceTree = "<group>";
@@ -6090,7 +6163,9 @@
 				E0C867E2671B0F9D8D69206A /* ErxRepositoryError.swift */,
 				2696BF61BB171A6137D34972 /* ErxTask.swift */,
 				9680201D0278FDEE02288E06 /* ErxTask+Communication.swift */,
+				8D76E65F87DDAFAD0A5DC1A4 /* ErxTask+Medication.swift */,
 				130F3E6ABEC1B3269177284C /* ErxTask+MedicationDispense.swift */,
+				405243E439D97C1584284AC2 /* ErxTask+MultiplePrescription.swift */,
 				8BD01AE4070D6C910B56E3C7 /* ErxTaskOrder.swift */,
 				91238604C24B614E09D0AC3A /* ErxTaskRepository.swift */,
 				1662502BD5CB18C1D5B73F17 /* FHIRDateFormatter.swift */,
@@ -6099,6 +6174,7 @@
 				0A8FF15990C6728F723F348B /* PageContainer.swift */,
 				976FE2836ECF5B8E43815891 /* PharmacyLocalDataStore.swift */,
 				7CE01883D396A58B3142DBCC /* PharmacyLocation.swift */,
+				2A5C20060EC2CA5CC552E709 /* PharmacyLocation+Dummies.swift */,
 				21129CD8C4A5BB05524CDAA0 /* Profile.swift */,
 				1C6CA6CCA93D7CB6B9885D9D /* ProfileDataStore.swift */,
 				D38D3671B360BB42269EC5CD /* RemoteStoreError.swift */,
@@ -6245,6 +6321,7 @@
 			isa = PBXGroup;
 			children = (
 				C7B3545DD98303C0957E4BA8 /* GroupedPrescriptionListDomainTests.swift */,
+				D12A447409BC6A343DDD4823 /* MainDomainTests.swift */,
 				4453971AAE9B7910061D356B /* PrescriptionViewStatusTests.swift */,
 				23F982A63EC5B61C8CCED8BC /* DeviceSecurity */,
 				6C08FB64EE8518496E303B5D /* ExtAuth */,
@@ -6459,6 +6536,7 @@
 		D34BBF93653E8C6BA9E6DD6E /* SnapshotTests */ = {
 			isa = PBXGroup;
 			children = (
+				F60B23C05C384C4910BF0DEC /* AddProfileViewSnapshotTests.swift */,
 				1B9A4B2CF4C74FF521BB01C9 /* AppAuthenticationViewSnapshotTests.swift */,
 				B4ACE9AE2AEEFE69A00E0F5A /* AuditEventsSnapshotTests.swift */,
 				83854DA06794400A1E3D7FB3 /* CameraViewSnapshotTests.swift */,
@@ -6480,6 +6558,7 @@
 				6CED9A79C6E9E3A9363C1983 /* PharmacyContactViewSnapshotTests.swift */,
 				3C1AD8EAA69F121F246791E1 /* PharmacyDetailViewSnapshotTests.swift */,
 				A514BBCC2DA4F86869C2B7BC /* PharmacyRedeemViewSnapshotTests.swift */,
+				D097178A546608AD9A6F7A6F /* PharmacySearchFilterViewSnapshotTests.swift */,
 				3B2B935C90E0400F0B2DAC07 /* PharmacySearchViewSnapshotTests.swift */,
 				6116E435A41DE821F0948BB5 /* PickupCodeViewSnapshotTests.swift */,
 				3998001B0A63FCE9A6B23498 /* PrescriptionFullDetailSnapshotTests.swift */,
@@ -6765,6 +6844,14 @@
 				EA4AF6D0A862F5751677ACB5 /* ReadCardHelp */,
 			);
 			path = ReadCard;
+			sourceTree = "<group>";
+		};
+		EF39A089E97224FA96C69784 /* Detail */ = {
+			isa = PBXGroup;
+			children = (
+				D9C4C59430B62AD3FCBC3E8A /* PharmacyDetailDomainTests.swift */,
+			);
+			path = Detail;
 			sourceTree = "<group>";
 		};
 		EF7755A18C4ADF3A6859757C /* CoreDataExt */ = {
@@ -7766,7 +7853,6 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 872324274317EA307CECDEE1 /* Build configuration list for PBXNativeTarget "eRpApp" */;
 			buildPhases = (
-				517C7C6E52C4B3DD2B1DED8E /* Swiftgen */,
 				A6893F78A22407EF29237088 /* Sources */,
 				7A21A3EAABC99EE46DABA471 /* Resources */,
 				B1D77DF43EC87F5882E6402F /* Frameworks */,
@@ -8372,24 +8458,6 @@
 			shellPath = /bin/sh;
 			shellScript = "ditto \"${SCRIPT_INPUT_FILE_0}\" \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 		};
-		517C7C6E52C4B3DD2B1DED8E /* Swiftgen */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-			);
-			name = Swiftgen;
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = "/bin/sh -l";
-			shellScript = "mint run swiftgen";
-		};
 		88786F5E85962EADDBCA89A0 /* Copy Swift Objective-C Interface Header */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -8599,12 +8667,15 @@
 				17698663A97D7BA1F94031F6 /* SectionContainerLabelStyle.swift in Sources */,
 				682EE7120B5F11230C372B73 /* SectionContainerStyle.swift in Sources */,
 				DD96A6DD70CC1924533128BC /* SingleElementSectionContainer.swift in Sources */,
+				E42B9609928EF01AB582DE2D /* SmallSheetContainerViewController.swift in Sources */,
+				0AEFA6D4201D94A5EE8F2590 /* SmallSheetPresentationController.swift in Sources */,
 				B86CDD29CED45330D3524B77 /* SubTitle.swift in Sources */,
 				64CE90D9A5F6271D4761650B /* SubTitleTop.swift in Sources */,
 				84EF7B43CC3B09AB792D7618 /* TertiaryButtonStyle.swift in Sources */,
 				72E5E3D64A5BF6B62D9B7361 /* TertiaryFilledButtonStyle.swift in Sources */,
 				59EC865BFFDF7E67680B2E8E /* TrailingIconCellLabelStyle.swift in Sources */,
 				704FBFD3FFDBBBB27F6CD60E /* TrailingIconLabelStyle.swift in Sources */,
+				DB7624514A5452E5828E3B50 /* View+SmallSheet.swift in Sources */,
 				5386A68103E4613B4956717E /* XCAssets+Generated.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -8654,6 +8725,7 @@
 				CB4B251209C612ECDF811164 /* AVSMessageValidatorTests.swift in Sources */,
 				81A546C55B4FABAC8D7D0692 /* AVSRedeemServiceTests.swift in Sources */,
 				6C19A5D087814E472EF4EB5D /* AVSTransaction+Fixtures.swift in Sources */,
+				23E3D4D08ABF9A30F3E63C64 /* AddProfileViewSnapshotTests.swift in Sources */,
 				F91831E60036387192B4A24C /* AppAuthenticationBiometricsDomainTests.swift in Sources */,
 				F389D19A14227778683A23C5 /* AppAuthenticationDomainTests.swift in Sources */,
 				66F5E7148262DAF0C941FE40 /* AppAuthenticationPasswordDomainTests.swift in Sources */,
@@ -8701,6 +8773,7 @@
 				4C42A68FCECDBF9B0B8FBF6E /* KeychainStorageTests.swift in Sources */,
 				B19B875E5B1A85B2B63C281F /* LegalNoticeSnapshotTests.swift in Sources */,
 				F463D7BECE92340604565F17 /* LoginHandlerMock.swift in Sources */,
+				7F945B2CC9FEC2096D6D4A47 /* MainDomainTests.swift in Sources */,
 				9D8BAAD52ED98AD568FE5E65 /* MainViewHintsDomainTests.swift in Sources */,
 				724109D27B0B7E48E808AF48 /* MainViewHintsProviderTests.swift in Sources */,
 				9B9666F67E5C618C17165B00 /* MainViewSnapshotTests.swift in Sources */,
@@ -8747,13 +8820,15 @@
 				2CC3F1416BD3A2E9FE5BF4B0 /* OrdersViewSnapshotTests.swift in Sources */,
 				6F40B16C7E7F3D7D49B45507 /* PharmacyContactDomainTests.swift in Sources */,
 				5521E4ED4A09BA5319E72EF3 /* PharmacyContactViewSnapshotTests.swift in Sources */,
+				130816B5234A02EF672A1370 /* PharmacyDetailDomainTests.swift in Sources */,
 				74AA61E8CE4986029CD84FD4 /* PharmacyDetailViewSnapshotTests.swift in Sources */,
 				87DC8DD229DF37A459997AAA /* PharmacyLocation+Fixtures.swift in Sources */,
 				FA9A68958FAB38D6A35E8A8C /* PharmacyLocationViewModel+Fixtures.swift in Sources */,
 				B7637BEF3E993E7A061C0C64 /* PharmacyOpenHoursCalculatorTests.swift in Sources */,
 				65480502B3C783F6796E904E /* PharmacyRedeemDomainTests.swift in Sources */,
 				FE0BC83A1C0721576D318A21 /* PharmacyRedeemViewSnapshotTests.swift in Sources */,
-				2B65EB79C1CB095B987212AC /* PharmacySearchTests.swift in Sources */,
+				70F1C6EF02F04DEE2D4D5E60 /* PharmacySearchDomainTests.swift in Sources */,
+				B28DD1864E9CC06DC79EBF81 /* PharmacySearchFilterViewSnapshotTests.swift in Sources */,
 				2EF743C6BB93F362A79D4EF8 /* PharmacySearchViewSnapshotTests.swift in Sources */,
 				F0F06947D5E9A25A737748CD /* PickupCodeDomainTests.swift in Sources */,
 				8305272C41D32B2924531A7B /* PickupCodeViewSnapshotTests.swift in Sources */,
@@ -8828,7 +8903,9 @@
 				ED351BB774E14068429E5D6C /* ErxRemoteDataStore.swift in Sources */,
 				BE9E000CAEE338642EF3F1F5 /* ErxRepositoryError.swift in Sources */,
 				010ADAD181088FECA79E244A /* ErxTask+Communication.swift in Sources */,
+				3DB62F4F00C3B85D3B9B9DE2 /* ErxTask+Medication.swift in Sources */,
 				2BA9D5B31F2ECC50FF6D71AF /* ErxTask+MedicationDispense.swift in Sources */,
+				C6AE27099043186B440A52C7 /* ErxTask+MultiplePrescription.swift in Sources */,
 				CB6BE836AEAD6CA923B58E0D /* ErxTask.swift in Sources */,
 				24375BE8C16C05DB68E811F2 /* ErxTaskMatrixCode.swift in Sources */,
 				C01EAEA55698AE6D167CA783 /* ErxTaskOrder.swift in Sources */,
@@ -8840,6 +8917,7 @@
 				0A52FDC5302E99A69713167D /* PageContainer.swift in Sources */,
 				CF341B4AB988C97E6C31FDE0 /* PagedContent.swift in Sources */,
 				B9A7EC03254708397A3B0ADF /* PharmacyLocalDataStore.swift in Sources */,
+				46D9BE6466C5914F4E00DEDE /* PharmacyLocation+Dummies.swift in Sources */,
 				D40E4E0F4DEC90EEF953E365 /* PharmacyLocation.swift in Sources */,
 				D0E5C360485AC7BFBFC8DBAC /* Profile.swift in Sources */,
 				6E9CA0439D466AA81D400408 /* ProfileDataStore.swift in Sources */,
@@ -8901,6 +8979,9 @@
 				230AAE2BC9AB36F45578A0A8 /* ErxTaskMedicationEntity+CoreDataClass.swift in Sources */,
 				F638F6C866AB6384B9153B4F /* ErxTaskMedicationEntity+CoreDataProperties.swift in Sources */,
 				0DD1C93CF713E4F7EEDCE56B /* ErxTaskMedicationEntity+ErxTask.Medication.swift in Sources */,
+				EAC514C73B53429AD25E3D20 /* ErxTaskMultiplePrescriptionEntity+CoreDataClass.swift in Sources */,
+				96C40C985E43401F57AD0F1B /* ErxTaskMultiplePrescriptionEntity+CoreDataProperties.swift in Sources */,
+				B4E89C74076FEBEA4F92B7B6 /* ErxTaskMultiplePrescriptionEntity+ErxTask.MultiplePrescription.swift in Sources */,
 				41F322B3A50EF6D9D43C9E45 /* ErxTaskOrganizationEntity+CoreDataClass.swift in Sources */,
 				B5E89AF9B05F7C7417D6894B /* ErxTaskOrganizationEntity+CoreDataProperties.swift in Sources */,
 				231E9658256E5136B11D858B /* ErxTaskOrganizationEntity+ErxTask.Organization.swift in Sources */,
@@ -8992,7 +9073,9 @@
 				552E173D0D5020DC3915FB5C /* ErxRemoteDataStore.swift in Sources */,
 				38B66ED0ABF0AB11D04D7483 /* ErxRepositoryError.swift in Sources */,
 				A2E28FB1AB899294BDD77B7A /* ErxTask+Communication.swift in Sources */,
+				4C3679F92179D2DC239A0B36 /* ErxTask+Medication.swift in Sources */,
 				0E91F2581B685CB11013CCD4 /* ErxTask+MedicationDispense.swift in Sources */,
+				3C45B18B51DDCCC23D60AF22 /* ErxTask+MultiplePrescription.swift in Sources */,
 				490F5E1C419E8E613B45645F /* ErxTask.swift in Sources */,
 				10779DBBCDFA03BA9A1C385E /* ErxTaskMatrixCode.swift in Sources */,
 				0EB453D8F6B102A23905F29C /* ErxTaskOrder.swift in Sources */,
@@ -9004,6 +9087,7 @@
 				258D5C926277D1C287982A03 /* PageContainer.swift in Sources */,
 				AEF11B7BEF317B5190F56647 /* PagedContent.swift in Sources */,
 				A346F21A54F773F8883AEF48 /* PharmacyLocalDataStore.swift in Sources */,
+				828A0F5575EF084179E2B65E /* PharmacyLocation+Dummies.swift in Sources */,
 				6DB6274DF3E4E761FE99F2E2 /* PharmacyLocation.swift in Sources */,
 				C5C1503A10FB107446731C53 /* Profile.swift in Sources */,
 				6B62544E743F9D4B1290DC01 /* ProfileDataStore.swift in Sources */,
@@ -9075,6 +9159,9 @@
 				DD7ACC495B5C4E5B04062ED2 /* ErxTaskMedicationEntity+CoreDataClass.swift in Sources */,
 				71EFCD7A45CF723B1BA0203C /* ErxTaskMedicationEntity+CoreDataProperties.swift in Sources */,
 				112C43D5F4E5AF517FF49241 /* ErxTaskMedicationEntity+ErxTask.Medication.swift in Sources */,
+				9754676F9F311FE1507CFE6D /* ErxTaskMultiplePrescriptionEntity+CoreDataClass.swift in Sources */,
+				757EE481A3F35DA95CF5827A /* ErxTaskMultiplePrescriptionEntity+CoreDataProperties.swift in Sources */,
+				F81C57EFFFFC262AC6756EE9 /* ErxTaskMultiplePrescriptionEntity+ErxTask.MultiplePrescription.swift in Sources */,
 				B48E3DB69972C20B46BA75AA /* ErxTaskOrganizationEntity+CoreDataClass.swift in Sources */,
 				2B3652989C6572125C0C5106 /* ErxTaskOrganizationEntity+CoreDataProperties.swift in Sources */,
 				5365C2F8347129AB71745DD7 /* ErxTaskOrganizationEntity+ErxTask.Organization.swift in Sources */,
@@ -9183,6 +9270,8 @@
 				F1199F0C5487ED860C68F301 /* Accessibility+Generated.swift in Sources */,
 				480536E421EBDCDC89EFF0D8 /* AccessibilityImage.swift in Sources */,
 				D6C62A247C84196A11B13981 /* ActionNavigationLink.swift in Sources */,
+				DEC15339D88B320E2544BCB9 /* AddProfileDomain.swift in Sources */,
+				19DF6A5BE95936EED782C5DF /* AddProfileView.swift in Sources */,
 				C0187465BFCB1CEDB853F824 /* AlertState+CodedError.swift in Sources */,
 				834EDCD32D2BF7EFC985F8C5 /* AnyTransition+Helper.swift in Sources */,
 				3F0F002B31B83B8D46EACFD4 /* AppAuthenticationBiometricsDomain.swift in Sources */,
@@ -9338,6 +9427,8 @@
 				F3989518858E68A99BF4F9A4 /* HintState.swift in Sources */,
 				346389B50709A472D4BA62DB /* HintView.swift in Sources */,
 				4A6378FCD242FDE06F122850 /* HintsProvider.swift in Sources */,
+				5EF3687E5969636D8AE57D8E /* HorizontalProfileSelectionDomain.swift in Sources */,
+				9C7CC4D2EE1C132B0ED1BB97 /* HorizontalProfileSelectionView.swift in Sources */,
 				9A1E2C702FEB4E27D9F9AA7F /* IDPCardWallDomain.swift in Sources */,
 				0FA6D5DCEFA6FF7F0FDAA9C5 /* IDPCardWallView.swift in Sources */,
 				1E916D94182A62EA92964B02 /* IDPError+Localization.swift in Sources */,
@@ -9417,16 +9508,18 @@
 				9944A48C974030029AF7A4B7 /* PharmacyContactView.swift in Sources */,
 				17D7AC1142D70F2D5E58DB98 /* PharmacyDetailDomain.swift in Sources */,
 				B8891BF8A59286466B4BFC1B /* PharmacyDetailView.swift in Sources */,
+				DE504B4FE63A10CCE0EF03AD /* PharmacyFHIRDataSourceError+LocalizedError.swift in Sources */,
 				82B9E6370D556E5842B6C7C0 /* PharmacyFilterBar.swift in Sources */,
 				7A4AD7561E92FCCBB724E784 /* PharmacyLocationViewModel.swift in Sources */,
 				E8E4D7162A5BF9338C756833 /* PharmacyOpenHoursCalculator.swift in Sources */,
 				12726083A6EB4CC69A268311 /* PharmacyRedeemDomain.swift in Sources */,
 				BCAD5352AF6E8CD542C55071 /* PharmacyRedeemView.swift in Sources */,
 				2847710C510B79BFD20F0663 /* PharmacySearchCell.swift in Sources */,
+				1A8E7FB67E309EA92BA5266E /* PharmacySearchDomain+Dummies.swift in Sources */,
 				31B6A5D244DAB2CE72BA0CCB /* PharmacySearchDomain.swift in Sources */,
 				9C00CADED23EB05C987C57C7 /* PharmacySearchFilterDomain.swift in Sources */,
 				2B4879463C8C8FAA3C4B385C /* PharmacySearchFilterView.swift in Sources */,
-				852A5E3E5EAE02A787AB41C1 /* PharmacySearchQuickFilterView.swift in Sources */,
+				D6D83C82401127931AC1E628 /* PharmacySearchStartView.swift in Sources */,
 				7E527FF18C1783E87787A658 /* PharmacySearchView.swift in Sources */,
 				F970EDF91D4A7CCFC879C284 /* PickupCodeDomain.swift in Sources */,
 				0073F77AEE04992A7DEFC8AC /* PickupCodeView.swift in Sources */,
@@ -9609,12 +9702,15 @@
 				BC9A1BBC9B29875F7D1A0BC1 /* SectionContainerLabelStyle.swift in Sources */,
 				D4ACD8EB0C4A233AE24DB16F /* SectionContainerStyle.swift in Sources */,
 				C2E665CA5D58895C6E1EC530 /* SingleElementSectionContainer.swift in Sources */,
+				0A1C628D4BF48EBDD5D2AF7E /* SmallSheetContainerViewController.swift in Sources */,
+				7080AEE6D5031682F10A574F /* SmallSheetPresentationController.swift in Sources */,
 				55F42CB173BCF2261B8AB408 /* SubTitle.swift in Sources */,
 				3B7E07BCC0DF6BCD2715F6E4 /* SubTitleTop.swift in Sources */,
 				DD723D9C81BC36B5A7EA9F44 /* TertiaryButtonStyle.swift in Sources */,
 				F225FC0766AEE1495F170909 /* TertiaryFilledButtonStyle.swift in Sources */,
 				946C7AEC4A8B7DA2E9B83EB8 /* TrailingIconCellLabelStyle.swift in Sources */,
 				BDBCAE85F3D18AEB9594E66B /* TrailingIconLabelStyle.swift in Sources */,
+				CB567A0088F13325E9EF1975 /* View+SmallSheet.swift in Sources */,
 				705FA82818E9D00D26CDD95C /* XCAssets+Generated.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -9632,6 +9728,7 @@
 				609769A362AF5622C9B01087 /* ModelsR4.Bundle+ErxTask.swift in Sources */,
 				CF8BF31656ABA2524DBA2C94 /* ModelsR4.Bundle+ErxTaskCommunication.swift in Sources */,
 				31452A61C904325B5B407F1E /* ModelsR4.Bundle+ErxTaskMedicationDispense.swift in Sources */,
+				76EF29902CB802B1EEB77FE8 /* ModelsR4.MedicationRequest+ErxTask.swift in Sources */,
 				683A8D65F689387C19846C61 /* ModelsR4.Organization+ErxTask.swift in Sources */,
 				7FB5CC10C4CAC3448BFFDF28 /* ModelsR4.Patient+ErxTask.swift in Sources */,
 				3C6065209D71D1DE096EB4FD /* ModelsR4.Practitioner+ErxTask.swift in Sources */,
@@ -9905,6 +10002,7 @@
 				C1A9B3AB28ED92F5FDFBE11C /* ModelsR4.Bundle+ErxTask.swift in Sources */,
 				F5F4705A961F59646AE6C057 /* ModelsR4.Bundle+ErxTaskCommunication.swift in Sources */,
 				4CF23937F14EDDB623000B45 /* ModelsR4.Bundle+ErxTaskMedicationDispense.swift in Sources */,
+				50378E06E1F04DDC3CC8BC00 /* ModelsR4.MedicationRequest+ErxTask.swift in Sources */,
 				FCC82CE166679DECFFCB6623 /* ModelsR4.Organization+ErxTask.swift in Sources */,
 				513AE7CD7402BE11EE0D937D /* ModelsR4.Patient+ErxTask.swift in Sources */,
 				E8CD62B0386D32C2BD3A65F9 /* ModelsR4.Practitioner+ErxTask.swift in Sources */,
@@ -13810,8 +13908,9 @@
 				F98ACB66EA4302BB753C6038 /* ErxTask8.xcdatamodel */,
 				D223B228FF392FC06E32E4F8 /* ErxTask9.xcdatamodel */,
 				B33CD75A5316E1795BF15D8C /* ErxTask10.xcdatamodel */,
+				077B3BF11F66AF2935A9A17D /* ErxTask11.xcdatamodel */,
 			);
-			currentVersion = B33CD75A5316E1795BF15D8C /* ErxTask10.xcdatamodel */;
+			currentVersion = 077B3BF11F66AF2935A9A17D /* ErxTask11.xcdatamodel */;
 			path = ErxTask.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

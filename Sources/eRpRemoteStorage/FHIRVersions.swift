@@ -40,7 +40,7 @@ enum Prescription {
         static let medicationDoesKey = "http://fhir.de/StructureDefinition/normgroesse"
         static let workRelatedAccidentKey = "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Accident"
         static let pznKey = "http://fhir.de/CodeSystem/ifa/pzn"
-
+        static let multiplePrescriptionKey = "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Multiple_Prescription"
         static let noctuFeeWaiverKey = "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_EmergencyServicesFee"
         static let dosageFlag = "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_DosageFlag"
         static let kvIDKeys: [Version: String] = [

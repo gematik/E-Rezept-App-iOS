@@ -23,10 +23,13 @@ import SwiftUI
 
 struct PharmacyDetailView: View {
     let store: PharmacyDetailDomain.Store
+    @ObservedObject
+    var viewStore: ViewStore<ViewState, PharmacyDetailDomain.Action>
     let isRedeemRecipe: Bool
 
     init(store: PharmacyDetailDomain.Store, isRedeemRecipe: Bool = true) {
         self.store = store
+        viewStore = ViewStore(store.scope(state: ViewState.init))
         self.isRedeemRecipe = isRedeemRecipe
     }
 
@@ -37,7 +40,8 @@ struct PharmacyDetailView: View {
         let reservationService: RedeemServiceOption
         let deliveryService: RedeemServiceOption
         let shipmentService: RedeemServiceOption
-        let pharmacyViewModel: PharmacyLocationViewModel
+        let openingHours: [PharmacyLocationViewModel.OpeningHoursDay]
+        let isFavorite: Bool
 
         init(state: PharmacyDetailDomain.State) {
             isErxReady = state.pharmacy.isErxReady
@@ -46,162 +50,161 @@ struct PharmacyDetailView: View {
             reservationService = state.reservationService
             deliveryService = state.deliveryService
             shipmentService = state.shipmentService
-            pharmacyViewModel = state.pharmacyViewModel
+            openingHours = state.pharmacyViewModel.openingHours
+            isFavorite = state.pharmacy.isFavorite
         }
     }
 
     var body: some View {
-        WithViewStore(store.scope(state: ViewState.init)) { viewStore in
-            ScrollView {
-                VStack(alignment: .leading, spacing: 4) {
-                    if viewStore.isErxReady {
-                        ErxReadinessBadge(detailedText: true)
+        ScrollView {
+            VStack(alignment: .leading, spacing: 4) {
+                if viewStore.isErxReady {
+                    ErxReadinessBadge(detailedText: true)
+                }
+
+                Text(viewStore.pharmacy.name ?? L10n.phaDetailTxtSubtitleFallback.text)
+                    .foregroundColor(Colors.systemLabel)
+                    .font(.title2)
+                    .bold()
+                    .accessibility(identifier: A11y.pharmacyDetail.phaDetailTxtSubtitle)
+
+                if let address = viewStore.pharmacy.address?.fullAddress {
+                    TertiaryButton(text: LocalizedStringKey(address),
+                                   isEnabled: viewStore.pharmacy.canBeDisplayedInMap,
+                                   imageName: SFSymbolName.map) {
+                        viewStore.send(.openMapApp)
                     }
+                    .accessibility(identifier: A11y.pharmacyDetail.phaDetailBtnLocation)
+                    .padding(.bottom, 24)
+                }
 
-                    Text(viewStore.pharmacy.name ?? L10n.phaDetailTxtSubtitleFallback.text)
-                        .foregroundColor(Colors.systemLabel)
-                        .font(.title2)
-                        .bold()
-                        .accessibility(identifier: A11y.pharmacyDetail.phaDetailTxtSubtitle)
-
-                    if let address = viewStore.pharmacy.address?.fullAddress {
-                        TertiaryButton(text: LocalizedStringKey(address),
-                                       isEnabled: viewStore.pharmacy.canBeDisplayedInMap,
-                                       imageName: SFSymbolName.map) {
-                            viewStore.send(.openMapApp)
+                if viewStore.isErxReady && viewStore.hasTasks {
+                    VStack(spacing: 8) {
+                        if viewStore.reservationService.hasService {
+                            if viewStore.reservationService.hasServiceAfterLogin {
+                                PrimaryTextButtonBorder(
+                                    text: L10n.phaDetailBtnLocation.key,
+                                    note: L10n.phaDetailBtnLoginNote.key
+                                ) {
+                                    viewStore.send(.showPharmacyRedeemOption(.onPremise))
+                                }
+                                .accessibility(identifier: A11y.pharmacyDetail.phaDetailBtnLocation)
+                            } else {
+                                DefaultTextButton(text: L10n.phaDetailBtnLocation,
+                                                  a11y: A11y.pharmacyDetail.phaDetailBtnLocation,
+                                                  style: .primary) {
+                                    viewStore.send(.showPharmacyRedeemOption(.onPremise))
+                                }
+                            }
                         }
-                        .accessibility(identifier: A11y.pharmacyDetail.phaDetailBtnLocation)
-                        .padding(.bottom, 24)
+                        if viewStore.deliveryService.hasService {
+                            if viewStore.deliveryService.hasServiceAfterLogin {
+                                PrimaryTextButtonBorder(
+                                    text: L10n.phaDetailBtnHealthcareService.key,
+                                    note: L10n.phaDetailBtnLoginNote.key
+                                ) {
+                                    viewStore.send(.showPharmacyRedeemOption(.delivery))
+                                }
+                                .accessibility(identifier: A11y.pharmacyDetail.phaDetailBtnHealthcareService)
+                            } else {
+                                DefaultTextButton(
+                                    text: L10n.phaDetailBtnHealthcareService,
+                                    a11y: A11y.pharmacyDetail.phaDetailBtnHealthcareService,
+                                    style: viewStore.reservationService.hasService ? .secondary : .primary
+                                ) {
+                                    viewStore.send(.showPharmacyRedeemOption(.delivery))
+                                }
+                            }
+                        }
+
+                        if viewStore.shipmentService.hasService {
+                            if viewStore.shipmentService.hasServiceAfterLogin {
+                                PrimaryTextButtonBorder(
+                                    text: L10n.phaDetailBtnOrganization.key,
+                                    note: L10n.phaDetailBtnLoginNote.key
+                                ) {
+                                    viewStore.send(.showPharmacyRedeemOption(.shipment))
+                                }
+                                .accessibility(identifier: A11y.pharmacyDetail.phaDetailBtnOrganization)
+                            } else {
+                                DefaultTextButton(
+                                    text: L10n.phaDetailBtnOrganization,
+                                    a11y: A11y.pharmacyDetail.phaDetailBtnOrganization,
+                                    style: (!viewStore.reservationService.hasService &&
+                                        !viewStore.deliveryService.hasService) ? .primary : .secondary
+                                ) {
+                                    viewStore.send(.showPharmacyRedeemOption(.shipment))
+                                }
+                            }
+                        }
                     }
+                } // if viewStore.pharmacy.isErxReady
 
-                    if viewStore.isErxReady && viewStore.hasTasks {
-                        VStack(spacing: 8) {
-                            if viewStore.reservationService.hasService {
-                                if viewStore.reservationService.hasServiceAfterLogin {
-                                    PrimaryTextButtonBorder(
-                                        text: L10n.phaDetailBtnLocation.key,
-                                        note: L10n.phaDetailBtnLoginNote.key
-                                    ) {
-                                        viewStore.send(.showPharmacyRedeemOption(.onPremise))
-                                    }
-                                    .accessibility(identifier: A11y.pharmacyDetail.phaDetailBtnLocation)
-                                } else {
-                                    DefaultTextButton(text: L10n.phaDetailBtnLocation,
-                                                      a11y: A11y.pharmacyDetail.phaDetailBtnLocation,
-                                                      style: .primary) {
-                                        viewStore.send(.showPharmacyRedeemOption(.onPremise))
-                                    }
-                                }
-                            }
-                            if viewStore.deliveryService.hasService {
-                                if viewStore.deliveryService.hasServiceAfterLogin {
-                                    PrimaryTextButtonBorder(
-                                        text: L10n.phaDetailBtnHealthcareService.key,
-                                        note: L10n.phaDetailBtnLoginNote.key
-                                    ) {
-                                        viewStore.send(.showPharmacyRedeemOption(.delivery))
-                                    }
-                                    .accessibility(identifier: A11y.pharmacyDetail.phaDetailBtnHealthcareService)
-                                } else {
-                                    DefaultTextButton(
-                                        text: L10n.phaDetailBtnHealthcareService,
-                                        a11y: A11y.pharmacyDetail.phaDetailBtnHealthcareService,
-                                        style: viewStore.reservationService.hasService ? .secondary : .primary
-                                    ) {
-                                        viewStore.send(.showPharmacyRedeemOption(.delivery))
-                                    }
-                                }
-                            }
-
-                            if viewStore.shipmentService.hasService {
-                                if viewStore.shipmentService.hasServiceAfterLogin {
-                                    PrimaryTextButtonBorder(
-                                        text: L10n.phaDetailBtnOrganization.key,
-                                        note: L10n.phaDetailBtnLoginNote.key
-                                    ) {
-                                        viewStore.send(.showPharmacyRedeemOption(.shipment))
-                                    }
-                                    .accessibility(identifier: A11y.pharmacyDetail.phaDetailBtnOrganization)
-                                } else {
-                                    DefaultTextButton(
-                                        text: L10n.phaDetailBtnOrganization,
-                                        a11y: A11y.pharmacyDetail.phaDetailBtnOrganization,
-                                        style: (!viewStore.reservationService.hasService &&
-                                            !viewStore.deliveryService.hasService) ? .primary : .secondary
-                                    ) {
-                                        viewStore.send(.showPharmacyRedeemOption(.shipment))
-                                    }
-                                }
-                            }
-                        }
-                    } // if viewStore.pharmacy.isErxReady
-
-                    if viewStore.pharmacy.isErxReady {
-                        if isRedeemRecipe {
-                            HintView<PharmacyDetailDomain.Action>(
-                                hint: Hint(id: A11y.pharmacyDetail.phaDetailHint,
-                                           message: L10n.phaDetailHintMessage.text,
-                                           image: .init(name: Asset.Illustrations.info.name))
-                            )
-                            .padding(.top, 12)
-                            .padding(.bottom, 32)
-                        }
-                    } else {
+                if viewStore.pharmacy.isErxReady {
+                    if isRedeemRecipe {
                         HintView<PharmacyDetailDomain.Action>(
-                            hint: Hint(id: A11y.pharmacyDetail.phaDetailHintNotErxReady,
-                                       title: L10n.phaDetailHintNotErxReadyTitle.text,
-                                       message: L10n.phaDetailHintNotErxReadyMessage.text,
-                                       image: .init(
-                                           name: Asset.Illustrations.pharmacistArmRedCirle.name,
-                                           accessibilityName: L10n.phaDetailHintNotErxReadyPic.text
-                                       ),
-                                       style: .important)
+                            hint: Hint(id: A11y.pharmacyDetail.phaDetailHint,
+                                       message: L10n.phaDetailHintMessage.text,
+                                       image: .init(name: Asset.Illustrations.info.name))
                         )
+                        .padding(.top, 12)
+                        .padding(.bottom, 32)
                     }
+                } else {
+                    HintView<PharmacyDetailDomain.Action>(
+                        hint: Hint(id: A11y.pharmacyDetail.phaDetailHintNotErxReady,
+                                   title: L10n.phaDetailHintNotErxReadyTitle.text,
+                                   message: L10n.phaDetailHintNotErxReadyMessage.text,
+                                   image: .init(
+                                       name: Asset.Illustrations.pharmacistArmRedCirle.name,
+                                       accessibilityName: L10n.phaDetailHintNotErxReadyPic.text
+                                   ),
+                                   style: .important)
+                    )
+                }
 
-                    if !viewStore.state.pharmacy.hoursOfOperation.isEmpty {
-                        OpeningHoursView(dailyOpenHours: viewStore.state.pharmacyViewModel.openingHours)
-                            .padding(.bottom, 8)
+                if !viewStore.state.pharmacy.hoursOfOperation.isEmpty {
+                    OpeningHoursView(dailyOpenHours: viewStore.openingHours)
+                        .padding(.bottom, 8)
+                }
+
+                ContactView(store: store)
+
+                Footer()
+                    .padding(.top, 4)
+
+                RedeemViewViaErxTaskRepoNavigation(store: store).accessibility(hidden: true)
+                RedeemViewViaAVSNavigation(store: store).accessibility(hidden: true)
+            }.padding()
+        }
+        .onAppear {
+            viewStore.send(.loadCurrentProfile)
+        }
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button(
+                    action: { viewStore.send(.toggleIsFavorite) },
+                    label: {
+                        Image(systemName: viewStore.isFavorite ? SFSymbolName.starFill : SFSymbolName.star)
+                            .foregroundColor(Colors.starYellow)
                     }
-
-                    ContactView(store: store)
-
-                    Footer()
-                        .padding(.top, 4)
-
-                    RedeemViewViaErxTaskRepoNavigation(store: store).accessibility(hidden: true)
-                    RedeemViewViaAVSNavigation(store: store).accessibility(hidden: true)
-                }.padding()
+                )
             }
-            .onAppear {
-                viewStore.send(.loadCurrentProfile)
-            }
-            .navigationBarItems(
-                trailing: trailingNavigationBarItem()
-            )
-            .introspectNavigationController { navigationController in
-                let navigationBar = navigationController.navigationBar
-                navigationBar.barTintColor = UIColor(Colors.systemBackground)
-                let navigationBarAppearance = UINavigationBarAppearance()
-                navigationBarAppearance.shadowColor = UIColor(Colors.systemColorClear)
-                navigationBarAppearance.backgroundColor = UIColor(Colors.systemBackground)
-                navigationBar.standardAppearance = navigationBarAppearance
+            ToolbarItemGroup(placement: .navigationBarTrailing) {
+                if isRedeemRecipe {
+                    NavigationBarCloseItem {
+                        viewStore.send(.close)
+                    }
+                }
             }
         }
-    }
-
-    // TODO: rebuild view structure,  // swiftlint:disable:this todo
-    // also `trailingNavigationBarItem` and alike are deprecating (Use `toolbar(content:)`)
-    @ViewBuilder
-    private func trailingNavigationBarItem() -> some View {
-        WithViewStore(store.stateless) { viewStore in
-            if isRedeemRecipe {
-                NavigationBarCloseItem {
-                    viewStore.send(.close)
-                }
-            } else {
-                EmptyView()
-            }
+        .introspectNavigationController { navigationController in
+            let navigationBar = navigationController.navigationBar
+            navigationBar.barTintColor = UIColor(Colors.systemBackground)
+            let navigationBarAppearance = UINavigationBarAppearance()
+            navigationBarAppearance.shadowColor = UIColor(Colors.systemColorClear)
+            navigationBarAppearance.backgroundColor = UIColor(Colors.systemBackground)
+            navigationBar.standardAppearance = navigationBarAppearance
         }
     }
 }

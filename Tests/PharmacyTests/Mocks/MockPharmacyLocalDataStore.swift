@@ -42,17 +42,19 @@ final class MockPharmacyLocalDataStore: PharmacyLocalDataStore {
 
     // MARK: - listAllPharmacies
 
-    var listAllPharmaciesCallsCount = 0
-    var listAllPharmaciesCalled: Bool {
-        listAllPharmaciesCallsCount > 0
+    var listPharmaciesReceivedArgument: Int?
+    var listPharmaciesCallsCount = 0
+    var listPharmaciesCalled: Bool {
+        listPharmaciesCallsCount > 0
     }
 
-    var listAllPharmaciesReturnValue: AnyPublisher<[PharmacyLocation], LocalStoreError>!
-    var listAllPharmaciesClosure: (() -> AnyPublisher<[PharmacyLocation], LocalStoreError>)?
+    var listPharmaciesReturnValue: AnyPublisher<[PharmacyLocation], LocalStoreError>!
+    var listPharmaciesClosure: (() -> AnyPublisher<[PharmacyLocation], LocalStoreError>)?
 
-    func listAllPharmacies() -> AnyPublisher<[PharmacyLocation], LocalStoreError> {
-        listAllPharmaciesCallsCount += 1
-        return listAllPharmaciesClosure.map { $0() } ?? listAllPharmaciesReturnValue
+    func listPharmacies(count: Int?) -> AnyPublisher<[PharmacyLocation], LocalStoreError> {
+        listPharmaciesReceivedArgument = count
+        listPharmaciesCallsCount += 1
+        return listPharmaciesClosure.map { $0() } ?? listPharmaciesReturnValue
     }
 
     // MARK: - save
@@ -105,15 +107,16 @@ final class MockPharmacyLocalDataStore: PharmacyLocalDataStore {
         (pharmacyId: String, mutating: (inout PharmacyLocation) -> Void)
     ] =
         []
-    var updatePharmacyIdMutatingReturnValue: AnyPublisher<Bool, LocalStoreError>!
+    var updatePharmacyIdMutatingReturnValue: AnyPublisher<PharmacyLocation, LocalStoreError>!
     var updatePharmacyIdMutatingClosure: ((String, @escaping (inout PharmacyLocation) -> Void)
-        -> AnyPublisher<Bool, LocalStoreError>)?
+        -> AnyPublisher<PharmacyLocation, LocalStoreError>)?
 
-    func update(identifier: String,
-                mutating: @escaping (inout PharmacyLocation) -> Void) -> AnyPublisher<Bool, LocalStoreError> {
+    func update(telematikId: String,
+                mutating: @escaping (inout PharmacyLocation) -> Void)
+        -> AnyPublisher<PharmacyLocation, LocalStoreError> {
         updatePharmacyIdMutatingCallsCount += 1
-        updatePharmacyIdMutatingReceivedArguments = (identifier, mutating)
-        updatePharmacyIdMutatingReceivedInvocations.append((identifier, mutating))
-        return updatePharmacyIdMutatingClosure.map { $0(identifier, mutating) } ?? updatePharmacyIdMutatingReturnValue
+        updatePharmacyIdMutatingReceivedArguments = (telematikId, mutating)
+        updatePharmacyIdMutatingReceivedInvocations.append((telematikId, mutating))
+        return updatePharmacyIdMutatingClosure.map { $0(telematikId, mutating) } ?? updatePharmacyIdMutatingReturnValue
     }
 }

@@ -74,6 +74,14 @@ final class ErxTaskFHIRClientTests: XCTestCase {
                 expect(erxTaskBundle?.author) == "Hausarztpraxis Dr. Topp-Glücklich"
                 expect(erxTaskBundle?.medication?.dosageForm) == "TAB"
                 expect(erxTaskBundle?.medication?.amount) == 12
+                expect(erxTaskBundle?.medication?.dosageInstructions) == "1-0-1-0"
+                expect(erxTaskBundle?.medication?.lot) == "1234567890abcde"
+                expect(erxTaskBundle?.medication?.expiresOn) == "2020-02-03T00:00:00+00:00"
+                expect(erxTaskBundle?.multiplePrescription?.mark) == true
+                expect(erxTaskBundle?.multiplePrescription?.numbering) == 2
+                expect(erxTaskBundle?.multiplePrescription?.totalNumber) == 4
+                expect(erxTaskBundle?.multiplePrescription?.startPeriod) == "2021-01-02"
+                expect(erxTaskBundle?.multiplePrescription?.endPeriod) == "2021-03-30"
             })
     }
 
@@ -112,6 +120,8 @@ final class ErxTaskFHIRClientTests: XCTestCase {
                 expect(erxTaskBundle?.author).to(beNil())
                 expect(erxTaskBundle?.medication?.dosageForm).to(beNil())
                 expect(erxTaskBundle?.medication?.amount).to(beNil())
+                expect(erxTaskBundle?.multiplePrescription?.mark).to(beNil())
+                expect(erxTaskBundle?.multiplePrescription?.numbering).to(beNil())
             })
     }
 

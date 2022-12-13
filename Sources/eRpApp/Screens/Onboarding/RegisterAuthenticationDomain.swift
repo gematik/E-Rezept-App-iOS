@@ -177,6 +177,9 @@ enum RegisterAuthenticationDomain {
             state.alertState = nil
             return .none
         case let .setPasswordA(string):
+            guard string != state.passwordA else {
+                return .none
+            }
             state.passwordStrength = environment.passwordStrengthTester.passwordStrength(for: string)
             state.showPasswordErrorMessage = false
             state.passwordA = string
@@ -186,6 +189,9 @@ enum RegisterAuthenticationDomain {
                 .cancellable(id: Token.comparePasswords, cancelInFlight: true)
 
         case let .setPasswordB(string):
+            guard string != state.passwordB else {
+                return .none
+            }
             state.showPasswordErrorMessage = false
             state.passwordB = string
             return Effect(value: .comparePasswords)

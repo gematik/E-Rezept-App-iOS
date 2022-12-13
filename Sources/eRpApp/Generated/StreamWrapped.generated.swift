@@ -547,9 +547,10 @@ class StreamWrappedPharmacyLocalDataStore: PharmacyLocalDataStore {
             .eraseToAnyPublisher()
 	}
 
-	func listAllPharmacies() -> AnyPublisher<[PharmacyLocation], LocalStoreError> {
+	func listPharmacies(count: Int?) -> AnyPublisher<[PharmacyLocation], LocalStoreError> {
         stream
-        	.map { $0.listAllPharmacies(
+        	.map { $0.listPharmacies(
+				count: count
             ) }
             .switchToLatest()
             .eraseToAnyPublisher()
@@ -567,9 +568,9 @@ class StreamWrappedPharmacyLocalDataStore: PharmacyLocalDataStore {
             )
 	}
 
-	func update(identifier: String, mutating: @escaping (inout PharmacyLocation) -> Void) -> AnyPublisher<Bool, LocalStoreError> {
+	func update(telematikId: String, mutating: @escaping (inout PharmacyLocation) -> Void) -> AnyPublisher<PharmacyLocation, LocalStoreError> {
         current.update(
-				identifier: identifier,
+				telematikId: telematikId,
 				mutating: mutating
             )
 	}
@@ -593,6 +594,15 @@ class StreamWrappedPharmacyRepository: PharmacyRepository {
 
 	}
 
+
+	func updateFromRemote(by telematikId: String) -> AnyPublisher<PharmacyLocation, PharmacyRepositoryError> {
+        stream
+        	.map { $0.updateFromRemote(
+				by: telematikId
+            ) }
+            .switchToLatest()
+            .eraseToAnyPublisher()
+	}
 
 	func loadCached(by telematikId: String) -> AnyPublisher<PharmacyLocation?, PharmacyRepositoryError> {
         stream
@@ -623,9 +633,10 @@ class StreamWrappedPharmacyRepository: PharmacyRepository {
             .eraseToAnyPublisher()
 	}
 
-	func loadLocalAll() -> AnyPublisher<[PharmacyLocation], PharmacyRepositoryError> {
+	func loadLocal(count: Int?) -> AnyPublisher<[PharmacyLocation], PharmacyRepositoryError> {
         stream
-        	.map { $0.loadLocalAll(
+        	.map { $0.loadLocal(
+				count: count
             ) }
             .switchToLatest()
             .eraseToAnyPublisher()
@@ -647,6 +658,18 @@ class StreamWrappedPharmacyRepository: PharmacyRepository {
             ) }
             .switchToLatest()
             .eraseToAnyPublisher()
+	}
+
+	func save(pharmacy: PharmacyLocation) -> AnyPublisher<Bool, PharmacyRepositoryError> {
+        current.save(
+				pharmacy: pharmacy
+            )
+	}
+
+	func delete(pharmacy: PharmacyLocation) -> AnyPublisher<Bool, PharmacyRepositoryError> {
+        current.delete(
+				pharmacy: pharmacy
+            )
 	}
 
 
@@ -709,6 +732,18 @@ class StreamWrappedProfileDataStore: ProfileDataStore {
         try current.pagedAuditEventsController(
 				for: profileId,
 				with: locale
+            )
+	}
+
+	func save(profile: Profile) -> AnyPublisher<Bool, LocalStoreError> {
+        current.save(
+				profile: profile
+            )
+	}
+
+	func delete(profile: Profile) -> AnyPublisher<Bool, LocalStoreError> {
+        current.delete(
+				profile: profile
             )
 	}
 

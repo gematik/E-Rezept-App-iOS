@@ -12,13 +12,13 @@ cd "$(dirname "$0")/.."
 echo "Prepare fortify scan started at…"
 date "+%H:%M:%S"
 
-# Setup project
-scripts/setup ${BUILD_TYPE}
-
 for file in $(git grep -l "[g]ematik_private_code_block_begin")
 do
     sed -i '' '/[g]ematik_private_code_block_begin/,/[g]ematik_private_code_block_end/ d' $file
 done
+
+# Setup project
+scripts/setup ${BUILD_TYPE}
 
 if [ -f ".githubignore" ]; then
   if [ -f ".gitignore" ]; then
@@ -27,8 +27,6 @@ if [ -f ".githubignore" ]; then
   fi
   rm -f .githubignore
 fi
-
-rm "eRp-App.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved"
 
 if [[ -z "${CIBUILD}" ]]; then
   export SAST_FILENAME="scan_$(date '+%Y-%m-%d_%H:%M:%s').zip"

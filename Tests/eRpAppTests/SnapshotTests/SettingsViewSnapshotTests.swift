@@ -67,7 +67,7 @@ final class SettingsViewSnapshotTests: XCTestCase {
                     name: "Schneebartz van Eltz",
                     color: Profile.Color.red,
                     emoji: "⛄️",
-                    lastAuthenticated: Date().addingTimeInterval(-60 * 60 * 24 * 31)
+                    lastAuthenticated: Date().addingTimeInterval(-60 * 60 * 24 * 32)
                 ),
                 isAuthenticated: false
             ),

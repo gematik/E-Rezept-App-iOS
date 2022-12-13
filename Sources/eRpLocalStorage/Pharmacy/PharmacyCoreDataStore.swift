@@ -66,9 +66,16 @@ public class PharmacyCoreDataStore: PharmacyLocalDataStore, CoreDataCrudable {
             .eraseToAnyPublisher()
     }
 
-    public func listAllPharmacies() -> AnyPublisher<[PharmacyLocation], LocalStoreError> {
+    public func listPharmacies(count: Int? = nil) -> AnyPublisher<[PharmacyLocation], LocalStoreError> {
         let request: NSFetchRequest<PharmacyEntity> = PharmacyEntity.fetchRequest()
-        request.sortDescriptors = [NSSortDescriptor(key: #keyPath(PharmacyEntity.name), ascending: false)]
+        if let fetchLimit = count {
+            request.fetchLimit = fetchLimit
+        }
+        request.sortDescriptors = [
+            NSSortDescriptor(key: #keyPath(PharmacyEntity.isFavorite), ascending: false),
+            NSSortDescriptor(key: #keyPath(PharmacyEntity.lastUsed), ascending: false),
+            NSSortDescriptor(key: #keyPath(PharmacyEntity.created), ascending: false),
+        ]
 
         return fetch(request)
             .map { list in list.compactMap(PharmacyLocation.init) }
@@ -93,6 +100,14 @@ public class PharmacyCoreDataStore: PharmacyLocalDataStore, CoreDataCrudable {
                     pharmacyEntity.web = pharmacy.telecom?.web
                     pharmacyEntity.latitude = pharmacy.position?.latitude as? NSDecimalNumber
                     pharmacyEntity.longitude = pharmacy.position?.longitude as? NSDecimalNumber
+                    pharmacyEntity.lastUsed = pharmacy.lastUsed
+                    pharmacyEntity.street = pharmacy.address?.street
+                    pharmacyEntity.zip = pharmacy.address?.zip
+                    pharmacyEntity.houseNumber = pharmacy.address?.houseNumber
+                    pharmacyEntity.city = pharmacy.address?.city
+                    pharmacyEntity.isFavorite = pharmacy.isFavorite
+                    pharmacyEntity.imagePath = pharmacy.imagePath
+                    pharmacyEntity.countUsage = Int32(pharmacy.countUsage)
                     return pharmacyEntity
                 } else {
                     return PharmacyEntity.from(pharmacyLocation: pharmacy, in: moc)
@@ -101,42 +116,53 @@ public class PharmacyCoreDataStore: PharmacyLocalDataStore, CoreDataCrudable {
         }
     }
 
-    public func update(identifier: String,
-                       mutating: @escaping (inout PharmacyLocation) -> Void) -> AnyPublisher<Bool, LocalStoreError> {
+    public func update(telematikId: String,
+                       mutating: @escaping (inout PharmacyLocation) -> Void)
+        -> AnyPublisher<PharmacyLocation, LocalStoreError> {
         save(mergePolicy: NSMergePolicy.error) { moc in
             let request: NSFetchRequest<PharmacyEntity> = PharmacyEntity.fetchRequest()
             request.fetchLimit = 1
             request.predicate = NSPredicate(
                 format: "%K == %@",
-                argumentArray: [#keyPath(PharmacyEntity.identifier), identifier]
+                argumentArray: [#keyPath(PharmacyEntity.telematikId), telematikId]
             )
 
-            if let pharmacyEntity = try? moc.fetch(request).first,
-               var pharmacy = PharmacyLocation(entity: pharmacyEntity) {
-                mutating(&pharmacy)
-                pharmacyEntity.telematikId = pharmacy.telematikID
-                pharmacyEntity.name = pharmacy.name
-                pharmacyEntity.email = pharmacy.telecom?.email
-                pharmacyEntity.phone = pharmacy.telecom?.phone
-                pharmacyEntity.fax = pharmacy.telecom?.fax
-                pharmacyEntity.web = pharmacy.telecom?.web
-                pharmacyEntity.latitude = pharmacy.position?.latitude as? NSDecimalNumber
-                pharmacyEntity.longitude = pharmacy.position?.longitude as? NSDecimalNumber
-            } else {
-                throw Error.noMatchingEntity
+            guard let pharmacyEntity = try? moc.fetch(request).first,
+                  var pharmacy = PharmacyLocation(entity: pharmacyEntity) else {
+                throw LocalStoreError.read(error: Error.noMatchingEntity)
             }
+            mutating(&pharmacy)
+            pharmacyEntity.telematikId = pharmacy.telematikID
+            pharmacyEntity.name = pharmacy.name
+            pharmacyEntity.email = pharmacy.telecom?.email
+            pharmacyEntity.phone = pharmacy.telecom?.phone
+            pharmacyEntity.fax = pharmacy.telecom?.fax
+            pharmacyEntity.web = pharmacy.telecom?.web
+            pharmacyEntity.latitude = pharmacy.position?.latitude as? NSDecimalNumber
+            pharmacyEntity.longitude = pharmacy.position?.longitude as? NSDecimalNumber
+            pharmacyEntity.lastUsed = pharmacy.lastUsed
+            pharmacyEntity.street = pharmacy.address?.street
+            pharmacyEntity.zip = pharmacy.address?.zip
+            pharmacyEntity.houseNumber = pharmacy.address?.houseNumber
+            pharmacyEntity.city = pharmacy.address?.city
+            pharmacyEntity.isFavorite = pharmacy.isFavorite
+            pharmacyEntity.imagePath = pharmacy.imagePath
+            pharmacyEntity.countUsage = Int32(pharmacy.countUsage)
+            return pharmacy
         }
     }
 
     public func delete(pharmacies: [PharmacyLocation]) -> AnyPublisher<Bool, LocalStoreError> {
         let request: NSFetchRequest<PharmacyEntity> = PharmacyEntity.fetchRequest()
-        let ids = pharmacies.map(\.id)
-        request.predicate = NSPredicate(format: "%K in %@", #keyPath(PharmacyEntity.identifier), ids)
+        let ids = pharmacies.map(\.telematikID)
+        request.predicate = NSPredicate(format: "%K in %@", #keyPath(PharmacyEntity.telematikId), ids)
         request.sortDescriptors = [NSSortDescriptor(key: #keyPath(PharmacyEntity.name), ascending: false)]
         return delete(resultsOf: request)
     }
 
+    // sourcery: CodedError = "505"
     public enum Error: Swift.Error {
+        // sourcery: errorCode = "01"
         case noMatchingEntity
     }
 }

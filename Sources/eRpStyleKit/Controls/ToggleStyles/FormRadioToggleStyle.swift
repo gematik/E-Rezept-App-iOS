@@ -60,8 +60,9 @@ public struct RadioLabelStyle: LabelStyle {
                     .foregroundColor(isOn ? Colors.primary : Color(.tertiaryLabel))
 
                 if showNavigationIndicator {
-                    Image(systemName: "chevron.forward")
-                        .foregroundColor(Color(.secondaryLabel))
+                    Image(systemName: SFSymbolName.chevronForward)
+                        .foregroundColor(Color(.tertiaryLabel))
+                        .font(.body.weight(.semibold))
                 }
             }
             .bottomDivider(showSeparator: showSeparator)

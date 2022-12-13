@@ -24,13 +24,8 @@ import Nimble
 import Pharmacy
 import XCTest
 
-class PharmacySearchTests: XCTestCase {
+class PharmacySearchDomainTests: XCTestCase {
     let testScheduler = DispatchQueue.test
-    let mockPharmacyRepository = MockPharmacyRepository(
-        searchRemote: Just(PharmacyLocation.Dummies.pharmacies)
-            .setFailureType(to: PharmacyRepositoryError.self)
-            .eraseToAnyPublisher()
-    )
 
     typealias TestStore = ComposableArchitecture.TestStore<
         PharmacySearchDomain.State,
@@ -39,7 +34,7 @@ class PharmacySearchTests: XCTestCase {
         PharmacySearchDomain.Action,
         PharmacySearchDomain.Environment
     >
-    var store: TestStore!
+
     // For tests we can lower the delay for search start
     var delaySearchStart: DispatchQueue.SchedulerTimeType.Stride = 0.1
     var uiApplicationMock: UIApplicationOpenURLMock!
@@ -53,20 +48,19 @@ class PharmacySearchTests: XCTestCase {
     }
 
     override func tearDownWithError() throws {
-        store = nil
-
         try super.tearDownWithError()
     }
 
-    func testStore(for state: PharmacySearchDomain.State) -> TestStore {
+    func testStore(
+        for state: PharmacySearchDomain.State,
+        pharmacyRepository: PharmacyRepository = MockPharmacyRepository()
+    ) -> TestStore {
         TestStore(
             initialState: state,
             reducer: PharmacySearchDomain.reducer,
             environment: PharmacySearchDomain.Environment(
                 schedulers: Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler()),
-                pharmacyRepository: pharmacyRepository(
-                    with: state.pharmacies.map(\.pharmacyLocation)
-                ),
+                pharmacyRepository: pharmacyRepository,
                 locationManager: .unimplemented(),
                 fhirDateFormatter: FHIRDateFormatter.shared,
                 openHoursCalculator: PharmacyOpenHoursCalculator(),
@@ -81,40 +75,32 @@ class PharmacySearchTests: XCTestCase {
         )
     }
 
-    private func pharmacyRepository(with pharmacies: [PharmacyLocation]) -> MockPharmacyRepository {
-        let pharmacyPublisher = Just<[PharmacyLocation]>(pharmacies)
-            .setFailureType(to: PharmacyRepositoryError.self)
-            .eraseToAnyPublisher()
-        let savePublisher = Just(true)
-            .setFailureType(to: PharmacyRepositoryError.self)
-            .eraseToAnyPublisher()
-        return MockPharmacyRepository(
-            searchRemote: pharmacyPublisher,
-            savePharmacies: savePublisher
-        )
-    }
-
     func testSearchForPharmacies() {
         // given
-        store = testStore(for: TestData.state)
+        let mockPharmacyRepo = MockPharmacyRepository(
+            searchRemote: Just(TestData.pharmacies)
+                .setFailureType(to: PharmacyRepositoryError.self)
+                .eraseToAnyPublisher()
+        )
+        let sut = testStore(for: TestData.stateWithStartView, pharmacyRepository: mockPharmacyRepo)
         let testSearchText = "Apo"
         let expected: Result<[PharmacyLocation], PharmacyRepositoryError> = .success(TestData.pharmacies)
 
         searchHistoryMock.historyItemsReturnValue = []
 
         // when search text changes to valid search term...
-        store.send(.searchTextChanged(testSearchText)) { state in
+        sut.send(.searchTextChanged(testSearchText)) { state in
             // ...expect it to be stored
             state.searchText = testSearchText
         }
         // when user hits Enter on keyboard start search...
-        store.send(.performSearch) { state in
+        sut.send(.performSearch) { state in
             // ...expect a search request to run
             state.searchState = .searchRunning
         }
         testScheduler.advance()
         // when search request is done...
-        store.receive(.pharmaciesReceived(expected)) { state in
+        sut.receive(.pharmaciesReceived(expected)) { state in
             // expect it to deliver successful & results...
             state.searchState = .searchResultOk
         }
@@ -122,26 +108,31 @@ class PharmacySearchTests: XCTestCase {
 
     func testSearchForPharmaciesEmptyResult() {
         // given
-        store = testStore(for: TestData.stateEmpty)
+        let mockPharmacyRepo = MockPharmacyRepository(
+            searchRemote: Just([])
+                .setFailureType(to: PharmacyRepositoryError.self)
+                .eraseToAnyPublisher()
+        )
+        let sut = testStore(for: TestData.stateEmpty, pharmacyRepository: mockPharmacyRepo)
         let testSearchText = "Apodfdfd"
         let expected: Result<[PharmacyLocation], PharmacyRepositoryError> = .success([])
 
         searchHistoryMock.historyItemsReturnValue = []
 
         // when search text changes to valid search term...
-        store.send(.searchTextChanged(testSearchText)) { state in
+        sut.send(.searchTextChanged(testSearchText)) { state in
             // ...expect it to be stored
             state.searchText = testSearchText
         }
         // when user hits Enter on keyboard start search...
-        store.send(.performSearch) { state in
+        sut.send(.performSearch) { state in
             // ...expect a search request to run
             state.searchState = .searchRunning
         }
         testScheduler.advance()
         expect(self.searchHistoryMock.addHistoryItemReceivedItem).to(equal(testSearchText))
         // when search request is done...
-        store.receive(.pharmaciesReceived(expected)) { state in
+        sut.receive(.pharmaciesReceived(expected)) { state in
             // expect it to be empty...
             state.searchState = .searchResultEmpty
         }
@@ -149,50 +140,134 @@ class PharmacySearchTests: XCTestCase {
 
     func testSearchForPharmaciesWithLocation() {
         // given
-        store = testStore(for: TestData.stateWithLocation)
+        let mockPharmacyRepo = MockPharmacyRepository(
+            searchRemote: Just(TestData.pharmaciesWithLocations)
+                .setFailureType(to: PharmacyRepositoryError.self)
+                .eraseToAnyPublisher()
+        )
+        let sut = testStore(for: TestData.stateWithLocation, pharmacyRepository: mockPharmacyRepo)
         let expected: Result<[PharmacyLocation], PharmacyRepositoryError> = .success(TestData.pharmaciesWithLocations)
 
         searchHistoryMock.historyItemsReturnValue = []
 
         // when user hits Location button start search...
-        store.send(.performSearch) { state in
+        sut.send(.performSearch) { state in
             // ...expect a search request to run
             state.searchState = .searchRunning
         }
         testScheduler.advance()
         // when search request is done...
-        store.receive(.pharmaciesReceived(expected)) { state in
+        sut.receive(.pharmaciesReceived(expected)) { state in
             // expect it to deliver successful & results...
             state.searchState = .searchResultOk
         }
     }
 
-    func testRequestLocationOnAppearWhenLocationAuthorizationAlreadyGranted() {
-        var didRequestInUseAuthorization = false
-        let sut = testStore(for: TestData.stateWithLocation)
-        sut.environment.locationManager = .unimplemented(
-            authorizationStatus: { .authorizedWhenInUse },
-            create: { _ in Effect<LocationManager.Action, Never>.none },
-            locationServicesEnabled: { true },
-            requestWhenInUseAuthorization: { _ in
-                .fireAndForget { didRequestInUseAuthorization = true }
-            }
-        )
+    func testStartView_loadLocalPharmacies_onAppear_Success() {
+        let state = TestData.stateWithStartView
+        let storedPharmacies = TestData.pharmacies
+        let mockPharmacyRepo = MockPharmacyRepository(stored: storedPharmacies)
+        let sut = testStore(for: state, pharmacyRepository: mockPharmacyRepo)
         searchHistoryMock.historyItemsReturnValue = []
 
         sut.send(.onAppear)
-
-        sut.send(.quickSearch(filters: [PharmacySearchFilterDomain.PharmacyFilterOption.currentLocation])) { state in
-            state.pharmacyFilterOptions = [PharmacySearchFilterDomain.PharmacyFilterOption.currentLocation]
-            state.searchState = .searchAfterLocalizationWasAuthorized
+        testScheduler.advance()
+        sut.receive(.loadLocalPharmaciesReceived(.success(storedPharmacies))) {
+            $0.localPharmacies = storedPharmacies
+                .map { PharmacyLocationViewModel(pharmacy: $0, referenceDate: TestData.openHoursTestReferenceDate) }
         }
-        testScheduler.run()
-        sut.receive(.requestLocation)
-        expect(didRequestInUseAuthorization) == true
+    }
+
+    func testStartView_selectingLocalPharmacies_toLoadAndNavigateToPharmacy_Success() {
+        let state = TestData.stateWithStartView
+        let selectedPharmacy = PharmacyLocation.Fixtures.pharmacyA
+        let mockPharmacyRepo = MockPharmacyRepository(
+            loadRemoteAndSave: Just(selectedPharmacy).setFailureType(to: PharmacyRepositoryError.self)
+                .eraseToAnyPublisher()
+        )
+        let sut = testStore(for: state, pharmacyRepository: mockPharmacyRepo)
+        searchHistoryMock.historyItemsReturnValue = []
+
+        sut.send(.loadAndNavigateToPharmacy(selectedPharmacy)) {
+            $0.searchState = .startView(loading: true)
+            $0.selectedPharmacy = selectedPharmacy
+        }
+        testScheduler.advance()
+        sut.receive(.loadAndNavigateToPharmacyReceived(.success(selectedPharmacy))) {
+            $0.searchState = .startView(loading: false)
+            $0.selectedPharmacy = nil
+            $0.route = .pharmacy(PharmacyDetailDomain.State(
+                erxTasks: state.erxTasks,
+                pharmacyViewModel: PharmacyLocationViewModel(
+                    pharmacy: selectedPharmacy,
+                    referenceDate: TestData.openHoursTestReferenceDate
+                )
+            ))
+        }
+    }
+
+    func testStartView_selectingLocalPharmacies_toLoadAndNavigateToPharmacy_Failure() {
+        let state = TestData.stateWithStartView
+        let selectedPharmacy = PharmacyLocation.Fixtures.pharmacyA
+        let expectedError = PharmacyRepositoryError.remote(.fhirClient(.inconsistentResponse))
+        let mockPharmacyRepo = MockPharmacyRepository(
+            loadRemoteAndSave: Fail(error: expectedError).eraseToAnyPublisher()
+        )
+        let sut = testStore(for: state, pharmacyRepository: mockPharmacyRepo)
+        searchHistoryMock.historyItemsReturnValue = []
+
+        sut.send(.loadAndNavigateToPharmacy(selectedPharmacy)) {
+            $0.searchState = .startView(loading: true)
+            $0.selectedPharmacy = selectedPharmacy
+        }
+        testScheduler.advance()
+        sut.receive(.loadAndNavigateToPharmacyReceived(.failure(expectedError))) {
+            $0.searchState = .startView(loading: false)
+            $0.selectedPharmacy = nil
+            $0.route = .alert(AlertState(for: expectedError))
+        }
+    }
+
+    func testStartView_selectingLocalPharmacies_toLoadAndNavigateToPharmacy_NotFound() {
+        let pharmacyViewModels = TestData.pharmacies.map { pharmacies in
+            PharmacyLocationViewModel(
+                pharmacy: pharmacies,
+                referenceLocation: nil,
+                referenceDate: TestData.openHoursTestReferenceDate
+            )
+        }
+        let state = PharmacySearchDomain.State(
+            erxTasks: [ErxTask.Fixtures.erxTaskReady],
+            searchText: "",
+            pharmacies: pharmacyViewModels,
+            localPharmacies: pharmacyViewModels,
+            searchState: .startView(loading: false)
+        )
+        let selectedPharmacy = pharmacyViewModels.last!
+        let expectedError = PharmacyRepositoryError.remote(.notFound)
+        let mockPharmacyRepo = MockPharmacyRepository(
+            loadRemoteAndSave: Fail(error: expectedError).eraseToAnyPublisher(),
+            deletePharmacies: Just(true).setFailureType(to: PharmacyRepositoryError.self).eraseToAnyPublisher()
+        )
+        let sut = testStore(for: state, pharmacyRepository: mockPharmacyRepo)
+        searchHistoryMock.historyItemsReturnValue = []
+
+        sut.send(.loadAndNavigateToPharmacy(selectedPharmacy.pharmacyLocation)) {
+            $0.searchState = .startView(loading: true)
+            $0.selectedPharmacy = selectedPharmacy.pharmacyLocation
+        }
+        testScheduler.advance()
+        sut.receive(.loadAndNavigateToPharmacyReceived(.failure(expectedError))) {
+            $0.searchState = .startView(loading: false)
+            $0.selectedPharmacy = nil
+            $0.localPharmacies = pharmacyViewModels.dropLast()
+            $0.route = .alert(PharmacySearchDomain.AlertStates.alert(for: expectedError))
+        }
+        expect(mockPharmacyRepo.deleteCallsCount) == 1
     }
 }
 
-extension PharmacySearchTests {
+extension PharmacySearchDomainTests {
     /// Test-Data values for `PharmacyLocation`
     public enum TestData {
         /// Test-Date for opening/closing state
@@ -210,7 +285,7 @@ extension PharmacySearchTests {
         }
 
         /// Test-Data PharmacyDomain.State
-        public static let state =
+        public static let stateWithStartView =
             PharmacySearchDomain.State(
                 erxTasks: [ErxTask.Fixtures.erxTaskReady],
                 searchText: "",
@@ -220,7 +295,8 @@ extension PharmacySearchTests {
                         referenceLocation: nil,
                         referenceDate: TestData.openHoursTestReferenceDate
                     )
-                }
+                },
+                searchState: .startView(loading: false)
             )
         /// Test-Data PharmacyDomain.State
         public static let stateEmpty =
@@ -281,11 +357,12 @@ extension PharmacySearchTests {
             ),
             address: address1,
             telecom: telecom,
+            isFavorite: true,
             hoursOfOperation: [
                 PharmacyLocation.HoursOfOperation(
                     daysOfWeek: ["mon", "tue"],
                     openingTime: "08:00:00",
-                    closingTime: "07:00:00"
+                    closingTime: "12:00:00"
                 ),
             ]
         )
@@ -303,7 +380,7 @@ extension PharmacySearchTests {
                 PharmacyLocation.HoursOfOperation(
                     daysOfWeek: ["wed"],
                     openingTime: "08:00:00",
-                    closingTime: "07:00:00"
+                    closingTime: "12:00:00"
                 ),
             ]
         )

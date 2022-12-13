@@ -65,9 +65,9 @@ struct OrderCellView: View {
                         )
                     }
 
-                    Image(systemName: "chevron.forward")
-                        .foregroundColor(Color(.secondaryLabel))
-                        .font(Font.body.weight(.semibold))
+                    Image(systemName: SFSymbolName.chevronForward)
+                        .foregroundColor(Color(.tertiaryLabel))
+                        .font(.body.weight(.semibold))
                 }
                 .padding(.horizontal)
 

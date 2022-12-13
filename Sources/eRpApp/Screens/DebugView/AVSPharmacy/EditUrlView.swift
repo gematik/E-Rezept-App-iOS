@@ -16,6 +16,8 @@
 //  
 //
 
+#if ENABLE_DEBUG_VIEW
+
 import SwiftUI
 
 struct EditUrlView: View {
@@ -274,3 +276,5 @@ struct EditUrlView_Previews: PreviewProvider {
         }
     }
 }
+
+#endif
