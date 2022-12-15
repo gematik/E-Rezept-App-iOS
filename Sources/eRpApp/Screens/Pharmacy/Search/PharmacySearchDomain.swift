@@ -52,27 +52,7 @@ enum PharmacySearchDomain: Equatable {
         case selectProfile
         case pharmacy(PharmacyDetailDomain.State)
         case filter(PharmacySearchFilterDomain.State)
-        case alert(AlertState<Action>)
-
-        enum Tag: Int {
-            case selectProfile
-            case pharmacy
-            case filter
-            case alert
-        }
-
-        var tag: Tag {
-            switch self {
-            case .selectProfile:
-                return .selectProfile
-            case .pharmacy:
-                return .pharmacy
-            case .filter:
-                return .filter
-            case .alert:
-                return .alert
-            }
-        }
+        case alert(ErpAlertState<Action>)
     }
 
     /// Same screen shows different UI elements based on the current state of the search
@@ -220,7 +200,7 @@ enum PharmacySearchDomain: Equatable {
             }
             return .none
         case let .loadLocalPharmaciesReceived(.failure(error)):
-            state.route = .alert(AlertState(for: error))
+            state.route = .alert(.init(for: error))
             return .none
         // Search
         case let .searchTextChanged(changedText):
@@ -282,7 +262,7 @@ enum PharmacySearchDomain: Equatable {
                     PharmacyDetailDomain.State(erxTasks: state.erxTasks, pharmacyViewModel: viewModel)
                 )
             case let .failure(error):
-                state.route = .alert(AlertStates.alert(for: error))
+                state.route = .alert(.init(for: error))
                 if PharmacyRepositoryError.remote(.notFound) == error,
                    let pharmacyLocation = state.selectedPharmacy {
                     if let index = state.localPharmacies
@@ -403,19 +383,6 @@ enum PharmacySearchDomain: Equatable {
             return .none
         }
     }
-
-    enum AlertStates {
-        static func alert(for error: PharmacyRepositoryError) -> AlertState<Action> {
-            guard let message = error.recoverySuggestion else {
-                return AlertState(for: error)
-            }
-            return AlertState(
-                title: TextState(error.localizedDescription),
-                message: TextState(message),
-                dismissButton: .default(TextState(L10n.alertBtnOk), action: .send(.setNavigation(tag: .none)))
-            )
-        }
-    }
 }
 
 extension PharmacySearchDomain.Environment {
@@ -487,8 +454,8 @@ extension PharmacySearchDomain {
             )
         }
 
-    static var locationPermissionAlertState: AlertState<Action> = {
-        AlertState(
+    static var locationPermissionAlertState: ErpAlertState<Action> = {
+        .init(
             title: TextState(L10n.phaSearchTxtLocationAlertTitle),
             message: TextState(L10n.phaSearchTxtLocationAlertMessage),
             primaryButton: .default(

@@ -137,7 +137,8 @@ final class PrescriptionDetailDomainTests: XCTestCase {
             state.isDeleting = false
             state.route = .alert(
                 PrescriptionDetailDomain.deleteFailedAlertState(
-                    ErxRepositoryError.local(.notImplemented).localizedDescriptionWithErrorList
+                    error: ErxRepositoryError.local(.notImplemented),
+                    localizedError: ErxRepositoryError.local(.notImplemented).localizedDescriptionWithErrorList
                 )
             )
         }

@@ -189,7 +189,7 @@ struct PrescriptionFullDetailView: View {
                         .accessibilityElement(children: .contain)
                         .accessibility(identifier: A11y.prescriptionDetails.prscDtlTxtMedInfoList)
 
-                        // Prescriped medication details
+                        // Prescribed medication details
                         Text(L10n.prscFdTxtDetailsPrescripedMedicationTitle.text)
                             .font(.title2.weight(.bold))
                             .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlTxtTitle)

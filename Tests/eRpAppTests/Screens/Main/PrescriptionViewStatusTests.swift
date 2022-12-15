@@ -25,7 +25,8 @@ final class PrescriptionViewStatusTests: XCTestCase {
     func task(status: ErxTask.Status = .ready,
               expiresOn: String? = DemoDate.createDemoDate(.tomorrow),
               acceptedUntil: String? = DemoDate.createDemoDate(.twentyEightDaysAhead),
-              redeemedOn: String? = nil) -> ErxTask {
+              redeemedOn: String? = nil,
+              multiplePrescription: ErxTask.MultiplePrescription? = nil) -> ErxTask {
         ErxTask(identifier: "2390f983-1e67-11b2-8555-63bf44e44fb8",
                 status: status,
                 accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
@@ -38,6 +39,7 @@ final class PrescriptionViewStatusTests: XCTestCase {
                 noctuFeeWaiver: true,
                 substitutionAllowed: true,
                 medication: medication,
+                multiplePrescription: multiplePrescription,
                 auditEvents: ErxAuditEvent.Fixtures.auditEvents)
     }
 
@@ -124,5 +126,22 @@ final class PrescriptionViewStatusTests: XCTestCase {
         let sut = GroupedPrescription.Prescription(erxTask: task)
         // then
         expect(sut.viewStatus).to(equal(.undefined))
+    }
+
+    func testTaskIsMultiplePrescriptionForLaterDate() {
+        // given
+        let startDate = "2323-01-26T15:23:21+00:00"
+        let multiPrescription = ErxTask.MultiplePrescription(
+            mark: true,
+            numbering: 2,
+            totalNumber: 4,
+            startPeriod: startDate,
+            endPeriod: "2323-04-26T15:23:21+00:00"
+        )
+        let task = task(status: .ready, multiplePrescription: multiPrescription)
+        // when
+        let sut = GroupedPrescription.Prescription(erxTask: task)
+        // then
+        expect(sut.viewStatus).to(equal(.redeem(at: "Einlösbar ab 26.01.2323")))
     }
 }

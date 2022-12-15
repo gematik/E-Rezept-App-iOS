@@ -40,24 +40,7 @@ enum ProfilesDomain {
     enum Route: Equatable {
         case editProfile(EditProfileDomain.State)
         case newProfile(NewProfileDomain.State)
-        case alert(AlertState<Action>)
-
-        enum Tag: Int {
-            case details
-            case newProfile
-            case alert
-        }
-
-        var tag: Tag {
-            switch self {
-            case .editProfile:
-                return .details
-            case .newProfile:
-                return .newProfile
-            case .alert:
-                return .alert
-            }
-        }
+        case alert(ErpAlertState<Action>)
     }
 
     struct State: Equatable {
@@ -117,7 +100,7 @@ enum ProfilesDomain {
         case .unregisterListener:
             return .cancel(id: Token.loadProfiles)
         case let .loadReceived(.failure(error)):
-            state.route = .alert(AlertStates.for(error))
+            state.route = .alert(.init(for: error, title: TextState(L10n.errTxtDatabaseAccess)))
             return .none
         case let .loadReceived(.success(profiles)):
             state.profiles = profiles
@@ -181,18 +164,6 @@ enum ProfilesDomain {
                   userDataStore: $0.userDataStore,
                   profileDataStore: $0.profileDataStore)
         }
-}
-
-extension ProfilesDomain {
-    enum AlertStates {
-        typealias Action = ProfilesDomain.Action
-
-        static func `for`(_ error: LocalizedError & CodedError) -> AlertState<Action> {
-            AlertState(title: TextState(L10n.errTxtDatabaseAccess),
-                       message: TextState(error.localizedDescriptionWithErrorList),
-                       dismissButton: .default(TextState(L10n.alertBtnOk)))
-        }
-    }
 }
 
 extension Profile.Color {

@@ -117,7 +117,7 @@ final class RegisteredDevicesDomainTests: XCTestCase {
         testScheduler.run()
 
         store.receive(.loadDevicesReceived(.failure(RegisteredDevicesServiceError.missingToken))) { state in
-            state.route = .alert(AlertState(for: RegisteredDevicesServiceError.missingToken))
+            state.route = .alert(.init(for: RegisteredDevicesServiceError.missingToken))
         }
 
         store.receive(.deviceIdReceived(nil))
@@ -179,7 +179,7 @@ final class RegisteredDevicesDomainTests: XCTestCase {
         expect(self.mockRegisteredDevicesService.deleteDeviceOfCalled).to(beTrue())
 
         store.receive(.deleteDeviceReceived(.failure(RegisteredDevicesServiceError.missingToken))) { state in
-            state.route = .alert(RegisteredDevicesDomain.AlertStates.for(RegisteredDevicesServiceError.missingToken))
+            state.route = .alert(.init(for: RegisteredDevicesServiceError.missingToken))
         }
     }
 }

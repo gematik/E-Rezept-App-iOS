@@ -150,6 +150,7 @@ struct CardWallReadCardView: View {
                         .extract(from:)),
                 dismiss: .setNavigation(tag: .none)
             )
+            .keyboardShortcut(.defaultAction) // workaround: this makes the alert's primary button bold
             .onAppear {
                 viewStore.send(.getChallenge)
             }

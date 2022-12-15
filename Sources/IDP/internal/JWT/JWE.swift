@@ -220,8 +220,8 @@ extension JWK {
         let rangeX: Range<Data.Index> = 1 ..< 33
         let rangeY: Range<Data.Index> = 33 ..< 65
 
-        guard let xCoordinate = raw.subdata(in: rangeX).encodeBase64urlsafe().utf8string,
-              let yCoordinate = raw.subdata(in: rangeY).encodeBase64urlsafe().utf8string else {
+        guard let xCoordinate = try raw().subdata(in: rangeX).encodeBase64urlsafe().utf8string,
+              let yCoordinate = try raw().subdata(in: rangeY).encodeBase64urlsafe().utf8string else {
             throw JWE.Error.encodingError
         }
 

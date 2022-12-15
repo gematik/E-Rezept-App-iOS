@@ -224,7 +224,7 @@ class PharmacySearchDomainTests: XCTestCase {
         sut.receive(.loadAndNavigateToPharmacyReceived(.failure(expectedError))) {
             $0.searchState = .startView(loading: false)
             $0.selectedPharmacy = nil
-            $0.route = .alert(AlertState(for: expectedError))
+            $0.route = .alert(.init(for: expectedError))
         }
     }
 
@@ -261,7 +261,7 @@ class PharmacySearchDomainTests: XCTestCase {
             $0.searchState = .startView(loading: false)
             $0.selectedPharmacy = nil
             $0.localPharmacies = pharmacyViewModels.dropLast()
-            $0.route = .alert(PharmacySearchDomain.AlertStates.alert(for: expectedError))
+            $0.route = .alert(.init(for: expectedError))
         }
         expect(mockPharmacyRepo.deleteCallsCount) == 1
     }

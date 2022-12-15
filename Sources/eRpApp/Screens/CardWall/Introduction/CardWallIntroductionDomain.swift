@@ -35,26 +35,6 @@ enum CardWallIntroductionDomain {
         case fasttrack(CardWallExtAuthSelectionDomain.State)
         case egk
         case notCapable
-
-        enum Tag: Int {
-            case can
-            case fasttrack
-            case egk
-            case notCapable
-        }
-
-        var tag: Tag {
-            switch self {
-            case .can:
-                return .can
-            case .fasttrack:
-                return .fasttrack
-            case .egk:
-                return .egk
-            case .notCapable:
-                return .notCapable
-            }
-        }
     }
 
     struct State: Equatable {

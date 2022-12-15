@@ -74,6 +74,7 @@ enum CreatePasswordDomain {
         case setPasswordB(String)
         case comparePasswords
         case saveButtonTapped
+        case enterButtonTapped
         case closeAfterPasswordSaved
     }
 
@@ -111,6 +112,12 @@ enum CreatePasswordDomain {
                 state.showPasswordErrorMessage = false
             }
             return .none
+
+        case .enterButtonTapped:
+            return Effect(value: .comparePasswords)
+                .delay(for: timeout, scheduler: environment.schedulers.main.animation())
+                .eraseToEffect()
+                .cancellable(id: Token.comparePasswords, cancelInFlight: true)
 
         case .saveButtonTapped:
             guard state.hasValidPasswordEntries else {

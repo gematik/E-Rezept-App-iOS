@@ -36,21 +36,7 @@ enum RegisteredDevicesDomain {
 
     enum Route: Equatable {
         case cardWall(IDPCardWallDomain.State)
-        case alert(AlertState<Action>)
-
-        enum Tag {
-            case cardWall
-            case alert
-        }
-
-        var tag: Tag {
-            switch self {
-            case .cardWall:
-                return .cardWall
-            case .alert:
-                return .alert
-            }
-        }
+        case alert(ErpAlertState<Action>)
     }
 
     struct State: Equatable {
@@ -147,7 +133,7 @@ enum RegisteredDevicesDomain {
             )
             return .none
         case let .loadDevicesReceived(.failure(error)):
-            state.route = .alert(AlertState(for: error))
+            state.route = .alert(.init(for: error))
             return .none
         case let .deviceIdReceived(keyIdentifier):
             state.thisDeviceKeyIdentifier = keyIdentifier
@@ -177,7 +163,7 @@ enum RegisteredDevicesDomain {
             return environment.deleteDevice(device, of: state.profileId)
                 .eraseToEffect()
         case let .deleteDeviceReceived(.failure(error)):
-            state.route = .alert(AlertStates.for(error))
+            state.route = .alert(.init(for: error))
             return .none
         case .deleteDeviceReceived(.success):
             return environment.getRegisteredDevices(profileId: state.profileId)
@@ -237,18 +223,6 @@ extension RegisteredDevicesDomain.Environment {
             .map(RegisteredDevicesDomain.Action.deleteDeviceReceived)
             .receive(on: schedulers.main)
             .eraseToEffect()
-    }
-}
-
-extension RegisteredDevicesDomain {
-    enum AlertStates {
-        typealias Action = RegisteredDevicesDomain.Action
-
-        static func `for`(_ error: LocalizedError & CodedError) -> AlertState<Action> {
-            AlertState(title: TextState(error.localizedDescriptionWithErrorList),
-                       message: error.recoverySuggestion.map(TextState.init),
-                       dismissButton: .default(TextState(L10n.alertBtnOk)))
-        }
     }
 }
 

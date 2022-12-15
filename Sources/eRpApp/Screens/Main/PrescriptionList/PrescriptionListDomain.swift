@@ -24,7 +24,7 @@ import Foundation
 import HTTPClient
 import IDP
 
-enum GroupedPrescriptionListDomain {
+enum PrescriptionListDomain {
     typealias Store = ComposableArchitecture.Store<State, Action>
     typealias Reducer = ComposableArchitecture.Reducer<State, Action, Environment>
 
@@ -56,8 +56,6 @@ enum GroupedPrescriptionListDomain {
         }
 
         let loginHandler: LoginHandler
-        let signatureProvider: SecureEnclaveSignatureProvider
-        let userSessionProvider: UserSessionProvider
     }
 
     struct State: Equatable {
@@ -149,7 +147,7 @@ enum GroupedPrescriptionListDomain {
         MainViewHintsDomain.reducer
             .pullback(
                 state: \.hintState,
-                action: /GroupedPrescriptionListDomain.Action.hint(action:)
+                action: /PrescriptionListDomain.Action.hint(action:)
             ) { globalEnvironment in
                 MainViewHintsDomain.Environment(
                     router: globalEnvironment.router,
@@ -161,8 +159,8 @@ enum GroupedPrescriptionListDomain {
             }
 }
 
-extension GroupedPrescriptionListDomain.Environment {
-    typealias Action = GroupedPrescriptionListDomain.Action
+extension PrescriptionListDomain.Environment {
+    typealias Action = PrescriptionListDomain.Action
 
     func cardWall() -> AnyPublisher<CardWallIntroductionDomain.State, Never> {
         let hideCardWallIntro = userSession.localUserStore.hideCardWallIntro
@@ -208,34 +206,35 @@ extension GroupedPrescriptionListDomain.Environment {
             .eraseToEffect()
     }
 
-    func refreshOrShowCardWall() -> Effect<GroupedPrescriptionListDomain.Action, Never> {
+    func refreshOrShowCardWall() -> Effect<PrescriptionListDomain.Action, Never> {
         loginHandler
             .isAuthenticatedOrAuthenticate()
             .first()
             .receive(on: schedulers.main.animation())
-            .flatMap { isAuthenticated -> Effect<GroupedPrescriptionListDomain.Action, Never> in
+            .flatMap { isAuthenticated -> Effect<PrescriptionListDomain.Action, Never> in
                 // [REQ:gemSpec_eRp_FdV:A_20167,A_20172] no token/not authorized, show authenticator module
                 if Result.success(false) == isAuthenticated {
                     return cardWall()
                         .receive(on: schedulers.main)
-                        .map(GroupedPrescriptionListDomain.Action.showCardWallReceived)
+                        .map(PrescriptionListDomain.Action.showCardWallReceived)
                         .eraseToEffect()
                 }
                 if case let Result.failure(error) = isAuthenticated {
-                    return Just(GroupedPrescriptionListDomain.Action.errorReceived(error))
+                    return Just(PrescriptionListDomain.Action.errorReceived(error))
                         .eraseToEffect()
                 } else {
                     return groupedPrescriptionStore.loadRemoteAndSave(for: locale)
                         .receive(on: schedulers.main)
                         .first()
                         .map { value in
-                            GroupedPrescriptionListDomain.Action
+                            PrescriptionListDomain.Action
                                 .loadRemoteGroupedPrescriptionsAndSaveReceived(LoadingState.value(value))
                         }
                         .catchUnauthorizedToShowCardwall(in: self)
                         .catch { error in
-                            Just(GroupedPrescriptionListDomain.Action
-                                .loadRemoteGroupedPrescriptionsAndSaveReceived(LoadingState.error(error)))
+                            Just(PrescriptionListDomain.Action
+                                .loadRemoteGroupedPrescriptionsAndSaveReceived(LoadingState
+                                    .error(error)))
                         }
                         .eraseToEffect()
                 }
@@ -244,7 +243,7 @@ extension GroupedPrescriptionListDomain.Environment {
     }
 }
 
-extension Publisher where Output == GroupedPrescriptionListDomain.Action, Failure == ErxRepositoryError {
+extension Publisher where Output == PrescriptionListDomain.Action, Failure == ErxRepositoryError {
     /// Catches "forbidden"/403 server response to show card wall. The acutual invalidation of any token is communicated
     /// within IDPInterceptor.
     ///
@@ -252,11 +251,11 @@ extension Publisher where Output == GroupedPrescriptionListDomain.Action, Failur
     /// - Returns: A Publisher that catches 403 server responses and transforms them into `showCardWallReceived`
     /// actions.
     func catchUnauthorizedToShowCardwall(
-        in environment: GroupedPrescriptionListDomain.Environment
+        in environment: PrescriptionListDomain.Environment
     )
-        -> AnyPublisher<GroupedPrescriptionListDomain.Action, ErxRepositoryError> {
+        -> AnyPublisher<PrescriptionListDomain.Action, ErxRepositoryError> {
         tryCatch { (error: ErxRepositoryError) -> AnyPublisher<
-            GroupedPrescriptionListDomain.Action,
+            PrescriptionListDomain.Action,
             ErxRepositoryError
         > in
         if case let ErxRepositoryError
@@ -265,7 +264,7 @@ extension Publisher where Output == GroupedPrescriptionListDomain.Action, Failur
             urlError.code.rawValue == HTTPStatusCode.unauthorized.rawValue {
             return environment.cardWall()
                 .receive(on: environment.schedulers.main.animation())
-                .map(GroupedPrescriptionListDomain.Action.showCardWallReceived)
+                .map(PrescriptionListDomain.Action.showCardWallReceived)
                 .setFailureType(to: ErxRepositoryError.self)
                 .eraseToAnyPublisher()
         }
@@ -276,7 +275,7 @@ extension Publisher where Output == GroupedPrescriptionListDomain.Action, Failur
     }
 }
 
-extension GroupedPrescriptionListDomain {
+extension PrescriptionListDomain {
     enum Dummies {
         static let demoSessionContainer = DummyUserSessionContainer()
         static let state = State()
@@ -296,9 +295,7 @@ extension GroupedPrescriptionListDomain {
             ),
             schedulers: Schedulers(),
             fhirDateFormatter: FHIRDateFormatter.shared,
-            loginHandler: DummyLoginHandler(),
-            signatureProvider: DummySecureEnclaveSignatureProvider(),
-            userSessionProvider: DummyUserSessionProvider()
+            loginHandler: DummyLoginHandler()
         )
         static let store = Store(initialState: state,
                                  reducer: domainReducer,

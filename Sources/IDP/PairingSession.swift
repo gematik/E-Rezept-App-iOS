@@ -105,7 +105,7 @@ extension BrainpoolP256r1.Verify.PublicKey {
                     ]
                 )),
 
-                try x962Value.asn1bitStringEncode(),
+                try x962Value().asn1bitStringEncode(),
             ]
         )
         return try create(tag: .universal(.sequence), data: asn1).serialize()

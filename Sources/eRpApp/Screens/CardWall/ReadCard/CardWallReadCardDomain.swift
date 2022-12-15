@@ -25,6 +25,14 @@ import IDP
 import NFCCardReaderProvider
 import UIKit
 
+enum CardWallReadCardHelpDomain {
+    enum State: Int {
+        case first
+        case second
+        case third
+    }
+}
+
 enum CardWallReadCardDomain {
     typealias Store = ComposableArchitecture.Store<State, Action>
     typealias Reducer = ComposableArchitecture.Reducer<State, Action, Environment>
@@ -40,22 +48,8 @@ enum CardWallReadCardDomain {
     }
 
     enum Route: Equatable {
-        case alert(AlertState<Action>)
-        case help(Int)
-
-        enum Tag: Int {
-            case alert
-            case help
-        }
-
-        var tag: Tag {
-            switch self {
-            case .alert:
-                return .alert
-            case .help:
-                return .help
-            }
-        }
+        case alert(ErpAlertState<Action>)
+        case help(CardWallReadCardHelpDomain.State)
     }
 
     struct State: Equatable {
@@ -79,7 +73,7 @@ enum CardWallReadCardDomain {
         case saveError(LocalStoreError)
         case openMail(String)
         case openHelpViewScreen
-        case updatePageIndex(index: Int)
+        case updatePageIndex(page: CardWallReadCardHelpDomain.State)
         case navigateToIntro
         case setNavigation(tag: Route.Tag?)
         case singleClose
@@ -209,11 +203,11 @@ enum CardWallReadCardDomain {
             }
             return .none
         case .openHelpViewScreen:
-            state.route = .help(0)
+            state.route = .help(.first)
             return .none
-        case let .updatePageIndex(index):
+        case let .updatePageIndex(page):
             guard state.route?.tag == .help else { return .none }
-            state.route = .help(index)
+            state.route = .help(page)
             return .none
         case .navigateToIntro:
             state.route = nil
@@ -233,72 +227,63 @@ extension CardWallReadCardDomain {
         typealias Action = CardWallReadCardDomain.Action
         typealias Error = CardWallReadCardDomain.State.Error
 
-        static var saveProfile: AlertState<Action> = {
-            AlertState(
-                title: TextState(L10n.cdwTxtRcAlertTitleSaveProfile),
-                message: TextState(L10n.cdwTxtRcAlertMessageSaveProfile),
-                dismissButton: .cancel(TextState(L10n.cdwBtnRcAlertSaveProfile))
-            )
-        }()
+        static var saveProfile: ErpAlertState<Action> = .info(AlertState(
+            title: TextState(L10n.cdwTxtRcAlertTitleSaveProfile),
+            message: TextState(L10n.cdwTxtRcAlertMessageSaveProfile),
+            dismissButton: .cancel(TextState(L10n.cdwBtnRcAlertSaveProfile))
+        ))
 
-        static func wrongCAN(_ error: Error) -> AlertState<Action> {
-            AlertState(
-                title: TextState(error.localizedDescriptionWithErrorList),
-                message: error.recoverySuggestion.map(TextState.init),
-                primaryButton: .default(TextState(L10n.cdwBtnRcCorrectCan), action: .send(.wrongCAN)),
-                secondaryButton: .cancel(TextState(L10n.cdwBtnRcAlertCancel), action: .send(.setNavigation(tag: .none)))
+        static func wrongCAN(_ error: State.Error) -> ErpAlertState<Action> {
+            ErpAlertState(
+                for: error,
+                primaryButton: .default(TextState(L10n.cdwBtnRcCorrectCan), action: .send(.wrongCAN))
             )
         }
 
         static var tagConnectionLostCount = 0
-        static func tagConnectionLost(_ error: CoreNFCError) -> AlertState<Action> {
+        static func tagConnectionLost(_ error: CoreNFCError) -> ErpAlertState<Action> {
             Self.tagConnectionLostCount += 1
             if tagConnectionLostCount <= 3 {
-                return AlertState(
-                    title: TextState(error.localizedDescription),
-                    message: TextState(error.recoverySuggestion ?? error.localizedDescription),
+                return ErpAlertState(
+                    for: error,
                     primaryButton: .default(TextState(L10n.cdwBtnRcHelp), action: .send(.openHelpViewScreen)),
                     secondaryButton: .cancel(.init(L10n.cdwBtnRcRetry), action: .send(.getChallenge))
                 )
             } else {
                 let report = createNfcReadingReport(with: error, commands: CommandLogger.commands)
-                return AlertState(
-                    title: TextState(L10n.cdwRcTxtErrorBadCardDescription),
-                    message: TextState(L10n.cdwRcTxtErrorBadCardRecovery),
+                return ErpAlertState(
+                    for: error,
                     primaryButton: .default(TextState(L10n.cdwBtnRcAlertReport), action: .send(.openMail(report))),
                     secondaryButton: .cancel(.init(L10n.cdwBtnRcRetry), action: .send(.getChallenge))
                 )
             }
         }
 
-        static func wrongPIN(_ error: Error) -> AlertState<Action> {
-            AlertState(
-                title: TextState(error.localizedDescription),
-                message: error.recoverySuggestion.map(TextState.init),
+        static func wrongPIN(_ error: Error) -> ErpAlertState<Action> {
+            ErpAlertState(
+                for: error,
                 primaryButton: .default(TextState(L10n.cdwBtnRcCorrectPin), action: .send(.wrongPIN)),
                 secondaryButton: .cancel(TextState(L10n.cdwBtnRcAlertCancel), action: .send(.setNavigation(tag: .none)))
             )
         }
 
-        static func alertFor(_ error: CodedError) -> AlertState<Action> {
-            AlertState(
-                title: TextState(error.localizedDescription),
-                message: TextState(error.recoverySuggestionWithErrorList),
-                dismissButton: .default(TextState(L10n.cdwBtnRcAlertClose), action: .send(.setNavigation(tag: .none)))
+        static func alertFor(_ error: CodedError) -> ErpAlertState<Action> {
+            ErpAlertState(
+                for: error,
+                primaryButton: .default(TextState(L10n.cdwBtnRcAlertClose), action: .send(.setNavigation(tag: .none)))
             )
         }
 
-        static func alertWithReportButton(error: CodedError) -> AlertState<Action> {
+        static func alertWithReportButton(error: CodedError) -> ErpAlertState<Action> {
             let report = createNfcReadingReport(with: error, commands: CommandLogger.commands)
-            return AlertState(
-                title: TextState(error.localizedDescription),
-                message: TextState(error.recoverySuggestionWithErrorList),
+            return ErpAlertState(
+                for: error,
                 primaryButton: .default(TextState(L10n.cdwBtnRcAlertReport), action: .send(.openMail(report))),
                 secondaryButton: .cancel(.init(L10n.cdwBtnRcRetry), action: .send(.getChallenge))
             )
         }
 
-        static func alert(for tagError: CoreNFCError) -> AlertState<CardWallReadCardDomain.Action>? {
+        static func alert(for tagError: CoreNFCError) -> ErpAlertState<CardWallReadCardDomain.Action>? {
             switch tagError {
             case .tagConnectionLost:
                 return CardWallReadCardDomain.AlertStates.tagConnectionLost(tagError)

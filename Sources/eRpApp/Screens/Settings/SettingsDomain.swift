@@ -32,23 +32,6 @@ enum SettingsDomain {
         case healthCardPasswordForgotPin(HealthCardPasswordDomain.State)
         case healthCardPasswordSetCustomPin(HealthCardPasswordDomain.State)
         case healthCardPasswordUnlockCard(HealthCardPasswordDomain.State)
-
-        enum Tag: Int {
-            case healthCardPasswordForgotPin
-            case healthCardPasswordSetCustomPin
-            case healthCardPasswordUnlockCard
-        }
-
-        var tag: Tag {
-            switch self {
-            case .healthCardPasswordUnlockCard:
-                return .healthCardPasswordUnlockCard
-            case .healthCardPasswordForgotPin:
-                return .healthCardPasswordForgotPin
-            case .healthCardPasswordSetCustomPin:
-                return .healthCardPasswordSetCustomPin
-            }
-        }
     }
 
     static func cleanup<T>() -> Effect<T, Never> {
@@ -198,7 +181,7 @@ enum SettingsDomain {
              .healthCardPasswordForgotPin(.readCard(.navigateToSettings)),
              .healthCardPasswordSetCustomPin(.readCard(.navigateToSettings)):
             state.route = nil
-            return cleanupSubDomains()
+            return HealthCardPasswordReadCardDomain.cleanup()
 
         case .healthCardPasswordUnlockCard,
              .healthCardPasswordForgotPin,

@@ -175,7 +175,7 @@ final class EditProfileDomainTests: XCTestCase {
 
         mainQueue.run()
         sut.receive(.updateProfileReceived(.failure(LocalStoreError.notImplemented))) { state in
-            state.route = .alert(EditProfileDomain.AlertStates.for(error))
+            state.route = .alert(.init(for: error))
         }
     }
 
@@ -534,7 +534,7 @@ extension EditProfileDomainTests {
             emoji: nil,
             color: .red,
             profileId: uuid,
-            route: .alert(EditProfileDomain.AlertStates.for(LocalStoreError.notImplemented))
+            route: .alert(.init(for: LocalStoreError.notImplemented))
         )
 
         static let profileWithDeleteConfirmation = EditProfileDomain.State(

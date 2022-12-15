@@ -221,6 +221,14 @@ public struct PharmacyLocation: Identifiable, Hashable, Equatable {
             }
         }
     }
+
+    public mutating func updateLocalStoredProperties(with pharmacy: PharmacyLocation) {
+        created = pharmacy.created
+        isFavorite = pharmacy.isFavorite
+        lastUsed = pharmacy.lastUsed
+        imagePath = pharmacy.imagePath
+        countUsage = pharmacy.countUsage
+    }
 }
 
 extension PharmacyLocation: Comparable {

@@ -21,11 +21,11 @@ import eRpKit
 import Introspect
 import SwiftUI
 
-struct GroupedPrescriptionListView: View {
-    let store: GroupedPrescriptionListDomain.Store
-    @ObservedObject var viewStore: ViewStore<ViewState, GroupedPrescriptionListDomain.Action>
+struct PrescriptionListView: View {
+    let store: PrescriptionListDomain.Store
+    @ObservedObject var viewStore: ViewStore<ViewState, PrescriptionListDomain.Action>
 
-    init(store: GroupedPrescriptionListDomain.Store) {
+    init(store: PrescriptionListDomain.Store) {
         self.store = store
         viewStore = ViewStore(store.scope(state: ViewState.init))
     }
@@ -35,7 +35,7 @@ struct GroupedPrescriptionListView: View {
         let showError: Bool
         let error: ErxRepositoryError?
 
-        init(state: GroupedPrescriptionListDomain.State) {
+        init(state: PrescriptionListDomain.State) {
             isLoading = state.loadingState.isLoading
             showError = state.loadingState.error != nil
             error = state.loadingState.error
@@ -49,10 +49,12 @@ struct GroupedPrescriptionListView: View {
                     viewStore.send(.loadLocalGroupedPrescriptions)
                     viewStore.send(.loadRemoteGroupedPrescriptionsAndSave)
                 }
-                .alert(isPresented: viewStore.binding(
-                    get: \.showError,
-                    send: GroupedPrescriptionListDomain.Action.alertDismissButtonTapped
-                )) {
+                .alert(
+                    isPresented: viewStore.binding(
+                        get: \.showError,
+                        send: PrescriptionListDomain.Action.alertDismissButtonTapped
+                    )
+                ) {
                     Alert(
                         title: Text(L10n.alertErrorTitle),
                         message: Text(viewStore.error?
@@ -66,12 +68,12 @@ struct GroupedPrescriptionListView: View {
     }
 }
 
-extension GroupedPrescriptionListView {
+extension PrescriptionListView {
     struct ListView: View {
-        let store: GroupedPrescriptionListDomain.Store
-        @ObservedObject var viewStore: ViewStore<ViewState, GroupedPrescriptionListDomain.Action>
+        let store: PrescriptionListDomain.Store
+        @ObservedObject var viewStore: ViewStore<ViewState, PrescriptionListDomain.Action>
 
-        init(store: GroupedPrescriptionListDomain.Store) {
+        init(store: PrescriptionListDomain.Store) {
             self.store = store
             viewStore = ViewStore(store.scope(state: ViewState.init))
         }
@@ -84,7 +86,7 @@ extension GroupedPrescriptionListView {
 
             let isLoading: Bool
 
-            init(state: GroupedPrescriptionListDomain.State) {
+            init(state: PrescriptionListDomain.State) {
                 isHintViewHidden = state.hintState.hint == nil
                 groupedPrescriptionsOpen = state.groupedPrescriptions.filter { !$0.isArchived }
                 groupedPrescriptionsArchived = state.groupedPrescriptions.filter(\.isArchived)
@@ -109,7 +111,7 @@ extension GroupedPrescriptionListView {
                     VStack(spacing: 16) {
                         MainHintView(store: store.scope(
                             state: { $0.hintState },
-                            action: GroupedPrescriptionListDomain.Action.hint(action:)
+                            action: PrescriptionListDomain.Action.hint(action:)
                         ))
                             .hidden(viewStore.isHintViewHidden)
 
@@ -212,41 +214,41 @@ extension GroupedPrescriptionListView {
     }
 }
 
-struct GroupedPrescriptionListView_Previews: PreviewProvider {
+struct PrescriptionListView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
             VStack {
-                GroupedPrescriptionListView(
-                    store: GroupedPrescriptionListDomain.Store(
-                        initialState: GroupedPrescriptionListDomain.Dummies.stateWithTwoPrescriptions,
-                        reducer: GroupedPrescriptionListDomain.Reducer.empty,
-                        environment: GroupedPrescriptionListDomain.Dummies.environment
+                PrescriptionListView(
+                    store: PrescriptionListDomain.Store(
+                        initialState: PrescriptionListDomain.Dummies.stateWithTwoPrescriptions,
+                        reducer: PrescriptionListDomain.Reducer.empty,
+                        environment: PrescriptionListDomain.Dummies.environment
                     )
                 )
             }.preferredColorScheme(.light)
 
             VStack {
-                GroupedPrescriptionListView(
-                    store: GroupedPrescriptionListDomain.Store(
-                        initialState: GroupedPrescriptionListDomain.Dummies.state,
-                        reducer: GroupedPrescriptionListDomain.Reducer.empty,
-                        environment: GroupedPrescriptionListDomain.Dummies.environment
+                PrescriptionListView(
+                    store: PrescriptionListDomain.Store(
+                        initialState: PrescriptionListDomain.Dummies.state,
+                        reducer: PrescriptionListDomain.Reducer.empty,
+                        environment: PrescriptionListDomain.Dummies.environment
                     )
                 )
             }
             .preferredColorScheme(.light)
 
             VStack {
-                GroupedPrescriptionListView(store: GroupedPrescriptionListDomain.Dummies.store)
+                PrescriptionListView(store: PrescriptionListDomain.Dummies.store)
             }
             .previewDevice("iPod touch (7th generation)")
             .preferredColorScheme(.dark)
             .environment(\.sizeCategory, .extraExtraExtraLarge)
 
             VStack {
-                GroupedPrescriptionListView(
-                    store: GroupedPrescriptionListDomain.Dummies.storeFor(
-                        GroupedPrescriptionListDomain.State(
+                PrescriptionListView(
+                    store: PrescriptionListDomain.Dummies.storeFor(
+                        PrescriptionListDomain.State(
                             groupedPrescriptions: [GroupedPrescription.Dummies.prescriptions]
                         )
                     )
@@ -255,9 +257,9 @@ struct GroupedPrescriptionListView_Previews: PreviewProvider {
             .preferredColorScheme(.light)
 
             VStack {
-                GroupedPrescriptionListView(
-                    store: GroupedPrescriptionListDomain.Dummies.storeFor(
-                        GroupedPrescriptionListDomain.State(
+                PrescriptionListView(
+                    store: PrescriptionListDomain.Dummies.storeFor(
+                        PrescriptionListDomain.State(
                             groupedPrescriptions: [GroupedPrescription.Dummies.faultyPrescription]
                         )
                     )

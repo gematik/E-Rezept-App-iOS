@@ -1,0 +1,32 @@
+// sourcery:file:eRpApp/Generated/Route+Tagged
+
+import Foundation
+
+{% macro GenerateTags routeType %}
+extension {{ routeType.name }} {
+    enum Tag: Int {
+        {% for route in routeType.cases %}
+        case {{ route.name }}
+        {% endfor %}
+    }
+
+    var tag: Tag {
+        switch self {
+        {% for route in routeType.cases %}
+            case .{{ route.name }}:
+                return .{{ route.name }}
+        {% endfor %}
+        }
+    }
+}
+{% endmacro %}
+
+{% for routeType in types.enums where routeType.localName == "Route" and routeType.parentName|default:""|hasSuffix:"Domain" %}
+    {% call GenerateTags routeType %}
+{% endfor %}
+
+{% for routeType in types.enums where routeType.localName == "State" and routeType.parentName|default:""|hasSuffix:"Domain" %}
+    {% call GenerateTags routeType %}
+{% endfor %}
+
+// sourcery:end

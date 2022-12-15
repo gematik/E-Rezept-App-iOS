@@ -75,7 +75,7 @@ final class HealthCardPasswordReadCardDomainTests: XCTestCase {
             $0.route = .alert(HealthCardPasswordReadCardDomain.AlertStates.cardUnlocked)
         }
 
-        sut.send(.okButtonTapped)
+        sut.send(.alertOkButtonTapped)
         sut.receive(.navigateToSettings) {
             $0.route = nil
         }
@@ -100,7 +100,7 @@ final class HealthCardPasswordReadCardDomainTests: XCTestCase {
             $0.route = .alert(HealthCardPasswordReadCardDomain.AlertStates.setNewPin)
         }
 
-        sut.send(.okButtonTapped)
+        sut.send(.alertOkButtonTapped)
         sut.receive(.navigateToSettings) {
             $0.route = nil
         }
@@ -126,7 +126,7 @@ final class HealthCardPasswordReadCardDomainTests: XCTestCase {
             $0.route = .alert(HealthCardPasswordReadCardDomain.AlertStates.pinCounterExhausted)
         }
 
-        sut.send(.okButtonTapped)
+        sut.send(.alertOkButtonTapped)
         sut.receive(.navigateToSettings) {
             $0.route = nil
         }

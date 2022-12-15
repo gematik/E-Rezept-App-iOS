@@ -37,18 +37,7 @@ enum ProfileSelectionDomain {
     }
 
     enum Route: Equatable {
-        case alert(AlertState<Action>)
-
-        enum Tag: Int {
-            case alert
-        }
-
-        var tag: Tag {
-            switch self {
-            case .alert:
-                return .alert
-            }
-        }
+        case alert(ErpAlertState<Action>)
     }
 
     struct State: Equatable {
@@ -95,7 +84,7 @@ enum ProfileSelectionDomain {
                     .cancellable(id: Token.loadSelectedProfile, cancelInFlight: true)
             )
         case let .loadReceived(.failure(error)):
-            state.route = .alert(AlertStates.for(error))
+            state.route = .alert(.init(for: error, title: TextState(L10n.errTxtDatabaseAccess)))
             return .none
         case let .loadReceived(.success(profiles)):
             state.profiles = profiles
@@ -118,18 +107,6 @@ enum ProfileSelectionDomain {
     static let reducer: Reducer = .combine(
         domainReducer
     )
-}
-
-extension ProfileSelectionDomain {
-    enum AlertStates {
-        typealias Action = ProfileSelectionDomain.Action
-
-        static func `for`(_ error: LocalizedError & CodedError) -> AlertState<Action> {
-            AlertState(title: TextState(L10n.errTxtDatabaseAccess),
-                       message: TextState(error.localizedDescriptionWithErrorList),
-                       dismissButton: .default(TextState(L10n.alertBtnOk)))
-        }
-    }
 }
 
 extension ProfileSelectionDomain {

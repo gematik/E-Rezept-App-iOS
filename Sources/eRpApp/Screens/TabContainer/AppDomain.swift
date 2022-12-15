@@ -26,7 +26,7 @@ enum AppDomain {
     typealias Store = ComposableArchitecture.Store<State, Action>
     typealias Reducer = ComposableArchitecture.Reducer<State, Action, Environment>
 
-    enum Tab {
+    enum Route {
         case main
         case pharmacySearch
         case orders
@@ -34,7 +34,7 @@ enum AppDomain {
     }
 
     struct State: Equatable {
-        var selectedTab: Tab
+        var route: Route
         var main: MainDomain.State
         var pharmacySearch: PharmacySearchDomain.State
         var orders: OrdersDomain.State
@@ -58,7 +58,7 @@ enum AppDomain {
         case registerDemoModeListener
         case registerNewOrderMessageListener
         case newOrderMessageReceived(Int)
-        case selectTab(Tab)
+        case selectTab(Route)
     }
 
     struct Environment {
@@ -79,7 +79,7 @@ enum AppDomain {
     private static let domainReducer = Reducer { state, action, environment in
         switch action {
         case .profile(action: .profileSelection(action: .close)):
-            switch state.selectedTab {
+            switch state.route {
             case .main:
                 return Effect(value: .main(action: .setNavigation(tag: nil)))
             case .orders:
@@ -128,7 +128,7 @@ enum AppDomain {
             state.unreadOrderMessageCount = unreadOrderMessageCount
             return .none
         case let .selectTab(tab):
-            state.selectedTab = tab
+            state.route = tab
             return .none
         }
     }
@@ -266,7 +266,7 @@ extension AppDomain {
         )
 
         static let state = State(
-            selectedTab: .main,
+            route: .main,
             main: MainDomain.Dummies.state,
             pharmacySearch: PharmacySearchDomain.Dummies.state,
             orders: OrdersDomain.Dummies.state,

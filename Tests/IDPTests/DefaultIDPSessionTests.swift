@@ -551,7 +551,7 @@ final class DefaultIDPSessionTests: XCTestCase {
     }
 
     let cryptoBox: IDPCrypto = {
-        let privateKey = try! BrainpoolP256r1.KeyExchange.generateKey(compactRepresentable: true)
+        let privateKey = try! BrainpoolP256r1.KeyExchange.generateKey()
         let nonce = try! generateSecureRandom(length: 12)
         let aesKeyData = try! Data(hex: "668D155004E1110DB6914BA40346A302312FA3F1AB647EC79FA12F96793E5205")
         return IDPCrypto(randomGenerator: { _ in "UWWzuvaSG".data(using: .utf8)! },

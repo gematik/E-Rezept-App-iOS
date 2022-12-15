@@ -38,11 +38,11 @@ final class RecordActionsForHintsTests: XCTestCase {
 
     private func testStore(
         sessionContainer: UsersSessionContainer,
-        for groupedPrescriptionListState: GroupedPrescriptionListDomain.State = GroupedPrescriptionListDomain.State()
+        for groupedPrescriptionListState: PrescriptionListDomain.State = PrescriptionListDomain.State()
     ) -> TestStore {
         TestStore(
             initialState: AppDomain.State(
-                selectedTab: .main,
+                route: .main,
                 main: MainDomain.State(
                     prescriptionListState: groupedPrescriptionListState,
                     horizontalProfileSelectionState: HorizontalProfileSelectionDomain.State(),
@@ -88,7 +88,7 @@ final class RecordActionsForHintsTests: XCTestCase {
         let prescriptionLoadingState =
             LoadingState<[GroupedPrescription], ErxRepositoryError>
                 .value([groupedPrescriptions])
-        let groupedPrescriptionListState = GroupedPrescriptionListDomain.State(
+        let groupedPrescriptionListState = PrescriptionListDomain.State(
             loadingState: prescriptionLoadingState,
             groupedPrescriptions: [groupedPrescriptions]
         )

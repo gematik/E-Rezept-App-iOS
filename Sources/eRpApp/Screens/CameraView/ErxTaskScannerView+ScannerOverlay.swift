@@ -45,9 +45,9 @@ extension ErxTaskScannerView {
                                 HStack {
                                     Image(systemName: !viewStore.state.isFlashOn ? SFSymbolName
                                         .lightbulb : SFSymbolName
-                                        .lightbulbSlash).foregroundColor(Colors.systemColorWhite)
+                                        .lightbulbSlash).foregroundColor(Color.primary)
                                     Text(!viewStore.state.isFlashOn ? L10n.scnBtnLightOn : L10n.scnBtnLightOff)
-                                        .foregroundColor(Colors.systemColorWhite)
+                                        .foregroundColor(Color.primary)
                                 }
                             })
                                 .padding(.horizontal)
@@ -85,6 +85,8 @@ extension ErxTaskScannerView {
                 .onReceive(NotificationCenter.default
                     .publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
                         viewStore.send(.flashLightOff)
+                }
+                .onChange(of: viewStore.isFlashOn) { _ in UIImpactFeedbackGenerator(style: .light).impactOccurred()
                 }
             }
         }

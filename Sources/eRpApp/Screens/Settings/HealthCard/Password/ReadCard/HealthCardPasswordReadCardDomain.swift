@@ -32,18 +32,7 @@ enum HealthCardPasswordReadCardDomain {
     enum Token: CaseIterable, Hashable {}
 
     enum Route: Equatable {
-        case alert(AlertState<Action>)
-
-        enum Tag: Int {
-            case alert
-        }
-
-        var tag: Tag {
-            switch self {
-            case .alert:
-                return .alert
-            }
-        }
+        case alert(ErpAlertState<Action>)
     }
 
     enum Mode: Equatable {
@@ -66,8 +55,15 @@ enum HealthCardPasswordReadCardDomain {
         // swiftlint:enable identifier_name
 
         case close
-        case okButtonTapped
+        case alertOkButtonTapped
+        case alertCancelButtonTapped
+        case alertAmendCanButtonTapped
+        case alertAmendPinButtonTapped
+        case alertAmendPukButtonTapped
         case navigateToSettings
+        case navigateToCanScreen
+        case navigateToOldPinScreen
+        case navigateToPukScreen
         case setNavigation(tag: Route.Tag?)
 
         case nothing
@@ -125,7 +121,7 @@ enum HealthCardPasswordReadCardDomain {
 
             // error: others
             case (.passwordNotFound, _):
-                state.route = .alert(AlertStates.notFound)
+                state.route = .alert(AlertStates.passwordNotFound)
             case (.securityStatusNotSatisfied, _):
                 state.route = .alert(AlertStates.securityStatusNotSatisfied)
             case (.memoryFailure, _):
@@ -142,7 +138,7 @@ enum HealthCardPasswordReadCardDomain {
                 state.route = .alert(AlertStates.wrongCan)
             } else if let tagError = nfcHealthCardPasswordControllerError.underlyingTagError {
                 if case .userCanceled = tagError { return .none }
-                state.route = .alert(AlertStates.alertFor(tagError))
+                state.route = .alert(.init(for: tagError))
             } else {
                 state.route = .alert(AlertStates.alertFor(nfcHealthCardPasswordControllerError))
             }
@@ -150,9 +146,26 @@ enum HealthCardPasswordReadCardDomain {
 
         case .close:
             return .none
-        case .okButtonTapped:
+        case .alertOkButtonTapped:
             return .init(value: .navigateToSettings)
+        case .alertCancelButtonTapped:
+            return .init(value: .setNavigation(tag: .none))
+        case .alertAmendCanButtonTapped:
+            return .init(value: .navigateToCanScreen)
+        case .alertAmendPinButtonTapped:
+            return .init(value: .navigateToOldPinScreen)
+        case .alertAmendPukButtonTapped:
+            return .init(value: .navigateToPukScreen)
         case .navigateToSettings:
+            state.route = nil
+            return .none
+        case .navigateToCanScreen:
+            state.route = nil
+            return .none
+        case .navigateToOldPinScreen:
+            state.route = nil
+            return .none
+        case .navigateToPukScreen:
             state.route = nil
             return .none
         case .setNavigation(tag: .none):

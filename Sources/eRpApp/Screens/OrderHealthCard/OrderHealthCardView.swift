@@ -365,7 +365,7 @@ extension OrderHealthCardView {
                         if let url = URL(string: L10n.orderEgkTxtInfoLink.text) {
                             UIApplication.shared.open(url)
                         }
-                    }
+                    }.multilineTextAlignment(.trailing)
                 }
             }
         }

@@ -51,12 +51,14 @@ enum AddProfileDomain {
         switch action {
         case let .saveProfile(profilename):
             let name = profilename.trimmed()
+            guard state.isValidName else { return .none }
             let profile = Profile(name: name,
                                   identifier: UUID(),
                                   insuranceId: nil,
                                   lastAuthenticated: nil,
                                   erxTasks: [])
             return environment.profileStore.save(profiles: [profile])
+                .first()
                 .catchToEffect()
                 .map { result in
                     Action.saveProfileReceived(result.map { _ in profile.id })

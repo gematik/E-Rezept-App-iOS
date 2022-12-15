@@ -47,28 +47,6 @@ enum HealthCardPasswordDomain {
         case pin
         case readCard(HealthCardPasswordReadCardDomain.State)
         case scanner
-
-        enum Tag: Int {
-            case introduction
-            case can
-            case puk
-            case oldPin
-            case pin
-            case readCard
-            case scanner
-        }
-
-        var tag: Tag {
-            switch self {
-            case .introduction: return .introduction
-            case .can: return .can
-            case .puk: return .puk
-            case .oldPin: return .oldPin
-            case .pin: return .pin
-            case .readCard: return .readCard
-            case .scanner: return .scanner
-            }
-        }
     }
 
     enum Mode {
@@ -155,9 +133,15 @@ enum HealthCardPasswordDomain {
                 state.route = .puk
             }
             return cleanupSubDomains()
-        case .readCard(.navigateToSettings):
-            state.route = .introduction
-            return .none
+        case .readCard(.navigateToCanScreen):
+            state.route = .can
+            return cleanupSubDomains()
+        case .readCard(.navigateToOldPinScreen):
+            state.route = .oldPin
+            return cleanupSubDomains()
+        case .readCard(.navigateToPukScreen):
+            state.route = .puk
+            return cleanupSubDomains()
         case .readCard:
             return .none
 

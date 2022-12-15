@@ -1,4 +1,4 @@
-"CFBundleDisplayName" = "الوصفة الإلكترونية";
-"NFCReaderUsageDescription" = "Ermöglicht es Ihnen, sich mithilfe Ihrer elektronische Gesundheitskarte zu identifizieren und zu authentifizieren";
-"NSCameraUsageDescription" = "E-Rezept benötigt die Kamera, um Rezepte per 2D Code lesen zu können.";
-"NSFaceIDUsageDescription" = "E-Rezept benötigt FaceID, um die App vor unerlaubtem Zugriff zu schützen.";
+"CFBundleDisplayName" = "E-Rezept";
+"NFCReaderUsageDescription" = "يسمح لك بالتعرف والمصادقة على نفسك باستخدام بطاقتك الصحية الإلكترونية";
+"NSCameraUsageDescription" = "تحتاج الوصفة الإلكترونية إلى الكاميرا لتتمكن من قراءة الوصفات عبر كود ثنائي الأبعاد.";
+"NSFaceIDUsageDescription" = "تتطلب الوصفة الإلكترونية FaceID لحماية التطبيق من الوصول غير المصرح به.";

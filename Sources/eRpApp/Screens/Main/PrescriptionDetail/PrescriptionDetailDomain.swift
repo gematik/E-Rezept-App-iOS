@@ -48,26 +48,9 @@ enum PrescriptionDetailDomain: Equatable {
     }
 
     enum Route: Equatable {
-        case alert(AlertState<Action>)
+        case alert(ErpAlertState<Action>)
         case sharePrescription(URL)
         case directAssignment
-
-        var tag: Tag {
-            switch self {
-            case .alert:
-                return .alert
-            case .sharePrescription:
-                return .sharePrescription
-            case .directAssignment:
-                return .directAssignment
-            }
-        }
-
-        enum Tag: Int {
-            case alert
-            case sharePrescription
-            case directAssignment
-        }
     }
 
     struct State: Equatable {
@@ -179,9 +162,11 @@ enum PrescriptionDetailDomain: Equatable {
                 state.route = .alert(missingTokenAlertState())
             } else if case let ErxRepositoryError.remote(error) = fail,
                       let outcome = error.fhirClientOperationOutcome {
-                state.route = .alert(deleteFailedAlertState(outcome))
+                state.route = .alert(deleteFailedAlertState(error: error, localizedError: outcome))
             } else {
-                state.route = .alert(deleteFailedAlertState(fail.localizedDescriptionWithErrorList))
+                state
+                    .route =
+                    .alert(deleteFailedAlertState(error: fail, localizedError: fail.localizedDescriptionWithErrorList))
             }
             return cleanup()
         case let .taskDeletedReceived(.success(success)):
@@ -248,8 +233,8 @@ enum PrescriptionDetailDomain: Equatable {
 }
 
 extension PrescriptionDetailDomain {
-    static var confirmDeleteAlertState: AlertState<Action> = {
-        AlertState<Action>(
+    static var confirmDeleteAlertState: ErpAlertState<Action> = {
+        ErpAlertState<Action>(
             title: TextState(L10n.dtlTxtDeleteAlertTitle),
             message: TextState(L10n.dtlTxtDeleteAlertMessage),
             primaryButton: .destructive(TextState(L10n.dtlTxtDeleteYes), action: .send(.confirmedDelete)),
@@ -257,18 +242,16 @@ extension PrescriptionDetailDomain {
         )
     }()
 
-    static func deleteFailedAlertState(_ localizedError: String) -> AlertState<Action> {
-        AlertState(
-            title: TextState(L10n.dtlTxtDeleteMissingTokenAlertTitle),
-            message: TextState(localizedError),
-            primaryButton: .default(TextState(L10n.prscFdBtnErrorBanner),
-                                    action: .send(.openEmailClient(body: localizedError))),
-            secondaryButton: .default(TextState(L10n.alertBtnOk), action: .send(.setNavigation(tag: nil)))
-        )
+    static func deleteFailedAlertState(error: CodedError, localizedError: String) -> ErpAlertState<Action> {
+        .init(for: error,
+              title: TextState(L10n.dtlTxtDeleteMissingTokenAlertTitle),
+              primaryButton: .default(TextState(L10n.prscFdBtnErrorBanner),
+                                      action: .send(.openEmailClient(body: localizedError))),
+              secondaryButton: .default(TextState(L10n.alertBtnOk), action: .send(.setNavigation(tag: nil))))
     }
 
-    static func missingTokenAlertState() -> AlertState<Action> {
-        AlertState(
+    static func missingTokenAlertState() -> ErpAlertState<Action> {
+        ErpAlertState(
             title: TextState(L10n.dtlTxtDeleteMissingTokenAlertTitle),
             message: TextState(L10n.dtlTxtDeleteMissingTokenAlertMessage),
             dismissButton: .default(TextState(L10n.alertBtnOk), action: .send(.setNavigation(tag: nil)))

@@ -35,7 +35,7 @@ final class MainViewSnapshotTests: XCTestCase {
                          environment: MainDomain.Dummies.environment)
     }
 
-    private func store(for state: GroupedPrescriptionListDomain.State)
+    private func store(for state: PrescriptionListDomain.State)
         -> MainDomain.Store {
         MainDomain.Store(
             initialState: MainDomain.State(
@@ -59,7 +59,7 @@ final class MainViewSnapshotTests: XCTestCase {
 
     func testMainView_Empty() {
         let sut = MainView(store: store(for: MainDomain.State(
-            prescriptionListState: GroupedPrescriptionListDomain.State(
+            prescriptionListState: PrescriptionListDomain.State(
                 groupedPrescriptions: []
             ),
             horizontalProfileSelectionState: HorizontalProfileSelectionDomain.State(
@@ -82,7 +82,7 @@ final class MainViewSnapshotTests: XCTestCase {
         )
 
         let sut = MainView(store: store(for: MainDomain.State(
-            prescriptionListState: GroupedPrescriptionListDomain.State(
+            prescriptionListState: PrescriptionListDomain.State(
                 groupedPrescriptions: [groupedPrescription]
             ),
             horizontalProfileSelectionState: HorizontalProfileSelectionDomain.Dummies.state
@@ -93,7 +93,7 @@ final class MainViewSnapshotTests: XCTestCase {
 
     func testMainView_LowDetailPrescriptions() {
         let sut = MainView(store: store(for: MainDomain.State(
-            prescriptionListState: GroupedPrescriptionListDomain.State(
+            prescriptionListState: PrescriptionListDomain.State(
                 groupedPrescriptions: [GroupedPrescription.Dummies.scannedPrescriptions]
             ),
             horizontalProfileSelectionState: HorizontalProfileSelectionDomain.Dummies.state
@@ -113,7 +113,7 @@ final class MainViewSnapshotTests: XCTestCase {
         )
 
         let sut = MainView(store: store(for: MainDomain.State(
-            prescriptionListState: GroupedPrescriptionListDomain.State(
+            prescriptionListState: PrescriptionListDomain.State(
                 groupedPrescriptions: Array(
                     repeating: groupedPrescription,
                     count: 6

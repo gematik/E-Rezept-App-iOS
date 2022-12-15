@@ -83,7 +83,7 @@ final class MainDomainTests: XCTestCase {
         // when
         sut.send(.horizontalProfileSelection(action: .loadReceived(.failure(error)))) { sut in
             // then
-            sut.route = .alert(MainDomain.AlertStates.for(error))
+            sut.route = .alert(.init(for: error))
         }
     }
 }

@@ -419,7 +419,7 @@ extension Publisher where Self.Output == HealthCardType, Self.Failure == NFCSign
                         return secureCard
                     } else {
                         guard let verifyPINError = NFCSignatureProviderError.VerifyPINError.from(response) else {
-                            return secureCard
+                            throw NFCSignatureProviderError.VerifyPINError.unknownFailure
                         }
                         throw NFCSignatureProviderError.verifyCardError(verifyPINError)
                     }

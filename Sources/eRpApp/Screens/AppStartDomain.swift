@@ -65,7 +65,7 @@ enum AppStartDomain {
         case .onboarding(action: .dismissOnboarding):
             state = .app(
                 AppDomain.State(
-                    selectedTab: .main,
+                    route: .main,
                     main: .init(prescriptionListState: .init(), horizontalProfileSelectionState: .init()),
                     pharmacySearch: PharmacySearchDomain.State(erxTasks: []),
                     orders: OrdersDomain.State(orders: []),
@@ -104,7 +104,7 @@ enum AppStartDomain {
             }
             state = .app(
                 AppDomain.State(
-                    selectedTab: .main,
+                    route: .main,
                     main: .init(prescriptionListState: .init(), horizontalProfileSelectionState: .init()),
                     pharmacySearch: PharmacySearchDomain.State(erxTasks: []),
                     orders: OrdersDomain.State(orders: []),

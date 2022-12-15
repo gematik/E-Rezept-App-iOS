@@ -79,7 +79,9 @@ class AVScannerViewController: UIViewController, AVCaptureMetadataOutputObjectsD
         .map { metadataObject in
             createScanOutput(for: metadataObject)
         }
-        onScanOutput(codes)
+        DispatchQueue.main.async {
+            self.onScanOutput(codes)
+        }
     }
 
     private func createScanOutput(for metadataObject: AVMetadataObject) -> ScanOutput {
@@ -153,7 +155,9 @@ class AVScannerViewController: UIViewController, AVCaptureMetadataOutputObjectsD
         view.layer.addSublayer(videoPreviewLayer)
         previewLayer = videoPreviewLayer
         // Start video capture.
-        captureSession.startRunning()
+        DispatchQueue.global(qos: .background).async {
+            self.captureSession.startRunning()
+        }
     }
 
     // MARK: Orientation changes

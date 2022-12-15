@@ -27,6 +27,7 @@ struct DebugQRCodeImporter<ContentType: Codable>: View {
 
     var found: (ContentType) -> Void
 
+    @State var error: Error?
     var body: some View {
         ZStack(alignment: .top) {
             AVScannerView(erxCodeTypes: [.qr],
@@ -37,15 +38,34 @@ struct DebugQRCodeImporter<ContentType: Codable>: View {
 
                 if let output = outputs.first {
                     if case let .erxCode(input) = output,
-                       let data = input?.data(using: .utf8),
-                       let newContent = try? JSONDecoder().decode(ContentType.self, from: data) {
-                        found(newContent)
-                        scan = false
+                       let data = input?.data(using: .utf8) {
+                        do {
+                            let newContent = try JSONDecoder().decode(ContentType.self, from: data)
+                            self.error = nil
+                            found(newContent)
+                            scan = false
+                        } catch {
+                            self.error = error
+                        }
                     }
                 }
             }
 
-            Text("Import via QR-Code")
+            VStack {
+                Text("Import via QR-Code")
+                    .padding()
+                    .background(RoundedCorner(radius: 16).foregroundColor(.black))
+                    .foregroundColor(.white)
+
+                Spacer()
+
+                if let error = error {
+                    Text(error.localizedDescription)
+                        .padding()
+                        .background(RoundedCorner(radius: 16).foregroundColor(.black))
+                        .foregroundColor(.white)
+                }
+            }.padding()
         }
         .navigationTitle("Import")
     }

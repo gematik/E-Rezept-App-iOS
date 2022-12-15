@@ -129,7 +129,7 @@ struct SettingsView: View {
                     destination: IfLetStore(profileStore) { profileStore in
                         EditProfileView(store: profileStore)
                     },
-                    tag: ProfilesDomain.Route.Tag.details, // swiftlint:disable:next trailing_closure
+                    tag: ProfilesDomain.Route.Tag.editProfile, // swiftlint:disable:next trailing_closure
                     selection: viewStore.binding(get: \.profilesRouteTag, send: { tag in
                         SettingsDomain.Action.profiles(action: .setNavigation(tag: tag))
                     })
@@ -388,7 +388,7 @@ extension SettingsView {
         )
     }
 
-    var profilesAlertStore: Store<AlertState<ProfilesDomain.Action>?, ProfilesDomain.Action> {
+    var profilesAlertStore: Store<ErpAlertState<ProfilesDomain.Action>?, ProfilesDomain.Action> {
         profilesStore.scope(
             state: (\ProfilesDomain.State.route)
                 .appending(path: /ProfilesDomain.Route.alert)

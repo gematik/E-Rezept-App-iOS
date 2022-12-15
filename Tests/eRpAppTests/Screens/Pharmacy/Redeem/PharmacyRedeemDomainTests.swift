@@ -242,7 +242,7 @@ class PharmacyRedeemDomainTests: XCTestCase {
         sut.receive(.redeemReceived(.success(expectedOrderResponses))) {
             $0.orderResponses = expectedOrderResponses
             $0.route = .alert(
-                PharmacyRedeemDomain.AlertStates.failingRequest(count: expectedOrderResponses.failedCount)
+                .info(PharmacyRedeemDomain.AlertStates.failingRequest(count: expectedOrderResponses.failedCount))
             )
         }
         expect(self.mockPharmacyRepository.saveCallsCount) == 1
@@ -272,7 +272,7 @@ class PharmacyRedeemDomainTests: XCTestCase {
         // when redeeming
         sut.send(.redeem)
         sut.receive(.redeemReceived(.failure(expectedError))) {
-            $0.route = .alert(PharmacyRedeemDomain.AlertStates.alert(for: expectedError))
+            $0.route = .alert(.init(for: expectedError))
         }
         expect(self.mockPharmacyRepository.saveCallsCount) == 1
     }
@@ -329,7 +329,7 @@ class PharmacyRedeemDomainTests: XCTestCase {
         mockRedeemValidator.returnValue = .invalid("Invalid Input")
 
         sut.send(.redeem) {
-            $0.route = .alert(PharmacyRedeemDomain.AlertStates.missingContactInfo(with: "Invalid Input"))
+            $0.route = .alert(.info(PharmacyRedeemDomain.AlertStates.missingContactInfo(with: "Invalid Input")))
         }
     }
 

@@ -51,27 +51,7 @@ enum PharmacyRedeemDomain: Equatable {
         case redeemSuccess(RedeemSuccessDomain.State)
         case contact(PharmacyContactDomain.State)
         case cardWall(CardWallIntroductionDomain.State)
-        case alert(AlertState<Action>)
-
-        enum Tag: Int {
-            case redeemSuccess
-            case contact
-            case cardWall
-            case alert
-        }
-
-        var tag: Tag {
-            switch self {
-            case .redeemSuccess:
-                return .redeemSuccess
-            case .contact:
-                return .contact
-            case .cardWall:
-                return .cardWall
-            case .alert:
-                return .alert
-            }
-        }
+        case alert(ErpAlertState<Action>)
     }
 
     enum Token: CaseIterable, Hashable {
@@ -165,7 +145,7 @@ enum PharmacyRedeemDomain: Equatable {
 
             if case let .invalid(error) = environment.inputValidator
                 .validate(state.selectedShipmentInfo, for: state.redeemOption) {
-                state.route = .alert(AlertStates.missingContactInfo(with: error))
+                state.route = .alert(.info(AlertStates.missingContactInfo(with: error)))
                 return .none
             }
             return environment.redeem(orders: state.orders)
@@ -173,7 +153,7 @@ enum PharmacyRedeemDomain: Equatable {
         case let .redeemReceived(.success(orderResponses)):
             state.orderResponses = orderResponses
             if orderResponses.arePartiallySuccessful || orderResponses.areFailing {
-                state.route = .alert(AlertStates.failingRequest(count: orderResponses.failedCount))
+                state.route = .alert(.info(AlertStates.failingRequest(count: orderResponses.failedCount)))
             } else if orderResponses.areSuccessful {
                 state.route = .redeemSuccess(RedeemSuccessDomain.State(redeemOption: state.redeemOption))
             }
@@ -181,7 +161,7 @@ enum PharmacyRedeemDomain: Equatable {
                 .cancellable(id: Token.savePharmacy, cancelInFlight: true)
                 .fireAndForget()
         case let .redeemReceived(.failure(error)):
-            state.route = .alert(AlertStates.alert(for: error))
+            state.route = .alert(.init(for: error))
             return environment.save(pharmacy: state.pharmacy)
                 .cancellable(id: Token.savePharmacy, cancelInFlight: true)
                 .fireAndForget()

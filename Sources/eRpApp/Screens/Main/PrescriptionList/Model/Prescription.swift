@@ -211,8 +211,10 @@ extension GroupedPrescription {
         }
 
         var multiplePrescriptionStatus: String? {
-            guard let index = erxTask.multiplePrescription?.numbering,
-                  let count = erxTask.multiplePrescription?.totalNumber
+            guard let multiplePrescription = erxTask.multiplePrescription,
+                  multiplePrescription.mark,
+                  let index = multiplePrescription.numbering,
+                  let count = multiplePrescription.totalNumber
             else { return nil }
 
             return "\(index)/\(count)"

@@ -1,3 +1,32 @@
+# Release 1.4.9
+
+### added (2 changes)
+ 
+- Add navigation to amend CAN/PIN/PUK from alert in HealthCardPasswordDomain  
+- Add autogeneration for Route.Tag types 
+
+### changed (2 change)
+
+- Change AlertState usage to ErpAlertState to prepare for better user facing error tracking 
+- Change the alert's primary action button bold in Card Wall 
+
+### fixed (7 changes)
+
+- Fix DebugPharmacy scanner and solve analyse warnings  
+- Fix NFCSignature error cast return value  
+- Fix wrong Voice Over text  
+- Fix creating profile without name  
+- Fix UI of OrderHealthCardView  
+- Fix multiplePrescription to display status only if prescription is of type multiple prescription  
+- Fix unusable password creation when switching from biometrics to password secured app  
+
+### internal (4 changes)
+
+- Update OpenSSL-Swift dependency  
+- Rename an separate GroupedPrescriptionDomain from MainDomain  
+- Change _pullback to use runtimeWarning instead of debugger breakpoint  
+- Added multiple prescription tests  
+
 # Release 1.4.8
 
 ### added (8 changes)

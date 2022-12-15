@@ -16,7 +16,9 @@
 //  
 //
 
+import Combine
 @testable import eRpApp
+import eRpKit
 import FHIRClient
 import Foundation
 import HTTPClient
@@ -41,8 +43,12 @@ final class PharmacyIntegrationTests: XCTestCase {
     }
 
     func testCompleteFlow() {
+        let mockPharmacyLocalDataStore = MockPharmacyLocalDataStore()
+        mockPharmacyLocalDataStore.listPharmaciesCountReturnValue = Just([]).setFailureType(to: LocalStoreError.self)
+            .eraseToAnyPublisher()
+
         let sut: PharmacyRepository = DefaultPharmacyRepository(
-            disk: MockPharmacyLocalDataStore(),
+            disk: mockPharmacyLocalDataStore,
             cloud: PharmacyFHIRDataSource(
                 fhirClient: FHIRClient(
                     server: environment.appConfiguration.apoVzd,

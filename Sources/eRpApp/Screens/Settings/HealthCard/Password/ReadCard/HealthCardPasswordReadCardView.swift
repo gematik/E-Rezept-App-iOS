@@ -105,6 +105,7 @@ struct HealthCardPasswordReadCardView: View {
             ),
             dismiss: .nothing
         )
+        .keyboardShortcut(.defaultAction) // workaround: this makes the alert's primary button bold
         .navigationBarHidden(true)
         .statusBar(hidden: true)
     }

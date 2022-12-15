@@ -23,173 +23,177 @@ extension HealthCardPasswordReadCardDomain {
         typealias Action = HealthCardPasswordReadCardDomain.Action
 
         // success
-        static let cardUnlocked: AlertState<Action> = .init(
+        static let cardUnlocked: ErpAlertState<Action> = .init(
             title: .init(L10n.stgTxtCardResetRcAlertCardUnlockedTitle),
             message: .init(L10n.stgTxtCardResetRcAlertCardUnlockedMessage),
             dismissButton: .default(
                 .init(L10n.stgBtnCardResetRcAlertOk),
-                action: .send(.okButtonTapped)
+                action: .send(.alertOkButtonTapped)
             )
         )
 
-        static let cardUnlockedWithSetNewPin: AlertState<Action> = .init(
+        static let cardUnlockedWithSetNewPin: ErpAlertState<Action> = .init(
             title: .init(L10n.stgTxtCardResetRcAlertCardUnlockedWithPinTitle),
             message: .init(L10n.stgTxtCardResetRcAlertCardUnlockedWithPinMessage),
             dismissButton: .default(
                 .init(L10n.stgBtnCardResetRcAlertOk),
-                action: .send(.okButtonTapped)
+                action: .send(.alertOkButtonTapped)
             )
         )
 
-        static let setNewPin: AlertState<Action> = .init(
+        static let setNewPin: ErpAlertState<Action> = .init(
             title: .init(L10n.stgTxtCardResetRcAlertCardSetNewPinTitle),
             dismissButton: .default(
                 .init(L10n.stgBtnCardResetRcAlertOk),
-                action: .send(.okButtonTapped)
+                action: .send(.alertOkButtonTapped)
             )
         )
 
         // error: blocked
-        static let pukCounterExhausted: AlertState<Action> = .init(
+        static let pukCounterExhausted: ErpAlertState<Action> = .init(
             title: .init(L10n.stgTxtCardResetRcAlertCounterExhaustedTitle),
             message: .init(L10n.stgTxtCardResetRcAlertCounterExhaustedMessage),
             dismissButton: .default(
                 .init(L10n.stgBtnCardResetRcAlertOk),
-                action: .send(.okButtonTapped)
+                action: .send(.alertOkButtonTapped)
             )
         )
 
-        // error: passwort not found
-        static let notFound: AlertState<Action> = .init(
+        // error: password not found
+        static let passwordNotFound: ErpAlertState<Action> = .init(
             title: .init(L10n.cdwTxtRcErrorPasswordMissingDescription),
             message: .init(L10n.cdwTxtRcErrorPasswordMissingRecovery),
             dismissButton: .default(
                 .init(L10n.stgBtnCardResetRcAlertOk),
-                action: .send(.okButtonTapped)
+                action: .send(.alertOkButtonTapped)
             )
         )
 
-        // error: security Status Not Satisfied
-        static let securityStatusNotSatisfied: AlertState<Action> = .init(
+        // error: security status not satisfied
+        static let securityStatusNotSatisfied: ErpAlertState<Action> = .init(
             title: .init(L10n.cdwTxtRcErrorSecStatusDescription),
             message: .init(L10n.cdwTxtRcErrorSecStatusRecovery),
             dismissButton: .default(
                 .init(L10n.stgBtnCardResetRcAlertOk),
-                action: .send(.okButtonTapped)
+                action: .send(.alertOkButtonTapped)
             )
         )
 
         // error: memory failure
-        static let memoryFailure: AlertState<Action> = .init(
+        static let memoryFailure: ErpAlertState<Action> = .init(
             title: .init(L10n.cdwTxtRcErrorMemoryFailureDescription),
             message: .init(L10n.cdwTxtRcErrorMemoryFailureRecovery),
             dismissButton: .default(
                 .init(L10n.stgBtnCardResetRcAlertOk),
-                action: .send(.okButtonTapped)
+                action: .send(.alertOkButtonTapped)
             )
         )
 
         // error: unknown failure
-        static let unknownFailure: AlertState<Action> = .init(
+        static let unknownFailure: ErpAlertState<Action> = .init(
             title: .init(L10n.cdwTxtRcErrorUnknownFailureDescription),
             message: .init(L10n.cdwTxtRcErrorUnknownFailureRecovery),
             dismissButton: .default(
                 .init(L10n.stgBtnCardResetRcAlertOk),
-                action: .send(.okButtonTapped)
+                action: .send(.alertOkButtonTapped)
             )
         )
 
-        static let pukCounterExhaustedWithSetNewPin: AlertState<Action> = .init(
+        static let pukCounterExhaustedWithSetNewPin: ErpAlertState<Action> = .init(
             title: .init(L10n.stgTxtCardResetRcAlertCounterExhaustedWithPinTitle),
             message: .init(L10n.stgTxtCardResetRcAlertCounterExhaustedWithPinMessage),
             dismissButton: .default(
                 .init(L10n.stgBtnCardResetRcAlertOk),
-                action: .send(.okButtonTapped)
+                action: .send(.alertOkButtonTapped)
             )
         )
 
-        static let pinCounterExhausted: AlertState<Action> = .init(
+        static let pinCounterExhausted: ErpAlertState<Action> = .init(
             title: .init(L10n.stgTxtCardResetRcAlertPinCounterExhaustedTitle),
             message: .init(L10n.stgTxtCardResetRcAlertPinCounterExhaustedMessage),
             dismissButton: .default(
                 .init(L10n.stgBtnCardResetRcAlertOk),
-                action: .send(.okButtonTapped)
+                action: .send(.alertOkButtonTapped)
             )
         )
 
         // warning: retry counter
-        static let pukIncorrectZeroRetriesLeft: AlertState<Action> = .init(
+        static let pukIncorrectZeroRetriesLeft: ErpAlertState<Action> = .init(
             title: .init(L10n.stgTxtCardResetRcAlertWrongPukZeroRetriesTitle),
             message: .init(L10n.stgTxtCardResetRcAlertWrongPukZeroRetriesMessage),
             dismissButton: .default(
                 .init(L10n.stgBtnCardResetRcAlertOk),
-                action: .send(.okButtonTapped)
+                action: .send(.alertOkButtonTapped)
             )
         )
 
-        static func pukIncorrect(retriesLeft: Int) -> AlertState<Action> {
+        static func pukIncorrect(retriesLeft: Int) -> ErpAlertState<Action> {
             if retriesLeft == 0 {
                 return Self.pukIncorrectZeroRetriesLeft
             } else {
                 return .init(
                     title: .init(L10n.stgTxtCardResetRcAlertWrongPukTitle),
                     message: .init(L10n.stgTxtCardResetRcAlertWrongPukMessage(retriesLeft)),
-                    dismissButton: .default(
-                        .init(L10n.stgBtnCardResetRcAlertOk),
-                        action: .send(.okButtonTapped)
+                    primaryButton: .default(
+                        .init(L10n.stgBtnCardResetRcAlertAmend),
+                        action: .send(.alertAmendPukButtonTapped)
+                    ),
+                    secondaryButton: .cancel(
+                        .init(L10n.stgBtnCardResetRcAlertCancel),
+                        action: .send(.alertCancelButtonTapped)
                     )
                 )
             }
         }
 
-        static func pinIncorrect(retriesLeft: Int) -> AlertState<Action> {
+        static func pinIncorrect(retriesLeft: Int) -> ErpAlertState<Action> {
             if retriesLeft == 0 {
                 return Self.pinCounterExhausted
             } else {
                 return .init(
                     title: .init(L10n.stgTxtCardResetRcAlertWrongPinTitle),
                     message: .init(L10n.stgTxtCardResetRcAlertWrongPinMessage(retriesLeft)),
-                    dismissButton: .default(
-                        .init(L10n.stgBtnCardResetRcAlertOk),
-                        action: .send(.okButtonTapped)
+                    primaryButton: .default(
+                        .init(L10n.stgBtnCardResetRcAlertAmend),
+                        action: .send(.alertAmendPinButtonTapped)
+                    ),
+                    secondaryButton: .cancel(
+                        .init(L10n.stgBtnCardResetRcAlertCancel),
+                        action: .send(.alertCancelButtonTapped)
                     )
                 )
             }
         }
 
         // error: others
-        static let wrongCan: AlertState<Action> = .init(
+        static let wrongCan: ErpAlertState<Action> = .init(
             title: .init(L10n.stgTxtCardResetRcAlertWrongCanTitle),
             message: .init(L10n.stgTxtCardResetRcAlertWrongCanMessage),
-            dismissButton: .default(
-                .init(L10n.stgBtnCardResetRcAlertOk),
-                action: .send(.okButtonTapped)
+            primaryButton: .default(
+                .init(L10n.stgBtnCardResetRcAlertAmend),
+                action: .send(.alertAmendCanButtonTapped)
+            ),
+            secondaryButton: .cancel(
+                .init(L10n.stgBtnCardResetRcAlertCancel),
+                action: .send(.alertCancelButtonTapped)
             )
         )
 
-        static let unknownError: AlertState<Action> = .init(
+        static let unknownError: ErpAlertState<Action> = .init(
             title: .init(L10n.stgTxtCardResetRcAlertUnknownErrorTitle),
             message: .init(L10n.stgTxtCardResetRcAlertUnknownErrorMessage),
             dismissButton: .default(
                 .init(L10n.stgBtnCardResetRcAlertOk),
-                action: .send(.okButtonTapped)
+                action: .send(.alertOkButtonTapped)
             )
         )
 
-        static func alertFor(_ error: NFCHealthCardPasswordControllerError) -> AlertState<Action> {
-            AlertState(
-                title: .init(L10n.stgTxtCardResetRcAlertUnknownErrorTitle),
-                message: .init(error.localizedDescriptionWithErrorList),
-                dismissButton: .default(TextState(L10n.cdwBtnRcAlertClose), action: .send(.setNavigation(tag: .none)))
-            )
+        static func alertFor(_ error: NFCHealthCardPasswordControllerError) -> ErpAlertState<Action> {
+            .init(for: error)
         }
 
         static func alertFor(_ error: CodedError) -> AlertState<Action> {
-            AlertState(
-                title: .init(error.localizedDescription),
-                message: .init(error.recoverySuggestionWithErrorList),
-                dismissButton: .default(TextState(L10n.cdwBtnRcAlertClose), action: .send(.setNavigation(tag: .none)))
-            )
+            .init(for: error)
         }
     }
 }

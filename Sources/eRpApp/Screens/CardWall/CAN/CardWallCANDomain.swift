@@ -29,23 +29,6 @@ enum CardWallCANDomain {
         case pin(CardWallPINDomain.State)
         case egk
         case scanner
-
-        enum Tag: Int {
-            case pin
-            case egk
-            case scanner
-        }
-
-        var tag: Tag {
-            switch self {
-            case .pin:
-                return .pin
-            case .egk:
-                return .egk
-            case .scanner:
-                return .scanner
-            }
-        }
     }
 
     struct State: Equatable {

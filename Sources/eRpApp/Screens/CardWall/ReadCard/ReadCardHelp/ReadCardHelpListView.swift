@@ -109,7 +109,7 @@ struct ReadCardHelpListView: View {
             }
             .navigationBarItems(
                 leading: Button(action: {
-                    viewStore.send(.updatePageIndex(index: 1))
+                    viewStore.send(.updatePageIndex(page: .second))
                 }, label: {
                     HStack {
                         Image(systemName: SFSymbolName.back).padding(0)

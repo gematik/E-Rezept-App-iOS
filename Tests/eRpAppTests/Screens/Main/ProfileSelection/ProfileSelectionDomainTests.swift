@@ -137,8 +137,9 @@ final class ProfileSelectionDomainTests: XCTestCase {
 
         store.send(.loadReceived(.failure(.localStoreError(.notImplemented)))) { state in
             state.route = .alert(
-                ProfileSelectionDomain.AlertStates.for(
-                    UserProfileServiceError.localStoreError(.notImplemented)
+                .init(
+                    for: UserProfileServiceError.localStoreError(.notImplemented),
+                    title: TextState(L10n.errTxtDatabaseAccess)
                 )
             )
         }

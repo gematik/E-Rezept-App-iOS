@@ -22,7 +22,7 @@ import SwiftUI
 
 struct GroupedPrescriptionView: View {
     let groupedPrescription: GroupedPrescription
-    let store: GroupedPrescriptionListDomain.Store
+    let store: PrescriptionListDomain.Store
     @ScaledMetric var lastItemSpacerSize: CGFloat = 12
 
     var body: some View {
@@ -248,7 +248,7 @@ struct GroupedPrescriptionView: View {
     }
 }
 
-struct RezeptBlock_Previews: PreviewProvider {
+struct GroupedPrescriptionView_Previews: PreviewProvider {
     static let groupedPrescription = GroupedPrescription.Dummies.prescriptions
     static let scannedGroupedPrescription = GroupedPrescription.Dummies.scannedPrescriptions
 
@@ -256,27 +256,27 @@ struct RezeptBlock_Previews: PreviewProvider {
         Group {
             GroupedPrescriptionView(
                 groupedPrescription: groupedPrescription,
-                store: GroupedPrescriptionListDomain.Dummies.store
+                store: PrescriptionListDomain.Dummies.store
             )
             .preferredColorScheme(.light)
             .previewLayout(.fixed(width: 500.0, height: 300.0))
             .padding()
             GroupedPrescriptionView(
                 groupedPrescription: scannedGroupedPrescription,
-                store: GroupedPrescriptionListDomain.Dummies.store
+                store: PrescriptionListDomain.Dummies.store
             )
             .preferredColorScheme(.light)
             .previewLayout(.fixed(width: 500.0, height: 300.0))
             .padding()
             GroupedPrescriptionView(
                 groupedPrescription: groupedPrescription,
-                store: GroupedPrescriptionListDomain.Dummies.store
+                store: PrescriptionListDomain.Dummies.store
             )
             .previewLayout(.sizeThatFits)
             .padding()
             GroupedPrescriptionView(
                 groupedPrescription: groupedPrescription,
-                store: GroupedPrescriptionListDomain.Dummies.store
+                store: PrescriptionListDomain.Dummies.store
             )
             .preferredColorScheme(.dark)
             .environment(\.sizeCategory, .extraExtraExtraLarge)
@@ -284,20 +284,20 @@ struct RezeptBlock_Previews: PreviewProvider {
             .padding()
             GroupedPrescriptionView(
                 groupedPrescription: groupedPrescription,
-                store: GroupedPrescriptionListDomain.Dummies.store
+                store: PrescriptionListDomain.Dummies.store
             )
             .preferredColorScheme(.light)
             .previewLayout(.fixed(width: 500.0, height: 300.0))
             .padding()
             GroupedPrescriptionView(
                 groupedPrescription: groupedPrescription,
-                store: GroupedPrescriptionListDomain.Dummies.store
+                store: PrescriptionListDomain.Dummies.store
             )
             .previewLayout(.sizeThatFits)
             .padding()
             GroupedPrescriptionView(
                 groupedPrescription: groupedPrescription,
-                store: GroupedPrescriptionListDomain.Dummies.store
+                store: PrescriptionListDomain.Dummies.store
             )
             .preferredColorScheme(.dark)
             .environment(\.sizeCategory, .extraExtraExtraLarge)

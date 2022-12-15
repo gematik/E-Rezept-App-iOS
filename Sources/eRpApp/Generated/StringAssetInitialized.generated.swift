@@ -47,16 +47,6 @@ extension FormTextFieldView {
     self.init(placeholder: placeholder, subtitle: subtitle?.key, text: text, showSeparator: showSeparator)
     }
 }
-extension GroupedPrescriptionListView.ListView.RefreshLoadingStateView {
-    init(scale: CGFloat = 1, text: StringAsset) {
-        self.init(scale: scale, text: text.key)
-    }
-}
-extension GroupedPrescriptionListView.ListView.SectionPlaceholderView {
-    init(text: StringAsset) {
-        self.init(text: text.key)
-    }
-}
 extension HeadernoteView {
     init(text: StringAsset, a11y: String) {
         self.init(text: text.key, a11y: a11y)
@@ -123,6 +113,16 @@ extension OnboardingRegisterAuthenticationView.BiometryButton {
 extension OptInCell {
     init(text: StringAsset, isOn: Binding<Bool>) {
         self.init(text: text.key, isOn: isOn)
+    }
+}
+extension PrescriptionListView.ListView.RefreshLoadingStateView {
+    init(scale: CGFloat = 1, text: StringAsset) {
+        self.init(scale: scale, text: text.key)
+    }
+}
+extension PrescriptionListView.ListView.SectionPlaceholderView {
+    init(text: StringAsset) {
+        self.init(text: text.key)
     }
 }
 extension PrimaryTextButton {

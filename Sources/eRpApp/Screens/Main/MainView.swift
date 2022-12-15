@@ -50,7 +50,7 @@ struct MainView: View {
     var body: some View {
         NavigationView {
             ZStack(alignment: .topLeading) {
-                GroupedPrescriptionListView(store: store.scope(
+                PrescriptionListView(store: store.scope(
                     state: \.prescriptionListState,
                     action: MainDomain.Action.prescriptionList(action:)
                 ))
@@ -342,7 +342,7 @@ struct MainView_Previews: PreviewProvider {
             MainView(
                 store: MainDomain.Dummies.storeFor(
                     MainDomain.State(
-                        prescriptionListState: GroupedPrescriptionListDomain.State(),
+                        prescriptionListState: PrescriptionListDomain.State(),
                         horizontalProfileSelectionState: HorizontalProfileSelectionDomain.State()
                     )
                 )
@@ -352,7 +352,7 @@ struct MainView_Previews: PreviewProvider {
             MainView(
                 store: MainDomain.Dummies.storeFor(
                     MainDomain.State(
-                        prescriptionListState: GroupedPrescriptionListDomain.State(
+                        prescriptionListState: PrescriptionListDomain.State(
                             groupedPrescriptions: Array(
                                 repeating: GroupedPrescription.Dummies.prescriptions,
                                 count: 2

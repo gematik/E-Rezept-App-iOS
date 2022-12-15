@@ -40,7 +40,7 @@ enum EditProfileDomain {
     }
 
     enum Route: Equatable {
-        case alert(AlertState<Action>)
+        case alert(ErpAlertState<Action>)
         case token(IDPToken)
         case linkedDevices
         case auditEvents(AuditEventsDomain.State)
@@ -194,7 +194,7 @@ extension EditProfileDomain {
         case .updateProfileReceived(.success):
             return .none
         case let .updateProfileReceived(.failure(error)):
-            state.route = .alert(AlertStates.for(error))
+            state.route = .alert(.init(for: error))
             return .none
         case .dismissAlert:
             state.route = nil
@@ -460,26 +460,6 @@ extension EditProfileDomain.Environment {
     }
 }
 
-extension EditProfileDomain.Route {
-    enum Tag: Int {
-        case alert
-        case token
-        case linkedDevices
-        case auditEvents
-        case registeredDevices
-    }
-
-    var tag: Tag {
-        switch self {
-        case .alert: return .alert
-        case .token: return .token
-        case .linkedDevices: return .linkedDevices
-        case .auditEvents: return .auditEvents
-        case .registeredDevices: return .registeredDevices
-        }
-    }
-}
-
 extension Publisher where Failure == LocalStoreError, Output == Bool {
     func createProfileIfOnlyOneProfileIsLeft(profileDataStore: ProfileDataStore)
         -> AnyPublisher<Bool, LocalStoreError> {
@@ -543,15 +523,7 @@ extension EditProfileDomain {
     enum AlertStates {
         typealias Action = EditProfileDomain.Action
 
-        static func `for`(_ error: LocalStoreError) -> AlertState<Action> {
-            AlertState(
-                title: TextState(L10n.stgTxtEditProfileErrorMessageTitle),
-                message: TextState(error.localizedDescriptionWithErrorList),
-                dismissButton: .default(TextState(L10n.alertBtnOk))
-            )
-        }
-
-        static var deleteProfile: AlertState<Action> =
+        static var deleteProfile: ErpAlertState<Action> =
             .init(title: TextState(L10n.stgTxtEditProfileDeleteConfirmationTitle),
                   message: TextState(L10n.stgTxtEditProfileDeleteConfirmationMessage),
                   primaryButton: .destructive(TextState(L10n.dtlTxtDeleteYes), action: .send(.confirmDeleteProfile)),
@@ -560,9 +532,9 @@ extension EditProfileDomain {
                       action: .send(.dismissAlert)
                   ))
 
-        static var deleteBiometricPairing: AlertState<Action> =
-            .init(title: TextState("Zugangsdaten löschen"),
-                  message: TextState("Möchten Sie Ihre gemerkten Zugangsdaten wirklich löschen?"),
+        static var deleteBiometricPairing: ErpAlertState<Action> =
+            .init(title: TextState(L10n.stgTxtEditProfileDeletePairingTitle),
+                  message: TextState(L10n.stgTxtEditProfileDeletePairingMessage),
                   primaryButton: .destructive(
                       TextState(L10n.dtlTxtDeleteYes),
                       action: .send(.confirmDeleteBiometricPairing)
@@ -572,19 +544,19 @@ extension EditProfileDomain {
                       action: .send(.dismissAlert)
                   ))
 
-        static func deleteBiometricPairingFailed(with error: IDPError) -> AlertState<Action> {
-            .init(title: TextState(error.localizedDescriptionWithErrorList),
-                  message: TextState(
-                      "Die Zugangsdaten konnten nicht vom Server gelöscht werden. Bitte versuchen Sie es erneut"
-                  ),
-                  primaryButton: .destructive(
-                      TextState(L10n.dtlTxtDeleteYes),
-                      action: .send(.confirmDeleteBiometricPairing)
-                  ),
-                  secondaryButton: .cancel(
-                      TextState(L10n.stgBtnEditProfileDeleteAlertCancel),
-                      action: .send(.dismissAlert)
-                  ))
+        static func deleteBiometricPairingFailed(with error: IDPError) -> ErpAlertState<Action> {
+            .init(
+                for: error,
+                title: TextState(L10n.stgTxtEditProfileDeletePairingError),
+                primaryButton: .destructive(
+                    TextState(L10n.dtlTxtDeleteYes),
+                    action: .send(.confirmDeleteBiometricPairing)
+                ),
+                secondaryButton: .cancel(
+                    TextState(L10n.stgBtnEditProfileDeleteAlertCancel),
+                    action: .send(.dismissAlert)
+                )
+            )
         }
     }
 }

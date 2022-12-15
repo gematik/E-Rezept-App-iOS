@@ -33,7 +33,7 @@ extension AppStoreSnapshotTests {
             displayType: .fullDetail
         )
 
-        let state = GroupedPrescriptionListDomain.State(
+        let state = PrescriptionListDomain.State(
             groupedPrescriptions: Array(
                 repeating: groupedPrescription,
                 count: 6

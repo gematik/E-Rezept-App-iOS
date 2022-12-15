@@ -37,12 +37,7 @@ struct AppMigrationView: View {
                     .accessibility(identifier: A11y.migration.amgTxtAndSpinner)
             }
         }
-        .alert(store.scope { _ in
-            if let alertState = viewStore.state.failedValue {
-                return alertState
-            }
-            return nil
-        }, dismiss: .nothing)
+        .alert(store.scope(state: \.failedValue), dismiss: .nothing)
         .onAppear {
             viewStore.send(.loadCurrentModelVersion)
         }

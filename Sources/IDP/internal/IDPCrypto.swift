@@ -53,7 +53,7 @@ struct IDPCrypto {
         stateLength: Int = 16,
         randomGenerator: @escaping Random<Data> = { try generateSecureRandom(length: $0) },
         brainpoolKeyPairGenerator: @escaping BrainpoolKeyGenerator = {
-            try BrainpoolP256r1.KeyExchange.generateKey(compactRepresentable: true)
+            try BrainpoolP256r1.KeyExchange.generateKey()
         },
         aesNonceGenerator: @escaping AESNonceGenerator = {
             try generateSecureRandom(length: IDPCrypto.AES256GCMSpec.nonceBytes)

@@ -21,7 +21,7 @@ import ComposableArchitecture
 import eRpKit
 import Foundation
 import IDP
-// swiftlint: disable file_length
+
 enum MainDomain {
     typealias Store = ComposableArchitecture.Store<State, Action>
     typealias Reducer = ComposableArchitecture.Reducer<State, Action, Environment>
@@ -33,43 +33,13 @@ enum MainDomain {
         case cardWall(CardWallIntroductionDomain.State)
         case prescriptionDetail(PrescriptionDetailDomain.State)
         case redeem(RedeemMethodsDomain.State)
-        case alert(AlertState<Action>)
-
-        enum Tag: Int {
-            case addProfile
-            case scanner
-            case deviceSecurity
-            case cardWall
-            case prescriptionDetail
-            case redeem
-            case alert
-        }
-
-        var tag: Tag {
-            switch self {
-            case .addProfile:
-                return .addProfile
-            case .scanner:
-                return .scanner
-            case .deviceSecurity:
-                return .deviceSecurity
-            case .cardWall:
-                return .cardWall
-            case .prescriptionDetail:
-                return .prescriptionDetail
-            case .redeem:
-                return .redeem
-            case .alert:
-                return .alert
-            }
-        }
+        case alert(ErpAlertState<Action>)
     }
 
     struct State: Equatable {
-        var prescriptionListState: GroupedPrescriptionListDomain.State
+        var prescriptionListState: PrescriptionListDomain.State
         var extAuthPendingState = ExtAuthPendingDomain.State()
         var horizontalProfileSelectionState: HorizontalProfileSelectionDomain.State
-        var addprofileState = AddProfileDomain.State()
         var isDemoMode = false
         var route: Route?
     }
@@ -115,8 +85,8 @@ enum MainDomain {
         case setNavigation(tag: Route.Tag?)
         case horizontalProfileSelection(action: HorizontalProfileSelectionDomain.Action)
         // Child Domain Actions
-        /// Child view actions for the `GroupedPrescriptionListDomain`
-        case prescriptionList(action: GroupedPrescriptionListDomain.Action)
+        /// Child view actions for the `PrescriptionListDomain`
+        case prescriptionList(action: PrescriptionListDomain.Action)
         /// Child view actions for the `ScannerDomain`
         case scanner(action: ScannerDomain.Action)
         case deviceSecurity(action: DeviceSecurityDomain.Action)
@@ -229,12 +199,12 @@ extension MainDomain {
             state.route = .cardWall(.init(isNFCReady: true, profileId: environment.userSession.profileId))
             return .none
         case let .prescriptionList(action: .errorReceived(error)):
-            let alertState: AlertState<Action>
+            let alertState: ErpAlertState<Action>
             switch error {
             case .idpError(.biometrics) where error.contains(PrivateKeyContainer.Error.canceledByUser):
-                alertState = AlertState(for: error, title: L10n.errSpecificI10808Title)
+                alertState = .init(for: error, title: L10n.errSpecificI10808Title)
             case .idpError(.biometrics), .idpError(.serverError):
-                alertState = AlertState(
+                alertState = .init(
                     for: error,
                     title: L10n.errTitleLoginNecessary,
                     primaryButton: .default(
@@ -243,7 +213,7 @@ extension MainDomain {
                     )
                 )
             default:
-                alertState = AlertState(for: error)
+                alertState = .init(for: error)
             }
             state.route = .alert(alertState)
             return .none
@@ -273,7 +243,7 @@ extension MainDomain {
             state.route = nil
             return cleanupSubDomains()
         case let .horizontalProfileSelection(action: .loadReceived(.failure(error))):
-            state.route = .alert(AlertStates.for(error))
+            state.route = .alert(.init(for: error))
             return .none
         case .refreshPrescription:
             return Effect(value: .prescriptionList(action: .refresh))
@@ -295,7 +265,7 @@ extension MainDomain {
     }
 
     static let reducer: Reducer = .combine(
-        groupedPrescriptionListPullback,
+        prescriptionListPullback,
         scannerPullbackReducer,
         deviceSecurityPullbackReducer,
         prescriptionDetailPullbackReducer,
@@ -368,24 +338,12 @@ extension MainDomain.Environment {
 }
 
 extension MainDomain {
-    enum AlertStates {
-        typealias Action = MainDomain.Action
-
-        static func `for`(_ error: LocalizedError & CodedError) -> AlertState<Action> {
-            AlertState(title: TextState(L10n.errTxtDatabaseAccess),
-                       message: TextState(error.localizedDescriptionWithErrorList),
-                       dismissButton: .default(TextState(L10n.alertBtnOk)))
-        }
-    }
-}
-
-extension MainDomain {
-    private static let groupedPrescriptionListPullback: Reducer =
-        GroupedPrescriptionListDomain.reducer.pullback(
+    private static let prescriptionListPullback: Reducer =
+        PrescriptionListDomain.reducer.pullback(
             state: \.prescriptionListState,
             action: /Action.prescriptionList(action:)
         ) { mainDomainEnvironment in
-            GroupedPrescriptionListDomain.Environment(
+            PrescriptionListDomain.Environment(
                 router: mainDomainEnvironment.router,
                 userSession: mainDomainEnvironment.userSession,
                 serviceLocator: mainDomainEnvironment.serviceLocator,
@@ -398,9 +356,7 @@ extension MainDomain {
                 loginHandler: DefaultLoginHandler(
                     idpSession: mainDomainEnvironment.userSession.idpSession,
                     signatureProvider: mainDomainEnvironment.signatureProvider
-                ),
-                signatureProvider: mainDomainEnvironment.signatureProvider,
-                userSessionProvider: mainDomainEnvironment.userSessionProvider
+                )
             )
         }
 
@@ -519,7 +475,7 @@ extension MainDomain {
             environment: Dummies.environment
         )
         static let state = State(
-            prescriptionListState: GroupedPrescriptionListDomain.Dummies.state,
+            prescriptionListState: PrescriptionListDomain.Dummies.state,
             horizontalProfileSelectionState: HorizontalProfileSelectionDomain.Dummies.state
         )
 

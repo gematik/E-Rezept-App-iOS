@@ -27,27 +27,9 @@ enum CardWallLoginOptionDomain {
     typealias Reducer = ComposableArchitecture.Reducer<State, Action, Environment>
 
     enum Route: Equatable {
-        case alert(AlertState<Action>)
+        case alert(ErpAlertState<Action>)
         case readcard(CardWallReadCardDomain.State)
         case warning
-
-        enum Tag: Int {
-            case alert
-            case readcard
-            case warning
-            case can
-        }
-
-        var tag: Tag {
-            switch self {
-            case .alert:
-                return .alert
-            case .readcard:
-                return .readcard
-            case .warning:
-                return .warning
-            }
-        }
     }
 
     struct State: Equatable {
@@ -95,7 +77,7 @@ enum CardWallLoginOptionDomain {
             }
             if option.isWithBiometry {
                 guard environment.canUseBiometrics() else {
-                    state.route = .alert(AlertState(
+                    state.route = .alert(ErpAlertState(
                         title: TextState(L10n.cdwTxtBiometrySetupIncomplete),
                         message: nil,
                         primaryButton: .cancel(TextState(L10n.alertBtnOk)),

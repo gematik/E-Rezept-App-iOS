@@ -26,15 +26,15 @@ import eRpRemoteStorage
 import FHIRClient
 import XCTest
 
-final class GroupedPrescriptionListDomainTests: XCTestCase {
+final class PrescriptionListDomainTests: XCTestCase {
     let testScheduler = DispatchQueue.test
 
     typealias TestStore = ComposableArchitecture.TestStore<
-        GroupedPrescriptionListDomain.State,
-        GroupedPrescriptionListDomain.State,
-        GroupedPrescriptionListDomain.Action,
-        GroupedPrescriptionListDomain.Action,
-        GroupedPrescriptionListDomain.Environment
+        PrescriptionListDomain.State,
+        PrescriptionListDomain.State,
+        PrescriptionListDomain.Action,
+        PrescriptionListDomain.Action,
+        PrescriptionListDomain.Environment
     >
 
     var userSession: MockUserSession!
@@ -60,9 +60,9 @@ final class GroupedPrescriptionListDomainTests: XCTestCase {
         userSession.isLoggedIn = isAuthenticated
 
         return TestStore(
-            initialState: GroupedPrescriptionListDomain.State(),
-            reducer: GroupedPrescriptionListDomain.domainReducer,
-            environment: GroupedPrescriptionListDomain.Environment(
+            initialState: PrescriptionListDomain.State(),
+            reducer: PrescriptionListDomain.domainReducer,
+            environment: PrescriptionListDomain.Environment(
                 router: MockRouting(),
                 userSession: userSession,
                 serviceLocator: ServiceLocator(),
@@ -70,9 +70,7 @@ final class GroupedPrescriptionListDomainTests: XCTestCase {
                 groupedPrescriptionStore: groupedPrescriptionStore,
                 schedulers: schedulers,
                 fhirDateFormatter: FHIRDateFormatter.shared,
-                loginHandler: loginHandler,
-                signatureProvider: DummySecureEnclaveSignatureProvider(),
-                userSessionProvider: DummyUserSessionProvider()
+                loginHandler: loginHandler
             )
         )
     }

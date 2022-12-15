@@ -119,7 +119,7 @@ enum DebugDomain {
         case resetAlertText
         case appear
         case resetHintEvents
-        case logAction(DebugLogDomain.Action)
+        case logAction(action: DebugLogDomain.Action)
         #endif
     }
 

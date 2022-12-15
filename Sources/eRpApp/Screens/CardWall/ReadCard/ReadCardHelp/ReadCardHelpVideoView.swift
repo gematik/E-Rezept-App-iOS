@@ -65,7 +65,7 @@ struct ReadCardHelpVideoView: View {
             }
             .navigationBarItems(
                 leading: Button(action: {
-                    viewStore.send(.updatePageIndex(index: 0))
+                    viewStore.send(.updatePageIndex(page: .first))
                 }, label: {
                     HStack {
                         Image(systemName: SFSymbolName.back).padding(0)
@@ -77,7 +77,7 @@ struct ReadCardHelpVideoView: View {
                     }
                 }),
                 trailing: Button(L10n.cdwBtnRcNextTip) {
-                    viewStore.send(.updatePageIndex(index: 2))
+                    viewStore.send(.updatePageIndex(page: .third))
                 }
                 .accessibility(label: Text(L10n.cdwBtnRcNextTip))
                 .accessibility(identifier: A11y.cardWall.readCard.cdwBtnRcHelpNextTip)

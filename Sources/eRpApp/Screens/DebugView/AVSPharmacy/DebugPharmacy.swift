@@ -29,6 +29,32 @@ struct DebugPharmacy: Identifiable, Codable, CustomStringConvertible, Equatable,
     var deliveryUrl = Endpoint()
     var certificates: [Certificate] = []
 
+    init(
+        id: UUID = UUID(),
+        name: String = "New Pharmacy",
+        onPremiseUrl: DebugPharmacy.Endpoint = Endpoint(),
+        shipmentUrl: DebugPharmacy.Endpoint = Endpoint(),
+        deliveryUrl: DebugPharmacy.Endpoint = Endpoint(),
+        certificates: [DebugPharmacy.Certificate] = []
+    ) {
+        self.id = id
+        self.name = name
+        self.onPremiseUrl = onPremiseUrl
+        self.shipmentUrl = shipmentUrl
+        self.deliveryUrl = deliveryUrl
+        self.certificates = certificates
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+
+        id = (try? container.decode(UUID.self, forKey: .id)) ?? UUID()
+        onPremiseUrl = try container.decode(DebugPharmacy.Endpoint.self, forKey: .onPremiseUrl)
+        shipmentUrl = try container.decode(DebugPharmacy.Endpoint.self, forKey: .shipmentUrl)
+        deliveryUrl = try container.decode(DebugPharmacy.Endpoint.self, forKey: .deliveryUrl)
+        certificates = try container.decode([Certificate].self, forKey: .certificates)
+    }
+
     struct Certificate: Identifiable, Codable, CustomStringConvertible, Equatable, Hashable {
         private(set) var id = UUID()
         var name: String
@@ -89,8 +115,21 @@ struct DebugPharmacy: Identifiable, Codable, CustomStringConvertible, Equatable,
         struct Header: Codable, Equatable, Hashable, Identifiable {
             var key: String = ""
             var value: String = ""
-
             private(set) var id = UUID()
+
+            internal init(key: String = "", value: String = "", id: UUID = UUID()) {
+                self.key = key
+                self.value = value
+                self.id = id
+            }
+
+            init(from decoder: Decoder) throws {
+                let container = try decoder.container(keyedBy: CodingKeys.self)
+
+                id = (try? container.decode(UUID.self, forKey: .id)) ?? UUID()
+                key = try container.decode(String.self, forKey: .key)
+                value = try container.decode(String.self, forKey: .value)
+            }
         }
     }
 }

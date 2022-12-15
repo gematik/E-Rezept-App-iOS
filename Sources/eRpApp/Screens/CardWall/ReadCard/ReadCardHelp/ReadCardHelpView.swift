@@ -21,9 +21,9 @@ import eRpStyleKit
 import SwiftUI
 
 struct ReadCardHelpView: View {
-    let store: Store<Int, CardWallReadCardDomain.Action>
+    let store: Store<CardWallReadCardHelpDomain.State, CardWallReadCardDomain.Action>
 
-    init(store: Store<Int, CardWallReadCardDomain.Action>) {
+    init(store: Store<CardWallReadCardHelpDomain.State, CardWallReadCardDomain.Action>) {
         self.store = store
         UIPageControl.appearance().currentPageIndicatorTintColor = UIColor(Colors.primary500)
         UIPageControl.appearance().pageIndicatorTintColor = UIColor(Colors.systemLabelQuarternary)
@@ -31,16 +31,20 @@ struct ReadCardHelpView: View {
 
     var body: some View {
         WithViewStore(store) { viewStore in
-            TabView(selection: viewStore.binding(get: { $0 },
-                                                 send: CardWallReadCardDomain.Action.updatePageIndex(index:))) {
+            TabView(selection: viewStore.binding(
+                get: { $0 },
+                send: {
+                    CardWallReadCardDomain.Action.updatePageIndex(page: $0)
+                }
+            )) {
                 ReadCardHelpCardView(store: store.stateless)
-                    .tag(0)
+                    .tag(CardWallReadCardHelpDomain.State.first)
 
                 ReadCardHelpVideoView(store: store.stateless)
-                    .tag(1)
+                    .tag(CardWallReadCardHelpDomain.State.second)
 
                 ReadCardHelpListView(store: store.stateless)
-                    .tag(2)
+                    .tag(CardWallReadCardHelpDomain.State.third)
             }
             .background(Colors.systemBackground)
             .tabViewStyle(PageTabViewStyle(indexDisplayMode: .always))
@@ -53,8 +57,8 @@ struct ReadCardHelpView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView<ReadCardHelpView> {
             ReadCardHelpView(
-                store: Store<Int, CardWallReadCardDomain.Action>(
-                    initialState: 0,
+                store: Store<CardWallReadCardHelpDomain.State, CardWallReadCardDomain.Action>(
+                    initialState: .first,
                     reducer: .empty,
                     environment: CardWallReadCardDomain.Dummies.environment
                 )

@@ -315,7 +315,7 @@ final class CardWallSnapshotTests: XCTestCase {
 
     func testReadCardHelpCardView() {
         let sut =
-            ReadCardHelpView(store: .init(initialState: 0,
+            ReadCardHelpView(store: .init(initialState: .first,
                                           reducer: .empty,
                                           environment: CardWallReadCardDomain.Dummies.environment))
 
@@ -324,7 +324,7 @@ final class CardWallSnapshotTests: XCTestCase {
 
     func testReadCardHelpListView() {
         let sut =
-            ReadCardHelpView(store: .init(initialState: 1,
+            ReadCardHelpView(store: .init(initialState: .second,
                                           reducer: .empty,
                                           environment: CardWallReadCardDomain.Dummies.environment))
 
@@ -332,7 +332,7 @@ final class CardWallSnapshotTests: XCTestCase {
     }
 
     func testReadCardHelpVideoView() {
-        let sut = ReadCardHelpView(store: .init(initialState: 2,
+        let sut = ReadCardHelpView(store: .init(initialState: .third,
                                                 reducer: .empty,
                                                 environment: CardWallReadCardDomain.Dummies.environment))
 

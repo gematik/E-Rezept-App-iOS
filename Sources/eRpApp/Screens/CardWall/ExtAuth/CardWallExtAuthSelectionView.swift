@@ -23,16 +23,32 @@ import SwiftUI
 struct CardWallExtAuthSelectionView: View {
     let store: CardWallExtAuthSelectionDomain.Store
     @ObservedObject
-    var viewStore: ViewStore<CardWallExtAuthSelectionDomain.State, CardWallExtAuthSelectionDomain.Action>
+    var viewStore: ViewStore<ViewState, CardWallExtAuthSelectionDomain.Action>
 
     init(store: CardWallExtAuthSelectionDomain.Store) {
         self.store = store
-        viewStore = ViewStore(store)
+        viewStore = ViewStore(store.scope(state: ViewState.init))
+    }
+
+    struct ViewState: Equatable {
+        let routeTag: CardWallExtAuthSelectionDomain.Route.Tag?
+        let error: IDPError?
+        let kkList: KKAppDirectory?
+        let selectedKK: KKAppDirectory.Entry?
+        let orderEgkVisible: Bool
+
+        init(state: CardWallExtAuthSelectionDomain.State) {
+            routeTag = state.route?.tag
+            error = state.error
+            kkList = state.kkList
+            selectedKK = state.selectedKK
+            orderEgkVisible = state.orderEgkVisible
+        }
     }
 
     var body: some View {
         VStack(spacing: 0) {
-            if let error = viewStore.state.error {
+            if let error = viewStore.error {
                 ErrorView(error: error) {
                     viewStore.send(.loadKKList, animation: .default)
                 }
@@ -126,18 +142,21 @@ struct CardWallExtAuthSelectionView: View {
             }
 
             NavigationLink(
-                destination: IfLetStore(store.scope(
-                    state: \.confirmation,
-                    action: CardWallExtAuthSelectionDomain.Action.confirmation
+                destination: IfLetStore(
+                    store.scope(
+                        state: (\CardWallExtAuthSelectionDomain.State.route)
+                            .appending(path: /CardWallExtAuthSelectionDomain.Route.confirmation)
+                            .extract(from:),
+                        action: CardWallExtAuthSelectionDomain.Action.confirmation
+                    ),
+                    then: CardWallExtAuthConfirmationView.init
                 ),
-                then: CardWallExtAuthConfirmationView.init),
-                isActive: Binding<Bool>(get: {
-                    viewStore.confirmation != nil
-                }, set: { value in
-                    if !value {
-                        viewStore.send(.hideConfirmation)
-                    }
-                })
+                tag: CardWallExtAuthSelectionDomain.Route.Tag.confirmation,
+                selection: viewStore.binding(
+                    get: \.routeTag
+                ) {
+                    .setNavigation(tag: $0)
+                }
             ) {}
         }
         .navigationBarItems(

@@ -48,20 +48,6 @@ enum RedeemMethodsDomain {
     enum Route: Equatable {
         case matrixCode(RedeemMatrixCodeDomain.State)
         case pharmacySearch(PharmacySearchDomain.State)
-
-        enum Tag: Int, CaseIterable {
-            case matrixCode
-            case pharmacySearch
-        }
-
-        var tag: Tag {
-            switch self {
-            case .matrixCode:
-                return .matrixCode
-            case .pharmacySearch:
-                return .pharmacySearch
-            }
-        }
     }
 
     struct State: Equatable {

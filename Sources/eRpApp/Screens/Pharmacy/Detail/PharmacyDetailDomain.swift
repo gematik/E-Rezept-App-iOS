@@ -53,21 +53,7 @@ enum PharmacyDetailDomain: Equatable {
     enum Route: Equatable {
         case redeemViaAVS(PharmacyRedeemDomain.State)
         case redeemViaErxTaskRepository(PharmacyRedeemDomain.State)
-        case alert(AlertState<PharmacyRedeemDomain.State>)
-
-        enum Tag: Int {
-            case redeemViaAVS
-            case redeemViaErxTaskRepository
-            case alert
-        }
-
-        var tag: Tag {
-            switch self {
-            case .redeemViaAVS: return .redeemViaAVS
-            case .redeemViaErxTaskRepository: return .redeemViaErxTaskRepository
-            case .alert: return .alert
-            }
-        }
+        case alert(ErpAlertState<PharmacyRedeemDomain.State>)
     }
 
     struct State: Equatable {
@@ -239,7 +225,7 @@ enum PharmacyDetailDomain: Equatable {
             case let .success(viewModel):
                 state.pharmacyViewModel = viewModel
             case let .failure(error):
-                state.route = .alert(AlertState(for: error))
+                state.route = .alert(.init(for: error))
             }
             return .none
         }

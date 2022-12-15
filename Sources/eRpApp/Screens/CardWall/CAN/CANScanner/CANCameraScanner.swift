@@ -105,9 +105,9 @@ struct LightSwitch: View {
                 }, label: {
                     HStack {
                         Image(systemName: !isFlashOn ? SFSymbolName.lightbulb : SFSymbolName
-                            .lightbulbSlash).foregroundColor(Colors.systemColorWhite)
+                            .lightbulbSlash).foregroundColor(Color.primary)
                         Text(!isFlashOn ? L10n.scnBtnLightOn : L10n.scnBtnLightOff)
-                            .foregroundColor(Colors.systemColorWhite)
+                            .foregroundColor(Color.primary)
                             .padding(.trailing)
                     }
                 })
@@ -121,9 +121,7 @@ struct LightSwitch: View {
             .publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
                 isFlashOn = false
         }
-        .onChange(of: isFlashOn) { state in
-            state ? UIImpactFeedbackGenerator(style: .light)
-                .impactOccurred() : UIImpactFeedbackGenerator(style: .light).impactOccurred()
+        .onChange(of: isFlashOn) { _ in UIImpactFeedbackGenerator(style: .light).impactOccurred()
         }
     }
 }

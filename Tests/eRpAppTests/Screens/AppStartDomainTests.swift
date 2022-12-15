@@ -75,9 +75,9 @@ final class AppStartDomainTests: XCTestCase {
             // than app should be presented
             $0 = .app(
                 AppDomain.State(
-                    selectedTab: .main,
+                    route: .main,
                     main: MainDomain.State(
-                        prescriptionListState: GroupedPrescriptionListDomain.State(),
+                        prescriptionListState: PrescriptionListDomain.State(),
                         horizontalProfileSelectionState: HorizontalProfileSelectionDomain.State()
                     ),
                     pharmacySearch: PharmacySearchDomain.State(erxTasks: []),
@@ -120,9 +120,9 @@ final class AppStartDomainTests: XCTestCase {
             // than app should be presented
             $0 = .app(
                 AppDomain.State(
-                    selectedTab: .main,
+                    route: .main,
                     main: MainDomain.State(
-                        prescriptionListState: GroupedPrescriptionListDomain.State(),
+                        prescriptionListState: PrescriptionListDomain.State(),
                         horizontalProfileSelectionState: HorizontalProfileSelectionDomain.State()
                     ),
                     pharmacySearch: PharmacySearchDomain.State(erxTasks: []),
@@ -153,9 +153,9 @@ final class AppStartDomainTests: XCTestCase {
                                                                                    onboardingVersion: "version"))) {
             $0 = .app(
                 AppDomain.State(
-                    selectedTab: .main,
+                    route: .main,
                     main: MainDomain.State(
-                        prescriptionListState: GroupedPrescriptionListDomain.State(),
+                        prescriptionListState: PrescriptionListDomain.State(),
                         horizontalProfileSelectionState: HorizontalProfileSelectionDomain.State()
                     ),
                     pharmacySearch: PharmacySearchDomain.State(erxTasks: []),

@@ -17,6 +17,7 @@
 //
 
 import ComposableArchitecture
+import eRpStyleKit
 import SwiftUI
 
 struct CreatePasswordView: View {
@@ -45,62 +46,82 @@ struct CreatePasswordView: View {
     }
 
     var body: some View {
-        List {
+        ScrollView {
+            // This TextField is mandatory to support password autofill from iCloud Keychain, applying  `.hidden()`
+            // lets iOS no longer detect it.
+            TextField("", text: .constant("E-Rezept App – \(UIDevice.current.name)"))
+                .textContentType(.username)
+                .frame(width: 1, height: 1, alignment: .leading)
+                .opacity(0.01)
+                .accessibility(hidden: true)
+
             if updatePassword {
-                Section(
-                    header: SectionHeaderView(
-                        text: L10n.cpwTxtSectionUpdateTitle,
-                        a11y: A11y.settings.createPassword.cpwTxtSectionUpdateTitle
-                    ).padding(.bottom, 8),
-                    footer: currentPasswordFooter()
-                ) {
-                    SecureFieldWithReveal(titleKey: L10n.cpwInpCurrentPasswordPlaceholder,
-                                          text: currentPassword) {}
+                SingleElementSectionContainer(
+                    header: {
+                        SectionHeaderView(
+                            text: L10n.cpwTxtSectionUpdateTitle,
+                            a11y: A11y.settings.createPassword.cpwTxtSectionUpdateTitle
+                        ).padding(.bottom, 8)
+                    },
+                    footer: { currentPasswordFooter() },
+                    content: {
+                        SecureField(L10n.cpwInpCurrentPasswordPlaceholder,
+                                    text: currentPassword) {
+                            viewStore.send(.enterButtonTapped)
+                        }
+                        .textContentType(.password)
                         .accessibility(identifier: A11y.settings.createPassword.cpwInpCurrentPassword)
-                }
-                .textCase(.none)
+                        .padding()
+                    }
+                )
             }
 
-            Section(
-                header: SectionHeaderView(
-                    text: L10n.cpwTxtSectionTitle,
-                    a11y: A11y.settings.createPassword.cpwTxtSectionTitle
-                ).padding(.bottom, 8),
-                footer: VStack(spacing: 8) {
-                    FootnoteView(
-                        text: L10n.cpwTxtPasswordRecommendation,
-                        a11y: A11y.settings.createPassword.cpwTxtPasswordRecommendation
-                    )
+            SingleElementSectionContainer(
+                header: {
+                    SectionHeaderView(
+                        text: L10n.cpwTxtSectionTitle,
+                        a11y: A11y.settings.createPassword.cpwTxtSectionTitle
+                    ).padding(.bottom, 8)
+                },
+                footer: {
+                    VStack(spacing: 8) {
+                        FootnoteView(
+                            text: L10n.cpwTxtPasswordRecommendation,
+                            a11y: A11y.settings.createPassword.cpwTxtPasswordRecommendation
+                        )
 
-                    PasswordStrengthView(strength: viewStore.passwordStrength)
-                }
-            ) {
-                VStack {
-                    SecureFieldWithReveal(titleKey: L10n.cpwInpPasswordAPlaceholder,
-                                          text: passwordA,
-                                          textContentType: .newPassword) {}
+                        PasswordStrengthView(strength: viewStore.passwordStrength)
+                    }
+                },
+                content: {
+                    VStack {
+                        SecureField(L10n.cpwInpPasswordAPlaceholder,
+                                    text: passwordA) {
+                            viewStore.send(.enterButtonTapped)
+                        }
+                        .padding()
+                        .textContentType(.newPassword)
                         .accessibility(identifier: A11y.settings.createPassword.cpwInpPasswordA)
+                    }
                 }
-            }
-            .textCase(.none)
+            )
 
-            Section {
-                SecureFieldWithReveal(titleKey: L10n.cpwInpPasswordBPlaceholder,
-                                      accessibilityLabelKey: L10n.cpwTxtPasswordBAccessibility,
-                                      text: passwordB,
-                                      textContentType: .newPassword) {
+            SingleElementSectionContainer {
+                SecureField(L10n.cpwInpPasswordBPlaceholder,
+                            text: passwordB) {
                     viewStore.send(.saveButtonTapped)
                 }
+                .padding()
+                .accessibilityLabel(L10n.cpwTxtPasswordBAccessibility)
+                .textContentType(.newPassword)
                 .accessibility(identifier: A11y.settings.createPassword.cpwInpPasswordB)
             }
 
-            Section(header: errorFooter(),
-                    footer: saveButtonAndError()) {
-                EmptyView()
-            }
-            .textCase(.none)
+            errorFooter()
+            saveButtonAndError()
+                .padding()
         }
-        .listStyle(InsetGroupedListStyle())
+        .background(Colors.systemBackgroundSecondary.ignoresSafeArea())
         .navigationTitle(updatePassword ? L10n.cpwTxtUpdateTitle : L10n.cpwTxtTitle)
     }
 

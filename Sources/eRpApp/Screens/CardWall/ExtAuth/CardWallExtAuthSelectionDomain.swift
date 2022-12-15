@@ -28,6 +28,10 @@ enum CardWallExtAuthSelectionDomain {
         Effect.cancel(token: Token.self)
     }
 
+    enum Route: Equatable {
+        case confirmation(CardWallExtAuthConfirmationDomain.State?)
+    }
+
     enum Token: CaseIterable, Hashable {}
 
     struct State: Equatable {
@@ -36,7 +40,7 @@ enum CardWallExtAuthSelectionDomain {
         var selectedKK: KKAppDirectory.Entry?
 
         var orderEgkVisible = false
-        var confirmation: CardWallExtAuthConfirmationDomain.State?
+        var route: Route?
     }
 
     enum Action: Equatable {
@@ -48,9 +52,9 @@ enum CardWallExtAuthSelectionDomain {
         case close
 
         case showOrderEgk(Bool)
-        case hideConfirmation
+        case setNavigation(tag: Route.Tag?)
 
-        case confirmation(_ action: CardWallExtAuthConfirmationDomain.Action)
+        case confirmation(action: CardWallExtAuthConfirmationDomain.Action)
     }
 
     struct Environment {
@@ -86,17 +90,18 @@ enum CardWallExtAuthSelectionDomain {
         case .confirmKK:
             guard let selectedKK = state.selectedKK else { return .none }
 
-            state.confirmation = CardWallExtAuthConfirmationDomain.State(selectedKK: selectedKK,
-                                                                         error: nil)
+            state.route = .confirmation(.init(selectedKK: selectedKK))
             return .none
-        case .hideConfirmation:
-            state.confirmation = nil
+        case .setNavigation(tag: nil):
+            state.route = nil
             return .none
         case let .error(error):
             state.error = error
             return .none
         case .confirmation(.close):
             return Effect(value: .close)
+        case .setNavigation:
+            return .none
         case .close,
              .confirmation:
             return .none // Handled by parent domain
@@ -110,9 +115,10 @@ enum CardWallExtAuthSelectionDomain {
 
     private static let confirmationPullback: Reducer =
         CardWallExtAuthConfirmationDomain.reducer
-            .optional()
-            .pullback(state: \.confirmation,
-                      action: /Action.confirmation) {
+            ._pullback(
+                state: (\State.route).appending(path: /Route.confirmation),
+                action: /Action.confirmation(action:)
+            ) {
                 .init(idpSession: $0.idpSession,
                       schedulers: $0.schedulers,
                       canOpenURL: UIApplication.shared.canOpenURL,

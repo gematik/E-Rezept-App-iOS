@@ -103,7 +103,7 @@ class EciesVAUCrypto: VAUCrypto {
         }
         let nonceGenerator = { try VAURandom.generateSecureRandom(length: self.eciesSpec.ivSize) }
         // [REQ:gemSpec_Krypt:GS-A_4357] Key pair generation delegated to OpenSSL with BrainpoolP256r1 parameters
-        let keyPairGenerator = { try BrainpoolP256r1.KeyExchange.generateKey(compactRepresentable: false) }
+        let keyPairGenerator = { try BrainpoolP256r1.KeyExchange.generateKey() }
 
         return try Ecies.encrypt(
             payload: payload,
@@ -170,9 +170,9 @@ enum Ecies {
         let sealedBox = try AES.GCM.seal(payload, using: cek, nonce: nonce)
 
         // g) Encode
-        return Data(
+        return try Data(
             [spec.version] +
-                privateKey.publicKey.x962Value.dropFirst() + // drop first 0x04 byte from uncompressed representation
+                privateKey.publicKey.x962Value().dropFirst() + // drop first 0x04 byte from uncompressed representation
                 sealedBox.nonce +
                 sealedBox.ciphertext +
                 sealedBox.tag

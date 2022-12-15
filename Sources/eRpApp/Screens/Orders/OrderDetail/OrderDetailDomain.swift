@@ -57,24 +57,7 @@ enum OrderDetailDomain: Equatable {
     enum Route: Equatable {
         case pickupCode(PickupCodeDomain.State)
         case prescriptionDetail(PrescriptionDetailDomain.State)
-        case alert(AlertState<Action>)
-
-        enum Tag: Int {
-            case pickupCode
-            case prescriptionDetail
-            case alert
-        }
-
-        var tag: Tag {
-            switch self {
-            case .pickupCode:
-                return .pickupCode
-            case .prescriptionDetail:
-                return .prescriptionDetail
-            case .alert:
-                return .alert
-            }
-        }
+        case alert(ErpAlertState<Action>)
     }
 
     struct State: Equatable {
@@ -380,16 +363,16 @@ extension OrderDetailDomain {
         return urlString?.url
     }
 
-    static var openMailAlertState: AlertState<Action> = {
-        AlertState(
+    static var openMailAlertState: ErpAlertState<Action> = {
+        .init(
             title: TextState(L10n.ordDetailTxtOpenMailErrorTitle),
             message: TextState(L10n.ordDetailTxtOpenMailError),
             dismissButton: .cancel(TextState(L10n.alertBtnClose))
         )
     }()
 
-    static func openUrlAlertState(for url: URL) -> AlertState<Action> {
-        AlertState(
+    static func openUrlAlertState(for url: URL) -> ErpAlertState<Action> {
+        .init(
             title: TextState(L10n.ordDetailTxtErrorTitle),
             message: TextState(L10n.ordDetailTxtError),
             primaryButton: .cancel(TextState(L10n.alertBtnClose)),

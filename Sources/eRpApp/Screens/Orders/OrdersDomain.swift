@@ -47,20 +47,6 @@ enum OrdersDomain: Equatable {
     enum Route: Equatable {
         case orderDetail(OrderDetailDomain.State)
         case selectProfile
-
-        enum Tag: Int {
-            case orderDetail
-            case selectProfile
-        }
-
-        var tag: Tag {
-            switch self {
-            case .orderDetail:
-                return .orderDetail
-            case .selectProfile:
-                return .selectProfile
-            }
-        }
     }
 
     struct State: Equatable {

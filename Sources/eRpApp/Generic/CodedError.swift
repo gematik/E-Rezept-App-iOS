@@ -35,6 +35,15 @@ extension CodedError {
             return "\n\n" + L10n.errCodesPrefix.text + "\n" + erpErrorCodeList.joined(separator: ", ")
         }
     }
+
+    var descriptionAndSuggestionWithErrorList: String {
+        if let suggestion = recoverySuggestion {
+            return localizedDescription + "\n" + suggestion + "\n\n" + L10n.errCodesPrefix
+                .text + "\n" + erpErrorCodeList.joined(separator: ", ")
+        } else {
+            return localizedDescriptionWithErrorList
+        }
+    }
 }
 
 extension CodedError {

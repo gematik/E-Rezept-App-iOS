@@ -1,2 +1,2 @@
-github "gematik/ref-OpenHealthCardKit" "5.0.0"
-github "gematik/openssl-swift" "3.0.3"
+github "gematik/ref-OpenHealthCardKit" "5.1.0"
+github "gematik/OpenSSL-Swift" ~> 4.0

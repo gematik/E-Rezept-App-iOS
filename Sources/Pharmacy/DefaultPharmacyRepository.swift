@@ -109,18 +109,14 @@ public struct DefaultPharmacyRepository: PharmacyRepository {
             .flatMap { remotePharmacies in
                 disk.listPharmacies(count: nil) // AnyPublisher<[PharmacyLocation], LocalStoreError>
                     .map { [remotePharmacies] localPharmacies in
-                        var updatedPharamacies = remotePharmacies
-                        localPharmacies.forEach { pharmacy in
-                            if let index = updatedPharamacies
-                                .firstIndex(where: { $0.telematikID == pharmacy.telematikID }) {
-                                updatedPharamacies[index].created = pharmacy.created
-                                updatedPharamacies[index].isFavorite = pharmacy.isFavorite
-                                updatedPharamacies[index].lastUsed = pharmacy.lastUsed
-                                updatedPharamacies[index].imagePath = pharmacy.imagePath
-                                updatedPharamacies[index].countUsage = pharmacy.countUsage
+                        remotePharmacies.map { pharmacy in
+                            var remotePharmacy = pharmacy
+                            if let localPharmacy = localPharmacies
+                                .first(where: { $0.telematikID == pharmacy.telematikID }) {
+                                remotePharmacy.updateLocalStoredProperties(with: localPharmacy)
                             }
+                            return remotePharmacy
                         }
-                        return updatedPharamacies
                     }
                     .map { pharmacies in
                         if filter.contains(.delivery) {

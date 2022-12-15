@@ -98,7 +98,7 @@ class PharmacyDetailDomainTests: XCTestCase {
 
         sut.send(.toggleIsFavorite)
         sut.receive(.toggleIsFavoriteReceived(.failure(expectedError))) {
-            $0.route = .alert(AlertState(for: expectedError))
+            $0.route = .alert(.init(for: expectedError))
         }
     }
 }

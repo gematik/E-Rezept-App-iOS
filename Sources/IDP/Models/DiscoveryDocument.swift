@@ -31,7 +31,11 @@ public protocol IDPEndpoint {
 extension BrainpoolP256r1.KeyExchange.PublicKey: Equatable {
     public static func ==(lhs: BrainpoolP256r1.KeyExchange.PublicKey,
                           rhs: BrainpoolP256r1.KeyExchange.PublicKey) -> Bool {
-        lhs.rawValue == rhs.rawValue
+        guard let lhsValue = try? lhs.rawValue(),
+              let rhsValue = try? rhs.rawValue() else {
+            return false
+        }
+        return lhsValue == rhsValue
     }
 }
 
@@ -72,7 +76,7 @@ public struct DiscoveryDocument: Codable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(backing, forKey: .payload)
-        try container.encode(encryptionPublicKey.x962Value, forKey: .encryptionPublicKey)
+        try container.encode(encryptionPublicKey.x962Value(), forKey: .encryptionPublicKey)
         try container.encode(signingCert.derBytes, forKey: .tokenKey)
         try container.encode(createdOn, forKey: .createdOn)
     }

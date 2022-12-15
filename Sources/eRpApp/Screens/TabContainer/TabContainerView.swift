@@ -31,11 +31,11 @@ struct TabContainerView: View {
     }
 
     struct ViewState: Equatable {
-        let selectedTab: AppDomain.Tab
+        let selectedTab: AppDomain.Route
         let unreadOrderMessageCount: Int
 
         init(state: AppDomain.State) {
-            selectedTab = state.selectedTab
+            selectedTab = state.route
             unreadOrderMessageCount = state.unreadOrderMessageCount
         }
     }
@@ -48,7 +48,7 @@ struct TabContainerView: View {
                 .zIndex(1000)
             #endif
 
-            TabView(selection: Binding<AppDomain.Tab>(
+            TabView(selection: Binding<AppDomain.Route>(
                 get: { viewStore.selectedTab },
                 set: { selected in
                     viewStore.send(.selectTab(selected))
@@ -61,7 +61,7 @@ struct TabContainerView: View {
                 .tabItem {
                     Label(L10n.tabTxtMain, image: Asset.TabIcon.appLogoTabItem.name)
                 }
-                .tag(AppDomain.Tab.main)
+                .tag(AppDomain.Route.main)
 
                 NavigationView {
                     PharmacySearchView(
@@ -77,7 +77,7 @@ struct TabContainerView: View {
                 .tabItem {
                     Label(L10n.tabTxtPharmacySearch, image: Asset.TabIcon.mapPinAndEllipse.name)
                 }
-                .tag(AppDomain.Tab.pharmacySearch)
+                .tag(AppDomain.Route.pharmacySearch)
 
                 OrdersView(
                     store: store.scope(state: \.orders,
@@ -89,7 +89,7 @@ struct TabContainerView: View {
                     Label(L10n.tabTxtOrders, image: Asset.TabIcon.bag.name)
                 }
                 .backport.badge(viewStore.unreadOrderMessageCount)
-                .tag(AppDomain.Tab.orders)
+                .tag(AppDomain.Route.orders)
 
                 #if ENABLE_DEBUG_VIEW
                 SettingsView(
@@ -105,7 +105,7 @@ struct TabContainerView: View {
                 .tabItem {
                     Label(L10n.tabTxtSettings, image: Asset.TabIcon.gearshape.name)
                 }
-                .tag(AppDomain.Tab.settings)
+                .tag(AppDomain.Route.settings)
                 #else
                 SettingsView(
                     store: store.scope(
@@ -116,7 +116,7 @@ struct TabContainerView: View {
                 .tabItem {
                     Label(L10n.tabTxtSettings, image: Asset.TabIcon.gearshape.name)
                 }
-                .tag(AppDomain.Tab.settings)
+                .tag(AppDomain.Route.settings)
                 #endif
             }
             .onAppear {

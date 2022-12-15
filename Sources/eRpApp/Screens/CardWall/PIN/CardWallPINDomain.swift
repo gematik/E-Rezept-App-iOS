@@ -27,25 +27,7 @@ enum CardWallPINDomain {
 
     indirect enum Route: Equatable {
         case login(CardWallLoginOptionDomain.State)
-        case loginPush(CardWallLoginOptionDomain.State)
         case egk
-
-        enum Tag: Int {
-            case login
-            case loginPush
-            case egk
-        }
-
-        var tag: Tag {
-            switch self {
-            case .login:
-                return .login
-            case .loginPush:
-                return .loginPush
-            case .egk:
-                return .egk
-            }
-        }
     }
 
     struct State: Equatable {

@@ -87,12 +87,13 @@ struct ExtAuthPendingView: View {
     var body: some View {
         VStack {
             Spacer()
-                .alert(store.scope { _ in
-                    if case let ExtAuthPendingDomain.State.extAuthFailed(alertView) = viewStore.state {
-                        return alertView
-                    }
-                    return nil
-                }, dismiss: .nothing)
+                .alert(
+                    self.store
+                        .scope(state: (\ExtAuthPendingDomain.State.self)
+                            .appending(path: /ExtAuthPendingDomain.State.extAuthFailed)
+                            .extract(from:)),
+                    dismiss: .nothing
+                )
 
             if showToast {
                 HStack(spacing: 16) {

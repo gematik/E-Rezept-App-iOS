@@ -67,6 +67,7 @@ struct AddProfileView: View {
                                     .padding(.horizontal)
                             }
                         })
+                            .disabled(!viewStore.isValidName)
                             .background(viewStore.isValidName ? Colors.primary : Color(.systemGray4))
                             .cornerRadius(16)
                 }

@@ -68,7 +68,7 @@ struct ReadCardHelpCardView: View {
                     }
                 }),
                 trailing: Button(L10n.cdwBtnRcNextTip) {
-                    viewStore.send(.updatePageIndex(index: 1))
+                    viewStore.send(.updatePageIndex(page: .second))
                 }
                 .accessibility(label: Text(L10n.cdwBtnRcNextTip))
                 .accessibility(identifier: A11y.cardWall.readCard.cdwBtnRcHelpNextTip)

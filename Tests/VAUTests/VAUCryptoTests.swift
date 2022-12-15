@@ -29,7 +29,7 @@ final class VAUCryptoTests: XCTestCase {
     func testVauCryptoEncrypt() throws {
         // given
         let message = "the message"
-        let vauPublicKey = try BrainpoolP256r1.KeyExchange.generateKey(compactRepresentable: false).publicKey
+        let vauPublicKey = try BrainpoolP256r1.KeyExchange.generateKey().publicKey
         let bearerToken = "bearer token"
         let requestIdGenerator = { "abcdef" }
         let keyData = try Data(hex: "9656c2b4b3da81d0385f6a1ee60e93b91828fd90231c923d53ce7bbbcd58ceaa")
