@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -158,10 +158,38 @@ class DemoSessionContainer: UserSession {
     lazy var avsTransactionDataStore: AVSTransactionDataStore = {
         DemoAVSTransactionDataStore()
     }()
+
+    private lazy var demoPrescriptionRepositoryWithActivity: DefaultPrescriptionRepository = {
+        DefaultPrescriptionRepository(
+            loginHandler: DefaultLoginHandler(
+                idpSession: idpSession,
+                signatureProvider: DummySecureEnclaveSignatureProvider()
+            ),
+            erxTaskRepository: self.erxTaskRepository
+        )
+    }()
+
+    lazy var prescriptionRepository: PrescriptionRepository = {
+        demoPrescriptionRepositoryWithActivity
+    }()
+
+    lazy var activityIndicating: ActivityIndicating = {
+        demoPrescriptionRepositoryWithActivity
+    }()
 }
 
 class DummySessionContainer: DemoSessionContainer {
     init() {
         super.init(schedulers: Schedulers())
+    }
+}
+
+private struct DemoLoginHandler: LoginHandler {
+    func isAuthenticated() -> AnyPublisher<LoginResult, Never> {
+        Just(LoginResult.success(true)).eraseToAnyPublisher()
+    }
+
+    func isAuthenticatedOrAuthenticate() -> AnyPublisher<LoginResult, Never> {
+        Just(LoginResult.success(true)).eraseToAnyPublisher()
     }
 }

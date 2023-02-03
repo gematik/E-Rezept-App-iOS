@@ -1,3 +1,47 @@
+# Release 1.5.0
+
+### added (9 changes)
+
+- Add search for fasttrack insurance list
+- Add ScrollViewWithStickyHeader to pharmacy search and main view
+- Add content square analytics to app and connect it with cardwall screens
+- Add clouds and spinner in horizontal profile chips
+- Add PrescriptionRepository that exposes ActivityIndicating to UserSession
+- Add prescription archive view
+- Add ActivityIndicating property to UserProfile
+- Add WelcomeDrawer
+- Add new main view empty state, profile icon and login / refresh buttons
+
+### changed (6 changes)
+
+- Change CS tracker with placeholder so that tracking stays disabled in next release
+- Change OrderHealthCardView to use TCA (routes)
+- Change debug view to be easier to understand
+- Change CreatePasswordDomain to be route of settings domain
+- Change SettingsView to have route for debug view
+- Change SettingsView to have routes for navigation so that we can track them
+
+### removed (1 change)
+
+- Remove grouping from prescriptions
+
+### fixed 7 changes)
+
+- Fix health insurance contact list
+- Fix cancel button for pharamcy search not visible correctly and dark mode ui glitch
+- Fix fasttrack sso using wrong redirect
+- Fix alert title when disabling demo mode
+- Fix fasttrack selection domain sending multiple requests for various users
+- Fix sticky scrollview header not blocking touches
+- Fix iOS 16 issue while presenting app authentication dialog
+
+### internal (4 changes)
+
+- Added more multiple prescription snapshot test data
+- Changed snapshot precision
+- Make UserProfileService single point of contact for profile domains
+- Change swift-composable-architecture to version 0.47.2 and remove deprecations and errors
+
 # Release 1.4.9
 
 ### added (2 changes)

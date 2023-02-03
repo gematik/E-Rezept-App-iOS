@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -18,14 +18,15 @@
 
 import ComposableArchitecture
 @testable import eRpApp
+import eRpKit
 import Nimble
 import XCTest
 
 final class CreatePasswordDomainTests: XCTestCase {
     typealias TestStore = ComposableArchitecture.TestStore<
         CreatePasswordDomain.State,
-        CreatePasswordDomain.State,
         CreatePasswordDomain.Action,
+        CreatePasswordDomain.State,
         CreatePasswordDomain.Action,
         CreatePasswordDomain.Environment
     >
@@ -34,6 +35,7 @@ final class CreatePasswordDomainTests: XCTestCase {
         super.setUp()
         mockPasswordManager = MockAppSecurityManager()
         mockPasswordStrengthTester = MockPasswordStrengthTester()
+        mockUserDataStore = MockUserDataStore()
     }
 
     func testStore(for state: CreatePasswordDomain.State) -> TestStore {
@@ -42,7 +44,8 @@ final class CreatePasswordDomainTests: XCTestCase {
                   environment: CreatePasswordDomain.Environment(
                       passwordManager: mockPasswordManager,
                       schedulers: Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler()),
-                      passwordStrengthTester: mockPasswordStrengthTester
+                      passwordStrengthTester: mockPasswordStrengthTester,
+                      userDataStore: mockUserDataStore
                   ))
     }
 
@@ -50,6 +53,7 @@ final class CreatePasswordDomainTests: XCTestCase {
     let testScheduler = DispatchQueue.test
     var mockPasswordManager: MockAppSecurityManager!
     var mockPasswordStrengthTester: MockPasswordStrengthTester!
+    var mockUserDataStore: MockUserDataStore!
 
     func testSetPasswordAOnly() {
         let store = testStore(for: emptyPasswords)
@@ -231,6 +235,8 @@ final class CreatePasswordDomainTests: XCTestCase {
 
         store.send(.saveButtonTapped)
         store.receive(.closeAfterPasswordSaved)
+        expect(self.mockUserDataStore.setAppSecurityOptionCalled).to(beTrue())
+        expect(self.mockUserDataStore.setAppSecurityOptionReceivedAppSecurityOption) == .password
     }
 
     func testUpdatePasswordChecksPassword() {

@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -30,9 +30,9 @@ final class DefaultPharmacyRepositoryTests: XCTestCase {
 
         let sut = DefaultPharmacyRepository(disk: mockLocalDataStore, cloud: mockRemoteDataStore)
 
-        mockLocalDataStore.fetchByTelematikIdClosure = { telematikId in
+        mockLocalDataStore.fetchPharmacyByClosure = { telematikId in
             if telematikId == Fixtures.pharmacy1.telematikID,
-               mockLocalDataStore.fetchByTelematikIdCallsCount == 1 {
+               mockLocalDataStore.fetchPharmacyByCallsCount == 1 {
                 return Just(Fixtures.pharmacy1)
                     .setFailureType(to: LocalStoreError.self)
                     .eraseToAnyPublisher()
@@ -48,7 +48,7 @@ final class DefaultPharmacyRepositoryTests: XCTestCase {
                 expect(result).to(equal(Fixtures.pharmacy1))
             })
 
-        expect(mockRemoteDataStore.fetchByTelematikIdCallsCount).to(equal(0))
+        expect(mockRemoteDataStore.fetchPharmacyByCallsCount).to(equal(0))
         expect(mockLocalDataStore.savePharmaciesCallsCount).to(equal(0))
     }
 
@@ -58,9 +58,9 @@ final class DefaultPharmacyRepositoryTests: XCTestCase {
 
         let sut = DefaultPharmacyRepository(disk: mockLocalDataStore, cloud: mockRemoteDataStore)
 
-        mockLocalDataStore.fetchByTelematikIdClosure = { telematikId in
+        mockLocalDataStore.fetchPharmacyByClosure = { telematikId in
             if telematikId == Fixtures.pharmacy1.telematikID,
-               mockLocalDataStore.fetchByTelematikIdCallsCount == 1 {
+               mockLocalDataStore.fetchPharmacyByCallsCount == 1 {
                 return Just(nil)
                     .setFailureType(to: LocalStoreError.self)
                     .eraseToAnyPublisher()
@@ -69,8 +69,8 @@ final class DefaultPharmacyRepositoryTests: XCTestCase {
             }
         }
 
-        mockRemoteDataStore.fetchByTelematikIdClosure = { _ in
-            if mockRemoteDataStore.fetchByTelematikIdCallsCount == 1 {
+        mockRemoteDataStore.fetchPharmacyByClosure = { _ in
+            if mockRemoteDataStore.fetchPharmacyByCallsCount == 1 {
                 return Just(Fixtures.pharmacy1)
                     .setFailureType(to: PharmacyFHIRDataSource.Error.self)
                     .eraseToAnyPublisher()
@@ -104,9 +104,9 @@ final class DefaultPharmacyRepositoryTests: XCTestCase {
         let telematikId = "123"
         let sut = DefaultPharmacyRepository(disk: mockLocalDataStore, cloud: mockRemoteDataStore)
 
-        mockLocalDataStore.fetchByTelematikIdClosure = { id in
+        mockLocalDataStore.fetchPharmacyByClosure = { id in
             if id == telematikId,
-               mockLocalDataStore.fetchByTelematikIdCallsCount == 1 {
+               mockLocalDataStore.fetchPharmacyByCallsCount == 1 {
                 return Just(nil)
                     .setFailureType(to: LocalStoreError.self)
                     .eraseToAnyPublisher()
@@ -115,8 +115,8 @@ final class DefaultPharmacyRepositoryTests: XCTestCase {
             }
         }
 
-        mockRemoteDataStore.fetchByTelematikIdClosure = { _ in
-            if mockRemoteDataStore.fetchByTelematikIdCallsCount == 1 {
+        mockRemoteDataStore.fetchPharmacyByClosure = { _ in
+            if mockRemoteDataStore.fetchPharmacyByCallsCount == 1 {
                 return Just(nil)
                     .setFailureType(to: PharmacyFHIRDataSource.Error.self)
                     .eraseToAnyPublisher()
@@ -139,15 +139,15 @@ final class DefaultPharmacyRepositoryTests: XCTestCase {
     func testSearchRemoteWithDeliveryOption() {
         let mockLocalDataStore = MockPharmacyLocalDataStore()
         let mockRemoteDataStore = MockPharmacyRemoteDataStore()
-        mockLocalDataStore.listPharmaciesReturnValue = Just([])
+        mockLocalDataStore.listPharmaciesCountReturnValue = Just([])
             .setFailureType(to: LocalStoreError.self)
             .eraseToAnyPublisher()
 
         let sut = DefaultPharmacyRepository(disk: mockLocalDataStore, cloud: mockRemoteDataStore)
 
-        mockRemoteDataStore.searchByTermPositionFilterClosure = { _, _, filter in
+        mockRemoteDataStore.searchPharmaciesByPositionFilterClosure = { _, _, filter in
             if filter.isEmpty,
-               mockRemoteDataStore.searchByTermPositionFilterCallsCount == 1 {
+               mockRemoteDataStore.searchPharmaciesByPositionFilterCallsCount == 1 {
                 return Just([Fixtures.pharmacy1, Fixtures.pharmacy2])
                     .setFailureType(to: PharmacyFHIRDataSource.Error.self)
                     .eraseToAnyPublisher()
@@ -172,16 +172,16 @@ final class DefaultPharmacyRepositoryTests: XCTestCase {
         storedPharmacy.created = createDate
         var remotePharmacy = Fixtures.pharmacy2
         remotePharmacy.created = createDate
-        mockLocalDataStore.listPharmaciesReturnValue = Just([storedPharmacy])
+        mockLocalDataStore.listPharmaciesCountReturnValue = Just([storedPharmacy])
             .setFailureType(to: LocalStoreError.self)
             .eraseToAnyPublisher()
         let mockRemoteDataStore = MockPharmacyRemoteDataStore()
 
         let sut = DefaultPharmacyRepository(disk: mockLocalDataStore, cloud: mockRemoteDataStore)
 
-        mockRemoteDataStore.searchByTermPositionFilterClosure = { _, _, filter in
+        mockRemoteDataStore.searchPharmaciesByPositionFilterClosure = { _, _, filter in
             if filter.isEmpty,
-               mockRemoteDataStore.searchByTermPositionFilterCallsCount == 1 {
+               mockRemoteDataStore.searchPharmaciesByPositionFilterCallsCount == 1 {
                 return Just([Fixtures.pharmacy1, remotePharmacy])
                     .setFailureType(to: PharmacyFHIRDataSource.Error.self)
                     .eraseToAnyPublisher()

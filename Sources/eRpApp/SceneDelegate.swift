@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -17,6 +17,7 @@
 //
 
 import ComposableArchitecture
+import ContentsquareModule
 import eRpKit
 import eRpLocalStorage
 import IDP
@@ -34,10 +35,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing, SceneDelegateD
     var coreDataControllerFactory: CoreDataControllerFactory = LocalStoreFactory()
     // This must be raw userDefaults access, demo session should *not* interfere with user authentication
     var userDataStore: UserDataStore = UserDefaultsStore(userDefaults: .standard)
+
+    let tracker = PlaceholderTracker()
+
     private lazy var routerStore = RouterStore(
         initialState: .init(),
-        reducer: AppStartDomain.reducer.notifyUserInteraction(),
-        environment: environment(),
+        reducer: AppStartDomain.reducer.analytics().notifyUserInteraction(),
+        environment: environment(tracker: tracker),
         router: AppStartDomain.router
     )
 
@@ -61,7 +65,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing, SceneDelegateD
 
     func scene(_ scene: UIScene,
                willConnectTo _: UISceneSession,
-               options _: UIScene.ConnectionOptions) {
+               options connectionOptions: UIScene.ConnectionOptions) {
         userDataStore.appStartCounter += 1
 
         if let windowScene = scene as? UIWindowScene {
@@ -88,6 +92,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing, SceneDelegateD
             mainWindow?.makeKeyAndVisible()
             setupNotifications(scene: scene)
         }
+
+        #if ENABLE_DEBUG_VIEW
+        if let url = connectionOptions.urlContexts.first?.url {
+            Contentsquare.handle(url: url)
+        }
+        #endif
     }
 
     func routeTo(_ endpoint: Endpoint) {
@@ -105,7 +115,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing, SceneDelegateD
 
         guard !migrationCoordinator.isMigrating else { return }
 
-        presentAppAuthenticationDomain(scene: scene)
+        DispatchQueue.main.async { [weak self] in
+            self?.presentAppAuthenticationDomain(scene: scene)
+        }
     }
 
     func presentAppMigrationDomain(completion: @escaping () -> Void) {
@@ -192,6 +204,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing, SceneDelegateD
         }
     }
 
+    #if ENABLE_DEBUG_VIEW
+    func scene(_: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
+        if let url = URLContexts.first?.url {
+            Contentsquare.handle(url: url)
+        }
+    }
+    #endif
+
     private func addBlurOverlayToWindow() {
         guard let mainWindow = mainWindow else { return }
         blurEffectView.frame = mainWindow.frame
@@ -216,6 +236,8 @@ extension SceneDelegate {
         let hasProfile = (try? store.hasProfile()) ?? false
         if !hasProfile {
             userDataStore.set(hideOnboarding: false)
+            // [REQ:gemSpec_eRp_FdV:A_19090] activate after optIn is granted
+            tracker.stopTracking()
 
             let profile = try store.createProfile(with: L10n.onbProfileName.text)
             userDataStore.set(selectedProfileId: profile.id)
@@ -268,11 +290,9 @@ extension SceneDelegate {
         return (changeableUserSessionContainer, userSessionProvider)
     }
 
-    private func environment() -> AppStartDomain.Environment {
+    private func environment(tracker: Tracker = PlaceholderTracker()) -> AppStartDomain.Environment {
         let schedulers = Schedulers()
         let (changeableUserSessionContainer, userSessionProvider) = sessionContainer(with: schedulers)
-
-        let tracker = PlaceholderTracker() // TODO: replace with new tracker //swiftlint:disable:this todo
 
         #if ENABLE_DEBUG_VIEW && targetEnvironment(simulator)
         // swiftlint:disable:next trailing_closure
@@ -341,13 +361,35 @@ extension SceneDelegate {
     }
 }
 
-extension Reducer where Action: Equatable {
+extension AnyReducer where Action: Equatable {
     fileprivate func notifyUserInteraction( // swiftlint:disable:this strict_fileprivate
-    ) -> Reducer<State, Action, Environment> {
+    ) -> AnyReducer<State, Action, Environment> {
         .init { state, action, environment in
             NotificationCenter.default.post(name: .userInteractionDetected, object: nil, userInfo: nil)
 
             return self.run(&state, action, environment)
+        }
+    }
+}
+
+extension AnyReducer where Action == AppStartDomain.Action, State == AppStartDomain.State,
+    Environment == AppStartDomain.Environment {
+    fileprivate func analytics() // swiftlint:disable:this strict_fileprivate
+        -> AnyReducer<State, Action, Environment> {
+        .init { state, action, environment in
+            let route = state.routeName()
+
+            let result = self.run(&state, action, environment)
+
+            if let newRoute = state.routeName(),
+               newRoute != route {
+                #if ENABLE_DEBUG_VIEW && targetEnvironment(simulator)
+                print("Route tag:", newRoute)
+                #endif
+                environment.tracker.track(screen: newRoute)
+            }
+
+            return result
         }
     }
 }

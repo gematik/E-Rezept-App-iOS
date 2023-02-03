@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -26,12 +26,23 @@ import XCTest
 
 final class PickupCodeDomainTests: XCTestCase {
     let testScheduler = DispatchQueue.test
-    let matrixCodeGenerator = MockMatrixCodeGenerator()
+    var matrixCodeGenerator: MockMatrixCodeGenerator!
+
+    static let testBundleName = "qrcode"
+
+    override func setUp() {
+        super.setUp()
+
+        matrixCodeGenerator = MockMatrixCodeGenerator()
+        let uiImage = UIImage(testBundleNamed: MockErxTaskMatrixCodeGenerator.testBundleName)!
+        let cgImage = uiImage.cgImage!
+        matrixCodeGenerator.generateImageForWidthHeightReturnValue = cgImage
+    }
 
     typealias TestStore = ComposableArchitecture.TestStore<
         PickupCodeDomain.State,
-        PickupCodeDomain.State,
         PickupCodeDomain.Action,
+        PickupCodeDomain.State,
         PickupCodeDomain.Action,
         PickupCodeDomain.Environment
     >
@@ -83,7 +94,7 @@ final class PickupCodeDomainTests: XCTestCase {
             $0.pickupCodeHR = nil
             $0.pickupCodeDMC = "Data Matrix Code Content"
             $0.dmcImage = expectedImage
-            expect(self.matrixCodeGenerator.generateImageCallsCount) == 2
+            expect(self.matrixCodeGenerator.generateImageForWidthHeightCallsCount) == 2
         }
     }
 
@@ -101,7 +112,7 @@ final class PickupCodeDomainTests: XCTestCase {
             $0.pickupCodeHR = "4711"
             $0.pickupCodeDMC = "Data Matrix Code Content"
             $0.dmcImage = expectedImage
-            expect(self.matrixCodeGenerator.generateImageCallsCount) == 2
+            expect(self.matrixCodeGenerator.generateImageForWidthHeightCallsCount) == 2
         }
         store.send(.loadMatrixCodeImage(screenSize: size))
     }

@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -18,16 +18,18 @@
 
 import ComposableArchitecture
 @testable import eRpApp
+import eRpKit
 import Nimble
 import XCTest
 
 final class MainDomainTests: XCTestCase {
     let testScheduler = DispatchQueue.test
+    let mockUserDataStore = MockUserDataStore()
 
     typealias TestStore = ComposableArchitecture.TestStore<
         MainDomain.State,
-        MainDomain.State,
         MainDomain.Action,
+        MainDomain.State,
         MainDomain.Action,
         MainDomain.Environment
     >
@@ -53,13 +55,13 @@ final class MainDomainTests: XCTestCase {
                       secureDataWiper: DummyProfileSecureDataWiper(),
                       signatureProvider: DummySecureEnclaveSignatureProvider(),
                       userSessionProvider: DummyUserSessionProvider(),
-                      userDataStore: DemoUserDefaultsStore(),
+                      userDataStore: mockUserDataStore,
                       tracker: DummyTracker()
                   ))
     }
 
     func testDemoModeChange() {
-        // givn
+        // given
         let sut = testStore()
 
         // when
@@ -85,5 +87,58 @@ final class MainDomainTests: XCTestCase {
             // then
             sut.route = .alert(.init(for: error))
         }
+    }
+
+    func testWelcomeDrawerRoute() {
+        // given
+        let sut = testStore(for: .init(prescriptionListState: .init(),
+                                       horizontalProfileSelectionState: .init()))
+        // when
+        mockUserDataStore.underlyingHideWelcomeDrawer = false
+        sut.send(.showWelcomeDrawer) { state in
+            // then
+            state.route = .welcomeDrawer
+        }
+        expect(self.mockUserDataStore.hideWelcomeDrawer).to(beTrue())
+
+        // when
+        sut.send(.showWelcomeDrawer)
+        // then
+        expect(self.mockUserDataStore.hideWelcomeDrawer).to(beTrue())
+    }
+
+    func testWelcomeDrawerNotPresentedWhileRouteSet() {
+        // given
+        let sut = testStore(for: .init(
+            prescriptionListState: .init(),
+            horizontalProfileSelectionState: .init(),
+            route: .deviceSecurity(DeviceSecurityDomain.State(warningType: .devicePinMissing))
+        ))
+        // when
+        mockUserDataStore.underlyingHideWelcomeDrawer = false
+
+        sut.send(.showWelcomeDrawer)
+        // then
+        expect(self.mockUserDataStore.hideWelcomeDrawer).to(beFalse())
+    }
+
+    func testRedeemPrescriptionsOnlyWithReadyStatus() {
+        // given
+        let sut = testStore(for: .init(
+            prescriptionListState: .init(),
+            horizontalProfileSelectionState: .init()
+        ))
+        let expectedPrescription = Prescription(erxTask: ErxTask.Fixtures.erxTask1)
+        let nonReadyPrescriptions = [
+            Prescription(erxTask: ErxTask.Fixtures.erxTask9),
+            Prescription(erxTask: ErxTask.Fixtures.erxTask10),
+            Prescription(erxTask: ErxTask.Fixtures.erxTask11),
+        ]
+        // when
+        sut
+            .send(.prescriptionList(action: .redeemButtonTapped(openPrescriptions: nonReadyPrescriptions +
+                    [expectedPrescription]))) { state in
+                    state.route = .redeem(RedeemMethodsDomain.State(erxTasks: [expectedPrescription.erxTask]))
+            }
     }
 }

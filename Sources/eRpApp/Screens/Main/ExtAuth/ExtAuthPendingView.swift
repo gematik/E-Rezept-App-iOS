@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -141,7 +141,7 @@ struct ExtAuthPendingView_Preview: PreviewProvider {
                     .Entry(name: "Gematik KK", identifier: "identifier"))
             ))
             ExtAuthPendingView(store: ExtAuthPendingDomain.Dummies.store(
-                for: .extAuthFailed(AlertState(title: TextState("error")))
+                for: .extAuthFailed(ErpAlertState(title: TextState("error")))
             ))
             ExtAuthPendingView(store: ExtAuthPendingDomain.Dummies.store(
                 for: .extAuthSuccessful(KKAppDirectory

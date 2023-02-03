@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -26,25 +26,25 @@ import XCTest
 
 final class RecordActionsForHintsTests: XCTestCase {
     let testScheduler = DispatchQueue.test
-    let reducer = Reducer<AppDomain.State, AppDomain.Action, AppDomain.Environment>.empty.recordActionsForHints()
+    let reducer = AnyReducer<AppDomain.State, AppDomain.Action, AppDomain.Environment>.empty.recordActionsForHints()
 
     typealias TestStore = ComposableArchitecture.TestStore<
         AppDomain.State,
-        AppDomain.State,
         AppDomain.Action,
+        AppDomain.State,
         AppDomain.Action,
         AppDomain.Environment
     >
 
     private func testStore(
         sessionContainer: UsersSessionContainer,
-        for groupedPrescriptionListState: PrescriptionListDomain.State = PrescriptionListDomain.State()
+        for prescriptionListState: PrescriptionListDomain.State = PrescriptionListDomain.State()
     ) -> TestStore {
         TestStore(
             initialState: AppDomain.State(
                 route: .main,
                 main: MainDomain.State(
-                    prescriptionListState: groupedPrescriptionListState,
+                    prescriptionListState: prescriptionListState,
                     horizontalProfileSelectionState: HorizontalProfileSelectionDomain.State(),
                     isDemoMode: false
                 ),
@@ -54,14 +54,12 @@ final class RecordActionsForHintsTests: XCTestCase {
                                      appSecurityState: .init(
                                          availableSecurityOptions: [],
                                          selectedSecurityOption: nil,
-                                         errorToDisplay: nil,
-                                         createPasswordState: nil
+                                         errorToDisplay: nil
                                      )),
                 profileSelection: .init(
                     profile: UserProfile.Fixtures.theo,
                     profileSelectionState: .init()
                 ),
-                debug: .init(trackingOptIn: true),
                 unreadOrderMessageCount: 0,
                 isDemoMode: false
             ),
@@ -83,17 +81,18 @@ final class RecordActionsForHintsTests: XCTestCase {
     }
 
     func testRecordActionsForHintsReducerHappyPath() {
-        let mockSessionContainer = MockUserSessionContainer()
-        let groupedPrescriptions = GroupedPrescription.Dummies.prescriptions
+        let mockSessionContainer = MockUsersSessionContainer()
+        mockSessionContainer.underlyingUserSession = MockUserSession()
+        let prescriptions = Prescription.Dummies.prescriptions
         let prescriptionLoadingState =
-            LoadingState<[GroupedPrescription], ErxRepositoryError>
-                .value([groupedPrescriptions])
-        let groupedPrescriptionListState = PrescriptionListDomain.State(
+            LoadingState<[Prescription], PrescriptionRepositoryError>
+                .value(prescriptions)
+        let prescriptionListState = PrescriptionListDomain.State(
             loadingState: prescriptionLoadingState,
-            groupedPrescriptions: [groupedPrescriptions]
+            prescriptions: prescriptions
         )
         let store = testStore(sessionContainer: mockSessionContainer,
-                              for: groupedPrescriptionListState)
+                              for: prescriptionListState)
 
         expect(mockSessionContainer.userSession.hintEventsStore.hintState.hasDemoModeBeenToggledBefore).to(beFalse())
         expect(mockSessionContainer.userSession.hintEventsStore.hintState.hasTasksInLocalStore).to(beFalse())
@@ -107,7 +106,7 @@ final class RecordActionsForHintsTests: XCTestCase {
         // when prescriptions were loaded and have results
         store.send(
             .main(
-                action: .prescriptionList(action: .loadLocalGroupedPrescriptionsReceived(prescriptionLoadingState))
+                action: .prescriptionList(action: .loadLocalPrescriptionsReceived(prescriptionLoadingState))
             )
         )
         // than hint state should change from the `recordActionsForHints` reducer
@@ -115,12 +114,13 @@ final class RecordActionsForHintsTests: XCTestCase {
     }
 
     func testRecordActionsForHintsReducerWhenThereAreNoTasksInLocalStore() {
-        let sessionContainer = MockUserSessionContainer()
+        let sessionContainer = MockUsersSessionContainer()
+        sessionContainer.underlyingUserSession = MockUserSession()
         let store = testStore(sessionContainer: sessionContainer)
 
         expect(sessionContainer.userSession.hintEventsStore.hintState.hasTasksInLocalStore).to(beFalse())
         // when prescriptions were loaded and have no results
-        store.send(.main(action: .prescriptionList(action: .loadLocalGroupedPrescriptionsReceived(LoadingState
+        store.send(.main(action: .prescriptionList(action: .loadLocalPrescriptionsReceived(LoadingState
                 .idle))))
         // than hint state should not be changed from the `recordActionsForHints` reducer
         expect(sessionContainer.userSession.hintEventsStore.hintState.hasTasksInLocalStore).to(beFalse())

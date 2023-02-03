@@ -46,12 +46,15 @@ extension CardWallCANDomain.Route {
 extension CardWallExtAuthSelectionDomain.Route {
     enum Tag: Int {
         case confirmation
+        case egk
     }
 
     var tag: Tag {
         switch self {
             case .confirmation:
                 return .confirmation
+            case .egk:
+                return .egk
         }
     }
 }
@@ -193,9 +196,11 @@ extension HealthCardPasswordReadCardDomain.Route {
 extension MainDomain.Route {
     enum Tag: Int {
         case addProfile
+        case welcomeDrawer
         case scanner
         case deviceSecurity
         case cardWall
+        case prescriptionArchive
         case prescriptionDetail
         case redeem
         case alert
@@ -205,12 +210,16 @@ extension MainDomain.Route {
         switch self {
             case .addProfile:
                 return .addProfile
+            case .welcomeDrawer:
+                return .welcomeDrawer
             case .scanner:
                 return .scanner
             case .deviceSecurity:
                 return .deviceSecurity
             case .cardWall:
                 return .cardWall
+            case .prescriptionArchive:
+                return .prescriptionArchive
             case .prescriptionDetail:
                 return .prescriptionDetail
             case .redeem:
@@ -235,6 +244,21 @@ extension OrderDetailDomain.Route {
                 return .prescriptionDetail
             case .alert:
                 return .alert
+        }
+    }
+}
+extension OrderHealthCardDomain.Route {
+    enum Tag: Int {
+        case searchPicker
+        case serviceInquiry
+    }
+
+    var tag: Tag {
+        switch self {
+            case .searchPicker:
+                return .searchPicker
+            case .serviceInquiry:
+                return .serviceInquiry
         }
     }
 }
@@ -310,6 +334,18 @@ extension PharmacySearchDomain.Route {
                 return .filter
             case .alert:
                 return .alert
+        }
+    }
+}
+extension PrescriptionArchiveDomain.Route {
+    enum Tag: Int {
+        case prescriptionDetail
+    }
+
+    var tag: Tag {
+        switch self {
+            case .prescriptionDetail:
+                return .prescriptionDetail
         }
     }
 }
@@ -393,19 +429,46 @@ extension RegisteredDevicesDomain.Route {
 }
 extension SettingsDomain.Route {
     enum Tag: Int {
+        case debug
+        case alert
         case healthCardPasswordForgotPin
         case healthCardPasswordSetCustomPin
         case healthCardPasswordUnlockCard
+        case setAppPassword
+        case complyTracking
+        case legalNotice
+        case dataProtection
+        case openSourceLicence
+        case termsOfUse
+        case egk
     }
 
     var tag: Tag {
         switch self {
+            case .debug:
+                return .debug
+            case .alert:
+                return .alert
             case .healthCardPasswordForgotPin:
                 return .healthCardPasswordForgotPin
             case .healthCardPasswordSetCustomPin:
                 return .healthCardPasswordSetCustomPin
             case .healthCardPasswordUnlockCard:
                 return .healthCardPasswordUnlockCard
+            case .setAppPassword:
+                return .setAppPassword
+            case .complyTracking:
+                return .complyTracking
+            case .legalNotice:
+                return .legalNotice
+            case .dataProtection:
+                return .dataProtection
+            case .openSourceLicence:
+                return .openSourceLicence
+            case .termsOfUse:
+                return .termsOfUse
+            case .egk:
+                return .egk
         }
     }
 }

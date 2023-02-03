@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -23,11 +23,13 @@ import SwiftUI
 
 enum CardWallPINDomain {
     typealias Store = ComposableArchitecture.Store<State, Action>
-    typealias Reducer = ComposableArchitecture.Reducer<State, Action, Environment>
+    typealias Reducer = ComposableArchitecture.AnyReducer<State, Action, Environment>
 
     indirect enum Route: Equatable {
+        // sourcery: AnalyticsScreen = cardwallSaveLogin
         case login(CardWallLoginOptionDomain.State)
-        case egk
+        // sourcery: AnalyticsScreen = cardwallContactInsuranceCompany
+        case egk(OrderHealthCardDomain.State)
     }
 
     struct State: Equatable {
@@ -44,11 +46,11 @@ enum CardWallPINDomain {
         case update(pin: String)
         case close
         case advance(TransitionMode)
-        case showEGKOrderInfoView
         case setNavigation(tag: Route.Tag?)
         case login(action: CardWallLoginOptionDomain.Action)
         case navigateToIntro
         case wrongCanClose
+        case egkAction(action: OrderHealthCardDomain.Action)
     }
 
     enum TransitionMode: Equatable {
@@ -89,8 +91,8 @@ enum CardWallPINDomain {
                 environment.accessibilityAnnouncementReceiver(state.warningMessage)
             }
             return .none
-        case .showEGKOrderInfoView:
-            state.route = .egk
+        case .setNavigation(tag: .egk):
+            state.route = .egk(.init())
             return .none
         case .setNavigation(tag: .none):
             state.route = nil
@@ -100,7 +102,8 @@ enum CardWallPINDomain {
                 // Delay for before CardWallCanView is displayed, Workaround for TCA pullback problem
                 .delay(for: 0.01, scheduler: environment.schedulers.main)
                 .eraseToEffect()
-        case .login(.wrongPinClose):
+        case .login(.wrongPinClose),
+             .egkAction(action: .close):
             state.route = nil
             return .none
         case .login(.close):
@@ -110,7 +113,8 @@ enum CardWallPINDomain {
         case .setNavigation,
              .login,
              .navigateToIntro,
-             .wrongCanClose:
+             .wrongCanClose,
+             .egkAction:
             return .none
         }
     }
@@ -127,8 +131,15 @@ enum CardWallPINDomain {
                                                   openURL: UIApplication.shared.open(_:options:completionHandler:))
         }
 
+    static let orderHealthCardPullbackReducer: Reducer =
+        OrderHealthCardDomain.reducer._pullback(
+            state: (\State.route).appending(path: /Route.egk),
+            action: /Action.egkAction(action:)
+        ) { _ in OrderHealthCardDomain.Environment() }
+
     static let reducer = Reducer.combine(
         loginPullbackReducer,
+        orderHealthCardPullbackReducer,
         domainReducer
     )
 }

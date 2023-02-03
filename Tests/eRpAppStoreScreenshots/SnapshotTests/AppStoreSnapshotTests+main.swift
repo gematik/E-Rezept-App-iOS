@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -25,19 +25,9 @@ import XCTest
 
 extension AppStoreSnapshotTests {
     func main() -> some View {
-        let groupedPrescription = GroupedPrescription(
-            id: "1",
-            title: "Hausarztpraxis Dr. Topp-Glücklich",
-            authoredOn: "2019-12-20",
-            prescriptions: GroupedPrescription.Prescription.Fixtures.prescriptions,
-            displayType: .fullDetail
-        )
-
         let state = PrescriptionListDomain.State(
-            groupedPrescriptions: Array(
-                repeating: groupedPrescription,
-                count: 6
-            )
+            prescriptions: Prescription.Fixtures.prescriptions,
+            profile: UserProfile.Dummies.profileA
         )
 
         return MainView(
@@ -67,7 +57,8 @@ extension UserProfile {
                 lastAuthenticated: nil,
                 erxTasks: []
             ),
-            connectionStatus: .connected
+            connectionStatus: .connected,
+            activityIndicating: false
         )
     }
 }
@@ -438,8 +429,8 @@ extension ErxTask {
     }
 }
 
-extension GroupedPrescription.Prescription {
+extension Prescription {
     enum Fixtures {
-        static let prescriptions = ErxTask.Fixtures.erxTasks.map { GroupedPrescription.Prescription(erxTask: $0) }
+        static let prescriptions = ErxTask.Fixtures.erxTasks.map { Prescription(erxTask: $0) }
     }
 }

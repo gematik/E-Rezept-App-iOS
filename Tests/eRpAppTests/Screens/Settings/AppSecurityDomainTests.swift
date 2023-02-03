@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -28,8 +28,8 @@ final class AppSecurityDomainTests: XCTestCase {
 
     typealias TestStore = ComposableArchitecture.TestStore<
         AppSecurityDomain.State,
-        AppSecurityDomain.State,
         AppSecurityDomain.Action,
+        AppSecurityDomain.State,
         AppSecurityDomain.Action,
         AppSecurityDomain.Environment
     >
@@ -46,7 +46,7 @@ final class AppSecurityDomainTests: XCTestCase {
     private func testStore(for availableSecurityOptions: [AppSecurityOption] = [],
                            selectedSecurityOption: AppSecurityOption? = nil) -> TestStore {
         mockAppSecurityManager.availableSecurityOptionsReturnValue = (availableSecurityOptions, nil)
-        mockUserDataStore.appSecurityOption = Just(selectedSecurityOption?.id ?? 0).eraseToAnyPublisher()
+        mockUserDataStore.appSecurityOption = Just(selectedSecurityOption ?? .unsecured).eraseToAnyPublisher()
         let appSecurityEnvironment = AppSecurityDomain.Environment(
             userDataStore: mockUserDataStore,
             appSecurityManager: mockAppSecurityManager,
@@ -67,7 +67,9 @@ final class AppSecurityDomainTests: XCTestCase {
             $0.availableSecurityOptions = availableSecurityOptions
         }
         testScheduler.advance()
-        store.receive(.loadSecurityOptionResponse(nil))
+        store.receive(.loadSecurityOptionResponse(.unsecured)) {
+            $0.selectedSecurityOption = .unsecured
+        }
     }
 
     func testLoadingAvailableSecurityOptions_With_Biometry() {
@@ -79,10 +81,12 @@ final class AppSecurityDomainTests: XCTestCase {
             $0.availableSecurityOptions = availableSecurityOptions
         }
         testScheduler.advance()
-        store.receive(.loadSecurityOptionResponse(nil))
+        store.receive(.loadSecurityOptionResponse(.unsecured)) {
+            $0.selectedSecurityOption = .unsecured
+        }
     }
 
-    func testLoadingAvailableSecurityOptions_None_Selected() {
+    func testLoadingAvailableSecurityOptions_Unspecified_Selected() {
         let availableSecurityOptions: [AppSecurityOption] = [.biometry(.faceID), .unsecured]
         let preSelectedSecurityOption: AppSecurityOption? = nil
 
@@ -93,12 +97,14 @@ final class AppSecurityDomainTests: XCTestCase {
             $0.availableSecurityOptions = availableSecurityOptions
         }
         testScheduler.advance()
-        store.receive(.loadSecurityOptionResponse(preSelectedSecurityOption))
+        store.receive(.loadSecurityOptionResponse(.unsecured)) {
+            $0.selectedSecurityOption = .unsecured
+        }
     }
 
     func testLoadingAvailableSecurityOptions_Biometry_Selected() {
         let availableSecurityOptions: [AppSecurityOption] = [.biometry(.faceID), .unsecured]
-        let preSelectedSecurityOption: AppSecurityOption? = .biometry(.faceID)
+        let preSelectedSecurityOption: AppSecurityOption = .biometry(.faceID)
 
         let store = testStore(for: availableSecurityOptions,
                               selectedSecurityOption: preSelectedSecurityOption)
@@ -114,7 +120,7 @@ final class AppSecurityDomainTests: XCTestCase {
 
     func testLoadingAvailableSecurityOptions_Unsecured_Selected() {
         let availableSecurityOptions: [AppSecurityOption] = [.biometry(.faceID), .unsecured]
-        let preSelectedSecurityOption: AppSecurityOption? = .unsecured
+        let preSelectedSecurityOption: AppSecurityOption = .unsecured
 
         let store = testStore(for: availableSecurityOptions,
                               selectedSecurityOption: preSelectedSecurityOption)
@@ -128,27 +134,9 @@ final class AppSecurityDomainTests: XCTestCase {
         }
     }
 
-    func testSelectingAppSecurityOption_From_None_To_Unsecured() {
-        let availableSecurityOptions: [AppSecurityOption] = [.biometry(.faceID), .unsecured]
-        let preSelectedSecurityOption: AppSecurityOption? = nil
-        let selectedSecurityOption: AppSecurityOption = .unsecured
-
-        let store = testStore(for: availableSecurityOptions,
-                              selectedSecurityOption: preSelectedSecurityOption)
-
-        store.send(.loadSecurityOption) {
-            $0.availableSecurityOptions = availableSecurityOptions
-        }
-        testScheduler.advance()
-        store.receive(.loadSecurityOptionResponse(preSelectedSecurityOption))
-        store.send(.select(selectedSecurityOption)) {
-            $0.selectedSecurityOption = selectedSecurityOption
-        }
-    }
-
     func testSelectingAppSecurityOption_From_None_To_Biometry() {
         let availableSecurityOptions: [AppSecurityOption] = [.biometry(.faceID), .unsecured]
-        let preSelectedSecurityOption: AppSecurityOption? = nil
+        let preSelectedSecurityOption: AppSecurityOption = .unsecured
         let selectedSecurityOption: AppSecurityOption = .biometry(.faceID)
 
         let store = testStore(for: availableSecurityOptions,
@@ -158,57 +146,17 @@ final class AppSecurityDomainTests: XCTestCase {
             $0.availableSecurityOptions = availableSecurityOptions
         }
         testScheduler.advance()
-        store.receive(.loadSecurityOptionResponse(preSelectedSecurityOption))
+        store.receive(.loadSecurityOptionResponse(preSelectedSecurityOption)) {
+            $0.selectedSecurityOption = preSelectedSecurityOption
+        }
         store.send(.select(selectedSecurityOption)) {
             $0.selectedSecurityOption = selectedSecurityOption
         }
     }
 
-    func testSelectingAppSecurityOption_From_None_To_Password() {
-        let state = AppSecurityDomain.State(
-            availableSecurityOptions: [.password, .unsecured],
-            selectedSecurityOption: nil,
-            errorToDisplay: nil,
-            createPasswordState: nil
-        )
-
-        let store = TestStore(initialState: state,
-                              reducer: AppSecurityDomain.reducer,
-                              environment: AppSecurityDomain.Environment(
-                                  userDataStore: MockUserDataStore(),
-                                  appSecurityManager: mockAppSecurityManager,
-                                  schedulers: Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler())
-                              ))
-
-        store.send(.select(.password)) { state in
-            state.createPasswordState = CreatePasswordDomain.State(mode: .create)
-        }
-    }
-
-    func testSelectingAppSecurityOption_From_Password_To_Password() {
-        let state = AppSecurityDomain.State(
-            availableSecurityOptions: [.password, .unsecured],
-            selectedSecurityOption: .password,
-            errorToDisplay: nil,
-            createPasswordState: nil
-        )
-
-        let store = TestStore(initialState: state,
-                              reducer: AppSecurityDomain.reducer,
-                              environment: AppSecurityDomain.Environment(
-                                  userDataStore: MockUserDataStore(),
-                                  appSecurityManager: mockAppSecurityManager,
-                                  schedulers: Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler())
-                              ))
-
-        store.send(.select(.password)) { state in
-            state.createPasswordState = CreatePasswordDomain.State(mode: .update)
-        }
-    }
-
     func testSelectingAppSecurityOption_From_Unsecured_To_Biometry() {
         let availableSecurityOptions: [AppSecurityOption] = [.biometry(.faceID), .unsecured]
-        let preSelectedSecurityOption: AppSecurityOption? = .unsecured
+        let preSelectedSecurityOption: AppSecurityOption = .unsecured
         let selectedSecurityOption: AppSecurityOption = .biometry(.faceID)
 
         let store = testStore(for: availableSecurityOptions,
@@ -228,7 +176,7 @@ final class AppSecurityDomainTests: XCTestCase {
 
     func testSelectingAppSecurityOption_From_Biometry_To_Unsecured() {
         let availableSecurityOptions: [AppSecurityOption] = [.biometry(.faceID), .unsecured]
-        let preSelectedSecurityOption: AppSecurityOption? = .biometry(.faceID)
+        let preSelectedSecurityOption: AppSecurityOption = .biometry(.faceID)
         let selectedSecurityOption: AppSecurityOption = .unsecured
 
         let store = testStore(for: availableSecurityOptions,
@@ -244,31 +192,5 @@ final class AppSecurityDomainTests: XCTestCase {
         store.send(.select(selectedSecurityOption)) {
             $0.selectedSecurityOption = selectedSecurityOption
         }
-    }
-
-    func testCloseCreatePasswordViewOnClose() {
-        let state = AppSecurityDomain.State(
-            availableSecurityOptions: [.password, .unsecured],
-            selectedSecurityOption: nil,
-            errorToDisplay: nil,
-            createPasswordState: CreatePasswordDomain.State(mode: .create)
-        )
-
-        let store = TestStore(initialState: state,
-                              reducer: AppSecurityDomain.reducer,
-                              environment: AppSecurityDomain.Environment(
-                                  userDataStore: mockUserDataStore,
-                                  appSecurityManager: mockAppSecurityManager,
-                                  schedulers: Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler())
-                              ))
-
-        expect(self.mockUserDataStore.setAppSecurityOptionCalled) == false
-
-        store.send(.createPassword(action: .closeAfterPasswordSaved)) { state in
-            state.createPasswordState = nil
-            state.selectedSecurityOption = .password
-        }
-
-        expect(self.mockUserDataStore.setAppSecurityOptionCalled) == true
     }
 }

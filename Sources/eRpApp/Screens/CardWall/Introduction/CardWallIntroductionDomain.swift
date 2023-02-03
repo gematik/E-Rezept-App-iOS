@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -23,17 +23,21 @@ import IDP
 
 enum CardWallIntroductionDomain {
     typealias Store = ComposableArchitecture.Store<State, Action>
-    typealias Reducer = ComposableArchitecture.Reducer<State, Action, Environment>
+    typealias Reducer = ComposableArchitecture.AnyReducer<State, Action, Environment>
 
     /// Provides an Effect that need to run whenever the state of this Domain is reset to nil
     static func cleanup<T>() -> Effect<T, Never> {
-        Effect.cancel(token: CardWallReadCardDomain.Token.self)
+        Effect.cancel(id: CardWallReadCardDomain.Token.self)
     }
 
     enum Route: Equatable {
+        // sourcery: AnalyticsScreen = cardwallCAN
         case can(CardWallCANDomain.State)
+        // sourcery: AnalyticsScreen = cardWallExtAuth
         case fasttrack(CardWallExtAuthSelectionDomain.State)
-        case egk
+        // sourcery: AnalyticsScreen = cardwallContactInsuranceCompany
+        case egk(OrderHealthCardDomain.State)
+        // sourcery: AnalyticsScreen = cardwallNotCapable
         case notCapable
     }
 
@@ -47,11 +51,11 @@ enum CardWallIntroductionDomain {
     indirect enum Action: Equatable {
         case advance
         case advanceCAN(String?)
-        case showEGKOrderInfoView
         case close
         case setNavigation(tag: Route.Tag?)
         case canAction(action: CardWallCANDomain.Action)
         case fasttrack(action: CardWallExtAuthSelectionDomain.Action)
+        case egkAction(action: OrderHealthCardDomain.Action)
     }
 
     struct Environment {
@@ -83,10 +87,11 @@ enum CardWallIntroductionDomain {
             return .none
         case .close:
             return .none
-        case .showEGKOrderInfoView:
-            state.route = .egk
+        case .setNavigation(tag: .egk):
+            state.route = .egk(.init())
             return .none
-        case .setNavigation(tag: .none):
+        case .setNavigation(tag: .none),
+             .egkAction(action: .close):
             state.route = nil
             return .none
         case .canAction(.navigateToIntro),
@@ -102,7 +107,8 @@ enum CardWallIntroductionDomain {
                 .eraseToEffect()
         case .setNavigation,
              .canAction,
-             .fasttrack:
+             .fasttrack,
+             .egkAction:
             return .none
         }
     }
@@ -130,9 +136,16 @@ enum CardWallIntroductionDomain {
                                                        schedulers: environment.schedulers)
         }
 
+    static let orderHealthCardPullbackReducer: Reducer =
+        OrderHealthCardDomain.reducer._pullback(
+            state: (\State.route).appending(path: /Route.egk),
+            action: /Action.egkAction(action:)
+        ) { _ in OrderHealthCardDomain.Environment() }
+
     static let reducer = Reducer.combine(
         canPullbackReducer,
         fastTrackPullbackReducer,
+        orderHealthCardPullbackReducer,
         domainReducer
     )
 }

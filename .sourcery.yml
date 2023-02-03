@@ -1,5 +1,87 @@
-sources:
-  - Sources
-templates:
-  - Templates/Sourcery/eRpApp
-output: Sources
+configurations:
+  - sources: # writes to Sources/eRpApp/Generated/
+      - Sources
+    templates:
+      - Templates/Sourcery/eRpApp
+    output: Sources
+  - sources: # writes to Tests/AVSTests/Mocks/Generated/
+      - Sources
+      - Tests/AVSTests
+    templates:
+      - Templates/Sourcery/Tests/ProtocolMock.stencil
+    output: Tests/AVSTests
+    args:
+      protocolMockImports: [ Combine,Foundation,HTTPClient,OpenSSL ]
+      protocolMockTestableImports: [ AVS ]
+  - sources: # writes to Tests/eRpAppTests/Mocks/Generated/
+      - Sources
+      - Tests/eRpAppTests
+    templates:
+      - Templates/Sourcery/Tests/ProtocolMock.stencil
+    output: Tests/eRpAppTests
+    args:
+      protocolMockImports: [ AVS,Combine,eRpKit,eRpLocalStorage,eRpRemoteStorage,Foundation,IdentifiedCollections,IDP,OpenSSL,Pharmacy,TestUtils,TrustStore,VAUClient, ZXingObjC ]
+      protocolMockTestableImports: [ eRpApp ]
+  - sources: # writes to Tests/eRpKitTests/Mocks/Generated/
+      - Sources
+      - Tests/eRpKitTests
+    templates:
+      - Templates/Sourcery/Tests/ProtocolMock.stencil
+    output: Tests/eRpKitTests
+    args:
+      protocolMockImports: [ Combine,eRpKit,Foundation ]
+      protocolMockTestableImports: [ eRpKit ]
+  - sources: # writes to Tests/eRpLocalStorageTests/Mocks/Generated/
+      - Sources
+      - Tests/eRpLocalStorageTests
+    templates:
+      - Templates/Sourcery/Tests/ProtocolMock.stencil
+    output: Tests/eRpLocalStorageTests
+    args:
+      protocolMockImports: [ Combine,eRpKit,Foundation ]
+      protocolMockTestableImports: [ eRpLocalStorage ]
+  - sources: # writes to Tests/IDPTests/Mocks/Generated/
+      - Sources
+      - Tests/IDPTests
+    templates:
+      - Templates/Sourcery/Tests/ProtocolMock.stencil
+    output: Tests/IDPTests
+    args:
+      protocolMockImports: [ Combine,Foundation,OpenSSL,TrustStore ]
+      protocolMockTestableImports: [ IDP ]
+  - sources: # writes to Tests/IntegrationTests/Mocks/Generated/
+      - Sources
+      - Tests/IntegrationTests
+    templates:
+      - Templates/Sourcery/Tests/ProtocolMock.stencil
+    output: Tests/IntegrationTests
+    args:
+      protocolMockImports: [ Combine,eRpKit ]
+      protocolMockTestableImports: [ Pharmacy ]
+  - sources: # writes to Tests/PharmacyTests/Mocks/Generated/
+      - Sources
+      - Tests/PharmacyTests
+    templates:
+      - Templates/Sourcery/Tests/ProtocolMock.stencil
+    output: Tests/PharmacyTests
+    args:
+      protocolMockImports: [ Combine,eRpKit ]
+      protocolMockTestableImports: [ Pharmacy ]
+  - sources: # writes to Tests/TrustStoreTests/Mocks/Generated/
+      - Sources
+      - Tests/TrustStoreTests
+    templates:
+      - Templates/Sourcery/Tests/ProtocolMock.stencil
+    output: Tests/TrustStoreTests
+    args:
+      protocolMockImports: [ Combine,Foundation,OpenSSL ]
+      protocolMockTestableImports: [ TrustStore ]
+  - sources:  # writes to Tests/VAUClientTests/Mocks/Generated/
+      - Sources
+      - Tests/VAUTests
+    templates:
+      - Templates/Sourcery/Tests/ProtocolMock.stencil
+    output: Tests/VAUTests
+    args:
+      protocolMockImports: [ Combine,Foundation,OpenSSL,TrustStore ]
+      protocolMockTestableImports: [ VAUClient ]

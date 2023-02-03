@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -23,11 +23,14 @@ import IDP
 
 enum CardWallCANDomain {
     typealias Store = ComposableArchitecture.Store<State, Action>
-    typealias Reducer = ComposableArchitecture.Reducer<State, Action, Environment>
+    typealias Reducer = ComposableArchitecture.AnyReducer<State, Action, Environment>
 
     enum Route: Equatable {
+        // sourcery: AnalyticsScreen = cardwallPIN
         case pin(CardWallPINDomain.State)
-        case egk
+        // sourcery: AnalyticsScreen = cardwallContactInsuranceCompany
+        case egk(OrderHealthCardDomain.State)
+        // sourcery: AnalyticsScreen = cardwallScanCAN
         case scanner
     }
 
@@ -45,7 +48,6 @@ enum CardWallCANDomain {
     indirect enum Action: Equatable {
         case update(can: String)
         case advance
-        case showEGKOrderInfoView
         case close
         case showScannerView
         case toggleFlashLight
@@ -53,6 +55,7 @@ enum CardWallCANDomain {
         case setNavigation(tag: Route.Tag?)
         case navigateToIntro
         case flashLightOff
+        case egkAction(action: OrderHealthCardDomain.Action)
     }
 
     struct Environment {
@@ -77,8 +80,8 @@ enum CardWallCANDomain {
             return .none
         case .close:
             return .none
-        case .showEGKOrderInfoView:
-            state.route = .egk
+        case .setNavigation(tag: .egk):
+            state.route = .egk(.init())
             return .none
         case .toggleFlashLight:
             state.isFlashOn.toggle()
@@ -86,10 +89,9 @@ enum CardWallCANDomain {
         case .showScannerView:
             state.route = .scanner
             return .none
-        case .setNavigation(tag: .none):
-            state.route = nil
-            return .none
-        case .pinAction(.wrongCanClose):
+        case .setNavigation(tag: .none),
+             .pinAction(.wrongCanClose),
+             .egkAction(action: .close):
             state.route = nil
             return .none
         case .pinAction(.close):
@@ -102,7 +104,8 @@ enum CardWallCANDomain {
                 .eraseToEffect()
         case .setNavigation,
              .navigateToIntro,
-             .pinAction:
+             .pinAction,
+             .egkAction:
             return .none
         case .flashLightOff:
             state.isFlashOn = false
@@ -112,6 +115,7 @@ enum CardWallCANDomain {
 
     static let reducer = Reducer.combine(
         pinPullbackReducer,
+        orderHealthCardPullbackReducer,
         domainReducer
     )
 
@@ -128,6 +132,12 @@ enum CardWallCANDomain {
                 accessibilityAnnouncementReceiver: environment.accessibilityAnnouncementReceiver
             )
         }
+
+    static let orderHealthCardPullbackReducer: Reducer =
+        OrderHealthCardDomain.reducer._pullback(
+            state: (\State.route).appending(path: /Route.egk),
+            action: /Action.egkAction(action:)
+        ) { _ in OrderHealthCardDomain.Environment() }
 }
 
 extension CardWallCANDomain {

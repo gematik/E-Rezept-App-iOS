@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -24,10 +24,10 @@ import IDP
 
 enum ExtAuthPendingDomain {
     typealias Store = ComposableArchitecture.Store<State, Action>
-    typealias Reducer = ComposableArchitecture.Reducer<State, Action, Environment>
+    typealias Reducer = ComposableArchitecture.AnyReducer<State, Action, Environment>
 
     static func cleanup<T>() -> Effect<T, Never> {
-        Effect.cancel(token: Token.self)
+        Effect.cancel(id: Token.self)
     }
 
     enum Token: CaseIterable, Hashable {
@@ -44,7 +44,7 @@ enum ExtAuthPendingDomain {
         case pendingExtAuth(KKAppDirectory.Entry)
         case extAuthReceived(KKAppDirectory.Entry)
         case extAuthSuccessful(KKAppDirectory.Entry)
-        case extAuthFailed(AlertState<Action>)
+        case extAuthFailed(ErpAlertState<Action>)
 
         var entry: KKAppDirectory.Entry? {
             switch self {
@@ -172,7 +172,7 @@ enum ExtAuthPendingDomain {
             return .none
         case let .externalLoginReceived(.failure(.idpError(error, url))):
             guard case let State.extAuthReceived(entry) = state else { return .none }
-            let alertState = alertState(title: entry.name, message: error.localizedDescription, url: url)
+            let alertState = alertState(title: entry.name, message: error.localizedDescriptionWithErrorList, url: url)
             state = .extAuthFailed(alertState)
             return .none
         case let .externalLoginReceived(.failure(.profileValidation(error: error))):
@@ -192,33 +192,33 @@ enum ExtAuthPendingDomain {
         }
     }
 
-    static func alertState(title: String, message: String, url: URL) -> AlertState<Action> {
-        AlertState<Action>(
+    static func alertState(title: String, message: String, url: URL) -> ErpAlertState<Action> {
+        ErpAlertState(.init(
             title: TextState(L10n.mainTxtPendingextauthFailed(title)),
             message: TextState(message),
             primaryButton: .default(TextState(L10n.mainTxtPendingextauthRetry),
                                     action: .send(.externalLogin(url))),
             secondaryButton: .cancel(TextState(L10n.mainTxtPendingextauthCancel),
                                      action: .send(.cancelAllPendingRequests))
-        )
+        ))
     }
 
-    static func alertState(title: String, message: String) -> AlertState<Action> {
-        AlertState<Action>(
+    static func alertState(title: String, message: String) -> ErpAlertState<Action> {
+        ErpAlertState(.init(
             title: TextState(title),
             message: TextState(message),
             dismissButton: .cancel(TextState(L10n.mainTxtPendingextauthCancel),
                                    action: .send(.cancelAllPendingRequests))
-        )
+        ))
     }
 
-    static var saveProfileAlert: AlertState<Action> = {
-        AlertState<Action>(
+    static var saveProfileAlert: ErpAlertState<Action> = {
+        ErpAlertState(.init(
             title: TextState(L10n.cdwTxtExtauthAlertTitleSaveProfile),
             message: TextState(L10n.cdwTxtExtauthAlertMessageSaveProfile),
             dismissButton: .cancel(TextState(L10n.cdwBtnExtauthAlertSaveProfile),
                                    action: .send(.cancelAllPendingRequests))
-        )
+        ))
     }()
 
     static let reducer: Reducer = .combine(

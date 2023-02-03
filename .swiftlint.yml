@@ -41,6 +41,7 @@ excluded: # paths to ignore during linting. Takes precedence over `included`.
   - Carthage/
   - DerivedData/
   - Sources/eRpApp/Generated/*
+  - Tests/*/Mocks/Generated/*
 nesting:
   type_level: 3
 line_length: 120

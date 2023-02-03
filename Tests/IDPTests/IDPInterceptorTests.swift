@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -28,16 +28,16 @@ import XCTest
 let token = "test-token"
 
 final class IDPInterceptorTests: XCTestCase {
-    let trustStoreSessionMock: TrustStoreSessionMock = {
-        let mock = TrustStoreSessionMock()
+    let trustStoreSessionMock: MockTrustStoreSession = {
+        let mock = MockTrustStoreSession()
         mock.validateCertificateReturnValue = Just(true).setFailureType(to: TrustStoreError.self).eraseToAnyPublisher()
         return mock
     }()
 
-    let extAuthRequestStorageMock = ExtAuthRequestStorageMock()
+    let extAuthRequestStorageMock = MockExtAuthRequestStorage()
 
     func testInterceptWithoutDelegate() {
-        let idpClientMock = IDPClientMock()
+        let idpClientMock = MockIDPClient()
         let session = DefaultIDPSession(
             client: idpClientMock,
             storage: MemStorage(accessToken: token),
@@ -57,7 +57,7 @@ final class IDPInterceptorTests: XCTestCase {
     }
 
     func testInterceptWithoutDelegateAndNoToken() {
-        let idpClientMock = IDPClientMock()
+        let idpClientMock = MockIDPClient()
         let session = DefaultIDPSession(
             client: idpClientMock,
             storage: MemStorage(token: nil),
@@ -78,7 +78,7 @@ final class IDPInterceptorTests: XCTestCase {
     }
 
     func testInterceptWithDelegate() {
-        let idpClientMock = IDPClientMock()
+        let idpClientMock = MockIDPClient()
         let session = DefaultIDPSession(
             client: idpClientMock,
             storage: MemStorage(accessToken: token),
@@ -102,7 +102,7 @@ final class IDPInterceptorTests: XCTestCase {
     }
 
     func testInterceptWithDelegateReturningTrueAndNoToken() {
-        let idpClientMock = IDPClientMock()
+        let idpClientMock = MockIDPClient()
         let session = DefaultIDPSession(
             client: idpClientMock,
             storage: MemStorage(token: nil),
@@ -128,7 +128,7 @@ final class IDPInterceptorTests: XCTestCase {
     }
 
     func testInterceptWithDelegateReturningFalseAndNoToken() {
-        let idpClientMock = IDPClientMock()
+        let idpClientMock = MockIDPClient()
         let session = DefaultIDPSession(
             client: idpClientMock,
             storage: NoTokenStorage(),
@@ -152,7 +152,7 @@ final class IDPInterceptorTests: XCTestCase {
     }
 
     func testInterceptWithDelegateReturningFalse() {
-        let idpClientMock = IDPClientMock()
+        let idpClientMock = MockIDPClient()
         let session = DefaultIDPSession(
             client: idpClientMock,
             storage: MemStorage(accessToken: token),
@@ -176,7 +176,7 @@ final class IDPInterceptorTests: XCTestCase {
     }
 
     func testCallWith401UnauthorizedResponseInvalidatesAccessToken() {
-        let idpClientMock = IDPClientMock()
+        let idpClientMock = MockIDPClient()
         let storage = MemStorage(accessToken: token)
         let session = DefaultIDPSession(
             client: idpClientMock,

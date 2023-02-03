@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -28,11 +28,11 @@ import ZXingObjC
 
 enum PrescriptionDetailDomain: Equatable {
     typealias Store = ComposableArchitecture.Store<State, Action>
-    typealias Reducer = ComposableArchitecture.Reducer<State, Action, Environment>
+    typealias Reducer = ComposableArchitecture.AnyReducer<State, Action, Environment>
 
     /// Provides an Effect that needs to run whenever the state of this Domain is reset to nil
     static func cleanup<T>() -> Effect<T, Never> {
-        Effect.cancel(token: Token.self)
+        Effect.cancel(id: Token.self)
     }
 
     enum Token: CaseIterable, Hashable {
@@ -54,7 +54,7 @@ enum PrescriptionDetailDomain: Equatable {
     }
 
     struct State: Equatable {
-        var prescription: GroupedPrescription.Prescription
+        var prescription: Prescription
         var loadingState: LoadingState<UIImage, LoadingImageError> = .idle
         var isArchived: Bool
         var isDeleting = false
@@ -188,7 +188,7 @@ enum PrescriptionDetailDomain: Equatable {
             } else {
                 erxTask.update(with: nil)
             }
-            state.prescription = GroupedPrescription.Prescription(erxTask: erxTask)
+            state.prescription = Prescription(erxTask: erxTask)
             return environment.saveErxTasks(erxTasks: [erxTask])
         case let .redeemedOnSavedReceived(success):
             if !success {
@@ -326,7 +326,7 @@ extension PrescriptionDetailDomain {
     enum Dummies {
         static let demoSessionContainer = DummyUserSessionContainer()
         static let state = State(
-            prescription: GroupedPrescription.Prescription.Dummies.prescriptionReady,
+            prescription: Prescription.Dummies.prescriptionReady,
             isArchived: false
         )
         static let environment = Environment(

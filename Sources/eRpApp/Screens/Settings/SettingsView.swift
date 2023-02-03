@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -24,45 +24,23 @@ import SwiftUI
 struct SettingsView: View {
     let store: SettingsDomain.Store
 
-    #if ENABLE_DEBUG_VIEW
-    let debugStore: DebugDomain.Store
-    #endif
-
     @ObservedObject
     var viewStore: ViewStore<ViewState, SettingsDomain.Action>
 
-    #if !ENABLE_DEBUG_VIEW
     init(store: SettingsDomain.Store) {
         self.store = store
         viewStore = ViewStore(store.scope(state: ViewState.init))
     }
-    #else
-    init(store: SettingsDomain.Store, debugStore: DebugDomain.Store) {
-        self.store = store
-        self.debugStore = debugStore
-        viewStore = ViewStore(store.scope(state: ViewState.init))
-    }
-    #endif
 
     struct ViewState: Equatable {
-        #if ENABLE_DEBUG_VIEW
-        let showDebugView: Bool
-        #endif
-        let showTrackerComplyView: Bool
         let isDemoMode: Bool
         let profilesRouteTag: ProfilesDomain.Route.Tag?
-        let showOrderHealthCardView: Bool
 
         let routeTag: SettingsDomain.Route.Tag?
 
         init(state: SettingsDomain.State) {
-            #if ENABLE_DEBUG_VIEW
-            showDebugView = state.showDebugView
-            #endif
-            showTrackerComplyView = state.showTrackerComplyView
             isDemoMode = state.isDemoMode
             profilesRouteTag = state.profiles.route?.tag
-            showOrderHealthCardView = state.showOrderHealthCardView
             routeTag = state.route?.tag
         }
     }
@@ -72,11 +50,7 @@ struct SettingsView: View {
             ScrollView {
                 VStack(spacing: 0) {
                     #if ENABLE_DEBUG_VIEW
-                    DebugSectionView(store: debugStore,
-                                     showDebugView: viewStore.binding(
-                                         get: { $0.showDebugView },
-                                         send: SettingsDomain.Action.toggleDebugView
-                                     ))
+                    DebugSectionView(store: store)
                     #endif
 
                     ProfilesView(store: profilesStore)
@@ -100,12 +74,16 @@ struct SettingsView: View {
                 // Tracking comply sheet presentation
                 Rectangle()
                     .frame(width: 0, height: 0, alignment: .center)
-                    .sheet(isPresented: viewStore.binding(
-                        get: { $0.showTrackerComplyView },
-                        send: SettingsDomain.Action.dismissTrackerComplyView
-                    )) {
+                    .sheet(isPresented: Binding<Bool>(
+                        get: { viewStore.routeTag == .complyTracking },
+                        set: { show in
+                            if !show { viewStore.send(.setNavigation(tag: nil)) }
+                        }
+                    ),
+                    onDismiss: {},
+                    content: {
                         TrackingComplyView(store: store)
-                    }
+                    })
                     .hidden()
                     .accessibility(hidden: true)
 
@@ -136,14 +114,36 @@ struct SettingsView: View {
                 ) {}
                     .hidden()
                     .accessibility(hidden: true)
+
+                NavigationLink(
+                    destination: IfLetStore(
+                        store.scope(
+                            state: (\SettingsDomain.State.route)
+                                .appending(path: /SettingsDomain.Route.setAppPassword)
+                                .extract(from:),
+                            action: SettingsDomain.Action.createPassword(action:)
+                        )
+                    ) { createStore in
+                        CreatePasswordView(store: createStore)
+                    },
+                    tag: SettingsDomain.Route.Tag.setAppPassword,
+                    selection: viewStore.binding(
+                        get: \.routeTag,
+                        send: SettingsDomain.Action.setNavigation
+                    )
+                ) {}
+                    .hidden()
+                    .accessibility(hidden: true)
             }
             .accentColor(Colors.primary600)
             .background(Color(.secondarySystemBackground).ignoresSafeArea())
             .navigationTitle(L10n.stgTxtTitle)
             .demoBanner(isPresented: viewStore.isDemoMode)
             .alert(
-                self.store.scope(state: \.alertState),
-                dismiss: .alertDismissButtonTapped
+                self.store
+                    .scope(state: (\SettingsDomain.State.route).appending(path: /SettingsDomain.Route.alert)
+                        .extract(from:)),
+                dismiss: .setNavigation(tag: .none)
             )
             .onAppear {
                 viewStore.send(.initSettings)
@@ -257,9 +257,22 @@ extension SettingsView {
 
     #if ENABLE_DEBUG_VIEW
     private struct DebugSectionView: View {
-        let store: DebugDomain.Store
+        let store: SettingsDomain.Store
+        @ObservedObject
+        var viewStore: ViewStore<ViewState, SettingsDomain.Action>
 
-        @Binding var showDebugView: Bool
+        init(store: SettingsDomain.Store) {
+            self.store = store
+            viewStore = ViewStore(store.scope(state: ViewState.init))
+        }
+
+        struct ViewState: Equatable {
+            let routeTag: SettingsDomain.Route.Tag?
+
+            init(state: SettingsDomain.State) {
+                routeTag = state.route?.tag
+            }
+        }
 
         var body: some View {
             SingleElementSectionContainer(header: {
@@ -269,8 +282,21 @@ extension SettingsView {
                     .accessibilityIdentifier("stg_txt_debug_title")
             }, content: {
                 NavigationLink(
-                    destination: DebugView(store: store),
-                    isActive: $showDebugView
+                    destination: IfLetStore(
+                        store.scope(
+                            state: (\SettingsDomain.State.route)
+                                .appending(path: /SettingsDomain.Route.debug)
+                                .extract(from:),
+                            action: SettingsDomain.Action.debug(action:)
+                        )
+                    ) { debugStore in
+                        DebugView(store: debugStore)
+                    },
+                    tag: SettingsDomain.Route.Tag.debug,
+                    selection: viewStore.binding(
+                        get: \.routeTag,
+                        send: SettingsDomain.Action.setNavigation
+                    )
                 ) {
                     Label("Debug", systemImage: SFSymbolName.ant)
                 }
@@ -347,7 +373,7 @@ extension SettingsView {
                         .font(Font.body.weight(.semibold))
                         .padding()
                         Button(L10n.stgTrkBtnAlertNo) {
-                            viewStore.send(.dismissTrackerComplyView)
+                            viewStore.send(.setNavigation(tag: nil))
                         }
                         .accessibility(identifier: A11y.settings.tracking.stgTrkBtnNo)
                         .font(Font.body.weight(.semibold))
@@ -355,7 +381,7 @@ extension SettingsView {
                     }
                 }
                 .navigationBarItems(
-                    trailing: CloseButton { viewStore.send(.dismissTrackerComplyView) }
+                    trailing: CloseButton { viewStore.send(.setNavigation(tag: nil)) }
                         .accessibility(identifier: A18n.redeem.overview.rdmBtnCloseButton)
                 )
                 .navigationBarTitleDisplayMode(.inline)
@@ -410,8 +436,7 @@ struct SettingsView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
             #if ENABLE_DEBUG_VIEW
-            SettingsView(store: SettingsDomain.Dummies.store,
-                         debugStore: DebugDomain.Dummies.store)
+            SettingsView(store: SettingsDomain.Dummies.store)
             #else
             SettingsView(store: SettingsDomain.Dummies.store)
             #endif

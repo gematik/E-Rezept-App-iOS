@@ -1,0 +1,37 @@
+screens:
+  main:
+    name: "Main Screen"
+  cardwallIntroduction:
+    name: "CardWall / Welcome"
+  cardwallNotCapable:
+    name: "CardWall / Not Capable"
+  cardwallCAN:
+    name: "CardWall / CAN"
+  cardwallContactInsuranceCompany:
+    name: "CardWall Contact Insurance Company"
+  cardwallContactInsuranceCompanySelectKK:
+    name: "CardWall Contact Insurance Company Select KK"
+  cardwallPIN:
+    name: "CardWall / PIN"
+  cardwallScanCAN:
+    name: "CardWall Scan CAN"
+  cardwallSaveLogin:
+    name: "CardWall / SaveCredentials / Initial"
+  cardwallSaveLoginSecurityInfo:
+    name: "CardWall / SaveCredentials / Information"
+  cardWallReadCard:
+    name: "CardWall / Connect"
+  cardWallReadCardHelp1:
+    name: "CardWall Read Card Help 1"
+  cardWallReadCardHelp2:
+    name: "CardWall Read Card Help 2"
+  cardWallReadCardHelp3:
+    name: "CardWall Read Card Help 3"
+  cardWallExtAuth:
+    name: "CardWall ExtAuth"
+  cardWallExtAuthConfirm:
+    name: "CardWall ExtAuth Confirm"
+  alert:
+    name: "General Alert Dialog"
+  errorAlert:
+    name: "Error Alert - "

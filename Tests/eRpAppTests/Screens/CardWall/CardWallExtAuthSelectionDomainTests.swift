@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -27,8 +27,8 @@ import XCTest
 final class CardWallExtAuthSelectionDomainTests: XCTestCase {
     typealias TestStore = ComposableArchitecture.TestStore<
         CardWallExtAuthSelectionDomain.State,
-        CardWallExtAuthSelectionDomain.State,
         CardWallExtAuthSelectionDomain.Action,
+        CardWallExtAuthSelectionDomain.State,
         CardWallExtAuthSelectionDomain.Action,
         CardWallExtAuthSelectionDomain.Environment
     >
@@ -100,6 +100,20 @@ final class CardWallExtAuthSelectionDomainTests: XCTestCase {
 
         sut.send(.selectKK(Self.testEntryA)) { state in
             state.selectedKK = Self.testEntryA
+        }
+    }
+
+    func testSearchListNoResult() {
+        let sut = testStore(for: .init(kkList: Self.testDirectory))
+
+        sut.send(.filteredKKList(search: "NonExistentKK"))
+    }
+
+    func testSearchListResult() {
+        let sut = testStore(for: .init(kkList: Self.testDirectory))
+
+        sut.send(.filteredKKList(search: "Test Entry A")) { state in
+            state.filteredKKList = KKAppDirectory(apps: [Self.testEntryA])
         }
     }
 

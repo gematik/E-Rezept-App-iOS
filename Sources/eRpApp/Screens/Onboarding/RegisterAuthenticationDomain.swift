@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -25,11 +25,11 @@ import Zxcvbn
 
 enum RegisterAuthenticationDomain {
     typealias Store = ComposableArchitecture.Store<State, Action>
-    typealias Reducer = ComposableArchitecture.Reducer<State, Action, Environment>
+    typealias Reducer = ComposableArchitecture.AnyReducer<State, Action, Environment>
 
     /// Provides an Effect that need to run whenever the state of this Domain is reset to nil
     static func cleanup<T>() -> Effect<T, Never> {
-        Effect.cancel(token: Token.self)
+        Effect.cancel(id: Token.self)
     }
 
     enum Token: CaseIterable, Hashable {
@@ -233,10 +233,10 @@ enum RegisterAuthenticationDomain {
                     state.showNoSelectionMessage = true
                     return .none
                 }
-                environment.userDataStore.set(appSecurityOption: selectedOption.id)
+                environment.userDataStore.set(appSecurityOption: selectedOption)
                 return Effect(value: .saveSelectionSuccess)
             } else {
-                environment.userDataStore.set(appSecurityOption: selectedOption.id)
+                environment.userDataStore.set(appSecurityOption: selectedOption)
                 return Effect(value: .saveSelectionSuccess)
             }
         case .saveSelectionSuccess,

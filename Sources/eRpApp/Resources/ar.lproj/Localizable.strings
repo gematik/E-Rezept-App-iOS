@@ -159,6 +159,9 @@
 "cdw_txt_extauth_fallback_description2" = "لا تريد الانتظار؟ قم بالتسجيل ببطاقة صحية مدعوم بالفعل من قبل كل شركة تأمين صحي.";
 "cdw_txt_extauth_fallback_headline" = "اختر التأمين الصحي";
 "cdw_txt_extauth_fallback_title" = "التسجيل بالتطبيق";
+"cdw_txt_extauth_noresults" = "Unter diesem Suchbegriff konnten wir keine Ergebnisse finden.";
+"cdw_txt_extauth_noresults_title" = "Keine Ergebnisse";
+"cdw_txt_extauth_searchprompt" = "Nach Name suchen";
 "cdw_txt_extauth_selection_description" = "لم تجد ما  تبحث عنه؟ يتم زيادة هذه القائمة باستمرار. يتم في الوقت الحالي دعم التسجيل بالبطاقة الصحية لكل شركة تأمين صحي.";
 "cdw_txt_extauth_selection_empty_list_description" = "ستكون هذه الميزة متاحة لك في غضون أيام قليلة. يُرجى المحاولة مرة أخرى لاحقا.";
 "cdw_txt_extauth_selection_empty_list_headline" = "ليس متاحا بعد";
@@ -349,6 +352,7 @@
 "erx_txt_redeem_at_%@" = "قابل للاسترداد من %@";
 "erx_txt_redeemed" = "أرشيف";
 "erx_txt_refresh_loading" = "جاري التحميل ...";
+"erx_txt_scanned_at_%@" = "Gescannt: %@";
 "hint_btn_close" = "إغلاق";
 "hint_btn_open_scn" = "فتح الماسح الضوئي";
 "hint_btn_try_demo_mode" = "ابدأ الوضع التجريبي";
@@ -645,12 +649,21 @@
 "kbv_norm_size_n3" = "الحجم الاعتيادي 3";
 "kbv_norm_size_nb" = "غير معني";
 "kbv_norm_size_sonstiges" = "أخرى";
+"main_btn_archived_presc" = "Eingelöste Rezepte";
+"main_btn_login" = "Anmelden";
+"main_btn_redeem" = "Einlösen";
+"main_btn_refresh" = "Aktualisieren";
+"main_empty_txt_connected" = "↓ Ziehen Sie den Screen nach unten, um zu aktualisieren.";
+"main_empty_txt_disconnected" = "Fügen Sie Rezepte über den ⊕ Button in der rechten oberen Ecke hinzu.";
+"main_empty_txt_title" = "Keine Rezepte";
 "main_txt_pendingextauth_cancel" = "إلغاء";
 "main_txt_pendingextauth_failed_%@" = "فشلت المصادقة باستخدام %@";
 "main_txt_pendingextauth_pending_%@" = "المصادقة في %@ قيد الانتظار";
 "main_txt_pendingextauth_resolving_%@" = "جاري معالجة مصادقة %@";
 "main_txt_pendingextauth_retry" = "كرر العملية";
 "main_txt_pendingextauth_successful_%@" = "نجحت المصادقة باستخدام %@";
+"main_txt_profile_status_offline" = "Status: Verbindung zum Rezeptserver getrennt";
+"main_txt_profile_status_online" = "Status: Profil angemeldet";
 "mgm_fallback_profile_name" = "اسم البروفايل";
 "mgm_txt_alert_message_profile_creation" = "تعذر إنشاء ملف تعريف أثناء التحديث";
 "mgm_txt_alert_message_up_to_date" = "التطبيق موافق بالفعل لآخر تحديث";
@@ -853,6 +866,7 @@
 "pro_btn_selection_edit" = "معالجة الصفحات الشخصية";
 "pro_txt_selection_profile_not_connected" = "لم يتم تسجيل الدخول";
 "pro_txt_selection_title" = "اختر الصفحة الشخصية";
+"prsc_arch_txt_title" = "Eingelöste Rezepte";
 "prsc_delete_note_direct_assignment" = "سيتم استبدال هذه الوصفة لك كجزء من العلاج ولا يمكن حذفها أثناء العلاج.";
 "prsc_dtl_btn_direct_assignment" = "الاحالة المباشرة";
 "prsc_dtl_btn_share_title" = "انشق، مزق";
@@ -1052,6 +1066,7 @@
 "stg_txt_alert_message_demo_mode_off" = "تم إلغاء تفعيل الوضع التجريبي";
 "stg_txt_alert_message_demo_mode_on" = "الوضع التجريبي فعال. لا تحتاج إلى بطاقة صحية أو اتصال بالإنترنت. كما لا يمكن صرف الوصفات الطبية التي تظهر أمامك في الصيدلية.";
 "stg_txt_alert_title_demo_mode" = "هل ترغب في جولة استكشافية؟";
+"stg_txt_alert_title_demo_mode_off" = "Demo-Modus deaktiviert";
 "stg_txt_audit_events_last_updated_%@" = "آخر تحديث: %@";
 "stg_txt_audit_events_missing_date" = "ليس هناك طابع زمني";
 "stg_txt_audit_events_missing_description" = "بدون بيان";
@@ -1173,3 +1188,7 @@
 "tab_txt_orders" = "الطلب #٪ s";
 "tab_txt_pharmacy_search" = "الصيدليات";
 "tab_txt_settings" = "الإعدادات";
+"wlcd_btn_decline" = "Vielleicht später";
+"wlcd_btn_login" = "Anmelden";
+"wlcd_txt_footer" = "Um Rezepte digital von Ihrer Praxis zu empfangen, müssen Sie angemeldet sein.";
+"wlcd_txt_header" = "Rezepte digital empfangen?";

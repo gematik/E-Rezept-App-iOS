@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -25,10 +25,10 @@ import IDP
 
 enum ProfileSelectionDomain {
     typealias Store = ComposableArchitecture.Store<State, Action>
-    typealias Reducer = ComposableArchitecture.Reducer<State, Action, Environment>
+    typealias Reducer = ComposableArchitecture.AnyReducer<State, Action, Environment>
 
     static func cleanup<T>() -> Effect<T, Never> {
-        Effect.cancel(token: Token.self)
+        Effect.cancel(id: Token.self)
     }
 
     enum Token: CaseIterable, Hashable {
@@ -60,7 +60,6 @@ enum ProfileSelectionDomain {
 
     struct Environment {
         let schedulers: Schedulers
-        let userDataStore: UserDataStore
         let userProfileService: UserProfileService
 
         let router: Routing
@@ -76,7 +75,7 @@ enum ProfileSelectionDomain {
                     .receive(on: environment.schedulers.main)
                     .eraseToEffect()
                     .cancellable(id: Token.loadProfiles, cancelInFlight: true),
-                environment.userDataStore.selectedProfileId
+                environment.userProfileService.selectedProfileId
                     .compactMap { $0 }
                     .map(Action.selectedProfileReceived)
                     .receive(on: environment.schedulers.main)
@@ -94,7 +93,7 @@ enum ProfileSelectionDomain {
             return .none
         case let .selectProfile(profile):
             state.selectedProfileId = profile.id
-            environment.userDataStore.set(selectedProfileId: profile.id)
+            environment.userProfileService.set(selectedProfileId: profile.id)
             return .init(value: .close)
         case .editProfiles:
             environment.router.routeTo(.settings)
@@ -122,7 +121,6 @@ extension ProfileSelectionDomain {
 
         static let environment = Environment(
             schedulers: Schedulers(),
-            userDataStore: DemoUserDefaultsStore(),
             userProfileService: DummyUserProfileService(),
             router: DummyRouter()
         )

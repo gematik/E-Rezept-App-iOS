@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -112,11 +112,9 @@ struct SmallSheetPresentationController<Content: View>: UIViewRepresentable {
             let contextVC = transitionContext.viewController(forKey: .from) as? SmallSheetContainerViewController
 
             UIView.animate(
-                withDuration: 0.8,
+                withDuration: 0.3,
                 delay: 0,
-                usingSpringWithDamping: 0.45,
-                initialSpringVelocity: 0,
-                options: []
+                options: [.curveEaseInOut]
             ) {
                 if let contextVC = contextVC,
                    let height = contextVC.contentSize?.height {
@@ -154,11 +152,9 @@ struct SmallSheetPresentationController<Content: View>: UIViewRepresentable {
             transitionContext.containerView.isOpaque = false
 
             UIView.animate(
-                withDuration: 0.8,
+                withDuration: 0.3,
                 delay: 0,
-                usingSpringWithDamping: 0.45,
-                initialSpringVelocity: 0,
-                options: []
+                options: [.curveEaseInOut]
             ) {
                 view.frame = transitionContext.containerView.bounds
             } completion: { _ in

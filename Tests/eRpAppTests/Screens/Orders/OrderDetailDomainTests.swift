@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -33,8 +33,8 @@ final class OrderDetailDomainTests: XCTestCase {
     let mockApplication = MockUIApplication()
     typealias TestStore = ComposableArchitecture.TestStore<
         OrderDetailDomain.State,
-        OrderDetailDomain.State,
         OrderDetailDomain.Action,
+        OrderDetailDomain.State,
         OrderDetailDomain.Action,
         OrderDetailDomain.Environment
     >
@@ -157,7 +157,7 @@ final class OrderDetailDomainTests: XCTestCase {
         store.send(.didSelectMedication(input)) { state in
             state.route = .prescriptionDetail(
                 .init(
-                    prescription: GroupedPrescription.Prescription(erxTask: input),
+                    prescription: Prescription(erxTask: input),
                     isArchived: false
                 )
             )

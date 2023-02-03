@@ -1,0 +1,62 @@
+// sourcery:file:eRpApp/Generated/Domains+ActionAnalytics
+
+import Foundation
+
+{% macro FindSubdomainActions actionType %}
+{% typed actionType as Enum %}
+    {% for case in actionType.cases %}
+        {% if case.hasAssociatedValue and not case.name|contains:"debug" %}
+            {% if case.associatedValues[0].typeName|default:"abc"|hasSuffix:"Domain.Action"  %}
+            case let .{{ case.name }}({{ case.associatedValues[0].localName }}: action):
+                action.analytics(tracker: tracker)
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+{% endmacro %}
+
+{% macro TrackCase caseType %}
+{% typed caseType as EnumCase %}
+{% if caseType.annotations.AnalyticsEvent %}
+            case .{{ caseType.name }}: 
+                tracker.track(Analytics.Screens.{{ caseType.annotations.AnalyticsEvent }})    
+{% endif %}
+{% if caseType.annotations.AnalyticsScreen %}
+            case .{{ caseType.name }}: 
+                tracker.track(Analytics.Screens.{{ caseType.annotations.AnalyticsScreen|join:", Analytics.Screens." }})    
+{% endif %}
+{% endmacro %}
+
+{% macro FindAnalyticsActions actionType %}
+{% typed actionType as Enum %}
+    {% for case in actionType.cases %}
+        {% if case.hasAssociatedValue %}
+            {% if not case.associatedValues[0].typeName|default:"abc"|hasSuffix:"Domain.Action"  %}
+            {% call TrackCase case %}
+            {% endif %}
+        {% else %}
+            {% call TrackCase case %}
+        {% endif %}
+    {% endfor %}
+{% endmacro %}
+
+{% macro PrintAction actionType %}
+{% typed actionType as Enum %}
+    {% if not actionType.name|contains:"Debug" %} 
+extension {{ actionType.name }} {
+    func analytics(tracker: Tracker) {
+        switch self {
+            {% call FindAnalyticsActions actionType %}
+            {% call FindSubdomainActions actionType %}
+            default: break
+        }
+    }
+}
+    {% endif %}
+{% endmacro %}
+
+{% for type in types.enums %}
+    {% if type.name|hasSuffix:"Action" and type.parentName|default:"abc"|hasSuffix:"Domain" %}
+        {% call PrintAction type %}
+    {% endif %}
+{% endfor %}
+// sourcery:end

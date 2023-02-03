@@ -1,6 +1,6 @@
 // swiftlint:disable file_length
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -30,7 +30,7 @@ import TrustStore
 import XCTest
 
 final class DefaultIDPSessionTests: XCTestCase {
-    var trustStoreSessionMock: TrustStoreSessionMock!
+    var trustStoreSessionMock: MockTrustStoreSession!
 
     private lazy var dateFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
@@ -80,11 +80,11 @@ final class DefaultIDPSessionTests: XCTestCase {
         return challenge
     }()
 
-    var idpClientMock: IDPClientMock!
+    var idpClientMock: MockIDPClient!
     var schedulers: TestSchedulers!
     var storage: MemStorage!
     var sut: DefaultIDPSession!
-    var extAuthRequestStorageMock: ExtAuthRequestStorageMock!
+    var extAuthRequestStorageMock: MockExtAuthRequestStorage!
 
     var initialToken: IDPToken!
     var dateProvider: TimeProvider!
@@ -92,7 +92,7 @@ final class DefaultIDPSessionTests: XCTestCase {
     override func setUpWithError() throws {
         try super.setUpWithError()
 
-        idpClientMock = IDPClientMock()
+        idpClientMock = MockIDPClient()
 
         // Date provider provides a date that should validate the DiscoveryDocument when reading from IDPStorage
         let issuedDate = dateFormatter.date(from: "2021-03-16 14:42:03.0000+0000")!
@@ -115,11 +115,11 @@ final class DefaultIDPSessionTests: XCTestCase {
 
         schedulers = TestSchedulers()
 
-        trustStoreSessionMock = TrustStoreSessionMock()
+        trustStoreSessionMock = MockTrustStoreSession()
         trustStoreSessionMock.validateCertificateReturnValue = Just(true).setFailureType(to: TrustStoreError.self)
             .eraseToAnyPublisher()
 
-        extAuthRequestStorageMock = ExtAuthRequestStorageMock()
+        extAuthRequestStorageMock = MockExtAuthRequestStorage()
 
         // 1 second before token expiration
         let dateProviderDate = issuedDate.addingTimeInterval(TimeInterval(-1))
@@ -134,7 +134,7 @@ final class DefaultIDPSessionTests: XCTestCase {
     func testLoadDiscoveryDocumentFromStorageOnInitFailesWhenTrustStoreFailsValidation() {
         trustStoreSessionMock.validateCertificateReturnValue = Just(false).setFailureType(to: TrustStoreError.self)
             .eraseToAnyPublisher()
-        let idpClientMock = IDPClientMock()
+        let idpClientMock = MockIDPClient()
         idpClientMock.discoveryDocument = nil
         let storage = MemStorage()
         let issuedDate = dateFormatter.date(from: "2021-03-16 14:42:03.0000+0000")!
@@ -159,7 +159,7 @@ final class DefaultIDPSessionTests: XCTestCase {
     func testLoadDiscoveryDocumentFromRemoteOnInitFailesWhenTrustStoreFailsValidation() {
         trustStoreSessionMock.validateCertificateReturnValue = Just(false).setFailureType(to: TrustStoreError.self)
             .eraseToAnyPublisher()
-        let idpClientMock = IDPClientMock()
+        let idpClientMock = MockIDPClient()
         let issuedDate = dateFormatter.date(from: "2021-03-16 14:42:03.0000+0000")!
         idpClientMock.discoveryDocument = discoveryDocument(createdOn: issuedDate)
         let storage = MemStorage()
@@ -184,7 +184,7 @@ final class DefaultIDPSessionTests: XCTestCase {
     func testLoadDiscoveryDocumentFromStorageOnInitFailesWhenTrustStoreThrows() {
         trustStoreSessionMock.validateCertificateReturnValue = Fail(error: TrustStoreError.invalidOCSPResponse)
             .eraseToAnyPublisher()
-        let idpClientMock = IDPClientMock()
+        let idpClientMock = MockIDPClient()
         idpClientMock.discoveryDocument = nil
         let storage = MemStorage()
         let issuedDate = dateFormatter.date(from: "2021-03-16 14:42:03.0000+0000")!
@@ -209,7 +209,7 @@ final class DefaultIDPSessionTests: XCTestCase {
     func testLoadDiscoveryDocumentFromRemoteOnInitFailesWhenTrustStoreThrows() {
         trustStoreSessionMock.validateCertificateReturnValue = Fail(error: TrustStoreError.invalidOCSPResponse)
             .eraseToAnyPublisher()
-        let idpClientMock = IDPClientMock()
+        let idpClientMock = MockIDPClient()
         let issuedDate = dateFormatter.date(from: "2021-03-16 14:42:03.0000+0000")!
         idpClientMock.discoveryDocument = discoveryDocument(createdOn: issuedDate)
         let storage = MemStorage()
@@ -232,7 +232,7 @@ final class DefaultIDPSessionTests: XCTestCase {
     // [REQ:gemSpec_IDP_Frontend:A_20623]
     // [REQ:gemSpec_IDP_Frontend:A_20512]
     func testLoadDiscoveryDocumentFromStorageOnInit() {
-        let idpClientMock = IDPClientMock()
+        let idpClientMock = MockIDPClient()
         idpClientMock.discoveryDocument = nil
         let storage = MemStorage()
         let issuedDate = dateFormatter.date(from: "2021-03-16 14:42:03.0000+0000")!
@@ -256,7 +256,7 @@ final class DefaultIDPSessionTests: XCTestCase {
     // [REQ:gemSpec_IDP_Frontend:A_20623]
     // [REQ:gemSpec_IDP_Frontend:A_20512]
     func testLoadDiscoveryDocumentFromRemoteOnInit() {
-        let idpClientMock = IDPClientMock()
+        let idpClientMock = MockIDPClient()
         let issuedDate = dateFormatter.date(from: "2021-03-16 14:42:03.0000+0000")!
         let discoveryDocument = self.discoveryDocument(createdOn: issuedDate)
         idpClientMock.discoveryDocument = discoveryDocument
@@ -277,7 +277,7 @@ final class DefaultIDPSessionTests: XCTestCase {
     }
 
     func testInvalidateLoadDiscoveryDocumentOnInit() {
-        let idpClientMock = IDPClientMock()
+        let idpClientMock = MockIDPClient()
         let storage = MemStorage()
         storage.set(discovery: nil)
 
@@ -304,7 +304,7 @@ final class DefaultIDPSessionTests: XCTestCase {
             tokenType: "Bearer",
             redirect: "redirect"
         )
-        let idpClientMock = IDPClientMock()
+        let idpClientMock = MockIDPClient()
         let storage = MemStorage()
         storage.set(token: token)
 
@@ -332,7 +332,7 @@ final class DefaultIDPSessionTests: XCTestCase {
     }
 
     func testInvalidateStoredDocumentWhenExpired() throws {
-        let idpClientMock = IDPClientMock()
+        let idpClientMock = MockIDPClient()
         // Date provider provides a date that should invalidate the DiscoveryDocument when reading from IDPStorage
         // But provide a date that would validate the (same) document when coming from the IDPClient
         let issuedDate = dateFormatter.date(from: "2021-03-18 08:51:16.0000+0000")!
@@ -375,7 +375,7 @@ final class DefaultIDPSessionTests: XCTestCase {
     }
 
     func testRequestChallenge() {
-        let idpClientMock = IDPClientMock()
+        let idpClientMock = MockIDPClient()
         idpClientMock.discoveryDocument = nil
         idpClientMock.requestChallenge_Publisher = Just(challengeDocument)
             .setFailureType(to: IDPError.self)
@@ -483,7 +483,7 @@ final class DefaultIDPSessionTests: XCTestCase {
         let issuedDate = dateFormatter.date(from: "2021-03-16 14:00:00.0000+0000")!
         let discoveryDocument = self.discoveryDocument(createdOn: issuedDate)
         storage.set(discovery: discoveryDocument)
-        let idpClientMock = IDPClientMock()
+        let idpClientMock = MockIDPClient()
         idpClientMock.requestChallenge_Publisher = Just(invalidChallenge)
             .setFailureType(to: IDPError.self).eraseToAnyPublisher()
         idpClientMock.discoveryDocument = discoveryDocument
@@ -502,7 +502,7 @@ final class DefaultIDPSessionTests: XCTestCase {
     }
 
     func testVerifySignedChallenge() {
-        let idpClientMock = IDPClientMock()
+        let idpClientMock = MockIDPClient()
         // Date provider provides a date that should validate the DiscoveryDocument when reading from IDPStorage
         let issuedDate = dateFormatter.date(from: "2021-03-16 16:42:28.0000+0000")!
         let discoveryDocument = self.discoveryDocument(createdOn: issuedDate)
@@ -575,7 +575,7 @@ final class DefaultIDPSessionTests: XCTestCase {
     }()
 
     func testExchangeToken() {
-        let idpClientMock = IDPClientMock()
+        let idpClientMock = MockIDPClient()
         // Date provider provides a date that should validate the DiscoveryDocument when reading from IDPStorage
         var issuedDate = dateFormatter.date(from: "2021-03-16 14:42:03.0000+0000")!
         let discoveryDocument = self.discoveryDocument(createdOn: issuedDate)
@@ -651,7 +651,7 @@ final class DefaultIDPSessionTests: XCTestCase {
     }
 
     func testUpdateWithSSOToken() {
-        let idpClientMock = IDPClientMock()
+        let idpClientMock = MockIDPClient()
         // Date provider provides a date that should validate the DiscoveryDocument when reading from IDPStorage
         let issuedDate = dateFormatter.date(from: "2021-03-16 14:42:03.0000+0000")!
         let discoveryDocument = self.discoveryDocument(createdOn: issuedDate.addingTimeInterval(TimeInterval(-10)))
@@ -745,7 +745,7 @@ final class DefaultIDPSessionTests: XCTestCase {
     }
 
     func testPair() throws {
-        let idpClientMock = IDPClientMock()
+        let idpClientMock = MockIDPClient()
         // Date provider provides a date that should validate the DiscoveryDocument when reading from IDPStorage
         let issuedDate = dateFormatter.date(from: "2021-03-16 14:42:03.0000+0000")!
         let discoveryDocument = self.discoveryDocument(createdOn: issuedDate.addingTimeInterval(TimeInterval(-10)))
@@ -829,7 +829,7 @@ final class DefaultIDPSessionTests: XCTestCase {
     }
 
     func testAltVerify() throws {
-        let idpClientMock = IDPClientMock()
+        let idpClientMock = MockIDPClient()
         // Date provider provides a date that should validate the DiscoveryDocument when reading from IDPStorage
         let issuedDate = dateFormatter.date(from: "2021-03-16 14:42:03.0000+0000")!
         let discoveryDocument = self.discoveryDocument(createdOn: issuedDate.addingTimeInterval(TimeInterval(-10)))

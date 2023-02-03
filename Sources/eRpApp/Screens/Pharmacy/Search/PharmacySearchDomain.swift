@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -29,13 +29,13 @@ import SwiftUI
 // swiftlint:disable type_body_length
 enum PharmacySearchDomain: Equatable {
     typealias Store = ComposableArchitecture.Store<State, Action>
-    typealias Reducer = ComposableArchitecture.Reducer<State, Action, Environment>
+    typealias Reducer = ComposableArchitecture.AnyReducer<State, Action, Environment>
 
     /// Provides an Effect that needs to run whenever the state of this Domain is reset to nil
     static func cleanup<T>() -> Effect<T, Never> {
         Effect.concatenate(
             PharmacyDetailDomain.cleanup(),
-            Effect.cancel(token: Token.self)
+            Effect.cancel(id: Token.self)
         )
     }
 
@@ -65,11 +65,11 @@ enum PharmacySearchDomain: Equatable {
         case localizingDevice
         case error
 
-        var isStartView: Bool {
+        var isNotStartView: Bool {
             if case .startView(loading: _) = self {
-                return true
+                return false
             }
-            return false
+            return true
         }
 
         var isStartViewLoading: Bool {

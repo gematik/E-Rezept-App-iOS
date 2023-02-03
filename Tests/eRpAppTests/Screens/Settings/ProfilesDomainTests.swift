@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -25,8 +25,8 @@ import XCTest
 final class ProfilesDomainTests: XCTestCase {
     typealias TestStore = ComposableArchitecture.TestStore<
         ProfilesDomain.State,
-        ProfilesDomain.State,
         ProfilesDomain.Action,
+        ProfilesDomain.State,
         ProfilesDomain.Action,
         ProfilesDomain.Environment
     >
@@ -45,7 +45,7 @@ final class ProfilesDomainTests: XCTestCase {
                 router: MockRouting(),
                 secureEnclaveSignatureProvider: DummySecureEnclaveSignatureProvider(),
                 userSessionProvider: MockUserSessionProvider(),
-                nfcSignatureProvider: NFCSignatureProviderMock(),
+                nfcSignatureProvider: MockNFCSignatureProvider(),
                 userSession: MockUserSession(),
                 signatureProvider: DummySecureEnclaveSignatureProvider(),
                 accessibilityAnnouncementReceiver: { _ in }

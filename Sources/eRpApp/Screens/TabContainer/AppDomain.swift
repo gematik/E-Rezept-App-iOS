@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -24,12 +24,16 @@ import SwiftUI
 
 enum AppDomain {
     typealias Store = ComposableArchitecture.Store<State, Action>
-    typealias Reducer = ComposableArchitecture.Reducer<State, Action, Environment>
+    typealias Reducer = ComposableArchitecture.AnyReducer<State, Action, Environment>
 
     enum Route {
+        // sourcery: AnalyticsState = main
         case main
+        // sourcery: AnalyticsState = pharmacySearch
         case pharmacySearch
+        // sourcery: AnalyticsState = orders
         case orders
+        // sourcery: AnalyticsState = settingsState
         case settings
     }
 
@@ -40,7 +44,6 @@ enum AppDomain {
         var orders: OrdersDomain.State
         var settingsState: SettingsDomain.State
         var profileSelection: ProfileSelectionToolbarItemDomain.State
-        var debug: DebugDomain.State
         var unreadOrderMessageCount: Int
 
         var isDemoMode: Bool
@@ -51,7 +54,6 @@ enum AppDomain {
         case pharmacySearch(action: PharmacySearchDomain.Action)
         case orders(action: OrdersDomain.Action)
         case settings(action: SettingsDomain.Action)
-        case debug(action: DebugDomain.Action)
         case profile(action: ProfileSelectionToolbarItemDomain.Action)
 
         case isDemoModeReceived(Bool)
@@ -106,7 +108,6 @@ enum AppDomain {
              .pharmacySearch,
              .orders,
              .settings,
-             .debug,
              .profile:
             return .none
         case let .isDemoModeReceived(isDemoMode):
@@ -151,7 +152,8 @@ enum AppDomain {
                 userProfileService: DefaultUserProfileService(
                     profileDataStore: appEnvironment.userSessionContainer.userSession.profileDataStore,
                     profileOnlineChecker: DefaultProfileOnlineChecker(),
-                    userSession: appEnvironment.userSessionContainer.userSession
+                    userSession: appEnvironment.userSessionContainer.userSession,
+                    userSessionProvider: appEnvironment.userSessionProvider
                 ),
                 secureDataWiper: DefaultProfileSecureDataWiper(userSessionProvider: appEnvironment.userSessionProvider),
                 signatureProvider: appEnvironment.signatureProvider,
@@ -209,22 +211,9 @@ enum AppDomain {
                 appSecurityManager: appEnvironment.userSession.appSecurityManager,
                 router: appEnvironment.router,
                 userSessionProvider: appEnvironment.userSessionProvider,
+                serviceLocator: appEnvironment.serviceLocator,
+                userDataStore: appEnvironment.userDataStore,
                 accessibilityAnnouncementReceiver: appEnvironment.accessibilityAnnouncementReceiver
-            )
-        }
-
-    private static let debugPullbackReducer: Reducer =
-        DebugDomain.reducer.pullback(
-            state: \.debug,
-            action: /AppDomain.Action.debug(action:)
-        ) { appEnvironment in
-            DebugDomain.Environment(
-                schedulers: appEnvironment.schedulers,
-                userSession: appEnvironment.userSession,
-                localUserStore: appEnvironment.userDataStore,
-                tracker: appEnvironment.tracker,
-                signatureProvider: appEnvironment.signatureProvider,
-                serviceLocatorDebugAccess: ServiceLocatorDebugAccess(serviceLocator: appEnvironment.serviceLocator)
             )
         }
 
@@ -235,11 +224,11 @@ enum AppDomain {
         ) {
             .init(
                 schedulers: $0.schedulers,
-                userDataStore: $0.userSessionContainer.userSession.localUserStore,
                 userProfileService: DefaultUserProfileService(
                     profileDataStore: $0.userSessionContainer.userSession.profileDataStore,
                     profileOnlineChecker: DefaultProfileOnlineChecker(),
-                    userSession: $0.userSessionContainer.userSession
+                    userSession: $0.userSessionContainer.userSession,
+                    userSessionProvider: $0.userSessionProvider
                 ),
                 router: $0.router
             )
@@ -250,7 +239,6 @@ enum AppDomain {
         pharmacySearchPullbackReducer,
         ordersPullbackReducer,
         settingsPullbackReducer,
-        debugPullbackReducer,
         profileSelectionReducer,
         domainReducer
     )
@@ -272,7 +260,6 @@ extension AppDomain {
             orders: OrdersDomain.Dummies.state,
             settingsState: SettingsDomain.Dummies.state,
             profileSelection: ProfileSelectionToolbarItemDomain.Dummies.state,
-            debug: DebugDomain.Dummies.state,
             unreadOrderMessageCount: 0,
             isDemoMode: false
         )

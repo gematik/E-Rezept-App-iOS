@@ -98,7 +98,7 @@ packages:
     majorVersion: 9.1.0
   ComposableArchitecture:
     url: https://github.com/pointfreeco/swift-composable-architecture
-    majorVersion: 0.33.1
+    majorVersion: 0.47.2
   CasePaths:
     url: https://github.com/pointfreeco/swift-case-paths
     majorVersion: 0.7.0
@@ -108,6 +108,9 @@ packages:
   Zxcvbn:
     url: https://github.com/andyjohns/zxcvbn-ios
     revision: bf6083dc17df950c8bdfcf2063859ee1270015fd
+  ContentSquare:
+    url:  https://github.com/ContentSquare/CS_iOS_SDK.git
+    majorVersion: 4.16.0
 settings:
   base:
     # for DISABLE_DIAMOND_PROBLEM_DIAGNOSTIC see: https://developer.apple.com/forums/thread/128806
@@ -170,6 +173,8 @@ targets:
         product: ComposableCoreLocation
       - package: Zxcvbn
         product: Zxcvbn
+      - package: ContentSquare
+        product: ContentsquareModule
     scheme:
       testTargets:
         - eRpAppTests

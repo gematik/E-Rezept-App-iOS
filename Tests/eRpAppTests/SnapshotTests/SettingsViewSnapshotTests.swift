@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -83,8 +83,7 @@ final class SettingsViewSnapshotTests: XCTestCase {
             ),
             reducer: SettingsDomain.Reducer.empty,
             environment: SettingsDomain.Dummies.environment
-        ),
-        debugStore: debugStore)
+        ))
             .frame(width: 375, height: 2589, alignment: .center)
 
         assertSnapshots(matching: sut, as: figmaReference())
@@ -112,8 +111,7 @@ final class SettingsViewSnapshotTests: XCTestCase {
             ),
             reducer: SettingsDomain.Reducer.empty,
             environment: SettingsDomain.Dummies.environment
-        ),
-        debugStore: debugStore)
+        ))
             .frame(width: 375, height: 2589, alignment: .center)
 
         assertSnapshots(matching: sut, as: figmaReference())
@@ -127,8 +125,7 @@ final class SettingsViewSnapshotTests: XCTestCase {
             ),
             reducer: SettingsDomain.Reducer.empty,
             environment: SettingsDomain.Dummies.environment
-        ),
-        debugStore: debugStore)
+        ))
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
@@ -142,8 +139,7 @@ final class SettingsViewSnapshotTests: XCTestCase {
             ),
             reducer: SettingsDomain.Reducer.empty,
             environment: SettingsDomain.Dummies.environment
-        ),
-        debugStore: debugStore)
+        ))
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
@@ -157,8 +153,7 @@ final class SettingsViewSnapshotTests: XCTestCase {
             ),
             reducer: SettingsDomain.Reducer.empty,
             environment: SettingsDomain.Dummies.environment
-        ),
-        debugStore: debugStore)
+        ))
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
@@ -172,8 +167,7 @@ final class SettingsViewSnapshotTests: XCTestCase {
             ),
             reducer: SettingsDomain.Reducer.empty,
             environment: SettingsDomain.Dummies.environment
-        ),
-        debugStore: debugStore)
+        ))
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
@@ -187,8 +181,7 @@ final class SettingsViewSnapshotTests: XCTestCase {
             ),
             reducer: SettingsDomain.Reducer.empty,
             environment: SettingsDomain.Dummies.environment
-        ),
-        debugStore: debugStore)
+        ))
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
@@ -202,8 +195,7 @@ final class SettingsViewSnapshotTests: XCTestCase {
             ),
             reducer: SettingsDomain.Reducer.empty,
             environment: SettingsDomain.Dummies.environment
-        ),
-        debugStore: debugStore)
+        ))
             .frame(width: 320, height: 2000)
 
         assertSnapshots(matching: sut, as: snapshotModi())
@@ -212,9 +204,6 @@ final class SettingsViewSnapshotTests: XCTestCase {
     func testSettingsView_DemoMode_Enabled() {
         let sut = SettingsView(store: SettingsDomain.Store(
             initialState: SettingsDomain.State(isDemoMode: true,
-                                               showLegalNoticeView: false,
-                                               showDataProtectionView: false,
-                                               showTermsOfUseView: false,
                                                appSecurityState: AppSecurityDomain
                                                    .State(
                                                        availableSecurityOptions: [
@@ -226,8 +215,7 @@ final class SettingsViewSnapshotTests: XCTestCase {
                                                appVersion: appVersion),
             reducer: SettingsDomain.Reducer.empty,
             environment: SettingsDomain.Dummies.environment
-        ),
-        debugStore: debugStore)
+        ))
             .frame(width: 320, height: 2000)
 
         assertSnapshots(matching: sut, as: snapshotModi())
@@ -238,7 +226,7 @@ final class SettingsViewSnapshotTests: XCTestCase {
             initialState: SettingsDomain.State(
                 isDemoMode: false,
                 appSecurityState: AppSecurityDomain.State(availableSecurityOptions: [.password]),
-                showTrackerComplyView: true
+                route: .complyTracking
             ),
             reducer: SettingsDomain.Reducer.empty,
             environment: SettingsDomain.Dummies.environment
@@ -264,9 +252,6 @@ final class SettingsViewSnapshotTests: XCTestCase {
         ]
 
         return SettingsDomain.State(isDemoMode: isDemoMode,
-                                    showLegalNoticeView: false,
-                                    showDataProtectionView: false,
-                                    showTermsOfUseView: false,
                                     appSecurityState: AppSecurityDomain
                                         .State(
                                             availableSecurityOptions: availableSecurityOptions,

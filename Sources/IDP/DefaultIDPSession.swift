@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -127,7 +127,7 @@ public class DefaultIDPSession: IDPSession {
     }
 
     public func requestChallenge() -> AnyPublisher<IDPChallengeSession, IDPError> {
-        getAndValidateChallenge()
+        getAndValidateChallenge(redirect: nil)
             .flatMap { [weak self] challengeSession -> AnyPublisher<IDPChallengeSession, IDPError> in
                 guard let self = self else {
                     return Fail(error: IDPError.internal(error: .requestChallengeUnexpectedNil)).eraseToAnyPublisher()
@@ -252,7 +252,7 @@ public class DefaultIDPSession: IDPSession {
         guard let ssoToken = token.ssoToken else {
             return Fail(error: IDPError.tokenUnavailable).eraseToAnyPublisher()
         }
-        return getAndValidateChallenge()
+        return getAndValidateChallenge(redirect: token.redirect)
             .flatMap { [weak self] challengeSession -> AnyPublisher<IDPToken, IDPError> in // IDPChallengeSession
                 guard let self = self else {
                     return Fail<IDPToken, IDPError>(error: IDPError.internal(error: .refreshTokenUnexpectedNil))
@@ -578,7 +578,7 @@ extension DefaultIDPSession {
         }
     }
 
-    private func getAndValidateChallenge() -> AnyPublisher<IDPChallengeSession, IDPError> {
+    private func getAndValidateChallenge(redirect: String?) -> AnyPublisher<IDPChallengeSession, IDPError> {
         loadDiscoveryDocument()
             .flatMap { [weak self] document -> AnyPublisher<IDPChallengeSession, IDPError> in
                 guard let self = self else {
@@ -600,7 +600,8 @@ extension DefaultIDPSession {
                     method: .sha256,
                     state: state,
                     nonce: nonce,
-                    using: document
+                    using: document,
+                    redirect: redirect
                 )
                 .flatMap { challenge -> AnyPublisher<IDPChallengeSession, IDPError> in
 

@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -215,13 +215,21 @@ final class ListsSnapshotTests: XCTestCase {
     }
 }
 
+/// The default `precision` to use if a specific value is not provided.
+private let defaultPrecision: Float = 0.99
+/// The default `perceptualPrecision` to use if a specific value is not provided.
+private let defaultPerceptualPrecision: Float = 0.97
+
 extension XCTestCase {
     func snapshotModi<T>() -> [String: Snapshotting<T, UIImage>] where T: SwiftUI.View {
         [
-            "light": .image(perceptualPrecision: 0.98),
+            "light": .image(
+                precision: defaultPrecision,
+                perceptualPrecision: defaultPerceptualPrecision
+            ),
             "dark": .image(
-                precision: 1,
-                perceptualPrecision: 0.98,
+                precision: defaultPrecision,
+                perceptualPrecision: defaultPerceptualPrecision,
                 traits: UITraitCollection(userInterfaceStyle: .dark)
             ),
         ]

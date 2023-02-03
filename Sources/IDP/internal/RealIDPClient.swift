@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -97,12 +97,14 @@ class RealIDPClient: IDPClient {
             .eraseToAnyPublisher()
     }
 
+    // swiftlint:disable:next function_parameter_count
     func requestChallenge(
         codeChallenge: String,
         method: IDPCodeChallengeMode,
         state: String,
         nonce: String,
-        using document: DiscoveryDocument
+        using document: DiscoveryDocument,
+        redirect: String?
     ) -> AnyPublisher<IDPChallenge, IDPError> {
         var authenticationComponents = URLComponents(
             url: document.authentication.url,
@@ -120,7 +122,7 @@ class RealIDPClient: IDPClient {
             URLQueryItem(
                 // [REQ:gemSpec_IDP_Frontend:A_20740] transfer
                 name: "redirect_uri",
-                value: clientConfig.redirectURI.absoluteString.urlPercentEscapedString()
+                value: (redirect ?? clientConfig.redirectURI.absoluteString).urlPercentEscapedString()
             ),
         ]
         authenticationComponents?.percentEncodedQueryItems = queryItems

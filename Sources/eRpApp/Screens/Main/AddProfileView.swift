@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -48,7 +48,7 @@ struct AddProfileView: View {
                         .font(.system(size: 16, weight: .bold))) {
                         TextField(L10n.addTxtProfile1, text: viewStore.binding(
                             get: \.profileName,
-                            send: AddProfileDomain.Action.updateProfileName(profilename:)
+                            send: AddProfileDomain.Action.updateProfileName(profileName:)
                         ))
                             .foregroundColor(Colors.textSecondary)
                             .padding()
@@ -57,7 +57,7 @@ struct AddProfileView: View {
                             .padding(.horizontal)
 
                         Button(action: {
-                            viewStore.send(.saveProfile(viewStore.profileName))
+                            viewStore.send(.saveProfile(viewStore.profileName), animation: .easeInOut)
                         }, label: {
                             HStack {
                                 Text(L10n.addBtnSave)

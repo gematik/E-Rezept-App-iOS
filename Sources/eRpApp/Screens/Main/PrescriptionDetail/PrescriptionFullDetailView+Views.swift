@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -119,8 +119,8 @@ extension PrescriptionFullDetailView {
 
     struct MedicationDetails: View {
         var title: String?
-        let prescription: GroupedPrescription.Prescription
-        let medication: GroupedPrescription.Medication?
+        let prescription: Prescription
+        let medication: Medication?
 
         var actualTitle: String {
             if let title = title {

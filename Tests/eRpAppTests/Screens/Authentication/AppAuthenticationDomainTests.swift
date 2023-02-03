@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -19,6 +19,7 @@
 import Combine
 import ComposableArchitecture
 @testable import eRpApp
+import eRpKit
 import Nimble
 import XCTest
 
@@ -27,8 +28,8 @@ final class AppAuthenticationDomainTests: XCTestCase {
 
     typealias TestStore = ComposableArchitecture.TestStore<
         AppAuthenticationDomain.State,
-        AppAuthenticationDomain.State,
         AppAuthenticationDomain.Action,
+        AppAuthenticationDomain.State,
         AppAuthenticationDomain.Action,
         AppAuthenticationDomain.Environment
     >
@@ -36,11 +37,8 @@ final class AppAuthenticationDomainTests: XCTestCase {
     struct MockAuthenticationProvider: AppAuthenticationProvider {
         var authenticationOption: AppSecurityOption
 
-        func loadAppAuthenticationOption() -> AnyPublisher<AppSecurityOption?, Never> {
-            Just(authenticationOption.id)
-                .map {
-                    AppSecurityOption(fromId: $0)
-                }
+        func loadAppAuthenticationOption() -> AnyPublisher<AppSecurityOption, Never> {
+            Just(authenticationOption)
                 .eraseToAnyPublisher()
         }
     }
@@ -73,7 +71,7 @@ final class AppAuthenticationDomainTests: XCTestCase {
 
     func testLoadingBiometricAppAuthenticationWithoutPreviousFailedAuthentications() {
         let store = testStore(for: .biometry(.faceID))
-        userDataStore.underlyingFailedAppAuthentications.send(0) // no failed authentications
+        userDataStore.underlyingFailedAppAuthentications = Just(0).eraseToAnyPublisher() // no failed authentications
 
         store.send(.onAppear)
         store.receive(.failedAppAuthenticationsReceived(0))
@@ -91,7 +89,7 @@ final class AppAuthenticationDomainTests: XCTestCase {
 
     func testLoadingBiometricAppAuthenticationWithPreviousFailedAuthentications() {
         let store = testStore(for: .biometry(.faceID))
-        userDataStore.underlyingFailedAppAuthentications.send(1)
+        userDataStore.underlyingFailedAppAuthentications = Just(1).eraseToAnyPublisher()
 
         store.send(.onAppear)
         store.receive(.failedAppAuthenticationsReceived(1)) {
@@ -153,7 +151,9 @@ final class AppAuthenticationDomainTests: XCTestCase {
 
     func testLoadingPasswordAppAuthentication() {
         let testStore = testStore(for: .password)
-        userDataStore.appSecurityOption = Just(3).eraseToAnyPublisher()
+
+        userDataStore.failedAppAuthentications = Just(0).eraseToAnyPublisher()
+        userDataStore.appSecurityOption = Just(.password).eraseToAnyPublisher()
 
         testStore.send(.onAppear)
         testStore.receive(.failedAppAuthenticationsReceived(0))

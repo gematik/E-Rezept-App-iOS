@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -228,6 +228,28 @@ class StandardSessionContainer: UserSession {
     lazy var avsSession: AVSSession = {
         DefaultAVSSession(httpClient: avsHttpClient)
     }()
+
+    private lazy var defaultLoginHandler: DefaultLoginHandler = {
+        DefaultLoginHandler(
+            idpSession: idpSession,
+            signatureProvider: DefaultSecureEnclaveSignatureProvider(storage: secureUserStore)
+        )
+    }()
+
+    private lazy var prescriptionRepositoryWithActivity: DefaultPrescriptionRepository = {
+        DefaultPrescriptionRepository(
+            loginHandler: defaultLoginHandler,
+            erxTaskRepository: self.erxTaskRepository
+        )
+    }()
+
+    var prescriptionRepository: PrescriptionRepository {
+        prescriptionRepositoryWithActivity
+    }
+
+    var activityIndicating: ActivityIndicating {
+        prescriptionRepositoryWithActivity
+    }
 }
 
 extension IDPSession {

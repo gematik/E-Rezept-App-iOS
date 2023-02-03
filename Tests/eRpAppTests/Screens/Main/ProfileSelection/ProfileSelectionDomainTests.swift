@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -26,15 +26,14 @@ import XCTest
 final class ProfileSelectionDomainTests: XCTestCase {
     typealias TestStore = ComposableArchitecture.TestStore<
         ProfileSelectionDomain.State,
-        ProfileSelectionDomain.State,
         ProfileSelectionDomain.Action,
+        ProfileSelectionDomain.State,
         ProfileSelectionDomain.Action,
         ProfileSelectionDomain.Environment
     >
 
     let testScheduler = DispatchQueue.test
     var schedulers: Schedulers!
-    var mockUserDataStore: MockUserDataStore!
     var mockUserProfileService: MockUserProfileService!
     var mockRouting: MockRouting!
 
@@ -42,7 +41,6 @@ final class ProfileSelectionDomainTests: XCTestCase {
         super.setUp()
 
         schedulers = Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler())
-        mockUserDataStore = MockUserDataStore()
         mockUserProfileService = MockUserProfileService()
         mockRouting = MockRouting()
     }
@@ -53,7 +51,6 @@ final class ProfileSelectionDomainTests: XCTestCase {
             reducer: ProfileSelectionDomain.reducer,
             environment: ProfileSelectionDomain.Environment(
                 schedulers: schedulers,
-                userDataStore: mockUserDataStore,
                 userProfileService: mockUserProfileService,
                 router: mockRouting
             )
@@ -71,9 +68,11 @@ final class ProfileSelectionDomainTests: XCTestCase {
             )
         )
 
+        expect(self.mockUserProfileService.setSelectedProfileIdCalled).to(beFalse())
         store.send(.selectProfile(Fixtures.profileA)) { state in
             state.selectedProfileId = Fixtures.profileA.id
         }
+        expect(self.mockUserProfileService.setSelectedProfileIdCalled).to(beTrue())
 
         store.receive(.close)
     }
@@ -95,7 +94,7 @@ final class ProfileSelectionDomainTests: XCTestCase {
             .setFailureType(to: UserProfileServiceError.self)
             .eraseToAnyPublisher()
 
-        mockUserDataStore.selectedProfileId = Just(Fixtures.profileA.id).eraseToAnyPublisher()
+        mockUserProfileService.selectedProfileId = Just(Fixtures.profileA.id).eraseToAnyPublisher()
 
         store.send(.registerListener)
 
@@ -123,7 +122,7 @@ final class ProfileSelectionDomainTests: XCTestCase {
 
         store.send(.editProfiles)
 
-        expect(self.mockRouting.routeToParameter).to(equal(Endpoint.settings))
+        expect(self.mockRouting.routeToReceivedEndpoint).to(equal(Endpoint.settings))
 
         store.receive(.close)
     }
@@ -150,17 +149,20 @@ extension ProfileSelectionDomainTests {
     enum Fixtures {
         static let profileA = UserProfile(
             profile: Profile(name: "Profile A"),
-            connectionStatus: .connected
+            connectionStatus: .connected,
+            activityIndicating: false
         )
 
         static let profileB = UserProfile(
             profile: Profile(name: "Profile B"),
-            connectionStatus: .connected
+            connectionStatus: .connected,
+            activityIndicating: false
         )
 
         static let profileC = UserProfile(
             profile: Profile(name: "Profile C"),
-            connectionStatus: .connected
+            connectionStatus: .connected,
+            activityIndicating: false
         )
     }
 }

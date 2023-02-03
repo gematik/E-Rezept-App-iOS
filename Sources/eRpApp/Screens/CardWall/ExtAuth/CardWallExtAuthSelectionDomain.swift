@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -22,22 +22,28 @@ import UIKit
 
 enum CardWallExtAuthSelectionDomain {
     typealias Store = ComposableArchitecture.Store<State, Action>
-    typealias Reducer = ComposableArchitecture.Reducer<State, Action, Environment>
+    typealias Reducer = ComposableArchitecture.AnyReducer<State, Action, Environment>
 
     static func cleanup<T>() -> Effect<T, Never> {
-        Effect.cancel(token: Token.self)
+        Effect.cancel(id: Token.self)
     }
 
     enum Route: Equatable {
+        // sourcery: AnalyticsScreen = cardWallExtAuthConfirm
         case confirmation(CardWallExtAuthConfirmationDomain.State?)
+        case egk(OrderHealthCardDomain.State)
     }
 
-    enum Token: CaseIterable, Hashable {}
+    enum Token: CaseIterable, Hashable {
+        case loadKKList
+    }
 
     struct State: Equatable {
         var kkList: KKAppDirectory?
+        var filteredKKList: KKAppDirectory = .init(apps: [KKAppDirectory.Entry]())
         var error: IDPError?
         var selectedKK: KKAppDirectory.Entry?
+        var searchText: String = ""
 
         var orderEgkVisible = false
         var route: Route?
@@ -50,11 +56,12 @@ enum CardWallExtAuthSelectionDomain {
         case confirmKK
         case error(IDPError)
         case close
-
-        case showOrderEgk(Bool)
+        case updateSearchText(newString: String)
         case setNavigation(tag: Route.Tag?)
-
+        case egkAction(action: OrderHealthCardDomain.Action)
         case confirmation(action: CardWallExtAuthConfirmationDomain.Action)
+        case filteredKKList(search: String)
+        case reset
     }
 
     struct Environment {
@@ -64,18 +71,17 @@ enum CardWallExtAuthSelectionDomain {
 
     static let domainReducer = Reducer { state, action, environment in
         switch action {
-        case let .showOrderEgk(show):
-            state.orderEgkVisible = show
-            return .none
         case .loadKKList:
             state.error = nil
             state.selectedKK = nil
             // [REQ:gemSpec_IDP_Sek:A_22296] Load available apps
             return environment.idpSession.loadDirectoryKKApps()
+                .first()
                 .catchToEffect()
                 .map(Action.loadKKListReceived)
                 .receive(on: environment.schedulers.main.animation())
                 .eraseToEffect()
+                .cancellable(id: Token.loadKKList)
         case let .loadKKListReceived(.success(result)):
             state.error = nil
             state.kkList = result
@@ -92,7 +98,22 @@ enum CardWallExtAuthSelectionDomain {
 
             state.route = .confirmation(.init(selectedKK: selectedKK))
             return .none
-        case .setNavigation(tag: nil):
+        case let .filteredKKList(search):
+            if let kkList = state.kkList {
+                state
+                    .filteredKKList = KKAppDirectory(apps: kkList.apps
+                        .filter { $0.name.lowercased().contains(search.lowercased()) })
+            }
+            return .none
+        case .reset:
+            state.filteredKKList = state.kkList ?? .init(apps: [KKAppDirectory.Entry]())
+            return .none
+        case let .updateSearchText(newString):
+            state.searchText = newString.trimmed()
+            return state.searchText
+                .isEmpty ? Effect(value: .reset) : Effect(value: .filteredKKList(search: state.searchText))
+        case .setNavigation(tag: nil),
+             .egkAction(action: .close):
             state.route = nil
             return .none
         case let .error(error):
@@ -100,16 +121,21 @@ enum CardWallExtAuthSelectionDomain {
             return .none
         case .confirmation(.close):
             return Effect(value: .close)
+        case .setNavigation(tag: .egk):
+            state.route = .egk(.init())
+            return .none
         case .setNavigation:
             return .none
         case .close,
-             .confirmation:
+             .confirmation,
+             .egkAction:
             return .none // Handled by parent domain
         }
     }
 
     static let reducer: Reducer = .combine(
         confirmationPullback,
+        orderHealthCardPullbackReducer,
         domainReducer
     )
 
@@ -124,6 +150,12 @@ enum CardWallExtAuthSelectionDomain {
                       canOpenURL: UIApplication.shared.canOpenURL,
                       openURL: UIApplication.shared.open)
             }
+
+    static let orderHealthCardPullbackReducer: Reducer =
+        OrderHealthCardDomain.reducer._pullback(
+            state: (\State.route).appending(path: /Route.egk),
+            action: /Action.egkAction(action:)
+        ) { _ in OrderHealthCardDomain.Environment() }
 }
 
 extension KKAppDirectory.Entry: Identifiable {

@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -19,6 +19,7 @@
 import Combine
 import ComposableArchitecture
 @testable import eRpApp
+import eRpKit
 import XCTest
 
 class MockAuthenticationChallengeProvider: AuthenticationChallengeProvider {
@@ -38,8 +39,8 @@ final class AppAuthenticationBiometricsDomainTests: XCTestCase {
 
     typealias TestStore = ComposableArchitecture.TestStore<
         AppAuthenticationBiometricsDomain.State,
-        AppAuthenticationBiometricsDomain.State,
         AppAuthenticationBiometricsDomain.Action,
+        AppAuthenticationBiometricsDomain.State,
         AppAuthenticationBiometricsDomain.Action,
         AppAuthenticationBiometricsDomain.Environment
     >

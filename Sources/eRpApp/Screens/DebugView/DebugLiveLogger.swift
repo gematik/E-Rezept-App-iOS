@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -72,14 +72,15 @@ class DebugLiveLogger {
     var requests: [RequestLog] = []
 
     var isLoggingEnabled: Bool {
-        didSet {
-            UserDefaults.standard.isLoggingEnabled = isLoggingEnabled
+        get {
+            UserDefaults.standard.isLoggingEnabled
+        }
+        set {
+            UserDefaults.standard.isLoggingEnabled = newValue
         }
     }
 
-    private init() {
-        isLoggingEnabled = UserDefaults.standard.isLoggingEnabled
-    }
+    private init() {}
 
     func log(request: URLRequest, sentAt: Date, response: HTTPResponse?, receivedAt: Date) {
         guard isLoggingEnabled else { return }

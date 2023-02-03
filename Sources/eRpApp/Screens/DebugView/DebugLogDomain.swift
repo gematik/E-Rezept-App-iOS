@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -24,7 +24,7 @@ import HTTPClient
 #if ENABLE_DEBUG_VIEW
 enum DebugLogDomain {
     typealias Store = ComposableArchitecture.Store<State, Action>
-    typealias Reducer = ComposableArchitecture.Reducer<State, Action, Environment>
+    typealias Reducer = ComposableArchitecture.AnyReducer<State, Action, Environment>
 
     enum Token: CaseIterable, Hashable {}
 
@@ -59,8 +59,8 @@ enum DebugLogDomain {
             }
         }
 
-        mutating func updateLogs() {
-            var logs = DebugLiveLogger.shared.requests
+        mutating func updateLogs(from store: DebugLiveLogger) {
+            var logs = store.requests
 
             let filter = self.filter.lowercased()
 
@@ -81,27 +81,29 @@ enum DebugLogDomain {
         case toggleLogging(isEnabled: Bool)
     }
 
-    struct Environment {}
+    struct Environment {
+        var loggingStore: DebugLiveLogger
+    }
 
-    static let domainReducer = Reducer { state, action, _ in
+    static let domainReducer = Reducer { state, action, environment in
         switch action {
         case .loadLogs:
-            state.updateLogs()
-            state.isLoggingEnabled = DebugLiveLogger.shared.isLoggingEnabled
+            state.updateLogs(from: environment.loggingStore)
+            state.isLoggingEnabled = environment.loggingStore.isLoggingEnabled
             return .none
         case let .sort(by: property):
             state.sort = property
 
-            state.updateLogs()
+            state.updateLogs(from: environment.loggingStore)
             return .none
         case let .setFilter(filter):
             state.filter = filter
 
-            state.updateLogs()
+            state.updateLogs(from: environment.loggingStore)
             return .none
         case let .toggleLogging(isEnabled: isEnabled):
             state.isLoggingEnabled = isEnabled
-            DebugLiveLogger.shared.isLoggingEnabled = isEnabled
+            environment.loggingStore.isLoggingEnabled = isEnabled
             return .none
         }
     }
@@ -114,7 +116,11 @@ enum DebugLogDomain {
 extension DebugLogDomain {
     enum Dummies {
         static let state = State(logs: multiple)
-        static let store = Store(initialState: state, reducer: DebugLogDomain.Reducer.empty, environment: Environment())
+        static let store = Store(
+            initialState: state,
+            reducer: DebugLogDomain.Reducer.empty,
+            environment: Environment(loggingStore: DebugLiveLogger.shared)
+        )
 
         static var multiple: [DebugLiveLogger.RequestLog] = [
             log1,

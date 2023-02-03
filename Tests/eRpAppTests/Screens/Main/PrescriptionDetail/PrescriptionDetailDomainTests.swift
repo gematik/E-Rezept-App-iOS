@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -16,6 +16,7 @@
 //  
 //
 
+import Combine
 import CombineSchedulers
 import ComposableArchitecture
 @testable import eRpApp
@@ -25,27 +26,27 @@ import Nimble
 import XCTest
 
 final class PrescriptionDetailDomainTests: XCTestCase {
-    let testScheduler = DispatchQueue.test
+    let testScheduler = DispatchQueue.immediate
     let initialState = PrescriptionDetailDomain.Dummies.state
+    let mockErxTaskRepository = MockErxTaskRepository()
 
     typealias TestStore = ComposableArchitecture.TestStore<
         PrescriptionDetailDomain.State,
-        PrescriptionDetailDomain.State,
         PrescriptionDetailDomain.Action,
+        PrescriptionDetailDomain.State,
         PrescriptionDetailDomain.Action,
         PrescriptionDetailDomain.Environment
     >
 
     func testStore(dateProvider: @escaping (() -> Date) = Date.init) -> TestStore {
         let schedulers = Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler())
-        let erxTaskRepository = PrescriptionDetailDomain.Dummies
-            .demoSessionContainer.userSession.erxTaskRepository
+
         return TestStore(
             initialState: initialState,
             reducer: PrescriptionDetailDomain.reducer,
             environment: PrescriptionDetailDomain.Environment(
                 schedulers: schedulers,
-                taskRepository: erxTaskRepository,
+                taskRepository: mockErxTaskRepository,
                 fhirDateFormatter: FHIRDateFormatter.shared,
                 userSession: MockUserSession(),
                 dateProvider: dateProvider
@@ -72,6 +73,8 @@ final class PrescriptionDetailDomainTests: XCTestCase {
     func testDeleteWithAlertSuccess() {
         let store = testStore()
 
+        mockErxTaskRepository.deletePublisher = Just(true).setFailureType(to: ErxRepositoryError.self)
+            .eraseToAnyPublisher()
         // when
         store.send(.delete) { sut in
             // then
@@ -82,7 +85,7 @@ final class PrescriptionDetailDomainTests: XCTestCase {
             sut.isDeleting = true
             sut.route = nil
         }
-        store.send(.taskDeletedReceived(Result.success(true))) { state in
+        store.receive(.taskDeletedReceived(Result.success(true))) { state in
             // then
             state.isDeleting = false
             state.route = nil
@@ -93,7 +96,8 @@ final class PrescriptionDetailDomainTests: XCTestCase {
     /// Tests the case when delete was hit and deletion has failed when not being logged in
     func testDeleteWhenNotLoggedIn() {
         let store = testStore()
-
+        let expectedError = ErxRepositoryError.remote(.fhirClientError(IDPError.tokenUnavailable))
+        mockErxTaskRepository.deletePublisher = Fail(error: expectedError).eraseToAnyPublisher()
         // when
         store.send(.delete) { sut in
             // then
@@ -104,8 +108,8 @@ final class PrescriptionDetailDomainTests: XCTestCase {
             sut.route = nil
             sut.isDeleting = true
         }
-        store.send(.taskDeletedReceived(
-            Result.failure(ErxRepositoryError.remote(.fhirClientError(IDPError.tokenUnavailable)))
+        store.receive(.taskDeletedReceived(
+            Result.failure(expectedError)
         )) { state in
             // then
             state.route = .alert(PrescriptionDetailDomain.missingTokenAlertState())
@@ -114,11 +118,15 @@ final class PrescriptionDetailDomainTests: XCTestCase {
         store.send(.setNavigation(tag: .none)) { state in
             state.route = nil
         }
+
+        store.send(.close)
     }
 
     /// Tests the case when delete was hit and deletion has failed with other errors.
     func testDeleteWithOtherErrorMessage() {
         let store = testStore()
+        let expectedError = ErxRepositoryError.local(.notImplemented)
+        mockErxTaskRepository.deletePublisher = Fail(error: expectedError).eraseToAnyPublisher()
 
         // when
         store.send(.delete) { sut in
@@ -130,7 +138,7 @@ final class PrescriptionDetailDomainTests: XCTestCase {
             sut.isDeleting = true
             sut.route = nil
         }
-        store.send(.taskDeletedReceived(
+        store.receive(.taskDeletedReceived(
             Result.failure(ErxRepositoryError.local(.notImplemented))
         )) { state in
             // then
@@ -145,6 +153,7 @@ final class PrescriptionDetailDomainTests: XCTestCase {
         store.send(.setNavigation(tag: nil)) { state in
             state.route = nil
         }
+        store.send(.close)
     }
 
     /// Test redeem low-detail prescriptions.
@@ -155,23 +164,23 @@ final class PrescriptionDetailDomainTests: XCTestCase {
 
         let expectedRedeemDate = FHIRDateFormatter.shared.stringWithLongUTCTimeZone(from: dateToday)
         var erxTask = initialState.prescription.erxTask
-        let prescription = GroupedPrescription.Prescription(erxTask: erxTask, date: dateToday)
+        let prescription = Prescription(erxTask: erxTask, date: dateToday)
         erxTask.update(with: expectedRedeemDate)
-        let expectedPrescription = GroupedPrescription.Prescription(erxTask: erxTask, date: dateToday)
+        let expectedPrescription = Prescription(erxTask: erxTask, date: dateToday)
+        mockErxTaskRepository.savePublisher = Just(true).setFailureType(to: ErxRepositoryError.self)
+            .eraseToAnyPublisher()
         // when
         store.send(.toggleRedeemPrescription) { sut in
             // then
             sut.prescription = expectedPrescription
             sut.isArchived = true
         }
-        testScheduler.advance()
         store.receive(.redeemedOnSavedReceived(true))
         store.send(.toggleRedeemPrescription) { sut in
             // then
             sut.prescription = prescription
             sut.isArchived = false
         }
-        testScheduler.advance()
         store.receive(.redeemedOnSavedReceived(true))
     }
 }

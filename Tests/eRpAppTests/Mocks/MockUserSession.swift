@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -101,7 +101,7 @@ class MockUserSession: UserSession {
     }()
 
     lazy var nfcSessionProvider: NFCSignatureProvider = {
-        NFCSignatureProviderMock()
+        MockNFCSignatureProvider()
     }()
 
     lazy var nfcHealthCardPasswordController: NFCHealthCardPasswordController = {
@@ -131,6 +131,14 @@ class MockUserSession: UserSession {
     lazy var avsTransactionDataStore: AVSTransactionDataStore = {
         MockAVSTransactionDataStore()
     }()
+
+    lazy var activityIndicating: ActivityIndicating = {
+        MockActivityIndicating()
+    }()
+
+    lazy var prescriptionRepository: PrescriptionRepository = {
+        MockPrescriptionRepository()
+    }()
 }
 
 class MockHintEventsStore: EventsStore {
@@ -141,16 +149,28 @@ class MockHintEventsStore: EventsStore {
 }
 
 class MockSecureUserStore: SecureUserDataStore {
-    @Published var publishedKeyIdentifier: Data?
+    var underlyingKeyIdentifier: AnyPublisher<Data?, Never>!
     var keyIdentifier: AnyPublisher<Data?, Never> {
-        $publishedKeyIdentifier.eraseToAnyPublisher()
+        underlyingKeyIdentifier.eraseToAnyPublisher()
     }
+
+    var setKeyIdentifierCallsCount = 0
+    var setKeyIdentifierCalled: Bool {
+        setKeyIdentifierCallsCount > 0
+    }
+
+    var setKeyIdentifierReceivedKeyIdentifier: Data?
+    var setKeyIdentifierReceivedInvocations: [Data?] = []
+    var setKeyIdentifierClosure: ((Data?) -> Void)?
 
     func set(keyIdentifier: Data?) {
-        publishedKeyIdentifier = keyIdentifier
+        setKeyIdentifierReceivedKeyIdentifier = keyIdentifier
+        setKeyIdentifierCallsCount += 1
+        setKeyIdentifierReceivedInvocations.append(keyIdentifier)
+        setKeyIdentifierClosure?(keyIdentifier)
     }
 
-    var tokenState: CurrentValueSubject<IDPToken?, Never> = CurrentValueSubject(nil)
+    var tokenState: AnyPublisher<IDPToken?, Never>!
     @Published var discoveryState: DiscoveryDocument?
     var can: AnyPublisher<String?, Never> = Just("123123").eraseToAnyPublisher()
 
@@ -188,6 +208,15 @@ class MockSecureUserStore: SecureUserDataStore {
     func wipe() {
         wipeCalledCount += 1
     }
+
+    var setTokenCallsCount = 0
+    var setTokenCalled: Bool {
+        setKeyIdentifierCallsCount > 0
+    }
+
+    var setTokenReceivedSetToken: IDPToken?
+    var setTokenReceivedInvocations: [IDPToken?] = []
+    var setTokenClosure: ((IDPToken?) -> Void)?
 }
 
 extension MockSecureUserStore: IDPStorage {
@@ -196,7 +225,10 @@ extension MockSecureUserStore: IDPStorage {
     }
 
     func set(token: IDPToken?) {
-        tokenState.value = token
+        setTokenReceivedSetToken = token
+        setTokenCallsCount += 1
+        setTokenReceivedInvocations.append(token)
+        setTokenClosure?(token)
     }
 
     var discoveryDocument: AnyPublisher<DiscoveryDocument?, Never> {

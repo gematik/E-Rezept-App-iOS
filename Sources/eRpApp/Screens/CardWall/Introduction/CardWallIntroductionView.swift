@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -203,7 +203,7 @@ extension CardWallIntroductionView {
                                         .fixedSize(horizontal: false, vertical: true)
 
                                     Button(action: {
-                                        viewStore.send(.showEGKOrderInfoView)
+                                        viewStore.send(.setNavigation(tag: .egk))
                                     }, label: {
                                         Text(L10n.cdwBtnIntroFootnote)
                                     })
@@ -221,9 +221,15 @@ extension CardWallIntroductionView {
                                         onDismiss: {},
                                         content: {
                                             NavigationView {
-                                                OrderHealthCardView {
-                                                    viewStore.send(.setNavigation(tag: nil))
-                                                }
+                                                IfLetStore(
+                                                    store.scope(
+                                                        state: (\CardWallIntroductionDomain.State.route)
+                                                            .appending(path: /CardWallIntroductionDomain.Route.egk)
+                                                            .extract(from:),
+                                                        action: CardWallIntroductionDomain.Action.egkAction(action:)
+                                                    ),
+                                                    then: OrderHealthCardView.init(store:)
+                                                )
                                             }
                                             .accentColor(Colors.primary700)
                                             .navigationViewStyle(StackNavigationViewStyle())

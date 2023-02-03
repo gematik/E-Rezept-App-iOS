@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -17,6 +17,7 @@
 //
 
 import ComposableArchitecture
+import eRpKit
 import SwiftUI
 
 struct OnboardingRegisterAuthenticationView: View, KeyboardReadable {
@@ -55,10 +56,8 @@ struct OnboardingRegisterAuthenticationView: View, KeyboardReadable {
                 state.selectedOption?.id ?? -1
             },
             send: { localState in
-                if let option = AppSecurityOption(fromId: localState) {
-                    return RegisterAuthenticationDomain.Action.select(option)
-                }
-                return RegisterAuthenticationDomain.Action.select(.unsecured)
+                let option = AppSecurityOption(fromId: localState)
+                return RegisterAuthenticationDomain.Action.select(option)
             }
         )
     }

@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -26,11 +26,11 @@ import IDP
 // swiftlint:disable type_body_length
 enum DebugDomain {
     typealias Store = ComposableArchitecture.Store<State, Action>
-    typealias Reducer = ComposableArchitecture.Reducer<State, Action, Environment>
+    typealias Reducer = ComposableArchitecture.AnyReducer<State, Action, Environment>
 
     /// Provides an Effect that needs to run whenever the state of this Domain is reset to nil
     static func cleanup<T>() -> Effect<T, Never> {
-        Effect.cancel(token: Token.self)
+        Effect.cancel(id: Token.self)
     }
 
     enum Token: CaseIterable, Hashable {
@@ -106,6 +106,7 @@ enum DebugDomain {
         case isMinimumOS14ToggleTapped
         case isAuthenticatedReceived(Bool?)
         case logoutButtonTapped
+        case invalidateAccessToken
         case accessCodeTextReceived(String)
         case toggleVirtualLogin(Bool)
         case virtualPrkCHAutReceived(String)
@@ -228,6 +229,21 @@ enum DebugDomain {
             }
             environment.userSession.secureUserStore.set(token: nil)
             return .none
+        case .invalidateAccessToken:
+            if let token = state.token {
+                state.lastIDPToken = token
+                state.accessCodeText = token.accessToken
+
+                let modifiedToken = IDPToken(
+                    accessToken: token.accessToken,
+                    expires: Date(),
+                    idToken: token.idToken,
+                    ssoToken: token.ssoToken,
+                    redirect: token.redirect
+                )
+                environment.userSession.secureUserStore.set(token: modifiedToken)
+            }
+            return .none
         case let .configurationReceived(configuration):
             state.selectedEnvironment = configuration
             return .none
@@ -276,7 +292,7 @@ enum DebugDomain {
     #if ENABLE_DEBUG_VIEW
     static let reducer: Reducer = .combine(
         DebugLogDomain.reducer.pullback(state: \.logState, action: /Action.logAction) { _ in
-            DebugLogDomain.Environment()
+            DebugLogDomain.Environment(loggingStore: DebugLiveLogger.shared)
         },
         domainReducer
     )

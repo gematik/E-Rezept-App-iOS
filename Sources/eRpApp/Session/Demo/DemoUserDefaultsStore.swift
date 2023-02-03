@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -66,13 +66,14 @@ class DemoUserDefaultsStore: UserDataStore {
     func set(serverEnvironmentConfiguration _: String?) {}
 
     /// The app security option
-    var appSecurityOption: AnyPublisher<Int, Never> {
+    var appSecurityOption: AnyPublisher<AppSecurityOption, Never> {
         appSecurityOptionCurrentValue.eraseToAnyPublisher()
     }
 
-    private var appSecurityOptionCurrentValue: CurrentValueSubject<Int, Never> = CurrentValueSubject(0)
+    private var appSecurityOptionCurrentValue: CurrentValueSubject<AppSecurityOption, Never> =
+        CurrentValueSubject(.unsecured)
 
-    func set(appSecurityOption: Int) {
+    func set(appSecurityOption: AppSecurityOption) {
         appSecurityOptionCurrentValue.send(appSecurityOption)
     }
 
@@ -119,6 +120,13 @@ class DemoUserDefaultsStore: UserDataStore {
     var appStartCounter: Int {
         get { appStartCounterValue }
         set { appStartCounterValue = newValue }
+    }
+
+    var hideWelcomeDrawerValue = true
+
+    var hideWelcomeDrawer: Bool {
+        get { hideWelcomeDrawerValue }
+        set { hideWelcomeDrawerValue = newValue }
     }
 
     func wipeAll() {}

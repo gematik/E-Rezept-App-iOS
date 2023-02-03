@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -80,48 +80,26 @@ struct PharmacySearchView: View {
                         .accessibility(identifier: A11y.pharmacySearch.phaSearchError)
                 case .searchRunning,
                      .searchResultOk:
-                    ScrollView {
-                        VStack(spacing: 0) {
-                            GeometryReader { proxy in
-                                Color.clear.preference(key: ViewOffsetKey.self,
-                                                       value: proxy.frame(in: .named("scroll")).origin.y)
-                            }.frame(width: 0, height: 0)
-
-                            PharmacyFilterBar<PharmacySearchFilterDomain.PharmacyFilterOption>(openFiltersAction: {},
-                                                                                               removeFilter: { _ in
-                                                                                               }, elements: [])
-                                .hidden()
-
-                            ResultsView(viewStore: viewStore)
-                        }
-
-                    }.onPreferenceChange(ViewOffsetKey.self) {
-                        scrollOffset = $0
-                    }
-                    .coordinateSpace(name: "scroll")
+                    ScrollViewWithStickyHeader(header: {
+                        PharmacyFilterBar(openFiltersAction: {
+                            viewStore.send(.setNavigation(tag: .filter), animation: .default)
+                        }, removeFilter: { option in
+                            viewStore.send(.removeFilterOption(option.element), animation: .default)
+                        }, elements: viewStore.filter)
+                            .padding(.horizontal)
+                            .transition(.move(edge: .top).combined(with: .opacity))
+                    }, content: {
+                        ResultsView(viewStore: viewStore)
+                    })
                 }
-
-            }.overlay(VStack {
-                if viewStore.showFilterBar {
-                    PharmacyFilterBar(openFiltersAction: {
-                        viewStore.send(.setNavigation(tag: .filter), animation: .default)
-                    }, removeFilter: { option in
-                        viewStore.send(.removeFilterOption(option.element), animation: .default)
-                    }, elements: viewStore.filter)
-                        .padding(.horizontal)
-                        .compositingGroup()
-                        .background(BlurEffectView(style: .systemChromeMaterialLight, isEnabled: scrollOffset < 0))
-                        .overlay(
-                            Divider().foregroundColor(Colors.separator).hidden(scrollOffset >= 0),
-                            alignment: SwiftUI.Alignment.bottom
-                        )
-                        .offset(x: 0, y: max(scrollOffset, 0))
-                        .transition(.move(edge: .top).combined(with: .opacity))
-                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .overlay(VStack {
                 if viewStore.searchState == .searchRunning {
                     SearchRunningView()
                         .accessibility(identifier: A11y.pharmacySearch.phaSearchSearchRunning)
                         .transition(.slide)
+                        .padding(.top, 80)
                 }
             }, alignment: .top)
 
@@ -133,7 +111,7 @@ struct PharmacySearchView: View {
                     viewStore.routeTag == .filter
                 }, set: { show in
                     if !show {
-                        viewStore.send(.setNavigation(tag: nil))
+                        viewStore.send(.setNavigation(tag: nil), animation: .easeInOut)
                     }
                 }),
                 onDismiss: {},
@@ -201,19 +179,7 @@ struct PharmacySearchView: View {
                 .extract(from:)),
             dismiss: .setNavigation(tag: .none)
         )
-        .introspectNavigationController { navigationController in
-            if let items = navigationController.navigationBar.items {
-                for item in items {
-                    if let searchController = item.searchController {
-                        searchController.searchBar.setShowsCancelButton(
-                            searchController.searchBar.searchTextField.isFirstResponder || !viewStore.searchState
-                                .isStartView,
-                            animated: true
-                        )
-                    }
-                }
-            }
-        }
+        .searchableForceCancelButtonVisible(forceCancelButtonVisible)
         .onAppear {
             viewStore.send(.onAppear)
         }
@@ -265,6 +231,16 @@ struct PharmacySearchView: View {
             get: \.searchText,
             send: PharmacySearchDomain.Action.searchTextChanged
         )
+    }
+
+    var forceCancelButtonVisible: Binding<Bool> {
+        Binding {
+            viewStore.searchState.isNotStartView
+        } set: { value in
+            if !value {
+                viewStore.send(.searchTextChanged(""), animation: .default)
+            }
+        }
     }
 
     var pharmacySearchFilterStore: Store<PharmacySearchFilterDomain.State?, PharmacySearchFilterDomain.Action> {
@@ -330,18 +306,9 @@ extension PharmacySearchView {
             }
             showDistance = state.pharmacyFilterOptions.contains { $0 == .currentLocation }
             searchHistory = searchText.lengthOfBytes(using: .utf8) == 0 ? state.searchHistory : []
-            showFilterBar = !state.searchState.isStartView
+            showFilterBar = state.searchState.isNotStartView
         }
     }
-}
-
-struct ViewOffsetKey: PreferenceKey {
-    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
-        value += nextValue()
-    }
-
-    typealias Value = CGFloat
-    static var defaultValue = CGFloat.zero
 }
 
 extension PharmacySearchView {

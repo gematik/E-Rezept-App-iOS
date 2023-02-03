@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -36,7 +36,7 @@ final class PrescriptionFullDetailSnapshotTests: XCTestCase {
     }
 
     func testPrescriptionFullDetailView_WithInProgressPrescription() {
-        let inProgressPrescription = GroupedPrescription.Prescription(erxTask: ErxTask.Fixtures.erxTaskInProgress)
+        let inProgressPrescription = Prescription(erxTask: ErxTask.Fixtures.erxTaskInProgress)
         let sut = PrescriptionFullDetailView(
             store: PrescriptionDetailDomain.Dummies.storeFor(
                 PrescriptionDetailDomain.State(prescription: inProgressPrescription, isArchived: false)
@@ -47,7 +47,7 @@ final class PrescriptionFullDetailSnapshotTests: XCTestCase {
     }
 
     func testPrescriptionFullDetailView_WithCompletedPrescription() {
-        let completed = GroupedPrescription.Prescription(erxTask: ErxTask.Fixtures.erxTaskCompleted)
+        let completed = Prescription(erxTask: ErxTask.Fixtures.erxTaskCompleted)
         let sut = PrescriptionFullDetailView(
             store: PrescriptionDetailDomain.Dummies.storeFor(
                 PrescriptionDetailDomain.State(prescription: completed, isArchived: false)
@@ -58,8 +58,7 @@ final class PrescriptionFullDetailSnapshotTests: XCTestCase {
     }
 
     func testPrescriptionFullDetailView_WithDirectAssignedPrescription() {
-        let inProgressDirectAssignedTask = GroupedPrescription
-            .Prescription(erxTask: ErxTask.Fixtures.erxTaskDirectAssigned)
+        let inProgressDirectAssignedTask = Prescription(erxTask: ErxTask.Fixtures.erxTaskDirectAssigned)
         let sut = PrescriptionFullDetailView(
             store: PrescriptionDetailDomain.Dummies.storeFor(
                 PrescriptionDetailDomain.State(prescription: inProgressDirectAssignedTask, isArchived: false)

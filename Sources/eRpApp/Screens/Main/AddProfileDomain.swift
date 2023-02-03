@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -23,7 +23,7 @@ import SwiftUI
 
 enum AddProfileDomain {
     typealias Store = ComposableArchitecture.Store<State, Action>
-    typealias Reducer = ComposableArchitecture.Reducer<State, Action, Environment>
+    typealias Reducer = ComposableArchitecture.AnyReducer<State, Action, Environment>
 
     struct State: Equatable {
         var alertState: AlertState<Action>?
@@ -35,29 +35,27 @@ enum AddProfileDomain {
 
     enum Action: Equatable {
         case saveProfile(String)
-        case saveProfileReceived(Result<UUID, LocalStoreError>)
-        case updateProfileName(profilename: String)
+        case saveProfileReceived(Result<UUID, UserProfileServiceError>)
+        case updateProfileName(profileName: String)
         case close
     }
 
     struct Environment {
-        let localUserStore: UserDataStore
-        let profileStore: ProfileDataStore
+        let userProfileService: UserProfileService
         let schedulers: Schedulers
-        let userSession: UserSession
     }
 
     private static let domainReducer = Reducer { state, action, environment in
         switch action {
-        case let .saveProfile(profilename):
-            let name = profilename.trimmed()
+        case let .saveProfile(profileName):
+            let name = profileName.trimmed()
             guard state.isValidName else { return .none }
             let profile = Profile(name: name,
                                   identifier: UUID(),
                                   insuranceId: nil,
                                   lastAuthenticated: nil,
                                   erxTasks: [])
-            return environment.profileStore.save(profiles: [profile])
+            return environment.userProfileService.save(profiles: [profile])
                 .first()
                 .catchToEffect()
                 .map { result in
@@ -66,13 +64,13 @@ enum AddProfileDomain {
                 .receive(on: environment.schedulers.main)
                 .eraseToEffect()
         case let .saveProfileReceived(.success(profileId)):
-            environment.localUserStore.set(selectedProfileId: profileId)
+            environment.userProfileService.set(selectedProfileId: profileId)
             return Effect(value: .close)
         case let .saveProfileReceived(.failure(error)):
             state.alertState = AlertState(for: error)
             return .none
-        case let .updateProfileName(profilename):
-            state.profileName = profilename
+        case let .updateProfileName(profileName):
+            state.profileName = profileName
             return .none
         case .close:
             return .none
@@ -103,10 +101,8 @@ extension AddProfileDomain {
         }
 
         static let environment = Environment(
-            localUserStore: DummyUserSessionContainer().userSession.localUserStore,
-            profileStore: DemoProfileDataStore(),
-            schedulers: Schedulers(),
-            userSession: DummySessionContainer()
+            userProfileService: DummyUserProfileService(),
+            schedulers: Schedulers()
         )
     }
 }

@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -36,12 +36,12 @@ extension UIApplication: ResourceHandler {
 
 enum OrderDetailDomain: Equatable {
     typealias Store = ComposableArchitecture.Store<State, Action>
-    typealias Reducer = ComposableArchitecture.Reducer<State, Action, Environment>
+    typealias Reducer = ComposableArchitecture.AnyReducer<State, Action, Environment>
 
     /// Provides an Effect that needs to run whenever the state of this Domain is reset to nil
     static func cleanup<T>() -> Effect<T, Never> {
         .concatenate(
-            Effect.cancel(token: Token.self),
+            Effect.cancel(id: Token.self),
             cleanupSubDomains()
         )
     }
@@ -124,7 +124,7 @@ enum OrderDetailDomain: Equatable {
             }
             return effect(for: communication)
         case let .didSelectMedication(erxTask):
-            let prescription = GroupedPrescription.Prescription(erxTask: erxTask)
+            let prescription = Prescription(erxTask: erxTask)
             state.route = .prescriptionDetail(
                 PrescriptionDetailDomain.State(
                     prescription: prescription,

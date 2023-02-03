@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -28,8 +28,8 @@ import XCTest
 final class ExtAuthPendingDomainTests: XCTestCase {
     typealias TestStore = ComposableArchitecture.TestStore<
         ExtAuthPendingDomain.State,
-        ExtAuthPendingDomain.State,
         ExtAuthPendingDomain.Action,
+        ExtAuthPendingDomain.State,
         ExtAuthPendingDomain.Action,
         ExtAuthPendingDomain.Environment
     >
@@ -207,7 +207,8 @@ final class ExtAuthPendingDomainTests: XCTestCase {
             state = .extAuthFailed(
                 ExtAuthPendingDomain.alertState(
                     title: healthInsurance.name,
-                    message: "Error while processing external authentication: original request not found.",
+                    message: "Error while processing external authentication: original request not found.\n\nFehlernummern: \ni-10019",
+                    // swiftlint:disable:previous line_length
                     url: urlFixture
                 )
             )

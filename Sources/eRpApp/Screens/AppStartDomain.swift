@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -24,7 +24,7 @@ import SwiftUI
 
 enum AppStartDomain {
     typealias Store = ComposableArchitecture.Store<State, Action>
-    typealias Reducer = ComposableArchitecture.Reducer<State, Action, Environment>
+    typealias Reducer = ComposableArchitecture.AnyReducer<State, Action, Environment>
 
     enum State: Equatable {
         case loading
@@ -66,7 +66,10 @@ enum AppStartDomain {
             state = .app(
                 AppDomain.State(
                     route: .main,
-                    main: .init(prescriptionListState: .init(), horizontalProfileSelectionState: .init()),
+                    main: .init(
+                        prescriptionListState: .init(),
+                        horizontalProfileSelectionState: .init()
+                    ),
                     pharmacySearch: PharmacySearchDomain.State(erxTasks: []),
                     orders: OrdersDomain.State(orders: []),
                     settingsState: .init(
@@ -74,12 +77,10 @@ enum AppStartDomain {
                         appSecurityState: .init(
                             availableSecurityOptions: environment.appSecurityManager.availableSecurityOptions.options,
                             selectedSecurityOption: nil,
-                            errorToDisplay: nil,
-                            createPasswordState: nil
+                            errorToDisplay: nil
                         )
                     ),
                     profileSelection: .init(),
-                    debug: DebugDomain.State(trackingOptIn: environment.tracker.optIn),
                     unreadOrderMessageCount: 0,
                     isDemoMode: false
                 )
@@ -113,12 +114,10 @@ enum AppStartDomain {
                         appSecurityState: .init(
                             availableSecurityOptions: environment.appSecurityManager.availableSecurityOptions.options,
                             selectedSecurityOption: nil,
-                            errorToDisplay: nil,
-                            createPasswordState: nil
+                            errorToDisplay: nil
                         )
                     ),
                     profileSelection: .init(),
-                    debug: DebugDomain.State(trackingOptIn: environment.tracker.optIn),
                     unreadOrderMessageCount: 0,
                     isDemoMode: false
                 )

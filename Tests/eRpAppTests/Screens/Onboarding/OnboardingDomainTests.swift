@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -28,8 +28,8 @@ final class OnboardingDomainTests: XCTestCase {
     let mockAppSecurityManager = MockAppSecurityManager()
     typealias TestStore = ComposableArchitecture.TestStore<
         OnboardingDomain.State,
-        OnboardingDomain.State,
         OnboardingDomain.Action,
+        OnboardingDomain.State,
         OnboardingDomain.Action,
         OnboardingDomain.Environment
     >
@@ -120,7 +120,7 @@ final class OnboardingDomainTests: XCTestCase {
         store.send(.saveAuthentication)
         expect(self.mockAppSecurityManager.savePasswordCallsCount) == 1
         expect(self.mockAppSecurityManager.savePasswordReturnValue).to(beTrue())
-        expect(self.mockUserDataStore.setAppSecurityOptionReceivedAppSecurityOption) == selectedOption.id
+        expect(self.mockUserDataStore.setAppSecurityOptionReceivedAppSecurityOption) == selectedOption
         expect(self.mockUserDataStore.setAppSecurityOptionCallsCount) == 1
 
         store.receive(.dismissOnboarding)
@@ -147,7 +147,7 @@ final class OnboardingDomainTests: XCTestCase {
         )
 
         store.send(.saveAuthentication)
-        expect(self.mockUserDataStore.setAppSecurityOptionReceivedAppSecurityOption) == selectedOption.id
+        expect(self.mockUserDataStore.setAppSecurityOptionReceivedAppSecurityOption) == selectedOption
         expect(self.mockUserDataStore.setAppSecurityOptionCallsCount) == 1
 
         store.receive(.dismissOnboarding)

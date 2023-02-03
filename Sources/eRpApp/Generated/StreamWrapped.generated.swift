@@ -959,7 +959,7 @@ class StreamWrappedUserDataStore: UserDataStore {
 			.eraseToAnyPublisher()
 	}
 	var serverEnvironmentName: String? { current.serverEnvironmentName }
-	var appSecurityOption: AnyPublisher<Int, Never> {
+	var appSecurityOption: AnyPublisher<AppSecurityOption, Never> {
 		return stream
 			.map { $0.appSecurityOption }
 			.switchToLatest()
@@ -990,6 +990,10 @@ class StreamWrappedUserDataStore: UserDataStore {
 	var appStartCounter: Int {
 		set { current.appStartCounter = newValue }
 		get { current.appStartCounter }
+	}
+	var hideWelcomeDrawer: Bool {
+		set { current.hideWelcomeDrawer = newValue }
+		get { current.hideWelcomeDrawer }
 	}
 	var configuration: AnyPublisher<AppConfiguration, Never> {
 		return stream
@@ -1023,7 +1027,7 @@ class StreamWrappedUserDataStore: UserDataStore {
             )
 	}
 
-	func set(appSecurityOption: Int) -> Void {
+	func set(appSecurityOption: AppSecurityOption) -> Void {
         current.set(
 				appSecurityOption: appSecurityOption
             )
@@ -1122,6 +1126,8 @@ class StreamWrappedUserSession: UserSession {
 	lazy var avsTransactionDataStore: AVSTransactionDataStore = {
 		StreamWrappedAVSTransactionDataStore(stream: stream.map{ $0.avsTransactionDataStore }.eraseToAnyPublisher(), current: current.avsTransactionDataStore )
 	}()
+	var prescriptionRepository: PrescriptionRepository { current.prescriptionRepository }
+	var activityIndicating: ActivityIndicating { current.activityIndicating }
 
 	func profile() -> AnyPublisher<Profile, LocalStoreError> {
         stream

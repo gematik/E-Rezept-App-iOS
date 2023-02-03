@@ -1,6 +1,6 @@
 // swiftlint:disable file_length
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -111,7 +111,7 @@ final class MigrationManagerTests: XCTestCase {
     func testModel4MigrationWithTwoDifferentPatientTasksAndScannedTasks() throws {
         let userDataStore = MockUserDataStore()
         let factory = MockCoreDataControllerFactory()
-        factory.loadCoreDataControllerValue = try loadCoreDataController()
+        factory.loadCoreDataControllerReturnValue = try loadCoreDataController()
         let sut = MigrationManager(
             factory: factory,
             erxTaskCoreDataStore: ErxTaskCoreDataStore(profileId: nil,
@@ -202,7 +202,7 @@ final class MigrationManagerTests: XCTestCase {
     func testModel4MigrationWithoutExistingTasks() throws {
         let userDataStore = MockUserDataStore()
         let factory = MockCoreDataControllerFactory()
-        factory.loadCoreDataControllerValue = try loadCoreDataController()
+        factory.loadCoreDataControllerReturnValue = try loadCoreDataController()
         let sut = MigrationManager(
             factory: factory,
             erxTaskCoreDataStore: ErxTaskCoreDataStore(profileId: nil, coreDataControllerFactory: factory),
@@ -254,7 +254,7 @@ final class MigrationManagerTests: XCTestCase {
     func testModel4MigrationWithOnlyScannedTasks() throws {
         let userDataStore = MockUserDataStore()
         let factory = MockCoreDataControllerFactory()
-        factory.loadCoreDataControllerValue = try loadCoreDataController()
+        factory.loadCoreDataControllerReturnValue = try loadCoreDataController()
         let sut = MigrationManager(
             factory: factory,
             erxTaskCoreDataStore: ErxTaskCoreDataStore(profileId: nil, coreDataControllerFactory: factory),
@@ -310,7 +310,7 @@ final class MigrationManagerTests: XCTestCase {
     func testMigrationFromVersion4ToVersion5WithoutAuditEvents() throws {
         let userDataStore = MockUserDataStore()
         let factory = MockCoreDataControllerFactory()
-        factory.loadCoreDataControllerValue = try loadCoreDataController()
+        factory.loadCoreDataControllerReturnValue = try loadCoreDataController()
         let sut = MigrationManager(
             factory: factory,
             erxTaskCoreDataStore: ErxTaskCoreDataStore(profileId: nil,
@@ -338,7 +338,7 @@ final class MigrationManagerTests: XCTestCase {
     func testMigrationFromVersion4ToVersion5WithAuditEvents() throws {
         let userDataStore = MockUserDataStore()
         let factory = MockCoreDataControllerFactory()
-        factory.loadCoreDataControllerValue = try loadCoreDataController()
+        factory.loadCoreDataControllerReturnValue = try loadCoreDataController()
         let erxTaskStore = ErxTaskCoreDataStore(profileId: UUID(),
                                                 coreDataControllerFactory: factory,
                                                 backgroundQueue: AnyScheduler.immediate)

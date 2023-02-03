@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -20,15 +20,32 @@ import SwiftUI
 import UIKit
 
 struct BlurEffectView: UIViewRepresentable {
+    init(style: UIBlurEffect.Style, isEnabled _: Bool) {
+        self.style = style
+        strength = 1.0
+    }
+
+    init(style: UIBlurEffect.Style, strength: CGFloat) {
+        self.style = style
+        self.strength = strength
+    }
+
     let style: UIBlurEffect.Style
-    let isEnabled: Bool
+    var isEnabled: Bool {
+        strength > 0.0
+    }
+
+    let strength: CGFloat
 
     func makeUIView(context _: UIViewRepresentableContext<Self>)
         -> UIVisualEffectView {
-        UIVisualEffectView(effect: isEnabled ? UIBlurEffect(style: style) : nil)
+        UIVisualEffectView(effect: UIBlurEffect(style: style))
     }
 
     func updateUIView(_ uiVisualEffectView: UIVisualEffectView, context _: UIViewRepresentableContext<Self>) {
-        uiVisualEffectView.effect = isEnabled ? UIBlurEffect(style: style) : nil
+        if uiVisualEffectView.effect == nil {
+            uiVisualEffectView.effect = UIBlurEffect(style: style)
+        }
+        uiVisualEffectView.alpha = strength
     }
 }

@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -22,12 +22,26 @@ import Foundation
 import IDP
 
 protocol UserProfileService {
+    var selectedProfileId: AnyPublisher<UUID?, Never> { get }
+
+    func set(selectedProfileId: UUID)
+
     func userProfilesPublisher() -> AnyPublisher<[UserProfile], UserProfileServiceError>
 
     func activeUserProfilePublisher() -> AnyPublisher<UserProfile, UserProfileServiceError>
+
+    func save(profiles: [Profile]) -> AnyPublisher<Bool, UserProfileServiceError>
 }
 
 class DummyUserProfileService: UserProfileService {
+    var selectedProfileId: AnyPublisher<UUID?, Never> {
+        Just(Self.dummyProfile.id).eraseToAnyPublisher()
+    }
+
+    func set(selectedProfileId _: UUID) {
+        // do nothing
+    }
+
     func userProfilesPublisher() -> AnyPublisher<[UserProfile], UserProfileServiceError> {
         Just([]).setFailureType(to: UserProfileServiceError.self)
             .eraseToAnyPublisher()
@@ -35,6 +49,12 @@ class DummyUserProfileService: UserProfileService {
 
     func activeUserProfilePublisher() -> AnyPublisher<UserProfile, UserProfileServiceError> {
         Just(UserProfile(from: Self.dummyProfile, isAuthenticated: true))
+            .setFailureType(to: UserProfileServiceError.self)
+            .eraseToAnyPublisher()
+    }
+
+    func save(profiles _: [Profile]) -> AnyPublisher<Bool, UserProfileServiceError> {
+        Just(true)
             .setFailureType(to: UserProfileServiceError.self)
             .eraseToAnyPublisher()
     }
@@ -83,34 +103,48 @@ struct DefaultUserProfileService: UserProfileService {
     private let profileOnlineChecker: ProfileOnlineChecker
 
     private let userSession: UserSession
+    private let userSessionProvider: UserSessionProvider
 
     internal init(profileDataStore: ProfileDataStore,
                   profileOnlineChecker: ProfileOnlineChecker,
-                  userSession: UserSession) {
+                  userSession: UserSession,
+                  userSessionProvider: UserSessionProvider) {
         self.profileDataStore = profileDataStore
         self.profileOnlineChecker = profileOnlineChecker
         self.userSession = userSession
+        self.userSessionProvider = userSessionProvider
+    }
+
+    var selectedProfileId: AnyPublisher<UUID?, Never> {
+        userSession.localUserStore.selectedProfileId
+    }
+
+    func set(selectedProfileId: UUID) {
+        userSession.localUserStore.set(selectedProfileId: selectedProfileId)
     }
 
     func userProfilesPublisher() -> AnyPublisher<[UserProfile], UserProfileServiceError> {
-        profileDataStore.listAllProfiles()
-            .flatMap { profiles -> AnyPublisher<[UserProfile], LocalStoreError> in
-                let publishers = profiles.map { profile in
-                    profileOnlineChecker.token(for: profile)
-                        .first()
-                        .map { token in
-                            UserProfile(from: profile, token: token)
-                        }
-                        .eraseToAnyPublisher()
-                }
-
-                return Publishers.MergeMany(publishers)
-                    .collect(publishers.count)
-                    .setFailureType(to: LocalStoreError.self)
-                    .eraseToAnyPublisher()
-            }
+        profileDataStore.listAllProfiles() // == AnyPublisher<[Profile], Never>
             .mapError(UserProfileServiceError.localStoreError)
+            .map { (profiles: [Profile]) -> [AnyPublisher<UserProfile, Never>] in
+                profiles
+                    .map { (profile: Profile) -> AnyPublisher<UserProfile, Never> in
+                        Just(profile)
+                            .combineLatest(
+                                profileOnlineChecker.token(for: profile),
+                                userSessionProvider.userSession(for: profile.id).activityIndicating.isActive
+                            )
+                            .map(UserProfile.init)
+                            .removeDuplicates()
+                            .eraseToAnyPublisher()
+                    }
+            } // == AnyPublisher<[AnyPublisher<UserProfile, Never>], UserProfileServiceError>
+            .map { (userProfilePubs: [AnyPublisher<UserProfile, Never>]) -> AnyPublisher<[UserProfile], Never> in
+                userProfilePubs.combineLatest()
+            }
+            .switchToLatest()
             .eraseToAnyPublisher()
+        // == AnyPublisher<[UserProfile], Never>
     }
 
     func activeUserProfilePublisher() -> AnyPublisher<UserProfile, UserProfileServiceError> {
@@ -122,9 +156,19 @@ struct DefaultUserProfileService: UserProfileService {
                         Just(false)
                     }
                     .setFailureType(to: UserProfileServiceError.self)
+                    .eraseToAnyPublisher(),
+                userSession.activityIndicating.isActive
+                    .setFailureType(to: UserProfileServiceError.self)
                     .eraseToAnyPublisher()
             )
             .map(UserProfile.init)
+            .removeDuplicates()
+            .eraseToAnyPublisher()
+    }
+
+    func save(profiles: [Profile]) -> AnyPublisher<Bool, UserProfileServiceError> {
+        profileDataStore.save(profiles: profiles)
+            .mapError { .localStoreError($0) }
             .eraseToAnyPublisher()
     }
 }

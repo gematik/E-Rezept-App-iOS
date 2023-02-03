@@ -1,3 +1,4 @@
+
 "add_btn_save" = "Speichern";
 "add_txt_profile1" = "Profile 1";
 "add_txt_title" = "Name eingeben";
@@ -159,6 +160,9 @@
 "cdw_txt_extauth_fallback_description2" = "Sie wollen nicht warten? Die Anmeldung mit Gesundheitskarte wird bereits jetzt von jeder Krankenversicherung unterstützt.";
 "cdw_txt_extauth_fallback_headline" = "Versicherung wählen";
 "cdw_txt_extauth_fallback_title" = "Mit App anmelden";
+"cdw_txt_extauth_noresults" = "Unter diesem Suchbegriff konnten wir keine Ergebnisse finden.";
+"cdw_txt_extauth_noresults_title" = "Keine Ergebnisse";
+"cdw_txt_extauth_searchprompt" = "Nach Name suchen";
 "cdw_txt_extauth_selection_description" = "Nicht fündig geworden? Diese Liste wird ständig erweitert. Die Anmeldung mit Gesundheitskarte wird bereits jetzt von jeder Krankenversicherung unterstützt.";
 "cdw_txt_extauth_selection_empty_list_description" = "Diese Funktion steht Ihnen in einigen Tagen zur Verfügung. Bitte probieren Sie es später erneut.";
 "cdw_txt_extauth_selection_empty_list_headline" = "Noch nicht verfügbar";
@@ -349,6 +353,7 @@
 "erx_txt_redeem_at_%@" = "Einlösbar ab %@";
 "erx_txt_redeemed" = "Archiv";
 "erx_txt_refresh_loading" = "Wird geladen …";
+"erx_txt_scanned_at_%@" = "Gescannt: %@";
 "hint_btn_close" = "schließen";
 "hint_btn_open_scn" = "Scanner öffnen";
 "hint_btn_try_demo_mode" = "Demo-Modus starten";
@@ -645,12 +650,21 @@
 "kbv_norm_size_n3" = "Normgröße 3";
 "kbv_norm_size_nb" = "Nicht betroffen";
 "kbv_norm_size_sonstiges" = "Sonstiges";
+"main_btn_archived_presc" = "Eingelöste Rezepte";
+"main_btn_login" = "Anmelden";
+"main_btn_redeem" = "Einlösen";
+"main_btn_refresh" = "Aktualisieren";
+"main_empty_txt_connected" = "↓ Ziehen Sie den Screen nach unten, um zu aktualisieren.";
+"main_empty_txt_disconnected" = "Fügen Sie Rezepte über den ⊕ Button in der rechten oberen Ecke hinzu.";
+"main_empty_txt_title" = "Keine Rezepte";
 "main_txt_pendingextauth_cancel" = "Abbrechen";
 "main_txt_pendingextauth_failed_%@" = "Authentisierung mit %@ fehlgeschlagen";
 "main_txt_pendingextauth_pending_%@" = "Authentisierung in %@ ausstehend";
 "main_txt_pendingextauth_resolving_%@" = "Authentisierung für %@ wird verarbeitet";
 "main_txt_pendingextauth_retry" = "Wiederholen";
 "main_txt_pendingextauth_successful_%@" = "Authentisierung mit %@ erfolgreich";
+"main_txt_profile_status_offline" = "Status: Verbindung zum Rezeptserver getrennt";
+"main_txt_profile_status_online" = "Status: Profil angemeldet";
 "mgm_fallback_profile_name" = "Profilname";
 "mgm_txt_alert_message_profile_creation" = "Es konnte kein Profil bei der Aktualisierung erstellt werden";
 "mgm_txt_alert_message_up_to_date" = "Die App ist bereits auf dem neusten Stand";
@@ -853,6 +867,7 @@
 "pro_btn_selection_edit" = "Profile bearbeiten";
 "pro_txt_selection_profile_not_connected" = "Nicht angemeldet";
 "pro_txt_selection_title" = "Profil wählen";
+"prsc_arch_txt_title" = "Eingelöste Rezepte";
 "prsc_delete_note_direct_assignment" = "Dieses Rezept wird im Rahmen einer Behandlung für Sie eingelöst und kann währenddessen nicht gelöscht werden.";
 "prsc_dtl_btn_direct_assignment" = "Direktzuweisung";
 "prsc_dtl_btn_share_title" = "Teilen";
@@ -1052,6 +1067,7 @@
 "stg_txt_alert_message_demo_mode_off" = "Demo-Modus ist deaktiviert";
 "stg_txt_alert_message_demo_mode_on" = "Demo-Modus ist aktiv. Sie benötigen keine Gesundheitskarte und keine Verbindung zum Internet. Die angezeigten Testrezepte können in einer Apotheke nicht eingelöst werden.";
 "stg_txt_alert_title_demo_mode" = "Erkundungstour gefällig?";
+"stg_txt_alert_title_demo_mode_off" = "Demo-Modus deaktiviert";
 "stg_txt_audit_events_last_updated_%@" = "Zuletzt aktualisiert: %@";
 "stg_txt_audit_events_missing_date" = "Kein Zeitstempel";
 "stg_txt_audit_events_missing_description" = "Keine Angabe";
@@ -1173,3 +1189,7 @@
 "tab_txt_orders" = "Bestellungen";
 "tab_txt_pharmacy_search" = "Apothekensuche";
 "tab_txt_settings" = "Einstellungen";
+"wlcd_btn_decline" = "Vielleicht später";
+"wlcd_btn_login" = "Anmelden";
+"wlcd_txt_footer" = "Um Rezepte digital von Ihrer Praxis zu empfangen, müssen Sie angemeldet sein.";
+"wlcd_txt_header" = "Rezepte digital empfangen?";

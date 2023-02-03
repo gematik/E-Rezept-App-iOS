@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -26,25 +26,28 @@ import IDP
 
 enum PrescriptionListDomain {
     typealias Store = ComposableArchitecture.Store<State, Action>
-    typealias Reducer = ComposableArchitecture.Reducer<State, Action, Environment>
+    typealias Reducer = ComposableArchitecture.AnyReducer<State, Action, Environment>
 
     /// Provides an Effect that need to run whenever the state of this Domain is reset to nil
     static func cleanup<T>() -> Effect<T, Never> {
-        Effect.cancel(token: Token.self)
+        Effect.cancel(id: Token.self)
     }
 
     enum Token: CaseIterable, Hashable {
         case loadLocalPrescriptionId
         case fetchPrescriptionId
         case refreshId
+        case selectedProfileId
+        case activeUserProfile
     }
 
     struct Environment {
         let router: Routing
         let userSession: UserSession
+        let userProfileService: UserProfileService
         let serviceLocator: ServiceLocator
         let accessibilityAnnouncementReceiver: (String) -> Void
-        let groupedPrescriptionStore: GroupedPrescriptionRepository
+        let prescriptionRepository: PrescriptionRepository
         let schedulers: Schedulers
         var fhirDateFormatter: FHIRDateFormatter
         /// To make sure enough time is left to redeem prescriptions we define a minimum
@@ -54,40 +57,50 @@ enum PrescriptionListDomain {
         var locale: String? {
             Locale.current.languageCode
         }
-
-        let loginHandler: LoginHandler
     }
 
     struct State: Equatable {
-        var loadingState: LoadingState<[GroupedPrescription], ErxRepositoryError> =
+        var loadingState: LoadingState<[Prescription], PrescriptionRepositoryError> =
             .idle
-        var groupedPrescriptions: [GroupedPrescription] = []
+        var prescriptions: [Prescription] = []
+        var profile: UserProfile?
 
         var hintState = MainViewHintsDomain.State()
     }
 
     enum Action: Equatable {
-        /// Loads locally stored GroupedPrescriptions
-        case loadLocalGroupedPrescriptions
-        /// Response from `loadLocalGroupedPrescriptions`
-        case loadLocalGroupedPrescriptionsReceived(LoadingState<[GroupedPrescription], ErxRepositoryError>)
-        ///  Loads GroupedPrescriptions from server and stores them in the local store
-        case loadRemoteGroupedPrescriptionsAndSave
-        /// Response from `loadRemoteGroupedPrescriptionsAndSave`
-        // swiftlint:disable:next identifier_name
-        case loadRemoteGroupedPrescriptionsAndSaveReceived(LoadingState<[GroupedPrescription], ErxRepositoryError>)
+        /// Loads locally stored Prescriptions
+        case loadLocalPrescriptions
+        /// Response from `loadLocalPrescriptions`
+        case loadLocalPrescriptionsReceived(LoadingState<[Prescription], PrescriptionRepositoryError>)
+        ///  Loads Prescriptions from server and stores them in the local store
+        case loadRemotePrescriptionsAndSave
+        /// Response from `loadRemotePrescriptionsAndSave`
+        case loadRemotePrescriptionsAndSaveReceived(LoadingState<[Prescription], PrescriptionRepositoryError>)
         /// Presents the CardWall when not logged in or executes `loadFromCloudAndSave`
         case refresh
+        /// Listener for selectedProfileID switches
+        case registerSelectedProfileIDListener
+        case unregisterSelectedProfileIDListener
+        case selectedProfileIDReceived(UUID?)
+        /// Listener for active UserProfile update changes (including connectivity status, activity status)
+        case registerActiveUserProfileListener
+        case unregisterActiveUserProfileListener
+        case activeUserProfileReceived(Result<UserProfile, UserProfileServiceError>)
+
+        case showArchivedButtonTapped
+        case profilePictureViewTapped
+
         /// Dismisses the alert that showing loading errors
         case alertDismissButtonTapped
         /// Response from `refresh` that presents the CardWall sheet
         case showCardWallReceived(CardWallIntroductionDomain.State)
 
         /// Details actions
-        case prescriptionDetailViewTapped(selectedPrescription: GroupedPrescription.Prescription)
+        case prescriptionDetailViewTapped(selectedPrescription: Prescription)
 
         /// Redeem actions
-        case redeemViewTapped(selectedGroupedPrescription: GroupedPrescription)
+        case redeemButtonTapped(openPrescriptions: [Prescription])
 
         /// Actions related to hint
         case hint(action: MainViewHintsDomain.Action)
@@ -97,27 +110,56 @@ enum PrescriptionListDomain {
 
     static let domainReducer = Reducer { state, action, environment in
         switch action {
-        case .loadLocalGroupedPrescriptions:
-            state.loadingState = .loading(state.groupedPrescriptions)
-            return environment.groupedPrescriptionStore.loadLocal()
+        case .registerSelectedProfileIDListener:
+            return environment.userProfileService.selectedProfileId
+                .removeDuplicates()
+                .map(Action.selectedProfileIDReceived)
+                .receive(on: environment.schedulers.main)
+                .eraseToEffect()
+                .cancellable(id: Token.selectedProfileId)
+        case .unregisterSelectedProfileIDListener:
+            return .cancel(id: Token.selectedProfileId)
+        case let .selectedProfileIDReceived(uuid):
+            return .concatenate(
+                Effect(value: .loadLocalPrescriptions),
+                Effect(value: .loadRemotePrescriptionsAndSave)
+            )
+
+        case .unregisterActiveUserProfileListener:
+            return .cancel(id: Token.activeUserProfile)
+        case .registerActiveUserProfileListener:
+            return environment.userProfileService.activeUserProfilePublisher()
+                .catchToEffect()
+                .map(Action.activeUserProfileReceived)
+                .cancellable(id: Token.activeUserProfile, cancelInFlight: true)
+                .receive(on: environment.schedulers.main)
+                .eraseToEffect()
+        case .activeUserProfileReceived(.failure):
+            state.profile = nil
+            return .none
+        case let .activeUserProfileReceived(.success(profile)):
+            state.profile = profile
+            return .none
+        case .loadLocalPrescriptions:
+            state.loadingState = .loading(state.prescriptions)
+            return environment.prescriptionRepository.loadLocal()
                 .receive(on: environment.schedulers.main.animation())
                 .catchToLoadingStateEffect()
-                .map(Action.loadLocalGroupedPrescriptionsReceived)
+                .map(Action.loadLocalPrescriptionsReceived)
                 .cancellable(id: Token.loadLocalPrescriptionId, cancelInFlight: true)
-        case let .loadLocalGroupedPrescriptionsReceived(loadingState):
+        case let .loadLocalPrescriptionsReceived(loadingState):
             state.loadingState = loadingState
-            state.groupedPrescriptions = loadingState.value ?? []
+            state.prescriptions = loadingState.value ?? []
             return .none
-        case .loadRemoteGroupedPrescriptionsAndSave:
+        case .loadRemotePrescriptionsAndSave:
             state.loadingState = .loading(nil)
             return environment.loadRemoteTasksAndSave()
-                .map(Action.loadRemoteGroupedPrescriptionsAndSaveReceived)
                 .cancellable(id: Token.fetchPrescriptionId, cancelInFlight: true)
-        case let .loadRemoteGroupedPrescriptionsAndSaveReceived(loadingState):
+        case let .loadRemotePrescriptionsAndSaveReceived(loadingState):
             state.loadingState = loadingState
             // prevent overriding values previously loaded from .loadLocalPrescriptions
-            if case let .value(groupedPrescriptions) = loadingState, !groupedPrescriptions.isEmpty {
-                state.groupedPrescriptions = groupedPrescriptions
+            if case let .value(prescriptions) = loadingState, !prescriptions.isEmpty {
+                state.prescriptions = prescriptions
             }
             return .none
         case .refresh:
@@ -130,7 +172,9 @@ enum PrescriptionListDomain {
             return .none
         case .showCardWallReceived,
              .prescriptionDetailViewTapped,
-             .redeemViewTapped:
+             .redeemButtonTapped,
+             .showArchivedButtonTapped,
+             .profilePictureViewTapped:
             return .none
         case .errorReceived:
             state.loadingState = .idle
@@ -178,99 +222,80 @@ extension PrescriptionListDomain.Environment {
             .eraseToAnyPublisher()
     }
 
-    func loadRemoteTasksAndSave()
-        -> Effect<LoadingState<[GroupedPrescription], ErxRepositoryError>, Never> {
-        userSession
-            .isAuthenticated
-            .mapError { ErxRepositoryError.local(.initialization(error: $0)) }
-            .first()
-            .flatMap { isAuthenticated
-                -> AnyPublisher<[GroupedPrescription], ErxRepositoryError> in
-
-                if isAuthenticated {
-                    return
-                        groupedPrescriptionStore
-                            .loadRemoteAndSave(for: locale)
-                            .first()
-                            .eraseToAnyPublisher()
-                } else {
-                    // return so the loadingState can be updated
-                    return Just([])
-                        .setFailureType(to: ErxRepositoryError.self)
-                        .eraseToAnyPublisher()
+    /// "Silently" try to load ErxTasks if preconditions are met
+    func loadRemoteTasksAndSave() -> Effect<PrescriptionListDomain.Action, Never> {
+        prescriptionRepository
+            .silentLoadRemote(for: locale)
+            .map { status -> PrescriptionListDomain.Action in
+                switch status {
+                case let .prescriptions(value):
+                    return .loadRemotePrescriptionsAndSaveReceived(.value(value))
+                case .notAuthenticated,
+                     .authenticationRequired:
+                    return .loadRemotePrescriptionsAndSaveReceived(.value([]))
                 }
             }
-            .map(LoadingState<[GroupedPrescription], ErxRepositoryError>.value)
-            .catch { _ in Effect(value: LoadingState.idle).eraseToEffect() }
+            .catch { _ in Just(.loadRemotePrescriptionsAndSaveReceived(.idle)) }
             .receive(on: schedulers.main.animation())
             .eraseToEffect()
     }
 
+    /// Load ErxTasks if already logged in else show CardWall or error
     func refreshOrShowCardWall() -> Effect<PrescriptionListDomain.Action, Never> {
-        loginHandler
-            .isAuthenticatedOrAuthenticate()
-            .first()
-            .receive(on: schedulers.main.animation())
-            .flatMap { isAuthenticated -> Effect<PrescriptionListDomain.Action, Never> in
-                // [REQ:gemSpec_eRp_FdV:A_20167,A_20172] no token/not authorized, show authenticator module
-                if Result.success(false) == isAuthenticated {
+        prescriptionRepository
+            .forcedLoadRemote(for: locale)
+            .catchUnauthorizedToShowCardwall()
+            .flatMap { status -> AnyPublisher<PrescriptionListDomain.Action, PrescriptionRepositoryError> in
+                switch status {
+                case let .prescriptions(value):
+                    return Just(.loadRemotePrescriptionsAndSaveReceived(.value(value)))
+                        .setFailureType(to: PrescriptionRepositoryError.self)
+                        .eraseToAnyPublisher()
+                case .notAuthenticated,
+                     .authenticationRequired:
                     return cardWall()
                         .receive(on: schedulers.main)
+                        .setFailureType(to: PrescriptionRepositoryError.self)
                         .map(PrescriptionListDomain.Action.showCardWallReceived)
-                        .eraseToEffect()
-                }
-                if case let Result.failure(error) = isAuthenticated {
-                    return Just(PrescriptionListDomain.Action.errorReceived(error))
-                        .eraseToEffect()
-                } else {
-                    return groupedPrescriptionStore.loadRemoteAndSave(for: locale)
-                        .receive(on: schedulers.main)
-                        .first()
-                        .map { value in
-                            PrescriptionListDomain.Action
-                                .loadRemoteGroupedPrescriptionsAndSaveReceived(LoadingState.value(value))
-                        }
-                        .catchUnauthorizedToShowCardwall(in: self)
-                        .catch { error in
-                            Just(PrescriptionListDomain.Action
-                                .loadRemoteGroupedPrescriptionsAndSaveReceived(LoadingState
-                                    .error(error)))
-                        }
-                        .eraseToEffect()
+                        .eraseToAnyPublisher()
                 }
             }
+            .catch { error in
+                if case let PrescriptionRepositoryError.loginHandler(error) = error {
+                    return Just(Action.errorReceived(error))
+                        .eraseToAnyPublisher()
+                }
+                return Just(Action.loadRemotePrescriptionsAndSaveReceived(.error(error)))
+                    .eraseToAnyPublisher()
+            }
+            .receive(on: schedulers.main)
             .eraseToEffect()
     }
 }
 
-extension Publisher where Output == PrescriptionListDomain.Action, Failure == ErxRepositoryError {
-    /// Catches "forbidden"/403 server response to show card wall. The acutual invalidation of any token is communicated
+extension Publisher where Output == PrescriptionRepositoryLoadRemoteResult, Failure == PrescriptionRepositoryError {
+    /// Catches "forbidden"/403 server response to show card wall. The actual invalidation of any token is communicated
     /// within IDPInterceptor.
     ///
     /// - Parameter environment: The environment of the Screen
     /// - Returns: A Publisher that catches 403 server responses and transforms them into `showCardWallReceived`
     /// actions.
-    func catchUnauthorizedToShowCardwall(
-        in environment: PrescriptionListDomain.Environment
-    )
-        -> AnyPublisher<PrescriptionListDomain.Action, ErxRepositoryError> {
-        tryCatch { (error: ErxRepositoryError) -> AnyPublisher<
-            PrescriptionListDomain.Action,
-            ErxRepositoryError
+    func catchUnauthorizedToShowCardwall()
+        -> AnyPublisher<PrescriptionRepositoryLoadRemoteResult, PrescriptionRepositoryError> {
+        self.catch { (error: PrescriptionRepositoryError) -> AnyPublisher<
+            PrescriptionRepositoryLoadRemoteResult,
+            PrescriptionRepositoryError
         > in
-        if case let ErxRepositoryError
-            .remote(.fhirClientError(FHIRClient.Error.httpError(.httpError(urlError)))) = error,
+        if case let PrescriptionRepositoryError
+            .erxRepository(.remote(.fhirClientError(FHIRClient.Error.httpError(.httpError(urlError))))) = error,
             urlError.code.rawValue == HTTPStatusCode.forbidden.rawValue ||
             urlError.code.rawValue == HTTPStatusCode.unauthorized.rawValue {
-            return environment.cardWall()
-                .receive(on: environment.schedulers.main.animation())
-                .map(PrescriptionListDomain.Action.showCardWallReceived)
-                .setFailureType(to: ErxRepositoryError.self)
+            return Just(PrescriptionRepositoryLoadRemoteResult.authenticationRequired)
+                .setFailureType(to: PrescriptionRepositoryError.self)
                 .eraseToAnyPublisher()
         }
-        throw error as ErxRepositoryError
+        return Fail(error: error).eraseToAnyPublisher()
         }
-        .mapError { $0 as! ErxRepositoryError } // swiftlint:disable:this force_cast
         .eraseToAnyPublisher()
     }
 }
@@ -280,22 +305,21 @@ extension PrescriptionListDomain {
         static let demoSessionContainer = DummyUserSessionContainer()
         static let state = State()
         static let stateWithTwoPrescriptions = State(
-            loadingState: .value([GroupedPrescription.Dummies.prescriptions]),
-            groupedPrescriptions: [GroupedPrescription.Dummies.prescriptions],
+            loadingState: .value(Prescription.Dummies.prescriptions),
+            prescriptions: Prescription.Dummies.prescriptions,
+            profile: UserProfile.Dummies.profileA,
             hintState: MainViewHintsDomain.Dummies.emptyState()
         )
 
         static let environment = Environment(
             router: DummyRouter(),
             userSession: demoSessionContainer.userSession,
+            userProfileService: DummyUserProfileService(),
             serviceLocator: ServiceLocator(),
             accessibilityAnnouncementReceiver: { _ in },
-            groupedPrescriptionStore: GroupedPrescriptionInteractor(
-                erxTaskInteractor: demoSessionContainer.userSession.erxTaskRepository
-            ),
+            prescriptionRepository: DummyPrescriptionRepository(),
             schedulers: Schedulers(),
-            fhirDateFormatter: FHIRDateFormatter.shared,
-            loginHandler: DummyLoginHandler()
+            fhirDateFormatter: FHIRDateFormatter.shared
         )
         static let store = Store(initialState: state,
                                  reducer: domainReducer,

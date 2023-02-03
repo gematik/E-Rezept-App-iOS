@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -34,27 +34,19 @@ struct HorizontalProfileSelectionView: View {
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack {
-                ForEach(viewStore.profiles) { profile in
+                ForEach(viewStore.profiles) { userProfile in
                     Button(
                         action: {
-                            viewStore.send(.selectProfile(profile), animation: .default)
+                            viewStore.send(.selectProfile(userProfile), animation: .default)
                         },
                         label: {
-                            HorizontalProfileSelectionView.ProfileCell(
-                                profile: profile,
-                                isSelected: viewStore.selectedProfileId == profile.id
+                            HorizontalProfileSelectionChipView(
+                                userProfile: userProfile,
+                                isSelected: viewStore.selectedProfileId == userProfile.id
                             )
                         }
                     )
-                    .background(viewStore.selectedProfileId == profile.id ? Colors.systemGray6 : Colors
-                        .systemBackgroundTertiary)
-                    .border(viewStore.selectedProfileId == profile.id ? Colors.separator : Colors.systemGray6,
-                            cornerRadius: 8)
                     .frame(maxWidth: width * 0.4, alignment: .leading)
-                    .accessibilityRemoveTraits(.isStaticText)
-                    .accessibilityAddTraits(.isButton)
-                    .accessibilityAddTraits(profile.id == viewStore.selectedProfileId ? .isSelected : .isButton)
-                    .accessibility(identifier: A11y.profileSelection.proBtnSelectionProfileEntry)
                 }
                 .accessibility(identifier: A11y.profileSelection.proBtnSelectionProfileRow)
 
@@ -64,12 +56,15 @@ struct HorizontalProfileSelectionView: View {
                     Image(systemName: SFSymbolName.personCirclePlus)
                 })
                     .padding(.horizontal)
-                    .padding(.vertical, 4)
+                    .padding(.vertical, 5)
                     .background(Colors.backgroundNeutral)
                     .border(Colors.systemGray6, cornerRadius: 8)
                     .accessibility(identifier: A11y.profileSelection.proBtnSelectionAddProfile)
+
+                Spacer()
             }
             .padding(.vertical)
+            .padding(.horizontal)
             .onAppear {
                 viewStore.send(.registerListener)
             }
@@ -81,24 +76,8 @@ struct HorizontalProfileSelectionView: View {
     }
 }
 
-extension HorizontalProfileSelectionView {
-    struct ProfileCell: View {
-        let profile: UserProfile
-        let isSelected: Bool
-
-        init(profile: UserProfile, isSelected: Bool) {
-            self.profile = profile
-            self.isSelected = isSelected
-        }
-
-        var body: some View {
-            HStack(alignment: .center) {
-                Text(profile.name)
-                    .foregroundColor(isSelected ? Colors.systemLabel : Colors.textSecondary)
-                    .font(.body)
-            }
-            .padding(.horizontal)
-            .padding(.vertical, 4)
-        }
+struct HorizontalProfileSelectionView_Previews: PreviewProvider {
+    static var previews: some View {
+        HorizontalProfileSelectionView(store: HorizontalProfileSelectionDomain.Dummies.store)
     }
 }

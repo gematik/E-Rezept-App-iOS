@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -32,11 +32,9 @@ struct HealthCardSectionView: View {
     }
 
     struct ViewState: Equatable {
-        let showOrderHealthCardView: Bool
         let routeTag: SettingsDomain.Route.Tag?
 
         init(state: SettingsDomain.State) {
-            showOrderHealthCardView = state.showOrderHealthCardView
             routeTag = state.route?.tag
         }
     }
@@ -49,10 +47,19 @@ struct HealthCardSectionView: View {
             content: {
                 // Destination: "Order health card"
                 NavigationLink(
-                    destination: OrderHealthCardView { viewStore.send(.toggleOrderHealthCardView(false)) },
-                    isActive: viewStore.binding(
-                        get: \.showOrderHealthCardView,
-                        send: SettingsDomain.Action.toggleOrderHealthCardView
+                    destination: IfLetStore(
+                        store.scope(
+                            state: (\SettingsDomain.State.route)
+                                .appending(path: /SettingsDomain.Route.egk)
+                                .extract(from:),
+                            action: SettingsDomain.Action.egkAction(action:)
+                        ),
+                        then: OrderHealthCardView.init(store:)
+                    ),
+                    tag: SettingsDomain.Route.Tag.egk,
+                    selection: viewStore.binding(
+                        get: \.routeTag,
+                        send: SettingsDomain.Action.setNavigation
                     )
                 ) {
                     Label(L10n.stgTxtCardOrderNewCard, systemImage: SFSymbolName.cardIcon)

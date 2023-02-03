@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -26,8 +26,8 @@ import XCTest
 final class RegisteredDevicesDomainTests: XCTestCase {
     typealias TestStore = ComposableArchitecture.TestStore<
         RegisteredDevicesDomain.State,
-        RegisteredDevicesDomain.State,
         RegisteredDevicesDomain.Action,
+        RegisteredDevicesDomain.State,
         RegisteredDevicesDomain.Action,
         RegisteredDevicesDomain.Environment
     >
@@ -37,7 +37,7 @@ final class RegisteredDevicesDomainTests: XCTestCase {
     var mockUserSession: MockUserSession!
     var mockUserSessionProvider: MockUserSessionProvider!
     var mockSecureEnclaveSignatureProvider: MockSecureEnclaveSignatureProvider!
-    var mockNFCSignatureProvider: NFCSignatureProviderMock!
+    var mockNFCSignatureProvider: MockNFCSignatureProvider!
     var mockSessionProvider: MockProfileBasedSessionProvider!
     var mockRegisteredDevicesService: MockRegisteredDevicesService!
 
@@ -48,7 +48,7 @@ final class RegisteredDevicesDomainTests: XCTestCase {
         mockUserSession = MockUserSession()
         mockUserSessionProvider = MockUserSessionProvider()
         mockSecureEnclaveSignatureProvider = MockSecureEnclaveSignatureProvider()
-        mockNFCSignatureProvider = NFCSignatureProviderMock()
+        mockNFCSignatureProvider = MockNFCSignatureProvider()
         mockSessionProvider = MockProfileBasedSessionProvider()
         mockRegisteredDevicesService = MockRegisteredDevicesService()
     }

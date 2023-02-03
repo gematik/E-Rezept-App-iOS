@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -17,6 +17,7 @@
 //
 
 import ComposableArchitecture
+import eRpKit
 import eRpStyleKit
 import SwiftUI
 
@@ -106,11 +107,9 @@ extension SettingsView {
         struct ViewState: Equatable {
             let availableSecurityOptions: [AppSecurityOption]
             let selectedSecurityOption: AppSecurityOption?
-            let showCreatePasswordScreen: Bool
             init(state: AppSecurityDomain.State) {
                 availableSecurityOptions = state.availableSecurityOptions
                 selectedSecurityOption = state.selectedSecurityOption
-                showCreatePasswordScreen = state.showCreatePasswordScreen
             }
         }
 
@@ -139,36 +138,15 @@ extension SettingsView {
                         .toggleStyle(.radio)
                     }
                 case .password:
-                    NavigationLink(
-                        destination: IfLetStore(
-                            store.scope(
-                                state: { $0.createPasswordState },
-                                action: { AppSecurityDomain.Action.createPassword(action: $0) }
-                            )
-                        ) { store in
-                            CreatePasswordView(store: store)
-                        },
-                        isActive: viewStore.binding(
-                            get: \.showCreatePasswordScreen,
-                            send: { active -> AppSecurityDomain.Action in
-                                if active {
-                                    return AppSecurityDomain.Action.select(.password)
-                                } else {
-                                    return AppSecurityDomain.Action.hideCreatePasswordScreen
-                                }
-                            }
+                    Toggle(isOn: binding) {
+                        Label(
+                            L10n.stgTxtSecurityOptionPasswordTitle,
+                            systemImage: SFSymbolName.rectangleAndPencilAndEllipsis
                         )
-                    ) {
-                        Toggle(isOn: binding) {
-                            Label(
-                                L10n.stgTxtSecurityOptionPasswordTitle,
-                                systemImage: SFSymbolName.rectangleAndPencilAndEllipsis
-                            )
-                            .accessibility(identifier: A18n.settings.security.stgTxtSecurityPassword)
-                        }
-                        .toggleStyle(.radioWithNavigation(showSeparator: false))
-                        .modifier(SectionContainerCellModifier())
+                        .accessibility(identifier: A18n.settings.security.stgTxtSecurityPassword)
                     }
+                    .toggleStyle(.radioWithNavigation(showSeparator: false))
+                    .modifier(SectionContainerCellModifier())
                 case .unsecured:
                     EmptyView()
                 }

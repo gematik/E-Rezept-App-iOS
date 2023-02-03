@@ -358,6 +358,12 @@ import SwiftUI
     internal static let cdwTxtExtauthFallbackHeadline = StringAsset("cdw_txt_extauth_fallback_headline")
     /// Log in with app
     internal static let cdwTxtExtauthFallbackTitle = StringAsset("cdw_txt_extauth_fallback_title")
+    /// Unter diesem Suchbegriff konnten wir keine Ergebnisse finden.
+    internal static let cdwTxtExtauthNoresults = StringAsset("cdw_txt_extauth_noresults")
+    /// Keine Ergebnisse
+    internal static let cdwTxtExtauthNoresultsTitle = StringAsset("cdw_txt_extauth_noresults_title")
+    /// Nach Name suchen
+    internal static let cdwTxtExtauthSearchprompt = StringAsset("cdw_txt_extauth_searchprompt")
     /// Didn't find what you were looking for? This list is constantly being expanded. Login with a medical card is already supported by every health insurance company.
     internal static let cdwTxtExtauthSelectionDescription = StringAsset("cdw_txt_extauth_selection_description")
     /// This feature will be available in a few days. Please try again later.
@@ -761,6 +767,10 @@ import SwiftUI
     internal static let erxTxtRedeemed = StringAsset("erx_txt_redeemed")
     /// Loading ...
     internal static let erxTxtRefreshLoading = StringAsset("erx_txt_refresh_loading")
+    /// Gescannt: %@
+    internal static func erxTxtScannedAt(_ element1: String) -> StringAsset {
+        StringAsset("erx_txt_scanned_at_%@", arguments: [element1])
+    }
     /// close
     internal static let hintBtnClose = StringAsset("hint_btn_close")
     /// Open scanner
@@ -1353,6 +1363,20 @@ import SwiftUI
     internal static let kbvNormSizeNb = StringAsset("kbv_norm_size_nb")
     /// Other
     internal static let kbvNormSizeSonstiges = StringAsset("kbv_norm_size_sonstiges")
+    /// Eingelöste Rezepte
+    internal static let mainBtnArchivedPresc = StringAsset("main_btn_archived_presc")
+    /// Anmelden
+    internal static let mainBtnLogin = StringAsset("main_btn_login")
+    /// Einlösen
+    internal static let mainBtnRedeem = StringAsset("main_btn_redeem")
+    /// Aktualisieren
+    internal static let mainBtnRefresh = StringAsset("main_btn_refresh")
+    /// ↓ Ziehen Sie den Screen nach unten, um zu aktualisieren.
+    internal static let mainEmptyTxtConnected = StringAsset("main_empty_txt_connected")
+    /// Fügen Sie Rezepte über den ⊕ Button in der rechten oberen Ecke hinzu.
+    internal static let mainEmptyTxtDisconnected = StringAsset("main_empty_txt_disconnected")
+    /// Keine Rezepte
+    internal static let mainEmptyTxtTitle = StringAsset("main_empty_txt_title")
     /// Cancel
     internal static let mainTxtPendingextauthCancel = StringAsset("main_txt_pendingextauth_cancel")
     /// Authentication with %@ failed
@@ -1373,6 +1397,10 @@ import SwiftUI
     internal static func mainTxtPendingextauthSuccessful(_ element1: String) -> StringAsset {
         StringAsset("main_txt_pendingextauth_successful_%@", arguments: [element1])
     }
+    /// Status: Verbindung zum Rezeptserver getrennt
+    internal static let mainTxtProfileStatusOffline = StringAsset("main_txt_profile_status_offline")
+    /// Status: Profil angemeldet
+    internal static let mainTxtProfileStatusOnline = StringAsset("main_txt_profile_status_online")
     /// Profile name
     internal static let mgmFallbackProfileName = StringAsset("mgm_fallback_profile_name")
     /// No profile could be created during the update
@@ -1797,6 +1825,8 @@ import SwiftUI
     internal static let proTxtSelectionProfileNotConnected = StringAsset("pro_txt_selection_profile_not_connected")
     /// Select profile
     internal static let proTxtSelectionTitle = StringAsset("pro_txt_selection_title")
+    /// Eingelöste Rezepte
+    internal static let prscArchTxtTitle = StringAsset("prsc_arch_txt_title")
     /// This prescription will be redeemed for you as part of a treatment and cannot be deleted during treatment.
     internal static let prscDeleteNoteDirectAssignment = StringAsset("prsc_delete_note_direct_assignment")
     /// direct assignment
@@ -2240,6 +2270,8 @@ import SwiftUI
     internal static let stgTxtAlertMessageDemoModeOn = StringAsset("stg_txt_alert_message_demo_mode_on")
     /// Would you like a tour of the app?
     internal static let stgTxtAlertTitleDemoMode = StringAsset("stg_txt_alert_title_demo_mode")
+    /// Demo-Modus deaktiviert
+    internal static let stgTxtAlertTitleDemoModeOff = StringAsset("stg_txt_alert_title_demo_mode_off")
     /// Last updated: %@
     internal static func stgTxtAuditEventsLastUpdated(_ element1: String) -> StringAsset {
         StringAsset("stg_txt_audit_events_last_updated_%@", arguments: [element1])
@@ -2502,6 +2534,14 @@ import SwiftUI
     internal static let tabTxtPharmacySearch = StringAsset("tab_txt_pharmacy_search")
     /// Settings
     internal static let tabTxtSettings = StringAsset("tab_txt_settings")
+    /// Vielleicht später
+    internal static let wlcdBtnDecline = StringAsset("wlcd_btn_decline")
+    /// Anmelden
+    internal static let wlcdBtnLogin = StringAsset("wlcd_btn_login")
+    /// Um Rezepte digital von Ihrer Praxis zu empfangen, müssen Sie angemeldet sein.
+    internal static let wlcdTxtFooter = StringAsset("wlcd_txt_footer")
+    /// Rezepte digital empfangen?
+    internal static let wlcdTxtHeader = StringAsset("wlcd_txt_header")
   }
   // swiftlint:enable function_parameter_count identifier_name line_length type_body_length
   

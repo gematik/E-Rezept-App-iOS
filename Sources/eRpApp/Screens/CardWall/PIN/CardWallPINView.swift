@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -158,7 +158,7 @@ struct CardWallPINView: View {
                     }
 
                     Button(L10n.cdwBtnPinNoPin) {
-                        viewStore.send(.showEGKOrderInfoView)
+                        viewStore.send(.setNavigation(tag: .egk))
                     }.fullScreenCover(isPresented: Binding<Bool>(
                         get: { viewStore.state.routeTag == .egk },
                         set: { show in
@@ -170,9 +170,15 @@ struct CardWallPINView: View {
                     onDismiss: {},
                     content: {
                         NavigationView {
-                            OrderHealthCardView {
-                                viewStore.send(.setNavigation(tag: .none))
-                            }
+                            IfLetStore(
+                                store.scope(
+                                    state: (\CardWallPINDomain.State.route)
+                                        .appending(path: /CardWallPINDomain.Route.egk)
+                                        .extract(from:),
+                                    action: CardWallPINDomain.Action.egkAction(action:)
+                                ),
+                                then: OrderHealthCardView.init(store:)
+                            )
                         }
                         .accentColor(Colors.primary700)
                         .navigationViewStyle(StackNavigationViewStyle())

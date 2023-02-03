@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -32,16 +32,10 @@ struct SettingsLegalInfoView: View {
     }
 
     struct ViewState: Equatable {
-        let showLegalNoticeView: Bool
-        let showDataProtectionView: Bool
-        let showFOSSView: Bool
-        let showTermsOfUseView: Bool
+        let routeTag: SettingsDomain.Route.Tag?
 
         init(state: SettingsDomain.State) {
-            showLegalNoticeView = state.showLegalNoticeView
-            showDataProtectionView = state.showDataProtectionView
-            showFOSSView = state.showFOSSView
-            showTermsOfUseView = state.showTermsOfUseView
+            routeTag = state.route?.tag
         }
     }
 
@@ -51,10 +45,19 @@ struct SettingsLegalInfoView: View {
                 .accessibilityIdentifier(A18n.settings.legalNotice.stgLnoTxtHeaderLegalInfo)
         }, content: {
             NavigationLink(
-                destination: LegalNoticeView(),
-                isActive: viewStore.binding(
-                    get: { $0.showLegalNoticeView },
-                    send: SettingsDomain.Action.toggleLegalNoticeView
+                destination: IfLetStore(
+                    store.scope(
+                        state: (\SettingsDomain.State.route)
+                            .appending(path: /SettingsDomain.Route.legalNotice)
+                            .extract(from:)
+                    )
+                ) { _ in
+                    LegalNoticeView()
+                },
+                tag: SettingsDomain.Route.Tag.legalNotice,
+                selection: viewStore.binding(
+                    get: \.routeTag,
+                    send: SettingsDomain.Action.setNavigation
                 )
             ) {
                 Label(L10n.stgLnoTxtLegalNotice, systemImage: SFSymbolName.info)
@@ -63,10 +66,19 @@ struct SettingsLegalInfoView: View {
             .buttonStyle(.navigation)
 
             NavigationLink(
-                destination: DataPrivacyView(),
-                isActive: viewStore.binding(
-                    get: { $0.showDataProtectionView },
-                    send: SettingsDomain.Action.toggleDataProtectionView
+                destination: IfLetStore(
+                    store.scope(
+                        state: (\SettingsDomain.State.route)
+                            .appending(path: /SettingsDomain.Route.dataProtection)
+                            .extract(from:)
+                    )
+                ) { _ in
+                    DataPrivacyView()
+                },
+                tag: SettingsDomain.Route.Tag.dataProtection,
+                selection: viewStore.binding(
+                    get: \.routeTag,
+                    send: SettingsDomain.Action.setNavigation
                 )
             ) {
                 Label(L10n.stgDpoTxtDataPrivacy, systemImage: SFSymbolName.shield)
@@ -75,10 +87,19 @@ struct SettingsLegalInfoView: View {
             .buttonStyle(.navigation)
 
             NavigationLink(
-                destination: FOSSView(),
-                isActive: viewStore.binding(
-                    get: { $0.showFOSSView },
-                    send: SettingsDomain.Action.toggleFOSSView
+                destination: IfLetStore(
+                    store.scope(
+                        state: (\SettingsDomain.State.route)
+                            .appending(path: /SettingsDomain.Route.openSourceLicence)
+                            .extract(from:)
+                    )
+                ) { _ in
+                    FOSSView()
+                },
+                tag: SettingsDomain.Route.Tag.openSourceLicence,
+                selection: viewStore.binding(
+                    get: \.routeTag,
+                    send: SettingsDomain.Action.setNavigation
                 )
             ) {
                 Label(L10n.stgDpoTxtFoss, systemImage: SFSymbolName.heartTextSquare)
@@ -87,10 +108,19 @@ struct SettingsLegalInfoView: View {
             .buttonStyle(.navigation)
 
             NavigationLink(
-                destination: TermsOfUseView(),
-                isActive: viewStore.binding(
-                    get: { $0.showTermsOfUseView },
-                    send: SettingsDomain.Action.toggleTermsOfUseView
+                destination: IfLetStore(
+                    store.scope(
+                        state: (\SettingsDomain.State.route)
+                            .appending(path: /SettingsDomain.Route.termsOfUse)
+                            .extract(from:)
+                    )
+                ) { _ in
+                    TermsOfUseView()
+                },
+                tag: SettingsDomain.Route.Tag.termsOfUse,
+                selection: viewStore.binding(
+                    get: \.routeTag,
+                    send: SettingsDomain.Action.setNavigation
                 )
             ) {
                 Label(L10n.stgDpoTxtTermsOfUse, systemImage: SFSymbolName.docPlaintext)

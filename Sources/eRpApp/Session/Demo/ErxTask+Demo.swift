@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -150,6 +150,14 @@ extension ErxTask {
         static let demoWorkRelatedAccident = ErxTask.WorkRelatedAccident(
             workPlaceIdentifier: "1234567890",
             date: "9.4.2021"
+        )
+
+        static let demoMultiplePrescription = ErxTask.MultiplePrescription(
+            mark: true,
+            numbering: 2,
+            totalNumber: 4,
+            startPeriod: "2323-01-26T15:23:21+00:00",
+            endPeriod: "2323-04-26T15:23:21+00:00"
         )
 
         static let erxTask1: ErxTask = .init(
@@ -383,6 +391,45 @@ extension ErxTask {
             auditEvents: ErxAuditEvent.Dummies.auditEvents
         )
 
+        static let erxTask14: ErxTask = .init(
+            identifier: "34235f983-1e67-22c5-8955-63bf44e44fb8",
+            status: .ready,
+            accessCode: "e46ab30336811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
+            fullUrl: nil,
+            authoredOn: DemoDate.createDemoDate(.yesterday),
+            expiresOn: DemoDate.createDemoDate(.ninetyTwoDaysAhead),
+            acceptedUntil: DemoDate.createDemoDate(.ninetyTwoDaysAhead),
+            redeemedOn: nil,
+            author: "Dr. Dr. med. Carsten van Storchhausen",
+            medication: medication8,
+            multiplePrescription: demoMultiplePrescription,
+            patient: demoPatient,
+            practitioner: demoPractitioner,
+            organization: demoOrganization,
+            workRelatedAccident: demoWorkRelatedAccident,
+            auditEvents: ErxAuditEvent.Dummies.auditEvents
+        )
+
+        static let erxTaskScanned1: ErxTask = .init(
+            identifier: "34235f983-1e67-331g-8955-63bf44e44fb8",
+            status: .ready,
+            accessCode: "e46ab30336811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
+            fullUrl: nil,
+            authoredOn: DemoDate.createDemoDate(.yesterday),
+            redeemedOn: nil,
+            source: .scanner
+        )
+
+        static let erxTaskScanned2: ErxTask = .init(
+            identifier: "34235f983-1e67-321g-8955-63bf44e44fb8",
+            status: .ready,
+            accessCode: "e46ab30336811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
+            fullUrl: nil,
+            authoredOn: DemoDate.createDemoDate(.yesterday),
+            redeemedOn: nil,
+            source: .scanner
+        )
+
         static let erxTasks: [ErxTask] =
             [
                 erxTask1,
@@ -398,6 +445,13 @@ extension ErxTask {
                 erxTask11,
                 erxTask12,
                 erxTask13,
+                erxTask14,
+            ]
+
+        static let erxTasksScanned: [ErxTask] =
+            [
+                erxTaskScanned1,
+                erxTaskScanned2,
             ]
     }
 }

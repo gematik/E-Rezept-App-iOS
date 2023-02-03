@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -22,6 +22,12 @@ import Foundation
 protocol Tracker: AnyObject {
     var optIn: Bool { get set }
     var optInPublisher: AnyPublisher<Bool, Never> { get }
+
+    func track(events: [AnalyticsEvent])
+    func track(screens: [AnalyticsScreen])
+    func track(event: String)
+    func track(screen: String)
+    func stopTracking()
 }
 
 class DummyTracker: Tracker {
@@ -30,6 +36,12 @@ class DummyTracker: Tracker {
     }
 
     var optIn = false
+
+    func track(events _: [AnalyticsEvent]) {}
+    func track(screens _: [AnalyticsScreen]) {}
+    func track(event _: String) {}
+    func track(screen _: String) {}
+    func stopTracking() {}
 }
 
 class PlaceholderTracker: Tracker {
@@ -37,10 +49,6 @@ class PlaceholderTracker: Tracker {
 
     init(userDefaults: UserDefaults = UserDefaults.standard) {
         self.userDefaults = userDefaults
-
-        // TODO: make sure these are true //swiftlint:disable:this todo
-        // [REQ:gemSpec_eRp_FdV:A_19095] user session is randomly created - See visitorID.
-        // [REQ:gemSpec_eRp_FdV:A_19096] new visitorID is generated when app is reinstalled.
     }
 
     var optIn: Bool {
@@ -55,6 +63,14 @@ class PlaceholderTracker: Tracker {
     var optInPublisher: AnyPublisher<Bool, Never> {
         userDefaults.publisher(for: \UserDefaults.appTrackingAllowed)
             .eraseToAnyPublisher()
+    }
+
+    func track(events _: [AnalyticsEvent]) {}
+    func track(screens _: [AnalyticsScreen]) {}
+    func track(event _: String) {}
+    func track(screen _: String) {}
+    func stopTracking() {
+        optIn = false
     }
 }
 

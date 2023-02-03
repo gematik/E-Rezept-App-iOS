@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -34,8 +34,8 @@ class PharmacyRedeemDomainTests: XCTestCase {
 
     typealias TestStore = ComposableArchitecture.TestStore<
         PharmacyRedeemDomain.State,
-        PharmacyRedeemDomain.State,
         PharmacyRedeemDomain.Action,
+        PharmacyRedeemDomain.State,
         PharmacyRedeemDomain.Action,
         PharmacyRedeemDomain.Environment
     >
@@ -108,7 +108,7 @@ class PharmacyRedeemDomainTests: XCTestCase {
             city: "Berlin"
         )
         mockRedeemValidator.returnValue = .valid
-        mockShipmentInfoDataStore.selectedShipmentInfoReturnValue = Just(expectedShipmentInfo)
+        mockShipmentInfoDataStore.selectedShipmentInfo = Just(expectedShipmentInfo)
             .setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
         mockUserSession.isLoggedIn = false
         mockRedeemService.redeemReturnValue = Fail(error: RedeemServiceError.noTokenAvailable)
@@ -156,14 +156,14 @@ class PharmacyRedeemDomainTests: XCTestCase {
 
         let expectedShipmentInfo = shipmentInfo
         mockRedeemValidator.returnValue = .valid
-        mockShipmentInfoDataStore.selectedShipmentInfoReturnValue = Just(expectedShipmentInfo)
+        mockShipmentInfoDataStore.selectedShipmentInfo = Just(expectedShipmentInfo)
             .setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
         mockUserSession.isLoggedIn = true
         mockPharmacyRepository.savePublisher = Just(true).setFailureType(to: PharmacyRepositoryError.self)
             .eraseToAnyPublisher()
 
         var expectedOrderResponses = IdentifiedArrayOf<OrderResponse>()
-        mockRedeemService.redeemOrdersClosure = { orders in
+        mockRedeemService.redeemClosure = { orders in
             let orderResponses = orders.map { order in
                 OrderResponse(requested: order, result: .success(true))
             }
@@ -217,7 +217,7 @@ class PharmacyRedeemDomainTests: XCTestCase {
 
         let expectedShipmentInfo = shipmentInfo
         mockRedeemValidator.returnValue = .valid
-        mockShipmentInfoDataStore.selectedShipmentInfoReturnValue = Just(expectedShipmentInfo)
+        mockShipmentInfoDataStore.selectedShipmentInfo = Just(expectedShipmentInfo)
             .setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
         mockUserSession.isLoggedIn = true
         mockPharmacyRepository.savePublisher = Just(true).setFailureType(to: PharmacyRepositoryError.self)
@@ -225,7 +225,7 @@ class PharmacyRedeemDomainTests: XCTestCase {
 
         let expectedError = RedeemServiceError.eRxRepository(.remote(.notImplemented))
         var expectedOrderResponses = IdentifiedArrayOf<OrderResponse>()
-        mockRedeemService.redeemOrdersClosure = { orders in
+        mockRedeemService.redeemClosure = { orders in
             var orderResponses = orders.map { order in
                 OrderResponse(requested: order, result: .success(true))
             }
@@ -261,7 +261,7 @@ class PharmacyRedeemDomainTests: XCTestCase {
 
         let expectedShipmentInfo = shipmentInfo
         mockRedeemValidator.returnValue = .valid
-        mockShipmentInfoDataStore.selectedShipmentInfoReturnValue = Just(expectedShipmentInfo)
+        mockShipmentInfoDataStore.selectedShipmentInfo = Just(expectedShipmentInfo)
             .setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
         mockUserSession.isLoggedIn = true
         let expectedError = RedeemServiceError.internalError(.missingTelematikId)
@@ -317,7 +317,7 @@ class PharmacyRedeemDomainTests: XCTestCase {
             zip: "10623",
             city: "Berlin"
         )
-        mockShipmentInfoDataStore.selectedShipmentInfoReturnValue = Just(expectedShipmentInfo)
+        mockShipmentInfoDataStore.selectedShipmentInfo = Just(expectedShipmentInfo)
             .setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
         mockUserSession.isLoggedIn = false
 

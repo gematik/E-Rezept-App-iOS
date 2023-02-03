@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -66,10 +66,10 @@ struct ProfileCell: View {
     }
 
     struct ConnectionStatusCircle: View {
-        let status: ProfileConnectionStatus?
+        let status: ProfileConnectionStatus
 
         var body: some View {
-            if let status = status {
+            if status != .never {
                 Circle()
                     .fill(Color(.systemBackground))
                     .frame(width: 12, height: 12)
@@ -86,7 +86,7 @@ protocol ProfileCellModel {
     var acronym: String { get }
     var emoji: String? { get }
     var color: ProfileColor { get }
-    var connectionStatus: ProfileConnectionStatus? { get }
+    var connectionStatus: ProfileConnectionStatus { get }
     var lastSuccessfulSync: Date? { get }
 }
 

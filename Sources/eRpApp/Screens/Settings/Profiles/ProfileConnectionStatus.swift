@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -20,19 +20,29 @@ import Foundation
 import SwiftUI
 
 enum ProfileConnectionStatus: Equatable {
+    case never
     case connected
     case disconnected
 }
 
 extension ProfileConnectionStatus {
-    var statusColor: Color {
-        self == .connected ? Colors.secondary600 : Colors.red600
+    var statusColor: Color? {
+        switch self {
+        case .connected:
+            return Colors.secondary600
+        case .disconnected:
+            return Colors.red600
+        case .never:
+            return nil
+        }
     }
 }
 
 extension ProfileConnectionStatus {
     var accessibilityValue: String {
         switch self {
+        case .never:
+            return "" // Has never been connected is not exposed to accessibility
         case .connected:
             return L10n.ctlTxtProfileConnectionStatusConnected.text
         case .disconnected:

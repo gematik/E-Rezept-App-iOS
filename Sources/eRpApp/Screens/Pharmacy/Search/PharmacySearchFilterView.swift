@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -84,7 +84,10 @@ struct PharmacySearchFilterView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
 
             Button(action: {
-                viewStore.send(.close(viewStore.state.pharmacyFilterOptions))
+                viewStore.send(
+                    .close(viewStore.state.pharmacyFilterOptions),
+                    animation: .easeInOut
+                )
             }, label: {
                 Text(L10n.psfBtnAccept)
             })
@@ -93,15 +96,6 @@ struct PharmacySearchFilterView: View {
         }
         .padding()
         .background(Color(.systemBackground).ignoresSafeArea(.all, edges: .bottom))
-        .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button(action: {
-                    viewStore.send(.close(viewStore.state.pharmacyFilterOptions))
-                }, label: {
-                    Text(L10n.psfBtnAccept)
-                })
-            }
-        }
         .navigationBarTitleDisplayMode(.inline)
     }
 

@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -30,8 +30,8 @@ class PharmacyContactDomainTests: XCTestCase {
 
     typealias TestStore = ComposableArchitecture.TestStore<
         PharmacyContactDomain.State,
-        PharmacyContactDomain.State,
         PharmacyContactDomain.Action,
+        PharmacyContactDomain.State,
         PharmacyContactDomain.Action,
         PharmacyContactDomain.Environment
     >
@@ -77,14 +77,14 @@ class PharmacyContactDomainTests: XCTestCase {
             service: .erxTaskRepository
         ))
         mockInputValidator.returnValue = .valid
-        mockShipmentInfoDataStore.saveShipmentInfoReturnValue = Just([shipmentInfo])
+        mockShipmentInfoDataStore.saveShipmentInfosReturnValue = Just([shipmentInfo])
             .setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
 
         // when
         sut.send(.save)
 
         // then
-        expect(self.mockShipmentInfoDataStore.saveShipmentInfoCallsCount).to(equal(1))
+        expect(self.mockShipmentInfoDataStore.saveShipmentInfosCallsCount).to(equal(1))
         sut.receive(.shipmentInfoSaved(.success(shipmentInfo)))
         expect(self.mockShipmentInfoDataStore.setSelectedShipmentInfoIdCallsCount).to(equal(1))
         sut.receive(.close)
@@ -100,7 +100,7 @@ class PharmacyContactDomainTests: XCTestCase {
             )
         )
         mockInputValidator.returnValue = .valid
-        mockShipmentInfoDataStore.saveShipmentInfoReturnValue =
+        mockShipmentInfoDataStore.saveShipmentInfosReturnValue =
             Fail(error: expectedError)
                 .eraseToAnyPublisher()
 
@@ -108,14 +108,14 @@ class PharmacyContactDomainTests: XCTestCase {
         sut.send(.save)
 
         // then
-        expect(self.mockShipmentInfoDataStore.saveShipmentInfoCallsCount).to(equal(1))
+        expect(self.mockShipmentInfoDataStore.saveShipmentInfosCallsCount).to(equal(1))
         sut.receive(.shipmentInfoSaved(.failure(expectedError))) {
             $0.alertState = AlertState(
                 title: TextState("Fehler"),
                 message: TextState(LocalStoreError.write(error: DemoError.demo).localizedDescriptionWithErrorList),
-                dismissButton: AlertState.Button.default(
+                dismissButton: ButtonState.default(
                     TextState("Okay"),
-                    action: AlertState.ButtonAction.send(PharmacyContactDomain.Action.alertDismissButtonTapped)
+                    action: .send(PharmacyContactDomain.Action.alertDismissButtonTapped)
                 )
             )
         }
@@ -280,12 +280,12 @@ class PharmacyContactDomainTests: XCTestCase {
             state.contactInfo = PharmacyContactDomain.State.ContactInfo(finalShipmentInfo)
         }
 
-        mockShipmentInfoDataStore.saveShipmentInfoReturnValue = Just([finalShipmentInfo])
+        mockShipmentInfoDataStore.saveShipmentInfosReturnValue = Just([finalShipmentInfo])
             .setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
 
         sut.send(.save)
 
-        expect(self.mockShipmentInfoDataStore.saveShipmentInfoCallsCount).to(equal(1))
+        expect(self.mockShipmentInfoDataStore.saveShipmentInfosCallsCount).to(equal(1))
         sut.receive(.shipmentInfoSaved(.success(finalShipmentInfo)))
         expect(self.mockShipmentInfoDataStore.setSelectedShipmentInfoIdCallsCount).to(equal(1))
         sut.receive(.close)

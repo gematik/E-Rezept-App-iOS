@@ -1119,6 +1119,25 @@ extension PrescriptionDetailDomain.LoadingImageError: CodedError {
     }
 }
 
+extension PrescriptionRepositoryError: CodedError {
+    var erpErrorCode: String {
+        switch self {
+            case .loginHandler:
+                return "i-02701"
+            case .erxRepository:
+                return "i-02702"
+        }
+    }
+    var erpErrorCodeList: [String] {
+        switch self {
+            case let .loginHandler(error):
+                return [erpErrorCode] + error.erpErrorCodeList
+            case let .erxRepository(error):
+                return [erpErrorCode] + error.erpErrorCodeList
+        }
+    }
+}
+
 extension PrivateKeyContainer.Error: CodedError {
     var erpErrorCode: String {
         switch self {

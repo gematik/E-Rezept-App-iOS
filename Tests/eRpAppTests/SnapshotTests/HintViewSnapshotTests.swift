@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -88,18 +88,6 @@ final class HintViewSnapshotTests: XCTestCase {
         assertSnapshots(matching: sut, as: snapshotModi())
     }
 
-    func testDemoModeTourHintView() {
-        let sut = HintView(
-            hint: MainViewHintsProvider.demoModeTourHint,
-            textAction: {},
-            closeAction: {}
-        )
-        .padding()
-        .frame(width: 500, height: 900)
-
-        assertSnapshots(matching: sut, as: snapshotModi())
-    }
-
     func testDemoModeWelcomeHintView() {
         let sut = HintView(
             hint: MainViewHintsProvider.demoModeWelcomeHint,
@@ -108,30 +96,6 @@ final class HintViewSnapshotTests: XCTestCase {
         )
         .padding()
         .frame(width: 500, height: 1000)
-
-        assertSnapshots(matching: sut, as: snapshotModi())
-    }
-
-    func testOpenScannerHintView() {
-        let sut = HintView(
-            hint: MainViewHintsProvider.openScannerHint,
-            textAction: {},
-            closeAction: {}
-        )
-        .padding()
-        .frame(width: 400, height: 900)
-
-        assertSnapshots(matching: sut, as: snapshotModi())
-    }
-
-    func testUnreadMessagesHintView() {
-        let sut = HintView(
-            hint: MainViewHintsProvider.unreadMessagesHint,
-            textAction: {},
-            closeAction: {}
-        )
-        .padding()
-        .frame(width: 400, height: 900)
 
         assertSnapshots(matching: sut, as: snapshotModi())
     }

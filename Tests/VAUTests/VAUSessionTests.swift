@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -20,24 +20,38 @@ import Combine
 import Foundation
 import GemCommonsKit
 import Nimble
+import OpenSSL
 import TestUtils
+import TrustStore
 @testable import VAUClient
 import XCTest
 
 final class VAUSessionTests: XCTestCase {
     func testSessionRetainsCurrentUserPseudonym() throws {
         // given
-        let vauStorage = MemStorage()
         let url = URL(string: "http://some-service.com")!
-        let sut = VAUSession(
-            vauServer: url,
-            vauAccessTokenProvider: VAUAccessTokenProviderMock(),
-            vauCryptoProvider: VAUCryptoProviderMock(),
-            vauStorage: vauStorage,
-            trustStoreSession: TrustStoreSessionMock()
-        )
         let request = URLRequest(url: URL(string: "http://www.url.com")!)
         let chain = PassThroughChain(request: request)
+
+        let vauAccessTokenProvider = MockVAUAccessTokenProvider()
+        vauAccessTokenProvider.vauBearerToken = Just("SomeAccessToken").setFailureType(to: VAUError.self)
+            .eraseToAnyPublisher()
+        let mockVAUCrypto = MockVAUCrypto()
+        mockVAUCrypto.decryptDataReturnValue = ""
+        mockVAUCrypto.encryptReturnValue = Data()
+        let mockVAUCryptoProvider = MockVAUCryptoProvider()
+        mockVAUCryptoProvider.provideForVauCertificateBearerTokenReturnValue = mockVAUCrypto
+        let trustStoreSession = MockTrustStoreSession()
+        trustStoreSession.loadVauCertificateReturnValue = Just(Self.defaultVauCertificate)
+            .setFailureType(to: TrustStoreError.self).eraseToAnyPublisher()
+
+        let sut = VAUSession(
+            vauServer: url,
+            vauAccessTokenProvider: vauAccessTokenProvider,
+            vauCryptoProvider: mockVAUCryptoProvider,
+            vauStorage: MemStorage(),
+            trustStoreSession: trustStoreSession
+        )
         let interceptor = sut.provideInterceptor()
 
         // helping subscriber
@@ -84,4 +98,26 @@ final class VAUSessionTests: XCTestCase {
 
         currentVauEndpointSubscriber.cancel()
     }
+
+    static let defaultVauCertificate: X509 = {
+        let pemString = """
+        -----BEGIN CERTIFICATE-----
+        MIICWzCCAgKgAwIBAgIUXcN6K1n5kgykxETzVBv/WoRt01YwCgYIKoZIzj0EAwIw
+        gYIxCzAJBgNVBAYTAkRFMQ8wDQYDVQQIDAZCZXJsaW4xDzANBgNVBAcMBkJlcmxp
+        bjEQMA4GA1UECgwHZ2VtYXRpazEQMA4GA1UECwwHZ2VtYXRpazEtMCsGA1UEAwwk
+        RS1SZXplcHQtVkFVIEJlaXNwaWVsaW1wbGVtZW50aWVydW5nMB4XDTIwMDUyMjE2
+        NTgyNFoXDTIxMDUyMjE2NTgyNFowgYIxCzAJBgNVBAYTAkRFMQ8wDQYDVQQIDAZC
+        ZXJsaW4xDzANBgNVBAcMBkJlcmxpbjEQMA4GA1UECgwHZ2VtYXRpazEQMA4GA1UE
+        CwwHZ2VtYXRpazEtMCsGA1UEAwwkRS1SZXplcHQtVkFVIEJlaXNwaWVsaW1wbGVt
+        ZW50aWVydW5nMFowFAYHKoZIzj0CAQYJKyQDAwIIAQEHA0IABIY0ISgw2tRXygUw
+        XmaHE0FmucIaZf/r9VX05137BIiIZuS2hDYky9pDyX6omWi8Qf1TV2+CwD76fWAb
+        n6ysKymjUzBRMB0GA1UdDgQWBBQh8MUVY5pJH8c0O/RVpDOPUIMXLjAfBgNVHSME
+        GDAWgBQh8MUVY5pJH8c0O/RVpDOPUIMXLjAPBgNVHRMBAf8EBTADAQH/MAoGCCqG
+        SM49BAMCA0cAMEQCIC8jRqHV/dHK+N9Y0NF5MVHS2RvtP3ndzCPhwKBz0UW9AiA6
+        oJnHJ2OP68rqpnbHG1/WWGJEfVT9Fig3zeYwYZKYvg==
+        -----END CERTIFICATE-----
+        """
+        let pem = pemString.data(using: .ascii)! // swiftlint:disable:this force_unwrapping
+        return try! X509(pem: pem)
+    }()
 }

@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -19,9 +19,8 @@
 import SwiftUI
 
 struct OrderHealthCardInquiryOptionsView: View {
-    let availableInquiries: [OrderHealthCardView.ServiceInquiry]
+    let availableInquiries: [OrderHealthCardDomain.ServiceInquiry]
     @Binding var selectedInquiry: Int
-    @Binding var show: Bool
 
     var body: some View {
         List {
@@ -30,7 +29,6 @@ struct OrderHealthCardInquiryOptionsView: View {
                     Button(
                         action: {
                             selectedInquiry = inquiry.id
-                            show = false
                         },
 
                         label: {
@@ -82,12 +80,10 @@ struct OrderHealthCardInquiryOptionsView: View {
 struct OrderHealthCardInquiryOptionsView_Preview: PreviewProvider { // swiftlint:disable:this type_name
     struct Wrapper: View {
         @State var selectedInquiry: Int = -1
-        @State var show = false
 
         var body: some View {
-            OrderHealthCardInquiryOptionsView(availableInquiries: OrderHealthCardView.ServiceInquiry.allCases,
-                                              selectedInquiry: $selectedInquiry,
-                                              show: $show)
+            OrderHealthCardInquiryOptionsView(availableInquiries: OrderHealthCardDomain.ServiceInquiry.allCases,
+                                              selectedInquiry: $selectedInquiry)
         }
     }
 

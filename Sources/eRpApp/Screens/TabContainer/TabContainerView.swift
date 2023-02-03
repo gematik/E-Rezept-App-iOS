@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -91,22 +91,6 @@ struct TabContainerView: View {
                 .backport.badge(viewStore.unreadOrderMessageCount)
                 .tag(AppDomain.Route.orders)
 
-                #if ENABLE_DEBUG_VIEW
-                SettingsView(
-                    store: store.scope(
-                        state: \.settingsState,
-                        action: AppDomain.Action.settings(action:)
-                    ),
-                    debugStore: store.scope(
-                        state: \.debug,
-                        action: AppDomain.Action.debug(action:)
-                    )
-                )
-                .tabItem {
-                    Label(L10n.tabTxtSettings, image: Asset.TabIcon.gearshape.name)
-                }
-                .tag(AppDomain.Route.settings)
-                #else
                 SettingsView(
                     store: store.scope(
                         state: \.settingsState,
@@ -117,7 +101,6 @@ struct TabContainerView: View {
                     Label(L10n.tabTxtSettings, image: Asset.TabIcon.gearshape.name)
                 }
                 .tag(AppDomain.Route.settings)
-                #endif
             }
             .onAppear {
                 viewStore.send(.registerDemoModeListener)

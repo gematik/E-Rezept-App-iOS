@@ -1,3 +1,4 @@
+
 "add_btn_save" = "Zapisz";
 "add_txt_profile1" = "profile 1";
 "add_txt_title" = "Podaj nazwę";
@@ -159,6 +160,9 @@
 "cdw_txt_extauth_fallback_description2" = "Nie chcesz czekać? Logowanie za pomocą karty zdrowia jest już obsługiwane przez każdą kasę chorych.";
 "cdw_txt_extauth_fallback_headline" = "Wybierz ubezpieczenie";
 "cdw_txt_extauth_fallback_title" = "Zaloguj się za pomocą aplikacji";
+"cdw_txt_extauth_noresults" = "Unter diesem Suchbegriff konnten wir keine Ergebnisse finden.";
+"cdw_txt_extauth_noresults_title" = "Keine Ergebnisse";
+"cdw_txt_extauth_searchprompt" = "Nach Name suchen";
 "cdw_txt_extauth_selection_description" = "Nie znalazłeś tego, czego szukałeś? Lista ta jest stale uzupełniana. Logowanie za pomocą karty zdrowia jest już obsługiwane przez każdą kasę chorych.";
 "cdw_txt_extauth_selection_empty_list_description" = "Funkcja ta zostanie Ci udostępniona za kilka dni. Spróbuj ponownie później.";
 "cdw_txt_extauth_selection_empty_list_headline" = "Funkcja niedostępna";
@@ -349,6 +353,7 @@
 "erx_txt_redeem_at_%@" = "Do wykorzystania od %@";
 "erx_txt_redeemed" = "Archiwum";
 "erx_txt_refresh_loading" = "Ładowanie ...";
+"erx_txt_scanned_at_%@" = "Gescannt: %@";
 "hint_btn_close" = "zamknij";
 "hint_btn_open_scn" = "Otwórz skaner";
 "hint_btn_try_demo_mode" = "Rozpocznij tryb demonstracyjny";
@@ -645,12 +650,21 @@
 "kbv_norm_size_n3" = "Rozmiar standardowy 3";
 "kbv_norm_size_nb" = "Nie dotyczy";
 "kbv_norm_size_sonstiges" = "Inne";
+"main_btn_archived_presc" = "Eingelöste Rezepte";
+"main_btn_login" = "Anmelden";
+"main_btn_redeem" = "Einlösen";
+"main_btn_refresh" = "Aktualisieren";
+"main_empty_txt_connected" = "↓ Ziehen Sie den Screen nach unten, um zu aktualisieren.";
+"main_empty_txt_disconnected" = "Fügen Sie Rezepte über den ⊕ Button in der rechten oberen Ecke hinzu.";
+"main_empty_txt_title" = "Keine Rezepte";
 "main_txt_pendingextauth_cancel" = "Anuluj";
 "main_txt_pendingextauth_failed_%@" = "Uwierzytelnienie za pomocą %@ nie powiodło się";
 "main_txt_pendingextauth_pending_%@" = "Oczekuje na uwierzytelnienie w %@";
 "main_txt_pendingextauth_resolving_%@" = "Uwierzytelnienie dla %@ jest przetwarzane";
 "main_txt_pendingextauth_retry" = "Powtórz";
 "main_txt_pendingextauth_successful_%@" = "Uwierzytelnienie za pomocą %@ powiodło się";
+"main_txt_profile_status_offline" = "Status: Verbindung zum Rezeptserver getrennt";
+"main_txt_profile_status_online" = "Status: Profil angemeldet";
 "mgm_fallback_profile_name" = "Nazwa profilu";
 "mgm_txt_alert_message_profile_creation" = "Nie udało się utworzyć profilu podczas aktualizacji";
 "mgm_txt_alert_message_up_to_date" = "Aplikacja działa już w aktualnej wersji";
@@ -853,6 +867,7 @@
 "pro_btn_selection_edit" = "Edytuj profile";
 "pro_txt_selection_profile_not_connected" = "Nie zalogowano";
 "pro_txt_selection_title" = "Wybierz profil";
+"prsc_arch_txt_title" = "Eingelöste Rezepte";
 "prsc_delete_note_direct_assignment" = "Ta recepta zostanie zrealizowana w ramach leczenia i nie można jej usunąć w trakcie leczenia.";
 "prsc_dtl_btn_direct_assignment" = "bezpośrednie przypisanie";
 "prsc_dtl_btn_share_title" = "Rozdzielać";
@@ -1052,6 +1067,7 @@
 "stg_txt_alert_message_demo_mode_off" = "Tryb demonstracyjny jest nieaktywny";
 "stg_txt_alert_message_demo_mode_on" = "Tryb demonstracyjny jest aktywny. Nie potrzebujesz karty zdrowia ani połączenia z Internetem. Wyświetlonych recept testowych nie można zrealizować w aptece.";
 "stg_txt_alert_title_demo_mode" = "Chcesz się przyjrzeć aplikacji?";
+"stg_txt_alert_title_demo_mode_off" = "Demo-Modus deaktiviert";
 "stg_txt_audit_events_last_updated_%@" = "Ostatnia aktualizacja: %@";
 "stg_txt_audit_events_missing_date" = "Brak znacznika czasu";
 "stg_txt_audit_events_missing_description" = "Brak danych";
@@ -1173,3 +1189,7 @@
 "tab_txt_orders" = "Zamówienia";
 "tab_txt_pharmacy_search" = "Apteki";
 "tab_txt_settings" = "Ustawienia";
+"wlcd_btn_decline" = "Vielleicht später";
+"wlcd_btn_login" = "Anmelden";
+"wlcd_txt_footer" = "Um Rezepte digital von Ihrer Praxis zu empfangen, müssen Sie angemeldet sein.";
+"wlcd_txt_header" = "Rezepte digital empfangen?";

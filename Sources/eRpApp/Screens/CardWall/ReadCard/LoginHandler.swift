@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -91,7 +91,21 @@ class DefaultLoginHandler: LoginHandler {
 
     func isAuthenticated() -> AnyPublisher<LoginResult, Never> {
         // TODO: implement and use instead of userSession.isAuthenticated  swiftlint:disable:this todo
-        Just(LoginResult.success(false)).eraseToAnyPublisher()
+        idpSession
+            .isLoggedIn
+            .first()
+            .map { value -> LoginResult in
+                LoginResult.success(value)
+            }
+            .catch { error -> AnyPublisher<LoginResult, Never> in
+                switch error {
+                case .network:
+                    return Just(Result.failure(LoginHandlerError.network(error))).eraseToAnyPublisher()
+                default:
+                    return Just(Result.success(false)).eraseToAnyPublisher()
+                }
+            }
+            .eraseToAnyPublisher()
     }
 
     func isAuthenticatedOrAuthenticate() -> AnyPublisher<LoginResult, Never> {

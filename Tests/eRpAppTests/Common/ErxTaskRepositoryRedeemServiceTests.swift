@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -304,7 +304,7 @@ final class ErxTaskRepositoryRedeemServiceTests: XCTestCase {
     }
 
     func testRedeemResponses_With_Error_From_LoginHanler() throws {
-        let loginHandlerMock = LoginHandlerMock()
+        let loginHandlerMock = MockLoginHandler()
         let expectedError = LoginHandlerError.idpError(.biometrics(.packagingAuthCertificate))
         loginHandlerMock.isAuthenticatedOrAuthenticateReturnValue = Just(LoginResult.failure(expectedError))
             .eraseToAnyPublisher()
@@ -327,8 +327,8 @@ final class ErxTaskRepositoryRedeemServiceTests: XCTestCase {
             })
     }
 
-    private func loginHandlerMock(authenticated: Bool) -> LoginHandlerMock {
-        let loginHandlerMock = LoginHandlerMock()
+    private func loginHandlerMock(authenticated: Bool) -> MockLoginHandler {
+        let loginHandlerMock = MockLoginHandler()
         loginHandlerMock.isAuthenticatedReturnValue = Just(LoginResult.success(authenticated)).eraseToAnyPublisher()
         loginHandlerMock.isAuthenticatedOrAuthenticateReturnValue = Just(LoginResult.success(authenticated))
             .eraseToAnyPublisher()

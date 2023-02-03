@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -26,46 +26,49 @@ import IDP
 // swiftlint:disable:next type_body_length
 enum SettingsDomain {
     typealias Store = ComposableArchitecture.Store<State, Action>
-    typealias Reducer = ComposableArchitecture.Reducer<State, Action, Environment>
+    typealias Reducer = ComposableArchitecture.AnyReducer<State, Action, Environment>
 
     enum Route: Equatable {
+        case debug(DebugDomain.State)
+        case alert(AlertState<Action>)
         case healthCardPasswordForgotPin(HealthCardPasswordDomain.State)
         case healthCardPasswordSetCustomPin(HealthCardPasswordDomain.State)
         case healthCardPasswordUnlockCard(HealthCardPasswordDomain.State)
+        case setAppPassword(CreatePasswordDomain.State)
+        case complyTracking
+        case legalNotice
+        case dataProtection
+        case openSourceLicence
+        case termsOfUse
+        case egk(OrderHealthCardDomain.State)
     }
 
     static func cleanup<T>() -> Effect<T, Never> {
         .concatenate(
+            cleanupSubDomains(),
             .cancel(token: Token.self),
-            cleanupSubDomains()
+            ProfilesDomain.cleanup()
         )
     }
 
     private static func cleanupSubDomains<T>() -> Effect<T, Never> {
         .concatenate(
-            ProfilesDomain.cleanup(),
-            HealthCardPasswordDomain.cleanup()
+            HealthCardPasswordDomain.cleanup(),
+            DebugDomain.cleanup()
         )
     }
 
     enum Token: CaseIterable, Hashable {
-        case updates
+        case trackingStatus
+        case demoModeStatus
     }
 
     struct State: Equatable {
         var isDemoMode: Bool
-        var alertState: AlertState<Action>?
-        var showLegalNoticeView = false
-        var showDataProtectionView = false
-        var showFOSSView = false
-        var showTermsOfUseView = false
-        var showDebugView = false
-        var showOrderHealthCardView = false
         var appSecurityState: AppSecurityDomain.State
         var profiles = ProfilesDomain.State(profiles: [], selectedProfileId: nil, route: nil)
         var appVersion = AppVersion.current
         var trackerOptIn = false
-        var showTrackerComplyView = false
 
         var route: Route?
     }
@@ -74,24 +77,19 @@ enum SettingsDomain {
         case close
         case initSettings
         case trackerStatusReceived(Bool)
-        case alertDismissButtonTapped
-        case toggleDemoModeSwitch
+        case demoModeStatusReceived(Bool)
         case toggleTrackingTapped(Bool)
         case confirmedOptInTracking
-        case dismissTrackerComplyView
-        case toggleLegalNoticeView(Bool)
-        case toggleDataProtectionView(Bool)
-        case toggleFOSSView(Bool)
-        case toggleTermsOfUseView(Bool)
-        case toggleDebugView(Bool)
-        case toggleOrderHealthCardView(Bool)
+        case toggleDemoModeSwitch
         case appSecurity(action: AppSecurityDomain.Action)
         case profiles(action: ProfilesDomain.Action)
+        case debug(action: DebugDomain.Action)
         case healthCardPasswordUnlockCard(action: HealthCardPasswordDomain.Action)
         case healthCardPasswordForgotPin(action: HealthCardPasswordDomain.Action)
         case healthCardPasswordSetCustomPin(action: HealthCardPasswordDomain.Action)
+        case createPassword(action: CreatePasswordDomain.Action)
         case popToRootView
-
+        case egkAction(action: OrderHealthCardDomain.Action)
         case setNavigation(tag: Route.Tag?)
     }
 
@@ -104,47 +102,51 @@ enum SettingsDomain {
         let appSecurityManager: AppSecurityManager
         let router: Routing
         let userSessionProvider: UserSessionProvider
+        let serviceLocator: ServiceLocator
+        let userDataStore: UserDataStore
         let accessibilityAnnouncementReceiver: (String) -> Void
     }
 
     private static let domainReducer = Reducer { state, action, environment in
         switch action {
         case .initSettings:
-            return UserDefaults.standard.publisher(for: \UserDefaults.appTrackingAllowed)
-                .map(Action.trackerStatusReceived)
-                .eraseToEffect()
+            return .merge(
+                environment.tracker.optInPublisher
+                    .map(Action.trackerStatusReceived)
+                    .eraseToEffect()
+                    .cancellable(id: Token.trackingStatus, cancelInFlight: true),
+                environment.changeableUserSessionContainer.isDemoMode
+                    .map(Action.demoModeStatusReceived)
+                    .eraseToEffect()
+                    .cancellable(id: Token.demoModeStatus, cancelInFlight: true)
+            )
+        case let .demoModeStatusReceived(isDemo):
+            state.isDemoMode = isDemo
+            return .none
         case let .trackerStatusReceived(value):
             state.trackerOptIn = value
-            return .none
-        case let .toggleOrderHealthCardView(value):
-            state.showOrderHealthCardView = value
             return .none
         case .close:
             state.appSecurityState.availableSecurityOptions = []
             return .none
 
-        // Alert
-        case .alertDismissButtonTapped:
-            state.alertState = nil
-            return .none
-
         // Demo-Mode
         case .toggleDemoModeSwitch:
+            state.route = .alert(state.isDemoMode ? demoModeOffAlertState : demoModeOnAlertState)
             if state.isDemoMode {
                 environment.changeableUserSessionContainer.switchToStandardMode()
             } else {
                 environment.changeableUserSessionContainer.switchToDemoMode()
             }
-            state.alertState = state.isDemoMode ? demoModeOffAlertState : demoModeOnAlertState
-            state.isDemoMode.toggle()
             return .none
 
         // Tracking
-        // [REQ:gemSpec_eRp_FdV:A_19089, A_19092, A_19097] OptIn for user tracking
+        // [REQ:gemSpec_eRp_FdV:A_19088, A_19089, A_19092, A_19097] OptIn for user tracking
         case let .toggleTrackingTapped(optIn):
             if optIn {
-                state.showTrackerComplyView = true
+                state.route = .complyTracking
             } else {
+                // [REQ:gemSpec_eRp_FdV:A_20185] OptOut for user
                 state.trackerOptIn = false
                 environment.tracker.optIn = false
             }
@@ -153,41 +155,13 @@ enum SettingsDomain {
         case .confirmedOptInTracking:
             state.trackerOptIn = true
             environment.tracker.optIn = true
-            state.showTrackerComplyView = false
-            return .none
-        case .dismissTrackerComplyView:
-            state.showTrackerComplyView = false
-            return .none
-
-        // Legal Infos
-        case let .toggleLegalNoticeView(show):
-            state.showLegalNoticeView = show
-            return .none
-
-        // Data protection & security
-        case let .toggleDataProtectionView(show):
-            state.showDataProtectionView = show
-            return .none
-        case let .toggleFOSSView(show):
-            state.showFOSSView = show
-            return .none
-        case let .toggleTermsOfUseView(show):
-            state.showTermsOfUseView = show
-            return .none
-        case .appSecurity,
-             .profiles:
+            state.route = nil
             return .none
         case .healthCardPasswordUnlockCard(.readCard(.navigateToSettings)),
              .healthCardPasswordForgotPin(.readCard(.navigateToSettings)),
              .healthCardPasswordSetCustomPin(.readCard(.navigateToSettings)):
             state.route = nil
             return HealthCardPasswordReadCardDomain.cleanup()
-
-        case .healthCardPasswordUnlockCard,
-             .healthCardPasswordForgotPin,
-             .healthCardPasswordSetCustomPin:
-            return .none
-
         case .setNavigation(tag: .healthCardPasswordForgotPin):
             state.route = .healthCardPasswordForgotPin(.init(mode: .forgotPin))
             return .none
@@ -197,49 +171,118 @@ enum SettingsDomain {
         case .setNavigation(tag: .healthCardPasswordUnlockCard):
             state.route = .healthCardPasswordUnlockCard(.init(mode: .unlockCard))
             return .none
-        case .setNavigation(tag: nil):
-            state.route = nil
-            return cleanup()
-        case .setNavigation:
-            return .none
-
-        // Debug
-        case let .toggleDebugView(show):
-            state.showDebugView = show
-            if !show {
-                return DebugDomain.cleanup()
+        case let .setNavigation(tag: tag):
+            switch tag {
+            case .debug:
+                state.route = .debug(DebugDomain.State(trackingOptIn: environment.tracker.optIn))
+            case .egk:
+                state.route = .egk(.init())
+            case .legalNotice:
+                state.route = .legalNotice
+            case .dataProtection:
+                state.route = .dataProtection
+            case .openSourceLicence:
+                state.route = .openSourceLicence
+            case .termsOfUse:
+                state.route = .termsOfUse
+            case .none:
+                state.route = nil
+                return cleanupSubDomains()
+            default: break
             }
             return .none
+        case .egkAction(action: .close):
+            state.route = nil
+            return cleanup()
+        case .egkAction:
+            return .none
+
+        // create password navigation
+        case .appSecurity(action: .select(.password)):
+            if state.appSecurityState.selectedSecurityOption == .password {
+                state.route = .setAppPassword(CreatePasswordDomain.State(mode: .update))
+            } else {
+                state.route = .setAppPassword(CreatePasswordDomain.State(mode: .create))
+            }
+            return .none
+        case .createPassword(.closeAfterPasswordSaved):
+            state.route = nil
+            return .none
         case .popToRootView:
+            state.route = nil
             state.profiles.route = nil
-            state.appSecurityState.createPasswordState = nil
-            state.showFOSSView = false
-            state.showDebugView = false
-            state.showTrackerComplyView = false
-            state.showLegalNoticeView = false
-            state.showDataProtectionView = false
-            state.showTermsOfUseView = false
+            return .none
+        case .healthCardPasswordUnlockCard,
+             .healthCardPasswordForgotPin,
+             .healthCardPasswordSetCustomPin,
+             .createPassword,
+             .debug,
+             .appSecurity,
+             .profiles:
             return .none
         }
     }
 
+    #if ENABLE_DEBUG_VIEW
     static let reducer: Reducer = .combine(
+        createPasswordPullbackReducer,
         appSecurityPullbackReducer,
         profilesPullbackReducer,
         healthCardPasswordForgotPinPullbackReducer,
         healthCardPasswordSetCustomPinPullbackReducer,
         healthCardPasswordUnlockCardPullbackReducer,
+        debugPullbackReducer,
         domainReducer
     )
+
+    private static let debugPullbackReducer: Reducer =
+        DebugDomain.reducer._pullback(
+            state: (\State.route).appending(path: /Route.debug),
+            action: /SettingsDomain.Action.debug(action:)
+        ) { environment in
+            DebugDomain.Environment(
+                schedulers: environment.schedulers,
+                userSession: environment.changeableUserSessionContainer.userSession,
+                localUserStore: environment.changeableUserSessionContainer.userSession.localUserStore,
+                tracker: environment.tracker,
+                signatureProvider: environment.signatureProvider,
+                serviceLocatorDebugAccess: ServiceLocatorDebugAccess(serviceLocator: environment.serviceLocator)
+            )
+        }
+    #else
+    static let reducer: Reducer = .combine(
+        createPasswordPullbackReducer,
+        appSecurityPullbackReducer,
+        profilesPullbackReducer,
+        healthCardPasswordForgotPinPullbackReducer,
+        healthCardPasswordSetCustomPinPullbackReducer,
+        healthCardPasswordUnlockCardPullbackReducer,
+        orderHealthCardPullbackReducer,
+        domainReducer
+    )
+    #endif
+
+    static let createPasswordPullbackReducer: Reducer =
+        CreatePasswordDomain.reducer._pullback(
+            state: (\State.route).appending(path: /Route.setAppPassword),
+            action: /SettingsDomain.Action.createPassword(action:)
+        ) { global in
+            CreatePasswordDomain.Environment(passwordManager: global.appSecurityManager,
+                                             schedulers: global.schedulers,
+                                             passwordStrengthTester: DefaultPasswordStrengthTester(),
+                                             userDataStore: global.userDataStore)
+        }
 
     private static let appSecurityPullbackReducer: Reducer =
         AppSecurityDomain.reducer.pullback(
             state: \.appSecurityState,
             action: /SettingsDomain.Action.appSecurity(action:)
         ) {
-            AppSecurityDomain.Environment(userDataStore: $0.changeableUserSessionContainer.userSession.localUserStore,
-                                          appSecurityManager: $0.appSecurityManager,
-                                          schedulers: $0.schedulers)
+            .init(
+                userDataStore: $0.changeableUserSessionContainer.userSession.localUserStore,
+                appSecurityManager: $0.appSecurityManager,
+                schedulers: $0.schedulers
+            )
         }
 
     private static let profilesPullbackReducer: Reducer =
@@ -255,7 +298,8 @@ enum SettingsDomain {
                 userProfileService: DefaultUserProfileService(
                     profileDataStore: $0.changeableUserSessionContainer.userSession.profileDataStore,
                     profileOnlineChecker: DefaultProfileOnlineChecker(),
-                    userSession: $0.changeableUserSessionContainer.userSession
+                    userSession: $0.changeableUserSessionContainer.userSession,
+                    userSessionProvider: $0.userSessionProvider
                 ),
                 profileSecureDataWiper: DefaultProfileSecureDataWiper(userSessionProvider: $0.userSessionProvider),
                 router: $0.router,
@@ -304,19 +348,25 @@ enum SettingsDomain {
             )
         }
 
+    static let orderHealthCardPullbackReducer: Reducer =
+        OrderHealthCardDomain.reducer._pullback(
+            state: (\State.route).appending(path: /Route.egk),
+            action: /Action.egkAction(action:)
+        ) { _ in OrderHealthCardDomain.Environment() }
+
     static var demoModeOnAlertState: AlertState<Action> = {
         AlertState<Action>(
             title: TextState(L10n.stgTxtAlertTitleDemoMode),
             message: TextState(L10n.stgTxtAlertMessageDemoModeOn),
-            dismissButton: .default(TextState(L10n.alertBtnOk), action: .send(.alertDismissButtonTapped))
+            dismissButton: .default(TextState(L10n.alertBtnOk), action: .send(.setNavigation(tag: nil)))
         )
     }()
 
     static var demoModeOffAlertState: AlertState<Action> = {
         AlertState<Action>(
-            title: TextState(L10n.stgTxtAlertTitleDemoMode),
+            title: TextState(L10n.stgTxtAlertTitleDemoModeOff),
             message: TextState(L10n.stgTxtAlertMessageDemoModeOff),
-            dismissButton: .default(TextState(L10n.alertBtnOk), action: .send(.alertDismissButtonTapped))
+            dismissButton: .default(TextState(L10n.alertBtnOk), action: .send(.setNavigation(tag: nil)))
         )
     }()
 }
@@ -340,7 +390,9 @@ extension SettingsDomain {
             nfcHealthCardPasswordController: DummyNFCHealthCardPasswordController(),
             appSecurityManager: DummyAppSecurityManager(),
             router: DummyRouter(),
-            userSessionProvider: DummyUserSessionProvider()
+            userSessionProvider: DummyUserSessionProvider(),
+            serviceLocator: ServiceLocator(),
+            userDataStore: DummySessionContainer().localUserStore
         ) { _ in }
 
         static let store = Store(

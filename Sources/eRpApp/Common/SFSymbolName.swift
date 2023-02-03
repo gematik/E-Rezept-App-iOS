@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -55,7 +55,8 @@ public enum SFSymbolName {
     public static let info = "info.circle"
     public static let qrCode = "qrcode"
     public static let person = "person.crop.circle"
-    public static let camera = "camera.viewfinder"
+    public static let camera = "camera"
+    public static let cameraViewfinder = "camera.viewfinder"
     public static let docTextViewfinder = "doc.text.viewfinder"
     public static let plusViewFinder = "plus.viewfinder"
     public static let rightDisclosureIndicator = "chevron.right"

@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -67,12 +67,12 @@ public protocol UserDataStore: AnyObject {
     // MARK: - App Security
 
     /// The app security option
-    var appSecurityOption: AnyPublisher<Int, Never> { get }
+    var appSecurityOption: AnyPublisher<AppSecurityOption, Never> { get }
 
     /// Set the app security option
     /// The new value is published through `appSecurityOption`
     /// - Parameter appSecurityOption:The option selected to secure the app
-    func set(appSecurityOption: Int)
+    func set(appSecurityOption: AppSecurityOption)
 
     /// The current count of failed app authentications
     var failedAppAuthentications: AnyPublisher<Int, Never> { get }
@@ -104,4 +104,7 @@ public protocol UserDataStore: AnyObject {
 
     /// Deletes all data stored in the `UserDataStore`
     func wipeAll()
+
+    ///
+    var hideWelcomeDrawer: Bool { get set }
 }

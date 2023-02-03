@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -19,19 +19,34 @@
 import SwiftUI
 
 struct PrescriptionStatusView: View {
-    let prescription: GroupedPrescription.Prescription
+    let prescription: Prescription
 
     var body: some View {
-        HStack(spacing: 4) {
-            Text(prescription.statusTitle)
-                .foregroundColor(prescription.titleTint)
-            prescription.image
-                .font(Font.caption2.weight(.semibold))
-                .foregroundColor(prescription.imageTint)
+        HStack(alignment: .top, spacing: 8) {
+            HStack(spacing: 4) {
+                Text(prescription.statusTitle)
+                    .font(Font.subheadline.weight(.regular))
+                    .foregroundColor(prescription.titleTint)
+                prescription.image
+                    .font(Font.subheadline.weight(.semibold))
+                    .foregroundColor(prescription.imageTint)
+            }
+            .padding(.init(top: 8, leading: 12, bottom: 8, trailing: 12))
+            .background(prescription.backgroundTint)
+            .cornerRadius(8)
+            .accessibility(identifier: A11y.mainScreen.erxDetailedStatus)
+
+            if let status = prescription.multiplePrescriptionStatus {
+                Text(status)
+                    .font(Font.subheadline.weight(.regular))
+                    .padding(.init(top: 8, leading: 12, bottom: 8, trailing: 12))
+                    .foregroundColor(Colors.systemLabelSecondary)
+                    .background(Colors.backgroundSecondary)
+                    .cornerRadius(8)
+                    .accessibility(identifier: A11y.mainScreen
+                        .erxDetailedMultiplePrescriptionIndex)
+            }
         }
-        .font(Font.footnote)
-        .padding(.init(top: 2, leading: 8, bottom: 2, trailing: 8))
-        .background(prescription.backgroundTint)
-        .cornerRadius(8)
+        .padding(.top, 4)
     }
 }

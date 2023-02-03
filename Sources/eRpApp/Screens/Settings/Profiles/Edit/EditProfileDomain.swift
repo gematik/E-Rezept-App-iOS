@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -27,16 +27,17 @@ import IDP
 
 enum EditProfileDomain {
     typealias Store = ComposableArchitecture.Store<State, Action>
-    typealias Reducer = ComposableArchitecture.Reducer<State, Action, Environment>
+    typealias Reducer = ComposableArchitecture.AnyReducer<State, Action, Environment>
 
     static func cleanup<T>() -> Effect<T, Never> {
-        Effect.cancel(token: Token.self)
+        Effect.cancel(id: Token.self)
     }
 
     enum Token: CaseIterable, Hashable {
         case idpTokenListener
         case idpBiometricKeyIDListener
         case canListener
+        case profileReceived
     }
 
     enum Route: Equatable {
@@ -123,13 +124,15 @@ extension EditProfileDomain {
                     .cancellable(id: Token.idpTokenListener, cancelInFlight: true),
                 environment.subscribeToBiometricKeyIDUpdates(for: state.profileId)
                     .cancellable(id: Token.idpBiometricKeyIDListener, cancelInFlight: true),
-                environment.subscribeToCanUpdates(with: state.profileId),
+                environment.subscribeToCanUpdates(with: state.profileId)
+                    .cancellable(id: Token.canListener, cancelInFlight: true),
                 environment.profileDataStore.fetchProfile(by: state.profileId)
                     .first()
                     .catchToEffect()
                     .map(Action.profileReceived)
                     .receive(on: environment.schedulers.main)
                     .eraseToEffect()
+                    .cancellable(id: Token.profileReceived, cancelInFlight: true)
             )
         case let .tokenReceived(token):
             state.token = token
@@ -374,7 +377,6 @@ extension EditProfileDomain.Environment {
             .receive(on: schedulers.main.animation())
             .map(Action.canReceived)
             .eraseToEffect()
-            .cancellable(id: EditProfileDomain.Token.canListener, cancelInFlight: true)
     }
 
     func subscribeToBiometricKeyIDUpdates(for profileId: UUID) -> Effect<Action, Never> {
@@ -438,6 +440,7 @@ extension EditProfileDomain.Environment {
                     .catch { _ in Just(nil) }
                     .eraseToAnyPublisher()
             }
+            .first()
             .combineLatest(
                 profileUserSession.secureUserStore.keyIdentifier // -> AnyPublisher<Data?, Never>
             )

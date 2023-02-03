@@ -98,6 +98,11 @@ internal enum Asset {
     internal static let womanRedCircle = ImageAsset(name: "woman_redCircle")
     internal static let womanYellowCircle = ImageAsset(name: "woman_yellowCircle")
   }
+  internal enum Main {
+    internal static let checkmarkCloudGreen = ImageAsset(name: "CheckmarkCloudGreen")
+    internal static let cloudSlashGrey = ImageAsset(name: "CloudSlashGrey")
+    internal static let exclamationmarkCloudRed = ImageAsset(name: "ExclamationmarkCloudRed")
+  }
   internal enum Onboarding {
     internal static let apotheker = ImageAsset(name: "Apotheker")
     internal static let appLogo = ImageAsset(name: "AppLogo")

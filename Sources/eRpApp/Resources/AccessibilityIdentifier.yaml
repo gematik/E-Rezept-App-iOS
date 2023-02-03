@@ -292,23 +292,23 @@ orderDetail:
     - puc_txt_subtitle
     - puc_txt_hrCode
 mainScreen:
+  - erx_btn_login
   - erx_btn_refresh
-  - erx_detailed_block
-  - erx_detailed_block_doctor
-  - erx_detailed_block_date
-  - erx_detailed_block_prescriptions
-  - erx_detailed_block_prescription_name
-  - erx_detailed_block_prescription_validity
-  - erx_detailed_block_multiple_prescription_index
-  - erx_detailed_block_redeem_all
-  - erx_detailed_block_status
+  - erx_btn_redeem_prescriptions
+  - erx_detailed_prescription
+  - erx_detailed_prescription_name
+  - erx_detailed_prescription_validity
+  - erx_detailed_multiple_prescription_index
+  - erx_detailed_status
   - erx_btn_profile
+  - erx_img_profile
+  - erx_img_profile_status
+  - erx_txt_empty_title
+  - erx_txt_empty_subtitle
+  - erx_btn_arc_prescription
   - erx_btn_scn_prescription
   - erx_hnt_demo_mode_tour
   - erx_hnt_demo_mode_welcome
-  - erx_hnt_open_scanner
-  - erx_hnt_show_card_wall
-  - erx_hnt_unread_messages
 profileSelection:
   - pro_txt_selection_profile_list
   - pro_txt_selection_profile_list_entry

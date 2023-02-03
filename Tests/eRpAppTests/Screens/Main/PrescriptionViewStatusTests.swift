@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -58,7 +58,7 @@ final class PrescriptionViewStatusTests: XCTestCase {
         // given
         let task = task()
         // when
-        let sut = GroupedPrescription.Prescription(erxTask: task)
+        let sut = Prescription(erxTask: task)
         // then
         expect(sut.viewStatus).to(equal(.open(until: "Noch 28 Tage gültig")))
     }
@@ -67,7 +67,7 @@ final class PrescriptionViewStatusTests: XCTestCase {
         // given
         let task = task(status: .inProgress)
         // when
-        let sut = GroupedPrescription.Prescription(erxTask: task)
+        let sut = Prescription(erxTask: task)
         // then
         expect(sut.viewStatus).to(equal(.open(until: "Noch 28 Tage gültig")))
     }
@@ -76,7 +76,7 @@ final class PrescriptionViewStatusTests: XCTestCase {
         // given
         let task = task(status: .completed, redeemedOn: DemoDate.createDemoDate(.today))
         // when
-        let sut = GroupedPrescription.Prescription(erxTask: task)
+        let sut = Prescription(erxTask: task)
         // then
         expect(sut.viewStatus).to(equal(.archived(message: "Eingelöst: Heute")))
     }
@@ -85,7 +85,7 @@ final class PrescriptionViewStatusTests: XCTestCase {
         // given
         let task = task(acceptedUntil: DemoDate.createDemoDate(.yesterday))
         // when
-        let sut = GroupedPrescription.Prescription(erxTask: task)
+        let sut = Prescription(erxTask: task)
         // then
         expect(sut.viewStatus).to(equal(.open(until: "Nur noch heute als Selbstzahler einlösbar")))
     }
@@ -95,7 +95,7 @@ final class PrescriptionViewStatusTests: XCTestCase {
         let task = task(expiresOn: nil,
                         acceptedUntil: nil)
         // when
-        let sut = GroupedPrescription.Prescription(erxTask: task)
+        let sut = Prescription(erxTask: task)
         // then
         expect(sut.viewStatus).to(equal(.open(until: "Keine Angabe")))
     }
@@ -105,7 +105,7 @@ final class PrescriptionViewStatusTests: XCTestCase {
         let task = task(expiresOn: DemoDate.createDemoDate(.yesterday),
                         acceptedUntil: DemoDate.createDemoDate(.yesterday))
         // when
-        let sut = GroupedPrescription.Prescription(erxTask: task)
+        let sut = Prescription(erxTask: task)
         // then
         expect(sut.viewStatus).to(equal(.archived(message: "Nicht mehr gültig")))
     }
@@ -114,7 +114,7 @@ final class PrescriptionViewStatusTests: XCTestCase {
         // given
         let task = task(status: .completed)
         // when
-        let sut = GroupedPrescription.Prescription(erxTask: task)
+        let sut = Prescription(erxTask: task)
         // then
         expect(sut.viewStatus).to(equal(.archived(message: "Eingelöst: Keine Angabe")))
     }
@@ -123,7 +123,7 @@ final class PrescriptionViewStatusTests: XCTestCase {
         // given
         let task = task(status: .draft)
         // when
-        let sut = GroupedPrescription.Prescription(erxTask: task)
+        let sut = Prescription(erxTask: task)
         // then
         expect(sut.viewStatus).to(equal(.undefined))
     }
@@ -140,7 +140,7 @@ final class PrescriptionViewStatusTests: XCTestCase {
         )
         let task = task(status: .ready, multiplePrescription: multiPrescription)
         // when
-        let sut = GroupedPrescription.Prescription(erxTask: task)
+        let sut = Prescription(erxTask: task)
         // then
         expect(sut.viewStatus).to(equal(.redeem(at: "Einlösbar ab 26.01.2323")))
     }

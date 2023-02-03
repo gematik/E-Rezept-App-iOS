@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -84,13 +84,14 @@ public class UserDefaultsStore: UserDataStore {
 
     // MARK: - App Security
 
-    public var appSecurityOption: AnyPublisher<Int, Never> {
+    public var appSecurityOption: AnyPublisher<AppSecurityOption, Never> {
         userDefaults.publisher(for: \UserDefaults.appSecurityOption)
+            .map { AppSecurityOption(fromId: $0) }
             .eraseToAnyPublisher()
     }
 
-    public func set(appSecurityOption: Int) {
-        userDefaults.appSecurityOption = appSecurityOption
+    public func set(appSecurityOption: AppSecurityOption) {
+        userDefaults.appSecurityOption = appSecurityOption.id
     }
 
     public var failedAppAuthentications: AnyPublisher<Int, Never> {
@@ -147,6 +148,11 @@ public class UserDefaultsStore: UserDataStore {
         }
         userDefaults.removePersistentDomain(forName: bundleIdentifier)
     }
+
+    public var hideWelcomeDrawer: Bool {
+        get { userDefaults.hideWelcomeDrawer }
+        set { userDefaults.hideWelcomeDrawer = newValue }
+    }
 }
 
 extension UserDefaults {
@@ -174,6 +180,8 @@ extension UserDefaults {
     public static let kLatestCompatibleCoreDataModelVersion = "kLatestCompatibleCoreDataModelVersion"
     /// Kex for storing the app start count
     public static let kAppStartCounter = "kAppStartCounter"
+    ///
+    public static let kHideWelcomeDrawer = "kHideWelcomeDrawer"
 
     @objc var serverEnvironmentConfiguration: String? {
         get {
@@ -244,5 +252,10 @@ extension UserDefaults {
         set { set(newValue, forKey: Self.kAppInstallSent) }
     }
 
+    ///
+    @objc public var hideWelcomeDrawer: Bool {
+        get { bool(forKey: Self.kHideWelcomeDrawer) }
+        set { set(newValue, forKey: Self.kHideWelcomeDrawer) }
+    }
     // swiftlint:enable implicit_getter
 }

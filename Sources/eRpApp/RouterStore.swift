@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -44,7 +44,7 @@ class RouterStore<State: Equatable, Action: Equatable, Environment> {
 
     init(
         initialState: State,
-        reducer: Reducer<State, Action, Environment>,
+        reducer: AnyReducer<State, Action, Environment>,
         environment: Environment,
         router: @escaping (Endpoint) -> Effect<Action, Never>
 
@@ -65,10 +65,10 @@ private enum RoutingAction<Action: Equatable, Endpoint: Equatable>: Equatable {
     case action(Action)
 }
 
-extension Reducer where Action: Equatable {
+extension AnyReducer where Action: Equatable {
     fileprivate func routed<Endpoint: Equatable>( // swiftlint:disable:this strict_fileprivate
         by router: @escaping (Endpoint) -> Effect<Action, Never>
-    ) -> Reducer<State, RoutingAction<Action, Endpoint>, Environment> {
+    ) -> AnyReducer<State, RoutingAction<Action, Endpoint>, Environment> {
         .init { state, action, environment in
             switch action {
             case let .action(action):

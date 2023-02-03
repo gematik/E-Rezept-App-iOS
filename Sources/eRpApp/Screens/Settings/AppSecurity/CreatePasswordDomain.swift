@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -16,13 +16,15 @@
 //  
 //
 
+import Combine
 import ComposableArchitecture
+import eRpKit
 import Foundation
 import Zxcvbn
 
 enum CreatePasswordDomain {
     typealias Store = ComposableArchitecture.Store<State, Action>
-    typealias Reducer = ComposableArchitecture.Reducer<State, Action, Environment>
+    typealias Reducer = ComposableArchitecture.AnyReducer<State, Action, Environment>
 
     enum Token: CaseIterable, Hashable {
         case comparePasswords
@@ -82,6 +84,7 @@ enum CreatePasswordDomain {
         let passwordManager: AppSecurityManager
         let schedulers: Schedulers
         let passwordStrengthTester: PasswordStrengthTester
+        let userDataStore: UserDataStore
     }
 
     static let reducer: Reducer = .init { state, action, environment in
@@ -145,6 +148,7 @@ enum CreatePasswordDomain {
                 Effect(value: .closeAfterPasswordSaved)
             )
         case .closeAfterPasswordSaved:
+            environment.userDataStore.set(appSecurityOption: .password)
             return .none
         }
     }
@@ -159,7 +163,8 @@ extension CreatePasswordDomain {
         static let environment = Environment(
             passwordManager: DummyAppSecurityManager(),
             schedulers: Schedulers(),
-            passwordStrengthTester: DefaultPasswordStrengthTester()
+            passwordStrengthTester: DefaultPasswordStrengthTester(),
+            userDataStore: DummySessionContainer().localUserStore
         )
 
         static let store = Store(

@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -41,13 +41,16 @@ public protocol IDPClient {
     /// - Parameter nonce: OpenID parameter nonce of high entropy.
     /// - Parameter document:
     ///     use this DiscoveryDocument to resolve the actual endpoint and verify the response(s) [when applicable]
+    /// - Parameter redirect: Overwrite the common redirect. Used for FastTrack where the redirect differs from normal
+    ///     IDP usage.
     /// - Returns: response with user content statement and signing challenge
-    func requestChallenge(
+    func requestChallenge( // swiftlint:disable:this function_parameter_count
         codeChallenge: String,
         method: IDPCodeChallengeMode,
         state: String,
         nonce: String,
-        using document: DiscoveryDocument
+        using document: DiscoveryDocument,
+        redirect: String?
     ) -> AnyPublisher<IDPChallenge, IDPError>
 
     /// Verify a given challenge with the IDP
@@ -146,4 +149,34 @@ public protocol IDPClient {
     ///   - document: The DiscoveryDocument to resolve the actual endpoint.
     func extAuthVerify(_ verify: IDPExtAuthVerify, using document: DiscoveryDocument)
         -> AnyPublisher<IDPExchangeToken, IDPError>
+}
+
+extension IDPClient {
+    /// Request a challenge from the IDP for a specific scope
+    ///
+    /// - Note: for more info check out 'gemSpec_IDP_Dienst#3.7'
+    ///
+    /// - Parameter codeChallenge: SHA256 hashed verifier code, see `exchange(token:)`.
+    /// - Parameter method: codeChallenge hashing method. Must be S256 to indicate SHA256 hashed value.
+    /// - Parameter state: OAuth parameter state of high entropy.
+    /// - Parameter nonce: OpenID parameter nonce of high entropy.
+    /// - Parameter document:
+    ///     use this DiscoveryDocument to resolve the actual endpoint and verify the response(s) [when applicable]
+    /// - Returns: response with user content statement and signing challenge
+    func requestChallenge(
+        codeChallenge: String,
+        method: IDPCodeChallengeMode,
+        state: String,
+        nonce: String,
+        using document: DiscoveryDocument
+    ) -> AnyPublisher<IDPChallenge, IDPError> {
+        requestChallenge(
+            codeChallenge: codeChallenge,
+            method: method,
+            state: state,
+            nonce: nonce,
+            using: document,
+            redirect: nil
+        )
+    }
 }

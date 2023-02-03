@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -24,8 +24,8 @@ import XCTest
 final class IDPCardWallDomainTests: XCTestCase {
     typealias TestStore = ComposableArchitecture.TestStore<
         IDPCardWallDomain.State,
-        IDPCardWallDomain.State,
         IDPCardWallDomain.Action,
+        IDPCardWallDomain.State,
         IDPCardWallDomain.Action,
         IDPCardWallDomain.Environment
     >
@@ -35,7 +35,7 @@ final class IDPCardWallDomainTests: XCTestCase {
     var mockUserSession: MockUserSession!
     var mockUserSessionProvider: MockUserSessionProvider!
     var mockSecureEnclaveSignatureProvider: MockSecureEnclaveSignatureProvider!
-    var mockNFCSignatureProvider: NFCSignatureProviderMock!
+    var mockNFCSignatureProvider: MockNFCSignatureProvider!
     var mockSessionProvider: MockProfileBasedSessionProvider!
 
     override func setUp() {
@@ -45,7 +45,7 @@ final class IDPCardWallDomainTests: XCTestCase {
         mockUserSession = MockUserSession()
         mockUserSessionProvider = MockUserSessionProvider()
         mockSecureEnclaveSignatureProvider = MockSecureEnclaveSignatureProvider()
-        mockNFCSignatureProvider = NFCSignatureProviderMock()
+        mockNFCSignatureProvider = MockNFCSignatureProvider()
         mockSessionProvider = MockProfileBasedSessionProvider()
     }
 

@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -35,14 +35,16 @@ struct CardWallExtAuthSelectionView: View {
         let error: IDPError?
         let kkList: KKAppDirectory?
         let selectedKK: KKAppDirectory.Entry?
-        let orderEgkVisible: Bool
+        var filteredKKList: KKAppDirectory
+        var searchText: String
 
         init(state: CardWallExtAuthSelectionDomain.State) {
             routeTag = state.route?.tag
             error = state.error
             kkList = state.kkList
             selectedKK = state.selectedKK
-            orderEgkVisible = state.orderEgkVisible
+            filteredKKList = state.filteredKKList
+            searchText = state.searchText
         }
     }
 
@@ -67,28 +69,51 @@ struct CardWallExtAuthSelectionView: View {
                     }
                 } else if let kkList = viewStore.kkList,
                           !kkList.apps.isEmpty {
+                    SearchBar(
+                        searchText: viewStore.binding(get: \.searchText) { .updateSearchText(newString: $0) },
+                        prompt: L10n.cdwTxtExtauthSearchprompt.key
+                    ) {}
+                        .padding()
+
                     List {
                         Section(header: Header {
-                            viewStore.send(.showOrderEgk(true))
+                            viewStore.send(.setNavigation(tag: .egk))
                         }) {
-                            ForEach(kkList.apps) { app in
-                                Button(action: {
-                                    viewStore.send(.selectKK(app))
-                                }, label: {
-                                    HStack {
-                                        Text(app.name)
-                                            .foregroundColor(Color(.label))
+                            if !viewStore.filteredKKList.apps.isEmpty {
+                                ForEach(viewStore.filteredKKList.apps) { app in
+                                    Button(action: {
+                                        viewStore.send(.selectKK(app))
+                                    }, label: {
+                                        HStack {
+                                            Text(app.name)
+                                                .foregroundColor(Color(.label))
 
-                                        Spacer()
+                                            Spacer()
 
-                                        if viewStore.selectedKK?.identifier == app.identifier {
-                                            Image(systemName: SFSymbolName.checkmark)
-                                        }
-                                    }.contentShape(Rectangle())
-                                })
+                                            if viewStore.selectedKK?.identifier == app.identifier {
+                                                Image(systemName: SFSymbolName.checkmark)
+                                            }
+                                        }.contentShape(Rectangle())
+                                    })
+                                }
+                            } else {
+                                VStack {
+                                    Text(L10n.cdwTxtExtauthNoresultsTitle)
+                                        .font(.headline)
+                                        .padding(.bottom, 1)
+                                    Text(L10n.cdwTxtExtauthNoresults)
+                                        .font(.subheadline)
+                                        .foregroundColor(Colors.textSecondary)
+                                        .multilineTextAlignment(.center)
+                                        .fixedSize(horizontal: false, vertical: true)
+                                }
+                                .frame(maxWidth: .infinity)
                             }
                         }
                         .textCase(.none)
+                    }
+                    .onAppear {
+                        viewStore.send(.reset)
                     }
                     .listStyle(GroupedListStyle())
                     .introspectTableView { tableView in
@@ -121,20 +146,34 @@ struct CardWallExtAuthSelectionView: View {
                     a11y: A11y.cardWall.extAuthSelection.cdwBtnExtauthSelectionConfirm,
                     isEnabled: viewStore.state.selectedKK != nil
                 ) {
+                    // workaround: dismiss keyboard to fix safearea bug for iOS 16
+                    if #available(iOS 16, *) {
+                        UIApplication.shared.dismissKeyboard()
+                    }
                     viewStore.send(.confirmKK)
                 }
                 .padding()
 
                 Rectangle()
                     .frame(width: 0, height: 0, alignment: .center)
-                    .sheet(isPresented: viewStore.binding(
-                        get: \.orderEgkVisible,
-                        send: CardWallExtAuthSelectionDomain.Action.showOrderEgk
+                    .sheet(isPresented: Binding<Bool>(
+                        get: { viewStore.state.routeTag == .egk },
+                        set: { show in
+                            if !show {
+                                viewStore.send(.setNavigation(tag: nil))
+                            }
+                        }
                     )) {
                         NavigationView {
-                            OrderHealthCardView {
-                                viewStore.send(.showOrderEgk(false))
-                            }
+                            IfLetStore(
+                                store.scope(
+                                    state: (\CardWallExtAuthSelectionDomain.State.route)
+                                        .appending(path: /CardWallExtAuthSelectionDomain.Route.egk)
+                                        .extract(from:),
+                                    action: CardWallExtAuthSelectionDomain.Action.egkAction(action:)
+                                ),
+                                then: OrderHealthCardView.init(store:)
+                            )
                         }.navigationViewStyle(StackNavigationViewStyle())
                     }
                     .hidden()

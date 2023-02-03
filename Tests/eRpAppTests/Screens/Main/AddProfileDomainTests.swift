@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -25,13 +25,12 @@ import XCTest
 
 final class AddProfileDomainTests: XCTestCase {
     let testScheduler = DispatchQueue.test
-    var mockProfileDataStore: MockProfileDataStore!
-    var mockLocalUserStore: MockUserDataStore!
+    var mockUserProfileService: MockUserProfileService!
 
     typealias TestStore = ComposableArchitecture.TestStore<
         AddProfileDomain.State,
-        AddProfileDomain.State,
         AddProfileDomain.Action,
+        AddProfileDomain.State,
         AddProfileDomain.Action,
         AddProfileDomain.Environment
     >
@@ -39,8 +38,7 @@ final class AddProfileDomainTests: XCTestCase {
     override func setUp() {
         super.setUp()
 
-        mockProfileDataStore = MockProfileDataStore()
-        mockLocalUserStore = MockUserDataStore()
+        mockUserProfileService = MockUserProfileService()
     }
 
     func testStore() -> TestStore {
@@ -52,10 +50,8 @@ final class AddProfileDomainTests: XCTestCase {
             initialState: state,
             reducer: AddProfileDomain.reducer,
             environment: AddProfileDomain.Environment(
-                localUserStore: mockLocalUserStore,
-                profileStore: mockProfileDataStore,
-                schedulers: Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler()),
-                userSession: MockUserSession()
+                userProfileService: mockUserProfileService,
+                schedulers: Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler())
             )
         )
     }
@@ -69,23 +65,23 @@ final class AddProfileDomainTests: XCTestCase {
             )
         )
 
-        mockProfileDataStore.saveProfilesReturnValue = Just(true)
-            .setFailureType(to: LocalStoreError.self)
+        mockUserProfileService.saveProfilesReturnValue = Just(true)
+            .setFailureType(to: UserProfileServiceError.self)
             .eraseToAnyPublisher()
 
-        expect(self.mockProfileDataStore.saveProfilesCalled).to(beFalse())
+        expect(self.mockUserProfileService.saveProfilesCalled).to(beFalse())
         sut.send(.saveProfile(validName))
-        expect(self.mockLocalUserStore.setSelectedProfileIdCalled).to(beFalse())
-        expect(self.mockProfileDataStore.saveProfilesCalled).to(beTrue())
+        expect(self.mockUserProfileService.setSelectedProfileIdCalled).to(beFalse())
+        expect(self.mockUserProfileService.saveProfilesCalled).to(beTrue())
 
-        let savedProfile = mockProfileDataStore.saveProfilesReceivedProfiles!.first!
-        mockLocalUserStore.setSelectedProfileIdClosure = { profileId in
+        let savedProfile = mockUserProfileService.saveProfilesReceivedProfiles!.first!
+        mockUserProfileService.setSelectedProfileIdClosure = { profileId in
             expect(profileId) == savedProfile.id
         }
 
         testScheduler.run()
         sut.receive(.saveProfileReceived(.success(savedProfile.id)))
-        expect(self.mockLocalUserStore.setSelectedProfileIdCalled).to(beTrue())
+        expect(self.mockUserProfileService.setSelectedProfileIdCalled).to(beTrue())
 
         sut.receive(.close)
     }
@@ -100,7 +96,7 @@ final class AddProfileDomainTests: XCTestCase {
         )
 
         sut.send(.saveProfile(invalidName))
-        expect(self.mockProfileDataStore.saveProfilesCalled).to(beFalse())
-        expect(self.mockLocalUserStore.setSelectedProfileIdCalled).to(beFalse())
+        expect(self.mockUserProfileService.saveProfilesCalled).to(beFalse())
+        expect(self.mockUserProfileService.setSelectedProfileIdCalled).to(beFalse())
     }
 }

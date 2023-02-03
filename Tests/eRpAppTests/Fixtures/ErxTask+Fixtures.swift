@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -217,6 +217,14 @@ extension ErxTask {
             endPeriod: "2323-04-26T15:23:21+00:00"
         )
 
+        static let demoNoMultiplePrescription = ErxTask.MultiplePrescription(
+            mark: false,
+            numbering: 0,
+            totalNumber: 0,
+            startPeriod: DemoDate.createDemoDate(.yesterday),
+            endPeriod: DemoDate.createDemoDate(.yesterday)
+        )
+
         static let erxTask1: ErxTask = .init(
             identifier: "2390f983-1e67-11b2-8555-63bf44e44fb8",
             status: .ready,
@@ -265,6 +273,7 @@ extension ErxTask {
             author: "Dr. Dr. med. Carsten van Storchhausen",
             noctuFeeWaiver: true,
             medication: medication3,
+            multiplePrescription: demoNoMultiplePrescription,
             patient: demoPatient,
             practitioner: demoPractitioner,
             organization: demoOrganization,

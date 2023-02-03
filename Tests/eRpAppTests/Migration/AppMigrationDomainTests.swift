@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -25,7 +25,7 @@ import Nimble
 import XCTest
 
 final class AppMigrationDomainTests: XCTestCase {
-    private var mockMigrationManager = MockMigrationManager()
+    private var mockMigrationManager = MockModelMigrating()
     private var mockUserDataStore = MockUserDataStore()
     private var finishedMigrationCalledCount: Int = 0
     private var finishedMigrationCalled: Bool {
@@ -60,8 +60,8 @@ final class AppMigrationDomainTests: XCTestCase {
 
     typealias TestStore = ComposableArchitecture.TestStore<
         AppMigrationDomain.State,
-        AppMigrationDomain.State,
         AppMigrationDomain.Action,
+        AppMigrationDomain.State,
         AppMigrationDomain.Action,
         AppMigrationDomain.Environment
     >
@@ -148,14 +148,13 @@ final class AppMigrationDomainTests: XCTestCase {
         let store = testStore()
         let startVersion: ModelVersion = .profiles
         let endVersion: ModelVersion = .auditEventsInProfile
-        mockMigrationManager.startModelMigrationReturnValue = CurrentValueSubject(startVersion.next()!)
+        mockMigrationManager.startModelMigrationFromReturnValue = CurrentValueSubject(startVersion.next()!)
             .setFailureType(to: MigrationError.self)
             .eraseToAnyPublisher()
 
-        mockUserDataStore.underlyingLastCompatibleCoreDataModelVersion = startVersion
+        mockUserDataStore.underlyingLatestCompatibleModelVersion = startVersion
         store.send(.loadCurrentModelVersion)
-        expect(self.mockUserDataStore.latestCompatibleCoreDataModelVersionCallsCount) == 1
-        expect(self.mockMigrationManager.startModelMigrationCallsCount) == 1
+        expect(self.mockMigrationManager.startModelMigrationFromCallsCount) == 1
         store.receive(.startMigration(from: startVersion)) { state in
             state = .inProgress
         }
@@ -163,14 +162,14 @@ final class AppMigrationDomainTests: XCTestCase {
             state = .finished
         }
         expect(self.mockUserDataStore.latestCompatibleModelVersion) == endVersion
-        expect(self.mockUserDataStore.latestCompatibleCoreDataModelVersionCallsCount) == 2
         expect(self.finishedMigrationCalledCount) == 1
     }
 
     func testMigratingWithErrorAndRetry() {
         let store = testStore()
         let expectedError = MigrationError.initialization(error: LocalStoreError.notImplemented)
-        mockMigrationManager.startModelMigrationReturnValue = Fail(error: expectedError).eraseToAnyPublisher()
+        mockMigrationManager.startModelMigrationFromReturnValue = Fail(error: expectedError).eraseToAnyPublisher()
+        mockUserDataStore.underlyingLatestCompatibleModelVersion = .taskStatus
 
         store.send(.startMigration(from: .taskStatus)) { state in
             state = .inProgress

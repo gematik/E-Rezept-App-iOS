@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -24,17 +24,18 @@ import IDP
 
 enum ProfilesDomain {
     typealias Store = ComposableArchitecture.Store<State, Action>
-    typealias Reducer = ComposableArchitecture.Reducer<State, Action, Environment>
+    typealias Reducer = ComposableArchitecture.AnyReducer<State, Action, Environment>
 
     static func cleanup<T>() -> Effect<T, Never> {
         .concatenate(
-            Effect.cancel(token: Token.self),
+            Effect.cancel(id: Token.self),
             EditProfileDomain.cleanup()
         )
     }
 
     enum Token: CaseIterable, Hashable {
         case loadProfiles
+        case loadProfileId
     }
 
     enum Route: Equatable {
@@ -96,6 +97,7 @@ enum ProfilesDomain {
                     .map(Action.selectedProfileReceived)
                     .receive(on: environment.schedulers.main)
                     .eraseToEffect()
+                    .cancellable(id: Token.loadProfileId, cancelInFlight: true)
             )
         case .unregisterListener:
             return .cancel(id: Token.loadProfiles)

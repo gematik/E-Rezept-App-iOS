@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -18,58 +18,78 @@
 
 import ComposableArchitecture
 import eRpKit
-import Introspect
 import SwiftUI
 
-struct PrescriptionListView: View {
+struct PrescriptionListView<StickyHeader: View>: View {
     let store: PrescriptionListDomain.Store
     @ObservedObject var viewStore: ViewStore<ViewState, PrescriptionListDomain.Action>
 
-    init(store: PrescriptionListDomain.Store) {
+    let header: StickyHeader
+
+    init(store: PrescriptionListDomain.Store, @ViewBuilder header: @escaping () -> StickyHeader) {
         self.store = store
+        self.header = header()
         viewStore = ViewStore(store.scope(state: ViewState.init))
     }
 
     struct ViewState: Equatable {
         let isLoading: Bool
         let showError: Bool
-        let error: ErxRepositoryError?
+        let openPrescription: [Prescription]
+        let error: PrescriptionRepositoryError?
 
         init(state: PrescriptionListDomain.State) {
             isLoading = state.loadingState.isLoading
             showError = state.loadingState.error != nil
             error = state.loadingState.error
+            openPrescription = state.prescriptions.filter { !$0.isArchived }
         }
     }
 
     var body: some View {
-        Group {
-            ListView(store: store)
-                .onAppear {
-                    viewStore.send(.loadLocalGroupedPrescriptions)
-                    viewStore.send(.loadRemoteGroupedPrescriptionsAndSave)
+        RefreshScrollView(
+            store: store,
+            content: {
+                if viewStore.openPrescription.isEmpty {
+                    PrescriptionListEmptyView(store: store)
+                } else {
+                    ListView(store: store)
                 }
-                .alert(
-                    isPresented: viewStore.binding(
-                        get: \.showError,
-                        send: PrescriptionListDomain.Action.alertDismissButtonTapped
-                    )
-                ) {
-                    Alert(
-                        title: Text(L10n.alertErrorTitle),
-                        message: Text(viewStore.error?
-                            .localizedDescriptionWithErrorList ?? "alert_error_message_unknown"),
-                        dismissButton: .default(Text(L10n.alertBtnOk)) {
-                            viewStore.send(.alertDismissButtonTapped)
-                        }
-                    )
+            },
+            header: {
+                header
+            }, action: {
+                viewStore.send(.redeemButtonTapped(
+                    openPrescriptions: viewStore.openPrescription
+                ))
+            }
+        )
+        .onAppear {
+            viewStore.send(.registerActiveUserProfileListener)
+            viewStore.send(.registerSelectedProfileIDListener)
+        }
+        .onDisappear {
+            viewStore.send(.unregisterActiveUserProfileListener)
+            viewStore.send(.unregisterSelectedProfileIDListener)
+        }
+        .alert(
+            isPresented: viewStore.binding(
+                get: \.showError,
+                send: PrescriptionListDomain.Action.alertDismissButtonTapped
+            )
+        ) {
+            Alert(
+                title: Text(L10n.alertErrorTitle),
+                message: Text(viewStore.error?
+                    .localizedDescriptionWithErrorList ?? "alert_error_message_unknown"),
+                dismissButton: .default(Text(L10n.alertBtnOk)) {
+                    viewStore.send(.alertDismissButtonTapped)
                 }
+            )
         }
     }
-}
 
-extension PrescriptionListView {
-    struct ListView: View {
+    private struct ListView: View {
         let store: PrescriptionListDomain.Store
         @ObservedObject var viewStore: ViewStore<ViewState, PrescriptionListDomain.Action>
 
@@ -79,137 +99,103 @@ extension PrescriptionListView {
         }
 
         struct ViewState: Equatable {
-            let isHintViewHidden: Bool
-
-            let groupedPrescriptionsOpen: [GroupedPrescription]
-            let groupedPrescriptionsArchived: [GroupedPrescription]
-
-            let isLoading: Bool
+            let profile: UserProfile?
+            let openPrescription: [Prescription]
+            let hasArchivedPrescriptions: Bool
 
             init(state: PrescriptionListDomain.State) {
-                isHintViewHidden = state.hintState.hint == nil
-                groupedPrescriptionsOpen = state.groupedPrescriptions.filter { !$0.isArchived }
-                groupedPrescriptionsArchived = state.groupedPrescriptions.filter(\.isArchived)
-
-                isLoading = state.loadingState.isLoading
+                profile = state.profile
+                openPrescription = state.prescriptions.filter { !$0.isArchived }
+                hasArchivedPrescriptions = state.prescriptions.first(where: \.isArchived) != nil
             }
         }
 
         var body: some View {
-            ScrollView(.vertical, showsIndicators: true) {
-                VStack(spacing: 0) {
-                    GeometryReader { proxy in
-                        Color.clear.preference(key: ViewOffsetKey.self,
-                                               value: proxy.frame(in: .named("scroll2")).origin.y)
-                    }.frame(width: 0, height: 0)
+            VStack(spacing: 0) {
+                ListHeaderView(store: store)
+                    .padding(.bottom, 4)
 
-                    Image(systemName: SFSymbolName.personCirclePlus)
-                        .padding(.vertical, 4)
-                        .padding()
-                        .hidden()
-
-                    VStack(spacing: 16) {
-                        MainHintView(store: store.scope(
-                            state: { $0.hintState },
-                            action: PrescriptionListDomain.Action.hint(action:)
-                        ))
-                            .hidden(viewStore.isHintViewHidden)
-
-                        CurrentSectionView(isLoading: viewStore.isLoading) {
-                            viewStore.send(.refresh)
-                        }
-
-                        if !viewStore.groupedPrescriptionsOpen.isEmpty {
-                            VStack(spacing: 16) {
-                                ForEach(viewStore.groupedPrescriptionsOpen) { groupedPrescription in
-                                    GroupedPrescriptionView(
-                                        groupedPrescription: groupedPrescription,
-                                        store: store
-                                    )
-                                }
-                            }
-                        } else {
-                            SectionPlaceholderView(text: L10n.erxTxtNoCurrentPrescriptions)
-                        }
-
-                        RedeemSectionView()
-
-                        if !viewStore.groupedPrescriptionsArchived.isEmpty {
-                            VStack(spacing: 16) {
-                                ForEach(viewStore.groupedPrescriptionsArchived) { groupedRedeemedPrescription in
-                                    GroupedPrescriptionView(
-                                        groupedPrescription: groupedRedeemedPrescription,
-                                        store: store
-                                    )
-                                }
-                            }
-                        } else {
-                            SectionPlaceholderView(text: L10n.erxTxtNotYetRedeemed)
+                VStack(spacing: 16) {
+                    ForEach(viewStore.openPrescription) { prescription in
+                        PrescriptionView(
+                            prescription: prescription
+                        ) {
+                            viewStore
+                                .send(.prescriptionDetailViewTapped(selectedPrescription: prescription))
                         }
                     }
                 }
-                .padding([.bottom, .trailing, .leading])
+                .padding()
+
+                if let date = viewStore.profile?.lastSuccessfulSync {
+                    RelativeTimerView(date: date)
+                        .font(.footnote)
+                        .foregroundColor(Colors.textSecondary)
+                }
+
+                if viewStore.hasArchivedPrescriptions {
+                    Button {
+                        viewStore
+                            .send(.showArchivedButtonTapped)
+                    } label: {
+                        Text(L10n.mainBtnArchivedPresc)
+                            .font(.subheadline.weight(.semibold))
+                    }
+                    .accessibilityIdentifier(A11y.mainScreen.erxBtnArcPrescription)
+                    .padding(.top, 28)
+                    .padding(.bottom)
+                }
             }
-            .coordinateSpace(name: "scroll2")
+        }
+    }
+
+    private struct ListHeaderView: View {
+        let store: PrescriptionListDomain.Store
+        @ObservedObject var viewStore: ViewStore<ViewState, PrescriptionListDomain.Action>
+
+        init(store: PrescriptionListDomain.Store) {
+            self.store = store
+            viewStore = ViewStore(store.scope(state: ViewState.init))
         }
 
-        struct CurrentSectionView: View {
-            let isLoading: Bool
-            let buttonPressed: () -> Void
+        struct ViewState: Equatable {
+            let profile: UserProfile?
+            let isConnected: Bool
 
-            var body: some View {
-                HStack {
-                    Text(L10n.erxTxtCurrent).font(Font.title3.bold())
-                    Spacer()
-                    if isLoading {
-                        RefreshLoadingStateView(text: L10n.erxTxtRefreshLoading)
+            init(state: PrescriptionListDomain.State) {
+                profile = state.profile
+                isConnected = profile?.connectionStatus == .connected
+            }
+        }
+
+        var body: some View {
+            HStack {
+                ProfilePictureView(
+                    emoji: viewStore.profile?.emoji,
+                    color: viewStore.profile?.color.background,
+                    connection: viewStore.profile?.connectionStatus,
+                    style: .small
+                ) {
+                    viewStore.send(.profilePictureViewTapped)
+                }
+
+                Spacer()
+
+                Button {
+                    viewStore.send(.refresh)
+                } label: {
+                    if viewStore.isConnected {
+                        Image(systemName: SFSymbolName.refresh)
                     } else {
-                        TertiaryListButton(text: L10n.erxBtnRefresh,
-                                           accessibilityIdentifier: A18n.mainScreen.erxBtnRefresh,
-                                           action: buttonPressed)
+                        Text(L10n.mainBtnLogin)
                     }
                 }
+                .buttonStyle(.quartary)
+                .accessibilityIdentifier(viewStore.isConnected ? A11y.mainScreen.erxBtnRefresh : A11y.mainScreen
+                    .erxBtnLogin)
             }
-        }
-
-        struct RedeemSectionView: View {
-            var body: some View {
-                HStack {
-                    Text(L10n.erxTxtRedeemed).font(Font.title3.bold())
-                    Spacer()
-                }
-                .padding(.top, 24)
-            }
-        }
-
-        /// sourcery: StringAssetInitialized
-        struct SectionPlaceholderView: View {
-            let text: LocalizedStringKey
-            var body: some View {
-                Text(text)
-                    .foregroundColor(Color(.systemGray))
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(RoundedCorner(radius: 16).foregroundColor(Colors.secondary))
-            }
-        }
-
-        /// sourcery: StringAssetInitialized
-        struct RefreshLoadingStateView: View {
-            @ScaledMetric var scale: CGFloat = 1
-            var text: LocalizedStringKey
-
-            var body: some View {
-                HStack {
-                    ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle())
-                        .padding(.trailing, 2)
-                        .scaleEffect(x: scale, y: scale, anchor: .center)
-                    Text(text)
-                        .font(.subheadline)
-                        .foregroundColor(Colors.systemGray)
-                }
-            }
+            .padding(.top, 38)
+            .padding(.horizontal)
         }
     }
 }
@@ -224,7 +210,9 @@ struct PrescriptionListView_Previews: PreviewProvider {
                         reducer: PrescriptionListDomain.Reducer.empty,
                         environment: PrescriptionListDomain.Dummies.environment
                     )
-                )
+                ) {
+                    Text("Header")
+                }
             }.preferredColorScheme(.light)
 
             VStack {
@@ -234,12 +222,16 @@ struct PrescriptionListView_Previews: PreviewProvider {
                         reducer: PrescriptionListDomain.Reducer.empty,
                         environment: PrescriptionListDomain.Dummies.environment
                     )
-                )
+                ) {
+                    Text("Header")
+                }
             }
             .preferredColorScheme(.light)
 
             VStack {
-                PrescriptionListView(store: PrescriptionListDomain.Dummies.store)
+                PrescriptionListView(store: PrescriptionListDomain.Dummies.store) {
+                    Text("Header")
+                }
             }
             .previewDevice("iPod touch (7th generation)")
             .preferredColorScheme(.dark)
@@ -249,10 +241,12 @@ struct PrescriptionListView_Previews: PreviewProvider {
                 PrescriptionListView(
                     store: PrescriptionListDomain.Dummies.storeFor(
                         PrescriptionListDomain.State(
-                            groupedPrescriptions: [GroupedPrescription.Dummies.prescriptions]
+                            prescriptions: Prescription.Dummies.prescriptions
                         )
                     )
-                )
+                ) {
+                    Text("Header")
+                }
             }
             .preferredColorScheme(.light)
 
@@ -260,10 +254,12 @@ struct PrescriptionListView_Previews: PreviewProvider {
                 PrescriptionListView(
                     store: PrescriptionListDomain.Dummies.storeFor(
                         PrescriptionListDomain.State(
-                            groupedPrescriptions: [GroupedPrescription.Dummies.faultyPrescription]
+                            prescriptions: Prescription.Dummies.prescriptions
                         )
                     )
-                )
+                ) {
+                    Text("Header")
+                }
             }
             .preferredColorScheme(.light)
         }

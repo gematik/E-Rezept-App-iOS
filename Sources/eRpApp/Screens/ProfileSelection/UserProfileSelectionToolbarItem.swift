@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -47,7 +47,7 @@ struct UserProfileSelectionToolbarItem: View {
         }
 
         if let fullName = profile.fullName {
-            return "\(profile.name); \(fullName); \(profile.connectionStatus?.accessibilityValue ?? "")"
+            return "\(profile.name); \(fullName); \(profile.connectionStatus.accessibilityValue)"
         }
 
         return profile.name
@@ -59,7 +59,7 @@ struct UserProfileSelectionToolbarItem: View {
                 InitialsImage(
                     backgroundColor: profile.color.background,
                     text: profile.emoji ?? profile.acronym,
-                    statusColor: profile.connectionStatus?.statusColor,
+                    statusColor: profile.connectionStatus.statusColor,
                     size: .large
                 )
                 .accessibilityLabel(L10n.ctlBtnProfileToolbarItem)

@@ -1,6 +1,6 @@
 // swiftlint:disable:this file_name
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -22,6 +22,8 @@
 import SnapshotTesting
 import SwiftUI
 
+/// The default `precision` to use if a specific value is not provided.
+private let defaultPrecision: Float = 0.99
 /// The default `perceptualPrecision` to use if a specific value is not provided.
 private let defaultPerceptualPrecision: Float = 0.97
 
@@ -38,7 +40,8 @@ func assertAppStoreSnapshots<SnapshotContent: View>(
     for view: SnapshotContent,
     backgroundColor: Color,
     colorScheme: ColorScheme,
-    precision: Float = 1,
+    precision: Float = defaultPrecision,
+    perceptualPrecision: Float = defaultPerceptualPrecision,
     configurations _: [String: ViewImageConfig] = appStoreViewConfigs,
     file: StaticString = #file,
     testName: String = #function,
@@ -50,7 +53,11 @@ func assertAppStoreSnapshots<SnapshotContent: View>(
         withTransaction(transaction) {
             assertSnapshot(
                 matching: AppStorePreview(
-                    .image(perceptualPrecision: defaultPerceptualPrecision, layout: .device(config: config)),
+                    .image(
+                        precision: precision,
+                        perceptualPrecision: perceptualPrecision,
+                        layout: .device(config: config)
+                    ),
                     backgroundColor: backgroundColor
                 ) {
                     view
@@ -58,7 +65,7 @@ func assertAppStoreSnapshots<SnapshotContent: View>(
                 .environment(\.colorScheme, colorScheme),
                 as: .image(
                     precision: precision,
-                    perceptualPrecision: defaultPerceptualPrecision,
+                    perceptualPrecision: perceptualPrecision,
                     layout: .device(config: config)
                 ),
                 named: name,

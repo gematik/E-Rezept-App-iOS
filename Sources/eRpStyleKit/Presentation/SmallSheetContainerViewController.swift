@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -65,7 +65,7 @@ class SmallSheetContainerViewController: UIViewController {
                 if translation < 0 {
                     return -pow(abs(translation), Self.upwardsDragDampening)
                 } else {
-                    return translation
+                    return translation + (view.window?.safeAreaInsets.bottom ?? 0)
                 }
             }()
             bottomAnchor

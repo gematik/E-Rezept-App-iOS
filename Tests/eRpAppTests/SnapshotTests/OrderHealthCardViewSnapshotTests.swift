@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -28,14 +28,19 @@ final class OrderHealthCardViewSnapshotTests: XCTestCase {
     }
 
     func testOrderHealthCardView() {
-        let sut = OrderHealthCardView {}
+        let sut = OrderHealthCardView(
+            store: OrderHealthCardDomain.Dummies.storeFor(
+                .init()
+            )
+        )
+
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
     }
 
     func testOrderHealthCardView_WithOptionsSelected() {
-        let sut = OrderHealthCardView(viewModel: OrderHealthCardView.ViewModel.dummyViewModel) {}
+        let sut = OrderHealthCardView(store: OrderHealthCardDomain.Dummies.store)
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())

@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -44,8 +44,8 @@ final class CardWallExtAuthSelectionViewSnapshotTests: XCTestCase {
         let sut = CardWallExtAuthSelectionView(
             store: store(for: .init(
                 kkList: Self.testDirectory,
+                filteredKKList: Self.testDirectory,
                 error: nil,
-                selectedKK: Self.testEntryB,
                 orderEgkVisible: false
             ))
         )
@@ -59,6 +59,19 @@ final class CardWallExtAuthSelectionViewSnapshotTests: XCTestCase {
                 kkList: Self.testDirectory,
                 error: IDPError.internal(error: .notImplemented),
                 selectedKK: Self.testEntryB,
+                orderEgkVisible: false
+            ))
+        )
+
+        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
+    }
+
+    func testNoResult() {
+        let sut = CardWallExtAuthSelectionView(
+            store: store(for: .init(
+                kkList: Self.testDirectory,
+                error: nil,
+                searchText: "Not existing KK",
                 orderEgkVisible: false
             ))
         )

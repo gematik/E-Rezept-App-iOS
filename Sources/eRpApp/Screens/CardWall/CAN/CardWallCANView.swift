@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -145,7 +145,7 @@ struct CardWallCANView: View {
                             .accessibility(identifier: A11y.cardWall.canInput.cdwTxtCanInstruction)
 
                         Button(action: {
-                            viewStore.send(.showEGKOrderInfoView)
+                            viewStore.send(.setNavigation(tag: .egk))
                             UIApplication.shared.dismissKeyboard()
                         }, label: {
                             Text(L10n.cdwBtnNoCan)
@@ -166,9 +166,15 @@ struct CardWallCANView: View {
                             onDismiss: {},
                             content: {
                                 NavigationView {
-                                    OrderHealthCardView {
-                                        viewStore.send(.setNavigation(tag: nil))
-                                    }
+                                    IfLetStore(
+                                        store.scope(
+                                            state: (\CardWallCANDomain.State.route)
+                                                .appending(path: /CardWallCANDomain.Route.egk)
+                                                .extract(from:),
+                                            action: CardWallCANDomain.Action.egkAction(action:)
+                                        ),
+                                        then: OrderHealthCardView.init(store:)
+                                    )
                                     .accentColor(Colors.primary700)
                                     .navigationViewStyle(StackNavigationViewStyle())
                                 }
@@ -183,7 +189,7 @@ struct CardWallCANView: View {
 
                     TertiaryListButton(
                         text: L10n.cdwBtnCanScanner,
-                        imageName: SFSymbolName.camera,
+                        imageName: SFSymbolName.cameraViewfinder,
                         accessibilityIdentifier: A11y.cardWall.canInput.cdwBtnCanScan
                     ) {
                         viewStore.send(.showScannerView)

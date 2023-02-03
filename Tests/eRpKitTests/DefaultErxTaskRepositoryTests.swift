@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -47,8 +47,8 @@ final class DefaultErxTaskRepositoryTests: XCTestCase {
             }
         }
 
-        mockRemoteDataStore.listAuditEventsNextPageForClosure = { previousePage in
-            guard let next = previousePage.next else {
+        mockRemoteDataStore.listAuditEventsNextPageOfClosure = { previousPage in
+            guard let next = previousPage.next else {
                 return Fail(error: RemoteStoreError.notImplemented).eraseToAnyPublisher()
             }
             if next == Fixtures.auditEventPageA.next {
@@ -109,7 +109,7 @@ final class DefaultErxTaskRepositoryTests: XCTestCase {
         }
 
         // medication dispenses
-        mockRemoteDataStore.listMedicationDispensesClosure = { _ in
+        mockRemoteDataStore.listMedicationDispensesForClosure = { _ in
             actualCallOrder.append("listMDRemote")
             return Just([Fixtures.medicationDispense1]).setFailureType(to: RemoteStoreError.self).eraseToAnyPublisher()
         }

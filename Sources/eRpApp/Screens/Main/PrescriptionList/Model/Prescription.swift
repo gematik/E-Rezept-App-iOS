@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -20,245 +20,218 @@ import eRpKit
 import Foundation
 import SwiftUI
 
-extension GroupedPrescription {
-    /// `Prescription` acts as a view model for an `ErxTask` to better fit the presentation logic
-    @dynamicMemberLookup
-    struct Prescription: Equatable, Hashable, Identifiable {
-        enum Status: Equatable {
-            case open(until: String)
-            case redeem(at: String) // swiftlint:disable:this identifier_name
-            case archived(message: String)
-            case undefined
-            case error(message: String)
+/// `Prescription` acts as a view model for an `ErxTask` to better fit the presentation logic
+@dynamicMemberLookup
+struct Prescription: Equatable, Hashable, Identifiable {
+    enum Status: Equatable {
+        case open(until: String)
+        case redeem(at: String) // swiftlint:disable:this identifier_name
+        case archived(message: String)
+        case undefined
+        case error(message: String)
+    }
+
+    let erxTask: ErxTask
+    let prescribedMedication: Medication?
+    let actualMedications: [Medication]
+    // [REQ:gemSpec_FD_eRp:A_21267] direct assignment
+    var type: PrescriptionType = .regular
+    let viewStatus: Status
+
+    enum PrescriptionType {
+        case lowDetail
+        case regular
+        case directAssignment
+        case multiplePrescription
+    }
+
+    var id: String {
+        erxTask.id
+    }
+
+    init(
+        erxTask: ErxTask,
+        date: Date = Date(),
+        dateFormatter: DateFormatter = globals.uiDateFormatter
+    ) {
+        if erxTask.multiplePrescription?.mark == true {
+            type = .multiplePrescription
+        }
+        if erxTask.flowType == .directAssignment ? true : erxTask.id
+            .starts(with: ErxTask.FlowType.Code.kDirectAssignment) {
+            type = .directAssignment
+        }
+        if erxTask.source == .scanner {
+            type = .lowDetail
         }
 
-        let erxTask: ErxTask
-        let prescribedMedication: GroupedPrescription.Medication?
-        let actualMedications: [GroupedPrescription.Medication]
-        // [REQ:gemSpec_FD_eRp:A_21267] direct assignment
-        var type: PrescriptionType = .regular
-        let viewStatus: Status
+        self.erxTask = erxTask
+        actualMedications = erxTask.medicationDispenses.map(Medication.from(medicationDispense:))
 
-        public enum PrescriptionType {
-            case regular
-            case directAssignment
-            case multiplePrescription
+        if let taskMedication = erxTask.medication {
+            prescribedMedication = Medication.from(medication: taskMedication, redeemedOn: erxTask.redeemedOn)
+        } else {
+            prescribedMedication = nil
         }
+        viewStatus = Self.evaluateViewStatus(for: erxTask,
+                                             type: type,
+                                             whenHandedOver: actualMedications.first?
+                                                 .handedOver ?? prescribedMedication?.handedOver,
+                                             date: date,
+                                             dateFormatter: dateFormatter)
+    }
 
-        var id: String {
-            erxTask.id
-        }
+    subscript<A>(dynamicMember keyPath: KeyPath<ErxTask, A>) -> A {
+        erxTask[keyPath: keyPath]
+    }
 
-        init(
-            erxTask: ErxTask,
-            date: Date = Date(),
-            dateFormatter: DateFormatter = globals.uiDateFormatter
-        ) {
-            if erxTask.multiplePrescription?.mark == true {
-                type = .multiplePrescription
-            }
-            if erxTask.flowType == .directAssignment ? true : erxTask.id
-                .starts(with: ErxTask.FlowType.Code.kDirectAssignment) {
-                type = .directAssignment
-            }
-            self.erxTask = erxTask
-            actualMedications = erxTask.medicationDispenses.map(Medication.from(medicationDispense:))
-
-            if let taskMedication = erxTask.medication {
-                prescribedMedication = Medication.from(medication: taskMedication, redeemedOn: erxTask.redeemedOn)
-            } else {
-                prescribedMedication = nil
-            }
-            viewStatus = Self.evaluateViewStatus(for: erxTask,
-                                                 type: type,
-                                                 whenHandedOver: actualMedications.first?
-                                                     .handedOver ?? prescribedMedication?.handedOver,
-                                                 date: date,
-                                                 dateFormatter: dateFormatter)
-        }
-
-        subscript<A>(dynamicMember keyPath: KeyPath<ErxTask, A>) -> A {
-            erxTask[keyPath: keyPath]
-        }
-
-        static func evaluateViewStatus(
-            for erxTask: ErxTask,
-            type: PrescriptionType,
-            whenHandedOver: String?,
-            date: Date = Date(),
-            dateFormatter: DateFormatter = globals.uiDateFormatter
-        ) -> Status {
-            switch erxTask.status {
-            case .ready, .inProgress:
-                guard erxTask.expiresOn != nil || erxTask.acceptedUntil != nil else {
-                    return .open(until: L10n.prscFdTxtNa.text)
-                }
-
-                if type == .multiplePrescription,
-                   erxTask.multiplePrescription?.isRedeemable == false,
-                   let startDate = erxTask.multiplePrescription?.startDate {
-                    let localizedDateString = dateFormatter.string(from: startDate)
-                    return .redeem(at: L10n.erxTxtRedeemAt(localizedDateString).text)
-                }
-
-                if let acceptedUntilDate = erxTask.acceptedUntil?.date,
-                   let remainingDays = date.days(until: acceptedUntilDate),
-                   remainingDays > 0 {
-                    return .open(until: L10n.erxTxtAcceptedUntil(remainingDays).text)
-                }
-
-                if let expiresDate = erxTask.expiresOn?.date,
-                   let remainingDays = date.days(until: expiresDate),
-                   remainingDays > 0 {
-                    return .open(until: L10n.erxTxtExpiresIn(remainingDays).text)
-                }
-
-                return .archived(message: L10n.erxTxtInvalid.text)
-
-            case .completed:
-                if let redeemedOnDate = whenHandedOver?.date {
-                    let localizedDateString = dateFormatter.string(from: redeemedOnDate)
-                    return .archived(message: L10n.dtlTxtMedRedeemedOn(localizedDateString).text)
-                } else {
-                    return .archived(message: L10n.dtlTxtMedRedeemedOn(L10n.prscFdTxtNa.text).text)
-                }
-            case .draft, .cancelled, .undefined:
-                return .undefined
-            case .error:
-                if let authoredOn = erxTask.authoredOn?.date {
-                    let localizedDateString = dateFormatter.string(from: authoredOn)
-                    return .error(message: L10n.dtlTxtMedAuthoredOn(localizedDateString).text)
-                } else {
-                    return .error(message: L10n.dtlTxtMedRedeemedOn(L10n.prscFdTxtNa.text).text)
-                }
-            }
-        }
-
-        var statusMessage: String {
-            guard type != .directAssignment
-            else {
-                return L10n.prscRedeemNoteDirectAssignment.text
+    static func evaluateViewStatus(
+        for erxTask: ErxTask,
+        type: PrescriptionType,
+        whenHandedOver: String?,
+        date: Date = Date(),
+        dateFormatter: DateFormatter = globals.uiDateFormatter
+    ) -> Status {
+        switch erxTask.status {
+        case .ready, .inProgress:
+            if type == .lowDetail,
+               let authoredOn = erxTask.authoredOn?.date {
+                let localizedDateString = dateFormatter.string(from: authoredOn)
+                return .open(until: L10n.erxTxtScannedAt(localizedDateString).text)
             }
 
-            switch viewStatus {
-            case let .open(until: localizedString): return localizedString
-            case let .redeem(at: localizedString): return localizedString
-            case let .archived(message: localizedString): return localizedString
-            case .undefined: return L10n.prscFdTxtNa.text
-            case let .error(message: localizedString): return localizedString
-            }
-        }
-
-        var isArchived: Bool {
-            switch viewStatus {
-            case .archived(message: _): return true
-            case .open(until: _),
-                 .redeem(at: _),
-                 .undefined,
-                 .error:
-                return false
-            }
-        }
-
-        var isRedeemable: Bool {
-            // [REQ:gemSpec_FD_eRp:A_21360] no redeem informations available for flowtype 169
-            guard type != .directAssignment
-            else { return false }
-
-            switch (erxTask.status, viewStatus) {
-            case (_, .archived),
-                 (_, .redeem): return false
-            case (.ready, _): return true
-            case (.draft, _),
-                 (.inProgress, _),
-                 (.cancelled, _),
-                 (.completed, _),
-                 (.undefined, _),
-                 (.error, _): return false
-            }
-        }
-
-        var isDeleteabel: Bool {
-            // [REQ:gemSpec_FD_eRp:A_22102] prevent deletion of tasks with flowtype 169 while not completed
-            guard type != .directAssignment
-            else { return erxTask.status == .completed }
-
-            if isArchived {
-                return true
+            guard erxTask.expiresOn != nil || erxTask.acceptedUntil != nil else {
+                return .open(until: L10n.prscFdTxtNa.text)
             }
 
-            // [REQ:gemSpec_FD_eRp:A_19145] prevent deletion while task is in progress
-            return erxTask.status != .inProgress
-        }
-
-        var errorString: String {
-            if case let .error(.decoding(message)) = erxTask.status {
-                return message
-            } else if case let .error(.unknown(message)) = erxTask.status {
-                return message
+            if type == .multiplePrescription,
+               erxTask.multiplePrescription?.isRedeemable == false,
+               let startDate = erxTask.multiplePrescription?.startDate {
+                let localizedDateString = dateFormatter.string(from: startDate)
+                return .redeem(at: L10n.erxTxtRedeemAt(localizedDateString).text)
             }
-            return "No error message available"
-        }
 
-        /// `true` if the medication has been dispensed and substituted by an alternative medication, `false` otherwise.
-        var isMedicationSubstituted: Bool {
-            guard let medicationPZN = erxTask.medication?.pzn,
-                  let medicationDispPZN = erxTask.medicationDispenses.first?.pzn
-            else { // TODO: change for all medicationDispenses, // swiftlint:disable:this todo
-                return false
+            if let acceptedUntilDate = erxTask.acceptedUntil?.date,
+               let remainingDays = date.days(until: acceptedUntilDate),
+               remainingDays > 0 {
+                return .open(until: L10n.erxTxtAcceptedUntil(remainingDays).text)
             }
-            return medicationPZN != medicationDispPZN
-        }
 
-        var multiplePrescriptionStatus: String? {
-            guard let multiplePrescription = erxTask.multiplePrescription,
-                  multiplePrescription.mark,
-                  let index = multiplePrescription.numbering,
-                  let count = multiplePrescription.totalNumber
-            else { return nil }
+            if let expiresDate = erxTask.expiresOn?.date,
+               let remainingDays = date.days(until: expiresDate),
+               remainingDays > 0 {
+                return .open(until: L10n.erxTxtExpiresIn(remainingDays).text)
+            }
 
-            return "\(index)/\(count)"
+            return .archived(message: L10n.erxTxtInvalid.text)
+
+        case .completed:
+            let redeemedOnDate = uiFormattedString(from: whenHandedOver?.date, dateFormatter: dateFormatter)
+            return .archived(message: L10n.dtlTxtMedRedeemedOn(redeemedOnDate).text)
+        case .draft, .cancelled, .undefined:
+            return .undefined
+        case .error:
+            let authoredOn = uiFormattedString(from: erxTask.authoredOn?.date, dateFormatter: dateFormatter)
+            return .error(message: L10n.dtlTxtMedAuthoredOn(authoredOn).text)
         }
     }
 
-    struct Medication: Equatable, Hashable {
-        let pzn: String?
-        let dose: String?
-        let amount: Decimal?
-        let name: String?
-        let dosageInstruction: String?
-        let dosageForm: String?
-        let handedOver: String?
-        let lot: String?
-        let expiresOn: String?
+    private static func uiFormattedString(
+        from date: Date?,
+        dateFormatter: DateFormatter
+    ) -> String {
+        if let date {
+            let localizedDateString = dateFormatter.string(from: date)
+            return localizedDateString
+        } else {
+            return L10n.prscFdTxtNa.text
+        }
+    }
 
-        static func from(medicationDispense: ErxTask.MedicationDispense) -> Medication {
-            self.init(
-                pzn: medicationDispense.pzn,
-                dose: medicationDispense.dose,
-                amount: medicationDispense.amount,
-                name: medicationDispense.name,
-                dosageInstruction: medicationDispense.dosageInstruction,
-                dosageForm: medicationDispense.dosageForm,
-                handedOver: medicationDispense.whenHandedOver,
-                lot: medicationDispense.lot,
-                expiresOn: medicationDispense.expiresOn
-            )
+    var statusMessage: String {
+        guard type != .directAssignment
+        else {
+            return L10n.prscRedeemNoteDirectAssignment.text
         }
 
-        static func from(medication: ErxTask.Medication, redeemedOn: String?) -> Medication {
-            self.init(
-                pzn: medication.pzn,
-                dose: medication.dose,
-                amount: medication.amount,
-                name: medication.name,
-                dosageInstruction: medication.dosageInstructions,
-                dosageForm: medication.dosageForm,
-                handedOver: redeemedOn,
-                lot: medication.lot,
-                expiresOn: medication.expiresOn
-            )
+        switch viewStatus {
+        case let .open(until: localizedString): return localizedString
+        case let .redeem(at: localizedString): return localizedString
+        case let .archived(message: localizedString): return localizedString
+        case .undefined: return L10n.prscFdTxtNa.text
+        case let .error(message: localizedString): return localizedString
         }
+    }
+
+    var isArchived: Bool {
+        switch viewStatus {
+        case .archived(message: _): return true
+        case .open(until: _),
+             .redeem(at: _),
+             .undefined,
+             .error:
+            return false
+        }
+    }
+
+    var isRedeemable: Bool {
+        // [REQ:gemSpec_FD_eRp:A_21360] no redeem informations available for flowtype 169
+        guard type != .directAssignment
+        else { return false }
+
+        switch (erxTask.status, viewStatus) {
+        case (_, .archived),
+             (_, .redeem): return false
+        case (.ready, _): return true
+        case (.draft, _),
+             (.inProgress, _),
+             (.cancelled, _),
+             (.completed, _),
+             (.undefined, _),
+             (.error, _): return false
+        }
+    }
+
+    var isDeleteabel: Bool {
+        // [REQ:gemSpec_FD_eRp:A_22102] prevent deletion of tasks with flowtype 169 while not completed
+        guard type != .directAssignment
+        else { return erxTask.status == .completed }
+
+        if isArchived {
+            return true
+        }
+
+        // [REQ:gemSpec_FD_eRp:A_19145] prevent deletion while task is in progress
+        return erxTask.status != .inProgress
+    }
+
+    var errorString: String {
+        if case let .error(.decoding(message)) = erxTask.status {
+            return message
+        } else if case let .error(.unknown(message)) = erxTask.status {
+            return message
+        }
+        return "No error message available"
+    }
+
+    /// `true` if the medication has been dispensed and substituted by an alternative medication, `false` otherwise.
+    var isMedicationSubstituted: Bool {
+        guard let medicationPZN = erxTask.medication?.pzn,
+              let medicationDispPZN = erxTask.medicationDispenses.first?.pzn
+        else { // TODO: change for all medicationDispenses, // swiftlint:disable:this todo
+            return false
+        }
+        return medicationPZN != medicationDispPZN
+    }
+
+    var multiplePrescriptionStatus: String? {
+        guard let multiplePrescription = erxTask.multiplePrescription,
+              multiplePrescription.mark,
+              let index = multiplePrescription.numbering,
+              let count = multiplePrescription.totalNumber
+        else { return nil }
+
+        return "\(index)/\(count)"
     }
 }
 
@@ -280,7 +253,7 @@ extension ErxTask.MultiplePrescription {
     }
 }
 
-extension GroupedPrescription.Prescription {
+extension Prescription {
     var statusTitle: LocalizedStringKey {
         guard type != .directAssignment else {
             switch viewStatus {
@@ -304,11 +277,11 @@ extension GroupedPrescription.Prescription {
         }
     }
 
-    var image: Image {
+    var image: Image? {
         guard type != .directAssignment else {
             switch viewStatus {
             case .open, .redeem, .undefined, .error:
-                return Image(systemName: SFSymbolName.clockWarning)
+                return nil
             case .archived:
                 return Image(systemName: SFSymbolName.hourglass)
             }
@@ -317,8 +290,8 @@ extension GroupedPrescription.Prescription {
         switch (erxTask.status, viewStatus) {
         case (.ready, .redeem): return Image(systemName: SFSymbolName.calendarClock)
         case (.ready, .archived): return Image(systemName: SFSymbolName.clockWarning)
-        case (.ready, _): return Image(systemName: SFSymbolName.checkmark)
-        case (.inProgress, _): return Image(systemName: SFSymbolName.hourglass)
+        case (.ready, _): return nil
+        case (.inProgress, _): return nil
         case (.completed, _): return Image(Asset.Prescriptions.checkmarkDouble)
         case (.cancelled, _): return Image(systemName: SFSymbolName.cross)
         case (.draft, _),
@@ -338,7 +311,7 @@ extension GroupedPrescription.Prescription {
              (.ready, .archived): return Colors.systemGray
         case (.ready, .redeem),
              (.inProgress, _): return Colors.yellow900
-        case (.ready, _): return Colors.secondary900
+        case (.ready, _): return Colors.primary900
         case (.cancelled, _): return Colors.red900
         case (.error, _): return Colors.red900
         }
@@ -355,7 +328,7 @@ extension GroupedPrescription.Prescription {
              (.ready, .archived): return Colors.systemGray2
         case (.ready, .redeem),
              (.inProgress, _): return Colors.yellow500
-        case (.ready, _): return Colors.secondary500
+        case (.ready, _): return Colors.primary500
         case (.cancelled, _): return Colors.red500
         case (.error, _): return Colors.red500
         }
@@ -371,16 +344,16 @@ extension GroupedPrescription.Prescription {
              (.completed, _),
              (.ready, .archived): return Colors.secondary
         case (.ready, .redeem),
-             (.inProgress, _): return Colors.yellow100
-        case (.ready, _): return Colors.secondary100
+             (.inProgress, _): return Colors.yellow200
+        case (.ready, _): return Colors.primary100
         case (.cancelled, _): return Colors.red100
         case (.error, _): return Colors.red100
         }
     }
 }
 
-extension GroupedPrescription.Prescription: Comparable {
-    public static func <(lhs: GroupedPrescription.Prescription, rhs: GroupedPrescription.Prescription) -> Bool {
+extension Prescription: Comparable {
+    public static func <(lhs: Prescription, rhs: Prescription) -> Bool {
         compare(lhs: lhs.prescribedMedication, rhs: rhs.prescribedMedication) {
             compare(lhs: lhs.actualMedications.first, rhs: rhs.actualMedications.first) {
                 compare(lhs: lhs.expiresOn, rhs: rhs.expiresOn) {
@@ -408,20 +381,12 @@ extension GroupedPrescription.Prescription: Comparable {
     }
 }
 
-extension GroupedPrescription.Medication: Comparable {
-    public static func <(lhs: GroupedPrescription.Medication, rhs: GroupedPrescription.Medication) -> Bool {
-        switch (lhs.name, rhs.name) {
-        case (_, nil): return true
-        case (nil, _): return false
-        case let (.some(lhsValue), .some(rhsValue)): return lhsValue < rhsValue
-        }
-    }
-}
-
-extension GroupedPrescription.Prescription {
+extension Prescription {
     enum Dummies {
-        static let prescriptionReady = GroupedPrescription.Prescription(erxTask: ErxTask.Demo.erxTaskReady)
-        static let prescriptionError = GroupedPrescription.Prescription(erxTask: ErxTask.Demo.erxTaskError)
-        static let prescriptions = ErxTask.Demo.erxTasks.map { GroupedPrescription.Prescription(erxTask: $0) }
+        static let prescriptionReady = Prescription(erxTask: ErxTask.Demo.erxTaskReady)
+        static let prescriptionError = Prescription(erxTask: ErxTask.Demo.erxTaskError)
+        static let prescriptions = ErxTask.Demo.erxTasks.map { Prescription(erxTask: $0) }
+        static let prescriptionsScanned = ErxTask.Demo.erxTasksScanned
+            .map { Prescription(erxTask: $0) }
     }
 }

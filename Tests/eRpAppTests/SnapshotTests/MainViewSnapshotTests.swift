@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -60,7 +60,7 @@ final class MainViewSnapshotTests: XCTestCase {
     func testMainView_Empty() {
         let sut = MainView(store: store(for: MainDomain.State(
             prescriptionListState: PrescriptionListDomain.State(
-                groupedPrescriptions: []
+                prescriptions: []
             ),
             horizontalProfileSelectionState: HorizontalProfileSelectionDomain.State(
                 profiles: [],
@@ -72,18 +72,29 @@ final class MainViewSnapshotTests: XCTestCase {
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
     }
 
+    func testMainView_Empty_ProfileConnected() {
+        let sut = MainView(store: store(for: MainDomain.State(
+            prescriptionListState: PrescriptionListDomain.State(
+                prescriptions: [],
+                profile: UserProfile.Dummies.profileA
+            ),
+            horizontalProfileSelectionState: HorizontalProfileSelectionDomain.State(
+                profiles: [UserProfile.Dummies.profileA],
+                selectedProfileId: UserProfile.Dummies.profileA.id
+            )
+        )))
+        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
+        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+    }
+
     func testMainView() {
-        let groupedPrescription = GroupedPrescription(
-            id: "1",
-            title: "Hausarztpraxis Dr. Topp-Glücklich",
-            authoredOn: "2020-02-03",
-            prescriptions: [GroupedPrescription.Prescription.Dummies.prescriptionReady],
-            displayType: .fullDetail
-        )
+        let prescription = Prescription.Dummies.prescriptionReady
 
         let sut = MainView(store: store(for: MainDomain.State(
             prescriptionListState: PrescriptionListDomain.State(
-                groupedPrescriptions: [groupedPrescription]
+                prescriptions: [prescription],
+                profile: UserProfile.Dummies.profileA
             ),
             horizontalProfileSelectionState: HorizontalProfileSelectionDomain.Dummies.state
         )))
@@ -94,35 +105,39 @@ final class MainViewSnapshotTests: XCTestCase {
     func testMainView_LowDetailPrescriptions() {
         let sut = MainView(store: store(for: MainDomain.State(
             prescriptionListState: PrescriptionListDomain.State(
-                groupedPrescriptions: [GroupedPrescription.Dummies.scannedPrescriptions]
+                prescriptions: Prescription.Dummies.prescriptionsScanned,
+                profile: UserProfile.Dummies.profileA
             ),
             horizontalProfileSelectionState: HorizontalProfileSelectionDomain.Dummies.state
         )))
-            .frame(width: 320, height: 1600)
 
         assertSnapshots(matching: sut, as: snapshotModi())
     }
 
     func testMainView_ALotOfPrescriptions() {
-        let groupedPrescription = GroupedPrescription(
-            id: "1",
-            title: "Hausarztpraxis Dr. Topp-Glücklich",
-            authoredOn: "2019-12-20",
-            prescriptions: GroupedPrescription.Prescription.Fixtures.prescriptions,
-            displayType: .fullDetail
-        )
+        let prescriptions = Prescription.Fixtures.prescriptions
 
         let sut = MainView(store: store(for: MainDomain.State(
             prescriptionListState: PrescriptionListDomain.State(
-                groupedPrescriptions: Array(
-                    repeating: groupedPrescription,
-                    count: 6
-                )
+                prescriptions: prescriptions,
+                profile: UserProfile.Dummies.profileA
             ),
             horizontalProfileSelectionState: HorizontalProfileSelectionDomain.Dummies.state
         )))
             .frame(width: 320, height: 2000)
 
         assertSnapshots(matching: sut, as: snapshotModi())
+    }
+
+    func testMainView_WelcomeDrawer() {
+        let sut =
+            WelcomeDrawerView(store: store(for: MainDomain.State(
+                prescriptionListState: .init(),
+                horizontalProfileSelectionState: .init()
+            )))
+
+        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
+        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
     }
 }

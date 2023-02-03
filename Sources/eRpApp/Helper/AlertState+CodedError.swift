@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -19,13 +19,18 @@
 import ComposableArchitecture
 
 extension AlertState {
-    init(for error: CodedError, title: StringAsset, primaryButton: Button? = nil) {
+    init(for error: CodedError, title: StringAsset, primaryButton: ButtonState<Action>? = nil) {
         self.init(for: error, title: TextState(title), primaryButton: primaryButton)
     }
 
     // body length will be shorter with dropped iOS 14 support
     // swiftlint:disable:next function_body_length
-    init(for error: CodedError, title: TextState? = nil, primaryButton: Button? = nil, secondaryButton: Button? = nil) {
+    init(
+        for error: CodedError,
+        title: TextState? = nil,
+        primaryButton: ButtonState<Action>? = nil,
+        secondaryButton: ButtonState<Action>? = nil
+    ) {
         let resultTitle: TextState
         let resultDescription: TextState
 
@@ -43,7 +48,7 @@ extension AlertState {
         }
 
         if #available(iOS 15, *) {
-            let buttons: [AlertState<Action>.Button]
+            let buttons: [ButtonState<Action>]
             if let primaryButton = primaryButton {
                 if let secondaryButton = secondaryButton {
                     buttons = [
@@ -126,8 +131,8 @@ enum ErpAlertState<Action: Equatable>: Equatable {
     init(
         for error: CodedError,
         title: StringAsset,
-        primaryButton: AlertState<Action>.Button? = nil,
-        secondaryButton: AlertState<Action>.Button? = nil
+        primaryButton: ButtonState<Action>? = nil,
+        secondaryButton: ButtonState<Action>? = nil
     ) {
         self.init(
             for: error,
@@ -140,8 +145,8 @@ enum ErpAlertState<Action: Equatable>: Equatable {
     init(
         for error: CodedError,
         title: TextState? = nil,
-        primaryButton: AlertState<Action>.Button? = nil,
-        secondaryButton: AlertState<Action>.Button? = nil
+        primaryButton: ButtonState<Action>? = nil,
+        secondaryButton: ButtonState<Action>? = nil
     ) {
         self = .error(
             error: error,
@@ -152,7 +157,7 @@ enum ErpAlertState<Action: Equatable>: Equatable {
     init(
         title: TextState,
         message: TextState? = nil,
-        dismissButton: AlertState<Action>.Button? = nil
+        dismissButton: ButtonState<Action>? = nil
     ) {
         self = .info(.init(title: title, message: message, dismissButton: dismissButton))
     }
@@ -160,8 +165,8 @@ enum ErpAlertState<Action: Equatable>: Equatable {
     init(
         title: TextState,
         message: TextState? = nil,
-        primaryButton: AlertState<Action>.Button,
-        secondaryButton: AlertState<Action>.Button
+        primaryButton: ButtonState<Action>,
+        secondaryButton: ButtonState<Action>
     ) {
         self = .info(.init(
             title: title,

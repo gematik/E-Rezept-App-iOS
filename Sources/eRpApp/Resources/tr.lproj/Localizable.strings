@@ -1,3 +1,4 @@
+
 "add_btn_save" = "Kaydet";
 "add_txt_profile1" = "profiller 1";
 "add_txt_title" = "Ad girin";
@@ -159,6 +160,9 @@
 "cdw_txt_extauth_fallback_description2" = "Beklemek istemiyor musunuz? Sağlık kartı ile kayıt zaten her sağlık sigorta şirketi tarafından desteklenmektedir.";
 "cdw_txt_extauth_fallback_headline" = "Sigorta seçin";
 "cdw_txt_extauth_fallback_title" = "Uygulamayla oturum açın";
+"cdw_txt_extauth_noresults" = "Unter diesem Suchbegriff konnten wir keine Ergebnisse finden.";
+"cdw_txt_extauth_noresults_title" = "Keine Ergebnisse";
+"cdw_txt_extauth_searchprompt" = "Nach Name suchen";
 "cdw_txt_extauth_selection_description" = "Aradığınızı bulamadınız mı? Bu liste sürekli genişletilmektedir. Bir sağlık kartı ile kayıt zaten her sağlık sigorta şirketi tarafından desteklenmektedir.";
 "cdw_txt_extauth_selection_empty_list_description" = "Bu özellik birkaç gün içinde kullanımınıza sunulacaktır. Lütfen daha sonra tekrar deneyin.";
 "cdw_txt_extauth_selection_empty_list_headline" = "Henüz mevcut değil";
@@ -349,6 +353,7 @@
 "erx_txt_redeem_at_%@" = "%@ tarafından kullanılabilir";
 "erx_txt_redeemed" = "Arşiv";
 "erx_txt_refresh_loading" = "Yükleniyor …";
+"erx_txt_scanned_at_%@" = "Gescannt: %@";
 "hint_btn_close" = "Kapat";
 "hint_btn_open_scn" = "Tarayıcıyı aç";
 "hint_btn_try_demo_mode" = "Demo modunu başlat";
@@ -645,12 +650,21 @@
 "kbv_norm_size_n3" = "Standart boyut 3";
 "kbv_norm_size_nb" = "Etkilenmiyor";
 "kbv_norm_size_sonstiges" = "Diğer";
+"main_btn_archived_presc" = "Eingelöste Rezepte";
+"main_btn_login" = "Anmelden";
+"main_btn_redeem" = "Einlösen";
+"main_btn_refresh" = "Aktualisieren";
+"main_empty_txt_connected" = "↓ Ziehen Sie den Screen nach unten, um zu aktualisieren.";
+"main_empty_txt_disconnected" = "Fügen Sie Rezepte über den ⊕ Button in der rechten oberen Ecke hinzu.";
+"main_empty_txt_title" = "Keine Rezepte";
 "main_txt_pendingextauth_cancel" = "İptal et";
 "main_txt_pendingextauth_failed_%@" = "%@ ile kimlik doğrulama başarısız oldu";
 "main_txt_pendingextauth_pending_%@" = "%@ içinde kimlik doğrulaması beklemede";
 "main_txt_pendingextauth_resolving_%@" = "%@ için kimlik doğrulama işleniyor";
 "main_txt_pendingextauth_retry" = "Tekrar et";
 "main_txt_pendingextauth_successful_%@" = "%@ ile kimlik doğrulama başarılı";
+"main_txt_profile_status_offline" = "Status: Verbindung zum Rezeptserver getrennt";
+"main_txt_profile_status_online" = "Status: Profil angemeldet";
 "mgm_fallback_profile_name" = "profil ismi";
 "mgm_txt_alert_message_profile_creation" = "Güncelleme sırasında bir profil oluşturulamadı";
 "mgm_txt_alert_message_up_to_date" = "Uygulama en güncel durumda";
@@ -853,6 +867,7 @@
 "pro_btn_selection_edit" = "Profilleri düzenle";
 "pro_txt_selection_profile_not_connected" = "Oturum açılmadı";
 "pro_txt_selection_title" = "Profil seç";
+"prsc_arch_txt_title" = "Eingelöste Rezepte";
 "prsc_delete_note_direct_assignment" = "Bu reçete sizin için bir tedavinin parçası olarak kullanılacaktır ve tedavi sırasında silinemez.";
 "prsc_dtl_btn_direct_assignment" = "doğrudan atama";
 "prsc_dtl_btn_share_title" = "Bölmek";
@@ -1052,6 +1067,7 @@
 "stg_txt_alert_message_demo_mode_off" = "Demo modu devre dışı";
 "stg_txt_alert_message_demo_mode_on" = "Demo modu etkin. Bir sağlık kartına veya internet bağlantısına ihtiyacınız yoktur. Görüntülenen test reçeteleri eczanede kullanılamaz.";
 "stg_txt_alert_title_demo_mode" = "Bir keşif turuna ne dersiniz?";
+"stg_txt_alert_title_demo_mode_off" = "Demo-Modus deaktiviert";
 "stg_txt_audit_events_last_updated_%@" = "Son güncelleme: %@";
 "stg_txt_audit_events_missing_date" = "Zaman damgası yok";
 "stg_txt_audit_events_missing_description" = "Belirtilmemiş";
@@ -1173,3 +1189,7 @@
 "tab_txt_orders" = "emirler";
 "tab_txt_pharmacy_search" = "Eczaneler";
 "tab_txt_settings" = "Ayarlar";
+"wlcd_btn_decline" = "Vielleicht später";
+"wlcd_btn_login" = "Anmelden";
+"wlcd_txt_footer" = "Um Rezepte digital von Ihrer Praxis zu empfangen, müssen Sie angemeldet sein.";
+"wlcd_txt_header" = "Rezepte digital empfangen?";

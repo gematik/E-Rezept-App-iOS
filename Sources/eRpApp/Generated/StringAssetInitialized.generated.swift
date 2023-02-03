@@ -115,16 +115,6 @@ extension OptInCell {
         self.init(text: text.key, isOn: isOn)
     }
 }
-extension PrescriptionListView.ListView.RefreshLoadingStateView {
-    init(scale: CGFloat = 1, text: StringAsset) {
-        self.init(scale: scale, text: text.key)
-    }
-}
-extension PrescriptionListView.ListView.SectionPlaceholderView {
-    init(text: StringAsset) {
-        self.init(text: text.key)
-    }
-}
 extension PrimaryTextButton {
     init(text: StringAsset, a11y: String, image: Image? = nil, isEnabled: Bool = true, action: @escaping () -> Void) {
         self.init(text: text.key, a11y: a11y, image: image, isEnabled: isEnabled, action: action)

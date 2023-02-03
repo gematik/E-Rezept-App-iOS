@@ -1,0 +1,105 @@
+// sourcery:file:eRpApp/Generated/Domains+Analytics
+
+import Foundation
+
+{% macro DomainRouteEnum stateType %}
+{% typed stateType as Enum %}
+{% for case in stateType.cases %}
+    {% if case.associatedValues[0].typeName|default:""|hasSuffix:"ErpAlertState<Action>" %}
+            case let .{{ case.name }}(.error(error, _)): 
+                return error.analyticsName
+    {% endif %}
+    {% if not case.name|contains:"debug" %}
+        {% if case.hasAssociatedValue and case.associatedValues[0].actualTypeName|hasSuffix:"Domain.State" %}
+            case let .{{ case.name }}(state: state):
+                return state.routeName() ?? route.tag.analyticsName
+        {% else %}
+        {% if not case.annotations.AnalyticsState %}
+            case .{{ case.name }}:
+                return route.tag.analyticsName
+        {% else %}
+            case .{{ case.name }}:
+                return {{ case.annotations.AnalyticsState }}.routeName() ?? route.tag.analyticsName
+        {% endif %}
+        {% endif %}
+     {% else %}
+            case .{{ case.name }}:
+                return nil
+     {% endif %}
+{% endfor %}
+{% endmacro %}
+
+{% macro DomainRoute stateType %}
+{% typed stateType as Type %}
+extension {{ stateType.name }} {
+    func routeName() -> String? {
+        {% if stateType.kind == "enum" %}
+        {% typed stateType as Enum %}
+        let route = self
+        switch route {
+            {% call DomainRouteEnum stateType %}
+        }
+        {% else %}
+            {% for property in stateType.allVariables where property.name == "route" %}
+                {% if property.isOptional %}
+        guard let route = route else {
+            return nil
+        }
+                {% endif %}
+        switch {{ property.name }} {
+                {% call DomainRouteEnum property.type %}
+        }
+            {% endfor %}
+        {% set FoundSomething %}{% for property in stateType.allVariables where property.name == "route" %}found{% endfor %}{% endset %}
+        {% if not FoundSomething == "found" %}
+            return nil
+        {% endif %}
+        {% endif %}
+    }
+}
+
+{% endmacro %}
+
+{% for type in types.structs %}
+    {% if type.localName == "State" and type.parentName|default:"abc"|hasSuffix:"Domain" and not type.parentName|contains:"Debug" %}
+        {% call DomainRoute type %}
+    {% endif %}
+{% endfor %}
+
+{% for type in types.enums %}
+    {% if type.localName == "State" and type.parentName|default:"abc"|hasSuffix:"Domain" and not type.parentName|contains:"Debug" %}
+        {% call DomainRoute type %}
+    {% endif %}
+{% endfor %}
+
+{% macro GenerateTags routeType %}
+{% typed routeType as Enum %}
+extension {{ routeType.name }}.Tag {
+    var analyticsName: String {
+        switch self {
+        {% for case in routeType.cases %}
+            case .{{ case.name }}: 
+            {% if case.annotations.AnalyticsScreen %}
+                return Analytics.Screens.{{ case.annotations.AnalyticsScreen }}.name
+            {% else %}
+                return "{{ case.name }}"
+            {% endif %}
+        {% endfor %}
+        }
+    }
+}
+{% endmacro %}
+
+{% for routeType in types.enums where routeType.localName == "Route" and routeType.parentName|default:""|hasSuffix:"Domain" %}
+    {% if not routeType.parentName|contains:"Debug" %}
+        {% call GenerateTags routeType %}
+    {% endif %}
+{% endfor %}
+
+{% for routeType in types.enums where routeType.localName == "State" and routeType.parentName|default:""|hasSuffix:"Domain" %}
+    {% if not routeType.parentName|contains:"Debug" %}
+        {% call GenerateTags routeType %}
+    {% endif %}
+{% endfor %}
+
+// sourcery:end

@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -27,8 +27,8 @@ import XCTest
 final class HealthCardPasswordReadCardDomainTests: XCTestCase {
     typealias TestStore = ComposableArchitecture.TestStore<
         HealthCardPasswordReadCardDomain.State,
-        HealthCardPasswordReadCardDomain.State,
         HealthCardPasswordReadCardDomain.Action,
+        HealthCardPasswordReadCardDomain.State,
         HealthCardPasswordReadCardDomain.Action,
         HealthCardPasswordReadCardDomain.Environment
     >

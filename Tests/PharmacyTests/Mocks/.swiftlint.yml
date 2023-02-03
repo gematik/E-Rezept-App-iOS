@@ -1,4 +1,0 @@
-disabled_rules:
-  - discouraged_optional_collection
-  - large_tuple
-  - identifier_name

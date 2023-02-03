@@ -1,3 +1,4 @@
+
 "add_btn_save" = "Зберегти";
 "add_txt_profile1" = "профілі 1";
 "add_txt_title" = "Введіть ім'я";
@@ -159,6 +160,9 @@
 "cdw_txt_extauth_fallback_description2" = "Не хочете чекати? Вхід за допомогою картки здоров'я вже підтримує кожна лікарняна каса.";
 "cdw_txt_extauth_fallback_headline" = "Виберіть страховку";
 "cdw_txt_extauth_fallback_title" = "Увійдіть за допомогою застосунку";
+"cdw_txt_extauth_noresults" = "Unter diesem Suchbegriff konnten wir keine Ergebnisse finden.";
+"cdw_txt_extauth_noresults_title" = "Keine Ergebnisse";
+"cdw_txt_extauth_searchprompt" = "Nach Name suchen";
 "cdw_txt_extauth_selection_description" = "Не знайшли те, що шукали? Цей список постійно розширюється. Реєстрацію за допомогою картки здоров'я вже підтримує кожна лікарняна каса.";
 "cdw_txt_extauth_selection_empty_list_description" = "Ця функція буде доступна вам через кілька днів. Повторіть спробу пізніше.";
 "cdw_txt_extauth_selection_empty_list_headline" = "Ще немає в наявності";
@@ -349,6 +353,7 @@
 "erx_txt_redeem_at_%@" = "Можна отримати від %@";
 "erx_txt_redeemed" = "Архів";
 "erx_txt_refresh_loading" = "Триває завантаження…";
+"erx_txt_scanned_at_%@" = "Gescannt: %@";
 "hint_btn_close" = "Закрити";
 "hint_btn_open_scn" = "Відкрити сканер";
 "hint_btn_try_demo_mode" = "Запустити демо-режим";
@@ -645,12 +650,21 @@
 "kbv_norm_size_n3" = "Стандартний розмір 3";
 "kbv_norm_size_nb" = "Не стосується";
 "kbv_norm_size_sonstiges" = "Різне";
+"main_btn_archived_presc" = "Eingelöste Rezepte";
+"main_btn_login" = "Anmelden";
+"main_btn_redeem" = "Einlösen";
+"main_btn_refresh" = "Aktualisieren";
+"main_empty_txt_connected" = "↓ Ziehen Sie den Screen nach unten, um zu aktualisieren.";
+"main_empty_txt_disconnected" = "Fügen Sie Rezepte über den ⊕ Button in der rechten oberen Ecke hinzu.";
+"main_empty_txt_title" = "Keine Rezepte";
 "main_txt_pendingextauth_cancel" = "Скасувати";
 "main_txt_pendingextauth_failed_%@" = "Помилка автентифікації за допомогою %@";
 "main_txt_pendingextauth_pending_%@" = "Очікування автентифікації за допомогою %@";
 "main_txt_pendingextauth_resolving_%@" = "Триває обробка автентифікації для %@";
 "main_txt_pendingextauth_retry" = "Повторити";
 "main_txt_pendingextauth_successful_%@" = "Аутентифікацію з %@ виконано успішно";
+"main_txt_profile_status_offline" = "Status: Verbindung zum Rezeptserver getrennt";
+"main_txt_profile_status_online" = "Status: Profil angemeldet";
 "mgm_fallback_profile_name" = "Ім'я профілю";
 "mgm_txt_alert_message_profile_creation" = "Під час оновлення не вдалося створити профіль.";
 "mgm_txt_alert_message_up_to_date" = "Застосунок вже оновлено";
@@ -853,6 +867,7 @@
 "pro_btn_selection_edit" = "Редагувати профілі";
 "pro_txt_selection_profile_not_connected" = "Не в системі";
 "pro_txt_selection_title" = "Вибрати профіль";
+"prsc_arch_txt_title" = "Eingelöste Rezepte";
 "prsc_delete_note_direct_assignment" = "Цей рецепт буде використано для вас як частина лікування, і його не можна видалити під час лікування.";
 "prsc_dtl_btn_direct_assignment" = "пряме доручення";
 "prsc_dtl_btn_share_title" = "Спліт";
@@ -1052,6 +1067,7 @@
 "stg_txt_alert_message_demo_mode_off" = "Демо-режим деактивовано";
 "stg_txt_alert_message_demo_mode_on" = "Демо-режим активний. Вам не потрібна картка здоров'я або підключення до Інтернету. Відображувані тестові рецепти не можна погасити в аптеці.";
 "stg_txt_alert_title_demo_mode" = "Бажаєте ознайомчий тур?";
+"stg_txt_alert_title_demo_mode_off" = "Demo-Modus deaktiviert";
 "stg_txt_audit_events_last_updated_%@" = "Останнє оновлення: %@";
 "stg_txt_audit_events_missing_date" = "Без позначки часу";
 "stg_txt_audit_events_missing_description" = "Дані відсутні";
@@ -1173,3 +1189,7 @@
 "tab_txt_orders" = "замовлення";
 "tab_txt_pharmacy_search" = "Аптеки";
 "tab_txt_settings" = "Налаштування";
+"wlcd_btn_decline" = "Vielleicht später";
+"wlcd_btn_login" = "Anmelden";
+"wlcd_txt_footer" = "Um Rezepte digital von Ihrer Praxis zu empfangen, müssen Sie angemeldet sein.";
+"wlcd_txt_header" = "Rezepte digital empfangen?";

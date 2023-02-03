@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -27,19 +27,22 @@ import UIKit
 
 enum CardWallReadCardHelpDomain {
     enum State: Int {
+        // sourcery: AnalyticsScreen = cardWallReadCardHelp1
         case first
+        // sourcery: AnalyticsScreen = cardWallReadCardHelp2
         case second
+        // sourcery: AnalyticsScreen = cardWallReadCardHelp3
         case third
     }
 }
 
 enum CardWallReadCardDomain {
     typealias Store = ComposableArchitecture.Store<State, Action>
-    typealias Reducer = ComposableArchitecture.Reducer<State, Action, Environment>
+    typealias Reducer = ComposableArchitecture.AnyReducer<State, Action, Environment>
 
     /// Provides an Effect that need to run whenever the state of this Domain is reset to nil
     static func cleanup<T>() -> Effect<T, Never> {
-        Effect.cancel(token: CardWallReadCardDomain.Token.self)
+        Effect.cancel(id: CardWallReadCardDomain.Token.self)
     }
 
     enum Token: CaseIterable, Hashable {
@@ -49,6 +52,7 @@ enum CardWallReadCardDomain {
 
     enum Route: Equatable {
         case alert(ErpAlertState<Action>)
+        // Screen tracking handled inside
         case help(CardWallReadCardHelpDomain.State)
     }
 

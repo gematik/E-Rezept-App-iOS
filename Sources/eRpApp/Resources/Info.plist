@@ -17,9 +17,11 @@
 	<key>CFBundlePackageType</key>
 	<string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.4.9</string>
+	<string>1.5.0</string>
 	<key>CFBundleVersion</key>
 	<string>$(GEMATIK_BUNDLE_VERSION)</string>
+	<key>CSDisableAutostart</key>
+	<true/>
 	<key>GEMATIKSourceVersion</key>
 	<string>$(GEMATIK_SOURCE_VERSION)</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
@@ -221,6 +223,8 @@
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>Your location is only required if you want to find pharmacies around you</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Your location is only required if you want to find pharmacies around you</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>Your location is only required if you want to find pharmacies around you</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>

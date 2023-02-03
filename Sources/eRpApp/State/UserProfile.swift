@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -37,48 +37,52 @@ struct UserProfile: ProfileCellModel, Equatable, Identifiable {
     var lastSuccessfulSync: Date? { profile.lastAuthenticated }
 
     let profile: Profile
-    let connectionStatus: ProfileConnectionStatus?
+    let connectionStatus: ProfileConnectionStatus
+    let activityIndicating: Bool
 
-    init(profile: Profile, connectionStatus: ProfileConnectionStatus?) {
+    init(profile: Profile, connectionStatus: ProfileConnectionStatus, activityIndicating: Bool) {
         self.profile = profile
         acronym = profile.name.acronym()
         self.connectionStatus = connectionStatus
+        self.activityIndicating = activityIndicating
     }
 }
 
 extension UserProfile {
-    init(from profile: Profile, token: IDPToken?) {
-        self.init(profile: profile,
-                  connectionStatus: Self.connectionStatus(
-                      for: token, lastAuthenticated:
-                      profile.lastAuthenticated
-                  ))
+    init(from profile: Profile, token: IDPToken?, activityIndicating: Bool = false) {
+        self.init(
+            profile: profile,
+            connectionStatus: Self.connectionStatus(for: token, lastAuthenticated: profile.lastAuthenticated),
+            activityIndicating: activityIndicating
+        )
     }
 
-    init(from profile: Profile, isAuthenticated: Bool) {
-        self.init(profile: profile,
-                  connectionStatus: Self.connectionStatus(
-                      for: isAuthenticated,
-                      lastAuthenticated: profile.lastAuthenticated
-                  ))
+    init(from profile: Profile, isAuthenticated: Bool, activityIndicating: Bool = false) {
+        self.init(
+            profile: profile,
+            connectionStatus: Self.connectionStatus(for: isAuthenticated, lastAuthenticated: profile.lastAuthenticated),
+            activityIndicating: activityIndicating
+        )
     }
 
     struct SSOTokenHeader: Claims, Decodable {
         public let exp: Date?
     }
 
-    private static func connectionStatus(for isAuthenticated: Bool,
-                                         lastAuthenticated: Date?) -> ProfileConnectionStatus? {
+    private static func connectionStatus(
+        for isAuthenticated: Bool,
+        lastAuthenticated: Date?
+    ) -> ProfileConnectionStatus {
         if isAuthenticated {
             return .connected
         }
         if lastAuthenticated != nil {
             return .disconnected
         }
-        return nil
+        return .never
     }
 
-    private static func connectionStatus(for token: IDPToken?, lastAuthenticated: Date?) -> ProfileConnectionStatus? {
+    private static func connectionStatus(for token: IDPToken?, lastAuthenticated: Date?) -> ProfileConnectionStatus {
         if let ssoToken = token?.ssoToken?.data(using: .utf8) {
             let elements = ssoToken.split(separator: 0x2E, omittingEmptySubsequences: false)
             if let header = elements.first,
@@ -93,9 +97,8 @@ extension UserProfile {
         }
         if lastAuthenticated != nil {
             return .disconnected
-        } else {
-            return nil
         }
+        return .never
     }
 }
 
@@ -142,6 +145,20 @@ extension UserProfile {
                 erxTasks: []
             ),
             isAuthenticated: false
+        )
+        static let profileD = UserProfile(
+            from: Profile(
+                name: "Everloading Evan",
+                identifier: UUID(),
+                created: Date(),
+                insuranceId: nil,
+                color: .yellow,
+                emoji: "🎃",
+                lastAuthenticated: Date().addingTimeInterval(-60 * 60 * 1.5),
+                erxTasks: []
+            ),
+            isAuthenticated: true,
+            activityIndicating: true
         )
     }
 }

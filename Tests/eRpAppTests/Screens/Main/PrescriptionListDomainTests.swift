@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -31,12 +31,13 @@ final class PrescriptionListDomainTests: XCTestCase {
 
     typealias TestStore = ComposableArchitecture.TestStore<
         PrescriptionListDomain.State,
-        PrescriptionListDomain.State,
         PrescriptionListDomain.Action,
+        PrescriptionListDomain.State,
         PrescriptionListDomain.Action,
         PrescriptionListDomain.Environment
     >
 
+    var mockPrescriptionRepository: MockPrescriptionRepository!
     var userSession: MockUserSession!
     var userDataStore: MockUserDataStore {
         userSession.mockUserDataStore
@@ -45,72 +46,58 @@ final class PrescriptionListDomainTests: XCTestCase {
     override func setUp() {
         super.setUp()
 
+        mockPrescriptionRepository = MockPrescriptionRepository()
         userSession = MockUserSession()
     }
 
-    private func testStore(for groupedPrescriptionStore: GroupedPrescriptionRepository,
-                           isAuthenticated: Bool = true) -> TestStore {
-        let schedulers = Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler())
-
-        let loginHandler = LoginHandlerMock()
-        loginHandler.isAuthenticatedOrAuthenticateReturnValue =
-            Just(LoginResult.success(isAuthenticated))
-                .eraseToAnyPublisher()
-
-        userSession.isLoggedIn = isAuthenticated
-
-        return TestStore(
+    private func testStore(for prescriptionRepository: PrescriptionRepository) -> TestStore {
+        .init(
             initialState: PrescriptionListDomain.State(),
             reducer: PrescriptionListDomain.domainReducer,
             environment: PrescriptionListDomain.Environment(
                 router: MockRouting(),
                 userSession: userSession,
+                userProfileService: DummyUserProfileService(),
                 serviceLocator: ServiceLocator(),
                 accessibilityAnnouncementReceiver: { _ in },
-                groupedPrescriptionStore: groupedPrescriptionStore,
-                schedulers: schedulers,
-                fhirDateFormatter: FHIRDateFormatter.shared,
-                loginHandler: loginHandler
+                prescriptionRepository: prescriptionRepository,
+                schedulers: Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler()),
+                fhirDateFormatter: FHIRDateFormatter.shared
             )
         )
     }
 
-    private func testStore(groups: [GroupedPrescription],
-                           auditEvents _: [ErxAuditEvent],
-                           isAuthenticated: Bool = true) -> TestStore {
-        testStore(for: MockGroupedPrescriptionRepository(groups: groups),
-                  isAuthenticated: isAuthenticated)
-    }
-
-    func testLoadingPrescriptionsFromDiskTwoTimes() {
+    func testLoadingPrescriptionsLocalTwoTimes() {
         // given
-        let input: [GroupedPrescription] = []
-        let store = testStore(groups: input,
-                              auditEvents: [])
+        let input: [Prescription] = []
+        mockPrescriptionRepository.loadLocalReturnValue = Just(input)
+            .setFailureType(to: PrescriptionRepositoryError.self)
+            .eraseToAnyPublisher()
+        let store = testStore(for: mockPrescriptionRepository)
 
-        let expected: LoadingState<[GroupedPrescription], ErxRepositoryError> =
+        let expected: LoadingState<[Prescription], PrescriptionRepositoryError> =
             .value(input)
 
         // when
-        store.send(.loadLocalGroupedPrescriptions) {
+        store.send(.loadLocalPrescriptions) {
             // then
             $0.loadingState = .loading([])
         }
         // when
         testScheduler.advance()
-        store.receive(.loadLocalGroupedPrescriptionsReceived(expected)) { state in
+        store.receive(.loadLocalPrescriptionsReceived(expected)) { state in
             // then
             state.loadingState = expected
-            state.groupedPrescriptions = input
+            state.prescriptions = input
         }
         // when
-        store.send(.loadLocalGroupedPrescriptions) {
+        store.send(.loadLocalPrescriptions) {
             // then
             $0.loadingState = .loading(input)
         }
         // when
         testScheduler.advance()
-        store.receive(.loadLocalGroupedPrescriptionsReceived(expected)) { state in
+        store.receive(.loadLocalPrescriptionsReceived(expected)) { state in
             // then
             state.loadingState = expected
         }
@@ -118,32 +105,36 @@ final class PrescriptionListDomainTests: XCTestCase {
 
     func testLoadingPrescriptionsFromCloudTwoTimesWhenAuthenticated() {
         // given
-        let input = [GroupedPrescription.Dummies.prescriptions]
-        let store = testStore(groups: input,
-                              auditEvents: [])
+        let input = Prescription.Fixtures.prescriptions
 
-        let expected: LoadingState<[GroupedPrescription], ErxRepositoryError> =
+        let returnValue = Just(PrescriptionRepositoryLoadRemoteResult.prescriptions(input))
+            .setFailureType(to: PrescriptionRepositoryError.self)
+            .eraseToAnyPublisher()
+        mockPrescriptionRepository.silentLoadRemoteForReturnValue = returnValue
+        let store = testStore(for: mockPrescriptionRepository)
+
+        let expected: LoadingState<[Prescription], PrescriptionRepositoryError> =
             .value(input)
         // when
-        store.send(.loadRemoteGroupedPrescriptionsAndSave) {
+        store.send(.loadRemotePrescriptionsAndSave) {
             // then
             $0.loadingState = .loading(nil)
         }
         // when
         testScheduler.advance()
-        store.receive(.loadRemoteGroupedPrescriptionsAndSaveReceived(expected)) { state in
+        store.receive(.loadRemotePrescriptionsAndSaveReceived(expected)) { state in
             // then
             state.loadingState = expected
-            state.groupedPrescriptions = input
+            state.prescriptions = input
         }
         // when
-        store.send(.loadRemoteGroupedPrescriptionsAndSave) {
+        store.send(.loadRemotePrescriptionsAndSave) {
             // then
             $0.loadingState = .loading(nil)
         }
         // when
         testScheduler.advance()
-        store.receive(.loadRemoteGroupedPrescriptionsAndSaveReceived(expected)) { state in
+        store.receive(.loadRemotePrescriptionsAndSaveReceived(expected)) { state in
             // then
             state.loadingState = expected
         }
@@ -151,32 +142,33 @@ final class PrescriptionListDomainTests: XCTestCase {
 
     func testLoadingPrescriptionsFromCloudTwoTimesWhenNotAuthenticated() {
         // given
-        let input = [GroupedPrescription.Dummies.prescriptions]
-        let store = testStore(groups: input,
-                              auditEvents: [],
-                              isAuthenticated: false)
+        mockPrescriptionRepository.silentLoadRemoteForReturnValue = Just(.notAuthenticated)
+            .setFailureType(to: PrescriptionRepositoryError.self)
+            .eraseToAnyPublisher()
+        let store = testStore(for: mockPrescriptionRepository)
 
-        let expected: LoadingState<[GroupedPrescription], ErxRepositoryError> =
+        let expected: LoadingState<[Prescription], PrescriptionRepositoryError> =
             .value([])
+
         // when
-        store.send(.loadRemoteGroupedPrescriptionsAndSave) {
+        store.send(.loadRemotePrescriptionsAndSave) {
             // then
             $0.loadingState = .loading(nil)
         }
         // when
         testScheduler.advance()
-        store.receive(.loadRemoteGroupedPrescriptionsAndSaveReceived(expected)) { state in
+        store.receive(.loadRemotePrescriptionsAndSaveReceived(expected)) { state in
             // then
             state.loadingState = expected
         }
         // when
-        store.send(.loadRemoteGroupedPrescriptionsAndSave) {
+        store.send(.loadRemotePrescriptionsAndSave) {
             // then
             $0.loadingState = .loading(nil)
         }
         // when
         testScheduler.advance()
-        store.receive(.loadRemoteGroupedPrescriptionsAndSaveReceived(expected)) { state in
+        store.receive(.loadRemotePrescriptionsAndSaveReceived(expected)) { state in
             // then
             state.loadingState = expected
         }
@@ -184,33 +176,37 @@ final class PrescriptionListDomainTests: XCTestCase {
 
     func testLoadingPrescriptionsFromDiskAndCloudWhenNotAuthenticated() {
         // given
-        let input = [GroupedPrescription.Dummies.prescriptions]
-        let store = testStore(groups: input,
-                              auditEvents: [],
-                              isAuthenticated: false)
+        let input = Prescription.Fixtures.prescriptions
+        mockPrescriptionRepository.loadLocalReturnValue = Just(input)
+            .setFailureType(to: PrescriptionRepositoryError.self)
+            .eraseToAnyPublisher()
+        mockPrescriptionRepository
+            .silentLoadRemoteForReturnValue = Just(PrescriptionRepositoryLoadRemoteResult.notAuthenticated)
+            .setFailureType(to: PrescriptionRepositoryError.self).eraseToAnyPublisher()
+        let store = testStore(for: mockPrescriptionRepository)
 
-        let expectedValueForLoad: LoadingState<[GroupedPrescription], ErxRepositoryError> =
+        let expectedValueForLoad: LoadingState<[Prescription], PrescriptionRepositoryError> =
             .value(input)
-        let expectedValueForFetch: LoadingState<[GroupedPrescription], ErxRepositoryError> =
+        let expectedValueForFetch: LoadingState<[Prescription], PrescriptionRepositoryError> =
             .value([])
         // when
-        store.send(.loadLocalGroupedPrescriptions) {
+        store.send(.loadLocalPrescriptions) {
             // then
             $0.loadingState = .loading([])
         }
         // when
-        store.send(.loadRemoteGroupedPrescriptionsAndSave) {
+        store.send(.loadRemotePrescriptionsAndSave) {
             // then
             $0.loadingState = .loading(nil)
         }
         // when
         testScheduler.advance()
-        store.receive(.loadLocalGroupedPrescriptionsReceived(expectedValueForLoad)) { state in
+        store.receive(.loadLocalPrescriptionsReceived(expectedValueForLoad)) { state in
             // then
             state.loadingState = expectedValueForLoad
-            state.groupedPrescriptions = input
+            state.prescriptions = input
         }
-        store.receive(.loadRemoteGroupedPrescriptionsAndSaveReceived(expectedValueForFetch)) { state in
+        store.receive(.loadRemotePrescriptionsAndSaveReceived(expectedValueForFetch)) { state in
             // then
             state.loadingState = expectedValueForFetch
         }
@@ -218,55 +214,64 @@ final class PrescriptionListDomainTests: XCTestCase {
 
     func testLoadingPrescriptionsFromDiskAndCloudWhenAuthenticated() {
         // given
-        let input = [GroupedPrescription.Dummies.prescriptions]
-        let store = testStore(groups: input,
-                              auditEvents: [],
-                              isAuthenticated: true)
+        let input = Prescription.Fixtures.prescriptions
 
-        let expectedValueForLoad: LoadingState<[GroupedPrescription], ErxRepositoryError> =
+        mockPrescriptionRepository.loadLocalReturnValue = Just(input)
+            .setFailureType(to: PrescriptionRepositoryError.self)
+            .eraseToAnyPublisher()
+        mockPrescriptionRepository
+            .silentLoadRemoteForReturnValue = Just(PrescriptionRepositoryLoadRemoteResult
+                .prescriptions(input))
+            .setFailureType(to: PrescriptionRepositoryError.self)
+            .eraseToAnyPublisher()
+        let store = testStore(for: mockPrescriptionRepository)
+
+        let expectedValueForLoad: LoadingState<[Prescription], PrescriptionRepositoryError> =
             .value(input)
         let expectedValueForFetch = expectedValueForLoad
         // when
-        store.send(.loadLocalGroupedPrescriptions) {
+        store.send(.loadLocalPrescriptions) {
             // then
             $0.loadingState = .loading([])
         }
         // when
-        store.send(.loadRemoteGroupedPrescriptionsAndSave) {
+        store.send(.loadRemotePrescriptionsAndSave) {
             // then
             $0.loadingState = .loading(nil)
         }
         // when
         testScheduler.advance()
-        store.receive(.loadLocalGroupedPrescriptionsReceived(expectedValueForLoad)) { state in
+        store.receive(.loadLocalPrescriptionsReceived(expectedValueForLoad)) { state in
             // then
             state.loadingState = expectedValueForLoad
-            state.groupedPrescriptions = input
+            state.prescriptions = input
         }
-        store.receive(.loadRemoteGroupedPrescriptionsAndSaveReceived(expectedValueForFetch))
+        store.receive(.loadRemotePrescriptionsAndSaveReceived(expectedValueForFetch))
     }
 
-    let loadingErrorTasks: ErxRepositoryError = .local(.notImplemented)
-    let loadingErrorAuditEvents: ErxRepositoryError = .local(.notImplemented)
+    let loadingErrorTasks: PrescriptionRepositoryError = .erxRepository(.local(.notImplemented))
+    let loadingErrorAuditEvents: PrescriptionRepositoryError = .erxRepository(.local(.notImplemented))
 
     func testLoadingFromDiskWithError() {
-        let groupedPrescriptionStore = MockGroupedPrescriptionRepository(
-            loadFromDisk: Fail(error: loadingErrorTasks).eraseToAnyPublisher(),
-            loadedFromCloudAndSaved: Fail(error: loadingErrorTasks).eraseToAnyPublisher()
+        mockPrescriptionRepository.loadLocalReturnValue = Fail(
+            outputType: [Prescription].self,
+            failure: loadingErrorTasks
         )
-        let store = testStore(for: groupedPrescriptionStore)
+        .eraseToAnyPublisher()
 
-        let expected: LoadingState<[GroupedPrescription], ErxRepositoryError> =
+        let store = testStore(for: mockPrescriptionRepository)
+
+        let expected: LoadingState<[Prescription], PrescriptionRepositoryError> =
             .error(loadingErrorTasks)
         // when
-        store.send(.loadLocalGroupedPrescriptions) {
+        store.send(.loadLocalPrescriptions) {
             // then
             $0.loadingState = .loading([])
             XCTAssert($0.loadingState.isError == false)
         }
         // when
         testScheduler.advance()
-        store.receive(.loadLocalGroupedPrescriptionsReceived(expected)) { state in
+        store.receive(.loadLocalPrescriptionsReceived(expected)) { state in
             // then
             state.loadingState = expected
             XCTAssert(state.loadingState.isError == true)
@@ -274,20 +279,17 @@ final class PrescriptionListDomainTests: XCTestCase {
     }
 
     func testLoadingFromCloudWithError() {
-        let groupedPrescriptionStore = MockGroupedPrescriptionRepository(
-            loadFromDisk: Fail(error: loadingErrorTasks).eraseToAnyPublisher(),
-            loadedFromCloudAndSaved: Fail(error: loadingErrorTasks).eraseToAnyPublisher()
-        )
-        let store = testStore(for: groupedPrescriptionStore)
-        let expectedTasks: LoadingState<[GroupedPrescription], ErxRepositoryError> =
+        let store = testStore(for: mockPrescriptionRepository)
+        mockPrescriptionRepository.silentLoadRemoteForReturnValue = Fail(error: loadingErrorTasks).eraseToAnyPublisher()
+        let expectedTasks: LoadingState<[Prescription], PrescriptionRepositoryError> =
             .idle
 
-        store.send(.loadRemoteGroupedPrescriptionsAndSave) {
+        store.send(.loadRemotePrescriptionsAndSave) {
             $0.loadingState = .loading(nil)
             XCTAssert($0.loadingState.isError == false)
         }
         testScheduler.advance()
-        store.receive(.loadRemoteGroupedPrescriptionsAndSaveReceived(expectedTasks)) { state in
+        store.receive(.loadRemotePrescriptionsAndSaveReceived(expectedTasks)) { state in
             // then
             state.loadingState = expectedTasks
             XCTAssert(state.loadingState.isError == false)
@@ -296,9 +298,10 @@ final class PrescriptionListDomainTests: XCTestCase {
 
     func testRefreshShouldShowCardWallWhenNotAuthenticated() {
         userDataStore.hideCardWallIntro = Just(false).eraseToAnyPublisher()
-        let store = testStore(groups: [],
-                              auditEvents: [],
-                              isAuthenticated: false)
+        mockPrescriptionRepository.forcedLoadRemoteForReturnValue = Just(.notAuthenticated)
+            .setFailureType(to: PrescriptionRepositoryError.self)
+            .eraseToAnyPublisher()
+        let store = testStore(for: mockPrescriptionRepository)
 
         let expected = CardWallIntroductionDomain.State(
             isNFCReady: true,
@@ -313,14 +316,13 @@ final class PrescriptionListDomainTests: XCTestCase {
 
     func testRefreshShouldShowCardWallServerResponseIs403Forbidden() {
         userDataStore.hideCardWallIntro = Just(false).eraseToAnyPublisher()
-        let repository = MockGroupedPrescriptionRepository(groups: [])
-        repository.loadRemoteAndSavePublisher = Fail(
-            error: ErxRepositoryError.remote(
+        mockPrescriptionRepository.forcedLoadRemoteForReturnValue = Fail(
+            outputType: PrescriptionRepositoryLoadRemoteResult.self,
+            failure: PrescriptionRepositoryError.erxRepository(.remote(
                 .fhirClientError(FHIRClient.Error.httpError(.httpError(.init(URLError.Code(rawValue: 403)))))
-            )
+            ))
         ).eraseToAnyPublisher()
-        let store = testStore(for: repository,
-                              isAuthenticated: true)
+        let store = testStore(for: mockPrescriptionRepository)
 
         let expected = CardWallIntroductionDomain.State(
             isNFCReady: true,
@@ -336,14 +338,13 @@ final class PrescriptionListDomainTests: XCTestCase {
     func testRefreshShouldShowCardWallServerResponseIs401Unauthorized() {
         userDataStore.hideCardWallIntro = Just(false).eraseToAnyPublisher()
 
-        let repository = MockGroupedPrescriptionRepository(groups: [])
-        repository.loadRemoteAndSavePublisher = Fail(
-            error: ErxRepositoryError.remote(
+        mockPrescriptionRepository.forcedLoadRemoteForReturnValue = Fail(
+            outputType: PrescriptionRepositoryLoadRemoteResult.self,
+            failure: PrescriptionRepositoryError.erxRepository(.remote(
                 .fhirClientError(FHIRClient.Error.httpError(.httpError(.init(URLError.Code(rawValue: 401)))))
-            )
+            ))
         ).eraseToAnyPublisher()
-        let store = testStore(for: repository,
-                              isAuthenticated: true)
+        let store = testStore(for: mockPrescriptionRepository)
 
         let expected = CardWallIntroductionDomain.State(
             isNFCReady: true,
@@ -357,40 +358,34 @@ final class PrescriptionListDomainTests: XCTestCase {
     }
 
     func testRefreshShouldLoadFromCloudWhenAuthenticated() {
-        let input = [GroupedPrescription.Dummies.prescriptions]
-        let store = testStore(groups: input,
-                              auditEvents: [],
-                              isAuthenticated: true)
+        let input = Prescription.Fixtures.prescriptions
 
-        let expected: LoadingState<[GroupedPrescription], ErxRepositoryError> =
-            .value(input)
+        mockPrescriptionRepository
+            .forcedLoadRemoteForReturnValue = Just(PrescriptionRepositoryLoadRemoteResult.prescriptions(input))
+            .setFailureType(to: PrescriptionRepositoryError.self)
+            .eraseToAnyPublisher()
+        let store = testStore(for: mockPrescriptionRepository)
+
+        let expected: LoadingState<[Prescription], PrescriptionRepositoryError> = .value(input)
 
         store.send(.refresh) {
             $0.loadingState = .loading(nil)
         }
         testScheduler.advance()
-        store.receive(.loadRemoteGroupedPrescriptionsAndSaveReceived(expected)) { state in
+        store.receive(.loadRemotePrescriptionsAndSaveReceived(expected)) { state in
             state.loadingState = expected
-            state.groupedPrescriptions = input
+            state.prescriptions = input
         }
     }
 
     func testNavigateIntoLowDetailPrescriptionDetails() {
         // given
-        let prescription = PrescriptionDetailDomain.Dummies.state.prescription
-        let groupedPrescription = GroupedPrescription(
-            id: "1",
-            title: "Scanned Prescription",
-            authoredOn: "2020-02-03",
-            prescriptions: [prescription],
-            displayType: GroupedPrescription.DisplayType.lowDetail
-        )
-        let store = testStore(groups: [groupedPrescription],
-                              auditEvents: [],
-                              isAuthenticated: true)
+        let prescription = Prescription.Fixtures.prescriptions
+
+        let store = testStore(for: mockPrescriptionRepository)
 
         // when
-        store.send(.prescriptionDetailViewTapped(selectedPrescription: prescription))
+        store.send(.prescriptionDetailViewTapped(selectedPrescription: prescription.first!))
 
         // nothing happens, as this is currently supposed to be handled in the parent domain
     }

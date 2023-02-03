@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2022 gematik GmbH
+//  Copyright (c) 2023 gematik GmbH
 //  
 //  Licensed under the EUPL, Version 1.2 or – as soon they will be approved by
 //  the European Commission - subsequent versions of the EUPL (the Licence);
@@ -50,7 +50,7 @@ final class PrescriptionLowDetailSnapshotTests: XCTestCase {
             medication: ErxTask.Fixtures.medication1
         )
         let stateNotArchived = PrescriptionDetailDomain.State(
-            prescription: GroupedPrescription.Prescription(erxTask: erxTask, date: now),
+            prescription: Prescription(erxTask: erxTask, date: now),
             isArchived: false
         )
         let storeRedeemed = PrescriptionDetailDomain.Store(
@@ -77,7 +77,7 @@ final class PrescriptionLowDetailSnapshotTests: XCTestCase {
             medication: ErxTask.Fixtures.medication1
         )
         let stateNotArchived = PrescriptionDetailDomain.State(
-            prescription: GroupedPrescription.Prescription(erxTask: erxTask, date: now),
+            prescription: Prescription(erxTask: erxTask, date: now),
             isArchived: false
         )
         let storeRedeemed = PrescriptionDetailDomain.Store(
@@ -104,7 +104,7 @@ final class PrescriptionLowDetailSnapshotTests: XCTestCase {
             medication: ErxTask.Fixtures.medication1
         )
         let stateRedeemed = PrescriptionDetailDomain.State(
-            prescription: GroupedPrescription.Prescription(erxTask: erxTask, date: now),
+            prescription: Prescription(erxTask: erxTask, date: now),
             isArchived: true
         )
         let storeRedeemed = PrescriptionDetailDomain.Store(
