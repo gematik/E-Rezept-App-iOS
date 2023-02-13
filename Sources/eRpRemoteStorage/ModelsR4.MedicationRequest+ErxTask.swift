@@ -21,9 +21,23 @@ import Foundation
 import ModelsR4
 
 extension ModelsR4.MedicationRequest {
+    // emergencyServiceFee
     var noctuFeeWaiver: Bool {
         `extension`?.first {
-            $0.url.value?.url.absoluteString == Prescription.Key.noctuFeeWaiverKey
+            $0.url.value?.url.absoluteString == Prescription.Key.MedicationRequest.noctuFeeWaiverKey
+        }
+        .map {
+            if let valueX = $0.value,
+               case Extension.ValueX.boolean(true) = valueX {
+                return true
+            }
+            return false
+        } ?? false
+    }
+
+    var bvg: Bool {
+        `extension`?.first {
+            $0.url.value?.url.absoluteString == Prescription.Key.MedicationRequest.bvg
         }
         .map {
             if let valueX = $0.value,
@@ -35,14 +49,28 @@ extension ModelsR4.MedicationRequest {
     }
 
     var workRelatedAccident: ErxTask.WorkRelatedAccident? {
-        guard let accident = `extension`?.first(where: {
-            $0.url.value?.url.absoluteString == Prescription.Key.workRelatedAccidentKey
+        guard let accident = `extension`?.first(where: { identifier in
+            Prescription.Key.MedicationRequest.workRelatedAccidentKey
+                .contains { $0.value == identifier.url.value?.url.absoluteString }
         }) else {
             return nil
         }
 
-        let identifier: String? = accident.extension?.first {
-            $0.url.value?.url.absoluteString == "unfallbetrieb"
+        let identifier: String? = accident.extension?.first { identifier in
+            Prescription.Key.MedicationRequest.workRelatedAccidentMarkKey
+                .contains { $0.value == identifier.url.value?.url.absoluteString }
+        }
+        .flatMap {
+            if let valueX = $0.value,
+               case let Extension.ValueX.coding(coding) = valueX {
+                return coding.code?.value?.string
+            }
+            return nil
+        }
+
+        let place: String? = accident.extension?.first { identifier in
+            Prescription.Key.MedicationRequest.workRelatedAccidentPlace
+                .contains { $0.value == identifier.url.value?.url.absoluteString }
         }
         .flatMap {
             if let valueX = $0.value,
@@ -52,8 +80,9 @@ extension ModelsR4.MedicationRequest {
             return nil
         }
 
-        let date: String? = accident.extension?.first {
-            $0.url.value?.url.absoluteString == "unfalltag"
+        let date: String? = accident.extension?.first { identifier in
+            Prescription.Key.MedicationRequest.workRelatedAccidentDate
+                .contains { $0.value == identifier.url.value?.url.absoluteString }
         }
         .flatMap {
             if let valueX = $0.value,
@@ -64,19 +93,22 @@ extension ModelsR4.MedicationRequest {
             return nil
         }
 
-        return ErxTask.WorkRelatedAccident(workPlaceIdentifier: identifier,
-                                           date: date)
+        return ErxTask.WorkRelatedAccident(
+            mark: identifier,
+            workPlaceIdentifier: place,
+            date: date
+        )
     }
 
     var multiplePrescription: ErxTask.MultiplePrescription? {
         guard let prescriptionInfo = `extension`?.first(where: {
-            $0.url.value?.url.absoluteString == Prescription.Key.multiplePrescriptionKey
+            $0.url.value?.url.absoluteString == Prescription.Key.MedicationRequest.multiplePrescriptionKey
         }) else {
             return nil
         }
 
         let mark: Bool = prescriptionInfo.extension?.first {
-            $0.url.value?.url.absoluteString == "Kennzeichen"
+            $0.url.value?.url.absoluteString == Prescription.Key.MedicationRequest.multiplePrescriptionMark
         }
         .map {
             if let valueX = $0.value,
@@ -87,7 +119,7 @@ extension ModelsR4.MedicationRequest {
         } ?? false
 
         let ratio: Ratio? = prescriptionInfo.extension?.first {
-            $0.url.value?.url.absoluteString == "Nummerierung"
+            $0.url.value?.url.absoluteString == Prescription.Key.MedicationRequest.multiplePrescriptionNumber
         }
         .flatMap {
             if let valueX = $0.value,
@@ -101,7 +133,7 @@ extension ModelsR4.MedicationRequest {
         let totalNumber: Decimal? = ratio?.denominator?.value?.value?.decimal
 
         let period: Period? = prescriptionInfo.extension?.first {
-            $0.url.value?.url.absoluteString == "Zeitraum"
+            $0.url.value?.url.absoluteString == Prescription.Key.MedicationRequest.multiplePrescriptionPeriod
         }
         .flatMap {
             if let valueX = $0.value,
@@ -128,5 +160,20 @@ extension ModelsR4.MedicationRequest {
             return true
         }
         return false
+    }
+
+    var coPaymentStatus: ErxTask.CoPaymentStatus? {
+        `extension`?.first { identifier in
+            Prescription.Key.MedicationRequest.statusCoPaymentKey
+                .contains { $0.value == identifier.url.value?.url.absoluteString }
+        }
+        .flatMap {
+            if let valueX = $0.value,
+               case let Extension.ValueX.coding(valueCoding) = valueX,
+               let value = valueCoding.code?.value?.string {
+                return ErxTask.CoPaymentStatus(rawValue: value)
+            }
+            return nil
+        }
     }
 }

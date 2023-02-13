@@ -27,21 +27,75 @@ import Foundation
 /// https://simplifier.net/eRezept/
 enum Prescription {
     // swiftlint:disable identifier_name
-    enum Version {
-        case v1_0_2
-        case v1_1_0
+    enum Version: String {
+        case v1_0_2 = "1.0.2"
+        case v1_1_0 = "1.1.0"
     }
 
     /// Collection of defined keys within the KBV profiles (begins with `fhir.kbv.de/`)
     /// Also contains some standard FHIR keys since they were used by the KBV profiles
+    /// Note: If there is no version array the key is equal over all versions
     enum Key {
+        case medication
+        case medicationRequest
+
+        enum Medication {
+            static let PZNKey = "https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Medication_PZN"
+            static let freeTextKey = "https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Medication_FreeText"
+            static let ingredientKey = "https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Medication_Ingredient"
+            static let compoundingKey = "https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Medication_Compounding"
+            static let vaccineKey = "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Medication_Vaccine"
+            static let categoryKey = "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Medication_Category"
+            static let ingredientFormKey =
+                "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Medication_Ingredient_Form"
+            static let wirkstoffNumberKey = "http://fhir.de/CodeSystem/ask"
+            static let ingredientAmountKey =
+                "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Medication_Ingredient_Amount"
+            static let packagingKey = "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Medication_Packaging"
+            static let compoundingInstructionKey =
+                "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Medication_CompoundingInstruction"
+            static let packagingSizeKey = "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Medication_PackagingSize"
+
+            static let baseMedicationTypeKey: [Version: String] = [
+                .v1_1_0: "https://fhir.kbv.de/StructureDefinition/KBV_EX_Base_Medication_Type",
+            ]
+        }
+
+        enum MedicationRequest {
+            static let statusCoPaymentKey: [Version: String] = [
+                .v1_0_2: "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_StatusCoPayment",
+                .v1_1_0: "https://fhir.kbv.de/StructureDefinition/KBV_EX_FOR_StatusCoPayment",
+            ]
+            static let noctuFeeWaiverKey = "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_EmergencyServicesFee"
+            static let bvg = "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_BVG"
+            static let workRelatedAccidentKey: [Version: String] = [
+                .v1_0_2: "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Accident",
+                .v1_1_0: "https://fhir.kbv.de/StructureDefinition/KBV_EX_FOR_Accident",
+            ]
+            static let workRelatedAccidentMarkKey: [Version: String] = [
+                .v1_0_2: "unfallkennzeichen",
+                .v1_1_0: "Unfallkennzeichen",
+            ]
+            static let workRelatedAccidentPlace: [Version: String] = [
+                .v1_0_2: "unfallbetrieb",
+                .v1_1_0: "Unfallbetrieb",
+            ]
+            static let workRelatedAccidentDate: [Version: String] = [
+                .v1_0_2: "unfalltag",
+                .v1_1_0: "Unfalltag",
+            ]
+            static let multiplePrescriptionKey =
+                "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Multiple_Prescription"
+            static let multiplePrescriptionPeriod = "Zeitraum"
+            static let multiplePrescriptionMark = "Kennzeichen"
+            static let multiplePrescriptionNumber = "Nummerierung"
+        }
+
         static let coverageStatusKey = "http://fhir.de/StructureDefinition/gkv/versichertenart"
         static let organisationIdentifierKey = "https://fhir.kbv.de/NamingSystem/KBV_NS_Base_BSNR"
         static let medicationDoesKey = "http://fhir.de/StructureDefinition/normgroesse"
-        static let workRelatedAccidentKey = "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Accident"
+
         static let pznKey = "http://fhir.de/CodeSystem/ifa/pzn"
-        static let multiplePrescriptionKey = "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Multiple_Prescription"
-        static let noctuFeeWaiverKey = "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_EmergencyServicesFee"
         static let dosageFlag = "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_DosageFlag"
         static let kvIDKeys: [Version: String] = [
             .v1_0_2: "http://fhir.de/NamingSystem/gkv/kvid-10",

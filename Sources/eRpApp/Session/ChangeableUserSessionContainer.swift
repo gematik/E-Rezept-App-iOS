@@ -60,6 +60,7 @@ class ChangeableUserSessionContainer: UsersSessionContainer {
             initialUserSession: session,
             userSessionProvider: userSessionProvider,
             publisher: userStore.selectedProfileId
+                .removeDuplicates()
                 .combineLatest(userStore.configuration)
                 .dropFirst()
                 .compactMap { uuid, config in

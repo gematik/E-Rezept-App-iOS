@@ -72,9 +72,19 @@ struct PharmacySearchView: View {
                             .accessibility(identifier: A11y.pharmacySearch.phaSearchLocalizingDevice)
                     }
                 case .searchResultEmpty:
-                    NoResultsView()
-                        .accessibility(identifier: A11y.pharmacySearch.phaSearchNoResults)
-                        .padding(.horizontal, 30)
+                    VStack {
+                        PharmacyFilterBar(openFiltersAction: {
+                            viewStore.send(.setNavigation(tag: .filter), animation: .default)
+                        }, removeFilter: { option in
+                            viewStore.send(.removeFilterOption(option.element), animation: .default)
+                        }, elements: viewStore.filter)
+                            .padding(.horizontal)
+                            .transition(.move(edge: .top).combined(with: .opacity))
+
+                        NoResultsView()
+                            .accessibility(identifier: A11y.pharmacySearch.phaSearchNoResults)
+                            .padding(.horizontal, 30)
+                    }
                 case .error:
                     ErrorView { viewStore.send(.performSearch) }
                         .accessibility(identifier: A11y.pharmacySearch.phaSearchError)
@@ -93,7 +103,7 @@ struct PharmacySearchView: View {
                     })
                 }
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
+            .frame(maxWidth: .infinity, alignment: .center)
             .overlay(VStack {
                 if viewStore.searchState == .searchRunning {
                     SearchRunningView()

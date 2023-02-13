@@ -88,6 +88,7 @@ extension CardWallReadCardDomain.Environment {
                     .requestChallenge()
                     .flatMap { (challenge: IDPChallengeSession) -> AnyPublisher<IDPToken, IDPError> in
                         signatureProvider.authenticationData(for: challenge)
+                            .first()
                             .mapError(IDPError.pairing)
                             .flatMap { (signedAuthenticationData: SignedAuthenticationData)
                                 -> AnyPublisher<IDPToken, IDPError> in

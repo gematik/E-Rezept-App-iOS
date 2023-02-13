@@ -46,6 +46,10 @@ struct HorizontalProfileSelectionView: View {
                             )
                         }
                     )
+                    // TODO: reenable as soon as feature is available swiftlint:disable:this todo
+//                    .if(userProfile == viewStore.profiles.first) {
+//                        $0.tooltip(tooltip: MainViewTooltips.rename)
+//                    }
                     .frame(maxWidth: width * 0.4, alignment: .leading)
                 }
                 .accessibility(identifier: A11y.profileSelection.proBtnSelectionProfileRow)
@@ -60,6 +64,7 @@ struct HorizontalProfileSelectionView: View {
                     .background(Colors.backgroundNeutral)
                     .border(Colors.systemGray6, cornerRadius: 8)
                     .accessibility(identifier: A11y.profileSelection.proBtnSelectionAddProfile)
+                    .tooltip(tooltip: MainViewTooltip.addProfile)
 
                 Spacer()
             }

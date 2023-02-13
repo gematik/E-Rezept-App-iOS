@@ -130,5 +130,6 @@ final class DefaultPrescriptionRepositoryTests: XCTestCase {
 
         // then
         expect(isActiveResult) == [true, false]
+        isActiveCancelable.cancel()
     }
 }

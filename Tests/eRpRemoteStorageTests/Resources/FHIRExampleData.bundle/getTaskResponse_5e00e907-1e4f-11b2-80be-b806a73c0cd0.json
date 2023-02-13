@@ -239,7 +239,7 @@
 								},
 								{
 									"url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_BVG",
-									"valueBoolean": false
+									"valueBoolean": true
 								},
 								{
 									"url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Accident",

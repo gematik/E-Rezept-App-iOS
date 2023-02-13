@@ -42,7 +42,7 @@ extension ErxTaskEntity {
         author = task.author
         dispenseValidityEnd = task.dispenseValidityEnd
 
-        noctuFeeWaiver = task.noctuFeeWaiver
+        noctuFeeWaiver = task.hasEmergencyServiceFee
         substitutionAllowed = task.substitutionAllowed
         source = task.source.rawValue
 
@@ -59,7 +59,7 @@ extension ErxTaskEntity {
         multiplePrescription = ErxTaskMultiplePrescriptionEntity(multiplePrescription: task.multiplePrescription,
                                                                  in: context)
 
-        // Note: auditEvents, communications and medicationDispenses are not set here
+        // Note: communications and medicationDispenses are not set here
         // since they are loaded asynchronous from remote
     }
 }
@@ -156,14 +156,6 @@ extension ErxTask {
             practitioner: Practitioner(entity: entity.practitioner),
             organization: Organization(entity: entity.organization),
             workRelatedAccident: WorkRelatedAccident(entity: entity.workRelatedAccident),
-            auditEvents: entity.auditEvents?
-                .compactMap { auditEventEntity in
-                    if let entity = auditEventEntity as? ErxAuditEventEntity {
-                        return ErxAuditEvent(entity: entity)
-                    }
-                    return nil
-                }
-                .sorted { $0.timestamp ?? "" > $1.timestamp ?? "" } ?? [],
             communications: mappedCommunications
                 .sorted { $0.timestamp < $1.timestamp },
             medicationDispenses: entity.medicationDispenses?

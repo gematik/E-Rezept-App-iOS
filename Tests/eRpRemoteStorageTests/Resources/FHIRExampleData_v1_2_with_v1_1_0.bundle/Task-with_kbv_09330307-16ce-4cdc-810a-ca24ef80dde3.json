@@ -229,16 +229,36 @@
                                     "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_FOR_StatusCoPayment",
                                     "valueCoding": {
                                         "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_FOR_StatusCoPayment",
-                                        "code": "0"
+                                        "code": "2"
                                     }
                                 },
                                 {
                                     "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_EmergencyServicesFee",
-                                    "valueBoolean": false
+                                    "valueBoolean": true
                                 },
                                 {
                                     "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_BVG",
-                                    "valueBoolean": false
+                                    "valueBoolean": true
+                                },
+                                {
+                                    "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_FOR_Accident",
+                                    "extension": [
+                                        {
+                                            "url": "Unfallkennzeichen",
+                                            "valueCoding": {
+                                                "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_FOR_Ursache_Type",
+                                                "code": "2"
+                                            }
+                                        },
+                                        {
+                                            "url": "Unfalltag",
+                                            "valueDate": "2021-04-01"
+                                        },
+                                        {
+                                            "url": "Unfallbetrieb",
+                                            "valueString": "Arbeitsplatz"
+                                        }
+                                    ]
                                 },
                                 {
                                     "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Multiple_Prescription",

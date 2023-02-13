@@ -57,6 +57,7 @@ enum MainDomain {
         .concatenate(
             DeviceSecurityDomain.cleanup(),
             CardWallIntroductionDomain.cleanup(),
+            PrescriptionListDomain.cleanup(),
             PrescriptionDetailDomain.cleanup(),
             RedeemMethodsDomain.cleanup()
         )

@@ -46,15 +46,6 @@ struct PrescriptionFullDetailView: View {
             isSubstitutionReadMorePresented = state.isSubstitutionReadMorePresented
         }
 
-        var auditEventsLastUpdated: String? {
-            prescription.auditEvents.first?.timestamp
-        }
-
-        var auditEventsErrorText: String? {
-            prescription.auditEvents
-                .isEmpty ? L10n.prscFdTxtProtocolDownloadError.text : nil
-        }
-
         var showFullDetailBottomBanner: Bool {
             switch prescription.viewStatus {
             case .open, .redeem, .archived, .undefined: return false
@@ -71,7 +62,7 @@ struct PrescriptionFullDetailView: View {
         }
 
         var showNoctFeeWaiverHint: Bool {
-            prescription.noctuFeeWaiver
+            prescription.hasEmergencyServiceFee
         }
 
         var title: String {

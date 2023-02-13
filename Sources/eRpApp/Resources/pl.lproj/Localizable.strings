@@ -1,4 +1,3 @@
-
 "add_btn_save" = "Zapisz";
 "add_txt_profile1" = "profile 1";
 "add_txt_title" = "Podaj nazwę";
@@ -142,7 +141,7 @@
 "cdw_txt_can_description" = "Numer dostępu do karty (CAN) znajdziesz w prawym górnym rogu karty zdrowia.";
 "cdw_txt_can_subtitle" = "Wprowadź numer dostępu";
 "cdw_txt_can_title" = "Logowanie";
-"cdw_txt_can_title_hint" = "CAN Eingabefeld";
+"cdw_txt_can_title_hint" = "Twój numer dostępu karty (Card Access Number, w skrócie: CAN) ma 6 znaków. Numer CAN znajdziesz w prawym górnym rogu z przodu karty zdrowia. Jeżeli nie ma tam sześcioznakowego numeru dostępu, musisz otrzymać nową kartę zdrowia od swojej instytucji ubezpieczenia zdrowotnego.";
 "cdw_txt_can_warn_wrong_description" = "Niestety wpisany CAN nie pasuje do rozpoznanej karty. Wprowadź ponownie CAN. Dziękujemy!";
 "cdw_txt_can_warn_wrong_title" = "Błędny CAN";
 "cdw_txt_extauth_alert_message_save_profile" = "Nie udało się połączyć Twojej karty zdrowia z profilem.";
@@ -328,6 +327,9 @@
 "dtl_txt_task_id" = "ID zadania";
 "dtl_txt_title" = "Szczegóły";
 "email_subject_fallback" = "Aplikacja na iOS: raport o błędach";
+"erp_txt_tooltips_add_profile" = "Naciśnij tutaj, aby utworzyć nowy profil";
+"erp_txt_tooltips_profile_rename" = "Naciśnij długo, aby edytować nazwy";
+"erp_txt_tooltips_scan" = "Naciśnij tutaj, aby dodać przepisy";
 "err_btn_cancel" = "Anuluj";
 "err_codes_prefix" = "Numery błędów:";
 "err_specific_i10018_description" = "Twoje dane biometryczne się zmieniły. Na przykład, czy dodano odcisk palca? Ze względów bezpieczeństwa musisz ponownie zarejestrować się na swojej karcie zdrowia.";
@@ -695,7 +697,7 @@
 "onb_leg_btn_terms_of_use_hint" = "Akceptuj warunki korzystania";
 "onb_leg_btn_title" = "Potwierdź";
 "onb_leg_txt_subtitle" = "Aby móc korzystać z aplikacji, musisz zaakceptować warunki korzystania i potwierdzić zaznajomienie się z polityką prywatności. Zapisywane są tylko dane niezbędne do realizacji usług.";
-"onb_leg_txt_title" = "Warunki korzystania i polityka prywatności";
+"onb_leg_txt_title" = "Prywatność i użytkowanie";
 "onb_prf_txt_alert_message" = "Pole nazwy nie może być puste";
 "onb_prf_txt_alert_title" = "Błąd";
 "onb_prf_txt_footnote" = "Pomoże Ci to w zarządzaniu receptami dla kilku osób.";
@@ -740,7 +742,7 @@
 "ord_detail_txt_orders" = "porządek";
 "ord_detail_txt_title" = "Przegląd zamówień";
 "ord_list_status_new" = "Nowy";
-"ord_txt_empty_list_message" = "Nie masz jeszcze żadnych powiadomień";
+"ord_txt_empty_list_message" = "Nie masz jeszcze żadnych zamówień";
 "ord_txt_empty_list_title" = "Brak zamówień";
 "ord_txt_no_pharmacy_name" = "Nieznana apteka";
 "ord_txt_title" = "Zamówienia";
@@ -794,7 +796,7 @@
 "pha_detail_opening_today" = "Dzisiaj";
 "pha_detail_opening_until" = "do";
 "pha_detail_phone" = "Numer telefonu";
-"pha_detail_txt_footer_end" = "Znalazłeś(aś) błąd lub chcesz skorygować dane?";
+"pha_detail_txt_footer_end" = ". Znalazłeś(aś) błąd lub chcesz skorygować dane?";
 "pha_detail_txt_footer_mid" = "mein-apothekenportal.de";
 "pha_detail_txt_footer_start" = "Wskazówka dla aptek: Dane kontaktowe i informacje o aptekach pozyskujemy ze strony";
 "pha_detail_txt_subtitle_fallback" = "Apteka";
@@ -918,7 +920,7 @@
 "prsc_fd_txt_substitution_read_further" = "Dowiedz się więcej";
 "prsc_fd_txt_substitution_read_further_link" = "https://www.das-e-rezept-fuer-deutschland.de/fragen-antworten";
 "prsc_fd_txt_substitution_title" = "Możliwość wyboru preparatu zastępczego";
-"prsc_redeem_note_direct_assignment" = "Ta recepta zostanie zrealizowana w ramach leczenia.";
+"prsc_redeem_note_direct_assignment" = "Ta recepta zostanie zrealizowana dla Ciebie w ramach leczenia.";
 "prsc_status_canceled" = "Anulowane";
 "prsc_status_completed" = "Zrealizowane";
 "prsc_status_direct_assigned" = "Zostaną wykupione dla ciebie";
@@ -1023,7 +1025,7 @@
 "stg_con_fbk_mail" = "app-feedback@gematik.de";
 "stg_con_fbk_subject_mail" = "Informacje zwrotne z aplikacji E-recepta";
 "stg_con_hotline_ava" = "Połączenie bezpłatne. Godziny pracy infolinii: od poniedziałku do piątku w godzinach 08:00–20:00 z wyjątkiem świąt państwowych";
-"stg_con_hotline_contact" = "+49-0800-277-3777";
+"stg_con_hotline_contact" = "+49-800-277-3777";
 "stg_con_text_contact_hotline" = "Zadzwoń na infolinię techniczną";
 "stg_con_text_mail" = "Napisz wiadomość e-mail";
 "stg_con_text_survey" = "Weź udział w ankiecie";

@@ -69,7 +69,7 @@ final class FHIRBundleTests_v1_2_with_v1_1_0: XCTestCase {
         expect(task.expiresOn) == "2022-06-02"
         expect(task.acceptedUntil) == "2022-04-02"
         expect(task.author) == "MVZ"
-        expect(task.noctuFeeWaiver) == false
+        expect(task.hasEmergencyServiceFee) == true
         expect(task.dispenseValidityEnd).to(beNil())
         expect(task.substitutionAllowed) == false
         // medication
@@ -105,6 +105,14 @@ final class FHIRBundleTests_v1_2_with_v1_1_0: XCTestCase {
         expect(task.organization?.address) == "Herbert-Lewin-Platz 2\n10623, Berlin"
         expect(task.organization?.email) == "mvz@e-mail.de"
         expect(task.organization?.identifier) == "721111100"
+
+        expect(task.workRelatedAccident) == ErxTask.WorkRelatedAccident(
+            mark: "2",
+            workPlaceIdentifier: "Arbeitsplatz",
+            date: "2021-04-01"
+        )
+        expect(task.coPaymentStatus) == .artificialInsemination
+        expect(task.bvg) == true
     }
 
     /// FHIRBundle test of workflow version 1.2.0

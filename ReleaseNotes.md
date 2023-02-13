@@ -1,3 +1,27 @@
+# Release 1.6.0
+
+### added (2 changes)
+
+- Add tooltips to MainView
+- Add missing medication types and add some other kbv values to the parser
+- Add foundation for tooltips and tooltipContainers
+
+### changed (1 change)
+
+- Update localization
+
+### removed (1 change)
+
+- Remove auditEvent variable from ErxTask since it was never used
+
+### fixed (5 changes)
+
+- Fix nfc alert showing up while exiting demo modus
+- Fix onboarding where it was possible to pass auth screen without consious selection
+- Fix sticky headers to use correct blurring material for darkmode
+- Fix cardwall and main cleanups
+- Fix no result message is not centered
+
 # Release 1.5.0
 
 ### added (9 changes)

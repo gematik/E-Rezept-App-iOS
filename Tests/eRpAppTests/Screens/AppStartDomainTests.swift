@@ -103,8 +103,7 @@ final class AppStartDomainTests: XCTestCase {
 
         let expectedComposition = OnboardingDomain.Composition(
             currentPageIndex: 0,
-            pages: [OnboardingDomain.Page.altRegisterAuthentication],
-            hideOnboardingLegacy: true
+            pages: [OnboardingDomain.Page.altRegisterAuthentication]
         )
 
         store.send(.refreshOnboardingState)

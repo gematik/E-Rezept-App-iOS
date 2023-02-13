@@ -38,10 +38,12 @@ struct MainView: View {
     struct ViewState: Equatable {
         let isDemoModeEnabled: Bool
         let routeTag: MainDomain.Route.Tag?
+        let showTooltips: Bool
 
         init(state: MainDomain.State) {
             isDemoModeEnabled = state.isDemoMode
             routeTag = state.route?.tag
+            showTooltips = state.route == nil
         }
     }
 
@@ -83,6 +85,7 @@ struct MainView: View {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     ScanItem { viewStore.send(.showScannerView) }
                         .embedToolbarContent()
+                        .tooltip(tooltip: MainViewTooltip.scan)
                 }
             }
             .navigationTitle(Text(L10n.erxTitle))
@@ -115,6 +118,7 @@ struct MainView: View {
         }
         .accentColor(Colors.primary600)
         .navigationViewStyle(StackNavigationViewStyle())
+        .tooltipContainer(enabled: viewStore.showTooltips)
     }
 }
 
@@ -130,9 +134,8 @@ private extension MainView {
                 Image(systemName: SFSymbolName.plusCircleFill)
                     .font(Font.title3.weight(.bold))
                     .foregroundColor(Colors.primary700)
-                    .padding(.leading)
-                    .padding(.vertical)
             }
+            .buttonStyle(.borderless)
             .accessibility(identifier: A18n.mainScreen.erxBtnScnPrescription)
             .accessibility(label: Text(L10n.erxBtnScnPrescription))
         }
@@ -366,7 +369,7 @@ struct MainView_Previews: PreviewProvider {
                 store: MainDomain.Dummies.storeFor(
                     MainDomain.State(
                         prescriptionListState: PrescriptionListDomain.State(),
-                        horizontalProfileSelectionState: HorizontalProfileSelectionDomain.State()
+                        horizontalProfileSelectionState: HorizontalProfileSelectionDomain.Dummies.state
                     )
                 )
             )

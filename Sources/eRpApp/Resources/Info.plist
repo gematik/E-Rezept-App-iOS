@@ -17,7 +17,20 @@
 	<key>CFBundlePackageType</key>
 	<string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.5.0</string>
+	<string>1.6.0</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>cs-$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>$(GEMATIK_BUNDLE_VERSION)</string>
 	<key>CSDisableAutostart</key>
@@ -223,8 +236,6 @@
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>Your location is only required if you want to find pharmacies around you</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Your location is only required if you want to find pharmacies around you</string>
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>Your location is only required if you want to find pharmacies around you</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>

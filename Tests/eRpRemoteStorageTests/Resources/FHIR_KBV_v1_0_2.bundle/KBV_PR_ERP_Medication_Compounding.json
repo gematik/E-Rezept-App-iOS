@@ -1,0 +1,91 @@
+{
+    "resourceType": "Medication",
+    "id": "5cd916fc-2ae2-4148-b016-911ec5f4c0a5",
+    "meta": {
+        "profile": [
+            "https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Medication_Compounding|1.0.2"
+        ]
+    },
+    "extension": [
+        {
+            "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Medication_Category",
+            "valueCoding": {
+                "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_ERP_Medication_Category",
+                "code": "00"
+            }
+        },
+        {
+            "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Medication_Vaccine",
+            "valueBoolean": false
+        },
+        {
+            "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Medication_CompoundingInstruction",
+            "valueString": "Anweisungen bzgl. der Herstellung der Rezeptur"
+        },
+        {
+            "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Medication_Packaging",
+            "valueString": "Angabe zur Transportbehältnisse, Verpackungen bzw. Applikationshilfen für eine Rezeptur"
+        }
+    ],
+    "code": {
+        "coding": [
+            {
+                "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_ERP_Medication_Type",
+                "code": "rezeptur"
+            }
+        ]
+    },
+    "form": {
+        "text": "Lösung"
+    },
+    "amount": {
+        "numerator": {
+            "value": 100,
+            "unit": "ml"
+        },
+        "denominator": {
+            "value": 1
+        }
+    },
+    "ingredient": [
+        {
+            "itemCodeableConcept": {
+                "coding": [
+                    {
+                        "system": "http://fhir.de/CodeSystem/ifa/pzn",
+                        "code": "10206346"
+                    }
+                ],
+                "text": "1_3 Graf 02.08.2022"
+            },
+            "strength": {
+                "numerator": {
+                    "value": 5,
+                    "unit": "g"
+                },
+                "denominator": {
+                    "value": 1
+                }
+            }
+        },
+        {
+            "extension": [
+                {
+                    "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Medication_Ingredient_Form",
+                    "valueString": "Pulver"
+                }
+            ],
+            "itemCodeableConcept": {
+                "text": "2-propanol 70 %"
+            },
+            "strength": {
+                "extension": [
+                    {
+                        "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Medication_Ingredient_Amount",
+                        "valueString": "Ad 100 g"
+                    }
+                ]
+            }
+        }
+    ]
+}

@@ -230,7 +230,7 @@
                                     "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_StatusCoPayment",
                                     "valueCoding": {
                                         "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_ERP_StatusCoPayment",
-                                        "code": "0"
+                                        "code": "2"
                                     }
                                 },
                                 {
@@ -239,7 +239,7 @@
                                 },
                                 {
                                     "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_BVG",
-                                    "valueBoolean": false
+                                    "valueBoolean": true
                                 },
                                 {
                                     "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Accident",

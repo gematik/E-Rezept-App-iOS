@@ -430,6 +430,7 @@ extension CardWallReadCardDomain.Environment {
 
             return self.nfcSessionProvider
                 .sign(can: can, pin: pin, challenge: challenge)
+                .first()
                 .mapError(CardWallReadCardDomain.State.Error.signChallengeError)
                 .receive(on: self.schedulers.main)
                 .flatMap { signedChallenge in

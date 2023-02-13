@@ -24,9 +24,7 @@ import ModelsR4
 import Nimble
 import XCTest
 
-// FHIRBundle tests with
-// - workflow bundle version: 1.0.0, 1.1.1 and
-// - prescription (KBV) bundle version 1.1.0
+// FHIRBundle tests with different workflow and kbv versions
 final class FHIRBundleTests: XCTestCase {
     /// FHIRBundle test with
     /// - workflow bundle version: 1.0.0 and
@@ -64,7 +62,7 @@ final class FHIRBundleTests: XCTestCase {
         expect(task.multiplePrescription?.totalNumber) == 4
         expect(task.multiplePrescription?.startPeriod) == "2021-01-02"
         expect(task.multiplePrescription?.endPeriod) == "2021-03-30"
-        expect(task.noctuFeeWaiver) == false
+        expect(task.hasEmergencyServiceFee) == false
         expect(task.substitutionAllowed) == true
         expect(task.source) == .server
         expect(task.patient?.name) == "Ludger Ludger Königsstein"
@@ -85,6 +83,14 @@ final class FHIRBundleTests: XCTestCase {
         expect(task.organization?.address) == "Musterstr. 2\n10623, Berlin"
         expect(task.organization?.email).to(beNil())
         expect(task.organization?.identifier) == "031234567"
+
+        expect(task.workRelatedAccident) == ErxTask.WorkRelatedAccident(
+            mark: "2",
+            workPlaceIdentifier: "Dummy-Betrieb",
+            date: "2020-05-01"
+        )
+        expect(task.coPaymentStatus) == .subjectToCharge
+        expect(task.bvg) == true
     }
 
     /// FHIRBundle test with
@@ -110,7 +116,7 @@ final class FHIRBundleTests: XCTestCase {
         expect(task.expiresOn) == "2022-03-02"
         expect(task.acceptedUntil) == "2021-12-28"
         expect(task.author) == "Universitätsklinik Campus Süd"
-        expect(task.noctuFeeWaiver) == false
+        expect(task.hasEmergencyServiceFee) == true
         expect(task.dispenseValidityEnd).to(beNil())
         expect(task.substitutionAllowed) == false
         // medication
@@ -148,6 +154,14 @@ final class FHIRBundleTests: XCTestCase {
         expect(task.organization?.address) == "Kirrberger Str. 100\n66421, Homburg"
         expect(task.organization?.email) == "unikliniksued@test.de"
         expect(task.organization?.identifier) == "998877665"
+
+        expect(task.workRelatedAccident) == ErxTask.WorkRelatedAccident(
+            mark: "2",
+            workPlaceIdentifier: "Arbeitsplatz",
+            date: "2021-04-01"
+        )
+        expect(task.coPaymentStatus) == .noSubjectToCharge
+        expect(task.bvg) == true
     }
 
     func testParseAuditEventsFromSamplePayload() throws {

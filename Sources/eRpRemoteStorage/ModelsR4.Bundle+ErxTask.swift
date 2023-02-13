@@ -97,7 +97,7 @@ extension ModelsR4.Bundle {
                 prescriptionId: task.prescriptionId
             )
         }
-        // Find the Document Bundle
+        // Find the Document Bundle (KBV-Bundle)
         guard let patientReceiptBundle = bundle
             .findResource(with: patientReceiptIdentifier, type: ModelsR4.Bundle.self) else {
             return ErxTask(
@@ -114,7 +114,7 @@ extension ModelsR4.Bundle {
             )
         }
 
-        let medication = patientReceiptBundle.medication
+        let medication = patientReceiptBundle.parseErxTaskMedication()
         let multiplePrescription = patientReceiptBundle.medicationRequest?.multiplePrescription
         let patient = patientReceiptBundle.patient
         let practitioner = patientReceiptBundle.practitioner
@@ -136,16 +136,7 @@ extension ModelsR4.Bundle {
             prescriptionId: task.prescriptionId,
             substitutionAllowed: patientReceiptBundle.medicationRequest?.substitutionAllowed ?? false,
             source: .server,
-            medication: ErxTask.Medication(
-                name: medication?.medicationText,
-                pzn: medication?.pzn,
-                amount: medication?.decimalAmount,
-                dosageForm: medication?.dosageForm,
-                dose: medication?.dose,
-                dosageInstructions: patientReceiptBundle.dosageInstructions,
-                lot: medication?.lot,
-                expiresOn: medication?.expiresOn
-            ),
+            medication: medication,
             multiplePrescription: ErxTask.MultiplePrescription(
                 mark: multiplePrescription?.mark ?? false,
                 numbering: multiplePrescription?.numbering,
@@ -176,7 +167,9 @@ extension ModelsR4.Bundle {
                 email: organization?.email,
                 address: organization?.completeAddress
             ),
-            workRelatedAccident: patientReceiptBundle.medicationRequest?.workRelatedAccident
+            workRelatedAccident: patientReceiptBundle.medicationRequest?.workRelatedAccident,
+            coPaymentStatus: patientReceiptBundle.medicationRequest?.coPaymentStatus,
+            bvg: patientReceiptBundle.medicationRequest?.bvg ?? false
         )
     }
 
@@ -190,6 +183,25 @@ extension ModelsR4.Bundle {
         .first { bundleEntry in
             newIdentifier == bundleEntry.id
         }
+    }
+
+    /// Creates an `ErxTask.Medication` from the ModelsR4.Medication
+    public func parseErxTaskMedication() -> ErxTask.Medication {
+        ErxTask.Medication(
+            name: medication?.medicationText,
+            drugCategory: medication?.drugCategory,
+            pzn: medication?.pzn,
+            isVaccine: medication?.isVaccine ?? false,
+            amount: medication?.decimalAmount,
+            dosageForm: medication?.dosageForm,
+            dose: medication?.dose,
+            dosageInstructions: dosageInstructions,
+            lot: medication?.lot,
+            expiresOn: medication?.expiresOn,
+            packaging: medication?.packaging,
+            manufacturingInstructions: medication?.compoundingInstruction,
+            ingredients: medication?.erxTaskIngredients ?? []
+        )
     }
 }
 
@@ -347,52 +359,6 @@ extension ModelsR4.Bundle {
 extension ModelsR4.Organization {
     var author: String? {
         name?.value?.string
-    }
-}
-
-extension ModelsR4.Medication {
-    var medicationText: String? {
-        code?.text?.value?.string
-    }
-
-    var dosageForm: String? {
-        form?.coding?.first {
-            $0.system?.value?.url.absoluteString == Prescription.Key.dosageFormKey
-        }?.code?.value?.string
-    }
-
-    var decimalAmount: Decimal? {
-        guard let numerator = amount?.numerator?.value?.value?.decimal,
-              let denominator = amount?.denominator?.value?.value?.decimal else { return nil }
-        return numerator / denominator
-    }
-
-    var dose: String? {
-        `extension`?.first {
-            $0.url.value?.url.absoluteString == Prescription.Key.medicationDoesKey
-        }
-        .flatMap {
-            if let valueX = $0.value,
-               case let Extension.ValueX.code(code) = valueX,
-               let key = code.value?.string {
-                return key
-            }
-            return nil
-        }
-    }
-
-    var pzn: String? {
-        code?.coding?.first {
-            $0.system?.value?.url.absoluteString == Prescription.Key.pznKey
-        }?.code?.value?.string
-    }
-
-    var lot: String? {
-        batch?.lotNumber?.value?.string
-    }
-
-    var expiresOn: String? {
-        batch?.expirationDate?.value?.description
     }
 }
 

@@ -63,6 +63,23 @@ struct RefreshScrollView<Content: View, StickyHeader: View>: View {
                 }, content: {
                     content
                         .padding(.bottom, viewStore.hasOpenPrescriptions ? 80 : 28)
+                        // Positioning of this introspection is important, moving it out of the `content` will alter the
+                        // horizontal scrollview instead of the full screen vertical one.
+                        .introspectScrollView { scrollView in
+                            let refreshControl: RefreshControl
+                            if let control = scrollView.refreshControl as? RefreshControl {
+                                refreshControl = control
+                            } else {
+                                refreshControl = RefreshControl()
+                                scrollView.refreshControl = refreshControl
+                            }
+                            refreshControl.onRefreshAction = {
+                                viewStore.send(.refresh)
+                            }
+                            if viewStore.isNotLoading, refreshControl.isRefreshing {
+                                refreshControl.endRefreshing()
+                            }
+                        }
                 }
             )
 
@@ -76,21 +93,6 @@ struct RefreshScrollView<Content: View, StickyHeader: View>: View {
                 .padding(.horizontal, 64)
                 .padding(.vertical)
                 .accessibilityIdentifier(A11y.mainScreen.erxBtnRedeemPrescriptions)
-            }
-        }
-        .introspectScrollView { scrollView in
-            let refreshControl: RefreshControl
-            if let control = scrollView.refreshControl as? RefreshControl {
-                refreshControl = control
-            } else {
-                refreshControl = RefreshControl()
-                scrollView.refreshControl = refreshControl
-            }
-            refreshControl.onRefreshAction = {
-                viewStore.send(.refresh)
-            }
-            if viewStore.isNotLoading, refreshControl.isRefreshing {
-                refreshControl.endRefreshing()
             }
         }
     }

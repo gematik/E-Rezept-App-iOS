@@ -1,4 +1,3 @@
-
 "add_btn_save" = "Speichern";
 "add_txt_profile1" = "Profile 1";
 "add_txt_title" = "Name eingeben";
@@ -142,7 +141,7 @@
 "cdw_txt_can_description" = "Ihre Zugangsnummer (Card Access Number, kurz: CAN) finden Sie in der rechten oberen Ecke Ihrer Gesundheitskarte.";
 "cdw_txt_can_subtitle" = "Zugangsnummer eingeben";
 "cdw_txt_can_title" = "Anmeldung";
-"cdw_txt_can_title_hint" = "CAN Eingabefeld";
+"cdw_txt_can_title_hint" = "Ihre Kartenzugangsnummer (Card Access Number, kurz: CAN) hat 6 Stellen. Sie finden die CAN in der rechten oberen Ecke der Vorderseite Ihrer Gesundheitskarte. Steht hier keine sechsstellige Zugangsnummer, benötigen Sie eine neue Gesundheitskarte von Ihrer Krankenversicherung.";
 "cdw_txt_can_warn_wrong_description" = "Die eingegebene CAN passt leider nicht zu der erkannten Karte. Bitte geben Sie die CAN erneut ein. Danke!";
 "cdw_txt_can_warn_wrong_title" = "Falsche CAN";
 "cdw_txt_extauth_alert_message_save_profile" = "Ihre Gesundheitskarte konnte nicht mit dem Profil verknüpft werden.";
@@ -328,6 +327,9 @@
 "dtl_txt_task_id" = "Task-ID";
 "dtl_txt_title" = "Details";
 "email_subject_fallback" = "iOS App: Fehlerreport";
+"erp_txt_tooltips_add_profile" = "Hier drücken, um ein neues Profil anzulegen";
+"erp_txt_tooltips_profile_rename" = "Lange drücken, um Namen zu bearbeiten";
+"erp_txt_tooltips_scan" = "Hier tippen, um Rezepte hinzuzufügen";
 "err_btn_cancel" = "Abbrechen";
 "err_codes_prefix" = "Fehlernummern: ";
 "err_specific_i10018_description" = "Ihre biometrischen Daten haben sich geändert. Wurde z.B. ein Fingerabdruck hinzugefügt? Aus Sicherheitsgründen müssen Sie sich erneut mit Ihrer Gesundheitskarte anmelden.";
@@ -695,7 +697,7 @@
 "onb_leg_btn_terms_of_use_hint" = "Nutzungsbedingungen akzeptieren";
 "onb_leg_btn_title" = "Bestätigen";
 "onb_leg_txt_subtitle" = "Um die App nutzen zu können, stimmen Sie bitte den Nutzungsbedingungen zu und bestätigen Sie die Kenntnisnahme der Datenschutzerklärung. Es werden nur Daten erfasst, die für das Funktionieren der Dienste unerlässlich sind.";
-"onb_leg_txt_title" = "Nutzung & Datenschutz";
+"onb_leg_txt_title" = "Datenschutz & Nutzung";
 "onb_prf_txt_alert_message" = "Das Namensfeld darf nicht leer sein";
 "onb_prf_txt_alert_title" = "Fehler";
 "onb_prf_txt_footnote" = "Das hilft Ihnen dabei, den Überblick zu behalten, wenn Sie die Rezepte für mehrere Personen verwalten möchten.";
@@ -740,7 +742,7 @@
 "ord_detail_txt_orders" = "Bestellung";
 "ord_detail_txt_title" = "Bestellübersicht";
 "ord_list_status_new" = "Neu";
-"ord_txt_empty_list_message" = "Sie haben noch keine Mitteilungen erhalten";
+"ord_txt_empty_list_message" = "Sie haben noch keine Rezepte eingelöst";
 "ord_txt_empty_list_title" = "Keine Bestellungen";
 "ord_txt_no_pharmacy_name" = "Unbekannte Apotheke";
 "ord_txt_title" = "Bestellungen";
@@ -794,7 +796,7 @@
 "pha_detail_opening_today" = "Heute";
 "pha_detail_opening_until" = "bis";
 "pha_detail_phone" = "Telefonnummer";
-"pha_detail_txt_footer_end" = "Sie haben einen Fehler entdeckt oder möchten Daten korrigieren?";
+"pha_detail_txt_footer_end" = ". Sie haben einen Fehler entdeckt oder möchten Daten korrigieren?";
 "pha_detail_txt_footer_mid" = "mein-apothekenportal.de";
 "pha_detail_txt_footer_start" = "Hinweis für Apotheken: Die Kontaktdaten und Informationen zu Apotheken beziehen wir von ";
 "pha_detail_txt_subtitle_fallback" = "Apotheke";
@@ -1022,8 +1024,8 @@
 "stg_btn_reg_devices_load" = "Authentifizieren";
 "stg_con_fbk_mail" = "app-feedback@gematik.de";
 "stg_con_fbk_subject_mail" = "Feedback aus der E-Rezept App";
-"stg_con_hotline_ava" = "Kostenfrei für den Anrufer. Servicezeiten: Mo. - Fr. 08:00 - 20:00 Uhr außer an bundeseinheitlichen Feiertagen";
-"stg_con_hotline_contact" = "+49-0800-277-3777";
+"stg_con_hotline_ava" = "Kostenfrei für den Anrufenden. Servicezeiten: Mo. - Fr. 08:00 - 20:00 Uhr außer an bundeseinheitlichen Feiertagen";
+"stg_con_hotline_contact" = "+49-800-277-3777";
 "stg_con_text_contact_hotline" = "Technische Hotline anrufen";
 "stg_con_text_mail" = "Mail schreiben";
 "stg_con_text_survey" = "An Umfrage teilnehmen";
@@ -1114,8 +1116,8 @@
 "stg_txt_card_reset_rc_alert_pin_counter_exhausted_title" = "Karte gesperrt";
 "stg_txt_card_reset_rc_alert_unknown_error_message" = "Bitte probieren Sie es erneut.";
 "stg_txt_card_reset_rc_alert_unknown_error_title" = "Ein Fehler ist aufgetreten";
-"stg_txt_card_reset_rc_alert_wrong_can_message" = "Sie finden die Zugangsnummer (CAN) oben rechts auf Ihrer Gesundheitskarte.";
-"stg_txt_card_reset_rc_alert_wrong_can_title" = "Zugangsnummer falsch eingegeben";
+"stg_txt_card_reset_rc_alert_wrong_can_message" = "Bitte korrigieren Sie Ihre Zugangsnummer (CAN)";
+"stg_txt_card_reset_rc_alert_wrong_can_title" = "Falsche CAN";
 "stg_txt_card_reset_rc_alert_wrong_pin_title" = "PIN falsch eingegeben";
 "stg_txt_card_reset_rc_alert_wrong_puk_title" = "PUK falsch eingegeben";
 "stg_txt_card_reset_rc_alert_wrong_puk_zero_retries_message" = "Sie haben leider keine weiteren Versuche Ihre PUK einzugeben. Bitte wenden Sie sich an Ihre Krankenversicherung.";
@@ -1132,7 +1134,7 @@
 "stg_txt_edit_profile_delete_confirmation_message" = "Hiermit werden alle Daten auf diesem Gerät gelöscht. Ihre Rezepte im Gesundheitsnetzwerk bleiben erhalten.";
 "stg_txt_edit_profile_delete_confirmation_title" = "Profil löschen?";
 "stg_txt_edit_profile_delete_pairing" = "Zugangsdaten löschen";
-"stg_txt_edit_profile_delete_pairing_error" = "Die Zugangsdaten konnten nicht vom Server gelöscht werden. Bitte versuchen Sie es erneut";
+"stg_txt_edit_profile_delete_pairing_error" = "Die Zugangsdaten konnten nicht vom Server gelöscht werden. Bitte versuchen Sie es erneut.";
 "stg_txt_edit_profile_delete_pairing_message" = "Sie erhalten nicht mehr automatisch neue Rezepte.";
 "stg_txt_edit_profile_delete_pairing_title" = "Zugangsdaten löschen";
 "stg_txt_edit_profile_empty_name_error_message" = "Das Namensfeld darf nicht leer sein";

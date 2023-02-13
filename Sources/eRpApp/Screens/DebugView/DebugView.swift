@@ -73,6 +73,9 @@ extension DebugView {
                     Button("Reset hint events") {
                         viewStore.send(.resetHintEvents)
                     }
+                    Button("Reset tooltips") {
+                        viewStore.send(.resetTooltips)
+                    }
                 }
             }
         }

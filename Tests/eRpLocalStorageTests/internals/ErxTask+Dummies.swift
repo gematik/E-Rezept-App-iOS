@@ -74,6 +74,7 @@ extension ErxTask {
         )
 
         static var demoWorkRelatedAccident = ErxTask.WorkRelatedAccident(
+            mark: nil,
             workPlaceIdentifier: "1234567890",
             date: "9.4.2021"
         )
@@ -134,7 +135,6 @@ extension ErxTask {
                 practitioner: practitioner,
                 organization: organisation,
                 workRelatedAccident: demoWorkRelatedAccident,
-                auditEvents: auditEvents(for: id),
                 communications: [ErxTask.Communication.Dummies.communication(
                     for: id,
                     insuranceId: patient.insuranceId!
@@ -190,7 +190,8 @@ extension ErxTask.Medication {
                 dose: "N1",
                 dosageInstructions: nil,
                 lot: nil,
-                expiresOn: nil
+                expiresOn: nil,
+                packaging: nil
             )
         }()
 
@@ -203,7 +204,8 @@ extension ErxTask.Medication {
                 dose: "N2",
                 dosageInstructions: nil,
                 lot: nil,
-                expiresOn: nil
+                expiresOn: nil,
+                packaging: nil
             )
         }()
 
@@ -216,7 +218,8 @@ extension ErxTask.Medication {
                 dose: "KTP",
                 dosageInstructions: nil,
                 lot: nil,
-                expiresOn: nil
+                expiresOn: nil,
+                packaging: nil
             )
         }()
     }

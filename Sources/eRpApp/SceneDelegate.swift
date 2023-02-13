@@ -115,6 +115,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing, SceneDelegateD
 
         guard !migrationCoordinator.isMigrating else { return }
 
+        // dispatching necessary to prevents keyboard not showing on iOS 16
         DispatchQueue.main.async { [weak self] in
             self?.presentAppAuthenticationDomain(scene: scene)
         }

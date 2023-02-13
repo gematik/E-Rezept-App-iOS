@@ -71,14 +71,10 @@ enum OnboardingDomain {
     }
 
     struct Composition: Equatable {
-        let hideOnboardingLegacy: Bool
-        let onboardingVersion: String?
         var currentPageIndex: Int
         let pages: [Page]
 
         init(hideOnboardingLegacy: Bool, onboardingVersion: String?) {
-            self.hideOnboardingLegacy = hideOnboardingLegacy
-            self.onboardingVersion = onboardingVersion
             currentPageIndex = 0
             pages = Composition.calculatePages(
                 hideOnboarding: hideOnboardingLegacy,
@@ -86,14 +82,12 @@ enum OnboardingDomain {
             )
         }
 
-        init(currentPageIndex: Int = 0,
-             pages: [Page] = [],
-             hideOnboardingLegacy: Bool = false,
-             onboardingVersion: String? = nil) {
+        init(
+            currentPageIndex: Int = 0,
+            pages: [Page] = []
+        ) {
             self.currentPageIndex = currentPageIndex
             self.pages = pages
-            self.hideOnboardingLegacy = hideOnboardingLegacy
-            self.onboardingVersion = onboardingVersion
         }
 
         var isEmpty: Bool {
@@ -111,9 +105,7 @@ enum OnboardingDomain {
         }
 
         mutating func next() {
-            if currentPageIndex < pages.count - 1 {
-                currentPageIndex += 1
-            }
+            setPage(index: currentPageIndex + 1)
         }
 
         mutating func setPage(index: Int) {

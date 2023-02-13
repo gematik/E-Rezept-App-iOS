@@ -72,15 +72,9 @@ final class RedeemMethodsDomainTests: XCTestCase {
             address: "Vor der Bahn 6\n54321 Berlin"
         )
         let workRelatedAccident = ErxTask.WorkRelatedAccident(
+            mark: "2",
             workPlaceIdentifier: "1234567890",
             date: "9.4.2021"
-        )
-        let auditEvent = ErxAuditEvent(
-            identifier: "100",
-            locale: "de",
-            text: "Read operation was performed.",
-            timestamp: "2021-05-01T14:22:15.444555666+00:00",
-            taskId: "6390f983-1e67-11b2-8555-63bf44e44fb8"
         )
         erxTask = ErxTask(
             identifier: "2390f983-1e67-11b2-8555-63bf44e44fb8",
@@ -96,8 +90,7 @@ final class RedeemMethodsDomainTests: XCTestCase {
             patient: patient,
             practitioner: practitioner,
             organization: organization,
-            workRelatedAccident: workRelatedAccident,
-            auditEvents: [auditEvent]
+            workRelatedAccident: workRelatedAccident
         )
     }
 

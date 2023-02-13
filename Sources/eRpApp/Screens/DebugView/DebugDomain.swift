@@ -120,6 +120,7 @@ enum DebugDomain {
         case resetAlertText
         case appear
         case resetHintEvents
+        case resetTooltips
         case logAction(action: DebugLogDomain.Action)
         #endif
     }
@@ -279,7 +280,9 @@ enum DebugDomain {
         case .resetHintEvents:
             environment.userSession.hintEventsStore.hintState = HintState()
             return .none
-
+        case .resetTooltips:
+            UserDefaults.standard.setValue([:], forKey: "TOOLTIPS")
+            return .none
         case let .tokenReceived(token):
             state.token = token
             return .none

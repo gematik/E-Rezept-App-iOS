@@ -1,0 +1,59 @@
+{
+  "resourceType": "Medication",
+  "id": "86fa62c7-06a0-418e-ba26-e99baa053c07",
+  "meta": {
+    "profile": [
+      "https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Medication_Ingredient|1.0.2"
+    ]
+  },
+  "extension": [
+    {
+      "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Medication_Category",
+      "valueCoding": {
+        "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_ERP_Medication_Category",
+        "code": "00"
+      }
+    },
+    {
+      "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Medication_Vaccine",
+      "valueBoolean": false
+    },
+    {
+      "url": "http://fhir.de/StructureDefinition/normgroesse",
+      "valueCode": "N1"
+    }
+  ],
+  "code": {
+    "coding": [
+      {
+        "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_ERP_Medication_Type",
+        "code": "wirkstoxff"
+      }
+    ]
+  },
+  "form": {
+    "text": "Flüssigkeiten"
+  },
+  "ingredient": [
+    {
+      "itemCodeableConcept": {
+        "coding": [
+          {
+            "system": "http://fhir.de/CodeSystem/ask",
+            "code": "37197"
+          }
+        ],
+        "text": "Wirkstoff Paulaner Weissbier"
+      },
+      "strength": {
+        "numerator": {
+          "value": 1,
+          "unit": "Maß"
+        },
+        "denominator": {
+          "value": 1
+        }
+      }
+    }
+  ]
+}

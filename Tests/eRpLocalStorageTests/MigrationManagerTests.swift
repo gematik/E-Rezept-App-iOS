@@ -126,7 +126,7 @@ final class MigrationManagerTests: XCTestCase {
         try erxTaskStore.add(tasks: tasks)
         let communications = tasks.flatMap(\.communications)
         try erxTaskStore.add(communications: communications)
-        let auditEvents = tasks.flatMap(\.auditEvents)
+        let auditEvents = ErxTask.Dummies.auditEvents(for: tasks.first!.id)
         try erxTaskStore.add(auditEvents: auditEvents)
 
         var receivedCompletions = [Subscribers.Completion<MigrationError>]()
@@ -349,7 +349,7 @@ final class MigrationManagerTests: XCTestCase {
         )
         // pre fill database with tasks and auditEvents
         let tasks = tasksForPatientAnna + tasksForPatientLudger
-        let auditEvents = tasks.flatMap(\.auditEvents)
+        let auditEvents = ErxTask.Dummies.auditEvents(for: tasks.first!.id)
         try erxTaskStore.add(auditEvents: auditEvents)
 
         var receivedCompletions = [Subscribers.Completion<MigrationError>]()
@@ -397,6 +397,7 @@ extension ErxTask {
         return ErxTask(
             identifier: id,
             status: status,
+            flowType: flowType,
             accessCode: accessCode,
             fullUrl: fullUrl,
             authoredOn: authoredOn,
@@ -406,16 +407,18 @@ extension ErxTask {
             redeemedOn: redeemedOn,
             author: author,
             dispenseValidityEnd: dispenseValidityEnd,
-            noctuFeeWaiver: noctuFeeWaiver,
+            noctuFeeWaiver: hasEmergencyServiceFee,
             prescriptionId: prescriptionId,
             substitutionAllowed: substitutionAllowed,
             source: source,
             medication: medication,
+            multiplePrescription: multiplePrescription,
             patient: patient,
             practitioner: practitioner,
             organization: organization,
             workRelatedAccident: workRelatedAccident,
-            auditEvents: [],
+            coPaymentStatus: coPaymentStatus,
+            bvg: bvg,
             communications: communications,
             medicationDispenses: medicationDispenses
         )

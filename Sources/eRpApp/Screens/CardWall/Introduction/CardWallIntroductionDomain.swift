@@ -101,10 +101,13 @@ enum CardWallIntroductionDomain {
         case .canAction(.close),
              .fasttrack(action: .close):
             state.route = nil
-            return Effect(value: .close)
-                // Delay for closing all views, Workaround for TCA pullback problem
-                .delay(for: 0.05, scheduler: environment.schedulers.main)
-                .eraseToEffect()
+            return Effect.concatenate(
+                cleanup(),
+                Effect(value: .close)
+                    // Delay for closing all views, Workaround for TCA pullback problem
+                    .delay(for: 0.05, scheduler: environment.schedulers.main)
+                    .eraseToEffect()
+            )
         case .setNavigation,
              .canAction,
              .fasttrack,

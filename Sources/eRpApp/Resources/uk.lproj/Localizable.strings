@@ -1,4 +1,3 @@
-
 "add_btn_save" = "Зберегти";
 "add_txt_profile1" = "профілі 1";
 "add_txt_title" = "Введіть ім'я";
@@ -142,7 +141,7 @@
 "cdw_txt_can_description" = "Ви можете знайти свій номер доступу до картки (CAN) у верхньому правому куті вашої медичної картки.";
 "cdw_txt_can_subtitle" = "Введіть номер доступу";
 "cdw_txt_can_title" = "Вхід";
-"cdw_txt_can_title_hint" = "CAN Eingabefeld";
+"cdw_txt_can_title_hint" = "Ваш номер доступу для картки (Card Access Number, скорочено CAN) складається з 6 цифр. Ви знайдете CAN у верхньому правому куті на лицьовій стороні вашої медичної картки. Якщо тут шестизначного номера доступу немає, вам потрібна нова картка здоров'я від вашої медичної страхової компанії.";
 "cdw_txt_can_warn_wrong_description" = "На жаль, введений CAN не відповідає розпізнаній картці. Введіть CAN ще раз. Спасибі!";
 "cdw_txt_can_warn_wrong_title" = "Неправильний CAN";
 "cdw_txt_extauth_alert_message_save_profile" = "Не вдалося прив'язати картку здоров'я до профілю.";
@@ -328,6 +327,9 @@
 "dtl_txt_task_id" = "Ідентифікатор завдання";
 "dtl_txt_title" = "Деталі";
 "email_subject_fallback" = "Застосунок iOS: звіт про помилки";
+"erp_txt_tooltips_add_profile" = "Натисніть тут, щоб створити новий профіль";
+"erp_txt_tooltips_profile_rename" = "Тривале натискання для редагування імен";
+"erp_txt_tooltips_scan" = "Натисніть тут, щоб додати рецепти";
 "err_btn_cancel" = "Скасувати";
 "err_codes_prefix" = "Номери помилок:";
 "err_specific_i10018_description" = "Ваші біометричні дані змінилися. Наприклад, чи додано відбиток пальця? З міркувань безпеки ви повинні повторно зареєструватися за допомогою своєї медичної картки.";
@@ -695,7 +697,7 @@
 "onb_leg_btn_terms_of_use_hint" = "Прийняти умови використання";
 "onb_leg_btn_title" = "Підтвердити";
 "onb_leg_txt_subtitle" = "Щоб використовувати застосунок, погодьтеся з умовами використання та підтвердьте, що ви прочитали Політику конфіденційності. Збираються лише дані, необхідні для функціонування сервісів.";
-"onb_leg_txt_title" = "Умови використання та Політика конфіденційності";
+"onb_leg_txt_title" = "Конфіденційність і використання";
 "onb_prf_txt_alert_message" = "Поле прізвища не може бути порожнім";
 "onb_prf_txt_alert_title" = "Помилка";
 "onb_prf_txt_footnote" = "Це допоможе вам контролювати процес керування рецептами для кількох людей.";
@@ -740,7 +742,7 @@
 "ord_detail_txt_orders" = "замовлення";
 "ord_detail_txt_title" = "Огляд замовлення";
 "ord_list_status_new" = "новий";
-"ord_txt_empty_list_message" = "Ви ще не отримали жодних сповіщень";
+"ord_txt_empty_list_message" = "У вас ще немає замовлень";
 "ord_txt_empty_list_title" = "Без замовлень";
 "ord_txt_no_pharmacy_name" = "Невідома аптека";
 "ord_txt_title" = "замовлення";
@@ -794,7 +796,7 @@
 "pha_detail_opening_today" = "Сьогодні";
 "pha_detail_opening_until" = "до";
 "pha_detail_phone" = "Номер телефону";
-"pha_detail_txt_footer_end" = "Ви виявили помилку або хочете виправити дані?";
+"pha_detail_txt_footer_end" = ". Ви виявили помилку або хочете виправити дані?";
 "pha_detail_txt_footer_mid" = "mein-apothekenportal.de";
 "pha_detail_txt_footer_start" = "Указівка для аптек: контактні дані та інформацію про аптеки ми отримуємо від";
 "pha_detail_txt_subtitle_fallback" = "Аптека";
@@ -1023,7 +1025,7 @@
 "stg_con_fbk_mail" = "app-feedback@gematik.de";
 "stg_con_fbk_subject_mail" = "Відгук від застосунку E-Rezept";
 "stg_con_hotline_ava" = "Безкоштовно для абонента. Режим роботи: Пн. - Пт. 08:00 - 20:00, крім святкових днів";
-"stg_con_hotline_contact" = "+49-0800-277-3777";
+"stg_con_hotline_contact" = "+49-800-277-3777";
 "stg_con_text_contact_hotline" = "Зателефонувати на технічну гарячу лінію";
 "stg_con_text_mail" = "Написати електронний лист";
 "stg_con_text_survey" = "Взяти участь в опитуванні";

@@ -167,8 +167,7 @@ extension ErxTask {
             patient: demoPatient,
             practitioner: demoPractitioner,
             organization: demoOrganization,
-            workRelatedAccident: demoWorkRelatedAccident,
-            auditEvents: ErxAuditEvent.Dummies.auditEvents
+            workRelatedAccident: demoWorkRelatedAccident
         )
 
         static let erxTaskError: ErxTask = .init(
@@ -205,6 +204,7 @@ extension ErxTask {
         )
 
         static let demoWorkRelatedAccident = ErxTask.WorkRelatedAccident(
+            mark: "2",
             workPlaceIdentifier: "1234567890",
             date: "9.4.2021"
         )
@@ -240,8 +240,7 @@ extension ErxTask {
             patient: demoPatient,
             practitioner: demoPractitioner,
             organization: demoOrganization,
-            workRelatedAccident: demoWorkRelatedAccident,
-            auditEvents: ErxAuditEvent.Dummies.auditEvents
+            workRelatedAccident: demoWorkRelatedAccident
         )
 
         static let erxTask2: ErxTask = .init(
@@ -258,8 +257,7 @@ extension ErxTask {
             patient: demoPatient,
             practitioner: demoPractitioner,
             organization: demoOrganization,
-            workRelatedAccident: demoWorkRelatedAccident,
-            auditEvents: ErxAuditEvent.Dummies.auditEvents
+            workRelatedAccident: demoWorkRelatedAccident
         )
 
         static let erxTask3: ErxTask = .init(
@@ -277,8 +275,7 @@ extension ErxTask {
             patient: demoPatient,
             practitioner: demoPractitioner,
             organization: demoOrganization,
-            workRelatedAccident: demoWorkRelatedAccident,
-            auditEvents: ErxAuditEvent.Dummies.auditEvents
+            workRelatedAccident: demoWorkRelatedAccident
         )
 
         static let erxTask4: ErxTask = .init(
@@ -294,8 +291,7 @@ extension ErxTask {
             patient: demoPatient,
             practitioner: demoPractitioner,
             organization: demoOrganization,
-            workRelatedAccident: demoWorkRelatedAccident,
-            auditEvents: ErxAuditEvent.Dummies.auditEvents
+            workRelatedAccident: demoWorkRelatedAccident
         )
 
         static let erxTask5: ErxTask = .init(
@@ -311,8 +307,7 @@ extension ErxTask {
             patient: demoPatient,
             practitioner: demoPractitioner,
             organization: demoOrganization,
-            workRelatedAccident: demoWorkRelatedAccident,
-            auditEvents: ErxAuditEvent.Dummies.auditEvents
+            workRelatedAccident: demoWorkRelatedAccident
         )
 
         static let erxTask6: ErxTask = .init(
@@ -329,8 +324,7 @@ extension ErxTask {
             patient: demoPatient,
             practitioner: demoPractitioner,
             organization: demoOrganization,
-            workRelatedAccident: demoWorkRelatedAccident,
-            auditEvents: ErxAuditEvent.Dummies.auditEvents
+            workRelatedAccident: demoWorkRelatedAccident
         )
 
         static let erxTask7: ErxTask = .init(
@@ -346,8 +340,7 @@ extension ErxTask {
             patient: demoPatient,
             practitioner: demoPractitioner,
             organization: demoOrganization,
-            workRelatedAccident: demoWorkRelatedAccident,
-            auditEvents: ErxAuditEvent.Dummies.auditEvents
+            workRelatedAccident: demoWorkRelatedAccident
         )
 
         static let erxTask8: ErxTask = .init(
@@ -363,8 +356,7 @@ extension ErxTask {
             patient: demoPatient,
             practitioner: demoPractitioner,
             organization: demoOrganization,
-            workRelatedAccident: demoWorkRelatedAccident,
-            auditEvents: ErxAuditEvent.Dummies.auditEvents
+            workRelatedAccident: demoWorkRelatedAccident
         )
 
         static let erxTask9: ErxTask = .init(
@@ -380,8 +372,7 @@ extension ErxTask {
             patient: demoPatient,
             practitioner: demoPractitioner,
             organization: demoOrganization,
-            workRelatedAccident: demoWorkRelatedAccident,
-            auditEvents: ErxAuditEvent.Dummies.auditEvents
+            workRelatedAccident: demoWorkRelatedAccident
         )
 
         static let erxTask10: ErxTask = .init(
@@ -398,8 +389,7 @@ extension ErxTask {
             patient: demoPatient,
             practitioner: demoPractitioner,
             organization: demoOrganization,
-            workRelatedAccident: demoWorkRelatedAccident,
-            auditEvents: ErxAuditEvent.Dummies.auditEvents
+            workRelatedAccident: demoWorkRelatedAccident
         )
 
         static let erxTask11: ErxTask = .init(
@@ -416,8 +406,7 @@ extension ErxTask {
             patient: demoPatient,
             practitioner: demoPractitioner,
             organization: demoOrganization,
-            workRelatedAccident: demoWorkRelatedAccident,
-            auditEvents: ErxAuditEvent.Dummies.auditEvents
+            workRelatedAccident: demoWorkRelatedAccident
         )
 
         static let erxTask12: ErxTask = .init(
@@ -434,8 +423,7 @@ extension ErxTask {
             patient: demoPatient,
             practitioner: demoPractitioner,
             organization: demoOrganization,
-            workRelatedAccident: demoWorkRelatedAccident,
-            auditEvents: ErxAuditEvent.Dummies.auditEvents
+            workRelatedAccident: demoWorkRelatedAccident
         )
 
         static let erxTask13: ErxTask = .init(
@@ -452,8 +440,7 @@ extension ErxTask {
             patient: demoPatient,
             practitioner: demoPractitioner,
             organization: demoOrganization,
-            workRelatedAccident: demoWorkRelatedAccident,
-            auditEvents: ErxAuditEvent.Dummies.auditEvents
+            workRelatedAccident: demoWorkRelatedAccident
         )
 
         static let erxTask14: ErxTask = .init(
@@ -470,8 +457,7 @@ extension ErxTask {
             patient: demoPatient,
             practitioner: demoPractitioner,
             organization: demoOrganization,
-            workRelatedAccident: demoWorkRelatedAccident,
-            auditEvents: ErxAuditEvent.Dummies.auditEvents
+            workRelatedAccident: demoWorkRelatedAccident
         )
 
         static let erxTask15: ErxTask = .init(
@@ -489,7 +475,6 @@ extension ErxTask {
             practitioner: demoPractitioner,
             organization: demoOrganization,
             workRelatedAccident: demoWorkRelatedAccident,
-            auditEvents: ErxAuditEvent.Dummies.auditEvents,
             medicationDispenses: [
                 medicationDispense1,
                 medicationDispense2,
@@ -511,8 +496,7 @@ extension ErxTask {
             patient: demoPatient,
             practitioner: demoPractitioner,
             organization: demoOrganization,
-            workRelatedAccident: demoWorkRelatedAccident,
-            auditEvents: ErxAuditEvent.Dummies.auditEvents
+            workRelatedAccident: demoWorkRelatedAccident
         )
 
         static let erxTasks: [ErxTask] =

@@ -39,8 +39,7 @@ final class PrescriptionViewStatusTests: XCTestCase {
                 noctuFeeWaiver: true,
                 substitutionAllowed: true,
                 medication: medication,
-                multiplePrescription: multiplePrescription,
-                auditEvents: ErxAuditEvent.Fixtures.auditEvents)
+                multiplePrescription: multiplePrescription)
     }
 
     let medication: ErxTask.Medication = {

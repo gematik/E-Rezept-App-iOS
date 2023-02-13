@@ -38,6 +38,7 @@ struct ScrollViewWithStickyHeader<Content: View, Header: View>: View {
                     .anchorPreference(key: StickyHeaderAnchorKey.self, value: .bounds) { anchor in
                         StickyHeader(view: AnyView(header), bounds: anchor)
                     }
+                    .disabled(true)
                     .hidden()
                     .accessibilityHidden(true)
 
@@ -60,7 +61,7 @@ struct ScrollViewWithStickyHeader<Content: View, Header: View>: View {
                             alignment: SwiftUI.Alignment.bottom
                         )
                         .background(BlurEffectView(
-                            style: .systemChromeMaterialLight,
+                            style: .systemChromeMaterial,
                             strength: applyBackgroundBlur ? effectStrength : 0.0
                         ))
                         .offset(x: proxy[stickyHeader.bounds].minX, y: yPosition)

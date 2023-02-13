@@ -38,12 +38,14 @@ struct OnboardingContainer: View, KeyboardReadable {
         let isDragEnabled: Bool
         let isShowingNextButton: Bool
         let isNextButtonEnabled: Bool
+        let hasValidAuthenticationSelection: Bool
 
         init(state: OnboardingDomain.State) {
             composition = state.composition
             isDragEnabled = state.isDragEnabled
             isShowingNextButton = state.isShowingNextButton
             isNextButtonEnabled = state.isNextButtonEnabled
+            hasValidAuthenticationSelection = state.registerAuthenticationState.hasValidSelection
         }
     }
 
@@ -77,13 +79,21 @@ struct OnboardingContainer: View, KeyboardReadable {
                     .gesture(viewStore.isDragEnabled ? nil : DragGesture())
                     .tag(2)
 
-                    OnboardingLegalInfoView {
-                        viewStore.send(
-                            .saveAuthentication,
-                            animation: Animation.default
-                        )
+                    // TabView only recognizes number of element changes since iOS 16.
+                    if #available(iOS 16, *) {
+                        // This prevents passing the onboarding without conscious auth. selection (ERA-6522)
+                        if viewStore.hasValidAuthenticationSelection {
+                            OnboardingLegalInfoView {
+                                viewStore.send(.saveAuthentication, animation: .default)
+                            }
+                            .tag(3)
+                        }
+                    } else {
+                        OnboardingLegalInfoView {
+                            viewStore.send(.saveAuthentication, animation: .default)
+                        }
+                        .tag(3)
                     }
-                    .tag(3)
                 }
             }
             .background(Colors.systemBackground)

@@ -36,6 +36,11 @@ extension ErxTaskMedicationEntity {
         pzn = medication.pzn
         lot = medication.lot
         expiresOn = medication.expiresOn
+        // ingredient = medication.ingredient // DH.TODO //swiftlint:disable:this todo
+        // isVaccine = medication.isVaccine // DH.TODO //swiftlint:disable:this todo
+        // packaging = medication.packaging // DH.TODO //swiftlint:disable:this todo
+        // manufacturingInstructions =  medication.manufacturingInstructions //DH.TODO //swiftlint:disable:this todo
+        // drugCategory = medication.drugCategory // DH.TODO //swiftlint:disable:this todo
     }
 }
 
@@ -45,13 +50,18 @@ extension ErxTask.Medication {
 
         self.init(
             name: entity.name,
+            drugCategory: nil, // DH.TODO //swiftlint:disable:this todo
             pzn: entity.pzn,
+            isVaccine: false, // DH.TODO //swiftlint:disable:this todo
             amount: entity.amount as Decimal?,
             dosageForm: entity.dosageForm,
             dose: entity.dose,
             dosageInstructions: entity.dosageInstructions,
             lot: entity.lot,
-            expiresOn: entity.expiresOn
+            expiresOn: entity.expiresOn,
+            packaging: nil, // DH.TODO //swiftlint:disable:this todo
+            manufacturingInstructions: nil, // DH.TODO //swiftlint:disable:this todo
+            ingredients: [] // DH.TODO //swiftlint:disable:this todo
         )
     }
 }

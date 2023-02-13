@@ -185,9 +185,9 @@ import SwiftUI
     internal static let cdwBtnIntroCancelLabel = StringAsset("cdw_btn_intro_cancel_label")
     /// health insurance app
     internal static let cdwBtnIntroFasttrackCenter = StringAsset("cdw_btn_intro_fasttrack_center")
-    /// Or: Sign in with your
+    /// Or: Sign in with your 
     internal static let cdwBtnIntroFasttrackLeading = StringAsset("cdw_btn_intro_fasttrack_leading")
-    /// on.
+    /// .
     internal static let cdwBtnIntroFasttrackTrailing = StringAsset("cdw_btn_intro_fasttrack_trailing")
     /// Order now
     internal static let cdwBtnIntroFootnote = StringAsset("cdw_btn_intro_footnote")
@@ -322,7 +322,7 @@ import SwiftUI
     internal static let cdwTxtCanSubtitle = StringAsset("cdw_txt_can_subtitle")
     /// Login
     internal static let cdwTxtCanTitle = StringAsset("cdw_txt_can_title")
-    /// CAN Eingabefeld
+    /// Your Card Access Number (CAN) has 6 digits. You can find the CAN in the top right corner on the front of your health card. If there is no six-digit access number, you need a new health card from your health insurance company.
     internal static let cdwTxtCanTitleHint = StringAsset("cdw_txt_can_title_hint")
     /// Unfortunately, the CAN entered does not match the recognised card. Please enter the CAN again. Thank you!
     internal static let cdwTxtCanWarnWrongDescription = StringAsset("cdw_txt_can_warn_wrong_description")
@@ -707,6 +707,12 @@ import SwiftUI
     internal static let dtlTxtTitle = StringAsset("dtl_txt_title")
     /// iOS App: Error report
     internal static let emailSubjectFallback = StringAsset("email_subject_fallback")
+    /// Press here to create a new profile
+    internal static let erpTxtTooltipsAddProfile = StringAsset("erp_txt_tooltips_add_profile")
+    /// Long press to edit names
+    internal static let erpTxtTooltipsProfileRename = StringAsset("erp_txt_tooltips_profile_rename")
+    /// Tap here to add recipes
+    internal static let erpTxtTooltipsScan = StringAsset("erp_txt_tooltips_scan")
     /// Cancel
     internal static let errBtnCancel = StringAsset("err_btn_cancel")
     /// Error numbers:
@@ -1461,7 +1467,7 @@ import SwiftUI
     internal static let onbLegBtnTitle = StringAsset("onb_leg_btn_title")
     /// In order to use the app, please agree to the Terms of Use and confirm that you have read and understood the Privacy Policy. Only data that is essential for the functioning of the services is collected.
     internal static let onbLegTxtSubtitle = StringAsset("onb_leg_txt_subtitle")
-    /// Terms of Use & Privacy Policy
+    /// Privacy & Use
     internal static let onbLegTxtTitle = StringAsset("onb_leg_txt_title")
     /// The name field must not be empty
     internal static let onbPrfTxtAlertMessage = StringAsset("onb_prf_txt_alert_message")
@@ -1563,7 +1569,7 @@ import SwiftUI
     }
     /// New
     internal static let ordListStatusNew = StringAsset("ord_list_status_new")
-    /// You haven't received any messages yet
+    /// You don't have any orders yet
     internal static let ordTxtEmptyListMessage = StringAsset("ord_txt_empty_list_message")
     /// No orders
     internal static let ordTxtEmptyListTitle = StringAsset("ord_txt_empty_list_title")
@@ -1671,7 +1677,7 @@ import SwiftUI
     internal static let phaDetailOpeningUntil = StringAsset("pha_detail_opening_until")
     /// Telephone number
     internal static let phaDetailPhone = StringAsset("pha_detail_phone")
-    /// Have you found an error or would you like to correct any data?
+    /// . Have you found an error or would you like to correct any data?
     internal static let phaDetailTxtFooterEnd = StringAsset("pha_detail_txt_footer_end")
     /// mein-apothekenportal.de
     internal static let phaDetailTxtFooterMid = StringAsset("pha_detail_txt_footer_mid")
@@ -2175,7 +2181,7 @@ import SwiftUI
     internal static let stgConFbkSubjectMail = StringAsset("stg_con_fbk_subject_mail")
     /// Toll-free for the caller. Service times: Monday - Friday 8:00 a.m. - 8:00 p.m. except on German national holidays
     internal static let stgConHotlineAva = StringAsset("stg_con_hotline_ava")
-    /// +49 0800 277 3777
+    /// +49-800-277-3777
     internal static let stgConHotlineContact = StringAsset("stg_con_hotline_contact")
     /// Call technical hotline
     internal static let stgConTextContactHotline = StringAsset("stg_con_text_contact_hotline")

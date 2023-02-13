@@ -141,7 +141,7 @@
 "cdw_txt_can_description" = "يمكنك العثور على رقم الوصول إلى بطاقتك (CAN) في الزاوية اليمنى العليا من بطاقتك الصحية.";
 "cdw_txt_can_subtitle" = "إدخال رقم الدخول";
 "cdw_txt_can_title" = "تسجيل الدخول";
-"cdw_txt_can_title_hint" = "CAN Eingabefeld";
+"cdw_txt_can_title_hint" = "يتكون رقم الدخول إلى بطاقتك (رقم الوصول إلى البطاقة - المعروف اختصارًا باسم CAN) من 6 أرقام. ستجد هذا الرقم في الركن الأيمن العلوي من مقدمة بطاقة التأمين الصحي الخاصة بك. إذا لم يكن هناك رقم وصول مكون من ستة أرقام، فستحتاج إلى بطاقة صحية جديدة من شركة التأمين الصحي الخاصة بك.";
 "cdw_txt_can_warn_wrong_description" = "للأسف رقم الوصول إلى البطاقة (CAN) لا يتطابق مع البطاقة التي تم التعرف عليها. يُرجى إعادة إدخال رقم CAN مرة أخرى. شكرًا!";
 "cdw_txt_can_warn_wrong_title" = "رقم CAN خاطيء";
 "cdw_txt_extauth_alert_message_save_profile" = "لم يتمكن من ربط بطاقتك الصحية بالملف الشخصي.";
@@ -327,6 +327,9 @@
 "dtl_txt_task_id" = "رقم الطلبية";
 "dtl_txt_title" = "التفاصيل";
 "email_subject_fallback" = "تطبيق iOS: تقرير الخطأ";
+"erp_txt_tooltips_add_profile" = "انقر هنا لإنشاء ملف تعريف جديد";
+"erp_txt_tooltips_profile_rename" = "اضغط مع الاستمرار لتعديل الأسماء";
+"erp_txt_tooltips_scan" = "اضغط هنا لإضافة وصفات";
 "err_btn_cancel" = "إلغاء";
 "err_codes_prefix" = "أرقام الخطأ:";
 "err_specific_i10018_description" = "لقد تغيرت القياسات الحيوية الخاصة بك. على سبيل المثال ، هل تمت إضافة بصمة إصبع؟ لأسباب أمنية ، يجب عليك التسجيل مرة أخرى باستخدام بطاقتك الصحية.";
@@ -694,7 +697,7 @@
 "onb_leg_btn_terms_of_use_hint" = "قبول شروط الاستخدام";
 "onb_leg_btn_title" = "تأكيد";
 "onb_leg_txt_subtitle" = "لكي تتمكن من استخدام التطبيق، يُرجى الموافقة على شروط الاستخدام والتأكيد على أنك اطلعت على سياسة الخصوصية. تُجمع فقط البيانات الضرورية لعمل الخدمات.";
-"onb_leg_txt_title" = "شروط الاستخدام & سياسة الخصوصية";
+"onb_leg_txt_title" = "الخصوصية والاستخدام";
 "onb_prf_txt_alert_message" = "لا يجوز ان يكون هذا الحقل فارغًا";
 "onb_prf_txt_alert_title" = "خطأ";
 "onb_prf_txt_footnote" = "يساعدك هذا في الاطلاع بشكل عام على الأمور عندما تريد إدارة الوصفات الطبية لعدة أشخاص.";
@@ -739,7 +742,7 @@
 "ord_detail_txt_orders" = "أمر";
 "ord_detail_txt_title" = "نظرة عامة على الطلب";
 "ord_list_status_new" = "جديد";
-"ord_txt_empty_list_message" = "لم تتلق أي رسائل حتى الآن";
+"ord_txt_empty_list_message" = "لم تتلق أي طلبات حتى الآن";
 "ord_txt_empty_list_title" = "لا توجد أوامر";
 "ord_txt_no_pharmacy_name" = "صيدلية غير معروفة";
 "ord_txt_title" = "الطلب #٪ s";
@@ -1022,7 +1025,7 @@
 "stg_con_fbk_mail" = "app-feedback@gematik.de";
 "stg_con_fbk_subject_mail" = "ملاحظة من تطبيق الوصفة الإلكترونية";
 "stg_con_hotline_ava" = "مجانا للمتصل. أوقات الخدمة: الاثنين - الجمعة 08:00 صباحًا - 20:00 مساءً ما عدا أيام العطلات الرسمية على مستوى ألمانيا";
-"stg_con_hotline_contact" = "+49-0800-277-3777";
+"stg_con_hotline_contact" = "+49-800-277-3777";
 "stg_con_text_contact_hotline" = "الاتصال بالخط الفني الساخن";
 "stg_con_text_mail" = "كتابة بريد إلكتروني";
 "stg_con_text_survey" = "المشاركة في الاستبيان";

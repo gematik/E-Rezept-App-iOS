@@ -35,7 +35,8 @@ extension ErxTask.WorkRelatedAccident {
     init?(entity: ErxTaskWorkRelatedAccidentEntity?) {
         guard let entity = entity else { return nil }
 
-        self.init(workPlaceIdentifier: entity.workPlaceIdentifier,
+        self.init(mark: nil, // DH.TODO: replace with value //swiftlint:disable:this todo
+                  workPlaceIdentifier: entity.workPlaceIdentifier,
                   date: entity.date)
     }
 }

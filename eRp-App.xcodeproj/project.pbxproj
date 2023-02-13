@@ -107,6 +107,7 @@
 		0E91F2581B685CB11013CCD4 /* ErxTask+MedicationDispense.swift in Sources */ = {isa = PBXBuildFile; fileRef = 130F3E6ABEC1B3269177284C /* ErxTask+MedicationDispense.swift */; };
 		0EB453D8F6B102A23905F29C /* ErxTaskOrder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BD01AE4070D6C910B56E3C7 /* ErxTaskOrder.swift */; };
 		0EB9227D3E6130E78686B7AF /* SectionContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4041623261FFC50C6E036362 /* SectionContainer.swift */; };
+		0EF40BB2A709754C18D9003F /* FHIR_KBV_v1_1_0.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 09ABB677BDD07A661E1C7D7A /* FHIR_KBV_v1_1_0.bundle */; };
 		0FA6D5DCEFA6FF7F0FDAA9C5 /* IDPCardWallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D61D80856DF8A8A78EA94A7 /* IDPCardWallView.swift */; };
 		0FBAFE06DF5A0CA584706938 /* ErxAuditEventEntity+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 329E97B1EEA433F9C6FA6C91 /* ErxAuditEventEntity+CoreDataProperties.swift */; };
 		0FBE44DCEB6AD5D090A3EAA1 /* ErxTaskOrder+Communication.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC0A7C5C6D89516FD9B72143 /* ErxTaskOrder+Communication.swift */; };
@@ -192,6 +193,7 @@
 		1DA6AE3913B7B37CE4C0CD01 /* OpenSSL.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2DD4921BA0619E88A69676CF /* OpenSSL.xcframework */; };
 		1DE30E2EF8EBB3FEF02A8594 /* MedicationProtocolView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1F0EF83E102237D22BB0B4E /* MedicationProtocolView.swift */; };
 		1E3D2A3D4B8882B65E7A4DAB /* HealthCardControl.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 803C46A4EE2C00096183FC21 /* HealthCardControl.xcframework */; };
+		1E4A9E829B8158F5FC9948CF /* FHIR_KBV_v1_1_0.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 09ABB677BDD07A661E1C7D7A /* FHIR_KBV_v1_1_0.bundle */; };
 		1E4F6095EF6DE5B8DE8B485E /* TestUtils.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 75F5D67595B4F5F353D7C7E3 /* TestUtils.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		1E8D4589B6BE888B225B369D /* AppConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28975BC26CE6188A0008B99F /* AppConfiguration.swift */; };
 		1E916D94182A62EA92964B02 /* IDPError+Localization.swift in Sources */ = {isa = PBXBuildFile; fileRef = DC21859C2B14CEAE05E28A3A /* IDPError+Localization.swift */; };
@@ -347,6 +349,7 @@
 		361C397A11A4DCC92D2C1AF4 /* MedicationDetailCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35C30649E48BAF2E6385C7BA /* MedicationDetailCellView.swift */; };
 		3634617E0BF4D9FCEFD71668 /* OrderDetailDomain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 53052D4AACF85CDE81A1A1CC /* OrderDetailDomain.swift */; };
 		364BE937FADC69C82F95CF96 /* FileManager+Backup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51018BDBE348C56052E1696B /* FileManager+Backup.swift */; };
+		3690330CD7AE406FAD92DD9F /* ModelsR4.Medication+ErxTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06996BA65DDA42F8E138A6E2 /* ModelsR4.Medication+ErxTask.swift */; };
 		369FE0AA7F08C5E032495FAD /* BundleKit in Frameworks */ = {isa = PBXBuildFile; productRef = B3085B55BDAFAED2BC4EC405 /* BundleKit */; };
 		36E7A06465C6931BCB149313 /* ModelsR4.Bundle+ErxAuditEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2EE393EE19F8C4656852968 /* ModelsR4.Bundle+ErxAuditEvent.swift */; };
 		374012819E3190F6C7D37CAB /* UserDefaultsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 914D2463C5E9241ADEA62F44 /* UserDefaultsStore.swift */; };
@@ -417,6 +420,7 @@
 		4030E54D4F751833D9C827C5 /* OpenSSL.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 2DD4921BA0619E88A69676CF /* OpenSSL.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		4052953F39C791C5DE0C2CC7 /* ProtocolMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = D77202362B61F1DE6AC1F810 /* ProtocolMock.swift */; };
 		40776CF7A633B90DA5519472 /* ReadCardHelpListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE0CEE6AD9A6005720C90B35 /* ReadCardHelpListView.swift */; };
+		408CFDDBCD6D6E768FE7B6D8 /* ErxTask+Status.swift in Sources */ = {isa = PBXBuildFile; fileRef = E384DAA9741F78AF7F6EEE6D /* ErxTask+Status.swift */; };
 		411FB665E2CFBA77599641ED /* HTTPClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A4CB8BB325F399E5191C288D /* HTTPClient.framework */; };
 		416356DBE6B37008028E8849 /* AVSTransactionDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2DC4B43C6EC174C47E444AA /* AVSTransactionDataStore.swift */; };
 		4168106DA7BDB0685AA2C278 /* Nimble in Frameworks */ = {isa = PBXBuildFile; productRef = 04C25F154D74A8C39DDEB7BD /* Nimble */; };
@@ -431,6 +435,7 @@
 		433CEBB9CBD6E2F2ED42B9A3 /* MedicationWorkAccidentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26B439565147982E808DE20D /* MedicationWorkAccidentView.swift */; };
 		43434847E7FAD7E324564366 /* String+URLEscaped.swift in Sources */ = {isa = PBXBuildFile; fileRef = B599E5993A87FED6FEBF8F47 /* String+URLEscaped.swift */; };
 		4346206333C72E21088E5850 /* SignedChallenge.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0110C6A41AFC54CEC414AA3 /* SignedChallenge.swift */; };
+		43509493A6862B25CB77425C /* TooltipDisplayStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4C52AF59D5A48B9C8469520 /* TooltipDisplayStorage.swift */; };
 		4377A8F9EEAAAD028D6BDF55 /* FHIRClient.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9916A4D3589404EE608FA1CF /* FHIRClient.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		443DE25DC7E3AEB392DE86E0 /* X509TrustStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E31B946CCDD14ACE4992578B /* X509TrustStore.swift */; };
 		448EBACDCDED58B74995C798 /* eRpStyleKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 768961DD91A07C97EC644956 /* eRpStyleKit.framework */; };
@@ -567,6 +572,7 @@
 		587B13788958C2D02B0FF642 /* AppAuthenticationDomain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32D46A9C793B714812039365 /* AppAuthenticationDomain.swift */; };
 		5888C68EC888682EEDF8985F /* IDPSessionMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE68FCB61BF99892A8EFCAEA /* IDPSessionMock.swift */; };
 		58B1FB083807D797DFCE1E77 /* UserMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2A48CB893D735B267931069B /* UserMode.swift */; };
+		58BA07CDCF5734B62147E049 /* FHIR_KBV_v1_0_2.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 62DA3E08A42B1F855BD421E0 /* FHIR_KBV_v1_0_2.bundle */; };
 		590A22F96E6945342864D19A /* JWEKDFTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F95A2F0ED509A45785872499 /* JWEKDFTests.swift */; };
 		59164FB7CBC82F6EBF38D7C6 /* BundleKit in Frameworks */ = {isa = PBXBuildFile; productRef = D0FBF3ACBF688B667ADF4BF4 /* BundleKit */; };
 		59297E440563FBB8EA3FB01D /* DataKit.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = BA33ACC0740EF453EF921B33 /* DataKit.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -600,6 +606,7 @@
 		5D53164161459B56528D18A3 /* OHHTTPStubsSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 012C2004D8431DAC034802E9 /* OHHTTPStubsSwift */; };
 		5D9AEAD6DA240AAE42C065AB /* AdditionalHeaderInterceptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E543366A25F1C9B58D04B186 /* AdditionalHeaderInterceptor.swift */; };
 		5D9FDDB6A8EB0B528E7F8F20 /* TextFieldAsFirstResponder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 60CE9BF9477F83DB95A2E07B /* TextFieldAsFirstResponder.swift */; };
+		5DAA8633119071D7865CAB67 /* FHIRMedication_v1_1_0_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 876BE32BF75DBC91DFEF63D3 /* FHIRMedication_v1_1_0_Tests.swift */; };
 		5DAADEA7CAF8B700BC0E85EF /* ErxTaskCoreDataStore+AuditEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9008597F5D8B57503EBFC9FB /* ErxTaskCoreDataStore+AuditEvent.swift */; };
 		5DAC0038AEA97F3118FCA7FE /* testSimpleList.light.png in Resources */ = {isa = PBXBuildFile; fileRef = 917F9E4AE434959DE9792BF8 /* testSimpleList.light.png */; };
 		5E0F57EAACEAB1C7C4CD24EC /* FHIRClient+PharmacyOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAF89DA819533269D1FDAD81 /* FHIRClient+PharmacyOperation.swift */; };
@@ -658,6 +665,7 @@
 		6937061DED9FDBDE17E88AD2 /* HTTPClientResponses.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 8B11729B4C17FBF85D51772B /* HTTPClientResponses.bundle */; };
 		69E00C3F22A39F2D4A0CF159 /* DemoErxTaskRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = B82524ADB25C69EAC0EC69A9 /* DemoErxTaskRepository.swift */; };
 		69F965C354CDA2C7BE9DCFD2 /* SectionContainerButtonLabelStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0197AD39AD211076FB88A005 /* SectionContainerButtonLabelStyle.swift */; };
+		6A0B56F82B8EED114264C057 /* View+Tooltip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86DCA418BF3EAF7CE36E185B /* View+Tooltip.swift */; };
 		6A4DB45C37DCB4CF52E26981 /* CardWallExtAuthConfirmationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2CEC414F3BE86152983363A7 /* CardWallExtAuthConfirmationView.swift */; };
 		6A53701898B0B6D46DA46B69 /* DefaultDataMatrixStringEncoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F354A991F2EB2818225DACF /* DefaultDataMatrixStringEncoder.swift */; };
 		6A8A9EC8D407902E5069D5D8 /* PrescriptionArchiveView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16002E0FF968849B16A20A23 /* PrescriptionArchiveView.swift */; };
@@ -670,6 +678,7 @@
 		6B4974F2DDA19298DA06C69F /* ShipmentInfoEntity+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14E9916FFF1833CE7D3E71DE /* ShipmentInfoEntity+CoreDataClass.swift */; };
 		6B62544E743F9D4B1290DC01 /* ProfileDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C6CA6CCA93D7CB6B9885D9D /* ProfileDataStore.swift */; };
 		6B7AC02AC90B6F1F075F49C6 /* Globals.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1812C95714A95AD32219F7B7 /* Globals.swift */; };
+		6B896278407D1A9AD7777E4A /* FHIRMedication_v1_1_0_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 876BE32BF75DBC91DFEF63D3 /* FHIRMedication_v1_1_0_Tests.swift */; };
 		6BCDC21712A36C8BAAE8AB39 /* ErxTask+Fixtures.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6A764CAD1761667FB7EDB51 /* ErxTask+Fixtures.swift */; };
 		6BF46DDD4CCC3B88018B1C12 /* LoopingVideoPlayerContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 859C34AB397644E558313B0E /* LoopingVideoPlayerContainerView.swift */; };
 		6BF9DC344AA3B8BCBB9ED495 /* CardWallReadCardDomain.swift in Sources */ = {isa = PBXBuildFile; fileRef = A093DE030F167F2E878184BC /* CardWallReadCardDomain.swift */; };
@@ -805,6 +814,7 @@
 		7F945B2CC9FEC2096D6D4A47 /* MainDomainTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D12A447409BC6A343DDD4823 /* MainDomainTests.swift */; };
 		7FB5CC10C4CAC3448BFFDF28 /* ModelsR4.Patient+ErxTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = B34388B1DCFAFDFAC9360434 /* ModelsR4.Patient+ErxTask.swift */; };
 		7FE6F1D1C7FFABB56FBD5542 /* EmailState.swift in Sources */ = {isa = PBXBuildFile; fileRef = CCEDF22DBB3701D7B617FE4B /* EmailState.swift */; };
+		7FF656A884CC81EBBC148678 /* View+TooltipContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 058360936E98A3C245BCB807 /* View+TooltipContainer.swift */; };
 		80203930C6D38F9D4FC36444 /* DefaultAVSSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFB9AAF1A3A32F20C4E1F8DD /* DefaultAVSSessionTests.swift */; };
 		8025C9770D2C29EA0BDE5284 /* String+Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC4FABDD9F05F811047D0F35 /* String+Helper.swift */; };
 		8085D990C8F373B25FBC4D87 /* CoreDataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8145DF0B4BF9B707EDF02A2D /* CoreDataController.swift */; };
@@ -865,6 +875,7 @@
 		885FE24912AD7A6B936A8FD3 /* HTTPClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A4CB8BB325F399E5191C288D /* HTTPClient.framework */; };
 		88B4EA489E2718359E90F413 /* TestUtils.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 742051B40935C33A411966C9 /* TestUtils.framework */; };
 		88BB7114536D95168CD76263 /* PharmacyEntity+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = B814E0AED7594A39880DEE97 /* PharmacyEntity+CoreDataClass.swift */; };
+		88DBA830E7A84E22E3A2EC0D /* FHIRMedication_v1_0_2_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3909ECE374B0F732F540A7A7 /* FHIRMedication_v1_0_2_Tests.swift */; };
 		89156D5EDD437AA67F8B877D /* LocalStoreError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 094C4CB887FCFB749059E8EF /* LocalStoreError.swift */; };
 		89231AD73F4BC1E167007FD4 /* PrescriptionArchiveDomain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54EAC43F455A762396A2BA66 /* PrescriptionArchiveDomain.swift */; };
 		8934BC23B3560567F97DF3B7 /* VAUInterceptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA90D2F29013CECAB3A42BEF /* VAUInterceptor.swift */; };
@@ -934,6 +945,7 @@
 		96653A534E269C10D79AEEC1 /* Localizable.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = 86EAD4B00CFDEACC9C832C60 /* Localizable.stringsdict */; };
 		96B040BE1FA238D9F7BDA7AA /* SecondaryButtonStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFB0B7FFEF573294C1FEF513 /* SecondaryButtonStyle.swift */; };
 		96C40C985E43401F57AD0F1B /* ErxTaskMultiplePrescriptionEntity+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = A91322631548A2C07D5901DF /* ErxTaskMultiplePrescriptionEntity+CoreDataProperties.swift */; };
+		96ED47A59CE3B3824A5A8C0F /* ErxTask+Status.swift in Sources */ = {isa = PBXBuildFile; fileRef = E384DAA9741F78AF7F6EEE6D /* ErxTask+Status.swift */; };
 		971191FE2130B9E0A435236D /* AppSecurityManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1DC2C118B5E76E7113AEF513 /* AppSecurityManager.swift */; };
 		9754676F9F311FE1507CFE6D /* ErxTaskMultiplePrescriptionEntity+CoreDataClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61BE3010F752DDF26DA966F3 /* ErxTaskMultiplePrescriptionEntity+CoreDataClass.swift */; };
 		9777101DA8A90A5A41D84ADE /* AppStoreSnapshotTests+onboarding.swift in Sources */ = {isa = PBXBuildFile; fileRef = E3CFEA771E3D13C579F2D533 /* AppStoreSnapshotTests+onboarding.swift */; };
@@ -1025,6 +1037,7 @@
 		A51F8D6529E4B893F388451C /* DiscoveryDocumentPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC0BDB0D5A04EF4B4EDC612E /* DiscoveryDocumentPayload.swift */; };
 		A534D0F06E225D2CCDB330C6 /* ProfileSelectionDomain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DAE68C962234031EF5130D2 /* ProfileSelectionDomain.swift */; };
 		A5541C885A1FA5A88AC5B2E2 /* DeviceSecuritySystemPinView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6C3DA5E656C268B5A725AEBF /* DeviceSecuritySystemPinView.swift */; };
+		A5FE8EC4F8B3ECC4148EDCDC /* View+Tooltip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86DCA418BF3EAF7CE36E185B /* View+Tooltip.swift */; };
 		A64A457A14EDFC140983414B /* URLRequestExtSerializeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B25F4E5F75314DAC9664342 /* URLRequestExtSerializeTests.swift */; };
 		A6A3CEF4A72D4FC5A42A8A22 /* DefaultErxTaskRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E63347D309F1C28B89528A1 /* DefaultErxTaskRepositoryTests.swift */; };
 		A6B057F3E3030ABFFD6964C9 /* CreatePasswordDomainTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EE6356818B683D96AA205E6 /* CreatePasswordDomainTests.swift */; };
@@ -1186,6 +1199,7 @@
 		C0395C7FD7889DF39A3BFD22 /* IDPInterceptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3575B5EB521EE0EB98D66BD3 /* IDPInterceptor.swift */; };
 		C058E8539D3FEC3C625FB8E4 /* IDPExchangeToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A0A7F65F2ED017BF1B185D6 /* IDPExchangeToken.swift */; };
 		C06DECC6D9E22B893BDA3018 /* AVSEndpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 240E3465799208CAFAA0EF9F /* AVSEndpoint.swift */; };
+		C072DA3250FE6CE52148549D /* View+TooltipContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 058360936E98A3C245BCB807 /* View+TooltipContainer.swift */; };
 		C080F5FD5BE2C30E0269C2DB /* X509TrustStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 080182B8FD4CF4C7E29A7DCA /* X509TrustStoreTests.swift */; };
 		C090C884C12887B8BE73A254 /* FHIRClient+Response.swift in Sources */ = {isa = PBXBuildFile; fileRef = 624D2D9FFF329EB09EABCCAA /* FHIRClient+Response.swift */; };
 		C09FDE3CBFE47DFC2338C5C9 /* TestSchedulers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D9A616EE2EE83D5C2B52B67 /* TestSchedulers.swift */; };
@@ -1221,6 +1235,7 @@
 		C46C8029FA4EBFE34B1A7742 /* CardWallReadCardDomain.State+Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = AE6AF38C46DC23AD91507D3C /* CardWallReadCardDomain.State+Helper.swift */; };
 		C47B4D020529B8239651D0D1 /* CardWallLoginOptionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29E5B0295704B183C7EDDCE7 /* CardWallLoginOptionView.swift */; };
 		C4C46274ED2241EA6918D4E6 /* NSManagedObjectContext+Combine.swift in Sources */ = {isa = PBXBuildFile; fileRef = B711689701BF8DE08FAAD97A /* NSManagedObjectContext+Combine.swift */; };
+		C4F2E1A6B47FB4D5FA05E7BA /* FHIRMedication_v1_0_2_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3909ECE374B0F732F540A7A7 /* FHIRMedication_v1_0_2_Tests.swift */; };
 		C53378FADC24076549C581C7 /* ProfileSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0164208FF07B97C9A1F12EAD /* ProfileSelectionView.swift */; };
 		C535C978FE8686383733F45E /* CodedError.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA727E7E87AB9F862ADB2324 /* CodedError.swift */; };
 		C5363A1682CC6F0FAA483102 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 80717D92E07EF8C6008CF08B /* SwiftUI.framework */; };
@@ -1399,6 +1414,7 @@
 		E55164A387EBDB05A9D1B371 /* SearchableExtensionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5E821FC1834A88D12D3E017 /* SearchableExtensionViewController.swift */; };
 		E553DE471B9194B03E9B5496 /* HTTPClient.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 42E101F42563C06166656194 /* HTTPClient.framework */; };
 		E5591E43EC8032ACFC1C7127 /* PrescriptionRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = E96455F27434935B95EA70BE /* PrescriptionRepository.swift */; };
+		E568C7202B8A97C9E305B401 /* ModelsR4.Medication+ErxTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06996BA65DDA42F8E138A6E2 /* ModelsR4.Medication+ErxTask.swift */; };
 		E569F43C75D624F9734325AC /* PharmacyFHIRDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEF43511FD40CD5ECA02083A /* PharmacyFHIRDataSource.swift */; };
 		E601CAF21FB0E2B988536D63 /* AppSecuritySelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6260AA580CE10A2F81AD80EE /* AppSecuritySelectionView.swift */; };
 		E60F7EEE6C60DA6C2F8CD652 /* eRpKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE55C211D7E7DDA60C85298E /* eRpKit.framework */; };
@@ -1422,6 +1438,7 @@
 		EAED3A10AE21B1F01F06A52A /* DummyLoginHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DAB2DC85933C536E56FC5E5 /* DummyLoginHandler.swift */; };
 		EAF5C52EA855837E42E3BC48 /* URL+PhoneHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73016A91743629EC5A2C5E79 /* URL+PhoneHelper.swift */; };
 		EB18205DCA6F9862C8DCE738 /* DemoProfileDataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFFFB434361ED56B2CF7B48B /* DemoProfileDataStore.swift */; };
+		EB34747653DD5578C7D45654 /* MainViewTooltip.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF713399158DA46514D0E150 /* MainViewTooltip.swift */; };
 		EB5F0C358ABB1BAC8311D0A8 /* BundleToken+Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B3C71BAE49F12C2310DBEBB /* BundleToken+Helper.swift */; };
 		EBA3CA383C08A1E84520C6F3 /* ErxTaskFHIRClientTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABB47494B7415C3158F28A89 /* ErxTaskFHIRClientTests.swift */; };
 		EBB21ACEFA61FD55E4B6661F /* HTTPClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63A9C0EEE5720AEF594B5AEE /* HTTPClient.swift */; };
@@ -1443,6 +1460,8 @@
 		EE543803A1ED0C5A2B9D5E0A /* CodedError.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7B172DB5DD79D57EB4F499A /* CodedError.generated.swift */; };
 		EEAAEA9059257C753EBE9DE7 /* DemoIDPSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0670A5DF9ABAAB04E6E34941 /* DemoIDPSession.swift */; };
 		EED788D7580CAAA89D1303D0 /* DataKit.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BA33ACC0740EF453EF921B33 /* DataKit.xcframework */; };
+		EEEE305F730D34E53B86DC68 /* FHIR_KBV_v1_0_2.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 62DA3E08A42B1F855BD421E0 /* FHIR_KBV_v1_0_2.bundle */; };
+		EF0440BBFEDBA1094EC114C5 /* TooltipView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44F4AE83031B656D55DF901A /* TooltipView.swift */; };
 		EF059E268158A860903031AC /* Image+ImageAsset.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8B47A6289A221CFDC782DAD /* Image+ImageAsset.swift */; };
 		EF0AE3BB8483C495A1456BC9 /* BundleKit in Frameworks */ = {isa = PBXBuildFile; productRef = AB90FF29D010BA56B0FEDBF6 /* BundleKit */; };
 		EF0D3755C0F707D31FD7273C /* ProtocolMock.generated.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CB641420499EAA5B6FBD155 /* ProtocolMock.generated.swift */; };
@@ -1503,6 +1522,7 @@
 		F81C57EFFFFC262AC6756EE9 /* ErxTaskMultiplePrescriptionEntity+ErxTask.MultiplePrescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4A37D508A1363E15E42841D /* ErxTaskMultiplePrescriptionEntity+ErxTask.MultiplePrescription.swift */; };
 		F82E35F8B91C6E7D88E57484 /* DefaultAppSecurityPasswordManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6D1C0D51078301217E9902A1 /* DefaultAppSecurityPasswordManagerTests.swift */; };
 		F8424574BF77E06B941F0C28 /* ButtonsSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5CF0AC1E8B7A9A477ABD318 /* ButtonsSnapshotTests.swift */; };
+		F84B0B3C5328005B1D594505 /* TooltipView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44F4AE83031B656D55DF901A /* TooltipView.swift */; };
 		F8BEC2AF44AD687B00AA05A7 /* AVS.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = BB68D1E6A6E40A228759F4A2 /* AVS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F91205D2E60CED1662805A51 /* FileManager+Backup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51018BDBE348C56052E1696B /* FileManager+Backup.swift */; };
 		F91831E60036387192B4A24C /* AppAuthenticationBiometricsDomainTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0525BBDE32FDB45A32F888F7 /* AppAuthenticationBiometricsDomainTests.swift */; };
@@ -1511,6 +1531,7 @@
 		F970EDF91D4A7CCFC879C284 /* PickupCodeDomain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 414E492D852DDD45907BCC70 /* PickupCodeDomain.swift */; };
 		F99F6EA6B1DE47D7F9125233 /* GemCommonsKit.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F384326304629BF0F91DCF3F /* GemCommonsKit.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F9FE1F2E8978524C9ECFBF98 /* OnboardingSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A75267F28904C5FADA99D56C /* OnboardingSnapshotTests.swift */; };
+		FA2A4501E679E9670FADC733 /* TooltipDisplayStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4C52AF59D5A48B9C8469520 /* TooltipDisplayStorage.swift */; };
 		FA526A1A4966A1843028F47C /* ScannerDomain+Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0309E778474BE4EE2620BB84 /* ScannerDomain+Helper.swift */; };
 		FA7FE484C29AC6BE9A26D7BE /* PharmacyEntity+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3916F5D47D4948EDCA19C3CB /* PharmacyEntity+CoreDataProperties.swift */; };
 		FA887214393FECAEFF8C6E10 /* TrustStoreSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02209C8AA6786AAEBAF7F056 /* TrustStoreSession.swift */; };
@@ -2607,12 +2628,14 @@
 		04BE0EC8DE461AA2F3875BF5 /* RoundedCorner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoundedCorner.swift; sourceTree = "<group>"; };
 		0525BBDE32FDB45A32F888F7 /* AppAuthenticationBiometricsDomainTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppAuthenticationBiometricsDomainTests.swift; sourceTree = "<group>"; };
 		052A6ACC4DBABFF5493C69C3 /* SecureFieldWithReveal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecureFieldWithReveal.swift; sourceTree = "<group>"; };
+		058360936E98A3C245BCB807 /* View+TooltipContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+TooltipContainer.swift"; sourceTree = "<group>"; };
 		058727249322156AA831D05D /* JWK+x962.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "JWK+x962.swift"; sourceTree = "<group>"; };
 		058F6B8CD5B90C2D0F9B7A3D /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
 		05DF42461609CA477B6B4680 /* AppStartDomainTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStartDomainTests.swift; sourceTree = "<group>"; };
 		05F52B8B761C6951B3CEE211 /* ErxTaskCoreDataStore+Communication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ErxTaskCoreDataStore+Communication.swift"; sourceTree = "<group>"; };
 		065B6211B234F5E7FAE3550C /* StringHelperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringHelperTests.swift; sourceTree = "<group>"; };
 		0670A5DF9ABAAB04E6E34941 /* DemoIDPSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoIDPSession.swift; sourceTree = "<group>"; };
+		06996BA65DDA42F8E138A6E2 /* ModelsR4.Medication+ErxTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ModelsR4.Medication+ErxTask.swift"; sourceTree = "<group>"; };
 		06F4DAA3FE69AD22C3B0359A /* CameraAuthorizationAlertView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraAuthorizationAlertView.swift; sourceTree = "<group>"; };
 		07501C2FEE308F85341DBB8D /* ar */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ar; path = ar.lproj/Localizable.strings; sourceTree = "<group>"; };
 		077B3BF11F66AF2935A9A17D /* ErxTask11.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ErxTask11.xcdatamodel; sourceTree = "<group>"; };
@@ -2624,6 +2647,7 @@
 		08F9E0C5BF30CE7C4FD7EEDA /* SecKeyRandom.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecKeyRandom.swift; sourceTree = "<group>"; };
 		094C4CB887FCFB749059E8EF /* LocalStoreError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocalStoreError.swift; sourceTree = "<group>"; };
 		09A3D9F4C7BC23FFD4EEA722 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		09ABB677BDD07A661E1C7D7A /* FHIR_KBV_v1_1_0.bundle */ = {isa = PBXFileReference; lastKnownFileType = wrapper.cfbundle; path = FHIR_KBV_v1_1_0.bundle; sourceTree = "<group>"; };
 		09D1CFBAF1FE649B58BC7A89 /* DiscoveryDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiscoveryDocument.swift; sourceTree = "<group>"; };
 		0A4F13E22B58023EC9C19450 /* ProfileCoreDataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileCoreDataStore.swift; sourceTree = "<group>"; };
 		0A8FF15990C6728F723F348B /* PageContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PageContainer.swift; sourceTree = "<group>"; };
@@ -2825,6 +2849,7 @@
 		383805B092ADA780F8AFA21D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		3896D08B72E9BB69508CF1E8 /* HealthCardPasswordCanView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthCardPasswordCanView.swift; sourceTree = "<group>"; };
 		38FDE2BCA580769A46A19D90 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		3909ECE374B0F732F540A7A7 /* FHIRMedication_v1_0_2_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FHIRMedication_v1_0_2_Tests.swift; sourceTree = "<group>"; };
 		3916F5D47D4948EDCA19C3CB /* PharmacyEntity+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PharmacyEntity+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		39405145D11A350525F45E0A /* PharmacyRedeemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PharmacyRedeemView.swift; sourceTree = "<group>"; };
 		397F7219576D00E284C61B6F /* AppStorePreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppStorePreview.swift; sourceTree = "<group>"; };
@@ -2877,6 +2902,7 @@
 		4453971AAE9B7910061D356B /* PrescriptionViewStatusTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrescriptionViewStatusTests.swift; sourceTree = "<group>"; };
 		447B7D870B612927D888B8B1 /* ZXDataMatrixWriter+MatrixCodeGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZXDataMatrixWriter+MatrixCodeGenerator.swift"; sourceTree = "<group>"; };
 		448A7826C24222B9D40DC9E3 /* AppAuthenticationPasswordDomainTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppAuthenticationPasswordDomainTests.swift; sourceTree = "<group>"; };
+		44F4AE83031B656D55DF901A /* TooltipView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TooltipView.swift; sourceTree = "<group>"; };
 		450501C544DD555457AE06D7 /* CardReaderProviderApi.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = CardReaderProviderApi.xcframework; path = Carthage/Build/CardReaderProviderApi.xcframework; sourceTree = "<group>"; };
 		45406E2F05B3CEF4B61B93CB /* PharmacySearchCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PharmacySearchCell.swift; sourceTree = "<group>"; };
 		45D45AC4C81894DCBD30D5C0 /* View+Border.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+Border.swift"; sourceTree = "<group>"; };
@@ -2993,6 +3019,7 @@
 		626ECBB2DCA231F88564FC0F /* LinksAwareTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinksAwareTextView.swift; sourceTree = "<group>"; };
 		62AA191A6E80CCAB691A5682 /* ShipmentInfoEntity+CoreDataProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ShipmentInfoEntity+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		62CEA68C5D694FAA800EC664 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		62DA3E08A42B1F855BD421E0 /* FHIR_KBV_v1_0_2.bundle */ = {isa = PBXFileReference; lastKnownFileType = wrapper.cfbundle; path = FHIR_KBV_v1_0_2.bundle; sourceTree = "<group>"; };
 		6357B4AB1B99611F132B2D8E /* PharmacyLocationViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PharmacyLocationViewModel.swift; sourceTree = "<group>"; };
 		63730206CC3463C0EAEE6171 /* ErxTask6.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = ErxTask6.xcdatamodel; sourceTree = "<group>"; };
 		6376512FC7663ED3DFE7EEF8 /* PharmacyCoreDataStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PharmacyCoreDataStoreTests.swift; sourceTree = "<group>"; };
@@ -3137,7 +3164,9 @@
 		85AC3ACA75BE2726562D27D9 /* URLRequest+FormUrlEncoded.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URLRequest+FormUrlEncoded.swift"; sourceTree = "<group>"; };
 		85E1AC794FBDB4850470FEB0 /* ScannerDomain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScannerDomain.swift; sourceTree = "<group>"; };
 		86CF9EDD6E33DF05CB3F0DA0 /* OrderCommunications.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrderCommunications.swift; sourceTree = "<group>"; };
+		86DCA418BF3EAF7CE36E185B /* View+Tooltip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+Tooltip.swift"; sourceTree = "<group>"; };
 		870574FE29F048C8EAB2EC93 /* IDPTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = IDPTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		876BE32BF75DBC91DFEF63D3 /* FHIRMedication_v1_1_0_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FHIRMedication_v1_1_0_Tests.swift; sourceTree = "<group>"; };
 		87760785F114B1DAD762824F /* CardWallIntroductionDomainTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardWallIntroductionDomainTests.swift; sourceTree = "<group>"; };
 		87765587E126406DA7D1F2F9 /* EditUrlView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditUrlView.swift; sourceTree = "<group>"; };
 		878A2BAB46F5D68BFD9EA5FC /* DefaultHTTPClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultHTTPClient.swift; sourceTree = "<group>"; };
@@ -3486,6 +3515,7 @@
 		E31B946CCDD14ACE4992578B /* X509TrustStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = X509TrustStore.swift; sourceTree = "<group>"; };
 		E34B55CD900EF4EB2A6276A5 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		E34FABDDAF3F6104628044FB /* CardWallReadCardViewModelOutputStateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardWallReadCardViewModelOutputStateTests.swift; sourceTree = "<group>"; };
+		E384DAA9741F78AF7F6EEE6D /* ErxTask+Status.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ErxTask+Status.swift"; sourceTree = "<group>"; };
 		E3CFEA771E3D13C579F2D533 /* AppStoreSnapshotTests+onboarding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppStoreSnapshotTests+onboarding.swift"; sourceTree = "<group>"; };
 		E49555604804265B3AFC80D8 /* eRpStyleKit.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = eRpStyleKit.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E4A250124F8D85FAFC166075 /* Nimble+URLMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Nimble+URLMatcher.swift"; sourceTree = "<group>"; };
@@ -3535,6 +3565,7 @@
 		EEDBB7C3BC4519F773C46A55 /* testBorderedListStyle.dark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = testBorderedListStyle.dark.png; sourceTree = "<group>"; };
 		EF1EDFF74238F9C18D44812A /* DemoVAUStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoVAUStorage.swift; sourceTree = "<group>"; };
 		EF227B314426E460839DBADF /* MigrationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MigrationManager.swift; sourceTree = "<group>"; };
+		EF713399158DA46514D0E150 /* MainViewTooltip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewTooltip.swift; sourceTree = "<group>"; };
 		EFAFD14E28006E62B4D1FA54 /* NewProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewProfileView.swift; sourceTree = "<group>"; };
 		EFB9AAF1A3A32F20C4E1F8DD /* DefaultAVSSessionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultAVSSessionTests.swift; sourceTree = "<group>"; };
 		EFDF6C20FCB525EBD0A84A13 /* CardWallLoginOptionDomain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardWallLoginOptionDomain.swift; sourceTree = "<group>"; };
@@ -3556,6 +3587,7 @@
 		F40CB66D691BAE30220E2F6E /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F487EF7EDE9E2E9AA549A5C5 /* SectionContainerColoredIconLabelStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionContainerColoredIconLabelStyle.swift; sourceTree = "<group>"; };
 		F4923DD5E21AE36E9EBD6EBF /* MockSecurityPolicyEvaluator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockSecurityPolicyEvaluator.swift; sourceTree = "<group>"; };
+		F4C52AF59D5A48B9C8469520 /* TooltipDisplayStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TooltipDisplayStorage.swift; sourceTree = "<group>"; };
 		F4E8B4DEBFCA486C59AFADB2 /* OnboardingLegalInfoCheckmarkView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingLegalInfoCheckmarkView.swift; sourceTree = "<group>"; };
 		F528B42F138B1E291CACA0D0 /* DefaultDeviceSecurityManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultDeviceSecurityManagerTests.swift; sourceTree = "<group>"; };
 		F55014B63090CF58DEA96B19 /* AppSecurityDomain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSecurityDomain.swift; sourceTree = "<group>"; };
@@ -4319,6 +4351,17 @@
 			path = TabContainer;
 			sourceTree = "<group>";
 		};
+		0CD82229F9AA1A7CA3715CCF /* Tooltip */ = {
+			isa = PBXGroup;
+			children = (
+				F4C52AF59D5A48B9C8469520 /* TooltipDisplayStorage.swift */,
+				44F4AE83031B656D55DF901A /* TooltipView.swift */,
+				86DCA418BF3EAF7CE36E185B /* View+Tooltip.swift */,
+				058360936E98A3C245BCB807 /* View+TooltipContainer.swift */,
+			);
+			path = Tooltip;
+			sourceTree = "<group>";
+		};
 		0D0D75348CFD1F237F1516DE /* HTTPClient */ = {
 			isa = PBXGroup;
 			children = (
@@ -4416,6 +4459,7 @@
 				8C19A7CA67213869EC5F0CB9 /* MainDomain.swift */,
 				A7A023363A155F6670334CFB /* MainDomain+Dummies.swift */,
 				E9F25FB07E1CF48A7E9A01EA /* MainView.swift */,
+				EF713399158DA46514D0E150 /* MainViewTooltip.swift */,
 				9D2B462850AEE399A50A756E /* WelcomeDrawerView.swift */,
 				9A1AF9DF6F51F074049CF342 /* DeviceSecurity */,
 				CBEEDC1207C53F87A7853900 /* ExtAuth */,
@@ -4434,6 +4478,8 @@
 				EEC2551A21FC95BED9E02631 /* ErxTaskFHIRDataStoreTests.swift */,
 				7B51545F0D907EBBE8E2ADAB /* FHIRBundleTests_v1_2_with_v1_1_0.swift */,
 				DE52E7DE2125D11CBD6977FF /* FHIRBundleTests.swift */,
+				3909ECE374B0F732F540A7A7 /* FHIRMedication_v1_0_2_Tests.swift */,
+				876BE32BF75DBC91DFEF63D3 /* FHIRMedication_v1_1_0_Tests.swift */,
 				4E4E53DA04A902185FE2AABE /* Resources */,
 			);
 			path = eRpRemoteStorageTests;
@@ -5158,6 +5204,8 @@
 		4E4E53DA04A902185FE2AABE /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				62DA3E08A42B1F855BD421E0 /* FHIR_KBV_v1_0_2.bundle */,
+				09ABB677BDD07A661E1C7D7A /* FHIR_KBV_v1_1_0.bundle */,
 				D6AC87D35ED7E85E1BF49022 /* FHIRExampleData_v1_2_with_v1_1_0.bundle */,
 				6A60C8EDC96DFDD9A8950398 /* FHIRExampleData.bundle */,
 				22DFBB6B404AABF9F3C577CB /* Info.plist */,
@@ -5286,6 +5334,7 @@
 				0CBA990CF848A5CB8117C3E3 /* ModelsR4.Bundle+ErxTask.swift */,
 				82E1B9DA7E0ECF357B203EB0 /* ModelsR4.Bundle+ErxTaskCommunication.swift */,
 				F5895B86203E666C87CD5374 /* ModelsR4.Bundle+ErxTaskMedicationDispense.swift */,
+				06996BA65DDA42F8E138A6E2 /* ModelsR4.Medication+ErxTask.swift */,
 				FEC880FCF33DD9D5BB3048F4 /* ModelsR4.MedicationRequest+ErxTask.swift */,
 				F5E0CE476FE3F0305F6B462C /* ModelsR4.Organization+ErxTask.swift */,
 				B34388B1DCFAFDFAC9360434 /* ModelsR4.Patient+ErxTask.swift */,
@@ -5357,6 +5406,7 @@
 				5E4A25E301DCD843362354C9 /* SmallSheetContainerViewController.swift */,
 				1C588DED5900C3BCAF2DD983 /* SmallSheetPresentationController.swift */,
 				AEE0E04A0BFDC11B084294D9 /* View+SmallSheet.swift */,
+				0CD82229F9AA1A7CA3715CCF /* Tooltip */,
 			);
 			path = Presentation;
 			sourceTree = "<group>";
@@ -6281,6 +6331,7 @@
 				8D76E65F87DDAFAD0A5DC1A4 /* ErxTask+Medication.swift */,
 				130F3E6ABEC1B3269177284C /* ErxTask+MedicationDispense.swift */,
 				405243E439D97C1584284AC2 /* ErxTask+MultiplePrescription.swift */,
+				E384DAA9741F78AF7F6EEE6D /* ErxTask+Status.swift */,
 				8BD01AE4070D6C910B56E3C7 /* ErxTaskOrder.swift */,
 				91238604C24B614E09D0AC3A /* ErxTaskRepository.swift */,
 				1662502BD5CB18C1D5B73F17 /* FHIRDateFormatter.swift */,
@@ -8375,6 +8426,8 @@
 			files = (
 				7594FF1A987B675E2F1582D6 /* FHIRExampleData.bundle in Resources */,
 				02485AF869AA71F9106B07CC /* FHIRExampleData_v1_2_with_v1_1_0.bundle in Resources */,
+				58BA07CDCF5734B62147E049 /* FHIR_KBV_v1_0_2.bundle in Resources */,
+				1E4A9E829B8158F5FC9948CF /* FHIR_KBV_v1_1_0.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8425,6 +8478,8 @@
 			files = (
 				504A19FBABCCC6C5FCA5B6DF /* FHIRExampleData.bundle in Resources */,
 				FF7F2722B7A0FAFC32A3244C /* FHIRExampleData_v1_2_with_v1_1_0.bundle in Resources */,
+				EEEE305F730D34E53B86DC68 /* FHIR_KBV_v1_0_2.bundle in Resources */,
+				0EF40BB2A709754C18D9003F /* FHIR_KBV_v1_1_0.bundle in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8775,9 +8830,13 @@
 				64CE90D9A5F6271D4761650B /* SubTitleTop.swift in Sources */,
 				84EF7B43CC3B09AB792D7618 /* TertiaryButtonStyle.swift in Sources */,
 				72E5E3D64A5BF6B62D9B7361 /* TertiaryFilledButtonStyle.swift in Sources */,
+				FA2A4501E679E9670FADC733 /* TooltipDisplayStorage.swift in Sources */,
+				EF0440BBFEDBA1094EC114C5 /* TooltipView.swift in Sources */,
 				59EC865BFFDF7E67680B2E8E /* TrailingIconCellLabelStyle.swift in Sources */,
 				704FBFD3FFDBBBB27F6CD60E /* TrailingIconLabelStyle.swift in Sources */,
 				DB7624514A5452E5828E3B50 /* View+SmallSheet.swift in Sources */,
+				A5FE8EC4F8B3ECC4148EDCDC /* View+Tooltip.swift in Sources */,
+				C072DA3250FE6CE52148549D /* View+TooltipContainer.swift in Sources */,
 				5386A68103E4613B4956717E /* XCAssets+Generated.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -8992,6 +9051,7 @@
 				3DB62F4F00C3B85D3B9B9DE2 /* ErxTask+Medication.swift in Sources */,
 				2BA9D5B31F2ECC50FF6D71AF /* ErxTask+MedicationDispense.swift in Sources */,
 				C6AE27099043186B440A52C7 /* ErxTask+MultiplePrescription.swift in Sources */,
+				408CFDDBCD6D6E768FE7B6D8 /* ErxTask+Status.swift in Sources */,
 				CB6BE836AEAD6CA923B58E0D /* ErxTask.swift in Sources */,
 				24375BE8C16C05DB68E811F2 /* ErxTaskMatrixCode.swift in Sources */,
 				C01EAEA55698AE6D167CA783 /* ErxTaskOrder.swift in Sources */,
@@ -9162,6 +9222,7 @@
 				4C3679F92179D2DC239A0B36 /* ErxTask+Medication.swift in Sources */,
 				0E91F2581B685CB11013CCD4 /* ErxTask+MedicationDispense.swift in Sources */,
 				3C45B18B51DDCCC23D60AF22 /* ErxTask+MultiplePrescription.swift in Sources */,
+				96ED47A59CE3B3824A5A8C0F /* ErxTask+Status.swift in Sources */,
 				490F5E1C419E8E613B45645F /* ErxTask.swift in Sources */,
 				10779DBBCDFA03BA9A1C385E /* ErxTaskMatrixCode.swift in Sources */,
 				0EB453D8F6B102A23905F29C /* ErxTaskOrder.swift in Sources */,
@@ -9543,6 +9604,7 @@
 				B508757E6E137B27E451B1C6 /* MainView.swift in Sources */,
 				D2C9CD7B002D1F0EEF18505F /* MainViewHintsDomain.swift in Sources */,
 				9209E6C580E867658E19E511 /* MainViewHintsProvider.swift in Sources */,
+				EB34747653DD5578C7D45654 /* MainViewTooltip.swift in Sources */,
 				82E4DF8887B703EC95701CFA /* MatrixCodeGenerator+Publisher.swift in Sources */,
 				37780631311A88B51D24A028 /* MatrixCodeGenerator.swift in Sources */,
 				0803D060FD96965F067E1523 /* Medication.swift in Sources */,
@@ -9813,9 +9875,13 @@
 				3B7E07BCC0DF6BCD2715F6E4 /* SubTitleTop.swift in Sources */,
 				DD723D9C81BC36B5A7EA9F44 /* TertiaryButtonStyle.swift in Sources */,
 				F225FC0766AEE1495F170909 /* TertiaryFilledButtonStyle.swift in Sources */,
+				43509493A6862B25CB77425C /* TooltipDisplayStorage.swift in Sources */,
+				F84B0B3C5328005B1D594505 /* TooltipView.swift in Sources */,
 				946C7AEC4A8B7DA2E9B83EB8 /* TrailingIconCellLabelStyle.swift in Sources */,
 				BDBCAE85F3D18AEB9594E66B /* TrailingIconLabelStyle.swift in Sources */,
 				CB567A0088F13325E9EF1975 /* View+SmallSheet.swift in Sources */,
+				6A0B56F82B8EED114264C057 /* View+Tooltip.swift in Sources */,
+				7FF656A884CC81EBBC148678 /* View+TooltipContainer.swift in Sources */,
 				705FA82818E9D00D26CDD95C /* XCAssets+Generated.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -9833,6 +9899,7 @@
 				609769A362AF5622C9B01087 /* ModelsR4.Bundle+ErxTask.swift in Sources */,
 				CF8BF31656ABA2524DBA2C94 /* ModelsR4.Bundle+ErxTaskCommunication.swift in Sources */,
 				31452A61C904325B5B407F1E /* ModelsR4.Bundle+ErxTaskMedicationDispense.swift in Sources */,
+				3690330CD7AE406FAD92DD9F /* ModelsR4.Medication+ErxTask.swift in Sources */,
 				76EF29902CB802B1EEB77FE8 /* ModelsR4.MedicationRequest+ErxTask.swift in Sources */,
 				683A8D65F689387C19846C61 /* ModelsR4.Organization+ErxTask.swift in Sources */,
 				7FB5CC10C4CAC3448BFFDF28 /* ModelsR4.Patient+ErxTask.swift in Sources */,
@@ -9983,6 +10050,8 @@
 				0766FDEAD04BEFEE77EF0EF0 /* ErxTaskFHIRDataStoreTests.swift in Sources */,
 				7247F6D91AED8DC166F88889 /* FHIRBundleTests.swift in Sources */,
 				988739D38129845BB4CD5AA3 /* FHIRBundleTests_v1_2_with_v1_1_0.swift in Sources */,
+				C4F2E1A6B47FB4D5FA05E7BA /* FHIRMedication_v1_0_2_Tests.swift in Sources */,
+				6B896278407D1A9AD7777E4A /* FHIRMedication_v1_1_0_Tests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -10108,6 +10177,7 @@
 				C1A9B3AB28ED92F5FDFBE11C /* ModelsR4.Bundle+ErxTask.swift in Sources */,
 				F5F4705A961F59646AE6C057 /* ModelsR4.Bundle+ErxTaskCommunication.swift in Sources */,
 				4CF23937F14EDDB623000B45 /* ModelsR4.Bundle+ErxTaskMedicationDispense.swift in Sources */,
+				E568C7202B8A97C9E305B401 /* ModelsR4.Medication+ErxTask.swift in Sources */,
 				50378E06E1F04DDC3CC8BC00 /* ModelsR4.MedicationRequest+ErxTask.swift in Sources */,
 				FCC82CE166679DECFFCB6623 /* ModelsR4.Organization+ErxTask.swift in Sources */,
 				513AE7CD7402BE11EE0D937D /* ModelsR4.Patient+ErxTask.swift in Sources */,
@@ -10123,6 +10193,8 @@
 				DF7B9B64BCE94AC46570F9E2 /* ErxTaskFHIRDataStoreTests.swift in Sources */,
 				5ACE1296F0F5A161575092CC /* FHIRBundleTests.swift in Sources */,
 				15F7FFEB6C692E9B4C4776B5 /* FHIRBundleTests_v1_2_with_v1_1_0.swift in Sources */,
+				88DBA830E7A84E22E3A2EC0D /* FHIRMedication_v1_0_2_Tests.swift in Sources */,
+				5DAA8633119071D7865CAB67 /* FHIRMedication_v1_1_0_Tests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

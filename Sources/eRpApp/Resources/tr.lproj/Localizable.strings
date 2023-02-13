@@ -1,4 +1,3 @@
-
 "add_btn_save" = "Kaydet";
 "add_txt_profile1" = "profiller 1";
 "add_txt_title" = "Ad girin";
@@ -142,7 +141,7 @@
 "cdw_txt_can_description" = "Kart erişim numaranızı (CAN) sağlık kartınızın sağ üst köşesinde bulabilirsiniz.";
 "cdw_txt_can_subtitle" = "Erişim numarasını girin";
 "cdw_txt_can_title" = "Oturum açma";
-"cdw_txt_can_title_hint" = "CAN Eingabefeld";
+"cdw_txt_can_title_hint" = "Kart Erişim Numaranız (CAN) 6 hanelidir. CAN'ı sağlık kartınızın ön tarafında sağ üst köşede bulabilirsiniz. Altı haneli bir erişim numarası yoksa, sağlık sigortanızdan yeni bir sağlık kartına ihtiyacınız vardır.";
 "cdw_txt_can_warn_wrong_description" = "Ne yazık ki, girilen CAN tanınan kartla eşleşmiyor. Lütfen CAN'ı yeniden girin. Teşekkürler!";
 "cdw_txt_can_warn_wrong_title" = "Yanlış CAN";
 "cdw_txt_extauth_alert_message_save_profile" = "Sağlık kartınız profile bağlanamadı.";
@@ -328,6 +327,9 @@
 "dtl_txt_task_id" = "Task-ID";
 "dtl_txt_title" = "Ayrıntılar";
 "email_subject_fallback" = "iOS uygulaması: Hata raporu";
+"erp_txt_tooltips_add_profile" = "Yeni bir profil oluşturmak için buraya basın";
+"erp_txt_tooltips_profile_rename" = "İsimleri düzenlemek için uzun basın";
+"erp_txt_tooltips_scan" = "Tarif eklemek için buraya dokunun";
 "err_btn_cancel" = "İptal et";
 "err_codes_prefix" = "Hata numaraları:";
 "err_specific_i10018_description" = "Biyometriniz değişti. Örneğin, bir parmak izi eklendi mi? Güvenlik nedeniyle sağlık kartınız ile tekrar kayıt olmanız gerekmektedir.";
@@ -695,7 +697,7 @@
 "onb_leg_btn_terms_of_use_hint" = "Kullanım koşullarını kabul et";
 "onb_leg_btn_title" = "Onayla";
 "onb_leg_txt_subtitle" = "Uygulamayı kullanmak için lütfen kullanım koşullarını kabul edin ve veri koruma politikasından haberdar olduğunuzu onaylayın. Yalnızca hizmetlerin çalışması için gerekli olan veriler toplanır.";
-"onb_leg_txt_title" = "Kullanım koşulları ve veri koruma politikası";
+"onb_leg_txt_title" = "Gizlilik ve Kullanım";
 "onb_prf_txt_alert_message" = "Ad alanı boş olamaz";
 "onb_prf_txt_alert_title" = "Hata";
 "onb_prf_txt_footnote" = "Bu, birden fazla kişinin reçetelerini yönetiyorsanız genel bakışı sağlamak için size yardımcı olacaktır.";
@@ -740,7 +742,7 @@
 "ord_detail_txt_orders" = "Bir sipariş";
 "ord_detail_txt_title" = "Siparişe genel bakış";
 "ord_list_status_new" = "Yeni";
-"ord_txt_empty_list_message" = "Henüz herhangi bir bildirim almadınız";
+"ord_txt_empty_list_message" = "Henüz siparişiniz yok";
 "ord_txt_empty_list_title" = "sipariş yok";
 "ord_txt_no_pharmacy_name" = "bilinmeyen eczane";
 "ord_txt_title" = "emirler";
@@ -794,7 +796,7 @@
 "pha_detail_opening_today" = "Bugün";
 "pha_detail_opening_until" = "Şu tarihe kadar:";
 "pha_detail_phone" = "Telefon numarası";
-"pha_detail_txt_footer_end" = "Bir hata mı fark ettiniz veya verileri düzeltmek mi istiyorsunuz?";
+"pha_detail_txt_footer_end" = ". Bir hata mı fark ettiniz veya verileri düzeltmek mi istiyorsunuz?";
 "pha_detail_txt_footer_mid" = "mein-apothekenportal.de";
 "pha_detail_txt_footer_start" = "Eczaneler için not: Eczanelerle ilgili iletişim bilgilerini ve bilgileri şu adresten alıyoruz:";
 "pha_detail_txt_subtitle_fallback" = "Eczane";
@@ -918,7 +920,7 @@
 "prsc_fd_txt_substitution_read_further" = "Daha fazla bilgi edin";
 "prsc_fd_txt_substitution_read_further_link" = "https://www.das-e-rezept-fuer-deutschland.de/fragen-antworten";
 "prsc_fd_txt_substitution_title" = "Muadil mümkün";
-"prsc_redeem_note_direct_assignment" = "Bu reçete sizin için bir tedavinin parçası olarak kullanılacaktır.";
+"prsc_redeem_note_direct_assignment" = "Bu reçete, tedavinin bir parçası olarak sizin için kullanılacaktır.";
 "prsc_status_canceled" = "İptal edildi";
 "prsc_status_completed" = "Kullanıldı";
 "prsc_status_direct_assigned" = "Senin için kurtarılacak";
@@ -1023,7 +1025,7 @@
 "stg_con_fbk_mail" = "app-feedback@gematik.de";
 "stg_con_fbk_subject_mail" = "E-Rezept uygulamasından geri bildirim";
 "stg_con_hotline_ava" = "Arayan için ücretsiz. Servis saatleri: Pazartesi - Cuma 08.00 - 20.00. Almanya resmi tatil günleri hariç.";
-"stg_con_hotline_contact" = "+49-0800-277-3777";
+"stg_con_hotline_contact" = "+49-800-277-3777";
 "stg_con_text_contact_hotline" = "Teknik destek hattını arayın";
 "stg_con_text_mail" = "E-posta yaz";
 "stg_con_text_survey" = "Ankete katılın";
