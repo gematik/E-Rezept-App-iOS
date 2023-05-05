@@ -21,7 +21,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-           1.4.9
+           1.8.0
  Docs
         </a>
          (100% documented)
@@ -81,6 +81,12 @@
                 <a class="nav-group-task-link" href="../Classes/ErxAuditEventEntity.html">ErxAuditEventEntity</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/ErxChargeItemEntity.html">ErxChargeItemEntity</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/ErxTaskAccidentInfoEntity.html">ErxTaskAccidentInfoEntity</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/ErxTaskCommunicationEntity.html">ErxTaskCommunicationEntity</a>
               </li>
               <li class="nav-group-task">
@@ -88,6 +94,9 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/ErxTaskEntity.html">ErxTaskEntity</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/ErxTaskIngredientEntity.html">ErxTaskIngredientEntity</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/ErxTaskMedicationDispenseEntity.html">ErxTaskMedicationDispenseEntity</a>
@@ -108,7 +117,10 @@
                 <a class="nav-group-task-link" href="../Classes/ErxTaskPractitionerEntity.html">ErxTaskPractitionerEntity</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Classes/ErxTaskWorkRelatedAccidentEntity.html">ErxTaskWorkRelatedAccidentEntity</a>
+                <a class="nav-group-task-link" href="../Classes/ErxTaskQuantityEntity.html">ErxTaskQuantityEntity</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/ErxTaskRatioEntity.html">ErxTaskRatioEntity</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/LocalStoreFactory.html">LocalStoreFactory</a>
@@ -163,10 +175,19 @@
             <a class="nav-group-name-link" href="../Extensions.html">Extensions</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions/ErxTask.html">ErxTask</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/FileManager.html">FileManager</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/FileManager/ExcludeFileError.html">– ExcludeFileError</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions/NSManagedObjectContext.html">NSManagedObjectContext</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions/NSManagedObjectContext.html#/s:So22NSManagedObjectContextC15eRpLocalStorageE21FetchRequestPublisherV">– FetchRequestPublisher</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/UserDefaults.html">UserDefaults</a>
@@ -196,6 +217,7 @@
                   
                   <pre class="highlight swift"><code><span class="kd">@objc(ErxTaskMedicationDispenseEntity)</span>
 <span class="kd">public</span> <span class="kd">class</span> <span class="kt">ErxTaskMedicationDispenseEntity</span> <span class="p">:</span> <span class="kt">NSManagedObject</span></code></pre>
+<pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">ErxTaskMedicationDispenseEntity</span><span class="p">:</span> <span class="kt">Identifiable</span></code></pre>
 
                 </div>
               </div>
@@ -237,60 +259,6 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/c:@CM@eRpLocalStorage@objc(cs)ErxTaskMedicationDispenseEntity(py)amount"></a>
-                    <a name="//apple_ref/swift/Property/amount" class="dashAnchor"></a>
-                    <a class="token" href="#/c:@CM@eRpLocalStorage@objc(cs)ErxTaskMedicationDispenseEntity(py)amount">amount</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">@NSManaged</span>
-<span class="kd">public</span> <span class="k">var</span> <span class="nv">amount</span><span class="p">:</span> <span class="kt">NSDecimalNumber</span><span class="p">?</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/c:@CM@eRpLocalStorage@objc(cs)ErxTaskMedicationDispenseEntity(py)dosageForm"></a>
-                    <a name="//apple_ref/swift/Property/dosageForm" class="dashAnchor"></a>
-                    <a class="token" href="#/c:@CM@eRpLocalStorage@objc(cs)ErxTaskMedicationDispenseEntity(py)dosageForm">dosageForm</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">@NSManaged</span>
-<span class="kd">public</span> <span class="k">var</span> <span class="nv">dosageForm</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
                     <a name="/c:@CM@eRpLocalStorage@objc(cs)ErxTaskMedicationDispenseEntity(py)dosageInstruction"></a>
                     <a name="//apple_ref/swift/Property/dosageInstruction" class="dashAnchor"></a>
                     <a class="token" href="#/c:@CM@eRpLocalStorage@objc(cs)ErxTaskMedicationDispenseEntity(py)dosageInstruction">dosageInstruction</a>
@@ -309,60 +277,6 @@
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@NSManaged</span>
 <span class="kd">public</span> <span class="k">var</span> <span class="nv">dosageInstruction</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/c:@CM@eRpLocalStorage@objc(cs)ErxTaskMedicationDispenseEntity(py)dose"></a>
-                    <a name="//apple_ref/swift/Property/dose" class="dashAnchor"></a>
-                    <a class="token" href="#/c:@CM@eRpLocalStorage@objc(cs)ErxTaskMedicationDispenseEntity(py)dose">dose</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">@NSManaged</span>
-<span class="kd">public</span> <span class="k">var</span> <span class="nv">dose</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/c:@CM@eRpLocalStorage@objc(cs)ErxTaskMedicationDispenseEntity(py)expiresOn"></a>
-                    <a name="//apple_ref/swift/Property/expiresOn" class="dashAnchor"></a>
-                    <a class="token" href="#/c:@CM@eRpLocalStorage@objc(cs)ErxTaskMedicationDispenseEntity(py)expiresOn">expiresOn</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">@NSManaged</span>
-<span class="kd">public</span> <span class="k">var</span> <span class="nv">expiresOn</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -417,87 +331,6 @@
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">@NSManaged</span>
 <span class="kd">public</span> <span class="k">var</span> <span class="nv">insuranceId</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/c:@CM@eRpLocalStorage@objc(cs)ErxTaskMedicationDispenseEntity(py)lot"></a>
-                    <a name="//apple_ref/swift/Property/lot" class="dashAnchor"></a>
-                    <a class="token" href="#/c:@CM@eRpLocalStorage@objc(cs)ErxTaskMedicationDispenseEntity(py)lot">lot</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">@NSManaged</span>
-<span class="kd">public</span> <span class="k">var</span> <span class="nv">lot</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/c:@CM@eRpLocalStorage@objc(cs)ErxTaskMedicationDispenseEntity(py)name"></a>
-                    <a name="//apple_ref/swift/Property/name" class="dashAnchor"></a>
-                    <a class="token" href="#/c:@CM@eRpLocalStorage@objc(cs)ErxTaskMedicationDispenseEntity(py)name">name</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">@NSManaged</span>
-<span class="kd">public</span> <span class="k">var</span> <span class="nv">name</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
-                    <a name="/c:@CM@eRpLocalStorage@objc(cs)ErxTaskMedicationDispenseEntity(py)pzn"></a>
-                    <a name="//apple_ref/swift/Property/pzn" class="dashAnchor"></a>
-                    <a class="token" href="#/c:@CM@eRpLocalStorage@objc(cs)ErxTaskMedicationDispenseEntity(py)pzn">pzn</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">@NSManaged</span>
-<span class="kd">public</span> <span class="k">var</span> <span class="nv">pzn</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -588,6 +421,33 @@
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/c:@CM@eRpLocalStorage@objc(cs)ErxTaskMedicationDispenseEntity(py)noteText"></a>
+                    <a name="//apple_ref/swift/Property/noteText" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@CM@eRpLocalStorage@objc(cs)ErxTaskMedicationDispenseEntity(py)noteText">noteText</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@NSManaged</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">noteText</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/c:@CM@eRpLocalStorage@objc(cs)ErxTaskMedicationDispenseEntity(py)task"></a>
                     <a name="//apple_ref/swift/Property/task" class="dashAnchor"></a>
                     <a class="token" href="#/c:@CM@eRpLocalStorage@objc(cs)ErxTaskMedicationDispenseEntity(py)task">task</a>
@@ -612,6 +472,60 @@
                     </section>
                   </div>
                 </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@CM@eRpLocalStorage@objc(cs)ErxTaskMedicationDispenseEntity(py)quantity"></a>
+                    <a name="//apple_ref/swift/Property/quantity" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@CM@eRpLocalStorage@objc(cs)ErxTaskMedicationDispenseEntity(py)quantity">quantity</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@NSManaged</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">quantity</span><span class="p">:</span> <span class="kt"><a href="../Classes/ErxTaskQuantityEntity.html">ErxTaskQuantityEntity</a></span><span class="p">?</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/c:@CM@eRpLocalStorage@objc(cs)ErxTaskMedicationDispenseEntity(py)medication"></a>
+                    <a name="//apple_ref/swift/Property/medication" class="dashAnchor"></a>
+                    <a class="token" href="#/c:@CM@eRpLocalStorage@objc(cs)ErxTaskMedicationDispenseEntity(py)medication">medication</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">@NSManaged</span>
+<span class="kd">public</span> <span class="k">var</span> <span class="nv">medication</span><span class="p">:</span> <span class="kt"><a href="../Classes/ErxTaskMedicationEntity.html">ErxTaskMedicationEntity</a></span><span class="p">?</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
               </ul>
             </div>
           </div>
@@ -620,7 +534,7 @@
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2022 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2022-12-14)</p>
+      <p>&copy; 2023 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2023-05-05)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.3</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>

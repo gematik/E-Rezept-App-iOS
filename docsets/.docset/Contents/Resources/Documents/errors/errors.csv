@@ -6,6 +6,8 @@ i-54004,"AVSError.unspecified","Conversion error when trying to cast to `AVSErro
 i-54005,"AVSError.`internal`","Internal error",AVSError.InternalError
 i-54101,"AVSError.InternalError.cmsContentCreation","",
 i-00901,"ZXDataMatrixWriter.Error.cgImageConversion","",
+i-02701,"PrescriptionRepositoryError.loginHandler","",LoginHandlerError
+i-02702,"PrescriptionRepositoryError.erxRepository","",ErxRepositoryError
 i-00301,"AppAuthenticationBiometricsDomain.Error.cannotEvaluatePolicy","",
 i-00302,"AppAuthenticationBiometricsDomain.Error.failedEvaluatingPolicy","",
 i-00201,"AVScannerViewController.Error.initalizationError","",
@@ -78,6 +80,23 @@ i-02602,"NFCHealthCardPasswordControllerError.openSecureSession","",
 i-02603,"NFCHealthCardPasswordControllerError.resetRetryCounter","",
 i-02604,"NFCHealthCardPasswordControllerError.wrongCan","",
 i-02605,"NFCHealthCardPasswordControllerError.changeReferenceData","",
+i-03101,"ChargeItemDomainServiceAuthenticateResult.Error.loginHandler","",LoginHandlerError
+i-03102,"ChargeItemDomainServiceAuthenticateResult.Error.unexpected","",
+i-03001,"ChargeItemDomainServiceFetchResult.Error.localStore","",LocalStoreError
+i-03002,"ChargeItemDomainServiceFetchResult.Error.loginHandler","",LoginHandlerError
+i-03003,"ChargeItemDomainServiceFetchResult.Error.erxRepository","",ErxRepositoryError
+i-03004,"ChargeItemDomainServiceFetchResult.Error.unexpected","",
+i-03401,"ChargeItemsDomainServiceDeleteResult.Error.localStore","",LocalStoreError
+i-03402,"ChargeItemsDomainServiceDeleteResult.Error.unexpected","",
+i-03201,"ChargeItemsDomainServiceGrantResult.Error.localStore","",LocalStoreError
+i-03202,"ChargeItemsDomainServiceGrantResult.Error.loginHandler","",LoginHandlerError
+i-03203,"ChargeItemsDomainServiceGrantResult.Error.erxRepository","",ErxRepositoryError
+i-03204,"ChargeItemsDomainServiceGrantResult.Error.unexpectedGrantConsentResponse","",
+i-03205,"ChargeItemsDomainServiceGrantResult.Error.unexpected","",
+i-03301,"ChargeItemsDomainServiceRevokeResult.Error.localStore","",LocalStoreError
+i-03302,"ChargeItemsDomainServiceRevokeResult.Error.loginHandler","",LoginHandlerError
+i-03303,"ChargeItemsDomainServiceRevokeResult.Error.erxRepository","",ErxRepositoryError
+i-03304,"ChargeItemsDomainServiceRevokeResult.Error.unexpected","",
 i-01701,"RegisteredDevicesDomain.Error.generic","",
 i-01801,"RegisteredDevicesServiceError.missingAuthentication","",
 i-01802,"RegisteredDevicesServiceError.missingToken","",
@@ -97,17 +116,19 @@ i-02103,"IDTokenValidatorError.profileWithInsuranceIdExists","",
 i-02104,"IDTokenValidatorError.other","",
 i-02201,"UserProfileServiceError.localStoreError","",LocalStoreError
 i-00801,"UserSessionError.idpError","",IDPError
-i-20001,"ErxRepositoryError.local","",LocalStoreError
-i-20002,"ErxRepositoryError.remote","",RemoteStoreError
+i-20601,"ErxConsent.Error.unableToConstructConsentRequest","Unable to construct consent request",
+i-20602,"ErxConsent.Error.invalidErxConsentInput","Invalid ErxConsent input",
 i-20101,"ErxTask.Status.Error.decoding","",
 i-20102,"ErxTask.Status.Error.unknown","",
 i-20103,"ErxTask.Status.Error.missingStatus","",
 i-20104,"ErxTask.Status.Error.missingPatientReceiptReference","",
 i-20105,"ErxTask.Status.Error.missingPatientReceiptIdentifier","",
 i-20106,"ErxTask.Status.Error.missingPatientReceiptBundle","",
-i-20201,"DefaultDataMatrixStringEncoderError.stringEncoding","Generic error while encoding the string.",
 i-20601,"ErxTaskOrder.Error.unableToConstructCommunicationRequest","Unable to construct communication request",
-i-20601,"ErxTaskOrder.Error.invalidErxTaskOrderInput","Invalid ErxTaskOrder though previous validation checks have been passed",
+i-20602,"ErxTaskOrder.Error.invalidErxTaskOrderInput","Invalid ErxTaskOrder though previous validation checks have been passed",
+i-20001,"ErxRepositoryError.local","",LocalStoreError
+i-20002,"ErxRepositoryError.remote","",RemoteStoreError
+i-20201,"DefaultDataMatrixStringEncoderError.stringEncoding","Generic error while encoding the string.",
 i-20301,"LocalStoreError.notImplemented","",
 i-20302,"LocalStoreError.initialization","",
 i-20303,"LocalStoreError.write","",
