@@ -1,4 +1,4 @@
-// Generated using Sourcery 1.9.0 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.0.1 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 import Combine
 import eRpKit
@@ -25,18 +25,15 @@ import eRpKit
 
 
 
-
-
-
+// MARK: - MockErxLocalDataStore -
 
 final class MockErxLocalDataStore: ErxLocalDataStore {
-
-
-    //MARK: - fetchTask
+    
+   // MARK: - fetchTask
 
     var fetchTaskByAccessCodeCallsCount = 0
     var fetchTaskByAccessCodeCalled: Bool {
-        return fetchTaskByAccessCodeCallsCount > 0
+        fetchTaskByAccessCodeCallsCount > 0
     }
     var fetchTaskByAccessCodeReceivedArguments: (id: ErxTask.ID, accessCode: String?)?
     var fetchTaskByAccessCodeReceivedInvocations: [(id: ErxTask.ID, accessCode: String?)] = []
@@ -47,54 +44,42 @@ final class MockErxLocalDataStore: ErxLocalDataStore {
         fetchTaskByAccessCodeCallsCount += 1
         fetchTaskByAccessCodeReceivedArguments = (id: id, accessCode: accessCode)
         fetchTaskByAccessCodeReceivedInvocations.append((id: id, accessCode: accessCode))
-        if let fetchTaskByAccessCodeClosure = fetchTaskByAccessCodeClosure {
-            return fetchTaskByAccessCodeClosure(id, accessCode)
-        } else {
-            return fetchTaskByAccessCodeReturnValue
-        }
+        return fetchTaskByAccessCodeClosure.map({ $0(id, accessCode) }) ?? fetchTaskByAccessCodeReturnValue
     }
-
-    //MARK: - listAllTasks
+    
+   // MARK: - listAllTasks
 
     var listAllTasksCallsCount = 0
     var listAllTasksCalled: Bool {
-        return listAllTasksCallsCount > 0
+        listAllTasksCallsCount > 0
     }
     var listAllTasksReturnValue: AnyPublisher<[ErxTask], LocalStoreError>!
     var listAllTasksClosure: (() -> AnyPublisher<[ErxTask], LocalStoreError>)?
 
     func listAllTasks() -> AnyPublisher<[ErxTask], LocalStoreError> {
         listAllTasksCallsCount += 1
-        if let listAllTasksClosure = listAllTasksClosure {
-            return listAllTasksClosure()
-        } else {
-            return listAllTasksReturnValue
-        }
+        return listAllTasksClosure.map({ $0() }) ?? listAllTasksReturnValue
     }
-
-    //MARK: - fetchLatestLastModifiedForErxTasks
+    
+   // MARK: - fetchLatestLastModifiedForErxTasks
 
     var fetchLatestLastModifiedForErxTasksCallsCount = 0
     var fetchLatestLastModifiedForErxTasksCalled: Bool {
-        return fetchLatestLastModifiedForErxTasksCallsCount > 0
+        fetchLatestLastModifiedForErxTasksCallsCount > 0
     }
     var fetchLatestLastModifiedForErxTasksReturnValue: AnyPublisher<String?, LocalStoreError>!
     var fetchLatestLastModifiedForErxTasksClosure: (() -> AnyPublisher<String?, LocalStoreError>)?
 
     func fetchLatestLastModifiedForErxTasks() -> AnyPublisher<String?, LocalStoreError> {
         fetchLatestLastModifiedForErxTasksCallsCount += 1
-        if let fetchLatestLastModifiedForErxTasksClosure = fetchLatestLastModifiedForErxTasksClosure {
-            return fetchLatestLastModifiedForErxTasksClosure()
-        } else {
-            return fetchLatestLastModifiedForErxTasksReturnValue
-        }
+        return fetchLatestLastModifiedForErxTasksClosure.map({ $0() }) ?? fetchLatestLastModifiedForErxTasksReturnValue
     }
-
-    //MARK: - save
+    
+   // MARK: - save
 
     var saveTasksUpdateProfileLastAuthenticatedCallsCount = 0
     var saveTasksUpdateProfileLastAuthenticatedCalled: Bool {
-        return saveTasksUpdateProfileLastAuthenticatedCallsCount > 0
+        saveTasksUpdateProfileLastAuthenticatedCallsCount > 0
     }
     var saveTasksUpdateProfileLastAuthenticatedReceivedArguments: (tasks: [ErxTask], updateProfileLastAuthenticated: Bool)?
     var saveTasksUpdateProfileLastAuthenticatedReceivedInvocations: [(tasks: [ErxTask], updateProfileLastAuthenticated: Bool)] = []
@@ -105,18 +90,14 @@ final class MockErxLocalDataStore: ErxLocalDataStore {
         saveTasksUpdateProfileLastAuthenticatedCallsCount += 1
         saveTasksUpdateProfileLastAuthenticatedReceivedArguments = (tasks: tasks, updateProfileLastAuthenticated: updateProfileLastAuthenticated)
         saveTasksUpdateProfileLastAuthenticatedReceivedInvocations.append((tasks: tasks, updateProfileLastAuthenticated: updateProfileLastAuthenticated))
-        if let saveTasksUpdateProfileLastAuthenticatedClosure = saveTasksUpdateProfileLastAuthenticatedClosure {
-            return saveTasksUpdateProfileLastAuthenticatedClosure(tasks, updateProfileLastAuthenticated)
-        } else {
-            return saveTasksUpdateProfileLastAuthenticatedReturnValue
-        }
+        return saveTasksUpdateProfileLastAuthenticatedClosure.map({ $0(tasks, updateProfileLastAuthenticated) }) ?? saveTasksUpdateProfileLastAuthenticatedReturnValue
     }
-
-    //MARK: - delete
+    
+   // MARK: - delete
 
     var deleteTasksCallsCount = 0
     var deleteTasksCalled: Bool {
-        return deleteTasksCallsCount > 0
+        deleteTasksCallsCount > 0
     }
     var deleteTasksReceivedTasks: [ErxTask]?
     var deleteTasksReceivedInvocations: [[ErxTask]] = []
@@ -127,36 +108,28 @@ final class MockErxLocalDataStore: ErxLocalDataStore {
         deleteTasksCallsCount += 1
         deleteTasksReceivedTasks = tasks
         deleteTasksReceivedInvocations.append(tasks)
-        if let deleteTasksClosure = deleteTasksClosure {
-            return deleteTasksClosure(tasks)
-        } else {
-            return deleteTasksReturnValue
-        }
+        return deleteTasksClosure.map({ $0(tasks) }) ?? deleteTasksReturnValue
     }
-
-    //MARK: - listAllTasksWithoutProfile
+    
+   // MARK: - listAllTasksWithoutProfile
 
     var listAllTasksWithoutProfileCallsCount = 0
     var listAllTasksWithoutProfileCalled: Bool {
-        return listAllTasksWithoutProfileCallsCount > 0
+        listAllTasksWithoutProfileCallsCount > 0
     }
     var listAllTasksWithoutProfileReturnValue: AnyPublisher<[ErxTask], LocalStoreError>!
     var listAllTasksWithoutProfileClosure: (() -> AnyPublisher<[ErxTask], LocalStoreError>)?
 
     func listAllTasksWithoutProfile() -> AnyPublisher<[ErxTask], LocalStoreError> {
         listAllTasksWithoutProfileCallsCount += 1
-        if let listAllTasksWithoutProfileClosure = listAllTasksWithoutProfileClosure {
-            return listAllTasksWithoutProfileClosure()
-        } else {
-            return listAllTasksWithoutProfileReturnValue
-        }
+        return listAllTasksWithoutProfileClosure.map({ $0() }) ?? listAllTasksWithoutProfileReturnValue
     }
-
-    //MARK: - listAllCommunications
+    
+   // MARK: - listAllCommunications
 
     var listAllCommunicationsForCallsCount = 0
     var listAllCommunicationsForCalled: Bool {
-        return listAllCommunicationsForCallsCount > 0
+        listAllCommunicationsForCallsCount > 0
     }
     var listAllCommunicationsForReceivedProfile: ErxTask.Communication.Profile?
     var listAllCommunicationsForReceivedInvocations: [ErxTask.Communication.Profile] = []
@@ -167,36 +140,28 @@ final class MockErxLocalDataStore: ErxLocalDataStore {
         listAllCommunicationsForCallsCount += 1
         listAllCommunicationsForReceivedProfile = profile
         listAllCommunicationsForReceivedInvocations.append(profile)
-        if let listAllCommunicationsForClosure = listAllCommunicationsForClosure {
-            return listAllCommunicationsForClosure(profile)
-        } else {
-            return listAllCommunicationsForReturnValue
-        }
+        return listAllCommunicationsForClosure.map({ $0(profile) }) ?? listAllCommunicationsForReturnValue
     }
-
-    //MARK: - fetchLatestTimestampForCommunications
+    
+   // MARK: - fetchLatestTimestampForCommunications
 
     var fetchLatestTimestampForCommunicationsCallsCount = 0
     var fetchLatestTimestampForCommunicationsCalled: Bool {
-        return fetchLatestTimestampForCommunicationsCallsCount > 0
+        fetchLatestTimestampForCommunicationsCallsCount > 0
     }
     var fetchLatestTimestampForCommunicationsReturnValue: AnyPublisher<String?, LocalStoreError>!
     var fetchLatestTimestampForCommunicationsClosure: (() -> AnyPublisher<String?, LocalStoreError>)?
 
     func fetchLatestTimestampForCommunications() -> AnyPublisher<String?, LocalStoreError> {
         fetchLatestTimestampForCommunicationsCallsCount += 1
-        if let fetchLatestTimestampForCommunicationsClosure = fetchLatestTimestampForCommunicationsClosure {
-            return fetchLatestTimestampForCommunicationsClosure()
-        } else {
-            return fetchLatestTimestampForCommunicationsReturnValue
-        }
+        return fetchLatestTimestampForCommunicationsClosure.map({ $0() }) ?? fetchLatestTimestampForCommunicationsReturnValue
     }
-
-    //MARK: - save
+    
+   // MARK: - save
 
     var saveCommunicationsCallsCount = 0
     var saveCommunicationsCalled: Bool {
-        return saveCommunicationsCallsCount > 0
+        saveCommunicationsCallsCount > 0
     }
     var saveCommunicationsReceivedCommunications: [ErxTask.Communication]?
     var saveCommunicationsReceivedInvocations: [[ErxTask.Communication]] = []
@@ -207,18 +172,14 @@ final class MockErxLocalDataStore: ErxLocalDataStore {
         saveCommunicationsCallsCount += 1
         saveCommunicationsReceivedCommunications = communications
         saveCommunicationsReceivedInvocations.append(communications)
-        if let saveCommunicationsClosure = saveCommunicationsClosure {
-            return saveCommunicationsClosure(communications)
-        } else {
-            return saveCommunicationsReturnValue
-        }
+        return saveCommunicationsClosure.map({ $0(communications) }) ?? saveCommunicationsReturnValue
     }
-
-    //MARK: - allUnreadCommunications
+    
+   // MARK: - allUnreadCommunications
 
     var allUnreadCommunicationsForCallsCount = 0
     var allUnreadCommunicationsForCalled: Bool {
-        return allUnreadCommunicationsForCallsCount > 0
+        allUnreadCommunicationsForCallsCount > 0
     }
     var allUnreadCommunicationsForReceivedProfile: ErxTask.Communication.Profile?
     var allUnreadCommunicationsForReceivedInvocations: [ErxTask.Communication.Profile] = []
@@ -229,18 +190,14 @@ final class MockErxLocalDataStore: ErxLocalDataStore {
         allUnreadCommunicationsForCallsCount += 1
         allUnreadCommunicationsForReceivedProfile = profile
         allUnreadCommunicationsForReceivedInvocations.append(profile)
-        if let allUnreadCommunicationsForClosure = allUnreadCommunicationsForClosure {
-            return allUnreadCommunicationsForClosure(profile)
-        } else {
-            return allUnreadCommunicationsForReturnValue
-        }
+        return allUnreadCommunicationsForClosure.map({ $0(profile) }) ?? allUnreadCommunicationsForReturnValue
     }
-
-    //MARK: - fetchAuditEvent
+    
+   // MARK: - fetchAuditEvent
 
     var fetchAuditEventByCallsCount = 0
     var fetchAuditEventByCalled: Bool {
-        return fetchAuditEventByCallsCount > 0
+        fetchAuditEventByCallsCount > 0
     }
     var fetchAuditEventByReceivedId: ErxAuditEvent.ID?
     var fetchAuditEventByReceivedInvocations: [ErxAuditEvent.ID] = []
@@ -251,18 +208,14 @@ final class MockErxLocalDataStore: ErxLocalDataStore {
         fetchAuditEventByCallsCount += 1
         fetchAuditEventByReceivedId = id
         fetchAuditEventByReceivedInvocations.append(id)
-        if let fetchAuditEventByClosure = fetchAuditEventByClosure {
-            return fetchAuditEventByClosure(id)
-        } else {
-            return fetchAuditEventByReturnValue
-        }
+        return fetchAuditEventByClosure.map({ $0(id) }) ?? fetchAuditEventByReturnValue
     }
-
-    //MARK: - listAllAuditEvents
+    
+   // MARK: - listAllAuditEvents
 
     var listAllAuditEventsForTaskIDForCallsCount = 0
     var listAllAuditEventsForTaskIDForCalled: Bool {
-        return listAllAuditEventsForTaskIDForCallsCount > 0
+        listAllAuditEventsForTaskIDForCallsCount > 0
     }
     var listAllAuditEventsForTaskIDForReceivedArguments: (taskID: ErxTask.ID, locale: String?)?
     var listAllAuditEventsForTaskIDForReceivedInvocations: [(taskID: ErxTask.ID, locale: String?)] = []
@@ -273,36 +226,28 @@ final class MockErxLocalDataStore: ErxLocalDataStore {
         listAllAuditEventsForTaskIDForCallsCount += 1
         listAllAuditEventsForTaskIDForReceivedArguments = (taskID: taskID, locale: locale)
         listAllAuditEventsForTaskIDForReceivedInvocations.append((taskID: taskID, locale: locale))
-        if let listAllAuditEventsForTaskIDForClosure = listAllAuditEventsForTaskIDForClosure {
-            return listAllAuditEventsForTaskIDForClosure(taskID, locale)
-        } else {
-            return listAllAuditEventsForTaskIDForReturnValue
-        }
+        return listAllAuditEventsForTaskIDForClosure.map({ $0(taskID, locale) }) ?? listAllAuditEventsForTaskIDForReturnValue
     }
-
-    //MARK: - fetchLatestTimestampForAuditEvents
+    
+   // MARK: - fetchLatestTimestampForAuditEvents
 
     var fetchLatestTimestampForAuditEventsCallsCount = 0
     var fetchLatestTimestampForAuditEventsCalled: Bool {
-        return fetchLatestTimestampForAuditEventsCallsCount > 0
+        fetchLatestTimestampForAuditEventsCallsCount > 0
     }
     var fetchLatestTimestampForAuditEventsReturnValue: AnyPublisher<String?, LocalStoreError>!
     var fetchLatestTimestampForAuditEventsClosure: (() -> AnyPublisher<String?, LocalStoreError>)?
 
     func fetchLatestTimestampForAuditEvents() -> AnyPublisher<String?, LocalStoreError> {
         fetchLatestTimestampForAuditEventsCallsCount += 1
-        if let fetchLatestTimestampForAuditEventsClosure = fetchLatestTimestampForAuditEventsClosure {
-            return fetchLatestTimestampForAuditEventsClosure()
-        } else {
-            return fetchLatestTimestampForAuditEventsReturnValue
-        }
+        return fetchLatestTimestampForAuditEventsClosure.map({ $0() }) ?? fetchLatestTimestampForAuditEventsReturnValue
     }
-
-    //MARK: - listAllAuditEvents
+    
+   // MARK: - listAllAuditEvents
 
     var listAllAuditEventsForCallsCount = 0
     var listAllAuditEventsForCalled: Bool {
-        return listAllAuditEventsForCallsCount > 0
+        listAllAuditEventsForCallsCount > 0
     }
     var listAllAuditEventsForReceivedLocale: String?
     var listAllAuditEventsForReceivedInvocations: [String?] = []
@@ -313,18 +258,14 @@ final class MockErxLocalDataStore: ErxLocalDataStore {
         listAllAuditEventsForCallsCount += 1
         listAllAuditEventsForReceivedLocale = locale
         listAllAuditEventsForReceivedInvocations.append(locale)
-        if let listAllAuditEventsForClosure = listAllAuditEventsForClosure {
-            return listAllAuditEventsForClosure(locale)
-        } else {
-            return listAllAuditEventsForReturnValue
-        }
+        return listAllAuditEventsForClosure.map({ $0(locale) }) ?? listAllAuditEventsForReturnValue
     }
-
-    //MARK: - save
+    
+   // MARK: - save
 
     var saveAuditEventsCallsCount = 0
     var saveAuditEventsCalled: Bool {
-        return saveAuditEventsCallsCount > 0
+        saveAuditEventsCallsCount > 0
     }
     var saveAuditEventsReceivedAuditEvents: [ErxAuditEvent]?
     var saveAuditEventsReceivedInvocations: [[ErxAuditEvent]] = []
@@ -335,62 +276,116 @@ final class MockErxLocalDataStore: ErxLocalDataStore {
         saveAuditEventsCallsCount += 1
         saveAuditEventsReceivedAuditEvents = auditEvents
         saveAuditEventsReceivedInvocations.append(auditEvents)
-        if let saveAuditEventsClosure = saveAuditEventsClosure {
-            return saveAuditEventsClosure(auditEvents)
-        } else {
-            return saveAuditEventsReturnValue
-        }
+        return saveAuditEventsClosure.map({ $0(auditEvents) }) ?? saveAuditEventsReturnValue
     }
-
-    //MARK: - listAllMedicationDispenses
+    
+   // MARK: - listAllMedicationDispenses
 
     var listAllMedicationDispensesCallsCount = 0
     var listAllMedicationDispensesCalled: Bool {
-        return listAllMedicationDispensesCallsCount > 0
+        listAllMedicationDispensesCallsCount > 0
     }
-    var listAllMedicationDispensesReturnValue: AnyPublisher<[ErxTask.MedicationDispense], LocalStoreError>!
-    var listAllMedicationDispensesClosure: (() -> AnyPublisher<[ErxTask.MedicationDispense], LocalStoreError>)?
+    var listAllMedicationDispensesReturnValue: AnyPublisher<[ErxMedicationDispense], LocalStoreError>!
+    var listAllMedicationDispensesClosure: (() -> AnyPublisher<[ErxMedicationDispense], LocalStoreError>)?
 
-    func listAllMedicationDispenses() -> AnyPublisher<[ErxTask.MedicationDispense], LocalStoreError> {
+    func listAllMedicationDispenses() -> AnyPublisher<[ErxMedicationDispense], LocalStoreError> {
         listAllMedicationDispensesCallsCount += 1
-        if let listAllMedicationDispensesClosure = listAllMedicationDispensesClosure {
-            return listAllMedicationDispensesClosure()
-        } else {
-            return listAllMedicationDispensesReturnValue
-        }
+        return listAllMedicationDispensesClosure.map({ $0() }) ?? listAllMedicationDispensesReturnValue
     }
-
-    //MARK: - save
+    
+   // MARK: - save
 
     var saveMedicationDispensesCallsCount = 0
     var saveMedicationDispensesCalled: Bool {
-        return saveMedicationDispensesCallsCount > 0
+        saveMedicationDispensesCallsCount > 0
     }
-    var saveMedicationDispensesReceivedMedicationDispenses: [ErxTask.MedicationDispense]?
-    var saveMedicationDispensesReceivedInvocations: [[ErxTask.MedicationDispense]] = []
+    var saveMedicationDispensesReceivedMedicationDispenses: [ErxMedicationDispense]?
+    var saveMedicationDispensesReceivedInvocations: [[ErxMedicationDispense]] = []
     var saveMedicationDispensesReturnValue: AnyPublisher<Bool, LocalStoreError>!
-    var saveMedicationDispensesClosure: (([ErxTask.MedicationDispense]) -> AnyPublisher<Bool, LocalStoreError>)?
+    var saveMedicationDispensesClosure: (([ErxMedicationDispense]) -> AnyPublisher<Bool, LocalStoreError>)?
 
-    func save(medicationDispenses: [ErxTask.MedicationDispense]) -> AnyPublisher<Bool, LocalStoreError> {
+    func save(medicationDispenses: [ErxMedicationDispense]) -> AnyPublisher<Bool, LocalStoreError> {
         saveMedicationDispensesCallsCount += 1
         saveMedicationDispensesReceivedMedicationDispenses = medicationDispenses
         saveMedicationDispensesReceivedInvocations.append(medicationDispenses)
-        if let saveMedicationDispensesClosure = saveMedicationDispensesClosure {
-            return saveMedicationDispensesClosure(medicationDispenses)
-        } else {
-            return saveMedicationDispensesReturnValue
-        }
+        return saveMedicationDispensesClosure.map({ $0(medicationDispenses) }) ?? saveMedicationDispensesReturnValue
     }
+    
+   // MARK: - fetchChargeItem
 
+    var fetchChargeItemByFullDetailCallsCount = 0
+    var fetchChargeItemByFullDetailCalled: Bool {
+        fetchChargeItemByFullDetailCallsCount > 0
+    }
+    var fetchChargeItemByFullDetailReceivedArguments: (chargeItemID: ErxChargeItem.ID, fullDetail: Bool)?
+    var fetchChargeItemByFullDetailReceivedInvocations: [(chargeItemID: ErxChargeItem.ID, fullDetail: Bool)] = []
+    var fetchChargeItemByFullDetailReturnValue: AnyPublisher<ErxChargeItem?, LocalStoreError>!
+    var fetchChargeItemByFullDetailClosure: ((ErxChargeItem.ID, Bool) -> AnyPublisher<ErxChargeItem?, LocalStoreError>)?
+
+    func fetchChargeItem(by chargeItemID: ErxChargeItem.ID, fullDetail: Bool) -> AnyPublisher<ErxChargeItem?, LocalStoreError> {
+        fetchChargeItemByFullDetailCallsCount += 1
+        fetchChargeItemByFullDetailReceivedArguments = (chargeItemID: chargeItemID, fullDetail: fullDetail)
+        fetchChargeItemByFullDetailReceivedInvocations.append((chargeItemID: chargeItemID, fullDetail: fullDetail))
+        return fetchChargeItemByFullDetailClosure.map({ $0(chargeItemID, fullDetail) }) ?? fetchChargeItemByFullDetailReturnValue
+    }
+    
+   // MARK: - fetchLatestTimestampForChargeItems
+
+    var fetchLatestTimestampForChargeItemsCallsCount = 0
+    var fetchLatestTimestampForChargeItemsCalled: Bool {
+        fetchLatestTimestampForChargeItemsCallsCount > 0
+    }
+    var fetchLatestTimestampForChargeItemsReturnValue: AnyPublisher<String?, LocalStoreError>!
+    var fetchLatestTimestampForChargeItemsClosure: (() -> AnyPublisher<String?, LocalStoreError>)?
+
+    func fetchLatestTimestampForChargeItems() -> AnyPublisher<String?, LocalStoreError> {
+        fetchLatestTimestampForChargeItemsCallsCount += 1
+        return fetchLatestTimestampForChargeItemsClosure.map({ $0() }) ?? fetchLatestTimestampForChargeItemsReturnValue
+    }
+    
+   // MARK: - listAllChargeItems
+
+    var listAllChargeItemsCallsCount = 0
+    var listAllChargeItemsCalled: Bool {
+        listAllChargeItemsCallsCount > 0
+    }
+    var listAllChargeItemsReturnValue: AnyPublisher<[ErxChargeItem], LocalStoreError>!
+    var listAllChargeItemsClosure: (() -> AnyPublisher<[ErxChargeItem], LocalStoreError>)?
+
+    func listAllChargeItems() -> AnyPublisher<[ErxChargeItem], LocalStoreError> {
+        listAllChargeItemsCallsCount += 1
+        return listAllChargeItemsClosure.map({ $0() }) ?? listAllChargeItemsReturnValue
+    }
+    
+   // MARK: - save
+
+    var saveChargeItemsCallsCount = 0
+    var saveChargeItemsCalled: Bool {
+        saveChargeItemsCallsCount > 0
+    }
+    var saveChargeItemsReceivedChargeItems: [ErxChargeItem]?
+    var saveChargeItemsReceivedInvocations: [[ErxChargeItem]] = []
+    var saveChargeItemsReturnValue: AnyPublisher<Bool, LocalStoreError>!
+    var saveChargeItemsClosure: (([ErxChargeItem]) -> AnyPublisher<Bool, LocalStoreError>)?
+
+    func save(chargeItems: [ErxChargeItem]) -> AnyPublisher<Bool, LocalStoreError> {
+        saveChargeItemsCallsCount += 1
+        saveChargeItemsReceivedChargeItems = chargeItems
+        saveChargeItemsReceivedInvocations.append(chargeItems)
+        return saveChargeItemsClosure.map({ $0(chargeItems) }) ?? saveChargeItemsReturnValue
+    }
 }
+
+
+// MARK: - MockPharmacyLocalDataStore -
+
 final class MockPharmacyLocalDataStore: PharmacyLocalDataStore {
-
-
-    //MARK: - fetchPharmacy
+    
+   // MARK: - fetchPharmacy
 
     var fetchPharmacyByCallsCount = 0
     var fetchPharmacyByCalled: Bool {
-        return fetchPharmacyByCallsCount > 0
+        fetchPharmacyByCallsCount > 0
     }
     var fetchPharmacyByReceivedTelematikId: String?
     var fetchPharmacyByReceivedInvocations: [String] = []
@@ -401,18 +396,14 @@ final class MockPharmacyLocalDataStore: PharmacyLocalDataStore {
         fetchPharmacyByCallsCount += 1
         fetchPharmacyByReceivedTelematikId = telematikId
         fetchPharmacyByReceivedInvocations.append(telematikId)
-        if let fetchPharmacyByClosure = fetchPharmacyByClosure {
-            return fetchPharmacyByClosure(telematikId)
-        } else {
-            return fetchPharmacyByReturnValue
-        }
+        return fetchPharmacyByClosure.map({ $0(telematikId) }) ?? fetchPharmacyByReturnValue
     }
-
-    //MARK: - listPharmacies
+    
+   // MARK: - listPharmacies
 
     var listPharmaciesCountCallsCount = 0
     var listPharmaciesCountCalled: Bool {
-        return listPharmaciesCountCallsCount > 0
+        listPharmaciesCountCallsCount > 0
     }
     var listPharmaciesCountReceivedCount: Int?
     var listPharmaciesCountReceivedInvocations: [Int?] = []
@@ -423,18 +414,14 @@ final class MockPharmacyLocalDataStore: PharmacyLocalDataStore {
         listPharmaciesCountCallsCount += 1
         listPharmaciesCountReceivedCount = count
         listPharmaciesCountReceivedInvocations.append(count)
-        if let listPharmaciesCountClosure = listPharmaciesCountClosure {
-            return listPharmaciesCountClosure(count)
-        } else {
-            return listPharmaciesCountReturnValue
-        }
+        return listPharmaciesCountClosure.map({ $0(count) }) ?? listPharmaciesCountReturnValue
     }
-
-    //MARK: - save
+    
+   // MARK: - save
 
     var savePharmaciesCallsCount = 0
     var savePharmaciesCalled: Bool {
-        return savePharmaciesCallsCount > 0
+        savePharmaciesCallsCount > 0
     }
     var savePharmaciesReceivedPharmacies: [PharmacyLocation]?
     var savePharmaciesReceivedInvocations: [[PharmacyLocation]] = []
@@ -445,18 +432,14 @@ final class MockPharmacyLocalDataStore: PharmacyLocalDataStore {
         savePharmaciesCallsCount += 1
         savePharmaciesReceivedPharmacies = pharmacies
         savePharmaciesReceivedInvocations.append(pharmacies)
-        if let savePharmaciesClosure = savePharmaciesClosure {
-            return savePharmaciesClosure(pharmacies)
-        } else {
-            return savePharmaciesReturnValue
-        }
+        return savePharmaciesClosure.map({ $0(pharmacies) }) ?? savePharmaciesReturnValue
     }
-
-    //MARK: - delete
+    
+   // MARK: - delete
 
     var deletePharmaciesCallsCount = 0
     var deletePharmaciesCalled: Bool {
-        return deletePharmaciesCallsCount > 0
+        deletePharmaciesCallsCount > 0
     }
     var deletePharmaciesReceivedPharmacies: [PharmacyLocation]?
     var deletePharmaciesReceivedInvocations: [[PharmacyLocation]] = []
@@ -467,18 +450,14 @@ final class MockPharmacyLocalDataStore: PharmacyLocalDataStore {
         deletePharmaciesCallsCount += 1
         deletePharmaciesReceivedPharmacies = pharmacies
         deletePharmaciesReceivedInvocations.append(pharmacies)
-        if let deletePharmaciesClosure = deletePharmaciesClosure {
-            return deletePharmaciesClosure(pharmacies)
-        } else {
-            return deletePharmaciesReturnValue
-        }
+        return deletePharmaciesClosure.map({ $0(pharmacies) }) ?? deletePharmaciesReturnValue
     }
-
-    //MARK: - update
+    
+   // MARK: - update
 
     var updateTelematikIdMutatingCallsCount = 0
     var updateTelematikIdMutatingCalled: Bool {
-        return updateTelematikIdMutatingCallsCount > 0
+        updateTelematikIdMutatingCallsCount > 0
     }
     var updateTelematikIdMutatingReceivedArguments: (telematikId: String, mutating: (inout PharmacyLocation) -> Void)?
     var updateTelematikIdMutatingReceivedInvocations: [(telematikId: String, mutating: (inout PharmacyLocation) -> Void)] = []
@@ -489,11 +468,6 @@ final class MockPharmacyLocalDataStore: PharmacyLocalDataStore {
         updateTelematikIdMutatingCallsCount += 1
         updateTelematikIdMutatingReceivedArguments = (telematikId: telematikId, mutating: mutating)
         updateTelematikIdMutatingReceivedInvocations.append((telematikId: telematikId, mutating: mutating))
-        if let updateTelematikIdMutatingClosure = updateTelematikIdMutatingClosure {
-            return updateTelematikIdMutatingClosure(telematikId, mutating)
-        } else {
-            return updateTelematikIdMutatingReturnValue
-        }
+        return updateTelematikIdMutatingClosure.map({ $0(telematikId, mutating) }) ?? updateTelematikIdMutatingReturnValue
     }
-
 }

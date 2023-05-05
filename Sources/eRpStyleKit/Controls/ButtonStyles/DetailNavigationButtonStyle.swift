@@ -30,6 +30,7 @@ public struct DetailNavigationButtonStyle: ButtonStyle {
         self.minChevronSpacing = minChevronSpacing ?? 16
     }
 
+    @Environment(\.sectionContainerStyle) var style
     @Environment(\.isEnabled)
     var isEnabled: Bool
 
@@ -38,6 +39,7 @@ public struct DetailNavigationButtonStyle: ButtonStyle {
             configuration.label
                 .opacity(isEnabled ? 1.0 : 0.5)
                 .keyValuePairStyle(SeparatedKeyValuePairStyle(showSeparator: showSeparator))
+                .subTitleStyle(.navigation(showSeparator: showSeparator, minChevronSpacing: minChevronSpacing))
                 .labelStyle(DetailNavigationLabelStyle(
                     showSeparator: showSeparator,
                     minChevronSpacing: minChevronSpacing
@@ -45,9 +47,9 @@ public struct DetailNavigationButtonStyle: ButtonStyle {
         }
         .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
         .foregroundColor(Color(.label))
-        .background(configuration.isPressed ?
-            Color(.systemGray5) :
-            Color(.tertiarySystemBackground))
+        .background(
+            configuration.isPressed ? style.content.selectedColor : style.content.backgroundColor
+        )
     }
 }
 
@@ -75,11 +77,14 @@ public struct DetailNavigationLabelStyle: LabelStyle {
             configuration.icon
         })
             .labelStyle(SectionContainerLabelStyle(showSeparator: showSeparator))
+            .subTitleStyle(.navigation(showSeparator: showSeparator, minChevronSpacing: minChevronSpacing))
             .keyValuePairStyle(PlainKeyValuePairStyle())
     }
 }
 
 public struct BottomDividerStyle: ViewModifier {
+    @Environment(\.sectionContainerIsLastElement)
+    var isLastElement: Bool
     let showSeparator: Bool
 
     public init(showSeparator: Bool) {
@@ -91,7 +96,7 @@ public struct BottomDividerStyle: ViewModifier {
             content
                 .padding([.bottom, .trailing, .top])
 
-            if showSeparator {
+            if showSeparator && !isLastElement {
                 Divider()
             }
         }
@@ -102,6 +107,31 @@ public struct BottomDividerStyle: ViewModifier {
 extension View {
     func bottomDivider(showSeparator: Bool = true) -> some View {
         modifier(BottomDividerStyle(showSeparator: showSeparator))
+    }
+}
+
+public struct TopDividerStyle: ViewModifier {
+    let showSeparator: Bool
+
+    public init(showSeparator: Bool) {
+        self.showSeparator = showSeparator
+    }
+
+    public func body(content: Content) -> some View {
+        VStack(alignment: .leading, spacing: 0) {
+            if showSeparator {
+                Divider()
+            }
+
+            content
+        }
+        .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+    }
+}
+
+extension View {
+    func topDivider(showSeparator: Bool = true) -> some View {
+        modifier(TopDividerStyle(showSeparator: showSeparator))
     }
 }
 
@@ -123,79 +153,119 @@ extension ButtonStyle where Self == DetailNavigationButtonStyle {
 }
 
 struct DetailNavigationButtonStyle_Preview: PreviewProvider {
-    static var previews: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 8) {
-                SectionContainer(header: {
-                    Text("Navigational Button")
-                }, content: {
-                    Button(action: {}, label: {
-                        Label(title: { Text("Simple Label without icon") }, icon: {})
-                    })
-                        .buttonStyle(.navigation)
-
-                    Button(action: {}, label: {
-                        Label("Simple Label", systemImage: "qrcode")
-                    })
-                        .buttonStyle(.navigation)
-
-                    Button(action: {}, label: {
-                        Text("Simple Text without icon needs manual padding and frame!")
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .bottomDivider()
-                    })
-                        .buttonStyle(.navigation)
-
-                    Button(action: {}, label: {
-                        Label(title: {
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text("You may use manual components")
-
-                                Text("as the `title` part of a `Label`.")
-                                    .font(.subheadline)
-                            }
-                        }, icon: {})
-                    })
-                        .buttonStyle(.navigation)
-
-                    Button(action: {}, label: {
-                        Label(title: {
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text("And pair them with an")
-
-                                Text("Icon to create beautiful buttons")
-                                    .font(.subheadline)
-                            }
-                        }, icon: {
-                            Image(systemName: "qrcode")
+    struct ExampleView: View {
+        var body: some View {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 8) {
+                    SectionContainer(header: {
+                        Text("Navigational Button")
+                    }, content: {
+                        Button(action: {}, label: {
+                            Text("Simple Text without icon needs manual padding and frame!")
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .bottomDivider()
+                                .padding(.leading)
                         })
+                            .buttonStyle(.navigation)
+
+                        Button(action: {}, label: {
+                            Label(title: {
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text("You may use manual components")
+
+                                    Text("as the `title` part of a `Label`.")
+                                        .font(.subheadline)
+                                }
+                            }, icon: {})
+                        })
+                            .buttonStyle(.navigation)
+
+                        Button(action: {}, label: {
+                            Label(title: { Text("Simple Label without icon") }, icon: {})
+                        })
+                            .buttonStyle(.navigation)
+
+                        Button(action: {}, label: {
+                            Label("Simple Label", systemImage: "qrcode")
+                        })
+                            .buttonStyle(.navigation)
+
+                        Button(action: {}, label: {
+                            Label(title: {
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text("And pair them with an")
+
+                                    Text("Icon to create beautiful buttons")
+                                        .font(.subheadline)
+                                }
+                            }, icon: {
+                                Image(systemName: "qrcode")
+                            })
+                        })
+                            .buttonStyle(.navigation)
+
+                        Toggle(isOn: .constant(true)) {
+                            Label {
+                                Text(
+                                    "Toggles may be navigational Items too!, just apply `DetailNavigationButtonStyle`"
+                                )
+                                .font(.footnote)
+                            } icon: {
+                                Image(systemName: "qrcode")
+                            }
+                        }
+                        .buttonStyle(.plain)
+
+                        Toggle(isOn: .constant(true)) {
+                            Label {
+                                Text(
+                                    "Toggles may be navigational Items too!, just apply `DetailNavigationButtonStyle`"
+                                )
+                                .font(.footnote)
+                            } icon: {
+                                Image(systemName: "qrcode")
+                            }
+                        }
+                        .toggleStyle(.radio)
+                        .buttonStyle(.plain)
+
+                        Button(action: {}, label: {
+                            SubTitle(title: "Here", description: "everything is optional", details: "some details")
+                        })
+                            .buttonStyle(.navigation)
+
+                        Button(action: {}, label: {
+                            SubTitle(title: "Here", description: "everything is optional", details: "some details")
+                                .subTitleStyle(.info)
+                        })
+                            .buttonStyle(.navigation)
                     })
-                        .buttonStyle(.navigation)
-
-                    Toggle(isOn: .constant(true)) {
-                        Label {
-                            Text("Toggles may be navigational Items too!, just apply the `DetailNavigationButtonStyle`")
-                                .font(.footnote)
-                        } icon: {
-                            Image(systemName: "qrcode")
-                        }
-                    }
-                    .buttonStyle(.navigation)
-
-                    Toggle(isOn: .constant(true)) {
-                        Label {
-                            Text("Toggles may be navigational Items too!, just apply the `DetailNavigationButtonStyle`")
-                                .font(.footnote)
-                        } icon: {
-                            Image(systemName: "qrcode")
-                        }
-                    }
-                    .toggleStyle(.radio)
-                    .buttonStyle(.navigation)
-                })
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         }
-        .background(Color(.secondarySystemBackground))
+    }
+
+    static var previews: some View {
+        Group {
+            ExampleView()
+                .sectionContainerStyle(.bordered)
+                .background(Color(.secondarySystemBackground))
+        }
+
+        Group {
+            ExampleView()
+                .sectionContainerStyle(.bordered)
+        }.preferredColorScheme(.dark)
+
+        Group {
+            ExampleView()
+                .sectionContainerStyle(.inline)
+        }
+
+        Group {
+            ExampleView()
+                .sectionContainerStyle(.inline)
+        }.preferredColorScheme(.dark)
     }
 }

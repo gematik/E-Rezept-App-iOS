@@ -23,7 +23,7 @@ import eRpKit
 /// MedicationDispense related local store interfaces
 extension ErxTaskCoreDataStore {
     /// List all medication dispenses contained in the store
-    public func listAllMedicationDispenses() -> AnyPublisher<[ErxTask.MedicationDispense], LocalStoreError> {
+    public func listAllMedicationDispenses() -> AnyPublisher<[ErxMedicationDispense], LocalStoreError> {
         let request: NSFetchRequest<ErxTaskMedicationDispenseEntity> = ErxTaskMedicationDispenseEntity.fetchRequest()
         request.sortDescriptors = [NSSortDescriptor(
             key: #keyPath(ErxTaskMedicationDispenseEntity.whenHandedOver),
@@ -36,14 +36,14 @@ extension ErxTaskCoreDataStore {
             )
         }
         return fetch(request)
-            .map { list in list.compactMap(ErxTask.MedicationDispense.init) }
+            .map { list in list.compactMap(ErxMedicationDispense.init) }
             .eraseToAnyPublisher()
     }
 
     /// Creates or updates the passed sequence of `ErxTask.MedicationDispense`s
     /// - Parameter medicationDispenses: Array of medication dispenses that should be stored
     /// - Returns: `true` if save operation was successful
-    public func save(medicationDispenses: [ErxTask.MedicationDispense]) -> AnyPublisher<Bool, LocalStoreError> {
+    public func save(medicationDispenses: [ErxMedicationDispense]) -> AnyPublisher<Bool, LocalStoreError> {
         save(mergePolicy: .mergeByPropertyObjectTrump) { moc in
             _ = medicationDispenses.map { medicationDispense -> ErxTaskMedicationDispenseEntity in
                 let medicationDispenseEntity = ErxTaskMedicationDispenseEntity.from(

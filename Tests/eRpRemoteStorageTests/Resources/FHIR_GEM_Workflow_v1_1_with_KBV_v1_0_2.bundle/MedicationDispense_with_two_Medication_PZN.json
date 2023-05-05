@@ -1,0 +1,249 @@
+{
+  "id": "0c17a45e-6bd6-43a1-b408-dfa6aa710027",
+  "type": "searchset",
+  "timestamp": "2021-07-23T21:06:21.211+00:00",
+  "resourceType": "Bundle",
+  "total": 2,
+  "entry": [
+    {
+      "fullUrl": "https://erp-test.zentral.erp.splitdns.ti-dienste.de/MedicationDispense/160.000.000.014.298.37",
+      "resource": {
+        "resourceType": "MedicationDispense",
+        "meta": {
+          "profile": [
+            "https://gematik.de/fhir/StructureDefinition/ErxMedicationDispense"
+          ]
+        },
+        "contained": [
+          {
+            "resourceType": "Medication",
+            "id": "Internal",
+            "meta": {
+              "profile": [
+                "https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Medication_PZN|1.0.2"
+              ]
+            },
+            "extension": [
+              {
+                "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Medication_Category",
+                "valueCoding": {
+                  "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_ERP_Medication_Category",
+                  "code": "00"
+                }
+              },
+              {
+                "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Medication_Vaccine",
+                "valueBoolean": true
+              }
+            ],
+            "code": {
+              "coding": [
+                {
+                  "system": "http://fhir.de/CodeSystem/ifa/pzn",
+                  "code": "04796852"
+                }
+              ],
+              "text": "gesund 1"
+            },
+            "form": {
+              "coding": [
+                {
+                  "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_KBV_DARREICHUNGSFORM",
+                  "code": "TAB"
+                }
+              ]
+            },
+            "amount": {
+              "numerator": {
+                "value": 12,
+                "unit": "TAB",
+                "system": "http://unitsofmeasure.org",
+                "code": "{tbl}"
+              },
+              "denominator": {
+                "value": 1
+              }
+            }
+          }
+        ],
+        "identifier": [
+          {
+            "system": "https://gematik.de/fhir/NamingSystem/PrescriptionID",
+            "value": "160.000.000.014.298.37"
+          }
+        ],
+        "status": "completed",
+        "medicationReference": {
+          "reference": "#Internal",
+          "display": "gesund"
+        },
+        "subject": {
+          "identifier": {
+            "system": "http://fhir.de/NamingSystem/gkv/kvid-10",
+            "value": "X114428530"
+          }
+        },
+        "supportingInformation": [
+          {
+            "reference": "Task/160.000.000.014.298.37"
+          }
+        ],
+        "performer": [
+          {
+            "actor": {
+              "identifier": {
+                "system": "https://gematik.de/fhir/NamingSystem/TelematikID",
+                "value": "3-SMC-B-Testkarte-883110000129068"
+              }
+            }
+          }
+        ],
+        "quantity": {
+            "value": 1,
+            "unit": "g",
+            "system": "http://unitsofmeasure.org",
+            "code": "{tbl}"
+        },
+        "whenHandedOver": "2021-07-23T23:04:01+02:00",
+        "dosageInstruction": [
+          {
+            "text": "1-0-1-0"
+          }
+        ],
+        "id": "160.000.000.014.298.37.1"
+      },
+      "search": {
+        "mode": "match"
+      }
+    },
+    {
+      "fullUrl": "https://erp-test.zentral.erp.splitdns.ti-dienste.de/MedicationDispense/160.000.000.014.285.76",
+      "resource": {
+        "resourceType": "MedicationDispense",
+        "meta": {
+          "profile": [
+            "https://gematik.de/fhir/StructureDefinition/ErxMedicationDispense"
+          ]
+        },
+        "contained": [
+          {
+            "resourceType": "Medication",
+            "id": "Internal",
+            "meta": {
+              "profile": [
+                "https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Medication_PZN|1.0.2"
+              ]
+            },
+            "extension": [
+              {
+                "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Medication_Category",
+                "valueCoding": {
+                  "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_ERP_Medication_Category",
+                  "code": "00"
+                }
+              },
+              {
+                "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Medication_Vaccine",
+                "valueBoolean": true
+              }
+            ],
+            "code": {
+              "coding": [
+                {
+                  "system": "http://fhir.de/CodeSystem/ifa/pzn",
+                  "code": "03273514"
+                }
+              ],
+              "text": "gesund"
+            },
+            "form": {
+              "coding": [
+                {
+                  "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_KBV_DARREICHUNGSFORM",
+                  "code": "TAB"
+                }
+              ]
+            },
+            "amount": {
+              "numerator": {
+                "value": 12,
+                "unit": "TAB",
+                "system": "http://unitsofmeasure.org",
+                "code": "{tbl}"
+              },
+              "denominator": {
+                "value": 1
+              }
+            }
+          }
+        ],
+        "identifier": [
+          {
+            "system": "https://gematik.de/fhir/NamingSystem/PrescriptionID",
+            "value": "160.000.000.014.285.76"
+          }
+        ],
+        "status": "completed",
+        "medicationReference": {
+          "reference": "#Internal",
+          "display": "gesund"
+        },
+        "subject": {
+          "identifier": {
+            "system": "http://fhir.de/NamingSystem/gkv/kvid-10",
+            "value": "X114428530"
+          }
+        },
+        "supportingInformation": [
+          {
+            "reference": "Task/160.000.000.014.285.76"
+          }
+        ],
+        "performer": [
+          {
+            "actor": {
+              "identifier": {
+                "system": "https://gematik.de/fhir/NamingSystem/TelematikID",
+                "value": "3-SMC-B-Testkarte-883110000129068"
+              }
+            }
+          }
+        ],
+        "quantity": {
+            "value": 1,
+            "unit": "g",
+            "system": "http://unitsofmeasure.org",
+            "code": "{tbl}"
+        },
+        "whenHandedOver": "2021-07-23T10:55:04+02:00",
+        "note": [
+            {
+                "text": "These are two notes"
+            },
+            {
+                "text": "separated by newlines!"
+            }
+        ],
+        "dosageInstruction": [
+          {
+            "text": "1-0-1-0"
+          }
+        ],
+        "id": "160.000.000.014.285.76.1"
+      },
+      "search": {
+        "mode": "match"
+      }
+    }
+  ],
+  "link": [
+    {
+      "relation": "next",
+      "url": "https://erp-test.zentral.erp.splitdns.ti-dienste.de/MedicationDispense?_count=50&__offset=50"
+    },
+    {
+      "relation": "self",
+      "url": "https://erp-test.zentral.erp.splitdns.ti-dienste.de/MedicationDispense"
+    }
+  ]
+}

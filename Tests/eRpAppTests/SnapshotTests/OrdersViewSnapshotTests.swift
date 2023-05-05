@@ -17,6 +17,7 @@
 //
 
 import CombineSchedulers
+import ComposableArchitecture
 @testable import eRpApp
 import eRpKit
 import SnapshotTesting
@@ -36,25 +37,34 @@ final class OrdersViewSnapshotTests: XCTestCase {
                 profileSelectionState: .init(
                     profiles: [],
                     selectedProfileId: nil,
-                    route: nil
+                    destination: nil
                 )
             ),
-            reducer: .empty,
-            environment: ProfileSelectionToolbarItemDomain.Dummies.environment
+            reducer: EmptyReducer()
         )
     }
 
     func testEmptyOdersView() {
-        let sut = OrdersView(store: OrdersDomain.Dummies.storeFor(OrdersDomain.State(orders: [])),
-                             profileSelectionToolbarItemStore: profileStore())
+        let sut = OrdersView(
+            store: OrdersDomain.Store(
+                initialState: OrdersDomain.State(orders: []),
+                reducer: EmptyReducer()
+            ),
+            profileSelectionToolbarItemStore: profileStore()
+        )
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
     }
 
     func testOdersView() {
-        let sut = OrdersView(store: OrdersDomain.Dummies.store,
-                             profileSelectionToolbarItemStore: profileStore())
+        let sut = OrdersView(
+            store: OrdersDomain.Store(
+                initialState: OrdersDomain.Dummies.state,
+                reducer: EmptyReducer()
+            ),
+            profileSelectionToolbarItemStore: profileStore()
+        )
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())

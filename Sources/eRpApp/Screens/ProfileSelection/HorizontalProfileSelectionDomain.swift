@@ -23,78 +23,89 @@ import eRpKit
 import Foundation
 import IDP
 
-enum HorizontalProfileSelectionDomain {
-    typealias Store = ComposableArchitecture.Store<State, Action>
-    typealias Reducer = ComposableArchitecture.AnyReducer<State, Action, Environment>
+struct HorizontalProfileSelectionDomain: ReducerProtocol {
+    typealias Store = StoreOf<Self>
 
-    static func cleanup<T>() -> Effect<T, Never> {
-        Effect.cancel(id: Token.self)
+    static func cleanup<T>() -> EffectTask<T> {
+        EffectTask<T>.cancel(ids: Token.allCases)
     }
 
     enum Token: CaseIterable, Hashable {
         case loadProfiles
         case loadSelectedProfile
+        case activeUserProfile
     }
 
     struct State: Equatable {
         var profiles: [UserProfile] = []
         var selectedProfileId: UUID?
+        var profileName: String?
     }
 
     enum Action: Equatable {
         case registerListener
         case unregisterListener
-        case loadReceived(Result<[UserProfile], UserProfileServiceError>)
-        case selectedProfileReceived(UUID)
         case selectProfile(UserProfile)
         case showAddProfileView
+        case profileButtonLongPressed(UserProfile)
+        case showEditProfileNameView(UUID, String)
+
+        case response(Response)
+
+        enum Response: Equatable {
+            case loadReceived(Result<[UserProfile], UserProfileServiceError>)
+            case selectedProfileReceived(UUID)
+        }
     }
 
-    struct Environment {
-        let schedulers: Schedulers
-        let userProfileService: UserProfileService
-    }
+    @Dependency(\.schedulers) var schedulers: Schedulers
+    @Dependency(\.userProfileService) var userProfileService: UserProfileService
 
-    static let domainReducer = Reducer { state, action, environment in
+    func reduce(into state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
         case .registerListener:
             return .merge(
-                environment.userProfileService.userProfilesPublisher()
+                userProfileService.userProfilesPublisher()
                     .catchToEffect()
-                    .map(Action.loadReceived)
-                    .receive(on: environment.schedulers.main)
+                    .map(Action.Response.loadReceived)
+                    .map(Action.response)
+                    .receive(on: schedulers.main)
                     .eraseToEffect()
                     .cancellable(id: Token.loadProfiles, cancelInFlight: true),
-                environment.userProfileService.selectedProfileId
+                userProfileService.selectedProfileId
                     .compactMap { $0 }
-                    .map(Action.selectedProfileReceived)
-                    .receive(on: environment.schedulers.main)
+                    .map(Action.Response.selectedProfileReceived)
+                    .map(Action.response)
+                    .receive(on: schedulers.main)
                     .eraseToEffect()
                     .cancellable(id: Token.loadSelectedProfile, cancelInFlight: true)
             )
-        case let .loadReceived(.failure(error)):
+        case .response(.loadReceived(.failure)):
             // Handled by parent domain
             return .none
-        case let .loadReceived(.success(profiles)):
+        case let .response(.loadReceived(.success(profiles))):
             state.profiles = profiles
-            return .none
-        case let .selectedProfileReceived(profileId):
-            state.selectedProfileId = profileId
             return .none
         case let .selectProfile(profile):
             state.selectedProfileId = profile.id
-            environment.userProfileService.set(selectedProfileId: profile.id)
+            userProfileService.set(selectedProfileId: profile.id)
+            return .none
+        case let .response(.selectedProfileReceived(profileId)):
+            state.selectedProfileId = profileId
+            return .none
+        case let .profileButtonLongPressed(profile):
+            return Effect.concatenate(
+                Effect(value: .selectProfile(profile)),
+                Effect(value: .showEditProfileNameView(profile.id, profile.name))
+            )
+        case .showEditProfileNameView:
             return .none
         case .showAddProfileView:
             return .none
         case .unregisterListener:
-            return cleanup()
+            return Self.cleanup()
         }
     }
-
-    static let reducer: Reducer = .combine(
-        domainReducer
-    )
 }
 
 extension HorizontalProfileSelectionDomain {
@@ -108,15 +119,9 @@ extension HorizontalProfileSelectionDomain {
             selectedProfileId: UserProfile.Dummies.profileA.id
         )
 
-        static let environment = Environment(
-            schedulers: Schedulers(),
-            userProfileService: DummyUserProfileService()
-        )
-
         static let store = Store(
             initialState: state,
-            reducer: .empty,
-            environment: environment
+            reducer: EmptyReducer()
         )
     }
 }

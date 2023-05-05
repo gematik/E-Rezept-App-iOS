@@ -29,11 +29,11 @@ struct CardWallCANView: View {
     struct ViewState: Equatable {
         let can: String
         let isDemoModus: Bool
-        let routeTag: CardWallCANDomain.Route.Tag?
+        let destinationTag: CardWallCANDomain.Destinations.State.Tag?
 
         init(state: CardWallCANDomain.State) {
             can = state.can
-            routeTag = state.route?.tag
+            destinationTag = state.destination?.tag
             isDemoModus = state.isDemoModus
         }
     }
@@ -59,17 +59,15 @@ struct CardWallCANView: View {
 
                 NavigationLink(
                     destination: IfLetStore(
-                        store.scope(
-                            state: (\CardWallCANDomain.State.route)
-                                .appending(path: /CardWallCANDomain.Route.pin)
-                                .extract(from:),
-                            action: CardWallCANDomain.Action.pinAction(action:)
+                        store.destinationsScope(
+                            state: /CardWallCANDomain.Destinations.State.pin,
+                            action: CardWallCANDomain.Destinations.Action.pinAction(action:)
                         ),
                         then: CardWallPINView.init(store:)
                     ),
-                    tag: CardWallCANDomain.Route.Tag.pin,
+                    tag: CardWallCANDomain.Destinations.State.Tag.pin,
                     selection: viewStore.binding(
-                        get: \.routeTag
+                        get: \.destinationTag
                     ) {
                         .setNavigation(tag: $0)
                     }
@@ -83,7 +81,7 @@ struct CardWallCANView: View {
             .navigationBarTitle(L10n.cdwTxtCanTitle, displayMode: .inline)
             .navigationBarItems(
                 trailing: NavigationBarCloseItem {
-                    viewStore.send(.close)
+                    viewStore.send(.delegate(.close))
                 }
                 .accessibility(identifier: A11y.cardWall.canInput.cdwBtnCanCancel)
                 .accessibility(label: Text(L10n.cdwBtnCanCancelLabel))
@@ -97,12 +95,12 @@ struct CardWallCANView: View {
         @State var scannedcan: ScanCAN?
 
         struct ViewState: Equatable {
-            let routeTag: CardWallCANDomain.Route.Tag?
+            let destinationTag: CardWallCANDomain.Destinations.State.Tag?
             let wrongCANEntered: Bool
             let can: String
 
             init(state: CardWallCANDomain.State) {
-                routeTag = state.route?.tag
+                destinationTag = state.destination?.tag
                 wrongCANEntered = state.wrongCANEntered
                 can = state.can
             }
@@ -156,7 +154,7 @@ struct CardWallCANView: View {
                             .foregroundColor(Colors.primary)
                             .accessibility(identifier: A11y.cardWall.canInput.cdwBtnCanMore)
                             .fullScreenCover(isPresented: Binding<Bool>(
-                                get: { viewStore.state.routeTag == .egk },
+                                get: { viewStore.state.destinationTag == .egk },
                                 set: { show in
                                     if !show {
                                         viewStore.send(.setNavigation(tag: nil))
@@ -167,11 +165,9 @@ struct CardWallCANView: View {
                             content: {
                                 NavigationView {
                                     IfLetStore(
-                                        store.scope(
-                                            state: (\CardWallCANDomain.State.route)
-                                                .appending(path: /CardWallCANDomain.Route.egk)
-                                                .extract(from:),
-                                            action: CardWallCANDomain.Action.egkAction(action:)
+                                        store.destinationsScope(
+                                            state: /CardWallCANDomain.Destinations.State.egk,
+                                            action: CardWallCANDomain.Destinations.Action.egkAction(action:)
                                         ),
                                         then: OrderHealthCardView.init(store:)
                                     )
@@ -196,7 +192,7 @@ struct CardWallCANView: View {
                     }
                     .padding()
                     .fullScreenCover(isPresented: Binding<Bool>(
-                        get: { viewStore.state.routeTag == .scanner },
+                        get: { viewStore.state.destinationTag == .scanner },
                         set: { show in
                             if !show {
                                 viewStore.send(.setNavigation(tag: nil))
@@ -230,10 +226,10 @@ struct CardWallCANView: View {
                             showAnimation = true
                         }
                 }
-            }.respectKeyboardInsets()
-                .onTapGesture {
-                    UIApplication.shared.dismissKeyboard()
-                }
+            }
+            .onTapGesture {
+                UIApplication.shared.dismissKeyboard()
+            }
         }
     }
 

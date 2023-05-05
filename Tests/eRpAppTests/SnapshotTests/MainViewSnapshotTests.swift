@@ -31,8 +31,7 @@ final class MainViewSnapshotTests: XCTestCase {
 
     private func store(for state: MainDomain.State) -> MainDomain.Store {
         MainDomain.Store(initialState: state,
-                         reducer: MainDomain.Reducer.empty,
-                         environment: MainDomain.Dummies.environment)
+                         reducer: EmptyReducer())
     }
 
     private func store(for state: PrescriptionListDomain.State)
@@ -41,8 +40,7 @@ final class MainViewSnapshotTests: XCTestCase {
             initialState: MainDomain.State(
                 prescriptionListState: state, horizontalProfileSelectionState: HorizontalProfileSelectionDomain.State()
             ),
-            reducer: MainDomain.Reducer.empty,
-            environment: MainDomain.Dummies.environment
+            reducer: EmptyReducer()
         )
     }
 
@@ -52,8 +50,7 @@ final class MainViewSnapshotTests: XCTestCase {
                 profiles: [],
                 selectedProfileId: nil
             ),
-            reducer: .empty,
-            environment: HorizontalProfileSelectionDomain.Dummies.environment
+            reducer: EmptyReducer()
         )
     }
 

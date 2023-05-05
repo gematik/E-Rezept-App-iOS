@@ -42,11 +42,16 @@ final class ErxTaskFHIRClientTests: XCTestCase {
         host = "some-fhir-service.com"
         service = URL(string: "http://\(host ?? "")")!
         fhirClient = FHIRClient(server: service, httpClient: DefaultHTTPClient(urlSessionConfiguration: .default))
-        sut = FHIRClient(server: service, httpClient: DefaultHTTPClient(urlSessionConfiguration: .default))
+        sut = FHIRClient(server: service,
+                         httpClient: DefaultHTTPClient(urlSessionConfiguration: .default),
+                         receiveQueue: .immediate)
     }
 
     func testFHIRClientTaskByIdJson() {
-        let expectedResponse = load(resource: "getTaskResponse_61704e3f-1e4f-11b2-80f4-b806a73c0cd0")
+        let expectedResponse = load(
+            resource: "getTaskResponse_61704e3f-1e4f-11b2-80f4-b806a73c0cd0",
+            directory: .gem_wf_v1_1_with_kbv_v1_0_2
+        )
 
         var counter = 0
         stub(condition: isPath("/Task/61704e3f-1e4f-11b2-80f4-b806a73c0cd0") && isMethodGET() &&
@@ -67,26 +72,30 @@ final class ErxTaskFHIRClientTests: XCTestCase {
                     "7eccd529292631f6a7cd120b57ded23062c35932cc721bfd32b08c5fb188b642"
                 expect(erxTaskBundle?.fullUrl).to(beNil())
                 expect(erxTaskBundle?.medication?.name) == "Sumatriptan-1a Pharma 100 mg Tabletten"
-                expect(erxTaskBundle?.authoredOn) == "2020-02-03T00:00:00+00:00"
+                expect(erxTaskBundle?.authoredOn) == "2021-03-24T08:35:32.311370977+00:00"
                 expect(erxTaskBundle?.lastModified) == "2021-03-24T08:35:32.311376627+00:00"
                 expect(erxTaskBundle?.expiresOn) == "2021-06-24"
                 expect(erxTaskBundle?.acceptedUntil) == "2021-04-23"
                 expect(erxTaskBundle?.author) == "Hausarztpraxis Dr. Topp-Glücklich"
                 expect(erxTaskBundle?.medication?.dosageForm) == "TAB"
-                expect(erxTaskBundle?.medication?.amount) == 12
-                expect(erxTaskBundle?.medication?.dosageInstructions) == "1-0-1-0"
-                expect(erxTaskBundle?.medication?.lot) == "1234567890abcde"
-                expect(erxTaskBundle?.medication?.expiresOn) == "2020-02-03T00:00:00+00:00"
-                expect(erxTaskBundle?.multiplePrescription?.mark) == true
-                expect(erxTaskBundle?.multiplePrescription?.numbering) == 2
-                expect(erxTaskBundle?.multiplePrescription?.totalNumber) == 4
-                expect(erxTaskBundle?.multiplePrescription?.startPeriod) == "2021-01-02"
-                expect(erxTaskBundle?.multiplePrescription?.endPeriod) == "2021-03-30"
+                expect(erxTaskBundle?.medication?.amount) ==
+                    .init(numerator: .init(value: "12", unit: "TAB"), denominator: .init(value: "1"))
+                expect(erxTaskBundle?.medication?.batch?.lotNumber) == "1234567890abcde"
+                expect(erxTaskBundle?.medication?.batch?.expiresOn) == "2020-02-03T00:00:00+00:00"
+                expect(erxTaskBundle?.medicationRequest.dosageInstructions) == "1-0-1-0"
+                expect(erxTaskBundle?.medicationRequest.multiplePrescription?.mark) == true
+                expect(erxTaskBundle?.medicationRequest.multiplePrescription?.numbering) == 2
+                expect(erxTaskBundle?.medicationRequest.multiplePrescription?.totalNumber) == 4
+                expect(erxTaskBundle?.medicationRequest.multiplePrescription?.startPeriod) == "2021-01-02"
+                expect(erxTaskBundle?.medicationRequest.multiplePrescription?.endPeriod) == "2021-03-30"
             })
     }
 
     func testFHIRClientTaskByIdInvalidFhirJson() {
-        let expectedResponse = load(resource: "getTaskResponse_invalid_fhir_61704e3f-1e4f-11b2-80f4-b806a73c0cd0")
+        let expectedResponse = load(
+            resource: "getTaskResponse_invalid_fhir_61704e3f-1e4f-11b2-80f4-b806a73c0cd0",
+            directory: .gem_wf_v1_1_with_kbv_v1_0_2
+        )
         let expectedErxTaskStatusDecodeErrorMessage =
             """
             authoredOn: 2021-03-24T08:35:32.311370977+00:00
@@ -120,13 +129,16 @@ final class ErxTaskFHIRClientTests: XCTestCase {
                 expect(erxTaskBundle?.author).to(beNil())
                 expect(erxTaskBundle?.medication?.dosageForm).to(beNil())
                 expect(erxTaskBundle?.medication?.amount).to(beNil())
-                expect(erxTaskBundle?.multiplePrescription?.mark).to(beNil())
-                expect(erxTaskBundle?.multiplePrescription?.numbering).to(beNil())
+                expect(erxTaskBundle?.medicationRequest.multiplePrescription?.mark).to(beNil())
+                expect(erxTaskBundle?.medicationRequest.multiplePrescription?.numbering).to(beNil())
             })
     }
 
     func testFHIRClientAllTaskIdsJson() {
-        let expectedResponse = load(resource: "getTaskIdsWithTwoTasksResponse")
+        let expectedResponse = load(
+            resource: "getTaskIdsWithTwoTasksResponse",
+            directory: .gem_wf_v1_1_with_kbv_v1_0_2
+        )
 
         var counter = 0
         stub(condition: isPath("/Task")) { _ in
@@ -146,7 +158,10 @@ final class ErxTaskFHIRClientTests: XCTestCase {
     }
 
     func testFetchingTasksWithLastModifiedDate() {
-        let expectedResponse = load(resource: "getTaskIdsWithTwoTasksResponse")
+        let expectedResponse = load(
+            resource: "getTaskIdsWithTwoTasksResponse",
+            directory: .gem_wf_v1_1_with_kbv_v1_0_2
+        )
 
         let lastModified = "2021-03-24T08:35:26.548+00:00"
         let dateString = FHIRDateFormatter.shared.date(from: lastModified)!.fhirFormattedString(with: .yearMonthDayTime)
@@ -169,7 +184,10 @@ final class ErxTaskFHIRClientTests: XCTestCase {
     }
 
     func testFHIRClientAllAuditEvents() {
-        let expectedResponse = load(resource: "getAuditEventResponse_4_entries")
+        let expectedResponse = load(
+            resource: "getAuditEventResponse_4_entries",
+            directory: .gem_wf_v1_1_with_kbv_v1_0_2
+        )
 
         var counter = 0
         stub(condition: isPath("/AuditEvent")) { _ in
@@ -191,7 +209,10 @@ final class ErxTaskFHIRClientTests: XCTestCase {
     }
 
     func testFetchingAuditEventsWithDate() {
-        let expectedResponse = load(resource: "getAuditEventResponse_4_entries")
+        let expectedResponse = load(
+            resource: "getAuditEventResponse_4_entries",
+            directory: .gem_wf_v1_1_with_kbv_v1_0_2
+        )
 
         let timestamp = "2021-03-24T08:35:26.548+00:00"
         let dateString = FHIRDateFormatter.shared.date(from: timestamp)!
@@ -218,7 +239,10 @@ final class ErxTaskFHIRClientTests: XCTestCase {
     /// The server will then respond with a http status code of 404 but the delete operation should be successful.
     func testDeleteTasks404() {
         // given a response with a 404 (not found) failure
-        let errorResponsePath = load(resource: "operationOutcome")
+        let errorResponsePath = load(
+            resource: "operationOutcome",
+            directory: .gem_wf_v1_1_with_kbv_v1_0_2
+        )
 
         stub(condition: isHost(host) && pathEndsWith("$abort")) { _ in
             fixture(filePath: errorResponsePath, status: 404, headers: ["Accept": "application/fhir+json"])
@@ -237,7 +261,10 @@ final class ErxTaskFHIRClientTests: XCTestCase {
     }
 
     func testRedeemOrderWithSuccess() {
-        let redeemOrderResponse = load(resource: "redeemOrderResponse")
+        let redeemOrderResponse = load(
+            resource: "redeemOrderResponse",
+            directory: .gem_wf_v1_1_with_kbv_v1_0_2
+        )
 
         var counter = 0
         stub(condition: isPath("/Communication")
@@ -277,7 +304,10 @@ final class ErxTaskFHIRClientTests: XCTestCase {
     }
 
     func testCommunicationResourceWithSuccess() {
-        let expectedResponse = load(resource: "erxCommunicationReplyResponse")
+        let expectedResponse = load(
+            resource: "erxCommunicationReplyResponse",
+            directory: .gem_wf_v1_1_with_kbv_v1_0_2
+        )
 
         var counter = 0
         stub(condition: isPath("/Communication")
@@ -297,7 +327,10 @@ final class ErxTaskFHIRClientTests: XCTestCase {
     }
 
     func testCommunicationResourceWithTimestamp() {
-        let expectedResponse = load(resource: "erxCommunicationReplyResponse")
+        let expectedResponse = load(
+            resource: "erxCommunicationReplyResponse",
+            directory: .gem_wf_v1_1_with_kbv_v1_0_2
+        )
 
         let timestamp = "2021-03-24T08:35:26.54834+00:00"
         let dateString = FHIRDateFormatter.shared.date(from: timestamp)!.fhirFormattedString(with: .yearMonthDayTime)
@@ -339,7 +372,10 @@ final class ErxTaskFHIRClientTests: XCTestCase {
     }
 
     func testFetchMedicationDispensesForTask() {
-        let expectedResponse = load(resource: "medicationDispenseBundle")
+        let expectedResponse = load(
+            resource: "MedicationDispense_with_two_Medication_PZN",
+            directory: .gem_wf_v1_1_with_kbv_v1_0_2
+        )
         let taskId = "160.000.000.014.285.76"
 
         var counter = 0
@@ -404,11 +440,14 @@ final class ErxTaskFHIRClientTests: XCTestCase {
 
     // swiftlint:enable line_length
 
-    private func load(resource name: String) -> String {
+    private func load(
+        resource name: String,
+        directory: FHIRBundleDirectories
+    ) -> String {
         guard let resource = Bundle(for: Self.self).path(
             forResource: name,
             ofType: "json",
-            inDirectory: "FHIRExampleData.bundle"
+            inDirectory: directory.rawValue
         ) else {
             fail("Bundle could not find resource \(name)")
             return ""

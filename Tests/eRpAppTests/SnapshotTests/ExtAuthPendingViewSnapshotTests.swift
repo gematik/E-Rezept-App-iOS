@@ -60,10 +60,10 @@ final class ExtAuthPendingViewSnapshotTests: XCTestCase {
             environment: ExtAuthPendingDomain.Environment(
                 idpSession: DemoIDPSession(storage: MemoryStorage(schedulers: schedulers)),
                 schedulers: schedulers,
-                currentProfile: mockUserSession.profile(),
-                idTokenValidator: mockUserSession.idTokenValidator(),
                 profileDataStore: mockUserSession.profileDataStore,
-                extAuthRequestStorage: DummyExtAuthRequestStorage()
+                extAuthRequestStorage: DummyExtAuthRequestStorage(),
+                currentProfile: mockUserSession.profile(),
+                idTokenValidator: mockUserSession.idTokenValidator()
             )
         )
         let sut = ExtAuthPendingView(store: store)
@@ -89,10 +89,10 @@ final class ExtAuthPendingViewSnapshotTests: XCTestCase {
             environment: ExtAuthPendingDomain.Environment(
                 idpSession: DemoIDPSession(storage: MemoryStorage(schedulers: schedulers)),
                 schedulers: schedulers,
-                currentProfile: mockUserSession.profile(),
-                idTokenValidator: mockUserSession.idTokenValidator(),
                 profileDataStore: mockUserSession.profileDataStore,
-                extAuthRequestStorage: DummyExtAuthRequestStorage()
+                extAuthRequestStorage: DummyExtAuthRequestStorage(),
+                currentProfile: mockUserSession.profile(),
+                idTokenValidator: mockUserSession.idTokenValidator()
             )
         )
         let sut = ExtAuthPendingView(store: store)

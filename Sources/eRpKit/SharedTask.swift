@@ -86,7 +86,7 @@ extension Sequence where Element == SharedTask {
                 authoredOn: authoredOn,
                 author: author,
                 source: .scanner,
-                medication: ErxTask.Medication(name: mediationNameForIndex(String(prescriptionCount)))
+                medication: ErxMedication(name: mediationNameForIndex(String(prescriptionCount)))
             )
             tasks.append(task)
             prescriptionCount += 1

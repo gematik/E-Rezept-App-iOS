@@ -55,12 +55,12 @@ final class MultiplePrescriptionExtensionTests: XCTestCase {
         expect(future.isRedeemable).to(beFalse())
     }
 
-    private func multiplePrescription(startDate: String?) -> ErxTask.MultiplePrescription {
+    private func multiplePrescription(startDate: String?) -> MultiplePrescription {
         guard let startDate = startDate else {
             XCTFail("No valid start date defined")
-            return ErxTask.MultiplePrescription()
+            return MultiplePrescription()
         }
-        return ErxTask.MultiplePrescription(
+        return MultiplePrescription(
             mark: true,
             numbering: 3,
             totalNumber: 7,

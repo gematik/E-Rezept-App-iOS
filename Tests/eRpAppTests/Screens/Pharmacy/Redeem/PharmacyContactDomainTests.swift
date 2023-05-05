@@ -33,7 +33,7 @@ class PharmacyContactDomainTests: XCTestCase {
         PharmacyContactDomain.Action,
         PharmacyContactDomain.State,
         PharmacyContactDomain.Action,
-        PharmacyContactDomain.Environment
+        Void
     >
     var store: TestStore!
 
@@ -61,13 +61,12 @@ class PharmacyContactDomainTests: XCTestCase {
     func testStore(for state: PharmacyContactDomain.State) -> TestStore {
         TestStore(
             initialState: state,
-            reducer: PharmacyContactDomain.reducer,
-            environment: PharmacyContactDomain.Environment(
-                schedulers: Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler()),
-                shipmentInfoStore: mockShipmentInfoDataStore,
-                validator: mockInputValidator
-            )
-        )
+            reducer: PharmacyContactDomain()
+        ) { dependencies in
+            dependencies.schedulers = Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler())
+            dependencies.shipmentInfoDataStore = mockShipmentInfoDataStore
+            dependencies.redeemInputValidator = mockInputValidator
+        }
     }
 
     func test_saveContactInformation() {
@@ -85,9 +84,9 @@ class PharmacyContactDomainTests: XCTestCase {
 
         // then
         expect(self.mockShipmentInfoDataStore.saveShipmentInfosCallsCount).to(equal(1))
-        sut.receive(.shipmentInfoSaved(.success(shipmentInfo)))
+        sut.receive(.response(.shipmentInfoSaved(.success(shipmentInfo))))
         expect(self.mockShipmentInfoDataStore.setSelectedShipmentInfoIdCallsCount).to(equal(1))
-        sut.receive(.close)
+        sut.receive(.delegate(.close))
     }
 
     func test_saveContactInformationWithError() {
@@ -109,7 +108,7 @@ class PharmacyContactDomainTests: XCTestCase {
 
         // then
         expect(self.mockShipmentInfoDataStore.saveShipmentInfosCallsCount).to(equal(1))
-        sut.receive(.shipmentInfoSaved(.failure(expectedError))) {
+        sut.receive(.response(.shipmentInfoSaved(.failure(expectedError)))) {
             $0.alertState = AlertState(
                 title: TextState("Fehler"),
                 message: TextState(LocalStoreError.write(error: DemoError.demo).localizedDescriptionWithErrorList),
@@ -286,8 +285,8 @@ class PharmacyContactDomainTests: XCTestCase {
         sut.send(.save)
 
         expect(self.mockShipmentInfoDataStore.saveShipmentInfosCallsCount).to(equal(1))
-        sut.receive(.shipmentInfoSaved(.success(finalShipmentInfo)))
+        sut.receive(.response(.shipmentInfoSaved(.success(finalShipmentInfo))))
         expect(self.mockShipmentInfoDataStore.setSelectedShipmentInfoIdCallsCount).to(equal(1))
-        sut.receive(.close)
+        sut.receive(.delegate(.close))
     }
 }

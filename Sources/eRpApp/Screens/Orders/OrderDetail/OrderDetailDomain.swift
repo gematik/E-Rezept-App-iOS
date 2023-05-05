@@ -23,30 +23,18 @@ import MapKit
 import SwiftUI
 import ZXingObjC
 
-protocol ResourceHandler {
-    func open(_ url: URL)
-    func canOpenURL(_ url: URL) -> Bool
-}
-
-extension UIApplication: ResourceHandler {
-    func open(_ url: URL) {
-        open(url, options: [:], completionHandler: nil)
-    }
-}
-
-enum OrderDetailDomain: Equatable {
-    typealias Store = ComposableArchitecture.Store<State, Action>
-    typealias Reducer = ComposableArchitecture.AnyReducer<State, Action, Environment>
+struct OrderDetailDomain: ReducerProtocol {
+    typealias Store = StoreOf<Self>
 
     /// Provides an Effect that needs to run whenever the state of this Domain is reset to nil
-    static func cleanup<T>() -> Effect<T, Never> {
+    static func cleanup<T>() -> EffectTask<T> {
         .concatenate(
-            Effect.cancel(id: Token.self),
-            cleanupSubDomains()
+            cleanupSubDomains(),
+            EffectTask<T>.cancel(ids: Token.allCases)
         )
     }
 
-    private static func cleanupSubDomains<T>() -> Effect<T, Never> {
+    private static func cleanupSubDomains<T>() -> EffectTask<T> {
         PrescriptionDetailDomain.cleanup()
     }
 
@@ -54,78 +42,84 @@ enum OrderDetailDomain: Equatable {
         case loadMedications
     }
 
-    enum Route: Equatable {
-        case pickupCode(PickupCodeDomain.State)
-        case prescriptionDetail(PrescriptionDetailDomain.State)
-        case alert(ErpAlertState<Action>)
-    }
-
     struct State: Equatable {
         var order: OrderCommunications
         var erxTasks: IdentifiedArrayOf<ErxTask> = []
         var openUrlSheetUrl: URL?
-        var route: Route?
+
+        var destination: Destinations.State?
     }
 
     enum Action: Equatable {
-        case didSelectCommunication(String)
         case didReadCommunications
         case loadTasks
         case tasksReceived([ErxTask])
         case didSelectMedication(ErxTask)
-        case prescriptionDetail(action: PrescriptionDetailDomain.Action)
-        case setNavigation(tag: Route.Tag?)
+
         case showPickupCode(dmcCode: String?, hrCode: String?)
-        case pickupCode(action: PickupCodeDomain.Action)
+
         case showOpenUrlSheet(url: URL?)
         case openUrl(url: URL?)
         case openMail(message: String)
         case openMapApp
         case openPhoneApp
         case openMailApp
+
+        case setNavigation(tag: Destinations.State.Tag?)
+        case destination(Destinations.Action)
     }
 
-    struct Environment {
-        internal init(schedulers: Schedulers,
-                      userSession: UserSession,
-                      fhirDateFormatter: FHIRDateFormatter,
-                      erxTaskRepository: ErxTaskRepository,
-                      application: ResourceHandler,
-                      date: Date = Date(),
-                      deviceInfo: OrderDetailDomain.DeviceInformations = DeviceInformations(),
-                      version: String = AppVersion.current.description) {
-            self.schedulers = schedulers
-            self.userSession = userSession
-            self.fhirDateFormatter = fhirDateFormatter
-            self.erxTaskRepository = erxTaskRepository
-            self.application = application
-            self.date = date
-            self.deviceInfo = deviceInfo
-            self.version = version
+    struct Destinations: ReducerProtocol {
+        enum State: Equatable {
+            case pickupCode(PickupCodeDomain.State)
+            case prescriptionDetail(PrescriptionDetailDomain.State)
+            case alert(ErpAlertState<OrderDetailDomain.Action>)
         }
 
-        let schedulers: Schedulers
-        let erxTaskRepository: ErxTaskRepository
-        let application: ResourceHandler
-        let date: Date
-        let deviceInfo: DeviceInformations
-        let version: String
-        let userSession: UserSession
-        let fhirDateFormatter: FHIRDateFormatter
+        enum Action: Equatable {
+            case prescriptionDetail(action: PrescriptionDetailDomain.Action)
+            case pickupCode(action: PickupCodeDomain.Action)
+        }
+
+        var body: some ReducerProtocol<State, Action> {
+            Scope(
+                state: /State.prescriptionDetail,
+                action: /Action.prescriptionDetail(action:)
+            ) {
+                PrescriptionDetailDomain()
+            }
+            Scope(
+                state: /State.pickupCode,
+                action: /Action.pickupCode(action:)
+            ) {
+                PickupCodeDomain()
+            }
+        }
     }
 
-    static let domainReducer = Reducer { state, action, environment in
-        switch action {
-        case let .didSelectCommunication(identifier):
-            guard let communication = state.order.displayedCommunications
-                .first(where: { $0.identifier == identifier })
-            else {
-                return .none
+    var deviceInfo = DeviceInformations()
+
+    @Dependency(\.schedulers) var schedulers: Schedulers
+    @Dependency(\.erxTaskRepository) var erxTaskRepository: ErxTaskRepository
+    @Dependency(\.resourceHandler) var application: ResourceHandler
+    @Dependency(\.dateProvider) var date: () -> Date
+    @Dependency(\.currentAppVersion) var version: AppVersion
+    @Dependency(\.userSession) var userSession: UserSession
+    @Dependency(\.fhirDateFormatter) var fhirDateFormatter: FHIRDateFormatter
+
+    var body: some ReducerProtocol<State, Action> {
+        Reduce(self.core)
+            .ifLet(\.destination, action: /Action.destination) {
+                Destinations()
             }
-            return effect(for: communication)
+    }
+
+    // swiftlint:disable:next cyclomatic_complexity function_body_length
+    private func core(state: inout State, action: Action) -> EffectTask<Action> {
+        switch action {
         case let .didSelectMedication(erxTask):
             let prescription = Prescription(erxTask: erxTask)
-            state.route = .prescriptionDetail(
+            state.destination = .prescriptionDetail(
                 PrescriptionDetailDomain.State(
                     prescription: prescription,
                     isArchived: prescription.isArchived
@@ -133,19 +127,19 @@ enum OrderDetailDomain: Equatable {
             )
             return .none
         case .didReadCommunications:
-            return environment.setReadState(for: state.order.communications.elements).fireAndForget()
+            return setReadState(for: state.order.communications.elements).fireAndForget()
         case .loadTasks:
             let taskIds = Set(state.order.communications.map(\.taskId))
             guard !taskIds.isEmpty else {
                 return .none
             }
-            return environment.loadTasks(taskIds)
+            return loadTasks(taskIds)
                 .cancellable(id: Token.loadMedications, cancelInFlight: true)
         case let .tasksReceived(tasks):
             state.erxTasks = IdentifiedArray(uniqueElements: tasks.sorted())
             return .none
         case let .showPickupCode(dmcCode: dmcCode, hrCode: hrCode):
-            state.route = .pickupCode(
+            state.destination = .pickupCode(
                 .init(
                     pharmacyName: state.order.pharmacy?.name,
                     pickupCodeHR: hrCode,
@@ -155,27 +149,27 @@ enum OrderDetailDomain: Equatable {
             return .none
         case let .openUrl(url: url):
             guard let url = url else { return .none }
-            if environment.application.canOpenURL(url) {
-                environment.application.open(url)
+            if application.canOpenURL(url) {
+                application.open(url)
             } else {
-                state.route = .alert(openUrlAlertState(for: url))
+                state.destination = .alert(Self.openUrlAlertState(for: url))
             }
             return .none
         case let .openMail(message):
-            state.route = nil
-            if let url = createEmailUrl(
+            state.destination = nil
+            if let url = Self.createEmailUrl(
                 to: L10n.ordDetailTxtEmailSupport.text,
                 subject: L10n.ordDetailTxtMailSubject.text,
-                body: eMailBody(
+                body: Self.eMailBody(
                     with: message,
-                    date: environment.date,
-                    deviceInfo: environment.deviceInfo,
-                    version: environment.version
+                    date: date(),
+                    deviceInfo: deviceInfo,
+                    version: version.productVersion.description
                 )
-            ), environment.application.canOpenURL(url) {
-                environment.application.open(url)
+            ), application.canOpenURL(url) {
+                application.open(url)
             } else {
-                state.route = .alert(openMailAlertState)
+                state.destination = .alert(Self.openMailAlertState)
             }
             return .none
         case let .showOpenUrlSheet(url):
@@ -196,71 +190,39 @@ enum OrderDetailDomain: Equatable {
         case .openPhoneApp:
             if let phone = state.order.pharmacy?.telecom?.phone,
                let number = URL(phoneNumber: phone) {
-                environment.application.open(number)
+                application.open(number)
             }
             return .none
         case .openMailApp:
             if let email = state.order.pharmacy?.telecom?.email,
-               let url = createEmailUrl(to: email) {
-                environment.application.open(url)
+               let url = Self.createEmailUrl(to: email) {
+                application.open(url)
             }
             return .none
         case .setNavigation(tag: .none),
-             .pickupCode(action: .close),
-             .prescriptionDetail(action: .close):
-            state.route = nil
-            return cleanup()
+             .destination(.pickupCode(action: .delegate(.close))),
+             .destination(.prescriptionDetail(action: .delegate(.close))):
+            state.destination = nil
+            return Self.cleanup()
         case .setNavigation,
-             .pickupCode,
-             .prescriptionDetail:
+             .destination:
             return .none
         }
     }
-
-    private static func effect(for communication: ErxTask.Communication) -> Effect<Action, Never> {
-        guard let payload = communication.payload else {
-            let payloadJSON = communication.payloadJSON
-            return Effect(value: OrderDetailDomain.Action.openMail(message: payloadJSON))
-        }
-
-        switch payload.supplyOptionsType {
-        case .onPremise:
-            if !payload.isPickupCodeEmptyOrNil {
-                return Effect(value: OrderDetailDomain.Action.showPickupCode(
-                    dmcCode: payload.pickUpCodeDMC,
-                    hrCode: payload.pickUpCodeHR
-                ))
-            }
-            return .none
-        case .delivery:
-            return .none
-        case .shipment:
-            if let urlString = payload.url,
-               !urlString.isEmpty,
-               let url = URL(string: urlString) {
-                return Effect(value: OrderDetailDomain.Action.showOpenUrlSheet(url: url))
-            }
-            return .none
-        }
-    }
-
-    static let reducer: Reducer = .combine(
-        prescriptionDetailPullbackReducer,
-        pickupCodeReducer,
-        domainReducer
-    )
 }
 
-extension OrderDetailDomain.Environment {
+extension OrderDetailDomain {
     func loadTasks(_ erxTaskIds: Set<ErxTask.ID>) -> Effect<OrderDetailDomain.Action, Never> {
         let publishers: [AnyPublisher<ErxTask?, Never>] = erxTaskIds.map {
             erxTaskRepository.loadLocal(by: $0, accessCode: nil)
+                .first()
                 .catch { _ in Just(.none) }
                 .eraseToAnyPublisher()
         }
 
-        return Publishers.MergeMany(publishers)
-            .collect(publishers.count)
+        return publishers
+            .combineLatest()
+            .first()
             .map { .tasksReceived($0.compactMap { $0 }) }
             .receive(on: schedulers.main)
             .eraseToEffect()
@@ -280,31 +242,6 @@ extension OrderDetailDomain.Environment {
 }
 
 extension OrderDetailDomain {
-    private static let prescriptionDetailPullbackReducer: Reducer =
-        PrescriptionDetailDomain.reducer._pullback(
-            state: (\State.route).appending(path: /Route.prescriptionDetail),
-            action: /OrderDetailDomain.Action.prescriptionDetail(action:)
-        ) { environment in
-            PrescriptionDetailDomain.Environment(
-                schedulers: environment.schedulers,
-                taskRepository: environment.userSession.erxTaskRepository,
-                fhirDateFormatter: environment.fhirDateFormatter,
-                userSession: environment.userSession
-            )
-        }
-
-    private static let pickupCodeReducer: Reducer =
-        PickupCodeDomain.reducer
-            ._pullback(
-                state: (\State.route).appending(path: /OrderDetailDomain.Route.pickupCode),
-                action: /OrderDetailDomain.Action.pickupCode(action:)
-            ) { messagesEnvironment in
-                PickupCodeDomain.Environment(
-                    schedulers: messagesEnvironment.schedulers,
-                    matrixCodeGenerator: ZXDataMatrixWriter()
-                )
-            }
-
     struct DeviceInformations {
         let model: String
         let systemName: String
@@ -390,26 +327,18 @@ extension OrderDetailDomain {
             order: OrderCommunications(orderId: "testID",
                                        communications: [OrdersDomain.Dummies.communicationOnPremise,
                                                         OrdersDomain.Dummies.communicationShipment,
-                                                        OrdersDomain.Dummies.communicationDelivery]),
+                                                        OrdersDomain.Dummies.communicationDelivery,
+                                                        OrdersDomain.Dummies.communicationOnPremiseWithUrl,
+                                                        OrdersDomain.Dummies.communicationWithoutPayload]),
             erxTasks: [ErxTask.Demo.erxTask1, ErxTask.Demo.erxTask13]
         )
 
-        static let demoSessionContainer = DummyUserSessionContainer()
-        static let environment = Environment(
-            schedulers: Schedulers(),
-            userSession: DummySessionContainer(),
-            fhirDateFormatter: globals.fhirDateFormatter,
-            erxTaskRepository: demoSessionContainer.userSession.erxTaskRepository,
-            application: UIApplication.shared
-        )
-
         static let store = Store(initialState: state,
-                                 reducer: reducer,
-                                 environment: environment)
+                                 reducer: OrderDetailDomain())
+
         static func storeFor(_ state: State) -> Store {
             Store(initialState: state,
-                  reducer: OrderDetailDomain.Reducer.empty,
-                  environment: environment)
+                  reducer: OrderDetailDomain())
         }
     }
 }

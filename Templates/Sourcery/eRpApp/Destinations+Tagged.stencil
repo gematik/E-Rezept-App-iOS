@@ -1,0 +1,30 @@
+// sourcery:file:eRpApp/Generated/Destinations+Tagged
+
+import Foundation
+
+{% macro GenerateTags destinationType %}
+extension {{ destinationType.name }} {
+    enum Tag: Int {
+        {% for destination in destinationType.cases %}
+        case {{ destination.name }}
+        {% endfor %}
+    }
+
+    var tag: Tag {
+        switch self {
+        {% for destination in destinationType.cases %}
+            case .{{ destination.name }}:
+                return .{{ destination.name }}
+        {% endfor %}
+        }
+    }
+}
+{% endmacro %}
+
+{% for destinations in types.structs where destinations.localName == "Destinations" and destinations.parentName|default:""|hasSuffix:"Domain" %}
+    {% for destinationType in destinations.containedTypes where destinationType.localName == "State" %}
+        {% call GenerateTags destinationType %}
+    {% endfor %}
+{% endfor %}
+
+// sourcery:end

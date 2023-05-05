@@ -1,3 +1,9 @@
+# Release 1.8.1
+
+## 1.8.1 (2023-05-05)
+
+This release should fix the broken documentation pipeline. 
+
 # Release 1.6.0
 
 ### added (2 changes)

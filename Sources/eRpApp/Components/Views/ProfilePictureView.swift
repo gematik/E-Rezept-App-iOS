@@ -19,18 +19,21 @@
 import SwiftUI
 
 struct ProfilePictureView: View {
-    let emoji: String? // change to image if image picker is implemented
+    let text: String?
+    let image: ProfilePicture?
     let color: Color?
     let connection: ProfileConnectionStatus?
     let style: ProfilePictureView.Style
     let action: () -> Void
 
     enum Style {
+        case xxLarge
         case large
         case small
 
         var size: CGFloat {
             switch self {
+            case .xxLarge: return 152
             case .large: return 96
             case .small: return 40
             }
@@ -38,6 +41,7 @@ struct ProfilePictureView: View {
 
         var imageSize: CGFloat {
             switch self {
+            case .xxLarge: return 108
             case .large: return 54
             case .small: return 20
             }
@@ -45,6 +49,7 @@ struct ProfilePictureView: View {
 
         var paddingLeading: CGFloat {
             switch self {
+            case .xxLarge: return 16
             case .large: return 16
             case .small: return 0
             }
@@ -52,6 +57,7 @@ struct ProfilePictureView: View {
 
         var statusSize: CGFloat {
             switch self {
+            case .xxLarge: return 52
             case .large: return 40
             case .small: return 28
             }
@@ -59,8 +65,17 @@ struct ProfilePictureView: View {
 
         var statusImageSize: CGFloat {
             switch self {
+            case .xxLarge: return 20
             case .large: return 16
             case .small: return 12
+            }
+        }
+
+        var textSize: CGFloat {
+            switch self {
+            case .xxLarge: return 33
+            case .large: return 22
+            case .small: return 11
             }
         }
     }
@@ -82,12 +97,14 @@ struct ProfilePictureView: View {
         } label: {
             ZStack(alignment: .bottomTrailing) {
                 Group {
-                    if emoji != nil {
-                        Text(emoji ?? "")
-                            .font(.system(size: style.imageSize).weight(.bold))
+                    if let image = image?.description, !image.name.isEmpty {
+                        Image(image)
+                            .resizable()
+                            .scaledToFit()
+                            .clipShape(Circle())
                     } else {
-                        Image(systemName: SFSymbolName.camera)
-                            .font(Font.headline.weight(.bold))
+                        Text(text ?? "")
+                            .font(.system(size: style.textSize).weight(.bold))
                             .foregroundColor(Color(.secondaryLabel))
                     }
                 }
@@ -120,19 +137,22 @@ struct ProfilePictureView_Previews: PreviewProvider {
     static var previews: some View {
         VStack(alignment: .leading) {
             ProfilePictureView(
-                emoji: "👻",
+                text: "SD",
+                image: ProfilePicture.none,
                 color: .blue,
                 connection: .connected,
                 style: .small
             ) {}
             ProfilePictureView(
-                emoji: "🐝",
+                text: "LN",
+                image: .baby,
                 color: .green,
                 connection: .disconnected,
                 style: .large
             ) {}
             ProfilePictureView(
-                emoji: "🦊",
+                text: "FM",
+                image: .doctor,
                 color: .yellow,
                 connection: .never,
                 style: .large

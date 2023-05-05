@@ -18,6 +18,7 @@
 
 import AVS
 import Combine
+import Dependencies
 import eRpKit
 import Foundation
 import IdentifiedCollections
@@ -27,6 +28,20 @@ import Pharmacy
 
 protocol RedeemService {
     func redeem(_ orders: [Order]) -> AnyPublisher<IdentifiedArrayOf<OrderResponse>, RedeemServiceError>
+}
+
+struct RedeemServiceDependency: DependencyKey {
+    // Is initially unimplemented because there is no reasonable default
+    // Use the dependency values from `AVSRedeemService` or `ErxTaskRepositoryRedeemService` to override
+    static let liveValue: RedeemService = UnimplementedRedeemService()
+    static let previewValue: RedeemService = DemoRedeemService()
+}
+
+extension DependencyValues {
+    var redeemService: RedeemService {
+        get { self[RedeemServiceDependency.self] }
+        set { self[RedeemServiceDependency.self] = newValue }
+    }
 }
 
 struct AVSRedeemService: RedeemService {
@@ -108,6 +123,22 @@ struct AVSRedeemService: RedeemService {
     }
 }
 
+extension AVSRedeemService: DependencyKey {
+    static let liveValue = AVSRedeemService(
+        avsSession: UsersSessionContainerDependency.liveValue.userSession.avsSession,
+        avsTransactionDataStore: UsersSessionContainerDependency.liveValue.userSession.avsTransactionDataStore
+    )
+
+    static let previewValue: AVSRedeemService = liveValue
+}
+
+extension DependencyValues {
+    var avsRedeemService: AVSRedeemService {
+        get { self[AVSRedeemService.self] }
+        set { self[AVSRedeemService.self] = newValue }
+    }
+}
+
 extension PharmacyLocation.AVSEndpoints.Endpoint {
     func asEndpoint() -> AVSEndpoint {
         AVSEndpoint(url: url, additionalHeaders: additionalHeaders)
@@ -181,6 +212,26 @@ struct ErxTaskRepositoryRedeemService: RedeemService {
                 return responses
             }
             .eraseToAnyPublisher()
+    }
+}
+
+extension ErxTaskRepositoryRedeemService: DependencyKey {
+    static let liveValue = {
+        @Dependency(\.userSession) var userSession
+        return ErxTaskRepositoryRedeemService(
+            erxTaskRepository: userSession.erxTaskRepository,
+            loginHandler: DefaultLoginHandler(
+                idpSession: userSession.idpSession,
+                signatureProvider: userSession.secureEnclaveSignatureProvider
+            )
+        )
+    }()
+}
+
+extension DependencyValues {
+    var erxTaskRepositoryRedeemService: ErxTaskRepositoryRedeemService {
+        get { self[ErxTaskRepositoryRedeemService.self] }
+        set { self[ErxTaskRepositoryRedeemService.self] = newValue }
     }
 }
 

@@ -18,11 +18,12 @@
 
 import Combine
 import CombineSchedulers
+import Dependencies
 import Foundation
 import IDP
 
 class DemoIDPSession: IDPSession {
-    @Injected(\.schedulers) var schedulers: Schedulers
+    @Dependency(\.schedulers) var schedulers
     private let storage: IDPStorage
     private var uiScheduler: AnySchedulerOf<DispatchQueue> {
         schedulers.main

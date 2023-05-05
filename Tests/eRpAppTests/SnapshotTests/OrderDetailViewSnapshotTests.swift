@@ -17,6 +17,7 @@
 //
 
 import CombineSchedulers
+import ComposableArchitecture
 @testable import eRpApp
 import eRpKit
 import SnapshotTesting
@@ -29,13 +30,14 @@ final class OrderDetailViewSnapshotTests: XCTestCase {
         diffTool = "open"
     }
 
-    func testOderDetailView() {
+    func testOderDetailViewWithOneCommunicationDispRequest() {
         let sut = OrderDetailView(
-            store: OrderDetailDomain.Dummies.storeFor(
-                .init(order: OrderCommunications(
+            store: OrderDetailDomain.Store(
+                initialState: .init(order: OrderCommunications(
                     orderId: "test",
-                    communications: [OrdersDomain.Dummies.communicationOnPremise]
-                ))
+                    communications: [OrdersDomain.Dummies.communicationDispRequest]
+                )),
+                reducer: EmptyReducer()
             )
         )
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
@@ -43,8 +45,33 @@ final class OrderDetailViewSnapshotTests: XCTestCase {
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
     }
 
-    func testOderDetailViewWithAllCommunicationTypes() {
-        let sut = OrderDetailView(store: OrderDetailDomain.Dummies.store)
+    func testOderDetailViewWithExpectedCommunications() {
+        let sut = OrderDetailView(
+            store: OrderDetailDomain.Store(
+                initialState: .init(order: OrderCommunications(
+                    orderId: "test",
+                    communications: [OrdersDomain.Dummies.communicationOnPremise,
+                                     OrdersDomain.Dummies.communicationShipment,
+                                     OrdersDomain.Dummies.communicationDelivery]
+                )),
+                reducer: EmptyReducer()
+            )
+        )
+        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
+        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+    }
+
+    func testOderDetailViewWithUnexpectedCommunications() {
+        let sut = OrderDetailView(store:
+            OrderDetailDomain.Store(
+                initialState: .init(order: OrderCommunications(
+                    orderId: "test",
+                    communications: [OrdersDomain.Dummies.communicationOnPremiseWithUrl,
+                                     OrdersDomain.Dummies.communicationWithoutPayload]
+                )),
+                reducer: EmptyReducer()
+            ))
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())

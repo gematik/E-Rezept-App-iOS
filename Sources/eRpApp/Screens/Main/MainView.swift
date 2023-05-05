@@ -37,13 +37,13 @@ struct MainView: View {
 
     struct ViewState: Equatable {
         let isDemoModeEnabled: Bool
-        let routeTag: MainDomain.Route.Tag?
+        let destinationTag: MainDomain.Destinations.State.Tag?
         let showTooltips: Bool
 
         init(state: MainDomain.State) {
             isDemoModeEnabled = state.isDemoMode
-            routeTag = state.route?.tag
-            showTooltips = state.route == nil
+            destinationTag = state.destination?.tag
+            showTooltips = state.destination == nil
         }
     }
 
@@ -63,14 +63,11 @@ struct MainView: View {
                         )
                     )
                     .accessibility(identifier: A11y.mainScreen.erxBtnProfile)
-                    .demoBanner(isPresented: viewStore.isDemoModeEnabled) {
-                        viewStore.send(MainDomain.Action.turnOffDemoMode)
-                    }
                 }
                 // Workaround to get correct accessibility while activating voice over *after*
                 // presentation of settings dialog. As soon as we can use multiple `fullScreenCover`
                 // (drop iOS <= ~14.4) we may omit this modifier and the `EmptyView()`.
-                .accessibility(hidden: viewStore.routeTag != nil)
+                .accessibility(hidden: viewStore.destinationTag != nil)
 
                 ExtAuthPendingView(
                     store: store.scope(
@@ -81,22 +78,33 @@ struct MainView: View {
 
                 MainViewNavigation(store: store)
             }
+            .demoBanner(isPresented: viewStore.isDemoModeEnabled) {
+                viewStore.send(MainDomain.Action.turnOffDemoMode)
+            }
+
+            .navigationTitle(Text(L10n.erxTitle))
+            .navigationBarTitleDisplayMode(.automatic)
+            .introspectNavigationController { navigationController in
+                let navigationBar = navigationController.navigationBar
+                navigationBar.barTintColor = UIColor(Colors.systemBackground)
+                let navigationBarAppearance = UINavigationBarAppearance()
+                navigationBarAppearance.shadowColor = UIColor(Colors.systemColorClear)
+
+                if viewStore.isDemoModeEnabled,
+                   let yellow = UIColor(named: Asset.Colors.yellow500.name) {
+                    navigationBarAppearance.backgroundColor = yellow
+                } else {
+                    navigationBarAppearance.backgroundColor = UIColor(Colors.systemBackground)
+                }
+                navigationBar.standardAppearance = navigationBarAppearance
+                navigationBar.compactAppearance = navigationBarAppearance
+            }
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     ScanItem { viewStore.send(.showScannerView) }
                         .embedToolbarContent()
                         .tooltip(tooltip: MainViewTooltip.scan)
                 }
-            }
-            .navigationTitle(Text(L10n.erxTitle))
-            .navigationBarTitleDisplayMode(viewStore.isDemoModeEnabled ? .inline : .automatic)
-            .introspectNavigationController { navigationController in
-                let navigationBar = navigationController.navigationBar
-                navigationBar.barTintColor = UIColor(Colors.systemBackground)
-                let navigationBarAppearance = UINavigationBarAppearance()
-                navigationBarAppearance.shadowColor = UIColor(Colors.systemColorClear)
-                navigationBarAppearance.backgroundColor = UIColor(Colors.systemBackground)
-                navigationBar.standardAppearance = navigationBarAppearance
             }
             .onAppear {
                 viewStore.send(.subscribeToDemoModeChange)
@@ -110,10 +118,8 @@ struct MainView: View {
                 viewStore.send(.unsubscribeFromDemoModeChange)
             }
             .alert(
-                self.store
-                    .scope(state: (\MainDomain.State.route).appending(path: /MainDomain.Route.alert)
-                        .extract(from:)),
-                dismiss: .setNavigation(tag: .none)
+                store.destinationsScope(state: /MainDomain.Destinations.State.alert),
+                dismiss: .nothing
             )
         }
         .accentColor(Colors.primary600)
@@ -151,10 +157,10 @@ private extension MainView {
         }
 
         struct ViewState: Equatable {
-            let routeTag: MainDomain.Route.Tag?
+            let destinationTag: MainDomain.Destinations.State.Tag?
 
             init(state: MainDomain.State) {
-                routeTag = state.route?.tag
+                destinationTag = state.destination?.tag
             }
         }
 
@@ -163,7 +169,7 @@ private extension MainView {
             Rectangle()
                 .frame(width: 0, height: 0, alignment: .center)
                 .smallSheet(isPresented: Binding<Bool>(
-                    get: { viewStore.routeTag == .welcomeDrawer },
+                    get: { viewStore.destinationTag == .welcomeDrawer },
                     set: { show in
                         if !show {
                             viewStore.send(.setNavigation(tag: nil), animation: .easeInOut)
@@ -181,7 +187,7 @@ private extension MainView {
             Rectangle()
                 .frame(width: 0, height: 0, alignment: .center)
                 .fullScreenCover(isPresented: Binding<Bool>(
-                    get: { viewStore.routeTag == .scanner },
+                    get: { viewStore.destinationTag == .scanner },
                     set: { show in
                         if !show {
                             viewStore.send(.setNavigation(tag: nil))
@@ -191,11 +197,9 @@ private extension MainView {
                 onDismiss: {},
                 content: {
                     IfLetStore(
-                        store.scope(
-                            state: (\MainDomain.State.route)
-                                .appending(path: /MainDomain.Route.scanner)
-                                .extract(from:),
-                            action: MainDomain.Action.scanner(action:)
+                        store.destinationsScope(
+                            state: /MainDomain.Destinations.State.scanner,
+                            action: MainDomain.Destinations.Action.scanner(action:)
                         ),
                         then: ErxTaskScannerView.init(store:)
                     )
@@ -209,7 +213,7 @@ private extension MainView {
                 .frame(width: 0, height: 0, alignment: .center)
                 .sheet(
                     isPresented: Binding<Bool>(
-                        get: { viewStore.routeTag == .deviceSecurity },
+                        get: { viewStore.destinationTag == .deviceSecurity },
                         set: { show in
                             if !show {
                                 viewStore.send(.setNavigation(tag: nil))
@@ -219,11 +223,9 @@ private extension MainView {
                     onDismiss: {},
                     content: {
                         IfLetStore(
-                            store.scope(
-                                state: (\MainDomain.State.route)
-                                    .appending(path: /MainDomain.Route.deviceSecurity)
-                                    .extract(from:),
-                                action: MainDomain.Action.deviceSecurity(action:)
+                            store.destinationsScope(
+                                state: /MainDomain.Destinations.State.deviceSecurity,
+                                action: MainDomain.Destinations.Action.deviceSecurity(action:)
                             ),
                             then: DeviceSecurityView.init(store:)
                         )
@@ -235,11 +237,9 @@ private extension MainView {
             // Navigation into details
             NavigationLink(
                 destination: IfLetStore(
-                    store.scope(
-                        state: (\MainDomain.State.route)
-                            .appending(path: /MainDomain.Route.prescriptionDetail)
-                            .extract(from:),
-                        action: MainDomain.Action.prescriptionDetailAction(action:)
+                    store.destinationsScope(
+                        state: /MainDomain.Destinations.State.prescriptionDetail,
+                        action: MainDomain.Destinations.Action.prescriptionDetailAction(action:)
                     )
                 ) { scopedStore in
                     WithViewStore(scopedStore) { $0.prescription.source } content: { viewStore in
@@ -249,9 +249,9 @@ private extension MainView {
                         }
                     }
                 },
-                tag: MainDomain.Route.Tag.prescriptionDetail,
+                tag: MainDomain.Destinations.State.Tag.prescriptionDetail,
                 selection: viewStore.binding(
-                    get: \.routeTag,
+                    get: \.destinationTag,
                     send: MainDomain.Action.setNavigation
                 )
             ) {
@@ -261,18 +261,15 @@ private extension MainView {
             // Navigation into archived prescriptions
             NavigationLink(
                 destination: IfLetStore(
-                    store.scope(
-                        state: (\MainDomain.State.route)
-                            .appending(path: /MainDomain.Route.prescriptionArchive)
-                            .extract(from:),
-                        action: MainDomain.Action.prescriptionArchiveAction
-                    )
-                ) { scopedStore in
-                    PrescriptionArchiveView(store: scopedStore)
-                },
-                tag: MainDomain.Route.Tag.prescriptionArchive,
+                    store.destinationsScope(
+                        state: /MainDomain.Destinations.State.prescriptionArchive,
+                        action: MainDomain.Destinations.Action.prescriptionArchiveAction(action:)
+                    ),
+                    then: PrescriptionArchiveView.init(store:)
+                ),
+                tag: MainDomain.Destinations.State.Tag.prescriptionArchive,
                 selection: viewStore.binding(
-                    get: \.routeTag,
+                    get: \.destinationTag,
                     send: MainDomain.Action.setNavigation
                 )
             ) {
@@ -283,7 +280,7 @@ private extension MainView {
             Rectangle()
                 .frame(width: 0, height: 0, alignment: .center)
                 .fullScreenCover(isPresented: Binding<Bool>(
-                    get: { viewStore.routeTag == .redeem },
+                    get: { viewStore.destinationTag == .redeem },
                     set: { show in
                         if !show {
                             viewStore.send(.setNavigation(tag: nil))
@@ -293,11 +290,9 @@ private extension MainView {
                 onDismiss: {},
                 content: {
                     IfLetStore(
-                        store.scope(
-                            state: (\MainDomain.State.route)
-                                .appending(path: /MainDomain.Route.redeem)
-                                .extract(from:),
-                            action: MainDomain.Action.redeemMethods(action:)
+                        store.destinationsScope(
+                            state: /MainDomain.Destinations.State.redeem,
+                            action: MainDomain.Destinations.Action.redeemMethods(action:)
                         ),
                         then: RedeemMethodsView.init(store:)
                     )
@@ -309,7 +304,7 @@ private extension MainView {
             Rectangle()
                 .frame(width: 0, height: 0, alignment: .center)
                 .fullScreenCover(isPresented: Binding<Bool>(
-                    get: { viewStore.routeTag == .cardWall },
+                    get: { viewStore.destinationTag == .cardWall },
                     set: { show in
                         if !show {
                             viewStore.send(.setNavigation(tag: nil))
@@ -319,11 +314,9 @@ private extension MainView {
                 onDismiss: {},
                 content: {
                     IfLetStore(
-                        store.scope(
-                            state: (\MainDomain.State.route)
-                                .appending(path: /MainDomain.Route.cardWall)
-                                .extract(from:),
-                            action: MainDomain.Action.cardWall(action:)
+                        store.destinationsScope(
+                            state: /MainDomain.Destinations.State.cardWall,
+                            action: MainDomain.Destinations.Action.cardWall(action:)
                         ),
                         then: CardWallIntroductionView.init(store:)
                     )
@@ -335,7 +328,59 @@ private extension MainView {
                 .frame(width: 0, height: 0, alignment: .center)
                 .smallSheet(
                     isPresented: Binding<Bool>(
-                        get: { viewStore.routeTag == .addProfile },
+                        get: { viewStore.destinationTag == .createProfile },
+                        set: { show in
+                            if !show {
+                                viewStore.send(.setNavigation(tag: nil), animation: .easeInOut)
+                            }
+                        }
+                    ),
+                    onDismiss: {},
+                    content: {
+                        ZStack {
+                            IfLetStore(
+                                store.destinationsScope(
+                                    state: /MainDomain.Destinations.State.createProfile,
+                                    action: MainDomain.Destinations.Action.createProfileAction(action:)
+                                ),
+                                then: CreateProfileView.init(store:)
+                            )
+                        }
+                    }
+                )
+                .accessibility(hidden: true)
+
+            Rectangle()
+                .frame(width: 0, height: 0, alignment: .center)
+                .smallSheet(
+                    isPresented: Binding<Bool>(
+                        get: { viewStore.destinationTag == .editName },
+                        set: { show in
+                            if !show {
+                                viewStore.send(.setNavigation(tag: nil), animation: .easeInOut)
+                            }
+                        }
+                    ),
+                    onDismiss: {},
+                    content: {
+                        ZStack {
+                            IfLetStore(
+                                store.destinationsScope(
+                                    state: /MainDomain.Destinations.State.editName,
+                                    action: MainDomain.Destinations.Action.editProfileNameAction(action:)
+                                ),
+                                then: EditProfileNameView.init(store:)
+                            )
+                        }
+                    }
+                )
+                .accessibility(hidden: true)
+
+            Rectangle()
+                .frame(width: 0, height: 0, alignment: .center)
+                .smallSheet(
+                    isPresented: Binding<Bool>(
+                        get: { viewStore.destinationTag == .editProfilePicture },
                         set: { show in
                             if !show {
                                 viewStore.send(.setNavigation(tag: nil), animation: .easeInOut)
@@ -347,12 +392,11 @@ private extension MainView {
                         ZStack {
                             IfLetStore(
                                 store.scope(
-                                    state: (\MainDomain.State.route)
-                                        .appending(path: /MainDomain.Route.addProfile)
-                                        .extract(from:),
-                                    action: MainDomain.Action.addProfileAction(action:)
-                                ),
-                                then: AddProfileView.init(store:)
+                                    state: (\MainDomain.State.destination)
+                                        .appending(path: /MainDomain.Destinations.State.editProfilePicture)
+                                        .extract(from:)
+                                ) { .destination(.editProfilePictureAction(action: $0)) },
+                                then: EditProfilePictureView.init(store:)
                             )
                         }
                     }
@@ -366,23 +410,26 @@ struct MainView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
             MainView(
-                store: MainDomain.Dummies.storeFor(
-                    MainDomain.State(
+                store: MainDomain.Store(
+                    initialState: .init(
+                        destination: .createProfile(CreateProfileDomain.State()),
                         prescriptionListState: PrescriptionListDomain.State(),
-                        horizontalProfileSelectionState: HorizontalProfileSelectionDomain.Dummies.state
-                    )
+                        horizontalProfileSelectionState: HorizontalProfileSelectionDomain.State()
+                    ),
+                    reducer: MainDomain()
                 )
             )
             .preferredColorScheme(.light)
 
             MainView(
-                store: MainDomain.Dummies.storeFor(
-                    MainDomain.State(
+                store: MainDomain.Store(
+                    initialState: .init(
                         prescriptionListState: PrescriptionListDomain.State(
                             prescriptions: Prescription.Dummies.prescriptions
                         ),
                         horizontalProfileSelectionState: HorizontalProfileSelectionDomain.Dummies.state
-                    )
+                    ),
+                    reducer: MainDomain()
                 )
             )
             .preferredColorScheme(.light)

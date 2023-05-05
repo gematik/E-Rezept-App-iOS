@@ -20,23 +20,27 @@ import Combine
 import ComposableArchitecture
 import eRpKit
 
-enum RedeemSuccessDomain {
-    typealias Store = ComposableArchitecture.Store<State, Action>
-    typealias Reducer = ComposableArchitecture.AnyReducer<State, Action, Environment>
+struct RedeemSuccessDomain: ReducerProtocol {
+    typealias Store = StoreOf<Self>
 
     struct State: Equatable {
         var redeemOption: RedeemOption
     }
 
     enum Action: Equatable {
-        case close
+        case closeButtonTapped
+        case delegate(Delegate)
+
+        enum Delegate: Equatable {
+            case close
+        }
     }
 
-    struct Environment {}
-
-    static let reducer = Reducer { _, action, _ in
+    func reduce(into _: inout State, action: Action) -> EffectTask<Action> {
         switch action {
-        case .close:
+        case .closeButtonTapped:
+            return Effect(value: .delegate(.close))
+        case .delegate:
             return .none
         }
     }
@@ -45,14 +49,9 @@ enum RedeemSuccessDomain {
 extension RedeemSuccessDomain {
     enum Dummies {
         static let state = State(redeemOption: .delivery)
-        static let environment = Environment()
-        static let store = Store(initialState: state,
-                                 reducer: reducer,
-                                 environment: environment)
+        static let store = Store(initialState: state, reducer: RedeemSuccessDomain())
         static func store(with option: RedeemOption) -> Store {
-            Store(initialState: State(redeemOption: option),
-                  reducer: reducer,
-                  environment: environment)
+            Store(initialState: State(redeemOption: option), reducer: EmptyReducer())
         }
     }
 }

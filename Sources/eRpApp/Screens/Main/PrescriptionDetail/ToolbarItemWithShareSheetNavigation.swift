@@ -31,11 +31,11 @@ struct ToolbarItemWithShareSheetNavigation: ViewModifier {
     }
 
     struct ViewState: Equatable {
-        let routeTag: PrescriptionDetailDomain.Route.Tag?
+        let destinationTag: PrescriptionDetailDomain.Destinations.State.Tag?
         let shareImage: UIImage?
 
         init(state: PrescriptionDetailDomain.State) {
-            routeTag = state.route?.tag
+            destinationTag = state.destination?.tag
             shareImage = state.loadingState.value
         }
     }
@@ -55,7 +55,7 @@ struct ToolbarItemWithShareSheetNavigation: ViewModifier {
                     }
                 }
                 .sheet(isPresented: Binding<Bool>(
-                    get: { viewStore.routeTag == .sharePrescription },
+                    get: { viewStore.destinationTag == .sharePrescription },
                     set: { show in
                         if !show {
                             viewStore.send(.setNavigation(tag: nil))
@@ -63,15 +63,12 @@ struct ToolbarItemWithShareSheetNavigation: ViewModifier {
                     }
                 )) {
                     IfLetStore(
-                        store.scope(
-                            state: (\PrescriptionDetailDomain.State.route)
-                                .appending(path: /PrescriptionDetailDomain.Route.sharePrescription)
-                                .extract(from:)
-                        )
+                        store.destinationsScope(state: /PrescriptionDetailDomain.Destinations.State.sharePrescription)
                     ) { scopedStore in
                         WithViewStore(scopedStore) { routeState in
                             ShareViewController(
-                                itemsToShare: ["E-Rezept-App", routeState.state, viewStore.shareImage].compactMap { $0 }
+                                itemsToShare: ["E-Rezept-App", routeState.state, viewStore.shareImage as Any?]
+                                    .compactMap { $0 }
                             )
                         }
                     }

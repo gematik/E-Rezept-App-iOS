@@ -16,6 +16,7 @@
 //  
 //
 
+import ComposableArchitecture
 @testable import eRpApp
 import eRpKit
 import SnapshotTesting
@@ -23,12 +24,12 @@ import SwiftUI
 import XCTest
 
 final class PharmacySearchFilterViewSnapshotTests: XCTestCase {
-    var uiApplicationMock: UIApplicationOpenURLMock!
+    var resourceHandlerMock: MockResourceHandler!
 
     override func setUp() {
         super.setUp()
 
-        uiApplicationMock = UIApplicationOpenURLMock()
+        resourceHandlerMock = MockResourceHandler()
         diffTool = "open"
     }
 
@@ -37,8 +38,7 @@ final class PharmacySearchFilterViewSnapshotTests: XCTestCase {
             PharmacySearchFilterView(
                 store: PharmacySearchFilterDomain.Store(
                     initialState: .init(pharmacyFilterOptions: []),
-                    reducer: .empty,
-                    environment: PharmacySearchFilterDomain.Environment(schedulers: Schedulers())
+                    reducer: EmptyReducer()
                 )
             )
         }
@@ -53,8 +53,7 @@ final class PharmacySearchFilterViewSnapshotTests: XCTestCase {
             PharmacySearchFilterView(
                 store: PharmacySearchFilterDomain.Store(
                     initialState: .init(pharmacyFilterOptions: [.ready, .currentLocation, .shipment]),
-                    reducer: .empty,
-                    environment: PharmacySearchFilterDomain.Environment(schedulers: Schedulers())
+                    reducer: EmptyReducer()
                 )
             )
         }

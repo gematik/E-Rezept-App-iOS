@@ -17,16 +17,17 @@
 //
 
 import ComposableArchitecture
+import eRpKit
 import eRpStyleKit
 import SwiftUI
 import WebKit
 
-// swiftlint:disable type_body_length
 struct PrescriptionFullDetailView: View {
     let store: PrescriptionDetailDomain.Store
-
     @ObservedObject
     var viewStore: ViewStore<ViewState, PrescriptionDetailDomain.Action>
+    // TODO: move dependency into domain and do date formatting already in the view model // swiftlint:disable:this todo
+    @Dependency(\.uiDateFormatter) var uiDateFormatter
 
     init(store: PrescriptionDetailDomain.Store) {
         self.store = store
@@ -58,15 +59,15 @@ struct PrescriptionFullDetailView: View {
         }
 
         var showSubstitutionAllowedHint: Bool {
-            !prescription.isArchived && prescription.substitutionAllowed
+            !prescription.isArchived && prescription.medicationRequest.substitutionAllowed
         }
 
         var showNoctFeeWaiverHint: Bool {
-            prescription.hasEmergencyServiceFee
+            prescription.medicationRequest.hasEmergencyServiceFee
         }
 
         var title: String {
-            if let name = prescription.prescribedMedication?.name {
+            if let name = prescription.prescribedMedication?.displayName {
                 return name
             }
             if case .error = prescription.viewStatus {
@@ -205,7 +206,7 @@ struct PrescriptionFullDetailView: View {
                     MedicationPatientView(
                         name: viewStore.prescription.patient?.name,
                         address: viewStore.prescription.patient?.address,
-                        dateOfBirth: Self.uiFormattedDate(dateString: viewStore.prescription.patient?.birthDate),
+                        dateOfBirth: uiDateFormatter.relativeDate(viewStore.prescription.patient?.birthDate),
                         phone: viewStore.prescription.patient?.phone,
                         healthInsurance: viewStore.prescription.patient?.insurance,
                         healthInsuranceState: viewStore.prescription.patient?.status,
@@ -230,9 +231,9 @@ struct PrescriptionFullDetailView: View {
 
                     // Work-related accident details
                     MedicationWorkAccidentView(
-                        accidentDate: Self.uiFormattedDate(dateString: viewStore.prescription.workRelatedAccident?
-                            .date),
-                        number: viewStore.prescription.workRelatedAccident?.workPlaceIdentifier
+                        accidentDate: uiDateFormatter
+                            .relativeDate(viewStore.prescription.medicationRequest.accidentInfo?.date),
+                        number: viewStore.prescription.medicationRequest.accidentInfo?.workPlaceIdentifier
                     )
 
                     // Task information details
@@ -264,8 +265,8 @@ struct PrescriptionFullDetailView: View {
                     .accessibility(identifier: A11y.prescriptionDetails.prscDtlBtnDeleteMedication)
                     .padding(.vertical)
 
-                if let delitionNote = viewStore.deletionNote {
-                    Text(delitionNote)
+                if let deletionNote = viewStore.deletionNote {
+                    Text(deletionNote)
                         .font(.footnote)
                         .multilineTextAlignment(.center)
                         .foregroundColor(Colors.systemLabelSecondary)
@@ -294,10 +295,7 @@ struct PrescriptionFullDetailView: View {
         }
         .toolbarShareSheet(store: store)
         .alert(
-            self.store
-                .scope(state: (\PrescriptionDetailDomain.State.route)
-                    .appending(path: /PrescriptionDetailDomain.Route.alert)
-                    .extract(from:)),
+            store.destinationsScope(state: /PrescriptionDetailDomain.Destinations.State.alert),
             dismiss: .setNavigation(tag: .none)
         )
         .onAppear {
@@ -316,24 +314,6 @@ struct PrescriptionFullDetailView: View {
             .hidden()
             .accessibility(hidden: true)
     }
-
-    func uiFormattedDateTime(dateTimeString: String?) -> String? {
-        if let dateTimeString = dateTimeString,
-           let dateTime = globals.fhirDateFormatter.date(from: dateTimeString,
-                                                         format: .yearMonthDayTimeMilliSeconds) {
-            return uiDateFormatter.string(from: dateTime)
-        }
-        return dateTimeString
-    }
-
-    var uiDateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.locale = Locale.current
-        formatter.dateStyle = .medium
-        formatter.timeStyle = .medium
-        formatter.doesRelativeDateFormatting = true
-        return formatter
-    }()
 }
 
 struct PrescriptionFullDetailView_Previews: PreviewProvider {
@@ -348,12 +328,10 @@ struct PrescriptionFullDetailView_Previews: PreviewProvider {
                 .preferredColorScheme(.dark)
             NavigationView {
                 PrescriptionFullDetailView(
-                    store: PrescriptionDetailDomain.Store(
-                        initialState: PrescriptionDetailDomain.State(
+                    store: PrescriptionDetailDomain.Dummies.storeFor(
+                        PrescriptionDetailDomain.State(
                             prescription: .Dummies.prescriptionError, isArchived: false
-                        ),
-                        reducer: PrescriptionDetailDomain.domainReducer,
-                        environment: PrescriptionDetailDomain.Dummies.environment
+                        )
                     )
                 )
             }

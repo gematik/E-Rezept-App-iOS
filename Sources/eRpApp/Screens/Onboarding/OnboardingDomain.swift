@@ -21,9 +21,8 @@ import ComposableArchitecture
 import eRpKit
 import SwiftUI
 
-enum OnboardingDomain {
-    typealias Store = ComposableArchitecture.Store<State, Action>
-    typealias Reducer = ComposableArchitecture.AnyReducer<State, Action, Environment>
+struct OnboardingDomain: ReducerProtocol {
+    typealias Store = StoreOf<Self>
 
     struct State: Equatable {
         var composition: Composition
@@ -141,16 +140,30 @@ enum OnboardingDomain {
         case dismissAlert
     }
 
-    struct Environment {
-        let appVersion: AppVersion
-        let localUserStore: UserDataStore
-        let schedulers: Schedulers
-        let appSecurityManager: AppSecurityManager
-        let authenticationChallengeProvider: AuthenticationChallengeProvider
-        let userSession: UserSession
+    @Dependency(\.currentAppVersion) var appVersion: AppVersion
+    @Dependency(\.appSecurityManager) var appSecurityManager: AppSecurityManager
+    @Dependency(\.userDataStore) var localUserStore: UserDataStore
+
+    var environment: Environment {
+        .init(appVersion: appVersion, appSecurityManager: appSecurityManager, localUserStore: localUserStore)
     }
 
-    private static let domainReducer = Reducer { state, action, environment in
+    struct Environment {
+        let appVersion: AppVersion
+        let appSecurityManager: AppSecurityManager
+        let localUserStore: UserDataStore
+    }
+
+    var body: some ReducerProtocol<State, Action> {
+        Scope(state: \.registerAuthenticationState, action: /OnboardingDomain.Action.registerAuthentication(action:)) {
+            RegisterAuthenticationDomain()
+        }
+
+        Reduce(core)
+    }
+
+    // swiftlint:disable:next cyclomatic_complexity
+    func core(into state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
         case .nextPage:
             state.composition.next()
@@ -168,22 +181,22 @@ enum OnboardingDomain {
 
             if case .password = selectedOption {
                 guard state.registerAuthenticationState.passwordStrength.passesMinimumThreshold,
-                      let success = try? environment.appSecurityManager
+                      let success = try? appSecurityManager
                       .save(password: state.registerAuthenticationState.passwordA),
                       success == true else {
                     state.composition.setPage(.registerAuthentication)
                     state.registerAuthenticationState.showNoSelectionMessage = true
                     return .none
                 }
-                environment.localUserStore.set(appSecurityOption: selectedOption)
+                localUserStore.set(appSecurityOption: selectedOption)
                 return Effect(value: .dismissOnboarding)
             } else {
-                environment.localUserStore.set(appSecurityOption: selectedOption)
+                localUserStore.set(appSecurityOption: selectedOption)
                 return Effect(value: .dismissOnboarding)
             }
         case .dismissOnboarding:
-            environment.localUserStore.set(hideOnboarding: true)
-            environment.localUserStore.set(onboardingVersion: environment.appVersion.productVersion)
+            localUserStore.set(hideOnboarding: true)
+            localUserStore.set(onboardingVersion: appVersion.productVersion)
             return RegisterAuthenticationDomain.cleanup()
         case .registerAuthentication(action: .saveSelectionSuccess):
             return Effect(value: .dismissOnboarding)
@@ -196,37 +209,10 @@ enum OnboardingDomain {
             return .none
         }
     }
-
-    private static let appSecurityPullbackReducer: Reducer =
-        RegisterAuthenticationDomain.reducer.pullback(
-            state: \.registerAuthenticationState,
-            action: /OnboardingDomain.Action.registerAuthentication(action:)
-        ) {
-            RegisterAuthenticationDomain.Environment(
-                appSecurityManager: $0.appSecurityManager,
-                userDataStore: $0.localUserStore,
-                schedulers: $0.schedulers,
-                authenticationChallengeProvider: $0.authenticationChallengeProvider,
-                passwordStrengthTester: DefaultPasswordStrengthTester()
-            )
-        }
-
-    static let reducer = Reducer.combine(
-        appSecurityPullbackReducer,
-        domainReducer
-    )
 }
 
 extension OnboardingDomain {
     enum Dummies {
         static let state = State(composition: OnboardingDomain.Composition.allPages)
-        static let environment = Environment(
-            appVersion: AppVersion.current,
-            localUserStore: DummyUserSessionContainer().userSession.localUserStore,
-            schedulers: Schedulers(),
-            appSecurityManager: DummyAppSecurityManager(),
-            authenticationChallengeProvider: BiometricsAuthenticationChallengeProvider(),
-            userSession: DummySessionContainer()
-        )
     }
 }

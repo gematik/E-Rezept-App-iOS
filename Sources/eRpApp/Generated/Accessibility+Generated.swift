@@ -105,6 +105,9 @@ internal enum A11y {
   }
     }
     internal enum controls { 
+    internal enum demoMode {
+      static let bnrTxtDemoMode = "bnr_txt_demo_mode"
+  }
     internal enum emojiPicker {
       static let ctlBtnEmojiPickerEditSave = "ctl_btn_emoji_picker_edit_save"
       static let ctlBtnEmojiPickerEdit = "ctl_btn_emoji_picker_edit"
@@ -116,6 +119,9 @@ internal enum A11y {
   }
     internal enum textfieldwithdelete {
       static let ctlBtnTextfieldDelete = "ctl_btn_textfield_delete"
+  }
+    internal enum tooltips {
+      static let ctlTooltipContainer = "ctl_tooltip_container"
   }
     }
     internal enum directAssignment {
@@ -141,6 +147,9 @@ internal enum A11y {
       static let erxBtnScnPrescription = "erx_btn_scn_prescription"
       static let erxHntDemoModeTour = "erx_hnt_demo_mode_tour"
       static let erxHntDemoModeWelcome = "erx_hnt_demo_mode_welcome"
+      static let erxTxtTooltipsAddProfile = "erx_txt_tooltips_add_profile"
+      static let erxTxtTooltipsProfileRename = "erx_txt_tooltips_profile_rename"
+      static let erxTxtTooltipsScan = "erx_txt_tooltips_scan"
   }
     internal enum migration {
       static let amgTxtAndSpinner = "amg_txt_and_spinner"
@@ -308,6 +317,49 @@ internal enum A11y {
       static let prscDtlTxtDeleteDisabledNote = "prsc_dtl_txt_delete_disabled_note"
       static let prscDtlBtnShare = "prsc_dtl_btn_share"
       static let prscDtlBtnDirectAssignment = "prsc_dtl_btn_direct_assignment"
+      static let prscDtlBtnErrorInfo = "prsc_dtl_btn_error_info"
+      static let prscDtlBtnSubstitutionInfo = "prsc_dtl_btn_substitution_info"
+      static let prscDtlBtnScannedPrescriptionInfo = "prsc_dtl_btn_scanned_prescription_info"
+      static let prscDtlTxtPrescriptionValidity = "prsc_dtl_txt_prescription_validity"
+      static let prscDtlBtnPrescriptionValidityInfo = "prsc_dtl_btn_prescription_validity_info"
+      static let prscDtlDrawerSubstitutionInfo = "prsc_dtl_drawer_substitution_info"
+      static let prscDtlDrawerErrorInfo = "prsc_dtl_drawer_error_info"
+      static let prscDtlDrawerScannedPrescriptionInfo = "prsc_dtl_drawer_scanned_prescription_info"
+      static let prscDtlDrawerPrescriptionValidityInfo = "prsc_dtl_drawer_prescription_validity_info"
+      static let prscDtlBtnAdditionalFee = "prsc_dtl_btn_additional_fee"
+      static let prscDtlBtnEmergencyServiceFee = "prsc_dtl_btn_emergency_service_fee"
+      static let prscDtlBtnMedication = "prsc_dtl_btn_medication"
+      static let prscDtlBtnInsuredPerson = "prsc_dtl_btn_insured_person"
+      static let prscDtlBtnPractitioner = "prsc_dtl_btn_practitioner"
+      static let prscDtlBtnInstitution = "prsc_dtl_btn_institution"
+      static let prscDtlBtnWorkRelatedAccident = "prsc_dtl_btn_work_related_accident"
+      static let prscDtlBtnTechnicalInformations = "prsc_dtl_btn_technical_informations"
+      static let prscDtlDrawerCoPaymentInfoTitle = "prsc_dtl_drawer_co_payment_info_title"
+      static let prscDtlDrawerCoPaymentInfoDescription = "prsc_dtl_drawer_co_payment_info_description"
+      static let prscDtlDrawerCoPaymentInfo = "prsc_dtl_drawer_co_payment_info"
+      static let prscDtlDrawerEmergencyServiceFeeInfo = "prsc_dtl_drawer_emergency_service_fee_info"
+      static let prscDtlTiAccessCode = "prsc_dtl_ti_access_code"
+      static let prscDtlTiTaskId = "prsc_dtl_ti_task_id"
+      static let prscDtlPaName = "prsc_dtl_pa_name"
+      static let prscDtlPaInsuranceId = "prsc_dtl_pa_insurance_id"
+      static let prscDtlPaAddress = "prsc_dtl_pa_address"
+      static let prscDtlPaBirthDate = "prsc_dtl_pa_birth_date"
+      static let prscDtlPaPhone = "prsc_dtl_pa_phone"
+      static let prscDtlPaInsurance = "prsc_dtl_pa_insurance"
+      static let prscDtlPaStatus = "prsc_dtl_pa_status"
+      static let prscDtlPrName = "prsc_dtl_pr_name"
+      static let prscDtlPrQualification = "prsc_dtl_pr_qualification"
+      static let prscDtlPrLanr = "prsc_dtl_pr_lanr"
+      static let prscDtlPrAddress = "prsc_dtl_pr_address"
+      static let prscDtlPrEmail = "prsc_dtl_pr_email"
+      static let prscDtlOrName = "prsc_dtl_or_name"
+      static let prscDtlOrIdentifier = "prsc_dtl_or_identifier"
+      static let prscDtlOrAddress = "prsc_dtl_or_address"
+      static let prscDtlOrPhone = "prsc_dtl_or_phone"
+      static let prscDtlOrEmail = "prsc_dtl_or_email"
+      static let prscDtlAccidentReason = "prsc_dtl_accident_reason"
+      static let prscDtlAccidentDate = "prsc_dtl_accident_date"
+      static let prscDtlAccidentId = "prsc_dtl_accident_id"
   }
     internal enum profileSelection {
       static let proTxtSelectionProfileList = "pro_txt_selection_profile_list"
@@ -392,6 +444,24 @@ internal enum A11y {
       static let stgEdtCardResetPinInputPin2 = "stg_edt_card_reset_pin_input_pin2"
       static let stgBtnCardResetRead = "stg_btn_card_reset_read"
   }
+    internal enum chargeItems {
+      static let stgBtnChargeItemsNavigationBarMenu = "stg_btn_charge_items_navigation_bar_menu"
+      static let stgTxtChargeItemsMenuEntryConnect = "stg_txt_charge_items_menu_entry_connect"
+      static let stgTxtChargeItemsMenuEntryActivate = "stg_txt_charge_items_menu_entry_activate"
+      static let stgTxtChargeItemsMenuEntryDeactivate = "stg_txt_charge_items_menu_entry_deactivate"
+      static let stgBtnChargeItemsMenuEntryEdit = "stg_btn_charge_items_menu_entry_edit"
+      static let stgBtnChargeItemsMenuEntryEditingDone = "stg_btn_charge_items_menu_entry_editing_done"
+      static let stgTxtChargeItemsEmptyListReplacement = "stg_txt_charge_items_empty_list_replacement"
+      static let stgTxtChargeItemsBottomBannerMessage = "stg_txt_charge_items_bottom_banner_message"
+      static let stgBtnChargeItemsBottomBanner = "stg_btn_charge_items_bottom_banner"
+      static let stgBtnChargeItemsContainer = "stg_btn_charge_items_container"
+      static let stgBtnChargeItemsSectionHeaderTitle = "stg_btn_charge_items_section_header_title"
+      static let stgBtnChargeItemsSectionHeaderSum = "stg_btn_charge_items_section_header_sum"
+      static let stgBtnChargeItemsRow = "stg_btn_charge_items_row"
+      static let stgBtnChargeItemsRowTitle = "stg_btn_charge_items_row_title"
+      static let stgBtnChargeItemsRowDate = "stg_btn_charge_items_row_date"
+      static let stgBtnChargeItemsRowTagContainer = "stg_btn_charge_items_row_tag_container"
+  }
     internal enum contact {
       static let stgConHeaderContact = "stg_con_header_contact"
       static let stgConHotlineContact = "stg_con_hotline_contact"
@@ -432,6 +502,8 @@ internal enum A11y {
       static let stgTxtEditProfileInsuranceCompany = "stg_txt_edit_profile_insurance_company"
       static let stgTxtEditProfileCan = "stg_txt_edit_profile_can"
       static let stgTxtEditProfileInsuranceId = "stg_txt_edit_profile_insurance_id"
+      static let stgTxtEditProfileChargeItemsSectionTitle = "stg_txt_edit_profile_charge_items_section_title"
+      static let stgTxtEditProfileChargeItemsSectionShowChargeItems = "stg_txt_edit_profile_charge_items_section_show_charge_items"
       static let stgTxtEditProfileLoginSectionTitle = "stg_txt_edit_profile_login_section_title"
       static let stgTxtEditProfileLoginSectionActivate = "stg_txt_edit_profile_login_section_activate"
       static let stgTxtEditProfileLoginSectionConnectedDevices = "stg_txt_edit_profile_login_section_connected_devices"
@@ -489,5 +561,9 @@ internal enum A11y {
       static let stgTrkBtnNo = "stg_trk_btn_no"
   }
     }
+    internal enum welcomedrawer {
+      static let wlcdBtnLogin = "wlcd_btn_login"
+      static let wlcdBtnDecline = "wlcd_btn_decline"
+  }
 }
 // swiftlint:enable identifier_name line_length number_separator type_body_length

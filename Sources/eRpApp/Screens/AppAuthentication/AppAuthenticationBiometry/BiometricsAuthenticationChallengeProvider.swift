@@ -17,6 +17,7 @@
 //
 
 import Combine
+import Dependencies
 import Foundation
 import LocalAuthentication
 
@@ -69,5 +70,23 @@ struct BiometricsAuthenticationChallengeProvider: AuthenticationChallengeProvide
                 }
             }
         }
+    }
+}
+
+// MARK: TCA Dependency
+
+// swiftlint:disable:next type_name
+struct AuthenticationChallengeProviderDependency: DependencyKey {
+    static let liveValue: AuthenticationChallengeProvider = BiometricsAuthenticationChallengeProvider()
+
+    static let previewValue: AuthenticationChallengeProvider = BiometricsAuthenticationChallengeProvider()
+
+    static let testValue: AuthenticationChallengeProvider = UnimplementedAuthenticationChallengeProvider()
+}
+
+extension DependencyValues {
+    var authenticationChallengeProvider: AuthenticationChallengeProvider {
+        get { self[AuthenticationChallengeProviderDependency.self] }
+        set { self[AuthenticationChallengeProviderDependency.self] = newValue }
     }
 }

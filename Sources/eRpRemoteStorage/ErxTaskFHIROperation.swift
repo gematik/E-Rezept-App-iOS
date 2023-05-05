@@ -43,8 +43,18 @@ public enum ErxTaskFHIROperation<Value, Handler: FHIRResponseHandler> where Hand
     case medicationDispenses(id: ErxTask.ID, handler: Handler)
     /// Load all medication dispenses since reference date
     case allMedicationDispenses(referenceDate: String?, handler: Handler)
+    /// Load all charge items since reference date
+    case allChargeItems(referenceDate: String?, handler: Handler)
+    /// Request a specific charge item from the service in a certain format
+    case chargeItemBy(id: String, handler: Handler)
+    /// Request all granted consents
+    case consents(handler: Handler)
+    /// Request to grant a `ErxConsent` of the given category
+    case grant(consent: ErxConsent, handler: Handler)
+    /// Delete the `ErxConsent` for the given `ErxConsent.Category`
+    case revokeConsent(category: ErxConsent.Category, handler: Handler)
     /// Loads content for a given url. Used for paging.
-    case next(url: URL, handler: Handler)
+    case next(url: URL, handler: Handler, locale: String?)
 }
 
 extension ErxTaskFHIROperation: FHIRClientOperation {
@@ -60,7 +70,12 @@ extension ErxTaskFHIROperation: FHIRClientOperation {
              let .allCommunications(_, handler),
              let .medicationDispenses(_, handler),
              let .allMedicationDispenses(_, handler: handler),
-             let .next(url: _, handler: handler):
+             let .allChargeItems(_, handler),
+             let .chargeItemBy(_, handler: handler),
+             let .consents(handler),
+             let .grant(_, handler),
+             let .revokeConsent(_, handler),
+             let .next(url: _, handler: handler, locale: _):
             return try handler.handle(response: response)
         }
     }
@@ -135,7 +150,30 @@ extension ErxTaskFHIROperation: FHIRClientOperation {
                 components?.queryItems = [whenHandOverItem]
             }
             return components?.string
-        case let .next(url: url, handler: _):
+        case let .allChargeItems(referenceDate, handler: _):
+            var components = URLComponents(string: "ChargeItem")
+            if let referenceDate = referenceDate,
+               let fhirDate = FHIRDateFormatter.shared.date(from: referenceDate) {
+                let enteredDate = URLQueryItem(
+                    name: "enteredDate",
+                    value: "ge\(fhirDate.fhirFormattedString(with: .yearMonthDayTime))"
+                )
+                components?.queryItems = [enteredDate]
+            }
+            return components?.string
+        case let .chargeItemBy(id: chargeItemId, _): return "ChargeItem/\(chargeItemId)"
+        case .consents(handler: _): return "Consent"
+        case .grant(consent: _, handler: _): return "Consent"
+        case let .revokeConsent(category, handler: _):
+            var components = URLComponents(string: "Consent")
+            components?.queryItems = [
+                URLQueryItem(
+                    name: "category",
+                    value: "\(category.rawValue)"
+                ),
+            ]
+            return components?.string
+        case let .next(url: url, handler: _, locale: _):
             return url.absoluteString
         }
     }
@@ -148,13 +186,22 @@ extension ErxTaskFHIROperation: FHIRClientOperation {
         case let .taskBy(_, accessCode, _),
              let .deleteTask(_, accessCode, _):
             headers["X-AccessCode"] = accessCode
-        case let .auditEvents(_, language, _):
+        case let .auditEvents(_, language, _),
+             let .next(url: _, _, language):
             headers["Accept-Language"] = language
-        case .redeem:
+        case let .redeem(order, _):
+            headers["Content-Type"] = acceptFormat.httpHeaderValue
+            headers["X-AccessCode"] = order.accessCode
+            if let dataLength = httpBody?.count, dataLength > 0 {
+                headers["Content-Length"] = String(dataLength)
+            }
+        case .grant(consent: _, _):
             headers["Content-Type"] = acceptFormat.httpHeaderValue
             if let dataLength = httpBody?.count, dataLength > 0 {
                 headers["Content-Length"] = String(dataLength)
             }
+        case .revokeConsent:
+            headers["Content-Type"] = acceptFormat.httpHeaderValue
         default: break
             // do nothing
         }
@@ -163,8 +210,12 @@ extension ErxTaskFHIROperation: FHIRClientOperation {
 
     public var httpMethod: HTTPMethod {
         switch self {
-        case .deleteTask, .redeem:
+        case .deleteTask,
+             .redeem,
+             .grant:
             return .post
+        case .revokeConsent:
+            return .delete
         default:
             return .get
         }
@@ -181,10 +232,16 @@ extension ErxTaskFHIROperation: FHIRClientOperation {
              .allCommunications,
              .medicationDispenses,
              .allMedicationDispenses,
+             .allChargeItems,
+             .chargeItemBy,
+             .consents,
+             .revokeConsent,
              .next:
             return nil
         case let .redeem(order: order, _):
             return try? order.asCommunicationResource()
+        case let .grant(consent: consent, _):
+            return try? consent.asConsentResource()
         }
     }
 
@@ -200,7 +257,12 @@ extension ErxTaskFHIROperation: FHIRClientOperation {
              let .allCommunications(_, handler),
              let .medicationDispenses(_, handler),
              let .allMedicationDispenses(_, handler: handler),
-             let .next(url: _, handler: handler):
+             let .allChargeItems(_, handler: handler),
+             let .chargeItemBy(_, handler),
+             let .consents(handler: handler),
+             let .grant(_, handler: handler),
+             let .revokeConsent(_, handler: handler),
+             let .next(url: _, handler: handler, locale: _):
             return handler.acceptFormat
         }
     }

@@ -17,20 +17,40 @@
 //
 
 import CombineSchedulers
+import ComposableArchitecture
 @testable import eRpApp
 import eRpKit
 import SnapshotTesting
 import SwiftUI
 import XCTest
 
+// DH.TODO: remove test and snapshots after activating new DetailViews // swiftlint:disable:this todo
 final class PrescriptionLowDetailSnapshotTests: XCTestCase {
     override func setUp() {
         super.setUp()
         diffTool = "open"
     }
 
+    func store(with state: PrescriptionDetailDomain.State) -> StoreOf<PrescriptionDetailDomain> {
+        Store(initialState: state,
+              reducer: EmptyReducer())
+    }
+
     func testPrescriptionLowDetailView_Show() {
-        let sut = PrescriptionLowDetailView(store: PrescriptionDetailDomain.Dummies.store)
+        let scannedTask: ErxTask = .init(
+            identifier: "2390f983-1e67-11b2-8555-63bf44e44fb8",
+            status: .ready,
+            accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
+            fullUrl: nil,
+            authoredOn: DemoDate.createDemoDate(.today),
+            source: .scanner
+        )
+        let sut = PrescriptionLowDetailView(
+            store: store(with: PrescriptionDetailDomain.State(
+                prescription: Prescription(erxTask: scannedTask),
+                isArchived: false
+            ))
+        )
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
@@ -47,17 +67,14 @@ final class PrescriptionLowDetailSnapshotTests: XCTestCase {
             expiresOn: "2021-02-23T14:34:29+00:00",
             redeemedOn: nil,
             author: nil,
+            source: .scanner,
             medication: ErxTask.Fixtures.medication1
         )
         let stateNotArchived = PrescriptionDetailDomain.State(
             prescription: Prescription(erxTask: erxTask, date: now),
             isArchived: false
         )
-        let storeRedeemed = PrescriptionDetailDomain.Store(
-            initialState: stateNotArchived,
-            reducer: PrescriptionDetailDomain.reducer,
-            environment: PrescriptionDetailDomain.Dummies.environment
-        )
+        let storeRedeemed = store(with: stateNotArchived)
         let sutRedeemed = PrescriptionLowDetailView(store: storeRedeemed)
         assertSnapshots(matching: sutRedeemed, as: snapshotModiOnDevicesWithTheming(mode: .dark))
         assertSnapshots(matching: sutRedeemed, as: snapshotModiOnDevicesWithTheming(mode: .light))
@@ -74,17 +91,14 @@ final class PrescriptionLowDetailSnapshotTests: XCTestCase {
             expiresOn: "2021-02-20T14:34:29+00:00",
             redeemedOn: nil,
             author: nil,
+            source: .scanner,
             medication: ErxTask.Fixtures.medication1
         )
         let stateNotArchived = PrescriptionDetailDomain.State(
             prescription: Prescription(erxTask: erxTask, date: now),
             isArchived: false
         )
-        let storeRedeemed = PrescriptionDetailDomain.Store(
-            initialState: stateNotArchived,
-            reducer: PrescriptionDetailDomain.reducer,
-            environment: PrescriptionDetailDomain.Dummies.environment
-        )
+        let storeRedeemed = store(with: stateNotArchived)
         let sutRedeemed = PrescriptionLowDetailView(store: storeRedeemed)
         assertSnapshots(matching: sutRedeemed, as: snapshotModiOnDevicesWithTheming(mode: .dark))
         assertSnapshots(matching: sutRedeemed, as: snapshotModiOnDevicesWithTheming(mode: .light))
@@ -101,17 +115,14 @@ final class PrescriptionLowDetailSnapshotTests: XCTestCase {
             expiresOn: "24.6.2021",
             redeemedOn: "2021-02-20T14:34:29+00:00",
             author: nil,
+            source: .scanner,
             medication: ErxTask.Fixtures.medication1
         )
         let stateRedeemed = PrescriptionDetailDomain.State(
             prescription: Prescription(erxTask: erxTask, date: now),
             isArchived: true
         )
-        let storeRedeemed = PrescriptionDetailDomain.Store(
-            initialState: stateRedeemed,
-            reducer: PrescriptionDetailDomain.reducer,
-            environment: PrescriptionDetailDomain.Dummies.environment
-        )
+        let storeRedeemed = store(with: stateRedeemed)
         let sutRedeemed = PrescriptionLowDetailView(store: storeRedeemed)
         assertSnapshots(matching: sutRedeemed, as: snapshotModiOnDevicesWithTheming(mode: .dark))
         assertSnapshots(matching: sutRedeemed, as: snapshotModiOnDevicesWithTheming(mode: .light))

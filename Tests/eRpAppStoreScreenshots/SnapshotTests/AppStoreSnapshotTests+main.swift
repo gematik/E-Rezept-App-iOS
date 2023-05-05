@@ -37,8 +37,7 @@ extension AppStoreSnapshotTests {
                     horizontalProfileSelectionState: HorizontalProfileSelectionDomain
                         .State(profiles: [UserProfile.Fixtures.theo], selectedProfileId: UserProfile.Fixtures.theo.id)
                 ),
-                reducer: MainDomain.Reducer.empty,
-                environment: MainDomain.Dummies.environment
+                reducer: EmptyReducer()
             )
         )
     }
@@ -53,7 +52,7 @@ extension UserProfile {
                 created: Date(),
                 insuranceId: nil,
                 color: .green,
-                emoji: "🌮",
+                image: .oldDoctor,
                 lastAuthenticated: nil,
                 erxTasks: []
             ),
@@ -66,76 +65,68 @@ extension UserProfile {
 extension ErxTask {
     // swiftlint:disable:next type_body_length
     enum Fixtures {
-        static let medication1: ErxTask.Medication = .init(
+        static let medication1: ErxMedication = .init(
             name: "Saflorblüten-Extrakt Pulver Peroral",
             pzn: "06876512",
-            amount: 10,
+            amount: .init(numerator: .init(value: "10")),
             dosageForm: "PUL",
-            dose: "N1",
-            dosageInstructions: nil
+            dose: "N1"
         )
 
-        static let medication2: ErxTask.Medication = .init(
+        static let medication2: ErxMedication = .init(
             name: "Yucca filamentosa",
             pzn: "06876511",
-            amount: 12,
+            amount: .init(numerator: .init(value: "12")),
             dosageForm: "FDA",
-            dose: "N2",
-            dosageInstructions: nil
+            dose: "N2"
         )
 
-        static let medication3: ErxTask.Medication = .init(
+        static let medication3: ErxMedication = .init(
             name: "Lebenselixir 9000",
             pzn: "06876513",
-            amount: 1,
+            amount: .init(numerator: .init(value: "1")),
             dosageForm: "ELI",
-            dose: "KTP",
-            dosageInstructions: nil
+            dose: "KTP"
         )
 
-        static let medication4: ErxTask.Medication = .init(
+        static let medication4: ErxMedication = .init(
             name: "Zimtöl",
             pzn: "06876514",
-            amount: 1,
+            amount: .init(numerator: .init(value: "1")),
             dosageForm: "AEO",
-            dose: "KA",
-            dosageInstructions: nil
+            dose: "KA"
         )
 
-        static let medication5: ErxTask.Medication = .init(
+        static let medication5: ErxMedication = .init(
             name: "Gelitan Wundgel Zur äußerlichen Anwendung",
             pzn: "06876515",
-            amount: 2,
+            amount: .init(numerator: .init(value: "2")),
             dosageForm: "GEL",
-            dose: "sonstiges",
-            dosageInstructions: nil
+            dose: "sonstiges"
         )
 
-        static let medication6: ErxTask.Medication = .init(
+        static let medication6: ErxMedication = .init(
             name: "Asthmazopol Inhalator Flasche",
             pzn: "06876516",
-            amount: 5,
+            amount: .init(numerator: .init(value: "5")),
             dosageForm: "INH",
-            dose: "N2",
-            dosageInstructions: nil
+            dose: "N2"
         )
 
-        static let medication7: ErxTask.Medication = .init(
+        static let medication7: ErxMedication = .init(
             name: "Iboprogenal 100+",
             pzn: "06876517",
-            amount: 20,
+            amount: .init(numerator: .init(value: "20")),
             dosageForm: "TAB",
-            dose: "N3",
-            dosageInstructions: nil
+            dose: "N3"
         )
 
-        static let medication8: ErxTask.Medication = .init(
+        static let medication8: ErxMedication = .init(
             name: "Vita-Tee",
             pzn: "06876518",
-            amount: 8,
+            amount: .init(numerator: .init(value: "8")),
             dosageForm: "INS",
-            dose: "NB",
-            dosageInstructions: nil
+            dose: "NB"
         )
 
         static let erxTaskReady = erxTask1
@@ -149,7 +140,7 @@ extension ErxTask {
             authoredOn: DemoDate.createDemoDate(.yesterday)
         )
 
-        static let demoPatient = ErxTask.Patient(
+        static let demoPatient = ErxPatient(
             name: "Ludger Königsstein",
             address: "Musterstr. 1 \n10623 Berlin",
             birthDate: "22.6.1935",
@@ -159,7 +150,7 @@ extension ErxTask {
             insuranceId: "A123456789"
         )
 
-        static let demoPractitioner = ErxTask.Practitioner(
+        static let demoPractitioner = ErxPractitioner(
             lanr: "123456789",
             name: "Dr. Dr. med. Carsten van Storchhausen",
             qualification: "Allgemeinarzt/Hausarzt",
@@ -167,7 +158,7 @@ extension ErxTask {
             address: "Hinter der Bahn 2\n12345 Berlin"
         )
 
-        static let demoOrganization = ErxTask.Organization(
+        static let demoOrganization = ErxOrganization(
             identifier: "987654321",
             name: "Praxis van Storchhausen",
             phone: "555 76543321",
@@ -175,8 +166,8 @@ extension ErxTask {
             address: "Vor der Bahn 6\n54321 Berlin"
         )
 
-        static let demoWorkRelatedAccident = ErxTask.WorkRelatedAccident(
-            mark: "2",
+        static let demoAccidentInfo = AccidentInfo(
+            type: .workAccident,
             workPlaceIdentifier: "1234567890",
             date: "9.4.2021"
         )
@@ -190,13 +181,15 @@ extension ErxTask {
             expiresOn: DemoDate.createDemoDate(.tomorrow),
             acceptedUntil: DemoDate.createDemoDate(.ninetyTwoDaysAhead),
             author: "Dr. Dr. med. Carsten van Storchhausen",
-            noctuFeeWaiver: true,
-            substitutionAllowed: true,
             medication: medication1,
+            medicationRequest: .init(
+                substitutionAllowed: true,
+                hasEmergencyServiceFee: true,
+                accidentInfo: demoAccidentInfo
+            ),
             patient: demoPatient,
             practitioner: demoPractitioner,
-            organization: demoOrganization,
-            workRelatedAccident: demoWorkRelatedAccident
+            organization: demoOrganization
         )
 
         static let erxTask2: ErxTask = .init(
@@ -208,12 +201,14 @@ extension ErxTask {
             expiresOn: DemoDate.createDemoDate(.twentyEightDaysAhead),
             acceptedUntil: DemoDate.createDemoDate(.ninetyTwoDaysAhead),
             author: "Dr. Dr. med. Carsten van Storchhausen",
-            substitutionAllowed: true,
             medication: medication2,
+            medicationRequest: .init(
+                substitutionAllowed: true,
+                accidentInfo: demoAccidentInfo
+            ),
             patient: demoPatient,
             practitioner: demoPractitioner,
-            organization: demoOrganization,
-            workRelatedAccident: demoWorkRelatedAccident
+            organization: demoOrganization
         )
 
         static let erxTask3: ErxTask = .init(
@@ -225,12 +220,14 @@ extension ErxTask {
             expiresOn: DemoDate.createDemoDate(.twelveDaysAhead),
             acceptedUntil: DemoDate.createDemoDate(.ninetyTwoDaysAhead),
             author: "Dr. Dr. med. Carsten van Storchhausen",
-            noctuFeeWaiver: true,
             medication: medication3,
+            medicationRequest: .init(
+                hasEmergencyServiceFee: true,
+                accidentInfo: demoAccidentInfo
+            ),
             patient: demoPatient,
             practitioner: demoPractitioner,
-            organization: demoOrganization,
-            workRelatedAccident: demoWorkRelatedAccident
+            organization: demoOrganization
         )
 
         static let erxTask4: ErxTask = .init(
@@ -243,10 +240,12 @@ extension ErxTask {
             acceptedUntil: DemoDate.createDemoDate(.ninetyTwoDaysAhead),
             author: "Dr. Dr. med. Carsten van Storchhausen",
             medication: medication4,
+            medicationRequest: .init(
+                accidentInfo: demoAccidentInfo
+            ),
             patient: demoPatient,
             practitioner: demoPractitioner,
-            organization: demoOrganization,
-            workRelatedAccident: demoWorkRelatedAccident
+            organization: demoOrganization
         )
 
         static let erxTask5: ErxTask = .init(
@@ -259,10 +258,12 @@ extension ErxTask {
             acceptedUntil: DemoDate.createDemoDate(.ninetyTwoDaysAhead),
             author: "Dr. Dr. med. Carsten van Storchhausen",
             medication: medication5,
+            medicationRequest: .init(
+                accidentInfo: demoAccidentInfo
+            ),
             patient: demoPatient,
             practitioner: demoPractitioner,
-            organization: demoOrganization,
-            workRelatedAccident: demoWorkRelatedAccident
+            organization: demoOrganization
         )
 
         static let erxTask6: ErxTask = .init(
@@ -274,12 +275,14 @@ extension ErxTask {
             expiresOn: DemoDate.createDemoDate(.dayBeforeYesterday),
             acceptedUntil: DemoDate.createDemoDate(.ninetyTwoDaysAhead),
             author: "Praxis Dr. med. Karin Hasenbein",
-            noctuFeeWaiver: true,
             medication: medication6,
+            medicationRequest: .init(
+                hasEmergencyServiceFee: true,
+                accidentInfo: demoAccidentInfo
+            ),
             patient: demoPatient,
             practitioner: demoPractitioner,
-            organization: demoOrganization,
-            workRelatedAccident: demoWorkRelatedAccident
+            organization: demoOrganization
         )
 
         static let erxTask7: ErxTask = .init(
@@ -292,10 +295,12 @@ extension ErxTask {
             acceptedUntil: DemoDate.createDemoDate(.ninetyTwoDaysAhead),
             author: "Dr. Dr. med. Carsten van Storchhausen",
             medication: medication7,
+            medicationRequest: .init(
+                accidentInfo: demoAccidentInfo
+            ),
             patient: demoPatient,
             practitioner: demoPractitioner,
-            organization: demoOrganization,
-            workRelatedAccident: demoWorkRelatedAccident
+            organization: demoOrganization
         )
 
         static let erxTask8: ErxTask = .init(
@@ -308,10 +313,12 @@ extension ErxTask {
             acceptedUntil: DemoDate.createDemoDate(.yesterday),
             author: "Dr. Dr. med. Carsten van Storchhausen",
             medication: medication8,
+            medicationRequest: .init(
+                accidentInfo: demoAccidentInfo
+            ),
             patient: demoPatient,
             practitioner: demoPractitioner,
-            organization: demoOrganization,
-            workRelatedAccident: demoWorkRelatedAccident
+            organization: demoOrganization
         )
 
         static let erxTask9: ErxTask = .init(
@@ -324,10 +331,12 @@ extension ErxTask {
             acceptedUntil: DemoDate.createDemoDate(.twelveDaysAhead),
             author: "Dr. Dr. med. Carsten van Storchhausen",
             medication: medication7,
+            medicationRequest: .init(
+                accidentInfo: demoAccidentInfo
+            ),
             patient: demoPatient,
             practitioner: demoPractitioner,
-            organization: demoOrganization,
-            workRelatedAccident: demoWorkRelatedAccident
+            organization: demoOrganization
         )
 
         static let erxTask10: ErxTask = .init(
@@ -341,10 +350,12 @@ extension ErxTask {
             redeemedOn: DemoDate.createDemoDate(.yesterday),
             author: "Dr. Dr. med. Carsten van Storchhausen",
             medication: medication1,
+            medicationRequest: .init(
+                accidentInfo: demoAccidentInfo
+            ),
             patient: demoPatient,
             practitioner: demoPractitioner,
-            organization: demoOrganization,
-            workRelatedAccident: demoWorkRelatedAccident
+            organization: demoOrganization
         )
 
         static let erxTask11: ErxTask = .init(
@@ -358,10 +369,12 @@ extension ErxTask {
             redeemedOn: nil,
             author: "Dr. Dr. med. Carsten van Storchhausen",
             medication: medication2,
+            medicationRequest: .init(
+                accidentInfo: demoAccidentInfo
+            ),
             patient: demoPatient,
             practitioner: demoPractitioner,
-            organization: demoOrganization,
-            workRelatedAccident: demoWorkRelatedAccident
+            organization: demoOrganization
         )
 
         static let erxTask12: ErxTask = .init(
@@ -375,10 +388,12 @@ extension ErxTask {
             redeemedOn: nil,
             author: "Dr. Dr. med. Carsten van Storchhausen",
             medication: medication3,
+            medicationRequest: .init(
+                accidentInfo: demoAccidentInfo
+            ),
             patient: demoPatient,
             practitioner: demoPractitioner,
-            organization: demoOrganization,
-            workRelatedAccident: demoWorkRelatedAccident
+            organization: demoOrganization
         )
 
         static let erxTask13: ErxTask = .init(
@@ -392,10 +407,12 @@ extension ErxTask {
             redeemedOn: nil,
             author: "Dr. Dr. med. Carsten van Storchhausen",
             medication: medication4,
+            medicationRequest: .init(
+                accidentInfo: demoAccidentInfo
+            ),
             patient: demoPatient,
             practitioner: demoPractitioner,
-            organization: demoOrganization,
-            workRelatedAccident: demoWorkRelatedAccident
+            organization: demoOrganization
         )
 
         static let erxTasks: [ErxTask] =

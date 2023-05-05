@@ -16,11 +16,10 @@
 //  
 //
 
+import Dependencies
 import SwiftUI
 
 /// Provides access to services.
-///
-/// Usage: `@Injected(\.serviceLocator) var serviceLocator: ServiceLocator`
 class ServiceLocator {
     // swiftlint:disable:next strict_fileprivate
     fileprivate(set) var deviceCapabilities: DeviceCapabilities = {
@@ -41,5 +40,34 @@ class ServiceLocatorDebugAccess {
 
     func setDeviceCapabilities(_ deviceCapabilities: DeviceCapabilities) {
         serviceLocator.deviceCapabilities = deviceCapabilities
+    }
+}
+
+// MARK: TCA Dependency
+
+extension ServiceLocator: DependencyKey {
+    static let liveValue = ServiceLocator()
+
+    static let previewValue = ServiceLocator()
+    static let testValue: ServiceLocator = unimplemented("ServiceLocator")
+}
+
+extension DependencyValues {
+    var serviceLocator: ServiceLocator {
+        get { self[ServiceLocator.self] }
+        set { self[ServiceLocator.self] = newValue }
+    }
+}
+
+extension ServiceLocatorDebugAccess: DependencyKey {
+    static let liveValue = ServiceLocatorDebugAccess(serviceLocator: .liveValue)
+
+    static let previewValue = ServiceLocatorDebugAccess(serviceLocator: .previewValue)
+}
+
+extension DependencyValues {
+    var serviceLocatorDebugAccess: ServiceLocatorDebugAccess {
+        get { self[ServiceLocatorDebugAccess.self] }
+        set { self[ServiceLocatorDebugAccess.self] = newValue }
     }
 }

@@ -82,4 +82,28 @@ public protocol ErxTaskRepository {
     func countAllUnreadCommunications(
         for profile: ErxTask.Communication.Profile
     ) -> AnyPublisher<Int, ErxRepositoryError>
+
+    /// Load all ErxChargeItem's from a remote (server).
+    ///
+    /// - Returns: AnyPublisher that emits an array of all `ErxChargeItems`s or `DefaultErxTaskRepository.Error`
+    func loadRemoteChargeItems() -> AnyPublisher<[ErxChargeItem], ErxRepositoryError>
+
+    /// Loads All consents of a given profile
+    /// Uses the request headers  ACCESS_TOKEN with the containing insurance id
+    ///
+    /// - Returns: Array of all loaded `ErxConsent`
+    func fetchConsents() -> AnyPublisher<[ErxConsent], ErxRepositoryError>
+
+    /// Send a grant consent request of  an `ErxConsent`
+    ///
+    /// - Parameter consent: Consent that contains information about the type of consent
+    ///                         and insurance id which the consent will be granted for
+    /// - Returns: The `ErxConsent` that was granted
+    func grantConsent(_ consent: ErxConsent) -> AnyPublisher<ErxConsent?, ErxRepositoryError>
+
+    /// Delete an consent of `ErxConsent` to revoke it
+    /// - Parameters:
+    ///   - category: the `ErxConsent.Category`of the consent to be revoked
+    /// - Returns: Publisher for the load request
+    func revokeConsent(_ category: ErxConsent.Category) -> AnyPublisher<Bool, ErxRepositoryError>
 }

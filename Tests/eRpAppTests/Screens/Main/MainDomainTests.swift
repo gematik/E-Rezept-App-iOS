@@ -16,22 +16,28 @@
 //  
 //
 
+import Combine
 import ComposableArchitecture
 @testable import eRpApp
 import eRpKit
+@testable import IDP
 import Nimble
 import XCTest
 
 final class MainDomainTests: XCTestCase {
-    let testScheduler = DispatchQueue.test
+    let testScheduler = DispatchQueue.immediate
     let mockUserDataStore = MockUserDataStore()
+    let mockUserSessionContainer = MockUsersSessionContainer()
+    let mockRouter = MockRouting()
+    let mockUserSession = MockUserSession()
+    let mockDeviceSecurityManager = MockDeviceSecurityManager()
 
     typealias TestStore = ComposableArchitecture.TestStore<
         MainDomain.State,
         MainDomain.Action,
         MainDomain.State,
         MainDomain.Action,
-        MainDomain.Environment
+        Void
     >
 
     func testStore() -> TestStore {
@@ -39,25 +45,17 @@ final class MainDomainTests: XCTestCase {
     }
 
     func testStore(for state: MainDomain.State) -> TestStore {
-        TestStore(initialState: state,
-                  reducer: MainDomain.reducer,
-                  environment: MainDomain.Environment(
-                      router: DummyRouter(),
-                      userSessionContainer: DummyUserSessionContainer(),
-                      userSession: DummySessionContainer(),
-                      appSecurityManager: DemoAppSecurityPasswordManager(),
-                      serviceLocator: ServiceLocator(),
-                      accessibilityAnnouncementReceiver: { _ in },
-                      erxTaskRepository: DummySessionContainer().erxTaskRepository,
-                      schedulers: Schedulers(),
-                      fhirDateFormatter: globals.fhirDateFormatter,
-                      userProfileService: DummyUserProfileService(),
-                      secureDataWiper: DummyProfileSecureDataWiper(),
-                      signatureProvider: DummySecureEnclaveSignatureProvider(),
-                      userSessionProvider: DummyUserSessionProvider(),
-                      userDataStore: mockUserDataStore,
-                      tracker: DummyTracker()
-                  ))
+        TestStore(initialState: state, reducer: MainDomain()) { dependencies in
+            dependencies.userSession = mockUserSession
+            dependencies.changeableUserSessionContainer = mockUserSessionContainer
+            dependencies.erxTaskRepository = DummySessionContainer().erxTaskRepository
+            dependencies.schedulers = Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler())
+            dependencies.fhirDateFormatter = FHIRDateFormatter.testValue
+            dependencies.userDataStore = mockUserDataStore
+            dependencies.deviceSecurityManager = mockDeviceSecurityManager
+            dependencies.router = mockRouter
+            dependencies.serviceLocator = ServiceLocator()
+        }
     }
 
     func testDemoModeChange() {
@@ -65,16 +63,61 @@ final class MainDomainTests: XCTestCase {
         let sut = testStore()
 
         // when
-        sut.send(.demoModeChangeReceived(true)) { sut in
+        mockUserSessionContainer.underlyingIsDemoMode = Just(true).eraseToAnyPublisher()
+        sut.send(.subscribeToDemoModeChange)
+        sut.receive(.response(.demoModeChangeReceived(true))) { sut in
             // then
             sut.isDemoMode = true
         }
 
         // when
-        sut.send(.demoModeChangeReceived(false)) { sut in
+        mockUserSessionContainer.underlyingIsDemoMode = Just(false).eraseToAnyPublisher()
+        sut.send(.response(.demoModeChangeReceived(false))) { sut in
             // then
             sut.isDemoMode = false
         }
+
+        sut.send(.unsubscribeFromDemoModeChange)
+    }
+
+    func testTurnOffDemoMode() {
+        // given
+        let sut = testStore()
+
+        sut.send(.turnOffDemoMode)
+        expect(self.mockRouter.routeToCalled).to(beTrue())
+    }
+
+    func testShowScanner() {
+        // given
+        let sut = testStore()
+
+        sut.send(.showScannerView) {
+            $0.destination = .scanner(ScannerDomain.State())
+        }
+    }
+
+    func testLoadingADeviceSecurityWarning() {
+        let sut = testStore()
+
+        let expectedWarning = DeviceSecurityWarningType.jailbreakDetected
+        mockDeviceSecurityManager.underlyingShowSystemSecurityWarning = Just(expectedWarning).eraseToAnyPublisher()
+
+        let deviceSecurityState = DeviceSecurityDomain.State(warningType: expectedWarning)
+        sut.send(.loadDeviceSecurityView)
+        sut.receive(.response(.loadDeviceSecurityViewReceived(deviceSecurityState))) {
+            $0.destination = .deviceSecurity(deviceSecurityState)
+        }
+    }
+
+    func testLoadingNoneDeviceSecurityWarning() {
+        let sut = testStore()
+
+        mockDeviceSecurityManager.underlyingShowSystemSecurityWarning = Just(DeviceSecurityWarningType.none)
+            .eraseToAnyPublisher()
+
+        sut.send(.loadDeviceSecurityView)
+        sut.receive(.response(.loadDeviceSecurityViewReceived(nil)))
     }
 
     func testWhenLoadingProfileWithError() {
@@ -83,9 +126,9 @@ final class MainDomainTests: XCTestCase {
         let error = UserProfileServiceError.localStoreError(.notImplemented)
 
         // when
-        sut.send(.horizontalProfileSelection(action: .loadReceived(.failure(error)))) { sut in
+        sut.send(.horizontalProfileSelection(action: .response(.loadReceived(.failure(error))))) { sut in
             // then
-            sut.route = .alert(.init(for: error))
+            sut.destination = .alert(.init(for: error))
         }
     }
 
@@ -97,7 +140,7 @@ final class MainDomainTests: XCTestCase {
         mockUserDataStore.underlyingHideWelcomeDrawer = false
         sut.send(.showWelcomeDrawer) { state in
             // then
-            state.route = .welcomeDrawer
+            state.destination = .welcomeDrawer
         }
         expect(self.mockUserDataStore.hideWelcomeDrawer).to(beTrue())
 
@@ -110,9 +153,9 @@ final class MainDomainTests: XCTestCase {
     func testWelcomeDrawerNotPresentedWhileRouteSet() {
         // given
         let sut = testStore(for: .init(
+            destination: .deviceSecurity(DeviceSecurityDomain.State(warningType: .devicePinMissing)),
             prescriptionListState: .init(),
-            horizontalProfileSelectionState: .init(),
-            route: .deviceSecurity(DeviceSecurityDomain.State(warningType: .devicePinMissing))
+            horizontalProfileSelectionState: .init()
         ))
         // when
         mockUserDataStore.underlyingHideWelcomeDrawer = false
@@ -120,6 +163,46 @@ final class MainDomainTests: XCTestCase {
         sut.send(.showWelcomeDrawer)
         // then
         expect(self.mockUserDataStore.hideWelcomeDrawer).to(beFalse())
+    }
+
+    func testShowingLoginNecessaryAlertAfterIDPErrorServerResponse() {
+        let sut = testStore(for: .init(
+            prescriptionListState: .init(),
+            horizontalProfileSelectionState: .init()
+        ))
+        let expectedError = LoginHandlerError.idpError(.serverError(IDPError.ServerResponse(
+            error: "2000",
+            errorText: "access_denied",
+            timestamp: Int(Date().timeIntervalSince1970),
+            uuid: "error-id-as-uuid",
+            code: "2000"
+        )))
+        mockUserSessionContainer.underlyingUserSession = mockUserSession
+        mockUserSession.mockPrescriptionRepository
+            .forcedLoadRemoteForReturnValue = Fail(error: PrescriptionRepositoryError.loginHandler(expectedError))
+            .eraseToAnyPublisher()
+
+        sut.send(.refreshPrescription)
+        sut.receive(.prescriptionList(action: .refresh)) {
+            $0.prescriptionListState.loadingState = .loading(nil)
+        }
+        sut.receive(.prescriptionList(action: .response(.errorReceived(expectedError)))) {
+            $0.prescriptionListState.loadingState = .idle
+            $0.destination = .alert(MainDomain.AlertStates.loginNecessaryAlert(for: expectedError))
+        }
+    }
+
+    func testInvalidateAccessTokenGetsCalledWhenShowingCardWall() {
+        let sut = testStore(for: .init(
+            prescriptionListState: .init(),
+            horizontalProfileSelectionState: .init()
+        ))
+
+        expect(self.mockUserSession.mockIDPSession.invalidateAccessToken_Called).to(beFalse())
+        sut.send(.setNavigation(tag: .cardWall)) {
+            $0.destination = .cardWall(.init(isNFCReady: true, profileId: self.mockUserSession.profileId))
+        }
+        expect(self.mockUserSession.mockIDPSession.invalidateAccessToken_Called).to(beTrue())
     }
 
     func testRedeemPrescriptionsOnlyWithReadyStatus() {
@@ -138,7 +221,7 @@ final class MainDomainTests: XCTestCase {
         sut
             .send(.prescriptionList(action: .redeemButtonTapped(openPrescriptions: nonReadyPrescriptions +
                     [expectedPrescription]))) { state in
-                    state.route = .redeem(RedeemMethodsDomain.State(erxTasks: [expectedPrescription.erxTask]))
+                    state.destination = .redeem(RedeemMethodsDomain.State(erxTasks: [expectedPrescription.erxTask]))
             }
     }
 }

@@ -21,14 +21,13 @@ import ComposableArchitecture
 import eRpKit
 import Foundation
 
-enum PrescriptionArchiveDomain {
-    typealias Store = ComposableArchitecture.Store<State, Action>
-    typealias Reducer = ComposableArchitecture.AnyReducer<State, Action, Environment>
+struct PrescriptionArchiveDomain: ReducerProtocol {
+    typealias Store = StoreOf<Self>
 
-    static func cleanup<T>() -> Effect<T, Never> {
+    static func cleanup<T>() -> EffectTask<T> {
         .concatenate(
             cleanupSubDomains(),
-            Effect.cancel(id: Token.self)
+            EffectTask<T>.cancel(ids: Token.allCases)
         )
     }
 
@@ -36,14 +35,26 @@ enum PrescriptionArchiveDomain {
         case loadLocalPrescriptionId
     }
 
-    private static func cleanupSubDomains<T>() -> Effect<T, Never> {
+    private static func cleanupSubDomains<T>() -> EffectTask<T> {
         .concatenate(
             PrescriptionDetailDomain.cleanup()
         )
     }
 
-    enum Route: Equatable {
-        case prescriptionDetail(PrescriptionDetailDomain.State)
+    struct Destinations: ReducerProtocol {
+        enum State: Equatable {
+            case prescriptionDetail(PrescriptionDetailDomain.State)
+        }
+
+        enum Action: Equatable {
+            case prescriptionDetail(PrescriptionDetailDomain.Action)
+        }
+
+        var body: some ReducerProtocol<State, Action> {
+            Scope(state: /State.prescriptionDetail, action: /Action.prescriptionDetail) {
+                PrescriptionDetailDomain()
+            }
+        }
     }
 
     struct State: Equatable {
@@ -51,92 +62,79 @@ enum PrescriptionArchiveDomain {
             .idle
         var prescriptions: [Prescription] = []
 
-        var route: Route?
+        var destination: Destinations.State?
     }
 
     enum Action: Equatable {
         /// Loads locally stored Prescriptions
         case loadLocalPrescriptions
-        /// Response from `loadLocalPrescriptions`
-        case loadLocalPrescriptionsReceived(LoadingState<[Prescription], PrescriptionRepositoryError>)
         /// Details actions
         case prescriptionDetailViewTapped(selectedPrescription: Prescription)
 
-        case prescriptionDetailAction(action: PrescriptionDetailDomain.Action)
-        case setNavigation(tag: Route.Tag?)
-        case close
+        case response(Response)
+        case delegate(Delegate)
+
+        case setNavigation(tag: Destinations.State.Tag?)
+        case destination(Destinations.Action)
+
+        enum Response: Equatable {
+            /// Response from `loadLocalPrescriptions`
+            case loadLocalPrescriptionsReceived(LoadingState<[Prescription], PrescriptionRepositoryError>)
+        }
+
+        enum Delegate: Equatable {
+            case close
+        }
     }
 
-    struct Environment {
-        let schedulers: Schedulers
-        let prescriptionRepository: PrescriptionRepository
-        let fhirDateFormatter: FHIRDateFormatter
-        var userSession: UserSession
+    @Dependency(\.schedulers) var schedulers: Schedulers
+    @Dependency(\.prescriptionRepository) var prescriptionRepository: PrescriptionRepository
+    @Dependency(\.fhirDateFormatter) var fhirDateFormatter: FHIRDateFormatter
+
+    var body: some ReducerProtocol<State, Action> {
+        Reduce(self.core)
+            .ifLet(\.destination, action: /Action.destination) {
+                Destinations()
+            }
     }
 
-    static let domainReducer = Reducer { state, action, environment in
+    private func core(state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
         case .loadLocalPrescriptions:
             state.loadingState = .loading(state.prescriptions)
-            return environment.prescriptionRepository.loadLocal()
-                .receive(on: environment.schedulers.main)
+            return prescriptionRepository.loadLocal()
+                .receive(on: schedulers.main)
                 .catchToLoadingStateEffect()
-                .map(Action.loadLocalPrescriptionsReceived)
+                .map { Action.response(.loadLocalPrescriptionsReceived($0)) }
                 .cancellable(id: Token.loadLocalPrescriptionId, cancelInFlight: true)
-        case let .loadLocalPrescriptionsReceived(loadingState):
+        case let .response(.loadLocalPrescriptionsReceived(loadingState)):
             state.loadingState = loadingState
             state.prescriptions = loadingState.value?.filter(\.isArchived) ?? []
             return .none
-        case .close:
-            return cleanup()
+        case .delegate(.close):
+            return Self.cleanup()
         case let .prescriptionDetailViewTapped(prescription):
-            state.route = .prescriptionDetail(PrescriptionDetailDomain.State(
+            state.destination = .prescriptionDetail(PrescriptionDetailDomain.State(
                 prescription: prescription,
                 isArchived: prescription.isArchived
             ))
             return .none
         case .setNavigation(tag: .none),
-             .prescriptionDetailAction(action: .close):
-            state.route = nil
-            return cleanupSubDomains()
+             .destination(.prescriptionDetail(.delegate(.close))):
+            state.destination = nil
+            return Self.cleanupSubDomains()
         case .setNavigation,
-             .prescriptionDetailAction:
+             .destination:
             return .none
         }
     }
-
-    static let reducer: Reducer = .combine(
-        prescriptionDetailPullbackReducer,
-        domainReducer
-    )
-
-    static let prescriptionDetailPullbackReducer: Reducer =
-        PrescriptionDetailDomain.reducer._pullback(
-            state: (\State.route).appending(path: /Route.prescriptionDetail),
-            action: /PrescriptionArchiveDomain.Action.prescriptionDetailAction(action:)
-        ) { environment in
-            PrescriptionDetailDomain.Environment(
-                schedulers: environment.schedulers,
-                taskRepository: environment.userSession.erxTaskRepository,
-                fhirDateFormatter: environment.fhirDateFormatter,
-                userSession: environment.userSession
-            )
-        }
 }
 
 extension PrescriptionArchiveDomain {
     enum Dummies {
         static let state = State(prescriptions: Prescription.Dummies.prescriptions)
 
-        static let environment = Environment(
-            schedulers: Schedulers(),
-            prescriptionRepository: DummyPrescriptionRepository(),
-            fhirDateFormatter: globals.fhirDateFormatter,
-            userSession: DummySessionContainer()
-        )
-
         static let store = Store(initialState: state,
-                                 reducer: reducer,
-                                 environment: environment)
+                                 reducer: PrescriptionArchiveDomain())
     }
 }

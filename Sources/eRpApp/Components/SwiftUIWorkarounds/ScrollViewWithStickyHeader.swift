@@ -123,12 +123,10 @@ struct ScrollViewWithStickyHeader_Preview: PreviewProvider {
                 }
             )
             .navigationBarTitleDisplayMode(.large)
-            .backport.searchable(
+            .searchable(
                 text: $text,
-                prompt: "Prompt",
-                displayModeAlways: true,
-                suggestions: {},
-                onSubmitOfSearch: {}
+                placement: .navigationBarDrawer(displayMode: .always),
+                prompt: "Prompt"
             )
             .background(Color(.secondarySystemBackground).ignoresSafeArea())
             .navigationTitle("ABC")

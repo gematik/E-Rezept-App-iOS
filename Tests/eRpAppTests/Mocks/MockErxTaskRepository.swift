@@ -77,6 +77,12 @@ class MockErxTaskRepository: ErxTaskRepository {
         saveCommunicationsCallsCount > 0
     }
 
+    var loadRemoteChargeItemsPublisher: AnyPublisher<[ErxChargeItem], ErxRepositoryError>
+    var loadRemoteChargeItemsCallsCount = 0
+    var loadRemoteChargeItemsCalled: Bool {
+        loadRemoteChargeItemsCallsCount > 0
+    }
+
     init(stored erxTasks: [ErxTask] = [],
          loadRemoteById: AnyPublisher<ErxTask?, ErxRepositoryError> = failing(),
          saveErxTasks: AnyPublisher<Bool, ErxRepositoryError> = failing(),
@@ -85,7 +91,8 @@ class MockErxTaskRepository: ErxTaskRepository {
          redeemOrder: AnyPublisher<ErxTaskOrder, ErxRepositoryError> = failing(),
          listCommunications: AnyPublisher<[ErxTask.Communication], ErxRepositoryError> = failing(),
          countCommunications: AnyPublisher<Int, ErxRepositoryError> = failing(),
-         saveCommunications: AnyPublisher<Bool, ErxRepositoryError> = failing()) {
+         saveCommunications: AnyPublisher<Bool, ErxRepositoryError> = failing(),
+         loadRemoteChargeItems: AnyPublisher<[ErxChargeItem], ErxRepositoryError> = failing()) {
         loadLocalAllPublisher = Just(erxTasks)
             .setFailureType(to: ErxRepositoryError.self)
             .eraseToAnyPublisher()
@@ -100,6 +107,7 @@ class MockErxTaskRepository: ErxTaskRepository {
         countUnreadCommunicationsPublisher = countCommunications
         saveCommunicationsPublisher = saveCommunications
         loadRemoteByIdPublisher = loadRemoteById
+        loadRemoteChargeItemsPublisher = loadRemoteChargeItems
     }
 
     var loadRemoteByIdPublisher: AnyPublisher<ErxTask?, ErxRepositoryError>
@@ -162,6 +170,14 @@ class MockErxTaskRepository: ErxTaskRepository {
         return countUnreadCommunicationsPublisher
     }
 
+    // MARK: - ChargeItem
+
+    func loadRemoteChargeItems()
+        -> AnyPublisher<[ErxChargeItem], ErxRepositoryError> {
+        loadRemoteChargeItemsCallsCount += 1
+        return loadRemoteChargeItemsPublisher
+    }
+
     static func failing() -> AnyPublisher<ErxTask?, ErxRepositoryError> {
         Deferred { () -> AnyPublisher<ErxTask?, ErxRepositoryError> in
             XCTFail("This publisher should not have run")
@@ -195,5 +211,77 @@ class MockErxTaskRepository: ErxTaskRepository {
             XCTFail("This publisher should not have run")
             return Just(0).setFailureType(to: ErxRepositoryError.self).eraseToAnyPublisher()
         }.eraseToAnyPublisher()
+    }
+
+    static func failing() -> AnyPublisher<[ErxChargeItem], ErxRepositoryError> {
+        Deferred { () -> AnyPublisher<[ErxChargeItem], ErxRepositoryError> in
+            XCTFail("This publisher should not have run")
+            return Just([]).setFailureType(to: ErxRepositoryError.self).eraseToAnyPublisher()
+        }.eraseToAnyPublisher()
+    }
+
+    // MARK: - fetchConsents
+
+    var fetchConsentsCallsCount = 0
+    var fetchConsentsCalled: Bool {
+        fetchConsentsCallsCount > 0
+    }
+
+    var fetchConsentsReturnValue: AnyPublisher<[ErxConsent], ErxRepositoryError>!
+    var fetchConsentsClosure: (() -> AnyPublisher<[ErxConsent], ErxRepositoryError>)?
+
+    func fetchConsents() -> AnyPublisher<[ErxConsent], ErxRepositoryError> {
+        fetchConsentsCallsCount += 1
+        if let fetchConsentsClosure = fetchConsentsClosure {
+            return fetchConsentsClosure()
+        } else {
+            return fetchConsentsReturnValue
+        }
+    }
+
+    // MARK: - grantConsent
+
+    var grantConsentCallsCount = 0
+    var grantConsentCalled: Bool {
+        grantConsentCallsCount > 0
+    }
+
+    var grantConsentReceivedConsent: ErxConsent?
+    var grantConsentReceivedInvocations: [ErxConsent] = []
+    var grantConsentReturnValue: AnyPublisher<ErxConsent?, ErxRepositoryError>!
+    var grantConsentClosure: ((ErxConsent) -> AnyPublisher<ErxConsent?, ErxRepositoryError>)?
+
+    func grantConsent(_ consent: ErxConsent) -> AnyPublisher<ErxConsent?, ErxRepositoryError> {
+        grantConsentCallsCount += 1
+        grantConsentReceivedConsent = consent
+        grantConsentReceivedInvocations.append(consent)
+        if let grantConsentClosure = grantConsentClosure {
+            return grantConsentClosure(consent)
+        } else {
+            return grantConsentReturnValue
+        }
+    }
+
+    // MARK: - revokeConsent
+
+    var revokeConsentCallsCount = 0
+    var revokeConsentCalled: Bool {
+        revokeConsentCallsCount > 0
+    }
+
+    var revokeConsentReceivedCategory: ErxConsent.Category?
+    var revokeConsentReceivedInvocations: [ErxConsent.Category] = []
+    var revokeConsentReturnValue: AnyPublisher<Bool, ErxRepositoryError>!
+    var revokeConsentClosure: ((ErxConsent.Category) -> AnyPublisher<Bool, ErxRepositoryError>)?
+
+    func revokeConsent(_ category: ErxConsent.Category) -> AnyPublisher<Bool, ErxRepositoryError> {
+        revokeConsentCallsCount += 1
+        revokeConsentReceivedCategory = category
+        revokeConsentReceivedInvocations.append(category)
+        if let revokeConsentClosure = revokeConsentClosure {
+            return revokeConsentClosure(category)
+        } else {
+            return revokeConsentReturnValue
+        }
     }
 }

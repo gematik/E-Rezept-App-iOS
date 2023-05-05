@@ -17,6 +17,7 @@
 //
 
 import AVS
+import Dependencies
 import eRpKit
 import Foundation
 
@@ -51,6 +52,20 @@ protocol RedeemInputValidator {
         phone: String?,
         mail: String?
     ) -> Validity
+}
+
+struct RedeemInputValidatorDependency: DependencyKey {
+    // Is initially unimplemented because there is no reasonable default
+    // Use the dependency values from `AVSMessage.Validator` or `ErxTaskOrder.Validator` to override
+    static let liveValue: RedeemInputValidator = UnimplementedRedeemInputValidator()
+    static let previewValue: RedeemInputValidator = DemoRedeemInputValidator()
+}
+
+extension DependencyValues {
+    var redeemInputValidator: RedeemInputValidator {
+        get { self[RedeemInputValidatorDependency.self] }
+        set { self[RedeemInputValidatorDependency.self] = newValue }
+    }
 }
 
 extension RedeemInputValidator {
@@ -239,6 +254,18 @@ extension AVSMessage {
     }
 }
 
+extension AVSMessage.Validator: DependencyKey {
+    static let liveValue = AVSMessage.Validator()
+    static let previewValue = AVSMessage.Validator()
+}
+
+extension DependencyValues {
+    var avsMessageValidator: AVSMessage.Validator {
+        get { self[AVSMessage.Validator.self] }
+        set { self[AVSMessage.Validator.self] = newValue }
+    }
+}
+
 extension ErxTaskOrder {
     /// Collection of input validation functions for redeem via ErxTaskRepository. Constraints defined in
     /// [gemILF_PS_eRp]
@@ -370,6 +397,18 @@ extension ErxTaskOrder {
         var service: RedeemServiceOption {
             .erxTaskRepository
         }
+    }
+}
+
+extension ErxTaskOrder.Validator: DependencyKey {
+    static let liveValue = ErxTaskOrder.Validator()
+    static let previewValue = ErxTaskOrder.Validator()
+}
+
+extension DependencyValues {
+    var erxTaskOrderValidator: ErxTaskOrder.Validator {
+        get { self[ErxTaskOrder.Validator.self] }
+        set { self[ErxTaskOrder.Validator.self] = newValue }
     }
 }
 

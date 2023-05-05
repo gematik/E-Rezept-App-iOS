@@ -33,11 +33,11 @@ struct HealthCardPasswordIntroductionView: View {
 
     struct ViewState: Equatable {
         let mode: HealthCardPasswordDomain.Mode
-        let routeTag: HealthCardPasswordDomain.Route.Tag
+        let destinationTag: HealthCardPasswordDomain.Destinations.State.Tag
 
         init(state: HealthCardPasswordDomain.State) {
             mode = state.mode
-            routeTag = state.route.tag
+            destinationTag = state.destination.tag
         }
     }
 
@@ -103,7 +103,7 @@ struct HealthCardPasswordIntroductionView: View {
             NavigationLink(
                 isActive: .init(
                     get: {
-                        viewStore.routeTag != .introduction
+                        viewStore.destinationTag != .introduction
                     },
                     set: { active in
                         if active {

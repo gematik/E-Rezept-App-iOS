@@ -17,6 +17,7 @@
 //
 
 import Combine
+import Dependencies
 import eRpKit
 import eRpLocalStorage
 import Foundation
@@ -91,6 +92,30 @@ class ChangeableUserSessionContainer: UsersSessionContainer {
         currentSession.send(currentProfileUserSession.userSession)
     }
 }
+
+// MARK: TCA Dependency
+
+struct UsersSessionContainerDependency: DependencyKey {
+    static let liveValue: UsersSessionContainer = ChangeableUserSessionContainer(
+        initialUserSession: UserSessionDependency.initialValue,
+        userDataStore: UserDataStoreDependency.liveValue,
+        userSessionProvider: DefaultUserSessionProvider.liveValue,
+        schedulers: Schedulers.liveValue
+    )
+
+    static let previewValue: UsersSessionContainer = DummyUserSessionContainer()
+
+    static let testValue: UsersSessionContainer = UnimplementedUsersSessionContainer()
+}
+
+extension DependencyValues {
+    var changeableUserSessionContainer: UsersSessionContainer {
+        get { self[UsersSessionContainerDependency.self] }
+        set { self[UsersSessionContainerDependency.self] = newValue }
+    }
+}
+
+// MARK: Dummies
 
 class DummyUserSessionContainer: UsersSessionContainer {
     var userSession: UserSession = DummySessionContainer()

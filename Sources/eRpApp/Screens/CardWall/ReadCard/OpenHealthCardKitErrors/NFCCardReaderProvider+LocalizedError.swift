@@ -24,7 +24,7 @@ extension NFCTagReaderSession.Error: LocalizedError {
     public var errorDescription: String? {
         switch self {
         case .couldNotInitializeSession:
-            return "NFCTagReaderSession could not be initalized"
+            return "NFCTagReaderSession could not be initialized"
         case .unsupportedTag:
             return "NFCTagReaderSession.Error: The read tag is not supported"
         case let .nfcTag(error: error):

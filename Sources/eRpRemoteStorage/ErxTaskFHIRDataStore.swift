@@ -21,7 +21,6 @@ import Combine
 import eRpKit
 import FHIRClient
 import Foundation
-import ModelsR4
 
 public class ErxTaskFHIRDataStore: ErxRemoteDataStore {
     private let fhirClient: FHIRClient
@@ -44,11 +43,13 @@ public class ErxTaskFHIRDataStore: ErxRemoteDataStore {
         fhirClient.fetchAllTaskIDs(after: referenceDate)
             .mapError { RemoteStoreError.fhirClientError($0) }
             .first()
-            .flatMap { self.collectAndMergeTaskPublishers(taskIds: $0) }
+            .flatMap { self.collectAndCombineLatestTaskPublishers(taskIds: $0) }
             .eraseToAnyPublisher()
     }
 
-    private func collectAndMergeTaskPublishers(taskIds: [String]) -> AnyPublisher<[ErxTask], RemoteStoreError> {
+    private func collectAndCombineLatestTaskPublishers(
+        taskIds: [String]
+    ) -> AnyPublisher<[ErxTask], RemoteStoreError> {
         let taskPublishers: [AnyPublisher<ErxTask, RemoteStoreError>] =
             taskIds.map { taskId in
                 self.fhirClient
@@ -59,8 +60,9 @@ public class ErxTaskFHIRDataStore: ErxRemoteDataStore {
                     .eraseToAnyPublisher()
             }
 
-        return Publishers.MergeMany(taskPublishers)
-            .collect()
+        return taskPublishers
+            .combineLatest()
+            .first()
             .eraseToAnyPublisher()
     }
 
@@ -125,9 +127,9 @@ public class ErxTaskFHIRDataStore: ErxRemoteDataStore {
             .eraseToAnyPublisher()
     }
 
-    public func listAuditEventsNextPage(of previousPage: PagedContent<[ErxAuditEvent]>)
+    public func listAuditEventsNextPage(of previousPage: PagedContent<[ErxAuditEvent]>, for locale: String?)
         -> AnyPublisher<PagedContent<[ErxAuditEvent]>, RemoteStoreError> {
-        fhirClient.fetchAuditEventsNextPage(of: previousPage)
+        fhirClient.fetchAuditEventsNextPage(of: previousPage, for: locale)
             .mapError { RemoteStoreError.fhirClientError($0) }
             .first()
             .eraseToAnyPublisher()
@@ -149,8 +151,73 @@ public class ErxTaskFHIRDataStore: ErxRemoteDataStore {
 
     public func listMedicationDispenses(
         for taskId: String
-    ) -> AnyPublisher<[ErxTask.MedicationDispense], RemoteStoreError> {
+    ) -> AnyPublisher<[ErxMedicationDispense], RemoteStoreError> {
         fhirClient.fetchMedicationDispenses(for: taskId)
+            .mapError { RemoteStoreError.fhirClientError($0) }
+            .first()
+            .eraseToAnyPublisher()
+    }
+
+    // MARK: - ChargeItem
+
+    public func fetchChargeItem(by id: ErxChargeItem.ID)
+        -> AnyPublisher<ErxChargeItem?, RemoteStoreError> {
+        fhirClient.fetchChargeItem(by: id)
+            .mapError { RemoteStoreError.fhirClientError($0) }
+            .eraseToAnyPublisher()
+    }
+
+    public func listAllChargeItems(after referenceDate: String?)
+        -> AnyPublisher<[ErxChargeItem], RemoteStoreError> {
+        fhirClient.fetchAllChargeItemIDs(after: referenceDate)
+            .mapError { RemoteStoreError.fhirClientError($0) }
+            .first()
+            .flatMap { self.collectAndCombineLatestChargeItemPublishers(chargeItemIds: $0) }
+            .eraseToAnyPublisher()
+    }
+
+    private func collectAndCombineLatestChargeItemPublishers(
+        chargeItemIds: [String]
+    ) -> AnyPublisher<[ErxChargeItem], RemoteStoreError> {
+        let chargeItemPublishers: [AnyPublisher<ErxChargeItem, RemoteStoreError>] =
+            chargeItemIds.map { chargeItemId in
+                self.fhirClient
+                    .fetchChargeItem(by: chargeItemId)
+                    .first()
+                    .compactMap { $0 }
+                    .mapError { RemoteStoreError.fhirClientError($0) }
+                    .eraseToAnyPublisher()
+            }
+
+        return chargeItemPublishers
+            .combineLatest()
+            .first()
+            .eraseToAnyPublisher()
+    }
+
+    // MARK: - Consents
+
+    public func fetchConsents()
+        -> AnyPublisher<[ErxConsent], RemoteStoreError> {
+        fhirClient.fetchConsents()
+            .mapError { RemoteStoreError.fhirClientError($0) }
+            .first()
+            .eraseToAnyPublisher()
+    }
+
+    public func grantConsent(
+        _ consent: ErxConsent
+    ) -> AnyPublisher<ErxConsent?, RemoteStoreError> {
+        fhirClient.grantConsent(consent)
+            .mapError { RemoteStoreError.fhirClientError($0) }
+            .first()
+            .eraseToAnyPublisher()
+    }
+
+    public func revokeConsent(
+        _ category: ErxConsent.Category
+    ) -> AnyPublisher<Bool, RemoteStoreError> {
+        fhirClient.revokeConsent(category)
             .mapError { RemoteStoreError.fhirClientError($0) }
             .first()
             .eraseToAnyPublisher()

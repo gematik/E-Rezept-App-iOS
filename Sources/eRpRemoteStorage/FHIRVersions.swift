@@ -36,14 +36,14 @@ enum Prescription {
     /// Also contains some standard FHIR keys since they were used by the KBV profiles
     /// Note: If there is no version array the key is equal over all versions
     enum Key {
-        case medication
-        case medicationRequest
-
         enum Medication {
-            static let PZNKey = "https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Medication_PZN"
-            static let freeTextKey = "https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Medication_FreeText"
-            static let ingredientKey = "https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Medication_Ingredient"
-            static let compoundingKey = "https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Medication_Compounding"
+            static let medicationTypePZNKey = "https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Medication_PZN"
+            static let medicationTypeFreeTextKey =
+                "https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Medication_FreeText"
+            static let medicationTypeIngredientKey =
+                "https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Medication_Ingredient"
+            static let medicationTypeCompoundingKey =
+                "https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Medication_Compounding"
             static let vaccineKey = "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Medication_Vaccine"
             static let categoryKey = "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Medication_Category"
             static let ingredientFormKey =
@@ -54,7 +54,8 @@ enum Prescription {
             static let packagingKey = "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Medication_Packaging"
             static let compoundingInstructionKey =
                 "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Medication_CompoundingInstruction"
-            static let packagingSizeKey = "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Medication_PackagingSize"
+            static let packagingSizeKey =
+                "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Medication_PackagingSize"
 
             static let baseMedicationTypeKey: [Version: String] = [
                 .v1_1_0: "https://fhir.kbv.de/StructureDefinition/KBV_EX_Base_Medication_Type",
@@ -66,21 +67,22 @@ enum Prescription {
                 .v1_0_2: "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_StatusCoPayment",
                 .v1_1_0: "https://fhir.kbv.de/StructureDefinition/KBV_EX_FOR_StatusCoPayment",
             ]
-            static let noctuFeeWaiverKey = "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_EmergencyServicesFee"
+            static let noctuFeeWaiverKey =
+                "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_EmergencyServicesFee"
             static let bvg = "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_BVG"
-            static let workRelatedAccidentKey: [Version: String] = [
+            static let accidentInfoKey: [Version: String] = [
                 .v1_0_2: "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Accident",
                 .v1_1_0: "https://fhir.kbv.de/StructureDefinition/KBV_EX_FOR_Accident",
             ]
-            static let workRelatedAccidentMarkKey: [Version: String] = [
+            static let accidentTypeKey: [Version: String] = [
                 .v1_0_2: "unfallkennzeichen",
                 .v1_1_0: "Unfallkennzeichen",
             ]
-            static let workRelatedAccidentPlace: [Version: String] = [
+            static let accidentPlaceKey: [Version: String] = [
                 .v1_0_2: "unfallbetrieb",
                 .v1_1_0: "Unfallbetrieb",
             ]
-            static let workRelatedAccidentDate: [Version: String] = [
+            static let accidentDateKey: [Version: String] = [
                 .v1_0_2: "unfalltag",
                 .v1_1_0: "Unfalltag",
             ]
@@ -97,79 +99,75 @@ enum Prescription {
 
         static let pznKey = "http://fhir.de/CodeSystem/ifa/pzn"
         static let dosageFlag = "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_DosageFlag"
-        static let kvIDKeys: [Version: String] = [
+        static let gkvKvIDKeys: [Version: String] = [
             .v1_0_2: "http://fhir.de/NamingSystem/gkv/kvid-10",
             .v1_1_0: "http://fhir.de/sid/gkv/kvid-10",
+        ]
+        static let pkvKvIDKeys: [Version: String] = [
+            .v1_0_2: "http://www.acme.com/identifiers/patient",
+            .v1_1_0: "http://fhir.de/sid/pkv/kvid-10",
         ]
         static let dosageFormKey = "https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_KBV_DARREICHUNGSFORM"
     }
 }
 
-/// https://simplifier.net/erezept-workflow
-enum Workflow {
-    /// Profile version specified by gematik medical team
+/// https://simplifier.net/erezept-patientenrechnung
+enum ErpCharge {
+    /// Profile version specified by gematik
     enum Version {
-        case v1_1_1
-        case v1_2_0
+        case v1_0_0
     }
 
-    /// Collection of defined keys within the e-rezept-workflow profiles (begins with `gematik.de/fhir/`)
     enum Key {
-        static let prescriptionTypeKeys: [Version: String] = [
-            .v1_1_1: "https://gematik.de/fhir/StructureDefinition/PrescriptionType",
-            .v1_2_0: "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_EX_PrescriptionType",
+        enum Consent {
+            static let consent: [Version: String] = [
+                .v1_0_0: "https://gematik.de/fhir/erpchrg/StructureDefinition/GEM_ERPCHRG_PR_Consent",
+            ]
+            static let consentType: [Version: String] = [
+                .v1_0_0: "https://gematik.de/fhir/erpchrg/CodeSystem/GEM_ERPCHRG_CS_ConsentType",
+            ]
+        }
+
+        enum ChargeItem {
+            static let prescriptionBundle: [Version: String] = [
+                .v1_0_0: "https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Bundle",
+            ]
+            static let receiptBundle: [Version: String] = [
+                .v1_0_0: "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_PR_Bundle",
+            ]
+            static let dispenseBundle: [Version: String] = [
+                .v1_0_0: "http://fhir.abda.de/eRezeptAbgabedaten/StructureDefinition/DAV-PKV-PR-ERP-AbgabedatenBundle",
+            ]
+        }
+    }
+}
+
+/// https://simplifier.net/packages/de.abda.erezeptabgabedaten
+enum Dispense {
+    enum Version {
+        case v1_3_0
+    }
+
+    enum Key {
+        static let totalAdditionalFee: [Version: String] = [
+            .v1_3_0: "http://fhir.abda.de/eRezeptAbgabedaten/StructureDefinition/DAV-EX-ERP-Gesamtzuzahlung",
         ]
-        static let flowTypeKeys: [Version: String] = [
-            .v1_1_1: "https://gematik.de/fhir/CodeSystem/Flowtype",
-            .v1_2_0: "https://gematik.de/fhir/erp/CodeSystem/GEM_ERP_CS_FlowType",
+
+        static let organisationIdentifier: [Version: String] = [
+            .v1_3_0: "http://fhir.de/sid/arge-ik/iknr",
         ]
-        static let documentTypeKeys: [Version: String] = [
-            .v1_1_1: "https://gematik.de/fhir/CodeSystem/Documenttype",
-            .v1_2_0: "https://gematik.de/fhir/erp/CodeSystem/GEM_ERP_CS_DocumentType",
-        ]
-        static let prescriptionIdKeys: [Version: String] = [
-            .v1_1_1: "https://gematik.de/fhir/NamingSystem/PrescriptionID",
-            .v1_2_0: "https://gematik.de/fhir/erp/NamingSystem/GEM_ERP_NS_PrescriptionId",
-        ]
-        static let accessCodeKeys: [Version: String] = [
-            .v1_1_1: "https://gematik.de/fhir/NamingSystem/AccessCode",
-            .v1_2_0: "https://gematik.de/fhir/erp/NamingSystem/GEM_ERP_NS_AccessCode",
-        ]
-        static let acceptDateKeys: [Version: String] = [
-            .v1_1_1: "https://gematik.de/fhir/StructureDefinition/AcceptDate",
-            .v1_2_0: "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_EX_AcceptDate",
-        ]
-        static let expiryDateKeys: [Version: String] = [
-            .v1_1_1: "https://gematik.de/fhir/StructureDefinition/ExpiryDate",
-            .v1_2_0: "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_EX_ExpiryDate",
-        ]
-        static let telematikIdKeys: [Version: String] = [
-            .v1_1_1: "https://gematik.de/fhir/NamingSystem/TelematikID",
-            .v1_2_0: "https://gematik.de/fhir/sid/telematik-id",
-        ]
-        static let communicationReply: [Version: String] = [
-            .v1_1_1: "https://gematik.de/fhir/StructureDefinition/ErxCommunicationReply",
-            .v1_2_0: "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_PR_Communication_Reply",
-        ]
-        static let communicationDispReq: [Version: String] = [
-            .v1_1_1: "https://gematik.de/fhir/StructureDefinition/ErxCommunicationDispReq",
-            .v1_2_0: "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_PR_Communication_DispReq",
-        ]
-        static let communicationInfoReq: [Version: String] = [
-            .v1_1_1: "https://gematik.de/fhir/StructureDefinition/ErxCommunicationInfoReq",
-            .v1_2_0: "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_PR_Communication_InfoReq",
-        ]
-        static let communicationRepresentative: [Version: String] = [
-            .v1_1_1: "https://gematik.de/fhir/StructureDefinition/ErxCommunicationRepresentative",
-            .v1_2_0: "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_PR_Communication_Representative",
-        ]
-        static let kvIDKeys: [Version: String] = [
-            .v1_1_1: "http://fhir.de/NamingSystem/gkv/kvid-10",
-            .v1_2_0: "http://fhir.de/sid/gkv/kvid-10",
-        ]
-        static let orderIdKeys: [Version: String] = [
-            .v1_1_1: "https://gematik.de/fhir/NamingSystem/OrderID",
-        ]
+
+        enum ChargeItem {
+            static let hmnr: [Version: String] = [
+                .v1_3_0: "http://fhir.de/sid/gkv/hmnr",
+            ]
+            static let ta1: [Version: String] = [
+                .v1_3_0: "http://TA1.abda.de",
+            ]
+            static let pzn: [Version: String] = [
+                .v1_3_0: "http://fhir.de/CodeSystem/ifa/pzn",
+            ]
+        }
     }
 }
 

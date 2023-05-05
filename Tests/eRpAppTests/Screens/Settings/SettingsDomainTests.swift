@@ -31,7 +31,7 @@ final class SettingsDomainTests: XCTestCase {
         SettingsDomain.Action,
         SettingsDomain.State,
         SettingsDomain.Action,
-        SettingsDomain.Environment
+        Void
     >
 
     func testStore() -> TestStore {
@@ -41,21 +41,12 @@ final class SettingsDomainTests: XCTestCase {
     func testStore(for state: SettingsDomain.State) -> TestStore {
         TestStore(
             initialState: state,
-            reducer: SettingsDomain.reducer,
-            environment: SettingsDomain.Environment(
-                changeableUserSessionContainer: mockUserSessionContainer,
-                schedulers: Schedulers(uiScheduler: scheduler),
-                tracker: mockTracker,
-                signatureProvider: DummySecureEnclaveSignatureProvider(),
-                nfcHealthCardPasswordController: DummyNFCHealthCardPasswordController(),
-                appSecurityManager: DummyAppSecurityManager(),
-                router: MockRouting(),
-                userSessionProvider: MockUserSessionProvider(),
-                serviceLocator: ServiceLocator(),
-                userDataStore: MockUserDataStore(),
-                accessibilityAnnouncementReceiver: { _ in }
-            )
-        )
+            reducer: SettingsDomain()
+        ) { dependencies in
+            dependencies.changeableUserSessionContainer = mockUserSessionContainer
+            dependencies.tracker = mockTracker
+            dependencies.router = MockRouting()
+        }
     }
 
     func testDemoModeToggleShouldSetDemoModeWhenDemoModeIsFalse() {
@@ -66,7 +57,7 @@ final class SettingsDomainTests: XCTestCase {
         // when
         store.send(.toggleDemoModeSwitch) { sut in
             // then
-            sut.route = .alert(SettingsDomain.demoModeOnAlertState)
+            sut.destination = .alert(SettingsDomain.demoModeOnAlertState)
         }
         expect(self.mockUserSessionContainer.switchToDemoModeCalled).to(beTrue())
     }
@@ -81,7 +72,7 @@ final class SettingsDomainTests: XCTestCase {
         // when
         store.send(.toggleDemoModeSwitch) { sut in
             // then
-            sut.route = .alert(SettingsDomain.demoModeOffAlertState)
+            sut.destination = .alert(SettingsDomain.demoModeOffAlertState)
         }
         expect(self.mockUserSessionContainer.switchToStandardModeCalled).to(beTrue())
     }
@@ -92,7 +83,7 @@ final class SettingsDomainTests: XCTestCase {
         // when
         store.send(.setNavigation(tag: .egk)) { sut in
             // then
-            sut.route = .egk(.init())
+            sut.destination = .egk(.init())
         }
 
         // when
@@ -101,7 +92,7 @@ final class SettingsDomainTests: XCTestCase {
         // when
         store.send(.setNavigation(tag: nil)) { sut in
             // then
-            sut.route = nil
+            sut.destination = nil
         }
     }
 
@@ -117,7 +108,7 @@ final class SettingsDomainTests: XCTestCase {
         store.send(.toggleTrackingTapped(true)) { sut in
             // then
             sut.trackerOptIn = false
-            sut.route = .complyTracking
+            sut.destination = .complyTracking
         }
     }
 
@@ -135,11 +126,11 @@ final class SettingsDomainTests: XCTestCase {
         store.send(.toggleTrackingTapped(true)) { sut in
             // then
             sut.trackerOptIn = false
-            sut.route = .complyTracking
+            sut.destination = .complyTracking
         }
         store.send(.confirmedOptInTracking) { sut in
             sut.trackerOptIn = true
-            sut.route = nil
+            sut.destination = nil
         }
 
         expect(self.mockTracker.optIn).to(beTrue())
@@ -173,11 +164,11 @@ final class SettingsDomainTests: XCTestCase {
         store.send(.toggleTrackingTapped(true)) { sut in
             // then
             sut.trackerOptIn = false
-            sut.route = .complyTracking
+            sut.destination = .complyTracking
         }
         store.send(.setNavigation(tag: nil)) { sut in
             sut.trackerOptIn = false
-            sut.route = nil
+            sut.destination = nil
         }
 
         expect(self.mockTracker.optIn).to(beFalse())
@@ -196,7 +187,7 @@ final class SettingsDomainTests: XCTestCase {
         mockUserSessionContainer.underlyingUserSession = MockUserSession()
 
         store.send(.appSecurity(action: .select(.password))) {
-            $0.route = .setAppPassword(
+            $0.destination = .setAppPassword(
                 CreatePasswordDomain.State(
                     mode: CreatePasswordDomain.State.Mode.create,
                     password: "",
@@ -208,8 +199,8 @@ final class SettingsDomainTests: XCTestCase {
                 )
             )
         }
-        store.send(.createPassword(action: .closeAfterPasswordSaved)) {
-            $0.route = nil
+        store.send(.destination(.setAppPasswordAction(.delegate(.closeAfterPasswordSaved)))) {
+            $0.destination = nil
         }
     }
 
@@ -226,7 +217,7 @@ final class SettingsDomainTests: XCTestCase {
         mockUserSessionContainer.underlyingUserSession = MockUserSession()
 
         store.send(.appSecurity(action: .select(.password))) {
-            $0.route = .setAppPassword(
+            $0.destination = .setAppPassword(
                 CreatePasswordDomain.State(
                     mode: CreatePasswordDomain.State.Mode.update,
                     password: "",
@@ -238,8 +229,8 @@ final class SettingsDomainTests: XCTestCase {
                 )
             )
         }
-        store.send(.createPassword(action: .closeAfterPasswordSaved)) {
-            $0.route = nil
+        store.send(.destination(.setAppPasswordAction(.delegate(.closeAfterPasswordSaved)))) {
+            $0.destination = nil
         }
     }
 
@@ -254,6 +245,8 @@ final class SettingsDomainTests: XCTestCase {
             )
         )
         mockUserSessionContainer.underlyingUserSession = MockUserSession()
+
+        store.dependencies.userDataStore = MockUserDataStore()
 
         store.send(.appSecurity(action: .select(.biometry(.touchID)))) {
             $0.appSecurityState.selectedSecurityOption = .biometry(.touchID)

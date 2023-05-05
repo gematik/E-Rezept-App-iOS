@@ -41,17 +41,20 @@ extension ErxTaskEntity {
     @NSManaged public var source: String?
     @NSManaged public var status: String?
     @NSManaged public var substitutionAllowed: Bool
+    @NSManaged public var coPaymentStatus: String?
+    @NSManaged public var bvg: Bool
+    @NSManaged public var dosageInstructions: String?
     @NSManaged public var auditEvents: NSSet?
     @NSManaged public var avsTransaction: NSSet?
     @NSManaged public var communications: NSSet?
     @NSManaged public var medication: ErxTaskMedicationEntity?
     @NSManaged public var medicationDispenses: NSSet?
+    @NSManaged public var multiplePrescription: ErxTaskMultiplePrescriptionEntity?
     @NSManaged public var organization: ErxTaskOrganizationEntity?
     @NSManaged public var patient: ErxTaskPatientEntity?
     @NSManaged public var practitioner: ErxTaskPractitionerEntity?
     @NSManaged public var profile: ProfileEntity?
-    @NSManaged public var workRelatedAccident: ErxTaskWorkRelatedAccidentEntity?
-    @NSManaged public var multiplePrescription: ErxTaskMultiplePrescriptionEntity?
+    @NSManaged public var accidentInfo: ErxTaskAccidentInfoEntity?
 }
 
 // MARK: Generated accessors for auditEvents

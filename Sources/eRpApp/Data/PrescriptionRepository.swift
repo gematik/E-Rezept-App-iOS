@@ -17,6 +17,7 @@
 //
 
 import Combine
+import Dependencies
 import eRpKit
 
 protocol PrescriptionRepository {
@@ -159,5 +160,23 @@ class DefaultPrescriptionRepository: PrescriptionRepository, ActivityIndicating 
                 })
             )
             .eraseToAnyPublisher()
+    }
+}
+
+struct PrescriptionRepositoryDependency: DependencyKey {
+    static let liveValue: PrescriptionRepository? = nil
+
+    static var previewValue: PrescriptionRepository? = DummyPrescriptionRepository()
+
+    static var testValue: PrescriptionRepository? = UnimplementedPrescriptionRepository()
+}
+
+extension DependencyValues {
+    var prescriptionRepository: PrescriptionRepository {
+        get {
+            self[PrescriptionRepositoryDependency.self] ?? changeableUserSessionContainer.userSession
+                .prescriptionRepository
+        }
+        set { self[PrescriptionRepositoryDependency.self] = newValue }
     }
 }

@@ -1,6 +1,6 @@
 source "https://rubygems.org"
 
-ruby "2.6.5"
+ruby "3.1.2"
 
 gem "fastlane", "~>2.187"
 gem "jazzy", "~>0.13"

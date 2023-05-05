@@ -22,9 +22,8 @@ import eRpKit
 import IDP
 import SwiftUI
 
-enum AppStartDomain {
-    typealias Store = ComposableArchitecture.Store<State, Action>
-    typealias Reducer = ComposableArchitecture.AnyReducer<State, Action, Environment>
+struct AppStartDomain: ReducerProtocol {
+    typealias Store = StoreOf<Self>
 
     enum State: Equatable {
         case loading
@@ -43,44 +42,54 @@ enum AppStartDomain {
         case refreshOnboardingStateReceived(OnboardingDomain.Composition)
     }
 
-    struct Environment {
-        let appVersion: AppVersion
-        let router: Routing
-        var userSessionContainer: UsersSessionContainer
-        var userSession: UserSession
-        let userDataStore: UserDataStore
-        var schedulers: Schedulers
-        var fhirDateFormatter: FHIRDateFormatter
-        var serviceLocator: ServiceLocator
-        let accessibilityAnnouncementReceiver: (String) -> Void
-        let tracker: Tracker
-        let signatureProvider: SecureEnclaveSignatureProvider
-        let appSecurityManager: AppSecurityManager
-        let authenticationChallengeProvider: AuthenticationChallengeProvider
-        let userSessionProvider: UserSessionProvider
+    @Dependency(\.userSession) var userSession: UserSession
+    @Dependency(\.userDataStore) var userDataStore: UserDataStore
+    @Dependency(\.schedulers) var schedulers: Schedulers
+    @Dependency(\.appSecurityManager) var appSecurityManager: AppSecurityManager
+
+    var body: some ReducerProtocol<State, Action> {
+        Scope(
+            state: /State.onboarding,
+            action: /Action.onboarding(action:)
+        ) {
+            OnboardingDomain()
+        }
+
+        Scope(
+            state: /State.app,
+            action: /Action.app(action:)
+        ) {
+            AppDomain()
+        }
+
+        Reduce(self.core)
     }
 
-    private static let domainReducer = Reducer { state, action, environment in
+    // swiftlint:disable:next function_body_length
+    func core(into state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
         case .onboarding(action: .dismissOnboarding):
             state = .app(
                 AppDomain.State(
-                    route: .main,
-                    main: .init(
-                        prescriptionListState: .init(),
-                        horizontalProfileSelectionState: .init()
+                    destination: .main,
+                    subdomains: .init(
+                        main: .init(
+                            prescriptionListState: .init(),
+                            horizontalProfileSelectionState: .init()
+                        ),
+                        pharmacySearch: PharmacySearchDomain.State(erxTasks: []),
+                        orders: OrdersDomain.State(orders: []),
+                        settingsState: .init(
+                            isDemoMode: userSession.isDemoMode,
+                            appSecurityState: .init(
+                                availableSecurityOptions: appSecurityManager.availableSecurityOptions
+                                    .options,
+                                selectedSecurityOption: nil,
+                                errorToDisplay: nil
+                            )
+                        ),
+                        profileSelection: .init()
                     ),
-                    pharmacySearch: PharmacySearchDomain.State(erxTasks: []),
-                    orders: OrdersDomain.State(orders: []),
-                    settingsState: .init(
-                        isDemoMode: environment.userSession.isDemoMode,
-                        appSecurityState: .init(
-                            availableSecurityOptions: environment.appSecurityManager.availableSecurityOptions.options,
-                            selectedSecurityOption: nil,
-                            errorToDisplay: nil
-                        )
-                    ),
-                    profileSelection: .init(),
                     unreadOrderMessageCount: 0,
                     isDemoMode: false
                 )
@@ -90,10 +99,10 @@ enum AppStartDomain {
              .onboarding:
             return .none
         case .refreshOnboardingState:
-            return environment.userDataStore.hideOnboarding
-                .zip(environment.userDataStore.onboardingVersion)
+            return userDataStore.hideOnboarding
+                .zip(userDataStore.onboardingVersion)
                 .first()
-                .receive(on: environment.schedulers.main)
+                .receive(on: schedulers.main)
                 .map(OnboardingDomain.Composition.init)
                 .map(AppStartDomain.Action.refreshOnboardingStateReceived)
                 .eraseToEffect()
@@ -105,19 +114,22 @@ enum AppStartDomain {
             }
             state = .app(
                 AppDomain.State(
-                    route: .main,
-                    main: .init(prescriptionListState: .init(), horizontalProfileSelectionState: .init()),
-                    pharmacySearch: PharmacySearchDomain.State(erxTasks: []),
-                    orders: OrdersDomain.State(orders: []),
-                    settingsState: .init(
-                        isDemoMode: environment.userSession.isDemoMode,
-                        appSecurityState: .init(
-                            availableSecurityOptions: environment.appSecurityManager.availableSecurityOptions.options,
-                            selectedSecurityOption: nil,
-                            errorToDisplay: nil
-                        )
+                    destination: .main,
+                    subdomains: .init(
+                        main: .init(prescriptionListState: .init(), horizontalProfileSelectionState: .init()),
+                        pharmacySearch: PharmacySearchDomain.State(erxTasks: []),
+                        orders: OrdersDomain.State(orders: []),
+                        settingsState: .init(
+                            isDemoMode: userSession.isDemoMode,
+                            appSecurityState: .init(
+                                availableSecurityOptions: appSecurityManager.availableSecurityOptions
+                                    .options,
+                                selectedSecurityOption: nil,
+                                errorToDisplay: nil
+                            )
+                        ),
+                        profileSelection: .init()
                     ),
-                    profileSelection: .init(),
                     unreadOrderMessageCount: 0,
                     isDemoMode: false
                 )
@@ -126,76 +138,33 @@ enum AppStartDomain {
         }
     }
 
-    private static let onboardingPullbackReducer: AppStartDomain.Reducer =
-        OnboardingDomain.reducer
-            .pullback(
-                state: /AppStartDomain.State.onboarding,
-                action: /AppStartDomain.Action.onboarding(action:)
-            ) {
-                OnboardingDomain.Environment(
-                    appVersion: $0.appVersion,
-                    localUserStore: $0.userDataStore,
-                    schedulers: $0.schedulers,
-                    appSecurityManager: $0.appSecurityManager,
-                    authenticationChallengeProvider: $0.authenticationChallengeProvider,
-                    userSession: $0.userSession
-                )
-            }
-
-    private static let appPullbackReducer: AppStartDomain.Reducer =
-        AppDomain.reducer
-            .pullback(
-                state: /AppStartDomain.State.app,
-                action: /AppStartDomain.Action.app(action:)
-            ) { appStartEnvironment in
-                AppDomain.Environment(
-                    router: appStartEnvironment.router,
-                    userSessionContainer: appStartEnvironment.userSessionContainer,
-                    userSession: appStartEnvironment.userSession,
-                    userDataStore: appStartEnvironment.userDataStore,
-                    schedulers: appStartEnvironment.schedulers,
-                    fhirDateFormatter: appStartEnvironment.fhirDateFormatter,
-                    serviceLocator: appStartEnvironment.serviceLocator,
-                    accessibilityAnnouncementReceiver: appStartEnvironment.accessibilityAnnouncementReceiver,
-                    tracker: appStartEnvironment.tracker,
-                    signatureProvider: appStartEnvironment.signatureProvider,
-                    userSessionProvider: appStartEnvironment.userSessionProvider
-                )
-            }
-
-    static let reducer = Reducer.combine(
-        onboardingPullbackReducer,
-        appPullbackReducer,
-        domainReducer
-    )
-
-    static let router: (Endpoint) -> Effect<Action, Never> = { route in
+    static let router: (Endpoint) -> EffectTask<Action> = { route in
         switch route {
         case .settings:
             return Effect.concatenate(
-                Effect(value: .app(action: .settings(action: .popToRootView))),
-                Effect(value: .app(action: .selectTab(.settings)))
+                Effect(value: .app(action: .subdomains(.settings(action: .popToRootView)))),
+                Effect(value: .app(action: .setNavigation(.settings)))
             )
         case .scanner:
-            return Effect(value: .app(action: .main(action: .showScannerView)))
+            return Effect(value: .app(action: .subdomains(.main(action: .showScannerView))))
         case .orders:
-            return Effect(value: .app(action: .selectTab(.orders)))
+            return Effect(value: .app(action: .setNavigation(.orders)))
         case let .mainScreen(endpoint):
             switch endpoint {
             case .login:
                 return Effect.merge(
-                    Effect(value: .app(action: .selectTab(.main))),
-                    Effect(value: .app(action: .main(action: .prescriptionList(action: .refresh))))
+                    Effect(value: .app(action: .setNavigation(.main))),
+                    Effect(value: .app(action: .subdomains(.main(action: .prescriptionList(action: .refresh)))))
                 )
             default:
-                return Effect(value: .app(action: .selectTab(.main)))
+                return Effect(value: .app(action: .setNavigation(.main)))
             }
         case let .universalLink(url):
             switch url.path {
             case "/extauth":
-                return Effect(value: .app(action: .main(action: .externalLogin(url))))
+                return Effect(value: .app(action: .subdomains(.main(action: .externalLogin(url)))))
             case "/prescription":
-                return Effect(value: .app(action: .main(action: .importTaskByUrl(url))))
+                return Effect(value: .app(action: .subdomains(.main(action: .importTaskByUrl(url)))))
             default:
                 return .none
             }

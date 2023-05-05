@@ -66,5 +66,9 @@
         "denominator": {
             "value": 1
         }
+    },
+    "batch": {
+        "lotNumber": "1234567890abcde",
+        "expirationDate": "2020-02-03T00:00:00+00:00"
     }
 }

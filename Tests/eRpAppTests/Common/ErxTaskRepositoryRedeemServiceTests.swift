@@ -303,7 +303,7 @@ final class ErxTaskRepositoryRedeemServiceTests: XCTestCase {
             })
     }
 
-    func testRedeemResponses_With_Error_From_LoginHanler() throws {
+    func testRedeemResponses_With_Error_From_LoginHandler() throws {
         let loginHandlerMock = MockLoginHandler()
         let expectedError = LoginHandlerError.idpError(.biometrics(.packagingAuthCertificate))
         loginHandlerMock.isAuthenticatedOrAuthenticateReturnValue = Just(LoginResult.failure(expectedError))

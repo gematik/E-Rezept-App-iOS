@@ -18,6 +18,7 @@
 
 import Combine
 import ComposableArchitecture
+import Dependencies
 import eRpKit
 import FHIRClient
 import HTTPClient
@@ -26,13 +27,12 @@ import Pharmacy
 import SwiftUI
 import ZXingObjC
 
-enum PrescriptionDetailDomain: Equatable {
-    typealias Store = ComposableArchitecture.Store<State, Action>
-    typealias Reducer = ComposableArchitecture.AnyReducer<State, Action, Environment>
+struct PrescriptionDetailDomain: ReducerProtocol {
+    typealias Store = StoreOf<Self>
 
     /// Provides an Effect that needs to run whenever the state of this Domain is reset to nil
-    static func cleanup<T>() -> Effect<T, Never> {
-        Effect.cancel(id: Token.self)
+    static func cleanup<T>() -> EffectTask<T> {
+        EffectTask<T>.cancel(ids: Token.allCases)
     }
 
     enum Token: CaseIterable, Hashable {
@@ -47,12 +47,6 @@ enum PrescriptionDetailDomain: Equatable {
         case matrixCodeGenerationFailed
     }
 
-    enum Route: Equatable {
-        case alert(ErpAlertState<Action>)
-        case sharePrescription(URL)
-        case directAssignment
-    }
-
     struct State: Equatable {
         var prescription: Prescription
         var loadingState: LoadingState<UIImage, LoadingImageError> = .idle
@@ -62,7 +56,7 @@ enum PrescriptionDetailDomain: Equatable {
 
         var userActivity: NSUserActivity?
 
-        var route: Route?
+        var destination: Destinations.State?
 
         func createReportEmail(body: String) -> URL? {
             var urlString = URLComponents(string: "mailto:app-feedback@gematik.de")
@@ -77,120 +71,136 @@ enum PrescriptionDetailDomain: Equatable {
     }
 
     enum Action: Equatable {
-        /// Closes the details page
-        case close
         /// starts generation of data matrix code
         case loadMatrixCodeImage(screenSize: CGSize)
-        /// When a new data matrix code was generated
-        case matrixCodeImageReceived(LoadingState<UIImage, LoadingImageError>)
         /// Initial delete action
         case delete
         /// User has confirmed to delete task
         case confirmedDelete
-        /// When user chooses to not delete
-        case taskDeletedReceived(Result<Bool, ErxRepositoryError>)
-        /// Responds after save
-        case redeemedOnSavedReceived(Bool)
         /// Toggle medication redeem state
         case toggleRedeemPrescription
         /// Open substitution info
-        case openSubstitutionInfo
+        case openSubstitutionInfo // DH.TODO: delete //swiftlint:disable:this todo
         /// Dismiss substitution info
-        case dismissSubstitutionInfo
-        case showDirectAssignment
+        case dismissSubstitutionInfo // DH.TODO: delete //swiftlint:disable:this todo
         case errorBannerButtonPressed
         case openEmailClient(body: String)
+        case openUrlGesundBundDe
 
-        case setNavigation(tag: Route.Tag?)
+        case response(Response)
+        case delegate(Delegate)
+
+        case setNavigation(tag: Destinations.State.Tag?)
+        case destination(Destinations.Action)
+
+        enum Delegate: Equatable {
+            /// Closes the details page
+            case close
+        }
+
+        enum Response: Equatable {
+            /// When a new data matrix code was generated
+            case matrixCodeImageReceived(LoadingState<UIImage, LoadingImageError>)
+            /// When user chooses to not delete
+            case taskDeletedReceived(Result<Bool, ErxRepositoryError>)
+            /// Responds after save
+            case redeemedOnSavedReceived(Bool)
+        }
     }
 
-    struct Environment {
-        let schedulers: Schedulers
-        let taskRepository: ErxTaskRepository
-        let matrixCodeGenerator = DefaultErxTaskMatrixCodeGenerator(matrixCodeGenerator: ZXDataMatrixWriter())
-        let fhirDateFormatter: FHIRDateFormatter
-        let userSession: UserSession
-        var dateProvider: (() -> Date) = Date.init
+    @Dependency(\.schedulers) var schedulers: Schedulers
+    @Dependency(\.erxTaskRepository) var erxTaskRepository: ErxTaskRepository
+    @Dependency(\.erxTaskMatrixCodeGenerator) var matrixCodeGenerator: ErxTaskMatrixCodeGenerator
+    @Dependency(\.fhirDateFormatter) var fhirDateFormatter: FHIRDateFormatter
+    @Dependency(\.dateProvider) var dateProvider: () -> Date
+    @Dependency(\.uiDateFormatter) var uiDateFormatter
+    @Dependency(\.resourceHandler) var resourceHandler
+
+    var body: some ReducerProtocol<State, Action> {
+        Reduce(self.core)
+            .ifLet(\.destination, action: /Action.destination) {
+                Destinations()
+            }
     }
 
-    static let domainReducer = Reducer { state, action, environment in
-
+    // swiftlint:disable:next cyclomatic_complexity function_body_length
+    private func core(state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
-        case .close:
-            // Note: successful deletion is handled in parent reducer!
-            return cleanup()
-
         // Matrix Code
         case let .loadMatrixCodeImage(screenSize):
-            state.userActivity = environment.updateActivity(with: state.prescription.erxTask)
+            state.userActivity = updateActivity(with: state.prescription.erxTask)
 
-            return environment.matrixCodeGenerator.publishedMatrixCode(
+            return matrixCodeGenerator.publishedMatrixCode(
                 for: [state.prescription.erxTask],
-                with: environment.calcMatrixCodeSize(screenSize: screenSize)
+                with: calcMatrixCodeSize(screenSize: screenSize)
             )
             .mapError { _ in
                 LoadingImageError.matrixCodeGenerationFailed
             }
             .catchToLoadingStateEffect()
-            .map(PrescriptionDetailDomain.Action.matrixCodeImageReceived)
+            .map { Action.response(.matrixCodeImageReceived($0)) }
             .cancellable(id: Token.cancelMatrixCodeGeneration, cancelInFlight: true)
-            .receive(on: environment.schedulers.main)
+            .receive(on: schedulers.main)
             .eraseToEffect()
 
-        case let .matrixCodeImageReceived(loadingState):
+        case let .response(.matrixCodeImageReceived(loadingState)):
             state.loadingState = loadingState
             return .none
 
         // Delete
         // [REQ:gemSpec_eRp_FdV:A_19229]
         case .delete:
-            state.route = .alert(confirmDeleteAlertState)
+            state.destination = .alert(Self.confirmDeleteAlertState)
             return .none
         // [REQ:gemSpec_eRp_FdV:A_19229]
         case .confirmedDelete:
-            state.route = nil
+            state.destination = nil
             state.isDeleting = true
-            return environment.taskRepository.delete(erxTasks: [state.prescription.erxTask])
+            return erxTaskRepository.delete(erxTasks: [state.prescription.erxTask])
                 .first()
-                .receive(on: environment.schedulers.main)
+                .receive(on: schedulers.main)
                 .catchToEffect()
-                .map(Action.taskDeletedReceived)
+                .map { Action.response(.taskDeletedReceived($0)) }
                 .cancellable(id: Token.deleteErxTask)
-        case let .taskDeletedReceived(.failure(fail)):
+        case let .response(.taskDeletedReceived(.failure(fail))):
             state.isDeleting = false
             if fail == .remote(.fhirClientError(IDPError.tokenUnavailable)) {
-                state.route = .alert(missingTokenAlertState())
+                state.destination = .alert(Self.missingTokenAlertState())
             } else if case let ErxRepositoryError.remote(error) = fail,
                       let outcome = error.fhirClientOperationOutcome {
-                state.route = .alert(deleteFailedAlertState(error: error, localizedError: outcome))
+                state.destination = .alert(Self.deleteFailedAlertState(error: error, localizedError: outcome))
             } else {
                 state
-                    .route =
-                    .alert(deleteFailedAlertState(error: fail, localizedError: fail.localizedDescriptionWithErrorList))
+                    .destination =
+                    .alert(Self
+                        .deleteFailedAlertState(error: fail, localizedError: fail.localizedDescriptionWithErrorList))
             }
-            return cleanup()
-        case let .taskDeletedReceived(.success(success)):
+            return Self.cleanup()
+        case let .response(.taskDeletedReceived(.success(success))):
             state.isDeleting = false
             if success {
-                return Effect(value: .close)
+                return Effect(value: .delegate(.close))
             }
             return .none
 
         // Redeem
         case .toggleRedeemPrescription:
+            guard state.prescription.isManualRedeemEnabled else {
+                return .none
+            }
             state.isArchived.toggle()
             var erxTask = state.prescription.erxTask
             if state.isArchived {
-                let redeemedOn = environment.fhirDateFormatter.stringWithLongUTCTimeZone(
-                    from: environment.dateProvider()
+                let redeemedOn = fhirDateFormatter.stringWithLongUTCTimeZone(
+                    from: dateProvider()
                 )
                 erxTask.update(with: redeemedOn)
             } else {
                 erxTask.update(with: nil)
             }
             state.prescription = Prescription(erxTask: erxTask)
-            return environment.saveErxTasks(erxTasks: [erxTask])
-        case let .redeemedOnSavedReceived(success):
+            return saveErxTasks(erxTasks: [erxTask])
+        case let .response(.redeemedOnSavedReceived(success)):
             if !success {
                 state.isArchived.toggle()
             }
@@ -204,32 +214,90 @@ enum PrescriptionDetailDomain: Equatable {
         case .errorBannerButtonPressed:
             return .init(value: .openEmailClient(body: state.prescription.errorString))
         case let .openEmailClient(body):
-            state.route = nil
+            state.destination = nil
             guard let email = state.createReportEmail(body: body) else { return .none }
             if UIApplication.shared.canOpenURL(email) {
                 UIApplication.shared.open(email)
             }
             return .none
 
-        case .setNavigation(tag: .sharePrescription):
-            guard let url = state.prescription.erxTask.shareUrl() else { return .none }
+        case let .setNavigation(tag: tag):
+            switch tag {
+            case .sharePrescription:
+                guard let url = state.prescription.erxTask.shareUrl() else { return .none }
+                state.destination = .sharePrescription(url)
+            case .substitutionInfo:
+                state.destination = .substitutionInfo
+            case .directAssignmentInfo:
+                state.destination = .directAssignmentInfo
+            case .prescriptionValidityInfo:
+                let validity = PrescriptionValidity(
+                    authoredOnDate: uiDateFormatter.date(state.prescription.authoredOn),
+                    acceptUntilDate: uiDateFormatter.date(state.prescription.acceptedUntil),
+                    expiresOnDate: uiDateFormatter.date(state.prescription.expiresOn)
+                )
+                state.destination = .prescriptionValidityInfo(validity)
 
-            state.route = .sharePrescription(url)
+            case .errorInfo:
+                state.destination = .errorInfo
+            case .scannedPrescriptionInfo:
+                state.destination = .scannedPrescriptionInfo
+            case .coPaymentInfo:
+                guard let status = state.prescription.erxTask.medicationRequest.coPaymentStatus else { return .none }
+                let coPaymentState = Destinations.CoPaymentState(status: status)
+                state.destination = .coPaymentInfo(coPaymentState)
+            case .emergencyServiceFeeInfo:
+                state.destination = .emergencyServiceFeeInfo
+            case .none:
+                state.destination = nil
+            case .alert:
+                return .none
+            case .medication:
+                state.destination = .medication
+            case .patient:
+                guard let patient = state.prescription.patient else { return .none }
+                let patientState = Destinations.PatientState(patient: patient)
+                state.destination = .patient(patientState)
+            case .practitioner:
+                guard let practitioner = state.prescription.practitioner else { return .none }
+                let practitionerState = Destinations.PractitionerState(practitioner: practitioner)
+                state.destination = .practitioner(practitionerState)
+            case .organization:
+                guard let organization = state.prescription.organization else { return .none }
+                let organizationState = Destinations.OrganizationState(organization: organization)
+                state.destination = .organization(organizationState)
+            case .accidentInfo:
+                guard let accidentInfo = state.prescription.medicationRequest.accidentInfo else { return .none }
+                let accidentInfoState = Destinations.AccidentInfoState(accidentInfo: accidentInfo)
+                state.destination = .accidentInfo(accidentInfoState)
+            case .technicalInformations:
+                let techInfoState = Destinations.TechnicalInformationsState(
+                    taskId: state.prescription.erxTask.identifier,
+                    accessCode: state.prescription.accessCode
+                )
+                state.destination = .technicalInformations(techInfoState)
+            }
+
             return .none
-        case .setNavigation(tag: nil):
-            state.route = nil
+        case .openUrlGesundBundDe:
+            guard let url = URL(string: "https://gesund.bund.de"),
+                  resourceHandler.canOpenURL(url) else { return .none }
+
+            resourceHandler.open(url)
             return .none
-        case .setNavigation:
+        case .destination:
             return .none
-        case .showDirectAssignment:
-            state.route = .directAssignment
+        case .delegate:
             return .none
         }
     }
 
-    static let reducer: Reducer = .combine(
-        domainReducer
-    )
+    // DH.TODO: move to Destinations and rename into PrescriptionValidityState //swiftlint:disable:this todo
+    struct PrescriptionValidity: Equatable {
+        let authoredOnDate: String?
+        let acceptUntilDate: String?
+        let expiresOnDate: String?
+    }
 }
 
 extension PrescriptionDetailDomain {
@@ -270,7 +338,7 @@ extension RemoteStoreError {
     }
 }
 
-extension PrescriptionDetailDomain.Environment {
+extension PrescriptionDetailDomain {
     // TODO: Same func is in RedeemMatrixCodeDomain. swiftlint:disable:this todo
     // Maybe find a way to have only one implementation!
     /// Will calculate the size for the matrix code based on current screen size
@@ -283,11 +351,11 @@ extension PrescriptionDetailDomain.Environment {
 
     func saveErxTasks(erxTasks: [ErxTask])
         -> Effect<PrescriptionDetailDomain.Action, Never> {
-        taskRepository.save(erxTasks: erxTasks)
+        erxTaskRepository.save(erxTasks: erxTasks)
             .first()
             .receive(on: schedulers.main.animation())
             .replaceError(with: false)
-            .map(PrescriptionDetailDomain.Action.redeemedOnSavedReceived)
+            .map { PrescriptionDetailDomain.Action.response(.redeemedOnSavedReceived($0)) }
             .eraseToEffect()
             .cancellable(id: PrescriptionDetailDomain.Token.saveErxTask)
     }
@@ -306,7 +374,7 @@ extension ErxTask {
     }
 }
 
-extension PrescriptionDetailDomain.Environment {
+extension PrescriptionDetailDomain {
     func updateActivity(with task: ErxTask) -> NSUserActivity? {
         guard let url = task.shareUrl() else {
             return nil
@@ -329,19 +397,13 @@ extension PrescriptionDetailDomain {
             prescription: Prescription.Dummies.prescriptionReady,
             isArchived: false
         )
-        static let environment = Environment(
-            schedulers: Schedulers(),
-            taskRepository: demoSessionContainer.userSession.erxTaskRepository,
-            fhirDateFormatter: FHIRDateFormatter.shared,
-            userSession: DummySessionContainer()
-        )
+
         static let store = Store(initialState: state,
-                                 reducer: reducer,
-                                 environment: environment)
-        static func storeFor(_ state: State) -> Store {
+                                 reducer: PrescriptionDetailDomain())
+
+        static func storeFor(_ state: State) -> StoreOf<PrescriptionDetailDomain> {
             Store(initialState: state,
-                  reducer: PrescriptionDetailDomain.Reducer.empty,
-                  environment: environment)
+                  reducer: PrescriptionDetailDomain())
         }
     }
 }

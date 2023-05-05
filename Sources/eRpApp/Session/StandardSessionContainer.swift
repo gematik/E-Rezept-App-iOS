@@ -134,10 +134,6 @@ class StandardSessionContainer: UserSession {
         UserDefaultsStore()
     }()
 
-    lazy var hintEventsStore: EventsStore = {
-        HintEventsStore()
-    }()
-
     lazy var isAuthenticated: AnyPublisher<Bool, UserSessionError> = {
         idpSession.isLoggedIn
             .mapError { UserSessionError.idpError(error: $0) }
@@ -229,16 +225,9 @@ class StandardSessionContainer: UserSession {
         DefaultAVSSession(httpClient: avsHttpClient)
     }()
 
-    private lazy var defaultLoginHandler: DefaultLoginHandler = {
-        DefaultLoginHandler(
-            idpSession: idpSession,
-            signatureProvider: DefaultSecureEnclaveSignatureProvider(storage: secureUserStore)
-        )
-    }()
-
     private lazy var prescriptionRepositoryWithActivity: DefaultPrescriptionRepository = {
         DefaultPrescriptionRepository(
-            loginHandler: defaultLoginHandler,
+            loginHandler: idpSessionLoginHandler,
             erxTaskRepository: self.erxTaskRepository
         )
     }()
@@ -250,6 +239,34 @@ class StandardSessionContainer: UserSession {
     var activityIndicating: ActivityIndicating {
         prescriptionRepositoryWithActivity
     }
+
+    lazy var idpSessionLoginHandler: LoginHandler = {
+        DefaultLoginHandler(
+            idpSession: idpSession,
+            signatureProvider: secureEnclaveSignatureProvider
+        )
+    }()
+
+    lazy var biometricsIdpSessionLoginHandler: LoginHandler = {
+        DefaultLoginHandler(
+            idpSession: biometrieIdpSession,
+            signatureProvider: secureEnclaveSignatureProvider
+        )
+    }()
+
+    lazy var secureEnclaveSignatureProvider: SecureEnclaveSignatureProvider = {
+        #if ENABLE_DEBUG_VIEW && targetEnvironment(simulator)
+        // swiftlint:disable:next trailing_closure
+        DefaultSecureEnclaveSignatureProvider(
+            storage: secureUserStore,
+            privateKeyContainerProvider: { try PrivateKeyContainer.createFromKeyChain(with: $0) }
+        )
+        #else
+        DefaultSecureEnclaveSignatureProvider(
+            storage: secureUserStore
+        )
+        #endif
+    }()
 }
 
 extension IDPSession {

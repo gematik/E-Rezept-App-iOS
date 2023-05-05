@@ -23,21 +23,19 @@ import IDP
 import UIKit
 import ZXingObjC
 
-enum RedeemMethodsDomain {
-    typealias Store = ComposableArchitecture.Store<State, Action>
-    typealias Reducer = ComposableArchitecture.AnyReducer<State, Action, Environment>
+struct RedeemMethodsDomain: ReducerProtocol {
+    typealias Store = StoreOf<Self>
 
     /// Provides an Effect that need to run whenever the state of this Domain is reset to nil
-    static func cleanup<T>() -> Effect<T, Never> {
+    static func cleanup<T>() -> EffectTask<T> {
         Effect.concatenate(
-            RedeemMatrixCodeDomain.cleanup(),
-            PharmacySearchDomain.cleanup(),
-            Effect.cancel(id: Token.self)
+            cleanupSubDomains(),
+            EffectTask<T>.cancel(ids: Token.allCases)
         )
     }
 
-    static func cleanupSubviews<T>() -> Effect<T, Never> {
-        Effect.concatenate(
+    static func cleanupSubDomains<T>() -> EffectTask<T> {
+        .concatenate(
             RedeemMatrixCodeDomain.cleanup(),
             PharmacySearchDomain.cleanup()
         )
@@ -45,104 +43,93 @@ enum RedeemMethodsDomain {
 
     enum Token: CaseIterable, Hashable {}
 
-    enum Route: Equatable {
-        case matrixCode(RedeemMatrixCodeDomain.State)
-        case pharmacySearch(PharmacySearchDomain.State)
-    }
-
     struct State: Equatable {
         var erxTasks: [ErxTask]
-        var route: Route?
+        var destination: Destinations.State?
     }
 
     enum Action: Equatable {
-        case close
-        case redeemMatrixCodeAction(action: RedeemMatrixCodeDomain.Action)
-        case pharmacySearchAction(action: PharmacySearchDomain.Action)
-        case setNavigation(tag: Route.Tag?)
+        case closeButtonTapped
+        case destination(Destinations.Action)
+        case setNavigation(tag: Destinations.State.Tag?)
+        case delegate(Delegate)
+
+        enum Delegate: Equatable {
+            case close
+        }
     }
 
-    struct Environment {
-        let schedulers: Schedulers
-        let userSession: UserSession
-        let fhirDateFormatter: FHIRDateFormatter
-        let signatureProvider: SecureEnclaveSignatureProvider
-        let userSessionProvider: UserSessionProvider
-        let accessibilityAnnouncementReceiver: (String) -> Void
-    }
+    struct Destinations: ReducerProtocol {
+        enum State: Equatable {
+            case matrixCode(RedeemMatrixCodeDomain.State)
+            case pharmacySearch(PharmacySearchDomain.State)
+        }
 
-    static let reducer: Reducer = .combine(
-        redeemMatrixCodePullbackReducer,
-        pharmacySearchPullbackReducer,
-        redeemReducer
-    )
+        enum Action: Equatable {
+            case redeemMatrixCodeAction(action: RedeemMatrixCodeDomain.Action)
+            case pharmacySearchAction(action: PharmacySearchDomain.Action)
+        }
 
-    static let redeemReducer = Reducer { state, action, environment in
-        switch action {
-        case .close:
-            return .none
-        case .redeemMatrixCodeAction(.close):
-            state.route = nil
-            // Cleanup of child & running close action on parent reducer
-            return Effect.concatenate(
-                RedeemMatrixCodeDomain.cleanup(),
-                Effect(value: .close).delay(for: 0.1, scheduler: environment.schedulers.main).eraseToEffect()
-            )
-        case .redeemMatrixCodeAction(action:):
-            return .none
-        case .pharmacySearchAction(action: .close):
-            state.route = nil
-            return Effect.concatenate(
-                PharmacySearchDomain.cleanup(),
-                Effect(value: .close).delay(for: 0.1, scheduler: environment.schedulers.main).eraseToEffect()
-            )
-        case .pharmacySearchAction:
-            return .none
-        case let .setNavigation(tag: tag):
-            switch tag {
-            case .matrixCode:
-                state.route = .matrixCode(RedeemMatrixCodeDomain.State(erxTasks: state.erxTasks))
-            case .pharmacySearch:
-                state.route = .pharmacySearch(PharmacySearchDomain.State(erxTasks: state.erxTasks))
-            case .none:
-                state.route = nil
-                return cleanupSubviews()
+        var body: some ReducerProtocol<State, Action> {
+            Scope(
+                state: /State.matrixCode,
+                action: /Action.redeemMatrixCodeAction
+            ) {
+                RedeemMatrixCodeDomain()
             }
-            return .none
+            Scope(
+                state: /State.pharmacySearch,
+                action: /Action.pharmacySearchAction
+            ) {
+                PharmacySearchDomain(
+                    referenceDateForOpenHours: nil
+                )
+            }
         }
     }
 
-    static let redeemMatrixCodePullbackReducer: Reducer =
-        RedeemMatrixCodeDomain.reducer._pullback(
-            state: (\State.route).appending(path: /Route.matrixCode),
-            action: /Action.redeemMatrixCodeAction(action:)
-        ) { redeemEnv in
-            RedeemMatrixCodeDomain.Environment(
-                schedulers: redeemEnv.schedulers,
-                matrixCodeGenerator: DefaultErxTaskMatrixCodeGenerator(matrixCodeGenerator: ZXDataMatrixWriter()),
-                taskRepository: redeemEnv.userSession.erxTaskRepository,
-                fhirDateFormatter: redeemEnv.fhirDateFormatter
-            )
-        }
+    @Dependency(\.schedulers) var schedulers: Schedulers
 
-    static let pharmacySearchPullbackReducer: Reducer =
-        PharmacySearchDomain.reducer._pullback(
-            state: (\State.route).appending(path: /Route.pharmacySearch),
-            action: /RedeemMethodsDomain.Action.pharmacySearchAction(action:)
-        ) { environment in
-            PharmacySearchDomain.Environment(
-                schedulers: environment.schedulers,
-                pharmacyRepository: environment.userSession.pharmacyRepository,
-                fhirDateFormatter: environment.fhirDateFormatter,
-                openHoursCalculator: PharmacyOpenHoursCalculator(),
-                referenceDateForOpenHours: nil,
-                userSession: environment.userSession,
-                openURL: UIApplication.shared.open(_:options:completionHandler:),
-                signatureProvider: environment.signatureProvider,
-                accessibilityAnnouncementReceiver: environment.accessibilityAnnouncementReceiver,
-                userSessionProvider: environment.userSessionProvider
-            )
+    var body: some ReducerProtocol<State, Action> {
+        Reduce { state, action in
+            switch action {
+            case .closeButtonTapped:
+                return Effect(value: .delegate(.close))
+            case .destination(.redeemMatrixCodeAction(.closeButtonTapped)):
+                state.destination = nil
+                // Cleanup of child & running close action on parent reducer
+                return Effect.concatenate(
+                    RedeemMatrixCodeDomain.cleanup(),
+                    Effect(value: .delegate(.close)).delay(for: 0.1, scheduler: schedulers.main).eraseToEffect()
+                )
+            case let .destination(.pharmacySearchAction(action: .delegate(action))):
+                switch action {
+                case .close:
+                    state.destination = nil
+                    return Effect.concatenate(
+                        PharmacySearchDomain.cleanup(),
+                        Effect(value: .delegate(.close)).delay(for: 0.1, scheduler: schedulers.main).eraseToEffect()
+                    )
+                }
+            case let .setNavigation(tag: tag):
+                switch tag {
+                case .matrixCode:
+                    state.destination = .matrixCode(RedeemMatrixCodeDomain.State(erxTasks: state.erxTasks))
+                case .pharmacySearch:
+                    state.destination = .pharmacySearch(PharmacySearchDomain.State(erxTasks: state.erxTasks))
+                case .none:
+                    state.destination = nil
+                    return Self.cleanupSubDomains()
+                }
+                return .none
+            case .destination, .delegate:
+                return .none
+            }
         }
+        .ifLet(\.destination, action: /Action.destination) {
+            Destinations()
+        }
+    }
 }
 
 extension RedeemMethodsDomain {
@@ -150,20 +137,7 @@ extension RedeemMethodsDomain {
         static let state = State(
             erxTasks: ErxTask.Demo.erxTasks
         )
-        static let environment = Environment(
-            schedulers: Schedulers(),
-            userSession: DummySessionContainer(),
-            fhirDateFormatter: FHIRDateFormatter.shared,
-            signatureProvider: DummySecureEnclaveSignatureProvider(),
-            userSessionProvider: DummyUserSessionProvider()
-        ) { _ in }
-        static let store = Store(initialState: state,
-                                 reducer: reducer,
-                                 environment: environment)
-        static func storeFor(_ state: State) -> Store {
-            Store(initialState: state,
-                  reducer: RedeemMethodsDomain.Reducer.empty,
-                  environment: environment)
-        }
+
+        static let store = Store(initialState: state, reducer: RedeemMethodsDomain())
     }
 }

@@ -20,14 +20,14 @@ import Foundation
 import OpenSSL
 
 /// Represents all information needed for searching for pharmacies.
-public struct PharmacyLocation: Identifiable, Hashable, Equatable {
+public struct PharmacyLocation: Identifiable, Equatable {
     /// Pharmacy default initializer
     public init(
         id: String,
-        status: Status?,
+        status: Status? = nil,
         telematikID: String,
         created: Date = Date(),
-        name: String?,
+        name: String? = nil,
         types: [PharmacyType],
         position: Position? = nil,
         address: Address? = nil,
@@ -36,7 +36,7 @@ public struct PharmacyLocation: Identifiable, Hashable, Equatable {
         isFavorite: Bool = false,
         imagePath: String? = nil,
         countUsage: Int = 0,
-        hoursOfOperation: [HoursOfOperation],
+        hoursOfOperation: [HoursOfOperation] = [],
         avsEndpoints: AVSEndpoints? = nil,
         avsCertificates: [X509] = []
     ) {
@@ -228,22 +228,6 @@ public struct PharmacyLocation: Identifiable, Hashable, Equatable {
         lastUsed = pharmacy.lastUsed
         imagePath = pharmacy.imagePath
         countUsage = pharmacy.countUsage
-    }
-}
-
-extension PharmacyLocation: Comparable {
-    public static func <(lhs: PharmacyLocation, rhs: PharmacyLocation) -> Bool {
-        switch (lhs.name, rhs.name) {
-        case (nil, nil): return true
-        case (_, nil): return true
-        case (nil, _): return false
-        case let (.some(lhsValue), .some(rhsValue)):
-            return lhsValue < rhsValue
-        }
-    }
-
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(telematikID)
     }
 }
 

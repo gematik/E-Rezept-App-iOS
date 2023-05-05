@@ -1,4 +1,4 @@
-// Generated using Sourcery 1.9.0 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.0.1 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 
 import AVS
@@ -210,6 +210,127 @@ extension CardWallReadCardDomain.State.Error.InputError: CodedError {
     }
 }
 
+extension ChargeItemDomainServiceAuthenticateResult.Error: CodedError {
+    var erpErrorCode: String {
+        switch self {
+            case .loginHandler:
+                return "i-03101"
+            case .unexpected:
+                return "i-03102"
+        }
+    }
+    var erpErrorCodeList: [String] {
+        switch self {
+            case let .loginHandler(error):
+                return [erpErrorCode] + error.erpErrorCodeList
+            default:
+                return [erpErrorCode]
+        }
+    }
+}
+
+extension ChargeItemDomainServiceFetchResult.Error: CodedError {
+    var erpErrorCode: String {
+        switch self {
+            case .localStore:
+                return "i-03001"
+            case .loginHandler:
+                return "i-03002"
+            case .erxRepository:
+                return "i-03003"
+            case .unexpected:
+                return "i-03004"
+        }
+    }
+    var erpErrorCodeList: [String] {
+        switch self {
+            case let .localStore(error):
+                return [erpErrorCode] + error.erpErrorCodeList
+            case let .loginHandler(error):
+                return [erpErrorCode] + error.erpErrorCodeList
+            case let .erxRepository(error):
+                return [erpErrorCode] + error.erpErrorCodeList
+            default:
+                return [erpErrorCode]
+        }
+    }
+}
+
+extension ChargeItemsDomainServiceDeleteResult.Error: CodedError {
+    var erpErrorCode: String {
+        switch self {
+            case .localStore:
+                return "i-03401"
+            case .unexpected:
+                return "i-03402"
+        }
+    }
+    var erpErrorCodeList: [String] {
+        switch self {
+            case let .localStore(error):
+                return [erpErrorCode] + error.erpErrorCodeList
+            default:
+                return [erpErrorCode]
+        }
+    }
+}
+
+extension ChargeItemsDomainServiceGrantResult.Error: CodedError {
+    var erpErrorCode: String {
+        switch self {
+            case .localStore:
+                return "i-03201"
+            case .loginHandler:
+                return "i-03202"
+            case .erxRepository:
+                return "i-03203"
+            case .unexpectedGrantConsentResponse:
+                return "i-03204"
+            case .unexpected:
+                return "i-03205"
+        }
+    }
+    var erpErrorCodeList: [String] {
+        switch self {
+            case let .localStore(error):
+                return [erpErrorCode] + error.erpErrorCodeList
+            case let .loginHandler(error):
+                return [erpErrorCode] + error.erpErrorCodeList
+            case let .erxRepository(error):
+                return [erpErrorCode] + error.erpErrorCodeList
+            default:
+                return [erpErrorCode]
+        }
+    }
+}
+
+extension ChargeItemsDomainServiceRevokeResult.Error: CodedError {
+    var erpErrorCode: String {
+        switch self {
+            case .localStore:
+                return "i-03301"
+            case .loginHandler:
+                return "i-03302"
+            case .erxRepository:
+                return "i-03303"
+            case .unexpected:
+                return "i-03304"
+        }
+    }
+    var erpErrorCodeList: [String] {
+        switch self {
+            case let .localStore(error):
+                return [erpErrorCode] + error.erpErrorCodeList
+            case let .loginHandler(error):
+                return [erpErrorCode] + error.erpErrorCodeList
+            case let .erxRepository(error):
+                return [erpErrorCode] + error.erpErrorCodeList
+            default:
+                return [erpErrorCode]
+        }
+    }
+}
+
 extension ConversionError: CodedError {
     var erpErrorCode: String {
         switch self {
@@ -272,6 +393,25 @@ extension DemoError: CodedError {
     }
 }
 
+extension ErxConsent.Error: CodedError {
+    var erpErrorCode: String {
+        switch self {
+            case .unableToConstructConsentRequest:
+                return "i-20601"
+            case .invalidErxConsentInput:
+                return "i-20602"
+        }
+    }
+    var erpErrorCodeList: [String] {
+        switch self {
+            case .invalidErxConsentInput:
+                return [erpErrorCode]
+            default:
+                return [erpErrorCode]
+        }
+    }
+}
+
 extension ErxRepositoryError: CodedError {
     var erpErrorCode: String {
         switch self {
@@ -326,7 +466,7 @@ extension ErxTaskOrder.Error: CodedError {
             case .unableToConstructCommunicationRequest:
                 return "i-20601"
             case .invalidErxTaskOrderInput:
-                return "i-20601"
+                return "i-20602"
         }
     }
     var erpErrorCodeList: [String] {

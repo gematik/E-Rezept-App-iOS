@@ -31,7 +31,7 @@ struct CardWallExtAuthSelectionView: View {
     }
 
     struct ViewState: Equatable {
-        let routeTag: CardWallExtAuthSelectionDomain.Route.Tag?
+        let routeTag: CardWallExtAuthSelectionDomain.Destinations.State.Tag?
         let error: IDPError?
         let kkList: KKAppDirectory?
         let selectedKK: KKAppDirectory.Entry?
@@ -39,7 +39,7 @@ struct CardWallExtAuthSelectionView: View {
         var searchText: String
 
         init(state: CardWallExtAuthSelectionDomain.State) {
-            routeTag = state.route?.tag
+            routeTag = state.destination?.tag
             error = state.error
             kkList = state.kkList
             selectedKK = state.selectedKK
@@ -166,11 +166,9 @@ struct CardWallExtAuthSelectionView: View {
                     )) {
                         NavigationView {
                             IfLetStore(
-                                store.scope(
-                                    state: (\CardWallExtAuthSelectionDomain.State.route)
-                                        .appending(path: /CardWallExtAuthSelectionDomain.Route.egk)
-                                        .extract(from:),
-                                    action: CardWallExtAuthSelectionDomain.Action.egkAction(action:)
+                                store.destinationsScope(
+                                    state: /(CardWallExtAuthSelectionDomain.Destinations.State.egk),
+                                    action: CardWallExtAuthSelectionDomain.Destinations.Action.egkAction(action:)
                                 ),
                                 then: OrderHealthCardView.init(store:)
                             )
@@ -182,15 +180,13 @@ struct CardWallExtAuthSelectionView: View {
 
             NavigationLink(
                 destination: IfLetStore(
-                    store.scope(
-                        state: (\CardWallExtAuthSelectionDomain.State.route)
-                            .appending(path: /CardWallExtAuthSelectionDomain.Route.confirmation)
-                            .extract(from:),
-                        action: CardWallExtAuthSelectionDomain.Action.confirmation
+                    store.destinationsScope(
+                        state: /(CardWallExtAuthSelectionDomain.Destinations.State.confirmation),
+                        action: CardWallExtAuthSelectionDomain.Destinations.Action.confirmation
                     ),
                     then: CardWallExtAuthConfirmationView.init
                 ),
-                tag: CardWallExtAuthSelectionDomain.Route.Tag.confirmation,
+                tag: CardWallExtAuthSelectionDomain.Destinations.State.Tag.confirmation,
                 selection: viewStore.binding(
                     get: \.routeTag
                 ) {
@@ -200,7 +196,7 @@ struct CardWallExtAuthSelectionView: View {
         }
         .navigationBarItems(
             trailing: NavigationBarCloseItem {
-                viewStore.send(.close)
+                viewStore.send(.delegate(.close))
             }
             .accessibility(identifier: A11y.cardWall.extAuthSelection.cdwBtnExtauthSelectionCancel)
             .accessibility(label: Text(L10n.cdwBtnExtauthSelectionCancel))
@@ -291,16 +287,12 @@ struct CardWallExtAuthSelectionView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
             CardWallExtAuthSelectionView(store: CardWallExtAuthSelectionDomain.Store(
-                initialState:
-                .init(kkList: .init(apps: [
-                    //                    .init(name: "Gematik KK", identifier: "abc"),
-//                    .init(name: "Other KK", identifier: "def"),
-//                    .init(name: "Yet Another KK", identifier: "ghi"),
-                ]),
-                error: nil,
-                selectedKK: .init(name: "Other KK", identifier: "def")),
-                reducer: .empty,
-                environment: CardWallExtAuthSelectionDomain.Dummies.environment
+                initialState: .init(
+                    kkList: .init(apps: []),
+                    error: nil,
+                    selectedKK: .init(name: "Other KK", identifier: "def")
+                ),
+                reducer: CardWallExtAuthSelectionDomain()
             ))
         }
     }

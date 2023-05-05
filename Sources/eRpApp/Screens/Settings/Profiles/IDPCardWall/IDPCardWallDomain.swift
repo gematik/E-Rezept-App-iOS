@@ -21,14 +21,13 @@ import ComposableArchitecture
 import IDP
 import UIKit
 
-enum IDPCardWallDomain {
-    typealias Store = ComposableArchitecture.Store<State, Action>
-    typealias Reducer = ComposableArchitecture.AnyReducer<State, Action, Environment>
+struct IDPCardWallDomain: ReducerProtocol {
+    typealias Store = StoreOf<Self>
 
-    static func cleanup<T>() -> Effect<T, Never> {
+    static func cleanup<T>() -> EffectTask<T> {
         .concatenate(
-            Effect.cancel(id: Token.self),
-            CardWallReadCardDomain.cleanup()
+            CardWallReadCardDomain.cleanup(),
+            EffectTask<T>.cancel(ids: Token.allCases)
         )
     }
 
@@ -51,34 +50,45 @@ enum IDPCardWallDomain {
         case pinAction(action: CardWallPINDomain.Action)
         case readCard(action: CardWallReadCardDomain.Action)
 
-        case finished
-        case close
+        case delegate(Delegate)
+
+        enum Delegate: Equatable {
+            case finished
+            case close
+        }
     }
 
-    struct Environment {
-        let schedulers: Schedulers
-        let userSession: UserSession
-        let userSessionProvider: UserSessionProvider
-        let secureEnclaveSignatureProvider: SecureEnclaveSignatureProvider
-        let nfcSignatureProvider: NFCSignatureProvider
-        var sessionProvider: ProfileBasedSessionProvider
-        let accessibilityAnnouncementReceiver: (String) -> Void
-    }
+    @Dependency(\.schedulers) var schedulers: Schedulers
+    @Dependency(\.userSession) var userSession: UserSession
 
     static var dismissTimeout: DispatchQueue.SchedulerTimeType.Stride = 0.5
 
-    static let domainReducer = Reducer { state, action, environment in
+    var body: some ReducerProtocol<State, Action> {
+        Scope(state: \State.pin, action: /Action.pinAction(action:)) {
+            CardWallPINDomain()
+        }
+
+        Reduce(core)
+            .ifLet(\State.can, action: /Action.canAction(action:)) {
+                CardWallCANDomain()
+            }
+            .ifLet(\State.readCard, action: /Action.readCard(action:)) {
+                CardWallReadCardDomain()
+            }
+    }
+
+    func core(into state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
         case .pinAction(action: .advance(.fullScreenCover)):
             state.readCard = CardWallReadCardDomain.State(
-                isDemoModus: environment.userSession.isDemoMode,
+                isDemoModus: userSession.isDemoMode,
                 profileId: state.profileId,
                 pin: state.pin.pin,
                 loginOption: .withoutBiometry,
                 output: .idle
             )
             return .none
-        case .readCard(action: .wrongCAN):
+        case .readCard(action: .delegate(.wrongCAN)):
             if state.can == nil {
                 state.can = CardWallCANDomain.State(
                     isDemoModus: false,
@@ -87,80 +97,29 @@ enum IDPCardWallDomain {
                 )
             }
             state.can?.wrongCANEntered = true
-            state.pin.route = nil
-            state.can?.route = nil
+            state.pin.destination = nil
+            state.can?.destination = nil
             return .none
-        case .readCard(action: .wrongPIN):
+        case .readCard(action: .delegate(.wrongPIN)):
             state.pin.wrongPinEntered = true
-            state.pin.route = nil
+            state.pin.destination = nil
             return .none
-        case .canAction(action: .close),
-             .pinAction(action: .close):
+        case .canAction(action: .delegate(.close)),
+             .pinAction(action: .delegate(.close)):
             // closing a subscreen should close the whole stack -> forward to generic `.close`
-            return Effect(value: .close)
-        case .readCard(action: .close):
-            state.pin.route = nil
-            return Effect(value: .finished)
-                .delay(for: dismissTimeout, scheduler: environment.schedulers.main)
+            return Effect(value: .delegate(.close))
+        case .readCard(action: .delegate(.close)):
+            state.pin.destination = nil
+            return Effect(value: .delegate(.finished))
+                .delay(for: Self.dismissTimeout, scheduler: schedulers.main)
                 .eraseToEffect()
-        case .close,
-             .finished,
+        case .delegate,
              .canAction,
              .pinAction,
              .readCard:
             return .none
         }
     }
-
-    static let canPullbackReducer: Reducer =
-        CardWallCANDomain.reducer.optional().pullback(
-            state: \.can,
-            action: /Action.canAction(action:)
-        ) {
-            .init(
-                sessionProvider: $0.sessionProvider,
-                signatureProvider: $0.secureEnclaveSignatureProvider,
-                userSession: $0.userSession,
-                accessibilityAnnouncementReceiver: $0.accessibilityAnnouncementReceiver,
-                schedulers: $0.schedulers
-            )
-        }
-
-    static let pinPullbackReducer: Reducer =
-        CardWallPINDomain.reducer.pullback(
-            state: \.pin,
-            action: /Action.pinAction(action:)
-        ) {
-            .init(
-                userSession: $0.userSession,
-                schedulers: $0.schedulers,
-                sessionProvider: $0.sessionProvider,
-                signatureProvider: $0.secureEnclaveSignatureProvider,
-                accessibilityAnnouncementReceiver: $0.accessibilityAnnouncementReceiver
-            )
-        }
-
-    static let readCardPullbackReducer: Reducer =
-        CardWallReadCardDomain.reducer.optional().pullback(
-            state: \.readCard,
-            action: /Action.readCard(action:)
-        ) {
-            .init(
-                schedulers: $0.schedulers,
-                profileDataStore: $0.userSession.profileDataStore,
-                signatureProvider: $0.secureEnclaveSignatureProvider,
-                sessionProvider: $0.sessionProvider,
-                nfcSessionProvider: $0.userSession.nfcSessionProvider,
-                application: UIApplication.shared
-            )
-        }
-
-    static let reducer: Reducer = .combine(
-        readCardPullbackReducer,
-        pinPullbackReducer,
-        canPullbackReducer,
-        domainReducer
-    )
 }
 
 extension IDPCardWallDomain {
@@ -171,17 +130,7 @@ extension IDPCardWallDomain {
             pin: CardWallPINDomain.State(isDemoModus: false, pin: "", transition: .fullScreenCover)
         )
 
-        static let environment = Environment(
-            schedulers: Schedulers(),
-            userSession: DummySessionContainer(),
-            userSessionProvider: DummyUserSessionProvider(),
-            secureEnclaveSignatureProvider: DummySecureEnclaveSignatureProvider(),
-            nfcSignatureProvider: DemoSignatureProvider(),
-            sessionProvider: DummyProfileBasedSessionProvider()
-        ) { _ in }
-
         static let store = Store(initialState: state,
-                                 reducer: reducer,
-                                 environment: environment)
+                                 reducer: IDPCardWallDomain())
     }
 }

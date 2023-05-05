@@ -17,6 +17,7 @@
 //
 
 import CombineSchedulers
+import ComposableArchitecture
 @testable import eRpApp
 import eRpKit
 @testable import eRpLocalStorage
@@ -30,19 +31,11 @@ final class SettingsViewSnapshotTests: XCTestCase {
         diffTool = "open"
     }
 
-    let debugStore = DebugDomain.Store(initialState: DebugDomain.State(trackingOptIn: true),
-                                       reducer: .empty,
-                                       environment: DebugDomain.Environment(
-                                           schedulers: Schedulers(),
-                                           userSession: DummySessionContainer(),
-                                           localUserStore: MockUserDataStore(),
-                                           tracker: DummyTracker(),
-                                           serverEnvironmentConfiguration: nil,
-                                           signatureProvider: DummySecureEnclaveSignatureProvider(),
-                                           serviceLocatorDebugAccess: ServiceLocatorDebugAccess(
-                                               serviceLocator: ServiceLocator()
-                                           )
-                                       ))
+    let debugStore = DebugDomain.Store(
+        initialState: DebugDomain.State(trackingOptIn: true),
+        reducer: DebugDomain()
+    )
+
     let appVersion = AppVersion(productVersion: "1.0", buildNumber: "LOCAL BUILD", buildHash: "LOCAL BUILD")
 
     func testSettingsFigmaVariant1() {
@@ -50,7 +43,8 @@ final class SettingsViewSnapshotTests: XCTestCase {
             UserProfile(
                 from: Profile(
                     name: "Dennis Weihnachtsgans",
-                    color: Profile.Color.blue
+                    color: Profile.Color.blue,
+                    image: .doctor
                 ),
                 isAuthenticated: true
             ),
@@ -58,7 +52,7 @@ final class SettingsViewSnapshotTests: XCTestCase {
                 from: Profile(
                     name: "Merry Martin",
                     color: Profile.Color.green,
-                    emoji: "🎄"
+                    image: .baby
                 ),
                 isAuthenticated: false
             ),
@@ -66,7 +60,7 @@ final class SettingsViewSnapshotTests: XCTestCase {
                 from: Profile(
                     name: "Schneebartz van Eltz",
                     color: Profile.Color.red,
-                    emoji: "⛄️",
+                    image: .boyWithCard,
                     lastAuthenticated: Date().addingTimeInterval(-60 * 60 * 24 * 32)
                 ),
                 isAuthenticated: false
@@ -81,8 +75,7 @@ final class SettingsViewSnapshotTests: XCTestCase {
                 appVersion: AppVersion(productVersion: "1.0.1", buildNumber: "12", buildHash: "3130b2e"),
                 trackerOptIn: true
             ),
-            reducer: SettingsDomain.Reducer.empty,
-            environment: SettingsDomain.Dummies.environment
+            reducer: EmptyReducer()
         ))
             .frame(width: 375, height: 2589, alignment: .center)
 
@@ -109,8 +102,7 @@ final class SettingsViewSnapshotTests: XCTestCase {
                 appVersion: AppVersion(productVersion: "1.0.1", buildNumber: "12", buildHash: "3130b2e"),
                 trackerOptIn: true
             ),
-            reducer: SettingsDomain.Reducer.empty,
-            environment: SettingsDomain.Dummies.environment
+            reducer: EmptyReducer()
         ))
             .frame(width: 375, height: 2589, alignment: .center)
 
@@ -123,8 +115,7 @@ final class SettingsViewSnapshotTests: XCTestCase {
                 withAvailableSecurityOptions: [.biometry(.faceID)],
                 andSelectedSecurityOption: nil
             ),
-            reducer: SettingsDomain.Reducer.empty,
-            environment: SettingsDomain.Dummies.environment
+            reducer: EmptyReducer()
         ))
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
@@ -137,8 +128,7 @@ final class SettingsViewSnapshotTests: XCTestCase {
                 withAvailableSecurityOptions: [.biometry(.faceID)],
                 andSelectedSecurityOption: .biometry(.faceID)
             ),
-            reducer: SettingsDomain.Reducer.empty,
-            environment: SettingsDomain.Dummies.environment
+            reducer: EmptyReducer()
         ))
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
@@ -151,8 +141,7 @@ final class SettingsViewSnapshotTests: XCTestCase {
                 withAvailableSecurityOptions: [.biometry(.faceID)],
                 andSelectedSecurityOption: .unsecured
             ),
-            reducer: SettingsDomain.Reducer.empty,
-            environment: SettingsDomain.Dummies.environment
+            reducer: EmptyReducer()
         ))
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
@@ -165,8 +154,7 @@ final class SettingsViewSnapshotTests: XCTestCase {
                 withAvailableSecurityOptions: [],
                 andSelectedSecurityOption: nil
             ),
-            reducer: SettingsDomain.Reducer.empty,
-            environment: SettingsDomain.Dummies.environment
+            reducer: EmptyReducer()
         ))
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
@@ -179,8 +167,7 @@ final class SettingsViewSnapshotTests: XCTestCase {
                 withAvailableSecurityOptions: [],
                 andSelectedSecurityOption: .unsecured
             ),
-            reducer: SettingsDomain.Reducer.empty,
-            environment: SettingsDomain.Dummies.environment
+            reducer: EmptyReducer()
         ))
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
@@ -193,8 +180,7 @@ final class SettingsViewSnapshotTests: XCTestCase {
                 withAvailableSecurityOptions: [.biometry(.faceID), .password],
                 andSelectedSecurityOption: nil
             ),
-            reducer: SettingsDomain.Reducer.empty,
-            environment: SettingsDomain.Dummies.environment
+            reducer: EmptyReducer()
         ))
             .frame(width: 320, height: 2000)
 
@@ -213,8 +199,7 @@ final class SettingsViewSnapshotTests: XCTestCase {
                                                        selectedSecurityOption: nil
                                                    ),
                                                appVersion: appVersion),
-            reducer: SettingsDomain.Reducer.empty,
-            environment: SettingsDomain.Dummies.environment
+            reducer: EmptyReducer()
         ))
             .frame(width: 320, height: 2000)
 
@@ -226,10 +211,9 @@ final class SettingsViewSnapshotTests: XCTestCase {
             initialState: SettingsDomain.State(
                 isDemoMode: false,
                 appSecurityState: AppSecurityDomain.State(availableSecurityOptions: [.password]),
-                route: .complyTracking
+                destination: .complyTracking
             ),
-            reducer: SettingsDomain.Reducer.empty,
-            environment: SettingsDomain.Dummies.environment
+            reducer: EmptyReducer()
         ))
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
     }

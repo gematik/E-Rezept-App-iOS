@@ -18,12 +18,11 @@
 
 import ComposableArchitecture
 
-enum ProfileSelectionToolbarItemDomain {
-    typealias Store = ComposableArchitecture.Store<State, Action>
-    typealias Reducer = ComposableArchitecture.AnyReducer<State, Action, Environment>
+struct ProfileSelectionToolbarItemDomain: ReducerProtocol {
+    typealias Store = StoreOf<Self>
 
-    static func cleanup<T>() -> Effect<T, Never> {
-        Effect.cancel(id: Token.self)
+    static func cleanup<T>() -> EffectTask<T> {
+        EffectTask<T>.cancel(ids: Token.allCases)
     }
 
     enum Token: CaseIterable, Hashable {
@@ -42,41 +41,40 @@ enum ProfileSelectionToolbarItemDomain {
         var profileSelectionState: ProfileSelectionDomain.State = .init()
     }
 
-    typealias Environment = ProfileSelectionDomain.Environment
+    @Dependency(\.schedulers) var schedulers: Schedulers
+    @Dependency(\.userProfileService) var userProfileService: UserProfileService
 
-    static let reducer: Reducer = .combine(
-        profileSelectionReducer,
-        domainReducer
-    )
+    var body: some ReducerProtocol<State, Action> {
+        Scope(
+            state: \.profileSelectionState,
+            action: /ProfileSelectionToolbarItemDomain.Action.profileSelection(action:)
+        ) {
+            ProfileSelectionDomain()
+        }
 
-    static let domainReducer = Reducer { state, action, environment in
+        Reduce(core)
+    }
+
+    func core(into state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
         case .profileSelection:
             return .none
         case .unregisterProfileListener:
             return .cancel(id: Token.profileUpdates)
         case .registerProfileListener:
-            return environment.userProfileService.activeUserProfilePublisher()
+            return userProfileService.activeUserProfilePublisher()
                 .catchToEffect()
                 .map(Action.profileReceived)
                 .cancellable(id: Token.profileUpdates, cancelInFlight: true)
-                .receive(on: environment.schedulers.main)
+                .receive(on: schedulers.main)
                 .eraseToEffect()
-        case let .profileReceived(.failure(error)):
+        case .profileReceived(.failure):
             return .none
         case let .profileReceived(.success(profile)):
             state.profile = profile
             return .none
         }
     }
-
-    private static let profileSelectionReducer: Reducer =
-        ProfileSelectionDomain.reducer.pullback(
-            state: \.profileSelectionState,
-            action: /ProfileSelectionToolbarItemDomain.Action.profileSelection(action:)
-        ) {
-            $0
-        }
 }
 
 extension ProfileSelectionToolbarItemDomain {
@@ -86,14 +84,11 @@ extension ProfileSelectionToolbarItemDomain {
             profileSelectionState: .init(
                 profiles: [],
                 selectedProfileId: nil,
-                route: nil
+                destination: nil
             )
         )
 
-        static let environment = ProfileSelectionDomain.Dummies.environment
-
         static let store = Store(initialState: state,
-                                 reducer: reducer,
-                                 environment: environment)
+                                 reducer: EmptyReducer())
     }
 }

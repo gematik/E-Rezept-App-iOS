@@ -17,6 +17,7 @@
 //
 
 import Combine
+import Dependencies
 import eRpKit
 import LocalAuthentication
 
@@ -223,3 +224,22 @@ private let filesToCheck = [
     "/usr/lib/libcycript.dylib",
     "/var/log/syslog",
 ]
+
+// MARK: TCA Dependency
+
+struct DeviceSecurityManagerDependency: DependencyKey {
+    static var liveValue: DeviceSecurityManager = DefaultDeviceSecurityManager(
+        userDataStore: UserDataStoreDependency.liveValue
+    )
+
+    static var previewValue: DeviceSecurityManager = DummyDeviceSecurityManager()
+
+    static var testValue: DeviceSecurityManager = UnimplementedDeviceSecurityManager()
+}
+
+extension DependencyValues {
+    var deviceSecurityManager: DeviceSecurityManager {
+        get { self[DeviceSecurityManagerDependency.self] }
+        set { self[DeviceSecurityManagerDependency.self] = newValue }
+    }
+}

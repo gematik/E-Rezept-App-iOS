@@ -50,7 +50,7 @@ struct RedeemSuccessView: View {
 
                     LoadingPrimaryButton(text: L10n.rdmSccBtnReturnToMain,
                                          isLoading: false) {
-                        viewStore.send(.close)
+                        viewStore.send(.closeButtonTapped)
                     }
                     .accessibility(identifier: A11y.pharmacyRedeem.phaRedeemBtnRedeem)
                 }

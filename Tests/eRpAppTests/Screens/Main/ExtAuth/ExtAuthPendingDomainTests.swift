@@ -31,15 +31,14 @@ final class ExtAuthPendingDomainTests: XCTestCase {
         ExtAuthPendingDomain.Action,
         ExtAuthPendingDomain.State,
         ExtAuthPendingDomain.Action,
-        ExtAuthPendingDomain.Environment
+        Void
     >
 
     var idpSessionMock: IDPSessionMock!
     var extAuthRequestStorageMock: ExtAuthRequestStorageMock!
     lazy var testProfile = { Profile(name: "TestProfile") }()
     var mockProfileValidator: AnyPublisher<IDTokenValidator, IDTokenValidatorError>!
-    var mockCurrentProfile: AnyPublisher<Profile, LocalStoreError>!
-    var mockProfileDataStore = MockProfileDataStore()
+    var mockProfileDataStore: MockProfileDataStore!
     let uiScheduler = DispatchQueue.test
     lazy var schedulers: Schedulers = {
         Schedulers(
@@ -55,24 +54,31 @@ final class ExtAuthPendingDomainTests: XCTestCase {
 
         idpSessionMock = IDPSessionMock()
         extAuthRequestStorageMock = ExtAuthRequestStorageMock()
+        mockProfileDataStore = MockProfileDataStore()
     }
 
     func testStore(for state: ExtAuthPendingDomain.State) -> TestStore {
+        let mockUserSession = MockUserSession()
+        mockUserSession.profileId = testProfile.id
+        mockUserSession.profileDataStore = mockProfileDataStore
+        mockUserSession.profileReturnValue = Just(testProfile).setFailureType(to: LocalStoreError.self)
+            .eraseToAnyPublisher()
         mockProfileValidator = Just(
             ProfileValidator(currentProfile: testProfile, otherProfiles: [testProfile])
         ).setFailureType(to: IDTokenValidatorError.self).eraseToAnyPublisher()
-        mockCurrentProfile = Just(testProfile).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
+        mockProfileDataStore.listAllProfilesReturnValue = Just([testProfile])
+            .setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
 
         return TestStore(
             initialState: state,
-            reducer: ExtAuthPendingDomain.reducer,
-            environment: .init(idpSession: idpSessionMock,
-                               schedulers: schedulers,
-                               currentProfile: mockCurrentProfile,
-                               idTokenValidator: mockProfileValidator,
-                               profileDataStore: mockProfileDataStore,
-                               extAuthRequestStorage: extAuthRequestStorageMock)
-        )
+            reducer: ExtAuthPendingDomain()
+        ) { dependencies in
+            dependencies.schedulers = schedulers
+            dependencies.idpSession = idpSessionMock
+            dependencies.profileDataStore = mockUserSession.profileDataStore
+            dependencies.extAuthRequestStorage = extAuthRequestStorageMock
+            dependencies.userSession = mockUserSession
+        }
     }
 
     func testStore()
@@ -86,7 +92,7 @@ final class ExtAuthPendingDomainTests: XCTestCase {
 
         sut.send(.registerListener)
         uiScheduler.run()
-        sut.receive(.pendingExtAuthRequestsReceived([])) { state in
+        sut.receive(.response(.pendingExtAuthRequestsReceived([]))) { state in
             state = .empty
         }
     }
@@ -101,7 +107,7 @@ final class ExtAuthPendingDomainTests: XCTestCase {
 
         sut.send(.registerListener)
         uiScheduler.run()
-        sut.receive(.pendingExtAuthRequestsReceived([session])) { state in
+        sut.receive(.response(.pendingExtAuthRequestsReceived([session]))) { state in
             state = .pendingExtAuth(healthInsurance)
         }
     }
@@ -119,7 +125,7 @@ final class ExtAuthPendingDomainTests: XCTestCase {
 
         sut.send(.registerListener)
         uiScheduler.run()
-        sut.receive(.pendingExtAuthRequestsReceived([session])) { state in
+        sut.receive(.response(.pendingExtAuthRequestsReceived([session]))) { state in
             state = .pendingExtAuth(healthInsurance)
         }
         let urlFixture = URL(string: "https://dummy.gematik.de")!
@@ -133,7 +139,7 @@ final class ExtAuthPendingDomainTests: XCTestCase {
             state = .extAuthReceived(healthInsurance)
         }
         uiScheduler.run()
-        sut.receive(.externalLoginReceived(.success(IDPSessionMock.fixtureIDPToken))) { state in
+        sut.receive(.response(.externalLoginReceived(.success(IDPSessionMock.fixtureIDPToken)))) { state in
             state = .extAuthSuccessful(healthInsurance)
         }
         uiScheduler.run()
@@ -155,7 +161,7 @@ final class ExtAuthPendingDomainTests: XCTestCase {
 
         sut.send(.registerListener)
         uiScheduler.run()
-        sut.receive(.pendingExtAuthRequestsReceived([session])) { state in
+        sut.receive(.response(.pendingExtAuthRequestsReceived([session]))) { state in
             state = .pendingExtAuth(healthInsurance)
         }
         let urlFixture = URL(string: "https://dummy.gematik.de?state=hallo")!
@@ -172,7 +178,7 @@ final class ExtAuthPendingDomainTests: XCTestCase {
             state = .extAuthReceived(requestingKK)
         }
         uiScheduler.run()
-        sut.receive(.externalLoginReceived(.success(IDPSessionMock.fixtureIDPToken))) { state in
+        sut.receive(.response(.externalLoginReceived(.success(IDPSessionMock.fixtureIDPToken)))) { state in
             state = .extAuthSuccessful(requestingKK)
         }
         uiScheduler.advance(by: .seconds(2.1))
@@ -191,7 +197,7 @@ final class ExtAuthPendingDomainTests: XCTestCase {
 
         sut.send(.registerListener)
         uiScheduler.run()
-        sut.receive(.pendingExtAuthRequestsReceived([session])) { state in
+        sut.receive(.response(.pendingExtAuthRequestsReceived([session]))) { state in
             state = .pendingExtAuth(healthInsurance)
         }
         let urlFixture = URL(string: "https://dummy.gematik.de")!
@@ -203,16 +209,18 @@ final class ExtAuthPendingDomainTests: XCTestCase {
             state = .extAuthReceived(healthInsurance)
         }
         uiScheduler.run()
-        sut.receive(.externalLoginReceived(.failure(.idpError(.extAuthOriginalRequestMissing, urlFixture)))) { state in
-            state = .extAuthFailed(
-                ExtAuthPendingDomain.alertState(
-                    title: healthInsurance.name,
-                    message: "Error while processing external authentication: original request not found.\n\nFehlernummern: \ni-10019",
-                    // swiftlint:disable:previous line_length
-                    url: urlFixture
+        sut
+            .receive(.response(.externalLoginReceived(.failure(.idpError(.extAuthOriginalRequestMissing,
+                                                                         urlFixture))))) { state in
+                state = .extAuthFailed(
+                    ExtAuthPendingDomain.alertState(
+                        title: healthInsurance.name,
+                        message: "Error while processing external authentication: original request not found.\n\nFehlernummern: \ni-10019",
+                        // swiftlint:disable:previous line_length
+                        url: urlFixture
+                    )
                 )
-            )
-        }
+            }
     }
 
     func testCancelPendingRequestsRemovesCorrectly() {
@@ -231,7 +239,7 @@ final class ExtAuthPendingDomainTests: XCTestCase {
             .eraseToAnyPublisher()
         sut.send(.registerListener)
         uiScheduler.run()
-        sut.receive(.pendingExtAuthRequestsReceived(pendingRequests))
+        sut.receive(.response(.pendingExtAuthRequestsReceived(pendingRequests)))
         expect(self.extAuthRequestStorageMock.resetCalled).to(beFalse())
         sut.send(.cancelAllPendingRequests) { state in
             state = .empty
@@ -263,7 +271,7 @@ final class ExtAuthPendingDomainTests: XCTestCase {
 
         uiScheduler.run()
 
-        sut.receive(.pendingExtAuthRequestsReceived([session])) { state in
+        sut.receive(.response(.pendingExtAuthRequestsReceived([session]))) { state in
             state = .pendingExtAuth(healthInsurance)
         }
 
@@ -287,7 +295,7 @@ final class ExtAuthPendingDomainTests: XCTestCase {
 
         sut.send(.registerListener)
         uiScheduler.run()
-        sut.receive(.pendingExtAuthRequestsReceived([session])) { state in
+        sut.receive(.response(.pendingExtAuthRequestsReceived([session]))) { state in
             state = .pendingExtAuth(healthInsurance)
         }
         let urlFixture = URL(string: "https://dummy.gematik.de")!
@@ -300,7 +308,9 @@ final class ExtAuthPendingDomainTests: XCTestCase {
             state = .extAuthReceived(healthInsurance)
         }
         uiScheduler.run()
-        sut.receive(.externalLoginReceived(.failure(.profileValidation(error: expectedInternalError)))) { state in
+        sut.receive(.response(
+            .externalLoginReceived(.failure(.profileValidation(error: expectedInternalError)))
+        )) { state in
             state = .extAuthFailed(
                 ExtAuthPendingDomain.alertState(
                     title: healthInsurance.name,
@@ -322,7 +332,7 @@ final class ExtAuthPendingDomainTests: XCTestCase {
 
         sut.send(.registerListener)
         uiScheduler.run()
-        sut.receive(.pendingExtAuthRequestsReceived([session])) { state in
+        sut.receive(.response(.pendingExtAuthRequestsReceived([session]))) { state in
             state = .pendingExtAuth(healthInsurance)
         }
         let urlFixture = URL(string: "https://dummy.gematik.de")!
@@ -336,7 +346,7 @@ final class ExtAuthPendingDomainTests: XCTestCase {
             state = .extAuthReceived(healthInsurance)
         }
         uiScheduler.run()
-        sut.receive(.externalLoginReceived(.success(IDPSessionMock.fixtureIDPToken))) { state in
+        sut.receive(.response(.externalLoginReceived(.success(IDPSessionMock.fixtureIDPToken)))) { state in
             state = .extAuthSuccessful(healthInsurance)
         }
         uiScheduler.run()

@@ -63,27 +63,27 @@ final class AppMigrationDomainTests: XCTestCase {
         AppMigrationDomain.Action,
         AppMigrationDomain.State,
         AppMigrationDomain.Action,
-        AppMigrationDomain.Environment
+        Void
     >
 
 //    let testScheduler = DispatchQueue.test
     private func testStore(with state: AppMigrationDomain.State = .none) -> TestStore {
         TestStore(
             initialState: state,
-            reducer: AppMigrationDomain.reducer,
-            environment: AppMigrationDomain.Environment(
-                schedulers: Schedulers(
-                    uiScheduler: DispatchQueue.immediate.eraseToAnyScheduler()
-                ),
-                migrationManager: mockMigrationManager,
-                factory: loadFactory(),
-                userDataStore: mockUserDataStore,
+            reducer: AppMigrationDomain(
                 fileManager: fileManager,
                 finishedMigration: { [weak self] in
                     self?.finishedMigrationCalledCount += 1
                 }
             )
-        )
+        ) { dependencies in
+            dependencies.schedulers = Schedulers(
+                uiScheduler: DispatchQueue.immediate.eraseToAnyScheduler()
+            )
+            dependencies.migrationManager = mockMigrationManager
+            dependencies.coreDataControllerFactory = loadFactory()
+            dependencies.userDataStore = mockUserDataStore
+        }
     }
 
     private func loadFactory() -> CoreDataControllerFactory {
@@ -106,48 +106,10 @@ final class AppMigrationDomainTests: XCTestCase {
         return factory
     }
 
-//    func testMigrationWithMigratingOneStepHappyPath() {
-//        let store = testStore()
-//        let startVersion: ModelVersion = .taskStatus
-//        let endVersion: ModelVersion = .auditEventsInProfile
-//        mockMigrationManager.startModelMigrationReturnValue = CurrentValueSubject(startVersion.next()!)
-//            .setFailureType(to: MigrationError.self)
-//            .eraseToAnyPublisher()
-//
-//        mockUserDataStore.underlyingLastCompatibleCoreDataModelVersion = startVersion
-//        store.send(.loadCurrentModelVersion) { state in
-//            state = .none
-//        }
-//        expect(self.mockUserDataStore.latestCompatibleCoreDataModelVersionCallsCount) == 1
-//        expect(self.mockMigrationManager.startModelMigrationCallsCount) == 1
-//        testScheduler.advance()
-//        store.receive(.startMigration(from: startVersion)) { state in
-//            state = .inProgress
-//        }
-//        mockUserDataStore.underlyingLastCompatibleCoreDataModelVersion = .profiles
-//        testScheduler.advance()
-//        store.receive(.startMigrationReceived(.success(.profiles))) { state in
-//            state = .finished
-//        }
-//        testScheduler.advance()
-//        store.receive(.startMigration(from: .profiles)) { state in
-//            state = .inProgress
-//        }
-//        mockUserDataStore.underlyingLastCompatibleCoreDataModelVersion = .auditEventsInProfile
-//        testScheduler.advance()
-//        store.receive(.startMigrationReceived(.success(.auditEventsInProfile))) { state in
-//            state = .finished
-//        }
-//        testScheduler.advance()
-//        expect(self.mockUserDataStore.latestCompatibleModelVersion) == endVersion
-//        expect(self.mockUserDataStore.latestCompatibleCoreDataModelVersionCallsCount) == 2
-//        expect(self.finishedMigrationCalledCount) == 1
-//    }
-
     func testMigrationWithMigratingOneStepHappyPath_short() {
         let store = testStore()
-        let startVersion: ModelVersion = .profiles
-        let endVersion: ModelVersion = .auditEventsInProfile
+        let startVersion: ModelVersion = .auditEventsInProfile
+        let endVersion: ModelVersion = .pKV
         mockMigrationManager.startModelMigrationFromReturnValue = CurrentValueSubject(startVersion.next()!)
             .setFailureType(to: MigrationError.self)
             .eraseToAnyPublisher()

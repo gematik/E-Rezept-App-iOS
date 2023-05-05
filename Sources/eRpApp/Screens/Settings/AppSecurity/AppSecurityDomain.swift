@@ -21,9 +21,8 @@ import ComposableArchitecture
 import eRpKit
 import LocalAuthentication
 
-enum AppSecurityDomain {
-    typealias Store = ComposableArchitecture.Store<State, Action>
-    typealias Reducer = ComposableArchitecture.AnyReducer<State, Action, Environment>
+struct AppSecurityDomain: ReducerProtocol {
+    typealias Store = StoreOf<Self>
 
     struct State: Equatable {
         var availableSecurityOptions: [AppSecurityOption]
@@ -32,45 +31,51 @@ enum AppSecurityDomain {
     }
 
     enum Action: Equatable {
+        enum Response: Equatable {
+            case loadSecurityOption(AppSecurityOption)
+        }
+
         case loadSecurityOption
-        case loadSecurityOptionResponse(AppSecurityOption)
         case select(_ option: AppSecurityOption)
         case dismissError
+
+        case response(Response)
     }
 
-    struct Environment {
-        let userDataStore: UserDataStore
-        let appSecurityManager: AppSecurityManager
-        let schedulers: Schedulers
-    }
+    @Dependency(\.userDataStore) var userDataStore: UserDataStore
+    @Dependency(\.appSecurityManager) var appSecurityManager: AppSecurityManager
+    @Dependency(\.schedulers) var schedulers: Schedulers
 
-    static let domainReducer = Reducer { state, action, environment in
+    func reduce(into state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
         case .loadSecurityOption:
-            let availableSecurityOptions = environment.appSecurityManager.availableSecurityOptions
+            let availableSecurityOptions = appSecurityManager.availableSecurityOptions
             state.availableSecurityOptions = availableSecurityOptions.options
             state.errorToDisplay = availableSecurityOptions.error
-            return environment.userDataStore.appSecurityOption
+            return userDataStore.appSecurityOption
                 .first()
-                .map(Action.loadSecurityOptionResponse)
-                .receive(on: environment.schedulers.main)
+                .map {
+                    Action.response(.loadSecurityOption($0))
+                }
+                .receive(on: schedulers.main)
                 .eraseToEffect()
-        case let .loadSecurityOptionResponse(response):
-            if !state.availableSecurityOptions.contains(response) {
-                environment.userDataStore.set(appSecurityOption: .unsecured)
+        case let .response(.loadSecurityOption(appSecurityOption)):
+            if !state.availableSecurityOptions.contains(appSecurityOption) {
+                userDataStore.set(appSecurityOption: .unsecured)
             } else {
-                state.selectedSecurityOption = response
+                state.selectedSecurityOption = appSecurityOption
             }
             return .none
+
         case let .select(option):
             switch option {
             case .password:
                 // state change is done after save button is tapped
-                // creat passwort view presented by parent
+                // CreatePassword view presented by parent
                 return .none
             default:
                 state.selectedSecurityOption = option
-                environment.userDataStore.set(appSecurityOption: option)
+                userDataStore.set(appSecurityOption: option)
             }
             return .none
         case .dismissError:
@@ -78,24 +83,15 @@ enum AppSecurityDomain {
             return .none
         }
     }
-
-    static let reducer = Reducer.combine(
-        domainReducer
-    )
 }
 
 extension AppSecurityDomain {
     enum Dummies {
         static let state = State(availableSecurityOptions: [], selectedSecurityOption: .biometry(.faceID))
 
-        static let environment = Environment(userDataStore: DummySessionContainer().localUserStore,
-                                             appSecurityManager: DummyAppSecurityManager(),
-                                             schedulers: Schedulers())
-
         static let store = Store(
             initialState: state,
-            reducer: reducer,
-            environment: environment
+            reducer: AppSecurityDomain()
         )
     }
 }

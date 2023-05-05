@@ -21,7 +21,7 @@ import CombineSchedulers
 import eRpKit
 import eRpLocalStorage
 import Foundation
-import OrderedCollections
+import IdentifiedCollections
 import Pharmacy
 
 class DemoPharmacyRepository: PharmacyRepository {
@@ -32,7 +32,7 @@ class DemoPharmacyRepository: PharmacyRepository {
         schedulers.main
     }
 
-    private var store = OrderedSet<PharmacyLocation>()
+    private var store = IdentifiedArrayOf<PharmacyLocation>()
 
     init(cloud: PharmacyFHIRDataSource,
          requestDelayInSeconds: Double = 0.1,
@@ -93,27 +93,34 @@ class DemoPharmacyRepository: PharmacyRepository {
     }
 
     func loadLocal(count _: Int?) -> AnyPublisher<[PharmacyLocation], PharmacyRepositoryError> {
-        Just(Array(store))
-            .setFailureType(to: PharmacyRepositoryError.self)
-            .first()
-            .eraseToAnyPublisher()
+        Just(
+            store.sorted {
+                $0.isFavorite && !$1.isFavorite
+                    && ($0.name ?? "") > ($1.name ?? "")
+            }
+        )
+        .setFailureType(to: PharmacyRepositoryError.self)
+        .first()
+        .eraseToAnyPublisher()
     }
 
     func save(pharmacies: [PharmacyLocation]) -> AnyPublisher<Bool, PharmacyRepositoryError> {
         pharmacies.forEach { pharmacy in
-            store.updateOrAppend(pharmacy)
+            store[id: pharmacy.id] = pharmacy
         }
         return Just(true).setFailureType(to: PharmacyRepositoryError.self).eraseToAnyPublisher()
     }
 
     func delete(pharmacies: [PharmacyLocation]) -> AnyPublisher<Bool, PharmacyRepositoryError> {
-        store.formUnion(Set(pharmacies))
+        pharmacies.forEach { pharmacy in
+            store.remove(id: pharmacy.id)
+        }
         return Just(true).setFailureType(to: PharmacyRepositoryError.self).eraseToAnyPublisher()
     }
 }
 
 struct DummyPharmacyRepository: PharmacyRepository {
-    func updateFromRemote(by _: String) -> AnyPublisher<eRpKit.PharmacyLocation, Pharmacy.PharmacyRepositoryError> {
+    func updateFromRemote(by _: String) -> AnyPublisher<PharmacyLocation, Pharmacy.PharmacyRepositoryError> {
         Just(
             PharmacyLocation(
                 id: "",
@@ -128,7 +135,7 @@ struct DummyPharmacyRepository: PharmacyRepository {
         .eraseToAnyPublisher()
     }
 
-    func save(pharmacies _: [eRpKit.PharmacyLocation]) -> AnyPublisher<Bool, PharmacyRepositoryError> {
+    func save(pharmacies _: [PharmacyLocation]) -> AnyPublisher<Bool, PharmacyRepositoryError> {
         Just(true).setFailureType(to: PharmacyRepositoryError.self).eraseToAnyPublisher()
     }
 

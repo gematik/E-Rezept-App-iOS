@@ -20,12 +20,11 @@ import ComposableArchitecture
 import eRpKit
 import Foundation
 
-enum AuditEventsDomain {
-    typealias Store = ComposableArchitecture.Store<State, Action>
-    typealias Reducer = ComposableArchitecture.AnyReducer<State, Action, Environment>
+struct AuditEventsDomain: ReducerProtocol {
+    typealias Store = StoreOf<Self>
 
-    static func cleanup<T>() -> Effect<T, Never> {
-        Effect.cancel(id: Token.self)
+    static func cleanup<T>() -> EffectTask<T> {
+        EffectTask<T>.cancel(ids: Token.allCases)
     }
 
     enum Token: CaseIterable, Hashable {
@@ -54,51 +53,59 @@ enum AuditEventsDomain {
 
     enum Action: Equatable {
         case loadPageList
-        case profileReceived(Result<Profile?, LocalStoreError>)
         case loadPage(Page)
-        case loadPageReceived(Result<[State.AuditEvent], LocalStoreError>)
         case close
+
+        case response(Response)
+
+        enum Response: Equatable {
+            case profileReceived(Result<Profile?, LocalStoreError>)
+            case loadPageReceived(Result<[State.AuditEvent], LocalStoreError>)
+        }
+
+        enum Delegate: Equatable {}
     }
 
-    struct Environment {
-        let schedulers: Schedulers
-        let profileDataStore: ProfileDataStore
-        var fhirDateFormatter = FHIRDateFormatter.shared
-        var dateFormatter: DateFormatter = {
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateStyle = .medium
-            dateFormatter.timeStyle = .short
-            return dateFormatter
-        }()
-    }
+    @Dependency(\.schedulers) var schedulers: Schedulers
+    @Dependency(\.profileDataStore) var profileDataStore: ProfileDataStore
+    @Dependency(\.fhirDateFormatter) var fhirDateFormatter: FHIRDateFormatter
+    let dateFormatter: DateFormatter = {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateStyle = .medium
+        dateFormatter.timeStyle = .short
+        return dateFormatter
+    }()
 
-    static let domainReducer = Reducer { state, action, environment in
+    // swiftlint:disable:next cyclomatic_complexity function_body_length
+    func reduce(into state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
         case .loadPageList:
             state
-                .pages = (try? environment.profileDataStore
+                .pages = (try? profileDataStore
                     .pagedAuditEventsController(for: state.profileUUID, with: nil).getPageContainer())
                 .map { IdentifiedArrayOf(uniqueElements: $0.pages) }
 
             if let firstPage = state.pages?.first {
                 return .concatenate(
-                    environment.profileDataStore.fetchProfile(by: state.profileUUID)
+                    profileDataStore.fetchProfile(by: state.profileUUID)
                         .first()
                         .catchToEffect()
-                        .map(Action.profileReceived)
+                        .map(Action.Response.profileReceived)
+                        .map(Action.response)
                         .cancellable(id: Token.loadEvents, cancelInFlight: true)
-                        .receive(on: environment.schedulers.main)
+                        .receive(on: schedulers.main)
                         .eraseToEffect(),
                     Effect(value: .loadPage(firstPage))
                 )
             }
 
-            return environment.profileDataStore.fetchProfile(by: state.profileUUID)
+            return profileDataStore.fetchProfile(by: state.profileUUID)
                 .first()
                 .catchToEffect()
-                .map(Action.profileReceived)
+                .map(Action.Response.profileReceived)
+                .map(Action.response)
                 .cancellable(id: Token.loadEvents, cancelInFlight: true)
-                .receive(on: environment.schedulers.main)
+                .receive(on: schedulers.main)
                 .eraseToEffect()
         case let .loadPage(page):
             guard let pages = state.pages,
@@ -123,7 +130,7 @@ enum AuditEventsDomain {
                 state.nextPage = nil
             }
 
-            return (try? environment.profileDataStore.pagedAuditEventsController(for: state.profileUUID, with: nil))
+            return (try? profileDataStore.pagedAuditEventsController(for: state.profileUUID, with: nil))
                 .map {
                     $0
                         .getPage(page)
@@ -133,10 +140,10 @@ enum AuditEventsDomain {
                                 .map {
                                     let date: String?
                                     if let inputDateString = $0.timestamp,
-                                       let inputDate = environment.fhirDateFormatter.date(from: inputDateString) {
-                                        date = environment.dateFormatter.string(from: inputDate)
+                                       let inputDate = fhirDateFormatter.date(from: inputDateString) {
+                                        date = dateFormatter.string(from: inputDate)
                                     } else {
-                                        date = environment.dateFormatter.string(from: Date()) // nil
+                                        date = dateFormatter.string(from: Date()) // nil
                                     }
 
                                     return State.AuditEvent(
@@ -148,18 +155,19 @@ enum AuditEventsDomain {
                                 }
                         }
                         .catchToEffect()
-                        .map(Action.loadPageReceived)
+                        .map(Action.Response.loadPageReceived)
+                        .map(Action.response)
                 } ?? .none
-        case let .loadPageReceived(.success(page)):
+        case let .response(.loadPageReceived(.success(page))):
             state.entries = IdentifiedArrayOf(uniqueElements: page)
             return .none
-        case let .loadPageReceived(.failure(error)):
+        case .response(.loadPageReceived(.failure)):
             return .none
-        case .profileReceived(.failure):
+        case .response(.profileReceived(.failure)):
             return .none
-        case let .profileReceived(.success(events)):
+        case let .response(.profileReceived(.success(events))):
             if let lastAuthenticated = events?.lastAuthenticated {
-                state.lastUpdated = environment.dateFormatter.string(from: lastAuthenticated)
+                state.lastUpdated = dateFormatter.string(from: lastAuthenticated)
             } else {
                 state.lastUpdated = nil
             }
@@ -168,52 +176,62 @@ enum AuditEventsDomain {
             return .none
         }
     }
-
-    static let reducer: Reducer = .combine(
-        domainReducer
-    )
 }
 
-extension AuditEventsDomain.Environment {
-    func loadAuditEventsPage(_ page: Page, ofProfile profile: UUID) -> Effect<AuditEventsDomain.Action, Never> {
-        guard let pageController = try? profileDataStore.pagedAuditEventsController(for: profile, with: nil) else {
-            return .none
-        }
+extension AuditEventsDomain {
+    var environment: Environment {
+        .init(
+            schedulers: schedulers,
+            profileDataStore: profileDataStore,
+            fhirDateFormatter: fhirDateFormatter,
+            dateFormatter: dateFormatter
+        )
+    }
 
-        return pageController.getPage(page)
-            .map { auditEvents in
-                auditEvents.map { // Map Array Elements
-                    let date: String?
-                    if let inputDateString = $0.timestamp,
-                       let inputDate = fhirDateFormatter.date(from: inputDateString) {
-                        date = dateFormatter.string(from: inputDate)
-                    } else {
-                        date = dateFormatter.string(from: Date()) // nil
-                    }
+    struct Environment {
+        let schedulers: Schedulers
+        let profileDataStore: ProfileDataStore
+        let fhirDateFormatter: FHIRDateFormatter
+        let dateFormatter: DateFormatter
 
-                    return AuditEventsDomain.State.AuditEvent(
-                        id: $0.id,
-                        title: $0.title,
-                        description: $0.text?.trimmed(),
-                        date: date
-                    )
-                }
+        func loadAuditEventsPage(_ page: Page, ofProfile profile: UUID) -> Effect<AuditEventsDomain.Action, Never> {
+            guard let pageController = try? profileDataStore.pagedAuditEventsController(for: profile, with: nil) else {
+                return .none
             }
-            .catchToEffect()
-            .map(AuditEventsDomain.Action.loadPageReceived)
+
+            return pageController.getPage(page)
+                .map { auditEvents in
+                    auditEvents.map { // Map Array Elements
+                        let date: String?
+                        if let inputDateString = $0.timestamp,
+                           let inputDate = fhirDateFormatter.date(from: inputDateString) {
+                            date = dateFormatter.string(from: inputDate)
+                        } else {
+                            date = dateFormatter.string(from: Date()) // nil
+                        }
+
+                        return AuditEventsDomain.State.AuditEvent(
+                            id: $0.id,
+                            title: $0.title,
+                            description: $0.text?.trimmed(),
+                            date: date
+                        )
+                    }
+                }
+                .catchToEffect()
+                .map(Action.Response.loadPageReceived)
+                .map(Action.response)
+        }
     }
 }
 
 extension AuditEventsDomain {
     enum Dummies {
         static let state = State(profileUUID: DemoProfileDataStore.anna.id)
-        static let environment = Environment(
-            schedulers: Schedulers(),
-            profileDataStore: DemoProfileDataStore()
-        )
 
-        static let store = Store(initialState: state,
-                                 reducer: reducer,
-                                 environment: environment)
+        static let store = Store(
+            initialState: state,
+            reducer: AuditEventsDomain()
+        )
     }
 }

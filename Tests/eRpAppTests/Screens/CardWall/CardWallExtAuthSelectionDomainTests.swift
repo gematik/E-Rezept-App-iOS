@@ -30,7 +30,7 @@ final class CardWallExtAuthSelectionDomainTests: XCTestCase {
         CardWallExtAuthSelectionDomain.Action,
         CardWallExtAuthSelectionDomain.State,
         CardWallExtAuthSelectionDomain.Action,
-        CardWallExtAuthSelectionDomain.Environment
+        Void
     >
 
     var idpSessionMock: IDPSessionMock!
@@ -57,10 +57,11 @@ final class CardWallExtAuthSelectionDomainTests: XCTestCase {
         -> TestStore {
         TestStore(
             initialState: state,
-            reducer: CardWallExtAuthSelectionDomain.reducer,
-            environment: .init(idpSession: idpSessionMock,
-                               schedulers: schedulers)
-        )
+            reducer: CardWallExtAuthSelectionDomain()
+        ) { dependencies in
+            dependencies.idpSession = idpSessionMock
+            dependencies.schedulers = schedulers
+        }
     }
 
     func testStore()
@@ -77,7 +78,7 @@ final class CardWallExtAuthSelectionDomainTests: XCTestCase {
 
         sut.send(.loadKKList)
         uiScheduler.run()
-        sut.receive(.loadKKListReceived(.success(Self.testDirectory))) { state in
+        sut.receive(.response(.loadKKList(.success(Self.testDirectory)))) { state in
             state.kkList = Self.testDirectory
         }
     }
@@ -90,7 +91,7 @@ final class CardWallExtAuthSelectionDomainTests: XCTestCase {
 
         sut.send(.loadKKList)
         uiScheduler.run()
-        sut.receive(.loadKKListReceived(.failure(Self.testError))) { state in
+        sut.receive(.response(.loadKKList(.failure(Self.testError)))) { state in
             state.error = Self.testError
         }
     }

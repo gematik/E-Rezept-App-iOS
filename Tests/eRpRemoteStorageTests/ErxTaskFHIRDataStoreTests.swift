@@ -22,6 +22,7 @@ import eRpKit
 import FHIRClient
 import Foundation
 import HTTPClient
+import ModelsR4
 import Nimble
 import OHHTTPStubs
 import OHHTTPStubsSwift
@@ -37,7 +38,11 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
         try super.setUpWithError()
         host = "some-fhir-service.com"
         url = URL(string: "http://\(host ?? "")")!
-        fhirClient = FHIRClient(server: url, httpClient: DefaultHTTPClient(urlSessionConfiguration: .default))
+        fhirClient = FHIRClient(
+            server: url,
+            httpClient: DefaultHTTPClient(urlSessionConfiguration: .default),
+            receiveQueue: .immediate
+        )
         sut = ErxTaskFHIRDataStore(fhirClient: fhirClient)
     }
 
@@ -48,7 +53,10 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
     }
 
     func testFetchTaskById() {
-        let firstTaskResponse = load(resource: "getTaskResponse_61704e3f-1e4f-11b2-80f4-b806a73c0cd0")
+        let firstTaskResponse = load(
+            resource: "getTaskResponse_61704e3f-1e4f-11b2-80f4-b806a73c0cd0",
+            directory: .gem_wf_v1_1_with_kbv_v1_0_2
+        )
         var counter = 0
         stub(condition: isHost(host) && isPath("/Task/61704e3f-1e4f-11b2-80f4-b806a73c0cd0")) { _ in
             counter += 1
@@ -68,7 +76,7 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
                 expect(erxTask.medication?.name).toNot(beNil())
                 expect(erxTask.medication?.name) == "Sumatriptan-1a Pharma 100 mg Tabletten"
                 expect(erxTask.authoredOn).toNot(beNil())
-                expect(erxTask.authoredOn) == "2020-02-03T00:00:00+00:00"
+                expect(erxTask.authoredOn) == "2021-03-24T08:35:32.311370977+00:00"
                 expect(erxTask.expiresOn) == "2021-06-24"
                 expect(erxTask.acceptedUntil) == "2021-04-23"
                 expect(erxTask.lastModified) == "2021-03-24T08:35:32.311376627+00:00"
@@ -76,16 +84,18 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
                 expect(erxTask.author) == "Hausarztpraxis Dr. Topp-Glücklich"
                 expect(erxTask.medication?.dosageForm).toNot(beNil())
                 expect(erxTask.medication?.dosageForm) == "TAB"
-                expect(erxTask.medication?.amount).toNot(beNil())
-                expect(erxTask.medication?.amount) == 12
-                expect(erxTask.medication?.dosageInstructions) == "1-0-1-0"
-                expect(erxTask.medication?.lot) == "1234567890abcde"
-                expect(erxTask.medication?.expiresOn) == "2020-02-03T00:00:00+00:00"
-                expect(erxTask.multiplePrescription?.mark) == true
-                expect(erxTask.multiplePrescription?.numbering) == 2
-                expect(erxTask.multiplePrescription?.totalNumber) == 4
-                expect(erxTask.multiplePrescription?.startPeriod) == "2021-01-02"
-                expect(erxTask.multiplePrescription?.endPeriod) == "2021-03-30"
+                expect(erxTask.medication?.amount) == ErxMedication.Ratio(
+                    numerator: .init(value: "12", unit: "TAB"),
+                    denominator: .init(value: "1")
+                )
+                expect(erxTask.medication?.batch?.lotNumber) == "1234567890abcde"
+                expect(erxTask.medication?.batch?.expiresOn) == "2020-02-03T00:00:00+00:00"
+                expect(erxTask.medicationRequest.dosageInstructions) == "1-0-1-0"
+                expect(erxTask.medicationRequest.multiplePrescription?.mark) == true
+                expect(erxTask.medicationRequest.multiplePrescription?.numbering) == 2
+                expect(erxTask.medicationRequest.multiplePrescription?.totalNumber) == 4
+                expect(erxTask.medicationRequest.multiplePrescription?.startPeriod) == "2021-01-02"
+                expect(erxTask.medicationRequest.multiplePrescription?.endPeriod) == "2021-03-30"
             })
 
         // test if sub has been called
@@ -93,27 +103,29 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
     }
 
     func testListAllTasks() {
-        let taskIdsResponse = load(resource: "getTaskIdsWithTwoTasksResponse")
+        let taskIdsResponse = load(
+            resource: "getTaskIdsWithTwoTasksResponse",
+            directory: .gem_wf_v1_1_with_kbv_v1_0_2
+        )
         var counter = 0
         stub(condition: isHost(host) && isPath("/Task")) { _ in
             counter += 1
             return fixture(filePath: taskIdsResponse, headers: ["Accept": "application/fhir+json"])
         }
 
-        guard let firstTaskResponse = Bundle(for: Self.self).path(
-            forResource: "getTaskResponse_61704e3f-1e4f-11b2-80f4-b806a73c0cd0",
-            ofType: "json",
-            inDirectory: "FHIRExampleData.bundle"
-        ) else {
-            fail("Bundle could not find resource getTaskIdsWithTwoTasksResponse")
-            return
-        }
+        let firstTaskResponse = load(
+            resource: "getTaskResponse_61704e3f-1e4f-11b2-80f4-b806a73c0cd0",
+            directory: .gem_wf_v1_1_with_kbv_v1_0_2
+        )
 
         stub(condition: isHost(host) && isPath("/Task/61704e3f-1e4f-11b2-80f4-b806a73c0cd0")) { _ in
             counter += 1
             return fixture(filePath: firstTaskResponse, headers: ["Accept": "application/fhir+json"])
         }
-        let secondTaskResponse = load(resource: "getTaskResponse_5e00e907-1e4f-11b2-80be-b806a73c0cd0")
+        let secondTaskResponse = load(
+            resource: "getTaskResponse_5e00e907-1e4f-11b2-80be-b806a73c0cd0",
+            directory: .gem_wf_v1_1_with_kbv_v1_0_2
+        )
         stub(condition: isHost(host) && isPath("/Task/5e00e907-1e4f-11b2-80be-b806a73c0cd0")) { _ in
             counter += 1
             return fixture(filePath: secondTaskResponse, headers: ["Accept": "application/fhir+json"])
@@ -131,14 +143,10 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
     }
 
     func testListAllAuditEvents() {
-        guard let firstTaskResponse = Bundle(for: Self.self).path(
-            forResource: "getAuditEventResponse_4_entries",
-            ofType: "json",
-            inDirectory: "FHIRExampleData.bundle"
-        ) else {
-            fail("Bundle could not find resource getAuditEventResponse_4_entries")
-            return
-        }
+        let firstTaskResponse = load(
+            resource: "getAuditEventResponse_4_entries",
+            directory: .gem_wf_v1_1_with_kbv_v1_0_2
+        )
 
         var counter = 0
 
@@ -163,7 +171,10 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
 
     /// Tests a successful deletion of a task
     func testDeleteTasksSuccess() {
-        let emptyResponse = load(resource: "emptyResponse")
+        let emptyResponse = load(
+            resource: "emptyResponse",
+            directory: .gem_wf_v1_1_with_kbv_v1_0_2
+        )
 
         stub(condition: isHost(host) && pathEndsWith("$abort")) { _ in
             fixture(filePath: emptyResponse, status: 204, headers: ["Accept": "application/fhir+json"])
@@ -194,7 +205,10 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
     }
 
     func testRedeemShipmentOrderWithSuccess() {
-        let redeemOrderResponse = load(resource: "redeemOrderResponse")
+        let redeemOrderResponse = load(
+            resource: "redeemOrderResponse",
+            directory: .gem_wf_v1_1_with_kbv_v1_0_2
+        )
 
         var counter = 0
         stub(condition: isPath("/Communication")
@@ -214,7 +228,10 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
     }
 
     func testRedeemDeliveryOrderWithSuccess() {
-        let redeemOrderResponse = load(resource: "redeemOrderResponse")
+        let redeemOrderResponse = load(
+            resource: "redeemOrderResponse",
+            directory: .gem_wf_v1_1_with_kbv_v1_0_2
+        )
 
         var counter = 0
         stub(condition: isPath("/Communication")
@@ -234,7 +251,10 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
     }
 
     func testRedeemOnPremiseOrderWithSuccess() {
-        let redeemOrderResponse = load(resource: "redeemOrderResponse")
+        let redeemOrderResponse = load(
+            resource: "redeemOrderResponse",
+            directory: .gem_wf_v1_1_with_kbv_v1_0_2
+        )
 
         var counter = 0
         stub(condition: isPath("/Communication")
@@ -274,7 +294,10 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
     }
 
     func testListAllCommunicationsWithSuccess() {
-        let expectedResponse = load(resource: "erxCommunicationReplyResponse")
+        let expectedResponse = load(
+            resource: "erxCommunicationReplyResponse",
+            directory: .gem_wf_v1_1_with_kbv_v1_0_2
+        )
         var counter = 0
 
         stub(condition: isHost(host)
@@ -317,7 +340,10 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
     }
 
     func testListMedicationDispensesForTaskWithSuccess() {
-        let expectedResponse = load(resource: "medicationDispenseBundle")
+        let expectedResponse = load(
+            resource: "MedicationDispense_with_two_Medication_PZN",
+            directory: .gem_wf_v1_1_with_kbv_v1_0_2
+        )
         var counter = 0
 
         stub(condition: isHost(host)
@@ -357,6 +383,138 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
             } expectations: { _ in
                 fail("this test should rase an error instead")
             }
+    }
+
+    func testGetConsentsWithSuccess() {
+        let consentResponse = load(
+            resource: "getConsentsResponse",
+            directory: .gem_erpChrg_v1_0_0
+        )
+
+        var counter = 0
+        stub(condition: isHost(host)
+            && isPath("/Consent")
+            && isMethodGET()) { _ in
+                counter += 1
+                return fixture(filePath: consentResponse, headers: ["Content-Type": "application/json"])
+        }
+
+        sut.fetchConsents()
+            .test { error in
+                fail("unexpected fail with error: \(error)")
+            } expectations: { consent in
+                expect(counter) == 1
+                expect(consent.first?.category).to(equal(.chargcons))
+                expect(consent.first?.insuranceId).to(equal("X764228532"))
+            }
+    }
+
+    func testGetConsentsWithFailure() {
+        let expectedError = URLError(.notConnectedToInternet)
+
+        var counter = 0
+        stub(condition: isHost(host)
+            && isPath("/Consent")
+            && isMethodGET()) { _ in
+                counter += 1
+                return HTTPStubsResponse(error: expectedError)
+        }
+
+        sut.fetchConsents()
+            .test { error in
+                expect(counter) == 1
+                expect(error) == .fhirClientError(FHIRClient.Error.httpError(.httpError(expectedError)))
+            } expectations: { _ in
+                fail("this test should rase an error instead")
+            }
+    }
+
+    func testRevokeConsentWithSuccess() {
+        let emptyResponse = load(
+            resource: "emptyResponse",
+            directory: .gem_wf_v1_1_with_kbv_v1_0_2
+        )
+
+        stub(condition: isHost(host)
+            && isPath("/Consent")
+            && isMethodDELETE()) { _ in
+                fixture(filePath: emptyResponse, status: 204, headers: ["Accept": "application/fhir+json"])
+        }
+
+        sut.revokeConsent(.chargcons)
+            .test(expectations: { response in
+                expect(response) == true
+            })
+    }
+
+    func testRevokeConsentWithNoConsentGivenReturnsFailure() {
+        let errorResponse = load(
+            resource: "revokeConsentErrorResponse",
+            directory: .gem_erpChrg_v1_0_0
+        )
+
+        stub(condition: isHost(host)
+            && isPath("/Consent")
+            && isMethodDELETE()) { _ in
+                fixture(filePath: errorResponse,
+                        status: Int32(HTTPStatusCode.badRequest.rawValue),
+                        headers: ["Accept": "application/fhir+json"])
+        }
+
+        sut.revokeConsent(.chargcons)
+            .test(failure: { error in
+                expect(error.localizedDescription)
+                    .to(equal("error: Could not find any consent for given KVNR , code: not-found"))
+            }, expectations: { _ in
+                fail()
+            })
+    }
+
+    func testGrantConsentWithSuccess() {
+        let grantConsentResponse = load(
+            resource: "GEM_ERPCHRG_PR_Consent",
+            directory: .gem_erpChrg_v1_0_0
+        )
+
+        var counter = 0
+        stub(condition: isHost(host)
+            && isPath("/Consent")
+            && isMethodPOST()
+            && hasBody(expectedChargeConsentRequestBody)) { _ in
+                counter += 1
+                return fixture(filePath: grantConsentResponse, headers: ["Content-Type": "application/json"])
+        }
+
+        sut.grantConsent(chargeConsent)
+            .test { error in
+                fail("unexpected fail with error: \(error)")
+            } expectations: { consent in
+                expect(counter) == 1
+                expect(consent).to(equal(self.chargeConsent))
+            }
+    }
+
+    func testGrantConsentThatsAlreadyGivenReturnsFailure() {
+        let errorResponse = load(
+            resource: "grantConsentErrorResponse",
+            directory: .gem_erpChrg_v1_0_0
+        )
+
+        stub(condition: isHost(host)
+            && isPath("/Consent")
+            && isMethodPOST()) { _ in
+                fixture(filePath: errorResponse,
+                        status: Int32(HTTPStatusCode.badRequest.rawValue),
+                        headers: ["Accept": "application/fhir+json"])
+        }
+
+        sut.grantConsent(chargeConsent)
+            .test(failure: { error in
+                expect(error.localizedDescription)
+                    .to(equal("error: Charging consent already exists for this kvnr, code: conflict"))
+            }, expectations: { _ in
+                fail()
+            })
     }
 
     private var shipmentOrder: ErxTaskOrder = {
@@ -407,6 +565,12 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
                             payload: payload)
     }()
 
+    private var chargeConsent = ErxConsent(
+        identifier: "CHARGCONS-X764228532",
+        insuranceId: "X764228532",
+        timestamp: "2023-02-15"
+    )
+
     // swiftlint:disable line_length
     private var expectedShipmentRequestBody: Data = {
         String(
@@ -426,13 +590,22 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
         ).data(using: .utf8)!
     }()
 
+    private var expectedChargeConsentRequestBody: Data = {
+        String(
+            "{\"status\":\"active\",\"category\":[{\"coding\":[{\"system\":\"https:\\/\\/gematik.de\\/fhir\\/erpchrg\\/CodeSystem\\/GEM_ERPCHRG_CS_ConsentType\",\"code\":\"CHARGCONS\"}]}],\"patient\":{\"identifier\":{\"system\":\"http:\\/\\/fhir.de\\/NamingSystem\\/gkv\\/kvid-10\",\"value\":\"X764228532\"}},\"id\":\"CHARGCONS-X764228532\",\"scope\":{\"coding\":[{\"system\":\"http:\\/\\/terminology.hl7.org\\/CodeSystem\\/consentscope\",\"code\":\"patient-privacy\"}]},\"meta\":{\"profile\":[\"https:\\/\\/gematik.de\\/fhir\\/erpchrg\\/StructureDefinition\\/GEM_ERPCHRG_PR_Consent\"]},\"policyRule\":{\"coding\":[{\"system\":\"http:\\/\\/terminology.hl7.org\\/CodeSystem\\/v3-ActCode\",\"code\":\"OPTIN\"}]},\"dateTime\":\"2023-02-15\",\"resourceType\":\"Consent\"}"
+        ).data(using: .utf8)!
+    }()
+
     // swiftlint:enable line_length
 
-    private func load(resource name: String) -> String {
+    private func load(
+        resource name: String,
+        directory: FHIRBundleDirectories
+    ) -> String {
         guard let resource = Bundle(for: Self.self).path(
             forResource: name,
             ofType: "json",
-            inDirectory: "FHIRExampleData.bundle"
+            inDirectory: directory.rawValue
         ) else {
             fail("Bundle could not find resource \(name)")
             return ""

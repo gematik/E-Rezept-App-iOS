@@ -16,6 +16,7 @@
 //  
 //
 
+import ComposableArchitecture
 @testable import eRpApp
 import eRpKit
 import Pharmacy
@@ -38,7 +39,10 @@ final class PharmacyRedeemViewSnapshotTests: XCTestCase {
             profile: Profile(name: "Anna Vetter", color: Profile.Color.red)
         )
         let sut = NavigationView {
-            PharmacyRedeemView(store: PharmacyRedeemDomain.Dummies.storeFor(initialState))
+            PharmacyRedeemView(store: PharmacyRedeemDomain.Store(
+                initialState: initialState,
+                reducer: EmptyReducer()
+            ))
         }
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
@@ -65,7 +69,10 @@ final class PharmacyRedeemViewSnapshotTests: XCTestCase {
             profile: Profile(name: "Anna Vetter", color: Profile.Color.red)
         )
         let sut = NavigationView {
-            PharmacyRedeemView(store: PharmacyRedeemDomain.Dummies.storeFor(initialState))
+            PharmacyRedeemView(store: PharmacyRedeemDomain.Store(
+                initialState: initialState,
+                reducer: EmptyReducer()
+            ))
         }
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
@@ -89,7 +96,10 @@ final class PharmacyRedeemViewSnapshotTests: XCTestCase {
             profile: Profile(name: "Anna Vetter", color: Profile.Color.red)
         )
         let sut = NavigationView {
-            PharmacyRedeemView(store: PharmacyRedeemDomain.Dummies.storeFor(initialState))
+            PharmacyRedeemView(store: PharmacyRedeemDomain.Store(
+                initialState: initialState,
+                reducer: EmptyReducer()
+            ))
         }
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())

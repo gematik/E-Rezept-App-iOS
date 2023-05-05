@@ -28,8 +28,8 @@ final class ListsSnapshotTests: XCTestCase {
         diffTool = "open"
     }
 
-    func testSimpleList() {
-        let sut = NavigationView {
+    struct SnapshotExampleView: View {
+        var body: some View {
             ScrollView {
                 VStack(spacing: 8) {
                     SectionContainer {
@@ -42,11 +42,13 @@ final class ListsSnapshotTests: XCTestCase {
                             Label("Impressum", systemImage: SFSymbolName.info)
                         }
                         .toggleStyle(.radio)
+                        .buttonStyle(.plain)
 
                         Toggle(isOn: .constant(true)) {
                             Label("Impressum", systemImage: SFSymbolName.info)
                         }
                         .toggleStyle(.radio)
+                        .buttonStyle(.plain)
 
                         Toggle(isOn: .constant(true)) {
                             Label("Impressum", systemImage: SFSymbolName.info)
@@ -102,10 +104,22 @@ final class ListsSnapshotTests: XCTestCase {
                         }
                         .buttonStyle(.navigation)
 
+                        Button(action: {}, label: {
+                            SubTitle(title: "Impressum", description: "Noch 12 Tage gültig", details: "PZN Rezept")
+                        })
+                            .buttonStyle(.navigation)
+
+                        Button(action: {}, label: {
+                            SubTitle(title: "Impressum", description: "Noch 12 Tage gültig", details: "PZN Rezept")
+                                .subTitleStyle(.info)
+                        })
+                            .buttonStyle(.navigation)
+
                         Toggle(isOn: .constant(false)) {
                             Label(title: { Text("Impressum") }, icon: {})
                         }
                         .toggleStyle(.radio)
+                        .buttonStyle(.plain)
 
                         Toggle(isOn: .constant(true)) {
                             Label(title: { Text("Impressum") }, icon: {})
@@ -113,101 +127,36 @@ final class ListsSnapshotTests: XCTestCase {
                     }
                 }
             }
-            .navigationBarTitle("Lists")
-            .background(Color(.secondarySystemBackground).ignoresSafeArea())
+        }
+    }
+
+    func testSimpleGroupedList() {
+        let sut = NavigationView {
+            SnapshotExampleView()
+                .navigationBarTitle("Lists")
+                .background(Color(.secondarySystemBackground).ignoresSafeArea())
         }
         .frame(width: 375, height: 1400)
 
         assertSnapshots(matching: sut, as: snapshotModi())
     }
 
-    func testBorderedListStyle() {
+    func testBorderedGroupedListStyle() {
         let sut = NavigationView {
-            ScrollView {
-                VStack(spacing: 8) {
-                    SectionContainer {
-                        NavigationLink(destination: Text("abc")) {
-                            Label("Impressum", systemImage: SFSymbolName.info)
-                        }
-                        .buttonStyle(.navigation)
+            SnapshotExampleView()
+                .sectionContainerStyle(BorderSectionContainerStyle())
+                .navigationBarTitle("Lists")
+        }
+        .frame(width: 375, height: 1400)
 
-                        Toggle(isOn: .constant(false)) {
-                            Label("Impressum", systemImage: SFSymbolName.info)
-                        }
-                        .toggleStyle(.radio)
+        assertSnapshots(matching: sut, as: snapshotModi())
+    }
 
-                        Toggle(isOn: .constant(true)) {
-                            Label("Impressum", systemImage: SFSymbolName.info)
-                        }
-                        .toggleStyle(.radio)
-
-                        Toggle(isOn: .constant(true)) {
-                            Label("Impressum", systemImage: SFSymbolName.info)
-                        }
-
-                        Button(action: {}, label: {
-                            Label("Impressum", systemImage: SFSymbolName.info)
-                        })
-
-                        NavigationLink(destination: Text("abc")) {
-                            Label {
-                                SubTitle(title: "Impressum", description: "Noch 12 Tage gültig", details: nil)
-                            } icon: {
-                                Image(systemName: SFSymbolName.info)
-                            }
-                        }
-                        .buttonStyle(.navigation(showSeparator: false))
-                    }
-
-                    SectionContainer {
-                        NavigationLink(destination: Text("abc")) {
-                            Label {
-                                SubTitle(title: "Impressum", description: "Noch 12 Tage gültig", details: nil)
-                            } icon: {
-                                InitialsImage(backgroundColor: Colors.primary200, text: "SD", statusColor: nil)
-                            }
-                        }
-                        .buttonStyle(.navigation)
-
-                        NavigationLink(destination: Text("abc")) {
-                            Label {
-                                SubTitle(title: "Impressum", description: "Noch 12 Tage gültig", details: nil)
-                            } icon: {
-                                InitialsImage(backgroundColor: Colors.primary200,
-                                              text: "SD",
-                                              statusColor: nil,
-                                              size: .large)
-                            }
-                        }
-                        .buttonStyle(.navigation)
-
-                        NavigationLink(destination: Text("abc")) {
-                            Label(title: {
-                                KeyValuePair(key: "Impressum", value: "Detail")
-                            }, icon: {})
-                        }
-                        .buttonStyle(.navigation)
-
-                        NavigationLink(destination: Text("abc")) {
-                            Label(title: {
-                                SubTitle(title: "Impressum", description: "Noch 12 Tage gültig")
-                            }, icon: {})
-                        }
-                        .buttonStyle(.navigation)
-
-                        Toggle(isOn: .constant(false)) {
-                            Label(title: { Text("Impressum") }, icon: {})
-                        }
-                        .toggleStyle(.radio)
-
-                        Toggle(isOn: .constant(true)) {
-                            Label(title: { Text("Impressum") }, icon: {})
-                        }
-                    }
-                }
-            }
-            .sectionContainerStyle(BorderSectionContainerStyle())
-            .navigationBarTitle("Lists")
+    func testInlineListStyle() {
+        let sut = NavigationView {
+            SnapshotExampleView()
+                .sectionContainerStyle(.inline)
+                .navigationBarTitle("Lists")
         }
         .frame(width: 375, height: 1400)
 

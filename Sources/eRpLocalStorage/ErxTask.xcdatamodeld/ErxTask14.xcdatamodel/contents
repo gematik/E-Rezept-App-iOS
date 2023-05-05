@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="21513" systemVersion="22D68" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="AVSTransactionEntity" representedClassName="AVSTransactionEntity" syncable="YES">
+        <attribute name="groupedRedeemID" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="groupedRedeemTime" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="httpStatusCode" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="telematikID" optional="YES" attributeType="String"/>
+        <attribute name="transactionID" attributeType="UUID" usesScalarValueType="NO"/>
+        <relationship name="erxTask" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ErxTaskEntity" inverseName="avsTransaction" inverseEntity="ErxTaskEntity"/>
+        <fetchIndex name="byObjectIdIndex">
+            <fetchIndexElement property="transactionID" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="transactionID"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
+    </entity>
+    <entity name="ErxAuditEventEntity" representedClassName="ErxAuditEventEntity" syncable="YES">
+        <attribute name="identifier" optional="YES" attributeType="String"/>
+        <attribute name="locale" optional="YES" attributeType="String"/>
+        <attribute name="text" optional="YES" attributeType="String"/>
+        <attribute name="timestamp" optional="YES" attributeType="String"/>
+        <relationship name="profile" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ProfileEntity" inverseName="auditEvents" inverseEntity="ProfileEntity"/>
+        <relationship name="task" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ErxTaskEntity" inverseName="auditEvents" inverseEntity="ErxTaskEntity"/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="identifier"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
+    </entity>
+    <entity name="ErxChargeItemEntity" representedClassName="ErxChargeItemEntity" syncable="YES">
+        <attribute name="enteredDate" optional="YES" attributeType="String"/>
+        <attribute name="fhirData" optional="YES" attributeType="Binary"/>
+        <attribute name="identifier" attributeType="String"/>
+        <attribute name="invoice" optional="YES" attributeType="Binary"/>
+        <attribute name="medication" optional="YES" attributeType="Binary"/>
+        <relationship name="profile" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ProfileEntity" inverseName="chargeItems" inverseEntity="ProfileEntity"/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="identifier"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
+    </entity>
+    <entity name="ErxTaskAccidentInfoEntity" representedClassName="ErxTaskAccidentInfoEntity" syncable="YES">
+        <attribute name="date" optional="YES" attributeType="String"/>
+        <attribute name="type" optional="YES" attributeType="String"/>
+        <attribute name="workPlaceIdentifier" optional="YES" attributeType="String"/>
+        <relationship name="task" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ErxTaskEntity" inverseName="accidentInfo" inverseEntity="ErxTaskEntity"/>
+    </entity>
+    <entity name="ErxTaskCommunicationEntity" representedClassName="ErxTaskCommunicationEntity" syncable="YES">
+        <attribute name="identifier" optional="YES" attributeType="String"/>
+        <attribute name="insuranceId" optional="YES" attributeType="String"/>
+        <attribute name="isRead" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="orderId" optional="YES" attributeType="String"/>
+        <attribute name="payload" optional="YES" attributeType="String"/>
+        <attribute name="profile" optional="YES" attributeType="String"/>
+        <attribute name="taskId" optional="YES" attributeType="String"/>
+        <attribute name="telematikId" optional="YES" attributeType="String"/>
+        <attribute name="timestamp" optional="YES" attributeType="String"/>
+        <relationship name="task" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ErxTaskEntity" inverseName="communications" inverseEntity="ErxTaskEntity"/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="identifier"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
+    </entity>
+    <entity name="ErxTaskEntity" representedClassName="ErxTaskEntity" syncable="YES">
+        <attribute name="acceptedUntil" optional="YES" attributeType="String"/>
+        <attribute name="accessCode" optional="YES" attributeType="String"/>
+        <attribute name="author" optional="YES" attributeType="String"/>
+        <attribute name="authoredOn" optional="YES" attributeType="String"/>
+        <attribute name="bvg" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="coPaymentStatus" optional="YES" attributeType="String"/>
+        <attribute name="dispenseValidityEnd" optional="YES" attributeType="String"/>
+        <attribute name="dosageInstructions" optional="YES" attributeType="String"/>
+        <attribute name="expiresOn" optional="YES" attributeType="String"/>
+        <attribute name="flowType" optional="YES" attributeType="String"/>
+        <attribute name="form" optional="YES" attributeType="String"/>
+        <attribute name="fullUrl" optional="YES" attributeType="String" defaultValueString=""/>
+        <attribute name="identifier" optional="YES" attributeType="String"/>
+        <attribute name="lastModified" optional="YES" attributeType="String"/>
+        <attribute name="noctuFeeWaiver" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="prescriptionId" optional="YES" attributeType="String"/>
+        <attribute name="redeemedOn" optional="YES" attributeType="String"/>
+        <attribute name="source" optional="YES" attributeType="String"/>
+        <attribute name="status" optional="YES" attributeType="String"/>
+        <attribute name="substitutionAllowed" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <relationship name="accidentInfo" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="ErxTaskAccidentInfoEntity" inverseName="task" inverseEntity="ErxTaskAccidentInfoEntity"/>
+        <relationship name="auditEvents" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ErxAuditEventEntity" inverseName="task" inverseEntity="ErxAuditEventEntity"/>
+        <relationship name="avsTransaction" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="AVSTransactionEntity" inverseName="erxTask" inverseEntity="AVSTransactionEntity"/>
+        <relationship name="communications" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ErxTaskCommunicationEntity" inverseName="task" inverseEntity="ErxTaskCommunicationEntity"/>
+        <relationship name="medication" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="ErxTaskMedicationEntity" inverseName="task" inverseEntity="ErxTaskMedicationEntity"/>
+        <relationship name="medicationDispenses" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ErxTaskMedicationDispenseEntity" inverseName="task" inverseEntity="ErxTaskMedicationDispenseEntity"/>
+        <relationship name="multiplePrescription" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="ErxTaskMultiplePrescriptionEntity" inverseName="task" inverseEntity="ErxTaskMultiplePrescriptionEntity"/>
+        <relationship name="organization" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="ErxTaskOrganizationEntity" inverseName="task" inverseEntity="ErxTaskOrganizationEntity"/>
+        <relationship name="patient" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="ErxTaskPatientEntity" inverseName="task" inverseEntity="ErxTaskPatientEntity"/>
+        <relationship name="practitioner" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="ErxTaskPractitionerEntity" inverseName="task" inverseEntity="ErxTaskPractitionerEntity"/>
+        <relationship name="profile" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ProfileEntity" inverseName="erxTasks" inverseEntity="ProfileEntity"/>
+        <fetchIndex name="byObjectIdIndex">
+            <fetchIndexElement property="identifier" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <fetchIndex name="byIssueDateIndex">
+            <fetchIndexElement property="authoredOn" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="identifier"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
+    </entity>
+    <entity name="ErxTaskIngredientEntity" representedClassName="ErxTaskIngredientEntity" syncable="YES">
+        <attribute name="form" optional="YES" attributeType="String"/>
+        <attribute name="number" optional="YES" attributeType="String"/>
+        <attribute name="strengthFreeText" optional="YES" attributeType="String"/>
+        <attribute name="text" optional="YES" attributeType="String"/>
+        <relationship name="medication" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ErxTaskMedicationEntity" inverseName="ingredients" inverseEntity="ErxTaskMedicationEntity"/>
+        <relationship name="strengthRatio" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="ErxTaskRatioEntity" inverseName="ingredient" inverseEntity="ErxTaskRatioEntity"/>
+    </entity>
+    <entity name="ErxTaskMedicationDispenseEntity" representedClassName="ErxTaskMedicationDispenseEntity" syncable="YES">
+        <attribute name="dosageInstruction" optional="YES" attributeType="String"/>
+        <attribute name="identifier" optional="YES" attributeType="String"/>
+        <attribute name="insuranceId" optional="YES" attributeType="String"/>
+        <attribute name="noteText" optional="YES" attributeType="String"/>
+        <attribute name="taskId" optional="YES" attributeType="String"/>
+        <attribute name="telematikId" optional="YES" attributeType="String"/>
+        <attribute name="whenHandedOver" optional="YES" attributeType="String"/>
+        <relationship name="medication" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="ErxTaskMedicationEntity" inverseName="medicationDispense" inverseEntity="ErxTaskMedicationEntity"/>
+        <relationship name="quantity" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="ErxTaskQuantityEntity" inverseName="quantityMedicationDispense" inverseEntity="ErxTaskQuantityEntity"/>
+        <relationship name="task" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ErxTaskEntity" inverseName="medicationDispenses" inverseEntity="ErxTaskEntity"/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="identifier"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
+    </entity>
+    <entity name="ErxTaskMedicationEntity" representedClassName="ErxTaskMedicationEntity" syncable="YES">
+        <attribute name="dosageForm" optional="YES" attributeType="String"/>
+        <attribute name="dose" optional="YES" attributeType="String"/>
+        <attribute name="drugCategory" optional="YES" attributeType="String"/>
+        <attribute name="expiresOn" optional="YES" attributeType="String"/>
+        <attribute name="isVaccine" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="lot" optional="YES" attributeType="String"/>
+        <attribute name="manufacturingInstructions" optional="YES" attributeType="String"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="packaging" optional="YES" attributeType="String"/>
+        <attribute name="profile" optional="YES" attributeType="String"/>
+        <attribute name="pzn" optional="YES" attributeType="String"/>
+        <relationship name="amountRatio" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="ErxTaskRatioEntity" inverseName="medication" inverseEntity="ErxTaskRatioEntity"/>
+        <relationship name="ingredients" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ErxTaskIngredientEntity" inverseName="medication" inverseEntity="ErxTaskIngredientEntity"/>
+        <relationship name="medicationDispense" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ErxTaskMedicationDispenseEntity" inverseName="medication" inverseEntity="ErxTaskMedicationDispenseEntity"/>
+        <relationship name="task" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ErxTaskEntity" inverseName="medication" inverseEntity="ErxTaskEntity"/>
+    </entity>
+    <entity name="ErxTaskMultiplePrescriptionEntity" representedClassName="ErxTaskMultiplePrescriptionEntity" syncable="YES">
+        <attribute name="endPeriod" optional="YES" attributeType="String"/>
+        <attribute name="mark" optional="YES" attributeType="Boolean" usesScalarValueType="YES"/>
+        <attribute name="numbering" optional="YES" attributeType="Decimal" defaultValueString="0.0"/>
+        <attribute name="startPeriod" optional="YES" attributeType="String"/>
+        <attribute name="totalNumber" optional="YES" attributeType="Decimal" defaultValueString="0.0"/>
+        <relationship name="task" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ErxTaskEntity" inverseName="multiplePrescription" inverseEntity="ErxTaskEntity"/>
+    </entity>
+    <entity name="ErxTaskOrganizationEntity" representedClassName="ErxTaskOrganizationEntity" syncable="YES">
+        <attribute name="address" optional="YES" attributeType="String"/>
+        <attribute name="email" optional="YES" attributeType="String"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="organizationIdentifier" optional="YES" attributeType="String"/>
+        <attribute name="phone" optional="YES" attributeType="String"/>
+        <relationship name="task" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ErxTaskEntity" inverseName="organization" inverseEntity="ErxTaskEntity"/>
+    </entity>
+    <entity name="ErxTaskPatientEntity" representedClassName="ErxTaskPatientEntity" syncable="YES">
+        <attribute name="address" optional="YES" attributeType="String"/>
+        <attribute name="birthDate" optional="YES" attributeType="String"/>
+        <attribute name="insurance" optional="YES" attributeType="String"/>
+        <attribute name="insuranceIdentifier" optional="YES" attributeType="String"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="phone" optional="YES" attributeType="String"/>
+        <attribute name="status" optional="YES" attributeType="String"/>
+        <relationship name="task" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ErxTaskEntity" inverseName="patient" inverseEntity="ErxTaskEntity"/>
+    </entity>
+    <entity name="ErxTaskPractitionerEntity" representedClassName="ErxTaskPractitionerEntity" syncable="YES">
+        <attribute name="address" optional="YES" attributeType="String"/>
+        <attribute name="email" optional="YES" attributeType="String"/>
+        <attribute name="lanr" optional="YES" attributeType="String"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="qualification" optional="YES" attributeType="String"/>
+        <relationship name="task" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ErxTaskEntity" inverseName="practitioner" inverseEntity="ErxTaskEntity"/>
+    </entity>
+    <entity name="ErxTaskQuantityEntity" representedClassName="ErxTaskQuantityEntity" syncable="YES">
+        <attribute name="unit" optional="YES" attributeType="String"/>
+        <attribute name="value" optional="YES" attributeType="String"/>
+        <relationship name="denominatorRatio" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ErxTaskRatioEntity" inverseName="denominator" inverseEntity="ErxTaskRatioEntity"/>
+        <relationship name="numeratorRatio" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ErxTaskRatioEntity" inverseName="numerator" inverseEntity="ErxTaskRatioEntity"/>
+        <relationship name="quantityMedicationDispense" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ErxTaskMedicationDispenseEntity" inverseName="quantity" inverseEntity="ErxTaskMedicationDispenseEntity"/>
+    </entity>
+    <entity name="ErxTaskRatioEntity" representedClassName="ErxTaskRatioEntity" syncable="YES">
+        <relationship name="denominator" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="ErxTaskQuantityEntity" inverseName="denominatorRatio" inverseEntity="ErxTaskQuantityEntity"/>
+        <relationship name="ingredient" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ErxTaskIngredientEntity" inverseName="strengthRatio" inverseEntity="ErxTaskIngredientEntity"/>
+        <relationship name="medication" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ErxTaskMedicationEntity" inverseName="amountRatio" inverseEntity="ErxTaskMedicationEntity"/>
+        <relationship name="numerator" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="ErxTaskQuantityEntity" inverseName="numeratorRatio" inverseEntity="ErxTaskQuantityEntity"/>
+    </entity>
+    <entity name="PharmacyEntity" representedClassName="PharmacyEntity" syncable="YES">
+        <attribute name="city" optional="YES" attributeType="String"/>
+        <attribute name="countUsage" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="created" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="email" optional="YES" attributeType="String"/>
+        <attribute name="fax" optional="YES" attributeType="String"/>
+        <attribute name="houseNumber" optional="YES" attributeType="String"/>
+        <attribute name="identifier" attributeType="String"/>
+        <attribute name="imagePath" optional="YES" attributeType="String"/>
+        <attribute name="isFavorite" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="lastUsed" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="latitude" optional="YES" attributeType="Decimal" defaultValueString="0.0"/>
+        <attribute name="longitude" optional="YES" attributeType="Decimal" defaultValueString="0.0"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="phone" optional="YES" attributeType="String"/>
+        <attribute name="street" optional="YES" attributeType="String"/>
+        <attribute name="telematikId" optional="YES" attributeType="String"/>
+        <attribute name="web" optional="YES" attributeType="String"/>
+        <attribute name="zip" optional="YES" attributeType="String"/>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="identifier"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
+    </entity>
+    <entity name="ProfileEntity" representedClassName="ProfileEntity" syncable="YES">
+        <attribute name="color" optional="YES" attributeType="String"/>
+        <attribute name="created" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="familyName" optional="YES" attributeType="String"/>
+        <attribute name="givenName" optional="YES" attributeType="String"/>
+        <attribute name="identifier" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="image" optional="YES" attributeType="String"/>
+        <attribute name="insurance" optional="YES" attributeType="String"/>
+        <attribute name="insuranceId" optional="YES" attributeType="String"/>
+        <attribute name="insuranceType" optional="YES" attributeType="String"/>
+        <attribute name="lastAuthenticated" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="name" attributeType="String"/>
+        <relationship name="auditEvents" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ErxAuditEventEntity" inverseName="profile" inverseEntity="ErxAuditEventEntity"/>
+        <relationship name="chargeItems" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ErxChargeItemEntity" inverseName="profile" inverseEntity="ErxChargeItemEntity"/>
+        <relationship name="erxTasks" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="ErxTaskEntity" inverseName="profile" inverseEntity="ErxTaskEntity"/>
+        <fetchIndex name="byObjectIdIndex">
+            <fetchIndexElement property="identifier" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="identifier"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
+    </entity>
+    <entity name="ShipmentInfoEntity" representedClassName="ShipmentInfoEntity" syncable="YES">
+        <attribute name="addressDetail" optional="YES" attributeType="String"/>
+        <attribute name="city" optional="YES" attributeType="String"/>
+        <attribute name="deliveryInfo" optional="YES" attributeType="String"/>
+        <attribute name="identifier" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="mail" optional="YES" attributeType="String"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="phone" optional="YES" attributeType="String"/>
+        <attribute name="street" optional="YES" attributeType="String"/>
+        <attribute name="zip" optional="YES" attributeType="String"/>
+        <fetchIndex name="byObjectIdIndex">
+            <fetchIndexElement property="identifier" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="identifier"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
+    </entity>
+</model>

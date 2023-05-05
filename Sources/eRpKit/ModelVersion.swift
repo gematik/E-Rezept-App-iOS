@@ -26,6 +26,8 @@ public enum ModelVersion: Int, CaseIterable {
     case profiles = 4
     // Introduces audit events in `EditProfileDomain`.
     case auditEventsInProfile = 5
+    // Introduces pKV profiles
+    case pKV = 6
 
     /// Creates a `ModelVersion` of the next case related to self
     /// - Returns: Returns the next case if it is not the last case or returns nil

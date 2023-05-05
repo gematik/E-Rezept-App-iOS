@@ -58,7 +58,7 @@ struct UserProfileSelectionToolbarItem: View {
             if let profile = viewStore.profile {
                 InitialsImage(
                     backgroundColor: profile.color.background,
-                    text: profile.emoji ?? profile.acronym,
+                    text: profile.acronym,
                     statusColor: profile.connectionStatus.statusColor,
                     size: .large
                 )

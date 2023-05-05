@@ -24,13 +24,12 @@ import Foundation
 import HTTPClient
 import IDP
 
-enum PrescriptionListDomain {
-    typealias Store = ComposableArchitecture.Store<State, Action>
-    typealias Reducer = ComposableArchitecture.AnyReducer<State, Action, Environment>
+struct PrescriptionListDomain: ReducerProtocol {
+    typealias Store = StoreOf<Self>
 
     /// Provides an Effect that need to run whenever the state of this Domain is reset to nil
-    static func cleanup<T>() -> Effect<T, Never> {
-        Effect.cancel(id: Token.self)
+    static func cleanup<T>() -> EffectTask<T> {
+        EffectTask<T>.cancel(ids: Token.allCases)
     }
 
     enum Token: CaseIterable, Hashable {
@@ -41,85 +40,99 @@ enum PrescriptionListDomain {
         case activeUserProfile
     }
 
-    struct Environment {
-        let router: Routing
-        let userSession: UserSession
-        let userProfileService: UserProfileService
-        let serviceLocator: ServiceLocator
-        let accessibilityAnnouncementReceiver: (String) -> Void
-        let prescriptionRepository: PrescriptionRepository
-        let schedulers: Schedulers
-        var fhirDateFormatter: FHIRDateFormatter
-        /// To make sure enough time is left to redeem prescriptions we define a minimum
-        /// number of minutes that need to be left before the session expires.
-        let minLoginTimeLeftInMinutes: Int = 29
-
-        var locale: String? {
-            Locale.current.languageCode
-        }
-    }
-
     struct State: Equatable {
         var loadingState: LoadingState<[Prescription], PrescriptionRepositoryError> =
             .idle
         var prescriptions: [Prescription] = []
         var profile: UserProfile?
-
-        var hintState = MainViewHintsDomain.State()
     }
 
     enum Action: Equatable {
         /// Loads locally stored Prescriptions
         case loadLocalPrescriptions
-        /// Response from `loadLocalPrescriptions`
-        case loadLocalPrescriptionsReceived(LoadingState<[Prescription], PrescriptionRepositoryError>)
         ///  Loads Prescriptions from server and stores them in the local store
         case loadRemotePrescriptionsAndSave
-        /// Response from `loadRemotePrescriptionsAndSave`
-        case loadRemotePrescriptionsAndSaveReceived(LoadingState<[Prescription], PrescriptionRepositoryError>)
         /// Presents the CardWall when not logged in or executes `loadFromCloudAndSave`
         case refresh
         /// Listener for selectedProfileID switches
         case registerSelectedProfileIDListener
         case unregisterSelectedProfileIDListener
-        case selectedProfileIDReceived(UUID?)
         /// Listener for active UserProfile update changes (including connectivity status, activity status)
         case registerActiveUserProfileListener
         case unregisterActiveUserProfileListener
-        case activeUserProfileReceived(Result<UserProfile, UserProfileServiceError>)
-
         case showArchivedButtonTapped
-        case profilePictureViewTapped
-
+        case profilePictureViewTapped(UserProfile)
         /// Dismisses the alert that showing loading errors
         case alertDismissButtonTapped
-        /// Response from `refresh` that presents the CardWall sheet
-        case showCardWallReceived(CardWallIntroductionDomain.State)
-
         /// Details actions
         case prescriptionDetailViewTapped(selectedPrescription: Prescription)
-
         /// Redeem actions
         case redeemButtonTapped(openPrescriptions: [Prescription])
 
-        /// Actions related to hint
-        case hint(action: MainViewHintsDomain.Action)
+        case response(Response)
 
-        case errorReceived(LoginHandlerError)
+        enum Response: Equatable {
+            /// Response from `loadLocalPrescriptions`
+            case loadLocalPrescriptionsReceived(LoadingState<[Prescription], PrescriptionRepositoryError>)
+            /// Response from `loadRemotePrescriptionsAndSave`
+            case loadRemotePrescriptionsAndSaveReceived(LoadingState<[Prescription], PrescriptionRepositoryError>)
+            case selectedProfileIDReceived(UUID?)
+            case activeUserProfileReceived(Result<UserProfile, UserProfileServiceError>)
+            /// Response from `refresh` that presents the CardWall sheet
+            case showCardWallReceived(CardWallIntroductionDomain.State)
+            case errorReceived(LoginHandlerError)
+        }
     }
 
-    static let domainReducer = Reducer { state, action, environment in
+    /// To make sure enough time is left to redeem prescriptions we define a minimum
+    /// number of minutes that need to be left before the session expires.
+    let minLoginTimeLeftInMinutes: Int = 29
+
+    @Dependency(\.schedulers) var schedulers: Schedulers
+    @Dependency(\.serviceLocator) var serviceLocator: ServiceLocator
+    @Dependency(\.userSession) var userSession: UserSession
+    @Dependency(\.userProfileService) var userProfileService: UserProfileService
+    @Dependency(\.prescriptionRepository) var prescriptionRepository: PrescriptionRepository
+
+    private var environment: Environment {
+        .init(
+            schedulers: schedulers,
+            serviceLocator: serviceLocator,
+            userSession: userSession,
+            userProfileService: userProfileService,
+            prescriptionRepository: prescriptionRepository,
+            locale: Locale.current.languageCode
+        )
+    }
+
+    struct Environment {
+        var schedulers: Schedulers
+        var serviceLocator: ServiceLocator
+        var userSession: UserSession
+        var userProfileService: UserProfileService
+        var prescriptionRepository: PrescriptionRepository
+        var locale: String?
+    }
+
+    init() {}
+
+    var body: some ReducerProtocol<State, Action> {
+        Reduce(self.core)
+    }
+
+    // swiftlint:disable:next cyclomatic_complexity function_body_length
+    private func core(state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
         case .registerSelectedProfileIDListener:
-            return environment.userProfileService.selectedProfileId
+            return userProfileService.selectedProfileId
                 .removeDuplicates()
-                .map(Action.selectedProfileIDReceived)
-                .receive(on: environment.schedulers.main)
+                .map { .response(.selectedProfileIDReceived($0)) }
+                .receive(on: schedulers.main)
                 .eraseToEffect()
                 .cancellable(id: Token.selectedProfileId)
         case .unregisterSelectedProfileIDListener:
             return .cancel(id: Token.selectedProfileId)
-        case let .selectedProfileIDReceived(uuid):
+        case .response(.selectedProfileIDReceived):
             return .concatenate(
                 Effect(value: .loadLocalPrescriptions),
                 Effect(value: .loadRemotePrescriptionsAndSave)
@@ -128,26 +141,26 @@ enum PrescriptionListDomain {
         case .unregisterActiveUserProfileListener:
             return .cancel(id: Token.activeUserProfile)
         case .registerActiveUserProfileListener:
-            return environment.userProfileService.activeUserProfilePublisher()
+            return userProfileService.activeUserProfilePublisher()
                 .catchToEffect()
-                .map(Action.activeUserProfileReceived)
+                .map { .response(.activeUserProfileReceived($0)) }
                 .cancellable(id: Token.activeUserProfile, cancelInFlight: true)
-                .receive(on: environment.schedulers.main)
+                .receive(on: schedulers.main)
                 .eraseToEffect()
-        case .activeUserProfileReceived(.failure):
+        case .response(.activeUserProfileReceived(.failure)):
             state.profile = nil
             return .none
-        case let .activeUserProfileReceived(.success(profile)):
+        case let .response(.activeUserProfileReceived(.success(profile))):
             state.profile = profile
             return .none
         case .loadLocalPrescriptions:
             state.loadingState = .loading(state.prescriptions)
-            return environment.prescriptionRepository.loadLocal()
-                .receive(on: environment.schedulers.main.animation())
+            return prescriptionRepository.loadLocal()
+                .receive(on: schedulers.main.animation())
                 .catchToLoadingStateEffect()
-                .map(Action.loadLocalPrescriptionsReceived)
+                .map { .response(.loadLocalPrescriptionsReceived($0)) }
                 .cancellable(id: Token.loadLocalPrescriptionId, cancelInFlight: true)
-        case let .loadLocalPrescriptionsReceived(loadingState):
+        case let .response(.loadLocalPrescriptionsReceived(loadingState)):
             state.loadingState = loadingState
             state.prescriptions = loadingState.value ?? []
             return .none
@@ -155,7 +168,7 @@ enum PrescriptionListDomain {
             state.loadingState = .loading(nil)
             return environment.loadRemoteTasksAndSave()
                 .cancellable(id: Token.fetchPrescriptionId, cancelInFlight: true)
-        case let .loadRemotePrescriptionsAndSaveReceived(loadingState):
+        case let .response(.loadRemotePrescriptionsAndSaveReceived(loadingState)):
             state.loadingState = loadingState
             // prevent overriding values previously loaded from .loadLocalPrescriptions
             if case let .value(prescriptions) = loadingState, !prescriptions.isEmpty {
@@ -168,39 +181,17 @@ enum PrescriptionListDomain {
         case .alertDismissButtonTapped:
             state.loadingState = .idle
             return .none
-        case .hint:
-            return .none
-        case .showCardWallReceived,
+        case .response(.showCardWallReceived),
              .prescriptionDetailViewTapped,
              .redeemButtonTapped,
              .showArchivedButtonTapped,
              .profilePictureViewTapped:
             return .none
-        case .errorReceived:
+        case .response(.errorReceived):
             state.loadingState = .idle
             return .none // Handled in parent domain
         }
     }
-
-    static let reducer: Reducer = .combine(
-        hintsPullbackReducer,
-        domainReducer
-    )
-
-    static let hintsPullbackReducer: Reducer =
-        MainViewHintsDomain.reducer
-            .pullback(
-                state: \.hintState,
-                action: /PrescriptionListDomain.Action.hint(action:)
-            ) { globalEnvironment in
-                MainViewHintsDomain.Environment(
-                    router: globalEnvironment.router,
-                    userSession: globalEnvironment.userSession,
-                    schedulers: globalEnvironment.schedulers,
-                    hintEventsStore: globalEnvironment.userSession.hintEventsStore,
-                    hintProvider: MainViewHintsProvider()
-                )
-            }
 }
 
 extension PrescriptionListDomain.Environment {
@@ -229,13 +220,13 @@ extension PrescriptionListDomain.Environment {
             .map { status -> PrescriptionListDomain.Action in
                 switch status {
                 case let .prescriptions(value):
-                    return .loadRemotePrescriptionsAndSaveReceived(.value(value))
+                    return .response(.loadRemotePrescriptionsAndSaveReceived(.value(value)))
                 case .notAuthenticated,
                      .authenticationRequired:
-                    return .loadRemotePrescriptionsAndSaveReceived(.value([]))
+                    return .response(.loadRemotePrescriptionsAndSaveReceived(.value([])))
                 }
             }
-            .catch { _ in Just(.loadRemotePrescriptionsAndSaveReceived(.idle)) }
+            .catch { _ in Just(.response(.loadRemotePrescriptionsAndSaveReceived(.idle))) }
             .receive(on: schedulers.main.animation())
             .eraseToEffect()
     }
@@ -248,7 +239,7 @@ extension PrescriptionListDomain.Environment {
             .flatMap { status -> AnyPublisher<PrescriptionListDomain.Action, PrescriptionRepositoryError> in
                 switch status {
                 case let .prescriptions(value):
-                    return Just(.loadRemotePrescriptionsAndSaveReceived(.value(value)))
+                    return Just(.response(.loadRemotePrescriptionsAndSaveReceived(.value(value))))
                         .setFailureType(to: PrescriptionRepositoryError.self)
                         .eraseToAnyPublisher()
                 case .notAuthenticated,
@@ -256,16 +247,16 @@ extension PrescriptionListDomain.Environment {
                     return cardWall()
                         .receive(on: schedulers.main)
                         .setFailureType(to: PrescriptionRepositoryError.self)
-                        .map(PrescriptionListDomain.Action.showCardWallReceived)
+                        .map { .response(.showCardWallReceived($0)) }
                         .eraseToAnyPublisher()
                 }
             }
             .catch { error in
                 if case let PrescriptionRepositoryError.loginHandler(error) = error {
-                    return Just(Action.errorReceived(error))
+                    return Just(Action.response(.errorReceived(error)))
                         .eraseToAnyPublisher()
                 }
-                return Just(Action.loadRemotePrescriptionsAndSaveReceived(.error(error)))
+                return Just(Action.response(.loadRemotePrescriptionsAndSaveReceived(.error(error))))
                     .eraseToAnyPublisher()
             }
             .receive(on: schedulers.main)
@@ -302,35 +293,19 @@ extension Publisher where Output == PrescriptionRepositoryLoadRemoteResult, Fail
 
 extension PrescriptionListDomain {
     enum Dummies {
-        static let demoSessionContainer = DummyUserSessionContainer()
         static let state = State()
-        static let stateWithTwoPrescriptions = State(
+        static let stateWithPrescriptions = State(
             loadingState: .value(Prescription.Dummies.prescriptions),
             prescriptions: Prescription.Dummies.prescriptions,
-            profile: UserProfile.Dummies.profileA,
-            hintState: MainViewHintsDomain.Dummies.emptyState()
+            profile: UserProfile.Dummies.profileA
         )
 
-        static let environment = Environment(
-            router: DummyRouter(),
-            userSession: demoSessionContainer.userSession,
-            userProfileService: DummyUserProfileService(),
-            serviceLocator: ServiceLocator(),
-            accessibilityAnnouncementReceiver: { _ in },
-            prescriptionRepository: DummyPrescriptionRepository(),
-            schedulers: Schedulers(),
-            fhirDateFormatter: FHIRDateFormatter.shared
-        )
         static let store = Store(initialState: state,
-                                 reducer: domainReducer,
-                                 environment: environment)
+                                 reducer: PrescriptionListDomain())
 
         static func storeFor(_ state: State) -> Store {
-            Store(
-                initialState: state,
-                reducer: domainReducer,
-                environment: environment
-            )
+            Store(initialState: state,
+                  reducer: PrescriptionListDomain())
         }
     }
 }

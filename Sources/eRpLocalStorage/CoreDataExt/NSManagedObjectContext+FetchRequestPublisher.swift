@@ -24,88 +24,127 @@ extension NSManagedObjectContext {
     /// Combine Publisher for ManagerObjectContext that can be used without SwiftUI View
     /// This class wraps a Custom Publisher around a NSFetchedResultsController to keep itself
     /// and downstream Subscription updated on changes on the NSFetchRequest in the given NSManagedObjectContext.
-    struct FetchRequestPublisher<Entity: NSManagedObject>: Publisher {
-        typealias Output = [Entity]
-        typealias Failure = Error
+    struct FetchRequestPublisher<Entity: NSManagedObject> {
         private let fetchRequest: NSFetchRequest<Entity>
-        private let moc: NSManagedObjectContext
+        private let managedObjectContext: NSManagedObjectContext
 
         init(fetchRequest: NSFetchRequest<Entity>, context: NSManagedObjectContext) {
             self.fetchRequest = fetchRequest
-            moc = context
-        }
-
-        func receive<S: Subscriber>(subscriber: S) where Output == S.Input, Self.Failure == S.Failure {
-            subscriber.receive(subscription: ActualSubscription(
-                downstream: subscriber,
-                fetchRequest: fetchRequest,
-                context: moc
-            ))
+            managedObjectContext = context
         }
     }
 }
 
+extension NSManagedObjectContext.FetchRequestPublisher: Publisher {
+    typealias Output = [Entity]
+    typealias Failure = Error
+
+    func receive<S>(subscriber: S) where S: Subscriber, Failure == S.Failure, Output == S.Input {
+        let subscription = Inner<S>(
+            fetchRequest: fetchRequest,
+            context: managedObjectContext,
+            subscriber: subscriber
+        )
+        subscriber.receive(subscription: subscription)
+    }
+}
+
 extension NSManagedObjectContext.FetchRequestPublisher {
-    private final class ActualSubscription<Downstream: Subscriber>: NSObject, Subscription,
-        NSFetchedResultsControllerDelegate where Downstream.Input == [Entity], Downstream.Failure == Error {
-        private let downstream: Downstream
+    private class Inner<Downstream: Subscriber>: NSObject, Subscription, NSFetchedResultsControllerDelegate
+        where Downstream.Input == Output, Downstream.Failure == Failure {
+        typealias Input = Downstream.Input
+        typealias Failure = Downstream.Failure
+
         private var fetchedResultsController: NSFetchedResultsController<Entity>?
 
-        init(downstream: Downstream, fetchRequest: NSFetchRequest<Entity>, context: NSManagedObjectContext) {
-            self.downstream = downstream
+        private var demand: Subscribers.Demand
+        private var last: Input?
+        private var downstream: Downstream?
+
+        private let lock = NSLock()
+        // This lock can only be held for the duration of downstream callouts
+        private let downstreamLock = NSRecursiveLock()
+
+        init(
+            fetchRequest: NSFetchRequest<Entity>,
+            context: NSManagedObjectContext,
+            subscriber: Downstream
+        ) {
             fetchedResultsController = NSFetchedResultsController(
                 fetchRequest: fetchRequest,
                 managedObjectContext: context,
                 sectionNameKeyPath: nil,
                 cacheName: nil
             )
+            downstream = subscriber
+            demand = .max(0)
             super.init()
             fetchedResultsController?.delegate = self
             do {
                 try fetchedResultsController?.performFetch()
+                last = fetchedResultsController?.fetchedObjects ?? []
             } catch {
-                downstream.receive(completion: .failure(error))
+                downstream?.receive(completion: .failure(error))
                 cancel()
             }
         }
 
         deinit {
             fetchedResultsController?.delegate = nil
+            fetchedResultsController = nil
         }
 
-        /// PRAGMA MARK: Combine Subscription
+        func controllerDidChangeContent(_: NSFetchedResultsController<NSFetchRequestResult>) {
+            let fetchedObjects = fetchedResultsController?.fetchedObjects ?? []
+            guard let downstream = self.downstream else { return }
+            lock.lock()
+            if demand > 0 {
+                demand -= 1
+                lock.unlock()
 
-        private var demand: Subscribers.Demand = .none
+                downstreamLock.lock()
+                let additional = downstream.receive(fetchedObjects)
+                downstreamLock.unlock()
 
-        func request(_ demand: Subscribers.Demand) {
-            self.demand += demand
-            fulfillDemand()
+                lock.lock()
+                demand += additional
+                lock.unlock()
+            } else {
+                // Store updated value for a later request
+                last = fetchedObjects
+                lock.unlock()
+            }
+        }
+
+        func request(_ requestDemand: Subscribers.Demand) {
+            guard let downstream = self.downstream else { return }
+            lock.lock()
+            demand += requestDemand
+            if demand > 0, let lastFetchedObjects = last {
+                demand -= 1
+                last = nil
+                lock.unlock()
+
+                downstreamLock.lock()
+                let additional = downstream.receive(lastFetchedObjects)
+                downstreamLock.unlock()
+
+                lock.lock()
+                demand += additional
+                lock.unlock()
+            } else {
+                demand -= 1
+                last = nil
+                lock.unlock()
+            }
         }
 
         func cancel() {
             demand = .none
             fetchedResultsController?.delegate = nil
             fetchedResultsController = nil
-        }
-
-        /// PRAGMA MARK: NSFetchedResultsControllerDelegate
-
-        func controllerDidChangeContent(_: NSFetchedResultsController<NSFetchRequestResult>) {
-            fulfillDemand()
-        }
-
-        private func fulfillDemand() {
-            // fulfill when demand > 0
-            if demand > 0 {
-                // delete current demand
-                demand -= 1
-                let fetchedObjects = fetchedResultsController?.fetchedObjects ?? []
-                // `moreDemand` is the downstream's way of letting us know, how many *more* than the initial demand
-                // it wishes to receive after this fulfilment.
-                let moreDemand = downstream.receive(fetchedObjects)
-                // addition before subtraction so we don't inadvertently go below demand threshold
-                demand += moreDemand
-            }
+            last = nil
+            downstream = nil
         }
     }
 }

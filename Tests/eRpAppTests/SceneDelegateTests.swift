@@ -18,6 +18,7 @@
 
 import Combine
 import ComposableArchitecture
+import Dependencies
 @testable import eRpApp
 import eRpKit
 import eRpLocalStorage
@@ -73,54 +74,61 @@ final class SceneDelegateTests: XCTestCase {
         )
     }
 
-    func testSanatizingDatabaseShouldWipeUserDefaultsIfThereIsNoProfile() throws {
-        let sut = SceneDelegate()
-        sut.userDataStore = userDefaultsStore
-        sut.coreDataControllerFactory = loadFactory()
+    func testSanitizingDatabaseShouldWipeUserDefaultsIfThereIsNoProfile() throws {
+        let factory = loadFactory()
+        try withDependencies {
+            $0.userDataStore = userDefaultsStore
+            $0.coreDataControllerFactory = factory
+            $0.tracker = PlaceholderTracker()
+        } operation: {
+            let sut = SceneDelegate()
+            let initialUUID = UUID()
+            sut.userDataStore.set(selectedProfileId: initialUUID)
+            sut.userDataStore.set(hideOnboarding: true)
 
-        let initialUUID = UUID()
-        sut.userDataStore.set(selectedProfileId: initialUUID)
-        sut.userDataStore.set(hideOnboarding: true)
+            let profileCoreDataStore = ProfileCoreDataStore(
+                coreDataControllerFactory: factory,
+                backgroundQueue: AnyScheduler.main
+            )
+            let hadProfile = try profileCoreDataStore.hasProfile()
+            expect(hadProfile) == false
+            expect(try self.awaitPublisher(sut.userDataStore.hideOnboarding.first())) == true
 
-        let profileCoreDataStore = ProfileCoreDataStore(
-            coreDataControllerFactory: sut.coreDataControllerFactory,
-            backgroundQueue: AnyScheduler.main
-        )
-        let hadProfile = try profileCoreDataStore.hasProfile()
-        expect(hadProfile) == false
-        expect(try self.awaitPublisher(sut.userDataStore.hideOnboarding.first())) == true
+            try sut.sanitizeDatabases(store: profileCoreDataStore)
 
-        try sut.sanatizeDatabases(store: profileCoreDataStore)
-
-        let isProfileExisting = try profileCoreDataStore.hasProfile()
-        expect(isProfileExisting) == true
-        expect(try self.awaitPublisher(sut.userDataStore.hideOnboarding.first())) == false
-        let currentProfileId = try awaitPublisher(sut.userDataStore.selectedProfileId.first())
-        expect(currentProfileId) != initialUUID
-        expect(currentProfileId).notTo(beNil())
+            let isProfileExisting = try profileCoreDataStore.hasProfile()
+            expect(isProfileExisting) == true
+            expect(try self.awaitPublisher(sut.userDataStore.hideOnboarding.first())) == false
+            let currentProfileId = try awaitPublisher(sut.userDataStore.selectedProfileId.first())
+            expect(currentProfileId) != initialUUID
+            expect(currentProfileId).notTo(beNil())
+        }
     }
 
     func testSanatizingDatabaseShouldNotWipeUserDefaultsIfThereIsAProfile() throws {
-        let sut = SceneDelegate()
-        sut.userDataStore = UserDefaultsStore(userDefaults: UserDefaults())
-        sut.coreDataControllerFactory = loadFactory()
+        let factory = loadFactory()
+        try withDependencies {
+            $0.userDataStore = UserDefaultsStore(userDefaults: UserDefaults())
+            $0.coreDataControllerFactory = factory
+        } operation: {
+            let sut = SceneDelegate()
+            sut.userDataStore.set(hideOnboarding: true)
+            expect(try self.awaitPublisher(sut.userDataStore.hideOnboarding.first())) == true
 
-        sut.userDataStore.set(hideOnboarding: true)
-        expect(try self.awaitPublisher(sut.userDataStore.hideOnboarding.first())) == true
+            let profileCoreDataStore = ProfileCoreDataStore(
+                coreDataControllerFactory: factory,
+                backgroundQueue: AnyScheduler.main
+            )
+            let profile = try profileCoreDataStore.createProfile(with: "Test Name")
+            sut.userDataStore.set(selectedProfileId: profile.id)
+            let hasProfile = try profileCoreDataStore.hasProfile()
+            expect(hasProfile) == true
 
-        let profileCoreDataStore = ProfileCoreDataStore(
-            coreDataControllerFactory: sut.coreDataControllerFactory,
-            backgroundQueue: AnyScheduler.main
-        )
-        let profile = try profileCoreDataStore.createProfile(with: "Test Name")
-        sut.userDataStore.set(selectedProfileId: profile.id)
-        let hasProfile = try profileCoreDataStore.hasProfile()
-        expect(hasProfile) == true
+            try sut.sanitizeDatabases(store: profileCoreDataStore)
 
-        try sut.sanatizeDatabases(store: profileCoreDataStore)
-
-        expect(try self.awaitPublisher(sut.userDataStore.hideOnboarding.first())) == true
-        let currentProfileId = try awaitPublisher(sut.userDataStore.selectedProfileId.first())
-        expect(currentProfileId) == profile.id
+            expect(try self.awaitPublisher(sut.userDataStore.hideOnboarding.first())) == true
+            let currentProfileId = try awaitPublisher(sut.userDataStore.selectedProfileId.first())
+            expect(currentProfileId) == profile.id
+        }
     }
 }

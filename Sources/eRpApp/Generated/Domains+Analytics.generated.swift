@@ -1,15 +1,9 @@
-// Generated using Sourcery 1.9.0 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.0.1 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 
 import Foundation
 
 
-
-extension AddProfileDomain.State {
-    func routeName() -> String? {
-            return nil
-    }
-}
 
 extension AppAuthenticationBiometricsDomain.State {
     func routeName() -> String? {
@@ -31,15 +25,15 @@ extension AppAuthenticationPasswordDomain.State {
 
 extension AppDomain.State {
     func routeName() -> String? {
-        switch route {
+        switch destination {
             case .main:
-                return main.routeName() ?? route.tag.analyticsName
+                return subdomains.main.routeName() ?? destination.tag.analyticsName
             case .pharmacySearch:
-                return pharmacySearch.routeName() ?? route.tag.analyticsName
+                return subdomains.pharmacySearch.routeName() ?? destination.tag.analyticsName
             case .orders:
-                return orders.routeName() ?? route.tag.analyticsName
+                return subdomains.orders.routeName() ?? destination.tag.analyticsName
             case .settings:
-                return settingsState.routeName() ?? route.tag.analyticsName
+                return subdomains.settingsState.routeName() ?? destination.tag.analyticsName
         }
     }
 }
@@ -58,16 +52,16 @@ extension AuditEventsDomain.State {
 
 extension CardWallCANDomain.State {
     func routeName() -> String? {
-        guard let route = route else {
+        guard let destination = destination else {
             return nil
         }
-        switch route {
+        switch destination {
             case let .pin(state: state):
-                return state.routeName() ?? route.tag.analyticsName
+                return state.routeName() ?? destination.tag.analyticsName
             case let .egk(state: state):
-                return state.routeName() ?? route.tag.analyticsName
+                return state.routeName() ?? destination.tag.analyticsName
             case .scanner:
-                return route.tag.analyticsName
+                return destination.tag.analyticsName
         }
     }
 }
@@ -80,85 +74,109 @@ extension CardWallExtAuthConfirmationDomain.State {
 
 extension CardWallExtAuthSelectionDomain.State {
     func routeName() -> String? {
-        guard let route = route else {
+        guard let destination = destination else {
             return nil
         }
-        switch route {
-            case .confirmation:
-                return route.tag.analyticsName
+        switch destination {
+            case let .confirmation(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
             case let .egk(state: state):
-                return state.routeName() ?? route.tag.analyticsName
+                return state.routeName() ?? destination.tag.analyticsName
         }
     }
 }
 
 extension CardWallIntroductionDomain.State {
     func routeName() -> String? {
-        guard let route = route else {
+        guard let destination = destination else {
             return nil
         }
-        switch route {
+        switch destination {
             case let .can(state: state):
-                return state.routeName() ?? route.tag.analyticsName
+                return state.routeName() ?? destination.tag.analyticsName
             case let .fasttrack(state: state):
-                return state.routeName() ?? route.tag.analyticsName
+                return state.routeName() ?? destination.tag.analyticsName
             case let .egk(state: state):
-                return state.routeName() ?? route.tag.analyticsName
+                return state.routeName() ?? destination.tag.analyticsName
             case .notCapable:
-                return route.tag.analyticsName
+                return destination.tag.analyticsName
         }
     }
 }
 
 extension CardWallLoginOptionDomain.State {
     func routeName() -> String? {
-        guard let route = route else {
+        guard let destination = destination else {
             return nil
         }
-        switch route {
-            case let .alert(.error(error, _)): 
-                return error.analyticsName
+        switch destination {
             case .alert:
-                return route.tag.analyticsName
+                return destination.tag.analyticsName
             case let .readcard(state: state):
-                return state.routeName() ?? route.tag.analyticsName
+                return state.routeName() ?? destination.tag.analyticsName
             case .warning:
-                return route.tag.analyticsName
+                return destination.tag.analyticsName
         }
     }
 }
 
 extension CardWallPINDomain.State {
     func routeName() -> String? {
-        guard let route = route else {
+        guard let destination = destination else {
             return nil
         }
-        switch route {
+        switch destination {
             case let .login(state: state):
-                return state.routeName() ?? route.tag.analyticsName
+                return state.routeName() ?? destination.tag.analyticsName
             case let .egk(state: state):
-                return state.routeName() ?? route.tag.analyticsName
+                return state.routeName() ?? destination.tag.analyticsName
         }
     }
 }
 
 extension CardWallReadCardDomain.State {
     func routeName() -> String? {
-        guard let route = route else {
+        guard let destination = destination else {
             return nil
         }
-        switch route {
-            case let .alert(.error(error, _)): 
-                return error.analyticsName
+        switch destination {
             case .alert:
-                return route.tag.analyticsName
+                return destination.tag.analyticsName
             case let .help(state: state):
-                return state.routeName() ?? route.tag.analyticsName
+                return state.routeName() ?? destination.tag.analyticsName
+        }
+    }
+}
+
+extension ChargeItemDomain.State {
+    func routeName() -> String? {
+            return nil
+    }
+}
+
+extension ChargeItemsDomain.State {
+    func routeName() -> String? {
+        guard let destination = destination else {
+            return nil
+        }
+        switch destination {
+            case let .idpCardWall(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+            case .alert:
+                return destination.tag.analyticsName
+            case let .chargeItem(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
         }
     }
 }
 
 extension CreatePasswordDomain.State {
+    func routeName() -> String? {
+            return nil
+    }
+}
+
+extension CreateProfileDomain.State {
     func routeName() -> String? {
             return nil
     }
@@ -172,57 +190,67 @@ extension DeviceSecurityDomain.State {
 
 extension EditProfileDomain.State {
     func routeName() -> String? {
-        guard let route = route else {
+        guard let destination = destination else {
             return nil
         }
-        switch route {
-            case let .alert(.error(error, _)): 
-                return error.analyticsName
+        switch destination {
             case .alert:
-                return route.tag.analyticsName
+                return destination.tag.analyticsName
             case .token:
-                return route.tag.analyticsName
+                return destination.tag.analyticsName
             case .linkedDevices:
-                return route.tag.analyticsName
+                return destination.tag.analyticsName
             case let .auditEvents(state: state):
-                return state.routeName() ?? route.tag.analyticsName
+                return state.routeName() ?? destination.tag.analyticsName
             case let .registeredDevices(state: state):
-                return state.routeName() ?? route.tag.analyticsName
+                return state.routeName() ?? destination.tag.analyticsName
+            case let .chargeItems(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
         }
+    }
+}
+
+extension EditProfileNameDomain.State {
+    func routeName() -> String? {
+            return nil
+    }
+}
+
+extension EditProfilePictureDomain.State {
+    func routeName() -> String? {
+            return nil
     }
 }
 
 extension HealthCardPasswordDomain.State {
     func routeName() -> String? {
-        switch route {
+        switch destination {
             case .introduction:
-                return route.tag.analyticsName
+                return destination.tag.analyticsName
             case .can:
-                return route.tag.analyticsName
+                return destination.tag.analyticsName
             case .puk:
-                return route.tag.analyticsName
+                return destination.tag.analyticsName
             case .oldPin:
-                return route.tag.analyticsName
+                return destination.tag.analyticsName
             case .pin:
-                return route.tag.analyticsName
+                return destination.tag.analyticsName
             case let .readCard(state: state):
-                return state.routeName() ?? route.tag.analyticsName
+                return state.routeName() ?? destination.tag.analyticsName
             case .scanner:
-                return route.tag.analyticsName
+                return destination.tag.analyticsName
         }
     }
 }
 
 extension HealthCardPasswordReadCardDomain.State {
     func routeName() -> String? {
-        guard let route = route else {
+        guard let destination = destination else {
             return nil
         }
-        switch route {
-            case let .alert(.error(error, _)): 
-                return error.analyticsName
+        switch destination {
             case .alert:
-                return route.tag.analyticsName
+                return destination.tag.analyticsName
         }
     }
 }
@@ -241,37 +269,33 @@ extension IDPCardWallDomain.State {
 
 extension MainDomain.State {
     func routeName() -> String? {
-        guard let route = route else {
+        guard let destination = destination else {
             return nil
         }
-        switch route {
-            case let .addProfile(state: state):
-                return state.routeName() ?? route.tag.analyticsName
-            case .welcomeDrawer:
-                return route.tag.analyticsName
+        switch destination {
+            case let .createProfile(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+            case let .editProfilePicture(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+            case let .editName(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
             case let .scanner(state: state):
-                return state.routeName() ?? route.tag.analyticsName
+                return state.routeName() ?? destination.tag.analyticsName
             case let .deviceSecurity(state: state):
-                return state.routeName() ?? route.tag.analyticsName
+                return state.routeName() ?? destination.tag.analyticsName
             case let .cardWall(state: state):
-                return state.routeName() ?? route.tag.analyticsName
+                return state.routeName() ?? destination.tag.analyticsName
             case let .prescriptionArchive(state: state):
-                return state.routeName() ?? route.tag.analyticsName
+                return state.routeName() ?? destination.tag.analyticsName
             case let .prescriptionDetail(state: state):
-                return state.routeName() ?? route.tag.analyticsName
+                return state.routeName() ?? destination.tag.analyticsName
             case let .redeem(state: state):
-                return state.routeName() ?? route.tag.analyticsName
-            case let .alert(.error(error, _)): 
-                return error.analyticsName
+                return state.routeName() ?? destination.tag.analyticsName
+            case .welcomeDrawer:
+                return destination.tag.analyticsName
             case .alert:
-                return route.tag.analyticsName
+                return destination.tag.analyticsName
         }
-    }
-}
-
-extension MainViewHintsDomain.State {
-    func routeName() -> String? {
-            return nil
     }
 }
 
@@ -287,54 +311,46 @@ extension OnboardingDomain.State {
     }
 }
 
-extension OnboardingNewProfileDomain.State {
-    func routeName() -> String? {
-            return nil
-    }
-}
-
 extension OrderDetailDomain.State {
     func routeName() -> String? {
-        guard let route = route else {
+        guard let destination = destination else {
             return nil
         }
-        switch route {
+        switch destination {
             case let .pickupCode(state: state):
-                return state.routeName() ?? route.tag.analyticsName
+                return state.routeName() ?? destination.tag.analyticsName
             case let .prescriptionDetail(state: state):
-                return state.routeName() ?? route.tag.analyticsName
-            case let .alert(.error(error, _)): 
-                return error.analyticsName
+                return state.routeName() ?? destination.tag.analyticsName
             case .alert:
-                return route.tag.analyticsName
+                return destination.tag.analyticsName
         }
     }
 }
 
 extension OrderHealthCardDomain.State {
     func routeName() -> String? {
-        guard let route = route else {
+        guard let destination = destination else {
             return nil
         }
-        switch route {
+        switch destination {
             case .searchPicker:
-                return route.tag.analyticsName
+                return destination.tag.analyticsName
             case .serviceInquiry:
-                return route.tag.analyticsName
+                return destination.tag.analyticsName
         }
     }
 }
 
 extension OrdersDomain.State {
     func routeName() -> String? {
-        guard let route = route else {
+        guard let destination = destination else {
             return nil
         }
-        switch route {
+        switch destination {
             case let .orderDetail(state: state):
-                return state.routeName() ?? route.tag.analyticsName
+                return state.routeName() ?? destination.tag.analyticsName
             case .selectProfile:
-                return route.tag.analyticsName
+                return destination.tag.analyticsName
         }
     }
 }
@@ -347,56 +363,52 @@ extension PharmacyContactDomain.State {
 
 extension PharmacyDetailDomain.State {
     func routeName() -> String? {
-        guard let route = route else {
+        guard let destination = destination else {
             return nil
         }
-        switch route {
+        switch destination {
             case let .redeemViaAVS(state: state):
-                return state.routeName() ?? route.tag.analyticsName
+                return state.routeName() ?? destination.tag.analyticsName
             case let .redeemViaErxTaskRepository(state: state):
-                return state.routeName() ?? route.tag.analyticsName
+                return state.routeName() ?? destination.tag.analyticsName
             case .alert:
-                return route.tag.analyticsName
+                return destination.tag.analyticsName
         }
     }
 }
 
 extension PharmacyRedeemDomain.State {
     func routeName() -> String? {
-        guard let route = route else {
+        guard let destination = destination else {
             return nil
         }
-        switch route {
+        switch destination {
             case let .redeemSuccess(state: state):
-                return state.routeName() ?? route.tag.analyticsName
+                return state.routeName() ?? destination.tag.analyticsName
             case let .contact(state: state):
-                return state.routeName() ?? route.tag.analyticsName
+                return state.routeName() ?? destination.tag.analyticsName
             case let .cardWall(state: state):
-                return state.routeName() ?? route.tag.analyticsName
-            case let .alert(.error(error, _)): 
-                return error.analyticsName
+                return state.routeName() ?? destination.tag.analyticsName
             case .alert:
-                return route.tag.analyticsName
+                return destination.tag.analyticsName
         }
     }
 }
 
 extension PharmacySearchDomain.State {
     func routeName() -> String? {
-        guard let route = route else {
+        guard let destination = destination else {
             return nil
         }
-        switch route {
+        switch destination {
             case .selectProfile:
-                return route.tag.analyticsName
+                return destination.tag.analyticsName
             case let .pharmacy(state: state):
-                return state.routeName() ?? route.tag.analyticsName
+                return state.routeName() ?? destination.tag.analyticsName
             case let .filter(state: state):
-                return state.routeName() ?? route.tag.analyticsName
-            case let .alert(.error(error, _)): 
-                return error.analyticsName
+                return state.routeName() ?? destination.tag.analyticsName
             case .alert:
-                return route.tag.analyticsName
+                return destination.tag.analyticsName
         }
     }
 }
@@ -415,30 +427,52 @@ extension PickupCodeDomain.State {
 
 extension PrescriptionArchiveDomain.State {
     func routeName() -> String? {
-        guard let route = route else {
+        guard let destination = destination else {
             return nil
         }
-        switch route {
+        switch destination {
             case let .prescriptionDetail(state: state):
-                return state.routeName() ?? route.tag.analyticsName
+                return state.routeName() ?? destination.tag.analyticsName
         }
     }
 }
 
 extension PrescriptionDetailDomain.State {
     func routeName() -> String? {
-        guard let route = route else {
+        guard let destination = destination else {
             return nil
         }
-        switch route {
-            case let .alert(.error(error, _)): 
-                return error.analyticsName
+        switch destination {
+            case .medication:
+                return destination.tag.analyticsName
+            case .patient:
+                return destination.tag.analyticsName
+            case .practitioner:
+                return destination.tag.analyticsName
+            case .organization:
+                return destination.tag.analyticsName
+            case .accidentInfo:
+                return destination.tag.analyticsName
+            case .technicalInformations:
+                return destination.tag.analyticsName
             case .alert:
-                return route.tag.analyticsName
+                return destination.tag.analyticsName
             case .sharePrescription:
-                return route.tag.analyticsName
-            case .directAssignment:
-                return route.tag.analyticsName
+                return destination.tag.analyticsName
+            case .directAssignmentInfo:
+                return destination.tag.analyticsName
+            case .substitutionInfo:
+                return destination.tag.analyticsName
+            case .prescriptionValidityInfo:
+                return destination.tag.analyticsName
+            case .scannedPrescriptionInfo:
+                return destination.tag.analyticsName
+            case .errorInfo:
+                return destination.tag.analyticsName
+            case .coPaymentInfo:
+                return destination.tag.analyticsName
+            case .emergencyServiceFeeInfo:
+                return destination.tag.analyticsName
         }
     }
 }
@@ -451,14 +485,12 @@ extension PrescriptionListDomain.State {
 
 extension ProfileSelectionDomain.State {
     func routeName() -> String? {
-        guard let route = route else {
+        guard let destination = destination else {
             return nil
         }
-        switch route {
-            case let .alert(.error(error, _)): 
-                return error.analyticsName
+        switch destination {
             case .alert:
-                return route.tag.analyticsName
+                return destination.tag.analyticsName
         }
     }
 }
@@ -471,18 +503,16 @@ extension ProfileSelectionToolbarItemDomain.State {
 
 extension ProfilesDomain.State {
     func routeName() -> String? {
-        guard let route = route else {
+        guard let destination = destination else {
             return nil
         }
-        switch route {
+        switch destination {
             case let .editProfile(state: state):
-                return state.routeName() ?? route.tag.analyticsName
+                return state.routeName() ?? destination.tag.analyticsName
             case let .newProfile(state: state):
-                return state.routeName() ?? route.tag.analyticsName
-            case let .alert(.error(error, _)): 
-                return error.analyticsName
+                return state.routeName() ?? destination.tag.analyticsName
             case .alert:
-                return route.tag.analyticsName
+                return destination.tag.analyticsName
         }
     }
 }
@@ -495,14 +525,14 @@ extension RedeemMatrixCodeDomain.State {
 
 extension RedeemMethodsDomain.State {
     func routeName() -> String? {
-        guard let route = route else {
+        guard let destination = destination else {
             return nil
         }
-        switch route {
+        switch destination {
             case let .matrixCode(state: state):
-                return state.routeName() ?? route.tag.analyticsName
+                return state.routeName() ?? destination.tag.analyticsName
             case let .pharmacySearch(state: state):
-                return state.routeName() ?? route.tag.analyticsName
+                return state.routeName() ?? destination.tag.analyticsName
         }
     }
 }
@@ -521,16 +551,14 @@ extension RegisterAuthenticationDomain.State {
 
 extension RegisteredDevicesDomain.State {
     func routeName() -> String? {
-        guard let route = route else {
+        guard let destination = destination else {
             return nil
         }
-        switch route {
-            case let .cardWall(state: state):
-                return state.routeName() ?? route.tag.analyticsName
-            case let .alert(.error(error, _)): 
-                return error.analyticsName
+        switch destination {
+            case let .idpCardWall(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
             case .alert:
-                return route.tag.analyticsName
+                return destination.tag.analyticsName
         }
     }
 }
@@ -543,34 +571,34 @@ extension ScannerDomain.State {
 
 extension SettingsDomain.State {
     func routeName() -> String? {
-        guard let route = route else {
+        guard let destination = destination else {
             return nil
         }
-        switch route {
+        switch destination {
             case .debug:
                 return nil
             case .alert:
-                return route.tag.analyticsName
+                return destination.tag.analyticsName
             case let .healthCardPasswordForgotPin(state: state):
-                return state.routeName() ?? route.tag.analyticsName
+                return state.routeName() ?? destination.tag.analyticsName
             case let .healthCardPasswordSetCustomPin(state: state):
-                return state.routeName() ?? route.tag.analyticsName
+                return state.routeName() ?? destination.tag.analyticsName
             case let .healthCardPasswordUnlockCard(state: state):
-                return state.routeName() ?? route.tag.analyticsName
+                return state.routeName() ?? destination.tag.analyticsName
             case let .setAppPassword(state: state):
-                return state.routeName() ?? route.tag.analyticsName
+                return state.routeName() ?? destination.tag.analyticsName
             case .complyTracking:
-                return route.tag.analyticsName
+                return destination.tag.analyticsName
             case .legalNotice:
-                return route.tag.analyticsName
+                return destination.tag.analyticsName
             case .dataProtection:
-                return route.tag.analyticsName
+                return destination.tag.analyticsName
             case .openSourceLicence:
-                return route.tag.analyticsName
+                return destination.tag.analyticsName
             case .termsOfUse:
-                return route.tag.analyticsName
+                return destination.tag.analyticsName
             case let .egk(state: state):
-                return state.routeName() ?? route.tag.analyticsName
+                return state.routeName() ?? destination.tag.analyticsName
         }
     }
 }
@@ -578,71 +606,461 @@ extension SettingsDomain.State {
 
 extension AppMigrationDomain.State {
     func routeName() -> String? {
-        let route = self
-        switch route {
+        let destination = self
+        switch destination {
             case .none:
-                return route.tag.analyticsName
+                return destination.tag.analyticsName
             case .inProgress:
-                return route.tag.analyticsName
+                return destination.tag.analyticsName
             case .finished:
-                return route.tag.analyticsName
+                return destination.tag.analyticsName
             case .failed:
-                return route.tag.analyticsName
+                return destination.tag.analyticsName
         }
     }
 }
 
 extension AppStartDomain.State {
     func routeName() -> String? {
-        let route = self
-        switch route {
+        let destination = self
+        switch destination {
             case .loading:
-                return route.tag.analyticsName
+                return destination.tag.analyticsName
             case let .onboarding(state: state):
-                return state.routeName() ?? route.tag.analyticsName
+                return state.routeName() ?? destination.tag.analyticsName
             case let .app(state: state):
-                return state.routeName() ?? route.tag.analyticsName
+                return state.routeName() ?? destination.tag.analyticsName
         }
     }
 }
 
 extension CardWallReadCardHelpDomain.State {
     func routeName() -> String? {
-        let route = self
-        switch route {
+        let destination = self
+        switch destination {
             case .first:
-                return route.tag.analyticsName
+                return destination.tag.analyticsName
             case .second:
-                return route.tag.analyticsName
+                return destination.tag.analyticsName
             case .third:
-                return route.tag.analyticsName
+                return destination.tag.analyticsName
         }
     }
 }
 
 extension ExtAuthPendingDomain.State {
     func routeName() -> String? {
-        let route = self
-        switch route {
+        let destination = self
+        switch destination {
             case .empty:
-                return route.tag.analyticsName
+                return destination.tag.analyticsName
             case .pendingExtAuth:
-                return route.tag.analyticsName
+                return destination.tag.analyticsName
             case .extAuthReceived:
-                return route.tag.analyticsName
+                return destination.tag.analyticsName
             case .extAuthSuccessful:
-                return route.tag.analyticsName
+                return destination.tag.analyticsName
             case let .extAuthFailed(.error(error, _)): 
                 return error.analyticsName
             case .extAuthFailed:
-                return route.tag.analyticsName
+                return destination.tag.analyticsName
         }
     }
 }
 
 
 
-extension AppDomain.Route.Tag {
+extension CardWallCANDomain.Destinations.State {
+    func routeName() -> String? {
+        let destination = self
+        switch destination {
+            case let .pin(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+            case let .egk(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+            case .scanner:
+                return destination.tag.analyticsName
+        }
+    }
+}
+
+extension CardWallExtAuthSelectionDomain.Destinations.State {
+    func routeName() -> String? {
+        let destination = self
+        switch destination {
+            case let .confirmation(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+            case let .egk(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+        }
+    }
+}
+
+extension CardWallIntroductionDomain.Destinations.State {
+    func routeName() -> String? {
+        let destination = self
+        switch destination {
+            case let .can(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+            case let .fasttrack(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+            case let .egk(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+            case .notCapable:
+                return destination.tag.analyticsName
+        }
+    }
+}
+
+extension CardWallLoginOptionDomain.Destinations.State {
+    func routeName() -> String? {
+        let destination = self
+        switch destination {
+            case .alert:
+                return destination.tag.analyticsName
+            case let .readcard(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+            case .warning:
+                return destination.tag.analyticsName
+        }
+    }
+}
+
+extension CardWallPINDomain.Destinations.State {
+    func routeName() -> String? {
+        let destination = self
+        switch destination {
+            case let .login(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+            case let .egk(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+        }
+    }
+}
+
+extension CardWallReadCardDomain.Destinations.State {
+    func routeName() -> String? {
+        let destination = self
+        switch destination {
+            case .alert:
+                return destination.tag.analyticsName
+            case let .help(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+        }
+    }
+}
+
+extension ChargeItemsDomain.Destinations.State {
+    func routeName() -> String? {
+        let destination = self
+        switch destination {
+            case let .idpCardWall(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+            case .alert:
+                return destination.tag.analyticsName
+            case let .chargeItem(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+        }
+    }
+}
+
+extension EditProfileDomain.Destinations.State {
+    func routeName() -> String? {
+        let destination = self
+        switch destination {
+            case .alert:
+                return destination.tag.analyticsName
+            case .token:
+                return destination.tag.analyticsName
+            case .linkedDevices:
+                return destination.tag.analyticsName
+            case let .auditEvents(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+            case let .registeredDevices(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+            case let .chargeItems(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+        }
+    }
+}
+
+extension HealthCardPasswordDomain.Destinations.State {
+    func routeName() -> String? {
+        let destination = self
+        switch destination {
+            case .introduction:
+                return destination.tag.analyticsName
+            case .can:
+                return destination.tag.analyticsName
+            case .puk:
+                return destination.tag.analyticsName
+            case .oldPin:
+                return destination.tag.analyticsName
+            case .pin:
+                return destination.tag.analyticsName
+            case let .readCard(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+            case .scanner:
+                return destination.tag.analyticsName
+        }
+    }
+}
+
+extension HealthCardPasswordReadCardDomain.Destinations.State {
+    func routeName() -> String? {
+        let destination = self
+        switch destination {
+            case .alert:
+                return destination.tag.analyticsName
+        }
+    }
+}
+
+extension MainDomain.Destinations.State {
+    func routeName() -> String? {
+        let destination = self
+        switch destination {
+            case let .createProfile(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+            case let .editProfilePicture(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+            case let .editName(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+            case let .scanner(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+            case let .deviceSecurity(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+            case let .cardWall(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+            case let .prescriptionArchive(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+            case let .prescriptionDetail(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+            case let .redeem(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+            case .welcomeDrawer:
+                return destination.tag.analyticsName
+            case .alert:
+                return destination.tag.analyticsName
+        }
+    }
+}
+
+extension OrderDetailDomain.Destinations.State {
+    func routeName() -> String? {
+        let destination = self
+        switch destination {
+            case let .pickupCode(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+            case let .prescriptionDetail(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+            case .alert:
+                return destination.tag.analyticsName
+        }
+    }
+}
+
+extension OrderHealthCardDomain.Destinations.State {
+    func routeName() -> String? {
+        let destination = self
+        switch destination {
+            case .searchPicker:
+                return destination.tag.analyticsName
+            case .serviceInquiry:
+                return destination.tag.analyticsName
+        }
+    }
+}
+
+extension OrdersDomain.Destinations.State {
+    func routeName() -> String? {
+        let destination = self
+        switch destination {
+            case let .orderDetail(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+            case .selectProfile:
+                return destination.tag.analyticsName
+        }
+    }
+}
+
+extension PharmacyDetailDomain.Destinations.State {
+    func routeName() -> String? {
+        let destination = self
+        switch destination {
+            case let .redeemViaAVS(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+            case let .redeemViaErxTaskRepository(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+            case .alert:
+                return destination.tag.analyticsName
+        }
+    }
+}
+
+extension PharmacyRedeemDomain.Destinations.State {
+    func routeName() -> String? {
+        let destination = self
+        switch destination {
+            case let .redeemSuccess(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+            case let .contact(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+            case let .cardWall(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+            case .alert:
+                return destination.tag.analyticsName
+        }
+    }
+}
+
+extension PharmacySearchDomain.Destinations.State {
+    func routeName() -> String? {
+        let destination = self
+        switch destination {
+            case .selectProfile:
+                return destination.tag.analyticsName
+            case let .pharmacy(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+            case let .filter(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+            case .alert:
+                return destination.tag.analyticsName
+        }
+    }
+}
+
+extension PrescriptionArchiveDomain.Destinations.State {
+    func routeName() -> String? {
+        let destination = self
+        switch destination {
+            case let .prescriptionDetail(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+        }
+    }
+}
+
+extension PrescriptionDetailDomain.Destinations.State {
+    func routeName() -> String? {
+        let destination = self
+        switch destination {
+            case .medication:
+                return destination.tag.analyticsName
+            case .patient:
+                return destination.tag.analyticsName
+            case .practitioner:
+                return destination.tag.analyticsName
+            case .organization:
+                return destination.tag.analyticsName
+            case .accidentInfo:
+                return destination.tag.analyticsName
+            case .technicalInformations:
+                return destination.tag.analyticsName
+            case .alert:
+                return destination.tag.analyticsName
+            case .sharePrescription:
+                return destination.tag.analyticsName
+            case .directAssignmentInfo:
+                return destination.tag.analyticsName
+            case .substitutionInfo:
+                return destination.tag.analyticsName
+            case .prescriptionValidityInfo:
+                return destination.tag.analyticsName
+            case .scannedPrescriptionInfo:
+                return destination.tag.analyticsName
+            case .errorInfo:
+                return destination.tag.analyticsName
+            case .coPaymentInfo:
+                return destination.tag.analyticsName
+            case .emergencyServiceFeeInfo:
+                return destination.tag.analyticsName
+        }
+    }
+}
+
+extension ProfileSelectionDomain.Destinations.State {
+    func routeName() -> String? {
+        let destination = self
+        switch destination {
+            case .alert:
+                return destination.tag.analyticsName
+        }
+    }
+}
+
+extension ProfilesDomain.Destinations.State {
+    func routeName() -> String? {
+        let destination = self
+        switch destination {
+            case let .editProfile(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+            case let .newProfile(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+            case .alert:
+                return destination.tag.analyticsName
+        }
+    }
+}
+
+extension RedeemMethodsDomain.Destinations.State {
+    func routeName() -> String? {
+        let destination = self
+        switch destination {
+            case let .matrixCode(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+            case let .pharmacySearch(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+        }
+    }
+}
+
+extension RegisteredDevicesDomain.Destinations.State {
+    func routeName() -> String? {
+        let destination = self
+        switch destination {
+            case let .idpCardWall(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+            case .alert:
+                return destination.tag.analyticsName
+        }
+    }
+}
+
+extension SettingsDomain.Destinations.State {
+    func routeName() -> String? {
+        let destination = self
+        switch destination {
+            case .debug:
+                return nil
+            case .alert:
+                return destination.tag.analyticsName
+            case let .healthCardPasswordForgotPin(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+            case let .healthCardPasswordSetCustomPin(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+            case let .healthCardPasswordUnlockCard(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+            case let .setAppPassword(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+            case .complyTracking:
+                return destination.tag.analyticsName
+            case .legalNotice:
+                return destination.tag.analyticsName
+            case .dataProtection:
+                return destination.tag.analyticsName
+            case .openSourceLicence:
+                return destination.tag.analyticsName
+            case .termsOfUse:
+                return destination.tag.analyticsName
+            case let .egk(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+        }
+    }
+}
+
+
+
+extension AppDomain.Destinations.State.Tag {
     var analyticsName: String {
         switch self {
             case .main: 
@@ -656,7 +1074,7 @@ extension AppDomain.Route.Tag {
         }
     }
 }
-extension CardWallCANDomain.Route.Tag {
+extension CardWallCANDomain.Destinations.State.Tag {
     var analyticsName: String {
         switch self {
             case .pin: 
@@ -668,7 +1086,7 @@ extension CardWallCANDomain.Route.Tag {
         }
     }
 }
-extension CardWallExtAuthSelectionDomain.Route.Tag {
+extension CardWallExtAuthSelectionDomain.Destinations.State.Tag {
     var analyticsName: String {
         switch self {
             case .confirmation: 
@@ -678,7 +1096,7 @@ extension CardWallExtAuthSelectionDomain.Route.Tag {
         }
     }
 }
-extension CardWallIntroductionDomain.Route.Tag {
+extension CardWallIntroductionDomain.Destinations.State.Tag {
     var analyticsName: String {
         switch self {
             case .can: 
@@ -692,7 +1110,7 @@ extension CardWallIntroductionDomain.Route.Tag {
         }
     }
 }
-extension CardWallLoginOptionDomain.Route.Tag {
+extension CardWallLoginOptionDomain.Destinations.State.Tag {
     var analyticsName: String {
         switch self {
             case .alert: 
@@ -704,7 +1122,7 @@ extension CardWallLoginOptionDomain.Route.Tag {
         }
     }
 }
-extension CardWallPINDomain.Route.Tag {
+extension CardWallPINDomain.Destinations.State.Tag {
     var analyticsName: String {
         switch self {
             case .login: 
@@ -714,7 +1132,7 @@ extension CardWallPINDomain.Route.Tag {
         }
     }
 }
-extension CardWallReadCardDomain.Route.Tag {
+extension CardWallReadCardDomain.Destinations.State.Tag {
     var analyticsName: String {
         switch self {
             case .alert: 
@@ -724,7 +1142,19 @@ extension CardWallReadCardDomain.Route.Tag {
         }
     }
 }
-extension EditProfileDomain.Route.Tag {
+extension ChargeItemsDomain.Destinations.State.Tag {
+    var analyticsName: String {
+        switch self {
+            case .idpCardWall: 
+                return "idpCardWall"
+            case .alert: 
+                return "alert"
+            case .chargeItem: 
+                return "chargeItem"
+        }
+    }
+}
+extension EditProfileDomain.Destinations.State.Tag {
     var analyticsName: String {
         switch self {
             case .alert: 
@@ -737,10 +1167,12 @@ extension EditProfileDomain.Route.Tag {
                 return "auditEvents"
             case .registeredDevices: 
                 return "registeredDevices"
+            case .chargeItems: 
+                return "chargeItems"
         }
     }
 }
-extension HealthCardPasswordDomain.Route.Tag {
+extension HealthCardPasswordDomain.Destinations.State.Tag {
     var analyticsName: String {
         switch self {
             case .introduction: 
@@ -760,7 +1192,7 @@ extension HealthCardPasswordDomain.Route.Tag {
         }
     }
 }
-extension HealthCardPasswordReadCardDomain.Route.Tag {
+extension HealthCardPasswordReadCardDomain.Destinations.State.Tag {
     var analyticsName: String {
         switch self {
             case .alert: 
@@ -768,13 +1200,15 @@ extension HealthCardPasswordReadCardDomain.Route.Tag {
         }
     }
 }
-extension MainDomain.Route.Tag {
+extension MainDomain.Destinations.State.Tag {
     var analyticsName: String {
         switch self {
-            case .addProfile: 
-                return "addProfile"
-            case .welcomeDrawer: 
-                return "welcomeDrawer"
+            case .createProfile: 
+                return "createProfile"
+            case .editProfilePicture: 
+                return "editProfilePicture"
+            case .editName: 
+                return "editName"
             case .scanner: 
                 return "scanner"
             case .deviceSecurity: 
@@ -787,12 +1221,14 @@ extension MainDomain.Route.Tag {
                 return "prescriptionDetail"
             case .redeem: 
                 return "redeem"
+            case .welcomeDrawer: 
+                return "welcomeDrawer"
             case .alert: 
                 return "alert"
         }
     }
 }
-extension OrderDetailDomain.Route.Tag {
+extension OrderDetailDomain.Destinations.State.Tag {
     var analyticsName: String {
         switch self {
             case .pickupCode: 
@@ -804,7 +1240,7 @@ extension OrderDetailDomain.Route.Tag {
         }
     }
 }
-extension OrderHealthCardDomain.Route.Tag {
+extension OrderHealthCardDomain.Destinations.State.Tag {
     var analyticsName: String {
         switch self {
             case .searchPicker: 
@@ -814,7 +1250,7 @@ extension OrderHealthCardDomain.Route.Tag {
         }
     }
 }
-extension OrdersDomain.Route.Tag {
+extension OrdersDomain.Destinations.State.Tag {
     var analyticsName: String {
         switch self {
             case .orderDetail: 
@@ -824,7 +1260,7 @@ extension OrdersDomain.Route.Tag {
         }
     }
 }
-extension PharmacyDetailDomain.Route.Tag {
+extension PharmacyDetailDomain.Destinations.State.Tag {
     var analyticsName: String {
         switch self {
             case .redeemViaAVS: 
@@ -836,7 +1272,7 @@ extension PharmacyDetailDomain.Route.Tag {
         }
     }
 }
-extension PharmacyRedeemDomain.Route.Tag {
+extension PharmacyRedeemDomain.Destinations.State.Tag {
     var analyticsName: String {
         switch self {
             case .redeemSuccess: 
@@ -850,7 +1286,7 @@ extension PharmacyRedeemDomain.Route.Tag {
         }
     }
 }
-extension PharmacySearchDomain.Route.Tag {
+extension PharmacySearchDomain.Destinations.State.Tag {
     var analyticsName: String {
         switch self {
             case .selectProfile: 
@@ -864,7 +1300,7 @@ extension PharmacySearchDomain.Route.Tag {
         }
     }
 }
-extension PrescriptionArchiveDomain.Route.Tag {
+extension PrescriptionArchiveDomain.Destinations.State.Tag {
     var analyticsName: String {
         switch self {
             case .prescriptionDetail: 
@@ -872,19 +1308,43 @@ extension PrescriptionArchiveDomain.Route.Tag {
         }
     }
 }
-extension PrescriptionDetailDomain.Route.Tag {
+extension PrescriptionDetailDomain.Destinations.State.Tag {
     var analyticsName: String {
         switch self {
+            case .medication: 
+                return "medication"
+            case .patient: 
+                return "patient"
+            case .practitioner: 
+                return "practitioner"
+            case .organization: 
+                return "organization"
+            case .accidentInfo: 
+                return "accidentInfo"
+            case .technicalInformations: 
+                return "technicalInformations"
             case .alert: 
                 return "alert"
             case .sharePrescription: 
                 return "sharePrescription"
-            case .directAssignment: 
-                return "directAssignment"
+            case .directAssignmentInfo: 
+                return "directAssignmentInfo"
+            case .substitutionInfo: 
+                return "substitutionInfo"
+            case .prescriptionValidityInfo: 
+                return "prescriptionValidityInfo"
+            case .scannedPrescriptionInfo: 
+                return "scannedPrescriptionInfo"
+            case .errorInfo: 
+                return "errorInfo"
+            case .coPaymentInfo: 
+                return "coPaymentInfo"
+            case .emergencyServiceFeeInfo: 
+                return "emergencyServiceFeeInfo"
         }
     }
 }
-extension ProfileSelectionDomain.Route.Tag {
+extension ProfileSelectionDomain.Destinations.State.Tag {
     var analyticsName: String {
         switch self {
             case .alert: 
@@ -892,7 +1352,7 @@ extension ProfileSelectionDomain.Route.Tag {
         }
     }
 }
-extension ProfilesDomain.Route.Tag {
+extension ProfilesDomain.Destinations.State.Tag {
     var analyticsName: String {
         switch self {
             case .editProfile: 
@@ -904,7 +1364,7 @@ extension ProfilesDomain.Route.Tag {
         }
     }
 }
-extension RedeemMethodsDomain.Route.Tag {
+extension RedeemMethodsDomain.Destinations.State.Tag {
     var analyticsName: String {
         switch self {
             case .matrixCode: 
@@ -914,17 +1374,17 @@ extension RedeemMethodsDomain.Route.Tag {
         }
     }
 }
-extension RegisteredDevicesDomain.Route.Tag {
+extension RegisteredDevicesDomain.Destinations.State.Tag {
     var analyticsName: String {
         switch self {
-            case .cardWall: 
-                return "cardWall"
+            case .idpCardWall: 
+                return "idpCardWall"
             case .alert: 
                 return "alert"
         }
     }
 }
-extension SettingsDomain.Route.Tag {
+extension SettingsDomain.Destinations.State.Tag {
     var analyticsName: String {
         switch self {
             case .debug: 
@@ -954,6 +1414,7 @@ extension SettingsDomain.Route.Tag {
         }
     }
 }
+
 
 extension AppMigrationDomain.State.Tag {
     var analyticsName: String {

@@ -17,6 +17,7 @@
 //
 
 import CombineSchedulers
+import Dependencies
 import Foundation
 import IDP
 
@@ -50,3 +51,18 @@ extension Schedulers {
 }
 
 extension Schedulers: IDPSchedulers {}
+
+// MARK: TCA Dependency
+
+extension Schedulers: DependencyKey {
+    static let liveValue = Schedulers()
+
+    static let previewValue = Schedulers()
+}
+
+extension DependencyValues {
+    var schedulers: Schedulers {
+        get { self[Schedulers.self] }
+        set { self[Schedulers.self] = newValue }
+    }
+}

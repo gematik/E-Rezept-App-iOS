@@ -19,8 +19,10 @@
 @testable import AVS
 import Combine
 import DataKit
+import Dependencies
 @testable import eRpApp
 import eRpKit
+import eRpLocalStorage
 import Foundation
 import IdentifiedCollections
 import Nimble
@@ -207,74 +209,83 @@ final class AVSRedeemServiceTests: XCTestCase {
     }
 
     func testRedeemViaAVSResponses_All_Fail() throws {
-        let sut = AVSRedeemService(
-            avsSession: mockAVSService,
-            avsTransactionDataStore: mockAVSTransactionDataStore
-        )
+        let userDefaults = UserDefaultsStore(userDefaults: .standard)
+        withDependencies {
+            $0.appAuthenticationProvider = DefaultAuthenticationProvider(userDataStore: userDefaults)
+            $0.appSecurityManager = DefaultAppSecurityManager(keychainAccess: SystemKeychainAccessHelper())
+            $0.authenticationChallengeProvider = BiometricsAuthenticationChallengeProvider()
+            $0.schedulers = Schedulers()
+            $0.userDataStore = userDefaults
+        } operation: {
+            let sut = AVSRedeemService(
+                avsSession: mockAVSService,
+                avsTransactionDataStore: mockAVSTransactionDataStore
+            )
 
-        mockAVSService.redeemMessageEndpointRecipientsClosure = { _, _, _ in
-            Fail(error: AVSError.internal(error: AVSError.InternalError.cmsContentCreation))
-                .eraseToAnyPublisher()
+            mockAVSService.redeemMessageEndpointRecipientsClosure = { _, _, _ in
+                Fail(error: AVSError.internal(error: AVSError.InternalError.cmsContentCreation))
+                    .eraseToAnyPublisher()
+            }
+
+            let order1: Order = .Fixtures.order1
+            let order2: Order = .Fixtures.order2
+            let order3: Order = .Fixtures.order3
+
+            var receivedResponses: [IdentifiedArrayOf<OrderResponse>] = []
+            sut.redeem([order1, order2, order3])
+                .test(failure: { error in
+                    print(error)
+                    fail("no error expected")
+                }, expectations: { orderResponses in
+                    receivedResponses.append(orderResponses)
+                })
+
+            expect(receivedResponses.count).toEventually(equal(3))
+            let firstResponse = receivedResponses[0]
+
+            expect(firstResponse.count) == 3
+            expect(firstResponse.inProgress).to(beTrue())
+            expect(firstResponse.areFailing).to(beFalse())
+            expect(firstResponse.areSuccessful).to(beFalse())
+            expect(firstResponse.arePartiallySuccessful).to(beFalse())
+            expect(firstResponse.progress).to(equal(Double(1) / Double(3)))
+            expect(firstResponse[0].isFailure).to(beTrue())
+            expect(firstResponse[0].requested).to(equal(order1))
+            expect(firstResponse[1].inProgress).to(beTrue())
+            expect(firstResponse[1].requested).to(equal(order2))
+            expect(firstResponse[2].inProgress).to(beTrue())
+            expect(firstResponse[2].requested).to(equal(order3))
+
+            let secondResponse = receivedResponses[1]
+            expect(secondResponse.count) == 3
+            expect(secondResponse.inProgress).to(beTrue())
+            expect(secondResponse.areFailing).to(beFalse())
+            expect(secondResponse.areSuccessful).to(beFalse())
+            expect(secondResponse.arePartiallySuccessful).to(beFalse())
+            expect(secondResponse.progress).to(equal(Double(2) / Double(3)))
+            expect(secondResponse[0].isFailure).to(beTrue())
+            expect(secondResponse[0].requested).to(equal(order1))
+            expect(secondResponse[1].isFailure).to(beTrue())
+            expect(secondResponse[1].requested).to(equal(order2))
+            expect(secondResponse[2].inProgress).to(beTrue())
+            expect(secondResponse[2].requested).to(equal(order3))
+
+            let thirdResponse = receivedResponses[2]
+            expect(thirdResponse.inProgress).to(beFalse())
+            expect(thirdResponse.areFailing).to(beTrue())
+            expect(thirdResponse.areSuccessful).to(beFalse())
+            expect(thirdResponse.arePartiallySuccessful).to(beFalse())
+            expect(thirdResponse.progress).to(equal(1.0))
+            expect(thirdResponse.count) == 3
+            expect(thirdResponse[0].isFailure).to(beTrue())
+            expect(thirdResponse[0].requested).to(equal(order1))
+            expect(thirdResponse[1].isFailure).to(beTrue())
+            expect(thirdResponse[1].requested).to(equal(order2))
+            expect(thirdResponse[2].isFailure).to(beTrue())
+            expect(thirdResponse[2].requested).to(equal(order3))
+
+            expect(self.mockAVSTransactionDataStore.saveAvsTransactionsCalled) == false
         }
-
-        let order1: Order = .Fixtures.order1
-        let order2: Order = .Fixtures.order2
-        let order3: Order = .Fixtures.order3
-
-        var receivedResponses: [IdentifiedArrayOf<OrderResponse>] = []
-        sut.redeem([order1, order2, order3])
-            .test(failure: { error in
-                print(error)
-                fail("no error expected")
-            }, expectations: { orderResponses in
-                receivedResponses.append(orderResponses)
-            })
-
-        expect(receivedResponses.count).toEventually(equal(3))
-        let firstResponse = receivedResponses[0]
-
-        expect(firstResponse.count) == 3
-        expect(firstResponse.inProgress).to(beTrue())
-        expect(firstResponse.areFailing).to(beFalse())
-        expect(firstResponse.areSuccessful).to(beFalse())
-        expect(firstResponse.arePartiallySuccessful).to(beFalse())
-        expect(firstResponse.progress).to(equal(Double(1) / Double(3)))
-        expect(firstResponse[0].isFailure).to(beTrue())
-        expect(firstResponse[0].requested).to(equal(order1))
-        expect(firstResponse[1].inProgress).to(beTrue())
-        expect(firstResponse[1].requested).to(equal(order2))
-        expect(firstResponse[2].inProgress).to(beTrue())
-        expect(firstResponse[2].requested).to(equal(order3))
-
-        let secondResponse = receivedResponses[1]
-        expect(secondResponse.count) == 3
-        expect(secondResponse.inProgress).to(beTrue())
-        expect(secondResponse.areFailing).to(beFalse())
-        expect(secondResponse.areSuccessful).to(beFalse())
-        expect(secondResponse.arePartiallySuccessful).to(beFalse())
-        expect(secondResponse.progress).to(equal(Double(2) / Double(3)))
-        expect(secondResponse[0].isFailure).to(beTrue())
-        expect(secondResponse[0].requested).to(equal(order1))
-        expect(secondResponse[1].isFailure).to(beTrue())
-        expect(secondResponse[1].requested).to(equal(order2))
-        expect(secondResponse[2].inProgress).to(beTrue())
-        expect(secondResponse[2].requested).to(equal(order3))
-
-        let thirdResponse = receivedResponses[2]
-        expect(thirdResponse.inProgress).to(beFalse())
-        expect(thirdResponse.areFailing).to(beTrue())
-        expect(thirdResponse.areSuccessful).to(beFalse())
-        expect(thirdResponse.arePartiallySuccessful).to(beFalse())
-        expect(thirdResponse.progress).to(equal(1.0))
-        expect(thirdResponse.count) == 3
-        expect(thirdResponse[0].isFailure).to(beTrue())
-        expect(thirdResponse[0].requested).to(equal(order1))
-        expect(thirdResponse[1].isFailure).to(beTrue())
-        expect(thirdResponse[1].requested).to(equal(order2))
-        expect(thirdResponse[2].isFailure).to(beTrue())
-        expect(thirdResponse[2].requested).to(equal(order3))
-
-        expect(self.mockAVSTransactionDataStore.saveAvsTransactionsCalled) == false
     }
 
     func testRedeemViaAVSResponses_SetupFailure() throws {

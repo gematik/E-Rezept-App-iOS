@@ -1,4 +1,4 @@
-// Generated using Sourcery 1.9.0 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.0.1 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 
 import Combine
@@ -197,38 +197,41 @@ class StreamWrappedErxTaskRepository: ErxTaskRepository {
             .eraseToAnyPublisher()
 	}
 
-
-}
-
-class StreamWrappedEventsStore: EventsStore {
-    private var disposeBag: Set<AnyCancellable> = []
-	private let stream: AnyPublisher<EventsStore, Never>
-	private var current: EventsStore
-
-	init(stream: AnyPublisher<EventsStore, Never>, current: EventsStore) {
-		self.stream = stream
-		self.current = current
-
-		stream
-			.weakAssign(to: \.current, on: self)
-			.store(in: &disposeBag)
-
-
+	func loadRemoteChargeItems() -> AnyPublisher<[ErxChargeItem], ErxRepositoryError> {
+        stream
+        	.map { $0.loadRemoteChargeItems(
+            ) }
+            .switchToLatest()
+            .eraseToAnyPublisher()
 	}
 
-	var hintStatePublisher: AnyPublisher<HintState, Never> {
-		return stream
-			.map { $0.hintStatePublisher }
-			.switchToLatest()
-			.eraseToAnyPublisher()
+	func fetchConsents() -> AnyPublisher<[ErxConsent], ErxRepositoryError> {
+        stream
+        	.map { $0.fetchConsents(
+            ) }
+            .switchToLatest()
+            .eraseToAnyPublisher()
 	}
-	var hintState: HintState {
-		set { current.hintState = newValue }
-		get { current.hintState }
+
+	func grantConsent(_ consent: ErxConsent) -> AnyPublisher<ErxConsent?, ErxRepositoryError> {
+        stream
+        	.map { $0.grantConsent(
+				consent
+            ) }
+            .switchToLatest()
+            .eraseToAnyPublisher()
+	}
+
+	func revokeConsent(_ category: ErxConsent.Category) -> AnyPublisher<Bool, ErxRepositoryError> {
+        stream
+        	.map { $0.revokeConsent(
+				category
+            ) }
+            .switchToLatest()
+            .eraseToAnyPublisher()
 	}
 
 
-	/// AnyObject
 }
 
 class StreamWrappedExtAuthRequestStorage: ExtAuthRequestStorage {
@@ -1097,9 +1100,6 @@ class StreamWrappedUserSession: UserSession {
 	lazy var localUserStore: UserDataStore = {
 		StreamWrappedUserDataStore(stream: stream.map{ $0.localUserStore }.eraseToAnyPublisher(), current: current.localUserStore )
 	}()
-	lazy var hintEventsStore: EventsStore = {
-		StreamWrappedEventsStore(stream: stream.map{ $0.hintEventsStore }.eraseToAnyPublisher(), current: current.hintEventsStore )
-	}()
 	lazy var secureUserStore: SecureUserDataStore = {
 		StreamWrappedSecureUserDataStore(stream: stream.map{ $0.secureUserStore }.eraseToAnyPublisher(), current: current.secureUserStore )
 	}()
@@ -1128,6 +1128,9 @@ class StreamWrappedUserSession: UserSession {
 	}()
 	var prescriptionRepository: PrescriptionRepository { current.prescriptionRepository }
 	var activityIndicating: ActivityIndicating { current.activityIndicating }
+	var idpSessionLoginHandler: LoginHandler { current.idpSessionLoginHandler }
+	var biometricsIdpSessionLoginHandler: LoginHandler { current.biometricsIdpSessionLoginHandler }
+	var secureEnclaveSignatureProvider: SecureEnclaveSignatureProvider { current.secureEnclaveSignatureProvider }
 
 	func profile() -> AnyPublisher<Profile, LocalStoreError> {
         stream

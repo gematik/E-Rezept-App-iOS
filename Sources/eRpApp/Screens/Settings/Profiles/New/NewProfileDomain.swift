@@ -20,12 +20,11 @@ import ComposableArchitecture
 import eRpKit
 import Foundation
 
-enum NewProfileDomain {
-    typealias Store = ComposableArchitecture.Store<State, Action>
-    typealias Reducer = ComposableArchitecture.AnyReducer<State, Action, Environment>
+struct NewProfileDomain: ReducerProtocol {
+    typealias Store = StoreOf<Self>
 
-    static func cleanup<T>() -> Effect<T, Never> {
-        Effect.cancel(id: Token.self)
+    static func cleanup<T>() -> EffectTask<T> {
+        EffectTask<T>.cancel(ids: Token.allCases)
     }
 
     enum Token: CaseIterable, Hashable {}
@@ -33,7 +32,6 @@ enum NewProfileDomain {
     struct State: Equatable {
         var name: String
         var acronym: String
-        var emoji: String?
         var color: ProfileColor
 
         var alertState: AlertState<Action>?
@@ -41,28 +39,33 @@ enum NewProfileDomain {
 
     enum Action: Equatable {
         case setName(String)
-        case setEmoji(String?)
         case setColor(ProfileColor)
         case save
-        case close
-        case saveReceived(Result<UUID, LocalStoreError>)
+        case closeButtonTapped
         case dismissAlert
+
+        case response(Response)
+        case delegate(Delegate)
+
+        enum Response: Equatable {
+            case saveReceived(Result<UUID, LocalStoreError>)
+        }
+
+        enum Delegate: Equatable {
+            case close
+        }
     }
 
-    struct Environment {
-        let schedulers: Schedulers
-        let userDataStore: UserDataStore
-        let profileDataStore: ProfileDataStore
-    }
+    @Dependency(\.schedulers) var schedulers: Schedulers
+    @Dependency(\.userDataStore) var userDataStore: UserDataStore
+    @Dependency(\.profileDataStore) var profileDataStore: ProfileDataStore
 
-    static let domainReducer = Reducer { state, action, environment in
+    // swiftlint:disable:next cyclomatic_complexity function_body_length
+    func reduce(into state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
         case let .setName(name):
             state.acronym = name.acronym()
             state.name = name
-            return .none
-        case let .setEmoji(emoji):
-            state.emoji = emoji
             return .none
         case let .setColor(color):
             state.color = color
@@ -77,38 +80,36 @@ enum NewProfileDomain {
                                   identifier: UUID(),
                                   insuranceId: nil,
                                   color: state.color.erxColor,
-                                  emoji: state.emoji,
                                   lastAuthenticated: nil,
                                   erxTasks: [])
-            return environment.profileDataStore.save(profiles: [profile])
+            return profileDataStore.save(profiles: [profile])
                 .catchToEffect()
                 .map { result in
                     switch result {
-                    case let .success(profileId):
-                        return Action.saveReceived(.success(profile.id))
+                    case .success:
+                        return Action.response(.saveReceived(.success(profile.id)))
                     case let .failure(error):
-                        return Action.saveReceived(.failure(error))
+                        return Action.response(.saveReceived(.failure(error)))
                     }
                 }
-                .receive(on: environment.schedulers.main)
+                .receive(on: schedulers.main)
                 .eraseToEffect()
-        case let .saveReceived(.success(profileId)):
-            environment.userDataStore.set(selectedProfileId: profileId)
-            return Effect(value: .close)
-        case let .saveReceived(.failure(error)):
+        case let .response(.saveReceived(.success(profileId))):
+            userDataStore.set(selectedProfileId: profileId)
+            return Effect(value: .delegate(.close))
+        case let .response(.saveReceived(.failure(error))):
             state.alertState = AlertStates.for(error)
             return .none
         case .dismissAlert:
             state.alertState = nil
             return .none
-        case .close:
+        case .closeButtonTapped:
+            return Effect(value: .delegate(.close))
+
+        case .delegate:
             return .none
         }
     }
-
-    static let reducer: Reducer = .combine(
-        domainReducer
-    )
 }
 
 extension NewProfileDomain {
@@ -136,17 +137,12 @@ extension NewProfileDomain {
         static let state = State(
             name: "Anna Vetter",
             acronym: "AV",
-            emoji: "🧠",
             color: .blue
         )
-        static let environment = Environment(
-            schedulers: Schedulers(),
-            userDataStore: DemoUserDefaultsStore(),
-            profileDataStore: DemoProfileDataStore()
-        )
 
-        static let store = Store(initialState: state,
-                                 reducer: reducer,
-                                 environment: environment)
+        static let store = Store(
+            initialState: state,
+            reducer: NewProfileDomain()
+        )
     }
 }

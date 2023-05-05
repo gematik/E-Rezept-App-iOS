@@ -17,8 +17,10 @@
 //
 
 import Combine
+import Dependencies
 import eRpKit
 import UIKit
+import ZXingObjC
 
 /// This protocol abstracts the generates of visual (matrix) codes for a given set of Tasks.
 public protocol ErxTaskMatrixCodeGenerator {
@@ -27,4 +29,22 @@ public protocol ErxTaskMatrixCodeGenerator {
     ///   - tasks: Array of `ErxTask`s that should be encoded.
     ///   - size: The size of the requested image
     func matrixCode(for tasks: [ErxTask], with size: CGSize) throws -> CGImage
+}
+
+// MARK: TCA Dependency
+
+struct ErxTaskMatrixCodeGeneratorDependency: DependencyKey {
+    static let liveValue: ErxTaskMatrixCodeGenerator =
+        DefaultErxTaskMatrixCodeGenerator(matrixCodeGenerator: ZXDataMatrixWriter())
+
+    static var previewValue: ErxTaskMatrixCodeGenerator = liveValue
+
+    static let testValue: ErxTaskMatrixCodeGenerator = UnimplementedErxTaskMatrixCodeGenerator()
+}
+
+extension DependencyValues {
+    var erxTaskMatrixCodeGenerator: ErxTaskMatrixCodeGenerator {
+        get { self[ErxTaskMatrixCodeGeneratorDependency.self] }
+        set { self[ErxTaskMatrixCodeGeneratorDependency.self] = newValue }
+    }
 }

@@ -1,0 +1,150 @@
+{
+    "resourceType": "Bundle",
+    "type": "searchset",
+    "entry": [
+        {
+            "resource": {
+                "resourceType": "MedicationDispense",
+                "id": "3465270a-11e7-4bbf-ae53-378f9cc52747",
+                "meta": {
+                    "profile": [
+                        "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_PR_MedicationDispense"
+                    ]
+                },
+                "contained": [
+                    {
+                        "resourceType": "Medication",
+                        "id": "e091f324-689b-4f3c-875d-050b525b09c5",
+                        "meta": {
+                            "profile": [
+                                "https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Medication_Ingredient|1.1.0"
+                            ]
+                        },
+                        "extension": [
+                            {
+                                "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Medication_Category",
+                                "valueCoding": {
+                                    "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_ERP_Medication_Category",
+                                    "code": "00"
+                                }
+                            },
+                            {
+                                "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Medication_Vaccine",
+                                "valueBoolean": true
+                            },
+                            {
+                                "url": "http://fhir.de/StructureDefinition/normgroesse",
+                                "valueCode": "N2"
+                            }
+                        ],
+                        "code": {
+                            "coding": [
+                                {
+                                    "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_ERP_Medication_Type",
+                                    "code": "wirkstoff"
+                                }
+                            ]
+                        },
+                        "form": {
+                            "text": "Tabletten"
+                        },
+                        "amount": {
+                            "numerator": {
+                                "extension": [
+                                    {
+                                        "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Medication_PackagingSize",
+                                        "valueString": "100"
+                                    }
+                                ],
+                                "unit": "Stück"
+                            },
+                            "denominator": {
+                                "value": 1
+                            }
+                        },
+                        "ingredient": [
+                            {
+                                "itemCodeableConcept": {
+                                    "coding": [
+                                        {
+                                            "system": "http://fhir.de/CodeSystem/ask",
+                                            "code": "22308"
+                                        }
+                                    ],
+                                    "text": "Gabapentin"
+                                },
+                                "strength": {
+                                    "numerator": {
+                                        "value": 300,
+                                        "unit": "mg"
+                                    },
+                                    "denominator": {
+                                        "value": 1
+                                    }
+                                }
+                            },
+                            {
+                                "itemCodeableConcept": {
+                                    "text": "Gabapentin2"
+                                },
+                                "strength": {
+                                    "numerator": {
+                                        "value": 300,
+                                        "unit": "mg"
+                                    },
+                                    "denominator": {
+                                        "value": 1
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                ],
+                "identifier": [
+                    {
+                        "system": "https://gematik.de/fhir/erp/NamingSystem/GEM_ERP_NS_PrescriptionId",
+                        "value": "160.000.033.491.280.78"
+                    }
+                ],
+                "status": "completed",
+                "medicationReference": {
+                    "reference": "#e091f324-689b-4f3c-875d-050b525b09c5"
+                },
+                "subject": {
+                    "identifier": {
+                        "system": "http://fhir.de/sid/gkv/kvid-10",
+                        "value": "X234567890"
+                    }
+                },
+                "quantity": {
+                    "value": 100,
+                    "unit": "mg"
+                },
+                "performer": [
+                    {
+                        "actor": {
+                            "identifier": {
+                                "system": "https://gematik.de/fhir/sid/telematik-id",
+                                "value": "3-abc-1234567890"
+                            }
+                        }
+                    }
+                ],
+                "whenHandedOver": "2022-02-28",
+                "note": [
+                    {
+                        "text": "These are two notes"
+                    },
+                    {
+                        "text": "separated by newlines!"
+                    }
+                ],
+                "dosageInstruction": [
+                    {
+                        "text": "1-0-1-0"
+                    }
+                ]
+            }
+        }
+    ]
+}

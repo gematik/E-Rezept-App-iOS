@@ -17,6 +17,7 @@
 //
 
 import Combine
+import Dependencies
 import eRpKit
 import Foundation
 import IDP
@@ -26,6 +27,24 @@ protocol ProfileBasedSessionProvider {
     func biometrieIdpSession(for profileId: UUID) -> IDPSession
     func userDataStore(for profileId: UUID) -> SecureUserDataStore
     func idTokenValidator(for profileId: UUID) -> AnyPublisher<IDTokenValidator, IDTokenValidatorError>
+}
+
+struct ProfileBasedSessionProviderDependency: DependencyKey {
+    static let liveValue: ProfileBasedSessionProvider = DefaultSessionProvider(
+        userSessionProvider: UserSessionProviderDependency.liveValue,
+        userSession: UsersSessionContainerDependency.liveValue.userSession
+    )
+
+    static let previewValue: ProfileBasedSessionProvider = DummyProfileBasedSessionProvider()
+
+    static let testValue: ProfileBasedSessionProvider = UnimplementedProfileBasedSessionProvider()
+}
+
+extension DependencyValues {
+    var profileBasedSessionProvider: ProfileBasedSessionProvider {
+        get { self[ProfileBasedSessionProviderDependency.self] }
+        set { self[ProfileBasedSessionProviderDependency.self] = newValue }
+    }
 }
 
 struct DefaultSessionProvider: ProfileBasedSessionProvider {

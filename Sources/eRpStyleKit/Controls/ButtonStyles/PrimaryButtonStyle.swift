@@ -26,10 +26,12 @@ public struct PrimaryButtonStyle: ButtonStyle {
     private var isDestructive: Bool
 
     var isEnabled: Bool
+    var isHuggingContent: Bool
 
-    public init(enabled: Bool = true, destructive: Bool = false) {
+    public init(enabled: Bool = true, destructive: Bool = false, hugging: Bool = false) {
         isEnabled = enabled
         isDestructive = destructive
+        isHuggingContent = hugging
     }
 
     var backgroundColor: Color {
@@ -50,15 +52,16 @@ public struct PrimaryButtonStyle: ButtonStyle {
             .font(.body.weight(.semibold))
             .foregroundColor(isEnabled ? Color.white : Color(.systemGray))
             .opacity(configuration.isPressed ? 0.25 : 1)
-            .frame(maxWidth: .infinity, minHeight: 52, alignment: .center)
+            .padding(.horizontal, 32)
+            .frame(maxWidth: isHuggingContent ? nil : .infinity, minHeight: 52, alignment: .center)
             .background(backgroundColor)
             .cornerRadius(16)
-            .padding(.horizontal)
+            .padding(isHuggingContent ? [] : .horizontal)
     }
 }
 
 extension ButtonStyle where Self == PrimaryButtonStyle {
-    /// A button style that applies fg and bg color, as well as border radius.
+    /// A button style that applies fg and bg color, as well as border radius, defaulting to max available width.
     ///
     /// To apply this style to a button, or to a view that contains buttons, use
     /// the ``View.buttonStyle(.primary)`` modifier.
@@ -71,6 +74,12 @@ extension ButtonStyle where Self == PrimaryButtonStyle {
     public static func primary(isEnabled: Bool = true, isDestructive: Bool = false) -> PrimaryButtonStyle {
         PrimaryButtonStyle(enabled: isEnabled, destructive: isDestructive)
     }
+
+    /// A button style that applies fg and bg color, as well as border radius, hugging its contents.
+    ///
+    /// To apply this style to a button, or to a view that contains buttons, use
+    /// the ``View.buttonStyle(.primary)`` modifier.
+    public static var primaryHugging: PrimaryButtonStyle { PrimaryButtonStyle() }
 }
 
 struct PrimaryButtonStyle_Preview: PreviewProvider {
@@ -96,6 +105,26 @@ struct PrimaryButtonStyle_Preview: PreviewProvider {
 
                         Button(action: {}, label: { Label("Label and Icon", systemImage: "qrcode") })
                             .buttonStyle(PrimaryButtonStyle(enabled: false, destructive: false))
+                    }
+
+                    Group {
+                        Text("Primary Hugging")
+                            .font(.title)
+                            .padding(.horizontal)
+
+                        Button(action: {}, label: { Text("Simple") })
+                            .buttonStyle(PrimaryButtonStyle(enabled: true, destructive: false, hugging: true))
+                            .disabled(true)
+
+                        Button(action: {}, label: { Text("Simple") })
+                            .environment(\.isEnabled, false)
+                            .buttonStyle(PrimaryButtonStyle(enabled: false, destructive: false, hugging: true))
+
+                        Button(action: {}, label: { Label("Label and Icon", systemImage: "qrcode") })
+                            .buttonStyle(PrimaryButtonStyle(enabled: true, destructive: false, hugging: true))
+
+                        Button(action: {}, label: { Label("Label and Icon", systemImage: "qrcode") })
+                            .buttonStyle(PrimaryButtonStyle(enabled: false, destructive: false, hugging: true))
                     }
 
                     Group {

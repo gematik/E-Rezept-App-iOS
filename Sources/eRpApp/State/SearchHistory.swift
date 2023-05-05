@@ -16,11 +16,25 @@
 //  
 //
 
+import Dependencies
 import Foundation
 
 protocol SearchHistory {
     func addHistoryItem(_ item: String)
     func historyItems() -> [String]
+}
+
+struct SearchHistoryDependency: DependencyKey {
+    static let liveValue: SearchHistory = DefaultSearchHistory.pharmacySearch
+    static let previewValue: SearchHistory = DefaultSearchHistory.pharmacySearch
+    static let testValue: SearchHistory = unimplemented("\(Self.self).SearchHistory")
+}
+
+extension DependencyValues {
+    var searchHistory: SearchHistory {
+        get { self[SearchHistoryDependency.self] }
+        set { self[SearchHistoryDependency.self] = newValue }
+    }
 }
 
 class DefaultSearchHistory: SearchHistory {

@@ -231,7 +231,7 @@ extension OnboardingRegisterAuthenticationView {
                     Text(L10n.authTxtBiometricsDisclaimer)
                         .font(.footnote)
                         .foregroundColor(Color(.secondaryLabel))
-                        .frame(width: .infinity, alignment: .leading)
+                        .frame(maxWidth: .infinity, alignment: .leading)
                         .fixedSize(horizontal: false, vertical: true)
 
                     Spacer(minLength: 0)

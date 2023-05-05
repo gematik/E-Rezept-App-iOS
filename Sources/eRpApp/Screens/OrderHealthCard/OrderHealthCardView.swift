@@ -29,7 +29,7 @@ struct OrderHealthCardView: View {
         var serviceInquiry: OrderHealthCardDomain.ServiceInquiry?
         var serviceInquiryId: Int
         var textColor: Color
-        let routeTag: OrderHealthCardDomain.Route.Tag?
+        let routeTag: OrderHealthCardDomain.Destinations.State.Tag?
 
         init(state: OrderHealthCardDomain.State) {
             insuranceCompanies = state.insuranceCompanies
@@ -37,7 +37,7 @@ struct OrderHealthCardView: View {
             serviceInquiry = state.serviceInquiry
             serviceInquiryId = state.serviceInquiryId
             textColor = state.insuranceCompany != nil ? Colors.systemLabel : Colors.primary700
-            routeTag = state.route?.tag
+            routeTag = state.destination?.tag
         }
     }
 
@@ -78,7 +78,7 @@ struct OrderHealthCardView: View {
                                             .setService(service: newID)
                                         }
                                     ),
-                                    tag: OrderHealthCardDomain.Route.Tag.serviceInquiry,
+                                    tag: OrderHealthCardDomain.Destinations.State.Tag.serviceInquiry,
                                     selection: viewStore.binding(
                                         get: \.routeTag
                                     ) {
@@ -113,11 +113,10 @@ struct OrderHealthCardView: View {
                 viewStore.send(.loadList)
             }
             .padding()
-            .respectKeyboardInsets()
             .navigationBarTitleDisplayMode(.inline)
             .navigationBarItems(
                 trailing: NavigationBarCloseItem {
-                    viewStore.send(.close)
+                    viewStore.send(.delegate(.close))
                 }
                 .accessibility(identifier: A11y.orderEGK.ogkBtnCancel)
                 .accessibility(label: Text(L10n.cdwBtnCanCancelLabel))
@@ -147,13 +146,13 @@ extension OrderHealthCardView {
             var insuranceCompanies: [OrderHealthCardDomain.HealthInsuranceCompany]
             var insuranceCompany: OrderHealthCardDomain.HealthInsuranceCompany?
             var textColor: Color
-            let routeTag: OrderHealthCardDomain.Route.Tag?
+            let routeTag: OrderHealthCardDomain.Destinations.State.Tag?
 
             init(state: OrderHealthCardDomain.State) {
                 insuranceCompanies = state.insuranceCompanies
                 insuranceCompany = state.insuranceCompany
                 textColor = state.insuranceCompany != nil ? Colors.systemLabel : Colors.primary700
-                routeTag = state.route?.tag
+                routeTag = state.destination?.tag
             }
         }
 
@@ -187,7 +186,7 @@ extension OrderHealthCardView {
                         NavigationLink(
                             destination:
                             OrderHealthCardView.PickerSearch(store: store),
-                            tag: OrderHealthCardDomain.Route.Tag.searchPicker,
+                            tag: OrderHealthCardDomain.Destinations.State.Tag.searchPicker,
                             selection: viewStore.binding(
                                 get: \.routeTag
                             ) {

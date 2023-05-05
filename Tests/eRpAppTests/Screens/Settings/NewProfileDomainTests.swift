@@ -28,19 +28,18 @@ final class NewProfileDomainTests: XCTestCase {
         NewProfileDomain.Action,
         NewProfileDomain.State,
         NewProfileDomain.Action,
-        NewProfileDomain.Environment
+        Void
     >
 
     func testStore(for state: NewProfileDomain.State) -> TestStore {
         TestStore(
             initialState: state,
-            reducer: NewProfileDomain.reducer,
-            environment: NewProfileDomain.Environment(
-                schedulers: Schedulers(uiScheduler: mainQueue.eraseToAnyScheduler()),
-                userDataStore: MockUserDataStore(),
-                profileDataStore: mockProfileDataStore
-            )
-        )
+            reducer: NewProfileDomain()
+        ) { dependencies in
+            dependencies.schedulers = Schedulers(uiScheduler: mainQueue.eraseToAnyScheduler())
+            dependencies.userDataStore = MockUserDataStore()
+            dependencies.profileDataStore = mockProfileDataStore
+        }
     }
 
     let mainQueue = DispatchQueue.test
@@ -54,7 +53,7 @@ final class NewProfileDomainTests: XCTestCase {
     }
 
     func testSavingAnEmptyNameDisplaysError() {
-        let sut = testStore(for: .init(name: "", acronym: "", emoji: nil, color: .red, alertState: nil))
+        let sut = testStore(for: .init(name: "", acronym: "", color: .red, alertState: nil))
 
         sut.send(.save) { state in
             state.alertState = NewProfileDomain.AlertStates.emptyName
@@ -62,7 +61,7 @@ final class NewProfileDomainTests: XCTestCase {
     }
 
     func testSavingSucceeds() {
-        let sut = testStore(for: .init(name: "Bob", acronym: "B", emoji: nil, color: .red, alertState: nil))
+        let sut = testStore(for: .init(name: "Bob", acronym: "B", color: .red, alertState: nil))
 
         mockProfileDataStore.saveProfilesReturnValue = Just(true)
             .setFailureType(to: LocalStoreError.self)
@@ -72,13 +71,13 @@ final class NewProfileDomainTests: XCTestCase {
 
         mainQueue.run()
         let newProfile = mockProfileDataStore.saveProfilesReceivedProfiles!.first!
-        sut.receive(.saveReceived(.success(newProfile.id)))
+        sut.receive(.response(.saveReceived(.success(newProfile.id))))
 
-        sut.receive(.close)
+        sut.receive(.delegate(.close))
     }
 
     func testSetName() {
-        let sut = testStore(for: .init(name: "", acronym: "", emoji: nil, color: .red, alertState: nil))
+        let sut = testStore(for: .init(name: "", acronym: "", color: .red, alertState: nil))
 
         sut.send(.setName("Test")) { state in
             state.name = "Test"
@@ -86,16 +85,8 @@ final class NewProfileDomainTests: XCTestCase {
         }
     }
 
-    func testSetEmoji() {
-        let sut = testStore(for: .init(name: "", acronym: "", emoji: nil, color: .red, alertState: nil))
-
-        sut.send(.setEmoji("🎃")) { state in
-            state.emoji = "🎃"
-        }
-    }
-
     func testSetColor() {
-        let sut = testStore(for: .init(name: "", acronym: "", emoji: nil, color: .red, alertState: nil))
+        let sut = testStore(for: .init(name: "", acronym: "", color: .red, alertState: nil))
 
         sut.send(.setColor(.green)) { state in
             state.color = .green

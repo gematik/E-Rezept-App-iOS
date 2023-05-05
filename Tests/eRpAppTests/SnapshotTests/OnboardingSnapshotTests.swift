@@ -16,6 +16,7 @@
 //  
 //
 
+import ComposableArchitecture
 @testable import eRpApp
 import eRpKit
 import LocalAuthentication
@@ -46,12 +47,16 @@ final class OnboardingSnapshotTests: XCTestCase {
     func testOnboardingRegisterAuthenticationView_NoBiometrics() {
         let state = RegisterAuthenticationDomain.State(
             availableSecurityOptions: [.password],
+            selectedSecurityOption: .password,
             securityOptionsError: AppSecurityManagerError.localAuthenticationContext(
                 NSError(domain: "", code: LAError.Code.biometryNotEnrolled.rawValue)
             )
         )
         let sut = OnboardingRegisterAuthenticationView(
-            store: RegisterAuthenticationDomain.Dummies.store(with: state)
+            store: RegisterAuthenticationDomain.Store(
+                initialState: state,
+                reducer: EmptyReducer()
+            )
         )
         .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
         assertSnapshots(matching: sut, as: snapshotModi())
@@ -63,7 +68,10 @@ final class OnboardingSnapshotTests: XCTestCase {
             selectedSecurityOption: AppSecurityOption.biometry(.faceID)
         )
         let sut = OnboardingRegisterAuthenticationView(
-            store: RegisterAuthenticationDomain.Dummies.store(with: state)
+            store: RegisterAuthenticationDomain.Store(
+                initialState: state,
+                reducer: EmptyReducer()
+            )
         )
         .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
         assertSnapshots(matching: sut, as: snapshotModi())
@@ -75,7 +83,10 @@ final class OnboardingSnapshotTests: XCTestCase {
             selectedSecurityOption: AppSecurityOption.password
         )
         let sut = OnboardingRegisterAuthenticationView(
-            store: RegisterAuthenticationDomain.Dummies.store(with: state)
+            store: RegisterAuthenticationDomain.Store(
+                initialState: state,
+                reducer: EmptyReducer()
+            )
         )
         .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
         assertSnapshots(matching: sut, as: snapshotModi())
@@ -91,8 +102,7 @@ final class OnboardingSnapshotTests: XCTestCase {
                 passwordStrength: .strong,
                 showPasswordErrorMessage: true
             ),
-            reducer: RegisterAuthenticationDomain.Reducer.empty,
-            environment: RegisterAuthenticationDomain.Dummies.environment
+            reducer: EmptyReducer()
         )
 
         let sut = OnboardingRegisterAuthenticationView(store: store)
@@ -110,8 +120,7 @@ final class OnboardingSnapshotTests: XCTestCase {
                 passwordStrength: .veryWeak,
                 showPasswordErrorMessage: true
             ),
-            reducer: RegisterAuthenticationDomain.Reducer.empty,
-            environment: RegisterAuthenticationDomain.Dummies.environment
+            reducer: EmptyReducer()
         )
 
         let sut = OnboardingRegisterAuthenticationView(store: store)
@@ -122,10 +131,14 @@ final class OnboardingSnapshotTests: XCTestCase {
     func testOnboardingRegisterAuthenticationView_WithNoSelectionError() {
         let state = RegisterAuthenticationDomain.State(
             availableSecurityOptions: [.password, .biometry(.touchID)],
+            selectedSecurityOption: .biometry(.touchID),
             showNoSelectionMessage: true
         )
         let sut = OnboardingRegisterAuthenticationView(
-            store: RegisterAuthenticationDomain.Dummies.store(with: state)
+            store: RegisterAuthenticationDomain.Store(
+                initialState: state,
+                reducer: EmptyReducer()
+            )
         )
         .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
         assertSnapshots(matching: sut, as: snapshotModi())

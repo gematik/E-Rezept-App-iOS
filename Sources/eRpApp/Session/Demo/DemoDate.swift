@@ -16,6 +16,7 @@
 //  
 //
 
+import eRpKit
 import Foundation
 
 /// Creates formatted dates (authoredOn, expiresOn) for demo data
@@ -59,7 +60,7 @@ enum DemoDate: CaseIterable {
         case .ninetyTwoDaysAhead:
             aDate = Date(timeIntervalSinceNow: 60 * 60 * 24 * 92)
         }
-        return globals.fhirDateFormatter
+        return FHIRDateFormatter.liveValue
             .stringWithLongUTCTimeZone(from: aDate)
     }
 }

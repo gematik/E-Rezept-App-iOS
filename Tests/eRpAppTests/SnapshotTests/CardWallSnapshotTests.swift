@@ -17,6 +17,7 @@
 //
 
 import Combine
+import ComposableArchitecture
 @testable import eRpApp
 import eRpKit
 import IDP
@@ -37,8 +38,7 @@ final class CardWallSnapshotTests: XCTestCase {
                     isNFCReady: true,
                     profileId: UUID()
                 ),
-                reducer: .empty,
-                environment: CardWallIntroductionDomain.Dummies.environment
+                reducer: EmptyReducer()
             )
         )
 
@@ -84,10 +84,9 @@ final class CardWallSnapshotTests: XCTestCase {
                     .State(
                         isNFCReady: true,
                         profileId: UUID(),
-                        route: .notCapable
+                        destination: .notCapable
                     ),
-                reducer: CardWallIntroductionDomain.reducer,
-                environment: CardWallIntroductionDomain.Dummies.environment
+                reducer: EmptyReducer()
             )
         )
 
@@ -104,8 +103,7 @@ final class CardWallSnapshotTests: XCTestCase {
                     profileId: UUID(),
                     can: ""
                 ),
-                reducer: .empty,
-                environment: CardWallCANDomain.Dummies.environment
+                reducer: CardWallCANDomain()
             )
         )
 
@@ -122,8 +120,7 @@ final class CardWallSnapshotTests: XCTestCase {
                     profileId: UUID(),
                     can: ""
                 ),
-                reducer: .empty,
-                environment: CardWallCANDomain.Dummies.environment
+                reducer: CardWallCANDomain()
             )
         )
 
@@ -139,8 +136,7 @@ final class CardWallSnapshotTests: XCTestCase {
                                                       profileId: UUID(),
                                                       can: "",
                                                       wrongCANEntered: true),
-                reducer: .empty,
-                environment: CardWallCANDomain.Dummies.environment
+                reducer: CardWallCANDomain()
             )
         )
 
@@ -153,8 +149,7 @@ final class CardWallSnapshotTests: XCTestCase {
         let sut = CardWallPINView(
             store: CardWallPINDomain.Store(
                 initialState: CardWallPINDomain.State(isDemoModus: false, pin: "", transition: .fullScreenCover),
-                reducer: .empty,
-                environment: CardWallPINDomain.Dummies.environment
+                reducer: CardWallPINDomain()
             )
         )
 
@@ -167,8 +162,7 @@ final class CardWallSnapshotTests: XCTestCase {
         let sut = CardWallPINView(
             store: CardWallPINDomain.Store(
                 initialState: CardWallPINDomain.State(isDemoModus: true, pin: "123", transition: .fullScreenCover),
-                reducer: .empty,
-                environment: CardWallPINDomain.Dummies.environment
+                reducer: CardWallPINDomain()
             )
         )
 
@@ -185,8 +179,7 @@ final class CardWallSnapshotTests: XCTestCase {
         let sut = CardWallPINView(
             store: CardWallPINDomain.Store(
                 initialState: state,
-                reducer: .empty,
-                environment: CardWallPINDomain.Dummies.environment
+                reducer: CardWallPINDomain()
             )
         )
 
@@ -200,8 +193,7 @@ final class CardWallSnapshotTests: XCTestCase {
             store: CardWallLoginOptionDomain.Store(
                 initialState: CardWallLoginOptionDomain.State(isDemoModus: false,
                                                               selectedLoginOption: .withoutBiometry),
-                reducer: .empty,
-                environment: CardWallLoginOptionDomain.Dummies.environment
+                reducer: EmptyReducer()
             )
         )
 
@@ -215,8 +207,7 @@ final class CardWallSnapshotTests: XCTestCase {
             store: CardWallLoginOptionDomain.Store(
                 initialState: CardWallLoginOptionDomain.State(isDemoModus: true,
                                                               selectedLoginOption: .withoutBiometry),
-                reducer: .empty,
-                environment: CardWallLoginOptionDomain.Dummies.environment
+                reducer: EmptyReducer()
             )
         )
 
@@ -228,28 +219,19 @@ final class CardWallSnapshotTests: XCTestCase {
     lazy var testProfile = { Profile(name: "testProfile") }()
     var mockProfileValidator: AnyPublisher<IDTokenValidator, IDTokenValidatorError>!
     var mockCurrentProfile: AnyPublisher<Profile, LocalStoreError>!
-    private func readCardStore(for state: CardWallReadCardDomain.State) -> CardWallReadCardDomain.Store {
+    private func readCardStore(for state: CardWallReadCardDomain.State) -> StoreOf<CardWallReadCardDomain> {
         mockProfileValidator = CurrentValueSubject(
             ProfileValidator(currentProfile: testProfile, otherProfiles: [testProfile])
         ).eraseToAnyPublisher()
         mockCurrentProfile = CurrentValueSubject(testProfile).eraseToAnyPublisher()
 
-        return CardWallReadCardDomain.Store(
+        return Store(
             initialState: state,
-            reducer:
-            CardWallReadCardDomain.Reducer.empty,
-            environment: CardWallReadCardDomain.Environment(
-                schedulers: Schedulers(),
-                profileDataStore: MockProfileDataStore(),
-                signatureProvider: DummySecureEnclaveSignatureProvider(),
-                sessionProvider: DummyProfileBasedSessionProvider(),
-                nfcSessionProvider: MockNFCSignatureProvider(),
-                application: MockUIApplication()
-            )
+            reducer: EmptyReducer()
         )
     }
 
-    private func readCardStore(for output: CardWallReadCardDomain.State.Output) -> CardWallReadCardDomain.Store {
+    private func readCardStore(for output: CardWallReadCardDomain.State.Output) -> StoreOf<CardWallReadCardDomain> {
         readCardStore(for: CardWallReadCardDomain.State(
             isDemoModus: false,
             profileId: UUID(),
@@ -316,8 +298,7 @@ final class CardWallSnapshotTests: XCTestCase {
     func testReadCardHelpCardView() {
         let sut =
             ReadCardHelpView(store: .init(initialState: .first,
-                                          reducer: .empty,
-                                          environment: CardWallReadCardDomain.Dummies.environment))
+                                          reducer: EmptyReducer()))
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
     }
@@ -325,16 +306,14 @@ final class CardWallSnapshotTests: XCTestCase {
     func testReadCardHelpListView() {
         let sut =
             ReadCardHelpView(store: .init(initialState: .second,
-                                          reducer: .empty,
-                                          environment: CardWallReadCardDomain.Dummies.environment))
+                                          reducer: EmptyReducer()))
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
     }
 
     func testReadCardHelpVideoView() {
         let sut = ReadCardHelpView(store: .init(initialState: .third,
-                                                reducer: .empty,
-                                                environment: CardWallReadCardDomain.Dummies.environment))
+                                                reducer: EmptyReducer()))
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
     }

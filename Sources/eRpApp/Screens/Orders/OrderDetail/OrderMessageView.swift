@@ -21,49 +21,85 @@ import eRpKit
 import SwiftUI
 
 struct OrderMessageView: View {
-    let viewState: ViewState
+    @ObservedObject var viewStore: ViewStore<ViewState, OrderDetailDomain.Action>
 
-    init(communication: ErxTask.Communication,
-         pharmacyName: String? = nil,
+    init(store: OrderDetailDomain.Store,
+         communication: ErxTask.Communication,
          style: Indicator.Style = .middle) {
-        viewState = ViewState(
-            communication: communication,
-            pharmacyName: pharmacyName,
-            style: style
+        viewStore = ViewStore(
+            store.scope {
+                ViewState(state: $0, communication: communication, style: style)
+            }
         )
     }
 
     var body: some View {
         HStack(alignment: .center) {
-            Indicator(style: viewState.style)
+            Indicator(style: viewStore.style)
                 .frame(maxHeight: .infinity)
 
             VStack(alignment: .leading, spacing: 4) {
-                Text(viewState.timestamp)
+                Text(viewStore.timestamp)
                     .font(Font.subheadline)
                     .multilineTextAlignment(.leading)
                     .foregroundColor(Colors.systemLabel)
                     .padding(.horizontal)
 
-                Text(viewState.infoText)
+                Text(viewStore.infoText)
                     .font(Font.subheadline)
                     .multilineTextAlignment(.leading)
                     .padding(.horizontal)
                     .foregroundColor(Colors.systemLabelSecondary)
 
-                if let buttonText = viewState.buttonText {
-                    HStack(spacing: 4) {
-                        Text(buttonText)
-                            .font(Font.subheadline)
-                        Image(systemName: SFSymbolName.chevronRight)
-                            .font(Font.subheadline.weight(.semibold))
+                if let pickupButtonText = viewStore.pickupButtonText {
+                    Button {
+                        viewStore.send(.showPickupCode(dmcCode: viewStore.dmcCode, hrCode: viewStore.hrCode))
+                    } label: {
+                        HStack(spacing: 4) {
+                            Text(pickupButtonText)
+                                .font(Font.subheadline)
+                            Image(systemName: SFSymbolName.chevronRight)
+                                .font(Font.subheadline.weight(.semibold))
+                        }
+                        .padding(.top)
+                        .padding(.horizontal)
+                        .foregroundColor(Colors.primary600)
                     }
-                    .padding(.top, 4)
-                    .padding(.horizontal)
-                    .foregroundColor(Colors.primary600)
                 }
 
-                if ![.last, .single].contains(viewState.style) {
+                if let linkButtonText = viewStore.linkButtonText {
+                    Button {
+                        viewStore.send(.openUrl(url: viewStore.link))
+                    } label: {
+                        HStack(spacing: 4) {
+                            Text(linkButtonText)
+                                .font(Font.subheadline)
+                            Image(systemName: SFSymbolName.chevronRight)
+                                .font(Font.subheadline.weight(.semibold))
+                        }
+                        .padding(.top)
+                        .padding(.horizontal)
+                        .foregroundColor(Colors.primary600)
+                    }
+                }
+
+                if let malformedPayload = viewStore.malformedPayload {
+                    Button {
+                        viewStore.send(.openMail(message: malformedPayload))
+                    } label: {
+                        HStack(spacing: 4) {
+                            Text(L10n.ordDetailBtnError)
+                                .font(Font.subheadline)
+                            Image(systemName: SFSymbolName.chevronRight)
+                                .font(Font.subheadline.weight(.semibold))
+                        }
+                        .padding(.top)
+                        .padding(.horizontal)
+                        .foregroundColor(Colors.alertNegativ)
+                    }
+                }
+
+                if ![.last, .single].contains(viewStore.style) {
                     Divider()
                         .padding(.top, 8)
                         .padding(.leading)
@@ -85,32 +121,44 @@ struct OrderMessageView: View {
     struct ViewState: Equatable {
         let timestamp: String
         let infoText: LocalizedStringKey
-        let buttonText: LocalizedStringKey?
+        let linkButtonText: LocalizedStringKey?
+        let pickupButtonText: LocalizedStringKey?
         let style: Indicator.Style
+        let link: URL?
+        let dmcCode: String?
+        let hrCode: String?
+        var malformedPayload: String?
 
-        init(communication: ErxTask.Communication,
-             pharmacyName: String?,
-             style: Indicator.Style) {
+        init(
+            state: OrderDetailDomain.State,
+            communication: ErxTask.Communication,
+            style: Indicator.Style,
+            uiDateFormatter: UIDateFormatter = UIDateFormatter.liveValue
+        ) {
             self.style = style
-
-            if let date = OrderMessageView.uiFormattedDateTime(dateTimeString: communication.timestamp) {
-                timestamp = date
-            } else {
-                timestamp = communication.timestamp
-            }
+            timestamp = uiDateFormatter.relativeDateAndTime(communication.timestamp) ?? communication.timestamp
 
             guard communication.profile != .dispReq else {
                 infoText = L10n.ordDetailTxtSendTo(
                     L10n.ordDetailTxtPresc(1).text,
-                    pharmacyName ?? L10n.ordTxtNoPharmacyName.text
+                    state.order.pharmacy?.name ?? L10n.ordTxtNoPharmacyName.text
                 ).key
-                buttonText = nil
+                linkButtonText = nil
+                pickupButtonText = nil
+                link = nil
+                hrCode = nil
+                dmcCode = nil
                 return
             }
 
             guard let payload = communication.payload else {
                 infoText = L10n.ordDetailTxtError.key
-                buttonText = L10n.ordDetailBtnError.key
+                linkButtonText = nil
+                pickupButtonText = nil
+                link = nil
+                hrCode = nil
+                dmcCode = nil
+                malformedPayload = communication.payloadJSON
                 return
             }
 
@@ -120,23 +168,22 @@ struct OrderMessageView: View {
                 infoText = L10n.ordDetailMsgsTxtEmpty.key
             }
 
-            switch payload.supplyOptionsType {
-            case .onPremise:
-                if !payload.isPickupCodeEmptyOrNil {
-                    buttonText = L10n.ordDetailBtnOnPremise.key
-                } else {
-                    buttonText = nil
-                }
-            case .delivery:
-                buttonText = nil
-            case .shipment:
-                if let urlString = payload.url,
-                   !urlString.isEmpty,
-                   URL(string: urlString) != nil {
-                    buttonText = L10n.ordDetailBtnShipment.key
-                } else {
-                    buttonText = nil
-                }
+            if !payload.isPickupCodeEmptyOrNil {
+                pickupButtonText = L10n.ordDetailBtnOnPremise.key
+                hrCode = payload.pickUpCodeHR
+                dmcCode = payload.pickUpCodeDMC
+            } else {
+                pickupButtonText = nil
+                hrCode = nil
+                dmcCode = nil
+            }
+
+            if let urlString = payload.url, !urlString.isEmpty, let url = URL(string: urlString) {
+                link = url
+                linkButtonText = L10n.ordDetailBtnLink.key
+            } else {
+                link = nil
+                linkButtonText = nil
             }
         }
     }
@@ -216,69 +263,73 @@ struct OrderMessageView: View {
             }
         }
     }
-
-    private static func uiFormattedDateTime(dateTimeString: String?) -> String? {
-        if let dateTimeString = dateTimeString,
-           let dateTime = globals.fhirDateFormatter.date(from: dateTimeString,
-                                                         format: .yearMonthDayTimeMilliSeconds) {
-            return uiDateFormatter.string(from: dateTime)
-        }
-        return dateTimeString
-    }
-
-    static var uiDateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.locale = Locale.current
-        formatter.dateStyle = .medium
-        formatter.timeStyle = .short
-        formatter.doesRelativeDateFormatting = true
-        return formatter
-    }()
 }
 
 struct OrderMessageView_Previews: PreviewProvider {
     static var previews: some View {
         VStack(spacing: 0) {
-            OrderMessageView(communication: ErxTask.Communication(
-                identifier: "4",
-                profile: .reply,
-                taskId: "taskID",
-                userId: "userID",
-                telematikId: "telematikID",
-                timestamp: "2021-05-29T10:59:37.098245933+00:00",
-                payloadJSON: "{\"version\": \"1\",\"supplyOptionsType\": \"delivery\",\"info_text\": \"Your prescription is on the way. Make sure you are at home. We will not come back and bring you more drugs! Just kidding ;)\"}" // swiftlint:disable:this line_length
-            ),
-            style: .first)
-            OrderMessageView(communication: ErxTask.Communication(
-                identifier: "3",
-                profile: .reply,
-                taskId: "taskID",
-                userId: "userID",
-                telematikId: "telematikID",
-                timestamp: "2021-05-29T10:59:37.098245933+00:00",
-                payloadJSON: "{\"version\":\"1\" , \"supplyOptionsType\":\"onPremise\" , \"info_text\":\"01 Info/Para + HRcode/Para + DMC/Para + URL/Para\" , \"pickUpCodeHR\":\"T01__R01\" , \"pickUpCodeDMC\":\"Test_01___Rezept_01___abcdefg12345\" , \"url\":\"https://www.tree.fm/forest/33\"}" // swiftlint:disable:this line_length
-            ))
-            OrderMessageView(communication: ErxTask.Communication(
-                identifier: "2",
-                profile: .reply,
-                taskId: "taskID",
-                userId: "userID",
-                telematikId: "telematikID",
-                timestamp: "2021-05-29T10:59:37.098245933+00:00",
-                payloadJSON: "{\"version\":\"1\" , \"supplyOptionsType\":\"shipment\" , \"info_text\":\"10 Info/Para + HRcode/Para + DMC/Para + URL/Para\" , \"pickUpCodeHR\":\"T10__R03\" , \"pickUpCodeDMC\":\"Test_10___Rezept_03___abcdefg12345\" , \"url\":\"https://www.tree.fm/forest/33\"}" // swiftlint:disable:this line_length
-            ),
-            style: .last)
-            OrderMessageView(communication: ErxTask.Communication(
-                identifier: "1",
-                profile: .dispReq,
-                taskId: "taskID",
-                userId: "userID",
-                telematikId: "telematikID",
-                timestamp: "2021-05-29T09:59:37.098245933+00:00",
-                payloadJSON: ""
-            ),
-            pharmacyName: "Delphin Apotheke",
-            style: .single)
+            OrderMessageView(
+                store: OrderDetailDomain.Dummies.store,
+                communication: ErxTask.Communication(
+                    identifier: "4",
+                    profile: .reply,
+                    taskId: "taskID",
+                    userId: "userID",
+                    telematikId: "telematikID",
+                    timestamp: "2021-05-29T10:59:37.098245933+00:00",
+                    payloadJSON: "{\"version\": \"1\",\"supplyOptionsType\": \"delivery\",\"info_text\": \"Your prescription is on the way. Make sure you are at home. We will not come back and bring you more drugs! Just kidding ;)\", \"url\":\"https://www.tree.fm/forest/33\"}" // swiftlint:disable:this line_length
+                ),
+                style: .first
+            )
+            OrderMessageView(
+                store: OrderDetailDomain.Dummies.store,
+                communication: ErxTask.Communication(
+                    identifier: "3",
+                    profile: .reply,
+                    taskId: "taskID",
+                    userId: "userID",
+                    telematikId: "telematikID",
+                    timestamp: "2021-05-29T10:59:37.098245933+00:00",
+                    payloadJSON: "{\"version\":\"1\" , \"supplyOptionsType\":\"onPremise\" , \"info_text\":\"01 Info/Para + HRcode/Para + DMC/Para + URL/Para\" , \"pickUpCodeHR\":\"T01__R01\" , \"pickUpCodeDMC\":\"Test_01___Rezept_01___abcdefg12345\" }" // swiftlint:disable:this line_length
+                )
+            )
+            OrderMessageView(
+                store: OrderDetailDomain.Dummies.store,
+                communication: ErxTask.Communication(
+                    identifier: "2",
+                    profile: .reply,
+                    taskId: "taskID",
+                    userId: "userID",
+                    telematikId: "telematikID",
+                    timestamp: "2021-05-29T10:59:37.098245933+00:00",
+                    payloadJSON: "{\"version\":\"1\" , \"supplyOptionsType\":\"shipment\" , \"info_text\":\"10 Info/Para + HRcode/Para + DMC/Para + URL/Para\" , \"pickUpCodeHR\":\"T10__R03\" , \"pickUpCodeDMC\":\"Test_10___Rezept_03___abcdefg12345\" , \"url\":\"https://www.tree.fm/forest/33\"}" // swiftlint:disable:this line_length
+                )
+            )
+            OrderMessageView(
+                store: OrderDetailDomain.Dummies.store,
+                communication: ErxTask.Communication(
+                    identifier: "2",
+                    profile: .reply,
+                    taskId: "taskID",
+                    userId: "userID",
+                    telematikId: "telematikID",
+                    timestamp: "2021-05-29T10:59:37.098245933+00:00",
+                    payloadJSON: "not a json"
+                )
+            )
+            OrderMessageView(
+                store: OrderDetailDomain.Dummies.store,
+                communication: ErxTask.Communication(
+                    identifier: "1",
+                    profile: .dispReq,
+                    taskId: "taskID",
+                    userId: "userID",
+                    telematikId: "telematikID",
+                    timestamp: "2021-05-29T09:59:37.098245933+00:00",
+                    payloadJSON: ""
+                ),
+                style: .single
+            )
         }
     }
 }

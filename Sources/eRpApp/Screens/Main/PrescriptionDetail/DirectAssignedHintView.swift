@@ -29,51 +29,42 @@ struct DirectAssignedHintView: View {
     }
 
     struct ViewState: Equatable {
-        let routeTag: PrescriptionDetailDomain.Route.Tag?
+        let destinationTag: PrescriptionDetailDomain.Destinations.State.Tag?
 
         init(state: PrescriptionDetailDomain.State) {
-            routeTag = state.route?.tag
+            destinationTag = state.destination?.tag
         }
     }
 
     var body: some View {
-        Button(
-            action: { viewStore.send(.showDirectAssignment) },
-            label: {
-                DirectAssignmentButton()
-                    .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnDirectAssignment)
-            }
-        )
-        .sheet(
-            isPresented: Binding<Bool>(
-                get: { viewStore.routeTag == .directAssignment },
-                set: { show in
-                    if !show {
-                        viewStore.send(.setNavigation(tag: nil))
-                    }
-                }
-            ),
-            onDismiss: {},
-            content: {
-                NavigationView {
-                    DirectAssignmentView()
-                        .toolbar {
-                            ToolbarItem(placement: .navigationBarTrailing) {
-                                CloseButton { viewStore.send(.setNavigation(tag: nil)) }
-                                    .embedToolbarContent()
-                                    .accessibilityIdentifier(A11y.directAssignment.davBtnClose)
+        VStack(spacing: 0) {
+            Button(action: { viewStore.send(.setNavigation(tag: .directAssignmentInfo)) }, label: {
+                Label(L10n.prscDtlBtnDirectAssignment, systemImage: SFSymbolName.info)
+                    .labelStyle(.blueFlag)
+            })
+                .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnDirectAssignment)
+
+            Rectangle()
+                .frame(width: 0, height: 0, alignment: .center)
+                .smallSheet(
+                    isPresented: Binding<Bool>(
+                        get: { viewStore.destinationTag == .directAssignmentInfo },
+                        set: { show in
+                            if !show {
+                                viewStore.send(.setNavigation(tag: nil))
                             }
                         }
-                        .navigationTitle("")
-                        .navigationBarTitleDisplayMode(.inline)
-                }
-                .accentColor(Colors.primary600)
-                .navigationViewStyle(StackNavigationViewStyle())
-            }
-        )
+                    ),
+                    onDismiss: {},
+                    content: {
+                        DirectAssignmentDrawerView()
+                    }
+                )
+                .accessibility(hidden: true)
+        }
     }
 
-    struct DirectAssignmentView: View {
+    struct DirectAssignmentDrawerView: View {
         var body: some View {
             VStack(alignment: .leading, spacing: 8) {
                 Text(L10n.davTxtDirectAssignmentTitle)
@@ -86,22 +77,7 @@ struct DirectAssignedHintView: View {
                 Spacer()
             }
             .padding()
-        }
-    }
-
-    struct DirectAssignmentButton: View {
-        var body: some View {
-            HStack(spacing: 8) {
-                Text(L10n.prscDtlBtnDirectAssignment)
-                    .font(Font.subheadline)
-                    .foregroundColor(Colors.primary900)
-                Image(systemName: SFSymbolName.info)
-                    .font(Font.subheadline.weight(.semibold))
-                    .foregroundColor(Colors.primary600)
-            }
-            .padding(.init(top: 8, leading: 12, bottom: 8, trailing: 12))
-            .background(Colors.primary100)
-            .cornerRadius(8)
+            .background(Colors.systemBackground.ignoresSafeArea())
         }
     }
 }

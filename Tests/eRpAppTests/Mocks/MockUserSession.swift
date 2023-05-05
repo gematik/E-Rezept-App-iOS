@@ -32,13 +32,22 @@ import VAUClient
 
 class MockUserSession: UserSession {
     lazy var trustStoreSession: TrustStoreSession = DemoTrustStoreSession()
+    var mockPrescriptionRepository: MockPrescriptionRepository
+    var mockIDPSession: IDPSessionMock
 
     var isLoggedIn: Bool
     var profileId: UUID
 
-    init(isAuthenticated: Bool = true, profileId: UUID = UUID()) {
+    init(
+        isAuthenticated: Bool = true,
+        profileId: UUID = UUID(),
+        prescriptionRepository: MockPrescriptionRepository = MockPrescriptionRepository(),
+        idpSession: IDPSessionMock = IDPSessionMock()
+    ) {
         isLoggedIn = isAuthenticated
         self.profileId = profileId
+        mockPrescriptionRepository = prescriptionRepository
+        mockIDPSession = idpSession
     }
 
     var isDemoMode: Bool {
@@ -46,7 +55,7 @@ class MockUserSession: UserSession {
     }
 
     lazy var idpSession: IDPSession = {
-        DemoIDPSession(storage: secureUserStore)
+        mockIDPSession
     }()
 
     lazy var extAuthRequestStorageMock = ExtAuthRequestStorageMock()
@@ -76,10 +85,6 @@ class MockUserSession: UserSession {
     var localUserStore: UserDataStore {
         mockUserDataStore
     }
-
-    lazy var hintEventsStore: EventsStore = {
-        MockHintEventsStore()
-    }()
 
     lazy var isAuthenticated: AnyPublisher<Bool, UserSessionError> = Just(isLoggedIn)
         .setFailureType(to: UserSessionError.self).eraseToAnyPublisher()
@@ -137,15 +142,20 @@ class MockUserSession: UserSession {
     }()
 
     lazy var prescriptionRepository: PrescriptionRepository = {
-        MockPrescriptionRepository()
+        mockPrescriptionRepository
     }()
-}
 
-class MockHintEventsStore: EventsStore {
-    var hintStatePublisher: AnyPublisher<HintState, Never> =
-        Just(HintState()).eraseToAnyPublisher()
+    lazy var idpSessionLoginHandler: LoginHandler = {
+        MockLoginHandler()
+    }()
 
-    var hintState = HintState()
+    lazy var biometricsIdpSessionLoginHandler: LoginHandler = {
+        MockLoginHandler()
+    }()
+
+    lazy var secureEnclaveSignatureProvider: SecureEnclaveSignatureProvider = {
+        MockSecureEnclaveSignatureProvider()
+    }()
 }
 
 class MockSecureUserStore: SecureUserDataStore {
@@ -309,6 +319,77 @@ class FakeErxTaskRepository: ErxTaskRepository {
         Just(0).setFailureType(to: ErrorType.self).eraseToAnyPublisher()
     }
 
+    // MARK: - ChargeItem
+
+    func loadRemoteChargeItems() -> AnyPublisher<[ErxChargeItem], ErxRepositoryError> {
+        Just([]).setFailureType(to: ErrorType.self).eraseToAnyPublisher()
+    }
+
+    // MARK: - fetchConsents
+
+    var fetchConsentsCallsCount = 0
+    var fetchConsentsCalled: Bool {
+        fetchConsentsCallsCount > 0
+    }
+
+    var fetchConsentsReturnValue: AnyPublisher<[ErxConsent], ErxRepositoryError>!
+    var fetchConsentsClosure: (() -> AnyPublisher<[ErxConsent], ErxRepositoryError>)?
+
+    func fetchConsents() -> AnyPublisher<[ErxConsent], ErxRepositoryError> {
+        fetchConsentsCallsCount += 1
+        if let fetchConsentsClosure = fetchConsentsClosure {
+            return fetchConsentsClosure()
+        } else {
+            return fetchConsentsReturnValue
+        }
+    }
+
+    // MARK: - grantConsent
+
+    var grantConsentCallsCount = 0
+    var grantConsentCalled: Bool {
+        grantConsentCallsCount > 0
+    }
+
+    var grantConsentReceivedConsent: ErxConsent?
+    var grantConsentReceivedInvocations: [ErxConsent] = []
+    var grantConsentReturnValue: AnyPublisher<ErxConsent?, ErxRepositoryError>!
+    var grantConsentClosure: ((ErxConsent) -> AnyPublisher<ErxConsent?, ErxRepositoryError>)?
+
+    func grantConsent(_ consent: ErxConsent) -> AnyPublisher<ErxConsent?, ErxRepositoryError> {
+        grantConsentCallsCount += 1
+        grantConsentReceivedConsent = consent
+        grantConsentReceivedInvocations.append(consent)
+        if let grantConsentClosure = grantConsentClosure {
+            return grantConsentClosure(consent)
+        } else {
+            return grantConsentReturnValue
+        }
+    }
+
+    // MARK: - revokeConsent
+
+    var revokeConsentCallsCount = 0
+    var revokeConsentCalled: Bool {
+        revokeConsentCallsCount > 0
+    }
+
+    var revokeConsentReceivedCategory: ErxConsent.Category?
+    var revokeConsentReceivedInvocations: [ErxConsent.Category] = []
+    var revokeConsentReturnValue: AnyPublisher<Bool, ErxRepositoryError>!
+    var revokeConsentClosure: ((ErxConsent.Category) -> AnyPublisher<Bool, ErxRepositoryError>)?
+
+    func revokeConsent(_ category: ErxConsent.Category) -> AnyPublisher<Bool, ErxRepositoryError> {
+        revokeConsentCallsCount += 1
+        revokeConsentReceivedCategory = category
+        revokeConsentReceivedInvocations.append(category)
+        if let revokeConsentClosure = revokeConsentClosure {
+            return revokeConsentClosure(category)
+        } else {
+            return revokeConsentReturnValue
+        }
+    }
+
     static var exampleStore: [String: ErxTask] = {
         let authoredOnNinetyTwoDaysBefore = DemoDate.createDemoDate(.ninetyTwoDaysBefore)
         let authoredOnThirtyDaysBefore = DemoDate.createDemoDate(.thirtyDaysBefore)
@@ -330,9 +411,9 @@ class FakeErxTaskRepository: ErxTaskRepository {
                 authoredOn: authoredOnThirtyDaysBefore,
                 expiresOn: expiresIn12DaysString,
                 author: "Dr. A",
-                medication: ErxTask.Medication(
+                medication: ErxMedication(
                     name: "Sumatriptan-1a Pharma 100 mg Tabletten",
-                    amount: 12,
+                    amount: .init(numerator: .init(value: "12")),
                     dosageForm: "TAB"
                 )
             ),
@@ -344,9 +425,9 @@ class FakeErxTaskRepository: ErxTaskRepository {
                 authoredOn: authoredOnThirtyDaysBefore,
                 expiresOn: expiresIn31DaysString,
                 author: "Dr. A",
-                medication: ErxTask.Medication(
+                medication: ErxMedication(
                     name: "Saflorblüten-Extrakt",
-                    amount: 12,
+                    amount: .init(numerator: .init(value: "12")),
                     dosageForm: "TAB"
                 )
             ),
@@ -358,9 +439,9 @@ class FakeErxTaskRepository: ErxTaskRepository {
                 authoredOn: authoredOnThirtyDaysBefore,
                 expiresOn: expiresIn12DaysString,
                 author: "Dr. A",
-                medication: ErxTask.Medication(
+                medication: ErxMedication(
                     name: "Yucca filamentosa",
-                    amount: 12,
+                    amount: .init(numerator: .init(value: "12")),
                     dosageForm: "TAB"
                 )
             ),
@@ -373,9 +454,9 @@ class FakeErxTaskRepository: ErxTaskRepository {
                 authoredOn: authoredOnThirtyDaysBefore,
                 expiresOn: expiresYesterdayString,
                 author: "Dr. Abgelaufen",
-                medication: ErxTask.Medication(
+                medication: ErxMedication(
                     name: "Zimtöl",
-                    amount: 20,
+                    amount: .init(numerator: .init(value: "20")),
                     dosageForm: "AEO"
                 )
             ),
@@ -388,9 +469,9 @@ class FakeErxTaskRepository: ErxTaskRepository {
                 authoredOn: authoredOnWeekBefore,
                 expiresOn: expiresIn12DaysString,
                 author: "Dr. A",
-                medication: ErxTask.Medication(
+                medication: ErxMedication(
                     name: "Iboprogenal 100+",
-                    amount: 10,
+                    amount: .init(numerator: .init(value: "10")),
                     dosageForm: "TAB"
                 )
             ),
@@ -402,9 +483,9 @@ class FakeErxTaskRepository: ErxTaskRepository {
                 authoredOn: authoredOnWeekBefore,
                 expiresOn: expiresIn31DaysString,
                 author: "Dr. A",
-                medication: ErxTask.Medication(
+                medication: ErxMedication(
                     name: "Saflorblüten-Extrakt",
-                    amount: 12,
+                    amount: .init(numerator: .init(value: "12")),
                     dosageForm: "TAB"
                 )
             ),
@@ -416,9 +497,9 @@ class FakeErxTaskRepository: ErxTaskRepository {
                 authoredOn: authoredOnWeekBefore,
                 expiresOn: expiresIn31DaysString,
                 author: "Dr. A",
-                medication: ErxTask.Medication(
+                medication: ErxMedication(
                     name: "Med. A",
-                    amount: 12,
+                    amount: .init(numerator: .init(value: "12")),
                     dosageForm: "TAB"
                 )
             ),
@@ -432,9 +513,9 @@ class FakeErxTaskRepository: ErxTaskRepository {
                 expiresOn: expiresYesterdayString,
                 acceptedUntil: expiresIn12DaysString,
                 author: "Dr. A",
-                medication: ErxTask.Medication(
+                medication: ErxMedication(
                     name: "Med. A",
-                    amount: 12,
+                    amount: .init(numerator: .init(value: "12")),
                     dosageForm: "TAB"
                 )
             ),
@@ -449,9 +530,9 @@ class FakeErxTaskRepository: ErxTaskRepository {
                 redeemedOn: redeemedOnToday,
                 author: nil,
                 source: .scanner,
-                medication: ErxTask.Medication(
+                medication: ErxMedication(
                     name: "Meditonsin 1",
-                    amount: 12,
+                    amount: .init(numerator: .init(value: "12")),
                     dosageForm: "TAB"
                 )
             ),
@@ -465,9 +546,9 @@ class FakeErxTaskRepository: ErxTaskRepository {
                 redeemedOn: redeemedOnToday,
                 author: nil,
                 source: .scanner,
-                medication: ErxTask.Medication(
+                medication: ErxMedication(
                     name: "Meditonsin 2",
-                    amount: 12,
+                    amount: .init(numerator: .init(value: "12")),
                     dosageForm: "TAB"
                 )
             ),
@@ -480,12 +561,12 @@ class FakeErxTaskRepository: ErxTaskRepository {
                 authoredOn: authoredOnSixteenDaysBefore,
                 expiresOn: expiresIn12DaysString,
                 author: "Dr. B",
-                medication: ErxTask.Medication(
+                medication: ErxMedication(
                     name: "Brausepulver 1",
-                    amount: 1,
+                    amount: .init(numerator: .init(value: "1")),
                     dosageForm: "TAB"
                 ),
-                practitioner: ErxTask.Practitioner(
+                practitioner: ErxPractitioner(
                     lanr: "123456789",
                     name: "Dr. White"
                 )
@@ -498,12 +579,12 @@ class FakeErxTaskRepository: ErxTaskRepository {
                 authoredOn: authoredOnSixteenDaysBefore,
                 expiresOn: expiresIn12DaysString,
                 author: "Dr. B",
-                medication: ErxTask.Medication(
+                medication: ErxMedication(
                     name: "Brausepulver 2",
-                    amount: 1,
+                    amount: .init(numerator: .init(value: "1")),
                     dosageForm: "TAB"
                 ),
-                practitioner: ErxTask.Practitioner(
+                practitioner: ErxPractitioner(
                     lanr: "123456789",
                     name: "Dr. White"
                 )
@@ -516,12 +597,12 @@ class FakeErxTaskRepository: ErxTaskRepository {
                 authoredOn: authoredOnSixteenDaysBefore,
                 expiresOn: expiresIn12DaysString,
                 author: "Dr. B",
-                medication: ErxTask.Medication(
+                medication: ErxMedication(
                     name: "Brausepulver 3",
-                    amount: 11,
+                    amount: .init(numerator: .init(value: "11")),
                     dosageForm: "TAB"
                 ),
-                practitioner: ErxTask.Practitioner(
+                practitioner: ErxPractitioner(
                     lanr: "123456789",
                     name: "Dr. White"
                 )
@@ -535,29 +616,27 @@ class FakeErxTaskRepository: ErxTaskRepository {
                 authoredOn: authoredOnNinetyTwoDaysBefore,
                 expiresOn: expiresIn12DaysString,
                 author: "Dr. B",
-                medication: ErxTask.Medication(
+                medication: ErxMedication(
                     name: "Brausepulver 3",
-                    amount: 11,
+                    amount: .init(numerator: .init(value: "11")),
                     dosageForm: "TAB"
                 ),
-                practitioner: ErxTask.Practitioner(
+                practitioner: ErxPractitioner(
                     lanr: "987654321",
                     name: "Dr. Black"
                 ),
-                medicationDispenses: [ErxTask.MedicationDispense(
+                medicationDispenses: [ErxMedicationDispense(
                     identifier: "3456789987654",
                     taskId: "7390f983-1e67-11b2-8555-63bf44e44f6c",
                     insuranceId: "ABC",
-                    pzn: "X123456",
-                    name: "Brausepulver 4",
-                    dose: "",
-                    dosageForm: "TAB",
                     dosageInstruction: "",
-                    amount: 11,
                     telematikId: "1234567",
                     whenHandedOver: handedOverAWeekBefore!,
-                    lot: nil,
-                    expiresOn: nil
+                    medication: ErxMedication(
+                        name: "Brausepulver 3",
+                        amount: .init(numerator: .init(value: "11")),
+                        dosageForm: "TAB"
+                    )
                 )]
             ),
             "14": ErxTask(
@@ -568,44 +647,40 @@ class FakeErxTaskRepository: ErxTaskRepository {
                 authoredOn: authoredOnNinetyTwoDaysBefore,
                 expiresOn: expiresIn12DaysString,
                 author: "Dr. B",
-                medication: ErxTask.Medication(
+                medication: ErxMedication(
                     name: "Brausepulver 3",
-                    amount: 11,
+                    amount: .init(numerator: .init(value: "11")),
                     dosageForm: "TAB"
                 ),
-                practitioner: ErxTask.Practitioner(
+                practitioner: ErxPractitioner(
                     lanr: "987654322"
                 ),
                 medicationDispenses: [
-                    ErxTask.MedicationDispense(
+                    ErxMedicationDispense(
                         identifier: "098767825647892",
                         taskId: "7390f983-1e67-11b2-8555-63bf44e44f7c",
                         insuranceId: "ABC",
-                        pzn: "X123456",
-                        name: "Brausepulver 3",
-                        dose: "",
-                        dosageForm: "TAB",
                         dosageInstruction: "",
-                        amount: 5,
-                        telematikId: "1234567",
+                        telematikId: "A12345678",
                         whenHandedOver: handedOverAWeekBefore!,
-                        lot: nil,
-                        expiresOn: nil
+                        medication: ErxMedication(
+                            name: "Brausepulver 3",
+                            amount: .init(numerator: .init(value: "6")),
+                            dosageForm: "TAB"
+                        )
                     ),
-                    ErxTask.MedicationDispense(
+                    ErxMedicationDispense(
                         identifier: "098767825647892-2",
                         taskId: "7390f983-1e67-11b2-8555-63bf44e44f7c",
                         insuranceId: "ABC",
-                        pzn: "X123456",
-                        name: "Brausepulver 3",
-                        dose: "",
-                        dosageForm: "TAB",
                         dosageInstruction: "",
-                        amount: 5,
-                        telematikId: "1234567",
+                        telematikId: "A12345678",
                         whenHandedOver: handedOverAWeekBefore!,
-                        lot: nil,
-                        expiresOn: nil
+                        medication: ErxMedication(
+                            name: "Brausepulver 3",
+                            amount: .init(numerator: .init(value: "5")),
+                            dosageForm: "TAB"
+                        )
                     ),
                 ]
             ),

@@ -31,13 +31,13 @@ final class OrdersDomainTests: XCTestCase {
         saveCommunications: Just(true).setFailureType(to: ErxRepositoryError.self).eraseToAnyPublisher()
     )
     let mockPharmacyRepository = MockPharmacyRepository()
-    let mockApplication = MockUIApplication()
+    let mockApplication = MockResourceHandler()
     typealias TestStore = ComposableArchitecture.TestStore<
         OrdersDomain.State,
         OrdersDomain.Action,
         OrdersDomain.State,
         OrdersDomain.Action,
-        OrdersDomain.Environment
+        Void
     >
 
     private func testStore(
@@ -46,32 +46,28 @@ final class OrdersDomainTests: XCTestCase {
     ) -> TestStore {
         TestStore(
             initialState: OrdersDomain.State(orders: []),
-            reducer: OrdersDomain.domainReducer,
-            environment: OrdersDomain.Environment(
-                schedulers: schedulers,
-                userSession: DummySessionContainer(),
-                fhirDateFormatter: globals.fhirDateFormatter,
-                erxTaskRepository: erxTaskRepository,
-                pharmacyRepository: pharmacyRepository
-            )
-        )
+            reducer: OrdersDomain()
+        ) { dependencies in
+            dependencies.schedulers = schedulers
+            dependencies.userSession = DummySessionContainer()
+            dependencies.erxTaskRepository = erxTaskRepository
+            dependencies.pharmacyRepository = pharmacyRepository
+        }
     }
 
     private func testStore(
         for orders: IdentifiedArrayOf<OrderCommunications>,
-        resourceHandler _: ResourceHandler = FailingUIApplication()
+        resourceHandler _: ResourceHandler = UnimplementedResourceHandler()
     ) -> TestStore {
         TestStore(
             initialState: OrdersDomain.State(orders: orders),
-            reducer: OrdersDomain.domainReducer,
-            environment: OrdersDomain.Environment(
-                schedulers: schedulers,
-                userSession: DummySessionContainer(),
-                fhirDateFormatter: globals.fhirDateFormatter,
-                erxTaskRepository: mockErxTaskRepository,
-                pharmacyRepository: mockPharmacyRepository
-            )
-        )
+            reducer: OrdersDomain()
+        ) { dependencies in
+            dependencies.schedulers = schedulers
+            dependencies.userSession = DummySessionContainer()
+            dependencies.erxTaskRepository = mockErxTaskRepository
+            dependencies.pharmacyRepository = mockPharmacyRepository
+        }
     }
 
     private func erxTaskRepository(with communications: [ErxTask.Communication]) -> MockErxTaskRepository {
@@ -104,7 +100,7 @@ final class OrdersDomainTests: XCTestCase {
         let store = testStore(for: mockErxTaskRepoAccess, and: mockPharmacyRepoAccess)
 
         store.send(.subscribeToCommunicationChanges)
-        store.receive(.communicationChangeReceived([]))
+        store.receive(.response(.communicationChangeReceived([])))
         expect(mockErxTaskRepoAccess.listCommunicationsCallsCount) == 1
     }
 
@@ -120,12 +116,12 @@ final class OrdersDomainTests: XCTestCase {
         let store = testStore(for: mockErxTaskRepoAccess, and: mockPharmacyRepoAccess)
 
         store.send(.subscribeToCommunicationChanges)
-        store.receive(.communicationChangeReceived(expected.communications.elements)) { state in
+        store.receive(.response(.communicationChangeReceived(expected.communications.elements))) { state in
             state.orders = IdentifiedArray(uniqueElements: [expected])
             expect(mockErxTaskRepoAccess.listCommunicationsCallsCount) == 1
             expect(mockErxTaskRepoAccess.saveCommunicationsCallsCount) == 0
         }
-        store.receive(.pharmaciesReceived([pharmacy])) { state in
+        store.receive(.response(.pharmaciesReceived([pharmacy]))) { state in
             expected.pharmacy = self.pharmacy
             state.orders = IdentifiedArray(uniqueElements: [expected])
             expect(mockPharmacyRepoAccess.loadCachedCallsCount) == 1
@@ -142,7 +138,7 @@ final class OrdersDomainTests: XCTestCase {
         let store = testStore(for: IdentifiedArray(uniqueElements: [expected]))
 
         store.send(.didSelect(communicationOnPremise.orderId!)) { state in
-            state.route = .orderDetail(.init(order: expected))
+            state.destination = .orderDetail(.init(order: expected))
         }
     }
 

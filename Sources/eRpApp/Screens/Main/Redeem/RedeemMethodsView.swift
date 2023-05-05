@@ -21,20 +21,11 @@ import SwiftUI
 
 struct RedeemMethodsView: View {
     let store: RedeemMethodsDomain.Store
-    @ObservedObject var viewStore: ViewStore<ViewState, RedeemMethodsDomain.Action>
-    @AppStorage("enable_avs_login") var enableAvsLogin = false
+    @ObservedObject var viewStore: ViewStore<Void, RedeemMethodsDomain.Action>
 
     init(store: RedeemMethodsDomain.Store) {
         self.store = store
-        viewStore = ViewStore(store.scope(state: ViewState.init))
-    }
-
-    struct ViewState: Equatable {
-        let prescriptionsAreAllFullDetail: Bool
-
-        init(state: RedeemMethodsDomain.State) {
-            prescriptionsAreAllFullDetail = state.erxTasks.allSatisfy { $0.source == .server }
-        }
+        viewStore = ViewStore(store.stateless)
     }
 
     var body: some View {
@@ -60,21 +51,19 @@ struct RedeemMethodsView: View {
                 })
                     .accessibility(identifier: A18n.redeem.overview.rdmBtnPharmacyTile)
 
-                if viewStore.prescriptionsAreAllFullDetail || enableAvsLogin {
-                    Button(action: { viewStore.send(.setNavigation(tag: .pharmacySearch)) }, label: {
-                        Tile(iconSystemName: SFSymbolName.bag,
-                             title: L10n.rdmBtnRedeemSearchPharmacyTitle,
-                             description: L10n.rdmBtnRedeemSearchPharmacyDescription,
-                             discloseIcon: SFSymbolName.rightDisclosureIndicator)
-                            .padding([.leading, .trailing], 16)
-                    })
-                        .accessibility(identifier: A18n.redeem.overview.rdmBtnDeliveryTile)
-                }
+                Button(action: { viewStore.send(.setNavigation(tag: .pharmacySearch)) }, label: {
+                    Tile(iconSystemName: SFSymbolName.bag,
+                         title: L10n.rdmBtnRedeemSearchPharmacyTitle,
+                         description: L10n.rdmBtnRedeemSearchPharmacyDescription,
+                         discloseIcon: SFSymbolName.rightDisclosureIndicator)
+                        .padding([.leading, .trailing], 16)
+                })
+                    .accessibility(identifier: A18n.redeem.overview.rdmBtnDeliveryTile)
                 Spacer()
             }
-            .routes(for: store)
+            .navigations(for: store)
             .navigationBarItems(
-                trailing: NavigationBarCloseItem { viewStore.send(.close) }
+                trailing: NavigationBarCloseItem { viewStore.send(.closeButtonTapped) }
                     .accessibility(identifier: A18n.redeem.overview.rdmBtnCloseButton)
             )
             .navigationBarTitleDisplayMode(.inline)
@@ -91,10 +80,9 @@ struct RedeemMethodsView: View {
         .navigationViewStyle(StackNavigationViewStyle())
     }
 
-    struct Router: ViewModifier {
+    struct Navigation: ViewModifier {
         let store: RedeemMethodsDomain.Store
         @ObservedObject var viewStore: ViewStore<ViewState, RedeemMethodsDomain.Action>
-        @AppStorage("enable_avs_login") var enableAvsLogin = false
 
         init(store: RedeemMethodsDomain.Store) {
             self.store = store
@@ -102,12 +90,10 @@ struct RedeemMethodsView: View {
         }
 
         struct ViewState: Equatable {
-            let prescriptionsAreAllFullDetail: Bool
-            let routeTag: RedeemMethodsDomain.Route.Tag?
+            let destinationTag: RedeemMethodsDomain.Destinations.State.Tag?
 
             init(state: RedeemMethodsDomain.State) {
-                routeTag = state.route?.tag
-                prescriptionsAreAllFullDetail = state.erxTasks.allSatisfy { $0.source == .server }
+                destinationTag = state.destination?.tag
             }
         }
 
@@ -118,60 +104,51 @@ struct RedeemMethodsView: View {
                 NavigationLink(
                     // swiftlint:disable trailing_closure
                     destination: dataMatrixDestination,
-                    tag: RedeemMethodsDomain.Route.Tag.matrixCode,
-                    selection: viewStore.binding(get: \.routeTag, send: { .setNavigation(tag: $0) })
+                    tag: RedeemMethodsDomain.Destinations.State.Tag.matrixCode,
+                    selection: viewStore.binding(get: \.destinationTag, send: { .setNavigation(tag: $0) })
                 ) {}
                     .hidden()
                     .accessibility(hidden: true)
 
-                if viewStore.prescriptionsAreAllFullDetail || enableAvsLogin {
-                    NavigationLink(
-                        destination: pharmacySearchDestination,
-                        tag: RedeemMethodsDomain.Route.Tag.pharmacySearch,
-                        selection: viewStore.binding(get: \.routeTag, send: { .setNavigation(tag: $0) })
-                    ) {}
-                        .hidden()
-                        .accessibility(hidden: true)
-                    // This is a workaround due to a SwiftUI bug where never 2 NavigationLink
-                    // should be on the same view. See:
-                    // https://forums.swift.org/t/14-5-beta3-navigationlink-unexpected-pop/45279
-                    NavigationLink(destination: EmptyView()) {
-                        EmptyView()
-                    }.accessibility(hidden: true)
-                }
+                NavigationLink(
+                    destination: IfLetStore(
+                        store.destinationsScope(
+                            state: /RedeemMethodsDomain.Destinations.State.pharmacySearch,
+                            action: RedeemMethodsDomain.Destinations.Action.pharmacySearchAction(action:)
+                        )
+                    ) { scopedStore in
+                        PharmacySearchView(store: scopedStore)
+                    },
+                    tag: RedeemMethodsDomain.Destinations.State.Tag.pharmacySearch,
+                    selection: viewStore.binding(get: \.destinationTag, send: { .setNavigation(tag: $0) })
+                ) {}
+                    .hidden()
+                    .accessibility(hidden: true)
+                // This is a workaround due to a SwiftUI bug where never 2 NavigationLink
+                // should be on the same view. See:
+                // https://forums.swift.org/t/14-5-beta3-navigationlink-unexpected-pop/45279
+                NavigationLink(destination: EmptyView()) {
+                    EmptyView()
+                }.accessibility(hidden: true)
             }
         }
 
         private var dataMatrixDestination: some View {
             IfLetStore(
-                self.store.scope(
-                    state: (\RedeemMethodsDomain.State.route).appending(path: /RedeemMethodsDomain.Route.matrixCode)
-                        .extract(from:),
-                    action: RedeemMethodsDomain.Action.redeemMatrixCodeAction(action:)
+                store.destinationsScope(
+                    state: /RedeemMethodsDomain.Destinations.State.matrixCode,
+                    action: RedeemMethodsDomain.Destinations.Action.redeemMatrixCodeAction(action:)
                 ),
                 then: RedeemMatrixCodeView.init(store:)
-            )
-        }
-
-        private var pharmacySearchDestination: some View {
-            IfLetStore(
-                self.store.scope(
-                    state: (\RedeemMethodsDomain.State.route).appending(path: /RedeemMethodsDomain.Route.pharmacySearch)
-                        .extract(from:),
-                    action: RedeemMethodsDomain.Action.pharmacySearchAction(action:)
-                ),
-                then: { scopedStore in
-                    PharmacySearchView(store: scopedStore)
-                }
             )
         }
     }
 }
 
 extension View {
-    func routes(for store: RedeemMethodsDomain.Store) -> some View {
+    func navigations(for store: RedeemMethodsDomain.Store) -> some View {
         modifier(
-            RedeemMethodsView.Router(store: store)
+            RedeemMethodsView.Navigation(store: store)
         )
     }
 }

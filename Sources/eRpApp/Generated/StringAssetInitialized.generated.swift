@@ -1,4 +1,4 @@
-// Generated using Sourcery 1.9.0 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.0.1 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 
 import SwiftUI
@@ -158,6 +158,9 @@ extension StatusView {
 extension SubTitle {
     init(title: StringAsset, description: StringAsset? = nil, details: StringAsset? = nil) {
     self.init(title: title.key, description: description?.key, details: details?.key)
+    }
+    init(title: String, details: StringAsset) {
+    self.init(title: title, details: details.key)
     }
     init(title: String, description: StringAsset) {
     self.init(title: title, description: description.key)

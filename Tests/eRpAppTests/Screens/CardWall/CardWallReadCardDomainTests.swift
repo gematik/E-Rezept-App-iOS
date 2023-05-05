@@ -34,7 +34,7 @@ final class CardWallReadCardDomainTests: XCTestCase {
         CardWallReadCardDomain.Action,
         CardWallReadCardDomain.State,
         CardWallReadCardDomain.Action,
-        CardWallReadCardDomain.Environment
+        Void
     >
 
     var idpMock: TestUtils.IDPSessionMock!
@@ -43,10 +43,9 @@ final class CardWallReadCardDomainTests: XCTestCase {
     var mockNFCSessionProvider: MockNFCSignatureProvider!
     lazy var testProfile = { Profile(name: "TestProfile") }()
     var mockProfileValidator: AnyPublisher<IDTokenValidator, IDTokenValidatorError>!
-    var mockCurrentProfile: AnyPublisher<Profile, LocalStoreError>!
     var mockProfileDataStore = MockProfileDataStore()
     var mockProfileBasedIdpSessionProvider = MockProfileBasedSessionProvider()
-    var mockApplication = MockUIApplication()
+    var mockResourceHandler = MockResourceHandler()
 
     let challenge = try! IDPChallengeSession(
         challenge: IDPChallenge(
@@ -68,8 +67,6 @@ final class CardWallReadCardDomainTests: XCTestCase {
             computeScheduler: DispatchQueue.test.eraseToAnyScheduler()
         )
     }()
-
-    var environment: CardWallReadCardDomain.Environment!
 
     var sut: CardWallReadCardDomain.State!
 
@@ -101,20 +98,19 @@ final class CardWallReadCardDomainTests: XCTestCase {
         mockProfileValidator = Just(
             ProfileValidator(currentProfile: testProfile, otherProfiles: [testProfile])
         ).setFailureType(to: IDTokenValidatorError.self).eraseToAnyPublisher()
-        mockCurrentProfile = Just(testProfile).setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
         mockProfileBasedIdpSessionProvider.idTokenValidatorForReturnValue = mockProfileValidator
 
         return TestStore(
             initialState: initialState,
-            reducer: CardWallReadCardDomain.reducer,
-            environment: CardWallReadCardDomain.Environment(
-                schedulers: schedulers,
-                profileDataStore: mockProfileDataStore,
-                signatureProvider: DummySecureEnclaveSignatureProvider(),
-                sessionProvider: mockProfileBasedIdpSessionProvider,
-                nfcSessionProvider: mockNFCSessionProvider,
-                application: mockApplication
-            )
+            reducer: CardWallReadCardDomain(),
+            prepareDependencies: { dependencies in
+                dependencies.schedulers = schedulers
+                dependencies.profileDataStore = mockProfileDataStore
+                dependencies.secureEnclaveSignatureProvider = DummySecureEnclaveSignatureProvider()
+                dependencies.profileBasedSessionProvider = mockProfileBasedIdpSessionProvider
+                dependencies.nfcSessionProvider = mockNFCSessionProvider
+                dependencies.resourceHandler = mockResourceHandler
+            }
         )
     }
 
@@ -138,42 +134,47 @@ final class CardWallReadCardDomainTests: XCTestCase {
         )
 
         sut.send(.getChallenge)
-        sut.receive(.stateReceived(.retrievingChallenge(.loading))) { state in
+        sut.receive(.response(.state(.retrievingChallenge(.loading)))) { state in
             state.output = .retrievingChallenge(.loading)
         }
         networkScheduler.advance()
         uiScheduler.advance()
-        sut.receive(.stateReceived(.challengeLoaded(challenge))) { state in
+        sut.receive(.response(.state(.challengeLoaded(challenge)))) { state in
             state.output = .challengeLoaded(self.challenge)
         }
     }
 
     func testHappyPathSigning() {
-        let sut = testStore(initialState: defaultState)
-        mockProfileDataStore.updateProfileIdMutatingReturnValue = Just(true)
-            .setFailureType(to: LocalStoreError.self)
-            .eraseToAnyPublisher()
+        mockProfileValidator = Just(
+            ProfileValidator(currentProfile: testProfile, otherProfiles: [testProfile])
+        ).setFailureType(to: IDTokenValidatorError.self).eraseToAnyPublisher()
+        mockProfileBasedIdpSessionProvider.idTokenValidatorForReturnValue = mockProfileValidator
         mockNFCSessionProvider.signCanPinChallengeReturnValue = Just(signedChallenge)
             .setFailureType(to: NFCSignatureProviderError.self)
             .eraseToAnyPublisher()
+        mockProfileDataStore.updateProfileIdMutatingReturnValue = Just(true)
+            .setFailureType(to: LocalStoreError.self)
+            .eraseToAnyPublisher()
+
+        let sut = testStore(initialState: defaultState)
 
         let idpToken = IDPSessionMock.fixtureIDPToken
         sut.send(.signChallenge(challenge))
         uiScheduler.advance()
 
-        sut.receive(.stateReceived(.signingChallenge(.loading))) { state in
+        sut.receive(.response(.state(.signingChallenge(.loading)))) { state in
             state.output = .signingChallenge(.loading)
         }
         expect(self.mockNFCSessionProvider.signCanPinChallengeCalled).to(beTrue())
         uiScheduler.advance()
-        sut.receive(.stateReceived(.verifying(.loading))) { state in
+        sut.receive(.response(.state(.verifying(.loading)))) { state in
             state.output = .verifying(.loading)
         }
-        sut.receive(.stateReceived(.loggedIn(idpToken))) { state in
+        sut.receive(.response(.state(.loggedIn(idpToken)))) { state in
             state.output = .loggedIn(idpToken)
         }
         uiScheduler.advance()
-        sut.receive(.close)
+        sut.receive(.delegate(.close))
     }
 
     func testWhenOnAppearIDPChallengeFails_ViewIsInErrorState() {
@@ -187,7 +188,7 @@ final class CardWallReadCardDomainTests: XCTestCase {
                                                                        output: .idle))
 
         sut.send(.getChallenge)
-        sut.receive(.stateReceived(.retrievingChallenge(.loading))) { state in
+        sut.receive(.response(.state(.retrievingChallenge(.loading)))) { state in
             state.output = .retrievingChallenge(.loading)
         }
         passthrough.send(completion: .failure(idpError))
@@ -197,9 +198,9 @@ final class CardWallReadCardDomainTests: XCTestCase {
         let error = CardWallReadCardDomain.State.Error.idpError(idpError)
 
         sut.receive(CardWallReadCardDomain.Action
-            .stateReceived(.retrievingChallenge(.error(error)))) { state in
+            .response(.state(.retrievingChallenge(.error(error))))) { state in
                 state.output = .retrievingChallenge(.error(error))
-                state.route = .alert(CardWallReadCardDomain.AlertStates.alertFor(error))
+                state.destination = .alert(CardWallReadCardDomain.AlertStates.alertFor(error))
         }
     }
 
@@ -215,11 +216,11 @@ final class CardWallReadCardDomainTests: XCTestCase {
         )
 
         testStore.send(.getChallenge)
-        testStore.receive(.stateReceived(.retrievingChallenge(.loading))) { state in
+        testStore.receive(.response(.state(.retrievingChallenge(.loading)))) { state in
             state.output = .retrievingChallenge(.loading)
         }
         uiScheduler.advance()
-        testStore.receive(CardWallReadCardDomain.Action.stateReceived(.challengeLoaded(challenge))) { state in
+        testStore.receive(CardWallReadCardDomain.Action.response(.state(.challengeLoaded(challenge)))) { state in
             state.output = .challengeLoaded(self.challenge)
         }
     }
@@ -240,20 +241,20 @@ final class CardWallReadCardDomainTests: XCTestCase {
             .eraseToAnyPublisher()
         sut.send(.signChallenge(challenge))
         uiScheduler.advance()
-        sut.receive(.stateReceived(.signingChallenge(.loading))) { state in
+        sut.receive(.response(.state(.signingChallenge(.loading)))) { state in
             state.output = .signingChallenge(.loading)
         }
         uiScheduler.advance()
-        sut.receive(CardWallReadCardDomain.Action.stateReceived(.verifying(.loading))) { state in
+        sut.receive(CardWallReadCardDomain.Action.response(.state(.verifying(.loading)))) { state in
             state.output = .verifying(.loading)
         }
         verifyPassthrough.send(exchangeToken)
         verifyPassthrough.send(completion: .finished)
         uiScheduler.advance()
-        sut.receive(.stateReceived(.loggedIn(IDPSessionMock.fixtureIDPToken))) { state in
+        sut.receive(.response(.state(.loggedIn(IDPSessionMock.fixtureIDPToken)))) { state in
             state.output = .loggedIn(IDPSessionMock.fixtureIDPToken)
         }
-        sut.receive(.close)
+        sut.receive(.delegate(.close))
     }
 
     func testWhenIDPChallengeAvailable_SigningStates_PinError() {
@@ -263,15 +264,15 @@ final class CardWallReadCardDomainTests: XCTestCase {
 
         sut.send(.signChallenge(challenge))
         uiScheduler.advance()
-        sut.receive(.stateReceived(.signingChallenge(.loading))) { state in
+        sut.receive(.response(.state(.signingChallenge(.loading)))) { state in
             state.output = .signingChallenge(.loading)
         }
 
         uiScheduler.advance()
         sut.receive(CardWallReadCardDomain.Action
-            .stateReceived(.signingChallenge(.error(.signChallengeError(pinError))))) { state in
+            .response(.state(.signingChallenge(.error(.signChallengeError(pinError)))))) { state in
                 state.output = .signingChallenge(.error(.signChallengeError(pinError)))
-                state.route = .alert(CardWallReadCardDomain.AlertStates.wrongPIN(.signChallengeError(pinError)))
+                state.destination = .alert(CardWallReadCardDomain.AlertStates.wrongPIN(.signChallengeError(pinError)))
         }
     }
 
@@ -282,16 +283,16 @@ final class CardWallReadCardDomainTests: XCTestCase {
 
         sut.send(.signChallenge(challenge))
         uiScheduler.advance()
-        sut.receive(.stateReceived(.signingChallenge(.loading))) { state in
+        sut.receive(.response(.state(.signingChallenge(.loading)))) { state in
             state.output = .signingChallenge(.loading)
         }
         uiScheduler.advance()
         sut.receive(
             CardWallReadCardDomain.Action
-                .stateReceived(.signingChallenge(.error(.signChallengeError(canError))))
+                .response(.state(.signingChallenge(.error(.signChallengeError(canError)))))
         ) { state in
             state.output = .signingChallenge(.error(.signChallengeError(canError)))
-            state.route = .alert(CardWallReadCardDomain.AlertStates.wrongCAN(.signChallengeError(canError)))
+            state.destination = .alert(CardWallReadCardDomain.AlertStates.wrongCAN(.signChallengeError(canError)))
         }
     }
 
@@ -302,20 +303,21 @@ final class CardWallReadCardDomainTests: XCTestCase {
 
         sut.send(.signChallenge(challenge))
         uiScheduler.advance()
-        sut.receive(.stateReceived(.signingChallenge(.loading))) { state in
+        sut.receive(.response(.state(.signingChallenge(.loading)))) { state in
             state.output = .signingChallenge(.loading)
         }
         uiScheduler.advance()
         sut.receive(
-            CardWallReadCardDomain.Action.stateReceived(.signingChallenge(.error(.signChallengeError(error))))
+            CardWallReadCardDomain.Action.response(.state(.signingChallenge(.error(.signChallengeError(error)))))
         ) { state in
             state.output = .signingChallenge(.error(.signChallengeError(error)))
 
-            state.route = .alert(CardWallReadCardDomain.AlertStates.alertWithReportButton(error: error))
+            state.destination = .alert(CardWallReadCardDomain.AlertStates.alertWithReportButton(error: error))
         }
     }
 
     func testSendingMail() {
+        mockResourceHandler.canOpenURLReturnValue = true
         let sut = testStore(initialState: defaultState)
 
         let error = NFCSignatureProviderError.signingFailure(.unsupportedAlgorithm)
@@ -323,12 +325,12 @@ final class CardWallReadCardDomainTests: XCTestCase {
         let mailState = EmailState(subject: L10n.cdwTxtMailSubject.text, body: report)
         let expectedUrl = mailState.createEmailUrl()
 
-        expect(self.mockApplication.canOpenURLCalled).to(beFalse())
-        expect(self.mockApplication.openCalled).to(beFalse())
+        expect(self.mockResourceHandler.canOpenURLCalled).to(beFalse())
+        expect(self.mockResourceHandler.openCalled).to(beFalse())
         sut.send(.openMail(report))
-        expect(self.mockApplication.canOpenURLCalled).to(beTrue())
-        expect(self.mockApplication.openCalled).to(beTrue())
-        expect(self.mockApplication.openUrlParameter?.absoluteString) == expectedUrl?.absoluteString
+        expect(self.mockResourceHandler.canOpenURLCalled).to(beTrue())
+        expect(self.mockResourceHandler.openCalled).to(beTrue())
+        expect(self.mockResourceHandler.openReceivedUrl?.absoluteString) == expectedUrl?.absoluteString
     }
 
     func testUpdateProfileSaveError() {
@@ -343,21 +345,21 @@ final class CardWallReadCardDomainTests: XCTestCase {
         sut.send(.signChallenge(challenge))
         uiScheduler.advance()
 
-        sut.receive(.stateReceived(.signingChallenge(.loading))) { state in
+        sut.receive(.response(.state(.signingChallenge(.loading)))) { state in
             state.output = .signingChallenge(.loading)
         }
         expect(self.mockNFCSessionProvider.signCanPinChallengeCalled).to(beTrue())
 
         uiScheduler.advance()
-        sut.receive(.stateReceived(.verifying(.loading))) { state in
+        sut.receive(.response(.state(.verifying(.loading)))) { state in
             state.output = .verifying(.loading)
         }
-        sut.receive(.stateReceived(.loggedIn(idpToken))) { state in
+        sut.receive(.response(.state(.loggedIn(idpToken)))) { state in
             state.output = .loggedIn(idpToken)
         }
         uiScheduler.advance()
         sut.receive(.saveError(.notImplemented)) { state in
-            state.route = .alert(CardWallReadCardDomain.AlertStates.saveProfile)
+            state.destination = .alert(CardWallReadCardDomain.AlertStates.saveProfile)
         }
     }
 
@@ -378,19 +380,19 @@ final class CardWallReadCardDomainTests: XCTestCase {
         sut.send(.signChallenge(challenge))
         uiScheduler.advance()
 
-        sut.receive(.stateReceived(.signingChallenge(.loading))) { state in
+        sut.receive(.response(.state(.signingChallenge(.loading)))) { state in
             state.output = .signingChallenge(.loading)
         }
         expect(self.mockNFCSessionProvider.signCanPinChallengeCalled).to(beTrue())
 
         uiScheduler.advance()
-        sut.receive(.stateReceived(.verifying(.loading))) { state in
+        sut.receive(.response(.state(.verifying(.loading)))) { state in
             state.output = .verifying(.loading)
         }
-        sut.receive(.stateReceived(.verifying(.error(.profileValidation(expectedInternalError))))) { state in
+        sut.receive(.response(.state(.verifying(.error(.profileValidation(expectedInternalError)))))) { state in
             state.output = .verifying(.error(.profileValidation(expectedInternalError)))
             state
-                .route = .alert(CardWallReadCardDomain.AlertStates
+                .destination = .alert(CardWallReadCardDomain.AlertStates
                     .alertFor(CardWallReadCardDomain.State.Error.profileValidation(expectedInternalError)))
         }
     }
@@ -402,17 +404,17 @@ final class CardWallReadCardDomainTests: XCTestCase {
 
         sut.send(.signChallenge(challenge))
         uiScheduler.advance()
-        sut.receive(.stateReceived(.signingChallenge(.loading))) { state in
+        sut.receive(.response(.state(.signingChallenge(.loading)))) { state in
             state.output = .signingChallenge(.loading)
         }
 
         uiScheduler.advance()
         sut.receive(
-            CardWallReadCardDomain.Action.stateReceived(.signingChallenge(.error(.signChallengeError(error))))
+            CardWallReadCardDomain.Action.response(.state(.signingChallenge(.error(.signChallengeError(error)))))
         ) { state in
             state.output = .signingChallenge(.error(.signChallengeError(error)))
 
-            state.route = .alert(CardWallReadCardDomain.AlertStates.alertWithReportButton(error: error))
+            state.destination = .alert(CardWallReadCardDomain.AlertStates.alertWithReportButton(error: error))
         }
     }
 
@@ -423,17 +425,17 @@ final class CardWallReadCardDomainTests: XCTestCase {
 
         sut.send(.signChallenge(challenge))
         uiScheduler.advance()
-        sut.receive(.stateReceived(.signingChallenge(.loading))) { state in
+        sut.receive(.response(.state(.signingChallenge(.loading)))) { state in
             state.output = .signingChallenge(.loading)
         }
 
         uiScheduler.advance()
         sut.receive(
-            CardWallReadCardDomain.Action.stateReceived(.signingChallenge(.error(.signChallengeError(error))))
+            CardWallReadCardDomain.Action.response(.state(.signingChallenge(.error(.signChallengeError(error)))))
         ) { state in
             state.output = .signingChallenge(.error(.signChallengeError(error)))
 
-            state.route = .alert(CardWallReadCardDomain.AlertStates.alertWithReportButton(error: error))
+            state.destination = .alert(CardWallReadCardDomain.AlertStates.alertWithReportButton(error: error))
         }
     }
 
@@ -444,17 +446,17 @@ final class CardWallReadCardDomainTests: XCTestCase {
 
         sut.send(.signChallenge(challenge))
         uiScheduler.advance()
-        sut.receive(.stateReceived(.signingChallenge(.loading))) { state in
+        sut.receive(.response(.state(.signingChallenge(.loading)))) { state in
             state.output = .signingChallenge(.loading)
         }
 
         uiScheduler.advance()
         sut.receive(
-            CardWallReadCardDomain.Action.stateReceived(.signingChallenge(.error(.signChallengeError(error))))
+            CardWallReadCardDomain.Action.response(.state(.signingChallenge(.error(.signChallengeError(error)))))
         ) { state in
             state.output = .signingChallenge(.error(.signChallengeError(error)))
 
-            state.route = .alert(CardWallReadCardDomain.AlertStates.alertWithReportButton(error: error))
+            state.destination = .alert(CardWallReadCardDomain.AlertStates.alertWithReportButton(error: error))
         }
     }
 
@@ -465,16 +467,16 @@ final class CardWallReadCardDomainTests: XCTestCase {
 
         sut.send(.signChallenge(challenge))
         uiScheduler.advance()
-        sut.receive(.stateReceived(.signingChallenge(.loading))) { state in
+        sut.receive(.response(.state(.signingChallenge(.loading)))) { state in
             state.output = .signingChallenge(.loading)
         }
         uiScheduler.advance()
         sut.receive(
-            CardWallReadCardDomain.Action.stateReceived(.signingChallenge(.error(.signChallengeError(error))))
+            CardWallReadCardDomain.Action.response(.state(.signingChallenge(.error(.signChallengeError(error)))))
         ) { state in
             state.output = .signingChallenge(.error(.signChallengeError(error)))
 
-            state.route = .alert(CardWallReadCardDomain.AlertStates.alertWithReportButton(error: error))
+            state.destination = .alert(CardWallReadCardDomain.AlertStates.alertWithReportButton(error: error))
         }
     }
 
@@ -485,16 +487,16 @@ final class CardWallReadCardDomainTests: XCTestCase {
 
         sut.send(.signChallenge(challenge))
         uiScheduler.advance()
-        sut.receive(.stateReceived(.signingChallenge(.loading))) { state in
+        sut.receive(.response(.state(.signingChallenge(.loading)))) { state in
             state.output = .signingChallenge(.loading)
         }
         uiScheduler.advance()
         sut.receive(
-            CardWallReadCardDomain.Action.stateReceived(.signingChallenge(.error(.signChallengeError(error))))
+            CardWallReadCardDomain.Action.response(.state(.signingChallenge(.error(.signChallengeError(error)))))
         ) { state in
             state.output = .signingChallenge(.error(.signChallengeError(error)))
 
-            state.route = .alert(CardWallReadCardDomain.AlertStates.alertWithReportButton(error: error))
+            state.destination = .alert(CardWallReadCardDomain.AlertStates.alertWithReportButton(error: error))
         }
     }
 
@@ -506,16 +508,16 @@ final class CardWallReadCardDomainTests: XCTestCase {
         let stateError = CardWallReadCardDomain.State.Error.signChallengeError(error)
         sut.send(.signChallenge(challenge))
         uiScheduler.advance()
-        sut.receive(.stateReceived(.signingChallenge(.loading))) { state in
+        sut.receive(.response(.state(.signingChallenge(.loading)))) { state in
             state.output = .signingChallenge(.loading)
         }
         uiScheduler.advance()
         sut.receive(
-            CardWallReadCardDomain.Action.stateReceived(.signingChallenge(.error(.signChallengeError(error))))
+            CardWallReadCardDomain.Action.response(.state(.signingChallenge(.error(.signChallengeError(error)))))
         ) { state in
             state.output = .signingChallenge(.error(.signChallengeError(error)))
 
-            state.route = .alert(CardWallReadCardDomain.AlertStates.wrongPIN(stateError))
+            state.destination = .alert(CardWallReadCardDomain.AlertStates.wrongPIN(stateError))
         }
     }
 
@@ -527,17 +529,17 @@ final class CardWallReadCardDomainTests: XCTestCase {
         let stateError = CardWallReadCardDomain.State.Error.signChallengeError(error)
         sut.send(.signChallenge(challenge))
         uiScheduler.advance()
-        sut.receive(.stateReceived(.signingChallenge(.loading))) { state in
+        sut.receive(.response(.state(.signingChallenge(.loading)))) { state in
             state.output = .signingChallenge(.loading)
         }
 
         uiScheduler.advance()
         sut.receive(
-            CardWallReadCardDomain.Action.stateReceived(.signingChallenge(.error(.signChallengeError(error))))
+            CardWallReadCardDomain.Action.response(.state(.signingChallenge(.error(.signChallengeError(error)))))
         ) { state in
             state.output = .signingChallenge(.error(.signChallengeError(error)))
 
-            state.route = .alert(CardWallReadCardDomain.AlertStates.alertFor(stateError))
+            state.destination = .alert(CardWallReadCardDomain.AlertStates.alertFor(stateError))
         }
     }
 
@@ -549,16 +551,16 @@ final class CardWallReadCardDomainTests: XCTestCase {
         let stateError = CardWallReadCardDomain.State.Error.signChallengeError(error)
         sut.send(.signChallenge(challenge))
         uiScheduler.advance()
-        sut.receive(.stateReceived(.signingChallenge(.loading))) { state in
+        sut.receive(.response(.state(.signingChallenge(.loading)))) { state in
             state.output = .signingChallenge(.loading)
         }
         uiScheduler.advance()
         sut.receive(
-            CardWallReadCardDomain.Action.stateReceived(.signingChallenge(.error(stateError)))
+            CardWallReadCardDomain.Action.response(.state(.signingChallenge(.error(stateError))))
         ) { state in
             state.output = .signingChallenge(.error(.signChallengeError(error)))
 
-            state.route = .alert(CardWallReadCardDomain.AlertStates.alertFor(stateError))
+            state.destination = .alert(CardWallReadCardDomain.AlertStates.alertFor(stateError))
         }
     }
 }

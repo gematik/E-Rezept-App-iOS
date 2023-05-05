@@ -22,13 +22,12 @@ import eRpKit
 import SwiftUI
 import ZXingObjC
 
-enum RedeemMatrixCodeDomain {
-    typealias Store = ComposableArchitecture.Store<State, Action>
-    typealias Reducer = ComposableArchitecture.AnyReducer<State, Action, Environment>
+struct RedeemMatrixCodeDomain: ReducerProtocol {
+    typealias Store = StoreOf<Self>
 
     /// Provides an Effect that need to run whenever the state of this Domain is reset to nil
-    static func cleanup<T>() -> Effect<T, Never> {
-        Effect.cancel(id: Token.self)
+    static func cleanup<T>() -> EffectTask<T> {
+        EffectTask<T>.cancel(ids: Token.allCases)
     }
 
     enum Token: CaseIterable, Hashable {
@@ -49,51 +48,64 @@ enum RedeemMatrixCodeDomain {
     }
 
     enum Action: Equatable {
-        case close
+        case closeButtonTapped
         case loadMatrixCodeImage(screenSize: CGSize)
-        case matrixCodeImageReceived(LoadingState<UIImage, LoadingImageError>)
-        case redeemedOnSavedReceived(Bool)
+
+        case response(Response)
+        case delegate(Delegate)
+
+        enum Response: Equatable {
+            case matrixCodeImageReceived(LoadingState<UIImage, LoadingImageError>)
+            case redeemedOnSavedReceived(Bool)
+        }
+
+        enum Delegate: Equatable {
+            case close
+        }
     }
 
-    struct Environment {
-        var schedulers: Schedulers
-        let matrixCodeGenerator: ErxTaskMatrixCodeGenerator
-        let taskRepository: ErxTaskRepository
-        let fhirDateFormatter: FHIRDateFormatter
+    @Dependency(\.schedulers) var schedulers: Schedulers
+    @Dependency(\.erxTaskMatrixCodeGenerator) var matrixCodeGenerator: ErxTaskMatrixCodeGenerator
+    @Dependency(\.erxTaskRepository) var taskRepository: ErxTaskRepository
+    @Dependency(\.fhirDateFormatter) var fhirDateFormatter: FHIRDateFormatter
+
+    var body: some ReducerProtocol<State, Action> {
+        Reduce(self.core)
     }
 
-    static let reducer = Reducer { state, action, environment in
-
+    private func core(state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
+        case .closeButtonTapped:
+            return .task { .delegate(.close) }
         case let .loadMatrixCodeImage(screenSize):
-            return environment.matrixCodeGenerator.publishedMatrixCode(
+            return matrixCodeGenerator.publishedMatrixCode(
                 for: state.erxTasks,
-                with: environment.calcMatrixCodeSize(screenSize: screenSize)
+                with: calcMatrixCodeSize(screenSize: screenSize)
             )
             .mapError { _ in
                 LoadingImageError.matrixCodeGenerationFailed
             }
             .catchToLoadingStateEffect()
-            .map(RedeemMatrixCodeDomain.Action.matrixCodeImageReceived)
+            .map { .response(.matrixCodeImageReceived($0)) }
             .cancellable(id: Token.cancelMatrixCodeGeneration, cancelInFlight: true)
-            .receive(on: environment.schedulers.main)
+            .receive(on: schedulers.main)
             .eraseToEffect()
 
-        case let .matrixCodeImageReceived(loadingState):
+        case let .response(.matrixCodeImageReceived(loadingState)):
             state.loadingState = loadingState
             UIScreen.main.brightness = CGFloat(1.0)
             // User story defines that scanned erxTasks should be automatically
             // redeemed when this screen was successfully shown.
-            return environment.redeemAndSaveErxTasks(erxTasks: state.erxTasks)
-        case let .redeemedOnSavedReceived(success):
+            return redeemAndSaveErxTasks(erxTasks: state.erxTasks)
+        case .response(.redeemedOnSavedReceived):
             return .none
-        case .close:
+        case .delegate(.close):
             return .cancel(id: Token.cancelMatrixCodeGeneration)
         }
     }
 }
 
-extension RedeemMatrixCodeDomain.Environment {
+extension RedeemMatrixCodeDomain {
     /// Will calculate the size for the matrix code based on current screen size
     func calcMatrixCodeSize(screenSize: CGSize) -> CGSize {
         let padding: CGFloat = 16
@@ -115,7 +127,7 @@ extension RedeemMatrixCodeDomain.Environment {
             .first()
             .receive(on: schedulers.main)
             .replaceError(with: false)
-            .map(RedeemMatrixCodeDomain.Action.redeemedOnSavedReceived)
+            .map { .response(.redeemedOnSavedReceived($0)) }
             .eraseToEffect()
             .cancellable(id: RedeemMatrixCodeDomain.Token.redeemAndSaveErxTasks)
     }
@@ -127,19 +139,13 @@ extension RedeemMatrixCodeDomain {
         static let state = State(
             erxTasks: Prescription.Dummies.prescriptions.map(\.erxTask)
         )
-        static let environment = Environment(
-            schedulers: Schedulers(),
-            matrixCodeGenerator: DefaultErxTaskMatrixCodeGenerator(matrixCodeGenerator: ZXDataMatrixWriter()),
-            taskRepository: demoSessionContainer.userSession.erxTaskRepository,
-            fhirDateFormatter: FHIRDateFormatter.shared
-        )
+
         static let store = Store(initialState: state,
-                                 reducer: reducer,
-                                 environment: environment)
+                                 reducer: RedeemMatrixCodeDomain())
+
         static func storeFor(_ state: State) -> Store {
             Store(initialState: state,
-                  reducer: RedeemMatrixCodeDomain.Reducer.empty,
-                  environment: environment)
+                  reducer: RedeemMatrixCodeDomain())
         }
     }
 }

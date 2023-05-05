@@ -17,13 +17,32 @@
 	<key>CFBundlePackageType</key>
 	<string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0.5</string>
+	<string>1.8.0</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>cs-$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>$(GEMATIK_BUNDLE_VERSION)</string>
+	<key>CSDisableAutostart</key>
+	<true/>
 	<key>GEMATIKSourceVersion</key>
 	<string>$(GEMATIK_SOURCE_VERSION)</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>mailto</string>
+	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NFCReaderUsageDescription</key>
@@ -32,6 +51,10 @@
 	<string>E-Rezept needs access to your camera so that it can read your prescritions</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>E-Rezept uses FaceID to protect access to your app.</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Your location is only required if you want to find pharmacies around you</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Your location is only required if you want to find pharmacies around you</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
@@ -79,9 +102,5 @@
 		<string>E828BD080FD27600006601</string>
 		<string>D27600014603</string>
 	</array>
-	<key>NSLocationAlwaysUsageDescription</key>
-	<string>Your location is only required if you want to find pharmacies around you</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Your location is only required if you want to find pharmacies around you</string>
 </dict>
 </plist>

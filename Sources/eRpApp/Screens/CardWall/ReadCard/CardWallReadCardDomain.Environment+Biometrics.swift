@@ -122,12 +122,12 @@ extension CardWallReadCardDomain.Environment {
         do {
             pairingSession = try signatureProvider.createPairingSession()
         } catch {
-            return Just(.stateReceived(.retrievingChallenge(.error(.biometrieError(error))))).eraseToEffect()
+            return Just(.response(.state(.retrievingChallenge(.error(.biometrieError(error)))))).eraseToEffect()
         }
 
         return Effect<CardWallReadCardDomain.Action, Never>.run { subscriber -> Cancellable in
 
-            subscriber.send(.stateReceived(.signingChallenge(.loading)))
+            subscriber.send(.response(.state(.signingChallenge(.loading))))
 
             return sessionProvider
                 .biometrieIdpSession(for: profileID)
@@ -211,13 +211,14 @@ extension CardWallReadCardDomain.Environment {
                 .map(CardWallReadCardDomain.State.Output.loggedIn)
                 .sink(receiveCompletion: { completion in
                     if case let .failure(error) = completion {
-                        subscriber.send(CardWallReadCardDomain.Action.stateReceived(.signingChallenge(.error(error))))
+                        subscriber
+                            .send(CardWallReadCardDomain.Action.response(.state(.signingChallenge(.error(error)))))
                         // [REQ:gemSpec_IDP_Frontend:A_21598,A_21595] Failure will delete paring data
                         _ = try? signatureProvider.abort(pairingSession: pairingSession)
                     }
                     subscriber.send(completion: .finished)
                 }, receiveValue: { value in
-                    subscriber.send(.stateReceived(value))
+                    subscriber.send(.response(.state(value)))
                 })
         }
     }

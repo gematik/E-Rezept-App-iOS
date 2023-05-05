@@ -30,7 +30,7 @@ final class CardWallExtAuthConfirmationDomainTests: XCTestCase {
         CardWallExtAuthConfirmationDomain.Action,
         CardWallExtAuthConfirmationDomain.State,
         CardWallExtAuthConfirmationDomain.Action,
-        CardWallExtAuthConfirmationDomain.Environment
+        Void
     >
 
     var idpSessionMock: IDPSessionMock!
@@ -47,25 +47,25 @@ final class CardWallExtAuthConfirmationDomainTests: XCTestCase {
         )
     }()
 
-    var uiApplicationMock: UIApplicationOpenURLMock!
+    var resourceHandlerMock: MockResourceHandler!
 
     override func setUp() {
         super.setUp()
 
         idpSessionMock = IDPSessionMock()
-        uiApplicationMock = UIApplicationOpenURLMock()
+        resourceHandlerMock = MockResourceHandler()
     }
 
     func testStore(for state: CardWallExtAuthConfirmationDomain.State)
         -> TestStore {
         TestStore(
             initialState: state,
-            reducer: CardWallExtAuthConfirmationDomain.reducer,
-            environment: .init(idpSession: idpSessionMock,
-                               schedulers: schedulers,
-                               canOpenURL: uiApplicationMock.canOpenURL,
-                               openURL: uiApplicationMock.openURL)
-        )
+            reducer: CardWallExtAuthConfirmationDomain()
+        ) { dependencies in
+            dependencies.idpSession = idpSessionMock
+            dependencies.schedulers = schedulers
+            dependencies.resourceHandler = resourceHandlerMock
+        }
     }
 
     func testStore()
@@ -79,7 +79,7 @@ final class CardWallExtAuthConfirmationDomainTests: XCTestCase {
         let urlFixture = URL(string: "https://dummy.gematik.de")!
 
         idpSessionMock.startExtAuth_Publisher = Just(urlFixture).setFailureType(to: IDPError.self).eraseToAnyPublisher()
-        uiApplicationMock.canOpenURLUrlReturnValue = true
+        resourceHandlerMock.canOpenURLReturnValue = true
 
         sut.send(.confirmKK) { state in
             state.loading = true
@@ -87,7 +87,7 @@ final class CardWallExtAuthConfirmationDomainTests: XCTestCase {
         uiScheduler.run()
         sut.receive(.openURL(urlFixture))
 
-        guard let receivedArgs = uiApplicationMock.openURLOptionsCompletionReceivedArguments,
+        guard let receivedArgs = resourceHandlerMock.openOptionsCompletionHandlerReceivedArguments,
               let completion = receivedArgs.completion else {
             fail("did not receive arguments")
             return
@@ -95,11 +95,11 @@ final class CardWallExtAuthConfirmationDomainTests: XCTestCase {
         completion(true)
         uiScheduler.run()
 
-        sut.receive(.openURLReceived(true)) { state in
+        sut.receive(.response(.openURL(true))) { state in
             state.loading = false
         }
 
-        sut.receive(.close)
+        sut.receive(.delegate(.close))
     }
 
     func testConfirmationFailsWithIDPError() {
@@ -127,12 +127,12 @@ final class CardWallExtAuthConfirmationDomainTests: XCTestCase {
 
         let urlFixture = URL(string: "https://dummy.gematik.de")!
 
-        uiApplicationMock.canOpenURLUrlReturnValue = false
+        resourceHandlerMock.canOpenURLReturnValue = false
 
         sut.send(.openURL(urlFixture))
         uiScheduler.run()
 
-        sut.receive(.openURLReceived(false)) { state in
+        sut.receive(.response(.openURL(false))) { state in
             state.loading = false
             state.error = CardWallExtAuthConfirmationDomain.Error.universalLinkFailed
         }

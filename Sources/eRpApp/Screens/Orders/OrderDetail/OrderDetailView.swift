@@ -39,15 +39,11 @@ struct OrderDetailView: View {
 
                 VStack(alignment: .leading, spacing: 0) {
                     ForEach(viewStore.communications) { communication in
-                        Button {
-                            viewStore.send(.didSelectCommunication(communication.id))
-                        } label: {
-                            OrderMessageView(
-                                communication: communication,
-                                pharmacyName: viewStore.pharmacyName,
-                                style: style(for: communication)
-                            )
-                        }
+                        OrderMessageView(
+                            store: store,
+                            communication: communication,
+                            style: style(for: communication)
+                        )
                     }
                     .accessibilityElement(children: .contain)
                     .accessibility(identifier: A11y.orderDetail.list.ordDetailTxtMsgList)
@@ -80,11 +76,9 @@ struct OrderDetailView: View {
 
             NavigationLink(
                 destination: IfLetStore(
-                    store.scope(
-                        state: (\OrderDetailDomain.State.route)
-                            .appending(path: /OrderDetailDomain.Route.prescriptionDetail)
-                            .extract(from:),
-                        action: OrderDetailDomain.Action.prescriptionDetail(action:)
+                    store.destinationsScope(
+                        state: /OrderDetailDomain.Destinations.State.prescriptionDetail,
+                        action: OrderDetailDomain.Destinations.Action.prescriptionDetail(action:)
                     )
                 ) { scopedStore in
                     WithViewStore(scopedStore.scope(state: \.prescription.source)) { viewStore in
@@ -94,9 +88,9 @@ struct OrderDetailView: View {
                         }
                     }
                 },
-                tag: OrderDetailDomain.Route.Tag.prescriptionDetail,
+                tag: OrderDetailDomain.Destinations.State.Tag.prescriptionDetail,
                 selection: viewStore.binding(
-                    get: \.routeTag,
+                    get: \.destinationTag,
                     send: OrderDetailDomain.Action.setNavigation
                 )
             ) {
@@ -108,12 +102,18 @@ struct OrderDetailView: View {
             Rectangle()
                 .frame(width: 0, height: 0, alignment: .center)
                 .sheet(isPresented: Binding<Bool>(
-                    get: { viewStore.routeTag == .pickupCode },
+                    get: { viewStore.destinationTag == .pickupCode },
                     set: { show in
                         if !show { viewStore.send(.setNavigation(tag: .none)) }
                     }
                 )) {
-                    IfLetStore(pickupCodeStore, then: PickupCodeView.init(store:))
+                    IfLetStore(
+                        store.destinationsScope(
+                            state: /OrderDetailDomain.Destinations.State.pickupCode,
+                            action: OrderDetailDomain.Destinations.Action.pickupCode(action:)
+                        ),
+                        then: PickupCodeView.init(store:)
+                    )
                 }
                 .hidden()
                 .accessibility(hidden: true)
@@ -138,9 +138,7 @@ struct OrderDetailView: View {
         .navigationBarTitle(L10n.ordDetailTxtTitle, displayMode: .inline)
         .accessibility(identifier: A11y.orderDetail.list.ordDetailTitle)
         .alert(
-            self.store
-                .scope(state: (\OrderDetailDomain.State.route).appending(path: /OrderDetailDomain.Route.alert)
-                    .extract(from:)),
+            store.destinationsScope(state: /OrderDetailDomain.Destinations.State.alert),
             dismiss: .setNavigation(tag: .none)
         )
         .onAppear {
@@ -195,22 +193,6 @@ struct OrderDetailView: View {
         default:
             return .middle
         }
-    }
-
-    private static func uiFormattedDate(dateString: String?) -> String? {
-        if let dateString = dateString,
-           let date = globals.fhirDateFormatter.date(from: dateString,
-                                                     format: .yearMonthDay) {
-            return globals.uiDateFormatter.string(from: date)
-        }
-        return dateString
-    }
-
-    var pickupCodeStore: Store<PickupCodeDomain.State?, PickupCodeDomain.Action> {
-        store.scope(
-            state: (\OrderDetailDomain.State.route).appending(path: /OrderDetailDomain.Route.pickupCode).extract(from:),
-            action: OrderDetailDomain.Action.pickupCode(action:)
-        )
     }
 
     struct TitleView: View {
@@ -279,25 +261,23 @@ struct OrderDetailView: View {
 
 extension OrderDetailView {
     struct ViewState: Equatable {
-        let pharmacyName: String
         let hasLocation: Bool
         let hasPhoneContact: Bool
         let hasEmailContact: Bool
         let communications: IdentifiedArrayOf<ErxTask.Communication>
         let erxTasks: IdentifiedArrayOf<ErxTask>
 
-        let routeTag: OrderDetailDomain.Route.Tag?
+        let destinationTag: OrderDetailDomain.Destinations.State.Tag?
 
         var openUrlSheetVisible: Bool
 
         init(state: OrderDetailDomain.State) {
-            pharmacyName = state.order.pharmacy?.name ?? L10n.ordTxtNoPharmacyName.text
             hasLocation = state.order.pharmacy?.position != nil
             hasPhoneContact = state.order.pharmacy?.telecom?.phone != nil
             hasEmailContact = state.order.pharmacy?.telecom?.email != nil
             communications = state.order.displayedCommunications
             erxTasks = state.erxTasks
-            routeTag = state.route?.tag
+            destinationTag = state.destination?.tag
             openUrlSheetVisible = state.openUrlSheetUrl != nil
         }
     }

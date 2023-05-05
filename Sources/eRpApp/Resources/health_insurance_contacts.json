@@ -2,13 +2,13 @@
   {
     "name": "AOK Baden-Württemberg",
     "healthCardAndPinPhone": "",
-    "healthCardAndPinMail": "a99_egk@bw.aok.de",
-    "healthCardAndPinUrl": "",
-    "pinUrl": "",
-    "subjectCardAndPinMail": "#eGKPIN# Bestellung einer NFC-fähigen Gesundheitskarte und PIN",
-    "bodyCardAndPinMail": "Sehr geehrte Damen und Herren,\nich möchte die E-Rezept-App der gematik nutzen.\n\nName:\nVorname:\nVersichertennummer/ KVNR:\n\nBitte senden Sie mir hierfür eine NFC-fähige Gesundheitskarte zu. Ich benötige zu der Gesundheitskarte auch die PIN. Bitte senden Sie mir Informationen zu, wie ich die PIN erhalten kann.\n\nMit freundlichen Grüßen\nIhr Versicherter/ Ihre Versicherte",
-    "subjectPinMail": "#PIN# Bestellung einer PIN zur Gesundheitskarte",
-    "bodyPinMail": "Sehr geehrte Damen und Herren,\nich möchte die E-Rezept-App der gematik nutzen.\n\nName:\nVorname:\nVersichertennummer/ KVNR:\n\nIch benötige zu der Gesundheitskarte  die PIN. Bitte senden Sie mir Informationen zu, wie ich die PIN erhalten kann.\n\nMit freundlichen Grüßen\nIhr Versicherter/ Ihre Versicherte"
+    "healthCardAndPinMail": "",
+    "healthCardAndPinUrl": "https://www.aok.de/pk/versichertenservice/elektronische-gesundheitskarte-egk/",
+    "pinUrl": "https://www.aok.de/pk/versichertenservice/pin-zur-elektronischen-gesundheitskarte/",
+    "subjectCardAndPinMail": "",
+    "bodyCardAndPinMail": "",
+    "subjectPinMail": "",
+    "bodyPinMail": ""
   },
   {
     "name": "AOK Bayern",
@@ -143,7 +143,7 @@
     "bodyPinMail": ""
   },
   {
-    "name": "BKK Deutsche Bahn AG",
+    "name": "BAHN-BKK",
     "healthCardAndPinPhone": "",
     "healthCardAndPinMail": "",
     "healthCardAndPinUrl": "https://www.bahn-bkk.de/egk-erezept",

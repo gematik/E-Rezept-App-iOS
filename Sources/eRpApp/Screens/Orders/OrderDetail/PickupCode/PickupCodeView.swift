@@ -46,7 +46,7 @@ struct PickupCodeView: View {
                         TitleView(store: store)
                     }
                 }
-                .navigationBarItems(trailing: CloseButton { viewStore.send(.close) })
+                .navigationBarItems(trailing: CloseButton { viewStore.send(.delegate(.close)) })
                 .navigationBarTitleDisplayMode(.inline)
                 .introspectNavigationController { navigationController in
                     let navigationBar = navigationController.navigationBar

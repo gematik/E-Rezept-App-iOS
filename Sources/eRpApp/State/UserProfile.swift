@@ -31,7 +31,7 @@ struct UserProfile: ProfileCellModel, Equatable, Identifiable {
     var insurance: String? { profile.insurance }
     var insuranceId: String? { profile.insuranceId }
 
-    var emoji: String? { profile.emoji }
+    var image: ProfilePicture { profile.image.viewModelPicture }
     var color: ProfileColor { profile.color.viewModelColor }
 
     var lastSuccessfulSync: Date? { profile.lastAuthenticated }
@@ -114,7 +114,6 @@ extension UserProfile {
                 insurance: "Spooky BKK",
                 insuranceId: "X112233445",
                 color: .blue,
-                emoji: "🎃",
                 lastAuthenticated: Date().addingTimeInterval(-60 * 8),
                 erxTasks: []
             ),
@@ -127,7 +126,6 @@ extension UserProfile {
                 created: Date(),
                 insuranceId: nil,
                 color: .blue,
-                emoji: "💀",
                 lastAuthenticated: nil,
                 erxTasks: []
             ),
@@ -140,7 +138,6 @@ extension UserProfile {
                 created: Date(),
                 insuranceId: nil,
                 color: .blue,
-                emoji: "🎃",
                 lastAuthenticated: Date().addingTimeInterval(-60 * 60 * 1.5),
                 erxTasks: []
             ),
@@ -153,12 +150,25 @@ extension UserProfile {
                 created: Date(),
                 insuranceId: nil,
                 color: .yellow,
-                emoji: "🎃",
                 lastAuthenticated: Date().addingTimeInterval(-60 * 60 * 1.5),
                 erxTasks: []
             ),
             isAuthenticated: true,
             activityIndicating: true
+        )
+
+        static let profileE = UserProfile(
+            from: Profile(
+                name: "Private Paul",
+                identifier: UUID(),
+                created: Date(),
+                insuranceId: nil,
+                insuranceType: .pKV,
+                color: .red,
+                lastAuthenticated: Date().addingTimeInterval(-60 * 60 * 1.5),
+                erxTasks: []
+            ),
+            isAuthenticated: true
         )
     }
 }

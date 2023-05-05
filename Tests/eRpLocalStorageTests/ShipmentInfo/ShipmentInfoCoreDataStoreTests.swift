@@ -68,11 +68,15 @@ final class ShipmentInfoCoreDataStoreTests: XCTestCase {
         return factory
     }
 
+    let foregroundQueue: AnySchedulerOf<DispatchQueue> = .immediate
+    let backgroundQueue: AnySchedulerOf<DispatchQueue> = .immediate
+
     private func loadShipmentInfoCoreDataStore() -> ShipmentInfoCoreDataStore {
         ShipmentInfoCoreDataStore(
             userDefaults: userDefaults,
             coreDataControllerFactory: loadFactory(),
-            backgroundQueue: AnyScheduler.main
+            foregroundQueue: foregroundQueue,
+            backgroundQueue: backgroundQueue
         )
     }
 
@@ -104,7 +108,7 @@ final class ShipmentInfoCoreDataStoreTests: XCTestCase {
             })
 
         // then it should be the one we expect
-        expect(receivedFetchResult).toEventually(equal(input))
+        expect(receivedFetchResult).to(equal(input))
 
         cancellable.cancel()
     }
@@ -123,7 +127,7 @@ final class ShipmentInfoCoreDataStoreTests: XCTestCase {
             })
 
         // then it should return no entry
-        expect(receivedNoResult).toEventually(beTrue())
+        expect(receivedNoResult).to(beTrue())
 
         cancellable.cancel()
     }
@@ -144,7 +148,7 @@ final class ShipmentInfoCoreDataStoreTests: XCTestCase {
             })
 
         // then nil should be returned
-        expect(selectedShipmentInfoResults.count).toEventually(equal(1))
+        expect(selectedShipmentInfoResults.count).to(equal(1))
         expect(selectedShipmentInfoResults[0]).to(beNil())
 
         cancellable.cancel()
@@ -167,7 +171,7 @@ final class ShipmentInfoCoreDataStoreTests: XCTestCase {
             })
 
         // then that entity should be returned
-        expect(selectedShipmentInfoResults.count).toEventually(equal(1))
+        expect(selectedShipmentInfoResults.count).to(equal(1))
         expect(selectedShipmentInfoResults[0]) == input
 
         cancellable.cancel()
@@ -191,7 +195,7 @@ final class ShipmentInfoCoreDataStoreTests: XCTestCase {
         sut.set(selectedShipmentInfoId: input.id)
 
         // then there should be an additional value be published
-        expect(selectedShipmentInfoResults.count).toEventually(equal(2))
+        expect(selectedShipmentInfoResults.count).to(equal(2))
         expect(selectedShipmentInfoResults[0]).to(beNil())
         expect(selectedShipmentInfoResults[1]) == input
 
@@ -213,7 +217,7 @@ final class ShipmentInfoCoreDataStoreTests: XCTestCase {
                 selectedShipmentInfoResults.append(result)
             })
 
-        expect(selectedShipmentInfoResults.count).toEventually(equal(1))
+        expect(selectedShipmentInfoResults.count).to(equal(1))
         // then there should be nil
         expect(selectedShipmentInfoResults[0]).to(beNil())
 
@@ -261,7 +265,7 @@ final class ShipmentInfoCoreDataStoreTests: XCTestCase {
             })
 
         // then there should be only one in store with the updated values
-        expect(receivedListAllShipmentInfoValues.count).toEventually(equal(1))
+        expect(receivedListAllShipmentInfoValues.count).to(equal(1))
         expect(receivedListAllShipmentInfoValues[0].count).to(equal(0))
 
         cancellable.cancel()
@@ -309,7 +313,7 @@ final class ShipmentInfoCoreDataStoreTests: XCTestCase {
             })
 
         // then there should be only one in store with the updated values
-        expect(receivedListAllShipmentInfoValues.count).toEventually(equal(1))
+        expect(receivedListAllShipmentInfoValues.count).to(equal(1))
         expect(receivedListAllShipmentInfoValues[0].count).to(equal(1))
         let result = receivedListAllShipmentInfoValues[0].first
         expect(result) == updatedShipment
@@ -332,9 +336,9 @@ final class ShipmentInfoCoreDataStoreTests: XCTestCase {
             }, receiveValue: { shipmentInfo in
                 receivedDeleteResults.append(shipmentInfo)
             })
-        expect(receivedDeleteResults.count).toEventually(equal(1))
+        expect(receivedDeleteResults.count).to(equal(1))
         expect(receivedDeleteResults.first) == shipmentToDelete
-        expect(receivedDeleteCompletions.count).toEventually(equal(1))
+        expect(receivedDeleteCompletions.count).to(equal(1))
         expect(receivedDeleteCompletions.first) == .finished
 
         // then there should be no entry left in store
@@ -346,7 +350,7 @@ final class ShipmentInfoCoreDataStoreTests: XCTestCase {
                 receivedListAllShipmentInfosValues.append(shipmentInfos)
             })
 
-        expect(receivedListAllShipmentInfosValues.count).toEventually(equal(1))
+        expect(receivedListAllShipmentInfosValues.count).to(equal(1))
         expect(receivedListAllShipmentInfosValues.first?.count) == 0
     }
 
@@ -366,10 +370,10 @@ final class ShipmentInfoCoreDataStoreTests: XCTestCase {
             }, receiveValue: { deletedShipmentInfos in
                 receivedDeleteResults.append(contentsOf: deletedShipmentInfos)
             })
-        expect(receivedDeleteResults.count).toEventually(equal(2))
+        expect(receivedDeleteResults.count).to(equal(2))
         expect(receivedDeleteResults.first) == shipmentToDelete1
         expect(receivedDeleteResults.last) == shipmentToDelete2
-        expect(receivedDeleteCompletions.count).toEventually(equal(1))
+        expect(receivedDeleteCompletions.count).to(equal(1))
         expect(receivedDeleteCompletions.first) == .finished
 
         // then there should be no entry left in store
@@ -381,7 +385,7 @@ final class ShipmentInfoCoreDataStoreTests: XCTestCase {
                 receivedListAllShipmentInfosValues.append(shipmentInfos)
             })
 
-        expect(receivedListAllShipmentInfosValues.count).toEventually(equal(1))
+        expect(receivedListAllShipmentInfosValues.count).to(equal(1))
         expect(receivedListAllShipmentInfosValues.first?.count) == 0
     }
 
@@ -400,7 +404,7 @@ final class ShipmentInfoCoreDataStoreTests: XCTestCase {
                 selectedShipmentInfoResults.append(result)
             })
 
-        expect(selectedShipmentInfoResults.count).toEventually(equal(1))
+        expect(selectedShipmentInfoResults.count).to(equal(1))
         expect(selectedShipmentInfoResults[0]) == shipmentToDelete
 
         // when deleting the selected entity
@@ -411,7 +415,7 @@ final class ShipmentInfoCoreDataStoreTests: XCTestCase {
             }, receiveValue: { shipmentInfo in
                 receivedDeleteResults.append(shipmentInfo)
             })
-        expect(receivedDeleteResults.count).toEventually(equal(1))
+        expect(receivedDeleteResults.count).to(equal(1))
         expect(receivedDeleteResults.first) == shipmentToDelete
 
         expect(selectedShipmentInfoResults.count).toEventually(equal(2))
@@ -438,7 +442,7 @@ final class ShipmentInfoCoreDataStoreTests: XCTestCase {
         }, receiveValue: { result in
             receivedUpdateValues.append(result)
         })
-        expect(receivedUpdateValues.count).toEventually(equal(1))
+        expect(receivedUpdateValues.count).to(equal(1))
         expect(receivedUpdateValues.first) == expectedResult
 
         // then the input shipment should be updated
@@ -450,7 +454,7 @@ final class ShipmentInfoCoreDataStoreTests: XCTestCase {
                 receivedListAllShipmentInfosValues.append(shipmentInfos)
             })
 
-        expect(receivedListAllShipmentInfosValues.count).toEventually(equal(1))
+        expect(receivedListAllShipmentInfosValues.count).to(equal(1))
         expect(receivedListAllShipmentInfosValues.first?.count) == 1
         let result = receivedListAllShipmentInfosValues[0].first!
         expect(result) == expectedResult
@@ -470,7 +474,7 @@ final class ShipmentInfoCoreDataStoreTests: XCTestCase {
         }, receiveValue: { _ in
             fail("did not expect to receive a value")
         })
-        expect(receivedUpdateCompletions.count).toEventually(equal(1))
+        expect(receivedUpdateCompletions.count).to(equal(1))
         expect(receivedUpdateCompletions.first) == .failure(
             LocalStoreError.write(error: ShipmentInfoCoreDataStore.Error.noMatchingEntity)
         )
@@ -489,9 +493,9 @@ extension ShipmentInfoCoreDataStore {
                 receivedSaveResults.append(contentsOf: results)
             })
 
-        expect(receivedSaveResults.count).toEventually(equal(shipmentInfos.count))
+        expect(receivedSaveResults.count).to(equal(shipmentInfos.count))
         expect(receivedSaveResults.last) == shipmentInfos.last
-        expect(receivedSaveCompletions.count).toEventually(equal(1))
+        expect(receivedSaveCompletions.count).to(equal(1))
         expect(receivedSaveCompletions.first) == .finished
 
         cancellable.cancel()
@@ -508,9 +512,9 @@ extension ShipmentInfoCoreDataStore {
                 receivedSaveResults.append(result)
             })
 
-        expect(receivedSaveResults.count).toEventually(equal(1))
+        expect(receivedSaveResults.count).to(equal(1))
         expect(receivedSaveResults.last) == shipmentInfo
-        expect(receivedSaveCompletions.count).toEventually(equal(1))
+        expect(receivedSaveCompletions.count).to(equal(1))
         expect(receivedSaveCompletions.first) == .finished
 
         cancellable.cancel()

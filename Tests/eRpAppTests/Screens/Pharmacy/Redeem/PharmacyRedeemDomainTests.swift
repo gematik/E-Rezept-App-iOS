@@ -37,7 +37,7 @@ class PharmacyRedeemDomainTests: XCTestCase {
         PharmacyRedeemDomain.Action,
         PharmacyRedeemDomain.State,
         PharmacyRedeemDomain.Action,
-        PharmacyRedeemDomain.Environment
+        Void
     >
     var store: TestStore!
 
@@ -59,20 +59,16 @@ class PharmacyRedeemDomainTests: XCTestCase {
     func testStore(for state: PharmacyRedeemDomain.State) -> TestStore {
         TestStore(
             initialState: state,
-            reducer: PharmacyRedeemDomain.reducer,
-            environment: PharmacyRedeemDomain.Environment(
-                schedulers: Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler()),
-                userSession: mockUserSession,
-                shipmentInfoStore: mockShipmentInfoDataStore,
-                redeemService: mockRedeemService,
-                inputValidator: mockRedeemValidator,
-                serviceLocator: ServiceLocator(),
-                signatureProvider: MockSecureEnclaveSignatureProvider(),
-                userSessionProvider: MockUserSessionProvider(),
-                accessibilityAnnouncementReceiver: { _ in },
-                pharmacyRepository: mockPharmacyRepository
-            )
-        )
+            reducer: PharmacyRedeemDomain()
+        ) { dependencies in
+            dependencies.schedulers = Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler())
+            dependencies.userSession = mockUserSession
+            dependencies.shipmentInfoDataStore = mockShipmentInfoDataStore
+            dependencies.redeemInputValidator = mockRedeemValidator
+            dependencies.redeemService = mockRedeemService
+            dependencies.serviceLocator = ServiceLocator()
+            dependencies.pharmacyRepository = mockPharmacyRepository
+        }
     }
 
     var pharmacy: PharmacyLocation {
@@ -124,10 +120,10 @@ class PharmacyRedeemDomainTests: XCTestCase {
         let expectedCardWallState = CardWallIntroductionDomain.State(
             isNFCReady: true,
             profileId: mockUserSession.profileId,
-            route: nil
+            destination: nil
         )
         sut.receive(.setNavigation(tag: .cardWall)) {
-            $0.route = PharmacyRedeemDomain.Route.cardWall(expectedCardWallState)
+            $0.destination = PharmacyRedeemDomain.Destinations.State.cardWall(expectedCardWallState)
         }
         expect(self.mockPharmacyRepository.saveCallsCount) == 0
     }
@@ -181,7 +177,7 @@ class PharmacyRedeemDomainTests: XCTestCase {
         sut.send(.redeem)
         sut.receive(.redeemReceived(.success(expectedOrderResponses))) {
             $0.orderResponses = expectedOrderResponses
-            $0.route = .redeemSuccess(RedeemSuccessDomain.State(redeemOption: .onPremise))
+            $0.destination = .redeemSuccess(RedeemSuccessDomain.State(redeemOption: .onPremise))
 
             for task in inputTasks {
                 let response = $0.orderResponses.first { $0.requested.taskID == task.id }
@@ -230,7 +226,8 @@ class PharmacyRedeemDomainTests: XCTestCase {
                 OrderResponse(requested: order, result: .success(true))
             }
             // let one of the response be failing
-            orderResponses[0] = OrderResponse(requested: orderResponses[0].requested, result: .failure(expectedError))
+            orderResponses[0] = OrderResponse(requested: orderResponses[0].requested,
+                                              result: .failure(expectedError))
             expectedOrderResponses = IdentifiedArrayOf(uniqueElements: orderResponses)
             return Just(expectedOrderResponses)
                 .setFailureType(to: RedeemServiceError.self)
@@ -241,7 +238,7 @@ class PharmacyRedeemDomainTests: XCTestCase {
         sut.send(.redeem)
         sut.receive(.redeemReceived(.success(expectedOrderResponses))) {
             $0.orderResponses = expectedOrderResponses
-            $0.route = .alert(
+            $0.destination = .alert(
                 .info(PharmacyRedeemDomain.AlertStates.failingRequest(count: expectedOrderResponses.failedCount))
             )
         }
@@ -272,7 +269,7 @@ class PharmacyRedeemDomainTests: XCTestCase {
         // when redeeming
         sut.send(.redeem)
         sut.receive(.redeemReceived(.failure(expectedError))) {
-            $0.route = .alert(.init(for: expectedError))
+            $0.destination = .alert(.init(for: expectedError))
         }
         expect(self.mockPharmacyRepository.saveCallsCount) == 1
     }
@@ -329,7 +326,9 @@ class PharmacyRedeemDomainTests: XCTestCase {
         mockRedeemValidator.returnValue = .invalid("Invalid Input")
 
         sut.send(.redeem) {
-            $0.route = .alert(.info(PharmacyRedeemDomain.AlertStates.missingContactInfo(with: "Invalid Input")))
+            $0
+                .destination =
+                .alert(.info(PharmacyRedeemDomain.AlertStates.missingContactInfo(with: "Invalid Input")))
         }
     }
 

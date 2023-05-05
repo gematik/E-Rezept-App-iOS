@@ -29,7 +29,7 @@ final class ProfileSelectionDomainTests: XCTestCase {
         ProfileSelectionDomain.Action,
         ProfileSelectionDomain.State,
         ProfileSelectionDomain.Action,
-        ProfileSelectionDomain.Environment
+        Void
     >
 
     let testScheduler = DispatchQueue.test
@@ -48,13 +48,12 @@ final class ProfileSelectionDomainTests: XCTestCase {
     private func testStore(for state: ProfileSelectionDomain.State) -> TestStore {
         TestStore(
             initialState: state,
-            reducer: ProfileSelectionDomain.reducer,
-            environment: ProfileSelectionDomain.Environment(
-                schedulers: schedulers,
-                userProfileService: mockUserProfileService,
-                router: mockRouting
-            )
-        )
+            reducer: ProfileSelectionDomain()
+        ) { dependencies in
+            dependencies.schedulers = schedulers
+            dependencies.userProfileService = mockUserProfileService
+            dependencies.router = mockRouting
+        }
     }
 
     func testSelectProfile() {
@@ -135,7 +134,7 @@ final class ProfileSelectionDomainTests: XCTestCase {
         )
 
         store.send(.loadReceived(.failure(.localStoreError(.notImplemented)))) { state in
-            state.route = .alert(
+            state.destination = .alert(
                 .init(
                     for: UserProfileServiceError.localStoreError(.notImplemented),
                     title: TextState(L10n.errTxtDatabaseAccess)

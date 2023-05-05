@@ -22,9 +22,8 @@ import eRpKit
 import SwiftUI
 import ZXingObjC
 
-enum PickupCodeDomain: Equatable {
-    typealias Store = ComposableArchitecture.Store<State, Action>
-    typealias Reducer = ComposableArchitecture.AnyReducer<State, Action, Environment>
+struct PickupCodeDomain: ReducerProtocol {
+    typealias Store = StoreOf<Self>
 
     struct State: Equatable {
         var pharmacyName: String?
@@ -34,39 +33,51 @@ enum PickupCodeDomain: Equatable {
     }
 
     enum Action: Equatable {
-        case close
         case loadMatrixCodeImage(screenSize: CGSize)
-        case matrixCodeImageReceived(UIImage?)
+
+        case response(Response)
+        case delegate(Delegate)
+
+        enum Response: Equatable {
+            case matrixCodeImageReceived(UIImage?)
+        }
+
+        enum Delegate: Equatable {
+            case close
+        }
     }
 
-    struct Environment {
-        let schedulers: Schedulers
-        let matrixCodeGenerator: MatrixCodeGenerator
-        let screenScale = UIScreen.main.scale
+    let screenScale = UIScreen.main.scale
+
+    @Dependency(\.schedulers) var schedulers: Schedulers
+    @Dependency(\.matrixCodeGenerator) var matrixCodeGenerator: MatrixCodeGenerator
+
+    var body: some ReducerProtocol<State, Action> {
+        Reduce(self.core)
     }
 
-    static let reducer = Reducer { state, action, environment in
+    private func core(state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
-        case .close:
+        case .delegate(.close):
             // handled by parent domain
             return .none
         case let .loadMatrixCodeImage(screenSize):
             guard let dmcCode = state.pickupCodeDMC, !dmcCode.isEmpty, state.dmcImage == nil else {
                 return .none
             }
-            let size = environment.calcMatrixCodeSize(screenSize: screenSize)
-            return environment.matrixCodeGenerator.publishedMatrixCode(
+            let size = calcMatrixCodeSize(screenSize: screenSize)
+            return matrixCodeGenerator.publishedMatrixCode(
                 for: dmcCode,
                 with: size,
-                scale: environment.screenScale,
+                scale: screenScale,
                 orientation: .up
             )
-            .receive(on: environment.schedulers.main.animation())
+            .receive(on: schedulers.main.animation())
             .first()
             .catch { _ in Effect.none }
-            .map(PickupCodeDomain.Action.matrixCodeImageReceived)
+            .map { .response(.matrixCodeImageReceived($0)) }
             .eraseToEffect()
-        case let .matrixCodeImageReceived(matrixCodeImage):
+        case let .response(.matrixCodeImageReceived(matrixCodeImage)):
             if let image = matrixCodeImage {
                 UIScreen.main.brightness = CGFloat(1.0)
                 state.dmcImage = image
@@ -74,11 +85,9 @@ enum PickupCodeDomain: Equatable {
             return .none
         }
     }
-}
 
-extension PickupCodeDomain.Environment {
     /// Will calculate the size for the matrix code based on current screen size
-    func calcMatrixCodeSize(screenSize: CGSize) -> CGSize {
+    private func calcMatrixCodeSize(screenSize: CGSize) -> CGSize {
         let padding: CGFloat = 16
         let minScreenDimension = min(screenSize.width, screenSize.height)
         let pixelDimension = Int(minScreenDimension - 2 * padding)
@@ -91,17 +100,11 @@ extension PickupCodeDomain {
         static let demoSessionContainer = DummyUserSessionContainer()
         static let state = State(pickupCodeHR: "1234",
                                  pickupCodeDMC: "123456789")
-        static let environment = Environment(
-            schedulers: Schedulers(),
-            matrixCodeGenerator: ZXDataMatrixWriter()
-        )
         static let store = Store(initialState: state,
-                                 reducer: reducer,
-                                 environment: environment)
+                                 reducer: PickupCodeDomain())
         static func storeFor(_ state: State) -> Store {
             Store(initialState: state,
-                  reducer: PickupCodeDomain.Reducer.empty,
-                  environment: environment)
+                  reducer: PickupCodeDomain())
         }
     }
 }

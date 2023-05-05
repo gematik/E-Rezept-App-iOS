@@ -1,4 +1,4 @@
-// Generated using Sourcery 1.9.0 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.0.1 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 import Combine
 import Foundation
@@ -27,36 +27,29 @@ import TrustStore
 
 
 
-
-
-
+// MARK: - MockTrustStoreSession -
 
 final class MockTrustStoreSession: TrustStoreSession {
-
-
-    //MARK: - loadVauCertificate
+    
+   // MARK: - loadVauCertificate
 
     var loadVauCertificateCallsCount = 0
     var loadVauCertificateCalled: Bool {
-        return loadVauCertificateCallsCount > 0
+        loadVauCertificateCallsCount > 0
     }
     var loadVauCertificateReturnValue: AnyPublisher<X509, TrustStoreError>!
     var loadVauCertificateClosure: (() -> AnyPublisher<X509, TrustStoreError>)?
 
     func loadVauCertificate() -> AnyPublisher<X509, TrustStoreError> {
         loadVauCertificateCallsCount += 1
-        if let loadVauCertificateClosure = loadVauCertificateClosure {
-            return loadVauCertificateClosure()
-        } else {
-            return loadVauCertificateReturnValue
-        }
+        return loadVauCertificateClosure.map({ $0() }) ?? loadVauCertificateReturnValue
     }
-
-    //MARK: - validate
+    
+   // MARK: - validate
 
     var validateCertificateCallsCount = 0
     var validateCertificateCalled: Bool {
-        return validateCertificateCallsCount > 0
+        validateCertificateCallsCount > 0
     }
     var validateCertificateReceivedCertificate: X509?
     var validateCertificateReceivedInvocations: [X509] = []
@@ -67,18 +60,14 @@ final class MockTrustStoreSession: TrustStoreSession {
         validateCertificateCallsCount += 1
         validateCertificateReceivedCertificate = certificate
         validateCertificateReceivedInvocations.append(certificate)
-        if let validateCertificateClosure = validateCertificateClosure {
-            return validateCertificateClosure(certificate)
-        } else {
-            return validateCertificateReturnValue
-        }
+        return validateCertificateClosure.map({ $0(certificate) }) ?? validateCertificateReturnValue
     }
-
-    //MARK: - reset
+    
+   // MARK: - reset
 
     var resetCallsCount = 0
     var resetCalled: Bool {
-        return resetCallsCount > 0
+        resetCallsCount > 0
     }
     var resetClosure: (() -> Void)?
 
@@ -86,26 +75,33 @@ final class MockTrustStoreSession: TrustStoreSession {
         resetCallsCount += 1
         resetClosure?()
     }
-
 }
+
+
+// MARK: - MockVAUAccessTokenProvider -
+
 final class MockVAUAccessTokenProvider: VAUAccessTokenProvider {
+    
+   // MARK: - vauBearerToken
 
     var vauBearerToken: AnyPublisher<BearerToken, VAUError> {
-        get { return underlyingVauBearerToken }
+        get { underlyingVauBearerToken }
         set(value) { underlyingVauBearerToken = value }
     }
     var underlyingVauBearerToken: AnyPublisher<BearerToken, VAUError>!
-
 }
+
+
+// MARK: - MockVAUCrypto -
+
 final class MockVAUCrypto: VAUCrypto {
-
-
-    //MARK: - encrypt
+    
+   // MARK: - encrypt
 
     var encryptThrowableError: Error?
     var encryptCallsCount = 0
     var encryptCalled: Bool {
-        return encryptCallsCount > 0
+        encryptCallsCount > 0
     }
     var encryptReturnValue: Data!
     var encryptClosure: (() throws -> Data)?
@@ -115,19 +111,15 @@ final class MockVAUCrypto: VAUCrypto {
             throw error
         }
         encryptCallsCount += 1
-        if let encryptClosure = encryptClosure {
-            return try encryptClosure()
-        } else {
-            return encryptReturnValue
-        }
+        return try encryptClosure.map({ try $0() }) ?? encryptReturnValue
     }
-
-    //MARK: - decrypt
+    
+   // MARK: - decrypt
 
     var decryptDataThrowableError: Error?
     var decryptDataCallsCount = 0
     var decryptDataCalled: Bool {
-        return decryptDataCallsCount > 0
+        decryptDataCallsCount > 0
     }
     var decryptDataReceivedData: Data?
     var decryptDataReceivedInvocations: [Data] = []
@@ -141,23 +133,21 @@ final class MockVAUCrypto: VAUCrypto {
         decryptDataCallsCount += 1
         decryptDataReceivedData = data
         decryptDataReceivedInvocations.append(data)
-        if let decryptDataClosure = decryptDataClosure {
-            return try decryptDataClosure(data)
-        } else {
-            return decryptDataReturnValue
-        }
+        return try decryptDataClosure.map({ try $0(data) }) ?? decryptDataReturnValue
     }
-
 }
+
+
+// MARK: - MockVAUCryptoProvider -
+
 final class MockVAUCryptoProvider: VAUCryptoProvider {
-
-
-    //MARK: - provide
+    
+   // MARK: - provide
 
     var provideForVauCertificateBearerTokenThrowableError: Error?
     var provideForVauCertificateBearerTokenCallsCount = 0
     var provideForVauCertificateBearerTokenCalled: Bool {
-        return provideForVauCertificateBearerTokenCallsCount > 0
+        provideForVauCertificateBearerTokenCallsCount > 0
     }
     var provideForVauCertificateBearerTokenReceivedArguments: (message: String, vauCertificate: VAUCertificate, bearerToken: BearerToken)?
     var provideForVauCertificateBearerTokenReceivedInvocations: [(message: String, vauCertificate: VAUCertificate, bearerToken: BearerToken)] = []
@@ -171,11 +161,6 @@ final class MockVAUCryptoProvider: VAUCryptoProvider {
         provideForVauCertificateBearerTokenCallsCount += 1
         provideForVauCertificateBearerTokenReceivedArguments = (message: message, vauCertificate: vauCertificate, bearerToken: bearerToken)
         provideForVauCertificateBearerTokenReceivedInvocations.append((message: message, vauCertificate: vauCertificate, bearerToken: bearerToken))
-        if let provideForVauCertificateBearerTokenClosure = provideForVauCertificateBearerTokenClosure {
-            return try provideForVauCertificateBearerTokenClosure(message, vauCertificate, bearerToken)
-        } else {
-            return provideForVauCertificateBearerTokenReturnValue
-        }
+        return try provideForVauCertificateBearerTokenClosure.map({ try $0(message, vauCertificate, bearerToken) }) ?? provideForVauCertificateBearerTokenReturnValue
     }
-
 }

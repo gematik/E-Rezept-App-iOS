@@ -69,11 +69,15 @@ extension ModelsR4.Bundle {
               If the audit event does not belong to a specific task, then taskId remains nil.
              */
             var taskId: String?
-            if let taskIDString = auditEvent.entity?.first?.what?.reference?.value?.string,
-               let pathComponents = URL(string: taskIDString)?.pathComponents,
-               let taskComponentIndex = pathComponents.firstIndex(of: "Task"),
-               taskComponentIndex + 1 < pathComponents.count {
-                taskId = pathComponents[taskComponentIndex + 1]
+            if let what = auditEvent.entity?.first?.what {
+                if let identifierValue = what.identifier?.value(for: Workflow.Key.prescriptionIdKeys) {
+                    taskId = identifierValue
+                } else if let taskIDString = what.reference?.value?.string,
+                          let pathComponents = URL(string: taskIDString)?.pathComponents,
+                          let taskComponentIndex = pathComponents.firstIndex(of: "Task"),
+                          taskComponentIndex + 1 < pathComponents.count {
+                    taskId = pathComponents[taskComponentIndex + 1]
+                }
             }
 
             return ErxAuditEvent(identifier: identifier,

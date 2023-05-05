@@ -135,7 +135,7 @@ public class DefaultErxTaskRepository: ErxTaskRepository {
                     .mapError(ErrorType.local)
                     .flatMap { result -> AnyPublisher<Bool, ErrorType> in
                         if result, auditEvents.next != nil {
-                            return self.loadRemoteAuditEventsPage(of: auditEvents)
+                            return self.loadRemoteAuditEventsPage(of: auditEvents, for: locale)
                         } else {
                             return Just(result).setFailureType(to: ErrorType.self).eraseToAnyPublisher()
                         }
@@ -145,16 +145,16 @@ public class DefaultErxTaskRepository: ErxTaskRepository {
             .eraseToAnyPublisher()
     }
 
-    internal func loadRemoteAuditEventsPage(of lastPage: PagedContent<[ErxAuditEvent]>)
+    internal func loadRemoteAuditEventsPage(of lastPage: PagedContent<[ErxAuditEvent]>, for locale: String?)
         -> AnyPublisher<Bool, ErrorType> {
-        cloud.listAuditEventsNextPage(of: lastPage)
+        cloud.listAuditEventsNextPage(of: lastPage, for: locale)
             .mapError(ErrorType.remote)
             .flatMap { auditEvents in
                 self.disk.save(auditEvents: auditEvents.content)
                     .mapError(ErrorType.local)
                     .flatMap { result -> AnyPublisher<Bool, ErrorType> in
                         if result, auditEvents.next != nil {
-                            return self.loadRemoteAuditEventsPage(of: auditEvents)
+                            return self.loadRemoteAuditEventsPage(of: auditEvents, for: locale)
                         } else {
                             return Just(result).setFailureType(to: ErrorType.self).eraseToAnyPublisher()
                         }
@@ -279,5 +279,49 @@ public class DefaultErxTaskRepository: ErxTaskRepository {
             }
             .map { $0.filter { $0.isRead == false }.count }
             .eraseToAnyPublisher()
+    }
+
+    /// Load all ErxChargeItem's from a remote (server).
+    ///
+    /// - Returns: AnyPublisher that emits an array of all `ErxChargeItems`s or `DefaultErxTaskRepository.Error`
+    public func loadRemoteChargeItems() -> AnyPublisher<[ErxChargeItem], ErrorType> {
+        Just([
+            ErxChargeItem.dummy,
+            ErxChargeItem.dummy,
+            ErxChargeItem.dummy,
+        ])
+            .setFailureType(to: ErrorType.self)
+            .eraseToAnyPublisher()
+//        cloud.listAllChargeItems(after: nil)
+//            .mapError(ErrorType.remote)
+//            .eraseToAnyPublisher()
+    }
+
+    public func fetchConsents() -> AnyPublisher<[ErxConsent], ErrorType> {
+        cloud.fetchConsents()
+            .mapError(ErrorType.remote)
+            .eraseToAnyPublisher()
+    }
+
+    public func grantConsent(_ consent: ErxConsent) -> AnyPublisher<ErxConsent?, ErrorType> {
+        cloud.grantConsent(consent)
+            .mapError(ErrorType.remote)
+            .eraseToAnyPublisher()
+    }
+
+    public func revokeConsent(_ category: ErxConsent.Category) -> AnyPublisher<Bool, ErrorType> {
+        cloud.revokeConsent(category)
+            .mapError(ErrorType.remote)
+            .eraseToAnyPublisher()
+    }
+}
+
+extension ErxChargeItem {
+    static var dummy: Self {
+        ErxChargeItem(
+            identifier: UUID().uuidString,
+            fhirData: Data(),
+            enteredDate: "2021-06-01T07:13:00+05:00"
+        )
     }
 }

@@ -23,14 +23,7 @@ import SwiftUI
 public enum SFSymbolName {
     public static let checkmark = "checkmark"
     public static let cardIcon = "creditcard"
-    public static var cardIconAnd123: String {
-        if #available(iOS 15.0, *) {
-            return "creditcard.and.123"
-        } else {
-            return "creditcard"
-        }
-    }
-
+    public static var cardIconAnd123 = "creditcard.and.123"
     public static let back = "chevron.left"
     public static let threeDots = "ellipsis.circle"
     public static let ellipsis = "ellipsis"
@@ -132,35 +125,24 @@ public enum SFSymbolName {
     public static let questionmarkCircle = "questionmark.circle"
     public static let personCirclePlus = "person.crop.circle.badge.plus"
 
-    public static var filter: String {
-        if #available(iOS 15.0, *) {
-            return "line.3.horizontal.decrease.circle"
-        } else {
-            return "line.horizontal.3.decrease.circle"
-        }
-    }
+    public static var filter = "line.3.horizontal.decrease.circle"
 
     public static let rectangleAndPencilAndEllipsis = "rectangle.and.pencil.and.ellipsis"
     public static let eye = "eye"
     public static let eyeSlash = "eye.slash"
     public static let calendarClock = "calendar.badge.clock"
-    public static var calendarWarning: String {
-        if #available(iOS 15.0, *) {
-            return "calendar.badge.exclamationmark"
-        } else {
-            return "calendar"
-        }
-    }
+    public static var calendarWarning = "calendar.badge.exclamationmark"
 
-    public static var clockWarning: String {
-        if #available(iOS 15.0, *) {
-            return "clock.badge.exclamationmark"
-        } else {
-            return "clock"
-        }
-    }
+    public static var clockWarning = "clock.badge.exclamationmark"
 
     public static let hourglass = "hourglass"
+    public static var euroSign: String {
+        if #available(iOS 16.0, *) {
+            return "eurosign"
+        } else {
+            return "eurosign.circle"
+        }
+    }
 }
 
 public enum UnicodeCharacter {

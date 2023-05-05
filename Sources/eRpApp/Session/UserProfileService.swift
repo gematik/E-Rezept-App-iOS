@@ -17,6 +17,8 @@
 //
 
 import Combine
+import ComposableArchitecture
+import Dependencies
 import eRpKit
 import Foundation
 import IDP
@@ -31,6 +33,9 @@ protocol UserProfileService {
     func activeUserProfilePublisher() -> AnyPublisher<UserProfile, UserProfileServiceError>
 
     func save(profiles: [Profile]) -> AnyPublisher<Bool, UserProfileServiceError>
+
+    func update(profileId: UUID, mutating: @escaping (inout Profile) -> Void)
+        -> AnyPublisher<Bool, UserProfileServiceError>
 }
 
 class DummyUserProfileService: UserProfileService {
@@ -54,6 +59,13 @@ class DummyUserProfileService: UserProfileService {
     }
 
     func save(profiles _: [Profile]) -> AnyPublisher<Bool, UserProfileServiceError> {
+        Just(true)
+            .setFailureType(to: UserProfileServiceError.self)
+            .eraseToAnyPublisher()
+    }
+
+    func update(profileId _: UUID,
+                mutating _: @escaping (inout Profile) -> Void) -> AnyPublisher<Bool, UserProfileServiceError> {
         Just(true)
             .setFailureType(to: UserProfileServiceError.self)
             .eraseToAnyPublisher()
@@ -149,6 +161,7 @@ struct DefaultUserProfileService: UserProfileService {
 
     func activeUserProfilePublisher() -> AnyPublisher<UserProfile, UserProfileServiceError> {
         userSession.profile()
+            .removeDuplicates()
             .mapError(UserProfileServiceError.localStoreError)
             .combineLatest(
                 userSession.isAuthenticated
@@ -171,6 +184,13 @@ struct DefaultUserProfileService: UserProfileService {
             .mapError { .localStoreError($0) }
             .eraseToAnyPublisher()
     }
+
+    func update(profileId: UUID,
+                mutating: @escaping (inout eRpKit.Profile) -> Void) -> AnyPublisher<Bool, UserProfileServiceError> {
+        profileDataStore.update(profileId: profileId, mutating: mutating)
+            .mapError { .localStoreError($0) }
+            .eraseToAnyPublisher()
+    }
 }
 
 protocol ProfileOnlineChecker {
@@ -180,5 +200,48 @@ protocol ProfileOnlineChecker {
 struct DefaultProfileOnlineChecker: ProfileOnlineChecker {
     func token(for profile: Profile) -> AnyPublisher<IDPToken?, Never> {
         KeychainStorage(profileId: profile.id).token
+    }
+}
+
+// MARK: TCA Dependency
+
+extension DefaultUserProfileService {}
+
+struct UserProfileServiceDependency: DependencyKey {
+    static var live: DefaultUserProfileService {
+        @Dependency(\.userSession) var userSession: UserSession
+        @Dependency(\.profileDataStore) var profileDataStore: ProfileDataStore
+        @Dependency(\.userSessionProvider) var userSessionProvider: UserSessionProvider
+
+        return .init(
+            profileDataStore: profileDataStore,
+            profileOnlineChecker: ProfileOnlineCheckerDependency.liveValue,
+            userSession: userSession,
+            userSessionProvider: userSessionProvider
+        )
+    }
+
+    static let liveValue: UserProfileService = Self.live
+    static let previewValue: UserProfileService = DummyUserProfileService()
+    static let testValue: UserProfileService = UnimplementedUserProfileService()
+}
+
+extension DependencyValues {
+    var userProfileService: UserProfileService {
+        get { self[UserProfileServiceDependency.self] }
+        set { self[UserProfileServiceDependency.self] = newValue }
+    }
+}
+
+struct ProfileOnlineCheckerDependency: DependencyKey {
+    static let liveValue: ProfileOnlineChecker = DefaultProfileOnlineChecker()
+    static let previewValue: ProfileOnlineChecker = DefaultProfileOnlineChecker()
+    static let testValue: ProfileOnlineChecker = UnimplementedProfileOnlineChecker()
+}
+
+extension DependencyValues {
+    var profileOnlineChecker: ProfileOnlineChecker {
+        get { self[ProfileOnlineCheckerDependency.self] }
+        set { self[ProfileOnlineCheckerDependency.self] = newValue }
     }
 }

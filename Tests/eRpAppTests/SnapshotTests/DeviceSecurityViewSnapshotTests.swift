@@ -17,6 +17,7 @@
 //
 
 import CombineSchedulers
+import ComposableArchitecture
 @testable import eRpApp
 import eRpKit
 import SnapshotTesting
@@ -34,8 +35,7 @@ final class DeviceSecurityViewSnapshotTests: XCTestCase {
             initialState: DeviceSecurityDomain.State(
                 warningType: .devicePinMissing
             ),
-            reducer: .empty,
-            environment: DeviceSecurityDomain.Dummies.environment
+            reducer: EmptyReducer()
         ))
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
@@ -48,8 +48,7 @@ final class DeviceSecurityViewSnapshotTests: XCTestCase {
             initialState: DeviceSecurityDomain.State(
                 warningType: .jailbreakDetected
             ),
-            reducer: .empty,
-            environment: DeviceSecurityDomain.Dummies.environment
+            reducer: EmptyReducer()
         ))
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())

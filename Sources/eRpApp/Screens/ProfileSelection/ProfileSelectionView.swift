@@ -108,7 +108,7 @@ extension ProfileSelectionView {
                     .frame(width: 32, height: 32, alignment: .center)
                     .background(Circle().fill(profile.color.background))
                     .overlay(
-                        Text(profile.emoji ?? profile.acronym)
+                        Text(profile.acronym)
                             .font(.system(size: 13).weight(.bold))
                             .foregroundColor(Color(.secondaryLabel))
                     )

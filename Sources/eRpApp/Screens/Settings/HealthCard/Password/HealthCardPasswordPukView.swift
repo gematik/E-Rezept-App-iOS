@@ -34,12 +34,12 @@ struct HealthCardPasswordPukView: View {
     struct ViewState: Equatable {
         let mode: HealthCardPasswordDomain.Mode
         let pukMayAdvance: Bool
-        let routeTag: HealthCardPasswordDomain.Route.Tag
+        let destinationTag: HealthCardPasswordDomain.Destinations.State.Tag
 
         init(state: HealthCardPasswordDomain.State) {
             mode = state.mode
             pukMayAdvance = state.pukMayAdvance
-            routeTag = state.route.tag
+            destinationTag = state.destination.tag
         }
     }
 
@@ -72,9 +72,9 @@ struct HealthCardPasswordPukView: View {
                 NavigationLink(
                     isActive: .init(
                         get: {
-                            viewStore.state.routeTag != .introduction &&
-                                viewStore.state.routeTag != .can &&
-                                viewStore.state.routeTag != .puk
+                            viewStore.state.destinationTag != .introduction &&
+                                viewStore.state.destinationTag != .can &&
+                                viewStore.state.destinationTag != .puk
                         },
                         set: { active in
                             if active {

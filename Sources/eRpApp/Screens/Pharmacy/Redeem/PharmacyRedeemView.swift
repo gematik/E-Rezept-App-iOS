@@ -63,9 +63,7 @@ struct PharmacyRedeemView: View {
 
             RedeemButton(viewStore: viewStore)
                 .alert(
-                    self.store
-                        .scope(state: (\PharmacyRedeemDomain.State.route)
-                            .appending(path: /PharmacyRedeemDomain.Route.alert).extract(from:)),
+                    store.destinationsScope(state: /PharmacyRedeemDomain.Destinations.State.alert),
                     dismiss: .setNavigation(tag: .none)
                 )
         }
@@ -236,7 +234,7 @@ extension PharmacyRedeemView {
     }
 
     struct PrescriptionView: View {
-        @State var viewStore: ViewStore<ViewState, PharmacyRedeemDomain.Action>
+        @ObservedObject var viewStore: ViewStore<ViewState, PharmacyRedeemDomain.Action>
         var body: some View {
             SingleElementSectionContainer(
                 header: {
@@ -262,7 +260,7 @@ extension PharmacyRedeemView {
     }
 
     struct RedeemButton: View {
-        @State var viewStore: ViewStore<ViewState, PharmacyRedeemDomain.Action>
+        @ObservedObject var viewStore: ViewStore<ViewState, PharmacyRedeemDomain.Action>
         var body: some View {
             VStack(spacing: 8) {
                 GreyDivider()
@@ -304,21 +302,28 @@ extension PharmacyRedeemView {
         }
 
         struct ViewState: Equatable {
-            let routeTag: PharmacyRedeemDomain.Route.Tag?
+            let destinationTag: PharmacyRedeemDomain.Destinations.State.Tag?
 
             init(state: PharmacyRedeemDomain.State) {
-                routeTag = state.route?.tag
+                destinationTag = state.destination?.tag
             }
         }
 
+        // swiftlint:disable:next function_body_length
         func body(content: Content) -> some View {
             Group {
                 content
 
                 NavigationLink(
-                    destination: redeemSuccessDestination,
-                    tag: PharmacyRedeemDomain.Route.Tag.redeemSuccess,
-                    selection: viewStore.binding(get: \.routeTag) { .setNavigation(tag: $0) }
+                    destination: IfLetStore(
+                        store.destinationsScope(
+                            state: /PharmacyRedeemDomain.Destinations.State.redeemSuccess,
+                            action: PharmacyRedeemDomain.Destinations.Action.redeemSuccessView(action:)
+                        ),
+                        then: RedeemSuccessView.init(store:)
+                    ),
+                    tag: PharmacyRedeemDomain.Destinations.State.Tag.redeemSuccess,
+                    selection: viewStore.binding(get: \.destinationTag) { .setNavigation(tag: $0) }
                 ) {}
                     .hidden()
                     .accessibility(hidden: true)
@@ -327,7 +332,7 @@ extension PharmacyRedeemView {
                     .frame(width: 0, height: 0, alignment: .center)
                     .fullScreenCover(
                         isPresented: Binding<Bool>(
-                            get: { viewStore.routeTag == .cardWall },
+                            get: { viewStore.destinationTag == .cardWall },
                             set: { show in
                                 if !show {
                                     viewStore.send(.setNavigation(tag: nil))
@@ -336,7 +341,13 @@ extension PharmacyRedeemView {
                         ),
                         onDismiss: {},
                         content: {
-                            cardWallDestination
+                            IfLetStore(
+                                store.destinationsScope(
+                                    state: /PharmacyRedeemDomain.Destinations.State.cardWall,
+                                    action: PharmacyRedeemDomain.Destinations.Action.cardWall(action:)
+                                ),
+                                then: CardWallIntroductionView.init(store:)
+                            )
                         }
                     )
                     .accessibility(hidden: true)
@@ -344,7 +355,7 @@ extension PharmacyRedeemView {
             }
             .fullScreenCover(
                 isPresented: Binding<Bool>(
-                    get: { viewStore.state.routeTag == .contact },
+                    get: { viewStore.state.destinationTag == .contact },
                     set: { show in
                         if !show {
                             viewStore.send(.setNavigation(tag: nil))
@@ -352,41 +363,15 @@ extension PharmacyRedeemView {
                     }
                 ),
                 onDismiss: {},
-                content: { pharmacyContactDestination }
-            )
-        }
-
-        private var redeemSuccessDestination: some View {
-            IfLetStore(
-                self.store.scope(
-                    state: (\PharmacyRedeemDomain.State.route)
-                        .appending(path: /PharmacyRedeemDomain.Route.redeemSuccess)
-                        .extract(from:),
-                    action: PharmacyRedeemDomain.Action.redeemSuccessView(action:)
-                ),
-                then: RedeemSuccessView.init(store:)
-            )
-        }
-
-        private var pharmacyContactDestination: some View {
-            IfLetStore(
-                self.store.scope(
-                    state: (\PharmacyRedeemDomain.State.route).appending(path: /PharmacyRedeemDomain.Route.contact)
-                        .extract(from:),
-                    action: PharmacyRedeemDomain.Action.pharmacyContact(action:)
-                ),
-                then: PharmacyContactView.init(store:)
-            )
-        }
-
-        private var cardWallDestination: some View {
-            IfLetStore(
-                self.store.scope(
-                    state: (\PharmacyRedeemDomain.State.route).appending(path: /PharmacyRedeemDomain.Route.cardWall)
-                        .extract(from:),
-                    action: PharmacyRedeemDomain.Action.cardWall(action:)
-                ),
-                then: CardWallIntroductionView.init(store:)
+                content: {
+                    IfLetStore(
+                        store.destinationsScope(
+                            state: /PharmacyRedeemDomain.Destinations.State.contact,
+                            action: PharmacyRedeemDomain.Destinations.Action.pharmacyContact(action:)
+                        ),
+                        then: PharmacyContactView.init(store:)
+                    )
+                }
             )
         }
     }
@@ -436,7 +421,7 @@ extension PharmacyRedeemView {
                 taskID = task.id
                 title = task.medication?.name ?? L10n.prscFdTxtNa.text
                 subtitle = task
-                    .substitutionAllowed ? L10n.phaRedeemTxtPrescriptionSub.text : ""
+                    .medicationRequest.substitutionAllowed ? L10n.phaRedeemTxtPrescriptionSub.text : ""
                 self.isSelected = isSelected
             }
         }
@@ -464,13 +449,13 @@ extension InitialsImage {
     init(profile: Profile) {
         self.init(
             backgroundColor: profile.color.viewModelColor.background,
-            text: profile.emoji ?? profile.name.acronym(),
+            text: profile.name.acronym(),
             size: .extraLarge
         )
     }
 }
 
-struct ReservationView_Previews: PreviewProvider {
+struct PharmacyRedeemView_Previews: PreviewProvider {
     static var previews: some View {
         PharmacyRedeemView(store: PharmacyRedeemDomain.Dummies.store)
     }

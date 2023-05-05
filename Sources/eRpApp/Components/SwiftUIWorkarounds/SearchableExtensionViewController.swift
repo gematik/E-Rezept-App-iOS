@@ -183,7 +183,6 @@ class IntrospectionUIViewController: UIViewController {
     }
 }
 
-@available(iOS 15.0, *)
 struct SearchableExtensionVC_Preview: PreviewProvider {
     struct SearchableCancelButtonTest: View {
         @State var overwriteVisibity = false {

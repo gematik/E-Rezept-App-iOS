@@ -196,19 +196,19 @@ extension ErxTaskCoreDataStore {
             )
             predicates.append(profilePredicate)
         }
-        predicates.append(
-            NSPredicate(
-                format: "%K == %@ AND %K == %@ AND %K == %@",
-                argumentArray: [
-                    #keyPath(ErxTaskCommunicationEntity.taskId),
-                    taskId,
-                    #keyPath(ErxTaskCommunicationEntity.telematikId),
-                    telematikId,
-                    #keyPath(ErxTaskCommunicationEntity.profile),
-                    profile.rawValue,
-                ]
-            )
+        let communicationPredicate = NSPredicate(
+            format: "%K == %@ AND %K == %@ AND %K == %@",
+            argumentArray: [
+                #keyPath(ErxTaskCommunicationEntity.taskId),
+                taskId,
+                #keyPath(ErxTaskCommunicationEntity.telematikId),
+                telematikId,
+                #keyPath(ErxTaskCommunicationEntity.profile),
+                profile.rawValue,
+            ]
         )
+        predicates.append(communicationPredicate)
+        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
         let entity = try? moc.fetch(request).first
         return entity.map(ErxTask.Communication.init(entity:))
     }

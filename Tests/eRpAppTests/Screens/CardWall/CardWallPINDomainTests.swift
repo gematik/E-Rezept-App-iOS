@@ -27,21 +27,21 @@ final class CardWallPINDomainTests: XCTestCase {
         CardWallPINDomain.Action,
         CardWallPINDomain.State,
         CardWallPINDomain.Action,
-        CardWallPINDomain.Environment
+        Void
     >
 
     func testStore(for state: CardWallPINDomain.State)
         -> TestStore {
         TestStore(
             initialState: state,
-            reducer: CardWallPINDomain.reducer,
-            environment: CardWallPINDomain.Environment(
-                userSession: MockUserSession(),
-                schedulers: Schedulers(),
-                sessionProvider: DummyProfileBasedSessionProvider(),
-                signatureProvider: DummySecureEnclaveSignatureProvider()
-            ) { _ in }
-        )
+            reducer: CardWallPINDomain()
+        ) { dependencies in
+            dependencies.userSession = MockUserSession()
+            dependencies.schedulers = Schedulers()
+            // TODO: use mock dependencies // swiftlint:disable:this todo
+            dependencies.profileBasedSessionProvider = DummyProfileBasedSessionProvider()
+            dependencies.secureEnclaveSignatureProvider = DummySecureEnclaveSignatureProvider()
+        }
     }
 
     func testStore(for pin: String)
@@ -104,7 +104,7 @@ final class CardWallPINDomainTests: XCTestCase {
         // when
         store.send(.advance(.push)) { sut in
             // then
-            sut.route = .login(CardWallLoginOptionDomain.State(isDemoModus: false, pin: "1234567"))
+            sut.destination = .login(CardWallLoginOptionDomain.State(isDemoModus: false, pin: "1234567"))
         }
     }
 
@@ -112,12 +112,19 @@ final class CardWallPINDomainTests: XCTestCase {
         // given
         let store = testStore(for: "1234")
 
+        var accessibilityAnnouncementCallsCount = 0
+        store.dependencies.accessibilityAnnouncementReceiver.accessibilityAnnouncement = { _ in
+            accessibilityAnnouncementCallsCount += 1
+        }
+        expect(accessibilityAnnouncementCallsCount) == 0
+
         // when
         store.send(.advance(.push)) { sut in
             // then
-            sut.route = .none
+            sut.destination = .none
             sut.doneButtonPressed = true
         }
+        expect(accessibilityAnnouncementCallsCount) == 1
         store.send(.update(pin: "12345")) { sut in
             // then
             sut.pin = "12345"
@@ -126,9 +133,11 @@ final class CardWallPINDomainTests: XCTestCase {
         // when
         store.send(.advance(.push)) { sut in
             // then
-            sut.route = .none
+            sut.destination = .none
             sut.doneButtonPressed = true
         }
+        expect(accessibilityAnnouncementCallsCount) == 2
+
         // when
         store.send(.update(pin: "123456")) { sut in
             // then
@@ -138,7 +147,7 @@ final class CardWallPINDomainTests: XCTestCase {
         // when
         store.send(.advance(.push)) { sut in
             // then
-            sut.route = .login(CardWallLoginOptionDomain.State(isDemoModus: false, pin: "123456"))
+            sut.destination = .login(CardWallLoginOptionDomain.State(isDemoModus: false, pin: "123456"))
         }
     }
 
@@ -146,23 +155,37 @@ final class CardWallPINDomainTests: XCTestCase {
         // given
         let store = testStore(for: "123456789")
 
+        var accessibilityAnnouncementCallsCount = 0
+        store.dependencies.accessibilityAnnouncementReceiver.accessibilityAnnouncement = { _ in
+            accessibilityAnnouncementCallsCount += 1
+        }
+        expect(accessibilityAnnouncementCallsCount) == 0
+
         // when
         store.send(.advance(.push)) { sut in
             // then
-            sut.route = .none
+            sut.destination = .none
             sut.doneButtonPressed = true
         }
+        expect(accessibilityAnnouncementCallsCount) == 1
     }
 
     func testPINNotNumeric() {
         // given
         let store = testStore(for: "123456a")
 
+        var accessibilityAnnouncementCallsCount = 0
+        store.dependencies.accessibilityAnnouncementReceiver.accessibilityAnnouncement = { _ in
+            accessibilityAnnouncementCallsCount += 1
+        }
+        expect(accessibilityAnnouncementCallsCount) == 0
+
         // when
         store.send(.advance(.push)) { sut in
             // then
-            sut.route = .none
+            sut.destination = .none
             sut.doneButtonPressed = true
         }
+        expect(accessibilityAnnouncementCallsCount) == 1
     }
 }

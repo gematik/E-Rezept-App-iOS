@@ -45,7 +45,7 @@ extension PharmacyLocation {
             status: .active,
             telematikID: "3-06.2.ycl.123",
             name: "Apotheke am Wäldchen",
-            types: [.pharm, .emergency, .mobl, .outpharm],
+            types: [.pharm, .emergency, .mobl, .outpharm, .delivery],
             position: Position(latitude: 49.2470345, longitude: 8.8668786),
             address: address1,
             telecom: telecom,

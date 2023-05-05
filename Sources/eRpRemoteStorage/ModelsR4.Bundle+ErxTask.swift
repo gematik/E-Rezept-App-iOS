@@ -114,8 +114,6 @@ extension ModelsR4.Bundle {
             )
         }
 
-        let medication = patientReceiptBundle.parseErxTaskMedication()
-        let multiplePrescription = patientReceiptBundle.medicationRequest?.multiplePrescription
         let patient = patientReceiptBundle.patient
         let practitioner = patientReceiptBundle.practitioner
         let organization = patientReceiptBundle.organization
@@ -126,25 +124,16 @@ extension ModelsR4.Bundle {
             flowType: ErxTask.FlowType(rawValue: task.flowTypeCode),
             accessCode: taskAccessCode,
             fullUrl: fullUrl?.value?.url.absoluteString,
-            authoredOn: patientReceiptBundle.medicationRequest?.authoredOn?.value?.description,
+            authoredOn: task.authoredOn?.value?.description,
             lastModified: task.lastModified?.value?.description,
             expiresOn: task.expiryDate,
             acceptedUntil: task.acceptDate,
             author: patientReceiptBundle.organization?.author,
-            dispenseValidityEnd: patientReceiptBundle.dispenseValidityEnd,
-            noctuFeeWaiver: patientReceiptBundle.medicationRequest?.noctuFeeWaiver ?? false,
             prescriptionId: task.prescriptionId,
-            substitutionAllowed: patientReceiptBundle.medicationRequest?.substitutionAllowed ?? false,
             source: .server,
-            medication: medication,
-            multiplePrescription: ErxTask.MultiplePrescription(
-                mark: multiplePrescription?.mark ?? false,
-                numbering: multiplePrescription?.numbering,
-                totalNumber: multiplePrescription?.totalNumber,
-                startPeriod: multiplePrescription?.startPeriod,
-                endPeriod: multiplePrescription?.endPeriod
-            ),
-            patient: ErxTask.Patient(
+            medication: patientReceiptBundle.parseErxMedication(),
+            medicationRequest: patientReceiptBundle.parseErxMedicationRequest(),
+            patient: ErxPatient(
                 name: patient?.fullName,
                 address: patient?.completeAddress,
                 birthDate: patient?.birthDate?.value?.description,
@@ -153,23 +142,20 @@ extension ModelsR4.Bundle {
                 insurance: patientReceiptBundle.coverage?.payor.first?.display?.value?.string,
                 insuranceId: patient?.insuranceId
             ),
-            practitioner: ErxTask.Practitioner(
+            practitioner: ErxPractitioner(
                 lanr: practitioner?.lanr,
                 name: practitioner?.fullName,
                 qualification: practitioner?.qualificationText,
                 email: practitioner?.email,
                 address: practitioner?.completeAddress
             ),
-            organization: ErxTask.Organization(
-                identifier: organization?.organizationIdentifier,
+            organization: ErxOrganization(
+                identifier: organization?.erxOrganizationIdentifier,
                 name: organization?.name?.value?.string,
                 phone: organization?.phone,
                 email: organization?.email,
                 address: organization?.completeAddress
-            ),
-            workRelatedAccident: patientReceiptBundle.medicationRequest?.workRelatedAccident,
-            coPaymentStatus: patientReceiptBundle.medicationRequest?.coPaymentStatus,
-            bvg: patientReceiptBundle.medicationRequest?.bvg ?? false
+            )
         )
     }
 
@@ -177,30 +163,58 @@ extension ModelsR4.Bundle {
                                                    type _: Resource.Type) -> Resource? {
         let newIdentifier = identifier.dropHashSymbol
 
-        return entry?.lazy.compactMap {
-            $0.resource?.get(if: Resource.self)
+        // try finding the resource by fullUrl
+        if let kbvBundle = entry?.first(where: { bundleEntry in
+            guard let urlString = bundleEntry.fullUrl?.value?.url.absoluteString else { return false }
+            return urlString == newIdentifier.value?.string
+        })?
+            .resource?
+            .get(if: Resource.self) {
+            return kbvBundle
         }
-        .first { bundleEntry in
-            newIdentifier == bundleEntry.id
+
+        // select the second entry
+        if entry?.count == 2 {
+            return entry?.last?.resource?.get(if: Resource.self)
         }
+
+        // try finding it by identifier
+        if let bundle = entry?.compactMap({ $0.resource?.get(if: Resource.self) }),
+           let kbvBundle = bundle.first(where: { bundleEntry in newIdentifier == bundleEntry.id }) {
+            return kbvBundle
+        }
+
+        return nil
     }
 
     /// Creates an `ErxTask.Medication` from the ModelsR4.Medication
-    public func parseErxTaskMedication() -> ErxTask.Medication {
-        ErxTask.Medication(
+    public func parseErxMedication() -> ErxMedication {
+        .init(
             name: medication?.medicationText,
             drugCategory: medication?.drugCategory,
             pzn: medication?.pzn,
             isVaccine: medication?.isVaccine ?? false,
-            amount: medication?.decimalAmount,
+            amount: medication?.medicationAmount,
             dosageForm: medication?.dosageForm,
             dose: medication?.dose,
-            dosageInstructions: dosageInstructions,
-            lot: medication?.lot,
-            expiresOn: medication?.expiresOn,
+            batch: medication?.erxTaskBatch,
             packaging: medication?.packaging,
             manufacturingInstructions: medication?.compoundingInstruction,
             ingredients: medication?.erxTaskIngredients ?? []
+        )
+    }
+
+    /// Creates an `eRpKit.MedicationRequest` from the ModelsR4.MedicationRequest
+    func parseErxMedicationRequest() -> ErxMedicationRequest {
+        .init(
+            dosageInstructions: joinedDosageInstructions,
+            substitutionAllowed: medicationRequest?.substitutionAllowed,
+            hasEmergencyServiceFee: medicationRequest?.noctuFeeWaiver,
+            dispenseValidityEnd: dispenseValidityEnd,
+            accidentInfo: medicationRequest?.accidentInfo,
+            bvg: medicationRequest?.bvg,
+            coPaymentStatus: medicationRequest?.coPaymentStatus,
+            multiplePrescription: medicationRequest?.multiplePrescription
         )
     }
 }
@@ -210,8 +224,18 @@ extension ModelsR4.FHIRPrimitive where PrimitiveType == ModelsR4.FHIRString {
         guard let stringValue = value?.string, stringValue.starts(with: "#") else {
             return self
         }
-
         return FHIRPrimitive(FHIRString(String(stringValue.dropFirst())))
+    }
+}
+
+extension ModelsR4.Identifier {
+    func value(for systemKeys: [Workflow.Version: String]) -> String? {
+        guard let systemValue = system?.value?.url.absoluteString,
+              systemKeys.contains(where: { $0.value == systemValue }) else {
+            return nil
+        }
+
+        return value?.value?.string
     }
 }
 
@@ -277,6 +301,12 @@ extension ModelsR4.Task {
 }
 
 extension ModelsR4.Bundle {
+    var invoice: ModelsR4.Invoice? {
+        entry?.lazy.compactMap {
+            $0.resource?.get(if: ModelsR4.Invoice.self)
+        }.first
+    }
+
     var medication: ModelsR4.Medication? {
         entry?.lazy.compactMap {
             $0.resource?.get(if: ModelsR4.Medication.self)
@@ -337,22 +367,11 @@ extension ModelsR4.Bundle {
         }
     }
 
-    var dosageInstructions: String? {
-        medicationRequest?.dosageInstruction?.first {
-            $0.extension?.first {
-                $0.url.value?.url.absoluteString == Prescription.Key.dosageFlag
-            }
-            .map {
-                if let valueX = $0.value,
-                   case Extension.ValueX.boolean(true) = valueX {
-                    return true
-                }
-                return false
-            } ?? false
-        }
-        .flatMap {
+    var joinedDosageInstructions: String? {
+        medicationRequest?.dosageInstruction?.compactMap {
             $0.text?.value?.string
         }
+        .joined(separator: ",")
     }
 }
 

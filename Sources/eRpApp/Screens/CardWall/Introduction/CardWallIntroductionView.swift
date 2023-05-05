@@ -16,6 +16,7 @@
 //  
 //
 
+import CasePaths
 import Combine
 import ComposableArchitecture
 import eRpStyleKit
@@ -25,10 +26,10 @@ struct CardWallIntroductionView: View {
     let store: CardWallIntroductionDomain.Store
 
     struct ViewState: Equatable {
-        let routeTag: CardWallIntroductionDomain.Route.Tag?
+        let routeTag: CardWallIntroductionDomain.Destinations.State.Tag?
 
         init(state: CardWallIntroductionDomain.State) {
-            routeTag = state.route?.tag
+            routeTag = state.destination?.tag
         }
     }
 
@@ -52,15 +53,13 @@ struct CardWallIntroductionView: View {
 
                         NavigationLink(
                             destination: IfLetStore(
-                                store.scope(
-                                    state: (\CardWallIntroductionDomain.State.route)
-                                        .appending(path: /CardWallIntroductionDomain.Route.can)
-                                        .extract(from:),
-                                    action: CardWallIntroductionDomain.Action.canAction(action:)
+                                store.destinationsScope(
+                                    state: /CardWallIntroductionDomain.Destinations.State.can,
+                                    action: CardWallIntroductionDomain.Destinations.Action.canAction(action:)
                                 ),
                                 then: CardWallCANView.init(store:)
                             ),
-                            tag: CardWallIntroductionDomain.Route.Tag.can,
+                            tag: CardWallIntroductionDomain.Destinations.State.Tag.can,
                             selection: viewStore.binding(
                                 get: \.routeTag
                             ) {
@@ -72,7 +71,7 @@ struct CardWallIntroductionView: View {
 
                         NavigationLink(
                             destination: CapabilitiesView(store: store),
-                            tag: CardWallIntroductionDomain.Route.Tag.notCapable,
+                            tag: CardWallIntroductionDomain.Destinations.State.Tag.notCapable,
                             selection: viewStore.binding(
                                 get: \.routeTag
                             ) {
@@ -98,15 +97,13 @@ struct CardWallIntroductionView: View {
 
                             NavigationLink(
                                 destination: IfLetStore(
-                                    store.scope(
-                                        state: (\CardWallIntroductionDomain.State.route)
-                                            .appending(path: /CardWallIntroductionDomain.Route.fasttrack)
-                                            .extract(from:),
-                                        action: CardWallIntroductionDomain.Action.fasttrack(action:)
+                                    store.destinationsScope(
+                                        state: /CardWallIntroductionDomain.Destinations.State.fasttrack,
+                                        action: CardWallIntroductionDomain.Destinations.Action.fasttrack(action:)
                                     ),
                                     then: CardWallExtAuthSelectionView.init(store:)
                                 ),
-                                tag: CardWallIntroductionDomain.Route.Tag.fasttrack,
+                                tag: CardWallIntroductionDomain.Destinations.State.Tag.fasttrack,
                                 selection: viewStore.binding(
                                     get: \.routeTag
                                 ) {
@@ -121,7 +118,7 @@ struct CardWallIntroductionView: View {
                 .navigationBarTitle(L10n.cdwTxtIntroHeaderTop, displayMode: .large)
                 .navigationBarItems(
                     trailing: NavigationBarCloseItem {
-                        viewStore.send(.close)
+                        viewStore.send(.delegate(.close))
                     }
                     .accessibility(identifier: A11y.cardWall.intro.cdwBtnIntroCancel)
                     .accessibility(label: Text(L10n.cdwBtnIntroCancelLabel))
@@ -139,10 +136,10 @@ extension CardWallIntroductionView {
         let store: CardWallIntroductionDomain.Store
 
         struct ViewState: Equatable {
-            let routeTag: CardWallIntroductionDomain.Route.Tag?
+            let routeTag: CardWallIntroductionDomain.Destinations.State.Tag?
 
             init(state: CardWallIntroductionDomain.State) {
-                routeTag = state.route?.tag
+                routeTag = state.destination?.tag
             }
         }
 
@@ -222,11 +219,10 @@ extension CardWallIntroductionView {
                                         content: {
                                             NavigationView {
                                                 IfLetStore(
-                                                    store.scope(
-                                                        state: (\CardWallIntroductionDomain.State.route)
-                                                            .appending(path: /CardWallIntroductionDomain.Route.egk)
-                                                            .extract(from:),
-                                                        action: CardWallIntroductionDomain.Action.egkAction(action:)
+                                                    store.destinationsScope(
+                                                        state: /(CardWallIntroductionDomain.Destinations.State.egk),
+                                                        action: CardWallIntroductionDomain.Destinations.Action
+                                                            .egkAction(action:)
                                                     ),
                                                     then: OrderHealthCardView.init(store:)
                                                 )

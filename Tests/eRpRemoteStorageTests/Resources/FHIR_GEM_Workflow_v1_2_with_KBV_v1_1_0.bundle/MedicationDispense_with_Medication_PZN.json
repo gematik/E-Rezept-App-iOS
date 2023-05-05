@@ -1,0 +1,133 @@
+{
+    "resourceType": "Bundle",
+    "type": "searchset",
+    "entry": [
+        {
+            "resource": {
+                "resourceType": "MedicationDispense",
+                "id": "3465270a-11e7-4bbf-ae53-378f9cc52747",
+                "meta": {
+                    "profile": [
+                        "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_PR_MedicationDispense"
+                    ]
+                },
+                "contained": [
+                    {
+                        "resourceType": "Medication",
+                        "id": "704db507-79b4-44a1-84b8-344255ad7e36",
+                        "meta": {
+                            "profile": [
+                                "https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Medication_PZN|1.1.0"
+                            ]
+                        },
+                        "extension": [
+                            {
+                                "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_Base_Medication_Type",
+                                "valueCodeableConcept": {
+                                    "coding": [
+                                        {
+                                            "system": "http://snomed.info/sct",
+                                            "version": "http://snomed.info/sct/900000000000207008/version/20220331",
+                                            "code": "763158003",
+                                            "display": "Medicinal product (product)"
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Medication_Category",
+                                "valueCoding": {
+                                    "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_ERP_Medication_Category",
+                                    "code": "00"
+                                }
+                            },
+                            {
+                                "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Medication_Vaccine",
+                                "valueBoolean": true
+                            },
+                            {
+                                "url": "http://fhir.de/StructureDefinition/normgroesse",
+                                "valueCode": "N1"
+                            }
+                        ],
+                        "code": {
+                            "coding": [
+                                {
+                                    "system": "http://fhir.de/CodeSystem/ifa/pzn",
+                                    "code": "16332684"
+                                }
+                            ],
+                            "text": "GONAL-f 150 I.E./0,25ml Injektionslösung"
+                        },
+                        "form": {
+                            "coding": [
+                                {
+                                    "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_KBV_DARREICHUNGSFORM",
+                                    "code": "PEN"
+                                }
+                            ]
+                        },
+                        "amount": {
+                            "numerator": {
+                                "extension": [
+                                    {
+                                        "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Medication_PackagingSize",
+                                        "valueString": "4"
+                                    }
+                                ],
+                                "unit": "St"
+                            },
+                            "denominator": {
+                                "value": 1
+                            }
+                        }
+                    }
+                ],
+                "identifier": [
+                    {
+                        "system": "https://gematik.de/fhir/erp/NamingSystem/GEM_ERP_NS_PrescriptionId",
+                        "value": "160.000.033.491.280.78"
+                    }
+                ],
+                "status": "completed",
+                "medicationReference": {
+                    "reference": "#704db507-79b4-44a1-84b8-344255ad7e36"
+                },
+                "subject": {
+                    "identifier": {
+                        "system": "http://fhir.de/sid/gkv/kvid-10",
+                        "value": "X234567890"
+                    }
+                },
+                "quantity": {
+                    "value": 100,
+                    "unit": "mg"
+                },
+                "performer": [
+                    {
+                        "actor": {
+                            "identifier": {
+                                "system": "https://gematik.de/fhir/sid/telematik-id",
+                                "value": "3-abc-1234567890"
+                            }
+                        }
+                    }
+                ],
+                "whenHandedOver": "2022-02-28",
+                "note": [
+                    {
+                        "text": "These are two notes"
+                    },
+                    {
+                        "text": "separated by newlines!"
+                    }
+                ],
+                "dosageInstruction": [
+                    {
+                        "text": "1-0-1-0"
+                    }
+                ]
+            }
+        }
+    ]
+}

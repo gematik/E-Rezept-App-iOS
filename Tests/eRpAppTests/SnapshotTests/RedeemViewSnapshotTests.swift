@@ -16,6 +16,7 @@
 //  
 //
 
+import ComposableArchitecture
 @testable import eRpApp
 import eRpKit
 import SnapshotTesting
@@ -38,11 +39,12 @@ final class RedeemViewSnapshotTests: XCTestCase {
 
     func testRedeemMatrixCodeViewSnapshot() {
         let sut = RedeemMatrixCodeView(
-            store: RedeemMatrixCodeDomain.Dummies.storeFor(
-                RedeemMatrixCodeDomain.State(
+            store: RedeemMatrixCodeDomain.Store(
+                initialState: .init(
                     erxTasks: ErxTask.Demo.erxTasks,
                     loadingState: .value(UIImage(testBundleNamed: "qrcode")!)
-                )
+                ),
+                reducer: EmptyReducer()
             )
         )
 

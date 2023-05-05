@@ -29,7 +29,7 @@ final class RegisteredDevicesDomainTests: XCTestCase {
         RegisteredDevicesDomain.Action,
         RegisteredDevicesDomain.State,
         RegisteredDevicesDomain.Action,
-        RegisteredDevicesDomain.Environment
+        Void
     >
 
     let testScheduler = DispatchQueue.test
@@ -56,18 +56,11 @@ final class RegisteredDevicesDomainTests: XCTestCase {
     private func testStore(for state: RegisteredDevicesDomain.State) -> TestStore {
         TestStore(
             initialState: state,
-            reducer: RegisteredDevicesDomain.reducer,
-            environment: RegisteredDevicesDomain.Environment(
-                schedulers: schedulers,
-                userSession: mockUserSession,
-                userSessionProvider: mockUserSessionProvider,
-                secureEnclaveSignatureProvider: mockSecureEnclaveSignatureProvider,
-                nfcSignatureProvider: mockNFCSignatureProvider,
-                sessionProvider: mockSessionProvider,
-                accessibilityAnnouncementReceiver: { _ in },
-                registeredDevicesService: mockRegisteredDevicesService
-            )
-        )
+            reducer: RegisteredDevicesDomain()
+        ) { dependencies in
+            dependencies.schedulers = schedulers
+            dependencies.registeredDevicesService = mockRegisteredDevicesService
+        }
     }
 
     let testProfileId = UUID()
@@ -95,10 +88,10 @@ final class RegisteredDevicesDomainTests: XCTestCase {
         testScheduler.run()
 
         store.receive(.showCardWall(cardWallState)) { state in
-            state.route = .cardWall(cardWallState)
+            state.destination = .idpCardWall(cardWallState)
         }
 
-        store.receive(.deviceIdReceived(nil))
+        store.receive(.response(.deviceIdReceived(nil)))
     }
 
     func testLoadDevicesAuthenticationErrorShows() {
@@ -116,17 +109,17 @@ final class RegisteredDevicesDomainTests: XCTestCase {
         }
         testScheduler.run()
 
-        store.receive(.loadDevicesReceived(.failure(RegisteredDevicesServiceError.missingToken))) { state in
-            state.route = .alert(.init(for: RegisteredDevicesServiceError.missingToken))
+        store.receive(.response(.loadDevicesReceived(.failure(RegisteredDevicesServiceError.missingToken)))) { state in
+            state.destination = .alert(.init(for: RegisteredDevicesServiceError.missingToken))
         }
 
-        store.receive(.deviceIdReceived(nil))
+        store.receive(.response(.deviceIdReceived(nil)))
     }
 
     func testDeleteDeviceSuccess() {
         let store = testStore(
             for: .init(profileId: UUID(),
-                       route: nil,
+                       destination: nil,
                        thisDeviceKeyIdentifier: nil,
                        content: .loaded(Fixtures.loadedDataA))
         )
@@ -149,11 +142,11 @@ final class RegisteredDevicesDomainTests: XCTestCase {
 
         expect(self.mockRegisteredDevicesService.deleteDeviceOfCalled).to(beTrue())
 
-        store.receive(.deleteDeviceReceived(.success(true)))
+        store.receive(.response(.deleteDeviceReceived(.success(true))))
 
         testScheduler.run()
 
-        store.receive(.loadDevicesReceived(.success(Fixtures.pairingEntriesSetB))) { state in
+        store.receive(.response(.loadDevicesReceived(.success(Fixtures.pairingEntriesSetB)))) { state in
             state.content = .loaded(Fixtures.loadedDataB)
         }
     }
@@ -161,7 +154,7 @@ final class RegisteredDevicesDomainTests: XCTestCase {
     func testDeleteDeviceFailure() {
         let store = testStore(
             for: .init(profileId: UUID(),
-                       route: nil,
+                       destination: nil,
                        thisDeviceKeyIdentifier: nil,
                        content: .loaded(Fixtures.loadedDataA))
         )
@@ -178,8 +171,8 @@ final class RegisteredDevicesDomainTests: XCTestCase {
 
         expect(self.mockRegisteredDevicesService.deleteDeviceOfCalled).to(beTrue())
 
-        store.receive(.deleteDeviceReceived(.failure(RegisteredDevicesServiceError.missingToken))) { state in
-            state.route = .alert(.init(for: RegisteredDevicesServiceError.missingToken))
+        store.receive(.response(.deleteDeviceReceived(.failure(RegisteredDevicesServiceError.missingToken)))) { state in
+            state.destination = .alert(.init(for: RegisteredDevicesServiceError.missingToken))
         }
     }
 }

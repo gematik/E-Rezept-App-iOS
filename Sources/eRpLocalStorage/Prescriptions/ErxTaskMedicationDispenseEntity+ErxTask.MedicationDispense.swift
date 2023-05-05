@@ -20,14 +20,14 @@ import CoreData
 import eRpKit
 
 extension ErxTaskMedicationDispenseEntity {
-    static func from(medicationDispense: ErxTask.MedicationDispense,
+    static func from(medicationDispense: ErxMedicationDispense,
                      in context: NSManagedObjectContext) -> ErxTaskMedicationDispenseEntity {
         ErxTaskMedicationDispenseEntity(medicationDispense: medicationDispense,
                                         in: context)
     }
 
     convenience init(
-        medicationDispense: ErxTask.MedicationDispense,
+        medicationDispense: ErxMedicationDispense,
         in context: NSManagedObjectContext
     ) {
         self.init(context: context)
@@ -35,47 +35,38 @@ extension ErxTaskMedicationDispenseEntity {
         identifier = medicationDispense.identifier
         taskId = medicationDispense.taskId
         insuranceId = medicationDispense.insuranceId
-        pzn = medicationDispense.pzn
-        name = medicationDispense.name
-        dose = medicationDispense.dose
-        dosageForm = medicationDispense.dosageForm
         dosageInstruction = medicationDispense.dosageInstruction
-        if let medicationAmount = medicationDispense.amount {
-            amount = NSDecimalNumber(decimal: medicationAmount)
-        }
         telematikId = medicationDispense.telematikId
         whenHandedOver = medicationDispense.whenHandedOver
-        lot = medicationDispense.lot
-        expiresOn = medicationDispense.expiresOn
+        noteText = medicationDispense.noteText
+        quantity = ErxTaskQuantityEntity(quantity: medicationDispense.quantity, in: context)
+        medication = ErxTaskMedicationEntity(medication: medicationDispense.medication, in: context)
     }
 }
 
-extension ErxTask.MedicationDispense {
+extension ErxMedicationDispense {
     init?(entity: ErxTaskMedicationDispenseEntity?) {
         guard let entity = entity,
-              let id = entity.identifier,
               let taskId = entity.taskId,
-              let insuranceId = entity.insuranceId,
-              let pzn = entity.pzn,
-              let telematikId = entity.telematikId,
-              let whenHandedOver = entity.whenHandedOver else {
+              let identifier = entity.identifier else {
             return nil
         }
 
+        var quantity: ErxMedication.Quantity?
+        if let value = entity.quantity?.value {
+            quantity = .init(value: value, unit: entity.quantity?.unit)
+        }
+
         self.init(
-            identifier: id,
+            identifier: identifier,
             taskId: taskId,
-            insuranceId: insuranceId,
-            pzn: pzn,
-            name: entity.name,
-            dose: entity.dose,
-            dosageForm: entity.dosageForm,
+            insuranceId: entity.insuranceId,
             dosageInstruction: entity.dosageInstruction,
-            amount: entity.amount as Decimal?,
-            telematikId: telematikId,
-            whenHandedOver: whenHandedOver,
-            lot: entity.lot,
-            expiresOn: entity.expiresOn
+            telematikId: entity.telematikId,
+            whenHandedOver: entity.whenHandedOver,
+            quantity: quantity,
+            noteText: entity.noteText,
+            medication: ErxMedication(entity: entity.medication)
         )
     }
 }

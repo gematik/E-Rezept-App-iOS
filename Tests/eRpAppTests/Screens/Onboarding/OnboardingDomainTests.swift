@@ -31,22 +31,21 @@ final class OnboardingDomainTests: XCTestCase {
         OnboardingDomain.Action,
         OnboardingDomain.State,
         OnboardingDomain.Action,
-        OnboardingDomain.Environment
+        Void
     >
 
     func testStore(with state: OnboardingDomain.State = OnboardingDomain.Dummies.state) -> TestStore {
-        TestStore(
+        let mockAuthenticationChallengeProvider = MockAuthenticationChallengeProvider()
+        mockAuthenticationChallengeProvider.startAuthenticationChallengeReturnValue = Just(.success(true))
+            .eraseToAnyPublisher()
+        return TestStore(
             initialState: state,
-            reducer: OnboardingDomain.reducer,
-            environment: OnboardingDomain.Environment(
-                appVersion: AppVersion.current,
-                localUserStore: mockUserDataStore,
-                schedulers: Schedulers.immediate,
-                appSecurityManager: mockAppSecurityManager,
-                authenticationChallengeProvider: MockAuthenticationChallengeProvider(result: .success(true)),
-                userSession: MockUserSession()
-            )
-        )
+            reducer: OnboardingDomain()
+        ) { dependencies in
+            dependencies.currentAppVersion = AppVersion.current
+            dependencies.appSecurityManager = mockAppSecurityManager
+            dependencies.userDataStore = mockUserDataStore
+        }
     }
 
     func testSavingAuthenticationWithoutSelection() {

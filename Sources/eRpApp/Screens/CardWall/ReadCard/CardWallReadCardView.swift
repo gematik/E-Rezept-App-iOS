@@ -23,23 +23,23 @@ import eRpStyleKit
 import SwiftUI
 
 struct CardWallReadCardView: View {
-    let store: CardWallReadCardDomain.Store
+    let store: StoreOf<CardWallReadCardDomain>
     static let height: CGFloat = {
         // Compensate display scaling (Settings -> Display & Brightness -> Display -> Standard vs. Zoomed
         180 * UIScreen.main.scale / UIScreen.main.nativeScale
     }()
 
-    init(store: CardWallReadCardDomain.Store) {
+    init(store: StoreOf<CardWallReadCardDomain>) {
         self.store = store
     }
 
     struct ViewState: Equatable {
-        let routeTag: CardWallReadCardDomain.Route.Tag?
+        let destinationTag: CardWallReadCardDomain.Destinations.State.Tag?
         let output: CardWallReadCardDomain.State.Output
         let isDemoModus: Bool
 
         init(state: CardWallReadCardDomain.State) {
-            routeTag = state.route?.tag
+            destinationTag = state.destination?.tag
             output = state.output
             isDemoModus = state.isDemoModus
         }
@@ -88,7 +88,7 @@ struct CardWallReadCardView: View {
                         viewStore.send(.openHelpViewScreen)
                     }
                     .fullScreenCover(isPresented: Binding<Bool>(
-                        get: { viewStore.state.routeTag == .help },
+                        get: { viewStore.state.destinationTag == .help },
                         set: { show in
                             if !show {
                                 viewStore.send(.setNavigation(tag: nil))
@@ -99,11 +99,7 @@ struct CardWallReadCardView: View {
                     content: {
                         NavigationView {
                             IfLetStore(
-                                store.scope(
-                                    state: (\CardWallReadCardDomain.State.route)
-                                        .appending(path: /CardWallReadCardDomain.Route.help)
-                                        .extract(from:)
-                                ),
+                                store.destinationsScope(state: /CardWallReadCardDomain.Destinations.State.help),
                                 then: ReadCardHelpView.init(store:)
                             )
                         }
@@ -134,7 +130,7 @@ struct CardWallReadCardView: View {
                 .padding(.vertical)
 
                 Button(action: {
-                    viewStore.send(.singleClose)
+                    viewStore.send(.delegate(.singleClose))
                 }, label: {
                     Label(title: { Text(L10n.cdwBtnRcBack) }, icon: {})
                 })
@@ -144,10 +140,7 @@ struct CardWallReadCardView: View {
                 Text(L10n.cdwTxtRcDemoModeInfo)
             }
             .alert(
-                self.store
-                    .scope(state: (\CardWallReadCardDomain.State.route)
-                        .appending(path: /CardWallReadCardDomain.Route.alert)
-                        .extract(from:)),
+                store.destinationsScope(state: /CardWallReadCardDomain.Destinations.State.alert),
                 dismiss: .setNavigation(tag: .none)
             )
             .keyboardShortcut(.defaultAction) // workaround: this makes the alert's primary button bold

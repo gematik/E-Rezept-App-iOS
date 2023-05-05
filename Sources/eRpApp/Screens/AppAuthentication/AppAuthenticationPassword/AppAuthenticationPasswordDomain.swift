@@ -18,12 +18,11 @@
 
 import ComposableArchitecture
 
-enum AppAuthenticationPasswordDomain {
-    typealias Store = ComposableArchitecture.Store<State, Action>
-    typealias Reducer = ComposableArchitecture.AnyReducer<State, Action, Environment>
+struct AppAuthenticationPasswordDomain: ReducerProtocol {
+    typealias Store = StoreOf<Self>
 
-    static func cleanup<T>() -> Effect<T, Never> {
-        Effect.cancel(id: Token.self)
+    static func cleanup<T>() -> EffectTask<T> {
+        EffectTask<T>.cancel(ids: Token.allCases)
     }
 
     enum Token: CaseIterable, Hashable {}
@@ -39,18 +38,20 @@ enum AppAuthenticationPasswordDomain {
         case passwordVerificationReceived(Bool)
     }
 
-    struct Environment {
-        let appSecurityPasswordManager: AppSecurityManager
+    @Dependency(\.appSecurityManager) var appSecurityManager: AppSecurityManager
+
+    var body: some ReducerProtocol<State, Action> {
+        Reduce(self.core)
     }
 
-    static let domainReducer = Reducer { state, action, environment in
+    func core(into state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
         case let .setPassword(password):
             state.password = password
             return .none
 
         case .loginButtonTapped:
-            guard let success = try? environment.appSecurityPasswordManager.matches(password: state.password) else {
+            guard let success = try? appSecurityManager.matches(password: state.password) else {
                 return Effect(value: .passwordVerificationReceived(false))
             }
             return Effect(value: .passwordVerificationReceived(success))
@@ -60,31 +61,21 @@ enum AppAuthenticationPasswordDomain {
             return .none
         }
     }
-
-    static let reducer: Reducer = .combine(
-        domainReducer
-    )
 }
 
 extension AppAuthenticationPasswordDomain {
     enum Dummies {
         static let state = State()
 
-        static let environment = Environment(
-            appSecurityPasswordManager: DummyAppSecurityManager()
-        )
-
         static let store = Store(
             initialState: state,
-            reducer: reducer,
-            environment: environment
+            reducer: AppAuthenticationPasswordDomain()
         )
 
         static func storeFor(_ state: State) -> Store {
             Store(
                 initialState: state,
-                reducer: reducer,
-                environment: environment
+                reducer: AppAuthenticationPasswordDomain()
             )
         }
     }

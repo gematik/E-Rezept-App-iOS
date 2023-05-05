@@ -149,7 +149,9 @@ extension OnboardingLegalInfoView {
 
                 Button(
                     action: {
-                        isUseAccepted.toggle()
+                        withAnimation {
+                            isUseAccepted.toggle()
+                        }
                     },
                     label: {
                         OnboardingLegalInfoCheckmarkView(isAccepted: $isUseAccepted)
@@ -205,7 +207,9 @@ extension OnboardingLegalInfoView {
 
                 Button(
                     action: {
-                        isPrivacyAccepted.toggle()
+                        withAnimation {
+                            isPrivacyAccepted.toggle()
+                        }
                     },
                     label: {
                         OnboardingLegalInfoCheckmarkView(isAccepted: $isPrivacyAccepted)

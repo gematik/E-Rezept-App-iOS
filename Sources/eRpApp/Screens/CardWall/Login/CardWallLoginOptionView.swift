@@ -21,15 +21,15 @@ import SwiftUI
 import UIKit
 
 struct CardWallLoginOptionView: View {
-    let store: CardWallLoginOptionDomain.Store
+    let store: StoreOf<CardWallLoginOptionDomain>
 
     struct ViewState: Equatable {
-        let routeTag: CardWallLoginOptionDomain.Route.Tag?
+        let destinationTag: CardWallLoginOptionDomain.Destinations.State.Tag?
         let isDemoModus: Bool
         var selectedLoginOption = LoginOption.notSelected
 
         init(state: CardWallLoginOptionDomain.State) {
-            routeTag = state.route?.tag
+            destinationTag = state.destination?.tag
             isDemoModus = state.isDemoModus
             selectedLoginOption = state.selectedLoginOption
         }
@@ -81,10 +81,7 @@ struct CardWallLoginOptionView: View {
                         .hidden()
                         .accessibility(hidden: true)
                         .alert(
-                            self.store
-                                .scope(state: (\CardWallLoginOptionDomain.State.route)
-                                    .appending(path: /CardWallLoginOptionDomain.Route.alert)
-                                    .extract(from:)),
+                            self.store.destinationsScope(state: /CardWallLoginOptionDomain.Destinations.State.alert),
                             dismiss: .setNavigation(tag: .none)
                         )
 
@@ -106,17 +103,15 @@ struct CardWallLoginOptionView: View {
 
                 NavigationLink(
                     destination: IfLetStore(
-                        store.scope(
-                            state: (\CardWallLoginOptionDomain.State.route)
-                                .appending(path: /CardWallLoginOptionDomain.Route.readcard)
-                                .extract(from:),
-                            action: CardWallLoginOptionDomain.Action.readcardAction(action:)
+                        store.destinationsScope(
+                            state: /CardWallLoginOptionDomain.Destinations.State.readcard,
+                            action: CardWallLoginOptionDomain.Destinations.Action.readcardAction(action:)
                         ),
                         then: CardWallReadCardView.init(store:)
                     ),
-                    tag: CardWallLoginOptionDomain.Route.Tag.readcard,
+                    tag: CardWallLoginOptionDomain.Destinations.State.Tag.readcard,
                     selection: viewStore.binding(
-                        get: \.routeTag
+                        get: \.destinationTag
                     ) {
                         .setNavigation(tag: $0)
                     }
@@ -130,7 +125,7 @@ struct CardWallLoginOptionView: View {
             .navigationBarTitle(L10n.cdwTxtBiometryTitle, displayMode: .inline)
             .navigationBarItems(
                 trailing: NavigationBarCloseItem {
-                    viewStore.send(.close)
+                    viewStore.send(.delegate(.close))
                 }
                 .accessibility(identifier: A11y.cardWall.loginOption.cdwBtnLoginOptionCancel)
                 .accessibility(label: Text(L10n.cdwBtnBiometryCancelLabel))
@@ -140,13 +135,13 @@ struct CardWallLoginOptionView: View {
 
     // [REQ:gemSpec_IDP_Frontend:A_21574] Actual view
     struct PrivacyWarningViewContainer: View {
-        let store: CardWallLoginOptionDomain.Store
+        let store: StoreOf<CardWallLoginOptionDomain>
 
         struct ViewState: Equatable {
-            let routeTag: CardWallLoginOptionDomain.Route.Tag?
+            let destinationTag: CardWallLoginOptionDomain.Destinations.State.Tag?
 
             init(state: CardWallLoginOptionDomain.State) {
-                routeTag = state.route?.tag
+                destinationTag = state.destination?.tag
             }
         }
 
@@ -156,7 +151,7 @@ struct CardWallLoginOptionView: View {
                     Rectangle()
                         .frame(width: 0, height: 0, alignment: .center)
                         .fullScreenCover(isPresented: Binding<Bool>(
-                            get: { viewStore.state.routeTag == .warning },
+                            get: { viewStore.state.destinationTag == .warning },
                             set: { show in
                                 if !show {
                                     viewStore.send(.setNavigation(tag: nil))

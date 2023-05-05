@@ -12,14 +12,14 @@ import Foundation
     {% if not case.name|contains:"debug" %}
         {% if case.hasAssociatedValue and case.associatedValues[0].actualTypeName|hasSuffix:"Domain.State" %}
             case let .{{ case.name }}(state: state):
-                return state.routeName() ?? route.tag.analyticsName
+                return state.routeName() ?? destination.tag.analyticsName
         {% else %}
         {% if not case.annotations.AnalyticsState %}
             case .{{ case.name }}:
-                return route.tag.analyticsName
+                return destination.tag.analyticsName
         {% else %}
             case .{{ case.name }}:
-                return {{ case.annotations.AnalyticsState }}.routeName() ?? route.tag.analyticsName
+                return {{ case.annotations.AnalyticsState }}.routeName() ?? destination.tag.analyticsName
         {% endif %}
         {% endif %}
      {% else %}
@@ -35,14 +35,24 @@ extension {{ stateType.name }} {
     func routeName() -> String? {
         {% if stateType.kind == "enum" %}
         {% typed stateType as Enum %}
-        let route = self
-        switch route {
+        let destination = self
+        switch destination {
             {% call DomainRouteEnum stateType %}
         }
         {% else %}
             {% for property in stateType.allVariables where property.name == "route" %}
                 {% if property.isOptional %}
-        guard let route = route else {
+        guard let destination = {{ property.name }} else {
+            return nil
+        }
+                {% endif %}
+        switch destination {
+                {% call DomainRouteEnum property.type %}
+        }
+            {% endfor %}
+            {% for property in stateType.allVariables where property.name == "destination" %}
+                {% if property.isOptional %}
+        guard let {{ property.name }} = {{ property.name }} else {
             return nil
         }
                 {% endif %}
@@ -50,7 +60,7 @@ extension {{ stateType.name }} {
                 {% call DomainRouteEnum property.type %}
         }
             {% endfor %}
-        {% set FoundSomething %}{% for property in stateType.allVariables where property.name == "route" %}found{% endfor %}{% endset %}
+        {% set FoundSomething %}{% for property in stateType.allVariables where property.name == "route" or property.name == "destination" %}found{% endfor %}{% endset %}
         {% if not FoundSomething == "found" %}
             return nil
         {% endif %}
@@ -72,6 +82,18 @@ extension {{ stateType.name }} {
     {% endif %}
 {% endfor %}
 
+{% for type in types.structs %}
+    {% if type.localName == "State" and type.parentName|default:"abc"|hasSuffix:"Destinations" and not type.parentName|contains:"Debug" and not type.parent.annotations.AnalyticsIgnoreGeneration %}
+        {% call DomainRoute type %}
+    {% endif %}
+{% endfor %}
+
+{% for type in types.enums %}
+    {% if type.localName == "State" and type.parentName|default:"abc"|hasSuffix:"Destinations" and not type.parentName|contains:"Debug" and not type.parent.annotations.AnalyticsIgnoreGeneration %}
+        {% call DomainRoute type %}
+    {% endif %}
+{% endfor %}
+
 {% macro GenerateTags routeType %}
 {% typed routeType as Enum %}
 extension {{ routeType.name }}.Tag {
@@ -89,6 +111,12 @@ extension {{ routeType.name }}.Tag {
     }
 }
 {% endmacro %}
+
+{% for routeType in types.enums where routeType.localName == "State" and routeType.parentName|default:""|hasSuffix:"Destinations" %}
+    {% if not routeType.parentName|contains:"Debug" %}
+        {% call GenerateTags routeType %}
+    {% endif %}
+{% endfor %}
 
 {% for routeType in types.enums where routeType.localName == "Route" and routeType.parentName|default:""|hasSuffix:"Domain" %}
     {% if not routeType.parentName|contains:"Debug" %}

@@ -53,6 +53,7 @@ struct WelcomeDrawerView: View {
                     .background(Colors.primary100)
                     .cornerRadius(16)
                     .padding([.leading, .trailing])
+                    .accessibility(identifier: A11y.welcomedrawer.wlcdBtnLogin)
 
                 Button(action: {
                     viewStore.send(.setNavigation(tag: .none), animation: .easeInOut)
@@ -69,6 +70,7 @@ struct WelcomeDrawerView: View {
                 })
                     .cornerRadius(16)
                     .padding([.leading, .trailing])
+                    .accessibility(identifier: A11y.welcomedrawer.wlcdBtnDecline)
             }
         }.background(Colors.systemBackground.ignoresSafeArea())
     }

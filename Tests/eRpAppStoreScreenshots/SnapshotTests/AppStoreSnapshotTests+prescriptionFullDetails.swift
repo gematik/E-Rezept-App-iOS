@@ -17,6 +17,7 @@
 //
 
 import CombineSchedulers
+import ComposableArchitecture
 @testable import eRpApp
 import SnapshotTesting
 import SwiftUI
@@ -24,6 +25,11 @@ import XCTest
 
 extension AppStoreSnapshotTests {
     func prescriptionFullDetails() -> some View {
-        PrescriptionFullDetailView(store: PrescriptionDetailDomain.Dummies.store)
+        PrescriptionFullDetailView(
+            store: Store(
+                initialState: PrescriptionDetailDomain.Dummies.state,
+                reducer: EmptyReducer()
+            )
+        )
     }
 }

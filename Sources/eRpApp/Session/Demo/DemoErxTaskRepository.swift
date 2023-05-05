@@ -18,6 +18,7 @@
 
 import Combine
 import CombineSchedulers
+import Dependencies
 import eRpKit
 import eRpLocalStorage
 import eRpRemoteStorage
@@ -25,6 +26,7 @@ import Foundation
 import IdentifiedCollections
 
 class DemoErxTaskRepository: ErxTaskRepository {
+    @Dependency(\.fhirDateFormatter) var fhirDateFormatter
     typealias ErrorType = ErxRepositoryError
     private let delay: Double
     private var demoDatesIterator = DemoDatesIterator()
@@ -125,6 +127,22 @@ class DemoErxTaskRepository: ErxTaskRepository {
         Just([]).setFailureType(to: ErrorType.self).eraseToAnyPublisher()
     }
 
+    func loadRemoteChargeItems() -> AnyPublisher<[ErxChargeItem], ErxRepositoryError> {
+        Just([]).setFailureType(to: ErrorType.self).eraseToAnyPublisher()
+    }
+
+    func fetchConsents() -> AnyPublisher<[ErxConsent], ErxRepositoryError> {
+        Just([]).setFailureType(to: ErrorType.self).eraseToAnyPublisher()
+    }
+
+    func grantConsent(_ consent: ErxConsent) -> AnyPublisher<ErxConsent?, ErxRepositoryError> {
+        Just(consent).setFailureType(to: ErrorType.self).eraseToAnyPublisher()
+    }
+
+    func revokeConsent(_: ErxConsent.Category) -> AnyPublisher<Bool, ErxRepositoryError> {
+        Just(true).setFailureType(to: ErrorType.self).eraseToAnyPublisher()
+    }
+
     private lazy var store: Set<ErxTask> = {
         Set(ErxTask.Demo.erxTasks)
     }()
@@ -156,9 +174,9 @@ class DemoErxTaskRepository: ErxTaskRepository {
         return store.filter { erxTask in
             // convert date strings to real dates for comparison
             if let demoDateString = nextDemoDate,
-               let demoDate = globals.fhirDateFormatter.date(from: demoDateString, format: .yearMonthDay),
+               let demoDate = fhirDateFormatter.date(from: demoDateString, format: .yearMonthDay),
                let authoredOnString = erxTask.authoredOn,
-               let erxDate = globals.fhirDateFormatter.date(from: authoredOnString, format: .yearMonthDay) {
+               let erxDate = fhirDateFormatter.date(from: authoredOnString, format: .yearMonthDay) {
                 let compareResult = Calendar.current.compare(demoDate, to: erxDate, toGranularity: .day)
                 return compareResult == .orderedSame || compareResult == .orderedDescending
             }

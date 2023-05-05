@@ -1,0 +1,97 @@
+{
+    "resourceType": "Bundle",
+    "type": "searchset",
+    "entry": [
+        {
+            "resource": {
+                "resourceType": "MedicationDispense",
+                "id": "3465270a-11e7-4bbf-ae53-378f9cc52747",
+                "meta": {
+                    "profile": [
+                        "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_PR_MedicationDispense"
+                    ]
+                },
+                "contained": [
+                    {
+                        "resourceType": "Medication",
+                        "id": "0d93504e-c6a7-47c1-8ad5-b0c5cf1b8920",
+                        "meta": {
+                            "profile": [
+                                "https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Medication_FreeText|1.1.0"
+                            ]
+                        },
+                        "extension": [
+                            {
+                                "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Medication_Category",
+                                "valueCoding": {
+                                    "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_ERP_Medication_Category",
+                                    "code": "00"
+                                }
+                            },
+                            {
+                                "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Medication_Vaccine",
+                                "valueBoolean": true
+                            }
+                        ],
+                        "code": {
+                            "coding": [
+                                {
+                                    "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_ERP_Medication_Type",
+                                    "code": "freitext"
+                                }
+                            ],
+                            "text": "Metformin 850mg Tabletten N3"
+                        },
+                        "form": {
+                            "text": "Tabletten"
+                        }
+                    }
+                ],
+                "identifier": [
+                    {
+                        "system": "https://gematik.de/fhir/erp/NamingSystem/GEM_ERP_NS_PrescriptionId",
+                        "value": "160.000.033.491.280.78"
+                    }
+                ],
+                "status": "completed",
+                "medicationReference": {
+                    "reference": "#0d93504e-c6a7-47c1-8ad5-b0c5cf1b8920"
+                },
+                "subject": {
+                    "identifier": {
+                        "system": "http://fhir.de/sid/gkv/kvid-10",
+                        "value": "X234567890"
+                    }
+                },
+                "quantity": {
+                    "value": 100,
+                    "unit": "mg"
+                },
+                "performer": [
+                    {
+                        "actor": {
+                            "identifier": {
+                                "system": "https://gematik.de/fhir/sid/telematik-id",
+                                "value": "3-abc-1234567890"
+                            }
+                        }
+                    }
+                ],
+                "whenHandedOver": "2022-02-28",
+                "note": [
+                    {
+                        "text": "These are two notes"
+                    },
+                    {
+                        "text": "separated by newlines!"
+                    }
+                ],
+                "dosageInstruction": [
+                    {
+                        "text": "1-0-1-0"
+                    }
+                ]
+            }
+        }
+    ]
+}

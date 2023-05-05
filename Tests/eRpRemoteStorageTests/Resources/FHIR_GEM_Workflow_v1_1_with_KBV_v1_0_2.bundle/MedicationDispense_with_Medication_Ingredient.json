@@ -1,0 +1,126 @@
+{
+    "type": "searchset",
+    "resourceType": "Bundle",
+    "entry": [
+        {
+            "fullUrl": "https://erp-test.zentral.erp.splitdns.ti-dienste.de/MedicationDispense/160.000.000.014.298.37",
+            "resource": {
+                "resourceType": "MedicationDispense",
+                "meta": {
+                    "profile": [
+                        "https://gematik.de/fhir/StructureDefinition/ErxMedicationDispense"
+                    ]
+                },
+                "contained": [
+                    {
+                        "resourceType": "Medication",
+                        "id": "86fa62c7-06a0-418e-ba26-e99baa053c07",
+                        "meta": {
+                            "profile": [
+                                "https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Medication_Ingredient|1.0.2"
+                            ]
+                        },
+                        "extension": [
+                            {
+                                "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Medication_Category",
+                                "valueCoding": {
+                                    "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_ERP_Medication_Category",
+                                    "code": "00"
+                                }
+                            },
+                            {
+                                "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Medication_Vaccine",
+                                "valueBoolean": true
+                            },
+                            {
+                                "url": "http://fhir.de/StructureDefinition/normgroesse",
+                                "valueCode": "N1"
+                            }
+                        ],
+                        "code": {
+                            "coding": [
+                                {
+                                    "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_ERP_Medication_Type",
+                                    "code": "wirkstoxff"
+                                }
+                            ]
+                        },
+                        "form": {
+                            "text": "Flüssigkeiten"
+                        },
+                        "ingredient": [
+                            {
+                                "itemCodeableConcept": {
+                                    "coding": [
+                                        {
+                                            "system": "http://fhir.de/CodeSystem/ask",
+                                            "code": "37197"
+                                        }
+                                    ],
+                                    "text": "Wirkstoff Paulaner Weissbier"
+                                },
+                                "strength": {
+                                    "numerator": {
+                                        "value": 1,
+                                        "unit": "Maß"
+                                    },
+                                    "denominator": {
+                                        "value": 1
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                ],
+                "identifier": [
+                    {
+                        "system": "https://gematik.de/fhir/NamingSystem/PrescriptionID",
+                        "value": "160.000.000.014.298.37"
+                    }
+                ],
+                "status": "completed",
+                "medicationReference": {
+                    "reference": "#86fa62c7-06a0-418e-ba26-e99baa053c07",
+                    "display": "gesund"
+                },
+                "subject": {
+                    "identifier": {
+                        "system": "http://fhir.de/NamingSystem/gkv/kvid-10",
+                        "value": "X114428530"
+                    }
+                },
+                "supportingInformation": [
+                    {
+                        "reference": "Task/160.000.000.014.298.37"
+                    }
+                ],
+                "performer": [
+                    {
+                        "actor": {
+                            "identifier": {
+                                "system": "https://gematik.de/fhir/NamingSystem/TelematikID",
+                                "value": "3-SMC-B-Testkarte-883110000129068"
+                            }
+                        }
+                    }
+                ],
+                "quantity": {
+                    "value": 1,
+                    "unit": "g",
+                    "system": "http://unitsofmeasure.org",
+                    "code": "{tbl}"
+                },
+                "whenHandedOver": "2021-07-23T23:04:01+02:00",
+                "dosageInstruction": [
+                    {
+                        "text": "1-0-1-0"
+                    }
+                ],
+                "id": "160.000.000.014.298.37.1"
+            },
+            "search": {
+                "mode": "match"
+            }
+        }
+    ],
+}

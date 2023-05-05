@@ -21,26 +21,18 @@ import ComposableArchitecture
 import eRpKit
 import Foundation
 
-enum ScannerDomain {
-    typealias Store = ComposableArchitecture.Store<State, Action>
-    typealias Reducer = ComposableArchitecture.AnyReducer<State, Action, Environment>
+struct ScannerDomain: ReducerProtocol {
+    typealias Store = StoreOf<Self>
 
     /// Provides an Effect that needs to run whenever the state of this Domain is reset to nil.
-    static func cleanup<T>() -> Effect<T, Never> {
-        Effect.cancel(id: Token.self)
+    static func cleanup<T>() -> EffectTask<T> {
+        EffectTask<T>.cancel(ids: Token.allCases)
     }
 
     enum Token: CaseIterable, Hashable {
         case saveErxTasks
         case resetScanState
         case loadErxTask
-    }
-
-    struct Environment {
-        let repository: ErxTaskRepository
-        let dateFormatter: FHIRDateFormatter
-        var messageInterval: DispatchQueue.SchedulerTimeType.Stride = 2.0
-        let scheduler: Schedulers
     }
 
     struct State: Equatable {
@@ -55,69 +47,86 @@ enum ScannerDomain {
     }
 
     enum Action: Equatable {
-        /// Closes the scanner view
-        case close
         /// Closes if there are no scanned tasks, otherwise presents an alert
         case closeWithoutSave
         /// Saves all scanned tasks and closes after successful save. In case of failure `showError` is called
         case saveAndClose(Set<[ScannedErxTask]>)
-        /// Called if an error during save occurs
-        case saveAndCloseReceived(ErxRepositoryError)
         /// Analyses the scan output and add calls  `analysesReceived` with the result
         case analyse(scanOutput: [ScanOutput])
-        /// Mutates the `scanState` after successful scan and calls `resetScannerState` after `messageInterval` passed
-        case analyseReceived(LoadingState<[ScannedErxTask], ScannerDomain.Error>)
         /// Changes the `scanState` to `idle`
         case resetScannerState
         /// Sets the `alertState` back to nil (which hides the alert)
         case alertDismissButtonTapped
+        /// Delegates the parent to close the scanner view
+        case closeAlertCancelButtonTapped
         /// Toggles the flashlight
         case toggleFlashLight
         /// set isFlashOn to false
         case flashLightOff
+
+        case response(Response)
+        case delegate(Delegate)
+
+        enum Response: Equatable {
+            /// Called if an error during save occurs
+            case saveAndCloseReceived(ErxRepositoryError)
+            /// Mutates the `scanState` after successful scan
+            /// and calls `resetScannerState` after `messageInterval` passed
+            case analyseReceived(LoadingState<[ScannedErxTask], ScannerDomain.Error>)
+        }
+
+        enum Delegate: Equatable {
+            /// Closes the scanner view
+            case close
+        }
     }
 
-    static let domainReducer = Reducer { state, action, environment in
+    var messageInterval: DispatchQueue.SchedulerTimeType.Stride = 2.0
+
+    @Dependency(\.erxTaskRepository) var repository: ErxTaskRepository
+    @Dependency(\.fhirDateFormatter) var dateFormatter: FHIRDateFormatter
+    @Dependency(\.schedulers) var scheduler: Schedulers
+
+    // swiftlint:disable:next cyclomatic_complexity function_body_length
+    private func core(state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
-        case .close:
-            // view is closed by parent view
-            return .none
         case let .saveAndClose(scannedBatches):
-            let authoredOn = environment.dateFormatter.stringWithLongUTCTimeZone(from: Date())
+            let authoredOn = dateFormatter.stringWithLongUTCTimeZone(from: Date())
             let erxTasks = scannedBatches.flatMap { $0 }.asErxTasks(status: .ready, with: authoredOn)
 
-            return environment.repository.save(erxTasks: erxTasks)
-                .receive(on: environment.scheduler.main)
-                .map { _ in Action.close }
+            return repository.save(erxTasks: erxTasks)
+                .first()
+                .receive(on: scheduler.main)
+                .map { _ in Action.delegate(.close) }
                 .catch { error in
-                    Just(Action.saveAndCloseReceived(error))
+                    Just(Action.response(.saveAndCloseReceived(error)))
                 }
                 .eraseToEffect()
                 .cancellable(id: Token.saveErxTasks)
-        case let .saveAndCloseReceived(error):
-            state.alertState = savingAlertState
+        case .response(.saveAndCloseReceived):
+            state.alertState = Self.savingAlertState
             return .none
         case let .analyse(scanOutput):
             state.scanState = .loading(nil)
             do {
                 let scannedTasks = try CodeAnalyser.analyse(scanOutput: scanOutput, with: state.acceptedTaskBatches)
-                return environment.checkForTaskDuplicatesInStore(scannedTasks)
+                return checkForTaskDuplicatesInStore(scannedTasks)
                     .cancellable(id: Token.loadErxTask)
             } catch let error as ScannerDomain.Error {
-                return Effect(value: .analyseReceived(.error(error)))
+                return Effect(value: .response(.analyseReceived(.error(error))))
             } catch let error as ScannedErxTask.Error {
-                return Effect(value: .analyseReceived(.error(.scannedErxTask(error))))
+                return Effect(value: .response(.analyseReceived(.error(.scannedErxTask(error)))))
             } catch {
-                return Effect(value: .analyseReceived(.error(.unknown)))
+                return Effect(value: .response(.analyseReceived(.error(.unknown))))
             }
-        case let .analyseReceived(loadingState):
+        case let .response(.analyseReceived(loadingState)):
             if case let .value(scannedErxTask) = loadingState {
                 state.acceptedTaskBatches.insert(scannedErxTask)
             }
             state.scanState = loadingState
             return Effect(value: .resetScannerState)
-                .delay(for: environment.messageInterval, scheduler: environment.scheduler.main)
-                .receive(on: environment.scheduler.main)
+                .delay(for: messageInterval, scheduler: scheduler.main)
+                .receive(on: scheduler.main)
                 .eraseToEffect()
                 .cancellable(id: Token.resetScanState, cancelInFlight: true)
         case .resetScannerState:
@@ -126,11 +135,14 @@ enum ScannerDomain {
         case .alertDismissButtonTapped:
             state.alertState = nil
             return .none
+        case .closeAlertCancelButtonTapped:
+            state.alertState = nil
+            return Effect(value: .delegate(.close))
         case .closeWithoutSave:
             if state.acceptedTaskBatches.isEmpty {
-                return Effect(value: .close)
+                return Effect(value: .delegate(.close))
             } else {
-                state.alertState = closeAlertState
+                state.alertState = Self.closeAlertState
                 return .none
             }
         case .toggleFlashLight:
@@ -139,18 +151,24 @@ enum ScannerDomain {
         case .flashLightOff:
             state.isFlashOn = false
             return .none
+        case .delegate:
+            return .none
         }
     }
 
-    static var closeAlertState: AlertState<Action> = {
+    var body: some ReducerProtocol<State, Action> {
+        Reduce(self.core)
+    }
+
+    static let closeAlertState: AlertState<Action> = {
         AlertState<Action>(
             title: TextState(L10n.camTxtWarnCancelTitle),
             primaryButton: .destructive(TextState(L10n.camTxtWarnContinue), action: nil),
-            secondaryButton: .cancel(TextState(L10n.camTxtWarnCancel), action: .send(.close))
+            secondaryButton: .cancel(TextState(L10n.camTxtWarnCancel), action: .send(.closeAlertCancelButtonTapped))
         )
     }()
 
-    static var savingAlertState: AlertState<Action> = {
+    static let savingAlertState: AlertState<Action> = {
         AlertState(
             title: TextState(L10n.alertErrorTitle),
             message: TextState(L10n.scnMsgSavingError),
@@ -159,7 +177,7 @@ enum ScannerDomain {
     }()
 }
 
-extension ScannerDomain.Environment {
+extension ScannerDomain {
     func checkForTaskDuplicatesInStore(_ scannedTasks: [ScannedErxTask]) -> Effect<ScannerDomain.Action, Never> {
         let findPublishers: [AnyPublisher<ScannedErxTask?, Never>] = scannedTasks.map { scannedTask in
             self.repository.loadLocal(by: scannedTask.id, accessCode: scannedTask.accessCode)
@@ -179,9 +197,9 @@ extension ScannerDomain.Environment {
             .map { optionalTasks in
                 let tasks = optionalTasks.compactMap { $0 }
                 if tasks.isEmpty {
-                    return .analyseReceived(.error(.storeDuplicate))
+                    return .response(.analyseReceived(.error(.storeDuplicate)))
                 } else {
-                    return .analyseReceived(.value(tasks))
+                    return .response(.analyseReceived(.value(tasks)))
                 }
             }
             .receive(on: scheduler.main)
@@ -201,7 +219,7 @@ extension Sequence where Element == ScannedErxTask {
                 authoredOn: authoredOn,
                 author: L10n.scnTxtAuthor.text,
                 source: .scanner,
-                medication: ErxTask.Medication(name: L10n.scnTxtMedication(String(prescriptionCount)).text)
+                medication: ErxMedication(name: L10n.scnTxtMedication(String(prescriptionCount)).text)
             )
             tasks.append(task)
             prescriptionCount += 1
@@ -213,20 +231,14 @@ extension Sequence where Element == ScannedErxTask {
 
 extension ScannerDomain {
     enum Dummies {
-        static func store(with state: State) -> Store {
+        static let store = Store(initialState: Dummies.state,
+                                 reducer: ScannerDomain())
+
+        static func store(with state: State) -> StoreOf<ScannerDomain> {
             Store(initialState: state,
-                  reducer: domainReducer,
-                  environment: Dummies.environment)
+                  reducer: ScannerDomain())
         }
 
-        static let store = Store(initialState: Dummies.state,
-                                 reducer: domainReducer,
-                                 environment: Dummies.environment)
-
         static let state = State()
-
-        static let environment = Environment(repository: DummySessionContainer().erxTaskRepository,
-                                             dateFormatter: globals.fhirDateFormatter,
-                                             scheduler: Schedulers())
     }
 }

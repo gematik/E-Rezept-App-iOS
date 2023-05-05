@@ -17,43 +17,17 @@
 //
 
 import ComposableArchitecture
+import eRpKit
 
 extension MainDomain {
     enum Dummies {
         static let store = Store(
             initialState: Dummies.state,
-            reducer: reducer,
-            environment: Dummies.environment
+            reducer: MainDomain()
         )
         static let state = State(
             prescriptionListState: PrescriptionListDomain.Dummies.state,
             horizontalProfileSelectionState: HorizontalProfileSelectionDomain.Dummies.state
-        )
-
-        static func storeFor(_ state: State) -> Store {
-            Store(
-                initialState: state,
-                reducer: domainReducer,
-                environment: Dummies.environment
-            )
-        }
-
-        static let environment = Environment(
-            router: DummyRouter(),
-            userSessionContainer: DummyUserSessionContainer(),
-            userSession: DummySessionContainer(),
-            appSecurityManager: DemoAppSecurityPasswordManager(),
-            serviceLocator: ServiceLocator(),
-            accessibilityAnnouncementReceiver: { _ in },
-            erxTaskRepository: DummySessionContainer().erxTaskRepository,
-            schedulers: Schedulers(),
-            fhirDateFormatter: globals.fhirDateFormatter,
-            userProfileService: DummyUserProfileService(),
-            secureDataWiper: DummyProfileSecureDataWiper(),
-            signatureProvider: DummySecureEnclaveSignatureProvider(),
-            userSessionProvider: DummyUserSessionProvider(),
-            userDataStore: DemoUserDefaultsStore(),
-            tracker: DummyTracker()
         )
     }
 }

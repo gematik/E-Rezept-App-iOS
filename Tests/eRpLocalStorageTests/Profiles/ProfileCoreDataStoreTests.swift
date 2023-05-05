@@ -64,10 +64,14 @@ final class ProfileCoreDataStoreTests: XCTestCase {
         return factory
     }
 
+    let foregroundQueue: AnySchedulerOf<DispatchQueue> = .immediate
+    let backgroundQueue: AnySchedulerOf<DispatchQueue> = .immediate
+
     private func loadProfileCoreDataStore(for _: UUID? = nil) -> ProfileCoreDataStore {
         ProfileCoreDataStore(
             coreDataControllerFactory: loadFactory(),
-            backgroundQueue: AnyScheduler.main
+            foregroundQueue: foregroundQueue,
+            backgroundQueue: backgroundQueue
         )
     }
 
@@ -75,7 +79,8 @@ final class ProfileCoreDataStoreTests: XCTestCase {
         ErxTaskCoreDataStore(
             profileId: profileId,
             coreDataControllerFactory: loadFactory(),
-            backgroundQueue: AnyScheduler.main
+            foregroundQueue: foregroundQueue,
+            backgroundQueue: backgroundQueue
         )
     }
 
@@ -83,8 +88,7 @@ final class ProfileCoreDataStoreTests: XCTestCase {
         Profile(
             name: "Karl",
             identifier: UUID(),
-            color: .grey,
-            emoji: "🤖"
+            color: .grey
         )
     }()
 
@@ -110,7 +114,7 @@ final class ProfileCoreDataStoreTests: XCTestCase {
             insurance: "Random BKK",
             insuranceId: "k1234",
             color: .grey,
-            emoji: "🤖",
+            image: .boyWithCard,
             lastAuthenticated: Date(),
             erxTasks: [ErxTask(identifier: "id1", status: .ready, accessCode: "accessCode1"),
                        ErxTask(identifier: "id2", status: .ready, accessCode: "accessCode2")]
@@ -165,7 +169,7 @@ final class ProfileCoreDataStoreTests: XCTestCase {
             })
 
         expect(receivedCompletions.count) == 0
-        expect(receivedListAllProfileValues.count).toEventually(equal(1))
+        expect(receivedListAllProfileValues.count).to(equal(1))
         // then two profiles should be received (without saving erxtTasks and erxAuditEvents)
         expect(receivedListAllProfileValues[0].count) == 2
         let receivedProfiles = receivedListAllProfileValues[0]
@@ -178,7 +182,7 @@ final class ProfileCoreDataStoreTests: XCTestCase {
                                      insurance: profileWithTasks.insurance,
                                      insuranceId: profileWithTasks.insuranceId,
                                      color: profileWithTasks.color,
-                                     emoji: profileWithTasks.emoji,
+                                     image: profileWithTasks.image,
                                      lastAuthenticated: profileWithTasks.lastAuthenticated,
                                      erxTasks: [])
         expect(receivedProfiles).to(contain(expectedResult))
@@ -205,8 +209,8 @@ final class ProfileCoreDataStoreTests: XCTestCase {
                 receivedSaveResults.append(result)
             })
 
-        expect(receivedSaveResults.count).toEventually(equal(0))
-        expect(receivedSaveCompletions.count).toEventually(equal(1))
+        expect(receivedSaveResults.count).to(equal(0))
+        expect(receivedSaveCompletions.count).to(equal(1))
         expect(receivedSaveCompletions.first) ==
             .failure(LocalStoreError.initialization(error: factory.loadCoreDataControllerThrowableError!))
 
@@ -218,7 +222,6 @@ final class ProfileCoreDataStoreTests: XCTestCase {
         // given two saved profiles in store
         let heinz = Profile(name: "Heinz",
                             insuranceId: "1234",
-                            emoji: "🤖",
                             lastAuthenticated: Date())
         let dieter = Profile(name: "Dieter", lastAuthenticated: Date().addingTimeInterval(1000))
         try store.add(profiles: [heinz, dieter])
@@ -235,7 +238,7 @@ final class ProfileCoreDataStoreTests: XCTestCase {
             })
 
         expect(receivedCompletions.count) == 0
-        expect(receivedListAllProfileValues.count).toEventually(equal(1))
+        expect(receivedListAllProfileValues.count).to(equal(1))
         // then two profiles should be received
         expect(receivedListAllProfileValues[0].count) == 2
         let receivedProfiles = receivedListAllProfileValues[0]
@@ -273,7 +276,7 @@ final class ProfileCoreDataStoreTests: XCTestCase {
             })
 
         // then there should be only one in store with the updated values
-        expect(receivedListAllProfileValues.count).toEventually(equal(1))
+        expect(receivedListAllProfileValues.count).to(equal(1))
         expect(receivedListAllProfileValues[0].count) == 1
         let result = receivedListAllProfileValues[0].first
         expect(result?.identifier) == updatedProfile.identifier
@@ -306,9 +309,9 @@ final class ProfileCoreDataStoreTests: XCTestCase {
             }, receiveValue: { result in
                 receivedDeleteResults.append(result)
             })
-        expect(receivedDeleteResults.count).toEventually(equal(1))
+        expect(receivedDeleteResults.count).to(equal(1))
         expect(receivedDeleteResults.first).to(beTrue())
-        expect(receivedDeleteCompletions.count).toEventually(equal(1))
+        expect(receivedDeleteCompletions.count).to(equal(1))
         expect(receivedDeleteCompletions.first) == .finished
 
         // then
@@ -320,7 +323,7 @@ final class ProfileCoreDataStoreTests: XCTestCase {
                 receivedListAllProfileValues.append(profiles)
             })
 
-        expect(receivedListAllProfileValues.count).toEventually(equal(1))
+        expect(receivedListAllProfileValues.count).to(equal(1))
         // there should be no profile left in store
         expect(receivedListAllProfileValues.first?.count) == 0
 
@@ -332,7 +335,7 @@ final class ProfileCoreDataStoreTests: XCTestCase {
                 receivedListAllErxTasksValues.append(erxTasks)
             })
 
-        expect(receivedListAllErxTasksValues.count).toEventually(equal(1))
+        expect(receivedListAllErxTasksValues.count).to(equal(1))
         // and no erxTasks
         expect(receivedListAllErxTasksValues.first?.count) == 0
 
@@ -344,7 +347,7 @@ final class ProfileCoreDataStoreTests: XCTestCase {
                 receivedListAllAuditEventsValues.append(erxAuditEvents)
             })
 
-        expect(receivedListAllAuditEventsValues.count).toEventually(equal(1))
+        expect(receivedListAllAuditEventsValues.count).to(equal(1))
         // and no erxAuditEvents
         expect(receivedListAllAuditEventsValues.first?.count) == 0
     }
@@ -365,7 +368,7 @@ final class ProfileCoreDataStoreTests: XCTestCase {
             })
 
         // then it should be the one we expect
-        expect(receivedFetchResult).toEventually(equal(profileToFetch))
+        expect(receivedFetchResult).to(equal(profileToFetch))
 
         cancellable.cancel()
     }
@@ -384,7 +387,7 @@ final class ProfileCoreDataStoreTests: XCTestCase {
             })
 
         // then it should return none
-        expect(receivedNoResult).toEventually(beTrue())
+        expect(receivedNoResult).to(beTrue())
 
         cancellable.cancel()
     }
@@ -407,7 +410,7 @@ final class ProfileCoreDataStoreTests: XCTestCase {
             receivedUpdateValues.append(result)
         })
 
-        expect(receivedUpdateValues.count).toEventually(equal(1))
+        expect(receivedUpdateValues.count).to(equal(1))
 
         var receivedListAllProfileValues = [[Profile]]()
         // we observe all store changes
@@ -419,7 +422,7 @@ final class ProfileCoreDataStoreTests: XCTestCase {
             })
 
         // then
-        expect(receivedListAllProfileValues.count).toEventually(equal(1))
+        expect(receivedListAllProfileValues.count).to(equal(1))
         expect(receivedListAllProfileValues.first?.count) == 1
         expect(receivedListAllProfileValues.first?.first) == expectedResult
 
@@ -440,10 +443,10 @@ final class ProfileCoreDataStoreTests: XCTestCase {
             receivedUpdateValues.append(result)
         })
 
-        expect(receivedCompletions.count).toEventually(equal(1))
+        expect(receivedCompletions.count).to(equal(1))
         let expectedError = LocalStoreError.write(error: ProfileCoreDataStore.Error.noMatchingEntity)
         expect(receivedCompletions.first) == .failure(expectedError)
-        expect(receivedUpdateValues.count).toEventually(equal(0))
+        expect(receivedUpdateValues.count).to(equal(0))
 
         cancellable.cancel()
     }
@@ -466,7 +469,7 @@ final class ProfileCoreDataStoreTests: XCTestCase {
                 receivedListAllProfileValues.append(profiles)
             })
         expect(receivedCompletions.count) == 0
-        expect(receivedListAllProfileValues.count).toEventually(equal(1))
+        expect(receivedListAllProfileValues.count).to(equal(1))
         // then the stored profile with tasks and auditEvents should be returned
         expect(receivedListAllProfileValues.first?.count) == 1
         guard let profile = receivedListAllProfileValues.first?.first else {
@@ -495,9 +498,9 @@ extension ProfileCoreDataStore {
                 receivedSaveResults.append(result)
             })
 
-        expect(receivedSaveResults.count).toEventually(equal(1))
+        expect(receivedSaveResults.count).to(equal(1))
         expect(receivedSaveResults.last).to(beTrue())
-        expect(receivedSaveCompletions.count).toEventually(equal(1))
+        expect(receivedSaveCompletions.count).to(equal(1))
         expect(receivedSaveCompletions.first) == .finished
 
         cancellable.cancel()

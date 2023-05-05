@@ -1,0 +1,73 @@
+// sourcery:file:eRpApp/Generated/DependencyKey+Unimplemented
+
+import AVS
+import Combine
+import CombineSchedulers
+import CoreData
+import LocalAuthentication
+import eRpKit
+import eRpLocalStorage
+import eRpRemoteStorage
+import FHIRClient
+import HTTPClient
+import IDP
+import OpenSSL
+import Pharmacy
+import TrustStore
+import VAUClient
+import UIKit
+import XCTestDynamicOverlay
+import IdentifiedCollections
+
+{% macro unimplementedOptionalVariableStub variable %}
+{% typed variable as Variable %}
+    var {{ variable.name }}: {{ variable.typeName }}
+{% endmacro %}
+
+{% macro unimplementedNonOptionalArrayOrDictionaryVariableStub variable %}
+{% typed variable as Variable %}
+    var {{ variable.name }}: {{ variable.typeName }} = {% if variable.isArray %}[]{% elif variable.isDictionary %}[:]{% endif %}
+{% endmacro %}
+
+{% macro unimplementedNonOptionalVariableStub variable %}
+    {% typed variable as Variable %}
+
+    var {{ variable.name }}: {{ variable.typeName }} {
+        get { fatalError("") }
+        set(value) { fatalError("") }
+    }
+{% endmacro %}
+
+{% macro unimplementedNonOptionalMethodStub method %}
+    {% typed method as Method %}
+    func {{ method.name }}{{ ' throws' if method.throws }} -> {{ method.actualReturnTypeName }} {
+        fatalError("{{ method.selectorName }} has not been implemented")
+    }
+{% endmacro %}
+
+
+{% macro unimplementedStubsForProtocol type %}
+{% typed type as Type  %}
+{% if liveValue.type.based.AnyObject %}class{% else %}struct{% endif %} Unimplemented{{ type.name }}: {{ type.name }} {
+    init() {}
+    
+{% for variable in type.variables where variable.name != "liveValue"%}{% if variable.name != "testValue" %}{% if variable.name != "previewValue" %}
+        {% if variable.isOptional %}{% call unimplementedOptionalVariableStub variable %}{% elif variable.isArray or variable.isDictionary %}{% call unimplementedNonOptionalArrayOrDictionaryVariableStub variable %}{% else %}{% call unimplementedNonOptionalVariableStub variable %}{% endif %}
+{% endif %}{% endif %}{% endfor %}
+
+{% for method in type.allMethods|!initializer %}
+    {% call unimplementedNonOptionalMethodStub method %}
+{% endfor %}
+}
+{% endmacro %}
+
+{% for type in types.based.DependencyKey %}
+{% for liveValue in type.staticVariables where liveValue.name == "liveValue"%}
+{% if liveValue.type.kind == "protocol" %}
+{% call unimplementedStubsForProtocol liveValue.type %}
+{% endif %}
+{% endfor %}
+{% endfor %}
+
+
+// sourcery:end

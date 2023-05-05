@@ -16,7 +16,7 @@
 # 
 #
 
-xcversion(version: ENV["FL_XCODE_VERSION"] || "14.0")
+xcversion(version: ENV["FL_XCODE_VERSION"] || "14.2")
 
 fastlane_version "2.187.0"
 
@@ -287,7 +287,7 @@ desc "Build and test (scan) the project for macOS"
 desc "The lane to run by ci on every commit."
 desc ""
 desc "###Example:"
-desc "```\nfastlane build_mac mac_schemes:ProjectScheme mac_sdk:\"macos10.14\" mac_destination:\"platform=macOS,arch=x86_64\" configuration:Release --env osx\n```"
+desc "```\nfastlane build_mac mac_schemes:ProjectScheme mac_sdk:\"macos11\" mac_destination:\"platform=macOS,arch=x86_64\" configuration:Release --env osx\n```"
 desc "###Options"
 desc " * **`project`**: The path to the Xcode project file. (`G_PROJECT`)"
 desc " * **`schemes`**: The (shared) schemes to build for the mac build. If only one Scheme exists you can omit this and specify a scheme in a Scanfile (`G_MAC_SCHEMES`)"
@@ -515,7 +515,7 @@ lane :generate_documentation do |options|
   sh "mkdir -p ../build/docs"
 
   for scheme in schemes
-    sh "cd .. && mint run sourcekitten doc -- -project eRp-App.xcodeproj -scheme #{scheme} > build/docs/#{scheme}.json; cd -"
+    sh "cd .. && mint run -s sourcekitten doc -- -project eRp-App.xcodeproj -scheme #{scheme} > build/docs/#{scheme}.json; cd -"
   end
 
   version = sh 'cd .. && grep -A 1 -R CFBundleShortVersionString ./Sources/eRpApp/Resources/Info.plist | grep "<string>" | sed -E "s/.*<string>(.*)<\\/string>/\\1/g"; cd - > /dev/null'.strip

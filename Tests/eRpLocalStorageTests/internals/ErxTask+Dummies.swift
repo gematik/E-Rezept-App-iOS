@@ -21,7 +21,7 @@ import Foundation
 
 extension ErxTask {
     enum Dummies {
-        static var demoPatientLudger = ErxTask.Patient(
+        static var demoPatientLudger = ErxPatient(
             name: "Ludger Königsstein",
             address: "Musterstr. 1 \n10623 Berlin",
             birthDate: "22.6.1935",
@@ -31,7 +31,7 @@ extension ErxTask {
             insuranceId: "A123456789"
         )
 
-        static var demoPatientAnna = ErxTask.Patient(
+        static var demoPatientAnna = ErxPatient(
             name: "Anna Vetter",
             address: "Benzelratherstr. 29 \nFrechen",
             birthDate: "12.12.1933",
@@ -41,7 +41,7 @@ extension ErxTask {
             insuranceId: "A234567890"
         )
 
-        static var demoPractitionerStorchhausen = ErxTask.Practitioner(
+        static var demoPractitionerStorchhausen = ErxPractitioner(
             lanr: "123456789",
             name: "Dr. Dr. med. Carsten van Storchhausen",
             qualification: "Allgemeinarzt/Hausarzt",
@@ -49,7 +49,7 @@ extension ErxTask {
             address: "Hinter der Bahn 2\n12345 Berlin"
         )
 
-        static var demoOrganizationStorchhausen = ErxTask.Organization(
+        static var demoOrganizationStorchhausen = ErxOrganization(
             identifier: "987654321",
             name: "Praxis van Storchhausen",
             phone: "555 76543321",
@@ -57,7 +57,7 @@ extension ErxTask {
             address: "Vor der Bahn 6\n54321 Berlin"
         )
 
-        static var demoPractitionerTodgluecklich = ErxTask.Practitioner(
+        static var demoPractitionerTodgluecklich = ErxPractitioner(
             lanr: "234567891",
             name: "Dr. Dr. med. Hans Todglücklich",
             qualification: "Allgemeinarzt/Hausarzt",
@@ -65,7 +65,7 @@ extension ErxTask {
             address: "Am Friedhof 2\n12345 Berlin"
         )
 
-        static var demoOrganizationTodgluecklich = ErxTask.Organization(
+        static var demoOrganizationTodgluecklich = ErxOrganization(
             identifier: "3456789012",
             name: "Praxis Todglücklich",
             phone: "030 123123123",
@@ -73,8 +73,8 @@ extension ErxTask {
             address: "Am Friedhof 2\n54321 Berlin"
         )
 
-        static var demoWorkRelatedAccident = ErxTask.WorkRelatedAccident(
-            mark: nil,
+        static var demoAccidentInfo = AccidentInfo(
+            type: nil,
             workPlaceIdentifier: "1234567890",
             date: "9.4.2021"
         )
@@ -105,18 +105,18 @@ extension ErxTask {
 
         static func erxTask(
             id: String,
-            status: ErxTask.Status = .ready,
+            status: Status = .ready,
             authoredOn: String = FHIRDateFormatter.shared.stringWithLongUTCTimeZone(from: Date()),
-            practitioner: Practitioner = demoPractitionerStorchhausen,
-            patient: Patient = demoPatientAnna,
-            organisation: Organization = demoOrganizationStorchhausen,
-            medication _: ErxTask.Medication = ErxTask.Medication.Dummies.medication1,
-            medicationDispenses: [ErxTask.MedicationDispense] = []
+            practitioner: ErxPractitioner = demoPractitionerStorchhausen,
+            patient: ErxPatient = demoPatientAnna,
+            organisation: ErxOrganization = demoOrganizationStorchhausen,
+            medication _: ErxMedication = ErxMedication.Dummies.medication1,
+            medicationDispenses: [ErxMedicationDispense] = []
         ) -> ErxTask {
             ErxTask(
                 identifier: id,
                 status: status,
-                flowType: ErxTask.FlowType.pharmacyOnly,
+                flowType: FlowType.pharmacyOnly,
                 accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
                 fullUrl: "some/full/url",
                 authoredOn: authoredOn,
@@ -125,17 +125,19 @@ extension ErxTask {
                 acceptedUntil: "2021-06-10T10:55:04+02:00",
                 redeemedOn: nil,
                 author: practitioner.name,
-                dispenseValidityEnd: "2021-06-10T10:55:04+02:00",
-                noctuFeeWaiver: true,
                 prescriptionId: id,
-                substitutionAllowed: !medicationDispenses.isEmpty,
                 source: .server,
-                medication: ErxTask.Medication.Dummies.medication1,
+                medication: ErxMedication.Dummies.medication1,
+                medicationRequest: .init(
+                    substitutionAllowed: !medicationDispenses.isEmpty,
+                    hasEmergencyServiceFee: true,
+                    dispenseValidityEnd: "2021-06-10T10:55:04+02:00",
+                    accidentInfo: demoAccidentInfo
+                ),
                 patient: patient,
                 practitioner: practitioner,
                 organization: organisation,
-                workRelatedAccident: demoWorkRelatedAccident,
-                communications: [ErxTask.Communication.Dummies.communication(
+                communications: [Communication.Dummies.communication(
                     for: id,
                     insuranceId: patient.insuranceId!
                 )],
@@ -149,7 +151,7 @@ extension ErxTask {
             ErxTask(
                 identifier: id,
                 status: .ready,
-                flowType: ErxTask.FlowType(rawValue: String(id.prefix(3))),
+                flowType: FlowType(rawValue: String(id.prefix(3))),
                 accessCode: accessCode,
                 authoredOn: authoredOn,
                 author: NSLocalizedString("scn_txt_author", comment: ""),
@@ -179,69 +181,56 @@ extension ErxTask.Communication {
     }
 }
 
-extension ErxTask.Medication {
+extension ErxMedication {
     enum Dummies {
-        static let medication1: ErxTask.Medication = {
-            ErxTask.Medication(
+        static let medication1: ErxMedication = {
+            ErxMedication(
                 name: "Saflorblüten-Extrakt Pulver Peroral",
                 pzn: "06876512",
-                amount: 10,
+                amount: .init(numerator: .init(value: "10")),
                 dosageForm: "PUL",
                 dose: "N1",
-                dosageInstructions: nil,
-                lot: nil,
-                expiresOn: nil,
                 packaging: nil
             )
         }()
 
-        static let medication2: ErxTask.Medication = {
-            ErxTask.Medication(
+        static let medication2: ErxMedication = {
+            ErxMedication(
                 name: "Yucca filamentosa",
                 pzn: "06876511",
-                amount: 12,
+                amount: .init(numerator: .init(value: "12")),
                 dosageForm: "FDA",
                 dose: "N2",
-                dosageInstructions: nil,
-                lot: nil,
-                expiresOn: nil,
                 packaging: nil
             )
         }()
 
-        static let medication3: ErxTask.Medication = {
-            ErxTask.Medication(
+        static let medication3: ErxMedication = {
+            ErxMedication(
                 name: "Lebenselixir 9000",
                 pzn: "06876513",
-                amount: 1,
+                amount: .init(numerator: .init(value: "1")),
                 dosageForm: "ELI",
                 dose: "KTP",
-                dosageInstructions: nil,
-                lot: nil,
-                expiresOn: nil,
                 packaging: nil
             )
         }()
     }
 }
 
-extension ErxTask.MedicationDispense {
+extension ErxMedicationDispense {
     enum Dummies {
-        static func medicationDispense(for taskId: String, insuranceId: String) -> ErxTask.MedicationDispense {
-            ErxTask.MedicationDispense(
+        static func medicationDispense(for taskId: String, insuranceId: String) -> ErxMedicationDispense {
+            ErxMedicationDispense(
                 identifier: "4567890123",
                 taskId: taskId,
                 insuranceId: insuranceId,
-                pzn: "06876513",
-                name: "Lebenselixir 9000",
-                dose: "N2",
-                dosageForm: "TAB",
-                dosageInstruction: "Not too much",
-                amount: 2.0,
+                dosageInstruction: "1-0-1",
                 telematikId: "12345678",
                 whenHandedOver: "2021-07-20T10:55:04+02:00",
-                lot: nil,
-                expiresOn: nil
+                quantity: .init(value: "17", unit: "St."),
+                noteText: "take good care",
+                medication: ErxMedication.Dummies.medication1
             )
         }
     }

@@ -17,6 +17,7 @@
 //
 
 import CombineSchedulers
+import ComposableArchitecture
 @testable import eRpApp
 import IDP
 @testable import SnapshotTesting
@@ -33,11 +34,7 @@ final class CardWallExtAuthSelectionViewSnapshotTests: XCTestCase {
 
     func store(for state: CardWallExtAuthSelectionDomain.State) -> CardWallExtAuthSelectionDomain.Store {
         .init(initialState: state,
-              reducer: .empty,
-              environment: CardWallExtAuthSelectionDomain.Environment(
-                  idpSession: IDPSessionMock(),
-                  schedulers: Schedulers()
-              ))
+              reducer: EmptyReducer())
     }
 
     func testList() {

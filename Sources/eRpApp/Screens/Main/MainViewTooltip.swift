@@ -43,23 +43,35 @@ enum MainViewTooltip: UInt, TooltipId {
             return L10n.erpTxtTooltipsAddProfile
         }
     }
+
+    var accesssibilityIdentifier: String {
+        switch self {
+        case .scan:
+            return A11y.mainScreen.erxTxtTooltipsScan
+        case .rename:
+            return A11y.mainScreen.erxTxtTooltipsProfileRename
+        case .addProfile:
+            return A11y.mainScreen.erxTxtTooltipsAddProfile
+        }
+    }
 }
 
 struct MainViewTooltipView: View {
-    let text: StringAsset
+    let tooltip: MainViewTooltip
 
     var body: some View {
-        Text(text)
+        Text(tooltip.stringAsset)
             .font(.subheadline)
             .fixedSize(horizontal: false, vertical: true)
             .frame(width: 152, alignment: .leading)
+            .accessibilityIdentifier(tooltip.accesssibilityIdentifier)
     }
 }
 
 extension View {
     func tooltip(tooltip: MainViewTooltip) -> some View {
         self.tooltip(id: tooltip) {
-            MainViewTooltipView(text: tooltip.stringAsset)
+            MainViewTooltipView(tooltip: tooltip)
         }
     }
 }

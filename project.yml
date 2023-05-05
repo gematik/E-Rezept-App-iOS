@@ -5,8 +5,8 @@ options:
   developmentLanguage: en-GB
   useBaseInternationalization: false
   deploymentTarget:
-    macOS: 10.15
-    iOS: 14.0
+    macOS: 11
+    iOS: 15.0
 schemes:
   AllTests_iOS:
     build:
@@ -98,7 +98,7 @@ packages:
     majorVersion: 9.1.0
   ComposableArchitecture:
     url: https://github.com/pointfreeco/swift-composable-architecture
-    majorVersion: 0.47.2
+    majorVersion: 0.49.2
   CasePaths:
     url: https://github.com/pointfreeco/swift-case-paths
     majorVersion: 0.7.0
@@ -234,6 +234,9 @@ targets:
     settings:
       PRODUCT_NAME: eRpLocalStorage
       INFOPLIST_FILE: Sources/eRpLocalStorage/Resources/Info.plist
+      configs:
+        Debug:
+          SWIFT_ACTIVE_COMPILATION_CONDITIONS: DEBUG ENABLE_DEBUG_VIEW
     type: framework
     platform: [iOS,macOS]
     sources:
@@ -242,6 +245,10 @@ targets:
       - sdk: CoreData.framework
       - framework: Carthage/Build/GemCommonsKit.xcframework
       - target: eRpKit_${platform}
+      - target: eRpRemoteStorage_${platform}
+        link: true
+      - package: FHIRModels
+        product: ModelsR4
     scheme:
       testTargets:
         - eRpLocalStorageTests_${platform}
@@ -327,6 +334,7 @@ targets:
     dependencies:
       - package: FHIRModels
         product: ModelsR4
+      - package: CombineSchedulers
       - framework: Carthage/Build/GemCommonsKit.xcframework
     scheme:
       testTargets:

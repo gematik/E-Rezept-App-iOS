@@ -32,10 +32,10 @@ struct SettingsLegalInfoView: View {
     }
 
     struct ViewState: Equatable {
-        let routeTag: SettingsDomain.Route.Tag?
+        let destinationTag: SettingsDomain.Destinations.State.Tag?
 
         init(state: SettingsDomain.State) {
-            routeTag = state.route?.tag
+            destinationTag = state.destination?.tag
         }
     }
 
@@ -46,17 +46,15 @@ struct SettingsLegalInfoView: View {
         }, content: {
             NavigationLink(
                 destination: IfLetStore(
-                    store.scope(
-                        state: (\SettingsDomain.State.route)
-                            .appending(path: /SettingsDomain.Route.legalNotice)
-                            .extract(from:)
+                    store.destinationsScope(
+                        state: /SettingsDomain.Destinations.State.legalNotice
                     )
                 ) { _ in
                     LegalNoticeView()
                 },
-                tag: SettingsDomain.Route.Tag.legalNotice,
+                tag: SettingsDomain.Destinations.State.Tag.legalNotice,
                 selection: viewStore.binding(
-                    get: \.routeTag,
+                    get: \.destinationTag,
                     send: SettingsDomain.Action.setNavigation
                 )
             ) {
@@ -67,17 +65,15 @@ struct SettingsLegalInfoView: View {
 
             NavigationLink(
                 destination: IfLetStore(
-                    store.scope(
-                        state: (\SettingsDomain.State.route)
-                            .appending(path: /SettingsDomain.Route.dataProtection)
-                            .extract(from:)
+                    store.destinationsScope(
+                        state: /SettingsDomain.Destinations.State.dataProtection
                     )
                 ) { _ in
                     DataPrivacyView()
                 },
-                tag: SettingsDomain.Route.Tag.dataProtection,
+                tag: SettingsDomain.Destinations.State.Tag.dataProtection,
                 selection: viewStore.binding(
-                    get: \.routeTag,
+                    get: \.destinationTag,
                     send: SettingsDomain.Action.setNavigation
                 )
             ) {
@@ -88,17 +84,15 @@ struct SettingsLegalInfoView: View {
 
             NavigationLink(
                 destination: IfLetStore(
-                    store.scope(
-                        state: (\SettingsDomain.State.route)
-                            .appending(path: /SettingsDomain.Route.openSourceLicence)
-                            .extract(from:)
+                    store.destinationsScope(
+                        state: /SettingsDomain.Destinations.State.openSourceLicence
                     )
                 ) { _ in
                     FOSSView()
                 },
-                tag: SettingsDomain.Route.Tag.openSourceLicence,
+                tag: SettingsDomain.Destinations.State.Tag.openSourceLicence,
                 selection: viewStore.binding(
-                    get: \.routeTag,
+                    get: \.destinationTag,
                     send: SettingsDomain.Action.setNavigation
                 )
             ) {
@@ -109,17 +103,15 @@ struct SettingsLegalInfoView: View {
 
             NavigationLink(
                 destination: IfLetStore(
-                    store.scope(
-                        state: (\SettingsDomain.State.route)
-                            .appending(path: /SettingsDomain.Route.termsOfUse)
-                            .extract(from:)
+                    store.destinationsScope(
+                        state: /SettingsDomain.Destinations.State.termsOfUse
                     )
                 ) { _ in
                     TermsOfUseView()
                 },
-                tag: SettingsDomain.Route.Tag.termsOfUse,
+                tag: SettingsDomain.Destinations.State.Tag.termsOfUse,
                 selection: viewStore.binding(
-                    get: \.routeTag,
+                    get: \.destinationTag,
                     send: SettingsDomain.Action.setNavigation
                 )
             ) {

@@ -34,7 +34,7 @@ final class RedeemMatrixCodeDomainTests: XCTestCase {
         RedeemMatrixCodeDomain.Action,
         RedeemMatrixCodeDomain.State,
         RedeemMatrixCodeDomain.Action,
-        RedeemMatrixCodeDomain.Environment
+        Void
     >
 
     func testStore() -> TestStore {
@@ -55,14 +55,13 @@ final class RedeemMatrixCodeDomainTests: XCTestCase {
         )
         return TestStore(
             initialState: testState,
-            reducer: RedeemMatrixCodeDomain.reducer,
-            environment: RedeemMatrixCodeDomain.Environment(
-                schedulers: schedulers,
-                matrixCodeGenerator: mockDMCGenerator,
-                taskRepository: mockRepository,
-                fhirDateFormatter: FHIRDateFormatter.shared
-            )
-        )
+            reducer: RedeemMatrixCodeDomain()
+        ) { dependencies in
+            dependencies.schedulers = schedulers
+            dependencies.erxTaskMatrixCodeGenerator = mockDMCGenerator
+            dependencies.erxTaskRepository = mockRepository
+            dependencies.fhirDateFormatter = FHIRDateFormatter.shared
+        }
     }
 
     /// Use DMC publisher to generate an exact same image
@@ -92,9 +91,9 @@ final class RedeemMatrixCodeDomainTests: XCTestCase {
         // when
         store.send(.loadMatrixCodeImage(screenSize: CGSize(width: 400, height: 800)))
         testScheduler.advance()
-        store.receive(.matrixCodeImageReceived(expected)) { sut in
+        store.receive(.response(.matrixCodeImageReceived(expected))) { sut in
             sut.loadingState = expected
         }
-        store.receive(.redeemedOnSavedReceived(false))
+        store.receive(.response(.redeemedOnSavedReceived(false)))
     }
 }
