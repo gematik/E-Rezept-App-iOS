@@ -21,7 +21,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-           1.4.7
+           1.8.0
  Docs
         </a>
          (100% documented)
@@ -81,6 +81,12 @@
                 <a class="nav-group-task-link" href="../Classes/ErxAuditEventEntity.html">ErxAuditEventEntity</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/ErxChargeItemEntity.html">ErxChargeItemEntity</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/ErxTaskAccidentInfoEntity.html">ErxTaskAccidentInfoEntity</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/ErxTaskCommunicationEntity.html">ErxTaskCommunicationEntity</a>
               </li>
               <li class="nav-group-task">
@@ -90,10 +96,16 @@
                 <a class="nav-group-task-link" href="../Classes/ErxTaskEntity.html">ErxTaskEntity</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/ErxTaskIngredientEntity.html">ErxTaskIngredientEntity</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/ErxTaskMedicationDispenseEntity.html">ErxTaskMedicationDispenseEntity</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/ErxTaskMedicationEntity.html">ErxTaskMedicationEntity</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/ErxTaskMultiplePrescriptionEntity.html">ErxTaskMultiplePrescriptionEntity</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/ErxTaskOrganizationEntity.html">ErxTaskOrganizationEntity</a>
@@ -105,7 +117,10 @@
                 <a class="nav-group-task-link" href="../Classes/ErxTaskPractitionerEntity.html">ErxTaskPractitionerEntity</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Classes/ErxTaskWorkRelatedAccidentEntity.html">ErxTaskWorkRelatedAccidentEntity</a>
+                <a class="nav-group-task-link" href="../Classes/ErxTaskQuantityEntity.html">ErxTaskQuantityEntity</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/ErxTaskRatioEntity.html">ErxTaskRatioEntity</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/LocalStoreFactory.html">LocalStoreFactory</a>
@@ -160,10 +175,19 @@
             <a class="nav-group-name-link" href="../Extensions.html">Extensions</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions/ErxTask.html">ErxTask</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/FileManager.html">FileManager</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/FileManager/ExcludeFileError.html">– ExcludeFileError</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions/NSManagedObjectContext.html">NSManagedObjectContext</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions/NSManagedObjectContext.html#/s:So22NSManagedObjectContextC15eRpLocalStorageE21FetchRequestPublisherV">– FetchRequestPublisher</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/UserDefaults.html">UserDefaults</a>
@@ -571,9 +595,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:6eRpKit13UserDataStoreP17appSecurityOption7Combine12AnyPublisherVySis5NeverOGvp"></a>
+                    <a name="/s:6eRpKit13UserDataStoreP17appSecurityOption7Combine12AnyPublisherVyAA03AppgH0Os5NeverOGvp"></a>
                     <a name="//apple_ref/swift/Property/appSecurityOption" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6eRpKit13UserDataStoreP17appSecurityOption7Combine12AnyPublisherVySis5NeverOGvp">appSecurityOption</a>
+                    <a class="token" href="#/s:6eRpKit13UserDataStoreP17appSecurityOption7Combine12AnyPublisherVyAA03AppgH0Os5NeverOGvp">appSecurityOption</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -587,7 +611,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">appSecurityOption</span><span class="p">:</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">Int</span><span class="p">,</span> <span class="kt">Never</span><span class="o">&gt;</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">appSecurityOption</span><span class="p">:</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">AppSecurityOption</span><span class="p">,</span> <span class="kt">Never</span><span class="o">&gt;</span> <span class="p">{</span> <span class="k">get</span> <span class="p">}</span></code></pre>
 
                         </div>
                       </div>
@@ -597,9 +621,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:6eRpKit13UserDataStoreP3set17appSecurityOptionySi_tF"></a>
+                    <a name="/s:6eRpKit13UserDataStoreP3set17appSecurityOptionyAA03ApphI0O_tF"></a>
                     <a name="//apple_ref/swift/Method/set(appSecurityOption:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6eRpKit13UserDataStoreP3set17appSecurityOptionySi_tF">set(appSecurityOption:<wbr>)</a>
+                    <a class="token" href="#/s:6eRpKit13UserDataStoreP3set17appSecurityOptionyAA03ApphI0O_tF">set(appSecurityOption:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -613,7 +637,7 @@
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">set</span><span class="p">(</span><span class="nv">appSecurityOption</span><span class="p">:</span> <span class="kt">Int</span><span class="p">)</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">set</span><span class="p">(</span><span class="nv">appSecurityOption</span><span class="p">:</span> <span class="kt">AppSecurityOption</span><span class="p">)</span></code></pre>
 
                         </div>
                       </div>
@@ -880,6 +904,32 @@
                     </section>
                   </div>
                 </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:6eRpKit13UserDataStoreP17hideWelcomeDrawerSbvp"></a>
+                    <a name="//apple_ref/swift/Property/hideWelcomeDrawer" class="dashAnchor"></a>
+                    <a class="token" href="#/s:6eRpKit13UserDataStoreP17hideWelcomeDrawerSbvp">hideWelcomeDrawer</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">var</span> <span class="nv">hideWelcomeDrawer</span><span class="p">:</span> <span class="kt">Bool</span> <span class="p">{</span> <span class="k">get</span> <span class="k">set</span> <span class="p">}</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
               </ul>
             </div>
           </div>
@@ -888,8 +938,8 @@
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2022 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2022-10-20)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
+      <p>&copy; 2023 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2023-05-05)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.3</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>
 </html>

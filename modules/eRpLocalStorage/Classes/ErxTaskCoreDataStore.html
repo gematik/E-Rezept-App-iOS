@@ -21,7 +21,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-           1.4.7
+           1.8.0
  Docs
         </a>
          (100% documented)
@@ -81,6 +81,12 @@
                 <a class="nav-group-task-link" href="../Classes/ErxAuditEventEntity.html">ErxAuditEventEntity</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/ErxChargeItemEntity.html">ErxChargeItemEntity</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/ErxTaskAccidentInfoEntity.html">ErxTaskAccidentInfoEntity</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/ErxTaskCommunicationEntity.html">ErxTaskCommunicationEntity</a>
               </li>
               <li class="nav-group-task">
@@ -90,10 +96,16 @@
                 <a class="nav-group-task-link" href="../Classes/ErxTaskEntity.html">ErxTaskEntity</a>
               </li>
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/ErxTaskIngredientEntity.html">ErxTaskIngredientEntity</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/ErxTaskMedicationDispenseEntity.html">ErxTaskMedicationDispenseEntity</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/ErxTaskMedicationEntity.html">ErxTaskMedicationEntity</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/ErxTaskMultiplePrescriptionEntity.html">ErxTaskMultiplePrescriptionEntity</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/ErxTaskOrganizationEntity.html">ErxTaskOrganizationEntity</a>
@@ -105,7 +117,10 @@
                 <a class="nav-group-task-link" href="../Classes/ErxTaskPractitionerEntity.html">ErxTaskPractitionerEntity</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Classes/ErxTaskWorkRelatedAccidentEntity.html">ErxTaskWorkRelatedAccidentEntity</a>
+                <a class="nav-group-task-link" href="../Classes/ErxTaskQuantityEntity.html">ErxTaskQuantityEntity</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Classes/ErxTaskRatioEntity.html">ErxTaskRatioEntity</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Classes/LocalStoreFactory.html">LocalStoreFactory</a>
@@ -160,10 +175,19 @@
             <a class="nav-group-name-link" href="../Extensions.html">Extensions</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions/ErxTask.html">ErxTask</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/FileManager.html">FileManager</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/FileManager/ExcludeFileError.html">– ExcludeFileError</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions/NSManagedObjectContext.html">NSManagedObjectContext</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions/NSManagedObjectContext.html#/s:So22NSManagedObjectContextC15eRpLocalStorageE21FetchRequestPublisherV">– FetchRequestPublisher</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/UserDefaults.html">UserDefaults</a>
@@ -708,6 +732,181 @@ other queue (Default: DispatchQueue.main)</p>
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:15eRpLocalStorage20ErxTaskCoreDataStoreC15fetchChargeItem2by10fullDetail7Combine12AnyPublisherVy01eA3Kit0djK0VSgAJ0bH5ErrorOGSS_SbtF"></a>
+                    <a name="//apple_ref/swift/Method/fetchChargeItem(by:fullDetail:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:15eRpLocalStorage20ErxTaskCoreDataStoreC15fetchChargeItem2by10fullDetail7Combine12AnyPublisherVy01eA3Kit0djK0VSgAJ0bH5ErrorOGSS_SbtF">fetchChargeItem(by:<wbr>fullDetail:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Fetch the ErxChargeItem by its id when required by <code>Self</code></p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">fetchChargeItem</span><span class="p">(</span>
+    <span class="n">by</span> <span class="nv">chargeItemID</span><span class="p">:</span> <span class="kt">ErxChargeItem</span><span class="o">.</span><span class="kt">ID</span><span class="p">,</span>
+    <span class="nv">fullDetail</span><span class="p">:</span> <span class="kt">Bool</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">ErxChargeItem</span><span class="p">?,</span> <span class="kt">LocalStoreError</span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>id</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>the ErxChargeItem ID</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>fullDetail</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>if set to true, fetches all available information
+otherwise only a minimal version</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>Publisher for the fetch request</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:15eRpLocalStorage20ErxTaskCoreDataStoreC34fetchLatestTimestampForChargeItems7Combine12AnyPublisherVySSSg01eA3Kit0bH5ErrorOGyF"></a>
+                    <a name="//apple_ref/swift/Method/fetchLatestTimestampForChargeItems()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:15eRpLocalStorage20ErxTaskCoreDataStoreC34fetchLatestTimestampForChargeItems7Combine12AnyPublisherVySSSg01eA3Kit0bH5ErrorOGyF">fetchLatestTimestampForChargeItems()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Fetch the most recent <code>enteredDate</code> of all <code>ChargeItem</code>s</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">fetchLatestTimestampForChargeItems</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">String</span><span class="p">?,</span> <span class="kt">LocalStoreError</span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:15eRpLocalStorage20ErxTaskCoreDataStoreC18listAllChargeItems7Combine12AnyPublisherVySay01eA3Kit0dK4ItemVGAH0bH5ErrorOGyF"></a>
+                    <a name="//apple_ref/swift/Method/listAllChargeItems()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:15eRpLocalStorage20ErxTaskCoreDataStoreC18listAllChargeItems7Combine12AnyPublisherVySay01eA3Kit0dK4ItemVGAH0bH5ErrorOGyF">listAllChargeItems()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>List all charge items with the given local contained in the store</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">listAllChargeItems</span><span class="p">(</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="p">[</span><span class="kt">ErxChargeItem</span><span class="p">],</span> <span class="kt">LocalStoreError</span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>Array of the fetched charge items or error</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:15eRpLocalStorage20ErxTaskCoreDataStoreC4save11chargeItems7Combine12AnyPublisherVySb01eA3Kit0bH5ErrorOGSayAI0D10ChargeItemVG_tF"></a>
+                    <a name="//apple_ref/swift/Method/save(chargeItems:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:15eRpLocalStorage20ErxTaskCoreDataStoreC4save11chargeItems7Combine12AnyPublisherVySb01eA3Kit0bH5ErrorOGSayAI0D10ChargeItemVG_tF">save(chargeItems:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Creates or updates the passed sequence of <code>ErxChargeItem</code>s</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">save</span><span class="p">(</span><span class="nv">chargeItems</span><span class="p">:</span> <span class="p">[</span><span class="kt">ErxChargeItem</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">Bool</span><span class="p">,</span> <span class="kt">LocalStoreError</span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>chargeItems</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Array of charge items that should be stored</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p><code>true</code> if save operation was successful</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:15eRpLocalStorage20ErxTaskCoreDataStoreC05fetchE02by10accessCode7Combine12AnyPublisherVy01eA3Kit0dE0VSgAJ0bH5ErrorOGSS_SSSgtF"></a>
                     <a name="//apple_ref/swift/Method/fetchTask(by:accessCode:)" class="dashAnchor"></a>
                     <a class="token" href="#/s:15eRpLocalStorage20ErxTaskCoreDataStoreC05fetchE02by10accessCode7Combine12AnyPublisherVy01eA3Kit0dE0VSgAJ0bH5ErrorOGSS_SSSgtF">fetchTask(by:<wbr>accessCode:<wbr>)</a>
@@ -941,9 +1140,9 @@ otherwise.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:15eRpLocalStorage20ErxTaskCoreDataStoreC26listAllMedicationDispenses7Combine12AnyPublisherVySay01eA3Kit0dE0V0K8DispenseVGAH0bH5ErrorOGyF"></a>
+                    <a name="/s:15eRpLocalStorage20ErxTaskCoreDataStoreC26listAllMedicationDispenses7Combine12AnyPublisherVySay01eA3Kit0dK8DispenseVGAH0bH5ErrorOGyF"></a>
                     <a name="//apple_ref/swift/Method/listAllMedicationDispenses()" class="dashAnchor"></a>
-                    <a class="token" href="#/s:15eRpLocalStorage20ErxTaskCoreDataStoreC26listAllMedicationDispenses7Combine12AnyPublisherVySay01eA3Kit0dE0V0K8DispenseVGAH0bH5ErrorOGyF">listAllMedicationDispenses()</a>
+                    <a class="token" href="#/s:15eRpLocalStorage20ErxTaskCoreDataStoreC26listAllMedicationDispenses7Combine12AnyPublisherVySay01eA3Kit0dK8DispenseVGAH0bH5ErrorOGyF">listAllMedicationDispenses()</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -958,7 +1157,7 @@ otherwise.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">listAllMedicationDispenses</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="p">[</span><span class="kt">ErxTask</span><span class="o">.</span><span class="kt">MedicationDispense</span><span class="p">],</span> <span class="kt">LocalStoreError</span><span class="o">&gt;</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">listAllMedicationDispenses</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="p">[</span><span class="kt">ErxMedicationDispense</span><span class="p">],</span> <span class="kt">LocalStoreError</span><span class="o">&gt;</span></code></pre>
 
                         </div>
                       </div>
@@ -968,9 +1167,9 @@ otherwise.</p>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:15eRpLocalStorage20ErxTaskCoreDataStoreC4save19medicationDispenses7Combine12AnyPublisherVySb01eA3Kit0bH5ErrorOGSayAI0dE0V18MedicationDispenseVG_tF"></a>
+                    <a name="/s:15eRpLocalStorage20ErxTaskCoreDataStoreC4save19medicationDispenses7Combine12AnyPublisherVySb01eA3Kit0bH5ErrorOGSayAI0D18MedicationDispenseVG_tF"></a>
                     <a name="//apple_ref/swift/Method/save(medicationDispenses:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:15eRpLocalStorage20ErxTaskCoreDataStoreC4save19medicationDispenses7Combine12AnyPublisherVySb01eA3Kit0bH5ErrorOGSayAI0dE0V18MedicationDispenseVG_tF">save(medicationDispenses:<wbr>)</a>
+                    <a class="token" href="#/s:15eRpLocalStorage20ErxTaskCoreDataStoreC4save19medicationDispenses7Combine12AnyPublisherVySb01eA3Kit0bH5ErrorOGSayAI0D18MedicationDispenseVG_tF">save(medicationDispenses:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -985,7 +1184,7 @@ otherwise.</p>
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">save</span><span class="p">(</span><span class="nv">medicationDispenses</span><span class="p">:</span> <span class="p">[</span><span class="kt">ErxTask</span><span class="o">.</span><span class="kt">MedicationDispense</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">Bool</span><span class="p">,</span> <span class="kt">LocalStoreError</span><span class="o">&gt;</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">save</span><span class="p">(</span><span class="nv">medicationDispenses</span><span class="p">:</span> <span class="p">[</span><span class="kt">ErxMedicationDispense</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">Bool</span><span class="p">,</span> <span class="kt">LocalStoreError</span><span class="o">&gt;</span></code></pre>
 
                         </div>
                       </div>
@@ -1050,8 +1249,8 @@ otherwise.</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2022 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2022-10-20)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
+      <p>&copy; 2023 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2023-05-05)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.3</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>
 </html>

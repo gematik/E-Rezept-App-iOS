@@ -21,21 +21,21 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../../index.html">
-           1.2.7
+           1.8.0
  Docs
         </a>
-         (87% documented)
+         (100% documented)
       </p>
     
-      <p class="header-col--secondary">
+      <div class="header-col--secondary">
         <form role="search" action="../../search.json">
           <input type="text" placeholder="Search documentation" data-typeahead>
         </form>
-      </p>
+      </div>
     
         <p class="header-col header-col--secondary">
           <a class="header-link" href="https://github.com/gematik/E-Rezept-App-iOS">
-            <img class="header-icon" src="../../img/gh.png"/>
+            <img class="header-icon" src="../../img/gh.png" alt="GitHub"/>
             View on GitHub
           </a>
         </p>
@@ -44,7 +44,7 @@
 
     <p class="breadcrumbs">
       <a class="breadcrumb" href="../../index.html"> Reference</a>
-      <img class="carat" src="../../img/carat.png" />
+      <img class="carat" src="../../img/carat.png" alt=""/>
       Bundle Extension Reference
     </p>
 
@@ -72,6 +72,9 @@
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../../Enums/ErxTaskFHIROperation.html">ErxTaskFHIROperation</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Enums/RemoteStorageBundleParsingError.html">RemoteStorageBundleParsingError</a>
               </li>
             </ul>
           </li>
@@ -114,9 +117,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:8ModelsR46BundleC16eRpRemoteStorageE5ErrorO"></a>
-                    <a name="//apple_ref/swift/Enum/Error" class="dashAnchor"></a>
-                    <a class="token" href="#/s:8ModelsR46BundleC16eRpRemoteStorageE5ErrorO">Error</a>
+                    <a name="/s:8ModelsR46BundleC16eRpRemoteStorageE21parseErxChargeItemIDsSaySSGyKF"></a>
+                    <a name="//apple_ref/swift/Method/parseErxChargeItemIDs()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:8ModelsR46BundleC16eRpRemoteStorageE21parseErxChargeItemIDsSaySSGyKF">parseErxChargeItemIDs()</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -124,15 +127,89 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Undocumented</p>
+                        <p>Parse and extract all found ErxChargeItem IDs from <code>Self</code></p>
+<div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <code>ModelsR4.Bundle.Error</code>
 
-                        <a href="../../Extensions/ModelsR4/Bundle/Error.html" class="slightly-smaller">See more</a>
+</div>
+
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
                         <div class="language">
                           <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">Error</span> <span class="p">:</span> <span class="kt">Swift</span><span class="o">.</span><span class="kt">Error</span></code></pre>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">parseErxChargeItemIDs</span><span class="p">()</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="p">[</span><span class="kt">String</span><span class="p">]</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>Array with all found charge item ID&rsquo;s</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:8ModelsR46BundleC16eRpRemoteStorageE18parseErxChargeItem2id4with01eD3Kit0hiJ0VSgSS_10Foundation4DataVtKF"></a>
+                    <a name="//apple_ref/swift/Method/parseErxChargeItem(id:with:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:8ModelsR46BundleC16eRpRemoteStorageE18parseErxChargeItem2id4with01eD3Kit0hiJ0VSgSS_10Foundation4DataVtKF">parseErxChargeItem(id:<wbr>with:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Parse and extract a ErxChargeItem from <code>Self</code></p>
+<div class="aside aside-throws">
+    <p class="aside-title">Throws</p>
+    <code>ModelsR4.Bundle.Error</code>
+
+</div>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">parseErxChargeItem</span><span class="p">(</span> <span class="c1">// swiftlint:disable:this function_body_length</span>
+    <span class="nv">id</span><span class="p">:</span> <span class="kt">ErxChargeItem</span><span class="o">.</span><span class="kt">ID</span><span class="p">,</span>
+    <span class="n">with</span> <span class="nv">fhirData</span><span class="p">:</span> <span class="kt">Data</span>
+<span class="p">)</span> <span class="k">throws</span> <span class="o">-&gt;</span> <span class="kt">ErxChargeItem</span><span class="p">?</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>A ErxChargeItem or nil</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:8ModelsR46BundleC16eRpRemoteStorageE18parseErxMedication01eD3Kit0hI0VyF"></a>
+                    <a name="//apple_ref/swift/Method/parseErxMedication()" class="dashAnchor"></a>
+                    <a class="token" href="#/s:8ModelsR46BundleC16eRpRemoteStorageE18parseErxMedication01eD3Kit0hI0VyF">parseErxMedication()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Creates an <code>ErxTask.Medication</code> from the ModelsR4.Medication</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">parseErxMedication</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">ErxMedication</span></code></pre>
 
                         </div>
                       </div>
@@ -147,9 +224,8 @@
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2022 <a class="link" href="https://www.gematik.de" target="_blank" rel="external">gematik GmbH</a>. All rights reserved. (Last updated: 2022-04-19)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external">jazzy ♪♫ v0.13.5</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external">Realm</a> project.</p>
+      <p>&copy; 2023 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2023-05-05)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.3</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>
-</div>
 </html>
