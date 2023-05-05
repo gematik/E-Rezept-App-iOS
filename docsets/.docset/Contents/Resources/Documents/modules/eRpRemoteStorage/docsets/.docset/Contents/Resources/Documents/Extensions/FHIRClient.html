@@ -21,10 +21,10 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-           1.4.7
+           1.8.0
  Docs
         </a>
-         (100% documented)
+         (0% documented)
       </p>
     
       <div class="header-col--secondary">
@@ -84,6 +84,12 @@
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Extensions/FHIRClient.html">FHIRClient</a>
               </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions/ModelsR4.html">ModelsR4</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Extensions/ModelsR4/Bundle.html">– Bundle</a>
+              </li>
             </ul>
           </li>
         </ul>
@@ -93,13 +99,6 @@
         <section class="section">
           <div class="section-content top-matter">
             <h1>FHIRClient</h1>
-              <div class="declaration">
-                <div class="language">
-                  
-                  <pre class="highlight swift"><code><span class="kd">extension</span> <span class="kt">FHIRClient</span></code></pre>
-
-                </div>
-              </div>
             
           </div>
         </section>
@@ -111,9 +110,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10FHIRClientAAC16eRpRemoteStorageE9fetchTask2by10accessCode7Combine12AnyPublisherVy01eB3Kit03ErxF0VSgAB5ErrorOGSS_SSSgtF"></a>
+                    <a name="/"></a>
                     <a name="//apple_ref/swift/Method/fetchTask(by:accessCode:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10FHIRClientAAC16eRpRemoteStorageE9fetchTask2by10accessCode7Combine12AnyPublisherVy01eB3Kit03ErxF0VSgAB5ErrorOGSS_SSSgtF">fetchTask(by:<wbr>accessCode:<wbr>)</a>
+                    <a class="token" href="#/">fetchTask(by:<wbr>accessCode:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -124,59 +123,15 @@
                         <p>Convenience function for requesting a certain task by ID</p>
 
                       </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">fetchTask</span><span class="p">(</span><span class="n">by</span> <span class="nv">id</span><span class="p">:</span> <span class="kt">ErxTask</span><span class="o">.</span><span class="kt">ID</span><span class="p">,</span>
-                      <span class="nv">accessCode</span><span class="p">:</span> <span class="kt">String</span><span class="p">?)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">ErxTask</span><span class="p">?,</span> <span class="kt">FHIRClient</span><span class="o">.</span><span class="kt">Error</span><span class="o">&gt;</span></code></pre>
-
-                        </div>
-                      </div>
-                      <div>
-                        <h4>Parameters</h4>
-                        <table class="graybox">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>id</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>The ID of the task to be requested</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>accessCode</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>code to access the given <code>id</code> or nil when not required due to (previous|other) authorization</p>
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                      <div>
-                        <h4>Return Value</h4>
-                        <p><code>AnyPublisher</code> that emits the task or nil when not found</p>
-                      </div>
                     </section>
                   </div>
                 </li>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10FHIRClientAAC16eRpRemoteStorageE15fetchAllTaskIDs5after7Combine12AnyPublisherVySaySSGAB5ErrorOGSSSg_tF"></a>
+                    <a name="/"></a>
                     <a name="//apple_ref/swift/Method/fetchAllTaskIDs(after:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10FHIRClientAAC16eRpRemoteStorageE15fetchAllTaskIDs5after7Combine12AnyPublisherVySaySSGAB5ErrorOGSSSg_tF">fetchAllTaskIDs(after:<wbr>)</a>
+                    <a class="token" href="#/">fetchAllTaskIDs(after:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -193,46 +148,15 @@
 </div>
 
                       </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">fetchAllTaskIDs</span><span class="p">(</span><span class="n">after</span> <span class="nv">referenceDate</span><span class="p">:</span> <span class="kt">String</span><span class="p">?)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="p">[</span><span class="kt">String</span><span class="p">],</span> <span class="kt">FHIRClient</span><span class="o">.</span><span class="kt">Error</span><span class="o">&gt;</span></code></pre>
-
-                        </div>
-                      </div>
-                      <div>
-                        <h4>Parameters</h4>
-                        <table class="graybox">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>referenceDate</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>Tasks with modification date greater or equal <code>referenceDate</code> will be fetched</p>
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                      <div>
-                        <h4>Return Value</h4>
-                        <p><code>AnyPublisher</code> that emits the ids for the found  tasks</p>
-                      </div>
                     </section>
                   </div>
                 </li>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10FHIRClientAAC16eRpRemoteStorageE10deleteTask2by10accessCode7Combine12AnyPublisherVySbAB5ErrorOGSS_SSSgtF"></a>
+                    <a name="/"></a>
                     <a name="//apple_ref/swift/Method/deleteTask(by:accessCode:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10FHIRClientAAC16eRpRemoteStorageE10deleteTask2by10accessCode7Combine12AnyPublisherVySbAB5ErrorOGSS_SSSgtF">deleteTask(by:<wbr>accessCode:<wbr>)</a>
+                    <a class="token" href="#/">deleteTask(by:<wbr>accessCode:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -243,59 +167,15 @@
                         <p>Convenience function for deleting a task</p>
 
                       </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">deleteTask</span><span class="p">(</span><span class="n">by</span> <span class="nv">id</span><span class="p">:</span> <span class="kt">ErxTask</span><span class="o">.</span><span class="kt">ID</span><span class="p">,</span>
-                       <span class="nv">accessCode</span><span class="p">:</span> <span class="kt">String</span><span class="p">?)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">Bool</span><span class="p">,</span> <span class="kt">FHIRClient</span><span class="o">.</span><span class="kt">Error</span><span class="o">&gt;</span></code></pre>
-
-                        </div>
-                      </div>
-                      <div>
-                        <h4>Parameters</h4>
-                        <table class="graybox">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>id</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>The ID of the task to be requested</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>accessCode</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>code to access the given <code>id</code> or nil when not required due to (previous|other) authorization</p>
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                      <div>
-                        <h4>Return Value</h4>
-                        <p><code>AnyPublisher</code> that emits the task or nil when not found</p>
-                      </div>
                     </section>
                   </div>
                 </li>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10FHIRClientAAC16eRpRemoteStorageE15fetchAuditEvent2by7Combine12AnyPublisherVy01eB3Kit03ErxfG0VSgAB5ErrorOGSS_tF"></a>
+                    <a name="/"></a>
                     <a name="//apple_ref/swift/Method/fetchAuditEvent(by:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10FHIRClientAAC16eRpRemoteStorageE15fetchAuditEvent2by7Combine12AnyPublisherVy01eB3Kit03ErxfG0VSgAB5ErrorOGSS_tF">fetchAuditEvent(by:<wbr>)</a>
+                    <a class="token" href="#/">fetchAuditEvent(by:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -306,58 +186,15 @@
                         <p>Convenience function for requesting a certain audit event by ID</p>
 
                       </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">fetchAuditEvent</span><span class="p">(</span><span class="n">by</span> <span class="nv">id</span><span class="p">:</span> <span class="kt">ErxAuditEvent</span><span class="o">.</span><span class="kt">ID</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">ErxAuditEvent</span><span class="p">?,</span> <span class="kt">FHIRClient</span><span class="o">.</span><span class="kt">Error</span><span class="o">&gt;</span></code></pre>
-
-                        </div>
-                      </div>
-                      <div>
-                        <h4>Parameters</h4>
-                        <table class="graybox">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>id</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>The ID of the audit event to be requested</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>accessCode</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>code to access the given <code>id</code> or nil when not required due to (previous|other) authorization</p>
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                      <div>
-                        <h4>Return Value</h4>
-                        <p><code>AnyPublisher</code> that emits the audit event or nil when not found</p>
-                      </div>
                     </section>
                   </div>
                 </li>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10FHIRClientAAC16eRpRemoteStorageE19fetchAllAuditEvents5after3for7Combine12AnyPublisherVy01eB3Kit12PagedContentVySayAJ03ErxG5EventVGGAB5ErrorOGSSSg_ATtF"></a>
+                    <a name="/"></a>
                     <a name="//apple_ref/swift/Method/fetchAllAuditEvents(after:for:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10FHIRClientAAC16eRpRemoteStorageE19fetchAllAuditEvents5after3for7Combine12AnyPublisherVy01eB3Kit12PagedContentVySayAJ03ErxG5EventVGGAB5ErrorOGSSSg_ATtF">fetchAllAuditEvents(after:<wbr>for:<wbr>)</a>
+                    <a class="token" href="#/">fetchAllAuditEvents(after:<wbr>for:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -368,63 +205,15 @@
                         <p>Convenience function for requesting audit events</p>
 
                       </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">fetchAllAuditEvents</span><span class="p">(</span>
-    <span class="n">after</span> <span class="nv">referenceDate</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
-    <span class="k">for</span> <span class="nv">locale</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">PagedContent</span><span class="o">&lt;</span><span class="p">[</span><span class="kt">ErxAuditEvent</span><span class="p">]</span><span class="o">&gt;</span><span class="p">,</span> <span class="kt">FHIRClient</span><span class="o">.</span><span class="kt">Error</span><span class="o">&gt;</span></code></pre>
-
-                        </div>
-                      </div>
-                      <div>
-                        <h4>Parameters</h4>
-                        <table class="graybox">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>referenceDate</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>Audit-Events with date greater or equal <code>referenceDate</code> will be fetched.
-          Pass <code>nil</code> for fetching all audit events</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>locale</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>Locale key for which language the audit events will be fetched.
-    Nil if all languages should be fetched</p>
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                      <div>
-                        <h4>Return Value</h4>
-                        <p><code>AnyPublisher</code> that emits the audit events</p>
-                      </div>
                     </section>
                   </div>
                 </li>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10FHIRClientAAC16eRpRemoteStorageE24fetchAuditEventsNextPage2of7Combine12AnyPublisherVy01eB3Kit12PagedContentVySayAI03ErxF5EventVGGAB5ErrorOGAO_tF"></a>
-                    <a name="//apple_ref/swift/Method/fetchAuditEventsNextPage(of:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10FHIRClientAAC16eRpRemoteStorageE24fetchAuditEventsNextPage2of7Combine12AnyPublisherVy01eB3Kit12PagedContentVySayAI03ErxF5EventVGGAB5ErrorOGAO_tF">fetchAuditEventsNextPage(of:<wbr>)</a>
+                    <a name="/"></a>
+                    <a name="//apple_ref/swift/Method/fetchAuditEventsNextPage(of:for:)" class="dashAnchor"></a>
+                    <a class="token" href="#/">fetchAuditEventsNextPage(of:<wbr>for:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -435,47 +224,15 @@
                         <p>Convenience function for requesting audit events</p>
 
                       </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">fetchAuditEventsNextPage</span><span class="p">(</span><span class="n">of</span> <span class="nv">previousPage</span><span class="p">:</span> <span class="kt">PagedContent</span><span class="o">&lt;</span><span class="p">[</span><span class="kt">ErxAuditEvent</span><span class="p">]</span><span class="o">&gt;</span><span class="p">)</span>
-    <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">PagedContent</span><span class="o">&lt;</span><span class="p">[</span><span class="kt">ErxAuditEvent</span><span class="p">]</span><span class="o">&gt;</span><span class="p">,</span> <span class="kt">FHIRClient</span><span class="o">.</span><span class="kt">Error</span><span class="o">&gt;</span></code></pre>
-
-                        </div>
-                      </div>
-                      <div>
-                        <h4>Parameters</h4>
-                        <table class="graybox">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>previousPage</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>The previous page of the requested one.</p>
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                      <div>
-                        <h4>Return Value</h4>
-                        <p><code>AnyPublisher</code> that emits the audit events</p>
-                      </div>
                     </section>
                   </div>
                 </li>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10FHIRClientAAC16eRpRemoteStorageE6redeem5order7Combine12AnyPublisherVy01eB3Kit12ErxTaskOrderVAB5ErrorOGAK_tF"></a>
+                    <a name="/"></a>
                     <a name="//apple_ref/swift/Method/redeem(order:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10FHIRClientAAC16eRpRemoteStorageE6redeem5order7Combine12AnyPublisherVy01eB3Kit12ErxTaskOrderVAB5ErrorOGAK_tF">redeem(order:<wbr>)</a>
+                    <a class="token" href="#/">redeem(order:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -486,46 +243,15 @@
                         <p>Convenience function for redeeming an <code>ErxTask</code> in a pharmacy</p>
 
                       </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">redeem</span><span class="p">(</span><span class="nv">order</span><span class="p">:</span> <span class="kt">ErxTaskOrder</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">ErxTaskOrder</span><span class="p">,</span> <span class="kt">FHIRClient</span><span class="o">.</span><span class="kt">Error</span><span class="o">&gt;</span></code></pre>
-
-                        </div>
-                      </div>
-                      <div>
-                        <h4>Parameters</h4>
-                        <table class="graybox">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>order</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>The information relevant for placing the order</p>
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                      <div>
-                        <h4>Return Value</h4>
-                        <p><code>true</code> if the server responds without error and parsing has been successful, otherwise  error</p>
-                      </div>
                     </section>
                   </div>
                 </li>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10FHIRClientAAC16eRpRemoteStorageE22communicationResources5after7Combine12AnyPublisherVySay01eB3Kit7ErxTaskV13CommunicationVGAB5ErrorOGSSSg_tF"></a>
+                    <a name="/"></a>
                     <a name="//apple_ref/swift/Method/communicationResources(after:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10FHIRClientAAC16eRpRemoteStorageE22communicationResources5after7Combine12AnyPublisherVySay01eB3Kit7ErxTaskV13CommunicationVGAB5ErrorOGSSSg_tF">communicationResources(after:<wbr>)</a>
+                    <a class="token" href="#/">communicationResources(after:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -536,48 +262,15 @@
                         <p>Requests all communication Resources for the logged in user</p>
 
                       </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">communicationResources</span><span class="p">(</span>
-    <span class="n">after</span> <span class="nv">referenceDate</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="p">[</span><span class="kt">ErxTask</span><span class="o">.</span><span class="kt">Communication</span><span class="p">],</span> <span class="kt">FHIRClient</span><span class="o">.</span><span class="kt">Error</span><span class="o">&gt;</span></code></pre>
-
-                        </div>
-                      </div>
-                      <div>
-                        <h4>Parameters</h4>
-                        <table class="graybox">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>referenceDate</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>Communications with <code>timestamp</code> greater or equal <code>referenceDate</code> will be fetched</p>
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                      <div>
-                        <h4>Return Value</h4>
-                        <p>Array of all loaded communication resources</p>
-                      </div>
                     </section>
                   </div>
                 </li>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:10FHIRClientAAC16eRpRemoteStorageE24fetchMedicationDispenses3for7Combine12AnyPublisherVySay01eB3Kit7ErxTaskV0F8DispenseVGAB5ErrorOGSS_tF"></a>
+                    <a name="/"></a>
                     <a name="//apple_ref/swift/Method/fetchMedicationDispenses(for:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:10FHIRClientAAC16eRpRemoteStorageE24fetchMedicationDispenses3for7Combine12AnyPublisherVySay01eB3Kit7ErxTaskV0F8DispenseVGAB5ErrorOGSS_tF">fetchMedicationDispenses(for:<wbr>)</a>
+                    <a class="token" href="#/">fetchMedicationDispenses(for:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -588,38 +281,101 @@
                         <p>Requests medication dispenses for a specific <code>Prescription</code></p>
 
                       </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">func</span> <span class="nf">fetchMedicationDispenses</span><span class="p">(</span>
-    <span class="k">for</span> <span class="nv">id</span><span class="p">:</span> <span class="kt">ErxTask</span><span class="o">.</span><span class="kt">ID</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="p">[</span><span class="kt">ErxTask</span><span class="o">.</span><span class="kt">MedicationDispense</span><span class="p">],</span> <span class="kt">FHIRClient</span><span class="o">.</span><span class="kt">Error</span><span class="o">&gt;</span></code></pre>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/"></a>
+                    <a name="//apple_ref/swift/Method/fetchChargeItem(by:)" class="dashAnchor"></a>
+                    <a class="token" href="#/">fetchChargeItem(by:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Convenience function for requesting a certain charge item by ID</p>
 
-                        </div>
                       </div>
-                      <div>
-                        <h4>Parameters</h4>
-                        <table class="graybox">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>id</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>MedicationDispense for the corresponding <code>ErxTask.ID</code> will be fetched.</p>
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/"></a>
+                    <a name="//apple_ref/swift/Method/fetchAllChargeItemIDs(after:)" class="dashAnchor"></a>
+                    <a class="token" href="#/">fetchAllChargeItemIDs(after:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Convenience function for requesting all charge item ids</p>
+
                       </div>
-                      <div>
-                        <h4>Return Value</h4>
-                        <p><code>AnyPublisher</code> that emits <code>MedicationDispense</code>s</p>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/"></a>
+                    <a name="//apple_ref/swift/Method/fetchConsents()" class="dashAnchor"></a>
+                    <a class="token" href="#/">fetchConsents()</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Loads All consents of a given profile
+Uses the request headers  ACCESS_TOKEN with the containing insurance id</p>
+
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/"></a>
+                    <a name="//apple_ref/swift/Method/grantConsent(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/">grantConsent(_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Send a grant consent request of  an <code>ErxConsent</code></p>
+
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/"></a>
+                    <a name="//apple_ref/swift/Method/revokeConsent(_:)" class="dashAnchor"></a>
+                    <a class="token" href="#/">revokeConsent(_:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Delete an consent of <code>ErxConsent</code> to revoke it</p>
+
                       </div>
                     </section>
                   </div>
@@ -632,8 +388,8 @@
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2022 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2022-10-20)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
+      <p>&copy; 2023 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2023-05-05)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.3</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>
 </html>

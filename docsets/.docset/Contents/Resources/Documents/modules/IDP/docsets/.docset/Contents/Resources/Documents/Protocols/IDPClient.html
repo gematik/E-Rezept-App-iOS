@@ -21,10 +21,10 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-           1.4.7
+           1.8.0
  Docs
         </a>
-         (100% documented)
+         (0% documented)
       </p>
     
       <div class="header-col--secondary">
@@ -81,7 +81,7 @@
                 <a class="nav-group-task-link" href="../Classes/IDPInterceptor.html">IDPInterceptor</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Classes.html#/s:3IDP14PairingSessionC">PairingSession</a>
+                <a class="nav-group-task-link" href="../Classes.html#/PairingSession">PairingSession</a>
               </li>
             </ul>
           </li>
@@ -244,16 +244,16 @@
             <a class="nav-group-name-link" href="../Typealiases.html">Type Aliases</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Typealiases.html#/s:3IDP8IDPScopea">IDPScope</a>
+                <a class="nav-group-task-link" href="../Typealiases.html#/IDPScope">IDPScope</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Typealiases.html#/s:3IDP6Randoma">Random</a>
+                <a class="nav-group-task-link" href="../Typealiases.html#/Random">Random</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Typealiases.html#/s:3IDP12TimeProvidera">TimeProvider</a>
+                <a class="nav-group-task-link" href="../Typealiases.html#/TimeProvider">TimeProvider</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="../Typealiases.html#/s:3IDP12VerifierCodea">VerifierCode</a>
+                <a class="nav-group-task-link" href="../Typealiases.html#/VerifierCode">VerifierCode</a>
               </li>
             </ul>
           </li>
@@ -264,13 +264,6 @@
         <section class="section">
           <div class="section-content top-matter">
             <h1>IDPClient</h1>
-              <div class="declaration">
-                <div class="language">
-                  
-                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">protocol</span> <span class="kt">IDPClient</span></code></pre>
-
-                </div>
-              </div>
             <p>Identity Provider protocol that should be implemented according to &lsquo;gemSpec_IDP_Dienst&rsquo;.</p>
 
           </div>
@@ -283,9 +276,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:3IDP9IDPClientP21loadDiscoveryDocument7Combine12AnyPublisherVyAA0dE0VAA8IDPErrorOGyF"></a>
+                    <a name="/"></a>
                     <a name="//apple_ref/swift/Method/loadDiscoveryDocument()" class="dashAnchor"></a>
-                    <a class="token" href="#/s:3IDP9IDPClientP21loadDiscoveryDocument7Combine12AnyPublisherVyAA0dE0VAA8IDPErrorOGyF">loadDiscoveryDocument()</a>
+                    <a class="token" href="#/">loadDiscoveryDocument()</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -296,27 +289,15 @@
                         <p>Load the DiscoveryDocument for the IDPClient</p>
 
                       </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">loadDiscoveryDocument</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/DiscoveryDocument.html">DiscoveryDocument</a></span><span class="p">,</span> <span class="kt"><a href="../Enums/IDPError.html">IDPError</a></span><span class="o">&gt;</span></code></pre>
-
-                        </div>
-                      </div>
-                      <div>
-                        <h4>Return Value</h4>
-                        <p>a stream that emits once either a DiscoveryDocument or IDPError.</p>
-                      </div>
                     </section>
                   </div>
                 </li>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:3IDP9IDPClientP16requestChallenge04codeD06method5state5nonce5using7Combine12AnyPublisherVyAA12IDPChallengeVAA8IDPErrorOGSS_AA07IDPCodeD4ModeOS2SAA17DiscoveryDocumentVtF"></a>
-                    <a name="//apple_ref/swift/Method/requestChallenge(codeChallenge:method:state:nonce:using:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:3IDP9IDPClientP16requestChallenge04codeD06method5state5nonce5using7Combine12AnyPublisherVyAA12IDPChallengeVAA8IDPErrorOGSS_AA07IDPCodeD4ModeOS2SAA17DiscoveryDocumentVtF">requestChallenge(codeChallenge:<wbr>method:<wbr>state:<wbr>nonce:<wbr>using:<wbr>)</a>
+                    <a name="/"></a>
+                    <a name="//apple_ref/swift/Method/requestChallenge(codeChallenge:method:state:nonce:using:redirect:)" class="dashAnchor"></a>
+                    <a class="token" href="#/">requestChallenge(codeChallenge:<wbr>method:<wbr>state:<wbr>nonce:<wbr>using:<wbr>redirect:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -332,100 +313,15 @@
 </div>
 
                       </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">requestChallenge</span><span class="p">(</span>
-    <span class="nv">codeChallenge</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
-    <span class="nv">method</span><span class="p">:</span> <span class="kt"><a href="../Enums/IDPCodeChallengeMode.html">IDPCodeChallengeMode</a></span><span class="p">,</span>
-    <span class="nv">state</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
-    <span class="nv">nonce</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
-    <span class="n">using</span> <span class="nv">document</span><span class="p">:</span> <span class="kt"><a href="../Structs/DiscoveryDocument.html">DiscoveryDocument</a></span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/IDPChallenge.html">IDPChallenge</a></span><span class="p">,</span> <span class="kt"><a href="../Enums/IDPError.html">IDPError</a></span><span class="o">&gt;</span></code></pre>
-
-                        </div>
-                      </div>
-                      <div>
-                        <h4>Parameters</h4>
-                        <table class="graybox">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>codeChallenge</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>SHA256 hashed verifier code, see <code>exchange(token:)</code>.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>method</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>codeChallenge hashing method. Must be S256 to indicate SHA256 hashed value.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>state</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>OAuth parameter state of high entropy.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>nonce</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>OpenID parameter nonce of high entropy.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>document</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>use this DiscoveryDocument to resolve the actual endpoint and verify the response(s) [when applicable]</p>
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                      <div>
-                        <h4>Return Value</h4>
-                        <p>response with user content statement and signing challenge</p>
-                      </div>
                     </section>
                   </div>
                 </li>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:3IDP9IDPClientP6verify_5using7Combine12AnyPublisherVyAA16IDPExchangeTokenVAA8IDPErrorOGAA3JWEV_AA17DiscoveryDocumentVtF"></a>
+                    <a name="/"></a>
                     <a name="//apple_ref/swift/Method/verify(_:using:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:3IDP9IDPClientP6verify_5using7Combine12AnyPublisherVyAA16IDPExchangeTokenVAA8IDPErrorOGAA3JWEV_AA17DiscoveryDocumentVtF">verify(_:<wbr>using:<wbr>)</a>
+                    <a class="token" href="#/">verify(_:<wbr>using:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -436,61 +332,15 @@
                         <p>Verify a given challenge with the IDP</p>
 
                       </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">verify</span><span class="p">(</span>
-    <span class="n">_</span> <span class="nv">signedChallenge</span><span class="p">:</span> <span class="kt">JWE</span><span class="p">,</span>
-    <span class="n">using</span> <span class="nv">document</span><span class="p">:</span> <span class="kt"><a href="../Structs/DiscoveryDocument.html">DiscoveryDocument</a></span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/IDPExchangeToken.html">IDPExchangeToken</a></span><span class="p">,</span> <span class="kt"><a href="../Enums/IDPError.html">IDPError</a></span><span class="o">&gt;</span></code></pre>
-
-                        </div>
-                      </div>
-                      <div>
-                        <h4>Parameters</h4>
-                        <table class="graybox">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>signedChallenge</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>Encrypted challenge that has been signed with the egk</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>document</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>Use this DiscoveryDocument to resolve the actual endpoints</p>
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                      <div>
-                        <h4>Return Value</h4>
-                        <p>exchange token upon success</p>
-                      </div>
                     </section>
                   </div>
                 </li>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:3IDP9IDPClientP7refresh4with8ssoToken5using3for7Combine12AnyPublisherVyAA011IDPExchangeF0VAA8IDPErrorOGAA12IDPChallengeV_SSAA17DiscoveryDocumentVSStF"></a>
+                    <a name="/"></a>
                     <a name="//apple_ref/swift/Method/refresh(with:ssoToken:using:for:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:3IDP9IDPClientP7refresh4with8ssoToken5using3for7Combine12AnyPublisherVyAA011IDPExchangeF0VAA8IDPErrorOGAA12IDPChallengeV_SSAA17DiscoveryDocumentVSStF">refresh(with:<wbr>ssoToken:<wbr>using:<wbr>for:<wbr>)</a>
+                    <a class="token" href="#/">refresh(with:<wbr>ssoToken:<wbr>using:<wbr>for:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -502,82 +352,15 @@
 <code>exchange</code>.</p>
 
                       </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">refresh</span><span class="p">(</span><span class="n">with</span> <span class="nv">unsignedChallenge</span><span class="p">:</span> <span class="kt"><a href="../Structs/IDPChallenge.html">IDPChallenge</a></span><span class="p">,</span>
-             <span class="nv">ssoToken</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
-             <span class="n">using</span> <span class="nv">document</span><span class="p">:</span> <span class="kt"><a href="../Structs/DiscoveryDocument.html">DiscoveryDocument</a></span><span class="p">,</span>
-             <span class="k">for</span> <span class="nv">redirect</span><span class="p">:</span> <span class="kt">String</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/IDPExchangeToken.html">IDPExchangeToken</a></span><span class="p">,</span> <span class="kt"><a href="../Enums/IDPError.html">IDPError</a></span><span class="o">&gt;</span></code></pre>
-
-                        </div>
-                      </div>
-                      <div>
-                        <h4>Parameters</h4>
-                        <table class="graybox">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>unsigned</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>The unsigned IDP-Challenge. Generate a new challenge for each sso refresh by using
-      <code>requestChallenge</code>.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>sso</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>The SSO token from a prior successful login via <code>verify</code> and <code>exchange</code>.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>document</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>The discovery document to use.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>redirect</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>The redirect that the refresh is requested for. Must match the initial SSO token redirect.</p>
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
                     </section>
                   </div>
                 </li>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:3IDP9IDPClientP8exchange5token8verifier11redirectURI20encryptedKeyVerifier5using7Combine12AnyPublisherVyAA12TokenPayloadVAA8IDPErrorOGAA011IDPExchangeO0V_S2SSgAA3JWEVAA17DiscoveryDocumentVtF"></a>
+                    <a name="/"></a>
                     <a name="//apple_ref/swift/Method/exchange(token:verifier:redirectURI:encryptedKeyVerifier:using:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:3IDP9IDPClientP8exchange5token8verifier11redirectURI20encryptedKeyVerifier5using7Combine12AnyPublisherVyAA12TokenPayloadVAA8IDPErrorOGAA011IDPExchangeO0V_S2SSgAA3JWEVAA17DiscoveryDocumentVtF">exchange(token:<wbr>verifier:<wbr>redirectURI:<wbr>encryptedKeyVerifier:<wbr>using:<wbr>)</a>
+                    <a class="token" href="#/">exchange(token:<wbr>verifier:<wbr>redirectURI:<wbr>encryptedKeyVerifier:<wbr>using:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -588,100 +371,15 @@
                         <p>Exchange a token for an actual token</p>
 
                       </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">exchange</span><span class="p">(</span><span class="nv">token</span><span class="p">:</span> <span class="kt"><a href="../Structs/IDPExchangeToken.html">IDPExchangeToken</a></span><span class="p">,</span>
-              <span class="nv">verifier</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
-              <span class="nv">redirectURI</span><span class="p">:</span> <span class="kt">String</span><span class="p">?,</span>
-              <span class="nv">encryptedKeyVerifier</span><span class="p">:</span> <span class="kt">JWE</span><span class="p">,</span>
-              <span class="n">using</span> <span class="nv">document</span><span class="p">:</span> <span class="kt"><a href="../Structs/DiscoveryDocument.html">DiscoveryDocument</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">TokenPayload</span><span class="p">,</span> <span class="kt"><a href="../Enums/IDPError.html">IDPError</a></span><span class="o">&gt;</span></code></pre>
-
-                        </div>
-                      </div>
-                      <div>
-                        <h4>Parameters</h4>
-                        <table class="graybox">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>token</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>exchange token</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>verifier</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>initial verifier generated upon requesting the challenge.
-      Must be at least 43 * 128-bit unreserved characters long.
-      See <a href="https://tools.ietf.org/html/rfc7636#section-4.2">https://tools.ietf.org/html/rfc7636#section-4.2</a></p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>redirectURI</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>redirect_uri to use for the backend call.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>encryptedKeyVerifier</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>encrypted  symmetric key together with the <code>verifier</code></p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>document</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>use this DiscoveryDocument to resolve the actual endpoint</p>
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                      <div>
-                        <h4>Return Value</h4>
-                        <p>the authenticated token</p>
-                      </div>
                     </section>
                   </div>
                 </li>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:3IDP9IDPClientP14registerDevice_5token5using7Combine12AnyPublisherVyAA12PairingEntryVAA8IDPErrorOGAA3JWEV_AA8IDPTokenVAA17DiscoveryDocumentVtF"></a>
+                    <a name="/"></a>
                     <a name="//apple_ref/swift/Method/registerDevice(_:token:using:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:3IDP9IDPClientP14registerDevice_5token5using7Combine12AnyPublisherVyAA12PairingEntryVAA8IDPErrorOGAA3JWEV_AA8IDPTokenVAA17DiscoveryDocumentVtF">registerDevice(_:<wbr>token:<wbr>using:<wbr>)</a>
+                    <a class="token" href="#/">registerDevice(_:<wbr>token:<wbr>using:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -692,73 +390,15 @@
                         <p>Register a new biometric key for alternative authentication.</p>
 
                       </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">registerDevice</span><span class="p">(</span><span class="n">_</span> <span class="nv">jwe</span><span class="p">:</span> <span class="kt">JWE</span><span class="p">,</span>
-                    <span class="nv">token</span><span class="p">:</span> <span class="kt"><a href="../Structs/IDPToken.html">IDPToken</a></span><span class="p">,</span>
-                    <span class="n">using</span> <span class="nv">document</span><span class="p">:</span> <span class="kt"><a href="../Structs/DiscoveryDocument.html">DiscoveryDocument</a></span><span class="p">)</span>
-    <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/PairingEntry.html">PairingEntry</a></span><span class="p">,</span> <span class="kt"><a href="../Enums/IDPError.html">IDPError</a></span><span class="o">&gt;</span></code></pre>
-
-                        </div>
-                      </div>
-                      <div>
-                        <h4>Parameters</h4>
-                        <table class="graybox">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>jwe</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>JWE encrypting the <code>PairingRegistration</code> of the key to register.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>token</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>Access token for authentication and authorization for the new key.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>document</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>use this DiscoveryDocument to resolve the actual endpoint</p>
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                      <div>
-                        <h4>Return Value</h4>
-                        <p>AnyPublisher with a<code><a href="../Structs/PairingEntry.html">PairingEntry</a></code> containing registration information upon success.</p>
-                      </div>
                     </section>
                   </div>
                 </li>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:3IDP9IDPClientP16unregisterDevice_5token5using7Combine12AnyPublisherVySbAA8IDPErrorOGSS_AA8IDPTokenVAA17DiscoveryDocumentVtF"></a>
+                    <a name="/"></a>
                     <a name="//apple_ref/swift/Method/unregisterDevice(_:token:using:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:3IDP9IDPClientP16unregisterDevice_5token5using7Combine12AnyPublisherVySbAA8IDPErrorOGSS_AA8IDPTokenVAA17DiscoveryDocumentVtF">unregisterDevice(_:<wbr>token:<wbr>using:<wbr>)</a>
+                    <a class="token" href="#/">unregisterDevice(_:<wbr>token:<wbr>using:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -769,72 +409,15 @@
                         <p>Unregisters a key of the device with the given identifier.</p>
 
                       </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">unregisterDevice</span><span class="p">(</span><span class="n">_</span> <span class="nv">keyIdentifier</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
-                      <span class="nv">token</span><span class="p">:</span> <span class="kt"><a href="../Structs/IDPToken.html">IDPToken</a></span><span class="p">,</span>
-                      <span class="n">using</span> <span class="nv">document</span><span class="p">:</span> <span class="kt"><a href="../Structs/DiscoveryDocument.html">DiscoveryDocument</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">Bool</span><span class="p">,</span> <span class="kt"><a href="../Enums/IDPError.html">IDPError</a></span><span class="o">&gt;</span></code></pre>
-
-                        </div>
-                      </div>
-                      <div>
-                        <h4>Parameters</h4>
-                        <table class="graybox">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>keyIdentifier</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>Identifier of the key to remove.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>token</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>Authentication token to authenticate the removal.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>document</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>use this DiscoveryDocument to resolve the actual endpoint</p>
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                      <div>
-                        <h4>Return Value</h4>
-                        <p>AnyPublisher with a<code>Bool</code> containing <code>true</code> upon success, <code>false</code> otherwise.</p>
-                      </div>
                     </section>
                   </div>
                 </li>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:3IDP9IDPClientP11listDevices5token5using7Combine12AnyPublisherVyAA14PairingEntriesVAA8IDPErrorOGAA8IDPTokenV_AA17DiscoveryDocumentVtF"></a>
+                    <a name="/"></a>
                     <a name="//apple_ref/swift/Method/listDevices(token:using:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:3IDP9IDPClientP11listDevices5token5using7Combine12AnyPublisherVyAA14PairingEntriesVAA8IDPErrorOGAA8IDPTokenV_AA17DiscoveryDocumentVtF">listDevices(token:<wbr>using:<wbr>)</a>
+                    <a class="token" href="#/">listDevices(token:<wbr>using:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -845,58 +428,15 @@
                         <p>List all registered devices.</p>
 
                       </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">listDevices</span><span class="p">(</span><span class="nv">token</span><span class="p">:</span> <span class="kt"><a href="../Structs/IDPToken.html">IDPToken</a></span><span class="p">,</span> <span class="n">using</span> <span class="nv">document</span><span class="p">:</span> <span class="kt"><a href="../Structs/DiscoveryDocument.html">DiscoveryDocument</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/PairingEntries.html">PairingEntries</a></span><span class="p">,</span> <span class="kt"><a href="../Enums/IDPError.html">IDPError</a></span><span class="o">&gt;</span></code></pre>
-
-                        </div>
-                      </div>
-                      <div>
-                        <h4>Parameters</h4>
-                        <table class="graybox">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>token</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>Authentication token to authenticate the removal.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>document</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>use this DiscoveryDocument to resolve the actual endpoint</p>
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                      <div>
-                        <h4>Return Value</h4>
-                        <p>AnyPublisher with a<code><a href="../Structs/PairingEntries.html">PairingEntries</a></code> containing all registered devices.</p>
-                      </div>
                     </section>
                   </div>
                 </li>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:3IDP9IDPClientP9altVerify_5using7Combine12AnyPublisherVyAA16IDPExchangeTokenVAA8IDPErrorOGAA3JWEV_AA17DiscoveryDocumentVtF"></a>
+                    <a name="/"></a>
                     <a name="//apple_ref/swift/Method/altVerify(_:using:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:3IDP9IDPClientP9altVerify_5using7Combine12AnyPublisherVyAA16IDPExchangeTokenVAA8IDPErrorOGAA3JWEV_AA17DiscoveryDocumentVtF">altVerify(_:<wbr>using:<wbr>)</a>
+                    <a class="token" href="#/">altVerify(_:<wbr>using:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -907,60 +447,15 @@
                         <p>Verify a given challenge with the IDP using alternative authentication, a.k.a. biometric secured key.</p>
 
                       </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">altVerify</span><span class="p">(</span><span class="n">_</span> <span class="nv">encryptedSignedChallenge</span><span class="p">:</span> <span class="kt">JWE</span><span class="p">,</span>
-               <span class="n">using</span> <span class="nv">document</span><span class="p">:</span> <span class="kt"><a href="../Structs/DiscoveryDocument.html">DiscoveryDocument</a></span><span class="p">)</span>
-    <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/IDPExchangeToken.html">IDPExchangeToken</a></span><span class="p">,</span> <span class="kt"><a href="../Enums/IDPError.html">IDPError</a></span><span class="o">&gt;</span></code></pre>
-
-                        </div>
-                      </div>
-                      <div>
-                        <h4>Parameters</h4>
-                        <table class="graybox">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>encryptedSignedChallenge</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>JWE encrypting a <code>SignedAuthenticationChallenge</code>.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>document</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>Use this DiscoveryDocument to resolve the actual endpoints and</p>
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
-                      <div>
-                        <h4>Return Value</h4>
-                        <p>exchange token upon success</p>
-                      </div>
                     </section>
                   </div>
                 </li>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:3IDP9IDPClientP19loadDirectoryKKApps5using7Combine12AnyPublisherVyAA012IDPDirectoryE0VAA8IDPErrorOGAA17DiscoveryDocumentV_tF"></a>
+                    <a name="/"></a>
                     <a name="//apple_ref/swift/Method/loadDirectoryKKApps(using:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:3IDP9IDPClientP19loadDirectoryKKApps5using7Combine12AnyPublisherVyAA012IDPDirectoryE0VAA8IDPErrorOGAA17DiscoveryDocumentV_tF">loadDirectoryKKApps(using:<wbr>)</a>
+                    <a class="token" href="#/">loadDirectoryKKApps(using:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -971,42 +466,15 @@
                         <p>Load available Insurance companies that are capable of External Authentication (<em>FastTrack</em>).</p>
 
                       </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">loadDirectoryKKApps</span><span class="p">(</span><span class="n">using</span> <span class="nv">document</span><span class="p">:</span> <span class="kt"><a href="../Structs/DiscoveryDocument.html">DiscoveryDocument</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/IDPDirectoryKKApps.html">IDPDirectoryKKApps</a></span><span class="p">,</span> <span class="kt"><a href="../Enums/IDPError.html">IDPError</a></span><span class="o">&gt;</span></code></pre>
-
-                        </div>
-                      </div>
-                      <div>
-                        <h4>Parameters</h4>
-                        <table class="graybox">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>document</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>The DiscoveryDocument to resolve the actual endpoint.</p>
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
                     </section>
                   </div>
                 </li>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:3IDP9IDPClientP12startExtAuth_5using7Combine12AnyPublisherVy10Foundation3URLVAA8IDPErrorOGAA06IDPExtE0V_AA17DiscoveryDocumentVtF"></a>
+                    <a name="/"></a>
                     <a name="//apple_ref/swift/Method/startExtAuth(_:using:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:3IDP9IDPClientP12startExtAuth_5using7Combine12AnyPublisherVy10Foundation3URLVAA8IDPErrorOGAA06IDPExtE0V_AA17DiscoveryDocumentVtF">startExtAuth(_:<wbr>using:<wbr>)</a>
+                    <a class="token" href="#/">startExtAuth(_:<wbr>using:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1017,54 +485,15 @@
                         <p>Initial step for external authentication with insurance company app.</p>
 
                       </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">startExtAuth</span><span class="p">(</span><span class="n">_</span> <span class="nv">app</span><span class="p">:</span> <span class="kt"><a href="../Structs/IDPExtAuth.html">IDPExtAuth</a></span><span class="p">,</span> <span class="n">using</span> <span class="nv">document</span><span class="p">:</span> <span class="kt"><a href="../Structs/DiscoveryDocument.html">DiscoveryDocument</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt">URL</span><span class="p">,</span> <span class="kt"><a href="../Enums/IDPError.html">IDPError</a></span><span class="o">&gt;</span></code></pre>
-
-                        </div>
-                      </div>
-                      <div>
-                        <h4>Parameters</h4>
-                        <table class="graybox">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>app</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>The reference to an insurance company app to user for the authentication.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>document</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>The DiscoveryDocument to resolve the actual endpoint.</p>
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
-                      </div>
                     </section>
                   </div>
                 </li>
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:3IDP9IDPClientP13extAuthVerify_5using7Combine12AnyPublisherVyAA16IDPExchangeTokenVAA8IDPErrorOGAA06IDPExtdE0V_AA17DiscoveryDocumentVtF"></a>
+                    <a name="/"></a>
                     <a name="//apple_ref/swift/Method/extAuthVerify(_:using:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:3IDP9IDPClientP13extAuthVerify_5using7Combine12AnyPublisherVyAA16IDPExchangeTokenVAA8IDPErrorOGAA06IDPExtdE0V_AA17DiscoveryDocumentVtF">extAuthVerify(_:<wbr>using:<wbr>)</a>
+                    <a class="token" href="#/">extAuthVerify(_:<wbr>using:<wbr>)</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -1074,46 +503,6 @@
                       <div class="abstract">
                         <p>Follow up step whenever an insurance company app authorizes a user login.</p>
 
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">extAuthVerify</span><span class="p">(</span><span class="n">_</span> <span class="nv">verify</span><span class="p">:</span> <span class="kt"><a href="../Structs/IDPExtAuthVerify.html">IDPExtAuthVerify</a></span><span class="p">,</span> <span class="n">using</span> <span class="nv">document</span><span class="p">:</span> <span class="kt"><a href="../Structs/DiscoveryDocument.html">DiscoveryDocument</a></span><span class="p">)</span>
-    <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/IDPExchangeToken.html">IDPExchangeToken</a></span><span class="p">,</span> <span class="kt"><a href="../Enums/IDPError.html">IDPError</a></span><span class="o">&gt;</span></code></pre>
-
-                        </div>
-                      </div>
-                      <div>
-                        <h4>Parameters</h4>
-                        <table class="graybox">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>verify</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>Data used to authenticate and authorize the user.</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>document</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>The DiscoveryDocument to resolve the actual endpoint.</p>
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
                       </div>
                     </section>
                   </div>
@@ -1126,8 +515,8 @@
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2022 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2022-10-20)</p>
-      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.2</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
+      <p>&copy; 2023 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2023-05-05)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.3</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>
 </html>
