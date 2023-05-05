@@ -18,8 +18,6 @@
 
 import SwiftUI
 
-#if swift(>=5.3)
-@available(iOS 14.0, *)
 struct LibraryContent: LibraryContentProvider {
     @LibraryContentBuilder
     var views: [LibraryItem] {
@@ -29,4 +27,3 @@ struct LibraryContent: LibraryContentProvider {
         LibraryItem(TertiaryListButton(text: "Sticky Button Text", accessibilityIdentifier: "some") {})
     }
 }
-#endif

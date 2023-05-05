@@ -47,7 +47,7 @@ final class DefaultErxTaskRepositoryTests: XCTestCase {
             }
         }
 
-        mockRemoteDataStore.listAuditEventsNextPageOfClosure = { previousPage in
+        mockRemoteDataStore.listAuditEventsNextPageOfForClosure = { previousPage, _ in
             guard let next = previousPage.next else {
                 return Fail(error: RemoteStoreError.notImplemented).eraseToAnyPublisher()
             }
@@ -197,20 +197,32 @@ extension DefaultErxTaskRepositoryTests {
             auditEvent9,
         ], next: nil)
 
-        static let medicationDispense1 = ErxTask.MedicationDispense(
+        static let medicationDispense1 = ErxMedicationDispense(
             identifier: "6543212345-2",
             taskId: "6543212345",
             insuranceId: "987652345",
-            pzn: "123124",
-            name: nil,
-            dose: nil,
-            dosageForm: nil,
             dosageInstruction: nil,
-            amount: 1,
             telematikId: "1234521231234345456",
             whenHandedOver: "2022-02-02",
-            lot: nil,
-            expiresOn: nil
+            quantity: .init(value: "1"),
+            noteText: "pharmacist note",
+            medication: .init(
+                name: nil,
+                profile: .pzn,
+                drugCategory: .avm,
+                pzn: "123124",
+                isVaccine: false,
+                amount: ErxMedication.Ratio(numerator: .init(value: "1")),
+                dosageForm: nil,
+                dose: nil,
+                batch: .init(
+                    lotNumber: "Charge number X",
+                    expiresOn: "2021-01-21T09:00:00Z"
+                ),
+                packaging: nil,
+                manufacturingInstructions: nil,
+                ingredients: []
+            )
         )
     }
 }

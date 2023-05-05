@@ -22,260 +22,198 @@ import eRpKit
 import IDP
 import SwiftUI
 
-enum AppDomain {
-    typealias Store = ComposableArchitecture.Store<State, Action>
-    typealias Reducer = ComposableArchitecture.AnyReducer<State, Action, Environment>
+struct AppDomain: ReducerProtocol {
+    typealias Store = StoreOf<Self>
 
-    enum Route {
-        // sourcery: AnalyticsState = main
-        case main
-        // sourcery: AnalyticsState = pharmacySearch
-        case pharmacySearch
-        // sourcery: AnalyticsState = orders
-        case orders
-        // sourcery: AnalyticsState = settingsState
-        case settings
+    struct Subdomains: ReducerProtocol {
+        struct State: Equatable {
+            var main: MainDomain.State
+            var pharmacySearch: PharmacySearchDomain.State
+            var orders: OrdersDomain.State
+            var settingsState: SettingsDomain.State
+            var profileSelection: ProfileSelectionToolbarItemDomain.State
+        }
+
+        enum Action: Equatable {
+            case main(action: MainDomain.Action)
+            case pharmacySearch(action: PharmacySearchDomain.Action)
+            case orders(action: OrdersDomain.Action)
+            case settings(action: SettingsDomain.Action)
+            case profile(action: ProfileSelectionToolbarItemDomain.Action)
+        }
+
+        var body: some ReducerProtocol<State, Action> {
+            Scope(
+                state: \.main,
+                action: /Action.main(action:)
+            ) {
+                MainDomain()
+            }
+
+            Scope(
+                state: \.pharmacySearch,
+                action: /Action.pharmacySearch(action:)
+            ) {
+                PharmacySearchDomain(referenceDateForOpenHours: nil)
+            }
+
+            Scope(
+                state: \.orders,
+                action: /Action.orders(action:)
+            ) {
+                OrdersDomain()
+            }
+
+            Scope(
+                state: \.settingsState,
+                action: /Action.settings(action:)
+            ) {
+                SettingsDomain()
+            }
+
+            Scope(
+                state: \.profileSelection,
+                action: /Action.profile(action:)
+            ) {
+                ProfileSelectionToolbarItemDomain()
+            }
+        }
+    }
+
+    // sourcery: AnalyticsIgnoreGeneration
+    struct Destinations: ReducerProtocol {
+        enum State: Equatable {
+            // sourcery: AnalyticsState = subdomains.main
+            case main
+            // sourcery: AnalyticsState = subdomains.pharmacySearch
+            case pharmacySearch
+            // sourcery: AnalyticsState = subdomains.orders
+            case orders
+            // sourcery: AnalyticsState = subdomains.settingsState
+            case settings
+        }
+
+        enum Action: Equatable {}
+
+        var body: some ReducerProtocol<State, Action> {
+            EmptyReducer()
+        }
     }
 
     struct State: Equatable {
-        var route: Route
-        var main: MainDomain.State
-        var pharmacySearch: PharmacySearchDomain.State
-        var orders: OrdersDomain.State
-        var settingsState: SettingsDomain.State
-        var profileSelection: ProfileSelectionToolbarItemDomain.State
-        var unreadOrderMessageCount: Int
+        var destination: Destinations.State
 
+        var subdomains: Subdomains.State
+
+        var unreadOrderMessageCount: Int
         var isDemoMode: Bool
     }
 
     enum Action: Equatable {
-        case main(action: MainDomain.Action)
-        case pharmacySearch(action: PharmacySearchDomain.Action)
-        case orders(action: OrdersDomain.Action)
-        case settings(action: SettingsDomain.Action)
-        case profile(action: ProfileSelectionToolbarItemDomain.Action)
-
         case isDemoModeReceived(Bool)
         case registerDemoModeListener
         case registerNewOrderMessageListener
         case newOrderMessageReceived(Int)
-        case selectTab(Route)
+        case setNavigation(Destinations.State)
+
+        case subdomains(Subdomains.Action)
     }
 
-    struct Environment {
-        let router: Routing
-        var userSessionContainer: UsersSessionContainer
-        var userSession: UserSession
-        let userDataStore: UserDataStore
-        var schedulers: Schedulers
-        var fhirDateFormatter: FHIRDateFormatter
-        var serviceLocator: ServiceLocator
-        let accessibilityAnnouncementReceiver: (String) -> Void
+    @Dependency(\.schedulers) var schedulers: Schedulers
+    @Dependency(\.changeableUserSessionContainer) var userSessionContainer: UsersSessionContainer
+    @Dependency(\.erxTaskRepository) var erxTaskRepository
 
-        let tracker: Tracker
-        let signatureProvider: SecureEnclaveSignatureProvider
-        let userSessionProvider: UserSessionProvider
+    var body: some ReducerProtocol<State, Action> {
+        Scope(state: \.subdomains, action: /Action.subdomains) {
+            Subdomains()
+        }
+
+        Reduce(self.core)
     }
 
-    private static let domainReducer = Reducer { state, action, environment in
+    // swiftlint:disable:next function_body_length cyclomatic_complexity
+    func core(into state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
-        case .profile(action: .profileSelection(action: .close)):
-            switch state.route {
+        case .subdomains(.profile(action: .profileSelection(action: .close))):
+            switch state.destination {
             case .main:
-                return Effect(value: .main(action: .setNavigation(tag: nil)))
+                return Effect(value: .subdomains(.main(action: .setNavigation(tag: nil))))
             case .orders:
-                return Effect(value: .orders(action: .setNavigation(tag: nil)))
+                return Effect(value: .subdomains(.orders(action: .setNavigation(tag: nil))))
             case .pharmacySearch:
-                return Effect(value: .pharmacySearch(action: .setNavigation(tag: nil)))
+                return Effect(value: .subdomains(.pharmacySearch(action: .setNavigation(tag: nil))))
             default:
                 return .none
             }
-        case .settings(action: .profiles(action: .profile(action: .confirmDeleteProfile))),
-             .settings(action: .profiles(action: .newProfile(action: .saveReceived(.success)))):
+        case .subdomains(.settings(action: .profiles(action: .destination(.editProfileAction(.confirmDeleteProfile))))),
+             .subdomains(
+                 .settings(
+                     action: .profiles(
+                         action: .destination(.newProfileAction(action: .response(.saveReceived(.success))))
+                     )
+                 )
+             ):
             return .concatenate(
-                .init(value: .main(action: .setNavigation(tag: nil))),
-                .init(value: .orders(action: .setNavigation(tag: nil))),
-                .init(value: .pharmacySearch(action: .setNavigation(tag: nil)))
+                .init(value: .subdomains(.main(action: .setNavigation(tag: nil)))),
+                .init(value: .subdomains(.orders(action: .setNavigation(tag: nil)))),
+                .init(value: .subdomains(.pharmacySearch(action: .setNavigation(tag: nil))))
             )
-        case .profile(action: .profileSelection(action: .selectProfile)):
+        case .subdomains(.profile(action: .profileSelection(action: .selectProfile))):
             return .concatenate(
-                .init(value: .main(action: .setNavigation(tag: nil))),
-                .init(value: .orders(action: .setNavigation(tag: nil))),
-                .init(value: .pharmacySearch(action: .setNavigation(tag: nil)))
+                .init(value: .subdomains(.main(action: .setNavigation(tag: nil)))),
+                .init(value: .subdomains(.orders(action: .setNavigation(tag: nil)))),
+                .init(value: .subdomains(.pharmacySearch(action: .setNavigation(tag: nil))))
             )
-        case .main,
-             .pharmacySearch,
-             .orders,
-             .settings,
-             .profile:
+        case .subdomains(.main(action: .horizontalProfileSelection(action: .selectProfile))):
+            return .concatenate(
+                .init(value: .subdomains(.orders(action: .setNavigation(tag: nil)))),
+                .init(value: .subdomains(.pharmacySearch(action: .setNavigation(tag: nil))))
+            )
+        case .subdomains:
             return .none
         case let .isDemoModeReceived(isDemoMode):
             state.isDemoMode = isDemoMode
-            state.settingsState.isDemoMode = isDemoMode
+            state.subdomains.settingsState.isDemoMode = isDemoMode
             return .none
         case .registerDemoModeListener:
-            return environment.userSessionContainer.isDemoMode
+            return userSessionContainer.isDemoMode
                 .map(AppDomain.Action.isDemoModeReceived)
                 .eraseToEffect()
         case .registerNewOrderMessageListener:
-            return environment.userSessionContainer.userSession.erxTaskRepository
+            return erxTaskRepository
                 .countAllUnreadCommunications(for: ErxTask.Communication.Profile.all)
-                .receive(on: environment.schedulers.main.animation())
+                .receive(on: schedulers.main.animation())
                 .map(AppDomain.Action.newOrderMessageReceived)
                 .catch { _ in Effect.none }
                 .eraseToEffect()
         case let .newOrderMessageReceived(unreadOrderMessageCount):
             state.unreadOrderMessageCount = unreadOrderMessageCount
             return .none
-        case let .selectTab(tab):
-            state.route = tab
+        case let .setNavigation(destination):
+            state.destination = destination
             return .none
         }
     }
-
-    private static let mainPullbackReducer: AppDomain.Reducer =
-        MainDomain.reducer.pullback(
-            state: \.main,
-            action: /AppDomain.Action.main(action:)
-        ) { appEnvironment in
-            MainDomain.Environment(
-                router: appEnvironment.router,
-                userSessionContainer: appEnvironment.userSessionContainer,
-                userSession: appEnvironment.userSessionContainer.userSession,
-                appSecurityManager: appEnvironment.userSessionContainer.userSession.appSecurityManager,
-                serviceLocator: appEnvironment.serviceLocator,
-                accessibilityAnnouncementReceiver: appEnvironment.accessibilityAnnouncementReceiver,
-                erxTaskRepository: appEnvironment.userSessionContainer.userSession.erxTaskRepository,
-                schedulers: appEnvironment.schedulers,
-                fhirDateFormatter: appEnvironment.fhirDateFormatter,
-                userProfileService: DefaultUserProfileService(
-                    profileDataStore: appEnvironment.userSessionContainer.userSession.profileDataStore,
-                    profileOnlineChecker: DefaultProfileOnlineChecker(),
-                    userSession: appEnvironment.userSessionContainer.userSession,
-                    userSessionProvider: appEnvironment.userSessionProvider
-                ),
-                secureDataWiper: DefaultProfileSecureDataWiper(userSessionProvider: appEnvironment.userSessionProvider),
-                signatureProvider: appEnvironment.signatureProvider,
-                userSessionProvider: appEnvironment.userSessionProvider,
-                userDataStore: appEnvironment.userDataStore,
-                tracker: appEnvironment.tracker
-            )
-        }
-
-    private static let pharmacySearchPullbackReducer: AppDomain.Reducer =
-        PharmacySearchDomain.reducer.pullback(
-            state: \.pharmacySearch,
-            action: /AppDomain.Action.pharmacySearch(action:)
-        ) { appEnvironment in
-            PharmacySearchDomain.Environment(
-                schedulers: appEnvironment.schedulers,
-                pharmacyRepository: appEnvironment.userSession.pharmacyRepository,
-                locationManager: .live,
-                fhirDateFormatter: appEnvironment.fhirDateFormatter,
-                openHoursCalculator: PharmacyOpenHoursCalculator(),
-                referenceDateForOpenHours: nil,
-                userSession: appEnvironment.userSession,
-                openURL: UIApplication.shared.open(_:options:completionHandler:),
-                signatureProvider: appEnvironment.signatureProvider,
-                accessibilityAnnouncementReceiver: appEnvironment.accessibilityAnnouncementReceiver,
-                userSessionProvider: appEnvironment.userSessionProvider
-            )
-        }
-
-    private static let ordersPullbackReducer: AppDomain.Reducer =
-        OrdersDomain.reducer.pullback(
-            state: \.orders,
-            action: /AppDomain.Action.orders(action:)
-        ) { appEnvironment in
-            OrdersDomain.Environment(
-                schedulers: appEnvironment.schedulers,
-                userSession: appEnvironment.userSessionContainer.userSession,
-                fhirDateFormatter: appEnvironment.fhirDateFormatter,
-                erxTaskRepository: appEnvironment.userSessionContainer.userSession.erxTaskRepository,
-                pharmacyRepository: appEnvironment.userSession.pharmacyRepository
-            )
-        }
-
-    private static let settingsPullbackReducer: Reducer =
-        SettingsDomain.reducer.pullback(
-            state: \.settingsState,
-            action: /AppDomain.Action.settings(action:)
-        ) { appEnvironment in
-            .init(
-                changeableUserSessionContainer: appEnvironment.userSessionContainer,
-                schedulers: appEnvironment.schedulers,
-                tracker: appEnvironment.tracker,
-                signatureProvider: appEnvironment.signatureProvider,
-                nfcHealthCardPasswordController: appEnvironment.userSession.nfcHealthCardPasswordController,
-                appSecurityManager: appEnvironment.userSession.appSecurityManager,
-                router: appEnvironment.router,
-                userSessionProvider: appEnvironment.userSessionProvider,
-                serviceLocator: appEnvironment.serviceLocator,
-                userDataStore: appEnvironment.userDataStore,
-                accessibilityAnnouncementReceiver: appEnvironment.accessibilityAnnouncementReceiver
-            )
-        }
-
-    private static let profileSelectionReducer: Reducer =
-        ProfileSelectionToolbarItemDomain.reducer.pullback(
-            state: \.profileSelection,
-            action: /Action.profile(action:)
-        ) {
-            .init(
-                schedulers: $0.schedulers,
-                userProfileService: DefaultUserProfileService(
-                    profileDataStore: $0.userSessionContainer.userSession.profileDataStore,
-                    profileOnlineChecker: DefaultProfileOnlineChecker(),
-                    userSession: $0.userSessionContainer.userSession,
-                    userSessionProvider: $0.userSessionProvider
-                ),
-                router: $0.router
-            )
-        }
-
-    static let reducer = Reducer.combine(
-        mainPullbackReducer,
-        pharmacySearchPullbackReducer,
-        ordersPullbackReducer,
-        settingsPullbackReducer,
-        profileSelectionReducer,
-        domainReducer
-    )
-    .recordActionsForHints()
 }
 
 extension AppDomain {
     enum Dummies {
         static let store = Store(
             initialState: state,
-            reducer: domainReducer,
-            environment: environment
+            reducer: AppDomain()
         )
 
         static let state = State(
-            route: .main,
-            main: MainDomain.Dummies.state,
-            pharmacySearch: PharmacySearchDomain.Dummies.state,
-            orders: OrdersDomain.Dummies.state,
-            settingsState: SettingsDomain.Dummies.state,
-            profileSelection: ProfileSelectionToolbarItemDomain.Dummies.state,
+            destination: .main,
+            subdomains: .init(
+                main: MainDomain.Dummies.state,
+                pharmacySearch: PharmacySearchDomain.Dummies.stateStartView,
+                orders: OrdersDomain.Dummies.state,
+                settingsState: SettingsDomain.Dummies.state,
+                profileSelection: ProfileSelectionToolbarItemDomain.Dummies.state
+            ),
             unreadOrderMessageCount: 0,
             isDemoMode: false
-        )
-
-        static let environment = Environment(
-            router: DummyRouter(),
-            userSessionContainer: DummyUserSessionContainer(),
-            userSession: DummySessionContainer(),
-            userDataStore: DemoUserDefaultsStore(),
-            schedulers: Schedulers(),
-            fhirDateFormatter: globals.fhirDateFormatter,
-            serviceLocator: ServiceLocator(),
-            accessibilityAnnouncementReceiver: { _ in },
-            tracker: DummyTracker(),
-            signatureProvider: DummySecureEnclaveSignatureProvider(),
-            userSessionProvider: DummyUserSessionProvider()
         )
     }
 }

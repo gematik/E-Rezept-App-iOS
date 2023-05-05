@@ -43,19 +43,6 @@ struct PharmacySearchView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            if #unavailable(iOS 15.0) { /* see .backport.searchable() below */
-                SearchBar(
-                    searchText: viewStore.binding(
-                        get: \.searchText,
-                        send: PharmacySearchDomain.Action.searchTextChanged
-                    ),
-                    prompt: L10n.phaSearchTxtSearchHint.key
-                ) { viewStore.send(.performSearch) }
-                    .padding()
-
-                GreyDivider(topPadding: 0)
-            }
-
             PharmacyDetailViewNavigation(store: store, isRedeemRecipe: isRedeemRecipe)
 
             DebugPharmacies(viewStore: viewStore)
@@ -118,7 +105,7 @@ struct PharmacySearchView: View {
             Rectangle()
                 .frame(width: 0, height: 0, alignment: .center)
                 .smallSheet(isPresented: Binding<Bool>(get: {
-                    viewStore.routeTag == .filter
+                    viewStore.destinationTag == .filter
                 }, set: { show in
                     if !show {
                         viewStore.send(.setNavigation(tag: nil), animation: .easeInOut)
@@ -126,8 +113,14 @@ struct PharmacySearchView: View {
                 }),
                 onDismiss: {},
                 content: {
-                    IfLetStore(pharmacySearchFilterStore, then: PharmacySearchFilterView.init(store:))
-                        .accentColor(Colors.primary600)
+                    IfLetStore(
+                        store.destinationsScope(
+                            state: /PharmacySearchDomain.Destinations.State.filter,
+                            action: PharmacySearchDomain.Destinations.Action.pharmacyFilterView(action:)
+                        ),
+                        then: PharmacySearchFilterView.init(store:)
+                    )
+                    .accentColor(Colors.primary600)
                 })
                 .accessibility(hidden: true)
 
@@ -135,7 +128,7 @@ struct PharmacySearchView: View {
                 Rectangle()
                     .frame(width: 0, height: 0, alignment: .center)
                     .sheet(isPresented: Binding<Bool>(get: {
-                        viewStore.routeTag == .selectProfile
+                        viewStore.destinationTag == .selectProfile
                     }, set: { show in
                         if !show {
                             viewStore.send(.setNavigation(tag: nil))
@@ -157,7 +150,7 @@ struct PharmacySearchView: View {
             ToolbarItemGroup(placement: .navigationBarTrailing) {
                 if isRedeemRecipe {
                     NavigationBarCloseItem {
-                        viewStore.send(.close)
+                        viewStore.send(.closeButtonTouched)
                     }
                 }
             }
@@ -172,21 +165,18 @@ struct PharmacySearchView: View {
             }
         }
         .navigationTitle(L10n.tabTxtPharmacySearch)
-        .backport.searchable(
+        .searchable(
             text: searchText,
-            prompt: L10n.phaSearchTxtSearchHint.key,
-            displayModeAlways: true,
-            suggestions: {
-                Suggestions(viewStore: viewStore)
-            },
-            onSubmitOfSearch: {
-                viewStore.send(.performSearch, animation: .default)
-            }
-        )
+            placement: .navigationBarDrawer(displayMode: .always),
+            prompt: L10n.phaSearchTxtSearchHint.key
+        ) {
+            Suggestions(viewStore: viewStore)
+        }
+        .onSubmit(of: .search) {
+            viewStore.send(.performSearch, animation: .default)
+        }
         .alert(
-            store.scope(state: (\PharmacySearchDomain.State.route)
-                .appending(path: /PharmacySearchDomain.Route.alert)
-                .extract(from:)),
+            store.destinationsScope(state: /PharmacySearchDomain.Destinations.State.alert),
             dismiss: .setNavigation(tag: .none)
         )
         .searchableForceCancelButtonVisible(forceCancelButtonVisible)
@@ -213,7 +203,7 @@ struct PharmacySearchView: View {
             var body: some View {
                 VStack(alignment: .leading, spacing: 0) {
                     Text(text)
-                        .backport.searchCompletion(text)
+                        .searchCompletion(text)
                         .padding(.vertical, 8)
                         .foregroundColor(Colors.systemLabel)
                 }
@@ -252,15 +242,6 @@ struct PharmacySearchView: View {
             }
         }
     }
-
-    var pharmacySearchFilterStore: Store<PharmacySearchFilterDomain.State?, PharmacySearchFilterDomain.Action> {
-        store.scope(
-            state: (\PharmacySearchDomain.State.route)
-                .appending(path: /PharmacySearchDomain.Route.filter)
-                .extract(from:),
-            action: PharmacySearchDomain.Action.pharmacyFilterView(action:)
-        )
-    }
 }
 
 extension PharmacySearchView {
@@ -291,7 +272,7 @@ extension PharmacySearchView {
 
 extension PharmacySearchView {
     struct ViewState: Equatable {
-        let routeTag: PharmacySearchDomain.Route.Tag?
+        let destinationTag: PharmacySearchDomain.Destinations.State.Tag?
         let searchText: String
         let searchState: PharmacySearchDomain.SearchState
         let pharmacies: [PharmacyLocationViewModel]
@@ -303,7 +284,7 @@ extension PharmacySearchView {
         let showFilterBar: Bool
 
         init(state: PharmacySearchDomain.State) {
-            routeTag = state.route?.tag
+            destinationTag = state.destination?.tag
             searchText = state.searchText
             searchState = state.searchState
             pharmacies = state.pharmacies
@@ -327,22 +308,20 @@ extension PharmacySearchView {
         let isRedeemRecipe: Bool
 
         var body: some View {
-            WithViewStore(store) { viewStore in
+            WithViewStore(store.scope(state: \.destination?.tag)) { viewStore in
                 NavigationLink(
                     destination: IfLetStore(
-                        store.scope(
-                            state: (\PharmacySearchDomain.State.route)
-                                .appending(path: /PharmacySearchDomain.Route.pharmacy)
-                                .extract(from:),
-                            action: PharmacySearchDomain.Action.pharmacyDetailView(action:)
+                        store.destinationsScope(
+                            state: /PharmacySearchDomain.Destinations.State.pharmacy,
+                            action: PharmacySearchDomain.Destinations.Action.pharmacyDetailView(action:)
                         )
                     ) { scopedStore in
                         PharmacyDetailView(store: scopedStore, isRedeemRecipe: isRedeemRecipe)
                             .navigationBarTitle(L10n.phaDetailTxtTitle, displayMode: .inline)
                     },
-                    tag: PharmacySearchDomain.Route.Tag.pharmacy,
+                    tag: PharmacySearchDomain.Destinations.State.Tag.pharmacy,
                     selection: viewStore.binding(
-                        get: { $0.route?.tag },
+                        get: { $0 },
                         send: { .setNavigation(tag: $0) }
                     )
                 ) {}
@@ -358,7 +337,7 @@ extension PharmacySearchView {
 
         var body: some View {
             SingleElementSectionContainer {
-                ForEach(viewStore.pharmacies, id: \.self) { pharmacyViewModel in
+                ForEach(viewStore.pharmacies) { pharmacyViewModel in
                     Button(
                         action: { viewStore.send(.showDetails(pharmacyViewModel)) },
                         label: { Label(title: {
@@ -475,5 +454,15 @@ struct PharmacySearchView_Previews: PreviewProvider {
                                isRedeemRecipe: false)
         }
         .accentColor(Colors.primary700)
+
+        NavigationView {
+            PharmacySearchView(
+                store: PharmacySearchDomain.Dummies.storeOf(PharmacySearchDomain.Dummies.stateSearchResultOk),
+                profileSelectionToolbarItemStore: ProfileSelectionToolbarItemDomain.Dummies.store,
+                isRedeemRecipe: false
+            )
+        }
+        .preferredColorScheme(.dark)
+//        .accentColor(Colors.primary700)
     }
 }

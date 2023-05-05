@@ -60,7 +60,7 @@ struct RedeemMatrixCodeView: View {
             }
             .navigationBarItems(
                 trailing: CloseButton {
-                    viewStore.send(.close)
+                    viewStore.send(.closeButtonTapped)
                 }
                 .accessibility(identifier: A18n.redeem.matrixCode.rphBtnCloseButton)
             )
@@ -69,10 +69,10 @@ struct RedeemMatrixCodeView: View {
                     title: Text(L10n.rphTxtCloseAlertTitle),
                     message: Text(L10n.rphTxtCloseAlertMessage),
                     primaryButton: Alert.Button.cancel(Text(L10n.rphBtnCloseAlertKeep)) {
-                        viewStore.send(.close)
+                        viewStore.send(.closeButtonTapped)
                     },
                     secondaryButton: Alert.Button.destructive(Text(L10n.rphBtnCloseAlertMarkRedeemed)) {
-                        viewStore.send(.close)
+                        viewStore.send(.closeButtonTapped)
                     }
                 )
             }

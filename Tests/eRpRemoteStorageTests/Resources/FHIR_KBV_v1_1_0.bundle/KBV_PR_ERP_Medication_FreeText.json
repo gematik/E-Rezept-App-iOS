@@ -30,5 +30,8 @@
     },
     "form": {
         "text": "Tabletten"
+    },
+    "batch": {
+        "lotNumber": "1234567890abcde"
     }
 }

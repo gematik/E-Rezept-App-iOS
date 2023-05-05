@@ -92,7 +92,7 @@ struct ReadCardHelpListView: View {
                                         Text(L10n.cdwTxtRcListFasttrack)
                                             .fixedSize(horizontal: false, vertical: true)
                                         Button(action: {
-                                            viewStore.send(.navigateToIntro)
+                                            viewStore.send(.delegate(.navigateToIntro))
                                         }, label: {
                                             Text(L10n.cdwTxtRcListFasttrackMore)
                                         })

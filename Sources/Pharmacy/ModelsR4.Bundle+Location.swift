@@ -112,7 +112,7 @@ extension ModelsR4.Bundle {
         healthCareServices.forEach { healthService in
             healthService.type?.forEach { codableConcept in
                 codableConcept.coding?.forEach { coding in
-                    if coding.system?.value?.url.absoluteString == FHIRResponseKeys.serviceTypeIDKey {
+                    if coding.system?.value?.url.absoluteString == Terminology.Key.CodeSystem.serviceType {
                         switch coding.code {
                         case "117":
                             pharmacyTypes.append(
@@ -159,8 +159,10 @@ extension ModelsR4.Location {
     }
 
     var telematikID: String? {
-        identifier?.first {
-            $0.system?.value?.url.absoluteString == FHIRResponseKeys.telematikIDKey
+        identifier?.first { id in
+            Workflow.Key.telematikIdKeys.contains {
+                $0.value == id.system?.value?.url.absoluteString
+            }
         }?.value?.value?.string
     }
 
@@ -228,10 +230,4 @@ extension ModelsR4.Location {
         }
         return hours
     }
-}
-
-internal enum FHIRResponseKeys {
-    static let telematikIDKey = "https://gematik.de/fhir/NamingSystem/TelematikID"
-    static let typeIDKey = "http://terminology.hl7.org/ValueSet/v3-ServiceDeliveryLocationRoleType"
-    static let serviceTypeIDKey = "http://terminology.hl7.org/CodeSystem/service-type"
 }

@@ -83,6 +83,7 @@ internal enum Asset {
     internal static let arztRedCircle = ImageAsset(name: "Arzt_RedCircle")
     internal static let celebrationYellowCircle = ImageAsset(name: "Celebration_YellowCircle")
     internal static let girlRedCircle = ImageAsset(name: "Girl_RedCircle")
+    internal static let girlRedCircleLarge = ImageAsset(name: "Girl_RedCircle_large")
     internal static let groupShot = ImageAsset(name: "GroupShot")
     internal static let info = ImageAsset(name: "Info")
     internal static let ladyDeveloperBlueCircle = ImageAsset(name: "LadyDeveloper_BlueCircle")
@@ -125,6 +126,21 @@ internal enum Asset {
     }
     internal static let checkmarkDouble = ImageAsset(name: "checkmarkDouble")
     internal static let initialPlaceholder = ImageAsset(name: "initialPlaceholder")
+  }
+  internal enum Profile {
+    internal static let baby = ImageAsset(name: "Baby")
+    internal static let boyWithCard = ImageAsset(name: "BoyWithCard")
+    internal static let developer = ImageAsset(name: "Developer")
+    internal static let doctor = ImageAsset(name: "Doctor")
+    internal static let doctor2 = ImageAsset(name: "Doctor2")
+    internal static let manWithPhone = ImageAsset(name: "ManWithPhone")
+    internal static let oldDoctor = ImageAsset(name: "OldDoctor")
+    internal static let oldMan = ImageAsset(name: "OldMan")
+    internal static let oldWoman = ImageAsset(name: "OldWoman")
+    internal static let pharmacist = ImageAsset(name: "Pharmacist")
+    internal static let pharmacist2 = ImageAsset(name: "Pharmacist2")
+    internal static let wheelchair = ImageAsset(name: "Wheelchair")
+    internal static let womanWithPhone = ImageAsset(name: "WomanWithPhone")
   }
   internal enum Settings {
     internal enum LegalNotice {

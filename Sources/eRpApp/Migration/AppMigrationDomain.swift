@@ -22,12 +22,11 @@ import eRpKit
 import eRpLocalStorage
 import Foundation
 
-enum AppMigrationDomain {
-    typealias Store = ComposableArchitecture.Store<State, Action>
-    typealias Reducer = ComposableArchitecture.AnyReducer<State, Action, Environment>
+struct AppMigrationDomain: ReducerProtocol {
+    typealias Store = StoreOf<Self>
 
-    static func cleanup<T>() -> Effect<T, Never> {
-        Effect.cancel(id: Token.self)
+    static func cleanup<T>() -> EffectTask<T> {
+        EffectTask<T>.cancel(ids: Token.allCases)
     }
 
     enum Token: CaseIterable, Hashable {
@@ -57,62 +56,66 @@ enum AppMigrationDomain {
         case nothing
     }
 
-    struct Environment {
-        let schedulers: Schedulers
-        let migrationManager: ModelMigrating
-        let factory: CoreDataControllerFactory
-        let userDataStore: UserDataStore
-        let fileManager: FileManager
-        var finishedMigration: () -> Void
+    @Dependency(\.schedulers) var schedulers: Schedulers
+    @Dependency(\.migrationManager) var migrationManager: ModelMigrating
+    @Dependency(\.coreDataControllerFactory) var factory: CoreDataControllerFactory
+    @Dependency(\.userDataStore) var userDataStore: UserDataStore
+
+    var fileManager: FileManager = .default
+    var finishedMigration: () -> Void
+
+    var body: some ReducerProtocol<State, Action> {
+        Reduce(self.core)
     }
 
-    private static let domainReducer = Reducer { state, action, environment in
+    // swiftlint:disable:next function_body_length cyclomatic_complexity
+    func core(into state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
         case .loadCurrentModelVersion:
-            let currentVersion = environment.userDataStore.latestCompatibleModelVersion
+            let currentVersion = userDataStore.latestCompatibleModelVersion
             return Effect(value: .startMigration(from: currentVersion))
         case let .startMigration(from: currentVersion):
             state = .inProgress
-            return environment.migrationManager.startModelMigration(from: currentVersion)
+            return migrationManager.startModelMigration(from: currentVersion)
                 .first()
                 .catchToEffect()
                 .map(Action.startMigrationReceived)
-                .receive(on: environment.schedulers.main)
+                .receive(on: schedulers.main)
                 .eraseToEffect()
         case let .startMigrationReceived(.success(newVersion)):
             state = .finished
-            environment.userDataStore.latestCompatibleModelVersion = newVersion
+            userDataStore.latestCompatibleModelVersion = newVersion
 
             if !newVersion.isLastVersion {
                 return Effect(value: .startMigration(from: newVersion))
             }
 
-            environment.finishedMigration()
+            finishedMigration()
             return .none
         case let .startMigrationReceived(.failure(error)):
             if error == .isLatestVersion {
                 assertionFailure("MigrationManager should not have been called when the latest version is reached")
                 state = .finished
-                environment.finishedMigration()
+                finishedMigration()
                 return .none
             }
 
             state = .failed(
-                alertState(
+                Self.alertState(
                     title: L10n.amgBtnAlertTitle.text,
                     message: error.localizedDescription
                 )
             )
             return .none
         case .deleteDatabase:
-            let databaseUrl = environment.factory.databaseUrl
-            guard environment.fileManager.fileExists(atPath: databaseUrl.path) else {
-                state = .failed(deleteDatabaseAlertState())
+            let databaseUrl = factory.databaseUrl
+            guard fileManager.fileExists(atPath: databaseUrl.path) else {
+                state = .failed(Self.deleteDatabaseAlertState())
                 return .none
             }
             do {
-                let databaseUrl = environment.factory.databaseUrl
-                if let coreDataController = try? environment.factory.loadCoreDataController() {
+                let databaseUrl = factory.databaseUrl
+                if let coreDataController = try? factory.loadCoreDataController() {
                     // Don't let deleting the persistent store stop deleting the database file
                     try? coreDataController.destroyPersistentStore(at: databaseUrl)
                 }
@@ -120,25 +123,23 @@ enum AppMigrationDomain {
                 let folderUrl = databaseUrl.deletingLastPathComponent()
                 let shmFileUrl = folderUrl.appendingPathComponent("\(fileName)-shm")
                 let walFileUrl = folderUrl.appendingPathComponent("\(fileName)-wal")
-                try environment.fileManager.removeItem(at: shmFileUrl)
-                try environment.fileManager.removeItem(at: walFileUrl)
-                try environment.fileManager.removeItem(at: databaseUrl)
+                try fileManager.removeItem(at: shmFileUrl)
+                try fileManager.removeItem(at: walFileUrl)
+                try fileManager.removeItem(at: databaseUrl)
                 state = .finished
-                environment.finishedMigration()
+                finishedMigration()
             } catch {
-                state = .failed(deleteDatabaseAlertState())
+                state = .failed(Self.deleteDatabaseAlertState())
             }
             return .none
         case .close:
             state = .finished
-            environment.finishedMigration()
+            finishedMigration()
             return .none
         case .nothing:
             return .none
         }
     }
-
-    static let reducer: Reducer = domainReducer
 
     static func deleteDatabaseAlertState() -> AlertState<Action> {
         AlertState<Action>(
@@ -164,14 +165,7 @@ extension AppMigrationDomain {
         static func store(for state: AppMigrationDomain.State) -> AppMigrationDomain.Store {
             AppMigrationDomain.Store(
                 initialState: state,
-                reducer: .empty,
-                environment: AppMigrationDomain.Environment(
-                    schedulers: Schedulers(),
-                    migrationManager: MigrationManager.failing,
-                    factory: LocalStoreFactory.failing,
-                    userDataStore: DemoUserDefaultsStore(),
-                    fileManager: FileManager.default
-                ) {}
+                reducer: AppMigrationDomain {}
             )
         }
     }

@@ -8,6 +8,10 @@ controls:
     - ctl_btn_search_bar_cancel
   textfieldwithdelete:
     - ctl_btn_textfield_delete
+  tooltips:
+    - ctl_tooltip_container
+  demoMode:
+    - bnr_txt_demo_mode
 migration:
   - amg_txt_and_spinner
 scanner:
@@ -166,6 +170,23 @@ settings:
     - stg_btn_profile
     - stg_con_profiles
     - stg_btn_new_profile
+  chargeItems:
+    - stg_btn_charge_items_navigation_bar_menu
+    - stg_txt_charge_items_menu_entry_connect
+    - stg_txt_charge_items_menu_entry_activate
+    - stg_txt_charge_items_menu_entry_deactivate
+    - stg_btn_charge_items_menu_entry_edit
+    - stg_btn_charge_items_menu_entry_editing_done
+    - stg_txt_charge_items_empty_list_replacement
+    - stg_txt_charge_items_bottom_banner_message
+    - stg_btn_charge_items_bottom_banner
+    - stg_btn_charge_items_container
+    - stg_btn_charge_items_section_header_title
+    - stg_btn_charge_items_section_header_sum
+    - stg_btn_charge_items_row
+    - stg_btn_charge_items_row_title
+    - stg_btn_charge_items_row_date
+    - stg_btn_charge_items_row_tag_container
   card:
     - stg_txt_card_forgot_pin
     - stg_txt_card_custom_pin
@@ -201,6 +222,8 @@ settings:
     - stg_txt_edit_profile_insurance_company
     - stg_txt_edit_profile_can
     - stg_txt_edit_profile_insurance_id
+    - stg_txt_edit_profile_charge_items_section_title
+    - stg_txt_edit_profile_charge_items_section_show_charge_items
     - stg_txt_edit_profile_login_section_title
     - stg_txt_edit_profile_login_section_activate
     - stg_txt_edit_profile_login_section_connected_devices
@@ -309,6 +332,12 @@ mainScreen:
   - erx_btn_scn_prescription
   - erx_hnt_demo_mode_tour
   - erx_hnt_demo_mode_welcome
+  - erx_txt_tooltips_add_profile
+  - erx_txt_tooltips_profile_rename
+  - erx_txt_tooltips_scan
+welcomedrawer:
+  - wlcd_btn_login
+  - wlcd_btn_decline
 profileSelection:
   - pro_txt_selection_profile_list
   - pro_txt_selection_profile_list_entry
@@ -333,6 +362,51 @@ prescriptionDetails:
   - prsc_dtl_txt_delete_disabled_note
   - prsc_dtl_btn_share
   - prsc_dtl_btn_direct_assignment
+  # new:
+  - prsc_dtl_btn_error_info
+  - prsc_dtl_btn_substitution_info
+  - prsc_dtl_btn_scanned_prescription_info
+  - prsc_dtl_txt_prescription_validity
+  - prsc_dtl_btn_prescription_validity_info
+  - prsc_dtl_drawer_substitution_info
+  - prsc_dtl_drawer_error_info
+  - prsc_dtl_drawer_scanned_prescription_info
+  - prsc_dtl_drawer_prescription_validity_info
+  - prsc_dtl_btn_additional_fee
+  - prsc_dtl_btn_emergency_service_fee
+  - prsc_dtl_btn_medication
+  - prsc_dtl_btn_insured_person
+  - prsc_dtl_btn_practitioner
+  - prsc_dtl_btn_institution
+  - prsc_dtl_btn_work_related_accident
+  - prsc_dtl_btn_technical_informations
+  - prsc_dtl_drawer_co_payment_info_title
+  - prsc_dtl_drawer_co_payment_info_description
+  - prsc_dtl_drawer_co_payment_info
+  - prsc_dtl_drawer_emergency_service_fee_info
+  - prsc_dtl_ti_access_code
+  - prsc_dtl_ti_task_id
+  - prsc_dtl_pa_name
+  - prsc_dtl_pa_insurance_id
+  - prsc_dtl_pa_address
+  - prsc_dtl_pa_birth_date
+  - prsc_dtl_pa_phone
+  - prsc_dtl_pa_insurance
+  - prsc_dtl_pa_status
+  - prsc_dtl_pr_name
+  - prsc_dtl_pr_qualification
+  - prsc_dtl_pr_lanr
+  - prsc_dtl_pr_address
+  - prsc_dtl_pr_email
+  - prsc_dtl_or_name
+  - prsc_dtl_or_identifier
+  - prsc_dtl_or_address
+  - prsc_dtl_or_phone
+  - prsc_dtl_or_email
+  - prsc_dtl_accident_reason
+  - prsc_dtl_accident_date
+  - prsc_dtl_accident_id
+
 pharmacySearch:
   - pha_search_txt_result_list
   - pha_search_txt_result_list_entry

@@ -21,9 +21,8 @@ import ComposableArchitecture
 import eRpKit
 import LocalAuthentication
 
-enum AppAuthenticationBiometricsDomain {
-    typealias Store = ComposableArchitecture.Store<State, Action>
-    typealias Reducer = ComposableArchitecture.AnyReducer<State, Action, Environment>
+struct AppAuthenticationBiometricsDomain: ReducerProtocol {
+    typealias Store = StoreOf<Self>
 
     typealias AuthenticationResult = Result<Bool, Error>
 
@@ -36,24 +35,26 @@ enum AppAuthenticationBiometricsDomain {
 
     enum Action: Equatable {
         case startAuthenticationChallenge
-        case authenticationChallengeResponse(Result<Bool, Error>)
         case dismissError
+
+        case authenticationChallengeResponse(Result<Bool, Error>)
     }
 
-    struct Environment {
-        var schedulers: Schedulers
-        var authenticationChallengeProvider: AuthenticationChallengeProvider
+    @Dependency(\.schedulers) var schedulers: Schedulers
+    @Dependency(\.authenticationChallengeProvider) var authenticationChallengeProvider: AuthenticationChallengeProvider
+
+    var body: some ReducerProtocol<State, Action> {
+        Reduce(self.core)
     }
 
-    static let reducer = Reducer { state, action, environment in
+    func core(into state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
         case .startAuthenticationChallenge:
-            return environment
-                .authenticationChallengeProvider
+            return authenticationChallengeProvider
                 .startAuthenticationChallenge()
                 .first()
                 .map { Action.authenticationChallengeResponse($0) }
-                .receive(on: environment.schedulers.main.animation())
+                .receive(on: schedulers.main.animation())
                 .eraseToEffect()
         case let .authenticationChallengeResponse(response):
             state.authenticationResult = response

@@ -18,7 +18,9 @@
 
 import AVS
 import Combine
+import Dependencies
 import eRpKit
+import eRpLocalStorage
 import Foundation
 import IDP
 import Pharmacy
@@ -49,9 +51,6 @@ protocol UserSession {
 
     /// The UserDefaults repository for this session
     var localUserStore: UserDataStore { get }
-
-    /// Provides the state of events are relevant for hints
-    var hintEventsStore: EventsStore { get }
 
     /// The Secure (KeyChain) repository for this session
     var secureUserStore: SecureUserDataStore { get }
@@ -95,4 +94,45 @@ protocol UserSession {
     var prescriptionRepository: PrescriptionRepository { get }
 
     var activityIndicating: ActivityIndicating { get }
+
+    var idpSessionLoginHandler: LoginHandler { get }
+
+    var biometricsIdpSessionLoginHandler: LoginHandler { get }
+
+    var secureEnclaveSignatureProvider: SecureEnclaveSignatureProvider { get }
+}
+
+struct UserSessionDependency: DependencyKey {
+    static var initialValue: UserSession = {
+        let coreDataControllerFactory = CoreDataControllerFactoryDependency.liveValue
+        // After sanitising the database there should be a profile available which is set as the selected profile
+        let selectedProfileId = UserDefaults.standard.selectedProfileId ?? UUID()
+
+        return StandardSessionContainer(
+            for: selectedProfileId,
+            schedulers: Schedulers(),
+            erxTaskCoreDataStore: ErxTaskCoreDataStore(
+                profileId: selectedProfileId,
+                coreDataControllerFactory: coreDataControllerFactory
+            ),
+            pharmacyCoreDataStore: PharmacyCoreDataStore(coreDataControllerFactory: coreDataControllerFactory),
+            profileDataStore: ProfileDataStoreDependency.initialValue,
+            shipmentInfoDataStore: ShipmentInfoCoreDataStore(coreDataControllerFactory: coreDataControllerFactory),
+            avsTransactionDataStore: AVSTransactionCoreDataStore(coreDataControllerFactory: coreDataControllerFactory),
+            appConfiguration: UserDataStoreDependency.liveValue.appConfiguration
+        )
+    }()
+
+    static let liveValue: UserSession? = nil
+
+    static var previewValue: UserSession? = DemoSessionContainer(schedulers: Schedulers())
+
+    static let testValue: UserSession? = UnimplementedUserSession()
+}
+
+extension DependencyValues {
+    var userSession: UserSession {
+        get { self[UserSessionDependency.self] ?? changeableUserSessionContainer.userSession }
+        set { self[UserSessionDependency.self] = newValue }
+    }
 }

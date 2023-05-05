@@ -33,12 +33,12 @@ struct RegisteredDevicesView: View {
     }
 
     struct ViewState: Equatable {
-        let routeTag: RegisteredDevicesDomain.Route.Tag?
+        let destinationTag: RegisteredDevicesDomain.Destinations.State.Tag?
         let content: RegisteredDevicesDomain.State.Content
         let thisDeviceKeyIdentifier: String?
 
         init(with state: RegisteredDevicesDomain.State) {
-            routeTag = state.route?.tag
+            destinationTag = state.destination?.tag
             content = state.content
             thisDeviceKeyIdentifier = state.thisDeviceKeyIdentifier
         }
@@ -155,7 +155,7 @@ struct RegisteredDevicesView: View {
             Rectangle()
                 .frame(width: 0, height: 0, alignment: .center)
                 .sheet(isPresented: Binding<Bool>(get: {
-                    viewStore.routeTag == .cardWall
+                    viewStore.destinationTag == .idpCardWall
                 }, set: { show in
                     if !show {
                         viewStore.send(.setNavigation(tag: nil))
@@ -163,36 +163,26 @@ struct RegisteredDevicesView: View {
                 }),
                 onDismiss: {},
                 content: {
-                    IfLetStore(idpCardWallStore) { idpCardWallStore in
-                        IDPCardWallView(store: idpCardWallStore)
-                    }
+                    IfLetStore(
+                        store.destinationsScope(
+                            state: /RegisteredDevicesDomain.Destinations.State.idpCardWall,
+                            action: RegisteredDevicesDomain.Destinations.Action.idpCardWallAction
+                        ),
+                        then: IDPCardWallView.init(store:)
+                    )
                 })
                 .hidden()
                 .accessibility(hidden: true)
         }
         .subTitleStyle(PlainSectionContainerSubTitleStyle())
         .alert(
-            store.scope(
-                state:
-                (\RegisteredDevicesDomain.State.route)
-                    .appending(path: /RegisteredDevicesDomain.Route.alert)
-                    .extract(from:)
-            ),
+            store.destinationsScope(state: /RegisteredDevicesDomain.Destinations.State.alert),
             dismiss: RegisteredDevicesDomain.Action.setNavigation(tag: nil)
         )
         .navigationTitle(L10n.stgTxtRegDevicesTitle)
         .navigationBarTitleDisplayMode(.inline)
         .background(Color(.secondarySystemBackground)
             .ignoresSafeArea())
-    }
-
-    private var idpCardWallStore: Store<IDPCardWallDomain.State?, IDPCardWallDomain.Action> {
-        store.scope(
-            state: (\RegisteredDevicesDomain.State.route)
-                .appending(path: /RegisteredDevicesDomain.Route.cardWall)
-                .extract(from:),
-            action: RegisteredDevicesDomain.Action.idpCardWall(action:)
-        )
     }
 }
 

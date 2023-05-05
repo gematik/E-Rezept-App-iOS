@@ -17,6 +17,7 @@
 //
 
 import CombineSchedulers
+import ComposableArchitecture
 @testable import eRpApp
 import IDP
 import SnapshotTesting
@@ -41,12 +42,11 @@ final class EditProfileSnapshotTests: XCTestCase {
                         insurance: nil,
                         can: nil,
                         insuranceId: nil,
-                        emoji: "🌸",
+                        image: .boyWithCard,
                         color: .blue,
                         profileId: UUID()
                     ),
-                    reducer: .empty,
-                    environment: editProfileEnvironment
+                    reducer: EmptyReducer()
                 )
             )
         }
@@ -66,13 +66,12 @@ final class EditProfileSnapshotTests: XCTestCase {
                         insurance: "AOK",
                         can: "123123",
                         insuranceId: "XY1234567890",
-                        emoji: "🎃",
+                        image: .boyWithCard,
                         color: .blue,
                         profileId: UUID(),
                         token: IDPToken(accessToken: "", expires: Date(), idToken: "", redirect: "redirect")
                     ),
-                    reducer: .empty,
-                    environment: editProfileEnvironment
+                    reducer: EmptyReducer()
                 )
             )
         }
@@ -92,13 +91,12 @@ final class EditProfileSnapshotTests: XCTestCase {
                         insurance: "AOK",
                         can: "123123",
                         insuranceId: "XY1234567890",
-                        emoji: "🎃",
+                        image: .boyWithCard,
                         color: .blue,
                         profileId: UUID(),
                         token: IDPToken(accessToken: "", expires: Date(), idToken: "", redirect: "redirect")
                     ),
-                    reducer: .empty,
-                    environment: editProfileEnvironment
+                    reducer: EmptyReducer()
                 )
             )
         }
@@ -107,7 +105,7 @@ final class EditProfileSnapshotTests: XCTestCase {
         assertSnapshots(matching: sut, as: figmaReference())
     }
 
-    func testEditProfileFilledWithEmojiSnapshot() {
+    func testEditProfileFilledWithImageSnapshot() {
         let sut = EditProfileView(
             store: .init(
                 initialState: .init(
@@ -117,12 +115,11 @@ final class EditProfileSnapshotTests: XCTestCase {
                     insurance: nil,
                     can: nil,
                     insuranceId: nil,
-                    emoji: "👵🏻",
+                    image: .boyWithCard,
                     color: .green,
                     profileId: UUID()
                 ),
-                reducer: .empty,
-                environment: editProfileEnvironment
+                reducer: EmptyReducer()
             )
         )
 
@@ -141,15 +138,11 @@ final class EditProfileSnapshotTests: XCTestCase {
                     insurance: nil,
                     can: nil,
                     insuranceId: nil,
+                    image: .none,
                     color: .green,
                     profileId: UUID()
                 ),
-                reducer: .empty,
-                environment: NewProfileDomain.Environment(
-                    schedulers: Schedulers(),
-                    userDataStore: MockUserDataStore(),
-                    profileDataStore: MockProfileDataStore()
-                )
+                reducer: EmptyReducer()
             )
         )
 
@@ -168,39 +161,38 @@ final class EditProfileSnapshotTests: XCTestCase {
                     insurance: "Gematik BKK",
                     can: "123123",
                     insuranceId: "X987654321",
-                    emoji: "👵🏻",
+                    image: .boyWithCard,
                     color: .yellow,
                     profileId: UUID()
                 ),
-                reducer: .empty,
-                environment: NewProfileDomain.Environment(
-                    schedulers: Schedulers(),
-                    userDataStore: MockUserDataStore(),
-                    profileDataStore: MockProfileDataStore()
-                )
+                reducer: EmptyReducer()
             )
         )
         .frame(width: 375, height: 1400)
 
         assertSnapshots(matching: sut, as: snapshotModi())
     }
-}
 
-extension EditProfileSnapshotTests {
-    var editProfileEnvironment: EditProfileDomain.Environment {
-        EditProfileDomain.Environment(
-            appSecurityManager: MockAppSecurityManager(),
-            schedulers: Schedulers(),
-            profileDataStore: MockProfileDataStore(),
-            userDataStore: MockUserDataStore(),
-            profileSecureDataWiper: MockProfileSecureDataWiper(),
-            router: MockRouting(),
-            userSession: MockUserSession(),
-            userSessionProvider: MockUserSessionProvider(),
-            secureEnclaveSignatureProvider: DummySecureEnclaveSignatureProvider(),
-            nfcSignatureProvider: MockNFCSignatureProvider(),
-            signatureProvider: DummySecureEnclaveSignatureProvider(),
-            accessibilityAnnouncementReceiver: { _ in }
+    func testEditProfilePrivateInsuranceProfileSnapshot() {
+        let sut = EditProfileView(
+            store: .init(
+                initialState: .init(
+                    name: "Private Paul",
+                    acronym: "PP",
+                    fullName: "Private Paul",
+                    insurance: "Gematik PKV",
+                    can: "123123",
+                    insuranceId: "X987654321",
+                    image: .boyWithCard,
+                    color: .red,
+                    profileId: UUID(),
+                    insuranceType: .pKV
+                ),
+                reducer: EmptyReducer()
+            )
         )
+        .frame(width: 375, height: 1400)
+
+        assertSnapshots(matching: sut, as: snapshotModi())
     }
 }

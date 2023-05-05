@@ -22,9 +22,8 @@ import Foundation
 import HTTPClient
 
 #if ENABLE_DEBUG_VIEW
-enum DebugLogDomain {
-    typealias Store = ComposableArchitecture.Store<State, Action>
-    typealias Reducer = ComposableArchitecture.AnyReducer<State, Action, Environment>
+struct DebugLogDomain: ReducerProtocol {
+    typealias Store = StoreOf<Self>
 
     enum Token: CaseIterable, Hashable {}
 
@@ -81,36 +80,30 @@ enum DebugLogDomain {
         case toggleLogging(isEnabled: Bool)
     }
 
-    struct Environment {
-        var loggingStore: DebugLiveLogger
-    }
+    let loggingStore: DebugLiveLogger
 
-    static let domainReducer = Reducer { state, action, environment in
+    func reduce(into state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
         case .loadLogs:
-            state.updateLogs(from: environment.loggingStore)
-            state.isLoggingEnabled = environment.loggingStore.isLoggingEnabled
+            state.updateLogs(from: loggingStore)
+            state.isLoggingEnabled = loggingStore.isLoggingEnabled
             return .none
         case let .sort(by: property):
             state.sort = property
 
-            state.updateLogs(from: environment.loggingStore)
+            state.updateLogs(from: loggingStore)
             return .none
         case let .setFilter(filter):
             state.filter = filter
 
-            state.updateLogs(from: environment.loggingStore)
+            state.updateLogs(from: loggingStore)
             return .none
         case let .toggleLogging(isEnabled: isEnabled):
             state.isLoggingEnabled = isEnabled
-            environment.loggingStore.isLoggingEnabled = isEnabled
+            loggingStore.isLoggingEnabled = isEnabled
             return .none
         }
     }
-
-    static let reducer: Reducer = .combine(
-        domainReducer
-    )
 }
 
 extension DebugLogDomain {
@@ -118,8 +111,7 @@ extension DebugLogDomain {
         static let state = State(logs: multiple)
         static let store = Store(
             initialState: state,
-            reducer: DebugLogDomain.Reducer.empty,
-            environment: Environment(loggingStore: DebugLiveLogger.shared)
+            reducer: DebugLogDomain(loggingStore: DebugLiveLogger.shared)
         )
 
         static var multiple: [DebugLiveLogger.RequestLog] = [

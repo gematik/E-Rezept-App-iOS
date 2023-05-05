@@ -33,8 +33,8 @@ struct DemoBannerView<Content: View>: View {
                 }
 
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("bnr_txt_demo_mode")
-                        .accessibility(identifier: "bnr_txt_demo_mode")
+                    Text(L10n.bnrTxtDemoMode)
+                        .accessibility(identifier: A11y.controls.demoMode.bnrTxtDemoMode)
 
                     if let innerContent = innerContent {
                         innerContent
@@ -73,6 +73,18 @@ struct DemoBannerViewModifier<InnerContent: View>: ViewModifier {
                 turnDemoModeOffCallback: turnDemoModeOffCallback
             )
             content
+                .introspectNavigationController { navigationController in
+
+                    guard let yellow = UIColor(named: Asset.Colors.yellow500.name) else { return }
+
+                    let appearance = UINavigationBarAppearance()
+                    appearance.configureWithOpaqueBackground()
+                    if visible {
+                        appearance.backgroundColor = yellow
+                    }
+                    navigationController.navigationBar.standardAppearance = appearance
+                    navigationController.navigationBar.compactAppearance = appearance
+                }
         }
     }
 }
@@ -96,6 +108,23 @@ extension View {
 struct DemoBannerView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
+            NavigationView {
+                List {
+                    Text("abc")
+                        .frame(height: 1000, alignment: .top)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    Spacer()
+                }
+                .listStyle(.insetGrouped)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .demoBanner(isPresented: true) {
+                    Text("abc")
+                }
+                .navigationTitle("jo")
+            }
+            .navigationBarTitleDisplayMode(.automatic)
+            .frame(maxWidth: .infinity, alignment: .leading)
+
             DemoBannerView(visible: true, innerContent: EmptyView())
                 .previewLayout(.fixed(width: 250.0, height: 100.0))
 

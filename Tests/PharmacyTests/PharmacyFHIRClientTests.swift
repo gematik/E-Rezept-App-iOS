@@ -39,7 +39,11 @@ final class PharmacyFHIRClientTests: XCTestCase {
 
         host = "some-fhir-service.com"
         service = URL(string: "http://\(host ?? "")")!
-        sut = FHIRClient(server: service, httpClient: DefaultHTTPClient(urlSessionConfiguration: .default))
+        sut = FHIRClient(
+            server: service,
+            httpClient: DefaultHTTPClient(urlSessionConfiguration: .default),
+            receiveQueue: .immediate
+        )
     }
 
     override func tearDown() {

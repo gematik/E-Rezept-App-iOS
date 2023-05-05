@@ -29,29 +29,21 @@ import OpenSSL
 import Pharmacy
 import SwiftUI
 
-enum PharmacyRedeemDomain: Equatable {
-    typealias Store = ComposableArchitecture.Store<State, Action>
-    typealias Reducer = ComposableArchitecture.AnyReducer<State, Action, Environment>
+struct PharmacyRedeemDomain: ReducerProtocol {
+    typealias Store = StoreOf<Self>
 
-    static func cleanup<T>() -> Effect<T, Never> {
+    static func cleanup<T>() -> EffectTask<T> {
         Effect.concatenate(
-            cleanupSubviews(),
+            cleanupSubDomains(),
             Effect.cancel(id: PharmacyRedeemDomain.Token.self)
         )
     }
 
-    static func cleanupSubviews<T>() -> Effect<T, Never> {
+    static func cleanupSubDomains<T>() -> Effect<T, Never> {
         Effect.concatenate(
             PharmacyContactDomain.cleanup(),
             CardWallIntroductionDomain.cleanup()
         )
-    }
-
-    enum Route: Equatable {
-        case redeemSuccess(RedeemSuccessDomain.State)
-        case contact(PharmacyContactDomain.State)
-        case cardWall(CardWallIntroductionDomain.State)
-        case alert(ErpAlertState<Action>)
     }
 
     enum Token: CaseIterable, Hashable {
@@ -69,7 +61,7 @@ enum PharmacyRedeemDomain: Equatable {
         var orderResponses: IdentifiedArrayOf<OrderResponse> = []
         var selectedShipmentInfo: ShipmentInfo?
         var profile: Profile?
-        var route: Route?
+        var destination: Destinations.State?
     }
 
     enum Action: Equatable {
@@ -88,35 +80,36 @@ enum PharmacyRedeemDomain: Equatable {
         /// Called when a prescription has been selected or deselected
         case didSelect(String)
         /// Actions for subdomains and navigation
-        case redeemSuccessView(action: RedeemSuccessDomain.Action)
-        case pharmacyContact(action: PharmacyContactDomain.Action)
-        case cardWall(action: CardWallIntroductionDomain.Action)
-        case setNavigation(tag: Route.Tag?)
-        /// Closes action used by parent domains to close the entire navigationn stack
+        case destination(Destinations.Action)
+        case setNavigation(tag: Destinations.State.Tag?)
+        /// Closes action used by parent domains to close the entire navigation stack
         case close
     }
 
-    struct Environment {
-        var schedulers: Schedulers
-        var userSession: UserSession
-        let shipmentInfoStore: ShipmentInfoDataStore
-        let redeemService: RedeemService
-        let inputValidator: RedeemInputValidator
-        let serviceLocator: ServiceLocator
-        let signatureProvider: SecureEnclaveSignatureProvider
-        let userSessionProvider: UserSessionProvider
-        let accessibilityAnnouncementReceiver: (String) -> Void
-        let pharmacyRepository: PharmacyRepository
+    @Dependency(\.schedulers) var schedulers: Schedulers
+    @Dependency(\.shipmentInfoDataStore) var shipmentInfoStore: ShipmentInfoDataStore
+    @Dependency(\.userSession) var userSession: UserSession
+    @Dependency(\.redeemInputValidator) var inputValidator: RedeemInputValidator
+    @Dependency(\.redeemService) var redeemService: RedeemService
+    @Dependency(\.serviceLocator) var serviceLocator: ServiceLocator
+    @Dependency(\.pharmacyRepository) var pharmacyRepository: PharmacyRepository
+
+    var body: some ReducerProtocol<State, Action> {
+        Reduce(self.core)
+            .ifLet(\.destination, action: /Action.destination) {
+                PharmacyRedeemDomain.Destinations()
+            }
     }
 
-    static let domainReducer = Reducer { state, action, environment in
+    // swiftlint:disable:next function_body_length cyclomatic_complexity
+    func core(into state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
         case .registerSelectedShipmentInfoListener:
-            return environment.shipmentInfoStore.selectedShipmentInfo
+            return shipmentInfoStore.selectedShipmentInfo
                 .catchToEffect()
                 .map(Action.selectedShipmentInfoReceived)
                 .cancellable(id: Token.shipmentInfoStore, cancelInFlight: true)
-                .receive(on: environment.schedulers.main)
+                .receive(on: schedulers.main)
                 .eraseToEffect()
         case let .selectedShipmentInfoReceived(result):
             if case let .success(shipmentInfo) = result, let selectedShipmentInfo = shipmentInfo {
@@ -126,11 +119,11 @@ enum PharmacyRedeemDomain: Equatable {
             }
             return .none
         case .registerSelectedProfileListener:
-            return environment.userSession.profile()
+            return userSession.profile()
                 .catchToEffect()
                 .map(Action.selectedProfileReceived)
                 .cancellable(id: Token.profileUpdates, cancelInFlight: true)
-                .receive(on: environment.schedulers.main)
+                .receive(on: schedulers.main)
                 .eraseToEffect()
         case .selectedProfileReceived(.failure):
             return .none
@@ -143,26 +136,26 @@ enum PharmacyRedeemDomain: Equatable {
                 return .none
             }
 
-            if case let .invalid(error) = environment.inputValidator
+            if case let .invalid(error) = inputValidator
                 .validate(state.selectedShipmentInfo, for: state.redeemOption) {
-                state.route = .alert(.info(AlertStates.missingContactInfo(with: error)))
+                state.destination = .alert(.info(AlertStates.missingContactInfo(with: error)))
                 return .none
             }
-            return environment.redeem(orders: state.orders)
+            return redeem(orders: state.orders)
                 .cancellable(id: Token.redeem, cancelInFlight: true)
         case let .redeemReceived(.success(orderResponses)):
             state.orderResponses = orderResponses
             if orderResponses.arePartiallySuccessful || orderResponses.areFailing {
-                state.route = .alert(.info(AlertStates.failingRequest(count: orderResponses.failedCount)))
+                state.destination = .alert(.info(AlertStates.failingRequest(count: orderResponses.failedCount)))
             } else if orderResponses.areSuccessful {
-                state.route = .redeemSuccess(RedeemSuccessDomain.State(redeemOption: state.redeemOption))
+                state.destination = .redeemSuccess(RedeemSuccessDomain.State(redeemOption: state.redeemOption))
             }
-            return environment.save(pharmacy: state.pharmacy)
+            return save(pharmacy: state.pharmacy)
                 .cancellable(id: Token.savePharmacy, cancelInFlight: true)
                 .fireAndForget()
         case let .redeemReceived(.failure(error)):
-            state.route = .alert(.init(for: error))
-            return environment.save(pharmacy: state.pharmacy)
+            state.destination = .alert(.init(for: error))
+            return save(pharmacy: state.pharmacy)
                 .cancellable(id: Token.savePharmacy, cancelInFlight: true)
                 .fireAndForget()
         case let .didSelect(taskID):
@@ -174,80 +167,46 @@ enum PharmacyRedeemDomain: Equatable {
                 }
             }
             return .none
-        case .redeemSuccessView(action: .close):
-            state.route = nil
-            return Effect(value: .close)
-        case .pharmacyContact(.close), .cardWall(.close):
-            state.route = nil
-            return cleanupSubviews()
+        case let .destination(.redeemSuccessView(action: .delegate(action))):
+            switch action {
+            case .close:
+                state.destination = nil
+                return Effect(value: .close)
+            }
+        case let .destination(.pharmacyContact(.delegate(action))):
+            switch action {
+            case .close:
+                state.destination = nil
+                return Self.cleanupSubDomains()
+            }
+        case .destination(.cardWall(.delegate(.close))):
+            state.destination = nil
+            return Self.cleanupSubDomains()
         case let .setNavigation(tag: tag):
             switch tag {
             case .contact:
-                state.route = .contact(
-                    .init(shipmentInfo: state.selectedShipmentInfo, service: environment.inputValidator.service)
+                state.destination = .contact(
+                    .init(shipmentInfo: state.selectedShipmentInfo, service: inputValidator.service)
                 )
             case .redeemSuccess:
-                state.route = .redeemSuccess(RedeemSuccessDomain.State(redeemOption: state.redeemOption))
+                state.destination = .redeemSuccess(RedeemSuccessDomain.State(redeemOption: state.redeemOption))
             case .cardWall:
-                state.route = .cardWall(CardWallIntroductionDomain.State(
-                    isNFCReady: environment.serviceLocator.deviceCapabilities.isNFCReady,
-                    profileId: environment.userSession.profileId
+                state.destination = .cardWall(CardWallIntroductionDomain.State(
+                    isNFCReady: serviceLocator.deviceCapabilities.isNFCReady,
+                    profileId: userSession.profileId
                 ))
             case .alert: break
-            case .none: state.route = nil
+            case .none: state.destination = nil
             }
             return .none
         case .close:
-            state.route = nil
+            state.destination = nil
             // closing is handled in parent reducer
-            return cleanupSubviews()
-        case .cardWall, .pharmacyContact, .redeemSuccessView:
+            return Self.cleanupSubDomains()
+        case .destination:
             return .none
         }
     }
-
-    static let reducer: Reducer = .combine(
-        cardWallPullbackReducer,
-        pharmacyContactPullbackReducer,
-        redeemSuccessPullbackReducer,
-        domainReducer
-    )
-
-    static let pharmacyContactPullbackReducer: Reducer =
-        PharmacyContactDomain.reducer._pullback(
-            state: (\State.route).appending(path: /Route.contact),
-            action: /PharmacyRedeemDomain.Action.pharmacyContact(action:)
-        ) { environment in
-            PharmacyContactDomain.Environment(
-                schedulers: environment.schedulers,
-                shipmentInfoStore: environment.shipmentInfoStore,
-                validator: environment.inputValidator
-            )
-        }
-
-    static let redeemSuccessPullbackReducer: Reducer =
-        RedeemSuccessDomain.reducer._pullback(
-            state: (\State.route).appending(path: /Route.redeemSuccess),
-            action: /PharmacyRedeemDomain.Action.redeemSuccessView(action:)
-        ) { _ in RedeemSuccessDomain.Environment() }
-
-    static let cardWallPullbackReducer: Reducer =
-        CardWallIntroductionDomain.reducer._pullback(
-            state: (\State.route).appending(path: /Route.cardWall),
-            action: /PharmacyRedeemDomain.Action.cardWall(action:)
-        ) { globalEnvironment in
-            CardWallIntroductionDomain.Environment(
-                userSession: globalEnvironment.userSession,
-                userSessionProvider: globalEnvironment.userSessionProvider,
-                sessionProvider: DefaultSessionProvider(
-                    userSessionProvider: globalEnvironment.userSessionProvider,
-                    userSession: globalEnvironment.userSession
-                ),
-                schedulers: globalEnvironment.schedulers,
-                signatureProvider: globalEnvironment.signatureProvider,
-                accessibilityAnnouncementReceiver: globalEnvironment.accessibilityAnnouncementReceiver
-            )
-        }
 }
 
 extension PharmacyRedeemDomain {
@@ -298,11 +257,12 @@ extension PharmacyRedeemDomain.State {
     }
 }
 
-extension PharmacyRedeemDomain.Environment {
+extension PharmacyRedeemDomain {
     func redeem(
         orders: [Order]
     ) -> Effect<PharmacyRedeemDomain.Action, Never> {
         redeemService.redeem(orders) // -> AnyPublisher<IdentifiedArrayOf<OrderResponse>, RedeemServiceError>
+            .receive(on: schedulers.main.animation())
             .map { orderResponses -> PharmacyRedeemDomain.Action in
                 PharmacyRedeemDomain.Action.redeemReceived(.success(orderResponses))
             }
@@ -313,7 +273,6 @@ extension PharmacyRedeemDomain.Environment {
                     return Effect(value: PharmacyRedeemDomain.Action.redeemReceived(.failure(redeemError)))
                 }
             }
-            .receive(on: schedulers.main.animation())
             .eraseToEffect()
     }
 
@@ -328,7 +287,7 @@ extension PharmacyRedeemDomain.Environment {
     }
 }
 
-extension ErxTask.Patient {
+extension ErxPatient {
     func shipmentInfo(with identifier: UUID = UUID()) -> ShipmentInfo {
         guard let address = address else {
             return ShipmentInfo(name: name)
@@ -431,25 +390,11 @@ extension PharmacyRedeemDomain {
             ),
             profile: Profile(name: "Marta Maquise")
         )
-        static let environment = Environment(
-            schedulers: Schedulers(),
-            userSession: DummySessionContainer(),
-            shipmentInfoStore: DemoShipmentInfoStore(),
-            redeemService: DemoRedeemService(),
-            inputValidator: DemoRedeemInputValidator(),
-            serviceLocator: ServiceLocator(),
-            signatureProvider: DummySecureEnclaveSignatureProvider(),
-            userSessionProvider: DummyUserSessionProvider(),
-            accessibilityAnnouncementReceiver: { _ in },
-            pharmacyRepository: DummyPharmacyRepository()
-        )
+
         static let store = Store(initialState: state,
-                                 reducer: reducer,
-                                 environment: environment)
+                                 reducer: PharmacyRedeemDomain())
         static func storeFor(_ state: State) -> Store {
-            Store(initialState: state,
-                  reducer: PharmacyRedeemDomain.Reducer.empty,
-                  environment: environment)
+            Store(initialState: state, reducer: PharmacyRedeemDomain())
         }
     }
 }

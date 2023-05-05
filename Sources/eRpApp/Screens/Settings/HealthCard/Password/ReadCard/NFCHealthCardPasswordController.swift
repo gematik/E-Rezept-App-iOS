@@ -19,6 +19,7 @@
 import Combine
 import CombineSchedulers
 import CoreNFC
+import Dependencies
 import HealthCardControl
 import NFCCardReaderProvider
 
@@ -335,5 +336,24 @@ struct DummyNFCHealthCardPasswordController: NFCHealthCardPasswordController {
         Just(NFCHealthCardPasswordControllerResponse.success)
             .setFailureType(to: NFCHealthCardPasswordControllerError.self)
             .eraseToAnyPublisher()
+    }
+}
+
+// MARK: TCA Dependency
+
+// swiftlint:disable:next type_name
+struct NFCHealthCardPasswordControllerDependency: DependencyKey {
+    static let liveValue: NFCHealthCardPasswordController =
+        DefaultNFCResetRetryCounterController(schedulers: .liveValue)
+
+    static let previewValue: NFCHealthCardPasswordController = DummyNFCHealthCardPasswordController()
+
+    static let testValue: NFCHealthCardPasswordController = UnimplementedNFCHealthCardPasswordController()
+}
+
+extension DependencyValues {
+    var nfcHealthCardPasswordController: NFCHealthCardPasswordController {
+        get { self[NFCHealthCardPasswordControllerDependency.self] }
+        set { self[NFCHealthCardPasswordControllerDependency.self] = newValue }
     }
 }

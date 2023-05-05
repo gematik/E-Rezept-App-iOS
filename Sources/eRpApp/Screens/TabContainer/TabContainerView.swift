@@ -31,11 +31,11 @@ struct TabContainerView: View {
     }
 
     struct ViewState: Equatable {
-        let selectedTab: AppDomain.Route
+        let destination: AppDomain.Destinations.State
         let unreadOrderMessageCount: Int
 
         init(state: AppDomain.State) {
-            selectedTab = state.route
+            destination = state.destination
             unreadOrderMessageCount = state.unreadOrderMessageCount
         }
     }
@@ -48,64 +48,75 @@ struct TabContainerView: View {
                 .zIndex(1000)
             #endif
 
-            TabView(selection: Binding<AppDomain.Route>(
-                get: { viewStore.selectedTab },
+            TabView(selection: Binding<AppDomain.Destinations.State>(
+                get: { viewStore.destination },
                 set: { selected in
-                    viewStore.send(.selectTab(selected))
+                    viewStore.send(.setNavigation(selected))
                 }
             )) {
                 MainView(
-                    store: store.scope(state: \.main,
-                                       action: AppDomain.Action.main(action:))
+                    store: store.scope(
+                        state: \.subdomains.main
+                    ) {
+                        AppDomain.Action.subdomains(.main(action: $0))
+                    }
                 )
                 .tabItem {
                     Label(L10n.tabTxtMain, image: Asset.TabIcon.appLogoTabItem.name)
                 }
-                .tag(AppDomain.Route.main)
+                .tag(AppDomain.Destinations.State.main)
 
                 NavigationView {
                     PharmacySearchView(
                         store: store.scope(
-                            state: \.pharmacySearch,
-                            action: AppDomain.Action.pharmacySearch(action:)
-                        ),
-                        profileSelectionToolbarItemStore: store.scope(state: \.profileSelection,
-                                                                      action: AppDomain.Action.profile(action:)),
+                            state: \.subdomains.pharmacySearch
+                        ) {
+                            AppDomain.Action.subdomains(.pharmacySearch(action: $0))
+                        },
+                        profileSelectionToolbarItemStore: store.scope(
+                            state: \.subdomains.profileSelection
+                        ) {
+                            AppDomain.Action
+                                .subdomains(.profile(action: $0))
+                        },
                         isRedeemRecipe: false
                     )
                 }
                 .tabItem {
                     Label(L10n.tabTxtPharmacySearch, image: Asset.TabIcon.mapPinAndEllipse.name)
                 }
-                .tag(AppDomain.Route.pharmacySearch)
+                .tag(AppDomain.Destinations.State.pharmacySearch)
 
                 OrdersView(
-                    store: store.scope(state: \.orders,
-                                       action: AppDomain.Action.orders(action:)),
-                    profileSelectionToolbarItemStore: store.scope(state: \.profileSelection,
-                                                                  action: AppDomain.Action.profile(action:))
+                    store: store.scope(state: \.subdomains.orders) {
+                        AppDomain.Action.subdomains(.orders(action: $0))
+                    },
+                    profileSelectionToolbarItemStore: store.scope(
+                        state: \.subdomains.profileSelection
+                    ) {
+                        AppDomain.Action.subdomains(.profile(action: $0))
+                    }
                 )
                 .tabItem {
                     Label(L10n.tabTxtOrders, image: Asset.TabIcon.bag.name)
                 }
-                .backport.badge(viewStore.unreadOrderMessageCount)
-                .tag(AppDomain.Route.orders)
+                .badge(viewStore.unreadOrderMessageCount)
+                .tag(AppDomain.Destinations.State.orders)
 
                 SettingsView(
                     store: store.scope(
-                        state: \.settingsState,
-                        action: AppDomain.Action.settings(action:)
-                    )
+                        state: \.subdomains.settingsState
+                    ) { AppDomain.Action.subdomains(.settings(action: $0)) }
                 )
                 .tabItem {
                     Label(L10n.tabTxtSettings, image: Asset.TabIcon.gearshape.name)
                 }
-                .tag(AppDomain.Route.settings)
+                .tag(AppDomain.Destinations.State.settings)
             }
             .onAppear {
                 viewStore.send(.registerDemoModeListener)
                 viewStore.send(.registerNewOrderMessageListener)
-                viewStore.send(.profile(action: .registerProfileListener))
+                viewStore.send(.subdomains(.profile(action: .registerProfileListener)))
             }
             // Fix tabbar background becomming 100% transparent for dynamic views, in our case using quick filters
             // within pharmacy search
@@ -119,14 +130,10 @@ struct TabContainerView: View {
                 }
             }
             .onDisappear {
-                viewStore.send(.profile(action: .unregisterProfileListener))
+                viewStore.send(.subdomains(.profile(action: .unregisterProfileListener)))
             }
             .accentColor(Colors.primary600)
             .zIndex(0)
-
-            if #unavailable(iOS 15.0), viewStore.unreadOrderMessageCount > 0 {
-                MessagesBadgeView(badgeCount: viewStore.unreadOrderMessageCount)
-            }
         }
     }
 

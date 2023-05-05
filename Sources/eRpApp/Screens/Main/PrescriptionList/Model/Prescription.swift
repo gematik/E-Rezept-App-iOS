@@ -29,6 +29,13 @@ struct Prescription: Equatable, Hashable, Identifiable {
         case archived(message: String)
         case undefined
         case error(message: String)
+
+        var isError: Bool {
+            if case .error = self {
+                return true
+            }
+            return false
+        }
     }
 
     let erxTask: ErxTask
@@ -39,7 +46,7 @@ struct Prescription: Equatable, Hashable, Identifiable {
     let viewStatus: Status
 
     enum PrescriptionType {
-        case lowDetail
+        case scanned
         case regular
         case directAssignment
         case multiplePrescription
@@ -52,9 +59,9 @@ struct Prescription: Equatable, Hashable, Identifiable {
     init(
         erxTask: ErxTask,
         date: Date = Date(),
-        dateFormatter: DateFormatter = globals.uiDateFormatter
+        dateFormatter: UIDateFormatter = UIDateFormatter.liveValue
     ) {
-        if erxTask.multiplePrescription?.mark == true {
+        if erxTask.medicationRequest.multiplePrescription?.mark == true {
             type = .multiplePrescription
         }
         if erxTask.flowType == .directAssignment ? true : erxTask.id
@@ -62,14 +69,18 @@ struct Prescription: Equatable, Hashable, Identifiable {
             type = .directAssignment
         }
         if erxTask.source == .scanner {
-            type = .lowDetail
+            type = .scanned
         }
 
         self.erxTask = erxTask
         actualMedications = erxTask.medicationDispenses.map(Medication.from(medicationDispense:))
 
         if let taskMedication = erxTask.medication {
-            prescribedMedication = Medication.from(medication: taskMedication, redeemedOn: erxTask.redeemedOn)
+            prescribedMedication = Medication.from(
+                medication: taskMedication,
+                dosageInstructions: erxTask.medicationRequest.dosageInstructions,
+                redeemedOn: erxTask.redeemedOn
+            )
         } else {
             prescribedMedication = nil
         }
@@ -78,7 +89,7 @@ struct Prescription: Equatable, Hashable, Identifiable {
                                              whenHandedOver: actualMedications.first?
                                                  .handedOver ?? prescribedMedication?.handedOver,
                                              date: date,
-                                             dateFormatter: dateFormatter)
+                                             uiDateFormatter: dateFormatter)
     }
 
     subscript<A>(dynamicMember keyPath: KeyPath<ErxTask, A>) -> A {
@@ -90,13 +101,13 @@ struct Prescription: Equatable, Hashable, Identifiable {
         type: PrescriptionType,
         whenHandedOver: String?,
         date: Date = Date(),
-        dateFormatter: DateFormatter = globals.uiDateFormatter
+        uiDateFormatter: UIDateFormatter
     ) -> Status {
         switch erxTask.status {
         case .ready, .inProgress:
-            if type == .lowDetail,
+            if type == .scanned,
                let authoredOn = erxTask.authoredOn?.date {
-                let localizedDateString = dateFormatter.string(from: authoredOn)
+                let localizedDateString = uiDateFormatter.relativeDate(from: authoredOn)
                 return .open(until: L10n.erxTxtScannedAt(localizedDateString).text)
             }
 
@@ -105,9 +116,9 @@ struct Prescription: Equatable, Hashable, Identifiable {
             }
 
             if type == .multiplePrescription,
-               erxTask.multiplePrescription?.isRedeemable == false,
-               let startDate = erxTask.multiplePrescription?.startDate {
-                let localizedDateString = dateFormatter.string(from: startDate)
+               erxTask.medicationRequest.multiplePrescription?.isRedeemable == false,
+               let startDate = erxTask.medicationRequest.multiplePrescription?.startDate {
+                let localizedDateString = uiDateFormatter.relativeDate(from: startDate)
                 return .redeem(at: L10n.erxTxtRedeemAt(localizedDateString).text)
             }
 
@@ -126,23 +137,21 @@ struct Prescription: Equatable, Hashable, Identifiable {
             return .archived(message: L10n.erxTxtInvalid.text)
 
         case .completed:
-            let redeemedOnDate = uiFormattedString(from: whenHandedOver?.date, dateFormatter: dateFormatter)
+            let redeemedOnDate = uiDateFormatter.relativeDate(whenHandedOver) ?? L10n.prscFdTxtNa.text
             return .archived(message: L10n.dtlTxtMedRedeemedOn(redeemedOnDate).text)
         case .draft, .cancelled, .undefined:
             return .undefined
         case .error:
-            let authoredOn = uiFormattedString(from: erxTask.authoredOn?.date, dateFormatter: dateFormatter)
+            let authoredOn = uiDateFormatter.relativeDate(erxTask.authoredOn) ?? L10n.prscFdTxtNa.text
             return .error(message: L10n.dtlTxtMedAuthoredOn(authoredOn).text)
         }
     }
 
-    private static func uiFormattedString(
-        from date: Date?,
-        dateFormatter: DateFormatter
-    ) -> String {
-        if let date {
-            let localizedDateString = dateFormatter.string(from: date)
-            return localizedDateString
+    var title: String {
+        if let name = prescribedMedication?.displayName {
+            return name
+        } else if case .error = viewStatus {
+            return L10n.prscTxtFallbackName.text
         } else {
             return L10n.prscFdTxtNa.text
         }
@@ -192,6 +201,14 @@ struct Prescription: Equatable, Hashable, Identifiable {
         }
     }
 
+    var isManualRedeemEnabled: Bool {
+        guard erxTask.source == .scanner else {
+            return false
+        }
+
+        return erxTask.communications.isEmpty && erxTask.avsTransactions.isEmpty
+    }
+
     var isDeleteabel: Bool {
         // [REQ:gemSpec_FD_eRp:A_22102] prevent deletion of tasks with flowtype 169 while not completed
         guard type != .directAssignment
@@ -217,7 +234,7 @@ struct Prescription: Equatable, Hashable, Identifiable {
     /// `true` if the medication has been dispensed and substituted by an alternative medication, `false` otherwise.
     var isMedicationSubstituted: Bool {
         guard let medicationPZN = erxTask.medication?.pzn,
-              let medicationDispPZN = erxTask.medicationDispenses.first?.pzn
+              let medicationDispPZN = erxTask.medicationDispenses.first?.medication?.pzn
         else { // TODO: change for all medicationDispenses, // swiftlint:disable:this todo
             return false
         }
@@ -225,7 +242,7 @@ struct Prescription: Equatable, Hashable, Identifiable {
     }
 
     var multiplePrescriptionStatus: String? {
-        guard let multiplePrescription = erxTask.multiplePrescription,
+        guard let multiplePrescription = erxTask.medicationRequest.multiplePrescription,
               multiplePrescription.mark,
               let index = multiplePrescription.numbering,
               let count = multiplePrescription.totalNumber
@@ -235,7 +252,7 @@ struct Prescription: Equatable, Hashable, Identifiable {
     }
 }
 
-extension ErxTask.MultiplePrescription {
+extension MultiplePrescription {
     var isRedeemable: Bool {
         guard let startDate = startDate,
               let daysUntilStartDate = Date().days(until: startDate)
@@ -246,7 +263,7 @@ extension ErxTask.MultiplePrescription {
 
     var startDate: Date? {
         guard let start = startPeriod,
-              let startDate = globals.fhirDateFormatter.date(from: start, format: .yearMonthDay)
+              let startDate = FHIRDateFormatter.liveValue.date(from: start, format: .yearMonthDay)
         else { return nil }
 
         return startDate
@@ -254,6 +271,19 @@ extension ErxTask.MultiplePrescription {
 }
 
 extension Prescription {
+    var coPaymentStatusText: String {
+        switch erxTask.medicationRequest.coPaymentStatus {
+        case .noSubjectToCharge:
+            return L10n.prscDtlTxtNo.text
+        case .subjectToCharge:
+            return L10n.prscDtlTxtYes.text
+        case .artificialInsemination:
+            return L10n.prscDtlTxtPartial.text
+        case .none:
+            return L10n.prscFdTxtNa.text
+        }
+    }
+
     var statusTitle: LocalizedStringKey {
         guard type != .directAssignment else {
             switch viewStatus {
@@ -384,7 +414,9 @@ extension Prescription: Comparable {
 extension Prescription {
     enum Dummies {
         static let prescriptionReady = Prescription(erxTask: ErxTask.Demo.erxTaskReady)
+        static let prescriptionDirectAssignment = Prescription(erxTask: ErxTask.Demo.erxTaskDirectAssignment)
         static let prescriptionError = Prescription(erxTask: ErxTask.Demo.erxTaskError)
+        static let scanned = Prescription(erxTask: ErxTask.Demo.erxTaskScanned1)
         static let prescriptions = ErxTask.Demo.erxTasks.map { Prescription(erxTask: $0) }
         static let prescriptionsScanned = ErxTask.Demo.erxTasksScanned
             .map { Prescription(erxTask: $0) }

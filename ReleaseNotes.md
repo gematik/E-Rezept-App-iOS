@@ -1,3 +1,74 @@
+# Release 1.8.0
+
+## 1.8.0 (2023-03-01)
+
+### added (5 changes)
+
+- Add Destinations for screen navigation
+- Add basic ChargeItemsDomain
+- Add debug menu entry for faking pKV profiles
+- Add accesssibility identifiers for tooltips
+- Add Insurance Type to Profile
+
+### changed (4 changes)
+
+- Change development tooling Ruby 3.1.2, iPhone 14 Snapshots
+- Change resolving references in task bundle
+- Change to present entire communication payload to users
+- Change parsing of audit events to also parse the taskId by identifier
+
+### removed (1 change)
+
+- Remove iOS 14 support
+
+### fixed (5 changes)
+
+- Fix pharmacy favorites in demo mode
+- Fix switching tabs in main view to reset other tabs navigation stacks
+- Fix necessary login alert to actually present the card wall
+- Fix communications not being grouped correctly
+- Fix pharmacy filter background in dark mode
+
+## 1.7.0 (2023-02-02)
+
+### changed (6 changes)
+
+- Migrate Domains to use TCA ReducerProtocol
+- Refactor Routing dependency to use normal dependencies system
+- Update data privacy text
+- Change lot and expiresOn to be grouped in new type Batch
+- Change ErxTask properties to be grouped by MedicationRequest
+- Update localization
+
+### added (7 changes)
+
+- Add Analytics by activating ContentSquareAnalytics adapter
+- Add response action to main domain and add some missing tests
+- Add Edit-Profile Name when Profile chip in long pressed in horizontal bar
+- Add previewValue and refactor most dependencies to account for Protocols
+- Add medication types for medication dispense
+- Add top level dependencies to DependencyValues
+- Add tooltips to MainView
+
+### fixed (10 changes)
+
+- Fix saving scanned tasks to only happen once
+- Fix local state for scanned tasks that have been redeemed via fachdienst
+- Fix selecting prescriptions in PharmacyRedeemView
+- Fix manual redeem to only work for tasks which are scanned and have not been...
+- Fix redeeming when scanned tasks available in store
+- Fix missing Accessibility IDs
+- Fix nfc alert showing up while exiting demo modus
+- Fix onboarding where it was possible to pass auth screen without selection with fast swipe gestures
+- Fix sticky headers to use correct blurring material for darkmode
+- Fix no result message is not centered
+
+### removed (3 changes)
+
+- Remove MainViewHintDomain, MainViewHint, EventStore, HintProvider, HintState...
+- Remove globals in favor of using TCA Dependency
+- Remove auditEvent variable from ErxTask, since it was never used and is now...
+
 # Release 1.6.0
 
 ### added (2 changes)

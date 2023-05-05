@@ -17,6 +17,7 @@
 //
 
 import CombineSchedulers
+import ComposableArchitecture
 @testable import eRpApp
 import eRpKit
 import SnapshotTesting
@@ -24,13 +25,20 @@ import SwiftUI
 import XCTest
 
 final class PrescriptionArchiveSnapshotTests: XCTestCase {
+    let testScheduler = DispatchQueue.immediate
+    let initialState = PrescriptionArchiveDomain.Dummies.state
+
     override func setUp() {
         super.setUp()
         diffTool = "open"
     }
 
     func testPrescriptionArchiveView_Show() {
-        let sut = PrescriptionArchiveView(store: PrescriptionArchiveDomain.Dummies.store)
+        let store: StoreOf<PrescriptionArchiveDomain> = Store(
+            initialState: initialState,
+            reducer: EmptyReducer()
+        )
+        let sut = PrescriptionArchiveView(store: store)
             .frame(width: 320, height: 2000)
         assertSnapshots(matching: sut, as: snapshotModi())
     }

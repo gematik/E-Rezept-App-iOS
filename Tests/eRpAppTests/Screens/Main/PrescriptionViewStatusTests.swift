@@ -26,7 +26,7 @@ final class PrescriptionViewStatusTests: XCTestCase {
               expiresOn: String? = DemoDate.createDemoDate(.tomorrow),
               acceptedUntil: String? = DemoDate.createDemoDate(.twentyEightDaysAhead),
               redeemedOn: String? = nil,
-              multiplePrescription: ErxTask.MultiplePrescription? = nil) -> ErxTask {
+              multiplePrescription: MultiplePrescription? = nil) -> ErxTask {
         ErxTask(identifier: "2390f983-1e67-11b2-8555-63bf44e44fb8",
                 status: status,
                 accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
@@ -36,20 +36,21 @@ final class PrescriptionViewStatusTests: XCTestCase {
                 acceptedUntil: acceptedUntil,
                 redeemedOn: redeemedOn,
                 author: "Dr. Dr. med. Carsten van Storchhausen",
-                noctuFeeWaiver: true,
-                substitutionAllowed: true,
                 medication: medication,
-                multiplePrescription: multiplePrescription)
+                medicationRequest: .init(
+                    substitutionAllowed: true,
+                    hasEmergencyServiceFee: true,
+                    multiplePrescription: multiplePrescription
+                ))
     }
 
-    let medication: ErxTask.Medication = {
-        ErxTask.Medication(
+    let medication: ErxMedication = {
+        ErxMedication(
             name: "Yucca filamentosa",
             pzn: "06876511",
-            amount: 12,
+            amount: .init(numerator: .init(value: "12")),
             dosageForm: "FDA",
-            dose: "N2",
-            dosageInstructions: nil
+            dose: "N2"
         )
     }()
 
@@ -130,7 +131,7 @@ final class PrescriptionViewStatusTests: XCTestCase {
     func testTaskIsMultiplePrescriptionForLaterDate() {
         // given
         let startDate = "2323-01-26T15:23:21+00:00"
-        let multiPrescription = ErxTask.MultiplePrescription(
+        let multiPrescription = MultiplePrescription(
             mark: true,
             numbering: 2,
             totalNumber: 4,

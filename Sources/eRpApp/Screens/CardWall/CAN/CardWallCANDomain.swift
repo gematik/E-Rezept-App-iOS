@@ -21,18 +21,8 @@ import ComposableArchitecture
 import Foundation
 import IDP
 
-enum CardWallCANDomain {
-    typealias Store = ComposableArchitecture.Store<State, Action>
-    typealias Reducer = ComposableArchitecture.AnyReducer<State, Action, Environment>
-
-    enum Route: Equatable {
-        // sourcery: AnalyticsScreen = cardwallPIN
-        case pin(CardWallPINDomain.State)
-        // sourcery: AnalyticsScreen = cardwallContactInsuranceCompany
-        case egk(OrderHealthCardDomain.State)
-        // sourcery: AnalyticsScreen = cardwallScanCAN
-        case scanner
-    }
+struct CardWallCANDomain: ReducerProtocol {
+    typealias Store = StoreOf<Self>
 
     struct State: Equatable {
         let isDemoModus: Bool
@@ -42,31 +32,71 @@ enum CardWallCANDomain {
         var wrongCANEntered = false
         var scannedCAN: String?
         var isFlashOn = false
-        var route: Route?
+        var destination: Destinations.State?
     }
 
-    indirect enum Action: Equatable {
+    struct Destinations: ReducerProtocol {
+        enum State: Equatable {
+            // sourcery: AnalyticsScreen = cardwallPIN
+            case pin(CardWallPINDomain.State)
+            // sourcery: AnalyticsScreen = cardwallContactInsuranceCompany
+            case egk(OrderHealthCardDomain.State)
+            // sourcery: AnalyticsScreen = cardwallScanCAN
+            case scanner
+        }
+
+        enum Action: Equatable {
+            case pinAction(action: CardWallPINDomain.Action)
+            case egkAction(action: OrderHealthCardDomain.Action)
+        }
+
+        var body: some ReducerProtocol<State, Action> {
+            Scope(
+                state: /State.pin,
+                action: /Action.pinAction
+            ) {
+                CardWallPINDomain()
+            }
+
+            Scope(
+                state: /State.egk,
+                action: /Action.egkAction(action:)
+            ) {
+                OrderHealthCardDomain()
+            }
+        }
+    }
+
+    enum Action: Equatable {
         case update(can: String)
         case advance
-        case close
         case showScannerView
         case toggleFlashLight
-        case pinAction(action: CardWallPINDomain.Action)
-        case setNavigation(tag: Route.Tag?)
-        case navigateToIntro
         case flashLightOff
-        case egkAction(action: OrderHealthCardDomain.Action)
+
+        case setNavigation(tag: Destinations.State.Tag?)
+        case destination(Destinations.Action)
+
+        case delegate(Delegate)
+
+        enum Delegate: Equatable {
+            case close
+            case navigateToIntro
+        }
     }
 
-    struct Environment {
-        var sessionProvider: ProfileBasedSessionProvider
-        let signatureProvider: SecureEnclaveSignatureProvider
-        var userSession: UserSession
-        let accessibilityAnnouncementReceiver: (String) -> Void
-        var schedulers: Schedulers
+    @Dependency(\.profileBasedSessionProvider) var sessionProvider: ProfileBasedSessionProvider
+    @Dependency(\.schedulers) var schedulers: Schedulers
+
+    var body: some ReducerProtocol<State, Action> {
+        Reduce(self.core)
+            .ifLet(\.destination, action: /Action.destination) {
+                Destinations()
+            }
     }
 
-    static let domainReducer = Reducer { state, action, environment in
+    // swiftlint:disable:next cyclomatic_complexity function_body_length
+    func core(into state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
         case let .update(can: can):
             state.can = can
@@ -75,86 +105,55 @@ enum CardWallCANDomain {
             guard state.can.lengthOfBytes(using: .utf8) == 6 else {
                 return .none
             }
-            environment.sessionProvider.userDataStore(for: state.profileId).set(can: state.can)
-            state.route = .pin(CardWallPINDomain.State(isDemoModus: state.isDemoModus, transition: .push))
-            return .none
-        case .close:
+            sessionProvider.userDataStore(for: state.profileId).set(can: state.can)
+            state.destination = .pin(CardWallPINDomain.State(isDemoModus: state.isDemoModus, transition: .push))
             return .none
         case .setNavigation(tag: .egk):
-            state.route = .egk(.init())
+            state.destination = .egk(.init())
             return .none
         case .toggleFlashLight:
             state.isFlashOn.toggle()
             return .none
         case .showScannerView:
-            state.route = .scanner
+            state.destination = .scanner
             return .none
         case .setNavigation(tag: .none),
-             .pinAction(.wrongCanClose),
-             .egkAction(action: .close):
-            state.route = nil
+             .destination(.egkAction(action: .delegate(.close))):
+            state.destination = nil
             return .none
-        case .pinAction(.close):
-            return Effect(value: .close)
-        case .pinAction(.navigateToIntro):
-            state.route = nil
-            return Effect(value: .navigateToIntro)
-                // Delay for the switch to CardWallExthView, Workaround for TCA pullback problem
-                .delay(for: 0.05, scheduler: environment.schedulers.main)
-                .eraseToEffect()
+        case let .destination(.pinAction(.delegate(delegateAction))):
+            switch delegateAction {
+            case .close:
+                return Effect(value: .delegate(.close))
+            case .wrongCanClose:
+                state.destination = nil
+                return .none
+            case .navigateToIntro:
+                state.destination = nil
+                return Effect(value: .delegate(.navigateToIntro))
+                    // Delay for the switch to CardWallExthView, Workaround for TCA pullback problem
+                    .delay(for: 0.05, scheduler: schedulers.main)
+                    .eraseToEffect()
+            }
         case .setNavigation,
-             .navigateToIntro,
-             .pinAction,
-             .egkAction:
+             .delegate,
+             .destination:
             return .none
         case .flashLightOff:
             state.isFlashOn = false
             return .none
         }
     }
-
-    static let reducer = Reducer.combine(
-        pinPullbackReducer,
-        orderHealthCardPullbackReducer,
-        domainReducer
-    )
-
-    static let pinPullbackReducer: Reducer =
-        CardWallPINDomain.reducer._pullback(
-            state: (\State.route).appending(path: /Route.pin),
-            action: /Action.pinAction(action:)
-        ) { environment in
-            CardWallPINDomain.Environment(
-                userSession: environment.userSession,
-                schedulers: environment.schedulers,
-                sessionProvider: environment.sessionProvider,
-                signatureProvider: environment.signatureProvider,
-                accessibilityAnnouncementReceiver: environment.accessibilityAnnouncementReceiver
-            )
-        }
-
-    static let orderHealthCardPullbackReducer: Reducer =
-        OrderHealthCardDomain.reducer._pullback(
-            state: (\State.route).appending(path: /Route.egk),
-            action: /Action.egkAction(action:)
-        ) { _ in OrderHealthCardDomain.Environment() }
 }
 
 extension CardWallCANDomain {
     enum Dummies {
         static let state = State(isDemoModus: true, profileId: UUID(), can: "")
-        static let environment = Environment(sessionProvider: DummyProfileBasedSessionProvider(),
-                                             signatureProvider: DummySecureEnclaveSignatureProvider(),
-                                             userSession: DemoSessionContainer(schedulers: Schedulers()),
-                                             accessibilityAnnouncementReceiver: { _ in },
-                                             schedulers: Schedulers())
 
         static let store = storeFor(state)
 
         static func storeFor(_ state: State) -> Store {
-            Store(initialState: state,
-                  reducer: reducer,
-                  environment: environment)
+            Store(initialState: state, reducer: CardWallCANDomain())
         }
     }
 }

@@ -51,6 +51,24 @@ public enum SectionContainerContentStyle {
         }
     }
 
+    var backgroundColor: Color {
+        switch self {
+        case .inline:
+            return Color(.systemBackground)
+        default:
+            return Color(.tertiarySystemBackground)
+        }
+    }
+
+    var selectedColor: Color {
+        switch self {
+        case .inline:
+            return Color(.systemGray5)
+        default:
+            return Color(.systemGray4)
+        }
+    }
+
     var edgeInsets: EdgeInsets {
         switch self {
         case .inline:
@@ -75,6 +93,15 @@ public enum SectionContainerContentStyle {
             return Colors.systemColorClear
         case let .border(color: color, width: _):
             return color
+        }
+    }
+
+    var topAndBottomDivider: Bool {
+        switch self {
+        case .inline:
+            return true
+        case .plain, .border:
+            return false
         }
     }
 }
@@ -163,5 +190,34 @@ extension View {
         let roundedRect = RoundedRectangle(cornerRadius: cornerRadius)
         return clipShape(roundedRect)
             .overlay(roundedRect.strokeBorder(content, lineWidth: width))
+    }
+}
+
+struct TopAndBottomDividerStyle: ViewModifier {
+    let showSeparator: Bool
+
+    init(showSeparator: Bool) {
+        self.showSeparator = showSeparator
+    }
+
+    func body(content: Content) -> some View {
+        VStack(alignment: .leading, spacing: 0) {
+            if showSeparator {
+                Divider()
+            }
+
+            content
+
+            if showSeparator {
+                Divider()
+            }
+        }
+        .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
+    }
+}
+
+extension View {
+    func topAndBottomDivider(showSeparator: Bool = false) -> some View {
+        modifier(TopAndBottomDividerStyle(showSeparator: showSeparator))
     }
 }

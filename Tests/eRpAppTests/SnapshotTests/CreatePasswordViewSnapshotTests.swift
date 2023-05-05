@@ -17,6 +17,7 @@
 //
 
 import CombineSchedulers
+import ComposableArchitecture
 @testable import eRpApp
 @testable import eRpLocalStorage
 import SnapshotTesting
@@ -41,8 +42,7 @@ final class CreatePasswordViewSnapshotTests: XCTestCase {
                     showPasswordErrorMessage: false,
                     showOriginalPasswordWrong: false
                 ),
-                reducer: CreatePasswordDomain.Reducer.empty,
-                environment: CreatePasswordDomain.Dummies.environment
+                reducer: EmptyReducer()
             )
         )
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
@@ -62,8 +62,7 @@ final class CreatePasswordViewSnapshotTests: XCTestCase {
                     showPasswordErrorMessage: true,
                     showOriginalPasswordWrong: true
                 ),
-                reducer: CreatePasswordDomain.Reducer.empty,
-                environment: CreatePasswordDomain.Dummies.environment
+                reducer: EmptyReducer()
             )
         )
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
@@ -82,8 +81,7 @@ final class CreatePasswordViewSnapshotTests: XCTestCase {
                     showPasswordErrorMessage: true,
                     showOriginalPasswordWrong: true
                 ),
-                reducer: CreatePasswordDomain.Reducer.empty,
-                environment: CreatePasswordDomain.Dummies.environment
+                reducer: EmptyReducer()
             )
         )
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())

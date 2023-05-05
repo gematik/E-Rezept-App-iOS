@@ -23,9 +23,8 @@ import eRpKit
 import Pharmacy
 import SwiftUI
 
-enum PharmacySearchFilterDomain: Equatable {
-    typealias Store = ComposableArchitecture.Store<State, Action>
-    typealias Reducer = ComposableArchitecture.AnyReducer<State, Action, Environment>
+struct PharmacySearchFilterDomain: ReducerProtocol {
+    typealias Store = StoreOf<Self>
 
     /// All filter options used with pharmacies search
     enum PharmacyFilterOption: String, CaseIterable, Hashable, Identifiable {
@@ -78,17 +77,17 @@ enum PharmacySearchFilterDomain: Equatable {
     }
 
     enum Action: Equatable {
-        case close([PharmacyFilterOption])
+        case delegate(Delegate)
         case toggleFilter(PharmacyFilterOption)
+
+        enum Delegate: Equatable {
+            case close
+        }
     }
 
-    struct Environment {
-        var schedulers: Schedulers
-    }
-
-    static let reducer = Reducer { state, action, _ in
+    func reduce(into state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
-        case .close:
+        case .delegate(.close):
             return .none
         case let .toggleFilter(filterOption):
             if let index = state.pharmacyFilterOptions.firstIndex(of: filterOption) {
@@ -122,15 +121,12 @@ extension Collection where Element == PharmacySearchFilterDomain.PharmacyFilterO
 extension PharmacySearchFilterDomain {
     enum Dummies {
         static let state = State(
-            pharmacyFilterOptions: PharmacyFilterOption.allCases
+            pharmacyFilterOptions: [.open, .ready]
         )
-        static let environment = Environment(
-            schedulers: Schedulers()
-        )
+
         static let store = Store(
             initialState: state,
-            reducer: reducer,
-            environment: environment
+            reducer: PharmacySearchFilterDomain()
         )
     }
 }

@@ -88,10 +88,7 @@ struct ExtAuthPendingView: View {
         VStack {
             Spacer()
                 .alert(
-                    self.store
-                        .scope(state: (\ExtAuthPendingDomain.State.self)
-                            .appending(path: /ExtAuthPendingDomain.State.extAuthFailed)
-                            .extract(from:)),
+                    store.scope(state: /ExtAuthPendingDomain.State.extAuthFailed),
                     dismiss: .nothing
                 )
 

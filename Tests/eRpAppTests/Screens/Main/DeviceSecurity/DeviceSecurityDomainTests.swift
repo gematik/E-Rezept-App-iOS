@@ -28,7 +28,7 @@ final class DeviceSecurityDomainTests: XCTestCase {
         DeviceSecurityDomain.Action,
         DeviceSecurityDomain.State,
         DeviceSecurityDomain.Action,
-        DeviceSecurityDomain.Environment
+        Void
     >
 
     var mockDeviceSecurityManager: MockDeviceSecurityManager!
@@ -41,18 +41,17 @@ final class DeviceSecurityDomainTests: XCTestCase {
     func testStore(for state: DeviceSecurityDomain.State) -> TestStore {
         TestStore(
             initialState: state,
-            reducer: DeviceSecurityDomain.reducer,
-            environment: DeviceSecurityDomain.Environment(
-                deviceSecurityManager: mockDeviceSecurityManager
-            )
-        )
+            reducer: DeviceSecurityDomain()
+        ) { dependencies in
+            dependencies.deviceSecurityManager = mockDeviceSecurityManager
+        }
     }
 
     func testCloseDeviceSecurityPinViewWhenOkButtonTapped_HideScreenForSession() {
         let store = testStore(for: .init(warningType: .devicePinMissing))
         expect(self.mockDeviceSecurityManager.setIgnoreDeviceSystemPinWarningForSessionCalled).to(beFalse())
         store.send(.acceptMissingPin(permanently: false))
-        store.receive(.close)
+        store.receive(.delegate(.close))
         expect(self.mockDeviceSecurityManager.setIgnoreDeviceSystemPinWarningForSessionCalled).to(beTrue())
         expect(self.mockDeviceSecurityManager.setIgnoreDeviceSystemPinWarningPermanentlyCalled).to(beTrue())
         expect(self.mockDeviceSecurityManager.setIgnoreDeviceSystemPinWarningPermanentlyReceivedInvocations)
@@ -64,7 +63,7 @@ final class DeviceSecurityDomainTests: XCTestCase {
         expect(self.mockDeviceSecurityManager.setIgnoreDeviceSystemPinWarningForSessionCalled).to(beFalse())
         expect(self.mockDeviceSecurityManager.setIgnoreDeviceSystemPinWarningPermanentlyCalled).to(beFalse())
         store.send(.acceptMissingPin(permanently: true))
-        store.receive(.close)
+        store.receive(.delegate(.close))
         expect(self.mockDeviceSecurityManager.setIgnoreDeviceSystemPinWarningForSessionCalled).to(beTrue())
         expect(self.mockDeviceSecurityManager.setIgnoreDeviceSystemPinWarningPermanentlyCalled).to(beTrue())
         expect(self.mockDeviceSecurityManager.setIgnoreDeviceSystemPinWarningPermanentlyReceivedInvocations)
@@ -77,7 +76,7 @@ final class DeviceSecurityDomainTests: XCTestCase {
         expect(self.mockDeviceSecurityManager.setIgnoreDeviceSystemPinWarningPermanentlyCalled).to(beFalse())
         expect(self.mockDeviceSecurityManager.setIgnoreRootedDeviceWarningForSessionCalled).to(beFalse())
         store.send(.acceptRootedDevice)
-        store.receive(.close)
+        store.receive(.delegate(.close))
         expect(self.mockDeviceSecurityManager.setIgnoreDeviceSystemPinWarningForSessionCalled).to(beFalse())
         expect(self.mockDeviceSecurityManager.setIgnoreDeviceSystemPinWarningPermanentlyCalled).to(beFalse())
         expect(self.mockDeviceSecurityManager.setIgnoreRootedDeviceWarningForSessionCalled).to(beTrue())
@@ -96,7 +95,7 @@ final class MockDeviceSecurityManager: DeviceSecurityManager {
         set(value) { underlyingShowSystemSecurityWarning = value }
     }
 
-    private var underlyingShowSystemSecurityWarning: AnyPublisher<DeviceSecurityWarningType, Never>!
+    var underlyingShowSystemSecurityWarning: AnyPublisher<DeviceSecurityWarningType, Never>!
 
     // MARK: - informMissingSystemPin
 

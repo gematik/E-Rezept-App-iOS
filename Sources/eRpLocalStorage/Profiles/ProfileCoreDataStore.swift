@@ -106,7 +106,11 @@ public class ProfileCoreDataStore: ProfileDataStore, CoreDataCrudable {
         request.sortDescriptors = [NSSortDescriptor(key: #keyPath(ProfileEntity.created), ascending: true)]
 
         return fetch(request)
-            .map { list in list.compactMap { Profile(entity: $0, dateProvider: self.dateProvider) } }
+            .map { list in
+                list.compactMap {
+                    Profile(entity: $0, dateProvider: self.dateProvider)
+                }
+            }
             .eraseToAnyPublisher()
     }
 
@@ -122,12 +126,13 @@ public class ProfileCoreDataStore: ProfileDataStore, CoreDataCrudable {
 
                 if let profileEntity = try? moc.fetch(request).first {
                     profileEntity.name = profile.name
-                    profileEntity.emoji = profile.emoji
                     profileEntity.insuranceId = profile.insuranceId
+                    profileEntity.insuranceType = profile.insuranceType.rawValue
                     profileEntity.insurance = profile.insurance
                     profileEntity.givenName = profile.givenName
                     profileEntity.familyName = profile.familyName
                     profileEntity.color = profile.color.rawValue
+                    profileEntity.image = profile.image.rawValue
                     profileEntity.lastAuthenticated = profile.lastAuthenticated
                     return profileEntity
                 } else {
@@ -154,11 +159,12 @@ public class ProfileCoreDataStore: ProfileDataStore, CoreDataCrudable {
                 mutating(&profile)
                 profileEntity.name = profile.name
                 profileEntity.insuranceId = profile.insuranceId
+                profileEntity.insuranceType = profile.insuranceType.rawValue
                 profileEntity.insurance = profile.insurance
                 profileEntity.givenName = profile.givenName
                 profileEntity.familyName = profile.familyName
-                profileEntity.emoji = profile.emoji
                 profileEntity.color = profile.color.rawValue
+                profileEntity.image = profile.image.rawValue
                 profileEntity.lastAuthenticated = profile.lastAuthenticated
             } else {
                 throw Error.noMatchingEntity

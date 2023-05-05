@@ -20,18 +20,11 @@ import ComposableArchitecture
 import IDP
 import UIKit
 
-enum CardWallExtAuthSelectionDomain {
-    typealias Store = ComposableArchitecture.Store<State, Action>
-    typealias Reducer = ComposableArchitecture.AnyReducer<State, Action, Environment>
+struct CardWallExtAuthSelectionDomain: ReducerProtocol {
+    typealias Store = StoreOf<Self>
 
-    static func cleanup<T>() -> Effect<T, Never> {
-        Effect.cancel(id: Token.self)
-    }
-
-    enum Route: Equatable {
-        // sourcery: AnalyticsScreen = cardWallExtAuthConfirm
-        case confirmation(CardWallExtAuthConfirmationDomain.State?)
-        case egk(OrderHealthCardDomain.State)
+    static func cleanup<T>() -> EffectTask<T> {
+        EffectTask<T>.cancel(ids: Token.allCases)
     }
 
     enum Token: CaseIterable, Hashable {
@@ -46,47 +39,92 @@ enum CardWallExtAuthSelectionDomain {
         var searchText: String = ""
 
         var orderEgkVisible = false
-        var route: Route?
+        var destination: Destinations.State?
+    }
+
+    struct Destinations: ReducerProtocol {
+        enum State: Equatable {
+            // sourcery: AnalyticsScreen = cardWallExtAuthConfirm
+            case confirmation(CardWallExtAuthConfirmationDomain.State)
+            case egk(OrderHealthCardDomain.State)
+        }
+
+        enum Action: Equatable {
+            case egkAction(action: OrderHealthCardDomain.Action)
+            case confirmation(action: CardWallExtAuthConfirmationDomain.Action)
+        }
+
+        var body: some ReducerProtocol<State, Action> {
+            Scope(
+                state: /State.confirmation,
+                action: /Action.confirmation
+            ) {
+                CardWallExtAuthConfirmationDomain()
+            }
+
+            Scope(
+                state: /State.egk,
+                action: /Action.egkAction(action:)
+            ) {
+                OrderHealthCardDomain()
+            }
+        }
     }
 
     enum Action: Equatable {
         case loadKKList
-        case loadKKListReceived(Result<KKAppDirectory, IDPError>)
         case selectKK(KKAppDirectory.Entry)
         case confirmKK
         case error(IDPError)
-        case close
         case updateSearchText(newString: String)
-        case setNavigation(tag: Route.Tag?)
-        case egkAction(action: OrderHealthCardDomain.Action)
-        case confirmation(action: CardWallExtAuthConfirmationDomain.Action)
+
         case filteredKKList(search: String)
         case reset
+
+        case setNavigation(tag: Destinations.State.Tag?)
+        case destination(Destinations.Action)
+
+        case response(Response)
+        case delegate(Delegate)
+
+        enum Response: Equatable {
+            case loadKKList(Result<KKAppDirectory, IDPError>)
+        }
+
+        enum Delegate: Equatable {
+            case close
+        }
     }
 
-    struct Environment {
-        let idpSession: IDPSession
-        let schedulers: Schedulers
+    @Dependency(\.idpSession) var idpSession: IDPSession
+    @Dependency(\.schedulers) var schedulers: Schedulers
+
+    var body: some ReducerProtocol<State, Action> {
+        Reduce(self.core)
+            .ifLet(\.destination, action: /Action.destination) {
+                Destinations()
+            }
     }
 
-    static let domainReducer = Reducer { state, action, environment in
+    // swiftlint:disable:next function_body_length cyclomatic_complexity
+    func core(into state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
         case .loadKKList:
             state.error = nil
             state.selectedKK = nil
             // [REQ:gemSpec_IDP_Sek:A_22296] Load available apps
-            return environment.idpSession.loadDirectoryKKApps()
+            return idpSession.loadDirectoryKKApps()
                 .first()
                 .catchToEffect()
-                .map(Action.loadKKListReceived)
-                .receive(on: environment.schedulers.main.animation())
+                .map { Action.response(.loadKKList($0)) }
+                .receive(on: schedulers.main.animation())
                 .eraseToEffect()
                 .cancellable(id: Token.loadKKList)
-        case let .loadKKListReceived(.success(result)):
+        case let .response(.loadKKList(.success(result))):
             state.error = nil
             state.kkList = result
             return .none
-        case let .loadKKListReceived(.failure(error)):
+        case let .response(.loadKKList(.failure(error))):
             state.error = error
             return .none
         case let .selectKK(entry):
@@ -96,7 +134,7 @@ enum CardWallExtAuthSelectionDomain {
         case .confirmKK:
             guard let selectedKK = state.selectedKK else { return .none }
 
-            state.route = .confirmation(.init(selectedKK: selectedKK))
+            state.destination = .confirmation(.init(selectedKK: selectedKK))
             return .none
         case let .filteredKKList(search):
             if let kkList = state.kkList {
@@ -113,49 +151,24 @@ enum CardWallExtAuthSelectionDomain {
             return state.searchText
                 .isEmpty ? Effect(value: .reset) : Effect(value: .filteredKKList(search: state.searchText))
         case .setNavigation(tag: nil),
-             .egkAction(action: .close):
-            state.route = nil
+             .destination(.egkAction(action: .delegate(.close))):
+            state.destination = nil
             return .none
         case let .error(error):
             state.error = error
             return .none
-        case .confirmation(.close):
-            return Effect(value: .close)
+        case .destination(.confirmation(action: .delegate(.close))):
+            return Effect(value: .delegate(.close))
         case .setNavigation(tag: .egk):
-            state.route = .egk(.init())
+            state.destination = .egk(.init())
             return .none
         case .setNavigation:
             return .none
-        case .close,
-             .confirmation,
-             .egkAction:
+        case .destination,
+             .delegate:
             return .none // Handled by parent domain
         }
     }
-
-    static let reducer: Reducer = .combine(
-        confirmationPullback,
-        orderHealthCardPullbackReducer,
-        domainReducer
-    )
-
-    private static let confirmationPullback: Reducer =
-        CardWallExtAuthConfirmationDomain.reducer
-            ._pullback(
-                state: (\State.route).appending(path: /Route.confirmation),
-                action: /Action.confirmation(action:)
-            ) {
-                .init(idpSession: $0.idpSession,
-                      schedulers: $0.schedulers,
-                      canOpenURL: UIApplication.shared.canOpenURL,
-                      openURL: UIApplication.shared.open)
-            }
-
-    static let orderHealthCardPullbackReducer: Reducer =
-        OrderHealthCardDomain.reducer._pullback(
-            state: (\State.route).appending(path: /Route.egk),
-            action: /Action.egkAction(action:)
-        ) { _ in OrderHealthCardDomain.Environment() }
 }
 
 extension KKAppDirectory.Entry: Identifiable {
@@ -167,11 +180,7 @@ extension KKAppDirectory.Entry: Identifiable {
 extension CardWallExtAuthSelectionDomain {
     enum Dummies {
         static let state = State()
-        static let environment = Environment(idpSession: DemoIDPSession(storage: MemoryStorage()),
-                                             schedulers: Schedulers())
 
-        static let store = Store(initialState: state,
-                                 reducer: reducer,
-                                 environment: environment)
+        static let store = Store(initialState: state, reducer: CardWallExtAuthSelectionDomain())
     }
 }

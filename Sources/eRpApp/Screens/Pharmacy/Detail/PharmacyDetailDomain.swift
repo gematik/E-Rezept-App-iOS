@@ -27,19 +27,18 @@ import MapKit
 import Pharmacy
 import SwiftUI
 
-enum PharmacyDetailDomain: Equatable {
-    typealias Store = ComposableArchitecture.Store<State, Action>
-    typealias Reducer = ComposableArchitecture.AnyReducer<State, Action, Environment>
+struct PharmacyDetailDomain: ReducerProtocol {
+    typealias Store = StoreOf<Self>
 
     /// Provides an Effect that needs to run whenever the state of this Domain is reset to nil
-    static func cleanup<T>() -> Effect<T, Never> {
+    static func cleanup<T>() -> EffectTask<T> {
         Effect.concatenate(
-            PharmacyRedeemDomain.cleanup(),
-            Effect.cancel(id: Token.self)
+            cleanupSubDomains(),
+            EffectTask<T>.cancel(ids: Token.allCases)
         )
     }
 
-    static func cleanupSubviews<T>() -> Effect<T, Never> {
+    static func cleanupSubDomains<T>() -> Effect<T, Never> {
         Effect.concatenate(
             PharmacyRedeemDomain.cleanup()
         )
@@ -50,10 +49,43 @@ enum PharmacyDetailDomain: Equatable {
         case savePharmacy
     }
 
-    enum Route: Equatable {
-        case redeemViaAVS(PharmacyRedeemDomain.State)
-        case redeemViaErxTaskRepository(PharmacyRedeemDomain.State)
-        case alert(ErpAlertState<PharmacyRedeemDomain.State>)
+    struct Destinations: ReducerProtocol {
+        enum State: Equatable {
+            case redeemViaAVS(PharmacyRedeemDomain.State)
+            case redeemViaErxTaskRepository(PharmacyRedeemDomain.State)
+            case alert(ErpAlertState<PharmacyRedeemDomain.State>)
+        }
+
+        enum Action: Equatable {
+            /// Actions for PharmacyRedeemView with the `ErxTaskRepositoryRedeemService`
+            case pharmacyRedeemViaErxTaskRepository(action: PharmacyRedeemDomain.Action)
+            /// Actions for PharmacyRedeemView with the `AVSRedeemService`
+            case pharmacyRedeemViaAVS(action: PharmacyRedeemDomain.Action)
+        }
+
+        @Dependency(\.erxTaskOrderValidator) var erxTaskOrderValidator
+        @Dependency(\.erxTaskRepositoryRedeemService) var erxTaskRepositoryRedeemService
+        @Dependency(\.avsMessageValidator) var avsMessageValidator
+        @Dependency(\.avsRedeemService) var avsRedeemService
+
+        var body: some ReducerProtocol<State, Action> {
+            Scope(
+                state: /State.redeemViaAVS,
+                action: /Action.pharmacyRedeemViaAVS
+            ) {
+                PharmacyRedeemDomain()
+                    .dependency(\.redeemInputValidator, avsMessageValidator)
+                    .dependency(\.redeemService, avsRedeemService)
+            }
+            Scope(
+                state: /State.redeemViaErxTaskRepository,
+                action: /Action.pharmacyRedeemViaErxTaskRepository
+            ) {
+                PharmacyRedeemDomain()
+                    .dependency(\.redeemInputValidator, erxTaskOrderValidator)
+                    .dependency(\.redeemService, erxTaskRepositoryRedeemService)
+            }
+        }
     }
 
     struct State: Equatable {
@@ -66,16 +98,12 @@ enum PharmacyDetailDomain: Equatable {
         var reservationService: RedeemServiceOption = .noService
         var shipmentService: RedeemServiceOption = .noService
         var deliveryService: RedeemServiceOption = .noService
-        var route: Route?
+        var destination: Destinations.State?
     }
 
     enum Action: Equatable {
         /// load current profile
         case loadCurrentProfile
-        /// receive current Profile
-        case currentProfileReceived(Profile?)
-        /// Closes the details page
-        case close
         /// Opens Map App with pharmacy location
         case openMapApp
         /// Opens the Phone App with pharmacy phone number
@@ -86,43 +114,58 @@ enum PharmacyDetailDomain: Equatable {
         case openMailApp
         /// Selects  the `RedeemOption` to use and set the navigation tag accordingly
         case showPharmacyRedeemOption(RedeemOption)
-        /// Actions for PharmacyRedeemView with the `ErxTaskRepositoryRedeemService`
-        case pharmacyRedeemViaErxTaskRepository(action: PharmacyRedeemDomain.Action)
-        /// Actions for PharmacyRedeemView with the `AVSRedeemService`
-        case pharmacyRedeemViaAVS(action: PharmacyRedeemDomain.Action)
-        /// Handles navigation
-        case setNavigation(tag: Route.Tag?)
         /// Changes favorite state of pharmacy or creates a local pharmacy
         case toggleIsFavorite
+        /// Handles navigation
+        case setNavigation(tag: Destinations.State.Tag?)
+        case destination(Destinations.Action)
+        /// Internal actions
+        case response(Response)
+        /// delegate actions
+        case delegate(Delegate)
 
-        case toggleIsFavoriteReceived(Result<PharmacyLocationViewModel, PharmacyRepositoryError>)
+        enum Response: Equatable {
+            /// response of `loadCurrentProfile` action
+            case currentProfileReceived(Profile?)
+            /// response of `toggleIsFavorite` action
+            case toggleIsFavoriteReceived(Result<PharmacyLocationViewModel, PharmacyRepositoryError>)
+        }
+
+        enum Delegate: Equatable {
+            /// Closes the details page
+            case close
+        }
     }
 
-    struct Environment {
-        var schedulers: Schedulers
-        let userSession: UserSession
-        let signatureProvider: SecureEnclaveSignatureProvider
-        let accessibilityAnnouncementReceiver: (String) -> Void
-        let userSessionProvider: UserSessionProvider
-        let pharmacyRepository: PharmacyRepository
+    @Dependency(\.schedulers) var schedulers: Schedulers
+    @Dependency(\.userSession) var userSession: UserSession
+    @Dependency(\.pharmacyRepository) var pharmacyRepository: PharmacyRepository
+    @Dependency(\.feedbackReceiver) var feedbackReceiver
+
+    var body: some ReducerProtocol<State, Action> {
+        Reduce(self.core)
+            .ifLet(\.destination, action: /Action.destination) {
+                Destinations()
+            }
     }
 
-    static let domainReducer = Reducer { state, action, environment in
+    // swiftlint:disable:next function_body_length cyclomatic_complexity
+    func core(into state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
         case .loadCurrentProfile:
-            return environment.userSession.profile()
+            return userSession.profile()
                 .first()
                 .catchToEffect()
                 .map { result in
                     if case let .success(profile) = result {
-                        return Action.currentProfileReceived(profile)
+                        return Action.response(.currentProfileReceived(profile))
                     }
-                    return Action.currentProfileReceived(nil)
+                    return Action.response(.currentProfileReceived(nil))
                 }
-                .receive(on: environment.schedulers.main)
+                .receive(on: schedulers.main)
                 .eraseToEffect()
                 .cancellable(id: Token.loadProfile, cancelInFlight: true)
-        case let .currentProfileReceived(profile):
+        case let .response(.currentProfileReceived(profile)):
             let provider = RedeemOptionProvider(
                 wasAuthenticatedBefore: profile?.insuranceId != nil,
                 pharmacy: state.pharmacy
@@ -131,9 +174,9 @@ enum PharmacyDetailDomain: Equatable {
             state.shipmentService = provider.shipmentService
             state.deliveryService = provider.deliveryService
             return .none
-        case .close:
+        case .delegate(.close):
             // Note: closing is handled in parent reducer
-            return cleanup()
+            return Self.cleanupSubDomains()
         case .openMapApp:
             guard let longitude = state.pharmacy.position?.longitude?.doubleValue,
                   let latitude = state.pharmacy.position?.latitude?.doubleValue else {
@@ -173,7 +216,7 @@ enum PharmacyDetailDomain: Equatable {
             return .none
         case .openMailApp:
             if let email = state.pharmacy.telecom?.email,
-               let url = createEmailUrl(to: email) {
+               let url = Self.createEmailUrl(to: email) {
                 UIApplication.shared.open(url)
             }
             return .none
@@ -184,105 +227,53 @@ enum PharmacyDetailDomain: Equatable {
                 pharmacy: state.pharmacy,
                 selectedErxTasks: Set(state.erxTasks)
             )
-            var route: Route
             switch option {
             case .onPremise:
-                state.route = state.reservationService.route(with: redeemState)
+                state.destination = state.reservationService.destination(with: redeemState)
             case .delivery:
-                state.route = state.deliveryService.route(with: redeemState)
+                state.destination = state.deliveryService.destination(with: redeemState)
             case .shipment:
-                state.route = state.shipmentService.route(with: redeemState)
+                state.destination = state.shipmentService.destination(with: redeemState)
             }
             return .none
-        case .pharmacyRedeemViaErxTaskRepository(action: .close), .pharmacyRedeemViaAVS(action: .close):
-            state.route = nil
+        case .destination(.pharmacyRedeemViaErxTaskRepository(action: .close)),
+             .destination(.pharmacyRedeemViaAVS(action: .close)):
+            state.destination = nil
             return Effect.concatenate(
-                cleanupSubviews(),
-                Effect(value: .close)
+                Self.cleanupSubDomains(),
+                Effect(value: .delegate(.close))
                     // swiftlint:disable:next todo
                     // TODO: this is workaround to avoid `onAppear` of the the child view getting called
-                    .delay(for: .seconds(0.1), scheduler: environment.schedulers.main)
+                    .delay(for: .seconds(0.1), scheduler: schedulers.main)
                     .eraseToEffect()
             )
         case .setNavigation(tag: .none):
-            state.route = nil
+            state.destination = nil
             return .none
-        case .pharmacyRedeemViaErxTaskRepository, .setNavigation, .pharmacyRedeemViaAVS:
+        case .destination, .setNavigation:
             return .none
         case .toggleIsFavorite:
             var pharmacyViewModel = state.pharmacyViewModel
             pharmacyViewModel.pharmacyLocation.isFavorite.toggle()
-            return environment.pharmacyRepository.save(pharmacy: pharmacyViewModel.pharmacyLocation)
+            return pharmacyRepository.save(pharmacy: pharmacyViewModel.pharmacyLocation)
                 .first()
-                .receive(on: environment.schedulers.main.animation())
+                .receive(on: schedulers.main.animation())
                 .map { _ in pharmacyViewModel }
                 .catchToEffect()
-                .map(Action.toggleIsFavoriteReceived)
+                .map { .response(.toggleIsFavoriteReceived($0)) }
                 .cancellable(id: Token.savePharmacy, cancelInFlight: true)
 
-        case let .toggleIsFavoriteReceived(result):
+        case let .response(.toggleIsFavoriteReceived(result)):
             switch result {
             case let .success(viewModel):
+                feedbackReceiver.hapticFeedbackSuccess()
                 state.pharmacyViewModel = viewModel
             case let .failure(error):
-                state.route = .alert(.init(for: error))
+                state.destination = .alert(.init(for: error))
             }
             return .none
         }
     }
-
-    static let reducer: Reducer = .combine(
-        pharmacyRedeemViaAVSPullbackReducer,
-        pharmacyRedeemViaRepositoryPullback,
-        domainReducer
-    )
-
-    static let pharmacyRedeemViaAVSPullbackReducer: Reducer =
-        PharmacyRedeemDomain.reducer._pullback(
-            state: (\State.route).appending(path: /PharmacyDetailDomain.Route.redeemViaAVS),
-            action: /PharmacyDetailDomain.Action.pharmacyRedeemViaAVS(action:)
-        ) { environment in
-            PharmacyRedeemDomain.Environment(
-                schedulers: environment.schedulers,
-                userSession: environment.userSession,
-                shipmentInfoStore: environment.userSession.shipmentInfoDataStore,
-                redeemService: AVSRedeemService(
-                    avsSession: environment.userSession.avsSession,
-                    avsTransactionDataStore: environment.userSession.avsTransactionDataStore
-                ),
-                inputValidator: AVSMessage.Validator(),
-                serviceLocator: ServiceLocator(),
-                signatureProvider: environment.signatureProvider,
-                userSessionProvider: environment.userSessionProvider,
-                accessibilityAnnouncementReceiver: environment.accessibilityAnnouncementReceiver,
-                pharmacyRepository: environment.pharmacyRepository
-            )
-        }
-
-    static let pharmacyRedeemViaRepositoryPullback: Reducer =
-        PharmacyRedeemDomain.reducer._pullback(
-            state: (\State.route).appending(path: /PharmacyDetailDomain.Route.redeemViaErxTaskRepository),
-            action: /PharmacyDetailDomain.Action.pharmacyRedeemViaErxTaskRepository(action:)
-        ) { environment in
-            PharmacyRedeemDomain.Environment(
-                schedulers: environment.schedulers,
-                userSession: environment.userSession,
-                shipmentInfoStore: environment.userSession.shipmentInfoDataStore,
-                redeemService: ErxTaskRepositoryRedeemService(
-                    erxTaskRepository: environment.userSession.erxTaskRepository,
-                    loginHandler: DefaultLoginHandler(
-                        idpSession: environment.userSession.idpSession,
-                        signatureProvider: environment.signatureProvider
-                    )
-                ),
-                inputValidator: ErxTaskOrder.Validator(),
-                serviceLocator: ServiceLocator(),
-                signatureProvider: environment.signatureProvider,
-                userSessionProvider: environment.userSessionProvider,
-                accessibilityAnnouncementReceiver: environment.accessibilityAnnouncementReceiver,
-                pharmacyRepository: environment.pharmacyRepository
-            )
-        }
 }
 
 extension PharmacyDetailDomain {
@@ -324,7 +315,7 @@ extension PharmacyDetailDomain {
 }
 
 extension RedeemServiceOption {
-    func route(with state: PharmacyRedeemDomain.State) -> PharmacyDetailDomain.Route? {
+    func destination(with state: PharmacyRedeemDomain.State) -> PharmacyDetailDomain.Destinations.State? {
         switch self {
         case .avs:
             return .redeemViaAVS(state)
@@ -369,21 +360,6 @@ extension PharmacyDetailDomain {
             shipmentService: .erxTaskRepository,
             deliveryService: .erxTaskRepository
         )
-        static let environment = Environment(
-            schedulers: Schedulers(),
-            userSession: DummySessionContainer(),
-            signatureProvider: DummySecureEnclaveSignatureProvider(),
-            accessibilityAnnouncementReceiver: { _ in },
-            userSessionProvider: DummyUserSessionProvider(),
-            pharmacyRepository: DummyPharmacyRepository()
-        )
-        static let store = Store(initialState: state,
-                                 reducer: reducer,
-                                 environment: environment)
-        static func storeFor(_ state: State) -> Store {
-            Store(initialState: state,
-                  reducer: PharmacyDetailDomain.Reducer.empty,
-                  environment: environment)
-        }
+        static let store = Store(initialState: state, reducer: PharmacyDetailDomain())
     }
 }

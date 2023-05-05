@@ -44,6 +44,9 @@ final class PharmacyCoreDataStoreTests: XCTestCase {
         super.tearDown()
     }
 
+    let foregroundQueue: AnySchedulerOf<DispatchQueue> = .immediate
+    let backgroundQueue: AnySchedulerOf<DispatchQueue> = .immediate
+
     private func loadFactory() -> CoreDataControllerFactory {
         guard let factory = factory else {
             #if os(macOS)
@@ -67,7 +70,8 @@ final class PharmacyCoreDataStoreTests: XCTestCase {
     private func loadPharmacyCoreDataStore(for _: UUID? = nil) -> PharmacyCoreDataStore {
         PharmacyCoreDataStore(
             coreDataControllerFactory: loadFactory(),
-            backgroundQueue: AnyScheduler.main
+            foregroundQueue: foregroundQueue,
+            backgroundQueue: backgroundQueue
         )
     }
 
@@ -174,7 +178,7 @@ final class PharmacyCoreDataStoreTests: XCTestCase {
             })
 
         expect(receivedCompletions.count) == 0
-        expect(receivedListAllPharmacyValues.count).toEventually(equal(1))
+        expect(receivedListAllPharmacyValues.count).to(equal(1))
         // then two pharmacies should be received
         // (without saving status, types, hoursOfOperation, avsEndpoints, avsCertificates)
         expect(receivedListAllPharmacyValues[0].count) == 2
@@ -234,8 +238,8 @@ final class PharmacyCoreDataStoreTests: XCTestCase {
                 receivedSaveResults.append(result)
             })
 
-        expect(receivedSaveResults.count).toEventually(equal(0))
-        expect(receivedSaveCompletions.count).toEventually(equal(1))
+        expect(receivedSaveResults.count).to(equal(0))
+        expect(receivedSaveCompletions.count).to(equal(1))
         expect(receivedSaveCompletions.first) ==
             .failure(LocalStoreError.initialization(error: factory.loadCoreDataControllerThrowableError!))
 
@@ -274,7 +278,7 @@ final class PharmacyCoreDataStoreTests: XCTestCase {
             })
 
         // then there should be only one in store with the updated values
-        expect(receivedListAllPharmacyValues.count).toEventually(equal(1))
+        expect(receivedListAllPharmacyValues.count).to(equal(1))
         expect(receivedListAllPharmacyValues[0].count) == 1
         let result = receivedListAllPharmacyValues[0].first
         expect(result).to(equal(updatedPharmacy))
@@ -295,9 +299,9 @@ final class PharmacyCoreDataStoreTests: XCTestCase {
             }, receiveValue: { result in
                 receivedDeleteResults.append(result)
             })
-        expect(receivedDeleteResults.count).toEventually(equal(1))
+        expect(receivedDeleteResults.count).to(equal(1))
         expect(receivedDeleteResults.first).to(beTrue())
-        expect(receivedDeleteCompletions.count).toEventually(equal(1))
+        expect(receivedDeleteCompletions.count).to(equal(1))
         expect(receivedDeleteCompletions.first) == .finished
 
         // then
@@ -309,7 +313,7 @@ final class PharmacyCoreDataStoreTests: XCTestCase {
                 receivedListAllPharmacyValues.append(pharmacies)
             })
 
-        expect(receivedListAllPharmacyValues.count).toEventually(equal(1))
+        expect(receivedListAllPharmacyValues.count).to(equal(1))
         // there should be no pharmacy left in store
         expect(receivedListAllPharmacyValues.first?.count) == 0
     }
@@ -329,7 +333,7 @@ final class PharmacyCoreDataStoreTests: XCTestCase {
             })
 
         // then it should be the one we expect
-        expect(receivedFetchResult).toEventually(equal(pharmacySimple))
+        expect(receivedFetchResult).to(equal(pharmacySimple))
 
         cancellable.cancel()
     }
@@ -347,7 +351,7 @@ final class PharmacyCoreDataStoreTests: XCTestCase {
             })
 
         // then it should return none
-        expect(receivedNoResult).toEventually(beTrue())
+        expect(receivedNoResult).to(beTrue())
 
         cancellable.cancel()
     }
@@ -382,7 +386,7 @@ final class PharmacyCoreDataStoreTests: XCTestCase {
             receivedUpdateValues.append(result)
         })
 
-        expect(receivedUpdateValues.count).toEventually(equal(1))
+        expect(receivedUpdateValues.count).to(equal(1))
 
         var receivedListAllPharmacyValues = [[PharmacyLocation]]()
         // we observe all store changes
@@ -394,7 +398,7 @@ final class PharmacyCoreDataStoreTests: XCTestCase {
             })
 
         // then
-        expect(receivedListAllPharmacyValues.count).toEventually(equal(1))
+        expect(receivedListAllPharmacyValues.count).to(equal(1))
         expect(receivedListAllPharmacyValues.first?.count) == 1
         expect(receivedListAllPharmacyValues.first?.first) == expectedResult
 
@@ -415,10 +419,10 @@ final class PharmacyCoreDataStoreTests: XCTestCase {
             receivedUpdateValues.append(result)
         })
 
-        expect(receivedCompletions.count).toEventually(equal(1))
+        expect(receivedCompletions.count).to(equal(1))
         let expectedError = LocalStoreError.write(error: PharmacyCoreDataStore.Error.noMatchingEntity)
         expect(receivedCompletions.first) == .failure(expectedError)
-        expect(receivedUpdateValues.count).toEventually(equal(0))
+        expect(receivedUpdateValues.count).to(equal(0))
 
         cancellable.cancel()
     }
@@ -436,9 +440,9 @@ extension PharmacyCoreDataStore {
                 receivedSaveResults.append(result)
             })
 
-        expect(receivedSaveResults.count).toEventually(equal(1))
+        expect(receivedSaveResults.count).to(equal(1))
         expect(receivedSaveResults.allSatisfy { $0 == true }).to(beTrue())
-        expect(receivedSaveCompletions.count).toEventually(equal(1))
+        expect(receivedSaveCompletions.count).to(equal(1))
         expect(receivedSaveCompletions.first) == .finished
 
         cancellable.cancel()

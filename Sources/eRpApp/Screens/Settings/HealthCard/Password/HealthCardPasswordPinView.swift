@@ -37,7 +37,7 @@ struct HealthCardPasswordPinView: View {
         let newPin2: String
         let pinMayAdvance: Bool
         let pinShowWarning: Bool
-        let routeTag: HealthCardPasswordDomain.Route.Tag
+        let destinationTag: HealthCardPasswordDomain.Destinations.State.Tag
 
         init(state: HealthCardPasswordDomain.State) {
             mode = state.mode
@@ -45,7 +45,7 @@ struct HealthCardPasswordPinView: View {
             newPin2 = state.newPin2
             pinMayAdvance = state.pinMayAdvance
             pinShowWarning = state.pinShowWarning
-            routeTag = state.route.tag
+            destinationTag = state.destination.tag
         }
     }
 

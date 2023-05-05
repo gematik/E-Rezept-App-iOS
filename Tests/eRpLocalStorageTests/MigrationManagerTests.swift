@@ -108,6 +108,9 @@ final class MigrationManagerTests: XCTestCase {
         )
     }()
 
+    let foregroundQueue: AnySchedulerOf<DispatchQueue> = .immediate
+    let backgroundQueue: AnySchedulerOf<DispatchQueue> = .global()
+
     func testModel4MigrationWithTwoDifferentPatientTasksAndScannedTasks() throws {
         let userDataStore = MockUserDataStore()
         let factory = MockCoreDataControllerFactory()
@@ -116,7 +119,8 @@ final class MigrationManagerTests: XCTestCase {
             factory: factory,
             erxTaskCoreDataStore: ErxTaskCoreDataStore(profileId: nil,
                                                        coreDataControllerFactory: factory,
-                                                       backgroundQueue: AnyScheduler.immediate),
+                                                       foregroundQueue: foregroundQueue,
+                                                       backgroundQueue: backgroundQueue),
             userDataStore: userDataStore
         )
         // pre fill database with tasks from two different patients and a scanned task
@@ -142,7 +146,9 @@ final class MigrationManagerTests: XCTestCase {
         expect(receivedResults.count).toEventually(equal(1))
         expect(receivedResults.first) == .profiles
 
-        let profileStore = ProfileCoreDataStore(coreDataControllerFactory: factory)
+        let profileStore = ProfileCoreDataStore(coreDataControllerFactory: factory,
+                                                foregroundQueue: foregroundQueue,
+                                                backgroundQueue: backgroundQueue)
 
         var receivedProfileCompletions = [Subscribers.Completion<LocalStoreError>]()
         var receivedProfileResults = [[Profile]]()
@@ -205,7 +211,12 @@ final class MigrationManagerTests: XCTestCase {
         factory.loadCoreDataControllerReturnValue = try loadCoreDataController()
         let sut = MigrationManager(
             factory: factory,
-            erxTaskCoreDataStore: ErxTaskCoreDataStore(profileId: nil, coreDataControllerFactory: factory),
+            erxTaskCoreDataStore: ErxTaskCoreDataStore(
+                profileId: nil,
+                coreDataControllerFactory: factory,
+                foregroundQueue: foregroundQueue,
+                backgroundQueue: backgroundQueue
+            ),
             userDataStore: userDataStore
         )
 
@@ -222,7 +233,9 @@ final class MigrationManagerTests: XCTestCase {
         expect(receivedResults.count).toEventually(equal(1))
         expect(receivedResults.first) == .profiles
 
-        let profileStore = ProfileCoreDataStore(coreDataControllerFactory: factory)
+        let profileStore = ProfileCoreDataStore(coreDataControllerFactory: factory,
+                                                foregroundQueue: foregroundQueue,
+                                                backgroundQueue: backgroundQueue)
 
         var receivedProfileCompletions = [Subscribers.Completion<LocalStoreError>]()
         var receivedProfileResults = [[Profile]]()
@@ -257,7 +270,12 @@ final class MigrationManagerTests: XCTestCase {
         factory.loadCoreDataControllerReturnValue = try loadCoreDataController()
         let sut = MigrationManager(
             factory: factory,
-            erxTaskCoreDataStore: ErxTaskCoreDataStore(profileId: nil, coreDataControllerFactory: factory),
+            erxTaskCoreDataStore: ErxTaskCoreDataStore(
+                profileId: nil,
+                coreDataControllerFactory: factory,
+                foregroundQueue: foregroundQueue,
+                backgroundQueue: backgroundQueue
+            ),
             userDataStore: userDataStore
         )
 
@@ -278,7 +296,9 @@ final class MigrationManagerTests: XCTestCase {
         expect(receivedResults.count).toEventually(equal(1))
         expect(receivedResults.first) == .profiles
 
-        let profileStore = ProfileCoreDataStore(coreDataControllerFactory: factory)
+        let profileStore = ProfileCoreDataStore(coreDataControllerFactory: factory,
+                                                foregroundQueue: foregroundQueue,
+                                                backgroundQueue: backgroundQueue)
 
         var receivedProfileCompletions = [Subscribers.Completion<LocalStoreError>]()
         var receivedProfileResults = [[Profile]]()
@@ -315,7 +335,8 @@ final class MigrationManagerTests: XCTestCase {
             factory: factory,
             erxTaskCoreDataStore: ErxTaskCoreDataStore(profileId: nil,
                                                        coreDataControllerFactory: factory,
-                                                       backgroundQueue: AnyScheduler.immediate),
+                                                       foregroundQueue: foregroundQueue,
+                                                       backgroundQueue: backgroundQueue),
             userDataStore: userDataStore
         )
 
@@ -341,7 +362,8 @@ final class MigrationManagerTests: XCTestCase {
         factory.loadCoreDataControllerReturnValue = try loadCoreDataController()
         let erxTaskStore = ErxTaskCoreDataStore(profileId: UUID(),
                                                 coreDataControllerFactory: factory,
-                                                backgroundQueue: AnyScheduler.immediate)
+                                                foregroundQueue: foregroundQueue,
+                                                backgroundQueue: backgroundQueue)
         let sut = MigrationManager(
             factory: factory,
             erxTaskCoreDataStore: erxTaskStore,
@@ -379,12 +401,94 @@ final class MigrationManagerTests: XCTestCase {
 
         cancellable.cancel()
     }
+
+    func testMigrationFromVersion5ToVersion6WithPKVProfiles() throws {
+        let userDataStore = MockUserDataStore()
+        let factory = MockCoreDataControllerFactory()
+        factory.loadCoreDataControllerReturnValue = try loadCoreDataController()
+        let erxTaskStore = ErxTaskCoreDataStore(profileId: UUID(),
+                                                coreDataControllerFactory: factory,
+                                                foregroundQueue: foregroundQueue,
+                                                backgroundQueue: backgroundQueue)
+
+        let sut = MigrationManager(
+            factory: factory,
+            erxTaskCoreDataStore: erxTaskStore,
+            userDataStore: userDataStore
+        )
+        // pre fill database with profiles that need migration
+        let profileStore = ProfileCoreDataStore(coreDataControllerFactory: factory,
+                                                foregroundQueue: foregroundQueue,
+                                                backgroundQueue: backgroundQueue)
+
+        let moc = try loadCoreDataController().container.newBackgroundContext()
+
+        let profileAFixture = ProfileEntity(profile: .init(name: "A Test Profile"), in: moc)
+        profileAFixture.insuranceType = ""
+        let profileBFixture = ProfileEntity(profile: .init(name: "B Test Profile"), in: moc)
+        profileBFixture.insuranceType = ""
+        profileBFixture.insuranceId = "A123456789"
+        let profileCFixture = ProfileEntity(profile: .init(name: "C Test Profile"), in: moc)
+        profileCFixture.insuranceType = ""
+
+        try moc.save()
+
+//        let tasks = tasksForPatientAnna + tasksForPatientLudger
+//        let auditEvents = ErxTask.Dummies.auditEvents(for: tasks.first!.id)
+//        try erxTaskStore.add(auditEvents: auditEvents)
+
+        var receivedCompletions = [Subscribers.Completion<MigrationError>]()
+        var receivedResults = [ModelVersion]()
+        let cancellable =
+            sut.startModelMigration(from: ModelVersion.auditEventsInProfile)
+                .sink(receiveCompletion: { completion in
+                    receivedCompletions.append(completion)
+                }, receiveValue: { modelVersion in
+                    receivedResults.append(modelVersion)
+                })
+
+        expect(receivedResults.count).toEventually(equal(1))
+        expect(receivedResults.first) == .pKV
+
+        var receivedProfileCompletions = [Subscribers.Completion<LocalStoreError>]()
+        var receivedProfileResults = [[Profile]]()
+        _ = profileStore.listAllProfiles()
+            .first()
+            .sink(receiveCompletion: { completion in
+                receivedProfileCompletions.append(completion)
+            }, receiveValue: { profiles in
+                receivedProfileResults.append(profiles)
+            })
+
+        expect(receivedProfileResults.count).toEventually(equal(1))
+        expect(receivedProfileResults.first?.count).toEventually(equal(3))
+
+        guard let profiles = receivedProfileResults.first?.sorted(by: { $0.name < $1.name }) else { return }
+
+        let profileA = profiles[0]
+        let profileB = profiles[1]
+        let profileC = profiles[2]
+
+        expect(profileA.name) == "A Test Profile"
+        expect(profileB.name) == "B Test Profile"
+        expect(profileC.name) == "C Test Profile"
+
+        expect(profileA.insuranceId).to(beNil())
+        expect(profileB.insuranceId).to(equal("A123456789"))
+        expect(profileC.insuranceId).to(beNil())
+
+        expect(profileA.insuranceType).to(equal(Profile.InsuranceType.unknown))
+        expect(profileB.insuranceType).to(equal(Profile.InsuranceType.gKV))
+        expect(profileC.insuranceType).to(equal(Profile.InsuranceType.unknown))
+
+        cancellable.cancel()
+    }
 }
 
 extension ErxTask {
     // Removes AuditEvents and  lastModified of ErxTask and sets insuranceId of Patient to nil
     func modifyAsExpected() -> ErxTask {
-        let patient = ErxTask.Patient(
+        let patient = ErxPatient(
             name: patient?.name,
             address: patient?.address,
             birthDate: patient?.birthDate,
@@ -406,19 +510,21 @@ extension ErxTask {
             acceptedUntil: acceptedUntil,
             redeemedOn: redeemedOn,
             author: author,
-            dispenseValidityEnd: dispenseValidityEnd,
-            noctuFeeWaiver: hasEmergencyServiceFee,
             prescriptionId: prescriptionId,
-            substitutionAllowed: substitutionAllowed,
             source: source,
             medication: medication,
-            multiplePrescription: multiplePrescription,
+            medicationRequest: .init(
+                substitutionAllowed: medicationRequest.substitutionAllowed,
+                hasEmergencyServiceFee: medicationRequest.hasEmergencyServiceFee,
+                dispenseValidityEnd: medicationRequest.dispenseValidityEnd,
+                accidentInfo: medicationRequest.accidentInfo,
+                bvg: medicationRequest.bvg,
+                coPaymentStatus: medicationRequest.coPaymentStatus,
+                multiplePrescription: medicationRequest.multiplePrescription
+            ),
             patient: patient,
             practitioner: practitioner,
             organization: organization,
-            workRelatedAccident: workRelatedAccident,
-            coPaymentStatus: coPaymentStatus,
-            bvg: bvg,
             communications: communications,
             medicationDispenses: medicationDispenses
         )

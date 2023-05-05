@@ -1,0 +1,181 @@
+{
+    "resourceType": "Bundle",
+    "type": "searchset",
+    "entry": [
+        {
+            "resource": {
+                "resourceType": "MedicationDispense",
+                "id": "3465270a-11e7-4bbf-ae53-378f9cc52747",
+                "meta": {
+                    "profile": [
+                        "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_PR_MedicationDispense"
+                    ]
+                },
+                "contained": [
+                    {
+                        "resourceType": "Medication",
+                        "id": "ce7953d0-25a1-4998-a246-53973eab64e6",
+                        "meta": {
+                            "profile": [
+                                "https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Medication_Compounding|1.1.0"
+                            ]
+                        },
+                        "extension": [
+                            {
+                                "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_Base_Medication_Type",
+                                "valueCodeableConcept": {
+                                    "coding": [
+                                        {
+                                            "system": "http://snomed.info/sct",
+                                            "version": "http://snomed.info/sct/900000000000207008/version/20220331",
+                                            "code": "373873005:860781008=362943005",
+                                            "display": "Pharmaceutical / biologic product (product) : Has product characteristic (attribute) = Manual method (qualifier value)"
+                                        }
+                                    ]
+                                }
+                            },
+                            {
+                                "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Medication_Category",
+                                "valueCoding": {
+                                    "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_ERP_Medication_Category",
+                                    "code": "00"
+                                }
+                            },
+                            {
+                                "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Medication_Vaccine",
+                                "valueBoolean": true
+                            },
+                            {
+                                "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Medication_CompoundingInstruction",
+                                "valueString": "Schwieriger Herstellungsprozess"
+                            },
+                            {
+                                "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Medication_Packaging",
+                                "valueString": "Deo-Roller"
+                            }
+                        ],
+                        "code": {
+                            "coding": [
+                                {
+                                    "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_ERP_Medication_Type",
+                                    "code": "rezeptur"
+                                }
+                            ],
+                            "text": "Viskose Aluminiumchlorid-Hexahydrat-Lösung 20 % (NRF 11.132.)"
+                        },
+                        "form": {
+                            "text": "Creme"
+                        },
+                        "amount": {
+                            "numerator": {
+                                "extension": [
+                                    {
+                                        "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Medication_PackagingSize",
+                                        "valueString": "200"
+                                    }
+                                ],
+                                "unit": "g"
+                            },
+                            "denominator": {
+                                "value": 1
+                            }
+                        },
+                        "ingredient": [
+                            {
+                                "itemCodeableConcept": {
+                                    "text": "Erythromycin"
+                                },
+                                "strength": {
+                                    "numerator": {
+                                        "value": 2.5,
+                                        "unit": "%"
+                                    },
+                                    "denominator": {
+                                        "value": 1
+                                    }
+                                }
+                            },
+                            {
+                                "itemCodeableConcept": {
+                                    "text": "Oleum Rosae"
+                                },
+                                "strength": {
+                                    "numerator": {
+                                        "value": 2,
+                                        "unit": "%"
+                                    },
+                                    "denominator": {
+                                        "value": 1
+                                    }
+                                }
+                            },
+                            {
+                                "extension": [
+                                    {
+                                        "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Medication_Ingredient_Form",
+                                        "valueString": "Salbe"
+                                    }
+                                ],
+                                "itemCodeableConcept": {
+                                    "text": "Ungt. Emulsificans aquos."
+                                },
+                                "strength": {
+                                    "extension": [
+                                        {
+                                            "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Medication_Ingredient_Amount",
+                                            "valueString": "Ad 200 g"
+                                        }
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                ],
+                "identifier": [
+                    {
+                        "system": "https://gematik.de/fhir/erp/NamingSystem/GEM_ERP_NS_PrescriptionId",
+                        "value": "160.000.033.491.280.78"
+                    }
+                ],
+                "status": "completed",
+                "medicationReference": {
+                    "reference": "#ce7953d0-25a1-4998-a246-53973eab64e6"
+                },
+                "subject": {
+                    "identifier": {
+                        "system": "http://fhir.de/sid/gkv/kvid-10",
+                        "value": "X234567890"
+                    }
+                },
+                "quantity": {
+                    "value": 100,
+                    "unit": "mg"
+                },
+                "performer": [
+                    {
+                        "actor": {
+                            "identifier": {
+                                "system": "https://gematik.de/fhir/sid/telematik-id",
+                                "value": "3-abc-1234567890"
+                            }
+                        }
+                    }
+                ],
+                "whenHandedOver": "2022-02-28",
+                "note": [
+                    {
+                        "text": "These are two notes"
+                    },
+                    {
+                        "text": "separated by newlines!"
+                    }
+                ],
+                "dosageInstruction": [
+                    {
+                        "text": "1-0-1-0"
+                    }
+                ]
+            }
+        }
+    ]
+}

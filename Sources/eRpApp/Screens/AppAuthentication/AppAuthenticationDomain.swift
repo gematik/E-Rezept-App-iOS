@@ -20,12 +20,11 @@ import Combine
 import ComposableArchitecture
 import eRpKit
 
-enum AppAuthenticationDomain {
-    typealias Store = ComposableArchitecture.Store<State, Action>
-    typealias Reducer = ComposableArchitecture.AnyReducer<State, Action, Environment>
+struct AppAuthenticationDomain: ReducerProtocol {
+    typealias Store = StoreOf<Self>
 
-    static func cleanup<T>() -> Effect<T, Never> {
-        Effect.cancel(id: Token.self)
+    static func cleanup<T>() -> EffectTask<T> {
+        EffectTask<T>.cancel(ids: Token.allCases)
     }
 
     enum Token: CaseIterable, Hashable {
@@ -48,36 +47,30 @@ enum AppAuthenticationDomain {
         case password(action: AppAuthenticationPasswordDomain.Action)
     }
 
-    struct Environment {
-        let userDataStore: UserDataStore
-        let schedulers: Schedulers
-        let appAuthenticationProvider: AppAuthenticationProvider
-        let appSecurityPasswordManager: AppSecurityManager
-        let authenticationChallengeProvider: AuthenticationChallengeProvider
-        let didCompleteAuthentication: (() -> Void)?
+    @Dependency(\.userDataStore) var userDataStore: UserDataStore
+    @Dependency(\.schedulers) var schedulers: Schedulers
+    @Dependency(\.appAuthenticationProvider) var appAuthenticationProvider: AppAuthenticationProvider
 
-        init(userDataStore: UserDataStore,
-             schedulers: Schedulers,
-             appAuthenticationProvider: AppAuthenticationProvider,
-             appSecurityPasswordManager: AppSecurityManager,
-             authenticationChallengeProvider: AuthenticationChallengeProvider,
-             didCompleteAuthentication: (() -> Void)? = nil) {
-            self.userDataStore = userDataStore
-            self.schedulers = schedulers
-            self.appAuthenticationProvider = appAuthenticationProvider
-            self.appSecurityPasswordManager = appSecurityPasswordManager
-            self.didCompleteAuthentication = didCompleteAuthentication
-            self.authenticationChallengeProvider = authenticationChallengeProvider
-        }
+    let didCompleteAuthentication: (() -> Void)?
+
+    var body: some ReducerProtocol<State, Action> {
+        Reduce(self.core)
+            .ifLet(\.biometrics, action: /AppAuthenticationDomain.Action.biometrics(action:)) {
+                AppAuthenticationBiometricsDomain()
+            }
+            .ifLet(\.password, action: /AppAuthenticationDomain.Action.password(action:)) {
+                AppAuthenticationPasswordDomain()
+            }
     }
 
-    private static let domainReducer = Reducer { state, action, environment in
+    // swiftlint:disable:next function_body_length cyclomatic_complexity
+    func core(into state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
         case .onAppear:
             return Effect.merge(
-                environment.subscribeToFailedAuthenticationChanges()
+                subscribeToFailedAuthenticationChanges()
                     .cancellable(id: Token.failedAuthentications, cancelInFlight: true),
-                environment.loadAppAuthenticationOption()
+                loadAppAuthenticationOption()
             )
         case let .failedAppAuthenticationsReceived(count):
             state.failedAuthenticationsCount = count
@@ -85,7 +78,7 @@ enum AppAuthenticationDomain {
         case let .loadAppAuthenticationOptionResponse(response, failedAuthenticationsCount):
             guard let authenticationOption = response else {
                 state.didCompleteAuthentication = true
-                environment.didCompleteAuthentication?()
+                didCompleteAuthentication?()
                 state.biometrics = nil
                 return .none
             }
@@ -97,7 +90,7 @@ enum AppAuthenticationDomain {
                 )
             case .unsecured:
                 state.didCompleteAuthentication = true
-                environment.didCompleteAuthentication?()
+                didCompleteAuthentication?()
                 state.biometrics = nil
             case .password:
                 state.password = AppAuthenticationPasswordDomain.State()
@@ -107,66 +100,37 @@ enum AppAuthenticationDomain {
         case let .biometrics(action: .authenticationChallengeResponse(response)):
             if case .success(true) = response {
                 state.didCompleteAuthentication = true
-                environment.didCompleteAuthentication?()
+                didCompleteAuthentication?()
                 state.biometrics = nil
-                environment.userDataStore.set(failedAppAuthentications: 0)
+                userDataStore.set(failedAppAuthentications: 0)
             } else {
                 state.failedAuthenticationsCount += 1
-                environment.userDataStore.set(failedAppAuthentications: state.failedAuthenticationsCount)
+                userDataStore.set(failedAppAuthentications: state.failedAuthenticationsCount)
             }
             return .none
 
         case let .password(.passwordVerificationReceived(isLoggedIn)):
             if isLoggedIn {
                 state.didCompleteAuthentication = true
-                environment.didCompleteAuthentication?()
+                didCompleteAuthentication?()
                 state.password = nil
-                environment.userDataStore.set(failedAppAuthentications: 0)
+                userDataStore.set(failedAppAuthentications: 0)
             } else {
                 state.failedAuthenticationsCount += 1
-                environment.userDataStore.set(failedAppAuthentications: state.failedAuthenticationsCount)
+                userDataStore.set(failedAppAuthentications: state.failedAuthenticationsCount)
             }
 
             return .none
         case .removeSubscriptions:
-            return cleanup()
+            return Self.cleanup()
         case .password,
              .biometrics:
             return .none
         }
     }
-
-    static let reducer = Reducer.combine(
-        biometricsPullbackReducer,
-        passwordPullbackReducer,
-        domainReducer
-    )
-
-    private static let biometricsPullbackReducer: Reducer =
-        AppAuthenticationBiometricsDomain.reducer
-            .optional()
-            .pullback(
-                state: \.biometrics,
-                action: /AppAuthenticationDomain.Action.biometrics(action:)
-            ) {
-                AppAuthenticationBiometricsDomain.Environment(
-                    schedulers: $0.schedulers,
-                    authenticationChallengeProvider: $0.authenticationChallengeProvider
-                )
-            }
-
-    private static let passwordPullbackReducer: Reducer =
-        AppAuthenticationPasswordDomain.reducer
-            .optional()
-            .pullback(state: \.password,
-                      action: /AppAuthenticationDomain.Action.password(action:)) { currentEnvironment in
-                AppAuthenticationPasswordDomain.Environment(
-                    appSecurityPasswordManager: currentEnvironment.appSecurityPasswordManager
-                )
-            }
 }
 
-extension AppAuthenticationDomain.Environment {
+extension AppAuthenticationDomain {
     func subscribeToFailedAuthenticationChanges() -> Effect<AppAuthenticationDomain.Action, Never> {
         userDataStore.failedAppAuthentications
             .receive(on: schedulers.main.animation())
@@ -186,52 +150,19 @@ extension AppAuthenticationDomain.Environment {
 }
 
 extension AppAuthenticationDomain {
-    struct DefaultAuthenticationProvider: AppAuthenticationProvider {
-        private var userDataStore: UserDataStore
-
-        init(userDataStore: UserDataStore) {
-            self.userDataStore = userDataStore
-        }
-
-        func loadAppAuthenticationOption() -> AnyPublisher<AppSecurityOption, Never> {
-            userDataStore
-                .appSecurityOption
-                .eraseToAnyPublisher()
-        }
-    }
-}
-
-extension AppAuthenticationDomain {
     enum Dummies {
         static let state = State()
 
-        static let environment = Environment(
-            userDataStore: DummySessionContainer().localUserStore,
-            schedulers: Schedulers(),
-            appAuthenticationProvider:
-            AppAuthenticationDomain.DefaultAuthenticationProvider(
-                userDataStore: DummySessionContainer().localUserStore
-            ),
-            appSecurityPasswordManager: DummyAppSecurityManager(),
-            authenticationChallengeProvider: BiometricsAuthenticationChallengeProvider()
-        )
-
         static let store = Store(
             initialState: state,
-            reducer: reducer,
-            environment: environment
+            reducer: AppAuthenticationDomain {}
         )
 
         static func storeFor(_ state: State) -> Store {
             Store(
                 initialState: state,
-                reducer: domainReducer,
-                environment: environment
+                reducer: AppAuthenticationDomain {}
             )
         }
     }
-}
-
-protocol AppAuthenticationProvider {
-    func loadAppAuthenticationOption() -> AnyPublisher<AppSecurityOption, Never>
 }

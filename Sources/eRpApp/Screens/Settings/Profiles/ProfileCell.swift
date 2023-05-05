@@ -35,7 +35,7 @@ struct ProfileCell: View {
         HStack(alignment: .center, spacing: 8) {
             InitialsImage(
                 backgroundColor: profile.color.background,
-                text: profile.emoji ?? profile.acronym,
+                text: profile.acronym,
                 statusColor: nil,
                 size: .large
             )
@@ -84,7 +84,6 @@ struct ProfileCell: View {
 protocol ProfileCellModel {
     var name: String { get }
     var acronym: String { get }
-    var emoji: String? { get }
     var color: ProfileColor { get }
     var connectionStatus: ProfileConnectionStatus { get }
     var lastSuccessfulSync: Date? { get }

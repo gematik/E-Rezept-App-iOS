@@ -21,11 +21,11 @@ import ComposableArchitecture
 import eRpKit
 import Foundation
 
-enum DeviceSecurityDomain {
-    typealias Store = ComposableArchitecture.Store<State, Action>
-    typealias Reducer = ComposableArchitecture.AnyReducer<State, Action, Environment>
-    static func cleanup<T>() -> Effect<T, Never> {
-        Effect.cancel(id: Token.self)
+struct DeviceSecurityDomain: ReducerProtocol {
+    typealias Store = StoreOf<Self>
+
+    static func cleanup<T>() -> EffectTask<T> {
+        EffectTask<T>.cancel(ids: Token.allCases)
     }
 
     enum Token: CaseIterable, Hashable {}
@@ -35,47 +35,46 @@ enum DeviceSecurityDomain {
     }
 
     enum Action: Equatable {
-        case close
         case acceptRootedDevice
         case acceptMissingPin(permanently: Bool)
-    }
 
-    struct Environment {
-        let deviceSecurityManager: DeviceSecurityManager
-    }
+        case delegate(Delegate)
 
-    static let domainReducer = Reducer { _, action, environment in
-        switch action {
-        case .acceptRootedDevice:
-            environment.deviceSecurityManager.set(ignoreRootedDeviceWarningForSession: true)
-            return Effect(value: .close)
-        case let .acceptMissingPin(permanently):
-            environment.deviceSecurityManager.set(ignoreDeviceSystemPinWarningForSession: true)
-            environment.deviceSecurityManager
-                .set(ignoreDeviceSystemPinWarningPermanently: permanently)
-            return Effect(value: .close)
-        case .close: // Handled by parent domain
-            return .none
+        enum Delegate: Equatable {
+            case close
         }
     }
 
-    static let reducer: Reducer = .combine(
-        domainReducer
-    )
+    @Dependency(\.deviceSecurityManager) var deviceSecurityManager: DeviceSecurityManager
+
+    var body: some ReducerProtocol<State, Action> {
+        Reduce(self.core)
+    }
+
+    private func core(state _: inout State, action: Action) -> EffectTask<Action> {
+        switch action {
+        case .acceptRootedDevice:
+            deviceSecurityManager.set(ignoreRootedDeviceWarningForSession: true)
+            return Effect(value: .delegate(.close))
+        case let .acceptMissingPin(permanently):
+            deviceSecurityManager.set(ignoreDeviceSystemPinWarningForSession: true)
+            deviceSecurityManager
+                .set(ignoreDeviceSystemPinWarningPermanently: permanently)
+            return Effect(value: .delegate(.close))
+        case .delegate(.close):
+            // Handled by parent domain
+            return .none
+        }
+    }
 }
 
 extension DeviceSecurityDomain {
     enum Dummies {
         static let state = State(warningType: .devicePinMissing)
 
-        static let environment = Environment(
-            deviceSecurityManager: DummyDeviceSecurityManager()
-        )
-
         static let store = Store(
             initialState: state,
-            reducer: reducer,
-            environment: environment
+            reducer: DeviceSecurityDomain()
         )
     }
 }

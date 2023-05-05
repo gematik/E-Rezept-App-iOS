@@ -119,10 +119,36 @@ public protocol ErxLocalDataStore {
     // MARK: - MedicationDispense interfaces
 
     /// List all medication dispenses contained in the store
-    func listAllMedicationDispenses() -> AnyPublisher<[ErxTask.MedicationDispense], LocalStoreError>
+    func listAllMedicationDispenses() -> AnyPublisher<[ErxMedicationDispense], LocalStoreError>
 
     /// Creates or updates the passed sequence of `ErxTask.MedicationDispense`s
     /// - Parameter medicationDispenses: Array of medication dispenses that should be stored
     /// - Returns: `true` if save operation was successful
-    func save(medicationDispenses: [ErxTask.MedicationDispense]) -> AnyPublisher<Bool, LocalStoreError>
+    func save(medicationDispenses: [ErxMedicationDispense]) -> AnyPublisher<Bool, LocalStoreError>
+
+    // MARK: - ChargeItem interfaces
+
+    /// Fetch the ErxChargeItem by its id when required by `Self`
+    ///
+    /// - Parameters:
+    ///   - id: the ErxChargeItem ID
+    ///   - fullDetail: if set to true, fetches all available information
+    ///   otherwise only a minimal version
+    /// - Returns: Publisher for the fetch request
+    func fetchChargeItem(
+        by chargeItemID: ErxChargeItem.ID,
+        fullDetail: Bool
+    ) -> AnyPublisher<ErxChargeItem?, LocalStoreError>
+
+    /// Fetch the most recent `enteredDate` of all `ChargeItem`s
+    func fetchLatestTimestampForChargeItems() -> AnyPublisher<String?, LocalStoreError>
+
+    /// List all charge items with the given local contained in the store
+    /// - Returns: Array of the fetched charge items or error
+    func listAllChargeItems() -> AnyPublisher<[ErxChargeItem], LocalStoreError>
+
+    /// Creates or updates the passed sequence of `ErxChargeItem`s
+    /// - Parameter chargeItems: Array of charge items that should be stored
+    /// - Returns: `true` if save operation was successful
+    func save(chargeItems: [ErxChargeItem]) -> AnyPublisher<Bool, LocalStoreError>
 }

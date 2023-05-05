@@ -28,44 +28,29 @@ final class ProfilesDomainTests: XCTestCase {
         ProfilesDomain.Action,
         ProfilesDomain.State,
         ProfilesDomain.Action,
-        ProfilesDomain.Environment
+        Void
     >
 
     func testStore(for state: ProfilesDomain.State) -> TestStore {
         TestStore(
             initialState: state,
-            reducer: ProfilesDomain.reducer,
-            environment: ProfilesDomain.Environment(
-                appSecurityManager: mockAppSecurityManager,
-                schedulers: Schedulers(uiScheduler: mainQueue.eraseToAnyScheduler()),
-                profileDataStore: mockProfileDataStore,
-                userDataStore: mockUserDataStore,
-                userProfileService: mockUserProfileService,
-                profileSecureDataWiper: MockProfileSecureDataWiper(),
-                router: MockRouting(),
-                secureEnclaveSignatureProvider: DummySecureEnclaveSignatureProvider(),
-                userSessionProvider: MockUserSessionProvider(),
-                nfcSignatureProvider: MockNFCSignatureProvider(),
-                userSession: MockUserSession(),
-                signatureProvider: DummySecureEnclaveSignatureProvider(),
-                accessibilityAnnouncementReceiver: { _ in }
-            )
-        )
+            reducer: ProfilesDomain()
+        ) { dependencies in
+            dependencies.userProfileService = mockUserProfileService
+            dependencies.schedulers = Schedulers(uiScheduler: mainQueue.eraseToAnyScheduler())
+            dependencies.router = DummyRouter()
+        }
     }
 
     let mainQueue = DispatchQueue.test
 
     var mockAppSecurityManager: MockAppSecurityManager!
-    var mockProfileDataStore: MockProfileDataStore!
-    var mockUserDataStore: MockUserDataStore!
     var mockUserProfileService: MockUserProfileService!
 
     override func setUp() {
         super.setUp()
 
         mockAppSecurityManager = MockAppSecurityManager()
-        mockProfileDataStore = MockProfileDataStore()
-        mockUserDataStore = MockUserDataStore()
         mockUserProfileService = MockUserProfileService()
     }
 
@@ -78,21 +63,21 @@ final class ProfilesDomainTests: XCTestCase {
         let profilesPublisher = CurrentValueSubject<[UserProfile], UserProfileServiceError>(expectedProfiles)
 
         mockUserProfileService.userProfilesPublisherReturnValue = profilesPublisher.eraseToAnyPublisher()
-        mockUserDataStore.selectedProfileId = Just(Fixtures.profileA.id).eraseToAnyPublisher()
+        mockUserProfileService.selectedProfileId = Just(Fixtures.profileA.id).eraseToAnyPublisher()
 
         let sut = testStore(for: .init(profiles: [],
                                        selectedProfileId: nil,
-                                       route: nil))
+                                       destination: nil))
 
         sut.send(.registerListener)
 
         mainQueue.advance()
 
-        sut.receive(.loadReceived(.success(expectedProfiles))) { state in
+        sut.receive(.response(.loadReceived(.success(expectedProfiles)))) { state in
             state.profiles = expectedProfiles
         }
 
-        sut.receive(.selectedProfileReceived(Fixtures.profileA.id)) { state in
+        sut.receive(.response(.selectedProfileReceived(Fixtures.profileA.id))) { state in
             state.selectedProfileId = Fixtures.profileA.id
         }
 
@@ -104,10 +89,10 @@ final class ProfilesDomainTests: XCTestCase {
     func testEditProfile() {
         let sut = testStore(for: .init(profiles: [Fixtures.profileA, Fixtures.profileB],
                                        selectedProfileId: nil,
-                                       route: nil))
+                                       destination: nil))
 
         sut.send(.editProfile(Fixtures.profileA)) { state in
-            state.route = .editProfile(.init(profile: Fixtures.profileA))
+            state.destination = .editProfile(.init(profile: Fixtures.profileA))
         }
     }
 }
@@ -124,7 +109,6 @@ extension ProfilesDomainTests {
             created: createdA,
             insuranceId: nil,
             color: .blue,
-            emoji: nil,
             lastAuthenticated: nil,
             erxTasks: []
         )
@@ -134,7 +118,6 @@ extension ProfilesDomainTests {
             created: createdB,
             insuranceId: nil,
             color: .grey,
-            emoji: nil,
             lastAuthenticated: nil,
             erxTasks: []
         )

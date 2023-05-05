@@ -27,7 +27,7 @@ final class CardWallIntroductionDomainTests: XCTestCase {
         CardWallIntroductionDomain.Action,
         CardWallIntroductionDomain.State,
         CardWallIntroductionDomain.Action,
-        CardWallIntroductionDomain.Environment
+        Void
     >
 
     func testStore() -> TestStore {
@@ -36,15 +36,12 @@ final class CardWallIntroductionDomainTests: XCTestCase {
 
     func testStore(for state: CardWallIntroductionDomain.State) -> TestStore {
         TestStore(initialState: state,
-                  reducer: CardWallIntroductionDomain.domainReducer,
-                  environment: CardWallIntroductionDomain.Environment(
-                      userSession: MockUserSession(),
-                      userSessionProvider: DummyUserSessionProvider(),
-                      sessionProvider: DummyProfileBasedSessionProvider(),
-                      schedulers: schedulers,
-                      signatureProvider: DummySecureEnclaveSignatureProvider(),
-                      accessibilityAnnouncementReceiver: { _ in }
-                  ))
+                  reducer: CardWallIntroductionDomain(),
+                  prepareDependencies: { dependencies in
+                      dependencies.userSession = MockUserSession()
+                      dependencies.userSessionProvider = MockUserSessionProvider()
+                      dependencies.schedulers = schedulers
+                  })
     }
 
     let uiScheduler = DispatchQueue.test
@@ -59,22 +56,32 @@ final class CardWallIntroductionDomainTests: XCTestCase {
     }()
 
     func testFastTrackCloseActionShouldBeForwarded() {
-        let store = testStore()
+        let store = testStore(for: .init(isNFCReady: true, profileId: UUID(), destination: .fasttrack(.init())))
 
         // when
-        store.send(.fasttrack(action: .close))
+        store.send(.destination(.fasttrack(action: .delegate(.close)))) { state in
+            state.destination = nil
+        }
         uiScheduler.run()
         // then
-        store.receive(.close)
+        store.receive(.delegate(.close))
     }
 
     func testCANCloseActionShouldBeForwarded() {
-        let store = testStore()
+        let store = testStore(for: .init(
+            isNFCReady: true,
+            profileId: UUID(),
+            destination: .can(
+                .init(isDemoModus: false, profileId: UUID(), can: "")
+            )
+        ))
 
         // when
-        store.send(.canAction(action: .close))
+        store.send(.destination(.canAction(action: .delegate(.close)))) { state in
+            state.destination = nil
+        }
         uiScheduler.run()
         // then
-        store.receive(.close)
+        store.receive(.delegate(.close))
     }
 }

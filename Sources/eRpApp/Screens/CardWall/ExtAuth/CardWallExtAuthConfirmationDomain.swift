@@ -20,12 +20,12 @@ import ComposableArchitecture
 import IDP
 import UIKit
 
-enum CardWallExtAuthConfirmationDomain {
+struct CardWallExtAuthConfirmationDomain: ReducerProtocol {
     typealias Store = ComposableArchitecture.Store<State, Action>
     typealias Reducer = ComposableArchitecture.AnyReducer<State, Action, Environment>
 
-    static func cleanup<T>() -> Effect<T, Never> {
-        Effect.cancel(id: Token.self)
+    static func cleanup<T>() -> EffectTask<T> {
+        EffectTask<T>.cancel(ids: Token.allCases)
     }
 
     enum Token: CaseIterable, Hashable {}
@@ -52,24 +52,45 @@ enum CardWallExtAuthConfirmationDomain {
         case confirmKK
         case error(Error)
         case openURL(URL)
-        case openURLReceived(Bool)
-        case close
         case openContactSheet
         case closeContactSheet
 
         case contactByTelephone
         case contactByMail
+
+        case response(Response)
+        case delegate(Delegate)
+
+        enum Response: Equatable {
+            case openURL(Bool)
+        }
+
+        enum Delegate: Equatable {
+            case close
+        }
     }
+
+    @Dependency(\.idpSession) var idpSession: IDPSession
+    @Dependency(\.schedulers) var schedulers: Schedulers
+    @Dependency(\.resourceHandler) var resourceHandler: ResourceHandler
 
     struct Environment {
         let idpSession: IDPSession
         let schedulers: Schedulers
 
-        let canOpenURL: (URL) -> Bool
-        let openURL: (URL, [UIApplication.OpenExternalURLOptionsKey: Any], ((Bool) -> Void)?) -> Void
+        let resourceHandler: ResourceHandler
     }
 
-    static let domainReducer = Reducer { state, action, environment in
+    private var environment: Environment {
+        .init(idpSession: idpSession, schedulers: schedulers, resourceHandler: resourceHandler)
+    }
+
+    var body: some ReducerProtocol<State, Action> {
+        Reduce(self.core)
+    }
+
+    // swiftlint:disable:next function_body_length cyclomatic_complexity
+    func core(into state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
         case .confirmKK:
             state.loading = true
@@ -86,22 +107,22 @@ enum CardWallExtAuthConfirmationDomain {
             return Effect.future { completion in
 
                 // [REQ:gemSpec_IDP_Sek:A_22299] Follow redirect
-                guard environment.canOpenURL(url) else {
-                    completion(.success(Action.openURLReceived(false)))
+                guard environment.resourceHandler.canOpenURL(url) else {
+                    completion(.success(Action.response(.openURL(false))))
                     return
                 }
 
                 // [REQ:gemSpec_IDP_Sek:A_22313] Remember State parameter for later verification
-                environment.openURL(url, [:]) { result in
-                    completion(.success(Action.openURLReceived(result)))
+                environment.resourceHandler.open(url, options: [:]) { result in
+                    completion(.success(Action.response(.openURL(result))))
                 }
             }
             .receive(on: environment.schedulers.main)
             .eraseToEffect()
-        case let .openURLReceived(successful):
+        case let .response(.openURL(successful)):
             state.loading = false
             if successful {
-                return Effect(value: .close)
+                return Effect(value: .delegate(.close))
             } else {
                 state.error = Error.universalLinkFailed
             }
@@ -128,20 +149,16 @@ enum CardWallExtAuthConfirmationDomain {
             return .none
         case .contactByTelephone:
             guard let url = URL(string: "tel:+498002773777") else { return .none }
-            environment.openURL(url, [:]) { _ in }
+            environment.resourceHandler.open(url, options: [:]) { _ in }
             return .none
         case .contactByMail:
             guard let url = URL(string: "mailto:app-feedback@gematik.de") else { return .none }
-            environment.openURL(url, [:]) { _ in }
+            environment.resourceHandler.open(url, options: [:]) { _ in }
             return .none
-        case .close:
+        case .delegate:
             return .none // Handled by parent domain
         }
     }
-
-    static let reducer: Reducer = .combine(
-        domainReducer
-    )
 }
 
 extension CardWallExtAuthConfirmationDomain.Error: LocalizedError {
@@ -160,19 +177,11 @@ extension CardWallExtAuthConfirmationDomain {
         static let state = State(selectedKK: .init(name: "Dummy KK", identifier: "identifier"),
                                  error: nil)
 
-        static let environment = Environment(idpSession: DemoIDPSession(storage: MemoryStorage()),
-                                             schedulers: Schedulers(),
-                                             canOpenURL: UIApplication.shared.canOpenURL,
-                                             openURL: UIApplication.shared.open(_:options:completionHandler:))
-
         static let store = Store(initialState: state,
-                                 reducer: reducer,
-                                 environment: environment)
+                                 reducer: CardWallExtAuthConfirmationDomain())
 
         static func store(for state: State) -> Store {
-            Store(initialState: state,
-                  reducer: reducer,
-                  environment: environment)
+            Store(initialState: state, reducer: CardWallExtAuthConfirmationDomain())
         }
     }
 }

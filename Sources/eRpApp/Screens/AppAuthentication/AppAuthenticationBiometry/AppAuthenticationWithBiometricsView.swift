@@ -105,11 +105,7 @@ struct AppAuthenticationWithBiometricsView_Previews: PreviewProvider {
                         biometryType: .faceID,
                         startImmediateAuthenticationChallenge: false
                     ),
-                    reducer: AppAuthenticationBiometricsDomain.reducer,
-                    environment: AppAuthenticationBiometricsDomain.Environment(
-                        schedulers: Schedulers(),
-                        authenticationChallengeProvider: BiometricsAuthenticationChallengeProvider()
-                    )
+                    reducer: AppAuthenticationBiometricsDomain()
                 )
             )
         }

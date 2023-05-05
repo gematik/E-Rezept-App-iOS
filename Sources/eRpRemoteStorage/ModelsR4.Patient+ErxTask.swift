@@ -86,8 +86,12 @@ extension ModelsR4.Patient {
     }
 
     var insuranceId: String? {
-        identifier?.first { identifier in
-            Prescription.Key.kvIDKeys.contains { $0.value == identifier.system?.value?.url.absoluteString }
+        let gkvKeys: [String] = Prescription.Key.gkvKvIDKeys.map(\.value)
+        let pkvKeys: [String] = Prescription.Key.pkvKvIDKeys.map(\.value)
+
+        let keys = gkvKeys + pkvKeys
+        return identifier?.first { identifier in
+            keys.contains { $0 == identifier.system?.value?.url.absoluteString }
         }?.value?.value?.string
     }
 }

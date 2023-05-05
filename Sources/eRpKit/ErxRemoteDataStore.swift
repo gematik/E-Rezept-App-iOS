@@ -76,7 +76,7 @@ public protocol ErxRemoteDataStore {
     ///   - referenceDate: `AuditEvent`s with modification date great or equal  `referenceDate` will be listed.
     ///                             Pass `nil` for listing all
     ///   - locale: Location type of the language in which the result should be returned
-    func listAuditEventsNextPage(of previousPage: PagedContent<[ErxAuditEvent]>)
+    func listAuditEventsNextPage(of previousPage: PagedContent<[ErxAuditEvent]>, for locale: String?)
         -> AnyPublisher<PagedContent<[ErxAuditEvent]>, RemoteStoreError>
 
     /// List all medication dispenses for a specific `Prescription` /  `ErxTask`
@@ -84,5 +84,39 @@ public protocol ErxRemoteDataStore {
     /// - Returns: `MedicationDispense`s
     func listMedicationDispenses(
         for id: ErxTask.ID
-    ) -> AnyPublisher<[ErxTask.MedicationDispense], RemoteStoreError>
+    ) -> AnyPublisher<[ErxMedicationDispense], RemoteStoreError>
+
+    /// Fetch the ErxChargeItem by its id when required by `Self`
+    ///
+    /// - Parameters:
+    ///   - id: the ErxChargeIem ID
+    /// - Returns: Publisher for the fetch request
+    func fetchChargeItem(by id: ErxChargeItem.ID)
+        -> AnyPublisher<ErxChargeItem?, RemoteStoreError>
+
+    /// List all charge items contained in the store
+    /// - Parameter referenceDate: `ChargeItem`s with entered date great or equal  `referenceDate` will be listed.
+    ///                             Pass `nil` for listing all
+    /// - Returns: Publisher for the fetch request
+    func listAllChargeItems(after referenceDate: String?)
+        -> AnyPublisher<[ErxChargeItem], RemoteStoreError>
+
+    /// Loads All consents of a given profile
+    /// Uses the request headers  ACCESS_TOKEN with the containing insurance id
+    ///
+    /// - Returns: Array of all loaded `ErxConsent`
+    func fetchConsents() -> AnyPublisher<[ErxConsent], RemoteStoreError>
+
+    /// Send a grant consent request of  an `ErxConsent`
+    ///
+    /// - Parameter consent: Consent that contains information about the type of consent
+    ///                         and insurance id which the consent will be granted for
+    /// - Returns: The `ErxConsent` that was granted
+    func grantConsent(_ consent: ErxConsent) -> AnyPublisher<ErxConsent?, RemoteStoreError>
+
+    /// Delete an consent of `ErxConsent` to revoke it
+    /// - Parameters:
+    ///   - category: the `ErxConsent.Category`of the consent to be revoked
+    /// - Returns: Publisher for the load request
+    func revokeConsent(_ category: ErxConsent.Category) -> AnyPublisher<Bool, RemoteStoreError>
 }

@@ -1,4 +1,4 @@
-// Generated using Sourcery 1.9.0 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.0.1 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 import Combine
 import Foundation
@@ -27,18 +27,15 @@ import OpenSSL
 
 
 
-
-
-
+// MARK: - MockAVSClient -
 
 final class MockAVSClient: AVSClient {
-
-
-    //MARK: - send
+    
+   // MARK: - send
 
     var sendDataToCallsCount = 0
     var sendDataToCalled: Bool {
-        return sendDataToCallsCount > 0
+        sendDataToCallsCount > 0
     }
     var sendDataToReceivedArguments: (data: Data, endpoint: AVSEndpoint)?
     var sendDataToReceivedInvocations: [(data: Data, endpoint: AVSEndpoint)] = []
@@ -49,23 +46,21 @@ final class MockAVSClient: AVSClient {
         sendDataToCallsCount += 1
         sendDataToReceivedArguments = (data: data, endpoint: endpoint)
         sendDataToReceivedInvocations.append((data: data, endpoint: endpoint))
-        if let sendDataToClosure = sendDataToClosure {
-            return sendDataToClosure(data, endpoint)
-        } else {
-            return sendDataToReturnValue
-        }
+        return sendDataToClosure.map({ $0(data, endpoint) }) ?? sendDataToReturnValue
     }
-
 }
+
+
+// MARK: - MockAVSCmsEncrypter -
+
 final class MockAVSCmsEncrypter: AVSCmsEncrypter {
-
-
-    //MARK: - cmsEncrypt
+    
+   // MARK: - cmsEncrypt
 
     var cmsEncryptRecipientsThrowableError: Error?
     var cmsEncryptRecipientsCallsCount = 0
     var cmsEncryptRecipientsCalled: Bool {
-        return cmsEncryptRecipientsCallsCount > 0
+        cmsEncryptRecipientsCallsCount > 0
     }
     var cmsEncryptRecipientsReceivedArguments: (data: Data, recipients: [X509])?
     var cmsEncryptRecipientsReceivedInvocations: [(data: Data, recipients: [X509])] = []
@@ -79,23 +74,21 @@ final class MockAVSCmsEncrypter: AVSCmsEncrypter {
         cmsEncryptRecipientsCallsCount += 1
         cmsEncryptRecipientsReceivedArguments = (data: data, recipients: recipients)
         cmsEncryptRecipientsReceivedInvocations.append((data: data, recipients: recipients))
-        if let cmsEncryptRecipientsClosure = cmsEncryptRecipientsClosure {
-            return try cmsEncryptRecipientsClosure(data, recipients)
-        } else {
-            return cmsEncryptRecipientsReturnValue
-        }
+        return try cmsEncryptRecipientsClosure.map({ try $0(data, recipients) }) ?? cmsEncryptRecipientsReturnValue
     }
-
 }
+
+
+// MARK: - MockAVSMessageConverter -
+
 final class MockAVSMessageConverter: AVSMessageConverter {
-
-
-    //MARK: - convert
+    
+   // MARK: - convert
 
     var convertRecipientsThrowableError: Error?
     var convertRecipientsCallsCount = 0
     var convertRecipientsCalled: Bool {
-        return convertRecipientsCallsCount > 0
+        convertRecipientsCallsCount > 0
     }
     var convertRecipientsReceivedArguments: (message: AVSMessage, recipients: [X509])?
     var convertRecipientsReceivedInvocations: [(message: AVSMessage, recipients: [X509])] = []
@@ -109,11 +102,6 @@ final class MockAVSMessageConverter: AVSMessageConverter {
         convertRecipientsCallsCount += 1
         convertRecipientsReceivedArguments = (message: message, recipients: recipients)
         convertRecipientsReceivedInvocations.append((message: message, recipients: recipients))
-        if let convertRecipientsClosure = convertRecipientsClosure {
-            return try convertRecipientsClosure(message, recipients)
-        } else {
-            return convertRecipientsReturnValue
-        }
+        return try convertRecipientsClosure.map({ try $0(message, recipients) }) ?? convertRecipientsReturnValue
     }
-
 }

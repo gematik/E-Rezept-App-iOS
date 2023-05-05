@@ -16,7 +16,7 @@
 # 
 #
 
-xcversion(version: ENV["FL_XCODE_VERSION"] || "14.0")
+xcversion(version: ENV["FL_XCODE_VERSION"] || "14.2")
 
 fastlane_version "2.187.0"
 
@@ -287,7 +287,7 @@ desc "Build and test (scan) the project for macOS"
 desc "The lane to run by ci on every commit."
 desc ""
 desc "###Example:"
-desc "```\nfastlane build_mac mac_schemes:ProjectScheme mac_sdk:\"macos10.14\" mac_destination:\"platform=macOS,arch=x86_64\" configuration:Release --env osx\n```"
+desc "```\nfastlane build_mac mac_schemes:ProjectScheme mac_sdk:\"macos11\" mac_destination:\"platform=macOS,arch=x86_64\" configuration:Release --env osx\n```"
 desc "###Options"
 desc " * **`project`**: The path to the Xcode project file. (`G_PROJECT`)"
 desc " * **`schemes`**: The (shared) schemes to build for the mac build. If only one Scheme exists you can omit this and specify a scheme in a Scanfile (`G_MAC_SCHEMES`)"

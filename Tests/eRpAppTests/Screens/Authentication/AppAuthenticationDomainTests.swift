@@ -31,7 +31,7 @@ final class AppAuthenticationDomainTests: XCTestCase {
         AppAuthenticationDomain.Action,
         AppAuthenticationDomain.State,
         AppAuthenticationDomain.Action,
-        AppAuthenticationDomain.Environment
+        Void
     >
 
     struct MockAuthenticationProvider: AppAuthenticationProvider {
@@ -54,19 +54,23 @@ final class AppAuthenticationDomainTests: XCTestCase {
     }
 
     private func testStore(for authenticationOption: AppSecurityOption) -> TestStore {
-        TestStore(initialState: AppAuthenticationDomain.State(),
-                  reducer: AppAuthenticationDomain.reducer,
-                  environment: AppAuthenticationDomain.Environment(
-                      userDataStore: userDataStore,
-                      schedulers: Schedulers(
-                          uiScheduler: testScheduler.eraseToAnyScheduler()
-                      ),
-                      appAuthenticationProvider: MockAuthenticationProvider(
-                          authenticationOption: authenticationOption
-                      ),
-                      appSecurityPasswordManager: appSecurityPasswordManager,
-                      authenticationChallengeProvider: MockAuthenticationChallengeProvider(result: .success(true))
-                  ))
+        let mockAuthenticationChallengeProvider = MockAuthenticationChallengeProvider()
+        mockAuthenticationChallengeProvider.startAuthenticationChallengeReturnValue = Just(.success(true))
+            .eraseToAnyPublisher()
+        return TestStore(
+            initialState: AppAuthenticationDomain.State(),
+            reducer: AppAuthenticationDomain {}
+        ) { dependencies in
+            dependencies.userDataStore = userDataStore
+            dependencies.schedulers = Schedulers(
+                uiScheduler: testScheduler.eraseToAnyScheduler()
+            )
+            dependencies.appAuthenticationProvider = MockAuthenticationProvider(
+                authenticationOption: authenticationOption
+            )
+            dependencies.appSecurityManager = appSecurityPasswordManager
+            dependencies.authenticationChallengeProvider = mockAuthenticationChallengeProvider
+        }
     }
 
     func testLoadingBiometricAppAuthenticationWithoutPreviousFailedAuthentications() {
@@ -116,6 +120,10 @@ final class AppAuthenticationDomainTests: XCTestCase {
             didCompleteAuthenticationCalledCount > 0
         }
 
+        let mockAuthenticationChallengeProvider = MockAuthenticationChallengeProvider()
+        mockAuthenticationChallengeProvider.startAuthenticationChallengeReturnValue = Just(.success(true))
+            .eraseToAnyPublisher()
+
         let store = TestStore(
             initialState: AppAuthenticationDomain.State(
                 biometrics: AppAuthenticationBiometricsDomain.State(
@@ -124,20 +132,18 @@ final class AppAuthenticationDomainTests: XCTestCase {
                 ),
                 password: nil
             ),
-            reducer: AppAuthenticationDomain.reducer,
-            environment: AppAuthenticationDomain.Environment(
-                userDataStore: MockUserDataStore(),
-                schedulers: Schedulers(
-                    uiScheduler: testScheduler.eraseToAnyScheduler()
-                ),
-                appAuthenticationProvider: MockAuthenticationProvider(
-                    authenticationOption: .biometry(.touchID)
-                ),
-                appSecurityPasswordManager: appSecurityPasswordManager,
-                authenticationChallengeProvider: MockAuthenticationChallengeProvider(result: .success(true)),
-                didCompleteAuthentication: { didCompleteAuthenticationCalledCount += 1 }
+            reducer: AppAuthenticationDomain { didCompleteAuthenticationCalledCount += 1 }
+        ) { dependencies in
+            dependencies.userDataStore = MockUserDataStore()
+            dependencies.schedulers = Schedulers(
+                uiScheduler: testScheduler.eraseToAnyScheduler()
             )
-        )
+            dependencies.appAuthenticationProvider = MockAuthenticationProvider(
+                authenticationOption: .biometry(.touchID)
+            )
+            dependencies.appSecurityManager = appSecurityPasswordManager
+            dependencies.authenticationChallengeProvider = mockAuthenticationChallengeProvider
+        }
 
         let expectedResponse = Result<Bool, AppAuthenticationBiometricsDomain.Error>.success(true)
         expect(didCompleteAuthenticationCalled).to(beFalse())
@@ -177,25 +183,27 @@ final class AppAuthenticationDomainTests: XCTestCase {
             didCompleteAuthenticationCalledCount > 0
         }
 
+        let mockAuthenticationChallengeProvider = MockAuthenticationChallengeProvider()
+        mockAuthenticationChallengeProvider.startAuthenticationChallengeReturnValue = Just(.success(true))
+            .eraseToAnyPublisher()
+
         let store = TestStore(
             initialState: AppAuthenticationDomain.State(
                 biometrics: nil,
                 password: AppAuthenticationPasswordDomain.State()
             ),
-            reducer: AppAuthenticationDomain.reducer,
-            environment: AppAuthenticationDomain.Environment(
-                userDataStore: MockUserDataStore(),
-                schedulers: Schedulers(
-                    uiScheduler: testScheduler.eraseToAnyScheduler()
-                ),
-                appAuthenticationProvider: MockAuthenticationProvider(
-                    authenticationOption: .password
-                ),
-                appSecurityPasswordManager: appSecurityPasswordManager,
-                authenticationChallengeProvider: MockAuthenticationChallengeProvider(result: .success(true)),
-                didCompleteAuthentication: { didCompleteAuthenticationCalledCount += 1 }
+            reducer: AppAuthenticationDomain { didCompleteAuthenticationCalledCount += 1 }
+        ) { dependencies in
+            dependencies.userDataStore = MockUserDataStore()
+            dependencies.schedulers = Schedulers(
+                uiScheduler: testScheduler.eraseToAnyScheduler()
             )
-        )
+            dependencies.appAuthenticationProvider = MockAuthenticationProvider(
+                authenticationOption: .password
+            )
+            dependencies.appSecurityManager = appSecurityPasswordManager
+            dependencies.authenticationChallengeProvider = mockAuthenticationChallengeProvider
+        }
 
         expect(didCompleteAuthenticationCalled).to(beFalse())
         store.send(.password(action: .passwordVerificationReceived(true))) { state in

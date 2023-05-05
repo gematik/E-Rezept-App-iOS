@@ -44,7 +44,7 @@ final class PickupCodeDomainTests: XCTestCase {
         PickupCodeDomain.Action,
         PickupCodeDomain.State,
         PickupCodeDomain.Action,
-        PickupCodeDomain.Environment
+        Void
     >
 
     private func testStore(for state: PickupCodeDomain.State) -> TestStore {
@@ -52,12 +52,11 @@ final class PickupCodeDomainTests: XCTestCase {
 
         return TestStore(
             initialState: state,
-            reducer: PickupCodeDomain.reducer,
-            environment: PickupCodeDomain.Environment(
-                schedulers: schedulers,
-                matrixCodeGenerator: matrixCodeGenerator
-            )
-        )
+            reducer: PickupCodeDomain()
+        ) { dependencies in
+            dependencies.schedulers = schedulers
+            dependencies.matrixCodeGenerator = matrixCodeGenerator
+        }
     }
 
     func testWithHRCodeOnly() {
@@ -90,7 +89,7 @@ final class PickupCodeDomainTests: XCTestCase {
 
         store.send(.loadMatrixCodeImage(screenSize: size))
         testScheduler.advance()
-        store.receive(.matrixCodeImageReceived(expectedImage)) {
+        store.receive(.response(.matrixCodeImageReceived(expectedImage))) {
             $0.pickupCodeHR = nil
             $0.pickupCodeDMC = "Data Matrix Code Content"
             $0.dmcImage = expectedImage
@@ -108,7 +107,7 @@ final class PickupCodeDomainTests: XCTestCase {
         ))
         store.send(.loadMatrixCodeImage(screenSize: size))
         testScheduler.advance()
-        store.receive(.matrixCodeImageReceived(expectedImage)) {
+        store.receive(.response(.matrixCodeImageReceived(expectedImage))) {
             $0.pickupCodeHR = "4711"
             $0.pickupCodeDMC = "Data Matrix Code Content"
             $0.dmcImage = expectedImage

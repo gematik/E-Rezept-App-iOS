@@ -17,6 +17,7 @@
 //
 
 import Combine
+import Dependencies
 import Foundation
 
 protocol Tracker: AnyObject {
@@ -82,5 +83,20 @@ extension UserDefaults {
     @objc public var appTrackingAllowed: Bool {
         get { bool(forKey: Self.kAppTrackingAllowed) }
         set { set(newValue, forKey: Self.kAppTrackingAllowed) }
+    }
+}
+
+// MARK: TCA Dependency
+
+struct TrackerDependency: DependencyKey {
+    static let liveValue: Tracker = ContentSquareAnalyticsAdapter()
+
+    static let previewValue: Tracker = DummyTracker()
+}
+
+extension DependencyValues {
+    var tracker: Tracker {
+        get { self[TrackerDependency.self] }
+        set { self[TrackerDependency.self] = newValue }
     }
 }

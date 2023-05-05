@@ -30,13 +30,13 @@ final class OrderDetailDomainTests: XCTestCase {
         find: Just(ErxTask.Demo.erxTask1).setFailureType(to: ErxRepositoryError.self).eraseToAnyPublisher(),
         saveCommunications: Just(true).setFailureType(to: ErxRepositoryError.self).eraseToAnyPublisher()
     )
-    let mockApplication = MockUIApplication()
+    let mockApplication = MockResourceHandler()
     typealias TestStore = ComposableArchitecture.TestStore<
         OrderDetailDomain.State,
         OrderDetailDomain.Action,
         OrderDetailDomain.State,
         OrderDetailDomain.Action,
-        OrderDetailDomain.Environment
+        Void
     >
 
     private func testStore(
@@ -44,32 +44,28 @@ final class OrderDetailDomainTests: XCTestCase {
     ) -> TestStore {
         TestStore(
             initialState: OrderDetailDomain.State(order: .init(orderId: "765432", communications: [])),
-            reducer: OrderDetailDomain.domainReducer,
-            environment: OrderDetailDomain.Environment(
-                schedulers: schedulers,
-                userSession: DummySessionContainer(),
-                fhirDateFormatter: globals.fhirDateFormatter,
-                erxTaskRepository: repository,
-                application: FailingUIApplication()
-            )
-        )
+            reducer: OrderDetailDomain()
+        ) { dependencies in
+            dependencies.schedulers = schedulers
+            dependencies.userSession = DummySessionContainer()
+            dependencies.erxTaskRepository = repository
+            dependencies.resourceHandler = UnimplementedResourceHandler()
+        }
     }
 
     private func testStore(
         for order: OrderCommunications,
-        resourceHandler: ResourceHandler = FailingUIApplication()
+        resourceHandler: ResourceHandler = UnimplementedResourceHandler()
     ) -> TestStore {
         TestStore(
             initialState: OrderDetailDomain.State(order: order),
-            reducer: OrderDetailDomain.domainReducer,
-            environment: OrderDetailDomain.Environment(
-                schedulers: schedulers,
-                userSession: DummySessionContainer(),
-                fhirDateFormatter: globals.fhirDateFormatter,
-                erxTaskRepository: mockRepository,
-                application: resourceHandler
-            )
-        )
+            reducer: OrderDetailDomain()
+        ) { dependencies in
+            dependencies.schedulers = schedulers
+            dependencies.userSession = DummySessionContainer()
+            dependencies.erxTaskRepository = mockRepository
+            dependencies.resourceHandler = resourceHandler
+        }
     }
 
     private func repository(with communications: [ErxTask.Communication]) -> MockErxTaskRepository {
@@ -127,7 +123,7 @@ final class OrderDetailDomainTests: XCTestCase {
             XCTFail("phone number is not present")
             return
         }
-        expect(self.mockApplication.openUrlParameter) == URL(phoneNumber: phone)
+        expect(self.mockApplication.openReceivedUrl) == URL(phoneNumber: phone)
     }
 
     func testOpenMailApp() {
@@ -147,7 +143,7 @@ final class OrderDetailDomainTests: XCTestCase {
             XCTFail("email address is not present")
             return
         }
-        expect(self.mockApplication.openUrlParameter) == URL(string: "mailto:\(email)?")
+        expect(self.mockApplication.openReceivedUrl) == URL(string: "mailto:\(email)?")
     }
 
     func testSelectingMedication() {
@@ -155,7 +151,7 @@ final class OrderDetailDomainTests: XCTestCase {
         let store = testStore(for: .init(orderId: "123", communications: []))
 
         store.send(.didSelectMedication(input)) { state in
-            state.route = .prescriptionDetail(
+            state.destination = .prescriptionDetail(
                 .init(
                     prescription: Prescription(erxTask: input),
                     isArchived: false
@@ -164,17 +160,16 @@ final class OrderDetailDomainTests: XCTestCase {
         }
     }
 
-    func testSelectingOnPremiseCommunication() {
+    func testSelectingPickupCode() {
         let input = OrderCommunications(
             orderId: "123",
             communications: [OrderDetailDomainTests.communicationOnPremise]
         )
         let store = testStore(for: input)
 
-        store.send(.didSelectCommunication(OrderDetailDomainTests.communicationOnPremise.id))
-        store.receive(.showPickupCode(dmcCode: "DMC-4711-and-more", hrCode: "4711")) {
+        store.send(.showPickupCode(dmcCode: "DMC-4711-and-more", hrCode: "4711")) {
             $0.order = input
-            $0.route = .pickupCode(
+            $0.destination = .pickupCode(
                 .init(
                     pickupCodeHR: "4711",
                     pickupCodeDMC: "DMC-4711-and-more",
@@ -184,11 +179,11 @@ final class OrderDetailDomainTests: XCTestCase {
         }
         store.send(.setNavigation(tag: .none)) {
             $0.order = input
-            $0.route = nil
+            $0.destination = nil
         }
     }
 
-    func testSelectingShipmentCommunication() {
+    func testSelectingValidUrl() {
         let orderId = "12343-1236-432"
         let input = [OrderDetailDomainTests.communicationShipment]
         let store = testStore(
@@ -196,18 +191,19 @@ final class OrderDetailDomainTests: XCTestCase {
             resourceHandler: mockApplication
         )
 
-        store.send(.didSelectCommunication(OrderDetailDomainTests.communicationShipment.id))
         let expectedUrl = URL(string: "https://www.das-e-rezept-fuer-deutschland.de")!
-        store.receive(.showOpenUrlSheet(url: expectedUrl)) { state in
+        store.send(.showOpenUrlSheet(url: expectedUrl)) { state in
             state.openUrlSheetUrl = expectedUrl
         }
+        mockApplication.canOpenURLReturnValue = true
+
         store.send(.openUrl(url: expectedUrl))
         expect(self.mockApplication.canOpenURLCallsCount) == 1
         expect(self.mockApplication.openCallsCount) == 1
-        expect(self.mockApplication.openUrlParameter) == expectedUrl
+        expect(self.mockApplication.openReceivedUrl) == expectedUrl
     }
 
-    func testSelectingShipmentCommunicationWithWrongUrl() {
+    func testSelectingInvalidUrl() {
         let orderId = "12343-1236-432"
         let expectedUrl = URL(string: "www.invalid-url.de")!
         let input = [OrderDetailDomainTests.communicationShipmentInvalidUrl]
@@ -217,16 +213,15 @@ final class OrderDetailDomainTests: XCTestCase {
             resourceHandler: mockApplication
         )
 
-        store.send(.didSelectCommunication(OrderDetailDomainTests.communicationShipmentInvalidUrl.id))
-        store.receive(.showOpenUrlSheet(url: expectedUrl)) { state in
+        store.send(.showOpenUrlSheet(url: expectedUrl)) { state in
             state.openUrlSheetUrl = expectedUrl
         }
         store.send(.openUrl(url: expectedUrl)) { state in
-            state.route = .alert(OrderDetailDomain.openUrlAlertState(for: expectedUrl))
+            state.destination = .alert(OrderDetailDomain.openUrlAlertState(for: expectedUrl))
         }
         expect(self.mockApplication.canOpenURLCallsCount) == 1
         expect(self.mockApplication.openCallsCount) == 0
-        expect(self.mockApplication.openUrlParameter).to(beNil())
+        expect(self.mockApplication.openReceivedUrl).to(beNil())
     }
 
     func testCommunicationWithWrongPayloadFormat() {
@@ -248,24 +243,24 @@ final class OrderDetailDomainTests: XCTestCase {
         let input = [OrderDetailDomainTests.communicationWithWrongPayload]
         let store = TestStore(
             initialState: OrderDetailDomain.State(order: .init(orderId: orderId, communications: input)),
-            reducer: OrderDetailDomain.domainReducer,
-            environment: OrderDetailDomain.Environment(
-                schedulers: schedulers,
-                userSession: DummySessionContainer(),
-                fhirDateFormatter: globals.fhirDateFormatter,
-                erxTaskRepository: mockRepository,
-                application: mockApplication,
-                date: date,
-                deviceInfo: deviceInfo,
-                version: "TestAppVersion"
+            reducer: OrderDetailDomain(deviceInfo: deviceInfo)
+        ) { dependencies in
+            dependencies.schedulers = schedulers
+            dependencies.userSession = DummySessionContainer()
+            dependencies.erxTaskRepository = mockRepository
+            dependencies.resourceHandler = mockApplication
+            dependencies.dateProvider = { date }
+            dependencies.currentAppVersion = AppVersion(
+                productVersion: "TestAppVersion",
+                buildNumber: "",
+                buildHash: ""
             )
-        )
-
-        store.send(.didSelectCommunication(OrderDetailDomainTests.communicationWithWrongPayload.id))
-        store.receive(.openMail(message: "wrong payload format"))
+        }
+        mockApplication.canOpenURLReturnValue = true
+        store.send(.openMail(message: "wrong payload format"))
         expect(self.mockApplication.canOpenURLCallsCount) == 1
         expect(self.mockApplication.openCallsCount) == 1
-        expect(self.mockApplication.openUrlParameter) == expectedUrl
+        expect(self.mockApplication.openReceivedUrl) == expectedUrl
     }
 }
 

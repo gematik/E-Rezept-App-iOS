@@ -20,8 +20,12 @@ import eRpKit
 import Foundation
 import ModelsR4
 
+// Note: All values should be implemented in a loosely manner so that
+// medications from any profile type can be parsed. This is relevant because medications
+// are created during MedicationDispense by the DAV and they are not restricted
+// to use the KBV profiles
 extension ModelsR4.Medication {
-    var profileType: ErxTask.Medication.ProfileType? {
+    var profileType: ErxMedication.ProfileType? {
         guard let profileType = meta?.profile?.first?.value?.url.absoluteString else {
             return nil
         }
@@ -37,7 +41,20 @@ extension ModelsR4.Medication {
         return Prescription.Version(rawValue: kbvVersion)
     }
 
-    var drugCategory: ErxTask.Medication.DrugCategory? {
+    // TODO: Consider grouping medicationText and pzn in `Code` and also fill code //swiftlint:disable:this todo
+    // for other profile types. The decision taken here, to only display pzn should be
+    // done in the view model
+    var medicationText: String? {
+        code?.text?.value?.string
+    }
+
+    var pzn: String? {
+        code?.coding?.first {
+            $0.system?.value?.url.absoluteString == Prescription.Key.pznKey
+        }?.code?.value?.string
+    }
+
+    var drugCategory: ErxMedication.DrugCategory? {
         `extension`?.first {
             $0.url.value?.url.absoluteString == Prescription.Key.Medication.categoryKey
         }
@@ -90,20 +107,15 @@ extension ModelsR4.Medication {
         }
     }
 
-    var medicationText: String? {
-        code?.text?.value?.string
-    }
-
-    var erxTaskIngredients: [ErxTask.Medication.Ingredient] {
-        guard let ingredients = ingredient,
-              let version = version else {
+    var erxTaskIngredients: [ErxMedication.Ingredient] {
+        guard let ingredients = ingredient else {
             return []
         }
 
         switch profileType {
         case .ingredient:
             return ingredients.map {
-                ErxTask.Medication.Ingredient(
+                ErxMedication.Ingredient(
                     text: $0.name,
                     number: $0.wirkstoffNumber,
                     form: $0.form,
@@ -113,7 +125,7 @@ extension ModelsR4.Medication {
             }
         case .compounding:
             return ingredients.map {
-                ErxTask.Medication.Ingredient(
+                ErxMedication.Ingredient(
                     text: $0.name,
                     number: $0.pznNumber,
                     form: $0.form,
@@ -122,7 +134,15 @@ extension ModelsR4.Medication {
                 )
             }
         default:
-            return []
+            return ingredients.map {
+                ErxMedication.Ingredient(
+                    text: $0.name,
+                    number: $0.number,
+                    form: nil,
+                    strength: $0.amount(for: nil),
+                    strengthFreeText: nil
+                )
+            }
         }
     }
 
@@ -137,13 +157,11 @@ extension ModelsR4.Medication {
         }
     }
 
-    var decimalAmount: Decimal? {
-        guard let numerator = amount?.numerator?.value?.value?.decimal,
-              let denominator = amount?.denominator?.value?.value?.decimal else { return nil }
-        return numerator / denominator
+    var medicationAmount: ErxMedication.Ratio? {
+        createRatio(for: amount, for: version)
     }
 
-    func amountRatio(for version: Prescription.Version) -> ErxTask.Ratio? {
+    func amountRatio(for version: Prescription.Version) -> ErxMedication.Ratio? {
         createRatio(for: amount, for: version)
     }
 
@@ -161,10 +179,14 @@ extension ModelsR4.Medication {
         }
     }
 
-    var pzn: String? {
-        code?.coding?.first {
-            $0.system?.value?.url.absoluteString == Prescription.Key.pznKey
-        }?.code?.value?.string
+    var erxTaskBatch: ErxMedication.Batch? {
+        guard lot != nil || expiresOn != nil else {
+            return nil
+        }
+        return .init(
+            lotNumber: lot,
+            expiresOn: expiresOn
+        )
     }
 
     var lot: String? {
@@ -205,6 +227,14 @@ extension ModelsR4.MedicationIngredient {
         return nil
     }
 
+    var number: String? {
+        if case let MedicationIngredient.ItemX.codeableConcept(concept) = item {
+            return concept.coding?.first?.code?.value?.string
+        }
+
+        return nil
+    }
+
     var form: String? {
         `extension`?.first {
             $0.url.value?.url.absoluteString == Prescription.Key.Medication.ingredientFormKey
@@ -231,38 +261,35 @@ extension ModelsR4.MedicationIngredient {
         }
     }
 
-    func amount(for version: Prescription.Version) -> ErxTask.Ratio? {
+    func amount(for version: Prescription.Version?)
+        -> ErxMedication.Ratio? {
         createRatio(for: strength, for: version)
     }
 }
 
-private func createRatio(for amount: Ratio?, for version: Prescription.Version) -> ErxTask.Ratio? {
-    guard let unit = amount?.numerator?.unit?.value?.string else {
-        return nil
-    }
-
-    var denominator: ErxTask.Quantity?
+private func createRatio(for amount: Ratio?, for version: Prescription.Version?) -> ErxMedication.Ratio? {
+    var denominator: ErxMedication.Quantity?
     if let denominatorValue = amount?.denominator?.value?.value?.decimal.description {
-        denominator = ErxTask.Quantity(
+        denominator = ErxMedication.Quantity(
             value: denominatorValue,
             unit: amount?.denominator?.unit?.value?.string
         )
     }
+    let numeratorValue = amount?.numerator?.value?.value?.decimal.description
+    let numeratorUnit = amount?.numerator?.unit?.value?.string
 
     switch version {
-    case .v1_0_2:
-        guard let value = amount?.numerator?.value?.value?.decimal.description else {
-            return nil
-        }
+    case .none, .v1_0_2:
+        guard let value = numeratorValue else { return nil }
 
-        return ErxTask.Ratio(
-            numerator: ErxTask.Quantity(value: value, unit: unit),
+        return ErxMedication.Ratio(
+            numerator: ErxMedication.Quantity(value: value, unit: numeratorUnit),
             denominator: denominator
         )
     case .v1_1_0:
-        if let value = amount?.numerator?.value?.value?.decimal.description {
-            return ErxTask.Ratio(
-                numerator: ErxTask.Quantity(value: value, unit: unit),
+        if let value = numeratorValue {
+            return ErxMedication.Ratio(
+                numerator: ErxMedication.Quantity(value: value, unit: numeratorUnit),
                 denominator: denominator
             )
         } else {
@@ -274,8 +301,8 @@ private func createRatio(for amount: Ratio?, for version: Prescription.Version) 
                     if let valueX = $0.value,
                        case let Extension.ValueX.string(valueString) = valueX,
                        let value = valueString.value?.string {
-                        return ErxTask.Ratio(
-                            numerator: ErxTask.Quantity(value: value, unit: unit),
+                        return ErxMedication.Ratio(
+                            numerator: ErxMedication.Quantity(value: value, unit: numeratorUnit),
                             denominator: denominator
                         )
                     }
@@ -288,25 +315,26 @@ private func createRatio(for amount: Ratio?, for version: Prescription.Version) 
     }
 }
 
-extension ErxTask.Medication.ProfileType {
+extension ErxMedication.ProfileType {
     init(urlString: String) {
         switch urlString {
-        case Prescription.Key.Medication.PZNKey: self = .pzn
-        case Prescription.Key.Medication.compoundingKey: self = .compounding
-        case Prescription.Key.Medication.ingredientKey: self = .ingredient
-        case Prescription.Key.Medication.freeTextKey: self = .freeText
+        case Prescription.Key.Medication.medicationTypePZNKey: self = .pzn
+        case Prescription.Key.Medication.medicationTypeCompoundingKey: self = .compounding
+        case Prescription.Key.Medication.medicationTypeIngredientKey: self = .ingredient
+        case Prescription.Key.Medication.medicationTypeFreeTextKey: self = .freeText
         default:
             self = .unknown
         }
     }
 }
 
-extension ErxTask.Medication.DrugCategory {
+extension ErxMedication.DrugCategory {
     init(value: String) {
         switch value {
         case "00": self = .avm
         case "01": self = .btm
         case "02": self = .amvv
+        case "03": self = .other
         default:
             self = .unknown
         }

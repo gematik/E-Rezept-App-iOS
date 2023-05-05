@@ -22,15 +22,13 @@ import eRpKit
 import Foundation
 import IDP
 
-// swiftlint:disable:next superfluous_disable_command
-// swiftlint:disable type_body_length
-enum DebugDomain {
-    typealias Store = ComposableArchitecture.Store<State, Action>
-    typealias Reducer = ComposableArchitecture.AnyReducer<State, Action, Environment>
+// swiftlint:disable:next type_body_length
+struct DebugDomain: ReducerProtocol {
+    typealias Store = StoreOf<Self>
 
     /// Provides an Effect that needs to run whenever the state of this Domain is reset to nil
-    static func cleanup<T>() -> Effect<T, Never> {
-        Effect.cancel(id: Token.self)
+    static func cleanup<T>() -> EffectTask<T> {
+        EffectTask<T>.cancel(ids: Token.allCases)
     }
 
     enum Token: CaseIterable, Hashable {
@@ -55,6 +53,9 @@ enum DebugDomain {
         var accessCodeText: String = "" +
             ""
         var lastIDPToken: IDPToken?
+        var profile: Profile?
+
+        var fakeTaskStatus = String(ErxTask.scannedTaskMinIntervalForCompletion)
 
         var useVirtualLogin: Bool = UserDefaults.standard.isVirtualEGKEnabled
         var virtualLoginPrivateKey: String = UserDefaults.standard.virtualEGKPrkCHAut ?? ""
@@ -108,9 +109,12 @@ enum DebugDomain {
         case logoutButtonTapped
         case invalidateAccessToken
         case accessCodeTextReceived(String)
+        case profileReceived(Result<UserProfile, UserProfileServiceError>)
+        case setProfileInsuranceTypeToPKV
         case toggleVirtualLogin(Bool)
         case virtualPrkCHAutReceived(String)
         case virtualCCHAutReceived(String)
+        case setFaceErxTaskStatus(String)
         case loginWithToken
         case toggleTrackingTapped
         case tokenReceived(IDPToken?)
@@ -119,42 +123,40 @@ enum DebugDomain {
         case showAlert(Bool)
         case resetAlertText
         case appear
-        case resetHintEvents
         case resetTooltips
         case logAction(action: DebugLogDomain.Action)
         #endif
     }
 
-    struct Environment {
-        var schedulers: Schedulers
-        var userSession: UserSession
-        let localUserStore: UserDataStore
-        let tracker: Tracker
-        var serverEnvironmentConfiguration: AppConfiguration?
+    @Dependency(\.schedulers) var schedulers: Schedulers
+    @Dependency(\.userSession) var userSession: UserSession
+    @Dependency(\.userDataStore) var localUserStore: UserDataStore
+    @Dependency(\.tracker) var tracker: Tracker
+    @Dependency(\.userProfileService) var userProfileService: UserProfileService
 
-        let signatureProvider: SecureEnclaveSignatureProvider
-        let serviceLocatorDebugAccess: ServiceLocatorDebugAccess
-    }
+    @Dependency(\.secureEnclaveSignatureProvider) var signatureProvider: SecureEnclaveSignatureProvider
+    @Dependency(\.serviceLocatorDebugAccess) var serviceLocatorDebugAccess: ServiceLocatorDebugAccess
 
-    static let domainReducer = Reducer { state, action, environment in
+    // swiftlint:disable:next function_body_length cyclomatic_complexity
+    func core(into state: inout State, action: Action) -> EffectTask<Action> {
         #if ENABLE_DEBUG_VIEW
         switch action {
         case .hideOnboardingToggleTapped:
-            environment.localUserStore.set(hideOnboarding: false)
-            environment.localUserStore.set(onboardingVersion: nil)
+            localUserStore.set(hideOnboarding: false)
+            localUserStore.set(onboardingVersion: nil)
             return .none
         case let .hideOnboardingReceived(onboardingVersion):
             state.hideOnboarding = onboardingVersion != nil
             return .none
         case .hideCardWallIntroToggleTapped:
             state.hideCardWallIntro.toggle()
-            environment.localUserStore.set(hideCardWallIntro: state.hideCardWallIntro)
+            localUserStore.set(hideCardWallIntro: state.hideCardWallIntro)
             return .none
         case let .hideCardWallIntroReceived(hideCardWallIntro):
             state.hideCardWallIntro = hideCardWallIntro
             return .none
         case .resetCanButtonTapped:
-            environment.userSession.secureUserStore.set(can: nil)
+            userSession.secureUserStore.set(can: nil)
             return .none
         case .deleteSSOToken:
             if let token = state.token {
@@ -165,19 +167,19 @@ enum DebugDomain {
                     ssoToken: nil,
                     redirect: token.redirect
                 )
-                environment.userSession.secureUserStore.set(token: modifiedToken)
+                userSession.secureUserStore.set(token: modifiedToken)
             }
             return .none
         case .deleteKeyAndEGKAuthCertForBiometric:
-            environment.userSession.secureUserStore.set(keyIdentifier: nil)
-            environment.userSession.secureUserStore.set(certificate: nil)
+            userSession.secureUserStore.set(keyIdentifier: nil)
+            userSession.secureUserStore.set(certificate: nil)
             return .none
         case .resetOcspAndCertListButtonTapped:
-            environment.userSession.trustStoreSession.reset()
+            userSession.trustStoreSession.reset()
             return .none
         case .useDebugDeviceCapabilitiesToggleTapped:
             state.useDebugDeviceCapabilities.toggle()
-            let serviceLocatorDebugAccess = environment.serviceLocatorDebugAccess
+            let serviceLocatorDebugAccess = serviceLocatorDebugAccess
             if state.useDebugDeviceCapabilities {
                 serviceLocatorDebugAccess.setDeviceCapabilities(state.debugCapabilities)
             } else {
@@ -207,12 +209,16 @@ enum DebugDomain {
             state.virtualLoginPrivateKey = prkchaut
             UserDefaults.standard.virtualEGKPrkCHAut = prkchaut
             return .none
+        case let .setFaceErxTaskStatus(seconds):
+            ErxTask.scannedTaskMinIntervalForCompletion = Double(seconds) ?? 0
+            state.fakeTaskStatus = seconds
+            return .none
         case let .accessCodeTextReceived(accessCodeText):
             state.accessCodeText = accessCodeText
             return .none
         case .loginWithToken:
             if let idpToken = state.lastIDPToken {
-                environment.userSession.secureUserStore.set(token: idpToken)
+                userSession.secureUserStore.set(token: idpToken)
             } else {
                 let idpToken = IDPToken(
                     accessToken: state.accessCodeText,
@@ -220,7 +226,7 @@ enum DebugDomain {
                     idToken: "",
                     redirect: "todo"
                 )
-                environment.userSession.secureUserStore.set(token: idpToken)
+                userSession.secureUserStore.set(token: idpToken)
             }
             return .none
         case .logoutButtonTapped:
@@ -228,7 +234,7 @@ enum DebugDomain {
                 state.lastIDPToken = token
                 state.accessCodeText = token.accessToken
             }
-            environment.userSession.secureUserStore.set(token: nil)
+            userSession.secureUserStore.set(token: nil)
             return .none
         case .invalidateAccessToken:
             if let token = state.token {
@@ -242,22 +248,22 @@ enum DebugDomain {
                     ssoToken: token.ssoToken,
                     redirect: token.redirect
                 )
-                environment.userSession.secureUserStore.set(token: modifiedToken)
+                userSession.secureUserStore.set(token: modifiedToken)
             }
             return .none
         case let .configurationReceived(configuration):
             state.selectedEnvironment = configuration
             return .none
         case let .setServerEnvironment(name):
-            environment.userSession.vauStorage.set(userPseudonym: nil)
-            environment.userSession.trustStoreSession.reset()
-            environment.userSession.secureUserStore.set(discovery: nil)
+            userSession.vauStorage.set(userPseudonym: nil)
+            userSession.trustStoreSession.reset()
+            userSession.secureUserStore.set(discovery: nil)
 
-            environment.localUserStore.set(serverEnvironmentConfiguration: name)
+            localUserStore.set(serverEnvironmentConfiguration: name)
             return .none
         case .toggleTrackingTapped:
-            environment.tracker.optIn.toggle()
-            state.trackingOptIn = environment.tracker.optIn
+            tracker.optIn.toggle()
+            state.trackingOptIn = tracker.optIn
 
             return .none
         case let .showAlert(showAlert):
@@ -267,19 +273,31 @@ enum DebugDomain {
             state.alertText = nil
             return .none
         case .appear:
-            state.trackingOptIn = environment.tracker.optIn
+            state.trackingOptIn = tracker.optIn
             return Effect.merge(
-                environment.onReceiveHideOnboarding(),
-                environment.onReceiveHideCardWallIntro(),
-                environment.onReceiveIsAuthenticated(),
-                environment.onReceiveToken(),
-                environment.onReceiveConfigurationName(for: state.availableEnvironments),
-                environment.onReceiveVirtualEGK()
+                onReceiveHideOnboarding(),
+                onReceiveHideCardWallIntro(),
+                onReceiveIsAuthenticated(),
+                onReceiveToken(),
+                onReceiveConfigurationName(for: state.availableEnvironments),
+                onReceiveVirtualEGK(),
+                onReceiveCurrentProfile()
             )
             .cancellable(id: Token.updates)
-        case .resetHintEvents:
-            environment.userSession.hintEventsStore.hintState = HintState()
+        case let .profileReceived(.success(profile)):
+            state.profile = profile.profile
             return .none
+        case .profileReceived(.failure):
+            state.profile = nil
+            return .none
+        case .setProfileInsuranceTypeToPKV:
+            guard let profile = state.profile, profile.insuranceType != .pKV else {
+                return .none
+            }
+
+            state.profile?.insuranceType = .pKV
+
+            return setProfileInsuranceTypeToPKV(profileId: profile.id)
         case .resetTooltips:
             UserDefaults.standard.setValue([:], forKey: "TOOLTIPS")
             return .none
@@ -293,19 +311,22 @@ enum DebugDomain {
     }
 
     #if ENABLE_DEBUG_VIEW
-    static let reducer: Reducer = .combine(
-        DebugLogDomain.reducer.pullback(state: \.logState, action: /Action.logAction) { _ in
-            DebugLogDomain.Environment(loggingStore: DebugLiveLogger.shared)
-        },
-        domainReducer
-    )
+    var body: some ReducerProtocol<State, Action> {
+        Scope(state: \.logState, action: /Action.logAction) {
+            DebugLogDomain(loggingStore: DebugLiveLogger.shared)
+        }
+
+        Reduce(self.core)
+    }
     #else
-    static let reducer = Reducer.empty
+    var body: some ReducerProtocol<State, Action> {
+        EmptyReducer()
+    }
     #endif
 }
 
 #if ENABLE_DEBUG_VIEW
-extension DebugDomain.Environment {
+extension DebugDomain {
     func onReceiveHideOnboarding() -> Effect<DebugDomain.Action, Never> {
         localUserStore.onboardingVersion
             .receive(on: schedulers.main)
@@ -362,6 +383,28 @@ extension DebugDomain.Environment {
             Effect(value: DebugDomain.Action.virtualCCHAutReceived(UserDefaults.standard.virtualEGKCCHAut ?? "")),
         ])
     }
+
+    func onReceiveCurrentProfile() -> EffectTask<DebugDomain.Action> {
+        userProfileService
+            .activeUserProfilePublisher()
+            .catchToEffect()
+            .receive(on: schedulers.main)
+            .map(DebugDomain.Action.profileReceived)
+            .eraseToEffect()
+    }
+
+    func setProfileInsuranceTypeToPKV(profileId: UUID) -> EffectTask<DebugDomain.Action> {
+        let userProfileService = self.userProfileService
+
+        return userProfileService
+            .update(profileId: profileId) { profile in
+                profile.insuranceType = .pKV
+                profile.insurance = "Dummy pKV"
+            }
+            .receive(on: schedulers.main)
+            .fireAndForget()
+            .eraseToEffect()
+    }
 }
 #endif
 
@@ -369,19 +412,9 @@ extension DebugDomain {
     enum Dummies {
         static let state = State(trackingOptIn: false)
 
-        static let environment = Environment(
-            schedulers: Schedulers(),
-            userSession: DummySessionContainer(),
-            localUserStore: DemoUserDefaultsStore(),
-            tracker: DummyTracker(),
-            signatureProvider: DummySecureEnclaveSignatureProvider(),
-            serviceLocatorDebugAccess: ServiceLocatorDebugAccess(serviceLocator: ServiceLocator())
-        )
-
         static let store = Store(
             initialState: state,
-            reducer: reducer,
-            environment: environment
+            reducer: DebugDomain()
         )
     }
 }

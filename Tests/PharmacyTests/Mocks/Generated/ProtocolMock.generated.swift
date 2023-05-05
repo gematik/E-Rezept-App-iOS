@@ -1,4 +1,4 @@
-// Generated using Sourcery 1.9.0 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.0.1 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 import Combine
 import eRpKit
@@ -25,18 +25,15 @@ import eRpKit
 
 
 
-
-
-
+// MARK: - MockPharmacyLocalDataStore -
 
 final class MockPharmacyLocalDataStore: PharmacyLocalDataStore {
-
-
-    //MARK: - fetchPharmacy
+    
+   // MARK: - fetchPharmacy
 
     var fetchPharmacyByCallsCount = 0
     var fetchPharmacyByCalled: Bool {
-        return fetchPharmacyByCallsCount > 0
+        fetchPharmacyByCallsCount > 0
     }
     var fetchPharmacyByReceivedTelematikId: String?
     var fetchPharmacyByReceivedInvocations: [String] = []
@@ -47,18 +44,14 @@ final class MockPharmacyLocalDataStore: PharmacyLocalDataStore {
         fetchPharmacyByCallsCount += 1
         fetchPharmacyByReceivedTelematikId = telematikId
         fetchPharmacyByReceivedInvocations.append(telematikId)
-        if let fetchPharmacyByClosure = fetchPharmacyByClosure {
-            return fetchPharmacyByClosure(telematikId)
-        } else {
-            return fetchPharmacyByReturnValue
-        }
+        return fetchPharmacyByClosure.map({ $0(telematikId) }) ?? fetchPharmacyByReturnValue
     }
-
-    //MARK: - listPharmacies
+    
+   // MARK: - listPharmacies
 
     var listPharmaciesCountCallsCount = 0
     var listPharmaciesCountCalled: Bool {
-        return listPharmaciesCountCallsCount > 0
+        listPharmaciesCountCallsCount > 0
     }
     var listPharmaciesCountReceivedCount: Int?
     var listPharmaciesCountReceivedInvocations: [Int?] = []
@@ -69,18 +62,14 @@ final class MockPharmacyLocalDataStore: PharmacyLocalDataStore {
         listPharmaciesCountCallsCount += 1
         listPharmaciesCountReceivedCount = count
         listPharmaciesCountReceivedInvocations.append(count)
-        if let listPharmaciesCountClosure = listPharmaciesCountClosure {
-            return listPharmaciesCountClosure(count)
-        } else {
-            return listPharmaciesCountReturnValue
-        }
+        return listPharmaciesCountClosure.map({ $0(count) }) ?? listPharmaciesCountReturnValue
     }
-
-    //MARK: - save
+    
+   // MARK: - save
 
     var savePharmaciesCallsCount = 0
     var savePharmaciesCalled: Bool {
-        return savePharmaciesCallsCount > 0
+        savePharmaciesCallsCount > 0
     }
     var savePharmaciesReceivedPharmacies: [PharmacyLocation]?
     var savePharmaciesReceivedInvocations: [[PharmacyLocation]] = []
@@ -91,18 +80,14 @@ final class MockPharmacyLocalDataStore: PharmacyLocalDataStore {
         savePharmaciesCallsCount += 1
         savePharmaciesReceivedPharmacies = pharmacies
         savePharmaciesReceivedInvocations.append(pharmacies)
-        if let savePharmaciesClosure = savePharmaciesClosure {
-            return savePharmaciesClosure(pharmacies)
-        } else {
-            return savePharmaciesReturnValue
-        }
+        return savePharmaciesClosure.map({ $0(pharmacies) }) ?? savePharmaciesReturnValue
     }
-
-    //MARK: - delete
+    
+   // MARK: - delete
 
     var deletePharmaciesCallsCount = 0
     var deletePharmaciesCalled: Bool {
-        return deletePharmaciesCallsCount > 0
+        deletePharmaciesCallsCount > 0
     }
     var deletePharmaciesReceivedPharmacies: [PharmacyLocation]?
     var deletePharmaciesReceivedInvocations: [[PharmacyLocation]] = []
@@ -113,18 +98,14 @@ final class MockPharmacyLocalDataStore: PharmacyLocalDataStore {
         deletePharmaciesCallsCount += 1
         deletePharmaciesReceivedPharmacies = pharmacies
         deletePharmaciesReceivedInvocations.append(pharmacies)
-        if let deletePharmaciesClosure = deletePharmaciesClosure {
-            return deletePharmaciesClosure(pharmacies)
-        } else {
-            return deletePharmaciesReturnValue
-        }
+        return deletePharmaciesClosure.map({ $0(pharmacies) }) ?? deletePharmaciesReturnValue
     }
-
-    //MARK: - update
+    
+   // MARK: - update
 
     var updateTelematikIdMutatingCallsCount = 0
     var updateTelematikIdMutatingCalled: Bool {
-        return updateTelematikIdMutatingCallsCount > 0
+        updateTelematikIdMutatingCallsCount > 0
     }
     var updateTelematikIdMutatingReceivedArguments: (telematikId: String, mutating: (inout PharmacyLocation) -> Void)?
     var updateTelematikIdMutatingReceivedInvocations: [(telematikId: String, mutating: (inout PharmacyLocation) -> Void)] = []
@@ -135,22 +116,20 @@ final class MockPharmacyLocalDataStore: PharmacyLocalDataStore {
         updateTelematikIdMutatingCallsCount += 1
         updateTelematikIdMutatingReceivedArguments = (telematikId: telematikId, mutating: mutating)
         updateTelematikIdMutatingReceivedInvocations.append((telematikId: telematikId, mutating: mutating))
-        if let updateTelematikIdMutatingClosure = updateTelematikIdMutatingClosure {
-            return updateTelematikIdMutatingClosure(telematikId, mutating)
-        } else {
-            return updateTelematikIdMutatingReturnValue
-        }
+        return updateTelematikIdMutatingClosure.map({ $0(telematikId, mutating) }) ?? updateTelematikIdMutatingReturnValue
     }
-
 }
+
+
+// MARK: - MockPharmacyRemoteDataStore -
+
 final class MockPharmacyRemoteDataStore: PharmacyRemoteDataStore {
-
-
-    //MARK: - searchPharmacies
+    
+   // MARK: - searchPharmacies
 
     var searchPharmaciesByPositionFilterCallsCount = 0
     var searchPharmaciesByPositionFilterCalled: Bool {
-        return searchPharmaciesByPositionFilterCallsCount > 0
+        searchPharmaciesByPositionFilterCallsCount > 0
     }
     var searchPharmaciesByPositionFilterReceivedArguments: (searchTerm: String, position: Position?, filter: [String: String])?
     var searchPharmaciesByPositionFilterReceivedInvocations: [(searchTerm: String, position: Position?, filter: [String: String])] = []
@@ -161,18 +140,14 @@ final class MockPharmacyRemoteDataStore: PharmacyRemoteDataStore {
         searchPharmaciesByPositionFilterCallsCount += 1
         searchPharmaciesByPositionFilterReceivedArguments = (searchTerm: searchTerm, position: position, filter: filter)
         searchPharmaciesByPositionFilterReceivedInvocations.append((searchTerm: searchTerm, position: position, filter: filter))
-        if let searchPharmaciesByPositionFilterClosure = searchPharmaciesByPositionFilterClosure {
-            return searchPharmaciesByPositionFilterClosure(searchTerm, position, filter)
-        } else {
-            return searchPharmaciesByPositionFilterReturnValue
-        }
+        return searchPharmaciesByPositionFilterClosure.map({ $0(searchTerm, position, filter) }) ?? searchPharmaciesByPositionFilterReturnValue
     }
-
-    //MARK: - fetchPharmacy
+    
+   // MARK: - fetchPharmacy
 
     var fetchPharmacyByCallsCount = 0
     var fetchPharmacyByCalled: Bool {
-        return fetchPharmacyByCallsCount > 0
+        fetchPharmacyByCallsCount > 0
     }
     var fetchPharmacyByReceivedTelematikId: String?
     var fetchPharmacyByReceivedInvocations: [String] = []
@@ -183,11 +158,6 @@ final class MockPharmacyRemoteDataStore: PharmacyRemoteDataStore {
         fetchPharmacyByCallsCount += 1
         fetchPharmacyByReceivedTelematikId = telematikId
         fetchPharmacyByReceivedInvocations.append(telematikId)
-        if let fetchPharmacyByClosure = fetchPharmacyByClosure {
-            return fetchPharmacyByClosure(telematikId)
-        } else {
-            return fetchPharmacyByReturnValue
-        }
+        return fetchPharmacyByClosure.map({ $0(telematikId) }) ?? fetchPharmacyByReturnValue
     }
-
 }

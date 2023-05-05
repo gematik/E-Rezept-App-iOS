@@ -30,11 +30,11 @@ struct PrescriptionArchiveView: View {
 
     struct ViewState: Equatable {
         let prescriptions: [Prescription]
-        let routeTag: PrescriptionArchiveDomain.Route.Tag?
+        let destinationTag: PrescriptionArchiveDomain.Destinations.State.Tag?
 
         init(state: PrescriptionArchiveDomain.State) {
             prescriptions = state.prescriptions
-            routeTag = state.route?.tag
+            destinationTag = state.destination?.tag
         }
     }
 
@@ -63,11 +63,9 @@ struct PrescriptionArchiveView: View {
         // Navigation into details
         NavigationLink(
             destination: IfLetStore(
-                store.scope(
-                    state: (\PrescriptionArchiveDomain.State.route)
-                        .appending(path: /PrescriptionArchiveDomain.Route.prescriptionDetail)
-                        .extract(from:),
-                    action: PrescriptionArchiveDomain.Action.prescriptionDetailAction(action:)
+                store.destinationsScope(
+                    state: /PrescriptionArchiveDomain.Destinations.State.prescriptionDetail,
+                    action: PrescriptionArchiveDomain.Destinations.Action.prescriptionDetail
                 )
             ) { scopedStore in
                 WithViewStore(scopedStore) { $0.prescription.source } content: { viewStore in
@@ -77,9 +75,9 @@ struct PrescriptionArchiveView: View {
                     }
                 }
             },
-            tag: PrescriptionArchiveDomain.Route.Tag.prescriptionDetail,
+            tag: PrescriptionArchiveDomain.Destinations.State.Tag.prescriptionDetail,
             selection: viewStore.binding(
-                get: \.routeTag,
+                get: \.destinationTag,
                 send: PrescriptionArchiveDomain.Action.setNavigation
             )
         ) {

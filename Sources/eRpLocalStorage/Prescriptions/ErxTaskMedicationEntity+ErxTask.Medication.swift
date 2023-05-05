@@ -20,7 +20,7 @@ import CoreData
 import eRpKit
 
 extension ErxTaskMedicationEntity {
-    convenience init?(medication: ErxTask.Medication?,
+    convenience init?(medication: ErxMedication?,
                       in context: NSManagedObjectContext) {
         guard let medication = medication else { return nil }
 
@@ -28,40 +28,52 @@ extension ErxTaskMedicationEntity {
 
         name = medication.name
         if let medicationAmount = medication.amount {
-            amount = NSDecimalNumber(decimal: medicationAmount)
+            amountRatio = ErxTaskRatioEntity(ratio: medicationAmount, in: context)
         }
         dosageForm = medication.dosageForm
         dose = medication.dose
-        dosageInstructions = medication.dosageInstructions
+        profile = medication.profile?.rawValue
         pzn = medication.pzn
-        lot = medication.lot
-        expiresOn = medication.expiresOn
-        // ingredient = medication.ingredient // DH.TODO //swiftlint:disable:this todo
-        // isVaccine = medication.isVaccine // DH.TODO //swiftlint:disable:this todo
-        // packaging = medication.packaging // DH.TODO //swiftlint:disable:this todo
-        // manufacturingInstructions =  medication.manufacturingInstructions //DH.TODO //swiftlint:disable:this todo
-        // drugCategory = medication.drugCategory // DH.TODO //swiftlint:disable:this todo
+        lot = medication.batch?.lotNumber
+        expiresOn = medication.batch?.expiresOn
+        isVaccine = medication.isVaccine
+        packaging = medication.packaging
+        manufacturingInstructions = medication.manufacturingInstructions
+        drugCategory = medication.drugCategory?.rawValue
+        let ingredientEntities = medication.ingredients.compactMap {
+            ErxTaskIngredientEntity(ingredient: $0, in: context)
+        }
+        if !ingredientEntities.isEmpty {
+            addToIngredients(NSSet(array: ingredientEntities))
+        }
     }
 }
 
-extension ErxTask.Medication {
+extension ErxMedication {
     init?(entity: ErxTaskMedicationEntity?) {
         guard let entity = entity else { return nil }
 
+        var batch: ErxMedication.Batch?
+        if entity.lot != nil || entity.expiresOn != nil {
+            batch = .init(lotNumber: entity.lot, expiresOn: entity.expiresOn)
+        }
+
         self.init(
             name: entity.name,
-            drugCategory: nil, // DH.TODO //swiftlint:disable:this todo
+            profile: ErxMedication.ProfileType(rawValue: entity.profile ?? "nil"),
+            drugCategory: ErxMedication.DrugCategory(rawValue: entity.drugCategory ?? "nil"),
             pzn: entity.pzn,
-            isVaccine: false, // DH.TODO //swiftlint:disable:this todo
-            amount: entity.amount as Decimal?,
+            isVaccine: entity.isVaccine,
+            amount: ErxMedication.Ratio(entity: entity.amountRatio),
             dosageForm: entity.dosageForm,
             dose: entity.dose,
-            dosageInstructions: entity.dosageInstructions,
-            lot: entity.lot,
-            expiresOn: entity.expiresOn,
-            packaging: nil, // DH.TODO //swiftlint:disable:this todo
-            manufacturingInstructions: nil, // DH.TODO //swiftlint:disable:this todo
-            ingredients: [] // DH.TODO //swiftlint:disable:this todo
+            batch: batch,
+            packaging: entity.packaging,
+            manufacturingInstructions: entity.manufacturingInstructions,
+            ingredients: entity.ingredients?.compactMap { entity in
+                guard let ingredient = entity as? ErxTaskIngredientEntity else { return nil }
+                return Ingredient(entity: ingredient)
+            } ?? []
         )
     }
 }

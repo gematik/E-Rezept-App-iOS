@@ -16,6 +16,8 @@
 //  
 //
 
+import Dependencies
+import eRpKit
 import Foundation
 import SwiftUI
 import WebKit
@@ -41,15 +43,6 @@ extension PrescriptionFullDetailView {
             .frame(minWidth: 0, maxWidth: .infinity)
             .border(Colors.separator, width: 0.5, cornerRadius: 16)
         }
-    }
-
-    static func uiFormattedDate(dateString: String?) -> String? {
-        if let dateString = dateString,
-           let date = globals.fhirDateFormatter.date(from: dateString,
-                                                     format: .yearMonthDay) {
-            return globals.uiDateFormatter.string(from: date)
-        }
-        return dateString
     }
 
     struct SubstitutionInfoWebView: View {
@@ -118,6 +111,8 @@ extension PrescriptionFullDetailView {
     }
 
     struct MedicationDetails: View {
+        // TODO: move dependency into domain and do formatting in the view model // swiftlint:disable:this todo
+        @Dependency(\.uiDateFormatter) var uiDateFormatter
         var title: String?
         let prescription: Prescription
         let medication: Medication?
@@ -127,7 +122,7 @@ extension PrescriptionFullDetailView {
                 return title
             }
 
-            return medication?.name ?? L10n.prscFdTxtNa.text
+            return medication?.displayName ?? L10n.prscTxtFallbackName.text
         }
 
         var body: some View {
@@ -137,13 +132,13 @@ extension PrescriptionFullDetailView {
                     .dosageForm),
                 dose: composedDoseInfoFrom(
                     doseKey: medication?.dose,
-                    amount: medication?.amount,
+                    amount: medication?.amount?.description,
                     dosageKey: medication?.dosageForm
                 ),
                 pzn: medication?.pzn,
                 isArchived: prescription.isArchived,
                 lot: medication?.lot,
-                expiresOn: PrescriptionFullDetailView.uiFormattedDate(dateString: medication?.expiresOn)
+                expiresOn: uiDateFormatter.relativeDate(medication?.expiresOn)
             )
 
             // Dosage instructions
@@ -179,7 +174,7 @@ extension PrescriptionFullDetailView {
         }
 
         private func composedDoseInfoFrom(doseKey: String?,
-                                          amount: Decimal?,
+                                          amount: String?,
                                           dosageKey: String?) -> String? {
             guard let doseKey = doseKey,
                   let amount = amount,

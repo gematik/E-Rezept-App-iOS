@@ -21,6 +21,7 @@ import eRpStyleKit
 import IDP
 import SwiftUI
 
+// swiftlint:disable file_length
 struct EditProfileView: View {
     let store: EditProfileDomain.Store
 
@@ -35,26 +36,30 @@ struct EditProfileView: View {
     struct ViewState: Equatable {
         let name: String
         let acronym: String
-        let emoji: String?
         let fullName: String?
         let insurance: String?
         let insuranceId: String?
+        let image: ProfilePicture
         let color: ProfileColor
         let isLoggedIn: Bool
         let showEmptyNameWarning: Bool
         let can: String?
+        let showChargeItemsSection: Bool
+        let destinationTag: EditProfileDomain.Destinations.State.Tag?
 
         init(with state: EditProfileDomain.State) {
             name = state.name
             acronym = state.acronym
-            emoji = state.emoji
             fullName = state.fullName
             insurance = state.insurance
             can = state.can
             insuranceId = state.insuranceId
+            image = state.image
             color = state.color
             isLoggedIn = state.token != nil
             showEmptyNameWarning = state.name.lengthOfBytes(using: .utf8) == 0
+            showChargeItemsSection = state.showChargeItemsSection
+            destinationTag = state.destination?.tag
         }
 
         var hasConnectingData: Bool {
@@ -77,16 +82,14 @@ struct EditProfileView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 8) {
-                ProfilePicturePicker(
-                    emoji: viewStore.binding(
-                        get: \.emoji,
-                        send: EditProfileDomain.Action.setEmoji
-                    ),
-                    acronym: viewStore.acronym,
+                ProfilePictureView(
+                    text: viewStore.acronym,
+                    image: viewStore.image,
                     color: viewStore.color.background,
-                    borderColor: viewStore.color.border
-                )
-                .padding(.top, 24)
+                    connection: nil,
+                    style: .xxLarge
+                ) {}
+                    .padding(.top, 24)
 
                 SingleElementSectionContainer(footer: {
                     if viewStore.showEmptyNameWarning {
@@ -112,6 +115,10 @@ struct EditProfileView: View {
 
                 ConnectedProfile(viewStore: viewStore)
 
+                if viewStore.showChargeItemsSection {
+                    ChargeItemsSectionView(store: store)
+                }
+
                 LoginSectionView(store: store)
 
                 TokenSectionView(store: store)
@@ -132,12 +139,7 @@ struct EditProfileView: View {
         })
         .navigationTitle(L10n.stgTxtEditProfileTitle)
         .alert(
-            store.scope(
-                state:
-                (\EditProfileDomain.State.route)
-                    .appending(path: /EditProfileDomain.Route.alert)
-                    .extract(from:)
-            ),
+            store.destinationsScope(state: /EditProfileDomain.Destinations.State.alert),
             dismiss: EditProfileDomain.Action.dismissAlert
         )
         .onAppear {
@@ -213,7 +215,7 @@ extension EditProfileView {
 
             if viewStore.isLoggedIn {
                 Button(action: {
-                    viewStore.send(.logout)
+                    viewStore.send(.delegate(.logout))
                 }, label: {
                     Text(L10n.stgBtnEditProfileLogout)
                 })
@@ -253,6 +255,64 @@ extension EditProfileView {
         }
     }
 
+    private struct ChargeItemsSectionView: View {
+        let store: EditProfileDomain.Store
+
+        @ObservedObject
+        var viewStore: ViewStore<ViewState, EditProfileDomain.Action>
+
+        init(store: EditProfileDomain.Store) {
+            self.store = store
+            viewStore = ViewStore(store.scope(state: ViewState.init))
+        }
+
+        struct ViewState: Equatable {
+            let destinationTag: EditProfileDomain.Destinations.State.Tag?
+
+            init(state: EditProfileDomain.State) {
+                destinationTag = state.destination?.tag
+            }
+        }
+
+        var body: some View {
+            SectionContainer(
+                header: {
+                    Text(L10n.stgTxtEditProfileChargeItemsSectionTitle)
+                        .accessibility(identifier: A11y.settings.editProfile.stgTxtEditProfileChargeItemsSectionTitle)
+                },
+                content: {
+                    EmptyView()
+
+                    NavigationLink(
+                        destination: IfLetStore(
+                            store.destinationsScope(
+                                state: /EditProfileDomain.Destinations.State.chargeItems,
+                                action: EditProfileDomain.Destinations.Action.chargeItemsAction
+                            ),
+                            then: ChargeItemsView.init(store:)
+                        ),
+                        tag: EditProfileDomain.Destinations.State.Tag.chargeItems,
+                        selection: viewStore.binding(
+                            get: \.destinationTag,
+                            send: EditProfileDomain.Action.setNavigation
+                        )
+                    ) {
+                        Label(
+                            title: { Text(L10n.stgBtnEditProfileChargeItems) },
+                            icon: {
+                                Image(systemName: SFSymbolName.euroSign)
+                            }
+                        )
+                    }
+                    .buttonStyle(.navigation)
+                    .accessibilityElement(children: .combine)
+                    .accessibility(identifier: A11y.settings.editProfile
+                        .stgTxtEditProfileChargeItemsSectionShowChargeItems)
+                }
+            )
+        }
+    }
+
     private struct LoginSectionView: View {
         let store: EditProfileDomain.Store
 
@@ -266,11 +326,11 @@ extension EditProfileView {
 
         struct ViewState: Equatable {
             let authType: EditProfileDomain.State.AuthenticationType
-            let routeTag: EditProfileDomain.Route.Tag?
+            let destinationTag: EditProfileDomain.Destinations.State.Tag?
 
             init(state: EditProfileDomain.State) {
                 authType = state.authType
-                routeTag = state.route?.tag
+                destinationTag = state.destination?.tag
             }
         }
 
@@ -328,12 +388,16 @@ extension EditProfileView {
                 )
 
                 NavigationLink(
-                    destination: IfLetStore(registeredDevicesStore) { registeredDevicesStore in
-                        RegisteredDevicesView(store: registeredDevicesStore)
-                    },
-                    tag: EditProfileDomain.Route.Tag.registeredDevices,
+                    destination: IfLetStore(
+                        store.destinationsScope(
+                            state: /EditProfileDomain.Destinations.State.registeredDevices,
+                            action: EditProfileDomain.Destinations.Action.registeredDevicesAction
+                        ),
+                        then: RegisteredDevicesView.init(store:)
+                    ),
+                    tag: EditProfileDomain.Destinations.State.Tag.registeredDevices,
                     selection: viewStore.binding(
-                        get: \.routeTag,
+                        get: \.destinationTag,
                         send: EditProfileDomain.Action.setNavigation
                     )
                 ) {
@@ -348,15 +412,6 @@ extension EditProfileView {
                         .stgTxtEditProfileLoginSectionConnectedDevices
                 )
             })
-        }
-
-        private var registeredDevicesStore: Store<RegisteredDevicesDomain.State?, RegisteredDevicesDomain.Action> {
-            store.scope(
-                state: (\EditProfileDomain.State.route)
-                    .appending(path: /EditProfileDomain.Route.registeredDevices)
-                    .extract(from:),
-                action: EditProfileDomain.Action.registeredDevices(action:)
-            )
         }
 
         @ViewBuilder
@@ -390,12 +445,12 @@ extension EditProfileView {
 
         struct ViewState: Equatable {
             let token: IDPToken?
-            let routeTag: EditProfileDomain.Route.Tag?
+            let destinationTag: EditProfileDomain.Destinations.State.Tag?
             let isLoggedIn: Bool
 
             init(state: EditProfileDomain.State) {
                 token = state.token
-                routeTag = state.route?.tag
+                destinationTag = state.destination?.tag
                 isLoggedIn = state.token != nil
             }
         }
@@ -416,9 +471,9 @@ extension EditProfileView {
                                              IDPTokenView(token: scopedViewStore.state)
                                          }
                                      },
-                                     tag: EditProfileDomain.Route.Tag.token,
+                                     tag: EditProfileDomain.Destinations.State.Tag.token,
                                      selection: viewStore.binding(
-                                         get: \.routeTag,
+                                         get: \.destinationTag,
                                          send: EditProfileDomain.Action.setNavigation
                                      )
                                  ) {
@@ -436,12 +491,16 @@ extension EditProfileView {
                                  .disabled(viewStore.state.token == nil)
 
                                  NavigationLink(
-                                     destination: IfLetStore(auditEventsStore) { auditEventsStore in
-                                         AuditEventsView(store: auditEventsStore)
-                                     },
-                                     tag: EditProfileDomain.Route.Tag.auditEvents,
+                                     destination: IfLetStore(
+                                         store.destinationsScope(
+                                             state: /EditProfileDomain.Destinations.State.auditEvents,
+                                             action: EditProfileDomain.Destinations.Action.auditEventsAction
+                                         ),
+                                         then: AuditEventsView.init(store:)
+                                     ),
+                                     tag: EditProfileDomain.Destinations.State.Tag.auditEvents,
                                      selection: viewStore.binding(
-                                         get: \.routeTag,
+                                         get: \.destinationTag,
                                          send: EditProfileDomain.Action.setNavigation
                                      )
                                  ) {
@@ -477,20 +536,7 @@ extension EditProfileView {
         }
 
         private var tokenStore: Store<IDPToken?, EditProfileDomain.Action> {
-            store.scope(
-                state: (\EditProfileDomain.State.route)
-                    .appending(path: /EditProfileDomain.Route.token)
-                    .extract(from:)
-            )
-        }
-
-        private var auditEventsStore: Store<AuditEventsDomain.State?, AuditEventsDomain.Action> {
-            store.scope(
-                state: (\EditProfileDomain.State.route)
-                    .appending(path: /EditProfileDomain.Route.auditEvents)
-                    .extract(from:),
-                action: EditProfileDomain.Action.auditEvents(action:)
-            )
+            store.destinationsScope(state: /EditProfileDomain.Destinations.State.token)
         }
     }
 }
@@ -499,13 +545,20 @@ struct ProfileView_Preview: PreviewProvider {
     static var previews: some View {
         Group {
             NavigationView {
-                EditProfileView(store: EditProfileDomain.Dummies.store)
+                EditProfileView(
+                    store: .init(
+                        initialState: {
+                            var state: EditProfileDomain.State = .init(profile: UserProfile.Dummies.profileE)
+                            state.token = IDPToken(accessToken: "", expires: Date(), idToken: "", redirect: "")
+                            return state
+                        }(),
+                        reducer: EditProfileDomain()
+                    )
+                )
             }
 
             NavigationView {
-                EditProfileView(store: EditProfileDomain.Store(initialState: EditProfileDomain.Dummies.onlineState,
-                                                               reducer: .empty,
-                                                               environment: EditProfileDomain.Dummies.environment))
+                EditProfileView(store: EditProfileDomain.Dummies.store)
             }
         }
     }

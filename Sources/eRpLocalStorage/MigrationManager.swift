@@ -80,6 +80,8 @@ public class MigrationManager: ModelMigrating {
                 return Just(toVersion)
                     .setFailureType(to: MigrationError.self)
                     .eraseToAnyPublisher()
+            case .pKV:
+                return migrateToModelVersion6()
             }
         } else {
             return Fail(error: .isLatestVersion)
@@ -189,6 +191,44 @@ extension MigrationManager: CoreDataCrudable {
             .eraseToAnyPublisher()
     }
 
+    func migrateToModelVersion6() -> AnyPublisher<ModelVersion, MigrationError> {
+        Deferred {
+            Future<ModelVersion, MigrationError> { [weak self] promise in
+                guard let self = self,
+                      let moc = self.coreDataController?.container.newBackgroundContext() else {
+                    return
+                }
+
+                moc.mergePolicy = NSMergePolicy.mergeByPropertyObjectTrump
+                moc.performAndWait {
+                    do {
+                        let profiles = try self.fetchProfiles(in: moc)
+
+                        // Look at all profiles that have no insurance type
+                        for profile in profiles where profile.insuranceType?.isEmpty ?? true {
+                            // All existing profiles with a insuranceId must be logged in via gKV
+                            if profile.insuranceId?.count ?? 0 > 0 {
+                                profile.insuranceType = "gKV"
+                            } else {
+                                // Everyone else has not been logged in yet, thus we cannot know what insurance
+                                // type will be true
+                                profile.insuranceType = "unknown"
+                            }
+                        }
+                        print(profiles)
+
+                        try moc.save()
+                        promise(.success(ModelVersion.pKV))
+                    } catch {
+                        promise(.failure(.write(error: error)))
+                        moc.reset()
+                    }
+                }
+            }
+        }
+        .eraseToAnyPublisher()
+    }
+
     func deleteAllAuditEvents() -> AnyPublisher<Bool, MigrationError> {
         let request: NSFetchRequest<ErxAuditEventEntity> = ErxAuditEventEntity.fetchRequest()
         return delete(resultsOf: request)
@@ -246,6 +286,15 @@ extension MigrationManager: CoreDataCrudable {
         }
         .mapError(MigrationError.write)
         .eraseToAnyPublisher()
+    }
+
+    func fetchProfiles(in context: NSManagedObjectContext) throws -> [ProfileEntity] {
+        let request: NSFetchRequest<ProfileEntity> = ProfileEntity.fetchRequest()
+        do {
+            return try context.fetch(request)
+        } catch {
+            throw MigrationError.read(error: error)
+        }
     }
 
     func fetch(tasks: [ErxTask], in context: NSManagedObjectContext) throws -> [ErxTaskEntity] {

@@ -1,0 +1,234 @@
+{
+  "resourceType": "Bundle",
+  "type": "searchset",
+  "entry": [
+    {
+      "resource": {
+        "resourceType": "Communication",
+        "id": "9d533345-1e50-11b2-8115-dd3ddb83b539",
+        "meta": {
+          "profile": [
+            "https://gematik.de/fhir/StructureDefinition/ErxCommunicationReply"
+          ]
+        },
+        "basedOn": [
+          {
+            "reference": "Task/6550190f-1dd2-11b2-80e1-dd3ddb83b539/$accept?ac=10c694275fa101508c8edd48cab1d3933c6f1d2a4c9fc132a143d81e91da7dd0"
+          }
+        ],
+        "status": "unknown",
+        "sent": "2021-05-26T10:59:37.098245933+00:00",
+        "received": "2021-05-26T11:31:14.348544950+00:00",
+        "recipient": [
+          {
+            "identifier": {
+              "system": "http://fhir.de/NamingSystem/gkv/kvid-10",
+              "value": "X234567890"
+            }
+          }
+        ],
+        "sender": {
+          "identifier": {
+            "system": "https://gematik.de/fhir/NamingSystem/TelematikID",
+            "value": "3-09.2.S.10.743"
+          }
+        },
+        "payload": [
+          {
+            "extension": [
+              {
+                "url": "https://gematik.de/fhir/StructureDefinition/SupplyOptionsType",
+                "extension": [
+                  {
+                    "url": "onPremise",
+                    "valueBoolean": true
+                  },
+                  {
+                    "url": "delivery",
+                    "valueBoolean": true
+                  },
+                  {
+                    "url": "shipment",
+                    "valueBoolean": true
+                  }
+                ]
+              }
+            ],
+            "contentString": "{\"version\": \"1\",\"supplyOptionsType\": \"shipment\",\"info_text\": \"\"}"
+          }
+        ]
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Communication",
+        "id": "c54ea762-1e50-11b2-8116-dd3ddb83b539",
+        "meta": {
+          "profile": [
+            "https://gematik.de/fhir/StructureDefinition/ErxCommunicationReply"
+          ]
+        },
+        "basedOn": [
+          {
+            "reference": "Task/6550190f-1dd2-11b2-80e1-dd3ddb83b539"
+          }
+        ],
+        "status": "unknown",
+        "sent": "2021-05-26T11:00:44.177332282+00:00",
+        "received": "2021-05-26T11:31:14.348539199+00:00",
+        "recipient": [
+          {
+            "identifier": {
+              "system": "http://fhir.de/NamingSystem/gkv/kvid-10",
+              "value": "X234567890"
+            }
+          }
+        ],
+        "sender": {
+          "identifier": {
+            "system": "https://gematik.de/fhir/NamingSystem/TelematikID",
+            "value": "3-09.2.S.10.743"
+          }
+        },
+        "payload": [
+          {
+            "extension": [
+              {
+                "url": "https://gematik.de/fhir/StructureDefinition/SupplyOptionsType",
+                "extension": [
+                  {
+                    "url": "onPremise",
+                    "valueBoolean": true
+                  },
+                  {
+                    "url": "delivery",
+                    "valueBoolean": true
+                  },
+                  {
+                    "url": "shipment",
+                    "valueBoolean": true
+                  }
+                ]
+              }
+            ],
+            "contentString": "{\"version\": \"1\",\"supplyOptionsType\": \"shipment\",\"info_text\": \"Wir möchten Sie informieren, dass Ihre bestellten Medikamente versandt wurde!\",\"url\": \"https://das-e-rezept-fuer-deutschland.de\"}"
+          }
+        ]
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Communication",
+        "id": "88f9ee33-1e50-11b2-8114-dd3ddb83b539",
+        "meta": {
+          "profile": [
+            "https://gematik.de/fhir/StructureDefinition/ErxCommunicationReply"
+          ]
+        },
+        "basedOn": [
+          {
+            "reference": "Task/6550190f-1dd2-11b2-80e1-dd3ddb83b539"
+          }
+        ],
+        "status": "unknown",
+        "sent": "2021-05-26T10:59:02.958820486+00:00",
+        "received": "2021-05-26T11:31:14.348543797+00:00",
+        "recipient": [
+          {
+            "identifier": {
+              "system": "http://fhir.de/NamingSystem/gkv/kvid-10",
+              "value": "X234567890"
+            }
+          }
+        ],
+        "sender": {
+          "identifier": {
+            "system": "https://gematik.de/fhir/NamingSystem/TelematikID",
+            "value": "3-09.2.S.10.743"
+          }
+        },
+        "payload": [
+          {
+            "extension": [
+              {
+                "url": "https://gematik.de/fhir/StructureDefinition/SupplyOptionsType",
+                "extension": [
+                  {
+                    "url": "onPremise",
+                    "valueBoolean": true
+                  },
+                  {
+                    "url": "delivery",
+                    "valueBoolean": true
+                  },
+                  {
+                    "url": "shipment",
+                    "valueBoolean": true
+                  }
+                ]
+              }
+            ],
+            "contentString": "{\"version\": \"1\",\"supplyOptionsType\": \"shipment\",\"info_text\": \"Wir möchten Sie informieren, dass Ihre bestellten Medikamente versandt wurden! Diese Nachricht hat keine Url.\",\"url\": \"\"}"
+          }
+        ]
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Communication",
+        "id": "86aa9d40-1dd2-11b2-80e5-dd3ddb83b539",
+        "meta": {
+          "profile": [
+            "https://gematik.de/fhir/StructureDefinition/ErxCommunicationReply"
+          ]
+        },
+        "basedOn": [
+          {
+            "reference": "Task/6550190f-1dd2-11b2-80e1-dd3ddb83b539"
+          }
+        ],
+        "status": "unknown",
+        "sent": "2021-05-25T19:57:02.495625841+00:00",
+        "received": "2021-05-25T20:21:34.075016376+00:00",
+        "recipient": [
+          {
+            "identifier": {
+              "system": "http://fhir.de/NamingSystem/gkv/kvid-10",
+              "value": "X234567890"
+            }
+          }
+        ],
+        "sender": {
+          "identifier": {
+            "system": "https://gematik.de/fhir/NamingSystem/TelematikID",
+            "value": "3-09.2.S.10.743"
+          }
+        },
+        "payload": [
+          {
+            "extension": [
+              {
+                "url": "https://gematik.de/fhir/StructureDefinition/SupplyOptionsType",
+                "extension": [
+                  {
+                    "url": "onPremise",
+                    "valueBoolean": true
+                  },
+                  {
+                    "url": "delivery",
+                    "valueBoolean": true
+                  },
+                  {
+                    "url": "shipment",
+                    "valueBoolean": true
+                  }
+                ]
+              }
+            ],
+            "contentString": "{\"version\": \"1\",\"supplyOptionsType\": \"onPremise\",\"info_text\": \"Wir möchten Sie informieren, dass Ihre bestellten Medikamente zur Abholung bereitstehen. Den Abholcode finden Sie anbei.\",\"pickUpCodeHR\": \"12341234\",\"pickUpCodeDMC\": \"465465465f6s4g6df54gs65dfg\",\"url\": \"\"}"
+          }
+        ]
+      }
+    }
+  ]
+}

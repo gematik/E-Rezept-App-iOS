@@ -66,11 +66,12 @@ final class AVSTransactionCoreDataStoreTests: XCTestCase {
         return factory
     }
 
-    let coreDataBackgroundQueue: AnySchedulerOf<DispatchQueue> = AnyScheduler.main
+    let coreDataBackgroundQueue: AnySchedulerOf<DispatchQueue> = AnyScheduler.immediate
 
     private func loadAVSTransactionCoreDataStore() -> AVSTransactionCoreDataStore {
         AVSTransactionCoreDataStore(
             coreDataControllerFactory: loadFactory(),
+            foregroundQueue: .immediate,
             backgroundQueue: coreDataBackgroundQueue
         )
     }
@@ -82,6 +83,7 @@ final class AVSTransactionCoreDataStoreTests: XCTestCase {
         ErxTaskCoreDataStore(
             profileId: profileUUID,
             coreDataControllerFactory: loadFactory(),
+            foregroundQueue: .immediate,
             backgroundQueue: coreDataBackgroundQueue,
             dateProvider: { self.date }
         )
@@ -114,7 +116,7 @@ final class AVSTransactionCoreDataStoreTests: XCTestCase {
             })
 
         // then it should be the one we expect
-        expect(receivedFetchResult).toEventually(equal(input))
+        expect(receivedFetchResult).to(equal(input))
 
         cancellable.cancel()
     }
@@ -133,7 +135,7 @@ final class AVSTransactionCoreDataStoreTests: XCTestCase {
             })
 
         // then it should return no entry
-        expect(receivedNoResult).toEventually(beTrue())
+        expect(receivedNoResult).to(beTrue())
 
         cancellable.cancel()
     }
@@ -179,7 +181,7 @@ final class AVSTransactionCoreDataStoreTests: XCTestCase {
             })
 
         // then there should be only one in store with the updated values
-        expect(receivedListAllAVSTransactionValues.count).toEventually(equal(1))
+        expect(receivedListAllAVSTransactionValues.count).to(equal(1))
         expect(receivedListAllAVSTransactionValues[0].count).to(equal(0))
 
         cancellable.cancel()
@@ -226,7 +228,7 @@ final class AVSTransactionCoreDataStoreTests: XCTestCase {
             })
 
         // then there should be only one in store with the updated values
-        expect(receivedListAllAVSTransactionValues.count).toEventually(equal(1))
+        expect(receivedListAllAVSTransactionValues.count).to(equal(1))
         expect(receivedListAllAVSTransactionValues[0].count).to(equal(1))
         let result = receivedListAllAVSTransactionValues[0].first
         expect(result) == updatedAVSTransaction
@@ -296,9 +298,9 @@ final class AVSTransactionCoreDataStoreTests: XCTestCase {
             }, receiveValue: { avsTransaction in
                 receivedDeleteResults.append(avsTransaction)
             })
-        expect(receivedDeleteResults.count).toEventually(equal(1))
+        expect(receivedDeleteResults.count).to(equal(1))
         expect(receivedDeleteResults.first) == avsTransactionToDelete
-        expect(receivedDeleteCompletions.count).toEventually(equal(1))
+        expect(receivedDeleteCompletions.count).to(equal(1))
         expect(receivedDeleteCompletions.first) == .finished
 
         // then there should be no entry left in store
@@ -310,7 +312,7 @@ final class AVSTransactionCoreDataStoreTests: XCTestCase {
                 receivedListAllAVSTransactionsValues.append(avsTransactions)
             })
 
-        expect(receivedListAllAVSTransactionsValues.count).toEventually(equal(1))
+        expect(receivedListAllAVSTransactionsValues.count).to(equal(1))
         expect(receivedListAllAVSTransactionsValues.first?.count) == 0
     }
 
@@ -330,10 +332,10 @@ final class AVSTransactionCoreDataStoreTests: XCTestCase {
             }, receiveValue: { deletedAVSTransactions in
                 receivedDeleteResults.append(contentsOf: deletedAVSTransactions)
             })
-        expect(receivedDeleteResults.count).toEventually(equal(2))
+        expect(receivedDeleteResults.count).to(equal(2))
         expect(receivedDeleteResults.first) == avsTransactionToDelete1
         expect(receivedDeleteResults.last) == avsTransactionToDelete2
-        expect(receivedDeleteCompletions.count).toEventually(equal(1))
+        expect(receivedDeleteCompletions.count).to(equal(1))
         expect(receivedDeleteCompletions.first) == .finished
 
         // then there should be no entry left in store
@@ -345,7 +347,7 @@ final class AVSTransactionCoreDataStoreTests: XCTestCase {
                 receivedListAllAVSTransactionsValues.append(avsTransactions)
             })
 
-        expect(receivedListAllAVSTransactionsValues.count).toEventually(equal(1))
+        expect(receivedListAllAVSTransactionsValues.count).to(equal(1))
         expect(receivedListAllAVSTransactionsValues.first?.count) == 0
     }
 }
@@ -362,9 +364,9 @@ extension AVSTransactionCoreDataStore {
                 receivedSaveResults.append(contentsOf: results)
             })
 
-        expect(receivedSaveResults.count).toEventually(equal(avsTransactions.count))
+        expect(receivedSaveResults.count).to(equal(avsTransactions.count))
         expect(receivedSaveResults.last) == avsTransactions.last
-        expect(receivedSaveCompletions.count).toEventually(equal(1))
+        expect(receivedSaveCompletions.count).to(equal(1))
         expect(receivedSaveCompletions.first) == .finished
 
         cancellable.cancel()
@@ -381,9 +383,9 @@ extension AVSTransactionCoreDataStore {
                 receivedSaveResults.append(result)
             })
 
-        expect(receivedSaveResults.count).toEventually(equal(1))
+        expect(receivedSaveResults.count).to(equal(1))
         expect(receivedSaveResults.last) == avsTransaction
-        expect(receivedSaveCompletions.count).toEventually(equal(1))
+        expect(receivedSaveCompletions.count).to(equal(1))
         expect(receivedSaveCompletions.first) == .finished
 
         cancellable.cancel()

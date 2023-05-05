@@ -22,12 +22,11 @@ import eRpKit
 import Foundation
 import IDP
 
-enum ExtAuthPendingDomain {
-    typealias Store = ComposableArchitecture.Store<State, Action>
-    typealias Reducer = ComposableArchitecture.AnyReducer<State, Action, Environment>
+struct ExtAuthPendingDomain: ReducerProtocol {
+    typealias Store = StoreOf<Self>
 
-    static func cleanup<T>() -> Effect<T, Never> {
-        Effect.cancel(id: Token.self)
+    static func cleanup<T>() -> EffectTask<T> {
+        EffectTask<T>.cancel(ids: Token.allCases)
     }
 
     enum Token: CaseIterable, Hashable {
@@ -73,37 +72,64 @@ enum ExtAuthPendingDomain {
     enum Action: Equatable {
         case registerListener
         case unregisterListener
-        case pendingExtAuthRequestsReceived([ExtAuthChallengeSession])
         case externalLogin(URL)
-        case externalLoginReceived(Result<IDPToken, Error>)
         case saveProfile(error: LocalStoreError)
         /// Hides the visisble part of the view, e.g. while finishing a login. The view itself will stay in the
         /// hierarchy, to handle additional requests.
         case hide
         case cancelAllPendingRequests
         case nothing
+
+        case response(Response)
+
+        enum Response: Equatable {
+            case pendingExtAuthRequestsReceived([ExtAuthChallengeSession])
+            case externalLoginReceived(Result<IDPToken, Error>)
+        }
+    }
+
+    @Dependency(\.schedulers) var schedulers: Schedulers
+    @Dependency(\.idpSession) var idpSession: IDPSession
+    @Dependency(\.userSession) var userSession: UserSession
+    @Dependency(\.profileDataStore) var profileDataStore: ProfileDataStore
+    @Dependency(\.extAuthRequestStorage) var extAuthRequestStorage: ExtAuthRequestStorage
+
+    private var environment: Environment {
+        .init(
+            idpSession: idpSession,
+            schedulers: schedulers,
+            profileDataStore: profileDataStore,
+            extAuthRequestStorage: extAuthRequestStorage,
+            currentProfile: userSession.profile(),
+            idTokenValidator: userSession.idTokenValidator()
+        )
     }
 
     struct Environment {
         let idpSession: IDPSession
         let schedulers: Schedulers
-        let currentProfile: AnyPublisher<Profile, LocalStoreError>
-        let idTokenValidator: AnyPublisher<IDTokenValidator, IDTokenValidatorError>
         let profileDataStore: ProfileDataStore
         let extAuthRequestStorage: ExtAuthRequestStorage
+        let currentProfile: AnyPublisher<Profile, LocalStoreError>
+        let idTokenValidator: AnyPublisher<IDTokenValidator, IDTokenValidatorError>
     }
 
-    static let domainReducer = Reducer { state, action, environment in
+    var body: some ReducerProtocol<State, Action> {
+        Reduce(self.core)
+    }
+
+    // swiftlint:disable:next cyclomatic_complexity function_body_length
+    private func core(state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
         case .registerListener:
             return environment.extAuthRequestStorage.pendingExtAuthRequests
-                .map(Action.pendingExtAuthRequestsReceived)
-                .receive(on: environment.schedulers.main.animation())
+                .map { .response(.pendingExtAuthRequestsReceived($0)) }
+                .receive(on: schedulers.main.animation())
                 .eraseToEffect()
                 .cancellable(id: Token.pendingExtAuthRequestsSubscription, cancelInFlight: true)
         case .unregisterListener:
             return Effect.cancel(id: Token.pendingExtAuthRequestsSubscription)
-        case let .pendingExtAuthRequestsReceived(requests):
+        case let .response(.pendingExtAuthRequestsReceived(requests)):
             if requests.isEmpty {
                 if case .pendingExtAuth = state {
                     state = .empty
@@ -119,6 +145,7 @@ enum ExtAuthPendingDomain {
             }
             return .none
         case let .externalLogin(url):
+            let environment = environment
             let entry: KKAppDirectory.Entry?
 
             // If we have multipe pending requests, use the correct one
@@ -151,11 +178,11 @@ enum ExtAuthPendingDomain {
                 }
                 .catchToEffect()
                 .cancellable(id: Token.login, cancelInFlight: true)
-                .map(Action.externalLoginReceived)
+                .map { .response(.externalLoginReceived($0)) }
                 .receive(on: environment.schedulers.main.animation())
                 .eraseToEffect()
-        case let .externalLoginReceived(.success(idpToken)):
-            guard case let State.extAuthReceived(entry) = state else { return .none }
+        case let .response(.externalLoginReceived(.success(idpToken))):
+            guard case let .extAuthReceived(entry) = state else { return .none }
             let payload = try? idpToken.idTokenPayload()
             state = .extAuthSuccessful(entry)
             return environment.saveProfileWith(
@@ -165,19 +192,23 @@ enum ExtAuthPendingDomain {
                 familyName: payload?.familyName
             )
             .delay(for: 2,
-                   scheduler: environment.schedulers.main.animation())
+                   scheduler: schedulers.main.animation())
             .eraseToEffect()
         case .saveProfile(error: _):
-            state = .extAuthFailed(saveProfileAlert)
+            state = .extAuthFailed(Self.saveProfileAlert)
             return .none
-        case let .externalLoginReceived(.failure(.idpError(error, url))):
-            guard case let State.extAuthReceived(entry) = state else { return .none }
-            let alertState = alertState(title: entry.name, message: error.localizedDescriptionWithErrorList, url: url)
+        case let .response(.externalLoginReceived(.failure(.idpError(error, url)))):
+            guard case let .extAuthReceived(entry) = state else { return .none }
+            let alertState = Self.alertState(
+                title: entry.name,
+                message: error.localizedDescriptionWithErrorList,
+                url: url
+            )
             state = .extAuthFailed(alertState)
             return .none
-        case let .externalLoginReceived(.failure(.profileValidation(error: error))):
-            guard case let State.extAuthReceived(entry) = state else { return .none }
-            let alertState = alertState(title: entry.name, message: error.localizedDescriptionWithErrorList)
+        case let .response(.externalLoginReceived(.failure(.profileValidation(error: error)))):
+            guard case let .extAuthReceived(entry) = state else { return .none }
+            let alertState = Self.alertState(title: entry.name, message: error.localizedDescriptionWithErrorList)
             state = .extAuthFailed(alertState)
             return .none
         case .hide:
@@ -220,10 +251,6 @@ enum ExtAuthPendingDomain {
                                    action: .send(.cancelAllPendingRequests))
         ))
     }()
-
-    static let reducer: Reducer = .combine(
-        domainReducer
-    )
 }
 
 extension ExtAuthPendingDomain.Environment {
@@ -238,6 +265,11 @@ extension ExtAuthPendingDomain.Environment {
             .flatMap { profile -> AnyPublisher<Bool, LocalStoreError> in
                 profileDataStore.update(profileId: profile.id) { profile in
                     profile.insuranceId = insuranceId
+                    // This is needed to ensure proper pKV faking and can be removed when the debug option to fake pKV
+                    // is removed.
+                    if profile.insuranceType == .unknown {
+                        profile.insuranceType = .gKV
+                    }
                     profile.insurance = insurance
                     profile.givenName = givenName
                     profile.familyName = familyName
@@ -258,12 +290,14 @@ extension ExtAuthPendingDomain.Environment {
 extension ExtAuthPendingDomain {
     enum Dummies {
         static let state = State()
-        static let environment = Environment(idpSession: DemoIDPSession(storage: MemoryStorage()),
-                                             schedulers: Schedulers(),
-                                             currentProfile: DummySessionContainer().profile(),
-                                             idTokenValidator: DummySessionContainer().idTokenValidator(),
-                                             profileDataStore: DemoProfileDataStore(),
-                                             extAuthRequestStorage: DummyExtAuthRequestStorage())
+        static let environment = Environment(
+            idpSession: DemoIDPSession(storage: MemoryStorage()),
+            schedulers: Schedulers(),
+            profileDataStore: DemoProfileDataStore(),
+            extAuthRequestStorage: DummyExtAuthRequestStorage(),
+            currentProfile: DummySessionContainer().profile(),
+            idTokenValidator: DummySessionContainer().idTokenValidator()
+        )
 
         static let store = Store(initialState: state,
                                  reducer: .empty,

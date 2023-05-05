@@ -94,7 +94,7 @@ struct CardWallExtAuthConfirmationView: View {
         }
         .navigationBarItems(
             trailing: NavigationBarCloseItem {
-                viewStore.send(.close)
+                viewStore.send(.delegate(.close))
             }
             .accessibility(identifier: A11y.cardWall.extAuthConfirmation.cdwBtnExtauthConfirmCancel)
             .accessibility(label: Text(L10n.cdwBtnExtauthConfirmCancel))

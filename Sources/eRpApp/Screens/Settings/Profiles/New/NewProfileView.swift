@@ -31,24 +31,19 @@ struct NewProfileView: View {
         viewStore = ViewStore(store)
     }
 
-    @State
-    var emoji: String?
-
     var body: some View {
         NavigationView {
             ScrollView {
                 VStack(spacing: 0) {
-                    ProfilePicturePicker(
-                        emoji: viewStore.binding(
-                            get: \.emoji,
-                            send: NewProfileDomain.Action.setEmoji
-                        ),
-                        acronym: viewStore.acronym,
+                    ProfilePictureView(
+                        text: viewStore.acronym,
+                        image: ProfilePicture.none,
                         color: viewStore.color.background,
-                        borderColor: viewStore.color.border
-                    )
-                    .padding(.top)
-                    .padding(.bottom, 8)
+                        connection: nil,
+                        style: .xxLarge
+                    ) {}
+                        .padding(.top)
+                        .padding(.bottom, 8)
 
                     SingleElementSectionContainer {
                         FormTextField(
@@ -77,7 +72,7 @@ struct NewProfileView: View {
             .toolbar {
                 ToolbarItem(placement: .navigation) {
                     NavigationBarCloseItem {
-                        viewStore.send(.close)
+                        viewStore.send(.closeButtonTapped)
                     }
                     .accessibility(identifier: A11y.settings.newProfile.stgBtnNewProfileCancel)
                     .embedToolbarContent()

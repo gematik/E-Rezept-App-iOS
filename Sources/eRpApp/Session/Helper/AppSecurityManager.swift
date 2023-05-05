@@ -17,6 +17,7 @@
 //
 
 import CryptoKit
+import Dependencies
 import eRpKit
 import Foundation
 import LocalAuthentication
@@ -110,6 +111,25 @@ enum AppSecurityManagerError: Error, Equatable {
         }
     }
 }
+
+// MARK: TCA Dependency
+
+struct AppSecurityManagerDependency: DependencyKey {
+    static let liveValue: AppSecurityManager = DefaultAppSecurityManager(keychainAccess: SystemKeychainAccessHelper())
+
+    static let previewValue: AppSecurityManager = DemoAppSecurityPasswordManager()
+
+    static let testValue: AppSecurityManager = UnimplementedAppSecurityManager()
+}
+
+extension DependencyValues {
+    var appSecurityManager: AppSecurityManager {
+        get { self[AppSecurityManagerDependency.self] }
+        set { self[AppSecurityManagerDependency.self] = newValue }
+    }
+}
+
+// MARK: Dummies
 
 struct DummyAppSecurityManager: AppSecurityManager {
     private let underlyingOptions: [AppSecurityOption]

@@ -32,11 +32,14 @@ struct PrescriptionView: View {
             label: {
                 HStack {
                     VStack(alignment: .leading, spacing: 4) {
-                        Text(prescription.prescribedMedication?.name, placeholder: L10n.erxTxtMedicationPlaceholder)
-                            .foregroundColor(Colors.systemLabel)
-                            .font(Font.body.weight(.semibold))
-                            .multilineTextAlignment(.leading)
-                            .accessibilityIdentifier(A11y.mainScreen.erxDetailedPrescriptionName)
+                        Text(
+                            prescription.prescribedMedication?.displayName,
+                            placeholder: L10n.erxTxtMedicationPlaceholder
+                        )
+                        .foregroundColor(Colors.systemLabel)
+                        .font(Font.body.weight(.semibold))
+                        .multilineTextAlignment(.leading)
+                        .accessibilityIdentifier(A11y.mainScreen.erxDetailedPrescriptionName)
                         Text(prescription.statusMessage)
                             .font(Font.subheadline.weight(.regular))
                             .foregroundColor(Color(.secondaryLabel))

@@ -47,13 +47,14 @@ public struct SectionContainer<Header: View, Content: View, Footer: View>: View 
                 content
             }
             .frame(maxWidth: .infinity, alignment: .center)
-            .background(Color(.tertiarySystemBackground))
+            .background(style.content.backgroundColor)
             .cornerRadius(style.content.cornerRadius)
             .border(
                 style.content.borderColor,
                 width: style.content.borderWidth,
                 cornerRadius: style.content.cornerRadius
             )
+            .topAndBottomDivider(showSeparator: style.content.topAndBottomDivider)
             .padding(style.content.edgeInsets)
 
             if let footer = footer() {
@@ -419,38 +420,57 @@ public extension SectionContainer {
 }
 
 struct SectionContainer_Preview: PreviewProvider {
-    static var previews: some View {
-        ScrollView {
-            SectionContainer(
-                header: { Text("Header") },
-                footer: { Text("Footer") },
-                content: {
-                    Button(action: {}, label: {
-                        Label("Within a button", systemImage: "qrcode")
-                    })
+    struct ExampleView: View {
+        var body: some View {
+            ScrollView {
+                SectionContainer(
+                    header: { Text("Header") },
+                    footer: { Text("Footer") },
+                    content: {
+                        Button(action: {}, label: {
+                            Label("Within a button", systemImage: "qrcode")
+                        }).buttonStyle(.plain)
 
-                    Button(action: {}, label: {
-                        Label("Used for navigation", systemImage: "qrcode")
-                    })
-                        .buttonStyle(DetailNavigationButtonStyle(showSeparator: true))
+                        Button(action: {}, label: {
+                            Label("Used for navigation", systemImage: "qrcode")
+                        })
+                            .buttonStyle(DetailNavigationButtonStyle(showSeparator: true))
 
-                    Toggle(isOn: .constant(true)) {
-                        Label("Simple Toggle", systemImage: "qrcode")
+                        Toggle(isOn: .constant(true)) {
+                            Label("Simple Toggle", systemImage: "qrcode")
+                        }
+                        .toggleStyle(.plain)
+
+                        Toggle(isOn: .constant(true)) {
+                            Label("Radio toggle", systemImage: "qrcode")
+                        }
+                        .toggleStyle(.radio)
+                        .buttonStyle(.navigation)
+
+                        Toggle(isOn: .constant(true)) {
+                            Label("Used for navigation", systemImage: "qrcode")
+                        }
+                        .toggleStyle(.radioWithNavigation)
+                        .buttonStyle(.navigation)
                     }
-                    .toggleStyle(.plain)
-
-                    Toggle(isOn: .constant(true)) {
-                        Label("Radio toggle", systemImage: "qrcode")
-                    }
-                    .toggleStyle(.radio)
-
-                    Toggle(isOn: .constant(true)) {
-                        Label("Used for navigation", systemImage: "qrcode")
-                    }
-                    .toggleStyle(.radioWithNavigation)
-                }
-            )
+                )
+            }
         }
-        .background(Color(.secondarySystemBackground))
+    }
+
+    static var previews: some View {
+        ExampleView()
+            .background(Color(.secondarySystemBackground))
+
+        ExampleView()
+            .background(Color(.secondarySystemBackground))
+            .preferredColorScheme(.dark)
+
+        ExampleView()
+            .sectionContainerStyle(.inline)
+
+        ExampleView()
+            .sectionContainerStyle(.inline)
+            .preferredColorScheme(.dark)
     }
 }

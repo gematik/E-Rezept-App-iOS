@@ -72,12 +72,12 @@ final class CardWallReadCardViewModelOutputStateTests: XCTestCase {
             .signingChallenge(.error(.signChallengeError(.wrongCAN(GenericErrorMock.generic))))
         expect(sut.nextButtonEnabled).to(beTrue())
         expect(sut.buttonTitle).to(equal(titleBackToCan))
-        expect(sut.nextAction).to(equal(.wrongCAN))
+        expect(sut.nextAction).to(equal(.delegate(.wrongCAN)))
         sut = CardWallReadCardDomain.State.Output
             .signingChallenge(.error(.signChallengeError(.verifyCardError(.wrongSecretWarning(retryCount: 5)))))
         expect(sut.nextButtonEnabled).to(beTrue())
         expect(sut.buttonTitle).to(equal(titleBackToPin))
-        expect(sut.nextAction).to(equal(.wrongPIN))
+        expect(sut.nextAction).to(equal(.delegate(.wrongPIN)))
 
         sut = CardWallReadCardDomain.State.Output.verifying(.loading)
         expect(sut.nextButtonEnabled).to(beFalse())

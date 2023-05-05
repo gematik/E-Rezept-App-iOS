@@ -119,7 +119,7 @@ struct PharmacyContactView: View {
                 .navigationBarTitle(L10n.phaContactTitleContact, displayMode: .inline)
                 .navigationBarItems(
                     leading: NavigationBarCloseItem {
-                        viewStore.send(.close)
+                        viewStore.send(.closeButtonTapped)
                     },
                     trailing: NavigationBarSaveItem(disabled: !viewStore.state.isNewContactInfo) {
                         viewStore.send(.save)

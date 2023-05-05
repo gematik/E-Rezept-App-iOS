@@ -1,4 +1,4 @@
-// Generated using Sourcery 1.9.0 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.0.1 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 import AVS
 import Combine
@@ -37,18 +37,15 @@ import ZXingObjC
 
 
 
-
-
-
+// MARK: - MockAVSSession -
 
 final class MockAVSSession: AVSSession {
-
-
-    //MARK: - redeem
+    
+   // MARK: - redeem
 
     var redeemMessageEndpointRecipientsCallsCount = 0
     var redeemMessageEndpointRecipientsCalled: Bool {
-        return redeemMessageEndpointRecipientsCallsCount > 0
+        redeemMessageEndpointRecipientsCallsCount > 0
     }
     var redeemMessageEndpointRecipientsReceivedArguments: (message: AVSMessage, endpoint: AVSEndpoint, recipients: [X509])?
     var redeemMessageEndpointRecipientsReceivedInvocations: [(message: AVSMessage, endpoint: AVSEndpoint, recipients: [X509])] = []
@@ -59,22 +56,20 @@ final class MockAVSSession: AVSSession {
         redeemMessageEndpointRecipientsCallsCount += 1
         redeemMessageEndpointRecipientsReceivedArguments = (message: message, endpoint: endpoint, recipients: recipients)
         redeemMessageEndpointRecipientsReceivedInvocations.append((message: message, endpoint: endpoint, recipients: recipients))
-        if let redeemMessageEndpointRecipientsClosure = redeemMessageEndpointRecipientsClosure {
-            return redeemMessageEndpointRecipientsClosure(message, endpoint, recipients)
-        } else {
-            return redeemMessageEndpointRecipientsReturnValue
-        }
+        return redeemMessageEndpointRecipientsClosure.map({ $0(message, endpoint, recipients) }) ?? redeemMessageEndpointRecipientsReturnValue
     }
-
 }
+
+
+// MARK: - MockAVSTransactionDataStore -
+
 final class MockAVSTransactionDataStore: AVSTransactionDataStore {
-
-
-    //MARK: - fetchAVSTransaction
+    
+   // MARK: - fetchAVSTransaction
 
     var fetchAVSTransactionByCallsCount = 0
     var fetchAVSTransactionByCalled: Bool {
-        return fetchAVSTransactionByCallsCount > 0
+        fetchAVSTransactionByCallsCount > 0
     }
     var fetchAVSTransactionByReceivedIdentifier: UUID?
     var fetchAVSTransactionByReceivedInvocations: [UUID] = []
@@ -85,36 +80,28 @@ final class MockAVSTransactionDataStore: AVSTransactionDataStore {
         fetchAVSTransactionByCallsCount += 1
         fetchAVSTransactionByReceivedIdentifier = identifier
         fetchAVSTransactionByReceivedInvocations.append(identifier)
-        if let fetchAVSTransactionByClosure = fetchAVSTransactionByClosure {
-            return fetchAVSTransactionByClosure(identifier)
-        } else {
-            return fetchAVSTransactionByReturnValue
-        }
+        return fetchAVSTransactionByClosure.map({ $0(identifier) }) ?? fetchAVSTransactionByReturnValue
     }
-
-    //MARK: - listAllAVSTransactions
+    
+   // MARK: - listAllAVSTransactions
 
     var listAllAVSTransactionsCallsCount = 0
     var listAllAVSTransactionsCalled: Bool {
-        return listAllAVSTransactionsCallsCount > 0
+        listAllAVSTransactionsCallsCount > 0
     }
     var listAllAVSTransactionsReturnValue: AnyPublisher<[AVSTransaction], LocalStoreError>!
     var listAllAVSTransactionsClosure: (() -> AnyPublisher<[AVSTransaction], LocalStoreError>)?
 
     func listAllAVSTransactions() -> AnyPublisher<[AVSTransaction], LocalStoreError> {
         listAllAVSTransactionsCallsCount += 1
-        if let listAllAVSTransactionsClosure = listAllAVSTransactionsClosure {
-            return listAllAVSTransactionsClosure()
-        } else {
-            return listAllAVSTransactionsReturnValue
-        }
+        return listAllAVSTransactionsClosure.map({ $0() }) ?? listAllAVSTransactionsReturnValue
     }
-
-    //MARK: - save
+    
+   // MARK: - save
 
     var saveAvsTransactionsCallsCount = 0
     var saveAvsTransactionsCalled: Bool {
-        return saveAvsTransactionsCallsCount > 0
+        saveAvsTransactionsCallsCount > 0
     }
     var saveAvsTransactionsReceivedAvsTransactions: [AVSTransaction]?
     var saveAvsTransactionsReceivedInvocations: [[AVSTransaction]] = []
@@ -125,18 +112,14 @@ final class MockAVSTransactionDataStore: AVSTransactionDataStore {
         saveAvsTransactionsCallsCount += 1
         saveAvsTransactionsReceivedAvsTransactions = avsTransactions
         saveAvsTransactionsReceivedInvocations.append(avsTransactions)
-        if let saveAvsTransactionsClosure = saveAvsTransactionsClosure {
-            return saveAvsTransactionsClosure(avsTransactions)
-        } else {
-            return saveAvsTransactionsReturnValue
-        }
+        return saveAvsTransactionsClosure.map({ $0(avsTransactions) }) ?? saveAvsTransactionsReturnValue
     }
-
-    //MARK: - delete
+    
+   // MARK: - delete
 
     var deleteAvsTransactionsCallsCount = 0
     var deleteAvsTransactionsCalled: Bool {
-        return deleteAvsTransactionsCallsCount > 0
+        deleteAvsTransactionsCallsCount > 0
     }
     var deleteAvsTransactionsReceivedAvsTransactions: [AVSTransaction]?
     var deleteAvsTransactionsReceivedInvocations: [[AVSTransaction]] = []
@@ -147,41 +130,166 @@ final class MockAVSTransactionDataStore: AVSTransactionDataStore {
         deleteAvsTransactionsCallsCount += 1
         deleteAvsTransactionsReceivedAvsTransactions = avsTransactions
         deleteAvsTransactionsReceivedInvocations.append(avsTransactions)
-        if let deleteAvsTransactionsClosure = deleteAvsTransactionsClosure {
-            return deleteAvsTransactionsClosure(avsTransactions)
-        } else {
-            return deleteAvsTransactionsReturnValue
-        }
+        return deleteAvsTransactionsClosure.map({ $0(avsTransactions) }) ?? deleteAvsTransactionsReturnValue
     }
-
 }
+
+
+// MARK: - MockActivityIndicating -
+
 final class MockActivityIndicating: ActivityIndicating {
+    
+   // MARK: - isActive
 
     var isActive: AnyPublisher<Bool, Never> {
-        get { return underlyingIsActive }
+        get { underlyingIsActive }
         set(value) { underlyingIsActive = value }
     }
     var underlyingIsActive: AnyPublisher<Bool, Never>!
-
 }
+
+
+// MARK: - MockAuthenticationChallengeProvider -
+
+final class MockAuthenticationChallengeProvider: AuthenticationChallengeProvider {
+    
+   // MARK: - startAuthenticationChallenge
+
+    var startAuthenticationChallengeCallsCount = 0
+    var startAuthenticationChallengeCalled: Bool {
+        startAuthenticationChallengeCallsCount > 0
+    }
+    var startAuthenticationChallengeReturnValue: AnyPublisher<AppAuthenticationBiometricsDomain.AuthenticationResult, Never>!
+    var startAuthenticationChallengeClosure: (() -> AnyPublisher<AppAuthenticationBiometricsDomain.AuthenticationResult, Never>)?
+
+    func startAuthenticationChallenge() -> AnyPublisher<AppAuthenticationBiometricsDomain.AuthenticationResult, Never> {
+        startAuthenticationChallengeCallsCount += 1
+        return startAuthenticationChallengeClosure.map({ $0() }) ?? startAuthenticationChallengeReturnValue
+    }
+}
+
+
+// MARK: - MockChargeItemsDomainService -
+
+final class MockChargeItemsDomainService: ChargeItemsDomainService {
+    
+   // MARK: - fetchChargeItems
+
+    var fetchChargeItemsForCallsCount = 0
+    var fetchChargeItemsForCalled: Bool {
+        fetchChargeItemsForCallsCount > 0
+    }
+    var fetchChargeItemsForReceivedProfileId: UUID?
+    var fetchChargeItemsForReceivedInvocations: [UUID] = []
+    var fetchChargeItemsForReturnValue: AnyPublisher<ChargeItemDomainServiceFetchResult, Never>!
+    var fetchChargeItemsForClosure: ((UUID) -> AnyPublisher<ChargeItemDomainServiceFetchResult, Never>)?
+
+    func fetchChargeItems(for profileId: UUID) -> AnyPublisher<ChargeItemDomainServiceFetchResult, Never> {
+        fetchChargeItemsForCallsCount += 1
+        fetchChargeItemsForReceivedProfileId = profileId
+        fetchChargeItemsForReceivedInvocations.append(profileId)
+        return fetchChargeItemsForClosure.map({ $0(profileId) }) ?? fetchChargeItemsForReturnValue
+    }
+    
+   // MARK: - authenticate
+
+    var authenticateForCallsCount = 0
+    var authenticateForCalled: Bool {
+        authenticateForCallsCount > 0
+    }
+    var authenticateForReceivedProfileId: UUID?
+    var authenticateForReceivedInvocations: [UUID] = []
+    var authenticateForReturnValue: AnyPublisher<ChargeItemDomainServiceAuthenticateResult, Never>!
+    var authenticateForClosure: ((UUID) -> AnyPublisher<ChargeItemDomainServiceAuthenticateResult, Never>)?
+
+    func authenticate(for profileId: UUID) -> AnyPublisher<ChargeItemDomainServiceAuthenticateResult, Never> {
+        authenticateForCallsCount += 1
+        authenticateForReceivedProfileId = profileId
+        authenticateForReceivedInvocations.append(profileId)
+        return authenticateForClosure.map({ $0(profileId) }) ?? authenticateForReturnValue
+    }
+    
+   // MARK: - grantChargeItemsConsent
+
+    var grantChargeItemsConsentForCallsCount = 0
+    var grantChargeItemsConsentForCalled: Bool {
+        grantChargeItemsConsentForCallsCount > 0
+    }
+    var grantChargeItemsConsentForReceivedProfileId: UUID?
+    var grantChargeItemsConsentForReceivedInvocations: [UUID] = []
+    var grantChargeItemsConsentForReturnValue: AnyPublisher<ChargeItemsDomainServiceGrantResult, Never>!
+    var grantChargeItemsConsentForClosure: ((UUID) -> AnyPublisher<ChargeItemsDomainServiceGrantResult, Never>)?
+
+    func grantChargeItemsConsent(for profileId: UUID) -> AnyPublisher<ChargeItemsDomainServiceGrantResult, Never> {
+        grantChargeItemsConsentForCallsCount += 1
+        grantChargeItemsConsentForReceivedProfileId = profileId
+        grantChargeItemsConsentForReceivedInvocations.append(profileId)
+        return grantChargeItemsConsentForClosure.map({ $0(profileId) }) ?? grantChargeItemsConsentForReturnValue
+    }
+    
+   // MARK: - fetchChargeItemsAssumingConsentGranted
+
+    var fetchChargeItemsAssumingConsentGrantedForCallsCount = 0
+    var fetchChargeItemsAssumingConsentGrantedForCalled: Bool {
+        fetchChargeItemsAssumingConsentGrantedForCallsCount > 0
+    }
+    var fetchChargeItemsAssumingConsentGrantedForReceivedProfileId: UUID?
+    var fetchChargeItemsAssumingConsentGrantedForReceivedInvocations: [UUID] = []
+    var fetchChargeItemsAssumingConsentGrantedForReturnValue: AnyPublisher<ChargeItemDomainServiceFetchResult, Never>!
+    var fetchChargeItemsAssumingConsentGrantedForClosure: ((UUID) -> AnyPublisher<ChargeItemDomainServiceFetchResult, Never>)?
+
+    func fetchChargeItemsAssumingConsentGranted(for profileId: UUID) -> AnyPublisher<ChargeItemDomainServiceFetchResult, Never> {
+        fetchChargeItemsAssumingConsentGrantedForCallsCount += 1
+        fetchChargeItemsAssumingConsentGrantedForReceivedProfileId = profileId
+        fetchChargeItemsAssumingConsentGrantedForReceivedInvocations.append(profileId)
+        return fetchChargeItemsAssumingConsentGrantedForClosure.map({ $0(profileId) }) ?? fetchChargeItemsAssumingConsentGrantedForReturnValue
+    }
+    
+   // MARK: - revokeChargeItemsConsent
+
+    var revokeChargeItemsConsentForCallsCount = 0
+    var revokeChargeItemsConsentForCalled: Bool {
+        revokeChargeItemsConsentForCallsCount > 0
+    }
+    var revokeChargeItemsConsentForReceivedProfileId: UUID?
+    var revokeChargeItemsConsentForReceivedInvocations: [UUID] = []
+    var revokeChargeItemsConsentForReturnValue: AnyPublisher<ChargeItemsDomainServiceRevokeResult, Never>!
+    var revokeChargeItemsConsentForClosure: ((UUID) -> AnyPublisher<ChargeItemsDomainServiceRevokeResult, Never>)?
+
+    func revokeChargeItemsConsent(for profileId: UUID) -> AnyPublisher<ChargeItemsDomainServiceRevokeResult, Never> {
+        revokeChargeItemsConsentForCallsCount += 1
+        revokeChargeItemsConsentForReceivedProfileId = profileId
+        revokeChargeItemsConsentForReceivedInvocations.append(profileId)
+        return revokeChargeItemsConsentForClosure.map({ $0(profileId) }) ?? revokeChargeItemsConsentForReturnValue
+    }
+}
+
+
+// MARK: - MockDeviceSecurityManagerSessionStorage -
+
 final class MockDeviceSecurityManagerSessionStorage: DeviceSecurityManagerSessionStorage {
+    
+   // MARK: - ignoreDeviceNotSecuredWarningForSession
 
     var ignoreDeviceNotSecuredWarningForSession: AnyPublisher<Bool?, Never> {
-        get { return underlyingIgnoreDeviceNotSecuredWarningForSession }
+        get { underlyingIgnoreDeviceNotSecuredWarningForSession }
         set(value) { underlyingIgnoreDeviceNotSecuredWarningForSession = value }
     }
     var underlyingIgnoreDeviceNotSecuredWarningForSession: AnyPublisher<Bool?, Never>!
+    
+   // MARK: - ignoreDeviceRootedWarningForSession
+
     var ignoreDeviceRootedWarningForSession: Bool {
-        get { return underlyingIgnoreDeviceRootedWarningForSession }
+        get { underlyingIgnoreDeviceRootedWarningForSession }
         set(value) { underlyingIgnoreDeviceRootedWarningForSession = value }
     }
     var underlyingIgnoreDeviceRootedWarningForSession: Bool!
-
-    //MARK: - set
+    
+   // MARK: - set
 
     var setIgnoreDeviceNotSecuredWarningForSessionCallsCount = 0
     var setIgnoreDeviceNotSecuredWarningForSessionCalled: Bool {
-        return setIgnoreDeviceNotSecuredWarningForSessionCallsCount > 0
+        setIgnoreDeviceNotSecuredWarningForSessionCallsCount > 0
     }
     var setIgnoreDeviceNotSecuredWarningForSessionReceivedIgnoreDeviceNotSecuredWarningForSession: Bool?
     var setIgnoreDeviceNotSecuredWarningForSessionReceivedInvocations: [Bool?] = []
@@ -193,16 +301,18 @@ final class MockDeviceSecurityManagerSessionStorage: DeviceSecurityManagerSessio
         setIgnoreDeviceNotSecuredWarningForSessionReceivedInvocations.append(ignoreDeviceNotSecuredWarningForSession)
         setIgnoreDeviceNotSecuredWarningForSessionClosure?(ignoreDeviceNotSecuredWarningForSession)
     }
-
 }
+
+
+// MARK: - MockERPDateFormatter -
+
 final class MockERPDateFormatter: ERPDateFormatter {
-
-
-    //MARK: - string
+    
+   // MARK: - string
 
     var stringFromCallsCount = 0
     var stringFromCalled: Bool {
-        return stringFromCallsCount > 0
+        stringFromCallsCount > 0
     }
     var stringFromReceivedFrom: Date?
     var stringFromReceivedInvocations: [Date] = []
@@ -213,63 +323,299 @@ final class MockERPDateFormatter: ERPDateFormatter {
         stringFromCallsCount += 1
         stringFromReceivedFrom = from
         stringFromReceivedInvocations.append(from)
-        if let stringFromClosure = stringFromClosure {
-            return stringFromClosure(from)
-        } else {
-            return stringFromReturnValue
-        }
+        return stringFromClosure.map({ $0(from) }) ?? stringFromReturnValue
     }
-
 }
+
+
+// MARK: - MockFeedbackReceiver -
+
+final class MockFeedbackReceiver: FeedbackReceiver {
+    
+   // MARK: - hapticFeedbackSuccess
+
+    var hapticFeedbackSuccessCallsCount = 0
+    var hapticFeedbackSuccessCalled: Bool {
+        hapticFeedbackSuccessCallsCount > 0
+    }
+    var hapticFeedbackSuccessClosure: (() -> Void)?
+
+    func hapticFeedbackSuccess() {
+        hapticFeedbackSuccessCallsCount += 1
+        hapticFeedbackSuccessClosure?()
+    }
+}
+
+
+// MARK: - MockIDPSession -
+
+final class MockIDPSession: IDPSession {
+    
+   // MARK: - isLoggedIn
+
+    var isLoggedIn: AnyPublisher<Bool, IDPError> {
+        get { underlyingIsLoggedIn }
+        set(value) { underlyingIsLoggedIn = value }
+    }
+    var underlyingIsLoggedIn: AnyPublisher<Bool, IDPError>!
+    
+   // MARK: - autoRefreshedToken
+
+    var autoRefreshedToken: AnyPublisher<IDPToken?, IDPError> {
+        get { underlyingAutoRefreshedToken }
+        set(value) { underlyingAutoRefreshedToken = value }
+    }
+    var underlyingAutoRefreshedToken: AnyPublisher<IDPToken?, IDPError>!
+    
+   // MARK: - invalidateAccessToken
+
+    var invalidateAccessTokenCallsCount = 0
+    var invalidateAccessTokenCalled: Bool {
+        invalidateAccessTokenCallsCount > 0
+    }
+    var invalidateAccessTokenClosure: (() -> Void)?
+
+    func invalidateAccessToken() {
+        invalidateAccessTokenCallsCount += 1
+        invalidateAccessTokenClosure?()
+    }
+    
+   // MARK: - requestChallenge
+
+    var requestChallengeCallsCount = 0
+    var requestChallengeCalled: Bool {
+        requestChallengeCallsCount > 0
+    }
+    var requestChallengeReturnValue: AnyPublisher<IDPChallengeSession, IDPError>!
+    var requestChallengeClosure: (() -> AnyPublisher<IDPChallengeSession, IDPError>)?
+
+    func requestChallenge() -> AnyPublisher<IDPChallengeSession, IDPError> {
+        requestChallengeCallsCount += 1
+        return requestChallengeClosure.map({ $0() }) ?? requestChallengeReturnValue
+    }
+    
+   // MARK: - verify
+
+    var verifyCallsCount = 0
+    var verifyCalled: Bool {
+        verifyCallsCount > 0
+    }
+    var verifyReceivedSignedChallenge: SignedChallenge?
+    var verifyReceivedInvocations: [SignedChallenge] = []
+    var verifyReturnValue: AnyPublisher<IDPExchangeToken, IDPError>!
+    var verifyClosure: ((SignedChallenge) -> AnyPublisher<IDPExchangeToken, IDPError>)?
+
+    func verify(_ signedChallenge: SignedChallenge) -> AnyPublisher<IDPExchangeToken, IDPError> {
+        verifyCallsCount += 1
+        verifyReceivedSignedChallenge = signedChallenge
+        verifyReceivedInvocations.append(signedChallenge)
+        return verifyClosure.map({ $0(signedChallenge) }) ?? verifyReturnValue
+    }
+    
+   // MARK: - exchange
+
+    var exchangeTokenChallengeSessionIdTokenValidatorCallsCount = 0
+    var exchangeTokenChallengeSessionIdTokenValidatorCalled: Bool {
+        exchangeTokenChallengeSessionIdTokenValidatorCallsCount > 0
+    }
+    var exchangeTokenChallengeSessionIdTokenValidatorReceivedArguments: (token: IDPExchangeToken, challengeSession: ChallengeSession, idTokenValidator: (TokenPayload.IDTokenPayload) -> Result<Bool, Error>)?
+    var exchangeTokenChallengeSessionIdTokenValidatorReceivedInvocations: [(token: IDPExchangeToken, challengeSession: ChallengeSession, idTokenValidator: (TokenPayload.IDTokenPayload) -> Result<Bool, Error>)] = []
+    var exchangeTokenChallengeSessionIdTokenValidatorReturnValue: AnyPublisher<IDPToken, IDPError>!
+    var exchangeTokenChallengeSessionIdTokenValidatorClosure: ((IDPExchangeToken, ChallengeSession, @escaping (TokenPayload.IDTokenPayload) -> Result<Bool, Error>) -> AnyPublisher<IDPToken, IDPError>)?
+
+    func exchange(token: IDPExchangeToken, challengeSession: ChallengeSession, idTokenValidator: @escaping (TokenPayload.IDTokenPayload) -> Result<Bool, Error>) -> AnyPublisher<IDPToken, IDPError> {
+        exchangeTokenChallengeSessionIdTokenValidatorCallsCount += 1
+        exchangeTokenChallengeSessionIdTokenValidatorReceivedArguments = (token: token, challengeSession: challengeSession, idTokenValidator: idTokenValidator)
+        exchangeTokenChallengeSessionIdTokenValidatorReceivedInvocations.append((token: token, challengeSession: challengeSession, idTokenValidator: idTokenValidator))
+        return exchangeTokenChallengeSessionIdTokenValidatorClosure.map({ $0(token, challengeSession, idTokenValidator) }) ?? exchangeTokenChallengeSessionIdTokenValidatorReturnValue
+    }
+    
+   // MARK: - refresh
+
+    var refreshTokenCallsCount = 0
+    var refreshTokenCalled: Bool {
+        refreshTokenCallsCount > 0
+    }
+    var refreshTokenReceivedToken: IDPToken?
+    var refreshTokenReceivedInvocations: [IDPToken] = []
+    var refreshTokenReturnValue: AnyPublisher<IDPToken, IDPError>!
+    var refreshTokenClosure: ((IDPToken) -> AnyPublisher<IDPToken, IDPError>)?
+
+    func refresh(token: IDPToken) -> AnyPublisher<IDPToken, IDPError> {
+        refreshTokenCallsCount += 1
+        refreshTokenReceivedToken = token
+        refreshTokenReceivedInvocations.append(token)
+        return refreshTokenClosure.map({ $0(token) }) ?? refreshTokenReturnValue
+    }
+    
+   // MARK: - pairDevice
+
+    var pairDeviceWithTokenCallsCount = 0
+    var pairDeviceWithTokenCalled: Bool {
+        pairDeviceWithTokenCallsCount > 0
+    }
+    var pairDeviceWithTokenReceivedArguments: (registrationData: RegistrationData, token: IDPToken)?
+    var pairDeviceWithTokenReceivedInvocations: [(registrationData: RegistrationData, token: IDPToken)] = []
+    var pairDeviceWithTokenReturnValue: AnyPublisher<PairingEntry, IDPError>!
+    var pairDeviceWithTokenClosure: ((RegistrationData, IDPToken) -> AnyPublisher<PairingEntry, IDPError>)?
+
+    func pairDevice(with registrationData: RegistrationData, token: IDPToken) -> AnyPublisher<PairingEntry, IDPError> {
+        pairDeviceWithTokenCallsCount += 1
+        pairDeviceWithTokenReceivedArguments = (registrationData: registrationData, token: token)
+        pairDeviceWithTokenReceivedInvocations.append((registrationData: registrationData, token: token))
+        return pairDeviceWithTokenClosure.map({ $0(registrationData, token) }) ?? pairDeviceWithTokenReturnValue
+    }
+    
+   // MARK: - unregisterDevice
+
+    var unregisterDeviceTokenCallsCount = 0
+    var unregisterDeviceTokenCalled: Bool {
+        unregisterDeviceTokenCallsCount > 0
+    }
+    var unregisterDeviceTokenReceivedArguments: (keyIdentifier: String, token: IDPToken)?
+    var unregisterDeviceTokenReceivedInvocations: [(keyIdentifier: String, token: IDPToken)] = []
+    var unregisterDeviceTokenReturnValue: AnyPublisher<Bool, IDPError>!
+    var unregisterDeviceTokenClosure: ((String, IDPToken) -> AnyPublisher<Bool, IDPError>)?
+
+    func unregisterDevice(_ keyIdentifier: String, token: IDPToken) -> AnyPublisher<Bool, IDPError> {
+        unregisterDeviceTokenCallsCount += 1
+        unregisterDeviceTokenReceivedArguments = (keyIdentifier: keyIdentifier, token: token)
+        unregisterDeviceTokenReceivedInvocations.append((keyIdentifier: keyIdentifier, token: token))
+        return unregisterDeviceTokenClosure.map({ $0(keyIdentifier, token) }) ?? unregisterDeviceTokenReturnValue
+    }
+    
+   // MARK: - listDevices
+
+    var listDevicesTokenCallsCount = 0
+    var listDevicesTokenCalled: Bool {
+        listDevicesTokenCallsCount > 0
+    }
+    var listDevicesTokenReceivedToken: IDPToken?
+    var listDevicesTokenReceivedInvocations: [IDPToken] = []
+    var listDevicesTokenReturnValue: AnyPublisher<PairingEntries, IDPError>!
+    var listDevicesTokenClosure: ((IDPToken) -> AnyPublisher<PairingEntries, IDPError>)?
+
+    func listDevices(token: IDPToken) -> AnyPublisher<PairingEntries, IDPError> {
+        listDevicesTokenCallsCount += 1
+        listDevicesTokenReceivedToken = token
+        listDevicesTokenReceivedInvocations.append(token)
+        return listDevicesTokenClosure.map({ $0(token) }) ?? listDevicesTokenReturnValue
+    }
+    
+   // MARK: - altVerify
+
+    var altVerifyCallsCount = 0
+    var altVerifyCalled: Bool {
+        altVerifyCallsCount > 0
+    }
+    var altVerifyReceivedSignedChallenge: SignedAuthenticationData?
+    var altVerifyReceivedInvocations: [SignedAuthenticationData] = []
+    var altVerifyReturnValue: AnyPublisher<IDPExchangeToken, IDPError>!
+    var altVerifyClosure: ((SignedAuthenticationData) -> AnyPublisher<IDPExchangeToken, IDPError>)?
+
+    func altVerify(_ signedChallenge: SignedAuthenticationData) -> AnyPublisher<IDPExchangeToken, IDPError> {
+        altVerifyCallsCount += 1
+        altVerifyReceivedSignedChallenge = signedChallenge
+        altVerifyReceivedInvocations.append(signedChallenge)
+        return altVerifyClosure.map({ $0(signedChallenge) }) ?? altVerifyReturnValue
+    }
+    
+   // MARK: - loadDirectoryKKApps
+
+    var loadDirectoryKKAppsCallsCount = 0
+    var loadDirectoryKKAppsCalled: Bool {
+        loadDirectoryKKAppsCallsCount > 0
+    }
+    var loadDirectoryKKAppsReturnValue: AnyPublisher<KKAppDirectory, IDPError>!
+    var loadDirectoryKKAppsClosure: (() -> AnyPublisher<KKAppDirectory, IDPError>)?
+
+    func loadDirectoryKKApps() -> AnyPublisher<KKAppDirectory, IDPError> {
+        loadDirectoryKKAppsCallsCount += 1
+        return loadDirectoryKKAppsClosure.map({ $0() }) ?? loadDirectoryKKAppsReturnValue
+    }
+    
+   // MARK: - startExtAuth
+
+    var startExtAuthEntryCallsCount = 0
+    var startExtAuthEntryCalled: Bool {
+        startExtAuthEntryCallsCount > 0
+    }
+    var startExtAuthEntryReceivedEntry: KKAppDirectory.Entry?
+    var startExtAuthEntryReceivedInvocations: [KKAppDirectory.Entry] = []
+    var startExtAuthEntryReturnValue: AnyPublisher<URL, IDPError>!
+    var startExtAuthEntryClosure: ((KKAppDirectory.Entry) -> AnyPublisher<URL, IDPError>)?
+
+    func startExtAuth(entry: KKAppDirectory.Entry) -> AnyPublisher<URL, IDPError> {
+        startExtAuthEntryCallsCount += 1
+        startExtAuthEntryReceivedEntry = entry
+        startExtAuthEntryReceivedInvocations.append(entry)
+        return startExtAuthEntryClosure.map({ $0(entry) }) ?? startExtAuthEntryReturnValue
+    }
+    
+   // MARK: - extAuthVerifyAndExchange
+
+    var extAuthVerifyAndExchangeIdTokenValidatorCallsCount = 0
+    var extAuthVerifyAndExchangeIdTokenValidatorCalled: Bool {
+        extAuthVerifyAndExchangeIdTokenValidatorCallsCount > 0
+    }
+    var extAuthVerifyAndExchangeIdTokenValidatorReceivedArguments: (url: URL, idTokenValidator: (TokenPayload.IDTokenPayload) -> Result<Bool, Error>)?
+    var extAuthVerifyAndExchangeIdTokenValidatorReceivedInvocations: [(url: URL, idTokenValidator: (TokenPayload.IDTokenPayload) -> Result<Bool, Error>)] = []
+    var extAuthVerifyAndExchangeIdTokenValidatorReturnValue: AnyPublisher<IDPToken, IDPError>!
+    var extAuthVerifyAndExchangeIdTokenValidatorClosure: ((URL, @escaping (TokenPayload.IDTokenPayload) -> Result<Bool, Error>) -> AnyPublisher<IDPToken, IDPError>)?
+
+    func extAuthVerifyAndExchange(_ url: URL, idTokenValidator: @escaping (TokenPayload.IDTokenPayload) -> Result<Bool, Error>) -> AnyPublisher<IDPToken, IDPError> {
+        extAuthVerifyAndExchangeIdTokenValidatorCallsCount += 1
+        extAuthVerifyAndExchangeIdTokenValidatorReceivedArguments = (url: url, idTokenValidator: idTokenValidator)
+        extAuthVerifyAndExchangeIdTokenValidatorReceivedInvocations.append((url: url, idTokenValidator: idTokenValidator))
+        return extAuthVerifyAndExchangeIdTokenValidatorClosure.map({ $0(url, idTokenValidator) }) ?? extAuthVerifyAndExchangeIdTokenValidatorReturnValue
+    }
+}
+
+
+// MARK: - MockLoginHandler -
+
 final class MockLoginHandler: LoginHandler {
-
-
-    //MARK: - isAuthenticated
+    
+   // MARK: - isAuthenticated
 
     var isAuthenticatedCallsCount = 0
     var isAuthenticatedCalled: Bool {
-        return isAuthenticatedCallsCount > 0
+        isAuthenticatedCallsCount > 0
     }
     var isAuthenticatedReturnValue: AnyPublisher<LoginResult, Never>!
     var isAuthenticatedClosure: (() -> AnyPublisher<LoginResult, Never>)?
 
     func isAuthenticated() -> AnyPublisher<LoginResult, Never> {
         isAuthenticatedCallsCount += 1
-        if let isAuthenticatedClosure = isAuthenticatedClosure {
-            return isAuthenticatedClosure()
-        } else {
-            return isAuthenticatedReturnValue
-        }
+        return isAuthenticatedClosure.map({ $0() }) ?? isAuthenticatedReturnValue
     }
-
-    //MARK: - isAuthenticatedOrAuthenticate
+    
+   // MARK: - isAuthenticatedOrAuthenticate
 
     var isAuthenticatedOrAuthenticateCallsCount = 0
     var isAuthenticatedOrAuthenticateCalled: Bool {
-        return isAuthenticatedOrAuthenticateCallsCount > 0
+        isAuthenticatedOrAuthenticateCallsCount > 0
     }
     var isAuthenticatedOrAuthenticateReturnValue: AnyPublisher<LoginResult, Never>!
     var isAuthenticatedOrAuthenticateClosure: (() -> AnyPublisher<LoginResult, Never>)?
 
     func isAuthenticatedOrAuthenticate() -> AnyPublisher<LoginResult, Never> {
         isAuthenticatedOrAuthenticateCallsCount += 1
-        if let isAuthenticatedOrAuthenticateClosure = isAuthenticatedOrAuthenticateClosure {
-            return isAuthenticatedOrAuthenticateClosure()
-        } else {
-            return isAuthenticatedOrAuthenticateReturnValue
-        }
+        return isAuthenticatedOrAuthenticateClosure.map({ $0() }) ?? isAuthenticatedOrAuthenticateReturnValue
     }
-
 }
+
+
+// MARK: - MockMatrixCodeGenerator -
+
 final class MockMatrixCodeGenerator: MatrixCodeGenerator {
-
-
-    //MARK: - generateImage
+    
+   // MARK: - generateImage
 
     var generateImageForWidthHeightThrowableError: Error?
     var generateImageForWidthHeightCallsCount = 0
     var generateImageForWidthHeightCalled: Bool {
-        return generateImageForWidthHeightCallsCount > 0
+        generateImageForWidthHeightCallsCount > 0
     }
     var generateImageForWidthHeightReceivedArguments: (contents: String, width: Int, height: Int)?
     var generateImageForWidthHeightReceivedInvocations: [(contents: String, width: Int, height: Int)] = []
@@ -283,22 +629,20 @@ final class MockMatrixCodeGenerator: MatrixCodeGenerator {
         generateImageForWidthHeightCallsCount += 1
         generateImageForWidthHeightReceivedArguments = (contents: contents, width: width, height: height)
         generateImageForWidthHeightReceivedInvocations.append((contents: contents, width: width, height: height))
-        if let generateImageForWidthHeightClosure = generateImageForWidthHeightClosure {
-            return try generateImageForWidthHeightClosure(contents, width, height)
-        } else {
-            return generateImageForWidthHeightReturnValue
-        }
+        return try generateImageForWidthHeightClosure.map({ try $0(contents, width, height) }) ?? generateImageForWidthHeightReturnValue
     }
-
 }
+
+
+// MARK: - MockModelMigrating -
+
 final class MockModelMigrating: ModelMigrating {
-
-
-    //MARK: - startModelMigration
+    
+   // MARK: - startModelMigration
 
     var startModelMigrationFromCallsCount = 0
     var startModelMigrationFromCalled: Bool {
-        return startModelMigrationFromCallsCount > 0
+        startModelMigrationFromCallsCount > 0
     }
     var startModelMigrationFromReceivedCurrentVersion: ModelVersion?
     var startModelMigrationFromReceivedInvocations: [ModelVersion] = []
@@ -309,22 +653,20 @@ final class MockModelMigrating: ModelMigrating {
         startModelMigrationFromCallsCount += 1
         startModelMigrationFromReceivedCurrentVersion = currentVersion
         startModelMigrationFromReceivedInvocations.append(currentVersion)
-        if let startModelMigrationFromClosure = startModelMigrationFromClosure {
-            return startModelMigrationFromClosure(currentVersion)
-        } else {
-            return startModelMigrationFromReturnValue
-        }
+        return startModelMigrationFromClosure.map({ $0(currentVersion) }) ?? startModelMigrationFromReturnValue
     }
-
 }
+
+
+// MARK: - MockNFCHealthCardPasswordController -
+
 final class MockNFCHealthCardPasswordController: NFCHealthCardPasswordController {
-
-
-    //MARK: - resetEgkMrPinRetryCounter
+    
+   // MARK: - resetEgkMrPinRetryCounter
 
     var resetEgkMrPinRetryCounterCanPukModeCallsCount = 0
     var resetEgkMrPinRetryCounterCanPukModeCalled: Bool {
-        return resetEgkMrPinRetryCounterCanPukModeCallsCount > 0
+        resetEgkMrPinRetryCounterCanPukModeCallsCount > 0
     }
     var resetEgkMrPinRetryCounterCanPukModeReceivedArguments: (can: String, puk: String, mode: NFCResetRetryCounterMode)?
     var resetEgkMrPinRetryCounterCanPukModeReceivedInvocations: [(can: String, puk: String, mode: NFCResetRetryCounterMode)] = []
@@ -335,18 +677,14 @@ final class MockNFCHealthCardPasswordController: NFCHealthCardPasswordController
         resetEgkMrPinRetryCounterCanPukModeCallsCount += 1
         resetEgkMrPinRetryCounterCanPukModeReceivedArguments = (can: can, puk: puk, mode: mode)
         resetEgkMrPinRetryCounterCanPukModeReceivedInvocations.append((can: can, puk: puk, mode: mode))
-        if let resetEgkMrPinRetryCounterCanPukModeClosure = resetEgkMrPinRetryCounterCanPukModeClosure {
-            return resetEgkMrPinRetryCounterCanPukModeClosure(can, puk, mode)
-        } else {
-            return resetEgkMrPinRetryCounterCanPukModeReturnValue
-        }
+        return resetEgkMrPinRetryCounterCanPukModeClosure.map({ $0(can, puk, mode) }) ?? resetEgkMrPinRetryCounterCanPukModeReturnValue
     }
-
-    //MARK: - changeReferenceData
+    
+   // MARK: - changeReferenceData
 
     var changeReferenceDataCanOldNewModeCallsCount = 0
     var changeReferenceDataCanOldNewModeCalled: Bool {
-        return changeReferenceDataCanOldNewModeCallsCount > 0
+        changeReferenceDataCanOldNewModeCallsCount > 0
     }
     var changeReferenceDataCanOldNewModeReceivedArguments: (can: String, old: String, new: String, mode: NFCChangeReferenceDataMode)?
     var changeReferenceDataCanOldNewModeReceivedInvocations: [(can: String, old: String, new: String, mode: NFCChangeReferenceDataMode)] = []
@@ -357,22 +695,20 @@ final class MockNFCHealthCardPasswordController: NFCHealthCardPasswordController
         changeReferenceDataCanOldNewModeCallsCount += 1
         changeReferenceDataCanOldNewModeReceivedArguments = (can: can, old: old, new: new, mode: mode)
         changeReferenceDataCanOldNewModeReceivedInvocations.append((can: can, old: old, new: new, mode: mode))
-        if let changeReferenceDataCanOldNewModeClosure = changeReferenceDataCanOldNewModeClosure {
-            return changeReferenceDataCanOldNewModeClosure(can, old, new, mode)
-        } else {
-            return changeReferenceDataCanOldNewModeReturnValue
-        }
+        return changeReferenceDataCanOldNewModeClosure.map({ $0(can, old, new, mode) }) ?? changeReferenceDataCanOldNewModeReturnValue
     }
-
 }
+
+
+// MARK: - MockNFCSignatureProvider -
+
 final class MockNFCSignatureProvider: NFCSignatureProvider {
-
-
-    //MARK: - openSecureSession
+    
+   // MARK: - openSecureSession
 
     var openSecureSessionCanPinCallsCount = 0
     var openSecureSessionCanPinCalled: Bool {
-        return openSecureSessionCanPinCallsCount > 0
+        openSecureSessionCanPinCallsCount > 0
     }
     var openSecureSessionCanPinReceivedArguments: (can: String, pin: String)?
     var openSecureSessionCanPinReceivedInvocations: [(can: String, pin: String)] = []
@@ -383,18 +719,14 @@ final class MockNFCSignatureProvider: NFCSignatureProvider {
         openSecureSessionCanPinCallsCount += 1
         openSecureSessionCanPinReceivedArguments = (can: can, pin: pin)
         openSecureSessionCanPinReceivedInvocations.append((can: can, pin: pin))
-        if let openSecureSessionCanPinClosure = openSecureSessionCanPinClosure {
-            return openSecureSessionCanPinClosure(can, pin)
-        } else {
-            return openSecureSessionCanPinReturnValue
-        }
+        return openSecureSessionCanPinClosure.map({ $0(can, pin) }) ?? openSecureSessionCanPinReturnValue
     }
-
-    //MARK: - sign
+    
+   // MARK: - sign
 
     var signCanPinChallengeCallsCount = 0
     var signCanPinChallengeCalled: Bool {
-        return signCanPinChallengeCallsCount > 0
+        signCanPinChallengeCallsCount > 0
     }
     var signCanPinChallengeReceivedArguments: (can: String, pin: String, challenge: IDPChallengeSession)?
     var signCanPinChallengeReceivedInvocations: [(can: String, pin: String, challenge: IDPChallengeSession)] = []
@@ -405,40 +737,58 @@ final class MockNFCSignatureProvider: NFCSignatureProvider {
         signCanPinChallengeCallsCount += 1
         signCanPinChallengeReceivedArguments = (can: can, pin: pin, challenge: challenge)
         signCanPinChallengeReceivedInvocations.append((can: can, pin: pin, challenge: challenge))
-        if let signCanPinChallengeClosure = signCanPinChallengeClosure {
-            return signCanPinChallengeClosure(can, pin, challenge)
-        } else {
-            return signCanPinChallengeReturnValue
-        }
+        return signCanPinChallengeClosure.map({ $0(can, pin, challenge) }) ?? signCanPinChallengeReturnValue
     }
-
 }
+
+
+// MARK: - MockPasswordStrengthTester -
+
+final class MockPasswordStrengthTester: PasswordStrengthTester {
+    
+   // MARK: - passwordStrength
+
+    var passwordStrengthForCallsCount = 0
+    var passwordStrengthForCalled: Bool {
+        passwordStrengthForCallsCount > 0
+    }
+    var passwordStrengthForReceivedPassword: String?
+    var passwordStrengthForReceivedInvocations: [String] = []
+    var passwordStrengthForReturnValue: PasswordStrength!
+    var passwordStrengthForClosure: ((String) -> PasswordStrength)?
+
+    func passwordStrength(for password: String) -> PasswordStrength {
+        passwordStrengthForCallsCount += 1
+        passwordStrengthForReceivedPassword = password
+        passwordStrengthForReceivedInvocations.append(password)
+        return passwordStrengthForClosure.map({ $0(password) }) ?? passwordStrengthForReturnValue
+    }
+}
+
+
+// MARK: - MockPrescriptionRepository -
+
 final class MockPrescriptionRepository: PrescriptionRepository {
-
-
-    //MARK: - loadLocal
+    
+   // MARK: - loadLocal
 
     var loadLocalCallsCount = 0
     var loadLocalCalled: Bool {
-        return loadLocalCallsCount > 0
+        loadLocalCallsCount > 0
     }
     var loadLocalReturnValue: AnyPublisher<[Prescription], PrescriptionRepositoryError>!
     var loadLocalClosure: (() -> AnyPublisher<[Prescription], PrescriptionRepositoryError>)?
 
     func loadLocal() -> AnyPublisher<[Prescription], PrescriptionRepositoryError> {
         loadLocalCallsCount += 1
-        if let loadLocalClosure = loadLocalClosure {
-            return loadLocalClosure()
-        } else {
-            return loadLocalReturnValue
-        }
+        return loadLocalClosure.map({ $0() }) ?? loadLocalReturnValue
     }
-
-    //MARK: - forcedLoadRemote
+    
+   // MARK: - forcedLoadRemote
 
     var forcedLoadRemoteForCallsCount = 0
     var forcedLoadRemoteForCalled: Bool {
-        return forcedLoadRemoteForCallsCount > 0
+        forcedLoadRemoteForCallsCount > 0
     }
     var forcedLoadRemoteForReceivedLocale: String?
     var forcedLoadRemoteForReceivedInvocations: [String?] = []
@@ -449,18 +799,14 @@ final class MockPrescriptionRepository: PrescriptionRepository {
         forcedLoadRemoteForCallsCount += 1
         forcedLoadRemoteForReceivedLocale = locale
         forcedLoadRemoteForReceivedInvocations.append(locale)
-        if let forcedLoadRemoteForClosure = forcedLoadRemoteForClosure {
-            return forcedLoadRemoteForClosure(locale)
-        } else {
-            return forcedLoadRemoteForReturnValue
-        }
+        return forcedLoadRemoteForClosure.map({ $0(locale) }) ?? forcedLoadRemoteForReturnValue
     }
-
-    //MARK: - silentLoadRemote
+    
+   // MARK: - silentLoadRemote
 
     var silentLoadRemoteForCallsCount = 0
     var silentLoadRemoteForCalled: Bool {
-        return silentLoadRemoteForCallsCount > 0
+        silentLoadRemoteForCallsCount > 0
     }
     var silentLoadRemoteForReceivedLocale: String?
     var silentLoadRemoteForReceivedInvocations: [String?] = []
@@ -471,22 +817,20 @@ final class MockPrescriptionRepository: PrescriptionRepository {
         silentLoadRemoteForCallsCount += 1
         silentLoadRemoteForReceivedLocale = locale
         silentLoadRemoteForReceivedInvocations.append(locale)
-        if let silentLoadRemoteForClosure = silentLoadRemoteForClosure {
-            return silentLoadRemoteForClosure(locale)
-        } else {
-            return silentLoadRemoteForReturnValue
-        }
+        return silentLoadRemoteForClosure.map({ $0(locale) }) ?? silentLoadRemoteForReturnValue
     }
-
 }
+
+
+// MARK: - MockProfileBasedSessionProvider -
+
 final class MockProfileBasedSessionProvider: ProfileBasedSessionProvider {
-
-
-    //MARK: - idpSession
+    
+   // MARK: - idpSession
 
     var idpSessionForCallsCount = 0
     var idpSessionForCalled: Bool {
-        return idpSessionForCallsCount > 0
+        idpSessionForCallsCount > 0
     }
     var idpSessionForReceivedProfileId: UUID?
     var idpSessionForReceivedInvocations: [UUID] = []
@@ -497,18 +841,14 @@ final class MockProfileBasedSessionProvider: ProfileBasedSessionProvider {
         idpSessionForCallsCount += 1
         idpSessionForReceivedProfileId = profileId
         idpSessionForReceivedInvocations.append(profileId)
-        if let idpSessionForClosure = idpSessionForClosure {
-            return idpSessionForClosure(profileId)
-        } else {
-            return idpSessionForReturnValue
-        }
+        return idpSessionForClosure.map({ $0(profileId) }) ?? idpSessionForReturnValue
     }
-
-    //MARK: - biometrieIdpSession
+    
+   // MARK: - biometrieIdpSession
 
     var biometrieIdpSessionForCallsCount = 0
     var biometrieIdpSessionForCalled: Bool {
-        return biometrieIdpSessionForCallsCount > 0
+        biometrieIdpSessionForCallsCount > 0
     }
     var biometrieIdpSessionForReceivedProfileId: UUID?
     var biometrieIdpSessionForReceivedInvocations: [UUID] = []
@@ -519,18 +859,14 @@ final class MockProfileBasedSessionProvider: ProfileBasedSessionProvider {
         biometrieIdpSessionForCallsCount += 1
         biometrieIdpSessionForReceivedProfileId = profileId
         biometrieIdpSessionForReceivedInvocations.append(profileId)
-        if let biometrieIdpSessionForClosure = biometrieIdpSessionForClosure {
-            return biometrieIdpSessionForClosure(profileId)
-        } else {
-            return biometrieIdpSessionForReturnValue
-        }
+        return biometrieIdpSessionForClosure.map({ $0(profileId) }) ?? biometrieIdpSessionForReturnValue
     }
-
-    //MARK: - userDataStore
+    
+   // MARK: - userDataStore
 
     var userDataStoreForCallsCount = 0
     var userDataStoreForCalled: Bool {
-        return userDataStoreForCallsCount > 0
+        userDataStoreForCallsCount > 0
     }
     var userDataStoreForReceivedProfileId: UUID?
     var userDataStoreForReceivedInvocations: [UUID] = []
@@ -541,18 +877,14 @@ final class MockProfileBasedSessionProvider: ProfileBasedSessionProvider {
         userDataStoreForCallsCount += 1
         userDataStoreForReceivedProfileId = profileId
         userDataStoreForReceivedInvocations.append(profileId)
-        if let userDataStoreForClosure = userDataStoreForClosure {
-            return userDataStoreForClosure(profileId)
-        } else {
-            return userDataStoreForReturnValue
-        }
+        return userDataStoreForClosure.map({ $0(profileId) }) ?? userDataStoreForReturnValue
     }
-
-    //MARK: - idTokenValidator
+    
+   // MARK: - idTokenValidator
 
     var idTokenValidatorForCallsCount = 0
     var idTokenValidatorForCalled: Bool {
-        return idTokenValidatorForCallsCount > 0
+        idTokenValidatorForCallsCount > 0
     }
     var idTokenValidatorForReceivedProfileId: UUID?
     var idTokenValidatorForReceivedInvocations: [UUID] = []
@@ -563,22 +895,20 @@ final class MockProfileBasedSessionProvider: ProfileBasedSessionProvider {
         idTokenValidatorForCallsCount += 1
         idTokenValidatorForReceivedProfileId = profileId
         idTokenValidatorForReceivedInvocations.append(profileId)
-        if let idTokenValidatorForClosure = idTokenValidatorForClosure {
-            return idTokenValidatorForClosure(profileId)
-        } else {
-            return idTokenValidatorForReturnValue
-        }
+        return idTokenValidatorForClosure.map({ $0(profileId) }) ?? idTokenValidatorForReturnValue
     }
-
 }
+
+
+// MARK: - MockProfileDataStore -
+
 final class MockProfileDataStore: ProfileDataStore {
-
-
-    //MARK: - fetchProfile
+    
+   // MARK: - fetchProfile
 
     var fetchProfileByCallsCount = 0
     var fetchProfileByCalled: Bool {
-        return fetchProfileByCallsCount > 0
+        fetchProfileByCallsCount > 0
     }
     var fetchProfileByReceivedIdentifier: Profile.ID?
     var fetchProfileByReceivedInvocations: [Profile.ID] = []
@@ -589,36 +919,28 @@ final class MockProfileDataStore: ProfileDataStore {
         fetchProfileByCallsCount += 1
         fetchProfileByReceivedIdentifier = identifier
         fetchProfileByReceivedInvocations.append(identifier)
-        if let fetchProfileByClosure = fetchProfileByClosure {
-            return fetchProfileByClosure(identifier)
-        } else {
-            return fetchProfileByReturnValue
-        }
+        return fetchProfileByClosure.map({ $0(identifier) }) ?? fetchProfileByReturnValue
     }
-
-    //MARK: - listAllProfiles
+    
+   // MARK: - listAllProfiles
 
     var listAllProfilesCallsCount = 0
     var listAllProfilesCalled: Bool {
-        return listAllProfilesCallsCount > 0
+        listAllProfilesCallsCount > 0
     }
     var listAllProfilesReturnValue: AnyPublisher<[Profile], LocalStoreError>!
     var listAllProfilesClosure: (() -> AnyPublisher<[Profile], LocalStoreError>)?
 
     func listAllProfiles() -> AnyPublisher<[Profile], LocalStoreError> {
         listAllProfilesCallsCount += 1
-        if let listAllProfilesClosure = listAllProfilesClosure {
-            return listAllProfilesClosure()
-        } else {
-            return listAllProfilesReturnValue
-        }
+        return listAllProfilesClosure.map({ $0() }) ?? listAllProfilesReturnValue
     }
-
-    //MARK: - save
+    
+   // MARK: - save
 
     var saveProfilesCallsCount = 0
     var saveProfilesCalled: Bool {
-        return saveProfilesCallsCount > 0
+        saveProfilesCallsCount > 0
     }
     var saveProfilesReceivedProfiles: [Profile]?
     var saveProfilesReceivedInvocations: [[Profile]] = []
@@ -629,18 +951,14 @@ final class MockProfileDataStore: ProfileDataStore {
         saveProfilesCallsCount += 1
         saveProfilesReceivedProfiles = profiles
         saveProfilesReceivedInvocations.append(profiles)
-        if let saveProfilesClosure = saveProfilesClosure {
-            return saveProfilesClosure(profiles)
-        } else {
-            return saveProfilesReturnValue
-        }
+        return saveProfilesClosure.map({ $0(profiles) }) ?? saveProfilesReturnValue
     }
-
-    //MARK: - delete
+    
+   // MARK: - delete
 
     var deleteProfilesCallsCount = 0
     var deleteProfilesCalled: Bool {
-        return deleteProfilesCallsCount > 0
+        deleteProfilesCallsCount > 0
     }
     var deleteProfilesReceivedProfiles: [Profile]?
     var deleteProfilesReceivedInvocations: [[Profile]] = []
@@ -651,18 +969,14 @@ final class MockProfileDataStore: ProfileDataStore {
         deleteProfilesCallsCount += 1
         deleteProfilesReceivedProfiles = profiles
         deleteProfilesReceivedInvocations.append(profiles)
-        if let deleteProfilesClosure = deleteProfilesClosure {
-            return deleteProfilesClosure(profiles)
-        } else {
-            return deleteProfilesReturnValue
-        }
+        return deleteProfilesClosure.map({ $0(profiles) }) ?? deleteProfilesReturnValue
     }
-
-    //MARK: - update
+    
+   // MARK: - update
 
     var updateProfileIdMutatingCallsCount = 0
     var updateProfileIdMutatingCalled: Bool {
-        return updateProfileIdMutatingCallsCount > 0
+        updateProfileIdMutatingCallsCount > 0
     }
     var updateProfileIdMutatingReceivedArguments: (profileId: UUID, mutating: (inout Profile) -> Void)?
     var updateProfileIdMutatingReceivedInvocations: [(profileId: UUID, mutating: (inout Profile) -> Void)] = []
@@ -673,19 +987,15 @@ final class MockProfileDataStore: ProfileDataStore {
         updateProfileIdMutatingCallsCount += 1
         updateProfileIdMutatingReceivedArguments = (profileId: profileId, mutating: mutating)
         updateProfileIdMutatingReceivedInvocations.append((profileId: profileId, mutating: mutating))
-        if let updateProfileIdMutatingClosure = updateProfileIdMutatingClosure {
-            return updateProfileIdMutatingClosure(profileId, mutating)
-        } else {
-            return updateProfileIdMutatingReturnValue
-        }
+        return updateProfileIdMutatingClosure.map({ $0(profileId, mutating) }) ?? updateProfileIdMutatingReturnValue
     }
-
-    //MARK: - pagedAuditEventsController
+    
+   // MARK: - pagedAuditEventsController
 
     var pagedAuditEventsControllerForWithThrowableError: Error?
     var pagedAuditEventsControllerForWithCallsCount = 0
     var pagedAuditEventsControllerForWithCalled: Bool {
-        return pagedAuditEventsControllerForWithCallsCount > 0
+        pagedAuditEventsControllerForWithCallsCount > 0
     }
     var pagedAuditEventsControllerForWithReceivedArguments: (profileId: UUID, locale: String?)?
     var pagedAuditEventsControllerForWithReceivedInvocations: [(profileId: UUID, locale: String?)] = []
@@ -699,22 +1009,20 @@ final class MockProfileDataStore: ProfileDataStore {
         pagedAuditEventsControllerForWithCallsCount += 1
         pagedAuditEventsControllerForWithReceivedArguments = (profileId: profileId, locale: locale)
         pagedAuditEventsControllerForWithReceivedInvocations.append((profileId: profileId, locale: locale))
-        if let pagedAuditEventsControllerForWithClosure = pagedAuditEventsControllerForWithClosure {
-            return try pagedAuditEventsControllerForWithClosure(profileId, locale)
-        } else {
-            return pagedAuditEventsControllerForWithReturnValue
-        }
+        return try pagedAuditEventsControllerForWithClosure.map({ try $0(profileId, locale) }) ?? pagedAuditEventsControllerForWithReturnValue
     }
-
 }
+
+
+// MARK: - MockProfileOnlineChecker -
+
 final class MockProfileOnlineChecker: ProfileOnlineChecker {
-
-
-    //MARK: - token
+    
+   // MARK: - token
 
     var tokenForCallsCount = 0
     var tokenForCalled: Bool {
-        return tokenForCallsCount > 0
+        tokenForCallsCount > 0
     }
     var tokenForReceivedProfile: Profile?
     var tokenForReceivedInvocations: [Profile] = []
@@ -725,22 +1033,20 @@ final class MockProfileOnlineChecker: ProfileOnlineChecker {
         tokenForCallsCount += 1
         tokenForReceivedProfile = profile
         tokenForReceivedInvocations.append(profile)
-        if let tokenForClosure = tokenForClosure {
-            return tokenForClosure(profile)
-        } else {
-            return tokenForReturnValue
-        }
+        return tokenForClosure.map({ $0(profile) }) ?? tokenForReturnValue
     }
-
 }
+
+
+// MARK: - MockProfileSecureDataWiper -
+
 final class MockProfileSecureDataWiper: ProfileSecureDataWiper {
-
-
-    //MARK: - wipeSecureData
+    
+   // MARK: - wipeSecureData
 
     var wipeSecureDataOfCallsCount = 0
     var wipeSecureDataOfCalled: Bool {
-        return wipeSecureDataOfCallsCount > 0
+        wipeSecureDataOfCallsCount > 0
     }
     var wipeSecureDataOfReceivedProfileId: UUID?
     var wipeSecureDataOfReceivedInvocations: [UUID] = []
@@ -751,18 +1057,14 @@ final class MockProfileSecureDataWiper: ProfileSecureDataWiper {
         wipeSecureDataOfCallsCount += 1
         wipeSecureDataOfReceivedProfileId = profileId
         wipeSecureDataOfReceivedInvocations.append(profileId)
-        if let wipeSecureDataOfClosure = wipeSecureDataOfClosure {
-            return wipeSecureDataOfClosure(profileId)
-        } else {
-            return wipeSecureDataOfReturnValue
-        }
+        return wipeSecureDataOfClosure.map({ $0(profileId) }) ?? wipeSecureDataOfReturnValue
     }
-
-    //MARK: - logout
+    
+   // MARK: - logout
 
     var logoutProfileCallsCount = 0
     var logoutProfileCalled: Bool {
-        return logoutProfileCallsCount > 0
+        logoutProfileCallsCount > 0
     }
     var logoutProfileReceivedProfile: Profile?
     var logoutProfileReceivedInvocations: [Profile] = []
@@ -773,18 +1075,14 @@ final class MockProfileSecureDataWiper: ProfileSecureDataWiper {
         logoutProfileCallsCount += 1
         logoutProfileReceivedProfile = profile
         logoutProfileReceivedInvocations.append(profile)
-        if let logoutProfileClosure = logoutProfileClosure {
-            return logoutProfileClosure(profile)
-        } else {
-            return logoutProfileReturnValue
-        }
+        return logoutProfileClosure.map({ $0(profile) }) ?? logoutProfileReturnValue
     }
-
-    //MARK: - secureStorage
+    
+   // MARK: - secureStorage
 
     var secureStorageOfCallsCount = 0
     var secureStorageOfCalled: Bool {
-        return secureStorageOfCallsCount > 0
+        secureStorageOfCallsCount > 0
     }
     var secureStorageOfReceivedProfileId: UUID?
     var secureStorageOfReceivedInvocations: [UUID] = []
@@ -795,22 +1093,20 @@ final class MockProfileSecureDataWiper: ProfileSecureDataWiper {
         secureStorageOfCallsCount += 1
         secureStorageOfReceivedProfileId = profileId
         secureStorageOfReceivedInvocations.append(profileId)
-        if let secureStorageOfClosure = secureStorageOfClosure {
-            return secureStorageOfClosure(profileId)
-        } else {
-            return secureStorageOfReturnValue
-        }
+        return secureStorageOfClosure.map({ $0(profileId) }) ?? secureStorageOfReturnValue
     }
-
 }
+
+
+// MARK: - MockRedeemService -
+
 final class MockRedeemService: RedeemService {
-
-
-    //MARK: - redeem
+    
+   // MARK: - redeem
 
     var redeemCallsCount = 0
     var redeemCalled: Bool {
-        return redeemCallsCount > 0
+        redeemCallsCount > 0
     }
     var redeemReceivedOrders: [Order]?
     var redeemReceivedInvocations: [[Order]] = []
@@ -821,22 +1117,20 @@ final class MockRedeemService: RedeemService {
         redeemCallsCount += 1
         redeemReceivedOrders = orders
         redeemReceivedInvocations.append(orders)
-        if let redeemClosure = redeemClosure {
-            return redeemClosure(orders)
-        } else {
-            return redeemReturnValue
-        }
+        return redeemClosure.map({ $0(orders) }) ?? redeemReturnValue
     }
-
 }
+
+
+// MARK: - MockRegisteredDevicesService -
+
 final class MockRegisteredDevicesService: RegisteredDevicesService {
-
-
-    //MARK: - registeredDevices
+    
+   // MARK: - registeredDevices
 
     var registeredDevicesForCallsCount = 0
     var registeredDevicesForCalled: Bool {
-        return registeredDevicesForCallsCount > 0
+        registeredDevicesForCallsCount > 0
     }
     var registeredDevicesForReceivedProfileId: UUID?
     var registeredDevicesForReceivedInvocations: [UUID] = []
@@ -847,18 +1141,14 @@ final class MockRegisteredDevicesService: RegisteredDevicesService {
         registeredDevicesForCallsCount += 1
         registeredDevicesForReceivedProfileId = profileId
         registeredDevicesForReceivedInvocations.append(profileId)
-        if let registeredDevicesForClosure = registeredDevicesForClosure {
-            return registeredDevicesForClosure(profileId)
-        } else {
-            return registeredDevicesForReturnValue
-        }
+        return registeredDevicesForClosure.map({ $0(profileId) }) ?? registeredDevicesForReturnValue
     }
-
-    //MARK: - deviceId
+    
+   // MARK: - deviceId
 
     var deviceIdForCallsCount = 0
     var deviceIdForCalled: Bool {
-        return deviceIdForCallsCount > 0
+        deviceIdForCallsCount > 0
     }
     var deviceIdForReceivedProfileId: UUID?
     var deviceIdForReceivedInvocations: [UUID] = []
@@ -869,18 +1159,14 @@ final class MockRegisteredDevicesService: RegisteredDevicesService {
         deviceIdForCallsCount += 1
         deviceIdForReceivedProfileId = profileId
         deviceIdForReceivedInvocations.append(profileId)
-        if let deviceIdForClosure = deviceIdForClosure {
-            return deviceIdForClosure(profileId)
-        } else {
-            return deviceIdForReturnValue
-        }
+        return deviceIdForClosure.map({ $0(profileId) }) ?? deviceIdForReturnValue
     }
-
-    //MARK: - deleteDevice
+    
+   // MARK: - deleteDevice
 
     var deleteDeviceOfCallsCount = 0
     var deleteDeviceOfCalled: Bool {
-        return deleteDeviceOfCallsCount > 0
+        deleteDeviceOfCallsCount > 0
     }
     var deleteDeviceOfReceivedArguments: (device: String, profileId: UUID)?
     var deleteDeviceOfReceivedInvocations: [(device: String, profileId: UUID)] = []
@@ -891,18 +1177,14 @@ final class MockRegisteredDevicesService: RegisteredDevicesService {
         deleteDeviceOfCallsCount += 1
         deleteDeviceOfReceivedArguments = (device: device, profileId: profileId)
         deleteDeviceOfReceivedInvocations.append((device: device, profileId: profileId))
-        if let deleteDeviceOfClosure = deleteDeviceOfClosure {
-            return deleteDeviceOfClosure(device, profileId)
-        } else {
-            return deleteDeviceOfReturnValue
-        }
+        return deleteDeviceOfClosure.map({ $0(device, profileId) }) ?? deleteDeviceOfReturnValue
     }
-
-    //MARK: - cardWall
+    
+   // MARK: - cardWall
 
     var cardWallForCallsCount = 0
     var cardWallForCalled: Bool {
-        return cardWallForCallsCount > 0
+        cardWallForCallsCount > 0
     }
     var cardWallForReceivedProfileId: UUID?
     var cardWallForReceivedInvocations: [UUID] = []
@@ -913,22 +1195,20 @@ final class MockRegisteredDevicesService: RegisteredDevicesService {
         cardWallForCallsCount += 1
         cardWallForReceivedProfileId = profileId
         cardWallForReceivedInvocations.append(profileId)
-        if let cardWallForClosure = cardWallForClosure {
-            return cardWallForClosure(profileId)
-        } else {
-            return cardWallForReturnValue
-        }
+        return cardWallForClosure.map({ $0(profileId) }) ?? cardWallForReturnValue
     }
-
 }
+
+
+// MARK: - MockRouting -
+
 final class MockRouting: Routing {
-
-
-    //MARK: - routeTo
+    
+   // MARK: - routeTo
 
     var routeToCallsCount = 0
     var routeToCalled: Bool {
-        return routeToCallsCount > 0
+        routeToCallsCount > 0
     }
     var routeToReceivedEndpoint: Endpoint?
     var routeToReceivedInvocations: [Endpoint] = []
@@ -940,16 +1220,18 @@ final class MockRouting: Routing {
         routeToReceivedInvocations.append(endpoint)
         routeToClosure?(endpoint)
     }
-
 }
+
+
+// MARK: - MockSearchHistory -
+
 final class MockSearchHistory: SearchHistory {
-
-
-    //MARK: - addHistoryItem
+    
+   // MARK: - addHistoryItem
 
     var addHistoryItemCallsCount = 0
     var addHistoryItemCalled: Bool {
-        return addHistoryItemCallsCount > 0
+        addHistoryItemCallsCount > 0
     }
     var addHistoryItemReceivedItem: String?
     var addHistoryItemReceivedInvocations: [String] = []
@@ -961,40 +1243,41 @@ final class MockSearchHistory: SearchHistory {
         addHistoryItemReceivedInvocations.append(item)
         addHistoryItemClosure?(item)
     }
-
-    //MARK: - historyItems
+    
+   // MARK: - historyItems
 
     var historyItemsCallsCount = 0
     var historyItemsCalled: Bool {
-        return historyItemsCallsCount > 0
+        historyItemsCallsCount > 0
     }
     var historyItemsReturnValue: [String]!
     var historyItemsClosure: (() -> [String])?
 
     func historyItems() -> [String] {
         historyItemsCallsCount += 1
-        if let historyItemsClosure = historyItemsClosure {
-            return historyItemsClosure()
-        } else {
-            return historyItemsReturnValue
-        }
+        return historyItemsClosure.map({ $0() }) ?? historyItemsReturnValue
     }
-
 }
+
+
+// MARK: - MockSecureEnclaveSignatureProvider -
+
 final class MockSecureEnclaveSignatureProvider: SecureEnclaveSignatureProvider {
+    
+   // MARK: - isBiometrieRegistered
 
     var isBiometrieRegistered: AnyPublisher<Bool, Never> {
-        get { return underlyingIsBiometrieRegistered }
+        get { underlyingIsBiometrieRegistered }
         set(value) { underlyingIsBiometrieRegistered = value }
     }
     var underlyingIsBiometrieRegistered: AnyPublisher<Bool, Never>!
-
-    //MARK: - createPairingSession
+    
+   // MARK: - createPairingSession
 
     var createPairingSessionThrowableError: Error?
     var createPairingSessionCallsCount = 0
     var createPairingSessionCalled: Bool {
-        return createPairingSessionCallsCount > 0
+        createPairingSessionCallsCount > 0
     }
     var createPairingSessionReturnValue: PairingSession!
     var createPairingSessionClosure: (() throws -> PairingSession)?
@@ -1004,18 +1287,14 @@ final class MockSecureEnclaveSignatureProvider: SecureEnclaveSignatureProvider {
             throw error
         }
         createPairingSessionCallsCount += 1
-        if let createPairingSessionClosure = createPairingSessionClosure {
-            return try createPairingSessionClosure()
-        } else {
-            return createPairingSessionReturnValue
-        }
+        return try createPairingSessionClosure.map({ try $0() }) ?? createPairingSessionReturnValue
     }
-
-    //MARK: - signPairingSession
+    
+   // MARK: - signPairingSession
 
     var signPairingSessionWithCertificateCallsCount = 0
     var signPairingSessionWithCertificateCalled: Bool {
-        return signPairingSessionWithCertificateCallsCount > 0
+        signPairingSessionWithCertificateCallsCount > 0
     }
     var signPairingSessionWithCertificateReceivedArguments: (pairingSession: PairingSession, signer: JWTSigner, certificate: X509)?
     var signPairingSessionWithCertificateReceivedInvocations: [(pairingSession: PairingSession, signer: JWTSigner, certificate: X509)] = []
@@ -1026,19 +1305,15 @@ final class MockSecureEnclaveSignatureProvider: SecureEnclaveSignatureProvider {
         signPairingSessionWithCertificateCallsCount += 1
         signPairingSessionWithCertificateReceivedArguments = (pairingSession: pairingSession, signer: signer, certificate: certificate)
         signPairingSessionWithCertificateReceivedInvocations.append((pairingSession: pairingSession, signer: signer, certificate: certificate))
-        if let signPairingSessionWithCertificateClosure = signPairingSessionWithCertificateClosure {
-            return signPairingSessionWithCertificateClosure(pairingSession, signer, certificate)
-        } else {
-            return signPairingSessionWithCertificateReturnValue
-        }
+        return signPairingSessionWithCertificateClosure.map({ $0(pairingSession, signer, certificate) }) ?? signPairingSessionWithCertificateReturnValue
     }
-
-    //MARK: - abort
+    
+   // MARK: - abort
 
     var abortPairingSessionThrowableError: Error?
     var abortPairingSessionCallsCount = 0
     var abortPairingSessionCalled: Bool {
-        return abortPairingSessionCallsCount > 0
+        abortPairingSessionCallsCount > 0
     }
     var abortPairingSessionReceivedPairingSession: PairingSession?
     var abortPairingSessionReceivedInvocations: [PairingSession] = []
@@ -1053,12 +1328,12 @@ final class MockSecureEnclaveSignatureProvider: SecureEnclaveSignatureProvider {
         abortPairingSessionReceivedInvocations.append(pairingSession)
         try abortPairingSessionClosure?(pairingSession)
     }
-
-    //MARK: - authenticationData
+    
+   // MARK: - authenticationData
 
     var authenticationDataForCallsCount = 0
     var authenticationDataForCalled: Bool {
-        return authenticationDataForCallsCount > 0
+        authenticationDataForCallsCount > 0
     }
     var authenticationDataForReceivedChallenge: IDPChallengeSession?
     var authenticationDataForReceivedInvocations: [IDPChallengeSession] = []
@@ -1069,27 +1344,172 @@ final class MockSecureEnclaveSignatureProvider: SecureEnclaveSignatureProvider {
         authenticationDataForCallsCount += 1
         authenticationDataForReceivedChallenge = challenge
         authenticationDataForReceivedInvocations.append(challenge)
-        if let authenticationDataForClosure = authenticationDataForClosure {
-            return authenticationDataForClosure(challenge)
-        } else {
-            return authenticationDataForReturnValue
-        }
+        return authenticationDataForClosure.map({ $0(challenge) }) ?? authenticationDataForReturnValue
     }
-
 }
+
+
+// MARK: - MockSecureUserDataStore -
+
+final class MockSecureUserDataStore: SecureUserDataStore {
+    
+   // MARK: - can
+
+    var can: AnyPublisher<String?, Never> {
+        get { underlyingCan }
+        set(value) { underlyingCan = value }
+    }
+    var underlyingCan: AnyPublisher<String?, Never>!
+    
+   // MARK: - token
+
+    var token: AnyPublisher<IDPToken?, Never> {
+        get { underlyingToken }
+        set(value) { underlyingToken = value }
+    }
+    var underlyingToken: AnyPublisher<IDPToken?, Never>!
+    
+   // MARK: - discoveryDocument
+
+    var discoveryDocument: AnyPublisher<DiscoveryDocument?, Never> {
+        get { underlyingDiscoveryDocument }
+        set(value) { underlyingDiscoveryDocument = value }
+    }
+    var underlyingDiscoveryDocument: AnyPublisher<DiscoveryDocument?, Never>!
+    
+   // MARK: - certificate
+
+    var certificate: AnyPublisher<X509?, Never> {
+        get { underlyingCertificate }
+        set(value) { underlyingCertificate = value }
+    }
+    var underlyingCertificate: AnyPublisher<X509?, Never>!
+    
+   // MARK: - keyIdentifier
+
+    var keyIdentifier: AnyPublisher<Data?, Never> {
+        get { underlyingKeyIdentifier }
+        set(value) { underlyingKeyIdentifier = value }
+    }
+    var underlyingKeyIdentifier: AnyPublisher<Data?, Never>!
+    
+   // MARK: - set
+
+    var setCanCallsCount = 0
+    var setCanCalled: Bool {
+        setCanCallsCount > 0
+    }
+    var setCanReceivedCan: String?
+    var setCanReceivedInvocations: [String?] = []
+    var setCanClosure: ((String?) -> Void)?
+
+    func set(can: String?) {
+        setCanCallsCount += 1
+        setCanReceivedCan = can
+        setCanReceivedInvocations.append(can)
+        setCanClosure?(can)
+    }
+    
+   // MARK: - wipe
+
+    var wipeCallsCount = 0
+    var wipeCalled: Bool {
+        wipeCallsCount > 0
+    }
+    var wipeClosure: (() -> Void)?
+
+    func wipe() {
+        wipeCallsCount += 1
+        wipeClosure?()
+    }
+    
+   // MARK: - set
+
+    var setTokenCallsCount = 0
+    var setTokenCalled: Bool {
+        setTokenCallsCount > 0
+    }
+    var setTokenReceivedToken: IDPToken?
+    var setTokenReceivedInvocations: [IDPToken?] = []
+    var setTokenClosure: ((IDPToken?) -> Void)?
+
+    func set(token: IDPToken?) {
+        setTokenCallsCount += 1
+        setTokenReceivedToken = token
+        setTokenReceivedInvocations.append(token)
+        setTokenClosure?(token)
+    }
+    
+   // MARK: - set
+
+    var setDiscoveryCallsCount = 0
+    var setDiscoveryCalled: Bool {
+        setDiscoveryCallsCount > 0
+    }
+    var setDiscoveryReceivedDocument: DiscoveryDocument?
+    var setDiscoveryReceivedInvocations: [DiscoveryDocument?] = []
+    var setDiscoveryClosure: ((DiscoveryDocument?) -> Void)?
+
+    func set(discovery document: DiscoveryDocument?) {
+        setDiscoveryCallsCount += 1
+        setDiscoveryReceivedDocument = document
+        setDiscoveryReceivedInvocations.append(document)
+        setDiscoveryClosure?(document)
+    }
+    
+   // MARK: - set
+
+    var setCertificateCallsCount = 0
+    var setCertificateCalled: Bool {
+        setCertificateCallsCount > 0
+    }
+    var setCertificateReceivedCertificate: X509?
+    var setCertificateReceivedInvocations: [X509?] = []
+    var setCertificateClosure: ((X509?) -> Void)?
+
+    func set(certificate: X509?) {
+        setCertificateCallsCount += 1
+        setCertificateReceivedCertificate = certificate
+        setCertificateReceivedInvocations.append(certificate)
+        setCertificateClosure?(certificate)
+    }
+    
+   // MARK: - set
+
+    var setKeyIdentifierCallsCount = 0
+    var setKeyIdentifierCalled: Bool {
+        setKeyIdentifierCallsCount > 0
+    }
+    var setKeyIdentifierReceivedKeyIdentifier: Data?
+    var setKeyIdentifierReceivedInvocations: [Data?] = []
+    var setKeyIdentifierClosure: ((Data?) -> Void)?
+
+    func set(keyIdentifier: Data?) {
+        setKeyIdentifierCallsCount += 1
+        setKeyIdentifierReceivedKeyIdentifier = keyIdentifier
+        setKeyIdentifierReceivedInvocations.append(keyIdentifier)
+        setKeyIdentifierClosure?(keyIdentifier)
+    }
+}
+
+
+// MARK: - MockShipmentInfoDataStore -
+
 final class MockShipmentInfoDataStore: ShipmentInfoDataStore {
+    
+   // MARK: - selectedShipmentInfo
 
     var selectedShipmentInfo: AnyPublisher<ShipmentInfo?, LocalStoreError> {
-        get { return underlyingSelectedShipmentInfo }
+        get { underlyingSelectedShipmentInfo }
         set(value) { underlyingSelectedShipmentInfo = value }
     }
     var underlyingSelectedShipmentInfo: AnyPublisher<ShipmentInfo?, LocalStoreError>!
-
-    //MARK: - set
+    
+   // MARK: - set
 
     var setSelectedShipmentInfoIdCallsCount = 0
     var setSelectedShipmentInfoIdCalled: Bool {
-        return setSelectedShipmentInfoIdCallsCount > 0
+        setSelectedShipmentInfoIdCallsCount > 0
     }
     var setSelectedShipmentInfoIdReceivedSelectedShipmentInfoId: UUID?
     var setSelectedShipmentInfoIdReceivedInvocations: [UUID] = []
@@ -1101,12 +1521,12 @@ final class MockShipmentInfoDataStore: ShipmentInfoDataStore {
         setSelectedShipmentInfoIdReceivedInvocations.append(selectedShipmentInfoId)
         setSelectedShipmentInfoIdClosure?(selectedShipmentInfoId)
     }
-
-    //MARK: - fetchShipmentInfo
+    
+   // MARK: - fetchShipmentInfo
 
     var fetchShipmentInfoByCallsCount = 0
     var fetchShipmentInfoByCalled: Bool {
-        return fetchShipmentInfoByCallsCount > 0
+        fetchShipmentInfoByCallsCount > 0
     }
     var fetchShipmentInfoByReceivedIdentifier: UUID?
     var fetchShipmentInfoByReceivedInvocations: [UUID] = []
@@ -1117,36 +1537,28 @@ final class MockShipmentInfoDataStore: ShipmentInfoDataStore {
         fetchShipmentInfoByCallsCount += 1
         fetchShipmentInfoByReceivedIdentifier = identifier
         fetchShipmentInfoByReceivedInvocations.append(identifier)
-        if let fetchShipmentInfoByClosure = fetchShipmentInfoByClosure {
-            return fetchShipmentInfoByClosure(identifier)
-        } else {
-            return fetchShipmentInfoByReturnValue
-        }
+        return fetchShipmentInfoByClosure.map({ $0(identifier) }) ?? fetchShipmentInfoByReturnValue
     }
-
-    //MARK: - listAllShipmentInfos
+    
+   // MARK: - listAllShipmentInfos
 
     var listAllShipmentInfosCallsCount = 0
     var listAllShipmentInfosCalled: Bool {
-        return listAllShipmentInfosCallsCount > 0
+        listAllShipmentInfosCallsCount > 0
     }
     var listAllShipmentInfosReturnValue: AnyPublisher<[ShipmentInfo], LocalStoreError>!
     var listAllShipmentInfosClosure: (() -> AnyPublisher<[ShipmentInfo], LocalStoreError>)?
 
     func listAllShipmentInfos() -> AnyPublisher<[ShipmentInfo], LocalStoreError> {
         listAllShipmentInfosCallsCount += 1
-        if let listAllShipmentInfosClosure = listAllShipmentInfosClosure {
-            return listAllShipmentInfosClosure()
-        } else {
-            return listAllShipmentInfosReturnValue
-        }
+        return listAllShipmentInfosClosure.map({ $0() }) ?? listAllShipmentInfosReturnValue
     }
-
-    //MARK: - save
+    
+   // MARK: - save
 
     var saveShipmentInfosCallsCount = 0
     var saveShipmentInfosCalled: Bool {
-        return saveShipmentInfosCallsCount > 0
+        saveShipmentInfosCallsCount > 0
     }
     var saveShipmentInfosReceivedShipmentInfos: [ShipmentInfo]?
     var saveShipmentInfosReceivedInvocations: [[ShipmentInfo]] = []
@@ -1157,18 +1569,14 @@ final class MockShipmentInfoDataStore: ShipmentInfoDataStore {
         saveShipmentInfosCallsCount += 1
         saveShipmentInfosReceivedShipmentInfos = shipmentInfos
         saveShipmentInfosReceivedInvocations.append(shipmentInfos)
-        if let saveShipmentInfosClosure = saveShipmentInfosClosure {
-            return saveShipmentInfosClosure(shipmentInfos)
-        } else {
-            return saveShipmentInfosReturnValue
-        }
+        return saveShipmentInfosClosure.map({ $0(shipmentInfos) }) ?? saveShipmentInfosReturnValue
     }
-
-    //MARK: - delete
+    
+   // MARK: - delete
 
     var deleteShipmentInfosCallsCount = 0
     var deleteShipmentInfosCalled: Bool {
-        return deleteShipmentInfosCallsCount > 0
+        deleteShipmentInfosCallsCount > 0
     }
     var deleteShipmentInfosReceivedShipmentInfos: [ShipmentInfo]?
     var deleteShipmentInfosReceivedInvocations: [[ShipmentInfo]] = []
@@ -1179,18 +1587,14 @@ final class MockShipmentInfoDataStore: ShipmentInfoDataStore {
         deleteShipmentInfosCallsCount += 1
         deleteShipmentInfosReceivedShipmentInfos = shipmentInfos
         deleteShipmentInfosReceivedInvocations.append(shipmentInfos)
-        if let deleteShipmentInfosClosure = deleteShipmentInfosClosure {
-            return deleteShipmentInfosClosure(shipmentInfos)
-        } else {
-            return deleteShipmentInfosReturnValue
-        }
+        return deleteShipmentInfosClosure.map({ $0(shipmentInfos) }) ?? deleteShipmentInfosReturnValue
     }
-
-    //MARK: - update
+    
+   // MARK: - update
 
     var updateIdentifierMutatingCallsCount = 0
     var updateIdentifierMutatingCalled: Bool {
-        return updateIdentifierMutatingCallsCount > 0
+        updateIdentifierMutatingCallsCount > 0
     }
     var updateIdentifierMutatingReceivedArguments: (identifier: UUID, mutating: (inout ShipmentInfo) -> Void)?
     var updateIdentifierMutatingReceivedInvocations: [(identifier: UUID, mutating: (inout ShipmentInfo) -> Void)] = []
@@ -1201,32 +1605,36 @@ final class MockShipmentInfoDataStore: ShipmentInfoDataStore {
         updateIdentifierMutatingCallsCount += 1
         updateIdentifierMutatingReceivedArguments = (identifier: identifier, mutating: mutating)
         updateIdentifierMutatingReceivedInvocations.append((identifier: identifier, mutating: mutating))
-        if let updateIdentifierMutatingClosure = updateIdentifierMutatingClosure {
-            return updateIdentifierMutatingClosure(identifier, mutating)
-        } else {
-            return updateIdentifierMutatingReturnValue
-        }
+        return updateIdentifierMutatingClosure.map({ $0(identifier, mutating) }) ?? updateIdentifierMutatingReturnValue
     }
-
 }
+
+
+// MARK: - MockTracker -
+
 final class MockTracker: Tracker {
+    
+   // MARK: - optIn
 
     var optIn: Bool {
-        get { return underlyingOptIn }
+        get { underlyingOptIn }
         set(value) { underlyingOptIn = value }
     }
     var underlyingOptIn: Bool!
+    
+   // MARK: - optInPublisher
+
     var optInPublisher: AnyPublisher<Bool, Never> {
-        get { return underlyingOptInPublisher }
+        get { underlyingOptInPublisher }
         set(value) { underlyingOptInPublisher = value }
     }
     var underlyingOptInPublisher: AnyPublisher<Bool, Never>!
-
-    //MARK: - track
+    
+   // MARK: - track
 
     var trackEventsCallsCount = 0
     var trackEventsCalled: Bool {
-        return trackEventsCallsCount > 0
+        trackEventsCallsCount > 0
     }
     var trackEventsReceivedEvents: [AnalyticsEvent]?
     var trackEventsReceivedInvocations: [[AnalyticsEvent]] = []
@@ -1238,12 +1646,12 @@ final class MockTracker: Tracker {
         trackEventsReceivedInvocations.append(events)
         trackEventsClosure?(events)
     }
-
-    //MARK: - track
+    
+   // MARK: - track
 
     var trackScreensCallsCount = 0
     var trackScreensCalled: Bool {
-        return trackScreensCallsCount > 0
+        trackScreensCallsCount > 0
     }
     var trackScreensReceivedScreens: [AnalyticsScreen]?
     var trackScreensReceivedInvocations: [[AnalyticsScreen]] = []
@@ -1255,12 +1663,12 @@ final class MockTracker: Tracker {
         trackScreensReceivedInvocations.append(screens)
         trackScreensClosure?(screens)
     }
-
-    //MARK: - track
+    
+   // MARK: - track
 
     var trackEventCallsCount = 0
     var trackEventCalled: Bool {
-        return trackEventCallsCount > 0
+        trackEventCallsCount > 0
     }
     var trackEventReceivedEvent: String?
     var trackEventReceivedInvocations: [String] = []
@@ -1272,12 +1680,12 @@ final class MockTracker: Tracker {
         trackEventReceivedInvocations.append(event)
         trackEventClosure?(event)
     }
-
-    //MARK: - track
+    
+   // MARK: - track
 
     var trackScreenCallsCount = 0
     var trackScreenCalled: Bool {
-        return trackScreenCallsCount > 0
+        trackScreenCallsCount > 0
     }
     var trackScreenReceivedScreen: String?
     var trackScreenReceivedInvocations: [String] = []
@@ -1289,12 +1697,12 @@ final class MockTracker: Tracker {
         trackScreenReceivedInvocations.append(screen)
         trackScreenClosure?(screen)
     }
-
-    //MARK: - stopTracking
+    
+   // MARK: - stopTracking
 
     var stopTrackingCallsCount = 0
     var stopTrackingCalled: Bool {
-        return stopTrackingCallsCount > 0
+        stopTrackingCallsCount > 0
     }
     var stopTrackingClosure: (() -> Void)?
 
@@ -1302,77 +1710,115 @@ final class MockTracker: Tracker {
         stopTrackingCallsCount += 1
         stopTrackingClosure?()
     }
-
 }
+
+
+// MARK: - MockUserDataStore -
+
 final class MockUserDataStore: UserDataStore {
+    
+   // MARK: - hideOnboarding
 
     var hideOnboarding: AnyPublisher<Bool, Never> {
-        get { return underlyingHideOnboarding }
+        get { underlyingHideOnboarding }
         set(value) { underlyingHideOnboarding = value }
     }
     var underlyingHideOnboarding: AnyPublisher<Bool, Never>!
+    
+   // MARK: - isOnboardingHidden
+
     var isOnboardingHidden: Bool {
-        get { return underlyingIsOnboardingHidden }
+        get { underlyingIsOnboardingHidden }
         set(value) { underlyingIsOnboardingHidden = value }
     }
     var underlyingIsOnboardingHidden: Bool!
+    
+   // MARK: - onboardingVersion
+
     var onboardingVersion: AnyPublisher<String?, Never> {
-        get { return underlyingOnboardingVersion }
+        get { underlyingOnboardingVersion }
         set(value) { underlyingOnboardingVersion = value }
     }
     var underlyingOnboardingVersion: AnyPublisher<String?, Never>!
+    
+   // MARK: - hideCardWallIntro
+
     var hideCardWallIntro: AnyPublisher<Bool, Never> {
-        get { return underlyingHideCardWallIntro }
+        get { underlyingHideCardWallIntro }
         set(value) { underlyingHideCardWallIntro = value }
     }
     var underlyingHideCardWallIntro: AnyPublisher<Bool, Never>!
+    
+   // MARK: - serverEnvironmentConfiguration
+
     var serverEnvironmentConfiguration: AnyPublisher<String?, Never> {
-        get { return underlyingServerEnvironmentConfiguration }
+        get { underlyingServerEnvironmentConfiguration }
         set(value) { underlyingServerEnvironmentConfiguration = value }
     }
     var underlyingServerEnvironmentConfiguration: AnyPublisher<String?, Never>!
     var serverEnvironmentName: String?
+    
+   // MARK: - appSecurityOption
+
     var appSecurityOption: AnyPublisher<AppSecurityOption, Never> {
-        get { return underlyingAppSecurityOption }
+        get { underlyingAppSecurityOption }
         set(value) { underlyingAppSecurityOption = value }
     }
     var underlyingAppSecurityOption: AnyPublisher<AppSecurityOption, Never>!
+    
+   // MARK: - failedAppAuthentications
+
     var failedAppAuthentications: AnyPublisher<Int, Never> {
-        get { return underlyingFailedAppAuthentications }
+        get { underlyingFailedAppAuthentications }
         set(value) { underlyingFailedAppAuthentications = value }
     }
     var underlyingFailedAppAuthentications: AnyPublisher<Int, Never>!
+    
+   // MARK: - ignoreDeviceNotSecuredWarningPermanently
+
     var ignoreDeviceNotSecuredWarningPermanently: AnyPublisher<Bool, Never> {
-        get { return underlyingIgnoreDeviceNotSecuredWarningPermanently }
+        get { underlyingIgnoreDeviceNotSecuredWarningPermanently }
         set(value) { underlyingIgnoreDeviceNotSecuredWarningPermanently = value }
     }
     var underlyingIgnoreDeviceNotSecuredWarningPermanently: AnyPublisher<Bool, Never>!
+    
+   // MARK: - selectedProfileId
+
     var selectedProfileId: AnyPublisher<UUID?, Never> {
-        get { return underlyingSelectedProfileId }
+        get { underlyingSelectedProfileId }
         set(value) { underlyingSelectedProfileId = value }
     }
     var underlyingSelectedProfileId: AnyPublisher<UUID?, Never>!
+    
+   // MARK: - latestCompatibleModelVersion
+
     var latestCompatibleModelVersion: ModelVersion {
-        get { return underlyingLatestCompatibleModelVersion }
+        get { underlyingLatestCompatibleModelVersion }
         set(value) { underlyingLatestCompatibleModelVersion = value }
     }
     var underlyingLatestCompatibleModelVersion: ModelVersion!
+    
+   // MARK: - appStartCounter
+
     var appStartCounter: Int {
-        get { return underlyingAppStartCounter }
+        get { underlyingAppStartCounter }
         set(value) { underlyingAppStartCounter = value }
     }
     var underlyingAppStartCounter: Int!
+    
+   // MARK: - hideWelcomeDrawer
+
     var hideWelcomeDrawer: Bool {
-        get { return underlyingHideWelcomeDrawer }
+        get { underlyingHideWelcomeDrawer }
         set(value) { underlyingHideWelcomeDrawer = value }
     }
     var underlyingHideWelcomeDrawer: Bool!
-
-    //MARK: - set
+    
+   // MARK: - set
 
     var setHideOnboardingCallsCount = 0
     var setHideOnboardingCalled: Bool {
-        return setHideOnboardingCallsCount > 0
+        setHideOnboardingCallsCount > 0
     }
     var setHideOnboardingReceivedHideOnboarding: Bool?
     var setHideOnboardingReceivedInvocations: [Bool] = []
@@ -1384,12 +1830,12 @@ final class MockUserDataStore: UserDataStore {
         setHideOnboardingReceivedInvocations.append(hideOnboarding)
         setHideOnboardingClosure?(hideOnboarding)
     }
-
-    //MARK: - set
+    
+   // MARK: - set
 
     var setOnboardingVersionCallsCount = 0
     var setOnboardingVersionCalled: Bool {
-        return setOnboardingVersionCallsCount > 0
+        setOnboardingVersionCallsCount > 0
     }
     var setOnboardingVersionReceivedOnboardingVersion: String?
     var setOnboardingVersionReceivedInvocations: [String?] = []
@@ -1401,12 +1847,12 @@ final class MockUserDataStore: UserDataStore {
         setOnboardingVersionReceivedInvocations.append(onboardingVersion)
         setOnboardingVersionClosure?(onboardingVersion)
     }
-
-    //MARK: - set
+    
+   // MARK: - set
 
     var setHideCardWallIntroCallsCount = 0
     var setHideCardWallIntroCalled: Bool {
-        return setHideCardWallIntroCallsCount > 0
+        setHideCardWallIntroCallsCount > 0
     }
     var setHideCardWallIntroReceivedHideCardWallIntro: Bool?
     var setHideCardWallIntroReceivedInvocations: [Bool] = []
@@ -1418,12 +1864,12 @@ final class MockUserDataStore: UserDataStore {
         setHideCardWallIntroReceivedInvocations.append(hideCardWallIntro)
         setHideCardWallIntroClosure?(hideCardWallIntro)
     }
-
-    //MARK: - set
+    
+   // MARK: - set
 
     var setServerEnvironmentConfigurationCallsCount = 0
     var setServerEnvironmentConfigurationCalled: Bool {
-        return setServerEnvironmentConfigurationCallsCount > 0
+        setServerEnvironmentConfigurationCallsCount > 0
     }
     var setServerEnvironmentConfigurationReceivedServerEnvironmentConfiguration: String?
     var setServerEnvironmentConfigurationReceivedInvocations: [String?] = []
@@ -1435,12 +1881,12 @@ final class MockUserDataStore: UserDataStore {
         setServerEnvironmentConfigurationReceivedInvocations.append(serverEnvironmentConfiguration)
         setServerEnvironmentConfigurationClosure?(serverEnvironmentConfiguration)
     }
-
-    //MARK: - set
+    
+   // MARK: - set
 
     var setAppSecurityOptionCallsCount = 0
     var setAppSecurityOptionCalled: Bool {
-        return setAppSecurityOptionCallsCount > 0
+        setAppSecurityOptionCallsCount > 0
     }
     var setAppSecurityOptionReceivedAppSecurityOption: AppSecurityOption?
     var setAppSecurityOptionReceivedInvocations: [AppSecurityOption] = []
@@ -1452,12 +1898,12 @@ final class MockUserDataStore: UserDataStore {
         setAppSecurityOptionReceivedInvocations.append(appSecurityOption)
         setAppSecurityOptionClosure?(appSecurityOption)
     }
-
-    //MARK: - set
+    
+   // MARK: - set
 
     var setFailedAppAuthenticationsCallsCount = 0
     var setFailedAppAuthenticationsCalled: Bool {
-        return setFailedAppAuthenticationsCallsCount > 0
+        setFailedAppAuthenticationsCallsCount > 0
     }
     var setFailedAppAuthenticationsReceivedFailedAppAuthentications: Int?
     var setFailedAppAuthenticationsReceivedInvocations: [Int] = []
@@ -1469,12 +1915,12 @@ final class MockUserDataStore: UserDataStore {
         setFailedAppAuthenticationsReceivedInvocations.append(failedAppAuthentications)
         setFailedAppAuthenticationsClosure?(failedAppAuthentications)
     }
-
-    //MARK: - set
+    
+   // MARK: - set
 
     var setIgnoreDeviceNotSecuredWarningPermanentlyCallsCount = 0
     var setIgnoreDeviceNotSecuredWarningPermanentlyCalled: Bool {
-        return setIgnoreDeviceNotSecuredWarningPermanentlyCallsCount > 0
+        setIgnoreDeviceNotSecuredWarningPermanentlyCallsCount > 0
     }
     var setIgnoreDeviceNotSecuredWarningPermanentlyReceivedIgnoreDeviceNotSecuredWarningPermanently: Bool?
     var setIgnoreDeviceNotSecuredWarningPermanentlyReceivedInvocations: [Bool] = []
@@ -1486,12 +1932,12 @@ final class MockUserDataStore: UserDataStore {
         setIgnoreDeviceNotSecuredWarningPermanentlyReceivedInvocations.append(ignoreDeviceNotSecuredWarningPermanently)
         setIgnoreDeviceNotSecuredWarningPermanentlyClosure?(ignoreDeviceNotSecuredWarningPermanently)
     }
-
-    //MARK: - set
+    
+   // MARK: - set
 
     var setSelectedProfileIdCallsCount = 0
     var setSelectedProfileIdCalled: Bool {
-        return setSelectedProfileIdCallsCount > 0
+        setSelectedProfileIdCallsCount > 0
     }
     var setSelectedProfileIdReceivedSelectedProfileId: UUID?
     var setSelectedProfileIdReceivedInvocations: [UUID] = []
@@ -1503,12 +1949,12 @@ final class MockUserDataStore: UserDataStore {
         setSelectedProfileIdReceivedInvocations.append(selectedProfileId)
         setSelectedProfileIdClosure?(selectedProfileId)
     }
-
-    //MARK: - wipeAll
+    
+   // MARK: - wipeAll
 
     var wipeAllCallsCount = 0
     var wipeAllCalled: Bool {
-        return wipeAllCallsCount > 0
+        wipeAllCallsCount > 0
     }
     var wipeAllClosure: (() -> Void)?
 
@@ -1516,21 +1962,26 @@ final class MockUserDataStore: UserDataStore {
         wipeAllCallsCount += 1
         wipeAllClosure?()
     }
-
 }
+
+
+// MARK: - MockUserProfileService -
+
 final class MockUserProfileService: UserProfileService {
+    
+   // MARK: - selectedProfileId
 
     var selectedProfileId: AnyPublisher<UUID?, Never> {
-        get { return underlyingSelectedProfileId }
+        get { underlyingSelectedProfileId }
         set(value) { underlyingSelectedProfileId = value }
     }
     var underlyingSelectedProfileId: AnyPublisher<UUID?, Never>!
-
-    //MARK: - set
+    
+   // MARK: - set
 
     var setSelectedProfileIdCallsCount = 0
     var setSelectedProfileIdCalled: Bool {
-        return setSelectedProfileIdCallsCount > 0
+        setSelectedProfileIdCallsCount > 0
     }
     var setSelectedProfileIdReceivedSelectedProfileId: UUID?
     var setSelectedProfileIdReceivedInvocations: [UUID] = []
@@ -1542,48 +1993,40 @@ final class MockUserProfileService: UserProfileService {
         setSelectedProfileIdReceivedInvocations.append(selectedProfileId)
         setSelectedProfileIdClosure?(selectedProfileId)
     }
-
-    //MARK: - userProfilesPublisher
+    
+   // MARK: - userProfilesPublisher
 
     var userProfilesPublisherCallsCount = 0
     var userProfilesPublisherCalled: Bool {
-        return userProfilesPublisherCallsCount > 0
+        userProfilesPublisherCallsCount > 0
     }
     var userProfilesPublisherReturnValue: AnyPublisher<[UserProfile], UserProfileServiceError>!
     var userProfilesPublisherClosure: (() -> AnyPublisher<[UserProfile], UserProfileServiceError>)?
 
     func userProfilesPublisher() -> AnyPublisher<[UserProfile], UserProfileServiceError> {
         userProfilesPublisherCallsCount += 1
-        if let userProfilesPublisherClosure = userProfilesPublisherClosure {
-            return userProfilesPublisherClosure()
-        } else {
-            return userProfilesPublisherReturnValue
-        }
+        return userProfilesPublisherClosure.map({ $0() }) ?? userProfilesPublisherReturnValue
     }
-
-    //MARK: - activeUserProfilePublisher
+    
+   // MARK: - activeUserProfilePublisher
 
     var activeUserProfilePublisherCallsCount = 0
     var activeUserProfilePublisherCalled: Bool {
-        return activeUserProfilePublisherCallsCount > 0
+        activeUserProfilePublisherCallsCount > 0
     }
     var activeUserProfilePublisherReturnValue: AnyPublisher<UserProfile, UserProfileServiceError>!
     var activeUserProfilePublisherClosure: (() -> AnyPublisher<UserProfile, UserProfileServiceError>)?
 
     func activeUserProfilePublisher() -> AnyPublisher<UserProfile, UserProfileServiceError> {
         activeUserProfilePublisherCallsCount += 1
-        if let activeUserProfilePublisherClosure = activeUserProfilePublisherClosure {
-            return activeUserProfilePublisherClosure()
-        } else {
-            return activeUserProfilePublisherReturnValue
-        }
+        return activeUserProfilePublisherClosure.map({ $0() }) ?? activeUserProfilePublisherReturnValue
     }
-
-    //MARK: - save
+    
+   // MARK: - save
 
     var saveProfilesCallsCount = 0
     var saveProfilesCalled: Bool {
-        return saveProfilesCallsCount > 0
+        saveProfilesCallsCount > 0
     }
     var saveProfilesReceivedProfiles: [Profile]?
     var saveProfilesReceivedInvocations: [[Profile]] = []
@@ -1594,22 +2037,38 @@ final class MockUserProfileService: UserProfileService {
         saveProfilesCallsCount += 1
         saveProfilesReceivedProfiles = profiles
         saveProfilesReceivedInvocations.append(profiles)
-        if let saveProfilesClosure = saveProfilesClosure {
-            return saveProfilesClosure(profiles)
-        } else {
-            return saveProfilesReturnValue
-        }
+        return saveProfilesClosure.map({ $0(profiles) }) ?? saveProfilesReturnValue
     }
+    
+   // MARK: - update
 
+    var updateProfileIdMutatingCallsCount = 0
+    var updateProfileIdMutatingCalled: Bool {
+        updateProfileIdMutatingCallsCount > 0
+    }
+    var updateProfileIdMutatingReceivedArguments: (profileId: UUID, mutating: (inout Profile) -> Void)?
+    var updateProfileIdMutatingReceivedInvocations: [(profileId: UUID, mutating: (inout Profile) -> Void)] = []
+    var updateProfileIdMutatingReturnValue: AnyPublisher<Bool, UserProfileServiceError>!
+    var updateProfileIdMutatingClosure: ((UUID, @escaping (inout Profile) -> Void) -> AnyPublisher<Bool, UserProfileServiceError>)?
+
+    func update(profileId: UUID, mutating: @escaping (inout Profile) -> Void) -> AnyPublisher<Bool, UserProfileServiceError> {
+        updateProfileIdMutatingCallsCount += 1
+        updateProfileIdMutatingReceivedArguments = (profileId: profileId, mutating: mutating)
+        updateProfileIdMutatingReceivedInvocations.append((profileId: profileId, mutating: mutating))
+        return updateProfileIdMutatingClosure.map({ $0(profileId, mutating) }) ?? updateProfileIdMutatingReturnValue
+    }
 }
+
+
+// MARK: - MockUserSessionProvider -
+
 final class MockUserSessionProvider: UserSessionProvider {
-
-
-    //MARK: - userSession
+    
+   // MARK: - userSession
 
     var userSessionForCallsCount = 0
     var userSessionForCalled: Bool {
-        return userSessionForCallsCount > 0
+        userSessionForCallsCount > 0
     }
     var userSessionForReceivedUuid: UUID?
     var userSessionForReceivedInvocations: [UUID] = []
@@ -1620,32 +2079,36 @@ final class MockUserSessionProvider: UserSessionProvider {
         userSessionForCallsCount += 1
         userSessionForReceivedUuid = uuid
         userSessionForReceivedInvocations.append(uuid)
-        if let userSessionForClosure = userSessionForClosure {
-            return userSessionForClosure(uuid)
-        } else {
-            return userSessionForReturnValue
-        }
+        return userSessionForClosure.map({ $0(uuid) }) ?? userSessionForReturnValue
     }
-
 }
+
+
+// MARK: - MockUsersSessionContainer -
+
 final class MockUsersSessionContainer: UsersSessionContainer {
+    
+   // MARK: - userSession
 
     var userSession: UserSession {
-        get { return underlyingUserSession }
+        get { underlyingUserSession }
         set(value) { underlyingUserSession = value }
     }
     var underlyingUserSession: UserSession!
+    
+   // MARK: - isDemoMode
+
     var isDemoMode: AnyPublisher<Bool, Never> {
-        get { return underlyingIsDemoMode }
+        get { underlyingIsDemoMode }
         set(value) { underlyingIsDemoMode = value }
     }
     var underlyingIsDemoMode: AnyPublisher<Bool, Never>!
-
-    //MARK: - switchToDemoMode
+    
+   // MARK: - switchToDemoMode
 
     var switchToDemoModeCallsCount = 0
     var switchToDemoModeCalled: Bool {
-        return switchToDemoModeCallsCount > 0
+        switchToDemoModeCallsCount > 0
     }
     var switchToDemoModeClosure: (() -> Void)?
 
@@ -1653,12 +2116,12 @@ final class MockUsersSessionContainer: UsersSessionContainer {
         switchToDemoModeCallsCount += 1
         switchToDemoModeClosure?()
     }
-
-    //MARK: - switchToStandardMode
+    
+   // MARK: - switchToStandardMode
 
     var switchToStandardModeCallsCount = 0
     var switchToStandardModeCalled: Bool {
-        return switchToStandardModeCallsCount > 0
+        switchToStandardModeCallsCount > 0
     }
     var switchToStandardModeClosure: (() -> Void)?
 
@@ -1666,5 +2129,4 @@ final class MockUsersSessionContainer: UsersSessionContainer {
         switchToStandardModeCallsCount += 1
         switchToStandardModeClosure?()
     }
-
 }

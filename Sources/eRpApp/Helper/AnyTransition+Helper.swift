@@ -46,7 +46,23 @@ extension AnyTransition {
         }
     }
 
+    struct Scale: ViewModifier {
+        private let scale: Double
+
+        init(_ scale: Double) {
+            self.scale = scale
+        }
+
+        func body(content: Content) -> some View {
+            content.scaleEffect(scale)
+        }
+    }
+
     static func endlessFade(from fromOpacity: Double, to toOpacity: Double, duration: Double = 1) -> AnyTransition {
         repeating(from: Opacity(fromOpacity), to: Opacity(toOpacity), duration: duration)
+    }
+
+    static func endlessScale(from fromScale: Double, to toScale: Double, duration: Double = 1) -> AnyTransition {
+        repeating(from: Scale(fromScale), to: Scale(toScale), duration: duration)
     }
 }

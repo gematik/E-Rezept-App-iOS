@@ -26,6 +26,11 @@ public struct SecondaryButtonStyle: ButtonStyle {
     private var isDestructive: Bool
     private var isEnabled: Bool
 
+    public init(enabled: Bool) {
+        isEnabled = enabled
+        isDestructive = false
+    }
+
     public init(enabled: Bool = true, destructive: Bool = false) {
         isEnabled = enabled
         isDestructive = destructive
@@ -61,7 +66,7 @@ extension ButtonStyle where Self == SecondaryButtonStyle {
     ///
     /// To apply this style to a button, or to a view that contains buttons, use
     /// the ``View.buttonStyle(.secondary)`` modifier.
-    public static var secondary: SecondaryButtonStyle { SecondaryButtonStyle() }
+    public static var secondary: SecondaryButtonStyle { SecondaryButtonStyle(enabled: true) }
 
     /// A button style that applies fg and bg color, as well as border radius.
     ///
@@ -103,7 +108,7 @@ public struct SecondaryAltButtonStyle: ButtonStyle {
             .font(.body.weight(.semibold))
             .frame(maxWidth: .infinity, minHeight: 52, alignment: .center)
             .opacity(configuration.isPressed ? 0.25 : 1)
-            .background(Color(.systemGray6))
+            .background(Colors.systemBackgroundSecondary)
             .foregroundColor(foregroundColor)
             .cornerRadius(16)
             .padding(.horizontal)

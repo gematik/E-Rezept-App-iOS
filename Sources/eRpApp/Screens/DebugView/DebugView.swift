@@ -33,11 +33,11 @@ struct DebugView: View {
                 LogSection(store: store)
                 FeatureFlagsSection()
                 VirtualEGKLogin(store: store)
+                LocalTaskStatusView(store: store)
                 CardWallSection(store: store)
                 OnboardingSection(store: store)
                 LoginSection(store: store)
             }
-            .respectKeyboardInsets()
             .onAppear { viewStore.send(.appear) }
             .alert(isPresented: viewStore.binding(
                 get: \.showAlert,
@@ -70,9 +70,6 @@ extension DebugView {
                                get: { state in state.trackingOptIn },
                                send: DebugDomain.Action.toggleTrackingTapped
                            ))
-                    Button("Reset hint events") {
-                        viewStore.send(.resetHintEvents)
-                    }
                     Button("Reset tooltips") {
                         viewStore.send(.resetTooltips)
                     }
@@ -129,6 +126,33 @@ extension DebugView {
                     Button("Reset CERT- and OCSP-Lists") {
                         viewStore.send(.resetOcspAndCertListButtonTapped)
                     }
+                }
+            }
+        }
+    }
+
+    struct LocalTaskStatusView: View {
+        @ObservedObject
+        private var viewStore: ViewStore<DebugDomain.State, DebugDomain.Action>
+
+        init(store: DebugDomain.Store) {
+            viewStore = ViewStore(store)
+        }
+
+        var body: some View {
+            Section(header: Text("Local Task Status")) {
+                VStack(alignment: .leading) {
+                    Text("Fake task status for:")
+                    HStack {
+                        TextField("Test", text: viewStore.binding(
+                            get: \.fakeTaskStatus,
+                            send: DebugDomain.Action.setFaceErxTaskStatus
+                        ))
+                            .keyboardType(.numberPad)
+                        Text("Seconds")
+                            .foregroundColor(.gray)
+                    }
+                    .font(.system(.body, design: .monospaced))
                 }
             }
         }
@@ -221,11 +245,44 @@ extension DebugView {
     }
 
     private struct LoginSection: View {
-        @Injected(\.fhirDateFormatter) var dateFormatter: FHIRDateFormatter
+        @Dependency(\.fhirDateFormatter) var dateFormatter: FHIRDateFormatter
         let store: DebugDomain.Store
 
         var body: some View {
             WithViewStore(store) { viewStore in
+                Section(header: Text("Active Profile")) {
+                    if let profile = viewStore.profile {
+                        HStack {
+                            ProfilePictureView(text: "TE",
+                                               image: .baby,
+                                               color: .red,
+                                               connection: nil,
+                                               style: .small) {}
+
+                            VStack(alignment: .leading) {
+                                Text(profile.name)
+                                Text("\nInsurance Type: \(profile.insuranceType.rawValue)")
+                                    .font(.footnote)
+                            }
+                        }
+
+                        Button("Mark as PKV") {
+                            viewStore.send(.setProfileInsuranceTypeToPKV)
+                        }
+//                        .disabled(profile.insuranceType != .gKV)
+                        .foregroundColor(profile.insuranceType == .gKV ? Color.orange : Color.gray)
+                        .accessibilityIdentifier("debug_btn_mark_profile_as_pkv")
+
+                        FootnoteView(
+                            text: "Profiles that have been logged in may be marked as pKV profiles. Marked profiles may not be converted back.",
+                            // swiftlint:disable:previous line_length
+                            a11y: ""
+                        )
+                    } else {
+                        Text("Loading current Profile...")
+                    }
+                }
+
                 Section(header: Text("Login With Token")) {
                     Group {
                         TextEditor(text: viewStore.binding(
@@ -280,7 +337,6 @@ extension DebugView {
                                 UIPasteboard.general.string = viewStore.token?.accessToken
                             }
                         })
-                        .animation(.easeInOut)
                         .padding()
                         .frame(maxWidth: .infinity, minHeight: 0, maxHeight: 100)
                         .foregroundColor(Colors.systemGray)

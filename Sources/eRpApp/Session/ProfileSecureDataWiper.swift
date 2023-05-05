@@ -17,6 +17,7 @@
 //
 
 import Combine
+import ComposableArchitecture
 import DataKit
 import eRpKit
 import Foundation
@@ -100,5 +101,24 @@ class DemoProfileSecureDataWiper: ProfileSecureDataWiper {
 
     func secureStorage(of _: UUID) -> SecureUserDataStore {
         MemoryStorage()
+    }
+}
+
+// MARK: TCA Dependency
+
+extension DefaultProfileSecureDataWiper {
+    static let live = DefaultProfileSecureDataWiper(userSessionProvider: UserSessionProviderDependency.liveValue)
+}
+
+struct ProfileSecureDataWiperDependency: DependencyKey {
+    static let liveValue: ProfileSecureDataWiper = DefaultProfileSecureDataWiper.live
+
+    static let testValue: ProfileSecureDataWiper = UnimplementedProfileSecureDataWiper()
+}
+
+extension DependencyValues {
+    var profileSecureDataWiper: ProfileSecureDataWiper {
+        get { self[ProfileSecureDataWiperDependency.self] }
+        set { self[ProfileSecureDataWiperDependency.self] = newValue }
     }
 }

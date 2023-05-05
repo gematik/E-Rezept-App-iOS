@@ -40,7 +40,11 @@ final class PharmacyFHIRDataSourceTests: XCTestCase {
 
         host = "some-fhir-service.com"
         service = URL(string: "http://\(host ?? "")")!
-        fhirClient = FHIRClient(server: service, httpClient: DefaultHTTPClient(urlSessionConfiguration: .default))
+        fhirClient = FHIRClient(
+            server: service,
+            httpClient: DefaultHTTPClient(urlSessionConfiguration: .default),
+            receiveQueue: .immediate
+        )
         sut = PharmacyFHIRDataSource(fhirClient: fhirClient)
     }
 

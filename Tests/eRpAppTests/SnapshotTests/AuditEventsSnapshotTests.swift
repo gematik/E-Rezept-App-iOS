@@ -17,6 +17,7 @@
 //
 
 import CombineSchedulers
+import ComposableArchitecture
 @testable import eRpApp
 import IdentifiedCollections
 import IDP
@@ -55,14 +56,12 @@ final class AuditEventsSnapshotTests: XCTestCase {
 
         let sut = NavigationView {
             AuditEventsView(
-                store: .init(initialState: .init(profileUUID: UUID(),
-                                                 entries: IdentifiedArrayOf(uniqueElements: elements),
-                                                 lastUpdated: "Last Edited 2021-01-20, 16:21"),
-                             reducer: .empty,
-                             environment: AuditEventsDomain.Environment(
-                                 schedulers: Schedulers(),
-                                 profileDataStore: MockProfileDataStore()
-                             ))
+                store: .init(
+                    initialState: .init(profileUUID: UUID(),
+                                        entries: IdentifiedArrayOf(uniqueElements: elements),
+                                        lastUpdated: "Last Edited 2021-01-20, 16:21"),
+                    reducer: EmptyReducer()
+                )
             )
         }
 
@@ -77,11 +76,7 @@ final class AuditEventsSnapshotTests: XCTestCase {
                 store: .init(initialState: .init(profileUUID: UUID(),
                                                  entries: [],
                                                  lastUpdated: nil),
-                             reducer: .empty,
-                             environment: AuditEventsDomain.Environment(
-                                 schedulers: Schedulers(),
-                                 profileDataStore: MockProfileDataStore()
-                             ))
+                             reducer: EmptyReducer())
             )
         }
 
@@ -93,14 +88,12 @@ final class AuditEventsSnapshotTests: XCTestCase {
     func testLoadingAuditEventsSnapshots() {
         let sut = NavigationView {
             AuditEventsView(
-                store: .init(initialState: .init(profileUUID: UUID(),
-                                                 entries: nil,
-                                                 lastUpdated: nil),
-                             reducer: .empty,
-                             environment: AuditEventsDomain.Environment(
-                                 schedulers: Schedulers(),
-                                 profileDataStore: MockProfileDataStore()
-                             ))
+                store: .init(
+                    initialState: .init(profileUUID: UUID(),
+                                        entries: nil,
+                                        lastUpdated: nil),
+                    reducer: EmptyReducer()
+                )
             )
         }
 

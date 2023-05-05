@@ -16,6 +16,7 @@
 //  
 //
 
+import Dependencies
 import Zxcvbn
 
 // tag::PasswordStrengthTester[]
@@ -72,25 +73,21 @@ extension String {
 
 // end::PasswordStrengthTester[]
 
-// MARK: - MockPasswordStrengthTester -
+// MARK: TCA Dependency
 
-final class MockPasswordStrengthTester: PasswordStrengthTester {
-    // MARK: - passwordStrength
+extension DefaultPasswordStrengthTester {
+    static let live: Self = DefaultPasswordStrengthTester()
+}
 
-    var passwordStrengthForCallsCount = 0
-    var passwordStrengthForCalled: Bool {
-        passwordStrengthForCallsCount > 0
-    }
+struct PasswordStrengthTesterDependencyKey: DependencyKey {
+    static let liveValue: PasswordStrengthTester = DefaultPasswordStrengthTester.live
+    static let previewValue: PasswordStrengthTester = DefaultPasswordStrengthTester.live
+    static let testValue: PasswordStrengthTester = UnimplementedPasswordStrengthTester()
+}
 
-    var passwordStrengthForReceivedPassword: String?
-    var passwordStrengthForReceivedInvocations: [String] = []
-    var passwordStrengthForReturnValue: PasswordStrength!
-    var passwordStrengthForClosure: ((String) -> PasswordStrength)?
-
-    func passwordStrength(for password: String) -> PasswordStrength {
-        passwordStrengthForCallsCount += 1
-        passwordStrengthForReceivedPassword = password
-        passwordStrengthForReceivedInvocations.append(password)
-        return passwordStrengthForClosure.map { $0(password) } ?? passwordStrengthForReturnValue
+extension DependencyValues {
+    var passwordStrengthTester: PasswordStrengthTester {
+        get { self[PasswordStrengthTesterDependencyKey.self] }
+        set { self[PasswordStrengthTesterDependencyKey.self] = newValue }
     }
 }

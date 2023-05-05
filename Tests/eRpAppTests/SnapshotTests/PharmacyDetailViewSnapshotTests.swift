@@ -16,6 +16,7 @@
 //  
 //
 
+import ComposableArchitecture
 @testable import eRpApp
 import eRpKit
 import SnapshotTesting
@@ -28,6 +29,10 @@ final class PharmacyDetailViewSnapshotTests: XCTestCase {
         diffTool = "open"
     }
 
+    func store(for state: PharmacyDetailDomain.State) -> PharmacyDetailDomain.Store {
+        .init(initialState: state, reducer: EmptyReducer())
+    }
+
     func testPharmacyDetailWithAllButtons() {
         let sut = PharmacyDetailView(store: store(for: PharmacyDetailViewSnapshotTests.Fixtures.allOptionsState))
 
@@ -38,8 +43,8 @@ final class PharmacyDetailViewSnapshotTests: XCTestCase {
 
     func testPharmacyDetailInactivePharmacy() {
         let sut = PharmacyDetailView(
-            store: PharmacyDetailDomain.Dummies.storeFor(
-                PharmacyDetailDomain.State(
+            store: store(
+                for: .init(
                     erxTasks: PharmacyDetailDomain.Dummies.prescriptions,
                     pharmacyViewModel: PharmacyLocationViewModel.Fixtures.pharmacyInactive
                 )
@@ -49,19 +54,6 @@ final class PharmacyDetailViewSnapshotTests: XCTestCase {
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
-    }
-
-    func store(for state: PharmacyDetailDomain.State) -> PharmacyDetailDomain.Store {
-        .init(initialState: state,
-              reducer: .empty,
-              environment: PharmacyDetailDomain.Environment(
-                  schedulers: Schedulers(),
-                  userSession: MockUserSession(),
-                  signatureProvider: MockSecureEnclaveSignatureProvider(),
-                  accessibilityAnnouncementReceiver: { _ in },
-                  userSessionProvider: MockUserSessionProvider(),
-                  pharmacyRepository: MockPharmacyRepository()
-              ))
     }
 }
 

@@ -48,16 +48,16 @@ extension ModelsR4.MedicationRequest {
         } ?? false
     }
 
-    var workRelatedAccident: ErxTask.WorkRelatedAccident? {
+    var accidentInfo: AccidentInfo? {
         guard let accident = `extension`?.first(where: { identifier in
-            Prescription.Key.MedicationRequest.workRelatedAccidentKey
+            Prescription.Key.MedicationRequest.accidentInfoKey
                 .contains { $0.value == identifier.url.value?.url.absoluteString }
         }) else {
             return nil
         }
 
         let identifier: String? = accident.extension?.first { identifier in
-            Prescription.Key.MedicationRequest.workRelatedAccidentMarkKey
+            Prescription.Key.MedicationRequest.accidentTypeKey
                 .contains { $0.value == identifier.url.value?.url.absoluteString }
         }
         .flatMap {
@@ -69,7 +69,7 @@ extension ModelsR4.MedicationRequest {
         }
 
         let place: String? = accident.extension?.first { identifier in
-            Prescription.Key.MedicationRequest.workRelatedAccidentPlace
+            Prescription.Key.MedicationRequest.accidentPlaceKey
                 .contains { $0.value == identifier.url.value?.url.absoluteString }
         }
         .flatMap {
@@ -81,7 +81,7 @@ extension ModelsR4.MedicationRequest {
         }
 
         let date: String? = accident.extension?.first { identifier in
-            Prescription.Key.MedicationRequest.workRelatedAccidentDate
+            Prescription.Key.MedicationRequest.accidentDateKey
                 .contains { $0.value == identifier.url.value?.url.absoluteString }
         }
         .flatMap {
@@ -93,14 +93,19 @@ extension ModelsR4.MedicationRequest {
             return nil
         }
 
-        return ErxTask.WorkRelatedAccident(
-            mark: identifier,
+        var accidentType: AccidentInfo.AccidentType?
+        if let type = identifier {
+            accidentType = .init(type: type)
+        }
+
+        return AccidentInfo(
+            type: accidentType,
             workPlaceIdentifier: place,
             date: date
         )
     }
 
-    var multiplePrescription: ErxTask.MultiplePrescription? {
+    var multiplePrescription: MultiplePrescription? {
         guard let prescriptionInfo = `extension`?.first(where: {
             $0.url.value?.url.absoluteString == Prescription.Key.MedicationRequest.multiplePrescriptionKey
         }) else {
@@ -146,7 +151,7 @@ extension ModelsR4.MedicationRequest {
         let startPeriod: String? = period?.start?.value?.date.description
         let endPeriod: String? = period?.end?.value?.date.description
 
-        return ErxTask.MultiplePrescription(
+        return MultiplePrescription(
             mark: mark,
             numbering: numbering,
             totalNumber: totalNumber,
@@ -174,6 +179,18 @@ extension ModelsR4.MedicationRequest {
                 return ErxTask.CoPaymentStatus(rawValue: value)
             }
             return nil
+        }
+    }
+}
+
+extension AccidentInfo.AccidentType {
+    init(type: String) {
+        switch type {
+        case "1": self = .accident
+        case "2": self = .workAccident
+        case "4": self = .workRelatedDisease
+        default:
+            self = .unknown
         }
     }
 }

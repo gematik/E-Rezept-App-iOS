@@ -16,6 +16,7 @@
 //  
 //
 
+import Combine
 import ComposableArchitecture
 @testable import eRpApp
 import LocalAuthentication
@@ -25,13 +26,14 @@ import XCTest
 final class RegisterAuthenticationDomainTests: XCTestCase {
     var mockAppSecurityManager: MockAppSecurityManager!
     var mockPasswordStrengthTester: MockPasswordStrengthTester!
+    var mockAuthenticationChallengeProvider: MockAuthenticationChallengeProvider!
 
     typealias TestStore = ComposableArchitecture.TestStore<
         RegisterAuthenticationDomain.State,
         RegisterAuthenticationDomain.Action,
         RegisterAuthenticationDomain.State,
         RegisterAuthenticationDomain.Action,
-        RegisterAuthenticationDomain.Environment
+        Void
     >
 
     override func setUp() {
@@ -39,24 +41,23 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
 
         mockAppSecurityManager = MockAppSecurityManager()
         mockPasswordStrengthTester = MockPasswordStrengthTester()
+        mockAuthenticationChallengeProvider = MockAuthenticationChallengeProvider()
     }
 
     func testStore(
         with state: RegisterAuthenticationDomain.State,
-        passwordStrengthTester: PasswordStrengthTester = DefaultPasswordStrengthTester(),
-        challengeResponse: Result<Bool, AppAuthenticationBiometricsDomain.Error> = .success(true)
+        passwordStrengthTester: PasswordStrengthTester = DefaultPasswordStrengthTester()
     ) -> TestStore {
         TestStore(
             initialState: state,
-            reducer: RegisterAuthenticationDomain.reducer,
-            environment: RegisterAuthenticationDomain.Environment(
-                appSecurityManager: mockAppSecurityManager,
-                userDataStore: MockUserDataStore(),
-                schedulers: Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler()),
-                authenticationChallengeProvider: MockAuthenticationChallengeProvider(result: challengeResponse),
-                passwordStrengthTester: passwordStrengthTester
-            )
-        )
+            reducer: RegisterAuthenticationDomain()
+        ) { dependencies in
+            dependencies.appSecurityManager = mockAppSecurityManager
+            dependencies.userDataStore = MockUserDataStore()
+            dependencies.schedulers = Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler())
+            dependencies.authenticationChallengeProvider = mockAuthenticationChallengeProvider
+            dependencies.passwordStrengthTester = passwordStrengthTester
+        }
     }
 
     let testScheduler = DispatchQueue.test
@@ -197,6 +198,9 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
             )
         )
 
+        mockAuthenticationChallengeProvider.startAuthenticationChallengeReturnValue = Just(.success(true))
+            .eraseToAnyPublisher()
+
         store.send(.select(.biometry(.faceID))) { state in
             state.selectedSecurityOption = .biometry(.faceID)
         }
@@ -217,9 +221,11 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
             with: RegisterAuthenticationDomain.State(
                 availableSecurityOptions: [.password, .biometry(.faceID)],
                 selectedSecurityOption: .biometry(.faceID)
-            ),
-            challengeResponse: .success(false)
+            )
         )
+
+        mockAuthenticationChallengeProvider.startAuthenticationChallengeReturnValue = Just(.success(false))
+            .eraseToAnyPublisher()
 
         store.send(.startBiometry)
         testScheduler.advance()
@@ -239,9 +245,11 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
             with: RegisterAuthenticationDomain.State(
                 availableSecurityOptions: [.password, .biometry(.touchID)],
                 selectedSecurityOption: .biometry(.touchID)
-            ),
-            challengeResponse: expectedResponse
+            )
         )
+
+        mockAuthenticationChallengeProvider.startAuthenticationChallengeReturnValue = Just(expectedResponse)
+            .eraseToAnyPublisher()
 
         store.send(.startBiometry)
         testScheduler.advance()
@@ -265,6 +273,9 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
                 showNoSelectionMessage: true
             )
         )
+
+        mockAuthenticationChallengeProvider.startAuthenticationChallengeReturnValue = Just(.success(true))
+            .eraseToAnyPublisher()
 
         store.send(.select(.biometry(.faceID))) { state in
             state.selectedSecurityOption = .biometry(.faceID)
@@ -400,9 +411,9 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
                 alertState: nil
             )
         )
-        let authenticationChallengeProvider =
-            store.environment.authenticationChallengeProvider as! MockAuthenticationChallengeProvider
-        authenticationChallengeProvider.result = .success(false)
+
+        mockAuthenticationChallengeProvider.startAuthenticationChallengeReturnValue = Just(.success(false))
+            .eraseToAnyPublisher()
 
         store.send(.startBiometry)
         testScheduler.run()

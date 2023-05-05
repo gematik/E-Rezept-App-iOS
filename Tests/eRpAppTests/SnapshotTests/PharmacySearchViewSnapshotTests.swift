@@ -16,6 +16,7 @@
 //  
 //
 
+import ComposableArchitecture
 @testable import eRpApp
 import eRpKit
 import SnapshotTesting
@@ -23,36 +24,21 @@ import SwiftUI
 import XCTest
 
 final class PharmacySearchViewSnapshotTests: XCTestCase {
-    var uiApplicationMock: UIApplicationOpenURLMock!
+    var resourceHandlerMock: MockResourceHandler!
 
     override func setUp() {
         super.setUp()
 
-        uiApplicationMock = UIApplicationOpenURLMock()
+        resourceHandlerMock = MockResourceHandler()
         diffTool = "open"
     }
-
-    let environment = PharmacySearchDomain.Environment(
-        schedulers: Schedulers(),
-        pharmacyRepository: MockPharmacyRepository(),
-        locationManager: .live,
-        fhirDateFormatter: FHIRDateFormatter.shared,
-        openHoursCalculator: PharmacyOpenHoursCalculator(),
-        referenceDateForOpenHours: PharmacySearchDomainTests.TestData.openHoursTestReferenceDate,
-        userSession: DummySessionContainer(),
-        openURL: { _, _, _ in },
-        signatureProvider: DummySecureEnclaveSignatureProvider(),
-        accessibilityAnnouncementReceiver: { _ in },
-        userSessionProvider: DummyUserSessionProvider()
-    )
 
     func testPharmacySearchStartView_WithoutLocalPharmacies() {
         let sut = NavigationView {
             PharmacySearchView(
                 store: PharmacySearchDomain.Store(
                     initialState: PharmacySearchDomainTests.TestData.stateWithStartView,
-                    reducer: .empty,
-                    environment: environment
+                    reducer: EmptyReducer()
                 )
             )
         }
@@ -81,8 +67,7 @@ final class PharmacySearchViewSnapshotTests: XCTestCase {
             PharmacySearchView(
                 store: PharmacySearchDomain.Store(
                     initialState: state,
-                    reducer: .empty,
-                    environment: environment
+                    reducer: EmptyReducer()
                 )
             )
         }
@@ -95,12 +80,13 @@ final class PharmacySearchViewSnapshotTests: XCTestCase {
     func testPharmacySearch_searchResultEmpty() {
         let sut = NavigationView {
             PharmacySearchView(
-                store: storeFor(
-                    state: .init(
+                store: .init(
+                    initialState: .init(
                         erxTasks: [],
                         searchText: "Apothekesdfwerwerasdf",
                         searchState: .searchResultEmpty
-                    )
+                    ),
+                    reducer: EmptyReducer()
                 ),
                 profileSelectionToolbarItemStore: storeFor(profile: UserProfile.Dummies.profileA),
                 isRedeemRecipe: false
@@ -115,13 +101,14 @@ final class PharmacySearchViewSnapshotTests: XCTestCase {
     func testPharmacySearch_searchResultSuccess() {
         let sut = NavigationView {
             PharmacySearchView(
-                store: storeFor(
-                    state: .init(
+                store: .init(
+                    initialState: .init(
                         erxTasks: [],
                         searchText: "Adler Apo",
                         pharmacies: PharmacyLocationViewModel.Fixtures.pharmacies,
                         searchState: .searchResultOk
-                    )
+                    ),
+                    reducer: EmptyReducer()
                 ),
                 profileSelectionToolbarItemStore: storeFor(profile: UserProfile.Dummies.profileA),
                 isRedeemRecipe: false
@@ -133,35 +120,10 @@ final class PharmacySearchViewSnapshotTests: XCTestCase {
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
     }
 
-    func storeFor(state: PharmacySearchDomain.State) -> PharmacySearchDomain.Store {
-        .init(
-            initialState: state,
-            reducer: .empty,
-            environment: PharmacySearchDomain.Environment(
-                schedulers: Schedulers(),
-                pharmacyRepository: MockPharmacyRepository(),
-                locationManager: .unimplemented(),
-                fhirDateFormatter: FHIRDateFormatter.shared,
-                openHoursCalculator: PharmacyOpenHoursCalculator(),
-                referenceDateForOpenHours: Date(),
-                userSession: MockUserSession(),
-                openURL: uiApplicationMock.openURL,
-                signatureProvider: MockSecureEnclaveSignatureProvider(),
-                accessibilityAnnouncementReceiver: { _ in },
-                userSessionProvider: MockUserSessionProvider()
-            )
-        )
-    }
-
     func storeFor(profile: UserProfile?) -> ProfileSelectionToolbarItemDomain.Store {
         .init(
             initialState: .init(profile: profile, profileSelectionState: .init()),
-            reducer: .empty,
-            environment: ProfileSelectionToolbarItemDomain.Environment(
-                schedulers: Schedulers(),
-                userProfileService: MockUserProfileService(),
-                router: MockRouting()
-            )
+            reducer: EmptyReducer()
         )
     }
 }

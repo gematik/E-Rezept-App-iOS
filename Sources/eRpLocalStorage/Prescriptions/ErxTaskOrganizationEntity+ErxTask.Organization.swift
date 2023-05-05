@@ -20,7 +20,7 @@ import CoreData
 import eRpKit
 
 extension ErxTaskOrganizationEntity {
-    convenience init?(organization: ErxTask.Organization?,
+    convenience init?(organization: ErxOrganization?,
                       in context: NSManagedObjectContext) {
         guard let organization = organization else { return nil }
 
@@ -34,7 +34,7 @@ extension ErxTaskOrganizationEntity {
     }
 }
 
-extension ErxTask.Organization {
+extension ErxOrganization {
     init?(entity: ErxTaskOrganizationEntity?) {
         guard let entity = entity else { return nil }
 

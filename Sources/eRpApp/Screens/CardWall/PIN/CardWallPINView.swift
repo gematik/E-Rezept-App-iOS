@@ -24,13 +24,13 @@ struct CardWallPINView: View {
     let store: CardWallPINDomain.Store
 
     struct ViewState: Equatable {
-        let routeTag: CardWallPINDomain.Route.Tag?
+        let routeTag: CardWallPINDomain.Destinations.State.Tag?
         let enteredPINValid: Bool
         let isDemoModus: Bool
         let transitionMode: CardWallPINDomain.TransitionMode
 
         init(state: CardWallPINDomain.State) {
-            routeTag = state.route?.tag
+            routeTag = state.destination?.tag
             enteredPINValid = state.enteredPINValid
             isDemoModus = state.isDemoModus
             transitionMode = state.transition
@@ -70,11 +70,9 @@ struct CardWallPINView: View {
                 content: {
                     NavigationView {
                         IfLetStore(
-                            store.scope(
-                                state: (\CardWallPINDomain.State.route)
-                                    .appending(path: /CardWallPINDomain.Route.login)
-                                    .extract(from:),
-                                action: CardWallPINDomain.Action.login(action:)
+                            store.destinationsScope(
+                                state: /CardWallPINDomain.Destinations.State.login,
+                                action: CardWallPINDomain.Destinations.Action.login
                             ),
                             then: CardWallLoginOptionView.init(store:)
                         )
@@ -86,15 +84,13 @@ struct CardWallPINView: View {
                 if viewStore.transitionMode == .push {
                     NavigationLink(
                         destination: IfLetStore(
-                            store.scope(
-                                state: (\CardWallPINDomain.State.route)
-                                    .appending(path: /CardWallPINDomain.Route.login)
-                                    .extract(from:),
-                                action: CardWallPINDomain.Action.login(action:)
+                            store.destinationsScope(
+                                state: /CardWallPINDomain.Destinations.State.login,
+                                action: CardWallPINDomain.Destinations.Action.login
                             ),
                             then: CardWallLoginOptionView.init(store:)
                         ),
-                        tag: CardWallPINDomain.Route.Tag.login,
+                        tag: CardWallPINDomain.Destinations.State.Tag.login,
                         selection: viewStore.binding(
                             get: \.routeTag
                         ) {
@@ -111,7 +107,7 @@ struct CardWallPINView: View {
             .navigationBarTitle(L10n.cdwTxtPinTitle, displayMode: .inline)
             .navigationBarItems(
                 trailing: NavigationBarCloseItem {
-                    viewStore.send(.close)
+                    viewStore.send(.delegate(.close))
                 }
                 .accessibility(identifier: A11y.cardWall.pinInput.cdwBtnPinCancel)
                 .accessibility(label: Text(L10n.cdwBtnPinCancelLabel))
@@ -123,13 +119,13 @@ struct CardWallPINView: View {
         let store: CardWallPINDomain.Store
 
         struct ViewState: Equatable {
-            let routeTag: CardWallPINDomain.Route.Tag?
+            let routeTag: CardWallPINDomain.Destinations.State.Tag?
             let wrongPinEntered: Bool
             let showWarning: Bool
             let warningMessage: String
 
             init(state: CardWallPINDomain.State) {
-                routeTag = state.route?.tag
+                routeTag = state.destination?.tag
                 wrongPinEntered = state.wrongPinEntered
                 showWarning = state.showWarning
                 warningMessage = state.warningMessage
@@ -171,11 +167,9 @@ struct CardWallPINView: View {
                     content: {
                         NavigationView {
                             IfLetStore(
-                                store.scope(
-                                    state: (\CardWallPINDomain.State.route)
-                                        .appending(path: /CardWallPINDomain.Route.egk)
-                                        .extract(from:),
-                                    action: CardWallPINDomain.Action.egkAction(action:)
+                                store.destinationsScope(
+                                    state: /CardWallPINDomain.Destinations.State.egk,
+                                    action: CardWallPINDomain.Destinations.Action.egkAction(action:)
                                 ),
                                 then: OrderHealthCardView.init(store:)
                             )
@@ -216,7 +210,6 @@ struct CardWallPINView: View {
                         }
                     }
                 }
-                .respectKeyboardInsets()
             }
         }
     }

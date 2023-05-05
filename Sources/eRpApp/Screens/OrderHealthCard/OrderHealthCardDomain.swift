@@ -21,14 +21,8 @@ import ComposableArchitecture
 import eRpKit
 import SwiftUI
 
-enum OrderHealthCardDomain {
-    typealias Store = ComposableArchitecture.Store<State, Action>
-    typealias Reducer = ComposableArchitecture.Reducer<State, Action, Environment>
-
-    enum Route: Equatable {
-        case searchPicker
-        case serviceInquiry
-    }
+struct OrderHealthCardDomain: ReducerProtocol {
+    typealias Store = StoreOf<Self>
 
     struct State: Equatable {
         var insuranceCompanies = [HealthInsuranceCompany]()
@@ -36,9 +30,10 @@ enum OrderHealthCardDomain {
         var serviceInquiry: ServiceInquiry?
         var searchText: String = ""
         var searchHealthInsurance = [HealthInsuranceCompany]()
-        var route: Route?
         var healthInsuranceCompanyId: UUID?
         var serviceInquiryId: Int = -1
+
+        var destination: Destinations.State?
     }
 
     enum ServiceInquiry: Int, CaseIterable, Identifiable {
@@ -61,14 +56,40 @@ enum OrderHealthCardDomain {
         case searchList
         case setService(service: Int)
         case selectHealthInsurance(id: UUID)
-        case setNavigation(tag: Route.Tag?)
         case resetList
-        case close
+
+        case destination(Destinations.Action)
+        case setNavigation(tag: Destinations.State.Tag?)
+
+        case delegate(Delegate)
+
+        enum Delegate: Equatable {
+            case close
+        }
     }
 
-    struct Environment {}
+    struct Destinations: ReducerProtocol {
+        enum State: Equatable {
+            case searchPicker
+            case serviceInquiry
+        }
 
-    private static let domainReducer = Reducer { state, action, _ in
+        enum Action: Equatable {}
+
+        var body: some ReducerProtocol<State, Action> {
+            EmptyReducer()
+        }
+    }
+
+    var body: some ReducerProtocol<State, Action> {
+        Reduce(self.core)
+            .ifLet(\.destination, action: /Action.destination) {
+                Destinations()
+            }
+    }
+
+    // swiftlint:disable:next function_body_length cyclomatic_complexity
+    func core(into state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
         case .loadList:
             let decoder = JSONDecoder()
@@ -85,10 +106,10 @@ enum OrderHealthCardDomain {
             state.insuranceCompanies = insuranceCompanies
             return .none
         case .setNavigation(tag: .serviceInquiry):
-            state.route = .serviceInquiry
+            state.destination = .serviceInquiry
             return .none
         case .setNavigation(tag: .searchPicker):
-            state.route = .searchPicker
+            state.destination = .searchPicker
             return .none
         case let .updateSearchText(newPrompt):
             state.searchText = newPrompt
@@ -104,14 +125,14 @@ enum OrderHealthCardDomain {
             return .none
         case let .setService(service):
             state.serviceInquiryId = service
-            state.route = nil
+            state.destination = nil
 
             state.serviceInquiry = ServiceInquiry(rawValue: state.serviceInquiryId)
 
             return .none
         case let .selectHealthInsurance(id):
             state.healthInsuranceCompanyId = id
-            state.route = nil
+            state.destination = nil
 
             state.insuranceCompany = state.insuranceCompanies.first { $0.id == state.healthInsuranceCompanyId }
             if let inquiryId = state.insuranceCompany?.serviceInquiryOptions.first {
@@ -125,17 +146,13 @@ enum OrderHealthCardDomain {
             state.searchHealthInsurance = state.insuranceCompanies
             return .none
         case .setNavigation(tag: nil):
-            state.route = nil
+            state.destination = nil
             return .none
-        case .close,
+        case .delegate,
              .setNavigation:
             return .none
         }
     }
-
-    static let reducer = Reducer.combine(
-        domainReducer
-    )
 }
 
 extension OrderHealthCardDomain {
@@ -218,8 +235,6 @@ extension OrderHealthCardDomain {
     }
 }
 
-extension OrderHealthCardDomain.Environment {}
-
 extension OrderHealthCardDomain.HealthInsuranceCompany {
     static let dummyHealthInsuranceCompany = OrderHealthCardDomain.HealthInsuranceCompany(
         name: "DummyHealthInsuranceCompany",
@@ -244,14 +259,10 @@ extension OrderHealthCardDomain {
             serviceInquiryId: 1
         )
 
-        static let environment = Environment()
-
         static let store = storeFor(state)
 
         static func storeFor(_ state: State) -> Store {
-            Store(initialState: state,
-                  reducer: reducer,
-                  environment: environment)
+            Store(initialState: state, reducer: OrderHealthCardDomain())
         }
     }
 }

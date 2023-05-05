@@ -17,6 +17,7 @@
 //
 
 import Combine
+import Dependencies
 import eRpKit
 import eRpLocalStorage
 import Foundation
@@ -88,5 +89,43 @@ class DefaultUserSessionProvider: UserSessionProvider, UserSessionProviderContro
     func resetSession(with config: AppConfiguration) {
         userSessions = [:]
         appConfiguration = config
+    }
+}
+
+// MARK: TCA Dependency
+
+extension DefaultUserSessionProvider {
+    static let liveValue = DefaultUserSessionProvider(
+        initialUserSession: UserSessionDependency.initialValue,
+        schedulers: Schedulers.liveValue,
+        coreDataControllerFactory: CoreDataControllerFactoryDependency.liveValue,
+        profileDataStore: ProfileDataStoreDependency.initialValue,
+        appConfiguration: UserDataStoreDependency.liveValue.appConfiguration
+    )
+}
+
+struct UserSessionProviderDependency: DependencyKey {
+    static let liveValue: UserSessionProvider = DefaultUserSessionProvider.liveValue
+
+    static let testValue: UserSessionProvider = UnimplementedUserSessionProvider()
+}
+
+extension DependencyValues {
+    var userSessionProvider: UserSessionProvider {
+        get { self[UserSessionProviderDependency.self] }
+        set { self[UserSessionProviderDependency.self] = newValue }
+    }
+}
+
+struct UserSessionProviderControlDependency: DependencyKey {
+    static let liveValue: UserSessionProviderControl = DefaultUserSessionProvider.liveValue
+
+    static let testValue: UserSessionProviderControl = UnimplementedUserSessionProviderControl()
+}
+
+extension DependencyValues {
+    var userSessionProviderControl: UserSessionProviderControl {
+        get { self[UserSessionProviderControlDependency.self] }
+        set { self[UserSessionProviderControlDependency.self] = newValue }
     }
 }

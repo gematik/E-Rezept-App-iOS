@@ -73,11 +73,6 @@ class DemoSessionContainer: UserSession {
         DemoShipmentInfoStore()
     }()
 
-    lazy var hintEventsStore: EventsStore = {
-        // In demo mode we need the same store as in the default session
-        HintEventsStore()
-    }()
-
     lazy var isAuthenticated: AnyPublisher<Bool, UserSessionError> = {
         idpSession.isLoggedIn
             .mapError { UserSessionError.idpError(error: $0) }
@@ -161,10 +156,7 @@ class DemoSessionContainer: UserSession {
 
     private lazy var demoPrescriptionRepositoryWithActivity: DefaultPrescriptionRepository = {
         DefaultPrescriptionRepository(
-            loginHandler: DefaultLoginHandler(
-                idpSession: idpSession,
-                signatureProvider: DummySecureEnclaveSignatureProvider()
-            ),
+            loginHandler: idpSessionLoginHandler,
             erxTaskRepository: self.erxTaskRepository
         )
     }()
@@ -175,6 +167,24 @@ class DemoSessionContainer: UserSession {
 
     lazy var activityIndicating: ActivityIndicating = {
         demoPrescriptionRepositoryWithActivity
+    }()
+
+    lazy var idpSessionLoginHandler: LoginHandler = {
+        DefaultLoginHandler(
+            idpSession: idpSession,
+            signatureProvider: secureEnclaveSignatureProvider
+        )
+    }()
+
+    lazy var biometricsIdpSessionLoginHandler: LoginHandler = {
+        DefaultLoginHandler(
+            idpSession: biometrieIdpSession,
+            signatureProvider: secureEnclaveSignatureProvider
+        )
+    }()
+
+    lazy var secureEnclaveSignatureProvider: SecureEnclaveSignatureProvider = {
+        DummySecureEnclaveSignatureProvider()
     }()
 }
 

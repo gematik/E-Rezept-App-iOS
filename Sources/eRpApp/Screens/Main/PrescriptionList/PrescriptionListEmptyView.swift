@@ -31,13 +31,11 @@ struct PrescriptionListEmptyView: View {
     struct ViewState: Equatable {
         let profile: UserProfile?
         let isConnected: Bool
-        let hasProfilePicture: Bool
         let hasArchivedPrescriptions: Bool
 
         init(state: PrescriptionListDomain.State) {
             profile = state.profile
             isConnected = profile?.connectionStatus == .connected
-            hasProfilePicture = profile?.emoji != nil
             hasArchivedPrescriptions = state.prescriptions.first(where: \.isArchived) != nil
         }
     }
@@ -45,12 +43,15 @@ struct PrescriptionListEmptyView: View {
     var body: some View {
         VStack(spacing: 0) {
             ProfilePictureView(
-                emoji: viewStore.profile?.emoji,
+                text: viewStore.profile?.acronym,
+                image: viewStore.profile?.image,
                 color: viewStore.profile?.color.background,
                 connection: viewStore.profile?.connectionStatus,
                 style: .large
             ) {
-                viewStore.send(.profilePictureViewTapped)
+                if let profile = viewStore.profile {
+                    viewStore.send(.profilePictureViewTapped(profile))
+                }
             }
             .padding(.bottom)
 

@@ -17,12 +17,15 @@
 //
 
 import ComposableArchitecture
+import eRpKit
 import SwiftUI
 
 struct PrescriptionLowDetailView: View {
     let store: PrescriptionDetailDomain.Store
     @ObservedObject
     var viewStore: ViewStore<ViewState, PrescriptionDetailDomain.Action>
+    // TODO: move dependency into domain and do formatting in the view model // swiftlint:disable:this todo
+    @Dependency(\.uiDateFormatter) var uiDateFormatter
 
     init(store: PrescriptionDetailDomain.Store) {
         self.store = store
@@ -96,13 +99,15 @@ struct PrescriptionLowDetailView: View {
                     .padding(.horizontal)
             }
 
-            MedicationRedeemView(
-                text: viewStore.prescription.isArchived ? L10n.dtlBtnToogleMarkedRedeemed : L10n
-                    .dtlBtnToogleMarkRedeemed,
-                a11y: A11y.prescriptionDetails.prscDtlBtnToggleRedeem,
-                isEnabled: viewStore.prescription.isRedeemable
-            ) {
-                viewStore.send(.toggleRedeemPrescription)
+            if viewStore.prescription.isManualRedeemEnabled {
+                MedicationRedeemView(
+                    text: viewStore.prescription.isArchived ? L10n.dtlBtnToogleMarkedRedeemed : L10n
+                        .dtlBtnToogleMarkRedeemed,
+                    a11y: A11y.prescriptionDetails.prscDtlBtnToggleRedeem,
+                    isEnabled: viewStore.prescription.isRedeemable
+                ) {
+                    viewStore.send(.toggleRedeemPrescription)
+                }
             }
 
             if !viewStore.prescription.isArchived {
@@ -124,9 +129,9 @@ struct PrescriptionLowDetailView: View {
             }
 
             MedicationProtocolView(
-                protocolEvents: [(uiFormattedDate(dateString: viewStore.prescription.authoredOn),
+                protocolEvents: [(uiDateFormatter.relativeDate(viewStore.prescription.authoredOn),
                                   L10n.dtlTxtScannedOn.text)],
-                lastUpdated: uiFormattedDate(dateString: viewStore.prescription.redeemedOn)
+                lastUpdated: uiDateFormatter.relativeDate(viewStore.prescription.redeemedOn)
             )
 
             MedicationInfoView(codeInfos: [
@@ -168,10 +173,7 @@ struct PrescriptionLowDetailView: View {
             }
         }
         .alert(
-            self.store
-                .scope(state: (\PrescriptionDetailDomain.State.route)
-                    .appending(path: /PrescriptionDetailDomain.Route.alert)
-                    .extract(from:)),
+            store.destinationsScope(state: /PrescriptionDetailDomain.Destinations.State.alert),
             dismiss: .setNavigation(tag: .none)
         )
         .toolbarShareSheet(store: store)
@@ -202,14 +204,6 @@ struct PrescriptionLowDetailView: View {
             .border(Colors.separator, width: 0.5, cornerRadius: 16)
         }
     }
-
-    private func uiFormattedDate(dateString: String?) -> String? {
-        if let dateString = dateString,
-           let date = globals.fhirDateFormatter.date(from: dateString) {
-            return globals.uiDateFormatter.string(from: date)
-        }
-        return dateString
-    }
 }
 
 struct PrescriptionLowDetailView_Previews: PreviewProvider {
@@ -219,12 +213,10 @@ struct PrescriptionLowDetailView_Previews: PreviewProvider {
         }
         NavigationView {
             PrescriptionLowDetailView(
-                store: PrescriptionDetailDomain.Store(
-                    initialState: PrescriptionDetailDomain.State(
+                store: PrescriptionDetailDomain.Dummies.storeFor(
+                    PrescriptionDetailDomain.State(
                         prescription: .Dummies.prescriptionError, isArchived: false
-                    ),
-                    reducer: PrescriptionDetailDomain.domainReducer,
-                    environment: PrescriptionDetailDomain.Dummies.environment
+                    )
                 )
             )
         }

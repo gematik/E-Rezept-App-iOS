@@ -24,39 +24,38 @@ import Nimble
 import XCTest
 
 final class AppStartDomainTests: XCTestCase {
-    var mockUserDataStore = MockUserDataStore()
+    var mockUserDataStore: MockUserDataStore!
 
     typealias TestStore = ComposableArchitecture.TestStore<
         AppStartDomain.State,
         AppStartDomain.Action,
         AppStartDomain.State,
         AppStartDomain.Action,
-        AppStartDomain.Environment
+        Void
     >
 
+    override func setUp() {
+        super.setUp()
+
+        mockUserDataStore = MockUserDataStore()
+    }
+
     private func testStore(with state: AppStartDomain.State = .init()) -> TestStore {
-        TestStore(
+        let mockAuthenticationChallengeProvider = MockAuthenticationChallengeProvider()
+        mockAuthenticationChallengeProvider.startAuthenticationChallengeReturnValue = Just(.success(true))
+            .eraseToAnyPublisher()
+        return TestStore(
             initialState: state,
-            reducer: AppStartDomain.reducer,
-            environment: AppStartDomain.Environment(
-                appVersion: AppVersion.current,
-                router: MockRouting(),
-                userSessionContainer: MockUsersSessionContainer(),
-                userSession: MockUserSession(),
-                userDataStore: mockUserDataStore,
-                schedulers: Schedulers(
-                    uiScheduler: DispatchQueue.immediate.eraseToAnyScheduler()
-                ),
-                fhirDateFormatter: FHIRDateFormatter.shared,
-                serviceLocator: ServiceLocator(),
-                accessibilityAnnouncementReceiver: { _ in },
-                tracker: DummyTracker(),
-                signatureProvider: DummySecureEnclaveSignatureProvider(),
-                appSecurityManager: MockAppSecurityManager(),
-                authenticationChallengeProvider: MockAuthenticationChallengeProvider(result: .success(true)),
-                userSessionProvider: MockUserSessionProvider()
+            reducer: AppStartDomain()
+        ) { dependencies in
+            dependencies.userSession = MockUserSession()
+            dependencies.userDataStore = mockUserDataStore
+            dependencies.schedulers = Schedulers(
+                uiScheduler: DispatchQueue.immediate.eraseToAnyScheduler()
             )
-        )
+            dependencies.appSecurityManager = MockAppSecurityManager()
+            dependencies.router = MockRouting()
+        }
     }
 
     func testStartAppWithOnboardingState() {
@@ -64,31 +63,37 @@ final class AppStartDomainTests: XCTestCase {
         mockUserDataStore.hideOnboarding = Just(false).eraseToAnyPublisher()
         mockUserDataStore.onboardingVersion = Just(nil).eraseToAnyPublisher()
 
+        store.dependencies.userDataStore = mockUserDataStore
+        store.dependencies.currentAppVersion = .previewValue
+
         store.send(.refreshOnboardingState)
         // when receiving onboarding with composition
         store.receive(.refreshOnboardingStateReceived(OnboardingDomain.Composition.allPages)) {
             // onboarding should be presented
             $0 = .onboarding(OnboardingDomain.State(composition: OnboardingDomain.Composition.allPages))
         }
+
         // when onboarding was dismissed
         store.send(.onboarding(action: .dismissOnboarding)) {
             // than app should be presented
             $0 = .app(
                 AppDomain.State(
-                    route: .main,
-                    main: MainDomain.State(
-                        prescriptionListState: PrescriptionListDomain.State(),
-                        horizontalProfileSelectionState: HorizontalProfileSelectionDomain.State()
+                    destination: .main,
+                    subdomains: .init(
+                        main: MainDomain.State(
+                            prescriptionListState: PrescriptionListDomain.State(),
+                            horizontalProfileSelectionState: HorizontalProfileSelectionDomain.State()
+                        ),
+                        pharmacySearch: PharmacySearchDomain.State(erxTasks: []),
+                        orders: OrdersDomain.State(orders: []),
+                        settingsState: SettingsDomain.State(isDemoMode: false,
+                                                            appSecurityState: .init(
+                                                                availableSecurityOptions: [.password],
+                                                                selectedSecurityOption: nil,
+                                                                errorToDisplay: nil
+                                                            )),
+                        profileSelection: .init()
                     ),
-                    pharmacySearch: PharmacySearchDomain.State(erxTasks: []),
-                    orders: OrdersDomain.State(orders: []),
-                    settingsState: SettingsDomain.State(isDemoMode: false,
-                                                        appSecurityState: .init(
-                                                            availableSecurityOptions: [.password],
-                                                            selectedSecurityOption: nil,
-                                                            errorToDisplay: nil
-                                                        )),
-                    profileSelection: .init(),
                     unreadOrderMessageCount: 0,
                     isDemoMode: false
                 )
@@ -106,6 +111,9 @@ final class AppStartDomainTests: XCTestCase {
             pages: [OnboardingDomain.Page.altRegisterAuthentication]
         )
 
+        store.dependencies.userDataStore = mockUserDataStore
+        store.dependencies.currentAppVersion = .previewValue
+
         store.send(.refreshOnboardingState)
         // when receiving onboarding with composition
         store.receive(.refreshOnboardingStateReceived(expectedComposition)) {
@@ -117,20 +125,22 @@ final class AppStartDomainTests: XCTestCase {
             // than app should be presented
             $0 = .app(
                 AppDomain.State(
-                    route: .main,
-                    main: MainDomain.State(
-                        prescriptionListState: PrescriptionListDomain.State(),
-                        horizontalProfileSelectionState: HorizontalProfileSelectionDomain.State()
+                    destination: .main,
+                    subdomains: .init(
+                        main: MainDomain.State(
+                            prescriptionListState: PrescriptionListDomain.State(),
+                            horizontalProfileSelectionState: HorizontalProfileSelectionDomain.State()
+                        ),
+                        pharmacySearch: PharmacySearchDomain.State(erxTasks: []),
+                        orders: OrdersDomain.State(orders: []),
+                        settingsState: .init(isDemoMode: false,
+                                             appSecurityState: .init(
+                                                 availableSecurityOptions: [.password],
+                                                 selectedSecurityOption: nil,
+                                                 errorToDisplay: nil
+                                             )),
+                        profileSelection: .init()
                     ),
-                    pharmacySearch: PharmacySearchDomain.State(erxTasks: []),
-                    orders: OrdersDomain.State(orders: []),
-                    settingsState: .init(isDemoMode: false,
-                                         appSecurityState: .init(
-                                             availableSecurityOptions: [.password],
-                                             selectedSecurityOption: nil,
-                                             errorToDisplay: nil
-                                         )),
-                    profileSelection: .init(),
                     unreadOrderMessageCount: 0,
                     isDemoMode: false
                 )
@@ -148,19 +158,21 @@ final class AppStartDomainTests: XCTestCase {
                                                                                    onboardingVersion: "version"))) {
             $0 = .app(
                 AppDomain.State(
-                    route: .main,
-                    main: MainDomain.State(
-                        prescriptionListState: PrescriptionListDomain.State(),
-                        horizontalProfileSelectionState: HorizontalProfileSelectionDomain.State()
+                    destination: .main,
+                    subdomains: .init(
+                        main: MainDomain.State(
+                            prescriptionListState: PrescriptionListDomain.State(),
+                            horizontalProfileSelectionState: HorizontalProfileSelectionDomain.State()
+                        ),
+                        pharmacySearch: PharmacySearchDomain.State(erxTasks: []),
+                        orders: OrdersDomain.State(orders: []),
+                        settingsState: .init(isDemoMode: false,
+                                             appSecurityState:
+                                             .init(availableSecurityOptions: [.password],
+                                                   selectedSecurityOption: nil,
+                                                   errorToDisplay: nil)),
+                        profileSelection: .init()
                     ),
-                    pharmacySearch: PharmacySearchDomain.State(erxTasks: []),
-                    orders: OrdersDomain.State(orders: []),
-                    settingsState: .init(isDemoMode: false,
-                                         appSecurityState:
-                                         .init(availableSecurityOptions: [.password],
-                                               selectedSecurityOption: nil,
-                                               errorToDisplay: nil)),
-                    profileSelection: .init(),
                     unreadOrderMessageCount: 0,
                     isDemoMode: false
                 )
@@ -173,7 +185,7 @@ final class AppStartDomainTests: XCTestCase {
 
         let url = URL(string: "https://das-e-rezept-fuer-deutschland.de/prescription#")!
 
-        let expected = AppStartDomain.Action.app(action: .main(action: .importTaskByUrl(url)))
+        let expected = AppStartDomain.Action.app(action: .subdomains(.main(action: .importTaskByUrl(url))))
 
         var success = false
 
@@ -194,7 +206,7 @@ final class AppStartDomainTests: XCTestCase {
 
         let url = URL(string: "https://das-e-rezept-fuer-deutschland.de/extauth/")!
 
-        let expected = AppStartDomain.Action.app(action: .main(action: .externalLogin(url)))
+        let expected = AppStartDomain.Action.app(action: .subdomains(.main(action: .externalLogin(url))))
 
         var success = false
 

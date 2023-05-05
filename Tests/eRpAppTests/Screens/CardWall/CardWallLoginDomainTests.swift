@@ -27,7 +27,7 @@ final class CardWallLoginDomainTests: XCTestCase {
         CardWallLoginOptionDomain.Action,
         CardWallLoginOptionDomain.State,
         CardWallLoginOptionDomain.Action,
-        CardWallLoginOptionDomain.Environment
+        Void
     >
 
     func testStore() -> TestStore {
@@ -35,56 +35,58 @@ final class CardWallLoginDomainTests: XCTestCase {
     }
 
     func testStore(for state: CardWallLoginOptionDomain.State) -> TestStore {
-        TestStore(initialState: state,
-                  reducer: CardWallLoginOptionDomain.reducer,
-                  environment: CardWallLoginOptionDomain.Environment(
-                      userSession: MockUserSession(),
-                      schedulers: Schedulers(),
-                      sessionProvider: DummyProfileBasedSessionProvider(),
-                      signatureProvider: DummySecureEnclaveSignatureProvider(),
-                      openURL: UIApplication.shared.open(_:options:completionHandler:)
-                  ))
+        TestStore(initialState: state, reducer: CardWallLoginOptionDomain()) { dependencies in
+            dependencies.userSession = MockUserSession()
+            dependencies.schedulers = Schedulers()
+            dependencies.resourceHandler = MockResourceHandler()
+        }
     }
 
     func testLoginOptionProceedWithBiometrie() {
         let store = testStore(for: CardWallLoginOptionDomain
-            .State(isDemoModus: false, pin: "", selectedLoginOption: .withBiometry, route: .none))
+            .State(isDemoModus: false, pin: "", selectedLoginOption: .withBiometry, destination: .none))
 
         store.send(.advance) { state in
-            state.route = .readcard(CardWallReadCardDomain.State(isDemoModus: false,
-                                                                 profileId: store.environment.userSession
-                                                                     .profileId,
-                                                                 pin: "",
-                                                                 loginOption: .withBiometry,
-                                                                 output: .idle))
+            state.destination = .readcard(CardWallReadCardDomain.State(
+                isDemoModus: false,
+                profileId: store.dependencies.userSession
+                    .profileId,
+                pin: "",
+                loginOption: .withBiometry,
+                output: .idle
+            ))
         }
     }
 
     func testLoginOptionProceedWithBiometrieButDemoMode() {
         let store = testStore(for: CardWallLoginOptionDomain
-            .State(isDemoModus: true, pin: "", selectedLoginOption: .withBiometry, route: .none))
+            .State(isDemoModus: true, pin: "", selectedLoginOption: .withBiometry, destination: .none))
 
         store.send(.advance) { state in
-            state.route = .readcard(CardWallReadCardDomain.State(isDemoModus: true,
-                                                                 profileId: store.environment.userSession
-                                                                     .profileId,
-                                                                 pin: "",
-                                                                 loginOption: .withoutBiometry,
-                                                                 output: .idle))
+            state.destination = .readcard(CardWallReadCardDomain.State(
+                isDemoModus: true,
+                profileId: store.dependencies.userSession
+                    .profileId,
+                pin: "",
+                loginOption: .withoutBiometry,
+                output: .idle
+            ))
         }
     }
 
     func testLoginOptionProceedWithoutBiometrie() {
         let store = testStore(for: CardWallLoginOptionDomain
-            .State(isDemoModus: false, pin: "", selectedLoginOption: .withoutBiometry, route: .none))
+            .State(isDemoModus: false, pin: "", selectedLoginOption: .withoutBiometry, destination: .none))
 
         store.send(.advance) { state in
-            state.route = .readcard(CardWallReadCardDomain.State(isDemoModus: false,
-                                                                 profileId: store.environment.userSession
-                                                                     .profileId,
-                                                                 pin: "",
-                                                                 loginOption: .withoutBiometry,
-                                                                 output: .idle))
+            state.destination = .readcard(CardWallReadCardDomain.State(
+                isDemoModus: false,
+                profileId: store.dependencies.userSession
+                    .profileId,
+                pin: "",
+                loginOption: .withoutBiometry,
+                output: .idle
+            ))
         }
     }
 }

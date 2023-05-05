@@ -117,7 +117,7 @@ struct PharmacySearchCell_Previews: PreviewProvider {
                     Text("container")
                 },
                 content: {
-                    ForEach(PharmacyLocationViewModel.Dummies.pharmacies, id: \.self) { pharmacyViewModel in
+                    ForEach(PharmacyLocationViewModel.Dummies.pharmacies) { pharmacyViewModel in
                         Button(
                             action: {},
                             label: {

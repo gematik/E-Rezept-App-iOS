@@ -25,9 +25,10 @@ import SwiftUI
 struct OrdersView: View {
     let store: OrdersDomain.Store
     let profileSelectionToolbarItemStore: ProfileSelectionToolbarItemDomain.Store
-
     @ObservedObject
     var viewStore: ViewStore<ViewState, OrdersDomain.Action>
+    // TODO: move dependency into domain and do formatting in the view model // swiftlint:disable:this todo
+    @Dependency(\.uiDateFormatter) var uiDateFormatter
 
     init(store: OrdersDomain.Store, profileSelectionToolbarItemStore: ProfileSelectionToolbarItemDomain.Store) {
         self.store = store
@@ -38,11 +39,11 @@ struct OrdersView: View {
     struct ViewState: Equatable {
         let orders: IdentifiedArrayOf<OrderCommunications>
 
-        let routeTag: OrdersDomain.Route.Tag?
+        let destinationTag: OrdersDomain.Destinations.State.Tag?
 
         init(state: OrdersDomain.State) {
             orders = state.orders
-            routeTag = state.route?.tag
+            destinationTag = state.destination?.tag
         }
     }
 
@@ -55,7 +56,7 @@ struct OrdersView: View {
                             ForEach(viewStore.orders) { order in
                                 OrderCellView(
                                     title: order.pharmacy?.name,
-                                    subtitle: Self.uiFormattedDate(dateString: order.lastUpdated) ?? "",
+                                    subtitle: uiDateFormatter.relativeDate(order.lastUpdated) ?? "",
                                     isNew: order.hasNewCommunications,
                                     prescriptionCount: order.prescriptionCount
                                 ) {
@@ -77,18 +78,15 @@ struct OrdersView: View {
                 // Navigation into details
                 NavigationLink(
                     destination: IfLetStore(
-                        store.scope(
-                            state: (\OrdersDomain.State.route)
-                                .appending(path: /OrdersDomain.Route.orderDetail)
-                                .extract(from:),
-                            action: OrdersDomain.Action.orderDetail(action:)
-                        )
-                    ) { scopedStore in
-                        OrderDetailView(store: scopedStore)
-                    },
-                    tag: OrdersDomain.Route.Tag.orderDetail,
+                        store.destinationsScope(
+                            state: /OrdersDomain.Destinations.State.orderDetail,
+                            action: OrdersDomain.Destinations.Action.orderDetail(action:)
+                        ),
+                        then: OrderDetailView.init(store:)
+                    ),
+                    tag: OrdersDomain.Destinations.State.Tag.orderDetail,
                     selection: viewStore.binding(
-                        get: \.routeTag,
+                        get: \.destinationTag,
                         send: OrdersDomain.Action.setNavigation
                     )
                 ) {
@@ -98,7 +96,7 @@ struct OrdersView: View {
                 Rectangle()
                     .frame(width: 0, height: 0, alignment: .center)
                     .sheet(isPresented: Binding<Bool>(
-                        get: { viewStore.routeTag == .selectProfile },
+                        get: { viewStore.destinationTag == .selectProfile },
                         set: { show in
                             if !show {
                                 viewStore.send(.setNavigation(tag: nil))
@@ -132,15 +130,6 @@ struct OrdersView: View {
         }
         .accentColor(Colors.primary600)
         .navigationViewStyle(StackNavigationViewStyle())
-    }
-
-    private static func uiFormattedDate(dateString: String?) -> String? {
-        if let dateString = dateString,
-           let date = globals.fhirDateFormatter.date(from: dateString,
-                                                     format: .yearMonthDay) {
-            return globals.uiDateFormatter.string(from: date)
-        }
-        return dateString
     }
 
     struct NoOdersView: View {

@@ -16,6 +16,7 @@
 //  
 //
 
+import Dependencies
 import Foundation
 
 struct AppVersion: Equatable {
@@ -45,5 +46,20 @@ private extension Bundle { // swiftlint:disable:this no_extension_access_modifie
 
     var gematikSourceVersion: String {
         infoDictionary?["GEMATIKSourceVersion"] as? String ?? "NO GEMATIKSourceVersion in Info.plist"
+    }
+}
+
+// MARK: TCA Dependency
+
+extension AppVersion: DependencyKey {
+    static let liveValue = AppVersion.current
+
+    static let previewValue = AppVersion(productVersion: "preview", buildNumber: "42", buildHash: "abc")
+}
+
+extension DependencyValues {
+    var currentAppVersion: AppVersion {
+        get { self[AppVersion.self] }
+        set { self[AppVersion.self] = newValue }
     }
 }

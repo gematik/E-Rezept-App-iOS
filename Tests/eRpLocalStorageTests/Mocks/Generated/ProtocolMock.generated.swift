@@ -1,4 +1,4 @@
-// Generated using Sourcery 1.9.0 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.0.1 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 import Combine
 import eRpKit
@@ -26,24 +26,24 @@ import Foundation
 
 
 
-
-
-
+// MARK: - MockCoreDataControllerFactory -
 
 final class MockCoreDataControllerFactory: CoreDataControllerFactory {
+    
+   // MARK: - databaseUrl
 
     var databaseUrl: URL {
-        get { return underlyingDatabaseUrl }
+        get { underlyingDatabaseUrl }
         set(value) { underlyingDatabaseUrl = value }
     }
     var underlyingDatabaseUrl: URL!
-
-    //MARK: - loadCoreDataController
+    
+   // MARK: - loadCoreDataController
 
     var loadCoreDataControllerThrowableError: Error?
     var loadCoreDataControllerCallsCount = 0
     var loadCoreDataControllerCalled: Bool {
-        return loadCoreDataControllerCallsCount > 0
+        loadCoreDataControllerCallsCount > 0
     }
     var loadCoreDataControllerReturnValue: CoreDataController!
     var loadCoreDataControllerClosure: (() throws -> CoreDataController)?
@@ -53,83 +53,117 @@ final class MockCoreDataControllerFactory: CoreDataControllerFactory {
             throw error
         }
         loadCoreDataControllerCallsCount += 1
-        if let loadCoreDataControllerClosure = loadCoreDataControllerClosure {
-            return try loadCoreDataControllerClosure()
-        } else {
-            return loadCoreDataControllerReturnValue
-        }
+        return try loadCoreDataControllerClosure.map({ try $0() }) ?? loadCoreDataControllerReturnValue
     }
-
 }
+
+
+// MARK: - MockUserDataStore -
+
 final class MockUserDataStore: UserDataStore {
+    
+   // MARK: - hideOnboarding
 
     var hideOnboarding: AnyPublisher<Bool, Never> {
-        get { return underlyingHideOnboarding }
+        get { underlyingHideOnboarding }
         set(value) { underlyingHideOnboarding = value }
     }
     var underlyingHideOnboarding: AnyPublisher<Bool, Never>!
+    
+   // MARK: - isOnboardingHidden
+
     var isOnboardingHidden: Bool {
-        get { return underlyingIsOnboardingHidden }
+        get { underlyingIsOnboardingHidden }
         set(value) { underlyingIsOnboardingHidden = value }
     }
     var underlyingIsOnboardingHidden: Bool!
+    
+   // MARK: - onboardingVersion
+
     var onboardingVersion: AnyPublisher<String?, Never> {
-        get { return underlyingOnboardingVersion }
+        get { underlyingOnboardingVersion }
         set(value) { underlyingOnboardingVersion = value }
     }
     var underlyingOnboardingVersion: AnyPublisher<String?, Never>!
+    
+   // MARK: - hideCardWallIntro
+
     var hideCardWallIntro: AnyPublisher<Bool, Never> {
-        get { return underlyingHideCardWallIntro }
+        get { underlyingHideCardWallIntro }
         set(value) { underlyingHideCardWallIntro = value }
     }
     var underlyingHideCardWallIntro: AnyPublisher<Bool, Never>!
+    
+   // MARK: - serverEnvironmentConfiguration
+
     var serverEnvironmentConfiguration: AnyPublisher<String?, Never> {
-        get { return underlyingServerEnvironmentConfiguration }
+        get { underlyingServerEnvironmentConfiguration }
         set(value) { underlyingServerEnvironmentConfiguration = value }
     }
     var underlyingServerEnvironmentConfiguration: AnyPublisher<String?, Never>!
     var serverEnvironmentName: String?
+    
+   // MARK: - appSecurityOption
+
     var appSecurityOption: AnyPublisher<AppSecurityOption, Never> {
-        get { return underlyingAppSecurityOption }
+        get { underlyingAppSecurityOption }
         set(value) { underlyingAppSecurityOption = value }
     }
     var underlyingAppSecurityOption: AnyPublisher<AppSecurityOption, Never>!
+    
+   // MARK: - failedAppAuthentications
+
     var failedAppAuthentications: AnyPublisher<Int, Never> {
-        get { return underlyingFailedAppAuthentications }
+        get { underlyingFailedAppAuthentications }
         set(value) { underlyingFailedAppAuthentications = value }
     }
     var underlyingFailedAppAuthentications: AnyPublisher<Int, Never>!
+    
+   // MARK: - ignoreDeviceNotSecuredWarningPermanently
+
     var ignoreDeviceNotSecuredWarningPermanently: AnyPublisher<Bool, Never> {
-        get { return underlyingIgnoreDeviceNotSecuredWarningPermanently }
+        get { underlyingIgnoreDeviceNotSecuredWarningPermanently }
         set(value) { underlyingIgnoreDeviceNotSecuredWarningPermanently = value }
     }
     var underlyingIgnoreDeviceNotSecuredWarningPermanently: AnyPublisher<Bool, Never>!
+    
+   // MARK: - selectedProfileId
+
     var selectedProfileId: AnyPublisher<UUID?, Never> {
-        get { return underlyingSelectedProfileId }
+        get { underlyingSelectedProfileId }
         set(value) { underlyingSelectedProfileId = value }
     }
     var underlyingSelectedProfileId: AnyPublisher<UUID?, Never>!
+    
+   // MARK: - latestCompatibleModelVersion
+
     var latestCompatibleModelVersion: ModelVersion {
-        get { return underlyingLatestCompatibleModelVersion }
+        get { underlyingLatestCompatibleModelVersion }
         set(value) { underlyingLatestCompatibleModelVersion = value }
     }
     var underlyingLatestCompatibleModelVersion: ModelVersion!
+    
+   // MARK: - appStartCounter
+
     var appStartCounter: Int {
-        get { return underlyingAppStartCounter }
+        get { underlyingAppStartCounter }
         set(value) { underlyingAppStartCounter = value }
     }
     var underlyingAppStartCounter: Int!
+    
+   // MARK: - hideWelcomeDrawer
+
     var hideWelcomeDrawer: Bool {
-        get { return underlyingHideWelcomeDrawer }
+        get { underlyingHideWelcomeDrawer }
         set(value) { underlyingHideWelcomeDrawer = value }
     }
     var underlyingHideWelcomeDrawer: Bool!
-
-    //MARK: - set
+    
+   // MARK: - set
 
     var setHideOnboardingCallsCount = 0
     var setHideOnboardingCalled: Bool {
-        return setHideOnboardingCallsCount > 0
+        setHideOnboardingCallsCount > 0
     }
     var setHideOnboardingReceivedHideOnboarding: Bool?
     var setHideOnboardingReceivedInvocations: [Bool] = []
@@ -141,12 +175,12 @@ final class MockUserDataStore: UserDataStore {
         setHideOnboardingReceivedInvocations.append(hideOnboarding)
         setHideOnboardingClosure?(hideOnboarding)
     }
-
-    //MARK: - set
+    
+   // MARK: - set
 
     var setOnboardingVersionCallsCount = 0
     var setOnboardingVersionCalled: Bool {
-        return setOnboardingVersionCallsCount > 0
+        setOnboardingVersionCallsCount > 0
     }
     var setOnboardingVersionReceivedOnboardingVersion: String?
     var setOnboardingVersionReceivedInvocations: [String?] = []
@@ -158,12 +192,12 @@ final class MockUserDataStore: UserDataStore {
         setOnboardingVersionReceivedInvocations.append(onboardingVersion)
         setOnboardingVersionClosure?(onboardingVersion)
     }
-
-    //MARK: - set
+    
+   // MARK: - set
 
     var setHideCardWallIntroCallsCount = 0
     var setHideCardWallIntroCalled: Bool {
-        return setHideCardWallIntroCallsCount > 0
+        setHideCardWallIntroCallsCount > 0
     }
     var setHideCardWallIntroReceivedHideCardWallIntro: Bool?
     var setHideCardWallIntroReceivedInvocations: [Bool] = []
@@ -175,12 +209,12 @@ final class MockUserDataStore: UserDataStore {
         setHideCardWallIntroReceivedInvocations.append(hideCardWallIntro)
         setHideCardWallIntroClosure?(hideCardWallIntro)
     }
-
-    //MARK: - set
+    
+   // MARK: - set
 
     var setServerEnvironmentConfigurationCallsCount = 0
     var setServerEnvironmentConfigurationCalled: Bool {
-        return setServerEnvironmentConfigurationCallsCount > 0
+        setServerEnvironmentConfigurationCallsCount > 0
     }
     var setServerEnvironmentConfigurationReceivedServerEnvironmentConfiguration: String?
     var setServerEnvironmentConfigurationReceivedInvocations: [String?] = []
@@ -192,12 +226,12 @@ final class MockUserDataStore: UserDataStore {
         setServerEnvironmentConfigurationReceivedInvocations.append(serverEnvironmentConfiguration)
         setServerEnvironmentConfigurationClosure?(serverEnvironmentConfiguration)
     }
-
-    //MARK: - set
+    
+   // MARK: - set
 
     var setAppSecurityOptionCallsCount = 0
     var setAppSecurityOptionCalled: Bool {
-        return setAppSecurityOptionCallsCount > 0
+        setAppSecurityOptionCallsCount > 0
     }
     var setAppSecurityOptionReceivedAppSecurityOption: AppSecurityOption?
     var setAppSecurityOptionReceivedInvocations: [AppSecurityOption] = []
@@ -209,12 +243,12 @@ final class MockUserDataStore: UserDataStore {
         setAppSecurityOptionReceivedInvocations.append(appSecurityOption)
         setAppSecurityOptionClosure?(appSecurityOption)
     }
-
-    //MARK: - set
+    
+   // MARK: - set
 
     var setFailedAppAuthenticationsCallsCount = 0
     var setFailedAppAuthenticationsCalled: Bool {
-        return setFailedAppAuthenticationsCallsCount > 0
+        setFailedAppAuthenticationsCallsCount > 0
     }
     var setFailedAppAuthenticationsReceivedFailedAppAuthentications: Int?
     var setFailedAppAuthenticationsReceivedInvocations: [Int] = []
@@ -226,12 +260,12 @@ final class MockUserDataStore: UserDataStore {
         setFailedAppAuthenticationsReceivedInvocations.append(failedAppAuthentications)
         setFailedAppAuthenticationsClosure?(failedAppAuthentications)
     }
-
-    //MARK: - set
+    
+   // MARK: - set
 
     var setIgnoreDeviceNotSecuredWarningPermanentlyCallsCount = 0
     var setIgnoreDeviceNotSecuredWarningPermanentlyCalled: Bool {
-        return setIgnoreDeviceNotSecuredWarningPermanentlyCallsCount > 0
+        setIgnoreDeviceNotSecuredWarningPermanentlyCallsCount > 0
     }
     var setIgnoreDeviceNotSecuredWarningPermanentlyReceivedIgnoreDeviceNotSecuredWarningPermanently: Bool?
     var setIgnoreDeviceNotSecuredWarningPermanentlyReceivedInvocations: [Bool] = []
@@ -243,12 +277,12 @@ final class MockUserDataStore: UserDataStore {
         setIgnoreDeviceNotSecuredWarningPermanentlyReceivedInvocations.append(ignoreDeviceNotSecuredWarningPermanently)
         setIgnoreDeviceNotSecuredWarningPermanentlyClosure?(ignoreDeviceNotSecuredWarningPermanently)
     }
-
-    //MARK: - set
+    
+   // MARK: - set
 
     var setSelectedProfileIdCallsCount = 0
     var setSelectedProfileIdCalled: Bool {
-        return setSelectedProfileIdCallsCount > 0
+        setSelectedProfileIdCallsCount > 0
     }
     var setSelectedProfileIdReceivedSelectedProfileId: UUID?
     var setSelectedProfileIdReceivedInvocations: [UUID] = []
@@ -260,12 +294,12 @@ final class MockUserDataStore: UserDataStore {
         setSelectedProfileIdReceivedInvocations.append(selectedProfileId)
         setSelectedProfileIdClosure?(selectedProfileId)
     }
-
-    //MARK: - wipeAll
+    
+   // MARK: - wipeAll
 
     var wipeAllCallsCount = 0
     var wipeAllCalled: Bool {
-        return wipeAllCallsCount > 0
+        wipeAllCallsCount > 0
     }
     var wipeAllClosure: (() -> Void)?
 
@@ -273,5 +307,4 @@ final class MockUserDataStore: UserDataStore {
         wipeAllCallsCount += 1
         wipeAllClosure?()
     }
-
 }

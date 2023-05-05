@@ -18,6 +18,7 @@
 
 import Combine
 import ComposableArchitecture
+import Dependencies
 @testable import eRpApp
 import eRpKit
 import Foundation
@@ -33,21 +34,25 @@ final class ScannerDomainTests: XCTestCase {
         ScannerDomain.Action,
         ScannerDomain.State,
         ScannerDomain.Action,
-        ScannerDomain.Environment
+        Void
     >
 
     private func testStore(
         with state: ScannerDomain.State = ScannerDomain.State(scanState: .idle, acceptedTaskBatches: [])
     ) -> TestStore {
         let schedulers = Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler())
+        let userSessionContainer = MockUsersSessionContainer()
+        userSessionContainer.userSession = MockUserSession()
+
         return TestStore(
             initialState: state,
-            reducer: ScannerDomain.domainReducer,
-            environment: ScannerDomain.Environment(repository: FakeErxTaskRepository(),
-                                                   dateFormatter: FHIRDateFormatter.shared,
-                                                   messageInterval: 0.0,
-                                                   scheduler: schedulers)
-        )
+            reducer: ScannerDomain(messageInterval: 0.0)
+        ) { dependencies in
+            dependencies.changeableUserSessionContainer = userSessionContainer
+            dependencies.erxTaskRepository = FakeErxTaskRepository()
+            dependencies.fhirDateFormatter = FHIRDateFormatter.shared
+            dependencies.schedulers = schedulers
+        }
     }
 
     private var scannedString: String {
@@ -75,7 +80,7 @@ final class ScannerDomainTests: XCTestCase {
             $0.scanState = .loading(nil)
         }
         testScheduler.advance()
-        store.receive(.analyseReceived(.value(scannedTasks))) { state in
+        store.receive(.response(.analyseReceived(.value(scannedTasks)))) { state in
             state.scanState = .value(self.scannedTasks)
             state.acceptedTaskBatches = expectedState.acceptedTaskBatches
         }
@@ -98,7 +103,7 @@ final class ScannerDomainTests: XCTestCase {
         }
         testScheduler.advance()
         // then only one should be returned
-        store.receive(.analyseReceived(.value(scannedTasks))) { state in
+        store.receive(.response(.analyseReceived(.value(scannedTasks)))) { state in
             state.scanState = .value(self.scannedTasks)
             state.acceptedTaskBatches = expectedState.acceptedTaskBatches
         }
@@ -124,7 +129,7 @@ final class ScannerDomainTests: XCTestCase {
             $0.acceptedTaskBatches = Set([])
         }
         // then no code should be returned and state should be Error.format
-        store.receive(.analyseReceived(expectedScanState)) { state in
+        store.receive(.response(.analyseReceived(expectedScanState))) { state in
             state.scanState = expectedScanState
             state.acceptedTaskBatches = Set([])
         }
@@ -150,7 +155,7 @@ final class ScannerDomainTests: XCTestCase {
             $0.acceptedTaskBatches = Set([])
         }
         // then no code should be returned and state should be empty
-        store.receive(.analyseReceived(expectedScanState)) { state in
+        store.receive(.response(.analyseReceived(expectedScanState))) { state in
             state.scanState = expectedScanState
             state.acceptedTaskBatches = Set([])
         }
@@ -173,7 +178,7 @@ final class ScannerDomainTests: XCTestCase {
             $0.acceptedTaskBatches = initialState.acceptedTaskBatches
         }
         // then an error of type duplicate should be returned
-        store.receive(.analyseReceived(expectedScanState)) { state in
+        store.receive(.response(.analyseReceived(expectedScanState))) { state in
             state.scanState = expectedScanState
             state.acceptedTaskBatches = initialState.acceptedTaskBatches
         }
@@ -200,7 +205,7 @@ final class ScannerDomainTests: XCTestCase {
         }
         testScheduler.advance()
         // then an error of type storeDuplicate should be returned
-        store.receive(.analyseReceived(expectedScanState)) { state in
+        store.receive(.response(.analyseReceived(expectedScanState))) { state in
             state.scanState = expectedScanState
             state.acceptedTaskBatches = Set([])
         }
@@ -236,7 +241,7 @@ final class ScannerDomainTests: XCTestCase {
         }
         testScheduler.advance()
         // then only the new one should be returned as successful scan
-        store.receive(.analyseReceived(expectedScanState)) { state in
+        store.receive(.response(.analyseReceived(expectedScanState))) { state in
             state.scanState = expectedScanState
             state.acceptedTaskBatches = expectedAcceptedBatches
         }
@@ -275,7 +280,7 @@ final class ScannerDomainTests: XCTestCase {
         }
         testScheduler.advance()
         // then only the new ones should be returned as successful scan and added as separate batch
-        store.receive(.analyseReceived(expectedScanState)) { state in
+        store.receive(.response(.analyseReceived(expectedScanState))) { state in
             state.scanState = expectedScanState
             state.acceptedTaskBatches = expectedAcceptedBatches
         }
@@ -288,7 +293,6 @@ final class ScannerDomainTests: XCTestCase {
     func testSuccessfulSavingAndClosingScannedErxTasks() {
         // given
         let initialState = ScannerDomain.State(scanState: .idle, acceptedTaskBatches: Set([scannedTasks]))
-        let schedulers = Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler())
         let saveErxTaskPublisher = Just(true).setFailureType(to: ErxRepositoryError.self).eraseToAnyPublisher()
         let deleteErxTaskPublisher = Just(true).setFailureType(to: ErxRepositoryError.self).eraseToAnyPublisher()
         let findPublisher = Just<ErxTask?>(nil).setFailureType(to: ErxRepositoryError.self).eraseToAnyPublisher()
@@ -296,29 +300,19 @@ final class ScannerDomainTests: XCTestCase {
                                                saveErxTasks: saveErxTaskPublisher,
                                                deleteErxTasks: deleteErxTaskPublisher,
                                                find: findPublisher)
-        let store = TestStore(
-            initialState: initialState,
-            reducer: ScannerDomain.domainReducer,
-            environment: ScannerDomain.Environment(
-                repository: repository,
-                dateFormatter: FHIRDateFormatter.shared,
-                messageInterval: 0.0,
-                scheduler: schedulers
-            )
-        )
+        let store = testStore(with: initialState)
+        store.dependencies.erxTaskRepository = repository
 
         // when
         store.send(.saveAndClose(initialState.acceptedTaskBatches))
         testScheduler.advance()
         // then
-        store.receive(.close)
+        store.receive(.delegate(.close))
     }
 
     func testFailureSavingAndClosingScannedErxTasks() {
         // given
         let initialState = ScannerDomain.State(scanState: .idle, acceptedTaskBatches: Set([scannedTasks]))
-        let schedulers = Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler())
-
         let savingError: ErxRepositoryError = .local(.notImplemented)
         let saveErxTaskPublisher = Fail<Bool, ErxRepositoryError>(error: savingError).eraseToAnyPublisher()
         let deleteErxTaskPublisher = Fail<Bool, ErxRepositoryError>(error: savingError).eraseToAnyPublisher()
@@ -327,23 +321,15 @@ final class ScannerDomainTests: XCTestCase {
                                                saveErxTasks: saveErxTaskPublisher,
                                                deleteErxTasks: deleteErxTaskPublisher,
                                                find: findPublisher)
-        let store = TestStore(
-            initialState: initialState,
-            reducer: ScannerDomain.domainReducer,
-            environment: ScannerDomain.Environment(
-                repository: repository,
-                dateFormatter: FHIRDateFormatter.shared,
-                messageInterval: 0.0,
-                scheduler: schedulers
-            )
-        )
+        let store = testStore(with: initialState)
+        store.dependencies.erxTaskRepository = repository
         let expectedAlert = ScannerDomain.savingAlertState
 
         // when
         store.send(.saveAndClose(initialState.acceptedTaskBatches))
         testScheduler.advance()
         // then
-        store.receive(.saveAndCloseReceived(savingError)) { state in
+        store.receive(.response(.saveAndCloseReceived(savingError))) { state in
             state.scanState = initialState.scanState
             state.acceptedTaskBatches = initialState.acceptedTaskBatches
             state.alertState = expectedAlert
@@ -377,7 +363,7 @@ final class ScannerDomainTests: XCTestCase {
             $0.acceptedTaskBatches = initialState.acceptedTaskBatches
         }
         // when the ok button is tapped
-        store.send(.close)
+        store.send(.delegate(.close))
     }
 }
 

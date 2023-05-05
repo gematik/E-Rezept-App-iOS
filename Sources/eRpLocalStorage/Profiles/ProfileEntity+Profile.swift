@@ -34,8 +34,9 @@ extension ProfileEntity {
         familyName = profile.familyName
         insurance = profile.insurance
         insuranceId = profile.insuranceId
+        insuranceType = profile.insuranceType.rawValue
         color = profile.color.rawValue
-        emoji = profile.emoji
+        image = profile.image.rawValue
         lastAuthenticated = profile.lastAuthenticated
         // Note: update of erxTasks is set when saving tasks in `save(tasks:)`
     }
@@ -48,10 +49,20 @@ extension Profile {
               let created = entity.created else {
             return nil
         }
+        var profilePicture: Profile.ProfilePictureType = .none
+        if let picture = entity.image {
+            profilePicture = Profile.ProfilePictureType(rawValue: picture) ?? .none
+        }
 
         var profileColor: Profile.Color = .grey
         if let color = entity.color {
             profileColor = Profile.Color(rawValue: color) ?? .grey
+        }
+        let insuranceType: Profile.InsuranceType
+        if let rawInsuranceType = entity.insuranceType {
+            insuranceType = Profile.InsuranceType(rawValue: rawInsuranceType) ?? .unknown
+        } else {
+            insuranceType = .unknown
         }
 
         let tasks: [ErxTask]
@@ -76,8 +87,9 @@ extension Profile {
             familyName: entity.familyName,
             insurance: entity.insurance,
             insuranceId: entity.insuranceId,
+            insuranceType: insuranceType,
             color: profileColor,
-            emoji: entity.emoji,
+            image: profilePicture,
             lastAuthenticated: entity.lastAuthenticated,
             erxTasks: tasks
         )

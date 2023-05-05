@@ -1,0 +1,13 @@
+{
+	"resourceType": "OperationOutcome",
+	"meta": {
+		"profile": ["http://hl7.org/fhir/StructureDefinition/OperationOutcome"]
+	},
+	"issue": [{
+		"severity": "error",
+		"code": "not-found",
+		"details": {
+			"text": "Could not find any consent for given KVNR "
+		}
+	}]
+}

@@ -20,7 +20,7 @@ import eRpKit
 import SwiftUI
 
 struct OrderMedicationView: View {
-    let medication: ErxTask.Medication?
+    let medication: ErxMedication?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {

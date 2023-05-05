@@ -23,8 +23,6 @@ extension AlertState {
         self.init(for: error, title: TextState(title), primaryButton: primaryButton)
     }
 
-    // body length will be shorter with dropped iOS 14 support
-    // swiftlint:disable:next function_body_length
     init(
         for error: CodedError,
         title: TextState? = nil,
@@ -47,53 +45,27 @@ extension AlertState {
             }
         }
 
-        if #available(iOS 15, *) {
-            let buttons: [ButtonState<Action>]
-            if let primaryButton = primaryButton {
-                if let secondaryButton = secondaryButton {
-                    buttons = [
-                        primaryButton,
-                        secondaryButton,
-                    ]
-                } else {
-                    buttons = [
-                        .cancel(TextState(L10n.alertBtnOk)),
-                        primaryButton,
-                    ]
-                }
+        let buttons: [ButtonState<Action>]
+        if let primaryButton = primaryButton {
+            if let secondaryButton = secondaryButton {
+                buttons = [
+                    primaryButton,
+                    secondaryButton,
+                ]
             } else {
-                buttons = [.cancel(TextState(L10n.alertBtnOk))]
+                buttons = [
+                    .cancel(TextState(L10n.alertBtnOk)),
+                    primaryButton,
+                ]
             }
-            self.init(
-                title: resultTitle,
-                message: resultDescription,
-                buttons: buttons
-            )
         } else {
-            if let primaryButton = primaryButton {
-                if let secondaryButton = secondaryButton {
-                    self.init(
-                        title: resultTitle,
-                        message: resultDescription,
-                        primaryButton: primaryButton,
-                        secondaryButton: secondaryButton
-                    )
-                } else {
-                    self.init(
-                        title: resultTitle,
-                        message: resultDescription,
-                        primaryButton: primaryButton,
-                        secondaryButton: .cancel(TextState(L10n.errBtnCancel))
-                    )
-                }
-            } else {
-                self.init(
-                    title: title ?? TextState(L10n.errTitleGeneric),
-                    message: TextState(error.localizedDescriptionWithErrorList),
-                    dismissButton: .cancel(TextState(L10n.alertBtnOk))
-                )
-            }
+            buttons = [.cancel(TextState(L10n.alertBtnOk))]
         }
+        self.init(
+            title: resultTitle,
+            message: resultDescription,
+            buttons: buttons
+        )
     }
 }
 

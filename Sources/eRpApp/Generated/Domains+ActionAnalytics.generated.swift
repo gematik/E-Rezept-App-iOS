@@ -1,4 +1,4 @@
-// Generated using Sourcery 1.9.0 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.0.1 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 
 import Foundation
@@ -7,13 +7,6 @@ import Foundation
 
 
 
-extension AddProfileDomain.Action {
-    func analytics(tracker: Tracker) {
-        switch self {
-            default: break
-        }
-    }
-}
 extension AppAuthenticationBiometricsDomain.Action {
     func analytics(tracker: Tracker) {
         switch self {
@@ -42,16 +35,6 @@ extension AppAuthenticationPasswordDomain.Action {
 extension AppDomain.Action {
     func analytics(tracker: Tracker) {
         switch self {
-            case let .main(action: action):
-                action.analytics(tracker: tracker)
-            case let .pharmacySearch(action: action):
-                action.analytics(tracker: tracker)
-            case let .orders(action: action):
-                action.analytics(tracker: tracker)
-            case let .settings(action: action):
-                action.analytics(tracker: tracker)
-            case let .profile(action: action):
-                action.analytics(tracker: tracker)
             default: break
         }
     }
@@ -91,10 +74,6 @@ extension AuditEventsDomain.Action {
 extension CardWallCANDomain.Action {
     func analytics(tracker: Tracker) {
         switch self {
-            case let .pinAction(action: action):
-                action.analytics(tracker: tracker)
-            case let .egkAction(action: action):
-                action.analytics(tracker: tracker)
             default: break
         }
     }
@@ -109,10 +88,6 @@ extension CardWallExtAuthConfirmationDomain.Action {
 extension CardWallExtAuthSelectionDomain.Action {
     func analytics(tracker: Tracker) {
         switch self {
-            case let .egkAction(action: action):
-                action.analytics(tracker: tracker)
-            case let .confirmation(action: action):
-                action.analytics(tracker: tracker)
             default: break
         }
     }
@@ -120,12 +95,6 @@ extension CardWallExtAuthSelectionDomain.Action {
 extension CardWallIntroductionDomain.Action {
     func analytics(tracker: Tracker) {
         switch self {
-            case let .canAction(action: action):
-                action.analytics(tracker: tracker)
-            case let .fasttrack(action: action):
-                action.analytics(tracker: tracker)
-            case let .egkAction(action: action):
-                action.analytics(tracker: tracker)
             default: break
         }
     }
@@ -133,8 +102,6 @@ extension CardWallIntroductionDomain.Action {
 extension CardWallLoginOptionDomain.Action {
     func analytics(tracker: Tracker) {
         switch self {
-            case let .readcardAction(action: action):
-                action.analytics(tracker: tracker)
             default: break
         }
     }
@@ -142,10 +109,6 @@ extension CardWallLoginOptionDomain.Action {
 extension CardWallPINDomain.Action {
     func analytics(tracker: Tracker) {
         switch self {
-            case let .login(action: action):
-                action.analytics(tracker: tracker)
-            case let .egkAction(action: action):
-                action.analytics(tracker: tracker)
             default: break
         }
     }
@@ -157,7 +120,35 @@ extension CardWallReadCardDomain.Action {
         }
     }
 }
+extension ChargeItemDomain.Action {
+    func analytics(tracker: Tracker) {
+        switch self {
+            default: break
+        }
+    }
+}
+extension ChargeItemsDomain.Action {
+    func analytics(tracker: Tracker) {
+        switch self {
+            default: break
+        }
+    }
+}
 extension CreatePasswordDomain.Action {
+    func analytics(tracker: Tracker) {
+        switch self {
+            default: break
+        }
+    }
+}
+extension CreateProfileDomain.Action {
+    func analytics(tracker: Tracker) {
+        switch self {
+            default: break
+        }
+    }
+}
+extension CreateProfileDomain.DelegateAction {
     func analytics(tracker: Tracker) {
         switch self {
             default: break
@@ -174,10 +165,34 @@ extension DeviceSecurityDomain.Action {
 extension EditProfileDomain.Action {
     func analytics(tracker: Tracker) {
         switch self {
-            case let .auditEvents(action: action):
-                action.analytics(tracker: tracker)
-            case let .registeredDevices(action: action):
-                action.analytics(tracker: tracker)
+            default: break
+        }
+    }
+}
+extension EditProfileNameDomain.Action {
+    func analytics(tracker: Tracker) {
+        switch self {
+            default: break
+        }
+    }
+}
+extension EditProfileNameDomain.DelegateAction {
+    func analytics(tracker: Tracker) {
+        switch self {
+            default: break
+        }
+    }
+}
+extension EditProfilePictureDomain.Action {
+    func analytics(tracker: Tracker) {
+        switch self {
+            default: break
+        }
+    }
+}
+extension EditProfilePictureDomain.DelegateAction {
+    func analytics(tracker: Tracker) {
+        switch self {
             default: break
         }
     }
@@ -192,8 +207,6 @@ extension ExtAuthPendingDomain.Action {
 extension HealthCardPasswordDomain.Action {
     func analytics(tracker: Tracker) {
         switch self {
-            case let .readCard(action: action):
-                action.analytics(tracker: tracker)
             default: break
         }
     }
@@ -232,29 +245,8 @@ extension MainDomain.Action {
                 action.analytics(tracker: tracker)
             case let .prescriptionList(action: action):
                 action.analytics(tracker: tracker)
-            case let .scanner(action: action):
-                action.analytics(tracker: tracker)
-            case let .deviceSecurity(action: action):
-                action.analytics(tracker: tracker)
-            case let .prescriptionArchiveAction(action: action):
-                action.analytics(tracker: tracker)
-            case let .prescriptionDetailAction(action: action):
-                action.analytics(tracker: tracker)
-            case let .redeemMethods(action: action):
-                action.analytics(tracker: tracker)
-            case let .cardWall(action: action):
-                action.analytics(tracker: tracker)
-            case let .addProfileAction(action: action):
-                action.analytics(tracker: tracker)
             case let .horizontalProfileSelection(action: action):
                 action.analytics(tracker: tracker)
-            default: break
-        }
-    }
-}
-extension MainViewHintsDomain.Action {
-    func analytics(tracker: Tracker) {
-        switch self {
             default: break
         }
     }
@@ -275,20 +267,9 @@ extension OnboardingDomain.Action {
         }
     }
 }
-extension OnboardingNewProfileDomain.Action {
-    func analytics(tracker: Tracker) {
-        switch self {
-            default: break
-        }
-    }
-}
 extension OrderDetailDomain.Action {
     func analytics(tracker: Tracker) {
         switch self {
-            case let .prescriptionDetail(action: action):
-                action.analytics(tracker: tracker)
-            case let .pickupCode(action: action):
-                action.analytics(tracker: tracker)
             default: break
         }
     }
@@ -303,8 +284,6 @@ extension OrderHealthCardDomain.Action {
 extension OrdersDomain.Action {
     func analytics(tracker: Tracker) {
         switch self {
-            case let .orderDetail(action: action):
-                action.analytics(tracker: tracker)
             default: break
         }
     }
@@ -319,10 +298,6 @@ extension PharmacyContactDomain.Action {
 extension PharmacyDetailDomain.Action {
     func analytics(tracker: Tracker) {
         switch self {
-            case let .pharmacyRedeemViaErxTaskRepository(action: action):
-                action.analytics(tracker: tracker)
-            case let .pharmacyRedeemViaAVS(action: action):
-                action.analytics(tracker: tracker)
             default: break
         }
     }
@@ -330,12 +305,6 @@ extension PharmacyDetailDomain.Action {
 extension PharmacyRedeemDomain.Action {
     func analytics(tracker: Tracker) {
         switch self {
-            case let .redeemSuccessView(action: action):
-                action.analytics(tracker: tracker)
-            case let .pharmacyContact(action: action):
-                action.analytics(tracker: tracker)
-            case let .cardWall(action: action):
-                action.analytics(tracker: tracker)
             default: break
         }
     }
@@ -343,10 +312,6 @@ extension PharmacyRedeemDomain.Action {
 extension PharmacySearchDomain.Action {
     func analytics(tracker: Tracker) {
         switch self {
-            case let .pharmacyDetailView(action: action):
-                action.analytics(tracker: tracker)
-            case let .pharmacyFilterView(action: action):
-                action.analytics(tracker: tracker)
             default: break
         }
     }
@@ -368,8 +333,6 @@ extension PickupCodeDomain.Action {
 extension PrescriptionArchiveDomain.Action {
     func analytics(tracker: Tracker) {
         switch self {
-            case let .prescriptionDetailAction(action: action):
-                action.analytics(tracker: tracker)
             default: break
         }
     }
@@ -384,8 +347,6 @@ extension PrescriptionDetailDomain.Action {
 extension PrescriptionListDomain.Action {
     func analytics(tracker: Tracker) {
         switch self {
-            case let .hint(action: action):
-                action.analytics(tracker: tracker)
             default: break
         }
     }
@@ -409,10 +370,6 @@ extension ProfileSelectionToolbarItemDomain.Action {
 extension ProfilesDomain.Action {
     func analytics(tracker: Tracker) {
         switch self {
-            case let .profile(action: action):
-                action.analytics(tracker: tracker)
-            case let .newProfile(action: action):
-                action.analytics(tracker: tracker)
             default: break
         }
     }
@@ -427,10 +384,6 @@ extension RedeemMatrixCodeDomain.Action {
 extension RedeemMethodsDomain.Action {
     func analytics(tracker: Tracker) {
         switch self {
-            case let .redeemMatrixCodeAction(action: action):
-                action.analytics(tracker: tracker)
-            case let .pharmacySearchAction(action: action):
-                action.analytics(tracker: tracker)
             default: break
         }
     }
@@ -452,8 +405,6 @@ extension RegisterAuthenticationDomain.Action {
 extension RegisteredDevicesDomain.Action {
     func analytics(tracker: Tracker) {
         switch self {
-            case let .idpCardWall(action: action):
-                action.analytics(tracker: tracker)
             default: break
         }
     }
@@ -471,16 +422,6 @@ extension SettingsDomain.Action {
             case let .appSecurity(action: action):
                 action.analytics(tracker: tracker)
             case let .profiles(action: action):
-                action.analytics(tracker: tracker)
-            case let .healthCardPasswordUnlockCard(action: action):
-                action.analytics(tracker: tracker)
-            case let .healthCardPasswordForgotPin(action: action):
-                action.analytics(tracker: tracker)
-            case let .healthCardPasswordSetCustomPin(action: action):
-                action.analytics(tracker: tracker)
-            case let .createPassword(action: action):
-                action.analytics(tracker: tracker)
-            case let .egkAction(action: action):
                 action.analytics(tracker: tracker)
             default: break
         }

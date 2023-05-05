@@ -24,26 +24,20 @@ import IDP
 import SwiftUI
 import UIKit
 
-protocol SceneDelegateDependencies {
-    var coreDataControllerFactory: CoreDataControllerFactory { get }
-    var userDataStore: UserDataStore { get }
-}
-
-class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing, SceneDelegateDependencies {
+class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing {
     var mainWindow: UIWindow?
     var authenticationWindow: UIWindow?
-    var coreDataControllerFactory: CoreDataControllerFactory = LocalStoreFactory()
     // This must be raw userDefaults access, demo session should *not* interfere with user authentication
-    var userDataStore: UserDataStore = UserDefaultsStore(userDefaults: .standard)
+    @Dependency(\.userDataStore) var userDataStore
+    @Dependency(\.tracker) var tracker
+    @Dependency(\.profileCoreDataStore) var profileCoreDataStore
 
-    let tracker = PlaceholderTracker()
-
-    private lazy var routerStore = RouterStore(
-        initialState: .init(),
-        reducer: AppStartDomain.reducer.analytics().notifyUserInteraction(),
-        environment: environment(tracker: tracker),
-        router: AppStartDomain.router
-    )
+    lazy var routerStore: RouterStore<some ReducerProtocol<AppStartDomain.State, AppStartDomain.Action>> =
+        RouterStore(
+            initialState: .init(),
+            reducer: AppStartDomain().analytics().notifyUserInteraction(),
+            router: AppStartDomain.router
+        )
 
     private lazy var migrationCoordinator = MigrationCoordinator(userDataStore: userDataStore)
 
@@ -66,10 +60,21 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing, SceneDelegateD
     func scene(_ scene: UIScene,
                willConnectTo _: UISceneSession,
                options connectionOptions: UIScene.ConnectionOptions) {
+        #if targetEnvironment(simulator)
+        if ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil {
+            return
+        }
+        #endif
         userDataStore.appStartCounter += 1
 
         if let windowScene = scene as? UIWindowScene {
             mainWindow = UIWindow(windowScene: windowScene)
+        }
+
+        do {
+            try sanitizeDatabases(store: profileCoreDataStore)
+        } catch {
+            assertionFailure(error.localizedDescription)
         }
 
         if migrationCoordinator.shouldMigrateDatabase {
@@ -101,7 +106,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing, SceneDelegateD
     }
 
     func routeTo(_ endpoint: Endpoint) {
-        routerStore.route(to: endpoint)
+        routerStore.routeTo(endpoint)
     }
 
     func sceneDidDisconnect(_: UIScene) {}
@@ -111,6 +116,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing, SceneDelegateD
     func sceneWillResignActive(_: UIScene) {}
 
     func sceneWillEnterForeground(_ scene: UIScene) {
+        #if targetEnvironment(simulator)
+        if ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"] != nil {
+            return
+        }
+        #endif
+
         removeBlurOverlayFromWindow()
 
         guard !migrationCoordinator.isMigrating else { return }
@@ -122,22 +133,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing, SceneDelegateD
     }
 
     func presentAppMigrationDomain(completion: @escaping () -> Void) {
-        let migrationManager = MigrationManager(
-            factory: coreDataControllerFactory,
-            erxTaskCoreDataStore: ErxTaskCoreDataStore(
-                profileId: nil,
-                coreDataControllerFactory: coreDataControllerFactory
-            ),
-            userDataStore: userDataStore
-        )
         let migrationStore = Store(
             initialState: AppMigrationDomain.State.none,
-            reducer: AppMigrationDomain.reducer,
-            environment: AppMigrationDomain.Environment(
-                schedulers: Schedulers(),
-                migrationManager: migrationManager,
-                factory: coreDataControllerFactory,
-                userDataStore: userDataStore,
+            reducer: AppMigrationDomain(
                 fileManager: FileManager.default,
                 finishedMigration: completion
             )
@@ -157,19 +155,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing, SceneDelegateD
         }
         invalidateTimer()
 
-        let authenticationProvider = AppAuthenticationDomain.DefaultAuthenticationProvider(
-            userDataStore: userDataStore
-        )
         let appAuthenticationStore = Store(
             initialState: AppAuthenticationDomain.State(),
-            reducer: AppAuthenticationDomain.reducer,
-            environment: AppAuthenticationDomain.Environment(
-                userDataStore: userDataStore,
-                schedulers: Schedulers(),
-                appAuthenticationProvider: authenticationProvider,
-                appSecurityPasswordManager: DefaultAppSecurityManager(keychainAccess: SystemKeychainAccessHelper()),
-                authenticationChallengeProvider: BiometricsAuthenticationChallengeProvider()
-            ) { [weak self, weak scene] in
+            reducer: AppAuthenticationDomain { [weak self, weak scene] in
                 guard let self = self else { return }
                 self.mainWindow?.accessibilityElementsHidden = false
                 self.mainWindow?.makeKeyAndVisible()
@@ -233,7 +221,7 @@ import Combine
 extension SceneDelegate {
     // The app needs at least one `Profile` in order to function correctly. If there is no Profile we assume
     // that the app is in the initial state for which also the `UserDataStore` should be in initial state
-    func sanatizeDatabases(store: ProfileCoreDataStore) throws {
+    func sanitizeDatabases(store: ProfileCoreDataStore) throws {
         let hasProfile = (try? store.hasProfile()) ?? false
         if !hasProfile {
             userDataStore.set(hideOnboarding: false)
@@ -243,90 +231,6 @@ extension SceneDelegate {
             let profile = try store.createProfile(with: L10n.onbProfileName.text)
             userDataStore.set(selectedProfileId: profile.id)
         }
-    }
-
-    private func sessionContainer(
-        with schedulers: Schedulers
-    ) -> (ChangeableUserSessionContainer, UserSessionProvider) {
-        let profileCoreDataStore = ProfileCoreDataStore(coreDataControllerFactory: coreDataControllerFactory)
-
-        do {
-            try sanatizeDatabases(store: profileCoreDataStore)
-        } catch {
-            assertionFailure(error.localizedDescription)
-        }
-
-        // After sanatizeing the database there should be a profile available which is set as the selected profile
-        let selectedProfileId = UserDefaults.standard.selectedProfileId ?? UUID()
-
-        let initialUserSession = StandardSessionContainer(
-            for: selectedProfileId,
-            schedulers: schedulers,
-            erxTaskCoreDataStore: ErxTaskCoreDataStore(
-                profileId: selectedProfileId,
-                coreDataControllerFactory: coreDataControllerFactory
-            ),
-            pharmacyCoreDataStore: PharmacyCoreDataStore(coreDataControllerFactory: coreDataControllerFactory),
-            profileDataStore: profileCoreDataStore,
-            shipmentInfoDataStore: ShipmentInfoCoreDataStore(coreDataControllerFactory: coreDataControllerFactory),
-            avsTransactionDataStore: AVSTransactionCoreDataStore(coreDataControllerFactory: coreDataControllerFactory),
-            appConfiguration: userDataStore.appConfiguration
-        )
-
-        let userSessionProvider = DefaultUserSessionProvider(
-            initialUserSession: initialUserSession,
-            schedulers: schedulers,
-            coreDataControllerFactory: coreDataControllerFactory,
-            profileDataStore: profileCoreDataStore,
-            appConfiguration: userDataStore.appConfiguration
-        )
-
-        let changeableUserSessionContainer = ChangeableUserSessionContainer(
-            initialUserSession: initialUserSession,
-            userDataStore: userDataStore,
-            userSessionProvider: userSessionProvider,
-            schedulers: schedulers
-        )
-
-        return (changeableUserSessionContainer, userSessionProvider)
-    }
-
-    private func environment(tracker: Tracker = PlaceholderTracker()) -> AppStartDomain.Environment {
-        let schedulers = Schedulers()
-        let (changeableUserSessionContainer, userSessionProvider) = sessionContainer(with: schedulers)
-
-        #if ENABLE_DEBUG_VIEW && targetEnvironment(simulator)
-        // swiftlint:disable:next trailing_closure
-        let signatureProvider = DefaultSecureEnclaveSignatureProvider(
-            storage: changeableUserSessionContainer.userSession.secureUserStore,
-            privateKeyContainerProvider: { try PrivateKeyContainer.createFromKeyChain(with: $0) }
-        )
-        #else
-        let signatureProvider = DefaultSecureEnclaveSignatureProvider(
-            storage: changeableUserSessionContainer.userSession.secureUserStore
-        )
-        #endif
-
-        return .init(
-            appVersion: AppVersion.current,
-            router: self,
-            userSessionContainer: changeableUserSessionContainer,
-            userSession: changeableUserSessionContainer.userSession,
-            // This must be raw userDefaults access, demo session should *not* interfere with user authentication
-            userDataStore: userDataStore,
-            schedulers: schedulers,
-            fhirDateFormatter: globals.fhirDateFormatter,
-            serviceLocator: ServiceLocator(),
-            accessibilityAnnouncementReceiver: { message in
-                UIAccessibility.post(notification: .announcement,
-                                     argument: message)
-            },
-            tracker: tracker,
-            signatureProvider: signatureProvider,
-            appSecurityManager: DefaultAppSecurityManager(keychainAccess: SystemKeychainAccessHelper()),
-            authenticationChallengeProvider: BiometricsAuthenticationChallengeProvider(),
-            userSessionProvider: userSessionProvider
-        )
     }
 }
 
@@ -362,35 +266,12 @@ extension SceneDelegate {
     }
 }
 
-extension AnyReducer where Action: Equatable {
-    fileprivate func notifyUserInteraction( // swiftlint:disable:this strict_fileprivate
-    ) -> AnyReducer<State, Action, Environment> {
-        .init { state, action, environment in
+extension ReducerProtocol where Action: Equatable {
+    func notifyUserInteraction() -> some ReducerProtocol<Self.State, Self.Action> {
+        Reduce { state, action in
             NotificationCenter.default.post(name: .userInteractionDetected, object: nil, userInfo: nil)
 
-            return self.run(&state, action, environment)
-        }
-    }
-}
-
-extension AnyReducer where Action == AppStartDomain.Action, State == AppStartDomain.State,
-    Environment == AppStartDomain.Environment {
-    fileprivate func analytics() // swiftlint:disable:this strict_fileprivate
-        -> AnyReducer<State, Action, Environment> {
-        .init { state, action, environment in
-            let route = state.routeName()
-
-            let result = self.run(&state, action, environment)
-
-            if let newRoute = state.routeName(),
-               newRoute != route {
-                #if ENABLE_DEBUG_VIEW && targetEnvironment(simulator)
-                print("Route tag:", newRoute)
-                #endif
-                environment.tracker.track(screen: newRoute)
-            }
-
-            return result
+            return self.reduce(into: &state, action: action)
         }
     }
 }

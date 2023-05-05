@@ -189,7 +189,7 @@ extension FHIRClient {
     /// - Returns: `AnyPublisher` that emits the audit events
     /// - Parameters:
     ///   - previousPage: The previous page of the requested one.
-    public func fetchAuditEventsNextPage(of previousPage: PagedContent<[ErxAuditEvent]>)
+    public func fetchAuditEventsNextPage(of previousPage: PagedContent<[ErxAuditEvent]>, for locale: String?)
         -> AnyPublisher<PagedContent<[ErxAuditEvent]>, FHIRClient.Error> {
         let handler =
             DefaultFHIRResponseHandler { (fhirResponse: FHIRClient.Response) -> PagedContent<[ErxAuditEvent]> in
@@ -206,7 +206,7 @@ extension FHIRClient {
                 .eraseToAnyPublisher()
         }
 
-        return execute(operation: ErxTaskFHIROperation.next(url: url, handler: handler))
+        return execute(operation: ErxTaskFHIROperation.next(url: url, handler: handler, locale: locale))
     }
 
     /// Convenience function for redeeming an `ErxTask` in a pharmacy
@@ -250,12 +250,12 @@ extension FHIRClient {
     /// - Returns: `AnyPublisher` that emits `MedicationDispense`s
     public func fetchMedicationDispenses(
         for id: ErxTask.ID
-    ) -> AnyPublisher<[ErxTask.MedicationDispense], FHIRClient.Error> {
+    ) -> AnyPublisher<[ErxMedicationDispense], FHIRClient.Error> {
         let handler =
-            DefaultFHIRResponseHandler { (fhirResponse: FHIRClient.Response) -> [ErxTask.MedicationDispense] in
+            DefaultFHIRResponseHandler { (fhirResponse: FHIRClient.Response) -> [ErxMedicationDispense] in
                 do {
                     let resource = try FHIRClient.decoder.decode(ModelsR4.Bundle.self, from: fhirResponse.body)
-                    return try resource.parseErxTaskMedicationDispenses()
+                    return try resource.parseErxMedicationDispenses()
                 } catch {
                     throw Error.decoding(error)
                 }
@@ -263,6 +263,96 @@ extension FHIRClient {
 
         return execute(operation: ErxTaskFHIROperation
             .medicationDispenses(id: id, handler: handler))
+    }
+
+    /// Convenience function for requesting a certain charge item by ID
+    ///
+    /// - Parameters:
+    ///   - id: The ID of the charge item to be requested
+    /// - Returns: `AnyPublisher` that emits the charge item or nil when not found
+    public func fetchChargeItem(by id: ErxChargeItem.ID)
+        -> AnyPublisher<ErxChargeItem?, FHIRClient.Error> {
+        let handler = DefaultFHIRResponseHandler { (fhirResponse: FHIRClient.Response) -> ErxChargeItem? in
+            let resource: ModelsR4.Bundle
+            do {
+                resource = try FHIRClient.decoder.decode(ModelsR4.Bundle.self, from: fhirResponse.body)
+            } catch {
+                throw Error.decoding(error)
+            }
+            return try resource.parseErxChargeItem(id: id, with: fhirResponse.body)
+        }
+
+        return execute(operation: ErxTaskFHIROperation.chargeItemBy(id: id, handler: handler))
+    }
+
+    /// Convenience function for requesting all charge item ids
+    ///
+    /// - Returns: `AnyPublisher` that emits the ids for the found charge items
+    /// - Parameter referenceDate: Charge items with entered date greater or equal `referenceDate` will be fetched
+    public func fetchAllChargeItemIDs(after referenceDate: String?) -> AnyPublisher<[String], FHIRClient.Error> {
+        let handler = DefaultFHIRResponseHandler { (fhirResponse: FHIRClient.Response) -> [String] in
+            let decoder = JSONDecoder()
+
+            do {
+                let resource = try decoder.decode(ModelsR4.Bundle.self, from: fhirResponse.body)
+                return try resource.parseErxChargeItemIDs()
+            } catch {
+                throw Error.decoding(error)
+            }
+        }
+
+        return execute(operation: ErxTaskFHIROperation.allChargeItems(referenceDate: referenceDate, handler: handler))
+    }
+
+    /// Loads All consents of a given profile
+    /// Uses the request headers  ACCESS_TOKEN with the containing insurance id
+    /// - Returns: Array of all loaded `ErxConsent`
+    public func fetchConsents() -> AnyPublisher<[ErxConsent], FHIRClient.Error> {
+        let handler = DefaultFHIRResponseHandler { (fhirResponse: FHIRClient.Response) -> [ErxConsent] in
+            do {
+                let resource = try FHIRClient.decoder.decode(ModelsR4.Bundle.self, from: fhirResponse.body)
+                return try resource.parseErxConsents()
+            } catch {
+                throw Error.decoding(error)
+            }
+        }
+
+        return execute(operation: ErxTaskFHIROperation.consents(handler: handler))
+    }
+
+    /// Send a grant consent request of  an `ErxConsent`
+    /// - Parameter consent: Consent that contains information about the type of consent
+    ///                         and insurance id which the consent will be granted for
+    /// - Returns: The `ErxConsent` that was granted or nil when not found
+    public func grantConsent(_ consent: ErxConsent) -> AnyPublisher<ErxConsent?, FHIRClient.Error> {
+        let handler = DefaultFHIRResponseHandler { (fhirResponse: FHIRClient.Response) -> ErxConsent? in
+            do {
+                let resource = try FHIRClient.decoder.decode(ModelsR4.Consent.self, from: fhirResponse.body)
+                return try resource.parseErxConsent()
+            } catch {
+                throw Error.decoding(error)
+            }
+        }
+
+        return execute(operation: ErxTaskFHIROperation.grant(consent: consent, handler: handler))
+    }
+
+    /// Delete an consent of `ErxConsent` to revoke it
+    /// - Parameters:
+    ///   - category: the `ErxConsent.Category`of the consent to be revoked
+    /// - Returns: Publisher for the load request
+    public func revokeConsent(_ category: ErxConsent.Category) -> AnyPublisher<Bool, FHIRClient.Error> {
+        let handler = DefaultFHIRResponseHandler { (fhirResponse: FHIRClient.Response) -> Bool in
+            if fhirResponse.status.isNoContent {
+                // Successful deletion is supposed to produce return code 204 and an empty body.
+                // So we actually do not need to parse anything
+                return true
+            }
+
+            throw FHIRClient.Error.inconsistentResponse
+        }
+
+        return execute(operation: ErxTaskFHIROperation.revokeConsent(category: category, handler: handler))
     }
 
     static var decoder: JSONDecoder {

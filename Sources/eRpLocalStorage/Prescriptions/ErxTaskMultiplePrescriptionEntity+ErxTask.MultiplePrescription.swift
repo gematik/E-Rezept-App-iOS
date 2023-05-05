@@ -20,7 +20,7 @@ import CoreData
 import eRpKit
 
 extension ErxTaskMultiplePrescriptionEntity {
-    convenience init?(multiplePrescription: ErxTask.MultiplePrescription?,
+    convenience init?(multiplePrescription: MultiplePrescription?,
                       in context: NSManagedObjectContext) {
         guard let multiplePrescription = multiplePrescription else { return nil }
 
@@ -38,7 +38,7 @@ extension ErxTaskMultiplePrescriptionEntity {
     }
 }
 
-extension ErxTask.MultiplePrescription {
+extension MultiplePrescription {
     init?(entity: ErxTaskMultiplePrescriptionEntity?) {
         guard let entity = entity else { return nil }
 

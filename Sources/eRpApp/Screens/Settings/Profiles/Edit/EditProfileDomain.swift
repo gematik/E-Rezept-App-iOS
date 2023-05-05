@@ -25,12 +25,12 @@ import eRpLocalStorage
 import Foundation
 import IDP
 
-enum EditProfileDomain {
-    typealias Store = ComposableArchitecture.Store<State, Action>
-    typealias Reducer = ComposableArchitecture.AnyReducer<State, Action, Environment>
+// swiftlint:disable:next type_body_length
+struct EditProfileDomain: ReducerProtocol {
+    typealias Store = StoreOf<Self>
 
-    static func cleanup<T>() -> Effect<T, Never> {
-        Effect.cancel(id: Token.self)
+    static func cleanup<T>() -> EffectTask<T> {
+        EffectTask<T>.cancel(ids: Token.allCases)
     }
 
     enum Token: CaseIterable, Hashable {
@@ -38,14 +38,6 @@ enum EditProfileDomain {
         case idpBiometricKeyIDListener
         case canListener
         case profileReceived
-    }
-
-    enum Route: Equatable {
-        case alert(ErpAlertState<Action>)
-        case token(IDPToken)
-        case linkedDevices
-        case auditEvents(AuditEventsDomain.State)
-        case registeredDevices(RegisteredDevicesDomain.State)
     }
 
     struct State: Equatable {
@@ -56,41 +48,119 @@ enum EditProfileDomain {
         var insurance: String?
         var can: String?
         var insuranceId: String?
-        var emoji: String?
+        var image: ProfilePicture
         var color: ProfileColor
         var token: IDPToken?
         var hasBiometricKeyID: Bool?
         var availableSecurityOptions: [AppSecurityOption] = []
         var securityOptionsError: AppSecurityManagerError?
-        var route: Route?
+        var destination: Destinations.State?
+        var insuranceType: Profile.InsuranceType
+    }
+
+    struct Destinations: ReducerProtocol {
+        enum State: Equatable {
+            case alert(ErpAlertState<EditProfileDomain.Action>)
+            case token(IDPToken)
+            case linkedDevices
+            case auditEvents(AuditEventsDomain.State)
+            case registeredDevices(RegisteredDevicesDomain.State)
+            case chargeItems(ChargeItemsDomain.State)
+        }
+
+        enum Action: Equatable {
+            case auditEventsAction(AuditEventsDomain.Action)
+            case registeredDevicesAction(RegisteredDevicesDomain.Action)
+            case chargeItemsAction(ChargeItemsDomain.Action)
+        }
+
+        var body: some ReducerProtocol<State, Action> {
+            Scope(
+                state: /State.auditEvents,
+                action: /Action.auditEventsAction
+            ) {
+                AuditEventsDomain()
+            }
+            Scope(
+                state: /State.registeredDevices,
+                action: /Action.registeredDevicesAction
+            ) {
+                RegisteredDevicesDomain()
+                    .dependency(
+                        \.profileBasedSessionProvider,
+                        {
+                            @Dependency(\.userSessionProvider) var userSessionProvider
+                            @Dependency(\.userSession) var userSession
+
+                            return RegisterSessionProvider(
+                                userSessionProvider: userSessionProvider,
+                                userSession: userSession
+                            )
+                        }()
+                    )
+            }
+            Scope(
+                state: /State.chargeItems,
+                action: /Action.chargeItemsAction
+            ) {
+                ChargeItemsDomain()
+            }
+        }
     }
 
     enum Action: Equatable {
         case setName(String)
-        case setEmoji(String?)
         case setColor(ProfileColor)
         case showDeleteProfileAlert
         case confirmDeleteProfile
-        case close
         case dismissAlert
-        case updateProfileReceived(Result<Bool, LocalStoreError>)
-        case logout
         case login
         case relogin
 
         case showDeleteBiometricPairingAlert
         case confirmDeleteBiometricPairing
-        case deleteBiometricPairingReceived(Result<Bool, IDPError>)
-
         case loadAvailableSecurityOptions
         case registerListener
-        case tokenReceived(IDPToken?)
-        case biometricKeyIDReceived(Bool)
-        case canReceived(String?)
-        case profileReceived(Result<Profile?, LocalStoreError>)
-        case setNavigation(tag: Route.Tag?)
-        case auditEvents(action: AuditEventsDomain.Action)
-        case registeredDevices(action: RegisteredDevicesDomain.Action)
+
+        case setNavigation(tag: Destinations.State.Tag?)
+        case destination(Destinations.Action)
+
+        case response(Response)
+        case delegate(Delegate)
+
+        enum Response: Equatable {
+            case updateProfileReceived(Result<Bool, LocalStoreError>)
+            case deleteBiometricPairingReceived(Result<Bool, IDPError>)
+            case canReceived(String?)
+            case tokenReceived(IDPToken?)
+            case biometricKeyIDReceived(Bool)
+            case profileReceived(Result<Profile?, LocalStoreError>)
+        }
+
+        enum Delegate {
+            case close
+            case logout
+        }
+    }
+
+    @Dependency(\.appSecurityManager) var appSecurityManager: AppSecurityManager
+    @Dependency(\.schedulers) var schedulers: Schedulers
+    @Dependency(\.profileDataStore) var profileDataStore: ProfileDataStore
+    @Dependency(\.userDataStore) var userDataStore: UserDataStore
+    @Dependency(\.profileSecureDataWiper) var profileSecureDataWiper: ProfileSecureDataWiper
+    @Dependency(\.userSessionProvider) var userSessionProvider: UserSessionProvider
+    @Dependency(\.router) var router: Routing
+
+    private var environment: Environment {
+        .init(
+            appSecurityManager: appSecurityManager,
+            schedulers: schedulers,
+            profileDataStore: profileDataStore,
+            userDataStore: userDataStore,
+            profileSecureDataWiper: profileSecureDataWiper,
+            userSessionProvider: userSessionProvider,
+            router: router
+        )
     }
 
     struct Environment {
@@ -99,21 +169,22 @@ enum EditProfileDomain {
         let profileDataStore: ProfileDataStore
         let userDataStore: UserDataStore
         let profileSecureDataWiper: ProfileSecureDataWiper
-        let router: Routing
-        let userSession: UserSession
         let userSessionProvider: UserSessionProvider
-        let secureEnclaveSignatureProvider: SecureEnclaveSignatureProvider
-        let nfcSignatureProvider: NFCSignatureProvider
-        let signatureProvider: SecureEnclaveSignatureProvider
-        let accessibilityAnnouncementReceiver: (String) -> Void
+        let router: Routing
     }
-}
 
-extension EditProfileDomain {
-    static let domainReducer = Reducer { state, action, environment in
+    var body: some ReducerProtocol<State, Action> {
+        Reduce(core)
+            .ifLet(\.destination, action: /Action.destination) {
+                Destinations()
+            }
+    }
+
+    // swiftlint:disable:next function_body_length cyclomatic_complexity
+    func core(into state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
         case .loadAvailableSecurityOptions:
-            let availableOptions = environment.appSecurityManager.availableSecurityOptions
+            let availableOptions = appSecurityManager.availableSecurityOptions
             state.availableSecurityOptions = availableOptions.options
             state.securityOptionsError = availableOptions.error
             return .none
@@ -126,38 +197,31 @@ extension EditProfileDomain {
                     .cancellable(id: Token.idpBiometricKeyIDListener, cancelInFlight: true),
                 environment.subscribeToCanUpdates(with: state.profileId)
                     .cancellable(id: Token.canListener, cancelInFlight: true),
-                environment.profileDataStore.fetchProfile(by: state.profileId)
+                profileDataStore.fetchProfile(by: state.profileId)
                     .first()
                     .catchToEffect()
-                    .map(Action.profileReceived)
-                    .receive(on: environment.schedulers.main)
+                    .map(Action.Response.profileReceived)
+                    .map(Action.response)
+                    .receive(on: schedulers.main)
                     .eraseToEffect()
                     .cancellable(id: Token.profileReceived, cancelInFlight: true)
             )
-        case let .tokenReceived(token):
+        case let .response(.tokenReceived(token)):
             state.token = token
             return .none
-        case let .biometricKeyIDReceived(result):
+        case let .response(.biometricKeyIDReceived(result)):
             state.hasBiometricKeyID = result
             return .none
-        case let .canReceived(can):
+        case let .response(.canReceived(can)):
             state.can = can
             return .none
-        case let .profileReceived(.success(profile)):
+        case let .response(.profileReceived(.success(profile))):
             state.insuranceId = profile?.insuranceId
             state.insurance = profile?.insurance
             state.fullName = profile?.fullName
             return .none
-        case .profileReceived(.failure):
+        case .response(.profileReceived(.failure)):
             return .none
-        case let .setEmoji(emoji):
-            state.emoji = emoji
-
-            return environment
-                .updateProfile(with: state.profileId) { profile in
-                    profile.emoji = emoji
-                }
-                .map(Action.updateProfileReceived)
         case let .setName(name):
             let name = name.trimmed()
             state.name = name
@@ -169,134 +233,102 @@ extension EditProfileDomain {
                 .updateProfile(with: state.profileId) { profile in
                     profile.name = name
                 }
-                .map(Action.updateProfileReceived)
+                .map(Action.Response.updateProfileReceived)
+                .map(Action.response)
         case let .setColor(color):
             state.color = color
             return environment
                 .updateProfile(with: state.profileId) { profile in
                     profile.color = color.erxColor
                 }
-                .map(Action.updateProfileReceived)
+                .map(Action.Response.updateProfileReceived)
+                .map(Action.response)
         case .showDeleteProfileAlert:
-            state.route = .alert(AlertStates.deleteProfile)
+            state.destination = .alert(AlertStates.deleteProfile)
             return .none
         case .confirmDeleteProfile:
             return
                 .concatenate(
-                    cleanup(),
+                    Self.cleanup(),
                     environment
                         .deleteProfile(with: state.profileId)
                         .map { result in
                             switch result {
-                            case .success: return Action.close
-                            case let .failure(error): return Action.updateProfileReceived(.failure(error))
+                            case .success: return Action.delegate(.close)
+                            case let .failure(error): return Action.response(.updateProfileReceived(.failure(error)))
                             }
                         }
                         .eraseToEffect()
                 )
-        case .updateProfileReceived(.success):
+        case .response(.updateProfileReceived(.success)):
             return .none
-        case let .updateProfileReceived(.failure(error)):
-            state.route = .alert(.init(for: error))
+        case let .response(.updateProfileReceived(.failure(error))):
+            state.destination = .alert(.init(for: error))
             return .none
         case .dismissAlert:
-            state.route = nil
+            state.destination = nil
             return .none
-        case .logout:
+        case .delegate(.logout):
             state.token = nil
-            return environment.profileSecureDataWiper.wipeSecureData(of: state.profileId).fireAndForget()
+            return profileSecureDataWiper.wipeSecureData(of: state.profileId).fireAndForget()
         case .login:
-            environment.userDataStore.set(selectedProfileId: state.profileId)
-            environment.router.routeTo(.mainScreen(.login))
+            userDataStore.set(selectedProfileId: state.profileId)
+            router.routeTo(.mainScreen(.login))
             return .none
         case .relogin:
             state.token = nil
+            let environment = environment
             return environment.profileSecureDataWiper.wipeSecureData(of: state.profileId)
                 .handleEvents(receiveCompletion: { [state] _ in
                     environment.userDataStore.set(selectedProfileId: state.profileId)
                     environment.router.routeTo(.mainScreen(.login))
                 })
                 .fireAndForget()
-        case .close:
-            return cleanup()
+        case .delegate(.close):
+            return Self.cleanup()
         case .setNavigation(tag: .none):
-            state.route = nil
+            state.destination = nil
             return .none
         case .setNavigation(tag: .token):
             if let token = state.token {
-                state.route = .token(token)
+                state.destination = .token(token)
             }
             return .none
         case .setNavigation(tag: .linkedDevices):
-            state.route = .linkedDevices
+            state.destination = .linkedDevices
             return .none
         case .setNavigation(tag: .registeredDevices):
-            state.route = .registeredDevices(.init(profileId: state.profileId))
+            state.destination = .registeredDevices(.init(profileId: state.profileId))
             return .none
         case .setNavigation(tag: .auditEvents):
-            state.route = .auditEvents(.init(profileUUID: state.profileId))
+            state.destination = .auditEvents(.init(profileUUID: state.profileId))
+            return .none
+        case .setNavigation(tag: .chargeItems):
+            state.destination = .chargeItems(.init(profileId: state.profileId))
             return .none
         case .setNavigation:
             return .none
-        case .auditEvents,
-             .registeredDevices:
+        case .destination(.auditEventsAction),
+             .destination(.registeredDevicesAction),
+             .destination(.chargeItemsAction):
             return .none
         case .showDeleteBiometricPairingAlert:
-            state.route = .alert(AlertStates.deleteBiometricPairing)
+            state.destination = .alert(AlertStates.deleteBiometricPairing)
             return .none
         case .confirmDeleteBiometricPairing:
-            state.route = nil
+            state.destination = nil
             return environment.deleteBiometricPairing(for: state.profileId)
-        case let .deleteBiometricPairingReceived(result):
+        case let .response(.deleteBiometricPairingReceived(result)):
             switch result {
             case .success:
-                state.route = nil
+                state.destination = nil
                 return environment.profileSecureDataWiper.wipeSecureData(of: state.profileId).fireAndForget()
             case let .failure(error):
-                state.route = .alert(AlertStates.deleteBiometricPairingFailed(with: error))
+                state.destination = .alert(AlertStates.deleteBiometricPairingFailed(with: error))
                 return .none
             }
         }
     }
-}
-
-extension EditProfileDomain {
-    static let reducer: Reducer = .combine(
-        auditEventsReducer,
-        registeredDevicesDomain,
-        domainReducer
-    )
-
-    private static let auditEventsReducer: Reducer =
-        AuditEventsDomain.reducer._pullback(
-            state: (\State.route).appending(path: /EditProfileDomain.Route.auditEvents),
-            action: /EditProfileDomain.Action.auditEvents(action:)
-        ) {
-            .init(
-                schedulers: $0.schedulers,
-                profileDataStore: $0.profileDataStore
-            )
-        }
-
-    private static let registeredDevicesDomain: Reducer =
-        RegisteredDevicesDomain.reducer._pullback(
-            state: (\State.route).appending(path: /EditProfileDomain.Route.registeredDevices),
-            action: /EditProfileDomain.Action.registeredDevices(action:)
-        ) {
-            .init(
-                schedulers: $0.schedulers,
-                userSession: $0.userSession,
-                userSessionProvider: $0.userSessionProvider,
-                secureEnclaveSignatureProvider: $0.secureEnclaveSignatureProvider,
-                nfcSignatureProvider: $0.nfcSignatureProvider,
-                sessionProvider: RegisterSessionProvider(
-                    userSessionProvider: $0.userSessionProvider,
-                    userSession: $0.userSession
-                ),
-                accessibilityAnnouncementReceiver: $0.accessibilityAnnouncementReceiver,
-                registeredDevicesService: DefaultRegisteredDevicesService(userSessionProvider: $0.userSessionProvider)
-            )
-        }
 }
 
 extension EditProfileDomain.State {
@@ -306,39 +338,42 @@ extension EditProfileDomain.State {
          insurance: String?,
          can: String?,
          insuranceId: String?,
-         emoji: String? = nil,
+         image: ProfilePicture,
          color: ProfileColor,
          profileId: UUID,
          token: IDPToken? = nil,
          hasBiometricKeyID: Bool? = nil,
-         route: EditProfileDomain.Route? = nil,
+         destination: EditProfileDomain.Destinations.State? = nil,
          availableSecurityOptions: [AppSecurityOption] = [],
-         securityOptionsError: AppSecurityManagerError? = nil) {
+         securityOptionsError: AppSecurityManagerError? = nil,
+         insuranceType: Profile.InsuranceType = .unknown) {
         self.name = name
         self.acronym = acronym
         self.fullName = fullName
         self.insurance = insurance
         self.can = can
         self.insuranceId = insuranceId
-        self.emoji = emoji
+        self.image = image
         self.color = color
         self.profileId = profileId
-        self.route = route
+        self.destination = destination
         self.token = token
         self.hasBiometricKeyID = hasBiometricKeyID
         self.availableSecurityOptions = availableSecurityOptions
         self.securityOptionsError = securityOptionsError
+        self.insuranceType = insuranceType
     }
 
     init(profile: UserProfile) {
         profileId = profile.id
-        emoji = profile.emoji
         name = profile.name
         acronym = profile.name.acronym()
         fullName = profile.fullName
         insurance = profile.insurance
         insuranceId = profile.insuranceId
+        image = profile.image
         color = profile.color
+        insuranceType = profile.profile.insuranceType
     }
 
     enum AuthenticationType: Equatable {
@@ -360,6 +395,13 @@ extension EditProfileDomain.State {
         }
         return .none
     }
+
+    var showChargeItemsSection: Bool {
+        switch insuranceType {
+        case .pKV: return true
+        case .gKV, .unknown: return false
+        }
+    }
 }
 
 extension EditProfileDomain.Environment {
@@ -368,14 +410,16 @@ extension EditProfileDomain.Environment {
     func subscribeToTokenUpdates(for profileId: UUID) -> Effect<Action, Never> {
         userSessionProvider.userSession(for: profileId).secureUserStore.token
             .receive(on: schedulers.main.animation())
-            .map(Action.tokenReceived)
+            .map(Action.Response.tokenReceived)
+            .map(Action.response)
             .eraseToEffect()
     }
 
     func subscribeToCanUpdates(with profileId: UUID) -> Effect<Action, Never> {
         userSessionProvider.userSession(for: profileId).secureUserStore.can
             .receive(on: schedulers.main.animation())
-            .map(Action.canReceived)
+            .map(Action.Response.canReceived)
+            .map(Action.response)
             .eraseToEffect()
     }
 
@@ -383,13 +427,14 @@ extension EditProfileDomain.Environment {
         userSessionProvider.userSession(for: profileId).secureUserStore.keyIdentifier
             .receive(on: schedulers.main.animation())
             .map { $0 != nil }
-            .map(Action.biometricKeyIDReceived)
+            .map(Action.Response.biometricKeyIDReceived)
+            .map(Action.response)
             .eraseToEffect()
     }
 
     func updateProfile(
         with profileId: UUID,
-        mutating: @escaping (inout eRpKit.Profile) -> Void
+        mutating: @escaping (inout Profile) -> Void
     ) -> Effect<Result<Bool, LocalStoreError>, Never> {
         profileDataStore
             .update(profileId: profileId, mutating: mutating)
@@ -426,10 +471,8 @@ extension EditProfileDomain.Environment {
 
     func deleteBiometricPairing(for profileId: UUID) -> Effect<Action, Never> {
         let profileUserSession = userSessionProvider.userSession(for: profileId)
-        let loginHandler = DefaultLoginHandler(
-            idpSession: profileUserSession.biometrieIdpSession,
-            signatureProvider: DefaultSecureEnclaveSignatureProvider(storage: profileUserSession.secureUserStore)
-        )
+        let loginHandler = profileUserSession.biometricsIdpSessionLoginHandler
+
         return loginHandler.isAuthenticatedOrAuthenticate()
             .first()
             .flatMap { result -> AnyPublisher<IDPToken?, Never> in
@@ -455,7 +498,8 @@ extension EditProfileDomain.Environment {
                 return profileUserSession.biometrieIdpSession.unregisterDevice(deviceIdentifier, token: pairingToken)
                     // -> AnyPublisher<Bool, IDPError>
                     .catchToEffect()
-                    .map(Action.deleteBiometricPairingReceived)
+                    .map(Action.Response.deleteBiometricPairingReceived)
+                    .map(Action.response)
             }
             .first()
             .receive(on: schedulers.main)
@@ -476,7 +520,6 @@ extension Publisher where Failure == LocalStoreError, Output == Bool {
                                           identifier: UUID(),
                                           insuranceId: nil,
                                           color: .blue,
-                                          emoji: nil,
                                           lastAuthenticated: nil,
                                           erxTasks: [])
                     return profileDataStore.save(profiles: [profile])
@@ -572,28 +615,9 @@ extension EditProfileDomain {
             return state
         }()
 
-        static let environment = Environment(
-            appSecurityManager:
-            DummyAppSecurityManager(
-                options: onlineState.availableSecurityOptions,
-                error: onlineState.securityOptionsError
-            ),
-            schedulers: Schedulers(),
-            profileDataStore: DemoProfileDataStore(),
-            userDataStore: DemoUserDefaultsStore(),
-            profileSecureDataWiper: DummyProfileSecureDataWiper(),
-            router: DummyRouter(),
-            userSession: DummySessionContainer(),
-            userSessionProvider: DummyUserSessionProvider(),
-            secureEnclaveSignatureProvider: DummySecureEnclaveSignatureProvider(),
-            nfcSignatureProvider: DemoSignatureProvider(),
-            signatureProvider: DummySecureEnclaveSignatureProvider()
-        ) { _ in }
-
         static let store = Store(
             initialState: onlineState,
-            reducer: reducer,
-            environment: environment
+            reducer: EditProfileDomain()
         )
     }
 }

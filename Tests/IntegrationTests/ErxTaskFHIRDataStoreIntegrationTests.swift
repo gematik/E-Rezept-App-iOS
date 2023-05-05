@@ -141,6 +141,34 @@ final class ErxTaskFHIRDataStoreIntegrationTests: XCTestCase {
         expect(didLoadCommunications).to(beTrue())
     }
 
+    func testConsentFlow() throws {
+        guard let signer = environment.brainpool256r1Signer else {
+            throw XCTSkip("Skip test because no signing entity available")
+        }
+
+        let didLogin = login(with: signer)
+        expect(didLogin).to(beTrue())
+
+        // trying to revoke consent precautiously in case test failed before
+        cloudStorage.revokeConsent(.chargcons)
+            .first()
+            .replaceError(with: false)
+            .test(expectations: { _ in })
+
+        let consent = grantConsent()
+        expect(consent?.category).to(equal(.chargcons))
+        expect(consent?.insuranceId).to(equal("X114428530"))
+
+        let consents = getConsents()
+        expect(consents.first).to(equal(consent))
+
+        let didRevokeConsent = revokeConsent()
+        expect(didRevokeConsent).to(beTrue())
+
+        let consentsEmpty = getConsents()
+        expect(consentsEmpty).to(beEmpty())
+    }
+
     func testRedeemFlow() throws {
         guard let signer = environment.brainpool256r1Signer else {
             throw XCTSkip("Skip test because no signing entity available")
@@ -326,6 +354,94 @@ final class ErxTaskFHIRDataStoreIntegrationTests: XCTestCase {
         expect(file: file, line: line, finished).toEventually(beTrue(), timeout: .seconds(300))
         expect(file: file, line: line, success).to(beTrue())
         cancellable.cancel()
+        return success
+    }
+
+    private func getConsents(file: FileString = #file, line: UInt = #line) -> [ErxConsent] {
+        var finished = false
+        var success = false
+        var receivedConsents = [ErxConsent]()
+
+        cloudStorage.fetchConsents()
+            .first()
+            .test(
+                timeout: 300,
+                failure: { error in
+                    fail("Failed with error: \(error)", file: file, line: line)
+                    finished = true
+                },
+                expectations: { consents in
+                    receivedConsents = consents
+                    success = true
+                    finished = true
+                    Swift.print("✅ Loaded \(receivedConsents.count) consents!")
+                },
+                subscribeScheduler: DispatchQueue.global().eraseToAnyScheduler()
+            )
+        expect(file: file, line: line, finished).toEventually(beTrue(), timeout: .seconds(300))
+        expect(file: file, line: line, success).to(beTrue())
+        return receivedConsents
+    }
+
+    private func grantConsent(file: FileString = #file, line: UInt = #line) -> ErxConsent? {
+        var finished = false
+        var success = false
+        var receivedConsent: ErxConsent?
+
+        let kvnr = "X114428530"
+        let consent = ErxConsent(
+            identifier: "\(ErxConsent.Category.chargcons.rawValue)-\(kvnr)",
+            insuranceId: kvnr,
+            timestamp: FHIRDateFormatter.shared.string(from: Date(), format: .yearMonthDay),
+            scope: .patientPrivacy,
+            category: .chargcons,
+            policyRule: .optIn
+        )
+
+        cloudStorage.grantConsent(consent)
+            .first()
+            .test(
+                timeout: 300,
+                failure: { error in
+                    fail("Failed with error: \(error)", file: file, line: line)
+                    finished = true
+                },
+                expectations: { consent in
+                    receivedConsent = consent
+                    success = true
+                    finished = true
+                    Swift.print("✅ Consent granted!")
+                },
+                subscribeScheduler: DispatchQueue.global().eraseToAnyScheduler()
+            )
+        expect(file: file, line: line, finished).toEventually(beTrue(), timeout: .seconds(300))
+        expect(file: file, line: line, success).to(beTrue())
+        return receivedConsent
+    }
+
+    private func revokeConsent(file: FileString = #file, line: UInt = #line) -> Bool {
+        var finished = false
+        var success = false
+
+        let consentCategory = ErxConsent.Category.chargcons
+
+        cloudStorage.revokeConsent(consentCategory)
+            .first()
+            .test(
+                timeout: 300,
+                failure: { error in
+                    fail("Failed with error: \(error)", file: file, line: line)
+                    finished = true
+                },
+                expectations: { result in
+                    success = result
+                    finished = true
+                    Swift.print("✅ Revoked \(consentCategory.rawValue) consent!")
+                },
+                subscribeScheduler: DispatchQueue.global().eraseToAnyScheduler()
+            )
+        expect(file: file, line: line, finished).toEventually(beTrue(), timeout: .seconds(300))
+        expect(file: file, line: line, success).to(beTrue())
         return success
     }
 

@@ -79,20 +79,20 @@ extension CardWallReadCardDomain.State {
 
         var nextAction: CardWallReadCardDomain.Action {
             if case .loggedIn = self {
-                return .close
+                return .delegate(.close)
             }
             // Pop to correct screen if we have a card error a.k.a. wrong pin or wrong can
             if case let .signingChallenge(signingState) = self,
                case let .error(error) = signingState {
                 switch error {
                 case .signChallengeError(.verifyCardError(.passwordBlocked)):
-                    return .close // TODO: call action for correcting pin here // swiftlint:disable:this todo
+                    return .delegate(.close)
                 case .signChallengeError(.verifyCardError(.wrongSecretWarning)),
                      .inputError(.missingPIN):
-                    return .wrongPIN
+                    return .delegate(.wrongPIN)
                 case .signChallengeError(.wrongCAN),
                      .inputError(.missingCAN):
-                    return .wrongCAN
+                    return .delegate(.wrongCAN)
                 default: break
                 }
             }

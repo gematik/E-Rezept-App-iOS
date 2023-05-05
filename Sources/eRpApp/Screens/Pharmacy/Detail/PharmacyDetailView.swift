@@ -193,7 +193,7 @@ struct PharmacyDetailView: View {
             ToolbarItemGroup(placement: .navigationBarTrailing) {
                 if isRedeemRecipe {
                     NavigationBarCloseItem {
-                        viewStore.send(.close)
+                        viewStore.send(.delegate(.close))
                     }
                 }
             }
@@ -297,10 +297,10 @@ extension PharmacyDetailView {
     struct RedeemViewViaAVSNavigation: View {
         let store: PharmacyDetailDomain.Store
         var body: some View {
-            WithViewStore(store.scope(state: \.route?.tag)) { viewStore in
+            WithViewStore(store.scope(state: \.destination?.tag)) { viewStore in
                 NavigationLink(
                     destination: destination,
-                    tag: PharmacyDetailDomain.Route.Tag.redeemViaAVS,
+                    tag: PharmacyDetailDomain.Destinations.State.Tag.redeemViaAVS,
                     selection: viewStore.binding(
                         get: { $0 },
                         send: { .setNavigation(tag: $0) }
@@ -313,17 +313,11 @@ extension PharmacyDetailView {
 
         var destination: some View {
             IfLetStore(
-                scopedStore,
+                store.destinationsScope(
+                    state: /PharmacyDetailDomain.Destinations.State.redeemViaAVS,
+                    action: PharmacyDetailDomain.Destinations.Action.pharmacyRedeemViaAVS(action:)
+                ),
                 then: PharmacyRedeemView.init(store:)
-            )
-        }
-
-        var scopedStore: Store<PharmacyRedeemDomain.State?, PharmacyRedeemDomain.Action> {
-            store.scope(
-                state: (\PharmacyDetailDomain.State.route)
-                    .appending(path: /PharmacyDetailDomain.Route.redeemViaAVS)
-                    .extract(from:),
-                action: PharmacyDetailDomain.Action.pharmacyRedeemViaAVS(action:)
             )
         }
     }
@@ -331,10 +325,16 @@ extension PharmacyDetailView {
     struct RedeemViewViaErxTaskRepoNavigation: View {
         let store: PharmacyDetailDomain.Store
         var body: some View {
-            WithViewStore(store.scope(state: \.route?.tag)) { viewStore in
+            WithViewStore(store.scope(state: \.destination?.tag)) { viewStore in
                 NavigationLink(
-                    destination: destination,
-                    tag: PharmacyDetailDomain.Route.Tag.redeemViaErxTaskRepository,
+                    destination: IfLetStore(
+                        store.destinationsScope(
+                            state: /PharmacyDetailDomain.Destinations.State.redeemViaErxTaskRepository,
+                            action: PharmacyDetailDomain.Destinations.Action.pharmacyRedeemViaErxTaskRepository(action:)
+                        ),
+                        then: PharmacyRedeemView.init(store:)
+                    ),
+                    tag: PharmacyDetailDomain.Destinations.State.Tag.redeemViaErxTaskRepository,
                     selection: viewStore.binding(
                         get: { $0 },
                         send: { .setNavigation(tag: $0) }
@@ -349,22 +349,6 @@ extension PharmacyDetailView {
                     EmptyView()
                 }.accessibility(hidden: true)
             }
-        }
-
-        var destination: some View {
-            IfLetStore(
-                scopedStore,
-                then: PharmacyRedeemView.init(store:)
-            )
-        }
-
-        var scopedStore: Store<PharmacyRedeemDomain.State?, PharmacyRedeemDomain.Action> {
-            store.scope(
-                state: (\PharmacyDetailDomain.State.route)
-                    .appending(path: /PharmacyDetailDomain.Route.redeemViaErxTaskRepository)
-                    .extract(from:),
-                action: PharmacyDetailDomain.Action.pharmacyRedeemViaErxTaskRepository(action:)
-            )
         }
     }
 
@@ -417,19 +401,19 @@ struct PharmacyDetailView_Previews: PreviewProvider {
                         erxTasks: PharmacyDetailDomain.Dummies.prescriptions,
                         pharmacyViewModel: PharmacyDetailDomain.Dummies.pharmacyInactiveViewModel
                     ),
-                    reducer: PharmacyDetailDomain.Reducer.empty,
-                    environment: PharmacyDetailDomain.Dummies.environment
+                    reducer: PharmacyDetailDomain()
                 )
             )
         }
 
         NavigationView {
             PharmacyDetailView(
-                store: PharmacyDetailDomain.Dummies.storeFor(
-                    PharmacyDetailDomain.State(
+                store: PharmacyDetailDomain.Store(
+                    initialState: .init(
                         erxTasks: PharmacyDetailDomain.Dummies.prescriptions,
                         pharmacyViewModel: PharmacyDetailDomain.Dummies.pharmacyInactiveViewModel
-                    )
+                    ),
+                    reducer: PharmacyDetailDomain()
                 )
             )
         }

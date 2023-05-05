@@ -1,0 +1,60 @@
+{
+  "id": "59c8f8c2-0fac-4558-ae39-f03ade8565b8",
+  "type": "searchset",
+  "timestamp": "2023-02-07T08:36:41.918+00:00",
+  "resourceType": "Bundle",
+  "total": 0,
+  "entry": [
+    {
+      "fullUrl": "https://erp-dev.zentral.erp.splitdns.ti-dienste.de/Consent/CHARGCONS-X764228532",
+      "resource": {
+        "resourceType": "Consent",
+        "id": "CHARGCONS-X764228532",
+        "meta": {
+          "profile": [
+            "https://gematik.de/fhir/erpchrg/StructureDefinition/GEM_ERPCHRG_PR_Consent|1.0"
+          ]
+        },
+        "status": "active",
+        "scope": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/consentscope",
+              "code": "patient-privacy",
+              "display": "Privacy Consent"
+            }
+          ]
+        },
+        "category": [
+          {
+            "coding": [
+              {
+                "system": "https://gematik.de/fhir/erpchrg/CodeSystem/GEM_ERPCHRG_CS_ConsentType",
+                "code": "CHARGCONS",
+                "display": "Consent for saving electronic charge item"
+              }
+            ]
+          }
+        ],
+        "patient": {
+          "identifier": {
+            "system": "http://fhir.de/sid/pkv/kvid-10",
+            "value": "X764228532"
+          }
+        },
+        "dateTime": "2023-02-07",
+        "policyRule": {
+          "coding": [
+            {
+              "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+              "code": "OPTIN"
+            }
+          ]
+        }
+      },
+      "search": {
+        "mode": "match"
+      }
+    }
+  ]
+}

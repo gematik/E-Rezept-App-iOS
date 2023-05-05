@@ -41,7 +41,7 @@ struct PharmacySearchFilterView: View {
                 Text(title)
                     .padding(EdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16))
                     .foregroundColor(isEnabled ? Colors.systemBackground : Colors.systemLabelSecondary)
-                    .background(isEnabled ? Colors.primary : Colors.systemGray6)
+                    .background(isEnabled ? Colors.primary : Colors.systemBackgroundSecondary)
                     .cornerRadius(8)
             })
         }
@@ -84,10 +84,7 @@ struct PharmacySearchFilterView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
 
             Button(action: {
-                viewStore.send(
-                    .close(viewStore.state.pharmacyFilterOptions),
-                    animation: .easeInOut
-                )
+                viewStore.send(.delegate(.close), animation: .easeInOut)
             }, label: {
                 Text(L10n.psfBtnAccept)
             })
@@ -95,7 +92,7 @@ struct PharmacySearchFilterView: View {
                 .buttonStyle(.secondaryAlt)
         }
         .padding()
-        .background(Color(.systemBackground).ignoresSafeArea(.all, edges: .bottom))
+        .background(Colors.systemBackground.ignoresSafeArea(.all, edges: .bottom))
         .navigationBarTitleDisplayMode(.inline)
     }
 
@@ -116,13 +113,9 @@ struct PharmacySearchFilterView: View {
 
 struct PharmacySearchFilterView_Previews: PreviewProvider {
     static var previews: some View {
-        Text("abc")
-            .smallSheet(
-                isPresented: .constant(true),
-                onDismiss: {},
-                content: {
-                    PharmacySearchFilterView(store: PharmacySearchFilterDomain.Dummies.store)
-                }
-            )
+        PharmacySearchFilterView(store: PharmacySearchFilterDomain.Dummies.store)
+
+        PharmacySearchFilterView(store: PharmacySearchFilterDomain.Dummies.store)
+            .preferredColorScheme(.dark)
     }
 }

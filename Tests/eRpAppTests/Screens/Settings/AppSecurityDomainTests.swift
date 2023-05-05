@@ -31,7 +31,7 @@ final class AppSecurityDomainTests: XCTestCase {
         AppSecurityDomain.Action,
         AppSecurityDomain.State,
         AppSecurityDomain.Action,
-        AppSecurityDomain.Environment
+        Void
     >
     var mockUserDataStore: MockUserDataStore!
     var mockAppSecurityManager: MockAppSecurityManager!
@@ -47,15 +47,15 @@ final class AppSecurityDomainTests: XCTestCase {
                            selectedSecurityOption: AppSecurityOption? = nil) -> TestStore {
         mockAppSecurityManager.availableSecurityOptionsReturnValue = (availableSecurityOptions, nil)
         mockUserDataStore.appSecurityOption = Just(selectedSecurityOption ?? .unsecured).eraseToAnyPublisher()
-        let appSecurityEnvironment = AppSecurityDomain.Environment(
-            userDataStore: mockUserDataStore,
-            appSecurityManager: mockAppSecurityManager,
-            schedulers: Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler())
-        )
 
-        return TestStore(initialState: AppSecurityDomain.State(availableSecurityOptions: [.password]),
-                         reducer: AppSecurityDomain.reducer,
-                         environment: appSecurityEnvironment)
+        return TestStore(
+            initialState: AppSecurityDomain.State(availableSecurityOptions: [.password]),
+            reducer: AppSecurityDomain()
+        ) { dependencies in
+            dependencies.userDataStore = mockUserDataStore
+            dependencies.appSecurityManager = mockAppSecurityManager
+            dependencies.schedulers = Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler())
+        }
     }
 
     func testLoadingAvailableSecurityOptions_Without_Biometry() {
@@ -67,7 +67,7 @@ final class AppSecurityDomainTests: XCTestCase {
             $0.availableSecurityOptions = availableSecurityOptions
         }
         testScheduler.advance()
-        store.receive(.loadSecurityOptionResponse(.unsecured)) {
+        store.receive(.response(.loadSecurityOption(.unsecured))) {
             $0.selectedSecurityOption = .unsecured
         }
     }
@@ -81,7 +81,7 @@ final class AppSecurityDomainTests: XCTestCase {
             $0.availableSecurityOptions = availableSecurityOptions
         }
         testScheduler.advance()
-        store.receive(.loadSecurityOptionResponse(.unsecured)) {
+        store.receive(.response(.loadSecurityOption(.unsecured))) {
             $0.selectedSecurityOption = .unsecured
         }
     }
@@ -97,7 +97,7 @@ final class AppSecurityDomainTests: XCTestCase {
             $0.availableSecurityOptions = availableSecurityOptions
         }
         testScheduler.advance()
-        store.receive(.loadSecurityOptionResponse(.unsecured)) {
+        store.receive(.response(.loadSecurityOption(.unsecured))) {
             $0.selectedSecurityOption = .unsecured
         }
     }
@@ -113,7 +113,7 @@ final class AppSecurityDomainTests: XCTestCase {
             $0.availableSecurityOptions = availableSecurityOptions
         }
         testScheduler.advance()
-        store.receive(.loadSecurityOptionResponse(preSelectedSecurityOption)) {
+        store.receive(.response(.loadSecurityOption(preSelectedSecurityOption))) {
             $0.selectedSecurityOption = preSelectedSecurityOption
         }
     }
@@ -129,7 +129,7 @@ final class AppSecurityDomainTests: XCTestCase {
             $0.availableSecurityOptions = availableSecurityOptions
         }
         testScheduler.advance()
-        store.receive(.loadSecurityOptionResponse(preSelectedSecurityOption)) {
+        store.receive(.response(.loadSecurityOption(preSelectedSecurityOption))) {
             $0.selectedSecurityOption = preSelectedSecurityOption
         }
     }
@@ -146,7 +146,7 @@ final class AppSecurityDomainTests: XCTestCase {
             $0.availableSecurityOptions = availableSecurityOptions
         }
         testScheduler.advance()
-        store.receive(.loadSecurityOptionResponse(preSelectedSecurityOption)) {
+        store.receive(.response(.loadSecurityOption(preSelectedSecurityOption))) {
             $0.selectedSecurityOption = preSelectedSecurityOption
         }
         store.send(.select(selectedSecurityOption)) {
@@ -166,7 +166,7 @@ final class AppSecurityDomainTests: XCTestCase {
             $0.availableSecurityOptions = availableSecurityOptions
         }
         testScheduler.advance()
-        store.receive(.loadSecurityOptionResponse(preSelectedSecurityOption)) {
+        store.receive(.response(.loadSecurityOption(preSelectedSecurityOption))) {
             $0.selectedSecurityOption = preSelectedSecurityOption
         }
         store.send(.select(selectedSecurityOption)) {
@@ -186,7 +186,7 @@ final class AppSecurityDomainTests: XCTestCase {
             $0.availableSecurityOptions = availableSecurityOptions
         }
         testScheduler.advance()
-        store.receive(.loadSecurityOptionResponse(preSelectedSecurityOption)) {
+        store.receive(.response(.loadSecurityOption(preSelectedSecurityOption))) {
             $0.selectedSecurityOption = preSelectedSecurityOption
         }
         store.send(.select(selectedSecurityOption)) {

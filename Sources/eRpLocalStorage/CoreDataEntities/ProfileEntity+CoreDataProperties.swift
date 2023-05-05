@@ -15,6 +15,7 @@
 //  limitations under the Licence.
 //  
 //
+//
 
 import CoreData
 import Foundation
@@ -26,16 +27,18 @@ extension ProfileEntity {
 
     @NSManaged public var color: String?
     @NSManaged public var created: Date?
-    @NSManaged public var emoji: String?
     @NSManaged public var familyName: String?
     @NSManaged public var givenName: String?
     @NSManaged public var identifier: UUID?
+    @NSManaged public var image: String?
     @NSManaged public var insurance: String?
     @NSManaged public var insuranceId: String?
+    @NSManaged public var insuranceType: String?
     @NSManaged public var lastAuthenticated: Date?
     @NSManaged public var name: String?
     @NSManaged public var auditEvents: NSSet?
     @NSManaged public var erxTasks: NSSet?
+    @NSManaged public var chargeItems: NSSet?
 }
 
 // MARK: Generated accessors for auditEvents
@@ -69,3 +72,21 @@ extension ProfileEntity {
     @objc(removeErxTasks:)
     @NSManaged public func removeFromErxTasks(_ values: NSSet)
 }
+
+// MARK: Generated accessors for chargeItems
+
+extension ProfileEntity {
+    @objc(addChargeItemsObject:)
+    @NSManaged public func addToChargeItems(_ value: ErxChargeItemEntity)
+
+    @objc(removeChargeItemsObject:)
+    @NSManaged public func removeFromChargeItems(_ value: ErxChargeItemEntity)
+
+    @objc(addChargeItems:)
+    @NSManaged public func addToChargeItems(_ values: NSSet)
+
+    @objc(removeChargeItems:)
+    @NSManaged public func removeFromChargeItems(_ values: NSSet)
+}
+
+extension ProfileEntity: Identifiable {}

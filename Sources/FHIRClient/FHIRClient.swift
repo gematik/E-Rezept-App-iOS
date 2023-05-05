@@ -17,6 +17,7 @@
 //
 
 import Combine
+import CombineSchedulers
 import Foundation
 import HTTPClient
 import ModelsR4
@@ -87,15 +88,17 @@ extension FHIRClient {
 public class FHIRClient {
     private var server: URL
     private var httpClient: HTTPClient
+    private let receiveQueue: AnySchedulerOf<DispatchQueue>
 
     /// Initialize with the service URL and an `HTTPClient`
     ///
     /// - Parameters:
     ///   - server: `URL` where the request will be sent to
     ///   - httpClient:  `HTTPClient` that will (alter and) perform the request resulting from a `FHIRClientOperation`
-    public init(server: URL, httpClient: HTTPClient) {
+    public init(server: URL, httpClient: HTTPClient, receiveQueue: AnySchedulerOf<DispatchQueue> = .main) {
         self.server = server
         self.httpClient = httpClient
+        self.receiveQueue = receiveQueue
     }
 
     /// Perform a request derived from a `FHIRClientOperation`.
@@ -114,6 +117,7 @@ public class FHIRClient {
             request.httpBody = bodyData
         }
         return httpClient.send(request: request)
+            .receive(on: receiveQueue)
             .tryMap { data, urlResponse, status in
                 let response = FHIRClient.Response.from(response: urlResponse, status: status, data: data)
 

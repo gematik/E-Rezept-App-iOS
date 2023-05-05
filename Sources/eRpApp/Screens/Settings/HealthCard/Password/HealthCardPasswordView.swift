@@ -32,10 +32,10 @@ struct HealthCardPasswordView: View {
     }
 
     struct ViewState: Equatable {
-        let routeTag: HealthCardPasswordDomain.Route.Tag
+        let destinationTag: HealthCardPasswordDomain.Destinations.State.Tag
 
         init(state: HealthCardPasswordDomain.State) {
-            routeTag = state.route.tag
+            destinationTag = state.destination.tag
         }
     }
 
@@ -43,18 +43,22 @@ struct HealthCardPasswordView: View {
         HealthCardPasswordIntroductionView(store: store)
             .fullScreenCover(
                 isPresented: Binding<Bool>(
-                    get: { viewStore.routeTag == .readCard },
+                    get: { viewStore.destinationTag == .readCard },
                     set: { _ in } // is handled by store
                 )
             ) {
-                IfLetStore(store.scope(
-                    state: (\HealthCardPasswordDomain.State.route)
-                        .appending(path: /HealthCardPasswordDomain.Route.readCard)
-                        .extract(from:),
-                    action: HealthCardPasswordDomain.Action.readCard(action:)
-
-                ),
-                then: HealthCardPasswordReadCardView.init(store:))
+                IfLetStore(
+                    store
+                        .scope(
+                            state: \HealthCardPasswordDomain.State.destination,
+                            action: HealthCardPasswordDomain.Action.destination
+                        )
+                        .scope(
+                            state: /HealthCardPasswordDomain.Destinations.State.readCard,
+                            action: HealthCardPasswordDomain.Destinations.Action.readCard(action:)
+                        ),
+                    then: HealthCardPasswordReadCardView.init(store:)
+                )
             }
     }
 }

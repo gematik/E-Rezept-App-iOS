@@ -63,11 +63,12 @@ extension ErxTaskScannerView {
 
                     Spacer()
                     if viewStore.scanState.isIdle || viewStore.scanState.isLoading {
-                        Image(systemName: SFSymbolName.plusViewFinder)
-                            .font(Font.largeTitle)
-                            .scaleEffect(isImageScaled ? 1.2 : 1)
-                            .foregroundColor(Colors.yellow500)
-                            .animation(Animation.easeInOut(duration: 2).repeatForever(autoreverses: true))
+                        if isImageScaled {
+                            Image(systemName: SFSymbolName.plusViewFinder)
+                                .font(Font.largeTitle)
+                                .foregroundColor(Colors.yellow500)
+                                .transition(.endlessScale(from: 1, to: 1.2))
+                        }
                     } else {
                         ScanStateImage(imageAsset: imageAsset(for: viewStore.scanState),
                                        foregroundColor: alertTintColor(for: viewStore.scanState))
@@ -142,7 +143,6 @@ extension ErxTaskScannerView {
                             .multilineTextAlignment(.center)
                             .foregroundColor(.white)
                             .accessibility(identifier: A11y.scanner.scnTxtScanState)
-                            .animation(nil)
                             .padding()
                     }
                     .frame(minWidth: 0, maxWidth: .infinity)
@@ -150,7 +150,6 @@ extension ErxTaskScannerView {
                     .cornerRadius(16)
                     .padding(.horizontal)
                 }
-                .animation(.ripple())
             }
         }
 
@@ -196,7 +195,6 @@ extension ErxTaskScannerView {
                     .background(Colors.systemGray6)
                     .clipShape(Circle())
                     .scaleEffect(counterScale)
-                    .animation(.spring())
                     .onReceive(Just(self.counterScale)) { scale in
                         if scale == 2.0 {
                             withAnimation {
@@ -249,7 +247,6 @@ extension ErxTaskScannerView {
                     .cornerRadius(20)
                     .padding([.horizontal, .bottom])
                     .transition(.move(edge: .bottom))
-                    .animation(.ripple())
             }
         }
     }

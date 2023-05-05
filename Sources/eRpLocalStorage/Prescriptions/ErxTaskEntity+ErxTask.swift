@@ -40,10 +40,20 @@ extension ErxTaskEntity {
         acceptedUntil = task.acceptedUntil
         redeemedOn = task.redeemedOn
         author = task.author
-        dispenseValidityEnd = task.dispenseValidityEnd
-
-        noctuFeeWaiver = task.hasEmergencyServiceFee
-        substitutionAllowed = task.substitutionAllowed
+        dispenseValidityEnd = task.medicationRequest.dispenseValidityEnd
+        bvg = task.medicationRequest.bvg
+        dosageInstructions = task.medicationRequest.dosageInstructions
+        coPaymentStatus = task.medicationRequest.coPaymentStatus?.rawValue
+        noctuFeeWaiver = task.medicationRequest.hasEmergencyServiceFee
+        substitutionAllowed = task.medicationRequest.substitutionAllowed
+        accidentInfo = ErxTaskAccidentInfoEntity(
+            accident: task.medicationRequest.accidentInfo,
+            in: context
+        )
+        multiplePrescription = ErxTaskMultiplePrescriptionEntity(
+            multiplePrescription: task.medicationRequest.multiplePrescription,
+            in: context
+        )
         source = task.source.rawValue
 
         medication = ErxTaskMedicationEntity(medication: task.medication,
@@ -54,39 +64,41 @@ extension ErxTaskEntity {
                                                  in: context)
         organization = ErxTaskOrganizationEntity(organization: task.organization,
                                                  in: context)
-        workRelatedAccident = ErxTaskWorkRelatedAccidentEntity(accident: task.workRelatedAccident,
-                                                               in: context)
-        multiplePrescription = ErxTaskMultiplePrescriptionEntity(multiplePrescription: task.multiplePrescription,
-                                                                 in: context)
-
-        // Note: communications and medicationDispenses are not set here
+        // Note: communications, avsTransactions and medicationDispenses are not set here
         // since they are loaded asynchronous from remote
     }
 }
 
 extension ErxTask {
-    private static func updatedStatusForAVSRedeemedTask(_ entity: ErxTaskEntity, currentDate now: Date) -> ErxTask
-        .Status? {
-        if let avsTransactions = entity.avsTransaction {
-            let transactions = avsTransactions.filter { transaction in
-                guard let transaction = transaction as? AVSTransactionEntity,
-                      let redeemTime = transaction.groupedRedeemTime else {
+    private static func updatedStatusForRedeemedScannedTask(
+        communications: [Communication],
+        avsTransactions: [AVSTransaction],
+        currentDate now: Date
+    ) -> ErxTask.Status? {
+        if !avsTransactions.isEmpty {
+            let recentTransactions = avsTransactions.filter { transaction in
+                let redeemedTimeInterval = now.timeIntervalSince(transaction.groupedRedeemTime)
+                return redeemedTimeInterval < ErxTask.scannedTaskMinIntervalForCompletion &&
+                    redeemedTimeInterval > 0
+            }
+            return recentTransactions.isEmpty ? .completed : .inProgress
+        } else if !communications.isEmpty {
+            let recentCommunications = communications.filter { communication in
+                guard communication.profile == .dispReq,
+                      let redeemTime = communication.timestamp.date else {
                     return false
                 }
-                return now.timeIntervalSince(redeemTime) > ErxTask.scannedTaskMinIntervalForCompletion
+                let redeemedTimeInterval = now.timeIntervalSince(redeemTime)
+                return redeemedTimeInterval < ErxTask.scannedTaskMinIntervalForCompletion &&
+                    redeemedTimeInterval > 0
             }
-            if !transactions.isEmpty {
-                return .completed
-            } else if !Array(avsTransactions).isEmpty {
-                return .inProgress
-            }
+            return recentCommunications.isEmpty ? .completed : .inProgress
         }
         return nil
     }
 
-    private static func updatedStatusForTask(
-        _: ErxTaskEntity,
-        with communications: [ErxTask.Communication],
+    private static func updatedStatusForServerTask(
+        communications: [ErxTask.Communication],
         currentDate now: Date
     ) -> ErxTask.Status? {
         let comms = communications.filter { communication in
@@ -104,7 +116,13 @@ extension ErxTask {
         return nil
     }
 
+    #if ENABLE_DEBUG_VIEW
+    /// Time interval for the fake status of a scanned `ErxTask`
+    public static var scannedTaskMinIntervalForCompletion: TimeInterval = 600
+    #else
     static let scannedTaskMinIntervalForCompletion: TimeInterval = 600
+    #endif
+
     // swiftlint:disable:next function_body_length
     init?(entity: ErxTaskEntity, dateProvider: () -> Date) {
         guard let identifier = entity.identifier else {
@@ -125,14 +143,31 @@ extension ErxTask {
                     return nil
                 }
             } ?? []
+        let avsTransactions: [AVSTransaction] = entity.avsTransaction?
+            .compactMap { avsTransaction in
+                if let entity = avsTransaction as? AVSTransactionEntity {
+                    return AVSTransaction(entity: entity)
+                } else {
+                    return nil
+                }
+            } ?? []
+
         if erxTaskStatus == .ready {
             if source == .scanner {
-                erxTaskStatus = ErxTask.updatedStatusForAVSRedeemedTask(entity, currentDate: now) ?? erxTaskStatus
+                erxTaskStatus = ErxTask.updatedStatusForRedeemedScannedTask(
+                    communications: mappedCommunications,
+                    avsTransactions: avsTransactions,
+                    currentDate: now
+                ) ?? erxTaskStatus
             } else if source == .server {
                 erxTaskStatus = ErxTask
-                    .updatedStatusForTask(entity, with: mappedCommunications, currentDate: now) ?? erxTaskStatus
+                    .updatedStatusForServerTask(
+                        communications: mappedCommunications,
+                        currentDate: now
+                    ) ?? erxTaskStatus
             }
         }
+
         self.init(
             identifier: identifier,
             status: erxTaskStatus,
@@ -144,24 +179,30 @@ extension ErxTask {
             expiresOn: entity.expiresOn,
             acceptedUntil: entity.acceptedUntil,
             redeemedOn: entity.redeemedOn,
+            avsTransactions: avsTransactions.sorted { $0.groupedRedeemTime < $1.groupedRedeemTime },
             author: entity.author,
-            dispenseValidityEnd: entity.dispenseValidityEnd,
-            noctuFeeWaiver: entity.noctuFeeWaiver,
             prescriptionId: entity.prescriptionId,
-            substitutionAllowed: entity.substitutionAllowed,
             source: source,
-            medication: Medication(entity: entity.medication),
-            multiplePrescription: MultiplePrescription(entity: entity.multiplePrescription),
-            patient: Patient(entity: entity.patient),
-            practitioner: Practitioner(entity: entity.practitioner),
-            organization: Organization(entity: entity.organization),
-            workRelatedAccident: WorkRelatedAccident(entity: entity.workRelatedAccident),
+            medication: ErxMedication(entity: entity.medication),
+            medicationRequest: .init(
+                dosageInstructions: entity.dosageInstructions,
+                substitutionAllowed: entity.substitutionAllowed,
+                hasEmergencyServiceFee: entity.noctuFeeWaiver,
+                dispenseValidityEnd: entity.dispenseValidityEnd,
+                accidentInfo: AccidentInfo(entity: entity.accidentInfo),
+                bvg: entity.bvg,
+                coPaymentStatus: CoPaymentStatus(rawValue: entity.coPaymentStatus ?? "nil"),
+                multiplePrescription: MultiplePrescription(entity: entity.multiplePrescription)
+            ),
+            patient: ErxPatient(entity: entity.patient),
+            practitioner: ErxPractitioner(entity: entity.practitioner),
+            organization: ErxOrganization(entity: entity.organization),
             communications: mappedCommunications
                 .sorted { $0.timestamp < $1.timestamp },
             medicationDispenses: entity.medicationDispenses?
                 .compactMap { medicationDispense in
                     if let entity = medicationDispense as? ErxTaskMedicationDispenseEntity {
-                        return ErxTask.MedicationDispense(entity: entity)
+                        return ErxMedicationDispense(entity: entity)
                     } else {
                         return nil
                     }

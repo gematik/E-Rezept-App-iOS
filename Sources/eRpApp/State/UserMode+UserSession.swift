@@ -61,10 +61,6 @@ extension UserMode: UserSession {
         sessionContainer.secureUserStore
     }
 
-    var hintEventsStore: EventsStore {
-        sessionContainer.hintEventsStore
-    }
-
     var isDemoMode: Bool {
         if case .demo = self {
             return true
@@ -130,5 +126,17 @@ extension UserMode: UserSession {
 
     var activityIndicating: ActivityIndicating {
         sessionContainer.activityIndicating
+    }
+
+    var idpSessionLoginHandler: LoginHandler {
+        sessionContainer.idpSessionLoginHandler
+    }
+
+    var biometricsIdpSessionLoginHandler: LoginHandler {
+        sessionContainer.biometricsIdpSessionLoginHandler
+    }
+
+    var secureEnclaveSignatureProvider: SecureEnclaveSignatureProvider {
+        sessionContainer.secureEnclaveSignatureProvider
     }
 }

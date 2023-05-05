@@ -17,6 +17,7 @@
 //
 
 import CombineSchedulers
+import ComposableArchitecture
 @testable import eRpApp
 import SnapshotTesting
 import SwiftUI
@@ -37,8 +38,7 @@ final class AppAuthenticationViewSnapshotTests: XCTestCase {
                     password: AppAuthenticationPasswordDomain.State(),
                     failedAuthenticationsCount: 0
                 ),
-                reducer: .empty,
-                environment: AppAuthenticationDomain.Dummies.environment
+                reducer: EmptyReducer()
             )
         )
 
@@ -56,8 +56,7 @@ final class AppAuthenticationViewSnapshotTests: XCTestCase {
                     password: AppAuthenticationPasswordDomain.State(),
                     failedAuthenticationsCount: 1
                 ),
-                reducer: .empty,
-                environment: AppAuthenticationDomain.Dummies.environment
+                reducer: EmptyReducer()
             )
         )
 
@@ -78,8 +77,7 @@ final class AppAuthenticationViewSnapshotTests: XCTestCase {
                     password: nil,
                     failedAuthenticationsCount: 0
                 ),
-                reducer: .empty,
-                environment: AppAuthenticationDomain.Dummies.environment
+                reducer: EmptyReducer()
             )
         )
 
@@ -100,8 +98,7 @@ final class AppAuthenticationViewSnapshotTests: XCTestCase {
                     password: nil,
                     failedAuthenticationsCount: 0
                 ),
-                reducer: .empty,
-                environment: AppAuthenticationDomain.Dummies.environment
+                reducer: EmptyReducer()
             )
         )
 
@@ -122,8 +119,7 @@ final class AppAuthenticationViewSnapshotTests: XCTestCase {
                     password: nil,
                     failedAuthenticationsCount: 1
                 ),
-                reducer: .empty,
-                environment: AppAuthenticationDomain.Dummies.environment
+                reducer: EmptyReducer()
             )
         )
 

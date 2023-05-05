@@ -1,4 +1,4 @@
-// Generated using Sourcery 1.9.0 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.0.1 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 import Combine
 import Foundation
@@ -27,23 +27,23 @@ import TrustStore
 
 
 
-
-
-
+// MARK: - MockExtAuthRequestStorage -
 
 final class MockExtAuthRequestStorage: ExtAuthRequestStorage {
+    
+   // MARK: - pendingExtAuthRequests
 
     var pendingExtAuthRequests: AnyPublisher<[ExtAuthChallengeSession], Never> {
-        get { return underlyingPendingExtAuthRequests }
+        get { underlyingPendingExtAuthRequests }
         set(value) { underlyingPendingExtAuthRequests = value }
     }
     var underlyingPendingExtAuthRequests: AnyPublisher<[ExtAuthChallengeSession], Never>!
-
-    //MARK: - setExtAuthRequest
+    
+   // MARK: - setExtAuthRequest
 
     var setExtAuthRequestForCallsCount = 0
     var setExtAuthRequestForCalled: Bool {
-        return setExtAuthRequestForCallsCount > 0
+        setExtAuthRequestForCallsCount > 0
     }
     var setExtAuthRequestForReceivedArguments: (request: ExtAuthChallengeSession?, state: String)?
     var setExtAuthRequestForReceivedInvocations: [(request: ExtAuthChallengeSession?, state: String)] = []
@@ -55,12 +55,12 @@ final class MockExtAuthRequestStorage: ExtAuthRequestStorage {
         setExtAuthRequestForReceivedInvocations.append((request: request, state: state))
         setExtAuthRequestForClosure?(request, state)
     }
-
-    //MARK: - getExtAuthRequest
+    
+   // MARK: - getExtAuthRequest
 
     var getExtAuthRequestForCallsCount = 0
     var getExtAuthRequestForCalled: Bool {
-        return getExtAuthRequestForCallsCount > 0
+        getExtAuthRequestForCallsCount > 0
     }
     var getExtAuthRequestForReceivedState: String?
     var getExtAuthRequestForReceivedInvocations: [String] = []
@@ -71,18 +71,14 @@ final class MockExtAuthRequestStorage: ExtAuthRequestStorage {
         getExtAuthRequestForCallsCount += 1
         getExtAuthRequestForReceivedState = state
         getExtAuthRequestForReceivedInvocations.append(state)
-        if let getExtAuthRequestForClosure = getExtAuthRequestForClosure {
-            return getExtAuthRequestForClosure(state)
-        } else {
-            return getExtAuthRequestForReturnValue
-        }
+        return getExtAuthRequestForClosure.map({ $0(state) }) ?? getExtAuthRequestForReturnValue
     }
-
-    //MARK: - reset
+    
+   // MARK: - reset
 
     var resetCallsCount = 0
     var resetCalled: Bool {
-        return resetCallsCount > 0
+        resetCallsCount > 0
     }
     var resetClosure: (() -> Void)?
 
@@ -90,34 +86,32 @@ final class MockExtAuthRequestStorage: ExtAuthRequestStorage {
         resetCallsCount += 1
         resetClosure?()
     }
-
 }
+
+
+// MARK: - MockTrustStoreSession -
+
 final class MockTrustStoreSession: TrustStoreSession {
-
-
-    //MARK: - loadVauCertificate
+    
+   // MARK: - loadVauCertificate
 
     var loadVauCertificateCallsCount = 0
     var loadVauCertificateCalled: Bool {
-        return loadVauCertificateCallsCount > 0
+        loadVauCertificateCallsCount > 0
     }
     var loadVauCertificateReturnValue: AnyPublisher<X509, TrustStoreError>!
     var loadVauCertificateClosure: (() -> AnyPublisher<X509, TrustStoreError>)?
 
     func loadVauCertificate() -> AnyPublisher<X509, TrustStoreError> {
         loadVauCertificateCallsCount += 1
-        if let loadVauCertificateClosure = loadVauCertificateClosure {
-            return loadVauCertificateClosure()
-        } else {
-            return loadVauCertificateReturnValue
-        }
+        return loadVauCertificateClosure.map({ $0() }) ?? loadVauCertificateReturnValue
     }
-
-    //MARK: - validate
+    
+   // MARK: - validate
 
     var validateCertificateCallsCount = 0
     var validateCertificateCalled: Bool {
-        return validateCertificateCallsCount > 0
+        validateCertificateCallsCount > 0
     }
     var validateCertificateReceivedCertificate: X509?
     var validateCertificateReceivedInvocations: [X509] = []
@@ -128,18 +122,14 @@ final class MockTrustStoreSession: TrustStoreSession {
         validateCertificateCallsCount += 1
         validateCertificateReceivedCertificate = certificate
         validateCertificateReceivedInvocations.append(certificate)
-        if let validateCertificateClosure = validateCertificateClosure {
-            return validateCertificateClosure(certificate)
-        } else {
-            return validateCertificateReturnValue
-        }
+        return validateCertificateClosure.map({ $0(certificate) }) ?? validateCertificateReturnValue
     }
-
-    //MARK: - reset
+    
+   // MARK: - reset
 
     var resetCallsCount = 0
     var resetCalled: Bool {
-        return resetCallsCount > 0
+        resetCallsCount > 0
     }
     var resetClosure: (() -> Void)?
 
@@ -147,5 +137,4 @@ final class MockTrustStoreSession: TrustStoreSession {
         resetCallsCount += 1
         resetClosure?()
     }
-
 }

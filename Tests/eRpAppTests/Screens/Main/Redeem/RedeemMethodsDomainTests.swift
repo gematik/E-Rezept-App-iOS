@@ -32,7 +32,7 @@ final class RedeemMethodsDomainTests: XCTestCase {
         RedeemMethodsDomain.Action,
         RedeemMethodsDomain.State,
         RedeemMethodsDomain.Action,
-        RedeemMethodsDomain.Environment
+        Void
     >
 
     var erxTask: ErxTask!
@@ -40,7 +40,7 @@ final class RedeemMethodsDomainTests: XCTestCase {
     override func setUpWithError() throws {
         try super.setUpWithError()
 
-        let patient = ErxTask.Patient(
+        let patient = ErxPatient(
             name: "Ludger Königsstein",
             address: "Musterstr. 1 \n10623 Berlin",
             birthDate: "22.6.1935",
@@ -49,30 +49,29 @@ final class RedeemMethodsDomainTests: XCTestCase {
             insurance: "AOK Rheinland/Hamburg",
             insuranceId: "A123456789"
         )
-        let medication = ErxTask.Medication(
+        let medication = ErxMedication(
             name: "Saflorblüten-Extrakt Pulver Peroral",
             pzn: "06876512",
-            amount: 10,
+            amount: .init(numerator: .init(value: "10")),
             dosageForm: "PUL",
-            dose: "N1",
-            dosageInstructions: nil
+            dose: "N1"
         )
-        let practitioner = ErxTask.Practitioner(
+        let practitioner = ErxPractitioner(
             lanr: "123456789",
             name: "Dr. Dr. med. Carsten van Storchhausen",
             qualification: "Allgemeinarzt/Hausarzt",
             email: "noreply@google.de",
             address: "Hinter der Bahn 2\n12345 Berlin"
         )
-        let organization = ErxTask.Organization(
+        let organization = ErxOrganization(
             identifier: "987654321",
             name: "Praxis van Storchhausen",
             phone: "555 76543321",
             email: "noreply@praxisvonstorchhausen.de",
             address: "Vor der Bahn 6\n54321 Berlin"
         )
-        let workRelatedAccident = ErxTask.WorkRelatedAccident(
-            mark: "2",
+        let accidentInfo = AccidentInfo(
+            type: .workAccident,
             workPlaceIdentifier: "1234567890",
             date: "9.4.2021"
         )
@@ -84,32 +83,40 @@ final class RedeemMethodsDomainTests: XCTestCase {
             authoredOn: DemoDate.createDemoDate(.today),
             expiresOn: DemoDate.createDemoDate(.tomorrow),
             author: "Dr. Dr. med. Carsten van Storchhausen",
-            noctuFeeWaiver: true,
-            substitutionAllowed: true,
             medication: medication,
+            medicationRequest: .init(
+                substitutionAllowed: true,
+                hasEmergencyServiceFee: true,
+                accidentInfo: accidentInfo
+            ),
             patient: patient,
             practitioner: practitioner,
-            organization: organization,
-            workRelatedAccident: workRelatedAccident
+            organization: organization
         )
     }
+
+    lazy var scannedTask: ErxTask = {
+        .init(
+            identifier: "34235f983-1e67-331g-8955-63bf44e44fb8",
+            status: .ready,
+            accessCode: "e46ab30336811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
+            fullUrl: nil,
+            authoredOn: DemoDate.createDemoDate(.yesterday),
+            redeemedOn: nil,
+            source: .scanner
+        )
+    }()
 
     func testStore() -> TestStore {
         let schedulers = Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler())
         return TestStore(
             initialState: RedeemMethodsDomain.State(
-                erxTasks: [erxTask]
+                erxTasks: [erxTask, scannedTask]
             ),
-            reducer: RedeemMethodsDomain.reducer,
-            environment: RedeemMethodsDomain.Environment(
-                schedulers: schedulers,
-                userSession: MockUserSession(),
-                fhirDateFormatter: FHIRDateFormatter.shared,
-                signatureProvider: MockSecureEnclaveSignatureProvider(),
-                userSessionProvider: MockUserSessionProvider(),
-                accessibilityAnnouncementReceiver: { _ in }
-            )
-        )
+            reducer: RedeemMethodsDomain()
+        ) { dependencies in
+            dependencies.schedulers = schedulers
+        }
     }
 
     /// Tests to open the redeem matrix code view
@@ -117,13 +124,13 @@ final class RedeemMethodsDomainTests: XCTestCase {
         let store = testStore()
 
         let expectedState = RedeemMatrixCodeDomain.State(
-            erxTasks: [erxTask]
+            erxTasks: [erxTask, scannedTask]
         )
 
         // when
         store.send(.setNavigation(tag: .matrixCode)) { sut in
             // then
-            sut.route = .matrixCode(expectedState)
+            sut.destination = .matrixCode(expectedState)
         }
     }
 
@@ -131,13 +138,13 @@ final class RedeemMethodsDomainTests: XCTestCase {
         let store = testStore()
 
         let expectedState = PharmacySearchDomain.State(
-            erxTasks: [erxTask]
+            erxTasks: [erxTask, scannedTask]
         )
 
         // when
         store.send(.setNavigation(tag: .pharmacySearch)) { sut in
             // then
-            sut.route = .pharmacySearch(expectedState)
+            sut.destination = .pharmacySearch(expectedState)
         }
     }
 }

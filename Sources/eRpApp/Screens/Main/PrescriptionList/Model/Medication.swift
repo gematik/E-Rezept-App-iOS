@@ -19,48 +19,59 @@
 import eRpKit
 import Foundation
 
-struct Medication: Equatable, Hashable {
+struct Medication: Hashable, Comparable {
     let pzn: String?
     let dose: String?
-    let amount: Decimal?
+    let amount: ErxMedication.Ratio?
     let name: String?
     let dosageInstruction: String?
     let dosageForm: String?
     let handedOver: String?
     let lot: String?
     let expiresOn: String?
+    let ingredients: [ErxMedication.Ingredient]
 
-    static func from(medicationDispense: ErxTask.MedicationDispense) -> Medication {
+    var displayName: String {
+        if let name = name {
+            return name
+        } else {
+            let joinedText = ingredients.compactMap(\.text).joined(separator: ", ")
+            guard !joinedText.isEmpty else { return L10n.prscTxtFallbackName.text }
+            return joinedText
+        }
+    }
+
+    static func from(medicationDispense: ErxMedicationDispense) -> Medication {
         self.init(
-            pzn: medicationDispense.pzn,
-            dose: medicationDispense.dose,
-            amount: medicationDispense.amount,
-            name: medicationDispense.name,
+            pzn: medicationDispense.medication?.pzn,
+            dose: medicationDispense.medication?.dose,
+            amount: medicationDispense.medication?.amount,
+            name: medicationDispense.medication?.name,
             dosageInstruction: medicationDispense.dosageInstruction,
-            dosageForm: medicationDispense.dosageForm,
+            dosageForm: medicationDispense.medication?.dosageForm,
             handedOver: medicationDispense.whenHandedOver,
-            lot: medicationDispense.lot,
-            expiresOn: medicationDispense.expiresOn
+            lot: medicationDispense.medication?.batch?.lotNumber,
+            expiresOn: medicationDispense.medication?.batch?.expiresOn,
+            ingredients: medicationDispense.medication?.ingredients ?? []
         )
     }
 
-    static func from(medication: ErxTask.Medication, redeemedOn: String?) -> Medication {
+    static func from(medication: ErxMedication, dosageInstructions: String?, redeemedOn: String?) -> Medication {
         self.init(
             pzn: medication.pzn,
             dose: medication.dose,
             amount: medication.amount,
             name: medication.name,
-            dosageInstruction: medication.dosageInstructions,
+            dosageInstruction: dosageInstructions,
             dosageForm: medication.dosageForm,
             handedOver: redeemedOn,
-            lot: medication.lot,
-            expiresOn: medication.expiresOn
+            lot: medication.batch?.lotNumber,
+            expiresOn: medication.batch?.expiresOn,
+            ingredients: medication.ingredients
         )
     }
-}
 
-extension Medication: Comparable {
-    public static func <(lhs: Medication, rhs: Medication) -> Bool {
+    static func <(lhs: Medication, rhs: Medication) -> Bool {
         switch (lhs.name, rhs.name) {
         case (_, nil): return true
         case (nil, _): return false

@@ -22,18 +22,6 @@ import ComposableArchitecture
 import eRpKit
 import XCTest
 
-class MockAuthenticationChallengeProvider: AuthenticationChallengeProvider {
-    init(result: Result<Bool, AppAuthenticationBiometricsDomain.Error>) {
-        self.result = result
-    }
-
-    var result: Result<Bool, AppAuthenticationBiometricsDomain.Error>
-    func startAuthenticationChallenge()
-        -> AnyPublisher<AppAuthenticationBiometricsDomain.AuthenticationResult, Never> {
-        Just(result).eraseToAnyPublisher()
-    }
-}
-
 final class AppAuthenticationBiometricsDomainTests: XCTestCase {
     let testScheduler = DispatchQueue.test
 
@@ -42,24 +30,25 @@ final class AppAuthenticationBiometricsDomainTests: XCTestCase {
         AppAuthenticationBiometricsDomain.Action,
         AppAuthenticationBiometricsDomain.State,
         AppAuthenticationBiometricsDomain.Action,
-        AppAuthenticationBiometricsDomain.Environment
+        Void
     >
 
     private func testStore(for biometryType: BiometryType,
                            withResult result: Result<Bool, AppAuthenticationBiometricsDomain.Error>) -> TestStore {
-        TestStore(
+        let mockAuthenticationChallengeProvider = MockAuthenticationChallengeProvider()
+        mockAuthenticationChallengeProvider.startAuthenticationChallengeReturnValue = Just(result).eraseToAnyPublisher()
+        return TestStore(
             initialState: AppAuthenticationBiometricsDomain.State(
                 biometryType: biometryType,
                 startImmediateAuthenticationChallenge: false
             ),
-            reducer: AppAuthenticationBiometricsDomain.reducer,
-            environment: AppAuthenticationBiometricsDomain.Environment(
-                schedulers: Schedulers(
-                    uiScheduler: testScheduler.eraseToAnyScheduler()
-                ),
-                authenticationChallengeProvider: MockAuthenticationChallengeProvider(result: result)
+            reducer: AppAuthenticationBiometricsDomain()
+        ) { dependencies in
+            dependencies.schedulers = Schedulers(
+                uiScheduler: testScheduler.eraseToAnyScheduler()
             )
-        )
+            dependencies.authenticationChallengeProvider = mockAuthenticationChallengeProvider
+        }
     }
 
     func testPerformAuthenticationChallenge_FaceID_Success() {

@@ -1,4 +1,4 @@
-// Generated using Sourcery 1.9.0 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.0.1 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 import Combine
 import Foundation
@@ -26,47 +26,35 @@ import OpenSSL
 
 
 
-
-
-
+// MARK: - MockTrustStoreClient -
 
 final class MockTrustStoreClient: TrustStoreClient {
-
-
-    //MARK: - loadCertListFromServer
+    
+   // MARK: - loadCertListFromServer
 
     var loadCertListFromServerCallsCount = 0
     var loadCertListFromServerCalled: Bool {
-        return loadCertListFromServerCallsCount > 0
+        loadCertListFromServerCallsCount > 0
     }
     var loadCertListFromServerReturnValue: AnyPublisher<CertList, TrustStoreError>!
     var loadCertListFromServerClosure: (() -> AnyPublisher<CertList, TrustStoreError>)?
 
     func loadCertListFromServer() -> AnyPublisher<CertList, TrustStoreError> {
         loadCertListFromServerCallsCount += 1
-        if let loadCertListFromServerClosure = loadCertListFromServerClosure {
-            return loadCertListFromServerClosure()
-        } else {
-            return loadCertListFromServerReturnValue
-        }
+        return loadCertListFromServerClosure.map({ $0() }) ?? loadCertListFromServerReturnValue
     }
-
-    //MARK: - loadOCSPListFromServer
+    
+   // MARK: - loadOCSPListFromServer
 
     var loadOCSPListFromServerCallsCount = 0
     var loadOCSPListFromServerCalled: Bool {
-        return loadOCSPListFromServerCallsCount > 0
+        loadOCSPListFromServerCallsCount > 0
     }
     var loadOCSPListFromServerReturnValue: AnyPublisher<OCSPList, TrustStoreError>!
     var loadOCSPListFromServerClosure: (() -> AnyPublisher<OCSPList, TrustStoreError>)?
 
     func loadOCSPListFromServer() -> AnyPublisher<OCSPList, TrustStoreError> {
         loadOCSPListFromServerCallsCount += 1
-        if let loadOCSPListFromServerClosure = loadOCSPListFromServerClosure {
-            return loadOCSPListFromServerClosure()
-        } else {
-            return loadOCSPListFromServerReturnValue
-        }
+        return loadOCSPListFromServerClosure.map({ $0() }) ?? loadOCSPListFromServerReturnValue
     }
-
 }

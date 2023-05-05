@@ -17,6 +17,7 @@
 //
 
 import CombineSchedulers
+import ComposableArchitecture
 @testable import eRpApp
 import IDP
 import SnapshotTesting
@@ -37,15 +38,9 @@ final class NewProfileSnapshotTests: XCTestCase {
                     initialState: .init(
                         name: "Spooky Dennis",
                         acronym: "",
-                        emoji: "🎃",
                         color: .blue
                     ),
-                    reducer: .empty,
-                    environment: NewProfileDomain.Environment(
-                        schedulers: Schedulers(),
-                        userDataStore: MockUserDataStore(),
-                        profileDataStore: MockProfileDataStore()
-                    )
+                    reducer: EmptyReducer()
                 )
             )
         }
@@ -54,39 +49,13 @@ final class NewProfileSnapshotTests: XCTestCase {
         assertSnapshots(matching: sut, as: figmaReference())
     }
 
-    func testNewProfileFilledWithEmojiSnapshot() {
-        let sut = NewProfileView(
-            store: .init(
-                initialState: .init(name: "Anna Vetter",
-                                    acronym: "AV",
-                                    emoji: "👵🏻",
-                                    color: .green),
-                reducer: .empty,
-                environment: NewProfileDomain.Environment(
-                    schedulers: Schedulers(),
-                    userDataStore: MockUserDataStore(),
-                    profileDataStore: MockProfileDataStore()
-                )
-            )
-        )
-
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
-    }
-
     func testNewProfileFilledWithAcronymSnapshot() {
         let sut = NewProfileView(
             store: .init(
                 initialState: .init(name: "Anna Vetter",
                                     acronym: "AV",
                                     color: .grey),
-                reducer: .empty,
-                environment: NewProfileDomain.Environment(
-                    schedulers: Schedulers(),
-                    userDataStore: MockUserDataStore(),
-                    profileDataStore: MockProfileDataStore()
-                )
+                reducer: EmptyReducer()
             )
         )
 

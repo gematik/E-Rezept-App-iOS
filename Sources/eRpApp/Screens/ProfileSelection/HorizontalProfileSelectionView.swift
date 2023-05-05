@@ -46,10 +46,12 @@ struct HorizontalProfileSelectionView: View {
                             )
                         }
                     )
-                    // TODO: reenable as soon as feature is available swiftlint:disable:this todo
-//                    .if(userProfile == viewStore.profiles.first) {
-//                        $0.tooltip(tooltip: MainViewTooltips.rename)
-//                    }
+                    .highPriorityGesture(LongPressGesture(minimumDuration: 1).onEnded { _ in
+                        viewStore.send(.profileButtonLongPressed(userProfile))
+                    })
+                    .if(userProfile == viewStore.profiles.first) {
+                        $0.tooltip(tooltip: MainViewTooltip.rename)
+                    }
                     .frame(maxWidth: width * 0.4, alignment: .leading)
                 }
                 .accessibility(identifier: A11y.profileSelection.proBtnSelectionProfileRow)
@@ -77,6 +79,7 @@ struct HorizontalProfileSelectionView: View {
                 viewStore.send(.unregisterListener)
             }
         }
+        .highPriorityGesture(DragGesture())
         .background(Colors.systemBackground)
     }
 }

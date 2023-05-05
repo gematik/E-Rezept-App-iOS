@@ -23,13 +23,12 @@ import LocalAuthentication
 import SwiftUI
 import Zxcvbn
 
-enum RegisterAuthenticationDomain {
-    typealias Store = ComposableArchitecture.Store<State, Action>
-    typealias Reducer = ComposableArchitecture.AnyReducer<State, Action, Environment>
+struct RegisterAuthenticationDomain: ReducerProtocol {
+    typealias Store = StoreOf<Self>
 
     /// Provides an Effect that need to run whenever the state of this Domain is reset to nil
-    static func cleanup<T>() -> Effect<T, Never> {
-        Effect.cancel(id: Token.self)
+    static func cleanup<T>() -> EffectTask<T> {
+        EffectTask<T>.cancel(ids: Token.allCases)
     }
 
     enum Token: CaseIterable, Hashable {
@@ -103,18 +102,17 @@ enum RegisterAuthenticationDomain {
         case continueBiometry
     }
 
-    struct Environment {
-        let appSecurityManager: AppSecurityManager
-        let userDataStore: UserDataStore
-        let schedulers: Schedulers
-        let authenticationChallengeProvider: AuthenticationChallengeProvider
-        let passwordStrengthTester: PasswordStrengthTester
-    }
+    @Dependency(\.appSecurityManager) var appSecurityManager: AppSecurityManager
+    @Dependency(\.userDataStore) var userDataStore: UserDataStore
+    @Dependency(\.schedulers) var schedulers: Schedulers
+    @Dependency(\.authenticationChallengeProvider) var authenticationChallengeProvider: AuthenticationChallengeProvider
+    @Dependency(\.passwordStrengthTester) var passwordStrengthTester: PasswordStrengthTester
 
-    static let domainReducer = Reducer { state, action, environment in
+    // swiftlint:disable:next cyclomatic_complexity function_body_length
+    func reduce(into state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
         case .loadAvailableSecurityOptions:
-            let availableOptions = environment.appSecurityManager.availableSecurityOptions
+            let availableOptions = appSecurityManager.availableSecurityOptions
             state.availableSecurityOptions = availableOptions.options
             state.securityOptionsError = availableOptions.error
             if state.selectedSecurityOption == nil {
@@ -137,12 +135,11 @@ enum RegisterAuthenticationDomain {
                 state.passwordA = ""
                 state.passwordB = ""
                 UIApplication.shared.dismissKeyboard()
-                return environment
-                    .authenticationChallengeProvider
+                return authenticationChallengeProvider
                     .startAuthenticationChallenge()
                     .first()
                     .map { Action.authenticationChallengeResponse($0) }
-                    .receive(on: environment.schedulers.main.animation())
+                    .receive(on: schedulers.main.animation())
                     .eraseToEffect()
             }
             return .none
@@ -165,7 +162,7 @@ enum RegisterAuthenticationDomain {
                 switch state.selectedSecurityOption {
                 case .biometry:
                     return Effect(value: .continueBiometry)
-                        .delay(for: state.timeout, scheduler: environment.schedulers.main.animation())
+                        .delay(for: state.timeout, scheduler: schedulers.main.animation())
                         .eraseToEffect()
                         .cancellable(id: Token.continueBiometry, cancelInFlight: true)
                 default:
@@ -180,11 +177,11 @@ enum RegisterAuthenticationDomain {
             guard string != state.passwordA else {
                 return .none
             }
-            state.passwordStrength = environment.passwordStrengthTester.passwordStrength(for: string)
+            state.passwordStrength = passwordStrengthTester.passwordStrength(for: string)
             state.showPasswordErrorMessage = false
             state.passwordA = string
             return Effect(value: .comparePasswords)
-                .delay(for: state.timeout, scheduler: environment.schedulers.main.animation())
+                .delay(for: state.timeout, scheduler: schedulers.main.animation())
                 .eraseToEffect()
                 .cancellable(id: Token.comparePasswords, cancelInFlight: true)
 
@@ -195,7 +192,7 @@ enum RegisterAuthenticationDomain {
             state.showPasswordErrorMessage = false
             state.passwordB = string
             return Effect(value: .comparePasswords)
-                .delay(for: state.timeout, scheduler: environment.schedulers.main.animation())
+                .delay(for: state.timeout, scheduler: schedulers.main.animation())
                 .eraseToEffect()
                 .cancellable(id: Token.comparePasswords, cancelInFlight: true)
 
@@ -210,7 +207,7 @@ enum RegisterAuthenticationDomain {
             return .none
         case .enterButtonTapped:
             return Effect(value: .comparePasswords)
-                .delay(for: state.timeout, scheduler: environment.schedulers.main.animation())
+                .delay(for: state.timeout, scheduler: schedulers.main.animation())
                 .eraseToEffect()
                 .cancellable(id: Token.comparePasswords, cancelInFlight: true)
         case .saveSelection:
@@ -227,16 +224,16 @@ enum RegisterAuthenticationDomain {
             }
 
             if case .password = selectedOption {
-                guard let success = try? environment.appSecurityManager
+                guard let success = try? appSecurityManager
                     .save(password: state.passwordA),
                     success == true else {
                     state.showNoSelectionMessage = true
                     return .none
                 }
-                environment.userDataStore.set(appSecurityOption: selectedOption)
+                userDataStore.set(appSecurityOption: selectedOption)
                 return Effect(value: .saveSelectionSuccess)
             } else {
-                environment.userDataStore.set(appSecurityOption: selectedOption)
+                userDataStore.set(appSecurityOption: selectedOption)
                 return Effect(value: .saveSelectionSuccess)
             }
         case .saveSelectionSuccess,
@@ -245,10 +242,6 @@ enum RegisterAuthenticationDomain {
             return .none
         }
     }
-
-    static let reducer = Reducer.combine(
-        domainReducer
-    )
 }
 
 extension RegisterAuthenticationDomain {
@@ -258,32 +251,15 @@ extension RegisterAuthenticationDomain {
             selectedSecurityOption: .biometry(.faceID)
         )
 
-        static let environment = Environment(
-            appSecurityManager: DummyAppSecurityManager(),
-            userDataStore: DemoUserDefaultsStore(),
-            schedulers: Schedulers(),
-            authenticationChallengeProvider: BiometricsAuthenticationChallengeProvider(),
-            passwordStrengthTester: DefaultPasswordStrengthTester()
-        )
-
         static let store = Store(
             initialState: state,
-            reducer: reducer,
-            environment: environment
+            reducer: RegisterAuthenticationDomain()
         )
 
         static func store(with state: State) -> Store {
             Store(
                 initialState: state,
-                reducer: reducer,
-                environment: Environment(
-                    appSecurityManager: DummyAppSecurityManager(options: state.availableSecurityOptions,
-                                                                error: state.securityOptionsError),
-                    userDataStore: DemoUserDefaultsStore(),
-                    schedulers: Schedulers(),
-                    authenticationChallengeProvider: BiometricsAuthenticationChallengeProvider(),
-                    passwordStrengthTester: DefaultPasswordStrengthTester()
-                )
+                reducer: RegisterAuthenticationDomain()
             )
         }
     }

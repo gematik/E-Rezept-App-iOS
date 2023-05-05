@@ -1,0 +1,102 @@
+{
+    "resourceType": "Bundle",
+    "type": "searchset",
+    "entry": [
+        {
+            "resource": {
+                "resourceType": "MedicationDispense",
+                "id": "3465270a-11e7-4bbf-ae53-378f9cc52747",
+                "meta": {
+                    "profile": [
+                        "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_PR_MedicationDispense"
+                    ]
+                },
+                "contained": [
+                    {
+                        "resourceType": "Medication",
+                        "id": "001463e7-a5e9-48da-9b07-c17bab476403",
+                        "meta": {
+                            "profile": [
+                                "https://fhir.kbv.de/this/can/be/a/random/profile/from/DAV"
+                            ]
+                        },
+                        "code": {
+                            "coding": [
+                                {
+                                    "system": "http://fhir.de/CodeSystem/ifa/pzn",
+                                    "code": "06313728"
+                                }
+                            ],
+                            "text": "Sumatriptan-1a Pharma 100 mg Tabletten"
+                        },
+                        "form": {
+                            "coding": [
+                                {
+                                    "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_KBV_DARREICHUNGSFORM",
+                                    "code": "TAB"
+                                }
+                            ]
+                        },
+                        "amount": {
+                            "numerator": {
+                                "value": 20,
+                                "unit": "St"
+                            },
+                            "denominator": {
+                                "value": 1
+                            }
+                        },
+                        "batch": {
+                            "lotNumber": "1234567890abcde",
+                            "expirationDate": "2020-02-03T00:00:00+00:00"
+                        }
+                    }
+                ],
+                "identifier": [
+                    {
+                        "system": "https://gematik.de/fhir/erp/NamingSystem/GEM_ERP_NS_PrescriptionId",
+                        "value": "160.000.033.491.280.78"
+                    }
+                ],
+                "status": "completed",
+                "medicationReference": {
+                    "reference": "#001463e7-a5e9-48da-9b07-c17bab476403"
+                },
+                "subject": {
+                    "identifier": {
+                        "system": "http://fhir.de/sid/gkv/kvid-10",
+                        "value": "X234567890"
+                    }
+                },
+                "quantity": {
+                    "value": 100,
+                    "unit": "mg"
+                },
+                "performer": [
+                    {
+                        "actor": {
+                            "identifier": {
+                                "system": "https://gematik.de/fhir/sid/telematik-id",
+                                "value": "3-abc-1234567890"
+                            }
+                        }
+                    }
+                ],
+                "whenHandedOver": "2022-02-28",
+                "note": [
+                    {
+                        "text": "These are two notes"
+                    },
+                    {
+                        "text": "separated by newlines!"
+                    }
+                ],
+                "dosageInstruction": [
+                    {
+                        "text": "1-0-1-0"
+                    }
+                ]
+            }
+        }
+    ]
+}

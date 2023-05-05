@@ -23,12 +23,11 @@ import eRpKit
 import Foundation
 import IDP
 
-enum ProfileSelectionDomain {
-    typealias Store = ComposableArchitecture.Store<State, Action>
-    typealias Reducer = ComposableArchitecture.AnyReducer<State, Action, Environment>
+struct ProfileSelectionDomain: ReducerProtocol {
+    typealias Store = StoreOf<Self>
 
-    static func cleanup<T>() -> Effect<T, Never> {
-        Effect.cancel(id: Token.self)
+    static func cleanup<T>() -> EffectTask<T> {
+        EffectTask<T>.cancel(ids: Token.allCases)
     }
 
     enum Token: CaseIterable, Hashable {
@@ -36,15 +35,23 @@ enum ProfileSelectionDomain {
         case loadSelectedProfile
     }
 
-    enum Route: Equatable {
-        case alert(ErpAlertState<Action>)
-    }
-
     struct State: Equatable {
         var profiles: [UserProfile] = []
         var selectedProfileId: UUID?
 
-        var route: Route?
+        var destination: Destinations.State?
+    }
+
+    struct Destinations: ReducerProtocol {
+        enum State: Equatable {
+            case alert(ErpAlertState<ProfileSelectionDomain.Action>)
+        }
+
+        enum Action: Equatable {}
+
+        var body: some ReducerProtocol<State, Action> {
+            EmptyReducer()
+        }
     }
 
     enum Action: Equatable {
@@ -56,34 +63,40 @@ enum ProfileSelectionDomain {
         case close
 
         case editProfiles
+
+        case destination(Destinations.Action)
     }
 
-    struct Environment {
-        let schedulers: Schedulers
-        let userProfileService: UserProfileService
+    @Dependency(\.schedulers) var schedulers: Schedulers
+    @Dependency(\.userProfileService) var userProfileService: UserProfileService
+    @Dependency(\.router) var router: Routing
 
-        let router: Routing
+    var body: some ReducerProtocol<State, Action> {
+        Reduce(core)
+            .ifLet(\.destination, action: /Action.destination) {
+                Destinations()
+            }
     }
 
-    static let domainReducer = Reducer { state, action, environment in
+    func core(into state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
         case .registerListener:
             return .merge(
-                environment.userProfileService.userProfilesPublisher()
+                userProfileService.userProfilesPublisher()
                     .catchToEffect()
                     .map(Action.loadReceived)
-                    .receive(on: environment.schedulers.main)
+                    .receive(on: schedulers.main)
                     .eraseToEffect()
                     .cancellable(id: Token.loadProfiles, cancelInFlight: true),
-                environment.userProfileService.selectedProfileId
+                userProfileService.selectedProfileId
                     .compactMap { $0 }
                     .map(Action.selectedProfileReceived)
-                    .receive(on: environment.schedulers.main)
+                    .receive(on: schedulers.main)
                     .eraseToEffect()
                     .cancellable(id: Token.loadSelectedProfile, cancelInFlight: true)
             )
         case let .loadReceived(.failure(error)):
-            state.route = .alert(.init(for: error, title: TextState(L10n.errTxtDatabaseAccess)))
+            state.destination = .alert(.init(for: error, title: TextState(L10n.errTxtDatabaseAccess)))
             return .none
         case let .loadReceived(.success(profiles)):
             state.profiles = profiles
@@ -93,19 +106,17 @@ enum ProfileSelectionDomain {
             return .none
         case let .selectProfile(profile):
             state.selectedProfileId = profile.id
-            environment.userProfileService.set(selectedProfileId: profile.id)
+            userProfileService.set(selectedProfileId: profile.id)
             return .init(value: .close)
         case .editProfiles:
-            environment.router.routeTo(.settings)
+            router.routeTo(.settings)
             return .init(value: .close)
         case .close, .unregisterListener:
-            return cleanup()
+            return Self.cleanup()
+        case .destination:
+            return .none
         }
     }
-
-    static let reducer: Reducer = .combine(
-        domainReducer
-    )
 }
 
 extension ProfileSelectionDomain {
@@ -119,14 +130,7 @@ extension ProfileSelectionDomain {
             selectedProfileId: UserProfile.Dummies.profileA.id
         )
 
-        static let environment = Environment(
-            schedulers: Schedulers(),
-            userProfileService: DummyUserProfileService(),
-            router: DummyRouter()
-        )
-
         static let store = Store(initialState: state,
-                                 reducer: ProfileSelectionDomain.reducer,
-                                 environment: environment)
+                                 reducer: EmptyReducer())
     }
 }

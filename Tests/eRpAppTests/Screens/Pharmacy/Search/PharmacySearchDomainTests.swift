@@ -32,18 +32,18 @@ class PharmacySearchDomainTests: XCTestCase {
         PharmacySearchDomain.Action,
         PharmacySearchDomain.State,
         PharmacySearchDomain.Action,
-        PharmacySearchDomain.Environment
+        Void
     >
 
     // For tests we can lower the delay for search start
     var delaySearchStart: DispatchQueue.SchedulerTimeType.Stride = 0.1
-    var uiApplicationMock: UIApplicationOpenURLMock!
+    var resourceHandlerMock: MockResourceHandler!
     var searchHistoryMock: MockSearchHistory!
 
     override func setUp() {
         super.setUp()
 
-        uiApplicationMock = UIApplicationOpenURLMock()
+        resourceHandlerMock = MockResourceHandler()
         searchHistoryMock = MockSearchHistory()
     }
 
@@ -57,22 +57,16 @@ class PharmacySearchDomainTests: XCTestCase {
     ) -> TestStore {
         TestStore(
             initialState: state,
-            reducer: PharmacySearchDomain.reducer,
-            environment: PharmacySearchDomain.Environment(
-                schedulers: Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler()),
-                pharmacyRepository: pharmacyRepository,
-                locationManager: .unimplemented(),
-                fhirDateFormatter: FHIRDateFormatter.shared,
-                openHoursCalculator: PharmacyOpenHoursCalculator(),
-                referenceDateForOpenHours: TestData.openHoursTestReferenceDate,
-                userSession: MockUserSession(),
-                openURL: uiApplicationMock.openURL,
-                searchHistory: searchHistoryMock,
-                signatureProvider: MockSecureEnclaveSignatureProvider(),
-                accessibilityAnnouncementReceiver: { _ in },
-                userSessionProvider: MockUserSessionProvider()
+            reducer: PharmacySearchDomain(
+                referenceDateForOpenHours: TestData.openHoursTestReferenceDate
             )
-        )
+        ) { dependencies in
+            dependencies.schedulers = Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler())
+            dependencies.pharmacyRepository = pharmacyRepository
+            dependencies.locationManager = .unimplemented()
+            dependencies.searchHistory = searchHistoryMock
+            dependencies.resourceHandler = resourceHandlerMock
+        }
     }
 
     func testSearchForPharmacies() {
@@ -100,7 +94,7 @@ class PharmacySearchDomainTests: XCTestCase {
         }
         testScheduler.advance()
         // when search request is done...
-        sut.receive(.pharmaciesReceived(expected)) { state in
+        sut.receive(.response(.pharmaciesReceived(expected))) { state in
             // expect it to deliver successful & results...
             state.searchState = .searchResultOk
         }
@@ -132,7 +126,7 @@ class PharmacySearchDomainTests: XCTestCase {
         testScheduler.advance()
         expect(self.searchHistoryMock.addHistoryItemReceivedItem).to(equal(testSearchText))
         // when search request is done...
-        sut.receive(.pharmaciesReceived(expected)) { state in
+        sut.receive(.response(.pharmaciesReceived(expected))) { state in
             // expect it to be empty...
             state.searchState = .searchResultEmpty
         }
@@ -157,7 +151,7 @@ class PharmacySearchDomainTests: XCTestCase {
         }
         testScheduler.advance()
         // when search request is done...
-        sut.receive(.pharmaciesReceived(expected)) { state in
+        sut.receive(.response(.pharmaciesReceived(expected))) { state in
             // expect it to deliver successful & results...
             state.searchState = .searchResultOk
         }
@@ -172,7 +166,7 @@ class PharmacySearchDomainTests: XCTestCase {
 
         sut.send(.onAppear)
         testScheduler.advance()
-        sut.receive(.loadLocalPharmaciesReceived(.success(storedPharmacies))) {
+        sut.receive(.response(.loadLocalPharmaciesReceived(.success(storedPharmacies)))) {
             $0.localPharmacies = storedPharmacies
                 .map { PharmacyLocationViewModel(pharmacy: $0, referenceDate: TestData.openHoursTestReferenceDate) }
         }
@@ -193,10 +187,10 @@ class PharmacySearchDomainTests: XCTestCase {
             $0.selectedPharmacy = selectedPharmacy
         }
         testScheduler.advance()
-        sut.receive(.loadAndNavigateToPharmacyReceived(.success(selectedPharmacy))) {
+        sut.receive(.response(.loadAndNavigateToPharmacyReceived(.success(selectedPharmacy)))) {
             $0.searchState = .startView(loading: false)
             $0.selectedPharmacy = nil
-            $0.route = .pharmacy(PharmacyDetailDomain.State(
+            $0.destination = .pharmacy(PharmacyDetailDomain.State(
                 erxTasks: state.erxTasks,
                 pharmacyViewModel: PharmacyLocationViewModel(
                     pharmacy: selectedPharmacy,
@@ -221,10 +215,10 @@ class PharmacySearchDomainTests: XCTestCase {
             $0.selectedPharmacy = selectedPharmacy
         }
         testScheduler.advance()
-        sut.receive(.loadAndNavigateToPharmacyReceived(.failure(expectedError))) {
+        sut.receive(.response(.loadAndNavigateToPharmacyReceived(.failure(expectedError)))) {
             $0.searchState = .startView(loading: false)
             $0.selectedPharmacy = nil
-            $0.route = .alert(.init(for: expectedError))
+            $0.destination = .alert(.init(for: expectedError))
         }
     }
 
@@ -257,11 +251,11 @@ class PharmacySearchDomainTests: XCTestCase {
             $0.selectedPharmacy = selectedPharmacy.pharmacyLocation
         }
         testScheduler.advance()
-        sut.receive(.loadAndNavigateToPharmacyReceived(.failure(expectedError))) {
+        sut.receive(.response(.loadAndNavigateToPharmacyReceived(.failure(expectedError)))) {
             $0.searchState = .startView(loading: false)
             $0.selectedPharmacy = nil
             $0.localPharmacies = pharmacyViewModels.dropLast()
-            $0.route = .alert(.init(for: expectedError))
+            $0.destination = .alert(.init(for: expectedError))
         }
         expect(mockPharmacyRepo.deleteCallsCount) == 1
     }

@@ -34,7 +34,7 @@ final class PrescriptionListDomainTests: XCTestCase {
         PrescriptionListDomain.Action,
         PrescriptionListDomain.State,
         PrescriptionListDomain.Action,
-        PrescriptionListDomain.Environment
+        Void
     >
 
     var mockPrescriptionRepository: MockPrescriptionRepository!
@@ -50,21 +50,16 @@ final class PrescriptionListDomainTests: XCTestCase {
         userSession = MockUserSession()
     }
 
-    private func testStore(for prescriptionRepository: PrescriptionRepository) -> TestStore {
+    private func testStore(for _: PrescriptionRepository) -> TestStore {
         .init(
             initialState: PrescriptionListDomain.State(),
-            reducer: PrescriptionListDomain.domainReducer,
-            environment: PrescriptionListDomain.Environment(
-                router: MockRouting(),
-                userSession: userSession,
-                userProfileService: DummyUserProfileService(),
-                serviceLocator: ServiceLocator(),
-                accessibilityAnnouncementReceiver: { _ in },
-                prescriptionRepository: prescriptionRepository,
-                schedulers: Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler()),
-                fhirDateFormatter: FHIRDateFormatter.shared
-            )
-        )
+            reducer: PrescriptionListDomain()
+        ) { dependencies in
+            dependencies.schedulers = Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler())
+            dependencies.serviceLocator = ServiceLocator()
+            dependencies.userSession = userSession
+            dependencies.prescriptionRepository = mockPrescriptionRepository
+        }
     }
 
     func testLoadingPrescriptionsLocalTwoTimes() {
@@ -85,7 +80,7 @@ final class PrescriptionListDomainTests: XCTestCase {
         }
         // when
         testScheduler.advance()
-        store.receive(.loadLocalPrescriptionsReceived(expected)) { state in
+        store.receive(.response(.loadLocalPrescriptionsReceived(expected))) { state in
             // then
             state.loadingState = expected
             state.prescriptions = input
@@ -97,7 +92,7 @@ final class PrescriptionListDomainTests: XCTestCase {
         }
         // when
         testScheduler.advance()
-        store.receive(.loadLocalPrescriptionsReceived(expected)) { state in
+        store.receive(.response(.loadLocalPrescriptionsReceived(expected))) { state in
             // then
             state.loadingState = expected
         }
@@ -122,7 +117,7 @@ final class PrescriptionListDomainTests: XCTestCase {
         }
         // when
         testScheduler.advance()
-        store.receive(.loadRemotePrescriptionsAndSaveReceived(expected)) { state in
+        store.receive(.response(.loadRemotePrescriptionsAndSaveReceived(expected))) { state in
             // then
             state.loadingState = expected
             state.prescriptions = input
@@ -134,7 +129,7 @@ final class PrescriptionListDomainTests: XCTestCase {
         }
         // when
         testScheduler.advance()
-        store.receive(.loadRemotePrescriptionsAndSaveReceived(expected)) { state in
+        store.receive(.response(.loadRemotePrescriptionsAndSaveReceived(expected))) { state in
             // then
             state.loadingState = expected
         }
@@ -157,7 +152,7 @@ final class PrescriptionListDomainTests: XCTestCase {
         }
         // when
         testScheduler.advance()
-        store.receive(.loadRemotePrescriptionsAndSaveReceived(expected)) { state in
+        store.receive(.response(.loadRemotePrescriptionsAndSaveReceived(expected))) { state in
             // then
             state.loadingState = expected
         }
@@ -168,7 +163,7 @@ final class PrescriptionListDomainTests: XCTestCase {
         }
         // when
         testScheduler.advance()
-        store.receive(.loadRemotePrescriptionsAndSaveReceived(expected)) { state in
+        store.receive(.response(.loadRemotePrescriptionsAndSaveReceived(expected))) { state in
             // then
             state.loadingState = expected
         }
@@ -201,12 +196,12 @@ final class PrescriptionListDomainTests: XCTestCase {
         }
         // when
         testScheduler.advance()
-        store.receive(.loadLocalPrescriptionsReceived(expectedValueForLoad)) { state in
+        store.receive(.response(.loadLocalPrescriptionsReceived(expectedValueForLoad))) { state in
             // then
             state.loadingState = expectedValueForLoad
             state.prescriptions = input
         }
-        store.receive(.loadRemotePrescriptionsAndSaveReceived(expectedValueForFetch)) { state in
+        store.receive(.response(.loadRemotePrescriptionsAndSaveReceived(expectedValueForFetch))) { state in
             // then
             state.loadingState = expectedValueForFetch
         }
@@ -241,12 +236,12 @@ final class PrescriptionListDomainTests: XCTestCase {
         }
         // when
         testScheduler.advance()
-        store.receive(.loadLocalPrescriptionsReceived(expectedValueForLoad)) { state in
+        store.receive(.response(.loadLocalPrescriptionsReceived(expectedValueForLoad))) { state in
             // then
             state.loadingState = expectedValueForLoad
             state.prescriptions = input
         }
-        store.receive(.loadRemotePrescriptionsAndSaveReceived(expectedValueForFetch))
+        store.receive(.response(.loadRemotePrescriptionsAndSaveReceived(expectedValueForFetch)))
     }
 
     let loadingErrorTasks: PrescriptionRepositoryError = .erxRepository(.local(.notImplemented))
@@ -271,7 +266,7 @@ final class PrescriptionListDomainTests: XCTestCase {
         }
         // when
         testScheduler.advance()
-        store.receive(.loadLocalPrescriptionsReceived(expected)) { state in
+        store.receive(.response(.loadLocalPrescriptionsReceived(expected))) { state in
             // then
             state.loadingState = expected
             XCTAssert(state.loadingState.isError == true)
@@ -289,7 +284,7 @@ final class PrescriptionListDomainTests: XCTestCase {
             XCTAssert($0.loadingState.isError == false)
         }
         testScheduler.advance()
-        store.receive(.loadRemotePrescriptionsAndSaveReceived(expectedTasks)) { state in
+        store.receive(.response(.loadRemotePrescriptionsAndSaveReceived(expectedTasks))) { state in
             // then
             state.loadingState = expectedTasks
             XCTAssert(state.loadingState.isError == false)
@@ -311,7 +306,7 @@ final class PrescriptionListDomainTests: XCTestCase {
             $0.loadingState = .loading(nil)
         }
         testScheduler.advance()
-        store.receive(.showCardWallReceived(expected))
+        store.receive(.response(.showCardWallReceived(expected)))
     }
 
     func testRefreshShouldShowCardWallServerResponseIs403Forbidden() {
@@ -332,7 +327,7 @@ final class PrescriptionListDomainTests: XCTestCase {
             $0.loadingState = .loading(nil)
         }
         testScheduler.advance()
-        store.receive(.showCardWallReceived(expected))
+        store.receive(.response(.showCardWallReceived(expected)))
     }
 
     func testRefreshShouldShowCardWallServerResponseIs401Unauthorized() {
@@ -354,7 +349,7 @@ final class PrescriptionListDomainTests: XCTestCase {
             $0.loadingState = .loading(nil)
         }
         testScheduler.advance()
-        store.receive(.showCardWallReceived(expected))
+        store.receive(.response(.showCardWallReceived(expected)))
     }
 
     func testRefreshShouldLoadFromCloudWhenAuthenticated() {
@@ -372,7 +367,7 @@ final class PrescriptionListDomainTests: XCTestCase {
             $0.loadingState = .loading(nil)
         }
         testScheduler.advance()
-        store.receive(.loadRemotePrescriptionsAndSaveReceived(expected)) { state in
+        store.receive(.response(.loadRemotePrescriptionsAndSaveReceived(expected))) { state in
             state.loadingState = expected
             state.prescriptions = input
         }

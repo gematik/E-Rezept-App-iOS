@@ -24,18 +24,16 @@ extension ErxTaskMedicationDispenseEntity {
         NSFetchRequest<ErxTaskMedicationDispenseEntity>(entityName: "ErxTaskMedicationDispenseEntity")
     }
 
-    @NSManaged public var amount: NSDecimalNumber?
-    @NSManaged public var dosageForm: String?
     @NSManaged public var dosageInstruction: String?
-    @NSManaged public var dose: String?
-    @NSManaged public var expiresOn: String?
     @NSManaged public var identifier: String?
     @NSManaged public var insuranceId: String?
-    @NSManaged public var lot: String?
-    @NSManaged public var name: String?
-    @NSManaged public var pzn: String?
     @NSManaged public var taskId: String?
     @NSManaged public var telematikId: String?
     @NSManaged public var whenHandedOver: String?
+    @NSManaged public var noteText: String?
     @NSManaged public var task: ErxTaskEntity?
+    @NSManaged public var quantity: ErxTaskQuantityEntity?
+    @NSManaged public var medication: ErxTaskMedicationEntity?
 }
+
+extension ErxTaskMedicationDispenseEntity: Identifiable {}

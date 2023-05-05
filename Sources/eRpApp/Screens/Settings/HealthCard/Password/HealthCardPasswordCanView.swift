@@ -34,12 +34,12 @@ struct HealthCardPasswordCanView: View {
     struct ViewState: Equatable {
         let mode: HealthCardPasswordDomain.Mode
         let canMayAdvance: Bool
-        let routeTag: HealthCardPasswordDomain.Route.Tag
+        let destinationTag: HealthCardPasswordDomain.Destinations.State.Tag
 
         init(state: HealthCardPasswordDomain.State) {
             mode = state.mode
             canMayAdvance = state.canMayAdvance
-            routeTag = state.route.tag
+            destinationTag = state.destination.tag
         }
     }
 
@@ -56,9 +56,9 @@ struct HealthCardPasswordCanView: View {
                 NavigationLink(
                     isActive: .init(
                         get: {
-                            viewStore.routeTag != .introduction &&
-                                viewStore.routeTag != .can &&
-                                viewStore.routeTag != .scanner
+                            viewStore.destinationTag != .introduction &&
+                                viewStore.destinationTag != .can &&
+                                viewStore.destinationTag != .scanner
                         },
                         set: { active in
                             if active {
@@ -82,9 +82,9 @@ struct HealthCardPasswordCanView: View {
                 NavigationLink(
                     isActive: .init(
                         get: {
-                            viewStore.routeTag != .introduction &&
-                                viewStore.routeTag != .can &&
-                                viewStore.routeTag != .scanner
+                            viewStore.destinationTag != .introduction &&
+                                viewStore.destinationTag != .can &&
+                                viewStore.destinationTag != .scanner
                         },
                         set: { active in
                             if active {
@@ -108,9 +108,9 @@ struct HealthCardPasswordCanView: View {
                 NavigationLink(
                     isActive: .init(
                         get: {
-                            viewStore.routeTag != .introduction &&
-                                viewStore.routeTag != .can &&
-                                viewStore.routeTag != .scanner
+                            viewStore.destinationTag != .introduction &&
+                                viewStore.destinationTag != .can &&
+                                viewStore.destinationTag != .scanner
                         },
                         set: { active in
                             if active {
@@ -201,7 +201,7 @@ struct HealthCardPasswordCanView: View {
                     }
                     .padding()
                     .fullScreenCover(isPresented: Binding<Bool>(
-                        get: { viewStore.state.route == .scanner },
+                        get: { viewStore.state.destination == .scanner },
                         set: { show in
                             if !show {
                                 viewStore.send(.setNavigation(tag: .can))
@@ -236,7 +236,6 @@ struct HealthCardPasswordCanView: View {
                         }
                 }
             }
-            .respectKeyboardInsets()
             .onTapGesture {
                 UIApplication.shared.dismissKeyboard()
             }

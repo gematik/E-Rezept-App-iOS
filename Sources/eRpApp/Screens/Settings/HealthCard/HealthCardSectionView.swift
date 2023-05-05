@@ -32,10 +32,10 @@ struct HealthCardSectionView: View {
     }
 
     struct ViewState: Equatable {
-        let routeTag: SettingsDomain.Route.Tag?
+        let destinationTag: SettingsDomain.Destinations.State.Tag?
 
         init(state: SettingsDomain.State) {
-            routeTag = state.route?.tag
+            destinationTag = state.destination?.tag
         }
     }
 
@@ -48,17 +48,15 @@ struct HealthCardSectionView: View {
                 // Destination: "Order health card"
                 NavigationLink(
                     destination: IfLetStore(
-                        store.scope(
-                            state: (\SettingsDomain.State.route)
-                                .appending(path: /SettingsDomain.Route.egk)
-                                .extract(from:),
-                            action: SettingsDomain.Action.egkAction(action:)
+                        store.destinationsScope(
+                            state: /SettingsDomain.Destinations.State.egk,
+                            action: SettingsDomain.Destinations.Action.egkAction
                         ),
                         then: OrderHealthCardView.init(store:)
                     ),
-                    tag: SettingsDomain.Route.Tag.egk,
+                    tag: SettingsDomain.Destinations.State.Tag.egk,
                     selection: viewStore.binding(
-                        get: \.routeTag,
+                        get: \.destinationTag,
                         send: SettingsDomain.Action.setNavigation
                     )
                 ) {
@@ -70,18 +68,15 @@ struct HealthCardSectionView: View {
                 // Destination: "Forgot PIN"
                 NavigationLink(
                     destination: IfLetStore(
-                        store.scope(
-                            state: (\SettingsDomain.State.route)
-                                .appending(path: /SettingsDomain.Route.healthCardPasswordForgotPin)
-                                .extract(from:),
-                            action: SettingsDomain.Action.healthCardPasswordForgotPin(action:)
-                        )
-                    ) { scopedStore in
-                        HealthCardPasswordView(store: scopedStore)
-                    },
-                    tag: SettingsDomain.Route.Tag.healthCardPasswordForgotPin,
+                        store.destinationsScope(
+                            state: /SettingsDomain.Destinations.State.healthCardPasswordForgotPin,
+                            action: SettingsDomain.Destinations.Action.healthCardPasswordForgotPinAction
+                        ),
+                        then: HealthCardPasswordView.init(store:)
+                    ),
+                    tag: SettingsDomain.Destinations.State.Tag.healthCardPasswordForgotPin,
                     selection: viewStore.binding(
-                        get: \.routeTag,
+                        get: \.destinationTag,
                         send: SettingsDomain.Action.setNavigation
                     )
                 ) {
@@ -93,18 +88,15 @@ struct HealthCardSectionView: View {
                 // Destination: "Set a custom PIN"
                 NavigationLink(
                     destination: IfLetStore(
-                        store.scope(
-                            state: (\SettingsDomain.State.route)
-                                .appending(path: /SettingsDomain.Route.healthCardPasswordSetCustomPin)
-                                .extract(from:),
-                            action: SettingsDomain.Action.healthCardPasswordSetCustomPin(action:)
-                        )
-                    ) { scopedStore in
-                        HealthCardPasswordView(store: scopedStore)
-                    },
-                    tag: SettingsDomain.Route.Tag.healthCardPasswordSetCustomPin,
+                        store.destinationsScope(
+                            state: /SettingsDomain.Destinations.State.healthCardPasswordSetCustomPin,
+                            action: SettingsDomain.Destinations.Action.healthCardPasswordSetCustomPinAction
+                        ),
+                        then: HealthCardPasswordView.init(store:)
+                    ),
+                    tag: SettingsDomain.Destinations.State.Tag.healthCardPasswordSetCustomPin,
                     selection: viewStore.binding(
-                        get: \.routeTag,
+                        get: \.destinationTag,
                         send: SettingsDomain.Action.setNavigation
                     )
                 ) {
@@ -116,18 +108,15 @@ struct HealthCardSectionView: View {
                 // Destination: "Unlock health card"
                 NavigationLink(
                     destination: IfLetStore(
-                        store.scope(
-                            state: (\SettingsDomain.State.route)
-                                .appending(path: /SettingsDomain.Route.healthCardPasswordUnlockCard)
-                                .extract(from:),
-                            action: SettingsDomain.Action.healthCardPasswordUnlockCard(action:)
-                        )
-                    ) { scopedStore in
-                        HealthCardPasswordView(store: scopedStore)
-                    },
-                    tag: SettingsDomain.Route.Tag.healthCardPasswordUnlockCard,
+                        store.destinationsScope(
+                            state: /SettingsDomain.Destinations.State.healthCardPasswordUnlockCard,
+                            action: SettingsDomain.Destinations.Action.healthCardPasswordUnlockCardAction
+                        ),
+                        then: HealthCardPasswordView.init(store:)
+                    ),
+                    tag: SettingsDomain.Destinations.State.Tag.healthCardPasswordUnlockCard,
                     selection: viewStore.binding(
-                        get: \.routeTag,
+                        get: \.destinationTag,
                         send: SettingsDomain.Action.setNavigation
                     )
                 ) {

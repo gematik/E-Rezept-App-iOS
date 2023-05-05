@@ -24,25 +24,19 @@ import eRpKit
 import Foundation
 import IDP
 
-enum RegisteredDevicesDomain {
-    typealias Store = ComposableArchitecture.Store<State, Action>
-    typealias Reducer = ComposableArchitecture.AnyReducer<State, Action, Environment>
+struct RegisteredDevicesDomain: ReducerProtocol {
+    typealias Store = StoreOf<Self>
 
-    static func cleanup<T>() -> Effect<T, Never> {
-        Effect.cancel(id: Token.self)
+    static func cleanup<T>() -> EffectTask<T> {
+        EffectTask<T>.cancel(ids: Token.allCases)
     }
 
     enum Token: CaseIterable, Hashable {}
 
-    enum Route: Equatable {
-        case cardWall(IDPCardWallDomain.State)
-        case alert(ErpAlertState<Action>)
-    }
-
     struct State: Equatable {
         let profileId: UUID
 
-        var route: Route?
+        var destination: Destinations.State?
 
         var thisDeviceKeyIdentifier: String?
 
@@ -78,17 +72,42 @@ enum RegisteredDevicesDomain {
         }
     }
 
+    struct Destinations: ReducerProtocol {
+        enum State: Equatable {
+            case idpCardWall(IDPCardWallDomain.State)
+            case alert(ErpAlertState<RegisteredDevicesDomain.Action>)
+        }
+
+        enum Action: Equatable {
+            case idpCardWallAction(IDPCardWallDomain.Action)
+        }
+
+        var body: some ReducerProtocol<State, Action> {
+            Scope(
+                state: /State.idpCardWall,
+                action: /Action.idpCardWallAction
+            ) {
+                IDPCardWallDomain()
+            }
+        }
+    }
+
     enum Action: Equatable {
         case loadDevices
-        case loadDevicesReceived(Result<PairingEntries, RegisteredDevicesServiceError>)
         case deleteDevice(String)
-        case deleteDeviceReceived(Result<Bool, RegisteredDevicesServiceError>)
 
         case showCardWall(IDPCardWallDomain.State)
-        case idpCardWall(action: IDPCardWallDomain.Action)
 
-        case setNavigation(tag: Route.Tag?)
-        case deviceIdReceived(String?)
+        case setNavigation(tag: Destinations.State.Tag?)
+        case destination(Destinations.Action)
+
+        case response(Response)
+
+        enum Response: Equatable {
+            case loadDevicesReceived(Result<PairingEntries, RegisteredDevicesServiceError>)
+            case deleteDeviceReceived(Result<Bool, RegisteredDevicesServiceError>)
+            case deviceIdReceived(String?)
+        }
     }
 
     // sourcery: CodedError = "017"
@@ -97,26 +116,39 @@ enum RegisteredDevicesDomain {
         case generic(String)
     }
 
-    struct Environment {
-        let schedulers: Schedulers
-        let userSession: UserSession
-        let userSessionProvider: UserSessionProvider
-        let secureEnclaveSignatureProvider: SecureEnclaveSignatureProvider
-        let nfcSignatureProvider: NFCSignatureProvider
-        let sessionProvider: ProfileBasedSessionProvider
-        let accessibilityAnnouncementReceiver: (String) -> Void
+    @Dependency(\.schedulers) var schedulers: Schedulers
+    @Dependency(\.registeredDevicesService) var registeredDevicesService: RegisteredDevicesService
 
-        let registeredDevicesService: RegisteredDevicesService
+    let dateFormatter: DateFormatter = {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateStyle = .medium
+        dateFormatter.timeStyle = .short
+        return dateFormatter
+    }()
 
-        var dateFormatter: DateFormatter = {
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateStyle = .medium
-            dateFormatter.timeStyle = .short
-            return dateFormatter
-        }()
+    private var environment: Environment {
+        .init(
+            schedulers: schedulers,
+            registeredDevicesService: registeredDevicesService,
+            dateFormatter: dateFormatter
+        )
     }
 
-    static let domainReducer = Reducer { state, action, environment in
+    struct Environment {
+        let schedulers: Schedulers
+        let registeredDevicesService: RegisteredDevicesService
+        let dateFormatter: DateFormatter
+    }
+
+    var body: some ReducerProtocol<State, Action> {
+        Reduce(core)
+            .ifLet(\.destination, action: /Action.destination) {
+                Destinations()
+            }
+    }
+
+    // swiftlint:disable:next function_body_length cyclomatic_complexity
+    func core(into state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
         case .loadDevices:
             let currentState = (/State.Content.loaded).extract(from: state.content) ?? []
@@ -125,85 +157,65 @@ enum RegisteredDevicesDomain {
                 environment.getRegisteredDevices(profileId: state.profileId),
                 environment.getDeviceId(for: state.profileId)
             )
-        case let .loadDevicesReceived(.success(entries)):
+        case let .response(.loadDevicesReceived(.success(entries))):
             state.content = .loaded(
                 entries.pairingEntries
-                    .map { ($0, environment.dateFormatter) }
+                    .map { ($0, dateFormatter) }
                     .map(State.Entry.init)
             )
             return .none
-        case let .loadDevicesReceived(.failure(error)):
-            state.route = .alert(.init(for: error))
+        case let .response(.loadDevicesReceived(.failure(error))):
+            state.destination = .alert(.init(for: error))
             return .none
-        case let .deviceIdReceived(keyIdentifier):
+        case let .response(.deviceIdReceived(keyIdentifier)):
             state.thisDeviceKeyIdentifier = keyIdentifier
             return .none
         case let .showCardWall(cardWallState):
-            state.route = .cardWall(cardWallState)
+            state.destination = .idpCardWall(cardWallState)
             return .none
         case .setNavigation(tag: .none):
-            state.route = nil
+            state.destination = nil
             state.content = .notLoaded
             return .none
         case .setNavigation:
             return .none
-        case .idpCardWall(action: .finished):
-            state.route = nil
-            return .concatenate(
-                IDPCardWallDomain.cleanup(),
-                Effect(value: .loadDevices)
-            )
-        case .idpCardWall(action: .close):
-            state.route = nil
-            return IDPCardWallDomain.cleanup()
-        case .idpCardWall:
+        case let .destination(.idpCardWallAction(.delegate(idpCardWallDelegateAction))):
+            switch idpCardWallDelegateAction {
+            case .finished:
+                state.destination = nil
+                return .concatenate(
+                    IDPCardWallDomain.cleanup(),
+                    Effect(value: .loadDevices)
+                )
+            case .close:
+                state.destination = nil
+                return IDPCardWallDomain.cleanup()
+            }
+        case .destination(.idpCardWallAction):
             return .none
         case let .deleteDevice(device):
-            let profileId = state.profileId
             return environment.deleteDevice(device, of: state.profileId)
                 .eraseToEffect()
-        case let .deleteDeviceReceived(.failure(error)):
-            state.route = .alert(.init(for: error))
+        case let .response(.deleteDeviceReceived(.failure(error))):
+            state.destination = .alert(.init(for: error))
             return .none
-        case .deleteDeviceReceived(.success):
+        case .response(.deleteDeviceReceived(.success)):
             return environment.getRegisteredDevices(profileId: state.profileId)
         }
     }
-
-    static let reducer: Reducer = .combine(
-        idpCardWallReducer,
-        domainReducer
-    )
-    .debugActions()
-
-    static let idpCardWallReducer: Reducer =
-        IDPCardWallDomain.reducer._pullback(
-            state: (\State.route).appending(path: /RegisteredDevicesDomain.Route.cardWall),
-            action: /RegisteredDevicesDomain.Action.idpCardWall(action:)
-        ) {
-            .init(
-                schedulers: $0.schedulers,
-                userSession: $0.userSession,
-                userSessionProvider: $0.userSessionProvider,
-                secureEnclaveSignatureProvider: $0.secureEnclaveSignatureProvider,
-                nfcSignatureProvider: $0.nfcSignatureProvider,
-                sessionProvider: $0.sessionProvider,
-                accessibilityAnnouncementReceiver: $0.accessibilityAnnouncementReceiver
-            )
-        }
 }
 
 extension RegisteredDevicesDomain.Environment {
     func getRegisteredDevices(profileId: UUID) -> Effect<RegisteredDevicesDomain.Action, Never> {
         registeredDevicesService.registeredDevices(for: profileId)
-            .map { RegisteredDevicesDomain.Action.loadDevicesReceived(.success($0)) }
+            .map { RegisteredDevicesDomain.Action.response(.loadDevicesReceived(.success($0))) }
             .catch { error -> AnyPublisher<RegisteredDevicesDomain.Action, Never> in
                 if RegisteredDevicesServiceError.missingAuthentication == error {
                     return registeredDevicesService.cardWall(for: profileId)
                         .map(RegisteredDevicesDomain.Action.showCardWall)
                         .eraseToAnyPublisher()
                 }
-                return Just(RegisteredDevicesDomain.Action.loadDevicesReceived(.failure(error)))
+                return Just(RegisteredDevicesDomain.Action.response(.loadDevicesReceived(.failure(error))))
                     .eraseToAnyPublisher()
             }
             .receive(on: schedulers.main)
@@ -212,7 +224,8 @@ extension RegisteredDevicesDomain.Environment {
 
     func getDeviceId(for profileId: UUID) -> Effect<RegisteredDevicesDomain.Action, Never> {
         registeredDevicesService.deviceId(for: profileId)
-            .map(RegisteredDevicesDomain.Action.deviceIdReceived)
+            .map(RegisteredDevicesDomain.Action.Response.deviceIdReceived)
+            .map(RegisteredDevicesDomain.Action.response)
             .receive(on: schedulers.main)
             .eraseToEffect()
     }
@@ -220,7 +233,8 @@ extension RegisteredDevicesDomain.Environment {
     func deleteDevice(_ deviceId: String, of profileId: UUID) -> Effect<RegisteredDevicesDomain.Action, Never> {
         registeredDevicesService.deleteDevice(deviceId, of: profileId)
             .catchToEffect()
-            .map(RegisteredDevicesDomain.Action.deleteDeviceReceived)
+            .map(RegisteredDevicesDomain.Action.Response.deleteDeviceReceived)
+            .map(RegisteredDevicesDomain.Action.response)
             .receive(on: schedulers.main)
             .eraseToEffect()
     }
@@ -231,12 +245,12 @@ extension RegisteredDevicesDomain {
         static let state = State(profileId: UUID())
         static let loadingState = State(
             profileId: UUID(),
-            route: nil,
+            destination: nil,
             content: .loading([])
         )
         static let devicesState = State(
             profileId: UUID(),
-            route: nil,
+            destination: nil,
             thisDeviceKeyIdentifier: "a98765432",
             content: .loaded([
                 State.Entry(PairingEntry.Dummies.deviceA),
@@ -245,13 +259,13 @@ extension RegisteredDevicesDomain {
         )
         static let loadedNoDevices = State(
             profileId: UUID(),
-            route: nil,
+            destination: nil,
             thisDeviceKeyIdentifier: nil,
             content: .loaded([])
         )
         static let loadingWithDevicesState = State(
             profileId: UUID(),
-            route: nil,
+            destination: nil,
             content: .loading([
                 State.Entry(PairingEntry.Dummies.deviceA),
                 State.Entry(PairingEntry.Dummies.deviceB),
@@ -259,27 +273,16 @@ extension RegisteredDevicesDomain {
         )
         static let cardWallState = State(
             profileId: UUID(),
-            route: .cardWall(.init(profileId: UUID(),
-                                   pin: .init(isDemoModus: false, transition: .fullScreenCover)))
+            destination: .idpCardWall(.init(profileId: UUID(),
+                                            pin: .init(isDemoModus: false, transition: .fullScreenCover)))
         )
 
-        static let environment = Environment(
-            schedulers: Schedulers(),
-            userSession: DummySessionContainer(),
-            userSessionProvider: DummyUserSessionProvider(),
-            secureEnclaveSignatureProvider: DummySecureEnclaveSignatureProvider(),
-            nfcSignatureProvider: DemoSignatureProvider(),
-            sessionProvider: DummyProfileBasedSessionProvider(),
-            accessibilityAnnouncementReceiver: { _ in },
-            registeredDevicesService: DefaultRegisteredDevicesService(userSessionProvider: DummyUserSessionProvider())
-        )
+        static let store = store(for: state)
 
-        static let store = Store(initialState: state,
-                                 reducer: reducer,
-                                 environment: environment)
-
-        static func store(for state: State) -> Store {
-            Store(initialState: state, reducer: .empty, environment: environment)
+        static func store(
+            for state: State
+        ) -> Store {
+            Store(initialState: state, reducer: EmptyReducer())
         }
     }
 }

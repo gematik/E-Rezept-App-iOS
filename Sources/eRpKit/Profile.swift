@@ -28,8 +28,9 @@ public struct Profile: Identifiable, Hashable, Equatable {
         familyName: String? = nil,
         insurance: String? = nil,
         insuranceId: String? = nil,
-        color: Color = Color.next(),
-        emoji: String? = nil,
+        insuranceType: InsuranceType = .unknown,
+        color: Color = Color.grey,
+        image: ProfilePictureType = .none,
         lastAuthenticated: Date? = nil,
         erxTasks: [ErxTask] = []
     ) {
@@ -40,8 +41,9 @@ public struct Profile: Identifiable, Hashable, Equatable {
         self.familyName = familyName
         self.insurance = insurance
         self.insuranceId = insuranceId
+        self.insuranceType = insuranceType
         self.color = color
-        self.emoji = emoji
+        self.image = image
         self.lastAuthenticated = lastAuthenticated
         self.erxTasks = erxTasks
     }
@@ -57,8 +59,9 @@ public struct Profile: Identifiable, Hashable, Equatable {
     public var familyName: String?
     public var insurance: String?
     public var insuranceId: String?
+    public var insuranceType: InsuranceType
     public var color: Color
-    public var emoji: String?
+    public var image: ProfilePictureType
     public var lastAuthenticated: Date?
     public var erxTasks: [ErxTask]
 
@@ -66,6 +69,12 @@ public struct Profile: Identifiable, Hashable, Equatable {
         [givenName, familyName]
             .compactMap { $0 }
             .joined(separator: " ")
+    }
+
+    public enum InsuranceType: String, Equatable {
+        case unknown
+        case gKV
+        case pKV
     }
 
     public enum Color: String, CaseIterable {
@@ -99,5 +108,22 @@ public struct Profile: Identifiable, Hashable, Equatable {
         private static func random<G: RandomNumberGenerator>(using generator: inout G) -> Color {
             Color.allCases.randomElement(using: &generator) ?? .grey
         }
+    }
+
+    public enum ProfilePictureType: String, CaseIterable {
+        case baby
+        case boyWithCard
+        case developer
+        case doctor
+        case doctor2
+        case manWithPhone
+        case oldDoctor
+        case oldMan
+        case oldWoman
+        case pharmacist
+        case pharmacist2
+        case wheelchair
+        case womanWithPhone
+        case none
     }
 }

@@ -21,152 +21,129 @@ import ComposableArchitecture
 import Foundation
 import IDP
 
-enum CardWallIntroductionDomain {
-    typealias Store = ComposableArchitecture.Store<State, Action>
-    typealias Reducer = ComposableArchitecture.AnyReducer<State, Action, Environment>
+struct CardWallIntroductionDomain: ReducerProtocol {
+    typealias Store = StoreOf<Self>
 
     /// Provides an Effect that need to run whenever the state of this Domain is reset to nil
-    static func cleanup<T>() -> Effect<T, Never> {
+    static func cleanup<T>() -> EffectTask<T> {
         Effect.cancel(id: CardWallReadCardDomain.Token.self)
     }
 
-    enum Route: Equatable {
-        // sourcery: AnalyticsScreen = cardwallCAN
-        case can(CardWallCANDomain.State)
-        // sourcery: AnalyticsScreen = cardWallExtAuth
-        case fasttrack(CardWallExtAuthSelectionDomain.State)
-        // sourcery: AnalyticsScreen = cardwallContactInsuranceCompany
-        case egk(OrderHealthCardDomain.State)
-        // sourcery: AnalyticsScreen = cardwallNotCapable
-        case notCapable
+    struct Destinations: ReducerProtocol {
+        enum State: Equatable {
+            // sourcery: AnalyticsScreen = cardwallCAN
+            case can(CardWallCANDomain.State)
+            // sourcery: AnalyticsScreen = cardWallExtAuth
+            case fasttrack(CardWallExtAuthSelectionDomain.State)
+            // sourcery: AnalyticsScreen = cardwallContactInsuranceCompany
+            case egk(OrderHealthCardDomain.State)
+            // sourcery: AnalyticsScreen = cardwallNotCapable
+            case notCapable
+        }
+
+        enum Action: Equatable {
+            case canAction(action: CardWallCANDomain.Action)
+            case fasttrack(action: CardWallExtAuthSelectionDomain.Action)
+            case egkAction(action: OrderHealthCardDomain.Action)
+        }
+
+        var body: some ReducerProtocol<State, Action> {
+            Scope(state: /State.can, action: /Action.canAction) {
+                CardWallCANDomain()
+            }
+            Scope(state: /State.fasttrack, action: /Action.fasttrack) {
+                CardWallExtAuthSelectionDomain()
+            }
+            Scope(state: /State.egk, action: /Action.egkAction) {
+                OrderHealthCardDomain()
+            }
+        }
     }
 
     struct State: Equatable {
         /// App is only usable with NFC for now
         let isNFCReady: Bool
         let profileId: UUID
-        var route: Route?
+        var destination: Destinations.State?
     }
 
     indirect enum Action: Equatable {
         case advance
         case advanceCAN(String?)
-        case close
-        case setNavigation(tag: Route.Tag?)
-        case canAction(action: CardWallCANDomain.Action)
-        case fasttrack(action: CardWallExtAuthSelectionDomain.Action)
-        case egkAction(action: OrderHealthCardDomain.Action)
+
+        case delegate(Delegate)
+
+        case setNavigation(tag: Destinations.State.Tag?)
+        case destination(Destinations.Action)
+
+        enum Delegate: Equatable {
+            case close
+        }
     }
 
-    struct Environment {
-        let userSession: UserSession
-        let userSessionProvider: UserSessionProvider
-        var sessionProvider: ProfileBasedSessionProvider
-        var schedulers: Schedulers
-        var signatureProvider: SecureEnclaveSignatureProvider
-        let accessibilityAnnouncementReceiver: (String) -> Void
+    @Dependency(\.userSession) var userSession: UserSession
+    @Dependency(\.userSessionProvider) var userSessionProvider: UserSessionProvider
+    @Dependency(\.schedulers) var schedulers: Schedulers
+
+    var body: some ReducerProtocol<State, Action> {
+        Reduce(self.core)
+            .ifLet(\.destination, action: /Action.destination) {
+                Destinations()
+            }
     }
 
-    static let domainReducer = Reducer { state, action, environment in
+    func core(into state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
         case .advance:
             guard state.isNFCReady else {
-                state.route = .notCapable
+                state.destination = .notCapable
                 return .none
             }
-            return environment.userSessionProvider.userSession(for: state.profileId).secureUserStore.can
+            return userSessionProvider.userSession(for: state.profileId).secureUserStore.can
                 .first()
                 .map(Action.advanceCAN)
                 .eraseToEffect()
         case let .advanceCAN(can):
-            state.route = .can(CardWallCANDomain.State(
-                isDemoModus: environment.userSession.isDemoMode,
+            state.destination = .can(CardWallCANDomain.State(
+                isDemoModus: userSession.isDemoMode,
                 profileId: state.profileId,
                 can: can ?? ""
             ))
             return .none
-        case .close:
+        case .delegate(.close):
             return .none
         case .setNavigation(tag: .egk):
-            state.route = .egk(.init())
+            state.destination = .egk(.init())
             return .none
         case .setNavigation(tag: .none),
-             .egkAction(action: .close):
-            state.route = nil
+             .destination(.egkAction(action: .delegate(.close))):
+            state.destination = nil
             return .none
-        case .canAction(.navigateToIntro),
+        case .destination(.canAction(.delegate(.navigateToIntro))),
              .setNavigation(tag: .fasttrack):
-            state.route = .fasttrack(CardWallExtAuthSelectionDomain.State())
+            state.destination = .fasttrack(CardWallExtAuthSelectionDomain.State())
             return .none
-        case .canAction(.close),
-             .fasttrack(action: .close):
-            state.route = nil
+        case .destination(.canAction(.delegate(.close))),
+             .destination(.fasttrack(action: .delegate(.close))):
+            state.destination = nil
             return Effect.concatenate(
-                cleanup(),
-                Effect(value: .close)
+                Self.cleanup(),
+                Effect(value: .delegate(.close))
                     // Delay for closing all views, Workaround for TCA pullback problem
-                    .delay(for: 0.05, scheduler: environment.schedulers.main)
+                    .delay(for: 0.05, scheduler: schedulers.main)
                     .eraseToEffect()
             )
         case .setNavigation,
-             .canAction,
-             .fasttrack,
-             .egkAction:
+             .destination:
             return .none
         }
     }
-
-    static let canPullbackReducer: Reducer =
-        CardWallCANDomain.reducer._pullback(
-            state: (\State.route).appending(path: /Route.can),
-            action: /Action.canAction(action:)
-        ) { environment in
-            CardWallCANDomain.Environment(
-                sessionProvider: environment.sessionProvider,
-                signatureProvider: environment.signatureProvider,
-                userSession: environment.userSession,
-                accessibilityAnnouncementReceiver: environment.accessibilityAnnouncementReceiver,
-                schedulers: environment.schedulers
-            )
-        }
-
-    static let fastTrackPullbackReducer: Reducer =
-        CardWallExtAuthSelectionDomain.reducer._pullback(
-            state: (\State.route).appending(path: /Route.fasttrack),
-            action: /Action.fasttrack(action:)
-        ) { environment in
-            CardWallExtAuthSelectionDomain.Environment(idpSession: environment.userSession.idpSession,
-                                                       schedulers: environment.schedulers)
-        }
-
-    static let orderHealthCardPullbackReducer: Reducer =
-        OrderHealthCardDomain.reducer._pullback(
-            state: (\State.route).appending(path: /Route.egk),
-            action: /Action.egkAction(action:)
-        ) { _ in OrderHealthCardDomain.Environment() }
-
-    static let reducer = Reducer.combine(
-        canPullbackReducer,
-        fastTrackPullbackReducer,
-        orderHealthCardPullbackReducer,
-        domainReducer
-    )
 }
 
 extension CardWallIntroductionDomain {
     enum Dummies {
         static let state = State(isNFCReady: true, profileId: UUID())
-        static let environment = Environment(userSession: DemoSessionContainer(schedulers: Schedulers()),
-                                             userSessionProvider: DummyUserSessionProvider(),
-                                             sessionProvider: DummyProfileBasedSessionProvider(),
-                                             schedulers: Schedulers(),
-                                             signatureProvider: DummySecureEnclaveSignatureProvider()) { _ in }
 
-        static let store = storeFor(state)
-        static func storeFor(_ state: State) -> Store {
-            Store(initialState: state,
-                  reducer: reducer,
-                  environment: environment)
-        }
+        static let store = Store(initialState: state, reducer: CardWallIntroductionDomain())
     }
 }

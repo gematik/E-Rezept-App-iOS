@@ -113,8 +113,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swift-composable-architecture",
       "state" : {
-        "revision" : "c9259b5f74892690cb04a9a8088b4a1789b05a7d",
-        "version" : "0.47.2"
+        "revision" : "6cf778a7da64de9508596a435aa0a5647885d71a",
+        "version" : "0.49.2"
       }
     },
     {
@@ -124,6 +124,15 @@
       "state" : {
         "revision" : "ead7d30cc224c3642c150b546f4f1080d1c411a8",
         "version" : "0.6.1"
+      }
+    },
+    {
+      "identity" : "swift-dependencies",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pointfreeco/swift-dependencies",
+      "state" : {
+        "revision" : "7a094fcc6a4fcb34fbe625ecd3acd81b881a6dfb",
+        "version" : "0.1.3"
       }
     },
     {
@@ -167,8 +176,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swiftui-navigation",
       "state" : {
-        "revision" : "4b666bcc59ba1711a7543ecb37e1d181963b180c",
-        "version" : "0.4.2"
+        "revision" : "46acf5ecc1cabdb28d7fe03289f6c8b13a023f52",
+        "version" : "0.4.5"
       }
     },
     {
@@ -176,8 +185,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/xctest-dynamic-overlay",
       "state" : {
-        "revision" : "5a5457a744239896e9b0b03a8e1a5069c3e7b91f",
-        "version" : "0.6.0"
+        "revision" : "16b23a295fa322eb957af98037f86791449de60f",
+        "version" : "0.8.1"
       }
     },
     {

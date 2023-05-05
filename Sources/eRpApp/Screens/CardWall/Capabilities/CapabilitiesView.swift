@@ -32,7 +32,7 @@ struct CapabilitiesView: View {
             .navigationBarTitle(L10n.cdwTxtNfuTitle, displayMode: .inline)
             .navigationBarItems(
                 trailing: NavigationBarCloseItem {
-                    viewStore.send(.close)
+                    viewStore.send(.delegate(.close))
                 }
                 .accessibility(identifier: A11y.cardWall.notForYou.cdwBtnNfuCancel)
                 .accessibility(label: Text(L10n.cdwBtnNfuCancelLabel))

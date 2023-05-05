@@ -31,52 +31,88 @@ enum Endpoint: Equatable {
     }
 }
 
-protocol Routing {
+protocol Routing: AnyObject {
     func routeTo(_ endpoint: Endpoint)
 }
 
-class RouterStore<State: Equatable, Action: Equatable, Environment> {
-    private let store: Store<State, RoutingAction<Action, Endpoint>>
-    var wrappedStore: Store<State, Action> {
-        store.scope(state: { (state: State) -> State in state },
-                    action: { localAction in RoutingAction.action(localAction) })
+class RouterStore<ContentReducer: ReducerProtocol>: Routing
+    where ContentReducer.Action: Equatable, ContentReducer.State: Equatable {
+    private let store: StoreOf<RouterReducer<_DependencyKeyWritingReducer<ContentReducer>>>
+    var wrappedStore: StoreOf<ContentReducer> {
+        store.scope(
+            state: { $0 },
+            action: RouterReducer<_DependencyKeyWritingReducer<ContentReducer>>.Action.action
+        )
     }
+
+    private let routerInstance = RouterInstance()
 
     init(
-        initialState: State,
-        reducer: AnyReducer<State, Action, Environment>,
-        environment: Environment,
-        router: @escaping (Endpoint) -> Effect<Action, Never>
-
+        initialState: ContentReducer.State,
+        reducer: ContentReducer,
+        router: @escaping (Endpoint) -> EffectTask<ContentReducer.Action>
     ) {
-        store = Store(initialState: initialState,
-                      reducer: reducer.routed(by: router),
-                      environment: environment)
+        store = Store(
+            initialState: initialState,
+            reducer: RouterReducer(
+                contentReducer: reducer.dependency(\.router, routerInstance),
+                router: router
+            )
+        )
+
+        routerInstance.delegate = self
     }
 
-    func route(to endpoint: Endpoint) {
+    func routeTo(_ endpoint: Endpoint) {
         let viewStore = ViewStore(store)
         viewStore.send(.routeTo(endpoint))
     }
+
+    private class RouterInstance: Routing {
+        func routeTo(_ endpoint: eRpApp.Endpoint) {
+            delegate?.routeTo(endpoint)
+        }
+
+        weak var delegate: Routing?
+    }
 }
 
-private enum RoutingAction<Action: Equatable, Endpoint: Equatable>: Equatable {
-    case routeTo(Endpoint)
-    case action(Action)
-}
+struct RouterReducer<ContentReducer: ReducerProtocol>: ReducerProtocol
+    where ContentReducer.Action: Equatable {
+    typealias State = ContentReducer.State
 
-extension AnyReducer where Action: Equatable {
-    fileprivate func routed<Endpoint: Equatable>( // swiftlint:disable:this strict_fileprivate
-        by router: @escaping (Endpoint) -> Effect<Action, Never>
-    ) -> AnyReducer<State, RoutingAction<Action, Endpoint>, Environment> {
-        .init { state, action, environment in
+    enum Action: Equatable {
+        case routeTo(Endpoint)
+        case action(ContentReducer.Action)
+    }
+
+    let contentReducer: ContentReducer
+    let router: (Endpoint) -> EffectTask<ContentReducer.Action>
+
+    var body: some ReducerProtocol<State, Action> {
+        Reduce { state, action in
             switch action {
             case let .action(action):
-                return self.run(&state, action, environment).map(RoutingAction.action)
+                return contentReducer.reduce(into: &state, action: action).map(Action.action)
             case let .routeTo(route):
-                return router(route).map(RoutingAction.action)
+                return router(route).map(Action.action)
             }
         }
+    }
+}
+
+struct RoutingDependency: DependencyKey {
+    static let liveValue: Routing = UnimplementedRouting()
+
+    static let previewValue: Routing = UnimplementedRouting()
+
+    static let testValue: Routing = UnimplementedRouting()
+}
+
+extension DependencyValues {
+    var router: Routing {
+        get { self[RoutingDependency.self] }
+        set { self[RoutingDependency.self] = newValue }
     }
 }
 

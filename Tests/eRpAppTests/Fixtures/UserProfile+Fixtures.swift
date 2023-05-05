@@ -29,7 +29,6 @@ extension UserProfile {
                 created: Date(),
                 insuranceId: nil,
                 color: .green,
-                emoji: "🌮",
                 lastAuthenticated: nil,
                 erxTasks: []
             ),
@@ -44,7 +43,6 @@ extension UserProfile {
                 created: Date(),
                 insuranceId: nil,
                 color: .red,
-                emoji: nil,
                 lastAuthenticated: nil,
                 erxTasks: []
             ),

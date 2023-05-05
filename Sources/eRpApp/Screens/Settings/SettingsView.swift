@@ -34,14 +34,14 @@ struct SettingsView: View {
 
     struct ViewState: Equatable {
         let isDemoMode: Bool
-        let profilesRouteTag: ProfilesDomain.Route.Tag?
+        let profilesDestinationTag: ProfilesDomain.Destinations.State.Tag?
 
-        let routeTag: SettingsDomain.Route.Tag?
+        let destinationTag: SettingsDomain.Destinations.State.Tag?
 
         init(state: SettingsDomain.State) {
             isDemoMode = state.isDemoMode
-            profilesRouteTag = state.profiles.route?.tag
-            routeTag = state.route?.tag
+            profilesDestinationTag = state.profiles.destination?.tag
+            destinationTag = state.destination?.tag
         }
     }
 
@@ -69,13 +69,16 @@ struct SettingsView: View {
 
                     BottomSectionView(store: store)
                 }
-                .alert(profilesAlertStore, dismiss: .setNavigation(tag: nil))
+                .alert(
+                    profilesStore.destinationsScope(state: /ProfilesDomain.Destinations.State.alert),
+                    dismiss: .setNavigation(tag: nil)
+                )
 
                 // Tracking comply sheet presentation
                 Rectangle()
                     .frame(width: 0, height: 0, alignment: .center)
                     .sheet(isPresented: Binding<Bool>(
-                        get: { viewStore.routeTag == .complyTracking },
+                        get: { viewStore.destinationTag == .complyTracking },
                         set: { show in
                             if !show { viewStore.send(.setNavigation(tag: nil)) }
                         }
@@ -90,7 +93,7 @@ struct SettingsView: View {
                 Rectangle()
                     .frame(width: 0, height: 0, alignment: .center)
                     .sheet(isPresented: Binding<Bool>(get: {
-                        viewStore.profilesRouteTag == .newProfile
+                        viewStore.profilesDestinationTag == .newProfile
                     }, set: { show in
                         if !show {
                             viewStore.send(.profiles(action: .setNavigation(tag: nil)))
@@ -98,17 +101,27 @@ struct SettingsView: View {
                     }),
                     onDismiss: {},
                     content: {
-                        IfLetStore(newProfileStore, then: NewProfileView.init)
+                        IfLetStore(
+                            profilesStore.destinationsScope(
+                                state: /ProfilesDomain.Destinations.State.newProfile,
+                                action: ProfilesDomain.Destinations.Action.newProfileAction
+                            ),
+                            then: NewProfileView.init(store:)
+                        )
                     })
                     .hidden()
                     .accessibility(hidden: true)
 
                 NavigationLink(
-                    destination: IfLetStore(profileStore) { profileStore in
-                        EditProfileView(store: profileStore)
-                    },
-                    tag: ProfilesDomain.Route.Tag.editProfile, // swiftlint:disable:next trailing_closure
-                    selection: viewStore.binding(get: \.profilesRouteTag, send: { tag in
+                    destination: IfLetStore(
+                        profilesStore.destinationsScope(
+                            state: /ProfilesDomain.Destinations.State.editProfile,
+                            action: ProfilesDomain.Destinations.Action.editProfileAction
+                        ),
+                        then: EditProfileView.init(store:)
+                    ),
+                    tag: ProfilesDomain.Destinations.State.Tag.editProfile, // swiftlint:disable:next trailing_closure
+                    selection: viewStore.binding(get: \.profilesDestinationTag, send: { tag in
                         SettingsDomain.Action.profiles(action: .setNavigation(tag: tag))
                     })
                 ) {}
@@ -117,18 +130,15 @@ struct SettingsView: View {
 
                 NavigationLink(
                     destination: IfLetStore(
-                        store.scope(
-                            state: (\SettingsDomain.State.route)
-                                .appending(path: /SettingsDomain.Route.setAppPassword)
-                                .extract(from:),
-                            action: SettingsDomain.Action.createPassword(action:)
-                        )
-                    ) { createStore in
-                        CreatePasswordView(store: createStore)
-                    },
-                    tag: SettingsDomain.Route.Tag.setAppPassword,
+                        store.destinationsScope(
+                            state: /SettingsDomain.Destinations.State.setAppPassword,
+                            action: SettingsDomain.Destinations.Action.setAppPasswordAction
+                        ),
+                        then: CreatePasswordView.init(store:)
+                    ),
+                    tag: SettingsDomain.Destinations.State.Tag.setAppPassword,
                     selection: viewStore.binding(
-                        get: \.routeTag,
+                        get: \.destinationTag,
                         send: SettingsDomain.Action.setNavigation
                     )
                 ) {}
@@ -140,9 +150,7 @@ struct SettingsView: View {
             .navigationTitle(L10n.stgTxtTitle)
             .demoBanner(isPresented: viewStore.isDemoMode)
             .alert(
-                self.store
-                    .scope(state: (\SettingsDomain.State.route).appending(path: /SettingsDomain.Route.alert)
-                        .extract(from:)),
+                store.destinationsScope(state: /SettingsDomain.Destinations.State.alert),
                 dismiss: .setNavigation(tag: .none)
             )
             .onAppear {
@@ -267,10 +275,10 @@ extension SettingsView {
         }
 
         struct ViewState: Equatable {
-            let routeTag: SettingsDomain.Route.Tag?
+            let destinationTag: SettingsDomain.Destinations.State.Tag?
 
             init(state: SettingsDomain.State) {
-                routeTag = state.route?.tag
+                destinationTag = state.destination?.tag
             }
         }
 
@@ -283,18 +291,16 @@ extension SettingsView {
             }, content: {
                 NavigationLink(
                     destination: IfLetStore(
-                        store.scope(
-                            state: (\SettingsDomain.State.route)
-                                .appending(path: /SettingsDomain.Route.debug)
-                                .extract(from:),
-                            action: SettingsDomain.Action.debug(action:)
-                        )
-                    ) { debugStore in
-                        DebugView(store: debugStore)
-                    },
-                    tag: SettingsDomain.Route.Tag.debug,
+                        destinationsScopedStore
+                            .scope(
+                                state: /SettingsDomain.Destinations.State.debug,
+                                action: SettingsDomain.Destinations.Action.debugAction
+                            ),
+                        then: DebugView.init(store:)
+                    ),
+                    tag: SettingsDomain.Destinations.State.Tag.debug,
                     selection: viewStore.binding(
-                        get: \.routeTag,
+                        get: \.destinationTag,
                         send: SettingsDomain.Action.setNavigation
                     )
                 ) {
@@ -303,6 +309,10 @@ extension SettingsView {
                 .accessibility(identifier: "stg_btn_debug")
                 .buttonStyle(.navigation)
             })
+        }
+
+        var destinationsScopedStore: Store<SettingsDomain.Destinations.State?, SettingsDomain.Destinations.Action> {
+            store.scope(state: \SettingsDomain.State.destination, action: SettingsDomain.Action.destination)
         }
     }
     #endif
@@ -404,32 +414,6 @@ extension SettingsView {
     var profilesStore: ProfilesDomain.Store {
         store.scope(state: \.profiles, action: SettingsDomain.Action.profiles)
     }
-
-    var profileStore: Store<EditProfileDomain.State?, EditProfileDomain.Action> {
-        profilesStore.scope(
-            state: (\ProfilesDomain.State.route)
-                .appending(path: /ProfilesDomain.Route.editProfile)
-                .extract(from:),
-            action: ProfilesDomain.Action.profile(action:)
-        )
-    }
-
-    var profilesAlertStore: Store<ErpAlertState<ProfilesDomain.Action>?, ProfilesDomain.Action> {
-        profilesStore.scope(
-            state: (\ProfilesDomain.State.route)
-                .appending(path: /ProfilesDomain.Route.alert)
-                .extract(from:)
-        )
-    }
-
-    var newProfileStore: Store<NewProfileDomain.State?, NewProfileDomain.Action> {
-        profilesStore.scope(
-            state: (\ProfilesDomain.State.route)
-                .appending(path: /ProfilesDomain.Route.newProfile)
-                .extract(from:),
-            action: ProfilesDomain.Action.newProfile(action:)
-        )
-    }
 }
 
 struct SettingsView_Previews: PreviewProvider {
@@ -440,6 +424,6 @@ struct SettingsView_Previews: PreviewProvider {
             #else
             SettingsView(store: SettingsDomain.Dummies.store)
             #endif
-        }
+        }.preferredColorScheme(.dark)
     }
 }

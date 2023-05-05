@@ -64,6 +64,7 @@ struct TooltipContainerModifier: ViewModifier {
                             tooltipElement.dismiss()
                         }
                     }
+                    .accessibilityIdentifier("ctl_tooltip_container")
                     .transition(
                         .asymmetric(
                             insertion: .scale.animation(.default),

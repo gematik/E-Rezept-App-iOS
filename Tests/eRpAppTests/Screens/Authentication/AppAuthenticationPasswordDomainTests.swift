@@ -27,7 +27,7 @@ final class AppAuthenticationPasswordDomainTests: XCTestCase {
         AppAuthenticationPasswordDomain.Action,
         AppAuthenticationPasswordDomain.State,
         AppAuthenticationPasswordDomain.Action,
-        AppAuthenticationPasswordDomain.Environment
+        Void
     >
     let emptyPassword = AppAuthenticationPasswordDomain.State(password: "")
     let abcPassword = AppAuthenticationPasswordDomain.State(password: "abc")
@@ -41,11 +41,10 @@ final class AppAuthenticationPasswordDomainTests: XCTestCase {
     func testStore(for state: AppAuthenticationPasswordDomain.State) -> TestStore {
         TestStore(
             initialState: state,
-            reducer: AppAuthenticationPasswordDomain.reducer,
-            environment: AppAuthenticationPasswordDomain.Environment(
-                appSecurityPasswordManager: mockAppSecurityPasswordManager
-            )
-        )
+            reducer: AppAuthenticationPasswordDomain()
+        ) { dependencies in
+            dependencies.appSecurityManager = mockAppSecurityPasswordManager
+        }
     }
 
     func testSetPassword() {

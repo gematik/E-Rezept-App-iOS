@@ -1,0 +1,590 @@
+{
+  "id": "fe315450-3510-4e1f-9f5a-c7edcf943b03",
+  "type": "collection",
+  "timestamp": "2022-06-14T16:01:16.630+00:00",
+  "resourceType": "Bundle",
+  "link": [
+    {
+      "relation": "self",
+      "url": "https://erp.box.erezepttest.net/Task/160.000.000.003.223.88"
+    }
+  ],
+  "entry": [
+    {
+      "fullUrl": "https://erp.box.erezepttest.net/Task/160.000.000.003.223.88",
+      "resource": {
+        "resourceType": "Task",
+        "id": "160.000.000.003.223.88",
+        "meta": {
+          "profile": [
+            "https://gematik.de/fhir/StructureDefinition/ErxTask|1.1.1"
+          ]
+        },
+        "identifier": [
+          {
+            "use": "official",
+            "system": "https://gematik.de/fhir/NamingSystem/PrescriptionID",
+            "value": "160.000.000.003.223.88"
+          },
+          {
+            "use": "official",
+            "system": "https://gematik.de/fhir/NamingSystem/AccessCode",
+            "value": "43fab2ce46cf7c10e4dac7ca4d4229c561bbea02cb981ddfa413b34d61e9daa8"
+          }
+        ],
+        "intent": "order",
+        "status": "ready",
+        "extension": [
+          {
+            "url": "https://gematik.de/fhir/StructureDefinition/PrescriptionType",
+            "valueCoding": {
+              "system": "https://gematik.de/fhir/CodeSystem/Flowtype",
+              "code": "160",
+              "display": "Muster 16 (Apothekenpflichtige Arzneimittel)"
+            }
+          },
+          {
+            "url": "https://gematik.de/fhir/StructureDefinition/ExpiryDate",
+            "valueDate": "2022-09-14"
+          },
+          {
+            "url": "https://gematik.de/fhir/StructureDefinition/AcceptDate",
+            "valueDate": "2022-07-12"
+          }
+        ],
+        "authoredOn": "2022-06-14T16:01:15.301+00:00",
+        "lastModified": "2022-06-14T16:01:15.692+00:00",
+        "performerType": [
+          {
+            "coding": [
+              {
+                "system": "urn:ietf:rfc:3986",
+                "code": "urn:oid:1.2.276.0.76.4.54",
+                "display": "Öffentliche Apotheke"
+              }
+            ],
+            "text": "Öffentliche Apotheke"
+          }
+        ],
+        "for": {
+          "identifier": {
+            "value": "X123456799",
+            "system": "http://fhir.de/NamingSystem/gkv/kvid-10"
+          }
+        },
+        "input": [
+          {
+            "type": {
+              "coding": [
+                {
+                  "system": "https://gematik.de/fhir/CodeSystem/Documenttype",
+                  "code": "2"
+                }
+              ]
+            },
+            "valueReference": {
+              "reference": "urn:uuid:a0970c00-0000-0000-0002-0000000000003"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "fullUrl": "urn:uuid:a0970c00-0000-0000-0002-000000000000",
+      "resource": {
+        "resourceType": "Bundle",
+        "id": "a0970c00-0000-0000-0002-000000000000",
+        "meta": {
+          "lastUpdated": "2021-06-08T13:44:53.012475+02:00",
+          "profile": [
+            "https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Bundle|1.0.2"
+          ]
+        },
+        "identifier": {
+          "system": "https://gematik.de/fhir/NamingSystem/PrescriptionID",
+          "value": "160.000.000.003.223.88"
+        },
+        "type": "document",
+        "timestamp": "2021-06-08T13:44:53.012475+02:00",
+        "entry": [
+          {
+            "fullUrl": "http://pvs.praxis.local/fhir/Composition/1560e505-3862-4162-9f8f-9a88157e0905",
+            "resource": {
+              "resourceType": "Composition",
+              "id": "1560e505-3862-4162-9f8f-9a88157e0905",
+              "meta": {
+                "profile": [
+                  "https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Composition|1.0.2"
+                ]
+              },
+              "extension": [
+                {
+                  "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_FOR_Legal_basis",
+                  "valueCoding": {
+                    "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_KBV_STATUSKENNZEICHEN",
+                    "code": "00"
+                  }
+                }
+              ],
+              "status": "final",
+              "type": {
+                "coding": [
+                  {
+                    "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_KBV_FORMULAR_ART",
+                    "code": "e16A"
+                  }
+                ]
+              },
+              "subject": {
+                "reference": "Patient/16fa9dd1-a702-4627-8405-cd22f01a09c7"
+              },
+              "date": "2021-06-08T13:43:44+02:00",
+              "author": [
+                {
+                  "reference": "Practitioner/6e6c209e-1b86-43e0-9794-f54ec147fc49",
+                  "type": "Practitioner"
+                },
+                {
+                  "type": "Device",
+                  "identifier": {
+                    "system": "https://fhir.kbv.de/NamingSystem/KBV_NS_FOR_Pruefnummer",
+                    "value": "X/000/1111/22/333"
+                  }
+                }
+              ],
+              "title": "elektronische Arzneimittelverordnung",
+              "custodian": {
+                "reference": "Organisation/71146e2d-f1df-45b3-aa45-3bcb44d20928"
+              },
+              "section": [
+                {
+                  "code": {
+                    "coding": [
+                      {
+                        "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_ERP_Section_Type",
+                        "code": "Prescription"
+                      }
+                    ]
+                  },
+                  "entry": [
+                    {
+                      "reference": "MedicationRequest/005cd690-7473-4bf4-a502-30a32f2e7623"
+                    }
+                  ]
+                },
+                {
+                  "code": {
+                    "coding": [
+                      {
+                        "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_ERP_Section_Type",
+                        "code": "Coverage"
+                      }
+                    ]
+                  },
+                  "entry": [
+                    {
+                      "reference": "Coverage/312e170e-de2f-47bf-8ee3-e8c3a353f6bd"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          {
+            "fullUrl": "http://pvs.praxis.local/fhir/Patient/16fa9dd1-a702-4627-8405-cd22f01a09c7",
+            "resource": {
+              "resourceType": "Patient",
+              "id": "16fa9dd1-a702-4627-8405-cd22f01a09c7",
+              "meta": {
+                "profile": [
+                  "https://fhir.kbv.de/StructureDefinition/KBV_PR_FOR_Patient|1.0.3"
+                ]
+              },
+              "identifier": [
+                {
+                  "type": {
+                    "coding": [
+                      {
+                        "system": "http://fhir.de/CodeSystem/identifier-type-de-basis",
+                        "code": "GKV"
+                      }
+                    ]
+                  },
+                  "system": "http://fhir.de/NamingSystem/gkv/kvid-10",
+                  "value": "X123456799"
+                }
+              ],
+              "name": [
+                {
+                  "use": "official",
+                  "family": "Vórmwinkel",
+                  "_family": {
+                    "extension": [
+                      {
+                        "url": "http://hl7.org/fhir/StructureDefinition/humanname-own-name",
+                        "valueString": "Vórmwinkel"
+                      }
+                    ]
+                  },
+                  "given": [
+                    "Ulrica Lisa"
+                  ]
+                }
+              ],
+              "birthDate": "1940-11-05",
+              "address": [
+                {
+                  "type": "both",
+                  "line": [
+                    "Steinwegpassage 2"
+                  ],
+                  "_line": [
+                    {
+                      "extension": [
+                        {
+                          "url": "http://hl7.org/fhir/StructureDefinition/iso21090-ADXP-streetName",
+                          "valueString": "Steinwegpassage 2"
+                        }
+                      ]
+                    }
+                  ],
+                  "city": "Hamburg",
+                  "postalCode": "20355",
+                  "country": "D"
+                }
+              ]
+            }
+          },
+          {
+            "fullUrl": "http://pvs.praxis.local/fhir/Practitioner/6e6c209e-1b86-43e0-9794-f54ec147fc49",
+            "resource": {
+              "resourceType": "Practitioner",
+              "id": "6e6c209e-1b86-43e0-9794-f54ec147fc49",
+              "meta": {
+                "profile": [
+                  "https://fhir.kbv.de/StructureDefinition/KBV_PR_FOR_Practitioner|1.0.3"
+                ]
+              },
+              "identifier": [
+                {
+                  "type": {
+                    "coding": [
+                      {
+                        "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                        "code": "LANR"
+                      }
+                    ]
+                  },
+                  "system": "https://fhir.kbv.de/NamingSystem/KBV_NS_Base_ANR",
+                  "value": "123456789"
+                }
+              ],
+              "name": [
+                {
+                  "use": "official",
+                  "family": "Gõdofský-Witzigmann",
+                  "given": [
+                    "Tina Freifrau"
+                  ],
+                  "prefix": [
+                    "Dr. med."
+                  ],
+                  "_prefix": [
+                    {
+                      "extension": [
+                        {
+                          "url": "http://hl7.org/fhir/StructureDefinition/iso21090-EN-qualifier",
+                          "valueCode": "AC"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "qualification": [
+                {
+                  "code": {
+                    "coding": [
+                      {
+                        "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_FOR_Qualification_Type",
+                        "code": "00"
+                      }
+                    ]
+                  }
+                },
+                {
+                  "code": {
+                    "text": "Ärztin/Arzt"
+                  }
+                }
+              ]
+            }
+          },
+          {
+            "fullUrl": "http://pvs.praxis.local/fhir/Organization/71146e2d-f1df-45b3-aa45-3bcb44d20928",
+            "resource": {
+              "resourceType": "Organization",
+              "id": "71146e2d-f1df-45b3-aa45-3bcb44d20928",
+              "meta": {
+                "profile": [
+                  "https://fhir.kbv.de/StructureDefinition/KBV_PR_FOR_Organization|1.0.3"
+                ]
+              },
+              "identifier": [
+                {
+                  "type": {
+                    "coding": [
+                      {
+                        "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                        "code": "BSNR"
+                      }
+                    ]
+                  },
+                  "system": "https://fhir.kbv.de/NamingSystem/KBV_NS_Base_BSNR",
+                  "value": "123456"
+                }
+              ],
+              "name": "Praxis Dr. Aphrodite MondwürfelTEST-ONLY",
+              "telecom": [
+                {
+                  "system": "phone",
+                  "value": "0284784541"
+                }
+              ],
+              "address": [
+                {
+                  "type": "both",
+                  "line": [
+                    "Kirchspielsweg 6"
+                  ],
+                  "_line": [
+                    {
+                      "extension": [
+                        {
+                          "url": "http://hl7.org/fhir/StructureDefinition/iso21090-ADXP-streetName",
+                          "valueString": "Kirchspielsweg 6"
+                        }
+                      ]
+                    }
+                  ],
+                  "city": "Heide",
+                  "postalCode": "47459",
+                  "country": "D"
+                }
+              ]
+            }
+          },
+          {
+            "fullUrl": "http://pvs.praxis.local/fhir/Medication/4980b470-e8e5-44bf-a53a-47ade2561cdb",
+            "resource": {
+              "resourceType": "Medication",
+              "id": "4980b470-e8e5-44bf-a53a-47ade2561cdb",
+              "meta": {
+                "profile": [
+                  "https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Medication_PZN|1.0.2"
+                ]
+              },
+              "extension": [
+                {
+                  "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Medication_Category",
+                  "valueCoding": {
+                    "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_ERP_Medication_Category",
+                    "code": "00"
+                  }
+                },
+                {
+                  "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Medication_Vaccine",
+                  "valueBoolean": false
+                },
+                {
+                  "url": "http://fhir.de/StructureDefinition/normgroesse",
+                  "valueCode": "N3"
+                }
+              ],
+              "code": {
+                "coding": [
+                  {
+                    "system": "http://fhir.de/CodeSystem/ifa/pzn",
+                    "code": "08850519"
+                  }
+                ],
+                "text": "Olanzapin Heuma 20 mg SMT"
+              },
+              "form": {
+                "coding": [
+                  {
+                    "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_KBV_DARREICHUNGSFORM",
+                    "code": "SMT"
+                  }
+                ]
+              },
+              "amount": {
+                "numerator": {
+                  "value": 70,
+                  "unit": "St"
+                },
+                "denominator": {
+                  "value": 1
+                }
+              }
+            }
+          },
+          {
+            "fullUrl": "http://pvs.praxis.local/fhir/Coverage/312e170e-de2f-47bf-8ee3-e8c3a353f6bd",
+            "resource": {
+              "resourceType": "Coverage",
+              "id": "312e170e-de2f-47bf-8ee3-e8c3a353f6bd",
+              "meta": {
+                "profile": [
+                  "https://fhir.kbv.de/StructureDefinition/KBV_PR_FOR_Coverage|1.0.3"
+                ]
+              },
+              "extension": [
+                {
+                  "url": "http://fhir.de/StructureDefinition/gkv/versichertenart",
+                  "valueCoding": {
+                    "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_KBV_VERSICHERTENSTATUS",
+                    "code": "1"
+                  }
+                },
+                {
+                  "url": "http://fhir.de/StructureDefinition/gkv/besondere-personengruppe",
+                  "valueCoding": {
+                    "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_KBV_PERSONENGRUPPE",
+                    "code": "00"
+                  }
+                },
+                {
+                  "url": "http://fhir.de/StructureDefinition/gkv/dmp-kennzeichen",
+                  "valueCoding": {
+                    "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_KBV_DMP",
+                    "code": "00"
+                  }
+                },
+                {
+                  "url": "http://fhir.de/StructureDefinition/gkv/wop",
+                  "valueCoding": {
+                    "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_ITA_WOP",
+                    "code": "00"
+                  }
+                }
+              ],
+              "status": "active",
+              "type": {
+                "coding": [
+                  {
+                    "system": "http://fhir.de/CodeSystem/versicherungsart-de-basis",
+                    "code": "GKV"
+                  }
+                ]
+              },
+              "beneficiary": {
+                "reference": "Patient/16fa9dd1-a702-4627-8405-cd22f01a09c7"
+              },
+              "payor": [
+                {
+                  "identifier": {
+                    "system": "http://fhir.de/NamingSystem/arge-ik/iknr",
+                    "value": "109500969"
+                  },
+                  "display": "Test GKV-SV"
+                }
+              ]
+            }
+          },
+          {
+            "fullUrl": "http://pvs.praxis.local/fhir/MedicationRequest/005cd690-7473-4bf4-a502-30a32f2e7623",
+            "resource": {
+              "resourceType": "MedicationRequest",
+              "id": "005cd690-7473-4bf4-a502-30a32f2e7623",
+              "meta": {
+                "profile": [
+                  "https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Prescription|1.0.2"
+                ]
+              },
+              "extension": [
+                {
+                  "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_EmergencyServicesFee",
+                  "valueBoolean": false
+                },
+                {
+                  "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_BVG",
+                  "valueBoolean": false
+                },
+                {
+                  "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Multiple_Prescription",
+                  "extension": [
+                    {
+                      "url": "Kennzeichen",
+                      "valueBoolean": false
+                    }
+                  ]
+                },
+                {
+                  "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_StatusCoPayment",
+                  "valueCoding": {
+                    "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_ERP_StatusCoPayment",
+                    "code": "0"
+                  }
+                }
+              ],
+              "status": "active",
+              "intent": "order",
+              "medicationReference": {
+                "reference": "Medication/4980b470-e8e5-44bf-a53a-47ade2561cdb"
+              },
+              "subject": {
+                "reference": "Patient/16fa9dd1-a702-4627-8405-cd22f01a09c7"
+              },
+              "authoredOn": "2022-06-14",
+              "requester": {
+                "reference": "Practitioner/6e6c209e-1b86-43e0-9794-f54ec147fc49"
+              },
+              "insurance": [
+                {
+                  "reference": "Converage/312e170e-de2f-47bf-8ee3-e8c3a353f6bd"
+                }
+              ],
+              "dosageInstruction": [
+                {
+                  "extension": [
+                    {
+                      "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_DosageFlag",
+                      "valueBoolean": true
+                    }
+                  ],
+                  "text": "1x täglich"
+                }
+              ],
+              "dispenseRequest": {
+                "quantity": {
+                  "value": 1,
+                  "system": "http://unitsofmeasure.org",
+                  "code": "{Package}"
+                }
+              },
+              "substitution": {
+                "allowedBoolean": false
+              }
+            }
+          }
+        ],
+        "signature": {
+          "type": [
+            {
+              "system": "urn:iso-astm:E1762-95:2013",
+              "code": "1.2.840.10065.1.12.1.5"
+            }
+          ],
+          "when": "2022-06-14T16:01:16.630+00:00",
+          "who": {
+            "reference": "https://erp.box.erezepttest.net/Device/1"
+          },
+          "sigFormat": "application/jose",
+          "data": "ZXlKaGJHY2lPaUpDVURJMU5sSXhJaXdpZURWMEkxTXlOVFlpT2lKWmVtczFUbnBrYTAxVVVUQlBWMWt3V2tSS2FWbHFVbTFOUkZGNlRWZEdiVTlVV20xTlJHc3hUVlJKZVUxWFNtMU5ha1pwVG1wUk1VNTZXbWxPUjAxNFdXcEplRmx0VW14TlJGWnBUVlJHYUUweVZURk9aeUlzSW5SNWNDSTZJbUZ3Y0d4cFkyRjBhVzl1TDJwdmMyVWlMQ0pqZEhraU9pSmhjSEJzYVdOaGRHbHZiaTltYUdseUsycHpiMjQ3WTJoaGNuTmxkRDExZEdZdE9DSXNJbmcxWXlJNld5Sk5TVWxFUzJwRFEwRjBRMmRCZDBsQ1FXZEpVa0ZRUzNOWVpWUXhXbXRZYkhaUVpHRnZkRU5XVG5oTmQwTm5XVWxMYjFwSmVtb3dSVUYzU1hkbldtdDRRM3BCU2tKblRsWkNRVmxVUVd0U1JrMVNPSGRJVVZsRVZsRlJTMFJDV21oWk1taHNZa2M1ZWtsRlpIUlphMmRuVkdzNVZVeFdXa0pVUld4RlRWVm5kMUpuV1VSV1VWRk1SRVE1UjFsWFRtOVpWelV6V2xjMWEyUlhOVzVqTTA1M1dsaHdjRnB0YkhwWk1taHNZMmxDUldGWFZuVmpNMUYwVVRCRloxcEhWbmxKUmxKc1lrZFdkRmxZVW5CaE1teDFXbTVLYUdNelVubGtWM1F3WkZoSmVFaDZRV1JDWjA1V1FrRk5UVVpyUmtSVVJUbFVUR3RhUlV4VlRrSk5VMEpWVWxaT1ZVeFZPVTlVUm10M1NHaGpUazFxU1hkTmFrVXhUV3BOZDAxRVFYZFhhR05PVFdwUmQwMXFSVEJOYWsxM1RVUkJkMWRxUWt0TlVrRjNSR2RaUkZaUlVVUkVRV1JzWTIxV05scFlRakJOVTJ0M1NuZFpSRlpSVVV0RVEwSktVV3N3WjFKSFZqRmtTRTVxWVVkNGFHSnRVV2RTTWpGcFUwTkJkRWxGTlZCV1F6RlhVVlY0U2xKRVJVeE5RV3RIUVRGVlJVSm9UVU5TUlZWM1YycEJWVUpuWTNGb2EycFBVRkZKUWtKbmEzSktRVTFFUVdkblFrRlJZMFJSWjBGRlpuVXdZazFYYVRWdWRHVnRaRGhEVGtodFVUQnJUblJCZFhOVU5raDFPWEJGVDBKWGFqbGxiV05FVldSdWIyOU1XbTlLZWxoSFNXaHpNVUUwWVRaek1tVXJjRTkyYUc4d2FIZExVRE5GWm5sak9YSktVR0ZQUTBGVlVYZG5aMFpCVFVJd1IwRXhWV1JFWjFGWFFrSlJUa1JGVDJFM1ZVZDFaSHBISzJKR1dHRjFiekZCVWt0aVZsVnFRVTlDWjA1V1NGRTRRa0ZtT0VWQ1FVMURRbXRCZDBaM1dVUldVakJTUWtKQmQwUnZTVTFTVmtwUlRHdHNRMVJUTlZWU1ZrNVZUVUYzUjBFeFZXUkZkMFZDTDNkUlEwMUJRWGRWWjFsRVZsSXdaMEpGYzNkVFZFRTNRbWRuY1dkb1VVRlVRVk5DU1hwQmRrMURNRWREUTNOSFFWRlZSa0ozU1VKR2FVWnZaRWhTZDA5cE9IWmtNMlF6VEcxa2JHSlhSakJoVjNOMVdrZFZkbG95T0haalJ6bHpZVmRPY0ZwWVRYZERaMWxKUzI5SlZVRkZkMFZuYUhOM1VtZFpTVXQzV1VKQ1VWVklRVkZGUlU5cVFUUk5SRmxIUTBOelIwRlJWVVpDZWtGQ2FHbHdiMlJJVW5kUGFUaDJZakpPZW1ORE1UQmFXRTR3VEcwNWFtTXpRWFZrUjFaeldsY3hhR1JIYkhKTVdGSnNZek5STms5RVFUUk5RemgzU0hkWlJGWlNNR3BDUW1kM1JtOUJWV1YzZUZaS01EZHNjR2s1WkVoU1NGaHpVbll5WlRkdWFGSlRWWGRMZDFsR1MzbFJTVUYzVFVWSmFrRm5UVUkwZDBoRVFXRk5RbWQzUTJkM1NWSlRNVk5hV0hCc1kwaFJkME5uV1VsTGIwbFZRVVYzUldkblRYZERaMWxKUzI5YVNYcHFNRVZCZDBsRVUwRkJkMUpSU1doQlNsUlpVa1JLTlhaeWNIRnZkblZHTURScFFVTnFUREIwVVdGRGJUa3JVVkJRUkVkUFdHdElLMmRRTUVGcFFsSkJOWHBqTjBKcmNtdG9TMDAzVmxSMFRsUjNlV0ZuYURWNFZFMUpOR2xJUzJKNGFrTTJRbXRuVmtFOVBTSmRmUS4uZ19YeEZBc1gyVmY2SFBSNzFyTEU2ZWhETl9iNG1JcFVXcEtHVmJVRTRGWmZiSXFIRVlid2RSUDVzSU15bjZadkc0T0J1NTdHQlg0eFh0bG5Hc0xJNVE=",
+          "targetFormat": "application/fhir+json"
+        }
+      }
+    }
+  ]
+}

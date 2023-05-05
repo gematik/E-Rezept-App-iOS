@@ -28,7 +28,7 @@ final class CreatePasswordDomainTests: XCTestCase {
         CreatePasswordDomain.Action,
         CreatePasswordDomain.State,
         CreatePasswordDomain.Action,
-        CreatePasswordDomain.Environment
+        Void
     >
 
     override func setUp() {
@@ -39,14 +39,15 @@ final class CreatePasswordDomainTests: XCTestCase {
     }
 
     func testStore(for state: CreatePasswordDomain.State) -> TestStore {
-        TestStore(initialState: state,
-                  reducer: CreatePasswordDomain.reducer,
-                  environment: CreatePasswordDomain.Environment(
-                      passwordManager: mockPasswordManager,
-                      schedulers: Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler()),
-                      passwordStrengthTester: mockPasswordStrengthTester,
-                      userDataStore: mockUserDataStore
-                  ))
+        TestStore(
+            initialState: state,
+            reducer: CreatePasswordDomain()
+        ) { dependencies in
+            dependencies.appSecurityManager = mockPasswordManager
+            dependencies.schedulers = Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler())
+            dependencies.passwordStrengthTester = mockPasswordStrengthTester
+            dependencies.userDataStore = mockUserDataStore
+        }
     }
 
     let emptyPasswords = CreatePasswordDomain.State(mode: .create, passwordA: "", passwordB: "")
@@ -185,7 +186,7 @@ final class CreatePasswordDomainTests: XCTestCase {
 
         store.send(.saveButtonTapped)
 
-        store.receive(.closeAfterPasswordSaved)
+        store.receive(.delegate(.closeAfterPasswordSaved))
 
         expect(self.mockPasswordManager.savePasswordCalled) == true
         expect(self.mockPasswordManager.savePasswordCallsCount) == 1
@@ -234,7 +235,7 @@ final class CreatePasswordDomainTests: XCTestCase {
         mockPasswordManager.savePasswordReturnValue = true
 
         store.send(.saveButtonTapped)
-        store.receive(.closeAfterPasswordSaved)
+        store.receive(.delegate(.closeAfterPasswordSaved))
         expect(self.mockUserDataStore.setAppSecurityOptionCalled).to(beTrue())
         expect(self.mockUserDataStore.setAppSecurityOptionReceivedAppSecurityOption) == .password
     }
@@ -255,7 +256,7 @@ final class CreatePasswordDomainTests: XCTestCase {
         expect(self.mockPasswordManager.matchesPasswordCalled).to(beFalse())
         expect(self.mockPasswordManager.savePasswordCalled).to(beFalse())
         store.send(.saveButtonTapped)
-        store.receive(.closeAfterPasswordSaved)
+        store.receive(.delegate(.closeAfterPasswordSaved))
         expect(self.mockPasswordManager.matchesPasswordCalled).to(beTrue())
         expect(self.mockPasswordManager.savePasswordCalled).to(beTrue())
     }

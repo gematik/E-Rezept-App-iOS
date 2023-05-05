@@ -18,6 +18,8 @@
 
 import Combine
 import CoreImage
+import Dependencies
+import ZXingObjC
 
 /// Instances of conforming type can be used to generate a matrix code
 public protocol MatrixCodeGenerator {
@@ -29,4 +31,19 @@ public protocol MatrixCodeGenerator {
     func generateImage(for contents: String,
                        width: Int,
                        height: Int) throws -> CGImage
+}
+
+struct MatrixCodeGeneratorDependency: DependencyKey {
+    static let liveValue: MatrixCodeGenerator = ZXDataMatrixWriter()
+
+    static var previewValue: MatrixCodeGenerator = liveValue
+
+    static let testValue: MatrixCodeGenerator = UnimplementedMatrixCodeGenerator()
+}
+
+extension DependencyValues {
+    var matrixCodeGenerator: MatrixCodeGenerator {
+        get { self[MatrixCodeGeneratorDependency.self] }
+        set { self[MatrixCodeGeneratorDependency.self] = newValue }
+    }
 }

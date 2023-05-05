@@ -121,7 +121,6 @@ struct OnboardingContainer: View, KeyboardReadable {
             .onReceive(keyboardPublisher) { isKeyboardVisible in
                 self.isKeyboardVisible = isKeyboardVisible
             }
-            .animation(.easeInOut)
         }
     }
 }
@@ -131,13 +130,11 @@ struct OnboardingContainerView_Previews: PreviewProvider {
         Group {
             OnboardingContainer(store: .init(
                 initialState: OnboardingDomain.Dummies.state,
-                reducer: OnboardingDomain.reducer,
-                environment: OnboardingDomain.Dummies.environment
+                reducer: OnboardingDomain()
             ))
             OnboardingContainer(store: .init(
                 initialState: OnboardingDomain.Dummies.state,
-                reducer: OnboardingDomain.reducer,
-                environment: OnboardingDomain.Dummies.environment
+                reducer: OnboardingDomain()
             ))
                 .preferredColorScheme(.dark)
         }

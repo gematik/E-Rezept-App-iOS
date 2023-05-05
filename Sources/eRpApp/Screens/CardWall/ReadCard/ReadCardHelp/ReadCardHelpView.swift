@@ -59,8 +59,7 @@ struct ReadCardHelpView_Previews: PreviewProvider {
             ReadCardHelpView(
                 store: Store<CardWallReadCardHelpDomain.State, CardWallReadCardDomain.Action>(
                     initialState: .first,
-                    reducer: .empty,
-                    environment: CardWallReadCardDomain.Dummies.environment
+                    reducer: EmptyReducer()
                 )
             )
         }

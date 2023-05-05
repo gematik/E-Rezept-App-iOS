@@ -97,7 +97,7 @@ struct ProfilesView: View {
                 }
             }, icon: {
                 InitialsImage(backgroundColor: profile.color.background,
-                              text: profile.emoji ?? profile.acronym,
+                              text: profile.acronym,
                               size: .large)
             })
         }

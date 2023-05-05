@@ -91,18 +91,14 @@ struct HealthCardPasswordReadCardView: View {
             .padding(.vertical, 8)
 
             Button(
-                action: { viewStore.send(.close) },
+                action: { viewStore.send(.backButtonTapped) },
                 label: { Label(title: { Text(L10n.cdwBtnRcBack) }, icon: {}) }
             )
             .buttonStyle(.secondary)
             .padding(.horizontal)
         }
         .alert(
-            store.scope(
-                state: (\HealthCardPasswordReadCardDomain.State.route)
-                    .appending(path: /HealthCardPasswordReadCardDomain.Route.alert)
-                    .extract(from:)
-            ),
+            store.destinationsScope(state: /HealthCardPasswordReadCardDomain.Destinations.State.alert),
             dismiss: .nothing
         )
         .keyboardShortcut(.defaultAction) // workaround: this makes the alert's primary button bold

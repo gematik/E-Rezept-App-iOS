@@ -22,7 +22,7 @@ import Foundation
 
 /// Adds additional properties to the PharmacyLocation entity that are used in the view.
 @dynamicMemberLookup
-struct PharmacyLocationViewModel: Equatable, Hashable, Identifiable {
+struct PharmacyLocationViewModel: Equatable, Identifiable {
     init(
         pharmacy: PharmacyLocation,
         referenceLocation: Location? = nil,

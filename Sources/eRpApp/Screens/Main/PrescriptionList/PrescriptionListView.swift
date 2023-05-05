@@ -171,14 +171,16 @@ struct PrescriptionListView<StickyHeader: View>: View {
         var body: some View {
             HStack {
                 ProfilePictureView(
-                    emoji: viewStore.profile?.emoji,
+                    text: viewStore.profile?.acronym,
+                    image: viewStore.profile?.image,
                     color: viewStore.profile?.color.background,
                     connection: viewStore.profile?.connectionStatus,
                     style: .small
                 ) {
-                    viewStore.send(.profilePictureViewTapped)
+                    if let profile = viewStore.profile {
+                        viewStore.send(.profilePictureViewTapped(profile))
+                    }
                 }
-
                 Spacer()
 
                 Button {
@@ -206,9 +208,8 @@ struct PrescriptionListView_Previews: PreviewProvider {
             VStack {
                 PrescriptionListView(
                     store: PrescriptionListDomain.Store(
-                        initialState: PrescriptionListDomain.Dummies.stateWithTwoPrescriptions,
-                        reducer: PrescriptionListDomain.Reducer.empty,
-                        environment: PrescriptionListDomain.Dummies.environment
+                        initialState: PrescriptionListDomain.Dummies.stateWithPrescriptions,
+                        reducer: PrescriptionListDomain()
                     )
                 ) {
                     Text("Header")
@@ -219,8 +220,7 @@ struct PrescriptionListView_Previews: PreviewProvider {
                 PrescriptionListView(
                     store: PrescriptionListDomain.Store(
                         initialState: PrescriptionListDomain.Dummies.state,
-                        reducer: PrescriptionListDomain.Reducer.empty,
-                        environment: PrescriptionListDomain.Dummies.environment
+                        reducer: PrescriptionListDomain()
                     )
                 ) {
                     Text("Header")

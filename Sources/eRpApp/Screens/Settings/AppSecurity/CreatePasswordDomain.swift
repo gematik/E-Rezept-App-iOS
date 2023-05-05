@@ -22,9 +22,8 @@ import eRpKit
 import Foundation
 import Zxcvbn
 
-enum CreatePasswordDomain {
-    typealias Store = ComposableArchitecture.Store<State, Action>
-    typealias Reducer = ComposableArchitecture.AnyReducer<State, Action, Environment>
+struct CreatePasswordDomain: ReducerProtocol {
+    typealias Store = StoreOf<Self>
 
     enum Token: CaseIterable, Hashable {
         case comparePasswords
@@ -71,40 +70,44 @@ enum CreatePasswordDomain {
     }
 
     enum Action: Equatable {
+        enum Delegate: Equatable {
+            case closeAfterPasswordSaved
+        }
+
         case setCurrentPassword(String)
         case setPasswordA(String)
         case setPasswordB(String)
         case comparePasswords
         case saveButtonTapped
         case enterButtonTapped
-        case closeAfterPasswordSaved
+
+        case delegate(Delegate)
     }
 
-    struct Environment {
-        let passwordManager: AppSecurityManager
-        let schedulers: Schedulers
-        let passwordStrengthTester: PasswordStrengthTester
-        let userDataStore: UserDataStore
-    }
+    @Dependency(\.appSecurityManager) var appSecurityManager: AppSecurityManager
+    @Dependency(\.schedulers) var schedulers: Schedulers
+    @Dependency(\.passwordStrengthTester) var passwordStrengthTester: PasswordStrengthTester
+    @Dependency(\.userDataStore) var userDataStore: UserDataStore
 
-    static let reducer: Reducer = .init { state, action, environment in
+    // swiftlint:disable:next function_body_length cyclomatic_complexity
+    func reduce(into state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
         case let .setCurrentPassword(string):
             state.password = string
             state.showOriginalPasswordWrong = false
             return .none
         case let .setPasswordA(string):
-            state.passwordStrength = environment.passwordStrengthTester.passwordStrength(for: string)
+            state.passwordStrength = passwordStrengthTester.passwordStrength(for: string)
             state.passwordA = string
             return Effect(value: .comparePasswords)
-                .delay(for: timeout, scheduler: environment.schedulers.main.animation())
+                .delay(for: Self.timeout, scheduler: schedulers.main.animation())
                 .eraseToEffect()
                 .cancellable(id: Token.comparePasswords, cancelInFlight: true)
 
         case let .setPasswordB(string):
             state.passwordB = string
             return Effect(value: .comparePasswords)
-                .delay(for: timeout, scheduler: environment.schedulers.main.animation())
+                .delay(for: Self.timeout, scheduler: schedulers.main.animation())
                 .eraseToEffect()
                 .cancellable(id: Token.comparePasswords, cancelInFlight: true)
 
@@ -118,7 +121,7 @@ enum CreatePasswordDomain {
 
         case .enterButtonTapped:
             return Effect(value: .comparePasswords)
-                .delay(for: timeout, scheduler: environment.schedulers.main.animation())
+                .delay(for: Self.timeout, scheduler: schedulers.main.animation())
                 .eraseToEffect()
                 .cancellable(id: Token.comparePasswords, cancelInFlight: true)
 
@@ -131,7 +134,7 @@ enum CreatePasswordDomain {
             }
 
             guard state.mode == .create ||
-                (try? environment.passwordManager.matches(password: state.password)) ?? false else {
+                (try? appSecurityManager.matches(password: state.password)) ?? false else {
                 state.showOriginalPasswordWrong = true
                 return .none
             }
@@ -139,16 +142,19 @@ enum CreatePasswordDomain {
 
             guard !state.passwordA.isEmpty,
                   state.hasValidPasswordEntries,
-                  let success = try? environment.passwordManager.save(password: state.passwordA),
+                  let success = try? appSecurityManager.save(password: state.passwordA),
                   success == true else {
                 return Effect.cancel(id: Token.comparePasswords)
             }
+
+            userDataStore.set(appSecurityOption: .password)
+
             return Effect.concatenate(
                 Effect.cancel(id: Token.comparePasswords),
-                Effect(value: .closeAfterPasswordSaved)
+                Effect(value: .delegate(.closeAfterPasswordSaved))
             )
-        case .closeAfterPasswordSaved:
-            environment.userDataStore.set(appSecurityOption: .password)
+
+        case .delegate:
             return .none
         }
     }
@@ -160,17 +166,9 @@ extension CreatePasswordDomain {
     enum Dummies {
         static let state = State(mode: .update)
 
-        static let environment = Environment(
-            passwordManager: DummyAppSecurityManager(),
-            schedulers: Schedulers(),
-            passwordStrengthTester: DefaultPasswordStrengthTester(),
-            userDataStore: DummySessionContainer().localUserStore
-        )
-
         static let store = Store(
             initialState: state,
-            reducer: reducer,
-            environment: environment
+            reducer: CreatePasswordDomain()
         )
     }
 }

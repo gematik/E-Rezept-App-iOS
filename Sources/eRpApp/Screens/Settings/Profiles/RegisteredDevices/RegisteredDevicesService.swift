@@ -17,6 +17,7 @@
 //
 
 import Combine
+import ComposableArchitecture
 import DataKit
 import eRpKit
 import Foundation
@@ -63,10 +64,7 @@ struct DefaultRegisteredDevicesService: RegisteredDevicesService {
     func registeredDevices(for profileId: UUID) -> AnyPublisher<PairingEntries, RegisteredDevicesServiceError> {
         let userSession = userSessionProvider.userSession(for: profileId)
         let idpSession = userSession.biometrieIdpSession
-        let loginHandler = DefaultLoginHandler(
-            idpSession: idpSession,
-            signatureProvider: DefaultSecureEnclaveSignatureProvider(storage: userSession.secureUserStore)
-        )
+        let loginHandler = userSession.idpSessionLoginHandler
 
         return loginHandler.isAuthenticatedOrAuthenticate()
             .first()
@@ -155,5 +153,24 @@ struct DefaultRegisteredDevicesService: RegisteredDevicesService {
                 )
             }
             .eraseToAnyPublisher()
+    }
+}
+
+// MARK: TCA Dependency
+
+extension DefaultRegisteredDevicesService {
+    static let live: Self = .init(userSessionProvider: UserSessionProviderDependency.liveValue)
+}
+
+struct RegisteredDevicesServiceDependency: DependencyKey {
+    static let liveValue: RegisteredDevicesService = DefaultRegisteredDevicesService.live
+
+    static let testValue: RegisteredDevicesService = UnimplementedRegisteredDevicesService()
+}
+
+extension DependencyValues {
+    var registeredDevicesService: RegisteredDevicesService {
+        get { self[RegisteredDevicesServiceDependency.self] }
+        set { self[RegisteredDevicesServiceDependency.self] = newValue }
     }
 }
