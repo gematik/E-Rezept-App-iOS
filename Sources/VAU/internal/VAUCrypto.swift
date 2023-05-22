@@ -101,6 +101,7 @@ class EciesVAUCrypto: VAUCrypto {
         guard let payload = "1 \(bearerToken) \(requestId) \(symKeyHex) \(message)".data(using: .utf8) else {
             throw VAUError.internalCryptoError
         }
+        // [REQ:gemSpec_Krypt:A_4389:1] IVs must not be reused, IVs bit length must be larger or equal to 96
         let nonceGenerator = { try VAURandom.generateSecureRandom(length: self.eciesSpec.ivSize) }
         // [REQ:gemSpec_Krypt:GS-A_4357] Key pair generation delegated to OpenSSL with BrainpoolP256r1 parameters
         let keyPairGenerator = { try BrainpoolP256r1.KeyExchange.generateKey() }
@@ -150,6 +151,7 @@ enum Ecies {
         // a) Create an ephemeral key pair and derive shared secret with key from the VAU certificate
         let privateKey = try keyPairGenerator()
         let sharedSecret = try privateKey.sharedSecret(with: vauPubKey)
+        // [REQ:gemSpec_Krypt:GS-A_4389:2] 256bit GCM symmetric key
         let secretKey = SymmetricKey(data: sharedSecret)
 
         // b-d) HKDF
@@ -167,6 +169,7 @@ enum Ecies {
         let nonce = try AES.GCM.Nonce(data: nonceData)
 
         // f) Encrypt
+        // [REQ:gemSpec_Krypt:GS-A_4389:1] 256bit GCM symmetric key
         let sealedBox = try AES.GCM.seal(payload, using: cek, nonce: nonce)
 
         // g) Encode

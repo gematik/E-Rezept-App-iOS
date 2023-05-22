@@ -33,12 +33,13 @@ struct ProfileCell: View {
 
     var body: some View {
         HStack(alignment: .center, spacing: 8) {
-            InitialsImage(
-                backgroundColor: profile.color.background,
-                text: profile.acronym,
-                statusColor: nil,
-                size: .large
-            )
+            ProfilePictureView(
+                image: profile.image,
+                userImageData: profile.userImageData,
+                color: profile.color,
+                connection: nil,
+                style: .small
+            ) {}
 
             VStack(alignment: .leading, spacing: 0) {
                 Text(profile.name)
@@ -85,6 +86,8 @@ protocol ProfileCellModel {
     var name: String { get }
     var acronym: String { get }
     var color: ProfileColor { get }
+    var image: ProfilePicture { get }
+    var userImageData: Data? { get }
     var connectionStatus: ProfileConnectionStatus { get }
     var lastSuccessfulSync: Date? { get }
 }

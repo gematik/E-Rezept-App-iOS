@@ -37,11 +37,11 @@ struct CardWallCANDomain: ReducerProtocol {
 
     struct Destinations: ReducerProtocol {
         enum State: Equatable {
-            // sourcery: AnalyticsScreen = cardwallPIN
+            // sourcery: AnalyticsScreen = cardWall_PIN
             case pin(CardWallPINDomain.State)
-            // sourcery: AnalyticsScreen = cardwallContactInsuranceCompany
+            // sourcery: AnalyticsScreen = contactInsuranceCompany
             case egk(OrderHealthCardDomain.State)
-            // sourcery: AnalyticsScreen = cardwallScanCAN
+            // sourcery: AnalyticsScreen = cardWall_scanCAN
             case scanner
         }
 
@@ -124,13 +124,13 @@ struct CardWallCANDomain: ReducerProtocol {
         case let .destination(.pinAction(.delegate(delegateAction))):
             switch delegateAction {
             case .close:
-                return Effect(value: .delegate(.close))
+                return EffectTask(value: .delegate(.close))
             case .wrongCanClose:
                 state.destination = nil
                 return .none
             case .navigateToIntro:
                 state.destination = nil
-                return Effect(value: .delegate(.navigateToIntro))
+                return EffectTask(value: .delegate(.navigateToIntro))
                     // Delay for the switch to CardWallExthView, Workaround for TCA pullback problem
                     .delay(for: 0.05, scheduler: schedulers.main)
                     .eraseToEffect()

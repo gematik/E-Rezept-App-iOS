@@ -136,19 +136,24 @@ public protocol ErxLocalDataStore {
     ///   otherwise only a minimal version
     /// - Returns: Publisher for the fetch request
     func fetchChargeItem(
-        by chargeItemID: ErxChargeItem.ID,
+        by chargeItemID: ErxSparseChargeItem.ID,
         fullDetail: Bool
-    ) -> AnyPublisher<ErxChargeItem?, LocalStoreError>
+    ) -> AnyPublisher<ErxSparseChargeItem?, LocalStoreError>
 
     /// Fetch the most recent `enteredDate` of all `ChargeItem`s
     func fetchLatestTimestampForChargeItems() -> AnyPublisher<String?, LocalStoreError>
 
     /// List all charge items with the given local contained in the store
     /// - Returns: Array of the fetched charge items or error
-    func listAllChargeItems() -> AnyPublisher<[ErxChargeItem], LocalStoreError>
+    func listAllChargeItems() -> AnyPublisher<[ErxSparseChargeItem], LocalStoreError>
 
     /// Creates or updates the passed sequence of `ErxChargeItem`s
     /// - Parameter chargeItems: Array of charge items that should be stored
     /// - Returns: `true` if save operation was successful
-    func save(chargeItems: [ErxChargeItem]) -> AnyPublisher<Bool, LocalStoreError>
+    func save(chargeItems: [ErxSparseChargeItem]) -> AnyPublisher<Bool, LocalStoreError>
+
+    /// Deletes a sequence of charge items from the store
+    /// - Parameter chargeItems: Array of charge items that should be deleted
+    /// - Returns: `true` if delete operation was successful
+    func delete(chargeItems: [ErxSparseChargeItem]) -> AnyPublisher<Bool, LocalStoreError>
 }

@@ -33,7 +33,7 @@ struct PrescriptionView: View {
                 HStack {
                     VStack(alignment: .leading, spacing: 4) {
                         Text(
-                            prescription.prescribedMedication?.displayName,
+                            prescription.medication?.displayName,
                             placeholder: L10n.erxTxtMedicationPlaceholder
                         )
                         .foregroundColor(Colors.systemLabel)
@@ -60,6 +60,39 @@ struct PrescriptionView: View {
         .padding()
         .background(Colors.systemBackgroundTertiary)
         .border(Colors.separator, width: 0.5, cornerRadius: 16)
+    }
+
+    struct PrescriptionStatusView: View {
+        let prescription: Prescription
+
+        var body: some View {
+            HStack(alignment: .top, spacing: 8) {
+                HStack(spacing: 4) {
+                    Text(prescription.statusTitle)
+                        .font(Font.subheadline.weight(.regular))
+                        .foregroundColor(prescription.titleTint)
+                    prescription.image
+                        .font(Font.subheadline.weight(.semibold))
+                        .foregroundColor(prescription.imageTint)
+                }
+                .padding(.init(top: 8, leading: 12, bottom: 8, trailing: 12))
+                .background(prescription.backgroundTint)
+                .cornerRadius(8)
+                .accessibility(identifier: A11y.mainScreen.erxDetailedStatus)
+
+                if let status = prescription.multiplePrescriptionStatus {
+                    Text(status)
+                        .font(Font.subheadline.weight(.regular))
+                        .padding(.init(top: 8, leading: 12, bottom: 8, trailing: 12))
+                        .foregroundColor(Colors.systemLabelSecondary)
+                        .background(Colors.backgroundSecondary)
+                        .cornerRadius(8)
+                        .accessibility(identifier: A11y.mainScreen
+                            .erxDetailedMultiplePrescriptionIndex)
+                }
+            }
+            .padding(.top, 4)
+        }
     }
 }
 

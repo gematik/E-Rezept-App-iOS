@@ -1,3 +1,39 @@
+# Release 1.9.0
+
+## added (9 changes)
+
+- Add logic to load avs certificates 
+- Add parsing for the avs endpoints 
+- Add ErxSparseChargeItem as minimal data set for a ChargeItem 
+- Add RemoteStore delete for charge item 
+- Add ErxChargeItem to ErxTaskRepository 
+- Add and rework existing analytics identifier 
+- Add toolbar menu for new PrescriptionDetailView
+- Add MedicationView as child view of PrescriptionDetailView
+- Add tracking keys for medication detail screens and update AccessibilityIdetifier.yaml 
+
+## changed (7 changes)
+
+- Change using new PrescriptionDetailView in MainView, PrescriptionArchiveView and OrderDetailView
+- Change UI of CardWallIntroductionView
+- Change profile for communications and consent to have version id
+- Change publish repo and update jazzy for iPhone 14
+- Change loading DiscoveryDocument to be loaded once instead of loading for each profile
+- Change local store FHIR parsing to use duplicates from remote store
+- Change name of ChargeItemsDomain to ChargeItemListDomain
+
+## removed (2 change)
+
+- Remove profile picker from Navigation Toolbar
+- Remove old prescription detail screens
+
+
+## fixed (3 changes)
+
+- Fix parsing charge item
+- Fix snapshot tests 
+- Fix Integration Tests
+
 # Release 1.8.1
 
 ## 1.8.1 (2023-05-05)

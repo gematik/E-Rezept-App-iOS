@@ -72,7 +72,7 @@ final class FHIR_GEM_Workflow_v1_2_with_KBV_v1_1_0_Tests: XCTestCase {
         // medication
         expect(task.medication?.name) == "L-Thyroxin Henning 75 100 Tbl. N3"
         expect(task.medication?.dosageForm) == "TAB"
-        expect(task.medication?.dose) == "N3"
+        expect(task.medication?.normSizeCode) == "N3"
         expect(task.medication?.pzn) == "02532741"
         expect(task.medication?.amount).to(beNil())
         // medication request
@@ -205,7 +205,7 @@ final class FHIR_GEM_Workflow_v1_2_with_KBV_v1_1_0_Tests: XCTestCase {
             .init(numerator: .init(value: "4", unit: "St"), denominator: .init(value: "1"))
         expect(first.medication?.pzn) == "16332684"
         expect(first.medication?.name) == "GONAL-f 150 I.E./0,25ml Injektionslösung"
-        expect(first.medication?.dose) == "N1"
+        expect(first.medication?.normSizeCode) == "N1"
         expect(first.medication?.profile) == .pzn
         expect(first.medication?.drugCategory) == .avm
         expect(first.medication?.packaging).to(beNil())
@@ -237,7 +237,7 @@ final class FHIR_GEM_Workflow_v1_2_with_KBV_v1_1_0_Tests: XCTestCase {
         expect(first.medication?.name) == "Metformin 850mg Tabletten N3"
         expect(first.medication?.dosageForm) == "Tabletten"
         expect(first.medication?.amount).to(beNil())
-        expect(first.medication?.dose).to(beNil())
+        expect(first.medication?.normSizeCode).to(beNil())
         expect(first.medication?.profile) == .freeText
         expect(first.medication?.drugCategory) == .avm
         expect(first.medication?.packaging).to(beNil())
@@ -268,7 +268,7 @@ final class FHIR_GEM_Workflow_v1_2_with_KBV_v1_1_0_Tests: XCTestCase {
         expect(first.medication?.name).to(beNil())
         expect(first.medication?.amount) ==
             .init(numerator: .init(value: "100", unit: "Stück"), denominator: .init(value: "1"))
-        expect(first.medication?.dose) == "N2"
+        expect(first.medication?.normSizeCode) == "N2"
         expect(first.medication?.profile) == .ingredient
         expect(first.medication?.drugCategory) == .avm
         expect(first.medication?.packaging).to(beNil())
@@ -321,7 +321,7 @@ final class FHIR_GEM_Workflow_v1_2_with_KBV_v1_1_0_Tests: XCTestCase {
         expect(first.medication?.name) == "Viskose Aluminiumchlorid-Hexahydrat-Lösung 20 % (NRF 11.132.)"
         expect(first.medication?.amount) ==
             .init(numerator: .init(value: "200", unit: "g"), denominator: .init(value: "1"))
-        expect(first.medication?.dose).to(beNil())
+        expect(first.medication?.normSizeCode).to(beNil())
         expect(first.medication?.profile) == .compounding
         expect(first.medication?.packaging) == "Deo-Roller"
         expect(first.medication?.manufacturingInstructions) == "Schwieriger Herstellungsprozess"
@@ -380,7 +380,7 @@ final class FHIR_GEM_Workflow_v1_2_with_KBV_v1_1_0_Tests: XCTestCase {
         expect(first.medication?.name) == "Sumatriptan-1a Pharma 100 mg Tabletten"
         expect(first.medication?.amount) ==
             .init(numerator: .init(value: "20", unit: "St"), denominator: .init(value: "1"))
-        expect(first.medication?.dose).to(beNil())
+        expect(first.medication?.normSizeCode).to(beNil())
         expect(first.medication?.profile) == .unknown
         expect(first.medication?.drugCategory).to(beNil())
         expect(first.medication?.packaging).to(beNil())

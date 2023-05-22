@@ -169,7 +169,7 @@ struct CardWallCANView: View {
                                             state: /CardWallCANDomain.Destinations.State.egk,
                                             action: CardWallCANDomain.Destinations.Action.egkAction(action:)
                                         ),
-                                        then: OrderHealthCardView.init(store:)
+                                        then: OrderHealthCardListView.init(store:)
                                     )
                                     .accentColor(Colors.primary700)
                                     .navigationViewStyle(StackNavigationViewStyle())

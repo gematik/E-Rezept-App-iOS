@@ -73,12 +73,6 @@ struct TabContainerView: View {
                         ) {
                             AppDomain.Action.subdomains(.pharmacySearch(action: $0))
                         },
-                        profileSelectionToolbarItemStore: store.scope(
-                            state: \.subdomains.profileSelection
-                        ) {
-                            AppDomain.Action
-                                .subdomains(.profile(action: $0))
-                        },
                         isRedeemRecipe: false
                     )
                 }
@@ -90,11 +84,6 @@ struct TabContainerView: View {
                 OrdersView(
                     store: store.scope(state: \.subdomains.orders) {
                         AppDomain.Action.subdomains(.orders(action: $0))
-                    },
-                    profileSelectionToolbarItemStore: store.scope(
-                        state: \.subdomains.profileSelection
-                    ) {
-                        AppDomain.Action.subdomains(.profile(action: $0))
                     }
                 )
                 .tabItem {
@@ -116,7 +105,6 @@ struct TabContainerView: View {
             .onAppear {
                 viewStore.send(.registerDemoModeListener)
                 viewStore.send(.registerNewOrderMessageListener)
-                viewStore.send(.subdomains(.profile(action: .registerProfileListener)))
             }
             // Fix tabbar background becomming 100% transparent for dynamic views, in our case using quick filters
             // within pharmacy search
@@ -128,9 +116,6 @@ struct TabContainerView: View {
                     tabBarAppearance.configureWithOpaqueBackground()
                     UITabBar.appearance().scrollEdgeAppearance = tabBarAppearance
                 }
-            }
-            .onDisappear {
-                viewStore.send(.subdomains(.profile(action: .unregisterProfileListener)))
             }
             .accentColor(Colors.primary600)
             .zIndex(0)

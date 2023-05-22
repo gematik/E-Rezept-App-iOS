@@ -39,7 +39,8 @@ struct EditProfileView: View {
         let fullName: String?
         let insurance: String?
         let insuranceId: String?
-        let image: ProfilePicture
+        let image: ProfilePicture?
+        let userImageData: Data?
         let color: ProfileColor
         let isLoggedIn: Bool
         let showEmptyNameWarning: Bool
@@ -55,6 +56,7 @@ struct EditProfileView: View {
             can = state.can
             insuranceId = state.insuranceId
             image = state.image
+            userImageData = state.userImageData
             color = state.color
             isLoggedIn = state.token != nil
             showEmptyNameWarning = state.name.lengthOfBytes(using: .utf8) == 0
@@ -83,9 +85,9 @@ struct EditProfileView: View {
         ScrollView {
             VStack(spacing: 8) {
                 ProfilePictureView(
-                    text: viewStore.acronym,
                     image: viewStore.image,
-                    color: viewStore.color.background,
+                    userImageData: viewStore.userImageData,
+                    color: viewStore.color,
                     connection: nil,
                     style: .xxLarge
                 ) {}
@@ -277,8 +279,9 @@ extension EditProfileView {
         var body: some View {
             SectionContainer(
                 header: {
-                    Text(L10n.stgTxtEditProfileChargeItemsSectionTitle)
-                        .accessibility(identifier: A11y.settings.editProfile.stgTxtEditProfileChargeItemsSectionTitle)
+                    Text(L10n.stgTxtEditProfileChargeItemListSectionTitle)
+                        .accessibility(identifier: A11y.settings.editProfile
+                            .stgTxtEditProfileChargeItemListSectionTitle)
                 },
                 content: {
                     EmptyView()
@@ -286,19 +289,19 @@ extension EditProfileView {
                     NavigationLink(
                         destination: IfLetStore(
                             store.destinationsScope(
-                                state: /EditProfileDomain.Destinations.State.chargeItems,
-                                action: EditProfileDomain.Destinations.Action.chargeItemsAction
+                                state: /EditProfileDomain.Destinations.State.chargeItemList,
+                                action: EditProfileDomain.Destinations.Action.chargeItemListAction
                             ),
-                            then: ChargeItemsView.init(store:)
+                            then: ChargeItemListView.init(store:)
                         ),
-                        tag: EditProfileDomain.Destinations.State.Tag.chargeItems,
+                        tag: EditProfileDomain.Destinations.State.Tag.chargeItemList,
                         selection: viewStore.binding(
                             get: \.destinationTag,
                             send: EditProfileDomain.Action.setNavigation
                         )
                     ) {
                         Label(
-                            title: { Text(L10n.stgBtnEditProfileChargeItems) },
+                            title: { Text(L10n.stgBtnEditProfileChargeItemList) },
                             icon: {
                                 Image(systemName: SFSymbolName.euroSign)
                             }
@@ -307,7 +310,7 @@ extension EditProfileView {
                     .buttonStyle(.navigation)
                     .accessibilityElement(children: .combine)
                     .accessibility(identifier: A11y.settings.editProfile
-                        .stgTxtEditProfileChargeItemsSectionShowChargeItems)
+                        .stgTxtEditProfileChargeItemListSectionShowChargeItemList)
                 }
             )
         }
@@ -490,6 +493,7 @@ extension EditProfileView {
                                  .buttonStyle(.navigation)
                                  .disabled(viewStore.state.token == nil)
 
+                                 // [REQ:gemSpec_eRp_FdV:A_19177#2] Actual Button to open the audit events
                                  NavigationLink(
                                      destination: IfLetStore(
                                          store.destinationsScope(

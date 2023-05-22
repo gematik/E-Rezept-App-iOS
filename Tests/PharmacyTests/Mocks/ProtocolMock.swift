@@ -17,10 +17,11 @@
 //  
 //
 
+// sourcery:begin: ProtocolMock
 import eRpKit
+import OpenSSL
 import Pharmacy
 
-// sourcery:begin: ProtocolMock
 extension PharmacyLocalDataStore {}
 extension PharmacyRemoteDataStore {}
 // sourcery:end

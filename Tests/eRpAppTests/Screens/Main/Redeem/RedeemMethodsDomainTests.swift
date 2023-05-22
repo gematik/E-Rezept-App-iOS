@@ -54,7 +54,7 @@ final class RedeemMethodsDomainTests: XCTestCase {
             pzn: "06876512",
             amount: .init(numerator: .init(value: "10")),
             dosageForm: "PUL",
-            dose: "N1"
+            normSizeCode: "N1"
         )
         let practitioner = ErxPractitioner(
             lanr: "123456789",

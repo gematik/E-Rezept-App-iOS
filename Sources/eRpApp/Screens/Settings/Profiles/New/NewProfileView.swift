@@ -36,9 +36,9 @@ struct NewProfileView: View {
             ScrollView {
                 VStack(spacing: 0) {
                     ProfilePictureView(
-                        text: viewStore.acronym,
                         image: ProfilePicture.none,
-                        color: viewStore.color.background,
+                        userImageData: .empty,
+                        color: viewStore.color,
                         connection: nil,
                         style: .xxLarge
                     ) {}

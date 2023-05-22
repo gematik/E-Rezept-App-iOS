@@ -50,7 +50,7 @@ final class FHIR_GEM_Workflow_v1_1_with_KBV_v1_0_2_Tests: XCTestCase {
         expect(task.acceptedUntil) == "2021-04-23"
         expect(task.author) == "Hausarztpraxis Dr. Topp-Glücklich"
         expect(task.medication?.dosageForm) == "TAB"
-        expect(task.medication?.dose) == "N1"
+        expect(task.medication?.normSizeCode) == "N1"
         expect(task.medication?.pzn) == "06313728"
         expect(task.medication?.amount) ==
             .init(numerator: .init(value: "12", unit: "TAB"), denominator: .init(value: "1"))
@@ -120,7 +120,7 @@ final class FHIR_GEM_Workflow_v1_1_with_KBV_v1_0_2_Tests: XCTestCase {
         // medication
         expect(task.medication?.name) == "Olanzapin Heumann 20mg"
         expect(task.medication?.dosageForm) == "SMT"
-        expect(task.medication?.dose) == "N3"
+        expect(task.medication?.normSizeCode) == "N3"
         expect(task.medication?.pzn) == "08850519"
         expect(task.medication?.amount) ==
             .init(numerator: .init(value: "70", unit: "St"), denominator: .init(value: "1"))
@@ -295,7 +295,7 @@ final class FHIR_GEM_Workflow_v1_1_with_KBV_v1_0_2_Tests: XCTestCase {
         expect(first.medication?.amount) ==
             .init(numerator: .init(value: "12", unit: "TAB"), denominator: .init(value: "1"))
         expect(first.medication?.dosageForm) == "TAB"
-        expect(first.medication?.dose).to(beNil())
+        expect(first.medication?.normSizeCode).to(beNil())
         expect(first.medication?.batch).to(beNil())
         expect(first.medication?.packaging).to(beNil())
         expect(first.medication?.manufacturingInstructions).to(beNil())
@@ -330,7 +330,7 @@ final class FHIR_GEM_Workflow_v1_1_with_KBV_v1_0_2_Tests: XCTestCase {
         expect(medicationDispense.medication?.packaging).to(beNil())
         expect(medicationDispense.medication?.amount).to(beNil())
         expect(medicationDispense.medication?.dosageForm) == "Darreichungsform als Freitext"
-        expect(medicationDispense.medication?.dose).to(beNil())
+        expect(medicationDispense.medication?.normSizeCode).to(beNil())
         expect(medicationDispense.medication?.batch).to(beNil())
         expect(medicationDispense.medication?.ingredients.count) == 0
     }
@@ -362,7 +362,7 @@ final class FHIR_GEM_Workflow_v1_1_with_KBV_v1_0_2_Tests: XCTestCase {
         expect(medicationDispense.medication?.packaging).to(beNil())
         expect(medicationDispense.medication?.amount).to(beNil())
         expect(medicationDispense.medication?.dosageForm) == "Flüssigkeiten"
-        expect(medicationDispense.medication?.dose) == "N1"
+        expect(medicationDispense.medication?.normSizeCode) == "N1"
         expect(medicationDispense.medication?.batch).to(beNil())
         expect(medicationDispense.medication?.ingredients.count) == 1
         guard medicationDispense.medication?.ingredients.count == 1 else {
@@ -413,7 +413,7 @@ final class FHIR_GEM_Workflow_v1_1_with_KBV_v1_0_2_Tests: XCTestCase {
             denominator: ErxMedication.Quantity(value: "1")
         )
         expect(medicationDispense.medication?.dosageForm) == "Lösung"
-        expect(medicationDispense.medication?.dose).to(beNil())
+        expect(medicationDispense.medication?.normSizeCode).to(beNil())
         expect(medicationDispense.medication?.batch).to(beNil())
         expect(medicationDispense.medication?.ingredients.count) == 2
         guard medicationDispense.medication?.ingredients.count == 2 else {

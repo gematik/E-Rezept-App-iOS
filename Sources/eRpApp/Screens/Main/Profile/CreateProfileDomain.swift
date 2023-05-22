@@ -82,7 +82,7 @@ struct CreateProfileDomain: ReducerProtocol {
 }
 
 extension CreateProfileDomain {
-    func createAndSaveProfile(name: String) -> Effect<CreateProfileDomain.Action, Never> {
+    func createAndSaveProfile(name: String) -> EffectTask<CreateProfileDomain.Action> {
         let profile = Profile(name: name)
         return userProfileService
             .save(profiles: [profile])

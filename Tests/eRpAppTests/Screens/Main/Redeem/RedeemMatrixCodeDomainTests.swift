@@ -67,7 +67,7 @@ final class RedeemMatrixCodeDomainTests: XCTestCase {
     /// Use DMC publisher to generate an exact same image
     func generateMockDMCImage() -> UIImage {
         var generatedImage: UIImage?
-        _ = mockDMCGenerator.publishedMatrixCode(
+        _ = mockDMCGenerator.matrixCodePublisher(
             for: [ErxTask.Fixtures.erxTaskRedeemed],
             with: CGSize(width: 400, height: 800)
         )

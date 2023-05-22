@@ -95,7 +95,7 @@ struct PharmacyContactDomain: ReducerProtocol {
             if let identifier = info?.identifier {
                 shipmentInfoStore.set(selectedShipmentInfoId: identifier)
             }
-            return Effect(value: .delegate(.close))
+            return EffectTask(value: .delegate(.close))
         case let .response(.shipmentInfoSaved(.failure(error))):
             state.alertState = AlertState(
                 title: TextState(L10n.alertErrorTitle),
@@ -107,7 +107,7 @@ struct PharmacyContactDomain: ReducerProtocol {
             state.alertState = nil
             return .none
         case .closeButtonTapped:
-            return Effect(value: .delegate(.close))
+            return EffectTask(value: .delegate(.close))
         case .delegate:
             return .none
         case let .setName(name):

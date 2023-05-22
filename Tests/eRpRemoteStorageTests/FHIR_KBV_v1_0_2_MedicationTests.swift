@@ -32,7 +32,7 @@ final class FHIR_KBV_v1_0_2_MedicationTests: XCTestCase {
         expect(medication.profileType) == .pzn
         expect(medication.drugCategory) == .avm
         expect(medication.isVaccine).to(beFalse())
-        expect(medication.dose) == "N1"
+        expect(medication.normSizeCode) == "N1"
         expect(medication.medicationText) == "Ich bin in Einlösung"
         expect(medication.pzn) == "00427833"
         expect(medication.dosageForm) == "IHP"
@@ -60,7 +60,7 @@ final class FHIR_KBV_v1_0_2_MedicationTests: XCTestCase {
         expect(medication.profileType) == .ingredient
         expect(medication.drugCategory) == .avm
         expect(medication.isVaccine).to(beFalse())
-        expect(medication.dose) == "N1"
+        expect(medication.normSizeCode) == "N1"
         expect(medication.dosageForm) == "Flüssigkeiten"
         expect(medication.amountRatio(for: .v1_0_2)).to(beNil())
         expect(medication.erxTaskBatch).to(beNil())
@@ -91,7 +91,7 @@ final class FHIR_KBV_v1_0_2_MedicationTests: XCTestCase {
             denominator: ErxMedication.Quantity(value: "1")
         )
         expect(medication.dosageForm) == "Lösung"
-        expect(medication.dose).to(beNil())
+        expect(medication.normSizeCode).to(beNil())
         expect(medication.erxTaskBatch).to(beNil())
         expect(medication.erxTaskIngredients.count) == 2
         expect(medication.erxTaskIngredients[0]) == ErxMedication.Ingredient(

@@ -39,29 +39,44 @@ public protocol AVSSession {
 public struct AVSSessionResponse {
     /// The original `AVSMessage` that was sent to the `AVSSession`
     public let message: AVSMessage
-    /// Tne status code of the response
+    /// The status code of the response
     public let httpStatusCode: Int
+
+    /// Contains the response information from an `AVSSession`
+    ///
+    /// - Parameters:
+    ///   - message: original `AVSMessage` that was sent to the `AVSSession`
+    ///   - httpStatusCode: status code of the response
+    public init(message: AVSMessage, httpStatusCode: Int) {
+        self.message = message
+        self.httpStatusCode = httpStatusCode
+    }
 }
 
 public class DefaultAVSSession: AVSSession {
     let avsMessageConverter: AVSMessageConverter
     let avsClient: AVSClient
+    let logger: ((AVSMessage, AVSEndpoint, HTTPResponse) -> Void)?
 
     public convenience init(
-        httpClient: HTTPClient = DefaultHTTPClient(urlSessionConfiguration: .ephemeral)
+        httpClient: HTTPClient = DefaultHTTPClient(urlSessionConfiguration: .ephemeral),
+        logger: ((AVSMessage, AVSEndpoint, HTTPResponse) -> Void)? = nil
     ) {
         self.init(
             avsMessageConverter: AuthEnvelopedWithUnauthAttributes(),
-            avsClient: RealAVSClient(httpClient: httpClient)
+            avsClient: RealAVSClient(httpClient: httpClient),
+            logger: logger
         )
     }
 
     required init(
         avsMessageConverter: AVSMessageConverter,
-        avsClient: AVSClient
+        avsClient: AVSClient,
+        logger: ((AVSMessage, AVSEndpoint, HTTPResponse) -> Void)?
     ) {
         self.avsMessageConverter = avsMessageConverter
         self.avsClient = avsClient
+        self.logger = logger
     }
 
     public func redeem(
@@ -76,6 +91,10 @@ public class DefaultAVSSession: AVSSession {
             }
             .flatMap { restMessage -> AnyPublisher<AVSSessionResponse, AVSError> in
                 self.avsClient.send(data: restMessage, to: endpoint)
+                    // swiftlint:disable:previous trailing_closure
+                    .handleEvents(receiveOutput: { [weak self] response in
+                        self?.logger?(message, endpoint, response)
+                    })
                     .tryMap { httpResponse in
                         guard httpResponse.status.isSuccessful else {
                             let urlError = URLError(URLError.Code(rawValue: httpResponse.status.rawValue))

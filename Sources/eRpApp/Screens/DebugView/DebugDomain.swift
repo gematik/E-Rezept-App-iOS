@@ -274,7 +274,7 @@ struct DebugDomain: ReducerProtocol {
             return .none
         case .appear:
             state.trackingOptIn = tracker.optIn
-            return Effect.merge(
+            return .merge(
                 onReceiveHideOnboarding(),
                 onReceiveHideCardWallIntro(),
                 onReceiveIsAuthenticated(),
@@ -299,7 +299,7 @@ struct DebugDomain: ReducerProtocol {
 
             return setProfileInsuranceTypeToPKV(profileId: profile.id)
         case .resetTooltips:
-            UserDefaults.standard.setValue([:], forKey: "TOOLTIPS")
+            UserDefaults.standard.setValue([String: Any](), forKey: "TOOLTIPS")
             return .none
         case let .tokenReceived(token):
             state.token = token
@@ -327,21 +327,21 @@ struct DebugDomain: ReducerProtocol {
 
 #if ENABLE_DEBUG_VIEW
 extension DebugDomain {
-    func onReceiveHideOnboarding() -> Effect<DebugDomain.Action, Never> {
+    func onReceiveHideOnboarding() -> EffectTask<DebugDomain.Action> {
         localUserStore.onboardingVersion
             .receive(on: schedulers.main)
             .map(DebugDomain.Action.hideOnboardingReceived)
             .eraseToEffect()
     }
 
-    func onReceiveHideCardWallIntro() -> Effect<DebugDomain.Action, Never> {
+    func onReceiveHideCardWallIntro() -> EffectTask<DebugDomain.Action> {
         localUserStore.hideCardWallIntro
             .receive(on: schedulers.main)
             .map(DebugDomain.Action.hideCardWallIntroReceived)
             .eraseToEffect()
     }
 
-    func onReceiveIsAuthenticated() -> Effect<DebugDomain.Action, Never> {
+    func onReceiveIsAuthenticated() -> EffectTask<DebugDomain.Action> {
         userSession.isAuthenticated
             .receive(on: schedulers.main)
             .map(DebugDomain.Action.isAuthenticatedReceived)
@@ -351,16 +351,16 @@ extension DebugDomain {
             .eraseToEffect()
     }
 
-    func onReceiveToken() -> Effect<DebugDomain.Action, Never> {
+    func onReceiveToken() -> EffectTask<DebugDomain.Action> {
         userSession.idpSession.autoRefreshedToken
             .receive(on: schedulers.main)
             .map(DebugDomain.Action.tokenReceived)
-            .catch { _ in Effect.none }
+            .catch { _ in EffectTask.none }
             .eraseToEffect()
     }
 
     func onReceiveConfigurationName(for availableEnvironments: [DebugDomain.State.ServerEnvironment])
-        -> Effect<DebugDomain.Action, Never> {
+        -> EffectTask<DebugDomain.Action> {
         localUserStore.serverEnvironmentConfiguration
             .map { name in
                 let configuration = availableEnvironments.first { environment in
@@ -376,11 +376,12 @@ extension DebugDomain {
             .eraseToEffect()
     }
 
-    func onReceiveVirtualEGK() -> Effect<DebugDomain.Action, Never> {
+    func onReceiveVirtualEGK() -> EffectTask<DebugDomain.Action> {
         .concatenate([
-            Effect(value: DebugDomain.Action.toggleVirtualLogin(UserDefaults.standard.isVirtualEGKEnabled)),
-            Effect(value: DebugDomain.Action.virtualPrkCHAutReceived(UserDefaults.standard.virtualEGKPrkCHAut ?? "")),
-            Effect(value: DebugDomain.Action.virtualCCHAutReceived(UserDefaults.standard.virtualEGKCCHAut ?? "")),
+            EffectTask(value: DebugDomain.Action.toggleVirtualLogin(UserDefaults.standard.isVirtualEGKEnabled)),
+            EffectTask(value: DebugDomain.Action
+                .virtualPrkCHAutReceived(UserDefaults.standard.virtualEGKPrkCHAut ?? "")),
+            EffectTask(value: DebugDomain.Action.virtualCCHAutReceived(UserDefaults.standard.virtualEGKCCHAut ?? "")),
         ])
     }
 

@@ -19,31 +19,63 @@
 import ComposableArchitecture
 import eRpKit
 import Foundation
+import UIKit
 
 extension PrescriptionDetailDomain {
     struct Destinations: ReducerProtocol {
         enum State: Equatable {
-            case medication
+            // sourcery: AnalyticsScreen = prescriptionDetail_medicationOverview
+            case medicationOverview(MedicationOverviewDomain.State)
+            // sourcery: AnalyticsScreen = prescriptionDetail_medication
+            case medication(MedicationDomain.State)
+            // sourcery: AnalyticsScreen = prescriptionDetail_patient
             case patient(PatientState)
+            // sourcery: AnalyticsScreen = prescriptionDetail_practitioner
             case practitioner(PractitionerState)
+            // sourcery: AnalyticsScreen = prescriptionDetail_organization
             case organization(OrganizationState)
+            // sourcery: AnalyticsScreen = prescriptionDetail_accidentInfo
             case accidentInfo(AccidentInfoState)
+            // sourcery: AnalyticsScreen = prescriptionDetail_technicalInfo
             case technicalInformations(TechnicalInformationsState)
+            // sourcery: AnalyticsScreen = errorAlert
             case alert(ErpAlertState<PrescriptionDetailDomain.Action>)
-            case sharePrescription(URL)
+            // sourcery: AnalyticsScreen = prescriptionDetail_sharePrescription
+            case sharePrescription(ShareState)
+            // sourcery: AnalyticsScreen = prescriptionDetail_directAssignmentInfo
             case directAssignmentInfo
+            // sourcery: AnalyticsScreen = prescriptionDetail_substitutionInfo
             case substitutionInfo
-            case prescriptionValidityInfo(PrescriptionValidity)
+            // sourcery: AnalyticsScreen = prescriptionDetail_prescriptionValidityInfo
+            case prescriptionValidityInfo(PrescriptionValidityState)
+            // sourcery: AnalyticsScreen = prescriptionDetail_scannedPrescriptionInfo
             case scannedPrescriptionInfo
+            // sourcery: AnalyticsScreen = prescriptionDetail_errorInfo
             case errorInfo
+            // sourcery: AnalyticsScreen = prescriptionDetail_coPaymentInfo
             case coPaymentInfo(CoPaymentState)
+            // sourcery: AnalyticsScreen = prescriptionDetail_emergencyServiceFeeInfo
             case emergencyServiceFeeInfo
         }
 
-        enum Action: Equatable {}
+        enum Action: Equatable {
+            case medication(action: MedicationDomain.Action)
+            case medicationOverview(action: MedicationOverviewDomain.Action)
+        }
 
         var body: some ReducerProtocol<State, Action> {
-            EmptyReducer()
+            Scope(
+                state: /State.medication,
+                action: /Action.medication
+            ) {
+                MedicationDomain()
+            }
+            Scope(
+                state: /State.medicationOverview,
+                action: /Action.medicationOverview
+            ) {
+                MedicationOverviewDomain()
+            }
         }
 
         struct CoPaymentState: Equatable {
@@ -65,6 +97,12 @@ extension PrescriptionDetailDomain {
             }
         }
 
+        struct PrescriptionValidityState: Equatable {
+            let authoredOnDate: String?
+            let acceptUntilDate: String?
+            let expiresOnDate: String?
+        }
+
         struct TechnicalInformationsState: Equatable {
             let taskId: String
             let accessCode: String?
@@ -84,6 +122,11 @@ extension PrescriptionDetailDomain {
 
         struct AccidentInfoState: Equatable {
             let accidentInfo: AccidentInfo
+        }
+
+        struct ShareState: Equatable {
+            let url: URL
+            let dataMatrixCodeImage: UIImage?
         }
     }
 }

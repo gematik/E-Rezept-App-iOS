@@ -130,6 +130,9 @@ onboarding:
     - onb_auth_txt_section_title
     - onb_auth_btn_faceid
     - onb_auth_btn_touchid
+    - onb_auth_btn_password
+  analytics:
+    - onb_ana_btn_continue
   legalInfo:
     - onb_txt_legal_info_title
     - onb_btn_accept
@@ -170,23 +173,23 @@ settings:
     - stg_btn_profile
     - stg_con_profiles
     - stg_btn_new_profile
-  chargeItems:
-    - stg_btn_charge_items_navigation_bar_menu
-    - stg_txt_charge_items_menu_entry_connect
-    - stg_txt_charge_items_menu_entry_activate
-    - stg_txt_charge_items_menu_entry_deactivate
-    - stg_btn_charge_items_menu_entry_edit
-    - stg_btn_charge_items_menu_entry_editing_done
-    - stg_txt_charge_items_empty_list_replacement
-    - stg_txt_charge_items_bottom_banner_message
-    - stg_btn_charge_items_bottom_banner
-    - stg_btn_charge_items_container
-    - stg_btn_charge_items_section_header_title
-    - stg_btn_charge_items_section_header_sum
-    - stg_btn_charge_items_row
-    - stg_btn_charge_items_row_title
-    - stg_btn_charge_items_row_date
-    - stg_btn_charge_items_row_tag_container
+  chargeItemList:
+    - stg_btn_charge_item_list_navigation_bar_menu
+    - stg_txt_charge_item_list_menu_entry_connect
+    - stg_txt_charge_item_list_menu_entry_activate
+    - stg_txt_charge_item_list_menu_entry_deactivate
+    - stg_btn_charge_item_list_menu_entry_edit
+    - stg_btn_charge_item_list_menu_entry_editing_done
+    - stg_txt_charge_item_list_empty_list_replacement
+    - stg_txt_charge_item_list_bottom_banner_message
+    - stg_btn_charge_item_list_bottom_banner
+    - stg_btn_charge_item_list_container
+    - stg_btn_charge_item_list_section_header_title
+    - stg_btn_charge_item_list_section_header_sum
+    - stg_btn_charge_item_list_row
+    - stg_btn_charge_item_list_row_title
+    - stg_btn_charge_item_list_row_date
+    - stg_btn_charge_item_list_row_tag_container
   card:
     - stg_txt_card_forgot_pin
     - stg_txt_card_custom_pin
@@ -222,8 +225,8 @@ settings:
     - stg_txt_edit_profile_insurance_company
     - stg_txt_edit_profile_can
     - stg_txt_edit_profile_insurance_id
-    - stg_txt_edit_profile_charge_items_section_title
-    - stg_txt_edit_profile_charge_items_section_show_charge_items
+    - stg_txt_edit_profile_charge_item_list_section_title
+    - stg_txt_edit_profile_charge_item_list_section_show_charge_item_list
     - stg_txt_edit_profile_login_section_title
     - stg_txt_edit_profile_login_section_activate
     - stg_txt_edit_profile_login_section_connected_devices
@@ -347,25 +350,16 @@ profileSelection:
   - pro_btn_selection_add_profile
 prescriptionDetails:
   - prsc_dtl_txt_title
-  - prsc_dtl_txt_med_info
-  - prsc_dtl_txt_med_info_list
-  - prsc_dtl_txt_med_dosage_instructions
-  - prsc_dtl_btn_delete_medication
   - prsc_dtl_btn_toggle_redeem
-  - prsc_dtl_hnt_noctu_fee_waiver
-  - prsc_dtl_hnt_substitution
-  - prsc_dtl_hnt_dosage_instructions
-  - prsc_dtl_hnt_keep_overview
-  - prsc_dtl_txt_task_id
-  - prsc_dtl_txt_access_code
-  - prsc_dtl_txt_med_error
-  - prsc_dtl_txt_delete_disabled_note
-  - prsc_dtl_btn_share
-  - prsc_dtl_btn_direct_assignment
-  # new:
+  - prsc_dtl_btn_toolbar_item
+  - prsc_dtl_toolbar_menu
+  - prsc_dtl_toolbar_menu_btn_share
+  - prsc_dtl_toolbar_menu_btn_redeem
+  - prsc_dtl_toolbar_menu_btn_delete
   - prsc_dtl_btn_error_info
   - prsc_dtl_btn_substitution_info
   - prsc_dtl_btn_scanned_prescription_info
+  - prsc_dtl_btn_direct_assignment_info
   - prsc_dtl_txt_prescription_validity
   - prsc_dtl_btn_prescription_validity_info
   - prsc_dtl_drawer_substitution_info
@@ -384,6 +378,10 @@ prescriptionDetails:
   - prsc_dtl_drawer_co_payment_info_description
   - prsc_dtl_drawer_co_payment_info
   - prsc_dtl_drawer_emergency_service_fee_info
+  - prsc_dtl_txt_authored_on
+  - prsc_dtl_txt_bvg
+  - prsc_dtl_txt_multi_prescription
+  - prsc_dtl_txt_dosage_instructions
   - prsc_dtl_ti_access_code
   - prsc_dtl_ti_task_id
   - prsc_dtl_pa_name
@@ -406,7 +404,29 @@ prescriptionDetails:
   - prsc_dtl_accident_reason
   - prsc_dtl_accident_date
   - prsc_dtl_accident_id
-
+  - prsc_dtl_med_amount
+  - prsc_dtl_med_name
+  - prsc_dtl_med_norm_size_code
+  - prsc_dtl_med_pzn
+  - prsc_dtl_med_dosage_form
+  - prsc_dtl_med_drug_category
+  - prsc_dtl_med_vaccine
+  - prsc_dtl_med_batch_expires_on
+  - prsc_dtl_med_batch_lot_number
+  - prsc_dtl_med_ingredient_name
+  - prsc_dtl_med_manufacturing_instructions
+  - prsc_dtl_med_packaging
+  - prsc_dtl_med_ingredient_strength
+  - prsc_dtl_med_ingredient_form
+  - prsc_dtl_med_ingredient_number
+  - prsc_dtl_med_btn_ingredient
+  - prsc_dtl_med_dosage_instructions
+  - prsc_dtl_med_note
+  - prsc_dtl_med_handed_over_date
+  - prsc_dtl_med_ov_subscribed_header
+  - prsc_dtl_med_ov_btn_subscribed_medication
+  - prsc_dtl_med_ov_dispensed_header
+  - prsc_dtl_med_ov_btn_dispensed_medication
 pharmacySearch:
   - pha_search_txt_result_list
   - pha_search_txt_result_list_entry

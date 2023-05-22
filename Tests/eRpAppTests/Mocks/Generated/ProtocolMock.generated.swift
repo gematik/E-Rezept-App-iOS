@@ -1,4 +1,4 @@
-// Generated using Sourcery 2.0.1 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.0.2 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 import AVS
 import Combine
@@ -169,26 +169,44 @@ final class MockAuthenticationChallengeProvider: AuthenticationChallengeProvider
 }
 
 
-// MARK: - MockChargeItemsDomainService -
+// MARK: - MockChargeItemListDomainService -
 
-final class MockChargeItemsDomainService: ChargeItemsDomainService {
+final class MockChargeItemListDomainService: ChargeItemListDomainService {
     
-   // MARK: - fetchChargeItems
+   // MARK: - fetchLocalChargeItems
 
-    var fetchChargeItemsForCallsCount = 0
-    var fetchChargeItemsForCalled: Bool {
-        fetchChargeItemsForCallsCount > 0
+    var fetchLocalChargeItemsForCallsCount = 0
+    var fetchLocalChargeItemsForCalled: Bool {
+        fetchLocalChargeItemsForCallsCount > 0
     }
-    var fetchChargeItemsForReceivedProfileId: UUID?
-    var fetchChargeItemsForReceivedInvocations: [UUID] = []
-    var fetchChargeItemsForReturnValue: AnyPublisher<ChargeItemDomainServiceFetchResult, Never>!
-    var fetchChargeItemsForClosure: ((UUID) -> AnyPublisher<ChargeItemDomainServiceFetchResult, Never>)?
+    var fetchLocalChargeItemsForReceivedProfileId: UUID?
+    var fetchLocalChargeItemsForReceivedInvocations: [UUID] = []
+    var fetchLocalChargeItemsForReturnValue: AnyPublisher<ChargeItemDomainServiceFetchResult, Never>!
+    var fetchLocalChargeItemsForClosure: ((UUID) -> AnyPublisher<ChargeItemDomainServiceFetchResult, Never>)?
 
-    func fetchChargeItems(for profileId: UUID) -> AnyPublisher<ChargeItemDomainServiceFetchResult, Never> {
-        fetchChargeItemsForCallsCount += 1
-        fetchChargeItemsForReceivedProfileId = profileId
-        fetchChargeItemsForReceivedInvocations.append(profileId)
-        return fetchChargeItemsForClosure.map({ $0(profileId) }) ?? fetchChargeItemsForReturnValue
+    func fetchLocalChargeItems(for profileId: UUID) -> AnyPublisher<ChargeItemDomainServiceFetchResult, Never> {
+        fetchLocalChargeItemsForCallsCount += 1
+        fetchLocalChargeItemsForReceivedProfileId = profileId
+        fetchLocalChargeItemsForReceivedInvocations.append(profileId)
+        return fetchLocalChargeItemsForClosure.map({ $0(profileId) }) ?? fetchLocalChargeItemsForReturnValue
+    }
+    
+   // MARK: - fetchRemoteChargeItemsAndSave
+
+    var fetchRemoteChargeItemsAndSaveForCallsCount = 0
+    var fetchRemoteChargeItemsAndSaveForCalled: Bool {
+        fetchRemoteChargeItemsAndSaveForCallsCount > 0
+    }
+    var fetchRemoteChargeItemsAndSaveForReceivedProfileId: UUID?
+    var fetchRemoteChargeItemsAndSaveForReceivedInvocations: [UUID] = []
+    var fetchRemoteChargeItemsAndSaveForReturnValue: AnyPublisher<ChargeItemDomainServiceFetchResult, Never>!
+    var fetchRemoteChargeItemsAndSaveForClosure: ((UUID) -> AnyPublisher<ChargeItemDomainServiceFetchResult, Never>)?
+
+    func fetchRemoteChargeItemsAndSave(for profileId: UUID) -> AnyPublisher<ChargeItemDomainServiceFetchResult, Never> {
+        fetchRemoteChargeItemsAndSaveForCallsCount += 1
+        fetchRemoteChargeItemsAndSaveForReceivedProfileId = profileId
+        fetchRemoteChargeItemsAndSaveForReceivedInvocations.append(profileId)
+        return fetchRemoteChargeItemsAndSaveForClosure.map({ $0(profileId) }) ?? fetchRemoteChargeItemsAndSaveForReturnValue
     }
     
    // MARK: - authenticate
@@ -217,10 +235,10 @@ final class MockChargeItemsDomainService: ChargeItemsDomainService {
     }
     var grantChargeItemsConsentForReceivedProfileId: UUID?
     var grantChargeItemsConsentForReceivedInvocations: [UUID] = []
-    var grantChargeItemsConsentForReturnValue: AnyPublisher<ChargeItemsDomainServiceGrantResult, Never>!
-    var grantChargeItemsConsentForClosure: ((UUID) -> AnyPublisher<ChargeItemsDomainServiceGrantResult, Never>)?
+    var grantChargeItemsConsentForReturnValue: AnyPublisher<ChargeItemListDomainServiceGrantResult, Never>!
+    var grantChargeItemsConsentForClosure: ((UUID) -> AnyPublisher<ChargeItemListDomainServiceGrantResult, Never>)?
 
-    func grantChargeItemsConsent(for profileId: UUID) -> AnyPublisher<ChargeItemsDomainServiceGrantResult, Never> {
+    func grantChargeItemsConsent(for profileId: UUID) -> AnyPublisher<ChargeItemListDomainServiceGrantResult, Never> {
         grantChargeItemsConsentForCallsCount += 1
         grantChargeItemsConsentForReceivedProfileId = profileId
         grantChargeItemsConsentForReceivedInvocations.append(profileId)
@@ -253,10 +271,10 @@ final class MockChargeItemsDomainService: ChargeItemsDomainService {
     }
     var revokeChargeItemsConsentForReceivedProfileId: UUID?
     var revokeChargeItemsConsentForReceivedInvocations: [UUID] = []
-    var revokeChargeItemsConsentForReturnValue: AnyPublisher<ChargeItemsDomainServiceRevokeResult, Never>!
-    var revokeChargeItemsConsentForClosure: ((UUID) -> AnyPublisher<ChargeItemsDomainServiceRevokeResult, Never>)?
+    var revokeChargeItemsConsentForReturnValue: AnyPublisher<ChargeItemListDomainServiceRevokeResult, Never>!
+    var revokeChargeItemsConsentForClosure: ((UUID) -> AnyPublisher<ChargeItemListDomainServiceRevokeResult, Never>)?
 
-    func revokeChargeItemsConsent(for profileId: UUID) -> AnyPublisher<ChargeItemsDomainServiceRevokeResult, Never> {
+    func revokeChargeItemsConsent(for profileId: UUID) -> AnyPublisher<ChargeItemListDomainServiceRevokeResult, Never> {
         revokeChargeItemsConsentForCallsCount += 1
         revokeChargeItemsConsentForReceivedProfileId = profileId
         revokeChargeItemsConsentForReceivedInvocations.append(profileId)

@@ -88,7 +88,6 @@ final class PharmacySearchViewSnapshotTests: XCTestCase {
                     ),
                     reducer: EmptyReducer()
                 ),
-                profileSelectionToolbarItemStore: storeFor(profile: UserProfile.Dummies.profileA),
                 isRedeemRecipe: false
             )
         }
@@ -110,7 +109,6 @@ final class PharmacySearchViewSnapshotTests: XCTestCase {
                     ),
                     reducer: EmptyReducer()
                 ),
-                profileSelectionToolbarItemStore: storeFor(profile: UserProfile.Dummies.profileA),
                 isRedeemRecipe: false
             )
         }
@@ -118,12 +116,5 @@ final class PharmacySearchViewSnapshotTests: XCTestCase {
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
-    }
-
-    func storeFor(profile: UserProfile?) -> ProfileSelectionToolbarItemDomain.Store {
-        .init(
-            initialState: .init(profile: profile, profileSelectionState: .init()),
-            reducer: EmptyReducer()
-        )
     }
 }

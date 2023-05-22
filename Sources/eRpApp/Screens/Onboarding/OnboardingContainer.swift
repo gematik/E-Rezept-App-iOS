@@ -29,22 +29,16 @@ struct OnboardingContainer: View, KeyboardReadable {
     init(store: Store<OnboardingDomain.State, OnboardingDomain.Action>) {
         self.store = store
         viewStore = ViewStore(store.scope(state: ViewState.init))
-        UIPageControl.appearance().currentPageIndicatorTintColor = UIColor(Colors.primary500)
-        UIPageControl.appearance().pageIndicatorTintColor = UIColor(Colors.systemLabelQuarternary)
     }
 
     struct ViewState: Equatable {
         let composition: OnboardingDomain.Composition
-        let isDragEnabled: Bool
         let isShowingNextButton: Bool
-        let isNextButtonEnabled: Bool
         let hasValidAuthenticationSelection: Bool
 
         init(state: OnboardingDomain.State) {
             composition = state.composition
-            isDragEnabled = state.isDragEnabled
             isShowingNextButton = state.isShowingNextButton
-            isNextButtonEnabled = state.isNextButtonEnabled
             hasValidAuthenticationSelection = state.registerAuthenticationState.hasValidSelection
         }
     }
@@ -63,47 +57,42 @@ struct OnboardingContainer: View, KeyboardReadable {
                         store: store.scope(state: { $0.registerAuthenticationState },
                                            action: { .registerAuthentication(action: $0) })
                     )
-                    .gesture(viewStore.isDragEnabled ? nil : DragGesture())
                     .tag(0)
+
                 } else {
                     OnboardingStartView()
                         .tag(0)
-                    OnboardingFeaturesView()
-                        .tag(1)
+
+                    OnboardingLegalInfoView {
+                        viewStore.send(.nextPage, animation: .default)
+                    }
+                    .tag(1)
+                    .contentShape(Rectangle())
+                    .gesture(DragGesture())
 
                     // [REQ:gemSpec_BSI_FdV:A_20834] view to register authentication in onboarding process
                     OnboardingRegisterAuthenticationView(
                         store: store.scope(state: { $0.registerAuthenticationState },
                                            action: { .registerAuthentication(action: $0) })
                     )
-                    .gesture(viewStore.isDragEnabled ? nil : DragGesture())
+                    .contentShape(Rectangle())
+                    .gesture(viewStore.hasValidAuthenticationSelection ? nil : DragGesture())
                     .tag(2)
 
-                    // TabView only recognizes number of element changes since iOS 16.
-                    if #available(iOS 16, *) {
-                        // This prevents passing the onboarding without conscious auth. selection (ERA-6522)
-                        if viewStore.hasValidAuthenticationSelection {
-                            OnboardingLegalInfoView {
-                                viewStore.send(.saveAuthentication, animation: .default)
-                            }
-                            .tag(3)
-                        }
-                    } else {
-                        OnboardingLegalInfoView {
-                            viewStore.send(.saveAuthentication, animation: .default)
-                        }
-                        .tag(3)
+                    OnboardingAnalyticsView {
+                        viewStore.send(.showTrackingAlert)
                     }
+                    .tag(3)
                 }
             }
+            .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+            .indexViewStyle(PageIndexViewStyle(backgroundDisplayMode: .never))
             .background(Colors.systemBackground)
-            .tabViewStyle(PageTabViewStyle(indexDisplayMode: viewStore.isDragEnabled ? .always : .never))
-            .indexViewStyle(PageIndexViewStyle(backgroundDisplayMode: viewStore.isDragEnabled ? .always : .never))
             .alert(store.scope(state: \.alertState), dismiss: .dismissAlert)
 
             ZStack {
                 if viewStore.isShowingNextButton {
-                    OnboardingNextButton(isEnabled: viewStore.isNextButtonEnabled) {
+                    OnboardingNextButton(isEnabled: true) {
                         // Due to a bug in iOS < 14.5 the keyboard animation somehow breaks
                         // the page animation. For that we close the keyboard on first touch and
                         // animate to the next page only if there is no keyboard on screen

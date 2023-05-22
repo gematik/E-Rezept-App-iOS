@@ -67,7 +67,7 @@ struct AppAuthenticationDomain: ReducerProtocol {
     func core(into state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
         case .onAppear:
-            return Effect.merge(
+            return .merge(
                 subscribeToFailedAuthenticationChanges()
                     .cancellable(id: Token.failedAuthentications, cancelInFlight: true),
                 loadAppAuthenticationOption()
@@ -131,14 +131,14 @@ struct AppAuthenticationDomain: ReducerProtocol {
 }
 
 extension AppAuthenticationDomain {
-    func subscribeToFailedAuthenticationChanges() -> Effect<AppAuthenticationDomain.Action, Never> {
+    func subscribeToFailedAuthenticationChanges() -> EffectTask<AppAuthenticationDomain.Action> {
         userDataStore.failedAppAuthentications
             .receive(on: schedulers.main.animation())
             .map(AppAuthenticationDomain.Action.failedAppAuthenticationsReceived)
             .eraseToEffect()
     }
 
-    func loadAppAuthenticationOption() -> Effect<AppAuthenticationDomain.Action, Never> {
+    func loadAppAuthenticationOption() -> EffectTask<AppAuthenticationDomain.Action> {
         appAuthenticationProvider
             .loadAppAuthenticationOption()
             .zip(userDataStore.failedAppAuthentications.first())

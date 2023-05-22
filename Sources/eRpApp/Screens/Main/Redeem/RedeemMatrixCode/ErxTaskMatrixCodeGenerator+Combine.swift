@@ -22,9 +22,15 @@ import UIKit
 
 extension ErxTaskMatrixCodeGenerator {
     func publishedMatrixCode(for tasks: [ErxTask],
+                             with size: CGSize)
+        -> AnyPublisher<UIImage, Error> {
+        matrixCodePublisher(for: tasks, with: size, scale: UIScreen.main.scale, orientation: .up)
+    }
+
+    func matrixCodePublisher(for tasks: [ErxTask],
                              with size: CGSize,
-                             scale: CGFloat = UIScreen.main.scale,
-                             orientation: UIImage.Orientation = .up)
+                             scale: CGFloat,
+                             orientation: UIImage.Orientation)
         -> AnyPublisher<UIImage, Error> {
         Deferred { () -> AnyPublisher<UIImage, Error> in
             do {

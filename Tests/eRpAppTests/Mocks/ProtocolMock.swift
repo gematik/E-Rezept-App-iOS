@@ -34,7 +34,7 @@ extension ActivityIndicating {}
 extension AuthenticationChallengeProvider {}
 extension AVSSession {}
 extension AVSTransactionDataStore {}
-extension ChargeItemsDomainService {}
+extension ChargeItemListDomainService {}
 extension DeviceSecurityManagerSessionStorage {}
 extension ERPDateFormatter {}
 extension IDPSession {}

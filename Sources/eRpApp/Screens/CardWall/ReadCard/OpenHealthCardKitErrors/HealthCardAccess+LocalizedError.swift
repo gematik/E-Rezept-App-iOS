@@ -19,6 +19,7 @@
 
 import Foundation
 import HealthCardAccess
+import HealthCardControl
 
 extension HealthCard.Error: LocalizedError {
     public var errorDescription: String? {

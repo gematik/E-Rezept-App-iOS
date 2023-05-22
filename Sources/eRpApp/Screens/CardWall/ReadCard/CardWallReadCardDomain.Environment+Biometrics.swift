@@ -29,12 +29,13 @@ extension HealthCardType {
             .mapError { $0.asNFCSignatureError() }
             .flatMap { certificate -> AnyPublisher<SignedChallenge, NFCSignatureProviderError> in
                 // [REQ:gemSpec_Krypt:A_17207] Assure only brainpoolP256r1 is used
+                // [REQ:gemSpec_Krypt:GS-A_4357-01,GS-A_4357-02] Assure that brainpoolP256r1 is used
                 guard let alg = certificate.info.algorithm.alg else {
                     return Fail(
                         error: NFCSignatureProviderError.signingFailure(.unsupportedAlgorithm)
                     ).eraseToAnyPublisher()
                 }
-                // [REQ:gemSpec_IDP_Frontend:A_20700-07] sign with C.CH.AUT
+                // [REQ:gemSpec_IDP_Frontend:A_20700-05,A_20700-07] sign with C.CH.AUT
                 return challengeSession.sign(
                     with: EGKSigner(card: self),
                     using: [certificate.certificate],
@@ -54,6 +55,7 @@ extension HealthCardType {
             .mapError(NFCSignatureProviderError.cardReadingError)
             .flatMap { certificate -> AnyPublisher<RegistrationData, NFCSignatureProviderError> in
                 // [REQ:gemSpec_Krypt:A_17207] Assure only brainpoolP256r1 is used
+                // [REQ:gemSpec_Krypt:GS-A_4357-01,GS-A_4357-02] Assure that brainpoolP256r1 is used
                 guard certificate.info.algorithm.alg == .bp256r1 else {
                     return Fail(
                         error: NFCSignatureProviderError.signingFailure(.unsupportedAlgorithm)
@@ -117,7 +119,7 @@ extension CardWallReadCardDomain.Environment {
         can: String,
         pin: String,
         profileID: UUID
-    ) -> Effect<CardWallReadCardDomain.Action, Never> {
+    ) -> EffectTask<CardWallReadCardDomain.Action> {
         let pairingSession: PairingSession
         do {
             pairingSession = try signatureProvider.createPairingSession()
@@ -125,7 +127,7 @@ extension CardWallReadCardDomain.Environment {
             return Just(.response(.state(.retrievingChallenge(.error(.biometrieError(error)))))).eraseToEffect()
         }
 
-        return Effect<CardWallReadCardDomain.Action, Never>.run { subscriber -> Cancellable in
+        return EffectTask<CardWallReadCardDomain.Action>.run { subscriber -> Cancellable in
 
             subscriber.send(.response(.state(.signingChallenge(.loading))))
 
@@ -145,7 +147,7 @@ extension CardWallReadCardDomain.Environment {
                         healthCard
                             // [REQ:gemSpec_IDP_Frontend:A_20700-07] C.CH.AUT
                             // [REQ:gemF_Tokenverschlüsselung:A_20526-01] Smartcard signature
-                            // [REQ:gemF_Tokenverschlüsselung:A_20700-06] sign
+                            // [REQ:gemF_Tokenverschlüsselung:A_20700-05,A_20700-06] sign
                             .sign(challengeSession: challengeSession)
                             .flatMap { signedChallenge -> AnyPublisher<
                                 (SignedChallenge, RegistrationData),

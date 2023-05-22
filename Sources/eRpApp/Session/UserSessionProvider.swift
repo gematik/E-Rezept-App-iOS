@@ -76,6 +76,10 @@ class DefaultUserSessionProvider: UserSessionProvider, UserSessionProviderContro
                 profileId: uuid,
                 coreDataControllerFactory: coreDataControllerFactory
             ),
+            ordersCoreDataStore: ErxTaskCoreDataStore(
+                profileId: nil,
+                coreDataControllerFactory: coreDataControllerFactory
+            ),
             pharmacyCoreDataStore: PharmacyCoreDataStore(coreDataControllerFactory: coreDataControllerFactory),
             profileDataStore: profileDataStore,
             shipmentInfoDataStore: ShipmentInfoCoreDataStore(coreDataControllerFactory: coreDataControllerFactory),

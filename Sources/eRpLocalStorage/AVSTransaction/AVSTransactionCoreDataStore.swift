@@ -103,8 +103,11 @@ public class AVSTransactionCoreDataStore: AVSTransactionDataStore, CoreDataCruda
             .eraseToAnyPublisher()
     }
 
+    // sourcery: CodedError = "581"
     public enum Error: Swift.Error {
+        // sourcery: errorCode = 01
         case noMatchingEntity
+        // sourcery: errorCode = 02
         case internalError
     }
 }

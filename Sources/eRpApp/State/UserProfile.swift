@@ -32,6 +32,7 @@ struct UserProfile: ProfileCellModel, Equatable, Identifiable {
     var insuranceId: String? { profile.insuranceId }
 
     var image: ProfilePicture { profile.image.viewModelPicture }
+    var userImageData: Data? { profile.userImageData }
     var color: ProfileColor { profile.color.viewModelColor }
 
     var lastSuccessfulSync: Date? { profile.lastAuthenticated }

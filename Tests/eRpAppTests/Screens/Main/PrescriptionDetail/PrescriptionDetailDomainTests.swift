@@ -31,6 +31,7 @@ final class PrescriptionDetailDomainTests: XCTestCase {
     let mockErxTaskRepository = MockErxTaskRepository()
     let uiDateFormatter = UIDateFormatter(fhirDateFormatter: FHIRDateFormatter.shared)
     let mockResourceHandler = MockResourceHandler()
+    let mockMatrixCodeGenerator = MockErxTaskMatrixCodeGenerator()
 
     typealias TestStore = ComposableArchitecture.TestStore<
         PrescriptionDetailDomain.State,
@@ -57,6 +58,7 @@ final class PrescriptionDetailDomainTests: XCTestCase {
             dependencies.dateProvider = dateProvider
             dependencies.uiDateFormatter = uiDateFormatter
             dependencies.resourceHandler = mockResourceHandler
+            dependencies.erxTaskMatrixCodeGenerator = mockMatrixCodeGenerator
         }
     }
 
@@ -160,6 +162,36 @@ final class PrescriptionDetailDomainTests: XCTestCase {
             state.destination = nil
         }
         store.send(.delegate(.close))
+    }
+
+    func testDeletingPrescriptionInProgress() {
+        let prescription = Prescription(erxTask: ErxTask.Fixtures.erxTaskInProgressAndValid)
+        let sut = testStore(.init(
+            prescription: prescription,
+            isArchived: true
+        ))
+
+        sut.send(.delete) {
+            $0.destination = .alert(ErpAlertState(
+                title: TextState(L10n.dtlBtnDeleteDisabledNote),
+                dismissButton: .default(TextState(L10n.alertBtnOk), action: .send(.setNavigation(tag: nil)))
+            ))
+        }
+    }
+
+    func testDeletingPrescriptionWithDirectAssignemnt() {
+        let prescription = Prescription(erxTask: ErxTask.Fixtures.erxTaskDirectAssigned)
+        let sut = testStore(.init(
+            prescription: prescription,
+            isArchived: true
+        ))
+
+        sut.send(.delete) {
+            $0.destination = .alert(ErpAlertState(
+                title: TextState(L10n.prscDeleteNoteDirectAssignment),
+                dismissButton: .default(TextState(L10n.alertBtnOk), action: .send(.setNavigation(tag: nil)))
+            ))
+        }
     }
 
     /// Test redeem low-detail prescriptions.
@@ -295,7 +327,7 @@ final class PrescriptionDetailDomainTests: XCTestCase {
 
     func testShowPrescriptionValidityInfo() {
         let sut = testStore()
-        let expectedValidityInfo = PrescriptionDetailDomain.PrescriptionValidity(
+        let expectedValidityInfo = PrescriptionDetailDomain.Destinations.PrescriptionValidityState(
             authoredOnDate: uiDateFormatter.date(initialState.prescription.authoredOn),
             acceptUntilDate: uiDateFormatter.date(initialState.prescription.acceptedUntil),
             expiresOnDate: uiDateFormatter.date(initialState.prescription.expiresOn)
@@ -330,12 +362,24 @@ final class PrescriptionDetailDomainTests: XCTestCase {
         }
     }
 
-    func testShowSharePrescriptionSheet() {
+    func testLoadingImageAndShowShareSheet() {
         let sut = testStore()
         let expectedUrl = initialState.prescription.erxTask.shareUrl()!
+        let expectedImage = mockMatrixCodeGenerator.uiImage
+        let expectedLoadingState: LoadingState<UIImage, PrescriptionDetailDomain.LoadingImageError> =
+            .value(expectedImage)
 
-        sut.send(.setNavigation(tag: .sharePrescription)) {
-            $0.destination = .sharePrescription(expectedUrl)
+        let shareState = PrescriptionDetailDomain.Destinations.ShareState(
+            url: expectedUrl,
+            dataMatrixCodeImage: expectedImage
+        )
+        sut.send(.loadMatrixCodeImage(screenSize: CGSize(width: 100.0, height: 100.0))) {
+            $0.loadingState = .loading(nil)
+        }
+
+        sut.receive(.response(.matrixCodeImageReceived(expectedLoadingState))) {
+            $0.loadingState = expectedLoadingState
+            $0.destination = .sharePrescription(shareState)
         }
     }
 
@@ -392,6 +436,30 @@ final class PrescriptionDetailDomainTests: XCTestCase {
 
         sut.send(.setNavigation(tag: .accidentInfo)) {
             $0.destination = .accidentInfo(expectedState)
+        }
+    }
+
+    func testShowMedication_when_not_dispensed() {
+        let sut = testStore()
+        let expectedState = MedicationDomain.State(
+            subscribed: initialState.prescription.medication!
+        )
+
+        sut.send(.setNavigation(tag: .medication)) {
+            $0.destination = .medication(expectedState)
+        }
+    }
+
+    func testShowMedicationOverview_when_dispensed() {
+        let redeemedPrescription = Prescription(erxTask: ErxTask.Fixtures.erxTaskRedeemed)
+        let sut = testStore(.init(prescription: redeemedPrescription, isArchived: true))
+        let expectedState = MedicationOverviewDomain.State(
+            subscribed: redeemedPrescription.medication!,
+            dispensed: redeemedPrescription.medicationDispenses
+        )
+
+        sut.send(.setNavigation(tag: .medication)) {
+            $0.destination = .medicationOverview(expectedState)
         }
     }
 }

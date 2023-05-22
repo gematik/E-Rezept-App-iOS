@@ -1,4 +1,4 @@
-// Generated using Sourcery 2.0.1 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.0.2 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 
 import AVS
@@ -11,6 +11,7 @@ import eRpLocalStorage
 import eRpRemoteStorage
 import FHIRClient
 import HTTPClient
+import IdentifiedCollections
 import IDP
 import OpenSSL
 import Pharmacy
@@ -18,7 +19,6 @@ import TrustStore
 import VAUClient
 import UIKit
 import XCTestDynamicOverlay
-import IdentifiedCollections
 
 
 
@@ -55,22 +55,25 @@ struct UnimplementedAuthenticationChallengeProvider: AuthenticationChallengeProv
         fatalError("startAuthenticationChallenge has not been implemented")
     }
 }
-struct UnimplementedChargeItemsDomainService: ChargeItemsDomainService {
+struct UnimplementedChargeItemListDomainService: ChargeItemListDomainService {
     init() {}
 
-    func fetchChargeItems(for profileId: UUID) -> AnyPublisher<ChargeItemDomainServiceFetchResult, Never> {
-        fatalError("fetchChargeItems(for:) has not been implemented")
+    func fetchLocalChargeItems(for profileId: UUID) -> AnyPublisher<ChargeItemDomainServiceFetchResult, Never> {
+        fatalError("fetchLocalChargeItems(for:) has not been implemented")
+    }
+    func fetchRemoteChargeItemsAndSave(for profileId: UUID) -> AnyPublisher<ChargeItemDomainServiceFetchResult, Never> {
+        fatalError("fetchRemoteChargeItemsAndSave(for:) has not been implemented")
     }
     func authenticate(for profileId: UUID) -> AnyPublisher<ChargeItemDomainServiceAuthenticateResult, Never> {
         fatalError("authenticate(for:) has not been implemented")
     }
-    func grantChargeItemsConsent(for profileId: UUID) -> AnyPublisher<ChargeItemsDomainServiceGrantResult, Never> {
+    func grantChargeItemsConsent(for profileId: UUID) -> AnyPublisher<ChargeItemListDomainServiceGrantResult, Never> {
         fatalError("grantChargeItemsConsent(for:) has not been implemented")
     }
     func fetchChargeItemsAssumingConsentGranted(for profileId: UUID) -> AnyPublisher<ChargeItemDomainServiceFetchResult, Never> {
         fatalError("fetchChargeItemsAssumingConsentGranted(for:) has not been implemented")
     }
-    func revokeChargeItemsConsent(for profileId: UUID) -> AnyPublisher<ChargeItemsDomainServiceRevokeResult, Never> {
+    func revokeChargeItemsConsent(for profileId: UUID) -> AnyPublisher<ChargeItemListDomainServiceRevokeResult, Never> {
         fatalError("revokeChargeItemsConsent(for:) has not been implemented")
     }
 }
@@ -118,8 +121,11 @@ struct UnimplementedErxTaskMatrixCodeGenerator: ErxTaskMatrixCodeGenerator {
     func matrixCode(for tasks: [ErxTask], with size: CGSize) throws -> CGImage {
         fatalError("matrixCode(for:with:) has not been implemented")
     }
-    func publishedMatrixCode(for tasks: [ErxTask], with size: CGSize, scale: CGFloat = UIScreen.main.scale, orientation: UIImage.Orientation = .up) -> AnyPublisher<UIImage, Error> {
-        fatalError("publishedMatrixCode(for:with:scale:orientation:) has not been implemented")
+    func matrixCodePublisher(for tasks: [ErxTask], with size: CGSize, scale: CGFloat, orientation: UIImage.Orientation) -> AnyPublisher<UIImage, Error> {
+        fatalError("matrixCodePublisher(for:with:scale:orientation:) has not been implemented")
+    }
+    func publishedMatrixCode(for tasks: [ErxTask], with size: CGSize) -> AnyPublisher<UIImage, Error> {
+        fatalError("publishedMatrixCode(for:with:) has not been implemented")
     }
 }
 struct UnimplementedErxTaskRepository: ErxTaskRepository {
@@ -155,11 +161,23 @@ struct UnimplementedErxTaskRepository: ErxTaskRepository {
     func countAllUnreadCommunications(for profile: ErxTask.Communication.Profile) -> AnyPublisher<Int, ErxRepositoryError> {
         fatalError("countAllUnreadCommunications(for:) has not been implemented")
     }
-    func loadRemoteChargeItems() -> AnyPublisher<[ErxChargeItem], ErxRepositoryError> {
+    func loadRemoteChargeItems() -> AnyPublisher<[ErxSparseChargeItem], ErxRepositoryError> {
         fatalError("loadRemoteChargeItems has not been implemented")
     }
     func fetchConsents() -> AnyPublisher<[ErxConsent], ErxRepositoryError> {
         fatalError("fetchConsents has not been implemented")
+    }
+    func loadLocal(by id: ErxSparseChargeItem.ID) -> AnyPublisher<ErxSparseChargeItem?, ErxRepositoryError> {
+        fatalError("loadLocal(by:) has not been implemented")
+    }
+    func loadLocalAll() -> AnyPublisher<[ErxSparseChargeItem], ErxRepositoryError> {
+        fatalError("loadLocalAll has not been implemented")
+    }
+    func save(chargeItems: [ErxSparseChargeItem]) -> AnyPublisher<Bool, ErxRepositoryError> {
+        fatalError("save(chargeItems:) has not been implemented")
+    }
+    func delete(chargeItems: [ErxSparseChargeItem]) -> AnyPublisher<Bool, ErxRepositoryError> {
+        fatalError("delete(chargeItems:) has not been implemented")
     }
     func grantConsent(_ consent: ErxConsent) -> AnyPublisher<ErxConsent?, ErxRepositoryError> {
         fatalError("grantConsent(_:) has not been implemented")
@@ -261,8 +279,8 @@ struct UnimplementedMatrixCodeGenerator: MatrixCodeGenerator {
     func generateImage(for contents: String, width: Int, height: Int) throws -> CGImage {
         fatalError("generateImage(for:width:height:) has not been implemented")
     }
-    func publishedMatrixCode(for string: String, with size: CGSize, scale: CGFloat = UIScreen.main.scale, orientation: UIImage.Orientation = .up) -> AnyPublisher<UIImage, Swift.Error> {
-        fatalError("publishedMatrixCode(for:with:scale:orientation:) has not been implemented")
+    func matrixCodePublisher(for string: String, with size: CGSize, scale: CGFloat = UIScreen.main.scale, orientation: UIImage.Orientation = .up) -> AnyPublisher<UIImage, Swift.Error> {
+        fatalError("matrixCodePublisher(for:with:scale:orientation:) has not been implemented")
     }
 }
 struct UnimplementedModelMigrating: ModelMigrating {
@@ -322,6 +340,9 @@ struct UnimplementedPharmacyRepository: PharmacyRepository {
     }
     func delete(pharmacies: [PharmacyLocation]) -> AnyPublisher<Bool, PharmacyRepositoryError> {
         fatalError("delete(pharmacies:) has not been implemented")
+    }
+    func loadAvsCertificates(for id: String) -> AnyPublisher<[X509], PharmacyRepositoryError> {
+        fatalError("loadAvsCertificates(for:) has not been implemented")
     }
     func save(pharmacy: PharmacyLocation) -> AnyPublisher<Bool, PharmacyRepositoryError> {
         fatalError("save(pharmacy:) has not been implemented")
@@ -729,6 +750,11 @@ struct UnimplementedUserSession: UserSession {
     }
 
     var erxTaskRepository: ErxTaskRepository {
+        get { fatalError("") }
+        set(value) { fatalError("") }
+    }
+
+    var ordersRepository: ErxTaskRepository {
         get { fatalError("") }
         set(value) { fatalError("") }
     }

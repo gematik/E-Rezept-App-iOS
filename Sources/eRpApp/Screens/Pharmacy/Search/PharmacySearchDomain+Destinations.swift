@@ -22,9 +22,11 @@ import Foundation
 extension PharmacySearchDomain {
     struct Destinations: ReducerProtocol {
         enum State: Equatable {
-            case selectProfile
+            // sourcery: AnalyticsScreen = pharmacySearch_detail
             case pharmacy(PharmacyDetailDomain.State)
+            // sourcery: AnalyticsScreen = pharmacySearch_filter
             case filter(PharmacySearchFilterDomain.State)
+            // sourcery: AnalyticsScreen = alert
             case alert(ErpAlertState<PharmacySearchDomain.Action>)
         }
 

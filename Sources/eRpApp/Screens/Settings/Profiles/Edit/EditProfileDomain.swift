@@ -48,7 +48,8 @@ struct EditProfileDomain: ReducerProtocol {
         var insurance: String?
         var can: String?
         var insuranceId: String?
-        var image: ProfilePicture
+        var image: ProfilePicture?
+        var userImageData: Data?
         var color: ProfileColor
         var token: IDPToken?
         var hasBiometricKeyID: Bool?
@@ -60,18 +61,22 @@ struct EditProfileDomain: ReducerProtocol {
 
     struct Destinations: ReducerProtocol {
         enum State: Equatable {
+            // sourcery: AnalyticsScreen = alert
             case alert(ErpAlertState<EditProfileDomain.Action>)
+            // sourcery: AnalyticsScreen = profile_token
             case token(IDPToken)
-            case linkedDevices
+            // sourcery: AnalyticsScreen = profile_auditEvents
             case auditEvents(AuditEventsDomain.State)
+            // sourcery: AnalyticsScreen = profile_registeredDevices
             case registeredDevices(RegisteredDevicesDomain.State)
-            case chargeItems(ChargeItemsDomain.State)
+            // sourcery: AnalyticsScreen = chargeItemList
+            case chargeItemList(ChargeItemListDomain.State)
         }
 
         enum Action: Equatable {
             case auditEventsAction(AuditEventsDomain.Action)
             case registeredDevicesAction(RegisteredDevicesDomain.Action)
-            case chargeItemsAction(ChargeItemsDomain.Action)
+            case chargeItemListAction(ChargeItemListDomain.Action)
         }
 
         var body: some ReducerProtocol<State, Action> {
@@ -100,10 +105,10 @@ struct EditProfileDomain: ReducerProtocol {
                     )
             }
             Scope(
-                state: /State.chargeItems,
-                action: /Action.chargeItemsAction
+                state: /State.chargeItemList,
+                action: /Action.chargeItemListAction
             ) {
-                ChargeItemsDomain()
+                ChargeItemListDomain()
             }
         }
     }
@@ -270,6 +275,7 @@ struct EditProfileDomain: ReducerProtocol {
             return .none
         case .delegate(.logout):
             state.token = nil
+            // [REQ:gemSpec_IDP_Frontend:A_20499-01#1] Call the SSO_TOKEN removal upon manual logout
             return profileSecureDataWiper.wipeSecureData(of: state.profileId).fireAndForget()
         case .login:
             userDataStore.set(selectedProfileId: state.profileId)
@@ -294,23 +300,20 @@ struct EditProfileDomain: ReducerProtocol {
                 state.destination = .token(token)
             }
             return .none
-        case .setNavigation(tag: .linkedDevices):
-            state.destination = .linkedDevices
-            return .none
         case .setNavigation(tag: .registeredDevices):
             state.destination = .registeredDevices(.init(profileId: state.profileId))
             return .none
         case .setNavigation(tag: .auditEvents):
             state.destination = .auditEvents(.init(profileUUID: state.profileId))
             return .none
-        case .setNavigation(tag: .chargeItems):
-            state.destination = .chargeItems(.init(profileId: state.profileId))
+        case .setNavigation(tag: .chargeItemList):
+            state.destination = .chargeItemList(.init(profileId: state.profileId))
             return .none
         case .setNavigation:
             return .none
         case .destination(.auditEventsAction),
              .destination(.registeredDevicesAction),
-             .destination(.chargeItemsAction):
+             .destination(.chargeItemListAction):
             return .none
         case .showDeleteBiometricPairingAlert:
             state.destination = .alert(AlertStates.deleteBiometricPairing)
@@ -338,7 +341,8 @@ extension EditProfileDomain.State {
          insurance: String?,
          can: String?,
          insuranceId: String?,
-         image: ProfilePicture,
+         image: ProfilePicture?,
+         userImageData _: Data?,
          color: ProfileColor,
          profileId: UUID,
          token: IDPToken? = nil,
@@ -372,6 +376,7 @@ extension EditProfileDomain.State {
         insurance = profile.insurance
         insuranceId = profile.insuranceId
         image = profile.image
+        userImageData = profile.userImageData
         color = profile.color
         insuranceType = profile.profile.insuranceType
     }
@@ -407,7 +412,7 @@ extension EditProfileDomain.State {
 extension EditProfileDomain.Environment {
     typealias Action = EditProfileDomain.Action
 
-    func subscribeToTokenUpdates(for profileId: UUID) -> Effect<Action, Never> {
+    func subscribeToTokenUpdates(for profileId: UUID) -> EffectTask<Action> {
         userSessionProvider.userSession(for: profileId).secureUserStore.token
             .receive(on: schedulers.main.animation())
             .map(Action.Response.tokenReceived)
@@ -415,7 +420,7 @@ extension EditProfileDomain.Environment {
             .eraseToEffect()
     }
 
-    func subscribeToCanUpdates(with profileId: UUID) -> Effect<Action, Never> {
+    func subscribeToCanUpdates(with profileId: UUID) -> EffectTask<Action> {
         userSessionProvider.userSession(for: profileId).secureUserStore.can
             .receive(on: schedulers.main.animation())
             .map(Action.Response.canReceived)
@@ -423,7 +428,7 @@ extension EditProfileDomain.Environment {
             .eraseToEffect()
     }
 
-    func subscribeToBiometricKeyIDUpdates(for profileId: UUID) -> Effect<Action, Never> {
+    func subscribeToBiometricKeyIDUpdates(for profileId: UUID) -> EffectTask<Action> {
         userSessionProvider.userSession(for: profileId).secureUserStore.keyIdentifier
             .receive(on: schedulers.main.animation())
             .map { $0 != nil }
@@ -435,7 +440,7 @@ extension EditProfileDomain.Environment {
     func updateProfile(
         with profileId: UUID,
         mutating: @escaping (inout Profile) -> Void
-    ) -> Effect<Result<Bool, LocalStoreError>, Never> {
+    ) -> EffectTask<Result<Bool, LocalStoreError>> {
         profileDataStore
             .update(profileId: profileId, mutating: mutating)
             .receive(on: schedulers.main)
@@ -444,7 +449,7 @@ extension EditProfileDomain.Environment {
 
     func deleteProfile(
         with profileId: UUID
-    ) -> Effect<Result<Bool, LocalStoreError>, Never> {
+    ) -> EffectTask<Result<Bool, LocalStoreError>> {
         let profile = Profile(name: "",
                               identifier: profileId,
                               insuranceId: nil,
@@ -469,7 +474,7 @@ extension EditProfileDomain.Environment {
                 .catchToEffect()
     }
 
-    func deleteBiometricPairing(for profileId: UUID) -> Effect<Action, Never> {
+    func deleteBiometricPairing(for profileId: UUID) -> EffectTask<Action> {
         let profileUserSession = userSessionProvider.userSession(for: profileId)
         let loginHandler = profileUserSession.biometricsIdpSessionLoginHandler
 
@@ -488,11 +493,11 @@ extension EditProfileDomain.Environment {
                 profileUserSession.secureUserStore.keyIdentifier // -> AnyPublisher<Data?, Never>
             )
             .first()
-            .flatMap { pairingToken, keyIdentifier -> Effect<Action, Never> in
+            .flatMap { pairingToken, keyIdentifier -> EffectTask<Action> in
                 guard let keyIdentifier = keyIdentifier,
                       let pairingToken = pairingToken,
                       let deviceIdentifier = Base64.urlSafe.encode(data: keyIdentifier, with: .none).utf8string else {
-                    return Effect(value: Action.relogin)
+                    return EffectTask(value: Action.relogin)
                 }
 
                 return profileUserSession.biometrieIdpSession.unregisterDevice(deviceIdentifier, token: pairingToken)

@@ -31,7 +31,6 @@ struct AppDomain: ReducerProtocol {
             var pharmacySearch: PharmacySearchDomain.State
             var orders: OrdersDomain.State
             var settingsState: SettingsDomain.State
-            var profileSelection: ProfileSelectionToolbarItemDomain.State
         }
 
         enum Action: Equatable {
@@ -39,7 +38,6 @@ struct AppDomain: ReducerProtocol {
             case pharmacySearch(action: PharmacySearchDomain.Action)
             case orders(action: OrdersDomain.Action)
             case settings(action: SettingsDomain.Action)
-            case profile(action: ProfileSelectionToolbarItemDomain.Action)
         }
 
         var body: some ReducerProtocol<State, Action> {
@@ -70,13 +68,6 @@ struct AppDomain: ReducerProtocol {
             ) {
                 SettingsDomain()
             }
-
-            Scope(
-                state: \.profileSelection,
-                action: /Action.profile(action:)
-            ) {
-                ProfileSelectionToolbarItemDomain()
-            }
         }
     }
 
@@ -84,12 +75,16 @@ struct AppDomain: ReducerProtocol {
     struct Destinations: ReducerProtocol {
         enum State: Equatable {
             // sourcery: AnalyticsState = subdomains.main
+            // sourcery: AnalyticsScreen = main
             case main
             // sourcery: AnalyticsState = subdomains.pharmacySearch
+            // sourcery: AnalyticsScreen = pharmacySearch
             case pharmacySearch
             // sourcery: AnalyticsState = subdomains.orders
+            // sourcery: AnalyticsScreen = orders
             case orders
             // sourcery: AnalyticsState = subdomains.settingsState
+            // sourcery: AnalyticsScreen = settings
             case settings
         }
 
@@ -131,34 +126,10 @@ struct AppDomain: ReducerProtocol {
         Reduce(self.core)
     }
 
-    // swiftlint:disable:next function_body_length cyclomatic_complexity
     func core(into state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
-        case .subdomains(.profile(action: .profileSelection(action: .close))):
-            switch state.destination {
-            case .main:
-                return Effect(value: .subdomains(.main(action: .setNavigation(tag: nil))))
-            case .orders:
-                return Effect(value: .subdomains(.orders(action: .setNavigation(tag: nil))))
-            case .pharmacySearch:
-                return Effect(value: .subdomains(.pharmacySearch(action: .setNavigation(tag: nil))))
-            default:
-                return .none
-            }
-        case .subdomains(.settings(action: .profiles(action: .destination(.editProfileAction(.confirmDeleteProfile))))),
-             .subdomains(
-                 .settings(
-                     action: .profiles(
-                         action: .destination(.newProfileAction(action: .response(.saveReceived(.success))))
-                     )
-                 )
-             ):
-            return .concatenate(
-                .init(value: .subdomains(.main(action: .setNavigation(tag: nil)))),
-                .init(value: .subdomains(.orders(action: .setNavigation(tag: nil)))),
-                .init(value: .subdomains(.pharmacySearch(action: .setNavigation(tag: nil))))
-            )
-        case .subdomains(.profile(action: .profileSelection(action: .selectProfile))):
+        case .subdomains(.settings(action: .destination(.editProfileAction(.confirmDeleteProfile)))),
+             .subdomains(.settings(action: .destination(.newProfileAction(.response(.saveReceived(.success)))))):
             return .concatenate(
                 .init(value: .subdomains(.main(action: .setNavigation(tag: nil)))),
                 .init(value: .subdomains(.orders(action: .setNavigation(tag: nil)))),
@@ -184,7 +155,7 @@ struct AppDomain: ReducerProtocol {
                 .countAllUnreadCommunications(for: ErxTask.Communication.Profile.all)
                 .receive(on: schedulers.main.animation())
                 .map(AppDomain.Action.newOrderMessageReceived)
-                .catch { _ in Effect.none }
+                .catch { _ in EffectTask.none }
                 .eraseToEffect()
         case let .newOrderMessageReceived(unreadOrderMessageCount):
             state.unreadOrderMessageCount = unreadOrderMessageCount
@@ -209,8 +180,7 @@ extension AppDomain {
                 main: MainDomain.Dummies.state,
                 pharmacySearch: PharmacySearchDomain.Dummies.stateStartView,
                 orders: OrdersDomain.Dummies.state,
-                settingsState: SettingsDomain.Dummies.state,
-                profileSelection: ProfileSelectionToolbarItemDomain.Dummies.state
+                settingsState: SettingsDomain.Dummies.state
             ),
             unreadOrderMessageCount: 0,
             isDemoMode: false

@@ -17,8 +17,8 @@
 	<key>CFBundlePackageType</key>
 	<string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.8.0</string>
-    <key>CFBundleVersion</key>
+	<string>1.9.0</string>
+	<key>CFBundleVersion</key>
 	<string>$(GEMATIK_BUNDLE_VERSION)</string>
 	<key>CSDisableAutostart</key>
 	<true/>
@@ -216,6 +216,10 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>PHPhotoLibraryPreventAutomaticLimitedAccessAlert</key>
+	<true/>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>E-Rezept needs access to your libary so that it can use your photos as profile pictures</string>
 	<key>NSCameraUsageDescription</key>
 	<string>E-Rezept needs access to your camera so that it can read your prescritions</string>
 	<key>NSFaceIDUsageDescription</key>

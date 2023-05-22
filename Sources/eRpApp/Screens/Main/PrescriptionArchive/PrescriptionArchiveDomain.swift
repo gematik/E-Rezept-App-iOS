@@ -43,6 +43,7 @@ struct PrescriptionArchiveDomain: ReducerProtocol {
 
     struct Destinations: ReducerProtocol {
         enum State: Equatable {
+            // sourcery: AnalyticsScreen = prescriptionDetail
             case prescriptionDetail(PrescriptionDetailDomain.State)
         }
 

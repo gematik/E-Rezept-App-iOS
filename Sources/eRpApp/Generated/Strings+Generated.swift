@@ -183,18 +183,22 @@ import SwiftUI
     internal static let cdwBtnHelpNextHint = StringAsset("cdw_btn_help_next_hint")
     /// Close dialog
     internal static let cdwBtnIntroCancelLabel = StringAsset("cdw_btn_intro_cancel_label")
+    /// insurance app
+    internal static let cdwBtnIntroFasttrack = StringAsset("cdw_btn_intro_fasttrack")
     /// health insurance app
     internal static let cdwBtnIntroFasttrackCenter = StringAsset("cdw_btn_intro_fasttrack_center")
     /// Or: Sign in with your 
     internal static let cdwBtnIntroFasttrackLeading = StringAsset("cdw_btn_intro_fasttrack_leading")
     /// .
     internal static let cdwBtnIntroFasttrackTrailing = StringAsset("cdw_btn_intro_fasttrack_trailing")
-    /// Order now
+    /// order now
     internal static let cdwBtnIntroFootnote = StringAsset("cdw_btn_intro_footnote")
     /// Find out more
     internal static let cdwBtnIntroMore = StringAsset("cdw_btn_intro_more")
     /// Let's get started
     internal static let cdwBtnIntroNext = StringAsset("cdw_btn_intro_next")
+    /// Medical card
+    internal static let cdwBtnIntroNfc = StringAsset("cdw_btn_intro_nfc")
     /// Close dialog
     internal static let cdwBtnNfuCancelLabel = StringAsset("cdw_btn_nfu_cancel_label")
     /// Back to the homepage
@@ -257,6 +261,10 @@ import SwiftUI
     internal static let cdwBtnRchelpNextHint = StringAsset("cdw_btn_rchelp_next_hint")
     /// Next
     internal static let cdwBtnSelContinue = StringAsset("cdw_btn_sel_continue")
+    /// Associated PIN required
+    internal static let cdwBtnSubintroNfc = StringAsset("cdw_btn_subintro_nfc")
+    /// NFC-enabled smartphone required
+    internal static let cdwBtnSubintroNonfc = StringAsset("cdw_btn_subintro_nonfc")
     /// Cancel scanning
     internal static let cdwCanScanBtnClose = StringAsset("cdw_can_scan_btn_close")
     /// Accept
@@ -358,11 +366,11 @@ import SwiftUI
     internal static let cdwTxtExtauthFallbackHeadline = StringAsset("cdw_txt_extauth_fallback_headline")
     /// Log in with app
     internal static let cdwTxtExtauthFallbackTitle = StringAsset("cdw_txt_extauth_fallback_title")
-    /// Unter diesem Suchbegriff konnten wir keine Ergebnisse finden.
+    /// We couldn't find any results with this search term.
     internal static let cdwTxtExtauthNoresults = StringAsset("cdw_txt_extauth_noresults")
-    /// Keine Ergebnisse
+    /// No results
     internal static let cdwTxtExtauthNoresultsTitle = StringAsset("cdw_txt_extauth_noresults_title")
-    /// Nach Name suchen
+    /// Search by name
     internal static let cdwTxtExtauthSearchprompt = StringAsset("cdw_txt_extauth_searchprompt")
     /// Didn't find what you were looking for? This list is constantly being expanded. Login with a medical card is already supported by every health insurance company.
     internal static let cdwTxtExtauthSelectionDescription = StringAsset("cdw_txt_extauth_selection_description")
@@ -400,6 +408,8 @@ import SwiftUI
     internal static let cdwTxtIntroRequirementPhone = StringAsset("cdw_txt_intro_requirement_phone")
     /// The PIN for the medical card
     internal static let cdwTxtIntroRequirementPin = StringAsset("cdw_txt_intro_requirement_pin")
+    /// How would you like to authenticate yourself?
+    internal static let cdwTxtIntroSubheader = StringAsset("cdw_txt_intro_subheader")
     /// iOS App: NFC read error
     internal static let cdwTxtMailSubject = StringAsset("cdw_txt_mail_subject")
     /// Unfortunately, your device does not meet the minimum requirements for logging into the e-prescription app. For secure authentication with your medical card, at least iOS 14 and an NFC chip are required.
@@ -705,9 +715,9 @@ import SwiftUI
     internal static let dtlTxtTaskId = StringAsset("dtl_txt_task_id")
     /// Details
     internal static let dtlTxtTitle = StringAsset("dtl_txt_title")
-    /// Hintergrundfarbe
+    /// Background colour
     internal static let editColorTxt = StringAsset("edit_color_txt")
-    /// Profilbild bearbeiten
+    /// Edit profile picture
     internal static let editPictureTxt = StringAsset("edit_picture_txt")
     /// iOS App: Error report
     internal static let emailSubjectFallback = StringAsset("email_subject_fallback")
@@ -729,7 +739,7 @@ import SwiftUI
     internal static let errSpecificI10808Title = StringAsset("err_specific_i10808_title")
     /// An error has occurred
     internal static let errTitleGeneric = StringAsset("err_title_generic")
-    /// Registration required
+    /// Re-login
     internal static let errTitleLoginNecessary = StringAsset("err_title_login_necessary")
     /// Error accessing the database
     internal static let errTxtDatabaseAccess = StringAsset("err_txt_database_access")
@@ -777,7 +787,7 @@ import SwiftUI
     internal static let erxTxtRedeemed = StringAsset("erx_txt_redeemed")
     /// Loading ...
     internal static let erxTxtRefreshLoading = StringAsset("erx_txt_refresh_loading")
-    /// Gescannt: %@
+    /// Scanned: %@
     internal static func erxTxtScannedAt(_ element1: String) -> StringAsset {
         StringAsset("erx_txt_scanned_at_%@", arguments: [element1])
     }
@@ -1373,19 +1383,19 @@ import SwiftUI
     internal static let kbvNormSizeNb = StringAsset("kbv_norm_size_nb")
     /// Other
     internal static let kbvNormSizeSonstiges = StringAsset("kbv_norm_size_sonstiges")
-    /// Eingelöste Rezepte
+    /// Redeemed prescriptions
     internal static let mainBtnArchivedPresc = StringAsset("main_btn_archived_presc")
-    /// Anmelden
+    /// Log in
     internal static let mainBtnLogin = StringAsset("main_btn_login")
-    /// Einlösen
+    /// Redeem
     internal static let mainBtnRedeem = StringAsset("main_btn_redeem")
-    /// Aktualisieren
+    /// Update
     internal static let mainBtnRefresh = StringAsset("main_btn_refresh")
-    /// ↓ Ziehen Sie den Screen nach unten, um zu aktualisieren.
+    /// ↓ Drag the screen down to refresh.
     internal static let mainEmptyTxtConnected = StringAsset("main_empty_txt_connected")
-    /// Fügen Sie Rezepte über den ⊕ Button in der rechten oberen Ecke hinzu.
+    /// Add recipes using the ⊕ button in the top right corner.
     internal static let mainEmptyTxtDisconnected = StringAsset("main_empty_txt_disconnected")
-    /// Keine Rezepte
+    /// No prescriptions
     internal static let mainEmptyTxtTitle = StringAsset("main_empty_txt_title")
     /// Cancel
     internal static let mainTxtPendingextauthCancel = StringAsset("main_txt_pendingextauth_cancel")
@@ -1407,9 +1417,9 @@ import SwiftUI
     internal static func mainTxtPendingextauthSuccessful(_ element1: String) -> StringAsset {
         StringAsset("main_txt_pendingextauth_successful_%@", arguments: [element1])
     }
-    /// Status: Verbindung zum Rezeptserver getrennt
+    /// Status: Disconnected from the recipe server
     internal static let mainTxtProfileStatusOffline = StringAsset("main_txt_profile_status_offline")
-    /// Status: Profil angemeldet
+    /// Status: Profile registered
     internal static let mainTxtProfileStatusOnline = StringAsset("main_txt_profile_status_online")
     /// Profile name
     internal static let mgmFallbackProfileName = StringAsset("mgm_fallback_profile_name")
@@ -1421,6 +1431,14 @@ import SwiftUI
     internal static let navBack = StringAsset("nav_back")
     /// Cancel
     internal static let navCancel = StringAsset("nav_cancel")
+    /// Please contact your health insurance company via the usual channels.
+    internal static let oderEgkContactNoSubtitle = StringAsset("oder_egk_contact_no_subtitle")
+    /// Contact is not possible via this app
+    internal static let oderEgkContactNoTitle = StringAsset("oder_egk_contact_no_title")
+    /// Your insurance company offers the following contact options
+    internal static let oderEgkContactSubtitle = StringAsset("oder_egk_contact_subtitle")
+    /// How would you like to contact your insurance company?
+    internal static let oderEgkContactTitle = StringAsset("oder_egk_contact_title")
     /// Connection interrupted
     internal static let ohcTxtNfcErrorInvalidatedDescription = StringAsset("ohc_txt_nfc_error_invalidated_description")
     /// The NFC connection was unexpectedly lost, please try again.
@@ -1437,6 +1455,22 @@ import SwiftUI
     internal static let ohcTxtNfcErrorUnsupportedDescription = StringAsset("ohc_txt_nfc_error_unsupported_description")
     /// Your device's NFC reader is not available.
     internal static let ohcTxtNfcErrorUnsupportedRecovery = StringAsset("ohc_txt_nfc_error_unsupported_recovery")
+    /// Next
+    internal static let onbAnaBtnNext = StringAsset("onb_ana_btn_next")
+    /// Detect errors and crashes.
+    internal static let onbAnaTxtCrash = StringAsset("onb_ana_Txt_crash")
+    /// We would like:
+    internal static let onbAnaTxtHeader = StringAsset("onb_ana_txt_header")
+    /// Would you like to help us improve the app?
+    internal static let onbAnaTxtTitle = StringAsset("onb_ana_txt_title")
+    /// Improve usability.
+    internal static let onbAnaTxtUsability = StringAsset("onb_ana_txt_usability")
+    /// All data is of course collected anonymously.
+    internal static let onbAnaTxtAnonymouse = StringAsset("onb_anaTxt_anonymouse")
+    /// You can modify this decision in the system settings at any time
+    internal static let onbAnaTxtChangeable = StringAsset("onb_anaTxt_changeable")
+    /// Save
+    internal static let onbAuthBtnPasswordSave = StringAsset("onb_auth_btn_password_save")
     /// Make it difficult for unauthorised users to access your data and make the app secure on launch.
     internal static let onbAuthTxtAltDescription = StringAsset("onb_auth_txt_alt_description")
     /// OR
@@ -1507,9 +1541,11 @@ import SwiftUI
     internal static let onbWelTxtExplanation = StringAsset("onb_wel_txt_explanation")
     /// Welcome to the e-prescription app
     internal static let onbWelTxtTitle = StringAsset("onb_wel_txt_title")
+    /// I have read and accept the privacy policy and terms of use.
+    internal static let onbLegBtnAccept = StringAsset("onbLegBtnAccept")
     /// Report error
     internal static let ordDetailBtnError = StringAsset("ord_detail_btn_error")
-    /// Link ihrer Apotheke
+    /// Link of your pharmacy
     internal static let ordDetailBtnLink = StringAsset("ord_detail_btn_link")
     /// Show collection code
     internal static let ordDetailBtnOnPremise = StringAsset("ord_detail_btn_onPremise")
@@ -1585,6 +1621,14 @@ import SwiftUI
     internal static let ordTxtTitle = StringAsset("ord_txt_title")
     /// How to identify an NFC-enabled medical card
     internal static let orderEgkBtnInfoButton = StringAsset("order_egk_btn_info_button")
+    /// PIN
+    internal static let orderEgkPin = StringAsset("order_egk_pin")
+    /// Pin & Map
+    internal static let orderEgkPinCard = StringAsset("order_egk_pin_card")
+    /// For this app you need a card and a corresponding PIN.
+    internal static let orderEgkServiceSubtitle = StringAsset("order_egk_service_subtitle")
+    /// What would you like to apply for?
+    internal static let orderEgkServiceTitle = StringAsset("order_egk_service_title")
     /// Email
     internal static let orderEgkTxtContactOptionMail = StringAsset("order_egk_txt_contact_option_mail")
     /// Phone
@@ -1665,11 +1709,11 @@ import SwiftUI
     internal static let phaDetailContact = StringAsset("pha_detail_contact")
     /// Please note that prescribed medication may also be subject to additional payments.
     internal static let phaDetailHintMessage = StringAsset("pha_detail_hint_message")
-    /// This pharmacy is not currently able to receive any e-prescriptions.
+    /// You cannot yet send e-prescriptions to this pharmacy.
     internal static let phaDetailHintNotErxReadyMessage = StringAsset("pha_detail_hint_not_erx_ready_message")
     /// Pharmacist stocks medicine
     internal static let phaDetailHintNotErxReadyPic = StringAsset("pha_detail_hint_not_erx_ready_pic")
-    /// Can be redeemed soon
+    /// Redeem on site only
     internal static let phaDetailHintNotErxReadyTitle = StringAsset("pha_detail_hint_not_erx_ready_title")
     /// Email address
     internal static let phaDetailMail = StringAsset("pha_detail_mail")
@@ -1837,107 +1881,185 @@ import SwiftUI
     internal static let proTxtSelectionProfileNotConnected = StringAsset("pro_txt_selection_profile_not_connected")
     /// Select profile
     internal static let proTxtSelectionTitle = StringAsset("pro_txt_selection_title")
-    /// Eingelöste Rezepte
+    /// child
+    internal static let profileTxtBaby = StringAsset("profile_txt_baby")
+    /// Blind man
+    internal static let profileTxtBlindMan = StringAsset("profile_txt_blind_man")
+    /// boy with map
+    internal static let profileTxtBoy = StringAsset("profile_txt_boy")
+    /// developer
+    internal static let profileTxtDeveloper = StringAsset("profile_txt_developer")
+    /// Doctor
+    internal static let profileTxtDoctor = StringAsset("profile_txt_doctor")
+    /// Doctor
+    internal static let profileTxtDoctorW = StringAsset("profile_txt_doctorW")
+    /// man with map
+    internal static let profileTxtMann = StringAsset("profile_txt_mann")
+    /// None selected
+    internal static let profileTxtNone = StringAsset("profile_txt_none")
+    /// Elderly doctor
+    internal static let profileTxtOldDoctor = StringAsset("profile_txt_old_Doctor")
+    /// Old man
+    internal static let profileTxtOldMan = StringAsset("profile_txt_old_man")
+    /// Older woman
+    internal static let profileTxtOldWoman = StringAsset("profile_txt_old_woman")
+    /// Pharmacist
+    internal static let profileTxtPharmacist = StringAsset("profile_txt_pharmacist")
+    /// Pharmacist with cellphone
+    internal static let profileTxtPharmacistHandy = StringAsset("profile_txt_pharmacist_handy")
+    /// woman on cellphone
+    internal static let profileTxtWoman = StringAsset("profile_txt_woman")
+    /// Redeemed prescriptions
     internal static let prscArchTxtTitle = StringAsset("prsc_arch_txt_title")
     /// This prescription will be redeemed for you as part of a treatment and cannot be deleted during treatment.
     internal static let prscDeleteNoteDirectAssignment = StringAsset("prsc_delete_note_direct_assignment")
+    /// Deletion not possible
+    internal static let prscDtlAlertTitleDeleteNotAllowed = StringAsset("prsc_dtl_alert_title_delete_not_allowed")
+    /// Delete
+    internal static let prscDtlBtnDelete = StringAsset("prsc_dtl_btn_delete")
     /// direct assignment
     internal static let prscDtlBtnDirectAssignment = StringAsset("prsc_dtl_btn_direct_assignment")
-    /// gesund.bund.de öffnen
+    /// Open gesund.bund.de
     internal static let prscDtlBtnFooter = StringAsset("prsc_dtl_btn_footer")
     /// Split
+    internal static let prscDtlBtnShare = StringAsset("prsc_dtl_btn_share")
+    /// Split
     internal static let prscDtlBtnShareTitle = StringAsset("prsc_dtl_btn_share_title")
-    /// Technische Informationen
+    /// Technical information
     internal static let prscDtlBtnTechnicalInformations = StringAsset("prsc_dtl_btn_technical_informations")
-    /// Arbeitsunfall
+    /// Accident at work
     internal static let prscDtlBtnWorkRelatedAccident = StringAsset("prsc_dtl_btn_work_related_accident")
-    /// Sie sind von der Zuzahlung von diesem Medikament befreit. Die Kosten für das Medikament übernimmt Ihre Krankenkasse.
+    /// You are exempt from the co-payment of this drug. Your health insurance will cover the cost of the medication.
     internal static let prscDtlDrCoPaymentNoDescription = StringAsset("prsc_dtl_dr_co_payment_no_description")
-    /// Von der Zuzahlung befreit
+    /// Exempted from co-payment
     internal static let prscDtlDrCoPaymentNoTitle = StringAsset("prsc_dtl_dr_co_payment_no_title")
-    /// Dieses Arzneimittel wurde im Rahmen einer künstlichen Befruchtung verordnet (gemäß §27 a SGB V). Die Kosten für dieses Medikament werden zu 50% von Ihrer Krankenkasse übernommen. Die anderen 50% müssen Sie selbst an die Apotheke bezahlen.
+    /// This drug was prescribed as part of an artificial insemination (according to §27 a SGB V). Your health insurance will cover 50%% of the cost of this medication. You have to pay the other 50%% to the pharmacy yourself. 
     /// 
-    /// In manchen Fällen wird Ihr Kostenanteil als Satzungsleistung von Ihrer Krankenkasse übernommen.
+    ///  In some cases, your share of the costs will be covered by your health insurance company as a statutory benefit.
     internal static let prscDtlDrCoPaymentPartialDescription = StringAsset("prsc_dtl_dr_co_payment_partial_description")
-    /// Teilweise zuzahlungspflichtige Medikamente
+    /// Some medications that are subject to co-payment
     internal static let prscDtlDrCoPaymentPartialTitle = StringAsset("prsc_dtl_dr_co_payment_partial_title")
-    /// Gesetzlich Versicherte müssen für verschreibungspflichtige Medikamente eine Zuzahlung von bis zu zehn Euro leisten.
+    /// Those with statutory health insurance must pay a co-payment of up to ten euros for prescription drugs. 
     /// 
-    /// Die Höhe der Zuzahlung ist abhängig von dem Preis Ihres Medikaments. Medikamente, die weniger als 5€ kosten müssen Sie selbst zahlen. Bei Medikamenten die teurer sind, müssen Sie zehn Prozent des Preises zuzahlen, mindestens aber 5€ und höchstens 10€.
+    ///  The amount of the co-payment depends on the price of your medication. You have to pay for medicines that cost less than €5 yourself. For medicines that are more expensive, you have to pay ten percent of the price, but at least €5 and no more than €10. 
     /// 
-    /// Grundsätzlich befreit von einer Zuzahlung sind Kinder und Jugendliche unter 18 Jahren.
+    ///  Children and young people under the age of 18 are generally exempt from co-payment. 
     /// 
-    /// Sollten Ihre jährlichen Kosten für Medikamente Ihre finanzielle Belastungsgrenze überschreiten können Sie sich von der Zuzahlung befreien lassen. Sprechen Sie dazu mit Ihrer Krankenversicherung.
+    ///  If your annual costs for medication exceed your financial limit, you can be exempted from the co-payment. Talk to your health insurer about this.
     internal static let prscDtlDrCoPaymentYesDescription = StringAsset("prsc_dtl_dr_co_payment_yes_description")
-    /// Zuzahlungspflichtige Medikamente
+    /// Drugs subject to co-payment
     internal static let prscDtlDrCoPaymentYesTitle = StringAsset("prsc_dtl_dr_co_payment_yes_title")
-    /// Manchmal ist Eile geboten. Einige Rezept können ohne die zusätzliche Zahlung einer Notdienstgebühr beispielsweise auch nachts in einer Apotheke eingelöst werden.
+    /// Sometimes hurry is required. For example, some prescriptions can be filled at night in a pharmacy without the additional payment of an emergency service fee.
     internal static let prscDtlDrEmergencyServiceFeeInfoDescription = StringAsset("prsc_dtl_dr_emergency_service_fee_info_description")
-    /// Notdienstgebühr
+    /// Emergency service fee
     internal static let prscDtlDrEmergencyServiceFeeInfoTitle = StringAsset("prsc_dtl_dr_emergency_service_fee_info_title")
-    /// In diesem Rezept werden nicht alle Informationen korrekt dargestellt. Sie können es aber dennoch in Ihrer Apotheke einlösen.
+    /// Not all information is presented correctly in this recipe. However, you can still redeem it in your pharmacy.
     internal static let prscDtlDrErrorInfoDescription = StringAsset("prsc_dtl_dr_error_info_description")
-    /// Rezept fehlerhaft
+    /// Recipe incorrect
     internal static let prscDtlDrErrorInfoTitle = StringAsset("prsc_dtl_dr_error_info_title")
-    /// Innerhalb dieses Zeitraums können Sie Ihr Rezept in einer beliebigen Apotheke mit einer Zuzahlung einlösen.
+    /// During this period, you can redeem your prescription in any pharmacy with an additional payment.
     internal static let prscDtlDrPrescriptionValidityInfoAcceptDateDescription = StringAsset("prsc_dtl_dr_prescription_validity_info_accept_date_description")
-    /// Innerhalb dieses Zeitraums können Sie das Rezept nach wie vor in einer Apotheke einlösen, müssen jedoch die Kaufsumme selbst übernehmen. Alternativ können Sie in Ihrer Praxis um eine erneute Ausstellung des Rezepts bitten.
+    /// During this period, you can still redeem the prescription in a pharmacy, but you have to pay the purchase price yourself. Alternatively, you can ask your practice to reissue the prescription.
     internal static let prscDtlDrPrescriptionValidityInfoExpireDateDescription = StringAsset("prsc_dtl_dr_prescription_validity_info_expire_date_description")
-    /// Wie lange ist dieses Rezept gültig?
+    /// How long is this prescription valid?
     internal static let prscDtlDrPrescriptionValidityInfoTitle = StringAsset("prsc_dtl_dr_prescription_validity_info_title")
-    /// Von einem Papierausdruck importierte Rezepte dürfen aus Sicherheitsgründen keine persönlichen oder medizinische Daten anzeigen.
+    /// For security reasons, prescriptions imported from a paper printout must not display any personal or medical data. 
     /// 
-    /// Melden Sie sich in dieser App mit Gesundheitskarte oder Versicherungs-App an, um alle im Rezept enthaltenen Informationen einzusehen.
+    ///  Sign in to this app with health card or insurance app to view all information contained in the prescription.
     internal static let prscDtlDrScannedPrescriptionInfoDescription = StringAsset("prsc_dtl_dr_scanned_prescription_info_description")
-    /// Gescanntes Rezept
+    /// Scanned prescription
     internal static let prscDtlDrScannedPrescriptionInfoTitle = StringAsset("prsc_dtl_dr_scanned_prescription_info_title")
-    /// Aufgrund gesetzlicher Vorgaben Ihrer Krankenkasse kann Ihnen eine Alternative mit dem selben Wirkstoff ausgehändigt werden.
+    /// Due to the legal requirements of your health insurance company, you can be given an alternative with the same active ingredient. 
     /// 
-    /// Medikamente können unterschiedlich aussehen und heißen, andere Preise und Hersteller haben, aber dennoch den gleichen Wirkstoff beinhalten. Für die Wirkung von Arzneimitteln im Körper sind vor allem der Wirkstoff selbst und die Dosierung ausschlaggebend. Oft bekommen Patienten und Patientinnen in der Apotheke ein anderes Medikament als das vom Arzt oder der Ärztin auf dem Rezept verordnete – vorausgesetzt, die Medikamente sind vergleichbar. Für den Wechsel kann es therapeutische und wirtschaftliche Gründe geben.
+    ///  Medicines can look and be called differently, have different prices and manufacturers, but still contain the same active ingredient. The active ingredient itself and the dosage are particularly important for the effect of drugs in the body. Patients in the pharmacy often get a different drug than the one prescribed by the doctor on the prescription - provided the drugs are comparable. There can be therapeutic and economic reasons for the change.
     internal static let prscDtlDrSubstitutionInfoDescription = StringAsset("prsc_dtl_dr_substitution_info_description")
-    /// Ersatzpräparat möglich
+    /// Substitute medication possible
     internal static let prscDtlDrSubstitutionInfoTitle = StringAsset("prsc_dtl_dr_substitution_info_title")
     /// Open gesund.bund.de
     internal static let prscDtlHntGesundBundDeBtn = StringAsset("prsc_dtl_hnt_gesund_bund_de_btn")
     /// You can find professionally verified information on illnesses, ICD codes and issues to do with prevention and healthcare in the National Health Portal.
     internal static let prscDtlHntGesundBundDeText = StringAsset("prsc_dtl_hnt_gesund_bund_de_text")
-    /// Adresse
+    /// Active Ingredient Name
+    internal static let prscDtlMedIngredientName = StringAsset("prsc_dtl_med_ingredient_name")
+    /// crafting instruction
+    internal static let prscDtlMedManufacturingInstructions = StringAsset("prsc_dtl_med_manufacturing_instructions")
+    /// Receive
+    internal static let prscDtlMedOvTxtDispensedHeader = StringAsset("prsc_dtl_med_ov_txt_dispensed_header")
+    /// prescribed
+    internal static let prscDtlMedOvTxtSubscribedHeader = StringAsset("prsc_dtl_med_ov_txt_subscribed_header")
+    /// potency and unity
+    internal static let prscDtlMedTxtAmount = StringAsset("prsc_dtl_med_txt_amount")
+    /// Drug Prescription Ordinance
+    internal static let prscDtlMedTxtAmvv = StringAsset("prsc_dtl_med_txt_amvv")
+    /// Medicines and dressings
+    internal static let prscDtlMedTxtAvm = StringAsset("prsc_dtl_med_txt_avm")
+    /// Expiry Date
+    internal static let prscDtlMedTxtBatchExpiresOn = StringAsset("prsc_dtl_med_txt_batch_expires_on")
+    /// Batch description
+    internal static let prscDtlMedTxtBatchLotNumber = StringAsset("prsc_dtl_med_txt_batch_lot_number")
+    /// Narcotics (BtM)
+    internal static let prscDtlMedTxtBtm = StringAsset("prsc_dtl_med_txt_btm")
+    /// Category
+    internal static let prscDtlMedTxtDrugCategory = StringAsset("prsc_dtl_med_txt_drug_category")
+    /// Vaccine
+    internal static let prscDtlMedTxtDrugVaccine = StringAsset("prsc_dtl_med_txt_drug_vaccine")
+    /// Submission date
+    internal static let prscDtlMedTxtHandedOverDate = StringAsset("prsc_dtl_med_txt_handed_over_date")
+    /// active ingredient number
+    internal static let prscDtlMedTxtIngredinetNumber = StringAsset("prsc_dtl_med_txt_ingredinet_number")
+    /// trade name
+    internal static let prscDtlMedTxtName = StringAsset("prsc_dtl_med_txt_name")
+    /// Note from your pharmacy
+    internal static let prscDtlMedTxtNote = StringAsset("prsc_dtl_med_txt_Note")
+    /// Other
+    internal static let prscDtlMedTxtOther = StringAsset("prsc_dtl_med_txt_other")
+    /// Packaging
+    internal static let prscDtlMedTxtPackaging = StringAsset("prsc_dtl_med_txt_packaging")
+    /// Address
     internal static let prscDtlPrTxtAddress = StringAsset("prsc_dtl_pr_txt_address")
-    /// E-Mail
+    /// e-mail
     internal static let prscDtlPrTxtEmail = StringAsset("prsc_dtl_pr_txt_email")
-    /// Access-Code
+    /// Access code
     internal static let prscDtlTiTxtAccessCode = StringAsset("prsc_dtl_ti_txt_access_code")
-    /// Task-ID
+    /// Task ID
     internal static let prscDtlTiTxtTaskId = StringAsset("prsc_dtl_ti_txt_task_id")
-    /// Technische Informationen
+    /// Technical information
     internal static let prscDtlTiTxtTitle = StringAsset("prsc_dtl_ti_txt_title")
-    /// Ursache
+    /// Caused
     internal static let prscDtlTxtAccidentReason = StringAsset("prsc_dtl_txt_accident_reason")
-    /// Unfall
+    /// Accident
     internal static let prscDtlTxtAccidentReasonGeneral = StringAsset("prsc_dtl_txt_accident_reason_general")
-    /// Arbeitsunfall
+    /// Accident at work
     internal static let prscDtlTxtAccidentReasonWork = StringAsset("prsc_dtl_txt_accident_reason_work")
-    /// Berufskrankheit
+    /// occupational disease
     internal static let prscDtlTxtAccidentReasonWorkRelated = StringAsset("prsc_dtl_txt_accident_reason_work_related")
-    /// Zuzahlung
+    /// additional payment
     internal static let prscDtlTxtAdditionalFee = StringAsset("prsc_dtl_txt_additional_fee")
-    /// Notdienstgebühr
+    /// date of issue
+    internal static let prscDtlTxtAuthoredOnDate = StringAsset("prsc_dtl_txt_authored_on_date")
+    /// Eligible according to BVG
+    internal static let prscDtlTxtBvg = StringAsset("prsc_dtl_txt_bvg")
+    /// Delivery Notes
+    internal static let prscDtlTxtDosageInstructions = StringAsset("prsc_dtl_txt_dosage_instructions")
+    /// Emergency service fee
     internal static let prscDtlTxtEmergencyServiceFee = StringAsset("prsc_dtl_txt_emergency_service_fee")
-    /// Fachlich geprüfte Informationen zu Krankheiten, ICD-Codes und zu Vorsorge- und Pflegethemen finden Sie im Nationalen Gesundheitsportal.
+    /// You can find professionally verified information on illnesses, ICD codes and issues to do with prevention and healthcare in the National Health Portal.
     internal static let prscDtlTxtFooter = StringAsset("prsc_dtl_txt_footer")
     /// Institution
     internal static let prscDtlTxtInstitution = StringAsset("prsc_dtl_txt_institution")
-    /// Versicherte Person
+    /// Insured person
     internal static let prscDtlTxtInsuredPerson = StringAsset("prsc_dtl_txt_insured_person")
-    /// Medikament
+    /// Medicine
     internal static let prscDtlTxtMedication = StringAsset("prsc_dtl_txt_medication")
-    /// Nein
+    /// multiple prescription
+    internal static let prscDtlTxtMultiPrescription = StringAsset("prsc_dtl_txt_multi_prescription")
+    /// No
     internal static let prscDtlTxtNo = StringAsset("prsc_dtl_txt_no")
-    /// Teilweise
+    /// Partially
     internal static let prscDtlTxtPartial = StringAsset("prsc_dtl_txt_partial")
-    /// Verschreibende Person
+    /// Prescriber
     internal static let prscDtlTxtPractitionerPerson = StringAsset("prsc_dtl_txt_practitioner_person")
-    /// Ja
+    /// Yes
     internal static let prscDtlTxtYes = StringAsset("prsc_dtl_txt_yes")
     /// Report
     internal static let prscFdBtnErrorBanner = StringAsset("prsc_fd_btn_error_banner")
@@ -2223,11 +2345,11 @@ import SwiftUI
     internal static let secTxtSystemRootDetectionFootnote = StringAsset("sec_txt_system_root_detection_footnote")
     /// Warning
     internal static let secTxtSystemRootDetectionHeadline = StringAsset("sec_txt_system_root_detection_headline")
-    /// For security reasons, this app should not be used on jailbroken devices.
+    /// This can be caused, for example, by manipulated devices or an activated developer mode. For security reasons, we do not recommend using the app on jailbroken devices.
     internal static let secTxtSystemRootDetectionMessage = StringAsset("sec_txt_system_root_detection_message")
     /// I acknowledge the increased risk and would like to continue anyway.
     internal static let secTxtSystemRootDetectionSelection = StringAsset("sec_txt_system_root_detection_selection")
-    /// This device may have been jailbroken
+    /// Your device may have reduced security
     internal static let secTxtSystemRootDetectionTitle = StringAsset("sec_txt_system_root_detection_title")
     /// Selected
     internal static let sectionTxtIsActiveValue = StringAsset("section_txt_is_active_value")
@@ -2249,38 +2371,38 @@ import SwiftUI
     internal static let stgBtnCardResetAdvance = StringAsset("stg_btn_card_reset_advance")
     /// OK
     internal static let stgBtnCardResetPinAlertOk = StringAsset("stg_btn_card_reset_pin_alert_ok")
-    /// Korrigieren
+    /// Correct
     internal static let stgBtnCardResetRcAlertAmend = StringAsset("stg_btn_card_reset_rc_alert_amend")
-    /// Abbrechen
+    /// Cancel
     internal static let stgBtnCardResetRcAlertCancel = StringAsset("stg_btn_card_reset_rc_alert_cancel")
     /// OK
     internal static let stgBtnCardResetRcAlertOk = StringAsset("stg_btn_card_reset_rc_alert_ok")
     /// Connect card
     internal static let stgBtnCardResetRead = StringAsset("stg_btn_card_reset_read")
-    /// Mehr anzeigen
-    internal static let stgBtnChargeItemMore = StringAsset("stg_btn_charge_item_more")
-    /// Einlösen
-    internal static let stgBtnChargeItemShare = StringAsset("stg_btn_charge_item_share")
-    /// Verbinden
-    internal static let stgBtnChargeItemsBottomBannerAuthenticateButton = StringAsset("stg_btn_charge_items_bottom_banner_authenticate_button")
-    /// Aktivieren
-    internal static let stgBtnChargeItemsBottomBannerGrantButton = StringAsset("stg_btn_charge_items_bottom_banner_grant_button")
-    /// Fertig
-    internal static let stgBtnChargeItemsEditingDone = StringAsset("stg_btn_charge_items_editing_done")
-    /// Auswählen
-    internal static let stgBtnChargeItemsEditingStart = StringAsset("stg_btn_charge_items_editing_start")
-    /// Aktivieren
-    internal static let stgBtnChargeItemsFeatureActivate = StringAsset("stg_btn_charge_items_feature_activate")
-    /// Deaktivieren
-    internal static let stgBtnChargeItemsFeatureDeactivate = StringAsset("stg_btn_charge_items_feature_deactivate")
-    /// Optionen
-    internal static let stgBtnChargeItemsMenu = StringAsset("stg_btn_charge_items_menu")
-    /// Gesamt: %@
-    internal static func stgBtnChargeItemsSum(_ element1: String) -> StringAsset {
-        StringAsset("stg_btn_charge_items_sum", arguments: [element1])
+    /// Connect
+    internal static let stgBtnChargeItemListBottomBannerAuthenticateButton = StringAsset("stg_btn_charge_item_list_bottom_banner_authenticate_button")
+    /// Enable
+    internal static let stgBtnChargeItemListBottomBannerGrantButton = StringAsset("stg_btn_charge_item_list_bottom_banner_grant_button")
+    /// Done
+    internal static let stgBtnChargeItemListEditingDone = StringAsset("stg_btn_charge_item_list_editing_done")
+    /// Select
+    internal static let stgBtnChargeItemListEditingStart = StringAsset("stg_btn_charge_item_list_editing_start")
+    /// Enable
+    internal static let stgBtnChargeItemListFeatureActivate = StringAsset("stg_btn_charge_item_list_feature_activate")
+    /// Disable
+    internal static let stgBtnChargeItemListFeatureDeactivate = StringAsset("stg_btn_charge_item_list_feature_deactivate")
+    /// options
+    internal static let stgBtnChargeItemListMenu = StringAsset("stg_btn_charge_item_list_menu")
+    /// Total: %@
+    internal static func stgBtnChargeItemListSum(_ element1: String) -> StringAsset {
+        StringAsset("stg_btn_charge_item_list_sum", arguments: [element1])
     }
-    /// Kostenbelege anzeigen
-    internal static let stgBtnEditProfileChargeItems = StringAsset("stg_btn_edit_profile_charge_items")
+    /// Show more
+    internal static let stgBtnChargeItemMore = StringAsset("stg_btn_charge_item_more")
+    /// Redeem
+    internal static let stgBtnChargeItemShare = StringAsset("stg_btn_charge_item_share")
+    /// Show expense receipts
+    internal static let stgBtnEditProfileChargeItemList = StringAsset("stg_btn_edit_profile_charge_item_list")
     /// Delete profile
     internal static let stgBtnEditProfileDelete = StringAsset("stg_btn_edit_profile_delete")
     /// Cancel
@@ -2396,7 +2518,7 @@ import SwiftUI
     internal static let stgTxtAlertMessageDemoModeOn = StringAsset("stg_txt_alert_message_demo_mode_on")
     /// Would you like a tour of the app?
     internal static let stgTxtAlertTitleDemoMode = StringAsset("stg_txt_alert_title_demo_mode")
-    /// Demo-Modus deaktiviert
+    /// Demo mode disabled
     internal static let stgTxtAlertTitleDemoModeOff = StringAsset("stg_txt_alert_title_demo_mode_off")
     /// Last updated: %@
     internal static func stgTxtAuditEventsLastUpdated(_ element1: String) -> StringAsset {
@@ -2526,64 +2648,64 @@ import SwiftUI
     internal static let stgTxtCardSectionHeader = StringAsset("stg_txt_card_section_header")
     /// unlock card
     internal static let stgTxtCardUnlockCard = StringAsset("stg_txt_card_unlock_card")
-    /// Ausgestellt am
+    /// Issued on
     internal static let stgTxtChargeItemCreator = StringAsset("stg_txt_charge_item_creator")
-    /// Eingelöst in
+    /// Receive
+    internal static let stgTxtChargeItemListAlertGrantConsentButtonActivate = StringAsset("stg_txt_charge_item_list_alert_grant_consent_button_activate")
+    /// Cancel
+    internal static let stgTxtChargeItemListAlertGrantConsentButtonCancel = StringAsset("stg_txt_charge_item_list_alert_grant_consent_button_cancel")
+    /// Your statements are also saved on the recipe server.
+    internal static let stgTxtChargeItemListAlertGrantConsentMessage = StringAsset("stg_txt_charge_item_list_alert_grant_consent_message")
+    /// receive bills
+    internal static let stgTxtChargeItemListAlertGrantConsentTitle = StringAsset("stg_txt_charge_item_list_alert_grant_consent_title")
+    /// Cancel
+    internal static let stgTxtChargeItemListAlertRevokeConsentButtonCancel = StringAsset("stg_txt_charge_item_list_alert_revoke_consent_button_cancel")
+    /// Disable
+    internal static let stgTxtChargeItemListAlertRevokeConsentButtonDeactivate = StringAsset("stg_txt_charge_item_list_alert_revoke_consent_button_deactivate")
+    /// This will delete all statements from this device and from the server.
+    internal static let stgTxtChargeItemListAlertRevokeConsentMessage = StringAsset("stg_txt_charge_item_list_alert_revoke_consent_message")
+    /// disable function
+    internal static let stgTxtChargeItemListAlertRevokeConsentTitle = StringAsset("stg_txt_charge_item_list_alert_revoke_consent_title")
+    /// To receive bills you must be connected to the server.
+    internal static let stgTxtChargeItemListBottomBannerAuthenticateMessage = StringAsset("stg_txt_charge_item_list_bottom_banner_authenticate_message")
+    /// Submit paperless statements to the tax office, aid agency or insurance company.
+    internal static let stgTxtChargeItemListBottomBannerGrantMessage = StringAsset("stg_txt_charge_item_list_bottom_banner_grant_message")
+    /// Loading receipts...
+    internal static let stgTxtChargeItemListBottomBannerLoadingMessage = StringAsset("stg_txt_charge_item_list_bottom_banner_loading_message")
+    /// No bills
+    internal static let stgTxtChargeItemListEmptyListReplacement = StringAsset("stg_txt_charge_item_list_empty_list_replacement")
+    /// Connect failed
+    internal static let stgTxtChargeItemListErrorAlertAuthenticateTitle = StringAsset("stg_txt_charge_item_list_error_alert_authenticate_title")
+    /// OK
+    internal static let stgTxtChargeItemListErrorAlertButtonOkay = StringAsset("stg_txt_charge_item_list_error_alert_button_okay")
+    /// Try again
+    internal static let stgTxtChargeItemListErrorAlertButtonRetry = StringAsset("stg_txt_charge_item_list_error_alert_button_retry")
+    /// Failed to load billing information
+    internal static let stgTxtChargeItemListErrorAlertFetchChargeItemListTitle = StringAsset("stg_txt_charge_item_list_error_alert_fetch_charge_item_list_title")
+    /// Activation failed
+    internal static let stgTxtChargeItemListErrorAlertGrantConsentTitle = StringAsset("stg_txt_charge_item_list_error_alert_grant_consent_title")
+    /// Deactivation failed
+    internal static let stgTxtChargeItemListErrorAlertRevokeConsentTitle = StringAsset("stg_txt_charge_item_list_error_alert_revoke_consent_title")
+    /// settlements
+    internal static let stgTxtChargeItemListTitle = StringAsset("stg_txt_charge_item_list_title")
+    /// Connect
+    internal static let stgTxtChargeItemListToolbarMenuAuthenticate = StringAsset("stg_txt_charge_item_list_toolbar_menu_authenticate")
+    /// Enable
+    internal static let stgTxtChargeItemListToolbarMenuGrant = StringAsset("stg_txt_charge_item_list_toolbar_menu_grant")
+    /// Disable
+    internal static let stgTxtChargeItemListToolbarMenuRevoke = StringAsset("stg_txt_charge_item_list_toolbar_menu_revoke")
+    /// redeemed in
     internal static let stgTxtChargeItemRedeemedAt = StringAsset("stg_txt_charge_item_redeemed_at")
-    /// Eingelöst am
+    /// redeemed on
     internal static let stgTxtChargeItemRedeemedOn = StringAsset("stg_txt_charge_item_redeemed_on")
-    /// Gesamtpreis
+    /// total price
     internal static let stgTxtChargeItemSum = StringAsset("stg_txt_charge_item_sum")
-    /// Empfangen
-    internal static let stgTxtChargeItemsAlertGrantConsentButtonActivate = StringAsset("stg_txt_charge_items_alert_grant_consent_button_activate")
-    /// Abbrechen
-    internal static let stgTxtChargeItemsAlertGrantConsentButtonCancel = StringAsset("stg_txt_charge_items_alert_grant_consent_button_cancel")
-    /// Ihre Abrechnungen werden zusätzlich auf dem Rezeptserver gespeichert.
-    internal static let stgTxtChargeItemsAlertGrantConsentMessage = StringAsset("stg_txt_charge_items_alert_grant_consent_message")
-    /// Abrechnungen empfangen
-    internal static let stgTxtChargeItemsAlertGrantConsentTitle = StringAsset("stg_txt_charge_items_alert_grant_consent_title")
-    /// Abbrechen
-    internal static let stgTxtChargeItemsAlertRevokeConsentButtonCancel = StringAsset("stg_txt_charge_items_alert_revoke_consent_button_cancel")
-    /// Deaktivieren
-    internal static let stgTxtChargeItemsAlertRevokeConsentButtonDeactivate = StringAsset("stg_txt_charge_items_alert_revoke_consent_button_deactivate")
-    /// Hierdurch werden alle Abrechnungen von diesem Gerät und vom Server gelöscht.
-    internal static let stgTxtChargeItemsAlertRevokeConsentMessage = StringAsset("stg_txt_charge_items_alert_revoke_consent_message")
-    /// Funktion deaktivieren
-    internal static let stgTxtChargeItemsAlertRevokeConsentTitle = StringAsset("stg_txt_charge_items_alert_revoke_consent_title")
-    /// Um Abrechnungen zu empfangen, müssen Sie mit dem Server verbunden sein.
-    internal static let stgTxtChargeItemsBottomBannerAuthenticateMessage = StringAsset("stg_txt_charge_items_bottom_banner_authenticate_message")
-    /// Reichen Sie Abrechnungen papierlos bei Finanzamt, Beihilfestelle oder Versicherung ein.
-    internal static let stgTxtChargeItemsBottomBannerGrantMessage = StringAsset("stg_txt_charge_items_bottom_banner_grant_message")
-    /// Kostenbelege werden geladen...
-    internal static let stgTxtChargeItemsBottomBannerLoadingMessage = StringAsset("stg_txt_charge_items_bottom_banner_loading_message")
-    /// Keine Abrechnungen
-    internal static let stgTxtChargeItemsEmptyListReplacement = StringAsset("stg_txt_charge_items_empty_list_replacement")
-    /// Verbinden fehlgeschlagen
-    internal static let stgTxtChargeItemsErrorAlertAuthenticateTitle = StringAsset("stg_txt_charge_items_error_alert_authenticate_title")
-    /// Okay
-    internal static let stgTxtChargeItemsErrorAlertButtonOkay = StringAsset("stg_txt_charge_items_error_alert_button_okay")
-    /// Erneut versuchen
-    internal static let stgTxtChargeItemsErrorAlertButtonRetry = StringAsset("stg_txt_charge_items_error_alert_button_retry")
-    /// Laden der Abrechnungsinformationen fehlgeschlagen
-    internal static let stgTxtChargeItemsErrorAlertFetchChargeItemsTitle = StringAsset("stg_txt_charge_items_error_alert_fetch_charge_items_title")
-    /// Aktivieren fehlgeschlagen
-    internal static let stgTxtChargeItemsErrorAlertGrantConsentTitle = StringAsset("stg_txt_charge_items_error_alert_grant_consent_title")
-    /// Deaktivieren fehlgeschlagen
-    internal static let stgTxtChargeItemsErrorAlertRevokeConsentTitle = StringAsset("stg_txt_charge_items_error_alert_revoke_consent_title")
-    /// Abrechnungen
-    internal static let stgTxtChargeItemsTitle = StringAsset("stg_txt_charge_items_title")
-    /// Verbinden
-    internal static let stgTxtChargeItemsToolbarMenuAuthenticate = StringAsset("stg_txt_charge_items_toolbar_menu_authenticate")
-    /// Aktivieren
-    internal static let stgTxtChargeItemsToolbarMenuGrant = StringAsset("stg_txt_charge_items_toolbar_menu_grant")
-    /// Deaktivieren
-    internal static let stgTxtChargeItemsToolbarMenuRevoke = StringAsset("stg_txt_charge_items_toolbar_menu_revoke")
     /// Demo mode
     internal static let stgTxtDemoMode = StringAsset("stg_txt_demo_mode")
     /// Background colour
     internal static let stgTxtEditProfileBackgroundSectionTitle = StringAsset("stg_txt_edit_profile_background_section_title")
-    /// Kostenbelege
-    internal static let stgTxtEditProfileChargeItemsSectionTitle = StringAsset("stg_txt_edit_profile_charge_items_section_title")
+    /// expense receipts
+    internal static let stgTxtEditProfileChargeItemListSectionTitle = StringAsset("stg_txt_edit_profile_charge_item_list_section_title")
     /// Profile name
     internal static let stgTxtEditProfileDefaultName = StringAsset("stg_txt_edit_profile_default_name")
     /// This will erase all data on this device. Your prescriptions in the health network will be retained.
@@ -2596,7 +2718,7 @@ import SwiftUI
     internal static let stgTxtEditProfileDeletePairingError = StringAsset("stg_txt_edit_profile_delete_pairing_error")
     /// You will no longer automatically receive new prescriptions.
     internal static let stgTxtEditProfileDeletePairingMessage = StringAsset("stg_txt_edit_profile_delete_pairing_message")
-    /// Zugangsdaten löschen
+    /// Delete access data
     internal static let stgTxtEditProfileDeletePairingTitle = StringAsset("stg_txt_edit_profile_delete_pairing_title")
     /// The name field must not be empty
     internal static let stgTxtEditProfileEmptyNameErrorMessage = StringAsset("stg_txt_edit_profile_empty_name_error_message")
@@ -2716,11 +2838,11 @@ import SwiftUI
     internal static let tabTxtSettings = StringAsset("tab_txt_settings")
     /// Vielleicht später
     internal static let wlcdBtnDecline = StringAsset("wlcd_btn_decline")
-    /// Anmelden
+    /// Log in
     internal static let wlcdBtnLogin = StringAsset("wlcd_btn_login")
-    /// Um Rezepte digital von Ihrer Praxis zu empfangen, müssen Sie angemeldet sein.
+    /// You must be logged in to receive digital prescriptions from your practice.
     internal static let wlcdTxtFooter = StringAsset("wlcd_txt_footer")
-    /// Rezepte digital empfangen?
+    /// Receive recipes digitally?
     internal static let wlcdTxtHeader = StringAsset("wlcd_txt_header")
   }
   // swiftlint:enable function_parameter_count identifier_name line_length type_body_length

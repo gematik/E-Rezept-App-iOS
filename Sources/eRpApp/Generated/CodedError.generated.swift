@@ -1,4 +1,4 @@
-// Generated using Sourcery 2.0.1 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.0.2 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 
 import AVS
@@ -53,6 +53,23 @@ extension AVSError.InternalError: CodedError {
         switch self {
             case .cmsContentCreation:
                 return "i-54101"
+        }
+    }
+    var erpErrorCodeList: [String] {
+        switch self {
+            default:
+                return [erpErrorCode]
+        }
+    }
+}
+
+extension AVSTransactionCoreDataStore.Error: CodedError {
+    var erpErrorCode: String {
+        switch self {
+            case .noMatchingEntity:
+                return "i-5811"
+            case .internalError:
+                return "i-5812"
         }
     }
     var erpErrorCodeList: [String] {
@@ -256,7 +273,7 @@ extension ChargeItemDomainServiceFetchResult.Error: CodedError {
     }
 }
 
-extension ChargeItemsDomainServiceDeleteResult.Error: CodedError {
+extension ChargeItemListDomainServiceDeleteResult.Error: CodedError {
     var erpErrorCode: String {
         switch self {
             case .localStore:
@@ -275,7 +292,7 @@ extension ChargeItemsDomainServiceDeleteResult.Error: CodedError {
     }
 }
 
-extension ChargeItemsDomainServiceGrantResult.Error: CodedError {
+extension ChargeItemListDomainServiceGrantResult.Error: CodedError {
     var erpErrorCode: String {
         switch self {
             case .localStore:
@@ -304,7 +321,7 @@ extension ChargeItemsDomainServiceGrantResult.Error: CodedError {
     }
 }
 
-extension ChargeItemsDomainServiceRevokeResult.Error: CodedError {
+extension ChargeItemListDomainServiceRevokeResult.Error: CodedError {
     var erpErrorCode: String {
         switch self {
             case .localStore:
@@ -883,6 +900,21 @@ extension KeychainAccessHelperError: CodedError {
             case .keyChainError:
                 return [erpErrorCode]
             default:
+                return [erpErrorCode]
+        }
+    }
+}
+
+extension LocalStorageBundleParsingError: CodedError {
+    var erpErrorCode: String {
+        switch self {
+            case .parseError:
+                return "i-59001"
+        }
+    }
+    var erpErrorCodeList: [String] {
+        switch self {
+            case .parseError:
                 return [erpErrorCode]
         }
     }
@@ -1711,19 +1743,19 @@ extension TrustStoreError.InternalError: CodedError {
     var erpErrorCode: String {
         switch self {
             case .loadOCSPCheckedTrustStoreUnexpectedNil:
-                return "i-56190-20-02001"
+                return "i-5611"
             case .loadCertListFromServerUnexpectedNil:
-                return "i-56190-20-02002"
+                return "i-5612"
             case .loadOCSPListFromServerUnexpectedNil:
-                return "i-56190-20-02003"
+                return "i-5613"
             case .trustStoreCertListUnexpectedNil:
-                return "i-56190-20-02004"
+                return "i-5614"
             case .loadOCSPResponsesUnexpectedNil:
-                return "i-56190-20-02005"
+                return "i-5615"
             case .missingSignerForEECertificate:
-                return "i-56190-20-02006"
+                return "i-5616"
             case .notImplemented:
-                return "i-56190-20-02007"
+                return "i-5617"
         }
     }
     var erpErrorCodeList: [String] {

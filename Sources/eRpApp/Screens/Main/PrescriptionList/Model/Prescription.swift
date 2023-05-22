@@ -22,7 +22,7 @@ import SwiftUI
 
 /// `Prescription` acts as a view model for an `ErxTask` to better fit the presentation logic
 @dynamicMemberLookup
-struct Prescription: Equatable, Hashable, Identifiable {
+struct Prescription: Equatable, Identifiable {
     enum Status: Equatable {
         case open(until: String)
         case redeem(at: String) // swiftlint:disable:this identifier_name
@@ -39,11 +39,10 @@ struct Prescription: Equatable, Hashable, Identifiable {
     }
 
     let erxTask: ErxTask
-    let prescribedMedication: Medication?
-    let actualMedications: [Medication]
     // [REQ:gemSpec_FD_eRp:A_21267] direct assignment
     var type: PrescriptionType = .regular
     let viewStatus: Status
+    let authoredOnDate: String?
 
     enum PrescriptionType {
         case scanned
@@ -72,24 +71,16 @@ struct Prescription: Equatable, Hashable, Identifiable {
             type = .scanned
         }
 
+        authoredOnDate = dateFormatter.date(erxTask.authoredOn)
         self.erxTask = erxTask
-        actualMedications = erxTask.medicationDispenses.map(Medication.from(medicationDispense:))
 
-        if let taskMedication = erxTask.medication {
-            prescribedMedication = Medication.from(
-                medication: taskMedication,
-                dosageInstructions: erxTask.medicationRequest.dosageInstructions,
-                redeemedOn: erxTask.redeemedOn
-            )
-        } else {
-            prescribedMedication = nil
-        }
-        viewStatus = Self.evaluateViewStatus(for: erxTask,
-                                             type: type,
-                                             whenHandedOver: actualMedications.first?
-                                                 .handedOver ?? prescribedMedication?.handedOver,
-                                             date: date,
-                                             uiDateFormatter: dateFormatter)
+        viewStatus = Self.evaluateViewStatus(
+            for: erxTask,
+            type: type,
+            whenHandedOver: erxTask.medicationDispenses.first?.whenHandedOver ?? erxTask.redeemedOn,
+            date: date,
+            uiDateFormatter: dateFormatter
+        )
     }
 
     subscript<A>(dynamicMember keyPath: KeyPath<ErxTask, A>) -> A {
@@ -148,7 +139,7 @@ struct Prescription: Equatable, Hashable, Identifiable {
     }
 
     var title: String {
-        if let name = prescribedMedication?.displayName {
+        if let name = erxTask.medication?.displayName {
             return name
         } else if case .error = viewStatus {
             return L10n.prscTxtFallbackName.text
@@ -209,7 +200,7 @@ struct Prescription: Equatable, Hashable, Identifiable {
         return erxTask.communications.isEmpty && erxTask.avsTransactions.isEmpty
     }
 
-    var isDeleteabel: Bool {
+    var isDeleteable: Bool {
         // [REQ:gemSpec_FD_eRp:A_22102] prevent deletion of tasks with flowtype 169 while not completed
         guard type != .directAssignment
         else { return erxTask.status == .completed }
@@ -382,31 +373,8 @@ extension Prescription {
     }
 }
 
-extension Prescription: Comparable {
-    public static func <(lhs: Prescription, rhs: Prescription) -> Bool {
-        compare(lhs: lhs.prescribedMedication, rhs: rhs.prescribedMedication) {
-            compare(lhs: lhs.actualMedications.first, rhs: rhs.actualMedications.first) {
-                compare(lhs: lhs.expiresOn, rhs: rhs.expiresOn) {
-                    false
-                }
-            }
-        }
-    }
-
-    public static func compare<T: Comparable>(lhs: T?, rhs: T?, onEqual: () -> Bool) -> Bool {
-        switch (lhs, rhs) {
-        case (nil, nil): return onEqual()
-        case (_, nil): return true
-        case (nil, _): return false
-        case let (.some(lhsValue), .some(rhsValue)):
-            if lhsValue != rhsValue {
-                return lhsValue < rhsValue
-            }
-            return onEqual()
-        }
-    }
-
-    public func hash(into hasher: inout Hasher) {
+extension Prescription: Hashable {
+    func hash(into hasher: inout Hasher) {
         hasher.combine(erxTask.identifier)
     }
 }
@@ -414,6 +382,7 @@ extension Prescription: Comparable {
 extension Prescription {
     enum Dummies {
         static let prescriptionReady = Prescription(erxTask: ErxTask.Demo.erxTaskReady)
+        static let prescriptionRedeemed = Prescription(erxTask: ErxTask.Demo.erxTaskRedeemed)
         static let prescriptionDirectAssignment = Prescription(erxTask: ErxTask.Demo.erxTaskDirectAssignment)
         static let prescriptionError = Prescription(erxTask: ErxTask.Demo.erxTaskError)
         static let scanned = Prescription(erxTask: ErxTask.Demo.erxTaskScanned1)

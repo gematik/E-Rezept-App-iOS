@@ -25,7 +25,7 @@ extension ModelsR4.Bundle {
     ///
     /// - Returns: Array with all found charge item ID's
     /// - Throws: `ModelsR4.Bundle.Error`
-    public func parseErxChargeItemIDs() throws -> [String] {
+    func parseErxChargeItemIDs() throws -> [String] {
         // Collect and parse all ErxTask id's
         try entry?.compactMap {
             guard let chargeItem = $0.resource?.get(if: ModelsR4.ChargeItem.self) else {
@@ -42,7 +42,7 @@ extension ModelsR4.Bundle {
     ///
     /// - Returns: A ErxChargeItem or nil
     /// - Throws: `ModelsR4.Bundle.Error`
-    public func parseErxChargeItem( // swiftlint:disable:this function_body_length
+    func parseErxChargeItem( // swiftlint:disable:this function_body_length
         id: ErxChargeItem.ID,
         with fhirData: Data
     ) throws -> ErxChargeItem? {
@@ -127,6 +127,7 @@ extension ModelsR4.Bundle {
             identifier: chargeItemIdentifier,
             fhirData: fhirData,
             enteredDate: enteredDate,
+            accessCode: chargeItem.accessCode,
             medication: prescriptionBundle.parseErxMedication(),
             medicationRequest: prescriptionBundle.parseErxMedicationRequest(),
             patient: ErxPatient(
@@ -172,6 +173,14 @@ extension ModelsR4.Bundle {
     }
 }
 
+extension ModelsR4.ChargeItem {
+    var accessCode: String? {
+        identifier?.first { identifier in
+            Workflow.Key.accessCodeKeys.contains { $0.value == identifier.system?.value?.url.absoluteString }
+        }?.value?.value?.string
+    }
+}
+
 extension ModelsR4.Bundle {
     var parseErxSignature: ErxSignature? {
         guard let whenDate = signature?.when.value?.description
@@ -188,26 +197,22 @@ extension ModelsR4.Bundle {
         from chargeItem: ModelsR4.ChargeItem,
         with bundleKey: [ErpCharge.Version: String]
     ) throws -> ModelsR4.Bundle {
-        guard let prescriptionReferenceId = chargeItem.supportingInformation?
+        guard let reference = chargeItem.supportingInformation?
             .first(where: { information in
                 bundleKey.contains {
                     $0.value == information.display?.value?.string
                 }
-            })?.reference?.value?.string
-            .split(separator: "/")
-            .last?
-            .description
-            .asFHIRStringPrimitive()
+            })?.reference
         else {
-            throw RemoteStorageBundleParsingError.parseError("Could not parse prescription bundle reference id.")
+            throw RemoteStorageBundleParsingError.parseError("Could not parse bundle reference with key: \(bundleKey).")
         }
 
-        guard let prescriptionBundle = findResource(with: prescriptionReferenceId, type: ModelsR4.Bundle.self)
+        guard let bundle = findResource(with: reference, type: ModelsR4.Bundle.self)
         else {
-            throw RemoteStorageBundleParsingError.parseError("Could not parse prescription bundle.")
+            throw RemoteStorageBundleParsingError.parseError("Could not parse bundle with key: \(bundleKey).")
         }
 
-        return prescriptionBundle
+        return bundle
     }
 }
 
@@ -242,6 +247,7 @@ extension ModelsR4.Invoice {
             return DavInvoice.ChargeableItem(
                 factor: factor,
                 price: price,
+                description: $0.description,
                 pzn: $0.pzn,
                 ta1: $0.ta1,
                 hmrn: $0.hmrn
@@ -251,6 +257,10 @@ extension ModelsR4.Invoice {
 }
 
 extension ModelsR4.InvoiceLineItem {
+    var description: String? {
+        chargeItemCodableConcept?.text?.value?.string
+    }
+
     var pzn: String? {
         coding(for: Dispense.Key.ChargeItem.pzn)?.code?.value?.string
     }
@@ -263,14 +273,18 @@ extension ModelsR4.InvoiceLineItem {
         coding(for: Dispense.Key.ChargeItem.hmnr)?.code?.value?.string
     }
 
-    func coding(for keys: [Dispense.Version: String]) -> ModelsR4.Coding? {
+    var chargeItemCodableConcept: CodeableConcept? {
         if case let ChargeItemX.codeableConcept(item) = chargeItem {
-            return item.coding?.first { coding in
-                keys.contains {
-                    $0.value == coding.system?.value?.url.absoluteString
-                }
-            }
+            return item
         }
         return nil
+    }
+
+    func coding(for keys: [Dispense.Version: String]) -> ModelsR4.Coding? {
+        chargeItemCodableConcept?.coding?.first { coding in
+            keys.contains {
+                $0.value == coding.system?.value?.url.absoluteString
+            }
+        }
     }
 }

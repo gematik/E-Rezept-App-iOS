@@ -41,7 +41,7 @@ extension DependencyValues {
 public struct ErxTaskRepositoryDependency: DependencyKey {
     public static let liveValue: ErxTaskRepository? = nil
 
-    public static var previewValue: ErxTaskRepository? = DemoErxTaskRepository(secureUserStore: MemoryStorage())
+    public static var previewValue: ErxTaskRepository? = DummyErxTaskRepository()
 
     public static var testValue: ErxTaskRepository? = UnimplementedErxTaskRepository()
 }
@@ -50,6 +50,22 @@ extension DependencyValues {
     var erxTaskRepository: ErxTaskRepository {
         get { self[ErxTaskRepositoryDependency.self] ?? changeableUserSessionContainer.userSession.erxTaskRepository }
         set { self[ErxTaskRepositoryDependency.self] = newValue }
+    }
+}
+
+// sourcery: skipUnimplmented
+public struct OrdersRepositoryDependency: DependencyKey {
+    public static let liveValue: ErxTaskRepository? = nil
+
+    public static var previewValue: ErxTaskRepository? = DummyErxTaskRepository()
+
+    public static var testValue: ErxTaskRepository? = UnimplementedErxTaskRepository()
+}
+
+extension DependencyValues {
+    var ordersRepository: ErxTaskRepository {
+        get { self[OrdersRepositoryDependency.self] ?? changeableUserSessionContainer.userSession.ordersRepository }
+        set { self[OrdersRepositoryDependency.self] = newValue }
     }
 }
 
@@ -254,6 +270,7 @@ import Pharmacy
 struct PharmacyRepositoryDependency: DependencyKey {
     static let liveValue: PharmacyRepository? = nil
     static let previewValue: PharmacyRepository? = nil
+    static let testValue: PharmacyRepository? = UnimplementedPharmacyRepository()
 }
 
 extension DependencyValues {

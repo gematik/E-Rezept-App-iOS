@@ -27,11 +27,11 @@ import UIKit
 
 enum CardWallReadCardHelpDomain {
     enum State: Int {
-        // sourcery: AnalyticsScreen = cardWallReadCardHelp1
+        // sourcery: AnalyticsScreen = troubleShooting_readCardHelp1
         case first
-        // sourcery: AnalyticsScreen = cardWallReadCardHelp2
+        // sourcery: AnalyticsScreen = troubleShooting_readCardHelp2
         case second
-        // sourcery: AnalyticsScreen = cardWallReadCardHelp3
+        // sourcery: AnalyticsScreen = troubleShooting_readCardHelp3
         case third
     }
 }
@@ -41,7 +41,7 @@ struct CardWallReadCardDomain: ReducerProtocol {
 
     /// Provides an Effect that need to run whenever the state of this Domain is reset to nil
     static func cleanup<T>() -> EffectTask<T> {
-        Effect.cancel(id: CardWallReadCardDomain.Token.self)
+        .cancel(id: CardWallReadCardDomain.Token.self)
     }
 
     enum Token: CaseIterable, Hashable {
@@ -61,6 +61,7 @@ struct CardWallReadCardDomain: ReducerProtocol {
 
     struct Destinations: ReducerProtocol {
         enum State: Equatable {
+            // sourcery: AnalyticsScreen = alert
             case alert(ErpAlertState<CardWallReadCardDomain.Action>)
             // Screen tracking handled inside
             case help(CardWallReadCardHelpDomain.State)
@@ -212,11 +213,11 @@ struct CardWallReadCardDomain: ReducerProtocol {
 
             let environment = environment
 
-            return Effect.concatenate(
-                Effect.cancel(id: Token.idpChallenge),
+            return .concatenate(
+                .cancel(id: Token.idpChallenge),
                 environment.sessionProvider.userDataStore(for: state.profileId).can
                     .first()
-                    .flatMap { can -> Effect<Action, Never> in
+                    .flatMap { can -> EffectTask<Action> in
                         guard let can = can else {
                             return Just(Action
                                 .response(.state(State.Output.retrievingChallenge(.error(.inputError(.missingCAN))))))
@@ -341,7 +342,7 @@ extension CardWallReadCardDomain.Environment {
         insurance: String?,
         givenName: String?,
         familyName: String?
-    ) -> Effect<CardWallReadCardDomain.Action, Never> {
+    ) -> EffectTask<CardWallReadCardDomain.Action> {
         profileDataStore.update(profileId: profileId) { profile in
             profile.insuranceId = insuranceId
             // This is needed to ensure proper pKV faking (can be removed when the debug option to fake pKV is removed.)
@@ -363,8 +364,8 @@ extension CardWallReadCardDomain.Environment {
     }
 
     // [REQ:gemSpec_eRp_FdV:A_20172]
-    func idpChallengePublisher(for profileID: UUID) -> Effect<CardWallReadCardDomain.Action, Never> {
-        Effect<CardWallReadCardDomain.Action, Never>.run { subscriber -> Cancellable in
+    func idpChallengePublisher(for profileID: UUID) -> EffectTask<CardWallReadCardDomain.Action> {
+        EffectTask<CardWallReadCardDomain.Action>.run { subscriber -> Cancellable in
             sessionProvider
                 .idpSession(for: profileID)
                 .requestChallenge()
@@ -387,8 +388,8 @@ extension CardWallReadCardDomain.Environment {
     func signChallengeWithNFCCard(can: String,
                                   pin: String,
                                   profileID: UUID,
-                                  challenge: IDPChallengeSession) -> Effect<CardWallReadCardDomain.Action, Never> {
-        Effect<CardWallReadCardDomain.Action, Never>.run { subscriber -> Cancellable in
+                                  challenge: IDPChallengeSession) -> EffectTask<CardWallReadCardDomain.Action> {
+        .run { subscriber -> Cancellable in
 
             subscriber.send(.response(.state(.signingChallenge(.loading))))
 
@@ -418,8 +419,8 @@ extension CardWallReadCardDomain.Environment {
                                      pin _: String,
                                      profileID: UUID,
                                      registerBiometrics _: Bool = false)
-        -> Effect<CardWallReadCardDomain.Action, Never> {
-        Effect<CardWallReadCardDomain.Action, Never>.run { subscriber -> Cancellable in
+        -> EffectTask<CardWallReadCardDomain.Action> {
+        .run { subscriber -> Cancellable in
             subscriber.send(.response(.state(.verifying(.loading))))
             return sessionProvider.idTokenValidator(for: profileID)
                 .mapError(CardWallReadCardDomain.State.Error.profileValidation)

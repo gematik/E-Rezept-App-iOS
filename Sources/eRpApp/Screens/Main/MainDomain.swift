@@ -199,7 +199,7 @@ extension MainDomain {
         case .unsubscribeFromDemoModeChange:
             return Self.cleanup()
         case let .externalLogin(url):
-            return Effect(value: .extAuthPending(action: .externalLogin(url)))
+            return EffectTask(value: .extAuthPending(action: .externalLogin(url)))
                 .delay(for: 5, scheduler: environment.schedulers.main)
                 .eraseToEffect()
         case let .importTaskByUrl(url):
@@ -229,11 +229,18 @@ extension MainDomain {
             let alertState: ErpAlertState<Action>
             switch error {
             case .idpError(.biometrics) where error.contains(PrivateKeyContainer.Error.canceledByUser):
-                alertState = .init(for: error, title: L10n.errSpecificI10808Title)
+                alertState = .init(
+                    for: error,
+                    title: L10n.errSpecificI10808Title,
+                    primaryButton: .cancel(TextState(L10n.alertBtnOk), action: .send(.setNavigation(tag: nil)))
+                )
             case .idpError(.biometrics), .idpError(.serverError):
                 alertState = AlertStates.loginNecessaryAlert(for: error)
             default:
-                alertState = .init(for: error)
+                alertState = .init(
+                    for: error,
+                    primaryButton: .cancel(TextState(L10n.alertBtnOk), action: .send(.setNavigation(tag: nil)))
+                )
             }
             state.destination = .alert(alertState)
             return .none
@@ -259,7 +266,7 @@ extension MainDomain {
             state.destination = nil
             return .concatenate(
                 CardWallIntroductionDomain.cleanup(),
-                Effect(value: .prescriptionList(action: .loadRemotePrescriptionsAndSave))
+                EffectTask(value: .prescriptionList(action: .loadRemotePrescriptionsAndSave))
             )
         case .destination(.redeemMethods(action: .delegate(.close))),
              .destination(.prescriptionArchiveAction(action: .delegate(.close))),
@@ -267,10 +274,16 @@ extension MainDomain {
             state.destination = nil
             return Self.cleanupSubDomains()
         case let .horizontalProfileSelection(action: .response(.loadReceived(.failure(error)))):
-            state.destination = .alert(.init(for: error))
+            state
+                .destination =
+                .alert(.init(for: error,
+                             primaryButton: .cancel(
+                                 TextState(L10n.alertBtnOk),
+                                 action: .send(.setNavigation(tag: nil))
+                             )))
             return .none
         case .refreshPrescription:
-            return Effect(value: .prescriptionList(action: .refresh))
+            return EffectTask(value: .prescriptionList(action: .refresh))
         case .horizontalProfileSelection(action: .showAddProfileView):
             state.destination = .createProfile(CreateProfileDomain.State())
             return .none
@@ -289,7 +302,10 @@ extension MainDomain {
                 state.destination = nil
                 return CreateProfileDomain.cleanup()
             case let .failure(userProfileServiceError):
-                state.destination = .alert(.init(for: userProfileServiceError))
+                state.destination = .alert(.init(
+                    for: userProfileServiceError,
+                    primaryButton: .cancel(TextState(L10n.alertBtnOk), action: .send(.setNavigation(tag: nil)))
+                ))
                 return .none
             }
         case let .destination(.scanner(action: .delegate(delegateAction))):
@@ -304,7 +320,10 @@ extension MainDomain {
                 state.destination = nil
                 return EditProfileNameDomain.cleanup()
             case let .failure(userProfileServiceError):
-                state.destination = .alert(.init(for: userProfileServiceError))
+                state.destination = .alert(.init(
+                    for: userProfileServiceError,
+                    primaryButton: .cancel(TextState(L10n.alertBtnOk), action: .send(.setNavigation(tag: nil)))
+                ))
                 return .none
             }
         case let .destination(.editProfilePictureAction(action: .delegate(delegateAction))):
@@ -313,7 +332,10 @@ extension MainDomain {
                 state.destination = nil
                 return EditProfilePictureDomain.cleanup()
             case let .failure(userProfileServiceError):
-                state.destination = .alert(.init(for: userProfileServiceError))
+                state.destination = .alert(.init(
+                    for: userProfileServiceError,
+                    primaryButton: .cancel(TextState(L10n.alertBtnOk), action: .send(.setNavigation(tag: nil)))
+                ))
                 return Self.cleanupSubDomains()
             }
         case .destination,
@@ -343,7 +365,7 @@ extension MainDomain {
 }
 
 extension MainDomain.Environment {
-    func checkForTaskDuplicatesThenSave(_ sharedTasks: [SharedTask]) -> Effect<MainDomain.Action, Never> {
+    func checkForTaskDuplicatesThenSave(_ sharedTasks: [SharedTask]) -> EffectTask<MainDomain.Action> {
         let authoredOn = fhirDateFormatter.stringWithLongUTCTimeZone(from: Date())
         let erxTaskRepository = self.erxTaskRepository
 

@@ -128,7 +128,7 @@ struct ExtAuthPendingDomain: ReducerProtocol {
                 .eraseToEffect()
                 .cancellable(id: Token.pendingExtAuthRequestsSubscription, cancelInFlight: true)
         case .unregisterListener:
-            return Effect.cancel(id: Token.pendingExtAuthRequestsSubscription)
+            return .cancel(id: Token.pendingExtAuthRequestsSubscription)
         case let .response(.pendingExtAuthRequestsReceived(requests)):
             if requests.isEmpty {
                 if case .pendingExtAuth = state {
@@ -217,7 +217,7 @@ struct ExtAuthPendingDomain: ReducerProtocol {
         case .cancelAllPendingRequests:
             environment.extAuthRequestStorage.reset()
             state = .empty
-            return Effect.cancel(id: Token.login)
+            return .cancel(id: Token.login)
         case .nothing:
             return .none
         }
@@ -259,7 +259,7 @@ extension ExtAuthPendingDomain.Environment {
         insurance: String?,
         givenName: String?,
         familyName: String?
-    ) -> Effect<ExtAuthPendingDomain.Action, Never> {
+    ) -> EffectTask<ExtAuthPendingDomain.Action> {
         currentProfile
             .first()
             .flatMap { profile -> AnyPublisher<Bool, LocalStoreError> in

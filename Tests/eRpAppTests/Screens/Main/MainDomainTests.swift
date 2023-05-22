@@ -25,13 +25,6 @@ import Nimble
 import XCTest
 
 final class MainDomainTests: XCTestCase {
-    let testScheduler = DispatchQueue.immediate
-    let mockUserDataStore = MockUserDataStore()
-    let mockUserSessionContainer = MockUsersSessionContainer()
-    let mockRouter = MockRouting()
-    let mockUserSession = MockUserSession()
-    let mockDeviceSecurityManager = MockDeviceSecurityManager()
-
     typealias TestStore = ComposableArchitecture.TestStore<
         MainDomain.State,
         MainDomain.Action,
@@ -39,6 +32,25 @@ final class MainDomainTests: XCTestCase {
         MainDomain.Action,
         Void
     >
+
+    let testScheduler = DispatchQueue.immediate
+    var mockUserDataStore: MockUserDataStore!
+    var mockUserSessionContainer: MockUsersSessionContainer!
+    var mockRouter: MockRouting!
+    var mockUserSession: MockUserSession!
+    var mockDeviceSecurityManager: MockDeviceSecurityManager!
+    var mockPrescriptionRepository: MockPrescriptionRepository!
+
+    override func setUp() {
+        super.setUp()
+
+        mockUserDataStore = MockUserDataStore()
+        mockUserSessionContainer = MockUsersSessionContainer()
+        mockRouter = MockRouting()
+        mockUserSession = MockUserSession()
+        mockDeviceSecurityManager = MockDeviceSecurityManager()
+        mockPrescriptionRepository = MockPrescriptionRepository()
+    }
 
     func testStore() -> TestStore {
         testStore(for: MainDomain.Dummies.state)
@@ -54,6 +66,7 @@ final class MainDomainTests: XCTestCase {
             dependencies.userDataStore = mockUserDataStore
             dependencies.deviceSecurityManager = mockDeviceSecurityManager
             dependencies.router = mockRouter
+            dependencies.prescriptionRepository = mockPrescriptionRepository
             dependencies.serviceLocator = ServiceLocator()
         }
     }
@@ -128,7 +141,10 @@ final class MainDomainTests: XCTestCase {
         // when
         sut.send(.horizontalProfileSelection(action: .response(.loadReceived(.failure(error))))) { sut in
             // then
-            sut.destination = .alert(.init(for: error))
+            sut.destination = .alert(.init(for: error, primaryButton: .cancel(
+                TextState("Okay"),
+                action: .send(.setNavigation(tag: nil))
+            )))
         }
     }
 
@@ -177,8 +193,7 @@ final class MainDomainTests: XCTestCase {
             uuid: "error-id-as-uuid",
             code: "2000"
         )))
-        mockUserSessionContainer.underlyingUserSession = mockUserSession
-        mockUserSession.mockPrescriptionRepository
+        mockPrescriptionRepository
             .forcedLoadRemoteForReturnValue = Fail(error: PrescriptionRepositoryError.loginHandler(expectedError))
             .eraseToAnyPublisher()
 

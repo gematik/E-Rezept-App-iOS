@@ -46,6 +46,8 @@ struct AnalyticsReducer<ContentReducer: ReducerProtocol>: ReducerProtocol
                 #if ENABLE_DEBUG_VIEW && targetEnvironment(simulator)
                 print("Route tag:", newRoute)
                 #endif
+                // [REQ:gemSpec_eRp_FdV:A_19093#2] Very sparse usage of actual tracking boils down to this call where
+                // only displayed screens are tracked
                 tracker.track(screen: newRoute)
             }
 

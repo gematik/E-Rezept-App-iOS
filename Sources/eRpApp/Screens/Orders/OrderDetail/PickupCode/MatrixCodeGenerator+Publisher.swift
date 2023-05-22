@@ -29,7 +29,7 @@ extension MatrixCodeGenerator {
     ///   - size:final size for the generated image
     ///   - scale: scaling factor for the image
     ///   - orientation: orientation of the image
-    func publishedMatrixCode(for string: String,
+    func matrixCodePublisher(for string: String,
                              with size: CGSize,
                              scale: CGFloat = UIScreen.main.scale,
                              orientation: UIImage.Orientation = .up) -> AnyPublisher<UIImage, Swift.Error> {

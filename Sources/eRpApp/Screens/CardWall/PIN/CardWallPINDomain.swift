@@ -36,9 +36,9 @@ struct CardWallPINDomain: ReducerProtocol {
 
     struct Destinations: ReducerProtocol {
         enum State: Equatable {
-            // sourcery: AnalyticsScreen = cardwallSaveLogin
+            // sourcery: AnalyticsScreen = cardWall_saveLogin
             case login(CardWallLoginOptionDomain.State)
-            // sourcery: AnalyticsScreen = cardwallContactInsuranceCompany
+            // sourcery: AnalyticsScreen = contactInsuranceCompany
             case egk(OrderHealthCardDomain.State)
         }
 
@@ -131,9 +131,9 @@ struct CardWallPINDomain: ReducerProtocol {
         case let .destination(.login(.delegate(delegateAction))):
             switch delegateAction {
             case .close:
-                return Effect(value: .delegate(.close))
+                return EffectTask(value: .delegate(.close))
             case .wrongCanClose:
-                return Effect(value: .delegate(.wrongCanClose))
+                return EffectTask(value: .delegate(.wrongCanClose))
                     // Delay for before CardWallCanView is displayed, Workaround for TCA pullback problem
                     .delay(for: 0.01, scheduler: schedulers.main)
                     .eraseToEffect()
@@ -141,7 +141,7 @@ struct CardWallPINDomain: ReducerProtocol {
                 state.destination = nil
                 return .none
             case .navigateToIntro:
-                return Effect(value: .delegate(.navigateToIntro))
+                return EffectTask(value: .delegate(.navigateToIntro))
             }
         case .destination(.egkAction(action: .delegate(.close))):
             state.destination = nil

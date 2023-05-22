@@ -42,19 +42,19 @@ public enum TrustStoreError: Swift.Error {
 
     // sourcery: CodedError = "561"
     public enum InternalError: Swift.Error {
-        // sourcery: errorCode = 90-20-02001
+        // sourcery: errorCode = 01
         case loadOCSPCheckedTrustStoreUnexpectedNil
-        // sourcery: errorCode = 90-20-02002
+        // sourcery: errorCode = 02
         case loadCertListFromServerUnexpectedNil
-        // sourcery: errorCode = 90-20-02003
+        // sourcery: errorCode = 03
         case loadOCSPListFromServerUnexpectedNil
-        // sourcery: errorCode = 90-20-02004
+        // sourcery: errorCode = 04
         case trustStoreCertListUnexpectedNil
-        // sourcery: errorCode = 90-20-02005
+        // sourcery: errorCode = 05
         case loadOCSPResponsesUnexpectedNil
-        // sourcery: errorCode = 90-20-02006
+        // sourcery: errorCode = 06
         case missingSignerForEECertificate
-        // sourcery: errorCode = 90-20-02007
+        // sourcery: errorCode = 07
         case notImplemented
     }
 }

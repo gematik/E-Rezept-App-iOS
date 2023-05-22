@@ -19,6 +19,7 @@
 import ComposableCoreLocation
 import eRpKit
 import Foundation
+import OpenSSL
 
 /// Adds additional properties to the PharmacyLocation entity that are used in the view.
 @dynamicMemberLookup

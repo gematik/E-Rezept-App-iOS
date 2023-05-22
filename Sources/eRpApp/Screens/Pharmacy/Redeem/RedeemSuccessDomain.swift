@@ -39,7 +39,7 @@ struct RedeemSuccessDomain: ReducerProtocol {
     func reduce(into _: inout State, action: Action) -> EffectTask<Action> {
         switch action {
         case .closeButtonTapped:
-            return Effect(value: .delegate(.close))
+            return EffectTask(value: .delegate(.close))
         case .delegate:
             return .none
         }

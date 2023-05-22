@@ -21,16 +21,27 @@ import ComposableArchitecture
 extension MainDomain {
     struct Destinations: ReducerProtocol {
         enum State: Equatable {
+            // sourcery: AnalyticsScreen = main_createProfile
             case createProfile(CreateProfileDomain.State)
+            // sourcery: AnalyticsScreen = main_editProfilePicture
             case editProfilePicture(EditProfilePictureDomain.State)
+            // sourcery: AnalyticsScreen = main_editName
             case editName(EditProfileNameDomain.State)
+            // sourcery: AnalyticsScreen = main_scanner
             case scanner(ScannerDomain.State)
+            // sourcery: AnalyticsScreen = main_deviceSecurity
             case deviceSecurity(DeviceSecurityDomain.State)
+            // sourcery: AnalyticsScreen = cardWall
             case cardWall(CardWallIntroductionDomain.State)
+            // sourcery: AnalyticsScreen = main_prescriptionArchive
             case prescriptionArchive(PrescriptionArchiveDomain.State)
+            // sourcery: AnalyticsScreen = prescriptionDetail
             case prescriptionDetail(PrescriptionDetailDomain.State)
+            // sourcery: AnalyticsScreen = redeem_methodSelection
             case redeem(RedeemMethodsDomain.State)
+            // sourcery: AnalyticsScreen = main_welcomeDrawer
             case welcomeDrawer
+            // sourcery: AnalyticsScreen = alert
             case alert(ErpAlertState<MainDomain.Action>)
         }
 

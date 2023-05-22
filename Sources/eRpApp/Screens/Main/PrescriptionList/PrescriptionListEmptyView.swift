@@ -43,14 +43,15 @@ struct PrescriptionListEmptyView: View {
     var body: some View {
         VStack(spacing: 0) {
             ProfilePictureView(
-                text: viewStore.profile?.acronym,
                 image: viewStore.profile?.image,
-                color: viewStore.profile?.color.background,
+                userImageData: viewStore.profile?.userImageData,
+                color: viewStore.profile?.color,
                 connection: viewStore.profile?.connectionStatus,
                 style: .large
             ) {
                 if let profile = viewStore.profile {
                     viewStore.send(.profilePictureViewTapped(profile))
+                    UIImpactFeedbackGenerator(style: .light).impactOccurred()
                 }
             }
             .padding(.bottom)

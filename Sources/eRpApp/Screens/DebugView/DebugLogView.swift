@@ -26,6 +26,16 @@ struct DebugLogView: View {
 
     var body: some View {
         List {
+            if log.responseStatus == .debug {
+                Text(
+                    """
+                    This request only exists locally. The request body is decrypted
+                    for debug purposes. Date and header fields can be different from the
+                    original request.
+                    """
+                )
+                .foregroundColor(Color.purple)
+            }
             Text(log.id.uuidString)
 
             Section(header: Text("Request")) {

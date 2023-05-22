@@ -72,11 +72,19 @@ struct PrescriptionDetailView: View {
                         .buttonStyle(.navigation)
                         .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnEmergencyServiceFee)
 
-                    Button(action: { /* DH.TODO: //swiftlint:disable:this todo  */ }, label: {
+                    SubTitle(title: viewStore.dosageInstructions, description: L10n.prscDtlTxtDosageInstructions)
+                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlTxtDosageInstructions)
+
+                    Button(action: { viewStore.send(.setNavigation(tag: .medication)) }, label: {
                         SubTitle(title: viewStore.medicationName, details: L10n.prscDtlTxtMedication)
                     })
                         .buttonStyle(.navigation)
                         .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnMedication)
+
+                    if let number = viewStore.multiplePrescriptionNumber {
+                        SubTitle(title: number, description: L10n.prscDtlTxtMultiPrescription)
+                            .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlTxtMultiPrescription)
+                    }
 
                     Button(action: { viewStore.send(.setNavigation(tag: .patient)) }, label: {
                         SubTitle(title: viewStore.patientName, details: L10n.prscDtlTxtInsuredPerson)
@@ -96,11 +104,23 @@ struct PrescriptionDetailView: View {
                         .buttonStyle(.navigation)
                         .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnInstitution)
 
-                    Button(action: { viewStore.send(.setNavigation(tag: .accidentInfo)) }, label: {
-                        SubTitle(title: L10n.prscDtlBtnWorkRelatedAccident)
-                    })
-                        .buttonStyle(.navigation)
-                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnWorkRelatedAccident)
+                    if let accidentReason = viewStore.accidentReason {
+                        Button(action: { viewStore.send(.setNavigation(tag: .accidentInfo)) }, label: {
+                            SubTitle(title: accidentReason, description: L10n.prscDtlTxtAccidentReason)
+                        })
+                            .buttonStyle(.navigation)
+                            .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnWorkRelatedAccident)
+                    }
+
+                    SubTitle(
+                        title: viewStore.bvg ? L10n.prscDtlTxtYes : L10n.prscDtlTxtNo,
+                        description: L10n.prscDtlTxtBvg
+                    )
+                    .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlTxtBvg)
+
+                }, moreContent: {
+                    SubTitle(title: viewStore.authoredOnDate, description: L10n.prscDtlTxtAuthoredOnDate)
+                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlTxtAuthoredOn)
 
                     Button(action: { viewStore.send(.setNavigation(tag: .technicalInformations)) }, label: {
                         SubTitle(title: L10n.prscDtlBtnTechnicalInformations)
@@ -124,10 +144,20 @@ struct PrescriptionDetailView: View {
 
             Navigations(store: store)
         }
-        .toolbarShareSheet(store: store)
+        .redacted(reason: viewStore.isDeleting ? .placeholder : .init())
+        .prescriptionDetailToolbarItem(store: store)
+        .onAppear {
+            viewStore.send(.startHandoffActivity)
+        }
+        .alert(
+            store.destinationsScope(state: /PrescriptionDetailDomain.Destinations.State.alert),
+            dismiss: .setNavigation(tag: .none)
+        )
         .navigationBarTitle(Text(L10n.prscFdTxtNavigationTitle), displayMode: .inline)
     }
+}
 
+extension PrescriptionDetailView {
     struct FooterView: View {
         let action: () -> Void
 
@@ -255,6 +285,42 @@ struct PrescriptionDetailView: View {
             ) {
                 EmptyView()
             }.accessibility(hidden: true)
+
+            // MedicationView
+            NavigationLink(
+                destination: IfLetStore(
+                    store.destinationsScope(
+                        state: /PrescriptionDetailDomain.Destinations.State.medication,
+                        action: PrescriptionDetailDomain.Destinations.Action.medication(action:)
+                    ),
+                    then: MedicationView.init(store:)
+                ),
+                tag: PrescriptionDetailDomain.Destinations.State.Tag.medication,
+                selection: viewStore.binding(
+                    get: \.destinationTag,
+                    send: PrescriptionDetailDomain.Action.setNavigation
+                )
+            ) {
+                EmptyView()
+            }.accessibility(hidden: true)
+
+            // MedicationOverview
+            NavigationLink(
+                destination: IfLetStore(
+                    store.destinationsScope(
+                        state: /PrescriptionDetailDomain.Destinations.State.medicationOverview,
+                        action: PrescriptionDetailDomain.Destinations.Action.medicationOverview(action:)
+                    ),
+                    then: MedicationOverview.init(store:)
+                ),
+                tag: PrescriptionDetailDomain.Destinations.State.Tag.medicationOverview,
+                selection: viewStore.binding(
+                    get: \.destinationTag,
+                    send: PrescriptionDetailDomain.Action.setNavigation
+                )
+            ) {
+                EmptyView()
+            }.accessibility(hidden: true)
         }
 
         struct CoPaymentDrawerView: View {
@@ -307,7 +373,7 @@ struct PrescriptionDetailView: View {
 
 extension PrescriptionDetailView {
     struct ViewState: Equatable {
-        let isDeleteButtonDisabled: Bool
+        let isDeleting: Bool
         let hasEmergencyServiceFee: Bool
         let coPaymentStatusText: String
         let showErrorBanner: Bool
@@ -319,11 +385,16 @@ extension PrescriptionDetailView {
         let medicationRedeemButtonTitle: LocalizedStringKey
         let isManualRedeemEnabled: Bool
         let isRedeemable: Bool
+        let dosageInstructions: String
+        let authoredOnDate: String
+        let bvg: Bool
+        let multiplePrescriptionNumber: String?
+        let accidentReason: String?
         let destinationTag: PrescriptionDetailDomain.Destinations.State.Tag?
 
         init(state: PrescriptionDetailDomain.State) {
             medicationName = state.prescription.title
-            isDeleteButtonDisabled = !state.prescription.isDeleteabel
+            isDeleting = state.isDeleting
             hasEmergencyServiceFee = state.prescription.medicationRequest.hasEmergencyServiceFee
             coPaymentStatusText = state.prescription.coPaymentStatusText
             showErrorBanner = state.prescription.viewStatus.isError
@@ -336,21 +407,18 @@ extension PrescriptionDetailView {
             isManualRedeemEnabled = state.prescription.isManualRedeemEnabled
             isRedeemable = state.prescription.isRedeemable
             destinationTag = state.destination?.tag
+            authoredOnDate = state.prescription.authoredOnDate ?? L10n.prscFdTxtNa.text
+            dosageInstructions = state.prescription.medicationRequest.dosageInstructions ?? L10n.prscFdTxtNa.text
+            bvg = state.prescription.medicationRequest.bvg
+            accidentReason = state.prescription.medicationRequest.accidentInfo?.localizedReason.text
+            if state.prescription.medicationRequest.multiplePrescription?.mark == true,
+               let number = state.prescription.medicationRequest.multiplePrescription?.numbering,
+               let totalNumber = state.prescription.medicationRequest.multiplePrescription?.totalNumber {
+                multiplePrescriptionNumber = "\(number) von \(totalNumber)"
+            } else {
+                multiplePrescriptionNumber = nil
+            }
         }
-
-        // DH.TODO: move into alert after tapping delete //swiftlint:disable:this todo
-//        var deletionNote: String? {
-//            guard !prescription.isDeleteabel else { return nil }
-//
-//            if prescription.type == .directAssignment {
-//                return L10n.prscDeleteNoteDirectAssignment.text
-//            }
-//
-//            if prescription.erxTask.status == .inProgress {
-//                return L10n.dtlBtnDeleteDisabledNote.text
-//            }
-//            return nil
-//        }
     }
 }
 

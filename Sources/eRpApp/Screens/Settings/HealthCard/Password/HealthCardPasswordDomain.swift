@@ -26,7 +26,7 @@ struct HealthCardPasswordDomain: ReducerProtocol {
     /// Provides an Effect that needs to run whenever the state of this Domain is reset to nil
     static func cleanup<T>() -> EffectTask<T> {
         .concatenate(
-            Effect.cancel(id: HealthCardPasswordDomain.Token.self),
+            .cancel(id: HealthCardPasswordDomain.Token.self),
             cleanupSubDomains()
         )
     }
@@ -86,12 +86,19 @@ struct HealthCardPasswordDomain: ReducerProtocol {
 
     struct Destinations: ReducerProtocol {
         enum State: Equatable {
+            // sourcery: AnalyticsScreen = healthCardPassword_introduction
             case introduction
+            // sourcery: AnalyticsScreen = healthCardPassword_can
             case can
+            // sourcery: AnalyticsScreen = healthCardPassword_puk
             case puk
+            // sourcery: AnalyticsScreen = healthCardPassword_oldPin
             case oldPin
+            // sourcery: AnalyticsScreen = healthCardPassword_pin
             case pin
+            // sourcery: AnalyticsScreen = healthCardPassword_readCard
             case readCard(HealthCardPasswordReadCardDomain.State)
+            // sourcery: AnalyticsScreen = healthCardPassword_scanner
             case scanner
         }
 

@@ -113,18 +113,18 @@ struct ScannerDomain: ReducerProtocol {
                 return checkForTaskDuplicatesInStore(scannedTasks)
                     .cancellable(id: Token.loadErxTask)
             } catch let error as ScannerDomain.Error {
-                return Effect(value: .response(.analyseReceived(.error(error))))
+                return EffectTask(value: .response(.analyseReceived(.error(error))))
             } catch let error as ScannedErxTask.Error {
-                return Effect(value: .response(.analyseReceived(.error(.scannedErxTask(error)))))
+                return EffectTask(value: .response(.analyseReceived(.error(.scannedErxTask(error)))))
             } catch {
-                return Effect(value: .response(.analyseReceived(.error(.unknown))))
+                return EffectTask(value: .response(.analyseReceived(.error(.unknown))))
             }
         case let .response(.analyseReceived(loadingState)):
             if case let .value(scannedErxTask) = loadingState {
                 state.acceptedTaskBatches.insert(scannedErxTask)
             }
             state.scanState = loadingState
-            return Effect(value: .resetScannerState)
+            return EffectTask(value: .resetScannerState)
                 .delay(for: messageInterval, scheduler: scheduler.main)
                 .receive(on: scheduler.main)
                 .eraseToEffect()
@@ -137,10 +137,10 @@ struct ScannerDomain: ReducerProtocol {
             return .none
         case .closeAlertCancelButtonTapped:
             state.alertState = nil
-            return Effect(value: .delegate(.close))
+            return EffectTask(value: .delegate(.close))
         case .closeWithoutSave:
             if state.acceptedTaskBatches.isEmpty {
-                return Effect(value: .delegate(.close))
+                return EffectTask(value: .delegate(.close))
             } else {
                 state.alertState = Self.closeAlertState
                 return .none
@@ -163,7 +163,7 @@ struct ScannerDomain: ReducerProtocol {
     static let closeAlertState: AlertState<Action> = {
         AlertState<Action>(
             title: TextState(L10n.camTxtWarnCancelTitle),
-            primaryButton: .destructive(TextState(L10n.camTxtWarnContinue), action: nil),
+            primaryButton: .destructive(TextState(L10n.camTxtWarnContinue)),
             secondaryButton: .cancel(TextState(L10n.camTxtWarnCancel), action: .send(.closeAlertCancelButtonTapped))
         )
     }()
@@ -178,7 +178,7 @@ struct ScannerDomain: ReducerProtocol {
 }
 
 extension ScannerDomain {
-    func checkForTaskDuplicatesInStore(_ scannedTasks: [ScannedErxTask]) -> Effect<ScannerDomain.Action, Never> {
+    func checkForTaskDuplicatesInStore(_ scannedTasks: [ScannedErxTask]) -> EffectTask<ScannerDomain.Action> {
         let findPublishers: [AnyPublisher<ScannedErxTask?, Never>] = scannedTasks.map { scannedTask in
             self.repository.loadLocal(by: scannedTask.id, accessCode: scannedTask.accessCode)
                 .map { erxTask -> ScannedErxTask? in

@@ -30,27 +30,12 @@ final class OrdersViewSnapshotTests: XCTestCase {
         diffTool = "open"
     }
 
-    private func profileStore(for profile: UserProfile? = nil) -> ProfileSelectionToolbarItemDomain.Store {
-        ProfileSelectionToolbarItemDomain.Store(
-            initialState: .init(
-                profile: profile ?? UserProfile.Fixtures.theo,
-                profileSelectionState: .init(
-                    profiles: [],
-                    selectedProfileId: nil,
-                    destination: nil
-                )
-            ),
-            reducer: EmptyReducer()
-        )
-    }
-
     func testEmptyOdersView() {
         let sut = OrdersView(
             store: OrdersDomain.Store(
                 initialState: OrdersDomain.State(orders: []),
                 reducer: EmptyReducer()
-            ),
-            profileSelectionToolbarItemStore: profileStore()
+            )
         )
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
@@ -62,8 +47,7 @@ final class OrdersViewSnapshotTests: XCTestCase {
             store: OrdersDomain.Store(
                 initialState: OrdersDomain.Dummies.state,
                 reducer: EmptyReducer()
-            ),
-            profileSelectionToolbarItemStore: profileStore()
+            )
         )
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())

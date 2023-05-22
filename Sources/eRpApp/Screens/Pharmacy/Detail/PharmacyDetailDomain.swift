@@ -24,6 +24,7 @@ import eRpKit
 import eRpLocalStorage
 import IDP
 import MapKit
+import OpenSSL
 import Pharmacy
 import SwiftUI
 
@@ -32,27 +33,31 @@ struct PharmacyDetailDomain: ReducerProtocol {
 
     /// Provides an Effect that needs to run whenever the state of this Domain is reset to nil
     static func cleanup<T>() -> EffectTask<T> {
-        Effect.concatenate(
+        .concatenate(
             cleanupSubDomains(),
             EffectTask<T>.cancel(ids: Token.allCases)
         )
     }
 
-    static func cleanupSubDomains<T>() -> Effect<T, Never> {
-        Effect.concatenate(
+    static func cleanupSubDomains<T>() -> EffectTask<T> {
+        .concatenate(
             PharmacyRedeemDomain.cleanup()
         )
     }
 
     enum Token: CaseIterable, Hashable {
         case loadProfile
+        case loadCertificates
         case savePharmacy
     }
 
     struct Destinations: ReducerProtocol {
         enum State: Equatable {
+            // sourcery: AnalyticsScreen = redeem_viaAVS
             case redeemViaAVS(PharmacyRedeemDomain.State)
+            // sourcery: AnalyticsScreen = redeem_viaTI
             case redeemViaErxTaskRepository(PharmacyRedeemDomain.State)
+            // sourcery: AnalyticsScreen = alert
             case alert(ErpAlertState<PharmacyRedeemDomain.State>)
         }
 
@@ -127,6 +132,8 @@ struct PharmacyDetailDomain: ReducerProtocol {
         enum Response: Equatable {
             /// response of `loadCurrentProfile` action
             case currentProfileReceived(Profile?)
+            /// response of loading certificates (loaded in `currentProfileReceived`)
+            case avsCertificatesReceived(Result<[X509], PharmacyRepositoryError>)
             /// response of `toggleIsFavorite` action
             case toggleIsFavoriteReceived(Result<PharmacyLocationViewModel, PharmacyRepositoryError>)
         }
@@ -166,8 +173,34 @@ struct PharmacyDetailDomain: ReducerProtocol {
                 .eraseToEffect()
                 .cancellable(id: Token.loadProfile, cancelInFlight: true)
         case let .response(.currentProfileReceived(profile)):
+            if profile?.hasDoneLoginBefore == false, state.pharmacy.hasAVSEndpoints {
+                // load certificate for avs service
+                return pharmacyRepository.loadAvsCertificates(for: state.pharmacyViewModel.id)
+                    .first()
+                    .receive(on: schedulers.main)
+                    .catchToEffect()
+                    .map { result in Action.response(.avsCertificatesReceived(result)) }
+                    .cancellable(id: Token.loadCertificates, cancelInFlight: true)
+            } else {
+                let provider = RedeemOptionProvider(
+                    wasAuthenticatedBefore: profile?.hasDoneLoginBefore ?? false,
+                    pharmacy: state.pharmacy
+                )
+                state.reservationService = provider.reservationService
+                state.shipmentService = provider.shipmentService
+                state.deliveryService = provider.deliveryService
+                return .none
+            }
+        case let .response(.avsCertificatesReceived(result)):
+            switch result {
+            case let .success(certificates):
+                state.pharmacyViewModel.pharmacyLocation.avsCertificates = certificates
+            default:
+                break
+            }
+
             let provider = RedeemOptionProvider(
-                wasAuthenticatedBefore: profile?.insuranceId != nil,
+                wasAuthenticatedBefore: false,
                 pharmacy: state.pharmacy
             )
             state.reservationService = provider.reservationService
@@ -239,9 +272,9 @@ struct PharmacyDetailDomain: ReducerProtocol {
         case .destination(.pharmacyRedeemViaErxTaskRepository(action: .close)),
              .destination(.pharmacyRedeemViaAVS(action: .close)):
             state.destination = nil
-            return Effect.concatenate(
+            return .concatenate(
                 Self.cleanupSubDomains(),
-                Effect(value: .delegate(.close))
+                EffectTask(value: .delegate(.close))
                     // swiftlint:disable:next todo
                     // TODO: this is workaround to avoid `onAppear` of the the child view getting called
                     .delay(for: .seconds(0.1), scheduler: schedulers.main)

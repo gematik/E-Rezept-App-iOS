@@ -592,7 +592,7 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
 
     private var expectedChargeConsentRequestBody: Data = {
         String(
-            "{\"status\":\"active\",\"category\":[{\"coding\":[{\"system\":\"https:\\/\\/gematik.de\\/fhir\\/erpchrg\\/CodeSystem\\/GEM_ERPCHRG_CS_ConsentType\",\"code\":\"CHARGCONS\"}]}],\"patient\":{\"identifier\":{\"system\":\"http:\\/\\/fhir.de\\/NamingSystem\\/gkv\\/kvid-10\",\"value\":\"X764228532\"}},\"id\":\"CHARGCONS-X764228532\",\"scope\":{\"coding\":[{\"system\":\"http:\\/\\/terminology.hl7.org\\/CodeSystem\\/consentscope\",\"code\":\"patient-privacy\"}]},\"meta\":{\"profile\":[\"https:\\/\\/gematik.de\\/fhir\\/erpchrg\\/StructureDefinition\\/GEM_ERPCHRG_PR_Consent\"]},\"policyRule\":{\"coding\":[{\"system\":\"http:\\/\\/terminology.hl7.org\\/CodeSystem\\/v3-ActCode\",\"code\":\"OPTIN\"}]},\"dateTime\":\"2023-02-15\",\"resourceType\":\"Consent\"}"
+            "{\"status\":\"active\",\"category\":[{\"coding\":[{\"system\":\"https:\\/\\/gematik.de\\/fhir\\/erpchrg\\/CodeSystem\\/GEM_ERPCHRG_CS_ConsentType\",\"code\":\"CHARGCONS\"}]}],\"patient\":{\"identifier\":{\"system\":\"http:\\/\\/fhir.de\\/NamingSystem\\/gkv\\/kvid-10\",\"value\":\"X764228532\"}},\"id\":\"CHARGCONS-X764228532\",\"scope\":{\"coding\":[{\"system\":\"http:\\/\\/terminology.hl7.org\\/CodeSystem\\/consentscope\",\"code\":\"patient-privacy\"}]},\"meta\":{\"profile\":[\"https:\\/\\/gematik.de\\/fhir\\/erpchrg\\/StructureDefinition\\/GEM_ERPCHRG_PR_Consent|1.0\"]},\"policyRule\":{\"coding\":[{\"system\":\"http:\\/\\/terminology.hl7.org\\/CodeSystem\\/v3-ActCode\",\"code\":\"OPTIN\"}]},\"dateTime\":\"2023-02-15\",\"resourceType\":\"Consent\"}"
         ).data(using: .utf8)!
     }()
 

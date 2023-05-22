@@ -57,7 +57,7 @@ final class SettingsDomainTests: XCTestCase {
         // when
         store.send(.toggleDemoModeSwitch) { sut in
             // then
-            sut.destination = .alert(SettingsDomain.demoModeOnAlertState)
+            sut.destination = .alert(.info(SettingsDomain.demoModeOnAlertState))
         }
         expect(self.mockUserSessionContainer.switchToDemoModeCalled).to(beTrue())
     }
@@ -72,7 +72,7 @@ final class SettingsDomainTests: XCTestCase {
         // when
         store.send(.toggleDemoModeSwitch) { sut in
             // then
-            sut.destination = .alert(SettingsDomain.demoModeOffAlertState)
+            sut.destination = .alert(.info(SettingsDomain.demoModeOffAlertState))
         }
         expect(self.mockUserSessionContainer.switchToStandardModeCalled).to(beTrue())
     }

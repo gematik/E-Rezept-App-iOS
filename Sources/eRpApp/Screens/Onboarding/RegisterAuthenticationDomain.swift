@@ -100,6 +100,7 @@ struct RegisterAuthenticationDomain: ReducerProtocol {
         case saveSelection
         case saveSelectionSuccess
         case continueBiometry
+        case nextPage
     }
 
     @Dependency(\.appSecurityManager) var appSecurityManager: AppSecurityManager
@@ -107,6 +108,7 @@ struct RegisterAuthenticationDomain: ReducerProtocol {
     @Dependency(\.schedulers) var schedulers: Schedulers
     @Dependency(\.authenticationChallengeProvider) var authenticationChallengeProvider: AuthenticationChallengeProvider
     @Dependency(\.passwordStrengthTester) var passwordStrengthTester: PasswordStrengthTester
+    @Dependency(\.feedbackReceiver) var feedbackReceiver
 
     // swiftlint:disable:next cyclomatic_complexity function_body_length
     func reduce(into state: inout State, action: Action) -> EffectTask<Action> {
@@ -158,10 +160,10 @@ struct RegisterAuthenticationDomain: ReducerProtocol {
                 }
             case .success(true):
                 state.biometrySuccessful = true
-
+                feedbackReceiver.hapticFeedbackSuccess()
                 switch state.selectedSecurityOption {
                 case .biometry:
-                    return Effect(value: .continueBiometry)
+                    return EffectTask(value: .continueBiometry)
                         .delay(for: state.timeout, scheduler: schedulers.main.animation())
                         .eraseToEffect()
                         .cancellable(id: Token.continueBiometry, cancelInFlight: true)
@@ -180,7 +182,7 @@ struct RegisterAuthenticationDomain: ReducerProtocol {
             state.passwordStrength = passwordStrengthTester.passwordStrength(for: string)
             state.showPasswordErrorMessage = false
             state.passwordA = string
-            return Effect(value: .comparePasswords)
+            return EffectTask(value: .comparePasswords)
                 .delay(for: state.timeout, scheduler: schedulers.main.animation())
                 .eraseToEffect()
                 .cancellable(id: Token.comparePasswords, cancelInFlight: true)
@@ -191,7 +193,7 @@ struct RegisterAuthenticationDomain: ReducerProtocol {
             }
             state.showPasswordErrorMessage = false
             state.passwordB = string
-            return Effect(value: .comparePasswords)
+            return EffectTask(value: .comparePasswords)
                 .delay(for: state.timeout, scheduler: schedulers.main.animation())
                 .eraseToEffect()
                 .cancellable(id: Token.comparePasswords, cancelInFlight: true)
@@ -206,7 +208,7 @@ struct RegisterAuthenticationDomain: ReducerProtocol {
             }
             return .none
         case .enterButtonTapped:
-            return Effect(value: .comparePasswords)
+            return EffectTask(value: .comparePasswords)
                 .delay(for: state.timeout, scheduler: schedulers.main.animation())
                 .eraseToEffect()
                 .cancellable(id: Token.comparePasswords, cancelInFlight: true)
@@ -231,13 +233,14 @@ struct RegisterAuthenticationDomain: ReducerProtocol {
                     return .none
                 }
                 userDataStore.set(appSecurityOption: selectedOption)
-                return Effect(value: .saveSelectionSuccess)
+                return EffectTask(value: .saveSelectionSuccess)
             } else {
                 userDataStore.set(appSecurityOption: selectedOption)
-                return Effect(value: .saveSelectionSuccess)
+                return EffectTask(value: .saveSelectionSuccess)
             }
         case .saveSelectionSuccess,
-             .continueBiometry:
+             .continueBiometry,
+             .nextPage:
             // handled by OnboardingDomain
             return .none
         }

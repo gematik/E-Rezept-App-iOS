@@ -19,6 +19,7 @@
 import Combine
 import eRpKit
 import Foundation
+import OpenSSL
 
 /// Repository for the app to the Pharmacy data layer handling the syncing between its data stores.
 public struct DefaultPharmacyRepository: PharmacyRepository {
@@ -152,6 +153,12 @@ public struct DefaultPharmacyRepository: PharmacyRepository {
     public func delete(pharmacies: [PharmacyLocation]) -> AnyPublisher<Bool, PharmacyRepositoryError> {
         disk.delete(pharmacies: pharmacies)
             .mapError(PharmacyRepositoryError.local)
+            .eraseToAnyPublisher()
+    }
+
+    public func loadAvsCertificates(for id: String) -> AnyPublisher<[X509], PharmacyRepositoryError> {
+        cloud.loadAvsCertificates(for: id)
+            .mapError(PharmacyRepositoryError.remote)
             .eraseToAnyPublisher()
     }
 }

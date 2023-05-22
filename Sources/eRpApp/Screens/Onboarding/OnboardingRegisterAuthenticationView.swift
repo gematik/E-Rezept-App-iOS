@@ -63,8 +63,8 @@ struct OnboardingRegisterAuthenticationView: View, KeyboardReadable {
     }
 
     var body: some View {
-        ScrollView(.vertical, showsIndicators: true) {
-            VStack(alignment: .leading, spacing: 0) {
+        VStack {
+            ScrollView(.vertical, showsIndicators: true) {
                 TitleView()
                     .padding(.top)
 
@@ -91,31 +91,32 @@ struct OnboardingRegisterAuthenticationView: View, KeyboardReadable {
                         .padding(.top)
                 }
 
-                switch viewStore.selectedOption {
-                case .password:
+                if viewStore.selectedOption == .password {
                     PasswordView(store: store)
-                case .biometry(.faceID):
-                    FaceIDView(isSelected: viewStore.biometrySuccessful, message: viewStore.biometryErrorMessage) {
-                        viewStore.send(
-                            .startBiometry,
-                            animation: Animation.default
-                        )
-                    }
-                case .biometry(.touchID):
-                    TouchIDView(isSelected: viewStore.biometrySuccessful, message: viewStore.biometryErrorMessage) {
-                        viewStore.send(
-                            .startBiometry,
-                            animation: Animation.default
-                        )
-                    }
-                default:
-                    EmptyView()
                 }
-
-                Spacer(minLength: 110)
             }
-            .padding(.horizontal)
+            switch viewStore.selectedOption {
+            case .password:
+                PasswordViewButton(store: store)
+            case .biometry(.faceID):
+                FaceIDView(isSelected: viewStore.biometrySuccessful, message: viewStore.biometryErrorMessage) {
+                    viewStore.send(
+                        .startBiometry,
+                        animation: Animation.default
+                    )
+                }
+            case .biometry(.touchID):
+                TouchIDView(isSelected: viewStore.biometrySuccessful, message: viewStore.biometryErrorMessage) {
+                    viewStore.send(
+                        .startBiometry,
+                        animation: Animation.default
+                    )
+                }
+            default:
+                EmptyView()
+            }
         }
+        .padding(.horizontal)
         .alert(
             self.store.scope(state: \.alertState),
             dismiss: .alertDismissButtonTapped
@@ -132,6 +133,8 @@ extension OnboardingRegisterAuthenticationView {
             VStack(alignment: .leading, spacing: 0) {
                 HStack {
                     Image(decorative: Asset.Onboarding.developer)
+                        .accessibilityHidden(true)
+
                     Spacer()
                 }
                 .padding(.top, 10)
@@ -170,10 +173,6 @@ extension OnboardingRegisterAuthenticationView {
 
         var body: some View {
             VStack(alignment: .leading, spacing: 8) {
-                Text(L10n.authTxtBiometricsFaceIdTitle)
-                    .font(.body.weight(.semibold))
-                    .padding(.bottom, 8)
-
                 OnboardingRegisterAuthenticationView.BiometryButton(text: L10n.authBtnBiometricsFaceid,
                                                                     image: Image(
                                                                         systemName: isSelected ? SFSymbolName
@@ -182,23 +181,8 @@ extension OnboardingRegisterAuthenticationView {
                                                                     backgroundColor: isSelected ? Colors
                                                                         .alertPositiv : Colors.primary,
                                                                     action: action)
+                    .padding()
                     .accessibility(identifier: A11y.onboarding.authentication.onbAuthBtnFaceid)
-
-                Text(L10n.authTxtBiometricsDisclaimer)
-                    .font(.footnote)
-                    .foregroundColor(Color(.secondaryLabel))
-                    .fixedSize(horizontal: false, vertical: true)
-
-                if let message = message {
-                    Text(message)
-                        .multilineTextAlignment(.center)
-                        .fixedSize(horizontal: false, vertical: true)
-                        .foregroundColor(Colors.systemGray)
-                        .padding(.horizontal)
-                        .accessibility(identifier: A11y.onboarding.authentication.onbAuthTxtNoBiometrics)
-                        .padding(.top, 50)
-                        .padding(.horizontal)
-                }
             }
             .padding(.top, 42)
         }
@@ -211,10 +195,6 @@ extension OnboardingRegisterAuthenticationView {
 
         var body: some View {
             VStack(alignment: .leading, spacing: 8) {
-                Text(L10n.authTxtBiometricsTouchIdTitle)
-                    .font(.body.weight(.semibold))
-                    .padding(.bottom, 8)
-
                 OnboardingRegisterAuthenticationView.BiometryButton(text: L10n.authBtnBiometricsTouchid,
                                                                     image: Image(
                                                                         systemName: isSelected ? SFSymbolName
@@ -224,28 +204,9 @@ extension OnboardingRegisterAuthenticationView {
                                                                         .alertPositiv : Colors.primary,
                                                                     action: action)
                     .accessibility(identifier: A11y.onboarding.authentication.onbAuthBtnTouchid)
+                    .padding()
                     .padding(.top, 50)
                     .padding(.horizontal)
-
-                HStack(spacing: 0) {
-                    Text(L10n.authTxtBiometricsDisclaimer)
-                        .font(.footnote)
-                        .foregroundColor(Color(.secondaryLabel))
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .fixedSize(horizontal: false, vertical: true)
-
-                    Spacer(minLength: 0)
-                }
-                if let message = message {
-                    Text(message)
-                        .multilineTextAlignment(.center)
-                        .fixedSize(horizontal: false, vertical: true)
-                        .foregroundColor(Colors.systemGray)
-                        .padding(.horizontal)
-                        .accessibility(identifier: A11y.onboarding.authentication.onbAuthTxtNoBiometrics)
-                        .padding(.top, 50)
-                        .padding(.horizontal)
-                }
             }
             .padding(.top, 42)
         }
@@ -262,13 +223,15 @@ extension OnboardingRegisterAuthenticationView {
             Button(action: action) {
                 HStack {
                     Spacer()
-                    image.foregroundColor(.white)
+                    image
+                        .foregroundColor(.white)
+                        .font(Font.body.weight(.semibold))
                     Text(text)
                         .fontWeight(.semibold)
                         .font(.body)
                         .multilineTextAlignment(.center)
                         .foregroundColor(Colors.systemColorWhite)
-                        .padding()
+                        .padding([.top, .bottom, .trailing])
                         .fixedSize(horizontal: false, vertical: true)
                     Spacer()
                 }
@@ -301,9 +264,6 @@ extension OnboardingRegisterAuthenticationView {
 
         var body: some View {
             VStack(alignment: .leading, spacing: 6) {
-                Text(L10n.authTxtBiometricsPasswordTitle)
-                    .font(.body.weight(.semibold))
-
                 // This TextField is mandatory to support password autofill from iCloud Keychain, applying  `.hidden()`
                 // lets iOS no longer detect it.
                 TextField("", text: .constant("E-Rezept App – \(UIDevice.current.name)"))
@@ -358,7 +318,40 @@ extension OnboardingRegisterAuthenticationView {
                     }
                 }
             }
-            .padding(.top, 42)
+            .padding(.top, 40)
+        }
+    }
+
+    struct PasswordViewButton: View {
+        let store: RegisterAuthenticationDomain.Store
+        @ObservedObject private var viewStore: ViewStore<
+            RegisterAuthenticationDomain.State,
+            RegisterAuthenticationDomain.Action
+        >
+
+        init(store: RegisterAuthenticationDomain.Store) {
+            self.store = store
+            viewStore = ViewStore(store)
+        }
+
+        var body: some View {
+            VStack {
+                Button(action: { viewStore.send(.nextPage) }, label: {
+                    Text(L10n.onbAuthBtnPasswordSave)
+                        .padding(.horizontal, 64)
+                        .padding(.vertical)
+                })
+                    .disabled(!viewStore.hasValidSelection)
+                    .accessibility(identifier: A18n.onboarding.authentication.onbAuthBtnPassword)
+                    .font(Font.body.weight(.semibold))
+                    .foregroundColor(!viewStore.hasValidSelection ? Colors.systemGray : Colors.systemColorWhite)
+                    .background(!viewStore.hasValidSelection ? Colors.systemGray5 : Colors.primary600)
+                    .cornerRadius(16)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .multilineTextAlignment(.center)
+                    .padding()
+            }
         }
     }
 }

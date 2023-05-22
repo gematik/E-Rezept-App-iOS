@@ -52,9 +52,9 @@ struct AppAuthenticationPasswordDomain: ReducerProtocol {
 
         case .loginButtonTapped:
             guard let success = try? appSecurityManager.matches(password: state.password) else {
-                return Effect(value: .passwordVerificationReceived(false))
+                return EffectTask(value: .passwordVerificationReceived(false))
             }
-            return Effect(value: .passwordVerificationReceived(success))
+            return EffectTask(value: .passwordVerificationReceived(success))
 
         case let .passwordVerificationReceived(isLoggedIn):
             state.lastMatchResultSuccessful = isLoggedIn

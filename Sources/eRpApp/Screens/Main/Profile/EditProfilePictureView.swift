@@ -18,6 +18,7 @@
 
 import ComposableArchitecture
 import eRpStyleKit
+import PhotosUI
 import SwiftUI
 
 struct EditProfilePictureView: View {
@@ -35,44 +36,49 @@ struct EditProfilePictureView: View {
         let profile: UserProfile
         let color: ProfileColor
         let picture: ProfilePicture
+        let userImageData: Data
+        let destinationTag: EditProfilePictureDomain.Destinations.State.Tag?
 
         init(state: EditProfilePictureDomain.State) {
             profile = state.profile
             color = state.color ?? .grey
             picture = state.picture ?? .none
+            destinationTag = state.destination?.tag
+            userImageData = state.userImageData ?? .empty
         }
     }
 
     var body: some View {
-        VStack(spacing: 8) {
+        VStack {
             Section(header:
                 Text(L10n.editPictureTxt)
                     .padding([.leading, .trailing, .top])
-                    .font(.system(size: 16, weight: .bold))) {
+                    .font(.headline.bold())) {
                     ZStack(alignment: .topTrailing) {
                         ProfilePictureView(
-                            text: viewStore.profile.acronym,
                             image: viewStore.picture,
-                            color: viewStore.color.background,
+                            userImageData: viewStore.userImageData,
+                            color: viewStore.color,
                             connection: nil,
                             style: .xxLarge
                         ) {}
                             .disabled(true)
 
-                        if viewStore.picture != .none {
+                        if viewStore.picture != .none || viewStore.userImageData != .empty {
                             ResetPictureButton {
                                 viewStore.send(.editPicture(nil))
-                            }.background(Circle().foregroundColor(Colors.systemBackground).padding(8))
+                                viewStore.send(.setUserImageData(.empty))
+                            }.background(Circle().foregroundColor(Colors.systemBackground).padding(12))
                         }
                     }
 
                     VStack(alignment: .leading) {
                         ProfilePictureSelector(store: store)
-                            .padding([.trailing, .top, .bottom])
+                            .padding([.top, .bottom])
 
                         Text(L10n.editColorTxt)
-                            .font(.system(size: 16, weight: .bold))
-                            .padding([.leading, .trailing, .top])
+                            .font(.headline.bold())
+                            .padding([.trailing, .top])
 
                         ProfileColorPicker(color: viewStore.binding(
                             get: \.color,
@@ -89,10 +95,28 @@ struct EditProfilePictureView: View {
         .onAppear {
             viewStore.send(.setProfileValues)
         }
+        .onChange(of: viewStore.color) { _ in
+            UIImpactFeedbackGenerator(style: .light).impactOccurred()
+        }
         .padding()
-        .background(Colors.systemBackground.ignoresSafeArea())
+        .background(Colors.systemBackgroundTertiary.ignoresSafeArea())
+        .sheet(isPresented: Binding<Bool>(
+            get: { viewStore.state.destinationTag == .photoPicker },
+            set: { show in
+                if !show {
+                    viewStore.send(.setNavigation(tag: nil))
+                }
+            }
+        )) {
+            PhotoPicker(picketImage: viewStore.binding(
+                get: \.userImageData,
+                send: EditProfilePictureDomain.Action.setUserImageData
+            ))
+        }
     }
 }
+
+extension EditProfilePictureView {}
 
 struct EditProfilePictureView_Previews: PreviewProvider {
     static var previews: some View {
@@ -132,19 +156,32 @@ extension EditProfilePictureView {
         }
 
         var body: some View {
-            ScrollView(.horizontal) {
+            ScrollView(.horizontal, showsIndicators: false) {
                 HStack {
+                    Button(action: {
+                        viewStore.send(.setNavigation(tag: .photoPicker))
+                    }, label: {
+                        Image(systemName: SFSymbolName.camera)
+                            .frame(width: 80, height: 80)
+                            .font(Font.headline.weight(.bold))
+                            .foregroundColor(Color(.secondaryLabel))
+                            .background(Circle().fill(Colors.secondary))
+                    })
+
                     ForEach(ProfilePicture.allCases, id: \.rawValue) { image in
                         if let displayImage = image.description, !displayImage.name.isEmpty {
-                            Image(displayImage)
-                                .resizable()
-                                .frame(width: 80, height: 80)
-                                .background(Circle().foregroundColor(viewStore.color.background))
-                                .border(viewStore.color.border, width: 1, cornerRadius: 99)
-                                .clipShape(Circle())
-                                .onTapGesture {
-                                    viewStore.send(.editPicture(image))
-                                }
+                            Button(action: {
+                                viewStore.send(.editPicture(image))
+                                viewStore.send(.setUserImageData(.empty))
+                            }, label: {
+                                Image(displayImage)
+                                    .resizable()
+                                    .frame(width: 80, height: 80)
+                                    .background(Circle().foregroundColor(viewStore.color.background))
+                                    .border(viewStore.color.border, width: 1, cornerRadius: 99)
+                                    .clipShape(Circle())
+                                    .accessibilityLabel(image.accessibility)
+                            })
                         }
                     }
                 }

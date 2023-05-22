@@ -20,6 +20,7 @@ import Combine
 import eRpKit
 import FHIRClient
 import Foundation
+import OpenSSL
 
 /// The remote data source for any pharmacy requests
 public struct PharmacyFHIRDataSource: PharmacyRemoteDataStore {
@@ -56,6 +57,12 @@ public struct PharmacyFHIRDataSource: PharmacyRemoteDataStore {
     public func fetchPharmacy(by telematikId: String)
         -> AnyPublisher<PharmacyLocation?, Error> {
         fhirClient.fetchPharmacy(by: telematikId)
+            .mapError { Error.fhirClient($0) }
+            .eraseToAnyPublisher()
+    }
+
+    public func loadAvsCertificates(for locationId: String) -> AnyPublisher<[X509], Error> {
+        fhirClient.loadAvsCertificates(for: locationId)
             .mapError { Error.fhirClient($0) }
             .eraseToAnyPublisher()
     }

@@ -99,14 +99,14 @@ struct CreatePasswordDomain: ReducerProtocol {
         case let .setPasswordA(string):
             state.passwordStrength = passwordStrengthTester.passwordStrength(for: string)
             state.passwordA = string
-            return Effect(value: .comparePasswords)
+            return EffectTask(value: .comparePasswords)
                 .delay(for: Self.timeout, scheduler: schedulers.main.animation())
                 .eraseToEffect()
                 .cancellable(id: Token.comparePasswords, cancelInFlight: true)
 
         case let .setPasswordB(string):
             state.passwordB = string
-            return Effect(value: .comparePasswords)
+            return EffectTask(value: .comparePasswords)
                 .delay(for: Self.timeout, scheduler: schedulers.main.animation())
                 .eraseToEffect()
                 .cancellable(id: Token.comparePasswords, cancelInFlight: true)
@@ -120,7 +120,7 @@ struct CreatePasswordDomain: ReducerProtocol {
             return .none
 
         case .enterButtonTapped:
-            return Effect(value: .comparePasswords)
+            return EffectTask(value: .comparePasswords)
                 .delay(for: Self.timeout, scheduler: schedulers.main.animation())
                 .eraseToEffect()
                 .cancellable(id: Token.comparePasswords, cancelInFlight: true)
@@ -144,14 +144,14 @@ struct CreatePasswordDomain: ReducerProtocol {
                   state.hasValidPasswordEntries,
                   let success = try? appSecurityManager.save(password: state.passwordA),
                   success == true else {
-                return Effect.cancel(id: Token.comparePasswords)
+                return .cancel(id: Token.comparePasswords)
             }
 
             userDataStore.set(appSecurityOption: .password)
 
-            return Effect.concatenate(
-                Effect.cancel(id: Token.comparePasswords),
-                Effect(value: .delegate(.closeAfterPasswordSaved))
+            return .concatenate(
+                .cancel(id: Token.comparePasswords),
+                EffectTask(value: .delegate(.closeAfterPasswordSaved))
             )
 
         case .delegate:

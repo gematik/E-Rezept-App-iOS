@@ -37,6 +37,10 @@ extension ModelsR4.Bundle {
             guard let task = $0.resource?.get(if: ModelsR4.Task.self) else {
                 return nil
             }
+            guard let status = task.status.value?.rawValue,
+                  ErxTask.Status(rawValue: status) != .cancelled else {
+                return nil
+            }
             guard let identifier = task.id?.value?.string else {
                 throw RemoteStorageBundleParsingError.parseError("Could not parse id from task.")
             }
@@ -188,15 +192,16 @@ extension ModelsR4.Bundle {
     }
 
     /// Creates an `ErxTask.Medication` from the ModelsR4.Medication
-    public func parseErxMedication() -> ErxMedication {
+    func parseErxMedication() -> ErxMedication {
         .init(
             name: medication?.medicationText,
+            profile: medication?.profileType,
             drugCategory: medication?.drugCategory,
             pzn: medication?.pzn,
             isVaccine: medication?.isVaccine ?? false,
             amount: medication?.medicationAmount,
             dosageForm: medication?.dosageForm,
-            dose: medication?.dose,
+            normSizeCode: medication?.normSizeCode,
             batch: medication?.erxTaskBatch,
             packaging: medication?.packaging,
             manufacturingInstructions: medication?.compoundingInstruction,
@@ -355,7 +360,7 @@ extension ModelsR4.Bundle {
 
     var coverageStatus: String? {
         coverage?.extension?.first {
-            $0.url.value?.url.absoluteString == Prescription.Key.coverageStatusKey
+            $0.url.value?.url.absoluteString == ErpPrescription.Key.coverageStatusKey
         }
         .flatMap {
             if let valueX = $0.value,

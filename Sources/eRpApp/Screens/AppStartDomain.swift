@@ -87,8 +87,7 @@ struct AppStartDomain: ReducerProtocol {
                                 selectedSecurityOption: nil,
                                 errorToDisplay: nil
                             )
-                        ),
-                        profileSelection: .init()
+                        )
                     ),
                     unreadOrderMessageCount: 0,
                     isDemoMode: false
@@ -127,8 +126,7 @@ struct AppStartDomain: ReducerProtocol {
                                 selectedSecurityOption: nil,
                                 errorToDisplay: nil
                             )
-                        ),
-                        profileSelection: .init()
+                        )
                     ),
                     unreadOrderMessageCount: 0,
                     isDemoMode: false
@@ -141,30 +139,30 @@ struct AppStartDomain: ReducerProtocol {
     static let router: (Endpoint) -> EffectTask<Action> = { route in
         switch route {
         case .settings:
-            return Effect.concatenate(
-                Effect(value: .app(action: .subdomains(.settings(action: .popToRootView)))),
-                Effect(value: .app(action: .setNavigation(.settings)))
+            return .concatenate(
+                EffectTask(value: .app(action: .subdomains(.settings(action: .popToRootView)))),
+                EffectTask(value: .app(action: .setNavigation(.settings)))
             )
         case .scanner:
-            return Effect(value: .app(action: .subdomains(.main(action: .showScannerView))))
+            return EffectTask(value: .app(action: .subdomains(.main(action: .showScannerView))))
         case .orders:
-            return Effect(value: .app(action: .setNavigation(.orders)))
+            return EffectTask(value: .app(action: .setNavigation(.orders)))
         case let .mainScreen(endpoint):
             switch endpoint {
             case .login:
-                return Effect.merge(
-                    Effect(value: .app(action: .setNavigation(.main))),
-                    Effect(value: .app(action: .subdomains(.main(action: .prescriptionList(action: .refresh)))))
+                return .merge(
+                    EffectTask(value: .app(action: .setNavigation(.main))),
+                    EffectTask(value: .app(action: .subdomains(.main(action: .prescriptionList(action: .refresh)))))
                 )
             default:
-                return Effect(value: .app(action: .setNavigation(.main)))
+                return EffectTask(value: .app(action: .setNavigation(.main)))
             }
         case let .universalLink(url):
             switch url.path {
             case "/extauth":
-                return Effect(value: .app(action: .subdomains(.main(action: .externalLogin(url)))))
+                return EffectTask(value: .app(action: .subdomains(.main(action: .externalLogin(url)))))
             case "/prescription":
-                return Effect(value: .app(action: .subdomains(.main(action: .importTaskByUrl(url)))))
+                return EffectTask(value: .app(action: .subdomains(.main(action: .importTaskByUrl(url)))))
             default:
                 return .none
             }

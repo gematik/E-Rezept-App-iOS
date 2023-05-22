@@ -79,15 +79,9 @@ struct OrderDetailView: View {
                     store.destinationsScope(
                         state: /OrderDetailDomain.Destinations.State.prescriptionDetail,
                         action: OrderDetailDomain.Destinations.Action.prescriptionDetail(action:)
-                    )
-                ) { scopedStore in
-                    WithViewStore(scopedStore.scope(state: \.prescription.source)) { viewStore in
-                        switch viewStore.state {
-                        case .scanner: PrescriptionLowDetailView(store: scopedStore)
-                        case .server: PrescriptionFullDetailView(store: scopedStore)
-                        }
-                    }
-                },
+                    ),
+                    then: PrescriptionDetailView.init(store:)
+                ),
                 tag: OrderDetailDomain.Destinations.State.Tag.prescriptionDetail,
                 selection: viewStore.binding(
                     get: \.destinationTag,

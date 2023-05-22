@@ -27,7 +27,7 @@ extension ErxConsent {
     }
 
     private func createFHIRConsent() throws -> Consent {
-        guard let chargeConsent = ErpCharge.Key.Consent.consent[.v1_0_0]?.asFHIRCanonicalPrimitive() else {
+        guard let chargeConsent = ErpCharge.Key.Consent.consent[.v1_0_0]?.asFHIRCanonicalPrimitive(for: "1.0") else {
             throw ErxConsent.Error.unableToConstructConsentRequest
         }
         let meta = Meta(profile: [chargeConsent])

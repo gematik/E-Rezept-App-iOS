@@ -111,7 +111,7 @@ class RealIDPClient: IDPClient {
             resolvingAgainstBaseURL: false
         )
         let queryItems = [
-            // [REQ:gemSpec_IDP_Frontend:A_20603,A_20601] transfer
+            // [REQ:gemSpec_IDP_Frontend:A_20603,A_20601,A_20601-01] Transfer
             URLQueryItem(name: "client_id", value: clientConfig.clientId.urlPercentEscapedString()),
             URLQueryItem(name: "code_challenge", value: codeChallenge.urlPercentEscapedString()),
             URLQueryItem(name: "code_challenge_method", value: method.rawValue.urlPercentEscapedString()),

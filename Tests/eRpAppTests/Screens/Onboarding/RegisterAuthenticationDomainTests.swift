@@ -27,6 +27,7 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
     var mockAppSecurityManager: MockAppSecurityManager!
     var mockPasswordStrengthTester: MockPasswordStrengthTester!
     var mockAuthenticationChallengeProvider: MockAuthenticationChallengeProvider!
+    var mockFeedbackReceiver: MockFeedbackReceiver!
 
     typealias TestStore = ComposableArchitecture.TestStore<
         RegisterAuthenticationDomain.State,
@@ -42,6 +43,7 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
         mockAppSecurityManager = MockAppSecurityManager()
         mockPasswordStrengthTester = MockPasswordStrengthTester()
         mockAuthenticationChallengeProvider = MockAuthenticationChallengeProvider()
+        mockFeedbackReceiver = MockFeedbackReceiver()
     }
 
     func testStore(
@@ -57,6 +59,7 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
             dependencies.schedulers = Schedulers(uiScheduler: testScheduler.eraseToAnyScheduler())
             dependencies.authenticationChallengeProvider = mockAuthenticationChallengeProvider
             dependencies.passwordStrengthTester = passwordStrengthTester
+            dependencies.feedbackReceiver = mockFeedbackReceiver
         }
     }
 
@@ -214,6 +217,9 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
         }
         testScheduler.advance(by: 1)
         store.receive(.continueBiometry)
+
+        expect(self.mockFeedbackReceiver.hapticFeedbackSuccessCalled).to(beTrue())
+        expect(self.mockFeedbackReceiver.hapticFeedbackSuccessCallsCount) == 1
     }
 
     func testSelectingFaceIDWithCancelation() {

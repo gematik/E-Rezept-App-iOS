@@ -1,4 +1,4 @@
-// Generated using Sourcery 2.0.1 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.0.2 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 
 import Foundation
@@ -63,7 +63,6 @@ extension CardWallIntroductionDomain.Destinations.State {
         case can
         case fasttrack
         case egk
-        case notCapable
     }
 
     var tag: Tag {
@@ -74,8 +73,6 @@ extension CardWallIntroductionDomain.Destinations.State {
                 return .fasttrack
             case .egk:
                 return .egk
-            case .notCapable:
-                return .notCapable
         }
     }
 }
@@ -127,7 +124,7 @@ extension CardWallReadCardDomain.Destinations.State {
         }
     }
 }
-extension ChargeItemsDomain.Destinations.State {
+extension ChargeItemListDomain.Destinations.State {
     enum Tag: Int {
         case idpCardWall
         case alert
@@ -149,10 +146,9 @@ extension EditProfileDomain.Destinations.State {
     enum Tag: Int {
         case alert
         case token
-        case linkedDevices
         case auditEvents
         case registeredDevices
-        case chargeItems
+        case chargeItemList
     }
 
     var tag: Tag {
@@ -161,14 +157,24 @@ extension EditProfileDomain.Destinations.State {
                 return .alert
             case .token:
                 return .token
-            case .linkedDevices:
-                return .linkedDevices
             case .auditEvents:
                 return .auditEvents
             case .registeredDevices:
                 return .registeredDevices
-            case .chargeItems:
-                return .chargeItems
+            case .chargeItemList:
+                return .chargeItemList
+        }
+    }
+}
+extension EditProfilePictureDomain.Destinations.State {
+    enum Tag: Int {
+        case photoPicker
+    }
+
+    var tag: Tag {
+        switch self {
+            case .photoPicker:
+                return .photoPicker
         }
     }
 }
@@ -256,6 +262,30 @@ extension MainDomain.Destinations.State {
         }
     }
 }
+extension MedicationDomain.Destinations.State {
+    enum Tag: Int {
+        case ingredient
+    }
+
+    var tag: Tag {
+        switch self {
+            case .ingredient:
+                return .ingredient
+        }
+    }
+}
+extension MedicationOverviewDomain.Destinations.State {
+    enum Tag: Int {
+        case medication
+    }
+
+    var tag: Tag {
+        switch self {
+            case .medication:
+                return .medication
+        }
+    }
+}
 extension OrderDetailDomain.Destinations.State {
     enum Tag: Int {
         case pickupCode
@@ -278,6 +308,7 @@ extension OrderHealthCardDomain.Destinations.State {
     enum Tag: Int {
         case searchPicker
         case serviceInquiry
+        case contactOptions
     }
 
     var tag: Tag {
@@ -286,21 +317,20 @@ extension OrderHealthCardDomain.Destinations.State {
                 return .searchPicker
             case .serviceInquiry:
                 return .serviceInquiry
+            case .contactOptions:
+                return .contactOptions
         }
     }
 }
 extension OrdersDomain.Destinations.State {
     enum Tag: Int {
         case orderDetail
-        case selectProfile
     }
 
     var tag: Tag {
         switch self {
             case .orderDetail:
                 return .orderDetail
-            case .selectProfile:
-                return .selectProfile
         }
     }
 }
@@ -345,7 +375,6 @@ extension PharmacyRedeemDomain.Destinations.State {
 }
 extension PharmacySearchDomain.Destinations.State {
     enum Tag: Int {
-        case selectProfile
         case pharmacy
         case filter
         case alert
@@ -353,8 +382,6 @@ extension PharmacySearchDomain.Destinations.State {
 
     var tag: Tag {
         switch self {
-            case .selectProfile:
-                return .selectProfile
             case .pharmacy:
                 return .pharmacy
             case .filter:
@@ -378,6 +405,7 @@ extension PrescriptionArchiveDomain.Destinations.State {
 }
 extension PrescriptionDetailDomain.Destinations.State {
     enum Tag: Int {
+        case medicationOverview
         case medication
         case patient
         case practitioner
@@ -397,6 +425,8 @@ extension PrescriptionDetailDomain.Destinations.State {
 
     var tag: Tag {
         switch self {
+            case .medicationOverview:
+                return .medicationOverview
             case .medication:
                 return .medication
             case .patient:
@@ -437,24 +467,6 @@ extension ProfileSelectionDomain.Destinations.State {
 
     var tag: Tag {
         switch self {
-            case .alert:
-                return .alert
-        }
-    }
-}
-extension ProfilesDomain.Destinations.State {
-    enum Tag: Int {
-        case editProfile
-        case newProfile
-        case alert
-    }
-
-    var tag: Tag {
-        switch self {
-            case .editProfile:
-                return .editProfile
-            case .newProfile:
-                return .newProfile
             case .alert:
                 return .alert
         }
@@ -504,6 +516,8 @@ extension SettingsDomain.Destinations.State {
         case openSourceLicence
         case termsOfUse
         case egk
+        case editProfile
+        case newProfile
     }
 
     var tag: Tag {
@@ -532,6 +546,10 @@ extension SettingsDomain.Destinations.State {
                 return .termsOfUse
             case .egk:
                 return .egk
+            case .editProfile:
+                return .editProfile
+            case .newProfile:
+                return .newProfile
         }
     }
 }

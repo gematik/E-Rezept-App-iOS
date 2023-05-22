@@ -95,7 +95,7 @@ struct AuditEventsDomain: ReducerProtocol {
                         .cancellable(id: Token.loadEvents, cancelInFlight: true)
                         .receive(on: schedulers.main)
                         .eraseToEffect(),
-                    Effect(value: .loadPage(firstPage))
+                    EffectTask(value: .loadPage(firstPage))
                 )
             }
 
@@ -194,7 +194,7 @@ extension AuditEventsDomain {
         let fhirDateFormatter: FHIRDateFormatter
         let dateFormatter: DateFormatter
 
-        func loadAuditEventsPage(_ page: Page, ofProfile profile: UUID) -> Effect<AuditEventsDomain.Action, Never> {
+        func loadAuditEventsPage(_ page: Page, ofProfile profile: UUID) -> EffectTask<AuditEventsDomain.Action> {
             guard let pageController = try? profileDataStore.pagedAuditEventsController(for: profile, with: nil) else {
                 return .none
             }

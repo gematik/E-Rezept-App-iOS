@@ -96,9 +96,13 @@ struct ProfilesView: View {
                     .font(.subheadline)
                 }
             }, icon: {
-                InitialsImage(backgroundColor: profile.color.background,
-                              text: profile.acronym,
-                              size: .large)
+                ProfilePictureView(
+                    image: profile.image,
+                    userImageData: profile.userImageData,
+                    color: profile.color,
+                    connection: nil,
+                    style: .small
+                ) {}.padding(.leading, 16)
             })
         }
     }

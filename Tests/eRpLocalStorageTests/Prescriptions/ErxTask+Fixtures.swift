@@ -133,7 +133,7 @@ extension ErxTask {
             isVaccine: true,
             amount: .init(ErxMedication.Ratio(numerator: .init(value: "1", unit: "St."))),
             dosageForm: "FDA",
-            dose: "N2",
+            normSizeCode: "N2",
             batch: .init(
                 lotNumber: "set in medication dispense only",
                 expiresOn: "set in medication dispense only"
@@ -151,7 +151,7 @@ extension ErxTask {
             isVaccine: false,
             amount: .init(ErxMedication.Ratio(numerator: .init(value: "1", unit: "Packung"))),
             dosageForm: "TAB",
-            dose: "N2",
+            normSizeCode: "N2",
             batch: .init(
                 lotNumber: "set in medication dispense only",
                 expiresOn: "set in medication dispense only"

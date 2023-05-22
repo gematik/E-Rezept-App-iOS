@@ -47,14 +47,17 @@ extension Publisher {
         let semaphore = DispatchSemaphore(value: 0)
         let cancellable = subscribe(on: subscribeScheduler)
             .receive(on: receivingScheduler)
-            .sink(receiveCompletion: { completion in
-                if case let .failure(error) = completion {
-                    failure(error)
+            .sink(
+                receiveCompletion: { completion in
+                    if case let .failure(error) = completion {
+                        failure(error)
+                    }
+                    semaphore.signal()
+                },
+                receiveValue: { value in
+                    expectations(value)
                 }
-                semaphore.signal()
-            }, receiveValue: { value in
-                expectations(value)
-            })
+            )
         let timeoutTime = DispatchTime.now() + DispatchTimeInterval.milliseconds(Int(timeout * 1000))
         if case .timedOut = semaphore.wait(timeout: timeoutTime) {
             cancellable.cancel()

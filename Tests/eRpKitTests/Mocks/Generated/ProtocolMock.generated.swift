@@ -1,4 +1,4 @@
-// Generated using Sourcery 2.0.1 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.0.2 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 import Combine
 import eRpKit
@@ -318,12 +318,12 @@ final class MockErxLocalDataStore: ErxLocalDataStore {
     var fetchChargeItemByFullDetailCalled: Bool {
         fetchChargeItemByFullDetailCallsCount > 0
     }
-    var fetchChargeItemByFullDetailReceivedArguments: (chargeItemID: ErxChargeItem.ID, fullDetail: Bool)?
-    var fetchChargeItemByFullDetailReceivedInvocations: [(chargeItemID: ErxChargeItem.ID, fullDetail: Bool)] = []
-    var fetchChargeItemByFullDetailReturnValue: AnyPublisher<ErxChargeItem?, LocalStoreError>!
-    var fetchChargeItemByFullDetailClosure: ((ErxChargeItem.ID, Bool) -> AnyPublisher<ErxChargeItem?, LocalStoreError>)?
+    var fetchChargeItemByFullDetailReceivedArguments: (chargeItemID: ErxSparseChargeItem.ID, fullDetail: Bool)?
+    var fetchChargeItemByFullDetailReceivedInvocations: [(chargeItemID: ErxSparseChargeItem.ID, fullDetail: Bool)] = []
+    var fetchChargeItemByFullDetailReturnValue: AnyPublisher<ErxSparseChargeItem?, LocalStoreError>!
+    var fetchChargeItemByFullDetailClosure: ((ErxSparseChargeItem.ID, Bool) -> AnyPublisher<ErxSparseChargeItem?, LocalStoreError>)?
 
-    func fetchChargeItem(by chargeItemID: ErxChargeItem.ID, fullDetail: Bool) -> AnyPublisher<ErxChargeItem?, LocalStoreError> {
+    func fetchChargeItem(by chargeItemID: ErxSparseChargeItem.ID, fullDetail: Bool) -> AnyPublisher<ErxSparseChargeItem?, LocalStoreError> {
         fetchChargeItemByFullDetailCallsCount += 1
         fetchChargeItemByFullDetailReceivedArguments = (chargeItemID: chargeItemID, fullDetail: fullDetail)
         fetchChargeItemByFullDetailReceivedInvocations.append((chargeItemID: chargeItemID, fullDetail: fullDetail))
@@ -350,10 +350,10 @@ final class MockErxLocalDataStore: ErxLocalDataStore {
     var listAllChargeItemsCalled: Bool {
         listAllChargeItemsCallsCount > 0
     }
-    var listAllChargeItemsReturnValue: AnyPublisher<[ErxChargeItem], LocalStoreError>!
-    var listAllChargeItemsClosure: (() -> AnyPublisher<[ErxChargeItem], LocalStoreError>)?
+    var listAllChargeItemsReturnValue: AnyPublisher<[ErxSparseChargeItem], LocalStoreError>!
+    var listAllChargeItemsClosure: (() -> AnyPublisher<[ErxSparseChargeItem], LocalStoreError>)?
 
-    func listAllChargeItems() -> AnyPublisher<[ErxChargeItem], LocalStoreError> {
+    func listAllChargeItems() -> AnyPublisher<[ErxSparseChargeItem], LocalStoreError> {
         listAllChargeItemsCallsCount += 1
         return listAllChargeItemsClosure.map({ $0() }) ?? listAllChargeItemsReturnValue
     }
@@ -364,16 +364,34 @@ final class MockErxLocalDataStore: ErxLocalDataStore {
     var saveChargeItemsCalled: Bool {
         saveChargeItemsCallsCount > 0
     }
-    var saveChargeItemsReceivedChargeItems: [ErxChargeItem]?
-    var saveChargeItemsReceivedInvocations: [[ErxChargeItem]] = []
+    var saveChargeItemsReceivedChargeItems: [ErxSparseChargeItem]?
+    var saveChargeItemsReceivedInvocations: [[ErxSparseChargeItem]] = []
     var saveChargeItemsReturnValue: AnyPublisher<Bool, LocalStoreError>!
-    var saveChargeItemsClosure: (([ErxChargeItem]) -> AnyPublisher<Bool, LocalStoreError>)?
+    var saveChargeItemsClosure: (([ErxSparseChargeItem]) -> AnyPublisher<Bool, LocalStoreError>)?
 
-    func save(chargeItems: [ErxChargeItem]) -> AnyPublisher<Bool, LocalStoreError> {
+    func save(chargeItems: [ErxSparseChargeItem]) -> AnyPublisher<Bool, LocalStoreError> {
         saveChargeItemsCallsCount += 1
         saveChargeItemsReceivedChargeItems = chargeItems
         saveChargeItemsReceivedInvocations.append(chargeItems)
         return saveChargeItemsClosure.map({ $0(chargeItems) }) ?? saveChargeItemsReturnValue
+    }
+    
+   // MARK: - delete
+
+    var deleteChargeItemsCallsCount = 0
+    var deleteChargeItemsCalled: Bool {
+        deleteChargeItemsCallsCount > 0
+    }
+    var deleteChargeItemsReceivedChargeItems: [ErxSparseChargeItem]?
+    var deleteChargeItemsReceivedInvocations: [[ErxSparseChargeItem]] = []
+    var deleteChargeItemsReturnValue: AnyPublisher<Bool, LocalStoreError>!
+    var deleteChargeItemsClosure: (([ErxSparseChargeItem]) -> AnyPublisher<Bool, LocalStoreError>)?
+
+    func delete(chargeItems: [ErxSparseChargeItem]) -> AnyPublisher<Bool, LocalStoreError> {
+        deleteChargeItemsCallsCount += 1
+        deleteChargeItemsReceivedChargeItems = chargeItems
+        deleteChargeItemsReceivedInvocations.append(chargeItems)
+        return deleteChargeItemsClosure.map({ $0(chargeItems) }) ?? deleteChargeItemsReturnValue
     }
 }
 
@@ -578,6 +596,24 @@ final class MockErxRemoteDataStore: ErxRemoteDataStore {
         listAllChargeItemsAfterReceivedReferenceDate = referenceDate
         listAllChargeItemsAfterReceivedInvocations.append(referenceDate)
         return listAllChargeItemsAfterClosure.map({ $0(referenceDate) }) ?? listAllChargeItemsAfterReturnValue
+    }
+    
+   // MARK: - delete
+
+    var deleteChargeItemsCallsCount = 0
+    var deleteChargeItemsCalled: Bool {
+        deleteChargeItemsCallsCount > 0
+    }
+    var deleteChargeItemsReceivedChargeItems: [ErxSparseChargeItem]?
+    var deleteChargeItemsReceivedInvocations: [[ErxSparseChargeItem]] = []
+    var deleteChargeItemsReturnValue: AnyPublisher<Bool, RemoteStoreError>!
+    var deleteChargeItemsClosure: (([ErxSparseChargeItem]) -> AnyPublisher<Bool, RemoteStoreError>)?
+
+    func delete(chargeItems: [ErxSparseChargeItem]) -> AnyPublisher<Bool, RemoteStoreError> {
+        deleteChargeItemsCallsCount += 1
+        deleteChargeItemsReceivedChargeItems = chargeItems
+        deleteChargeItemsReceivedInvocations.append(chargeItems)
+        return deleteChargeItemsClosure.map({ $0(chargeItems) }) ?? deleteChargeItemsReturnValue
     }
     
    // MARK: - fetchConsents

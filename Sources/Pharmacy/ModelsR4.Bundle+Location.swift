@@ -16,9 +16,11 @@
 //  
 //
 
+import DataKit
 import eRpKit
 import Foundation
 import ModelsR4
+import OpenSSL
 
 // sourcery: CodedError = "510"
 public enum PharmacyBundleParsingError: Swift.Error {
@@ -37,13 +39,34 @@ extension ModelsR4.Bundle {
             guard let location = $0.resource?.get(if: ModelsR4.Location.self) else {
                 return nil
             }
-            return try Self.parse(location: location, $0.fullUrl, from: self)
+            return try Self.parse(location: location)
         } ?? []
     }
 
-    static func parse(location: ModelsR4.Location,
-                      _: FHIRPrimitive<FHIRURI>?,
-                      from _: ModelsR4.Bundle) throws -> PharmacyLocation {
+    /// Parse and extract all found avs certificates from `self`
+    ///
+    /// - Returns: Array with all found and parsed certificates
+    /// - Throws: `ModelsR4.Bundle.Error`
+    func parseCertificates() throws -> [X509] {
+        // Collect and parse all Pharmacy Locations
+        try entry?.compactMap { anEntry -> X509? in
+            guard let binaryResource = anEntry.resource?.get(if: ModelsR4.Binary.self) else {
+                return nil
+            }
+            return try Self.parse(binary: binaryResource)
+        }
+        .filter { $0.signatureAlgorithm() == .unsupported } ?? []
+    }
+
+    static func parse(binary: ModelsR4.Binary) throws -> X509? {
+        guard let base64DataString = binary.data?.value?.dataString else {
+            return nil
+        }
+        guard let data = try? Base64.decode(string: base64DataString) else { return nil }
+        return try? X509(der: data)
+    }
+
+    static func parse(location: ModelsR4.Location) throws -> PharmacyLocation {
         guard let id = location.id?.value?.string else {
             throw PharmacyBundleParsingError.parseError("Could not parse id from pharmacy.")
         }
@@ -87,7 +110,8 @@ extension ModelsR4.Bundle {
                 email: location.email,
                 web: location.web
             ),
-            hoursOfOperation: location.hoursOfOperations
+            hoursOfOperation: location.hoursOfOperations,
+            avsEndpoints: location.avsEndpoints
         )
 
         return pharmacy
@@ -194,6 +218,38 @@ extension ModelsR4.Location {
         return pharmacyTypes
     }
 
+    var avsEndpoints: PharmacyLocation.AVSEndpoints? {
+        guard let avsSystems = telecom?.filter({ $0.system?.value == ContactPointSystem.other }) else {
+            return nil
+        }
+
+        var pickupUrl: String?
+        var deliveryUrl: String?
+        var shipmentUrl: String?
+        avsSystems.forEach { system in
+            switch system.rank?.value?.integer {
+            case ApoVzd.Key.pickupRank:
+                pickupUrl = system.value?.value?.string
+            case ApoVzd.Key.deliveryRank:
+                deliveryUrl = system.value?.value?.string
+            case ApoVzd.Key.shipmentRank:
+                shipmentUrl = system.value?.value?.string
+            default:
+                return
+            }
+        }
+
+        guard pickupUrl != nil || shipmentUrl != nil || deliveryUrl != nil else {
+            return nil
+        }
+
+        return PharmacyLocation.AVSEndpoints(
+            onPremiseUrl: pickupUrl,
+            shipmentUrl: shipmentUrl,
+            deliveryUrl: deliveryUrl
+        )
+    }
+
     var phone: String? {
         telecom?.first {
             $0.system?.value == ContactPointSystem.phone
@@ -229,5 +285,18 @@ extension ModelsR4.Location {
             hours.append(pharmacyHop)
         }
         return hours
+    }
+}
+
+/// https://simplifier.net/vzd-fhir-directory
+public enum ApoVzd {
+    /// Supported Keys from `gemF_eRp_altern_Zuweisung`
+    public enum Key {
+        /// Rank for the url of the onPremise service
+        public static let pickupRank: Int32 = 100
+        /// Rank for the url of the delivery service
+        public static let deliveryRank: Int32 = 200
+        /// Rank for the url of the shipment service
+        public static let shipmentRank: Int32 = 300
     }
 }

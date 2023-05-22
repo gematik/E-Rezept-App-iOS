@@ -1,4 +1,4 @@
-// Generated using Sourcery 2.0.1 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.0.2 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 
 import Combine
@@ -197,7 +197,7 @@ class StreamWrappedErxTaskRepository: ErxTaskRepository {
             .eraseToAnyPublisher()
 	}
 
-	func loadRemoteChargeItems() -> AnyPublisher<[ErxChargeItem], ErxRepositoryError> {
+	func loadRemoteChargeItems() -> AnyPublisher<[ErxSparseChargeItem], ErxRepositoryError> {
         stream
         	.map { $0.loadRemoteChargeItems(
             ) }
@@ -208,6 +208,41 @@ class StreamWrappedErxTaskRepository: ErxTaskRepository {
 	func fetchConsents() -> AnyPublisher<[ErxConsent], ErxRepositoryError> {
         stream
         	.map { $0.fetchConsents(
+            ) }
+            .switchToLatest()
+            .eraseToAnyPublisher()
+	}
+
+	func loadLocal(by id: ErxSparseChargeItem.ID) -> AnyPublisher<ErxSparseChargeItem?, ErxRepositoryError> {
+        stream
+        	.map { $0.loadLocal(
+				by: id
+            ) }
+            .switchToLatest()
+            .eraseToAnyPublisher()
+	}
+
+	func loadLocalAll() -> AnyPublisher<[ErxSparseChargeItem], ErxRepositoryError> {
+        stream
+        	.map { $0.loadLocalAll(
+            ) }
+            .switchToLatest()
+            .eraseToAnyPublisher()
+	}
+
+	func save(chargeItems: [ErxSparseChargeItem]) -> AnyPublisher<Bool, ErxRepositoryError> {
+        stream
+        	.map { $0.save(
+				chargeItems: chargeItems
+            ) }
+            .switchToLatest()
+            .eraseToAnyPublisher()
+	}
+
+	func delete(chargeItems: [ErxSparseChargeItem]) -> AnyPublisher<Bool, ErxRepositoryError> {
+        stream
+        	.map { $0.delete(
+				chargeItems: chargeItems
             ) }
             .switchToLatest()
             .eraseToAnyPublisher()
@@ -663,6 +698,15 @@ class StreamWrappedPharmacyRepository: PharmacyRepository {
             .eraseToAnyPublisher()
 	}
 
+	func loadAvsCertificates(for id: String) -> AnyPublisher<[X509], PharmacyRepositoryError> {
+        stream
+        	.map { $0.loadAvsCertificates(
+				for: id
+            ) }
+            .switchToLatest()
+            .eraseToAnyPublisher()
+	}
+
 	func save(pharmacy: PharmacyLocation) -> AnyPublisher<Bool, PharmacyRepositoryError> {
         current.save(
 				pharmacy: pharmacy
@@ -1087,6 +1131,9 @@ class StreamWrappedUserSession: UserSession {
 	}
 	lazy var erxTaskRepository: ErxTaskRepository = {
 		StreamWrappedErxTaskRepository(stream: stream.map{ $0.erxTaskRepository }.eraseToAnyPublisher() )
+	}()
+	lazy var ordersRepository: ErxTaskRepository = {
+		StreamWrappedErxTaskRepository(stream: stream.map{ $0.ordersRepository }.eraseToAnyPublisher() )
 	}()
 	lazy var profileDataStore: ProfileDataStore = {
 		StreamWrappedProfileDataStore(stream: stream.map{ $0.profileDataStore }.eraseToAnyPublisher(), current: current.profileDataStore )

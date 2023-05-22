@@ -33,6 +33,7 @@ class StandardSessionContainer: UserSession {
     private var keychainStorage: KeychainStorage
     private let schedulers: Schedulers
     private var erxTaskCoreDataStore: ErxTaskCoreDataStore
+    private var ordersCoreDataStore: ErxTaskCoreDataStore
     private var pharmacyCoreDataStore: PharmacyCoreDataStore
     let appConfiguration: AppConfiguration
     var profileDataStore: ProfileDataStore
@@ -45,6 +46,7 @@ class StandardSessionContainer: UserSession {
         for profileId: UUID,
         schedulers: Schedulers,
         erxTaskCoreDataStore: ErxTaskCoreDataStore,
+        ordersCoreDataStore: ErxTaskCoreDataStore,
         pharmacyCoreDataStore: PharmacyCoreDataStore,
         profileDataStore: ProfileDataStore,
         shipmentInfoDataStore: ShipmentInfoDataStore,
@@ -54,6 +56,7 @@ class StandardSessionContainer: UserSession {
         self.profileId = profileId
         self.schedulers = schedulers
         self.erxTaskCoreDataStore = erxTaskCoreDataStore
+        self.ordersCoreDataStore = ordersCoreDataStore
         self.pharmacyCoreDataStore = pharmacyCoreDataStore
         self.profileDataStore = profileDataStore
         self.shipmentInfoDataStore = shipmentInfoDataStore
@@ -189,7 +192,7 @@ class StandardSessionContainer: UserSession {
         )
     }()
 
-    lazy var erxTaskRepository: ErxTaskRepository = {
+    private lazy var erxRemoteDataStore: ErxRemoteDataStore = {
         let vauSession = VAUSession(
             vauServer: appConfiguration.erp,
             vauAccessTokenProvider: self.idpSession.asVAUAccessTokenProvider(),
@@ -201,8 +204,15 @@ class StandardSessionContainer: UserSession {
             server: appConfiguration.base,
             httpClient: self.erpHttpClient(vau: vauSession)
         )
-        let cloud = ErxTaskFHIRDataStore(fhirClient: fhirClient)
-        return DefaultErxTaskRepository(disk: erxTaskCoreDataStore, cloud: cloud)
+        return ErxTaskFHIRDataStore(fhirClient: fhirClient)
+    }()
+
+    lazy var erxTaskRepository: ErxTaskRepository = {
+        DefaultErxTaskRepository(disk: erxTaskCoreDataStore, cloud: erxRemoteDataStore)
+    }()
+
+    lazy var ordersRepository: ErxTaskRepository = {
+        DefaultErxTaskRepository(disk: ordersCoreDataStore, cloud: erxRemoteDataStore)
     }()
 
     lazy var appSecurityManager: AppSecurityManager = {
@@ -222,7 +232,20 @@ class StandardSessionContainer: UserSession {
     }
 
     lazy var avsSession: AVSSession = {
+        #if ENABLE_DEBUG_VIEW
+        DefaultAVSSession(httpClient: avsHttpClient) { message, endpoint, httpResponse in
+            var urlRequest = URLRequest(url: endpoint.url)
+            endpoint.additionalHeaders.forEach { key, value in
+                urlRequest.addValue(value, forHTTPHeaderField: key)
+            }
+            urlRequest.httpBody = try? JSONEncoder().encode(message)
+            var response = httpResponse
+            response.status = HTTPStatusCode.debug
+            DebugLiveLogger.shared.log(request: urlRequest, sentAt: Date(), response: response, receivedAt: Date())
+        }
+        #else
         DefaultAVSSession(httpClient: avsHttpClient)
+        #endif
     }()
 
     private lazy var prescriptionRepositoryWithActivity: DefaultPrescriptionRepository = {

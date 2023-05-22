@@ -36,13 +36,16 @@ struct AVSDebugView: View {
                         Text(pharmacy.name)
                             .font(.headline)
                             .padding(.bottom, 2)
-                        if let onPremise = pharmacy.onPremiseUrl.url, !onPremise.isEmpty {
+                        let onPremise = pharmacy.onPremiseUrl.url
+                        if !onPremise.isEmpty {
                             TextWithValue("OnPremise", value: onPremise)
                         }
-                        if let shipment = pharmacy.shipmentUrl.url, !shipment.isEmpty {
+                        let shipment = pharmacy.shipmentUrl.url
+                        if !shipment.isEmpty {
                             TextWithValue("Shipment", value: shipment)
                         }
-                        if let delivery = pharmacy.deliveryUrl.url, !delivery.isEmpty {
+                        let delivery = pharmacy.deliveryUrl.url
+                        if !delivery.isEmpty {
                             TextWithValue("Delivery", value: delivery)
                         }
                     }

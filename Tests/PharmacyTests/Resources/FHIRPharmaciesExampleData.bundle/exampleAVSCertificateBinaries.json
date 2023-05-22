@@ -1,0 +1,53 @@
+{
+    "id": "efa77cda-d324-4af8-8f7f-ea0514586e92",
+    "meta": {
+        "lastUpdated": "2023-04-20T14:36:25.075192866+02:00"
+    },
+    "resourceType": "Bundle",
+    "type": "searchset",
+    "total": 2,
+    "link": [
+        {
+            "relation": "self",
+            "url": "Bundleefa77cda-d324-4af8-8f7f-ea0514586e92"
+        }
+    ],
+    "entry": [
+        {
+            "resource": {
+                "id": "17a2bade-b1f1-4046-8393-26eabf222808",
+                "meta": {
+                    "lastUpdated": "2023-03-28T09:12:33.915+02:00",
+                    "versionId": "1"
+                },
+                "resourceType": "Binary",
+                "securityContext": {
+                    "reference": "Location/0ed62168-7a45-41bd-b85b-9085a1a5f0ca"
+                },
+                "contentType": "application/pkix-cert",
+                "data": "MIIFJTCCBA2gAwIBAgIHAy3++TwYvTANBgkqhkiG9w0BAQsFADCBmjELMAkGA1UEBhMCREUxHzAdBgNVBAoMFmdlbWF0aWsgR21iSCBOT1QtVkFMSUQxSDBGBgNVBAsMP0luc3RpdHV0aW9uIGRlcyBHZXN1bmRoZWl0c3dlc2Vucy1DQSBkZXIgVGVsZW1hdGlraW5mcmFzdHJ1a3R1cjEgMB4GA1UEAwwXR0VNLlNNQ0ItQ0E0MSBURVNULU9OTFkwHhcNMjMwMTI1MjMwMDAwWhcNMjgwMTI1MjI1OTU5WjCB+DELMAkGA1UEBhMCREUxDDAKBgNVBAgMA1VsbTEUMBIGA1UEBwwLSW5nb2xmc3RhZHQxDjAMBgNVBBEMBTEyMzQ2MRUwEwYDVQQJDAxIYXVwdHN0ci4gMTExITAfBgNVBAoMGDMtMi0yMDIzMDEyNC0xIE5PVC1WQUxJRDEgMB4GA1UEBRMXMTYuODAyNzYwMDEwMTE2OTk5MDIzMDExFDASBgNVBAQMC1VsbWVuZG9yZmVyMREwDwYDVQQqDAhBZGVsaGVpZDEwMC4GA1UEAwwnQXBvdGhla2UgQWRlbGhlaWQgVWxtZW5kb3JmZXIgVEVTVC1PTkxZMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAoldSTGb4p9vPAMh8xObq7I1Ym5kwi0e7/elMKCqxv6ZWQUoBVy1j5XpApLsS5V8foDghv0CszT9ro9g8DQ5JLKhyjBdiFp8aHxXENx4Mf/c83sVNmvDNi5XaertVp7yGFWqQQ5OdzhN0T1IHzfHTkX/mqpygIkiTbhlr4TxoZkb8L+BFqjIg4kG8J2Dupe2AAEdpEmqqFBywF8Zce5st13Fv2GIBTNcEXzxsgyHZLLL7k4rZ74ia1Z7oiVC10sxA8EnjXFBAL78WqI3RDGT/SmR4hYFUDcNMtvYw4CsvFr+RLP/+DG2T1ziqQLn2dCb5ulr0rGt/H4Rzu30VBKo2xwIDAQABo4IBDjCCAQowHwYDVR0jBBgwFoAUuvg6WBH2huoEom3Eeuu5s/pLb8IwHQYDVR0OBBYEFBEnAhX7lSpGcNurxYxIz6eEPKLEMAwGA1UdEwEB/wQCMAAwOAYIKwYBBQUHAQEELDAqMCgGCCsGAQUFBzABhhxodHRwOi8vZWhjYS5nZW1hdGlrLmRlL29jc3AvME4GBSskCAMDBEUwQzBBMD8wPTA7MBcMFcOWZmZlbnRsaWNoZSBBcG90aGVrZTAJBgcqghQATAQ2ExUzLTAxLjIuMjAyMzAwMS4xNi4xMDEwDgYDVR0PAQH/BAQDAgQwMCAGA1UdIAQZMBcwCgYIKoIUAEwEgSMwCQYHKoIUAEwETDANBgkqhkiG9w0BAQsFAAOCAQEAPr/1uepXo+PgTFnbnrhFvXAvsLIBbrQe10cK6Y0Do0ZmWjqKNpvxiVqGnPPyKjbM2QxIx0tGcXpXqyPH5lBt6tsFyBa3Nu8tiR9I8JWTXeLEq+4wMjzkkqE8bNsE+eozZNRyZlUvS4obXJAYCwvgEBMVR9IQ6pizGAVzyq3uSdRNwC4e15Atgg4ZqUCL9wq8B4Ih80qWHX3Zf+86rJA6SFi09Yj5sZvb14x/ikc4hI/9TVTVTGsWl4ZZh2OE5zzPgTFXbdt9AeOSr9bhgYEsf6x7WODcRGZQ4RbamOoa0urjgP9WKIdKqzX8yC1xrEbAAjAhKvznz91JzAcYLGicSg=="
+            },
+            "search": {
+                "mode": "match"
+            }
+        },
+        {
+            "resource": {
+                "id": "9947f186-9048-4032-a5bb-952deec6f608",
+                "meta": {
+                    "lastUpdated": "2023-03-28T09:12:33.915+02:00",
+                    "versionId": "1"
+                },
+                "resourceType": "Binary",
+                "securityContext": {
+                    "reference": "Location/0ed62168-7a45-41bd-b85b-9085a1a5f0ca"
+                },
+                "contentType": "application/pkix-cert",
+                "data": "MIID+DCCA5+gAwIBAgIHALv/lvONGDAKBggqhkjOPQQDAjCBmjELMAkGA1UEBhMCREUxHzAdBgNVBAoMFmdlbWF0aWsgR21iSCBOT1QtVkFMSUQxSDBGBgNVBAsMP0luc3RpdHV0aW9uIGRlcyBHZXN1bmRoZWl0c3dlc2Vucy1DQSBkZXIgVGVsZW1hdGlraW5mcmFzdHJ1a3R1cjEgMB4GA1UEAwwXR0VNLlNNQ0ItQ0E1MSBURVNULU9OTFkwHhcNMjMwMTI1MjMwMDAwWhcNMjgwMTI1MjI1OTU5WjCB+DELMAkGA1UEBhMCREUxDDAKBgNVBAgMA1VsbTEUMBIGA1UEBwwLSW5nb2xmc3RhZHQxDjAMBgNVBBEMBTEyMzQ2MRUwEwYDVQQJDAxIYXVwdHN0ci4gMTExITAfBgNVBAoMGDMtMi0yMDIzMDEyNC0xIE5PVC1WQUxJRDEgMB4GA1UEBRMXMTYuODAyNzYwMDEwMTE2OTk5MDIzMDExFDASBgNVBAQMC1VsbWVuZG9yZmVyMREwDwYDVQQqDAhBZGVsaGVpZDEwMC4GA1UEAwwnQXBvdGhla2UgQWRlbGhlaWQgVWxtZW5kb3JmZXIgVEVTVC1PTkxZMFowFAYHKoZIzj0CAQYJKyQDAwIIAQEHA0IABIt9O6MwSMzM3FIN8+/QeLLH419hU/Z5BpkJLVpz2o2HZ7vYATrvaAPqkRmdPDRYTcMsjl6yYQhLlTTb6QplZiejggFtMIIBaTAOBgNVHQ8BAf8EBAMCAwgwDAYDVR0TAQH/BAIwADBcBgNVHSAEVTBTMDsGCCqCFABMBIEjMC8wLQYIKwYBBQUHAgEWIWh0dHA6Ly93d3cuZ2VtYXRpay5kZS9nby9wb2xpY2llczAJBgcqghQATARMMAkGByqCFABMBGUwTgYFKyQIAwMERTBDMEEwPzA9MDswFwwVw5ZmZmVudGxpY2hlIEFwb3RoZWtlMAkGByqCFABMBDYTFTMtMDEuMi4yMDIzMDAxLjE2LjEwMTAfBgNVHSMEGDAWgBQGmOkCVf/Jn1yjZQ7xXeIg9YT7kzAdBgNVHQ4EFgQUV1SAEWk6W6ORPAkLkl4tv+a3dgcwOAYIKwYBBQUHAQEELDAqMCgGCCsGAQUFBzABhhxodHRwOi8vZWhjYS5nZW1hdGlrLmRlL29jc3AvMCEGA1UdEQQaMBigFgYDVQQDoA8MDU9ldGtlci1HcnVwcGUwCgYIKoZIzj0EAwIDRwAwRAIgKcJKdOEtiEAb/i3tf2uVuMn+kXewNzt+9ndW5Vr9cUoCIFTgZx/sGG0GZZPLM4UqZpQ0UVU52x/P288I/fZiSm41"
+            },
+            "search": {
+                "mode": "match"
+            }
+        }
+    ]
+}

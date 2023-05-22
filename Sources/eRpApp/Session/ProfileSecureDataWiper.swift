@@ -46,7 +46,7 @@ class DefaultProfileSecureDataWiper: ProfileSecureDataWiper {
 
     func wipeSecureData(of profileId: UUID) -> AnyPublisher<Void, Never> {
         let storage = userSessionProvider.userSession(for: profileId).secureUserStore
-        // [REQ:gemSpec_IDP_Frontend:A_20499] Deletion of SSO_TOKEN, ID_TOKEN, AUTH_TOKEN
+        // [REQ:gemSpec_IDP_Frontend:A_20499,A_20499-01#2] Deletion of SSO_TOKEN, ID_TOKEN, AUTH_TOKEN
         // [REQ:gemSpec_eRp_FdV:A_20186] Deletion of SSO_TOKEN, ID_TOKEN, AUTH_TOKEN
         // [REQ:gemSpec_IDP_Frontend:A_21603] Certificate
         storage.wipe()

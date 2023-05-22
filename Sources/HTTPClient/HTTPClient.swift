@@ -154,6 +154,7 @@ public enum HTTPStatusCode: Int {
     // server error
     case serverError = 500
     case notImplemented = 501
+    case debug = -2
 }
 
 /// HTTP Method

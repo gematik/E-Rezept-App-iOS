@@ -66,8 +66,8 @@ struct OrdersDomain: ReducerProtocol {
 
     struct Destinations: ReducerProtocol {
         enum State: Equatable {
+            // sourcery: AnalyticsScreen = orders_detail
             case orderDetail(OrderDetailDomain.State)
-            case selectProfile
         }
 
         enum Action: Equatable {
@@ -85,9 +85,7 @@ struct OrdersDomain: ReducerProtocol {
     }
 
     @Dependency(\.schedulers) var schedulers: Schedulers
-    @Dependency(\.userSession) var userSession: UserSession
-    @Dependency(\.fhirDateFormatter) var fhirDateFormatter: FHIRDateFormatter
-    @Dependency(\.erxTaskRepository) var erxTaskRepository: ErxTaskRepository
+    @Dependency(\.ordersRepository) var ordersRepository: ErxTaskRepository
     @Dependency(\.pharmacyRepository) var pharmacyRepository: PharmacyRepository
 
     var body: some ReducerProtocol<State, Action> {
@@ -97,11 +95,10 @@ struct OrdersDomain: ReducerProtocol {
             }
     }
 
-    // swiftlint:disable:next function_body_length
     private func core(state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
         case .subscribeToCommunicationChanges:
-            return erxTaskRepository.loadLocalCommunications(for: .all)
+            return ordersRepository.loadLocalCommunications(for: .all)
                 .catch { _ in Just([ErxTask.Communication]()) }
                 .map { .response(.communicationChangeReceived($0)) }
                 .receive(on: schedulers.main.animation())
@@ -140,9 +137,6 @@ struct OrdersDomain: ReducerProtocol {
                 )
             }
             return .none
-        case .setNavigation(tag: .selectProfile):
-            state.destination = .selectProfile
-            return .none
         case .setNavigation(tag: .none):
             state.destination = nil
             return Self.cleanupSubDomains()
@@ -154,7 +148,7 @@ struct OrdersDomain: ReducerProtocol {
 }
 
 extension OrdersDomain {
-    func loadPharmacies(_ orders: IdentifiedArrayOf<OrderCommunications>) -> Effect<OrdersDomain.Action, Never> {
+    func loadPharmacies(_ orders: IdentifiedArrayOf<OrderCommunications>) -> EffectTask<OrdersDomain.Action> {
         let publishers: [AnyPublisher<PharmacyLocation?, Never>] = orders.map {
             pharmacyRepository.loadCached(by: $0.telematikId)
                 .first()
@@ -172,101 +166,8 @@ extension OrdersDomain {
 
 extension OrdersDomain {
     enum Dummies {
-        static let communicationDispRequest = ErxTask.Communication(
-            identifier: "1",
-            profile: .dispReq,
-            taskId: "taskID",
-            userId: "userID",
-            telematikId: "telematikID",
-            timestamp: "2021-05-26T10:59:37.098245933+00:00",
-            payloadJSON: "{\"version\": \"1\",\"supplyOptionsType\": \"onPremise\",\"info_text\": \"You can come by and pick up your drugs.\", \"pickUpCodeHR\":\"4711\"}" // swiftlint:disable:this line_length
-        )
-
-        static let communicationOnPremise = ErxTask.Communication(
-            identifier: "1",
-            profile: .reply,
-            taskId: "taskID",
-            userId: "userID",
-            telematikId: "telematikID",
-            timestamp: "2021-05-26T10:59:37.098245933+00:00",
-            payloadJSON: "{\"version\": \"1\",\"supplyOptionsType\": \"onPremise\",\"info_text\": \"You can come by and pick up your drugs.\", \"pickUpCodeHR\":\"4711\"}" // swiftlint:disable:this line_length
-        )
-
-        static let communicationOnPremiseWithUrl = ErxTask.Communication(
-            identifier: "1",
-            profile: .reply,
-            taskId: "taskID",
-            userId: "userID",
-            telematikId: "telematikID",
-            timestamp: "2021-05-26T10:59:37.098245933+00:00",
-            payloadJSON: "{\"version\": \"1\",\"supplyOptionsType\": \"onPremise\",\"info_text\": \"You can come by and pick up your drugs.\", \"pickUpCodeHR\":\"4711\", \"url\": \"https://das-e-rezept-fuer-deutschland.de\"}" // swiftlint:disable:this line_length
-        )
-
-        static let communicationShipment = ErxTask.Communication(
-            identifier: "2",
-            profile: .reply,
-            taskId: "taskID",
-            userId: "userID",
-            telematikId: "telematikID",
-            timestamp: "2021-05-28T10:59:37.098245933+00:00",
-            payloadJSON: "{\"version\": \"1\",\"supplyOptionsType\": \"shipment\",\"info_text\": \"Checkout your shimpment in the shopping cart.\",\"url\": \"https://das-e-rezept-fuer-deutschland.de\"}",
-            // swiftlint:disable:previous line_length
-            isRead: true
-        )
-
-        static let communicationDelivery = ErxTask.Communication(
-            identifier: "3",
-            profile: .reply,
-            taskId: "taskID",
-            userId: "userID",
-            telematikId: "telematikID",
-            timestamp: "2021-05-29T10:59:37.098245933+00:00",
-            payloadJSON: "{\"version\": \"1\",\"supplyOptionsType\": \"delivery\",\"info_text\": \"Your prescription is on the way. Make sure you are at home. We will not come back and bring you more drugs! Just kidding ;)\", \"url\": \"https://das-e-rezept-fuer-deutschland.de\"}" // swiftlint:disable:this line_length
-        )
-
-        static let communicationWithOrderId = ErxTask.Communication(
-            identifier: "4",
-            profile: .reply,
-            taskId: "taskID",
-            userId: "userID",
-            telematikId: "telematikID",
-            orderId: "orderId",
-            timestamp: "2021-05-26T10:59:37.098245933+00:00",
-            // swiftlint:disable:next line_length
-            payloadJSON: "{\"version\": \"1\",\"supplyOptionsType\": \"onPremise\",\"info_text\": \"You can come by and pick up your drugs.\", \"pickUpCodeHR\":\"4711\"}",
-            isRead: true
-        )
-
-        static let communicationWithoutPayload = ErxTask.Communication(
-            identifier: "4",
-            profile: .reply,
-            taskId: "taskID",
-            userId: "userID",
-            telematikId: "telematikID",
-            orderId: "orderId",
-            timestamp: "2021-05-26T10:59:37.098245933+00:00",
-            payloadJSON: "",
-            isRead: true
-        )
-
-        static let demoSessionContainer = DummyUserSessionContainer()
-
-        static let orders = [
-            OrderCommunications(
-                orderId: "orderId_1",
-                communications: [communicationOnPremise,
-                                 communicationShipment,
-                                 communicationDelivery]
-            ),
-            OrderCommunications(
-                orderId: "orderId_2",
-                communications: [communicationWithOrderId],
-                pharmacy: PharmacyLocation.Dummies.pharmacy
-            ),
-        ]
-
         static let state =
-            State(orders: IdentifiedArray(uniqueElements: orders))
+            State(orders: IdentifiedArray(uniqueElements: OrderCommunications.Dummies.multipleOrderCommunications))
 
         static let store = Store(initialState: state,
                                  reducer: OrdersDomain())

@@ -36,37 +36,18 @@ struct OnboardingDomain: ReducerProtocol {
         )
 
         var isShowingNextButton: Bool {
-            currentPage != .legalInfo && currentPage != .altRegisterAuthentication
-        }
-
-        var isNextButtonEnabled: Bool {
-            if case .registerAuthentication = currentPage {
-                return registerAuthenticationState.hasValidSelection
-            } else {
-                return true
-            }
-        }
-
-        var isDragEnabled: Bool {
-            if currentPage == .registerAuthentication && registerAuthenticationState.hasValidSelection {
-                return true
-            } else if currentPage == .altRegisterAuthentication ||
-                currentPage == .registerAuthentication {
-                return false
-            } else {
-                return true
-            }
+            currentPage == .start
         }
     }
 
     enum Page {
         case start
-        case features
         case registerAuthentication
         case altRegisterAuthentication
         case legalInfo
+        case analytics
 
-        static var all: [Page] = [.start, .features, .registerAuthentication, .legalInfo]
+        static var all: [Page] = [.start, .legalInfo, .registerAuthentication, analytics]
     }
 
     struct Composition: Equatable {
@@ -138,11 +119,14 @@ struct OnboardingDomain: ReducerProtocol {
         case registerAuthentication(action: RegisterAuthenticationDomain.Action)
         case nextPage
         case dismissAlert
+        case showTrackingAlert
+        case allowTracking
     }
 
     @Dependency(\.currentAppVersion) var appVersion: AppVersion
     @Dependency(\.appSecurityManager) var appSecurityManager: AppSecurityManager
     @Dependency(\.userDataStore) var localUserStore: UserDataStore
+    @Dependency(\.tracker) var tracker: Tracker
 
     var environment: Environment {
         .init(appVersion: appVersion, appSecurityManager: appSecurityManager, localUserStore: localUserStore)
@@ -162,7 +146,7 @@ struct OnboardingDomain: ReducerProtocol {
         Reduce(core)
     }
 
-    // swiftlint:disable:next cyclomatic_complexity
+    // swiftlint:disable:next function_body_length cyclomatic_complexity
     func core(into state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
         case .nextPage:
@@ -189,30 +173,54 @@ struct OnboardingDomain: ReducerProtocol {
                     return .none
                 }
                 localUserStore.set(appSecurityOption: selectedOption)
-                return Effect(value: .dismissOnboarding)
+                return EffectTask(value: .dismissOnboarding)
             } else {
                 localUserStore.set(appSecurityOption: selectedOption)
-                return Effect(value: .dismissOnboarding)
+                return EffectTask(value: .dismissOnboarding)
             }
         case .dismissOnboarding:
             localUserStore.set(hideOnboarding: true)
             localUserStore.set(onboardingVersion: appVersion.productVersion)
             return RegisterAuthenticationDomain.cleanup()
-        case .registerAuthentication(action: .saveSelectionSuccess):
-            return Effect(value: .dismissOnboarding)
-        case .registerAuthentication(action: .continueBiometry):
-            return Effect(value: .nextPage)
+        case .registerAuthentication(action: .continueBiometry),
+             .registerAuthentication(action: .nextPage),
+             .registerAuthentication(action: .saveSelectionSuccess):
+            return EffectTask(value: .nextPage)
         case .registerAuthentication:
             return .none
-        case .dismissAlert:
-            state.alertState = nil
+        // [REQ:gemSpec_eRp_FdV:A_19088,A_19091#1,A_19092] Show comply route to display analytics usage within
+        // onboarding
+        case .showTrackingAlert:
+            state.alertState = Self.trackingAlertState
             return .none
+        // [REQ:gemSpec_eRp_FdV:A_19090,A_19091#2] User confirms the opt in within settings
+        case .allowTracking:
+            tracker.optIn = true
+            return EffectTask(value: .saveAuthentication)
+        // [REQ:gemSpec_eRp_FdV:A_19092] User may choose to not accept analytics
+        case .dismissAlert:
+            tracker.optIn = false
+            state.alertState = nil
+            return EffectTask(value: .saveAuthentication)
         }
     }
+
+    static let trackingAlertState: AlertState<Action> = {
+        AlertState<Action>(
+            title: TextState("Erlauben Sie E-Rezept Ihr Nutzerverhalten anonym zu analysieren?"),
+            message: TextState(
+                "Ihre Daten werden für Produktverbesserungen genutzt und nicht an Dritte weitergegeben."
+            ),
+            primaryButton: .default(TextState("Nicht erlauben"), action: .send(.dismissAlert, animation: .default)),
+            secondaryButton: .default(TextState("Erlauben"), action: .send(.allowTracking, animation: .default))
+        )
+    }()
 }
 
 extension OnboardingDomain {
     enum Dummies {
         static let state = State(composition: OnboardingDomain.Composition.allPages)
+
+        static let store = Store(initialState: state, reducer: OnboardingDomain())
     }
 }

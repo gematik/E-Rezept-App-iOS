@@ -24,13 +24,13 @@ public enum ProfilePicture: String, CaseIterable {
     case baby
     case boyWithCard
     case developer
-    case doctor
-    case doctor2
+    case doctorFemale
+    case pharmacist
     case manWithPhone
     case oldDoctor
     case oldMan
     case oldWoman
-    case pharmacist
+    case doctorMale
     case pharmacist2
     case wheelchair
     case womanWithPhone
@@ -44,9 +44,9 @@ public enum ProfilePicture: String, CaseIterable {
             return Asset.Profile.boyWithCard
         case .developer:
             return Asset.Profile.developer
-        case .doctor:
+        case .doctorFemale:
             return Asset.Profile.doctor
-        case .doctor2:
+        case .pharmacist:
             return Asset.Profile.doctor2
         case .manWithPhone:
             return Asset.Profile.manWithPhone
@@ -56,7 +56,7 @@ public enum ProfilePicture: String, CaseIterable {
             return Asset.Profile.oldMan
         case .oldWoman:
             return Asset.Profile.oldWoman
-        case .pharmacist:
+        case .doctorMale:
             return Asset.Profile.pharmacist
         case .pharmacist2:
             return Asset.Profile.pharmacist2
@@ -66,6 +66,39 @@ public enum ProfilePicture: String, CaseIterable {
             return Asset.Profile.womanWithPhone
         case .none:
             return .none
+        }
+    }
+
+    var accessibility: StringAsset {
+        switch self {
+        case .baby:
+            return L10n.profileTxtBaby
+        case .boyWithCard:
+            return L10n.profileTxtBoy
+        case .developer:
+            return L10n.profileTxtDeveloper
+        case .doctorFemale:
+            return L10n.profileTxtDoctorW
+        case .pharmacist:
+            return L10n.profileTxtPharmacist
+        case .manWithPhone:
+            return L10n.profileTxtMann
+        case .oldDoctor:
+            return L10n.profileTxtOldDoctor
+        case .oldMan:
+            return L10n.profileTxtOldMan
+        case .oldWoman:
+            return L10n.profileTxtOldWoman
+        case .doctorMale:
+            return L10n.profileTxtDoctor
+        case .pharmacist2:
+            return L10n.profileTxtPharmacistHandy
+        case .wheelchair:
+            return L10n.profileTxtBlindMan
+        case .womanWithPhone:
+            return L10n.profileTxtWoman
+        case .none:
+            return L10n.profileTxtNone
         }
     }
 }
@@ -79,10 +112,10 @@ extension ProfilePicture {
             return .boyWithCard
         case .developer:
             return .developer
-        case .doctor:
-            return .doctor
-        case .doctor2:
-            return .doctor2
+        case .doctorFemale:
+            return .doctorFemale
+        case .pharmacist:
+            return .pharmacist
         case .manWithPhone:
             return .manWithPhone
         case .oldDoctor:
@@ -91,8 +124,8 @@ extension ProfilePicture {
             return .oldMan
         case .oldWoman:
             return .oldMan
-        case .pharmacist:
-            return .pharmacist
+        case .doctorMale:
+            return .doctorMale
         case .pharmacist2:
             return .pharmacist2
         case .wheelchair:

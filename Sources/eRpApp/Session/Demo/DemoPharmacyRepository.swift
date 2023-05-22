@@ -22,6 +22,7 @@ import eRpKit
 import eRpLocalStorage
 import Foundation
 import IdentifiedCollections
+import OpenSSL
 import Pharmacy
 
 class DemoPharmacyRepository: PharmacyRepository {
@@ -117,6 +118,10 @@ class DemoPharmacyRepository: PharmacyRepository {
         }
         return Just(true).setFailureType(to: PharmacyRepositoryError.self).eraseToAnyPublisher()
     }
+
+    func loadAvsCertificates(for _: String) -> AnyPublisher<[X509], Pharmacy.PharmacyRepositoryError> {
+        Just([]).setFailureType(to: PharmacyRepositoryError.self).eraseToAnyPublisher()
+    }
 }
 
 struct DummyPharmacyRepository: PharmacyRepository {
@@ -179,5 +184,9 @@ struct DummyPharmacyRepository: PharmacyRepository {
 
     func delete(pharmacies _: [PharmacyLocation]) -> AnyPublisher<Bool, PharmacyRepositoryError> {
         Just(true).setFailureType(to: PharmacyRepositoryError.self).eraseToAnyPublisher()
+    }
+
+    func loadAvsCertificates(for _: String) -> AnyPublisher<[X509], Pharmacy.PharmacyRepositoryError> {
+        Just([]).setFailureType(to: PharmacyRepositoryError.self).eraseToAnyPublisher()
     }
 }

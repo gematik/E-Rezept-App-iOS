@@ -43,6 +43,7 @@ final class EditProfileSnapshotTests: XCTestCase {
                         can: nil,
                         insuranceId: nil,
                         image: .boyWithCard,
+                        userImageData: nil,
                         color: .blue,
                         profileId: UUID()
                     ),
@@ -67,6 +68,7 @@ final class EditProfileSnapshotTests: XCTestCase {
                         can: "123123",
                         insuranceId: "XY1234567890",
                         image: .boyWithCard,
+                        userImageData: nil,
                         color: .blue,
                         profileId: UUID(),
                         token: IDPToken(accessToken: "", expires: Date(), idToken: "", redirect: "redirect")
@@ -92,6 +94,7 @@ final class EditProfileSnapshotTests: XCTestCase {
                         can: "123123",
                         insuranceId: "XY1234567890",
                         image: .boyWithCard,
+                        userImageData: nil,
                         color: .blue,
                         profileId: UUID(),
                         token: IDPToken(accessToken: "", expires: Date(), idToken: "", redirect: "redirect")
@@ -116,6 +119,7 @@ final class EditProfileSnapshotTests: XCTestCase {
                     can: nil,
                     insuranceId: nil,
                     image: .boyWithCard,
+                    userImageData: nil,
                     color: .green,
                     profileId: UUID()
                 ),
@@ -138,7 +142,8 @@ final class EditProfileSnapshotTests: XCTestCase {
                     insurance: nil,
                     can: nil,
                     insuranceId: nil,
-                    image: .none,
+                    image: ProfilePicture.none,
+                    userImageData: nil,
                     color: .green,
                     profileId: UUID()
                 ),
@@ -162,6 +167,7 @@ final class EditProfileSnapshotTests: XCTestCase {
                     can: "123123",
                     insuranceId: "X987654321",
                     image: .boyWithCard,
+                    userImageData: nil,
                     color: .yellow,
                     profileId: UUID()
                 ),
@@ -177,6 +183,7 @@ final class EditProfileSnapshotTests: XCTestCase {
         let sut = EditProfileView(
             store: .init(
                 initialState: .init(
+                    profileId: UUID(),
                     name: "Private Paul",
                     acronym: "PP",
                     fullName: "Private Paul",
@@ -185,7 +192,6 @@ final class EditProfileSnapshotTests: XCTestCase {
                     insuranceId: "X987654321",
                     image: .boyWithCard,
                     color: .red,
-                    profileId: UUID(),
                     insuranceType: .pKV
                 ),
                 reducer: EmptyReducer()

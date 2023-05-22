@@ -25,6 +25,9 @@ protocol AVSCmsEncrypter {
 
 class RsaOnlyAVSCmsEncrypter: AVSCmsEncrypter {
     func cmsEncrypt(_ data: Data, recipients: [X509]) throws -> Data {
+        // [REQ:gemSpec_Krypt:GS-A_4390] RSAES-OAEP with MGF1 implemented in sub-framework OpenSSL-swift
+        // https://github.com/gematik/OpenSSL-Swift/blob/3c1ea91ba5abfefecfe3588815cb928d777e29ad/Sources/OpenSSL/CMS/CMSContentInfo.swift#L88
+        // swiftlint:disable:previous line_length
         let cms = try CMSContentInfo.encryptPartial(data: data)
         try cms.addRecipientsRSAOnly(recipients)
         try cms.final(data: data)

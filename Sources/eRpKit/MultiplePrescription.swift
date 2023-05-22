@@ -31,9 +31,14 @@ public struct MultiplePrescription: Hashable, Codable {
         self.endPeriod = endPeriod
     }
 
+    /// `True` if medication is of type multiple prescription, `false` if not
     public let mark: Bool
+    /// Number of this medication within the `totalNumber` of all multiple prescriptions
     public let numbering: Decimal?
+    /// Total number of multiple prescriptions
     public let totalNumber: Decimal?
+    /// Start of period from when this multiple prescription is valid
     public let startPeriod: String?
+    /// End of valid period
     public let endPeriod: String?
 }

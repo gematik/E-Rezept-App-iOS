@@ -99,12 +99,12 @@ struct CardWallExtAuthConfirmationDomain: ReducerProtocol {
                 .first()
                 .map(Action.openURL)
                 .catch { error in
-                    Effect(value: Action.error(Error.idpError(error)))
+                    EffectTask(value: Action.error(Error.idpError(error)))
                 }
                 .receive(on: environment.schedulers.main)
                 .eraseToEffect()
         case let .openURL(url):
-            return Effect.future { completion in
+            return .future { completion in
 
                 // [REQ:gemSpec_IDP_Sek:A_22299] Follow redirect
                 guard environment.resourceHandler.canOpenURL(url) else {
@@ -122,7 +122,7 @@ struct CardWallExtAuthConfirmationDomain: ReducerProtocol {
         case let .response(.openURL(successful)):
             state.loading = false
             if successful {
-                return Effect(value: .delegate(.close))
+                return EffectTask(value: .delegate(.close))
             } else {
                 state.error = Error.universalLinkFailed
             }

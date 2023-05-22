@@ -133,6 +133,7 @@ public class ProfileCoreDataStore: ProfileDataStore, CoreDataCrudable {
                     profileEntity.familyName = profile.familyName
                     profileEntity.color = profile.color.rawValue
                     profileEntity.image = profile.image.rawValue
+                    profileEntity.userImageData = profile.userImageData
                     profileEntity.lastAuthenticated = profile.lastAuthenticated
                     return profileEntity
                 } else {
@@ -165,6 +166,7 @@ public class ProfileCoreDataStore: ProfileDataStore, CoreDataCrudable {
                 profileEntity.familyName = profile.familyName
                 profileEntity.color = profile.color.rawValue
                 profileEntity.image = profile.image.rawValue
+                profileEntity.userImageData = profile.userImageData
                 profileEntity.lastAuthenticated = profile.lastAuthenticated
             } else {
                 throw Error.noMatchingEntity

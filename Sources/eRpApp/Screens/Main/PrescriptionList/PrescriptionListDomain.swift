@@ -134,8 +134,8 @@ struct PrescriptionListDomain: ReducerProtocol {
             return .cancel(id: Token.selectedProfileId)
         case .response(.selectedProfileIDReceived):
             return .concatenate(
-                Effect(value: .loadLocalPrescriptions),
-                Effect(value: .loadRemotePrescriptionsAndSave)
+                EffectTask(value: .loadLocalPrescriptions),
+                EffectTask(value: .loadRemotePrescriptionsAndSave)
             )
 
         case .unregisterActiveUserProfileListener:
@@ -214,7 +214,7 @@ extension PrescriptionListDomain.Environment {
     }
 
     /// "Silently" try to load ErxTasks if preconditions are met
-    func loadRemoteTasksAndSave() -> Effect<PrescriptionListDomain.Action, Never> {
+    func loadRemoteTasksAndSave() -> EffectTask<PrescriptionListDomain.Action> {
         prescriptionRepository
             .silentLoadRemote(for: locale)
             .map { status -> PrescriptionListDomain.Action in
@@ -232,7 +232,7 @@ extension PrescriptionListDomain.Environment {
     }
 
     /// Load ErxTasks if already logged in else show CardWall or error
-    func refreshOrShowCardWall() -> Effect<PrescriptionListDomain.Action, Never> {
+    func refreshOrShowCardWall() -> EffectTask<PrescriptionListDomain.Action> {
         prescriptionRepository
             .forcedLoadRemote(for: locale)
             .catchUnauthorizedToShowCardwall()

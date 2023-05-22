@@ -24,18 +24,15 @@ import UIKit
 
 struct PharmacySearchView: View {
     let store: PharmacySearchDomain.Store
-    let profileSelectionToolbarItemStore: ProfileSelectionToolbarItemDomain.Store?
     let isRedeemRecipe: Bool
 
     @ObservedObject
     var viewStore: ViewStore<ViewState, PharmacySearchDomain.Action>
 
     init(store: PharmacySearchDomain.Store,
-         profileSelectionToolbarItemStore: ProfileSelectionToolbarItemDomain.Store? = nil,
          isRedeemRecipe: Bool = true) {
         self.store = store
         self.isRedeemRecipe = isRedeemRecipe
-        self.profileSelectionToolbarItemStore = profileSelectionToolbarItemStore
         viewStore = ViewStore(store.scope(state: ViewState.init))
     }
 
@@ -123,28 +120,6 @@ struct PharmacySearchView: View {
                     .accentColor(Colors.primary600)
                 })
                 .accessibility(hidden: true)
-
-            if let profileSelectionToolbarItemStore = profileSelectionToolbarItemStore {
-                Rectangle()
-                    .frame(width: 0, height: 0, alignment: .center)
-                    .sheet(isPresented: Binding<Bool>(get: {
-                        viewStore.destinationTag == .selectProfile
-                    }, set: { show in
-                        if !show {
-                            viewStore.send(.setNavigation(tag: nil))
-                        }
-                    }),
-                    onDismiss: {},
-                    content: {
-                        ProfileSelectionView(
-                            store: profileSelectionToolbarItemStore
-                                .scope(state: \.profileSelectionState,
-                                       action: ProfileSelectionToolbarItemDomain.Action.profileSelection(action:))
-                        )
-                    })
-                    .hidden()
-                    .accessibility(hidden: true)
-            }
         }
         .toolbar {
             ToolbarItemGroup(placement: .navigationBarTrailing) {
@@ -152,15 +127,6 @@ struct PharmacySearchView: View {
                     NavigationBarCloseItem {
                         viewStore.send(.closeButtonTouched)
                     }
-                }
-            }
-            ToolbarItemGroup(placement: .navigationBarLeading) {
-                if let profileSelectionToolbarItemStore = profileSelectionToolbarItemStore {
-                    UserProfileSelectionToolbarItem(store: profileSelectionToolbarItemStore) {
-                        viewStore.send(.setNavigation(tag: .selectProfile))
-                    }
-                    .embedToolbarContent()
-                    .accessibility(identifier: A18n.mainScreen.erxBtnProfile)
                 }
             }
         }
@@ -450,7 +416,6 @@ struct PharmacySearchView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
             PharmacySearchView(store: PharmacySearchDomain.Dummies.store,
-                               profileSelectionToolbarItemStore: ProfileSelectionToolbarItemDomain.Dummies.store,
                                isRedeemRecipe: false)
         }
         .accentColor(Colors.primary700)
@@ -458,11 +423,9 @@ struct PharmacySearchView_Previews: PreviewProvider {
         NavigationView {
             PharmacySearchView(
                 store: PharmacySearchDomain.Dummies.storeOf(PharmacySearchDomain.Dummies.stateSearchResultOk),
-                profileSelectionToolbarItemStore: ProfileSelectionToolbarItemDomain.Dummies.store,
                 isRedeemRecipe: false
             )
         }
         .preferredColorScheme(.dark)
-//        .accentColor(Colors.primary700)
     }
 }

@@ -22,6 +22,7 @@ import FHIRClient
 import Foundation
 import HTTPClient
 import ModelsR4
+import OpenSSL
 
 extension FHIRClient {
     /// Convenience function for searching for pharmacies
@@ -80,6 +81,32 @@ extension FHIRClient {
         return execute(
             operation: PharmacyFHIROperation.fetchPharmacy(
                 telematikId: telematikId,
+                handler: handler
+            )
+        )
+    }
+
+    /// Convenience function for requesting the certificates of a pharmacy
+    ///
+    /// - Parameters:
+    ///   - locationId: The id of the pharmacy to be requested
+    /// - Returns: `AnyPublisher` that emits an array of `X509` certificates
+    public func loadAvsCertificates(for locationId: String) -> AnyPublisher<[X509], Error> {
+        let handler = DefaultFHIRResponseHandler(
+            acceptFormat: FHIRAcceptFormat.json
+        ) { (fhirResponse: FHIRClient.Response) -> [X509] in
+            let decoder = JSONDecoder()
+            let resource: ModelsR4.Bundle
+            do {
+                resource = try decoder.decode(ModelsR4.Bundle.self, from: fhirResponse.body)
+            } catch {
+                throw Error.decoding(error)
+            }
+            return try resource.parseCertificates()
+        }
+        return execute(
+            operation: PharmacyFHIROperation.loadCertificates(
+                locationId: locationId,
                 handler: handler
             )
         )

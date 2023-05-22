@@ -24,16 +24,14 @@ import SwiftUI
 
 struct OrdersView: View {
     let store: OrdersDomain.Store
-    let profileSelectionToolbarItemStore: ProfileSelectionToolbarItemDomain.Store
     @ObservedObject
     var viewStore: ViewStore<ViewState, OrdersDomain.Action>
     // TODO: move dependency into domain and do formatting in the view model // swiftlint:disable:this todo
     @Dependency(\.uiDateFormatter) var uiDateFormatter
 
-    init(store: OrdersDomain.Store, profileSelectionToolbarItemStore: ProfileSelectionToolbarItemDomain.Store) {
+    init(store: OrdersDomain.Store) {
         self.store = store
         viewStore = ViewStore(store.scope(state: ViewState.init))
-        self.profileSelectionToolbarItemStore = profileSelectionToolbarItemStore
     }
 
     struct ViewState: Equatable {
@@ -71,7 +69,7 @@ struct OrdersView: View {
                         .padding(.bottom)
                     }
                 } else {
-                    NoOdersView()
+                    NoOrdersView()
                         .padding()
                 }
 
@@ -92,47 +90,18 @@ struct OrdersView: View {
                 ) {
                     EmptyView()
                 }.accessibility(hidden: true)
-
-                Rectangle()
-                    .frame(width: 0, height: 0, alignment: .center)
-                    .sheet(isPresented: Binding<Bool>(
-                        get: { viewStore.destinationTag == .selectProfile },
-                        set: { show in
-                            if !show {
-                                viewStore.send(.setNavigation(tag: nil))
-                            }
-                        }
-                    ),
-                    onDismiss: {},
-                    content: {
-                        ProfileSelectionView(
-                            store: profileSelectionToolbarItemStore
-                                .scope(state: \.profileSelectionState,
-                                       action: ProfileSelectionToolbarItemDomain.Action.profileSelection(action:))
-                        )
-                    })
-                    .hidden()
-                    .accessibility(hidden: true)
             }
             .navigationBarTitle(L10n.ordTxtTitle, displayMode: .automatic)
             .accessibility(identifier: A11y.orders.list.ordTxtTitle)
             .onAppear { viewStore.send(.subscribeToCommunicationChanges) }
             .onDisappear { viewStore.send(.removeSubscription) }
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    UserProfileSelectionToolbarItem(store: profileSelectionToolbarItemStore) {
-                        viewStore.send(.setNavigation(tag: .selectProfile))
-                    }
-                    .embedToolbarContent()
-                    .accessibility(identifier: A18n.mainScreen.erxBtnProfile)
-                }
-            }
+            .toolbar {}
         }
         .accentColor(Colors.primary600)
         .navigationViewStyle(StackNavigationViewStyle())
     }
 
-    struct NoOdersView: View {
+    struct NoOrdersView: View {
         var body: some View {
             VStack(spacing: 8) {
                 Text(L10n.ordTxtEmptyListTitle)
@@ -146,13 +115,11 @@ struct OrdersView: View {
     }
 }
 
-struct OdersView_Previews: PreviewProvider {
+struct OrdersView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            OrdersView(store: OrdersDomain.Dummies.store,
-                       profileSelectionToolbarItemStore: ProfileSelectionToolbarItemDomain.Dummies.store)
-            OrdersView(store: OrdersDomain.Dummies.storeFor(OrdersDomain.State(orders: [])),
-                       profileSelectionToolbarItemStore: ProfileSelectionToolbarItemDomain.Dummies.store)
+            OrdersView(store: OrdersDomain.Dummies.store)
+            OrdersView(store: OrdersDomain.Dummies.storeFor(OrdersDomain.State(orders: [])))
         }
     }
 }

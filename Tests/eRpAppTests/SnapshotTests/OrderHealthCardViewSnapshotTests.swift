@@ -28,9 +28,9 @@ final class OrderHealthCardViewSnapshotTests: XCTestCase {
     }
 
     func testOrderHealthCardView() {
-        let sut = OrderHealthCardView(
+        let sut = OrderHealthCardListView(
             store: OrderHealthCardDomain.Dummies.storeFor(
-                .init()
+                .init(insuranceCompanies: [.dummyHealthInsuranceCompany])
             )
         )
 
@@ -39,8 +39,39 @@ final class OrderHealthCardViewSnapshotTests: XCTestCase {
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
     }
 
-    func testOrderHealthCardView_WithOptionsSelected() {
-        let sut = OrderHealthCardView(store: OrderHealthCardDomain.Dummies.store)
+    func testOrderHealthCardView_SelectedInsurance() {
+        let sut = OrderHealthCardInquiryView(store: OrderHealthCardDomain.Dummies.store)
+        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
+        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+    }
+
+    func testOrderHealthCardView_ContactFull() {
+        let sut = OrderHealthCardContactView(
+            store: OrderHealthCardDomain.Dummies.storeFor(
+                .init(insuranceCompany: .dummyHealthInsuranceCompany,
+                      serviceInquiry: .healthCardAndPin)
+            )
+        )
+        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
+        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+    }
+
+    func testOrderHealthCardView_ContactEmpty() {
+        let sut = OrderHealthCardContactView(
+            store: OrderHealthCardDomain.Dummies.storeFor(
+                .init(insuranceCompany: OrderHealthCardDomain.HealthInsuranceCompany(name: "EmptyKK",
+                                                                                     healthCardAndPinPhone: "",
+                                                                                     healthCardAndPinMail: "",
+                                                                                     healthCardAndPinUrl: "",
+                                                                                     pinUrl: "",
+                                                                                     subjectCardAndPinMail: "",
+                                                                                     bodyCardAndPinMail: "",
+                                                                                     subjectPinMail: "",
+                                                                                     bodyPinMail: ""))
+            )
+        )
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())

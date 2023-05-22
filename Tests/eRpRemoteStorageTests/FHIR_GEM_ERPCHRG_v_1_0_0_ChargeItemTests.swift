@@ -37,7 +37,7 @@ final class FHIR_GEM_ERPCHRG_v_1_0_0_ChargeItemTests: XCTestCase {
     func testParseChargeItem() throws {
         guard let chargeItem = try decode(resource: "GEM_ERPCHRG_PR_ChargeItem.json")
             .parseErxChargeItem(
-                id: "200.000.001.205.203.40",
+                id: "200.000.001.206.112.29",
                 with: "fhirData".data(using: .utf8)!
             )
         else {
@@ -45,13 +45,14 @@ final class FHIR_GEM_ERPCHRG_v_1_0_0_ChargeItemTests: XCTestCase {
             return
         }
 
-        expect(chargeItem.enteredDate) == "2023-02-17T14:07:46.964+00:00"
+        expect(chargeItem.enteredDate) == "2023-02-23T15:08:32.699+00:00"
+        expect(chargeItem.accessCode) == "abd4afed9f3f458114fc3407878213e110f238d1afa919fbed7282abbef68bfd"
 
         // medication
         expect(chargeItem.medication?.name) == "Schmerzmittel"
         expect(chargeItem.medication?.dosageForm) == "TAB"
-        expect(chargeItem.medication?.dose) == "NB"
-        expect(chargeItem.medication?.pzn) == "17091124"
+        expect(chargeItem.medication?.normSizeCode) == "NB"
+        expect(chargeItem.medication?.pzn) == "15222136"
         expect(chargeItem.medication?.amount?.description) == "1 Stk"
         // medication request
         expect(chargeItem.medicationRequest.dosageInstructions) == "1-0-0-0"
@@ -68,50 +69,51 @@ final class FHIR_GEM_ERPCHRG_v_1_0_0_ChargeItemTests: XCTestCase {
         expect(chargeItem.medicationRequest.accidentInfo).to(beNil())
         // patient
         expect(chargeItem.patient?.name) == "Günther Angermänn"
-        expect(chargeItem.patient?.address) == "Weiherstr. 74a\n67411 Büttnerdorf"
-        expect(chargeItem.patient?.birthDate) == "1976-04-30"
+        expect(chargeItem.patient?.address) == "Driescher Hecke 56\n67130 Neu Eladorf"
+        expect(chargeItem.patient?.birthDate) == "1964-03-10"
         expect(chargeItem.patient?.phone).to(beNil())
         expect(chargeItem.patient?.status) == "1"
-        expect(chargeItem.patient?.insurance) == "Künstler-Krankenkasse Baden-Württemberg"
+        expect(chargeItem.patient?.insurance) == "Farmer Pfalz"
         expect(chargeItem.patient?.insuranceId) == "X110465770"
         // practitioner
-        expect(chargeItem.practitioner?.lanr) == "443236256"
+        expect(chargeItem.practitioner?.lanr) == "208818254"
         expect(chargeItem.practitioner?.name) == "Dr. Schraßer"
         expect(chargeItem.practitioner?.qualification) == "Super-Facharzt für alles Mögliche"
         expect(chargeItem.practitioner?.email).to(beNil())
         expect(chargeItem.practitioner?.address).to(beNil())
         // organization
         expect(chargeItem.organization?.name) == "Arztpraxis Schraßer"
-        expect(chargeItem.organization?.phone) == "(05808) 9632619"
-        expect(chargeItem.organization?.address) == "Halligstr. 98\n85005, Alt Mateo"
-        expect(chargeItem.organization?.email) == "andre.teufel@xn--schffer-7wa.name"
-        expect(chargeItem.organization?.identifier) == "734374849"
+        expect(chargeItem.organization?.phone) == "+49-720-1828263"
+        expect(chargeItem.organization?.address) == "Rudolf-Mann-Platz 5\n83852, Ceylinburg"
+        expect(chargeItem.organization?.email) == "dina.assmus@apitz.net"
+        expect(chargeItem.organization?.identifier) == "831957093"
         // pharmacy
-        expect(chargeItem.pharmacy?.name) == "Apotheke Crystal Claire Waters"
-        expect(chargeItem.pharmacy?.address) == "Görresstr. 789\n48480, Süd Eniefeld"
+        expect(chargeItem.pharmacy?.name) == "Adler-Apotheke"
+        expect(chargeItem.pharmacy?.address) == "Taunusstraße 89\n63225, Langen"
         expect(chargeItem.pharmacy?.country) == "D"
-        expect(chargeItem.pharmacy?.identifier) == "833940499"
+        expect(chargeItem.pharmacy?.identifier) == "308412345"
         // invoice
         expect(chargeItem.invoice?.currency) == "EUR"
-        expect(chargeItem.invoice?.totalGross) == 534.2
-        expect(chargeItem.invoice?.totalAdditionalFee) == 217.69
-        expect(chargeItem.invoice?.chargeableItems.count) == 2
+        expect(chargeItem.invoice?.totalGross) == 21.04
+        expect(chargeItem.invoice?.totalAdditionalFee) == 0
+        expect(chargeItem.invoice?.chargeableItems.count) == 1
         expect(chargeItem.invoice?.chargeableItems.first?.factor) == 1.0
-        expect(chargeItem.invoice?.chargeableItems.first?.price) == 6.23
-        expect(chargeItem.invoice?.chargeableItems.first?.pzn) == "83251256"
+        expect(chargeItem.invoice?.chargeableItems.first?.price) == 21.04
+        expect(chargeItem.invoice?.chargeableItems.first?.description) == "BELOC-ZOK mite 47,5 mg Retardtabletten 30 St"
+        expect(chargeItem.invoice?.chargeableItems.first?.pzn) == "03879429"
         expect(chargeItem.invoice?.chargeableItems.first?.ta1) == "84256543"
         expect(chargeItem.invoice?.chargeableItems.first?.hmrn) == "85258976"
         // medication dispense
-        expect(chargeItem.medicationDispense?.identifier) == "e00e96a2-6dae-4036-8e72-42b5c21fdbf3"
-        expect(chargeItem.medicationDispense?.whenHandedOver) == "2023-02-17"
+        expect(chargeItem.medicationDispense?.identifier) == "7b1e6c94-71fb-4bbe-9c5a-2e865efd8526"
+        expect(chargeItem.medicationDispense?.whenHandedOver) == "2023-07-03"
         // prescription bundle signature
-        expect(chargeItem.prescriptionSignature?.when) == "2023-02-17T14:07:47.806+00:00"
+        expect(chargeItem.prescriptionSignature?.when) == "2023-02-23T15:08:32.983+00:00"
         expect(chargeItem.prescriptionSignature?.sigFormat) == "application/pkcs7-mime"
-        expect(chargeItem.prescriptionSignature?.data?.suffix(10)) == "vDAo+tog=="
+        expect(chargeItem.prescriptionSignature?.data?.suffix(10)) == "wNkB1inA=="
         // receipt bundle signature
-        expect(chargeItem.receiptSignature?.when) == "2023-02-17T14:07:47.808+00:00"
+        expect(chargeItem.receiptSignature?.when) == "2023-02-23T15:08:32.985+00:00"
         expect(chargeItem.receiptSignature?.sigFormat) == "application/pkcs7-mime"
-        expect(chargeItem.receiptSignature?.data?.suffix(10)) == "Mb3ej1h4E="
+        expect(chargeItem.receiptSignature?.data?.suffix(10)) == "SWNoW9f9ep"
         // dispense bundle signature
         expect(chargeItem.dispenseSignature?.when) == "2023-02-17T14:07:47.809+00:00"
         expect(chargeItem.dispenseSignature?.sigFormat) == "application/pkcs7-mime"

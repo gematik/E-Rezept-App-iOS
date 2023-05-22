@@ -28,7 +28,7 @@ public struct ErxMedication: Hashable, Codable {
                 isVaccine: Bool = false,
                 amount: Ratio? = nil,
                 dosageForm: String? = nil,
-                dose: String? = nil,
+                normSizeCode: String? = nil,
                 batch: Batch? = nil,
                 packaging: String? = nil,
                 manufacturingInstructions: String? = nil,
@@ -39,7 +39,7 @@ public struct ErxMedication: Hashable, Codable {
         self.pzn = pzn
         self.amount = amount
         self.dosageForm = dosageForm
-        self.dose = dose
+        self.normSizeCode = normSizeCode
         self.batch = batch
         self.isVaccine = isVaccine
         self.packaging = packaging
@@ -61,7 +61,7 @@ public struct ErxMedication: Hashable, Codable {
     /// Describes the form of the item. E.g.: Powder, tablets, capsule. (Darreichungsform)
     public let dosageForm: String?
     /// Describes the therapeutic size for the package (e.g. N1)  /  a.k.a. "Normgroesse"
-    public let dose: String?
+    public let normSizeCode: String?
     /// True if marked as vaccine, false if not
     public let isVaccine: Bool
     /// Informations about the packaging (only for .`compounding` profile types)

@@ -44,8 +44,9 @@ struct CardWallExtAuthSelectionDomain: ReducerProtocol {
 
     struct Destinations: ReducerProtocol {
         enum State: Equatable {
-            // sourcery: AnalyticsScreen = cardWallExtAuthConfirm
+            // sourcery: AnalyticsScreen = cardWall_extAuthConfirm
             case confirmation(CardWallExtAuthConfirmationDomain.State)
+            // sourcery: AnalyticsScreen = contactInsuranceCompany
             case egk(OrderHealthCardDomain.State)
         }
 
@@ -149,7 +150,7 @@ struct CardWallExtAuthSelectionDomain: ReducerProtocol {
         case let .updateSearchText(newString):
             state.searchText = newString.trimmed()
             return state.searchText
-                .isEmpty ? Effect(value: .reset) : Effect(value: .filteredKKList(search: state.searchText))
+                .isEmpty ? EffectTask(value: .reset) : EffectTask(value: .filteredKKList(search: state.searchText))
         case .setNavigation(tag: nil),
              .destination(.egkAction(action: .delegate(.close))):
             state.destination = nil
@@ -158,7 +159,7 @@ struct CardWallExtAuthSelectionDomain: ReducerProtocol {
             state.error = error
             return .none
         case .destination(.confirmation(action: .delegate(.close))):
-            return Effect(value: .delegate(.close))
+            return EffectTask(value: .delegate(.close))
         case .setNavigation(tag: .egk):
             state.destination = .egk(.init())
             return .none

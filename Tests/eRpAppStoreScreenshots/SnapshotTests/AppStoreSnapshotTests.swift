@@ -37,10 +37,6 @@ final class AppStoreSnapshotTests: XCTestCase {
         assertAppStoreSnapshots(for: main(), backgroundColor: .white, colorScheme: .light)
     }
 
-    func test03PrescriptionFullDetail() {
-        assertAppStoreSnapshots(for: prescriptionFullDetails(), backgroundColor: .white, colorScheme: .light)
-    }
-
     func test04RedeemView() {
         assertAppStoreSnapshots(for: redeemMatrixCode(), backgroundColor: .white, colorScheme: .light)
     }

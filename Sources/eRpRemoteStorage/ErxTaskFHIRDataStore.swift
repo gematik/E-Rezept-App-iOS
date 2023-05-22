@@ -87,7 +87,7 @@ public class ErxTaskFHIRDataStore: ErxRemoteDataStore {
                 )
             } else {
                 fhirClientError = FHIRClient.Error.internalError(
-                    "Cannot delete: ID oder accessCode missing?"
+                    "Cannot delete: ID or accessCode missing?"
                 )
             }
             let localError = RemoteStoreError.fhirClientError(fhirClientError)
@@ -192,6 +192,42 @@ public class ErxTaskFHIRDataStore: ErxRemoteDataStore {
         return chargeItemPublishers
             .combineLatest()
             .first()
+            .eraseToAnyPublisher()
+    }
+
+    public func delete(chargeItems: [ErxSparseChargeItem]) -> AnyPublisher<Bool, RemoteStoreError> {
+        // swiftlint:disable:next todo
+        // TODO: Ideally this should delete multiple tasks at once.
+        //       But it needs special error handling, if the server only
+        //       deleted 2 or 3 prescriptions etc.
+        //       So for now this will only accept one ErxTask.
+
+        // In case of error...
+        guard chargeItems.count == 1,
+              let id = chargeItems.first?.id,
+              let fatChargeItem = try? chargeItems.first?.parseErxChargeItem(),
+              let accessCode = fatChargeItem.accessCode
+        else {
+            var fhirClientError = FHIRClient.Error.unknown(RemoteStoreError.notImplemented)
+            if chargeItems.isEmpty {
+                fhirClientError = FHIRClient.Error.internalError("Cannot delete: Empty array of ErxTasks!")
+            } else if chargeItems.count > 1 {
+                fhirClientError = FHIRClient.Error.internalError(
+                    "Cannot delete: Deletion of multiple elements is not implemented currently!"
+                )
+            } else {
+                fhirClientError = FHIRClient.Error.internalError(
+                    "Cannot delete: ID or accessCode missing?"
+                )
+            }
+            let localError = RemoteStoreError.fhirClientError(fhirClientError)
+
+            return Result<Bool, RemoteStoreError>.failure(localError).publisher.eraseToAnyPublisher()
+        }
+
+        // In case of success...
+        return fhirClient.deleteChargeItem(by: id, accessCode: accessCode)
+            .mapError { RemoteStoreError.fhirClientError($0) }
             .eraseToAnyPublisher()
     }
 

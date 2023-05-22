@@ -56,8 +56,10 @@ struct IDPCrypto {
             try BrainpoolP256r1.KeyExchange.generateKey()
         },
         aesNonceGenerator: @escaping AESNonceGenerator = {
+            // [REQ:gemSpec_Krypt:GS-A_4389:2] IVs must not be reused, IVs bit length must be larger or equal to 96
             try generateSecureRandom(length: IDPCrypto.AES256GCMSpec.nonceBytes)
         },
+        // [REQ:gemSpec_Krypt:GS-A_4389:1] 256bit GCM symmetric key
         aesKey: SymmetricKey = SymmetricKey(size: SymmetricKeySize(bitCount: 256))
     ) {
         self.verifierLength = verifierLength

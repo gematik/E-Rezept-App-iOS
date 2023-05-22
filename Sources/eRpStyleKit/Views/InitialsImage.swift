@@ -43,23 +43,10 @@ public struct InitialsImage: View {
     public enum Size {
         case regular
         case large
-        case extraLarge
+    }
 
-        var dimension: CGFloat {
-            switch self {
-            case .regular: return 22
-            case .large: return 32
-            case .extraLarge: return 40
-            }
-        }
-
-        var font: CGFloat {
-            switch self {
-            case .regular: return 11
-            case .large: return 13
-            case .extraLarge: return 17
-            }
-        }
+    var dimension: CGFloat {
+        size == .regular ? 22 : 32
     }
 
     public var body: some View {
@@ -71,10 +58,10 @@ public struct InitialsImage: View {
             )
             .overlay(
                 Text(text)
-                    .font(.system(size: size.font).weight(.bold))
+                    .font(.system(size: size == .regular ? 11 : 13).weight(.bold))
                     .foregroundColor(Color(.secondaryLabel))
             )
-            .frame(width: size.dimension, height: size.dimension, alignment: .center)
+            .frame(width: dimension, height: dimension, alignment: .center)
             .overlay(ConnectionStatusCircle(statusColor: statusColor),
                      alignment: .bottomTrailing)
             .frame(width: 22, height: 22, alignment: .center)
@@ -107,14 +94,6 @@ struct InitialsImage_Preview: PreviewProvider {
                 statusColor: Color.red,
                 borderColor: Color.blue,
                 size: .large
-            )
-
-            InitialsImage(
-                backgroundColor: Color.gray,
-                text: "AB",
-                statusColor: Color.red,
-                borderColor: Color.black,
-                size: .extraLarge
             )
         }
     }

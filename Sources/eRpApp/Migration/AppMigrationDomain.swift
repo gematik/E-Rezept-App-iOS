@@ -73,7 +73,7 @@ struct AppMigrationDomain: ReducerProtocol {
         switch action {
         case .loadCurrentModelVersion:
             let currentVersion = userDataStore.latestCompatibleModelVersion
-            return Effect(value: .startMigration(from: currentVersion))
+            return EffectTask(value: .startMigration(from: currentVersion))
         case let .startMigration(from: currentVersion):
             state = .inProgress
             return migrationManager.startModelMigration(from: currentVersion)
@@ -87,7 +87,7 @@ struct AppMigrationDomain: ReducerProtocol {
             userDataStore.latestCompatibleModelVersion = newVersion
 
             if !newVersion.isLastVersion {
-                return Effect(value: .startMigration(from: newVersion))
+                return EffectTask(value: .startMigration(from: newVersion))
             }
 
             finishedMigration()

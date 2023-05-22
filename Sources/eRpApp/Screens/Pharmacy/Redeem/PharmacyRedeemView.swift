@@ -121,7 +121,7 @@ extension PharmacyRedeemView {
         let profile: Profile?
         var body: some View {
             if let profile = profile {
-                InitialsImage(profile: profile)
+                ProfilePictureView(profile: profile)
                     .frame(width: 40, height: 40, alignment: .center)
             } else {
                 Image(systemName: SFSymbolName.house)
@@ -419,7 +419,7 @@ extension PharmacyRedeemView {
 
             init(_ task: ErxTask, isSelected: Bool) {
                 taskID = task.id
-                title = task.medication?.name ?? L10n.prscFdTxtNa.text
+                title = task.medication?.displayName ?? L10n.prscFdTxtNa.text
                 subtitle = task
                     .medicationRequest.substitutionAllowed ? L10n.phaRedeemTxtPrescriptionSub.text : ""
                 self.isSelected = isSelected
@@ -445,13 +445,15 @@ extension RedeemOption {
     }
 }
 
-extension InitialsImage {
+extension ProfilePictureView {
     init(profile: Profile) {
         self.init(
-            backgroundColor: profile.color.viewModelColor.background,
-            text: profile.name.acronym(),
-            size: .extraLarge
-        )
+            image: profile.image.viewModelPicture,
+            userImageData: profile.userImageData,
+            color: profile.color.viewModelColor,
+            connection: nil,
+            style: .small
+        ) {}
     }
 }
 

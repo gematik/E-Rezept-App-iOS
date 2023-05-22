@@ -47,6 +47,8 @@ public enum ErxTaskFHIROperation<Value, Handler: FHIRResponseHandler> where Hand
     case allChargeItems(referenceDate: String?, handler: Handler)
     /// Request a specific charge item from the service in a certain format
     case chargeItemBy(id: String, handler: Handler)
+    /// Delete a specific charge item by it's ID
+    case deleteChargeItem(id: ErxChargeItem.ID, accessCode: String?, handler: Handler)
     /// Request all granted consents
     case consents(handler: Handler)
     /// Request to grant a `ErxConsent` of the given category
@@ -71,7 +73,8 @@ extension ErxTaskFHIROperation: FHIRClientOperation {
              let .medicationDispenses(_, handler),
              let .allMedicationDispenses(_, handler: handler),
              let .allChargeItems(_, handler),
-             let .chargeItemBy(_, handler: handler),
+             let .chargeItemBy(_, handler),
+             let .deleteChargeItem(_, _, handler),
              let .consents(handler),
              let .grant(_, handler),
              let .revokeConsent(_, handler),
@@ -161,7 +164,8 @@ extension ErxTaskFHIROperation: FHIRClientOperation {
                 components?.queryItems = [enteredDate]
             }
             return components?.string
-        case let .chargeItemBy(id: chargeItemId, _): return "ChargeItem/\(chargeItemId)"
+        case let .chargeItemBy(chargeItemId, _): return "ChargeItem/\(chargeItemId)"
+        case let .deleteChargeItem(chargeItemId, _, _): return "ChargeItem/\(chargeItemId)"
         case .consents(handler: _): return "Consent"
         case .grant(consent: _, handler: _): return "Consent"
         case let .revokeConsent(category, handler: _):
@@ -195,6 +199,8 @@ extension ErxTaskFHIROperation: FHIRClientOperation {
             if let dataLength = httpBody?.count, dataLength > 0 {
                 headers["Content-Length"] = String(dataLength)
             }
+        case let .deleteChargeItem(_, accessCode, _):
+            headers["X-AccessCode"] = accessCode
         case .grant(consent: _, _):
             headers["Content-Type"] = acceptFormat.httpHeaderValue
             if let dataLength = httpBody?.count, dataLength > 0 {
@@ -214,7 +220,8 @@ extension ErxTaskFHIROperation: FHIRClientOperation {
              .redeem,
              .grant:
             return .post
-        case .revokeConsent:
+        case .deleteChargeItem,
+             .revokeConsent:
             return .delete
         default:
             return .get
@@ -234,6 +241,7 @@ extension ErxTaskFHIROperation: FHIRClientOperation {
              .allMedicationDispenses,
              .allChargeItems,
              .chargeItemBy,
+             .deleteChargeItem,
              .consents,
              .revokeConsent,
              .next:
@@ -259,6 +267,7 @@ extension ErxTaskFHIROperation: FHIRClientOperation {
              let .allMedicationDispenses(_, handler: handler),
              let .allChargeItems(_, handler: handler),
              let .chargeItemBy(_, handler),
+             let .deleteChargeItem(_, _, handler),
              let .consents(handler: handler),
              let .grant(_, handler: handler),
              let .revokeConsent(_, handler: handler),

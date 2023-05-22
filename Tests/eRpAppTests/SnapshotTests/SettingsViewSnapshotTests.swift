@@ -44,7 +44,7 @@ final class SettingsViewSnapshotTests: XCTestCase {
                 from: Profile(
                     name: "Dennis Weihnachtsgans",
                     color: Profile.Color.blue,
-                    image: .doctor
+                    image: .doctorFemale
                 ),
                 isAuthenticated: true
             ),

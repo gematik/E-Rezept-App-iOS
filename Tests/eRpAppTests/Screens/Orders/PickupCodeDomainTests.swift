@@ -69,7 +69,7 @@ final class PickupCodeDomainTests: XCTestCase {
     /// Use DMC publisher to generate an exact same image
     private func generateMockDMCImage() -> UIImage {
         var generatedImage: UIImage?
-        _ = matrixCodeGenerator.publishedMatrixCode(
+        _ = matrixCodeGenerator.matrixCodePublisher(
             for: "Data Matrix Code Content",
             with: CGSize(width: 200, height: 200)
         )

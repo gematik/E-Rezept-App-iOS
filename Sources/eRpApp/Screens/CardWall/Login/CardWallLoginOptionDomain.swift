@@ -34,10 +34,11 @@ struct CardWallLoginOptionDomain: ReducerProtocol {
 
     struct Destinations: ReducerProtocol {
         enum State: Equatable {
+            // sourcery: AnalyticsScreen = alert
             case alert(ErpAlertState<CardWallLoginOptionDomain.Action>)
-            // sourcery: AnalyticsScreen = cardWallReadCard
+            // sourcery: AnalyticsScreen = cardWall_readCard
             case readcard(CardWallReadCardDomain.State)
-            // sourcery: AnalyticsScreen = cardwallSaveLoginSecurityInfo
+            // sourcery: AnalyticsScreen = cardWall_saveLoginSecurityInfo
             case warning
         }
 
@@ -114,7 +115,7 @@ struct CardWallLoginOptionDomain: ReducerProtocol {
                     return .none
                 }
                 // [REQ:gemSpec_IDP_Frontend:A_21574] Present user information
-                return Effect(value: .presentSecurityWarning)
+                return EffectTask(value: .presentSecurityWarning)
             }
             state.selectedLoginOption = option
             return .none
@@ -144,7 +145,7 @@ struct CardWallLoginOptionDomain: ReducerProtocol {
         case let .destination(.readcardAction(.delegate(destinationAction))):
             switch destinationAction {
             case .close:
-                return Effect(value: .delegate(.close))
+                return EffectTask(value: .delegate(.close))
                     // Delay for waiting the close animation Workaround for TCA pullback problem
                     .delay(for: 0.5, scheduler: schedulers.main)
                     .eraseToEffect()
@@ -152,14 +153,14 @@ struct CardWallLoginOptionDomain: ReducerProtocol {
                 state.destination = nil
                 return .none
             case .wrongCAN:
-                return Effect(value: .delegate(.wrongCanClose))
+                return EffectTask(value: .delegate(.wrongCanClose))
                     // Delay for waiting the close animation Workaround for TCA pullback problem
                     .delay(for: 0.1, scheduler: schedulers.main)
                     .eraseToEffect()
             case .wrongPIN:
-                return Effect(value: .delegate(.wrongPinClose))
+                return EffectTask(value: .delegate(.wrongPinClose))
             case .navigateToIntro:
-                return Effect(value: .delegate(.navigateToIntro))
+                return EffectTask(value: .delegate(.navigateToIntro))
                     // Delay for waiting the close animation Workaround for TCA pullback problem
                     .delay(for: 1.1, scheduler: schedulers.main)
                     .eraseToEffect()

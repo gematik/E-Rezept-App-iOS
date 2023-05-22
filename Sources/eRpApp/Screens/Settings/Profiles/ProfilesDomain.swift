@@ -40,37 +40,6 @@ struct ProfilesDomain: ReducerProtocol {
     struct State: Equatable {
         var profiles: [UserProfile]
         var selectedProfileId: UUID?
-
-        var destination: Destinations.State?
-    }
-
-    struct Destinations: ReducerProtocol {
-        enum State: Equatable {
-            case editProfile(EditProfileDomain.State)
-            case newProfile(NewProfileDomain.State)
-            case alert(ErpAlertState<ProfilesDomain.Action>)
-        }
-
-        enum Action: Equatable {
-            case editProfileAction(EditProfileDomain.Action)
-            case newProfileAction(NewProfileDomain.Action)
-        }
-
-        var body: some ReducerProtocol<State, Action> {
-            Scope(
-                state: /State.editProfile,
-                action: /Action.editProfileAction
-            ) {
-                EditProfileDomain()
-            }
-
-            Scope(
-                state: /State.newProfile,
-                action: /Action.newProfileAction
-            ) {
-                NewProfileDomain()
-            }
-        }
     }
 
     enum Action: Equatable {
@@ -80,14 +49,18 @@ struct ProfilesDomain: ReducerProtocol {
         case addNewProfile
         case editProfile(UserProfile)
 
-        case setNavigation(tag: Destinations.State.Tag?)
-        case destination(Destinations.Action)
-
         case response(Response)
+        case delegate(Delegate)
 
         enum Response: Equatable {
             case loadReceived(Result<[UserProfile], UserProfileServiceError>)
             case selectedProfileReceived(UUID)
+        }
+
+        enum Delegate: Equatable {
+            case alert(ErpAlertState<ProfilesDomain.Action>)
+            case showEditProfile(EditProfileDomain.State)
+            case showNewProfile
         }
     }
 
@@ -96,12 +69,8 @@ struct ProfilesDomain: ReducerProtocol {
 
     var body: some ReducerProtocol<State, Action> {
         Reduce(core)
-            .ifLet(\.destination, action: /Action.destination) {
-                Destinations()
-            }
     }
 
-    // swiftlint:disable:next function_body_length cyclomatic_complexity
     func core(into state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
         case .registerListener:
@@ -126,40 +95,24 @@ struct ProfilesDomain: ReducerProtocol {
         case .unregisterListener:
             return .cancel(id: Token.loadProfiles)
         case let .response(.loadReceived(.failure(error))):
-            state.destination = .alert(.init(for: error, title: TextState(L10n.errTxtDatabaseAccess)))
-            return .none
+            return .task {
+                .delegate(.alert(.init(for: error, title: TextState(L10n.errTxtDatabaseAccess))))
+            }
         case let .response(.loadReceived(.success(profiles))):
             state.profiles = profiles
             return .none
-        case .setNavigation(tag: .none):
-            state.destination = nil
-            return EditProfileDomain.cleanup()
         case let .response(.selectedProfileReceived(profileId)):
             state.selectedProfileId = profileId
             return .none
         case let .editProfile(profile):
-            state.destination = .editProfile(.init(profile: profile))
-            return .none
+            return .task {
+                .delegate(.showEditProfile(.init(profile: profile)))
+            }
         case .addNewProfile:
-            state.destination = .newProfile(.init(name: "", acronym: "", color: .blue))
-            return .none
-        case let .destination(.editProfileAction(.delegate(action))):
-            switch action {
-            case .logout:
-                return .init(value: .registerListener)
-            case .close:
-                state.destination = nil
-                return .none
+            return .task {
+                .delegate(.showNewProfile)
             }
-        case let .destination(.newProfileAction(.delegate(action))):
-            switch action {
-            case .close:
-                state.destination = nil
-                return .none
-            }
-
-        case .destination,
-             .setNavigation:
+        case .delegate:
             return .none
         }
     }
@@ -191,10 +144,10 @@ extension Profile.ProfilePictureType {
             return .boyWithCard
         case .developer:
             return .developer
-        case .doctor:
-            return .doctor
-        case .doctor2:
-            return .doctor2
+        case .doctorFemale:
+            return .doctorFemale
+        case .pharmacist:
+            return .pharmacist
         case .manWithPhone:
             return .manWithPhone
         case .oldDoctor:
@@ -203,8 +156,8 @@ extension Profile.ProfilePictureType {
             return .oldMan
         case .oldWoman:
             return .oldWoman
-        case .pharmacist:
-            return .pharmacist
+        case .doctorMale:
+            return .doctorMale
         case .pharmacist2:
             return .pharmacist2
         case .wheelchair:

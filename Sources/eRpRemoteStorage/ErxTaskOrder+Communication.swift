@@ -34,7 +34,8 @@ extension ErxTaskOrder {
         #warning(
             "Version should be updated after 1.1.23 to v1_2_0. More informations: https://github.com/gematik/api-erp/blob/master/docs/erp_fhirversion.adoc#versionsübergang-31122022--01012023" // swiftlint:disable:this line_length
         )
-        guard let communicationDispReq = Workflow.Key.communicationDispReq[.v1_1_1]?.asFHIRCanonicalPrimitive() else {
+        guard let communicationDispReq = Workflow.Key.communicationDispReq[.v1_1_1]?
+            .asFHIRCanonicalPrimitive() else {
             throw ErxTaskOrder.Error.unableToConstructCommunicationRequest
         }
         let meta = Meta(profile: [communicationDispReq])
@@ -71,5 +72,15 @@ extension ErxTaskOrder.Payload {
             return ""
         }
         return String(data: data, encoding: .utf8) ?? ""
+    }
+}
+
+extension String {
+    func asFHIRCanonicalPrimitive(for version: String) -> FHIRPrimitive<Canonical>? {
+        let result = "\(self)|\(version)"
+        guard let uri = result.asFHIRCanonical() else {
+            return nil
+        }
+        return FHIRPrimitive(uri)
     }
 }

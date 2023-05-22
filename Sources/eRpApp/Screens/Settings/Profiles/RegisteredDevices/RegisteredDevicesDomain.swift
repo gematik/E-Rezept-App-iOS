@@ -74,7 +74,9 @@ struct RegisteredDevicesDomain: ReducerProtocol {
 
     struct Destinations: ReducerProtocol {
         enum State: Equatable {
+            // sourcery: AnalyticsScreen = cardWall
             case idpCardWall(IDPCardWallDomain.State)
+            // sourcery: AnalyticsScreen = alert
             case alert(ErpAlertState<RegisteredDevicesDomain.Action>)
         }
 
@@ -153,7 +155,7 @@ struct RegisteredDevicesDomain: ReducerProtocol {
         case .loadDevices:
             let currentState = (/State.Content.loaded).extract(from: state.content) ?? []
             state.content = .loading(currentState)
-            return Effect.merge(
+            return .merge(
                 environment.getRegisteredDevices(profileId: state.profileId),
                 environment.getDeviceId(for: state.profileId)
             )
@@ -185,7 +187,7 @@ struct RegisteredDevicesDomain: ReducerProtocol {
                 state.destination = nil
                 return .concatenate(
                     IDPCardWallDomain.cleanup(),
-                    Effect(value: .loadDevices)
+                    EffectTask(value: .loadDevices)
                 )
             case .close:
                 state.destination = nil
@@ -206,7 +208,7 @@ struct RegisteredDevicesDomain: ReducerProtocol {
 }
 
 extension RegisteredDevicesDomain.Environment {
-    func getRegisteredDevices(profileId: UUID) -> Effect<RegisteredDevicesDomain.Action, Never> {
+    func getRegisteredDevices(profileId: UUID) -> EffectTask<RegisteredDevicesDomain.Action> {
         registeredDevicesService.registeredDevices(for: profileId)
             .map { RegisteredDevicesDomain.Action.response(.loadDevicesReceived(.success($0))) }
             .catch { error -> AnyPublisher<RegisteredDevicesDomain.Action, Never> in
@@ -222,7 +224,7 @@ extension RegisteredDevicesDomain.Environment {
             .eraseToEffect()
     }
 
-    func getDeviceId(for profileId: UUID) -> Effect<RegisteredDevicesDomain.Action, Never> {
+    func getDeviceId(for profileId: UUID) -> EffectTask<RegisteredDevicesDomain.Action> {
         registeredDevicesService.deviceId(for: profileId)
             .map(RegisteredDevicesDomain.Action.Response.deviceIdReceived)
             .map(RegisteredDevicesDomain.Action.response)
@@ -230,7 +232,7 @@ extension RegisteredDevicesDomain.Environment {
             .eraseToEffect()
     }
 
-    func deleteDevice(_ deviceId: String, of profileId: UUID) -> Effect<RegisteredDevicesDomain.Action, Never> {
+    func deleteDevice(_ deviceId: String, of profileId: UUID) -> EffectTask<RegisteredDevicesDomain.Action> {
         registeredDevicesService.deleteDevice(deviceId, of: profileId)
             .catchToEffect()
             .map(RegisteredDevicesDomain.Action.Response.deleteDeviceReceived)

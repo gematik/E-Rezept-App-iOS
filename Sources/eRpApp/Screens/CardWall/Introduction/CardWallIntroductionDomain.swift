@@ -26,19 +26,17 @@ struct CardWallIntroductionDomain: ReducerProtocol {
 
     /// Provides an Effect that need to run whenever the state of this Domain is reset to nil
     static func cleanup<T>() -> EffectTask<T> {
-        Effect.cancel(id: CardWallReadCardDomain.Token.self)
+        .cancel(id: CardWallReadCardDomain.Token.self)
     }
 
     struct Destinations: ReducerProtocol {
         enum State: Equatable {
-            // sourcery: AnalyticsScreen = cardwallCAN
+            // sourcery: AnalyticsScreen = cardWall_CAN
             case can(CardWallCANDomain.State)
-            // sourcery: AnalyticsScreen = cardWallExtAuth
+            // sourcery: AnalyticsScreen = cardWall_extAuth
             case fasttrack(CardWallExtAuthSelectionDomain.State)
-            // sourcery: AnalyticsScreen = cardwallContactInsuranceCompany
+            // sourcery: AnalyticsScreen = contactInsuranceCompany
             case egk(OrderHealthCardDomain.State)
-            // sourcery: AnalyticsScreen = cardwallNotCapable
-            case notCapable
         }
 
         enum Action: Equatable {
@@ -95,10 +93,6 @@ struct CardWallIntroductionDomain: ReducerProtocol {
     func core(into state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
         case .advance:
-            guard state.isNFCReady else {
-                state.destination = .notCapable
-                return .none
-            }
             return userSessionProvider.userSession(for: state.profileId).secureUserStore.can
                 .first()
                 .map(Action.advanceCAN)
@@ -126,9 +120,9 @@ struct CardWallIntroductionDomain: ReducerProtocol {
         case .destination(.canAction(.delegate(.close))),
              .destination(.fasttrack(action: .delegate(.close))):
             state.destination = nil
-            return Effect.concatenate(
+            return .concatenate(
                 Self.cleanup(),
-                Effect(value: .delegate(.close))
+                EffectTask(value: .delegate(.close))
                     // Delay for closing all views, Workaround for TCA pullback problem
                     .delay(for: 0.05, scheduler: schedulers.main)
                     .eraseToEffect()

@@ -60,7 +60,9 @@ final class PharmacyIntegrationTests: XCTestCase {
                             ),
                             LoggingInterceptor(log: .body),
                         ]
-                    )
+                    ),
+                    // use a receiveQueue that is not main since that one is blocked by the test()'s semaphore
+                    receiveQueue: DispatchQueue.global().eraseToAnyScheduler()
                 )
             )
         )
@@ -77,8 +79,7 @@ final class PharmacyIntegrationTests: XCTestCase {
                         success = true
                     }
                     Swift.print("pharmacyLocations", pharmacyLocations)
-                },
-                subscribeScheduler: DispatchQueue.global().eraseToAnyScheduler()
+                }
             )
         expect(success) == true
     }

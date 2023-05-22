@@ -18,12 +18,11 @@
 
 import CoreData
 import eRpKit
-import eRpRemoteStorage
 import ModelsR4
 
 extension ErxChargeItemEntity {
     static func from(
-        chargeItem: ErxChargeItem,
+        chargeItem: ErxSparseChargeItem,
         encoder: JSONEncoder = JSONEncoder(),
         in context: NSManagedObjectContext
     ) -> ErxChargeItemEntity? {
@@ -35,7 +34,7 @@ extension ErxChargeItemEntity {
     }
 
     convenience init?(
-        chargeItem: ErxChargeItem,
+        chargeItem: ErxSparseChargeItem,
         encoder: JSONEncoder = JSONEncoder(),
         in context: NSManagedObjectContext
     ) {
@@ -52,7 +51,7 @@ extension ErxChargeItemEntity {
     }
 }
 
-extension ErxChargeItem {
+extension ErxSparseChargeItem {
     init?(
         entity: ErxChargeItemEntity?,
         decoder: JSONDecoder = JSONDecoder()
@@ -73,15 +72,5 @@ extension ErxChargeItem {
             medication: medication,
             invoice: invoice
         )
-    }
-
-    func parseFullItemDetails(
-        decoder: JSONDecoder = JSONDecoder()
-    ) throws -> ErxChargeItem {
-        let decoder = JSONDecoder()
-        let bundle = try decoder.decode(ModelsR4.Bundle.self, from: fhirData)
-        let chargeItemFullDetail = try bundle.parseErxChargeItem(id: id, with: fhirData)
-
-        return chargeItemFullDetail ?? self
     }
 }

@@ -109,7 +109,9 @@ final class ErxTaskFHIRDataStoreIntegrationTests: XCTestCase {
 
         let fhirClient = FHIRClient(
             server: environment.appConfiguration.base,
-            httpClient: erpHttpClient
+            httpClient: erpHttpClient,
+            // use a receiveQueue that is not main since that one is blocked by the test()'s semaphore
+            receiveQueue: DispatchQueue.global().eraseToAnyScheduler()
         )
 
         return ErxTaskFHIRDataStore(fhirClient: fhirClient)
@@ -209,7 +211,9 @@ final class ErxTaskFHIRDataStoreIntegrationTests: XCTestCase {
 
         let fhirClient = FHIRClient(
             server: environment.appConfiguration.base,
-            httpClient: erpHttpClient
+            httpClient: erpHttpClient,
+            // use a receiveQueue that is not main since that one is blocked by the test()'s semaphore
+            receiveQueue: DispatchQueue.global().eraseToAnyScheduler()
         )
         let cloud = ErxTaskFHIRDataStore(fhirClient: fhirClient)
 

@@ -68,12 +68,7 @@ struct PrescriptionArchiveView: View {
                     action: PrescriptionArchiveDomain.Destinations.Action.prescriptionDetail
                 )
             ) { scopedStore in
-                WithViewStore(scopedStore) { $0.prescription.source } content: { viewStore in
-                    switch viewStore.state {
-                    case .scanner: PrescriptionLowDetailView(store: scopedStore)
-                    case .server: PrescriptionFullDetailView(store: scopedStore)
-                    }
-                }
+                PrescriptionDetailView(store: scopedStore)
             },
             tag: PrescriptionArchiveDomain.Destinations.State.Tag.prescriptionDetail,
             selection: viewStore.binding(

@@ -67,24 +67,13 @@ final class CardWallSnapshotTests: XCTestCase {
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
     }
 
-    func testNotForYouViewWithCapabilties() {
-        let sut = CapabilitiesView(
-            store: CardWallIntroductionDomain.Dummies.store
-        )
-
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
-    }
-
-    func testNotForYouViewWithoutCapabilties() {
-        let sut = CapabilitiesView(
+    func testIntroductionViewWithCapabilties() {
+        let sut = CardWallIntroductionView(
             store: CardWallIntroductionDomain.Store(
                 initialState: CardWallIntroductionDomain
                     .State(
-                        isNFCReady: true,
-                        profileId: UUID(),
-                        destination: .notCapable
+                        isNFCReady: false,
+                        profileId: UUID()
                     ),
                 reducer: EmptyReducer()
             )

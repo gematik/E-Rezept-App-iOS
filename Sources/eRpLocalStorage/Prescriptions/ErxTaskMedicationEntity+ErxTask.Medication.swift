@@ -31,7 +31,7 @@ extension ErxTaskMedicationEntity {
             amountRatio = ErxTaskRatioEntity(ratio: medicationAmount, in: context)
         }
         dosageForm = medication.dosageForm
-        dose = medication.dose
+        dose = medication.normSizeCode
         profile = medication.profile?.rawValue
         pzn = medication.pzn
         lot = medication.batch?.lotNumber
@@ -57,16 +57,16 @@ extension ErxMedication {
         if entity.lot != nil || entity.expiresOn != nil {
             batch = .init(lotNumber: entity.lot, expiresOn: entity.expiresOn)
         }
-
+        let profile = ErxMedication.ProfileType(rawValue: entity.profile ?? "nil")
         self.init(
             name: entity.name,
-            profile: ErxMedication.ProfileType(rawValue: entity.profile ?? "nil"),
+            profile: profile,
             drugCategory: ErxMedication.DrugCategory(rawValue: entity.drugCategory ?? "nil"),
             pzn: entity.pzn,
             isVaccine: entity.isVaccine,
             amount: ErxMedication.Ratio(entity: entity.amountRatio),
             dosageForm: entity.dosageForm,
-            dose: entity.dose,
+            normSizeCode: entity.dose,
             batch: batch,
             packaging: entity.packaging,
             manufacturingInstructions: entity.manufacturingInstructions,

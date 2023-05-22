@@ -874,7 +874,7 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
                 isVaccine: true,
                 amount: .init(numerator: .init(value: "42")),
                 dosageForm: "updated form",
-                dose: "updated does",
+                normSizeCode: "updated does",
                 batch: .init(
                     lotNumber: "updated charge num.",
                     expiresOn: "Updated 2049-07-10T10:55:04+02:00"
@@ -984,7 +984,7 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
 
     func testSaveChargeItems() throws {
         let store = loadErxCoreDataStore()
-        let item = ErxChargeItem(
+        let item = ErxSparseChargeItem(
             identifier: "id_12345",
             fhirData: Data(),
             enteredDate: "2023-01-12T14:42:32+00:00"
@@ -992,14 +992,14 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
         try store.add(chargeItems: [item])
     }
 
-    func testSavingChargeItemWithLowDetail() throws {
+    func testSavingSparseChargeItem() throws {
         let store = loadErxCoreDataStore()
         // given
-        let chargeItemToFetch = ErxChargeItem.Fixtures.lowDetailChargeItem
+        let chargeItemToFetch = ErxSparseChargeItem.Fixtures.chargeItem
         try store.add(chargeItems: [chargeItemToFetch])
 
         // when
-        var receivedFetchResult = [ErxChargeItem]()
+        var receivedFetchResult = [ErxSparseChargeItem]()
         let cancellable = store.listAllChargeItems()
             .sink(receiveCompletion: { completion in
                 expect(completion) == .finished
@@ -1016,26 +1016,26 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
     func testListingOnlyChargeItemsWithRelationshipToProfile() throws {
         // given
         let testProfile = Profile(name: "TestProfile")
-        try prepareStores(profiles: [testProfile], chargeItems: [ErxChargeItem.Fixtures.chargeItem1,
-                                                                 ErxChargeItem.Fixtures.chargeItem2])
+        try prepareStores(profiles: [testProfile], chargeItems: [ErxSparseChargeItem.Fixtures.chargeItem1,
+                                                                 ErxSparseChargeItem.Fixtures.chargeItem2])
 
         // when accessing the store with a profile and saving a charge item to that profile
         let store = loadErxCoreDataStore(for: testProfile.id)
-        try store.add(chargeItems: [ErxChargeItem.Fixtures.chargeItem3])
+        try store.add(chargeItems: [ErxSparseChargeItem.Fixtures.chargeItem3])
 
         // then listing tasks for that profile
-        var receivedListAllValues = [[ErxChargeItem]]()
+        var receivedListAllValues = [[ErxSparseChargeItem]]()
         let cancellable = store.listAllChargeItems()
             .sink(receiveCompletion: { _ in
                 fail("did not expect to receive a completion")
-            }, receiveValue: { auditEvents in
-                receivedListAllValues.append(auditEvents)
+            }, receiveValue: { result in
+                receivedListAllValues.append(result)
             })
 
         // should only return the charge item with a set relationship to that profile
         expect(receivedListAllValues.count).toEventually(equal(1))
         expect(receivedListAllValues.first?.count) == 1
-        expect(receivedListAllValues[0].first) == ErxChargeItem.Fixtures.chargeItem3
+        expect(receivedListAllValues[0].first) == ErxSparseChargeItem.Fixtures.chargeItem3
 
         cancellable.cancel()
     }
@@ -1043,8 +1043,8 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
     func testFetchingLatestChargeItem() throws {
         let store = loadErxCoreDataStore()
         // given
-        try store.add(chargeItems: [ErxChargeItem.Fixtures.chargeItem1,
-                                    ErxChargeItem.Fixtures.chargeItem2])
+        try store.add(chargeItems: [ErxSparseChargeItem.Fixtures.chargeItem1,
+                                    ErxSparseChargeItem.Fixtures.chargeItem2])
 
         var receivedLatesValues = [String?]()
         // when fetching the latest `enteredDate` of all `ChargeItem`s
@@ -1057,10 +1057,10 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
 
         expect(receivedLatesValues.count).toEventually(equal(1))
         // then the latest date has to be returned
-        expect(receivedLatesValues.first) == ErxChargeItem.Fixtures.chargeItem2.enteredDate
+        expect(receivedLatesValues.first) == ErxSparseChargeItem.Fixtures.chargeItem2.enteredDate
 
         // verify that two chargeItems have been in store
-        var receivedValues = [[ErxChargeItem]]()
+        var receivedValues = [[ErxSparseChargeItem]]()
         let cancellable = store.listAllChargeItems()
             .sink(receiveCompletion: { _ in
                 fail("unexpected complete")
@@ -1077,11 +1077,11 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
     func testFetchingLatestChargeItemWithProfileRelationship() throws {
         // given
         let testProfile = Profile(name: "TestProfile")
-        try prepareStores(profiles: [testProfile], chargeItems: [ErxChargeItem.Fixtures.chargeItem1,
-                                                                 ErxChargeItem.Fixtures.chargeItem2])
+        try prepareStores(profiles: [testProfile], chargeItems: [ErxSparseChargeItem.Fixtures.chargeItem1,
+                                                                 ErxSparseChargeItem.Fixtures.chargeItem2])
 
         let store = loadErxCoreDataStore(for: testProfile.id)
-        try store.add(chargeItems: [ErxChargeItem.Fixtures.chargeItem3])
+        try store.add(chargeItems: [ErxSparseChargeItem.Fixtures.chargeItem3])
 
         // when
         var receivedLatesValues = [String?]()
@@ -1095,8 +1095,9 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
         // then the timestamp of the charge item with a relationship is returned even though
         // there are newer events in store
         expect(receivedLatesValues.count).toEventually(equal(1))
-        expect(receivedLatesValues.first) == ErxChargeItem.Fixtures.chargeItem3.enteredDate
-        expect(ErxChargeItem.Fixtures.chargeItem3.enteredDate?.date) < ErxChargeItem.Fixtures.chargeItem1.enteredDate!
+        expect(receivedLatesValues.first) == ErxSparseChargeItem.Fixtures.chargeItem3.enteredDate
+        expect(ErxSparseChargeItem.Fixtures.chargeItem3.enteredDate?.date) < ErxSparseChargeItem.Fixtures.chargeItem1
+            .enteredDate!
             .date!
     }
 
@@ -1104,10 +1105,10 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
         let store = loadErxCoreDataStore()
         // given
         let chargeItemToFetch = ErxChargeItem.Fixtures.chargeItemWithFHIRData
-        try store.add(chargeItems: [chargeItemToFetch])
+        try store.add(chargeItems: [chargeItemToFetch.sparseChargeItem])
 
         // when
-        var receivedFetchResult: ErxChargeItem?
+        var receivedFetchResult: ErxSparseChargeItem?
         let cancellable = store.fetchChargeItem(by: chargeItemToFetch.identifier, fullDetail: true)
             .sink(receiveCompletion: { completion in
                 expect(completion) == .finished
@@ -1117,7 +1118,7 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
 
         // then
         expect(receivedFetchResult?.identifier).toEventually(equal(chargeItemToFetch.identifier))
-        expect(receivedFetchResult) == chargeItemToFetch
+        expect(receivedFetchResult?.chargeItem) == chargeItemToFetch
 
         cancellable.cancel()
     }
@@ -1272,7 +1273,7 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
         communications: [ErxTask.Communication] = [],
         auditEvents: [ErxAuditEvent] = [],
         medicationDispenses: [ErxMedicationDispense] = [],
-        chargeItems: [ErxChargeItem] = []
+        chargeItems: [ErxSparseChargeItem] = []
     ) throws {
         if !profiles.isEmpty {
             try loadProfileCoreDataStore().add(profiles: profiles)
@@ -1354,7 +1355,7 @@ extension ErxTaskCoreDataStore {
         cancellable.cancel()
     }
 
-    func add(chargeItems: [ErxChargeItem]) throws {
+    func add(chargeItems: [ErxSparseChargeItem]) throws {
         var receivedResults = [Bool]()
         var receivedSaveCompletions = [Subscribers.Completion<LocalStoreError>]()
 

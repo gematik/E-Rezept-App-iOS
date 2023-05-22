@@ -26,7 +26,7 @@ import SwiftUI
 extension PharmacySearchDomain {
     /// Provides an Effect that needs to run whenever the state of this Domain is reset to nil
     static func cleanup<T>() -> EffectTask<T> {
-        Effect.concatenate(
+        .concatenate(
             PharmacyDetailDomain.cleanup(),
             EffectTask<T>.cancel(ids: Token.allCases)
         )

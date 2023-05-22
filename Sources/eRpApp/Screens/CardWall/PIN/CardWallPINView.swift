@@ -171,7 +171,7 @@ struct CardWallPINView: View {
                                     state: /CardWallPINDomain.Destinations.State.egk,
                                     action: CardWallPINDomain.Destinations.Action.egkAction(action:)
                                 ),
-                                then: OrderHealthCardView.init(store:)
+                                then: OrderHealthCardListView.init(store:)
                             )
                         }
                         .accentColor(Colors.primary700)

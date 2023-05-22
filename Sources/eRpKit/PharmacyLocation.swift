@@ -106,6 +106,10 @@ public struct PharmacyLocation: Identifiable, Equatable {
         }
     }
 
+    public var hasAVSEndpoints: Bool {
+        avsEndpoints != nil
+    }
+
     /// Indicates if the delivery service via the `eRpRemoteStorage` module (Fachdienst) is present
     /// Note: Authentication via "Fachdienst" is required
     public var hasDeliveryService: Bool {
@@ -155,7 +159,6 @@ public struct PharmacyLocation: Identifiable, Equatable {
         public let shipmentUrlAdditionalHeaders: [String: String]
         public let deliveryUrl: String?
         public let deliveryUrlAdditionalHeaders: [String: String]
-        public let certificatesURL: URL?
 
         public struct Endpoint: Equatable {
             public let url: URL
@@ -173,8 +176,7 @@ public struct PharmacyLocation: Identifiable, Equatable {
             shipmentUrl: String? = nil,
             shipmentUrlAdditionalHeaders: [String: String] = [:],
             deliveryUrl: String? = nil,
-            deliveryUrlAdditionalHeaders: [String: String] = [:],
-            certificatesURL: URL? = nil
+            deliveryUrlAdditionalHeaders: [String: String] = [:]
         ) {
             self.onPremiseUrl = onPremiseUrl
             self.onPremiseUrlAdditionalHeaders = onPremiseUrlAdditionalHeaders
@@ -182,7 +184,6 @@ public struct PharmacyLocation: Identifiable, Equatable {
             self.shipmentUrlAdditionalHeaders = shipmentUrlAdditionalHeaders
             self.deliveryUrl = deliveryUrl
             self.deliveryUrlAdditionalHeaders = deliveryUrlAdditionalHeaders
-            self.certificatesURL = certificatesURL
         }
 
         public func url(for redeemOption: RedeemOption, transactionId: String, telematikId: String) -> Endpoint? {

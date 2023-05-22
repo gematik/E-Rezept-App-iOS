@@ -55,12 +55,12 @@ struct DeviceSecurityDomain: ReducerProtocol {
         switch action {
         case .acceptRootedDevice:
             deviceSecurityManager.set(ignoreRootedDeviceWarningForSession: true)
-            return Effect(value: .delegate(.close))
+            return EffectTask(value: .delegate(.close))
         case let .acceptMissingPin(permanently):
             deviceSecurityManager.set(ignoreDeviceSystemPinWarningForSession: true)
             deviceSecurityManager
                 .set(ignoreDeviceSystemPinWarningPermanently: permanently)
-            return Effect(value: .delegate(.close))
+            return EffectTask(value: .delegate(.close))
         case .delegate(.close):
             // Handled by parent domain
             return .none

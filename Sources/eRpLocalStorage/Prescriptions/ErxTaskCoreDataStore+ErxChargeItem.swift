@@ -31,8 +31,8 @@ extension ErxTaskCoreDataStore {
     /// - Returns: Publisher for the fetch request
     public func fetchChargeItem(
         by chargeItemID: ErxChargeItem.ID,
-        fullDetail: Bool
-    ) -> AnyPublisher<ErxChargeItem?, LocalStoreError> {
+        fullDetail _: Bool
+    ) -> AnyPublisher<ErxSparseChargeItem?, LocalStoreError> {
         let request: NSFetchRequest<ErxChargeItemEntity> = ErxChargeItemEntity.fetchRequest()
         var subPredicates = [NSPredicate]()
         if let identifier = profileId {
@@ -47,16 +47,11 @@ extension ErxTaskCoreDataStore {
         request.predicate = NSCompoundPredicate(type: .and, subpredicates: subPredicates)
         request.sortDescriptors = [NSSortDescriptor(key: #keyPath(ErxChargeItemEntity.enteredDate), ascending: false)]
         return fetch(request)
-            .tryMap { results in
+            .map { results in
                 guard let chargeItem = results.first else {
                     return nil
                 }
-                let item = ErxChargeItem(entity: chargeItem)
-                if fullDetail {
-                    return try item?.parseFullItemDetails()
-                } else {
-                    return item
-                }
+                return ErxSparseChargeItem(entity: chargeItem)
             }
             .mapError(LocalStoreError.read(error:))
             .eraseToAnyPublisher()
@@ -81,7 +76,7 @@ extension ErxTaskCoreDataStore {
     /// List all charge items with the given local contained in the store
     /// - Returns: Array of the fetched charge items or error
     public func listAllChargeItems(
-    ) -> AnyPublisher<[ErxChargeItem], LocalStoreError> {
+    ) -> AnyPublisher<[ErxSparseChargeItem], LocalStoreError> {
         let request: NSFetchRequest<ErxChargeItemEntity> = ErxChargeItemEntity.fetchRequest()
         request.sortDescriptors = [NSSortDescriptor(
             key: #keyPath(ErxChargeItemEntity.enteredDate),
@@ -94,14 +89,14 @@ extension ErxTaskCoreDataStore {
             )
         }
         return fetch(request)
-            .map { list in list.compactMap { ErxChargeItem(entity: $0) }}
+            .map { list in list.compactMap { ErxSparseChargeItem(entity: $0) }}
             .eraseToAnyPublisher()
     }
 
     /// Creates or updates the passed sequence of `ErxChargeItem`s
     /// - Parameter chargeItems: Array of charge items that should be stored
     /// - Returns: `true` if save operation was successful
-    public func save(chargeItems: [ErxChargeItem]) -> AnyPublisher<Bool, LocalStoreError> {
+    public func save(chargeItems: [ErxSparseChargeItem]) -> AnyPublisher<Bool, LocalStoreError> {
         save(mergePolicy: .mergeByPropertyObjectTrump) { moc in
             _ = chargeItems.map { [weak self] chargeItem -> ErxChargeItemEntity? in
                 let chargeItemsEntity = ErxChargeItemEntity.from(
@@ -112,5 +107,26 @@ extension ErxTaskCoreDataStore {
                 return chargeItemsEntity
             }
         }
+    }
+
+    /// Deletes a sequence of charge items from the store
+    /// - Parameter chargeItems: Array of charge items that should be deleted
+    /// - Returns: `true` if delete operation was successful
+    public func delete(chargeItems: [ErxSparseChargeItem]) -> AnyPublisher<Bool, LocalStoreError> {
+        let request: NSFetchRequest<ErxChargeItemEntity> = ErxChargeItemEntity.fetchRequest()
+        request.sortDescriptors = [NSSortDescriptor(key: #keyPath(ErxChargeItemEntity.enteredDate), ascending: false)]
+        var subPredicates = [NSPredicate]()
+        if let identifier = profileId {
+            let profilePredicate = NSPredicate(
+                format: "%K == %@",
+                argumentArray: [#keyPath(ErxChargeItemEntity.profile.identifier), identifier]
+            )
+            subPredicates.append(profilePredicate)
+        }
+        let ids = chargeItems.map(\.id)
+        subPredicates.append(NSPredicate(format: "%K in %@", #keyPath(ErxChargeItemEntity.identifier), ids))
+        request.predicate = NSCompoundPredicate(type: .and, subpredicates: subPredicates)
+
+        return delete(resultsOf: request)
     }
 }

@@ -37,6 +37,7 @@ extension ProfileEntity {
         insuranceType = profile.insuranceType.rawValue
         color = profile.color.rawValue
         image = profile.image.rawValue
+        userImageData = profile.userImageData
         lastAuthenticated = profile.lastAuthenticated
         // Note: update of erxTasks is set when saving tasks in `save(tasks:)`
     }
@@ -90,6 +91,7 @@ extension Profile {
             insuranceType: insuranceType,
             color: profileColor,
             image: profilePicture,
+            userImageData: entity.userImageData,
             lastAuthenticated: entity.lastAuthenticated,
             erxTasks: tasks
         )

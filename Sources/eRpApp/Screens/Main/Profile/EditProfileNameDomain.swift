@@ -61,7 +61,7 @@ struct EditProfileNameDomain: ReducerProtocol {
             state.profileName = profileName
             return .none
         case .saveButtonTapped:
-            return Effect(value: .saveEditedProfileName(name: state.profileName))
+            return EffectTask(value: .saveEditedProfileName(name: state.profileName))
         case let .saveEditedProfileName(name):
             let name = name.trimmed()
             if name.lengthOfBytes(using: .utf8) > 0 {
@@ -83,7 +83,7 @@ extension EditProfileNameDomain {
     func updateProfile(
         with profileId: UUID,
         name: String
-    ) -> Effect<Result<Bool, UserProfileServiceError>, Never> {
+    ) -> EffectTask<Result<Bool, UserProfileServiceError>> {
         userProfileService
             .update(profileId: profileId, mutating: ({ profile in profile.name = name }))
             .receive(on: schedulers.main)

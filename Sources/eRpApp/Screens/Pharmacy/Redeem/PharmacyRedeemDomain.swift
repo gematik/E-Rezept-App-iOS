@@ -33,14 +33,14 @@ struct PharmacyRedeemDomain: ReducerProtocol {
     typealias Store = StoreOf<Self>
 
     static func cleanup<T>() -> EffectTask<T> {
-        Effect.concatenate(
+        .concatenate(
             cleanupSubDomains(),
-            Effect.cancel(id: PharmacyRedeemDomain.Token.self)
+            .cancel(id: PharmacyRedeemDomain.Token.self)
         )
     }
 
-    static func cleanupSubDomains<T>() -> Effect<T, Never> {
-        Effect.concatenate(
+    static func cleanupSubDomains<T>() -> EffectTask<T> {
+        .concatenate(
             PharmacyContactDomain.cleanup(),
             CardWallIntroductionDomain.cleanup()
         )
@@ -171,7 +171,7 @@ struct PharmacyRedeemDomain: ReducerProtocol {
             switch action {
             case .close:
                 state.destination = nil
-                return Effect(value: .close)
+                return EffectTask(value: .close)
             }
         case let .destination(.pharmacyContact(.delegate(action))):
             switch action {
@@ -260,23 +260,23 @@ extension PharmacyRedeemDomain.State {
 extension PharmacyRedeemDomain {
     func redeem(
         orders: [Order]
-    ) -> Effect<PharmacyRedeemDomain.Action, Never> {
+    ) -> EffectTask<PharmacyRedeemDomain.Action> {
         redeemService.redeem(orders) // -> AnyPublisher<IdentifiedArrayOf<OrderResponse>, RedeemServiceError>
             .receive(on: schedulers.main.animation())
             .map { orderResponses -> PharmacyRedeemDomain.Action in
                 PharmacyRedeemDomain.Action.redeemReceived(.success(orderResponses))
             }
-            .catch { redeemError -> Effect<PharmacyRedeemDomain.Action, Never> in
+            .catch { redeemError -> EffectTask<PharmacyRedeemDomain.Action> in
                 if redeemError == .noTokenAvailable {
-                    return Effect(value: PharmacyRedeemDomain.Action.setNavigation(tag: .cardWall))
+                    return EffectTask(value: PharmacyRedeemDomain.Action.setNavigation(tag: .cardWall))
                 } else {
-                    return Effect(value: PharmacyRedeemDomain.Action.redeemReceived(.failure(redeemError)))
+                    return EffectTask(value: PharmacyRedeemDomain.Action.redeemReceived(.failure(redeemError)))
                 }
             }
             .eraseToEffect()
     }
 
-    func save(pharmacy: PharmacyLocation) -> Effect<Bool, PharmacyRepositoryError> {
+    func save(pharmacy: PharmacyLocation) -> EffectPublisher<Bool, PharmacyRepositoryError> {
         var pharmacy = pharmacy
         pharmacy.lastUsed = Date()
         pharmacy.countUsage += 1

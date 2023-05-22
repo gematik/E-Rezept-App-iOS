@@ -19,6 +19,7 @@
 import Combine
 import eRpKit
 import Foundation
+import OpenSSL
 
 /// Interface for the app to the Pharmacy data layer
 /// sourcery: StreamWrapped
@@ -75,6 +76,11 @@ public protocol PharmacyRepository {
     ///   - pharmacies: the `PharmacyLocation`s to be deleted
     /// - Returns: `AnyPublisher` that emits a boolean on success or fails with a `PharmacyRepositoryError`
     func delete(pharmacies: [PharmacyLocation]) -> AnyPublisher<Bool, PharmacyRepositoryError>
+
+    /// Load certificates for a given `PharmacyLocation` id
+    /// - Parameter id: id of `PharmacyLocation` from which to load the certificate
+    /// - Returns: Emits an array of certificates on success or fails with a `PharmacyRepositoryError`
+    func loadAvsCertificates(for id: String) -> AnyPublisher<[X509], PharmacyRepositoryError>
 }
 
 extension PharmacyRepository {

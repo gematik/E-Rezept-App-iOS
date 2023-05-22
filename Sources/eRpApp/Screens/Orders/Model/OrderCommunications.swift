@@ -72,3 +72,22 @@ extension OrderCommunications: Comparable {
         lhs.lastUpdated > rhs.lastUpdated
     }
 }
+
+extension OrderCommunications {
+    enum Dummies {
+        static let multipleOrderCommunications = [orderCommunications1, orderCommunications2]
+
+        static let orderCommunications1 =
+            OrderCommunications(
+                orderId: "orderId_1",
+                communications: ErxTask.Communication.Dummies.multipleCommunications1
+            )
+
+        static let orderCommunications2 =
+            OrderCommunications(
+                orderId: "orderId_2",
+                communications: ErxTask.Communication.Dummies.multipleCommunications2,
+                pharmacy: PharmacyLocation.Dummies.pharmacy
+            )
+    }
+}

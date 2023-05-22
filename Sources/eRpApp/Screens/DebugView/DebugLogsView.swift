@@ -30,6 +30,8 @@ struct DebugLogsView: View {
             return Colors.backgroundNeutral
         }
         switch statusCode {
+        case -100 ..< 0:
+            return Colors.systemGray5
         case 300 ..< 400:
             return Colors.yellow200
         case 400 ..< 500:
@@ -105,9 +107,13 @@ struct DebugLogsView: View {
         var body: some View {
             VStack(alignment: .leading) {
                 HStack {
-                    Text("\(log.responseStatus?.rawValue ?? -1)")
-                        .font(.system(.headline, design: .monospaced))
-                        .foregroundColor(log.responseStatus?.isSuccessful ?? false ? .green : .red)
+                    if log.responseStatus == .debug {
+                        Text("Copy")
+                    } else {
+                        Text("\(log.responseStatus?.rawValue ?? -1)")
+                            .font(.system(.headline, design: .monospaced))
+                            .foregroundColor(log.responseStatus?.isSuccessful ?? false ? .green : .red)
+                    }
                     Text(log.requestUrl)
                         .font(.headline)
                 }

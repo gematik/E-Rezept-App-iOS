@@ -1,0 +1,106 @@
+{
+    "id": "84bf615a-27bb-4612-ac97-ec1b898614ed",
+    "meta": {
+        "lastUpdated": "2023-04-18T18:08:22.172211607+02:00"
+    },
+    "resourceType": "Bundle",
+    "type": "searchset",
+    "total": 1,
+    "link": [
+        {
+            "relation": "self",
+            "url": "Bundle84bf615a-27bb-4612-ac97-ec1b898614ed"
+        }
+    ],
+    "entry": [
+        {
+            "resource": {
+                "id": "ngc26fe2-9c3a-4d52-854e-794c96f73f66",
+                "resourceType": "Location",
+                "address": {
+                    "use": "work",
+                    "type": "physical",
+                    "line": [
+                        "Münchnerstr. 15 b"
+                    ],
+                    "postalCode": "82139",
+                    "city": "Starnberg",
+                    "country": "de"
+                },
+                "identifier": [
+                    {
+                        "system": "https://gematik.de/fhir/NamingSystem/TelematikID",
+                        "value": "3-SMC-B-Testkarte-883110000116948"
+                    }
+                ],
+                "name": "PT-STA-Apotheke 2TEST-ONLY",
+                "position": {
+                    "latitude": 48.0018513,
+                    "longitude": 11.3497755
+                },
+                "status": "active",
+                "telecom": [
+                    {
+                        "system": "other",
+                        "value": "https://ixosapi.service-pt.de/api/GematikAppZuweisung/864692?sig=Jh9U%2b7gbgR21QGHfvsmoztM%2bTSXZeko2Qeft1XfnozY%3d&se=2601360745",
+                        "use": "mobile",
+                        "rank": 100
+                    },
+                    {
+                        "system": "other",
+                        "value": "https://ixosapi.service-pt.de/api/GematikAppZuweisung/864692?sig=Jh9U%2b7gbgR21QGHfvsmoztM%2bTSXZeko2Qeft1XfnozY%3d&se=2601360745",
+                        "use": "mobile",
+                        "rank": 200
+                    },
+                    {
+                        "system": "other",
+                        "value": "https://ixosapi.service-pt.de/api/GematikAppZuweisung/864692?sig=Jh9U%2b7gbgR21QGHfvsmoztM%2bTSXZeko2Qeft1XfnozY%3d&se=2601360745",
+                        "use": "mobile",
+                        "rank": 300
+                    }
+                ],
+                "type": [
+                    {
+                        "coding": [
+                            {
+                                "system": "http://terminology.hl7.org/CodeSystem/service-type",
+                                "code": "DELEGATOR",
+                                "display": "eRX Token Receiver"
+                            }
+                        ]
+                    },
+                    {
+                        "coding": [
+                            {
+                                "system": "http://terminology.hl7.org/CodeSystem/v3-RoleCode",
+                                "code": "PHARM",
+                                "display": "pharmacy"
+                            }
+                        ]
+                    },
+                    {
+                        "coding": [
+                            {
+                                "system": "http://terminology.hl7.org/CodeSystem/v3-RoleCode",
+                                "code": "OUTPHARM",
+                                "display": "outpatient pharmacy"
+                            }
+                        ]
+                    },
+                    {
+                        "coding": [
+                            {
+                                "system": "http://terminology.hl7.org/CodeSystem/v3-RoleCode",
+                                "code": "MOBL",
+                                "display": "Mobile Services"
+                            }
+                        ]
+                    }
+                ]
+            },
+            "search": {
+                "mode": "match"
+            }
+        }
+    ]
+}

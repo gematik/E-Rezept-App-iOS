@@ -214,7 +214,7 @@ extension DefaultErxTaskRepositoryTests {
                 isVaccine: false,
                 amount: ErxMedication.Ratio(numerator: .init(value: "1")),
                 dosageForm: nil,
-                dose: nil,
+                normSizeCode: nil,
                 batch: .init(
                     lotNumber: "Charge number X",
                     expiresOn: "2021-01-21T09:00:00Z"

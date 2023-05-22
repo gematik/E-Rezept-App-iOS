@@ -133,7 +133,7 @@ extension FHIRClient {
                 }
                 throw error
             }
-            .mapError { $0 as? FHIRClient.Error ?? FHIRClient.Error.internalError("Unknown error") }
+            .mapError { $0 as? FHIRClient.Error ?? FHIRClient.Error.unknown($0) }
             .eraseToAnyPublisher()
     }
 
@@ -302,6 +302,49 @@ extension FHIRClient {
         }
 
         return execute(operation: ErxTaskFHIROperation.allChargeItems(referenceDate: referenceDate, handler: handler))
+    }
+
+    /// Convenience function for deleting a charge item
+    ///
+    /// - Parameters:
+    ///   - id: The ID of the charge item to be deleted
+    ///   - accessCode: code to access the given `id` or nil when not required due to (previous/other) authorisation
+    /// - Returns: `AnyPublisher` that emits true if the item was deleted
+    public func deleteChargeItem(
+        by id: ErxChargeItem.ID,
+        accessCode: String?
+    ) -> AnyPublisher<Bool, FHIRClient.Error> {
+        let handler = DefaultFHIRResponseHandler { (fhirResponse: FHIRClient.Response) -> Bool in
+            let resource: ModelsR4.Bundle
+            if fhirResponse.status.isNoContent {
+                // Successful delete is supposed to produces return code 204 and an empty body.
+                // So we actually do not need to parse anything
+                return true
+            } else {
+                do {
+                    resource = try FHIRClient.decoder.decode(ModelsR4.Bundle.self, from: fhirResponse.body)
+                } catch {
+                    throw Error.decoding(error)
+                }
+                return try resource.parseErxChargeItem(id: id, with: fhirResponse.body) == nil
+            }
+        }
+
+        return execute(operation: ErxTaskFHIROperation.deleteTask(id: id, accessCode: accessCode, handler: handler))
+            .tryCatch { error -> AnyPublisher<Bool, FHIRClient.Error> in
+                // When the server responds with 404 we handle this as a success case for
+                // deletion. Obviously the server does not know the charge item which means we can
+                // safely delete it locally as well. Hence we return true so the charge item is
+                // subsequently also deleted locally on the device. Also see comments in ticket ERA-800.
+                if case let FHIRClient.Error.operationOutcome(outcome) = error,
+                   let type = outcome.issue.first?.code,
+                   type == IssueType.notFound {
+                    return Just(true).setFailureType(to: FHIRClient.Error.self).eraseToAnyPublisher()
+                }
+                throw error
+            }
+            .mapError { $0 as? FHIRClient.Error ?? FHIRClient.Error.unknown($0) }
+            .eraseToAnyPublisher()
     }
 
     /// Loads All consents of a given profile

@@ -112,12 +112,20 @@ class DemoSessionContainer: UserSession {
         )
     }()
 
-    lazy var erxTaskRepository: ErxTaskRepository = {
+    private lazy var demoErxTaskRepository: ErxTaskRepository = {
         DemoErxTaskRepository(
             requestDelayInSeconds: 0.9,
             schedulers: schedulers,
             secureUserStore: secureUserStore
         )
+    }()
+
+    lazy var erxTaskRepository: ErxTaskRepository = {
+        demoErxTaskRepository
+    }()
+
+    lazy var ordersRepository: ErxTaskRepository = {
+        demoErxTaskRepository
     }()
 
     lazy var trustStoreSession: TrustStoreSession = {

@@ -41,6 +41,8 @@ protocol UserSession {
 
     var erxTaskRepository: ErxTaskRepository { get }
 
+    var ordersRepository: ErxTaskRepository { get }
+
     var profileDataStore: ProfileDataStore { get }
 
     /// Access to the store of `ShipmentInfo` objects
@@ -77,7 +79,7 @@ protocol UserSession {
 
     var trustStoreSession: TrustStoreSession { get }
 
-    /// Affected manager when app (start) ist secured by password usage
+    /// Affected manager when app (start) is secured by password usage
     var appSecurityManager: AppSecurityManager { get }
 
     // Manager that gathering information about device security and the user's acknowledgement thereof
@@ -113,6 +115,10 @@ struct UserSessionDependency: DependencyKey {
             schedulers: Schedulers(),
             erxTaskCoreDataStore: ErxTaskCoreDataStore(
                 profileId: selectedProfileId,
+                coreDataControllerFactory: coreDataControllerFactory
+            ),
+            ordersCoreDataStore: ErxTaskCoreDataStore(
+                profileId: nil,
                 coreDataControllerFactory: coreDataControllerFactory
             ),
             pharmacyCoreDataStore: PharmacyCoreDataStore(coreDataControllerFactory: coreDataControllerFactory),

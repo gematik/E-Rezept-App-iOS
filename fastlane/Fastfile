@@ -630,12 +630,20 @@ lane :list_requirements do |options|
     spec = matches[:SPEC]
     afos = matches[:AFOS]
 
-    afos.split(',').each do |afo|
+    afos.split(',').each do |afoWithCount|
+      parts = afoWithCount.split('#')
+      afo = parts[0]
+      number = 0
+
+      if parts.count == 2
+        number = parts[1]
+      end
 
       hit = {
         "file" => file,
         "line" => line,
-        "code" => code
+        "code" => code,
+        "\#" => number
       }
 
       if matches.names.include?("SUBAFOS")
@@ -665,13 +673,24 @@ lane :list_requirements do |options|
 
     block.each do |line|
       # Format: [REQ:<SPEC>:<AFOS>:<SUBAFOS?>] <DESC>
-      if matches = line.match(/\[REQ:(?<SPEC>[^:]*):(?<AFOS>[^:]*)(?:(?::)(?<SUBAFOS>[^:]*))?\](?<DESC>.*)/)
+      if matches = line.match(/\[REQ:(?<SPEC>[^:]*):(?<AFOS>[^:\s]*)(?:(?::)(?<SUBAFOS>[^:\s]*))?\](?<DESC>.*)/)
 
         register(matches, file, number, trimmedCode)
       end
       number += 1
     end
   end 
+
+  Dir.glob("../doc/manual/requirement-notes.md").each do |file|
+    number = 0
+    firstHit = 0
+    block = Array.new
+
+    open(file).each_line do |line|
+      number += 1
+      parseBlock([line], file, number)
+    end
+  end
 
   Dir.glob("../sources/**/*.swift").each do |file|
     # puts "Testing '#{file}'"
@@ -702,8 +721,16 @@ lane :list_requirements do |options|
     end
   end
 
+  # puts SPECS.to_json
+
   SORTED_SPECS = SPECS.transform_values { |afos|
-    afos.sort_by { |key| key }.to_h
+    afos
+      .transform_values { |hits|
+        hits.sort_by { |hit|
+          hit["\#"]
+        }
+      }
+      .sort_by { |key| key }.to_h
   }
 
   sh "mkdir -p ../build/docs/generated"
@@ -744,7 +771,7 @@ lane :compile_foss do
   dependencies = YAML.load_file("../dependencies.yml").map { |entry|
     UI.message("Load #{entry[:name]}")
     license = ""
-    open(entry[:license_uri]).read().each_line{|line| license += "#{line.strip}\n" }
+    URI.open(entry[:license_uri]).read().each_line{|line| license += "#{line.strip}\n" }
     license = license.gsub(/\R{2}/, 'PARAGRAPH_BREAK')
     license = license.gsub(/\R{1}/, ' ')
     license = license.gsub(/PARAGRAPH_BREAK/, "</p>\n\n<p>")

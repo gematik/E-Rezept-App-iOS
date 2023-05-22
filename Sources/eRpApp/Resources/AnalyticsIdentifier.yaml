@@ -1,37 +1,183 @@
 screens:
   main:
-    name: "Main Screen"
-  cardwallIntroduction:
-    name: "CardWall / Welcome"
-  cardwallNotCapable:
-    name: "CardWall / Not Capable"
-  cardwallCAN:
-    name: "CardWall / CAN"
-  cardwallContactInsuranceCompany:
-    name: "CardWall Contact Insurance Company"
-  cardwallContactInsuranceCompanySelectKK:
-    name: "CardWall Contact Insurance Company Select KK"
-  cardwallPIN:
-    name: "CardWall / PIN"
-  cardwallScanCAN:
-    name: "CardWall Scan CAN"
-  cardwallSaveLogin:
-    name: "CardWall / SaveCredentials / Initial"
-  cardwallSaveLoginSecurityInfo:
-    name: "CardWall / SaveCredentials / Information"
-  cardWallReadCard:
-    name: "CardWall / Connect"
-  cardWallReadCardHelp1:
-    name: "CardWall Read Card Help 1"
-  cardWallReadCardHelp2:
-    name: "CardWall Read Card Help 2"
-  cardWallReadCardHelp3:
-    name: "CardWall Read Card Help 3"
-  cardWallExtAuth:
-    name: "CardWall ExtAuth"
-  cardWallExtAuthConfirm:
-    name: "CardWall ExtAuth Confirm"
+    name: "main"
+  main_createProfile:
+    name: "main:createProfile"
+  main_editProfilePicture:
+    name: "main:editProfilePicture"
+  main_editName:
+    name: "main:editName"
+  main_scanner:
+    name: "main:scanner"
+  main_deviceSecurity:
+    name: "main:deviceSecurity"
+  main_prescriptionArchive:
+    name: "main:prescriptionArchive"
+  main_welcomeDrawer:
+    name: "main:welcomeDrawer"
+  prescriptionDetail:
+    name: "prescriptionDetail"
+  prescriptionDetail_medication:
+    name: "prescriptionDetail:medication"
+  prescriptionDetail_patient:
+    name: "prescriptionDetail:patient"
+  prescriptionDetail_practitioner:
+    name: "prescriptionDetail:practitioner"
+  prescriptionDetail_organization:
+    name: "prescriptionDetail:organization"
+  prescriptionDetail_accidentInfo:
+    name: "prescriptionDetail:accidentInfo"
+  prescriptionDetail_technicalInfo:
+    name: "prescriptionDetail:technicalInfo"
+  prescriptionDetail_sharePrescription:
+    name: "prescriptionDetail:sharePrescription"
+  prescriptionDetail_directAssignmentInfo:
+    name: "prescriptionDetail:directAssignmentInfo"
+  prescriptionDetail_substitutionInfo:
+    name: "prescriptionDetail:substitutionInfo"
+  prescriptionDetail_errorInfo:
+    name: "prescriptionDetail:errorInfo"
+  prescriptionDetail_prescriptionValidityInfo:
+    name: "prescriptionDetail:prescriptionValidityInfo"
+  prescriptionDetail_scannedPrescriptionInfo:
+    name: "prescriptionDetail:scannedPrescriptionInfo"
+  prescriptionDetail_coPaymentInfo:
+    name: "prescriptionDetail:coPaymentInfo"
+  prescriptionDetail_emergencyServiceFeeInfo:
+    name: "prescriptionDetail:emergencyServiceFeeInfo"
+  prescriptionDetail_medicationOverview:
+    name: "prescriptionDetail:medicationOverview"
+  prescriptionDetail_medication_ingredients:
+    name: "prescriptionDetail:medication_ingredients"
+  redeem_methodSelection:
+    name: "redeem:methodSelection"
+  redeem_prescriptionAllOrSelection:
+    name: "redeem:prescriptionAllOrSelection"
+  redeem_prescriptionChooseSubset:
+    name: "redeem:prescriptionChooseSubset"
+  redeem_matrixCode:
+    name: "redeem:matrixCode"
+  redeem_viaAVS:
+    name: "redeem:viaAVS"
+  redeem_viaTI:
+    name: "redeem:viaTI"
+  redeem_success:
+    name: "redeem:success"
+  redeem_editContactInformation:
+    name: "redeem:editContactInformation"
+  pharmacySearch:
+    name: "pharmacySearch"
+  pharmacySearch_detail:
+    name: "pharmacySearch:detail"
+  pharmacySearch_filter:
+    name: "pharmacySearch:filter"
+  cardWall:
+    name: "cardWall"
+  cardWall_introduction:
+    name: "cardWall:welcome"
+  cardWall_notCapable:
+    name: "cardWall:notCapable"
+  cardWall_CAN:
+    name: "cardWall:CAN"
+  cardWall_PIN:
+    name: "cardWall:PIN"
+  cardWall_scanCAN:
+    name: "cardWall:scanCAN"
+  cardWall_saveLogin:
+    name: "cardWall:saveCredentials:initial"
+  cardWall_saveLoginSecurityInfo:
+    name: "cardWall:saveCredentials:information"
+  cardWall_readCard:
+    name: "cardWall:connect"
+  cardWall_extAuth:
+    name: "cardWall:extAuth"
+  cardWall_extAuthConfirm:
+    name: "cardWall:extAuthConfirm"
+  troubleShooting: # not used in iOS
+    name: "troubleShooting"
+  troubleShooting_readCardHelp1: # Troubleshooting is a section on it's own
+    name: "troubleShooting:readCardHelp1"
+  troubleShooting_readCardHelp2:
+    name: "troubleShooting:readCardHelp2"
+  troubleShooting_readCardHelp3:
+    name: "troubleShooting:readCardHelp3"
+  contactInsuranceCompany:
+    name: "contactInsuranceCompany"
+  contactInsuranceCompany_selectKK: #not used in Android orderHealthCard2.0
+    name: "contactInsuranceCompany:selectKK"
+  contactInsuranceCompany_selectReason:
+    name: "contactInsuranceCompany:selectReason"
+  contactInsuranceCompany_selectMethod:
+    name: "contactInsuranceCompany:selectMethod"
+  orders:
+    name: "orders"
+  orders_detail:
+    name: "orders:detail"
+  orders_pickupCode:
+    name: "orders:pickupCode"
   alert:
     name: "General Alert Dialog"
   errorAlert:
-    name: "Error Alert - "
+    name: "Error Alert"
+  healthCardPassword_forgotPin: #so far not used
+    name: "healthCardPassword:forgotPin"
+  healthCardPassword_setCustomPin: #so far not used
+    name: "healthCardPassword:setCustomPin"
+  healthCardPassword_unlockCard: #so far not used
+    name: "healthCardPassword:unlockCard"
+  healthCardPassword_introduction:
+    name: "healthCardPassword:introduction"
+  healthCardPassword_can:
+    name: "healthCardPassword:can"
+  healthCardPassword_puk:
+    name: "healthCardPassword:puk"
+  healthCardPassword_oldPin:
+    name: "healthCardPassword:oldPin"
+  healthCardPassword_pin:
+    name: "healthCardPassword:pin"
+  healthCardPassword_readCard:
+    name: "healthCardPassword:readCard"
+  healthCardPassword_scanner:
+    name: "healthCardPassword:scanner"
+  settings:
+    name: "settings"
+  settings_accessibility: # not used in iOS
+    name: "settings:accessibility"
+  settings_authenticationMethods:
+    name: "settings:authenticationMethods"
+  settings_authenticationMethods_setAppPassword:
+    name: "settings:authenticationMethods:setAppPassword"
+  settings_productImprovements:
+    name: "settings:productImprovements"
+  settings_productImprovements_complyTracking:
+    name: "settings:productImprovements:complyTracking"
+  settings_legalNotice:
+    name: "settings:legalNotice"
+  settings_dataProtection:
+    name: "settings:dataProtection"
+  settings_openSourceLicence:
+    name: "settings:openSourceLicence"
+  settings_additionalLicence: # not used in iOS
+    name: "settings:additionalLicence"
+  settings_termsOfUse:
+    name: "settings:termsOfUse"
+  profile:
+    name: "profile"
+  profile_editPicture:
+    name: "profile:editPicture"
+  settings_newProfile:
+    name: "settings:newProfile"
+  profile_token:
+    name: "profile:token"
+  profile_registeredDevices:
+    name: "profile:registeredDevices"
+  profile_auditEvents:
+    name: "profile:auditEvents"
+  chargeItemList:
+    name: "chargeItemList"
+  chargeItemDetails:
+    name: "chargeItemDetails"
+  mlKit: # not used in iOS
+    name: "mlKit"
+  mlKit_information: # not used in iOS
+    name: "mlKit:information"

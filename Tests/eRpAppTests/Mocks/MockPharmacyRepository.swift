@@ -20,6 +20,7 @@ import Combine
 @testable import eRpApp
 import eRpKit
 import Foundation
+import OpenSSL
 import Pharmacy
 import XCTest
 
@@ -66,13 +67,20 @@ class MockPharmacyRepository: PharmacyRepository {
         loadRemoteAndSaveCallsCount > 0
     }
 
+    var loadAvsCertificatesPublisher: AnyPublisher<[X509], PharmacyRepositoryError>
+    var loadAvsCertificatesCallsCount = 0
+    var loadAvsCertificatesCalled: Bool {
+        loadAvsCertificatesCallsCount > 0
+    }
+
     init(stored pharmacies: [PharmacyLocation] = [],
          loadRemoteAndSave: AnyPublisher<PharmacyLocation, PharmacyRepositoryError> = failing(),
          loadCachedById: AnyPublisher<PharmacyLocation?, PharmacyRepositoryError> = failing(),
          searchRemote: AnyPublisher<[PharmacyLocation], PharmacyRepositoryError> = failing(),
          savePharmacies: AnyPublisher<Bool, PharmacyRepositoryError> = failing(),
          loadLocalById: AnyPublisher<PharmacyLocation?, PharmacyRepositoryError> = failing(),
-         deletePharmacies: AnyPublisher<Bool, PharmacyRepositoryError> = failing()) {
+         deletePharmacies: AnyPublisher<Bool, PharmacyRepositoryError> = failing(),
+         avsCertificates: AnyPublisher<[X509], PharmacyRepositoryError> = failing()) {
         loadLocalAllPublisher = Just(pharmacies)
             .setFailureType(to: PharmacyRepositoryError.self)
             .eraseToAnyPublisher()
@@ -82,6 +90,7 @@ class MockPharmacyRepository: PharmacyRepository {
         loadLocalByIdPublisher = loadLocalById
         deletePublisher = deletePharmacies
         loadRemoteAndSavePublisher = loadRemoteAndSave
+        loadAvsCertificatesPublisher = avsCertificates
     }
 
     func updateFromRemote(by _: String) -> AnyPublisher<PharmacyLocation, PharmacyRepositoryError> {
@@ -121,6 +130,11 @@ class MockPharmacyRepository: PharmacyRepository {
         return deletePublisher
     }
 
+    func loadAvsCertificates(for _: String) -> AnyPublisher<[X509], Pharmacy.PharmacyRepositoryError> {
+        loadAvsCertificatesCallsCount += 1
+        return loadAvsCertificatesPublisher
+    }
+
     static func failing() -> AnyPublisher<PharmacyLocation?, PharmacyRepositoryError> {
         Deferred { () -> AnyPublisher<PharmacyLocation?, PharmacyRepositoryError> in
             XCTFail("This publisher should not have run")
@@ -144,6 +158,13 @@ class MockPharmacyRepository: PharmacyRepository {
 
     static func failing() -> AnyPublisher<PharmacyLocation, PharmacyRepositoryError> {
         Deferred { () -> AnyPublisher<PharmacyLocation, PharmacyRepositoryError> in
+            XCTFail("This publisher should not have run")
+            return Fail(error: PharmacyRepositoryError.remote(.notFound)).eraseToAnyPublisher()
+        }.eraseToAnyPublisher()
+    }
+
+    static func failing() -> AnyPublisher<[X509], PharmacyRepositoryError> {
+        Deferred { () -> AnyPublisher<[X509], PharmacyRepositoryError> in
             XCTFail("This publisher should not have run")
             return Fail(error: PharmacyRepositoryError.remote(.notFound)).eraseToAnyPublisher()
         }.eraseToAnyPublisher()

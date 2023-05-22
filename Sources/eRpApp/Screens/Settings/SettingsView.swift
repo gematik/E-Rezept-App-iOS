@@ -34,13 +34,11 @@ struct SettingsView: View {
 
     struct ViewState: Equatable {
         let isDemoMode: Bool
-        let profilesDestinationTag: ProfilesDomain.Destinations.State.Tag?
 
         let destinationTag: SettingsDomain.Destinations.State.Tag?
 
         init(state: SettingsDomain.State) {
             isDemoMode = state.isDemoMode
-            profilesDestinationTag = state.profiles.destination?.tag
             destinationTag = state.destination?.tag
         }
     }
@@ -70,7 +68,7 @@ struct SettingsView: View {
                     BottomSectionView(store: store)
                 }
                 .alert(
-                    profilesStore.destinationsScope(state: /ProfilesDomain.Destinations.State.alert),
+                    store.destinationsScope(state: /SettingsDomain.Destinations.State.alert),
                     dismiss: .setNavigation(tag: nil)
                 )
 
@@ -93,18 +91,18 @@ struct SettingsView: View {
                 Rectangle()
                     .frame(width: 0, height: 0, alignment: .center)
                     .sheet(isPresented: Binding<Bool>(get: {
-                        viewStore.profilesDestinationTag == .newProfile
+                        viewStore.destinationTag == .newProfile
                     }, set: { show in
                         if !show {
-                            viewStore.send(.profiles(action: .setNavigation(tag: nil)))
+                            viewStore.send(.setNavigation(tag: nil))
                         }
                     }),
                     onDismiss: {},
                     content: {
                         IfLetStore(
-                            profilesStore.destinationsScope(
-                                state: /ProfilesDomain.Destinations.State.newProfile,
-                                action: ProfilesDomain.Destinations.Action.newProfileAction
+                            store.destinationsScope(
+                                state: /SettingsDomain.Destinations.State.newProfile,
+                                action: SettingsDomain.Destinations.Action.newProfileAction
                             ),
                             then: NewProfileView.init(store:)
                         )
@@ -114,15 +112,15 @@ struct SettingsView: View {
 
                 NavigationLink(
                     destination: IfLetStore(
-                        profilesStore.destinationsScope(
-                            state: /ProfilesDomain.Destinations.State.editProfile,
-                            action: ProfilesDomain.Destinations.Action.editProfileAction
+                        store.destinationsScope(
+                            state: /SettingsDomain.Destinations.State.editProfile,
+                            action: SettingsDomain.Destinations.Action.editProfileAction
                         ),
                         then: EditProfileView.init(store:)
                     ),
-                    tag: ProfilesDomain.Destinations.State.Tag.editProfile, // swiftlint:disable:next trailing_closure
-                    selection: viewStore.binding(get: \.profilesDestinationTag, send: { tag in
-                        SettingsDomain.Action.profiles(action: .setNavigation(tag: tag))
+                    tag: SettingsDomain.Destinations.State.Tag.editProfile, // swiftlint:disable:next trailing_closure
+                    selection: viewStore.binding(get: \.destinationTag, send: { tag in
+                        SettingsDomain.Action.setNavigation(tag: tag)
                     })
                 ) {}
                     .hidden()
@@ -233,6 +231,7 @@ extension SettingsView {
                 }, icon: {})
                     .accessibilityIdentifier(A18n.settings.tracking.stgTrkTxtFootnote)
             }, content: {
+                // [REQ:gemSpec_eRp_FdV:A_19097] Toggle within Settings to enable and disable usage tracking
                 Toggle(isOn: viewStore.binding(
                     get: \.trackerOptIn,
                     send: SettingsDomain.Action.toggleTrackingTapped

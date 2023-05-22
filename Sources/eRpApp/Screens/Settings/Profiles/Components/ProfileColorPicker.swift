@@ -33,11 +33,10 @@ struct ProfileColorPicker: View {
                     .background(
                         Circle()
                             .foregroundColor(color.background)
+                            .border(color.border, width: 1, cornerRadius: 99)
                     )
                     .onTapGesture {
-                        withAnimation {
-                            self.color = color
-                        }
+                        self.color = color
                     }
                     .accessibility(value: Text(color == self.color ? L10n.ctlTxtProfileColorPickerSelected
                             .key : ""))

@@ -27,13 +27,16 @@ public enum PharmacyFHIROperation<Value, Handler: FHIRResponseHandler> where Han
     case searchPharmacies(searchTerm: String, position: Position?, filter: [String: String], handler: Handler)
     /// Search for pharmacies by telematikId
     case fetchPharmacy(telematikId: String, handler: Handler)
+    /// Load certificates used for redeeming via avs service
+    case loadCertificates(locationId: String, handler: Handler)
 }
 
 extension PharmacyFHIROperation: FHIRClientOperation {
     public func handle(response: FHIRClient.Response) throws -> Value {
         switch self {
         case let .searchPharmacies(_, _, _, handler),
-             let .fetchPharmacy(_, handler):
+             let .fetchPharmacy(_, handler),
+             let .loadCertificates(_, handler: handler):
             return try handler.handle(response: response)
         }
     }
@@ -64,6 +67,14 @@ extension PharmacyFHIROperation: FHIRClientOperation {
             )
             components?.queryItems = [item]
             return components?.string
+        case let .loadCertificates(locationId: locationId, _):
+            var components = URLComponents(string: "Binary")
+            let item = URLQueryItem(
+                name: "_securityContext",
+                value: "Location/\(locationId)"
+            )
+            components?.queryItems = [item]
+            return components?.string
         }
     }
 
@@ -88,7 +99,8 @@ extension PharmacyFHIROperation: FHIRClientOperation {
     public var acceptFormat: FHIRAcceptFormat {
         switch self {
         case let .searchPharmacies(_, _, _, handler),
-             let .fetchPharmacy(_, handler):
+             let .fetchPharmacy(_, handler),
+             let .loadCertificates(_, handler):
             return handler.acceptFormat
         }
     }

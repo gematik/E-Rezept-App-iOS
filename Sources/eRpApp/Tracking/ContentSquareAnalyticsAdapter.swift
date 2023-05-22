@@ -21,6 +21,7 @@ import ContentsquareModule
 import Foundation
 import UIKit
 
+// [REQ:gemSpec_eRp_FdV:A_19087#2] Implementation of the opt-in usability-tracker.
 final class ContentSquareAnalyticsAdapter: NSObject, Tracker {
     let userDefaults: UserDefaults
 
@@ -68,6 +69,7 @@ final class ContentSquareAnalyticsAdapter: NSObject, Tracker {
     // [REQ:gemSpec_eRp_FdV:A_19090] activate tracking only if permitted
     private func startIfPermitted() {
         if optIn {
+            // [REQ:gemSpec_eRp_FdV:A_19096] Remove existing sessions while starting the framework
             Contentsquare.start()
             Contentsquare.optOut()
             Contentsquare.optIn()

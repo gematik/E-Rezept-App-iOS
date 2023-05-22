@@ -107,10 +107,10 @@ struct IDPCardWallDomain: ReducerProtocol {
         case .canAction(action: .delegate(.close)),
              .pinAction(action: .delegate(.close)):
             // closing a subscreen should close the whole stack -> forward to generic `.close`
-            return Effect(value: .delegate(.close))
+            return EffectTask(value: .delegate(.close))
         case .readCard(action: .delegate(.close)):
             state.pin.destination = nil
-            return Effect(value: .delegate(.finished))
+            return EffectTask(value: .delegate(.finished))
                 .delay(for: Self.dismissTimeout, scheduler: schedulers.main)
                 .eraseToEffect()
         case .delegate,

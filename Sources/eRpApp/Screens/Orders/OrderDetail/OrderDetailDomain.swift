@@ -71,8 +71,11 @@ struct OrderDetailDomain: ReducerProtocol {
 
     struct Destinations: ReducerProtocol {
         enum State: Equatable {
+            // sourcery: AnalyticsScreen = orders_pickupCode
             case pickupCode(PickupCodeDomain.State)
+            // sourcery: AnalyticsScreen = prescriptionDetail
             case prescriptionDetail(PrescriptionDetailDomain.State)
+            // sourcery: AnalyticsScreen = alert
             case alert(ErpAlertState<OrderDetailDomain.Action>)
         }
 
@@ -212,7 +215,7 @@ struct OrderDetailDomain: ReducerProtocol {
 }
 
 extension OrderDetailDomain {
-    func loadTasks(_ erxTaskIds: Set<ErxTask.ID>) -> Effect<OrderDetailDomain.Action, Never> {
+    func loadTasks(_ erxTaskIds: Set<ErxTask.ID>) -> EffectTask<OrderDetailDomain.Action> {
         let publishers: [AnyPublisher<ErxTask?, Never>] = erxTaskIds.map {
             erxTaskRepository.loadLocal(by: $0, accessCode: nil)
                 .first()
@@ -228,7 +231,7 @@ extension OrderDetailDomain {
             .eraseToEffect()
     }
 
-    func setReadState(for communications: [ErxTask.Communication]) -> Effect<Bool, ErxRepositoryError> {
+    func setReadState(for communications: [ErxTask.Communication]) -> EffectPublisher<Bool, ErxRepositoryError> {
         let readCommunications = communications.filter { !$0.isRead }
             .map { comm -> ErxTask.Communication in
                 var readComm = comm
@@ -324,12 +327,7 @@ extension OrderDetailDomain {
 extension OrderDetailDomain {
     enum Dummies {
         static let state = State(
-            order: OrderCommunications(orderId: "testID",
-                                       communications: [OrdersDomain.Dummies.communicationOnPremise,
-                                                        OrdersDomain.Dummies.communicationShipment,
-                                                        OrdersDomain.Dummies.communicationDelivery,
-                                                        OrdersDomain.Dummies.communicationOnPremiseWithUrl,
-                                                        OrdersDomain.Dummies.communicationWithoutPayload]),
+            order: OrderCommunications.Dummies.orderCommunications1,
             erxTasks: [ErxTask.Demo.erxTask1, ErxTask.Demo.erxTask13]
         )
 

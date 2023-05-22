@@ -88,13 +88,16 @@ final class IDPIntegrationTests: XCTestCase {
                                           idTokenValidator: { _ in .success(true) })
             }
             .first()
-            .test(expectations: { idpToken in
-                success = true
-                Swift.print("token access", idpToken.accessToken)
-                Swift.print("token id", idpToken.idToken)
-                Swift.print("token sso: '\(idpToken.ssoToken ?? "<empty>")'")
-                token = idpToken
-            }, subscribeScheduler: DispatchQueue.global().eraseToAnyScheduler())
+            .test(
+                timeout: 10,
+                expectations: { idpToken in
+                    success = true
+                    Swift.print("token access", idpToken.accessToken)
+                    Swift.print("token id", idpToken.idToken)
+                    Swift.print("token sso: '\(idpToken.ssoToken ?? "<empty>")'")
+                    token = idpToken
+                }, subscribeScheduler: DispatchQueue.global().eraseToAnyScheduler()
+            )
         expect(success) == true
 
         guard token != nil else {
@@ -390,7 +393,7 @@ final class IDPIntegrationTests: XCTestCase {
         expect(token).toNot(beNil())
 
         success = false
-        // Get registerd Devices
+        // Get registered Devices
         pairingIDPSession.listDevices(token: token)
             .first()
             .test(failure: { error in
@@ -403,7 +406,8 @@ final class IDPIntegrationTests: XCTestCase {
                       devices.pairingEntries.forEach { entry in
                           Swift.print("Device: ", entry.name, entry.pairingEntryVersion)
                       }
-                  }, subscribeScheduler: DispatchQueue.global().eraseToAnyScheduler())
+                  },
+                  subscribeScheduler: DispatchQueue.global().eraseToAnyScheduler())
         expect(success) == true
     }
 

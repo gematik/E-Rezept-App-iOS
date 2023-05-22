@@ -171,14 +171,15 @@ struct PrescriptionListView<StickyHeader: View>: View {
         var body: some View {
             HStack {
                 ProfilePictureView(
-                    text: viewStore.profile?.acronym,
                     image: viewStore.profile?.image,
-                    color: viewStore.profile?.color.background,
+                    userImageData: viewStore.profile?.userImageData,
+                    color: viewStore.profile?.color,
                     connection: viewStore.profile?.connectionStatus,
                     style: .small
                 ) {
                     if let profile = viewStore.profile {
                         viewStore.send(.profilePictureViewTapped(profile))
+                        UIImpactFeedbackGenerator(style: .light).impactOccurred()
                     }
                 }
                 Spacer()

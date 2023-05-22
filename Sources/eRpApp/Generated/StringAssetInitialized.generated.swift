@@ -1,4 +1,4 @@
-// Generated using Sourcery 2.0.1 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.0.2 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 
 import SwiftUI
@@ -88,16 +88,6 @@ extension ListCellView {
 extension LoadingPrimaryButton {
     init(text: StringAsset, isLoading: Bool, action: @escaping () -> Void) {
         self.init(text: text.key, isLoading: isLoading, action: action)
-    }
-}
-extension MedicationDetailCellView {
-    init(value: String? = nil, subtitle: String? = nil, title: StringAsset, isLastInSection: Bool = false) {
-        self.init(value: value, subtitle: subtitle, title: title.key, isLastInSection: isLastInSection)
-    }
-}
-extension MedicationInfoView.CodeInfo {
-    init(code: String? = nil, codeTitle: StringAsset, accessibilityId: String) {
-        self.init(code: code, codeTitle: codeTitle.key, accessibilityId: accessibilityId)
     }
 }
 extension MedicationRedeemView {

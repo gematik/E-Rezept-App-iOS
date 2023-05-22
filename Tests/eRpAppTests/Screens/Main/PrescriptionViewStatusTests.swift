@@ -25,23 +25,24 @@ final class PrescriptionViewStatusTests: XCTestCase {
     func task(status: ErxTask.Status = .ready,
               expiresOn: String? = DemoDate.createDemoDate(.tomorrow),
               acceptedUntil: String? = DemoDate.createDemoDate(.twentyEightDaysAhead),
-              redeemedOn: String? = nil,
               multiplePrescription: MultiplePrescription? = nil) -> ErxTask {
-        ErxTask(identifier: "2390f983-1e67-11b2-8555-63bf44e44fb8",
-                status: status,
-                accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
-                fullUrl: nil,
-                authoredOn: DemoDate.createDemoDate(.today),
-                expiresOn: expiresOn,
-                acceptedUntil: acceptedUntil,
-                redeemedOn: redeemedOn,
-                author: "Dr. Dr. med. Carsten van Storchhausen",
-                medication: medication,
-                medicationRequest: .init(
-                    substitutionAllowed: true,
-                    hasEmergencyServiceFee: true,
-                    multiplePrescription: multiplePrescription
-                ))
+        ErxTask(
+            identifier: "2390f983-1e67-11b2-8555-63bf44e44fb8",
+            status: status,
+            accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
+            fullUrl: nil,
+            authoredOn: DemoDate.createDemoDate(.today),
+            expiresOn: expiresOn,
+            acceptedUntil: acceptedUntil,
+            author: "Dr. Dr. med. Carsten van Storchhausen",
+            medication: medication,
+            medicationRequest: .init(
+                substitutionAllowed: true,
+                hasEmergencyServiceFee: true,
+                multiplePrescription: multiplePrescription
+            ),
+            medicationDispenses: status == .completed ? [medicationDispense] : []
+        )
     }
 
     let medication: ErxMedication = {
@@ -50,9 +51,29 @@ final class PrescriptionViewStatusTests: XCTestCase {
             pzn: "06876511",
             amount: .init(numerator: .init(value: "12")),
             dosageForm: "FDA",
-            dose: "N2"
+            normSizeCode: "N2"
         )
     }()
+
+    let medicationDispense: ErxMedicationDispense = .init(
+        identifier: "some-unique-id",
+        taskId: "2390f983-1e67-11b2-8555-63bf44e44fb8",
+        insuranceId: "A123456789",
+        dosageInstruction: nil,
+        telematikId: "11b2-8555",
+        whenHandedOver: DemoDate.createDemoDate(.today) ?? "",
+        medication: .init(
+            name: "Vita-Tee",
+            pzn: "06876519",
+            amount: .init(numerator: .init(value: "4")),
+            dosageForm: "INS",
+            normSizeCode: "NB",
+            batch: .init(
+                lotNumber: "Charge number 1001",
+                expiresOn: "2323-01-26T15:23:21+00:00"
+            )
+        )
+    )
 
     func testTaskIsReady() { // CREATE, ACTIVATE
         // given
@@ -74,7 +95,7 @@ final class PrescriptionViewStatusTests: XCTestCase {
 
     func testTaskIsClosed() { // CLOSE
         // given
-        let task = task(status: .completed, redeemedOn: DemoDate.createDemoDate(.today))
+        let task = task(status: .completed)
         // when
         let sut = Prescription(erxTask: task)
         // then
@@ -110,13 +131,19 @@ final class PrescriptionViewStatusTests: XCTestCase {
         expect(sut.viewStatus).to(equal(.archived(message: "Nicht mehr gültig")))
     }
 
-    func testTaskIsClosedWithoutRedeemedDate() {
+    func testScannedTaskIsClosed() {
         // given
-        let task = task(status: .completed)
+        let task = ErxTask(
+            identifier: "2390f983-1e67-11b2-8555-63bf44e44fb8",
+            status: .completed,
+            accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
+            redeemedOn: DemoDate.createDemoDate(.yesterday),
+            source: .scanner
+        )
         // when
         let sut = Prescription(erxTask: task)
         // then
-        expect(sut.viewStatus).to(equal(.archived(message: "Eingelöst: Keine Angabe")))
+        expect(sut.viewStatus).to(equal(.archived(message: "Eingelöst: Gestern")))
     }
 
     func testTaskIsUndefined() {

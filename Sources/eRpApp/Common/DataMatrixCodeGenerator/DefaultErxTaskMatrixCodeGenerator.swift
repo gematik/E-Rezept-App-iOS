@@ -22,8 +22,8 @@ import UIKit
 
 /// Encodes `ErxTasks` with a given `MatrixCodeGenerator`.
 public class DefaultErxTaskMatrixCodeGenerator: ErxTaskMatrixCodeGenerator {
-    public init(matrixCodeGenerator: MatrixCodeGenerator,
-                erxTaskStringEncoder: DataMatrixStringEncoder = DefaultDataMatrixStringEncoder()) {
+    init(matrixCodeGenerator: MatrixCodeGenerator,
+         erxTaskStringEncoder: DataMatrixStringEncoder = DefaultDataMatrixStringEncoder()) {
         self.matrixCodeGenerator = matrixCodeGenerator
         self.erxTaskStringEncoder = erxTaskStringEncoder
     }
@@ -31,7 +31,7 @@ public class DefaultErxTaskMatrixCodeGenerator: ErxTaskMatrixCodeGenerator {
     let matrixCodeGenerator: MatrixCodeGenerator
     let erxTaskStringEncoder: DataMatrixStringEncoder
 
-    public func matrixCode(for tasks: [ErxTask], with size: CGSize) throws -> CGImage {
+    func matrixCode(for tasks: [ErxTask], with size: CGSize) throws -> CGImage {
         let dataMatrixTasks = tasks.compactMap { task -> Task? in
             guard let accessCode = task.accessCode else { return nil }
 

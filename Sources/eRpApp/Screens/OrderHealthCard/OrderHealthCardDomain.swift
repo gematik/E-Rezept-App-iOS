@@ -33,7 +33,23 @@ struct OrderHealthCardDomain: ReducerProtocol {
         var healthInsuranceCompanyId: UUID?
         var serviceInquiryId: Int = -1
 
-        var destination: Destinations.State?
+        var isPinServiceAndContact: Bool {
+            if serviceInquiry == .pin, insuranceCompany?.hasContactInformationForPin == true {
+                return true
+            } else {
+                return false
+            }
+        }
+
+        var isHealthCardAndPinServiceAndContact: Bool {
+            if serviceInquiry == .healthCardAndPin, insuranceCompany?.hasContactInformationForHealthCardAndPin == true {
+                return true
+            } else {
+                return false
+            }
+        }
+
+        var destination: Destinations.State? = .searchPicker
     }
 
     enum ServiceInquiry: Int, CaseIterable, Identifiable {
@@ -54,9 +70,10 @@ struct OrderHealthCardDomain: ReducerProtocol {
         case loadList
         case updateSearchText(newPrompt: String)
         case searchList
-        case setService(service: Int)
+        case setService(service: ServiceInquiry)
         case selectHealthInsurance(id: UUID)
         case resetList
+        case advance
 
         case destination(Destinations.Action)
         case setNavigation(tag: Destinations.State.Tag?)
@@ -70,8 +87,12 @@ struct OrderHealthCardDomain: ReducerProtocol {
 
     struct Destinations: ReducerProtocol {
         enum State: Equatable {
+            // sourcery: AnalyticsScreen = contactInsuranceCompany_selectKK
             case searchPicker
+            // sourcery: AnalyticsScreen = contactInsuranceCompany_selectReason
             case serviceInquiry
+            // sourcery: AnalyticsScreen = contactInsuranceCompany_selectMethod
+            case contactOptions
         }
 
         enum Action: Equatable {}
@@ -111,6 +132,21 @@ struct OrderHealthCardDomain: ReducerProtocol {
         case .setNavigation(tag: .searchPicker):
             state.destination = .searchPicker
             return .none
+        case .setNavigation(tag: .contactOptions):
+            state.destination = .contactOptions
+            return .none
+        case .advance:
+            switch state.destination {
+            case .searchPicker:
+                state.destination = .serviceInquiry
+                return .none
+            case .serviceInquiry:
+                state.destination = .contactOptions
+                return .none
+            case .contactOptions,
+                 .none:
+                return .none
+            }
         case let .updateSearchText(newPrompt):
             state.searchText = newPrompt
             return .none
@@ -124,16 +160,11 @@ struct OrderHealthCardDomain: ReducerProtocol {
             state.searchHealthInsurance = result
             return .none
         case let .setService(service):
-            state.serviceInquiryId = service
-            state.destination = nil
-
-            state.serviceInquiry = ServiceInquiry(rawValue: state.serviceInquiryId)
-
-            return .none
+            state.serviceInquiryId = service.id
+            state.serviceInquiry = service
+            return Effect(value: .advance)
         case let .selectHealthInsurance(id):
             state.healthInsuranceCompanyId = id
-            state.destination = nil
-
             state.insuranceCompany = state.insuranceCompanies.first { $0.id == state.healthInsuranceCompanyId }
             if let inquiryId = state.insuranceCompany?.serviceInquiryOptions.first {
                 state.serviceInquiryId = inquiryId.rawValue
@@ -141,7 +172,7 @@ struct OrderHealthCardDomain: ReducerProtocol {
             } else {
                 state.serviceInquiryId = -1
             }
-            return .none
+            return Effect(value: .advance)
         case .resetList:
             state.searchHealthInsurance = state.insuranceCompanies
             return .none
@@ -197,7 +228,7 @@ extension OrderHealthCardDomain {
         }
 
         var hasContactInformationForPin: Bool {
-            !pinUrl.isEmpty || !subjectPinMail.isEmpty || !bodyPinMail.isEmpty
+            !healthCardAndPinPhone.isEmpty || !pinUrl.isEmpty || !subjectPinMail.isEmpty || !bodyPinMail.isEmpty
         }
 
         var hasContactInformationForHealthCardAndPin: Bool {

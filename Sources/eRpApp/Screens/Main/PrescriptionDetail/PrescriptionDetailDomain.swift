@@ -21,11 +21,8 @@ import ComposableArchitecture
 import Dependencies
 import eRpKit
 import FHIRClient
-import HTTPClient
 import IDP
-import Pharmacy
 import SwiftUI
-import ZXingObjC
 
 struct PrescriptionDetailDomain: ReducerProtocol {
     typealias Store = StoreOf<Self>
@@ -52,25 +49,13 @@ struct PrescriptionDetailDomain: ReducerProtocol {
         var loadingState: LoadingState<UIImage, LoadingImageError> = .idle
         var isArchived: Bool
         var isDeleting = false
-        var isSubstitutionReadMorePresented = false
-
-        var userActivity: NSUserActivity?
-
         var destination: Destinations.State?
-
-        func createReportEmail(body: String) -> URL? {
-            var urlString = URLComponents(string: "mailto:app-feedback@gematik.de")
-            var queryItems = [URLQueryItem]()
-            queryItems.append(URLQueryItem(name: "subject", value: "Fehlerreport iOS App"))
-            queryItems.append(URLQueryItem(name: "body", value: body))
-
-            urlString?.queryItems = queryItems
-
-            return urlString?.url
-        }
+        // holdes the handoff feature in memory as long as the view is visible
+        var userActivity: NSUserActivity?
     }
 
     enum Action: Equatable {
+        case startHandoffActivity
         /// starts generation of data matrix code
         case loadMatrixCodeImage(screenSize: CGSize)
         /// Initial delete action
@@ -79,11 +64,6 @@ struct PrescriptionDetailDomain: ReducerProtocol {
         case confirmedDelete
         /// Toggle medication redeem state
         case toggleRedeemPrescription
-        /// Open substitution info
-        case openSubstitutionInfo // DH.TODO: delete //swiftlint:disable:this todo
-        /// Dismiss substitution info
-        case dismissSubstitutionInfo // DH.TODO: delete //swiftlint:disable:this todo
-        case errorBannerButtonPressed
         case openEmailClient(body: String)
         case openUrlGesundBundDe
 
@@ -126,9 +106,12 @@ struct PrescriptionDetailDomain: ReducerProtocol {
     // swiftlint:disable:next cyclomatic_complexity function_body_length
     private func core(state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
+        case .startHandoffActivity:
+            state.userActivity = Self.createHandoffActivity(with: state.prescription.erxTask)
+            return .none
         // Matrix Code
         case let .loadMatrixCodeImage(screenSize):
-            state.userActivity = updateActivity(with: state.prescription.erxTask)
+            state.loadingState = .loading(nil)
 
             return matrixCodeGenerator.publishedMatrixCode(
                 for: [state.prescription.erxTask],
@@ -145,12 +128,19 @@ struct PrescriptionDetailDomain: ReducerProtocol {
 
         case let .response(.matrixCodeImageReceived(loadingState)):
             state.loadingState = loadingState
+            guard let url = state.prescription.erxTask.shareUrl() else { return .none }
+            // we ignore if generating the data matrix code image fails and share at least the link
+            state.destination = .sharePrescription(.init(url: url, dataMatrixCodeImage: loadingState.value))
             return .none
 
         // Delete
         // [REQ:gemSpec_eRp_FdV:A_19229]
         case .delete:
-            state.destination = .alert(Self.confirmDeleteAlertState)
+            if state.prescription.isDeleteable {
+                state.destination = .alert(Self.confirmDeleteAlertState)
+            } else {
+                state.destination = .alert(Self.deletionNotAllowedAlertState(state.prescription))
+            }
             return .none
         // [REQ:gemSpec_eRp_FdV:A_19229]
         case .confirmedDelete:
@@ -179,7 +169,7 @@ struct PrescriptionDetailDomain: ReducerProtocol {
         case let .response(.taskDeletedReceived(.success(success))):
             state.isDeleting = false
             if success {
-                return Effect(value: .delegate(.close))
+                return EffectTask(value: .delegate(.close))
             }
             return .none
 
@@ -205,14 +195,6 @@ struct PrescriptionDetailDomain: ReducerProtocol {
                 state.isArchived.toggle()
             }
             return .none
-        case .openSubstitutionInfo:
-            state.isSubstitutionReadMorePresented = true
-            return .none
-        case .dismissSubstitutionInfo:
-            state.isSubstitutionReadMorePresented = false
-            return .none
-        case .errorBannerButtonPressed:
-            return .init(value: .openEmailClient(body: state.prescription.errorString))
         case let .openEmailClient(body):
             state.destination = nil
             guard let email = state.createReportEmail(body: body) else { return .none }
@@ -224,14 +206,14 @@ struct PrescriptionDetailDomain: ReducerProtocol {
         case let .setNavigation(tag: tag):
             switch tag {
             case .sharePrescription:
-                guard let url = state.prescription.erxTask.shareUrl() else { return .none }
-                state.destination = .sharePrescription(url)
+                // is set by.response(.matrixCodeImageReceived)
+                return .none
             case .substitutionInfo:
                 state.destination = .substitutionInfo
             case .directAssignmentInfo:
                 state.destination = .directAssignmentInfo
             case .prescriptionValidityInfo:
-                let validity = PrescriptionValidity(
+                let validity = Destinations.PrescriptionValidityState(
                     authoredOnDate: uiDateFormatter.date(state.prescription.authoredOn),
                     acceptUntilDate: uiDateFormatter.date(state.prescription.acceptedUntil),
                     expiresOnDate: uiDateFormatter.date(state.prescription.expiresOn)
@@ -252,8 +234,15 @@ struct PrescriptionDetailDomain: ReducerProtocol {
                 state.destination = nil
             case .alert:
                 return .none
-            case .medication:
-                state.destination = .medication
+            case .medication, .medicationOverview:
+                guard let medication = state.prescription.medication else { return .none }
+                if state.prescription.medicationDispenses.isEmpty {
+                    state.destination = .medication(.init(subscribed: medication))
+                } else {
+                    state.destination = .medicationOverview(
+                        .init(subscribed: medication, dispensed: state.prescription.medicationDispenses)
+                    )
+                }
             case .patient:
                 guard let patient = state.prescription.patient else { return .none }
                 let patientState = Destinations.PatientState(patient: patient)
@@ -291,16 +280,37 @@ struct PrescriptionDetailDomain: ReducerProtocol {
             return .none
         }
     }
+}
 
-    // DH.TODO: move to Destinations and rename into PrescriptionValidityState //swiftlint:disable:this todo
-    struct PrescriptionValidity: Equatable {
-        let authoredOnDate: String?
-        let acceptUntilDate: String?
-        let expiresOnDate: String?
+extension PrescriptionDetailDomain.State {
+    func createReportEmail(body: String) -> URL? {
+        var urlString = URLComponents(string: "mailto:app-feedback@gematik.de")
+        var queryItems = [URLQueryItem]()
+        queryItems.append(URLQueryItem(name: "subject", value: "Fehlerreport iOS App"))
+        queryItems.append(URLQueryItem(name: "body", value: body))
+
+        urlString?.queryItems = queryItems
+
+        return urlString?.url
     }
 }
 
 extension PrescriptionDetailDomain {
+    /// Creates the handoff action for sharing the url between devices
+    static func createHandoffActivity(with task: ErxTask) -> NSUserActivity? {
+        guard let url = task.shareUrl() else {
+            return nil
+        }
+
+        let activity = NSUserActivity(activityType: "de.gematik.erp4ios.eRezept.Share")
+        activity.title = "Share with other stuff"
+        activity.isEligibleForHandoff = true
+        activity.webpageURL = url
+        activity.becomeCurrent()
+
+        return activity
+    }
+
     static var confirmDeleteAlertState: ErpAlertState<Action> = {
         ErpAlertState<Action>(
             title: TextState(L10n.dtlTxtDeleteAlertTitle),
@@ -309,6 +319,22 @@ extension PrescriptionDetailDomain {
             secondaryButton: .cancel(TextState(L10n.dtlTxtDeleteNo), action: .send(.setNavigation(tag: nil)))
         )
     }()
+
+    static func deletionNotAllowedAlertState(_ prescription: Prescription) -> ErpAlertState<Action> {
+        var title = L10n.prscDtlAlertTitleDeleteNotAllowed
+        if prescription.type == .directAssignment {
+            title = L10n.prscDeleteNoteDirectAssignment
+        } else if prescription.erxTask.status == .inProgress {
+            title = L10n.dtlBtnDeleteDisabledNote
+        } else {
+            assertionFailure("check prescription.isDeletable state for more reasons")
+        }
+
+        return ErpAlertState(
+            title: TextState(title),
+            dismissButton: .default(TextState(L10n.alertBtnOk), action: .send(.setNavigation(tag: nil)))
+        )
+    }
 
     static func deleteFailedAlertState(error: CodedError, localizedError: String) -> ErpAlertState<Action> {
         .init(for: error,
@@ -350,7 +376,7 @@ extension PrescriptionDetailDomain {
     }
 
     func saveErxTasks(erxTasks: [ErxTask])
-        -> Effect<PrescriptionDetailDomain.Action, Never> {
+        -> EffectTask<PrescriptionDetailDomain.Action> {
         erxTaskRepository.save(erxTasks: erxTasks)
             .first()
             .receive(on: schedulers.main.animation())
@@ -371,22 +397,6 @@ extension ErxTask {
         urlComponents.fragment = String(data: encoded, encoding: .utf8)
 
         return urlComponents.url
-    }
-}
-
-extension PrescriptionDetailDomain {
-    func updateActivity(with task: ErxTask) -> NSUserActivity? {
-        guard let url = task.shareUrl() else {
-            return nil
-        }
-
-        let activity = NSUserActivity(activityType: "de.gematik.erp4ios.eRezept.Share")
-        activity.title = "Share with other stuff"
-        activity.isEligibleForHandoff = true
-        activity.webpageURL = url
-        activity.becomeCurrent()
-
-        return activity
     }
 }
 

@@ -1,4 +1,4 @@
-// Generated using Sourcery 2.0.1 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.0.2 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 
 import Foundation
@@ -98,8 +98,6 @@ extension CardWallIntroductionDomain.State {
                 return state.routeName() ?? destination.tag.analyticsName
             case let .egk(state: state):
                 return state.routeName() ?? destination.tag.analyticsName
-            case .notCapable:
-                return destination.tag.analyticsName
         }
     }
 }
@@ -154,7 +152,7 @@ extension ChargeItemDomain.State {
     }
 }
 
-extension ChargeItemsDomain.State {
+extension ChargeItemListDomain.State {
     func routeName() -> String? {
         guard let destination = destination else {
             return nil
@@ -198,13 +196,11 @@ extension EditProfileDomain.State {
                 return destination.tag.analyticsName
             case .token:
                 return destination.tag.analyticsName
-            case .linkedDevices:
-                return destination.tag.analyticsName
             case let .auditEvents(state: state):
                 return state.routeName() ?? destination.tag.analyticsName
             case let .registeredDevices(state: state):
                 return state.routeName() ?? destination.tag.analyticsName
-            case let .chargeItems(state: state):
+            case let .chargeItemList(state: state):
                 return state.routeName() ?? destination.tag.analyticsName
         }
     }
@@ -218,7 +214,13 @@ extension EditProfileNameDomain.State {
 
 extension EditProfilePictureDomain.State {
     func routeName() -> String? {
+        guard let destination = destination else {
             return nil
+        }
+        switch destination {
+            case .photoPicker:
+                return destination.tag.analyticsName
+        }
     }
 }
 
@@ -299,6 +301,30 @@ extension MainDomain.State {
     }
 }
 
+extension MedicationDomain.State {
+    func routeName() -> String? {
+        guard let destination = destination else {
+            return nil
+        }
+        switch destination {
+            case .ingredient:
+                return destination.tag.analyticsName
+        }
+    }
+}
+
+extension MedicationOverviewDomain.State {
+    func routeName() -> String? {
+        guard let destination = destination else {
+            return nil
+        }
+        switch destination {
+            case let .medication(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+        }
+    }
+}
+
 extension NewProfileDomain.State {
     func routeName() -> String? {
             return nil
@@ -337,6 +363,8 @@ extension OrderHealthCardDomain.State {
                 return destination.tag.analyticsName
             case .serviceInquiry:
                 return destination.tag.analyticsName
+            case .contactOptions:
+                return destination.tag.analyticsName
         }
     }
 }
@@ -349,8 +377,6 @@ extension OrdersDomain.State {
         switch destination {
             case let .orderDetail(state: state):
                 return state.routeName() ?? destination.tag.analyticsName
-            case .selectProfile:
-                return destination.tag.analyticsName
         }
     }
 }
@@ -401,8 +427,6 @@ extension PharmacySearchDomain.State {
             return nil
         }
         switch destination {
-            case .selectProfile:
-                return destination.tag.analyticsName
             case let .pharmacy(state: state):
                 return state.routeName() ?? destination.tag.analyticsName
             case let .filter(state: state):
@@ -443,8 +467,10 @@ extension PrescriptionDetailDomain.State {
             return nil
         }
         switch destination {
-            case .medication:
-                return destination.tag.analyticsName
+            case let .medicationOverview(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+            case let .medication(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
             case .patient:
                 return destination.tag.analyticsName
             case .practitioner:
@@ -495,25 +521,9 @@ extension ProfileSelectionDomain.State {
     }
 }
 
-extension ProfileSelectionToolbarItemDomain.State {
-    func routeName() -> String? {
-            return nil
-    }
-}
-
 extension ProfilesDomain.State {
     func routeName() -> String? {
-        guard let destination = destination else {
             return nil
-        }
-        switch destination {
-            case let .editProfile(state: state):
-                return state.routeName() ?? destination.tag.analyticsName
-            case let .newProfile(state: state):
-                return state.routeName() ?? destination.tag.analyticsName
-            case .alert:
-                return destination.tag.analyticsName
-        }
     }
 }
 
@@ -598,6 +608,10 @@ extension SettingsDomain.State {
             case .termsOfUse:
                 return destination.tag.analyticsName
             case let .egk(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+            case let .editProfile(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+            case let .newProfile(state: state):
                 return state.routeName() ?? destination.tag.analyticsName
         }
     }
@@ -706,8 +720,6 @@ extension CardWallIntroductionDomain.Destinations.State {
                 return state.routeName() ?? destination.tag.analyticsName
             case let .egk(state: state):
                 return state.routeName() ?? destination.tag.analyticsName
-            case .notCapable:
-                return destination.tag.analyticsName
         }
     }
 }
@@ -750,7 +762,7 @@ extension CardWallReadCardDomain.Destinations.State {
     }
 }
 
-extension ChargeItemsDomain.Destinations.State {
+extension ChargeItemListDomain.Destinations.State {
     func routeName() -> String? {
         let destination = self
         switch destination {
@@ -772,14 +784,22 @@ extension EditProfileDomain.Destinations.State {
                 return destination.tag.analyticsName
             case .token:
                 return destination.tag.analyticsName
-            case .linkedDevices:
-                return destination.tag.analyticsName
             case let .auditEvents(state: state):
                 return state.routeName() ?? destination.tag.analyticsName
             case let .registeredDevices(state: state):
                 return state.routeName() ?? destination.tag.analyticsName
-            case let .chargeItems(state: state):
+            case let .chargeItemList(state: state):
                 return state.routeName() ?? destination.tag.analyticsName
+        }
+    }
+}
+
+extension EditProfilePictureDomain.Destinations.State {
+    func routeName() -> String? {
+        let destination = self
+        switch destination {
+            case .photoPicker:
+                return destination.tag.analyticsName
         }
     }
 }
@@ -846,6 +866,26 @@ extension MainDomain.Destinations.State {
     }
 }
 
+extension MedicationDomain.Destinations.State {
+    func routeName() -> String? {
+        let destination = self
+        switch destination {
+            case .ingredient:
+                return destination.tag.analyticsName
+        }
+    }
+}
+
+extension MedicationOverviewDomain.Destinations.State {
+    func routeName() -> String? {
+        let destination = self
+        switch destination {
+            case let .medication(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+        }
+    }
+}
+
 extension OrderDetailDomain.Destinations.State {
     func routeName() -> String? {
         let destination = self
@@ -868,6 +908,8 @@ extension OrderHealthCardDomain.Destinations.State {
                 return destination.tag.analyticsName
             case .serviceInquiry:
                 return destination.tag.analyticsName
+            case .contactOptions:
+                return destination.tag.analyticsName
         }
     }
 }
@@ -878,8 +920,6 @@ extension OrdersDomain.Destinations.State {
         switch destination {
             case let .orderDetail(state: state):
                 return state.routeName() ?? destination.tag.analyticsName
-            case .selectProfile:
-                return destination.tag.analyticsName
         }
     }
 }
@@ -918,8 +958,6 @@ extension PharmacySearchDomain.Destinations.State {
     func routeName() -> String? {
         let destination = self
         switch destination {
-            case .selectProfile:
-                return destination.tag.analyticsName
             case let .pharmacy(state: state):
                 return state.routeName() ?? destination.tag.analyticsName
             case let .filter(state: state):
@@ -944,8 +982,10 @@ extension PrescriptionDetailDomain.Destinations.State {
     func routeName() -> String? {
         let destination = self
         switch destination {
-            case .medication:
-                return destination.tag.analyticsName
+            case let .medicationOverview(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+            case let .medication(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
             case .patient:
                 return destination.tag.analyticsName
             case .practitioner:
@@ -982,20 +1022,6 @@ extension ProfileSelectionDomain.Destinations.State {
     func routeName() -> String? {
         let destination = self
         switch destination {
-            case .alert:
-                return destination.tag.analyticsName
-        }
-    }
-}
-
-extension ProfilesDomain.Destinations.State {
-    func routeName() -> String? {
-        let destination = self
-        switch destination {
-            case let .editProfile(state: state):
-                return state.routeName() ?? destination.tag.analyticsName
-            case let .newProfile(state: state):
-                return state.routeName() ?? destination.tag.analyticsName
             case .alert:
                 return destination.tag.analyticsName
         }
@@ -1054,6 +1080,10 @@ extension SettingsDomain.Destinations.State {
                 return destination.tag.analyticsName
             case let .egk(state: state):
                 return state.routeName() ?? destination.tag.analyticsName
+            case let .editProfile(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+            case let .newProfile(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
         }
     }
 }
@@ -1064,13 +1094,13 @@ extension AppDomain.Destinations.State.Tag {
     var analyticsName: String {
         switch self {
             case .main: 
-                return "main"
+                return Analytics.Screens.main.name
             case .pharmacySearch: 
-                return "pharmacySearch"
+                return Analytics.Screens.pharmacySearch.name
             case .orders: 
-                return "orders"
+                return Analytics.Screens.orders.name
             case .settings: 
-                return "settings"
+                return Analytics.Screens.settings.name
         }
     }
 }
@@ -1078,11 +1108,11 @@ extension CardWallCANDomain.Destinations.State.Tag {
     var analyticsName: String {
         switch self {
             case .pin: 
-                return Analytics.Screens.cardwallPIN.name
+                return Analytics.Screens.cardWall_PIN.name
             case .egk: 
-                return Analytics.Screens.cardwallContactInsuranceCompany.name
+                return Analytics.Screens.contactInsuranceCompany.name
             case .scanner: 
-                return Analytics.Screens.cardwallScanCAN.name
+                return Analytics.Screens.cardWall_scanCAN.name
         }
     }
 }
@@ -1090,9 +1120,9 @@ extension CardWallExtAuthSelectionDomain.Destinations.State.Tag {
     var analyticsName: String {
         switch self {
             case .confirmation: 
-                return Analytics.Screens.cardWallExtAuthConfirm.name
+                return Analytics.Screens.cardWall_extAuthConfirm.name
             case .egk: 
-                return "egk"
+                return Analytics.Screens.contactInsuranceCompany.name
         }
     }
 }
@@ -1100,13 +1130,11 @@ extension CardWallIntroductionDomain.Destinations.State.Tag {
     var analyticsName: String {
         switch self {
             case .can: 
-                return Analytics.Screens.cardwallCAN.name
+                return Analytics.Screens.cardWall_CAN.name
             case .fasttrack: 
-                return Analytics.Screens.cardWallExtAuth.name
+                return Analytics.Screens.cardWall_extAuth.name
             case .egk: 
-                return Analytics.Screens.cardwallContactInsuranceCompany.name
-            case .notCapable: 
-                return Analytics.Screens.cardwallNotCapable.name
+                return Analytics.Screens.contactInsuranceCompany.name
         }
     }
 }
@@ -1114,11 +1142,11 @@ extension CardWallLoginOptionDomain.Destinations.State.Tag {
     var analyticsName: String {
         switch self {
             case .alert: 
-                return "alert"
+                return Analytics.Screens.alert.name
             case .readcard: 
-                return Analytics.Screens.cardWallReadCard.name
+                return Analytics.Screens.cardWall_readCard.name
             case .warning: 
-                return Analytics.Screens.cardwallSaveLoginSecurityInfo.name
+                return Analytics.Screens.cardWall_saveLoginSecurityInfo.name
         }
     }
 }
@@ -1126,9 +1154,9 @@ extension CardWallPINDomain.Destinations.State.Tag {
     var analyticsName: String {
         switch self {
             case .login: 
-                return Analytics.Screens.cardwallSaveLogin.name
+                return Analytics.Screens.cardWall_saveLogin.name
             case .egk: 
-                return Analytics.Screens.cardwallContactInsuranceCompany.name
+                return Analytics.Screens.contactInsuranceCompany.name
         }
     }
 }
@@ -1136,21 +1164,21 @@ extension CardWallReadCardDomain.Destinations.State.Tag {
     var analyticsName: String {
         switch self {
             case .alert: 
-                return "alert"
+                return Analytics.Screens.alert.name
             case .help: 
                 return "help"
         }
     }
 }
-extension ChargeItemsDomain.Destinations.State.Tag {
+extension ChargeItemListDomain.Destinations.State.Tag {
     var analyticsName: String {
         switch self {
             case .idpCardWall: 
-                return "idpCardWall"
+                return Analytics.Screens.cardWall.name
             case .alert: 
-                return "alert"
+                return Analytics.Screens.alert.name
             case .chargeItem: 
-                return "chargeItem"
+                return Analytics.Screens.chargeItemDetails.name
         }
     }
 }
@@ -1158,17 +1186,23 @@ extension EditProfileDomain.Destinations.State.Tag {
     var analyticsName: String {
         switch self {
             case .alert: 
-                return "alert"
+                return Analytics.Screens.alert.name
             case .token: 
-                return "token"
-            case .linkedDevices: 
-                return "linkedDevices"
+                return Analytics.Screens.profile_token.name
             case .auditEvents: 
-                return "auditEvents"
+                return Analytics.Screens.profile_auditEvents.name
             case .registeredDevices: 
-                return "registeredDevices"
-            case .chargeItems: 
-                return "chargeItems"
+                return Analytics.Screens.profile_registeredDevices.name
+            case .chargeItemList: 
+                return Analytics.Screens.chargeItemList.name
+        }
+    }
+}
+extension EditProfilePictureDomain.Destinations.State.Tag {
+    var analyticsName: String {
+        switch self {
+            case .photoPicker: 
+                return "photoPicker"
         }
     }
 }
@@ -1176,19 +1210,19 @@ extension HealthCardPasswordDomain.Destinations.State.Tag {
     var analyticsName: String {
         switch self {
             case .introduction: 
-                return "introduction"
+                return Analytics.Screens.healthCardPassword_introduction.name
             case .can: 
-                return "can"
+                return Analytics.Screens.healthCardPassword_can.name
             case .puk: 
-                return "puk"
+                return Analytics.Screens.healthCardPassword_puk.name
             case .oldPin: 
-                return "oldPin"
+                return Analytics.Screens.healthCardPassword_oldPin.name
             case .pin: 
-                return "pin"
+                return Analytics.Screens.healthCardPassword_pin.name
             case .readCard: 
-                return "readCard"
+                return Analytics.Screens.healthCardPassword_readCard.name
             case .scanner: 
-                return "scanner"
+                return Analytics.Screens.healthCardPassword_scanner.name
         }
     }
 }
@@ -1196,7 +1230,7 @@ extension HealthCardPasswordReadCardDomain.Destinations.State.Tag {
     var analyticsName: String {
         switch self {
             case .alert: 
-                return "alert"
+                return Analytics.Screens.errorAlert.name
         }
     }
 }
@@ -1204,27 +1238,43 @@ extension MainDomain.Destinations.State.Tag {
     var analyticsName: String {
         switch self {
             case .createProfile: 
-                return "createProfile"
+                return Analytics.Screens.main_createProfile.name
             case .editProfilePicture: 
-                return "editProfilePicture"
+                return Analytics.Screens.main_editProfilePicture.name
             case .editName: 
-                return "editName"
+                return Analytics.Screens.main_editName.name
             case .scanner: 
-                return "scanner"
+                return Analytics.Screens.main_scanner.name
             case .deviceSecurity: 
-                return "deviceSecurity"
+                return Analytics.Screens.main_deviceSecurity.name
             case .cardWall: 
-                return "cardWall"
+                return Analytics.Screens.cardWall.name
             case .prescriptionArchive: 
-                return "prescriptionArchive"
+                return Analytics.Screens.main_prescriptionArchive.name
             case .prescriptionDetail: 
-                return "prescriptionDetail"
+                return Analytics.Screens.prescriptionDetail.name
             case .redeem: 
-                return "redeem"
+                return Analytics.Screens.redeem_methodSelection.name
             case .welcomeDrawer: 
-                return "welcomeDrawer"
+                return Analytics.Screens.main_welcomeDrawer.name
             case .alert: 
-                return "alert"
+                return Analytics.Screens.alert.name
+        }
+    }
+}
+extension MedicationDomain.Destinations.State.Tag {
+    var analyticsName: String {
+        switch self {
+            case .ingredient: 
+                return Analytics.Screens.prescriptionDetail_medication_ingredients.name
+        }
+    }
+}
+extension MedicationOverviewDomain.Destinations.State.Tag {
+    var analyticsName: String {
+        switch self {
+            case .medication: 
+                return Analytics.Screens.prescriptionDetail_medication.name
         }
     }
 }
@@ -1232,11 +1282,11 @@ extension OrderDetailDomain.Destinations.State.Tag {
     var analyticsName: String {
         switch self {
             case .pickupCode: 
-                return "pickupCode"
+                return Analytics.Screens.orders_pickupCode.name
             case .prescriptionDetail: 
-                return "prescriptionDetail"
+                return Analytics.Screens.prescriptionDetail.name
             case .alert: 
-                return "alert"
+                return Analytics.Screens.alert.name
         }
     }
 }
@@ -1244,9 +1294,11 @@ extension OrderHealthCardDomain.Destinations.State.Tag {
     var analyticsName: String {
         switch self {
             case .searchPicker: 
-                return "searchPicker"
+                return Analytics.Screens.contactInsuranceCompany_selectKK.name
             case .serviceInquiry: 
-                return "serviceInquiry"
+                return Analytics.Screens.contactInsuranceCompany_selectReason.name
+            case .contactOptions: 
+                return Analytics.Screens.contactInsuranceCompany_selectMethod.name
         }
     }
 }
@@ -1254,9 +1306,7 @@ extension OrdersDomain.Destinations.State.Tag {
     var analyticsName: String {
         switch self {
             case .orderDetail: 
-                return "orderDetail"
-            case .selectProfile: 
-                return "selectProfile"
+                return Analytics.Screens.orders_detail.name
         }
     }
 }
@@ -1264,11 +1314,11 @@ extension PharmacyDetailDomain.Destinations.State.Tag {
     var analyticsName: String {
         switch self {
             case .redeemViaAVS: 
-                return "redeemViaAVS"
+                return Analytics.Screens.redeem_viaAVS.name
             case .redeemViaErxTaskRepository: 
-                return "redeemViaErxTaskRepository"
+                return Analytics.Screens.redeem_viaTI.name
             case .alert: 
-                return "alert"
+                return Analytics.Screens.alert.name
         }
     }
 }
@@ -1276,27 +1326,25 @@ extension PharmacyRedeemDomain.Destinations.State.Tag {
     var analyticsName: String {
         switch self {
             case .redeemSuccess: 
-                return "redeemSuccess"
+                return Analytics.Screens.redeem_success.name
             case .contact: 
-                return "contact"
+                return Analytics.Screens.redeem_editContactInformation.name
             case .cardWall: 
-                return "cardWall"
+                return Analytics.Screens.cardWall.name
             case .alert: 
-                return "alert"
+                return Analytics.Screens.alert.name
         }
     }
 }
 extension PharmacySearchDomain.Destinations.State.Tag {
     var analyticsName: String {
         switch self {
-            case .selectProfile: 
-                return "selectProfile"
             case .pharmacy: 
-                return "pharmacy"
+                return Analytics.Screens.pharmacySearch_detail.name
             case .filter: 
-                return "filter"
+                return Analytics.Screens.pharmacySearch_filter.name
             case .alert: 
-                return "alert"
+                return Analytics.Screens.alert.name
         }
     }
 }
@@ -1304,43 +1352,45 @@ extension PrescriptionArchiveDomain.Destinations.State.Tag {
     var analyticsName: String {
         switch self {
             case .prescriptionDetail: 
-                return "prescriptionDetail"
+                return Analytics.Screens.prescriptionDetail.name
         }
     }
 }
 extension PrescriptionDetailDomain.Destinations.State.Tag {
     var analyticsName: String {
         switch self {
+            case .medicationOverview: 
+                return Analytics.Screens.prescriptionDetail_medicationOverview.name
             case .medication: 
-                return "medication"
+                return Analytics.Screens.prescriptionDetail_medication.name
             case .patient: 
-                return "patient"
+                return Analytics.Screens.prescriptionDetail_patient.name
             case .practitioner: 
-                return "practitioner"
+                return Analytics.Screens.prescriptionDetail_practitioner.name
             case .organization: 
-                return "organization"
+                return Analytics.Screens.prescriptionDetail_organization.name
             case .accidentInfo: 
-                return "accidentInfo"
+                return Analytics.Screens.prescriptionDetail_accidentInfo.name
             case .technicalInformations: 
-                return "technicalInformations"
+                return Analytics.Screens.prescriptionDetail_technicalInfo.name
             case .alert: 
-                return "alert"
+                return Analytics.Screens.errorAlert.name
             case .sharePrescription: 
-                return "sharePrescription"
+                return Analytics.Screens.prescriptionDetail_sharePrescription.name
             case .directAssignmentInfo: 
-                return "directAssignmentInfo"
+                return Analytics.Screens.prescriptionDetail_directAssignmentInfo.name
             case .substitutionInfo: 
-                return "substitutionInfo"
+                return Analytics.Screens.prescriptionDetail_substitutionInfo.name
             case .prescriptionValidityInfo: 
-                return "prescriptionValidityInfo"
+                return Analytics.Screens.prescriptionDetail_prescriptionValidityInfo.name
             case .scannedPrescriptionInfo: 
-                return "scannedPrescriptionInfo"
+                return Analytics.Screens.prescriptionDetail_scannedPrescriptionInfo.name
             case .errorInfo: 
-                return "errorInfo"
+                return Analytics.Screens.prescriptionDetail_errorInfo.name
             case .coPaymentInfo: 
-                return "coPaymentInfo"
+                return Analytics.Screens.prescriptionDetail_coPaymentInfo.name
             case .emergencyServiceFeeInfo: 
-                return "emergencyServiceFeeInfo"
+                return Analytics.Screens.prescriptionDetail_emergencyServiceFeeInfo.name
         }
     }
 }
@@ -1352,25 +1402,13 @@ extension ProfileSelectionDomain.Destinations.State.Tag {
         }
     }
 }
-extension ProfilesDomain.Destinations.State.Tag {
-    var analyticsName: String {
-        switch self {
-            case .editProfile: 
-                return "editProfile"
-            case .newProfile: 
-                return "newProfile"
-            case .alert: 
-                return "alert"
-        }
-    }
-}
 extension RedeemMethodsDomain.Destinations.State.Tag {
     var analyticsName: String {
         switch self {
             case .matrixCode: 
-                return "matrixCode"
+                return Analytics.Screens.redeem_matrixCode.name
             case .pharmacySearch: 
-                return "pharmacySearch"
+                return Analytics.Screens.pharmacySearch.name
         }
     }
 }
@@ -1378,9 +1416,9 @@ extension RegisteredDevicesDomain.Destinations.State.Tag {
     var analyticsName: String {
         switch self {
             case .idpCardWall: 
-                return "idpCardWall"
+                return Analytics.Screens.cardWall.name
             case .alert: 
-                return "alert"
+                return Analytics.Screens.alert.name
         }
     }
 }
@@ -1390,27 +1428,31 @@ extension SettingsDomain.Destinations.State.Tag {
             case .debug: 
                 return "debug"
             case .alert: 
-                return "alert"
+                return Analytics.Screens.alert.name
             case .healthCardPasswordForgotPin: 
-                return "healthCardPasswordForgotPin"
+                return Analytics.Screens.healthCardPassword_forgotPin.name
             case .healthCardPasswordSetCustomPin: 
-                return "healthCardPasswordSetCustomPin"
+                return Analytics.Screens.healthCardPassword_setCustomPin.name
             case .healthCardPasswordUnlockCard: 
-                return "healthCardPasswordUnlockCard"
+                return Analytics.Screens.healthCardPassword_unlockCard.name
             case .setAppPassword: 
-                return "setAppPassword"
+                return Analytics.Screens.settings_authenticationMethods_setAppPassword.name
             case .complyTracking: 
-                return "complyTracking"
+                return Analytics.Screens.settings_productImprovements_complyTracking.name
             case .legalNotice: 
-                return "legalNotice"
+                return Analytics.Screens.settings_legalNotice.name
             case .dataProtection: 
-                return "dataProtection"
+                return Analytics.Screens.settings_dataProtection.name
             case .openSourceLicence: 
-                return "openSourceLicence"
+                return Analytics.Screens.settings_openSourceLicence.name
             case .termsOfUse: 
-                return "termsOfUse"
+                return Analytics.Screens.settings_termsOfUse.name
             case .egk: 
-                return "egk"
+                return Analytics.Screens.contactInsuranceCompany.name
+            case .editProfile: 
+                return Analytics.Screens.profile.name
+            case .newProfile: 
+                return Analytics.Screens.settings_newProfile.name
         }
     }
 }
@@ -1446,11 +1488,11 @@ extension CardWallReadCardHelpDomain.State.Tag {
     var analyticsName: String {
         switch self {
             case .first: 
-                return Analytics.Screens.cardWallReadCardHelp1.name
+                return Analytics.Screens.troubleShooting_readCardHelp1.name
             case .second: 
-                return Analytics.Screens.cardWallReadCardHelp2.name
+                return Analytics.Screens.troubleShooting_readCardHelp2.name
             case .third: 
-                return Analytics.Screens.cardWallReadCardHelp3.name
+                return Analytics.Screens.troubleShooting_readCardHelp3.name
         }
     }
 }

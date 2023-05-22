@@ -102,7 +102,11 @@ struct ListsAtoms_Preview: PreviewProvider {
                             Label {
                                 SubTitle(title: "Impressum", description: "Noch 12 Tage gültig", details: nil)
                             } icon: {
-                                InitialsImage(backgroundColor: Colors.primary200, text: "SD", statusColor: nil)
+                                InitialsImage(
+                                    backgroundColor: Colors.primary200,
+                                    text: "AB",
+                                    statusColor: nil
+                                )
                             }
                         }
                         .buttonStyle(.navigation)
@@ -112,7 +116,7 @@ struct ListsAtoms_Preview: PreviewProvider {
                                 SubTitle(title: "Impressum", description: "Noch 12 Tage gültig", details: nil)
                             } icon: {
                                 InitialsImage(backgroundColor: Colors.primary200,
-                                              text: "SD",
+                                              text: "AB",
                                               statusColor: nil,
                                               size: .large)
                             }

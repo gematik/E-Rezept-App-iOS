@@ -289,6 +289,7 @@ public class DefaultIDPSession: IDPSession {
                         .flatMap { fetchedDocument -> AnyPublisher<DiscoveryDocument, IDPError> in
                             // Validate JWT/DiscoveryDocument signature
                             // [REQ:gemSpec_Krypt:A_17207] Only implemented for brainpoolP256r1
+                            // [REQ:gemSpec_Krypt:GS-A_4357-01,GS-A_4357-02] Assure that brainpoolP256r1 is used
                             guard (try? fetchedDocument.backing.verify(with: fetchedDocument.discKey)) ?? false else {
                                 return Fail(error: IDPError.validation(error: IDPError.invalidDiscoveryDocument))
                                     .eraseToAnyPublisher()
@@ -607,6 +608,7 @@ extension DefaultIDPSession {
 
                     // [REQ:gemSpec_Krypt:A_17207] Only implemented for brainpoolP256r1
                     // [REQ:gemSpec_IDP_Frontend:A_19908-01] Signature check
+                    // [REQ:gemSpec_Krypt:GS-A_4357-01,GS-A_4357-02] Assure that brainpoolP256r1 is used
                     guard let verified = try? challenge.challenge.verify(with: document.authentication.cert),
                           verified else {
                         return Fail(error: IDPError.validation(error: JWT.Error.invalidSignature))

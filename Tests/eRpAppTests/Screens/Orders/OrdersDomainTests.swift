@@ -26,12 +26,6 @@ import Pharmacy
 import XCTest
 
 final class OrdersDomainTests: XCTestCase {
-    let schedulers = Schedulers(uiScheduler: DispatchQueue.immediate.eraseToAnyScheduler())
-    let mockErxTaskRepository = MockErxTaskRepository(
-        saveCommunications: Just(true).setFailureType(to: ErxRepositoryError.self).eraseToAnyPublisher()
-    )
-    let mockPharmacyRepository = MockPharmacyRepository()
-    let mockApplication = MockResourceHandler()
     typealias TestStore = ComposableArchitecture.TestStore<
         OrdersDomain.State,
         OrdersDomain.Action,
@@ -40,34 +34,35 @@ final class OrdersDomainTests: XCTestCase {
         Void
     >
 
-    private func testStore(
-        for erxTaskRepository: MockErxTaskRepository,
-        and pharmacyRepository: MockPharmacyRepository
-    ) -> TestStore {
+    let schedulers = Schedulers(uiScheduler: DispatchQueue.immediate.eraseToAnyScheduler())
+    var mockOrdersRepository: MockErxTaskRepository!
+    var mockPharmacyRepository: MockPharmacyRepository!
+    var mockApplication: MockResourceHandler!
+
+    override func setUp() {
+        super.setUp()
+
+        mockOrdersRepository = MockErxTaskRepository()
+        mockPharmacyRepository = MockPharmacyRepository()
+        mockApplication = MockResourceHandler()
+    }
+
+    private func testStore(for state: OrdersDomain.State) -> TestStore {
         TestStore(
-            initialState: OrdersDomain.State(orders: []),
+            initialState: state,
             reducer: OrdersDomain()
         ) { dependencies in
             dependencies.schedulers = schedulers
-            dependencies.userSession = DummySessionContainer()
-            dependencies.erxTaskRepository = erxTaskRepository
-            dependencies.pharmacyRepository = pharmacyRepository
+            dependencies.ordersRepository = mockOrdersRepository
+            dependencies.pharmacyRepository = mockPharmacyRepository
+            dependencies.resourceHandler = mockApplication
         }
     }
 
     private func testStore(
-        for orders: IdentifiedArrayOf<OrderCommunications>,
-        resourceHandler _: ResourceHandler = UnimplementedResourceHandler()
+        for orders: IdentifiedArrayOf<OrderCommunications>
     ) -> TestStore {
-        TestStore(
-            initialState: OrdersDomain.State(orders: orders),
-            reducer: OrdersDomain()
-        ) { dependencies in
-            dependencies.schedulers = schedulers
-            dependencies.userSession = DummySessionContainer()
-            dependencies.erxTaskRepository = mockErxTaskRepository
-            dependencies.pharmacyRepository = mockPharmacyRepository
-        }
+        testStore(for: .init(orders: orders))
     }
 
     private func erxTaskRepository(with communications: [ErxTask.Communication]) -> MockErxTaskRepository {
@@ -97,7 +92,9 @@ final class OrdersDomainTests: XCTestCase {
     func testOrdersDomainSubscriptionWithoutMessages() {
         let mockErxTaskRepoAccess = erxTaskRepository(with: [])
         let mockPharmacyRepoAccess = pharmacyRepository(with: [])
-        let store = testStore(for: mockErxTaskRepoAccess, and: mockPharmacyRepoAccess)
+        mockOrdersRepository = mockErxTaskRepoAccess
+        mockPharmacyRepository = mockPharmacyRepoAccess
+        let store = testStore(for: OrdersDomain.State(orders: []))
 
         store.send(.subscribeToCommunicationChanges)
         store.receive(.response(.communicationChangeReceived([])))
@@ -113,7 +110,9 @@ final class OrdersDomainTests: XCTestCase {
 
         let mockErxTaskRepoAccess = erxTaskRepository(with: expected.communications.elements)
         let mockPharmacyRepoAccess = pharmacyRepository(with: [pharmacy])
-        let store = testStore(for: mockErxTaskRepoAccess, and: mockPharmacyRepoAccess)
+        mockOrdersRepository = mockErxTaskRepoAccess
+        mockPharmacyRepository = mockPharmacyRepoAccess
+        let store = testStore(for: OrdersDomain.State(orders: []))
 
         store.send(.subscribeToCommunicationChanges)
         store.receive(.response(.communicationChangeReceived(expected.communications.elements))) { state in

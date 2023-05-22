@@ -70,7 +70,7 @@ extension ErxTask {
             pzn: "06876512",
             amount: .init(numerator: .init(value: "10")),
             dosageForm: "PUL",
-            dose: "N1"
+            normSizeCode: "N1"
         )
 
         static let medication2: ErxMedication = .init(
@@ -78,7 +78,7 @@ extension ErxTask {
             pzn: "06876511",
             amount: .init(numerator: .init(value: "12")),
             dosageForm: "FDA",
-            dose: "N2"
+            normSizeCode: "N2"
         )
 
         static let medication3: ErxMedication = .init(
@@ -86,7 +86,7 @@ extension ErxTask {
             pzn: "06876513",
             amount: .init(numerator: .init(value: "1")),
             dosageForm: "ELI",
-            dose: "KTP"
+            normSizeCode: "KTP"
         )
 
         static let medication4: ErxMedication = .init(
@@ -94,7 +94,7 @@ extension ErxTask {
             pzn: "06876514",
             amount: .init(numerator: .init(value: "1")),
             dosageForm: "AEO",
-            dose: "KA"
+            normSizeCode: "KA"
         )
 
         static let medication5: ErxMedication = .init(
@@ -102,7 +102,7 @@ extension ErxTask {
             pzn: "06876515",
             amount: .init(numerator: .init(value: "2")),
             dosageForm: "GEL",
-            dose: "sonstiges"
+            normSizeCode: "sonstiges"
         )
 
         static let medication6: ErxMedication = .init(
@@ -110,7 +110,7 @@ extension ErxTask {
             pzn: "06876516",
             amount: .init(numerator: .init(value: "5")),
             dosageForm: "INH",
-            dose: "N2"
+            normSizeCode: "N2"
         )
 
         static let medication7: ErxMedication = .init(
@@ -118,7 +118,7 @@ extension ErxTask {
             pzn: "06876517",
             amount: .init(numerator: .init(value: "20")),
             dosageForm: "TAB",
-            dose: "N3"
+            normSizeCode: "N3"
         )
 
         static let medication8: ErxMedication = .init(
@@ -126,7 +126,7 @@ extension ErxTask {
             pzn: "06876518",
             amount: .init(numerator: .init(value: "8")),
             dosageForm: "INS",
-            dose: "NB"
+            normSizeCode: "NB"
         )
 
         static let erxTaskReady = erxTask1

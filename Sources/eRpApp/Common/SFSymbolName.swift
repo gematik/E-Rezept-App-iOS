@@ -124,6 +124,9 @@ public enum SFSymbolName {
     public static let lightbulbSlash = "lightbulb.slash"
     public static let questionmarkCircle = "questionmark.circle"
     public static let personCirclePlus = "person.crop.circle.badge.plus"
+    public static let personCircle = "person.circle"
+    public static let boltFill = "bolt.fill"
+    public static let sparkles = "sparkles"
 
     public static var filter = "line.3.horizontal.decrease.circle"
 

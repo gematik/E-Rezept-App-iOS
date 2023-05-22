@@ -77,13 +77,38 @@ class MockErxTaskRepository: ErxTaskRepository {
         saveCommunicationsCallsCount > 0
     }
 
-    var loadRemoteChargeItemsPublisher: AnyPublisher<[ErxChargeItem], ErxRepositoryError>
-    var loadRemoteChargeItemsCallsCount = 0
-    var loadRemoteChargeItemsCalled: Bool {
-        loadRemoteChargeItemsCallsCount > 0
+    var loadRemoteAndSaveChargeItemsPublisher: AnyPublisher<[ErxSparseChargeItem], ErxRepositoryError>
+    var loadRemoteAndSaveChargeItemsCallsCount = 0
+    var loadRemoteAndSaveChargeItemsCalled: Bool {
+        loadRemoteAndSaveChargeItemsCallsCount > 0
+    }
+
+    var saveChargeItemsPublisher: AnyPublisher<Bool, ErxRepositoryError>
+    var saveChargeItemsCallsCount = 0
+    var saveChargeItemsCalled: Bool {
+        saveChargeItemsCallsCount > 0
+    }
+
+    var deleteChargeItemsPublisher: AnyPublisher<Bool, ErxRepositoryError>
+    var deleteChargeItemsCallsCount = 0
+    var deleteChargeItemsCalled: Bool {
+        deleteChargeItemsCallsCount > 0
+    }
+
+    var loadLocalChargeItemsPublisher: AnyPublisher<ErxSparseChargeItem?, ErxRepositoryError>
+    var loadLocalChargeItemsCallsCount = 0
+    var loadLocalChargeItemsCalled: Bool {
+        loadLocalChargeItemsCallsCount > 0
+    }
+
+    var loadLocalAllChargeItemsPublisher: AnyPublisher<[ErxSparseChargeItem], ErxRepositoryError>
+    var loadLocalAllChargeItemsCallsCount = 0
+    var loadLocalAllChargeItemsCalled: Bool {
+        loadLocalAllChargeItemsCallsCount > 0
     }
 
     init(stored erxTasks: [ErxTask] = [],
+         chargeItems: [ErxSparseChargeItem] = [],
          loadRemoteById: AnyPublisher<ErxTask?, ErxRepositoryError> = failing(),
          saveErxTasks: AnyPublisher<Bool, ErxRepositoryError> = failing(),
          deleteErxTasks: AnyPublisher<Bool, ErxRepositoryError> = failing(),
@@ -92,7 +117,9 @@ class MockErxTaskRepository: ErxTaskRepository {
          listCommunications: AnyPublisher<[ErxTask.Communication], ErxRepositoryError> = failing(),
          countCommunications: AnyPublisher<Int, ErxRepositoryError> = failing(),
          saveCommunications: AnyPublisher<Bool, ErxRepositoryError> = failing(),
-         loadRemoteChargeItems: AnyPublisher<[ErxChargeItem], ErxRepositoryError> = failing()) {
+         findChargeItem: AnyPublisher<ErxSparseChargeItem?, ErxRepositoryError> = failing(),
+         saveChargeItems: AnyPublisher<Bool, ErxRepositoryError> = failing(),
+         deleteChargeItems: AnyPublisher<Bool, ErxRepositoryError> = failing()) {
         loadLocalAllPublisher = Just(erxTasks)
             .setFailureType(to: ErxRepositoryError.self)
             .eraseToAnyPublisher()
@@ -107,7 +134,15 @@ class MockErxTaskRepository: ErxTaskRepository {
         countUnreadCommunicationsPublisher = countCommunications
         saveCommunicationsPublisher = saveCommunications
         loadRemoteByIdPublisher = loadRemoteById
-        loadRemoteChargeItemsPublisher = loadRemoteChargeItems
+        loadLocalChargeItemsPublisher = findChargeItem
+        loadLocalAllChargeItemsPublisher = Just(chargeItems)
+            .setFailureType(to: ErxRepositoryError.self)
+            .eraseToAnyPublisher()
+        loadRemoteAndSaveChargeItemsPublisher = Just(chargeItems)
+            .setFailureType(to: ErxRepositoryError.self)
+            .eraseToAnyPublisher()
+        saveChargeItemsPublisher = saveChargeItems
+        deleteChargeItemsPublisher = deleteChargeItems
     }
 
     var loadRemoteByIdPublisher: AnyPublisher<ErxTask?, ErxRepositoryError>
@@ -173,9 +208,29 @@ class MockErxTaskRepository: ErxTaskRepository {
     // MARK: - ChargeItem
 
     func loadRemoteChargeItems()
-        -> AnyPublisher<[ErxChargeItem], ErxRepositoryError> {
-        loadRemoteChargeItemsCallsCount += 1
-        return loadRemoteChargeItemsPublisher
+        -> AnyPublisher<[ErxSparseChargeItem], ErxRepositoryError> {
+        loadRemoteAndSaveChargeItemsCallsCount += 1
+        return loadRemoteAndSaveChargeItemsPublisher
+    }
+
+    func loadLocal(by _: ErxSparseChargeItem.ID) -> AnyPublisher<ErxSparseChargeItem?, ErxRepositoryError> {
+        loadLocalChargeItemsCallsCount += 1
+        return loadLocalChargeItemsPublisher
+    }
+
+    func loadLocalAll() -> AnyPublisher<[ErxSparseChargeItem], ErxRepositoryError> {
+        loadLocalAllChargeItemsCallsCount += 1
+        return loadLocalAllChargeItemsPublisher
+    }
+
+    func save(chargeItems _: [ErxSparseChargeItem]) -> AnyPublisher<Bool, ErxRepositoryError> {
+        saveChargeItemsCallsCount += 1
+        return saveChargeItemsPublisher
+    }
+
+    func delete(chargeItems _: [ErxSparseChargeItem]) -> AnyPublisher<Bool, ErxRepositoryError> {
+        deleteChargeItemsCallsCount += 1
+        return deleteChargeItemsPublisher
     }
 
     static func failing() -> AnyPublisher<ErxTask?, ErxRepositoryError> {
@@ -213,10 +268,10 @@ class MockErxTaskRepository: ErxTaskRepository {
         }.eraseToAnyPublisher()
     }
 
-    static func failing() -> AnyPublisher<[ErxChargeItem], ErxRepositoryError> {
-        Deferred { () -> AnyPublisher<[ErxChargeItem], ErxRepositoryError> in
+    static func failing() -> AnyPublisher<ErxSparseChargeItem?, ErxRepositoryError> {
+        Deferred { () -> AnyPublisher<ErxSparseChargeItem?, ErxRepositoryError> in
             XCTFail("This publisher should not have run")
-            return Just([]).setFailureType(to: ErxRepositoryError.self).eraseToAnyPublisher()
+            return Just(nil).setFailureType(to: ErxRepositoryError.self).eraseToAnyPublisher()
         }.eraseToAnyPublisher()
     }
 

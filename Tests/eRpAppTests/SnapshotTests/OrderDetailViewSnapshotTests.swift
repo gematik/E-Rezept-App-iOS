@@ -30,12 +30,76 @@ final class OrderDetailViewSnapshotTests: XCTestCase {
         diffTool = "open"
     }
 
+    let communicationDispRequest = ErxTask.Communication(
+        identifier: "1",
+        profile: .dispReq,
+        taskId: "taskID",
+        userId: "userID",
+        telematikId: "telematikID",
+        timestamp: "2021-05-26T10:59:37.098245933+00:00",
+        payloadJSON: "{\"version\": \"1\",\"supplyOptionsType\": \"onPremise\",\"info_text\": \"You can come by and pick up your drugs.\", \"pickUpCodeHR\":\"4711\"}" // swiftlint:disable:this line_length
+    )
+
+    let communicationOnPremise = ErxTask.Communication(
+        identifier: "1",
+        profile: .reply,
+        taskId: "taskID",
+        userId: "userID",
+        telematikId: "telematikID",
+        timestamp: "2021-05-26T10:59:37.098245933+00:00",
+        payloadJSON: "{\"version\": \"1\",\"supplyOptionsType\": \"onPremise\",\"info_text\": \"You can come by and pick up your drugs.\", \"pickUpCodeHR\":\"4711\"}" // swiftlint:disable:this line_length
+    )
+
+    let communicationShipment = ErxTask.Communication(
+        identifier: "2",
+        profile: .reply,
+        taskId: "taskID",
+        userId: "userID",
+        telematikId: "telematikID",
+        timestamp: "2021-05-28T10:59:37.098245933+00:00",
+        payloadJSON: "{\"version\": \"1\",\"supplyOptionsType\": \"shipment\",\"info_text\": \"Checkout your shimpment in the shopping cart.\",\"url\": \"https://das-e-rezept-fuer-deutschland.de\"}",
+        // swiftlint:disable:previous line_length
+        isRead: true
+    )
+
+    let communicationDelivery = ErxTask.Communication(
+        identifier: "3",
+        profile: .reply,
+        taskId: "taskID",
+        userId: "userID",
+        telematikId: "telematikID",
+        timestamp: "2021-05-29T10:59:37.098245933+00:00",
+        payloadJSON: "{\"version\": \"1\",\"supplyOptionsType\": \"delivery\",\"info_text\": \"Your prescription is on the way. Make sure you are at home. We will not come back and bring you more drugs! Just kidding ;)\", \"url\": \"https://das-e-rezept-fuer-deutschland.de\"}" // swiftlint:disable:this line_length
+    )
+
+    let communicationOnPremiseWithUrl = ErxTask.Communication(
+        identifier: "1",
+        profile: .reply,
+        taskId: "taskID",
+        userId: "userID",
+        telematikId: "telematikID",
+        timestamp: "2021-05-26T10:59:37.098245933+00:00",
+        payloadJSON: "{\"version\": \"1\",\"supplyOptionsType\": \"onPremise\",\"info_text\": \"You can come by and pick up your drugs.\", \"pickUpCodeHR\":\"4711\", \"url\": \"https://das-e-rezept-fuer-deutschland.de\"}" // swiftlint:disable:this line_length
+    )
+
+    let communicationWithoutPayload = ErxTask.Communication(
+        identifier: "4",
+        profile: .reply,
+        taskId: "taskID",
+        userId: "userID",
+        telematikId: "telematikID",
+        orderId: "orderId",
+        timestamp: "2021-05-26T10:59:37.098245933+00:00",
+        payloadJSON: "",
+        isRead: true
+    )
+
     func testOderDetailViewWithOneCommunicationDispRequest() {
         let sut = OrderDetailView(
             store: OrderDetailDomain.Store(
                 initialState: .init(order: OrderCommunications(
                     orderId: "test",
-                    communications: [OrdersDomain.Dummies.communicationDispRequest]
+                    communications: [communicationDispRequest]
                 )),
                 reducer: EmptyReducer()
             )
@@ -50,9 +114,9 @@ final class OrderDetailViewSnapshotTests: XCTestCase {
             store: OrderDetailDomain.Store(
                 initialState: .init(order: OrderCommunications(
                     orderId: "test",
-                    communications: [OrdersDomain.Dummies.communicationOnPremise,
-                                     OrdersDomain.Dummies.communicationShipment,
-                                     OrdersDomain.Dummies.communicationDelivery]
+                    communications: [communicationOnPremise,
+                                     communicationShipment,
+                                     communicationDelivery]
                 )),
                 reducer: EmptyReducer()
             )
@@ -67,8 +131,8 @@ final class OrderDetailViewSnapshotTests: XCTestCase {
             OrderDetailDomain.Store(
                 initialState: .init(order: OrderCommunications(
                     orderId: "test",
-                    communications: [OrdersDomain.Dummies.communicationOnPremiseWithUrl,
-                                     OrdersDomain.Dummies.communicationWithoutPayload]
+                    communications: [communicationOnPremiseWithUrl,
+                                     communicationWithoutPayload]
                 )),
                 reducer: EmptyReducer()
             ))

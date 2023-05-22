@@ -85,7 +85,7 @@ enum LoadingState<Value, Failure: Error>: Equatable where Failure: Equatable, Va
 }
 
 extension Publisher where Output: Equatable, Failure: Equatable {
-    func catchToLoadingStateEffect() -> Effect<LoadingState<Output, Failure>, Never> {
+    func catchToLoadingStateEffect() -> EffectTask<LoadingState<Output, Failure>> {
         map(LoadingState.value)
             .catch { Just(LoadingState.error($0)) }
             .eraseToEffect()

@@ -66,7 +66,7 @@ struct PickupCodeDomain: ReducerProtocol {
                 return .none
             }
             let size = calcMatrixCodeSize(screenSize: screenSize)
-            return matrixCodeGenerator.publishedMatrixCode(
+            return matrixCodeGenerator.matrixCodePublisher(
                 for: dmcCode,
                 with: size,
                 scale: screenScale,
@@ -74,7 +74,7 @@ struct PickupCodeDomain: ReducerProtocol {
             )
             .receive(on: schedulers.main.animation())
             .first()
-            .catch { _ in Effect.none }
+            .catch { _ in EffectTask.none }
             .map { .response(.matrixCodeImageReceived($0)) }
             .eraseToEffect()
         case let .response(.matrixCodeImageReceived(matrixCodeImage)):

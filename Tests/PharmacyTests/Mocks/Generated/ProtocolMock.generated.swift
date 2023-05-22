@@ -1,7 +1,8 @@
-// Generated using Sourcery 2.0.1 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.0.2 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 import Combine
 import eRpKit
+import OpenSSL
 
 @testable import Pharmacy
 
@@ -159,5 +160,23 @@ final class MockPharmacyRemoteDataStore: PharmacyRemoteDataStore {
         fetchPharmacyByReceivedTelematikId = telematikId
         fetchPharmacyByReceivedInvocations.append(telematikId)
         return fetchPharmacyByClosure.map({ $0(telematikId) }) ?? fetchPharmacyByReturnValue
+    }
+    
+   // MARK: - loadAvsCertificates
+
+    var loadAvsCertificatesForCallsCount = 0
+    var loadAvsCertificatesForCalled: Bool {
+        loadAvsCertificatesForCallsCount > 0
+    }
+    var loadAvsCertificatesForReceivedLocationId: String?
+    var loadAvsCertificatesForReceivedInvocations: [String] = []
+    var loadAvsCertificatesForReturnValue: AnyPublisher<[X509], PharmacyFHIRDataSource.Error>!
+    var loadAvsCertificatesForClosure: ((String) -> AnyPublisher<[X509], PharmacyFHIRDataSource.Error>)?
+
+    func loadAvsCertificates(for locationId: String) -> AnyPublisher<[X509], PharmacyFHIRDataSource.Error> {
+        loadAvsCertificatesForCallsCount += 1
+        loadAvsCertificatesForReceivedLocationId = locationId
+        loadAvsCertificatesForReceivedInvocations.append(locationId)
+        return loadAvsCertificatesForClosure.map({ $0(locationId) }) ?? loadAvsCertificatesForReturnValue
     }
 }

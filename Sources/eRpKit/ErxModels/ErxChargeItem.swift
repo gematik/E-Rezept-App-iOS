@@ -28,6 +28,7 @@ public struct ErxChargeItem: Identifiable, Hashable {
         identifier: String,
         fhirData: Data,
         enteredDate: String? = nil,
+        accessCode: String? = nil,
         medication: ErxMedication? = nil,
         medicationRequest: ErxMedicationRequest = ErxMedicationRequest(),
         patient: ErxPatient? = nil,
@@ -39,11 +40,11 @@ public struct ErxChargeItem: Identifiable, Hashable {
         prescriptionSignature: ErxSignature? = nil,
         receiptSignature: ErxSignature? = nil,
         dispenseSignature: ErxSignature? = nil
-
     ) {
         self.identifier = identifier
         self.fhirData = fhirData
         self.enteredDate = enteredDate
+        self.accessCode = accessCode
         self.medication = medication
         self.medicationRequest = medicationRequest
         self.patient = patient
@@ -67,6 +68,8 @@ public struct ErxChargeItem: Identifiable, Hashable {
     public let fhirData: Data
     /// Date the charge item was entered
     public let enteredDate: String?
+    /// Access code authorising for the charge item
+    public let accessCode: String?
 
     // MARK: KBV profiled FHIR resources
 
@@ -90,16 +93,28 @@ public struct ErxChargeItem: Identifiable, Hashable {
     /// actual medication dispenses
     public let medicationDispense: DavMedicationDispense?
 
-    // MARK: Signatures from all bundles
+    // MARK: Signatures from bundles
 
+    /// Prescription bundle signature
     public let prescriptionSignature: ErxSignature?
+    /// Receipt bundle signature
     public let receiptSignature: ErxSignature?
+    /// Dispense bundle signature
     public let dispenseSignature: ErxSignature?
 }
 
 extension ErxChargeItem {
-    /// Mock data for now, to display something on UI level
-    public var medicationText: String {
-        "Vitamin C"
+    /// ChargeItem with sparse data set
+    ///
+    /// The full ChargeItem information is held as fhirData value
+    /// and can be extracted as a `ErxChargeItem`
+    public var sparseChargeItem: ErxSparseChargeItem {
+        ErxSparseChargeItem(
+            identifier: identifier,
+            fhirData: fhirData,
+            enteredDate: enteredDate,
+            medication: medication,
+            invoice: invoice
+        )
     }
 }

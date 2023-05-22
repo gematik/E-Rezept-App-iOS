@@ -18,7 +18,7 @@
 
 import eRpKit
 import Foundation
-
+// swiftlint:disable file_length
 extension ErxTask {
     // swiftlint:disable:next type_body_length
     enum Demo {
@@ -34,7 +34,7 @@ extension ErxTask {
                 numerator: ErxMedication.Quantity(value: "10", unit: "St.")
             ),
             dosageForm: "PUL",
-            dose: "N1",
+            normSizeCode: "N1",
             batch: .init(
                 lotNumber: "TOTO-5236-VL",
                 expiresOn: "12.12.2024"
@@ -51,7 +51,7 @@ extension ErxTask {
                 numerator: ErxMedication.Quantity(value: "12", unit: "St.")
             ),
             dosageForm: "FDA",
-            dose: "N2",
+            normSizeCode: "N2",
             packaging: "Box",
             manufacturingInstructions: "Anleitung beiliegend",
             ingredients: []
@@ -64,7 +64,7 @@ extension ErxTask {
                 numerator: ErxMedication.Quantity(value: "200", unit: "ml")
             ),
             dosageForm: "ELI",
-            dose: "KTP",
+            normSizeCode: "KTP",
             packaging: "Box",
             manufacturingInstructions: "Anleitung beiliegend",
             ingredients: []
@@ -77,7 +77,7 @@ extension ErxTask {
                 numerator: ErxMedication.Quantity(value: "100", unit: "ml")
             ),
             dosageForm: "AEO",
-            dose: "KA",
+            normSizeCode: "KA",
             packaging: "Box",
             manufacturingInstructions: "Anleitung beiliegend",
             ingredients: []
@@ -90,7 +90,7 @@ extension ErxTask {
                 numerator: ErxMedication.Quantity(value: "2", unit: "Pack.")
             ),
             dosageForm: "GEL",
-            dose: "sonstiges",
+            normSizeCode: "sonstiges",
             packaging: "Box",
             manufacturingInstructions: "Anleitung beiliegend",
             ingredients: []
@@ -103,7 +103,7 @@ extension ErxTask {
                 numerator: ErxMedication.Quantity(value: "1", unit: "Flasche")
             ),
             dosageForm: "INH",
-            dose: "N2",
+            normSizeCode: "N2",
             packaging: "Box",
             manufacturingInstructions: "Anleitung beiliegend",
             ingredients: []
@@ -116,7 +116,7 @@ extension ErxTask {
                 numerator: ErxMedication.Quantity(value: "20", unit: "St.")
             ),
             dosageForm: "TAB",
-            dose: "N3",
+            normSizeCode: "N3",
             packaging: "Box",
             manufacturingInstructions: "Anleitung beiliegend",
             ingredients: []
@@ -130,10 +130,52 @@ extension ErxTask {
                 numerator: ErxMedication.Quantity(value: "8", unit: "Beutel")
             ),
             dosageForm: "INS",
-            dose: "NB",
+            normSizeCode: "NB",
             packaging: "Box",
             manufacturingInstructions: "Anleitung beiliegend",
             ingredients: []
+        )
+
+        static let pznMedication = medication1
+
+        static let freeTextMedication = ErxMedication(
+            name: "Freier Text für eine Rezeptur oder Wirkstoffverordnung die nicht strukturiert erfasst werden können",
+            profile: .freeText,
+            drugCategory: .avm,
+            pzn: nil,
+            isVaccine: true,
+            dosageForm: "Angabe der Darreichungsform als Freitext",
+            batch: .init(lotNumber: "TOTO-5236-VL", expiresOn: "12.12.2024")
+        )
+
+        static let compoundingMedication: ErxMedication = .init(
+            name: "Yucca filamentosa",
+            profile: .compounding,
+            drugCategory: .avm,
+            pzn: nil,
+            isVaccine: false,
+            amount: .init(ErxMedication.Ratio(numerator: .init(value: "1", unit: "St."))),
+            dosageForm: "FDA",
+            normSizeCode: "N2",
+            packaging: "Small package",
+            manufacturingInstructions: "no instructions",
+            ingredients: [yuccaIngredient, filmaIngredient]
+        )
+
+        static let yuccaIngredient = ErxMedication.Ingredient(
+            text: "Yucca",
+            number: "12345",
+            form: "creme",
+            strength: nil,
+            strengthFreeText: "1/2"
+        )
+
+        static let filmaIngredient = ErxMedication.Ingredient(
+            text: "Filamentosa",
+            number: "9872136",
+            form: "liquid",
+            strength: .init(numerator: .init(value: "40", unit: "%")),
+            strengthFreeText: nil
         )
 
         static let erxTaskReady = erxTask1
@@ -179,6 +221,16 @@ extension ErxTask {
             type: .workAccident,
             workPlaceIdentifier: "1234567890",
             date: "9.4.2021"
+        )
+
+        static let demoMedicationRequest: ErxMedicationRequest = .init(
+            dosageInstructions: "Some informations on how to take your prescription",
+            substitutionAllowed: true,
+            hasEmergencyServiceFee: true,
+            dispenseValidityEnd: "12.12.1936",
+            accidentInfo: demoAccidentInfo,
+            coPaymentStatus: .subjectToCharge,
+            multiplePrescription: demoMultiplePrescription
         )
 
         static let demoMultiplePrescription = MultiplePrescription(

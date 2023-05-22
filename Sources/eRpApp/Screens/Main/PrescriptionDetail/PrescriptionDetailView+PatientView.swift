@@ -17,6 +17,7 @@
 //
 
 import ComposableArchitecture
+import eRpKit
 import eRpStyleKit
 import SwiftUI
 
@@ -65,7 +66,7 @@ extension PrescriptionDetailView {
                         .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlPaInsurance)
 
                         SubTitle(
-                            title: viewStore.patient.status ?? L10n.prscFdTxtNa.text,
+                            title: viewStore.patient.localizedStausMember ?? L10n.prscFdTxtNa.text,
                             description: L10n.prscFdTxtPatientStatus
                         )
                         .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlPaStatus)
@@ -75,5 +76,21 @@ extension PrescriptionDetailView {
                 .navigationBarTitle(Text(L10n.prscFdTxtPatientTitle), displayMode: .inline)
             }
         }
+    }
+}
+
+extension ErxPatient {
+    var localizedStausMember: String? {
+        let patientMemberStatusKeys: [String: String] = [
+            "1": "kbv_member_status_1",
+            "3": "kbv_member_status_3",
+            "5": "kbv_member_status_5",
+        ]
+
+        guard let statusKey = status,
+              let localizedStringKey = patientMemberStatusKeys[statusKey.lowercased()] else {
+            return status
+        }
+        return NSLocalizedString(localizedStringKey, comment: "")
     }
 }

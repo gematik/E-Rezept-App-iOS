@@ -170,7 +170,7 @@ struct CardWallExtAuthSelectionView: View {
                                     state: /(CardWallExtAuthSelectionDomain.Destinations.State.egk),
                                     action: CardWallExtAuthSelectionDomain.Destinations.Action.egkAction(action:)
                                 ),
-                                then: OrderHealthCardView.init(store:)
+                                then: OrderHealthCardListView.init(store:)
                             )
                         }.navigationViewStyle(StackNavigationViewStyle())
                     }

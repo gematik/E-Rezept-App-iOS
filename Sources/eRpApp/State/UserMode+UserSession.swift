@@ -41,6 +41,10 @@ extension UserMode: UserSession {
         sessionContainer.erxTaskRepository
     }
 
+    var ordersRepository: ErxTaskRepository {
+        sessionContainer.ordersRepository
+    }
+
     var profileDataStore: ProfileDataStore {
         sessionContainer.profileDataStore
     }

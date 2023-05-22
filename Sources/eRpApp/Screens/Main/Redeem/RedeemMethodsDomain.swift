@@ -28,7 +28,7 @@ struct RedeemMethodsDomain: ReducerProtocol {
 
     /// Provides an Effect that need to run whenever the state of this Domain is reset to nil
     static func cleanup<T>() -> EffectTask<T> {
-        Effect.concatenate(
+        .concatenate(
             cleanupSubDomains(),
             EffectTask<T>.cancel(ids: Token.allCases)
         )
@@ -61,7 +61,9 @@ struct RedeemMethodsDomain: ReducerProtocol {
 
     struct Destinations: ReducerProtocol {
         enum State: Equatable {
+            // sourcery: AnalyticsScreen = redeem_matrixCode
             case matrixCode(RedeemMatrixCodeDomain.State)
+            // sourcery: AnalyticsScreen = pharmacySearch
             case pharmacySearch(PharmacySearchDomain.State)
         }
 
@@ -94,21 +96,21 @@ struct RedeemMethodsDomain: ReducerProtocol {
         Reduce { state, action in
             switch action {
             case .closeButtonTapped:
-                return Effect(value: .delegate(.close))
+                return EffectTask(value: .delegate(.close))
             case .destination(.redeemMatrixCodeAction(.closeButtonTapped)):
                 state.destination = nil
                 // Cleanup of child & running close action on parent reducer
-                return Effect.concatenate(
+                return .concatenate(
                     RedeemMatrixCodeDomain.cleanup(),
-                    Effect(value: .delegate(.close)).delay(for: 0.1, scheduler: schedulers.main).eraseToEffect()
+                    EffectTask(value: .delegate(.close)).delay(for: 0.1, scheduler: schedulers.main).eraseToEffect()
                 )
             case let .destination(.pharmacySearchAction(action: .delegate(action))):
                 switch action {
                 case .close:
                     state.destination = nil
-                    return Effect.concatenate(
+                    return .concatenate(
                         PharmacySearchDomain.cleanup(),
-                        Effect(value: .delegate(.close)).delay(for: 0.1, scheduler: schedulers.main).eraseToEffect()
+                        EffectTask(value: .delegate(.close)).delay(for: 0.1, scheduler: schedulers.main).eraseToEffect()
                     )
                 }
             case let .setNavigation(tag: tag):

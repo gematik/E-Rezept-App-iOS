@@ -189,7 +189,7 @@ extension ErxMedication {
                 pzn: "06876512",
                 amount: .init(numerator: .init(value: "10")),
                 dosageForm: "PUL",
-                dose: "N1",
+                normSizeCode: "N1",
                 packaging: nil
             )
         }()
@@ -200,7 +200,7 @@ extension ErxMedication {
                 pzn: "06876511",
                 amount: .init(numerator: .init(value: "12")),
                 dosageForm: "FDA",
-                dose: "N2",
+                normSizeCode: "N2",
                 packaging: nil
             )
         }()
@@ -211,7 +211,7 @@ extension ErxMedication {
                 pzn: "06876513",
                 amount: .init(numerator: .init(value: "1")),
                 dosageForm: "ELI",
-                dose: "KTP",
+                normSizeCode: "KTP",
                 packaging: nil
             )
         }()

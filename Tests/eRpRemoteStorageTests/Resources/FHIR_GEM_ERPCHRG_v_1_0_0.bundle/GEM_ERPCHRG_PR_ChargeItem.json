@@ -1,814 +1,1257 @@
 {
-	"resourceType": "Bundle",
-	"id": "658d213d-523b-4a24-bbdb-f237611ead2d",
-	"type": "collection",
-	"timestamp": "2023-02-17T14:07:47.710+00:00",
-	"entry": [{
-		"fullUrl": "https://erp-dev.zentral.erp.splitdns.ti-dienste.de/ChargeItem/200.000.001.205.203.40",
-		"resource": {
-			"resourceType": "ChargeItem",
-			"id": "200.000.001.205.203.40",
-			"meta": {
-				"profile": ["https://gematik.de/fhir/erpchrg/StructureDefinition/GEM_ERPCHRG_PR_ChargeItem|1.0"]
-			},
-			"identifier": [{
-				"system": "https://gematik.de/fhir/erp/NamingSystem/GEM_ERP_NS_PrescriptionId",
-				"value": "200.000.001.205.203.40"
-			}, {
-				"system": "https://gematik.de/fhir/erp/NamingSystem/GEM_ERP_NS_AccessCode",
-				"value": "feaf93c400be820a1981250a29d529e3de9a5a3054049d58f133ea13e00d36b0"
-			}],
-			"status": "billable",
-			"code": {
-				"coding": [{
-					"system": "http://terminology.hl7.org/CodeSystem/data-absent-reason",
-					"code": "not-applicable"
-				}]
-			},
-			"subject": {
-				"identifier": {
-					"system": "http://fhir.de/sid/pkv/kvid-10",
-					"value": "X110465770"
-				}
-			},
-			"enterer": {
-				"identifier": {
-					"system": "https://gematik.de/fhir/sid/telematik-id",
-					"value": "3-SMC-B-Testkarte-883110000116873"
-				}
-			},
-			"enteredDate": "2023-02-17T14:07:46.964+00:00",
-			"supportingInformation": [{
-				"reference": "Bundle/775157da-afc8-4248-b90b-a32163895323",
-				"display": "https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Bundle"
-			}, {
-				"reference": "Bundle/a2442313-18da-4051-b355-42a47d9f823a",
-				"display": "http://fhir.abda.de/eRezeptAbgabedaten/StructureDefinition/DAV-PKV-PR-ERP-AbgabedatenBundle"
-			}, {
-				"reference": "Bundle/c8d36312-0000-0000-0003-000000000000",
-				"display": "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_PR_Bundle"
-			}]
-		}
-	}, {
-		"fullUrl": "urn:uuid:a2442313-18da-4051-b355-42a47d9f823a",
-		"resource": {
-			"resourceType": "Bundle",
-            "id": "a2442313-18da-4051-b355-42a47d9f823a",
-			"meta": {
-				"lastUpdated": "2023-02-17T15:07:45.077+01:00",
-				"profile": ["http://fhir.abda.de/eRezeptAbgabedaten/StructureDefinition/DAV-PKV-PR-ERP-AbgabedatenBundle|1.1"]
-			},
-			"identifier": {
-				"system": "https://gematik.de/fhir/erp/NamingSystem/GEM_ERP_NS_PrescriptionId",
-				"value": "200.000.001.205.203.40"
-			},
-			"type": "document",
-			"timestamp": "2023-02-17T15:07:45.077+01:00",
-			"entry": [{
-				"fullUrl": "urn:uuid:f67f6885-c527-4198-a44a-d5bef2fda5b9",
-				"resource": {
-					"resourceType": "Composition",
-					"id": "f67f6885-c527-4198-a44a-d5bef2fda5b9",
-					"meta": {
-						"profile": ["http://fhir.abda.de/eRezeptAbgabedaten/StructureDefinition/DAV-PKV-PR-ERP-AbgabedatenComposition|1.1"]
-					},
-					"status": "final",
-					"type": {
-						"coding": [{
-							"system": "http://fhir.abda.de/eRezeptAbgabedaten/CodeSystem/DAV-CS-ERP-CompositionTypes",
-							"code": "ERezeptAbgabedaten"
-						}]
-					},
-					"date": "2023-02-17T15:07:45+01:00",
-					"author": [{
-						"reference": "urn:uuid:623e785c-0f6d-4db9-8488-9809b8493537"
-					}],
-					"title": "ERezeptAbgabedaten",
-					"section": [{
-						"title": "Apotheke",
-						"entry": [{
-							"reference": "urn:uuid:623e785c-0f6d-4db9-8488-9809b8493537"
-						}]
-					}, {
-						"title": "Abgabeinformationen",
-						"entry": [{
-							"reference": "urn:uuid:e00e96a2-6dae-4036-8e72-42b5c21fdbf3"
-						}]
-					}]
-				}
-			}, {
-				"fullUrl": "urn:uuid:623e785c-0f6d-4db9-8488-9809b8493537",
-				"resource": {
-					"resourceType": "Organization",
-					"id": "623e785c-0f6d-4db9-8488-9809b8493537",
-					"meta": {
-						"profile": ["http://fhir.abda.de/eRezeptAbgabedaten/StructureDefinition/DAV-PKV-PR-ERP-Apotheke|1.1"]
-					},
-					"identifier": [{
-						"system": "http://fhir.de/sid/arge-ik/iknr",
-						"value": "833940499"
-					}],
-					"name": "Apotheke Crystal Claire Waters",
-					"address": [{
-						"type": "physical",
-						"line": ["Görresstr. 789"],
-						"_line": [{
-							"extension": [{
-								"url": "http://hl7.org/fhir/StructureDefinition/iso21090-ADXP-houseNumber",
-								"valueString": "789"
-							}, {
-								"url": "http://hl7.org/fhir/StructureDefinition/iso21090-ADXP-streetName",
-								"valueString": "Görresstr."
-							}]
-						}],
-						"city": "Süd Eniefeld",
-						"postalCode": "48480",
-						"country": "D"
-					}]
-				}
-			}, {
-				"fullUrl": "urn:uuid:39618663-4b23-43de-ab1d-db25b2d85130",
-				"resource": {
-					"resourceType": "Invoice",
-					"id": "39618663-4b23-43de-ab1d-db25b2d85130",
-					"meta": {
-						"profile": ["http://fhir.abda.de/eRezeptAbgabedaten/StructureDefinition/DAV-PKV-PR-ERP-Abrechnungszeilen|1.1"]
-					},
-					"status": "issued",
-					"type": {
-						"coding": [{
-							"system": "http://fhir.abda.de/eRezeptAbgabedaten/CodeSystem/DAV-CS-ERP-InvoiceTyp",
-							"code": "Abrechnungszeilen"
-						}]
-					},
-					"lineItem": [{
-						"sequence": 1,
-						"chargeItemCodeableConcept": {
-                            "coding": [{
-                                "system": "http://fhir.de/CodeSystem/ifa/pzn",
-                                "code": "83251256"
-                            }, {
-                                "system": "http://TA1.abda.de",
-                                "code": "84256543"
-                            }, {
-                                "system": "http://fhir.de/sid/gkv/hmnr",
-                                "code": "85258976"
-                            }]
-						},
-						"priceComponent": [{
-							"extension": [{
-								"url": "http://fhir.abda.de/eRezeptAbgabedaten/StructureDefinition/DAV-EX-ERP-KostenVersicherter",
-								"extension": [{
-									"url": "Kategorie",
-									"valueCodeableConcept": {
-										"coding": [{
-											"system": "http://fhir.abda.de/eRezeptAbgabedaten/CodeSystem/DAV-PKV-CS-ERP-KostenVersicherterKategorie",
-											"code": "0"
-										}]
-									}
-								}, {
-									"url": "Kostenbetrag",
-									"valueMoney": {
-										"value": 3.81,
-										"currency": "EUR"
-									}
-								}]
-							}, {
-								"url": "http://fhir.abda.de/eRezeptAbgabedaten/StructureDefinition/DAV-EX-ERP-MwStSatz",
-								"valueDecimal": 11.06
-							}],
-							"type": "informational",
-							"factor": 1,
-							"amount": {
-								"value": 6.23,
-								"currency": "EUR"
-							}
-						}]
-					}, {
-						"sequence": 2,
-						"chargeItemCodeableConcept": {
-							"coding": [{
-								"system": "http://fhir.de/CodeSystem/ifa/pzn",
-								"code": "22894670"
-							}]
-						},
-						"priceComponent": [{
-							"extension": [{
-								"url": "http://fhir.abda.de/eRezeptAbgabedaten/StructureDefinition/DAV-EX-ERP-KostenVersicherter",
-								"extension": [{
-									"url": "Kategorie",
-									"valueCodeableConcept": {
-										"coding": [{
-											"system": "http://fhir.abda.de/eRezeptAbgabedaten/CodeSystem/DAV-PKV-CS-ERP-KostenVersicherterKategorie",
-											"code": "0"
-										}]
-									}
-								}, {
-									"url": "Kostenbetrag",
-									"valueMoney": {
-										"value": 213.88,
-										"currency": "EUR"
-									}
-								}]
-							}, {
-								"url": "http://fhir.abda.de/eRezeptAbgabedaten/StructureDefinition/DAV-EX-ERP-MwStSatz",
-								"valueDecimal": 11.06
-							}],
-							"type": "informational",
-							"factor": 1,
-							"amount": {
-								"value": 527.97,
-								"currency": "EUR"
-							}
-						}]
-					}],
-					"totalGross": {
-						"extension": [{
-							"url": "http://fhir.abda.de/eRezeptAbgabedaten/StructureDefinition/DAV-EX-ERP-Gesamtzuzahlung",
-							"valueMoney": {
-								"value": 217.69,
-								"currency": "EUR"
-							}
-						}],
-						"value": 534.20,
-						"currency": "EUR"
-					}
-				}
-			}, {
-				"fullUrl": "urn:uuid:e00e96a2-6dae-4036-8e72-42b5c21fdbf3",
-				"resource": {
-					"resourceType": "MedicationDispense",
-					"id": "e00e96a2-6dae-4036-8e72-42b5c21fdbf3",
-					"meta": {
-						"profile": ["http://fhir.abda.de/eRezeptAbgabedaten/StructureDefinition/DAV-PKV-PR-ERP-Abgabeinformationen|1.1"]
-					},
-					"extension": [{
-						"url": "http://fhir.abda.de/eRezeptAbgabedaten/StructureDefinition/DAV-PKV-EX-ERP-AbrechnungsTyp",
-						"valueCodeableConcept": {
-							"coding": [{
-								"system": "http://fhir.abda.de/eRezeptAbgabedaten/CodeSystem/DAV-PKV-CS-ERP-AbrechnungsTyp",
-								"code": "1"
-							}]
-						}
-					}, {
-						"url": "http://fhir.abda.de/eRezeptAbgabedaten/StructureDefinition/DAV-EX-ERP-Abrechnungszeilen",
-						"valueReference": {
-							"reference": "urn:uuid:39618663-4b23-43de-ab1d-db25b2d85130"
-						}
-					}],
-					"status": "completed",
-					"medicationCodeableConcept": {
-						"coding": [{
-							"system": "http://terminology.hl7.org/CodeSystem/data-absent-reason",
-							"code": "not-applicable"
-						}]
-					},
-					"performer": [{
-						"actor": {
-							"reference": "urn:uuid:623e785c-0f6d-4db9-8488-9809b8493537"
-						}
-					}],
-					"authorizingPrescription": [{
-						"identifier": {
-							"system": "https://gematik.de/fhir/erp/NamingSystem/GEM_ERP_NS_PrescriptionId",
-							"value": "200.000.001.205.203.40"
-						}
-					}],
-					"type": {
-						"coding": [{
-							"system": "http://fhir.abda.de/eRezeptAbgabedaten/CodeSystem/DAV-CS-ERP-MedicationDispenseTyp",
-							"code": "Abgabeinformationen"
-						}]
-					},
-					"whenHandedOver": "2023-02-17"
-				}
-			}],
-			"signature": {
-				"type": [{
-					"system": "urn:iso-astm:E1762-95:2013",
-					"code": "1.2.840.10065.1.12.1.1"
-				}],
-				"when": "2023-02-17T14:07:47.809+00:00",
-				"who": {
-					"reference": "https://erp-dev.zentral.erp.splitdns.ti-dienste.de/Device/1"
-				},
-				"sigFormat": "application/pkcs7-mime",
-				"data": "MIIuswYJKoZIhvcNAQcCoIIupDCCLqACAQExDTALBglghkgBZQMEAgEwghlqBgkqhkiG9w0BBwGgghlbBIIZVzxCdW5kbGUgeG1sbnM9Imh0dHA6Ly9obDcub3JnL2ZoaXIiPjxpZCB2YWx1ZT0iYTI0NDIzMTMtMThkYS00MDUxLWIzNTUtNDJhNDdkOWY4MjNhIi8+PG1ldGE+PGxhc3RVcGRhdGVkIHZhbHVlPSIyMDIzLTAyLTE3VDE1OjA3OjQ1LjA3NyswMTowMCIvPjxwcm9maWxlIHZhbHVlPSJodHRwOi8vZmhpci5hYmRhLmRlL2VSZXplcHRBYmdhYmVkYXRlbi9TdHJ1Y3R1cmVEZWZpbml0aW9uL0RBVi1QS1YtUFItRVJQLUFiZ2FiZWRhdGVuQnVuZGxlfDEuMSIvPjwvbWV0YT48aWRlbnRpZmllcj48c3lzdGVtIHZhbHVlPSJodHRwczovL2dlbWF0aWsuZGUvZmhpci9lcnAvTmFtaW5nU3lzdGVtL0dFTV9FUlBfTlNfUHJlc2NyaXB0aW9uSWQiLz48dmFsdWUgdmFsdWU9IjIwMC4wMDAuMDAxLjIwNS4yMDMuNDAiLz48L2lkZW50aWZpZXI+PHR5cGUgdmFsdWU9ImRvY3VtZW50Ii8+PHRpbWVzdGFtcCB2YWx1ZT0iMjAyMy0wMi0xN1QxNTowNzo0NS4wNzcrMDE6MDAiLz48ZW50cnk+PGZ1bGxVcmwgdmFsdWU9InVybjp1dWlkOmY2N2Y2ODg1LWM1MjctNDE5OC1hNDRhLWQ1YmVmMmZkYTViOSIvPjxyZXNvdXJjZT48Q29tcG9zaXRpb24geG1sbnM9Imh0dHA6Ly9obDcub3JnL2ZoaXIiPjxpZCB2YWx1ZT0iZjY3ZjY4ODUtYzUyNy00MTk4LWE0NGEtZDViZWYyZmRhNWI5Ii8+PG1ldGE+PHByb2ZpbGUgdmFsdWU9Imh0dHA6Ly9maGlyLmFiZGEuZGUvZVJlemVwdEFiZ2FiZWRhdGVuL1N0cnVjdHVyZURlZmluaXRpb24vREFWLVBLVi1QUi1FUlAtQWJnYWJlZGF0ZW5Db21wb3NpdGlvbnwxLjEiLz48L21ldGE+PHN0YXR1cyB2YWx1ZT0iZmluYWwiLz48dHlwZT48Y29kaW5nPjxzeXN0ZW0gdmFsdWU9Imh0dHA6Ly9maGlyLmFiZGEuZGUvZVJlemVwdEFiZ2FiZWRhdGVuL0NvZGVTeXN0ZW0vREFWLUNTLUVSUC1Db21wb3NpdGlvblR5cGVzIi8+PGNvZGUgdmFsdWU9IkVSZXplcHRBYmdhYmVkYXRlbiIvPjwvY29kaW5nPjwvdHlwZT48ZGF0ZSB2YWx1ZT0iMjAyMy0wMi0xN1QxNTowNzo0NSswMTowMCIvPjxhdXRob3I+PHJlZmVyZW5jZSB2YWx1ZT0idXJuOnV1aWQ6NjIzZTc4NWMtMGY2ZC00ZGI5LTg0ODgtOTgwOWI4NDkzNTM3Ii8+PC9hdXRob3I+PHRpdGxlIHZhbHVlPSJFUmV6ZXB0QWJnYWJlZGF0ZW4iLz48c2VjdGlvbj48dGl0bGUgdmFsdWU9IkFwb3RoZWtlIi8+PGVudHJ5PjxyZWZlcmVuY2UgdmFsdWU9InVybjp1dWlkOjYyM2U3ODVjLTBmNmQtNGRiOS04NDg4LTk4MDliODQ5MzUzNyIvPjwvZW50cnk+PC9zZWN0aW9uPjxzZWN0aW9uPjx0aXRsZSB2YWx1ZT0iQWJnYWJlaW5mb3JtYXRpb25lbiIvPjxlbnRyeT48cmVmZXJlbmNlIHZhbHVlPSJ1cm46dXVpZDplMDBlOTZhMi02ZGFlLTQwMzYtOGU3Mi00MmI1YzIxZmRiZjMiLz48L2VudHJ5Pjwvc2VjdGlvbj48L0NvbXBvc2l0aW9uPjwvcmVzb3VyY2U+PC9lbnRyeT48ZW50cnk+PGZ1bGxVcmwgdmFsdWU9InVybjp1dWlkOjYyM2U3ODVjLTBmNmQtNGRiOS04NDg4LTk4MDliODQ5MzUzNyIvPjxyZXNvdXJjZT48T3JnYW5pemF0aW9uIHhtbG5zPSJodHRwOi8vaGw3Lm9yZy9maGlyIj48aWQgdmFsdWU9IjYyM2U3ODVjLTBmNmQtNGRiOS04NDg4LTk4MDliODQ5MzUzNyIvPjxtZXRhPjxwcm9maWxlIHZhbHVlPSJodHRwOi8vZmhpci5hYmRhLmRlL2VSZXplcHRBYmdhYmVkYXRlbi9TdHJ1Y3R1cmVEZWZpbml0aW9uL0RBVi1QS1YtUFItRVJQLUFwb3RoZWtlfDEuMSIvPjwvbWV0YT48aWRlbnRpZmllcj48c3lzdGVtIHZhbHVlPSJodHRwOi8vZmhpci5kZS9zaWQvYXJnZS1pay9pa25yIi8+PHZhbHVlIHZhbHVlPSI4MzM5NDA0OTkiLz48L2lkZW50aWZpZXI+PG5hbWUgdmFsdWU9IkFwb3RoZWtlIENyeXN0YWwgQ2xhaXJlIFdhdGVycyIvPjxhZGRyZXNzPjx0eXBlIHZhbHVlPSJwaHlzaWNhbCIvPjxsaW5lIHZhbHVlPSJHw7ZycmVzc3RyLiA3ODkiPjxleHRlbnNpb24gdXJsPSJodHRwOi8vaGw3Lm9yZy9maGlyL1N0cnVjdHVyZURlZmluaXRpb24vaXNvMjEwOTAtQURYUC1ob3VzZU51bWJlciI+PHZhbHVlU3RyaW5nIHZhbHVlPSI3ODkiLz48L2V4dGVuc2lvbj48ZXh0ZW5zaW9uIHVybD0iaHR0cDovL2hsNy5vcmcvZmhpci9TdHJ1Y3R1cmVEZWZpbml0aW9uL2lzbzIxMDkwLUFEWFAtc3RyZWV0TmFtZSI+PHZhbHVlU3RyaW5nIHZhbHVlPSJHw7ZycmVzc3RyLiIvPjwvZXh0ZW5zaW9uPjwvbGluZT48Y2l0eSB2YWx1ZT0iU8O8ZCBFbmllZmVsZCIvPjxwb3N0YWxDb2RlIHZhbHVlPSI0ODQ4MCIvPjxjb3VudHJ5IHZhbHVlPSJEIi8+PC9hZGRyZXNzPjwvT3JnYW5pemF0aW9uPjwvcmVzb3VyY2U+PC9lbnRyeT48ZW50cnk+PGZ1bGxVcmwgdmFsdWU9InVybjp1dWlkOjM5NjE4NjYzLTRiMjMtNDNkZS1hYjFkLWRiMjViMmQ4NTEzMCIvPjxyZXNvdXJjZT48SW52b2ljZSB4bWxucz0iaHR0cDovL2hsNy5vcmcvZmhpciI+PGlkIHZhbHVlPSIzOTYxODY2My00YjIzLTQzZGUtYWIxZC1kYjI1YjJkODUxMzAiLz48bWV0YT48cHJvZmlsZSB2YWx1ZT0iaHR0cDovL2ZoaXIuYWJkYS5kZS9lUmV6ZXB0QWJnYWJlZGF0ZW4vU3RydWN0dXJlRGVmaW5pdGlvbi9EQVYtUEtWLVBSLUVSUC1BYnJlY2hudW5nc3plaWxlbnwxLjEiLz48L21ldGE+PHN0YXR1cyB2YWx1ZT0iaXNzdWVkIi8+PHR5cGU+PGNvZGluZz48c3lzdGVtIHZhbHVlPSJodHRwOi8vZmhpci5hYmRhLmRlL2VSZXplcHRBYmdhYmVkYXRlbi9Db2RlU3lzdGVtL0RBVi1DUy1FUlAtSW52b2ljZVR5cCIvPjxjb2RlIHZhbHVlPSJBYnJlY2hudW5nc3plaWxlbiIvPjwvY29kaW5nPjwvdHlwZT48bGluZUl0ZW0+PHNlcXVlbmNlIHZhbHVlPSIxIi8+PGNoYXJnZUl0ZW1Db2RlYWJsZUNvbmNlcHQ+PGNvZGluZz48c3lzdGVtIHZhbHVlPSJodHRwOi8vZmhpci5kZS9Db2RlU3lzdGVtL2lmYS9wem4iLz48Y29kZSB2YWx1ZT0iODMyNTEyNDMiLz48L2NvZGluZz48L2NoYXJnZUl0ZW1Db2RlYWJsZUNvbmNlcHQ+PHByaWNlQ29tcG9uZW50PjxleHRlbnNpb24gdXJsPSJodHRwOi8vZmhpci5hYmRhLmRlL2VSZXplcHRBYmdhYmVkYXRlbi9TdHJ1Y3R1cmVEZWZpbml0aW9uL0RBVi1FWC1FUlAtS29zdGVuVmVyc2ljaGVydGVyIj48ZXh0ZW5zaW9uIHVybD0iS2F0ZWdvcmllIj48dmFsdWVDb2RlYWJsZUNvbmNlcHQ+PGNvZGluZz48c3lzdGVtIHZhbHVlPSJodHRwOi8vZmhpci5hYmRhLmRlL2VSZXplcHRBYmdhYmVkYXRlbi9Db2RlU3lzdGVtL0RBVi1QS1YtQ1MtRVJQLUtvc3RlblZlcnNpY2hlcnRlckthdGVnb3JpZSIvPjxjb2RlIHZhbHVlPSIwIi8+PC9jb2Rpbmc+PC92YWx1ZUNvZGVhYmxlQ29uY2VwdD48L2V4dGVuc2lvbj48ZXh0ZW5zaW9uIHVybD0iS29zdGVuYmV0cmFnIj48dmFsdWVNb25leT48dmFsdWUgdmFsdWU9IjMuODEiLz48Y3VycmVuY3kgdmFsdWU9IkVVUiIvPjwvdmFsdWVNb25leT48L2V4dGVuc2lvbj48L2V4dGVuc2lvbj48ZXh0ZW5zaW9uIHVybD0iaHR0cDovL2ZoaXIuYWJkYS5kZS9lUmV6ZXB0QWJnYWJlZGF0ZW4vU3RydWN0dXJlRGVmaW5pdGlvbi9EQVYtRVgtRVJQLU13U3RTYXR6Ij48dmFsdWVEZWNpbWFsIHZhbHVlPSIxMS4wNiIvPjwvZXh0ZW5zaW9uPjx0eXBlIHZhbHVlPSJpbmZvcm1hdGlvbmFsIi8+PGZhY3RvciB2YWx1ZT0iMSIvPjxhbW91bnQ+PHZhbHVlIHZhbHVlPSI2LjIzIi8+PGN1cnJlbmN5IHZhbHVlPSJFVVIiLz48L2Ftb3VudD48L3ByaWNlQ29tcG9uZW50PjwvbGluZUl0ZW0+PGxpbmVJdGVtPjxzZXF1ZW5jZSB2YWx1ZT0iMiIvPjxjaGFyZ2VJdGVtQ29kZWFibGVDb25jZXB0Pjxjb2Rpbmc+PHN5c3RlbSB2YWx1ZT0iaHR0cDovL2ZoaXIuZGUvQ29kZVN5c3RlbS9pZmEvcHpuIi8+PGNvZGUgdmFsdWU9IjIyODk0NjcwIi8+PC9jb2Rpbmc+PC9jaGFyZ2VJdGVtQ29kZWFibGVDb25jZXB0PjxwcmljZUNvbXBvbmVudD48ZXh0ZW5zaW9uIHVybD0iaHR0cDovL2ZoaXIuYWJkYS5kZS9lUmV6ZXB0QWJnYWJlZGF0ZW4vU3RydWN0dXJlRGVmaW5pdGlvbi9EQVYtRVgtRVJQLUtvc3RlblZlcnNpY2hlcnRlciI+PGV4dGVuc2lvbiB1cmw9IkthdGVnb3JpZSI+PHZhbHVlQ29kZWFibGVDb25jZXB0Pjxjb2Rpbmc+PHN5c3RlbSB2YWx1ZT0iaHR0cDovL2ZoaXIuYWJkYS5kZS9lUmV6ZXB0QWJnYWJlZGF0ZW4vQ29kZVN5c3RlbS9EQVYtUEtWLUNTLUVSUC1Lb3N0ZW5WZXJzaWNoZXJ0ZXJLYXRlZ29yaWUiLz48Y29kZSB2YWx1ZT0iMCIvPjwvY29kaW5nPjwvdmFsdWVDb2RlYWJsZUNvbmNlcHQ+PC9leHRlbnNpb24+PGV4dGVuc2lvbiB1cmw9Iktvc3RlbmJldHJhZyI+PHZhbHVlTW9uZXk+PHZhbHVlIHZhbHVlPSIyMTMuODgiLz48Y3VycmVuY3kgdmFsdWU9IkVVUiIvPjwvdmFsdWVNb25leT48L2V4dGVuc2lvbj48L2V4dGVuc2lvbj48ZXh0ZW5zaW9uIHVybD0iaHR0cDovL2ZoaXIuYWJkYS5kZS9lUmV6ZXB0QWJnYWJlZGF0ZW4vU3RydWN0dXJlRGVmaW5pdGlvbi9EQVYtRVgtRVJQLU13U3RTYXR6Ij48dmFsdWVEZWNpbWFsIHZhbHVlPSIxMS4wNiIvPjwvZXh0ZW5zaW9uPjx0eXBlIHZhbHVlPSJpbmZvcm1hdGlvbmFsIi8+PGZhY3RvciB2YWx1ZT0iMSIvPjxhbW91bnQ+PHZhbHVlIHZhbHVlPSI1MjcuOTciLz48Y3VycmVuY3kgdmFsdWU9IkVVUiIvPjwvYW1vdW50PjwvcHJpY2VDb21wb25lbnQ+PC9saW5lSXRlbT48dG90YWxHcm9zcz48ZXh0ZW5zaW9uIHVybD0iaHR0cDovL2ZoaXIuYWJkYS5kZS9lUmV6ZXB0QWJnYWJlZGF0ZW4vU3RydWN0dXJlRGVmaW5pdGlvbi9EQVYtRVgtRVJQLUdlc2FtdHp1emFobHVuZyI+PHZhbHVlTW9uZXk+PHZhbHVlIHZhbHVlPSIyMTcuNjkiLz48Y3VycmVuY3kgdmFsdWU9IkVVUiIvPjwvdmFsdWVNb25leT48L2V4dGVuc2lvbj48dmFsdWUgdmFsdWU9IjUzNC4yMCIvPjxjdXJyZW5jeSB2YWx1ZT0iRVVSIi8+PC90b3RhbEdyb3NzPjwvSW52b2ljZT48L3Jlc291cmNlPjwvZW50cnk+PGVudHJ5PjxmdWxsVXJsIHZhbHVlPSJ1cm46dXVpZDplMDBlOTZhMi02ZGFlLTQwMzYtOGU3Mi00MmI1YzIxZmRiZjMiLz48cmVzb3VyY2U+PE1lZGljYXRpb25EaXNwZW5zZSB4bWxucz0iaHR0cDovL2hsNy5vcmcvZmhpciI+PGlkIHZhbHVlPSJlMDBlOTZhMi02ZGFlLTQwMzYtOGU3Mi00MmI1YzIxZmRiZjMiLz48bWV0YT48cHJvZmlsZSB2YWx1ZT0iaHR0cDovL2ZoaXIuYWJkYS5kZS9lUmV6ZXB0QWJnYWJlZGF0ZW4vU3RydWN0dXJlRGVmaW5pdGlvbi9EQVYtUEtWLVBSLUVSUC1BYmdhYmVpbmZvcm1hdGlvbmVufDEuMSIvPjwvbWV0YT48ZXh0ZW5zaW9uIHVybD0iaHR0cDovL2ZoaXIuYWJkYS5kZS9lUmV6ZXB0QWJnYWJlZGF0ZW4vU3RydWN0dXJlRGVmaW5pdGlvbi9EQVYtUEtWLUVYLUVSUC1BYnJlY2hudW5nc1R5cCI+PHZhbHVlQ29kZWFibGVDb25jZXB0Pjxjb2Rpbmc+PHN5c3RlbSB2YWx1ZT0iaHR0cDovL2ZoaXIuYWJkYS5kZS9lUmV6ZXB0QWJnYWJlZGF0ZW4vQ29kZVN5c3RlbS9EQVYtUEtWLUNTLUVSUC1BYnJlY2hudW5nc1R5cCIvPjxjb2RlIHZhbHVlPSIxIi8+PC9jb2Rpbmc+PC92YWx1ZUNvZGVhYmxlQ29uY2VwdD48L2V4dGVuc2lvbj48ZXh0ZW5zaW9uIHVybD0iaHR0cDovL2ZoaXIuYWJkYS5kZS9lUmV6ZXB0QWJnYWJlZGF0ZW4vU3RydWN0dXJlRGVmaW5pdGlvbi9EQVYtRVgtRVJQLUFicmVjaG51bmdzemVpbGVuIj48dmFsdWVSZWZlcmVuY2U+PHJlZmVyZW5jZSB2YWx1ZT0idXJuOnV1aWQ6Mzk2MTg2NjMtNGIyMy00M2RlLWFiMWQtZGIyNWIyZDg1MTMwIi8+PC92YWx1ZVJlZmVyZW5jZT48L2V4dGVuc2lvbj48c3RhdHVzIHZhbHVlPSJjb21wbGV0ZWQiLz48bWVkaWNhdGlvbkNvZGVhYmxlQ29uY2VwdD48Y29kaW5nPjxzeXN0ZW0gdmFsdWU9Imh0dHA6Ly90ZXJtaW5vbG9neS5obDcub3JnL0NvZGVTeXN0ZW0vZGF0YS1hYnNlbnQtcmVhc29uIi8+PGNvZGUgdmFsdWU9Im5vdC1hcHBsaWNhYmxlIi8+PC9jb2Rpbmc+PC9tZWRpY2F0aW9uQ29kZWFibGVDb25jZXB0PjxwZXJmb3JtZXI+PGFjdG9yPjxyZWZlcmVuY2UgdmFsdWU9InVybjp1dWlkOjYyM2U3ODVjLTBmNmQtNGRiOS04NDg4LTk4MDliODQ5MzUzNyIvPjwvYWN0b3I+PC9wZXJmb3JtZXI+PGF1dGhvcml6aW5nUHJlc2NyaXB0aW9uPjxpZGVudGlmaWVyPjxzeXN0ZW0gdmFsdWU9Imh0dHBzOi8vZ2VtYXRpay5kZS9maGlyL2VycC9OYW1pbmdTeXN0ZW0vR0VNX0VSUF9OU19QcmVzY3JpcHRpb25JZCIvPjx2YWx1ZSB2YWx1ZT0iMjAwLjAwMC4wMDEuMjA1LjIwMy40MCIvPjwvaWRlbnRpZmllcj48L2F1dGhvcml6aW5nUHJlc2NyaXB0aW9uPjx0eXBlPjxjb2Rpbmc+PHN5c3RlbSB2YWx1ZT0iaHR0cDovL2ZoaXIuYWJkYS5kZS9lUmV6ZXB0QWJnYWJlZGF0ZW4vQ29kZVN5c3RlbS9EQVYtQ1MtRVJQLU1lZGljYXRpb25EaXNwZW5zZVR5cCIvPjxjb2RlIHZhbHVlPSJBYmdhYmVpbmZvcm1hdGlvbmVuIi8+PC9jb2Rpbmc+PC90eXBlPjx3aGVuSGFuZGVkT3ZlciB2YWx1ZT0iMjAyMy0wMi0xNyIvPjwvTWVkaWNhdGlvbkRpc3BlbnNlPjwvcmVzb3VyY2U+PC9lbnRyeT48L0J1bmRsZT6ggggpMIIC2DCCAn+gAwIBAgICbBkwCgYIKoZIzj0EAwIwgYQxCzAJBgNVBAYTAkRFMR8wHQYDVQQKDBZnZW1hdGlrIEdtYkggTk9ULVZBTElEMTIwMAYDVQQLDClLb21wb25lbnRlbi1DQSBkZXIgVGVsZW1hdGlraW5mcmFzdHJ1a3R1cjEgMB4GA1UEAwwXR0VNLktPTVAtQ0E1MCBURVNULU9OTFkwHhcNMjMwMTI3MTIxMTA3WhcNMjgwMTI2MTIxMTA2WjBfMQswCQYDVQQGEwJERTEiMCAGA1UECgwZSUJNIFRFU1QtT05MWSAtIE5PVC1WQUxJRDEaMBgGA1UEBRMRMDg3NDctUlVERVZTSUcwMDQxEDAOBgNVBAMMB2VyZXplcHQwWjAUBgcqhkjOPQIBBgkrJAMDAggBAQcDQgAEEAt110GmZW03/Rgi08t+sxViOx7MguDl6CJcVJI6yeKSBQm17RFzdTJ+l2CKvHU5rKG4Elb3TAF5Rwk3N82+nKOCAQIwgf8wHQYDVR0OBBYEFD32mi04umdSQfOiv5rn9SPaSPmcMB8GA1UdIwQYMBaAFDriqiWSTqyplH3PGWnqEwa5qDDTME8GCCsGAQUFBwEBBEMwQTA/BggrBgEFBQcwAYYzaHR0cDovL29jc3AyLXRlc3RyZWYua29tcC1jYS50ZWxlbWF0aWstdGVzdC9vY3NwL2VjMA4GA1UdDwEB/wQEAwIGQDAhBgNVHSAEGjAYMAoGCCqCFABMBIEjMAoGCCqCFABMBIIbMAwGA1UdEwEB/wQCMAAwKwYFKyQIAwMEIjAgMB4wHDAaMBgwCgwIRS1SZXplcHQwCgYIKoIUAEwEggMwCgYIKoZIzj0EAwIDRwAwRAIgONQp32lPnBxxdy6q2rIPyRgq0MDf1NgjussesvU6mkECIB6aixAfGG9Ae0E/1wQhFN45kr8zUJsNM+kaaPpG9PznMIIFSTCCBDGgAwIBAgIHA6EQzzG+qjANBgkqhkiG9w0BAQsFADCBmjELMAkGA1UEBhMCREUxHzAdBgNVBAoMFmdlbWF0aWsgR21iSCBOT1QtVkFMSUQxSDBGBgNVBAsMP0luc3RpdHV0aW9uIGRlcyBHZXN1bmRoZWl0c3dlc2Vucy1DQSBkZXIgVGVsZW1hdGlraW5mcmFzdHJ1a3R1cjEgMB4GA1UEAwwXR0VNLlNNQ0ItQ0EyNCBURVNULU9OTFkwHhcNMjAwMTI0MDAwMDAwWhcNMjQxMjExMjM1OTU5WjCB5TELMAkGA1UEBhMCREUxEDAOBgNVBAcMB0hhbWJ1cmcxDjAMBgNVBBEMBTIyNDUzMRgwFgYDVQQJDA9IZXNlbHN0w7xja2VuIDkxKjAoBgNVBAoMITMtU01DLUItVGVzdGthcnRlLTg4MzExMDAwMDExNjg3MzEdMBsGA1UEBRMUODAyNzY4ODMxMTAwMDAxMTY4NzMxEjAQBgNVBAQMCVNjaHJhw59lcjESMBAGA1UEKgwJU2llZ2ZyaWVkMScwJQYDVQQDDB5BcG90aGVrZSBhbSBGbHVnaGFmZW5URVNULU9OTFkwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDXPpn1+Rj9of5DlEZmGRSn/zfyEuuwcKuZkXFb1CRfnY1aFSUTK3l2mf59S9JmBulNzR48VZJ0VFfOpxNX7HiYt5B9/FIna8OGMAy7ZRjRIVUwoXYKaw4Uw5leHRP4Y0FcQlzc6TidhjQdrSVGKvov9Qvag6WINBVeHj/jS7Jhy2vZMBsIrTRqhYmEBqtymbFlY9QVRNMhhl2kFL+vjx6bZMyvqS5zD8IG9RXKCIiRjHBGoFzYJuIFX8RNMQSBKTW0Z3nr4QRbvzpwbtVmue1dT+E7clvT3r54baWo91Du+I1LzJWvlCUgtlnUml1rQ62MH2KF4qXIgT68HDKCjTiBAgMBAAGjggFFMIIBQTAdBgNVHQ4EFgQUkFwilc+EghFefpYaD9gTURgSpLowDgYDVR0PAQH/BAQDAgZAMCAGA1UdIAQZMBcwCgYIKoIUAEwEgSMwCQYHKoIUAEwETjA4BggrBgEFBQcBAQQsMCowKAYIKwYBBQUHMAGGHGh0dHA6Ly9laGNhLmdlbWF0aWsuZGUvb2NzcC8wHwYDVR0jBBgwFoAUeunhb+oUWRYF7gPp0/0hq97p2Z4wDAYDVR0TAQH/BAIwADCBhAYFKyQIAwMEezB5pCgwJjELMAkGA1UEBhMCREUxFzAVBgNVBAoMDmdlbWF0aWsgQmVybGluME0wSzBJMEcwFwwVw5ZmZmVudGxpY2hlIEFwb3RoZWtlMAkGByqCFABMBDYTITMtU01DLUItVGVzdGthcnRlLTg4MzExMDAwMDExNjg3MzANBgkqhkiG9w0BAQsFAAOCAQEAcJHa47UAMOpR+wuCw9BleBezXdbFw1/qxWEjDhzO/GLSZ9DBwa/v+SGXNU/FMMqH08JKU25jgW5evfBdNtoK5j/S8Cv/dTuqL0ztNQann2Ue1GtZtv5S1Ry5x+QkCje8HD6AwWZuLp/Pib4mQlLpOqvatHshggy71PDTq0YAAt8QKTee0NJApg1Ts7eZBdqPgl4QU0A47CKQXKUQ1bjWD7lEXZGSlXsqmm8//EV66Vkd8cnyquAjtZ858xKptikk1z6VMwp5PEosWwARHG1l0LzP2edpF5aUee6V282Dn/ZtvjlktQGHd9B3AfOXwSHUKJ8O0DUn3E+8JFZKtKZDuqGCBrShggawBggrBgEFBQcQAjCCBqIKAQCgggabMIIGlwYJKwYBBQUHMAEBBIIGiDCCBoQwggFCoVIwUDELMAkGA1UEBhMCREUxGjAYBgNVBAoMEWdlbWF0aWsgTk9ULVZBTElEMSUwIwYDVQQDDBxlaGNhIE9DU1AgU2lnbmVyIDMgVEVTVC1PTkxZGA8yMDIzMDIxNzE0MDc0NlowgbYwgbMwQDAJBgUrDgMCGgUABBQCQueXrXfm7rDq8atTmSkzgTQ1kQQUeunhb+oUWRYF7gPp0/0hq97p2Z4CBwOhEM8xvqqAABgPMjAyMzAyMTcxNDA3NDZaoVwwWjAaBgUrJAgDDAQRGA8yMDIwMDEyNDA3NTQ0OFowPAYFKyQIAw0EMzAxMA0GCWCGSAFlAwQCAQUABCDuhNK4ZE8CVMylx1JXHScZTYhXOPEooyMUkA/Ua8eqDqEiMCAwHgYJKwYBBQUHMAEGBBEYDzE4NzAwMTA3MDAwMDAwWjANBgkqhkiG9w0BAQsFAAOCAQEAnXOC9lRR1j0koUQeBeJyXx0j2O+++t3+irsGwN06OCAxTvrI6GBpujNkGYSNaZcKBoRRXHv61jZo90ki6cx7NInApkTj82aWpUujNvK+GvzQ6GSeLMIbgGPBMdRK5+1MHOpV1KXhq7jmzUegfv3N7zJdGzLuiONTZDMAr2roVdrAI3JFLV9DNDWX1PfKkKNb+xmZlmYn+RGuqpYOE4fIoXfN1Kk8DgoKtxLLyCG4+xTpDLaevpUsIxqM2OB0+WimUrzmWeCFoOD9CWDbsgd2d/5gqqpWaYY/bfEoi8i4RRhhFREzlZh8vjdVE4gZKNZgq5b1tAdwztBEE1hfEKqQVqCCBCYwggQiMIIEHjCCAwagAwIBAgIHA6JrgQuktzANBgkqhkiG9w0BAQsFADCBhDELMAkGA1UEBhMCREUxHzAdBgNVBAoMFmdlbWF0aWsgR21iSCBOT1QtVkFMSUQxMjAwBgNVBAsMKU9DU1AtU2lnbmVyLUNBIGRlciBUZWxlbWF0aWtpbmZyYXN0cnVrdHVyMSAwHgYDVQQDDBdHRU0uT0NTUC1DQTI0IFRFU1QtT05MWTAeFw0xODExMTEwMDAwMDBaFw0yMzExMTAyMzU5NTlaMFAxCzAJBgNVBAYTAkRFMRowGAYDVQQKDBFnZW1hdGlrIE5PVC1WQUxJRDElMCMGA1UEAwwcZWhjYSBPQ1NQIFNpZ25lciAzIFRFU1QtT05MWTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBALnRrqN4t2IAT1xZvYUKGX7x+s/E2GEsxu9LuSZNLJP5d1B4gLptouKjCb02rzIdFxKgTszUzNZEsM35Q+59Do2Gbn/IgUYi87cVyFILzFKRFlgEBNm8IfTTqdKkmEsvbQjp+rbFZH/rRmPHkS1++v9yp7nSqDluER9bHotXK64u08PeFqrO71DCLcIvb+MSheGaSaFIK5s1n93i8jJMVYznpcMXzeOPSZxNtqAZP5/Ov0g1rWrlkEI8GByYTy3eZMXI2IX+RddvwI8wRlz50mC75z6+sdragI+f7jA5BXdgKd+ihd70KYYmeKVDfjJzbxWWuKjJxRMwsMtarKfkV68CAwEAAaOBxzCBxDAdBgNVHQ4EFgQUTi13/mTXh2lbKxFzzQRqcUbNLpcwDAYDVR0TAQH/BAIwADATBgNVHSUEDDAKBggrBgEFBQcDCTAOBgNVHQ8BAf8EBAMCBkAwHwYDVR0jBBgwFoAUWrr3CucYiDdKN1JVewC6Jr5jqcowFQYDVR0gBA4wDDAKBggqghQATASBIzA4BggrBgEFBQcBAQQsMCowKAYIKwYBBQUHMAGGHGh0dHA6Ly9laGNhLmdlbWF0aWsuZGUvb2NzcC8wDQYJKoZIhvcNAQELBQADggEBAH1W2GpmeeCJPKTYH3JygsFfJj5rhkuX5kicEkGfz0awTZkSVQXpstDKWpcFN1TXXKJ46Wb9BA7bl42L18mgS04pr4ef89KUrZtCES3VG+zt98+wH9M5ajB7RVOetOMJR9owOjfljn6xDzIBi7PPPDcRteiwDasFBbr1FXyiZu6QkX6uj2D7pIPhVm+oQxNGS9Xa5G4rknqw6NTZ0CegQrOOGYbNAj5k6zHBaqhJxSXi6sPp1LLfYVcvBT039mLtjyBltmUUJ/MH/Gr68aXtSmG0hZYO/50Pt24jQn+7axlSNinElVUIirDThCpiFBvV7EsNdjHvqWg2d+Yd50mdjPcxggY3MIIGMwIBATCBpjCBmjELMAkGA1UEBhMCREUxHzAdBgNVBAoMFmdlbWF0aWsgR21iSCBOT1QtVkFMSUQxSDBGBgNVBAsMP0luc3RpdHV0aW9uIGRlcyBHZXN1bmRoZWl0c3dlc2Vucy1DQSBkZXIgVGVsZW1hdGlraW5mcmFzdHJ1a3R1cjEgMB4GA1UEAwwXR0VNLlNNQ0ItQ0EyNCBURVNULU9OTFkCBwOhEM8xvqowCwYJYIZIAWUDBAIBoIIBtTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yMzAyMTcxNDA3NDZaMCsGCSqGSIb3DQEJNDEeMBwwCwYJYIZIAWUDBAIBoQ0GCSqGSIb3DQEBCwUAMC8GCSqGSIb3DQEJBDEiBCB5lBIn4qFWr1XDtJ6Iyj57seItRJHif9FkTQ/lHERyDzAwBgsqhkiG9w0BCRACBDEhMB8MEENNU0RvY3VtZW50MnNpZ24GCyqGSIb3DQEJEAIEMIHqBgsqhkiG9w0BCRACLzGB2jCB1zCB1DCB0QQg7oTSuGRPAlTMpcdSVx0nGU2IVzjxKKMjFJAP1GvHqg4wgawwgaCkgZ0wgZoxCzAJBgNVBAYTAkRFMR8wHQYDVQQKDBZnZW1hdGlrIEdtYkggTk9ULVZBTElEMUgwRgYDVQQLDD9JbnN0aXR1dGlvbiBkZXMgR2VzdW5kaGVpdHN3ZXNlbnMtQ0EgZGVyIFRlbGVtYXRpa2luZnJhc3RydWt0dXIxIDAeBgNVBAMMF0dFTS5TTUNCLUNBMjQgVEVTVC1PTkxZAgcDoRDPMb6qMA0GCSqGSIb3DQEBCwUABIIBAH9zPNN2cuKJ+DMV2rpuDAKdl340j+2k2wAvBta0LWbolf1hiMswlQrUL6x/JVQxZ/u2OgsBRYkZ0ZfuOUHH/vzrm0b9r9NlQHATybEHukvTHDvRjatNiO3r66kq6T7WPeJFqMj5yDJSixW88KgnbWJcJGWa91Mqx0sWfL/G4lRAuNoJ0yjJwcYxRVIl0yVL2UaEsNmAk8oko5QhfHun7WnGQhVeT3zP6AKdCblvVYZxH6PHYcUr3Q22jVhEhO7RG2yIC7j+kRNdyC+IL1F3zpqhRgs0X9YttCb5XtP7LTxf4hXqUOs8dXe5zPIrqc8ZZhdKTVTrSwjOxcxqy2dBuAShggKqMIICpgYJKoZIhvcNAQkGMYIClzCCApMCAQEwgYswgYQxCzAJBgNVBAYTAkRFMR8wHQYDVQQKDBZnZW1hdGlrIEdtYkggTk9ULVZBTElEMTIwMAYDVQQLDClLb21wb25lbnRlbi1DQSBkZXIgVGVsZW1hdGlraW5mcmFzdHJ1a3R1cjEgMB4GA1UEAwwXR0VNLktPTVAtQ0E1MCBURVNULU9OTFkCAmwZMAsGCWCGSAFlAwQCAaCCAZwwHAYJKoZIhvcNAQkFMQ8XDTIzMDIxNzE0MDc0N1owLwYJKoZIhvcNAQkEMSIEIEtTU5J6RCCSTH7Alb88zVhHkvS+O9z/dpleMvBoN25rMHkGCSqGSIb3DQEJDzFsMGowCwYJYIZIAWUDBAEqMAsGCWCGSAFlAwQBFjALBglghkgBZQMEAQIwCgYIKoZIhvcNAwcwDgYIKoZIhvcNAwICAgCAMA0GCCqGSIb3DQMCAgFAMAcGBSsOAwIHMA0GCCqGSIb3DQMCAgEoMIHPBgsqhkiG9w0BCRACLzGBvzCBvDCBuTCBtgQg9ei7y+RtvfRiw6uw7EGn1+/Ju00KNBlNNCtctgzjyMYwgZEwgYqkgYcwgYQxCzAJBgNVBAYTAkRFMR8wHQYDVQQKDBZnZW1hdGlrIEdtYkggTk9ULVZBTElEMTIwMAYDVQQLDClLb21wb25lbnRlbi1DQSBkZXIgVGVsZW1hdGlraW5mcmFzdHJ1a3R1cjEgMB4GA1UEAwwXR0VNLktPTVAtQ0E1MCBURVNULU9OTFkCAmwZMAoGCCqGSM49BAMCBEcwRQIhAKmOK6ehUhd/x+nrVTPa0WoazWjb7/pVa8XtjFB+IULPAiBg4dLMHXU4ZcToXKoZxqYV7s0TlHs/8RyYJ3aOEsSfDw=="
-			}
-		}
-	}, {
-		"fullUrl": "urn:uuid:775157da-afc8-4248-b90b-a32163895323",
-		"resource": {
-			"resourceType": "Bundle",
-            "id": "775157da-afc8-4248-b90b-a32163895323",
-			"meta": {
-				"lastUpdated": "2023-02-17T15:07:40.162+01:00",
-				"profile": ["https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Bundle|1.1.0"]
-			},
-			"identifier": {
-				"system": "https://gematik.de/fhir/erp/NamingSystem/GEM_ERP_NS_PrescriptionId",
-				"value": "200.000.001.205.203.40"
-			},
-			"type": "document",
-			"timestamp": "2023-02-17T15:07:40.162+01:00",
-			"entry": [{
-				"fullUrl": "https://pvs.gematik.de/fhir/Composition/25ecd923-1d58-4e74-a0b8-dde43bb06b5e",
-				"resource": {
-					"resourceType": "Composition",
-					"id": "25ecd923-1d58-4e74-a0b8-dde43bb06b5e",
-					"meta": {
-						"profile": ["https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Composition|1.1.0"]
-					},
-					"extension": [{
-						"url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_FOR_PKV_Tariff",
-						"valueCoding": {
-							"system": "https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_KBV_PKV_TARIFF",
-							"code": "03"
-						}
-					}, {
-						"url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_FOR_Legal_basis",
-						"valueCoding": {
-							"system": "https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_KBV_STATUSKENNZEICHEN",
-							"code": "00"
-						}
-					}],
-					"status": "final",
-					"type": {
-						"coding": [{
-							"system": "https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_KBV_FORMULAR_ART",
-							"code": "e16A"
-						}]
-					},
-					"subject": {
-						"reference": "Patient/0e69e4e7-f2c5-4bd6-bf25-5af4e715c472"
-					},
-					"date": "2023-02-17T15:07:40+01:00",
-					"author": [{
-						"reference": "Practitioner/d31cee47-e0e8-4bd6-82f3-e70daecd4b7b",
-						"type": "Practitioner"
-					}, {
-						"type": "Device",
-						"identifier": {
-							"system": "https://fhir.kbv.de/NamingSystem/KBV_NS_FOR_Pruefnummer",
-							"value": "GEMATIK/410/2109/36/123"
-						}
-					}],
-					"title": "elektronische Arzneimittelverordnung",
-					"custodian": {
-						"reference": "Organization/4e118502-4ed8-45f5-9c79-9a64eaab88f6"
-					},
-					"section": [{
-						"code": {
-							"coding": [{
-								"system": "https://fhir.kbv.de/CodeSystem/KBV_CS_ERP_Section_Type",
-								"code": "Coverage"
-							}]
-						},
-						"entry": [{
-							"reference": "Coverage/06f31815-aea8-490a-8c0b-b3123b1600cf"
-						}]
-					}, {
-						"code": {
-							"coding": [{
-								"system": "https://fhir.kbv.de/CodeSystem/KBV_CS_ERP_Section_Type",
-								"code": "Prescription"
-							}]
-						},
-						"entry": [{
-							"reference": "MedicationRequest/28744ee3-ff3a-4793-9036-c11d6b4b105f"
-						}]
-					}]
-				}
-			}, {
-				"fullUrl": "https://pvs.gematik.de/fhir/MedicationRequest/28744ee3-ff3a-4793-9036-c11d6b4b105f",
-				"resource": {
-					"resourceType": "MedicationRequest",
-					"id": "28744ee3-ff3a-4793-9036-c11d6b4b105f",
-					"meta": {
-						"profile": ["https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Prescription|1.1.0"]
-					},
-					"extension": [{
-						"url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_BVG",
-						"valueBoolean": false
-					}, {
-						"url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_EmergencyServicesFee",
-						"valueBoolean": false
-					}, {
-						"url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Multiple_Prescription",
-						"extension": [{
-							"url": "Kennzeichen",
-							"valueBoolean": false
-						}]
-					}, {
-						"url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_FOR_StatusCoPayment",
-						"valueCoding": {
-							"system": "https://fhir.kbv.de/CodeSystem/KBV_CS_FOR_StatusCoPayment",
-							"code": "0"
-						}
-					}],
-					"status": "active",
-					"intent": "order",
-					"medicationReference": {
-						"reference": "Medication/368dadee-d6d9-425b-afbd-93ccbf109ad8"
-					},
-					"subject": {
-						"reference": "Patient/0e69e4e7-f2c5-4bd6-bf25-5af4e715c472"
-					},
-					"authoredOn": "2023-02-17",
-					"requester": {
-						"reference": "Practitioner/d31cee47-e0e8-4bd6-82f3-e70daecd4b7b"
-					},
-					"insurance": [{
-						"reference": "Coverage/06f31815-aea8-490a-8c0b-b3123b1600cf"
-					}],
-					"dosageInstruction": [{
-						"extension": [{
-							"url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_DosageFlag",
-							"valueBoolean": true
-						}],
-						"text": "1-0-0-0"
-					}],
-					"dispenseRequest": {
-						"quantity": {
-							"value": 1,
-							"system": "http://unitsofmeasure.org",
-							"code": "{Package}"
-						}
-					},
-					"substitution": {
-						"allowedBoolean": true
-					}
-				}
-			}, {
-				"fullUrl": "https://pvs.gematik.de/fhir/Medication/368dadee-d6d9-425b-afbd-93ccbf109ad8",
-				"resource": {
-					"resourceType": "Medication",
-					"id": "368dadee-d6d9-425b-afbd-93ccbf109ad8",
-					"meta": {
-						"profile": ["https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Medication_PZN|1.1.0"]
-					},
-					"extension": [{
-						"url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_Base_Medication_Type",
-						"valueCodeableConcept": {
-							"coding": [{
-								"system": "http://snomed.info/sct",
-								"version": "http://snomed.info/sct/900000000000207008/version/20220331",
-								"code": "763158003",
-								"display": "Medicinal product (product)"
-							}]
-						}
-					}, {
-						"url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Medication_Category",
-						"valueCoding": {
-							"system": "https://fhir.kbv.de/CodeSystem/KBV_CS_ERP_Medication_Category",
-							"code": "00"
-						}
-					}, {
-						"url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Medication_Vaccine",
-						"valueBoolean": false
-					}, {
-						"url": "http://fhir.de/StructureDefinition/normgroesse",
-						"valueCode": "NB"
-					}],
-					"code": {
-						"coding": [{
-							"system": "http://fhir.de/CodeSystem/ifa/pzn",
-							"code": "17091124"
-						}],
-						"text": "Schmerzmittel"
-					},
-					"form": {
-						"coding": [{
-							"system": "https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_KBV_DARREICHUNGSFORM",
-							"code": "TAB"
-						}]
-					},
-					"amount": {
-						"numerator": {
-							"extension": [{
-								"url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Medication_PackagingSize",
-								"valueString": "1"
-							}],
-							"unit": "Stk"
-						},
-						"denominator": {
-							"value": 1
-						}
-					}
-				}
-			}, {
-				"fullUrl": "https://pvs.gematik.de/fhir/Patient/0e69e4e7-f2c5-4bd6-bf25-5af4e715c472",
-				"resource": {
-					"resourceType": "Patient",
-					"id": "0e69e4e7-f2c5-4bd6-bf25-5af4e715c472",
-					"meta": {
-						"profile": ["https://fhir.kbv.de/StructureDefinition/KBV_PR_FOR_Patient|1.1.0"]
-					},
-					"identifier": [{
-						"type": {
-							"coding": [{
-								"system": "http://fhir.de/CodeSystem/identifier-type-de-basis",
-								"code": "PKV"
-							}]
-						},
-						"system": "http://fhir.de/sid/pkv/kvid-10",
-						"value": "X110465770"
-					}],
-					"name": [{
-						"use": "official",
-						"family": "Angermänn",
-						"_family": {
-							"extension": [{
-								"url": "http://hl7.org/fhir/StructureDefinition/humanname-own-name",
-								"valueString": "Angermänn"
-							}]
-						},
-						"given": ["Günther"]
-					}],
-					"birthDate": "1976-04-30",
-					"address": [{
-						"type": "both",
-						"line": ["Weiherstr. 74a"],
-						"_line": [{
-							"extension": [{
-								"url": "http://hl7.org/fhir/StructureDefinition/iso21090-ADXP-houseNumber",
-								"valueString": "74a"
-							}, {
-								"url": "http://hl7.org/fhir/StructureDefinition/iso21090-ADXP-streetName",
-								"valueString": "Weiherstr."
-							}]
-						}],
-						"city": "Büttnerdorf",
-						"postalCode": "67411",
-						"country": "D"
-					}]
-				}
-			}, {
-				"fullUrl": "https://pvs.gematik.de/fhir/Organization/4e118502-4ed8-45f5-9c79-9a64eaab88f6",
-				"resource": {
-					"resourceType": "Organization",
-					"id": "4e118502-4ed8-45f5-9c79-9a64eaab88f6",
-					"meta": {
-						"profile": ["https://fhir.kbv.de/StructureDefinition/KBV_PR_FOR_Organization|1.1.0"]
-					},
-					"identifier": [{
-						"type": {
-							"coding": [{
-								"system": "http://terminology.hl7.org/CodeSystem/v2-0203",
-								"code": "BSNR"
-							}]
-						},
-						"system": "https://fhir.kbv.de/NamingSystem/KBV_NS_Base_BSNR",
-						"value": "734374849"
-					}],
-					"name": "Arztpraxis Schraßer",
-					"telecom": [{
-						"system": "phone",
-						"value": "(05808) 9632619"
-					}, {
-						"system": "email",
-						"value": "andre.teufel@xn--schffer-7wa.name"
-					}],
-					"address": [{
-						"type": "both",
-						"line": ["Halligstr. 98"],
-						"_line": [{
-							"extension": [{
-								"url": "http://hl7.org/fhir/StructureDefinition/iso21090-ADXP-houseNumber",
-								"valueString": "98"
-							}, {
-								"url": "http://hl7.org/fhir/StructureDefinition/iso21090-ADXP-streetName",
-								"valueString": "Halligstr."
-							}]
-						}],
-						"city": "Alt Mateo",
-						"postalCode": "85005",
-						"country": "D"
-					}]
-				}
-			}, {
-				"fullUrl": "https://pvs.gematik.de/fhir/Coverage/06f31815-aea8-490a-8c0b-b3123b1600cf",
-				"resource": {
-					"resourceType": "Coverage",
-					"id": "06f31815-aea8-490a-8c0b-b3123b1600cf",
-					"meta": {
-						"profile": ["https://fhir.kbv.de/StructureDefinition/KBV_PR_FOR_Coverage|1.1.0"]
-					},
-					"extension": [{
-						"url": "http://fhir.de/StructureDefinition/gkv/besondere-personengruppe",
-						"valueCoding": {
-							"system": "https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_KBV_PERSONENGRUPPE",
-							"code": "00"
-						}
-					}, {
-						"url": "http://fhir.de/StructureDefinition/gkv/dmp-kennzeichen",
-						"valueCoding": {
-							"system": "https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_KBV_DMP",
-							"code": "00"
-						}
-					}, {
-						"url": "http://fhir.de/StructureDefinition/gkv/wop",
-						"valueCoding": {
-							"system": "https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_ITA_WOP",
-							"code": "71"
-						}
-					}, {
-						"url": "http://fhir.de/StructureDefinition/gkv/versichertenart",
-						"valueCoding": {
-							"system": "https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_KBV_VERSICHERTENSTATUS",
-							"code": "1"
-						}
-					}],
-					"status": "active",
-					"type": {
-						"coding": [{
-							"system": "http://fhir.de/CodeSystem/versicherungsart-de-basis",
-							"code": "PKV"
-						}]
-					},
-					"beneficiary": {
-						"reference": "Patient/53d4475b-bff0-470a-89a4-1811c832ee06"
-					},
-					"payor": [{
-						"identifier": {
-							"system": "http://fhir.de/sid/arge-ik/iknr",
-							"value": "100843242"
-						},
-						"display": "Künstler-Krankenkasse Baden-Württemberg"
-					}]
-				}
-			}, {
-				"fullUrl": "https://pvs.gematik.de/fhir/Practitioner/d31cee47-e0e8-4bd6-82f3-e70daecd4b7b",
-				"resource": {
-					"resourceType": "Practitioner",
-					"id": "d31cee47-e0e8-4bd6-82f3-e70daecd4b7b",
-					"meta": {
-						"profile": ["https://fhir.kbv.de/StructureDefinition/KBV_PR_FOR_Practitioner|1.1.0"]
-					},
-					"identifier": [{
-						"type": {
-							"coding": [{
-								"system": "http://terminology.hl7.org/CodeSystem/v2-0203",
-								"code": "LANR"
-							}]
-						},
-						"system": "https://fhir.kbv.de/NamingSystem/KBV_NS_Base_ANR",
-						"value": "443236256"
-					}],
-					"name": [{
-						"use": "official",
-						"family": "Schraßer",
-						"_family": {
-							"extension": [{
-								"url": "http://hl7.org/fhir/StructureDefinition/humanname-own-name",
-								"valueString": "Schraßer"
-							}]
-						},
-						"given": ["Dr."],
-						"prefix": ["Dr."],
-						"_prefix": [{
-							"extension": [{
-								"url": "http://hl7.org/fhir/StructureDefinition/iso21090-EN-qualifier",
-								"valueCode": "AC"
-							}]
-						}]
-					}],
-					"qualification": [{
-						"code": {
-							"coding": [{
-								"system": "https://fhir.kbv.de/CodeSystem/KBV_CS_FOR_Qualification_Type",
-								"code": "00"
-							}]
-						}
-					}, {
-						"code": {
-							"coding": [{
-								"system": "https://fhir.kbv.de/CodeSystem/KBV_CS_FOR_Berufsbezeichnung",
-								"code": "Berufsbezeichnung"
-							}],
-							"text": "Super-Facharzt für alles Mögliche"
-						}
-					}]
-				}
-			}],
-			"signature": {
-				"type": [{
-					"system": "urn:iso-astm:E1762-95:2013",
-					"code": "1.2.840.10065.1.12.1.1"
-				}],
-				"when": "2023-02-17T14:07:47.806+00:00",
-				"who": {
-					"reference": "https://erp-dev.zentral.erp.splitdns.ti-dienste.de/Device/1"
-				},
-				"sigFormat": "application/pkcs7-mime",
-				"data": "MII01wYJKoZIhvcNAQcCoII0yDCCNMQCAQUxDTALBglghkgBZQMEAgEwgiqxBgkqhkiG9w0BBwGggiqiBIIqnjw/eG1sIHZlcnNpb249IjEuMCIgZW5jb2Rpbmc9InV0Zi04Ij8+CjxCdW5kbGUgeG1sbnM9Imh0dHA6Ly9obDcub3JnL2ZoaXIiPjxpZCB2YWx1ZT0iNzc1MTU3ZGEtYWZjOC00MjQ4LWI5MGItYTMyMTYzODk1MzIzIi8+PG1ldGE+PGxhc3RVcGRhdGVkIHZhbHVlPSIyMDIzLTAyLTE3VDE1OjA3OjQwLjE2MiswMTowMCIvPjxwcm9maWxlIHZhbHVlPSJodHRwczovL2ZoaXIua2J2LmRlL1N0cnVjdHVyZURlZmluaXRpb24vS0JWX1BSX0VSUF9CdW5kbGV8MS4xLjAiLz48L21ldGE+PGlkZW50aWZpZXI+PHN5c3RlbSB2YWx1ZT0iaHR0cHM6Ly9nZW1hdGlrLmRlL2ZoaXIvZXJwL05hbWluZ1N5c3RlbS9HRU1fRVJQX05TX1ByZXNjcmlwdGlvbklkIi8+PHZhbHVlIHZhbHVlPSIyMDAuMDAwLjAwMS4yMDUuMjAzLjQwIi8+PC9pZGVudGlmaWVyPjx0eXBlIHZhbHVlPSJkb2N1bWVudCIvPjx0aW1lc3RhbXAgdmFsdWU9IjIwMjMtMDItMTdUMTU6MDc6NDAuMTYyKzAxOjAwIi8+PGVudHJ5PjxmdWxsVXJsIHZhbHVlPSJodHRwczovL3B2cy5nZW1hdGlrLmRlL2ZoaXIvQ29tcG9zaXRpb24vMjVlY2Q5MjMtMWQ1OC00ZTc0LWEwYjgtZGRlNDNiYjA2YjVlIi8+PHJlc291cmNlPjxDb21wb3NpdGlvbj48aWQgdmFsdWU9IjI1ZWNkOTIzLTFkNTgtNGU3NC1hMGI4LWRkZTQzYmIwNmI1ZSIvPjxtZXRhPjxwcm9maWxlIHZhbHVlPSJodHRwczovL2ZoaXIua2J2LmRlL1N0cnVjdHVyZURlZmluaXRpb24vS0JWX1BSX0VSUF9Db21wb3NpdGlvbnwxLjEuMCIvPjwvbWV0YT48ZXh0ZW5zaW9uIHVybD0iaHR0cHM6Ly9maGlyLmtidi5kZS9TdHJ1Y3R1cmVEZWZpbml0aW9uL0tCVl9FWF9GT1JfUEtWX1RhcmlmZiI+PHZhbHVlQ29kaW5nPjxzeXN0ZW0gdmFsdWU9Imh0dHBzOi8vZmhpci5rYnYuZGUvQ29kZVN5c3RlbS9LQlZfQ1NfU0ZISVJfS0JWX1BLVl9UQVJJRkYiLz48Y29kZSB2YWx1ZT0iMDMiLz48L3ZhbHVlQ29kaW5nPjwvZXh0ZW5zaW9uPjxleHRlbnNpb24gdXJsPSJodHRwczovL2ZoaXIua2J2LmRlL1N0cnVjdHVyZURlZmluaXRpb24vS0JWX0VYX0ZPUl9MZWdhbF9iYXNpcyI+PHZhbHVlQ29kaW5nPjxzeXN0ZW0gdmFsdWU9Imh0dHBzOi8vZmhpci5rYnYuZGUvQ29kZVN5c3RlbS9LQlZfQ1NfU0ZISVJfS0JWX1NUQVRVU0tFTk5aRUlDSEVOIi8+PGNvZGUgdmFsdWU9IjAwIi8+PC92YWx1ZUNvZGluZz48L2V4dGVuc2lvbj48c3RhdHVzIHZhbHVlPSJmaW5hbCIvPjx0eXBlPjxjb2Rpbmc+PHN5c3RlbSB2YWx1ZT0iaHR0cHM6Ly9maGlyLmtidi5kZS9Db2RlU3lzdGVtL0tCVl9DU19TRkhJUl9LQlZfRk9STVVMQVJfQVJUIi8+PGNvZGUgdmFsdWU9ImUxNkEiLz48L2NvZGluZz48L3R5cGU+PHN1YmplY3Q+PHJlZmVyZW5jZSB2YWx1ZT0iUGF0aWVudC8wZTY5ZTRlNy1mMmM1LTRiZDYtYmYyNS01YWY0ZTcxNWM0NzIiLz48L3N1YmplY3Q+PGRhdGUgdmFsdWU9IjIwMjMtMDItMTdUMTU6MDc6NDArMDE6MDAiLz48YXV0aG9yPjxyZWZlcmVuY2UgdmFsdWU9IlByYWN0aXRpb25lci9kMzFjZWU0Ny1lMGU4LTRiZDYtODJmMy1lNzBkYWVjZDRiN2IiLz48dHlwZSB2YWx1ZT0iUHJhY3RpdGlvbmVyIi8+PC9hdXRob3I+PGF1dGhvcj48dHlwZSB2YWx1ZT0iRGV2aWNlIi8+PGlkZW50aWZpZXI+PHN5c3RlbSB2YWx1ZT0iaHR0cHM6Ly9maGlyLmtidi5kZS9OYW1pbmdTeXN0ZW0vS0JWX05TX0ZPUl9QcnVlZm51bW1lciIvPjx2YWx1ZSB2YWx1ZT0iR0VNQVRJSy80MTAvMjEwOS8zNi8xMjMiLz48L2lkZW50aWZpZXI+PC9hdXRob3I+PHRpdGxlIHZhbHVlPSJlbGVrdHJvbmlzY2hlIEFyem5laW1pdHRlbHZlcm9yZG51bmciLz48Y3VzdG9kaWFuPjxyZWZlcmVuY2UgdmFsdWU9Ik9yZ2FuaXphdGlvbi80ZTExODUwMi00ZWQ4LTQ1ZjUtOWM3OS05YTY0ZWFhYjg4ZjYiLz48L2N1c3RvZGlhbj48c2VjdGlvbj48Y29kZT48Y29kaW5nPjxzeXN0ZW0gdmFsdWU9Imh0dHBzOi8vZmhpci5rYnYuZGUvQ29kZVN5c3RlbS9LQlZfQ1NfRVJQX1NlY3Rpb25fVHlwZSIvPjxjb2RlIHZhbHVlPSJDb3ZlcmFnZSIvPjwvY29kaW5nPjwvY29kZT48ZW50cnk+PHJlZmVyZW5jZSB2YWx1ZT0iQ292ZXJhZ2UvMDZmMzE4MTUtYWVhOC00OTBhLThjMGItYjMxMjNiMTYwMGNmIi8+PC9lbnRyeT48L3NlY3Rpb24+PHNlY3Rpb24+PGNvZGU+PGNvZGluZz48c3lzdGVtIHZhbHVlPSJodHRwczovL2ZoaXIua2J2LmRlL0NvZGVTeXN0ZW0vS0JWX0NTX0VSUF9TZWN0aW9uX1R5cGUiLz48Y29kZSB2YWx1ZT0iUHJlc2NyaXB0aW9uIi8+PC9jb2Rpbmc+PC9jb2RlPjxlbnRyeT48cmVmZXJlbmNlIHZhbHVlPSJNZWRpY2F0aW9uUmVxdWVzdC8yODc0NGVlMy1mZjNhLTQ3OTMtOTAzNi1jMTFkNmI0YjEwNWYiLz48L2VudHJ5Pjwvc2VjdGlvbj48L0NvbXBvc2l0aW9uPjwvcmVzb3VyY2U+PC9lbnRyeT48ZW50cnk+PGZ1bGxVcmwgdmFsdWU9Imh0dHBzOi8vcHZzLmdlbWF0aWsuZGUvZmhpci9NZWRpY2F0aW9uUmVxdWVzdC8yODc0NGVlMy1mZjNhLTQ3OTMtOTAzNi1jMTFkNmI0YjEwNWYiLz48cmVzb3VyY2U+PE1lZGljYXRpb25SZXF1ZXN0PjxpZCB2YWx1ZT0iMjg3NDRlZTMtZmYzYS00NzkzLTkwMzYtYzExZDZiNGIxMDVmIi8+PG1ldGE+PHByb2ZpbGUgdmFsdWU9Imh0dHBzOi8vZmhpci5rYnYuZGUvU3RydWN0dXJlRGVmaW5pdGlvbi9LQlZfUFJfRVJQX1ByZXNjcmlwdGlvbnwxLjEuMCIvPjwvbWV0YT48ZXh0ZW5zaW9uIHVybD0iaHR0cHM6Ly9maGlyLmtidi5kZS9TdHJ1Y3R1cmVEZWZpbml0aW9uL0tCVl9FWF9FUlBfQlZHIj48dmFsdWVCb29sZWFuIHZhbHVlPSJmYWxzZSIvPjwvZXh0ZW5zaW9uPjxleHRlbnNpb24gdXJsPSJodHRwczovL2ZoaXIua2J2LmRlL1N0cnVjdHVyZURlZmluaXRpb24vS0JWX0VYX0VSUF9FbWVyZ2VuY3lTZXJ2aWNlc0ZlZSI+PHZhbHVlQm9vbGVhbiB2YWx1ZT0iZmFsc2UiLz48L2V4dGVuc2lvbj48ZXh0ZW5zaW9uIHVybD0iaHR0cHM6Ly9maGlyLmtidi5kZS9TdHJ1Y3R1cmVEZWZpbml0aW9uL0tCVl9FWF9FUlBfTXVsdGlwbGVfUHJlc2NyaXB0aW9uIj48ZXh0ZW5zaW9uIHVybD0iS2VubnplaWNoZW4iPjx2YWx1ZUJvb2xlYW4gdmFsdWU9ImZhbHNlIi8+PC9leHRlbnNpb24+PC9leHRlbnNpb24+PGV4dGVuc2lvbiB1cmw9Imh0dHBzOi8vZmhpci5rYnYuZGUvU3RydWN0dXJlRGVmaW5pdGlvbi9LQlZfRVhfRk9SX1N0YXR1c0NvUGF5bWVudCI+PHZhbHVlQ29kaW5nPjxzeXN0ZW0gdmFsdWU9Imh0dHBzOi8vZmhpci5rYnYuZGUvQ29kZVN5c3RlbS9LQlZfQ1NfRk9SX1N0YXR1c0NvUGF5bWVudCIvPjxjb2RlIHZhbHVlPSIwIi8+PC92YWx1ZUNvZGluZz48L2V4dGVuc2lvbj48c3RhdHVzIHZhbHVlPSJhY3RpdmUiLz48aW50ZW50IHZhbHVlPSJvcmRlciIvPjxtZWRpY2F0aW9uUmVmZXJlbmNlPjxyZWZlcmVuY2UgdmFsdWU9Ik1lZGljYXRpb24vMzY4ZGFkZWUtZDZkOS00MjViLWFmYmQtOTNjY2JmMTA5YWQ4Ii8+PC9tZWRpY2F0aW9uUmVmZXJlbmNlPjxzdWJqZWN0PjxyZWZlcmVuY2UgdmFsdWU9IlBhdGllbnQvMGU2OWU0ZTctZjJjNS00YmQ2LWJmMjUtNWFmNGU3MTVjNDcyIi8+PC9zdWJqZWN0PjxhdXRob3JlZE9uIHZhbHVlPSIyMDIzLTAyLTE3Ii8+PHJlcXVlc3Rlcj48cmVmZXJlbmNlIHZhbHVlPSJQcmFjdGl0aW9uZXIvZDMxY2VlNDctZTBlOC00YmQ2LTgyZjMtZTcwZGFlY2Q0YjdiIi8+PC9yZXF1ZXN0ZXI+PGluc3VyYW5jZT48cmVmZXJlbmNlIHZhbHVlPSJDb3ZlcmFnZS8wNmYzMTgxNS1hZWE4LTQ5MGEtOGMwYi1iMzEyM2IxNjAwY2YiLz48L2luc3VyYW5jZT48ZG9zYWdlSW5zdHJ1Y3Rpb24+PGV4dGVuc2lvbiB1cmw9Imh0dHBzOi8vZmhpci5rYnYuZGUvU3RydWN0dXJlRGVmaW5pdGlvbi9LQlZfRVhfRVJQX0Rvc2FnZUZsYWciPjx2YWx1ZUJvb2xlYW4gdmFsdWU9InRydWUiLz48L2V4dGVuc2lvbj48dGV4dCB2YWx1ZT0iMS0wLTAtMCIvPjwvZG9zYWdlSW5zdHJ1Y3Rpb24+PGRpc3BlbnNlUmVxdWVzdD48cXVhbnRpdHk+PHZhbHVlIHZhbHVlPSIxIi8+PHN5c3RlbSB2YWx1ZT0iaHR0cDovL3VuaXRzb2ZtZWFzdXJlLm9yZyIvPjxjb2RlIHZhbHVlPSJ7UGFja2FnZX0iLz48L3F1YW50aXR5PjwvZGlzcGVuc2VSZXF1ZXN0PjxzdWJzdGl0dXRpb24+PGFsbG93ZWRCb29sZWFuIHZhbHVlPSJ0cnVlIi8+PC9zdWJzdGl0dXRpb24+PC9NZWRpY2F0aW9uUmVxdWVzdD48L3Jlc291cmNlPjwvZW50cnk+PGVudHJ5PjxmdWxsVXJsIHZhbHVlPSJodHRwczovL3B2cy5nZW1hdGlrLmRlL2ZoaXIvTWVkaWNhdGlvbi8zNjhkYWRlZS1kNmQ5LTQyNWItYWZiZC05M2NjYmYxMDlhZDgiLz48cmVzb3VyY2U+PE1lZGljYXRpb24+PGlkIHZhbHVlPSIzNjhkYWRlZS1kNmQ5LTQyNWItYWZiZC05M2NjYmYxMDlhZDgiLz48bWV0YT48cHJvZmlsZSB2YWx1ZT0iaHR0cHM6Ly9maGlyLmtidi5kZS9TdHJ1Y3R1cmVEZWZpbml0aW9uL0tCVl9QUl9FUlBfTWVkaWNhdGlvbl9QWk58MS4xLjAiLz48L21ldGE+PGV4dGVuc2lvbiB1cmw9Imh0dHBzOi8vZmhpci5rYnYuZGUvU3RydWN0dXJlRGVmaW5pdGlvbi9LQlZfRVhfQmFzZV9NZWRpY2F0aW9uX1R5cGUiPjx2YWx1ZUNvZGVhYmxlQ29uY2VwdD48Y29kaW5nPjxzeXN0ZW0gdmFsdWU9Imh0dHA6Ly9zbm9tZWQuaW5mby9zY3QiLz48dmVyc2lvbiB2YWx1ZT0iaHR0cDovL3Nub21lZC5pbmZvL3NjdC85MDAwMDAwMDAwMDAyMDcwMDgvdmVyc2lvbi8yMDIyMDMzMSIvPjxjb2RlIHZhbHVlPSI3NjMxNTgwMDMiLz48ZGlzcGxheSB2YWx1ZT0iTWVkaWNpbmFsIHByb2R1Y3QgKHByb2R1Y3QpIi8+PC9jb2Rpbmc+PC92YWx1ZUNvZGVhYmxlQ29uY2VwdD48L2V4dGVuc2lvbj48ZXh0ZW5zaW9uIHVybD0iaHR0cHM6Ly9maGlyLmtidi5kZS9TdHJ1Y3R1cmVEZWZpbml0aW9uL0tCVl9FWF9FUlBfTWVkaWNhdGlvbl9DYXRlZ29yeSI+PHZhbHVlQ29kaW5nPjxzeXN0ZW0gdmFsdWU9Imh0dHBzOi8vZmhpci5rYnYuZGUvQ29kZVN5c3RlbS9LQlZfQ1NfRVJQX01lZGljYXRpb25fQ2F0ZWdvcnkiLz48Y29kZSB2YWx1ZT0iMDAiLz48L3ZhbHVlQ29kaW5nPjwvZXh0ZW5zaW9uPjxleHRlbnNpb24gdXJsPSJodHRwczovL2ZoaXIua2J2LmRlL1N0cnVjdHVyZURlZmluaXRpb24vS0JWX0VYX0VSUF9NZWRpY2F0aW9uX1ZhY2NpbmUiPjx2YWx1ZUJvb2xlYW4gdmFsdWU9ImZhbHNlIi8+PC9leHRlbnNpb24+PGV4dGVuc2lvbiB1cmw9Imh0dHA6Ly9maGlyLmRlL1N0cnVjdHVyZURlZmluaXRpb24vbm9ybWdyb2Vzc2UiPjx2YWx1ZUNvZGUgdmFsdWU9Ik5CIi8+PC9leHRlbnNpb24+PGNvZGU+PGNvZGluZz48c3lzdGVtIHZhbHVlPSJodHRwOi8vZmhpci5kZS9Db2RlU3lzdGVtL2lmYS9wem4iLz48Y29kZSB2YWx1ZT0iMTcwOTExMjQiLz48L2NvZGluZz48dGV4dCB2YWx1ZT0iU2NobWVyem1pdHRlbCIvPjwvY29kZT48Zm9ybT48Y29kaW5nPjxzeXN0ZW0gdmFsdWU9Imh0dHBzOi8vZmhpci5rYnYuZGUvQ29kZVN5c3RlbS9LQlZfQ1NfU0ZISVJfS0JWX0RBUlJFSUNIVU5HU0ZPUk0iLz48Y29kZSB2YWx1ZT0iVEFCIi8+PC9jb2Rpbmc+PC9mb3JtPjxhbW91bnQ+PG51bWVyYXRvcj48ZXh0ZW5zaW9uIHVybD0iaHR0cHM6Ly9maGlyLmtidi5kZS9TdHJ1Y3R1cmVEZWZpbml0aW9uL0tCVl9FWF9FUlBfTWVkaWNhdGlvbl9QYWNrYWdpbmdTaXplIj48dmFsdWVTdHJpbmcgdmFsdWU9IjEiLz48L2V4dGVuc2lvbj48dW5pdCB2YWx1ZT0iU3RrIi8+PC9udW1lcmF0b3I+PGRlbm9taW5hdG9yPjx2YWx1ZSB2YWx1ZT0iMSIvPjwvZGVub21pbmF0b3I+PC9hbW91bnQ+PC9NZWRpY2F0aW9uPjwvcmVzb3VyY2U+PC9lbnRyeT48ZW50cnk+PGZ1bGxVcmwgdmFsdWU9Imh0dHBzOi8vcHZzLmdlbWF0aWsuZGUvZmhpci9QYXRpZW50LzBlNjllNGU3LWYyYzUtNGJkNi1iZjI1LTVhZjRlNzE1YzQ3MiIvPjxyZXNvdXJjZT48UGF0aWVudD48aWQgdmFsdWU9IjBlNjllNGU3LWYyYzUtNGJkNi1iZjI1LTVhZjRlNzE1YzQ3MiIvPjxtZXRhPjxwcm9maWxlIHZhbHVlPSJodHRwczovL2ZoaXIua2J2LmRlL1N0cnVjdHVyZURlZmluaXRpb24vS0JWX1BSX0ZPUl9QYXRpZW50fDEuMS4wIi8+PC9tZXRhPjxpZGVudGlmaWVyPjx0eXBlPjxjb2Rpbmc+PHN5c3RlbSB2YWx1ZT0iaHR0cDovL2ZoaXIuZGUvQ29kZVN5c3RlbS9pZGVudGlmaWVyLXR5cGUtZGUtYmFzaXMiLz48Y29kZSB2YWx1ZT0iUEtWIi8+PC9jb2Rpbmc+PC90eXBlPjxzeXN0ZW0gdmFsdWU9Imh0dHA6Ly9maGlyLmRlL3NpZC9wa3Yva3ZpZC0xMCIvPjx2YWx1ZSB2YWx1ZT0iWDExMDQ2NTc3MCIvPjwvaWRlbnRpZmllcj48bmFtZT48dXNlIHZhbHVlPSJvZmZpY2lhbCIvPjxmYW1pbHkgdmFsdWU9IkFuZ2VybcOkbm4iPjxleHRlbnNpb24gdXJsPSJodHRwOi8vaGw3Lm9yZy9maGlyL1N0cnVjdHVyZURlZmluaXRpb24vaHVtYW5uYW1lLW93bi1uYW1lIj48dmFsdWVTdHJpbmcgdmFsdWU9IkFuZ2VybcOkbm4iLz48L2V4dGVuc2lvbj48L2ZhbWlseT48Z2l2ZW4gdmFsdWU9IkfDvG50aGVyIi8+PC9uYW1lPjxiaXJ0aERhdGUgdmFsdWU9IjE5NzYtMDQtMzAiLz48YWRkcmVzcz48dHlwZSB2YWx1ZT0iYm90aCIvPjxsaW5lIHZhbHVlPSJXZWloZXJzdHIuIDc0YSI+PGV4dGVuc2lvbiB1cmw9Imh0dHA6Ly9obDcub3JnL2ZoaXIvU3RydWN0dXJlRGVmaW5pdGlvbi9pc28yMTA5MC1BRFhQLWhvdXNlTnVtYmVyIj48dmFsdWVTdHJpbmcgdmFsdWU9Ijc0YSIvPjwvZXh0ZW5zaW9uPjxleHRlbnNpb24gdXJsPSJodHRwOi8vaGw3Lm9yZy9maGlyL1N0cnVjdHVyZURlZmluaXRpb24vaXNvMjEwOTAtQURYUC1zdHJlZXROYW1lIj48dmFsdWVTdHJpbmcgdmFsdWU9IldlaWhlcnN0ci4iLz48L2V4dGVuc2lvbj48L2xpbmU+PGNpdHkgdmFsdWU9IkLDvHR0bmVyZG9yZiIvPjxwb3N0YWxDb2RlIHZhbHVlPSI2NzQxMSIvPjxjb3VudHJ5IHZhbHVlPSJEIi8+PC9hZGRyZXNzPjwvUGF0aWVudD48L3Jlc291cmNlPjwvZW50cnk+PGVudHJ5PjxmdWxsVXJsIHZhbHVlPSJodHRwczovL3B2cy5nZW1hdGlrLmRlL2ZoaXIvT3JnYW5pemF0aW9uLzRlMTE4NTAyLTRlZDgtNDVmNS05Yzc5LTlhNjRlYWFiODhmNiIvPjxyZXNvdXJjZT48T3JnYW5pemF0aW9uPjxpZCB2YWx1ZT0iNGUxMTg1MDItNGVkOC00NWY1LTljNzktOWE2NGVhYWI4OGY2Ii8+PG1ldGE+PHByb2ZpbGUgdmFsdWU9Imh0dHBzOi8vZmhpci5rYnYuZGUvU3RydWN0dXJlRGVmaW5pdGlvbi9LQlZfUFJfRk9SX09yZ2FuaXphdGlvbnwxLjEuMCIvPjwvbWV0YT48aWRlbnRpZmllcj48dHlwZT48Y29kaW5nPjxzeXN0ZW0gdmFsdWU9Imh0dHA6Ly90ZXJtaW5vbG9neS5obDcub3JnL0NvZGVTeXN0ZW0vdjItMDIwMyIvPjxjb2RlIHZhbHVlPSJCU05SIi8+PC9jb2Rpbmc+PC90eXBlPjxzeXN0ZW0gdmFsdWU9Imh0dHBzOi8vZmhpci5rYnYuZGUvTmFtaW5nU3lzdGVtL0tCVl9OU19CYXNlX0JTTlIiLz48dmFsdWUgdmFsdWU9IjczNDM3NDg0OSIvPjwvaWRlbnRpZmllcj48bmFtZSB2YWx1ZT0iQXJ6dHByYXhpcyBTY2hyYcOfZXIiLz48dGVsZWNvbT48c3lzdGVtIHZhbHVlPSJwaG9uZSIvPjx2YWx1ZSB2YWx1ZT0iKDA1ODA4KSA5NjMyNjE5Ii8+PC90ZWxlY29tPjx0ZWxlY29tPjxzeXN0ZW0gdmFsdWU9ImVtYWlsIi8+PHZhbHVlIHZhbHVlPSJhbmRyZS50ZXVmZWxAeG4tLXNjaGZmZXItN3dhLm5hbWUiLz48L3RlbGVjb20+PGFkZHJlc3M+PHR5cGUgdmFsdWU9ImJvdGgiLz48bGluZSB2YWx1ZT0iSGFsbGlnc3RyLiA5OCI+PGV4dGVuc2lvbiB1cmw9Imh0dHA6Ly9obDcub3JnL2ZoaXIvU3RydWN0dXJlRGVmaW5pdGlvbi9pc28yMTA5MC1BRFhQLWhvdXNlTnVtYmVyIj48dmFsdWVTdHJpbmcgdmFsdWU9Ijk4Ii8+PC9leHRlbnNpb24+PGV4dGVuc2lvbiB1cmw9Imh0dHA6Ly9obDcub3JnL2ZoaXIvU3RydWN0dXJlRGVmaW5pdGlvbi9pc28yMTA5MC1BRFhQLXN0cmVldE5hbWUiPjx2YWx1ZVN0cmluZyB2YWx1ZT0iSGFsbGlnc3RyLiIvPjwvZXh0ZW5zaW9uPjwvbGluZT48Y2l0eSB2YWx1ZT0iQWx0IE1hdGVvIi8+PHBvc3RhbENvZGUgdmFsdWU9Ijg1MDA1Ii8+PGNvdW50cnkgdmFsdWU9IkQiLz48L2FkZHJlc3M+PC9Pcmdhbml6YXRpb24+PC9yZXNvdXJjZT48L2VudHJ5PjxlbnRyeT48ZnVsbFVybCB2YWx1ZT0iaHR0cHM6Ly9wdnMuZ2VtYXRpay5kZS9maGlyL0NvdmVyYWdlLzA2ZjMxODE1LWFlYTgtNDkwYS04YzBiLWIzMTIzYjE2MDBjZiIvPjxyZXNvdXJjZT48Q292ZXJhZ2U+PGlkIHZhbHVlPSIwNmYzMTgxNS1hZWE4LTQ5MGEtOGMwYi1iMzEyM2IxNjAwY2YiLz48bWV0YT48cHJvZmlsZSB2YWx1ZT0iaHR0cHM6Ly9maGlyLmtidi5kZS9TdHJ1Y3R1cmVEZWZpbml0aW9uL0tCVl9QUl9GT1JfQ292ZXJhZ2V8MS4xLjAiLz48L21ldGE+PGV4dGVuc2lvbiB1cmw9Imh0dHA6Ly9maGlyLmRlL1N0cnVjdHVyZURlZmluaXRpb24vZ2t2L2Jlc29uZGVyZS1wZXJzb25lbmdydXBwZSI+PHZhbHVlQ29kaW5nPjxzeXN0ZW0gdmFsdWU9Imh0dHBzOi8vZmhpci5rYnYuZGUvQ29kZVN5c3RlbS9LQlZfQ1NfU0ZISVJfS0JWX1BFUlNPTkVOR1JVUFBFIi8+PGNvZGUgdmFsdWU9IjAwIi8+PC92YWx1ZUNvZGluZz48L2V4dGVuc2lvbj48ZXh0ZW5zaW9uIHVybD0iaHR0cDovL2ZoaXIuZGUvU3RydWN0dXJlRGVmaW5pdGlvbi9na3YvZG1wLWtlbm56ZWljaGVuIj48dmFsdWVDb2Rpbmc+PHN5c3RlbSB2YWx1ZT0iaHR0cHM6Ly9maGlyLmtidi5kZS9Db2RlU3lzdGVtL0tCVl9DU19TRkhJUl9LQlZfRE1QIi8+PGNvZGUgdmFsdWU9IjAwIi8+PC92YWx1ZUNvZGluZz48L2V4dGVuc2lvbj48ZXh0ZW5zaW9uIHVybD0iaHR0cDovL2ZoaXIuZGUvU3RydWN0dXJlRGVmaW5pdGlvbi9na3Yvd29wIj48dmFsdWVDb2Rpbmc+PHN5c3RlbSB2YWx1ZT0iaHR0cHM6Ly9maGlyLmtidi5kZS9Db2RlU3lzdGVtL0tCVl9DU19TRkhJUl9JVEFfV09QIi8+PGNvZGUgdmFsdWU9IjcxIi8+PC92YWx1ZUNvZGluZz48L2V4dGVuc2lvbj48ZXh0ZW5zaW9uIHVybD0iaHR0cDovL2ZoaXIuZGUvU3RydWN0dXJlRGVmaW5pdGlvbi9na3YvdmVyc2ljaGVydGVuYXJ0Ij48dmFsdWVDb2Rpbmc+PHN5c3RlbSB2YWx1ZT0iaHR0cHM6Ly9maGlyLmtidi5kZS9Db2RlU3lzdGVtL0tCVl9DU19TRkhJUl9LQlZfVkVSU0lDSEVSVEVOU1RBVFVTIi8+PGNvZGUgdmFsdWU9IjEiLz48L3ZhbHVlQ29kaW5nPjwvZXh0ZW5zaW9uPjxzdGF0dXMgdmFsdWU9ImFjdGl2ZSIvPjx0eXBlPjxjb2Rpbmc+PHN5c3RlbSB2YWx1ZT0iaHR0cDovL2ZoaXIuZGUvQ29kZVN5c3RlbS92ZXJzaWNoZXJ1bmdzYXJ0LWRlLWJhc2lzIi8+PGNvZGUgdmFsdWU9IlBLViIvPjwvY29kaW5nPjwvdHlwZT48YmVuZWZpY2lhcnk+PHJlZmVyZW5jZSB2YWx1ZT0iUGF0aWVudC81M2Q0NDc1Yi1iZmYwLTQ3MGEtODlhNC0xODExYzgzMmVlMDYiLz48L2JlbmVmaWNpYXJ5PjxwYXlvcj48aWRlbnRpZmllcj48c3lzdGVtIHZhbHVlPSJodHRwOi8vZmhpci5kZS9zaWQvYXJnZS1pay9pa25yIi8+PHZhbHVlIHZhbHVlPSIxMDA4NDMyNDIiLz48L2lkZW50aWZpZXI+PGRpc3BsYXkgdmFsdWU9IkvDvG5zdGxlci1LcmFua2Vua2Fzc2UgQmFkZW4tV8O8cnR0ZW1iZXJnIi8+PC9wYXlvcj48L0NvdmVyYWdlPjwvcmVzb3VyY2U+PC9lbnRyeT48ZW50cnk+PGZ1bGxVcmwgdmFsdWU9Imh0dHBzOi8vcHZzLmdlbWF0aWsuZGUvZmhpci9QcmFjdGl0aW9uZXIvZDMxY2VlNDctZTBlOC00YmQ2LTgyZjMtZTcwZGFlY2Q0YjdiIi8+PHJlc291cmNlPjxQcmFjdGl0aW9uZXI+PGlkIHZhbHVlPSJkMzFjZWU0Ny1lMGU4LTRiZDYtODJmMy1lNzBkYWVjZDRiN2IiLz48bWV0YT48cHJvZmlsZSB2YWx1ZT0iaHR0cHM6Ly9maGlyLmtidi5kZS9TdHJ1Y3R1cmVEZWZpbml0aW9uL0tCVl9QUl9GT1JfUHJhY3RpdGlvbmVyfDEuMS4wIi8+PC9tZXRhPjxpZGVudGlmaWVyPjx0eXBlPjxjb2Rpbmc+PHN5c3RlbSB2YWx1ZT0iaHR0cDovL3Rlcm1pbm9sb2d5LmhsNy5vcmcvQ29kZVN5c3RlbS92Mi0wMjAzIi8+PGNvZGUgdmFsdWU9IkxBTlIiLz48L2NvZGluZz48L3R5cGU+PHN5c3RlbSB2YWx1ZT0iaHR0cHM6Ly9maGlyLmtidi5kZS9OYW1pbmdTeXN0ZW0vS0JWX05TX0Jhc2VfQU5SIi8+PHZhbHVlIHZhbHVlPSI0NDMyMzYyNTYiLz48L2lkZW50aWZpZXI+PG5hbWU+PHVzZSB2YWx1ZT0ib2ZmaWNpYWwiLz48ZmFtaWx5IHZhbHVlPSJTY2hyYcOfZXIiPjxleHRlbnNpb24gdXJsPSJodHRwOi8vaGw3Lm9yZy9maGlyL1N0cnVjdHVyZURlZmluaXRpb24vaHVtYW5uYW1lLW93bi1uYW1lIj48dmFsdWVTdHJpbmcgdmFsdWU9IlNjaHJhw59lciIvPjwvZXh0ZW5zaW9uPjwvZmFtaWx5PjxnaXZlbiB2YWx1ZT0iRHIuIi8+PHByZWZpeCB2YWx1ZT0iRHIuIj48ZXh0ZW5zaW9uIHVybD0iaHR0cDovL2hsNy5vcmcvZmhpci9TdHJ1Y3R1cmVEZWZpbml0aW9uL2lzbzIxMDkwLUVOLXF1YWxpZmllciI+PHZhbHVlQ29kZSB2YWx1ZT0iQUMiLz48L2V4dGVuc2lvbj48L3ByZWZpeD48L25hbWU+PHF1YWxpZmljYXRpb24+PGNvZGU+PGNvZGluZz48c3lzdGVtIHZhbHVlPSJodHRwczovL2ZoaXIua2J2LmRlL0NvZGVTeXN0ZW0vS0JWX0NTX0ZPUl9RdWFsaWZpY2F0aW9uX1R5cGUiLz48Y29kZSB2YWx1ZT0iMDAiLz48L2NvZGluZz48L2NvZGU+PC9xdWFsaWZpY2F0aW9uPjxxdWFsaWZpY2F0aW9uPjxjb2RlPjxjb2Rpbmc+PHN5c3RlbSB2YWx1ZT0iaHR0cHM6Ly9maGlyLmtidi5kZS9Db2RlU3lzdGVtL0tCVl9DU19GT1JfQmVydWZz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"
-			}
-		}
-	}, {
-		"fullUrl": "urn:uuid:c8d36312-0000-0000-0003-000000000000",
-		"resource": {
-			"resourceType": "Bundle",
-            "id": "c8d36312-0000-0000-0003-000000000000",
-			"meta": {
-				"profile": ["https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_PR_Bundle|1.2"]
-			},
-			"identifier": {
-				"system": "https://gematik.de/fhir/erp/NamingSystem/GEM_ERP_NS_PrescriptionId",
-				"value": "200.000.001.205.203.40"
-			},
-			"type": "document",
-			"timestamp": "2023-02-17T14:07:43.665+00:00",
-			"link": [{
-				"relation": "self",
-				"url": "https://erp-dev.zentral.erp.splitdns.ti-dienste.de/Task/200.000.001.205.203.40/$close/"
-			}],
-			"entry": [{
-				"fullUrl": "urn:uuid:0cf976ed-8a4c-4078-bc3b-e935f06b4362",
-				"resource": {
-					"resourceType": "Composition",
-					"id": "0cf976ed-8a4c-4078-bc3b-e935f06b4362",
-					"meta": {
-						"profile": ["https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_PR_Composition|1.2"]
-					},
-					"extension": [{
-						"url": "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_EX_Beneficiary",
-						"valueIdentifier": {
-							"system": "https://gematik.de/fhir/sid/telematik-id",
-							"value": "3-SMC-B-Testkarte-883110000116873"
-						}
-					}],
-					"status": "final",
-					"type": {
-						"coding": [{
-							"system": "https://gematik.de/fhir/erp/CodeSystem/GEM_ERP_CS_DocumentType",
-							"code": "3",
-							"display": "Receipt"
-						}]
-					},
-					"date": "2023-02-17T14:07:43.664+00:00",
-					"author": [{
-						"reference": "https://erp-dev.zentral.erp.splitdns.ti-dienste.de/Device/1"
-					}],
-					"title": "Quittung",
-					"event": [{
-						"period": {
-							"start": "2023-02-17T14:07:42.401+00:00",
-							"end": "2023-02-17T14:07:43.664+00:00"
-						}
-					}],
-					"section": [{
-						"entry": [{
-							"reference": "Binary/PrescriptionDigest-200.000.001.205.203.40"
-						}]
-					}]
-				}
-			}, {
-				"fullUrl": "https://erp-dev.zentral.erp.splitdns.ti-dienste.de/Device/1",
-				"resource": {
-					"resourceType": "Device",
-					"id": "1",
-					"meta": {
-						"profile": ["https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_PR_Device|1.2"]
-					},
-					"status": "active",
-					"serialNumber": "1.9.0",
-					"deviceName": [{
-						"name": "E-Rezept Fachdienst",
-						"type": "user-friendly-name"
-					}],
-					"version": [{
-						"value": "1.9.0"
-					}],
-					"contact": [{
-						"system": "email",
-						"value": "betrieb@gematik.de"
-					}]
-				}
-			}, {
-				"fullUrl": "https://erp-dev.zentral.erp.splitdns.ti-dienste.de/Binary/PrescriptionDigest-200.000.001.205.203.40",
-				"resource": {
-					"resourceType": "Binary",
-					"id": "PrescriptionDigest-200.000.001.205.203.40",
-					"meta": {
-						"versionId": "1",
-						"profile": ["https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_PR_Digest|1.2"]
-					},
-					"contentType": "application/octet-stream",
-					"data": "ZQsm4k/OW69rLio6As1LfoTGrAEnvqNUzKBKbQRJbb4="
-				}
-			}],
-			"signature": {
-				"type": [{
-					"system": "urn:iso-astm:E1762-95:2013",
-					"code": "1.2.840.10065.1.12.1.1"
-				}],
-				"when": "2023-02-17T14:07:47.808+00:00",
-				"who": {
-					"reference": "https://erp-dev.zentral.erp.splitdns.ti-dienste.de/Device/1"
-				},
-				"sigFormat": "application/pkcs7-mime",
-				"data": "MIIUmwYJKoZIhvcNAQcCoIIUjDCCFIgCAQUxDTALBglghkgBZQMEAgEwggp1BgkqhkiG9w0BBwGgggpmBIIKYjw/eG1sIHZlcnNpb249IjEuMCIgZW5jb2Rpbmc9InV0Zi04Ij8+CjxCdW5kbGUgeG1sbnM9Imh0dHA6Ly9obDcub3JnL2ZoaXIiPjxpZCB2YWx1ZT0iYzhkMzYzMTItMDAwMC0wMDAwLTAwMDMtMDAwMDAwMDAwMDAwIi8+PG1ldGE+PHByb2ZpbGUgdmFsdWU9Imh0dHBzOi8vZ2VtYXRpay5kZS9maGlyL2VycC9TdHJ1Y3R1cmVEZWZpbml0aW9uL0dFTV9FUlBfUFJfQnVuZGxlfDEuMiIvPjwvbWV0YT48aWRlbnRpZmllcj48c3lzdGVtIHZhbHVlPSJodHRwczovL2dlbWF0aWsuZGUvZmhpci9lcnAvTmFtaW5nU3lzdGVtL0dFTV9FUlBfTlNfUHJlc2NyaXB0aW9uSWQiLz48dmFsdWUgdmFsdWU9IjIwMC4wMDAuMDAxLjIwNS4yMDMuNDAiLz48L2lkZW50aWZpZXI+PHR5cGUgdmFsdWU9ImRvY3VtZW50Ii8+PHRpbWVzdGFtcCB2YWx1ZT0iMjAyMy0wMi0xN1QxNDowNzo0My42NjUrMDA6MDAiLz48bGluaz48cmVsYXRpb24gdmFsdWU9InNlbGYiLz48dXJsIHZhbHVlPSJodHRwczovL2VycC1kZXYuemVudHJhbC5lcnAuc3BsaXRkbnMudGktZGllbnN0ZS5kZS9UYXNrLzIwMC4wMDAuMDAxLjIwNS4yMDMuNDAvJGNsb3NlLyIvPjwvbGluaz48ZW50cnk+PGZ1bGxVcmwgdmFsdWU9InVybjp1dWlkOjBjZjk3NmVkLThhNGMtNDA3OC1iYzNiLWU5MzVmMDZiNDM2MiIvPjxyZXNvdXJjZT48Q29tcG9zaXRpb24+PGlkIHZhbHVlPSIwY2Y5NzZlZC04YTRjLTQwNzgtYmMzYi1lOTM1ZjA2YjQzNjIiLz48bWV0YT48cHJvZmlsZSB2YWx1ZT0iaHR0cHM6Ly9nZW1hdGlrLmRlL2ZoaXIvZXJwL1N0cnVjdHVyZURlZmluaXRpb24vR0VNX0VSUF9QUl9Db21wb3NpdGlvbnwxLjIiLz48L21ldGE+PGV4dGVuc2lvbiB1cmw9Imh0dHBzOi8vZ2VtYXRpay5kZS9maGlyL2VycC9TdHJ1Y3R1cmVEZWZpbml0aW9uL0dFTV9FUlBfRVhfQmVuZWZpY2lhcnkiPjx2YWx1ZUlkZW50aWZpZXI+PHN5c3RlbSB2YWx1ZT0iaHR0cHM6Ly9nZW1hdGlrLmRlL2ZoaXIvc2lkL3RlbGVtYXRpay1pZCIvPjx2YWx1ZSB2YWx1ZT0iMy1TTUMtQi1UZXN0a2FydGUtODgzMTEwMDAwMTE2ODczIi8+PC92YWx1ZUlkZW50aWZpZXI+PC9leHRlbnNpb24+PHN0YXR1cyB2YWx1ZT0iZmluYWwiLz48dHlwZT48Y29kaW5nPjxzeXN0ZW0gdmFsdWU9Imh0dHBzOi8vZ2VtYXRpay5kZS9maGlyL2VycC9Db2RlU3lzdGVtL0dFTV9FUlBfQ1NfRG9jdW1lbnRUeXBlIi8+PGNvZGUgdmFsdWU9IjMiLz48ZGlzcGxheSB2YWx1ZT0iUmVjZWlwdCIvPjwvY29kaW5nPjwvdHlwZT48ZGF0ZSB2YWx1ZT0iMjAyMy0wMi0xN1QxNDowNzo0My42NjQrMDA6MDAiLz48YXV0aG9yPjxyZWZlcmVuY2UgdmFsdWU9Imh0dHBzOi8vZXJwLWRldi56ZW50cmFsLmVycC5zcGxpdGRucy50aS1kaWVuc3RlLmRlL0RldmljZS8xIi8+PC9hdXRob3I+PHRpdGxlIHZhbHVlPSJRdWl0dHVuZyIvPjxldmVudD48cGVyaW9kPjxzdGFydCB2YWx1ZT0iMjAyMy0wMi0xN1QxNDowNzo0Mi40MDErMDA6MDAiLz48ZW5kIHZhbHVlPSIyMDIzLTAyLTE3VDE0OjA3OjQzLjY2NCswMDowMCIvPjwvcGVyaW9kPjwvZXZlbnQ+PHNlY3Rpb24+PGVudHJ5PjxyZWZlcmVuY2UgdmFsdWU9IkJpbmFyeS9QcmVzY3JpcHRpb25EaWdlc3QtMjAwLjAwMC4wMDEuMjA1LjIwMy40MCIvPjwvZW50cnk+PC9zZWN0aW9uPjwvQ29tcG9zaXRpb24+PC9yZXNvdXJjZT48L2VudHJ5PjxlbnRyeT48ZnVsbFVybCB2YWx1ZT0iaHR0cHM6Ly9lcnAtZGV2LnplbnRyYWwuZXJwLnNwbGl0ZG5zLnRpLWRpZW5zdGUuZGUvRGV2aWNlLzEiLz48cmVzb3VyY2U+PERldmljZT48aWQgdmFsdWU9IjEiLz48bWV0YT48cHJvZmlsZSB2YWx1ZT0iaHR0cHM6Ly9nZW1hdGlrLmRlL2ZoaXIvZXJwL1N0cnVjdHVyZURlZmluaXRpb24vR0VNX0VSUF9QUl9EZXZpY2V8MS4yIi8+PC9tZXRhPjxzdGF0dXMgdmFsdWU9ImFjdGl2ZSIvPjxzZXJpYWxOdW1iZXIgdmFsdWU9IjEuOS4wIi8+PGRldmljZU5hbWU+PG5hbWUgdmFsdWU9IkUtUmV6ZXB0IEZhY2hkaWVuc3QiLz48dHlwZSB2YWx1ZT0idXNlci1mcmllbmRseS1uYW1lIi8+PC9kZXZpY2VOYW1lPjx2ZXJzaW9uPjx2YWx1ZSB2YWx1ZT0iMS45LjAiLz48L3ZlcnNpb24+PGNvbnRhY3Q+PHN5c3RlbSB2YWx1ZT0iZW1haWwiLz48dmFsdWUgdmFsdWU9ImJldHJpZWJAZ2VtYXRpay5kZSIvPjwvY29udGFjdD48L0RldmljZT48L3Jlc291cmNlPjwvZW50cnk+PGVudHJ5PjxmdWxsVXJsIHZhbHVlPSJodHRwczovL2VycC1kZXYuemVudHJhbC5lcnAuc3BsaXRkbnMudGktZGllbnN0ZS5kZS9CaW5hcnkvUHJlc2NyaXB0aW9uRGlnZXN0LTIwMC4wMDAuMDAxLjIwNS4yMDMuNDAiLz48cmVzb3VyY2U+PEJpbmFyeT48aWQgdmFsdWU9IlByZXNjcmlwdGlvbkRpZ2VzdC0yMDAuMDAwLjAwMS4yMDUuMjAzLjQwIi8+PG1ldGE+PHZlcnNpb25JZCB2YWx1ZT0iMSIvPjxwcm9maWxlIHZhbHVlPSJodHRwczovL2dlbWF0aWsuZGUvZmhpci9lcnAvU3RydWN0dXJlRGVmaW5pdGlvbi9HRU1fRVJQX1BSX0RpZ2VzdHwxLjIiLz48L21ldGE+PGNvbnRlbnRUeXBlIHZhbHVlPSJhcHBsaWNhdGlvbi9vY3RldC1zdHJlYW0iLz48ZGF0YSB2YWx1ZT0iWlFzbTRrL09XNjlyTGlvNkFzMUxmb1RHckFFbnZxTlV6S0JLYlFSSmJiND0iLz48L0JpbmFyeT48L3Jlc291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"
-			}
-		}
-	}]
+    "resourceType": "Bundle",
+    "id": "11989888-5a17-42e7-b4e1-da4692502f4f",
+    "type": "collection",
+    "timestamp": "2023-02-23T15:08:32.870+00:00",
+    "entry":
+    [
+        {
+            "fullUrl": "https://erp-dev.zentral.erp.splitdns.ti-dienste.de/ChargeItem/200.000.001.206.112.29",
+            "resource":
+            {
+                "resourceType": "ChargeItem",
+                "id": "200.000.001.206.112.29",
+                "meta":
+                {
+                    "profile":
+                    [
+                        "https://gematik.de/fhir/erpchrg/StructureDefinition/GEM_ERPCHRG_PR_ChargeItem|1.0"
+                    ]
+                },
+                "identifier":
+                [
+                    {
+                        "system": "https://gematik.de/fhir/erp/NamingSystem/GEM_ERP_NS_PrescriptionId",
+                        "value": "200.000.001.206.112.29"
+                    },
+                    {
+                        "system": "https://gematik.de/fhir/erp/NamingSystem/GEM_ERP_NS_AccessCode",
+                        "value": "abd4afed9f3f458114fc3407878213e110f238d1afa919fbed7282abbef68bfd"
+                    }
+                ],
+                "status": "billable",
+                "code":
+                {
+                    "coding":
+                    [
+                        {
+                            "system": "http://terminology.hl7.org/CodeSystem/data-absent-reason",
+                            "code": "not-applicable"
+                        }
+                    ]
+                },
+                "subject":
+                {
+                    "identifier":
+                    {
+                        "system": "http://fhir.de/sid/pkv/kvid-10",
+                        "value": "X110465770"
+                    }
+                },
+                "enterer":
+                {
+                    "identifier":
+                    {
+                        "system": "https://gematik.de/fhir/sid/telematik-id",
+                        "value": "3-SMC-B-Testkarte-883110000116873"
+                    }
+                },
+                "enteredDate": "2023-02-23T15:08:32.699+00:00",
+                "supportingInformation":
+                [
+                    {
+                        "reference": "urn:uuid:c8606712-0000-0000-0001-000000000000",
+                        "display": "https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Bundle"
+                    },
+                    {
+                        "reference": "urn:uuid:c8606712-0000-0000-0004-000000000000",
+                        "display": "http://fhir.abda.de/eRezeptAbgabedaten/StructureDefinition/DAV-PKV-PR-ERP-AbgabedatenBundle"
+                    },
+                    {
+                        "reference": "urn:uuid:c8606712-0000-0000-0003-000000000000",
+                        "display": "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_PR_Bundle"
+                    }
+                ]
+            }
+        },
+        {
+            "fullUrl": "urn:uuid:c8606712-0000-0000-0004-000000000000",
+            "resource":
+            {
+                "resourceType": "Bundle",
+                "identifier":
+                {
+                    "system": "https://gematik.de/fhir/erp/NamingSystem/GEM_ERP_NS_PrescriptionId",
+                    "value": "200.000.001.206.112.29"
+                },
+                "timestamp": "2023-07-03T11:30:00Z",
+                "type": "document",
+                "meta":
+                {
+                    "profile":
+                    [
+                        "http://fhir.abda.de/eRezeptAbgabedaten/StructureDefinition/DAV-PKV-PR-ERP-AbgabedatenBundle|1.2"
+                    ],
+                    "tag":
+                    [
+                        {
+                            "display": "Beispiel RezeptAbgabedatenPKV Bundle (PZN-1)"
+                        },
+                        {
+                            "display": "ACHTUNG! Der fachlich korrekte Inhalt der Beispielinstanz kann nicht gewährleistet werden. Wir sind jederzeit dankbar für Hinweise auf Fehler oder für Verbesserungsvorschläge."
+                        }
+                    ]
+                },
+                "id": "6d240a29-144f-477b-b8e7-92d4b4bcebfd",
+                "entry":
+                [
+                    {
+                        "fullUrl": "urn:uuid:0877a6ac-9433-43b2-bcd5-46046479c306",
+                        "resource":
+                        {
+                            "author":
+                            [
+                                {
+                                    "reference": "urn:uuid:b998a7cd-f582-4a23-b86a-58e22402d105"
+                                }
+                            ],
+                            "type":
+                            {
+                                "coding":
+                                [
+                                    {
+                                        "system": "http://fhir.abda.de/eRezeptAbgabedaten/CodeSystem/DAV-CS-ERP-CompositionTypes",
+                                        "code": "ERezeptAbgabedaten"
+                                    }
+                                ]
+                            },
+                            "title": "ERezeptAbgabedaten",
+                            "id": "0877a6ac-9433-43b2-bcd5-46046479c306",
+                            "resourceType": "Composition",
+                            "status": "final",
+                            "date": "2023-07-03T11:30:00Z",
+                            "meta":
+                            {
+                                "profile":
+                                [
+                                    "http://fhir.abda.de/eRezeptAbgabedaten/StructureDefinition/DAV-PKV-PR-ERP-AbgabedatenComposition|1.2"
+                                ]
+                            },
+                            "section":
+                            [
+                                {
+                                    "title": "Abgabeinformationen",
+                                    "entry":
+                                    [
+                                        {
+                                            "reference": "urn:uuid:7b1e6c94-71fb-4bbe-9c5a-2e865efd8526"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "title": "Apotheke",
+                                    "entry":
+                                    [
+                                        {
+                                            "reference": "urn:uuid:b998a7cd-f582-4a23-b86a-58e22402d105"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "fullUrl": "urn:uuid:b998a7cd-f582-4a23-b86a-58e22402d105",
+                        "resource":
+                        {
+                            "name": "Adler-Apotheke",
+                            "identifier":
+                            [
+                                {
+                                    "system": "http://fhir.de/sid/arge-ik/iknr",
+                                    "value": "308412345"
+                                }
+                            ],
+                            "meta":
+                            {
+                                "profile":
+                                [
+                                    "http://fhir.abda.de/eRezeptAbgabedaten/StructureDefinition/DAV-PKV-PR-ERP-Apotheke|1.2"
+                                ]
+                            },
+                            "id": "b998a7cd-f582-4a23-b86a-58e22402d105",
+                            "address":
+                            [
+                                {
+                                    "_line":
+                                    [
+                                        {
+                                            "extension":
+                                            [
+                                                {
+                                                    "valueString": "Taunusstraße",
+                                                    "url": "http://hl7.org/fhir/StructureDefinition/iso21090-ADXP-streetName"
+                                                },
+                                                {
+                                                    "valueString": "89",
+                                                    "url": "http://hl7.org/fhir/StructureDefinition/iso21090-ADXP-houseNumber"
+                                                }
+                                            ]
+                                        }
+                                    ],
+                                    "type": "physical",
+                                    "city": "Langen",
+                                    "line":
+                                    [
+                                        "Taunusstraße 89"
+                                    ],
+                                    "country": "D",
+                                    "postalCode": "63225"
+                                }
+                            ],
+                            "resourceType": "Organization"
+                        }
+                    },
+                    {
+                        "fullUrl": "urn:uuid:7b1e6c94-71fb-4bbe-9c5a-2e865efd8526",
+                        "resource":
+                        {
+                            "type":
+                            {
+                                "coding":
+                                [
+                                    {
+                                        "system": "http://fhir.abda.de/eRezeptAbgabedaten/CodeSystem/DAV-CS-ERP-MedicationDispenseTyp",
+                                        "code": "Abgabeinformationen"
+                                    }
+                                ]
+                            },
+                            "id": "7b1e6c94-71fb-4bbe-9c5a-2e865efd8526",
+                            "resourceType": "MedicationDispense",
+                            "performer":
+                            [
+                                {
+                                    "actor":
+                                    {
+                                        "reference": "urn:uuid:b998a7cd-f582-4a23-b86a-58e22402d105"
+                                    }
+                                }
+                            ],
+                            "status": "completed",
+                            "extension":
+                            [
+                                {
+                                    "valueReference":
+                                    {
+                                        "reference": "urn:uuid:da94b6d8-f853-48b9-b101-be9280b81a71"
+                                    },
+                                    "url": "http://fhir.abda.de/eRezeptAbgabedaten/StructureDefinition/DAV-EX-ERP-Abrechnungszeilen"
+                                },
+                                {
+                                    "valueCodeableConcept":
+                                    {
+                                        "coding":
+                                        [
+                                            {
+                                                "system": "http://fhir.abda.de/eRezeptAbgabedaten/CodeSystem/DAV-PKV-CS-ERP-AbrechnungsTyp",
+                                                "code": "1"
+                                            }
+                                        ]
+                                    },
+                                    "url": "http://fhir.abda.de/eRezeptAbgabedaten/StructureDefinition/DAV-PKV-EX-ERP-AbrechnungsTyp"
+                                }
+                            ],
+                            "medicationCodeableConcept":
+                            {
+                                "coding":
+                                [
+                                    {
+                                        "system": "http://terminology.hl7.org/CodeSystem/data-absent-reason",
+                                        "code": "not-applicable"
+                                    }
+                                ]
+                            },
+                            "meta":
+                            {
+                                "profile":
+                                [
+                                    "http://fhir.abda.de/eRezeptAbgabedaten/StructureDefinition/DAV-PKV-PR-ERP-Abgabeinformationen|1.2"
+                                ]
+                            },
+                            "whenHandedOver": "2023-07-03",
+                            "authorizingPrescription":
+                            [
+                                {
+                                    "identifier":
+                                    {
+                                        "system": "https://gematik.de/fhir/erp/NamingSystem/GEM_ERP_NS_PrescriptionId",
+                                        "value": "200.000.001.206.112.29"
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "fullUrl": "urn:uuid:da94b6d8-f853-48b9-b101-be9280b81a71",
+                        "resource":
+                        {
+                            "status": "issued",
+                            "totalGross":
+                            {
+                                "value": 21.039999999999999,
+                                "extension":
+                                [
+                                    {
+                                        "valueMoney":
+                                        {
+                                            "value": 0.00,
+                                            "currency": "EUR"
+                                        },
+                                        "url": "http://fhir.abda.de/eRezeptAbgabedaten/StructureDefinition/DAV-EX-ERP-Gesamtzuzahlung"
+                                    }
+                                ],
+                                "currency": "EUR"
+                            },
+                            "type":
+                            {
+                                "coding":
+                                [
+                                    {
+                                        "system": "http://fhir.abda.de/eRezeptAbgabedaten/CodeSystem/DAV-CS-ERP-InvoiceTyp",
+                                        "code": "Abrechnungszeilen"
+                                    }
+                                ]
+                            },
+                            "meta":
+                            {
+                                "profile":
+                                [
+                                    "http://fhir.abda.de/eRezeptAbgabedaten/StructureDefinition/DAV-PKV-PR-ERP-Abrechnungszeilen|1.2"
+                                ]
+                            },
+                            "id": "da94b6d8-f853-48b9-b101-be9280b81a71",
+                            "lineItem":
+                            [
+                                {
+                                    "priceComponent":
+                                    [
+                                        {
+                                            "amount":
+                                            {
+                                                "value": 21.039999999999999,
+                                                "currency": "EUR"
+                                            },
+                                            "factor": 1,
+                                            "extension":
+                                            [
+                                                {
+                                                    "valueDecimal": 19.00,
+                                                    "url": "http://fhir.abda.de/eRezeptAbgabedaten/StructureDefinition/DAV-EX-ERP-MwStSatz"
+                                                },
+                                                {
+                                                    "extension":
+                                                    [
+                                                        {
+                                                            "valueCodeableConcept":
+                                                            {
+                                                                "coding":
+                                                                [
+                                                                    {
+                                                                        "system": "http://fhir.abda.de/eRezeptAbgabedaten/CodeSystem/DAV-PKV-CS-ERP-KostenVersicherterKategorie",
+                                                                        "code": "0"
+                                                                    }
+                                                                ]
+                                                            },
+                                                            "url": "Kategorie"
+                                                        },
+                                                        {
+                                                            "valueMoney":
+                                                            {
+                                                                "value": 0.00,
+                                                                "currency": "EUR"
+                                                            },
+                                                            "url": "Kostenbetrag"
+                                                        }
+                                                    ],
+                                                    "url": "http://fhir.abda.de/eRezeptAbgabedaten/StructureDefinition/DAV-EX-ERP-KostenVersicherter"
+                                                }
+                                            ],
+                                            "type": "informational"
+                                        }
+                                    ],
+                                    "chargeItemCodeableConcept":
+                                    {
+                                        "text": "BELOC-ZOK mite 47,5 mg Retardtabletten 30 St",
+                                        "coding":
+                                        [
+                                            {
+                                                "system": "http://fhir.de/CodeSystem/ifa/pzn",
+                                                "code": "03879429"
+                                            }, {
+                                                "system": "http://TA1.abda.de",
+                                                "code": "84256543"
+                                            }, {
+                                                "system": "http://fhir.de/sid/gkv/hmnr",
+                                                "code": "85258976"
+                                            }
+                                        ]
+                                    },
+                                    "sequence": 1
+                                }
+                            ],
+                            "resourceType": "Invoice"
+                        }
+                    }
+                ],
+                "signature":
+                {
+                    "type":
+                    [
+                        {
+                            "system": "urn:iso-astm:E1762-95:2013",
+                            "code": "1.2.840.10065.1.12.1.1"
+                        }
+                    ],
+                    "when": "2023-02-17T14:07:47.809+00:00",
+                    "who":
+                    {
+                        "reference": "https://erp-dev.zentral.erp.splitdns.ti-dienste.de/Device/1"
+                    },
+                    "sigFormat": "application/pkcs7-mime",
+                    "data": "aOEsSfDw=="
+                }
+            }
+        },
+        {
+            "fullUrl": "urn:uuid:c8606712-0000-0000-0001-000000000000",
+            "resource":
+            {
+                "resourceType": "Bundle",
+                "id": "96a3cbd7-0ff3-46e3-8d6e-565905be5f4c",
+                "meta":
+                {
+                    "lastUpdated": "2023-02-23T16:08:26.495+01:00",
+                    "profile":
+                    [
+                        "https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Bundle|1.1.0"
+                    ]
+                },
+                "identifier":
+                {
+                    "system": "https://gematik.de/fhir/erp/NamingSystem/GEM_ERP_NS_PrescriptionId",
+                    "value": "200.000.001.206.112.29"
+                },
+                "type": "document",
+                "timestamp": "2023-02-23T16:08:26.495+01:00",
+                "entry":
+                [
+                    {
+                        "fullUrl": "https://pvs.gematik.de/fhir/Composition/980f2b7b-4300-4b5b-990b-0c6ad3b111fd",
+                        "resource":
+                        {
+                            "resourceType": "Composition",
+                            "id": "980f2b7b-4300-4b5b-990b-0c6ad3b111fd",
+                            "meta":
+                            {
+                                "profile":
+                                [
+                                    "https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Composition|1.1.0"
+                                ]
+                            },
+                            "extension":
+                            [
+                                {
+                                    "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_FOR_PKV_Tariff",
+                                    "valueCoding":
+                                    {
+                                        "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_KBV_PKV_TARIFF",
+                                        "code": "03"
+                                    }
+                                },
+                                {
+                                    "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_FOR_Legal_basis",
+                                    "valueCoding":
+                                    {
+                                        "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_KBV_STATUSKENNZEICHEN",
+                                        "code": "00"
+                                    }
+                                }
+                            ],
+                            "status": "final",
+                            "type":
+                            {
+                                "coding":
+                                [
+                                    {
+                                        "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_KBV_FORMULAR_ART",
+                                        "code": "e16A"
+                                    }
+                                ]
+                            },
+                            "subject":
+                            {
+                                "reference": "Patient/70036944-4464-4e9b-b9c7-7ae6c705dfc4"
+                            },
+                            "date": "2023-02-23T16:08:26+01:00",
+                            "author":
+                            [
+                                {
+                                    "reference": "Practitioner/9f0174a5-2aed-44de-ab7b-b3cf6eccfc04",
+                                    "type": "Practitioner"
+                                },
+                                {
+                                    "type": "Device",
+                                    "identifier":
+                                    {
+                                        "system": "https://fhir.kbv.de/NamingSystem/KBV_NS_FOR_Pruefnummer",
+                                        "value": "GEMATIK/410/2109/36/123"
+                                    }
+                                }
+                            ],
+                            "title": "elektronische Arzneimittelverordnung",
+                            "custodian":
+                            {
+                                "reference": "Organization/7c8c55ae-e7ca-4a1b-baad-f251141ced40"
+                            },
+                            "section":
+                            [
+                                {
+                                    "code":
+                                    {
+                                        "coding":
+                                        [
+                                            {
+                                                "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_ERP_Section_Type",
+                                                "code": "Coverage"
+                                            }
+                                        ]
+                                    },
+                                    "entry":
+                                    [
+                                        {
+                                            "reference": "Coverage/5b40cc79-973e-40cc-889e-0bb2ce044168"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "code":
+                                    {
+                                        "coding":
+                                        [
+                                            {
+                                                "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_ERP_Section_Type",
+                                                "code": "Prescription"
+                                            }
+                                        ]
+                                    },
+                                    "entry":
+                                    [
+                                        {
+                                            "reference": "MedicationRequest/d0b75425-1905-4bb0-9f25-cdb7c25cc026"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "fullUrl": "https://pvs.gematik.de/fhir/MedicationRequest/d0b75425-1905-4bb0-9f25-cdb7c25cc026",
+                        "resource":
+                        {
+                            "resourceType": "MedicationRequest",
+                            "id": "d0b75425-1905-4bb0-9f25-cdb7c25cc026",
+                            "meta":
+                            {
+                                "profile":
+                                [
+                                    "https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Prescription|1.1.0"
+                                ]
+                            },
+                            "extension":
+                            [
+                                {
+                                    "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_BVG",
+                                    "valueBoolean": false
+                                },
+                                {
+                                    "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_EmergencyServicesFee",
+                                    "valueBoolean": false
+                                },
+                                {
+                                    "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Multiple_Prescription",
+                                    "extension":
+                                    [
+                                        {
+                                            "url": "Kennzeichen",
+                                            "valueBoolean": false
+                                        }
+                                    ]
+                                },
+                                {
+                                    "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_FOR_StatusCoPayment",
+                                    "valueCoding":
+                                    {
+                                        "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_FOR_StatusCoPayment",
+                                        "code": "0"
+                                    }
+                                }
+                            ],
+                            "status": "active",
+                            "intent": "order",
+                            "medicationReference":
+                            {
+                                "reference": "Medication/a5353966-08e0-4c70-a063-c4a3429967f7"
+                            },
+                            "subject":
+                            {
+                                "reference": "Patient/70036944-4464-4e9b-b9c7-7ae6c705dfc4"
+                            },
+                            "authoredOn": "2023-02-23",
+                            "requester":
+                            {
+                                "reference": "Practitioner/9f0174a5-2aed-44de-ab7b-b3cf6eccfc04"
+                            },
+                            "insurance":
+                            [
+                                {
+                                    "reference": "Coverage/5b40cc79-973e-40cc-889e-0bb2ce044168"
+                                }
+                            ],
+                            "dosageInstruction":
+                            [
+                                {
+                                    "extension":
+                                    [
+                                        {
+                                            "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_DosageFlag",
+                                            "valueBoolean": true
+                                        }
+                                    ],
+                                    "text": "1-0-0-0"
+                                }
+                            ],
+                            "dispenseRequest":
+                            {
+                                "quantity":
+                                {
+                                    "value": 1,
+                                    "system": "http://unitsofmeasure.org",
+                                    "code": "{Package}"
+                                }
+                            },
+                            "substitution":
+                            {
+                                "allowedBoolean": true
+                            }
+                        }
+                    },
+                    {
+                        "fullUrl": "https://pvs.gematik.de/fhir/Medication/a5353966-08e0-4c70-a063-c4a3429967f7",
+                        "resource":
+                        {
+                            "resourceType": "Medication",
+                            "id": "a5353966-08e0-4c70-a063-c4a3429967f7",
+                            "meta":
+                            {
+                                "profile":
+                                [
+                                    "https://fhir.kbv.de/StructureDefinition/KBV_PR_ERP_Medication_PZN|1.1.0"
+                                ]
+                            },
+                            "extension":
+                            [
+                                {
+                                    "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_Base_Medication_Type",
+                                    "valueCodeableConcept":
+                                    {
+                                        "coding":
+                                        [
+                                            {
+                                                "system": "http://snomed.info/sct",
+                                                "version": "http://snomed.info/sct/900000000000207008/version/20220331",
+                                                "code": "763158003",
+                                                "display": "Medicinal product (product)"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Medication_Category",
+                                    "valueCoding":
+                                    {
+                                        "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_ERP_Medication_Category",
+                                        "code": "00"
+                                    }
+                                },
+                                {
+                                    "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Medication_Vaccine",
+                                    "valueBoolean": false
+                                },
+                                {
+                                    "url": "http://fhir.de/StructureDefinition/normgroesse",
+                                    "valueCode": "NB"
+                                }
+                            ],
+                            "code":
+                            {
+                                "coding":
+                                [
+                                    {
+                                        "system": "http://fhir.de/CodeSystem/ifa/pzn",
+                                        "code": "15222136"
+                                    }
+                                ],
+                                "text": "Schmerzmittel"
+                            },
+                            "form":
+                            {
+                                "coding":
+                                [
+                                    {
+                                        "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_KBV_DARREICHUNGSFORM",
+                                        "code": "TAB"
+                                    }
+                                ]
+                            },
+                            "amount":
+                            {
+                                "numerator":
+                                {
+                                    "extension":
+                                    [
+                                        {
+                                            "url": "https://fhir.kbv.de/StructureDefinition/KBV_EX_ERP_Medication_PackagingSize",
+                                            "valueString": "1"
+                                        }
+                                    ],
+                                    "unit": "Stk"
+                                },
+                                "denominator":
+                                {
+                                    "value": 1
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "fullUrl": "https://pvs.gematik.de/fhir/Patient/70036944-4464-4e9b-b9c7-7ae6c705dfc4",
+                        "resource":
+                        {
+                            "resourceType": "Patient",
+                            "id": "70036944-4464-4e9b-b9c7-7ae6c705dfc4",
+                            "meta":
+                            {
+                                "profile":
+                                [
+                                    "https://fhir.kbv.de/StructureDefinition/KBV_PR_FOR_Patient|1.1.0"
+                                ]
+                            },
+                            "identifier":
+                            [
+                                {
+                                    "type":
+                                    {
+                                        "coding":
+                                        [
+                                            {
+                                                "system": "http://fhir.de/CodeSystem/identifier-type-de-basis",
+                                                "code": "PKV"
+                                            }
+                                        ]
+                                    },
+                                    "system": "http://fhir.de/sid/pkv/kvid-10",
+                                    "value": "X110465770"
+                                }
+                            ],
+                            "name":
+                            [
+                                {
+                                    "use": "official",
+                                    "family": "Angermänn",
+                                    "_family":
+                                    {
+                                        "extension":
+                                        [
+                                            {
+                                                "url": "http://hl7.org/fhir/StructureDefinition/humanname-own-name",
+                                                "valueString": "Angermänn"
+                                            }
+                                        ]
+                                    },
+                                    "given":
+                                    [
+                                        "Günther"
+                                    ]
+                                }
+                            ],
+                            "birthDate": "1964-03-10",
+                            "address":
+                            [
+                                {
+                                    "type": "both",
+                                    "line":
+                                    [
+                                        "Driescher Hecke 56"
+                                    ],
+                                    "_line":
+                                    [
+                                        {
+                                            "extension":
+                                            [
+                                                {
+                                                    "url": "http://hl7.org/fhir/StructureDefinition/iso21090-ADXP-houseNumber",
+                                                    "valueString": "56"
+                                                },
+                                                {
+                                                    "url": "http://hl7.org/fhir/StructureDefinition/iso21090-ADXP-streetName",
+                                                    "valueString": "Driescher Hecke"
+                                                }
+                                            ]
+                                        }
+                                    ],
+                                    "city": "Neu Eladorf",
+                                    "postalCode": "67130",
+                                    "country": "D"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "fullUrl": "https://pvs.gematik.de/fhir/Organization/7c8c55ae-e7ca-4a1b-baad-f251141ced40",
+                        "resource":
+                        {
+                            "resourceType": "Organization",
+                            "id": "7c8c55ae-e7ca-4a1b-baad-f251141ced40",
+                            "meta":
+                            {
+                                "profile":
+                                [
+                                    "https://fhir.kbv.de/StructureDefinition/KBV_PR_FOR_Organization|1.1.0"
+                                ]
+                            },
+                            "identifier":
+                            [
+                                {
+                                    "type":
+                                    {
+                                        "coding":
+                                        [
+                                            {
+                                                "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                                                "code": "BSNR"
+                                            }
+                                        ]
+                                    },
+                                    "system": "https://fhir.kbv.de/NamingSystem/KBV_NS_Base_BSNR",
+                                    "value": "831957093"
+                                }
+                            ],
+                            "name": "Arztpraxis Schraßer",
+                            "telecom":
+                            [
+                                {
+                                    "system": "phone",
+                                    "value": "+49-720-1828263"
+                                },
+                                {
+                                    "system": "email",
+                                    "value": "dina.assmus@apitz.net"
+                                }
+                            ],
+                            "address":
+                            [
+                                {
+                                    "type": "both",
+                                    "line":
+                                    [
+                                        "Rudolf-Mann-Platz 5"
+                                    ],
+                                    "_line":
+                                    [
+                                        {
+                                            "extension":
+                                            [
+                                                {
+                                                    "url": "http://hl7.org/fhir/StructureDefinition/iso21090-ADXP-houseNumber",
+                                                    "valueString": "5"
+                                                },
+                                                {
+                                                    "url": "http://hl7.org/fhir/StructureDefinition/iso21090-ADXP-streetName",
+                                                    "valueString": "Rudolf-Mann-Platz"
+                                                }
+                                            ]
+                                        }
+                                    ],
+                                    "city": "Ceylinburg",
+                                    "postalCode": "83852",
+                                    "country": "D"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "fullUrl": "https://pvs.gematik.de/fhir/Coverage/5b40cc79-973e-40cc-889e-0bb2ce044168",
+                        "resource":
+                        {
+                            "resourceType": "Coverage",
+                            "id": "5b40cc79-973e-40cc-889e-0bb2ce044168",
+                            "meta":
+                            {
+                                "profile":
+                                [
+                                    "https://fhir.kbv.de/StructureDefinition/KBV_PR_FOR_Coverage|1.1.0"
+                                ]
+                            },
+                            "extension":
+                            [
+                                {
+                                    "url": "http://fhir.de/StructureDefinition/gkv/besondere-personengruppe",
+                                    "valueCoding":
+                                    {
+                                        "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_KBV_PERSONENGRUPPE",
+                                        "code": "00"
+                                    }
+                                },
+                                {
+                                    "url": "http://fhir.de/StructureDefinition/gkv/dmp-kennzeichen",
+                                    "valueCoding":
+                                    {
+                                        "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_KBV_DMP",
+                                        "code": "00"
+                                    }
+                                },
+                                {
+                                    "url": "http://fhir.de/StructureDefinition/gkv/wop",
+                                    "valueCoding":
+                                    {
+                                        "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_ITA_WOP",
+                                        "code": "38"
+                                    }
+                                },
+                                {
+                                    "url": "http://fhir.de/StructureDefinition/gkv/versichertenart",
+                                    "valueCoding":
+                                    {
+                                        "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_SFHIR_KBV_VERSICHERTENSTATUS",
+                                        "code": "1"
+                                    }
+                                }
+                            ],
+                            "status": "active",
+                            "type":
+                            {
+                                "coding":
+                                [
+                                    {
+                                        "system": "http://fhir.de/CodeSystem/versicherungsart-de-basis",
+                                        "code": "PKV"
+                                    }
+                                ]
+                            },
+                            "beneficiary":
+                            {
+                                "reference": "Patient/6b725945-05ba-4b79-b880-6b9cd19a8caa"
+                            },
+                            "payor":
+                            [
+                                {
+                                    "identifier":
+                                    {
+                                        "system": "http://fhir.de/sid/arge-ik/iknr",
+                                        "value": "759428189"
+                                    },
+                                    "display": "Farmer Pfalz"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "fullUrl": "https://pvs.gematik.de/fhir/Practitioner/9f0174a5-2aed-44de-ab7b-b3cf6eccfc04",
+                        "resource":
+                        {
+                            "resourceType": "Practitioner",
+                            "id": "9f0174a5-2aed-44de-ab7b-b3cf6eccfc04",
+                            "meta":
+                            {
+                                "profile":
+                                [
+                                    "https://fhir.kbv.de/StructureDefinition/KBV_PR_FOR_Practitioner|1.1.0"
+                                ]
+                            },
+                            "identifier":
+                            [
+                                {
+                                    "type":
+                                    {
+                                        "coding":
+                                        [
+                                            {
+                                                "system": "http://terminology.hl7.org/CodeSystem/v2-0203",
+                                                "code": "LANR"
+                                            }
+                                        ]
+                                    },
+                                    "system": "https://fhir.kbv.de/NamingSystem/KBV_NS_Base_ANR",
+                                    "value": "208818254"
+                                }
+                            ],
+                            "name":
+                            [
+                                {
+                                    "use": "official",
+                                    "family": "Schraßer",
+                                    "_family":
+                                    {
+                                        "extension":
+                                        [
+                                            {
+                                                "url": "http://hl7.org/fhir/StructureDefinition/humanname-own-name",
+                                                "valueString": "Schraßer"
+                                            }
+                                        ]
+                                    },
+                                    "given":
+                                    [
+                                        "Dr."
+                                    ],
+                                    "prefix":
+                                    [
+                                        "Dr."
+                                    ],
+                                    "_prefix":
+                                    [
+                                        {
+                                            "extension":
+                                            [
+                                                {
+                                                    "url": "http://hl7.org/fhir/StructureDefinition/iso21090-EN-qualifier",
+                                                    "valueCode": "AC"
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ],
+                            "qualification":
+                            [
+                                {
+                                    "code":
+                                    {
+                                        "coding":
+                                        [
+                                            {
+                                                "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_FOR_Qualification_Type",
+                                                "code": "00"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "code":
+                                    {
+                                        "coding":
+                                        [
+                                            {
+                                                "system": "https://fhir.kbv.de/CodeSystem/KBV_CS_FOR_Berufsbezeichnung",
+                                                "code": "Berufsbezeichnung"
+                                            }
+                                        ],
+                                        "text": "Super-Facharzt für alles Mögliche"
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                ],
+                "signature":
+                {
+                    "type":
+                    [
+                        {
+                            "system": "urn:iso-astm:E1762-95:2013",
+                            "code": "1.2.840.10065.1.12.1.1"
+                        }
+                    ],
+                    "when": "2023-02-23T15:08:32.983+00:00",
+                    "who":
+                    {
+                        "reference": "https://erp-dev.zentral.erp.splitdns.ti-dienste.de/Device/1"
+                    },
+                    "sigFormat": "application/pkcs7-mime",
+                    "data": "MII0wgYJKoZIhvcNAQcCoII0szCCNK8CAQUxDTALBglghkgBZQMEAgEwgiqcBgkqhkiG9w0BBwGggiqNBIIqiTw/eG1sIHZlcnNpb249IjEuMCIgZW5jb2Rpbmc9InV0Zi04Ij8+CjxCdW5kbGUgeG1sbnM9Imh0dHA6Ly9obDcub3JnL2ZoaXIiPjxpZCB2YWx1ZT0iOTZhM2NiZDctMGZmMy00NmUzLThkNmUtNTY1OTA1YmU1ZjRjIi8+PG1ldGE+PGxhc3RVcGRhdGVkIHZhbHVlPSIyMDIzLTAyLTIzVDE2OjA4OjI2LjQ5NSswMTowMCIvPjxwcm9maWxlIHZhbHVlPSJodHRwczovL2ZoaXIua2J2LmRlL1N0cnVjdHVyZURlZmluaXRpb24vS0JWX1BSX0VSUF9CdW5kbGV8MS4xLjAiLz48L21ldGE+PGlkZW50aWZpZXI+PHN5c3RlbSB2YWx1ZT0iaHR0cHM6Ly9nZW1hdGlrLmRlL2ZoaXIvZXJwL05hbWluZ1N5c3RlbS9HRU1fRVJQX05TX1ByZXNjcmlwdGlvbklkIi8+PHZhbHVlIHZhbHVlPSIyMDAuMDAwLjAwMS4yMDYuMTEyLjI5Ii8+PC9pZGVudGlmaWVyPjx0eXBlIHZhbHVlPSJkb2N1bWVudCIvPjx0aW1lc3RhbXAgdmFsdWU9IjIwMjMtMDItMjNUMTY6MDg6MjYuNDk1KzAxOjAwIi8+PGVudHJ5PjxmdWxsVXJsIHZhbHVlPSJodHRwczovL3B2cy5nZW1hdGlrLmRlL2ZoaXIvQ29tcG9zaXRpb24vOTgwZjJiN2ItNDMwMC00YjViLTk5MGItMGM2YWQzYjExMWZkIi8+PHJlc291cmNlPjxDb21wb3NpdGlvbj48aWQgdmFsdWU9Ijk4MGYyYjdiLTQzMDAtNGI1Yi05OTBiLTBjNmFkM2IxMTFmZCIvPjxtZXRhPjxwcm9maWxlIHZhbHVlPSJodHRwczovL2ZoaXIua2J2LmRlL1N0cnVjdHVyZURlZmluaXRpb24vS0JWX1BSX0VSUF9Db21wb3NpdGlvbnwxLjEuMCIvPjwvbWV0YT48ZXh0ZW5zaW9uIHVybD0iaHR0cHM6Ly9maGlyLmtidi5kZS9TdHJ1Y3R1cmVEZWZpbml0aW9uL0tCVl9FWF9GT1JfUEtWX1RhcmlmZiI+PHZhbHVlQ29kaW5nPjxzeXN0ZW0gdmFsdWU9Imh0dHBzOi8vZmhpci5rYnYuZGUvQ29kZVN5c3RlbS9LQlZfQ1NfU0ZISVJfS0JWX1BLVl9UQVJJRkYiLz48Y29kZSB2YWx1ZT0iMDMiLz48L3ZhbHVlQ29kaW5nPjwvZXh0ZW5zaW9uPjxleHRlbnNpb24gdXJsPSJodHRwczovL2ZoaXIua2J2LmRlL1N0cnVjdHVyZURlZmluaXRpb24vS0JWX0VYX0ZPUl9MZWdhbF9iYXNpcyI+PHZhbHVlQ29kaW5nPjxzeXN0ZW0gdmFsdWU9Imh0dHBzOi8vZmhpci5rYnYuZGUvQ29kZVN5c3RlbS9LQlZfQ1NfU0ZISVJfS0JWX1NUQVRVU0tFTk5aRUlDSEVOIi8+PGNvZGUgdmFsdWU9IjAwIi8+PC92YWx1ZUNvZGluZz48L2V4dGVuc2lvbj48c3RhdHVzIHZhbHVlPSJmaW5hbCIvPjx0eXBlPjxjb2Rpbmc+PHN5c3RlbSB2YWx1ZT0iaHR0cHM6Ly9maGlyLmtidi5kZS9Db2RlU3lzdGVtL0tCVl9DU19TRkhJUl9LQlZfRk9STVVMQVJfQVJUIi8+PGNvZGUgdmFsdWU9ImUxNkEiLz48L2NvZGluZz48L3R5cGU+PHN1YmplY3Q+PHJlZmVyZW5jZSB2YWx1ZT0iUGF0aWVudC83MDAzNjk0NC00NDY0LTRlOWItYjljNy03YWU2YzcwNWRmYzQiLz48L3N1YmplY3Q+PGRhdGUgdmFsdWU9IjIwMjMtMDItMjNUMTY6MDg6MjYrMDE6MDAiLz48YXV0aG9yPjxyZWZlcmVuY2UgdmFsdWU9IlByYWN0aXRpb25lci85ZjAxNzRhNS0yYWVkLTQ0ZGUtYWI3Yi1iM2NmNmVjY2ZjMDQiLz48dHlwZSB2YWx1ZT0iUHJhY3RpdGlvbmVyIi8+PC9hdXRob3I+PGF1dGhvcj48dHlwZSB2YWx1ZT0iRGV2aWNlIi8+PGlkZW50aWZpZXI+PHN5c3RlbSB2YWx1ZT0iaHR0cHM6Ly9maGlyLmtidi5kZS9OYW1pbmdTeXN0ZW0vS0JWX05TX0ZPUl9QcnVlZm51bW1lciIvPjx2YWx1ZSB2YWx1ZT0iR0VNQVRJSy80MTAvMjEwOS8zNi8xMjMiLz48L2lkZW50aWZpZXI+PC9hdXRob3I+PHRpdGxlIHZhbHVlPSJlbGVrdHJvbmlzY2hlIEFyem5laW1pdHRlbHZlcm9yZG51bmciLz48Y3VzdG9kaWFuPjxyZWZlcmVuY2UgdmFsdWU9Ik9yZ2FuaXphdGlvbi83YzhjNTVhZS1lN2NhLTRhMWItYmFhZC1mMjUxMTQxY2VkNDAiLz48L2N1c3RvZGlhbj48c2VjdGlvbj48Y29kZT48Y29kaW5nPjxzeXN0ZW0gdmFsdWU9Imh0dHBzOi8vZmhpci5rYnYuZGUvQ29kZVN5c3RlbS9LQlZfQ1NfRVJQX1NlY3Rpb25fVHlwZSIvPjxjb2RlIHZhbHVlPSJDb3ZlcmFnZSIvPjwvY29kaW5nPjwvY29kZT48ZW50cnk+PHJlZmVyZW5jZSB2YWx1ZT0iQ292ZXJhZ2UvNWI0MGNjNzktOTczZS00MGNjLTg4OWUtMGJiMmNlMDQ0MTY4Ii8+PC9lbnRyeT48L3NlY3Rpb24+PHNlY3Rpb24+PGNvZGU+PGNvZGluZz48c3lzdGVtIHZhbHVlPSJodHRwczovL2ZoaXIua2J2LmRlL0NvZGVTeXN0ZW0vS0JWX0NTX0VSUF9TZWN0aW9uX1R5cGUiLz48Y29kZSB2YWx1ZT0iUHJlc2NyaXB0aW9uIi8+PC9jb2Rpbmc+PC9jb2RlPjxlbnRyeT48cmVmZXJlbmNlIHZhbHVlPSJNZWRpY2F0aW9uUmVxdWVzdC9kMGI3NTQyNS0xOTA1LTRiYjAtOWYyNS1jZGI3YzI1Y2MwMjYiLz48L2VudHJ5Pjwvc2VjdGlvbj48L0NvbXBvc2l0aW9uPjwvcmVzb3VyY2U+PC9lbnRyeT48ZW50cnk+PGZ1bGxVcmwgdmFsdWU9Imh0dHBzOi8vcHZzLmdlbWF0aWsuZGUvZmhpci9NZWRpY2F0aW9uUmVxdWVzdC9kMGI3NTQyNS0xOTA1LTRiYjAtOWYyNS1jZGI3YzI1Y2MwMjYiLz48cmVzb3VyY2U+PE1lZGljYXRpb25SZXF1ZXN0PjxpZCB2YWx1ZT0iZDBiNzU0MjUtMTkwNS00YmIwLTlmMjUtY2RiN2MyNWNjMDI2Ii8+PG1ldGE+PHByb2ZpbGUgdmFsdWU9Imh0dHBzOi8vZmhpci5rYnYuZGUvU3RydWN0dXJlRGVmaW5pdGlvbi9LQlZfUFJfRVJQX1ByZXNjcmlwdGlvbnwxLjEuMCIvPjwvbWV0YT48ZXh0ZW5zaW9uIHVybD0iaHR0cHM6Ly9maGlyLmtidi5kZS9TdHJ1Y3R1cmVEZWZpbml0aW9uL0tCVl9FWF9FUlBfQlZHIj48dmFsdWVCb29sZWFuIHZhbHVlPSJmYWxzZSIvPjwvZXh0ZW5zaW9uPjxleHRlbnNpb24gdXJsPSJodHRwczovL2ZoaXIua2J2LmRlL1N0cnVjdHVyZURlZmluaXRpb24vS0JWX0VYX0VSUF9FbWVyZ2VuY3lTZXJ2aWNlc0ZlZSI+PHZhbHVlQm9vbGVhbiB2YWx1ZT0iZmFsc2UiLz48L2V4dGVuc2lvbj48ZXh0ZW5zaW9uIHVybD0iaHR0cHM6Ly9maGlyLmtidi5kZS9TdHJ1Y3R1cmVEZWZpbml0aW9uL0tCVl9FWF9FUlBfTXVsdGlwbGVfUHJlc2NyaXB0aW9uIj48ZXh0ZW5zaW9uIHVybD0iS2VubnplaWNoZW4iPjx2YWx1ZUJvb2xlYW4gdmFsdWU9ImZhbHNlIi8+PC9leHRlbnNpb24+PC9leHRlbnNpb24+PGV4dGVuc2lvbiB1cmw9Imh0dHBzOi8vZmhpci5rYnYuZGUvU3RydWN0dXJlRGVmaW5pdGlvbi9LQlZfRVhfRk9SX1N0YXR1c0NvUGF5bWVudCI+PHZhbHVlQ29kaW5nPjxzeXN0ZW0gdmFsdWU9Imh0dHBzOi8vZmhpci5rYnYuZGUvQ29kZVN5c3RlbS9LQlZfQ1NfRk9SX1N0YXR1c0NvUGF5bWVudCIvPjxjb2RlIHZhbHVlPSIwIi8+PC92YWx1ZUNvZGluZz48L2V4dGVuc2lvbj48c3RhdHVzIHZhbHVlPSJhY3RpdmUiLz48aW50ZW50IHZhbHVlPSJvcmRlciIvPjxtZWRpY2F0aW9uUmVmZXJlbmNlPjxyZWZlcmVuY2UgdmFsdWU9Ik1lZGljYXRpb24vYTUzNTM5NjYtMDhlMC00YzcwLWEwNjMtYzRhMzQyOTk2N2Y3Ii8+PC9tZWRpY2F0aW9uUmVmZXJlbmNlPjxzdWJqZWN0PjxyZWZlcmVuY2UgdmFsdWU9IlBhdGllbnQvNzAwMzY5NDQtNDQ2NC00ZTliLWI5YzctN2FlNmM3MDVkZmM0Ii8+PC9zdWJqZWN0PjxhdXRob3JlZE9uIHZhbHVlPSIyMDIzLTAyLTIzIi8+PHJlcXVlc3Rlcj48cmVmZXJlbmNlIHZhbHVlPSJQcmFjdGl0aW9uZXIvOWYwMTc0YTUtMmFlZC00NGRlLWFiN2ItYjNjZjZlY2NmYzA0Ii8+PC9yZXF1ZXN0ZXI+PGluc3VyYW5jZT48cmVmZXJlbmNlIHZhbHVlPSJDb3ZlcmFnZS81YjQwY2M3OS05NzNlLTQwY2MtODg5ZS0wYmIyY2UwNDQxNjgiLz48L2luc3VyYW5jZT48ZG9zYWdlSW5zdHJ1Y3Rpb24+PGV4dGVuc2lvbiB1cmw9Imh0dHBzOi8vZmhpci5rYnYuZGUvU3RydWN0dXJlRGVmaW5pdGlvbi9LQlZfRVhfRVJQX0Rvc2FnZUZsYWciPjx2YWx1ZUJvb2xlYW4gdmFsdWU9InRydWUiLz48L2V4dGVuc2lvbj48dGV4dCB2YWx1ZT0iMS0wLTAtMCIvPjwvZG9zYWdlSW5zdHJ1Y3Rpb24+PGRpc3BlbnNlUmVxdWVzdD48cXVhbnRpdHk+PHZhbHVlIHZhbHVlPSIxIi8+PHN5c3RlbSB2YWx1ZT0iaHR0cDovL3VuaXRzb2ZtZWFzdXJlLm9yZyIvPjxjb2RlIHZhbHVlPSJ7UGFja2FnZX0iLz48L3F1YW50aXR5PjwvZGlzcGVuc2VSZXF1ZXN0PjxzdWJzdGl0dXRpb24+PGFsbG93ZWRCb29sZWFuIHZhbHVlPSJ0cnVlIi8+PC9zdWJzdGl0dXRpb24+PC9NZWRpY2F0aW9uUmVxdWVzdD48L3Jlc291cmNlPjwvZW50cnk+PGVudHJ5PjxmdWxsVXJsIHZhbHVlPSJodHRwczovL3B2cy5nZW1hdGlrLmRlL2ZoaXIvTWVkaWNhdGlvbi9hNTM1Mzk2Ni0wOGUwLTRjNzAtYTA2My1jNGEzNDI5OTY3ZjciLz48cmVzb3VyY2U+PE1lZGljYXRpb24+PGlkIHZhbHVlPSJhNTM1Mzk2Ni0wOGUwLTRjNzAtYTA2My1jNGEzNDI5OTY3ZjciLz48bWV0YT48cHJvZmlsZSB2YWx1ZT0iaHR0cHM6Ly9maGlyLmtidi5kZS9TdHJ1Y3R1cmVEZWZpbml0aW9uL0tCVl9QUl9FUlBfTWVkaWNhdGlvbl9QWk58MS4xLjAiLz48L21ldGE+PGV4dGVuc2lvbiB1cmw9Imh0dHBzOi8vZmhpci5rYnYuZGUvU3RydWN0dXJlRGVmaW5pdGlvbi9LQlZfRVhfQmFzZV9NZWRpY2F0aW9uX1R5cGUiPjx2YWx1ZUNvZGVhYmxlQ29uY2VwdD48Y29kaW5nPjxzeXN0ZW0gdmFsdWU9Imh0dHA6Ly9zbm9tZWQuaW5mby9zY3QiLz48dmVyc2lvbiB2YWx1ZT0iaHR0cDovL3Nub21lZC5pbmZvL3NjdC85MDAwMDAwMDAwMDAyMDcwMDgvdmVyc2lvbi8yMDIyMDMzMSIvPjxjb2RlIHZhbHVlPSI3NjMxNTgwMDMiLz48ZGlzcGxheSB2YWx1ZT0iTWVkaWNpbmFsIHByb2R1Y3QgKHByb2R1Y3QpIi8+PC9jb2Rpbmc+PC92YWx1ZUNvZGVhYmxlQ29uY2VwdD48L2V4dGVuc2lvbj48ZXh0ZW5zaW9uIHVybD0iaHR0cHM6Ly9maGlyLmtidi5kZS9TdHJ1Y3R1cmVEZWZpbml0aW9uL0tCVl9FWF9FUlBfTWVkaWNhdGlvbl9DYXRlZ29yeSI+PHZhbHVlQ29kaW5nPjxzeXN0ZW0gdmFsdWU9Imh0dHBzOi8vZmhpci5rYnYuZGUvQ29kZVN5c3RlbS9LQlZfQ1NfRVJQX01lZGljYXRpb25fQ2F0ZWdvcnkiLz48Y29kZSB2YWx1ZT0iMDAiLz48L3ZhbHVlQ29kaW5nPjwvZXh0ZW5zaW9uPjxleHRlbnNpb24gdXJsPSJodHRwczovL2ZoaXIua2J2LmRlL1N0cnVjdHVyZURlZmluaXRpb24vS0JWX0VYX0VSUF9NZWRpY2F0aW9uX1ZhY2NpbmUiPjx2YWx1ZUJvb2xlYW4gdmFsdWU9ImZhbHNlIi8+PC9leHRlbnNpb24+PGV4dGVuc2lvbiB1cmw9Imh0dHA6Ly9maGlyLmRlL1N0cnVjdHVyZURlZmluaXRpb24vbm9ybWdyb2Vzc2UiPjx2YWx1ZUNvZGUgdmFsdWU9Ik5CIi8+PC9leHRlbnNpb24+PGNvZGU+PGNvZGluZz48c3lzdGVtIHZhbHVlPSJodHRwOi8vZmhpci5kZS9Db2RlU3lzdGVtL2lmYS9wem4iLz48Y29kZSB2YWx1ZT0iMTUyMjIxMzYiLz48L2NvZGluZz48dGV4dCB2YWx1ZT0iU2NobWVyem1pdHRlbCIvPjwvY29kZT48Zm9ybT48Y29kaW5nPjxzeXN0ZW0gdmFsdWU9Imh0dHBzOi8vZmhpci5rYnYuZGUvQ29kZVN5c3RlbS9LQlZfQ1NfU0ZISVJfS0JWX0RBUlJFSUNIVU5HU0ZPUk0iLz48Y29kZSB2YWx1ZT0iVEFCIi8+PC9jb2Rpbmc+PC9mb3JtPjxhbW91bnQ+PG51bWVyYXRvcj48ZXh0ZW5zaW9uIHVybD0iaHR0cHM6Ly9maGlyLmtidi5kZS9TdHJ1Y3R1cmVEZWZpbml0aW9uL0tCVl9FWF9FUlBfTWVkaWNhdGlvbl9QYWNrYWdpbmdTaXplIj48dmFsdWVTdHJpbmcgdmFsdWU9IjEiLz48L2V4dGVuc2lvbj48dW5pdCB2YWx1ZT0iU3RrIi8+PC9udW1lcmF0b3I+PGRlbm9taW5hdG9yPjx2YWx1ZSB2YWx1ZT0iMSIvPjwvZGVub21pbmF0b3I+PC9hbW91bnQ+PC9NZWRpY2F0aW9uPjwvcmVzb3VyY2U+PC9lbnRyeT48ZW50cnk+PGZ1bGxVcmwgdmFsdWU9Imh0dHBzOi8vcHZzLmdlbWF0aWsuZGUvZmhpci9QYXRpZW50LzcwMDM2OTQ0LTQ0NjQtNGU5Yi1iOWM3LTdhZTZjNzA1ZGZjNCIvPjxyZXNvdXJjZT48UGF0aWVudD48aWQgdmFsdWU9IjcwMDM2OTQ0LTQ0NjQtNGU5Yi1iOWM3LTdhZTZjNzA1ZGZjNCIvPjxtZXRhPjxwcm9maWxlIHZhbHVlPSJodHRwczovL2ZoaXIua2J2LmRlL1N0cnVjdHVyZURlZmluaXRpb24vS0JWX1BSX0ZPUl9QYXRpZW50fDEuMS4wIi8+PC9tZXRhPjxpZGVudGlmaWVyPjx0eXBlPjxjb2Rpbmc+PHN5c3RlbSB2YWx1ZT0iaHR0cDovL2ZoaXIuZGUvQ29kZVN5c3RlbS9pZGVudGlmaWVyLXR5cGUtZGUtYmFzaXMiLz48Y29kZSB2YWx1ZT0iUEtWIi8+PC9jb2Rpbmc+PC90eXBlPjxzeXN0ZW0gdmFsdWU9Imh0dHA6Ly9maGlyLmRlL3NpZC9wa3Yva3ZpZC0xMCIvPjx2YWx1ZSB2YWx1ZT0iWDExMDQ2NTc3MCIvPjwvaWRlbnRpZmllcj48bmFtZT48dXNlIHZhbHVlPSJvZmZpY2lhbCIvPjxmYW1pbHkgdmFsdWU9IkFuZ2VybcOkbm4iPjxleHRlbnNpb24gdXJsPSJodHRwOi8vaGw3Lm9yZy9maGlyL1N0cnVjdHVyZURlZmluaXRpb24vaHVtYW5uYW1lLW93bi1uYW1lIj48dmFsdWVTdHJpbmcgdmFsdWU9IkFuZ2VybcOkbm4iLz48L2V4dGVuc2lvbj48L2ZhbWlseT48Z2l2ZW4gdmFsdWU9IkfDvG50aGVyIi8+PC9uYW1lPjxiaXJ0aERhdGUgdmFsdWU9IjE5NjQtMDMtMTAiLz48YWRkcmVzcz48dHlwZSB2YWx1ZT0iYm90aCIvPjxsaW5lIHZhbHVlPSJEcmllc2NoZXIgSGVja2UgNTYiPjxleHRlbnNpb24gdXJsPSJodHRwOi8vaGw3Lm9yZy9maGlyL1N0cnVjdHVyZURlZmluaXRpb24vaXNvMjEwOTAtQURYUC1ob3VzZU51bWJlciI+PHZhbHVlU3RyaW5nIHZhbHVlPSI1NiIvPjwvZXh0ZW5zaW9uPjxleHRlbnNpb24gdXJsPSJodHRwOi8vaGw3Lm9yZy9maGlyL1N0cnVjdHVyZURlZmluaXRpb24vaXNvMjEwOTAtQURYUC1zdHJlZXROYW1lIj48dmFsdWVTdHJpbmcgdmFsdWU9IkRyaWVzY2hlciBIZWNrZSIvPjwvZXh0ZW5zaW9uPjwvbGluZT48Y2l0eSB2YWx1ZT0iTmV1IEVsYWRvcmYiLz48cG9zdGFsQ29kZSB2YWx1ZT0iNjcxMzAiLz48Y291bnRyeSB2YWx1ZT0iRCIvPjwvYWRkcmVzcz48L1BhdGllbnQ+PC9yZXNvdXJjZT48L2VudHJ5PjxlbnRyeT48ZnVsbFVybCB2YWx1ZT0iaHR0cHM6Ly9wdnMuZ2VtYXRpay5kZS9maGlyL09yZ2FuaXphdGlvbi83YzhjNTVhZS1lN2NhLTRhMWItYmFhZC1mMjUxMTQxY2VkNDAiLz48cmVzb3VyY2U+PE9yZ2FuaXphdGlvbj48aWQgdmFsdWU9IjdjOGM1NWFlLWU3Y2EtNGExYi1iYWFkLWYyNTExNDFjZWQ0MCIvPjxtZXRhPjxwcm9maWxlIHZhbHVlPSJodHRwczovL2ZoaXIua2J2LmRlL1N0cnVjdHVyZURlZmluaXRpb24vS0JWX1BSX0ZPUl9Pcmdhbml6YXRpb258MS4xLjAiLz48L21ldGE+PGlkZW50aWZpZXI+PHR5cGU+PGNvZGluZz48c3lzdGVtIHZhbHVlPSJodHRwOi8vdGVybWlub2xvZ3kuaGw3Lm9yZy9Db2RlU3lzdGVtL3YyLTAyMDMiLz48Y29kZSB2YWx1ZT0iQlNOUiIvPjwvY29kaW5nPjwvdHlwZT48c3lzdGVtIHZhbHVlPSJodHRwczovL2ZoaXIua2J2LmRlL05hbWluZ1N5c3RlbS9LQlZfTlNfQmFzZV9CU05SIi8+PHZhbHVlIHZhbHVlPSI4MzE5NTcwOTMiLz48L2lkZW50aWZpZXI+PG5hbWUgdmFsdWU9IkFyenRwcmF4aXMgU2NocmHDn2VyIi8+PHRlbGVjb20+PHN5c3RlbSB2YWx1ZT0icGhvbmUiLz48dmFsdWUgdmFsdWU9Iis0OS03MjAtMTgyODI2MyIvPjwvdGVsZWNvbT48dGVsZWNvbT48c3lzdGVtIHZhbHVlPSJlbWFpbCIvPjx2YWx1ZSB2YWx1ZT0iZGluYS5hc3NtdXNAYXBpdHoubmV0Ii8+PC90ZWxlY29tPjxhZGRyZXNzPjx0eXBlIHZhbHVlPSJib3RoIi8+PGxpbmUgdmFsdWU9IlJ1ZG9sZi1NYW5uLVBsYXR6IDUiPjxleHRlbnNpb24gdXJsPSJodHRwOi8vaGw3Lm9yZy9maGlyL1N0cnVjdHVyZURlZmluaXRpb24vaXNvMjEwOTAtQURYUC1ob3VzZU51bWJlciI+PHZhbHVlU3RyaW5nIHZhbHVlPSI1Ii8+PC9leHRlbnNpb24+PGV4dGVuc2lvbiB1cmw9Imh0dHA6Ly9obDcub3JnL2ZoaXIvU3RydWN0dXJlRGVmaW5pdGlvbi9pc28yMTA5MC1BRFhQLXN0cmVldE5hbWUiPjx2YWx1ZVN0cmluZyB2YWx1ZT0iUnVkb2xmLU1hbm4tUGxhdHoiLz48L2V4dGVuc2lvbj48L2xpbmU+PGNpdHkgdmFsdWU9IkNleWxpbmJ1cmciLz48cG9zdGFsQ29kZSB2YWx1ZT0iODM4NTIiLz48Y291bnRyeSB2YWx1ZT0iRCIvPjwvYWRkcmVzcz48L09yZ2FuaXphdGlvbj48L3Jlc291cmNlPjwvZW50cnk+PGVudHJ5PjxmdWxsVXJsIHZhbHVlPSJodHRwczovL3B2cy5nZW1hdGlrLmRlL2ZoaXIvQ292ZXJhZ2UvNWI0MGNjNzktOTczZS00MGNjLTg4OWUtMGJiMmNlMDQ0MTY4Ii8+PHJlc291cmNlPjxDb3ZlcmFnZT48aWQgdmFsdWU9IjViNDBjYzc5LTk3M2UtNDBjYy04ODllLTBiYjJjZTA0NDE2OCIvPjxtZXRhPjxwcm9maWxlIHZhbHVlPSJodHRwczovL2ZoaXIua2J2LmRlL1N0cnVjdHVyZURlZmluaXRpb24vS0JWX1BSX0ZPUl9Db3ZlcmFnZXwxLjEuMCIvPjwvbWV0YT48ZXh0ZW5zaW9uIHVybD0iaHR0cDovL2ZoaXIuZGUvU3RydWN0dXJlRGVmaW5pdGlvbi9na3YvYmVzb25kZXJlLXBlcnNvbmVuZ3J1cHBlIj48dmFsdWVDb2Rpbmc+PHN5c3RlbSB2YWx1ZT0iaHR0cHM6Ly9maGlyLmtidi5kZS9Db2RlU3lzdGVtL0tCVl9DU19TRkhJUl9LQlZfUEVSU09ORU5HUlVQUEUiLz48Y29kZSB2YWx1ZT0iMDAiLz48L3ZhbHVlQ29kaW5nPjwvZXh0ZW5zaW9uPjxleHRlbnNpb24gdXJsPSJodHRwOi8vZmhpci5kZS9TdHJ1Y3R1cmVEZWZpbml0aW9uL2drdi9kbXAta2VubnplaWNoZW4iPjx2YWx1ZUNvZGluZz48c3lzdGVtIHZhbHVlPSJodHRwczovL2ZoaXIua2J2LmRlL0NvZGVTeXN0ZW0vS0JWX0NTX1NGSElSX0tCVl9ETVAiLz48Y29kZSB2YWx1ZT0iMDAiLz48L3ZhbHVlQ29kaW5nPjwvZXh0ZW5zaW9uPjxleHRlbnNpb24gdXJsPSJodHRwOi8vZmhpci5kZS9TdHJ1Y3R1cmVEZWZpbml0aW9uL2drdi93b3AiPjx2YWx1ZUNvZGluZz48c3lzdGVtIHZhbHVlPSJodHRwczovL2ZoaXIua2J2LmRlL0NvZGVTeXN0ZW0vS0JWX0NTX1NGSElSX0lUQV9XT1AiLz48Y29kZSB2YWx1ZT0iMzgiLz48L3ZhbHVlQ29kaW5nPjwvZXh0ZW5zaW9uPjxleHRlbnNpb24gdXJsPSJodHRwOi8vZmhpci5kZS9TdHJ1Y3R1cmVEZWZpbml0aW9uL2drdi92ZXJzaWNoZXJ0ZW5hcnQiPjx2YWx1ZUNvZGluZz48c3lzdGVtIHZhbHVlPSJodHRwczovL2ZoaXIua2J2LmRlL0NvZGVTeXN0ZW0vS0JWX0NTX1NGSElSX0tCVl9WRVJTSUNIRVJURU5TVEFUVVMiLz48Y29kZSB2YWx1ZT0iMSIvPjwvdmFsdWVDb2Rpbmc+PC9leHRlbnNpb24+PHN0YXR1cyB2YWx1ZT0iYWN0aXZlIi8+PHR5cGU+PGNvZGluZz48c3lzdGVtIHZhbHVlPSJodHRwOi8vZmhpci5kZS9Db2RlU3lzdGVtL3ZlcnNpY2hlcnVuZ3NhcnQtZGUtYmFzaXMiLz48Y29kZSB2YWx1ZT0iUEtWIi8+PC9jb2Rpbmc+PC90eXBlPjxiZW5lZmljaWFyeT48cmVmZXJlbmNlIHZhbHVlPSJQYXRpZW50LzZiNzI1OTQ1LTA1YmEtNGI3OS1iODgwLTZiOWNkMTlhOGNhYSIvPjwvYmVuZWZpY2lhcnk+PHBheW9yPjxpZGVudGlmaWVyPjxzeXN0ZW0gdmFsdWU9Imh0dHA6Ly9maGlyLmRlL3NpZC9hcmdlLWlrL2lrbnIiLz48dmFsdWUgdmFsdWU9Ijc1OTQyODE4OSIvPjwvaWRlbnRpZmllcj48ZGlzcGxheSB2YWx1ZT0iRmFybWVyIFBmYWx6Ii8+PC9wYXlvcj48L0NvdmVyYWdlPjwvcmVzb3VyY2U+PC9lbnRyeT48ZW50cnk+PGZ1bGxVcmwgdmFsdWU9Imh0dHBzOi8vcHZzLmdlbWF0aWsuZGUvZmhpci9QcmFjdGl0aW9uZXIvOWYwMTc0YTUtMmFlZC00NGRlLWFiN2ItYjNjZjZlY2NmYzA0Ii8+PHJlc291cmNlPjxQcmFjdGl0aW9uZXI+PGlkIHZhbHVlPSI5ZjAxNzRhNS0yYWVkLTQ0ZGUtYWI3Yi1iM2NmNmVjY2ZjMDQiLz48bWV0YT48cHJvZmlsZSB2YWx1ZT0iaHR0cHM6Ly9maGlyLmtidi5kZS9TdHJ1Y3R1cmVEZWZpbml0aW9uL0tCVl9QUl9GT1JfUHJhY3RpdGlvbmVyfDEuMS4wIi8+PC9tZXRhPjxpZGVudGlmaWVyPjx0eXBlPjxjb2Rpbmc+PHN5c3RlbSB2YWx1ZT0iaHR0cDovL3Rlcm1pbm9sb2d5LmhsNy5vcmcvQ29kZVN5c3RlbS92Mi0wMjAzIi8+PGNvZGUgdmFsdWU9IkxBTlIiLz48L2NvZGluZz48L3R5cGU+PHN5c3RlbSB2YWx1ZT0iaHR0cHM6Ly9maGlyLmtidi5kZS9OYW1pbmdTeXN0ZW0vS0JWX05TX0Jhc2VfQU5SIi8+PHZhbHVlIHZhbHVlPSIyMDg4MTgyNTQiLz48L2lkZW50aWZpZXI+PG5hbWU+PHVzZSB2YWx1ZT0ib2ZmaWNpYWwiLz48ZmFtaWx5IHZhbHVlPSJTY2hyYcOfZXIiPjxleHRlbnNpb24gdXJsPSJodHRwOi8vaGw3Lm9yZy9maGlyL1N0cnVjdHVyZURlZmluaXRpb24vaHVtYW5uYW1lLW93bi1uYW1lIj48dmFsdWVTdHJpbmcgdmFsdWU9IlNjaHJhw59lciIvPjwvZXh0ZW5zaW9uPjwvZmFtaWx5PjxnaXZlbiB2YWx1ZT0iRHIuIi8+PHByZWZpeCB2YWx1ZT0iRHIuIj48ZXh0ZW5zaW9uIHVybD0iaHR0cDovL2hsNy5vcmcvZmhpci9TdHJ1Y3R1cmVEZWZpbml0aW9uL2lzbzIxMDkwLUVOLXF1YWxpZmllciI+PHZhbHVlQ29kZSB2YWx1ZT0iQUMiLz48L2V4dGVuc2lvbj48L3ByZWZpeD48L25hbWU+PHF1YWxpZmljYXRpb24+PGNvZGU+PGNvZGluZz48c3lzdGVtIHZhbHVlPSJodHRwczovL2ZoaXIua2J2LmRlL0NvZGVTeXN0ZW0vS0JWX0NTX0ZPUl9RdWFsaWZpY2F0aW9uX1R5cGUiLz48Y29kZSB2YWx1ZT0iMDAiLz48L2NvZGluZz48L2NvZGU+PC9xdWFsaWZpY2F0aW9uPjxxdWFsaWZpY2F0aW9uPjxjb2RlPjxjb2Rpbmc+PHN5c3RlbSB2YWx1ZT0iaHR0cHM6Ly9maGlyLmtidi5kZS9Db2RlU3lzdGVtL0tCVl9DU19GT1JfQmVydWZzYmV6ZWljaG51bmciLz48Y29kZSB2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"
+                }
+            }
+        },
+        {
+            "fullUrl": "urn:uuid:c8606712-0000-0000-0003-000000000000",
+            "resource":
+            {
+                "resourceType": "Bundle",
+                "id": "c8606712-0000-0000-0003-000000000000",
+                "meta":
+                {
+                    "profile":
+                    [
+                        "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_PR_Bundle|1.2"
+                    ]
+                },
+                "identifier":
+                {
+                    "system": "https://gematik.de/fhir/erp/NamingSystem/GEM_ERP_NS_PrescriptionId",
+                    "value": "200.000.001.206.112.29"
+                },
+                "type": "document",
+                "timestamp": "2023-02-23T15:08:30.803+00:00",
+                "link":
+                [
+                    {
+                        "relation": "self",
+                        "url": "https://erp-dev.zentral.erp.splitdns.ti-dienste.de/Task/200.000.001.206.112.29/$close/"
+                    }
+                ],
+                "entry":
+                [
+                    {
+                        "fullUrl": "urn:uuid:1f107ad7-f4bf-47e3-a606-0181f5dd4f73",
+                        "resource":
+                        {
+                            "resourceType": "Composition",
+                            "id": "1f107ad7-f4bf-47e3-a606-0181f5dd4f73",
+                            "meta":
+                            {
+                                "profile":
+                                [
+                                    "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_PR_Composition|1.2"
+                                ]
+                            },
+                            "extension":
+                            [
+                                {
+                                    "url": "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_EX_Beneficiary",
+                                    "valueIdentifier":
+                                    {
+                                        "system": "https://gematik.de/fhir/sid/telematik-id",
+                                        "value": "3-SMC-B-Testkarte-883110000116873"
+                                    }
+                                }
+                            ],
+                            "status": "final",
+                            "type":
+                            {
+                                "coding":
+                                [
+                                    {
+                                        "system": "https://gematik.de/fhir/erp/CodeSystem/GEM_ERP_CS_DocumentType",
+                                        "code": "3",
+                                        "display": "Receipt"
+                                    }
+                                ]
+                            },
+                            "date": "2023-02-23T15:08:30.802+00:00",
+                            "author":
+                            [
+                                {
+                                    "reference": "https://erp-dev.zentral.erp.splitdns.ti-dienste.de/Device/1"
+                                }
+                            ],
+                            "title": "Quittung",
+                            "event":
+                            [
+                                {
+                                    "period":
+                                    {
+                                        "start": "2023-02-23T15:08:29.843+00:00",
+                                        "end": "2023-02-23T15:08:30.802+00:00"
+                                    }
+                                }
+                            ],
+                            "section":
+                            [
+                                {
+                                    "entry":
+                                    [
+                                        {
+                                            "reference": "Binary/PrescriptionDigest-200.000.001.206.112.29"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "fullUrl": "https://erp-dev.zentral.erp.splitdns.ti-dienste.de/Device/1",
+                        "resource":
+                        {
+                            "resourceType": "Device",
+                            "id": "1",
+                            "meta":
+                            {
+                                "profile":
+                                [
+                                    "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_PR_Device|1.2"
+                                ]
+                            },
+                            "status": "active",
+                            "serialNumber": "1.9.0",
+                            "deviceName":
+                            [
+                                {
+                                    "name": "E-Rezept Fachdienst",
+                                    "type": "user-friendly-name"
+                                }
+                            ],
+                            "version":
+                            [
+                                {
+                                    "value": "1.9.0"
+                                }
+                            ],
+                            "contact":
+                            [
+                                {
+                                    "system": "email",
+                                    "value": "betrieb@gematik.de"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "fullUrl": "https://erp-dev.zentral.erp.splitdns.ti-dienste.de/Binary/PrescriptionDigest-200.000.001.206.112.29",
+                        "resource":
+                        {
+                            "resourceType": "Binary",
+                            "id": "PrescriptionDigest-200.000.001.206.112.29",
+                            "meta":
+                            {
+                                "versionId": "1",
+                                "profile":
+                                [
+                                    "https://gematik.de/fhir/erp/StructureDefinition/GEM_ERP_PR_Digest|1.2"
+                                ]
+                            },
+                            "contentType": "application/octet-stream",
+                            "data": "aYDkjPosw3Sa5dX5EmSghwhVg7d9jhoXHdwszETXV/8="
+                        }
+                    }
+                ],
+                "signature":
+                {
+                    "type":
+                    [
+                        {
+                            "system": "urn:iso-astm:E1762-95:2013",
+                            "code": "1.2.840.10065.1.12.1.1"
+                        }
+                    ],
+                    "when": "2023-02-23T15:08:32.985+00:00",
+                    "who":
+                    {
+                        "reference": "https://erp-dev.zentral.erp.splitdns.ti-dienste.de/Device/1"
+                    },
+                    "sigFormat": "application/pkcs7-mime",
+                    "data": "MIIUnAYJKoZIhvcNAQcCoIIUjTCCFIkCAQUxDTALBglghkgBZQMEAgEwggp1BgkqhkiG9w0BBwGgggpmBIIKYjw/eG1sIHZlcnNpb249IjEuMCIgZW5jb2Rpbmc9InV0Zi04Ij8+CjxCdW5kbGUgeG1sbnM9Imh0dHA6Ly9obDcub3JnL2ZoaXIiPjxpZCB2YWx1ZT0iYzg2MDY3MTItMDAwMC0wMDAwLTAwMDMtMDAwMDAwMDAwMDAwIi8+PG1ldGE+PHByb2ZpbGUgdmFsdWU9Imh0dHBzOi8vZ2VtYXRpay5kZS9maGlyL2VycC9TdHJ1Y3R1cmVEZWZpbml0aW9uL0dFTV9FUlBfUFJfQnVuZGxlfDEuMiIvPjwvbWV0YT48aWRlbnRpZmllcj48c3lzdGVtIHZhbHVlPSJodHRwczovL2dlbWF0aWsuZGUvZmhpci9lcnAvTmFtaW5nU3lzdGVtL0dFTV9FUlBfTlNfUHJlc2NyaXB0aW9uSWQiLz48dmFsdWUgdmFsdWU9IjIwMC4wMDAuMDAxLjIwNi4xMTIuMjkiLz48L2lkZW50aWZpZXI+PHR5cGUgdmFsdWU9ImRvY3VtZW50Ii8+PHRpbWVzdGFtcCB2YWx1ZT0iMjAyMy0wMi0yM1QxNTowODozMC44MDMrMDA6MDAiLz48bGluaz48cmVsYXRpb24gdmFsdWU9InNlbGYiLz48dXJsIHZhbHVlPSJodHRwczovL2VycC1kZXYuemVudHJhbC5lcnAuc3BsaXRkbnMudGktZGllbnN0ZS5kZS9UYXNrLzIwMC4wMDAuMDAxLjIwNi4xMTIuMjkvJGNsb3NlLyIvPjwvbGluaz48ZW50cnk+PGZ1bGxVcmwgdmFsdWU9InVybjp1dWlkOjFmMTA3YWQ3LWY0YmYtNDdlMy1hNjA2LTAxODFmNWRkNGY3MyIvPjxyZXNvdXJjZT48Q29tcG9zaXRpb24+PGlkIHZhbHVlPSIxZjEwN2FkNy1mNGJmLTQ3ZTMtYTYwNi0wMTgxZjVkZDRmNzMiLz48bWV0YT48cHJvZmlsZSB2YWx1ZT0iaHR0cHM6Ly9nZW1hdGlrLmRlL2ZoaXIvZXJwL1N0cnVjdHVyZURlZmluaXRpb24vR0VNX0VSUF9QUl9Db21wb3NpdGlvbnwxLjIiLz48L21ldGE+PGV4dGVuc2lvbiB1cmw9Imh0dHBzOi8vZ2VtYXRpay5kZS9maGlyL2VycC9TdHJ1Y3R1cmVEZWZpbml0aW9uL0dFTV9FUlBfRVhfQmVuZWZpY2lhcnkiPjx2YWx1ZUlkZW50aWZpZXI+PHN5c3RlbSB2YWx1ZT0iaHR0cHM6Ly9nZW1hdGlrLmRlL2ZoaXIvc2lkL3RlbGVtYXRpay1pZCIvPjx2YWx1ZSB2YWx1ZT0iMy1TTUMtQi1UZXN0a2FydGUtODgzMTEwMDAwMTE2ODczIi8+PC92YWx1ZUlkZW50aWZpZXI+PC9leHRlbnNpb24+PHN0YXR1cyB2YWx1ZT0iZmluYWwiLz48dHlwZT48Y29kaW5nPjxzeXN0ZW0gdmFsdWU9Imh0dHBzOi8vZ2VtYXRpay5kZS9maGlyL2VycC9Db2RlU3lzdGVtL0dFTV9FUlBfQ1NfRG9jdW1lbnRUeXBlIi8+PGNvZGUgdmFsdWU9IjMiLz48ZGlzcGxheSB2YWx1ZT0iUmVjZWlwdCIvPjwvY29kaW5nPjwvdHlwZT48ZGF0ZSB2YWx1ZT0iMjAyMy0wMi0yM1QxNTowODozMC44MDIrMDA6MDAiLz48YXV0aG9yPjxyZWZlcmVuY2UgdmFsdWU9Imh0dHBzOi8vZXJwLWRldi56ZW50cmFsLmVycC5zcGxpdGRucy50aS1kaWVuc3RlLmRlL0RldmljZS8xIi8+PC9hdXRob3I+PHRpdGxlIHZhbHVlPSJRdWl0dHVuZyIvPjxldmVudD48cGVyaW9kPjxzdGFydCB2YWx1ZT0iMjAyMy0wMi0yM1QxNTowODoyOS44NDMrMDA6MDAiLz48ZW5kIHZhbHVlPSIyMDIzLTAyLTIzVDE1OjA4OjMwLjgwMiswMDowMCIvPjwvcGVyaW9kPjwvZXZlbnQ+PHNlY3Rpb24+PGVudHJ5PjxyZWZlcmVuY2UgdmFsdWU9IkJpbmFyeS9QcmVzY3JpcHRpb25EaWdlc3QtMjAwLjAwMC4wMDEuMjA2LjExMi4yOSIvPjwvZW50cnk+PC9zZWN0aW9uPjwvQ29tcG9zaXRpb24+PC9yZXNvdXJjZT48L2VudHJ5PjxlbnRyeT48ZnVsbFVybCB2YWx1ZT0iaHR0cHM6Ly9lcnAtZGV2LnplbnRyYWwuZXJwLnNwbGl0ZG5zLnRpLWRpZW5zdGUuZGUvRGV2aWNlLzEiLz48cmVzb3VyY2U+PERldmljZT48aWQgdmFsdWU9IjEiLz48bWV0YT48cHJvZmlsZSB2YWx1ZT0iaHR0cHM6Ly9nZW1hdGlrLmRlL2ZoaXIvZXJwL1N0cnVjdHVyZURlZmluaXRpb24vR0VNX0VSUF9QUl9EZXZpY2V8MS4yIi8+PC9tZXRhPjxzdGF0dXMgdmFsdWU9ImFjdGl2ZSIvPjxzZXJpYWxOdW1iZXIgdmFsdWU9IjEuOS4wIi8+PGRldmljZU5hbWU+PG5hbWUgdmFsdWU9IkUtUmV6ZXB0IEZhY2hkaWVuc3QiLz48dHlwZSB2YWx1ZT0idXNlci1mcmllbmRseS1uYW1lIi8+PC9kZXZpY2VOYW1lPjx2ZXJzaW9uPjx2YWx1ZSB2YWx1ZT0iMS45LjAiLz48L3ZlcnNpb24+PGNvbnRhY3Q+PHN5c3RlbSB2YWx1ZT0iZW1haWwiLz48dmFsdWUgdmFsdWU9ImJldHJpZWJAZ2VtYXRpay5kZSIvPjwvY29udGFjdD48L0RldmljZT48L3Jlc291cmNlPjwvZW50cnk+PGVudHJ5PjxmdWxsVXJsIHZhbHVlPSJodHRwczovL2VycC1kZXYuemVudHJhbC5lcnAuc3BsaXRkbnMudGktZGllbnN0ZS5kZS9CaW5hcnkvUHJlc2NyaXB0aW9uRGlnZXN0LTIwMC4wMDAuMDAxLjIwNi4xMTIuMjkiLz48cmVzb3VyY2U+PEJpbmFyeT48aWQgdmFsdWU9IlByZXNjcmlwdGlvbkRpZ2VzdC0yMDAuMDAwLjAwMS4yMDYuMTEyLjI5Ii8+PG1ldGE+PHZlcnNpb25JZCB2YWx1ZT0iMSIvPjxwcm9maWxlIHZhbHVlPSJodHRwczovL2dlbWF0aWsuZGUvZmhpci9lcnAvU3RydWN0dXJlRGVmaW5pdGlvbi9HRU1fRVJQX1BSX0RpZ2VzdHwxLjIiLz48L21ldGE+PGNvbnRlbnRUeXBlIHZhbHVlPSJhcHBsaWNhdGlvbi9vY3RldC1zdHJlYW0iLz48ZGF0YSB2YWx1ZT0iYVlEa2pQb3N3M1NhNWRYNUVtU2dod2hWZzdkOWpob1hIZHdzekVUWFYvOD0iLz48L0JpbmFyeT48L3Jlc291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"
+                }
+            }
+        }
+    ]
 }

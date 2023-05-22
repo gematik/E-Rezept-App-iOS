@@ -108,7 +108,10 @@ class DemoErxTaskRepository: ErxTaskRepository {
         .Profile)
         -> AnyPublisher<[ErxTask.Communication], // swiftlint:disable:this operator_usage_whitespace
             ErxRepositoryError> {
-        Just([]).setFailureType(to: ErrorType.self).eraseToAnyPublisher()
+        Just(
+            ErxTask.Communication.Dummies.multipleCommunications1 +
+                ErxTask.Communication.Dummies.multipleCommunications2
+        ).setFailureType(to: ErrorType.self).eraseToAnyPublisher()
     }
 
     func saveLocal(communications _: [ErxTask.Communication]) -> AnyPublisher<Bool, ErrorType> {
@@ -127,8 +130,24 @@ class DemoErxTaskRepository: ErxTaskRepository {
         Just([]).setFailureType(to: ErrorType.self).eraseToAnyPublisher()
     }
 
-    func loadRemoteChargeItems() -> AnyPublisher<[ErxChargeItem], ErxRepositoryError> {
+    func loadRemoteChargeItems() -> AnyPublisher<[ErxSparseChargeItem], ErxRepositoryError> {
         Just([]).setFailureType(to: ErrorType.self).eraseToAnyPublisher()
+    }
+
+    func loadLocal(by _: ErxSparseChargeItem.ID) -> AnyPublisher<ErxSparseChargeItem?, ErxRepositoryError> {
+        Just(nil).setFailureType(to: ErrorType.self).eraseToAnyPublisher()
+    }
+
+    func loadLocalAll() -> AnyPublisher<[ErxSparseChargeItem], ErxRepositoryError> {
+        Just([]).setFailureType(to: ErrorType.self).eraseToAnyPublisher()
+    }
+
+    func save(chargeItems _: [ErxSparseChargeItem]) -> AnyPublisher<Bool, ErxRepositoryError> {
+        Just(true).setFailureType(to: ErrorType.self).eraseToAnyPublisher()
+    }
+
+    func delete(chargeItems _: [ErxSparseChargeItem]) -> AnyPublisher<Bool, ErxRepositoryError> {
+        Just(true).setFailureType(to: ErrorType.self).eraseToAnyPublisher()
     }
 
     func fetchConsents() -> AnyPublisher<[ErxConsent], ErxRepositoryError> {

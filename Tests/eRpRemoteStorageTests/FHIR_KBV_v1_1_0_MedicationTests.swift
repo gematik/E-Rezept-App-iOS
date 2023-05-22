@@ -32,7 +32,7 @@ final class FHIR_KBV_v1_1_0_MedicationTests: XCTestCase {
         expect(medication.profileType) == .pzn
         expect(medication.drugCategory) == .avm
         expect(medication.isVaccine).to(beFalse())
-        expect(medication.dose) == "N1"
+        expect(medication.normSizeCode) == "N1"
         expect(medication.medicationText) == "GONAL-f 150 I.E./0,25ml Injektionslösung"
         expect(medication.pzn) == "16332684"
         expect(medication.dosageForm) == "PEN"
@@ -60,7 +60,7 @@ final class FHIR_KBV_v1_1_0_MedicationTests: XCTestCase {
         expect(medication.profileType) == .ingredient
         expect(medication.drugCategory) == .avm
         expect(medication.isVaccine).to(beFalse())
-        expect(medication.dose) == "N2"
+        expect(medication.normSizeCode) == "N2"
         expect(medication.dosageForm) == "Tabletten"
         expect(medication.amountRatio(for: .v1_1_0)) == ErxMedication.Ratio(
             numerator: ErxMedication.Quantity(value: "100", unit: "Stück"),
@@ -104,7 +104,7 @@ final class FHIR_KBV_v1_1_0_MedicationTests: XCTestCase {
             denominator: ErxMedication.Quantity(value: "1")
         )
         expect(medication.dosageForm) == "Creme"
-        expect(medication.dose).to(beNil())
+        expect(medication.normSizeCode).to(beNil())
         expect(medication.erxTaskBatch).to(beNil())
         expect(medication.erxTaskIngredients.count) == 3
         expect(medication.erxTaskIngredients[0]) == ErxMedication.Ingredient(

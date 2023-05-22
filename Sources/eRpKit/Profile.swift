@@ -31,6 +31,7 @@ public struct Profile: Identifiable, Hashable, Equatable {
         insuranceType: InsuranceType = .unknown,
         color: Color = Color.grey,
         image: ProfilePictureType = .none,
+        userImageData: Data? = nil,
         lastAuthenticated: Date? = nil,
         erxTasks: [ErxTask] = []
     ) {
@@ -44,6 +45,7 @@ public struct Profile: Identifiable, Hashable, Equatable {
         self.insuranceType = insuranceType
         self.color = color
         self.image = image
+        self.userImageData = userImageData
         self.lastAuthenticated = lastAuthenticated
         self.erxTasks = erxTasks
     }
@@ -62,6 +64,7 @@ public struct Profile: Identifiable, Hashable, Equatable {
     public var insuranceType: InsuranceType
     public var color: Color
     public var image: ProfilePictureType
+    public var userImageData: Data?
     public var lastAuthenticated: Date?
     public var erxTasks: [ErxTask]
 
@@ -69,6 +72,10 @@ public struct Profile: Identifiable, Hashable, Equatable {
         [givenName, familyName]
             .compactMap { $0 }
             .joined(separator: " ")
+    }
+
+    public var hasDoneLoginBefore: Bool {
+        insuranceId != nil
     }
 
     public enum InsuranceType: String, Equatable {
@@ -114,13 +121,13 @@ public struct Profile: Identifiable, Hashable, Equatable {
         case baby
         case boyWithCard
         case developer
-        case doctor
-        case doctor2
+        case doctorFemale
+        case pharmacist
         case manWithPhone
         case oldDoctor
         case oldMan
         case oldWoman
-        case pharmacist
+        case doctorMale
         case pharmacist2
         case wheelchair
         case womanWithPhone

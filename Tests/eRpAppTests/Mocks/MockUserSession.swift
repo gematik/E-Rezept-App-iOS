@@ -93,6 +93,13 @@ class MockUserSession: UserSession {
         StreamWrappedErxTaskRepository(stream: Just(FakeErxTaskRepository()).eraseToAnyPublisher())
     }()
 
+    var ordersRepository: ErxTaskRepository {
+        get { underlyingOrdersTaskRepository }
+        set(value) { underlyingOrdersTaskRepository = value }
+    }
+
+    private var underlyingOrdersTaskRepository: ErxTaskRepository!
+
     lazy var mockProfileDataStore: MockProfileDataStore = {
         MockProfileDataStore()
     }()
@@ -254,8 +261,14 @@ class FakeErxTaskRepository: ErxTaskRepository {
     typealias ErrorType = ErxRepositoryError
 
     var store: [String: ErxTask]
-    init(store: [String: ErxTask] = FakeErxTaskRepository.exampleStore) {
+    var chargeItemStore: [String: ErxSparseChargeItem]
+
+    init(
+        store: [String: ErxTask] = FakeErxTaskRepository.exampleStore,
+        chargeItemStore: [String: ErxSparseChargeItem] = FakeErxTaskRepository.chargeItemsStore
+    ) {
         self.store = store
+        self.chargeItemStore = chargeItemStore
     }
 
     func loadRemote(
@@ -321,7 +334,7 @@ class FakeErxTaskRepository: ErxTaskRepository {
 
     // MARK: - ChargeItem
 
-    func loadRemoteChargeItems() -> AnyPublisher<[ErxChargeItem], ErxRepositoryError> {
+    func loadRemoteChargeItems() -> AnyPublisher<[ErxSparseChargeItem], ErxRepositoryError> {
         Just([]).setFailureType(to: ErrorType.self).eraseToAnyPublisher()
     }
 
@@ -389,6 +402,43 @@ class FakeErxTaskRepository: ErxTaskRepository {
             return revokeConsentReturnValue
         }
     }
+
+    // MARK: - load chargeItems
+
+    func loadLocal(by id: ErxSparseChargeItem.ID) -> AnyPublisher<ErxSparseChargeItem?, eRpKit.ErxRepositoryError> {
+        if let result = chargeItemStore[id] {
+            return Just(result).setFailureType(to: ErrorType.self).eraseToAnyPublisher()
+        } else {
+            return Empty().setFailureType(to: ErrorType.self).eraseToAnyPublisher()
+        }
+    }
+
+    func loadLocalAll() -> AnyPublisher<[ErxSparseChargeItem], ErxRepositoryError> {
+        let chargeItems = chargeItemStore.values.compactMap { $0 }
+        return Just(chargeItems).setFailureType(to: ErrorType.self).eraseToAnyPublisher()
+    }
+
+    func save(chargeItems _: [ErxSparseChargeItem]) -> AnyPublisher<Bool, ErxRepositoryError> {
+        Just(true).setFailureType(to: ErrorType.self).eraseToAnyPublisher()
+    }
+
+    func delete(chargeItems: [ErxSparseChargeItem]) -> AnyPublisher<Bool, ErxRepositoryError> {
+        chargeItems.forEach { item in
+            chargeItemStore.removeValue(forKey: item.identifier)
+        }
+        return Just(true).setFailureType(to: ErrorType.self).eraseToAnyPublisher()
+    }
+
+    static let chargeItemsStore: [String: ErxSparseChargeItem] = {
+        [
+            "1": ErxSparseChargeItem(
+                identifier: "1390f983-1e67-11b2-8555-63bf44001234",
+                fhirData: "afasf".data(using: .utf8)!,
+                enteredDate: "2022-11-22T14:07:47.809+00:00"
+            ),
+        ]
+
+    }()
 
     static var exampleStore: [String: ErxTask] = {
         let authoredOnNinetyTwoDaysBefore = DemoDate.createDemoDate(.ninetyTwoDaysBefore)

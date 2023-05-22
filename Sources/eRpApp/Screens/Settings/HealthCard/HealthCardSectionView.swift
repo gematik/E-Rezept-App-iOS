@@ -52,7 +52,7 @@ struct HealthCardSectionView: View {
                             state: /SettingsDomain.Destinations.State.egk,
                             action: SettingsDomain.Destinations.Action.egkAction
                         ),
-                        then: OrderHealthCardView.init(store:)
+                        then: OrderHealthCardListView.init(store:)
                     ),
                     tag: SettingsDomain.Destinations.State.Tag.egk,
                     selection: viewStore.binding(

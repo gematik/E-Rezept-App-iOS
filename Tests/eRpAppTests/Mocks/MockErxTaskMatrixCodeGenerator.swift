@@ -16,14 +16,15 @@
 //  
 //
 
-import eRpApp
+import Combine
+@testable import eRpApp
 import eRpKit
 import UIKit
 import ZXingObjC
 
 // Encodes a string with a given `MatrixCodeGenerator` into an DMC image.
-public class MockErxTaskMatrixCodeGenerator: ErxTaskMatrixCodeGenerator {
-    public static let testBundleName = "qrcode"
+class MockErxTaskMatrixCodeGenerator: ErxTaskMatrixCodeGenerator {
+    static let testBundleName = "qrcode"
 
     init() {
         uiImage = UIImage(testBundleNamed: MockErxTaskMatrixCodeGenerator.testBundleName)!
@@ -33,7 +34,15 @@ public class MockErxTaskMatrixCodeGenerator: ErxTaskMatrixCodeGenerator {
     let uiImage: UIImage
     let cgImage: CGImage
 
-    public func matrixCode(for _: [ErxTask], with _: CGSize) throws -> CGImage {
+    func matrixCode(for _: [ErxTask], with _: CGSize) throws -> CGImage {
         cgImage
+    }
+
+    func matrixCodePublisher(for _: [ErxTask],
+                             with _: CGSize,
+                             scale _: CGFloat = UIScreen.main.scale,
+                             orientation _: UIImage.Orientation = .up)
+        -> AnyPublisher<UIImage, Error> {
+        Just(uiImage).setFailureType(to: Error.self).eraseToAnyPublisher()
     }
 }

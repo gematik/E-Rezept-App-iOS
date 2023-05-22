@@ -19,6 +19,7 @@
 import Combine
 import eRpKit
 import Foundation
+import OpenSSL
 
 /// Interface for the remote data store
 public protocol PharmacyRemoteDataStore {
@@ -42,4 +43,10 @@ public protocol PharmacyRemoteDataStore {
     /// - Returns: `AnyPublisher` that emits the `PharmacyLocation` or nil when not found
     func fetchPharmacy(by telematikId: String)
         -> AnyPublisher<PharmacyLocation?, PharmacyFHIRDataSource.Error>
+
+    /// Load certificates for a given `PharmacyLocation` id
+    ///
+    /// - Parameter locationId: id of `PharmacyLocation` from which to load the certificate
+    /// - Returns: Emits an array of certificates on success or fails with a `PharmacyRepositoryError`
+    func loadAvsCertificates(for locationId: String) -> AnyPublisher<[X509], PharmacyFHIRDataSource.Error>
 }

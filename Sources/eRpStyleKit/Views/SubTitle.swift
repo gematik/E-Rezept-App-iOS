@@ -65,6 +65,14 @@ public struct SubTitle: View {
         )
     }
 
+    public init(title: String) {
+        configuration = SubTitleConfiguration(
+            title: Text(title),
+            description: nil,
+            details: nil
+        )
+    }
+
     public var body: some View {
         subTitleStyle.makeBody(configuration: configuration)
     }
@@ -206,7 +214,7 @@ public struct InfoNavigationSubTitleStyle: SubTitleStyle {
 
             Image(systemName: SFSymbolName.info)
                 .foregroundColor(Colors.primary600)
-                .font(.body.weight(.semibold))
+                .font(.subheadline.weight(.semibold))
         }
         .bottomDivider(showSeparator: showSeparator)
         .padding(.leading)

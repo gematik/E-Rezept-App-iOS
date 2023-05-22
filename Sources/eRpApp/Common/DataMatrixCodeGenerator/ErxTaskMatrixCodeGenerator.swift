@@ -23,12 +23,19 @@ import UIKit
 import ZXingObjC
 
 /// This protocol abstracts the generates of visual (matrix) codes for a given set of Tasks.
-public protocol ErxTaskMatrixCodeGenerator {
+protocol ErxTaskMatrixCodeGenerator {
     /// Generates a matrix code for a given set of Tasks. Encodes all Tasks within one matrix code.
     /// - Parameters:
     ///   - tasks: Array of `ErxTask`s that should be encoded.
     ///   - size: The size of the requested image
     func matrixCode(for tasks: [ErxTask], with size: CGSize) throws -> CGImage
+
+    func matrixCodePublisher(
+        for tasks: [ErxTask],
+        with size: CGSize,
+        scale: CGFloat,
+        orientation: UIImage.Orientation
+    ) -> AnyPublisher<UIImage, Error>
 }
 
 // MARK: TCA Dependency

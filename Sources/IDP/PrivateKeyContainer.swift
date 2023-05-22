@@ -23,6 +23,9 @@ import OpenSSL
 import Security
 
 /// Represents a (SecureEnclave) private key, namely `PrK_SE_AUT`, secured by iOS Biometrics.
+///
+/// [REQ:gemSpec_IDP_Frontend:A_21590] This is the container to represent biometric keys. Usage is limited to
+/// authorization purposes
 public struct PrivateKeyContainer {
     // sourcery: CodedError = "108"
     public enum Error: Swift.Error {
@@ -153,7 +156,7 @@ public struct PrivateKeyContainer {
                 kSecAttrIsPermanent as String: true,
                 kSecAttrApplicationTag as String: tag,
                 kSecAttrAccessControl as String: access,
-            ],
+            ] as [String: Any],
         ]
 
         guard let privateKey = SecKeyCreateRandomKey(attributes as CFDictionary, &error) else {
@@ -187,7 +190,7 @@ public struct PrivateKeyContainer {
                 kSecAttrIsPermanent as String: true,
                 kSecAttrApplicationTag as String: tag,
                 kSecAttrAccessControl as String: access,
-            ],
+            ] as [String: Any],
         ]
 
         guard let privateKey = SecKeyCreateRandomKey(attributes as CFDictionary, &error) else {

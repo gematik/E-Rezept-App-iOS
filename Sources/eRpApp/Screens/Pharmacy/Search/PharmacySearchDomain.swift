@@ -30,7 +30,7 @@ struct PharmacySearchDomain: ReducerProtocol {
     typealias Store = StoreOf<Self>
 
     private static func cleanupSubDomains<T>() -> EffectTask<T> {
-        Effect.concatenate(
+        .concatenate(
             PharmacyDetailDomain.cleanup()
         )
     }
@@ -64,8 +64,6 @@ struct PharmacySearchDomain: ReducerProtocol {
             }
         }
 
-        /// TCA Detail-State for navigation
-        var pharmacyDetailState: PharmacyDetailDomain.State?
         /// Store for the active filter options the user has chosen
         var pharmacyFilterOptions: [PharmacySearchFilterDomain.PharmacyFilterOption] = []
         /// The current state the search is at
@@ -146,7 +144,7 @@ struct PharmacySearchDomain: ReducerProtocol {
     func core(into state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
         case .closeButtonTouched:
-            return Effect(value: .delegate(.close))
+            return EffectTask(value: .delegate(.close))
         case let .delegate(action):
             switch action {
             case .close:
@@ -198,6 +196,7 @@ struct PharmacySearchDomain: ReducerProtocol {
         case let .response(.pharmaciesReceived(result)):
             switch result {
             case let .success(pharmacies):
+                // [REQ:gemSpec_eRp_FdV:A_20285] pharmacy order is resolved on server side
                 state.pharmacies = pharmacies.map {
                     PharmacyLocationViewModel(
                         pharmacy: $0,
@@ -264,7 +263,7 @@ struct PharmacySearchDomain: ReducerProtocol {
             switch action {
             case .close:
                 state.destination = nil
-                return Effect(value: .delegate(.close))
+                return EffectTask(value: .delegate(.close))
                     // swiftlint:disable:next todo
                     // TODO: this is workaround to avoid `onAppear` of the the child view getting called
                     .delay(for: .seconds(0.1), scheduler: schedulers.main)
@@ -279,6 +278,7 @@ struct PharmacySearchDomain: ReducerProtocol {
         case let .quickSearch(filterOptions):
             state.pharmacyFilterOptions = filterOptions
 
+            // [REQ:gemSpec_eRp_APOVZD:A_21154] If user defined filters contain location element, ask for permission
             if filterOptions.contains(.currentLocation) {
                 state.searchState = .searchAfterLocalizationWasAuthorized
 
@@ -316,7 +316,7 @@ struct PharmacySearchDomain: ReducerProtocol {
              .locationManager(.didChangeAuthorization(.authorizedWhenInUse)):
             if state.searchState == .searchAfterLocalizationWasAuthorized {
                 if state.currentLocation != nil {
-                    return Effect(value: .performSearch)
+                    return EffectTask(value: .performSearch)
                 } else {
                     return locationManager.startUpdatingLocation(id: LocationManagerId()).fireAndForget()
                 }
@@ -335,12 +335,10 @@ struct PharmacySearchDomain: ReducerProtocol {
             return .concatenate(
                 locationManager.stopUpdatingLocation(id: LocationManagerId())
                     .fireAndForget(),
-                Effect(value: .performSearch)
+                EffectTask(value: .performSearch)
             )
         case let .setNavigation(tag: tag):
             switch tag {
-            case .selectProfile:
-                state.destination = .selectProfile
             case .filter:
                 state.destination = .filter(.init(pharmacyFilterOptions: state.pharmacyFilterOptions))
             case .pharmacy, .alert:
@@ -359,7 +357,7 @@ struct PharmacySearchDomain: ReducerProtocol {
 }
 
 extension PharmacySearchDomain {
-    func loadLocalPharmacies() -> Effect<PharmacySearchDomain.Action, Never> {
+    func loadLocalPharmacies() -> EffectTask<PharmacySearchDomain.Action> {
         pharmacyRepository.loadLocal(count: 5)
             .first()
             .receive(on: schedulers.main.animation())
@@ -378,7 +376,7 @@ extension PharmacySearchDomain {
         location: ComposableCoreLocation.Location?,
         filter: [PharmacySearchFilterDomain.PharmacyFilterOption]
     )
-        -> Effect<PharmacySearchDomain.Action, Never> {
+        -> EffectTask<PharmacySearchDomain.Action> {
         var position: Position?
         if let latitude = location?.coordinate.latitude,
            let longitude = location?.coordinate.longitude {

@@ -22,6 +22,7 @@ import ComposableArchitecture
 import eRpKit
 import XCTest
 
+@MainActor
 final class ProfilesDomainTests: XCTestCase {
     typealias TestStore = ComposableArchitecture.TestStore<
         ProfilesDomain.State,
@@ -66,8 +67,7 @@ final class ProfilesDomainTests: XCTestCase {
         mockUserProfileService.selectedProfileId = Just(Fixtures.profileA.id).eraseToAnyPublisher()
 
         let sut = testStore(for: .init(profiles: [],
-                                       selectedProfileId: nil,
-                                       destination: nil))
+                                       selectedProfileId: nil))
 
         sut.send(.registerListener)
 
@@ -86,14 +86,13 @@ final class ProfilesDomainTests: XCTestCase {
         sut.send(.unregisterListener)
     }
 
-    func testEditProfile() {
+    func testEditProfile() async {
         let sut = testStore(for: .init(profiles: [Fixtures.profileA, Fixtures.profileB],
-                                       selectedProfileId: nil,
-                                       destination: nil))
+                                       selectedProfileId: nil))
 
-        sut.send(.editProfile(Fixtures.profileA)) { state in
-            state.destination = .editProfile(.init(profile: Fixtures.profileA))
-        }
+        await sut.send(.editProfile(Fixtures.profileA))
+
+        await sut.receive(.delegate(.showEditProfile(.init(profile: Fixtures.profileA))))
     }
 }
 

@@ -30,68 +30,67 @@ struct ContactOptionsRowView: View {
     }
 
     var body: some View {
-        VStack(spacing: 16) {
+        VStack {
             if let phone = phone {
-                PrimaryTextButtonBorder(text: L10n.orderEgkTxtContactOptionTelephone,
-                                        image: Image(systemName: SFSymbolName.phone)) {
+                ContactCellButtonView(
+                    text: L10n.orderEgkTxtContactOptionTelephone.key,
+                    a11y: A11y.orderEGK.ogkBtnPhone
+                ) {
                     if UIApplication.shared.canOpenURL(phone) {
                         UIApplication.shared.open(phone)
                     }
                 }
-                .accessibility(identifier: A11y.orderEGK.ogkBtnPhone)
             }
 
             if let web = web {
-                PrimaryTextButtonBorder(text: L10n.orderEgkTxtContactOptionWeb,
-                                        image: Image(systemName: SFSymbolName.safari)) {
+                ContactCellButtonView(text: L10n.orderEgkTxtContactOptionWeb.key, a11y: A11y.orderEGK.ogkBtnWeb) {
                     if UIApplication.shared.canOpenURL(web) {
                         UIApplication.shared.open(web)
                     }
                 }
-                .accessibility(identifier: A11y.orderEGK.ogkBtnWeb)
             }
 
             if let email = email {
-                PrimaryTextButtonBorder(text: L10n.orderEgkTxtContactOptionMail,
-                                        image: Image(systemName: SFSymbolName.envelope)) {
+                ContactCellButtonView(text: L10n.orderEgkTxtContactOptionMail.key, a11y: A11y.orderEGK.ogkBtnMail) {
                     if UIApplication.shared.canOpenURL(email) {
                         UIApplication.shared.open(email)
                     }
                 }
-                .accessibility(identifier: A11y.orderEGK.ogkBtnMail)
             }
         }
     }
 
     private struct ContactCellButtonView: View {
-        let symbolName: String
         let text: LocalizedStringKey
         var a11y: String
-        var isEnabled = true
         let action: () -> Void
 
         var body: some View {
             Button(action: action) {
                 VStack {
-                    Image(systemName: symbolName)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 72, height: 46)
-                        .font(.largeTitle)
-                        .foregroundColor(isEnabled ? Asset.Colors.primary600.color : Color(.systemGray))
-                        .padding(.bottom)
                     Text(text)
-                        .foregroundColor(isEnabled ? Asset.Colors.primary600.color : Color(.systemGray))
+                        .fontWeight(.semibold)
+                        .font(.body)
+                        .multilineTextAlignment(.center)
+                        .foregroundColor(Asset.Colors.primary600.color)
+                        .padding()
+                        .fixedSize(horizontal: false, vertical: true)
                 }
             }
-            .padding()
-            .background(Color(.tertiarySystemBackground))
-            .border(Colors.separator, cornerRadius: 16)
+            .buttonStyle(ContactButtonStyle())
+            .padding(.horizontal)
+            .padding(.vertical, 8)
             .accessibility(identifier: a11y)
-            .if(!isEnabled) {
-                $0.accessibility(value: Text(L10n.buttonTxtIsInactiveValue))
+        }
+
+        private struct ContactButtonStyle: ButtonStyle {
+            func makeBody(configuration: Self.Configuration) -> some View {
+                configuration.label
+                    .frame(minWidth: 0, maxWidth: .infinity)
+                    .opacity(configuration.isPressed ? 0.25 : 1)
+                    .background(Colors.systemGray6)
+                    .cornerRadius(16)
             }
-            .disabled(!isEnabled)
         }
     }
 }

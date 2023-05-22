@@ -19,24 +19,39 @@
 import Combine
 import ComposableArchitecture
 import eRpKit
+import PhotosUI
 import SwiftUI
 
 struct EditProfilePictureDomain: ReducerProtocol {
     typealias Store = StoreOf<Self>
 
     /// Provides an Effect that needs to run whenever the state of this Domain is reset to nil
-    static func cleanup<T>() -> Effect<T, Never> {
-        Effect.cancel(id: Token.self)
+    static func cleanup<T>() -> EffectTask<T> {
+        .cancel(id: Token.self)
     }
 
     enum Token: CaseIterable, Hashable {
         case updateProfile
     }
 
+    struct Destinations: ReducerProtocol {
+        enum State: Equatable {
+            case photoPicker
+        }
+
+        enum Action: Equatable {}
+
+        var body: some ReducerProtocol<State, Action> {
+            EmptyReducer()
+        }
+    }
+
     struct State: Equatable {
         var profile: UserProfile
         var color: ProfileColor?
         var picture: ProfilePicture?
+        var userImageData: Data?
+        var destination: Destinations.State?
     }
 
     enum Action: Equatable {
@@ -44,7 +59,9 @@ struct EditProfilePictureDomain: ReducerProtocol {
         case editColor(ProfileColor?)
         case editPicture(ProfilePicture?)
         case delegate(DelegateAction)
+        case setUserImageData(Data)
         case updateProfileReceived(Result<Bool, UserProfileServiceError>)
+        case setNavigation(tag: Destinations.State.Tag?)
     }
 
     enum DelegateAction: Equatable {
@@ -60,6 +77,7 @@ struct EditProfilePictureDomain: ReducerProtocol {
         case .setProfileValues:
             state.color = state.profile.color
             state.picture = state.profile.image
+            state.userImageData = state.profile.userImageData
             return .none
         case let .editColor(color):
             state.color = color
@@ -78,7 +96,22 @@ struct EditProfilePictureDomain: ReducerProtocol {
         case let .updateProfileReceived(.failure(error)):
             state.color = state.profile.color
             state.picture = state.profile.image
+            state.userImageData = state.profile.userImageData
             return .init(value: .delegate(.failure(error)))
+        case let .setUserImageData(image):
+            state.userImageData = image
+            return updateProfile(with: state.profile.id) { profile in
+                profile.userImageData = image
+            }
+            .map(Action.updateProfileReceived)
+        case .setNavigation(tag: .photoPicker):
+            state.destination = .photoPicker
+            return .none
+        case .setNavigation(tag: .none):
+            state.destination = nil
+            return .none
+        case .setNavigation:
+            return .none
         case .delegate:
             return .none
         }
@@ -89,7 +122,7 @@ extension EditProfilePictureDomain {
     func updateProfile(
         with profileId: UUID,
         mutating: @escaping (inout eRpKit.Profile) -> Void
-    ) -> Effect<Result<Bool, UserProfileServiceError>, Never> {
+    ) -> EffectTask<Result<Bool, UserProfileServiceError>> {
         userProfileService
             .update(profileId: profileId, mutating: mutating)
             .receive(on: schedulers.main)

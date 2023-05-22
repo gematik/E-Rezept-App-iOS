@@ -1,4 +1,4 @@
-// Generated using Sourcery 2.0.1 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.0.2 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 
 import Foundation
@@ -127,7 +127,7 @@ extension ChargeItemDomain.Action {
         }
     }
 }
-extension ChargeItemsDomain.Action {
+extension ChargeItemListDomain.Action {
     func analytics(tracker: Tracker) {
         switch self {
             default: break
@@ -251,6 +251,20 @@ extension MainDomain.Action {
         }
     }
 }
+extension MedicationDomain.Action {
+    func analytics(tracker: Tracker) {
+        switch self {
+            default: break
+        }
+    }
+}
+extension MedicationOverviewDomain.Action {
+    func analytics(tracker: Tracker) {
+        switch self {
+            default: break
+        }
+    }
+}
 extension NewProfileDomain.Action {
     func analytics(tracker: Tracker) {
         switch self {
@@ -354,15 +368,6 @@ extension PrescriptionListDomain.Action {
 extension ProfileSelectionDomain.Action {
     func analytics(tracker: Tracker) {
         switch self {
-            default: break
-        }
-    }
-}
-extension ProfileSelectionToolbarItemDomain.Action {
-    func analytics(tracker: Tracker) {
-        switch self {
-            case let .profileSelection(action: action):
-                action.analytics(tracker: tracker)
             default: break
         }
     }

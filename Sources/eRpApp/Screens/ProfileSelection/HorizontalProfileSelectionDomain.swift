@@ -94,9 +94,9 @@ struct HorizontalProfileSelectionDomain: ReducerProtocol {
             state.selectedProfileId = profileId
             return .none
         case let .profileButtonLongPressed(profile):
-            return Effect.concatenate(
-                Effect(value: .selectProfile(profile)),
-                Effect(value: .showEditProfileNameView(profile.id, profile.name))
+            return .concatenate(
+                EffectTask(value: .selectProfile(profile)),
+                EffectTask(value: .showEditProfileNameView(profile.id, profile.name))
             )
         case .showEditProfileNameView:
             return .none

@@ -1,4 +1,4 @@
-// Generated using Sourcery 2.0.1 — https://github.com/krzysztofzablocki/Sourcery
+// Generated using Sourcery 2.0.2 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 
 
@@ -198,12 +198,12 @@ extension Store where State == CardWallReadCardDomain.State, Action == CardWallR
 
 
 
-extension Store where State == ChargeItemsDomain.State, Action == ChargeItemsDomain.Action {
+extension Store where State == ChargeItemListDomain.State, Action == ChargeItemListDomain.Action {
     func destinationsScope<ChildState, ChildAction>(
-        state: CasePath<ChargeItemsDomain.Destinations.State?, ChildState>,
-        action: @escaping (ChildAction) -> ChargeItemsDomain.Destinations.Action
+        state: CasePath<ChargeItemListDomain.Destinations.State?, ChildState>,
+        action: @escaping (ChildAction) -> ChargeItemListDomain.Destinations.Action
     ) -> Store<ChildState?, ChildAction> {
-        self.scope(state: \ChargeItemsDomain.State.destination, action: ChargeItemsDomain.Action.destination)
+        self.scope(state: \ChargeItemListDomain.State.destination, action: ChargeItemListDomain.Action.destination)
             .scope(
                 state: state.extract(from:),
                 action: action
@@ -211,9 +211,9 @@ extension Store where State == ChargeItemsDomain.State, Action == ChargeItemsDom
     }
 
     func destinationsScope<ChildState>(
-        state: CasePath<ChargeItemsDomain.Destinations.State?, ChildState>
+        state: CasePath<ChargeItemListDomain.Destinations.State?, ChildState>
     ) -> Store<ChildState?, Action> {
-        self.scope(state: \ChargeItemsDomain.State.destination)
+        self.scope(state: \ChargeItemListDomain.State.destination)
             .scope(state: state.extract(from:))
     }
 }
@@ -254,6 +254,10 @@ extension Store where State == EditProfileDomain.State, Action == EditProfileDom
             .scope(state: state.extract(from:))
     }
 }
+
+
+
+
 
 
 
@@ -342,6 +346,60 @@ extension Store where State == MainDomain.State, Action == MainDomain.Action {
         state: CasePath<MainDomain.Destinations.State?, ChildState>
     ) -> Store<ChildState?, Action> {
         self.scope(state: \MainDomain.State.destination)
+            .scope(state: state.extract(from:))
+    }
+}
+
+
+
+
+
+
+
+
+extension Store where State == MedicationDomain.State, Action == MedicationDomain.Action {
+    func destinationsScope<ChildState, ChildAction>(
+        state: CasePath<MedicationDomain.Destinations.State?, ChildState>,
+        action: @escaping (ChildAction) -> MedicationDomain.Destinations.Action
+    ) -> Store<ChildState?, ChildAction> {
+        self.scope(state: \MedicationDomain.State.destination, action: MedicationDomain.Action.destination)
+            .scope(
+                state: state.extract(from:),
+                action: action
+            )
+    }
+
+    func destinationsScope<ChildState>(
+        state: CasePath<MedicationDomain.Destinations.State?, ChildState>
+    ) -> Store<ChildState?, Action> {
+        self.scope(state: \MedicationDomain.State.destination)
+            .scope(state: state.extract(from:))
+    }
+}
+
+
+
+
+
+
+
+
+extension Store where State == MedicationOverviewDomain.State, Action == MedicationOverviewDomain.Action {
+    func destinationsScope<ChildState, ChildAction>(
+        state: CasePath<MedicationOverviewDomain.Destinations.State?, ChildState>,
+        action: @escaping (ChildAction) -> MedicationOverviewDomain.Destinations.Action
+    ) -> Store<ChildState?, ChildAction> {
+        self.scope(state: \MedicationOverviewDomain.State.destination, action: MedicationOverviewDomain.Action.destination)
+            .scope(
+                state: state.extract(from:),
+                action: action
+            )
+    }
+
+    func destinationsScope<ChildState>(
+        state: CasePath<MedicationOverviewDomain.Destinations.State?, ChildState>
+    ) -> Store<ChildState?, Action> {
+        self.scope(state: \MedicationOverviewDomain.State.destination)
             .scope(state: state.extract(from:))
     }
 }
@@ -602,33 +660,6 @@ extension Store where State == ProfileSelectionDomain.State, Action == ProfileSe
 }
 
 
-
-
-
-
-
-
-
-
-extension Store where State == ProfilesDomain.State, Action == ProfilesDomain.Action {
-    func destinationsScope<ChildState, ChildAction>(
-        state: CasePath<ProfilesDomain.Destinations.State?, ChildState>,
-        action: @escaping (ChildAction) -> ProfilesDomain.Destinations.Action
-    ) -> Store<ChildState?, ChildAction> {
-        self.scope(state: \ProfilesDomain.State.destination, action: ProfilesDomain.Action.destination)
-            .scope(
-                state: state.extract(from:),
-                action: action
-            )
-    }
-
-    func destinationsScope<ChildState>(
-        state: CasePath<ProfilesDomain.Destinations.State?, ChildState>
-    ) -> Store<ChildState?, Action> {
-        self.scope(state: \ProfilesDomain.State.destination)
-            .scope(state: state.extract(from:))
-    }
-}
 
 
 

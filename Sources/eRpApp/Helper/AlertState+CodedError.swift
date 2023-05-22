@@ -147,6 +147,20 @@ enum ErpAlertState<Action: Equatable>: Equatable {
             secondaryButton: secondaryButton
         ))
     }
+
+    func pullback<LocalAction>(_ pullback: (Action) -> LocalAction) -> ErpAlertState<LocalAction> {
+        switch self {
+        case let .info(alertState):
+            return .info(
+                alertState.map { $0.map { pullback($0) } }
+            )
+        case let .error(error: error, alertState: alertState):
+            return .error(
+                error: error,
+                alertState: alertState.map { $0.map { pullback($0) } }
+            )
+        }
+    }
 }
 
 import SwiftUI

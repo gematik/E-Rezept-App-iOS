@@ -242,12 +242,7 @@ private extension MainView {
                         action: MainDomain.Destinations.Action.prescriptionDetailAction(action:)
                     )
                 ) { scopedStore in
-                    WithViewStore(scopedStore) { $0.prescription.source } content: { viewStore in
-                        switch viewStore.state {
-                        case .scanner: PrescriptionLowDetailView(store: scopedStore)
-                        case .server: PrescriptionFullDetailView(store: scopedStore)
-                        }
-                    }
+                    PrescriptionDetailView(store: scopedStore)
                 },
                 tag: MainDomain.Destinations.State.Tag.prescriptionDetail,
                 selection: viewStore.binding(

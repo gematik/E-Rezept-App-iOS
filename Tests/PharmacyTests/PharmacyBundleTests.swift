@@ -21,6 +21,7 @@ import eRpKit
 import Foundation
 import ModelsR4
 import Nimble
+import OpenSSL
 @testable import Pharmacy
 import XCTest
 
@@ -92,6 +93,58 @@ final class PharmacyBundleTests: XCTestCase {
                              PharmacyLocation.PharmacyType.emergency]
         let pharmacyTypes = parsedPharmacyLocations.flatMap(\.types)
         expect(pharmacyTypes) == expectedTypes
+    }
+
+    func testParsingPharmacyLocationWithAVSUrls() throws {
+        let fhirBundle = try bundle(for: "examplePharmacyWithAVSUrls.json")
+
+        guard let location = try fhirBundle.parsePharmacyLocations().first else {
+            fail("Could not parse ModelsR4.Bundle into Pharmacy.")
+            return
+        }
+
+        expect(location.id) == "ngc26fe2-9c3a-4d52-854e-794c96f73f66"
+        expect(location.name) == "PT-STA-Apotheke 2TEST-ONLY"
+        expect(location.address) == PharmacyLocation.Address(
+            street: "Münchnerstr. 15 b",
+            houseNumber: nil, // TODO: why is house number nil and in street? correct!? //swiftlint:disable:this todo
+            zip: "82139",
+            city: "Starnberg"
+        )
+        expect(location.position?.latitude?.doubleValue).to(beCloseTo(48.0018513))
+        expect(location.position?.longitude).to(equal(11.3497755))
+        expect(location.telecom) == .init(
+            phone: nil,
+            fax: nil,
+            email: nil,
+            web: nil
+        )
+        expect(location.types) == [.pharm, .outpharm, .mobl]
+        expect(location.telematikID) == "3-SMC-B-Testkarte-883110000116948"
+        expect(location.isErxReady).to(beTrue())
+
+        expect(location.avsEndpoints) == .init(
+            // swiftlint:disable:next line_length
+            onPremiseUrl: "https://ixosapi.service-pt.de/api/GematikAppZuweisung/864692?sig=Jh9U%2b7gbgR21QGHfvsmoztM%2bTSXZeko2Qeft1XfnozY%3d&se=2601360745",
+            // swiftlint:disable:next line_length
+            shipmentUrl: "https://ixosapi.service-pt.de/api/GematikAppZuweisung/864692?sig=Jh9U%2b7gbgR21QGHfvsmoztM%2bTSXZeko2Qeft1XfnozY%3d&se=2601360745",
+            // swiftlint:disable:next line_length
+            deliveryUrl: "https://ixosapi.service-pt.de/api/GematikAppZuweisung/864692?sig=Jh9U%2b7gbgR21QGHfvsmoztM%2bTSXZeko2Qeft1XfnozY%3d&se=2601360745" //
+        )
+    }
+
+    // swiftlint:disable line_length
+    func testParsingAVSCertificateBinaries() throws {
+        let fhirBundle = try bundle(for: "exampleAVSCertificateBinaries.json")
+        let certificates = try fhirBundle.parseCertificates()
+
+        expect(certificates.count) == 1 // filterd for rsa
+        expect(certificates.first?.isValidCaCertificate).to(beFalse())
+        expect(try certificates.first?.issuerOneLine()) ==
+            "/C=DE/O=gematik GmbH NOT-VALID/OU=Institution des Gesundheitswesens-CA der Telematikinfrastruktur/CN=GEM.SMCB-CA41 TEST-ONLY"
+        expect(try certificates.first?.serialNumber()) == "894998056540349"
+        expect(try certificates.first?.subjectOneLine()) ==
+            "/C=DE/ST=Ulm/L=Ingolfstadt/postalCode=12346/street=Hauptstr. 11/O=3-2-20230124-1 NOT-VALID/serialNumber=16.80276001011699902301/SN=Ulmendorfer/GN=Adelheid/CN=Apotheke Adelheid Ulmendorfer TEST-ONLY"
     }
 
     private func bundle(for source: String) throws -> ModelsR4.Bundle {

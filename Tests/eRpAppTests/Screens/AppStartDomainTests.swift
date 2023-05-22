@@ -91,8 +91,7 @@ final class AppStartDomainTests: XCTestCase {
                                                                 availableSecurityOptions: [.password],
                                                                 selectedSecurityOption: nil,
                                                                 errorToDisplay: nil
-                                                            )),
-                        profileSelection: .init()
+                                                            ))
                     ),
                     unreadOrderMessageCount: 0,
                     isDemoMode: false
@@ -138,8 +137,7 @@ final class AppStartDomainTests: XCTestCase {
                                                  availableSecurityOptions: [.password],
                                                  selectedSecurityOption: nil,
                                                  errorToDisplay: nil
-                                             )),
-                        profileSelection: .init()
+                                             ))
                     ),
                     unreadOrderMessageCount: 0,
                     isDemoMode: false
@@ -170,8 +168,7 @@ final class AppStartDomainTests: XCTestCase {
                                              appSecurityState:
                                              .init(availableSecurityOptions: [.password],
                                                    selectedSecurityOption: nil,
-                                                   errorToDisplay: nil)),
-                        profileSelection: .init()
+                                                   errorToDisplay: nil))
                     ),
                     unreadOrderMessageCount: 0,
                     isDemoMode: false

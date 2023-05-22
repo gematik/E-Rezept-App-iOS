@@ -65,7 +65,7 @@ configurations:
       - Templates/Sourcery/Tests/ProtocolMock.stencil
     output: Tests/PharmacyTests
     args:
-      protocolMockImports: [ Combine,eRpKit ]
+      protocolMockImports: [ Combine,eRpKit,OpenSSL ]
       protocolMockTestableImports: [ Pharmacy ]
   - sources: # writes to Tests/TrustStoreTests/Mocks/Generated/
       - Sources

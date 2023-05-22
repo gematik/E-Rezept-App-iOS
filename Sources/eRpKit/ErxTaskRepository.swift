@@ -86,13 +86,35 @@ public protocol ErxTaskRepository {
     /// Load all ErxChargeItem's from a remote (server).
     ///
     /// - Returns: AnyPublisher that emits an array of all `ErxChargeItems`s or `DefaultErxTaskRepository.Error`
-    func loadRemoteChargeItems() -> AnyPublisher<[ErxChargeItem], ErxRepositoryError>
+    func loadRemoteChargeItems() -> AnyPublisher<[ErxSparseChargeItem], ErxRepositoryError>
 
     /// Loads All consents of a given profile
     /// Uses the request headers  ACCESS_TOKEN with the containing insurance id
     ///
     /// - Returns: Array of all loaded `ErxConsent`
     func fetchConsents() -> AnyPublisher<[ErxConsent], ErxRepositoryError>
+
+    /// Loads the `ErxChargeItem` by its id from disk
+    /// - Parameters:
+    ///   - id: the `ErxChargeItem` ID
+    /// - Returns: Publisher for the load request
+    func loadLocal(by id: ErxSparseChargeItem.ID) -> AnyPublisher<ErxSparseChargeItem?, ErxRepositoryError>
+
+    /// Load all local charge items (from disk)
+    /// - Returns: Publisher for the load request
+    func loadLocalAll() -> AnyPublisher<[ErxSparseChargeItem], ErxRepositoryError>
+
+    /// Saves an array of `ErxChargeItem`s
+    /// - Parameters:
+    ///   - chargeItems: the `ErxChargeItem`s to be saved
+    /// - Returns: Publisher for the load request
+    func save(chargeItems: [ErxSparseChargeItem]) -> AnyPublisher<Bool, ErxRepositoryError>
+
+    /// Delete an array of `ErxChargeItem`s
+    /// - Parameters:
+    ///   - chargeItems: the `ErxChargeItem`s to be deleted
+    /// - Returns: Publisher for the load request
+    func delete(chargeItems: [ErxSparseChargeItem]) -> AnyPublisher<Bool, ErxRepositoryError>
 
     /// Send a grant consent request of  an `ErxConsent`
     ///

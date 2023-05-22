@@ -75,7 +75,7 @@ class KeychainStorage: SecureUserDataStore, IDPStorage, SecureEGKCertificateStor
     }
 
     var idpDiscoveryDocumentIdentifier: String {
-        profilePrefix + Self.idpDiscoveryDocumentIdentifier
+        Self.idpDiscoveryDocumentIdentifier
     }
 
     var egkAuthCertIdentifier: String {
@@ -253,7 +253,7 @@ class KeychainStorage: SecureUserDataStore, IDPStorage, SecureEGKCertificateStor
     }
 
     func wipe() {
-        // [REQ:gemSpec_IDP_Frontend:A_20499] Deletion of SSO_TOKEN, ID_TOKEN, AUTH_TOKEN
+        // [REQ:gemSpec_IDP_Frontend:A_20499,A_20499-1#3] Deletion of SSO_TOKEN, ID_TOKEN, AUTH_TOKEN
         // [REQ:gemSpec_eRp_FdV:A_20186] Deletion of SSO_TOKEN, ID_TOKEN, AUTH_TOKEN
         set(can: nil)
         set(token: nil)

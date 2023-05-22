@@ -96,7 +96,7 @@ struct NewProfileDomain: ReducerProtocol {
                 .eraseToEffect()
         case let .response(.saveReceived(.success(profileId))):
             userDataStore.set(selectedProfileId: profileId)
-            return Effect(value: .delegate(.close))
+            return EffectTask(value: .delegate(.close))
         case let .response(.saveReceived(.failure(error))):
             state.alertState = AlertStates.for(error)
             return .none
@@ -104,7 +104,7 @@ struct NewProfileDomain: ReducerProtocol {
             state.alertState = nil
             return .none
         case .closeButtonTapped:
-            return Effect(value: .delegate(.close))
+            return EffectTask(value: .delegate(.close))
 
         case .delegate:
             return .none

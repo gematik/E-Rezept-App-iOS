@@ -19,9 +19,9 @@
 import SwiftUI
 
 struct ProfilePictureView: View {
-    let text: String?
     let image: ProfilePicture?
-    let color: Color?
+    let userImageData: Data?
+    let color: ProfileColor?
     let connection: ProfileConnectionStatus?
     let style: ProfilePictureView.Style
     let action: () -> Void
@@ -70,14 +70,6 @@ struct ProfilePictureView: View {
             case .small: return 12
             }
         }
-
-        var textSize: CGFloat {
-            switch self {
-            case .xxLarge: return 33
-            case .large: return 22
-            case .small: return 11
-            }
-        }
     }
 
     var connectionStatusImage: Image? {
@@ -97,19 +89,24 @@ struct ProfilePictureView: View {
         } label: {
             ZStack(alignment: .bottomTrailing) {
                 Group {
-                    if let image = image?.description, !image.name.isEmpty {
+                    if let userImageData = userImageData, !userImageData.isEmpty {
+                        Image(uiImage: UIImage(data: userImageData) ?? UIImage())
+                            .resizable()
+                            .scaledToFill()
+                            .clipShape(Circle())
+                    } else if let image = image?.description, !image.name.isEmpty {
                         Image(image)
                             .resizable()
                             .scaledToFit()
                             .clipShape(Circle())
                     } else {
-                        Text(text ?? "")
-                            .font(.system(size: style.textSize).weight(.bold))
+                        Image(systemName: SFSymbolName.camera)
+                            .font(Font.headline.weight(.bold))
                             .foregroundColor(Color(.secondaryLabel))
                     }
                 }
                 .frame(width: style.size, height: style.size, alignment: .center)
-                .background(Circle().fill(color ?? Colors.secondary))
+                .background(Circle().fill(color?.background ?? Colors.secondary))
                 .foregroundColor(Color(.secondaryLabel))
                 .padding(.vertical, 8)
                 .padding(.trailing, 16)
@@ -137,22 +134,22 @@ struct ProfilePictureView_Previews: PreviewProvider {
     static var previews: some View {
         VStack(alignment: .leading) {
             ProfilePictureView(
-                text: "SD",
                 image: ProfilePicture.none,
+                userImageData: nil,
                 color: .blue,
                 connection: .connected,
                 style: .small
             ) {}
             ProfilePictureView(
-                text: "LN",
                 image: .baby,
+                userImageData: nil,
                 color: .green,
                 connection: .disconnected,
                 style: .large
             ) {}
             ProfilePictureView(
-                text: "FM",
-                image: .doctor,
+                image: .doctorFemale,
+                userImageData: nil,
                 color: .yellow,
                 connection: .never,
                 style: .large

@@ -21,7 +21,7 @@ import Foundation
 import OpenSSL
 
 /// Represents stored data within the idp.
-/// [REQ:gemF_Biometrie:A21450:Pairing_Entry]
+/// [REQ:gemF_Biometrie:A_21450:Pairing_Entry]
 public struct PairingEntry: Equatable, Codable {
     public init(name: String, signedPairingData: String, creationTime: Date) {
         self.name = name

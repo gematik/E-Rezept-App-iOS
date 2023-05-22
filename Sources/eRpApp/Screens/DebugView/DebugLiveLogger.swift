@@ -161,7 +161,11 @@ extension DebugLiveLogger {
         }
 
         var requestBody: String {
-            request.httpBody?.utf8string ?? "no request body"
+            guard let body = request.httpBody else { return "no request body" }
+            if let utf8String = body.utf8string {
+                return utf8String
+            }
+            return body.base64EncodedString()
         }
 
         var responseStatus: HTTPStatusCode? {

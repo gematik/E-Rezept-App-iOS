@@ -15,6 +15,7 @@
 //  limitations under the Licence.
 //  
 //
+// swiftlint:disable type_body_length
 
 import Combine
 import Foundation
@@ -283,18 +284,59 @@ public class DefaultErxTaskRepository: ErxTaskRepository {
 
     /// Load all ErxChargeItem's from a remote (server).
     ///
-    /// - Returns: AnyPublisher that emits an array of all `ErxChargeItems`s or `DefaultErxTaskRepository.Error`
-    public func loadRemoteChargeItems() -> AnyPublisher<[ErxChargeItem], ErrorType> {
-        Just([
-            ErxChargeItem.dummy,
-            ErxChargeItem.dummy,
-            ErxChargeItem.dummy,
-        ])
-            .setFailureType(to: ErrorType.self)
+    /// - Returns: AnyPublisher that emits an array of all `ErxSparseChargeItem`s or `DefaultErxTaskRepository.Error`
+    public func loadRemoteChargeItems() -> AnyPublisher<[ErxSparseChargeItem], ErrorType> {
+        loadRemoteLatestChargeItems()
+            .flatMap { _ -> AnyPublisher<[ErxSparseChargeItem], ErrorType> in
+                self.disk.listAllChargeItems()
+                    .first()
+                    .mapError(ErrorType.local)
+                    .eraseToAnyPublisher()
+            }
             .eraseToAnyPublisher()
-//        cloud.listAllChargeItems(after: nil)
-//            .mapError(ErrorType.remote)
-//            .eraseToAnyPublisher()
+    }
+
+    private func loadRemoteLatestChargeItems() -> AnyPublisher<Bool, ErrorType> {
+        disk.fetchLatestTimestampForChargeItems()
+            .first()
+            .mapError(ErrorType.local)
+            .flatMap {
+                self.cloud.listAllChargeItems(after: $0)
+                    .mapError(ErrorType.remote)
+            }
+            .flatMap {
+                self.disk.save(chargeItems: $0.map(\.sparseChargeItem))
+                    .mapError(ErrorType.local)
+            }
+            .eraseToAnyPublisher()
+    }
+
+    public func loadLocal(by id: ErxSparseChargeItem.ID) -> AnyPublisher<ErxSparseChargeItem?, ErxRepositoryError> {
+        disk.fetchChargeItem(by: id, fullDetail: true)
+            .mapError(ErrorType.local)
+            .eraseToAnyPublisher()
+    }
+
+    public func loadLocalAll() -> AnyPublisher<[ErxSparseChargeItem], ErxRepositoryError> {
+        disk.listAllChargeItems()
+            .mapError(ErrorType.local)
+            .eraseToAnyPublisher()
+    }
+
+    public func save(chargeItems: [ErxSparseChargeItem]) -> AnyPublisher<Bool, ErxRepositoryError> {
+        disk.save(chargeItems: chargeItems)
+            .mapError(ErrorType.local)
+            .eraseToAnyPublisher()
+    }
+
+    public func delete(chargeItems: [ErxSparseChargeItem]) -> AnyPublisher<Bool, ErxRepositoryError> {
+        cloud.delete(chargeItems: chargeItems)
+            .mapError(ErrorType.remote)
+            .flatMap { _ in
+                self.disk.delete(chargeItems: chargeItems)
+                    .mapError(ErrorType.local)
+            }
+            .eraseToAnyPublisher()
     }
 
     public func fetchConsents() -> AnyPublisher<[ErxConsent], ErrorType> {
@@ -313,15 +355,5 @@ public class DefaultErxTaskRepository: ErxTaskRepository {
         cloud.revokeConsent(category)
             .mapError(ErrorType.remote)
             .eraseToAnyPublisher()
-    }
-}
-
-extension ErxChargeItem {
-    static var dummy: Self {
-        ErxChargeItem(
-            identifier: UUID().uuidString,
-            fhirData: Data(),
-            enteredDate: "2021-06-01T07:13:00+05:00"
-        )
     }
 }

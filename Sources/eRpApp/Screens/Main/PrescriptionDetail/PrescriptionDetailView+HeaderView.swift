@@ -20,6 +20,7 @@ import ComposableArchitecture
 import SwiftUI
 
 extension PrescriptionDetailView {
+    // swiftlint:disable:next type_body_length
     struct HeaderView: View {
         let store: StoreOf<PrescriptionDetailDomain>
         @ObservedObject
@@ -28,31 +29,6 @@ extension PrescriptionDetailView {
         init(store: PrescriptionDetailDomain.Store) {
             self.store = store
             viewStore = ViewStore(store.scope(state: ViewState.init))
-        }
-
-        struct ViewState: Equatable {
-            let prescription: Prescription
-            let title: String
-            let statusMessage: String
-            let showStatusMessageAsButton: Bool
-            let isDirectAssignment: Bool
-            let isSubstitutionAllowed: Bool
-            var destinationTag: PrescriptionDetailDomain.Destinations.State.Tag?
-            let type: Prescription.PrescriptionType
-            let isManualRedeemEnabled: Bool
-
-            init(state: PrescriptionDetailDomain.State) {
-                prescription = state.prescription
-                title = state.prescription.title
-                statusMessage = state.prescription.statusMessage
-                showStatusMessageAsButton = state.prescription.status == .ready && state.prescription
-                    .type != .directAssignment
-                isDirectAssignment = state.prescription.type == .directAssignment
-                isSubstitutionAllowed = state.prescription.medicationRequest.substitutionAllowed
-                destinationTag = state.destination?.tag
-                type = state.prescription.type
-                isManualRedeemEnabled = state.prescription.isManualRedeemEnabled
-            }
         }
 
         var body: some View {
@@ -66,7 +42,12 @@ extension PrescriptionDetailView {
                 // Flag/Hints for the prescription type
                 switch viewStore.type {
                 case .directAssignment:
-                    DirectAssignedHintView(store: store)
+                    Button(action: { viewStore.send(.setNavigation(tag: .directAssignmentInfo)) }, label: {
+                        Label(L10n.prscDtlBtnDirectAssignment, systemImage: SFSymbolName.info)
+                            .labelStyle(.blueFlag)
+                    })
+                        .padding(8)
+                        .accessibilityIdentifier(A11y.prescriptionDetails.prscDtlBtnDirectAssignmentInfo)
                 case .regular, .multiplePrescription:
                     if viewStore.prescription.viewStatus.isError {
                         Button(action: { viewStore.send(.setNavigation(tag: .errorInfo)) }, label: {
@@ -94,7 +75,8 @@ extension PrescriptionDetailView {
                 }
 
                 // Status message about validity and prescription status
-                if let message = viewStore.statusMessage, !message.isEmpty {
+                let message = viewStore.statusMessage
+                if !message.isEmpty {
                     Button(action: { viewStore.send(.setNavigation(tag: .prescriptionValidityInfo)) }, label: {
                         HStack {
                             Text(message)
@@ -168,9 +150,38 @@ extension PrescriptionDetailView {
                         }
                     ), content: ScannedPrescriptionInfoDrawerView.init)
                     .accessibility(hidden: true)
+
+                Rectangle()
+                    .frame(width: 0, height: 0, alignment: .center)
+                    .smallSheet(isPresented: Binding<Bool>(
+                        get: { viewStore.destinationTag == .directAssignmentInfo },
+                        set: { show in
+                            if !show {
+                                viewStore.send(.setNavigation(tag: nil), animation: .easeInOut)
+                            }
+                        }
+                    ), content: DirectAssignmentDrawerView.init)
+                    .accessibility(hidden: true)
             }
             .padding(.horizontal)
             .padding(.top)
+        }
+
+        struct DirectAssignmentDrawerView: View {
+            var body: some View {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text(L10n.davTxtDirectAssignmentTitle)
+                        .font(.headline)
+                        .accessibilityIdentifier(A11y.directAssignment.davTxtDirectAssignmentTitle)
+                    Text(L10n.davTxtDirectAssignmentHint)
+                        .font(Font.body)
+                        .foregroundColor(Colors.systemLabelSecondary)
+                        .accessibilityIdentifier(A11y.directAssignment.davTxtDirectAssignmentHint)
+                    Spacer()
+                }
+                .padding()
+                .background(Colors.systemBackground.ignoresSafeArea())
+            }
         }
 
         struct SubstitutionAllowedDrawerView: View {
@@ -226,9 +237,15 @@ extension PrescriptionDetailView {
 
         struct PrescriptionValidityView: View {
             @ObservedObject
-            var viewStore: ViewStore<PrescriptionDetailDomain.PrescriptionValidity?, PrescriptionDetailDomain.Action>
+            var viewStore: ViewStore<
+                PrescriptionDetailDomain.Destinations.PrescriptionValidityState?,
+                PrescriptionDetailDomain.Action
+            >
 
-            init(store: Store<PrescriptionDetailDomain.PrescriptionValidity?, PrescriptionDetailDomain.Action>) {
+            init(store: Store<
+                PrescriptionDetailDomain.Destinations.PrescriptionValidityState?,
+                PrescriptionDetailDomain.Action
+            >) {
                 viewStore = ViewStore(store)
             }
 
@@ -272,6 +289,31 @@ extension PrescriptionDetailView {
                         Text(toDate ?? L10n.prscFdTxtNa.text)
                     }
                 }
+            }
+        }
+
+        struct ViewState: Equatable {
+            let prescription: Prescription
+            let title: String
+            let statusMessage: String
+            let showStatusMessageAsButton: Bool
+            let isDirectAssignment: Bool
+            let isSubstitutionAllowed: Bool
+            var destinationTag: PrescriptionDetailDomain.Destinations.State.Tag?
+            let type: Prescription.PrescriptionType
+            let isManualRedeemEnabled: Bool
+
+            init(state: PrescriptionDetailDomain.State) {
+                prescription = state.prescription
+                title = state.prescription.title
+                statusMessage = state.prescription.statusMessage
+                showStatusMessageAsButton = state.prescription.status == .ready && state.prescription
+                    .type != .directAssignment
+                isDirectAssignment = state.prescription.type == .directAssignment
+                isSubstitutionAllowed = state.prescription.medicationRequest.substitutionAllowed
+                destinationTag = state.destination?.tag
+                type = state.prescription.type
+                isManualRedeemEnabled = state.prescription.isManualRedeemEnabled
             }
         }
     }

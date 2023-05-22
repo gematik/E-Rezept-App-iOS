@@ -21,9 +21,13 @@ import ComposableArchitecture
 extension PharmacyRedeemDomain {
     struct Destinations: ReducerProtocol {
         enum State: Equatable {
+            // sourcery: AnalyticsScreen = redeem_success
             case redeemSuccess(RedeemSuccessDomain.State)
+            // sourcery: AnalyticsScreen = redeem_editContactInformation
             case contact(PharmacyContactDomain.State)
+            // sourcery: AnalyticsScreen = cardWall
             case cardWall(CardWallIntroductionDomain.State)
+            // sourcery: AnalyticsScreen = alert
             case alert(ErpAlertState<PharmacyRedeemDomain.Action>)
         }
 

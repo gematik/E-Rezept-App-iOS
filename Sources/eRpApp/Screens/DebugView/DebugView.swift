@@ -253,8 +253,8 @@ extension DebugView {
                 Section(header: Text("Active Profile")) {
                     if let profile = viewStore.profile {
                         HStack {
-                            ProfilePictureView(text: "TE",
-                                               image: .baby,
+                            ProfilePictureView(image: .baby,
+                                               userImageData: nil,
                                                color: .red,
                                                connection: nil,
                                                style: .small) {}
@@ -342,8 +342,8 @@ extension DebugView {
                         .foregroundColor(Colors.systemGray)
                         .background(Color(.systemGray5))
                         .accessibilityIdentifier("debug_txt_access_token_read")
-                    if let date = viewStore.token?.expires,
-                       let expires = dateFormatter.string(from: date) {
+                    if let date = viewStore.token?.expires {
+                        let expires = dateFormatter.string(from: date)
                         FootnoteView(
                             text: "Access-token is valid until \(expires). Token can be copied with long touch.",
                             a11y: "dummy_a11y_i"

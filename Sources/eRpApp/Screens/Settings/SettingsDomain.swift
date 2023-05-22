@@ -23,6 +23,8 @@ import eRpKit
 import Foundation
 import IDP
 
+// domain and screens will be subject to refactoring for new style, long body is ok for now
+// swiftlint:disable:next type_body_length
 struct SettingsDomain: ReducerProtocol {
     typealias Store = StoreOf<Self>
 
@@ -37,7 +39,8 @@ struct SettingsDomain: ReducerProtocol {
     private static func cleanupSubDomains<T>() -> EffectTask<T> {
         .concatenate(
             HealthCardPasswordDomain.cleanup(),
-            DebugDomain.cleanup()
+            DebugDomain.cleanup(),
+            EditProfileDomain.cleanup()
         )
     }
 
@@ -49,7 +52,7 @@ struct SettingsDomain: ReducerProtocol {
     struct State: Equatable {
         var isDemoMode: Bool
         var appSecurityState: AppSecurityDomain.State
-        var profiles = ProfilesDomain.State(profiles: [], selectedProfileId: nil, destination: nil)
+        var profiles = ProfilesDomain.State(profiles: [], selectedProfileId: nil)
         var appVersion = AppVersion.current
         var trackerOptIn = false
 
@@ -59,17 +62,33 @@ struct SettingsDomain: ReducerProtocol {
     struct Destinations: ReducerProtocol {
         enum State: Equatable {
             case debug(DebugDomain.State)
-            case alert(AlertState<SettingsDomain.Action>)
+            // sourcery: AnalyticsScreen = alert
+            case alert(ErpAlertState<SettingsDomain.Action>)
+            // sourcery: AnalyticsScreen = healthCardPassword_forgotPin
             case healthCardPasswordForgotPin(HealthCardPasswordDomain.State)
+            // sourcery: AnalyticsScreen = healthCardPassword_setCustomPin
             case healthCardPasswordSetCustomPin(HealthCardPasswordDomain.State)
+            // sourcery: AnalyticsScreen = healthCardPassword_unlockCard
             case healthCardPasswordUnlockCard(HealthCardPasswordDomain.State)
+            // sourcery: AnalyticsScreen = settings_authenticationMethods_setAppPassword
             case setAppPassword(CreatePasswordDomain.State)
+            // sourcery: AnalyticsScreen = settings_productImprovements_complyTracking
             case complyTracking
+            // sourcery: AnalyticsScreen = settings_legalNotice
             case legalNotice
+            // sourcery: AnalyticsScreen = settings_dataProtection
             case dataProtection
+            // sourcery: AnalyticsScreen = settings_openSourceLicence
             case openSourceLicence
+            // sourcery: AnalyticsScreen = settings_termsOfUse
             case termsOfUse
+            // sourcery: AnalyticsScreen = contactInsuranceCompany
             case egk(OrderHealthCardDomain.State)
+
+            // sourcery: AnalyticsScreen = profile
+            case editProfile(EditProfileDomain.State)
+            // sourcery: AnalyticsScreen = settings_newProfile
+            case newProfile(NewProfileDomain.State)
         }
 
         enum Action: Equatable {
@@ -79,6 +98,8 @@ struct SettingsDomain: ReducerProtocol {
             case healthCardPasswordUnlockCardAction(HealthCardPasswordDomain.Action)
             case setAppPasswordAction(CreatePasswordDomain.Action)
             case egkAction(OrderHealthCardDomain.Action)
+            case editProfileAction(EditProfileDomain.Action)
+            case newProfileAction(NewProfileDomain.Action)
         }
 
         var body: some ReducerProtocol<State, Action> {
@@ -106,6 +127,19 @@ struct SettingsDomain: ReducerProtocol {
             }
             Scope(state: /State.healthCardPasswordUnlockCard, action: /Action.healthCardPasswordUnlockCardAction) {
                 HealthCardPasswordDomain()
+            }
+            Scope(
+                state: /State.editProfile,
+                action: /Action.editProfileAction
+            ) {
+                EditProfileDomain()
+            }
+
+            Scope(
+                state: /State.newProfile,
+                action: /Action.newProfileAction
+            ) {
+                NewProfileDomain()
             }
         }
     }
@@ -169,7 +203,7 @@ struct SettingsDomain: ReducerProtocol {
 
         // Demo-Mode
         case .toggleDemoModeSwitch:
-            state.destination = .alert(state.isDemoMode ? Self.demoModeOffAlertState : Self.demoModeOnAlertState)
+            state.destination = .alert(.info(state.isDemoMode ? Self.demoModeOffAlertState : Self.demoModeOnAlertState))
             if state.isDemoMode {
                 changeableUserSessionContainer.switchToStandardMode()
             } else {
@@ -178,17 +212,18 @@ struct SettingsDomain: ReducerProtocol {
             return .none
 
         // Tracking
-        // [REQ:gemSpec_eRp_FdV:A_19088, A_19089, A_19092, A_19097] OptIn for user tracking
+        // [REQ:gemSpec_eRp_FdV:A_19088, A_19089, A_19092, A_19097] OptIn for usage tracking
         case let .toggleTrackingTapped(optIn):
             if optIn {
+                // [REQ:gemSpec_eRp_FdV:A_19091#3] Show comply route to display analytics usage within settings
                 state.destination = .complyTracking
             } else {
-                // [REQ:gemSpec_eRp_FdV:A_20185] OptOut for user
+                // [REQ:gemSpec_eRp_FdV:A_20185,A_20187] OptOut for user
                 state.trackerOptIn = false
                 tracker.optIn = false
             }
             return .none
-        // [REQ:gemSpec_eRp_FdV:A_19090]
+        // [REQ:gemSpec_eRp_FdV:A_19090,A_19091#4] User confirms the opt in within settings
         case .confirmedOptInTracking:
             state.trackerOptIn = true
             tracker.optIn = true
@@ -254,11 +289,40 @@ struct SettingsDomain: ReducerProtocol {
             }
         case .destination(.setAppPasswordAction):
             return .none
+        case let .profiles(action: .delegate(delegateAction)):
+            switch delegateAction {
+            case let .showEditProfile(editProfileState):
+                state.destination = .editProfile(editProfileState)
+            case .showNewProfile:
+                state.destination = .newProfile(.init(name: "", acronym: "", color: .blue))
+            case let .alert(alert):
+                state.destination = .alert(
+                    alert.pullback { action in
+                        Action.profiles(action: action)
+                    }
+                )
+            }
+            return .none
+        case let .destination(.editProfileAction(.delegate(action))):
+            switch action {
+            case .logout:
+                return .init(value: .profiles(action: .registerListener))
+            case .close:
+                state.destination = nil
+                return .none
+            }
+        case let .destination(.newProfileAction(.delegate(action))):
+            switch action {
+            case .close:
+                state.destination = nil
+                return .none
+            }
         case .popToRootView:
             state.destination = nil
-            state.profiles.destination = nil
             return .none
         case .destination(.debugAction),
+             .destination(.editProfileAction),
+             .destination(.newProfileAction),
              .appSecurity,
              .profiles:
             return .none

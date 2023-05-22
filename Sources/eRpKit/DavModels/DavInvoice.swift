@@ -48,12 +48,14 @@ extension DavInvoice {
         public init(
             factor: Decimal,
             price: Decimal,
+            description: String? = nil,
             pzn: String? = nil,
             ta1: String? = nil,
             hmrn: String? = nil
         ) {
             self.factor = factor
             self.price = price
+            self.description = description
             self.pzn = pzn
             self.ta1 = ta1
             self.hmrn = hmrn
@@ -63,6 +65,8 @@ extension DavInvoice {
         public let factor: Decimal
         /// An amount of economic utility in some recognized currency.
         public let price: Decimal
+        /// Handelsname und Packungsgröße
+        public let description: String?
         /// Pharmazentralnummer (PZN)
         public let pzn: String?
         /// Sonderkennzeichen aus der Technischen Anlage 1 zur Arzneimittelabrechnungsvereinbarung

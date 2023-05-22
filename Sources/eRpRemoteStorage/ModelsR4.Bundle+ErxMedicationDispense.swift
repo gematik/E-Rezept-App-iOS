@@ -121,7 +121,7 @@ extension ModelsR4.MedicationDispense {
             isVaccine: medication.isVaccine,
             amount: medication.medicationAmount,
             dosageForm: medication.dosageForm,
-            dose: medication.dose,
+            normSizeCode: medication.normSizeCode,
             batch: medication.erxTaskBatch,
             packaging: medication.packaging,
             manufacturingInstructions: medication.compoundingInstruction,

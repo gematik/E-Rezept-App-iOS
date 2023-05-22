@@ -79,9 +79,7 @@ struct X509ScannerView: View {
                         Image(systemName: validCertFound ? SFSymbolName.checkmark : SFSymbolName.crossIcon)
                             .foregroundColor(validCertFound ? Colors.secondary600 : Colors.red600)
                         Text("C.HCI.ENC")
-                        if let name = name {
-                            Text(name)
-                        }
+                        Text(name)
                     }
                 }
                 .padding()

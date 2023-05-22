@@ -77,6 +77,7 @@ struct HealthCardPasswordReadCardDomain: ReducerProtocol {
 
     struct Destinations: ReducerProtocol {
         enum State: Equatable {
+            // sourcery: AnalyticsScreen = errorAlert
             case alert(ErpAlertState<HealthCardPasswordReadCardDomain.Action>)
         }
 
@@ -210,7 +211,7 @@ extension HealthCardPasswordReadCardDomain {
             can: String,
             puk: String,
             newPin: String? = nil
-        ) -> Effect<HealthCardPasswordReadCardDomain.Action, Never> {
+        ) -> EffectTask<HealthCardPasswordReadCardDomain.Action> {
             .run { subscriber -> Cancellable in
                 let mode: NFCResetRetryCounterMode
                 if let newPin = newPin {
@@ -238,7 +239,7 @@ extension HealthCardPasswordReadCardDomain {
             can: String,
             oldPin: String,
             pin: String
-        ) -> Effect<HealthCardPasswordReadCardDomain.Action, Never> {
+        ) -> EffectTask<HealthCardPasswordReadCardDomain.Action> {
             .run { subscriber -> Cancellable in
                 nfcSessionController
                     .changeReferenceData(can: can, old: oldPin, new: pin, mode: .changeEgkMrPinSecret)

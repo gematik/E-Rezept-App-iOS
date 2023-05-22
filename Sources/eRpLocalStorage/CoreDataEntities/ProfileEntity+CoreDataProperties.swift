@@ -27,10 +27,11 @@ extension ProfileEntity {
 
     @NSManaged public var color: String?
     @NSManaged public var created: Date?
+    @NSManaged public var image: String?
+    @NSManaged public var userImageData: Data?
     @NSManaged public var familyName: String?
     @NSManaged public var givenName: String?
     @NSManaged public var identifier: UUID?
-    @NSManaged public var image: String?
     @NSManaged public var insurance: String?
     @NSManaged public var insuranceId: String?
     @NSManaged public var insuranceType: String?

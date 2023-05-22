@@ -25,25 +25,56 @@ extension ErxTask {
     enum Fixtures {
         static let medication1: ErxMedication = .init(
             name: "Saflorblüten-Extrakt Pulver Peroral",
+            profile: .pzn,
             pzn: "06876512",
             amount: .init(numerator: .init(value: "10")),
             dosageForm: "PUL",
-            dose: "N1",
+            normSizeCode: "N1",
             batch: .init(
                 lotNumber: "TOTO-5236-VL",
-                expiresOn: nil
+                expiresOn: "2323-01-26T15:23:21+00:00"
             )
+        )
+
+        static let freeTextMedication: ErxMedication = .init(
+            name: "Free text medication name",
+            profile: .freeText,
+            drugCategory: .avm,
+            isVaccine: true,
+            amount: .init(numerator: .init(value: "10")),
+            dosageForm: "PUL",
+            normSizeCode: "N1",
+            batch: .init(
+                lotNumber: "TOTO-5236-VL",
+                expiresOn: "2323-01-26T15:23:21+00:00"
+            )
+        )
+
+        static let ingredientMedication: ErxMedication = .init(
+            name: "This is an ingredient type",
+            profile: .ingredient,
+            drugCategory: .avm,
+            isVaccine: true,
+            amount: .init(numerator: .init(value: "10")),
+            dosageForm: "Some",
+            normSizeCode: "N1",
+            batch: .init(
+                lotNumber: "TOTO-5236-VL",
+                expiresOn: "2323-01-26T15:23:21+00:00"
+            ),
+            packaging: "Small package",
+            manufacturingInstructions: "No instructions",
+            ingredients: [yuccaIngredient]
         )
 
         static let compoundingMedication: ErxMedication = .init(
             name: "Yucca filamentosa",
             profile: .compounding,
             drugCategory: .avm,
-            pzn: nil,
             isVaccine: false,
             amount: .init(ErxMedication.Ratio(numerator: .init(value: "1", unit: "St."))),
             dosageForm: "FDA",
-            dose: "N2",
+            normSizeCode: "N2",
             packaging: "Small package",
             manufacturingInstructions: "no instructions",
             ingredients: [yuccaIngredient, filmaIngredient]
@@ -70,7 +101,7 @@ extension ErxTask {
             pzn: "06876513",
             amount: .init(numerator: .init(value: "1")),
             dosageForm: "ELI",
-            dose: "KTP",
+            normSizeCode: "KTP",
             batch: .init(
                 lotNumber: "ABBA-5236-VL",
                 expiresOn: nil
@@ -82,7 +113,7 @@ extension ErxTask {
             pzn: "06876514",
             amount: .init(numerator: .init(value: "1")),
             dosageForm: "AEO",
-            dose: "KA",
+            normSizeCode: "KA",
             batch: .init(
                 lotNumber: "DODO-5236-VL",
                 expiresOn: nil
@@ -94,7 +125,7 @@ extension ErxTask {
             pzn: "06876515",
             amount: .init(numerator: .init(value: "2")),
             dosageForm: "GEL",
-            dose: "sonstiges"
+            normSizeCode: "sonstiges"
         )
 
         static let medication6: ErxMedication = .init(
@@ -102,7 +133,7 @@ extension ErxTask {
             pzn: "06876516",
             amount: .init(numerator: .init(value: "5")),
             dosageForm: "INH",
-            dose: "N2"
+            normSizeCode: "N2"
         )
 
         static let medication7: ErxMedication = .init(
@@ -110,7 +141,7 @@ extension ErxTask {
             pzn: "06876517",
             amount: .init(numerator: .init(value: "20")),
             dosageForm: "TAB",
-            dose: "N3"
+            normSizeCode: "N3"
         )
 
         static let medication8: ErxMedication = .init(
@@ -118,8 +149,11 @@ extension ErxTask {
             pzn: "06876518",
             amount: .init(numerator: .init(value: "8")),
             dosageForm: "INS",
-            dose: "NB"
+            normSizeCode: "NB"
         )
+
+        static let medicationDispenses: [ErxMedicationDispense] = [medicationDispense1, medicationDispense2,
+                                                                   medicationDispense3]
 
         static let medicationDispense1: ErxMedicationDispense = .init(
             identifier: "taskId-1",
@@ -133,7 +167,7 @@ extension ErxTask {
                 pzn: "06876519",
                 amount: .init(numerator: .init(value: "4")),
                 dosageForm: "INS",
-                dose: "NB",
+                normSizeCode: "NB",
                 batch: .init(
                     lotNumber: "Charge number 1001",
                     expiresOn: "2323-01-26T15:23:21+00:00"
@@ -145,7 +179,7 @@ extension ErxTask {
             identifier: "taskId-2",
             taskId: "53210f983-1e67-22c5-8955-63bf44e44fb8",
             insuranceId: "A123456789",
-            dosageInstruction: nil,
+            dosageInstruction: "Some dosage instructions",
             telematikId: "11b2-8555",
             whenHandedOver: DemoDate.createDemoDate(.today) ?? "",
             medication: .init(
@@ -153,7 +187,26 @@ extension ErxTask {
                 pzn: "06876519",
                 amount: .init(numerator: .init(value: "4")),
                 dosageForm: "INS",
-                dose: "NB",
+                normSizeCode: "NB",
+                batch: .init(
+                    lotNumber: "Charge number 1001",
+                    expiresOn: "2323-01-26T15:23:21+00:00"
+                )
+            )
+        )
+
+        static let medicationDispense3: ErxMedicationDispense = .init(
+            identifier: "taskId-2",
+            taskId: "53210f983-1e67-22c5-8955-63bf44e44fb8",
+            insuranceId: "A123456789",
+            dosageInstruction: "use hot water",
+            telematikId: "11b2-8555",
+            whenHandedOver: DemoDate.createDemoDate(.today) ?? "",
+            medication: .init(
+                name: "Green-Tee",
+                amount: .init(numerator: .init(value: "4")),
+                dosageForm: "INS",
+                normSizeCode: "NB",
                 batch: .init(
                     lotNumber: "Charge number 1001",
                     expiresOn: "2323-01-26T15:23:21+00:00"
@@ -164,6 +217,8 @@ extension ErxTask {
         static let erxTaskReady = erxTask1
 
         static let erxTaskInProgress = erxTask14
+
+        static let erxTaskInProgressAndValid = erxTask9
 
         static let erxTaskRedeemed = erxTask10
 
@@ -177,9 +232,9 @@ extension ErxTask {
             flowType: .directAssignment,
             accessCode: nil, // must be nil with flowtype directAssignment
             fullUrl: nil,
-            authoredOn: DemoDate.createDemoDate(.thirtyDaysBefore),
-            expiresOn: DemoDate.createDemoDate(.ninetyTwoDaysAhead),
-            acceptedUntil: DemoDate.createDemoDate(.twentyEightDaysAhead),
+            authoredOn: "2021-06-10T10:55:04+02:00",
+            expiresOn: "2021-09-10T10:55:04+02:00",
+            acceptedUntil: "2021-08-10T10:55:04+02:00",
             redeemedOn: nil,
             author: "Dr. Dr. med. Carsten van Storchhausen",
             medication: medication4,
@@ -191,11 +246,33 @@ extension ErxTask {
             organization: demoOrganization
         )
 
+        static let erxTaskSubstitutionAllowed: ErxTask = .init(
+            identifier: "2390f983-1e67-11b2-8555-63bf44e44fb8",
+            status: .ready,
+            accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
+            fullUrl: nil,
+            authoredOn: "2021-06-10T10:55:04+02:00",
+            lastModified: "2021-07-10T10:55:04+02:00",
+            expiresOn: "2021-09-10T10:55:04+02:00",
+            acceptedUntil: "2021-08-10T10:55:04+02:00",
+            author: "Dr. Dr. med. Carsten van Storchhausen",
+            medication: medication1,
+            medicationRequest: .init(
+                substitutionAllowed: true,
+                hasEmergencyServiceFee: true,
+                accidentInfo: demoAccidentInfo,
+                coPaymentStatus: .subjectToCharge
+            ),
+            patient: demoPatient,
+            practitioner: demoPractitioner,
+            organization: demoOrganization
+        )
+
         static let erxTaskError: ErxTask = .init(
             identifier: "2390f983-1e67-11b2-8555-63bf44e44fb8",
             status: .error(.decoding(message: "error: decoding")),
             accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
-            authoredOn: DemoDate.createDemoDate(.yesterday)
+            authoredOn: "2021-06-10T10:55:04+02:00"
         )
 
         static let demoPatient = ErxPatient(
@@ -260,7 +337,7 @@ extension ErxTask {
             status: .ready,
             accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
             fullUrl: nil,
-            authoredOn: DemoDate.createDemoDate(.today),
+            authoredOn: "2323-01-26T15:23:21+00:00",
             source: .scanner
         )
 
@@ -460,7 +537,11 @@ extension ErxTask {
             ),
             patient: demoPatient,
             practitioner: demoPractitioner,
-            organization: demoOrganization
+            organization: demoOrganization,
+            medicationDispenses: [
+                medicationDispense1,
+                medicationDispense2,
+            ]
         )
 
         static let erxTask11: ErxTask = .init(
