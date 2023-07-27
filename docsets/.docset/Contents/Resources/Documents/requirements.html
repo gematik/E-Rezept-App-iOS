@@ -20,7 +20,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="index.html">
-           1.8.0 Docs
+           1.9.0 Docs
         </a>
          (100% documented)
       </p>
@@ -70,7 +70,7 @@
             <a class="nav-group-name-link" href="Classes.html">Classes</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="Classes/DefaultErxTaskMatrixCodeGenerator.html">DefaultErxTaskMatrixCodeGenerator</a>
+                <a class="nav-group-task-link" href="Classes.html#/s:6eRpApp33DefaultErxTaskMatrixCodeGeneratorC">DefaultErxTaskMatrixCodeGenerator</a>
               </li>
             </ul>
           </li>
@@ -117,6 +117,9 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Extensions.html#/s:6eRpApp16AVSRedeemServiceV">AVSRedeemService</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Extensions.html#/AVSTransactionCoreDataStore">AVSTransactionCoreDataStore</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Extensions.html#/c:@M@eRpApp@objc(cs)AVScannerViewController">AVScannerViewController</a>
@@ -173,13 +176,13 @@
                 <a class="nav-group-task-link" href="Extensions.html#/ChargeItemDomainServiceFetchResult">ChargeItemDomainServiceFetchResult</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="Extensions.html#/ChargeItemsDomainServiceDeleteResult">ChargeItemsDomainServiceDeleteResult</a>
+                <a class="nav-group-task-link" href="Extensions.html#/ChargeItemListDomainServiceDeleteResult">ChargeItemListDomainServiceDeleteResult</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="Extensions.html#/ChargeItemsDomainServiceGrantResult">ChargeItemsDomainServiceGrantResult</a>
+                <a class="nav-group-task-link" href="Extensions.html#/ChargeItemListDomainServiceGrantResult">ChargeItemListDomainServiceGrantResult</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="Extensions.html#/ChargeItemsDomainServiceRevokeResult">ChargeItemsDomainServiceRevokeResult</a>
+                <a class="nav-group-task-link" href="Extensions.html#/ChargeItemListDomainServiceRevokeResult">ChargeItemListDomainServiceRevokeResult</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Extensions.html#/CoreDataController">CoreDataController</a>
@@ -341,7 +344,7 @@
                 <a class="nav-group-task-link" href="Extensions/PharmacyRepositoryError.html">PharmacyRepositoryError</a>
               </li>
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="Extensions/Prescription.html">Prescription</a>
+                <a class="nav-group-task-link" href="Extensions.html#/s:6eRpApp12PrescriptionV">Prescription</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Extensions.html#/PrescriptionDetailDomain">PrescriptionDetailDomain</a>
@@ -418,9 +421,6 @@
             <a class="nav-group-name-link" href="Protocols.html">Protocols</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
-                <a class="nav-group-task-link" href="Protocols/ErxTaskMatrixCodeGenerator.html">ErxTaskMatrixCodeGenerator</a>
-              </li>
-              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Protocols/MatrixCodeGenerator.html">MatrixCodeGenerator</a>
               </li>
             </ul>
@@ -430,6 +430,15 @@
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Structs/ErxTaskRepositoryDependency.html">ErxTaskRepositoryDependency</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Structs/OrdersRepositoryDependency.html">OrdersRepositoryDependency</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Structs/ProfileImageView.html">ProfileImageView</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Structs/ProfileImageView/Size.html">– Size</a>
               </li>
             </ul>
           </li>
@@ -450,40 +459,71 @@
             
             <h1 id='requirements' class='heading'>Requirements</h1>
 <h2 id='gemspec_krypt' class='heading'>gemSpec_Krypt</h2>
+<h3 id='a_17124' class='heading'>A_17124</h3>
+<h4 id='code-doc-manual-requirement-notes-md-3-code-no-exceptions-set-in-nsapptransportsecurity-see-also-a-href-https-developer-apple-com-library-archive-documentation-general-reference-infoplistkeyreference-articles-cocoakeys-html-requirements-for-connecting-using-ats-a' class='heading'><code>../doc/manual/requirement-notes.md:3</code>:  no exceptions set in NSAppTransportSecurity, see also: <a href="https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CocoaKeys.html">Requirements for Connecting Using ATS</a></h4>
+<pre class="highlight plaintext"><code>[REQ:gemSpec_Krypt:A_17322,A_17124,A_21275,A_21332,GS-A_4359,A_21275−01] no exceptions set in NSAppTransportSecurity, see also: [Requirements for Connecting Using ATS](https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CocoaKeys.html)
+</code></pre>
+<h3 id='a_17205' class='heading'>A_17205</h3>
+<h4 id='code-doc-manual-requirement-notes-md-9-code-the-app-does-not-use-the-tsl-all-tsl-related-parts-are-handled-within-the-erp-fd' class='heading'><code>../doc/manual/requirement-notes.md:9</code>:  The app does not use the TSL. All TSL related parts are handled within the eRp-FD.</h4>
+<pre class="highlight plaintext"><code>[REQ:gemSpec_Krypt:A_17205] The app does not use the TSL. All TSL related parts are handled within the eRp-FD.
+</code></pre>
 <h3 id='a_17207' class='heading'>A_17207</h3>
-<h4 id='code-sources-idp-defaultidpsession-swift-279-code-only-implemented-for-brainpoolp256r1' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:279</code>:  Only implemented for brainpoolP256r1</h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-481-code-assure-only-brainpoolp256r1-is-used' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:481</code>:  Assure only brainpoolP256r1 is used</h4>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_17207] Assure only brainpoolP256r1 is used
+// [REQ:gemSpec_Krypt:GS-A_4357-01,GS-A_4357-02] Assure that brainpoolP256r1 is used
+var alg: JWT.Algorithm? {
+</code></pre>
+<h4 id='code-sources-idp-defaultidpsession-swift-280-code-only-implemented-for-brainpoolp256r1' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:280</code>:  Only implemented for brainpoolP256r1</h4>
 <pre class="highlight plaintext"><code>// Validate JWT/DiscoveryDocument signature
 // [REQ:gemSpec_Krypt:A_17207] Only implemented for brainpoolP256r1
+// [REQ:gemSpec_Krypt:GS-A_4357-01,GS-A_4357-02] Assure that brainpoolP256r1 is used
 guard (try? fetchedDocument.backing.verify(with: fetchedDocument.discKey)) ?? false else {
 </code></pre>
-<h4 id='code-sources-idp-defaultidpsession-swift-596-code-only-implemented-for-brainpoolp256r1' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:596</code>:  Only implemented for brainpoolP256r1</h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-598-code-only-implemented-for-brainpoolp256r1' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:598</code>:  Only implemented for brainpoolP256r1</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_17207] Only implemented for brainpoolP256r1
 // [REQ:gemSpec_IDP_Frontend:A_19908-01] Signature check
+// [REQ:gemSpec_Krypt:GS-A_4357-01,GS-A_4357-02] Assure that brainpoolP256r1 is used
 guard let verified = try? challenge.challenge.verify(with: document.authentication.cert),
 </code></pre>
-<h4 id='code-sources-idp-internal-jwt-jwtsignatureverifier-swift-22-code' class='heading'><code>../Sources/IDP/internal/JWT/JWTSignatureVerifier.swift:22</code>:</h4>
+<h4 id='code-sources-idp-internal-jwt-jwtsignatureverifier-swift-23-code' class='heading'><code>../Sources/IDP/internal/JWT/JWTSignatureVerifier.swift:23</code>:</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_17207]
+// [REQ:gemSpec_Krypt:GS-A_4357-01,GS-A_4357-02]
 public func verify(signature raw: Data, message: Data) throws -&gt; Bool {
 </code></pre>
-<h4 id='code-sources-idp-internal-jwt-jwtsignatureverifier-swift-31-code' class='heading'><code>../Sources/IDP/internal/JWT/JWTSignatureVerifier.swift:31</code>:</h4>
+<h4 id='code-sources-idp-internal-jwt-jwtsignatureverifier-swift-33-code' class='heading'><code>../Sources/IDP/internal/JWT/JWTSignatureVerifier.swift:33</code>:</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_17207]
+// [REQ:gemSpec_Krypt:GS-A_4357-01,GS-A_4357-02] Assure that brainpoolP256r1 is used
 guard let key = brainpoolP256r1VerifyPublicKey() else {
 </code></pre>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-environment-biometrics-swift-18-code-assure-only-brainpoolp256r1-is-used' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.Environment+Biometrics.swift:18</code>:  Assure only brainpoolP256r1 is used</h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-environment-biometrics-swift-19-code-assure-only-brainpoolp256r1-is-used' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.Environment+Biometrics.swift:19</code>:  Assure only brainpoolP256r1 is used</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_17207] Assure only brainpoolP256r1 is used
+// [REQ:gemSpec_Krypt:GS-A_4357-01,GS-A_4357-02] Assure that brainpoolP256r1 is used
 guard let alg = certificate.info.algorithm.alg else {
 </code></pre>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-environment-biometrics-swift-43-code-assure-only-brainpoolp256r1-is-used' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.Environment+Biometrics.swift:43</code>:  Assure only brainpoolP256r1 is used</h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-environment-biometrics-swift-45-code-assure-only-brainpoolp256r1-is-used' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.Environment+Biometrics.swift:45</code>:  Assure only brainpoolP256r1 is used</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_17207] Assure only brainpoolP256r1 is used
+// [REQ:gemSpec_Krypt:GS-A_4357-01,GS-A_4357-02] Assure that brainpoolP256r1 is used
 guard certificate.info.algorithm.alg == .bp256r1 else {
 </code></pre>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-428-code-assure-only-brainpoolp256r1-is-used' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:428</code>:  Assure only brainpoolP256r1 is used</h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-429-code-assure-only-brainpoolp256r1-is-used' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:429</code>:  Assure only brainpoolP256r1 is used</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_17207] Assure only brainpoolP256r1 is used
+// [REQ:gemSpec_Krypt:GS-A_4357-01,GS-A_4357-02] Assure that brainpoolP256r1 is used
 guard let alg = certificate.info.algorithm.alg else {
 </code></pre>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-479-code-assure-only-brainpoolp256r1-is-used' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:479</code>:  Assure only brainpoolP256r1 is used</h4>
-<pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_17207] Assure only brainpoolP256r1 is used
-var alg: JWT.Algorithm? {
+<h4 id='code-doc-manual-requirement-notes-md-1-code-brainpoolp256r1-ist-used-for-creating-verifying-key-for-signature-usage-exception-biometric-use-case-uses-secp256r1-is-considered-in-repective-specification' class='heading'><code>../doc/manual/requirement-notes.md:1</code>:  brainpoolP256r1 ist used for creating/verifying key for signature usage; exception: Biometric use case uses secp256r1 (is considered in repective specification)</h4>
+<pre class="highlight plaintext"><code>[REQ:gemSpec_Krypt:A_17207,A_17359] brainpoolP256r1 ist used for creating/verifying key for signature usage; exception: Biometric use case uses secp256r1 (is considered in repective specification)
+</code></pre>
+<h3 id='a_17322' class='heading'>A_17322</h3>
+<h4 id='code-doc-manual-requirement-notes-md-3-code-no-exceptions-set-in-nsapptransportsecurity-see-also-a-href-https-developer-apple-com-library-archive-documentation-general-reference-infoplistkeyreference-articles-cocoakeys-html-requirements-for-connecting-using-ats-a' class='heading'><code>../doc/manual/requirement-notes.md:3</code>:  no exceptions set in NSAppTransportSecurity, see also: <a href="https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CocoaKeys.html">Requirements for Connecting Using ATS</a></h4>
+<pre class="highlight plaintext"><code>[REQ:gemSpec_Krypt:A_17322,A_17124,A_21275,A_21332,GS-A_4359,A_21275−01] no exceptions set in NSAppTransportSecurity, see also: [Requirements for Connecting Using ATS](https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CocoaKeys.html)
+</code></pre>
+<h3 id='a_17359' class='heading'>A_17359</h3>
+<h4 id='code-doc-manual-requirement-notes-md-1-code-brainpoolp256r1-ist-used-for-creating-verifying-key-for-signature-usage-exception-biometric-use-case-uses-secp256r1-is-considered-in-repective-specification' class='heading'><code>../doc/manual/requirement-notes.md:1</code>:  brainpoolP256r1 ist used for creating/verifying key for signature usage; exception: Biometric use case uses secp256r1 (is considered in repective specification)</h4>
+<pre class="highlight plaintext"><code>[REQ:gemSpec_Krypt:A_17207,A_17359] brainpoolP256r1 ist used for creating/verifying key for signature usage; exception: Biometric use case uses secp256r1 (is considered in repective specification)
+</code></pre>
+<h3 id='a_17775' class='heading'>A_17775</h3>
+<h4 id='code-doc-manual-requirement-notes-md-10-code-we-cannot-interfere-with-cipher-suite-lists-see-a-href-https-developer-apple-com-library-archive-documentation-general-reference-infoplistkeyreference-articles-cocoakeys-html-requirements-for-connecting-using-ats-a-for-actual-order' class='heading'><code>../doc/manual/requirement-notes.md:10</code>:  We cannot interfere with cipher suite lists, see <a href="https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CocoaKeys.html">Requirements for Connecting Using ATS</a> for actual order.</h4>
+<pre class="highlight plaintext"><code>[REQ:gemSpec_Krypt:A_17775,GS−A_5339] We cannot interfere with cipher suite lists, see [Requirements for Connecting Using ATS](https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CocoaKeys.html) for actual order.
 </code></pre>
 <h3 id='a_18464' class='heading'>A_18464</h3>
 <h4 id='code-sources-httpclient-defaulthttpclient-swift-35-code' class='heading'><code>../Sources/HTTPClient/DefaultHTTPClient.swift:35</code>:</h4>
@@ -504,6 +544,10 @@ var alg: JWT.Algorithm? {
 // HTTP communication
 // [REQ:gemSpec_eRp_FdV:A_20206]
 
+</code></pre>
+<h3 id='a_19215' class='heading'>A_19215</h3>
+<h4 id='code-doc-manual-requirement-notes-md-11-code-we-use-https-only-see-code-defaulthttpclient-swift-code-ats-forbidds-other-connections' class='heading'><code>../doc/manual/requirement-notes.md:11</code>:  We use https only, see <code>DefaultHTTPClient.swift</code>. ATS forbidds other connections.</h4>
+<pre class="highlight plaintext"><code>[REQ:gemSpec_Krypt:GS−A_5035,A_19215,A_20607] We use https only, see `DefaultHTTPClient.swift`. ATS forbidds other connections.
 </code></pre>
 <h3 id='a_20161-01' class='heading'>A_20161-01</h3>
 <h4 id='code-sources-vau-vauinterceptor-swift-46-code' class='heading'><code>../Sources/VAU/VAUInterceptor.swift:46</code>:</h4>
@@ -530,7 +574,7 @@ func encrypt() throws -&gt; Data
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_20161-01:5]
 guard let payload = "1 \(bearerToken) \(requestId) \(symKeyHex) \(message)".data(using: .utf8) else {
 </code></pre>
-<h4 id='6a-g-code-sources-vau-internal-vaucrypto-swift-130-code' class='heading'>6a-g <code>../Sources/VAU/internal/VAUCrypto.swift:130</code>:</h4>
+<h4 id='6a-g-code-sources-vau-internal-vaucrypto-swift-131-code' class='heading'>6a-g <code>../Sources/VAU/internal/VAUCrypto.swift:131</code>:</h4>
 <pre class="highlight plaintext"><code>/// Perform Elliptic Curve Integrated Encryption Scheme [SEC1-2009] on some payload
 /// [REQ:gemSpec_Krypt:A_20161-01:6a-g]
 static func encrypt(
@@ -557,12 +601,12 @@ func decrypt(data: Data) throws -&gt; String
 // [REQ:gemSpec_Krypt:A_20174]
 static func processVauResponse(httpResponse: HTTPResponse, vauCrypto: VAUCrypto, originalUrl: URL) throws
 </code></pre>
-<h4 id='3-code-sources-vau-internal-vaucrypto-swift-107-code-decrypt-using-aes-symmetric-key' class='heading'>3 <code>../Sources/VAU/internal/VAUCrypto.swift:107</code>:  Decrypt using AES symmetric key</h4>
+<h4 id='3-code-sources-vau-internal-vaucrypto-swift-108-code-decrypt-using-aes-symmetric-key' class='heading'>3 <code>../Sources/VAU/internal/VAUCrypto.swift:108</code>:  Decrypt using AES symmetric key</h4>
 <pre class="highlight plaintext"><code>// Steps according to gemSpec_Krypt A_20174
 // [REQ:gemSpec_Krypt:A_20174:3] Decrypt using AES symmetric key
 guard let sealed = try? AES.GCM.SealedBox(combined: data),
 </code></pre>
-<h4 id='4-5-code-sources-vau-internal-vaucrypto-swift-114-code-verify-decrypted-message-expect-quot-1-request-id-response-header-and-body-quot' class='heading'>4,5 <code>../Sources/VAU/internal/VAUCrypto.swift:114</code>:  Verify decrypted message. Expect: &ldquo;1 <request id> <response header and body>&rdquo;</h4>
+<h4 id='4-5-code-sources-vau-internal-vaucrypto-swift-115-code-verify-decrypted-message-expect-quot-1-request-id-response-header-and-body-quot' class='heading'>4,5 <code>../Sources/VAU/internal/VAUCrypto.swift:115</code>:  Verify decrypted message. Expect: &ldquo;1 <request id> <response header and body>&rdquo;</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_20174:4,5] Verify decrypted message. Expect: "1 &lt;request id&gt; &lt;response header and body&gt;"
 let separated = utf8.split(separator: " ", maxSplits: 2).map { String($0) }
 </code></pre>
@@ -589,6 +633,10 @@ var userPseudonym: AnyPublisher&lt;String?, Never&gt; { get }
 /// - Parameter userPseudonym: value to save. Pass in nil to unset
 func set(userPseudonym: String?)
 </code></pre>
+<h3 id='a_20607' class='heading'>A_20607</h3>
+<h4 id='code-doc-manual-requirement-notes-md-11-code-we-use-https-only-see-code-defaulthttpclient-swift-code-ats-forbidds-other-connections' class='heading'><code>../doc/manual/requirement-notes.md:11</code>:  We use https only, see <code>DefaultHTTPClient.swift</code>. ATS forbidds other connections.</h4>
+<pre class="highlight plaintext"><code>[REQ:gemSpec_Krypt:GS−A_5035,A_19215,A_20607] We use https only, see `DefaultHTTPClient.swift`. ATS forbidds other connections.
+</code></pre>
 <h3 id='a_21216' class='heading'>A_21216</h3>
 <h4 id='code-sources-truststore-internal-certlist-swift-11-code' class='heading'><code>../Sources/TrustStore/internal/CertList.swift:11</code>:</h4>
 <pre class="highlight plaintext"><code>/// Data structure according to */CertList* endpoint
@@ -607,6 +655,11 @@ public struct VAUCertList: Codable, Equatable {
 public struct OCSPList: Codable, Equatable {
 </code></pre>
 <h3 id='a_21218' class='heading'>A_21218</h3>
+<h4 id='code-sources-erpapp-appconfiguration-swift-94-code-gematik-root-ca-3-as-a-trust-anchor-has-to-be-set-in-the-program-code' class='heading'><code>../Sources/eRpApp/AppConfiguration.swift:94</code>:  Gematik Root CA 3 as a trust anchor has to be set in the program code</h4>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_21218] Gematik Root CA 3 as a trust anchor has to be set in the program code
+// swiftlint:disable:next force_try
+let TRUSTANCHOR_GemRootCa3 = try! TrustAnchor(withPEM: """
+</code></pre>
 <h4 id='code-sources-truststore-defaulttruststoresession-swift-68-code' class='heading'><code>../Sources/TrustStore/DefaultTrustStoreSession.swift:68</code>:</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_21218,A_21222]
 extension DefaultTrustStoreSession: TrustStoreSession {
@@ -676,10 +729,8 @@ private static let caCertRegex =
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_21218:(4)] Check ee_certs against category A+B certificates
 typealias VauAndIpdCerts = (vauCerts: [X509], idpCerts: [X509])
 </code></pre>
-<h4 id='code-sources-erpapp-appconfiguration-swift-94-code-gematik-root-ca-3-as-a-trust-anchor-has-to-be-set-in-the-program-code' class='heading'><code>../Sources/eRpApp/AppConfiguration.swift:94</code>:  Gematik Root CA 3 as a trust anchor has to be set in the program code</h4>
-<pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_21218] Gematik Root CA 3 as a trust anchor has to be set in the program code
-// swiftlint:disable:next force_try
-let TRUSTANCHOR_GemRootCa3 = try! TrustAnchor(withPEM: """
+<h4 id='code-doc-manual-requirement-notes-md-5-code-note-grace-period-for-ocsp-responses-is-12h' class='heading'><code>../doc/manual/requirement-notes.md:5</code>:  Note: grace period for OCSP responses is 12h</h4>
+<pre class="highlight plaintext"><code>[REQ:gemSpec_Krypt:A_21218] Note: grace period for OCSP responses is 12h
 </code></pre>
 <h3 id='a_21222' class='heading'>A_21222</h3>
 <h4 id='code-sources-truststore-defaulttruststoresession-swift-68-code' class='heading'><code>../Sources/TrustStore/DefaultTrustStoreSession.swift:68</code>:</h4>
@@ -692,6 +743,23 @@ extension DefaultTrustStoreSession: TrustStoreSession {
 /// [REQ:gemSpec_Krypt:A_21218,A_21222]
 public protocol TrustStoreSession {
 </code></pre>
+<h3 id='a_21275' class='heading'>A_21275</h3>
+<h4 id='code-doc-manual-requirement-notes-md-3-code-no-exceptions-set-in-nsapptransportsecurity-see-also-a-href-https-developer-apple-com-library-archive-documentation-general-reference-infoplistkeyreference-articles-cocoakeys-html-requirements-for-connecting-using-ats-a' class='heading'><code>../doc/manual/requirement-notes.md:3</code>:  no exceptions set in NSAppTransportSecurity, see also: <a href="https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CocoaKeys.html">Requirements for Connecting Using ATS</a></h4>
+<pre class="highlight plaintext"><code>[REQ:gemSpec_Krypt:A_17322,A_17124,A_21275,A_21332,GS-A_4359,A_21275−01] no exceptions set in NSAppTransportSecurity, see also: [Requirements for Connecting Using ATS](https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CocoaKeys.html)
+</code></pre>
+<h3 id='a_21275-01' class='heading'>A_21275−01</h3>
+<h4 id='code-doc-manual-requirement-notes-md-3-code-no-exceptions-set-in-nsapptransportsecurity-see-also-a-href-https-developer-apple-com-library-archive-documentation-general-reference-infoplistkeyreference-articles-cocoakeys-html-requirements-for-connecting-using-ats-a' class='heading'><code>../doc/manual/requirement-notes.md:3</code>:  no exceptions set in NSAppTransportSecurity, see also: <a href="https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CocoaKeys.html">Requirements for Connecting Using ATS</a></h4>
+<pre class="highlight plaintext"><code>[REQ:gemSpec_Krypt:A_17322,A_17124,A_21275,A_21332,GS-A_4359,A_21275−01] no exceptions set in NSAppTransportSecurity, see also: [Requirements for Connecting Using ATS](https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CocoaKeys.html)
+</code></pre>
+<h3 id='a_21332' class='heading'>A_21332</h3>
+<h4 id='code-doc-manual-requirement-notes-md-3-code-no-exceptions-set-in-nsapptransportsecurity-see-also-a-href-https-developer-apple-com-library-archive-documentation-general-reference-infoplistkeyreference-articles-cocoakeys-html-requirements-for-connecting-using-ats-a' class='heading'><code>../doc/manual/requirement-notes.md:3</code>:  no exceptions set in NSAppTransportSecurity, see also: <a href="https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CocoaKeys.html">Requirements for Connecting Using ATS</a></h4>
+<pre class="highlight plaintext"><code>[REQ:gemSpec_Krypt:A_17322,A_17124,A_21275,A_21332,GS-A_4359,A_21275−01] no exceptions set in NSAppTransportSecurity, see also: [Requirements for Connecting Using ATS](https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CocoaKeys.html)
+</code></pre>
+<h3 id='a_4389' class='heading'>A_4389</h3>
+<h4 id='1-code-sources-vau-internal-vaucrypto-swift-91-code-ivs-must-not-be-reused-ivs-bit-length-must-be-larger-or-equal-to-96' class='heading'>1 <code>../Sources/VAU/internal/VAUCrypto.swift:91</code>:  IVs must not be reused, IVs bit length must be larger or equal to 96</h4>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_4389:1] IVs must not be reused, IVs bit length must be larger or equal to 96
+let nonceGenerator = { try VAURandom.generateSecureRandom(length: self.eciesSpec.ivSize) }
+</code></pre>
 <h3 id='gs-a_4357' class='heading'>GS-A_4357</h3>
 <h4 id='code-sources-idp-internal-idpcrypto-swift-15-code-key-pair-generation-delegated-to-openssl-with-brainpoolp256r1-parameters' class='heading'><code>../Sources/IDP/internal/IDPCrypto.swift:15</code>:  Key pair generation delegated to OpenSSL with BrainpoolP256r1 parameters</h4>
 <pre class="highlight plaintext"><code>/// Key-pair generator type based on BrainpoolP256r1
@@ -703,9 +771,99 @@ public typealias BrainpoolKeyGenerator = () throws -&gt; BrainpoolP256r1.KeyExch
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:GS-A_4357] Key pair generation delegated to OpenSSL with BrainpoolP256r1 parameters
 case bpp256r1(BrainpoolP256r1.KeyExchange.PublicKey,
 </code></pre>
-<h4 id='code-sources-vau-internal-vaucrypto-swift-92-code-key-pair-generation-delegated-to-openssl-with-brainpoolp256r1-parameters' class='heading'><code>../Sources/VAU/internal/VAUCrypto.swift:92</code>:  Key pair generation delegated to OpenSSL with BrainpoolP256r1 parameters</h4>
+<h4 id='code-sources-vau-internal-vaucrypto-swift-93-code-key-pair-generation-delegated-to-openssl-with-brainpoolp256r1-parameters' class='heading'><code>../Sources/VAU/internal/VAUCrypto.swift:93</code>:  Key pair generation delegated to OpenSSL with BrainpoolP256r1 parameters</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:GS-A_4357] Key pair generation delegated to OpenSSL with BrainpoolP256r1 parameters
 let keyPairGenerator = { try BrainpoolP256r1.KeyExchange.generateKey() }
+</code></pre>
+<h3 id='gs-a_4357-01' class='heading'>GS-A_4357-01</h3>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-482-code-assure-that-brainpoolp256r1-is-used' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:482</code>:  Assure that brainpoolP256r1 is used</h4>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_17207] Assure only brainpoolP256r1 is used
+// [REQ:gemSpec_Krypt:GS-A_4357-01,GS-A_4357-02] Assure that brainpoolP256r1 is used
+var alg: JWT.Algorithm? {
+</code></pre>
+<h4 id='code-sources-idp-defaultidpsession-swift-600-code-assure-that-brainpoolp256r1-is-used' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:600</code>:  Assure that brainpoolP256r1 is used</h4>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_17207] Only implemented for brainpoolP256r1
+// [REQ:gemSpec_IDP_Frontend:A_19908-01] Signature check
+// [REQ:gemSpec_Krypt:GS-A_4357-01,GS-A_4357-02] Assure that brainpoolP256r1 is used
+guard let verified = try? challenge.challenge.verify(with: document.authentication.cert),
+</code></pre>
+<h4 id='code-sources-idp-internal-jwt-jwtsignatureverifier-swift-24-code' class='heading'><code>../Sources/IDP/internal/JWT/JWTSignatureVerifier.swift:24</code>:</h4>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_17207]
+// [REQ:gemSpec_Krypt:GS-A_4357-01,GS-A_4357-02]
+public func verify(signature raw: Data, message: Data) throws -&gt; Bool {
+</code></pre>
+<h4 id='code-sources-idp-internal-jwt-jwtsignatureverifier-swift-34-code-assure-that-brainpoolp256r1-is-used' class='heading'><code>../Sources/IDP/internal/JWT/JWTSignatureVerifier.swift:34</code>:  Assure that brainpoolP256r1 is used</h4>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_17207]
+// [REQ:gemSpec_Krypt:GS-A_4357-01,GS-A_4357-02] Assure that brainpoolP256r1 is used
+guard let key = brainpoolP256r1VerifyPublicKey() else {
+</code></pre>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-environment-biometrics-swift-20-code-assure-that-brainpoolp256r1-is-used' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.Environment+Biometrics.swift:20</code>:  Assure that brainpoolP256r1 is used</h4>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_17207] Assure only brainpoolP256r1 is used
+// [REQ:gemSpec_Krypt:GS-A_4357-01,GS-A_4357-02] Assure that brainpoolP256r1 is used
+guard let alg = certificate.info.algorithm.alg else {
+</code></pre>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-environment-biometrics-swift-46-code-assure-that-brainpoolp256r1-is-used' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.Environment+Biometrics.swift:46</code>:  Assure that brainpoolP256r1 is used</h4>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_17207] Assure only brainpoolP256r1 is used
+// [REQ:gemSpec_Krypt:GS-A_4357-01,GS-A_4357-02] Assure that brainpoolP256r1 is used
+guard certificate.info.algorithm.alg == .bp256r1 else {
+</code></pre>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-430-code-assure-that-brainpoolp256r1-is-used' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:430</code>:  Assure that brainpoolP256r1 is used</h4>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_17207] Assure only brainpoolP256r1 is used
+// [REQ:gemSpec_Krypt:GS-A_4357-01,GS-A_4357-02] Assure that brainpoolP256r1 is used
+guard let alg = certificate.info.algorithm.alg else {
+</code></pre>
+<h4 id='code-sources-idp-defaultidpsession-swift-281-code-assure-that-brainpoolp256r1-is-used' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:281</code>:  Assure that brainpoolP256r1 is used</h4>
+<pre class="highlight plaintext"><code>// Validate JWT/DiscoveryDocument signature
+// [REQ:gemSpec_Krypt:A_17207] Only implemented for brainpoolP256r1
+// [REQ:gemSpec_Krypt:GS-A_4357-01,GS-A_4357-02] Assure that brainpoolP256r1 is used
+guard (try? fetchedDocument.backing.verify(with: fetchedDocument.discKey)) ?? false else {
+</code></pre>
+<h3 id='gs-a_4357-02' class='heading'>GS-A_4357-02</h3>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-482-code-assure-that-brainpoolp256r1-is-used' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:482</code>:  Assure that brainpoolP256r1 is used</h4>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_17207] Assure only brainpoolP256r1 is used
+// [REQ:gemSpec_Krypt:GS-A_4357-01,GS-A_4357-02] Assure that brainpoolP256r1 is used
+var alg: JWT.Algorithm? {
+</code></pre>
+<h4 id='code-sources-idp-defaultidpsession-swift-600-code-assure-that-brainpoolp256r1-is-used' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:600</code>:  Assure that brainpoolP256r1 is used</h4>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_17207] Only implemented for brainpoolP256r1
+// [REQ:gemSpec_IDP_Frontend:A_19908-01] Signature check
+// [REQ:gemSpec_Krypt:GS-A_4357-01,GS-A_4357-02] Assure that brainpoolP256r1 is used
+guard let verified = try? challenge.challenge.verify(with: document.authentication.cert),
+</code></pre>
+<h4 id='code-sources-idp-internal-jwt-jwtsignatureverifier-swift-24-code' class='heading'><code>../Sources/IDP/internal/JWT/JWTSignatureVerifier.swift:24</code>:</h4>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_17207]
+// [REQ:gemSpec_Krypt:GS-A_4357-01,GS-A_4357-02]
+public func verify(signature raw: Data, message: Data) throws -&gt; Bool {
+</code></pre>
+<h4 id='code-sources-idp-internal-jwt-jwtsignatureverifier-swift-34-code-assure-that-brainpoolp256r1-is-used' class='heading'><code>../Sources/IDP/internal/JWT/JWTSignatureVerifier.swift:34</code>:  Assure that brainpoolP256r1 is used</h4>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_17207]
+// [REQ:gemSpec_Krypt:GS-A_4357-01,GS-A_4357-02] Assure that brainpoolP256r1 is used
+guard let key = brainpoolP256r1VerifyPublicKey() else {
+</code></pre>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-environment-biometrics-swift-20-code-assure-that-brainpoolp256r1-is-used' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.Environment+Biometrics.swift:20</code>:  Assure that brainpoolP256r1 is used</h4>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_17207] Assure only brainpoolP256r1 is used
+// [REQ:gemSpec_Krypt:GS-A_4357-01,GS-A_4357-02] Assure that brainpoolP256r1 is used
+guard let alg = certificate.info.algorithm.alg else {
+</code></pre>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-environment-biometrics-swift-46-code-assure-that-brainpoolp256r1-is-used' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.Environment+Biometrics.swift:46</code>:  Assure that brainpoolP256r1 is used</h4>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_17207] Assure only brainpoolP256r1 is used
+// [REQ:gemSpec_Krypt:GS-A_4357-01,GS-A_4357-02] Assure that brainpoolP256r1 is used
+guard certificate.info.algorithm.alg == .bp256r1 else {
+</code></pre>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-430-code-assure-that-brainpoolp256r1-is-used' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:430</code>:  Assure that brainpoolP256r1 is used</h4>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_17207] Assure only brainpoolP256r1 is used
+// [REQ:gemSpec_Krypt:GS-A_4357-01,GS-A_4357-02] Assure that brainpoolP256r1 is used
+guard let alg = certificate.info.algorithm.alg else {
+</code></pre>
+<h4 id='code-sources-idp-defaultidpsession-swift-281-code-assure-that-brainpoolp256r1-is-used' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:281</code>:  Assure that brainpoolP256r1 is used</h4>
+<pre class="highlight plaintext"><code>// Validate JWT/DiscoveryDocument signature
+// [REQ:gemSpec_Krypt:A_17207] Only implemented for brainpoolP256r1
+// [REQ:gemSpec_Krypt:GS-A_4357-01,GS-A_4357-02] Assure that brainpoolP256r1 is used
+guard (try? fetchedDocument.backing.verify(with: fetchedDocument.discKey)) ?? false else {
+</code></pre>
+<h3 id='gs-a_4359' class='heading'>GS-A_4359</h3>
+<h4 id='code-doc-manual-requirement-notes-md-3-code-no-exceptions-set-in-nsapptransportsecurity-see-also-a-href-https-developer-apple-com-library-archive-documentation-general-reference-infoplistkeyreference-articles-cocoakeys-html-requirements-for-connecting-using-ats-a' class='heading'><code>../doc/manual/requirement-notes.md:3</code>:  no exceptions set in NSAppTransportSecurity, see also: <a href="https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CocoaKeys.html">Requirements for Connecting Using ATS</a></h4>
+<pre class="highlight plaintext"><code>[REQ:gemSpec_Krypt:A_17322,A_17124,A_21275,A_21332,GS-A_4359,A_21275−01] no exceptions set in NSAppTransportSecurity, see also: [Requirements for Connecting Using ATS](https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CocoaKeys.html)
 </code></pre>
 <h3 id='gs-a_4367' class='heading'>GS-A_4367</h3>
 <h4 id='code-sources-idp-internal-seckeyrandom-swift-19-code' class='heading'><code>../Sources/IDP/internal/SecKeyRandom.swift:19</code>:</h4>
@@ -752,6 +910,31 @@ static func generateSecureRandom(length: Int, randomizer: SecRandomRef? = kSecRa
 // [REQ:gemSpec_eRp_FdV:A_20206]
 
 </code></pre>
+<h3 id='gs-a_4389' class='heading'>GS-A_4389</h3>
+<h4 id='2-code-sources-idp-internal-idpcrypto-swift-46-code-ivs-must-not-be-reused-ivs-bit-length-must-be-larger-or-equal-to-96' class='heading'>2 <code>../Sources/IDP/internal/IDPCrypto.swift:46</code>:  IVs must not be reused, IVs bit length must be larger or equal to 96</h4>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:GS-A_4389:2] IVs must not be reused, IVs bit length must be larger or equal to 96
+try generateSecureRandom(length: IDPCrypto.AES256GCMSpec.nonceBytes)
+</code></pre>
+<h4 id='1-code-sources-idp-internal-idpcrypto-swift-49-code-256bit-gcm-symmetric-key' class='heading'>1 <code>../Sources/IDP/internal/IDPCrypto.swift:49</code>:  256bit GCM symmetric key</h4>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:GS-A_4389:1] 256bit GCM symmetric key
+aesKey: SymmetricKey = SymmetricKey(size: SymmetricKeySize(bitCount: 256))
+</code></pre>
+<h4 id='2-code-sources-vau-internal-vaucrypto-swift-141-code-256bit-gcm-symmetric-key' class='heading'>2 <code>../Sources/VAU/internal/VAUCrypto.swift:141</code>:  256bit GCM symmetric key</h4>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:GS-A_4389:2] 256bit GCM symmetric key
+let secretKey = SymmetricKey(data: sharedSecret)
+</code></pre>
+<h4 id='1-code-sources-vau-internal-vaucrypto-swift-160-code-256bit-gcm-symmetric-key' class='heading'>1 <code>../Sources/VAU/internal/VAUCrypto.swift:160</code>:  256bit GCM symmetric key</h4>
+<pre class="highlight plaintext"><code>// f) Encrypt
+// [REQ:gemSpec_Krypt:GS-A_4389:1] 256bit GCM symmetric key
+let sealedBox = try AES.GCM.seal(payload, using: cek, nonce: nonce)
+</code></pre>
+<h3 id='gs-a_4390' class='heading'>GS-A_4390</h3>
+<h4 id='code-sources-avs-avscmsencrypter-swift-17-code-rsaes-oaep-with-mgf1-implemented-in-sub-framework-openssl-swift' class='heading'><code>../Sources/AVS/AVSCmsEncrypter.swift:17</code>:  RSAES-OAEP with MGF1 implemented in sub-framework OpenSSL-swift</h4>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:GS-A_4390] RSAES-OAEP with MGF1 implemented in sub-framework OpenSSL-swift
+// https://github.com/gematik/OpenSSL-Swift/blob/3c1ea91ba5abfefecfe3588815cb928d777e29ad/Sources/OpenSSL/CMS/CMSContentInfo.swift#L88
+// swiftlint:disable:previous line_length
+let cms = try CMSContentInfo.encryptPartial(data: data)
+</code></pre>
 <h3 id='gs-a_5322' class='heading'>GS-A_5322</h3>
 <h4 id='code-sources-httpclient-defaulthttpclient-swift-36-code-todo-check-if-limiting-ssl-sessions-is-possible-check-for-renegotiation' class='heading'><code>../Sources/HTTPClient/DefaultHTTPClient.swift:36</code>:  TODO: Check if limiting SSL Sessions is possible, check for renegotiation</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:GS-A_4385,A_18467,A_18464,GS-A_4387]
@@ -762,11 +945,32 @@ static func generateSecureRandom(length: Int, randomizer: SecRandomRef? = kSecRa
 // [REQ:gemSpec_eRp_FdV:A_20206]
 
 </code></pre>
+<h3 id='gs-a_5035' class='heading'>GS−A_5035</h3>
+<h4 id='code-doc-manual-requirement-notes-md-11-code-we-use-https-only-see-code-defaulthttpclient-swift-code-ats-forbidds-other-connections' class='heading'><code>../doc/manual/requirement-notes.md:11</code>:  We use https only, see <code>DefaultHTTPClient.swift</code>. ATS forbidds other connections.</h4>
+<pre class="highlight plaintext"><code>[REQ:gemSpec_Krypt:GS−A_5035,A_19215,A_20607] We use https only, see `DefaultHTTPClient.swift`. ATS forbidds other connections.
+</code></pre>
+<h3 id='gs-a_5322' class='heading'>GS−A_5322</h3>
+<h4 id='code-doc-manual-requirement-notes-md-12-code-there-is-no-api-to-control-the-session-length-developer-forums-suggest-it-is-10-minutes-for-ios' class='heading'><code>../doc/manual/requirement-notes.md:12</code>:  There is no API to control the session length, developer forums suggest it is 10 minutes for iOS.</h4>
+<pre class="highlight plaintext"><code>[REQ:gemSpec_Krypt:GS−A_5322] There is no API to control the session length, developer forums suggest it is 10 minutes for iOS.
+</code></pre>
+<h3 id='gs-a_5339' class='heading'>GS−A_5339</h3>
+<h4 id='code-doc-manual-requirement-notes-md-10-code-we-cannot-interfere-with-cipher-suite-lists-see-a-href-https-developer-apple-com-library-archive-documentation-general-reference-infoplistkeyreference-articles-cocoakeys-html-requirements-for-connecting-using-ats-a-for-actual-order' class='heading'><code>../doc/manual/requirement-notes.md:10</code>:  We cannot interfere with cipher suite lists, see <a href="https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CocoaKeys.html">Requirements for Connecting Using ATS</a> for actual order.</h4>
+<pre class="highlight plaintext"><code>[REQ:gemSpec_Krypt:A_17775,GS−A_5339] We cannot interfere with cipher suite lists, see [Requirements for Connecting Using ATS](https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CocoaKeys.html) for actual order.
+</code></pre>
+<h3 id='gs-a_5526' class='heading'>GS−A_5526</h3>
+<h4 id='code-doc-manual-requirement-notes-md-13-code-we-use-the-recommended-nsurlsession-for-best-network-security-a-href-https-developer-apple-com-documentation-security-preventing_insecure_network_connections-preventing-insecure-network-connections-a' class='heading'><code>../doc/manual/requirement-notes.md:13</code>:  We use the recommended NSURLSession for best network security <a href="https://developer.apple.com/documentation/security/preventing_insecure_network_connections">Preventing insecure network connections</a></h4>
+<pre class="highlight plaintext"><code>[REQ:gemSpec_Krypt:GS−A_5526,GS−A_5542] We use the recommended NSURLSession for best network security [Preventing insecure network connections](https://developer.apple.com/documentation/security/preventing_insecure_network_connections)
+</code></pre>
+<h3 id='gs-a_5542' class='heading'>GS−A_5542</h3>
+<h4 id='code-doc-manual-requirement-notes-md-13-code-we-use-the-recommended-nsurlsession-for-best-network-security-a-href-https-developer-apple-com-documentation-security-preventing_insecure_network_connections-preventing-insecure-network-connections-a' class='heading'><code>../doc/manual/requirement-notes.md:13</code>:  We use the recommended NSURLSession for best network security <a href="https://developer.apple.com/documentation/security/preventing_insecure_network_connections">Preventing insecure network connections</a></h4>
+<pre class="highlight plaintext"><code>[REQ:gemSpec_Krypt:GS−A_5526,GS−A_5542] We use the recommended NSURLSession for best network security [Preventing insecure network connections](https://developer.apple.com/documentation/security/preventing_insecure_network_connections)
+</code></pre>
 <h2 id='gemspec_idp_frontend' class='heading'>gemSpec_IDP_Frontend</h2>
 <h3 id='a_19908-01' class='heading'>A_19908-01</h3>
-<h4 id='code-sources-idp-defaultidpsession-swift-597-code-signature-check' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:597</code>:  Signature check</h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-599-code-signature-check' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:599</code>:  Signature check</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_17207] Only implemented for brainpoolP256r1
 // [REQ:gemSpec_IDP_Frontend:A_19908-01] Signature check
+// [REQ:gemSpec_Krypt:GS-A_4357-01,GS-A_4357-02] Assure that brainpoolP256r1 is used
 guard let verified = try? challenge.challenge.verify(with: document.authentication.cert),
 </code></pre>
 <h3 id='a_19937' class='heading'>A_19937</h3>
@@ -790,6 +994,10 @@ guard let decrypted = try? token.decrypted(with: self.cryptoBox.aesKey) else {
 <h4 id='code-sources-idp-defaultidpsession-swift-224-code-usage' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:224</code>:  Usage</h4>
 <pre class="highlight plaintext"><code>idToken: decrypted.idToken, // [REQ:gemSpec_IDP_Frontend:A_19938-01] Usage
 ssoToken: exchange.sso,
+</code></pre>
+<h3 id='a_20068-01' class='heading'>A_20068-01</h3>
+<h4 id='code-doc-manual-requirement-notes-md-25-code-implemented-with-ats-within-code-info-plist-code-path-code-nsapptransportsecurity-nspinneddomains-code' class='heading'><code>../doc/manual/requirement-notes.md:25</code>: : Implemented with ATS within <code>Info.plist</code>, path: <code>NSAppTransportSecurity.NSPinnedDomains</code></h4>
+<pre class="highlight plaintext"><code>[REQ:gemSpec_IDP_Frontend:A_20608,A_20608-01,A_20609,A_20618,A_20068-01]: Implemented with ATS within `Info.plist`, path: `NSAppTransportSecurity.NSPinnedDomains`
 </code></pre>
 <h3 id='a_20079' class='heading'>A_20079</h3>
 <h4 id='code-sources-idp-internal-realidpclient-swift-263-code-network-timeouts-will-traverse-the-queue-as-code-httperror-code-s' class='heading'><code>../Sources/IDP/internal/RealIDPClient.swift:263</code>:  Network timeouts will traverse the queue as <code>HTTPError</code>s.</h4>
@@ -820,32 +1028,52 @@ guard let decrypted = try? token.decrypted(with: self.cryptoBox.aesKey) else {
 expires: self.time().addingTimeInterval(TimeInterval(token.expiresIn)),
 </code></pre>
 <h3 id='a_20309' class='heading'>A_20309</h3>
-<h4 id='code-sources-idp-defaultidpsession-swift-576-code-generation-and-hashing-for-codechallenge' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:576</code>:  generation and hashing for codeChallenge</h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-577-code-generation-and-hashing-for-codechallenge' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:577</code>:  generation and hashing for codeChallenge</h4>
 <pre class="highlight plaintext"><code>// Generate a verifierCode
 // [REQ:gemSpec_IDP_Frontend:A_20309] generation and hashing for codeChallenge
 guard let verifierCode = try? self.cryptoBox.generateRandomVerifier(),
 </code></pre>
-<h4 id='code-sources-idp-internal-idpcrypto-swift-61-code-verifierlength-is-32-bytes-encoded-to-base64-this-results-in-43-chars' class='heading'><code>../Sources/IDP/internal/IDPCrypto.swift:61</code>:  verifierLength is 32 bytes, encoded to base64 this results in 43 chars</h4>
+<h4 id='code-sources-idp-internal-idpcrypto-swift-63-code-verifierlength-is-32-bytes-encoded-to-base64-this-results-in-43-chars' class='heading'><code>../Sources/IDP/internal/IDPCrypto.swift:63</code>:  verifierLength is 32 bytes, encoded to base64 this results in 43 chars</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20309] verifierLength is 32 bytes, encoded to base64 this results in 43 chars
 // (32 * 4 / 3 = 42,6)
 try randomGenerator(verifierLength).encodeBase64urlsafe().utf8string
 </code></pre>
 <h3 id='a_20483' class='heading'>A_20483</h3>
-<h4 id='code-sources-idp-defaultidpsession-swift-584-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:584</code>:</h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-585-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:585</code>:</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20483]
 return self.client.requestChallenge(
 </code></pre>
 <h3 id='a_20499' class='heading'>A_20499</h3>
+<h4 id='code-doc-manual-requirement-notes-md-17-code-not-applicable-as-authenticator-modul-is-within-fdv-not-3rd-party-app' class='heading'><code>../doc/manual/requirement-notes.md:17</code>:  Not applicable as authenticator modul is within FdV, not 3rd party app.</h4>
+<pre class="highlight plaintext"><code>[REQ:gemSpec_IDP_Frontend:A_20499] Not applicable as authenticator modul is within FdV, not 3rd party app.
+</code></pre>
 <h4 id='code-sources-erpapp-session-keychainstorage-swift-244-code-deletion-of-sso_token-id_token-auth_token' class='heading'><code>../Sources/eRpApp/Session/KeychainStorage.swift:244</code>:  Deletion of SSO_TOKEN, ID_TOKEN, AUTH_TOKEN</h4>
-<pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20499] Deletion of SSO_TOKEN, ID_TOKEN, AUTH_TOKEN
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20499,A_20499-1#3] Deletion of SSO_TOKEN, ID_TOKEN, AUTH_TOKEN
 // [REQ:gemSpec_eRp_FdV:A_20186] Deletion of SSO_TOKEN, ID_TOKEN, AUTH_TOKEN
 set(can: nil)
 </code></pre>
 <h4 id='code-sources-erpapp-session-profilesecuredatawiper-swift-38-code-deletion-of-sso_token-id_token-auth_token' class='heading'><code>../Sources/eRpApp/Session/ProfileSecureDataWiper.swift:38</code>:  Deletion of SSO_TOKEN, ID_TOKEN, AUTH_TOKEN</h4>
-<pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20499] Deletion of SSO_TOKEN, ID_TOKEN, AUTH_TOKEN
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20499,A_20499-01#2] Deletion of SSO_TOKEN, ID_TOKEN, AUTH_TOKEN
 // [REQ:gemSpec_eRp_FdV:A_20186] Deletion of SSO_TOKEN, ID_TOKEN, AUTH_TOKEN
 // [REQ:gemSpec_IDP_Frontend:A_21603] Certificate
 storage.wipe()
+</code></pre>
+<h3 id='a_20499-01' class='heading'>A_20499-01</h3>
+<h4 id='code-sources-erpapp-screens-settings-profiles-edit-editprofiledomain-swift-265-code-call-the-sso_token-removal-upon-manual-logout' class='heading'><code>../Sources/eRpApp/Screens/Settings/Profiles/Edit/EditProfileDomain.swift:265</code>:  Call the SSO_TOKEN removal upon manual logout</h4>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20499-01#1] Call the SSO_TOKEN removal upon manual logout
+return profileSecureDataWiper.wipeSecureData(of: state.profileId).fireAndForget()
+</code></pre>
+<h4 id='code-sources-erpapp-session-profilesecuredatawiper-swift-38-code-deletion-of-sso_token-id_token-auth_token' class='heading'><code>../Sources/eRpApp/Session/ProfileSecureDataWiper.swift:38</code>:  Deletion of SSO_TOKEN, ID_TOKEN, AUTH_TOKEN</h4>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20499,A_20499-01#2] Deletion of SSO_TOKEN, ID_TOKEN, AUTH_TOKEN
+// [REQ:gemSpec_eRp_FdV:A_20186] Deletion of SSO_TOKEN, ID_TOKEN, AUTH_TOKEN
+// [REQ:gemSpec_IDP_Frontend:A_21603] Certificate
+storage.wipe()
+</code></pre>
+<h3 id='a_20499-1' class='heading'>A_20499-1</h3>
+<h4 id='code-sources-erpapp-session-keychainstorage-swift-244-code-deletion-of-sso_token-id_token-auth_token' class='heading'><code>../Sources/eRpApp/Session/KeychainStorage.swift:244</code>:  Deletion of SSO_TOKEN, ID_TOKEN, AUTH_TOKEN</h4>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20499,A_20499-1#3] Deletion of SSO_TOKEN, ID_TOKEN, AUTH_TOKEN
+// [REQ:gemSpec_eRp_FdV:A_20186] Deletion of SSO_TOKEN, ID_TOKEN, AUTH_TOKEN
+set(can: nil)
 </code></pre>
 <h3 id='a_20512' class='heading'>A_20512</h3>
 <h4 id='code-sources-idp-defaultidpsession-swift-272-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:272</code>:</h4>
@@ -856,13 +1084,20 @@ self.storage.set(discovery: nil)
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20512]
 func isValid(on date: Date) -&gt; Bool {
 </code></pre>
+<h3 id='a_20525' class='heading'>A_20525</h3>
+<h4 id='code-doc-manual-requirement-notes-md-15-code-not-applicable-as-authenticator-modul-is-within-fdv-not-3rd-party-app' class='heading'><code>../doc/manual/requirement-notes.md:15</code>:  Not applicable as authenticator modul is within FdV, not 3rd party app</h4>
+<pre class="highlight plaintext"><code>[REQ:gemSpec_IDP_Frontend:A_20525] Not applicable as authenticator modul is within FdV, not 3rd party app
+</code></pre>
+<h4 id='code-doc-manual-requirement-notes-md-18-code-not-applicable-as-authenticator-modul-is-within-fdv-consent-is-given-by-using-the-app' class='heading'><code>../doc/manual/requirement-notes.md:18</code>:  Not applicable as authenticator modul is within FdV. Consent is given by using the app.</h4>
+<pre class="highlight plaintext"><code>[REQ:gemSpec_IDP_Frontend:A_20525] Not applicable as authenticator modul is within FdV. Consent is given by using the app.
+</code></pre>
 <h3 id='a_20526-01' class='heading'>A_20526-01</h3>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-swift-374-code-sign-and-verify-with-idp' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.swift:374</code>:  sign and verify with idp</h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-swift-375-code-sign-and-verify-with-idp' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.swift:375</code>:  sign and verify with idp</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_20172]
 // [REQ:gemSpec_IDP_Frontend:A_20526-01] sign and verify with idp
 func signChallengeWithNFCCard(can: String,
 </code></pre>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-swift-403-code-verify-with-idp' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.swift:403</code>:  verify with idp</h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-swift-404-code-verify-with-idp' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.swift:404</code>:  verify with idp</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_20172]
 // [REQ:gemSpec_IDP_Frontend:A_20526-01] verify with idp
 private func verifyResultWithIDP(_ signedChallenge: SignedChallenge,
@@ -873,6 +1108,9 @@ private func verifyResultWithIDP(_ signedChallenge: SignedChallenge,
 func sign(can: String, pin: String, challenge: IDPChallengeSession)
 </code></pre>
 <h3 id='a_20527' class='heading'>A_20527</h3>
+<h4 id='code-doc-manual-requirement-notes-md-16-code-not-directly-applicable-as-authenticator-modul-is-within-fdv-not-3rd-party-app-authorization_code-will-be-used-directly' class='heading'><code>../doc/manual/requirement-notes.md:16</code>:  Not directly applicable as authenticator modul is within FdV, not 3rd party app. AUTHORIZATION_CODE will be used directly.</h4>
+<pre class="highlight plaintext"><code>[REQ:gemSpec_IDP_Frontend:A_20527] Not directly applicable as authenticator modul is within FdV, not 3rd party app. AUTHORIZATION_CODE will be used directly.
+</code></pre>
 <h4 id='code-sources-idp-defaultidpsession-swift-164-code-returning-the-authorization_code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:164</code>:  Returning the AUTHORIZATION_CODE</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20527] Returning the AUTHORIZATION_CODE
 return Just(exchangeToken).setFailureType(to: IDPError.self).eraseToAnyPublisher()
@@ -893,8 +1131,13 @@ return IDPExchangeToken(
 return IDPExchangeToken(code: code,
 </code></pre>
 <h3 id='a_20601' class='heading'>A_20601</h3>
-<h4 id='code-sources-idp-internal-realidpclient-swift-101-code-transfer' class='heading'><code>../Sources/IDP/internal/RealIDPClient.swift:101</code>:  transfer</h4>
-<pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20603,A_20601] transfer
+<h4 id='code-sources-idp-internal-realidpclient-swift-101-code-transfer' class='heading'><code>../Sources/IDP/internal/RealIDPClient.swift:101</code>:  Transfer</h4>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20603,A_20601,A_20601-01] Transfer
+URLQueryItem(name: "client_id", value: clientConfig.clientId.urlPercentEscapedString()),
+</code></pre>
+<h3 id='a_20601-01' class='heading'>A_20601-01</h3>
+<h4 id='code-sources-idp-internal-realidpclient-swift-101-code-transfer' class='heading'><code>../Sources/IDP/internal/RealIDPClient.swift:101</code>:  Transfer</h4>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20603,A_20601,A_20601-01] Transfer
 URLQueryItem(name: "client_id", value: clientConfig.clientId.urlPercentEscapedString()),
 </code></pre>
 <h3 id='a_20602' class='heading'>A_20602</h3>
@@ -903,8 +1146,8 @@ URLQueryItem(name: "client_id", value: clientConfig.clientId.urlPercentEscapedSt
 request.setValue("\(token.tokenType) \(token.accessToken)", forHTTPHeaderField: "Authorization")
 </code></pre>
 <h3 id='a_20603' class='heading'>A_20603</h3>
-<h4 id='code-sources-idp-internal-realidpclient-swift-101-code-transfer' class='heading'><code>../Sources/IDP/internal/RealIDPClient.swift:101</code>:  transfer</h4>
-<pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20603,A_20601] transfer
+<h4 id='code-sources-idp-internal-realidpclient-swift-101-code-transfer' class='heading'><code>../Sources/IDP/internal/RealIDPClient.swift:101</code>:  Transfer</h4>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20603,A_20601,A_20601-01] Transfer
 URLQueryItem(name: "client_id", value: clientConfig.clientId.urlPercentEscapedString()),
 </code></pre>
 <h4 id='code-sources-idp-internal-realidpclient-swift-249-code-transfer' class='heading'><code>../Sources/IDP/internal/RealIDPClient.swift:249</code>:  transfer</h4>
@@ -943,6 +1186,25 @@ case let .internal(error: error): return error.localizedDescription
 // [REQ:gemSpec_eRp_FdV:A_20206]
 
 </code></pre>
+<h3 id='a_20607' class='heading'>A_20607</h3>
+<h4 id='code-doc-manual-requirement-notes-md-2-code-no-exceptions-set-in-nsapptransportsecurity-http-via-tls-is-enforced-os-will-use-system-root-certificates-in-combination-with-set-pinned-certificates-see-also-a-href-https-developer-apple-com-library-archive-documentation-general-reference-infoplistkeyreference-articles-cocoakeys-html-requirements-for-connecting-using-ats-a' class='heading'><code>../doc/manual/requirement-notes.md:2</code>:  no exceptions set in NSAppTransportSecurity, HTTP via TLS is enforced; OS will use system root certificates in combination with set pinned certificates. see also: <a href="https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CocoaKeys.html">Requirements for Connecting Using ATS</a></h4>
+<pre class="highlight plaintext"><code>[REQ:gemSpec_IDP_Frontend:A_20607,A_20609,A_20618] no exceptions set in NSAppTransportSecurity, HTTP via TLS is enforced; OS will use system root certificates in combination with set pinned certificates. see also: [Requirements for Connecting Using ATS](https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CocoaKeys.html)
+</code></pre>
+<h3 id='a_20608' class='heading'>A_20608</h3>
+<h4 id='code-doc-manual-requirement-notes-md-25-code-implemented-with-ats-within-code-info-plist-code-path-code-nsapptransportsecurity-nspinneddomains-code' class='heading'><code>../doc/manual/requirement-notes.md:25</code>: : Implemented with ATS within <code>Info.plist</code>, path: <code>NSAppTransportSecurity.NSPinnedDomains</code></h4>
+<pre class="highlight plaintext"><code>[REQ:gemSpec_IDP_Frontend:A_20608,A_20608-01,A_20609,A_20618,A_20068-01]: Implemented with ATS within `Info.plist`, path: `NSAppTransportSecurity.NSPinnedDomains`
+</code></pre>
+<h3 id='a_20608-01' class='heading'>A_20608-01</h3>
+<h4 id='code-doc-manual-requirement-notes-md-25-code-implemented-with-ats-within-code-info-plist-code-path-code-nsapptransportsecurity-nspinneddomains-code' class='heading'><code>../doc/manual/requirement-notes.md:25</code>: : Implemented with ATS within <code>Info.plist</code>, path: <code>NSAppTransportSecurity.NSPinnedDomains</code></h4>
+<pre class="highlight plaintext"><code>[REQ:gemSpec_IDP_Frontend:A_20608,A_20608-01,A_20609,A_20618,A_20068-01]: Implemented with ATS within `Info.plist`, path: `NSAppTransportSecurity.NSPinnedDomains`
+</code></pre>
+<h3 id='a_20609' class='heading'>A_20609</h3>
+<h4 id='code-doc-manual-requirement-notes-md-2-code-no-exceptions-set-in-nsapptransportsecurity-http-via-tls-is-enforced-os-will-use-system-root-certificates-in-combination-with-set-pinned-certificates-see-also-a-href-https-developer-apple-com-library-archive-documentation-general-reference-infoplistkeyreference-articles-cocoakeys-html-requirements-for-connecting-using-ats-a' class='heading'><code>../doc/manual/requirement-notes.md:2</code>:  no exceptions set in NSAppTransportSecurity, HTTP via TLS is enforced; OS will use system root certificates in combination with set pinned certificates. see also: <a href="https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CocoaKeys.html">Requirements for Connecting Using ATS</a></h4>
+<pre class="highlight plaintext"><code>[REQ:gemSpec_IDP_Frontend:A_20607,A_20609,A_20618] no exceptions set in NSAppTransportSecurity, HTTP via TLS is enforced; OS will use system root certificates in combination with set pinned certificates. see also: [Requirements for Connecting Using ATS](https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CocoaKeys.html)
+</code></pre>
+<h4 id='code-doc-manual-requirement-notes-md-25-code-implemented-with-ats-within-code-info-plist-code-path-code-nsapptransportsecurity-nspinneddomains-code' class='heading'><code>../doc/manual/requirement-notes.md:25</code>: : Implemented with ATS within <code>Info.plist</code>, path: <code>NSAppTransportSecurity.NSPinnedDomains</code></h4>
+<pre class="highlight plaintext"><code>[REQ:gemSpec_IDP_Frontend:A_20608,A_20608-01,A_20609,A_20618,A_20068-01]: Implemented with ATS within `Info.plist`, path: `NSAppTransportSecurity.NSPinnedDomains`
+</code></pre>
 <h3 id='a_20614' class='heading'>A_20614</h3>
 <h4 id='code-sources-idp-defaultidpsession-swift-260-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:260</code>:</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20617-01,A_20623,A_20614]
@@ -953,11 +1215,11 @@ case let .internal(error: error): return error.localizedDescription
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20617-01,A_20623,A_20614]
 .validateOrNil(with: trustStoreSession, timeProvider: time)
 </code></pre>
-<h4 id='code-sources-idp-defaultidpsession-swift-290-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:290</code>:</h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-291-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:291</code>:</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20617-01,A_20623]
 .validate(with: self.trustStoreSession, timeProvider: self.time)
 </code></pre>
-<h4 id='code-sources-idp-defaultidpsession-swift-659-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:659</code>:</h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-661-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:661</code>:</h4>
 <pre class="highlight plaintext"><code>/// Returns a Publisher that validates the input streams discoveryDocument against the given trustStoreSession. If
 /// the validity cannot be verified, the publisher fails with an `IDPError.trustStore` error.
 ///
@@ -969,7 +1231,7 @@ case let .internal(error: error): return error.localizedDescription
 /// - Returns: An AnyPublisher of `DiscoveryDocument`and `IDPError`
 func validate(with trustStoreSession: TrustStoreSession,
 </code></pre>
-<h4 id='code-sources-idp-defaultidpsession-swift-691-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:691</code>:</h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-693-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:693</code>:</h4>
 <pre class="highlight plaintext"><code>/// Returns a Publisher that validates the input streams discoveryDocument and returns nil if validity cannot be
 /// checked. All Errors are caught and result in an empty discoveryDocument.
 ///
@@ -981,16 +1243,25 @@ func validate(with trustStoreSession: TrustStoreSession,
 /// - Returns: An AnyPublisher of `DiscoveryDocument`and `Never`.
 func validateOrNil(with trustStoreSession: TrustStoreSession,
 </code></pre>
-<h3 id='a_20623' class='heading'>A_20623</h3>
-<h4 id='code-sources-idp-defaultidpsession-swift-260-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:260</code>:</h4>
-<pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20617-01,A_20623,A_20614]
-.validateOrNil(with: trustStoreSession, timeProvider: time)
+<h3 id='a_20618' class='heading'>A_20618</h3>
+<h4 id='code-doc-manual-requirement-notes-md-2-code-no-exceptions-set-in-nsapptransportsecurity-http-via-tls-is-enforced-os-will-use-system-root-certificates-in-combination-with-set-pinned-certificates-see-also-a-href-https-developer-apple-com-library-archive-documentation-general-reference-infoplistkeyreference-articles-cocoakeys-html-requirements-for-connecting-using-ats-a' class='heading'><code>../doc/manual/requirement-notes.md:2</code>:  no exceptions set in NSAppTransportSecurity, HTTP via TLS is enforced; OS will use system root certificates in combination with set pinned certificates. see also: <a href="https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CocoaKeys.html">Requirements for Connecting Using ATS</a></h4>
+<pre class="highlight plaintext"><code>[REQ:gemSpec_IDP_Frontend:A_20607,A_20609,A_20618] no exceptions set in NSAppTransportSecurity, HTTP via TLS is enforced; OS will use system root certificates in combination with set pinned certificates. see also: [Requirements for Connecting Using ATS](https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CocoaKeys.html)
 </code></pre>
-<h4 id='code-sources-idp-defaultidpsession-swift-290-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:290</code>:</h4>
+<h4 id='code-doc-manual-requirement-notes-md-25-code-implemented-with-ats-within-code-info-plist-code-path-code-nsapptransportsecurity-nspinneddomains-code' class='heading'><code>../doc/manual/requirement-notes.md:25</code>: : Implemented with ATS within <code>Info.plist</code>, path: <code>NSAppTransportSecurity.NSPinnedDomains</code></h4>
+<pre class="highlight plaintext"><code>[REQ:gemSpec_IDP_Frontend:A_20608,A_20608-01,A_20609,A_20618,A_20068-01]: Implemented with ATS within `Info.plist`, path: `NSAppTransportSecurity.NSPinnedDomains`
+</code></pre>
+<h3 id='a_20623' class='heading'>A_20623</h3>
+<h4 id='code-sources-truststore-x509truststore-swift-171-code-idp-oid' class='heading'><code>../Sources/TrustStore/X509TrustStore.swift:171</code>:  IDP oid</h4>
+<pre class="highlight plaintext"><code>case oidErpVau // 1.2.276.0.76.4.258 == 0x06082A8214004C048202
+// [REQ:gemSpec_IDP_Frontend:A_20623] IDP oid
+case oidIdpd // 1.2.276.0.76.4.260 == 0x06082A8214004C048204
+}
+</code></pre>
+<h4 id='code-sources-idp-defaultidpsession-swift-291-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:291</code>:</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20617-01,A_20623]
 .validate(with: self.trustStoreSession, timeProvider: self.time)
 </code></pre>
-<h4 id='code-sources-idp-defaultidpsession-swift-660-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:660</code>:</h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-662-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:662</code>:</h4>
 <pre class="highlight plaintext"><code>/// Returns a Publisher that validates the input streams discoveryDocument against the given trustStoreSession. If
 /// the validity cannot be verified, the publisher fails with an `IDPError.trustStore` error.
 ///
@@ -1002,11 +1273,11 @@ func validateOrNil(with trustStoreSession: TrustStoreSession,
 /// - Returns: An AnyPublisher of `DiscoveryDocument`and `IDPError`
 func validate(with trustStoreSession: TrustStoreSession,
 </code></pre>
-<h4 id='code-sources-idp-defaultidpsession-swift-663-code-validation-call' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:663</code>:  Validation call</h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-665-code-validation-call' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:665</code>:  Validation call</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20623] Validation call
 return trustStoreSession.validate(discoveryDocument: document)
 </code></pre>
-<h4 id='code-sources-idp-defaultidpsession-swift-691-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:691</code>:</h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-693-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:693</code>:</h4>
 <pre class="highlight plaintext"><code>/// Returns a Publisher that validates the input streams discoveryDocument and returns nil if validity cannot be
 /// checked. All Errors are caught and result in an empty discoveryDocument.
 ///
@@ -1018,7 +1289,7 @@ return trustStoreSession.validate(discoveryDocument: document)
 /// - Returns: An AnyPublisher of `DiscoveryDocument`and `Never`.
 func validateOrNil(with trustStoreSession: TrustStoreSession,
 </code></pre>
-<h4 id='code-sources-idp-defaultidpsession-swift-721-code-validation' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:721</code>:  Validation</h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-723-code-validation' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:723</code>:  Validation</h4>
 <pre class="highlight plaintext"><code>/// Returns a publisher that checks a discoveryDocument against the trust store. The Stream contains an output
 /// boolean for the plain check or an TrustStoreError in case the TrustStoreSession sub streams failed.
 ///
@@ -1033,30 +1304,37 @@ func validate(discoveryDocument: DiscoveryDocument) -&gt; AnyPublisher&lt;Bool, 
 <pre class="highlight plaintext"><code>} else if eeCert.contains(oidBytes: .oidIdpd) { // [REQ:gemSpec_IDP_Frontend:A_20623] oid check
 return (vauCerts, idpCerts + [eeCert])
 </code></pre>
-<h4 id='code-sources-truststore-x509truststore-swift-171-code-idp-oid' class='heading'><code>../Sources/TrustStore/X509TrustStore.swift:171</code>:  IDP oid</h4>
-<pre class="highlight plaintext"><code>case oidErpVau // 1.2.276.0.76.4.258 == 0x06082A8214004C048202
-// [REQ:gemSpec_IDP_Frontend:A_20623] IDP oid
-case oidIdpd // 1.2.276.0.76.4.260 == 0x06082A8214004C048204
-}
+<h4 id='code-sources-idp-defaultidpsession-swift-260-code' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:260</code>:</h4>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20617-01,A_20623,A_20614]
+.validateOrNil(with: trustStoreSession, timeProvider: time)
 </code></pre>
 <h3 id='a_20625' class='heading'>A_20625</h3>
 <h4 id='code-sources-idp-defaultidpsession-swift-208-code-validate-id_token-signature' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:208</code>:  Validate ID_TOKEN signature</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20625] Validate ID_TOKEN signature
 guard let jwt = try? JWT(from: decrypted.idToken),
 </code></pre>
+<h3 id='a_20700-05' class='heading'>A_20700-05</h3>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-environment-biometrics-swift-25-code-sign-with-c-ch-aut' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.Environment+Biometrics.swift:25</code>:  sign with C.CH.AUT</h4>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20700-05,A_20700-07] sign with C.CH.AUT
+return challengeSession.sign(
+</code></pre>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-435-code-sign-with-c-ch-aut' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:435</code>:  sign with C.CH.AUT</h4>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20700-05,A_20700-07] sign with C.CH.AUT
+return session.sign(
+</code></pre>
 <h3 id='a_20700-07' class='heading'>A_20700-07</h3>
 <h4 id='code-sources-idp-defaultsecureenclavesignatureprovider-swift-127-code-biometrics-only-other-modes-currently-not-supported' class='heading'><code>../Sources/IDP/DefaultSecureEnclaveSignatureProvider.swift:127</code>:  Biometrics only, other modes currently not supported</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20700-07] Biometrics only, other modes currently not supported
 amr: [
 </code></pre>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-environment-biometrics-swift-24-code-sign-with-c-ch-aut' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.Environment+Biometrics.swift:24</code>:  sign with C.CH.AUT</h4>
-<pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20700-07] sign with C.CH.AUT
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-environment-biometrics-swift-25-code-sign-with-c-ch-aut' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.Environment+Biometrics.swift:25</code>:  sign with C.CH.AUT</h4>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20700-05,A_20700-07] sign with C.CH.AUT
 return challengeSession.sign(
 </code></pre>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-environment-biometrics-swift-135-code-c-ch-aut' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.Environment+Biometrics.swift:135</code>:  C.CH.AUT</h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-environment-biometrics-swift-137-code-c-ch-aut' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.Environment+Biometrics.swift:137</code>:  C.CH.AUT</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20700-07] C.CH.AUT
 // [REQ:gemF_Tokenverschlüsselung:A_20526-01] Smartcard signature
-// [REQ:gemF_Tokenverschlüsselung:A_20700-06] sign
+// [REQ:gemF_Tokenverschlüsselung:A_20700-05,A_20700-06] sign
 .sign(challengeSession: challengeSession)
 </code></pre>
 <h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-425-code-c-ch-aut' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:425</code>:  C.CH.AUT</h4>
@@ -1065,11 +1343,11 @@ return challengeSession.sign(
 // [REQ:gemF_Tokenverschlüsselung:A_20700-06] sign
 .readAutCertificate()
 </code></pre>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-434-code-sign-with-c-ch-aut' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:434</code>:  sign with C.CH.AUT</h4>
-<pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20700-07] sign with C.CH.AUT
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-435-code-sign-with-c-ch-aut' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:435</code>:  sign with C.CH.AUT</h4>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20700-05,A_20700-07] sign with C.CH.AUT
 return session.sign(
 </code></pre>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-465-code-perform-signature-with-openhealthcardkit' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:465</code>:  perform signature with OpenHealthCardKit</h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-466-code-perform-signature-with-openhealthcardkit' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:466</code>:  perform signature with OpenHealthCardKit</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20700-07] perform signature with OpenHealthCardKit
 card.sign(data: message)
 </code></pre>
@@ -1087,6 +1365,10 @@ name: "redirect_uri",
 let redirectUri = URL(string: "https://redirect.gematik.de/erezept")! // swiftlint:disable:this force_unwrapping
 let extAuthRedirectUri = URL(
 </code></pre>
+<h3 id='a_20741' class='heading'>A_20741</h3>
+<h4 id='code-doc-manual-requirement-notes-md-8-code-configuration-within-code-app-configuration-json-code-organisational-process-as-in-a_20603' class='heading'><code>../doc/manual/requirement-notes.md:8</code>:  Configuration within <code>app-configuration.json</code>, organisational process as in A_20603</h4>
+<pre class="highlight plaintext"><code>[REQ:gemSpec_IDP_Frontend:A_20741] Configuration within `app-configuration.json`, organisational process as in A_20603
+</code></pre>
 <h3 id='a_21322' class='heading'>A_21322</h3>
 <h4 id='code-sources-erpapp-session-keychainstorage-swift-18-code-storage-implementation-uses-ios-keychain' class='heading'><code>../Sources/eRpApp/Session/KeychainStorage.swift:18</code>:  Storage implementation uses iOS Keychain</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_19186]
@@ -1103,12 +1385,12 @@ class KeychainStorage: SecureUserDataStore, IDPStorage, SecureEGKCertificateStor
 guard let encryptedKeyVerifier = try? KeyVerifier(
 </code></pre>
 <h3 id='a_21414' class='heading'>A_21414</h3>
-<h4 id='code-sources-idp-defaultidpsession-swift-314-code-encrypt-access_token-when-requesting-the-pairing-endpoint' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:314</code>:  Encrypt ACCESS_TOKEN when requesting the pairing endpoint</h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-315-code-encrypt-access_token-when-requesting-the-pairing-endpoint' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:315</code>:  Encrypt ACCESS_TOKEN when requesting the pairing endpoint</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_21414] Encrypt ACCESS_TOKEN when requesting the pairing endpoint
 guard let tokenJWT = try? JWT(from: token.accessToken),
 </code></pre>
 <h3 id='a_21416' class='heading'>A_21416</h3>
-<h4 id='code-sources-idp-defaultidpsession-swift-308-code-encryption' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:308</code>:  Encryption</h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-309-code-encryption' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:309</code>:  Encryption</h4>
 <pre class="highlight plaintext"><code>/// [REQ:gemSpec_IDP_Frontend:A_21416] Encryption
 guard let jwe = try? registrationData.encrypted(with: document.encryptionPublicKey,
 </code></pre>
@@ -1124,7 +1406,7 @@ public struct RegistrationData: Claims, Codable {
 func encrypted(with publicKey: BrainpoolP256r1.KeyExchange.PublicKey,
 </code></pre>
 <h3 id='a_21431' class='heading'>A_21431</h3>
-<h4 id='code-sources-idp-defaultidpsession-swift-388-code-encryption' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:388</code>:  Encryption</h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-389-code-encryption' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:389</code>:  Encryption</h4>
 <pre class="highlight plaintext"><code>/// [REQ:gemSpec_IDP_Frontend:A_21431] Encryption
 guard let jwe = try? signedChallenge.encrypted(with: document.encryptionPublicKey,
 </code></pre>
@@ -1133,75 +1415,91 @@ guard let jwe = try? signedChallenge.encrypted(with: document.encryptionPublicKe
 expiry: originalChallenge.challenge.exp,
 </code></pre>
 <h3 id='a_21443' class='heading'>A_21443</h3>
-<h4 id='code-sources-idp-defaultidpsession-swift-339-code-encrypt-access_token-when-requesting-the-unregister-endpoint' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:339</code>:  Encrypt ACCESS_TOKEN when requesting the unregister endpoint</h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-340-code-encrypt-access_token-when-requesting-the-unregister-endpoint' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:340</code>:  Encrypt ACCESS_TOKEN when requesting the unregister endpoint</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_21443] Encrypt ACCESS_TOKEN when requesting the unregister endpoint
 guard let tokenJWT = try? JWT(from: token.accessToken),
 </code></pre>
-<h4 id='code-sources-idp-defaultidpsession-swift-363-code-encrypt-access_token-when-requesting-the-list-endpoint' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:363</code>:  Encrypt ACCESS_TOKEN when requesting the list endpoint</h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-364-code-encrypt-access_token-when-requesting-the-list-endpoint' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:364</code>:  Encrypt ACCESS_TOKEN when requesting the list endpoint</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_21443] Encrypt ACCESS_TOKEN when requesting the list endpoint
 guard let tokenJWT = try? JWT(from: token.accessToken),
 </code></pre>
 <h3 id='a_21574' class='heading'>A_21574</h3>
-<h4 id='code-sources-erpapp-screens-cardwall-login-cardwallloginoptiondomain-swift-103-code-present-user-information' class='heading'><code>../Sources/eRpApp/Screens/CardWall/Login/CardWallLoginOptionDomain.swift:103</code>:  Present user information</h4>
+<h4 id='code-sources-erpapp-screens-cardwall-login-cardwallloginoptiondomain-swift-104-code-present-user-information' class='heading'><code>../Sources/eRpApp/Screens/CardWall/Login/CardWallLoginOptionDomain.swift:104</code>:  Present user information</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_21574] Present user information
-return Effect(value: .presentSecurityWarning)
+return EffectTask(value: .presentSecurityWarning)
 </code></pre>
 <h4 id='code-sources-erpapp-screens-cardwall-login-cardwallloginoptionview-swift-123-code-actual-view' class='heading'><code>../Sources/eRpApp/Screens/CardWall/Login/CardWallLoginOptionView.swift:123</code>:  Actual view</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_21574] Actual view
 struct PrivacyWarningViewContainer: View {
 </code></pre>
 <h3 id='a_21576' class='heading'>A_21576</h3>
-<h4 id='code-sources-idp-defaultidpsession-swift-332-code-deletion-call' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:332</code>:  deletion call</h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-333-code-deletion-call' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:333</code>:  deletion call</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_21576] deletion call
 public func unregisterDevice(_ keyIdentifier: String, token: IDPToken) -&gt; AnyPublisher&lt;Bool, IDPError&gt; {
 </code></pre>
 <h3 id='a_21578' class='heading'>A_21578</h3>
-<h4 id='code-sources-idp-privatekeycontainer-swift-137-code-enforced-via-access-attribute' class='heading'><code>../Sources/IDP/PrivateKeyContainer.swift:137</code>:  Enforced via access attribute</h4>
+<h4 id='code-doc-manual-requirement-notes-md-19-code-ios-only-allows-biometric-access-via-secure-enclave-or-higher-order-apis' class='heading'><code>../doc/manual/requirement-notes.md:19</code>:  iOS only allows Biometric access via secure enclave or higher order apis.</h4>
+<pre class="highlight plaintext"><code>[REQ:gemSpec_IDP_Frontend:A_21578] iOS only allows Biometric access via secure enclave or higher order apis.
+</code></pre>
+<h4 id='code-sources-idp-privatekeycontainer-swift-140-code-enforced-via-access-attribute' class='heading'><code>../Sources/IDP/PrivateKeyContainer.swift:140</code>:  Enforced via access attribute</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_21578,A_21579,A_21580,A_21583] Enforced via access attribute
 kSecAttrTokenID as String: kSecAttrTokenIDSecureEnclave,
 </code></pre>
 <h3 id='a_21579' class='heading'>A_21579</h3>
-<h4 id='code-sources-idp-privatekeycontainer-swift-137-code-enforced-via-access-attribute' class='heading'><code>../Sources/IDP/PrivateKeyContainer.swift:137</code>:  Enforced via access attribute</h4>
+<h4 id='code-sources-idp-privatekeycontainer-swift-140-code-enforced-via-access-attribute' class='heading'><code>../Sources/IDP/PrivateKeyContainer.swift:140</code>:  Enforced via access attribute</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_21578,A_21579,A_21580,A_21583] Enforced via access attribute
 kSecAttrTokenID as String: kSecAttrTokenIDSecureEnclave,
 </code></pre>
 <h3 id='a_21580' class='heading'>A_21580</h3>
-<h4 id='code-sources-idp-privatekeycontainer-swift-137-code-enforced-via-access-attribute' class='heading'><code>../Sources/IDP/PrivateKeyContainer.swift:137</code>:  Enforced via access attribute</h4>
+<h4 id='code-sources-idp-privatekeycontainer-swift-140-code-enforced-via-access-attribute' class='heading'><code>../Sources/IDP/PrivateKeyContainer.swift:140</code>:  Enforced via access attribute</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_21578,A_21579,A_21580,A_21583] Enforced via access attribute
 kSecAttrTokenID as String: kSecAttrTokenIDSecureEnclave,
 </code></pre>
 <h3 id='a_21581' class='heading'>A_21581</h3>
-<h4 id='code-sources-idp-privatekeycontainer-swift-133-code-algorithm-selection' class='heading'><code>../Sources/IDP/PrivateKeyContainer.swift:133</code>:  Algorithm selection</h4>
+<h4 id='code-sources-idp-privatekeycontainer-swift-136-code-algorithm-selection' class='heading'><code>../Sources/IDP/PrivateKeyContainer.swift:136</code>:  Algorithm selection</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_21581,A_21589] Algorithm selection
 kSecAttrKeyType as String: kSecAttrKeyTypeECSECPrimeRandom,
 </code></pre>
 <h3 id='a_21582' class='heading'>A_21582</h3>
-<h4 id='code-sources-idp-privatekeycontainer-swift-122-code-method-selection' class='heading'><code>../Sources/IDP/PrivateKeyContainer.swift:122</code>:  method selection</h4>
+<h4 id='code-sources-idp-privatekeycontainer-swift-125-code-method-selection' class='heading'><code>../Sources/IDP/PrivateKeyContainer.swift:125</code>:  method selection</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_21582] method selection
 // [REQ:gemSpec_IDP_Frontend:A_21587] via `.privateKeyUsage`
 [.privateKeyUsage,
 </code></pre>
 <h3 id='a_21583' class='heading'>A_21583</h3>
-<h4 id='code-sources-idp-privatekeycontainer-swift-137-code-enforced-via-access-attribute' class='heading'><code>../Sources/IDP/PrivateKeyContainer.swift:137</code>:  Enforced via access attribute</h4>
+<h4 id='code-doc-manual-requirement-notes-md-20-code-secure-enclave-is-enforced-with-code-attributes' class='heading'><code>../doc/manual/requirement-notes.md:20</code>:  Secure Enclave is enforced with code attributes.</h4>
+<pre class="highlight plaintext"><code>[REQ:gemSpec_IDP_Frontend:A_21583] Secure Enclave is enforced with code attributes.
+</code></pre>
+<h4 id='code-sources-idp-privatekeycontainer-swift-140-code-enforced-via-access-attribute' class='heading'><code>../Sources/IDP/PrivateKeyContainer.swift:140</code>:  Enforced via access attribute</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_21578,A_21579,A_21580,A_21583] Enforced via access attribute
 kSecAttrTokenID as String: kSecAttrTokenIDSecureEnclave,
 </code></pre>
 <h3 id='a_21584' class='heading'>A_21584</h3>
-<h4 id='code-sources-idp-privatekeycontainer-swift-228-code-private-key-usage-triggers-biometric-unlock' class='heading'><code>../Sources/IDP/PrivateKeyContainer.swift:228</code>:  private key usage triggers biometric unlock</h4>
+<h4 id='code-doc-manual-requirement-notes-md-21-code-there-is-no-api-to-allow-or-disallow-an-biometric-authentication-ios-is-handling-the-authorization-process-while-using-the-private-key-for-any-cryptographic-operation' class='heading'><code>../doc/manual/requirement-notes.md:21</code>:  There is no API to allow or disallow an biometric authentication, iOS is handling the authorization process while using the private key for any cryptographic operation.</h4>
+<pre class="highlight plaintext"><code>[REQ:gemSpec_IDP_Frontend:A_21584] There is no API to allow or disallow an biometric authentication, iOS is handling the authorization process while using the private key for any cryptographic operation.
+</code></pre>
+<h4 id='code-sources-idp-privatekeycontainer-swift-231-code-private-key-usage-triggers-biometric-unlock' class='heading'><code>../Sources/IDP/PrivateKeyContainer.swift:231</code>:  private key usage triggers biometric unlock</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_21584] private key usage triggers biometric unlock
 guard let signature = SecKeyCreateSignature(privateKey,
 </code></pre>
+<h3 id='a_21585' class='heading'>A_21585</h3>
+<h4 id='code-doc-manual-requirement-notes-md-22-code-default-behaviour-for-all-apps-when-using-private-access-group-a-href-https-developer-apple-com-documentation-security-keychain_services-keychain_items-sharing_access_to_keychain_items_among_a_collection_of_apps-https-developer-apple-com-documentation-security-keychain_services-keychain_items-sharing_access_to_keychain_items_among_a_collection_of_apps-a' class='heading'><code>../doc/manual/requirement-notes.md:22</code>:  Default behaviour for all apps when using private access group (<a href="https://developer.apple.com/documentation/security/keychain_services/keychain_items/sharing_access_to_keychain_items_among_a_collection_of_apps">https://developer.apple.com/documentation/security/keychain_services/keychain_items/sharing_access_to_keychain_items_among_a_collection_of_apps</a>)</h4>
+<pre class="highlight plaintext"><code>[REQ:gemSpec_IDP_Frontend:A_21585] Default behaviour for all apps when using private access group (https://developer.apple.com/documentation/security/keychain_services/keychain_items/sharing_access_to_keychain_items_among_a_collection_of_apps)
+</code></pre>
 <h3 id='a_21586' class='heading'>A_21586</h3>
-<h4 id='code-sources-idp-privatekeycontainer-swift-119-code-prevents-migration-to-other-devices' class='heading'><code>../Sources/IDP/PrivateKeyContainer.swift:119</code>:  prevents migration to other devices</h4>
+<h4 id='code-doc-manual-requirement-notes-md-23-code-ios-will-delete-all-user-related-data-after-user-accout-reset-key-chain-data-is-not-beeing-synced-with-icloud-since-code-ksecattrsynchronizable-code-is-not-applied' class='heading'><code>../doc/manual/requirement-notes.md:23</code>:  iOS will delete all user related data after user-accout reset. Key-Chain data is not beeing synced with iCloud since <code>kSecAttrSynchronizable</code> is not applied</h4>
+<pre class="highlight plaintext"><code>[REQ:gemSpec_IDP_Frontend:A_21586] iOS will delete all user related data after user-accout reset. Key-Chain data is not beeing synced with iCloud since `kSecAttrSynchronizable` is not applied
+</code></pre>
+<h4 id='code-sources-idp-privatekeycontainer-swift-122-code-prevents-migration-to-other-devices' class='heading'><code>../Sources/IDP/PrivateKeyContainer.swift:122</code>:  prevents migration to other devices</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_21586] prevents migration to other devices
 kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly,
 </code></pre>
-<h4 id='code-sources-idp-privatekeycontainer-swift-124-code-invalidates-biometry-after-changes' class='heading'><code>../Sources/IDP/PrivateKeyContainer.swift:124</code>:  invalidates biometry after changes</h4>
+<h4 id='code-sources-idp-privatekeycontainer-swift-127-code-invalidates-biometry-after-changes' class='heading'><code>../Sources/IDP/PrivateKeyContainer.swift:127</code>:  invalidates biometry after changes</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_21586] invalidates biometry after changes
 .biometryCurrentSet], &amp;error) else {
 </code></pre>
 <h3 id='a_21587' class='heading'>A_21587</h3>
-<h4 id='code-sources-idp-privatekeycontainer-swift-123-code-via-code-privatekeyusage-code' class='heading'><code>../Sources/IDP/PrivateKeyContainer.swift:123</code>:  via <code>.privateKeyUsage</code></h4>
+<h4 id='code-sources-idp-privatekeycontainer-swift-126-code-via-code-privatekeyusage-code' class='heading'><code>../Sources/IDP/PrivateKeyContainer.swift:126</code>:  via <code>.privateKeyUsage</code></h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_21582] method selection
 // [REQ:gemSpec_IDP_Frontend:A_21587] via `.privateKeyUsage`
 [.privateKeyUsage,
@@ -1220,13 +1518,24 @@ let keyIdentifier = try keyIdentifierGenerator()
 guard let someIdentifier = identifier,
 </code></pre>
 <h3 id='a_21589' class='heading'>A_21589</h3>
-<h4 id='code-sources-idp-privatekeycontainer-swift-133-code-algorithm-selection' class='heading'><code>../Sources/IDP/PrivateKeyContainer.swift:133</code>:  Algorithm selection</h4>
+<h4 id='code-sources-idp-privatekeycontainer-swift-136-code-algorithm-selection' class='heading'><code>../Sources/IDP/PrivateKeyContainer.swift:136</code>:  Algorithm selection</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_21581,A_21589] Algorithm selection
 kSecAttrKeyType as String: kSecAttrKeyTypeECSECPrimeRandom,
 </code></pre>
-<h4 id='code-sources-idp-privatekeycontainer-swift-135-code-key-length' class='heading'><code>../Sources/IDP/PrivateKeyContainer.swift:135</code>:  Key length</h4>
+<h4 id='code-sources-idp-privatekeycontainer-swift-138-code-key-length' class='heading'><code>../Sources/IDP/PrivateKeyContainer.swift:138</code>:  Key length</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_21589] Key length
 kSecAttrKeySizeInBits as String: 256,
+</code></pre>
+<h3 id='a_21590' class='heading'>A_21590</h3>
+<h4 id='code-doc-manual-requirement-notes-md-24-code-references-of-code-secureenclavesignatureprovider-code-is-limited-to-registration-and-altverify-usage' class='heading'><code>../doc/manual/requirement-notes.md:24</code>:  References of <code>SecureEnclaveSignatureProvider</code> is limited to registration and altVerify usage.</h4>
+<pre class="highlight plaintext"><code>[REQ:gemSpec_IDP_Frontend:A_21590] References of `SecureEnclaveSignatureProvider` is limited to registration and altVerify usage.
+</code></pre>
+<h4 id='code-sources-idp-privatekeycontainer-swift-17-code-this-is-the-container-to-represent-biometric-keys-usage-is-limited-to' class='heading'><code>../Sources/IDP/PrivateKeyContainer.swift:17</code>:  This is the container to represent biometric keys. Usage is limited to</h4>
+<pre class="highlight plaintext"><code>/// Represents a (SecureEnclave) private key, namely `PrK_SE_AUT`, secured by iOS Biometrics.
+///
+/// [REQ:gemSpec_IDP_Frontend:A_21590] This is the container to represent biometric keys. Usage is limited to
+/// authorization purposes
+public struct PrivateKeyContainer {
 </code></pre>
 <h3 id='a_21591' class='heading'>A_21591</h3>
 <h4 id='code-sources-idp-models-registrationdata-swift-57-code' class='heading'><code>../Sources/IDP/Models/RegistrationData.swift:57</code>:</h4>
@@ -1243,9 +1552,9 @@ func deviceInformation() -&gt; RegistrationData.DeviceInformation {
 func deviceInformation() -&gt; RegistrationData.DeviceInformation {
 </code></pre>
 <h3 id='a_21595' class='heading'>A_21595</h3>
-<h4 id='code-sources-idp-defaultsecureenclavesignatureprovider-swift-51-code-store-pairing-data' class='heading'><code>../Sources/IDP/DefaultSecureEnclaveSignatureProvider.swift:51</code>:  Store pairing data</h4>
-<pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_21598,A_21595,A_21595] Store pairing data
-certificateStorage.set(certificate: certificate)
+<h4 id='code-sources-erpapp-session-keychainstorage-swift-229-code-store-within-keychain' class='heading'><code>../Sources/eRpApp/Session/KeychainStorage.swift:229</code>:  Store within keychain</h4>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_21595] Store within keychain
+success = try keychainHelper.setGenericPassword(keyIdentifier, for: idpBiometricKeyIdentifier)
 </code></pre>
 <h4 id='code-sources-idp-defaultsecureenclavesignatureprovider-swift-51-code-store-pairing-data' class='heading'><code>../Sources/IDP/DefaultSecureEnclaveSignatureProvider.swift:51</code>:  Store pairing data</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_21598,A_21595,A_21595] Store pairing data
@@ -1260,7 +1569,7 @@ certificateStorage.set(certificate: nil)
 /// [REQ:gemSpec_IDP_Frontend:A_21595] Storage Protocol
 public protocol SecureEGKCertificateStorage {
 </code></pre>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-environment-biometrics-swift-203-code-failure-will-delete-paring-data' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.Environment+Biometrics.swift:203</code>:  Failure will delete paring data</h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-environment-biometrics-swift-205-code-failure-will-delete-paring-data' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.Environment+Biometrics.swift:205</code>:  Failure will delete paring data</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_21598,A_21595] Failure will delete paring data
 _ = try? signatureProvider.abort(pairingSession: pairingSession)
 </code></pre>
@@ -1276,9 +1585,9 @@ class KeychainStorage: SecureUserDataStore, IDPStorage, SecureEGKCertificateStor
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_21595] Store within keychain
 _ = try? keychainHelper.setGenericPassword(derBytes, for: egkAuthCertIdentifier)
 </code></pre>
-<h4 id='code-sources-erpapp-session-keychainstorage-swift-229-code-store-within-keychain' class='heading'><code>../Sources/eRpApp/Session/KeychainStorage.swift:229</code>:  Store within keychain</h4>
-<pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_21595] Store within keychain
-success = try keychainHelper.setGenericPassword(keyIdentifier, for: idpBiometricKeyIdentifier)
+<h4 id='code-sources-idp-defaultsecureenclavesignatureprovider-swift-51-code-store-pairing-data' class='heading'><code>../Sources/IDP/DefaultSecureEnclaveSignatureProvider.swift:51</code>:  Store pairing data</h4>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_21598,A_21595,A_21595] Store pairing data
+certificateStorage.set(certificate: certificate)
 </code></pre>
 <h3 id='a_21598' class='heading'>A_21598</h3>
 <h4 id='code-sources-idp-defaultsecureenclavesignatureprovider-swift-51-code-store-pairing-data' class='heading'><code>../Sources/IDP/DefaultSecureEnclaveSignatureProvider.swift:51</code>:  Store pairing data</h4>
@@ -1290,7 +1599,7 @@ certificateStorage.set(certificate: certificate)
 // registration
 public func abort(pairingSession: PairingSession) throws {
 </code></pre>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-environment-biometrics-swift-203-code-failure-will-delete-paring-data' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.Environment+Biometrics.swift:203</code>:  Failure will delete paring data</h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-environment-biometrics-swift-205-code-failure-will-delete-paring-data' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.Environment+Biometrics.swift:205</code>:  Failure will delete paring data</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_21598,A_21595] Failure will delete paring data
 _ = try? signatureProvider.abort(pairingSession: pairingSession)
 </code></pre>
@@ -1309,7 +1618,7 @@ func deviceInformation() -&gt; RegistrationData.DeviceInformation {
 set(certificate: nil)
 </code></pre>
 <h4 id='code-sources-erpapp-session-profilesecuredatawiper-swift-40-code-certificate' class='heading'><code>../Sources/eRpApp/Session/ProfileSecureDataWiper.swift:40</code>:  Certificate</h4>
-<pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20499] Deletion of SSO_TOKEN, ID_TOKEN, AUTH_TOKEN
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20499,A_20499-01#2] Deletion of SSO_TOKEN, ID_TOKEN, AUTH_TOKEN
 // [REQ:gemSpec_eRp_FdV:A_20186] Deletion of SSO_TOKEN, ID_TOKEN, AUTH_TOKEN
 // [REQ:gemSpec_IDP_Frontend:A_21603] Certificate
 storage.wipe()
@@ -1324,32 +1633,26 @@ storage.set(keyIdentifier: nil)
 _ = try? PrivateKeyContainer.deleteExistingKey(for: identifier)
 </code></pre>
 <h2 id='gemspec_erp_fdv' class='heading'>gemSpec_eRp_FdV</h2>
-<h3 id='a_19089' class='heading'>A_19089</h3>
-<h4 id='code-sources-erpapp-screens-settings-settingsdomain-swift-169-code-optin-for-user-tracking' class='heading'><code>../Sources/eRpApp/Screens/Settings/SettingsDomain.swift:169</code>:  OptIn for user tracking</h4>
-<pre class="highlight plaintext"><code>// Tracking
-// [REQ:gemSpec_eRp_FdV:A_19088, A_19089, A_19092, A_19097] OptIn for user tracking
-case let .toggleTrackingTapped(optIn):
+<h3 id='a_19086' class='heading'>A_19086</h3>
+<h4 id='code-doc-manual-requirement-notes-md-27-code-tracking-is-only-implemented-for-the-purpose-of-usability-tracking-sessions-are-not-persisted-session-ids-are-recreated-each-app-startup' class='heading'><code>../doc/manual/requirement-notes.md:27</code>:  Tracking is only implemented for the purpose of Usability-Tracking. Sessions are not persisted, session ids are recreated each app startup.</h4>
+<pre class="highlight plaintext"><code>[REQ:gemSpec_eRp_FdV:A_19086,A_19087#1] Tracking is only implemented for the purpose of Usability-Tracking. Sessions are not persisted, session ids are recreated each app startup.
 </code></pre>
-<h3 id='a_19092' class='heading'>A_19092</h3>
-<h4 id='code-sources-erpapp-screens-settings-settingsdomain-swift-169-code-optin-for-user-tracking' class='heading'><code>../Sources/eRpApp/Screens/Settings/SettingsDomain.swift:169</code>:  OptIn for user tracking</h4>
-<pre class="highlight plaintext"><code>// Tracking
-// [REQ:gemSpec_eRp_FdV:A_19088, A_19089, A_19092, A_19097] OptIn for user tracking
-case let .toggleTrackingTapped(optIn):
+<h3 id='a_19087' class='heading'>A_19087</h3>
+<h4 id='code-doc-manual-requirement-notes-md-27-code-tracking-is-only-implemented-for-the-purpose-of-usability-tracking-sessions-are-not-persisted-session-ids-are-recreated-each-app-startup' class='heading'><code>../doc/manual/requirement-notes.md:27</code>:  Tracking is only implemented for the purpose of Usability-Tracking. Sessions are not persisted, session ids are recreated each app startup.</h4>
+<pre class="highlight plaintext"><code>[REQ:gemSpec_eRp_FdV:A_19086,A_19087#1] Tracking is only implemented for the purpose of Usability-Tracking. Sessions are not persisted, session ids are recreated each app startup.
 </code></pre>
-<h3 id='a_19097' class='heading'>A_19097</h3>
-<h4 id='code-sources-erpapp-screens-settings-settingsdomain-swift-169-code-optin-for-user-tracking' class='heading'><code>../Sources/eRpApp/Screens/Settings/SettingsDomain.swift:169</code>:  OptIn for user tracking</h4>
-<pre class="highlight plaintext"><code>// Tracking
-// [REQ:gemSpec_eRp_FdV:A_19088, A_19089, A_19092, A_19097] OptIn for user tracking
-case let .toggleTrackingTapped(optIn):
+<h4 id='code-sources-erpapp-tracking-contentsquareanalyticsadapter-swift-11-code-implementation-of-the-opt-in-usability-tracker' class='heading'><code>../Sources/eRpApp/Tracking/ContentSquareAnalyticsAdapter.swift:11</code>:  Implementation of the opt-in usability-tracker.</h4>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_19087#2] Implementation of the opt-in usability-tracker.
+final class ContentSquareAnalyticsAdapter: NSObject, Tracker {
 </code></pre>
 <h3 id='a_19088' class='heading'>A_19088</h3>
-<h4 id='code-sources-erpapp-screens-settings-settingsdomain-swift-169-code-optin-for-user-tracking' class='heading'><code>../Sources/eRpApp/Screens/Settings/SettingsDomain.swift:169</code>:  OptIn for user tracking</h4>
-<pre class="highlight plaintext"><code>// Tracking
-// [REQ:gemSpec_eRp_FdV:A_19088, A_19089, A_19092, A_19097] OptIn for user tracking
-case let .toggleTrackingTapped(optIn):
+<h4 id='code-sources-erpapp-screens-onboarding-onboardingdomain-swift-179-code-show-comply-route-to-display-analytics-usage-within' class='heading'><code>../Sources/eRpApp/Screens/Onboarding/OnboardingDomain.swift:179</code>:  Show comply route to display analytics usage within</h4>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_19088,A_19091#1,A_19092] Show comply route to display analytics usage within
+// onboarding
+case .showTrackingAlert:
 </code></pre>
 <h3 id='a_19089' class='heading'>A_19089</h3>
-<h4 id='code-sources-erpapp-screens-settings-settingsview-swift-244-code-user-info-for-usage-tracking' class='heading'><code>../Sources/eRpApp/Screens/Settings/SettingsView.swift:244</code>:  User info for usage tracking</h4>
+<h4 id='code-sources-erpapp-screens-settings-settingsview-swift-243-code-user-info-for-usage-tracking' class='heading'><code>../Sources/eRpApp/Screens/Settings/SettingsView.swift:243</code>:  User info for usage tracking</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_19089] User info for usage tracking
 Label(title: { Text(L10n.stgTrkTxtExplanation) }, icon: {})
 </code></pre>
@@ -1358,24 +1661,92 @@ Label(title: { Text(L10n.stgTrkTxtExplanation) }, icon: {})
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_19090] activate after optIn is granted
 tracker.stopTracking()
 </code></pre>
-<h4 id='code-sources-erpapp-screens-settings-settingsdomain-swift-178-code' class='heading'><code>../Sources/eRpApp/Screens/Settings/SettingsDomain.swift:178</code>:</h4>
-<pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_19090]
+<h4 id='code-sources-erpapp-screens-onboarding-onboardingdomain-swift-183-code-user-confirms-the-opt-in-within-settings' class='heading'><code>../Sources/eRpApp/Screens/Onboarding/OnboardingDomain.swift:183</code>:  User confirms the opt in within settings</h4>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_19090,A_19091#2] User confirms the opt in within settings
+case .allowTracking:
+</code></pre>
+<h4 id='code-sources-erpapp-screens-settings-settingsdomain-swift-213-code-user-confirms-the-opt-in-within-settings' class='heading'><code>../Sources/eRpApp/Screens/Settings/SettingsDomain.swift:213</code>:  User confirms the opt in within settings</h4>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_19090,A_19091#4] User confirms the opt in within settings
 case .confirmedOptInTracking:
 </code></pre>
-<h4 id='code-sources-erpapp-tracking-contentsquareanalyticsadapter-swift-39-code-activate-after-optin-is-granted' class='heading'><code>../Sources/eRpApp/Tracking/ContentSquareAnalyticsAdapter.swift:39</code>:  activate after optIn is granted</h4>
+<h4 id='code-sources-erpapp-tracking-contentsquareanalyticsadapter-swift-40-code-activate-after-optin-is-granted' class='heading'><code>../Sources/eRpApp/Tracking/ContentSquareAnalyticsAdapter.swift:40</code>:  activate after optIn is granted</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_19090] activate after optIn is granted
 Contentsquare.start()
 </code></pre>
-<h4 id='code-sources-erpapp-tracking-contentsquareanalyticsadapter-swift-57-code-activate-tracking-only-if-permitted' class='heading'><code>../Sources/eRpApp/Tracking/ContentSquareAnalyticsAdapter.swift:57</code>:  activate tracking only if permitted</h4>
+<h4 id='code-sources-erpapp-tracking-contentsquareanalyticsadapter-swift-58-code-activate-tracking-only-if-permitted' class='heading'><code>../Sources/eRpApp/Tracking/ContentSquareAnalyticsAdapter.swift:58</code>:  activate tracking only if permitted</h4>
 <pre class="highlight plaintext"><code>/// Starts tracking and calls `optIn` if permission is granted by the user.
 /// Calling this method after calling `resetSessionID()` will create a new `sessionID`
 // [REQ:gemSpec_eRp_FdV:A_19090] activate tracking only if permitted
 private func startIfPermitted() {
 </code></pre>
+<h3 id='a_19091' class='heading'>A_19091</h3>
+<h4 id='code-sources-erpapp-screens-onboarding-onboardingdomain-swift-179-code-show-comply-route-to-display-analytics-usage-within' class='heading'><code>../Sources/eRpApp/Screens/Onboarding/OnboardingDomain.swift:179</code>:  Show comply route to display analytics usage within</h4>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_19088,A_19091#1,A_19092] Show comply route to display analytics usage within
+// onboarding
+case .showTrackingAlert:
+</code></pre>
+<h4 id='code-sources-erpapp-screens-onboarding-onboardingdomain-swift-183-code-user-confirms-the-opt-in-within-settings' class='heading'><code>../Sources/eRpApp/Screens/Onboarding/OnboardingDomain.swift:183</code>:  User confirms the opt in within settings</h4>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_19090,A_19091#2] User confirms the opt in within settings
+case .allowTracking:
+</code></pre>
+<h4 id='code-sources-erpapp-screens-settings-settingsdomain-swift-205-code-show-comply-route-to-display-analytics-usage-within-settings' class='heading'><code>../Sources/eRpApp/Screens/Settings/SettingsDomain.swift:205</code>:  Show comply route to display analytics usage within settings</h4>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_19091#3] Show comply route to display analytics usage within settings
+state.destination = .complyTracking
+</code></pre>
+<h4 id='code-sources-erpapp-screens-settings-settingsdomain-swift-213-code-user-confirms-the-opt-in-within-settings' class='heading'><code>../Sources/eRpApp/Screens/Settings/SettingsDomain.swift:213</code>:  User confirms the opt in within settings</h4>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_19090,A_19091#4] User confirms the opt in within settings
+case .confirmedOptInTracking:
+</code></pre>
+<h3 id='a_19092' class='heading'>A_19092</h3>
+<h4 id='code-sources-erpapp-screens-onboarding-onboardingdomain-swift-179-code-show-comply-route-to-display-analytics-usage-within' class='heading'><code>../Sources/eRpApp/Screens/Onboarding/OnboardingDomain.swift:179</code>:  Show comply route to display analytics usage within</h4>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_19088,A_19091#1,A_19092] Show comply route to display analytics usage within
+// onboarding
+case .showTrackingAlert:
+</code></pre>
+<h4 id='code-sources-erpapp-screens-onboarding-onboardingdomain-swift-187-code-user-may-choose-to-not-accept-analytics' class='heading'><code>../Sources/eRpApp/Screens/Onboarding/OnboardingDomain.swift:187</code>:  User may choose to not accept analytics</h4>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_19092] User may choose to not accept analytics
+case .dismissAlert:
+</code></pre>
+<h3 id='a_19093' class='heading'>A_19093</h3>
+<h4 id='code-doc-manual-requirement-notes-md-28-code-usage-tracking-is-called-very-sparse-and-boils-down-to-one-place-where-all-visited-screens-are-recorded-see-usage-of-code-dependency-tracker-code-for-all-cases-where-the-actual-analytics-framework-is-used' class='heading'><code>../doc/manual/requirement-notes.md:28</code>:  Usage Tracking is called very sparse and boils down to one place where all visited screens are recorded. See usage of <code>@Dependency(\.tracker)</code> for all cases where the actual analytics framework is used.</h4>
+<pre class="highlight plaintext"><code>[REQ:gemSpec_eRp_FdV:A_19093#1,A_19094] Usage Tracking is called very sparse and boils down to one place where all visited screens are recorded. See usage of `@Dependency(\.tracker)` for all cases where the actual analytics framework is used.
+</code></pre>
+<h4 id='code-sources-erpapp-tracking-analyticsreducer-swift-37-code-very-sparse-usage-of-actual-tracking-boils-down-to-this-call-where' class='heading'><code>../Sources/eRpApp/Tracking/AnalyticsReducer.swift:37</code>:  Very sparse usage of actual tracking boils down to this call where</h4>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_19093#2] Very sparse usage of actual tracking boils down to this call where
+// only displayed screens are tracked
+tracker.track(screen: newRoute)
+</code></pre>
+<h3 id='a_19094' class='heading'>A_19094</h3>
+<h4 id='code-doc-manual-requirement-notes-md-28-code-usage-tracking-is-called-very-sparse-and-boils-down-to-one-place-where-all-visited-screens-are-recorded-see-usage-of-code-dependency-tracker-code-for-all-cases-where-the-actual-analytics-framework-is-used' class='heading'><code>../doc/manual/requirement-notes.md:28</code>:  Usage Tracking is called very sparse and boils down to one place where all visited screens are recorded. See usage of <code>@Dependency(\.tracker)</code> for all cases where the actual analytics framework is used.</h4>
+<pre class="highlight plaintext"><code>[REQ:gemSpec_eRp_FdV:A_19093#1,A_19094] Usage Tracking is called very sparse and boils down to one place where all visited screens are recorded. See usage of `@Dependency(\.tracker)` for all cases where the actual analytics framework is used.
+</code></pre>
 <h3 id='a_19095' class='heading'>A_19095</h3>
-<h4 id='code-sources-erpapp-tracking-contentsquareanalyticsadapter-swift-68-code-resets-sessionid-so-that-on-next-app-start-a-new-sessionid-will-be-created' class='heading'><code>../Sources/eRpApp/Tracking/ContentSquareAnalyticsAdapter.swift:68</code>:  resets sessionID so that on next app start a new sessionID will be created</h4>
+<h4 id='code-sources-erpapp-tracking-contentsquareanalyticsadapter-swift-70-code-resets-sessionid-so-that-on-next-app-start-a-new-sessionid-will-be-created' class='heading'><code>../Sources/eRpApp/Tracking/ContentSquareAnalyticsAdapter.swift:70</code>:  resets sessionID so that on next app start a new sessionID will be created</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_19095] resets sessionID so that on next app start a new sessionID will be created
 Contentsquare.optOut()
+</code></pre>
+<h3 id='a_19096' class='heading'>A_19096</h3>
+<h4 id='code-sources-erpapp-tracking-contentsquareanalyticsadapter-swift-59-code-remove-existing-sessions-while-starting-the-framework' class='heading'><code>../Sources/eRpApp/Tracking/ContentSquareAnalyticsAdapter.swift:59</code>:  Remove existing sessions while starting the framework</h4>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_19096] Remove existing sessions while starting the framework
+Contentsquare.start()
+</code></pre>
+<h3 id='a_19097' class='heading'>A_19097</h3>
+<h4 id='code-sources-erpapp-screens-settings-settingsview-swift-221-code-toggle-within-settings-to-enable-and-disable-usage-tracking' class='heading'><code>../Sources/eRpApp/Screens/Settings/SettingsView.swift:221</code>:  Toggle within Settings to enable and disable usage tracking</h4>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_19097] Toggle within Settings to enable and disable usage tracking
+Toggle(isOn: viewStore.binding(
+</code></pre>
+<h3 id='a_19177' class='heading'>A_19177</h3>
+<h4 id='code-sources-erpapp-screens-settings-profiles-protocol-auditeventsview-swift-9-code-actual-button-to-open-the-audit-events' class='heading'><code>../Sources/eRpApp/Screens/Settings/Profiles/Protocol/AuditEventsView.swift:9</code>:  Actual Button to open the audit events</h4>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_19177#1] Actual Button to open the audit events
+struct AuditEventsView: View {
+</code></pre>
+<h4 id='code-sources-erpapp-screens-settings-profiles-edit-editprofileview-swift-483-code-actual-button-to-open-the-audit-events' class='heading'><code>../Sources/eRpApp/Screens/Settings/Profiles/Edit/EditProfileView.swift:483</code>:  Actual Button to open the audit events</h4>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_19177#2] Actual Button to open the audit events
+NavigationLink(
+</code></pre>
+<h3 id='a_19183' class='heading'>A_19183</h3>
+<h4 id='code-doc-manual-requirement-notes-md-14-code-no-erp-fd-data-is-forwarded-to-other-systems-besides-erp-fd-itself' class='heading'><code>../doc/manual/requirement-notes.md:14</code>:  No eRp-FD Data is forwarded to other systems besides eRp-FD itself.</h4>
+<pre class="highlight plaintext"><code>[REQ:gemSpec_eRp_FdV:A_19183] No eRp-FD Data is forwarded to other systems besides eRp-FD itself.
 </code></pre>
 <h3 id='a_19186' class='heading'>A_19186</h3>
 <h4 id='code-sources-erpapp-session-keychainstorage-swift-16-code' class='heading'><code>../Sources/eRpApp/Session/KeychainStorage.swift:16</code>:</h4>
@@ -1392,6 +1763,9 @@ class KeychainStorage: SecureUserDataStore, IDPStorage, SecureEGKCertificateStor
 return vauAccessTokenProvider.vauBearerToken
 </code></pre>
 <h3 id='a_19188' class='heading'>A_19188</h3>
+<h4 id='code-doc-manual-requirement-notes-md-6-code-session-data-access_token-id_token-sso_token-can-is-saved-in-the-keychain-its-deletion-is-managed-by-the-os-the-key-chain-is-sandboxed-and-can-only-be-shared-with-other-apps-by-the-same-vendor-when-explicitly-set-all-other-mentioned-data-is-deleted' class='heading'><code>../doc/manual/requirement-notes.md:6</code>:  session data (ACCESS_TOKEN, ID_TOKEN, SSO_TOKEN, CAN) is saved in the keychain. Its deletion is managed by the OS. The key chain is sandboxed and can only be shared with other apps by the same vendor when explicitly set. All other mentioned data is deleted.</h4>
+<pre class="highlight plaintext"><code>[REQ:gemSpec_eRp_FdV:A_19188] session data (ACCESS_TOKEN, ID_TOKEN, SSO_TOKEN, CAN) is saved in the keychain. Its deletion is managed by the OS. The key chain is sandboxed and can only be shared with other apps by the same vendor when explicitly set. All other mentioned data is deleted.
+</code></pre>
 <h4 id='code-sources-erpapp-session-keychainstorage-swift-17-code-deletion-of-data-saved-here-is-managed-by-the-os' class='heading'><code>../Sources/eRpApp/Session/KeychainStorage.swift:17</code>:  Deletion of data saved here is managed by the OS.</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_19186]
 // [REQ:gemSpec_eRp_FdV:A_19188] Deletion of data saved here is managed by the OS.
@@ -1401,16 +1775,22 @@ return vauAccessTokenProvider.vauBearerToken
 class KeychainStorage: SecureUserDataStore, IDPStorage, SecureEGKCertificateStorage {
 </code></pre>
 <h3 id='a_19229' class='heading'>A_19229</h3>
-<h4 id='code-sources-erpapp-screens-main-prescriptiondetail-prescriptiondetaildomain-swift-139-code' class='heading'><code>../Sources/eRpApp/Screens/Main/PrescriptionDetail/PrescriptionDetailDomain.swift:139</code>:</h4>
+<h4 id='code-doc-manual-requirement-notes-md-7-code-audit-events-will-be-deleted-when-the-referencing-task-is-deleted-cascading-relationship-quot-task-gt-audit-event-quot-is-defined-in-sources-erplocalstorage-prescriptions-erxtask-xcdatamodeld-erxtask-xcdatamodel-contents' class='heading'><code>../doc/manual/requirement-notes.md:7</code>:  Audit events will be deleted when the referencing task is deleted. Cascading relationship &ldquo;task -&gt; audit event&rdquo; is defined in Sources/eRpLocalStorage/Prescriptions/ErxTask.xcdatamodeld/ErxTask.xcdatamodel/contents</h4>
+<pre class="highlight plaintext"><code>[REQ:gemSpec_eRp_FdV:A_19229] Audit events will be deleted when the referencing task is deleted. Cascading relationship "task -&gt; audit event" is defined in Sources/eRpLocalStorage/Prescriptions/ErxTask.xcdatamodeld/ErxTask.xcdatamodel/contents
+</code></pre>
+<h4 id='code-sources-erpapp-screens-main-prescriptiondetail-prescriptiondetaildomain-swift-125-code' class='heading'><code>../Sources/eRpApp/Screens/Main/PrescriptionDetail/PrescriptionDetailDomain.swift:125</code>:</h4>
 <pre class="highlight plaintext"><code>// Delete
 // [REQ:gemSpec_eRp_FdV:A_19229]
 case .delete:
 </code></pre>
-<h4 id='code-sources-erpapp-screens-main-prescriptiondetail-prescriptiondetaildomain-swift-142-code' class='heading'><code>../Sources/eRpApp/Screens/Main/PrescriptionDetail/PrescriptionDetailDomain.swift:142</code>:</h4>
+<h4 id='code-sources-erpapp-screens-main-prescriptiondetail-prescriptiondetaildomain-swift-132-code' class='heading'><code>../Sources/eRpApp/Screens/Main/PrescriptionDetail/PrescriptionDetailDomain.swift:132</code>:</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_19229]
 case .confirmedDelete:
 </code></pre>
 <h3 id='a_19739' class='heading'>A_19739</h3>
+<h4 id='code-doc-manual-requirement-notes-md-26-code-implemented-with-ats-within-code-info-plist-code-path-code-nsapptransportsecurity-nspinneddomains-code' class='heading'><code>../doc/manual/requirement-notes.md:26</code>:  Implemented with ATS within <code>Info.plist</code>, path: <code>NSAppTransportSecurity.NSPinnedDomains</code></h4>
+<pre class="highlight plaintext"><code>[REQ:gemSpec_eRp_FdV:A_20033,A_19739] Implemented with ATS within `Info.plist`, path: `NSAppTransportSecurity.NSPinnedDomains`
+</code></pre>
 <h4 id='code-sources-truststore-truststoresession-swift-19-code' class='heading'><code>../Sources/TrustStore/TrustStoreSession.swift:19</code>:</h4>
 <pre class="highlight plaintext"><code>/// Request and validate the VAU certificate
 ///
@@ -1430,7 +1810,7 @@ func loadVauCertificate() -&gt; AnyPublisher&lt;X509, TrustStoreError&gt;
 func validate(certificate: X509) -&gt; AnyPublisher&lt;Bool, TrustStoreError&gt;
 </code></pre>
 <h3 id='a_19984' class='heading'>A_19984</h3>
-<h4 id='code-sources-pharmacy-fhirclient-pharmacyoperation-swift-23-code-validate-pharmacy-data-format-conforming-to-fhir' class='heading'><code>../Sources/Pharmacy/FHIRClient+PharmacyOperation.swift:23</code>:  validate pharmacy data format conforming to FHIR</h4>
+<h4 id='code-sources-pharmacy-fhirclient-pharmacyoperation-swift-24-code-validate-pharmacy-data-format-conforming-to-fhir' class='heading'><code>../Sources/Pharmacy/FHIRClient+PharmacyOperation.swift:24</code>:  validate pharmacy data format conforming to FHIR</h4>
 <pre class="highlight plaintext"><code>/// Convenience function for searching for pharmacies
 ///
 /// [REQ:gemSpec_eRp_FdV:A_19984] validate pharmacy data format conforming to FHIR
@@ -1445,12 +1825,23 @@ public func searchPharmacies(by searchTerm: String,
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_19984] parse task id and access code
 guard let taskId = taskString.match(pattern: Self.taskIdRegex) else {
 </code></pre>
+<h4 id='code-sources-erpkit-scannederxtask-swift-102-code-validate-data-matrix-code-structure' class='heading'><code>../Sources/eRpKit/ScannedErxTask.swift:102</code>:  validate data matrix code structure</h4>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_19984] validate data matrix code structure
+erxToken = try jsonDecoder.decode(ErxToken.self, from: jsonData)
+</code></pre>
 <h3 id='a_20032-01' class='heading'>A_20032-01</h3>
+<h4 id='code-doc-manual-requirement-notes-md-4-code-note-grace-period-for-ocsp-responses-is-12h' class='heading'><code>../doc/manual/requirement-notes.md:4</code>:  Note: grace period for OCSP responses is 12h</h4>
+<pre class="highlight plaintext"><code>[REQ:gemSpec_eRp_FdV:A_20032-01] Note: grace period for OCSP responses is 12h
+</code></pre>
 <h4 id='code-sources-truststore-x509truststore-swift-14-code' class='heading'><code>../Sources/TrustStore/X509TrustStore.swift:14</code>:</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_Krypt:A_21218]
 // [REQ:gemSpec_eRp_FdV:A_20032-01]
 // Category A: Cross root certificates
 private let rootCa: X509
+</code></pre>
+<h3 id='a_20033' class='heading'>A_20033</h3>
+<h4 id='code-doc-manual-requirement-notes-md-26-code-implemented-with-ats-within-code-info-plist-code-path-code-nsapptransportsecurity-nspinneddomains-code' class='heading'><code>../doc/manual/requirement-notes.md:26</code>:  Implemented with ATS within <code>Info.plist</code>, path: <code>NSAppTransportSecurity.NSPinnedDomains</code></h4>
+<pre class="highlight plaintext"><code>[REQ:gemSpec_eRp_FdV:A_20033,A_19739] Implemented with ATS within `Info.plist`, path: `NSAppTransportSecurity.NSPinnedDomains`
 </code></pre>
 <h3 id='a_20167' class='heading'>A_20167</h3>
 <h4 id='code-sources-idp-idpinterceptor-swift-61-code-no-token-available-bailout' class='heading'><code>../Sources/IDP/IDPInterceptor.swift:61</code>:  no token available, bailout</h4>
@@ -1474,16 +1865,16 @@ if Result.success(false) == authenticated {
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_20167,A_20172] no token/not authorized, show authenticator module
 if Result.success(false) == isAuthenticated {
 </code></pre>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-swift-352-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.swift:352</code>:</h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-swift-353-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.swift:353</code>:</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_20172]
-func idpChallengePublisher(for profileID: UUID) -&gt; Effect&lt;CardWallReadCardDomain.Action, Never&gt; {
+func idpChallengePublisher(for profileID: UUID) -&gt; EffectTask&lt;CardWallReadCardDomain.Action&gt; {
 </code></pre>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-swift-373-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.swift:373</code>:</h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-swift-374-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.swift:374</code>:</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_20172]
 // [REQ:gemSpec_IDP_Frontend:A_20526-01] sign and verify with idp
 func signChallengeWithNFCCard(can: String,
 </code></pre>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-swift-402-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.swift:402</code>:</h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-swift-403-code' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.swift:403</code>:</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_20172]
 // [REQ:gemSpec_IDP_Frontend:A_20526-01] verify with idp
 private func verifyResultWithIDP(_ signedChallenge: SignedChallenge,
@@ -1493,7 +1884,7 @@ private func verifyResultWithIDP(_ signedChallenge: SignedChallenge,
 if Result.success(false) == authenticated {
 </code></pre>
 <h3 id='a_20183' class='heading'>A_20183</h3>
-<h4 id='code-sources-pharmacy-pharmacyfhirdatasource-swift-30-code' class='heading'><code>../Sources/Pharmacy/PharmacyFHIRDataSource.swift:30</code>:</h4>
+<h4 id='code-sources-pharmacy-pharmacyfhirdatasource-swift-31-code' class='heading'><code>../Sources/Pharmacy/PharmacyFHIRDataSource.swift:31</code>:</h4>
 <pre class="highlight plaintext"><code>/// API for requesting pharmacies with the passed search term
 ///
 /// [REQ:gemSpec_eRp_FdV:A_20183]
@@ -1504,7 +1895,7 @@ if Result.success(false) == authenticated {
 /// - Returns: `AnyPublisher` that emits all `PharmacyLocation`s for the given `searchTerm`
 public func searchPharmacies(by searchTerm: String,
 </code></pre>
-<h4 id='code-sources-pharmacy-pharmacyremotedatastore-swift-21-code' class='heading'><code>../Sources/Pharmacy/PharmacyRemoteDataStore.swift:21</code>:</h4>
+<h4 id='code-sources-pharmacy-pharmacyremotedatastore-swift-22-code' class='heading'><code>../Sources/Pharmacy/PharmacyRemoteDataStore.swift:22</code>:</h4>
 <pre class="highlight plaintext"><code>/// API for requesting pharmacies with the passed search term
 ///
 /// [REQ:gemSpec_eRp_FdV:A_20183]
@@ -1515,7 +1906,7 @@ public func searchPharmacies(by searchTerm: String,
 /// - Returns: `AnyPublisher` that emits all `PharmacyLocation`s for the given `searchTerm`
 func searchPharmacies(by searchTerm: String,
 </code></pre>
-<h4 id='code-sources-erpapp-screens-pharmacy-search-pharmacysearchdomain-swift-177-code-search-results-mirrored-verbatim-no-sorting-no-highlighting' class='heading'><code>../Sources/eRpApp/Screens/Pharmacy/Search/PharmacySearchDomain.swift:177</code>:  search results mirrored verbatim, no sorting, no highlighting</h4>
+<h4 id='code-sources-erpapp-screens-pharmacy-search-pharmacysearchdomain-swift-175-code-search-results-mirrored-verbatim-no-sorting-no-highlighting' class='heading'><code>../Sources/eRpApp/Screens/Pharmacy/Search/PharmacySearchDomain.swift:175</code>:  search results mirrored verbatim, no sorting, no highlighting</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_20183] search results mirrored verbatim, no sorting, no highlighting
 state.searchState = .searchRunning
 </code></pre>
@@ -1524,30 +1915,43 @@ state.searchState = .searchRunning
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_20184]
 let success: Bool
 </code></pre>
-<h4 id='code-sources-erpapp-session-standardsessioncontainer-swift-86-code-keychain-storage-encrypts-session-ssl-tokens' class='heading'><code>../Sources/eRpApp/Session/StandardSessionContainer.swift:86</code>:  Keychain storage encrypts session/ssl tokens</h4>
+<h4 id='code-sources-erpapp-session-standardsessioncontainer-swift-89-code-keychain-storage-encrypts-session-ssl-tokens' class='heading'><code>../Sources/eRpApp/Session/StandardSessionContainer.swift:89</code>:  Keychain storage encrypts session/ssl tokens</h4>
 <pre class="highlight plaintext"><code>storage: secureUserStore, // [REQ:gemSpec_eRp_FdV:A_20184] Keychain storage encrypts session/ssl tokens
 schedulers: schedulers,
 </code></pre>
-<h4 id='code-sources-erpapp-session-standardsessioncontainer-swift-104-code-no-persistent-storage-for-idp-biometrics-session' class='heading'><code>../Sources/eRpApp/Session/StandardSessionContainer.swift:104</code>:  No persistent storage for idp biometrics session</h4>
+<h4 id='code-sources-erpapp-session-standardsessioncontainer-swift-107-code-no-persistent-storage-for-idp-biometrics-session' class='heading'><code>../Sources/eRpApp/Session/StandardSessionContainer.swift:107</code>:  No persistent storage for idp biometrics session</h4>
 <pre class="highlight plaintext"><code>storage: MemoryStorage(), // [REQ:gemSpec_eRp_FdV:A_20184] No persistent storage for idp biometrics session
 schedulers: schedulers,
 </code></pre>
 <h3 id='a_20185' class='heading'>A_20185</h3>
-<h4 id='code-sources-erpapp-screens-settings-settingsdomain-swift-173-code-optout-for-user' class='heading'><code>../Sources/eRpApp/Screens/Settings/SettingsDomain.swift:173</code>:  OptOut for user</h4>
-<pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_20185] OptOut for user
+<h4 id='code-sources-erpapp-screens-settings-settingsdomain-swift-208-code-optout-for-user' class='heading'><code>../Sources/eRpApp/Screens/Settings/SettingsDomain.swift:208</code>:  OptOut for user</h4>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_20185,A_20187] OptOut for user
 state.trackerOptIn = false
 </code></pre>
 <h3 id='a_20186' class='heading'>A_20186</h3>
 <h4 id='code-sources-erpapp-session-keychainstorage-swift-245-code-deletion-of-sso_token-id_token-auth_token' class='heading'><code>../Sources/eRpApp/Session/KeychainStorage.swift:245</code>:  Deletion of SSO_TOKEN, ID_TOKEN, AUTH_TOKEN</h4>
-<pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20499] Deletion of SSO_TOKEN, ID_TOKEN, AUTH_TOKEN
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20499,A_20499-1#3] Deletion of SSO_TOKEN, ID_TOKEN, AUTH_TOKEN
 // [REQ:gemSpec_eRp_FdV:A_20186] Deletion of SSO_TOKEN, ID_TOKEN, AUTH_TOKEN
 set(can: nil)
 </code></pre>
 <h4 id='code-sources-erpapp-session-profilesecuredatawiper-swift-39-code-deletion-of-sso_token-id_token-auth_token' class='heading'><code>../Sources/eRpApp/Session/ProfileSecureDataWiper.swift:39</code>:  Deletion of SSO_TOKEN, ID_TOKEN, AUTH_TOKEN</h4>
-<pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20499] Deletion of SSO_TOKEN, ID_TOKEN, AUTH_TOKEN
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20499,A_20499-01#2] Deletion of SSO_TOKEN, ID_TOKEN, AUTH_TOKEN
 // [REQ:gemSpec_eRp_FdV:A_20186] Deletion of SSO_TOKEN, ID_TOKEN, AUTH_TOKEN
 // [REQ:gemSpec_IDP_Frontend:A_21603] Certificate
 storage.wipe()
+</code></pre>
+<h3 id='a_20187' class='heading'>A_20187</h3>
+<h4 id='code-sources-erpapp-screens-settings-settingsdomain-swift-208-code-optout-for-user' class='heading'><code>../Sources/eRpApp/Screens/Settings/SettingsDomain.swift:208</code>:  OptOut for user</h4>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_20185,A_20187] OptOut for user
+state.trackerOptIn = false
+</code></pre>
+<h3 id='a_20193' class='heading'>A_20193</h3>
+<h4 id='code-doc-manual-requirement-notes-md-29-code-camera-is-only-used-for-scanning-recipes-and-avatar-setup-corelocation-is-used-for-pharmacy-search-usage-is-requested-before-actual-first-usage-the-user-is-asked-for-permission-this-is-also-enforced-by-the-os' class='heading'><code>../doc/manual/requirement-notes.md:29</code>:  Camera is only used for scanning recipes and avatar setup. CoreLocation is used for pharmacy search. Usage is requested before actual first usage, the user is asked for permission. This is also enforced by the OS.</h4>
+<pre class="highlight plaintext"><code>[REQ:gemSpec_eRp_FdV:A_20193,A_20194] Camera is only used for scanning recipes and avatar setup. CoreLocation is used for pharmacy search. Usage is requested before actual first usage, the user is asked for permission. This is also enforced by the OS.
+</code></pre>
+<h3 id='a_20194' class='heading'>A_20194</h3>
+<h4 id='code-doc-manual-requirement-notes-md-29-code-camera-is-only-used-for-scanning-recipes-and-avatar-setup-corelocation-is-used-for-pharmacy-search-usage-is-requested-before-actual-first-usage-the-user-is-asked-for-permission-this-is-also-enforced-by-the-os' class='heading'><code>../doc/manual/requirement-notes.md:29</code>:  Camera is only used for scanning recipes and avatar setup. CoreLocation is used for pharmacy search. Usage is requested before actual first usage, the user is asked for permission. This is also enforced by the OS.</h4>
+<pre class="highlight plaintext"><code>[REQ:gemSpec_eRp_FdV:A_20193,A_20194] Camera is only used for scanning recipes and avatar setup. CoreLocation is used for pharmacy search. Usage is requested before actual first usage, the user is asked for permission. This is also enforced by the OS.
 </code></pre>
 <h3 id='a_20206' class='heading'>A_20206</h3>
 <h4 id='code-sources-httpclient-defaulthttpclient-swift-40-code' class='heading'><code>../Sources/HTTPClient/DefaultHTTPClient.swift:40</code>:</h4>
@@ -1565,6 +1969,11 @@ storage.wipe()
 /// [REQ:gemSpec_eRp_FdV:A_20208]
 case searchPharmacies(searchTerm: String, position: Position?, filter: [String: String], handler: Handler)
 </code></pre>
+<h3 id='a_20285' class='heading'>A_20285</h3>
+<h4 id='code-sources-erpapp-screens-pharmacy-search-pharmacysearchdomain-swift-186-code-pharmacy-order-is-resolved-on-server-side' class='heading'><code>../Sources/eRpApp/Screens/Pharmacy/Search/PharmacySearchDomain.swift:186</code>:  pharmacy order is resolved on server side</h4>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_FdV:A_20285] pharmacy order is resolved on server side
+state.pharmacies = pharmacies.map {
+</code></pre>
 <h2 id='gemf_tokenverschlüsselung' class='heading'>gemF_Tokenverschlüsselung</h2>
 <h3 id='a_20526-01' class='heading'>A_20526-01</h3>
 <h4 id='code-sources-idp-defaultidpsession-swift-151-code-encryption-with-jwe' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:151</code>:  Encryption with JWE</h4>
@@ -1579,10 +1988,10 @@ let header = JWT.Header(alg: alg, x5c: certificates, typ: "JWT", cty: "NJWT")
 <pre class="highlight plaintext"><code>// [REQ:gemF_Tokenverschlüsselung:A_20526-01] Building and sending the request
 var request = URLRequest(url: document.authentication.url, cachePolicy: .reloadIgnoringCacheData)
 </code></pre>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-environment-biometrics-swift-136-code-smartcard-signature' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.Environment+Biometrics.swift:136</code>:  Smartcard signature</h4>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-environment-biometrics-swift-138-code-smartcard-signature' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.Environment+Biometrics.swift:138</code>:  Smartcard signature</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20700-07] C.CH.AUT
 // [REQ:gemF_Tokenverschlüsselung:A_20526-01] Smartcard signature
-// [REQ:gemF_Tokenverschlüsselung:A_20700-06] sign
+// [REQ:gemF_Tokenverschlüsselung:A_20700-05,A_20700-06] sign
 .sign(challengeSession: challengeSession)
 </code></pre>
 <h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-426-code-smartcard-signature' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:426</code>:  Smartcard signature</h4>
@@ -1591,11 +2000,18 @@ var request = URLRequest(url: document.authentication.url, cachePolicy: .reloadI
 // [REQ:gemF_Tokenverschlüsselung:A_20700-06] sign
 .readAutCertificate()
 </code></pre>
-<h3 id='a_20700-06' class='heading'>A_20700-06</h3>
-<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-environment-biometrics-swift-137-code-sign' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.Environment+Biometrics.swift:137</code>:  sign</h4>
+<h3 id='a_20700-05' class='heading'>A_20700-05</h3>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-environment-biometrics-swift-139-code-sign' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.Environment+Biometrics.swift:139</code>:  sign</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20700-07] C.CH.AUT
 // [REQ:gemF_Tokenverschlüsselung:A_20526-01] Smartcard signature
-// [REQ:gemF_Tokenverschlüsselung:A_20700-06] sign
+// [REQ:gemF_Tokenverschlüsselung:A_20700-05,A_20700-06] sign
+.sign(challengeSession: challengeSession)
+</code></pre>
+<h3 id='a_20700-06' class='heading'>A_20700-06</h3>
+<h4 id='code-sources-erpapp-screens-cardwall-readcard-cardwallreadcarddomain-environment-biometrics-swift-139-code-sign' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/CardWallReadCardDomain.Environment+Biometrics.swift:139</code>:  sign</h4>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Frontend:A_20700-07] C.CH.AUT
+// [REQ:gemF_Tokenverschlüsselung:A_20526-01] Smartcard signature
+// [REQ:gemF_Tokenverschlüsselung:A_20700-05,A_20700-06] sign
 .sign(challengeSession: challengeSession)
 </code></pre>
 <h4 id='code-sources-erpapp-screens-cardwall-readcard-nfcsignatureprovider-swift-320-code-sign' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ReadCard/NFCSignatureProvider.swift:320</code>:  sign</h4>
@@ -1624,26 +2040,26 @@ class KeychainStorage: SecureUserDataStore, IDPStorage, SecureEGKCertificateStor
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Sek:A_22294] Start login with KK
 return environment.idpSession.startExtAuth(entry: state.selectedKK)
 </code></pre>
-<h4 id='code-sources-erpapp-screens-cardwall-extauth-cardwallextauthselectiondomain-swift-118-code-select-kk' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ExtAuth/CardWallExtAuthSelectionDomain.swift:118</code>:  Select KK</h4>
+<h4 id='code-sources-erpapp-screens-cardwall-extauth-cardwallextauthselectiondomain-swift-119-code-select-kk' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ExtAuth/CardWallExtAuthSelectionDomain.swift:119</code>:  Select KK</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Sek:A_22294] Select KK
 state.selectedKK = entry
 </code></pre>
 <h3 id='a_22295' class='heading'>A_22295</h3>
-<h4 id='code-sources-idp-defaultidpsession-swift-438-code-usage-of-kk_app_id' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:438</code>:  Usage of kk_app_id</h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-439-code-usage-of-kk_app_id' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:439</code>:  Usage of kk_app_id</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Sek:A_22295] Usage of kk_app_id
 let extAuth = IDPExtAuth(kkAppId: entry.identifier,
 </code></pre>
 <h3 id='a_22296' class='heading'>A_22296</h3>
-<h4 id='code-sources-idp-defaultidpsession-swift-410-code-signature-verification' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:410</code>:  Signature verification</h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-411-code-signature-verification' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:411</code>:  Signature verification</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Sek:A_22296] Signature verification
 guard try jwtContainer.verify(with: document.discKey) == true else {
 </code></pre>
-<h4 id='code-sources-erpapp-screens-cardwall-extauth-cardwallextauthselectiondomain-swift-102-code-load-available-apps' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ExtAuth/CardWallExtAuthSelectionDomain.swift:102</code>:  Load available apps</h4>
+<h4 id='code-sources-erpapp-screens-cardwall-extauth-cardwallextauthselectiondomain-swift-103-code-load-available-apps' class='heading'><code>../Sources/eRpApp/Screens/CardWall/ExtAuth/CardWallExtAuthSelectionDomain.swift:103</code>:  Load available apps</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Sek:A_22296] Load available apps
 return idpSession.loadDirectoryKKApps()
 </code></pre>
 <h3 id='a_22299' class='heading'>A_22299</h3>
-<h4 id='code-sources-idp-defaultidpsession-swift-451-code-remember-state-parameter-for-later-verification' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:451</code>:  Remember State parameter for later verification</h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-452-code-remember-state-parameter-for-later-verification' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:452</code>:  Remember State parameter for later verification</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Sek:A_22299] Remember State parameter for later verification
 
 </code></pre>
@@ -1652,11 +2068,11 @@ return idpSession.loadDirectoryKKApps()
 guard environment.resourceHandler.canOpenURL(url) else {
 </code></pre>
 <h3 id='a_22301' class='heading'>A_22301</h3>
-<h4 id='code-sources-idp-defaultidpsession-swift-482-code-match-request-with-existing-state' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:482</code>:  Match request with existing state</h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-483-code-match-request-with-existing-state' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:483</code>:  Match request with existing state</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Sek:A_22301] Match request with existing state
 guard let challengeSession = extAuthRequestStorage.getExtAuthRequest(for: state) else {
 </code></pre>
-<h4 id='code-sources-idp-defaultidpsession-swift-487-code-send-authorization-request' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:487</code>:  Send authorization request</h4>
+<h4 id='code-sources-idp-defaultidpsession-swift-488-code-send-authorization-request' class='heading'><code>../Sources/IDP/DefaultIDPSession.swift:488</code>:  Send authorization request</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_IDP_Sek:A_22301] Send authorization request
 return extAuthVerify(verify)
 </code></pre>
@@ -1666,12 +2082,6 @@ return extAuthVerify(verify)
 environment.resourceHandler.open(url, options: [:]) { result in
 </code></pre>
 <h2 id='gemf_biometrie' class='heading'>gemF_Biometrie</h2>
-<h3 id='a21450' class='heading'>A21450</h3>
-<h4 id='pairing_entry-code-sources-idp-models-pairingentry-swift-12-code' class='heading'>Pairing_Entry <code>../Sources/IDP/Models/PairingEntry.swift:12</code>:</h4>
-<pre class="highlight plaintext"><code>/// Represents stored data within the idp.
-/// [REQ:gemF_Biometrie:A21450:Pairing_Entry]
-public struct PairingEntry: Equatable, Codable {
-</code></pre>
 <h3 id='a_21415' class='heading'>A_21415</h3>
 <h4 id='pairing_data-code-sources-idp-models-pairingdata-swift-12-code' class='heading'>Pairing_Data <code>../Sources/IDP/Models/PairingData.swift:12</code>:</h4>
 <pre class="highlight plaintext"><code>/// Structure for registering a biometric key. See `SignedPairingData` for sigend representation.
@@ -1703,17 +2113,28 @@ func encrypted(with publicKey: BrainpoolP256r1.KeyExchange.PublicKey,
 /// [REQ:gemF_Biometrie:A_21415:Signed_Pairing_Data]
 public struct SignedPairingData {
 </code></pre>
+<h3 id='a_21450' class='heading'>A_21450</h3>
+<h4 id='pairing_entry-code-sources-idp-models-pairingentry-swift-12-code' class='heading'>Pairing_Entry <code>../Sources/IDP/Models/PairingEntry.swift:12</code>:</h4>
+<pre class="highlight plaintext"><code>/// Represents stored data within the idp.
+/// [REQ:gemF_Biometrie:A_21450:Pairing_Entry]
+public struct PairingEntry: Equatable, Codable {
+</code></pre>
 <h2 id='gemspec_erp_apovzd' class='heading'>gemSpec_eRp_APOVZD</h2>
+<h3 id='a_21154' class='heading'>A_21154</h3>
+<h4 id='code-sources-erpapp-screens-pharmacy-search-pharmacysearchdomain-swift-268-code-if-user-defined-filters-contain-location-element-ask-for-permission' class='heading'><code>../Sources/eRpApp/Screens/Pharmacy/Search/PharmacySearchDomain.swift:268</code>:  If user defined filters contain location element, ask for permission</h4>
+<pre class="highlight plaintext"><code>// [REQ:gemSpec_eRp_APOVZD:A_21154] If user defined filters contain location element, ask for permission
+if filterOptions.contains(.currentLocation) {
+</code></pre>
 <h3 id='a_21779' class='heading'>A_21779</h3>
-<h4 id='code-sources-pharmacy-modelsr4-bundle-location-swift-108-code-delivery-pharmacy' class='heading'><code>../Sources/Pharmacy/ModelsR4.Bundle+Location.swift:108</code>:  delivery pharmacy</h4>
+<h4 id='code-sources-pharmacy-modelsr4-bundle-location-swift-132-code-delivery-pharmacy' class='heading'><code>../Sources/Pharmacy/ModelsR4.Bundle+Location.swift:132</code>:  delivery pharmacy</h4>
 <pre class="highlight plaintext"><code>// [[REQ:gemSpec_eRp_APOVZD:A_21779] delivery pharmacy
 case "498":
 </code></pre>
-<h4 id='code-sources-pharmacy-modelsr4-bundle-location-swift-165-code-map-pickup-pharmacy' class='heading'><code>../Sources/Pharmacy/ModelsR4.Bundle+Location.swift:165</code>:  Map pickup pharmacy</h4>
+<h4 id='code-sources-pharmacy-modelsr4-bundle-location-swift-189-code-map-pickup-pharmacy' class='heading'><code>../Sources/Pharmacy/ModelsR4.Bundle+Location.swift:189</code>:  Map pickup pharmacy</h4>
 <pre class="highlight plaintext"><code>// [[REQ:gemSpec_eRp_APOVZD:A_21779] Map pickup pharmacy
 case "OUTPHARM":
 </code></pre>
-<h4 id='code-sources-pharmacy-modelsr4-bundle-location-swift-170-code-map-shipping-pharmacy' class='heading'><code>../Sources/Pharmacy/ModelsR4.Bundle+Location.swift:170</code>:  Map shipping pharmacy</h4>
+<h4 id='code-sources-pharmacy-modelsr4-bundle-location-swift-194-code-map-shipping-pharmacy' class='heading'><code>../Sources/Pharmacy/ModelsR4.Bundle+Location.swift:194</code>:  Map shipping pharmacy</h4>
 <pre class="highlight plaintext"><code>// [[REQ:gemSpec_eRp_APOVZD:A_21779] Map shipping pharmacy
 case "MOBL":
 </code></pre>
@@ -1738,11 +2159,11 @@ func checkEeCertificatesStatus(with ocspResponses: [OCSPResponse]) throws -&gt; 
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_BSI_FdV:A_20834] mandatory app authentication
 rootView: AppAuthenticationView(store: appAuthenticationStore)
 </code></pre>
-<h4 id='code-sources-erpapp-screens-onboarding-onboardingcontainer-swift-48-code-view-to-register-authentication-in-onboarding-process' class='heading'><code>../Sources/eRpApp/Screens/Onboarding/OnboardingContainer.swift:48</code>:  view to register authentication in onboarding process</h4>
+<h4 id='code-sources-erpapp-screens-onboarding-onboardingcontainer-swift-42-code-view-to-register-authentication-in-onboarding-process' class='heading'><code>../Sources/eRpApp/Screens/Onboarding/OnboardingContainer.swift:42</code>:  view to register authentication in onboarding process</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_BSI_FdV:A_20834] view to register authentication in onboarding process
 OnboardingAltRegisterAuthenticationView(
 </code></pre>
-<h4 id='code-sources-erpapp-screens-onboarding-onboardingcontainer-swift-61-code-view-to-register-authentication-in-onboarding-process' class='heading'><code>../Sources/eRpApp/Screens/Onboarding/OnboardingContainer.swift:61</code>:  view to register authentication in onboarding process</h4>
+<h4 id='code-sources-erpapp-screens-onboarding-onboardingcontainer-swift-60-code-view-to-register-authentication-in-onboarding-process' class='heading'><code>../Sources/eRpApp/Screens/Onboarding/OnboardingContainer.swift:60</code>:  view to register authentication in onboarding process</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_BSI_FdV:A_20834] view to register authentication in onboarding process
 OnboardingRegisterAuthenticationView(
 </code></pre>
@@ -1761,44 +2182,30 @@ struct DeviceSecurityRootedDeviceView: View {
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_BSI_FdV:O.Tokn_9] actual view that presents the token
 struct IDPTokenView: View {
 </code></pre>
-<h4 id='code-sources-erpapp-screens-settings-profiles-edit-editprofiledomain-swift-180-code-observe-token-updates' class='heading'><code>../Sources/eRpApp/Screens/Settings/Profiles/Edit/EditProfileDomain.swift:180</code>:  observe token updates</h4>
+<h4 id='code-sources-erpapp-screens-settings-profiles-edit-editprofiledomain-swift-185-code-observe-token-updates' class='heading'><code>../Sources/eRpApp/Screens/Settings/Profiles/Edit/EditProfileDomain.swift:185</code>:  observe token updates</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_BSI_FdV:O.Tokn_9] observe token updates
 environment.subscribeToTokenUpdates(for: state.profileId)
 </code></pre>
 <h2 id='gemspec_fd_erp' class='heading'>gemSpec_FD_eRp</h2>
-<h3 id='a_21267' class='heading'>A_21267</h3>
-<h4 id='code-sources-erpkit-erxmodels-erxtask-swift-166-code-flowtype-169-some-operations-are-not-allowed-e-g-deleting' class='heading'><code>../Sources/eRpKit/ErxModels/ErxTask.swift:166</code>:  FlowType 169, some operations are not allowed (e.g. deleting)</h4>
-<pre class="highlight plaintext"><code>/// Muster 16 (Direkte Zuweisung)
-/// [REQ:gemSpec_FD_eRp: A_21267] FlowType 169, some operations are not allowed (e.g. deleting)
-/// Indicates if a prescription has been assigned directly after prescription (a.k.a Direktzuweisung)
-/// AccessCode will not be available for theses Tasks
-case directAssignment
-</code></pre>
 <h3 id='a_19145' class='heading'>A_19145</h3>
-<h4 id='code-sources-erpapp-screens-main-prescriptionlist-model-prescription-swift-208-code-prevent-deletion-while-task-is-in-progress' class='heading'><code>../Sources/eRpApp/Screens/Main/PrescriptionList/Model/Prescription.swift:208</code>:  prevent deletion while task is in progress</h4>
+<h4 id='code-sources-erpapp-screens-main-prescriptionlist-model-prescription-swift-199-code-prevent-deletion-while-task-is-in-progress' class='heading'><code>../Sources/eRpApp/Screens/Main/PrescriptionList/Model/Prescription.swift:199</code>:  prevent deletion while task is in progress</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_FD_eRp:A_19145] prevent deletion while task is in progress
 return erxTask.status != .inProgress
 </code></pre>
 <h3 id='a_21267' class='heading'>A_21267</h3>
-<h4 id='code-sources-erpapp-screens-main-prescriptionlist-model-prescription-swift-31-code-direct-assignment' class='heading'><code>../Sources/eRpApp/Screens/Main/PrescriptionList/Model/Prescription.swift:31</code>:  direct assignment</h4>
+<h4 id='code-sources-erpapp-screens-main-prescriptionlist-model-prescription-swift-29-code-direct-assignment' class='heading'><code>../Sources/eRpApp/Screens/Main/PrescriptionList/Model/Prescription.swift:29</code>:  direct assignment</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_FD_eRp:A_21267] direct assignment
 var type: PrescriptionType = .regular
 </code></pre>
 <h3 id='a_21360' class='heading'>A_21360</h3>
-<h4 id='code-sources-erpapp-screens-main-prescriptionlist-model-prescription-swift-174-code-no-redeem-informations-available-for-flowtype-169' class='heading'><code>../Sources/eRpApp/Screens/Main/PrescriptionList/Model/Prescription.swift:174</code>:  no redeem informations available for flowtype 169</h4>
+<h4 id='code-sources-erpapp-screens-main-prescriptionlist-model-prescription-swift-165-code-no-redeem-informations-available-for-flowtype-169' class='heading'><code>../Sources/eRpApp/Screens/Main/PrescriptionList/Model/Prescription.swift:165</code>:  no redeem informations available for flowtype 169</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_FD_eRp:A_21360] no redeem informations available for flowtype 169
 guard type != .directAssignment
 </code></pre>
 <h3 id='a_22102' class='heading'>A_22102</h3>
-<h4 id='code-sources-erpapp-screens-main-prescriptionlist-model-prescription-swift-200-code-prevent-deletion-of-tasks-with-flowtype-169-while-not-completed' class='heading'><code>../Sources/eRpApp/Screens/Main/PrescriptionList/Model/Prescription.swift:200</code>:  prevent deletion of tasks with flowtype 169 while not completed</h4>
+<h4 id='code-sources-erpapp-screens-main-prescriptionlist-model-prescription-swift-191-code-prevent-deletion-of-tasks-with-flowtype-169-while-not-completed' class='heading'><code>../Sources/eRpApp/Screens/Main/PrescriptionList/Model/Prescription.swift:191</code>:  prevent deletion of tasks with flowtype 169 while not completed</h4>
 <pre class="highlight plaintext"><code>// [REQ:gemSpec_FD_eRp:A_22102] prevent deletion of tasks with flowtype 169 while not completed
 guard type != .directAssignment
-</code></pre>
-<h2 id='gemspec_erp_fdv' class='heading'>gemspec_eRp_FdV</h2>
-<h3 id='a_19984' class='heading'>A_19984</h3>
-<h4 id='code-sources-erpkit-scannederxtask-swift-102-code-validate-data-matrix-code-structure' class='heading'><code>../Sources/eRpKit/ScannedErxTask.swift:102</code>:  validate data matrix code structure</h4>
-<pre class="highlight plaintext"><code>// [REQ:gemspec_eRp_FdV:A_19984] validate data matrix code structure
-erxToken = try jsonDecoder.decode(ErxToken.self, from: jsonData)
 </code></pre>
 
           </div>
@@ -1808,7 +2215,7 @@ erxToken = try jsonDecoder.decode(ErxToken.self, from: jsonData)
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2023 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2023-05-05)</p>
+      <p>&copy; 2023 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2023-05-22)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.3</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>
