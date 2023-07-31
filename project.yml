@@ -83,10 +83,10 @@ packages:
     majorVersion: 0.5.3  
   ComposableArchitecture:
     url: https://github.com/pointfreeco/swift-composable-architecture
-    majorVersion: 0.52.0
+    minorVersion: 0.52.0
   ComposableCoreLocation:
     url: https://github.com/pointfreeco/composable-core-location
-    majorVersion: 0.1.0
+    minorVersion: 0.1.0
   ContentSquare:
     url:  https://github.com/ContentSquare/CS_iOS_SDK.git
     majorVersion: 4.16.0
@@ -101,7 +101,10 @@ packages:
     majorVersion: 9.1.0
   SnapshotTesting:
     url: https://github.com/pointfreeco/swift-snapshot-testing
-    majorVersion: 1.10.0  
+    majorVersion: 1.10.0
+  CustomDump:
+    url: https://github.com/pointfreeco/swift-custom-dump
+    majorVersion: 0.10.3
   SwiftUI-Introspect:
     url: https://github.com/siteline/SwiftUI-Introspect
     majorVersion: 0.1.3
@@ -111,6 +114,9 @@ packages:
   ZXingObjC:
     url: https://github.com/zxingify/zxingify-objc
     majorVersion: 3.6.7
+  GemPDFKit:
+    url: https://github.com/gematik/swift-gemPDFKit.git
+    majorVersion: 0.1.0
 settings:
   base:
     # for DISABLE_DIAMOND_PROBLEM_DIAGNOSTIC see: https://developer.apple.com/forums/thread/128806
@@ -175,6 +181,8 @@ targets:
         product: Zxcvbn
       - package: ContentSquare
         product: ContentsquareModule
+      - package: GemPDFKit
+        product: GemPDFKit
     scheme:
       testTargets:
         - eRpAppTests
@@ -189,6 +197,7 @@ targets:
       - Sources/AVS
     dependencies:
       - target: HTTPClient_${platform}
+      - framework: Carthage/Build/ASN1Kit.xcframework
       - framework: Carthage/Build/GemCommonsKit.xcframework
       - framework: Carthage/Build/DataKit.xcframework
       - framework: Carthage/Build/OpenSSL.xcframework
@@ -351,6 +360,7 @@ targets:
       - target: IDP_${platform}
       - target: VAUClient_${platform}
       - package: Nimble
+      - package: CustomDump
       - sdk: XCTest.framework
     scheme:
   TrustStore:
@@ -412,6 +422,7 @@ targets:
       - path: Tests/eRpAppTests
         excludes:
           - "**/__Snapshots__/**"
+      - path: Sources/eRpLocalStorage/Prescriptions/ParsingDuplicates
     dependencies:
       - target: TestUtils_iOS
       - target: eRpApp

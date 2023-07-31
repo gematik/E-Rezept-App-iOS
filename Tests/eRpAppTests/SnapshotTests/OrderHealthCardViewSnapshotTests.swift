@@ -16,6 +16,7 @@
 //  
 //
 
+import ComposableArchitecture
 @testable import eRpApp
 import SnapshotTesting
 import SwiftUI
@@ -28,11 +29,11 @@ final class OrderHealthCardViewSnapshotTests: XCTestCase {
     }
 
     func testOrderHealthCardView() {
-        let sut = OrderHealthCardListView(
-            store: OrderHealthCardDomain.Dummies.storeFor(
-                .init(insuranceCompanies: [.dummyHealthInsuranceCompany])
-            )
-        )
+        let sut = OrderHealthCardListView(store:
+            OrderHealthCardDomain.Store(
+                initialState: .init(searchText: "EmptyKK"),
+                reducer: EmptyReducer()
+            ))
 
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
@@ -40,38 +41,43 @@ final class OrderHealthCardViewSnapshotTests: XCTestCase {
     }
 
     func testOrderHealthCardView_SelectedInsurance() {
-        let sut = OrderHealthCardInquiryView(store: OrderHealthCardDomain.Dummies.store)
+        let sut = OrderHealthCardInquiryView(store:
+            OrderHealthCardDomain.Store(
+                initialState: OrderHealthCardDomain.Dummies.state,
+                reducer: EmptyReducer()
+            ))
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
     }
 
     func testOrderHealthCardView_ContactFull() {
-        let sut = OrderHealthCardContactView(
-            store: OrderHealthCardDomain.Dummies.storeFor(
-                .init(insuranceCompany: .dummyHealthInsuranceCompany,
-                      serviceInquiry: .healthCardAndPin)
-            )
-        )
+        let sut = OrderHealthCardContactView(store:
+            OrderHealthCardDomain.Store(
+                initialState: .init(insuranceCompany: .dummyHealthInsuranceCompany,
+                                    serviceInquiry: .healthCardAndPin),
+                reducer: EmptyReducer()
+            ))
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
     }
 
     func testOrderHealthCardView_ContactEmpty() {
-        let sut = OrderHealthCardContactView(
-            store: OrderHealthCardDomain.Dummies.storeFor(
-                .init(insuranceCompany: OrderHealthCardDomain.HealthInsuranceCompany(name: "EmptyKK",
-                                                                                     healthCardAndPinPhone: "",
-                                                                                     healthCardAndPinMail: "",
-                                                                                     healthCardAndPinUrl: "",
-                                                                                     pinUrl: "",
-                                                                                     subjectCardAndPinMail: "",
-                                                                                     bodyCardAndPinMail: "",
-                                                                                     subjectPinMail: "",
-                                                                                     bodyPinMail: ""))
-            )
-        )
+        let sut = OrderHealthCardContactView(store:
+            OrderHealthCardDomain.Store(
+                initialState: .init(insuranceCompany: OrderHealthCardDomain
+                    .HealthInsuranceCompany(name: "EmptyKK",
+                                            healthCardAndPinPhone: "",
+                                            healthCardAndPinMail: "",
+                                            healthCardAndPinUrl: "",
+                                            pinUrl: "",
+                                            subjectCardAndPinMail: "",
+                                            bodyCardAndPinMail: "",
+                                            subjectPinMail: "",
+                                            bodyPinMail: "")),
+                reducer: EmptyReducer()
+            ))
         assertSnapshots(matching: sut, as: snapshotModiOnDevices())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())

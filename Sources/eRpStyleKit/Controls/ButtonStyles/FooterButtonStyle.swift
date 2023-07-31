@@ -15,7 +15,6 @@
 //  limitations under the Licence.
 //  
 //
-// swiftlint:disable type_name
 
 import SwiftUI
 
@@ -40,6 +39,7 @@ extension ButtonStyle where Self == FooterButtonStyle {
     public static var footer: FooterButtonStyle { FooterButtonStyle() }
 }
 
+// swiftlint:disable:next type_name
 struct SectionContainerFooterButtonStyle_Preview: PreviewProvider {
     static var previews: some View {
         ScrollView {

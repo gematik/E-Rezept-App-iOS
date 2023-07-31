@@ -22,8 +22,7 @@ import SwiftUI
 struct ProfileSelectionView: View {
     let store: ProfileSelectionDomain.Store
 
-    @ObservedObject
-    var viewStore: ViewStore<ProfileSelectionDomain.State, ProfileSelectionDomain.Action>
+    @ObservedObject var viewStore: ViewStore<ProfileSelectionDomain.State, ProfileSelectionDomain.Action>
 
     init(store: ProfileSelectionDomain.Store) {
         self.store = store

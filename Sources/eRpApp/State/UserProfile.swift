@@ -67,7 +67,7 @@ extension UserProfile {
     }
 
     struct SSOTokenHeader: Claims, Decodable {
-        public let exp: Date?
+        let exp: Date?
     }
 
     private static func connectionStatus(

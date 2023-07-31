@@ -27,6 +27,7 @@ public struct ErxChargeItem: Identifiable, Hashable {
     public init(
         identifier: String,
         fhirData: Data,
+        taskId: String? = nil,
         enteredDate: String? = nil,
         accessCode: String? = nil,
         medication: ErxMedication? = nil,
@@ -43,6 +44,7 @@ public struct ErxChargeItem: Identifiable, Hashable {
     ) {
         self.identifier = identifier
         self.fhirData = fhirData
+        self.taskId = taskId
         self.enteredDate = enteredDate
         self.accessCode = accessCode
         self.medication = medication
@@ -66,6 +68,8 @@ public struct ErxChargeItem: Identifiable, Hashable {
     public let identifier: String
     /// Complete FHIR bundle as json encoded data
     public let fhirData: Data
+    /// TaskId of the actual prescription
+    public let taskId: String?
     /// Date the charge item was entered
     public let enteredDate: String?
     /// Access code authorising for the charge item

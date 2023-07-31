@@ -65,8 +65,7 @@ final class SettingsDomainTests: XCTestCase {
     func testDemoModeToggleShouldSetStandardModeWhenDemoModeIsTrue() {
         let store = testStore(
             for: SettingsDomain.State(
-                isDemoMode: true,
-                appSecurityState: AppSecurityDomain.State(availableSecurityOptions: [.password])
+                isDemoMode: true
             )
         )
         // when
@@ -99,8 +98,7 @@ final class SettingsDomainTests: XCTestCase {
     func testAppTrackingOptInStartsComplyDialog() {
         let store = testStore(
             for: SettingsDomain.State(
-                isDemoMode: false,
-                appSecurityState: AppSecurityDomain.State(availableSecurityOptions: [.password])
+                isDemoMode: false
             )
         )
 
@@ -115,8 +113,7 @@ final class SettingsDomainTests: XCTestCase {
     func testAppTrackingOptInConfirmAlert() {
         let store = testStore(
             for: SettingsDomain.State(
-                isDemoMode: false,
-                appSecurityState: AppSecurityDomain.State(availableSecurityOptions: [.password])
+                isDemoMode: false
             )
         )
 
@@ -139,8 +136,7 @@ final class SettingsDomainTests: XCTestCase {
     func testAppTrackingOptInDisableAfterConfirm() {
         let store = testStore(
             for: SettingsDomain.State(
-                isDemoMode: false,
-                appSecurityState: AppSecurityDomain.State(availableSecurityOptions: [.password])
+                isDemoMode: false
             )
         )
 
@@ -154,8 +150,7 @@ final class SettingsDomainTests: XCTestCase {
     func testAppTrackingOptInCancelAlert() {
         let store = testStore(
             for: SettingsDomain.State(
-                isDemoMode: false,
-                appSecurityState: AppSecurityDomain.State(availableSecurityOptions: [.password])
+                isDemoMode: false
             )
         )
         mockTracker.optIn = false
@@ -172,84 +167,5 @@ final class SettingsDomainTests: XCTestCase {
         }
 
         expect(self.mockTracker.optIn).to(beFalse())
-    }
-
-    func testSelectingAppSecurityOption_From_Biometry_To_Password() {
-        let store = testStore(
-            for: SettingsDomain.State(
-                isDemoMode: false,
-                appSecurityState: AppSecurityDomain.State(
-                    availableSecurityOptions: [.biometry(.faceID), .password],
-                    selectedSecurityOption: .biometry(.faceID)
-                )
-            )
-        )
-        mockUserSessionContainer.underlyingUserSession = MockUserSession()
-
-        store.send(.appSecurity(action: .select(.password))) {
-            $0.destination = .setAppPassword(
-                CreatePasswordDomain.State(
-                    mode: CreatePasswordDomain.State.Mode.create,
-                    password: "",
-                    passwordA: "",
-                    passwordB: "",
-                    passwordStrength: PasswordStrength.none,
-                    showPasswordErrorMessage: false,
-                    showOriginalPasswordWrong: false
-                )
-            )
-        }
-        store.send(.destination(.setAppPasswordAction(.delegate(.closeAfterPasswordSaved)))) {
-            $0.destination = nil
-        }
-    }
-
-    func testSelectingAppSecurityOption_From_Password_To_New_Password() {
-        let store = testStore(
-            for: SettingsDomain.State(
-                isDemoMode: false,
-                appSecurityState: AppSecurityDomain.State(
-                    availableSecurityOptions: [.biometry(.faceID), .password],
-                    selectedSecurityOption: .password
-                )
-            )
-        )
-        mockUserSessionContainer.underlyingUserSession = MockUserSession()
-
-        store.send(.appSecurity(action: .select(.password))) {
-            $0.destination = .setAppPassword(
-                CreatePasswordDomain.State(
-                    mode: CreatePasswordDomain.State.Mode.update,
-                    password: "",
-                    passwordA: "",
-                    passwordB: "",
-                    passwordStrength: PasswordStrength.none,
-                    showPasswordErrorMessage: false,
-                    showOriginalPasswordWrong: false
-                )
-            )
-        }
-        store.send(.destination(.setAppPasswordAction(.delegate(.closeAfterPasswordSaved)))) {
-            $0.destination = nil
-        }
-    }
-
-    func testSelectingAppSecurityOption_From_Password_To_Biometry() {
-        let store = testStore(
-            for: SettingsDomain.State(
-                isDemoMode: false,
-                appSecurityState: AppSecurityDomain.State(
-                    availableSecurityOptions: [.biometry(.touchID), .password],
-                    selectedSecurityOption: .password
-                )
-            )
-        )
-        mockUserSessionContainer.underlyingUserSession = MockUserSession()
-
-        store.dependencies.userDataStore = MockUserDataStore()
-
-        store.send(.appSecurity(action: .select(.biometry(.touchID)))) {
-            $0.appSecurityState.selectedSecurityOption = .biometry(.touchID)
-        }
     }
 }

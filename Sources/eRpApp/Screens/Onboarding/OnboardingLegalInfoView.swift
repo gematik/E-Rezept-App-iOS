@@ -64,6 +64,7 @@ struct OnboardingLegalInfoView: View {
                     })
                         .frame(maxWidth: .infinity, alignment: .center)
                         .background(Colors.systemGray6.cornerRadius(16))
+                        .accessibility(identifier: A18n.onboarding.legalInfo.onbBtnAcceptTermsOfUseAndPrivacy)
                 }
             }
             Spacer()
@@ -74,7 +75,7 @@ struct OnboardingLegalInfoView: View {
                     .padding(.vertical)
             }
             .disabled(!isAllAccepted)
-            .accessibility(identifier: A18n.onboarding.legalInfo.onbBtnAccept)
+            .accessibility(identifier: A18n.onboarding.legalInfo.onbBtnConfirm)
             .font(Font.body.weight(.semibold))
             .foregroundColor(!isAllAccepted ? Colors.systemGray : Colors.systemColorWhite)
             .background(!isAllAccepted ? Colors.systemGray5 : Colors.primary600)
@@ -160,7 +161,7 @@ extension OnboardingLegalInfoView {
                             .font(Font.body.weight(.semibold))
                             .multilineTextAlignment(.leading)
                             .fixedSize(horizontal: false, vertical: true)
-                            .accessibilityIdentifier(A18n.onboarding.legalInfo.onbTxtTermsOfUse)
+                            .accessibilityIdentifier(A18n.onboarding.legalInfo.onbTxtTermsOfPrivacy)
                             .padding()
                             .foregroundColor(Colors.primary600)
                     }

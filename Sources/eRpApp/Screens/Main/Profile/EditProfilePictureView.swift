@@ -24,8 +24,7 @@ import SwiftUI
 struct EditProfilePictureView: View {
     let store: EditProfilePictureDomain.Store
 
-    @ObservedObject
-    var viewStore: ViewStore<ViewState, EditProfilePictureDomain.Action>
+    @ObservedObject var viewStore: ViewStore<ViewState, EditProfilePictureDomain.Action>
 
     init(store: EditProfilePictureDomain.Store) {
         self.store = store
@@ -116,29 +115,11 @@ struct EditProfilePictureView: View {
     }
 }
 
-extension EditProfilePictureView {}
-
-struct EditProfilePictureView_Previews: PreviewProvider {
-    static var previews: some View {
-        Group {
-            EditProfilePictureView(store: EditProfilePictureDomain.Dummies.store)
-                .previewDevice("iPhone 11")
-
-            EditProfilePictureView(store: EditProfilePictureDomain.Dummies.store)
-                .previewDevice("iPhone 13 Pro")
-
-            EditProfilePictureView(store: EditProfilePictureDomain.Dummies.store)
-                .previewDevice("iPhone SE (2nd generation)")
-        }
-    }
-}
-
 extension EditProfilePictureView {
     private struct ProfilePictureSelector: View {
         let store: EditProfilePictureDomain.Store
 
-        @ObservedObject
-        var viewStore: ViewStore<ViewState, EditProfilePictureDomain.Action>
+        @ObservedObject var viewStore: ViewStore<ViewState, EditProfilePictureDomain.Action>
 
         init(store: EditProfilePictureDomain.Store) {
             self.store = store
@@ -201,6 +182,21 @@ extension EditProfilePictureView {
                     .background(Circle().foregroundColor(Color(.systemGray6)))
             }
             .padding()
+        }
+    }
+}
+
+struct EditProfilePictureView_Previews: PreviewProvider {
+    static var previews: some View {
+        Group {
+            EditProfilePictureView(store: EditProfilePictureDomain.Dummies.store)
+                .previewDevice("iPhone 11")
+
+            EditProfilePictureView(store: EditProfilePictureDomain.Dummies.store)
+                .previewDevice("iPhone 13 Pro")
+
+            EditProfilePictureView(store: EditProfilePictureDomain.Dummies.store)
+                .previewDevice("iPhone SE (2nd generation)")
         }
     }
 }

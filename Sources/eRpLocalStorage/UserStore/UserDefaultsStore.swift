@@ -257,5 +257,4 @@ extension UserDefaults {
         get { bool(forKey: Self.kHideWelcomeDrawer) }
         set { set(newValue, forKey: Self.kHideWelcomeDrawer) }
     }
-    // swiftlint:enable implicit_getter
 }

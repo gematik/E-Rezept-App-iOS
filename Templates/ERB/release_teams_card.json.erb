@@ -1,0 +1,30 @@
+{
+      "@type": "MessageCard",
+      "@context": "http://schema.org/extensions",
+      "themeColor": "010e52",
+      "summary": "Notification with QR code",
+      "sections": [
+          {
+              "activityTitle": "<%= message_card['version'] %>",
+              "title": "iOS Release Build",
+              "text": <%= message_card['release_notes'] %>
+          },
+          {
+              "title": "Builds & Links",
+              "text": "
+<% if message_card['devbuild'] then %>
+  - **Debug-Build:** [Appcenter](<%= message_card['devbuild'] %>) ([QR-Code](https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=<%= ERB::Util.url_encode(message_card['devbuild']) %>))
+<% end %>
+<% if message_card['builds'].count > 0 then %>
+  <% message_card['builds'].each do |build| %>
+  - **<%= build['stream'] %>:** [Appcenter](<%= build['url'] %>) ([QR-Code](https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=<%= ERB::Util.url_encode(build['url']) %>))
+  <% end %>
+<% end %>
+<% if message_card['jira'] then %>
+  - **JIRA Tickets:** [Filter](<%= message_card['jira'] %>)
+<% end %>
+"
+        }
+
+    ]
+}

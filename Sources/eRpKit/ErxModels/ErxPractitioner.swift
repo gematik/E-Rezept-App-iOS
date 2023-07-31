@@ -19,19 +19,25 @@
 import Foundation
 
 public struct ErxPractitioner: Hashable, Codable {
-    public init(lanr: String? = nil,
+    public init(title: String? = nil,
+                lanr: String? = nil,
+                zanr: String? = nil,
                 name: String? = nil,
                 qualification: String? = nil,
                 email: String? = nil,
                 address: String? = nil) {
+        self.title = title
         self.lanr = lanr
+        self.zanr = zanr
         self.name = name
         self.qualification = qualification
         self.email = email
         self.address = address
     }
 
+    public let title: String?
     public let lanr: String?
+    public let zanr: String?
     public let name: String?
     public let qualification: String?
     public let email: String?

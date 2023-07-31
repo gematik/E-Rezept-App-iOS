@@ -19,6 +19,9 @@ internal enum A11y {
       static let authTxtPasswordFailure = "auth_txt_password_failure"
       static let authEdtPasswordInput = "auth_edt_password_input"
       static let authTxtFailedLoginHint = "auth_txt_failed_login_hint"
+      static let authBtnBiometricandpasswordFaceid = "auth_btn_biometricandpassword_faceid"
+      static let authBtnBiometricandpasswordTouchid = "auth_btn_biometricandpassword_touchid"
+      static let authBtnBiometricandpasswordChange = "auth_btn_biometricandpassword_change"
   }
     internal enum cardWall { 
     internal enum canInput {
@@ -177,11 +180,10 @@ internal enum A11y {
   }
     internal enum legalInfo {
       static let onbTxtLegalInfoTitle = "onb_txt_legal_info_title"
-      static let onbBtnAccept = "onb_btn_accept"
+      static let onbBtnConfirm = "onb_btn_confirm"
       static let onbTxtTermsOfUse = "onb_txt_terms_of_use"
-      static let onbBtnAcceptTermsOfUse = "onb_btn_accept_terms_of_use"
+      static let onbBtnAcceptTermsOfUseAndPrivacy = "onb_btn_accept_terms_of_use_and_privacy"
       static let onbTxtTermsOfPrivacy = "onb_txt_terms_of_privacy"
-      static let onbBtnAcceptPrivacy = "onb_btn_accept_privacy"
   }
     internal enum newProfile {
       static let onbPrfTxtTitle = "onb_prf_txt_title"
@@ -256,10 +258,6 @@ internal enum A11y {
       static let phaDetailWeb = "pha_detail_web"
       static let phaDetailMail = "pha_detail_mail"
       static let phaDetailPhone = "pha_detail_phone"
-  }
-    internal enum pharmacyGlobal {
-      static let phaGlobalImgReadinessBadge = "pha_global_img_readiness_badge"
-      static let phaGlobalTxtReadinessBadge = "pha_global_txt_readiness_badge"
   }
     internal enum pharmacyRedeem {
       static let phaRedeemTxtTitle = "pha_redeem_txt_title"
@@ -565,6 +563,7 @@ internal enum A11y {
       static let stgTxtSecurityTouchid = "stg_txt_security_touchid"
       static let stgTxtSecurityPassword = "stg_txt_security_password"
       static let stgTxtSecurityTokens = "stg_txt_security_tokens"
+      static let stgBtnDeviceSecurity = "stg_btn_device_security"
   }
     internal enum termsOfUse {
       static let stgTouTxtTermsOfUse = "stg_tou_txt_terms_of_use"

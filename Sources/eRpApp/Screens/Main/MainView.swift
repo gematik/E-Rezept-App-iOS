@@ -26,8 +26,7 @@ import SwiftUI
 struct MainView: View {
     let store: MainDomain.Store
 
-    @ObservedObject
-    var viewStore: ViewStore<ViewState, MainDomain.Action>
+    @ObservedObject var viewStore: ViewStore<ViewState, MainDomain.Action>
     @State var scrollOffset: CGFloat = 0
 
     init(store: MainDomain.Store) {
@@ -128,7 +127,7 @@ struct MainView: View {
     }
 }
 
-// swiftlint:disable no_extension_access_modifier
+// swiftlint:disable:next no_extension_access_modifier
 private extension MainView {
     // MARK: - screen related views
 

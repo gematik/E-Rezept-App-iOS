@@ -22,8 +22,7 @@ import SwiftUI
 extension PrescriptionDetailView {
     struct ToolbarViewModifier: ViewModifier {
         let store: PrescriptionDetailDomain.Store
-        @ObservedObject
-        var viewStore: ViewStore<ViewState, PrescriptionDetailDomain.Action>
+        @ObservedObject var viewStore: ViewStore<ViewState, PrescriptionDetailDomain.Action>
 
         init(store: PrescriptionDetailDomain.Store) {
             self.store = store

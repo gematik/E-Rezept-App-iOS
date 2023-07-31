@@ -104,6 +104,7 @@ final class CardWallReadCardDomainTests: XCTestCase {
             initialState: initialState,
             reducer: CardWallReadCardDomain(),
             prepareDependencies: { dependencies in
+                dependencies.dateProvider = { Date() }
                 dependencies.schedulers = schedulers
                 dependencies.profileDataStore = mockProfileDataStore
                 dependencies.secureEnclaveSignatureProvider = DummySecureEnclaveSignatureProvider()
@@ -317,20 +318,24 @@ final class CardWallReadCardDomainTests: XCTestCase {
     }
 
     func testSendingMail() {
-        mockResourceHandler.canOpenURLReturnValue = true
-        let sut = testStore(initialState: defaultState)
+        withDependencies { dependencies in
+            dependencies.dateProvider = { Date() }
+        } operation: {
+            mockResourceHandler.canOpenURLReturnValue = true
+            let sut = testStore(initialState: defaultState)
 
-        let error = NFCSignatureProviderError.signingFailure(.unsupportedAlgorithm)
-        let report = CardWallReadCardDomain.createNfcReadingReport(with: error, commands: [])
-        let mailState = EmailState(subject: L10n.cdwTxtMailSubject.text, body: report)
-        let expectedUrl = mailState.createEmailUrl()
+            let error = NFCSignatureProviderError.signingFailure(.unsupportedAlgorithm)
+            let report = CardWallReadCardDomain.createNfcReadingReport(with: error, commands: [])
+            let mailState = EmailState(subject: L10n.cdwTxtMailSubject.text, body: report)
+            let expectedUrl = mailState.createEmailUrl()
 
-        expect(self.mockResourceHandler.canOpenURLCalled).to(beFalse())
-        expect(self.mockResourceHandler.openCalled).to(beFalse())
-        sut.send(.openMail(report))
-        expect(self.mockResourceHandler.canOpenURLCalled).to(beTrue())
-        expect(self.mockResourceHandler.openCalled).to(beTrue())
-        expect(self.mockResourceHandler.openReceivedUrl?.absoluteString) == expectedUrl?.absoluteString
+            expect(self.mockResourceHandler.canOpenURLCalled).to(beFalse())
+            expect(self.mockResourceHandler.openCalled).to(beFalse())
+            sut.send(.openMail(report))
+            expect(self.mockResourceHandler.canOpenURLCalled).to(beTrue())
+            expect(self.mockResourceHandler.openCalled).to(beTrue())
+            expect(self.mockResourceHandler.openReceivedUrl?.absoluteString) == expectedUrl?.absoluteString
+        }
     }
 
     func testUpdateProfileSaveError() {

@@ -55,6 +55,18 @@ final class X509TrustStoreTests: XCTestCase {
         return try! X509(pem: CertificateResourceFileReader.readFromCertificatesBundle(file: file))
     }()
 
+    // rca5TestOnly + kompCa51TestOnly validate the OCSPResponse-signer
+    lazy var rca5TestOnly: X509 = {
+        let file = "GEM.RCA5-TEST-ONLY.pem"
+        return try! X509(pem: CertificateResourceFileReader.readFromCertificatesBundle(file: file))
+    }()
+
+    // rca5TestOnly + kompCa51TestOnly validate the OCSPResponse-signer
+    lazy var kompCa51TestOnly: X509 = {
+        let file = "GEM.KOMP-CA51-TEST-ONLY.pem"
+        return try! X509(pem: CertificateResourceFileReader.readFromCertificatesBundle(file: file))
+    }()
+
     lazy var kompCa11TestOnly: X509 = {
         let file = "GEM.KOMP-CA11-TEST-ONLY.pem"
         return try! X509(pem: CertificateResourceFileReader.readFromCertificatesBundle(file: file))
@@ -248,29 +260,32 @@ final class X509TrustStoreTests: XCTestCase {
     // [REQ:gemSpec_Krypt:A_21218]
     func testCheckCertificateStatus_FdEnc() throws {
         // given
-        let caCerts = [kompCa10TestOnly]
+        // rca5TestOnly + kompCa51TestOnly validate the OCSPResponse-signer
+        let addRootCerts = [rca5TestOnly]
+        let caCerts = [kompCa10TestOnly, kompCa51TestOnly]
         let eeCerts = [vauEncReference]
         let sut = try X509TrustStore(
             trustAnchor: rootCa3TestOnlyTrustAnchor.certificate,
-            addRoots: [],
+            unvalidatedAddRoots: addRootCerts,
             caCerts: caCerts,
             eeCerts: eeCerts
         )
         let ocspResponses_FdEnc = try ocspList_FdEnc.responses.map { try OCSPResponse(der: $0) }
 
         // then
-        // TODO: test data expired ERA-7662 swiftlint:disable:this todo
-        // expect(try sut.checkEeCertificatesStatus(with: ocspResponses_FdEnc)) == true
+        expect(try sut.checkEeCertificatesStatus(with: ocspResponses_FdEnc)) == true
     }
 
     // [REQ:gemSpec_Krypt:A_21218]
     func testCheckCertificateStatus_FdEncIdpSig1IdpSig3() throws {
         // given
-        let caCerts = [kompCa10TestOnly]
+        // rca5TestOnly + kompCa51TestOnly validate the OCSPResponse-signer
+        let addRootCerts = [rca5TestOnly]
+        let caCerts = [kompCa10TestOnly, kompCa51TestOnly]
         let eeCerts = [vauEncReference, idpSigReference1, idpSigReference3]
         let sut = try X509TrustStore(
             trustAnchor: rootCa3TestOnlyTrustAnchor.certificate,
-            addRoots: [],
+            unvalidatedAddRoots: addRootCerts,
             caCerts: caCerts,
             eeCerts: eeCerts
         )
@@ -278,8 +293,7 @@ final class X509TrustStoreTests: XCTestCase {
             .map { try OCSPResponse(der: $0) }
 
         // then
-        // TODO: test data expired ERA-7662 swiftlint:disable:this todo
-        // expect(try sut.checkEeCertificatesStatus(with: ocspResponses_FdEncIdpSig1IdpSig3)) == true
+        expect(try sut.checkEeCertificatesStatus(with: ocspResponses_FdEncIdpSig1IdpSig3)) == true
     }
 
     // [REQ:gemSpec_Krypt:A_21218] For every EE certificate there must be a matching OCSP response
@@ -364,3 +378,5 @@ let rootCa3TestOnlyTrustAnchor: TrustAnchor = {
     let pem = try! CertificateResourceFileReader.readFromCertificatesBundle(file: file)
     return try! TrustAnchor(withPEM: pem.utf8string!)
 }()
+
+// swiftlint:enable line_length identifier_name

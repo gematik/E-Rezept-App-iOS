@@ -135,10 +135,8 @@ struct DefaultDeviceSecurityManager: DeviceSecurityManager {
         // swiftlint:disable:next line_length
         // Source: https://github.com/OWASP/owasp-mstg/blob/10f1f8a639dd29cbe4db166881244f3e4ea52797/Document/0x06j-Testing-Resiliency-Against-Reverse-Engineering.md#checking-file-permissions
 
-        for file in filesToCheck {
-            if fileManager.fileExists(atPath: file) {
-                return true
-            }
+        for file in filesToCheck where fileManager.fileExists(atPath: file) {
+            return true
         }
 
         do {

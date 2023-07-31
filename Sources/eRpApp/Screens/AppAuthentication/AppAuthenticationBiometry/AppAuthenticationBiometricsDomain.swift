@@ -24,20 +24,17 @@ import LocalAuthentication
 struct AppAuthenticationBiometricsDomain: ReducerProtocol {
     typealias Store = StoreOf<Self>
 
-    typealias AuthenticationResult = Result<Bool, Error>
-
     struct State: Equatable {
         let biometryType: BiometryType
         let startImmediateAuthenticationChallenge: Bool
-        var authenticationResult: AuthenticationResult?
-        var errorToDisplay: Error?
+        var authenticationResult: AuthenticationChallengeProviderResult?
+        var errorToDisplay: AuthenticationChallengeProviderError?
     }
 
     enum Action: Equatable {
         case startAuthenticationChallenge
         case dismissError
-
-        case authenticationChallengeResponse(Result<Bool, Error>)
+        case authenticationChallengeResponse(AuthenticationChallengeProviderResult)
     }
 
     @Dependency(\.schedulers) var schedulers: Schedulers
@@ -70,63 +67,7 @@ struct AppAuthenticationBiometricsDomain: ReducerProtocol {
 }
 
 extension AppAuthenticationBiometricsDomain {
-    // sourcery: CodedError = "003"
-    enum Error: Swift.Error, LocalizedError, Equatable {
-        // sourcery: errorCode = "01"
-        case cannotEvaluatePolicy(NSError?)
-        // sourcery: errorCode = "02"
-        case failedEvaluatingPolicy(NSError?)
-
-        var errorDescription: String? {
-            switch self {
-            case let .cannotEvaluatePolicy(error):
-                guard let error = error else {
-                    return L10n.authTxtBiometricsFailedDefault.text
-                }
-                if LAError.Code(rawValue: error.code) == LAError.biometryLockout {
-                    return L10n.authTxtBiometricsLockout.text
-                } else {
-                    return error.localizedDescription
-                }
-            case let .failedEvaluatingPolicy(error):
-                guard let error = error else {
-                    return L10n.authTxtBiometricsFailedDefault.text
-                }
-                switch LAError.Code(rawValue: error.code) {
-                case LAError.authenticationFailed:
-                    return L10n.authTxtBiometricsFailedAuthenticationFailed.text
-                case LAError.userFallback:
-                    return L10n.authTxtBiometricsFailedUserFallback.text
-                case LAError.biometryNotEnrolled:
-                    return L10n.authTxtBiometricsFailedNotEnrolled.text
-                default:
-                    return L10n.authTxtBiometricsFailedDefault.text
-                }
-            }
-        }
-
-        static func ==(lhs: Error,
-                       rhs: Error) -> Bool {
-            switch (lhs, rhs) {
-            case let (.cannotEvaluatePolicy(lError),
-                      .cannotEvaluatePolicy(rError)):
-                return lError?.code == rError?.code
-            case let (.failedEvaluatingPolicy(lError),
-                      .failedEvaluatingPolicy(rError)):
-                return lError?.localizedDescription == rError?.localizedDescription
-            default:
-                return false
-            }
-        }
-    }
-}
-
-extension AppAuthenticationBiometricsDomain {
     enum Dummies {
         static let state = State(biometryType: .faceID, startImmediateAuthenticationChallenge: false)
     }
-}
-
-protocol AuthenticationChallengeProvider {
-    func startAuthenticationChallenge() -> AnyPublisher<AppAuthenticationBiometricsDomain.AuthenticationResult, Never>
 }

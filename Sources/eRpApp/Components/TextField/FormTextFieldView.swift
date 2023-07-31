@@ -58,7 +58,7 @@ struct FormTextFieldView: View {
                     }
                 }
 
-                if !text.isEmpty && isFirstResponder {
+                if !text.isEmpty, isFirstResponder {
                     Spacer()
                     Image(systemName: SFSymbolName.crossIconFill)
                         .foregroundColor(Color(.tertiaryLabel))

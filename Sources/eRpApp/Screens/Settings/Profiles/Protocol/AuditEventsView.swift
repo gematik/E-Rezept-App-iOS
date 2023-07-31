@@ -22,8 +22,7 @@ import SwiftUI
 // [REQ:gemSpec_eRp_FdV:A_19177#1] Actual Button to open the audit events
 struct AuditEventsView: View {
     let store: AuditEventsDomain.Store
-    @ObservedObject
-    var viewStore: ViewStore<AuditEventsDomain.State, AuditEventsDomain.Action>
+    @ObservedObject var viewStore: ViewStore<AuditEventsDomain.State, AuditEventsDomain.Action>
 
     init(store: AuditEventsDomain.Store) {
         self.store = store
@@ -122,8 +121,7 @@ struct AuditEventsView: View {
 
 extension AuditEventsView {
     struct PageNavigationControl: View {
-        @ObservedObject
-        var viewStore: ViewStore<AuditEventsDomain.State, AuditEventsDomain.Action>
+        @ObservedObject var viewStore: ViewStore<AuditEventsDomain.State, AuditEventsDomain.Action>
 
         var body: some View {
             HStack {

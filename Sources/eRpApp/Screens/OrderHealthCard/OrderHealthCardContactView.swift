@@ -22,8 +22,7 @@ import SwiftUI
 struct OrderHealthCardContactView: View {
     let store: OrderHealthCardDomain.Store
 
-    @ObservedObject
-    var viewStore: ViewStore<ViewState, OrderHealthCardDomain.Action>
+    @ObservedObject var viewStore: ViewStore<ViewState, OrderHealthCardDomain.Action>
 
     init(store: OrderHealthCardDomain.Store) {
         self.store = store
@@ -34,7 +33,7 @@ struct OrderHealthCardContactView: View {
         var insuranceCompany: OrderHealthCardDomain.HealthInsuranceCompany?
         var serviceInquiry: OrderHealthCardDomain.ServiceInquiry?
         var serviceInquiryId: Int
-        var hasPinContact: Bool
+        var isPinServiceAndContact: Bool
         var hasHealthCardAndPinServiceAndContact: Bool
         let routeTag: OrderHealthCardDomain.Destinations.State.Tag?
 
@@ -42,7 +41,7 @@ struct OrderHealthCardContactView: View {
             insuranceCompany = state.insuranceCompany
             serviceInquiry = state.serviceInquiry
             serviceInquiryId = state.serviceInquiryId
-            hasPinContact = state.isPinServiceAndContact
+            isPinServiceAndContact = state.isPinServiceAndContact
             hasHealthCardAndPinServiceAndContact = state.isHealthCardAndPinServiceAndContact
             routeTag = state.destination?.tag
         }
@@ -50,7 +49,7 @@ struct OrderHealthCardContactView: View {
 
     var body: some View {
         VStack(alignment: .center) {
-            if viewStore.hasPinContact || viewStore.hasHealthCardAndPinServiceAndContact {
+            if viewStore.isPinServiceAndContact || viewStore.hasHealthCardAndPinServiceAndContact {
                 Text(L10n.oderEgkContactTitle)
                     .font(Font.largeTitle.weight(.bold))
                     .foregroundColor(Color(.label))

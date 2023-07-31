@@ -80,13 +80,7 @@ struct AppStartDomain: ReducerProtocol {
                         pharmacySearch: PharmacySearchDomain.State(erxTasks: []),
                         orders: OrdersDomain.State(orders: []),
                         settingsState: .init(
-                            isDemoMode: userSession.isDemoMode,
-                            appSecurityState: .init(
-                                availableSecurityOptions: appSecurityManager.availableSecurityOptions
-                                    .options,
-                                selectedSecurityOption: nil,
-                                errorToDisplay: nil
-                            )
+                            isDemoMode: userSession.isDemoMode
                         )
                     ),
                     unreadOrderMessageCount: 0,
@@ -119,13 +113,7 @@ struct AppStartDomain: ReducerProtocol {
                         pharmacySearch: PharmacySearchDomain.State(erxTasks: []),
                         orders: OrdersDomain.State(orders: []),
                         settingsState: .init(
-                            isDemoMode: userSession.isDemoMode,
-                            appSecurityState: .init(
-                                availableSecurityOptions: appSecurityManager.availableSecurityOptions
-                                    .options,
-                                selectedSecurityOption: nil,
-                                errorToDisplay: nil
-                            )
+                            isDemoMode: userSession.isDemoMode
                         )
                     ),
                     unreadOrderMessageCount: 0,

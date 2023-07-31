@@ -122,8 +122,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swift-custom-dump",
       "state" : {
-        "revision" : "805c57f32a5934ee420f30ba129f00aa8c7575a1",
-        "version" : "0.10.0"
+        "revision" : "3a35f7892e7cf6ba28a78cd46a703c0be4e0c6dc",
+        "version" : "0.11.0"
       }
     },
     {
@@ -136,12 +136,30 @@
       }
     },
     {
+      "identity" : "swift-gempdfkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/gematik/swift-gemPDFKit.git",
+      "state" : {
+        "revision" : "d54cae3201e19ec83a4771c22a59b3d9d1524b23",
+        "version" : "0.1.0"
+      }
+    },
+    {
       "identity" : "swift-identified-collections",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/pointfreeco/swift-identified-collections",
       "state" : {
         "revision" : "ad3932d28c2e0a009a0167089619526709ef6497",
         "version" : "0.7.0"
+      }
+    },
+    {
+      "identity" : "swift-parsing",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pointfreeco/swift-parsing",
+      "state" : {
+        "revision" : "27c941bbd22a4bbc53005a15a0440443fd892f70",
+        "version" : "0.12.1"
       }
     },
     {

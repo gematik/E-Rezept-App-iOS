@@ -22,8 +22,7 @@ import SwiftUI
 struct OnboardingContainer: View, KeyboardReadable {
     let store: Store<OnboardingDomain.State, OnboardingDomain.Action>
 
-    @ObservedObject
-    var viewStore: ViewStore<ViewState, OnboardingDomain.Action>
+    @ObservedObject var viewStore: ViewStore<ViewState, OnboardingDomain.Action>
     @State var isKeyboardVisible = false
 
     init(store: Store<OnboardingDomain.State, OnboardingDomain.Action>) {
@@ -68,7 +67,7 @@ struct OnboardingContainer: View, KeyboardReadable {
                     }
                     .tag(1)
                     .contentShape(Rectangle())
-                    .gesture(DragGesture())
+                    .highPriorityGesture(DragGesture())
 
                     // [REQ:gemSpec_BSI_FdV:A_20834] view to register authentication in onboarding process
                     OnboardingRegisterAuthenticationView(

@@ -51,7 +51,7 @@ struct SearchBar: View {
                         .accessibility(hidden: true)
 
                     // X button
-                    if isEditing && !searchText.isEmpty {
+                    if isEditing, !searchText.isEmpty {
                         Button(
                             action: { self.searchText = "" },
                             label: {

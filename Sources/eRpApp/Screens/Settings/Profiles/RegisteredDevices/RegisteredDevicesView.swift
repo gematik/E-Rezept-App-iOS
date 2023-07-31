@@ -24,8 +24,7 @@ import SwiftUI
 
 struct RegisteredDevicesView: View {
     let store: RegisteredDevicesDomain.Store
-    @ObservedObject
-    var viewStore: ViewStore<ViewState, RegisteredDevicesDomain.Action>
+    @ObservedObject var viewStore: ViewStore<ViewState, RegisteredDevicesDomain.Action>
 
     init(store: RegisteredDevicesDomain.Store) {
         self.store = store
@@ -60,8 +59,8 @@ struct RegisteredDevicesView: View {
     }
 
     func description(for entry: RegisteredDevicesDomain.State.Entry) -> String {
-        if viewStore.thisDeviceKeyIdentifier != nil &&
-            entry.keyIdentifier == viewStore.thisDeviceKeyIdentifier {
+        if viewStore.thisDeviceKeyIdentifier != nil,
+           entry.keyIdentifier == viewStore.thisDeviceKeyIdentifier {
             return L10n.stgTxtRegDevicesRegisteredSinceThisDevice(entry.date).text
         } else {
             return L10n.stgTxtRegDevicesRegisteredSince(entry.date).text

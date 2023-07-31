@@ -83,10 +83,12 @@ class DefaultPrescriptionRepository: PrescriptionRepository, ActivityIndicating 
     // TODO: maybe int? // swiftlint:disable:this todo
     private var isActivePublisher = CurrentValueSubject<Bool, Never>(false)
 
+    @Dependency(\.uiDateFormatter) var uiDateFormatter: UIDateFormatter
+
     func loadLocal() -> AnyPublisher<[Prescription], PrescriptionRepositoryError> {
         erxTaskRepository.loadLocalAll()
             .map {
-                $0.map { Prescription(erxTask: $0) }
+                $0.map { Prescription(erxTask: $0, dateFormatter: self.uiDateFormatter) }
             }
             .mapError(PrescriptionRepositoryError.erxRepository)
             .eraseToAnyPublisher()
@@ -125,7 +127,7 @@ class DefaultPrescriptionRepository: PrescriptionRepository, ActivityIndicating 
         erxTaskRepository
             .loadRemoteAll(for: locale)
             .map {
-                $0.map { Prescription(erxTask: $0) }
+                $0.map { Prescription(erxTask: $0, dateFormatter: self.uiDateFormatter) }
             }
             .map(PrescriptionRepositoryLoadRemoteResult.prescriptions)
             .mapError(PrescriptionRepositoryError.erxRepository)

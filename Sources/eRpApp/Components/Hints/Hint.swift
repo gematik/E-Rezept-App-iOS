@@ -19,9 +19,8 @@
 import SwiftUI
 
 @dynamicMemberLookup
-// swiftlint:disable:next orphaned_doc_comment
 /// sourcery: StringAssetInitialized
-struct Hint<Action: Equatable>: Equatable, Identifiable {
+struct Hint<Action: Equatable>: Equatable, Identifiable { // swiftlint:disable:this attributes
     let id: String
     var title: String?
     var message: String?

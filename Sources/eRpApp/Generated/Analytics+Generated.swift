@@ -327,6 +327,14 @@ typealias AnalyticsEvent = String
     struct Redeem_viaTI: AnalyticsScreen {
       let name = "redeem:viaTI"
     }
+    static let scanner_documentImporter = Scanner_documentImporter()
+    struct Scanner_documentImporter: AnalyticsScreen {
+      let name = "scanner:documentImporter"
+    }
+    static let scanner_imageGallery = Scanner_imageGallery()
+    struct Scanner_imageGallery: AnalyticsScreen {
+      let name = "scanner:imageGallery"
+    }
     static let settings = Settings()
     struct Settings: AnalyticsScreen {
       let name = "settings"

@@ -97,7 +97,7 @@ struct ProfilePictureView: View {
                     } else if let image = image?.description, !image.name.isEmpty {
                         Image(image)
                             .resizable()
-                            .scaledToFit()
+                            .scaledToFill()
                             .clipShape(Circle())
                     } else {
                         Image(systemName: SFSymbolName.camera)
@@ -141,7 +141,7 @@ struct ProfilePictureView_Previews: PreviewProvider {
                 style: .small
             ) {}
             ProfilePictureView(
-                image: .baby,
+                image: .boyWithCard,
                 userImageData: nil,
                 color: .green,
                 connection: .disconnected,

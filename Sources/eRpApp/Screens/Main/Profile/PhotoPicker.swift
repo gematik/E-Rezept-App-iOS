@@ -61,7 +61,9 @@ struct PhotoPicker: UIViewControllerRepresentable {
                             // Error
                             return
                         }
-                        self.photoPicker.picketImage = data
+                        DispatchQueue.main.async {
+                            self.photoPicker.picketImage = data
+                        }
                     }
                 }
             }

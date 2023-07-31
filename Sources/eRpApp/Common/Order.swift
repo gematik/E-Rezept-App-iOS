@@ -22,6 +22,7 @@ import Foundation
 import OpenSSL
 import Pharmacy
 
+// swiftlint:disable:next type_name
 protocol eRpRemoteStorageOrder {
     var version: String { get }
     var redeemType: RedeemOption { get }
@@ -71,7 +72,7 @@ struct Order: eRpRemoteStorageOrder, AVSOrder, Equatable {
 
     init(
         orderID: UUID = UUID(),
-        version: String = "1",
+        version: String = "2",
         redeemType: RedeemOption,
         name: String? = nil,
         address: Address? = nil,

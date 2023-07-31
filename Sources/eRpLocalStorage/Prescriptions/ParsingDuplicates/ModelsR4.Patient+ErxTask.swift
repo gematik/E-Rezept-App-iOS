@@ -20,27 +20,53 @@ import eRpKit
 import Foundation
 import ModelsR4
 
+extension Extension.ValueX {
+    var stringOrNil: String? {
+        switch self {
+        case let .string(value):
+            return value.value?.string
+        default:
+            return nil
+        }
+    }
+
+    var referenceOrNil: Reference? {
+        switch self {
+        case let .reference(value):
+            return value
+        default:
+            return nil
+        }
+    }
+}
+
 extension ModelsR4.Patient {
     var fullName: String? {
         let firstName = name?.first?.given?.first?.value?.string
         let lastName = name?.first?.family?.value?.string
 
-        // Do we have a first name?
-        if let firstName = firstName,
-           !firstName.isEmpty {
-            // Do we also have a last name?
-            if let lastName = lastName,
-               !lastName.isEmpty {
-                // Return the combination of first and last name
-                return firstName + " " + lastName
-            }
+        // https://update.kbv.de/ita-update/DigitaleMuster/KBV_ITA_VGEX_Technisches_Handbuch_DiMus.pdf
+        // https://simplifier.net/packages/de.basisprofil.r4/1.4.0/files/656664
+        // http://fhir.de/StructureDefinition/humanname-namenszusatz
+        let namenszusatz = name?.first?.family?
+            .extensions(for: "http://fhir.de/StructureDefinition/humanname-namenszusatz").first?.value?.stringOrNil
 
-            // No last name, so only return the first name
-            return firstName
+        // https://simplifier.net/basisprofil-de-r4/humannamedebasis
+        let vorsatzwort = name?.first?.family?
+            .extensions(for: "http://hl7.org/fhir/StructureDefinition/humanname-own-prefix").first?.value?.stringOrNil
+
+        let nameParts: [String] = [firstName, namenszusatz, vorsatzwort, lastName].compactMap { namePart in
+            if namePart?.isEmpty ?? true {
+                return nil
+            }
+            return namePart
         }
 
-        // No first name, so only return the last name
-        return lastName
+        return nameParts.joined(separator: " ")
+    }
+
+    var title: String? {
+        name?.first?.prefix?.compactMap(\.value?.string).joined(separator: "")
     }
 
     var phone: String? {
@@ -83,6 +109,24 @@ extension ModelsR4.Patient {
         }
 
         return postalCodeAndCity
+    }
+
+    var singleLineAddress: String? {
+        guard let address = address?.first else { return nil }
+
+        let postalCodeAndCity = [
+            address.postalCode?.value?.string,
+            address.city?.value?.string,
+        ]
+        .compactMap { $0 }
+        .joined(separator: " ")
+
+        return [
+            address.line?.first?.value?.string,
+            postalCodeAndCity,
+        ]
+        .compactMap { $0 }
+        .joined(separator: ", ")
     }
 
     var insuranceId: String? {

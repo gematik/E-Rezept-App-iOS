@@ -22,8 +22,7 @@ import SwiftUI
 
 extension PrescriptionDetailView {
     struct TechnicalInformationsView: View {
-        @ObservedObject
-        var viewStore: ViewStore<
+        @ObservedObject var viewStore: ViewStore<
             PrescriptionDetailDomain.Destinations.TechnicalInformationsState,
             PrescriptionDetailDomain.Action
         >

@@ -28,6 +28,33 @@ import Foundation
 
 
 
+extension Store where State == AppSecurityDomain.State, Action == AppSecurityDomain.Action {
+    func destinationsScope<ChildState, ChildAction>(
+        state: CasePath<AppSecurityDomain.Destinations.State?, ChildState>,
+        action: @escaping (ChildAction) -> AppSecurityDomain.Destinations.Action
+    ) -> Store<ChildState?, ChildAction> {
+        self.scope(state: \AppSecurityDomain.State.destination, action: AppSecurityDomain.Action.destination)
+            .scope(
+                state: state.extract(from:),
+                action: action
+            )
+    }
+
+    func destinationsScope<ChildState>(
+        state: CasePath<AppSecurityDomain.Destinations.State?, ChildState>
+    ) -> Store<ChildState?, Action> {
+        self.scope(state: \AppSecurityDomain.State.destination)
+            .scope(state: state.extract(from:))
+    }
+}
+
+
+
+
+
+
+
+
 
 
 
@@ -190,6 +217,31 @@ extension Store where State == CardWallReadCardDomain.State, Action == CardWallR
 }
 
 
+
+
+
+
+
+
+extension Store where State == ChargeItemDomain.State, Action == ChargeItemDomain.Action {
+    func destinationsScope<ChildState, ChildAction>(
+        state: CasePath<ChargeItemDomain.Destinations.State?, ChildState>,
+        action: @escaping (ChildAction) -> ChargeItemDomain.Destinations.Action
+    ) -> Store<ChildState?, ChildAction> {
+        self.scope(state: \ChargeItemDomain.State.destination, action: ChargeItemDomain.Action.destination)
+            .scope(
+                state: state.extract(from:),
+                action: action
+            )
+    }
+
+    func destinationsScope<ChildState>(
+        state: CasePath<ChargeItemDomain.Destinations.State?, ChildState>
+    ) -> Store<ChildState?, Action> {
+        self.scope(state: \ChargeItemDomain.State.destination)
+            .scope(state: state.extract(from:))
+    }
+}
 
 
 
@@ -724,6 +776,31 @@ extension Store where State == RegisteredDevicesDomain.State, Action == Register
 
 
 
+
+
+
+
+
+
+extension Store where State == ScannerDomain.State, Action == ScannerDomain.Action {
+    func destinationsScope<ChildState, ChildAction>(
+        state: CasePath<ScannerDomain.Destinations.State?, ChildState>,
+        action: @escaping (ChildAction) -> ScannerDomain.Destinations.Action
+    ) -> Store<ChildState?, ChildAction> {
+        self.scope(state: \ScannerDomain.State.destination, action: ScannerDomain.Action.destination)
+            .scope(
+                state: state.extract(from:),
+                action: action
+            )
+    }
+
+    func destinationsScope<ChildState>(
+        state: CasePath<ScannerDomain.Destinations.State?, ChildState>
+    ) -> Store<ChildState?, Action> {
+        self.scope(state: \ScannerDomain.State.destination)
+            .scope(state: state.extract(from:))
+    }
+}
 
 
 

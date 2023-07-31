@@ -280,7 +280,8 @@ class CANCameraScannerViewController: UIViewController {
         }
     }
 
-    @IBAction func handleTap(_: UITapGestureRecognizer) {
+    @IBAction
+    func handleTap(_: UITapGestureRecognizer) {
         captureSessionQueue.async {
             if !self.captureSession.isRunning {
                 self.captureSession.startRunning()

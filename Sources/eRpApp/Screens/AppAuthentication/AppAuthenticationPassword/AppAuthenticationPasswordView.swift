@@ -77,6 +77,7 @@ struct AppAuthenticationPasswordView: View {
                 FooterView()
             }
         }
+        .padding(.vertical)
     }
 
     private struct UnsuccessfulAttemptMessageView: View {

@@ -22,8 +22,7 @@ import SwiftUI
 
 struct OnboardingRegisterAuthenticationView: View, KeyboardReadable {
     let store: RegisterAuthenticationDomain.Store
-    @ObservedObject
-    var viewStore: ViewStore<ViewState, RegisterAuthenticationDomain.Action>
+    @ObservedObject var viewStore: ViewStore<ViewState, RegisterAuthenticationDomain.Action>
 
     init(store: RegisterAuthenticationDomain.Store) {
         self.store = store

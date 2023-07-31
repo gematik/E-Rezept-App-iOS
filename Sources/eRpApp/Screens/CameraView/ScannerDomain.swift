@@ -20,6 +20,8 @@ import Combine
 import ComposableArchitecture
 import eRpKit
 import Foundation
+import UIKit
+import Vision
 
 struct ScannerDomain: ReducerProtocol {
     typealias Store = StoreOf<Self>
@@ -44,6 +46,10 @@ struct ScannerDomain: ReducerProtocol {
         var alertState: AlertState<Action>?
         /// Bool to handle the flashlight state
         var isFlashOn = false
+
+        var galleryActionSheet: ConfirmationDialogState<Action>?
+
+        var destination: Destinations.State?
     }
 
     enum Action: Equatable {
@@ -63,7 +69,17 @@ struct ScannerDomain: ReducerProtocol {
         case toggleFlashLight
         /// set isFlashOn to false
         case flashLightOff
+        /// Opens an action sheet with options to open photo or document files
+        case importButtonTapped
+        /// Opens the nativ image gallery
+        case openImageGallery
+        /// Opens the nativ document importer
+        case openDocumentImporter
 
+        case closeImportActionSheet
+
+        case destination(Destinations.Action)
+        case setNavigation(tag: Destinations.State.Tag?)
         case response(Response)
         case delegate(Delegate)
 
@@ -73,6 +89,9 @@ struct ScannerDomain: ReducerProtocol {
             /// Mutates the `scanState` after successful scan
             /// and calls `resetScannerState` after `messageInterval` passed
             case analyseReceived(LoadingState<[ScannedErxTask], ScannerDomain.Error>)
+
+            case galleryImageReceived(UIImage?)
+            case documentFileReceived(Result<[URL], Error>)
         }
 
         enum Delegate: Equatable {
@@ -81,11 +100,27 @@ struct ScannerDomain: ReducerProtocol {
         }
     }
 
+    struct Destinations: ReducerProtocol {
+        enum State: Equatable {
+            // sourcery: AnalyticsScreen = scanner_imageGallery
+            case imageGallery
+            // sourcery: AnalyticsScreen = scanner_documentImporter
+            case documentImporter
+        }
+
+        enum Action: Equatable {}
+
+        var body: some ReducerProtocolOf<Self> {
+            EmptyReducer()
+        }
+    }
+
     var messageInterval: DispatchQueue.SchedulerTimeType.Stride = 2.0
 
     @Dependency(\.erxTaskRepository) var repository: ErxTaskRepository
     @Dependency(\.fhirDateFormatter) var dateFormatter: FHIRDateFormatter
     @Dependency(\.schedulers) var scheduler: Schedulers
+    @Dependency(\.barcodeDetection) var barcodeDetection: BarcodeDetection
 
     // swiftlint:disable:next cyclomatic_complexity function_body_length
     private func core(state: inout State, action: Action) -> EffectTask<Action> {
@@ -151,28 +186,92 @@ struct ScannerDomain: ReducerProtocol {
         case .flashLightOff:
             state.isFlashOn = false
             return .none
+        case .importButtonTapped:
+            state.galleryActionSheet = Self.confirmationDialogState
+            return .none
+        case .openImageGallery:
+            state.destination = .imageGallery
+            return .none
+        case .openDocumentImporter:
+            state.destination = .documentImporter
+            return .none
+        case .closeImportActionSheet:
+            state.galleryActionSheet = nil
+            return .none
+        case let .response(.galleryImageReceived(image)):
+            guard let image else { return .none }
+            return .task {
+                .analyse(scanOutput:
+                    try await barcodeDetection.detectImage(image))
+            }
+        case let .response(.documentFileReceived(.success(result))):
+            guard let documentURL = result.first else {
+                return .none
+            }
+            return .task {
+                .analyse(scanOutput: try await barcodeDetection.detectDocument(documentURL))
+            }
+        case .response(.documentFileReceived(.failure)):
+            return .none
+        case .setNavigation(tag: .none):
+            state.destination = nil
+            return .none
         case .delegate:
+            return .none
+        case .destination,
+             .setNavigation:
             return .none
         }
     }
 
     var body: some ReducerProtocol<State, Action> {
         Reduce(self.core)
+            .ifLet(\.destination, action: /Action.destination) {
+                Destinations()
+            }
     }
 
     static let closeAlertState: AlertState<Action> = {
-        AlertState<Action>(
-            title: TextState(L10n.camTxtWarnCancelTitle),
-            primaryButton: .destructive(TextState(L10n.camTxtWarnContinue)),
-            secondaryButton: .cancel(TextState(L10n.camTxtWarnCancel), action: .send(.closeAlertCancelButtonTapped))
-        )
+        AlertState {
+            TextState(L10n.camTxtWarnCancelTitle)
+        } actions: {
+            ButtonState(role: .destructive, action: .send(.closeAlertCancelButtonTapped)) {
+                TextState(L10n.camTxtWarnContinue)
+            }
+            ButtonState(role: .cancel, action: .send(.none)) {
+                TextState(L10n.camTxtWarnCancel)
+            }
+        }
     }()
 
     static let savingAlertState: AlertState<Action> = {
-        AlertState(
-            title: TextState(L10n.alertErrorTitle),
-            message: TextState(L10n.scnMsgSavingError),
-            dismissButton: .default(TextState(L10n.alertBtnOk), action: .send(.alertDismissButtonTapped))
+        AlertState {
+            TextState(L10n.alertErrorTitle)
+        } actions: {
+            ButtonState(role: .cancel, action: .send(.alertDismissButtonTapped)) {
+                TextState(L10n.alertBtnOk)
+            }
+        } message: {
+            TextState(L10n.scnMsgSavingError)
+        }
+    }()
+
+    static let confirmationDialogState: ConfirmationDialogState<Action> = {
+        ConfirmationDialogState(
+            titleVisibility: .visible,
+            title: {
+                TextState(L10n.camTxtGallerySheetTitle)
+            }, actions: {
+                ButtonState(action: .send(.openImageGallery)) {
+                    TextState(L10n.camBtnGallerySheetPicture)
+                }
+                ButtonState(action: .send(.openDocumentImporter)) {
+                    TextState(L10n.camBtnGallerySheetDocument)
+                }
+                ButtonState(role: .cancel, action: .send(.closeImportActionSheet)) {
+                    TextState(L10n.camBtnGallerySheetCancel)
+                }
+            }
         )
     }()
 }

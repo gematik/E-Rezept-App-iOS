@@ -109,71 +109,6 @@ final class SettingsViewSnapshotTests: XCTestCase {
         assertSnapshots(matching: sut, as: figmaReference())
     }
 
-    func testSettingsView_App_Security_Biometry_Available_No_Selection() {
-        let sut = SettingsView(store: SettingsDomain.Store(
-            initialState: configuredSettingsDomainState(
-                withAvailableSecurityOptions: [.biometry(.faceID)],
-                andSelectedSecurityOption: nil
-            ),
-            reducer: EmptyReducer()
-        ))
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
-    }
-
-    func testSettingsView_App_Security_Biometry_Available_And_Selected() {
-        let sut = SettingsView(store: SettingsDomain.Store(
-            initialState: configuredSettingsDomainState(
-                withAvailableSecurityOptions: [.biometry(.faceID)],
-                andSelectedSecurityOption: .biometry(.faceID)
-            ),
-            reducer: EmptyReducer()
-        ))
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
-    }
-
-    func testSettingsView_App_Security_Biometry_Available_Unsecured_Selected() {
-        let sut = SettingsView(store: SettingsDomain.Store(
-            initialState: configuredSettingsDomainState(
-                withAvailableSecurityOptions: [.biometry(.faceID)],
-                andSelectedSecurityOption: .unsecured
-            ),
-            reducer: EmptyReducer()
-        ))
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
-    }
-
-    func testSettingsView_App_Security_Biometry_Unavailable_No_Selection() {
-        let sut = SettingsView(store: SettingsDomain.Store(
-            initialState: configuredSettingsDomainState(
-                withAvailableSecurityOptions: [],
-                andSelectedSecurityOption: nil
-            ),
-            reducer: EmptyReducer()
-        ))
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
-    }
-
-    func testSettingsView_App_Security_Biometry_Unvailable_Unsecured_Selected() {
-        let sut = SettingsView(store: SettingsDomain.Store(
-            initialState: configuredSettingsDomainState(
-                withAvailableSecurityOptions: [],
-                andSelectedSecurityOption: .unsecured
-            ),
-            reducer: EmptyReducer()
-        ))
-        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
-        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
-    }
-
     func testSettingsView_DemoMode_Disabled() {
         let sut = SettingsView(store: SettingsDomain.Store(
             initialState: configuredSettingsDomainState(
@@ -190,14 +125,6 @@ final class SettingsViewSnapshotTests: XCTestCase {
     func testSettingsView_DemoMode_Enabled() {
         let sut = SettingsView(store: SettingsDomain.Store(
             initialState: SettingsDomain.State(isDemoMode: true,
-                                               appSecurityState: AppSecurityDomain
-                                                   .State(
-                                                       availableSecurityOptions: [
-                                                           .biometry(.faceID),
-                                                           .password,
-                                                       ],
-                                                       selectedSecurityOption: nil
-                                                   ),
                                                appVersion: appVersion),
             reducer: EmptyReducer()
         ))
@@ -210,7 +137,6 @@ final class SettingsViewSnapshotTests: XCTestCase {
         let sut = SettingsView.TrackingComplyView(store: SettingsDomain.Store(
             initialState: SettingsDomain.State(
                 isDemoMode: false,
-                appSecurityState: AppSecurityDomain.State(availableSecurityOptions: [.password]),
                 destination: .complyTracking
             ),
             reducer: EmptyReducer()
@@ -222,8 +148,8 @@ final class SettingsViewSnapshotTests: XCTestCase {
         // swiftlint:disable:next discouraged_optional_collection
         profiles: [UserProfile]? = nil,
         isDemoMode: Bool = false,
-        withAvailableSecurityOptions availableSecurityOptions: [AppSecurityOption],
-        andSelectedSecurityOption selectedSecurityOption: AppSecurityOption?,
+        withAvailableSecurityOptions _: [AppSecurityOption],
+        andSelectedSecurityOption _: AppSecurityOption?,
         appVersion: AppVersion? = nil,
         trackerOptIn: Bool = false
     ) -> SettingsDomain.State {
@@ -236,11 +162,6 @@ final class SettingsViewSnapshotTests: XCTestCase {
         ]
 
         return SettingsDomain.State(isDemoMode: isDemoMode,
-                                    appSecurityState: AppSecurityDomain
-                                        .State(
-                                            availableSecurityOptions: availableSecurityOptions,
-                                            selectedSecurityOption: selectedSecurityOption
-                                        ),
                                     profiles: ProfilesDomain.State(
                                         profiles: profiles,
                                         selectedProfileId: profiles.first!.id

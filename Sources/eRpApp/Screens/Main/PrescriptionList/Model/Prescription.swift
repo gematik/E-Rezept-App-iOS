@@ -58,13 +58,15 @@ struct Prescription: Equatable, Identifiable {
     init(
         erxTask: ErxTask,
         date: Date = Date(),
-        dateFormatter: UIDateFormatter = UIDateFormatter.liveValue
+        dateFormatter: UIDateFormatter
     ) {
         if erxTask.medicationRequest.multiplePrescription?.mark == true {
             type = .multiplePrescription
         }
-        if erxTask.flowType == .directAssignment ? true : erxTask.id
-            .starts(with: ErxTask.FlowType.Code.kDirectAssignment) {
+        if erxTask.flowType == .directAssignment ||
+            erxTask.flowType == .directAssignmentForPKV ||
+            erxTask.id.starts(with: ErxTask.FlowType.Code.kDirectAssignment) ||
+            erxTask.id.starts(with: ErxTask.FlowType.Code.kDirectAssignmentForPKV) {
             type = .directAssignment
         }
         if erxTask.source == .scanner {
@@ -95,7 +97,7 @@ struct Prescription: Equatable, Identifiable {
         uiDateFormatter: UIDateFormatter
     ) -> Status {
         switch erxTask.status {
-        case .ready, .inProgress:
+        case .ready, .inProgress, .computed:
             if type == .scanned,
                let authoredOn = erxTask.authoredOn?.date {
                 let localizedDateString = uiDateFormatter.relativeDate(from: authoredOn)
@@ -165,9 +167,9 @@ struct Prescription: Equatable, Identifiable {
 
     var isArchived: Bool {
         switch viewStatus {
-        case .archived(message: _): return true
-        case .open(until: _),
-             .redeem(at: _),
+        case .archived: return true
+        case .open,
+             .redeem,
              .undefined,
              .error:
             return false
@@ -187,6 +189,8 @@ struct Prescription: Equatable, Identifiable {
              (.inProgress, _),
              (.cancelled, _),
              (.completed, _),
+             (.computed(.sent), _),
+             (.computed(.waiting), _),
              (.undefined, _),
              (.error, _): return false
         }
@@ -292,6 +296,8 @@ extension Prescription {
         case (.inProgress, _): return L10n.prscStatusInProgress.key
         case (.completed, _): return L10n.prscStatusCompleted.key
         case (.cancelled, _): return L10n.prscStatusCanceled.key
+        case (.computed(.sent), _): return L10n.prscStatusSent.key
+        case (.computed(.waiting), _): return L10n.prscStatusWaiting.key
         case (.draft, _),
              (.undefined, _): return L10n.prscStatusUndefined.key
         case (.error, _): return L10n.prscStatusError.key
@@ -313,6 +319,8 @@ extension Prescription {
         case (.ready, .archived): return Image(systemName: SFSymbolName.clockWarning)
         case (.ready, _): return nil
         case (.inProgress, _): return nil
+        case (.computed(.sent), _): return Image(Asset.Prescriptions.checkmarkDouble)
+        case (.computed(.waiting), _): return nil
         case (.completed, _): return Image(Asset.Prescriptions.checkmarkDouble)
         case (.cancelled, _): return Image(systemName: SFSymbolName.cross)
         case (.draft, _),
@@ -329,8 +337,10 @@ extension Prescription {
         case (.draft, _),
              (.undefined, _),
              (.completed, _),
+             (.computed(.sent), _),
              (.ready, .archived): return Colors.systemGray
         case (.ready, .redeem),
+             (.computed(.waiting), _),
              (.inProgress, _): return Colors.yellow900
         case (.ready, _): return Colors.primary900
         case (.cancelled, _): return Colors.red900
@@ -346,8 +356,10 @@ extension Prescription {
         case (.draft, _),
              (.undefined, _),
              (.completed, _),
+             (.computed(.sent), _),
              (.ready, .archived): return Colors.systemGray2
         case (.ready, .redeem),
+             (.computed(.waiting), _),
              (.inProgress, _): return Colors.yellow500
         case (.ready, _): return Colors.primary500
         case (.cancelled, _): return Colors.red500
@@ -363,8 +375,10 @@ extension Prescription {
         case (.draft, _),
              (.undefined, _),
              (.completed, _),
+             (.computed(.sent), _),
              (.ready, .archived): return Colors.secondary
         case (.ready, .redeem),
+             (.computed(.waiting), _),
              (.inProgress, _): return Colors.yellow200
         case (.ready, _): return Colors.primary100
         case (.cancelled, _): return Colors.red100
@@ -381,13 +395,21 @@ extension Prescription: Hashable {
 
 extension Prescription {
     enum Dummies {
-        static let prescriptionReady = Prescription(erxTask: ErxTask.Demo.erxTaskReady)
-        static let prescriptionRedeemed = Prescription(erxTask: ErxTask.Demo.erxTaskRedeemed)
-        static let prescriptionDirectAssignment = Prescription(erxTask: ErxTask.Demo.erxTaskDirectAssignment)
-        static let prescriptionError = Prescription(erxTask: ErxTask.Demo.erxTaskError)
-        static let scanned = Prescription(erxTask: ErxTask.Demo.erxTaskScanned1)
-        static let prescriptions = ErxTask.Demo.erxTasks.map { Prescription(erxTask: $0) }
+        static let prescriptionReady = Prescription(erxTask: ErxTask.Demo.erxTaskReady,
+                                                    dateFormatter: UIDateFormatter.previewValue)
+        static let prescriptionRedeemed = Prescription(erxTask: ErxTask.Demo.erxTaskRedeemed,
+                                                       dateFormatter: UIDateFormatter.previewValue)
+        static let prescriptionDirectAssignment = Prescription(erxTask: ErxTask.Demo.erxTaskDirectAssignment,
+                                                               dateFormatter: UIDateFormatter.previewValue)
+        static let prescriptionError = Prescription(erxTask: ErxTask.Demo.erxTaskError,
+                                                    dateFormatter: UIDateFormatter.previewValue)
+        static let scanned = Prescription(erxTask: ErxTask.Demo.erxTaskScanned1,
+                                          dateFormatter: UIDateFormatter.previewValue)
+        static let prescriptions = ErxTask.Demo.erxTasks.map {
+            Prescription(erxTask: $0, dateFormatter: UIDateFormatter.previewValue)
+        }
+
         static let prescriptionsScanned = ErxTask.Demo.erxTasksScanned
-            .map { Prescription(erxTask: $0) }
+            .map { Prescription(erxTask: $0, dateFormatter: UIDateFormatter.previewValue) }
     }
 }

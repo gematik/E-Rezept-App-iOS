@@ -152,17 +152,16 @@ struct OrderHealthCardDomain: ReducerProtocol {
             return .none
         case .searchList:
             var result = [HealthInsuranceCompany]()
-            for insurance in state.insuranceCompanies {
-                if insurance.name.lowercased().contains(state.searchText.lowercased()) {
-                    result.append(insurance)
-                }
+            for insurance in state.insuranceCompanies
+                where insurance.name.lowercased().contains(state.searchText.lowercased()) {
+                result.append(insurance)
             }
             state.searchHealthInsurance = result
             return .none
         case let .setService(service):
             state.serviceInquiryId = service.id
             state.serviceInquiry = service
-            return Effect(value: .advance)
+            return EffectTask(value: .advance)
         case let .selectHealthInsurance(id):
             state.healthInsuranceCompanyId = id
             state.insuranceCompany = state.insuranceCompanies.first { $0.id == state.healthInsuranceCompanyId }
@@ -172,7 +171,7 @@ struct OrderHealthCardDomain: ReducerProtocol {
             } else {
                 state.serviceInquiryId = -1
             }
-            return Effect(value: .advance)
+            return EffectTask(value: .advance)
         case .resetList:
             state.searchHealthInsurance = state.insuranceCompanies
             return .none
@@ -228,7 +227,7 @@ extension OrderHealthCardDomain {
         }
 
         var hasContactInformationForPin: Bool {
-            !healthCardAndPinPhone.isEmpty || !pinUrl.isEmpty || !subjectPinMail.isEmpty || !bodyPinMail.isEmpty
+            !healthCardAndPinPhone.isEmpty || !pinUrl.isEmpty || !healthCardAndPinMail.isEmpty
         }
 
         var hasContactInformationForHealthCardAndPin: Bool {

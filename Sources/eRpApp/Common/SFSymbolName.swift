@@ -89,6 +89,7 @@ public enum SFSymbolName {
     public static let clipboardDoc = "doc.text.below.ecg"
     public static let star = "star"
     public static let starFill = "star.fill"
+    public static let photoOnRect = "photo.on.rectangle"
 
     public static let numbers1circle = "1.circle"
     public static let numbers2circle = "2.circle"
@@ -137,6 +138,7 @@ public enum SFSymbolName {
     public static var calendarWarning = "calendar.badge.exclamationmark"
 
     public static var clockWarning = "clock.badge.exclamationmark"
+    public static var iPhonelocked = "lock.iphone"
 
     public static let hourglass = "hourglass"
     public static var euroSign: String {
@@ -151,3 +153,5 @@ public enum SFSymbolName {
 public enum UnicodeCharacter {
     public static let bullet = "\u{2022}"
 }
+
+// swiftlint:enable missing_docs

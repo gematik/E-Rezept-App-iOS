@@ -188,7 +188,7 @@ struct PrescriptionDetailDomain: ReducerProtocol {
             } else {
                 erxTask.update(with: nil)
             }
-            state.prescription = Prescription(erxTask: erxTask)
+            state.prescription = Prescription(erxTask: erxTask, dateFormatter: uiDateFormatter)
             return saveErxTasks(erxTasks: [erxTask])
         case let .response(.redeemedOnSavedReceived(success)):
             if !success {
@@ -312,11 +312,17 @@ extension PrescriptionDetailDomain {
     }
 
     static var confirmDeleteAlertState: ErpAlertState<Action> = {
-        ErpAlertState<Action>(
-            title: TextState(L10n.dtlTxtDeleteAlertTitle),
-            message: TextState(L10n.dtlTxtDeleteAlertMessage),
-            primaryButton: .destructive(TextState(L10n.dtlTxtDeleteYes), action: .send(.confirmedDelete)),
-            secondaryButton: .cancel(TextState(L10n.dtlTxtDeleteNo), action: .send(.setNavigation(tag: nil)))
+        .init(
+            title: L10n.dtlTxtDeleteAlertTitle,
+            actions: {
+                ButtonState(role: .destructive, action: .confirmedDelete) {
+                    .init(L10n.dtlTxtDeleteYes)
+                }
+                ButtonState(role: .cancel, action: .setNavigation(tag: .none)) {
+                    .init(L10n.dtlTxtDeleteNo)
+                }
+            },
+            message: L10n.dtlTxtDeleteAlertMessage
         )
     }()
 
@@ -330,25 +336,36 @@ extension PrescriptionDetailDomain {
             assertionFailure("check prescription.isDeletable state for more reasons")
         }
 
-        return ErpAlertState(
-            title: TextState(title),
-            dismissButton: .default(TextState(L10n.alertBtnOk), action: .send(.setNavigation(tag: nil)))
-        )
+        return .init(title: title) {
+            ButtonState(role: .cancel, action: .setNavigation(tag: .none)) {
+                .init(L10n.alertBtnOk)
+            }
+        }
     }
 
     static func deleteFailedAlertState(error: CodedError, localizedError: String) -> ErpAlertState<Action> {
-        .init(for: error,
-              title: TextState(L10n.dtlTxtDeleteMissingTokenAlertTitle),
-              primaryButton: .default(TextState(L10n.prscFdBtnErrorBanner),
-                                      action: .send(.openEmailClient(body: localizedError))),
-              secondaryButton: .default(TextState(L10n.alertBtnOk), action: .send(.setNavigation(tag: nil))))
+        .init(
+            for: error,
+            title: L10n.dtlTxtDeleteMissingTokenAlertTitle
+        ) {
+            ButtonState(action: .openEmailClient(body: localizedError)) {
+                .init(L10n.prscFdBtnErrorBanner)
+            }
+            ButtonState(role: .cancel, action: .setNavigation(tag: .none)) {
+                .init(L10n.alertBtnOk)
+            }
+        }
     }
 
     static func missingTokenAlertState() -> ErpAlertState<Action> {
-        ErpAlertState(
-            title: TextState(L10n.dtlTxtDeleteMissingTokenAlertTitle),
-            message: TextState(L10n.dtlTxtDeleteMissingTokenAlertMessage),
-            dismissButton: .default(TextState(L10n.alertBtnOk), action: .send(.setNavigation(tag: nil)))
+        .init(
+            title: L10n.dtlTxtDeleteMissingTokenAlertTitle,
+            actions: {
+                ButtonState(role: .cancel, action: .setNavigation(tag: .none)) {
+                    .init(L10n.alertBtnOk)
+                }
+            },
+            message: L10n.dtlTxtDeleteMissingTokenAlertMessage
         )
     }
 }

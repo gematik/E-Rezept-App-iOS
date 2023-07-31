@@ -28,7 +28,7 @@ struct TermsOfUseView: View {
 
 extension TermsOfUseView {
     struct WebView: UIViewRepresentable {
-        // swiftlint:disable weak_delegate
+        // swiftlint:disable:next weak_delegate
         let navigationDelegate = DataPrivacyTermsOfUseNavigationDelegate()
 
         func makeUIView(context _: Context) -> WKWebView {

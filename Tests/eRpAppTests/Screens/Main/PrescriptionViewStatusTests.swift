@@ -23,12 +23,14 @@ import XCTest
 
 final class PrescriptionViewStatusTests: XCTestCase {
     func task(status: ErxTask.Status = .ready,
+              flowType: ErxTask.FlowType? = nil,
               expiresOn: String? = DemoDate.createDemoDate(.tomorrow),
               acceptedUntil: String? = DemoDate.createDemoDate(.twentyEightDaysAhead),
               multiplePrescription: MultiplePrescription? = nil) -> ErxTask {
         ErxTask(
             identifier: "2390f983-1e67-11b2-8555-63bf44e44fb8",
             status: status,
+            flowType: flowType,
             accessCode: "e46ab30636811adaa210a719021701895f5787cab2c65420ffd02b3df25f6e24",
             fullUrl: nil,
             authoredOn: DemoDate.createDemoDate(.today),
@@ -79,7 +81,7 @@ final class PrescriptionViewStatusTests: XCTestCase {
         // given
         let task = task()
         // when
-        let sut = Prescription(erxTask: task)
+        let sut = Prescription(erxTask: task, dateFormatter: .testValue)
         // then
         expect(sut.viewStatus).to(equal(.open(until: "Noch 28 Tage gültig")))
     }
@@ -88,16 +90,17 @@ final class PrescriptionViewStatusTests: XCTestCase {
         // given
         let task = task(status: .inProgress)
         // when
-        let sut = Prescription(erxTask: task)
+        let sut = Prescription(erxTask: task, dateFormatter: .testValue)
         // then
         expect(sut.viewStatus).to(equal(.open(until: "Noch 28 Tage gültig")))
+        expect(sut.type).to(equal(.regular))
     }
 
     func testTaskIsClosed() { // CLOSE
         // given
         let task = task(status: .completed)
         // when
-        let sut = Prescription(erxTask: task)
+        let sut = Prescription(erxTask: task, dateFormatter: .testValue)
         // then
         expect(sut.viewStatus).to(equal(.archived(message: "Eingelöst: Heute")))
     }
@@ -106,7 +109,7 @@ final class PrescriptionViewStatusTests: XCTestCase {
         // given
         let task = task(acceptedUntil: DemoDate.createDemoDate(.yesterday))
         // when
-        let sut = Prescription(erxTask: task)
+        let sut = Prescription(erxTask: task, dateFormatter: .testValue)
         // then
         expect(sut.viewStatus).to(equal(.open(until: "Nur noch heute als Selbstzahler einlösbar")))
     }
@@ -116,7 +119,7 @@ final class PrescriptionViewStatusTests: XCTestCase {
         let task = task(expiresOn: nil,
                         acceptedUntil: nil)
         // when
-        let sut = Prescription(erxTask: task)
+        let sut = Prescription(erxTask: task, dateFormatter: .testValue)
         // then
         expect(sut.viewStatus).to(equal(.open(until: "Keine Angabe")))
     }
@@ -126,7 +129,7 @@ final class PrescriptionViewStatusTests: XCTestCase {
         let task = task(expiresOn: DemoDate.createDemoDate(.yesterday),
                         acceptedUntil: DemoDate.createDemoDate(.yesterday))
         // when
-        let sut = Prescription(erxTask: task)
+        let sut = Prescription(erxTask: task, dateFormatter: .testValue)
         // then
         expect(sut.viewStatus).to(equal(.archived(message: "Nicht mehr gültig")))
     }
@@ -141,18 +144,39 @@ final class PrescriptionViewStatusTests: XCTestCase {
             source: .scanner
         )
         // when
-        let sut = Prescription(erxTask: task)
+        let sut = Prescription(erxTask: task, dateFormatter: .testValue)
         // then
         expect(sut.viewStatus).to(equal(.archived(message: "Eingelöst: Gestern")))
+        expect(sut.type).to(equal(.scanned))
     }
 
     func testTaskIsUndefined() {
         // given
         let task = task(status: .draft)
         // when
-        let sut = Prescription(erxTask: task)
+        let sut = Prescription(erxTask: task, dateFormatter: .testValue)
         // then
         expect(sut.viewStatus).to(equal(.undefined))
+    }
+
+    func testDirectAssignment() {
+        // given
+        let task = task(status: .ready, flowType: .directAssignment)
+        // when
+        let sut = Prescription(erxTask: task, dateFormatter: UIDateFormatter.testValue)
+        // then
+        expect(sut.viewStatus).to(equal(.open(until: "Noch 28 Tage gültig")))
+        expect(sut.type).to(equal(.directAssignment))
+    }
+
+    func testDirectAssignmentForPKV() {
+        // given
+        let task = task(status: .ready, flowType: .directAssignmentForPKV)
+        // when
+        let sut = Prescription(erxTask: task, dateFormatter: UIDateFormatter.testValue)
+        // then
+        expect(sut.viewStatus).to(equal(.open(until: "Noch 28 Tage gültig")))
+        expect(sut.type).to(equal(.directAssignment))
     }
 
     func testTaskIsMultiplePrescriptionForLaterDate() {
@@ -167,8 +191,9 @@ final class PrescriptionViewStatusTests: XCTestCase {
         )
         let task = task(status: .ready, multiplePrescription: multiPrescription)
         // when
-        let sut = Prescription(erxTask: task)
+        let sut = Prescription(erxTask: task, dateFormatter: .testValue)
         // then
         expect(sut.viewStatus).to(equal(.redeem(at: "Einlösbar ab 26.01.2323")))
+        expect(sut.type).to(equal(.multiplePrescription))
     }
 }

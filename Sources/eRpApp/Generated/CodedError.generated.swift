@@ -101,25 +101,6 @@ extension AVScannerViewController.Error: CodedError {
     }
 }
 
-extension AppAuthenticationBiometricsDomain.Error: CodedError {
-    var erpErrorCode: String {
-        switch self {
-            case .cannotEvaluatePolicy:
-                return "i-00301"
-            case .failedEvaluatingPolicy:
-                return "i-00302"
-        }
-    }
-    var erpErrorCodeList: [String] {
-        switch self {
-            case .cannotEvaluatePolicy:
-                return [erpErrorCode]
-            case .failedEvaluatingPolicy:
-                return [erpErrorCode]
-        }
-    }
-}
-
 extension AppSecurityManagerError: CodedError {
     var erpErrorCode: String {
         switch self {
@@ -136,6 +117,25 @@ extension AppSecurityManagerError: CodedError {
             case .localAuthenticationContext:
                 return [erpErrorCode]
             default:
+                return [erpErrorCode]
+        }
+    }
+}
+
+extension AuthenticationChallengeProviderError: CodedError {
+    var erpErrorCode: String {
+        switch self {
+            case .cannotEvaluatePolicy:
+                return "i-00301"
+            case .failedEvaluatingPolicy:
+                return "i-00302"
+        }
+    }
+    var erpErrorCodeList: [String] {
+        switch self {
+            case .cannotEvaluatePolicy:
+                return [erpErrorCode]
+            case .failedEvaluatingPolicy:
                 return [erpErrorCode]
         }
     }
@@ -246,6 +246,33 @@ extension ChargeItemDomainServiceAuthenticateResult.Error: CodedError {
     }
 }
 
+extension ChargeItemDomainServiceDeleteResult.Error: CodedError {
+    var erpErrorCode: String {
+        switch self {
+            case .localStore:
+                return "i-03401"
+            case .loginHandler:
+                return "i-03402"
+            case .erxRepository:
+                return "i-03403"
+            case .unexpected:
+                return "i-03404"
+        }
+    }
+    var erpErrorCodeList: [String] {
+        switch self {
+            case let .localStore(error):
+                return [erpErrorCode] + error.erpErrorCodeList
+            case let .loginHandler(error):
+                return [erpErrorCode] + error.erpErrorCodeList
+            case let .erxRepository(error):
+                return [erpErrorCode] + error.erpErrorCodeList
+            default:
+                return [erpErrorCode]
+        }
+    }
+}
+
 extension ChargeItemDomainServiceFetchResult.Error: CodedError {
     var erpErrorCode: String {
         switch self {
@@ -266,25 +293,6 @@ extension ChargeItemDomainServiceFetchResult.Error: CodedError {
             case let .loginHandler(error):
                 return [erpErrorCode] + error.erpErrorCodeList
             case let .erxRepository(error):
-                return [erpErrorCode] + error.erpErrorCodeList
-            default:
-                return [erpErrorCode]
-        }
-    }
-}
-
-extension ChargeItemListDomainServiceDeleteResult.Error: CodedError {
-    var erpErrorCode: String {
-        switch self {
-            case .localStore:
-                return "i-03401"
-            case .unexpected:
-                return "i-03402"
-        }
-    }
-    var erpErrorCodeList: [String] {
-        switch self {
-            case let .localStore(error):
                 return [erpErrorCode] + error.erpErrorCodeList
             default:
                 return [erpErrorCode]
@@ -342,6 +350,39 @@ extension ChargeItemListDomainServiceRevokeResult.Error: CodedError {
                 return [erpErrorCode] + error.erpErrorCodeList
             case let .erxRepository(error):
                 return [erpErrorCode] + error.erpErrorCodeList
+            default:
+                return [erpErrorCode]
+        }
+    }
+}
+
+extension ChargeItemPDFServiceError: CodedError {
+    var erpErrorCode: String {
+        switch self {
+            case .couldNotCreateDestinationURL:
+                return "i-03501"
+            case .couldNotCreatePDFStringForParsing:
+                return "i-03502"
+            case .parsingError:
+                return "i-03503"
+            case .failedToCreateAttachment:
+                return "i-03504"
+            case .dataMissingPatient:
+                return "i-03505"
+            case .dataMissingDoctor:
+                return "i-03506"
+            case .dataMissingPharmacy:
+                return "i-03507"
+            case .dataMissingInvoice:
+                return "i-03508"
+        }
+    }
+    var erpErrorCodeList: [String] {
+        switch self {
+            case .parsingError:
+                return [erpErrorCode]
+            case .failedToCreateAttachment:
+                return [erpErrorCode]
             default:
                 return [erpErrorCode]
         }

@@ -64,8 +64,8 @@ enum KeychainAccessHelperError: Swift.Error, Equatable {
 }
 
 extension KeychainAccessHelper {
-    @inline(__always)
-    var defaultService: String {
+    // swiftlint:disable:next attributes
+    @inline(__always) var defaultService: String {
         "de.gematik.ti.erp.app"
     }
 

@@ -68,4 +68,22 @@ extension ModelsR4.Organization {
 
         return postalCodeAndCity
     }
+
+    var twoLineAddress: String? {
+        guard let address = address?.first else { return nil }
+
+        let postalCodeAndCity = [
+            address.postalCode?.value?.string,
+            address.city?.value?.string,
+        ]
+        .compactMap { $0 }
+        .joined(separator: " ")
+
+        return [
+            address.line?.first?.value?.string,
+            postalCodeAndCity,
+        ]
+        .compactMap { $0 }
+        .joined(separator: "\n")
+    }
 }

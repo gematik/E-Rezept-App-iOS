@@ -21,9 +21,74 @@ import Dependencies
 import Foundation
 import LocalAuthentication
 
+typealias AuthenticationChallengeProviderResult = Result<Bool, AuthenticationChallengeProviderError>
+
+protocol AuthenticationChallengeProvider {
+    func startAuthenticationChallenge()
+        -> AnyPublisher<AuthenticationChallengeProviderResult, Never>
+}
+
+// sourcery: CodedError = "003"
+enum AuthenticationChallengeProviderError: Swift.Error, LocalizedError, Equatable {
+    // sourcery: errorCode = "01"
+    case cannotEvaluatePolicy(NSError?)
+    // sourcery: errorCode = "02"
+    case failedEvaluatingPolicy(NSError?)
+
+    var errorDescription: String? {
+        switch self {
+        case let .cannotEvaluatePolicy(error):
+            guard let error = error else {
+                return L10n.authTxtBiometricsFailedDefault.text
+            }
+            if LAError.Code(rawValue: error.code) == LAError.biometryLockout {
+                return L10n.authTxtBiometricsLockout.text
+            } else {
+                return error.localizedDescription
+            }
+        case let .failedEvaluatingPolicy(error):
+            guard let error = error else {
+                return L10n.authTxtBiometricsFailedDefault.text
+            }
+            switch LAError.Code(rawValue: error.code) {
+            case LAError.authenticationFailed:
+                return L10n.authTxtBiometricsFailedAuthenticationFailed.text
+            case LAError.userFallback:
+                return L10n.authTxtBiometricsFailedUserFallback.text
+            case LAError.biometryNotEnrolled:
+                return L10n.authTxtBiometricsFailedNotEnrolled.text
+            default:
+                return L10n.authTxtBiometricsFailedDefault.text
+            }
+        }
+    }
+
+    var isUserFallBack: Bool {
+        if case let .failedEvaluatingPolicy(error) = self,
+           let laError = error as? LAError, laError.code == .userFallback {
+            return true
+        }
+        return false
+    }
+
+    static func ==(lhs: AuthenticationChallengeProviderError,
+                   rhs: AuthenticationChallengeProviderError) -> Bool {
+        switch (lhs, rhs) {
+        case let (.cannotEvaluatePolicy(lError),
+                  .cannotEvaluatePolicy(rError)):
+            return lError?.code == rError?.code
+        case let (.failedEvaluatingPolicy(lError),
+                  .failedEvaluatingPolicy(rError)):
+            return lError?.localizedDescription == rError?.localizedDescription
+        default:
+            return false
+        }
+    }
+}
+
 // swiftlint:disable:next type_name
 struct BiometricsAuthenticationChallengeProvider: AuthenticationChallengeProvider {
-    func startAuthenticationChallenge() -> AnyPublisher<AppAuthenticationBiometricsDomain.AuthenticationResult, Never> {
+    func startAuthenticationChallenge() -> AnyPublisher<AuthenticationChallengeProviderResult, Never> {
         Deferred {
             Future { promise in
                 startAuthenticationChallenge {
@@ -34,8 +99,7 @@ struct BiometricsAuthenticationChallengeProvider: AuthenticationChallengeProvide
         .eraseToAnyPublisher()
     }
 
-    private func startAuthenticationChallenge(completion: @escaping (AppAuthenticationBiometricsDomain
-            .AuthenticationResult) -> Void) {
+    private func startAuthenticationChallenge(completion: @escaping (AuthenticationChallengeProviderResult) -> Void) {
         var error: NSError?
         let authenticationContext = LAContext()
 

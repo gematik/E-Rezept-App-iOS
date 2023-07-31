@@ -22,8 +22,7 @@ import SwiftUI
 public struct SubTitle: View {
     let configuration: SubTitleConfiguration
 
-    @Environment(\.subTitleStyle)
-    var subTitleStyle: AnySubTitleStyle
+    @Environment(\.subTitleStyle) var subTitleStyle: AnySubTitleStyle
 
     public init(title: LocalizedStringKey, description: LocalizedStringKey? = nil, details: LocalizedStringKey? = nil) {
         configuration = SubTitleConfiguration(

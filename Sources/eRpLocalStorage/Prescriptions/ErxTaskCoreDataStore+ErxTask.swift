@@ -73,7 +73,10 @@ extension ErxTaskCoreDataStore {
     /// List all tasks contained in the store
     public func listAllTasks() -> AnyPublisher<[ErxTask], LocalStoreError> {
         let request: NSFetchRequest<ErxTaskEntity> = ErxTaskEntity.fetchRequest()
-        request.sortDescriptors = [NSSortDescriptor(key: #keyPath(ErxTaskEntity.authoredOn), ascending: false)]
+        request.sortDescriptors = [
+            NSSortDescriptor(key: #keyPath(ErxTaskEntity.authoredOn), ascending: false),
+            NSSortDescriptor(key: #keyPath(ErxTaskEntity.medication.name), ascending: false),
+        ]
         if let identifier = profileId {
             request.predicate = NSPredicate(
                 format: "%K == %@",

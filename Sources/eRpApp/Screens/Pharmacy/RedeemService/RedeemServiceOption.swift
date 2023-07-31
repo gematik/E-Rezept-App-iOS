@@ -51,44 +51,62 @@ struct RedeemOptionProvider: Equatable {
     let pharmacy: PharmacyLocation
 
     var reservationService: RedeemServiceOption {
-        if wasAuthenticatedBefore {
-            return pharmacy.hasReservationService ? .erxTaskRepository : .noService
-        } else {
-            if pharmacy.hasReservationAVSService {
-                return .avs
+        guard pharmacy.hasAnyAVSService else {
+            if wasAuthenticatedBefore, pharmacy.hasReservationService {
+                return .erxTaskRepository
             } else if pharmacy.hasReservationService {
                 return .erxTaskRepositoryAvailable
             } else {
                 return .noService
             }
         }
+
+        if wasAuthenticatedBefore, pharmacy.hasReservationAVSService {
+            return .erxTaskRepository
+        } else if pharmacy.hasReservationAVSService {
+            return .avs
+        } else {
+            return .noService
+        }
     }
 
     var shipmentService: RedeemServiceOption {
-        if wasAuthenticatedBefore {
-            return pharmacy.hasShipmentService ? .erxTaskRepository : .noService
-        } else {
-            if pharmacy.hasShipmentAVSService {
-                return .avs
+        guard pharmacy.hasAnyAVSService else {
+            if wasAuthenticatedBefore, pharmacy.hasShipmentService {
+                return .erxTaskRepository
             } else if pharmacy.hasShipmentService {
                 return .erxTaskRepositoryAvailable
             } else {
                 return .noService
             }
         }
+
+        if wasAuthenticatedBefore, pharmacy.hasShipmentAVSService {
+            return .erxTaskRepository
+        } else if pharmacy.hasShipmentAVSService {
+            return .avs
+        } else {
+            return .noService
+        }
     }
 
     var deliveryService: RedeemServiceOption {
-        if wasAuthenticatedBefore {
-            return pharmacy.hasDeliveryService ? .erxTaskRepository : .noService
-        } else {
-            if pharmacy.hasDeliveryAVSService {
-                return .avs
+        guard pharmacy.hasAnyAVSService else {
+            if wasAuthenticatedBefore, pharmacy.hasDeliveryService {
+                return .erxTaskRepository
             } else if pharmacy.hasDeliveryService {
                 return .erxTaskRepositoryAvailable
             } else {
                 return .noService
             }
+        }
+
+        if wasAuthenticatedBefore, pharmacy.hasDeliveryAVSService {
+            return .erxTaskRepository
+        } else if pharmacy.hasDeliveryAVSService {
+            return .avs
+        } else {
+            return .noService
         }
     }
 }

@@ -19,7 +19,6 @@
 import Combine
 import ComposableArchitecture
 
-// swiftlint:disable:next type_body_length
 struct HealthCardPasswordDomain: ReducerProtocol {
     typealias Store = StoreOf<Self>
 

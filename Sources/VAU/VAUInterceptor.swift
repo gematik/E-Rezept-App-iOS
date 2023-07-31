@@ -68,6 +68,7 @@ class VAUInterceptor: Interceptor {
     }
 }
 
+// swiftlint:disable:next large_tuple
 extension Publisher where Output == (BearerToken, VAUCertificate, URL), Failure == VAUError {
     // Prepare outer request (encrypt original request and embed it into a new one)
     // [REQ:gemSpec_Krypt:A_20161-01]

@@ -139,6 +139,10 @@ screens:
     name: "healthCardPassword:readCard"
   healthCardPassword_scanner:
     name: "healthCardPassword:scanner"
+  scanner_imageGallery:
+    name: "scanner:imageGallery"
+  scanner_documentImporter:
+    name: "scanner:documentImporter"
   settings:
     name: "settings"
   settings_accessibility: # not used in iOS

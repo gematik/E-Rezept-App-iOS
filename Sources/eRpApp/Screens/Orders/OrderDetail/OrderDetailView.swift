@@ -166,7 +166,7 @@ struct OrderDetailView: View {
                         .disabled(!viewStore.hasEmailContact)
                         .accessibility(identifier: A11y.orderDetail.list.ordDetailBtnContactEmail)
                 } label: {
-                    Label(L10n.ordDetailTxtContact, systemImage: SFSymbolName.threeDots)
+                    Label(L10n.ordDetailTxtContact, systemImage: SFSymbolName.ellipsis)
                         .foregroundColor(Colors.primary700)
                         .accessibility(identifier: A11y.orderDetail.list.ordDetailBtnContact)
                         .accessibility(label: Text(L10n.ordDetailTxtContact))

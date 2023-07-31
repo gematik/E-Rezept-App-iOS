@@ -262,8 +262,12 @@ struct ChargeItemListDomain: ReducerProtocol {
         case let .select(chargeItem):
             guard let fatChargeItem = chargeItem.original.chargeItem
             else { return .none }
-
-            state.destination = .chargeItem(.init(chargeItem: fatChargeItem))
+            state.destination = .chargeItem(
+                .init(
+                    profileId: state.profileId,
+                    chargeItem: fatChargeItem
+                )
+            )
             return .none
         case .fetchChargeItems:
             return .concatenate(
@@ -407,6 +411,8 @@ struct ChargeItemListDomain: ReducerProtocol {
                 switch deleteLocalChargeItemsResult {
                 case .success:
                     break // do-nothing
+                case .notAuthenticated:
+                    break // not required for local
                 case let .error(error):
                     state.destination = .alert(AlertStates.deleteChargeItemsErrorFor(error: error))
                 }

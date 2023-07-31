@@ -26,8 +26,7 @@ import SwiftUI
 struct ChargeItemListView: View {
     let store: ChargeItemListDomain.Store
 
-    @ObservedObject
-    private var viewStore: ViewStore<ViewState, ChargeItemListDomain.Action>
+    @ObservedObject private var viewStore: ViewStore<ViewState, ChargeItemListDomain.Action>
 
     init(store: ChargeItemListDomain.Store) {
         self.store = store
@@ -219,8 +218,7 @@ struct ChargeItemListView: View {
 
 extension ChargeItemListView {
     private struct ChargeItemListView: View {
-        @ObservedObject
-        var viewStore: ViewStore<ViewState, ChargeItemListDomain.Action>
+        @ObservedObject var viewStore: ViewStore<ViewState, ChargeItemListDomain.Action>
 
         var body: some View {
             List {

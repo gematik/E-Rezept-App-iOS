@@ -109,6 +109,7 @@ struct OrderDetailDomain: ReducerProtocol {
     @Dependency(\.currentAppVersion) var version: AppVersion
     @Dependency(\.userSession) var userSession: UserSession
     @Dependency(\.fhirDateFormatter) var fhirDateFormatter: FHIRDateFormatter
+    @Dependency(\.uiDateFormatter) var uiDateFormatter: UIDateFormatter
 
     var body: some ReducerProtocol<State, Action> {
         Reduce(self.core)
@@ -121,7 +122,7 @@ struct OrderDetailDomain: ReducerProtocol {
     private func core(state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
         case let .didSelectMedication(erxTask):
-            let prescription = Prescription(erxTask: erxTask)
+            let prescription = Prescription(erxTask: erxTask, dateFormatter: uiDateFormatter)
             state.destination = .prescriptionDetail(
                 PrescriptionDetailDomain.State(
                     prescription: prescription,
@@ -305,21 +306,28 @@ extension OrderDetailDomain {
 
     static var openMailAlertState: ErpAlertState<Action> = {
         .init(
-            title: TextState(L10n.ordDetailTxtOpenMailErrorTitle),
-            message: TextState(L10n.ordDetailTxtOpenMailError),
-            dismissButton: .cancel(TextState(L10n.alertBtnClose))
+            title: L10n.ordDetailTxtOpenMailErrorTitle,
+            actions: {
+                ButtonState(role: .cancel) {
+                    .init(L10n.alertBtnClose)
+                }
+            },
+            message: L10n.ordDetailTxtOpenMailError
         )
     }()
 
     static func openUrlAlertState(for url: URL) -> ErpAlertState<Action> {
         .init(
-            title: TextState(L10n.ordDetailTxtErrorTitle),
-            message: TextState(L10n.ordDetailTxtError),
-            primaryButton: .cancel(TextState(L10n.alertBtnClose)),
-            secondaryButton: .default(
-                TextState(L10n.ordDetailBtnError),
-                action: .send(Action.openMail(message: url.absoluteString))
-            )
+            title: L10n.ordDetailTxtErrorTitle,
+            actions: {
+                ButtonState(role: .cancel) {
+                    .init(L10n.alertBtnClose)
+                }
+                ButtonState(action: .openMail(message: url.absoluteString)) {
+                    .init(L10n.ordDetailBtnError)
+                }
+            },
+            message: L10n.ordDetailTxtError
         )
     }
 }

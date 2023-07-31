@@ -91,7 +91,7 @@ struct RegisterAuthenticationDomain: ReducerProtocol {
         case loadAvailableSecurityOptions
         case select(_ option: AppSecurityOption)
         case startBiometry
-        case authenticationChallengeResponse(AppAuthenticationBiometricsDomain.AuthenticationResult)
+        case authenticationChallengeResponse(AuthenticationChallengeProviderResult)
         case alertDismissButtonTapped
         case setPasswordA(String)
         case setPasswordB(String)

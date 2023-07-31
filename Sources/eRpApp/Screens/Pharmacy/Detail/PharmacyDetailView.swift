@@ -23,8 +23,7 @@ import SwiftUI
 
 struct PharmacyDetailView: View {
     let store: PharmacyDetailDomain.Store
-    @ObservedObject
-    var viewStore: ViewStore<ViewState, PharmacyDetailDomain.Action>
+    @ObservedObject var viewStore: ViewStore<ViewState, PharmacyDetailDomain.Action>
     let isRedeemRecipe: Bool
 
     init(store: PharmacyDetailDomain.Store, isRedeemRecipe: Bool = true) {
@@ -34,7 +33,6 @@ struct PharmacyDetailView: View {
     }
 
     struct ViewState: Equatable {
-        let isErxReady: Bool
         let hasTasks: Bool
         let pharmacy: PharmacyLocation
         let reservationService: RedeemServiceOption
@@ -44,7 +42,6 @@ struct PharmacyDetailView: View {
         let isFavorite: Bool
 
         init(state: PharmacyDetailDomain.State) {
-            isErxReady = state.pharmacy.isErxReady
             hasTasks = !state.erxTasks.isEmpty
             pharmacy = state.pharmacy
             reservationService = state.reservationService
@@ -58,10 +55,6 @@ struct PharmacyDetailView: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 4) {
-                if viewStore.isErxReady {
-                    ErxReadinessBadge(detailedText: true)
-                }
-
                 Text(viewStore.pharmacy.name ?? L10n.phaDetailTxtSubtitleFallback.text)
                     .foregroundColor(Colors.systemLabel)
                     .font(.title2)
@@ -78,7 +71,7 @@ struct PharmacyDetailView: View {
                     .padding(.bottom, 24)
                 }
 
-                if viewStore.isErxReady && viewStore.hasTasks {
+                if viewStore.hasTasks {
                     VStack(spacing: 8) {
                         if viewStore.reservationService.hasService {
                             if viewStore.reservationService.hasServiceAfterLogin {
@@ -138,29 +131,16 @@ struct PharmacyDetailView: View {
                             }
                         }
                     }
-                } // if viewStore.pharmacy.isErxReady
+                }
 
-                if viewStore.pharmacy.isErxReady {
-                    if isRedeemRecipe {
-                        HintView<PharmacyDetailDomain.Action>(
-                            hint: Hint(id: A11y.pharmacyDetail.phaDetailHint,
-                                       message: L10n.phaDetailHintMessage.text,
-                                       image: .init(name: Asset.Illustrations.info.name))
-                        )
-                        .padding(.top, 12)
-                        .padding(.bottom, 32)
-                    }
-                } else {
+                if isRedeemRecipe {
                     HintView<PharmacyDetailDomain.Action>(
-                        hint: Hint(id: A11y.pharmacyDetail.phaDetailHintNotErxReady,
-                                   title: L10n.phaDetailHintNotErxReadyTitle.text,
-                                   message: L10n.phaDetailHintNotErxReadyMessage.text,
-                                   image: .init(
-                                       name: Asset.Illustrations.pharmacistArmRedCirle.name,
-                                       accessibilityName: L10n.phaDetailHintNotErxReadyPic.text
-                                   ),
-                                   style: .important)
+                        hint: Hint(id: A11y.pharmacyDetail.phaDetailHint,
+                                   message: L10n.phaDetailHintMessage.text,
+                                   image: .init(name: Asset.Illustrations.info.name))
                     )
+                    .padding(.top, 12)
+                    .padding(.bottom, 32)
                 }
 
                 if !viewStore.state.pharmacy.hoursOfOperation.isEmpty {

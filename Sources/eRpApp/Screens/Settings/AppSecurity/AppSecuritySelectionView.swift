@@ -21,83 +21,62 @@ import eRpKit
 import eRpStyleKit
 import SwiftUI
 
-extension SettingsView {
-    struct SecuritySectionView: View {
-        let store: AppSecurityDomain.Store
-        @ObservedObject
-        var viewStore: ViewStore<Void, AppSecurityDomain.Action>
+struct AppSecuritySelectionView: View {
+    let store: AppSecurityDomain.Store
+    @ObservedObject var viewStore: ViewStore<ViewState, AppSecurityDomain.Action>
 
-        init(store: SettingsDomain.Store) {
-            self.store = store.scope(state: { $0.appSecurityState },
-                                     action: { .appSecurity(action: $0) })
-            viewStore = ViewStore(self.store.stateless)
-        }
+    init(store: AppSecurityDomain.Store) {
+        self.store = store
+        viewStore = ViewStore(store.scope(state: ViewState.init))
+    }
 
-        var body: some View {
-            SingleElementSectionContainer(
-                header: { HeaderView(store: store) },
-                content: {
-                    AppSecuritySelectionView(store: store)
-                }
-            )
-            .onAppear {
-                viewStore.send(.loadSecurityOption)
-            }
-        }
+    struct ViewState: Equatable {
+        let destinationTag: AppSecurityDomain.Destinations.State.Tag?
 
-        private struct HeaderView: View {
-            let store: AppSecurityDomain.Store
-
-            var body: some View {
-                WithViewStore(store) { viewStore in
-                    Label(title: { Text(L10n.stgTxtHeaderSecurity) }, icon: {})
-                        .accessibilityIdentifier(A18n.settings.security.stgTxtHeaderSecurity)
-
-                    if viewStore.state.selectedSecurityOption == nil {
-                        WarningView(text: L10n.stgTxtSecurityWarning.text)
-                            .accessibility(identifier: "")
-                    }
-
-                    if let error = viewStore.state.errorToDisplay {
-                        WarningView(text: error.errorDescription ?? "")
-                            .accessibility(identifier: "stg_hnt_biometrics_warning")
-                    }
-                }
-            }
-
-            private struct WarningView: View {
-                var text: String
-
-                var body: some View {
-                    HStack(alignment: .center, spacing: 0) {
-                        Image(systemName: SFSymbolName.exclamationMark)
-                            .foregroundColor(Colors.red900)
-                            .font(.title3)
-                            .padding(8)
-
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text(text)
-                                .font(Font.subheadline)
-                                .foregroundColor(Colors.red900)
-                                .fixedSize(horizontal: false, vertical: true)
-                        }
-                        .padding(8)
-
-                        Spacer()
-                    }
-                    .frame(maxWidth: .infinity)
-                    .padding(8)
-                    .background(RoundedRectangle(cornerRadius: 12).fill(Colors.red100))
-                    .border(Colors.red300, width: 0.5, cornerRadius: 12)
-                }
-            }
+        init(state: AppSecurityDomain.State) {
+            destinationTag = state.destination?.tag
         }
     }
 
-    struct AppSecuritySelectionView: View {
+    var body: some View {
+        VStack {
+            SingleElementSectionContainer(
+                header: { HeaderView(store: store) },
+                content: {
+                    SecuritySectionView(store: store)
+                }
+            )
+
+            Spacer()
+
+            NavigationLink(
+                destination: IfLetStore(
+                    store.destinationsScope(
+                        state: /AppSecurityDomain.Destinations.State.appPassword,
+                        action: AppSecurityDomain.Destinations.Action.appPasswordAction
+                    ),
+                    then: CreatePasswordView.init(store:)
+                ),
+                tag: AppSecurityDomain.Destinations.State.Tag.appPassword,
+                selection: viewStore.binding(
+                    get: \.destinationTag,
+                    send: AppSecurityDomain.Action.setNavigation
+                )
+            ) {}
+                .hidden()
+                .accessibility(hidden: true)
+
+        }.onAppear {
+            viewStore.send(.loadSecurityOption)
+        }
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationTitle(L10n.stgBtnDeviceSecurity)
+        .background(Color(.secondarySystemBackground))
+    }
+
+    private struct HeaderView: View {
         let store: AppSecurityDomain.Store
-        @ObservedObject
-        var viewStore: ViewStore<ViewState, AppSecurityDomain.Action>
+        @ObservedObject var viewStore: ViewStore<ViewState, AppSecurityDomain.Action>
 
         init(store: AppSecurityDomain.Store) {
             self.store = store
@@ -105,51 +84,106 @@ extension SettingsView {
         }
 
         struct ViewState: Equatable {
-            let availableSecurityOptions: [AppSecurityOption]
-            let selectedSecurityOption: AppSecurityOption?
+            let errorToDisplay: AppSecurityManagerError?
+
             init(state: AppSecurityDomain.State) {
-                availableSecurityOptions = state.availableSecurityOptions
-                selectedSecurityOption = state.selectedSecurityOption
+                errorToDisplay = state.errorToDisplay
             }
         }
 
         var body: some View {
-            ForEach(viewStore.state.availableSecurityOptions) { option in
-                let binding = viewStore.binding(
-                    get: { $0.selectedSecurityOption == option },
-                    send: .select(option)
-                )
-                .animation()
+            if let error = viewStore.errorToDisplay {
+                WarningView(text: error.errorDescription ?? "")
+                    .accessibility(identifier: "stg_hnt_biometrics_warning")
+            }
+        }
 
-                switch option {
-                case let .biometry(biometryType):
-                    switch biometryType {
-                    case .faceID:
-                        Toggle(isOn: binding) {
-                            Label(L10n.stgTxtSecurityOptionFaceidTitle, systemImage: SFSymbolName.faceId)
-                                .accessibility(identifier: A18n.settings.security.stgTxtSecurityFaceid)
-                        }
-                        .toggleStyle(.radio)
-                    case .touchID:
-                        Toggle(isOn: binding) {
-                            Label(L10n.stgTxtSecurityOptionTouchidTitle, systemImage: SFSymbolName.touchId)
-                                .accessibility(identifier: A18n.settings.security.stgTxtSecurityTouchid)
-                        }
-                        .toggleStyle(.radio)
+        private struct WarningView: View {
+            var text: String
+
+            var body: some View {
+                HStack(alignment: .center, spacing: 0) {
+                    Image(systemName: SFSymbolName.exclamationMark)
+                        .foregroundColor(Colors.red900)
+                        .font(.title3)
+                        .padding(8)
+
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(text)
+                            .font(Font.subheadline)
+                            .foregroundColor(Colors.red900)
+                            .fixedSize(horizontal: false, vertical: true)
                     }
-                case .password:
-                    Toggle(isOn: binding) {
-                        Label(
-                            L10n.stgTxtSecurityOptionPasswordTitle,
-                            systemImage: SFSymbolName.rectangleAndPencilAndEllipsis
-                        )
-                        .accessibility(identifier: A18n.settings.security.stgTxtSecurityPassword)
-                    }
-                    .toggleStyle(.radioWithNavigation(showSeparator: false))
-                    .modifier(SectionContainerCellModifier())
-                case .unsecured:
-                    EmptyView()
+                    .padding(8)
+
+                    Spacer()
                 }
+                .frame(maxWidth: .infinity)
+                .padding(8)
+                .background(RoundedRectangle(cornerRadius: 12).fill(Colors.red100))
+                .border(Colors.red300, width: 0.5, cornerRadius: 12)
+            }
+        }
+    }
+}
+
+struct SecuritySectionView: View {
+    let store: AppSecurityDomain.Store
+    @ObservedObject var viewStore: ViewStore<ViewState, AppSecurityDomain.Action>
+
+    init(store: AppSecurityDomain.Store) {
+        self.store = store
+        viewStore = ViewStore(store.scope(state: ViewState.init))
+    }
+
+    struct ViewState: Equatable {
+        let availableSecurityOptions: [AppSecurityOption]
+        let selectedSecurityOption: AppSecurityOption?
+        var isBiometricSelected = false
+        var isPasswordSelected = false
+
+        init(state: AppSecurityDomain.State) {
+            availableSecurityOptions = state.availableSecurityOptions
+            selectedSecurityOption = state.selectedSecurityOption
+            isBiometricSelected = state.isBiometricSelected
+            isPasswordSelected = state.isPasswordSelected
+        }
+    }
+
+    var body: some View {
+        ForEach(viewStore.state.availableSecurityOptions) { option in
+            switch option {
+            case let .biometry(biometryType):
+                switch biometryType {
+                case .faceID:
+                    Toggle(isOn: viewStore.binding(get: \.isBiometricSelected,
+                                                   send: .toggleBiometricSelected(.faceID))) {
+                        Text(L10n.stgTxtSecurityOptionFaceidTitle)
+                            .accessibility(identifier: A18n.settings.security.stgTxtSecurityFaceid)
+                    }.toggleStyle(.switch)
+                        .padding([.leading, .trailing, .top])
+                case .touchID:
+                    Toggle(isOn: viewStore.binding(get: \.isBiometricSelected,
+                                                   send: .toggleBiometricSelected(.faceID))) {
+                        Text(L10n.stgTxtSecurityOptionTouchidTitle)
+                            .accessibility(identifier: A18n.settings.security.stgTxtSecurityTouchid)
+                    }.toggleStyle(.switch)
+                        .padding([.leading, .trailing, .top])
+                }
+            case .password:
+                GreyDivider(topPadding: 0).ignoresSafeArea()
+
+                Toggle(isOn: viewStore.binding(get: \.isPasswordSelected,
+                                               send: .togglePasswordSelected)) {
+                    Text(L10n.stgTxtSecurityOptionPasswordTitle)
+                        .accessibility(identifier: A18n.settings.security.stgTxtSecurityPassword)
+                }
+                .padding([.leading, .trailing, .bottom])
+                .toggleStyle(.switch)
+                .modifier(SectionContainerCellModifier())
+            case .unsecured,
+                 .biometryAndPassword:
+                EmptyView()
             }
         }
     }
@@ -158,7 +192,7 @@ extension SettingsView {
 struct AppSecuritySelectionView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
-            SettingsView.SecuritySectionView(store: SettingsDomain.Dummies.store)
+            AppSecuritySelectionView(store: AppSecurityDomain.Dummies.store)
         }
     }
 }

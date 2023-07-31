@@ -22,8 +22,10 @@ import SwiftUI
 
 struct CardWallExtAuthConfirmationView: View {
     private let store: CardWallExtAuthConfirmationDomain.Store
-    @ObservedObject
-    private var viewStore: ViewStore<CardWallExtAuthConfirmationDomain.State, CardWallExtAuthConfirmationDomain.Action>
+    @ObservedObject private var viewStore: ViewStore<
+        CardWallExtAuthConfirmationDomain.State,
+        CardWallExtAuthConfirmationDomain.Action
+    >
 
     init(store: CardWallExtAuthConfirmationDomain.Store) {
         self.store = store

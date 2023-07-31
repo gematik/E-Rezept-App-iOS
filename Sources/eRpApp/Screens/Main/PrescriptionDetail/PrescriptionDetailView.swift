@@ -24,8 +24,7 @@ import WebKit
 
 struct PrescriptionDetailView: View {
     let store: StoreOf<PrescriptionDetailDomain>
-    @ObservedObject
-    var viewStore: ViewStore<ViewState, PrescriptionDetailDomain.Action>
+    @ObservedObject var viewStore: ViewStore<ViewState, PrescriptionDetailDomain.Action>
 
     init(store: PrescriptionDetailDomain.Store) {
         self.store = store
@@ -175,8 +174,7 @@ extension PrescriptionDetailView {
 
     struct Navigations: View {
         let store: StoreOf<PrescriptionDetailDomain>
-        @ObservedObject
-        var viewStore: ViewStore<ViewState, PrescriptionDetailDomain.Action>
+        @ObservedObject var viewStore: ViewStore<ViewState, PrescriptionDetailDomain.Action>
 
         init(store: PrescriptionDetailDomain.Store) {
             self.store = store
@@ -324,8 +322,7 @@ extension PrescriptionDetailView {
         }
 
         struct CoPaymentDrawerView: View {
-            @ObservedObject
-            var viewStore: ViewStore<
+            @ObservedObject var viewStore: ViewStore<
                 PrescriptionDetailDomain.Destinations.CoPaymentState,
                 PrescriptionDetailDomain.Action
             >

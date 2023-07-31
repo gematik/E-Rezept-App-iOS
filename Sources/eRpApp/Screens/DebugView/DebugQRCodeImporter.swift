@@ -22,8 +22,7 @@ import SwiftUI
 #if ENABLE_DEBUG_VIEW
 
 struct DebugQRCodeImporter<ContentType: Codable>: View {
-    @Binding
-    var scan: Bool
+    @Binding var scan: Bool
 
     var found: (ContentType) -> Void
 

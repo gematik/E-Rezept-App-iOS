@@ -19,52 +19,37 @@
 import ComposableArchitecture
 
 extension AlertState {
-    init(for error: CodedError, title: StringAsset, primaryButton: ButtonState<Action>? = nil) {
-        self.init(for: error, title: TextState(title), primaryButton: primaryButton)
-    }
-
     init(
         for error: CodedError,
-        title: TextState? = nil,
-        primaryButton: ButtonState<Action>? = nil,
-        secondaryButton: ButtonState<Action>? = nil
+        title: (() -> TextState)? = nil,
+        @ButtonStateBuilder<Action> actions: () -> [ButtonState<Action>] = { [] }
     ) {
-        let resultTitle: TextState
-        let resultDescription: TextState
+        let resultTitle: () -> TextState
+        let resultDescription: () -> TextState
 
         if let title = title {
             resultTitle = title
-            resultDescription = TextState(error.descriptionAndSuggestionWithErrorList)
+            resultDescription = { TextState(error.descriptionAndSuggestionWithErrorList) }
         } else {
             if error.recoverySuggestion != nil {
-                resultTitle = TextState(error.localizedDescription)
-                resultDescription = TextState(error.recoverySuggestionWithErrorList)
+                resultTitle = { TextState(error.localizedDescription) }
+                resultDescription = { TextState(error.recoverySuggestionWithErrorList) }
             } else {
-                resultTitle = TextState(L10n.errTitleGeneric)
-                resultDescription = TextState(error.localizedDescriptionWithErrorList)
+                resultTitle = { TextState(L10n.errTitleGeneric) }
+                resultDescription = { TextState(error.localizedDescriptionWithErrorList) }
             }
         }
 
-        let buttons: [ButtonState<Action>]
-        if let primaryButton = primaryButton {
-            if let secondaryButton = secondaryButton {
-                buttons = [
-                    primaryButton,
-                    secondaryButton,
-                ]
-            } else {
-                buttons = [
-                    .cancel(TextState(L10n.alertBtnOk)),
-                    primaryButton,
-                ]
-            }
-        } else {
-            buttons = [.cancel(TextState(L10n.alertBtnOk))]
+        var actionsWithCancel = actions()
+        if !actionsWithCancel.contains(where: { $0.role == .cancel }) {
+            actionsWithCancel.insert(.cancel(TextState(L10n.alertBtnOk)), at: 0)
         }
+
         self.init(
             title: resultTitle,
-            message: resultDescription,
-            buttons: buttons
+            // swiftformat:disable:next --redundantReturn
+            actions: { return actionsWithCancel },
+            message: resultDescription
         )
     }
 }
@@ -93,7 +78,9 @@ enum ErpAlertState<Action: Equatable>: Equatable {
     }
 
     init(for error: CodedError, title: StringAsset) {
-        self.init(for: error, title: TextState(title.key))
+        self.init(for: error) {
+            TextState(title.key)
+        }
     }
 
     init(_ info: AlertState<Action>) {
@@ -103,48 +90,56 @@ enum ErpAlertState<Action: Equatable>: Equatable {
     init(
         for error: CodedError,
         title: StringAsset,
-        primaryButton: ButtonState<Action>? = nil,
-        secondaryButton: ButtonState<Action>? = nil
+        @ButtonStateBuilder<Action> actions: () -> [ButtonState<Action>] = { [] }
     ) {
         self.init(
             for: error,
-            title: TextState(title.key),
-            primaryButton: primaryButton,
-            secondaryButton: secondaryButton
+            title: { TextState(title.key) },
+            actions: actions
         )
     }
 
     init(
         for error: CodedError,
-        title: TextState? = nil,
-        primaryButton: ButtonState<Action>? = nil,
-        secondaryButton: ButtonState<Action>? = nil
+        title: (() -> TextState)? = nil,
+        @ButtonStateBuilder<Action> actions: () -> [ButtonState<Action>] = { [] }
     ) {
         self = .error(
             error: error,
-            alertState: .init(for: error, title: title, primaryButton: primaryButton, secondaryButton: secondaryButton)
+            alertState: .init(for: error, title: title, actions: actions)
         )
     }
 
     init(
-        title: TextState,
-        message: TextState? = nil,
-        dismissButton: ButtonState<Action>? = nil
+        title: StringAsset,
+        @ButtonStateBuilder<Action> actions: () -> [ButtonState<Action>] = { [] },
+        message: StringAsset? = nil
     ) {
-        self = .info(.init(title: title, message: message, dismissButton: dismissButton))
+        if let message {
+            self = .info(.init(
+                title: { TextState(title.key) },
+                actions: actions,
+                message: { TextState(message.key) }
+            ))
+        } else {
+            self = .info(.init(
+                title: {
+                    TextState(title.key)
+                },
+                actions: actions
+            ))
+        }
     }
 
     init(
-        title: TextState,
-        message: TextState? = nil,
-        primaryButton: ButtonState<Action>,
-        secondaryButton: ButtonState<Action>
+        title: () -> TextState,
+        @ButtonStateBuilder<Action> actions: () -> [ButtonState<Action>] = { [] },
+        message: (() -> TextState)? = nil
     ) {
         self = .info(.init(
             title: title,
-            message: message,
-            primaryButton: primaryButton,
-            secondaryButton: secondaryButton
+            actions: actions,
+            message: message
         ))
     }
 

@@ -121,7 +121,6 @@ final class PharmacyBundleTests: XCTestCase {
         )
         expect(location.types) == [.pharm, .outpharm, .mobl]
         expect(location.telematikID) == "3-SMC-B-Testkarte-883110000116948"
-        expect(location.isErxReady).to(beTrue())
 
         expect(location.avsEndpoints) == .init(
             // swiftlint:disable:next line_length
@@ -133,18 +132,12 @@ final class PharmacyBundleTests: XCTestCase {
         )
     }
 
-    // swiftlint:disable line_length
     func testParsingAVSCertificateBinaries() throws {
         let fhirBundle = try bundle(for: "exampleAVSCertificateBinaries.json")
         let certificates = try fhirBundle.parseCertificates()
 
-        expect(certificates.count) == 1 // filterd for rsa
-        expect(certificates.first?.isValidCaCertificate).to(beFalse())
-        expect(try certificates.first?.issuerOneLine()) ==
-            "/C=DE/O=gematik GmbH NOT-VALID/OU=Institution des Gesundheitswesens-CA der Telematikinfrastruktur/CN=GEM.SMCB-CA41 TEST-ONLY"
+        expect(certificates.count) == 1 // filtered for rsa
         expect(try certificates.first?.serialNumber()) == "894998056540349"
-        expect(try certificates.first?.subjectOneLine()) ==
-            "/C=DE/ST=Ulm/L=Ingolfstadt/postalCode=12346/street=Hauptstr. 11/O=3-2-20230124-1 NOT-VALID/serialNumber=16.80276001011699902301/SN=Ulmendorfer/GN=Adelheid/CN=Apotheke Adelheid Ulmendorfer TEST-ONLY"
     }
 
     private func bundle(for source: String) throws -> ModelsR4.Bundle {

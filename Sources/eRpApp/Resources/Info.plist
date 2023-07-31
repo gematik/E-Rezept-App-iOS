@@ -17,7 +17,7 @@
 	<key>CFBundlePackageType</key>
 	<string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.9.0</string>
+	<string>1.11.0</string>
 	<key>CFBundleVersion</key>
 	<string>$(GEMATIK_BUNDLE_VERSION)</string>
 	<key>CSDisableAutostart</key>
@@ -46,7 +46,7 @@
 				<array>
 					<dict>
 						<key>SPKI-SHA256-BASE64</key>
-						<string>e0IRz5Tio3GA1Xs4fUVWmH1xHDiH2dMbVtCBSkOIdqM=</string>
+                        <string>qBRjZmOmkSNJL0p70zek7odSIzqs/muR4Jk9xYyCP+E=</string>
 					</dict>
 				</array>
 			</dict>
@@ -56,10 +56,14 @@
 				<false/>
 				<key>NSPinnedCAIdentities</key>
 				<array>
-					<dict>
-						<key>SPKI-SHA256-BASE64</key>
-						<string>e0IRz5Tio3GA1Xs4fUVWmH1xHDiH2dMbVtCBSkOIdqM=</string>
-					</dict>
+                    <dict>
+                        <key>SPKI-SHA256-BASE64</key>
+                        <string>e0IRz5Tio3GA1Xs4fUVWmH1xHDiH2dMbVtCBSkOIdqM=</string>
+                    </dict>
+                    <dict>
+                        <key>SPKI-SHA256-BASE64</key>
+                        <string>qBRjZmOmkSNJL0p70zek7odSIzqs/muR4Jk9xYyCP+E=</string>
+                    </dict>
 				</array>
 			</dict>
 			<key>erp-dev.app.ti-dienste.de</key>
@@ -136,6 +140,10 @@
 						<key>SPKI-SHA256-BASE64</key>
 						<string>86fLIetopQLDNxFZ0uMI66Xpl1pFgLlHHn9v6kT0i4I=</string>
 					</dict>
+                    <dict>
+                        <key>SPKI-SHA256-BASE64</key>
+                        <string>OD/WDbD3VsfMwwNzzy9MWd9JXppKB77Vb3ST2wn9meg=</string>
+                    </dict>
 				</array>
 			</dict>
 			<key>idp-pairing-test.zentral.idp.splitdns.ti-dienste.de</key>
@@ -148,6 +156,10 @@
 						<key>SPKI-SHA256-BASE64</key>
 						<string>86fLIetopQLDNxFZ0uMI66Xpl1pFgLlHHn9v6kT0i4I=</string>
 					</dict>
+                    <dict>
+                        <key>SPKI-SHA256-BASE64</key>
+                        <string>OD/WDbD3VsfMwwNzzy9MWd9JXppKB77Vb3ST2wn9meg=</string>
+                    </dict>
 				</array>
 			</dict>
 			<key>idp-pairing.zentral.idp.splitdns.ti-dienste.de</key>
@@ -168,6 +180,10 @@
 						<key>SPKI-SHA256-BASE64</key>
 						<string>w9I8WrpHr1YAS0DugvLGsrI9Vm1yEkZAyllKxemXXf4=</string>
 					</dict>
+                    <dict>
+                        <key>SPKI-SHA256-BASE64</key>
+                        <string>OD/WDbD3VsfMwwNzzy9MWd9JXppKB77Vb3ST2wn9meg=</string>
+                    </dict>
 				</array>
 			</dict>
 			<key>idp-ref.app.ti-dienste.de</key>
@@ -180,6 +196,10 @@
 						<key>SPKI-SHA256-BASE64</key>
 						<string>86fLIetopQLDNxFZ0uMI66Xpl1pFgLlHHn9v6kT0i4I=</string>
 					</dict>
+                    <dict>
+                        <key>SPKI-SHA256-BASE64</key>
+                        <string>OD/WDbD3VsfMwwNzzy9MWd9JXppKB77Vb3ST2wn9meg=</string>
+                    </dict>
 				</array>
 			</dict>
 			<key>idp-test.app.ti-dienste.de</key>
@@ -192,6 +212,10 @@
 						<key>SPKI-SHA256-BASE64</key>
 						<string>86fLIetopQLDNxFZ0uMI66Xpl1pFgLlHHn9v6kT0i4I=</string>
 					</dict>
+                    <dict>
+                        <key>SPKI-SHA256-BASE64</key>
+                        <string>OD/WDbD3VsfMwwNzzy9MWd9JXppKB77Vb3ST2wn9meg=</string>
+                    </dict>
 				</array>
 			</dict>
 			<key>idp.app.ti-dienste.de</key>
@@ -212,6 +236,10 @@
 						<key>SPKI-SHA256-BASE64</key>
 						<string>w9I8WrpHr1YAS0DugvLGsrI9Vm1yEkZAyllKxemXXf4=</string>
 					</dict>
+                    <dict>
+                        <key>SPKI-SHA256-BASE64</key>
+                        <string>OD/WDbD3VsfMwwNzzy9MWd9JXppKB77Vb3ST2wn9meg=</string>
+                    </dict>
 				</array>
 			</dict>
 		</dict>

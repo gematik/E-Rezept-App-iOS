@@ -115,7 +115,7 @@ extension ErxTaskFHIROperation: FHIRClientOperation {
             var components = URLComponents(string: "AuditEvent")
             components?.queryItems = queryItems
             return components?.string
-        case .redeem(order: _, handler: _): return "Communication"
+        case .redeem: return "Communication"
         case let .allCommunications(referenceDate, handler: _):
             var components = URLComponents(string: "Communication")
             if let referenceDate = referenceDate,
@@ -166,8 +166,8 @@ extension ErxTaskFHIROperation: FHIRClientOperation {
             return components?.string
         case let .chargeItemBy(chargeItemId, _): return "ChargeItem/\(chargeItemId)"
         case let .deleteChargeItem(chargeItemId, _, _): return "ChargeItem/\(chargeItemId)"
-        case .consents(handler: _): return "Consent"
-        case .grant(consent: _, handler: _): return "Consent"
+        case .consents: return "Consent"
+        case .grant: return "Consent"
         case let .revokeConsent(category, handler: _):
             var components = URLComponents(string: "Consent")
             components?.queryItems = [
@@ -201,7 +201,7 @@ extension ErxTaskFHIROperation: FHIRClientOperation {
             }
         case let .deleteChargeItem(_, accessCode, _):
             headers["X-AccessCode"] = accessCode
-        case .grant(consent: _, _):
+        case .grant:
             headers["Content-Type"] = acceptFormat.httpHeaderValue
             if let dataLength = httpBody?.count, dataLength > 0 {
                 headers["Content-Length"] = String(dataLength)

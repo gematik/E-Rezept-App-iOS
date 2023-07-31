@@ -22,8 +22,7 @@ import SwiftUI
 public struct KeyValuePair: View {
     let configuration: KeyValuePairConfiguration
 
-    @Environment(\.keyValuePairStyle)
-    var keyValuePairStyle: AnyKeyValuePairStyle
+    @Environment(\.keyValuePairStyle) var keyValuePairStyle: AnyKeyValuePairStyle
 
     public init(key: LocalizedStringKey, value: LocalizedStringKey) {
         configuration = KeyValuePairConfiguration(

@@ -116,3 +116,5 @@ extension Colors {
     public static let systemColorBlack = Color.black
     public static let systemColorClear = Color.clear
 }
+
+// swiftlint:enable missing_docs

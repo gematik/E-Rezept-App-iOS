@@ -40,8 +40,7 @@ public struct FormToggleStyle: ToggleStyle {
 }
 
 public struct ToggleLabelStyle: LabelStyle {
-    @Binding
-    var isOn: Bool
+    @Binding var isOn: Bool
 
     let showSeparator: Bool
 

@@ -177,6 +177,7 @@ let APOVZD_PU = AppConfiguration.Server(
         ""]
 )
 #endif
+// swiftlint:enable identifier_name
 
 #if TEST_ENVIRONMENT || (!DEFAULT_ENVIRONMENT_TU && !DEFAULT_ENVIRONMENT_RU && !DEFAULT_ENVIRONMENT_RU_DEV)
 

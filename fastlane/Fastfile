@@ -793,145 +793,52 @@ end
 
 
 def notify_teams_channel(url = "no_hook", stream = "Unknown stream", success = true, optional_message = "")
-  images = { # QR-codes and links
-    "type" => "ColumnSet",
-    "columns" => []
-  }
-  app_center_download_link = lane_context[SharedValues::APPCENTER_DOWNLOAD_LINK]
+  install_facts = []
   if !lane_context[SharedValues::APPCENTER_BUILD_INFORMATION].nil?
-    install_url = lane_context[SharedValues::APPCENTER_BUILD_INFORMATION]['install_url']
-    sh "cd .. && bundle exec qrencode -o distribution/install_url.png \"#{install_url}\"; cd -"
-    base64_install_url = sh "cd .. && base64 -i distribution/install_url.png; cd - > /dev/null"
     app_name = lane_context[SharedValues::APPCENTER_BUILD_INFORMATION]['app_name']
     id = lane_context[SharedValues::APPCENTER_BUILD_INFORMATION]['id']
     owner = ENV['APPCENTER_OWNER_NAME']
     appcenter_url = "https://install.appcenter.ms/orgs/#{owner}/apps/#{app_name}/releases/#{id}"
-    sh "cd .. && bundle exec qrencode -o distribution/appcenter_url.png \"#{appcenter_url}\"; cd -"
-    base64_appcenter_url = sh "cd .. && base64 -i distribution/appcenter_url.png; cd - > /dev/null"
-    images = {
-            "type" => "ColumnSet",
-            "columns" => [
-                {
-                    "type" => "Column",
-                    "width" => "stretch",
-                    "items" => [
-                        {
-                            "type" => "Image",
-                            "url" => "data:image/png;base64,#{base64_install_url}"
-                        },
-                        {
-                            "type" => "TextBlock",
-                            "text" => "[Direktlink (24h gültig)](#{install_url})",
-                            "wrap" => true
-                        }
-                    ]
-                },
-                {
-                    "type" => "Column",
-                    "width" => "stretch",
-                    "items" => [
-                        {
-                            "type" => "Image",
-                            "url" => "data:image/png;base64,#{base64_appcenter_url}"
-                        },
-                        {
-                            "type" => "TextBlock",
-                            "text" => "[AppCenter](#{appcenter_url})",
-                            "wrap" => true
-                        }
-                    ]
-                }
-            ]
-        }
+
+    File.open("../distribution/build_info_#{ENV['BUILD_NUMBER']}.json", 'w+') do |file|
+      file.write({
+        "stream" => stream,
+        "url" => appcenter_url,
+      }.to_json)
+    end
+
+    install_facts = [
+      {"name" => "Build", "value"=> "[AppCenter](#{appcenter_url}) or scan [QR-Code](https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=#{ERB::Util.url_encode(appcenter_url)})"}
+    ]
+
   end # QR-codes and links
 
   themeColor = success ? "00ff00" : "ff0000"
   activityImage = "data:image/png;base64," << (success ? "#{shiba_inu}" : "#{shiba_inu_mad}")
   text = "# " << (success ? "" : "FAILED! ") << stream << "\n\n #{optional_message}"
 
+  facts = [
+    {"name"=> "Branch (commit)", "value"=> "#{ENV['GIT_BRANCH']} (#{git_version})"}
+  ] + install_facts
+
   payload = {
-    "type" => "message",
-    "width" => "stretch",
-    "attachments"=> [
+    "@type" => "MessageCard",
+    "@context" => "http://schema.org/extensions",
+    "summary" => "Notification from eRezeptApp-iOS",
+    "themeColor" => themeColor,
+    "sections"=> [
       {
-        "contentType" => "application/vnd.microsoft.card.adaptive",
-        "contentUrl" => nil,
-        "content" => {
-          "type" => "AdaptiveCard",
-          "msteams": {
-            "width": "Full"
-          },
-          "body" => [
-              {
-                  "type" => "TextBlock",
-                  "size" => "Medium",
-                  "weight" => "Bolder",
-                  "text" => "#{ENV['GIT_BRANCH']} (#{git_version})"
-              },
-              {
-                  "type" => "ColumnSet",
-                  "columns" => [
-                      {
-                          "type" => "Column",
-                          "items" => [
-                              {
-                                  "type" => "Image",
-                                  "url" => activityImage
-                              }
-                          ],
-                          "width" => "auto"
-                      },
-                      {
-                          "type" => "Column",
-                          "items" => [
-                              {
-                                  "type" => "TextBlock",
-                                  "weight" => "Bolder",
-                                  "text" => "Notification from eRezeptApp-iOS >> #{build_version} (#{git_version})",
-                                  "wrap" => true
-                              },
-                              {
-                                  "type" => "TextBlock",
-                                  "spacing" => "None",
-                                  "text" => "Build: `#{ENV['JOB_NAME']}` - `#{ENV['BUILD_DISPLAY_NAME']}` on worker `#{ENV['NODE_NAME']}`",
-                                  "isSubtle" => true,
-                                  "wrap" => true
-                              },
-                              {
-                                  "type" => "TextBlock",
-                                  "spacing" => "None",
-                                  "text" => "[GitLab](#{ENV['CHANGE_URL']}) [Jenkins](#{ENV['RUN_DISPLAY_URL']})",
-                                  "isSubtle" => true,
-                                  "wrap" => true
-                              },
-                              {
-                                "type" => "ActionSet",
-                                "actions" => [
-                                    {
-                                        "type" => "Action.ShowCard",
-                                        "title" => "QR-Codes Anzeigen",
-                                        "card" => {
-                                            "type" => "AdaptiveCard",
-                                            "body" => [images]
-                                        }
-                                    }
-                                ],
-                                "width" => "auto"
-                              }
-                          ],
-                          "width" => "stretch"
-                      }
-                  ]
-              }
-          ],
-          "$schema" => "http://adaptivecards.io/schemas/adaptive-card.json",
-          "version" => "1.4"
-        }
+        "activityTitle" => "Notification from eRezeptApp-iOS >> #{build_version} (#{git_version})",
+        "activitySubtitle" => "Build: #{ENV['JOB_NAME']} - #{ENV['BUILD_DISPLAY_NAME']} on worker #{ENV['NODE_NAME']}<br>Link: #{ENV['BUILD_URL']}",
+        "activityImage" => activityImage,
+        "text" => text,
+        "facts" => facts
       }
     ]
   }
 
   # Send message
+  UI.message("Send notification to #{url}")
   require 'net/http'
   require 'uri'
   json_headers = { 'Content-Type' => 'application/json' }

@@ -236,8 +236,6 @@ final class CreatePasswordDomainTests: XCTestCase {
 
         store.send(.saveButtonTapped)
         store.receive(.delegate(.closeAfterPasswordSaved))
-        expect(self.mockUserDataStore.setAppSecurityOptionCalled).to(beTrue())
-        expect(self.mockUserDataStore.setAppSecurityOptionReceivedAppSecurityOption) == .password
     }
 
     func testUpdatePasswordChecksPassword() {

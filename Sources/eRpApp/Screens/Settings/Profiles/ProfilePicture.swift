@@ -123,7 +123,7 @@ extension ProfilePicture {
         case .oldMan:
             return .oldMan
         case .oldWoman:
-            return .oldMan
+            return .oldWoman
         case .doctorMale:
             return .doctorMale
         case .pharmacist2:

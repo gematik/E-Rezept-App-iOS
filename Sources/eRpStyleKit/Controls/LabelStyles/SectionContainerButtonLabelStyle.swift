@@ -26,8 +26,7 @@ public struct SectionContainerButtonLabelStyle: LabelStyle {
         self.showSeparator = showSeparator
     }
 
-    @Environment(\.isEnabled)
-    var isEnabled: Bool
+    @Environment(\.isEnabled) var isEnabled: Bool
 
     public func makeBody(configuration: Configuration) -> some View {
         HStack(spacing: 16) {

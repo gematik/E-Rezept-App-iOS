@@ -139,6 +139,57 @@ final class ChargeItemListDomainServiceTests: XCTestCase {
         expect(runSuccess) == true
     }
 
+    func testDeleteChargeItem() {
+        // given
+        let sut = DefaultChargeItemListDomainService(userSessionProvider: mockUserSessionProvider)
+        var runSuccess: Bool
+
+        // when
+        runSuccess = false
+        mockUserSession.profileReturnValue = Just(.Fixtures.profileForChargeItemsService)
+            .setFailureType(to: LocalStoreError.self).eraseToAnyPublisher()
+        mockLoginHandler.isAuthenticatedReturnValue = Just(LoginResult.success(true)).eraseToAnyPublisher()
+        mockErxTaskRepository.deleteChargeItemsPublisher = Just(true)
+            .setFailureType(to: ErxRepositoryError.self)
+            .eraseToAnyPublisher()
+
+        // then
+        sut.delete(
+            chargeItem: ErxSparseChargeItem.Fixtures.chargeItem,
+            for: testProfileId
+        )
+        .test(
+            expectations: { result in
+                runSuccess = true
+                expect(result) == ChargeItemDomainServiceDeleteResult.success
+            }
+        )
+        expect(runSuccess) == true
+    }
+
+    func testDeleteChargeItem_notAuthenticated() {
+        // given
+        let sut = DefaultChargeItemListDomainService(userSessionProvider: mockUserSessionProvider)
+        var runSuccess: Bool
+
+        // when
+        runSuccess = false
+        mockLoginHandler.isAuthenticatedReturnValue = Just(LoginResult.success(false)).eraseToAnyPublisher()
+
+        // then
+        sut.delete(
+            chargeItem: ErxSparseChargeItem.Fixtures.chargeItem,
+            for: testProfileId
+        )
+        .test(
+            expectations: { result in
+                runSuccess = true
+                expect(result) == ChargeItemDomainServiceDeleteResult.notAuthenticated
+            }
+        )
+        expect(runSuccess) == true
+    }
+
     func testAuthenticate() {
         // given
         let sut = DefaultChargeItemListDomainService(userSessionProvider: mockUserSessionProvider)
@@ -314,6 +365,10 @@ extension Profile {
     enum Fixtures {}
 }
 
+extension ErxSparseChargeItem {
+    enum Fixtures {}
+}
+
 extension Profile.Fixtures {
     static let profileForChargeItemsService: Profile = .init(
         name: "Gerrry with three \"r\"",
@@ -340,4 +395,12 @@ extension ErxConsent.Fixtures {
         )
         return chargeItemsConsent
     }()
+}
+
+extension ErxSparseChargeItem.Fixtures {
+    static let chargeItem = ErxSparseChargeItem(
+        identifier: UUID().uuidString,
+        fhirData: "testdata".data(using: .utf8)!,
+        enteredDate: "2022-09-14"
+    )
 }

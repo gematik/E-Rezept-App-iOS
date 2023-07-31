@@ -30,6 +30,10 @@ protocol ChargeItemListDomainService {
     /// Tries to fetch the Charge Items from the remote store
     func fetchRemoteChargeItemsAndSave(for profileId: UUID) -> AnyPublisher<ChargeItemDomainServiceFetchResult, Never>
 
+    /// Tries to delete a Charge Item from the remote store and on success on the local store as well
+    func delete(chargeItem: ErxSparseChargeItem, for profileId: UUID)
+        -> AnyPublisher<ChargeItemDomainServiceDeleteResult, Never>
+
     /// Performs an authentication of the user
     func authenticate(for profileId: UUID) -> AnyPublisher<ChargeItemDomainServiceAuthenticateResult, Never>
 
@@ -101,7 +105,7 @@ enum ChargeItemListDomainServiceGrantResult: Equatable {
 }
 
 enum ChargeItemListDomainServiceRevokeResult: Equatable {
-    case success(ChargeItemListDomainServiceDeleteResult)
+    case success(ChargeItemDomainServiceDeleteResult)
     case notAuthenticated
     case error(Error)
 
@@ -118,8 +122,9 @@ enum ChargeItemListDomainServiceRevokeResult: Equatable {
     }
 }
 
-enum ChargeItemListDomainServiceDeleteResult: Equatable {
+enum ChargeItemDomainServiceDeleteResult: Equatable {
     case success
+    case notAuthenticated
     case error(Error)
 
     // sourcery: CodedError = "034"
@@ -127,10 +132,15 @@ enum ChargeItemListDomainServiceDeleteResult: Equatable {
         // sourcery: errorCode = "01"
         case localStore(LocalStoreError)
         // sourcery: errorCode = "02"
+        case loginHandler(LoginHandlerError)
+        // sourcery: errorCode = "03"
+        case erxRepository(ErxRepositoryError)
+        // sourcery: errorCode = "04"
         case unexpected
     }
 }
 
+// swiftlint:disable:next type_body_length
 struct DefaultChargeItemListDomainService: ChargeItemListDomainService {
     let userSessionProvider: UserSessionProvider
 
@@ -197,6 +207,50 @@ struct DefaultChargeItemListDomainService: ChargeItemListDomainService {
                                 .eraseToAnyPublisher()
                         }
                         .catch { error -> AnyPublisher<ChargeItemDomainServiceFetchResult, Never> in
+                            Just(.error(.localStore(error))).eraseToAnyPublisher()
+                        }
+                        .eraseToAnyPublisher()
+
+                case LoginResult.success(false):
+                    return Just(.notAuthenticated).eraseToAnyPublisher()
+                case let LoginResult.failure(error):
+                    return Just(.error(.loginHandler(error))).eraseToAnyPublisher()
+                }
+            }
+            .eraseToAnyPublisher()
+    }
+
+    func delete(
+        chargeItem: ErxSparseChargeItem,
+        for profileId: UUID
+    ) -> AnyPublisher<ChargeItemDomainServiceDeleteResult, Never> {
+        let loginHandler = loginHandler(for: profileId)
+        let erxTaskRepository = erxTaskRepository(for: profileId)
+        let userSession = userSessionProvider.userSession(for: profileId)
+
+        return loginHandler.isAuthenticated()
+            .first()
+            .flatMap { (loginResult: LoginResult) -> AnyPublisher<ChargeItemDomainServiceDeleteResult, Never> in
+                switch loginResult {
+                case .success(true):
+                    return userSession.profile()
+                        .first()
+                        .flatMap { profile -> AnyPublisher<ChargeItemDomainServiceDeleteResult, Never> in
+                            guard profile.insuranceId != nil else {
+                                // At this point, we expect the profile to be associated with a insuranceId
+                                return Just(.error(.unexpected))
+                                    .eraseToAnyPublisher()
+                            }
+                            return erxTaskRepository.delete(chargeItems: [chargeItem])
+                                .first()
+                                .map { _ in .success }
+                                .catch { error in
+                                    Just(ChargeItemDomainServiceDeleteResult.error(.erxRepository(error)))
+                                        .eraseToAnyPublisher()
+                                }
+                                .eraseToAnyPublisher()
+                        }
+                        .catch { error -> AnyPublisher<ChargeItemDomainServiceDeleteResult, Never> in
                             Just(.error(.localStore(error))).eraseToAnyPublisher()
                         }
                         .eraseToAnyPublisher()
@@ -352,7 +406,7 @@ struct DefaultChargeItemListDomainService: ChargeItemListDomainService {
     }
 
     private func deleteAllLocalChargeItems(for _: UUID)
-        -> AnyPublisher<ChargeItemListDomainServiceDeleteResult, Never> {
+        -> AnyPublisher<ChargeItemDomainServiceDeleteResult, Never> {
         Just(.success).eraseToAnyPublisher() // to-do: integration
     }
 
@@ -379,38 +433,6 @@ struct DefaultChargeItemListDomainService: ChargeItemListDomainService {
     }
 }
 
-struct DummyChargeItemListDomainService: ChargeItemListDomainService {
-    func fetchLocalChargeItems(for _: UUID) -> AnyPublisher<ChargeItemDomainServiceFetchResult, Never> {
-        Just(.success([
-            ErxSparseChargeItem(identifier: "abc1", fhirData: Data(), enteredDate: "2022-07-12T10:24:47+02:00"),
-            ErxSparseChargeItem(identifier: "abc2", fhirData: Data(), enteredDate: "2023-07-12T10:24:47+02:00"),
-            ErxSparseChargeItem(identifier: "abc3", fhirData: Data(), enteredDate: "2022-07-19T10:24:47+02:00"),
-            ErxSparseChargeItem(identifier: "abc4", fhirData: Data(), enteredDate: "2022-07-18T10:24:47+02:00"),
-        ])).eraseToAnyPublisher()
-    }
-
-    func fetchRemoteChargeItemsAndSave(for _: UUID) -> AnyPublisher<ChargeItemDomainServiceFetchResult, Never> {
-        Just(.success([])).eraseToAnyPublisher()
-    }
-
-    func authenticate(for _: UUID) -> AnyPublisher<ChargeItemDomainServiceAuthenticateResult, Never> {
-        Just(.success).eraseToAnyPublisher()
-    }
-
-    func grantChargeItemsConsent(for _: UUID) -> AnyPublisher<ChargeItemListDomainServiceGrantResult, Never> {
-        Just(.success).eraseToAnyPublisher()
-    }
-
-    func fetchChargeItemsAssumingConsentGranted(for _: UUID)
-        -> AnyPublisher<ChargeItemDomainServiceFetchResult, Never> {
-        Just(.success([])).eraseToAnyPublisher()
-    }
-
-    func revokeChargeItemsConsent(for _: UUID) -> AnyPublisher<ChargeItemListDomainServiceRevokeResult, Never> {
-        Just(.success(.success)).eraseToAnyPublisher()
-    }
-}
-
 // MARK: TCA Dependency
 
 extension DefaultChargeItemListDomainService {
@@ -419,10 +441,7 @@ extension DefaultChargeItemListDomainService {
 }
 
 struct ChargeItemListDomainServiceDependency: DependencyKey {
-    // swiftlint:disable:next todo
-    // TODO: replace with correct live value, as soon as data can be imported or sent from the server
-    static let liveValue: ChargeItemListDomainService = DummyChargeItemListDomainService()
-    //    static let liveValue: ChargeItemListDomainService = DefaultChargeItemListDomainService.live
+    static let liveValue: ChargeItemListDomainService = DefaultChargeItemListDomainService.live
     static let previewValue: ChargeItemListDomainService = DummyChargeItemListDomainService()
     static let testValue: ChargeItemListDomainService = UnimplementedChargeItemListDomainService()
 }

@@ -19,15 +19,13 @@
 import SwiftUI
 
 struct ProfilePicturePicker: View {
-    @Binding
-    var emoji: String?
+    @Binding var emoji: String?
 
     let acronym: String
     let color: Color
     let borderColor: Color
 
-    @State
-    var editEmoji = false
+    @State var editEmoji = false
 
     var body: some View {
         VStack(spacing: 16) {

@@ -21,8 +21,7 @@ import SwiftUI
 
 struct AppMigrationView: View {
     let store: AppMigrationDomain.Store
-    @ObservedObject
-    var viewStore: ViewStore<AppMigrationDomain.State, AppMigrationDomain.Action>
+    @ObservedObject var viewStore: ViewStore<AppMigrationDomain.State, AppMigrationDomain.Action>
 
     init(store: AppMigrationDomain.Store) {
         self.store = store

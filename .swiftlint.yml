@@ -54,6 +54,8 @@ type_name:
     warning: 40
     error: 50
   allowed_symbols: ["_Previews"]
+attributes:
+  always_on_same_line: ["@Environment", "@ViewBuilder", "@Dependency", "@AppStorage"]
 custom_rules:
   nimble_fail_with_description:
     included: ".*Test\\.swift"

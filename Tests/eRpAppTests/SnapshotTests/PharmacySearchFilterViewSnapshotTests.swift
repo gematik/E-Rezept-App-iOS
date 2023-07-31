@@ -52,7 +52,7 @@ final class PharmacySearchFilterViewSnapshotTests: XCTestCase {
         let sut = NavigationView {
             PharmacySearchFilterView(
                 store: PharmacySearchFilterDomain.Store(
-                    initialState: .init(pharmacyFilterOptions: [.ready, .currentLocation, .shipment]),
+                    initialState: .init(pharmacyFilterOptions: [.currentLocation, .shipment]),
                     reducer: EmptyReducer()
                 )
             )

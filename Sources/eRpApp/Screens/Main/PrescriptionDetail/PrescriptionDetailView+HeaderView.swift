@@ -23,8 +23,7 @@ extension PrescriptionDetailView {
     // swiftlint:disable:next type_body_length
     struct HeaderView: View {
         let store: StoreOf<PrescriptionDetailDomain>
-        @ObservedObject
-        var viewStore: ViewStore<ViewState, PrescriptionDetailDomain.Action>
+        @ObservedObject var viewStore: ViewStore<ViewState, PrescriptionDetailDomain.Action>
 
         init(store: PrescriptionDetailDomain.Store) {
             self.store = store
@@ -236,8 +235,7 @@ extension PrescriptionDetailView {
         }
 
         struct PrescriptionValidityView: View {
-            @ObservedObject
-            var viewStore: ViewStore<
+            @ObservedObject var viewStore: ViewStore<
                 PrescriptionDetailDomain.Destinations.PrescriptionValidityState?,
                 PrescriptionDetailDomain.Action
             >

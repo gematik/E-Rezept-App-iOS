@@ -31,7 +31,7 @@ struct PrescriptionView: View {
             },
             label: {
                 HStack {
-                    VStack(alignment: .leading, spacing: 4) {
+                    VStack(alignment: .leading, spacing: 0) {
                         Text(
                             prescription.medication?.displayName,
                             placeholder: L10n.erxTxtMedicationPlaceholder
@@ -40,10 +40,13 @@ struct PrescriptionView: View {
                         .font(Font.body.weight(.semibold))
                         .multilineTextAlignment(.leading)
                         .accessibilityIdentifier(A11y.mainScreen.erxDetailedPrescriptionName)
-                        Text(prescription.statusMessage)
-                            .font(Font.subheadline.weight(.regular))
-                            .foregroundColor(Color(.secondaryLabel))
-                            .accessibilityIdentifier(A11y.mainScreen.erxDetailedPrescriptionValidity)
+                        .padding(.bottom, 4)
+                        if prescription.flowType != .directAssignment {
+                            Text(prescription.statusMessage)
+                                .font(Font.subheadline.weight(.regular))
+                                .foregroundColor(Color(.secondaryLabel))
+                                .accessibilityIdentifier(A11y.mainScreen.erxDetailedPrescriptionValidity)
+                        }
                         PrescriptionStatusView(prescription: prescription)
                     }
                     .multilineTextAlignment(.leading)
@@ -91,7 +94,7 @@ struct PrescriptionView: View {
                             .erxDetailedMultiplePrescriptionIndex)
                 }
             }
-            .padding(.top, 4)
+            .padding(.top, 8)
         }
     }
 }

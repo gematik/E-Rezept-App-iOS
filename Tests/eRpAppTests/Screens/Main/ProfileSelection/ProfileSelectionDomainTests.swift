@@ -137,7 +137,7 @@ final class ProfileSelectionDomainTests: XCTestCase {
             state.destination = .alert(
                 .init(
                     for: UserProfileServiceError.localStoreError(.notImplemented),
-                    title: TextState(L10n.errTxtDatabaseAccess)
+                    title: L10n.errTxtDatabaseAccess
                 )
             )
         }

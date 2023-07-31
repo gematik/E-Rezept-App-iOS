@@ -212,7 +212,7 @@ extension MainDomain {
             return environment.checkForTaskDuplicatesThenSave(sharedTasks)
                 .cancellable(id: Token.checkForTaskDuplicates)
         case .response(.importReceived(.success)):
-            state.destination = .alert(.init(title: TextState(L10n.erxTxtPrescriptionAddedAlertTitle.text)))
+            state.destination = .alert(.init(title: L10n.erxTxtPrescriptionAddedAlertTitle))
             return .none
         case let .response(.importReceived(.failure(error))):
             state.destination = .alert(.init(for: error, title: L10n.erxTxtPrescriptionDuplicateAlertTitle))
@@ -229,18 +229,19 @@ extension MainDomain {
             let alertState: ErpAlertState<Action>
             switch error {
             case .idpError(.biometrics) where error.contains(PrivateKeyContainer.Error.canceledByUser):
-                alertState = .init(
-                    for: error,
-                    title: L10n.errSpecificI10808Title,
-                    primaryButton: .cancel(TextState(L10n.alertBtnOk), action: .send(.setNavigation(tag: nil)))
-                )
+                alertState = .init(for: error, title: L10n.errSpecificI10808Title, actions: {
+                    ButtonState(role: .cancel, action: .setNavigation(tag: nil)) {
+                        .init(L10n.alertBtnOk)
+                    }
+                })
             case .idpError(.biometrics), .idpError(.serverError):
                 alertState = AlertStates.loginNecessaryAlert(for: error)
             default:
-                alertState = .init(
-                    for: error,
-                    primaryButton: .cancel(TextState(L10n.alertBtnOk), action: .send(.setNavigation(tag: nil)))
-                )
+                alertState = .init(for: error, actions: {
+                    ButtonState(role: .cancel, action: .setNavigation(tag: nil)) {
+                        .init(L10n.alertBtnOk)
+                    }
+                })
             }
             state.destination = .alert(alertState)
             return .none
@@ -274,13 +275,13 @@ extension MainDomain {
             state.destination = nil
             return Self.cleanupSubDomains()
         case let .horizontalProfileSelection(action: .response(.loadReceived(.failure(error)))):
-            state
-                .destination =
-                .alert(.init(for: error,
-                             primaryButton: .cancel(
-                                 TextState(L10n.alertBtnOk),
-                                 action: .send(.setNavigation(tag: nil))
-                             )))
+            state.destination = .alert(
+                .init(for: error, actions: {
+                    ButtonState(role: .cancel, action: .setNavigation(tag: nil)) {
+                        .init(L10n.alertBtnOk)
+                    }
+                })
+            )
             return .none
         case .refreshPrescription:
             return EffectTask(value: .prescriptionList(action: .refresh))
@@ -301,11 +302,14 @@ extension MainDomain {
             case .close:
                 state.destination = nil
                 return CreateProfileDomain.cleanup()
-            case let .failure(userProfileServiceError):
-                state.destination = .alert(.init(
-                    for: userProfileServiceError,
-                    primaryButton: .cancel(TextState(L10n.alertBtnOk), action: .send(.setNavigation(tag: nil)))
-                ))
+            case let .failure(error):
+                state.destination = .alert(
+                    .init(for: error, actions: {
+                        ButtonState(role: .cancel, action: .setNavigation(tag: nil)) {
+                            .init(L10n.alertBtnOk)
+                        }
+                    })
+                )
                 return .none
             }
         case let .destination(.scanner(action: .delegate(delegateAction))):
@@ -319,11 +323,14 @@ extension MainDomain {
             case .close:
                 state.destination = nil
                 return EditProfileNameDomain.cleanup()
-            case let .failure(userProfileServiceError):
-                state.destination = .alert(.init(
-                    for: userProfileServiceError,
-                    primaryButton: .cancel(TextState(L10n.alertBtnOk), action: .send(.setNavigation(tag: nil)))
-                ))
+            case let .failure(error):
+                state.destination = .alert(
+                    .init(for: error, actions: {
+                        ButtonState(role: .cancel, action: .setNavigation(tag: nil)) {
+                            .init(L10n.alertBtnOk)
+                        }
+                    })
+                )
                 return .none
             }
         case let .destination(.editProfilePictureAction(action: .delegate(delegateAction))):
@@ -331,11 +338,14 @@ extension MainDomain {
             case .close:
                 state.destination = nil
                 return EditProfilePictureDomain.cleanup()
-            case let .failure(userProfileServiceError):
-                state.destination = .alert(.init(
-                    for: userProfileServiceError,
-                    primaryButton: .cancel(TextState(L10n.alertBtnOk), action: .send(.setNavigation(tag: nil)))
-                ))
+            case let .failure(error):
+                state.destination = .alert(
+                    .init(for: error, actions: {
+                        ButtonState(role: .cancel, action: .setNavigation(tag: nil)) {
+                            .init(L10n.alertBtnOk)
+                        }
+                    })
+                )
                 return Self.cleanupSubDomains()
             }
         case .destination,
@@ -354,12 +364,12 @@ extension MainDomain {
         static func loginNecessaryAlert(for error: LoginHandlerError) -> ErpAlertState<Action> {
             .init(
                 for: error,
-                title: L10n.errTitleLoginNecessary,
-                primaryButton: .default(
-                    TextState(L10n.erxBtnAlertLogin),
-                    action: .send(Action.setNavigation(tag: .cardWall))
-                )
-            )
+                title: L10n.errTitleLoginNecessary
+            ) {
+                ButtonState(action: .setNavigation(tag: .cardWall)) {
+                    .init(L10n.erxBtnAlertLogin)
+                }
+            }
         }
     }
 }

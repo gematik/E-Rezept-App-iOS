@@ -22,8 +22,7 @@ import SwiftUI
 
 struct PharmacySearchStartView: View {
     var store: Store<PharmacySearchDomain.State, PharmacySearchDomain.Action>
-    @ObservedObject
-    var viewStore: ViewStore<ViewState, PharmacySearchDomain.Action>
+    @ObservedObject var viewStore: ViewStore<ViewState, PharmacySearchDomain.Action>
 
     init(store: Store<PharmacySearchDomain.State, PharmacySearchDomain.Action>) {
         self.store = store
@@ -49,7 +48,7 @@ struct PharmacySearchStartView: View {
                 Button {
                     viewStore.send(
                         .quickSearch(
-                            filters: [.open, .currentLocation, .ready]
+                            filters: [.open, .currentLocation]
                         ), animation: .default
                     )
                 } label: {
@@ -61,7 +60,7 @@ struct PharmacySearchStartView: View {
                 Button {
                     viewStore.send(
                         .quickSearch(
-                            filters: [.delivery, .ready]
+                            filters: [.delivery]
                         ), animation: .default
                     )
                 } label: {
@@ -73,7 +72,7 @@ struct PharmacySearchStartView: View {
                 Button {
                     viewStore.send(
                         .quickSearch(
-                            filters: [.shipment, .ready]
+                            filters: [.shipment]
                         ), animation: .default
                     )
                 } label: {

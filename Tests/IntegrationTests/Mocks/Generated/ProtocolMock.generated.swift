@@ -313,20 +313,20 @@ final class MockErxLocalDataStore: ErxLocalDataStore {
     
    // MARK: - fetchChargeItem
 
-    var fetchChargeItemByFullDetailCallsCount = 0
-    var fetchChargeItemByFullDetailCalled: Bool {
-        fetchChargeItemByFullDetailCallsCount > 0
+    var fetchChargeItemByCallsCount = 0
+    var fetchChargeItemByCalled: Bool {
+        fetchChargeItemByCallsCount > 0
     }
-    var fetchChargeItemByFullDetailReceivedArguments: (chargeItemID: ErxSparseChargeItem.ID, fullDetail: Bool)?
-    var fetchChargeItemByFullDetailReceivedInvocations: [(chargeItemID: ErxSparseChargeItem.ID, fullDetail: Bool)] = []
-    var fetchChargeItemByFullDetailReturnValue: AnyPublisher<ErxSparseChargeItem?, LocalStoreError>!
-    var fetchChargeItemByFullDetailClosure: ((ErxSparseChargeItem.ID, Bool) -> AnyPublisher<ErxSparseChargeItem?, LocalStoreError>)?
+    var fetchChargeItemByReceivedChargeItemID: ErxSparseChargeItem.ID?
+    var fetchChargeItemByReceivedInvocations: [ErxSparseChargeItem.ID] = []
+    var fetchChargeItemByReturnValue: AnyPublisher<ErxSparseChargeItem?, LocalStoreError>!
+    var fetchChargeItemByClosure: ((ErxSparseChargeItem.ID) -> AnyPublisher<ErxSparseChargeItem?, LocalStoreError>)?
 
-    func fetchChargeItem(by chargeItemID: ErxSparseChargeItem.ID, fullDetail: Bool) -> AnyPublisher<ErxSparseChargeItem?, LocalStoreError> {
-        fetchChargeItemByFullDetailCallsCount += 1
-        fetchChargeItemByFullDetailReceivedArguments = (chargeItemID: chargeItemID, fullDetail: fullDetail)
-        fetchChargeItemByFullDetailReceivedInvocations.append((chargeItemID: chargeItemID, fullDetail: fullDetail))
-        return fetchChargeItemByFullDetailClosure.map({ $0(chargeItemID, fullDetail) }) ?? fetchChargeItemByFullDetailReturnValue
+    func fetchChargeItem(by chargeItemID: ErxSparseChargeItem.ID) -> AnyPublisher<ErxSparseChargeItem?, LocalStoreError> {
+        fetchChargeItemByCallsCount += 1
+        fetchChargeItemByReceivedChargeItemID = chargeItemID
+        fetchChargeItemByReceivedInvocations.append(chargeItemID)
+        return fetchChargeItemByClosure.map({ $0(chargeItemID) }) ?? fetchChargeItemByReturnValue
     }
     
    // MARK: - fetchLatestTimestampForChargeItems

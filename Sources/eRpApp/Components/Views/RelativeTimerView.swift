@@ -22,8 +22,7 @@ import SwiftUI
 struct RelativeTimerView: View {
     let date: Date
 
-    @State
-    private var formattedString: String?
+    @State private var formattedString: String?
 
     var body: some View {
         RelativeTimerViewForToolbars(date: date, formattedString: $formattedString)
@@ -33,8 +32,7 @@ struct RelativeTimerView: View {
 struct RelativeTimerViewForToolbars: View {
     let date: Date
 
-    @Binding
-    var formattedString: String?
+    @Binding var formattedString: String?
 
     private let timer = Timer
         .publish(every: 60, on: .main, in: .common)

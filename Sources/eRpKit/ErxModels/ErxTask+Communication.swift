@@ -136,11 +136,11 @@ extension ErxTask {
 
 extension ErxTask.Communication: Comparable, Hashable {
     struct Unique: Equatable, Hashable {
-        public let profile: Profile
-        public let payload: String
-        public let insuranceId: String
-        public let telematikId: String
-        public let orderId: String
+        let profile: Profile
+        let payload: String
+        let insuranceId: String
+        let telematikId: String
+        let orderId: String
     }
 
     public static func <(lhs: ErxTask.Communication, rhs: ErxTask.Communication) -> Bool {

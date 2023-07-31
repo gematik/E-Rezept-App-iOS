@@ -146,7 +146,7 @@ struct OnboardingDomain: ReducerProtocol {
         Reduce(core)
     }
 
-    // swiftlint:disable:next function_body_length cyclomatic_complexity
+    // swiftlint:disable:next cyclomatic_complexity
     func core(into state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
         case .nextPage:

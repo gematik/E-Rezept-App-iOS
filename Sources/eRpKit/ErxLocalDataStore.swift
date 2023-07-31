@@ -132,12 +132,9 @@ public protocol ErxLocalDataStore {
     ///
     /// - Parameters:
     ///   - id: the ErxChargeItem ID
-    ///   - fullDetail: if set to true, fetches all available information
-    ///   otherwise only a minimal version
     /// - Returns: Publisher for the fetch request
     func fetchChargeItem(
-        by chargeItemID: ErxSparseChargeItem.ID,
-        fullDetail: Bool
+        by chargeItemID: ErxSparseChargeItem.ID
     ) -> AnyPublisher<ErxSparseChargeItem?, LocalStoreError>
 
     /// Fetch the most recent `enteredDate` of all `ChargeItem`s

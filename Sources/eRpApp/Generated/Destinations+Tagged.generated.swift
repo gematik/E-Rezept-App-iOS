@@ -25,6 +25,18 @@ extension AppDomain.Destinations.State {
         }
     }
 }
+extension AppSecurityDomain.Destinations.State {
+    enum Tag: Int {
+        case appPassword
+    }
+
+    var tag: Tag {
+        switch self {
+            case .appPassword:
+                return .appPassword
+        }
+    }
+}
 extension CardWallCANDomain.Destinations.State {
     enum Tag: Int {
         case pin
@@ -124,6 +136,24 @@ extension CardWallReadCardDomain.Destinations.State {
         }
     }
 }
+extension ChargeItemDomain.Destinations.State {
+    enum Tag: Int {
+        case shareSheet
+        case idpCardWall
+        case alert
+    }
+
+    var tag: Tag {
+        switch self {
+            case .shareSheet:
+                return .shareSheet
+            case .idpCardWall:
+                return .idpCardWall
+            case .alert:
+                return .alert
+        }
+    }
+}
 extension ChargeItemListDomain.Destinations.State {
     enum Tag: Int {
         case idpCardWall
@@ -149,6 +179,7 @@ extension EditProfileDomain.Destinations.State {
         case auditEvents
         case registeredDevices
         case chargeItemList
+        case editProfilePicture
     }
 
     var tag: Tag {
@@ -163,6 +194,8 @@ extension EditProfileDomain.Destinations.State {
                 return .registeredDevices
             case .chargeItemList:
                 return .chargeItemList
+            case .editProfilePicture:
+                return .editProfilePicture
         }
     }
 }
@@ -502,6 +535,21 @@ extension RegisteredDevicesDomain.Destinations.State {
         }
     }
 }
+extension ScannerDomain.Destinations.State {
+    enum Tag: Int {
+        case imageGallery
+        case documentImporter
+    }
+
+    var tag: Tag {
+        switch self {
+            case .imageGallery:
+                return .imageGallery
+            case .documentImporter:
+                return .documentImporter
+        }
+    }
+}
 extension SettingsDomain.Destinations.State {
     enum Tag: Int {
         case debug
@@ -509,7 +557,7 @@ extension SettingsDomain.Destinations.State {
         case healthCardPasswordForgotPin
         case healthCardPasswordSetCustomPin
         case healthCardPasswordUnlockCard
-        case setAppPassword
+        case appSecurity
         case complyTracking
         case legalNotice
         case dataProtection
@@ -532,8 +580,8 @@ extension SettingsDomain.Destinations.State {
                 return .healthCardPasswordSetCustomPin
             case .healthCardPasswordUnlockCard:
                 return .healthCardPasswordUnlockCard
-            case .setAppPassword:
-                return .setAppPassword
+            case .appSecurity:
+                return .appSecurity
             case .complyTracking:
                 return .complyTracking
             case .legalNotice:

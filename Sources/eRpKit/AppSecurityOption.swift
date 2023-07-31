@@ -23,6 +23,7 @@ public enum AppSecurityOption: Identifiable, Equatable {
     case unsecured
     case biometry(BiometryType)
     case password
+    case biometryAndPassword(BiometryType)
 
     public var id: Int {
         switch self {
@@ -37,6 +38,13 @@ public enum AppSecurityOption: Identifiable, Equatable {
             }
         case .password:
             return 3
+        case let .biometryAndPassword(biometryType):
+            switch biometryType {
+            case .faceID:
+                return 4
+            case .touchID:
+                return 5
+            }
         }
     }
 
@@ -50,6 +58,10 @@ public enum AppSecurityOption: Identifiable, Equatable {
             self = .biometry(.touchID)
         case 3:
             self = .password
+        case 4:
+            self = .biometryAndPassword(.faceID)
+        case 5:
+            self = .biometryAndPassword(.touchID)
         default:
             self = .unsecured
         }

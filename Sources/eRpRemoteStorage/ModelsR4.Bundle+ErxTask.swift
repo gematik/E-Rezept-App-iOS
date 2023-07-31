@@ -212,6 +212,7 @@ extension ModelsR4.Bundle {
     /// Creates an `eRpKit.MedicationRequest` from the ModelsR4.MedicationRequest
     func parseErxMedicationRequest() -> ErxMedicationRequest {
         .init(
+            authoredOn: medicationRequest?.authoredOn?.value?.description,
             dosageInstructions: joinedDosageInstructions,
             substitutionAllowed: medicationRequest?.substitutionAllowed,
             hasEmergencyServiceFee: medicationRequest?.noctuFeeWaiver,

@@ -89,8 +89,7 @@ struct CardWallPINDomain: ReducerProtocol {
     @Dependency(\.userSession) var userSession: UserSession
     @Dependency(\.schedulers) var schedulers: Schedulers
     @Dependency(\.resourceHandler) var resourceHandler: ResourceHandler
-    @Dependency(\.accessibilityAnnouncementReceiver)
-    var accessibilityAnnouncementReceiver: AccessibilityAnnouncementReceiver
+    @Dependency(\.accessibilityAnnouncementReceiver) var receiver: AccessibilityAnnouncementReceiver
 
     var body: some ReducerProtocol<State, Action> {
         Reduce(self.core)
@@ -99,14 +98,14 @@ struct CardWallPINDomain: ReducerProtocol {
             }
     }
 
-    // swiftlint:disable:next cyclomatic_complexity function_body_length
+    // swiftlint:disable:next cyclomatic_complexity
     func core(into state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
         case let .update(pin: pin):
             state.pin = pin
             state.doneButtonPressed = false
             if state.showWarning {
-                accessibilityAnnouncementReceiver.accessibilityAnnouncement(state.warningMessage)
+                receiver.accessibilityAnnouncement(state.warningMessage)
             }
             return .none
         case let .advance(mode):
@@ -119,7 +118,7 @@ struct CardWallPINDomain: ReducerProtocol {
                 state.doneButtonPressed = true
             }
             if state.showWarning {
-                accessibilityAnnouncementReceiver.accessibilityAnnouncement(state.warningMessage)
+                receiver.accessibilityAnnouncement(state.warningMessage)
             }
             return .none
         case .setNavigation(tag: .egk):

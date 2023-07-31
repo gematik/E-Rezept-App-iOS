@@ -104,3 +104,5 @@ final class AuthEnvelopedWithUnauthAttributesTests: XCTestCase {
         -----END CERTIFICATE-----
         """
 }
+
+// swiftlint:enable line_length

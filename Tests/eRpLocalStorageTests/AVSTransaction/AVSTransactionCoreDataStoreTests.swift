@@ -265,7 +265,7 @@ final class AVSTransactionCoreDataStoreTests: XCTestCase {
             }, receiveValue: { task in
                 success = true
                 expect(task?.identifier).to(equal("12345"))
-                expect(task?.status).to(equal(.inProgress))
+                expect(task?.status).to(equal(.computed(status: .sent)))
             })
 
         expect(success).to(beTrue())
@@ -277,7 +277,7 @@ final class AVSTransactionCoreDataStoreTests: XCTestCase {
             }, receiveValue: { task in
                 success = true
                 expect(task?.identifier).to(equal("12345"))
-                expect(task?.status).to(equal(.completed))
+                expect(task?.status).to(equal(.computed(status: .sent)))
             })
 
         expect(success).to(beTrue())

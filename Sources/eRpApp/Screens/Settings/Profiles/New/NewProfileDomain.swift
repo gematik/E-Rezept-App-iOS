@@ -60,7 +60,7 @@ struct NewProfileDomain: ReducerProtocol {
     @Dependency(\.userDataStore) var userDataStore: UserDataStore
     @Dependency(\.profileDataStore) var profileDataStore: ProfileDataStore
 
-    // swiftlint:disable:next cyclomatic_complexity function_body_length
+    // swiftlint:disable:next cyclomatic_complexity
     func reduce(into state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
         case let .setName(name):

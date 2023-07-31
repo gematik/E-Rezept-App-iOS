@@ -312,7 +312,7 @@ public class DefaultErxTaskRepository: ErxTaskRepository {
     }
 
     public func loadLocal(by id: ErxSparseChargeItem.ID) -> AnyPublisher<ErxSparseChargeItem?, ErxRepositoryError> {
-        disk.fetchChargeItem(by: id, fullDetail: true)
+        disk.fetchChargeItem(by: id)
             .mapError(ErrorType.local)
             .eraseToAnyPublisher()
     }
@@ -357,3 +357,5 @@ public class DefaultErxTaskRepository: ErxTaskRepository {
             .eraseToAnyPublisher()
     }
 }
+
+// swiftlint:enable type_body_length

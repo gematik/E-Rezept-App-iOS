@@ -25,8 +25,7 @@ import SwiftUI
 struct CardWallIntroductionView: View {
     let store: CardWallIntroductionDomain.Store
 
-    @ObservedObject
-    var viewStore: ViewStore<ViewState, CardWallIntroductionDomain.Action>
+    @ObservedObject var viewStore: ViewStore<ViewState, CardWallIntroductionDomain.Action>
 
     init(store: CardWallIntroductionDomain.Store) {
         self.store = store

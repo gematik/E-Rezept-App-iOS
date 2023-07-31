@@ -19,8 +19,7 @@
 import SwiftUI
 
 struct LibraryContent: LibraryContentProvider {
-    @LibraryContentBuilder
-    var views: [LibraryItem] {
+    @LibraryContentBuilder var views: [LibraryItem] {
         LibraryItem(PrimaryTextButton(text: "Primary Button Text", a11y: "Primary Button Text") {})
         LibraryItem(SecondaryTextButton(text: "Secondary Button Text", a11y: "") {})
         LibraryItem(TertiaryButton(text: "Tertiary Button Text") {})

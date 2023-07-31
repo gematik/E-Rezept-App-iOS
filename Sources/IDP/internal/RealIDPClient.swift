@@ -601,3 +601,6 @@ extension DiscoveryDocument {
         try self.init(jwt: jwt, encryptPuks: pukIdpEnc, signingPuks: pukIdpSig)
     }
 }
+
+// swiftlint:enable type_body_length
+// swiftlint:enable file_length

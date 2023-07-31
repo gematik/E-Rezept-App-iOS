@@ -1,3 +1,29 @@
+# Release 1.11.0
+
+## fixed (9 changes)
+
+ - Fix Insurance no contact overall shows directly
+ - Fix missing ASN1Kit dependency
+ - Fix UI of directAssignment
+ - Fix profile picture edit in settings
+ - Fix ViewStatus for PKV direct assignments
+ - Fix idp cardwall background color
+ - Fix flaky CardWallReadCardDomain test
+ - Fix swipe bug that allows skipping LegalInfo view
+ - Fix AVS certificate parsing
+
+## added (4 changes)
+
+ - Add new intermediate certificate pinning
+ - Add PDF creation for charge items
+ - Add image gallery and file import with barcode detection
+ - Handle external authentication for PKV
+
+## changed (2 changes)
+
+ - Change when AVS service configured it will also be used as configuration for TI services
+ - Change sorting after date and name for prescriptions
+
 # Release 1.9.0
 
 ## added (9 changes)

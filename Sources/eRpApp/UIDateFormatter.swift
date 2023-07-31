@@ -54,6 +54,14 @@ struct UIDateFormatter {
         return formatter
     }()
 
+    private var dateAndTimeFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.locale = Locale.current
+        formatter.timeZone = TimeZone.current
+        formatter.dateFormat = "dd.MM.yyyy HH:mm"
+        return formatter
+    }()
+
     func relativeDateAndTime(_ string: String?) -> String? {
         if let dateTimeString = string,
            let dateTime = fhirDateFormatter.date(from: dateTimeString, format: .yearMonthDayTimeMilliSeconds) {
@@ -82,6 +90,14 @@ struct UIDateFormatter {
         if let dateAsString = string,
            let date = fhirDateFormatter.date(from: dateAsString, format: .yearMonthDay) {
             return dateFormatter.string(from: date)
+        }
+        return string
+    }
+
+    func dateTime(_ string: String?) -> String? {
+        if let dateAsString = string,
+           let date = fhirDateFormatter.date(from: dateAsString, format: .yearMonthDayTime) {
+            return dateAndTimeFormatter.string(from: date)
         }
         return string
     }

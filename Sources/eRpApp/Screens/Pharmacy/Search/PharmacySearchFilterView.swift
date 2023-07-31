@@ -22,8 +22,7 @@ import SwiftUI
 
 struct PharmacySearchFilterView: View {
     let store: PharmacySearchFilterDomain.Store
-    @ObservedObject
-    var viewStore: ViewStore<PharmacySearchFilterDomain.State, PharmacySearchFilterDomain.Action>
+    @ObservedObject var viewStore: ViewStore<PharmacySearchFilterDomain.State, PharmacySearchFilterDomain.Action>
 
     init(store: PharmacySearchFilterDomain.Store) {
         self.store = store
@@ -50,8 +49,7 @@ struct PharmacySearchFilterView: View {
     typealias Filter = PharmacySearchFilterDomain.PharmacyFilterOption
 
     struct FilterRow: View {
-        @ObservedObject
-        var viewStore: ViewStore<PharmacySearchFilterDomain.State, PharmacySearchFilterDomain.Action>
+        @ObservedObject var viewStore: ViewStore<PharmacySearchFilterDomain.State, PharmacySearchFilterDomain.Action>
 
         let filters: [PharmacySearchFilterDomain.PharmacyFilterOption]
 
@@ -78,7 +76,6 @@ struct PharmacySearchFilterView: View {
 
             VStack(alignment: .leading, spacing: 8) {
                 FilterRow(viewStore: viewStore, filters: [.currentLocation, .open])
-                FilterRow(viewStore: viewStore, filters: [.ready])
                 FilterRow(viewStore: viewStore, filters: [.delivery, .shipment])
             }
             .frame(maxWidth: .infinity, alignment: .leading)

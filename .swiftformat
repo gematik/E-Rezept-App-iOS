@@ -1,7 +1,7 @@
 --exclude Package.swift,.build,vendor,Carthage,DerivedData,build,**/Generated
 
 # format options
---swiftversion 5.2
+--swiftversion 5.7
 
 --indent 4
 --ifdef no-indent
@@ -11,7 +11,8 @@
 --trimwhitespace always
 --wraparguments preserve
 --wrapcollections preserve
-
+--typeattributes prev-line
+--varattributes same-line
 # rules
 
 --enable isEmpty

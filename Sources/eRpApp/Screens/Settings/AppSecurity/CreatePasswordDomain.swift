@@ -147,8 +147,6 @@ struct CreatePasswordDomain: ReducerProtocol {
                 return .cancel(id: Token.comparePasswords)
             }
 
-            userDataStore.set(appSecurityOption: .password)
-
             return .concatenate(
                 .cancel(id: Token.comparePasswords),
                 EffectTask(value: .delegate(.closeAfterPasswordSaved))

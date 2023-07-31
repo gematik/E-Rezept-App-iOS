@@ -95,9 +95,7 @@ struct ProfilesDomain: ReducerProtocol {
         case .unregisterListener:
             return .cancel(id: Token.loadProfiles)
         case let .response(.loadReceived(.failure(error))):
-            return .task {
-                .delegate(.alert(.init(for: error, title: TextState(L10n.errTxtDatabaseAccess))))
-            }
+            return .send(.delegate(.alert(.init(for: error, title: L10n.errTxtDatabaseAccess))))
         case let .response(.loadReceived(.success(profiles))):
             state.profiles = profiles
             return .none
@@ -105,13 +103,9 @@ struct ProfilesDomain: ReducerProtocol {
             state.selectedProfileId = profileId
             return .none
         case let .editProfile(profile):
-            return .task {
-                .delegate(.showEditProfile(.init(profile: profile)))
-            }
+            return .send(.delegate(.showEditProfile(.init(profile: profile))))
         case .addNewProfile:
-            return .task {
-                .delegate(.showNewProfile)
-            }
+            return .send(.delegate(.showNewProfile))
         case .delegate:
             return .none
         }

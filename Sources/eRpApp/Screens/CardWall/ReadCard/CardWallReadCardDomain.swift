@@ -275,6 +275,8 @@ extension CardWallReadCardDomain {
         with error: CodedError,
         commands: [Command]
     ) -> String {
+        @Dependency(\.dateProvider) var dateProvider
+
         var description = "Teilen Sie uns den Namen Ihrer Krankenversicherung mit:\n"
         description += "\nWelchen Gesundheitskartentyp haben Sie "
         description += "(dies steht i.d.R. seitlich auf der Rückseite Ihrer Karte z.B. IDEMIA oder G&D):\n"
@@ -282,7 +284,7 @@ extension CardWallReadCardDomain {
         description = "\nVielen Dank für das Senden dieses Reports. Der generierte Report enthält keine privaten Daten:"
         description += "# NFC Reading error iOS E-Rezept App\n\n"
 
-        description += "Date: \(Date().description)\n"
+        description += "Date: \(dateProvider().description)\n"
 
         description += "\n# RESULT\n\n"
         description += "Tag connections lost count: \(CardWallReadCardDomain.AlertStates.tagConnectionLostCount)"

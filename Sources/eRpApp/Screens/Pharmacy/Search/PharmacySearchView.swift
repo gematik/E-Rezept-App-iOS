@@ -26,8 +26,7 @@ struct PharmacySearchView: View {
     let store: PharmacySearchDomain.Store
     let isRedeemRecipe: Bool
 
-    @ObservedObject
-    var viewStore: ViewStore<ViewState, PharmacySearchDomain.Action>
+    @ObservedObject var viewStore: ViewStore<ViewState, PharmacySearchDomain.Action>
 
     init(store: PharmacySearchDomain.Store,
          isRedeemRecipe: Bool = true) {
@@ -156,8 +155,7 @@ struct PharmacySearchView: View {
     }
 
     struct Suggestions: View {
-        @ObservedObject
-        var viewStore: ViewStore<ViewState, PharmacySearchDomain.Action>
+        @ObservedObject var viewStore: ViewStore<ViewState, PharmacySearchDomain.Action>
 
         struct Suggestion: View {
             internal init(_ text: String) {
@@ -215,8 +213,7 @@ extension PharmacySearchView {
         @AppStorage("debug_pharmacies") var debugPharmacies: [DebugPharmacy] = []
         @AppStorage("show_debug_pharmacies") var showDebugPharmacies = false
 
-        @ObservedObject
-        var viewStore: ViewStore<ViewState, PharmacySearchDomain.Action>
+        @ObservedObject var viewStore: ViewStore<ViewState, PharmacySearchDomain.Action>
 
         var body: some View {
             if showDebugPharmacies, !debugPharmacies.isEmpty {
@@ -298,8 +295,7 @@ extension PharmacySearchView {
     }
 
     private struct ResultsView: View {
-        @ObservedObject
-        var viewStore: ViewStore<ViewState, PharmacySearchDomain.Action>
+        @ObservedObject var viewStore: ViewStore<ViewState, PharmacySearchDomain.Action>
 
         var body: some View {
             SingleElementSectionContainer {

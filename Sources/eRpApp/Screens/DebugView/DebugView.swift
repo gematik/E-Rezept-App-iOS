@@ -132,8 +132,7 @@ extension DebugView {
     }
 
     struct LocalTaskStatusView: View {
-        @ObservedObject
-        private var viewStore: ViewStore<DebugDomain.State, DebugDomain.Action>
+        @ObservedObject private var viewStore: ViewStore<DebugDomain.State, DebugDomain.Action>
 
         init(store: DebugDomain.Store) {
             viewStore = ViewStore(store)
@@ -161,8 +160,7 @@ extension DebugView {
     struct VirtualEGKLogin: View {
         private let store: DebugDomain.Store
 
-        @ObservedObject
-        private var viewStore: ViewStore<DebugDomain.State, DebugDomain.Action>
+        @ObservedObject private var viewStore: ViewStore<DebugDomain.State, DebugDomain.Action>
 
         init(store: DebugDomain.Store) {
             self.store = store
@@ -452,7 +450,6 @@ extension DebugView {
         }
 
         private struct FeatureFlags: View {
-            @AppStorage("enable_avs_login") var enableAvsLogin = false
             @AppStorage("show_debug_pharmacies") var showDebugPharmacies = false
             @AppStorage("enable_prescription_sharing") var isPrescriptionSharingEnabled = false
 
@@ -460,22 +457,15 @@ extension DebugView {
                 List {
                     Toggle("Rezepte Teilen", isOn: $isPrescriptionSharingEnabled)
 
-                    Toggle("Zuweisen ohne TI", isOn: $enableAvsLogin)
-
                     VStack(alignment: .leading) {
                         Toggle("Show Debug Pharmacies", isOn: $showDebugPharmacies)
-                            .foregroundColor(enableAvsLogin ? Color(.label) : Color(.secondaryLabel))
                         Text("Zeigt die unter 'Debug Pharmacies' hinterlegten Apotheken in der Apothekensuche an")
                             .font(.footnote)
-                            .foregroundColor(enableAvsLogin ? Color(.secondaryLabel) : Color(.tertiaryLabel))
                     }
 
                     NavigationLink(destination: AVSDebugView()) {
                         Text("Debug Pharmacies")
-                    }.disabled(!enableAvsLogin)
-                }
-                .onChange(of: self.enableAvsLogin) { newValue in
-                    showDebugPharmacies = newValue
+                    }.disabled(!showDebugPharmacies)
                 }
             }
         }

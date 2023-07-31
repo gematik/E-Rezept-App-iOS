@@ -54,6 +54,28 @@ struct X509TrustStore: TrustStore {
         idpCerts = vauAndIdpCerts.idpCerts
     }
 
+    #if DEBUG
+    // For test purposes only, until cross validation of `addRoots` parameter in above initializer is implemented.
+    // Do NOT call this initializer in the productive code.
+    init(trustAnchor: X509, unvalidatedAddRoots: [X509], caCerts: [X509], eeCerts: [X509]) throws {
+        rootCa = trustAnchor
+
+        // Category A:
+        addRoots = unvalidatedAddRoots
+
+        // Category B:
+        self.caCerts = Self.filter(caCerts: caCerts, trusting: [rootCa] + addRoots)
+
+        // Category C and D:
+        let vauAndIdpCerts = Self.filter(eeCerts: eeCerts, trusting: [rootCa] + addRoots + self.caCerts)
+        guard let vauCert = vauAndIdpCerts.vauCerts.first, vauAndIdpCerts.vauCerts.count == 1 else {
+            throw TrustStoreError.noCertificateFound
+        }
+        self.vauCert = vauCert
+        idpCerts = vauAndIdpCerts.idpCerts
+    }
+    #endif
+
     init(trustAnchor: TrustAnchor, certList: CertList) throws {
         // Expect certificates to be DER formatted
         let addRoots = certList.addRoots.compactMap { try? X509(der: $0) }

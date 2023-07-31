@@ -22,8 +22,7 @@ import SwiftUI
 struct CreateProfileView: View {
     let store: CreateProfileDomain.Store
 
-    @ObservedObject
-    var viewStore: ViewStore<ViewState, CreateProfileDomain.Action>
+    @ObservedObject var viewStore: ViewStore<ViewState, CreateProfileDomain.Action>
 
     init(store: CreateProfileDomain.Store) {
         self.store = store

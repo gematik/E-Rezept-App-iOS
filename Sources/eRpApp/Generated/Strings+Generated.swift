@@ -45,12 +45,20 @@ import SwiftUI
     internal static let amgTxtAlertTitleDeleteDatabase = StringAsset("amg_txt_alert_title_delete_database")
     /// Update...
     internal static let amgTxtInProgress = StringAsset("amg_txt_in_progress")
+    /// Face ID
+    internal static let authBtnBiometriandpasswordFaceid = StringAsset("auth_btn_biometriandpassword_faceid")
+    /// Touch ID
+    internal static let authBtnBiometriandpasswordTouchid = StringAsset("auth_btn_biometriandpassword_touchid")
+    /// password
+    internal static let authBtnBiometricandpasswordChange = StringAsset("auth_btn_Biometricandpassword_change")
     /// Unlock with Face ID
     internal static let authBtnBiometricsFaceid = StringAsset("auth_btn_biometrics_faceid")
     /// Unlock with Touch ID
     internal static let authBtnBiometricsTouchid = StringAsset("auth_btn_biometrics_touchid")
     /// Continue
     internal static let authBtnPasswordContinue = StringAsset("auth_btn_password_continue")
+    /// Please try again or enter your password.
+    internal static let authTxtBiometricandpasswordPasswordMessage = StringAsset("auth_txt_biometricandpassword_password_message")
     /// Please be aware that people with whom you may share this device and whose biometrics may be stored on this device may also have access to your prescriptions.
     internal static let authTxtBiometricsDisclaimer = StringAsset("auth_txt_biometrics_disclaimer")
     /// Secure with Face ID
@@ -125,6 +133,12 @@ import SwiftUI
     internal static let bnrTxtDemoMode = StringAsset("bnr_txt_demo_mode")
     /// inactive
     internal static let buttonTxtIsInactiveValue = StringAsset("button_txt_is_inactive_value")
+    /// Cancel
+    internal static let camBtnGallerySheetCancel = StringAsset("cam_btn_gallery_sheet_cancel")
+    /// Documents
+    internal static let camBtnGallerySheetDocument = StringAsset("cam_btn_gallery_sheet_document")
+    /// Pictures
+    internal static let camBtnGallerySheetPicture = StringAsset("cam_btn_gallery_sheet_picture")
     /// To use the scanner, you must allow the app to access your camera in the system settings.
     internal static let camInitFailMessage = StringAsset("cam_init_fail_message")
     /// Access to camera denied
@@ -135,11 +149,13 @@ import SwiftUI
     internal static let camPermDenyMessage = StringAsset("cam_perm_deny_message")
     /// Allow access to camera?
     internal static let camPermDenyTitle = StringAsset("cam_perm_deny_title")
-    /// OK
+    /// import files
+    internal static let camTxtGallerySheetTitle = StringAsset("cam_txt_gallery_sheet_title")
+    /// No
     internal static let camTxtWarnCancel = StringAsset("cam_txt_warn_cancel")
     /// Cancel scanning?
     internal static let camTxtWarnCancelTitle = StringAsset("cam_txt_warn_cancel_title")
-    /// Don't cancel
+    /// Yes
     internal static let camTxtWarnContinue = StringAsset("cam_txt_warn_continue")
     /// Close dialog
     internal static let cdwBtnBiometryCancelLabel = StringAsset("cdw_btn_biometry_cancel_label")
@@ -725,7 +741,7 @@ import SwiftUI
     internal static let erpTxtTooltipsAddProfile = StringAsset("erp_txt_tooltips_add_profile")
     /// Long press to edit names
     internal static let erpTxtTooltipsProfileRename = StringAsset("erp_txt_tooltips_profile_rename")
-    /// Tap here to add recipes
+    /// Tap here to scan prescriptions
     internal static let erpTxtTooltipsScan = StringAsset("erp_txt_tooltips_scan")
     /// Cancel
     internal static let errBtnCancel = StringAsset("err_btn_cancel")
@@ -773,11 +789,11 @@ import SwiftUI
     internal static let erxTxtNoCurrentPrescriptions = StringAsset("erx_txt_no_current_prescriptions")
     /// You haven't redeemed any prescriptions yet
     internal static let erxTxtNotYetRedeemed = StringAsset("erx_txt_not_yet_redeemed")
-    /// Recipe added successfully
+    /// Prescription added successfully
     internal static let erxTxtPrescriptionAddedAlertTitle = StringAsset("erx_txt_prescription_added_alert_title")
-    /// The recipe has already been imported.
+    /// The prescription has already been imported.
     internal static let erxTxtPrescriptionDuplicateAlertMessage = StringAsset("erx_txt_prescription_duplicate_alert_message")
-    /// Recipe not added
+    /// Prescription not added
     internal static let erxTxtPrescriptionDuplicateAlertTitle = StringAsset("erx_txt_prescription_duplicate_alert_title")
     /// Redeemable from %@
     internal static func erxTxtRedeemAt(_ element1: String) -> StringAsset {
@@ -1393,7 +1409,7 @@ import SwiftUI
     internal static let mainBtnRefresh = StringAsset("main_btn_refresh")
     /// ↓ Drag the screen down to refresh.
     internal static let mainEmptyTxtConnected = StringAsset("main_empty_txt_connected")
-    /// Add recipes using the ⊕ button in the top right corner.
+    /// Add prescriptions using the ⊕ button in the top right corner.
     internal static let mainEmptyTxtDisconnected = StringAsset("main_empty_txt_disconnected")
     /// No prescriptions
     internal static let mainEmptyTxtTitle = StringAsset("main_empty_txt_title")
@@ -1417,7 +1433,7 @@ import SwiftUI
     internal static func mainTxtPendingextauthSuccessful(_ element1: String) -> StringAsset {
         StringAsset("main_txt_pendingextauth_successful_%@", arguments: [element1])
     }
-    /// Status: Disconnected from the recipe server
+    /// Status: Disconnected from the prescription server
     internal static let mainTxtProfileStatusOffline = StringAsset("main_txt_profile_status_offline")
     /// Status: Profile registered
     internal static let mainTxtProfileStatusOnline = StringAsset("main_txt_profile_status_online")
@@ -1617,7 +1633,7 @@ import SwiftUI
     internal static let ordTxtEmptyListTitle = StringAsset("ord_txt_empty_list_title")
     /// Unknown pharmacy
     internal static let ordTxtNoPharmacyName = StringAsset("ord_txt_no_pharmacy_name")
-    /// orders
+    /// Orders
     internal static let ordTxtTitle = StringAsset("ord_txt_title")
     /// How to identify an NFC-enabled medical card
     internal static let orderEgkBtnInfoButton = StringAsset("order_egk_btn_info_button")
@@ -1739,10 +1755,6 @@ import SwiftUI
     internal static let phaDetailTxtTitle = StringAsset("pha_detail_txt_title")
     /// Website
     internal static let phaDetailWeb = StringAsset("pha_detail_web")
-    /// E-prescription
-    internal static let phaGlobalTxtReadinessBadge = StringAsset("pha_global_txt_readiness_badge")
-    /// Ready for the e-prescription
-    internal static let phaGlobalTxtReadinessBadgeDetailed = StringAsset("pha_global_txt_readiness_badge_detailed")
     /// Try again and possibly select a different pharmacy. If the error persists, please inform support.
     internal static let phaRedeemAlertMessageFailure = StringAsset("pha_redeem_alert_message_failure")
     /// We require your telephone number for any queries.
@@ -1933,7 +1945,7 @@ import SwiftUI
     internal static let prscDtlDrCoPaymentNoDescription = StringAsset("prsc_dtl_dr_co_payment_no_description")
     /// Exempted from co-payment
     internal static let prscDtlDrCoPaymentNoTitle = StringAsset("prsc_dtl_dr_co_payment_no_title")
-    /// This drug was prescribed as part of an artificial insemination (according to §27 a SGB V). Your health insurance will cover 50%% of the cost of this medication. You have to pay the other 50%% to the pharmacy yourself. 
+    /// This drug was prescribed as part of an artificial insemination (according to §27 a SGB V). Your health insurance will cover 50 %% of the cost of this medication. You have to pay the other 50 %% to the pharmacy yourself. 
     /// 
     ///  In some cases, your share of the costs will be covered by your health insurance company as a statutory benefit.
     internal static let prscDtlDrCoPaymentPartialDescription = StringAsset("prsc_dtl_dr_co_payment_partial_description")
@@ -1953,9 +1965,9 @@ import SwiftUI
     internal static let prscDtlDrEmergencyServiceFeeInfoDescription = StringAsset("prsc_dtl_dr_emergency_service_fee_info_description")
     /// Emergency service fee
     internal static let prscDtlDrEmergencyServiceFeeInfoTitle = StringAsset("prsc_dtl_dr_emergency_service_fee_info_title")
-    /// Not all information is presented correctly in this recipe. However, you can still redeem it in your pharmacy.
+    /// Not all information is presented correctly in this prescription. However, you can still redeem it in your pharmacy.
     internal static let prscDtlDrErrorInfoDescription = StringAsset("prsc_dtl_dr_error_info_description")
-    /// Recipe incorrect
+    /// Prescription incorrect
     internal static let prscDtlDrErrorInfoTitle = StringAsset("prsc_dtl_dr_error_info_title")
     /// During this period, you can redeem your prescription in any pharmacy with an additional payment.
     internal static let prscDtlDrPrescriptionValidityInfoAcceptDateDescription = StringAsset("prsc_dtl_dr_prescription_validity_info_accept_date_description")
@@ -2167,14 +2179,18 @@ import SwiftUI
     internal static let prscStatusError = StringAsset("prsc_status_error")
     /// Expired
     internal static let prscStatusExpired = StringAsset("prsc_status_expired")
-    /// Being redeemed
+    /// In redemption
     internal static let prscStatusInProgress = StringAsset("prsc_status_in_progress")
     /// Redeemable later
     internal static let prscStatusMultiplePrsc = StringAsset("prsc_status_multiple_prsc")
     /// Redeemable
     internal static let prscStatusReady = StringAsset("prsc_status_ready")
+    /// Posted
+    internal static let prscStatusSent = StringAsset("prsc_status_sent")
     /// Unknown
     internal static let prscStatusUndefined = StringAsset("prsc_status_undefined")
+    /// Waiting for response
+    internal static let prscStatusWaiting = StringAsset("prsc_status_waiting")
     /// Medicine
     internal static let prscTxtFallbackName = StringAsset("prsc_txt_fallback_name")
     /// Done
@@ -2379,6 +2395,18 @@ import SwiftUI
     internal static let stgBtnCardResetRcAlertOk = StringAsset("stg_btn_card_reset_rc_alert_ok")
     /// Connect card
     internal static let stgBtnCardResetRead = StringAsset("stg_btn_card_reset_read")
+    /// Delete
+    internal static let stgBtnChargeItemAlertDeleteConfirmDelete = StringAsset("stg_btn_charge_item_alert_delete_confirm_delete")
+    /// Connect
+    internal static let stgBtnChargeItemAlertDeleteNotAuthConnect = StringAsset("stg_btn_charge_item_alert_delete_not_auth_connect")
+    /// Cancel
+    internal static let stgBtnChargeItemAlertErrorCancel = StringAsset("stg_btn_charge_item_alert_error_cancel")
+    /// OK
+    internal static let stgBtnChargeItemAlertErrorOkay = StringAsset("stg_btn_charge_item_alert_error_okay")
+    /// Try again
+    internal static let stgBtnChargeItemAlertErrorRetry = StringAsset("stg_btn_charge_item_alert_error_retry")
+    /// Delete
+    internal static let stgBtnChargeItemDelete = StringAsset("stg_btn_charge_item_delete")
     /// Connect
     internal static let stgBtnChargeItemListBottomBannerAuthenticateButton = StringAsset("stg_btn_charge_item_list_bottom_banner_authenticate_button")
     /// Enable
@@ -2401,6 +2429,10 @@ import SwiftUI
     internal static let stgBtnChargeItemMore = StringAsset("stg_btn_charge_item_more")
     /// Redeem
     internal static let stgBtnChargeItemShare = StringAsset("stg_btn_charge_item_share")
+    /// device security
+    internal static let stgBtnDeviceSecurity = StringAsset("stg_btn_device_security")
+    /// Edit
+    internal static let stgBtnEditPicture = StringAsset("stg_btn_edit_picture")
     /// Show expense receipts
     internal static let stgBtnEditProfileChargeItemList = StringAsset("stg_btn_edit_profile_charge_item_list")
     /// Delete profile
@@ -2548,7 +2580,7 @@ import SwiftUI
     internal static let stgTxtCardCustomPin = StringAsset("stg_txt_card_custom_pin")
     /// Forgot PIN
     internal static let stgTxtCardForgotPin = StringAsset("stg_txt_card_forgot_pin")
-    /// Order new card
+    /// Order PIN or card
     internal static let stgTxtCardOrderNewCard = StringAsset("stg_txt_card_order_new_card")
     /// Select desired PIN
     internal static let stgTxtCardResetIntroCustomPin = StringAsset("stg_txt_card_reset_intro_custom_pin")
@@ -2648,13 +2680,25 @@ import SwiftUI
     internal static let stgTxtCardSectionHeader = StringAsset("stg_txt_card_section_header")
     /// unlock card
     internal static let stgTxtCardUnlockCard = StringAsset("stg_txt_card_unlock_card")
+    /// Connect failed
+    internal static let stgTxtChargeItemAlertDeleteAuthTitle = StringAsset("stg_txt_charge_item_alert_delete_auth_title")
+    /// This statement will be irretrievably deleted on this device and on the server.
+    internal static let stgTxtChargeItemAlertDeleteConfirmMessage = StringAsset("stg_txt_charge_item_alert_delete_confirm_message")
+    /// Really delete?
+    internal static let stgTxtChargeItemAlertDeleteConfirmTitle = StringAsset("stg_txt_charge_item_alert_delete_confirm_title")
+    /// To delete, a connection to the prescription server must be established.
+    internal static let stgTxtChargeItemAlertDeleteNotAuthMessage = StringAsset("stg_txt_charge_item_alert_delete_not_auth_message")
+    /// Log in
+    internal static let stgTxtChargeItemAlertDeleteNotAuthTitle = StringAsset("stg_txt_charge_item_alert_delete_not_auth_title")
+    /// Failed to delete billing information
+    internal static let stgTxtChargeItemAlertErrorTitle = StringAsset("stg_txt_charge_item_alert_error_title")
     /// Issued on
     internal static let stgTxtChargeItemCreator = StringAsset("stg_txt_charge_item_creator")
     /// Receive
     internal static let stgTxtChargeItemListAlertGrantConsentButtonActivate = StringAsset("stg_txt_charge_item_list_alert_grant_consent_button_activate")
     /// Cancel
     internal static let stgTxtChargeItemListAlertGrantConsentButtonCancel = StringAsset("stg_txt_charge_item_list_alert_grant_consent_button_cancel")
-    /// Your statements are also saved on the recipe server.
+    /// Your statements are also saved on the prescription server.
     internal static let stgTxtChargeItemListAlertGrantConsentMessage = StringAsset("stg_txt_charge_item_list_alert_grant_consent_message")
     /// receive bills
     internal static let stgTxtChargeItemListAlertGrantConsentTitle = StringAsset("stg_txt_charge_item_list_alert_grant_consent_title")
@@ -2782,6 +2826,8 @@ import SwiftUI
     internal static let stgTxtHeaderDemoMode = StringAsset("stg_txt_header_demo_mode")
     /// Legal information
     internal static let stgTxtHeaderLegalInfo = StringAsset("stg_txt_header_legal_info")
+    /// personal settings
+    internal static let stgTxtHeaderPersonalSettings = StringAsset("stg_txt_header_personal_settings")
     /// Profiles
     internal static let stgTxtHeaderProfiles = StringAsset("stg_txt_header_profiles")
     /// Security
@@ -2830,7 +2876,7 @@ import SwiftUI
     }
     /// Prescriptions
     internal static let tabTxtMain = StringAsset("tab_txt_main")
-    /// orders
+    /// Orders
     internal static let tabTxtOrders = StringAsset("tab_txt_orders")
     /// Pharmacies
     internal static let tabTxtPharmacySearch = StringAsset("tab_txt_pharmacy_search")
@@ -2842,7 +2888,7 @@ import SwiftUI
     internal static let wlcdBtnLogin = StringAsset("wlcd_btn_login")
     /// You must be logged in to receive digital prescriptions from your practice.
     internal static let wlcdTxtFooter = StringAsset("wlcd_txt_footer")
-    /// Receive recipes digitally?
+    /// Receive prescriptions digitally?
     internal static let wlcdTxtHeader = StringAsset("wlcd_txt_header")
   }
   // swiftlint:enable function_parameter_count identifier_name line_length type_body_length

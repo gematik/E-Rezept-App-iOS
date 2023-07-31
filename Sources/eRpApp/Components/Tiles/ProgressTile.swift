@@ -93,7 +93,7 @@ struct ProgressTile: View {
             return Colors.systemLabelSecondary
         case .loading, .done:
             return Colors.systemLabel
-        case .error(title: _, description: _):
+        case .error:
             return Colors.red900
         }
     }
@@ -102,7 +102,7 @@ struct ProgressTile: View {
         switch state {
         case .idle, .loading, .done:
             return Colors.backgroundNeutral
-        case .error(title: _, description: _):
+        case .error:
             return Colors.red100
         }
     }
@@ -111,7 +111,7 @@ struct ProgressTile: View {
         switch state {
         case .idle, .loading, .done:
             return Colors.separator
-        case .error(title: _, description: _):
+        case .error:
             return Colors.red300
         }
     }
@@ -120,7 +120,7 @@ struct ProgressTile: View {
         switch state {
         case .idle, .loading, .done:
             return Colors.alertPositiv
-        case .error(title: _, description: _):
+        case .error:
             return Colors.red900
         }
     }
@@ -129,7 +129,7 @@ struct ProgressTile: View {
         switch state {
         case .idle, .loading, .done:
             return SFSymbolName.checkmarkCircleFill
-        case .error(title: _, description: _):
+        case .error:
             return SFSymbolName.xmarkCircleFill
         }
     }

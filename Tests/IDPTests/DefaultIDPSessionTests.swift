@@ -1128,6 +1128,69 @@ final class DefaultIDPSessionTests: XCTestCase {
         expect(self.extAuthRequestStorageMock.getExtAuthRequestForCalled).to(beTrue())
         expect(self.extAuthRequestStorageMock.getExtAuthRequestForReceivedInvocations.first).to(equal("mystate"))
     }
+
+    func testExtAuthVerifyAndExchange_kkHasPkvIdentifierSuffix() throws {
+        sut = DefaultIDPSession(
+            client: idpClientMock,
+            storage: storage,
+            schedulers: schedulers,
+            trustStoreSession: trustStoreSessionMock,
+            extAuthRequestStorage: extAuthRequestStorageMock,
+            time: dateProvider,
+            idpCrypto: cryptoBox // the crypto box used is the one used to encrypt the example data
+        )
+
+        let fixture = URL(string:
+            "https://das-e-rezept-fuer-deutschland.de?state=mystate&code=testcode&kk_app_redirect_uri=kk_app_redirect_uri" // swiftlint:disable:this line_length
+        )!
+        idpClientMock.extAuthVerifyUsingReturnValue =
+            Just(IDPExchangeToken(code: "code",
+                                  sso: nil,
+                                  state: "state",
+                                  redirect: "https://das-e-rezept-fuer-deutschland.de"))
+            .setFailureType(to: IDPError.self)
+            .eraseToAnyPublisher()
+
+        idpClientMock.exchange_Publisher = Just(encryptedTokenPayload)
+            .setFailureType(to: IDPError.self)
+            .eraseToAnyPublisher()
+
+        extAuthRequestStorageMock.getExtAuthRequestForReturnValue = ExtAuthChallengeSession(
+            verifierCode: "verifier_code",
+            nonce: "5557577A7576615347",
+            for: KKAppDirectory.Entry(name: "Gematik KK", identifier: "K1234pkv")
+        )
+
+        sut.extAuthVerifyAndExchange(fixture, idTokenValidator: { _ in .success(true) })
+            .test(
+                failure: { error in
+                    fail("Error: \(error)")
+                },
+                expectations: { response in
+                    let expected = IDPToken(
+                        accessToken: self.decryptedTokenPayload.accessToken,
+                        expires: self.dateProvider().addingTimeInterval(300),
+                        idToken: self.decryptedTokenPayload.idToken,
+                        ssoToken: self.decryptedTokenPayload.ssoToken,
+                        tokenType: self.decryptedTokenPayload.tokenType,
+                        redirect: "https://das-e-rezept-fuer-deutschland.de",
+                        isPkvFastTrackFlowInitiated: true
+                    )
+                    expect(response).to(equal(expected))
+                }
+            )
+        expect(self.extAuthRequestStorageMock.getExtAuthRequestForCalled).to(beTrue())
+        expect(self.extAuthRequestStorageMock.getExtAuthRequestForReceivedInvocations.first).to(equal("mystate"))
+
+        expect(self.idpClientMock.exchange_Called).to(beTrue())
+        expect(self.idpClientMock.exchange_ReceivedArguments).toNot(beNil())
+        guard let receivedArguments = idpClientMock.exchange_ReceivedArguments else {
+            fail("received Arguments nil")
+            return
+        }
+
+        expect(receivedArguments.redirectURI).to(equal("https://das-e-rezept-fuer-deutschland.de"))
+    }
 }
 
 extension String {

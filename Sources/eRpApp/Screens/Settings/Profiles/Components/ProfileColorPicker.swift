@@ -19,8 +19,7 @@
 import SwiftUI
 
 struct ProfileColorPicker: View {
-    @Binding
-    var color: ProfileColor
+    @Binding var color: ProfileColor
 
     var body: some View {
         HStack(spacing: 16) {

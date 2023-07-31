@@ -76,9 +76,9 @@ struct DefaultAppSecurityManager: AppSecurityManager {
 
         switch authenticationContext.biometryType {
         case .faceID:
-            return ([.biometry(.faceID), .password], nil)
+            return ([.biometry(.faceID), .password, .biometryAndPassword(.faceID)], nil)
         case .touchID:
-            return ([.biometry(.touchID), .password], nil)
+            return ([.biometry(.touchID), .password, .biometryAndPassword(.touchID)], nil)
         case .none:
             return ([.password], nil)
         @unknown default:

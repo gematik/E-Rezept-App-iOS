@@ -34,7 +34,7 @@ final class AppAuthenticationBiometricsDomainTests: XCTestCase {
     >
 
     private func testStore(for biometryType: BiometryType,
-                           withResult result: Result<Bool, AppAuthenticationBiometricsDomain.Error>) -> TestStore {
+                           withResult result: AuthenticationChallengeProviderResult) -> TestStore {
         let mockAuthenticationChallengeProvider = MockAuthenticationChallengeProvider()
         mockAuthenticationChallengeProvider.startAuthenticationChallengeReturnValue = Just(result).eraseToAnyPublisher()
         return TestStore(

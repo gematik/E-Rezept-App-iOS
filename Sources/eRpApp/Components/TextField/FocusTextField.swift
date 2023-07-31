@@ -65,15 +65,15 @@ extension FocusTextField {
         }
 
         @objc
-        public func textViewDidChange(_ textField: UITextField) {
+        func textViewDidChange(_ textField: UITextField) {
             text.wrappedValue = textField.text ?? ""
         }
 
-        public func textFieldDidBeginEditing(_: UITextField) {
+        func textFieldDidBeginEditing(_: UITextField) {
             isFirstResponder.wrappedValue = true
         }
 
-        public func textFieldDidEndEditing(_: UITextField) {
+        func textFieldDidEndEditing(_: UITextField) {
             isFirstResponder.wrappedValue = false
         }
     }

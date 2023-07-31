@@ -35,6 +35,7 @@ struct AppAuthenticationDomain: ReducerProtocol {
         var didCompleteAuthentication = false
         var biometrics: AppAuthenticationBiometricsDomain.State?
         var password: AppAuthenticationPasswordDomain.State?
+        var biometricAndPassword: AppAuthenticationBiometricPasswordDomain.State?
         var failedAuthenticationsCount: Int = 0
     }
 
@@ -45,6 +46,7 @@ struct AppAuthenticationDomain: ReducerProtocol {
         case removeSubscriptions
         case biometrics(action: AppAuthenticationBiometricsDomain.Action)
         case password(action: AppAuthenticationPasswordDomain.Action)
+        case biometricAndPassword(action: AppAuthenticationBiometricPasswordDomain.Action)
     }
 
     @Dependency(\.userDataStore) var userDataStore: UserDataStore
@@ -60,6 +62,9 @@ struct AppAuthenticationDomain: ReducerProtocol {
             }
             .ifLet(\.password, action: /AppAuthenticationDomain.Action.password(action:)) {
                 AppAuthenticationPasswordDomain()
+            }
+            .ifLet(\.biometricAndPassword, action: /AppAuthenticationDomain.Action.biometricAndPassword(action:)) {
+                AppAuthenticationBiometricPasswordDomain()
             }
     }
 
@@ -94,10 +99,15 @@ struct AppAuthenticationDomain: ReducerProtocol {
                 state.biometrics = nil
             case .password:
                 state.password = AppAuthenticationPasswordDomain.State()
+            case let .biometryAndPassword(type):
+                state.biometricAndPassword = AppAuthenticationBiometricPasswordDomain.State(
+                    biometryType: type,
+                    startImmediateAuthenticationChallenge: failedAuthenticationsCount == 0
+                )
             }
             return .none
-
-        case let .biometrics(action: .authenticationChallengeResponse(response)):
+        case let .biometrics(action: .authenticationChallengeResponse(response)),
+             let .biometricAndPassword(action: .authenticationChallengeResponse(response)):
             if case .success(true) = response {
                 state.didCompleteAuthentication = true
                 didCompleteAuthentication?()
@@ -108,8 +118,8 @@ struct AppAuthenticationDomain: ReducerProtocol {
                 userDataStore.set(failedAppAuthentications: state.failedAuthenticationsCount)
             }
             return .none
-
-        case let .password(.passwordVerificationReceived(isLoggedIn)):
+        case let .password(.passwordVerificationReceived(isLoggedIn)),
+             let .biometricAndPassword(.passwordVerificationReceived(isLoggedIn)):
             if isLoggedIn {
                 state.didCompleteAuthentication = true
                 didCompleteAuthentication?()
@@ -124,7 +134,8 @@ struct AppAuthenticationDomain: ReducerProtocol {
         case .removeSubscriptions:
             return Self.cleanup()
         case .password,
-             .biometrics:
+             .biometrics,
+             .biometricAndPassword:
             return .none
         }
     }

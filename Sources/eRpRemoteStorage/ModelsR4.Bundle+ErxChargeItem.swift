@@ -55,6 +55,12 @@ extension ModelsR4.Bundle {
             throw RemoteStorageBundleParsingError.parseError("Could not parse the charge item.")
         }
 
+        let taskId = chargeItem.identifier?.first { identifier in
+            Workflow.Key.prescriptionIdKeys.contains { key in
+                key.value == identifier.system?.value?.url.absoluteString
+            }
+        }?.value?.value?.string
+
         let enteredDate = chargeItem.enteredDate?.value?.description
 
         // MARK: - KBV_PR_ERP_Bundle
@@ -122,15 +128,18 @@ extension ModelsR4.Bundle {
 
         // The current dispense bundle v1.3.0 only specifies a single medicationDispense
         let medicationDispense = try dispenseBundle.parseDavMedicationDispenses().first
+        let productionSteps: [DavInvoice.Production] = []
 
         return ErxChargeItem(
             identifier: chargeItemIdentifier,
             fhirData: fhirData,
+            taskId: taskId,
             enteredDate: enteredDate,
             accessCode: chargeItem.accessCode,
             medication: prescriptionBundle.parseErxMedication(),
             medicationRequest: prescriptionBundle.parseErxMedicationRequest(),
             patient: ErxPatient(
+                title: patient?.title,
                 name: patient?.fullName,
                 address: patient?.completeAddress,
                 birthDate: patient?.birthDate?.value?.description,
@@ -140,6 +149,7 @@ extension ModelsR4.Bundle {
                 insuranceId: patient?.insuranceId
             ),
             practitioner: ErxPractitioner(
+                title: practitioner?.title,
                 lanr: practitioner?.lanr,
                 name: practitioner?.fullName,
                 qualification: practitioner?.qualificationText,
@@ -163,7 +173,8 @@ extension ModelsR4.Bundle {
                 totalAdditionalFee: totalAdditionalFee,
                 totalGross: totalGross,
                 currency: currency,
-                chargeableItems: chargableItems
+                chargeableItems: chargableItems,
+                productionSteps: productionSteps
             ),
             medicationDispense: medicationDispense,
             prescriptionSignature: prescriptionBundle.parseErxSignature,
@@ -272,6 +283,10 @@ extension ModelsR4.InvoiceLineItem {
     var hmrn: String? {
         coding(for: Dispense.Key.ChargeItem.hmnr)?.code?.value?.string
     }
+
+//    var packagingSize: String? {
+//        self.chargeItemCodableConcept?.
+//    }
 
     var chargeItemCodableConcept: CodeableConcept? {
         if case let ChargeItemX.codeableConcept(item) = chargeItem {

@@ -90,3 +90,5 @@ final class RsaOnlyAVSCmsEncrypterTests: XCTestCase {
         -----END CERTIFICATE-----
         """
 }
+
+// swiftlint:enable line_length

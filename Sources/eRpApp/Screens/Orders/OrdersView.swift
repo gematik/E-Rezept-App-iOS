@@ -24,8 +24,7 @@ import SwiftUI
 
 struct OrdersView: View {
     let store: OrdersDomain.Store
-    @ObservedObject
-    var viewStore: ViewStore<ViewState, OrdersDomain.Action>
+    @ObservedObject var viewStore: ViewStore<ViewState, OrdersDomain.Action>
     // TODO: move dependency into domain and do formatting in the view model // swiftlint:disable:this todo
     @Dependency(\.uiDateFormatter) var uiDateFormatter
 

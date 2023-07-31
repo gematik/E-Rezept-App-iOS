@@ -328,12 +328,12 @@ extension PairingData {
 }
 
 extension SignedPairingData {
-    // swiftlint:disable force_try
     enum Dummies {
         static let signedPairingDataA = SignedPairingData(
             originalPairingData: PairingData.Dummies.pairingDataA,
             signedPairingData: {
                 let pairingDataHeader = JWT.Header(alg: JWT.Algorithm.bp256r1, typ: "JWT")
+                // swiftlint:disable:next force_try
                 return try! JWT(header: pairingDataHeader, payload: PairingData.Dummies.pairingDataA)
             }()
         )
@@ -341,6 +341,7 @@ extension SignedPairingData {
             originalPairingData: PairingData.Dummies.pairingDataB,
             signedPairingData: {
                 let pairingDataHeader = JWT.Header(alg: JWT.Algorithm.bp256r1, typ: "JWT")
+                // swiftlint:disable:next force_try
                 return try! JWT(header: pairingDataHeader, payload: PairingData.Dummies.pairingDataB)
             }()
         )

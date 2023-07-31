@@ -20,27 +20,34 @@ import eRpKit
 import Foundation
 import ModelsR4
 
+extension Extension.ValueX {
+    var stringOrNil: String? {
+        switch self {
+        case let .string(value):
+            return value.value?.string
+        default:
+            return nil
+        }
+    }
+}
+
 extension ModelsR4.Patient {
     var fullName: String? {
         let firstName = name?.first?.given?.first?.value?.string
         let lastName = name?.first?.family?.value?.string
 
-        // Do we have a first name?
-        if let firstName = firstName,
-           !firstName.isEmpty {
-            // Do we also have a last name?
-            if let lastName = lastName,
-               !lastName.isEmpty {
-                // Return the combination of first and last name
-                return firstName + " " + lastName
+        let nameParts: [String] = [firstName, lastName].compactMap { namePart in
+            if namePart?.isEmpty ?? true {
+                return nil
             }
-
-            // No last name, so only return the first name
-            return firstName
+            return namePart
         }
 
-        // No first name, so only return the last name
-        return lastName
+        return nameParts.joined(separator: " ")
+    }
+
+    var title: String? {
+        name?.first?.prefix?.compactMap(\.value?.string).joined(separator: "")
     }
 
     var phone: String? {
@@ -83,6 +90,24 @@ extension ModelsR4.Patient {
         }
 
         return postalCodeAndCity
+    }
+
+    var singleLineAddress: String? {
+        guard let address = address?.first else { return nil }
+
+        let postalCodeAndCity = [
+            address.postalCode?.value?.string,
+            address.city?.value?.string,
+        ]
+        .compactMap { $0 }
+        .joined(separator: " ")
+
+        return [
+            address.line?.first?.value?.string,
+            postalCodeAndCity,
+        ]
+        .compactMap { $0 }
+        .joined(separator: ", ")
     }
 
     var insuranceId: String? {

@@ -20,6 +20,7 @@ import Foundation
 
 public struct ErxMedicationRequest: Hashable, Codable {
     public init(
+        authoredOn: String? = nil,
         dosageInstructions: String? = nil,
         substitutionAllowed: Bool? = false,
         hasEmergencyServiceFee: Bool? = false,
@@ -27,8 +28,10 @@ public struct ErxMedicationRequest: Hashable, Codable {
         accidentInfo: AccidentInfo? = nil,
         bvg: Bool? = false,
         coPaymentStatus: ErxTask.CoPaymentStatus? = nil,
-        multiplePrescription: MultiplePrescription? = nil
+        multiplePrescription: MultiplePrescription? = nil,
+        quantity: Decimal? = nil
     ) {
+        self.authoredOn = authoredOn
         self.dosageInstructions = dosageInstructions
         self.substitutionAllowed = substitutionAllowed ?? false
         self.hasEmergencyServiceFee = hasEmergencyServiceFee ?? false
@@ -37,8 +40,12 @@ public struct ErxMedicationRequest: Hashable, Codable {
         self.bvg = bvg ?? false
         self.coPaymentStatus = coPaymentStatus
         self.multiplePrescription = multiplePrescription
+        self.quantity = quantity
     }
 
+    public let quantity: Decimal?
+
+    public let authoredOn: String?
     /// Indicates how the medication is to be used by the patient.
     public let dosageInstructions: String?
     /// Whether substitution is allowed (Aut-Idem)

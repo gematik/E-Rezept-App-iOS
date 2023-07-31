@@ -98,14 +98,6 @@ public struct PharmacyLocation: Identifiable, Equatable {
         position?.latitude != nil && position?.longitude != nil
     }
 
-    public var isErxReady: Bool {
-        if let status = status {
-            return status == .active
-        } else {
-            return false
-        }
-    }
-
     public var hasAVSEndpoints: Bool {
         avsEndpoints != nil
     }
@@ -150,6 +142,10 @@ public struct PharmacyLocation: Identifiable, Equatable {
     /// Note: No authentication via "Fachdienst" is required
     public var hasReservationAVSService: Bool {
         avsEndpoints?.onPremiseUrl != nil && !avsCertificates.isEmpty
+    }
+
+    public var hasAnyAVSService: Bool {
+        hasReservationAVSService || hasShipmentAVSService || hasDeliveryAVSService
     }
 
     public struct AVSEndpoints: Equatable {

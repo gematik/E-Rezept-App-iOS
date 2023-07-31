@@ -127,4 +127,69 @@ final class AppAuthenticationViewSnapshotTests: XCTestCase {
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
     }
+
+    func testAppAuthenticationBiometricPasswordView() {
+        let sut = AppAuthenticationView(
+            store: AppAuthenticationDomain.Store(
+                initialState: AppAuthenticationDomain.State(
+                    didCompleteAuthentication: false,
+                    biometrics: nil,
+                    password: nil,
+                    biometricAndPassword: .init(
+                        biometryType: .faceID,
+                        startImmediateAuthenticationChallenge: false,
+                        authenticationResult: .success(true)
+                    ),
+                    failedAuthenticationsCount: 0
+                ),
+                reducer: EmptyReducer()
+            )
+        )
+
+        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
+        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+    }
+
+    func testAppAuthenticationBiometricPasswordFaceIDFailed() {
+        let sut = AppAuthenticationView(
+            store: AppAuthenticationDomain.Store(
+                initialState: AppAuthenticationDomain.State(
+                    didCompleteAuthentication: false,
+                    biometrics: nil,
+                    password: nil,
+                    biometricAndPassword: .init(biometryType: .faceID, startImmediateAuthenticationChallenge: false),
+                    failedAuthenticationsCount: 1
+                ),
+                reducer: EmptyReducer()
+            )
+        )
+
+        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
+        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+    }
+
+    func testAppAuthenticationBiometricPasswordPasswordView() {
+        let sut = AppAuthenticationView(
+            store: AppAuthenticationDomain.Store(
+                initialState: AppAuthenticationDomain.State(
+                    didCompleteAuthentication: false,
+                    biometrics: nil,
+                    password: nil,
+                    biometricAndPassword: .init(
+                        biometryType: .faceID,
+                        startImmediateAuthenticationChallenge: false,
+                        showPassword: true
+                    ),
+                    failedAuthenticationsCount: 0
+                ),
+                reducer: EmptyReducer()
+            )
+        )
+
+        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
+        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+    }
 }

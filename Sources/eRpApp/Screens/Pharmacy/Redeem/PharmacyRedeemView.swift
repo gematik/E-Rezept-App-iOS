@@ -213,7 +213,7 @@ extension PharmacyRedeemView {
                                 }
                                 .fixedSize(horizontal: false, vertical: true)
                             }
-                            if shipmentInfo.phone == nil && redeemOption.isPhoneRequired {
+                            if shipmentInfo.phone == nil, redeemOption.isPhoneRequired {
                                 Text(L10n.phaRedeemTxtMissingPhone)
                                     .font(Font.body.weight(.semibold))
                                     .frame(maxWidth: .infinity, minHeight: 52, alignment: .center)

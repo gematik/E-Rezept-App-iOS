@@ -16,6 +16,7 @@
 //  
 //
 
+import CustomDump
 import Foundation
 import Nimble
 
@@ -28,13 +29,12 @@ public func containsParameters(_ parameters: [String: String]) -> Predicate<URL>
         if let actualValue = try actualExpression.evaluate() {
             let comps = NSURLComponents(url: actualValue, resolvingAgainstBaseURL: true)
             if let queryItems = comps?.queryItems {
-                for (paramKey, paramValue) in parameters {
-                    if queryItems.filter({ item in item.name == paramKey && item.value == paramValue }).isEmpty {
-                        return PredicateResult(
-                            bool: false,
-                            message: msg.appended(message: "Missing or unmatched parameter \(paramKey)")
-                        )
-                    }
+                for (paramKey, paramValue) in parameters
+                    where queryItems.filter({ item in item.name == paramKey && item.value == paramValue }).isEmpty {
+                    return PredicateResult(
+                        bool: false,
+                        message: msg.appended(message: "Missing or unmatched parameter \(paramKey)")
+                    )
                 }
                 return PredicateResult(
                     bool: true,
@@ -46,5 +46,34 @@ public func containsParameters(_ parameters: [String: String]) -> Predicate<URL>
             status: .fail,
             message: msg.appendedBeNilHint()
         )
+    }
+}
+
+/// Helper function to assert by diffing data structures
+public func nodiff<T: Equatable>(_ expectedValue: T?) -> Predicate<T> {
+    nodiff(expectedValue, by: ==)
+}
+
+/// Helper function to assert by diffing data structures
+public func nodiff<T>(
+    _ expectedValue: T?,
+    by areEquivalent: @escaping (T, T) -> Bool
+) -> Predicate<T> {
+    Predicate.define("equal <\(stringify(expectedValue))>") { actualExpression, msg in
+        let actualValue = try actualExpression.evaluate()
+        switch (expectedValue, actualValue) {
+        case (nil, _?):
+            return PredicateResult(status: .fail, message: msg.appendedBeNilHint())
+        case (_, nil):
+            return PredicateResult(status: .fail, message: msg)
+        case let (expected?, actual?):
+            let matches = areEquivalent(expected, actual)
+            var msg = msg
+            if !matches,
+               let difference = diff(actualValue, expectedValue, format: DiffFormat.proportional) {
+                msg = .fail(difference)
+            }
+            return PredicateResult(bool: matches, message: msg)
+        }
     }
 }

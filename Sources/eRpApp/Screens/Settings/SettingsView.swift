@@ -24,8 +24,7 @@ import SwiftUI
 struct SettingsView: View {
     let store: SettingsDomain.Store
 
-    @ObservedObject
-    var viewStore: ViewStore<ViewState, SettingsDomain.Action>
+    @ObservedObject var viewStore: ViewStore<ViewState, SettingsDomain.Action>
 
     init(store: SettingsDomain.Store) {
         self.store = store
@@ -59,7 +58,7 @@ struct SettingsView: View {
 
                     TrackerSectionView(store: store)
 
-                    SecuritySectionView(store: store)
+                    SecuritySectionViewTest(store: store)
 
                     SettingsContactInfoView()
 
@@ -129,12 +128,12 @@ struct SettingsView: View {
                 NavigationLink(
                     destination: IfLetStore(
                         store.destinationsScope(
-                            state: /SettingsDomain.Destinations.State.setAppPassword,
-                            action: SettingsDomain.Destinations.Action.setAppPasswordAction
+                            state: /SettingsDomain.Destinations.State.appSecurity,
+                            action: SettingsDomain.Destinations.Action.appSecurityStateAction
                         ),
-                        then: CreatePasswordView.init(store:)
+                        then: AppSecuritySelectionView.init(store:)
                     ),
-                    tag: SettingsDomain.Destinations.State.Tag.setAppPassword,
+                    tag: SettingsDomain.Destinations.State.Tag.appSecurity,
                     selection: viewStore.binding(
                         get: \.destinationTag,
                         send: SettingsDomain.Action.setNavigation
@@ -162,8 +161,7 @@ extension SettingsView {
     private struct DemoModeSectionView: View {
         let store: SettingsDomain.Store
 
-        @ObservedObject
-        var viewStore: ViewStore<ViewState, SettingsDomain.Action>
+        @ObservedObject var viewStore: ViewStore<ViewState, SettingsDomain.Action>
 
         init(store: SettingsDomain.Store) {
             self.store = store
@@ -200,11 +198,36 @@ extension SettingsView {
         }
     }
 
+    private struct SecuritySectionViewTest: View {
+        let store: SettingsDomain.Store
+
+        @ObservedObject var viewStore: ViewStore<SettingsDomain.State, SettingsDomain.Action>
+
+        init(store: SettingsDomain.Store) {
+            self.store = store
+            viewStore = ViewStore(store)
+        }
+
+        var body: some View {
+            SingleElementSectionContainer(
+                header: { Text(L10n.stgTxtHeaderPersonalSettings) },
+                content: {
+                    Button(action: {
+                        viewStore.send(.setNavigation(tag: .appSecurity))
+                    }, label: {
+                        Label(L10n.stgBtnDeviceSecurity, systemImage: SFSymbolName.iPhonelocked)
+                    })
+                        .accessibility(identifier: A11y.settings.security.stgBtnDeviceSecurity)
+                        .buttonStyle(.navigation)
+                }
+            )
+        }
+    }
+
     private struct TrackerSectionView: View {
         let store: SettingsDomain.Store
 
-        @ObservedObject
-        var viewStore: ViewStore<ViewState, SettingsDomain.Action>
+        @ObservedObject var viewStore: ViewStore<ViewState, SettingsDomain.Action>
 
         init(store: SettingsDomain.Store) {
             self.store = store
@@ -265,8 +288,7 @@ extension SettingsView {
     #if ENABLE_DEBUG_VIEW
     private struct DebugSectionView: View {
         let store: SettingsDomain.Store
-        @ObservedObject
-        var viewStore: ViewStore<ViewState, SettingsDomain.Action>
+        @ObservedObject var viewStore: ViewStore<ViewState, SettingsDomain.Action>
 
         init(store: SettingsDomain.Store) {
             self.store = store
@@ -319,8 +341,7 @@ extension SettingsView {
     private struct BottomSectionView: View {
         let store: SettingsDomain.Store
 
-        @ObservedObject
-        var viewStore: ViewStore<ViewState, SettingsDomain.Action>
+        @ObservedObject var viewStore: ViewStore<ViewState, SettingsDomain.Action>
 
         init(store: SettingsDomain.Store) {
             self.store = store
@@ -347,8 +368,7 @@ extension SettingsView {
     struct TrackingComplyView: View {
         let store: SettingsDomain.Store
 
-        @ObservedObject
-        var viewStore: ViewStore<Void, SettingsDomain.Action>
+        @ObservedObject var viewStore: ViewStore<Void, SettingsDomain.Action>
 
         init(store: SettingsDomain.Store) {
             self.store = store

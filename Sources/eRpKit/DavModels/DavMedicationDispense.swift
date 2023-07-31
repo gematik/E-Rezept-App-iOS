@@ -28,14 +28,18 @@ public struct DavMedicationDispense: Hashable, Codable {
     /// Default initializer for a MedicationDispense which represent a ModulesR4.MedicationDispense
     public init(
         identifier: String,
-        whenHandedOver: String?
+        whenHandedOver: String?,
+        taskId: String?
     ) {
         self.identifier = identifier
         self.whenHandedOver = whenHandedOver
+        self.taskId = taskId
     }
 
     /// unique identifier in each `DavMedicationDispense`
     public let identifier: String
     /// Date string representing the actual time of performing the dispense
     public let whenHandedOver: String?
+
+    public let taskId: String?
 }

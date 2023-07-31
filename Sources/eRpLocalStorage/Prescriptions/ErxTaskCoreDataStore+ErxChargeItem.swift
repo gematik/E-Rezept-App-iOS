@@ -30,8 +30,7 @@ extension ErxTaskCoreDataStore {
     ///   otherwise only a minimal version
     /// - Returns: Publisher for the fetch request
     public func fetchChargeItem(
-        by chargeItemID: ErxChargeItem.ID,
-        fullDetail _: Bool
+        by chargeItemID: ErxChargeItem.ID
     ) -> AnyPublisher<ErxSparseChargeItem?, LocalStoreError> {
         let request: NSFetchRequest<ErxChargeItemEntity> = ErxChargeItemEntity.fetchRequest()
         var subPredicates = [NSPredicate]()

@@ -39,9 +39,12 @@ extension ModelsR4.Bundle {
             throw RemoteStorageBundleParsingError.parseError("Could not parse identifier from medication dispense.")
         }
 
+        let taskId = medicationDispense.authorizingPrescription?.first?.identifier?.value?.value?.string
+
         return .init(
             identifier: identifier,
-            whenHandedOver: medicationDispense.handOverDate
+            whenHandedOver: medicationDispense.handOverDate,
+            taskId: taskId
         )
     }
 }

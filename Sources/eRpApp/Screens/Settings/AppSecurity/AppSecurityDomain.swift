@@ -28,6 +28,34 @@ struct AppSecurityDomain: ReducerProtocol {
         var availableSecurityOptions: [AppSecurityOption]
         var selectedSecurityOption: AppSecurityOption?
         var errorToDisplay: AppSecurityManagerError?
+        var destination: Destinations.State?
+        var isBiometricSelected: Bool {
+            selectedSecurityOption == .biometryAndPassword(.touchID) || selectedSecurityOption ==
+                .biometryAndPassword(.faceID) || selectedSecurityOption == .biometry(.faceID) ||
+                selectedSecurityOption == .biometry(.touchID)
+        }
+
+        var isPasswordSelected: Bool {
+            selectedSecurityOption == .password || selectedSecurityOption == .biometryAndPassword(.faceID) ||
+                selectedSecurityOption == .biometryAndPassword(.touchID)
+        }
+    }
+
+    struct Destinations: ReducerProtocol {
+        enum State: Equatable {
+            case appPassword(CreatePasswordDomain.State)
+        }
+
+        enum Action: Equatable {
+            case appPasswordAction(CreatePasswordDomain.Action)
+        }
+
+        var body: some ReducerProtocol<State, Action> {
+            Scope(state: /State.appPassword,
+                  action: /Action.appPasswordAction) {
+                CreatePasswordDomain()
+            }
+        }
     }
 
     enum Action: Equatable {
@@ -38,15 +66,26 @@ struct AppSecurityDomain: ReducerProtocol {
         case loadSecurityOption
         case select(_ option: AppSecurityOption)
         case dismissError
-
         case response(Response)
+        case setNavigation(tag: Destinations.State.Tag?)
+        case togglePasswordSelected
+        case toggleBiometricSelected(BiometryType)
+        case destination(Destinations.Action)
     }
 
     @Dependency(\.userDataStore) var userDataStore: UserDataStore
     @Dependency(\.appSecurityManager) var appSecurityManager: AppSecurityManager
     @Dependency(\.schedulers) var schedulers: Schedulers
 
-    func reduce(into state: inout State, action: Action) -> EffectTask<Action> {
+    var body: some ReducerProtocol<State, Action> {
+        Reduce(self.core)
+            .ifLet(\.destination, action: /Action.destination) {
+                Destinations()
+            }
+    }
+
+    // swiftlint:disable:next function_body_length cyclomatic_complexity
+    func core(into state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
         case .loadSecurityOption:
             let availableSecurityOptions = appSecurityManager.availableSecurityOptions
@@ -66,20 +105,65 @@ struct AppSecurityDomain: ReducerProtocol {
                 state.selectedSecurityOption = appSecurityOption
             }
             return .none
-
-        case let .select(option):
-            switch option {
-            case .password:
-                // state change is done after save button is tapped
-                // CreatePassword view presented by parent
+        case .togglePasswordSelected:
+            if !state.isBiometricSelected {
                 return .none
-            default:
-                state.selectedSecurityOption = option
-                userDataStore.set(appSecurityOption: option)
+            }
+            if !state.isPasswordSelected {
+                return EffectTask(value: .setNavigation(tag: .appPassword))
+            } else {
+                switch state.selectedSecurityOption {
+                case .biometryAndPassword(.faceID):
+                    return EffectTask(value: .select(.biometry(.faceID)))
+                case .biometryAndPassword(.touchID):
+                    return EffectTask(value: .select(.biometry(.touchID)))
+                default:
+                    return .none
+                }
+            }
+        case let .toggleBiometricSelected(type):
+            if !state.isPasswordSelected {
+                return .none
+            }
+            if state.isBiometricSelected {
+                return EffectTask(value: .select(.password))
+            } else {
+                switch state.selectedSecurityOption {
+                case .password:
+                    return EffectTask(value: .select(.biometryAndPassword(type)))
+                default:
+                    return EffectTask(value: .select(.biometry(type)))
+                }
+            }
+        case let .select(option):
+            state.selectedSecurityOption = option
+            userDataStore.set(appSecurityOption: option)
+            return .none
+        case .setNavigation(tag: .appPassword):
+            if state.selectedSecurityOption == .password {
+                state.destination = .appPassword(.init(mode: .update))
+            } else {
+                state.destination = .appPassword(.init(mode: .create))
             }
             return .none
+        case .setNavigation(tag: nil):
+            state.destination = nil
+            return .none
+        case .destination(.appPasswordAction(.delegate(.closeAfterPasswordSaved))):
+            state.destination = nil
+            switch state.selectedSecurityOption {
+            case .biometry(.faceID):
+                return EffectTask(value: .select(.biometryAndPassword(.faceID)))
+            case .biometry(.touchID):
+                return EffectTask(value: .select(.biometryAndPassword(.touchID)))
+            default:
+                return EffectTask(value: .select(.password))
+            }
         case .dismissError:
             state.errorToDisplay = nil
+            return .none
+        case .destination(.appPasswordAction),
+             .setNavigation:
             return .none
         }
     }

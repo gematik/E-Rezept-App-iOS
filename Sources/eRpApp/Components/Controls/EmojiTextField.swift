@@ -20,8 +20,7 @@ import SwiftUI
 import UIKit
 
 struct EmojiTextField: UIViewRepresentable {
-    @Binding
-    var text: String?
+    @Binding var text: String?
 
     var completion: () -> Void
 
@@ -45,8 +44,7 @@ struct EmojiTextField: UIViewRepresentable {
     }
 
     class ObservationContainer: NSObject, UITextFieldDelegate {
-        @Binding
-        var text: String?
+        @Binding var text: String?
 
         var completion: () -> Void
 

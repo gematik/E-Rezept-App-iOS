@@ -145,7 +145,7 @@ final class AppAuthenticationDomainTests: XCTestCase {
             dependencies.authenticationChallengeProvider = mockAuthenticationChallengeProvider
         }
 
-        let expectedResponse = Result<Bool, AppAuthenticationBiometricsDomain.Error>.success(true)
+        let expectedResponse = AuthenticationChallengeProviderResult.success(true)
         expect(didCompleteAuthenticationCalled).to(beFalse())
         store.send(.biometrics(action: .authenticationChallengeResponse(expectedResponse))) { state in
             state.didCompleteAuthentication = true

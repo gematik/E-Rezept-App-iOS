@@ -159,8 +159,7 @@ struct MedicationView: View {
     }
 
     struct CompoundingMedicationView: View {
-        @ObservedObject
-        var viewStore: ViewStore<MedicationDomain.State, MedicationDomain.Action>
+        @ObservedObject var viewStore: ViewStore<MedicationDomain.State, MedicationDomain.Action>
 
         init(store: Store<MedicationDomain.State, MedicationDomain.Action>) {
             viewStore = ViewStore(store)

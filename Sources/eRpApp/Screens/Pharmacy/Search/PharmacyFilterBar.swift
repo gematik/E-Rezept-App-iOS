@@ -119,7 +119,6 @@ struct PharmacyFilterBar_Preview: PreviewProvider {
                 openFiltersAction: {},
                 removeFilter: { _ in },
                 elements: [
-                    .init(element: DummyElement(), key: "E-Rezept ready", accessibilityIdentifier: "E-Rezept ready"),
                     .init(element: DummyElement(), key: "Versand", accessibilityIdentifier: "Versand"),
                     .init(
                         element: DummyElement(),

@@ -26,8 +26,7 @@ import SwiftUI
 struct WelcomeDrawerView: View {
     let store: MainDomain.Store
 
-    @ObservedObject
-    var viewStore: ViewStore<Void, MainDomain.Action>
+    @ObservedObject var viewStore: ViewStore<Void, MainDomain.Action>
 
     init(store: MainDomain.Store) {
         self.store = store

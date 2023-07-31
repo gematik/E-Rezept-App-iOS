@@ -24,7 +24,6 @@ import TestUtils
 @testable import TrustStore
 import XCTest
 
-// swiftlint:disable identifier_name
 final class DefaultTrustStoreSessionTests: XCTestCase {
     private lazy var dateFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
@@ -83,7 +82,8 @@ final class DefaultTrustStoreSessionTests: XCTestCase {
         let storage = MemStorage()
         storage.set(certList: nil)
         storage.set(ocspList: nil)
-        var currentDate = dateFormatter.date(from: "2021-05-08 11:08:00.0000+0000")!
+        // Some hours after the OCSPResponse's producedAt value 2023-06-09 13:35:44 UTC
+        var currentDate = dateFormatter.date(from: "2023-06-09 18:00:00.0000+0000")!
 
         let dateProvider: TrustStoreTimeProvider = {
             currentDate
@@ -97,28 +97,37 @@ final class DefaultTrustStoreSessionTests: XCTestCase {
             trustStoreClient: trustStoreClient,
             time: dateProvider
         )
+        var success = false
 
         // then
         expect(trustStoreClient.loadCertListFromServerCalled) == false
         expect(trustStoreClient.loadCertListFromServerCalled) == false
 
         sut.loadVauCertificate()
-            .test(expectations: { _ in
-                expect(trustStoreClient.loadCertListFromServerCalled) == true
-                expect(trustStoreClient.loadCertListFromServerCallsCount) == 1
-                expect(storage.certListState) == self.certList
+            .test(
+                expectations: { _ in
+                    expect(trustStoreClient.loadCertListFromServerCalled) == true
+                    expect(trustStoreClient.loadCertListFromServerCallsCount) == 1
+                    expect(storage.certListState) == self.certList
 
-                expect(trustStoreClient.loadOCSPListFromServerCalled) == true
-                expect(trustStoreClient.loadOCSPListFromServerCallsCount) == 1
-                expect(storage.ocspListState) == self.ocspList
-            })
+                    expect(trustStoreClient.loadOCSPListFromServerCalled) == true
+                    expect(trustStoreClient.loadOCSPListFromServerCallsCount) == 1
+                    expect(storage.ocspListState) == self.ocspList
+                    success = true
+                }
+            )
+
+        expect(success) == true; success = false
 
         // When saved in storage, the object will not be requested from the server again
         sut.loadVauCertificate()
             .test(expectations: { _ in
                 expect(trustStoreClient.loadCertListFromServerCallsCount) == 1
                 expect(trustStoreClient.loadOCSPListFromServerCallsCount) == 1
+                success = true
             })
+
+        expect(success) == true; success = false
 
         // Advance the time so that saved mocked OCSP responses will be invalidated
         // The same mocked OCSP responses will be received by the client cannot be validated,
@@ -131,9 +140,12 @@ final class DefaultTrustStoreSessionTests: XCTestCase {
                 expect(trustStoreClient.loadOCSPListFromServerCallsCount) == 2
 
                 expect(error) == TrustStoreError.invalidOCSPResponse
+                success = true
+
             }) { _ in
                 fail("Expected failing test")
             }
+        expect(success) == true
     }
 
     func testLoadVauCertificateFromServer_failWhenOCSPResponsesCannotBeVerified() throws {

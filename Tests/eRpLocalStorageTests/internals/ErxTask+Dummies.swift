@@ -163,11 +163,10 @@ extension ErxTask {
 
 extension ErxTask.Communication {
     enum Dummies {
-        // swiftlint:disable line_length
         static func communication(for taskId: String,
                                   insuranceId: String) -> ErxTask.Communication {
             let payloadJSON =
-                "{\"version\": \"1\",\"supplyOptionsType\": \"shipment\",\"info_text\": \"Wir möchten Sie informieren, dass Ihre bestellten Medikamente versandt wurden! Diese Nachricht hat keine Url.\",\"url\": \"\"}"
+                "{\"version\": \"1\",\"supplyOptionsType\": \"shipment\",\"info_text\": \"Wir möchten Sie informieren, dass Ihre bestellten Medikamente versandt wurden! Diese Nachricht hat keine Url.\",\"url\": \"\"}" // swiftlint:disable:this line_length
             return ErxTask.Communication(
                 identifier: taskId,
                 profile: .reply,

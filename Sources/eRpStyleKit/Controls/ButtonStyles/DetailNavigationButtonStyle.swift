@@ -31,8 +31,7 @@ public struct DetailNavigationButtonStyle: ButtonStyle {
     }
 
     @Environment(\.sectionContainerStyle) var style
-    @Environment(\.isEnabled)
-    var isEnabled: Bool
+    @Environment(\.isEnabled) var isEnabled: Bool
 
     public func makeBody(configuration: Configuration) -> some View {
         HStack {
@@ -83,8 +82,7 @@ public struct DetailNavigationLabelStyle: LabelStyle {
 }
 
 public struct BottomDividerStyle: ViewModifier {
-    @Environment(\.sectionContainerIsLastElement)
-    var isLastElement: Bool
+    @Environment(\.sectionContainerIsLastElement) var isLastElement: Bool
     let showSeparator: Bool
 
     public init(showSeparator: Bool) {
@@ -96,7 +94,7 @@ public struct BottomDividerStyle: ViewModifier {
             content
                 .padding([.bottom, .trailing, .top])
 
-            if showSeparator && !isLastElement {
+            if showSeparator, !isLastElement {
                 Divider()
             }
         }

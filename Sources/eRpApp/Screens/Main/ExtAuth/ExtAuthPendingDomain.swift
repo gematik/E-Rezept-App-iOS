@@ -148,7 +148,7 @@ struct ExtAuthPendingDomain: ReducerProtocol {
             let environment = environment
             let entry: KKAppDirectory.Entry?
 
-            // If we have multipe pending requests, use the correct one
+            // If we have multiple pending requests, use the correct one
             if let components = URLComponents(url: url, resolvingAgainstBaseURL: true),
                let state = components.queryItemWithName("state")?.value,
                let newEntry = environment.extAuthRequestStorage.getExtAuthRequest(for: state)?.entry {
@@ -185,16 +185,18 @@ struct ExtAuthPendingDomain: ReducerProtocol {
             guard case let .extAuthReceived(entry) = state else { return .none }
             let payload = try? idpToken.idTokenPayload()
             state = .extAuthSuccessful(entry)
+            let overrideInsuranceTypeToPkv = idpToken.isPkvFastTrackFlowInitiated
             return environment.saveProfileWith(
                 insuranceId: payload?.idNummer,
                 insurance: payload?.organizationName,
                 givenName: payload?.givenName,
-                familyName: payload?.familyName
+                familyName: payload?.familyName,
+                overrideInsuranceTypeToPkv: overrideInsuranceTypeToPkv
             )
             .delay(for: 2,
                    scheduler: schedulers.main.animation())
             .eraseToEffect()
-        case .saveProfile(error: _):
+        case .saveProfile:
             state = .extAuthFailed(Self.saveProfileAlert)
             return .none
         case let .response(.externalLoginReceived(.failure(.idpError(error, url)))):
@@ -258,7 +260,8 @@ extension ExtAuthPendingDomain.Environment {
         insuranceId: String?,
         insurance: String?,
         givenName: String?,
-        familyName: String?
+        familyName: String?,
+        overrideInsuranceTypeToPkv: Bool = false
     ) -> EffectTask<ExtAuthPendingDomain.Action> {
         currentProfile
             .first()
@@ -269,6 +272,10 @@ extension ExtAuthPendingDomain.Environment {
                     // is removed.
                     if profile.insuranceType == .unknown {
                         profile.insuranceType = .gKV
+                    }
+                    // This is also temporary code until replaced by a proper implementation
+                    if overrideInsuranceTypeToPkv {
+                        profile.insuranceType = .pKV
                     }
                     profile.insurance = insurance
                     profile.givenName = givenName

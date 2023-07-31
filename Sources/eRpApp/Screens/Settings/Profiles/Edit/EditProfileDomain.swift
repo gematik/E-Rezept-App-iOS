@@ -71,12 +71,14 @@ struct EditProfileDomain: ReducerProtocol {
             case registeredDevices(RegisteredDevicesDomain.State)
             // sourcery: AnalyticsScreen = chargeItemList
             case chargeItemList(ChargeItemListDomain.State)
+            case editProfilePicture(EditProfilePictureDomain.State)
         }
 
         enum Action: Equatable {
             case auditEventsAction(AuditEventsDomain.Action)
             case registeredDevicesAction(RegisteredDevicesDomain.Action)
             case chargeItemListAction(ChargeItemListDomain.Action)
+            case editProfilePictureAction(action: EditProfilePictureDomain.Action)
         }
 
         var body: some ReducerProtocol<State, Action> {
@@ -109,6 +111,12 @@ struct EditProfileDomain: ReducerProtocol {
                 action: /Action.chargeItemListAction
             ) {
                 ChargeItemListDomain()
+            }
+            Scope(
+                state: /State.editProfilePicture,
+                action: /Action.editProfilePictureAction
+            ) {
+                EditProfilePictureDomain()
             }
         }
     }
@@ -221,6 +229,9 @@ struct EditProfileDomain: ReducerProtocol {
             state.can = can
             return .none
         case let .response(.profileReceived(.success(profile))):
+            state.image = profile?.image.viewModelPicture
+            state.userImageData = profile?.userImageData
+            state.color = profile?.color.viewModelColor ?? .grey
             state.insuranceId = profile?.insuranceId
             state.insurance = profile?.insurance
             state.fullName = profile?.fullName
@@ -309,11 +320,21 @@ struct EditProfileDomain: ReducerProtocol {
         case .setNavigation(tag: .chargeItemList):
             state.destination = .chargeItemList(.init(profileId: state.profileId))
             return .none
+        case .setNavigation(tag: .editProfilePicture):
+            state.destination = .editProfilePicture(.init(profile: UserProfile(from: Profile(
+                name: state.name,
+                identifier: state.profileId,
+                color: state.color.erxColor,
+                image: state.image?.erxPicture ?? ProfilePicture.none.erxPicture,
+                userImageData: state.userImageData
+            ), token: state.token)))
+            return .none
         case .setNavigation:
             return .none
         case .destination(.auditEventsAction),
              .destination(.registeredDevicesAction),
-             .destination(.chargeItemListAction):
+             .destination(.chargeItemListAction),
+             .destination(.editProfilePictureAction):
             return .none
         case .showDeleteBiometricPairingAlert:
             state.destination = .alert(AlertStates.deleteBiometricPairing)
@@ -574,40 +595,48 @@ extension EditProfileDomain {
     enum AlertStates {
         typealias Action = EditProfileDomain.Action
 
-        static var deleteProfile: ErpAlertState<Action> =
-            .init(title: TextState(L10n.stgTxtEditProfileDeleteConfirmationTitle),
-                  message: TextState(L10n.stgTxtEditProfileDeleteConfirmationMessage),
-                  primaryButton: .destructive(TextState(L10n.dtlTxtDeleteYes), action: .send(.confirmDeleteProfile)),
-                  secondaryButton: .cancel(
-                      TextState(L10n.stgBtnEditProfileDeleteAlertCancel),
-                      action: .send(.dismissAlert)
-                  ))
+        static let deleteProfile: ErpAlertState<Action> = {
+            .init(
+                title: L10n.stgTxtEditProfileDeleteConfirmationTitle,
+                actions: {
+                    ButtonState(role: .destructive, action: .confirmDeleteProfile) {
+                        .init(L10n.dtlTxtDeleteYes)
+                    }
+                    ButtonState(role: .cancel, action: .dismissAlert) {
+                        .init(L10n.stgBtnEditProfileDeleteAlertCancel)
+                    }
+                },
+                message: L10n.stgTxtEditProfileDeleteConfirmationMessage
+            )
+        }()
 
-        static var deleteBiometricPairing: ErpAlertState<Action> =
-            .init(title: TextState(L10n.stgTxtEditProfileDeletePairingTitle),
-                  message: TextState(L10n.stgTxtEditProfileDeletePairingMessage),
-                  primaryButton: .destructive(
-                      TextState(L10n.dtlTxtDeleteYes),
-                      action: .send(.confirmDeleteBiometricPairing)
-                  ),
-                  secondaryButton: .cancel(
-                      TextState(L10n.stgBtnEditProfileDeleteAlertCancel),
-                      action: .send(.dismissAlert)
-                  ))
+        static let deleteBiometricPairing: ErpAlertState<Action> = {
+            .init(
+                title: L10n.stgTxtEditProfileDeletePairingTitle,
+                actions: {
+                    ButtonState(role: .destructive, action: .confirmDeleteBiometricPairing) {
+                        .init(L10n.dtlTxtDeleteYes)
+                    }
+                    ButtonState(role: .cancel, action: .dismissAlert) {
+                        .init(L10n.stgBtnEditProfileDeleteAlertCancel)
+                    }
+                },
+                message: L10n.stgTxtEditProfileDeletePairingMessage
+            )
+        }()
 
         static func deleteBiometricPairingFailed(with error: IDPError) -> ErpAlertState<Action> {
             .init(
                 for: error,
-                title: TextState(L10n.stgTxtEditProfileDeletePairingError),
-                primaryButton: .destructive(
-                    TextState(L10n.dtlTxtDeleteYes),
-                    action: .send(.confirmDeleteBiometricPairing)
-                ),
-                secondaryButton: .cancel(
-                    TextState(L10n.stgBtnEditProfileDeleteAlertCancel),
-                    action: .send(.dismissAlert)
-                )
-            )
+                title: L10n.stgTxtEditProfileDeletePairingError
+            ) {
+                ButtonState(role: .destructive, action: .confirmDeleteBiometricPairing) {
+                    .init(L10n.dtlTxtDeleteYes)
+                }
+                ButtonState(role: .cancel, action: .dismissAlert) {
+                    .init(L10n.stgBtnEditProfileDeleteAlertCancel)
+                }
+            }
         }
     }
 }

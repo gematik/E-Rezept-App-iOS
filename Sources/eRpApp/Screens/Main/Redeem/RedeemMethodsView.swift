@@ -102,10 +102,9 @@ struct RedeemMethodsView: View {
                 content
 
                 NavigationLink(
-                    // swiftlint:disable trailing_closure
                     destination: dataMatrixDestination,
                     tag: RedeemMethodsDomain.Destinations.State.Tag.matrixCode,
-                    selection: viewStore.binding(get: \.destinationTag, send: { .setNavigation(tag: $0) })
+                    selection: viewStore.binding(get: \.destinationTag) { .setNavigation(tag: $0) }
                 ) {}
                     .hidden()
                     .accessibility(hidden: true)
@@ -120,7 +119,7 @@ struct RedeemMethodsView: View {
                         PharmacySearchView(store: scopedStore)
                     },
                     tag: RedeemMethodsDomain.Destinations.State.Tag.pharmacySearch,
-                    selection: viewStore.binding(get: \.destinationTag, send: { .setNavigation(tag: $0) })
+                    selection: viewStore.binding(get: \.destinationTag) { .setNavigation(tag: $0) }
                 ) {}
                     .hidden()
                     .accessibility(hidden: true)

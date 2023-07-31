@@ -21,8 +21,7 @@ import SwiftUI
 /// `LabelStyle` applying font and color for full width action buttons within `SectionContainer`s. This style is applied
 /// automatically within `SectionContainer`.
 public struct TrailingIconCellLabelStyle: LabelStyle {
-    @Environment(\.sectionContainerIsLastElement)
-    var isLastElement: Bool
+    @Environment(\.sectionContainerIsLastElement) var isLastElement: Bool
 
     public func makeBody(configuration: Configuration) -> some View {
         VStack(alignment: .leading, spacing: 0) {

@@ -22,8 +22,7 @@ import SwiftUI
 
 struct CardWallExtAuthSelectionView: View {
     let store: CardWallExtAuthSelectionDomain.Store
-    @ObservedObject
-    var viewStore: ViewStore<ViewState, CardWallExtAuthSelectionDomain.Action>
+    @ObservedObject var viewStore: ViewStore<ViewState, CardWallExtAuthSelectionDomain.Action>
 
     init(store: CardWallExtAuthSelectionDomain.Store) {
         self.store = store

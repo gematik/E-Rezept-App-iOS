@@ -165,7 +165,10 @@ final class PrescriptionDetailDomainTests: XCTestCase {
     }
 
     func testDeletingPrescriptionInProgress() {
-        let prescription = Prescription(erxTask: ErxTask.Fixtures.erxTaskInProgressAndValid)
+        let prescription = Prescription(
+            erxTask: ErxTask.Fixtures.erxTaskInProgressAndValid,
+            dateFormatter: UIDateFormatter.testValue
+        )
         let sut = testStore(.init(
             prescription: prescription,
             isArchived: true
@@ -173,14 +176,21 @@ final class PrescriptionDetailDomainTests: XCTestCase {
 
         sut.send(.delete) {
             $0.destination = .alert(ErpAlertState(
-                title: TextState(L10n.dtlBtnDeleteDisabledNote),
-                dismissButton: .default(TextState(L10n.alertBtnOk), action: .send(.setNavigation(tag: nil)))
+                title: L10n.dtlBtnDeleteDisabledNote,
+                actions: {
+                    ButtonState(role: .cancel, action: .setNavigation(tag: .none)) {
+                        .init(L10n.alertBtnOk)
+                    }
+                }
             ))
         }
     }
 
     func testDeletingPrescriptionWithDirectAssignemnt() {
-        let prescription = Prescription(erxTask: ErxTask.Fixtures.erxTaskDirectAssigned)
+        let prescription = Prescription(
+            erxTask: ErxTask.Fixtures.erxTaskDirectAssigned,
+            dateFormatter: UIDateFormatter.testValue
+        )
         let sut = testStore(.init(
             prescription: prescription,
             isArchived: true
@@ -188,8 +198,12 @@ final class PrescriptionDetailDomainTests: XCTestCase {
 
         sut.send(.delete) {
             $0.destination = .alert(ErpAlertState(
-                title: TextState(L10n.prscDeleteNoteDirectAssignment),
-                dismissButton: .default(TextState(L10n.alertBtnOk), action: .send(.setNavigation(tag: nil)))
+                title: L10n.prscDeleteNoteDirectAssignment,
+                actions: {
+                    ButtonState(role: .cancel, action: .setNavigation(tag: .none)) {
+                        .init(L10n.alertBtnOk)
+                    }
+                }
             ))
         }
     }
@@ -200,16 +214,20 @@ final class PrescriptionDetailDomainTests: XCTestCase {
         var erxTask = ErxTask.Fixtures.scannedTask
         let store = testStore(
             .init(
-                prescription: Prescription(erxTask: erxTask),
+                prescription: Prescription(erxTask: erxTask, dateFormatter: UIDateFormatter.testValue),
                 isArchived: false
             ),
             dateProvider: { dateToday }
         )
 
         let expectedRedeemDate = FHIRDateFormatter.shared.stringWithLongUTCTimeZone(from: dateToday)
-        let prescription = Prescription(erxTask: erxTask, date: dateToday)
+        let prescription = Prescription(erxTask: erxTask, date: dateToday, dateFormatter: UIDateFormatter.testValue)
         erxTask.update(with: expectedRedeemDate)
-        let expectedPrescription = Prescription(erxTask: erxTask, date: dateToday)
+        let expectedPrescription = Prescription(
+            erxTask: erxTask,
+            date: dateToday,
+            dateFormatter: UIDateFormatter.testValue
+        )
         mockErxTaskRepository.savePublisher = Just(true).setFailureType(to: ErxRepositoryError.self)
             .eraseToAnyPublisher()
         // when
@@ -233,7 +251,7 @@ final class PrescriptionDetailDomainTests: XCTestCase {
         let erxTask = ErxTask.Fixtures.scannedTaskWithAVSTransaction
         let store = testStore(
             .init(
-                prescription: Prescription(erxTask: erxTask),
+                prescription: Prescription(erxTask: erxTask, dateFormatter: UIDateFormatter.testValue),
                 isArchived: true
             ),
             dateProvider: { dateToday }
@@ -274,7 +292,10 @@ final class PrescriptionDetailDomainTests: XCTestCase {
         let erxTaskWithSubjectToChargeStatus = ErxTask.Fixtures.erxTask3
         let sut = testStore(
             .init(
-                prescription: Prescription(erxTask: erxTaskWithSubjectToChargeStatus),
+                prescription: Prescription(
+                    erxTask: erxTaskWithSubjectToChargeStatus,
+                    dateFormatter: UIDateFormatter.testValue
+                ),
                 isArchived: false
             )
         )
@@ -290,7 +311,7 @@ final class PrescriptionDetailDomainTests: XCTestCase {
         let taskWithoutCoPaymentInfo = ErxTask.Fixtures.erxTask12
         let sut = testStore(
             .init(
-                prescription: Prescription(erxTask: taskWithoutCoPaymentInfo),
+                prescription: Prescription(erxTask: taskWithoutCoPaymentInfo, dateFormatter: UIDateFormatter.testValue),
                 isArchived: false
             )
         )
@@ -303,7 +324,10 @@ final class PrescriptionDetailDomainTests: XCTestCase {
         let erxTaskWithNoSubjectToChargeStatus = ErxTask.Fixtures.erxTask2
         let sut = testStore(
             .init(
-                prescription: Prescription(erxTask: erxTaskWithNoSubjectToChargeStatus),
+                prescription: Prescription(
+                    erxTask: erxTaskWithNoSubjectToChargeStatus,
+                    dateFormatter: UIDateFormatter.testValue
+                ),
                 isArchived: false
             )
         )
@@ -451,7 +475,10 @@ final class PrescriptionDetailDomainTests: XCTestCase {
     }
 
     func testShowMedicationOverview_when_dispensed() {
-        let redeemedPrescription = Prescription(erxTask: ErxTask.Fixtures.erxTaskRedeemed)
+        let redeemedPrescription = Prescription(
+            erxTask: ErxTask.Fixtures.erxTaskRedeemed,
+            dateFormatter: UIDateFormatter.testValue
+        )
         let sut = testStore(.init(prescription: redeemedPrescription, isArchived: true))
         let expectedState = MedicationOverviewDomain.State(
             subscribed: redeemedPrescription.medication!,

@@ -147,7 +147,6 @@ struct PasswordStrength_Preview: PreviewProvider {
             VStack {
                 PasswordStrengthView(strength: strength)
 
-                // swiftlint:disable:next multiline_arguments
                 Stepper("Password strength: \(strength.rawValue)") {
                     withAnimation {
                         strength = PasswordStrength(rawValue: strength.rawValue + 1) ?? strength

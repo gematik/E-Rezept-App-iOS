@@ -51,7 +51,6 @@ struct SettingsDomain: ReducerProtocol {
 
     struct State: Equatable {
         var isDemoMode: Bool
-        var appSecurityState: AppSecurityDomain.State
         var profiles = ProfilesDomain.State(profiles: [], selectedProfileId: nil)
         var appVersion = AppVersion.current
         var trackerOptIn = false
@@ -70,8 +69,7 @@ struct SettingsDomain: ReducerProtocol {
             case healthCardPasswordSetCustomPin(HealthCardPasswordDomain.State)
             // sourcery: AnalyticsScreen = healthCardPassword_unlockCard
             case healthCardPasswordUnlockCard(HealthCardPasswordDomain.State)
-            // sourcery: AnalyticsScreen = settings_authenticationMethods_setAppPassword
-            case setAppPassword(CreatePasswordDomain.State)
+            case appSecurity(AppSecurityDomain.State)
             // sourcery: AnalyticsScreen = settings_productImprovements_complyTracking
             case complyTracking
             // sourcery: AnalyticsScreen = settings_legalNotice
@@ -96,7 +94,7 @@ struct SettingsDomain: ReducerProtocol {
             case healthCardPasswordForgotPinAction(HealthCardPasswordDomain.Action)
             case healthCardPasswordSetCustomPinAction(HealthCardPasswordDomain.Action)
             case healthCardPasswordUnlockCardAction(HealthCardPasswordDomain.Action)
-            case setAppPasswordAction(CreatePasswordDomain.Action)
+            case appSecurityStateAction(AppSecurityDomain.Action)
             case egkAction(OrderHealthCardDomain.Action)
             case editProfileAction(EditProfileDomain.Action)
             case newProfileAction(NewProfileDomain.Action)
@@ -108,8 +106,8 @@ struct SettingsDomain: ReducerProtocol {
                 DebugDomain()
             }
             #endif
-            Scope(state: /State.setAppPassword, action: /Action.setAppPasswordAction) {
-                CreatePasswordDomain()
+            Scope(state: /State.appSecurity, action: /Action.appSecurityStateAction) {
+                AppSecurityDomain()
             }
 
             Scope(state: /State.egk, action: /Action.egkAction) {
@@ -152,7 +150,6 @@ struct SettingsDomain: ReducerProtocol {
         case toggleTrackingTapped(Bool)
         case confirmedOptInTracking
         case toggleDemoModeSwitch
-        case appSecurity(action: AppSecurityDomain.Action)
         case profiles(action: ProfilesDomain.Action)
         case popToRootView
         case setNavigation(tag: Destinations.State.Tag?)
@@ -163,10 +160,6 @@ struct SettingsDomain: ReducerProtocol {
     @Dependency(\.tracker) var tracker: Tracker
 
     var body: some ReducerProtocol<State, Action> {
-        Scope(state: \State.appSecurityState, action: /SettingsDomain.Action.appSecurity(action:)) {
-            AppSecurityDomain()
-        }
-
         Scope(state: \State.profiles, action: /SettingsDomain.Action.profiles(action:)) {
             ProfilesDomain()
         }
@@ -198,9 +191,7 @@ struct SettingsDomain: ReducerProtocol {
             state.trackerOptIn = value
             return .none
         case .close:
-            state.appSecurityState.availableSecurityOptions = []
             return .none
-
         // Demo-Mode
         case .toggleDemoModeSwitch:
             state.destination = .alert(.info(state.isDemoMode ? Self.demoModeOffAlertState : Self.demoModeOnAlertState))
@@ -261,6 +252,8 @@ struct SettingsDomain: ReducerProtocol {
                 state.destination = .openSourceLicence
             case .termsOfUse:
                 state.destination = .termsOfUse
+            case .appSecurity:
+                state.destination = .appSecurity(.init(availableSecurityOptions: []))
             case .none:
                 state.destination = nil
                 return Self.cleanupSubDomains()
@@ -270,25 +263,6 @@ struct SettingsDomain: ReducerProtocol {
         case .destination(.egkAction(.delegate(.close))):
             state.destination = nil
             return Self.cleanup()
-        case .destination(.egkAction):
-            return .none
-
-        // create password navigation
-        case .appSecurity(action: .select(.password)):
-            if state.appSecurityState.selectedSecurityOption == .password {
-                state.destination = .setAppPassword(CreatePasswordDomain.State(mode: .update))
-            } else {
-                state.destination = .setAppPassword(CreatePasswordDomain.State(mode: .create))
-            }
-            return .none
-        case let .destination(.setAppPasswordAction(.delegate(delegateAction))):
-            switch delegateAction {
-            case .closeAfterPasswordSaved:
-                state.destination = nil
-                return .none
-            }
-        case .destination(.setAppPasswordAction):
-            return .none
         case let .profiles(action: .delegate(delegateAction)):
             switch delegateAction {
             case let .showEditProfile(editProfileState):
@@ -323,7 +297,8 @@ struct SettingsDomain: ReducerProtocol {
         case .destination(.debugAction),
              .destination(.editProfileAction),
              .destination(.newProfileAction),
-             .appSecurity,
+             .destination(.egkAction),
+             .destination(.appSecurityStateAction),
              .profiles:
             return .none
         }
@@ -350,7 +325,6 @@ extension SettingsDomain {
     enum Dummies {
         static let state = State(
             isDemoMode: false,
-            appSecurityState: AppSecurityDomain.State(availableSecurityOptions: []),
             profiles: ProfilesDomain.Dummies.state,
             appVersion: AppVersion(productVersion: "1.0",
                                    buildNumber: "LOCAL BUILD",

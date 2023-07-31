@@ -23,8 +23,7 @@ import SwiftUI
 struct OrderHealthCardListView: View {
     let store: OrderHealthCardDomain.Store
 
-    @ObservedObject
-    var viewStore: ViewStore<ViewState, OrderHealthCardDomain.Action>
+    @ObservedObject var viewStore: ViewStore<ViewState, OrderHealthCardDomain.Action>
 
     init(store: OrderHealthCardDomain.Store) {
         self.store = store

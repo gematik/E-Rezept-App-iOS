@@ -86,12 +86,7 @@ final class AppStartDomainTests: XCTestCase {
                         ),
                         pharmacySearch: PharmacySearchDomain.State(erxTasks: []),
                         orders: OrdersDomain.State(orders: []),
-                        settingsState: SettingsDomain.State(isDemoMode: false,
-                                                            appSecurityState: .init(
-                                                                availableSecurityOptions: [.password],
-                                                                selectedSecurityOption: nil,
-                                                                errorToDisplay: nil
-                                                            ))
+                        settingsState: SettingsDomain.State(isDemoMode: false)
                     ),
                     unreadOrderMessageCount: 0,
                     isDemoMode: false
@@ -132,12 +127,7 @@ final class AppStartDomainTests: XCTestCase {
                         ),
                         pharmacySearch: PharmacySearchDomain.State(erxTasks: []),
                         orders: OrdersDomain.State(orders: []),
-                        settingsState: .init(isDemoMode: false,
-                                             appSecurityState: .init(
-                                                 availableSecurityOptions: [.password],
-                                                 selectedSecurityOption: nil,
-                                                 errorToDisplay: nil
-                                             ))
+                        settingsState: .init(isDemoMode: false)
                     ),
                     unreadOrderMessageCount: 0,
                     isDemoMode: false
@@ -164,11 +154,7 @@ final class AppStartDomainTests: XCTestCase {
                         ),
                         pharmacySearch: PharmacySearchDomain.State(erxTasks: []),
                         orders: OrdersDomain.State(orders: []),
-                        settingsState: .init(isDemoMode: false,
-                                             appSecurityState:
-                                             .init(availableSecurityOptions: [.password],
-                                                   selectedSecurityOption: nil,
-                                                   errorToDisplay: nil))
+                        settingsState: .init(isDemoMode: false)
                     ),
                     unreadOrderMessageCount: 0,
                     isDemoMode: false

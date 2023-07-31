@@ -42,8 +42,7 @@ public struct FormRadioToggleStyle: ToggleStyle {
 }
 
 public struct RadioLabelStyle: LabelStyle {
-    @Binding
-    var isOn: Bool
+    @Binding var isOn: Bool
 
     let showSeparator: Bool
     let showNavigationIndicator: Bool

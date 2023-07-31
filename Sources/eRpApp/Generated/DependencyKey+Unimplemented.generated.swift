@@ -51,7 +51,7 @@ struct UnimplementedAppSecurityManager: AppSecurityManager {
 struct UnimplementedAuthenticationChallengeProvider: AuthenticationChallengeProvider {
     init() {}
 
-    func startAuthenticationChallenge() -> AnyPublisher<Result<Bool, AppAuthenticationBiometricsDomain.Error>, Never> {
+    func startAuthenticationChallenge() -> AnyPublisher<Result<Bool, AuthenticationChallengeProviderError>, Never> {
         fatalError("startAuthenticationChallenge has not been implemented")
     }
 }
@@ -64,6 +64,9 @@ struct UnimplementedChargeItemListDomainService: ChargeItemListDomainService {
     func fetchRemoteChargeItemsAndSave(for profileId: UUID) -> AnyPublisher<ChargeItemDomainServiceFetchResult, Never> {
         fatalError("fetchRemoteChargeItemsAndSave(for:) has not been implemented")
     }
+    func delete(chargeItem: ErxSparseChargeItem, for profileId: UUID) -> AnyPublisher<ChargeItemDomainServiceDeleteResult, Never> {
+        fatalError("delete(chargeItem:for:) has not been implemented")
+    }
     func authenticate(for profileId: UUID) -> AnyPublisher<ChargeItemDomainServiceAuthenticateResult, Never> {
         fatalError("authenticate(for:) has not been implemented")
     }
@@ -75,6 +78,16 @@ struct UnimplementedChargeItemListDomainService: ChargeItemListDomainService {
     }
     func revokeChargeItemsConsent(for profileId: UUID) -> AnyPublisher<ChargeItemListDomainServiceRevokeResult, Never> {
         fatalError("revokeChargeItemsConsent(for:) has not been implemented")
+    }
+}
+struct UnimplementedChargeItemPDFService: ChargeItemPDFService {
+    init() {}
+
+    func generatePDF(for chargeItem: ErxChargeItem) throws -> Data {
+        fatalError("generatePDF(for:) has not been implemented")
+    }
+    func loadPDFOrGenerate(for chargeItem: ErxChargeItem) throws -> URL {
+        fatalError("loadPDFOrGenerate(for:) has not been implemented")
     }
 }
 struct UnimplementedCoreDataControllerFactory: CoreDataControllerFactory {

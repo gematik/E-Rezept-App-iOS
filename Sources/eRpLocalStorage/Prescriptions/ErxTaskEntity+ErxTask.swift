@@ -76,37 +76,41 @@ extension ErxTask {
         currentDate now: Date
     ) -> ErxTask.Status? {
         if !avsTransactions.isEmpty {
-            let recentTransactions = avsTransactions.filter { transaction in
-                let redeemedTimeInterval = now.timeIntervalSince(transaction.groupedRedeemTime)
-                return redeemedTimeInterval < ErxTask.scannedTaskMinIntervalForCompletion &&
-                    redeemedTimeInterval > 0
-            }
-            return recentTransactions.isEmpty ? .completed : .inProgress
+            return .computed(status: .sent)
         } else if !communications.isEmpty {
             let recentCommunications = communications.filter { communication in
                 guard communication.profile == .dispReq,
-                      let redeemTime = communication.timestamp.date else {
+                      let redeemDate = communication.timestamp.date else {
                     return false
                 }
-                let redeemedTimeInterval = now.timeIntervalSince(redeemTime)
+                let redeemedTimeInterval = now.timeIntervalSince(redeemDate)
                 return redeemedTimeInterval < ErxTask.scannedTaskMinIntervalForCompletion &&
                     redeemedTimeInterval > 0
             }
-            return recentCommunications.isEmpty ? .completed : .inProgress
+            return recentCommunications.isEmpty ? .completed : .computed(status: .waiting)
         }
         return nil
     }
 
     private static func updatedStatusForServerTask(
+        lastModified: Date?,
         communications: [ErxTask.Communication],
         currentDate now: Date
     ) -> ErxTask.Status? {
         let comms = communications.filter { communication in
             guard communication.profile == .dispReq,
-                  let redeemTime = communication.timestamp.date else {
+                  let redeemDate = communication.timestamp.date else {
                 return false
             }
-            let redeemedTimeInterval = now.timeIntervalSince(redeemTime)
+            let redeemedTimeInterval = now.timeIntervalSince(redeemDate)
+            if let lastModifiedDate = lastModified {
+                let lastModifiedTimeInterval = now.timeIntervalSince(lastModifiedDate)
+                // if lastModified is more recent than the latest dispReq, we can be sure that something
+                // happened with the task (e.g. claimed -> rejected) and omit status manipulation
+                if lastModifiedTimeInterval < redeemedTimeInterval {
+                    return false
+                }
+            }
             return redeemedTimeInterval < ErxTask.scannedTaskMinIntervalForCompletion &&
                 redeemedTimeInterval > 0
         }
@@ -162,6 +166,7 @@ extension ErxTask {
             } else if source == .server {
                 erxTaskStatus = ErxTask
                     .updatedStatusForServerTask(
+                        lastModified: entity.lastModified?.date,
                         communications: mappedCommunications,
                         currentDate: now
                     ) ?? erxTaskStatus

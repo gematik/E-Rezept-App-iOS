@@ -135,11 +135,10 @@ onboarding:
     - onb_ana_btn_continue
   legalInfo:
     - onb_txt_legal_info_title
-    - onb_btn_accept
+    - onb_btn_confirm
     - onb_txt_terms_of_use
-    - onb_btn_accept_terms_of_use
+    - onb_btn_accept_terms_of_use_and_privacy
     - onb_txt_terms_of_privacy
-    - onb_btn_accept_privacy
 auth:
   - auth_btn_biometrics_faceid
   - auth_btn_biometrics_touchid
@@ -147,6 +146,9 @@ auth:
   - auth_txt_password_failure
   - auth_edt_password_input
   - auth_txt_failed_login_hint
+  - auth_btn_biometricandpassword_faceid
+  - auth_btn_biometricandpassword_touchid
+  - auth_btn_biometricandpassword_change
 settings:
   demo:
     - nav_done
@@ -159,6 +161,7 @@ settings:
     - stg_txt_security_touchid
     - stg_txt_security_password
     - stg_txt_security_tokens
+    - stg_btn_device_security
   createPassword:
     - cpw_btn_save
     - cpw_btn_update
@@ -491,9 +494,6 @@ pharmacyContact:
   - pha_contact_address_mail
   - pha_contact_address_info
   - pha_contact_btn_save
-pharmacyGlobal:
-  - pha_global_img_readiness_badge
-  - pha_global_txt_readiness_badge
 security:
   - sec_txt_system_pin_headline
   - sec_txt_system_pin_title

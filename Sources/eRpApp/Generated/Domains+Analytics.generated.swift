@@ -5,6 +5,12 @@ import Foundation
 
 
 
+extension AppAuthenticationBiometricPasswordDomain.State {
+    func routeName() -> String? {
+            return nil
+    }
+}
+
 extension AppAuthenticationBiometricsDomain.State {
     func routeName() -> String? {
             return nil
@@ -40,7 +46,13 @@ extension AppDomain.State {
 
 extension AppSecurityDomain.State {
     func routeName() -> String? {
+        guard let destination = destination else {
             return nil
+        }
+        switch destination {
+            case let .appPassword(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+        }
     }
 }
 
@@ -148,7 +160,17 @@ extension CardWallReadCardDomain.State {
 
 extension ChargeItemDomain.State {
     func routeName() -> String? {
+        guard let destination = destination else {
             return nil
+        }
+        switch destination {
+            case .shareSheet:
+                return destination.tag.analyticsName
+            case let .idpCardWall(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+            case .alert:
+                return destination.tag.analyticsName
+        }
     }
 }
 
@@ -201,6 +223,8 @@ extension EditProfileDomain.State {
             case let .registeredDevices(state: state):
                 return state.routeName() ?? destination.tag.analyticsName
             case let .chargeItemList(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+            case let .editProfilePicture(state: state):
                 return state.routeName() ?? destination.tag.analyticsName
         }
     }
@@ -575,7 +599,15 @@ extension RegisteredDevicesDomain.State {
 
 extension ScannerDomain.State {
     func routeName() -> String? {
+        guard let destination = destination else {
             return nil
+        }
+        switch destination {
+            case .imageGallery:
+                return destination.tag.analyticsName
+            case .documentImporter:
+                return destination.tag.analyticsName
+        }
     }
 }
 
@@ -595,7 +627,7 @@ extension SettingsDomain.State {
                 return state.routeName() ?? destination.tag.analyticsName
             case let .healthCardPasswordUnlockCard(state: state):
                 return state.routeName() ?? destination.tag.analyticsName
-            case let .setAppPassword(state: state):
+            case let .appSecurity(state: state):
                 return state.routeName() ?? destination.tag.analyticsName
             case .complyTracking:
                 return destination.tag.analyticsName
@@ -684,6 +716,16 @@ extension ExtAuthPendingDomain.State {
 
 
 
+extension AppSecurityDomain.Destinations.State {
+    func routeName() -> String? {
+        let destination = self
+        switch destination {
+            case let .appPassword(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+        }
+    }
+}
+
 extension CardWallCANDomain.Destinations.State {
     func routeName() -> String? {
         let destination = self
@@ -762,6 +804,20 @@ extension CardWallReadCardDomain.Destinations.State {
     }
 }
 
+extension ChargeItemDomain.Destinations.State {
+    func routeName() -> String? {
+        let destination = self
+        switch destination {
+            case .shareSheet:
+                return destination.tag.analyticsName
+            case let .idpCardWall(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+            case .alert:
+                return destination.tag.analyticsName
+        }
+    }
+}
+
 extension ChargeItemListDomain.Destinations.State {
     func routeName() -> String? {
         let destination = self
@@ -789,6 +845,8 @@ extension EditProfileDomain.Destinations.State {
             case let .registeredDevices(state: state):
                 return state.routeName() ?? destination.tag.analyticsName
             case let .chargeItemList(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+            case let .editProfilePicture(state: state):
                 return state.routeName() ?? destination.tag.analyticsName
         }
     }
@@ -1052,6 +1110,18 @@ extension RegisteredDevicesDomain.Destinations.State {
     }
 }
 
+extension ScannerDomain.Destinations.State {
+    func routeName() -> String? {
+        let destination = self
+        switch destination {
+            case .imageGallery:
+                return destination.tag.analyticsName
+            case .documentImporter:
+                return destination.tag.analyticsName
+        }
+    }
+}
+
 extension SettingsDomain.Destinations.State {
     func routeName() -> String? {
         let destination = self
@@ -1066,7 +1136,7 @@ extension SettingsDomain.Destinations.State {
                 return state.routeName() ?? destination.tag.analyticsName
             case let .healthCardPasswordUnlockCard(state: state):
                 return state.routeName() ?? destination.tag.analyticsName
-            case let .setAppPassword(state: state):
+            case let .appSecurity(state: state):
                 return state.routeName() ?? destination.tag.analyticsName
             case .complyTracking:
                 return destination.tag.analyticsName
@@ -1101,6 +1171,14 @@ extension AppDomain.Destinations.State.Tag {
                 return Analytics.Screens.orders.name
             case .settings: 
                 return Analytics.Screens.settings.name
+        }
+    }
+}
+extension AppSecurityDomain.Destinations.State.Tag {
+    var analyticsName: String {
+        switch self {
+            case .appPassword: 
+                return "appPassword"
         }
     }
 }
@@ -1170,6 +1248,18 @@ extension CardWallReadCardDomain.Destinations.State.Tag {
         }
     }
 }
+extension ChargeItemDomain.Destinations.State.Tag {
+    var analyticsName: String {
+        switch self {
+            case .shareSheet: 
+                return "shareSheet"
+            case .idpCardWall: 
+                return "idpCardWall"
+            case .alert: 
+                return "alert"
+        }
+    }
+}
 extension ChargeItemListDomain.Destinations.State.Tag {
     var analyticsName: String {
         switch self {
@@ -1195,6 +1285,8 @@ extension EditProfileDomain.Destinations.State.Tag {
                 return Analytics.Screens.profile_registeredDevices.name
             case .chargeItemList: 
                 return Analytics.Screens.chargeItemList.name
+            case .editProfilePicture: 
+                return "editProfilePicture"
         }
     }
 }
@@ -1422,6 +1514,16 @@ extension RegisteredDevicesDomain.Destinations.State.Tag {
         }
     }
 }
+extension ScannerDomain.Destinations.State.Tag {
+    var analyticsName: String {
+        switch self {
+            case .imageGallery: 
+                return Analytics.Screens.scanner_imageGallery.name
+            case .documentImporter: 
+                return Analytics.Screens.scanner_documentImporter.name
+        }
+    }
+}
 extension SettingsDomain.Destinations.State.Tag {
     var analyticsName: String {
         switch self {
@@ -1435,8 +1537,8 @@ extension SettingsDomain.Destinations.State.Tag {
                 return Analytics.Screens.healthCardPassword_setCustomPin.name
             case .healthCardPasswordUnlockCard: 
                 return Analytics.Screens.healthCardPassword_unlockCard.name
-            case .setAppPassword: 
-                return Analytics.Screens.settings_authenticationMethods_setAppPassword.name
+            case .appSecurity: 
+                return "appSecurity"
             case .complyTracking: 
                 return Analytics.Screens.settings_productImprovements_complyTracking.name
             case .legalNotice: 

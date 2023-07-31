@@ -26,8 +26,7 @@ struct RefreshScrollView<Content: View, StickyHeader: View>: View {
 
     let action: () -> Void
 
-    @ObservedObject
-    var viewStore: ViewStore<ViewState, PrescriptionListDomain.Action>
+    @ObservedObject var viewStore: ViewStore<ViewState, PrescriptionListDomain.Action>
 
     init(
         store: PrescriptionListDomain.Store,

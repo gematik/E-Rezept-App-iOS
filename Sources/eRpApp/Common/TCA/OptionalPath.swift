@@ -164,7 +164,7 @@ extension OptionalPath where Root == Value? {
 }
 
 // This file will probably be removed when transitioning to pointfree navigation
-// swiftlint:disable identifier_name function_body_length
+// swiftlint:disable identifier_name
 extension AnyReducer {
     func _pullback<GlobalState, GlobalAction, StatePath, ActionPath>(
         state toLocalState: StatePath,
@@ -249,3 +249,5 @@ extension AnyReducer {
         }
     }
 }
+
+// swiftlint:enable identifier_name

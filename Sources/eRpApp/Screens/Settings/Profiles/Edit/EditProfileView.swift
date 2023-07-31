@@ -25,8 +25,7 @@ import SwiftUI
 struct EditProfileView: View {
     let store: EditProfileDomain.Store
 
-    @ObservedObject
-    var viewStore: ViewStore<ViewState, EditProfileDomain.Action>
+    @ObservedObject var viewStore: ViewStore<ViewState, EditProfileDomain.Action>
 
     init(store: EditProfileDomain.Store) {
         self.store = store
@@ -90,8 +89,27 @@ struct EditProfileView: View {
                     color: viewStore.color,
                     connection: nil,
                     style: .xxLarge
-                ) {}
-                    .padding(.top, 24)
+                ) {
+                    viewStore.send(.setNavigation(tag: .editProfilePicture))
+                }
+                .padding(.top, 24)
+
+                NavigationLink(
+                    destination: IfLetStore(
+                        store.destinationsScope(
+                            state: /EditProfileDomain.Destinations.State.editProfilePicture,
+                            action: EditProfileDomain.Destinations.Action.editProfilePictureAction
+                        ),
+                        then: EditProfilePictureFullView.init(store:)
+                    ),
+                    tag: EditProfileDomain.Destinations.State.Tag.editProfilePicture,
+                    selection: viewStore.binding(
+                        get: \.destinationTag,
+                        send: EditProfileDomain.Action.setNavigation
+                    )
+                ) {
+                    Text(L10n.stgBtnEditPicture)
+                }
 
                 SingleElementSectionContainer(footer: {
                     if viewStore.showEmptyNameWarning {
@@ -108,12 +126,6 @@ struct EditProfileView: View {
                     )
                     .accessibility(identifier: A11y.settings.editProfile.stgTxtEditProfileNameInput)
                 })
-
-                ProfileColorPicker(color: viewStore.binding(get: \.color, send: EditProfileDomain.Action.setColor))
-                    .accessibility(identifier: A11y.settings.editProfile.stgTxtEditProfileBgColorPicker)
-                    .background(Color(.tertiarySystemBackground))
-                    .cornerRadius(16)
-                    .padding([.horizontal, .bottom])
 
                 ConnectedProfile(viewStore: viewStore)
 
@@ -161,8 +173,7 @@ extension EditProfileView {
     }
 
     private struct ConnectedProfile: View {
-        @ObservedObject
-        var viewStore: ViewStore<EditProfileView.ViewState, EditProfileDomain.Action>
+        @ObservedObject var viewStore: ViewStore<EditProfileView.ViewState, EditProfileDomain.Action>
 
         var body: some View {
             if viewStore.hasConnectingData {
@@ -260,8 +271,7 @@ extension EditProfileView {
     private struct ChargeItemsSectionView: View {
         let store: EditProfileDomain.Store
 
-        @ObservedObject
-        var viewStore: ViewStore<ViewState, EditProfileDomain.Action>
+        @ObservedObject var viewStore: ViewStore<ViewState, EditProfileDomain.Action>
 
         init(store: EditProfileDomain.Store) {
             self.store = store
@@ -319,8 +329,7 @@ extension EditProfileView {
     private struct LoginSectionView: View {
         let store: EditProfileDomain.Store
 
-        @ObservedObject
-        var viewStore: ViewStore<ViewState, EditProfileDomain.Action>
+        @ObservedObject var viewStore: ViewStore<ViewState, EditProfileDomain.Action>
 
         init(store: EditProfileDomain.Store) {
             self.store = store
@@ -417,8 +426,7 @@ extension EditProfileView {
             })
         }
 
-        @ViewBuilder
-        var footer: some View {
+        @ViewBuilder var footer: some View {
             switch viewStore.authType {
             case .biometryNotEnrolled:
                 Text(L10n.stgTxtEditProfileLoginFootnoteBiometry)
@@ -438,8 +446,7 @@ extension EditProfileView {
     private struct TokenSectionView: View {
         let store: EditProfileDomain.Store
 
-        @ObservedObject
-        var viewStore: ViewStore<ViewState, EditProfileDomain.Action>
+        @ObservedObject var viewStore: ViewStore<ViewState, EditProfileDomain.Action>
 
         init(store: EditProfileDomain.Store) {
             self.store = store
@@ -525,8 +532,7 @@ extension EditProfileView {
                              })
         }
 
-        @ViewBuilder
-        var footnote: some View {
+        @ViewBuilder var footnote: some View {
             if !viewStore.isLoggedIn {
                 FootnoteView(text: L10n.stgTxtEditProfileSecurityShowTokensHint,
                              a11y: A11y.settings.editProfile.stgTxtEditProfileSecurityShowTokensHint)

@@ -90,8 +90,7 @@ private func toggleFlashlight(status: Bool) {
 }
 
 struct LightSwitch: View {
-    @State
-    var isFlashOn: Bool {
+    @State var isFlashOn: Bool {
         didSet {
             toggleFlashlight(status: isFlashOn)
         }

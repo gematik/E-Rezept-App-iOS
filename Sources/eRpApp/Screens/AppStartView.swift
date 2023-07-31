@@ -23,8 +23,7 @@ import SwiftUI
 struct AppStartView: View {
     let store: AppStartDomain.Store
 
-    @ObservedObject
-    var viewStore: ViewStore<AppStartDomain.State, AppStartDomain.Action>
+    @ObservedObject var viewStore: ViewStore<AppStartDomain.State, AppStartDomain.Action>
 
     init(store: AppStartDomain.Store) {
         self.store = store

@@ -398,13 +398,18 @@ extension PharmacySearchDomain {
 extension PharmacySearchDomain {
     static var locationPermissionAlertState: ErpAlertState<Action> = {
         .init(
-            title: TextState(L10n.phaSearchTxtLocationAlertTitle),
-            message: TextState(L10n.phaSearchTxtLocationAlertMessage),
-            primaryButton: .default(
-                TextState(L10n.alertBtnOk),
-                action: .send(.removeFilterOption(.currentLocation), animation: .default)
-            ),
-            secondaryButton: .default(TextState("Settings"), action: .send(.openAppSpecificSettings))
+            title: L10n.phaSearchTxtLocationAlertTitle,
+            actions: {
+                ButtonState(action: .removeFilterOption(.currentLocation)) {
+                    .init(L10n.alertBtnOk)
+                }
+                ButtonState(action: .openAppSpecificSettings) {
+                    .init(L10n.stgTxtTitle)
+                }
+            },
+            message: L10n.phaSearchTxtLocationAlertMessage
         )
     }()
 }
+
+// swiftlint:enable type_body_length

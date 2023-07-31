@@ -22,6 +22,9 @@ import Foundation
 
 extension Prescription {
     enum Fixtures {
-        static let prescriptions = ErxTask.Fixtures.erxTasks.map { Prescription(erxTask: $0) }
+        static let prescriptions = {
+            let dateFormatter = UIDateFormatter.testValue
+            return ErxTask.Fixtures.erxTasks.map { Prescription(erxTask: $0, dateFormatter: dateFormatter) }
+        }()
     }
 }

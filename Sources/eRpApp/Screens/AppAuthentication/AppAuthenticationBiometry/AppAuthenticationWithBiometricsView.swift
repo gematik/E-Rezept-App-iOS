@@ -36,6 +36,7 @@ struct AppAuthenticationWithBiometricsView: View {
                     }
                 }
             }
+            .padding(.vertical)
             .onAppear {
                 if viewStore.startImmediateAuthenticationChallenge {
                     viewStore.send(.startAuthenticationChallenge)

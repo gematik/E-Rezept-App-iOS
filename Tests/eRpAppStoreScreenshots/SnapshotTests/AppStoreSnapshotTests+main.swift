@@ -436,6 +436,8 @@ extension ErxTask {
 
 extension Prescription {
     enum Fixtures {
-        static let prescriptions = ErxTask.Fixtures.erxTasks.map { Prescription(erxTask: $0) }
+        static let prescriptions = ErxTask.Fixtures.erxTasks.map {
+            Prescription(erxTask: $0, dateFormatter: UIDateFormatter.testValue)
+        }
     }
 }

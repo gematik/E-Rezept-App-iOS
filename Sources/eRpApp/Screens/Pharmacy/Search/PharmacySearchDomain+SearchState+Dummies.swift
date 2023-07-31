@@ -52,7 +52,7 @@ extension PharmacySearchDomain {
         case error
 
         var isNotStartView: Bool {
-            if case .startView(loading: _) = self {
+            if case .startView = self {
                 return false
             }
             return true

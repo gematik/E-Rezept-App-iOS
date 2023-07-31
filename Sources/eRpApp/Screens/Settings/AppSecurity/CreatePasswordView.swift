@@ -125,8 +125,7 @@ struct CreatePasswordView: View {
         .navigationTitle(updatePassword ? L10n.cpwTxtUpdateTitle : L10n.cpwTxtTitle)
     }
 
-    @ViewBuilder
-    private func errorFooter() -> some View {
+    @ViewBuilder private func errorFooter() -> some View {
         if let error = viewStore.passwordErrorMessage {
             Text(error)
                 .foregroundColor(Colors.red600)
@@ -136,8 +135,7 @@ struct CreatePasswordView: View {
         }
     }
 
-    @ViewBuilder
-    private func saveButtonAndError() -> some View {
+    @ViewBuilder private func saveButtonAndError() -> some View {
         PrimaryTextButton(
             text: updatePassword ? L10n.cpwBtnChange : L10n.cpwBtnSave,
             a11y: updatePassword ?
@@ -150,8 +148,7 @@ struct CreatePasswordView: View {
         }
     }
 
-    @ViewBuilder
-    private func currentPasswordFooter() -> some View {
+    @ViewBuilder private func currentPasswordFooter() -> some View {
         if viewStore.showOriginalPasswordWrong {
             VStack(alignment: .leading) {
                 Text(L10n.cpwTxtCurrentPasswordWrong)

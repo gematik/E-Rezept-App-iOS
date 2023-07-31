@@ -23,8 +23,7 @@ import SwiftUI
 struct ExtAuthPendingView: View {
     let store: ExtAuthPendingDomain.Store
 
-    @ObservedObject
-    private var viewStore: ViewStore<ExtAuthPendingDomain.State, ExtAuthPendingDomain.Action>
+    @ObservedObject private var viewStore: ViewStore<ExtAuthPendingDomain.State, ExtAuthPendingDomain.Action>
 
     init(store: ExtAuthPendingDomain.Store) {
         self.store = store
@@ -40,8 +39,7 @@ struct ExtAuthPendingView: View {
         }
     }
 
-    @ViewBuilder
-    func text() -> some View {
+    @ViewBuilder func text() -> some View {
         let name = viewStore.state.entry?.name ?? ""
 
         switch viewStore.state {
@@ -56,8 +54,7 @@ struct ExtAuthPendingView: View {
         }
     }
 
-    @ViewBuilder
-    func icon() -> some View {
+    @ViewBuilder func icon() -> some View {
         switch viewStore.state {
         case .pendingExtAuth,
              .extAuthReceived:
@@ -138,7 +135,7 @@ struct ExtAuthPendingView_Preview: PreviewProvider {
                     .Entry(name: "Gematik KK", identifier: "identifier"))
             ))
             ExtAuthPendingView(store: ExtAuthPendingDomain.Dummies.store(
-                for: .extAuthFailed(ErpAlertState(title: TextState("error")))
+                for: .extAuthFailed(ErpAlertState { TextState("error") })
             ))
             ExtAuthPendingView(store: ExtAuthPendingDomain.Dummies.store(
                 for: .extAuthSuccessful(KKAppDirectory

@@ -153,7 +153,7 @@ final class OrderDetailDomainTests: XCTestCase {
         store.send(.didSelectMedication(input)) { state in
             state.destination = .prescriptionDetail(
                 .init(
-                    prescription: Prescription(erxTask: input),
+                    prescription: Prescription(erxTask: input, dateFormatter: UIDateFormatter.testValue),
                     isArchived: false
                 )
             )

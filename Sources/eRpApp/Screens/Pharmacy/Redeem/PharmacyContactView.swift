@@ -22,8 +22,7 @@ import SwiftUI
 
 struct PharmacyContactView: View {
     let store: PharmacyContactDomain.Store
-    @ObservedObject
-    var viewStore: ViewStore<PharmacyContactDomain.State, PharmacyContactDomain.Action>
+    @ObservedObject var viewStore: ViewStore<PharmacyContactDomain.State, PharmacyContactDomain.Action>
 
     init(store: PharmacyContactDomain.Store) {
         self.store = store

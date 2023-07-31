@@ -146,3 +146,5 @@ extension PharmacyLocation {
         ]
     }
 }
+
+// swiftlint:enable missing_docs

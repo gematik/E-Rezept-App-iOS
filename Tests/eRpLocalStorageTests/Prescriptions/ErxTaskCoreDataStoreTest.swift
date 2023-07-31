@@ -22,6 +22,7 @@ import eRpKit
 @testable import eRpLocalStorage
 import Foundation
 import Nimble
+import TestUtils
 import XCTest
 
 // swiftlint:disable file_length
@@ -1109,7 +1110,7 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
 
         // when
         var receivedFetchResult: ErxSparseChargeItem?
-        let cancellable = store.fetchChargeItem(by: chargeItemToFetch.identifier, fullDetail: true)
+        let cancellable = store.fetchChargeItem(by: chargeItemToFetch.identifier)
             .sink(receiveCompletion: { completion in
                 expect(completion) == .finished
             }, receiveValue: { result in
@@ -1119,6 +1120,7 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
         // then
         expect(receivedFetchResult?.identifier).toEventually(equal(chargeItemToFetch.identifier))
         expect(receivedFetchResult?.chargeItem) == chargeItemToFetch
+        expect(receivedFetchResult?.chargeItem).to(nodiff(chargeItemToFetch))
 
         cancellable.cancel()
     }

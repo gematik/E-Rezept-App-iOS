@@ -17,6 +17,7 @@
 //
 
 import Combine
+import Dependencies
 @testable import eRpApp
 import eRpKit
 import eRpLocalStorage
@@ -124,7 +125,9 @@ final class DefaultPrescriptionRepositoryTests: XCTestCase {
         sut.silentLoadRemote(for: nil)
             .test(
                 expectations: { output in
-                    expect(output) == .prescriptions(ErxTask.Fixtures.erxTasks.map { Prescription(erxTask: $0) })
+                    expect(output) == .prescriptions(ErxTask.Fixtures.erxTasks.map {
+                        Prescription(erxTask: $0, dateFormatter: UIDateFormatter.testValue)
+                    })
                 }
             )
 

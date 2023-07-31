@@ -34,8 +34,18 @@ extension ErxTask {
         case completed
         /// The task state is not defined as subset of eRp status
         case undefined(status: String)
+        /// This status is not part of the FHIR task status and is computed on device only.
+        /// Status is computed in `ErxTaskEntity+ErxTask`
+        case computed(status: ComputedStatus)
         /// Extra error status (not FHIR)
         case error(Error)
+
+        public enum ComputedStatus: String {
+            /// Status is `sent` when an ErxTask has been sent to an AVS service without using the fachdienst
+            case sent
+            /// Status is `waiting` for 10 minutes after redeeming an ErxTask via fachdienst
+            case waiting
+        }
 
         /// The associated `RawValue` type
         public typealias RawValue = String
@@ -50,6 +60,8 @@ extension ErxTask {
             case "in-progress": self = .inProgress
             case "cancelled": self = .cancelled
             case "completed": self = .completed
+            case "sent": self = .computed(status: .sent)
+            case "waiting": self = .computed(status: .waiting)
             /// The task is ready to be acted upon and action is sought.
             case "requested", "undefined: requested": self = .undefined(status: "requested")
             /// A potential performer has claimed ownership of the task and is evaluating whether to perform it.
@@ -83,6 +95,7 @@ extension ErxTask {
             case .inProgress: return "in-progress"
             case .cancelled: return "cancelled"
             case .completed: return "completed"
+            case let .computed(status: status): return status.rawValue
             case let .undefined(status: status): return "undefined: \(status)"
             case let .error(error): return Self.errorPrefix + error.rawValue
             }

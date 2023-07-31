@@ -29,13 +29,11 @@ struct PharmacySearchFilterDomain: ReducerProtocol {
     /// All filter options used with pharmacies search
     enum PharmacyFilterOption: String, CaseIterable, Hashable, Identifiable {
         case open
-        case ready
         case delivery
         case shipment
         case currentLocation
 
         private static let openIdentifier = UUID()
-        private static let readyIdentifier = UUID()
         private static let deliveryIdentifier = UUID()
         private static let shipmentIdentifier = UUID()
         private static let currentLocationIdentifier = UUID()
@@ -44,8 +42,6 @@ struct PharmacySearchFilterDomain: ReducerProtocol {
             switch self {
             case .open:
                 return Self.openIdentifier
-            case .ready:
-                return Self.readyIdentifier
             case .delivery:
                 return Self.deliveryIdentifier
             case .shipment:
@@ -59,8 +55,6 @@ struct PharmacySearchFilterDomain: ReducerProtocol {
             switch self {
             case .open:
                 return L10n.phaSearchTxtFilterOpen.key
-            case .ready:
-                return L10n.phaSearchTxtFilterReady.key
             case .delivery:
                 return L10n.phaSearchTxtFilterDelivery.key
             case .shipment:
@@ -104,8 +98,6 @@ extension Collection where Element == PharmacySearchFilterDomain.PharmacyFilterO
     var asPharmacyRepositoryFilters: [PharmacyRepositoryFilter] {
         compactMap { option in
             switch option {
-            case .ready:
-                return PharmacyRepositoryFilter.ready
             case .shipment:
                 return PharmacyRepositoryFilter.shipment
             case .delivery:
@@ -121,7 +113,7 @@ extension Collection where Element == PharmacySearchFilterDomain.PharmacyFilterO
 extension PharmacySearchFilterDomain {
     enum Dummies {
         static let state = State(
-            pharmacyFilterOptions: [.open, .ready]
+            pharmacyFilterOptions: [.open, .delivery]
         )
 
         static let store = Store(

@@ -22,8 +22,7 @@ import SwiftUI
 public struct FormTextField: View {
     var titleKey: LocalizedStringKey
 
-    @Binding
-    var text: String
+    @Binding var text: String
 
     public init(_ titleKey: LocalizedStringKey, text: Binding<String>) {
         self.titleKey = titleKey

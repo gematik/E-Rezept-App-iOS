@@ -96,7 +96,7 @@ struct ProfileSelectionDomain: ReducerProtocol {
                     .cancellable(id: Token.loadSelectedProfile, cancelInFlight: true)
             )
         case let .loadReceived(.failure(error)):
-            state.destination = .alert(.init(for: error, title: TextState(L10n.errTxtDatabaseAccess)))
+            state.destination = .alert(.init(for: error, title: L10n.errTxtDatabaseAccess))
             return .none
         case let .loadReceived(.success(profiles)):
             state.profiles = profiles

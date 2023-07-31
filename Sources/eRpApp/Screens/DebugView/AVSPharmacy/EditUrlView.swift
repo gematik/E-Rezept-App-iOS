@@ -21,13 +21,10 @@
 import SwiftUI
 
 struct EditUrlView: View {
-    @Binding
-    var endpoint: DebugPharmacy.Endpoint
+    @Binding var endpoint: DebugPharmacy.Endpoint
 
-    @State
-    var error: Error?
-    @State
-    var httpStatusCode: Int?
+    @State var error: Error?
+    @State var httpStatusCode: Int?
 
     var body: some View {
         ScrollView {
@@ -116,18 +113,13 @@ struct URLTester: View {
 
         var headers: [DebugPharmacy.Endpoint.Header] = []
 
-        @Published
-        var error: Error?
-        @Published
-        var httpStatusCode: Int?
-        @Published
-        var loading = false
+        @Published var error: Error?
+        @Published var httpStatusCode: Int?
+        @Published var loading = false
 
-        @Published
-        var isValidUrl = true
+        @Published var isValidUrl = true
 
-        @Published
-        var method: Method = .post
+        @Published var method: Method = .post
 
         enum Method: String {
             case post = "POST"
@@ -172,8 +164,7 @@ struct URLTester: View {
         }
     }
 
-    @StateObject
-    var viewModel = URLTesterViewModel()
+    @StateObject var viewModel = URLTesterViewModel()
 
     @Binding var url: String
     @Binding var headers: [DebugPharmacy.Endpoint.Header]
@@ -257,8 +248,7 @@ struct URLTester: View {
 
 struct EditUrlView_Previews: PreviewProvider {
     struct DynPreview: View {
-        @State
-        var endpoint = DebugPharmacy.Endpoint(
+        @State var endpoint = DebugPharmacy.Endpoint(
             url: "https://intern.gematik.de/url/test/preview",
             additionalHeaders: []
         )

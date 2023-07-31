@@ -245,7 +245,7 @@ final class RegisterAuthenticationDomainTests: XCTestCase {
     }
 
     func testSelectingTouchIDWithErrorResponse() {
-        let expectedResponse: Result<Bool, AppAuthenticationBiometricsDomain.Error> =
+        let expectedResponse: AuthenticationChallengeProviderResult =
             .failure(.cannotEvaluatePolicy(MockError() as NSError))
         let store = testStore(
             with: RegisterAuthenticationDomain.State(

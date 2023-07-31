@@ -93,8 +93,16 @@ struct AppAuthenticationView: View {
                         ) {
                             AppAuthenticationPasswordView(store: $0)
                         }
+
+                        IfLetStore(
+                            store.scope(
+                                state: \.biometricAndPassword,
+                                action: AppAuthenticationDomain.Action.biometricAndPassword(action:)
+                            )
+                        ) {
+                            AppAuthenticationBiometricPasswordView(store: $0)
+                        }
                     }
-                    .padding(.vertical)
 
                     Spacer()
 

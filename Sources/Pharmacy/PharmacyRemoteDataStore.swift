@@ -47,6 +47,6 @@ public protocol PharmacyRemoteDataStore {
     /// Load certificates for a given `PharmacyLocation` id
     ///
     /// - Parameter locationId: id of `PharmacyLocation` from which to load the certificate
-    /// - Returns: Emits an array of certificates on success or fails with a `PharmacyRepositoryError`
+    /// - Returns: Emits an array of certificates on success or fails with a `PharmacyFHIRDataSource.Error`
     func loadAvsCertificates(for locationId: String) -> AnyPublisher<[X509], PharmacyFHIRDataSource.Error>
 }

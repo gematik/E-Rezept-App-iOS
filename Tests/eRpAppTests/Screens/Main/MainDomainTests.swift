@@ -141,10 +141,13 @@ final class MainDomainTests: XCTestCase {
         // when
         sut.send(.horizontalProfileSelection(action: .response(.loadReceived(.failure(error))))) { sut in
             // then
-            sut.destination = .alert(.init(for: error, primaryButton: .cancel(
-                TextState("Okay"),
-                action: .send(.setNavigation(tag: nil))
-            )))
+            sut.destination = .alert(
+                .init(for: error, actions: {
+                    ButtonState(role: .cancel, action: .setNavigation(tag: nil)) {
+                        TextState("Okay")
+                    }
+                })
+            )
         }
     }
 
@@ -226,11 +229,12 @@ final class MainDomainTests: XCTestCase {
             prescriptionListState: .init(),
             horizontalProfileSelectionState: .init()
         ))
-        let expectedPrescription = Prescription(erxTask: ErxTask.Fixtures.erxTask1)
+        let expectedPrescription = Prescription(erxTask: ErxTask.Fixtures.erxTask1,
+                                                dateFormatter: UIDateFormatter.testValue)
         let nonReadyPrescriptions = [
-            Prescription(erxTask: ErxTask.Fixtures.erxTask9),
-            Prescription(erxTask: ErxTask.Fixtures.erxTask10),
-            Prescription(erxTask: ErxTask.Fixtures.erxTask11),
+            Prescription(erxTask: ErxTask.Fixtures.erxTask9, dateFormatter: UIDateFormatter.testValue),
+            Prescription(erxTask: ErxTask.Fixtures.erxTask10, dateFormatter: UIDateFormatter.testValue),
+            Prescription(erxTask: ErxTask.Fixtures.erxTask11, dateFormatter: UIDateFormatter.testValue),
         ]
         // when
         sut

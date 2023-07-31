@@ -95,7 +95,7 @@ struct CardWallCANDomain: ReducerProtocol {
             }
     }
 
-    // swiftlint:disable:next cyclomatic_complexity function_body_length
+    // swiftlint:disable:next cyclomatic_complexity
     func core(into state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
         case let .update(can: can):

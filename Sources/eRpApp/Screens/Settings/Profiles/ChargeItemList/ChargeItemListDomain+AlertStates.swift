@@ -23,106 +23,105 @@ extension ChargeItemListDomain {
     enum AlertStates {
         typealias Action = ChargeItemListDomain.Action
 
-        static let grantConsentRequest: ErpAlertState<Action> = .init(
-            title: .init(L10n.stgTxtChargeItemListAlertGrantConsentTitle),
-            message: .init(L10n.stgTxtChargeItemListAlertGrantConsentMessage),
-            primaryButton: .default(
-                .init(L10n.stgTxtChargeItemListAlertGrantConsentButtonActivate),
-                action: .send(.grantConsentAlertGrantButtonTapped)
-            ),
-            secondaryButton: .cancel(
-                .init(L10n.stgTxtChargeItemListAlertGrantConsentButtonCancel),
-                action: .send(.grantConsentAlertDenyGrantButtonTapped)
+        static let grantConsentRequest: ErpAlertState<Action> = {
+            .init(
+                title: L10n.stgTxtChargeItemListAlertGrantConsentTitle,
+                actions: {
+                    ButtonState(action: .grantConsentAlertGrantButtonTapped) {
+                        .init(L10n.stgTxtChargeItemListAlertGrantConsentButtonActivate)
+                    }
+                    ButtonState(role: .cancel, action: .grantConsentAlertDenyGrantButtonTapped) {
+                        .init(L10n.stgTxtChargeItemListAlertGrantConsentButtonCancel)
+                    }
+                },
+                message: L10n.stgTxtChargeItemListAlertGrantConsentMessage
             )
-        )
+        }()
 
-        static let revokeConsentRequest: ErpAlertState<Action> = .init(
-            title: .init(L10n.stgTxtChargeItemListAlertGrantConsentTitle),
-            message: .init(L10n.stgTxtChargeItemListAlertGrantConsentMessage),
-            primaryButton: .destructive(
-                .init(L10n.stgTxtChargeItemListAlertRevokeConsentButtonDeactivate),
-                action: .send(.revokeConsentErrorAlertRetryButtonTapped)
-            ),
-            secondaryButton: .cancel(
-                .init(L10n.stgTxtChargeItemListAlertRevokeConsentButtonCancel),
-                action: .send(.revokeConsentErrorAlertOkayButtonTapped)
+        static let revokeConsentRequest: ErpAlertState<Action> = {
+            .init(
+                title: L10n.stgTxtChargeItemListAlertGrantConsentTitle,
+                actions: {
+                    ButtonState(role: .destructive, action: .revokeConsentErrorAlertRetryButtonTapped) {
+                        .init(L10n.stgTxtChargeItemListAlertRevokeConsentButtonDeactivate)
+                    }
+                    ButtonState(role: .cancel, action: .revokeConsentErrorAlertOkayButtonTapped) {
+                        .init(L10n.stgTxtChargeItemListAlertRevokeConsentButtonCancel)
+                    }
+                },
+                message: L10n.stgTxtChargeItemListAlertGrantConsentMessage
             )
-        )
+        }()
 
         static func fetchChargeItemsErrorFor(error: CodedError) -> ErpAlertState<Action> {
             .init(
                 for: error,
-                title: .init(L10n.stgTxtChargeItemListErrorAlertFetchChargeItemListTitle),
-                primaryButton: .default(
-                    .init(L10n.stgTxtChargeItemListErrorAlertButtonRetry),
-                    action: .send(.fetchChargeItemsErrorAlertRetryButtonTapped)
-                ),
-                secondaryButton: .default(
-                    .init(L10n.stgTxtChargeItemListErrorAlertButtonOkay),
-                    action: .send(.fetchChargeItemsErrorAlertOkayButtonTapped)
-                )
-            )
+                title: L10n.stgTxtChargeItemListErrorAlertFetchChargeItemListTitle
+            ) {
+                ButtonState(action: .fetchChargeItemsErrorAlertRetryButtonTapped) {
+                    .init(L10n.stgTxtChargeItemListErrorAlertButtonRetry)
+                }
+                ButtonState(action: .fetchChargeItemsErrorAlertOkayButtonTapped) {
+                    .init(L10n.stgTxtChargeItemListErrorAlertButtonOkay)
+                }
+            }
         }
 
         static func authenticateErrorFor(error: CodedError) -> ErpAlertState<Action> {
             .init(
                 for: error,
-                title: .init(L10n.stgTxtChargeItemListErrorAlertAuthenticateTitle),
-                primaryButton: .default(
-                    .init(L10n.stgTxtChargeItemListErrorAlertButtonRetry),
-                    action: .send(.authenticateErrorAlertRetryButtonTapped)
-                ),
-                secondaryButton: .default(
-                    .init(L10n.stgTxtChargeItemListErrorAlertButtonOkay),
-                    action: .send(.authenticateErrorAlertOkayButtonTapped)
-                )
-            )
+                title: L10n.stgTxtChargeItemListErrorAlertAuthenticateTitle
+            ) {
+                ButtonState(action: .authenticateErrorAlertRetryButtonTapped) {
+                    .init(L10n.stgTxtChargeItemListErrorAlertButtonRetry)
+                }
+                ButtonState(action: .authenticateErrorAlertOkayButtonTapped) {
+                    .init(L10n.stgTxtChargeItemListErrorAlertButtonOkay)
+                }
+            }
         }
 
         static func grantConsentErrorFor(error: CodedError) -> ErpAlertState<Action> {
             .init(
                 for: error,
-                title: .init(L10n.stgTxtChargeItemListErrorAlertGrantConsentTitle),
-                primaryButton: .default(
-                    .init(L10n.stgTxtChargeItemListErrorAlertButtonRetry),
-                    action: .send(.grantConsentErrorAlertRetryButtonTapped)
-                ),
-                secondaryButton: .default(
-                    .init(L10n.stgTxtChargeItemListErrorAlertButtonOkay),
-                    action: .send(.grantConsentErrorAlertOkayButtonTapped)
-                )
-            )
+                title: L10n.stgTxtChargeItemListErrorAlertGrantConsentTitle
+            ) {
+                ButtonState(action: .grantConsentErrorAlertRetryButtonTapped) {
+                    .init(L10n.stgTxtChargeItemListErrorAlertButtonRetry)
+                }
+                ButtonState(action: .grantConsentErrorAlertOkayButtonTapped) {
+                    .init(L10n.stgTxtChargeItemListErrorAlertButtonOkay)
+                }
+            }
         }
 
         static func revokeConsentErrorFor(error: CodedError) -> ErpAlertState<Action> {
             .init(
                 for: error,
-                title: .init(L10n.stgTxtChargeItemListErrorAlertRevokeConsentTitle),
-                primaryButton: .default(
-                    .init(L10n.stgTxtChargeItemListErrorAlertButtonRetry),
-                    action: .send(.revokeConsentErrorAlertRetryButtonTapped)
-                ),
-                secondaryButton: .default(
-                    .init(L10n.stgTxtChargeItemListErrorAlertButtonOkay),
-                    action: .send(.revokeConsentErrorAlertOkayButtonTapped)
-                )
-            )
+                title: L10n.stgTxtChargeItemListErrorAlertRevokeConsentTitle
+            ) {
+                ButtonState(action: .revokeConsentErrorAlertRetryButtonTapped) {
+                    .init(L10n.stgTxtChargeItemListErrorAlertButtonRetry)
+                }
+                ButtonState(action: .revokeConsentErrorAlertOkayButtonTapped) {
+                    .init(L10n.stgTxtChargeItemListErrorAlertButtonOkay)
+                }
+            }
         }
 
         // to-do: consider this alert when implementing the delete feature
         static func deleteChargeItemsErrorFor(error: CodedError) -> ErpAlertState<Action> {
             .init(
                 for: error,
-                title: .init("Löschen fehlgeschlagen"),
-                primaryButton: .default(
-                    .init("Erneut versuchen"),
-                    action: .send(.deleteChargeItemsErrorAlertRetryButtonTapped)
-                ),
-                secondaryButton: .default(
-                    .init("Okay"),
-                    action: .send(.deleteChargeItemsErrorAlertOkayButtonTapped)
-                )
-            )
+                title: .init("Löschen fehlgeschlagen")
+            ) {
+                ButtonState(action: .deleteChargeItemsErrorAlertRetryButtonTapped) {
+                    .init(L10n.stgTxtChargeItemListErrorAlertButtonRetry)
+                }
+                ButtonState(action: .deleteChargeItemsErrorAlertOkayButtonTapped) {
+                    .init(L10n.stgTxtChargeItemListErrorAlertButtonOkay)
+                }
+            }
         }
     }
 }

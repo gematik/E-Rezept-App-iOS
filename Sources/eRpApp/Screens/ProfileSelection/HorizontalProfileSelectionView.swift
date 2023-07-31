@@ -23,8 +23,10 @@ struct HorizontalProfileSelectionView: View {
     let store: HorizontalProfileSelectionDomain.Store
     let width = UIScreen.main.bounds.size.width * UIScreen.main.scale / UIScreen.main.nativeScale
 
-    @ObservedObject
-    var viewStore: ViewStore<HorizontalProfileSelectionDomain.State, HorizontalProfileSelectionDomain.Action>
+    @ObservedObject var viewStore: ViewStore<
+        HorizontalProfileSelectionDomain.State,
+        HorizontalProfileSelectionDomain.Action
+    >
 
     init(store: HorizontalProfileSelectionDomain.Store) {
         self.store = store

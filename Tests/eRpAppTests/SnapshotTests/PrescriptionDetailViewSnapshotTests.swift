@@ -31,8 +31,13 @@ final class PrescriptionDetailViewSnapshotTests: XCTestCase {
     }
 
     func store(with erxTask: ErxTask) -> StoreOf<PrescriptionDetailDomain> {
-        Store(initialState: .init(prescription: Prescription(erxTask: erxTask), isArchived: false),
-              reducer: EmptyReducer())
+        Store(
+            initialState: .init(
+                prescription: Prescription(erxTask: erxTask, dateFormatter: UIDateFormatter.testValue),
+                isArchived: false
+            ),
+            reducer: EmptyReducer()
+        )
     }
 
     func testPrescriptionDetail_WithSubstitutionAllowedPrescription() {

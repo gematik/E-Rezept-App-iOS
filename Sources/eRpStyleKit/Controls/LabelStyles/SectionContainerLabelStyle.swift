@@ -27,8 +27,7 @@ public struct SectionContainerLabelStyle: LabelStyle {
         self.showSeparator = showSeparator
     }
 
-    @Environment(\.sectionContainerIsLastElement)
-    var isLastElement: Bool
+    @Environment(\.sectionContainerIsLastElement) var isLastElement: Bool
 
     public func makeBody(configuration: Configuration) -> some View {
         HStack(alignment: .center, spacing: 16) {
@@ -42,7 +41,7 @@ public struct SectionContainerLabelStyle: LabelStyle {
                     .foregroundColor(Color(.label))
                     .padding([.bottom, .trailing, .top])
 
-                if !isLastElement && showSeparator {
+                if !isLastElement, showSeparator {
                     Divider()
                 }
             }

@@ -16,13 +16,13 @@
 //  
 //
 
+// swiftlint:disable line_length discouraged_optional_collection
+
 import BundleKit
 import UIKit
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
-    // swiftlint:disable line_length discouraged_optional_collection
-
     func application(_: UIApplication,
                      didFinishLaunchingWithOptions _: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         true
@@ -57,3 +57,5 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
 }
+
+// swiftlint:enable line_length discouraged_optional_collection

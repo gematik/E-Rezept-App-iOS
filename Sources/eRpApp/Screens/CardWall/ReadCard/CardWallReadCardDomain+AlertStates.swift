@@ -21,6 +21,7 @@ import Foundation
 import Helper
 import NFCCardReaderProvider
 
+// swiftlint:disable trailing_closure
 extension CardWallReadCardDomain {
     enum AlertStates {
         typealias Action = CardWallReadCardDomain.Action
@@ -35,53 +36,67 @@ extension CardWallReadCardDomain {
         )
 
         static func wrongCAN(_ error: State.Error) -> ErpAlertState<Action> {
-            ErpAlertState(
-                for: error,
-                primaryButton: .default(TextState(L10n.cdwBtnRcCorrectCan), action: .send(.delegate(.wrongCAN)))
-            )
+            .init(for: error, actions: {
+                ButtonState(action: .delegate(.wrongCAN)) {
+                    .init(L10n.cdwBtnRcCorrectCan)
+                }
+            })
         }
 
         static var tagConnectionLostCount = 0
         static func tagConnectionLost(_ error: CoreNFCError) -> ErpAlertState<Action> {
             Self.tagConnectionLostCount += 1
             if tagConnectionLostCount <= 3 {
-                return ErpAlertState(
-                    for: error,
-                    primaryButton: .default(TextState(L10n.cdwBtnRcHelp), action: .send(.openHelpViewScreen)),
-                    secondaryButton: .cancel(.init(L10n.cdwBtnRcRetry), action: .send(.getChallenge))
-                )
+                return .init(for: error, actions: {
+                    ButtonState(action: .openHelpViewScreen) {
+                        .init(L10n.cdwBtnRcHelp)
+                    }
+                    ButtonState(role: .cancel, action: .getChallenge) {
+                        .init(L10n.cdwBtnRcRetry)
+                    }
+                })
             } else {
                 let report = createNfcReadingReport(with: error, commands: CommandLogger.commands)
-                return ErpAlertState(
-                    for: error,
-                    primaryButton: .default(TextState(L10n.cdwBtnRcAlertReport), action: .send(.openMail(report))),
-                    secondaryButton: .cancel(.init(L10n.cdwBtnRcRetry), action: .send(.getChallenge))
-                )
+                return .init(for: error, actions: {
+                    ButtonState(action: .openMail(report)) {
+                        .init(L10n.cdwBtnRcAlertReport)
+                    }
+                    ButtonState(role: .cancel, action: .getChallenge) {
+                        .init(L10n.cdwBtnRcRetry)
+                    }
+                })
             }
         }
 
         static func wrongPIN(_ error: Error) -> ErpAlertState<Action> {
-            ErpAlertState(
-                for: error,
-                primaryButton: .default(TextState(L10n.cdwBtnRcCorrectPin), action: .send(.delegate(.wrongPIN))),
-                secondaryButton: .cancel(TextState(L10n.cdwBtnRcAlertCancel), action: .send(.setNavigation(tag: .none)))
-            )
+            .init(for: error, actions: {
+                ButtonState(action: .delegate(.wrongPIN)) {
+                    .init(L10n.cdwBtnRcCorrectPin)
+                }
+                ButtonState(role: .cancel, action: .setNavigation(tag: .none)) {
+                    .init(L10n.cdwBtnRcAlertCancel)
+                }
+            })
         }
 
         static func alertFor(_ error: CodedError) -> ErpAlertState<Action> {
-            ErpAlertState(
-                for: error,
-                primaryButton: .default(TextState(L10n.cdwBtnRcAlertClose), action: .send(.setNavigation(tag: .none)))
-            )
+            .init(for: error, actions: {
+                ButtonState(action: .setNavigation(tag: .none)) {
+                    .init(L10n.cdwBtnRcAlertClose)
+                }
+            })
         }
 
         static func alertWithReportButton(error: CodedError) -> ErpAlertState<Action> {
             let report = createNfcReadingReport(with: error, commands: CommandLogger.commands)
-            return ErpAlertState(
-                for: error,
-                primaryButton: .default(TextState(L10n.cdwBtnRcAlertReport), action: .send(.openMail(report))),
-                secondaryButton: .cancel(.init(L10n.cdwBtnRcRetry), action: .send(.getChallenge))
-            )
+            return .init(for: error, actions: {
+                ButtonState(action: .openMail(report)) {
+                    .init(L10n.cdwBtnRcAlertReport)
+                }
+                ButtonState(role: .cancel, action: .getChallenge) {
+                    .init(L10n.cdwBtnRcRetry)
+                }
+            })
         }
 
         static func alert(for tagError: CoreNFCError) -> ErpAlertState<CardWallReadCardDomain.Action>? {
@@ -97,3 +112,5 @@ extension CardWallReadCardDomain {
         }
     }
 }
+
+// swiftlint:enable trailing_closure

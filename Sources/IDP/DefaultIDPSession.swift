@@ -498,6 +498,10 @@ public class DefaultIDPSession: IDPSession {
             return Fail(error: IDPError.extAuthOriginalRequestMissing).eraseToAnyPublisher()
         }
 
+        // (Temporary) workaround to transport the information
+        // whether the token was specifically requested for a PKV and by using Fast Track
+        let isPkvFastTrackFlowInitiated = challengeSession.entry.identifier.hasSuffix("pkv")
+
         // [REQ:gemSpec_IDP_Sek:A_22301] Send authorization request
         return extAuthVerify(verify)
             .flatMap { [weak self] token -> AnyPublisher<IDPToken, IDPError> in
@@ -512,6 +516,22 @@ public class DefaultIDPSession: IDPSession {
                     challengeSession: challengeSession,
                     idTokenValidator: idTokenValidator
                 )
+                // Temporary workaround (see above isPkvFastTrackFlowInitiated)
+                .map { idpToken in
+                    if isPkvFastTrackFlowInitiated {
+                        return IDPToken(
+                            accessToken: idpToken.accessToken,
+                            expires: idpToken.expires,
+                            idToken: idpToken.idToken,
+                            ssoToken: idpToken.ssoToken,
+                            tokenType: idpToken.tokenType,
+                            redirect: idpToken.redirect,
+                            isPkvFastTrackFlowInitiated: true
+                        )
+                    } else {
+                        return idpToken
+                    }
+                }
                 .handleEvents(receiveOutput: { _ in
                     self.extAuthRequestStorage.setExtAuthRequest(nil, for: state)
                 })
@@ -730,7 +750,7 @@ extension TrustStoreSession {
     ///
     /// - Parameter discoveryDocument: The DiscoveryDocument that needs to be checked.
     /// - Returns: A publisher that contains an output with the check value or an failure if the check failed
-    /// due to an unerlying error.
+    /// due to an underlying error.
     func validate(discoveryDocument: DiscoveryDocument) -> AnyPublisher<Bool, TrustStoreError> {
         validate(certificate: discoveryDocument.discKey)
             .zip(validate(certificate: discoveryDocument.signingCert))
@@ -784,3 +804,6 @@ extension Publisher where Output == IDPToken?, Failure == Never {
             .eraseToAnyPublisher()
     }
 }
+
+// swiftlint:enable type_body_length
+// swiftlint:enable file_length

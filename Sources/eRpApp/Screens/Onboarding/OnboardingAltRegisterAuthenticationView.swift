@@ -22,8 +22,7 @@ import SwiftUI
 
 struct OnboardingAltRegisterAuthenticationView: View {
     let store: RegisterAuthenticationDomain.Store
-    @ObservedObject
-    var viewStore: ViewStore<RegisterAuthenticationDomain.State, RegisterAuthenticationDomain.Action>
+    @ObservedObject var viewStore: ViewStore<RegisterAuthenticationDomain.State, RegisterAuthenticationDomain.Action>
 
     init(store: RegisterAuthenticationDomain.Store) {
         self.store = store
@@ -51,8 +50,7 @@ struct OnboardingAltRegisterAuthenticationView: View {
 
 struct AltRegistrationView: View, KeyboardReadable {
     let store: RegisterAuthenticationDomain.Store
-    @ObservedObject
-    var viewStore: ViewStore<ViewState, RegisterAuthenticationDomain.Action>
+    @ObservedObject var viewStore: ViewStore<ViewState, RegisterAuthenticationDomain.Action>
 
     init(store: RegisterAuthenticationDomain.Store) {
         self.store = store

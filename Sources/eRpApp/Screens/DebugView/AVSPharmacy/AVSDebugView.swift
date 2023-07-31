@@ -25,8 +25,7 @@ import SwiftUI
 struct AVSDebugView: View {
     @AppStorage("debug_pharmacies") var debugPharmacies: [DebugPharmacy] = []
 
-    @State
-    var importViaQRCode = false
+    @State var importViaQRCode = false
 
     var body: some View {
         List {

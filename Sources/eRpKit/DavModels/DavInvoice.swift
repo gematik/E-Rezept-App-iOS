@@ -25,12 +25,14 @@ public struct DavInvoice: Hashable, Codable {
         totalAdditionalFee: Decimal,
         totalGross: Decimal,
         currency: String,
-        chargeableItems: [ChargeableItem] = []
+        chargeableItems: [ChargeableItem] = [],
+        productionSteps: [Production] = []
     ) {
         self.totalAdditionalFee = totalAdditionalFee
         self.totalGross = totalGross
         self.currency = currency
         self.chargeableItems = chargeableItems
+        self.productionSteps = productionSteps
     }
 
     /// Specification of the total additional costs of the insured person
@@ -41,13 +43,15 @@ public struct DavInvoice: Hashable, Codable {
     public let currency: String
     /// Reference to ChargeItem containing details of this line item or an inline billing code
     public let chargeableItems: [ChargeableItem]
+
+    public let productionSteps: [Production]
 }
 
 extension DavInvoice {
     public struct ChargeableItem: Hashable, Codable {
         public init(
             factor: Decimal,
-            price: Decimal,
+            price: Decimal?,
             description: String? = nil,
             pzn: String? = nil,
             ta1: String? = nil,
@@ -64,7 +68,7 @@ extension DavInvoice {
         /// The factor that has been applied on the base price for calculating this component
         public let factor: Decimal
         /// An amount of economic utility in some recognized currency.
-        public let price: Decimal
+        public let price: Decimal?
         /// Handelsname und Packungsgröße
         public let description: String?
         /// Pharmazentralnummer (PZN)
@@ -73,5 +77,33 @@ extension DavInvoice {
         public let ta1: String?
         /// Hilfsmittelpositionsnummer bei Applikationshilfen ohne PZN
         public let hmrn: String?
+    }
+
+    public struct Production: Hashable, Codable {
+        public init(title: String, createdOn: String, sequence: String, ingredients: [Ingredient]) {
+            self.title = title
+            self.createdOn = createdOn
+            self.sequence = sequence
+            self.ingredients = ingredients
+        }
+
+        public let title: String
+        public let createdOn: String
+        public let sequence: String
+        public let ingredients: [Ingredient]
+
+        public struct Ingredient: Hashable, Codable {
+            public init(pzn: String, factorMark: String?, factor: Decimal?, price: Decimal) {
+                self.pzn = pzn
+                self.factorMark = factorMark
+                self.factor = factor
+                self.price = price
+            }
+
+            public let pzn: String
+            public let factorMark: String?
+            public let factor: Decimal?
+            public let price: Decimal
+        }
     }
 }

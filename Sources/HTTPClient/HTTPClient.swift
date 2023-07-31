@@ -19,6 +19,8 @@
 import Combine
 import Foundation
 
+// swiftlint:disable large_tuple
+
 /// Typealias for Output that is emitted by the `DataTaskPublisher`
 public typealias HTTPResponse = (data: Data, response: HTTPURLResponse, status: HTTPStatusCode)
 /// URLRequest redirect handler as described in URLSessionTaskDelegate
@@ -30,6 +32,8 @@ public typealias RedirectHandler = (
     _ redirect: URLRequest,
     _ completionHandler: (URLRequest?) -> Void
 ) -> Void
+
+// swiftlint:enable large_tuple
 
 /// Protocol HTTPClient
 public protocol HTTPClient {

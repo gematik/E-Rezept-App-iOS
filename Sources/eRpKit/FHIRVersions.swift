@@ -306,6 +306,111 @@ public enum ErpCharge {
     }
 }
 
+/// https://simplifier.net/packages/de.abda.eRezeptAbgabedatenPKV
+public struct ABDAERezeptAbgabedaten {
+    /// Version 1.2.0
+    public static let v1_2_0 = ABDAERezeptAbgabedaten(
+        dAV_PKV_PR_ERP_AbgabedatenComposition: DAV_PKV_PR_ERP_AbgabedatenComposition.v1_2,
+        dAV_EX_ERP_Abrechnungszeilen: DAV_EX_ERP_Abrechnungszeilen.v1_2,
+        dAV_EX_ERP_ZusatzdatenHerstellung: DAV_EX_ERP_ZusatzdatenHerstellung.v1_2,
+        dAV_EX_ERP_ZusatzdatenEinheit: DAV_EX_ERP_ZusatzdatenEinheit.v1_2
+    )
+
+    /// instanced DAV_PKV_PR_ERP_AbgabedatenComposition profile
+    public let dAV_PKV_PR_ERP_AbgabedatenComposition: DAV_PKV_PR_ERP_AbgabedatenComposition
+    /// instanced DAV_EX_ERP_Abrechnungszeilen profile
+    public let dAV_EX_ERP_Abrechnungszeilen: DAV_EX_ERP_Abrechnungszeilen
+    /// instanced DAV_EX_ERP_ZusatzdatenHerstellung profile
+    public let dAV_EX_ERP_ZusatzdatenHerstellung: DAV_EX_ERP_ZusatzdatenHerstellung
+    /// instanced DAV_EX_ERP_ZusatzdatenEinheit profile
+    public let dAV_EX_ERP_ZusatzdatenEinheit: DAV_EX_ERP_ZusatzdatenEinheit
+
+    /// https://simplifier.net/packages/de.abda.erezeptabgabedatenpkv/1.2.0/files/1966863
+    public struct DAV_PKV_PR_ERP_AbgabedatenComposition {
+        /// Available Profile Versions
+        public enum Version: String {
+            case v1_2 = "1.2"
+        }
+
+        /// Profile Version
+        public let version: Version
+
+        /// Provile version 1.2
+        public static let v1_2 = Self(version: .v1_2)
+
+        /// Profile name used within meta
+        public let meta_profile =
+            "http://fhir.abda.de/eRezeptAbgabedaten/StructureDefinition/DAV-PKV-PR-ERP-AbgabedatenComposition"
+        /// Key used for retrieving dispense information reference
+        public var dispenseInformationKey = "Abgabeinformationen"
+    }
+
+    /// https://simplifier.net/packages/de.abda.erezeptabgabedatenpkv/1.2.0/files/1966865
+    public struct DAV_EX_ERP_Abrechnungszeilen {
+        /// Available Profile Versions
+        public enum Version: String {
+            case v1_2 = "1.2"
+        }
+
+        /// Profile Version
+        public let version: Version
+
+        /// Provile version 1.2
+        public static let v1_2 = Self(version: .v1_2)
+
+        /// Profile name used within meta
+        public let meta_profile =
+            "http://fhir.abda.de/eRezeptAbgabedaten/StructureDefinition/DAV-EX-ERP-Abrechnungszeilen"
+    }
+
+    /// https://simplifier.net/packages/de.abda.erezeptabgabedatenpkv/1.2.0/files/1966868
+    public struct DAV_EX_ERP_ZusatzdatenHerstellung {
+        /// Available Profile Versions
+        public enum Version: String {
+            case v1_2 = "1.2"
+        }
+
+        /// Profile Version
+        public let version: Version
+
+        /// Provile version 1.2
+        public static let v1_2 = Self(version: .v1_2)
+
+        /// Profile name used within meta
+        public let meta_profile =
+            "http://fhir.abda.de/eRezeptAbgabedaten/StructureDefinition/DAV-EX-ERP-ZusatzdatenHerstellung"
+    }
+
+    /// https://simplifier.net/packages/de.abda.erezeptabgabedatenpkv/1.2.0/files/1966867
+    public struct DAV_EX_ERP_ZusatzdatenEinheit {
+        /// Available Profile Versions
+        public enum Version: String {
+            case v1_2 = "1.2"
+        }
+
+        /// Profile Version
+        public let version: Version
+
+        /// Provile version 1.2
+        public static let v1_2 = Self(version: .v1_2)
+
+        /// Profile name used within meta
+        public let meta_profile =
+            "http://fhir.abda.de/eRezeptAbgabedaten/StructureDefinition/DAV-EX-ERP-ZusatzdatenEinheit"
+        /// Extension for some counter element
+        public let extension_counter = "http://fhir.abda.de/eRezeptAbgabedaten/StructureDefinition/DAV-EX-ERP-Zaehler"
+    }
+}
+
+// ChargeItem
+//   - AbgabedatenBundle
+//      - AbgabedatenComposition
+//      - Organisation (pharmacy)
+//      - Abgabeinformation/MedicationDispense
+//      - invoice
+//      - MedicationDispense
+//      - invoice
+
 /// https://simplifier.net/erezeptabgabedatenpkv
 public enum Dispense {
     /// Supported Versions of DAV `Dispense` definitions

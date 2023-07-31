@@ -7,6 +7,13 @@ import Foundation
 
 
 
+extension AppAuthenticationBiometricPasswordDomain.Action {
+    func analytics(tracker: Tracker) {
+        switch self {
+            default: break
+        }
+    }
+}
 extension AppAuthenticationBiometricsDomain.Action {
     func analytics(tracker: Tracker) {
         switch self {
@@ -20,6 +27,8 @@ extension AppAuthenticationDomain.Action {
             case let .biometrics(action: action):
                 action.analytics(tracker: tracker)
             case let .password(action: action):
+                action.analytics(tracker: tracker)
+            case let .biometricAndPassword(action: action):
                 action.analytics(tracker: tracker)
             default: break
         }
@@ -424,8 +433,6 @@ extension ScannerDomain.Action {
 extension SettingsDomain.Action {
     func analytics(tracker: Tracker) {
         switch self {
-            case let .appSecurity(action: action):
-                action.analytics(tracker: tracker)
             case let .profiles(action: action):
                 action.analytics(tracker: tracker)
             default: break

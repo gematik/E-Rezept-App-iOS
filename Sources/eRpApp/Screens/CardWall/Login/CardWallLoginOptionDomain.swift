@@ -104,13 +104,15 @@ struct CardWallLoginOptionDomain: ReducerProtocol {
             if option.isWithBiometry {
                 guard canUseBiometrics() else {
                     state.destination = .alert(ErpAlertState(
-                        title: TextState(L10n.cdwTxtBiometrySetupIncomplete),
-                        message: nil,
-                        primaryButton: .cancel(TextState(L10n.alertBtnOk)),
-                        secondaryButton: .default(
-                            TextState(L10n.tabTxtSettings),
-                            action: .send(.openAppSpecificSettings)
-                        )
+                        title: L10n.cdwTxtBiometrySetupIncomplete,
+                        actions: {
+                            ButtonState(role: .cancel) {
+                                .init(L10n.alertBtnOk)
+                            }
+                            ButtonState(action: .openAppSpecificSettings) {
+                                .init(L10n.tabTxtSettings)
+                            }
+                        }
                     ))
                     return .none
                 }

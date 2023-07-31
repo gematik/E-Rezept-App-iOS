@@ -19,13 +19,15 @@
 import Foundation
 
 public struct ErxPatient: Hashable, Codable {
-    public init(name: String? = nil,
+    public init(title: String? = nil,
+                name: String? = nil,
                 address: String? = nil,
                 birthDate: String? = nil,
                 phone: String? = nil,
                 status: String? = nil,
                 insurance: String? = nil,
                 insuranceId: String? = nil) {
+        self.title = title
         self.name = name
         self.address = address
         self.birthDate = birthDate
@@ -35,6 +37,8 @@ public struct ErxPatient: Hashable, Codable {
         self.insuranceId = insuranceId
     }
 
+    /// Degree or Title
+    public let title: String?
     /// First and last name of the patient (e.g.: Anna Vetter)
     public let name: String?
     /// Full address incl. street, city, postcode

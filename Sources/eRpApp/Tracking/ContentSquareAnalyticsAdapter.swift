@@ -16,6 +16,8 @@
 //  
 //
 
+// swiftlint:disable orphaned_doc_comment
+
 import Combine
 import ContentsquareModule
 import Foundation
@@ -117,3 +119,5 @@ final class ContentSquareAnalyticsAdapter: NSObject, Tracker {
         Contentsquare.optOut()
     }
 }
+
+// swiftlint:enable orphaned_doc_comment

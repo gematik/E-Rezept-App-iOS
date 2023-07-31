@@ -55,7 +55,12 @@ extension ModelsR4.Bundle {
             }
             return try Self.parse(binary: binaryResource)
         }
-        .filter { $0.signatureAlgorithm() == .unsupported } ?? []
+        // Work around for filtering for the AVS encryption certificates:
+        // We test wether the certificate's public key type is brainpoolP256r1.
+        // If it is not, for now we assume it to be a RSA-type (the ones we are looking for).
+        // (since only brainpoolP256r1 OR RSA-type public keys are used in our context (for now)).
+        // TODO: test directly for the subjectpublickey type in OpenSSL-Swift // swiftlint:disable:this todo
+        .filter { $0.brainpoolP256r1KeyExchangePublicKey() == nil } ?? []
     }
 
     static func parse(binary: ModelsR4.Binary) throws -> X509? {

@@ -159,10 +159,10 @@ final class MockAuthenticationChallengeProvider: AuthenticationChallengeProvider
     var startAuthenticationChallengeCalled: Bool {
         startAuthenticationChallengeCallsCount > 0
     }
-    var startAuthenticationChallengeReturnValue: AnyPublisher<AppAuthenticationBiometricsDomain.AuthenticationResult, Never>!
-    var startAuthenticationChallengeClosure: (() -> AnyPublisher<AppAuthenticationBiometricsDomain.AuthenticationResult, Never>)?
+    var startAuthenticationChallengeReturnValue: AnyPublisher<AuthenticationChallengeProviderResult, Never>!
+    var startAuthenticationChallengeClosure: (() -> AnyPublisher<AuthenticationChallengeProviderResult, Never>)?
 
-    func startAuthenticationChallenge() -> AnyPublisher<AppAuthenticationBiometricsDomain.AuthenticationResult, Never> {
+    func startAuthenticationChallenge() -> AnyPublisher<AuthenticationChallengeProviderResult, Never> {
         startAuthenticationChallengeCallsCount += 1
         return startAuthenticationChallengeClosure.map({ $0() }) ?? startAuthenticationChallengeReturnValue
     }
@@ -207,6 +207,24 @@ final class MockChargeItemListDomainService: ChargeItemListDomainService {
         fetchRemoteChargeItemsAndSaveForReceivedProfileId = profileId
         fetchRemoteChargeItemsAndSaveForReceivedInvocations.append(profileId)
         return fetchRemoteChargeItemsAndSaveForClosure.map({ $0(profileId) }) ?? fetchRemoteChargeItemsAndSaveForReturnValue
+    }
+    
+   // MARK: - delete
+
+    var deleteChargeItemForCallsCount = 0
+    var deleteChargeItemForCalled: Bool {
+        deleteChargeItemForCallsCount > 0
+    }
+    var deleteChargeItemForReceivedArguments: (chargeItem: ErxSparseChargeItem, profileId: UUID)?
+    var deleteChargeItemForReceivedInvocations: [(chargeItem: ErxSparseChargeItem, profileId: UUID)] = []
+    var deleteChargeItemForReturnValue: AnyPublisher<ChargeItemDomainServiceDeleteResult, Never>!
+    var deleteChargeItemForClosure: ((ErxSparseChargeItem, UUID) -> AnyPublisher<ChargeItemDomainServiceDeleteResult, Never>)?
+
+    func delete(chargeItem: ErxSparseChargeItem, for profileId: UUID) -> AnyPublisher<ChargeItemDomainServiceDeleteResult, Never> {
+        deleteChargeItemForCallsCount += 1
+        deleteChargeItemForReceivedArguments = (chargeItem: chargeItem, profileId: profileId)
+        deleteChargeItemForReceivedInvocations.append((chargeItem: chargeItem, profileId: profileId))
+        return deleteChargeItemForClosure.map({ $0(chargeItem, profileId) }) ?? deleteChargeItemForReturnValue
     }
     
    // MARK: - authenticate

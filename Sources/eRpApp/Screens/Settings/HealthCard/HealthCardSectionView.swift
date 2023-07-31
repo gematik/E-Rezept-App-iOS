@@ -23,8 +23,7 @@ import SwiftUI
 struct HealthCardSectionView: View {
     let store: SettingsDomain.Store
 
-    @ObservedObject
-    var viewStore: ViewStore<ViewState, SettingsDomain.Action>
+    @ObservedObject var viewStore: ViewStore<ViewState, SettingsDomain.Action>
 
     init(store: SettingsDomain.Store) {
         self.store = store

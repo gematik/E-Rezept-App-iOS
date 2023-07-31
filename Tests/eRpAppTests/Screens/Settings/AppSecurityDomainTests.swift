@@ -73,7 +73,8 @@ final class AppSecurityDomainTests: XCTestCase {
     }
 
     func testLoadingAvailableSecurityOptions_With_Biometry() {
-        let availableSecurityOptions: [AppSecurityOption] = [.biometry(.faceID), .unsecured]
+        let availableSecurityOptions: [AppSecurityOption] = [.biometry(.faceID), .unsecured, .password,
+                                                             .biometryAndPassword(.faceID)]
 
         let store = testStore(for: availableSecurityOptions)
 
@@ -87,11 +88,10 @@ final class AppSecurityDomainTests: XCTestCase {
     }
 
     func testLoadingAvailableSecurityOptions_Unspecified_Selected() {
-        let availableSecurityOptions: [AppSecurityOption] = [.biometry(.faceID), .unsecured]
-        let preSelectedSecurityOption: AppSecurityOption? = nil
+        let availableSecurityOptions: [AppSecurityOption] = [.biometry(.faceID), .unsecured, .password,
+                                                             .biometryAndPassword(.faceID)]
 
-        let store = testStore(for: availableSecurityOptions,
-                              selectedSecurityOption: preSelectedSecurityOption)
+        let store = testStore(for: availableSecurityOptions)
 
         store.send(.loadSecurityOption) {
             $0.availableSecurityOptions = availableSecurityOptions
@@ -103,11 +103,11 @@ final class AppSecurityDomainTests: XCTestCase {
     }
 
     func testLoadingAvailableSecurityOptions_Biometry_Selected() {
-        let availableSecurityOptions: [AppSecurityOption] = [.biometry(.faceID), .unsecured]
+        let availableSecurityOptions: [AppSecurityOption] = [.biometry(.faceID), .unsecured, .password,
+                                                             .biometryAndPassword(.faceID)]
         let preSelectedSecurityOption: AppSecurityOption = .biometry(.faceID)
 
-        let store = testStore(for: availableSecurityOptions,
-                              selectedSecurityOption: preSelectedSecurityOption)
+        let store = testStore(for: availableSecurityOptions, selectedSecurityOption: preSelectedSecurityOption)
 
         store.send(.loadSecurityOption) {
             $0.availableSecurityOptions = availableSecurityOptions
@@ -122,8 +122,7 @@ final class AppSecurityDomainTests: XCTestCase {
         let availableSecurityOptions: [AppSecurityOption] = [.biometry(.faceID), .unsecured]
         let preSelectedSecurityOption: AppSecurityOption = .unsecured
 
-        let store = testStore(for: availableSecurityOptions,
-                              selectedSecurityOption: preSelectedSecurityOption)
+        let store = testStore(for: availableSecurityOptions)
 
         store.send(.loadSecurityOption) {
             $0.availableSecurityOptions = availableSecurityOptions
@@ -134,53 +133,13 @@ final class AppSecurityDomainTests: XCTestCase {
         }
     }
 
-    func testSelectingAppSecurityOption_From_None_To_Biometry() {
-        let availableSecurityOptions: [AppSecurityOption] = [.biometry(.faceID), .unsecured]
-        let preSelectedSecurityOption: AppSecurityOption = .unsecured
-        let selectedSecurityOption: AppSecurityOption = .biometry(.faceID)
-
-        let store = testStore(for: availableSecurityOptions,
-                              selectedSecurityOption: preSelectedSecurityOption)
-
-        store.send(.loadSecurityOption) {
-            $0.availableSecurityOptions = availableSecurityOptions
-        }
-        testScheduler.advance()
-        store.receive(.response(.loadSecurityOption(preSelectedSecurityOption))) {
-            $0.selectedSecurityOption = preSelectedSecurityOption
-        }
-        store.send(.select(selectedSecurityOption)) {
-            $0.selectedSecurityOption = selectedSecurityOption
-        }
-    }
-
-    func testSelectingAppSecurityOption_From_Unsecured_To_Biometry() {
-        let availableSecurityOptions: [AppSecurityOption] = [.biometry(.faceID), .unsecured]
-        let preSelectedSecurityOption: AppSecurityOption = .unsecured
-        let selectedSecurityOption: AppSecurityOption = .biometry(.faceID)
-
-        let store = testStore(for: availableSecurityOptions,
-                              selectedSecurityOption: preSelectedSecurityOption)
-
-        store.send(.loadSecurityOption) {
-            $0.availableSecurityOptions = availableSecurityOptions
-        }
-        testScheduler.advance()
-        store.receive(.response(.loadSecurityOption(preSelectedSecurityOption))) {
-            $0.selectedSecurityOption = preSelectedSecurityOption
-        }
-        store.send(.select(selectedSecurityOption)) {
-            $0.selectedSecurityOption = selectedSecurityOption
-        }
-    }
-
-    func testSelectingAppSecurityOption_From_Biometry_To_Unsecured() {
-        let availableSecurityOptions: [AppSecurityOption] = [.biometry(.faceID), .unsecured]
+    func testSelectingAppSecurityOption_From_Biometry_To_BiometryAndPassword() {
+        let availableSecurityOptions: [AppSecurityOption] = [.biometry(.faceID), .unsecured, .password,
+                                                             .biometryAndPassword(.faceID)]
         let preSelectedSecurityOption: AppSecurityOption = .biometry(.faceID)
-        let selectedSecurityOption: AppSecurityOption = .unsecured
+        let selectedSecurityOption: AppSecurityOption = .biometryAndPassword(.faceID)
 
-        let store = testStore(for: availableSecurityOptions,
-                              selectedSecurityOption: preSelectedSecurityOption)
+        let store = testStore(for: availableSecurityOptions, selectedSecurityOption: preSelectedSecurityOption)
 
         store.send(.loadSecurityOption) {
             $0.availableSecurityOptions = availableSecurityOptions
@@ -189,8 +148,110 @@ final class AppSecurityDomainTests: XCTestCase {
         store.receive(.response(.loadSecurityOption(preSelectedSecurityOption))) {
             $0.selectedSecurityOption = preSelectedSecurityOption
         }
-        store.send(.select(selectedSecurityOption)) {
-            $0.selectedSecurityOption = selectedSecurityOption
+
+        store.send(.togglePasswordSelected)
+        testScheduler.advance()
+        store.receive(.setNavigation(tag: .appPassword)) {
+            $0.destination = .appPassword(.init(mode: .create))
+        }
+
+        store.send(.destination(.appPasswordAction(.delegate(.closeAfterPasswordSaved)))) {
+            $0.destination = nil
+        }
+        testScheduler.advance()
+        store.receive(.select(selectedSecurityOption)) {
+            $0.selectedSecurityOption = .biometryAndPassword(.faceID)
+        }
+    }
+
+    func testSelectingAppSecurityOption_From_Password_To_BiometryAndPassword() {
+        let availableSecurityOptions: [AppSecurityOption] = [.biometry(.faceID), .unsecured, .password,
+                                                             .biometryAndPassword(.faceID)]
+        let preSelectedSecurityOption: AppSecurityOption = .password
+        let selectedSecurityOption: AppSecurityOption = .biometryAndPassword(.faceID)
+
+        let store = testStore(for: availableSecurityOptions, selectedSecurityOption: preSelectedSecurityOption)
+
+        store.send(.loadSecurityOption) {
+            $0.availableSecurityOptions = availableSecurityOptions
+        }
+        testScheduler.advance()
+        store.receive(.response(.loadSecurityOption(preSelectedSecurityOption))) {
+            $0.selectedSecurityOption = preSelectedSecurityOption
+        }
+
+        store.send(.toggleBiometricSelected(.faceID))
+        testScheduler.advance()
+        store.receive(.select(selectedSecurityOption)) {
+            $0.selectedSecurityOption = .biometryAndPassword(.faceID)
+        }
+    }
+
+    func testSelectingAppSecurityOption_From_Biometric_To_BiometryAndPassword_Failed() {
+        let availableSecurityOptions: [AppSecurityOption] = [.biometry(.faceID), .unsecured,
+                                                             .biometryAndPassword(.faceID)]
+        let preSelectedSecurityOption: AppSecurityOption = .biometry(.faceID)
+
+        let store = testStore(for: availableSecurityOptions, selectedSecurityOption: preSelectedSecurityOption)
+
+        store.send(.loadSecurityOption) {
+            $0.availableSecurityOptions = availableSecurityOptions
+        }
+        testScheduler.advance()
+        store.receive(.response(.loadSecurityOption(preSelectedSecurityOption))) {
+            $0.selectedSecurityOption = preSelectedSecurityOption
+        }
+        store.send(.togglePasswordSelected)
+        testScheduler.advance()
+        store.receive(.setNavigation(tag: .appPassword)) {
+            $0.destination = .appPassword(.init(mode: .create))
+        }
+
+        store.send(.setNavigation(tag: nil)) {
+            $0.destination = nil
+            $0.selectedSecurityOption = .biometry(.faceID)
+        }
+    }
+
+    func testSelectingAppSecurityOption_From_BiometryAndPassword_To_Biometry() {
+        let availableSecurityOptions: [AppSecurityOption] = [.biometry(.faceID), .unsecured, .password,
+                                                             .biometryAndPassword(.faceID)]
+        let preSelectedSecurityOption: AppSecurityOption = .biometryAndPassword(.faceID)
+
+        let store = testStore(for: availableSecurityOptions, selectedSecurityOption: preSelectedSecurityOption)
+
+        store.send(.loadSecurityOption) {
+            $0.availableSecurityOptions = availableSecurityOptions
+        }
+        testScheduler.advance()
+        store.receive(.response(.loadSecurityOption(preSelectedSecurityOption))) {
+            $0.selectedSecurityOption = preSelectedSecurityOption
+        }
+        store.send(.togglePasswordSelected)
+        testScheduler.advance()
+        store.receive(.select(.biometry(.faceID))) {
+            $0.selectedSecurityOption = .biometry(.faceID)
+        }
+    }
+
+    func testSelectingAppSecurityOption_From_BiometryAndPassword_To_Password() {
+        let availableSecurityOptions: [AppSecurityOption] = [.biometry(.faceID), .unsecured,
+                                                             .biometryAndPassword(.faceID)]
+        let preSelectedSecurityOption: AppSecurityOption = .biometryAndPassword(.faceID)
+
+        let store = testStore(for: availableSecurityOptions, selectedSecurityOption: preSelectedSecurityOption)
+
+        store.send(.loadSecurityOption) {
+            $0.availableSecurityOptions = availableSecurityOptions
+        }
+        testScheduler.advance()
+        store.receive(.response(.loadSecurityOption(preSelectedSecurityOption))) {
+            $0.selectedSecurityOption = preSelectedSecurityOption
+        }
+        store.send(.toggleBiometricSelected(.faceID))
+        testScheduler.advance()
+        store.receive(.select(.password)) {
+            $0.selectedSecurityOption = .password
         }
     }
 }

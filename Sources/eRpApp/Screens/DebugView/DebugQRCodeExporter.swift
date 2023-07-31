@@ -24,14 +24,11 @@ import SwiftUI
 struct DebugQRCodeExporter<ContentType: Codable>: View {
     var content: ContentType
 
-    @State
-    var image: UIImage?
+    @State var image: UIImage?
 
-    @State
-    var error: String?
+    @State var error: String?
 
-    @State
-    var showShareSheet = false
+    @State var showShareSheet = false
 
     var body: some View {
         ScrollView {

@@ -22,8 +22,7 @@ import SwiftUI
 // TODO: do we actually need this //swiftlint:disable:this todo
 struct IDPCardWallView: View {
     let store: IDPCardWallDomain.Store
-    @ObservedObject
-    var viewStore: ViewStore<ViewState, IDPCardWallDomain.Action>
+    @ObservedObject var viewStore: ViewStore<ViewState, IDPCardWallDomain.Action>
 
     init(store: IDPCardWallDomain.Store) {
         self.store = store
@@ -47,14 +46,13 @@ struct IDPCardWallView: View {
                     canView()
                 }
             }
-            .background(Color(.secondarySystemBackground))
+            .background(Color(.systemBackground))
             .accessibility(identifier: A11y.cardWall.intro.cdwBtnIntroCancel)
             .accessibility(label: Text(L10n.cdwBtnIntroCancelLabel))
         }
     }
 
-    @ViewBuilder
-    func canView() -> some View {
+    @ViewBuilder func canView() -> some View {
         IfLetStore(canStore) { store in
             CardWallCANView(store: store)
         }
@@ -67,8 +65,7 @@ struct IDPCardWallView: View {
         )
     }
 
-    @ViewBuilder
-    func pinView() -> some View {
+    @ViewBuilder func pinView() -> some View {
         CardWallPINView(store: pinStore)
     }
 
@@ -79,8 +76,7 @@ struct IDPCardWallView: View {
         )
     }
 
-    @ViewBuilder
-    func readCardView() -> some View {
+    @ViewBuilder func readCardView() -> some View {
         IfLetStore(readCardStore) { store in
             CardWallReadCardView(store: store)
         }

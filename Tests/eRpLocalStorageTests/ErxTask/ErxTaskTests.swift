@@ -91,6 +91,46 @@ final class ErxTaskTests: XCTestCase {
         expect(sut.status).to(equal(.ready))
     }
 
+    func testInitFromErxTaskEntityToResetStateWhenModifiedDateIsMoreRecentThanFakeTimer() throws {
+        let redemption = Date()
+        let stillRedeeming = redemption.addingTimeInterval(10 * 60 - 1)
+        let modifiedTaskDate = redemption.addingTimeInterval(5 * 60)
+
+        lazy var communication = ErxTask.Communication(
+            identifier: "abc",
+            profile: .dispReq,
+            taskId: "id_1",
+            userId: "12345",
+            telematikId: "123456",
+            timestamp: FHIRDateFormatter.shared.stringWithLongUTCTimeZone(from: redemption),
+            payloadJSON: ""
+        )
+
+        let entity = ErxTaskEntity(task: loadedTask, in: moc)
+
+        var sut = try XCTUnwrap(ErxTask(entity: entity) {
+            stillRedeeming
+        })
+        expect(sut.status).to(equal(.ready))
+
+        let communicationEntity = ErxTaskCommunicationEntity(communication: communication, in: moc)
+        entity.addToCommunications(communicationEntity)
+        try moc.save()
+
+        sut = try XCTUnwrap(ErxTask(entity: entity) {
+            stillRedeeming
+        })
+        expect(sut.status).to(equal(.inProgress))
+
+        // After updating the task the state should again be ready
+        entity.lastModified = FHIRDateFormatter.shared.stringWithLongUTCTimeZone(from: modifiedTaskDate)
+
+        sut = try XCTUnwrap(ErxTask(entity: entity) {
+            modifiedTaskDate
+        })
+        expect(sut.status).to(equal(.ready))
+    }
+
     lazy var scannedTask: ErxTask = {
         ErxTask(identifier: "id_1",
                 status: .ready,
@@ -128,7 +168,7 @@ final class ErxTaskTests: XCTestCase {
         sut = try XCTUnwrap(ErxTask(entity: entity) {
             stillRedeeming
         })
-        expect(sut.status).to(equal(.inProgress))
+        expect(sut.status).to(equal(.computed(status: .waiting)))
 
         sut = try XCTUnwrap(ErxTask(entity: entity) {
             completedRedeeming
@@ -162,11 +202,11 @@ final class ErxTaskTests: XCTestCase {
         sut = try XCTUnwrap(ErxTask(entity: entity) {
             stillRedeeming
         })
-        expect(sut.status).to(equal(.inProgress))
+        expect(sut.status).to(equal(.computed(status: .sent)))
 
         sut = try XCTUnwrap(ErxTask(entity: entity) {
             completedRedeeming
         })
-        expect(sut.status).to(equal(.completed))
+        expect(sut.status).to(equal(.computed(status: .sent)))
     }
 }

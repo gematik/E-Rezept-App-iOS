@@ -132,6 +132,7 @@ extension ModelsR4.Bundle {
             medication: patientReceiptBundle.parseErxMedication(),
             medicationRequest: patientReceiptBundle.parseErxMedicationRequest(),
             patient: ErxPatient(
+                title: patient?.title,
                 name: patient?.fullName,
                 address: patient?.completeAddress,
                 birthDate: patient?.birthDate?.value?.description,
@@ -141,7 +142,9 @@ extension ModelsR4.Bundle {
                 insuranceId: patient?.insuranceId
             ),
             practitioner: ErxPractitioner(
+                title: practitioner?.title,
                 lanr: practitioner?.lanr,
+                zanr: practitioner?.lanr,
                 name: practitioner?.fullName,
                 qualification: practitioner?.qualificationText,
                 email: practitioner?.email,
@@ -185,6 +188,20 @@ extension ModelsR4.Bundle {
         return nil
     }
 
+    func findResource<Resource: ModelsR4.Resource>(for metaProfile: String?,
+                                                   type _: Resource.Type) -> Resource? {
+        guard let metaProfile = metaProfile else { return nil }
+        // try finding it by identifier
+        if let bundle = entry?.compactMap({ $0.resource?.get(if: Resource.self) }),
+           let resource = bundle.first(where: { bundleEntry in
+               bundleEntry.meta?.profile?.compactMap { $0.value?.url.absoluteString }.contains(metaProfile) ?? false
+           }) {
+            return resource
+        }
+
+        return nil
+    }
+
     /// Creates an `ErxTask.Medication` from the ModelsR4.Medication
     func parseErxMedication() -> ErxMedication {
         .init(
@@ -206,6 +223,7 @@ extension ModelsR4.Bundle {
     /// Creates an `eRpKit.MedicationRequest` from the ModelsR4.MedicationRequest
     func parseErxMedicationRequest() -> ErxMedicationRequest {
         .init(
+            authoredOn: medicationRequest?.authoredOn?.value?.description,
             dosageInstructions: joinedDosageInstructions,
             substitutionAllowed: medicationRequest?.substitutionAllowed,
             hasEmergencyServiceFee: medicationRequest?.noctuFeeWaiver,
@@ -213,7 +231,8 @@ extension ModelsR4.Bundle {
             accidentInfo: medicationRequest?.accidentInfo,
             bvg: medicationRequest?.bvg,
             coPaymentStatus: medicationRequest?.coPaymentStatus,
-            multiplePrescription: medicationRequest?.multiplePrescription
+            multiplePrescription: medicationRequest?.multiplePrescription,
+            quantity: medicationRequest?.dispenseRequest?.quantity?.value?.value?.decimal
         )
     }
 }

@@ -15,7 +15,8 @@
 //  limitations under the Licence.
 //  
 //
-// swiftlint:disable large_tuple missing_docs operator_usage_whitespace file_length no_extension_access_modifier
+
+// swiftlint:disable large_tuple missing_docs file_length no_extension_access_modifier
 
 import SwiftUI
 
@@ -934,3 +935,5 @@ extension SectionContainer where Header == EmptyView, Footer == EmptyView {
         )
     }
 }
+
+// swiftlint:enable large_tuple missing_docs file_length no_extension_access_modifier

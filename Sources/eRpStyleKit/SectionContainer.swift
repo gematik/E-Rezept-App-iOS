@@ -72,8 +72,7 @@ public struct SectionContainer<Header: View, Content: View, Footer: View>: View 
     }
 }
 
-// swiftlint:disable operator_usage_whitespace large_tuple missing_docs trailing_closure no_extension_access_modifier
-// swiftlint:disable file_length
+// swiftlint:disable large_tuple missing_docs trailing_closure no_extension_access_modifier file_length
 public extension SectionContainer {
     init<
         Content0: View,
@@ -681,3 +680,5 @@ struct SectionContainer_Preview: PreviewProvider {
             .preferredColorScheme(.dark)
     }
 }
+
+// swiftlint:enable large_tuple missing_docs trailing_closure no_extension_access_modifier file_length

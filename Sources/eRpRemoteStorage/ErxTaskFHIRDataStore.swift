@@ -80,14 +80,14 @@ public class ErxTaskFHIRDataStore: ErxRemoteDataStore {
         else {
             var fhirClientError = FHIRClient.Error.unknown(RemoteStoreError.notImplemented)
             if tasks.isEmpty {
-                fhirClientError = FHIRClient.Error.internalError("Cannot delete: Empty array of ErxTasks!")
+                fhirClientError = FHIRClient.Error.internalError("Can't be deleted: Empty array of ErxTasks!")
             } else if tasks.count > 1 {
                 fhirClientError = FHIRClient.Error.internalError(
-                    "Cannot delete: Deletion of multiple elements is not implemented currently!"
+                    "Can't be deleted: Deletion of multiple elements is not implemented currently!"
                 )
             } else {
                 fhirClientError = FHIRClient.Error.internalError(
-                    "Cannot delete: ID or accessCode missing?"
+                    "Can't be deleted: ID or accessCode is missing!"
                 )
             }
             let localError = RemoteStoreError.fhirClientError(fhirClientError)

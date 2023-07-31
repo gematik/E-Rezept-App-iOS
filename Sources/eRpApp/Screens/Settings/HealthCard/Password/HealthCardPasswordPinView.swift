@@ -83,8 +83,7 @@ struct HealthCardPasswordPinView: View {
     }
 
     private struct PINView: View {
-        @ObservedObject
-        var viewStore: ViewStore<HealthCardPasswordPinView.ViewState, HealthCardPasswordDomain.Action>
+        @ObservedObject var viewStore: ViewStore<HealthCardPasswordPinView.ViewState, HealthCardPasswordDomain.Action>
 
         var body: some View {
             ScrollView(.vertical, showsIndicators: true) {
