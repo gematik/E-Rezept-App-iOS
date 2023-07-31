@@ -21,7 +21,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-           1.8.0
+           1.11.0
  Docs
         </a>
          (100% documented)
@@ -446,9 +446,9 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:3IDP8IDPTokenV11accessToken7expires02idD003ssoD09tokenType8redirectACSS_10Foundation4DateVS2SSgS2Stcfc"></a>
-                    <a name="//apple_ref/swift/Method/init(accessToken:expires:idToken:ssoToken:tokenType:redirect:)" class="dashAnchor"></a>
-                    <a class="token" href="#/s:3IDP8IDPTokenV11accessToken7expires02idD003ssoD09tokenType8redirectACSS_10Foundation4DateVS2SSgS2Stcfc">init(accessToken:<wbr>expires:<wbr>idToken:<wbr>ssoToken:<wbr>tokenType:<wbr>redirect:<wbr>)</a>
+                    <a name="/s:3IDP8IDPTokenV27isPkvFastTrackFlowInitiatedSbvp"></a>
+                    <a name="//apple_ref/swift/Property/isPkvFastTrackFlowInitiated" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPTokenV27isPkvFastTrackFlowInitiatedSbvp">isPkvFastTrackFlowInitiated</a>
                     </code>
                   </div>
                   <div class="height-container">
@@ -456,8 +456,35 @@
                     <section class="section">
                       <div class="pointer"></div>
                       <div class="abstract">
-                        <p>Initialize an IDPToken</p>
+                        <p>(Temporary) property to transport the information
+ whether the token was specifically requested for a PKV and by using Fast Track</p>
 
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="k">let</span> <span class="nv">isPkvFastTrackFlowInitiated</span><span class="p">:</span> <span class="kt">Bool</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPTokenV11accessToken7expires02idD003ssoD09tokenType8redirect27isPkvFastTrackFlowInitiatedACSS_10Foundation4DateVS2SSgS2SSbtcfc"></a>
+                    <a name="//apple_ref/swift/Method/init(accessToken:expires:idToken:ssoToken:tokenType:redirect:isPkvFastTrackFlowInitiated:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPTokenV11accessToken7expires02idD003ssoD09tokenType8redirect27isPkvFastTrackFlowInitiatedACSS_10Foundation4DateVS2SSgS2SSbtcfc">init(accessToken:<wbr>expires:<wbr>idToken:<wbr>ssoToken:<wbr>tokenType:<wbr>redirect:<wbr>isPkvFastTrackFlowInitiated:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
                       </div>
                       <div class="declaration">
                         <h4>Declaration</h4>
@@ -469,77 +496,11 @@
     <span class="nv">idToken</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
     <span class="nv">ssoToken</span><span class="p">:</span> <span class="kt">String</span><span class="p">?</span> <span class="o">=</span> <span class="kc">nil</span><span class="p">,</span>
     <span class="nv">tokenType</span><span class="p">:</span> <span class="kt">String</span> <span class="o">=</span> <span class="s">"Bearer"</span><span class="p">,</span>
-    <span class="nv">redirect</span><span class="p">:</span> <span class="kt">String</span>
+    <span class="nv">redirect</span><span class="p">:</span> <span class="kt">String</span><span class="p">,</span>
+    <span class="nv">isPkvFastTrackFlowInitiated</span><span class="p">:</span> <span class="kt">Bool</span> <span class="o">=</span> <span class="kc">false</span>
 <span class="p">)</span></code></pre>
 
                         </div>
-                      </div>
-                      <div>
-                        <h4>Parameters</h4>
-                        <table class="graybox">
-                          <tbody>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>accessToken</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>Access token</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>expires</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>Expiration date</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>idToken</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>ID token</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>ssoToken</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>SSO token. Default: nil</p>
-                                </div>
-                              </td>
-                            </tr>
-                            <tr>
-                              <td>
-                                <code>
-                                <em>tokenType</em>
-                                </code>
-                              </td>
-                              <td>
-                                <div>
-                                  <p>Default: Bearer</p>
-                                </div>
-                              </td>
-                            </tr>
-                          </tbody>
-                        </table>
                       </div>
                     </section>
                   </div>
@@ -604,7 +565,7 @@
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2023 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2023-05-05)</p>
+      <p>&copy; 2023 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2023-07-28)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.3</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>

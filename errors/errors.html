@@ -11,8 +11,11 @@
     div.columns{display: flex; gap: min(4vw, 1.5em);}
     div.column{flex: auto; overflow-x: auto;}
     div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-    ul.task-list{list-style: none;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
     ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
       width: 0.8em;
       margin: 0 0.8em 0.2em -1.6em;
       vertical-align: middle;
@@ -34,8 +37,8 @@
 id="toc-avserror.internalerror"><code>AVSError.InternalError</code></a></li>
 <li><a href="#zxdatamatrixwriter.error"
 id="toc-zxdatamatrixwriter.error"><code>ZXDataMatrixWriter.Error</code></a></li>
-<li><a href="#appauthenticationbiometricsdomain.error"
-id="toc-appauthenticationbiometricsdomain.error"><code>AppAuthenticationBiometricsDomain.Error</code></a></li>
+<li><a href="#authenticationchallengeprovidererror"
+id="toc-authenticationchallengeprovidererror"><code>AuthenticationChallengeProviderError</code></a></li>
 <li><a href="#avscannerviewcontroller.error"
 id="toc-avscannerviewcontroller.error"><code>AVScannerViewController.Error</code></a></li>
 <li><a href="#scannerdomain.error"
@@ -70,14 +73,14 @@ id="toc-redeemserviceerror.internalerror"><code>RedeemServiceError.InternalError
 id="toc-nfchealthcardpasswordcontrollererror"><code>NFCHealthCardPasswordControllerError</code></a></li>
 <li><a href="#chargeitemdomainserviceauthenticateresult.error"
 id="toc-chargeitemdomainserviceauthenticateresult.error"><code>ChargeItemDomainServiceAuthenticateResult.Error</code></a></li>
+<li><a href="#chargeitemdomainservicedeleteresult.error"
+id="toc-chargeitemdomainservicedeleteresult.error"><code>ChargeItemDomainServiceDeleteResult.Error</code></a></li>
 <li><a href="#chargeitemdomainservicefetchresult.error"
 id="toc-chargeitemdomainservicefetchresult.error"><code>ChargeItemDomainServiceFetchResult.Error</code></a></li>
-<li><a href="#chargeitemsdomainservicedeleteresult.error"
-id="toc-chargeitemsdomainservicedeleteresult.error"><code>ChargeItemsDomainServiceDeleteResult.Error</code></a></li>
-<li><a href="#chargeitemsdomainservicegrantresult.error"
-id="toc-chargeitemsdomainservicegrantresult.error"><code>ChargeItemsDomainServiceGrantResult.Error</code></a></li>
-<li><a href="#chargeitemsdomainservicerevokeresult.error"
-id="toc-chargeitemsdomainservicerevokeresult.error"><code>ChargeItemsDomainServiceRevokeResult.Error</code></a></li>
+<li><a href="#chargeitemlistdomainservicegrantresult.error"
+id="toc-chargeitemlistdomainservicegrantresult.error"><code>ChargeItemListDomainServiceGrantResult.Error</code></a></li>
+<li><a href="#chargeitemlistdomainservicerevokeresult.error"
+id="toc-chargeitemlistdomainservicerevokeresult.error"><code>ChargeItemListDomainServiceRevokeResult.Error</code></a></li>
 <li><a href="#registereddevicesdomain.error"
 id="toc-registereddevicesdomain.error"><code>RegisteredDevicesDomain.Error</code></a></li>
 <li><a href="#registereddevicesserviceerror"
@@ -116,6 +119,8 @@ id="toc-coredatacontroller.error"><code>CoreDataController.Error</code></a></li>
 id="toc-migrationerror"><code>MigrationError</code></a></li>
 <li><a href="#pharmacycoredatastore.error"
 id="toc-pharmacycoredatastore.error"><code>PharmacyCoreDataStore.Error</code></a></li>
+<li><a href="#localstoragebundleparsingerror"
+id="toc-localstoragebundleparsingerror"><code>LocalStorageBundleParsingError</code></a></li>
 <li><a href="#profilecoredatastore.error"
 id="toc-profilecoredatastore.error"><code>ProfileCoreDataStore.Error</code></a></li>
 <li><a href="#shipmentinfocoredatastore.error"
@@ -201,9 +206,9 @@ href="/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepar
 </ul></li>
 </ul>
 <h2
-id="appauthenticationbiometricsdomain.error"><code>AppAuthenticationBiometricsDomain.Error</code></h2>
+id="authenticationchallengeprovidererror"><code>AuthenticationChallengeProviderError</code></h2>
 <p><em>Source:</em> <a
-href="/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpApp/Screens/AppAuthentication/AppAuthenticationBiometry/AppAuthenticationBiometricsDomain.swift">AppAuthenticationBiometricsDomain.swift</a></p>
+href="/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpApp/Screens/AppAuthentication/AppAuthenticationBiometry/BiometricsAuthenticationChallengeProvider.swift">BiometricsAuthenticationChallengeProvider.swift</a></p>
 <ul>
 <li><code>cannotEvaluatePolicy</code> (i-00301):
 <ul>
@@ -520,7 +525,7 @@ href="#nfctagreadersession.error">NFCTagReaderSession.Error</a></li>
 <h2
 id="chargeitemdomainserviceauthenticateresult.error"><code>ChargeItemDomainServiceAuthenticateResult.Error</code></h2>
 <p><em>Source:</em> <a
-href="/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpApp/Screens/Settings/Profiles/ChargeItems/ChargeItemsDomainService.swift">ChargeItemsDomainService.swift</a></p>
+href="/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpApp/Screens/Settings/Profiles/ChargeItemList/ChargeItemListDomainService.swift">ChargeItemListDomainService.swift</a></p>
 <ul>
 <li><code>loginHandler</code> (i-03101):
 <ul>
@@ -529,9 +534,28 @@ href="/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepar
 <li><code>unexpected</code> (i-03102):</li>
 </ul>
 <h2
+id="chargeitemdomainservicedeleteresult.error"><code>ChargeItemDomainServiceDeleteResult.Error</code></h2>
+<p><em>Source:</em> <a
+href="/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpApp/Screens/Settings/Profiles/ChargeItemList/ChargeItemListDomainService.swift">ChargeItemListDomainService.swift</a></p>
+<ul>
+<li><code>localStore</code> (i-03401):
+<ul>
+<li><a href="#localstoreerror">LocalStoreError</a></li>
+</ul></li>
+<li><code>loginHandler</code> (i-03402):
+<ul>
+<li><a href="#loginhandlererror">LoginHandlerError</a></li>
+</ul></li>
+<li><code>erxRepository</code> (i-03403):
+<ul>
+<li><a href="#erxrepositoryerror">ErxRepositoryError</a></li>
+</ul></li>
+<li><code>unexpected</code> (i-03404):</li>
+</ul>
+<h2
 id="chargeitemdomainservicefetchresult.error"><code>ChargeItemDomainServiceFetchResult.Error</code></h2>
 <p><em>Source:</em> <a
-href="/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpApp/Screens/Settings/Profiles/ChargeItems/ChargeItemsDomainService.swift">ChargeItemsDomainService.swift</a></p>
+href="/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpApp/Screens/Settings/Profiles/ChargeItemList/ChargeItemListDomainService.swift">ChargeItemListDomainService.swift</a></p>
 <ul>
 <li><code>localStore</code> (i-03001):
 <ul>
@@ -548,20 +572,9 @@ href="/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepar
 <li><code>unexpected</code> (i-03004):</li>
 </ul>
 <h2
-id="chargeitemsdomainservicedeleteresult.error"><code>ChargeItemsDomainServiceDeleteResult.Error</code></h2>
+id="chargeitemlistdomainservicegrantresult.error"><code>ChargeItemListDomainServiceGrantResult.Error</code></h2>
 <p><em>Source:</em> <a
-href="/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpApp/Screens/Settings/Profiles/ChargeItems/ChargeItemsDomainService.swift">ChargeItemsDomainService.swift</a></p>
-<ul>
-<li><code>localStore</code> (i-03401):
-<ul>
-<li><a href="#localstoreerror">LocalStoreError</a></li>
-</ul></li>
-<li><code>unexpected</code> (i-03402):</li>
-</ul>
-<h2
-id="chargeitemsdomainservicegrantresult.error"><code>ChargeItemsDomainServiceGrantResult.Error</code></h2>
-<p><em>Source:</em> <a
-href="/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpApp/Screens/Settings/Profiles/ChargeItems/ChargeItemsDomainService.swift">ChargeItemsDomainService.swift</a></p>
+href="/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpApp/Screens/Settings/Profiles/ChargeItemList/ChargeItemListDomainService.swift">ChargeItemListDomainService.swift</a></p>
 <ul>
 <li><code>localStore</code> (i-03201):
 <ul>
@@ -579,9 +592,9 @@ href="/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepar
 <li><code>unexpected</code> (i-03205):</li>
 </ul>
 <h2
-id="chargeitemsdomainservicerevokeresult.error"><code>ChargeItemsDomainServiceRevokeResult.Error</code></h2>
+id="chargeitemlistdomainservicerevokeresult.error"><code>ChargeItemListDomainServiceRevokeResult.Error</code></h2>
 <p><em>Source:</em> <a
-href="/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpApp/Screens/Settings/Profiles/ChargeItems/ChargeItemsDomainService.swift">ChargeItemsDomainService.swift</a></p>
+href="/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpApp/Screens/Settings/Profiles/ChargeItemList/ChargeItemListDomainService.swift">ChargeItemListDomainService.swift</a></p>
 <ul>
 <li><code>localStore</code> (i-03301):
 <ul>
@@ -801,8 +814,8 @@ id="avstransactioncoredatastore.error"><code>AVSTransactionCoreDataStore.Error</
 <p><em>Source:</em> <a
 href="/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/AVSTransaction/AVSTransactionCoreDataStore.swift">AVSTransactionCoreDataStore.swift</a></p>
 <ul>
-<li><code>noMatchingEntity</code> (i-):</li>
-<li><code>internalError</code> (i-):</li>
+<li><code>noMatchingEntity</code> (i-5811):</li>
+<li><code>internalError</code> (i-5812):</li>
 </ul>
 <h2
 id="coredatacontroller.error"><code>CoreDataController.Error</code></h2>
@@ -847,6 +860,16 @@ id="pharmacycoredatastore.error"><code>PharmacyCoreDataStore.Error</code></h2>
 href="/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/Pharmacy/PharmacyCoreDataStore.swift">PharmacyCoreDataStore.swift</a></p>
 <ul>
 <li><code>noMatchingEntity</code> (i-50501):</li>
+</ul>
+<h2
+id="localstoragebundleparsingerror"><code>LocalStorageBundleParsingError</code></h2>
+<p><em>Source:</em> <a
+href="/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/eRpLocalStorage/Prescriptions/ParsingDuplicates/ModelsR4.Bundle+ErxChargeItem.swift">ModelsR4.Bundle+ErxChargeItem.swift</a></p>
+<ul>
+<li><code>parseError</code> (i-59001):
+<ul>
+<li><a href="#string">String</a></li>
+</ul></li>
 </ul>
 <h2
 id="profilecoredatastore.error"><code>ProfileCoreDataStore.Error</code></h2>
@@ -1239,17 +1262,13 @@ id="truststoreerror.internalerror"><code>TrustStoreError.InternalError</code></h
 <p><em>Source:</em> <a
 href="/Users/tst_tt_build/jenkins/workspace/eRezeptApp-iOS-GitHub-Publish-Prepare/Sources/TrustStore/TrustStoreError.swift">TrustStoreError.swift</a></p>
 <ul>
-<li><code>loadOCSPCheckedTrustStoreUnexpectedNil</code>
-(i-56190-20-02001):</li>
-<li><code>loadCertListFromServerUnexpectedNil</code>
-(i-56190-20-02002):</li>
-<li><code>loadOCSPListFromServerUnexpectedNil</code>
-(i-56190-20-02003):</li>
-<li><code>trustStoreCertListUnexpectedNil</code>
-(i-56190-20-02004):</li>
-<li><code>loadOCSPResponsesUnexpectedNil</code> (i-56190-20-02005):</li>
-<li><code>missingSignerForEECertificate</code> (i-56190-20-02006):</li>
-<li><code>notImplemented</code> (i-56190-20-02007):</li>
+<li><code>loadOCSPCheckedTrustStoreUnexpectedNil</code> (i-5611):</li>
+<li><code>loadCertListFromServerUnexpectedNil</code> (i-5612):</li>
+<li><code>loadOCSPListFromServerUnexpectedNil</code> (i-5613):</li>
+<li><code>trustStoreCertListUnexpectedNil</code> (i-5614):</li>
+<li><code>loadOCSPResponsesUnexpectedNil</code> (i-5615):</li>
+<li><code>missingSignerForEECertificate</code> (i-5616):</li>
+<li><code>notImplemented</code> (i-5617):</li>
 </ul>
 <h2 id="vauerror"><code>VAUError</code></h2>
 <p><em>Source:</em> <a

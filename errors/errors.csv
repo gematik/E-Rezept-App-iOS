@@ -8,8 +8,8 @@ i-54101,"AVSError.InternalError.cmsContentCreation","",
 i-00901,"ZXDataMatrixWriter.Error.cgImageConversion","",
 i-02701,"PrescriptionRepositoryError.loginHandler","",LoginHandlerError
 i-02702,"PrescriptionRepositoryError.erxRepository","",ErxRepositoryError
-i-00301,"AppAuthenticationBiometricsDomain.Error.cannotEvaluatePolicy","",
-i-00302,"AppAuthenticationBiometricsDomain.Error.failedEvaluatingPolicy","",
+i-00301,"AuthenticationChallengeProviderError.cannotEvaluatePolicy","",
+i-00302,"AuthenticationChallengeProviderError.failedEvaluatingPolicy","",
 i-00201,"AVScannerViewController.Error.initalizationError","",
 i-00202,"AVScannerViewController.Error.other","",
 i-00101,"ScannerDomain.Error.duplicate","",
@@ -82,21 +82,31 @@ i-02604,"NFCHealthCardPasswordControllerError.wrongCan","",
 i-02605,"NFCHealthCardPasswordControllerError.changeReferenceData","",
 i-03101,"ChargeItemDomainServiceAuthenticateResult.Error.loginHandler","",LoginHandlerError
 i-03102,"ChargeItemDomainServiceAuthenticateResult.Error.unexpected","",
+i-03401,"ChargeItemDomainServiceDeleteResult.Error.localStore","",LocalStoreError
+i-03402,"ChargeItemDomainServiceDeleteResult.Error.loginHandler","",LoginHandlerError
+i-03403,"ChargeItemDomainServiceDeleteResult.Error.erxRepository","",ErxRepositoryError
+i-03404,"ChargeItemDomainServiceDeleteResult.Error.unexpected","",
 i-03001,"ChargeItemDomainServiceFetchResult.Error.localStore","",LocalStoreError
 i-03002,"ChargeItemDomainServiceFetchResult.Error.loginHandler","",LoginHandlerError
 i-03003,"ChargeItemDomainServiceFetchResult.Error.erxRepository","",ErxRepositoryError
 i-03004,"ChargeItemDomainServiceFetchResult.Error.unexpected","",
-i-03401,"ChargeItemsDomainServiceDeleteResult.Error.localStore","",LocalStoreError
-i-03402,"ChargeItemsDomainServiceDeleteResult.Error.unexpected","",
-i-03201,"ChargeItemsDomainServiceGrantResult.Error.localStore","",LocalStoreError
-i-03202,"ChargeItemsDomainServiceGrantResult.Error.loginHandler","",LoginHandlerError
-i-03203,"ChargeItemsDomainServiceGrantResult.Error.erxRepository","",ErxRepositoryError
-i-03204,"ChargeItemsDomainServiceGrantResult.Error.unexpectedGrantConsentResponse","",
-i-03205,"ChargeItemsDomainServiceGrantResult.Error.unexpected","",
-i-03301,"ChargeItemsDomainServiceRevokeResult.Error.localStore","",LocalStoreError
-i-03302,"ChargeItemsDomainServiceRevokeResult.Error.loginHandler","",LoginHandlerError
-i-03303,"ChargeItemsDomainServiceRevokeResult.Error.erxRepository","",ErxRepositoryError
-i-03304,"ChargeItemsDomainServiceRevokeResult.Error.unexpected","",
+i-03201,"ChargeItemListDomainServiceGrantResult.Error.localStore","",LocalStoreError
+i-03202,"ChargeItemListDomainServiceGrantResult.Error.loginHandler","",LoginHandlerError
+i-03203,"ChargeItemListDomainServiceGrantResult.Error.erxRepository","",ErxRepositoryError
+i-03204,"ChargeItemListDomainServiceGrantResult.Error.unexpectedGrantConsentResponse","",
+i-03205,"ChargeItemListDomainServiceGrantResult.Error.unexpected","",
+i-03301,"ChargeItemListDomainServiceRevokeResult.Error.localStore","",LocalStoreError
+i-03302,"ChargeItemListDomainServiceRevokeResult.Error.loginHandler","",LoginHandlerError
+i-03303,"ChargeItemListDomainServiceRevokeResult.Error.erxRepository","",ErxRepositoryError
+i-03304,"ChargeItemListDomainServiceRevokeResult.Error.unexpected","",
+i-03501,"ChargeItemPDFServiceError.couldNotCreateDestinationURL","",
+i-03502,"ChargeItemPDFServiceError.couldNotCreatePDFStringForParsing","",
+i-03503,"ChargeItemPDFServiceError.parsingError","",
+i-03504,"ChargeItemPDFServiceError.failedToCreateAttachment","",
+i-03505,"ChargeItemPDFServiceError.dataMissingPatient","",
+i-03506,"ChargeItemPDFServiceError.dataMissingDoctor","",
+i-03507,"ChargeItemPDFServiceError.dataMissingPharmacy","",
+i-03508,"ChargeItemPDFServiceError.dataMissingInvoice","",
 i-01701,"RegisteredDevicesDomain.Error.generic","",
 i-01801,"RegisteredDevicesServiceError.missingAuthentication","",
 i-01802,"RegisteredDevicesServiceError.missingToken","",
@@ -143,8 +153,8 @@ i-20504,"ScannedErxTask.Error.invalidJSON","",
 i-20701,"SharedTask.Error.missingSeparator","",
 i-20702,"SharedTask.Error.failedDecodingEmptyString","",
 i-20703,"SharedTask.Error.tooManyComponents","",
-i-,"AVSTransactionCoreDataStore.Error.noMatchingEntity","",
-i-,"AVSTransactionCoreDataStore.Error.internalError","",
+i-5811,"AVSTransactionCoreDataStore.Error.noMatchingEntity","",
+i-5812,"AVSTransactionCoreDataStore.Error.internalError","",
 i-50001,"CoreDataController.Error.initialization","",
 i-50301,"FileManager.ExcludeFileError.fileDoesNotExist","",
 i-50302,"FileManager.ExcludeFileError.error","",
@@ -156,6 +166,7 @@ i-50105,"MigrationError.delete","",
 i-50106,"MigrationError.unspecified","",
 i-50107,"MigrationError.initialization","",
 i-50501,"PharmacyCoreDataStore.Error.noMatchingEntity","",
+i-59001,"LocalStorageBundleParsingError.parseError","",
 i-50201,"ProfileCoreDataStore.Error.noMatchingEntity","",
 i-50202,"ProfileCoreDataStore.Error.initialization","",
 i-50401,"ShipmentInfoCoreDataStore.Error.noMatchingEntity","",
@@ -278,13 +289,13 @@ i-56003,"TrustStoreError.invalidOCSPResponse","When one (or more) OCSP response(
 i-56004,"TrustStoreError.eeCertificateOCSPStatusVerification","When one (or more) end entity certificate cannot be status verified by given OCSP responses",
 i-56005,"TrustStoreError.unspecified","Other error cases",
 i-56006,"TrustStoreError.`internal`","Internal error",TrustStoreError.InternalError
-i-56190-20-02001,"TrustStoreError.InternalError.loadOCSPCheckedTrustStoreUnexpectedNil","",
-i-56190-20-02002,"TrustStoreError.InternalError.loadCertListFromServerUnexpectedNil","",
-i-56190-20-02003,"TrustStoreError.InternalError.loadOCSPListFromServerUnexpectedNil","",
-i-56190-20-02004,"TrustStoreError.InternalError.trustStoreCertListUnexpectedNil","",
-i-56190-20-02005,"TrustStoreError.InternalError.loadOCSPResponsesUnexpectedNil","",
-i-56190-20-02006,"TrustStoreError.InternalError.missingSignerForEECertificate","",
-i-56190-20-02007,"TrustStoreError.InternalError.notImplemented","",
+i-5611,"TrustStoreError.InternalError.loadOCSPCheckedTrustStoreUnexpectedNil","",
+i-5612,"TrustStoreError.InternalError.loadCertListFromServerUnexpectedNil","",
+i-5613,"TrustStoreError.InternalError.loadOCSPListFromServerUnexpectedNil","",
+i-5614,"TrustStoreError.InternalError.trustStoreCertListUnexpectedNil","",
+i-5615,"TrustStoreError.InternalError.loadOCSPResponsesUnexpectedNil","",
+i-5616,"TrustStoreError.InternalError.missingSignerForEECertificate","",
+i-5617,"TrustStoreError.InternalError.notImplemented","",
 i-55001,"VAUError.network","In case of HTTP/Connection error",HTTPError
 i-55002,"VAUError.certificateDecoding","When failed to extract a X.509 VAU certificate information",
 i-55003,"VAUError.internalCryptoError","When internal cryptographic operations fail",

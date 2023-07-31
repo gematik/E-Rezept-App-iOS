@@ -21,7 +21,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="index.html">
-           1.8.0
+           1.11.0
  Docs
         </a>
          (100% documented)
@@ -84,6 +84,33 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Enums/DefaultDataMatrixStringEncoderError.html">DefaultDataMatrixStringEncoderError</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Enums/Dispense.html">Dispense</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Enums/Dispense/Version.html">– Version</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Enums/Dispense/Key.html">– Key</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Enums/ErpCharge.html">ErpCharge</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Enums/ErpCharge/Version.html">– Version</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Enums/ErpCharge/Key.html">– Key</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Enums/ErpPrescription.html">ErpPrescription</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Enums/ErpPrescription/Version.html">– Version</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Enums/ErpPrescription/Key.html">– Key</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Enums/ErxRepositoryError.html">ErxRepositoryError</a>
@@ -188,6 +215,21 @@
             <a class="nav-group-name-link" href="Structs.html">Structures</a>
             <ul class="nav-group-tasks">
               <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Structs/ABDAERezeptAbgabedaten.html">ABDAERezeptAbgabedaten</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Structs/ABDAERezeptAbgabedaten/DAV_PKV_PR_ERP_AbgabedatenComposition.html">– DAV_PKV_PR_ERP_AbgabedatenComposition</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Structs/ABDAERezeptAbgabedaten/DAV_EX_ERP_Abrechnungszeilen.html">– DAV_EX_ERP_Abrechnungszeilen</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Structs/ABDAERezeptAbgabedaten/DAV_EX_ERP_ZusatzdatenHerstellung.html">– DAV_EX_ERP_ZusatzdatenHerstellung</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Structs/ABDAERezeptAbgabedaten/DAV_EX_ERP_ZusatzdatenEinheit.html">– DAV_EX_ERP_ZusatzdatenEinheit</a>
+              </li>
+              <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Structs/AVSTransaction.html">AVSTransaction</a>
               </li>
               <li class="nav-group-task">
@@ -204,6 +246,9 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Structs/DavInvoice/ChargeableItem.html">– ChargeableItem</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Structs/DavInvoice/Production.html">– Production</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Structs/DavMedicationDispense.html">DavMedicationDispense</a>
@@ -273,6 +318,9 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Structs/ErxSignature.html">ErxSignature</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Structs/ErxSparseChargeItem.html">ErxSparseChargeItem</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Structs/ErxTask.html">ErxTask</a>
@@ -596,6 +644,92 @@ These Code Systems and Value Sets are cited in HL7 Published artifacts
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:6eRpKit15ErpPrescriptionO"></a>
+                    <a name="//apple_ref/swift/Enum/ErpPrescription" class="dashAnchor"></a>
+                    <a class="token" href="#/s:6eRpKit15ErpPrescriptionO">ErpPrescription</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Prescription profiles specified by the KBV which holds all informations
+about the prescription (also called KBV-Bundle)
+<a href="https://simplifier.net/eRezept/">https://simplifier.net/eRezept/</a></p>
+
+                        <a href="Enums/ErpPrescription.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">ErpPrescription</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:6eRpKit9ErpChargeO"></a>
+                    <a name="//apple_ref/swift/Enum/ErpCharge" class="dashAnchor"></a>
+                    <a class="token" href="#/s:6eRpKit9ErpChargeO">ErpCharge</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p><a href="https://simplifier.net/erezept-patientenrechnung">https://simplifier.net/erezept-patientenrechnung</a></p>
+
+                        <a href="Enums/ErpCharge.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">ErpCharge</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:6eRpKit8DispenseO"></a>
+                    <a name="//apple_ref/swift/Enum/Dispense" class="dashAnchor"></a>
+                    <a class="token" href="#/s:6eRpKit8DispenseO">Dispense</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p><a href="https://simplifier.net/erezeptabgabedatenpkv">https://simplifier.net/erezeptabgabedatenpkv</a></p>
+
+                        <a href="Enums/Dispense.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">Dispense</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:6eRpKit15LocalStoreErrorO"></a>
                     <a name="//apple_ref/swift/Enum/LocalStoreError" class="dashAnchor"></a>
                     <a class="token" href="#/s:6eRpKit15LocalStoreErrorO">LocalStoreError</a>
@@ -687,7 +821,7 @@ The <code>rawValue</code> represents the <code>xcdatamodel</code>version</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2023 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2023-05-05)</p>
+      <p>&copy; 2023 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2023-07-28)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.3</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>
