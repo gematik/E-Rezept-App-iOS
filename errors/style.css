@@ -11,7 +11,7 @@ body {
 }
 
 h3 {
-	margin: 40px 0;
+	margin: 32px 0 16px;
 }
 
 * {
@@ -37,6 +37,7 @@ pre code {
 
 a {
 	text-decoration: none;
+	margin: 0;
 }
 
 a:hover {
@@ -62,7 +63,7 @@ a::after {
 }
 
 #TOC ul {
-	padding-left: 1em;
+	padding: 0 0 0 1em;
 	list-style-type: none;
 }
 
@@ -86,4 +87,45 @@ ul {
 ul ul {
 	font-size: 0.9em;
 	line-height: 1.5em;
+}
+#toc-requirements + ul > li > a {
+	padding: 10px;
+}
+
+#toc-requirements + ul a + ul {
+	display: none;
+}
+
+#toc-requirements + ul a:hover + ul,
+#toc-requirements + ul a:target + ul,
+#toc-requirements + ul a + ul:hover {
+	display: block;
+}
+
+details summary {
+	font-size: 0.8em;
+}
+
+details pre {
+	font-size: 0.8em;
+	font-family: 'SF Mono', SFMono-Regular, ui-monospace, Menlo, monospace;
+	padding: 16px;
+	background: #eee;
+}
+
+a.github {
+	color: #999;
+	font-size: 0.8em;
+	vertical-align: top;
+	padding: 4px;
+}
+
+@media print {
+	#TOC {
+		position: initial;
+	}
+
+	#toc-requirements + ul a + ul {
+		display: block;
+	}
 }
