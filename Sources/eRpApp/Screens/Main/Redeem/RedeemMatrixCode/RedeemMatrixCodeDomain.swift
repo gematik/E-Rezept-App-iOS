@@ -65,6 +65,8 @@ struct RedeemMatrixCodeDomain: ReducerProtocol {
     }
 
     @Dependency(\.schedulers) var schedulers: Schedulers
+    // [REQ:gemSpec_eRp_FdV:A_20603] Usages of matrixCodeGenerator for code generation. UserProfile is neither part of
+    // the screen nor the state.
     @Dependency(\.erxTaskMatrixCodeGenerator) var matrixCodeGenerator: ErxTaskMatrixCodeGenerator
     @Dependency(\.erxTaskRepository) var taskRepository: ErxTaskRepository
     @Dependency(\.fhirDateFormatter) var fhirDateFormatter: FHIRDateFormatter

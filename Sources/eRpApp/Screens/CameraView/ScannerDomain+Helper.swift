@@ -21,6 +21,7 @@ import Foundation
 
 extension ScannerDomain {
     enum CodeAnalyser {
+        // [REQ:BSI-eRp-ePA:O.Source_1#3] validation
         static func analyse(scanOutput: [ScanOutput],
                             with previousTaskBatches: Set<[ScannedErxTask]>) throws -> [ScannedErxTask] {
             let scannedErxTasks = try createScannedErxTasks(from: scanOutput)

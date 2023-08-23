@@ -104,6 +104,7 @@ class EciesVAUCrypto: VAUCrypto {
         // [REQ:gemSpec_Krypt:A_4389:1] IVs must not be reused, IVs bit length must be larger or equal to 96
         let nonceGenerator = { try VAURandom.generateSecureRandom(length: self.eciesSpec.ivSize) }
         // [REQ:gemSpec_Krypt:GS-A_4357] Key pair generation delegated to OpenSSL with BrainpoolP256r1 parameters
+        // [REQ:BSI-eRp-ePA:O.Cryp_3#5] Brainpool key generator
         let keyPairGenerator = { try BrainpoolP256r1.KeyExchange.generateKey() }
 
         return try Ecies.encrypt(

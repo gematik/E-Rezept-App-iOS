@@ -22,6 +22,7 @@ import CoreData
 import eRpKit
 
 /// Store for fetching, creating, updating or deleting `Profile`s on the provided `CoreDataController`
+/// [REQ:BSI-eRp-ePA:O.Source_2#4] CoreDataStore adapter for `Profile`s
 public class ProfileCoreDataStore: ProfileDataStore, CoreDataCrudable {
     let coreDataControllerFactory: CoreDataControllerFactory
     let foregroundQueue: AnySchedulerOf<DispatchQueue>

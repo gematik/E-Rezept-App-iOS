@@ -42,6 +42,7 @@ public class LocalStoreFactory: CoreDataControllerFactory {
         fileProtection: FileProtectionType = .completeUnlessOpen
     ) {
         self.databaseUrl = databaseUrl
+        // [REQ:BSI-eRp-ePA:O.Purp_8#2,O.Arch_2#1] CoreData databases are protected
         self.fileProtection = fileProtection
     }
 

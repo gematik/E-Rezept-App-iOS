@@ -113,6 +113,7 @@ extension ScannedErxTask {
         var erxToken: ErxToken
         do {
             // [REQ:gemSpec_eRp_FdV:A_19984] validate data matrix code structure
+            // [REQ:BSI-eRp-ePA:O.Source_1#4] actual validation by decoding into predefined structure
             erxToken = try jsonDecoder.decode(ErxToken.self, from: jsonData)
         } catch {
             if let url = URL(string: codeContent),

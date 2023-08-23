@@ -1,89 +1,16 @@
 ---
-- :name: BundleKit
-  :url: https://github.com/SwiftCommon/BundleKit
-  :license_uri: https://raw.githubusercontent.com/SwiftCommon/BundleKit/master/LICENSE
-  :version: 0.0.2
-- :name: CasePaths
-  :url: https://github.com/pointfreeco/swift-case-paths
-  :license_uri: https://raw.githubusercontent.com/pointfreeco/swift-case-paths/main/LICENSE
-  :version: 0.7.0  
-- :name: CombineSchedulers
-  :url: https://github.com/pointfreeco/combine-schedulers
-  :license_uri: https://raw.githubusercontent.com/pointfreeco/combine-schedulers/main/LICENSE
-  :version: 0.5.3
-- :name: ComposableArchitecture
-  :url: https://github.com/pointfreeco/swift-composable-architecture
-  :license_uri: https://raw.githubusercontent.com/pointfreeco/swift-composable-architecture/main/LICENSE
-  :version: 0.52.0
-- :name: ComposableCoreLocation
-  :url: https://github.com/pointfreeco/composable-core-location
-  :license_uri: https://raw.githubusercontent.com/pointfreeco/composable-core-location/main/LICENSE
-  :version: 0.1.0
-- :name: Custom Dump
-  :url: https://github.com/pointfreeco/swift-custom-dump
-  :license_uri: https://raw.githubusercontent.com/pointfreeco/swift-custom-dump/main/LICENSE
-  :version: 1.1.0  
-- :name: DataKit
-  :url: https://github.com/SwiftCommon/DataKit
-  :license_uri: https://raw.githubusercontent.com/SwiftCommon/DataKit/master/LICENSE
-  :version: 1.1.0
-- :name: Dependencies
-  :url: https://github.com/pointfreeco/swift-dependencies
-  :license_uri: https://raw.githubusercontent.com/pointfreeco/swift-dependencies/main/LICENSE
-  :version: 0.2.0
-- :name: FHIRModels
-  :url: https://github.com/apple/FHIRModels/
-  :license_uri: https://raw.githubusercontent.com/apple/FHIRModels/main/LICENSE
-  :version: 0.4.0
-- :name: OpenSSL
-  :url: https://www.openssl.org/source
-  :license_uri: https://www.openssl.org/source/apache-license-2.0.txt
-  :version: 3.0.7
-- :name: SwiftCasePaths
-  :url: https://github.com/pointfreeco/swift-case-paths
-  :license_uri: https://raw.githubusercontent.com/pointfreeco/swift-case-paths/main/LICENSE
-  :version: 0.14.1
-- :name: SwiftCollections
-  :url: https://github.com/apple/swift-collections
-  :license_uri: https://raw.githubusercontent.com/apple/swift-collections/main/LICENSE.txt
-  :version: 1.0.2
-- :name: SwiftCustomDump
-  :url: https://github.com/pointfreeco/swift-custom-dump
-  :license_uri: https://raw.githubusercontent.com/pointfreeco/swift-custom-dump/main/LICENSE
-  :version: 0.10.0
-- :name: SwiftIdentifiedCollections
-  :url: https://github.com/pointfreeco/swift-identified-collections
-  :license_uri: https://raw.githubusercontent.com/pointfreeco/swift-identified-collections/main/LICENSE
-  :version: 0.7.0
-- :name: Swift Collections
-  :url: https://github.com/apple/swift-collections
-  :license_uri: https://raw.githubusercontent.com/apple/swift-collections/main/LICENSE.txt
-  :version: 1.0.2
-- :name: SwiftUI Introspect
-  :url: https://github.com/siteline/SwiftUI-Introspect
-  :license_uri: https://raw.githubusercontent.com/siteline/SwiftUI-Introspect/master/LICENSE
-  :version: 0.1.4
-- :name: SwiftUI Navigation
-  :url: https://github.com/pointfreeco/swiftui-navigation
-  :license_uri: https://raw.githubusercontent.com/pointfreeco/swiftui-navigation/main/LICENSE
-  :version: 0.7.1
-- :name: Swift Protobuf
-  :url: https://github.com/apple/swift-protobuf
-  :license_uri: https://raw.githubusercontent.com/apple/swift-protobuf/main/LICENSE.txt
-  :version: 1.20.3
-- :name: swift-clocks
-  :url: https://github.com/pointfreeco/swift-clocks
-  :license_uri: https://raw.githubusercontent.com/pointfreeco/swift-clocks/main/LICENSE
-  :version: 0.2.0
-- :name: XCTestDynamicOverlay
-  :url: https://github.com/pointfreeco/xctest-dynamic-overlay
-  :license_uri: https://raw.githubusercontent.com/pointfreeco/xctest-dynamic-overlay/main/LICENSE
-  :version: 0.8.1
-- :name: ZXingObjC
-  :url: https://github.com/zxingify/zxingify-objc
-  :license_uri: https://raw.githubusercontent.com/zxingify/zxingify-objc/master/COPYING
-  :version: 3.6.7
-- :name: Zxcvbn
-  :url: https://github.com/dropbox/zxcvbn-ios
-  :license_uri: https://raw.githubusercontent.com/dropbox/zxcvbn-ios/master/LICENSE.txt
-  :version: v1.0.4 + SwiftPM
+additional:
+  - :name: DataKit
+    :identity: datakit
+    :url: https://github.com/SwiftCommon/DataKit
+    :license_uri: https://raw.githubusercontent.com/SwiftCommon/DataKit/master/LICENSE
+    :version: 1.1.0
+  - :name: OpenSSL
+    :identity: openssl
+    :url: https://www.openssl.org/source
+    :license_uri: https://www.openssl.org/source/apache-license-2.0.txt
+    :version: 3.0.7
+exclude_identities_from_package_resolved:
+  - cs_ios_sdk
+  - cwlcatchexception
+  - cwlpreconditiontesting

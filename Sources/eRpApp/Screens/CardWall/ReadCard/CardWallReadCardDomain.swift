@@ -206,6 +206,7 @@ struct CardWallReadCardDomain: ReducerProtocol {
         case .delegate(.close):
             // This should be handled by the parent reducer
             return Self.cleanup()
+        // [REQ:BSI-eRp-ePA:O.Auth_3#2] Implementation of eGK connection
         case let .signChallenge(challenge):
             let pin = state.pin
             let biometrieFlow = state.loginOption == .withBiometry

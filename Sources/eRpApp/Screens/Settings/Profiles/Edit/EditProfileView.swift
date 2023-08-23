@@ -227,6 +227,7 @@ extension EditProfileView {
             }
 
             if viewStore.isLoggedIn {
+                // [REQ:BSI-eRp-ePA:O.Tokn_6#2] Logout Button
                 Button(action: {
                     viewStore.send(.delegate(.logout))
                 }, label: {
@@ -443,6 +444,7 @@ extension EditProfileView {
         }
     }
 
+    // [REQ:BSI-eRp-ePA:O.Tokn_5#2] Section for Token display
     private struct TokenSectionView: View {
         let store: EditProfileDomain.Store
 
@@ -501,6 +503,7 @@ extension EditProfileView {
                                  .disabled(viewStore.state.token == nil)
 
                                  // [REQ:gemSpec_eRp_FdV:A_19177#2] Actual Button to open the audit events
+                                 // [REQ:BSI-eRp-ePA:O.Auth_5#2] Actual Button to open the audit events
                                  NavigationLink(
                                      destination: IfLetStore(
                                          store.destinationsScope(

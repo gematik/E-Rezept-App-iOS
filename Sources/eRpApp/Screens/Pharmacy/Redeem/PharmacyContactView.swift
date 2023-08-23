@@ -20,6 +20,7 @@ import ComposableArchitecture
 import eRpStyleKit
 import SwiftUI
 
+// [REQ:BSI-eRp-ePA:O.Purp_2#6,O.Data_6#5] Contact information is collected when needed for redeeming
 struct PharmacyContactView: View {
     let store: PharmacyContactDomain.Store
     @ObservedObject var viewStore: ViewStore<PharmacyContactDomain.State, PharmacyContactDomain.Action>

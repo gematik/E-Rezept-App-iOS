@@ -19,7 +19,8 @@
 import ComposableArchitecture
 import SwiftUI
 
-// [REQ:gemSpec_eRp_FdV:A_19177#1] Actual Button to open the audit events
+// [REQ:gemSpec_eRp_FdV:A_19177#1] View displaying the audit events
+// [REQ:BSI-eRp-ePA:O.Auth_5#3] View displaying the audit events
 struct AuditEventsView: View {
     let store: AuditEventsDomain.Store
     @ObservedObject var viewStore: ViewStore<AuditEventsDomain.State, AuditEventsDomain.Action>

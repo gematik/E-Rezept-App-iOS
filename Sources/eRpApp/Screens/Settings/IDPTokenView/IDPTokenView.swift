@@ -20,6 +20,8 @@ import IDP
 import SwiftUI
 
 // [REQ:gemSpec_BSI_FdV:O.Tokn_9] actual view that presents the token
+// [REQ:BSI-eRp-ePA:O.Purp_9#1] Access and SSO Token display
+// [REQ:BSI-eRp-ePA:O.Tokn_5#3] Access and SSO Token display
 struct IDPTokenView: View {
     let token: IDPToken?
 

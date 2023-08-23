@@ -22,6 +22,7 @@ import CoreData
 import eRpKit
 
 /// Store for fetching, creating, updating or deleting `PharmacyLocation`s on the provided `CoreDataController`
+/// [REQ:BSI-eRp-ePA:O.Source_2#2] CoreDataStore adapter for `PharmacyLocation`s
 public class PharmacyCoreDataStore: PharmacyLocalDataStore, CoreDataCrudable {
     let coreDataControllerFactory: CoreDataControllerFactory
     let foregroundQueue: AnySchedulerOf<DispatchQueue>

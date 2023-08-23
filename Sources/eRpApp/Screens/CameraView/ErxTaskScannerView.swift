@@ -35,6 +35,8 @@ struct ErxTaskScannerView: View {
                               supportedCodeTypes: [.dataMatrix, .qr, .aztec],
                               scanning: viewStore.scanState.isIdle) {
                     if viewStore.state.scanState.isIdle {
+                        // [REQ:BSI-eRp-ePA:O.Purp_2#1,O.Data_6#3] Scanning tasks contains purpose related data input
+                        // [REQ:BSI-eRp-ePA:O.Source_1#1] Scanning tasks starts with scanner callback
                         viewStore.send(.analyse(scanOutput: $0))
                     }
                 }

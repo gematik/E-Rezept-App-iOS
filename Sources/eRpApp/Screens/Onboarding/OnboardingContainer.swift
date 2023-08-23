@@ -79,6 +79,7 @@ struct OnboardingContainer: View, KeyboardReadable {
                     .tag(2)
 
                     OnboardingAnalyticsView {
+                        // [REQ:BSI-eRp-ePA:O.Purp_3#4] Callback triggers tracking alert
                         viewStore.send(.showTrackingAlert)
                     }
                     .tag(3)

@@ -107,6 +107,7 @@ struct MainView: View {
             }
             .onAppear {
                 viewStore.send(.subscribeToDemoModeChange)
+                // [REQ:BSI-eRp-ePA:O.Arch_6#2,O.Resi_2#2,O.Plat_1#2] triggger device security check
                 viewStore.send(.loadDeviceSecurityView)
                 // Delay sheet animation to not interfere with Onboarding navigation
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
@@ -383,16 +384,13 @@ private extension MainView {
                     ),
                     onDismiss: {},
                     content: {
-                        ZStack {
-                            IfLetStore(
-                                store.scope(
-                                    state: (\MainDomain.State.destination)
-                                        .appending(path: /MainDomain.Destinations.State.editProfilePicture)
-                                        .extract(from:)
-                                ) { .destination(.editProfilePictureAction(action: $0)) },
-                                then: EditProfilePictureView.init(store:)
-                            )
-                        }
+                        IfLetStore(
+                            store.destinationsScope(
+                                state: /MainDomain.Destinations.State.editProfilePicture,
+                                action: MainDomain.Destinations.Action.editProfilePictureAction(action:)
+                            ),
+                            then: EditProfilePictureView.init(store:)
+                        )
                     }
                 )
                 .accessibility(hidden: true)

@@ -6,6 +6,7 @@
 docs
 /requirements.csv
 /requirements.html
+/requirements.md.html
 doc/errors/generated
 
 # AppCode project files

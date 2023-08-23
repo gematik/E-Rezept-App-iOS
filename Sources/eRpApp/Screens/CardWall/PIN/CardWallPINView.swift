@@ -40,6 +40,7 @@ struct CardWallPINView: View {
     var body: some View {
         WithViewStore(store.scope(state: ViewState.init)) { viewStore in
             VStack(alignment: .leading) {
+                // [REQ:BSI-eRp-ePA:O.Purp_2#3,O.Data_6#4] PIN is used for eGK Connection
                 PINView(store: store).padding()
 
                 Spacer()

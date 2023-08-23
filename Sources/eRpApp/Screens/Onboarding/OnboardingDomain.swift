@@ -190,14 +190,17 @@ struct OnboardingDomain: ReducerProtocol {
             return .none
         // [REQ:gemSpec_eRp_FdV:A_19088,A_19091#1,A_19092] Show comply route to display analytics usage within
         // onboarding
+        // [REQ:BSI-eRp-ePA:O.Purp_3#5] Show comply route to display analytics usage within onboarding
         case .showTrackingAlert:
             state.alertState = Self.trackingAlertState
             return .none
         // [REQ:gemSpec_eRp_FdV:A_19090,A_19091#2] User confirms the opt in within settings
+        // [REQ:BSI-eRp-ePA:O.Purp_3#6] Accept usage analytics
         case .allowTracking:
             tracker.optIn = true
             return EffectTask(value: .saveAuthentication)
         // [REQ:gemSpec_eRp_FdV:A_19092] User may choose to not accept analytics
+        // [REQ:BSI-eRp-ePA:O.Purp_3#7] Deny usage analytics
         case .dismissAlert:
             tracker.optIn = false
             state.alertState = nil
@@ -205,6 +208,7 @@ struct OnboardingDomain: ReducerProtocol {
         }
     }
 
+    // [REQ:gemSpec_eRp_FdV:A_19184] Alert for the user to choose.
     static let trackingAlertState: AlertState<Action> = {
         AlertState<Action>(
             title: TextState("Erlauben Sie E-Rezept Ihr Nutzerverhalten anonym zu analysieren?"),

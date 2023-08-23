@@ -29,6 +29,8 @@ extension JWE {
         using cryptoBox: IDPCrypto,
         expiry: Date? = nil
     ) throws -> Self {
+        // [REQ:BSI-eRp-ePA:O.Cryp_1#5] Signature via ecdh ephemeral-static
+        // [REQ:BSI-eRp-ePA:O.Cryp_4#6] one time usage for JWE ECDH-ES Encryption
         let algorithm = JWE.Algorithm.ecdh_es(JWE.Algorithm.KeyExchangeContext.bpp256r1(
             publicKey,
             keyPairGenerator: cryptoBox.brainpoolKeyPairGenerator

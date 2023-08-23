@@ -90,6 +90,8 @@ struct PrescriptionDetailDomain: ReducerProtocol {
 
     @Dependency(\.schedulers) var schedulers: Schedulers
     @Dependency(\.erxTaskRepository) var erxTaskRepository: ErxTaskRepository
+    // [REQ:gemSpec_eRp_FdV:A_20603] Usages of matrixCodeGenerator for code generation. UserProfile is neither part of
+    // the screen nor the state.
     @Dependency(\.erxTaskMatrixCodeGenerator) var matrixCodeGenerator: ErxTaskMatrixCodeGenerator
     @Dependency(\.fhirDateFormatter) var fhirDateFormatter: FHIRDateFormatter
     @Dependency(\.dateProvider) var dateProvider: () -> Date

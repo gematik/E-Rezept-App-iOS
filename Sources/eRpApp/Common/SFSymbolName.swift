@@ -128,7 +128,7 @@ public enum SFSymbolName {
     public static let personCircle = "person.circle"
     public static let boltFill = "bolt.fill"
     public static let sparkles = "sparkles"
-
+    public static let photo = "photo"
     public static var filter = "line.3.horizontal.decrease.circle"
 
     public static let rectangleAndPencilAndEllipsis = "rectangle.and.pencil.and.ellipsis"

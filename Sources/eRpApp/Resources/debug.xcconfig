@@ -2,6 +2,7 @@
 
 SWIFT_COMPILATION_MODE = incremental
 
+// [REQ:BSI-eRp-ePA:O.Source_8#2] setup of swift macros for development
 SWIFT_ACTIVE_COMPILATION_CONDITIONS = $(inherited) ENABLE_DEBUG_VIEW TEST_ENVIRONMENT
 
 CODE_SIGN_IDENTITY = Apple Development

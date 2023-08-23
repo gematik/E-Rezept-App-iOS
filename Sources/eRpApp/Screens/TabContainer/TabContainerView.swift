@@ -54,53 +54,56 @@ struct TabContainerView: View {
                     viewStore.send(.setNavigation(selected))
                 }
             )) {
-                MainView(
-                    store: store.scope(
-                        state: \.subdomains.main
-                    ) {
-                        AppDomain.Action.subdomains(.main(action: $0))
-                    }
-                )
-                .tabItem {
-                    Label(L10n.tabTxtMain, image: Asset.TabIcon.appLogoTabItem.name)
-                }
-                .tag(AppDomain.Destinations.State.main)
-
-                NavigationView {
-                    PharmacySearchView(
+                Group {
+                    MainView(
                         store: store.scope(
-                            state: \.subdomains.pharmacySearch
+                            state: \.subdomains.main
                         ) {
-                            AppDomain.Action.subdomains(.pharmacySearch(action: $0))
-                        },
-                        isRedeemRecipe: false
+                            AppDomain.Action.subdomains(.main(action: $0))
+                        }
                     )
-                }
-                .tabItem {
-                    Label(L10n.tabTxtPharmacySearch, image: Asset.TabIcon.mapPinAndEllipse.name)
-                }
-                .tag(AppDomain.Destinations.State.pharmacySearch)
-
-                OrdersView(
-                    store: store.scope(state: \.subdomains.orders) {
-                        AppDomain.Action.subdomains(.orders(action: $0))
+                    .tabItem {
+                        Label(L10n.tabTxtMain, image: Asset.TabIcon.appLogoTabItem.name)
                     }
-                )
-                .tabItem {
-                    Label(L10n.tabTxtOrders, image: Asset.TabIcon.bag.name)
-                }
-                .badge(viewStore.unreadOrderMessageCount)
-                .tag(AppDomain.Destinations.State.orders)
+                    .tag(AppDomain.Destinations.State.main)
 
-                SettingsView(
-                    store: store.scope(
-                        state: \.subdomains.settingsState
-                    ) { AppDomain.Action.subdomains(.settings(action: $0)) }
-                )
-                .tabItem {
-                    Label(L10n.tabTxtSettings, image: Asset.TabIcon.gearshape.name)
+                    NavigationView {
+                        PharmacySearchView(
+                            store: store.scope(
+                                state: \.subdomains.pharmacySearch
+                            ) {
+                                AppDomain.Action.subdomains(.pharmacySearch(action: $0))
+                            },
+                            isRedeemRecipe: false
+                        )
+                    }
+                    .tabItem {
+                        Label(L10n.tabTxtPharmacySearch, image: Asset.TabIcon.mapPinAndEllipse.name)
+                    }
+                    .tag(AppDomain.Destinations.State.pharmacySearch)
+
+                    OrdersView(
+                        store: store.scope(state: \.subdomains.orders) {
+                            AppDomain.Action.subdomains(.orders(action: $0))
+                        }
+                    )
+                    .tabItem {
+                        Label(L10n.tabTxtOrders, image: Asset.TabIcon.bag.name)
+                    }
+                    .badge(viewStore.unreadOrderMessageCount)
+                    .tag(AppDomain.Destinations.State.orders)
+
+                    SettingsView(
+                        store: store.scope(
+                            state: \.subdomains.settingsState
+                        ) { AppDomain.Action.subdomains(.settings(action: $0)) }
+                    )
+                    .tabItem {
+                        Label(L10n.tabTxtSettings, image: Asset.TabIcon.gearshape.name)
+                    }
+                    .tag(AppDomain.Destinations.State.settings)
                 }
-                .tag(AppDomain.Destinations.State.settings)
+                .backport.tabContainerToolBarBackground()
             }
             .onAppear {
                 viewStore.send(.registerDemoModeListener)
@@ -110,14 +113,16 @@ struct TabContainerView: View {
             // within pharmacy search
             // Source: https://www.hackingwithswift.com/forums/ios/tab-bar-transparent/10549
             .onAppear {
-                if #available(iOS 15.0, *) {
+                if #available(iOS 16.0, *) {
+                    // see `.backport.tabContainerToolBarBackground()` implementation
+                } else if #available(iOS 15.0, *) {
                     // correct the transparency bug for Tab bars
                     let tabBarAppearance = UITabBarAppearance()
                     tabBarAppearance.configureWithOpaqueBackground()
                     UITabBar.appearance().scrollEdgeAppearance = tabBarAppearance
                 }
             }
-            .accentColor(Colors.primary600)
+            .tint(Colors.primary600)
             .zIndex(0)
         }
     }

@@ -342,6 +342,11 @@
 "edit_color_txt" = "Колір фону";
 "edit_picture_txt" = "Редагувати зображення профілю";
 "email_subject_fallback" = "Застосунок iOS: звіт про помилки";
+"epp_btn_alert_abort" = "Abbrechen";
+"epp_btn_alert_camera" = "Kamera";
+"epp_btn_alert_library" = "Foto auswählen";
+"epp_txt_alert_header_profile" = "Profilbild wählen";
+"epp_txt_alert_subheader_choose" = "Wie möchten Sie fortfahren?";
 "erp_txt_tooltips_add_profile" = "Натисніть тут, щоб створити новий профіль";
 "erp_txt_tooltips_profile_rename" = "Тривале натискання для редагування імен";
 "erp_txt_tooltips_scan" = "Торкніться тут, щоб сканувати рецепти";

@@ -109,6 +109,7 @@ final class ContentSquareAnalyticsAdapter: NSObject, Tracker {
     }
 
     func track(screen: String) {
+        // [REQ:BSI-eRp-ePA:O.Purp_2#5,O.Purp_4#2,O.Data_6#7] ... records data only if user opt-in is given.
         if optIn {
             Contentsquare.send(screenViewWithName: screen)
         }

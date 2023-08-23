@@ -25,6 +25,7 @@ import GemCommonsKit
 // tag::ErxTaskCoreDataStoreDescription[]
 /// Store for fetching, creating, updating or deleting `ErxTask`s and it‘s underlying types. Access to most entities is
 /// tied to the given profileId.
+/// [REQ:BSI-eRp-ePA:O.Source_2#3] CoreDataStore adapter for `ErxTask`s
 public class ErxTaskCoreDataStore: CoreDataCrudable, ErxLocalDataStore {
     // end::ErxTaskCoreDataStoreDescription[]
 

@@ -22,6 +22,7 @@ import CoreData
 import eRpKit
 
 /// Store for fetching, creating, updating or deleting `AVSTransactionEntity`s on the provided `CoreDataController`
+/// [REQ:BSI-eRp-ePA:O.Source_2#6] CoreDataStore adapter for `AVSTransactionEntity`s
 public class AVSTransactionCoreDataStore: AVSTransactionDataStore, CoreDataCrudable {
     let coreDataControllerFactory: CoreDataControllerFactory
     let foregroundQueue: AnySchedulerOf<DispatchQueue>

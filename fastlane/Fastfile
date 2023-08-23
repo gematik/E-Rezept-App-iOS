@@ -457,13 +457,17 @@ lane :integration_tests do |options|
     scheme: "AllIntegrationTests_iOS",
     sdk: "iphonesimulator",
     configuration: "Debug",
-    test_without_building: true
+    test_without_building: true,
+    output_directory: "./fastlane/test_output/#{app_conf}" # default is ./fastlane/test_output
   )
-  # TODO remove(?)
-  message = "Successful Integration Tests for configuration: #{app_conf}"
-  notify_teams_channel(ENV["TEAMS_WEBHOOK_INT"], "Integration Tests", true, message)
 rescue => ex
-  message = "Failed Integration Tests for configuration! #{app_conf} \n\nReason:\n\n #{ex}"
+  jenkins_job_url = "https://jenkins.prod.ccs.gematik.solutions/job/eRezeptApp-iOS-Integration-Tests/#{ENV['BUILD_NUMBER']}"
+  message = "Failed Integration Tests for configuration: #{app_conf}
+Reason: #{ex}
+
+Basic Junit report: #{jenkins_job_url}/artifact/fastlane/test_output/#{app_conf}/report.html
+
+Console log (search for term: \"========== Run the tests for env: #{app_conf} ==========\"): #{jenkins_job_url}/consoleFull"
   notify_teams_channel(
     url = ENV["TEAMS_WEBHOOK_INT"],
     stream = "Integration Tests",
@@ -626,7 +630,7 @@ end
 lane :list_requirements do |options|
   SPECS = Hash.new
 
-  def register(matches, file, line, code = "")
+  def register(matches, file, line, code = "", source = "code")
     spec = matches[:SPEC]
     afos = matches[:AFOS]
 
@@ -643,7 +647,8 @@ lane :list_requirements do |options|
         "file" => file,
         "line" => line,
         "code" => code,
-        "\#" => number
+        "\#" => number,
+        "source" => source
       }
 
       if matches.names.include?("SUBAFOS")
@@ -664,7 +669,7 @@ lane :list_requirements do |options|
     end
   end
 
-  def parseBlock(block, file, firstLineNumber)
+  def parseBlock(block, file, firstLineNumber, source)
     number = firstLineNumber
 
     trimmedCode = block.map { |line|
@@ -675,7 +680,7 @@ lane :list_requirements do |options|
       # Format: [REQ:<SPEC>:<AFOS>:<SUBAFOS?>] <DESC>
       if matches = line.match(/\[REQ:(?<SPEC>[^:]*):(?<AFOS>[^:\s]*)(?:(?::)(?<SUBAFOS>[^:\s]*))?\](?<DESC>.*)/)
 
-        register(matches, file, number, trimmedCode)
+        register(matches, file, number, trimmedCode, source)
       end
       number += 1
     end
@@ -688,7 +693,7 @@ lane :list_requirements do |options|
 
     open(file).each_line do |line|
       number += 1
-      parseBlock([line], file, number)
+      parseBlock([line], file, number, "intro")
     end
   end
 
@@ -713,7 +718,7 @@ lane :list_requirements do |options|
       else
         if (block.count != 0) # first non matching line
           block.append(line)
-          parseBlock(block, file, number)
+          parseBlock(block, file, number, "code")
           block = Array.new # reset block
         end
         # puts "NOT: #{line}"
@@ -730,8 +735,15 @@ lane :list_requirements do |options|
           hit["\#"]
         }
       }
-      .sort_by { |key| key }.to_h
-  }
+      .sort_by { |value|
+        value.to_s.scan(/\d+|\D+/).map { |match|
+          next match if match.to_i.zero?
+          match.rjust(3, '0')
+        }.join
+      }
+      .to_h
+      # .sort_by { |key| key }.to_h
+  }.sort_by {|k, v| k}
 
   sh "mkdir -p ../build/docs/generated"
 
@@ -742,6 +754,10 @@ lane :list_requirements do |options|
   erb2_path = File.join(File.dirname(__FILE__), '..', 'Templates', 'ERB', 'requirements.md.erb')
   erb2_out_path = erb2_path.sub('.erb','').sub('/Templates/ERB','/build/docs/generated')
   erb2 = ERB.new(File.read(erb2_path))
+
+  erb3_path = File.join(File.dirname(__FILE__), '..', 'Templates', 'ERB', 'requirements.html.erb')
+  erb3_out_path = erb3_path.sub('.erb','').sub('/Templates/ERB','')
+  erb3 = ERB.new(File.read(erb3_path))
 
   UI.message("Writing AFOs to #{erb_out_path}")
 
@@ -755,31 +771,63 @@ lane :list_requirements do |options|
     file.write(erb2.result(binding))
   end
 
+  UI.message("Writing AFOs to #{erb3_out_path}")
+
+  File.open(erb3_out_path, 'w+') do |file|
+    file.write(erb3.result(binding))
+  end
+
   `which pandoc`
   if $?.success?
     UI.message("Generating html using `pandoc`...")
-    sh "cd .. && pandoc -s -f markdown -t html --toc --css Templates/ERB/style.css build/docs/generated/requirements.md > requirements.html"
+    sh "cd .. && pandoc -s -f markdown -t html --toc --css Templates/ERB/style.css build/docs/generated/requirements.md > requirements.md.html"
   else
     UI.message("`pandoc` not found, skipping html generation. To install pandoc run `brew install pandoc`.")
   end
 
 end
 
+desc "Refresh FOSS.html with data from Package.resolved"
+desc ""
+desc "###Hint:"
+desc "Generate a GitHub access token (Access public repositories) and call"
+desc "```\nGITHUB_API_TOKEN=token_goes_here fastlane xcodegen_generate_xcodeproj\n```"
+desc ""
 lane :compile_foss do
-  require 'open-uri'
+  dependencies_yaml = YAML.load_file("../dependencies.yml")
 
-  dependencies = YAML.load_file("../dependencies.yml").map { |entry|
-    UI.message("Load #{entry[:name]}")
-    license = ""
-    URI.open(entry[:license_uri]).read().each_line{|line| license += "#{line.strip}\n" }
-    license = license.gsub(/\R{2}/, 'PARAGRAPH_BREAK')
-    license = license.gsub(/\R{1}/, ' ')
-    license = license.gsub(/PARAGRAPH_BREAK/, "</p>\n\n<p>")
-    entry[:license] = "<p>#{license}</p>"
-
-    entry
+  # Dependencies that we maintain manually
+  dependencies_additional = dependencies_yaml["additional"]
+ 
+  # Dependencies from /eRp-App.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved
+  dependencies_package_resolved = dependencies_package_resolved()
+  exclude_identities_from_package_resolved = dependencies_yaml["exclude_identities_from_package_resolved"]
+  dependencies_package_resolved = dependencies_package_resolved.filter { |dependency| 
+    not exclude_identities_from_package_resolved.include? dependency[:identity]
   }
 
+  # Merge all dependency arrays before proceeding
+  dependencies = dependencies_additional | dependencies_package_resolved
+
+  # Load license texts from respective repo URIs
+  dependencies.each { |entry|
+    UI.message("Load license text for #{entry[:name]}")
+    license = ""
+
+    unless entry[:license_uri].nil? 
+      URI.open(entry[:license_uri]).read().each_line{|line| license += "#{line.strip}\n" }
+      license = license.gsub(/\R{2}/, 'PARAGRAPH_BREAK')
+      license = license.gsub(/\R{1}/, ' ')
+      license = license.gsub(/PARAGRAPH_BREAK/, "</p>\n\n<p>")
+    else
+      UI.important("IMPORTANT: No license URI available for #{entry[:name]}")
+    end
+
+    entry[:license] = "<p>#{license}</p>"
+
+    entry 
+  }
+  
   erb_path = File.join(File.dirname(__FILE__), '..', 'Templates', 'ERB', 'FOSS.html.erb')
   erb_out_path = erb_path.sub('.erb','').sub('/Templates/ERB','/Sources/eRpApp/Resources/en-GB.lproj')
   erb = ERB.new(File.read(erb_path))
@@ -790,6 +838,59 @@ lane :compile_foss do
   end
 
 end
+
+def dependencies_package_resolved
+  require 'open-uri' 
+  require 'json'
+
+  file = File.read('../eRp-App.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved')
+  data_hash = JSON.parse(file)
+
+  dependencies = data_hash['pins'].map do |pin|
+    UI.message("#{pin}")
+    identity = pin['identity']
+    location = pin['location']
+    version = pin['state']['version']
+    revision = pin['state']['revision']
+
+    dependency = {}
+    dependency[:name] = identity # TODO: better use repo_name here, it's often prettier than identity
+    dependency[:identity] = identity
+    dependency[:url] = location
+
+    # API curls for the license URI
+    license_uri = curl_license_url_from_github(location) if location.include? "github.com"
+    dependency[:license_uri] = license_uri
+    dependency[:version] = version||revision
+
+    dependency
+  end
+
+  dependencies
+end
+
+def curl_license_url_from_github(repo_url)
+  require 'net/http'
+  require 'uri'
+
+  repo_url = repo_url.gsub(".git", "")
+  repo_owner, repo_name = repo_url.split("/").last(2)
+
+  download_url = ""
+  repo_url = "https://api.github.com/repos/#{repo_owner}/#{repo_name}/license"
+  uri = URI.parse(repo_url)
+
+  req = Net::HTTP::Get.new(uri)
+  req['Authorization'] = "Bearer #{ENV['GITHUB_API_TOKEN']}" if ENV['GITHUB_API_TOKEN']
+  response = Net::HTTP.start(uri.hostname, uri.port, :use_ssl => true) { |http|
+    http.request(req)
+  }
+  UI.error("Bad credentials or authorisation") if response.body.include? "Bad credentials"
+
+  data_hash = JSON.parse(response.body)
+  download_url = data_hash['download_url']
+  download_url
+end  
 
 
 def notify_teams_channel(url = "no_hook", stream = "Unknown stream", success = true, optional_message = "")

@@ -26,6 +26,7 @@ extension ReducerProtocol
     }
 }
 
+// [REQ:BSI-eRp-ePA:O.Purp_2#4,O.Purp_4#1,O.Data_6#6] User interaction analytics trigger ...
 struct AnalyticsReducer<ContentReducer: ReducerProtocol>: ReducerProtocol
     where ContentReducer.Action == AppStartDomain.Action, ContentReducer.State == AppStartDomain.State {
     typealias State = ContentReducer.State

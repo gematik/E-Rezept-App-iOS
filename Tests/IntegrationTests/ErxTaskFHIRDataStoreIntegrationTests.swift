@@ -143,7 +143,8 @@ final class ErxTaskFHIRDataStoreIntegrationTests: XCTestCase {
         expect(didLoadCommunications).to(beTrue())
     }
 
-    func testConsentFlow() throws {
+    // Temporarily deactivated, since the test is only configured for RUDev but not working there
+    func deactivated_testConsentFlow() throws {
         guard let signer = environment.brainpool256r1Signer else {
             throw XCTSkip("Skip test because no signing entity available")
         }

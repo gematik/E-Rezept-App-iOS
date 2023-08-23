@@ -84,7 +84,36 @@ struct EditProfilePictureFullView: View {
                     .padding([.horizontal, .bottom])
             }
             Spacer()
+
+            Rectangle()
+                .frame(width: 0, height: 0, alignment: .center)
+                .fullScreenCover(isPresented: Binding<Bool>(
+                    get: { viewStore.destinationTag == .cameraPicker },
+                    set: { show in
+                        if !show {
+                            viewStore.send(.setNavigation(tag: nil))
+                        }
+                    }
+                ),
+                onDismiss: {},
+                content: {
+                    ZStack {
+                        CameraPicker(picketImage: viewStore.binding(
+                            get: \.userImageData,
+                            send: EditProfilePictureDomain.Action.setUserImageData
+                        )).ignoresSafeArea()
+
+                        CameraAuthorizationAlertView()
+                    }
+                })
+                .hidden()
+                .accessibility(hidden: true)
         }
+        .alert(
+            store.destinationsScope(state: /EditProfilePictureDomain.Destinations.State.alert),
+            dismiss: .nothing
+        )
+        .keyboardShortcut(.defaultAction)
         .padding()
         .background(Color(.secondarySystemBackground))
         .navigationTitle(L10n.editPictureTxt)
@@ -125,26 +154,27 @@ extension EditProfilePictureFullView {
         struct ViewState: Equatable {
             let profile: UserProfile
             let color: ProfileColor
+            let destinationTag: EditProfilePictureDomain.Destinations.State.Tag?
 
             init(state: EditProfilePictureDomain.State) {
                 profile = state.profile
                 color = state.color ?? .grey
+                destinationTag = state.destination?.tag
             }
         }
 
         var body: some View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack {
-                    Button(action: {
-                        viewStore.send(.setNavigation(tag: .photoPicker))
-                    }, label: {
-                        Image(systemName: SFSymbolName.camera)
-                            .frame(width: 80, height: 80)
-                            .font(Font.headline.weight(.bold))
-                            .foregroundColor(Color(.secondaryLabel))
-                            .background(Circle().fill(Colors.secondary))
-                            .border(Colors.systemGray4, width: 1, cornerRadius: 99)
-                    })
+                    Image(systemName: SFSymbolName.camera)
+                        .frame(width: 80, height: 80)
+                        .font(Font.headline.weight(.bold))
+                        .foregroundColor(Colors.systemColorBlack)
+                        .background(Circle().fill(Colors.systemGray5))
+                        .accessibility(identifier: A11y.settings.editProfilePictureFull.stgEppBtnChooseType)
+                        .onTapGesture {
+                            viewStore.send(.setNavigation(tag: .alert))
+                        }
 
                     ForEach(ProfilePicture.allCases, id: \.rawValue) { image in
                         if let displayImage = image.description, !displayImage.name.isEmpty {
@@ -172,12 +202,13 @@ extension EditProfilePictureFullView {
 
         var body: some View {
             Button(action: action) {
-                Image(systemName: SFSymbolName.crossIconPlain)
+                Image(systemName: SFSymbolName.trash)
                     .font(Font.caption.weight(.bold))
                     .foregroundColor(Color(.secondaryLabel))
                     .padding(8)
                     .background(Circle().foregroundColor(Colors.systemColorWhite))
             }
+            .accessibility(identifier: A11y.settings.editProfilePictureFull.stgEppBtnResetPicture)
             .padding()
         }
     }

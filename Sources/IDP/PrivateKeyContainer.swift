@@ -26,6 +26,7 @@ import Security
 ///
 /// [REQ:gemSpec_IDP_Frontend:A_21590] This is the container to represent biometric keys. Usage is limited to
 /// authorization purposes
+/// [REQ:BSI-eRp-ePA:O.Cryp_7#2] Container for private key operations using secure enclave private keys
 public struct PrivateKeyContainer {
     // sourcery: CodedError = "108"
     public enum Error: Swift.Error {
@@ -70,6 +71,7 @@ public struct PrivateKeyContainer {
 
     private static func findExistingKey(for tag: String) throws -> SecKey {
         // Keychain Query
+        // [REQ:BSI-eRp-ePA:O.Cryp_3#2,O.Cryp_6#2] Secure Enclave Key generation
         let query: [String: Any] = [kSecClass as String: kSecClassKey,
                                     kSecAttrKeyType as String: kSecAttrKeyTypeECSECPrimeRandom,
                                     kSecAttrKeySizeInBits as String: 256,
@@ -138,6 +140,7 @@ public struct PrivateKeyContainer {
                                             // [REQ:gemSpec_IDP_Frontend:A_21587] via `.privateKeyUsage`
                                             [.privateKeyUsage,
                                              // [REQ:gemSpec_IDP_Frontend:A_21586] invalidates biometry after changes
+                                             // [REQ:BSI-eRp-ePA:O.Biom_6#2] invalidates biometry after changes
                                              .biometryCurrentSet], &error) else {
             guard let error = error else {
                 throw Error.unknownError("Access Control creation failed")

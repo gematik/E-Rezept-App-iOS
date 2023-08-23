@@ -26,4 +26,14 @@ extension View {
     var backport: Backport<Self> { Backport(content: self) }
 }
 
-extension Backport where Content: View {}
+extension Backport where Content: View {
+    @ViewBuilder func tabContainerToolBarBackground() -> some View {
+        if #available(iOS 16, *) {
+            content
+                .toolbarBackground(.visible, for: .tabBar)
+                .toolbarBackground(Asset.Colors.tabViewToolBarBackground.color, for: .tabBar)
+        } else {
+            content
+        }
+    }
+}

@@ -342,6 +342,11 @@
 "edit_color_txt" = "لون الخلفية";
 "edit_picture_txt" = "تعديل الصورة الشخصية";
 "email_subject_fallback" = "تطبيق iOS: تقرير الخطأ";
+"epp_btn_alert_abort" = "Abbrechen";
+"epp_btn_alert_camera" = "Kamera";
+"epp_btn_alert_library" = "Foto auswählen";
+"epp_txt_alert_header_profile" = "Profilbild wählen";
+"epp_txt_alert_subheader_choose" = "Wie möchten Sie fortfahren?";
 "erp_txt_tooltips_add_profile" = "انقر هنا لإنشاء ملف تعريف جديد";
 "erp_txt_tooltips_profile_rename" = "اضغط مع الاستمرار لتعديل الأسماء";
 "erp_txt_tooltips_scan" = "انقر هنا لمسح الوصفات الطبية";

@@ -21,6 +21,7 @@ import eRpKit
 import Foundation
 
 /// Interface to access user specific data
+/// [REQ:BSI-eRp-ePA:O.Arch_2#5] User data that has no password character
 public class UserDefaultsStore: UserDataStore {
     private var userDefaults: UserDefaults
 

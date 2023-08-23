@@ -31,106 +31,128 @@ struct OrderHealthCardInquiryView: View {
 
     struct ViewState: Equatable {
         let routeTag: OrderHealthCardDomain.Destinations.State.Tag?
+        var hasContactInfo: Bool
 
         init(state: OrderHealthCardDomain.State) {
             routeTag = state.destination?.tag
+            hasContactInfo = state.hasContactInformation
         }
     }
 
     var body: some View {
         VStack {
-            VStack(alignment: .center) {
-                Spacer()
+            if !viewStore.hasContactInfo {
+                ZStack(alignment: .bottom) {
+                    Image(Asset.OrderEGK.womanShrug)
+                        .resizable()
+                        .scaledToFit()
+                        .clipShape(Circle())
+                        .frame(width: 200, height: 200)
 
-                Image(Asset.OrderEGK.blueEGK)
-                    .resizable()
-                    .scaledToFit()
-                    .clipShape(Circle())
-                    .frame(width: 240, height: 240)
-
-                Text(L10n.orderEgkServiceTitle)
-                    .font(Font.largeTitle.weight(.bold))
-                    .foregroundColor(Color(.label))
-                    .padding()
-                    .multilineTextAlignment(.center)
-
-                Text(L10n.orderEgkServiceSubtitle)
+                    Text(L10n.oderEgkContactNoTitle)
+                        .font(Font.body.weight(.bold))
+                        .foregroundColor(Color(.label))
+                        .multilineTextAlignment(.center)
+                }.padding()
+                Text(L10n.oderEgkContactNoSubtitle)
                     .font(.subheadline)
                     .foregroundColor(Colors.systemLabelSecondary)
                     .multilineTextAlignment(.center)
+                    .padding()
+            } else {
+                VStack(alignment: .center) {
+                    Spacer()
 
-                Spacer()
+                    Image(Asset.OrderEGK.blueEGK)
+                        .resizable()
+                        .scaledToFit()
+                        .clipShape(Circle())
+                        .frame(width: 240, height: 240)
 
-                Group {
-                    Button(action: {
-                        viewStore.send(.setService(service: .pin))
-                    }, label: {
-                        HStack {
-                            Text(L10n.orderEgkPin)
-                                .font(Font.body.weight(.bold))
-                                .foregroundColor(Colors.systemLabel)
-                                .multilineTextAlignment(.leading)
-                                .accessibilityIdentifier(A11y.cardWall.intro.cdwBtnIntroLater)
-
-                            Spacer(minLength: 8)
-                            Image(systemName: SFSymbolName.rightDisclosureIndicator)
-                                .font(Font.headline.weight(.semibold))
-                                .foregroundColor(Color(.tertiaryLabel))
-                                .padding(8)
-                        }
+                    Text(L10n.orderEgkServiceTitle)
+                        .font(Font.largeTitle.weight(.bold))
+                        .foregroundColor(Color(.label))
                         .padding()
-                    })
-                        .buttonStyle(DefaultButtonStyle())
-                        .background(Colors.systemBackgroundTertiary)
-                        .border(Colors.separator, width: 0.5, cornerRadius: 16)
-                        .padding()
+                        .multilineTextAlignment(.center)
 
-                    Button(action: {
-                        viewStore.send(.setService(service: .healthCardAndPin))
-                    }, label: {
-                        HStack {
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text(L10n.orderEgkPinCard)
+                    Text(L10n.orderEgkServiceSubtitle)
+                        .font(.subheadline)
+                        .foregroundColor(Colors.systemLabelSecondary)
+                        .multilineTextAlignment(.center)
+
+                    Spacer()
+
+                    Group {
+                        Button(action: {
+                            viewStore.send(.setService(service: .pin))
+                        }, label: {
+                            HStack {
+                                Text(L10n.orderEgkPin)
                                     .font(Font.body.weight(.bold))
                                     .foregroundColor(Colors.systemLabel)
-                            }
-                            .multilineTextAlignment(.leading)
+                                    .multilineTextAlignment(.leading)
+                                    .accessibilityIdentifier(A11y.cardWall.intro.cdwBtnIntroLater)
 
-                            Spacer(minLength: 8)
-                            Image(systemName: SFSymbolName.rightDisclosureIndicator)
-                                .font(Font.headline.weight(.semibold))
-                                .foregroundColor(Color(.tertiaryLabel))
-                                .padding(8)
-                        }
-                        .padding()
-                    })
-                        .buttonStyle(DefaultButtonStyle())
-                        .background(Colors.systemBackgroundTertiary)
-                        .border(Colors.separator, width: 0.5, cornerRadius: 16)
-                        .padding([.trailing, .leading, .bottom])
-                }
-
-                NavigationLink(
-                    isActive: .init(
-                        get: {
-                            viewStore.routeTag != .searchPicker && viewStore.routeTag != .serviceInquiry
-                        },
-                        set: { active in
-                            if active {
-                                // Handled by Domain
-                            } else {
-                                viewStore.send(.setNavigation(tag: .serviceInquiry))
+                                Spacer(minLength: 8)
+                                Image(systemName: SFSymbolName.rightDisclosureIndicator)
+                                    .font(Font.headline.weight(.semibold))
+                                    .foregroundColor(Color(.tertiaryLabel))
+                                    .padding(8)
                             }
-                        }
-                    ),
-                    destination: {
-                        OrderHealthCardContactView(store: store)
-                    },
-                    label: {
-                        EmptyView()
+                            .padding()
+                        })
+                            .buttonStyle(DefaultButtonStyle())
+                            .background(Colors.systemBackgroundTertiary)
+                            .border(Colors.separator, width: 0.5, cornerRadius: 16)
+                            .padding()
+
+                        Button(action: {
+                            viewStore.send(.setService(service: .healthCardAndPin))
+                        }, label: {
+                            HStack {
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text(L10n.orderEgkPinCard)
+                                        .font(Font.body.weight(.bold))
+                                        .foregroundColor(Colors.systemLabel)
+                                }
+                                .multilineTextAlignment(.leading)
+
+                                Spacer(minLength: 8)
+                                Image(systemName: SFSymbolName.rightDisclosureIndicator)
+                                    .font(Font.headline.weight(.semibold))
+                                    .foregroundColor(Color(.tertiaryLabel))
+                                    .padding(8)
+                            }
+                            .padding()
+                        })
+                            .buttonStyle(DefaultButtonStyle())
+                            .background(Colors.systemBackgroundTertiary)
+                            .border(Colors.separator, width: 0.5, cornerRadius: 16)
+                            .padding([.trailing, .leading, .bottom])
                     }
-                )
-                .accessibility(hidden: true)
+
+                    NavigationLink(
+                        isActive: .init(
+                            get: {
+                                viewStore.routeTag != .searchPicker && viewStore.routeTag != .serviceInquiry
+                            },
+                            set: { active in
+                                if active {
+                                    // Handled by Domain
+                                } else {
+                                    viewStore.send(.setNavigation(tag: .serviceInquiry))
+                                }
+                            }
+                        ),
+                        destination: {
+                            OrderHealthCardContactView(store: store)
+                        },
+                        label: {
+                            EmptyView()
+                        }
+                    )
+                    .accessibility(hidden: true)
+                }
             }
         }
         .navigationBarItems(

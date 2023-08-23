@@ -342,6 +342,11 @@
 "edit_color_txt" = "Фоновый цвет";
 "edit_picture_txt" = "Изменить изображение профиля";
 "email_subject_fallback" = "Приложение для iOS: отчет об ошибке";
+"epp_btn_alert_abort" = "Abbrechen";
+"epp_btn_alert_camera" = "Kamera";
+"epp_btn_alert_library" = "Foto auswählen";
+"epp_txt_alert_header_profile" = "Profilbild wählen";
+"epp_txt_alert_subheader_choose" = "Wie möchten Sie fortfahren?";
 "erp_txt_tooltips_add_profile" = "Нажмите здесь, чтобы создать новый профиль";
 "erp_txt_tooltips_profile_rename" = "Длительное нажатие для редактирования имен";
 "erp_txt_tooltips_scan" = "Нажмите здесь, чтобы отсканировать рецепты";

@@ -263,7 +263,7 @@ extension Array where Element == PharmacyLocationViewModel {
         if filterOptions.contains(.open) {
             return filter { location in
                 switch location.todayOpeningState {
-                case .open:
+                case .open, .closingSoon:
                     return true
                 default:
                     return false

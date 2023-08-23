@@ -46,6 +46,7 @@ struct SettingsView: View {
         NavigationView {
             ScrollView {
                 VStack(spacing: 0) {
+                    // [REQ:BSI-eRp-ePA:O.Source_8#3] Debug menu is only visible on debug builds
                     #if ENABLE_DEBUG_VIEW
                     DebugSectionView(store: store)
                     #endif
@@ -72,6 +73,7 @@ struct SettingsView: View {
                 )
 
                 // Tracking comply sheet presentation
+                // [REQ:BSI-eRp-ePA:O.Purp_5#3] Show comply view for settings triggered analytics enabling
                 Rectangle()
                     .frame(width: 0, height: 0, alignment: .center)
                     .sheet(isPresented: Binding<Bool>(
@@ -255,6 +257,8 @@ extension SettingsView {
                     .accessibilityIdentifier(A18n.settings.tracking.stgTrkTxtFootnote)
             }, content: {
                 // [REQ:gemSpec_eRp_FdV:A_19097] Toggle within Settings to enable and disable usage tracking
+                // [REQ:BSI-eRp-ePA:O.Purp_5#1] Toggle within Settings to enable and disable usage tracking
+                // [REQ:BSI-eRp-ePA:O.Purp_6#1] Current Analytics state is inspectable by the user
                 Toggle(isOn: viewStore.binding(
                     get: \.trackerOptIn,
                     send: SettingsDomain.Action.toggleTrackingTapped
@@ -286,6 +290,7 @@ extension SettingsView {
     }
 
     #if ENABLE_DEBUG_VIEW
+    // [REQ:BSI-eRp-ePA:O.Source_8#4] DebugSectionView is only available on debug builds
     private struct DebugSectionView: View {
         let store: SettingsDomain.Store
         @ObservedObject var viewStore: ViewStore<ViewState, SettingsDomain.Action>

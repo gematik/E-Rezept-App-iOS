@@ -204,6 +204,7 @@ struct SettingsDomain: ReducerProtocol {
 
         // Tracking
         // [REQ:gemSpec_eRp_FdV:A_19088, A_19089, A_19092, A_19097] OptIn for usage tracking
+        // [REQ:BSI-eRp-ePA:O.Purp_5#2] Actual disabling of analytics
         case let .toggleTrackingTapped(optIn):
             if optIn {
                 // [REQ:gemSpec_eRp_FdV:A_19091#3] Show comply route to display analytics usage within settings
@@ -215,6 +216,7 @@ struct SettingsDomain: ReducerProtocol {
             }
             return .none
         // [REQ:gemSpec_eRp_FdV:A_19090,A_19091#4] User confirms the opt in within settings
+        // [REQ:BSI-eRp-ePA:O.Purp_5#4] User confirms the opt in within settings
         case .confirmedOptInTracking:
             state.trackerOptIn = true
             tracker.optIn = true

@@ -62,6 +62,7 @@ struct SettingsLegalInfoView: View {
             .accessibility(identifier: A18n.settings.legalNotice.stgLnoTxtLegalNotice)
             .buttonStyle(.navigation)
 
+            // [REQ:BSI-eRp-ePA:O.Arch_9#3] DataPrivacy display within Settings
             NavigationLink(
                 destination: IfLetStore(
                     store.destinationsScope(

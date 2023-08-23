@@ -100,6 +100,8 @@ struct PharmacyDetailDomain: ReducerProtocol {
             pharmacyViewModel.pharmacyLocation
         }
 
+        // If there was a login before the profile is locked to that
+        var wasProfileAuthenticatedBefore = false
         var reservationService: RedeemServiceOption = .noService
         var shipmentService: RedeemServiceOption = .noService
         var deliveryService: RedeemServiceOption = .noService
@@ -173,7 +175,8 @@ struct PharmacyDetailDomain: ReducerProtocol {
                 .eraseToEffect()
                 .cancellable(id: Token.loadProfile, cancelInFlight: true)
         case let .response(.currentProfileReceived(profile)):
-            if profile?.hasDoneLoginBefore == false, state.pharmacy.hasAVSEndpoints {
+            state.wasProfileAuthenticatedBefore = profile?.isLinkedToInsuranceId ?? false
+            if state.pharmacy.hasAVSEndpoints {
                 // load certificate for avs service
                 return pharmacyRepository.loadAvsCertificates(for: state.pharmacyViewModel.id)
                     .first()
@@ -183,7 +186,7 @@ struct PharmacyDetailDomain: ReducerProtocol {
                     .cancellable(id: Token.loadCertificates, cancelInFlight: true)
             } else {
                 let provider = RedeemOptionProvider(
-                    wasAuthenticatedBefore: profile?.hasDoneLoginBefore ?? false,
+                    wasAuthenticatedBefore: state.wasProfileAuthenticatedBefore,
                     pharmacy: state.pharmacy
                 )
                 state.reservationService = provider.reservationService
@@ -200,7 +203,7 @@ struct PharmacyDetailDomain: ReducerProtocol {
             }
 
             let provider = RedeemOptionProvider(
-                wasAuthenticatedBefore: false,
+                wasAuthenticatedBefore: state.wasProfileAuthenticatedBefore,
                 pharmacy: state.pharmacy
             )
             state.reservationService = provider.reservationService

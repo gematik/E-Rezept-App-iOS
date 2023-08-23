@@ -20,6 +20,7 @@ import ComposableArchitecture
 import eRpStyleKit
 import SwiftUI
 
+// [REQ:BSI-eRp-ePA:O.Pass_3#2] View for changing the user password
 struct CreatePasswordView: View {
     let store: CreatePasswordDomain.Store
     @ObservedObject private var viewStore: ViewStore<CreatePasswordDomain.State, CreatePasswordDomain.Action>

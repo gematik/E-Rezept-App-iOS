@@ -287,6 +287,7 @@ struct EditProfileDomain: ReducerProtocol {
         case .delegate(.logout):
             state.token = nil
             // [REQ:gemSpec_IDP_Frontend:A_20499-01#1] Call the SSO_TOKEN removal upon manual logout
+            // [REQ:BSI-eRp-ePA:O.Tokn_6#3] Call the token removal upon manual logout
             return profileSecureDataWiper.wipeSecureData(of: state.profileId).fireAndForget()
         case .login:
             userDataStore.set(selectedProfileId: state.profileId)

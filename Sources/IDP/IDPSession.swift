@@ -33,6 +33,8 @@ public protocol IDPSession {
     var isLoggedIn: AnyPublisher<Bool, IDPError> { get }
 
     /// Subscribe to the session's IDPToken and receive the latest (session) token through this Publisher
+    ///
+    /// [REQ:gemSpec_eRp_FdV:A_19480] usage of this token is limited to FD/IDP Access.
     var autoRefreshedToken: AnyPublisher<IDPToken?, IDPError> { get }
 
     /// Invalidates the active token. Use to logout the user or mark the existing Session as invalid, e.g. due to an

@@ -342,6 +342,11 @@
 "edit_color_txt" = "Arka plan rengi";
 "edit_picture_txt" = "Profil resmini düzenle";
 "email_subject_fallback" = "iOS uygulaması: Hata raporu";
+"epp_btn_alert_abort" = "Abbrechen";
+"epp_btn_alert_camera" = "Kamera";
+"epp_btn_alert_library" = "Foto auswählen";
+"epp_txt_alert_header_profile" = "Profilbild wählen";
+"epp_txt_alert_subheader_choose" = "Wie möchten Sie fortfahren?";
 "erp_txt_tooltips_add_profile" = "Yeni bir profil oluşturmak için buraya basın";
 "erp_txt_tooltips_profile_rename" = "İsimleri düzenlemek için uzun basın";
 "erp_txt_tooltips_scan" = "Reçeteleri taramak için buraya dokunun";

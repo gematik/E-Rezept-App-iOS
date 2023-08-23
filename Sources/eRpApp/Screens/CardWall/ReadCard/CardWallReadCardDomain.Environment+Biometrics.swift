@@ -122,6 +122,7 @@ extension CardWallReadCardDomain.Environment {
     ) -> EffectTask<CardWallReadCardDomain.Action> {
         let pairingSession: PairingSession
         do {
+            // [REQ:BSI-eRp-ePA:O.Source_5#4] Creation of the pairing session
             pairingSession = try signatureProvider.createPairingSession()
         } catch {
             return Just(.response(.state(.retrievingChallenge(.error(.biometrieError(error)))))).eraseToEffect()
@@ -216,6 +217,7 @@ extension CardWallReadCardDomain.Environment {
                         subscriber
                             .send(CardWallReadCardDomain.Action.response(.state(.signingChallenge(.error(error)))))
                         // [REQ:gemSpec_IDP_Frontend:A_21598,A_21595] Failure will delete paring data
+                        // [REQ:BSI-eRp-ePA:O.Source_5#5] Failure will delete paring data
                         _ = try? signatureProvider.abort(pairingSession: pairingSession)
                     }
                     subscriber.send(completion: .finished)

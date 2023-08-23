@@ -70,6 +70,7 @@ internal enum Asset {
     internal static let secondary700 = ColorAsset(name: "secondary700")
     internal static let secondary800 = ColorAsset(name: "secondary800")
     internal static let secondary900 = ColorAsset(name: "secondary900")
+    internal static let tabViewToolBarBackground = ColorAsset(name: "tabViewToolBarBackground")
     internal static let yellow100 = ColorAsset(name: "yellow100")
     internal static let yellow200 = ColorAsset(name: "yellow200")
     internal static let yellow300 = ColorAsset(name: "yellow300")

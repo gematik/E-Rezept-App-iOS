@@ -244,6 +244,11 @@ settings:
     - stg_btn_new_profile_save
     - stg_btn_new_profile_cancel
     - stg_inp_new_profile_name
+  editProfilePictureFull:
+    - stg_epp_btn_reset_picture
+    - stg_epp_btn_choose_type
+    - stg_epp_btn_action_camera
+    - stg_epp_btn_action_library
   auditEvents:
     - stg_ctn_audit_events_events
     - stg_ctn_audit_events_event_title
@@ -351,6 +356,11 @@ profileSelection:
   - pro_btn_selection_profile_entry
   - pro_btn_selection_profile_row
   - pro_btn_selection_add_profile
+editProfilePicture:
+    - epp_btn_reset_picture
+    - epp_btn_choose_type
+    - epp_btn_action_camera
+    - epp_btn_action_library
 prescriptionDetails:
   - prsc_dtl_txt_title
   - prsc_dtl_btn_toggle_redeem

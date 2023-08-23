@@ -144,6 +144,7 @@ struct ExtAuthPendingDomain: ReducerProtocol {
                 }
             }
             return .none
+        // [REQ:BSI-eRp-ePA:O.Source_1#8] Validate data by parsing url and only allowing predefined variables as String
         case let .externalLogin(url):
             let environment = environment
             let entry: KKAppDirectory.Entry?

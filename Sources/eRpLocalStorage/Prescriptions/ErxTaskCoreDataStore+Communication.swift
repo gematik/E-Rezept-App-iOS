@@ -51,13 +51,6 @@ extension ErxTaskCoreDataStore {
         request.sortDescriptors = [NSSortDescriptor(key: #keyPath(ErxTaskCommunicationEntity.timestamp),
                                                     ascending: false)]
         var subPredicates = [NSPredicate]()
-        if let identifier = profileId {
-            let profilePredicate = NSPredicate(
-                format: "%K == %@",
-                argumentArray: [#keyPath(ErxTaskCommunicationEntity.task.profile.identifier), identifier]
-            )
-            subPredicates.append(profilePredicate)
-        }
         if !profile.isAll {
             let comProfile = NSPredicate(
                 format: "%K == %@",

@@ -49,6 +49,8 @@ struct AVScannerView: UIViewControllerRepresentable {
     }
 }
 
+// [REQ:BSI-eRp-ePA:O.Data_8#2] This controller uses the camera as an input device. Frames are processed but never
+// stored, metadata is never created here.
 class AVScannerViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate {
     /// These are the code types we will analyse further.
     var erxCodeTypes: [AVMetadataObject.ObjectType] = []

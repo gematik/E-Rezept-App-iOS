@@ -199,6 +199,7 @@ extension MainDomain {
         case .unsubscribeFromDemoModeChange:
             return Self.cleanup()
         case let .externalLogin(url):
+            // [REQ:BSI-eRp-ePA:O.Source_1#7] redirect into correct domain
             return EffectTask(value: .extAuthPending(action: .externalLogin(url)))
                 .delay(for: 5, scheduler: environment.schedulers.main)
                 .eraseToEffect()

@@ -40,6 +40,26 @@ final class OrderHealthCardViewSnapshotTests: XCTestCase {
         assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
     }
 
+    func testOrderHealthCardView_SelectedInsuranceNoContact() {
+        let sut = OrderHealthCardInquiryView(store:
+            OrderHealthCardDomain.Store(
+                initialState: .init(insuranceCompany: OrderHealthCardDomain
+                    .HealthInsuranceCompany(name: "EmptyKK",
+                                            healthCardAndPinPhone: "",
+                                            healthCardAndPinMail: "",
+                                            healthCardAndPinUrl: "",
+                                            pinUrl: "",
+                                            subjectCardAndPinMail: "",
+                                            bodyCardAndPinMail: "",
+                                            subjectPinMail: "",
+                                            bodyPinMail: "")),
+                reducer: EmptyReducer()
+            ))
+        assertSnapshots(matching: sut, as: snapshotModiOnDevices())
+        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithAccessibility())
+        assertSnapshots(matching: sut, as: snapshotModiOnDevicesWithTheming())
+    }
+
     func testOrderHealthCardView_SelectedInsurance() {
         let sut = OrderHealthCardInquiryView(store:
             OrderHealthCardDomain.Store(

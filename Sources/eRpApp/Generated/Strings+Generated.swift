@@ -737,6 +737,16 @@ import SwiftUI
     internal static let editPictureTxt = StringAsset("edit_picture_txt")
     /// iOS App: Error report
     internal static let emailSubjectFallback = StringAsset("email_subject_fallback")
+    /// Abbrechen
+    internal static let eppBtnAlertAbort = StringAsset("epp_btn_alert_abort")
+    /// Kamera
+    internal static let eppBtnAlertCamera = StringAsset("epp_btn_alert_camera")
+    /// Foto auswählen
+    internal static let eppBtnAlertLibrary = StringAsset("epp_btn_alert_library")
+    /// Profilbild wählen
+    internal static let eppTxtAlertHeaderProfile = StringAsset("epp_txt_alert_header_profile")
+    /// Wie möchten Sie fortfahren?
+    internal static let eppTxtAlertSubheaderChoose = StringAsset("epp_txt_alert_subheader_choose")
     /// Press here to create a new profile
     internal static let erpTxtTooltipsAddProfile = StringAsset("erp_txt_tooltips_add_profile")
     /// Long press to edit names

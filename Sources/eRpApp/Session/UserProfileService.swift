@@ -161,7 +161,6 @@ struct DefaultUserProfileService: UserProfileService {
 
     func activeUserProfilePublisher() -> AnyPublisher<UserProfile, UserProfileServiceError> {
         userSession.profile()
-//            .removeDuplicates()
             .mapError(UserProfileServiceError.localStoreError)
             .combineLatest(
                 userSession.isAuthenticated

@@ -342,6 +342,11 @@
 "edit_color_txt" = "Background colour";
 "edit_picture_txt" = "Edit profile picture";
 "email_subject_fallback" = "iOS App: Error report";
+"epp_btn_alert_abort" = "Abbrechen";
+"epp_btn_alert_camera" = "Kamera";
+"epp_btn_alert_library" = "Foto auswählen";
+"epp_txt_alert_header_profile" = "Profilbild wählen";
+"epp_txt_alert_subheader_choose" = "Wie möchten Sie fortfahren?";
 "erp_txt_tooltips_add_profile" = "Press here to create a new profile";
 "erp_txt_tooltips_profile_rename" = "Long press to edit names";
 "erp_txt_tooltips_scan" = "Tap here to scan prescriptions";

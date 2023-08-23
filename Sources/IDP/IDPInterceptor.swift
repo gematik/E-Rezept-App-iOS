@@ -66,7 +66,7 @@ public class IDPInterceptor: Interceptor {
                     guard let token = token else {
                         throw IDPError.tokenUnavailable
                     }
-                    // [REQ:gemSpec_IDP_Frontend:A_20602]
+                    // [REQ:gemSpec_IDP_Frontend:A_20602,A_21325#1]
                     request.setValue("\(token.tokenType) \(token.accessToken)", forHTTPHeaderField: "Authorization")
                     return request
                 }
@@ -81,6 +81,7 @@ public class IDPInterceptor: Interceptor {
                         .handleEvents(receiveOutput: { httpResponse in
                             if httpResponse.status == HTTPStatusCode.unauthorized {
                                 // [REQ:gemSpec_eRp_FdV:A_20167] invalidate/delete unauthorized token
+                                // [REQ:BSI-eRp-ePA:O.Source_5#2] invalidate/delete unauthorized token
                                 self.session.invalidateAccessToken()
                             }
                         })

@@ -68,6 +68,7 @@ struct DefaultDeviceSecurityManager: DeviceSecurityManager {
         self.laContext = laContext
     }
 
+    // [REQ:BSI-eRp-ePA:O.Arch_6#3,O.Resi_2#3,O.Plat_1#3] calculate system risk for jailbreak and missing device pin
     var showSystemSecurityWarning: AnyPublisher<DeviceSecurityWarningType, Never> {
         if informJailbreakDetected() {
             return Just(DeviceSecurityWarningType.jailbreakDetected).eraseToAnyPublisher()
@@ -77,6 +78,7 @@ struct DefaultDeviceSecurityManager: DeviceSecurityManager {
             .eraseToAnyPublisher()
     }
 
+    // [REQ:BSI-eRp-ePA:O.Plat_1#4] Missing system pin detection
     var informMissingSystemPin: AnyPublisher<Bool, Never> {
         var error: NSError?
         let localAuthenticationEvaluationSuccess = laContext.canEvaluatePolicy(
@@ -121,6 +123,7 @@ struct DefaultDeviceSecurityManager: DeviceSecurityManager {
     }
 
     // [REQ:gemSpec_BSI_FdV:A_20937] Jailbreak detection
+    // [REQ:BSI-eRp-ePA:O.Arch_6#4,O.Resi_2#4] Jailbreak detection
     func informJailbreakDetected() -> Bool {
         #if targetEnvironment(simulator)
         return false

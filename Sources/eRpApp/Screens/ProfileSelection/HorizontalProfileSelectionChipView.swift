@@ -23,8 +23,8 @@ struct HorizontalProfileSelectionChipView: View {
     let userProfile: UserProfile
     let isSelected: Bool
 
-    private let showConnectionStatusTimeInterval = 2
-    @State private var showConnectionStatus = false
+    var showConnectionStatusTimeInterval = 2
+    @State var showConnectionStatus = false
 
     var body: some View {
         HStack(alignment: .center) {
@@ -82,12 +82,16 @@ struct HorizontalProfileSelectionChipView_Preview: PreviewProvider {
 
             HorizontalProfileSelectionChipView(
                 userProfile: UserProfile.Dummies.profileA,
-                isSelected: false
+                isSelected: false,
+                showConnectionStatusTimeInterval: 1000,
+                showConnectionStatus: true
             )
 
             HorizontalProfileSelectionChipView(
                 userProfile: UserProfile.Dummies.profileB,
-                isSelected: false
+                isSelected: false,
+                showConnectionStatusTimeInterval: 1000,
+                showConnectionStatus: true
             )
 
             HorizontalProfileSelectionChipView(

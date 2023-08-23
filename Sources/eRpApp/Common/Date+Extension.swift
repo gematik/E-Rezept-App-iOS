@@ -22,10 +22,24 @@ extension Date {
     ///
     /// - Parameters:
     ///   - date: the `date` to compare self with
-    ///   - timeZone: time zone of the used date (will be applied to both dates)
     /// - Returns: number of days left to `date`. Returns a negative number if `date` lies in the past relatet to self
-    func days(until date: Date, timeZone: TimeZone? = nil) -> Int? {
-        Date.days(from: self, to: date, timeZone: timeZone)
+    func days(until date: Date) -> Int? {
+        Date.days(from: self, to: date)
+    }
+
+    /// Calculates remaining days between self and a given date.
+    /// including the day of the end date
+    ///
+    /// - Parameters:
+    ///   - date: the `date` to compare self with
+    /// - Returns: number of days left to `date`. Returns a negative number if `date` lies in the past relatet to self
+    func daysUntil(including date: Date) -> Int? {
+        let calendar = Calendar.current
+        let dateIncluding = {
+            let newDate = calendar.startOfDay(for: date)
+            return calendar.date(byAdding: .day, value: 1, to: newDate) ?? newDate
+        }()
+        return Date.days(from: self, to: dateIncluding, calendar: calendar)
     }
 
     /// Calculates remaining days between two dates.
@@ -33,15 +47,14 @@ extension Date {
     /// - Parameters:
     ///   - start: date from which to calculate the remaining days to `end`
     ///   - end: date until which the `start` date will count the days
-    ///   - timeZone: time zone of the used date (will be applied to both dates)
+    ///   - calendar: calendar which is used
     /// - Returns: number of days left to `date`.
     /// 		   Returns a negative number  if `end` lies in the past relatet to `start`
-    static func days(from start: Date, to end: Date, timeZone: TimeZone? = nil) -> Int? {
-        var calendar = Calendar.current
-        if let timeZone = timeZone {
-            calendar.timeZone = timeZone
-        }
-
+    static func days(
+        from start: Date,
+        to end: Date,
+        calendar: Calendar = Calendar.current
+    ) -> Int? {
         let date1 = calendar.startOfDay(for: start)
         let date2 = calendar.startOfDay(for: end)
 

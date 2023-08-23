@@ -1,3 +1,27 @@
+# Release 1.12.0
+
+## added (3 changes)
+
+- Add option to take new photo
+- Add dark mode colours to profile picker chips
+- Add more documentation for implemented specifications
+
+## changed (2 changes)
+
+- Make TabView ToolBar opaque
+- Boost FOSS.html automation
+
+## fixed (8 changes)
+
+- Fix valid date for prescription
+- Fix fetching all communications without profile relation
+- Fix avs redeem services after login to also load the certificate
+- Fix deleting task with optional accessCode
+- Fix Version detection for automatic release notes
+- Fix open filter doesn't include closing soon
+- Fix contact list
+- Fix Insurance no contact overall shows directly
+
 # Release 1.11.0
 
 ## fixed (9 changes)

@@ -117,6 +117,8 @@ public struct RegistrationData: Claims, Codable {
     /// [REQ:gemSpec_IDP_Frontend:A_21416] Encryption
     func encrypted(with publicKey: BrainpoolP256r1.KeyExchange.PublicKey,
                    using cryptoBox: IDPCrypto) throws -> JWE {
+        // [REQ:BSI-eRp-ePA:O.Cryp_1#4] Signature via ecdh ephemeral-static
+        // [REQ:BSI-eRp-ePA:O.Cryp_4#3] one time usage for JWE ECDH-ES Encryption
         let algorithm = JWE.Algorithm.ecdh_es(JWE.Algorithm.KeyExchangeContext.bpp256r1(
             publicKey,
             keyPairGenerator: cryptoBox.brainpoolKeyPairGenerator

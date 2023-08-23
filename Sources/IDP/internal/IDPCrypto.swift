@@ -53,6 +53,7 @@ struct IDPCrypto {
         stateLength: Int = 16,
         randomGenerator: @escaping Random<Data> = { try generateSecureRandom(length: $0) },
         brainpoolKeyPairGenerator: @escaping BrainpoolKeyGenerator = {
+            // [REQ:BSI-eRp-ePA:O.Cryp_3#3] Brainpool key generator
             try BrainpoolP256r1.KeyExchange.generateKey()
         },
         aesNonceGenerator: @escaping AESNonceGenerator = {

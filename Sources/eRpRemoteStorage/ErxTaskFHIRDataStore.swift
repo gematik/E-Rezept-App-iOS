@@ -75,8 +75,7 @@ public class ErxTaskFHIRDataStore: ErxRemoteDataStore {
 
         // In case of error...
         guard tasks.count == 1,
-              let id = tasks.first?.id,
-              let accessCode = tasks.first?.accessCode
+              let id = tasks.first?.id
         else {
             var fhirClientError = FHIRClient.Error.unknown(RemoteStoreError.notImplemented)
             if tasks.isEmpty {
@@ -87,13 +86,16 @@ public class ErxTaskFHIRDataStore: ErxRemoteDataStore {
                 )
             } else {
                 fhirClientError = FHIRClient.Error.internalError(
-                    "Can't be deleted: ID or accessCode is missing!"
+                    "Can't be deleted: ID is missing!"
                 )
             }
             let localError = RemoteStoreError.fhirClientError(fhirClientError)
 
             return Result<Bool, RemoteStoreError>.failure(localError).publisher.eraseToAnyPublisher()
         }
+
+        // accessCode is optional for deleting a task
+        let accessCode = tasks.first?.accessCode
 
         // In case of success...
         return fhirClient.deleteTask(by: id, accessCode: accessCode)

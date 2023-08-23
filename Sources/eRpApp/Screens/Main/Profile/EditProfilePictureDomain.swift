@@ -36,6 +36,8 @@ struct EditProfilePictureDomain: ReducerProtocol {
 
     struct Destinations: ReducerProtocol {
         enum State: Equatable {
+            case alert(ErpAlertState<EditProfilePictureDomain.Action>)
+            case cameraPicker
             case photoPicker
         }
 
@@ -62,6 +64,8 @@ struct EditProfilePictureDomain: ReducerProtocol {
         case setUserImageData(Data)
         case updateProfileReceived(Result<Bool, UserProfileServiceError>)
         case setNavigation(tag: Destinations.State.Tag?)
+        case destination(Destinations.Action)
+        case nothing
     }
 
     enum DelegateAction: Equatable {
@@ -69,9 +73,17 @@ struct EditProfilePictureDomain: ReducerProtocol {
         case failure(UserProfileServiceError)
     }
 
+    var body: some ReducerProtocol<State, Action> {
+        Reduce(self.reduce)
+            .ifLet(\.destination, action: /Action.destination) {
+                Destinations()
+            }
+    }
+
     @Dependency(\.schedulers) var schedulers: Schedulers
     @Dependency(\.userProfileService) var userProfileService: UserProfileService
 
+    // swiftlint:disable:next cyclomatic_complexity
     func reduce(into state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
         case .setProfileValues:
@@ -104,18 +116,43 @@ struct EditProfilePictureDomain: ReducerProtocol {
                 profile.userImageData = image
             }
             .map(Action.updateProfileReceived)
+        case .setNavigation(tag: .cameraPicker):
+            state.destination = .cameraPicker
+            return .none
         case .setNavigation(tag: .photoPicker):
             state.destination = .photoPicker
+            return .none
+        case .setNavigation(tag: .alert):
+            state.destination = .alert(Self.importAlert)
             return .none
         case .setNavigation(tag: .none):
             state.destination = nil
             return .none
-        case .setNavigation:
-            return .none
-        case .delegate:
+        case .delegate,
+             .nothing,
+             .setNavigation,
+             .destination:
             return .none
         }
     }
+
+    static var importAlert: ErpAlertState<Action> = {
+        .init(
+            title: L10n.eppTxtAlertHeaderProfile,
+            actions: {
+                ButtonState(action: .setNavigation(tag: .photoPicker)) {
+                    .init(L10n.eppBtnAlertLibrary)
+                }
+                ButtonState(action: .setNavigation(tag: .cameraPicker)) {
+                    .init(L10n.eppBtnAlertCamera)
+                }
+                ButtonState(action: .setNavigation(tag: .none)) {
+                    .init(L10n.eppBtnAlertAbort)
+                }
+            },
+            message: L10n.eppTxtAlertSubheaderChoose
+        )
+    }()
 }
 
 extension EditProfilePictureDomain {

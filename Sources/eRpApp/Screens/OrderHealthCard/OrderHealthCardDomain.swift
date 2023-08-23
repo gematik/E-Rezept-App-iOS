@@ -33,6 +33,10 @@ struct OrderHealthCardDomain: ReducerProtocol {
         var healthInsuranceCompanyId: UUID?
         var serviceInquiryId: Int = -1
 
+        var hasContactInformation: Bool {
+            insuranceCompany?.hasContactInformation == true
+        }
+
         var isPinServiceAndContact: Bool {
             if serviceInquiry == .pin, insuranceCompany?.hasContactInformationForPin == true {
                 return true

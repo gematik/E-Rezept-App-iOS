@@ -22,7 +22,7 @@ import eRpKit
 import SwiftUI
 
 #if ENABLE_DEBUG_VIEW
-
+// [REQ:BSI-eRp-ePA:O.Source_8#5] DebugView is only available on debug builds
 struct DebugView: View {
     let store: DebugDomain.Store
 

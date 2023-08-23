@@ -177,6 +177,7 @@ struct CardWallCANView: View {
                             })
                     }.padding()
 
+                    // [REQ:BSI-eRp-ePA:O.Purp_2#2,O.Data_6#2] CAN is used for eGK connection
                     CardWallCANInputView(
                         can: viewStore.binding(get: \.can) { .update(can: $0) }
                     ) {

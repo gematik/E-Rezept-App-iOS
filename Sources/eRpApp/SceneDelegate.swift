@@ -35,6 +35,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing {
     lazy var routerStore: RouterStore<some ReducerProtocol<AppStartDomain.State, AppStartDomain.Action>> =
         RouterStore(
             initialState: .init(),
+            // [REQ:BSI-eRp-ePA:O.Auth_8#5] Concat the user interaction reducer to the normal application reducer
             reducer: AppStartDomain().analytics().notifyUserInteraction(),
             router: AppStartDomain.router
         )
@@ -122,10 +123,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing {
         }
         #endif
 
+        // [REQ:BSI-eRp-ePA:O.Data_13#3,O.Plat_12#3] Moving the application to the foreground removes the blur.
         removeBlurOverlayFromWindow()
 
         guard !migrationCoordinator.isMigrating else { return }
 
+        // [REQ:BSI-eRp-ePA:O.Auth_7#2] Present the authentication window
         // dispatching necessary to prevents keyboard not showing on iOS 16
         DispatchQueue.main.async { [weak self] in
             self?.presentAppAuthenticationDomain(scene: scene)
@@ -180,9 +183,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate, Routing {
 
     func sceneDidEnterBackground(_: UIScene) {
         authenticationWindow = nil
+        // [REQ:BSI-eRp-ePA:O.Data_13#2,O.Plat_12#2] Moving the application to the background blurs the application
+        // window.
         addBlurOverlayToWindow()
     }
 
+    // [REQ:BSI-eRp-ePA:O.Source_1#5] External application calls via Universal Linking
     func scene(_: UIScene, continue userActivity: NSUserActivity) {
         switch userActivity.activityType {
         case NSUserActivityTypeBrowsingWeb:
@@ -243,6 +249,7 @@ extension SceneDelegate {
             object: nil,
             queue: OperationQueue.main
         ) { [weak self, weak scene] _ in
+            // [REQ:BSI-eRp-ePA:O.Auth_8#3] the timer is reset on user interaction
             self?.setupTimer(scene: scene)
         }
     }
@@ -261,6 +268,7 @@ extension SceneDelegate {
         ) { [weak self, weak scene] timer in
             timer.invalidate()
 
+            // [REQ:BSI-eRp-ePA:O.Auth_8#2] A timer is used to determine inactive users
             self?.presentAppAuthenticationDomain(scene: scene)
         }
     }
@@ -269,6 +277,8 @@ extension SceneDelegate {
 extension ReducerProtocol where Action: Equatable {
     func notifyUserInteraction() -> some ReducerProtocol<Self.State, Self.Action> {
         Reduce { state, action in
+            // [REQ:BSI-eRp-ePA:O.Auth_8#4] User interaction is determined by using a higher order reducer watching all
+            // actions
             NotificationCenter.default.post(name: .userInteractionDetected, object: nil, userInfo: nil)
 
             return self.reduce(into: &state, action: action)

@@ -114,15 +114,13 @@ struct Prescription: Equatable, Identifiable {
                 let localizedDateString = uiDateFormatter.relativeDate(from: startDate)
                 return .redeem(at: L10n.erxTxtRedeemAt(localizedDateString).text)
             }
-
             if let acceptedUntilDate = erxTask.acceptedUntil?.date,
-               let remainingDays = date.days(until: acceptedUntilDate),
+               let remainingDays = date.daysUntil(including: acceptedUntilDate),
                remainingDays > 0 {
                 return .open(until: L10n.erxTxtAcceptedUntil(remainingDays).text)
             }
-
             if let expiresDate = erxTask.expiresOn?.date,
-               let remainingDays = date.days(until: expiresDate),
+               let remainingDays = date.daysUntil(including: expiresDate),
                remainingDays > 0 {
                 return .open(until: L10n.erxTxtExpiresIn(remainingDays).text)
             }

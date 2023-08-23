@@ -51,6 +51,7 @@ struct OnboardingLegalInfoView: View {
 
                     }, label: {
                         HStack {
+                            // [REQ:BSI-eRp-ePA:O.Purp_3#3] User acceptance
                             OnboardingLegalInfoCheckmarkView(isAccepted: $isAllAccepted)
                                 .padding(.leading, 8)
 
@@ -112,6 +113,7 @@ extension OnboardingLegalInfoView {
         }
     }
 
+    // [REQ:BSI-eRp-ePA:O.Purp_3#1] Terms of Use display is part of the onboarding
     struct OnboardingTermsOfUseView: View {
         @Binding var showTermsOfUse: Bool
 
@@ -149,6 +151,7 @@ extension OnboardingLegalInfoView {
         }
     }
 
+    // [REQ:BSI-eRp-ePA:O.Purp_1#1] Display as part of the onboarding
     struct OnboardingPrivacyView: View {
         @Binding var showTermsOfPrivacy: Bool
 
@@ -169,6 +172,7 @@ extension OnboardingLegalInfoView {
                 .frame(maxWidth: .infinity, alignment: .center)
                 .fixedSize(horizontal: false, vertical: true)
                 .background(Colors.systemGray6.cornerRadius(16))
+                // [REQ:BSI-eRp-ePA:O.Arch_9#2] DataPrivacy display within Onboarding
                 .sheet(isPresented: $showTermsOfPrivacy) {
                     NavigationView {
                         DataPrivacyView()

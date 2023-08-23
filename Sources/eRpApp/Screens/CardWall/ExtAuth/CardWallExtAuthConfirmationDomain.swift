@@ -95,6 +95,7 @@ struct CardWallExtAuthConfirmationDomain: ReducerProtocol {
         case .confirmKK:
             state.loading = true
             // [REQ:gemSpec_IDP_Sek:A_22294] Start login with KK
+            // [REQ:BSI-eRp-ePA:O.Auth_3#2,O.Plat_10#2] Start login with KK
             return environment.idpSession.startExtAuth(entry: state.selectedKK)
                 .first()
                 .map(Action.openURL)
@@ -107,6 +108,7 @@ struct CardWallExtAuthConfirmationDomain: ReducerProtocol {
             return .future { completion in
 
                 // [REQ:gemSpec_IDP_Sek:A_22299] Follow redirect
+                // [REQ:BSI-eRp-ePA:O.Plat_10#3] Follow redirect
                 guard environment.resourceHandler.canOpenURL(url) else {
                     completion(.success(Action.response(.openURL(false))))
                     return

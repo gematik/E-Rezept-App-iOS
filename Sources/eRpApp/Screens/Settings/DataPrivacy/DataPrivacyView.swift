@@ -20,6 +20,8 @@ import ComposableArchitecture
 import SwiftUI
 import WebKit
 
+// [REQ:BSI-eRp-ePA:O.Purp_1#2] Actual View driving the display of `DataPrivacy.html`
+// [REQ:BSI-eRp-ePA:O.Arch_8#3] Webview containint local html without javascript
 struct DataPrivacyView: View {
     var body: some View {
         WebView()
@@ -29,10 +31,12 @@ struct DataPrivacyView: View {
 extension DataPrivacyView {
     struct WebView: UIViewRepresentable {
         // swiftlint:disable:next weak_delegate
+        // [REQ:BSI-eRp-ePA:O.Plat_13#3] Usage of the delegate
         let navigationDelegate = DataPrivacyTermsOfUseNavigationDelegate()
 
         func makeUIView(context _: Context) -> WKWebView {
             let wkWebView = WKWebView()
+            // [REQ:BSI-eRp-ePA:O.Plat_11#2] disabled javascript
             wkWebView.configuration.defaultWebpagePreferences.allowsContentJavaScript = false
             if let url = Bundle.main.url(forResource: "DataPrivacy",
                                          withExtension: "html") {

@@ -18,6 +18,7 @@
 
 import ComposableArchitecture
 
+// [REQ:BSI-eRp-ePA:O.Auth_6#2] Domain handling App Authentication
 struct AppAuthenticationPasswordDomain: ReducerProtocol {
     typealias Store = StoreOf<Self>
 

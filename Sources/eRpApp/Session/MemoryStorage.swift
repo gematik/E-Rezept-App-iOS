@@ -51,6 +51,7 @@ class MemoryStorage: SecureUserDataStore, IDPStorage {
             .eraseToAnyPublisher()
     }
 
+    /// [REQ:BSI-eRp-ePA:O.Tokn_1#3] MemoryStorage implementation
     func set(token: IDPToken?) {
         tokenState.value = token
     }

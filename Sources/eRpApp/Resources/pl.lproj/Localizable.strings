@@ -342,6 +342,11 @@
 "edit_color_txt" = "Kolor tła";
 "edit_picture_txt" = "Edytuj zdjęcie profilowe";
 "email_subject_fallback" = "Aplikacja na iOS: raport o błędach";
+"epp_btn_alert_abort" = "Abbrechen";
+"epp_btn_alert_camera" = "Kamera";
+"epp_btn_alert_library" = "Foto auswählen";
+"epp_txt_alert_header_profile" = "Profilbild wählen";
+"epp_txt_alert_subheader_choose" = "Wie möchten Sie fortfahren?";
 "erp_txt_tooltips_add_profile" = "Naciśnij tutaj, aby utworzyć nowy profil";
 "erp_txt_tooltips_profile_rename" = "Naciśnij długo, aby edytować nazwy";
 "erp_txt_tooltips_scan" = "Kliknij tutaj, aby zeskanować recepty";

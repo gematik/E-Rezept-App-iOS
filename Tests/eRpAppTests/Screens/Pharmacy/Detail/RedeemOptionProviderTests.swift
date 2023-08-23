@@ -71,10 +71,10 @@ class RedeemOptionProviderTests: XCTestCase {
         expect(sut.deliveryService) == .erxTaskRepository
     }
 
-    func testInvertServiceAndWithoutLogin() {
+    func testOneAVSServiceWithoutLogin() {
         let sut = RedeemOptionProvider(
             wasAuthenticatedBefore: false,
-            pharmacy: invertServicesPharmacy
+            pharmacy: oneAVSServicePharmacy
         )
 
         expect(sut.reservationService) == .noService
@@ -82,15 +82,26 @@ class RedeemOptionProviderTests: XCTestCase {
         expect(sut.deliveryService) == .avs
     }
 
-    func testInvertSServiceAndWithLogin() {
+    func testOneAVSServiceWithLogin() {
         let sut = RedeemOptionProvider(
             wasAuthenticatedBefore: true,
-            pharmacy: invertServicesPharmacy
+            pharmacy: oneAVSServicePharmacy
         )
 
         expect(sut.reservationService) == .noService
         expect(sut.shipmentService) == .noService
         expect(sut.deliveryService) == .erxTaskRepository
+    }
+
+    func testApolloApothekeFuerthWithLogin() {
+        let sut = RedeemOptionProvider(
+            wasAuthenticatedBefore: true,
+            pharmacy: apolloApothekeFuerth
+        )
+
+        expect(sut.reservationService) == .erxTaskRepository
+        expect(sut.shipmentService) == .noService
+        expect(sut.deliveryService) == .noService
     }
 
     lazy var allServicesPharmacy: PharmacyLocation = {
@@ -107,7 +118,7 @@ class RedeemOptionProviderTests: XCTestCase {
         )
     }()
 
-    lazy var invertServicesPharmacy: PharmacyLocation = {
+    lazy var oneAVSServicePharmacy: PharmacyLocation = {
         PharmacyLocation(
             id: "id",
             telematikID: "telematikID",
@@ -137,6 +148,18 @@ class RedeemOptionProviderTests: XCTestCase {
             telematikID: "telematikID",
             types: [.delivery, .mobl, .outpharm],
             avsCertificates: []
+        )
+    }()
+
+    lazy var apolloApothekeFuerth: PharmacyLocation = {
+        PharmacyLocation(
+            id: "id",
+            telematikID: "telematikID",
+            types: [.delivery, .mobl, .outpharm],
+            avsEndpoints: .init(
+                onPremiseUrl: "https://some-pharmacy.de"
+            ),
+            avsCertificates: [avsCert]
         )
     }()
 

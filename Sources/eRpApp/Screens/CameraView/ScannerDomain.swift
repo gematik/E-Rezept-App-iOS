@@ -144,6 +144,7 @@ struct ScannerDomain: ReducerProtocol {
         case let .analyse(scanOutput):
             state.scanState = .loading(nil)
             do {
+                // [REQ:BSI-eRp-ePA:O.Source_1#2] analyse the unput
                 let scannedTasks = try CodeAnalyser.analyse(scanOutput: scanOutput, with: state.acceptedTaskBatches)
                 return checkForTaskDuplicatesInStore(scannedTasks)
                     .cancellable(id: Token.loadErxTask)

@@ -74,7 +74,7 @@ public struct Profile: Identifiable, Hashable, Equatable {
             .joined(separator: " ")
     }
 
-    public var hasDoneLoginBefore: Bool {
+    public var isLinkedToInsuranceId: Bool {
         insuranceId != nil
     }
 

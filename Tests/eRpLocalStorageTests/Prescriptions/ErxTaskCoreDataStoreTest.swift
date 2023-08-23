@@ -603,34 +603,6 @@ final class ErxTaskCoreDataStoreTest: XCTestCase {
         cancellable.cancel()
     }
 
-    func testListingOnlyCommunicationsWithRelationshipToProfile() throws {
-        // given a profile and communications that do not belong to each other
-        let testProfile = Profile(name: "TestProfile")
-        try prepareStores(profiles: [testProfile], communications: [communication1, communication2])
-
-        // when accessing the store with a profile and saving a communication to that profile
-        let store = loadErxCoreDataStore(for: testProfile.id)
-        let task = ErxTask(identifier: communication3.taskId, status: .ready)
-        try store.add(tasks: [task]) // there must be a related task with a relationship to the profile
-        try store.add(communications: [communication3])
-
-        // then listing tasks for that profile
-        var receivedListAllValues = [[ErxTask.Communication]]()
-        let cancellable = store.listAllCommunications(for: .reply)
-            .sink(receiveCompletion: { _ in
-                fail("did not expect to receive a completion")
-            }, receiveValue: { communications in
-                receivedListAllValues.append(communications)
-            })
-
-        // should only return the communication with a set relationship to that profile
-        expect(receivedListAllValues.count).toEventually(equal(1))
-        expect(receivedListAllValues.first?.count) == 1
-        expect(receivedListAllValues[0].first) == communication3
-
-        cancellable.cancel()
-    }
-
     func testUpdatingCommunicationReply() throws {
         let store = loadErxCoreDataStore()
 

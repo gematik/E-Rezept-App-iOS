@@ -22,6 +22,7 @@ import Security
 /// Generate random Data with given length
 ///
 /// [REQ:gemSpec_Krypt:GS-A_4367]
+/// [REQ:BSI-eRp-ePA:O.Rand_1#2] Secure Random generator.
 ///
 /// - Parameters:
 ///   - length: the number of bytes to generate

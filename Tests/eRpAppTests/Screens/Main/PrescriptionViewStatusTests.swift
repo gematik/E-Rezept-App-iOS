@@ -83,7 +83,7 @@ final class PrescriptionViewStatusTests: XCTestCase {
         // when
         let sut = Prescription(erxTask: task, dateFormatter: .testValue)
         // then
-        expect(sut.viewStatus).to(equal(.open(until: "Noch 28 Tage gültig")))
+        expect(sut.viewStatus).to(equal(.open(until: "Noch 29 Tage gültig")))
     }
 
     func testTaskIsInProgress() { // ACCEPT
@@ -92,7 +92,7 @@ final class PrescriptionViewStatusTests: XCTestCase {
         // when
         let sut = Prescription(erxTask: task, dateFormatter: .testValue)
         // then
-        expect(sut.viewStatus).to(equal(.open(until: "Noch 28 Tage gültig")))
+        expect(sut.viewStatus).to(equal(.open(until: "Noch 29 Tage gültig")))
         expect(sut.type).to(equal(.regular))
     }
 
@@ -111,7 +111,7 @@ final class PrescriptionViewStatusTests: XCTestCase {
         // when
         let sut = Prescription(erxTask: task, dateFormatter: .testValue)
         // then
-        expect(sut.viewStatus).to(equal(.open(until: "Nur noch heute als Selbstzahler einlösbar")))
+        expect(sut.viewStatus).to(equal(.open(until: "Noch 2 Tage als Selbstzahler einlösbar")))
     }
 
     func testTaskIsReadyWithoutExpireAndAcceptedDate() {
@@ -165,7 +165,7 @@ final class PrescriptionViewStatusTests: XCTestCase {
         // when
         let sut = Prescription(erxTask: task, dateFormatter: UIDateFormatter.testValue)
         // then
-        expect(sut.viewStatus).to(equal(.open(until: "Noch 28 Tage gültig")))
+        expect(sut.viewStatus).to(equal(.open(until: "Noch 29 Tage gültig")))
         expect(sut.type).to(equal(.directAssignment))
     }
 
@@ -175,7 +175,7 @@ final class PrescriptionViewStatusTests: XCTestCase {
         // when
         let sut = Prescription(erxTask: task, dateFormatter: UIDateFormatter.testValue)
         // then
-        expect(sut.viewStatus).to(equal(.open(until: "Noch 28 Tage gültig")))
+        expect(sut.viewStatus).to(equal(.open(until: "Noch 29 Tage gültig")))
         expect(sut.type).to(equal(.directAssignment))
     }
 

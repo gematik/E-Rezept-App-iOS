@@ -46,6 +46,7 @@ public class DefaultHTTPClient: HTTPClient {
         // [REQ:gemSpec_IDP_Frontend:A_20606] Live URLs not present in NSAppTransportSecurity exception list for allowed
         // HTTP communication
         // [REQ:gemSpec_eRp_FdV:A_20206]
+        // [REQ:BSI-eRp-ePA:O.Sess_1#2,O.Ntwk_2#2,O.Ntwk_3#2] URLSession is used as Network Framework
 
         urlSessionConfiguration.tlsMinimumSupportedProtocolVersion = .TLSv12
         urlSession = .init(configuration: urlSessionConfiguration, delegate: delegate, delegateQueue: delegateQueue)

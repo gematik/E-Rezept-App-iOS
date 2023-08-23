@@ -95,6 +95,18 @@ class PharmacyDetailDomainTests: XCTestCase {
         )
     }()
 
+    lazy var noAVSServicesPharmacy: PharmacyLocationViewModel = {
+        PharmacyLocationViewModel(
+            pharmacy: PharmacyLocation(
+                id: "id",
+                telematikID: "telematikID",
+                types: [.delivery, .mobl, .outpharm],
+                avsEndpoints: nil,
+                avsCertificates: []
+            )
+        )
+    }()
+
     lazy var noServicePharmacy: PharmacyLocationViewModel = {
         .init(pharmacy: PharmacyLocation(id: "id", telematikID: "telematikID", types: []))
     }()
@@ -113,11 +125,16 @@ class PharmacyDetailDomainTests: XCTestCase {
         mockUserSession.profileReturnValue = Just(profile)
             .setFailureType(to: LocalStoreError.self)
             .eraseToAnyPublisher()
+        mockPharmacyRepository.loadAvsCertificatesPublisher = Just([]).setFailureType(to: PharmacyRepositoryError.self)
+            .eraseToAnyPublisher()
 
         // When loading the profile
         sut.send(.loadCurrentProfile)
         // Then redeem services for ErxTaskRepository can be used
         sut.receive(.response(.currentProfileReceived(profile))) {
+            $0.wasProfileAuthenticatedBefore = true
+        }
+        sut.receive(.response(.avsCertificatesReceived(.success([])))) {
             $0.reservationService = .erxTaskRepository
             $0.deliveryService = .erxTaskRepository
             $0.shipmentService = .erxTaskRepository
@@ -253,7 +270,7 @@ class PharmacyDetailDomainTests: XCTestCase {
         }
     }
 
-    func testRedeemFlowWithPharmacyWithoutServicesAndNotLoggedInBefore() {
+    func testRedeemOptionWithPharmacyWithoutServicesAndNotLoggedInBefore() {
         // Given a pharmacy without any services
         let pharmacyModel = noServicePharmacy
         let sut = testStore(for: PharmacyDetailDomain.State(
@@ -276,7 +293,7 @@ class PharmacyDetailDomainTests: XCTestCase {
         sut.send(.showPharmacyRedeemOption(.delivery))
     }
 
-    func testRedeemFlowWithPharmacyWithoutServicesAndLoggedInBefore() {
+    func testRedeemOptionWithPharmacyWithoutServicesAndLoggedInBefore() {
         // Given a pharmacy without any services
         let pharmacyModel = noServicePharmacy
         let sut = testStore(for: PharmacyDetailDomain.State(
@@ -291,12 +308,125 @@ class PharmacyDetailDomainTests: XCTestCase {
 
         sut.send(.loadCurrentProfile)
         // then no state change occurs (default is no service)
-        sut.receive(.response(.currentProfileReceived(profile)))
+        sut.receive(.response(.currentProfileReceived(profile))) {
+            $0.wasProfileAuthenticatedBefore = true
+        }
 
         // then redeem does not present soemthing
         sut.send(.showPharmacyRedeemOption(.onPremise))
         sut.send(.showPharmacyRedeemOption(.shipment))
         sut.send(.showPharmacyRedeemOption(.delivery))
+    }
+
+    func testRedeemOptionWithAPharmacyOfSomeAVSServicesAndLoggedInBefore() {
+        // Given a pharmacy with all avs and ErxTaskRepository services
+        let pharmacyModel = mixedServicesPharmacy
+        let sut = testStore(for: PharmacyDetailDomain.State(
+            erxTasks: ErxTask.Fixtures.erxTasks,
+            pharmacyViewModel: pharmacyModel
+        ))
+        // and a profile that has been logged in before (== insuranceID is not nil)
+        let profile = Profile(name: "Test", insuranceId: "loggedIn")
+        mockUserSession.profileReturnValue = Just(profile)
+            .setFailureType(to: LocalStoreError.self)
+            .eraseToAnyPublisher()
+        let expectedCertResponse = [derCert]
+        mockPharmacyRepository.loadAvsCertificatesPublisher = Just(expectedCertResponse)
+            .setFailureType(to: PharmacyRepositoryError.self)
+            .eraseToAnyPublisher()
+
+        // When loading the profile
+        sut.send(.loadCurrentProfile)
+        // Then the redeem services for `avs` should overwrite ti services
+        sut.receive(.response(.currentProfileReceived(profile))) {
+            $0.wasProfileAuthenticatedBefore = true
+        }
+        sut.receive(.response(.avsCertificatesReceived(.success(expectedCertResponse)))) {
+            $0.reservationService = .noService
+            $0.deliveryService = .noService
+            $0.shipmentService = .erxTaskRepository
+            $0.pharmacyViewModel.pharmacyLocation.avsCertificates = expectedCertResponse
+        }
+    }
+
+    func testRedeemOptionWithAPharmacyOfSomeAVSServicesAndNotLoggedInBefore() {
+        // Given a pharmacy with all avs and ErxTaskRepository services
+        let pharmacyModel = mixedServicesPharmacy
+        let sut = testStore(for: PharmacyDetailDomain.State(
+            erxTasks: ErxTask.Fixtures.erxTasks,
+            pharmacyViewModel: pharmacyModel
+        ))
+        // and a profile that has not been logged in before (== insuranceID is nil)
+        let profile = Profile(name: "Test", insuranceId: nil)
+        mockUserSession.profileReturnValue = Just(profile)
+            .setFailureType(to: LocalStoreError.self)
+            .eraseToAnyPublisher()
+        let expectedCertResponse = [derCert]
+        mockPharmacyRepository.loadAvsCertificatesPublisher = Just(expectedCertResponse)
+            .setFailureType(to: PharmacyRepositoryError.self)
+            .eraseToAnyPublisher()
+
+        // When loading the profile
+        sut.send(.loadCurrentProfile)
+        // Then the redeem services for `avs` should overwrite ti services
+        sut.receive(.response(.currentProfileReceived(profile)))
+        sut.receive(.response(.avsCertificatesReceived(.success(expectedCertResponse)))) {
+            $0.reservationService = .noService
+            $0.deliveryService = .noService
+            $0.shipmentService = .avs
+            $0.pharmacyViewModel.pharmacyLocation.avsCertificates = expectedCertResponse
+        }
+    }
+
+    func testRedeemOptionWithoutAVSServicesAndLoggedInBefore() {
+        // Given a pharmacy with all ErxTaskRepository and no avs services
+        let pharmacyModel = noAVSServicesPharmacy
+        let sut = testStore(for: PharmacyDetailDomain.State(
+            erxTasks: ErxTask.Fixtures.erxTasks,
+            pharmacyViewModel: pharmacyModel
+        ))
+        // and a profile that has been logged in before (== insuranceID is not nil)
+        let profile = Profile(name: "Test", insuranceId: "loggedIn")
+        mockUserSession.profileReturnValue = Just(profile)
+            .setFailureType(to: LocalStoreError.self)
+            .eraseToAnyPublisher()
+        mockPharmacyRepository.loadAvsCertificatesPublisher = Just([]).setFailureType(to: PharmacyRepositoryError.self)
+            .eraseToAnyPublisher()
+
+        // When loading the profile
+        sut.send(.loadCurrentProfile)
+        // Then the redeem services should be the one from the repository
+        sut.receive(.response(.currentProfileReceived(profile))) {
+            $0.wasProfileAuthenticatedBefore = true
+            $0.reservationService = .erxTaskRepository
+            $0.deliveryService = .erxTaskRepository
+            $0.shipmentService = .erxTaskRepository
+        }
+    }
+
+    func testRedeemOptionWithoutAVSServicesAndNotLoggedInBefore() {
+        // Given a pharmacy with all ErxTaskRepository and no avs services
+        let pharmacyModel = noAVSServicesPharmacy
+        let sut = testStore(for: PharmacyDetailDomain.State(
+            erxTasks: ErxTask.Fixtures.erxTasks,
+            pharmacyViewModel: pharmacyModel
+        ))
+        // and a profile that has not been logged in before (== insuranceID is nil)
+        let profile = Profile(name: "Test", insuranceId: nil)
+        mockUserSession.profileReturnValue = Just(profile)
+            .setFailureType(to: LocalStoreError.self)
+            .eraseToAnyPublisher()
+        mockPharmacyRepository.loadAvsCertificatesPublisher = Just([]).setFailureType(to: PharmacyRepositoryError.self)
+            .eraseToAnyPublisher()
+
+        // When loading the profile
+        sut.send(.loadCurrentProfile)
+        // Then the redeem services should be the one from the repository
+        sut.receive(.response(.currentProfileReceived(profile))) {
+            $0.reservationService = .erxTaskRepositoryAvailable
+            $0.deliveryService = .erxTaskRepositoryAvailable
+            $0.shipmentService = .erxTaskRepositoryAvailable
+        }
     }
 
     func testTogglingFavoriteState_Success() {

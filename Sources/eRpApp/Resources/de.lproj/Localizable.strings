@@ -342,6 +342,11 @@
 "edit_color_txt" = "Hintergrundfarbe";
 "edit_picture_txt" = "Profilbild bearbeiten";
 "email_subject_fallback" = "iOS App: Fehlerreport";
+"epp_btn_alert_abort" = "Abbrechen";
+"epp_btn_alert_camera" = "Kamera";
+"epp_btn_alert_library" = "Foto auswählen";
+"epp_txt_alert_header_profile" = "Profilbild wählen";
+"epp_txt_alert_subheader_choose" = "Wie möchten Sie fortfahren?";
 "erp_txt_tooltips_add_profile" = "Hier drücken, um ein neues Profil anzulegen";
 "erp_txt_tooltips_profile_rename" = "Lange drücken, um Namen zu bearbeiten";
 "erp_txt_tooltips_scan" = "Hier tippen, um Rezepte einzuscannen.";

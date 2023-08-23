@@ -242,6 +242,10 @@ extension EditProfilePictureDomain.State {
             return nil
         }
         switch destination {
+            case .alert:
+                return destination.tag.analyticsName
+            case .cameraPicker:
+                return destination.tag.analyticsName
             case .photoPicker:
                 return destination.tag.analyticsName
         }
@@ -856,6 +860,10 @@ extension EditProfilePictureDomain.Destinations.State {
     func routeName() -> String? {
         let destination = self
         switch destination {
+            case .alert:
+                return destination.tag.analyticsName
+            case .cameraPicker:
+                return destination.tag.analyticsName
             case .photoPicker:
                 return destination.tag.analyticsName
         }
@@ -1293,6 +1301,10 @@ extension EditProfileDomain.Destinations.State.Tag {
 extension EditProfilePictureDomain.Destinations.State.Tag {
     var analyticsName: String {
         switch self {
+            case .alert: 
+                return "alert"
+            case .cameraPicker: 
+                return "cameraPicker"
             case .photoPicker: 
                 return "photoPicker"
         }

@@ -46,7 +46,7 @@ final class EditProfilePictureSnapshotTest: XCTestCase {
     func testEditProfilePictureViewImage() {
         let sut = EditProfilePictureView(
             store: .init(
-                initialState: .init(profile: Fixtures.ImageProfile),
+                initialState: .init(profile: Fixtures.noImageProfile),
                 reducer: EmptyReducer()
             )
         )

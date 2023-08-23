@@ -201,11 +201,17 @@ extension EditProfileDomain.Destinations.State {
 }
 extension EditProfilePictureDomain.Destinations.State {
     enum Tag: Int {
+        case alert
+        case cameraPicker
         case photoPicker
     }
 
     var tag: Tag {
         switch self {
+            case .alert:
+                return .alert
+            case .cameraPicker:
+                return .cameraPicker
             case .photoPicker:
                 return .photoPicker
         }

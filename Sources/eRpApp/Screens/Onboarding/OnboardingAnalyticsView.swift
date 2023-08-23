@@ -29,6 +29,7 @@ struct OnboardingAnalyticsView: View {
                     TitleView()
                         .padding()
 
+                    // [REQ:gemSpec_eRp_FdV:A_19184] Information for the user what is collected
                     VStack(alignment: .leading, spacing: 16) {
                         Group {
                             Text(L10n.onbAnaTxtHeader)

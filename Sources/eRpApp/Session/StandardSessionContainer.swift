@@ -331,6 +331,7 @@ extension StandardSessionContainer {
     }
 
     func erpHttpClient(vau session: VAUSession) -> HTTPClient {
+        // [REQ:gemSpec_IDP_Frontend:A_21325#2] Interceptor order defines what is encrypted via VAU
         let interceptors: [Interceptor] = [
             AdditionalHeaderInterceptor(additionalHeader: appConfiguration.erpAdditionalHeader),
             idpSession.httpInterceptor(delegate: nil),

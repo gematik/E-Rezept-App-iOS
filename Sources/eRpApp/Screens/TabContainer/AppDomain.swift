@@ -152,7 +152,7 @@ struct AppDomain: ReducerProtocol {
                 .eraseToEffect()
         case .registerNewOrderMessageListener:
             return erxTaskRepository
-                .countAllUnreadCommunications(for: ErxTask.Communication.Profile.all)
+                .countAllUnreadCommunications(for: .all)
                 .receive(on: schedulers.main.animation())
                 .map(AppDomain.Action.newOrderMessageReceived)
                 .catch { _ in EffectTask.none }

@@ -116,6 +116,7 @@ public class DefaultIDPSession: IDPSession {
     }
 
     public func invalidateAccessToken() {
+        // [REQ:BSI-eRp-ePA:O.Source_5#3] invalidation means deleting the token
         storage.set(token: nil)
     }
 
@@ -243,6 +244,7 @@ public class DefaultIDPSession: IDPSession {
                 .eraseToAnyPublisher()
             }
             .handleEvents(receiveOutput: { [weak self] token in
+                // [REQ:BSI-eRp-ePA:O.Tokn_1#5] Storing the token from a successfull login
                 self?.storage.set(token: token)
             })
             .eraseToAnyPublisher()
@@ -267,6 +269,8 @@ public class DefaultIDPSession: IDPSession {
             .eraseToAnyPublisher()
     }
 
+    // [REQ:BSI-eRp-ePA:O.Resi_6#2] Implementation of loading the discovery document for fetching signature and
+    // encryption keys.
     private func loadDiscoveryDocument() -> AnyPublisher<DiscoveryDocument, IDPError> {
         storage.discoveryDocument
             .first()
@@ -290,6 +294,7 @@ public class DefaultIDPSession: IDPSession {
                             // Validate JWT/DiscoveryDocument signature
                             // [REQ:gemSpec_Krypt:A_17207] Only implemented for brainpoolP256r1
                             // [REQ:gemSpec_Krypt:GS-A_4357-01,GS-A_4357-02] Assure that brainpoolP256r1 is used
+                            // [REQ:BSI-eRp-ePA:O.Resi_6#4] Discovery Document signature verification
                             guard (try? fetchedDocument.backing.verify(with: fetchedDocument.discKey)) ?? false else {
                                 return Fail(error: IDPError.validation(error: IDPError.invalidDiscoveryDocument))
                                     .eraseToAnyPublisher()
@@ -422,6 +427,7 @@ public class DefaultIDPSession: IDPSession {
                 return self.client.loadDirectoryKKApps(using: document)
                     .tryMap { jwtContainer in
                         // [REQ:gemSpec_IDP_Sek:A_22296] Signature verification
+                        // [REQ:BSI-eRp-ePA:O.Resi_6#3] Discovery Document signature verification
                         guard try jwtContainer.verify(with: document.discKey) == true else {
                             throw IDPError.invalidSignature("kk_apps document signature wrong")
                         }
@@ -752,6 +758,7 @@ extension TrustStoreSession {
     /// - Returns: A publisher that contains an output with the check value or an failure if the check failed
     /// due to an underlying error.
     func validate(discoveryDocument: DiscoveryDocument) -> AnyPublisher<Bool, TrustStoreError> {
+        // [REQ:BSI-eRp-ePA:O.Resi_6#5] Discovery Document signature verification
         validate(certificate: discoveryDocument.discKey)
             .zip(validate(certificate: discoveryDocument.signingCert))
             .map { isDiscKeyValid, isSigningCertValid -> Bool in

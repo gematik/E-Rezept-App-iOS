@@ -132,6 +132,12 @@ internal enum A11y {
       static let davTxtDirectAssignmentHint = "dav_txt_direct_assignment_hint"
       static let davBtnClose = "dav_btn_close"
   }
+    internal enum editProfilePicture {
+      static let eppBtnResetPicture = "epp_btn_reset_picture"
+      static let eppBtnChooseType = "epp_btn_choose_type"
+      static let eppBtnActionCamera = "epp_btn_action_camera"
+      static let eppBtnActionLibrary = "epp_btn_action_library"
+  }
     internal enum mainScreen {
       static let erxBtnLogin = "erx_btn_login"
       static let erxBtnRefresh = "erx_btn_refresh"
@@ -533,6 +539,12 @@ internal enum A11y {
       static let stgBtnEditProfileSecuritySectionShowTokens = "stg_btn_edit_profile_security_section_show_tokens"
       static let stgBtnEditProfileSecuritySectionShowAuditEvents = "stg_btn_edit_profile_security_section_show_audit_events"
       static let stgTxtEditProfileSecurityShowTokensHint = "stg_txt_edit_profile_security_show_tokens_hint"
+  }
+    internal enum editProfilePictureFull {
+      static let stgEppBtnResetPicture = "stg_epp_btn_reset_picture"
+      static let stgEppBtnChooseType = "stg_epp_btn_choose_type"
+      static let stgEppBtnActionCamera = "stg_epp_btn_action_camera"
+      static let stgEppBtnActionLibrary = "stg_epp_btn_action_library"
   }
     internal enum foss {
       static let stgDprTxtFoss = "stg_dpr_txt_foss"

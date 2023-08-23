@@ -22,6 +22,7 @@ import CoreData
 import eRpKit
 
 /// Store for fetching, creating, updating or deleting `ShipmentInfoEntity`s on the provided `CoreDataController`
+/// [REQ:BSI-eRp-ePA:O.Source_2#5] CoreDataStore adapter for `ShipmentInfoEntity`s
 public class ShipmentInfoCoreDataStore: ShipmentInfoDataStore, CoreDataCrudable {
     private let userDefaults: UserDefaults
     let coreDataControllerFactory: CoreDataControllerFactory

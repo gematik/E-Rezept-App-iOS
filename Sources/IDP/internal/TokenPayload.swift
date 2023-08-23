@@ -186,6 +186,8 @@ public struct KeyVerifier: Codable {
             keyPairGenerator: cryptoBox.brainpoolKeyPairGenerator
         )
 
+        // [REQ:BSI-eRp-ePA:O.Cryp_1#6] Signature via ecdh ephemeral-static
+        // [REQ:BSI-eRp-ePA:O.Cryp_4#2] one time usage for JWE ECDH-ES Encryption
         guard let jweHeader = try? JWE.Header(algorithm: JWE.Algorithm.ecdh_es(keyExchangeContext),
                                               encryption: .a256gcm,
                                               contentType: "JWT") else {

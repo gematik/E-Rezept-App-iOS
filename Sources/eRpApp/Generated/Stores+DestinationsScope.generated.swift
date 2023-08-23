@@ -316,6 +316,27 @@ extension Store where State == EditProfileDomain.State, Action == EditProfileDom
 
 
 
+extension Store where State == EditProfilePictureDomain.State, Action == EditProfilePictureDomain.Action {
+    func destinationsScope<ChildState, ChildAction>(
+        state: CasePath<EditProfilePictureDomain.Destinations.State?, ChildState>,
+        action: @escaping (ChildAction) -> EditProfilePictureDomain.Destinations.Action
+    ) -> Store<ChildState?, ChildAction> {
+        self.scope(state: \EditProfilePictureDomain.State.destination, action: EditProfilePictureDomain.Action.destination)
+            .scope(
+                state: state.extract(from:),
+                action: action
+            )
+    }
+
+    func destinationsScope<ChildState>(
+        state: CasePath<EditProfilePictureDomain.Destinations.State?, ChildState>
+    ) -> Store<ChildState?, Action> {
+        self.scope(state: \EditProfilePictureDomain.State.destination)
+            .scope(state: state.extract(from:))
+    }
+}
+
+
 
 
 

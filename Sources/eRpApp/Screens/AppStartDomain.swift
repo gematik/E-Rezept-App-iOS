@@ -145,6 +145,7 @@ struct AppStartDomain: ReducerProtocol {
             default:
                 return EffectTask(value: .app(action: .setNavigation(.main)))
             }
+        // [REQ:BSI-eRp-ePA:O.Source_1#6] External application calls via Universal Linking
         case let .universalLink(url):
             switch url.path {
             case "/extauth":
