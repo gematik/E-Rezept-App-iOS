@@ -126,6 +126,7 @@ struct AppDomain: ReducerProtocol {
         Reduce(self.core)
     }
 
+    // swiftlint:disable:next function_body_length cyclomatic_complexity
     func core(into state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
         case .subdomains(.settings(action: .destination(.editProfileAction(.confirmDeleteProfile)))),
@@ -161,8 +162,27 @@ struct AppDomain: ReducerProtocol {
             state.unreadOrderMessageCount = unreadOrderMessageCount
             return .none
         case let .setNavigation(destination):
-            state.destination = destination
-            return .none
+            if state.destination == destination {
+                // When user taps on the active TabItem (current destination == next destination),
+                // we present the "root" view of the corresponding TabView's content
+                switch destination {
+                case .main:
+                    state.subdomains.main.destination = nil
+                    return MainDomain.cleanupSubDomains()
+                case .pharmacySearch:
+                    state.subdomains.pharmacySearch.destination = nil
+                    return PharmacySearchDomain.cleanupSubDomains()
+                case .orders:
+                    state.subdomains.orders.destination = nil
+                    return OrdersDomain.cleanupSubDomains()
+                case .settings:
+                    state.subdomains.settingsState.destination = nil
+                    return SettingsDomain.cleanupSubDomains()
+                }
+            } else {
+                state.destination = destination
+                return .none
+            }
         }
     }
 }

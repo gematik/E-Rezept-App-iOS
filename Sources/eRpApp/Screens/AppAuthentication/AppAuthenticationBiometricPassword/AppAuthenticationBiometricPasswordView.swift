@@ -48,7 +48,7 @@ struct AppAuthenticationBiometricPasswordView: View {
         if !viewStore.showPassword {
             VStack(alignment: .center) {
                 if viewStore.showUsePasswordMessage {
-                    Text(L10n.authTxtBiometricandpasswordPasswordMessage)
+                    Text(L10n.authTxtBapPasswordMessage)
                         .font(.subheadline.weight(.regular))
                         .foregroundColor(Colors.textSecondary)
                         .multilineTextAlignment(.center)
@@ -64,7 +64,7 @@ struct AppAuthenticationBiometricPasswordView: View {
                             Image(systemName: SFSymbolName.faceId)
                                 .foregroundColor(.white)
                                 .font(Font.body.weight(.bold))
-                            Text(L10n.authBtnBiometriandpasswordFaceid)
+                            Text(L10n.authBtnBapFaceid)
                                 .fontWeight(.semibold)
                                 .font(.body)
                                 .multilineTextAlignment(.center)
@@ -74,7 +74,7 @@ struct AppAuthenticationBiometricPasswordView: View {
                         .padding(.vertical)
                         .padding(.horizontal, 64)
                     })
-                        .accessibility(identifier: A11y.auth.authBtnBiometricandpasswordFaceid)
+                        .accessibility(identifier: A11y.auth.authBtnBapFaceid)
                         .background(Colors.primary)
                         .cornerRadius(16)
                         .padding()
@@ -86,7 +86,7 @@ struct AppAuthenticationBiometricPasswordView: View {
                             Image(systemName: SFSymbolName.touchId)
                                 .foregroundColor(.white)
                                 .font(Font.body.weight(.bold))
-                            Text(L10n.authBtnBiometriandpasswordTouchid)
+                            Text(L10n.authBtnBapTouchid)
                                 .fontWeight(.semibold)
                                 .font(.body)
                                 .multilineTextAlignment(.center)
@@ -96,17 +96,17 @@ struct AppAuthenticationBiometricPasswordView: View {
                         .padding(.vertical)
                         .padding(.horizontal, 64)
                     })
-                        .accessibility(identifier: A11y.auth.authBtnBiometricandpasswordTouchid)
+                        .accessibility(identifier: A11y.auth.authBtnBapTouchid)
                         .background(Colors.primary)
                         .cornerRadius(16)
                         .padding()
                 }
 
-                Button(L10n.authBtnBiometricandpasswordChange) {
+                Button(L10n.authBtnBapChange) {
                     viewStore.send(.switchToPassword(true), animation: .default)
                 }.foregroundColor(Colors.primary600)
                     .font(.body.weight(.semibold))
-                    .accessibility(identifier: A11y.auth.authBtnBiometricandpasswordChange)
+                    .accessibility(identifier: A11y.auth.authBtnBapChange)
             }
             .alert(isPresented: viewStore.binding(
                 get: { $0.error != nil },
@@ -181,11 +181,14 @@ struct PasswordView: View {
             }
             .padding()
 
-            Button("Zurück zur Face ID") {
+            Button(action: {
                 viewStore.send(.switchToPassword(false), animation: .default)
-            }.foregroundColor(Colors.primary600)
+            }, label: {
+                Text(viewStore
+                    .biometryType == .faceID ? L10n.authBtnBapBackFaceID : L10n.authBtnBapBackTouchID)
+            }).foregroundColor(Colors.primary600)
                 .font(.body.weight(.regular))
-                .accessibility(identifier: A11y.auth.authBtnBiometricandpasswordChange)
+                .accessibility(identifier: A11y.auth.authBtnBapChange)
                 .fixedSize(horizontal: false, vertical: true)
                 .multilineTextAlignment(.center)
                 .padding()

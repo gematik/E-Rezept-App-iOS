@@ -99,7 +99,9 @@ class StandardSessionContainer: UserSession {
 
         return DefaultIDPSession(
             config: idpSessionConfig,
-            storage: secureUserStore, // [REQ:gemSpec_eRp_FdV:A_20184] Keychain storage encrypts session/ssl tokens
+            // [REQ:gemSpec_eRp_FdV:A_21328#2] Keychain storage encrypts session tokens
+            // [REQ:gemSpec_eRp_FdV:A_20184] Keychain storage encrypts session/ssl tokens
+            storage: secureUserStore,
             schedulers: schedulers,
             httpClient: idpHttpClient,
             trustStoreSession: trustStoreSession,

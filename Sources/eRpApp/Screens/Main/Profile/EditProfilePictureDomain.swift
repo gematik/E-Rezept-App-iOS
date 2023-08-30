@@ -54,6 +54,7 @@ struct EditProfilePictureDomain: ReducerProtocol {
         var picture: ProfilePicture?
         var userImageData: Data?
         var destination: Destinations.State?
+        var isNewProfile = false
     }
 
     enum Action: Equatable {
@@ -62,6 +63,7 @@ struct EditProfilePictureDomain: ReducerProtocol {
         case editPicture(ProfilePicture?)
         case delegate(DelegateAction)
         case setUserImageData(Data)
+        case setNewUserValues(Profile)
         case updateProfileReceived(Result<Bool, UserProfileServiceError>)
         case setNavigation(tag: Destinations.State.Tag?)
         case destination(Destinations.Action)
@@ -74,7 +76,7 @@ struct EditProfilePictureDomain: ReducerProtocol {
     }
 
     var body: some ReducerProtocol<State, Action> {
-        Reduce(self.reduce)
+        Reduce(self.core)
             .ifLet(\.destination, action: /Action.destination) {
                 Destinations()
             }
@@ -83,8 +85,8 @@ struct EditProfilePictureDomain: ReducerProtocol {
     @Dependency(\.schedulers) var schedulers: Schedulers
     @Dependency(\.userProfileService) var userProfileService: UserProfileService
 
-    // swiftlint:disable:next cyclomatic_complexity
-    func reduce(into state: inout State, action: Action) -> EffectTask<Action> {
+    // swiftlint:disable:next function_body_length cyclomatic_complexity
+    func core(into state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
         case .setProfileValues:
             state.color = state.profile.color
@@ -93,16 +95,24 @@ struct EditProfilePictureDomain: ReducerProtocol {
             return .none
         case let .editColor(color):
             state.color = color
-            return updateProfile(with: state.profile.id) { profile in
-                profile.color = (color ?? .grey).erxColor
+            // Check if isNewProfile, because "updateProfile" fails without profileID and then is reversing the change
+            if !state.isNewProfile {
+                return updateProfile(with: state.profile.id) { profile in
+                    profile.color = (color ?? .grey).erxColor
+                }
+                .map(Action.updateProfileReceived)
             }
-            .map(Action.updateProfileReceived)
+            return .none
         case let .editPicture(picture):
             state.picture = picture
-            return updateProfile(with: state.profile.id) { profile in
-                profile.image = (picture ?? .none).erxPicture
+            // Check if isNewProfile, because "updateProfile" fails without profileID and then is reversing the change
+            if !state.isNewProfile {
+                return updateProfile(with: state.profile.id) { profile in
+                    profile.image = (picture ?? .none).erxPicture
+                }
+                .map(Action.updateProfileReceived)
             }
-            .map(Action.updateProfileReceived)
+            return .none
         case .updateProfileReceived(.success):
             return .none
         case let .updateProfileReceived(.failure(error)):
@@ -112,10 +122,14 @@ struct EditProfilePictureDomain: ReducerProtocol {
             return .init(value: .delegate(.failure(error)))
         case let .setUserImageData(image):
             state.userImageData = image
-            return updateProfile(with: state.profile.id) { profile in
-                profile.userImageData = image
+            // Check if isNewProfile, because "updateProfile" fails without profileID and then is reversing the change
+            if !state.isNewProfile {
+                return updateProfile(with: state.profile.id) { profile in
+                    profile.userImageData = image
+                }
+                .map(Action.updateProfileReceived)
             }
-            .map(Action.updateProfileReceived)
+            return .none
         case .setNavigation(tag: .cameraPicker):
             state.destination = .cameraPicker
             return .none
@@ -130,6 +144,7 @@ struct EditProfilePictureDomain: ReducerProtocol {
             return .none
         case .delegate,
              .nothing,
+             .setNewUserValues,
              .setNavigation,
              .destination:
             return .none

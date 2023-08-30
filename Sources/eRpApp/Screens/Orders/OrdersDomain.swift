@@ -34,7 +34,7 @@ struct OrdersDomain: ReducerProtocol {
         )
     }
 
-    private static func cleanupSubDomains<T>() -> EffectTask<T> {
+    static func cleanupSubDomains<T>() -> EffectTask<T> {
         OrderDetailDomain.cleanup()
     }
 

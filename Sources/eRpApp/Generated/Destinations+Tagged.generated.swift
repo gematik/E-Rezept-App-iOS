@@ -325,6 +325,18 @@ extension MedicationOverviewDomain.Destinations.State {
         }
     }
 }
+extension NewProfileDomain.Destinations.State {
+    enum Tag: Int {
+        case editProfilePicture
+    }
+
+    var tag: Tag {
+        switch self {
+            case .editProfilePicture:
+                return .editProfilePicture
+        }
+    }
+}
 extension OrderDetailDomain.Destinations.State {
     enum Tag: Int {
         case pickupCode

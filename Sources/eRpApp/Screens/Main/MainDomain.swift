@@ -34,7 +34,7 @@ struct MainDomain: ReducerProtocol {
         )
     }
 
-    private static func cleanupSubDomains<T>() -> EffectTask<T> {
+    static func cleanupSubDomains<T>() -> EffectTask<T> {
         .concatenate(
             DeviceSecurityDomain.cleanup(),
             CardWallIntroductionDomain.cleanup(),

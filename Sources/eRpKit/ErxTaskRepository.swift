@@ -114,7 +114,7 @@ public protocol ErxTaskRepository {
     /// - Parameters:
     ///   - chargeItems: the `ErxChargeItem`s to be deleted
     /// - Returns: Publisher for the load request
-    func delete(chargeItems: [ErxSparseChargeItem]) -> AnyPublisher<Bool, ErxRepositoryError>
+    func delete(chargeItems: [ErxChargeItem]) -> AnyPublisher<Bool, ErxRepositoryError>
 
     /// Send a grant consent request of  an `ErxConsent`
     ///

@@ -45,12 +45,16 @@ import SwiftUI
     internal static let amgTxtAlertTitleDeleteDatabase = StringAsset("amg_txt_alert_title_delete_database")
     /// Update...
     internal static let amgTxtInProgress = StringAsset("amg_txt_in_progress")
-    /// Face ID
-    internal static let authBtnBiometriandpasswordFaceid = StringAsset("auth_btn_biometriandpassword_faceid")
-    /// Touch ID
-    internal static let authBtnBiometriandpasswordTouchid = StringAsset("auth_btn_biometriandpassword_touchid")
+    /// Back to Face ID
+    internal static let authBtnBapBackFaceID = StringAsset("auth_btn_bap_back_faceID")
+    /// Back to Touch ID
+    internal static let authBtnBapBackTouchID = StringAsset("auth_btn_bap_back_touchID")
     /// password
-    internal static let authBtnBiometricandpasswordChange = StringAsset("auth_btn_Biometricandpassword_change")
+    internal static let authBtnBapChange = StringAsset("auth_btn_bap_change")
+    /// Face ID
+    internal static let authBtnBapFaceid = StringAsset("auth_btn_bap_faceid")
+    /// Touch ID
+    internal static let authBtnBapTouchid = StringAsset("auth_btn_bap_touchid")
     /// Unlock with Face ID
     internal static let authBtnBiometricsFaceid = StringAsset("auth_btn_biometrics_faceid")
     /// Unlock with Touch ID
@@ -58,7 +62,7 @@ import SwiftUI
     /// Continue
     internal static let authBtnPasswordContinue = StringAsset("auth_btn_password_continue")
     /// Please try again or enter your password.
-    internal static let authTxtBiometricandpasswordPasswordMessage = StringAsset("auth_txt_biometricandpassword_password_message")
+    internal static let authTxtBapPasswordMessage = StringAsset("auth_txt_bap_password_message")
     /// Please be aware that people with whom you may share this device and whose biometrics may be stored on this device may also have access to your prescriptions.
     internal static let authTxtBiometricsDisclaimer = StringAsset("auth_txt_biometrics_disclaimer")
     /// Secure with Face ID
@@ -73,7 +77,7 @@ import SwiftUI
     internal static let authTxtBiometricsFailedDefault = StringAsset("auth_txt_biometrics_failed_default")
     /// No biometric security has been set up on this device.
     internal static let authTxtBiometricsFailedNotEnrolled = StringAsset("auth_txt_biometrics_failed_not_enrolled")
-    /// An alternative login method is not supported.
+    /// An alternative to biometric login is not configured. Please deposit a password.
     internal static let authTxtBiometricsFailedUserFallback = StringAsset("auth_txt_biometrics_failed_user_fallback")
     /// Do you have any questions or problems concerning use of the app? You can contact our technical hotline on 0800 277 377 7. 
     /// 
@@ -737,15 +741,17 @@ import SwiftUI
     internal static let editPictureTxt = StringAsset("edit_picture_txt")
     /// iOS App: Error report
     internal static let emailSubjectFallback = StringAsset("email_subject_fallback")
-    /// Abbrechen
+    /// Back
+    internal static let eppBackButton = StringAsset("epp_back_button")
+    /// Cancel
     internal static let eppBtnAlertAbort = StringAsset("epp_btn_alert_abort")
-    /// Kamera
+    /// camera
     internal static let eppBtnAlertCamera = StringAsset("epp_btn_alert_camera")
-    /// Foto auswählen
+    /// select photo
     internal static let eppBtnAlertLibrary = StringAsset("epp_btn_alert_library")
-    /// Profilbild wählen
+    /// Choose profile picture
     internal static let eppTxtAlertHeaderProfile = StringAsset("epp_txt_alert_header_profile")
-    /// Wie möchten Sie fortfahren?
+    /// How would you like to continue?
     internal static let eppTxtAlertSubheaderChoose = StringAsset("epp_txt_alert_subheader_choose")
     /// Press here to create a new profile
     internal static let erpTxtTooltipsAddProfile = StringAsset("erp_txt_tooltips_add_profile")
@@ -1481,6 +1487,14 @@ import SwiftUI
     internal static let ohcTxtNfcErrorUnsupportedDescription = StringAsset("ohc_txt_nfc_error_unsupported_description")
     /// Your device's NFC reader is not available.
     internal static let ohcTxtNfcErrorUnsupportedRecovery = StringAsset("ohc_txt_nfc_error_unsupported_recovery")
+    /// Allow
+    internal static let onbAnaAlertAccept = StringAsset("onb_ana_alert_accept")
+    /// Do not allow
+    internal static let onbAnaAlertDeny = StringAsset("onb_ana_alert_deny")
+    /// Your data will be used for product improvements and will not be passed on to third parties.
+    internal static let onbAnaAlertMessage = StringAsset("onb_ana_alert_message")
+    /// Do you consent to the anonymous analysis of usage behaviour by e-prescription?
+    internal static let onbAnaAlertTitle = StringAsset("onb_ana_alert_title")
     /// Next
     internal static let onbAnaBtnNext = StringAsset("onb_ana_btn_next")
     /// Detect errors and crashes.
@@ -2065,6 +2079,10 @@ import SwiftUI
     internal static let prscDtlTxtDosageInstructions = StringAsset("prsc_dtl_txt_dosage_instructions")
     /// Emergency service fee
     internal static let prscDtlTxtEmergencyServiceFee = StringAsset("prsc_dtl_txt_emergency_service_fee")
+    /// Takes insurance
+    internal static let prscDtlTxtEmergencyServiceFeeCovered = StringAsset("prsc_dtl_txt_emergency_service_fee_covered")
+    /// Charges apply
+    internal static let prscDtlTxtEmergencyServiceFeeNotCovered = StringAsset("prsc_dtl_txt_emergency_service_fee_not_covered")
     /// You can find professionally verified information on illnesses, ICD codes and issues to do with prevention and healthcare in the National Health Portal.
     internal static let prscDtlTxtFooter = StringAsset("prsc_dtl_txt_footer")
     /// Institution
@@ -2443,6 +2461,10 @@ import SwiftUI
     internal static let stgBtnDeviceSecurity = StringAsset("stg_btn_device_security")
     /// Edit
     internal static let stgBtnEditPicture = StringAsset("stg_btn_edit_picture")
+    /// take a picture
+    internal static let stgBtnEditProfileActionCamera = StringAsset("stg_btn_edit_profile_action_camera")
+    /// choose picture
+    internal static let stgBtnEditProfileActionLibrary = StringAsset("stg_btn_edit_profile_action_library")
     /// Show expense receipts
     internal static let stgBtnEditProfileChargeItemList = StringAsset("stg_btn_edit_profile_charge_item_list")
     /// Delete profile

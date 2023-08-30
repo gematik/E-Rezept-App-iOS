@@ -239,7 +239,7 @@ class StreamWrappedErxTaskRepository: ErxTaskRepository {
             .eraseToAnyPublisher()
 	}
 
-	func delete(chargeItems: [ErxSparseChargeItem]) -> AnyPublisher<Bool, ErxRepositoryError> {
+	func delete(chargeItems: [ErxChargeItem]) -> AnyPublisher<Bool, ErxRepositoryError> {
         stream
         	.map { $0.delete(
 				chargeItems: chargeItems

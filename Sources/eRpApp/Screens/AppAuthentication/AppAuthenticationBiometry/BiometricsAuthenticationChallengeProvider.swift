@@ -41,6 +41,8 @@ enum AuthenticationChallengeProviderError: Swift.Error, LocalizedError, Equatabl
             guard let error = error else {
                 return L10n.authTxtBiometricsFailedDefault.text
             }
+            // [REQ:BSI-eRp-ePA:O.Biom_8#2] see also:
+            // https://developer.apple.com/documentation/localauthentication/laerror/code/2867589-biometrylockout
             if LAError.Code(rawValue: error.code) == LAError.biometryLockout {
                 return L10n.authTxtBiometricsLockout.text
             } else {
@@ -86,8 +88,9 @@ enum AuthenticationChallengeProviderError: Swift.Error, LocalizedError, Equatabl
     }
 }
 
-// swiftlint:disable:next type_name
+// [REQ:BSI-eRp-ePA:O.Biom_7#1] Live implementation of AuthenticationChallengeProvider for FaceID methods
 struct BiometricsAuthenticationChallengeProvider: AuthenticationChallengeProvider {
+    // swiftlint:disable:previous type_name
     func startAuthenticationChallenge() -> AnyPublisher<AuthenticationChallengeProviderResult, Never> {
         Deferred {
             Future { promise in

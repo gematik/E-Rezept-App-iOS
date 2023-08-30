@@ -74,10 +74,15 @@ struct ChargeItemDomain: ReducerProtocol {
         case nothing
 
         case response(Response)
+        case delegate(Delegate)
 
         enum Response: Equatable {
             case authenticate(ChargeItemDomainServiceAuthenticateResult)
             case deleteChargeItem(ChargeItemDomainServiceDeleteResult)
+        }
+
+        enum Delegate: Equatable {
+            case close
         }
     }
 
@@ -135,7 +140,7 @@ struct ChargeItemDomain: ReducerProtocol {
             state.destination = nil
 
             return chargeItemsService.delete(
-                chargeItem: state.chargeItem.sparseChargeItem,
+                chargeItem: state.chargeItem,
                 for: state.profileId
             )
             .first()
@@ -147,7 +152,7 @@ struct ChargeItemDomain: ReducerProtocol {
             switch result {
             case .success:
                 state.authenticationState = .authenticated
-                return .none
+                return .send(.delegate(.close))
             case .notAuthenticated:
                 state.authenticationState = .notAuthenticated
                 state.destination = .alert(AlertStates.deleteNotAuthenticated)
@@ -213,6 +218,11 @@ struct ChargeItemDomain: ReducerProtocol {
                 state.authenticationState = .error
                 state.destination = .alert(AlertStates.authenticateErrorFor(error: error))
                 return .none
+            }
+        case let .delegate(delegate):
+            switch delegate {
+            case .close:
+                return Self.cleanup()
             }
         case .destination(.idpCardWallAction(.delegate(.close))):
             state.destination = nil

@@ -102,7 +102,7 @@ public protocol ErxRemoteDataStore {
         -> AnyPublisher<[ErxChargeItem], RemoteStoreError>
 
     /// Deletes a sequence of charge items from the store
-    func delete(chargeItems: [ErxSparseChargeItem]) -> AnyPublisher<Bool, RemoteStoreError>
+    func delete(chargeItems: [ErxChargeItem]) -> AnyPublisher<Bool, RemoteStoreError>
 
     /// Loads All consents of a given profile
     /// Uses the request headers  ACCESS_TOKEN with the containing insurance id

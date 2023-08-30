@@ -355,7 +355,13 @@ extension MedicationOverviewDomain.State {
 
 extension NewProfileDomain.State {
     func routeName() -> String? {
+        guard let destination = destination else {
             return nil
+        }
+        switch destination {
+            case let .editProfilePicture(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+        }
     }
 }
 
@@ -952,6 +958,16 @@ extension MedicationOverviewDomain.Destinations.State {
     }
 }
 
+extension NewProfileDomain.Destinations.State {
+    func routeName() -> String? {
+        let destination = self
+        switch destination {
+            case let .editProfilePicture(state: state):
+                return state.routeName() ?? destination.tag.analyticsName
+        }
+    }
+}
+
 extension OrderDetailDomain.Destinations.State {
     func routeName() -> String? {
         let destination = self
@@ -1379,6 +1395,14 @@ extension MedicationOverviewDomain.Destinations.State.Tag {
         switch self {
             case .medication: 
                 return Analytics.Screens.prescriptionDetail_medication.name
+        }
+    }
+}
+extension NewProfileDomain.Destinations.State.Tag {
+    var analyticsName: String {
+        switch self {
+            case .editProfilePicture: 
+                return "editProfilePicture"
         }
     }
 }

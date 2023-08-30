@@ -20,12 +20,15 @@ import Foundation
 import OpenSSL
 
 protocol AVSCmsEncrypter {
+    // [REQ:gemSpec_eRp_FdV:A_22778#2] Encryption of message to the Pharmacy is done for all provided recipients
     func cmsEncrypt(_ data: Data, recipients: [X509]) throws -> Data
 }
 
 class RsaOnlyAVSCmsEncrypter: AVSCmsEncrypter {
     func cmsEncrypt(_ data: Data, recipients: [X509]) throws -> Data {
         // [REQ:gemSpec_Krypt:GS-A_4390] RSAES-OAEP with MGF1 implemented in sub-framework OpenSSL-swift
+        // [REQ:gemSpec_eRp_FdV:A_22778#3] Encryption of message to the Pharmacy is done with all provided certificates
+        // [REQ:gemSpec_eRp_FdV:A_22779#3] Encrypted message is of form of a PKCS#7 container (CMS)
         // https://github.com/gematik/OpenSSL-Swift/blob/3c1ea91ba5abfefecfe3588815cb928d777e29ad/Sources/OpenSSL/CMS/CMSContentInfo.swift#L88
         // swiftlint:disable:previous line_length
         let cms = try CMSContentInfo.encryptPartial(data: data)

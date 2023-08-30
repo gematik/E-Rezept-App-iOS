@@ -15,6 +15,7 @@ doc/errors/generated
 # Third party files
 vendor/
 .bundle/
+.vscode
 
 # Xcode
 #

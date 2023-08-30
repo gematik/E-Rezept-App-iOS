@@ -176,7 +176,7 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
             directory: .gem_wf_v1_1_with_kbv_v1_0_2
         )
 
-        stub(condition: isHost(host) && pathEndsWith("$abort")) { _ in
+        stub(condition: isHost(host) && pathStartsWith("/Task") && pathEndsWith("$abort")) { _ in
             fixture(filePath: emptyResponse, status: 204, headers: ["Accept": "application/fhir+json"])
         }
         let erxTask = ErxTask(identifier: "1", status: .ready, flowType: .pharmacyOnly, accessCode: "12")
@@ -383,6 +383,50 @@ final class ErxTaskFHIRDataStoreTests: XCTestCase {
             } expectations: { _ in
                 fail("this test should rase an error instead")
             }
+    }
+
+    func testDeleteChargeItemSuccess() throws {
+        let emptyResponse = load(
+            resource: "emptyResponse",
+            directory: .gem_wf_v1_1_with_kbv_v1_0_2
+        )
+
+        stub(condition: pathStartsWith("/ChargeItem")
+            && isMethodDELETE()) { _ in
+                fixture(filePath: emptyResponse, status: 204, headers: ["Accept": "application/fhir+json"])
+        }
+        let chargeItem = ErxChargeItem(
+            identifier: "200.000.001.206.112.29",
+            fhirData: "FHIRData".data(using: .utf8)!,
+            accessCode: "12"
+        )
+
+        sut.delete(chargeItems: [chargeItem])
+            .test(expectations: { response in
+                expect(response) == true
+            })
+    }
+
+    func testDeleteChargeItemWithError() {
+        stub(condition: pathStartsWith("/ChargeItem")
+            && isMethodDELETE()) { _ in
+                let error = NSError(domain: self.host, code: -1, userInfo: [:])
+                return HTTPStubsResponse(error: error)
+        }
+
+        let chargeItem = ErxChargeItem(
+            identifier: "200.000.001.206.112.29",
+            fhirData: "FHIRData".data(using: .utf8)!,
+            accessCode: "12"
+        )
+
+        sut.delete(chargeItems: [chargeItem])
+            .test(failure: { error in
+                let expectedError = RemoteStoreError.fhirClientError(
+                    FHIRClient.Error.httpError(HTTPError.httpError(URLError(URLError.Code(rawValue: -1))))
+                )
+                expect(error.self) == expectedError.self
+            })
     }
 
     func testGetConsentsWithSuccess() {

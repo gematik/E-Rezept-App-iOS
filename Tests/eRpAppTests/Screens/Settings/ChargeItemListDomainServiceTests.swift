@@ -155,7 +155,7 @@ final class ChargeItemListDomainServiceTests: XCTestCase {
 
         // then
         sut.delete(
-            chargeItem: ErxSparseChargeItem.Fixtures.chargeItem,
+            chargeItem: ErxChargeItem.Fixtures.chargeItem,
             for: testProfileId
         )
         .test(
@@ -178,7 +178,7 @@ final class ChargeItemListDomainServiceTests: XCTestCase {
 
         // then
         sut.delete(
-            chargeItem: ErxSparseChargeItem.Fixtures.chargeItem,
+            chargeItem: ErxChargeItem.Fixtures.chargeItem,
             for: testProfileId
         )
         .test(

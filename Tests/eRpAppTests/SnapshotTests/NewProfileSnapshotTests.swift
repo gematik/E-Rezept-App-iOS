@@ -54,7 +54,8 @@ final class NewProfileSnapshotTests: XCTestCase {
             store: .init(
                 initialState: .init(name: "Anna Vetter",
                                     acronym: "AV",
-                                    color: .grey),
+                                    color: .grey,
+                                    image: .baby),
                 reducer: EmptyReducer()
             )
         )

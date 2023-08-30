@@ -732,7 +732,7 @@ lane :list_requirements do |options|
     afos
       .transform_values { |hits|
         hits.sort_by { |hit|
-          hit["\#"]
+          hit["\#"].to_i
         }
       }
       .sort_by { |value|
@@ -742,7 +742,6 @@ lane :list_requirements do |options|
         }.join
       }
       .to_h
-      # .sort_by { |key| key }.to_h
   }.sort_by {|k, v| k}
 
   sh "mkdir -p ../build/docs/generated"

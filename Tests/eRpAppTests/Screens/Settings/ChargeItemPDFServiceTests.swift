@@ -194,7 +194,7 @@ final class ChargeItemPDFServiceTests: XCTestCase {
             ),
             doctor: .init(
                 title: "Dr. med.",
-                name: "Emma Schneider",
+                name: "Dr. med. Emma Schneider",
                 address: "Herbert-Lewin-Platz 2\n10623 Berlin",
                 code: .lanr("987654423"),
                 prescribedOn: "03.07.2023"
@@ -298,7 +298,7 @@ final class ChargeItemPDFServiceTests: XCTestCase {
             ),
             doctor: .init(
                 title: "Dr.",
-                name: "Maximilian Weber",
+                name: "Dr. Maximilian Weber",
                 address: "Yorckstraße 15\n93049 Regensburg",
                 code: .lanr("456456534"),
                 prescribedOn: "03.07.2023"
@@ -408,7 +408,7 @@ final class ChargeItemPDFServiceTests: XCTestCase {
             ),
             doctor: .init(
                 title: "Dr. med.",
-                name: "Emma Schneider",
+                name: "Dr. med. Emma Schneider",
                 address: "Herbert-Lewin-Platz 2\n10623 Berlin",
                 code: .lanr("987654423"),
                 prescribedOn: "03.07.2023"
@@ -460,7 +460,7 @@ final class ChargeItemPDFServiceTests: XCTestCase {
             ),
             doctor: .init(
                 title: "Dr. med.",
-                name: "Emma Schneider",
+                name: "Dr. med. Emma Schneider",
                 address: "Herbert-Lewin-Platz 2\n10623 Berlin",
                 code: .lanr("987654423"),
                 prescribedOn: "03.07.2023"
@@ -520,7 +520,7 @@ final class ChargeItemPDFServiceTests: XCTestCase {
             ),
             doctor: .init(
                 title: "Dr. med.",
-                name: "Emma Schneider",
+                name: "Dr. med. Emma Schneider",
                 address: "Herbert-Lewin-Platz 2\n10623 Berlin",
                 code: .lanr("987654423"),
                 prescribedOn: "03.07.2023"
@@ -574,7 +574,7 @@ final class ChargeItemPDFServiceTests: XCTestCase {
             ),
             doctor: .init(
                 title: "Dr. med.",
-                name: "Emma Schneider",
+                name: "Dr. med. Emma Schneider",
                 address: "Herbert-Lewin-Platz 2\n10623 Berlin",
                 code: .lanr("987654423"),
                 prescribedOn: "03.07.2023"
@@ -628,7 +628,7 @@ final class ChargeItemPDFServiceTests: XCTestCase {
             ),
             doctor: .init(
                 title: "Dr. med.",
-                name: "Emma Schneider",
+                name: "Dr. med. Emma Schneider",
                 address: "Herbert-Lewin-Platz 2\n10623 Berlin",
                 code: .lanr("987654423"),
                 prescribedOn: "03.07.2023"
@@ -682,7 +682,7 @@ final class ChargeItemPDFServiceTests: XCTestCase {
             ),
             doctor: .init(
                 title: "Dr. med.",
-                name: "Emma Schneider",
+                name: "Dr. med. Emma Schneider",
                 address: "Herbert-Lewin-Platz 2\n10623 Berlin",
                 code: .lanr("987654423"),
                 prescribedOn: "03.07.2023"
@@ -736,7 +736,7 @@ final class ChargeItemPDFServiceTests: XCTestCase {
             ),
             doctor: .init(
                 title: "Dr. med.",
-                name: "Emma Schneider",
+                name: "Dr. med. Emma Schneider",
                 address: "Herbert-Lewin-Platz 2\n10623 Berlin",
                 code: .lanr("987654423"),
                 prescribedOn: "03.07.2023"

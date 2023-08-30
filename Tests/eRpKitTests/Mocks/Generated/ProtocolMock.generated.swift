@@ -604,12 +604,12 @@ final class MockErxRemoteDataStore: ErxRemoteDataStore {
     var deleteChargeItemsCalled: Bool {
         deleteChargeItemsCallsCount > 0
     }
-    var deleteChargeItemsReceivedChargeItems: [ErxSparseChargeItem]?
-    var deleteChargeItemsReceivedInvocations: [[ErxSparseChargeItem]] = []
+    var deleteChargeItemsReceivedChargeItems: [ErxChargeItem]?
+    var deleteChargeItemsReceivedInvocations: [[ErxChargeItem]] = []
     var deleteChargeItemsReturnValue: AnyPublisher<Bool, RemoteStoreError>!
-    var deleteChargeItemsClosure: (([ErxSparseChargeItem]) -> AnyPublisher<Bool, RemoteStoreError>)?
+    var deleteChargeItemsClosure: (([ErxChargeItem]) -> AnyPublisher<Bool, RemoteStoreError>)?
 
-    func delete(chargeItems: [ErxSparseChargeItem]) -> AnyPublisher<Bool, RemoteStoreError> {
+    func delete(chargeItems: [ErxChargeItem]) -> AnyPublisher<Bool, RemoteStoreError> {
         deleteChargeItemsCallsCount += 1
         deleteChargeItemsReceivedChargeItems = chargeItems
         deleteChargeItemsReceivedInvocations.append(chargeItems)

@@ -150,6 +150,7 @@ extension TokenPayload {
 
 extension TokenPayload: Equatable {}
 
+// [REQ:gemSpec_eRp_FdV:A_21324#2] Token-key and code-verifier are encoded into KeyVerifier.
 public struct KeyVerifier: Codable {
     /// data string key that is used by the server to encrypt the access token response
     let tokenKey: String
@@ -177,6 +178,8 @@ public struct KeyVerifier: Codable {
 
     func encrypted(with publicKey: BrainpoolP256r1.KeyExchange.PublicKey,
                    using cryptoBox: IDPCrypto) throws -> JWE {
+        // [REQ:gemSpec_IDP_Frontend:A_21323#2] Encode into JSON object
+        // [REQ:gemSpec_IDP_Frontend:A_21324#3] Encode into JSON object
         guard let keyVerifierEncoded = try? KeyVerifier.jsonEncoder.encode(self) else {
             throw IDPError.internal(error: .keyVerifierEncoding)
         }

@@ -428,13 +428,12 @@ struct ChargeItemListDomain: ReducerProtocol {
                 return .none
             }
 
+        case .destination(.chargeItem(action: .delegate(.close))):
+            state.destination = nil
+            return .none
         case .destination(.idpCardWallAction(.delegate(.close))):
             state.destination = nil
-            return .concatenate(
-                CardWallIntroductionDomain.cleanup(),
-                .task { .fetchChargeItems }
-            )
-
+            return CardWallIntroductionDomain.cleanup()
         case .destination(.idpCardWallAction),
              .destination(.chargeItem):
             return .none

@@ -29,11 +29,32 @@ struct NewProfileDomain: ReducerProtocol {
 
     enum Token: CaseIterable, Hashable {}
 
+    struct Destinations: ReducerProtocol {
+        enum State: Equatable {
+            case editProfilePicture(EditProfilePictureDomain.State)
+        }
+
+        enum Action: Equatable {
+            case editProfilePictureAction(action: EditProfilePictureDomain.Action)
+        }
+
+        var body: some ReducerProtocol<State, Action> {
+            Scope(
+                state: /State.editProfilePicture,
+                action: /Action.editProfilePictureAction
+            ) {
+                EditProfilePictureDomain()
+            }
+        }
+    }
+
     struct State: Equatable {
         var name: String
         var acronym: String
         var color: ProfileColor
-
+        var image: ProfilePicture?
+        var userImageData: Data?
+        var destination: Destinations.State?
         var alertState: AlertState<Action>?
     }
 
@@ -43,7 +64,8 @@ struct NewProfileDomain: ReducerProtocol {
         case save
         case closeButtonTapped
         case dismissAlert
-
+        case setNavigation(tag: Destinations.State.Tag?)
+        case destination(Destinations.Action)
         case response(Response)
         case delegate(Delegate)
 
@@ -60,8 +82,15 @@ struct NewProfileDomain: ReducerProtocol {
     @Dependency(\.userDataStore) var userDataStore: UserDataStore
     @Dependency(\.profileDataStore) var profileDataStore: ProfileDataStore
 
-    // swiftlint:disable:next cyclomatic_complexity
-    func reduce(into state: inout State, action: Action) -> EffectTask<Action> {
+    var body: some ReducerProtocol<State, Action> {
+        Reduce(self.core)
+            .ifLet(\.destination, action: /Action.destination) {
+                Destinations()
+            }
+    }
+
+    // swiftlint:disable:next function_body_length cyclomatic_complexity
+    func core(into state: inout State, action: Action) -> EffectTask<Action> {
         switch action {
         case let .setName(name):
             state.acronym = name.acronym()
@@ -80,6 +109,8 @@ struct NewProfileDomain: ReducerProtocol {
                                   identifier: UUID(),
                                   insuranceId: nil,
                                   color: state.color.erxColor,
+                                  image: state.image?.erxPicture ?? .none,
+                                  userImageData: state.userImageData,
                                   lastAuthenticated: nil,
                                   erxTasks: [])
             return profileDataStore.save(profiles: [profile])
@@ -105,7 +136,25 @@ struct NewProfileDomain: ReducerProtocol {
             return .none
         case .closeButtonTapped:
             return EffectTask(value: .delegate(.close))
-
+        case .setNavigation(tag: .editProfilePicture):
+            state.destination = .editProfilePicture(.init(profile: UserProfile(
+                from: Profile(name: state.name,
+                              color: state.color.erxColor,
+                              image: (state.image ?? .none).erxPicture,
+                              userImageData: state.userImageData),
+                isAuthenticated: false
+            ), isNewProfile: true))
+            return .none
+        case let .destination(.editProfilePictureAction(action: .setNewUserValues(userValues))):
+            state.destination = nil
+            state.color = userValues.color.viewModelColor
+            state.userImageData = userValues.userImageData
+            state.image = userValues.image.viewModelPicture
+            return .none
+        case .setNavigation:
+            return .none
+        case .destination(.editProfilePictureAction):
+            return .none
         case .delegate:
             return .none
         }

@@ -94,6 +94,7 @@ class EciesVAUCrypto: VAUCrypto {
         self.eciesSpec = eciesSpec
     }
 
+    // [REQ:gemSpec_eRp_FdV:A_21325#2] Encryption of accessToken (here bearerToken)
     func encrypt() throws -> Data {
         // Build payload message
         let symKeyHex = symmetricKey.withUnsafeBytes { Data(Array($0)) }.hexStringLowerCase
@@ -104,7 +105,9 @@ class EciesVAUCrypto: VAUCrypto {
         // [REQ:gemSpec_Krypt:A_4389:1] IVs must not be reused, IVs bit length must be larger or equal to 96
         let nonceGenerator = { try VAURandom.generateSecureRandom(length: self.eciesSpec.ivSize) }
         // [REQ:gemSpec_Krypt:GS-A_4357] Key pair generation delegated to OpenSSL with BrainpoolP256r1 parameters
+        // [REQ:gemSpec_Krypt:GS-A_4367] Key pair generation delegated to OpenSSL with BrainpoolP256r1 parameters
         // [REQ:BSI-eRp-ePA:O.Cryp_3#5] Brainpool key generator
+        // [REQ:gemSpec_eRp_FdV:A_19179#5] Key pair generation delegated to OpenSSL with BrainpoolP256r1 parameters
         let keyPairGenerator = { try BrainpoolP256r1.KeyExchange.generateKey() }
 
         return try Ecies.encrypt(
@@ -153,6 +156,8 @@ enum Ecies {
         let privateKey = try keyPairGenerator()
         let sharedSecret = try privateKey.sharedSecret(with: vauPubKey)
         // [REQ:gemSpec_Krypt:GS-A_4389:2] 256bit GCM symmetric key
+        // [REQ:gemSpec_eRp_FdV:A_19179#6] AES key generation via CryptoKit
+        // [REQ:gemSpec_Krypt:GS-A_4368] AES key generation via CryptoKit
         let secretKey = SymmetricKey(data: sharedSecret)
 
         // b-d) HKDF

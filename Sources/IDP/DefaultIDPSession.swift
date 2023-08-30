@@ -109,6 +109,7 @@ public class DefaultIDPSession: IDPSession {
 
     /// Whether the session has access to a (valid) authenticated session (e.g. token)
     public var isLoggedIn: AnyPublisher<Bool, IDPError> {
+        // [REQ:gemSpec_eRp_FdV:A_21326#3,A_21327#3] Triggered at every app start, profile change, pull to refresh
         autoRefreshedToken.map { token in
             token != nil
         }
@@ -116,7 +117,7 @@ public class DefaultIDPSession: IDPSession {
     }
 
     public func invalidateAccessToken() {
-        // [REQ:BSI-eRp-ePA:O.Source_5#3] invalidation means deleting the token
+        // [REQ:BSI-eRp-ePA:O.Source_5#3] Invalidation means deleting the token
         storage.set(token: nil)
     }
 
@@ -193,7 +194,7 @@ public class DefaultIDPSession: IDPSession {
                     return Fail(error: IDPError.internal(error: .exchangeUnexpectedNil)).eraseToAnyPublisher()
                 }
                 // [REQ:gemSpec_IDP_Frontend:A_20529-01] Encryption
-                // [REQ:gemSpec_IDP_Frontend:A_21323] Crypto box contains `Token-Key`
+                // [REQ:gemSpec_IDP_Frontend:A_21323,A_21324#1] Crypto box contains `Token-Key`
                 guard let encryptedKeyVerifier = try? KeyVerifier(
                     with: self.cryptoBox.aesKey,
                     codeVerifier: challengeSession.verifierCode
@@ -294,6 +295,7 @@ public class DefaultIDPSession: IDPSession {
                             // Validate JWT/DiscoveryDocument signature
                             // [REQ:gemSpec_Krypt:A_17207] Only implemented for brainpoolP256r1
                             // [REQ:gemSpec_Krypt:GS-A_4357-01,GS-A_4357-02] Assure that brainpoolP256r1 is used
+                            // [REQ:gemSpec_Krypt:GS-A_4361-02] Assure that brainpoolP256r1 is used
                             // [REQ:BSI-eRp-ePA:O.Resi_6#4] Discovery Document signature verification
                             guard (try? fetchedDocument.backing.verify(with: fetchedDocument.discKey)) ?? false else {
                                 return Fail(error: IDPError.validation(error: IDPError.invalidDiscoveryDocument))
@@ -634,7 +636,7 @@ extension DefaultIDPSession {
 
                     // [REQ:gemSpec_Krypt:A_17207] Only implemented for brainpoolP256r1
                     // [REQ:gemSpec_IDP_Frontend:A_19908-01] Signature check
-                    // [REQ:gemSpec_Krypt:GS-A_4357-01,GS-A_4357-02] Assure that brainpoolP256r1 is used
+                    // [REQ:gemSpec_Krypt:GS-A_4357-01,GS-A_4357-02,GS-A_4361-02] Assure that brainpoolP256r1 is used
                     guard let verified = try? challenge.challenge.verify(with: document.authentication.cert),
                           verified else {
                         return Fail(error: IDPError.validation(error: JWT.Error.invalidSignature))
@@ -775,6 +777,7 @@ extension TimeInterval {
 }
 
 extension Publisher where Output == IDPToken?, Failure == Never {
+    // [REQ:gemSpec_eRp_FdV:A_21326#4,A_21327#4] Triggered at every app start, profile change, pull to refresh
     func refreshIfExpired(session: DefaultIDPSession,
                           time: @escaping TimeProvider) -> AnyPublisher<IDPToken?, IDPError> {
         setFailureType(to: IDPError.self)
@@ -783,7 +786,10 @@ extension Publisher where Output == IDPToken?, Failure == Never {
                 guard let token = token else {
                     return Just(nil).setFailureType(to: IDPError.self).eraseToAnyPublisher()
                 }
+                // [REQ:BSI-eRp-ePA:O.Auth_9#2] application is also checking for expiration
                 guard token.expires > time() else {
+                    // [REQ:gemSpec_eRp_FdV:A_21326#5,A_21327#5] Either return a refreshed IDPToken
+                    //  (or nil in case of error) to overwrite the current one
                     guard let session = session else {
                         return Just(nil)
                             .setFailureType(to: IDPError.self)

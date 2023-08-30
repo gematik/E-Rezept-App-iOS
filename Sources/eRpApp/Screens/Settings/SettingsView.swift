@@ -74,6 +74,7 @@ struct SettingsView: View {
 
                 // Tracking comply sheet presentation
                 // [REQ:BSI-eRp-ePA:O.Purp_5#3] Show comply view for settings triggered analytics enabling
+                // [REQ:gemSpec_eRp_FdV:A_19982#3] Opt out of analytics
                 Rectangle()
                     .frame(width: 0, height: 0, alignment: .center)
                     .sheet(isPresented: Binding<Bool>(
@@ -259,6 +260,7 @@ extension SettingsView {
                 // [REQ:gemSpec_eRp_FdV:A_19097] Toggle within Settings to enable and disable usage tracking
                 // [REQ:BSI-eRp-ePA:O.Purp_5#1] Toggle within Settings to enable and disable usage tracking
                 // [REQ:BSI-eRp-ePA:O.Purp_6#1] Current Analytics state is inspectable by the user
+                // [REQ:gemSpec_eRp_FdV:A_19982#4] Opt out of analytics
                 Toggle(isOn: viewStore.binding(
                     get: \.trackerOptIn,
                     send: SettingsDomain.Action.toggleTrackingTapped

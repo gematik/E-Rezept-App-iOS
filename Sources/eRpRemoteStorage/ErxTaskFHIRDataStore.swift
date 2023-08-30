@@ -197,7 +197,7 @@ public class ErxTaskFHIRDataStore: ErxRemoteDataStore {
             .eraseToAnyPublisher()
     }
 
-    public func delete(chargeItems: [ErxSparseChargeItem]) -> AnyPublisher<Bool, RemoteStoreError> {
+    public func delete(chargeItems: [ErxChargeItem]) -> AnyPublisher<Bool, RemoteStoreError> {
         // swiftlint:disable:next todo
         // TODO: Ideally this should delete multiple tasks at once.
         //       But it needs special error handling, if the server only
@@ -207,12 +207,11 @@ public class ErxTaskFHIRDataStore: ErxRemoteDataStore {
         // In case of error...
         guard chargeItems.count == 1,
               let id = chargeItems.first?.id,
-              let fatChargeItem = try? chargeItems.first?.parseErxChargeItem(),
-              let accessCode = fatChargeItem.accessCode
+              let accessCode = chargeItems.first?.accessCode
         else {
             var fhirClientError = FHIRClient.Error.unknown(RemoteStoreError.notImplemented)
             if chargeItems.isEmpty {
-                fhirClientError = FHIRClient.Error.internalError("Cannot delete: Empty array of ErxTasks!")
+                fhirClientError = FHIRClient.Error.internalError("Cannot delete: Empty array of ErxChargeItem!")
             } else if chargeItems.count > 1 {
                 fhirClientError = FHIRClient.Error.internalError(
                     "Cannot delete: Deletion of multiple elements is not implemented currently!"

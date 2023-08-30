@@ -18,16 +18,33 @@
 
 import ComposableArchitecture
 import eRpStyleKit
+import IDP
 import SwiftUI
 
 struct NewProfileView: View {
     let store: NewProfileDomain.Store
 
-    @ObservedObject var viewStore: ViewStore<NewProfileDomain.State, NewProfileDomain.Action>
+    @ObservedObject var viewStore: ViewStore<ViewState, NewProfileDomain.Action>
 
     init(store: NewProfileDomain.Store) {
         self.store = store
-        viewStore = ViewStore(store)
+        viewStore = ViewStore(store.scope(state: ViewState.init))
+    }
+
+    struct ViewState: Equatable {
+        let destinationTag: NewProfileDomain.Destinations.State.Tag?
+        let color: ProfileColor
+        let picture: ProfilePicture
+        let userImageData: Data
+        let name: String
+
+        init(with state: NewProfileDomain.State) {
+            color = state.color
+            picture = state.image ?? .none
+            userImageData = state.userImageData ?? .empty
+            destinationTag = state.destination?.tag
+            name = state.name
+        }
     }
 
     var body: some View {
@@ -35,14 +52,32 @@ struct NewProfileView: View {
             ScrollView {
                 VStack(spacing: 0) {
                     ProfilePictureView(
-                        image: ProfilePicture.none,
-                        userImageData: .empty,
+                        image: viewStore.picture,
+                        userImageData: viewStore.userImageData,
                         color: viewStore.color,
                         connection: nil,
-                        style: .xxLarge
-                    ) {}
-                        .padding(.top)
-                        .padding(.bottom, 8)
+                        style: .xxLarge,
+                        isBorderOn: true
+                    ) {
+                        viewStore.send(.setNavigation(tag: .editProfilePicture))
+                    }
+
+                    NavigationLink(
+                        destination: IfLetStore(
+                            store.destinationsScope(
+                                state: /NewProfileDomain.Destinations.State.editProfilePicture,
+                                action: NewProfileDomain.Destinations.Action.editProfilePictureAction
+                            ),
+                            then: EditProfilePictureFullView.init(store:)
+                        ),
+                        tag: NewProfileDomain.Destinations.State.Tag.editProfilePicture,
+                        selection: viewStore.binding(
+                            get: \.destinationTag,
+                            send: NewProfileDomain.Action.setNavigation
+                        )
+                    ) {
+                        Text(L10n.stgBtnEditPicture)
+                    }
 
                     SingleElementSectionContainer {
                         FormTextField(
@@ -51,14 +86,6 @@ struct NewProfileView: View {
                         )
                         .accessibilityIdentifier(A11y.settings.newProfile.stgInpNewProfileName)
                     }
-
-                    ProfileColorPicker(color: viewStore
-                        .binding(get: \.color, send: NewProfileDomain.Action.setColor))
-                                            .accessibility(identifier: A11y.settings.newProfile
-                                                .stgTxtNewProfileBgColorPicker)
-                                            .background(Color(.tertiarySystemBackground))
-                                            .cornerRadius(16)
-                                            .padding([.horizontal, .bottom])
                 }
 
                 Spacer(minLength: 0)

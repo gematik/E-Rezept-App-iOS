@@ -24,7 +24,7 @@ struct OrderMedicationView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
-            if let name = medication?.name {
+            if let name = medication?.displayName, !name.isEmpty {
                 HStack {
                     HStack(spacing: 4) {
                         Text(name)

@@ -22,7 +22,6 @@ import ModelsR4
 
 extension ModelsR4.Practitioner {
     var fullName: String? {
-        qualification?.first?.code.coding?.first?.code
         let firstName = name?.first?.given?.first?.value?.string
         let lastName = name?.first?.family?.value?.string
 
@@ -43,7 +42,14 @@ extension ModelsR4.Practitioner {
             return namePart
         }
 
-        return nameParts.joined(separator: " ")
+        var allParts: [String] = []
+        if let prefixes = name?.first?.prefix?.compactMap({ $0.value?.string }).filter({ !$0.isEmpty }) {
+            allParts = prefixes + nameParts
+        } else {
+            allParts = nameParts
+        }
+
+        return allParts.joined(separator: " ")
     }
 
     var title: String? {

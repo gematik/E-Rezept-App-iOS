@@ -228,7 +228,7 @@ class MockErxTaskRepository: ErxTaskRepository {
         return saveChargeItemsPublisher
     }
 
-    func delete(chargeItems _: [ErxSparseChargeItem]) -> AnyPublisher<Bool, ErxRepositoryError> {
+    func delete(chargeItems _: [ErxChargeItem]) -> AnyPublisher<Bool, ErxRepositoryError> {
         deleteChargeItemsCallsCount += 1
         return deleteChargeItemsPublisher
     }

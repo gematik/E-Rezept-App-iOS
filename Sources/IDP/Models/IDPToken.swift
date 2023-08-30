@@ -19,6 +19,8 @@
 import Foundation
 
 /// IDPToken
+///
+/// [REQ:gemSpec_eRp_FdV:A_21326#2,A_21327#2] Structure holding ACCESS_TOKEN and ID_TOKEN information
 public struct IDPToken: Codable {
     /// Access token
     public let accessToken: String

@@ -55,14 +55,6 @@ extension ModelsR4.Bundle {
             throw RemoteStorageBundleParsingError.parseError("Could not parse the charge item.")
         }
 
-        let taskId = chargeItem.identifier?.first { identifier in
-            Workflow.Key.prescriptionIdKeys.contains { key in
-                key.value == identifier.system?.value?.url.absoluteString
-            }
-        }?.value?.value?.string
-
-        let enteredDate = chargeItem.enteredDate?.value?.description
-
         // MARK: - KBV_PR_ERP_Bundle
 
         let prescriptionBundle = try parseSupportingInformationBundle(
@@ -133,8 +125,8 @@ extension ModelsR4.Bundle {
         return ErxChargeItem(
             identifier: chargeItemIdentifier,
             fhirData: fhirData,
-            taskId: taskId,
-            enteredDate: enteredDate,
+            taskId: chargeItem.taskId,
+            enteredDate: chargeItem.enteredDate?.value?.description,
             accessCode: chargeItem.accessCode,
             medication: prescriptionBundle.parseErxMedication(),
             medicationRequest: prescriptionBundle.parseErxMedicationRequest(),
@@ -185,9 +177,19 @@ extension ModelsR4.Bundle {
 }
 
 extension ModelsR4.ChargeItem {
+    var taskId: String? {
+        identifier?.first { identifier in
+            Workflow.Key.prescriptionIdKeys.contains {
+                $0.value == identifier.system?.value?.url.absoluteString
+            }
+        }?.value?.value?.string
+    }
+
     var accessCode: String? {
         identifier?.first { identifier in
-            Workflow.Key.accessCodeKeys.contains { $0.value == identifier.system?.value?.url.absoluteString }
+            Workflow.Key.accessCodeKeys.contains {
+                $0.value == identifier.system?.value?.url.absoluteString
+            }
         }?.value?.value?.string
     }
 }

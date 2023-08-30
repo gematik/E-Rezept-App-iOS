@@ -215,12 +215,12 @@ final class MockChargeItemListDomainService: ChargeItemListDomainService {
     var deleteChargeItemForCalled: Bool {
         deleteChargeItemForCallsCount > 0
     }
-    var deleteChargeItemForReceivedArguments: (chargeItem: ErxSparseChargeItem, profileId: UUID)?
-    var deleteChargeItemForReceivedInvocations: [(chargeItem: ErxSparseChargeItem, profileId: UUID)] = []
+    var deleteChargeItemForReceivedArguments: (chargeItem: ErxChargeItem, profileId: UUID)?
+    var deleteChargeItemForReceivedInvocations: [(chargeItem: ErxChargeItem, profileId: UUID)] = []
     var deleteChargeItemForReturnValue: AnyPublisher<ChargeItemDomainServiceDeleteResult, Never>!
-    var deleteChargeItemForClosure: ((ErxSparseChargeItem, UUID) -> AnyPublisher<ChargeItemDomainServiceDeleteResult, Never>)?
+    var deleteChargeItemForClosure: ((ErxChargeItem, UUID) -> AnyPublisher<ChargeItemDomainServiceDeleteResult, Never>)?
 
-    func delete(chargeItem: ErxSparseChargeItem, for profileId: UUID) -> AnyPublisher<ChargeItemDomainServiceDeleteResult, Never> {
+    func delete(chargeItem: ErxChargeItem, for profileId: UUID) -> AnyPublisher<ChargeItemDomainServiceDeleteResult, Never> {
         deleteChargeItemForCallsCount += 1
         deleteChargeItemForReceivedArguments = (chargeItem: chargeItem, profileId: profileId)
         deleteChargeItemForReceivedInvocations.append((chargeItem: chargeItem, profileId: profileId))

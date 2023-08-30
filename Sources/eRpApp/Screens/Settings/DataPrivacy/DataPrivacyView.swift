@@ -21,7 +21,8 @@ import SwiftUI
 import WebKit
 
 // [REQ:BSI-eRp-ePA:O.Purp_1#2] Actual View driving the display of `DataPrivacy.html`
-// [REQ:BSI-eRp-ePA:O.Arch_8#3] Webview containint local html without javascript
+// [REQ:BSI-eRp-ePA:O.Arch_8#3] Webview containing local html without javascript
+// [REQ:gemSpec_eRp_FdV:A_19980#2] Actual View driving the display of `DataPrivacy.html`
 struct DataPrivacyView: View {
     var body: some View {
         WebView()

@@ -113,7 +113,6 @@ extension ErxTaskCoreDataStore {
     /// - Returns: `true` if delete operation was successful
     public func delete(chargeItems: [ErxSparseChargeItem]) -> AnyPublisher<Bool, LocalStoreError> {
         let request: NSFetchRequest<ErxChargeItemEntity> = ErxChargeItemEntity.fetchRequest()
-        request.sortDescriptors = [NSSortDescriptor(key: #keyPath(ErxChargeItemEntity.enteredDate), ascending: false)]
         var subPredicates = [NSPredicate]()
         if let identifier = profileId {
             let profilePredicate = NSPredicate(

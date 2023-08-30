@@ -122,13 +122,15 @@ extension FHIRClient {
 
         return execute(operation: ErxTaskFHIROperation.deleteTask(id: id, accessCode: accessCode, handler: handler))
             .tryCatch { error -> AnyPublisher<Bool, FHIRClient.Error> in
-                // When the server responds with 404 we handle this as a success case for
-                // deletion. Obviously the server does not know the task which means we can
-                // safely delete it locally as well. Hence we return true so the task is
-                // subsequently also deleted locally on the device. Also see comments in ticket ERA-800.
+                // When the server responds with 410 (gone | processing) or 404 (notFound)
+                // we handle this as a success case for deletion.
+                // The response code 410 indicates that access to the target resource is no longer
+                // available at the origin server and that this condition is likely to be permanent.
+                // The response code 404 indicates that server does not know the task which means we can
+                // safely delete it locally as well. Also see comments in ticket ERA-800.
                 if case let FHIRClient.Error.operationOutcome(outcome) = error,
                    let type = outcome.issue.first?.code,
-                   type == IssueType.notFound {
+                   type == IssueType.processing || type == IssueType.notFound {
                     return Just(true).setFailureType(to: FHIRClient.Error.self).eraseToAnyPublisher()
                 }
                 throw error
@@ -227,6 +229,9 @@ extension FHIRClient {
     }
 
     /// Requests all communication Resources for the logged in user
+    ///
+    /// [REQ:gemSpec_eRp_FdV:A_19984] validate pharmacy data format conforming to FHIR
+    ///
     /// - Returns: Array of all loaded communication resources
     /// - Parameter referenceDate: Communications with `timestamp` greater or equal `referenceDate` will be fetched
     public func communicationResources(
@@ -330,21 +335,24 @@ extension FHIRClient {
             }
         }
 
-        return execute(operation: ErxTaskFHIROperation.deleteTask(id: id, accessCode: accessCode, handler: handler))
-            .tryCatch { error -> AnyPublisher<Bool, FHIRClient.Error> in
-                // When the server responds with 404 we handle this as a success case for
-                // deletion. Obviously the server does not know the charge item which means we can
-                // safely delete it locally as well. Hence we return true so the charge item is
-                // subsequently also deleted locally on the device. Also see comments in ticket ERA-800.
-                if case let FHIRClient.Error.operationOutcome(outcome) = error,
-                   let type = outcome.issue.first?.code,
-                   type == IssueType.notFound {
-                    return Just(true).setFailureType(to: FHIRClient.Error.self).eraseToAnyPublisher()
-                }
-                throw error
-            }
-            .mapError { $0 as? FHIRClient.Error ?? FHIRClient.Error.unknown($0) }
-            .eraseToAnyPublisher()
+        return execute(operation: ErxTaskFHIROperation
+            .deleteChargeItem(id: id, accessCode: accessCode, handler: handler))
+                    .tryCatch { error -> AnyPublisher<Bool, FHIRClient.Error> in
+                        // When the server responds with 410 (gone | processing) or 404 (notFound)
+                        // we handle this as a success case for deletion.
+                        // The response code 410 indicates that access to the target resource is no longer
+                        // available at the origin server and that this condition is likely to be permanent.
+                        // The response code 404 indicates that server does not know the task which means we can
+                        // safely delete it locally as well. Also see comments in ticket ERA-800.
+                        if case let FHIRClient.Error.operationOutcome(outcome) = error,
+                           let type = outcome.issue.first?.code,
+                           type == IssueType.processing || type == IssueType.notFound {
+                            return Just(true).setFailureType(to: FHIRClient.Error.self).eraseToAnyPublisher()
+                        }
+                        throw error
+                    }
+                    .mapError { $0 as? FHIRClient.Error ?? FHIRClient.Error.unknown($0) }
+                    .eraseToAnyPublisher()
     }
 
     /// Loads All consents of a given profile

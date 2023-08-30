@@ -88,7 +88,8 @@ struct EditProfileView: View {
                     userImageData: viewStore.userImageData,
                     color: viewStore.color,
                     connection: nil,
-                    style: .xxLarge
+                    style: .xxLarge,
+                    isBorderOn: true
                 ) {
                     viewStore.send(.setNavigation(tag: .editProfilePicture))
                 }

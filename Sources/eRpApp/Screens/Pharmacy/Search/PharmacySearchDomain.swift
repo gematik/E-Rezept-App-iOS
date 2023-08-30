@@ -29,7 +29,7 @@ import SwiftUI
 struct PharmacySearchDomain: ReducerProtocol {
     typealias Store = StoreOf<Self>
 
-    private static func cleanupSubDomains<T>() -> EffectTask<T> {
+    static func cleanupSubDomains<T>() -> EffectTask<T> {
         .concatenate(
             PharmacyDetailDomain.cleanup()
         )

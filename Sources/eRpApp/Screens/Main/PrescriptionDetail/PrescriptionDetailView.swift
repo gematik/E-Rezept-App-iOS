@@ -63,7 +63,8 @@ struct PrescriptionDetailView: View {
 
                     Button(action: { viewStore.send(.setNavigation(tag: .emergencyServiceFeeInfo)) }, label: {
                         SubTitle(
-                            title: viewStore.hasEmergencyServiceFee ? L10n.prscDtlTxtYes : L10n.prscDtlTxtNo,
+                            title: viewStore.hasEmergencyServiceFee ? L10n.prscDtlTxtEmergencyServiceFeeCovered : L10n
+                                .prscDtlTxtEmergencyServiceFeeNotCovered,
                             description: L10n.prscDtlTxtEmergencyServiceFee
                         )
                         .subTitleStyle(.info)
@@ -214,7 +215,7 @@ extension PrescriptionDetailView {
             NavigationLink(
                 destination: IfLetStore(
                     store.destinationsScope(state: /PrescriptionDetailDomain.Destinations.State.technicalInformations),
-                    then: TechnicalInformationsView.init(store:)
+                    then: PrescriptionDetailView.TechnicalInformationsView.init(store:)
                 ),
                 tag: PrescriptionDetailDomain.Destinations.State.Tag.technicalInformations,
                 selection: viewStore.binding(
@@ -228,7 +229,7 @@ extension PrescriptionDetailView {
             NavigationLink(
                 destination: IfLetStore(
                     store.destinationsScope(state: /PrescriptionDetailDomain.Destinations.State.patient),
-                    then: PatientView.init(store:)
+                    then: PrescriptionDetailView.PatientView.init(store:)
                 ),
                 tag: PrescriptionDetailDomain.Destinations.State.Tag.patient,
                 selection: viewStore.binding(
@@ -243,7 +244,7 @@ extension PrescriptionDetailView {
             NavigationLink(
                 destination: IfLetStore(
                     store.destinationsScope(state: /PrescriptionDetailDomain.Destinations.State.practitioner),
-                    then: PractitionerView.init(store:)
+                    then: PrescriptionDetailView.PractitionerView.init(store:)
                 ),
                 tag: PrescriptionDetailDomain.Destinations.State.Tag.practitioner,
                 selection: viewStore.binding(
@@ -258,7 +259,7 @@ extension PrescriptionDetailView {
             NavigationLink(
                 destination: IfLetStore(
                     store.destinationsScope(state: /PrescriptionDetailDomain.Destinations.State.organization),
-                    then: OrganizationView.init(store:)
+                    then: PrescriptionDetailView.OrganizationView.init(store:)
                 ),
                 tag: PrescriptionDetailDomain.Destinations.State.Tag.organization,
                 selection: viewStore.binding(
@@ -273,7 +274,7 @@ extension PrescriptionDetailView {
             NavigationLink(
                 destination: IfLetStore(
                     store.destinationsScope(state: /PrescriptionDetailDomain.Destinations.State.accidentInfo),
-                    then: AccidentInfoView.init(store:)
+                    then: PrescriptionDetailView.AccidentInfoView.init(store:)
                 ),
                 tag: PrescriptionDetailDomain.Destinations.State.Tag.accidentInfo,
                 selection: viewStore.binding(

@@ -125,7 +125,11 @@ public enum HTTPStatusCode: Int {
     case created = 201
     case accepted = 202
     case noContent = 204
+    case resetContent = 205
     case partialContent = 206
+    case multiStatus = 207
+    case alreadyReported = 208
+    case instanceManipulationUsed = 226
     // Redirect
     case multipleChoices = 300
     case movedPermanently = 301
@@ -148,16 +152,36 @@ public enum HTTPStatusCode: Int {
     case conflict = 409
     case gone = 410
     case lengthRequired = 411
+    case preconditionFailure = 412
     case requestEntityTooLarge = 413
     case requestUriTooLong = 414
-    case requestHeaderFieldsTooLarge = 431
     case unsupportedMediaType = 415
+    case rangeNotSatisfiable = 416
     case expectationFailed = 417
     case imateapot = 418
+    case misdirectedRequest = 421
+    case unprocessableEntity = 422
+    case locked = 423
+    case failedDependency = 424
+    case tooEarly = 425
+    case upgradeRequired = 426
+    case preconditionRequired = 428
     case tooManyRequests = 429
+    case requestHeaderFieldsTooLarge = 431
+    case unavailableForLegalReasons = 451
     // server error
     case serverError = 500
     case notImplemented = 501
+    case badGateway = 502
+    case serviceUnavailable = 503
+    case gatewayTimeout = 504
+    case httpVersionNotSupported = 505
+    case variantAlsoNegotiates = 506
+    case insufficentStorage = 507
+    case loopDetected = 508
+    case notExtended = 510
+    case networkAuthenticationRequired = 511
+    case networkConnectTimeoutError = 599
     case debug = -2
 }
 

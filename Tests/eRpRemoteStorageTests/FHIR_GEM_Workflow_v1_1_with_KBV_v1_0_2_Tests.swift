@@ -74,7 +74,7 @@ final class FHIR_GEM_Workflow_v1_1_with_KBV_v1_0_2_Tests: XCTestCase {
         expect(task.patient?.insurance) == "AOK Rheinland/Hamburg"
         expect(task.patient?.insuranceId) == "X234567890"
         expect(task.practitioner?.lanr) == "838382202"
-        expect(task.practitioner?.name) == "Hans Topp-Glücklich"
+        expect(task.practitioner?.name) == "Dr. med. Hans Topp-Glücklich"
         expect(task.practitioner?.qualification) == "Hausarzt"
         expect(task.practitioner?.email).to(beNil())
         expect(task.practitioner?.address).to(beNil())
@@ -144,7 +144,7 @@ final class FHIR_GEM_Workflow_v1_1_with_KBV_v1_0_2_Tests: XCTestCase {
         expect(task.medicationRequest.coPaymentStatus) == .noSubjectToCharge
         expect(task.medicationRequest.bvg) == true
         // patient
-        expect(task.patient?.name) == "Karl-Friederich Graf Freiherr von Schaumberg"
+        expect(task.patient?.name) == "Prof. Dr. Karl-Friederich Graf Freiherr von Schaumberg"
         expect(task.patient?.address) == "Siegburger Str. 155\n51105 Köln"
         expect(task.patient?.birthDate) == "1964-04-04"
         expect(task.patient?.phone).to(beNil())
@@ -153,7 +153,7 @@ final class FHIR_GEM_Workflow_v1_1_with_KBV_v1_0_2_Tests: XCTestCase {
         expect(task.patient?.insuranceId) == "X110498793"
         // practitioner
         expect(task.practitioner?.lanr) == "445588777"
-        expect(task.practitioner?.name) == "Hannelore Popówitsch"
+        expect(task.practitioner?.name) == "Prof. Dr. Hannelore Popówitsch"
         expect(task.practitioner?.qualification) == "Innere und Allgemeinmedizin (Hausarzt)"
         expect(task.practitioner?.email).to(beNil())
         expect(task.practitioner?.address).to(beNil())

@@ -237,4 +237,220 @@ extension DebugLiveLogger {
         }
     }
 }
+
+extension DebugLiveLogger {
+    struct HARFile: Codable {
+        let log: Log
+
+        struct Log: Codable {
+            var version = "1.2"
+            var creator: Creator
+            var browser: Creator
+            var pages: [Page]? // swiftlint:disable:this discouraged_optional_collection
+            var entries: [Entry]
+            var comment: String?
+        }
+
+        struct Creator: Codable {
+            var name: String
+            var version: String
+            var comment: String?
+        }
+
+        struct Page: Codable {
+            var startedDateTime: Date // "2009-04-16T12:07:25.123+01:00",
+            var id: String
+            var title: String
+            var pageTimings: Timing
+            var comment: String?
+
+            struct Timing: Codable {
+                var onContentLoad: Int? // 1720,
+                var onLoad: Int? // 2500,
+                var comment: String?
+            }
+        }
+
+        struct Entry: Codable {
+            var pageref: String? // "page_0"
+            var startedDateTime: Date // "2009-04-16T12:07:23.596Z",
+            var time: Int // 50,
+            var request: Request
+            var response: Response
+            var cache: Cache
+            var timings: Timing
+            var serverIPAddress: String? // "10.0.0.1",
+            var connection: String? // "52492",
+            var comment: String?
+        }
+
+        struct Request: Codable {
+            var method: String
+            var url: String
+            var httpVersion: String // "HTTP/1.1",
+            var cookies: [Cookie]
+            var headers: [Header]
+            var queryString: [QueryString]
+            var postData: PostData?
+            var headersSize: Int
+            var bodySize: Int
+            var comment: String?
+        }
+
+        struct Response: Codable {
+            var status: Int // 200,
+            var statusText: String // "OK",
+            var httpVersion: String // "HTTP/1.1",
+            var cookies: [Cookie]
+            var headers: [Header]
+            var content: Content
+            var redirectURL: String
+            var headersSize: Int
+            var bodySize: Int
+            var comment: String?
+        }
+
+        struct Cache: Codable {}
+
+        struct Timing: Codable {
+            var blocked: Int // 0,
+            var dns: Int // -1,
+            var connect: Int // 15,
+            var send: Int // 20,
+            var wait: Int // 38,
+            var receive: Int // 12,
+            var ssl: Int // -1,
+            var comment: String? // ""
+        }
+
+        struct PostData: Codable {
+            var mimeType: String // "multipart/form-data",
+            var params: [Param]
+            var text: String
+            var comment: String?
+        }
+
+        struct Param: Codable {
+            var name: String // "paramName",
+            var value: String // "paramValue",
+            var fileName: String // "example.pdf",
+            var contentType: String // "application/pdf",
+            var comment: String?
+        }
+
+        struct Cookie: Codable {
+            var name: String // "TestCookie",
+            var value: String // "Cookie Value",
+            var path: String // "/",
+            var domain: String? // "www.janodvarko.cz",
+            var expires: Date? // "2009-07-24T19:20:30.123+02:00",
+            var httpOnly: Bool? // false,
+            var secure: Bool? // false,
+            var comment: String? // ""
+        }
+
+        struct Header: Codable {
+            var name: String
+            var value: String
+            var comment: String?
+        }
+
+        struct QueryString: Codable {
+            var name: String
+            var value: String
+            var comment: String?
+        }
+
+        struct Content: Codable {
+            var size: Int // 33,
+            var compression: Int // 0,
+            var mimeType: String // "text/html; charset=utf-8",
+            var text: String // "\n",
+            var comment: String?
+        }
+    }
+}
+
+extension DebugLiveLogger.RequestLog {
+    func toHARRequest() -> DebugLiveLogger.HARFile.Request {
+        let headers = requestHeader.map { (key: String, value: String) in
+            DebugLiveLogger.HARFile.Header(name: key, value: value)
+        }
+
+        let postData: DebugLiveLogger.HARFile.PostData =
+            .init(mimeType: "text", params: [], text: requestBody)
+
+        return .init(
+            method: request.httpMethod ?? "GET",
+            url: requestUrl,
+            httpVersion: "unknown",
+            cookies: [],
+            headers: headers,
+            queryString: [],
+            postData: postData,
+            headersSize: -1,
+            bodySize: -1
+        )
+    }
+
+    func toHARResponse() -> DebugLiveLogger.HARFile.Response {
+        let headers = (responseHeader as? [String: String])?.map { (key: String, value: String) in
+            DebugLiveLogger.HARFile.Header(name: key, value: value)
+        } ?? []
+
+        let body = responseBody
+
+        return .init(
+            status: responseStatus?.rawValue ?? -1,
+            statusText: responseStatus.debugDescription,
+            httpVersion: "unknown",
+            cookies: [],
+            headers: headers,
+            content: .init(size: -1, compression: -1, mimeType: response?.response.mimeType ?? "unknown", text: body),
+            redirectURL: "",
+            headersSize: -1,
+            bodySize: -1
+        )
+    }
+}
+
+extension DebugLiveLogger {
+    func asHARFile() -> HARFile {
+        let entries = requests.map { request in
+            let harRequest = request.toHARRequest()
+            let harResponse = request.toHARResponse()
+
+            return HARFile.Entry(
+                startedDateTime: request.sentAt,
+                time: Int(request.receivedAt.timeIntervalSince(request.sentAt) * 1000),
+                request: harRequest,
+                response: harResponse,
+                cache: .init(),
+                timings: .init(blocked: -1, dns: -1, connect: -1, send: -1, wait: -1, receive: -1, ssl: -1)
+            )
+        }
+        return HARFile(
+            log: .init(
+                creator: .init(name: "E-Rezept-App iOS", version: AppVersion.current.productVersion),
+                browser: .init(name: "Debug Log", version: AppVersion.current.productVersion),
+                entries: entries
+            )
+        )
+    }
+
+    func serializedHARFile() -> String {
+        let harFile = asHARFile()
+
+        let encoder = JSONEncoder()
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeZone = TimeZone(abbreviation: "UTC")
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss'Z'"
+        encoder.dateEncodingStrategy = .formatted(formatter)
+
+        let data = (try? encoder.encode(harFile)) ?? Data()
+
+        return String(data: data, encoding: .utf8) ?? "encoding failed"
+    }
+}
 #endif

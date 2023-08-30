@@ -149,6 +149,7 @@ extension AppAuthenticationDomain {
             .eraseToEffect()
     }
 
+    // [REQ:BSI-eRp-ePA:O.Biom_5#1] Check whether at least one biometric reference is available.
     func loadAppAuthenticationOption() -> EffectTask<AppAuthenticationDomain.Action> {
         appAuthenticationProvider
             .loadAppAuthenticationOption()

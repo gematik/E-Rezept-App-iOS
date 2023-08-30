@@ -107,7 +107,7 @@ extension ErxChargeItem {
             practitioner: ErxPractitioner(
                 title: "Dr.",
                 lanr: "443236256",
-                name: "Dr. Schraßer",
+                name: "Dr. Dr. Schraßer",
                 qualification: "Super-Facharzt für alles Mögliche"
             ),
             organization: ErxOrganization(

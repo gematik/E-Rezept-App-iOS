@@ -24,6 +24,7 @@ import SwiftUI
 #if ENABLE_DEBUG_VIEW
 struct DebugLogsView: View {
     let store: DebugLogDomain.Store
+    @State var showShareSheet = false
 
     func background(for log: DebugLiveLogger.RequestLog) -> Color {
         guard let statusCode = log.responseStatus?.rawValue else {
@@ -85,11 +86,23 @@ struct DebugLogsView: View {
                         .listRowBackground(self.background(for: log))
                     }
                 }
+                .sheet(isPresented: $showShareSheet) {
+                    ShareViewController(itemsToShare: [DebugLiveLogger.shared.serializedHARFile()])
+                }
             }
             .onAppear {
                 viewStore.send(.loadLogs)
             }
-        }.navigationTitle("Logs")
+        }
+        .navigationTitle("Logs")
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button(
+                    action: { showShareSheet = true },
+                    label: { Image(systemName: "square.and.arrow.up") }
+                )
+            }
+        }
     }
 
     struct LogHeader: View {

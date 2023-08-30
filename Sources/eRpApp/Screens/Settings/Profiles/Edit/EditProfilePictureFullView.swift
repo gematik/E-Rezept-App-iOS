@@ -17,6 +17,7 @@
 //
 
 import ComposableArchitecture
+import eRpKit
 import eRpStyleKit
 import PhotosUI
 import SwiftUI
@@ -37,6 +38,7 @@ struct EditProfilePictureFullView: View {
         let picture: ProfilePicture
         let userImageData: Data
         let destinationTag: EditProfilePictureDomain.Destinations.State.Tag?
+        let isNewProfile: Bool
 
         init(state: EditProfilePictureDomain.State) {
             profile = state.profile
@@ -44,6 +46,7 @@ struct EditProfilePictureFullView: View {
             picture = state.picture ?? .none
             destinationTag = state.destination?.tag
             userImageData = state.userImageData ?? .empty
+            isNewProfile = state.isNewProfile
         }
     }
 
@@ -55,7 +58,8 @@ struct EditProfilePictureFullView: View {
                     userImageData: viewStore.userImageData,
                     color: viewStore.color,
                     connection: nil,
-                    style: .xxLarge
+                    style: .xxLarge,
+                    isBorderOn: true
                 ) {}
                     .disabled(true)
 
@@ -118,6 +122,32 @@ struct EditProfilePictureFullView: View {
         .background(Color(.secondarySystemBackground))
         .navigationTitle(L10n.editPictureTxt)
         .navigationBarTitleDisplayMode(.inline)
+        .navigationBarBackButtonHidden(viewStore.isNewProfile)
+        // Custom Back button, when new Profile is edited. This is to update the values for the new Profile
+        // (because there is no profileID, the normal update method cannot be used)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarLeading) {
+                if viewStore.isNewProfile {
+                    Button {
+                        viewStore.send(.setNewUserValues(Profile(
+                            name: "",
+                            color: viewStore.color.erxColor,
+                            image: viewStore.picture.erxPicture,
+                            userImageData: viewStore.userImageData
+                        )))
+                    } label: {
+                        HStack(spacing: 4) {
+                            Image(systemName: SFSymbolName.back)
+                                .font(Font.body.weight(.medium))
+                                .foregroundColor(Colors.primary700)
+                            Text(L10n.eppBackButton)
+                                .font(.body)
+                                .foregroundColor(Colors.primary700)
+                        }
+                    }
+                }
+            }
+        }
         .onAppear {
             viewStore.send(.setProfileValues)
         }
@@ -210,6 +240,21 @@ extension EditProfilePictureFullView {
             }
             .accessibility(identifier: A11y.settings.editProfilePictureFull.stgEppBtnResetPicture)
             .padding()
+        }
+    }
+}
+
+struct EditProfilePictureFullView_Previews: PreviewProvider {
+    static var previews: some View {
+        Group {
+            EditProfilePictureFullView(store: EditProfilePictureDomain.Dummies.store)
+                .previewDevice("iPhone 11")
+
+            EditProfilePictureFullView(store: EditProfilePictureDomain.Dummies.store)
+                .previewDevice("iPhone 13 Pro")
+
+            EditProfilePictureFullView(store: EditProfilePictureDomain.Dummies.store)
+                .previewDevice("iPhone SE (2nd generation)")
         }
     }
 }

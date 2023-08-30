@@ -1,3 +1,23 @@
+# Release 1.13.0
+
+## changed (1 change)
+
+- Change noctu yes/no to use own strings which are easier to understand
+
+## fixed (2 changes)
+
+- Fix delete for ChargeItem and Task
+- Fix screen transitions when state is niled out
+
+## added (2 changes)
+
+- Add prefix of patient and practitioner to name (merge request)
+- Tap on active TabItem leads to root view of the corresponding TabView's content (merge request)
+
+## internal (1 change)
+
+- More (BSI) requirement annotations (merge request)
+
 # Release 1.12.0
 
 ## added (3 changes)

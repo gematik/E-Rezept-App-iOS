@@ -56,10 +56,6 @@ struct HealthCardPasswordDomain: ReducerProtocol {
         var pinAlertState: AlertState<Action>?
 
         var destination: Destinations.State = .introduction
-
-        init(mode: HealthCardPasswordDomain.Mode) {
-            self.mode = mode
-        }
     }
 
     enum Action: Equatable {

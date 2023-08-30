@@ -70,7 +70,7 @@ struct DummyChargeItemListDomainService: ChargeItemListDomainService {
         Just(.success([])).eraseToAnyPublisher()
     }
 
-    func delete(chargeItem _: ErxSparseChargeItem,
+    func delete(chargeItem _: ErxChargeItem,
                 for _: UUID) -> AnyPublisher<ChargeItemDomainServiceDeleteResult, Never> {
         Just(.success).eraseToAnyPublisher()
     }

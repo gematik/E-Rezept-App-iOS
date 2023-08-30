@@ -236,16 +236,41 @@ final class ErxTaskFHIRClientTests: XCTestCase {
     }
 
     /// Tests a failure delete, e.g. when task has already been deleted on the server.
-    /// The server will then respond with a http status code of 404 but the delete operation should be successful.
+    /// The server can respond with a http status code of 404 but the delete operation should be successful.
     func testDeleteTasks404() {
         // given a response with a 404 (not found) failure
         let errorResponsePath = load(
-            resource: "operationOutcome",
+            resource: "operationOutcomeNotFound",
             directory: .gem_wf_v1_1_with_kbv_v1_0_2
         )
 
         stub(condition: isHost(host) && pathEndsWith("$abort")) { _ in
             fixture(filePath: errorResponsePath, status: 404, headers: ["Accept": "application/fhir+json"])
+        }
+
+        let erxTask = ErxTask(identifier: "1", status: .ready, flowType: .pharmacyOnly, accessCode: "12")
+
+        // when deleting a task
+        sut.deleteTask(by: erxTask.id, accessCode: erxTask.accessCode)
+            .test(failure: { error in
+                fail("unexpected error \(error)")
+            }, expectations: { success in
+                // then the operations should be successful even if the remote call returns a 404
+                expect(success) == true
+            })
+    }
+
+    /// Tests a failure delete, e.g. when task has already been deleted on the server.
+    /// The server can also respond with a http status code of 410 but the delete operation should be successful.
+    func testDeleteTasks410() {
+        // given a response with a 404 (not found) failure
+        let errorResponsePath = load(
+            resource: "operationOutcomeProcessing",
+            directory: .gem_wf_v1_1_with_kbv_v1_0_2
+        )
+
+        stub(condition: isHost(host) && pathEndsWith("$abort")) { _ in
+            fixture(filePath: errorResponsePath, status: 410, headers: ["Accept": "application/fhir+json"])
         }
 
         let erxTask = ErxTask(identifier: "1", status: .ready, flowType: .pharmacyOnly, accessCode: "12")

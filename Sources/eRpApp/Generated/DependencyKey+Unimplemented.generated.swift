@@ -64,7 +64,7 @@ struct UnimplementedChargeItemListDomainService: ChargeItemListDomainService {
     func fetchRemoteChargeItemsAndSave(for profileId: UUID) -> AnyPublisher<ChargeItemDomainServiceFetchResult, Never> {
         fatalError("fetchRemoteChargeItemsAndSave(for:) has not been implemented")
     }
-    func delete(chargeItem: ErxSparseChargeItem, for profileId: UUID) -> AnyPublisher<ChargeItemDomainServiceDeleteResult, Never> {
+    func delete(chargeItem: ErxChargeItem, for profileId: UUID) -> AnyPublisher<ChargeItemDomainServiceDeleteResult, Never> {
         fatalError("delete(chargeItem:for:) has not been implemented")
     }
     func authenticate(for profileId: UUID) -> AnyPublisher<ChargeItemDomainServiceAuthenticateResult, Never> {
@@ -189,7 +189,7 @@ struct UnimplementedErxTaskRepository: ErxTaskRepository {
     func save(chargeItems: [ErxSparseChargeItem]) -> AnyPublisher<Bool, ErxRepositoryError> {
         fatalError("save(chargeItems:) has not been implemented")
     }
-    func delete(chargeItems: [ErxSparseChargeItem]) -> AnyPublisher<Bool, ErxRepositoryError> {
+    func delete(chargeItems: [ErxChargeItem]) -> AnyPublisher<Bool, ErxRepositoryError> {
         fatalError("delete(chargeItems:) has not been implemented")
     }
     func grantConsent(_ consent: ErxConsent) -> AnyPublisher<ErxConsent?, ErxRepositoryError> {

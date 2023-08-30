@@ -31,7 +31,7 @@ protocol ChargeItemListDomainService {
     func fetchRemoteChargeItemsAndSave(for profileId: UUID) -> AnyPublisher<ChargeItemDomainServiceFetchResult, Never>
 
     /// Tries to delete a Charge Item from the remote store and on success on the local store as well
-    func delete(chargeItem: ErxSparseChargeItem, for profileId: UUID)
+    func delete(chargeItem: ErxChargeItem, for profileId: UUID)
         -> AnyPublisher<ChargeItemDomainServiceDeleteResult, Never>
 
     /// Performs an authentication of the user
@@ -221,7 +221,7 @@ struct DefaultChargeItemListDomainService: ChargeItemListDomainService {
     }
 
     func delete(
-        chargeItem: ErxSparseChargeItem,
+        chargeItem: ErxChargeItem,
         for profileId: UUID
     ) -> AnyPublisher<ChargeItemDomainServiceDeleteResult, Never> {
         let loginHandler = loginHandler(for: profileId)

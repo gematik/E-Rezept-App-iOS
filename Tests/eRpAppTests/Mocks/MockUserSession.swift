@@ -422,7 +422,7 @@ class FakeErxTaskRepository: ErxTaskRepository {
         Just(true).setFailureType(to: ErrorType.self).eraseToAnyPublisher()
     }
 
-    func delete(chargeItems: [ErxSparseChargeItem]) -> AnyPublisher<Bool, ErxRepositoryError> {
+    func delete(chargeItems: [ErxChargeItem]) -> AnyPublisher<Bool, ErxRepositoryError> {
         chargeItems.forEach { item in
             chargeItemStore.removeValue(forKey: item.identifier)
         }

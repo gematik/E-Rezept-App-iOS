@@ -77,7 +77,7 @@ struct DummyErxTaskRepository: ErxTaskRepository {
         Just(true).setFailureType(to: ErxRepositoryError.self).eraseToAnyPublisher()
     }
 
-    func delete(chargeItems _: [ErxSparseChargeItem]) -> AnyPublisher<Bool, ErxRepositoryError> {
+    func delete(chargeItems _: [ErxChargeItem]) -> AnyPublisher<Bool, ErxRepositoryError> {
         Just(true).setFailureType(to: ErxRepositoryError.self).eraseToAnyPublisher()
     }
 

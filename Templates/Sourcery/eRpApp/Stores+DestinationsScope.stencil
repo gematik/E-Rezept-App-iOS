@@ -1,5 +1,15 @@
 // sourcery:file:eRpApp/Generated/Stores+DestinationsScope
 
+private func returningLastNonNilValue<A, B>(
+    _ f: @escaping (A) -> B?
+) -> (A) -> B? {
+    var lastValue: B?
+    return { a in
+        lastValue = f(a) ?? lastValue
+        return lastValue
+    }
+}
+
 {% macro storeDestinationsScopeExtension domain destinationVariable %}
 {% typed domain as Type %}
 {% typed destinationVariable as Variable %}
@@ -8,7 +18,10 @@ extension Store where State == {{ domain.name }}.State, Action == {{ domain.name
         state: CasePath<{{ domain.name }}.Destinations.State?, ChildState>,
         action: @escaping (ChildAction) -> {{ domain.name }}.Destinations.Action
     ) -> Store<ChildState?, ChildAction> {
-        self.scope(state: \{{ domain.name }}.State.destination, action: {{ domain.name }}.Action.destination)
+        self.scope(
+                state: returningLastNonNilValue { state in state.destination},
+                action: {{ domain.name }}.Action.destination
+            )
             .scope(
                 state: state.extract(from:),
                 action: action

@@ -60,7 +60,8 @@ struct EditProfilePictureView: View {
                         userImageData: viewStore.userImageData,
                         color: viewStore.color,
                         connection: nil,
-                        style: .xxLarge
+                        style: .xxLarge,
+                        isBorderOn: true
                     ) {}
                         .disabled(true)
 

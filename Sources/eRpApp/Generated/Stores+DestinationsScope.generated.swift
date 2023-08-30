@@ -1,6 +1,16 @@
 // Generated using Sourcery 2.0.2 — https://github.com/krzysztofzablocki/Sourcery
 // DO NOT EDIT
 
+private func returningLastNonNilValue<A, B>(
+    _ f: @escaping (A) -> B?
+) -> (A) -> B? {
+    var lastValue: B?
+    return { a in
+        lastValue = f(a) ?? lastValue
+        return lastValue
+    }
+}
+
 
 import ComposableArchitecture
 import Foundation
@@ -33,7 +43,10 @@ extension Store where State == AppSecurityDomain.State, Action == AppSecurityDom
         state: CasePath<AppSecurityDomain.Destinations.State?, ChildState>,
         action: @escaping (ChildAction) -> AppSecurityDomain.Destinations.Action
     ) -> Store<ChildState?, ChildAction> {
-        self.scope(state: \AppSecurityDomain.State.destination, action: AppSecurityDomain.Action.destination)
+        self.scope(
+                state: returningLastNonNilValue { state in state.destination},
+                action: AppSecurityDomain.Action.destination
+            )
             .scope(
                 state: state.extract(from:),
                 action: action
@@ -64,7 +77,10 @@ extension Store where State == CardWallCANDomain.State, Action == CardWallCANDom
         state: CasePath<CardWallCANDomain.Destinations.State?, ChildState>,
         action: @escaping (ChildAction) -> CardWallCANDomain.Destinations.Action
     ) -> Store<ChildState?, ChildAction> {
-        self.scope(state: \CardWallCANDomain.State.destination, action: CardWallCANDomain.Action.destination)
+        self.scope(
+                state: returningLastNonNilValue { state in state.destination},
+                action: CardWallCANDomain.Action.destination
+            )
             .scope(
                 state: state.extract(from:),
                 action: action
@@ -93,7 +109,10 @@ extension Store where State == CardWallExtAuthSelectionDomain.State, Action == C
         state: CasePath<CardWallExtAuthSelectionDomain.Destinations.State?, ChildState>,
         action: @escaping (ChildAction) -> CardWallExtAuthSelectionDomain.Destinations.Action
     ) -> Store<ChildState?, ChildAction> {
-        self.scope(state: \CardWallExtAuthSelectionDomain.State.destination, action: CardWallExtAuthSelectionDomain.Action.destination)
+        self.scope(
+                state: returningLastNonNilValue { state in state.destination},
+                action: CardWallExtAuthSelectionDomain.Action.destination
+            )
             .scope(
                 state: state.extract(from:),
                 action: action
@@ -120,7 +139,10 @@ extension Store where State == CardWallIntroductionDomain.State, Action == CardW
         state: CasePath<CardWallIntroductionDomain.Destinations.State?, ChildState>,
         action: @escaping (ChildAction) -> CardWallIntroductionDomain.Destinations.Action
     ) -> Store<ChildState?, ChildAction> {
-        self.scope(state: \CardWallIntroductionDomain.State.destination, action: CardWallIntroductionDomain.Action.destination)
+        self.scope(
+                state: returningLastNonNilValue { state in state.destination},
+                action: CardWallIntroductionDomain.Action.destination
+            )
             .scope(
                 state: state.extract(from:),
                 action: action
@@ -147,7 +169,10 @@ extension Store where State == CardWallLoginOptionDomain.State, Action == CardWa
         state: CasePath<CardWallLoginOptionDomain.Destinations.State?, ChildState>,
         action: @escaping (ChildAction) -> CardWallLoginOptionDomain.Destinations.Action
     ) -> Store<ChildState?, ChildAction> {
-        self.scope(state: \CardWallLoginOptionDomain.State.destination, action: CardWallLoginOptionDomain.Action.destination)
+        self.scope(
+                state: returningLastNonNilValue { state in state.destination},
+                action: CardWallLoginOptionDomain.Action.destination
+            )
             .scope(
                 state: state.extract(from:),
                 action: action
@@ -174,7 +199,10 @@ extension Store where State == CardWallPINDomain.State, Action == CardWallPINDom
         state: CasePath<CardWallPINDomain.Destinations.State?, ChildState>,
         action: @escaping (ChildAction) -> CardWallPINDomain.Destinations.Action
     ) -> Store<ChildState?, ChildAction> {
-        self.scope(state: \CardWallPINDomain.State.destination, action: CardWallPINDomain.Action.destination)
+        self.scope(
+                state: returningLastNonNilValue { state in state.destination},
+                action: CardWallPINDomain.Action.destination
+            )
             .scope(
                 state: state.extract(from:),
                 action: action
@@ -201,7 +229,10 @@ extension Store where State == CardWallReadCardDomain.State, Action == CardWallR
         state: CasePath<CardWallReadCardDomain.Destinations.State?, ChildState>,
         action: @escaping (ChildAction) -> CardWallReadCardDomain.Destinations.Action
     ) -> Store<ChildState?, ChildAction> {
-        self.scope(state: \CardWallReadCardDomain.State.destination, action: CardWallReadCardDomain.Action.destination)
+        self.scope(
+                state: returningLastNonNilValue { state in state.destination},
+                action: CardWallReadCardDomain.Action.destination
+            )
             .scope(
                 state: state.extract(from:),
                 action: action
@@ -228,7 +259,10 @@ extension Store where State == ChargeItemDomain.State, Action == ChargeItemDomai
         state: CasePath<ChargeItemDomain.Destinations.State?, ChildState>,
         action: @escaping (ChildAction) -> ChargeItemDomain.Destinations.Action
     ) -> Store<ChildState?, ChildAction> {
-        self.scope(state: \ChargeItemDomain.State.destination, action: ChargeItemDomain.Action.destination)
+        self.scope(
+                state: returningLastNonNilValue { state in state.destination},
+                action: ChargeItemDomain.Action.destination
+            )
             .scope(
                 state: state.extract(from:),
                 action: action
@@ -255,7 +289,10 @@ extension Store where State == ChargeItemListDomain.State, Action == ChargeItemL
         state: CasePath<ChargeItemListDomain.Destinations.State?, ChildState>,
         action: @escaping (ChildAction) -> ChargeItemListDomain.Destinations.Action
     ) -> Store<ChildState?, ChildAction> {
-        self.scope(state: \ChargeItemListDomain.State.destination, action: ChargeItemListDomain.Action.destination)
+        self.scope(
+                state: returningLastNonNilValue { state in state.destination},
+                action: ChargeItemListDomain.Action.destination
+            )
             .scope(
                 state: state.extract(from:),
                 action: action
@@ -292,7 +329,10 @@ extension Store where State == EditProfileDomain.State, Action == EditProfileDom
         state: CasePath<EditProfileDomain.Destinations.State?, ChildState>,
         action: @escaping (ChildAction) -> EditProfileDomain.Destinations.Action
     ) -> Store<ChildState?, ChildAction> {
-        self.scope(state: \EditProfileDomain.State.destination, action: EditProfileDomain.Action.destination)
+        self.scope(
+                state: returningLastNonNilValue { state in state.destination},
+                action: EditProfileDomain.Action.destination
+            )
             .scope(
                 state: state.extract(from:),
                 action: action
@@ -321,7 +361,10 @@ extension Store where State == EditProfilePictureDomain.State, Action == EditPro
         state: CasePath<EditProfilePictureDomain.Destinations.State?, ChildState>,
         action: @escaping (ChildAction) -> EditProfilePictureDomain.Destinations.Action
     ) -> Store<ChildState?, ChildAction> {
-        self.scope(state: \EditProfilePictureDomain.State.destination, action: EditProfilePictureDomain.Action.destination)
+        self.scope(
+                state: returningLastNonNilValue { state in state.destination},
+                action: EditProfilePictureDomain.Action.destination
+            )
             .scope(
                 state: state.extract(from:),
                 action: action
@@ -350,7 +393,10 @@ extension Store where State == HealthCardPasswordDomain.State, Action == HealthC
         state: CasePath<HealthCardPasswordDomain.Destinations.State?, ChildState>,
         action: @escaping (ChildAction) -> HealthCardPasswordDomain.Destinations.Action
     ) -> Store<ChildState?, ChildAction> {
-        self.scope(state: \HealthCardPasswordDomain.State.destination, action: HealthCardPasswordDomain.Action.destination)
+        self.scope(
+                state: returningLastNonNilValue { state in state.destination},
+                action: HealthCardPasswordDomain.Action.destination
+            )
             .scope(
                 state: state.extract(from:),
                 action: action
@@ -377,7 +423,10 @@ extension Store where State == HealthCardPasswordReadCardDomain.State, Action ==
         state: CasePath<HealthCardPasswordReadCardDomain.Destinations.State?, ChildState>,
         action: @escaping (ChildAction) -> HealthCardPasswordReadCardDomain.Destinations.Action
     ) -> Store<ChildState?, ChildAction> {
-        self.scope(state: \HealthCardPasswordReadCardDomain.State.destination, action: HealthCardPasswordReadCardDomain.Action.destination)
+        self.scope(
+                state: returningLastNonNilValue { state in state.destination},
+                action: HealthCardPasswordReadCardDomain.Action.destination
+            )
             .scope(
                 state: state.extract(from:),
                 action: action
@@ -408,7 +457,10 @@ extension Store where State == MainDomain.State, Action == MainDomain.Action {
         state: CasePath<MainDomain.Destinations.State?, ChildState>,
         action: @escaping (ChildAction) -> MainDomain.Destinations.Action
     ) -> Store<ChildState?, ChildAction> {
-        self.scope(state: \MainDomain.State.destination, action: MainDomain.Action.destination)
+        self.scope(
+                state: returningLastNonNilValue { state in state.destination},
+                action: MainDomain.Action.destination
+            )
             .scope(
                 state: state.extract(from:),
                 action: action
@@ -435,7 +487,10 @@ extension Store where State == MedicationDomain.State, Action == MedicationDomai
         state: CasePath<MedicationDomain.Destinations.State?, ChildState>,
         action: @escaping (ChildAction) -> MedicationDomain.Destinations.Action
     ) -> Store<ChildState?, ChildAction> {
-        self.scope(state: \MedicationDomain.State.destination, action: MedicationDomain.Action.destination)
+        self.scope(
+                state: returningLastNonNilValue { state in state.destination},
+                action: MedicationDomain.Action.destination
+            )
             .scope(
                 state: state.extract(from:),
                 action: action
@@ -462,7 +517,10 @@ extension Store where State == MedicationOverviewDomain.State, Action == Medicat
         state: CasePath<MedicationOverviewDomain.Destinations.State?, ChildState>,
         action: @escaping (ChildAction) -> MedicationOverviewDomain.Destinations.Action
     ) -> Store<ChildState?, ChildAction> {
-        self.scope(state: \MedicationOverviewDomain.State.destination, action: MedicationOverviewDomain.Action.destination)
+        self.scope(
+                state: returningLastNonNilValue { state in state.destination},
+                action: MedicationOverviewDomain.Action.destination
+            )
             .scope(
                 state: state.extract(from:),
                 action: action
@@ -484,6 +542,31 @@ extension Store where State == MedicationOverviewDomain.State, Action == Medicat
 
 
 
+extension Store where State == NewProfileDomain.State, Action == NewProfileDomain.Action {
+    func destinationsScope<ChildState, ChildAction>(
+        state: CasePath<NewProfileDomain.Destinations.State?, ChildState>,
+        action: @escaping (ChildAction) -> NewProfileDomain.Destinations.Action
+    ) -> Store<ChildState?, ChildAction> {
+        self.scope(state: \NewProfileDomain.State.destination, action: NewProfileDomain.Action.destination)
+            .scope(
+                state: state.extract(from:),
+                action: action
+            )
+    }
+
+    func destinationsScope<ChildState>(
+        state: CasePath<NewProfileDomain.Destinations.State?, ChildState>
+    ) -> Store<ChildState?, Action> {
+        self.scope(state: \NewProfileDomain.State.destination)
+            .scope(state: state.extract(from:))
+    }
+}
+
+
+
+
+
+
 
 
 
@@ -493,7 +576,10 @@ extension Store where State == OrderDetailDomain.State, Action == OrderDetailDom
         state: CasePath<OrderDetailDomain.Destinations.State?, ChildState>,
         action: @escaping (ChildAction) -> OrderDetailDomain.Destinations.Action
     ) -> Store<ChildState?, ChildAction> {
-        self.scope(state: \OrderDetailDomain.State.destination, action: OrderDetailDomain.Action.destination)
+        self.scope(
+                state: returningLastNonNilValue { state in state.destination},
+                action: OrderDetailDomain.Action.destination
+            )
             .scope(
                 state: state.extract(from:),
                 action: action
@@ -520,7 +606,10 @@ extension Store where State == OrderHealthCardDomain.State, Action == OrderHealt
         state: CasePath<OrderHealthCardDomain.Destinations.State?, ChildState>,
         action: @escaping (ChildAction) -> OrderHealthCardDomain.Destinations.Action
     ) -> Store<ChildState?, ChildAction> {
-        self.scope(state: \OrderHealthCardDomain.State.destination, action: OrderHealthCardDomain.Action.destination)
+        self.scope(
+                state: returningLastNonNilValue { state in state.destination},
+                action: OrderHealthCardDomain.Action.destination
+            )
             .scope(
                 state: state.extract(from:),
                 action: action
@@ -547,7 +636,10 @@ extension Store where State == OrdersDomain.State, Action == OrdersDomain.Action
         state: CasePath<OrdersDomain.Destinations.State?, ChildState>,
         action: @escaping (ChildAction) -> OrdersDomain.Destinations.Action
     ) -> Store<ChildState?, ChildAction> {
-        self.scope(state: \OrdersDomain.State.destination, action: OrdersDomain.Action.destination)
+        self.scope(
+                state: returningLastNonNilValue { state in state.destination},
+                action: OrdersDomain.Action.destination
+            )
             .scope(
                 state: state.extract(from:),
                 action: action
@@ -576,7 +668,10 @@ extension Store where State == PharmacyDetailDomain.State, Action == PharmacyDet
         state: CasePath<PharmacyDetailDomain.Destinations.State?, ChildState>,
         action: @escaping (ChildAction) -> PharmacyDetailDomain.Destinations.Action
     ) -> Store<ChildState?, ChildAction> {
-        self.scope(state: \PharmacyDetailDomain.State.destination, action: PharmacyDetailDomain.Action.destination)
+        self.scope(
+                state: returningLastNonNilValue { state in state.destination},
+                action: PharmacyDetailDomain.Action.destination
+            )
             .scope(
                 state: state.extract(from:),
                 action: action
@@ -603,7 +698,10 @@ extension Store where State == PharmacyRedeemDomain.State, Action == PharmacyRed
         state: CasePath<PharmacyRedeemDomain.Destinations.State?, ChildState>,
         action: @escaping (ChildAction) -> PharmacyRedeemDomain.Destinations.Action
     ) -> Store<ChildState?, ChildAction> {
-        self.scope(state: \PharmacyRedeemDomain.State.destination, action: PharmacyRedeemDomain.Action.destination)
+        self.scope(
+                state: returningLastNonNilValue { state in state.destination},
+                action: PharmacyRedeemDomain.Action.destination
+            )
             .scope(
                 state: state.extract(from:),
                 action: action
@@ -630,7 +728,10 @@ extension Store where State == PharmacySearchDomain.State, Action == PharmacySea
         state: CasePath<PharmacySearchDomain.Destinations.State?, ChildState>,
         action: @escaping (ChildAction) -> PharmacySearchDomain.Destinations.Action
     ) -> Store<ChildState?, ChildAction> {
-        self.scope(state: \PharmacySearchDomain.State.destination, action: PharmacySearchDomain.Action.destination)
+        self.scope(
+                state: returningLastNonNilValue { state in state.destination},
+                action: PharmacySearchDomain.Action.destination
+            )
             .scope(
                 state: state.extract(from:),
                 action: action
@@ -661,7 +762,10 @@ extension Store where State == PrescriptionArchiveDomain.State, Action == Prescr
         state: CasePath<PrescriptionArchiveDomain.Destinations.State?, ChildState>,
         action: @escaping (ChildAction) -> PrescriptionArchiveDomain.Destinations.Action
     ) -> Store<ChildState?, ChildAction> {
-        self.scope(state: \PrescriptionArchiveDomain.State.destination, action: PrescriptionArchiveDomain.Action.destination)
+        self.scope(
+                state: returningLastNonNilValue { state in state.destination},
+                action: PrescriptionArchiveDomain.Action.destination
+            )
             .scope(
                 state: state.extract(from:),
                 action: action
@@ -688,7 +792,10 @@ extension Store where State == PrescriptionDetailDomain.State, Action == Prescri
         state: CasePath<PrescriptionDetailDomain.Destinations.State?, ChildState>,
         action: @escaping (ChildAction) -> PrescriptionDetailDomain.Destinations.Action
     ) -> Store<ChildState?, ChildAction> {
-        self.scope(state: \PrescriptionDetailDomain.State.destination, action: PrescriptionDetailDomain.Action.destination)
+        self.scope(
+                state: returningLastNonNilValue { state in state.destination},
+                action: PrescriptionDetailDomain.Action.destination
+            )
             .scope(
                 state: state.extract(from:),
                 action: action
@@ -717,7 +824,10 @@ extension Store where State == ProfileSelectionDomain.State, Action == ProfileSe
         state: CasePath<ProfileSelectionDomain.Destinations.State?, ChildState>,
         action: @escaping (ChildAction) -> ProfileSelectionDomain.Destinations.Action
     ) -> Store<ChildState?, ChildAction> {
-        self.scope(state: \ProfileSelectionDomain.State.destination, action: ProfileSelectionDomain.Action.destination)
+        self.scope(
+                state: returningLastNonNilValue { state in state.destination},
+                action: ProfileSelectionDomain.Action.destination
+            )
             .scope(
                 state: state.extract(from:),
                 action: action
@@ -748,7 +858,10 @@ extension Store where State == RedeemMethodsDomain.State, Action == RedeemMethod
         state: CasePath<RedeemMethodsDomain.Destinations.State?, ChildState>,
         action: @escaping (ChildAction) -> RedeemMethodsDomain.Destinations.Action
     ) -> Store<ChildState?, ChildAction> {
-        self.scope(state: \RedeemMethodsDomain.State.destination, action: RedeemMethodsDomain.Action.destination)
+        self.scope(
+                state: returningLastNonNilValue { state in state.destination},
+                action: RedeemMethodsDomain.Action.destination
+            )
             .scope(
                 state: state.extract(from:),
                 action: action
@@ -779,7 +892,10 @@ extension Store where State == RegisteredDevicesDomain.State, Action == Register
         state: CasePath<RegisteredDevicesDomain.Destinations.State?, ChildState>,
         action: @escaping (ChildAction) -> RegisteredDevicesDomain.Destinations.Action
     ) -> Store<ChildState?, ChildAction> {
-        self.scope(state: \RegisteredDevicesDomain.State.destination, action: RegisteredDevicesDomain.Action.destination)
+        self.scope(
+                state: returningLastNonNilValue { state in state.destination},
+                action: RegisteredDevicesDomain.Action.destination
+            )
             .scope(
                 state: state.extract(from:),
                 action: action
@@ -808,7 +924,10 @@ extension Store where State == ScannerDomain.State, Action == ScannerDomain.Acti
         state: CasePath<ScannerDomain.Destinations.State?, ChildState>,
         action: @escaping (ChildAction) -> ScannerDomain.Destinations.Action
     ) -> Store<ChildState?, ChildAction> {
-        self.scope(state: \ScannerDomain.State.destination, action: ScannerDomain.Action.destination)
+        self.scope(
+                state: returningLastNonNilValue { state in state.destination},
+                action: ScannerDomain.Action.destination
+            )
             .scope(
                 state: state.extract(from:),
                 action: action
@@ -835,7 +954,10 @@ extension Store where State == SettingsDomain.State, Action == SettingsDomain.Ac
         state: CasePath<SettingsDomain.Destinations.State?, ChildState>,
         action: @escaping (ChildAction) -> SettingsDomain.Destinations.Action
     ) -> Store<ChildState?, ChildAction> {
-        self.scope(state: \SettingsDomain.State.destination, action: SettingsDomain.Action.destination)
+        self.scope(
+                state: returningLastNonNilValue { state in state.destination},
+                action: SettingsDomain.Action.destination
+            )
             .scope(
                 state: state.extract(from:),
                 action: action

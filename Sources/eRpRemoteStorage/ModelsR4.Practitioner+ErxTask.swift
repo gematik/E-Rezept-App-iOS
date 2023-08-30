@@ -42,7 +42,14 @@ extension ModelsR4.Practitioner {
             return namePart
         }
 
-        return nameParts.joined(separator: " ")
+        var allParts: [String] = []
+        if let prefixes = name?.first?.prefix?.compactMap({ $0.value?.string }).filter({ !$0.isEmpty }) {
+            allParts = prefixes + nameParts
+        } else {
+            allParts = nameParts
+        }
+
+        return allParts.joined(separator: " ")
     }
 
     var title: String? {

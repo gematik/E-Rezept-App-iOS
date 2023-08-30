@@ -211,12 +211,13 @@ struct OnboardingDomain: ReducerProtocol {
     // [REQ:gemSpec_eRp_FdV:A_19184] Alert for the user to choose.
     static let trackingAlertState: AlertState<Action> = {
         AlertState<Action>(
-            title: TextState("Erlauben Sie E-Rezept Ihr Nutzerverhalten anonym zu analysieren?"),
-            message: TextState(
-                "Ihre Daten werden für Produktverbesserungen genutzt und nicht an Dritte weitergegeben."
-            ),
-            primaryButton: .default(TextState("Nicht erlauben"), action: .send(.dismissAlert, animation: .default)),
-            secondaryButton: .default(TextState("Erlauben"), action: .send(.allowTracking, animation: .default))
+            title: TextState(L10n.onbAnaAlertTitle),
+            message: TextState(L10n.onbAnaAlertMessage),
+            primaryButton: .default(TextState(L10n.onbAnaAlertDeny), action: .send(.dismissAlert, animation: .default)),
+            secondaryButton: .default(
+                TextState(L10n.onbAnaAlertAccept),
+                action: .send(.allowTracking, animation: .default)
+            )
         )
     }()
 }

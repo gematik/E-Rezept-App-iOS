@@ -146,9 +146,9 @@ auth:
   - auth_txt_password_failure
   - auth_edt_password_input
   - auth_txt_failed_login_hint
-  - auth_btn_biometricandpassword_faceid
-  - auth_btn_biometricandpassword_touchid
-  - auth_btn_biometricandpassword_change
+  - auth_btn_bap_faceid
+  - auth_btn_bap_touchid
+  - auth_btn_bap_change
 settings:
   demo:
     - nav_done

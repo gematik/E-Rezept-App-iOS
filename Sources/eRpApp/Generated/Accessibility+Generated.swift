@@ -19,9 +19,9 @@ internal enum A11y {
       static let authTxtPasswordFailure = "auth_txt_password_failure"
       static let authEdtPasswordInput = "auth_edt_password_input"
       static let authTxtFailedLoginHint = "auth_txt_failed_login_hint"
-      static let authBtnBiometricandpasswordFaceid = "auth_btn_biometricandpassword_faceid"
-      static let authBtnBiometricandpasswordTouchid = "auth_btn_biometricandpassword_touchid"
-      static let authBtnBiometricandpasswordChange = "auth_btn_biometricandpassword_change"
+      static let authBtnBapFaceid = "auth_btn_bap_faceid"
+      static let authBtnBapTouchid = "auth_btn_bap_touchid"
+      static let authBtnBapChange = "auth_btn_bap_change"
   }
     internal enum cardWall { 
     internal enum canInput {

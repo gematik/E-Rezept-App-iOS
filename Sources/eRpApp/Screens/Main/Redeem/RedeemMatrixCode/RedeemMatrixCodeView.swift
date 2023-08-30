@@ -19,6 +19,8 @@
 import ComposableArchitecture
 import SwiftUI
 
+// [REQ:gemSpec_eRp_FdV:A_20181#1] Screen that presents the DataMatrix code for redeeming a prescription only contains
+//   some static texts and the image of the code.
 struct RedeemMatrixCodeView: View {
     let store: RedeemMatrixCodeDomain.Store
     @State var originalBrightness: CGFloat?

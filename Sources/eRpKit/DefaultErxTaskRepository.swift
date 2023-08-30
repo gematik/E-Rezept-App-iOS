@@ -329,11 +329,11 @@ public class DefaultErxTaskRepository: ErxTaskRepository {
             .eraseToAnyPublisher()
     }
 
-    public func delete(chargeItems: [ErxSparseChargeItem]) -> AnyPublisher<Bool, ErxRepositoryError> {
+    public func delete(chargeItems: [ErxChargeItem]) -> AnyPublisher<Bool, ErxRepositoryError> {
         cloud.delete(chargeItems: chargeItems)
             .mapError(ErrorType.remote)
             .flatMap { _ in
-                self.disk.delete(chargeItems: chargeItems)
+                self.disk.delete(chargeItems: chargeItems.map(\.sparseChargeItem))
                     .mapError(ErrorType.local)
             }
             .eraseToAnyPublisher()

@@ -29,7 +29,7 @@ extension HealthCardType {
             .mapError { $0.asNFCSignatureError() }
             .flatMap { certificate -> AnyPublisher<SignedChallenge, NFCSignatureProviderError> in
                 // [REQ:gemSpec_Krypt:A_17207] Assure only brainpoolP256r1 is used
-                // [REQ:gemSpec_Krypt:GS-A_4357-01,GS-A_4357-02] Assure that brainpoolP256r1 is used
+                // [REQ:gemSpec_Krypt:GS-A_4357-01,GS-A_4357-02,GS-A_4361-02] Assure that brainpoolP256r1 is used
                 guard let alg = certificate.info.algorithm.alg else {
                     return Fail(
                         error: NFCSignatureProviderError.signingFailure(.unsupportedAlgorithm)
@@ -55,7 +55,7 @@ extension HealthCardType {
             .mapError(NFCSignatureProviderError.cardReadingError)
             .flatMap { certificate -> AnyPublisher<RegistrationData, NFCSignatureProviderError> in
                 // [REQ:gemSpec_Krypt:A_17207] Assure only brainpoolP256r1 is used
-                // [REQ:gemSpec_Krypt:GS-A_4357-01,GS-A_4357-02] Assure that brainpoolP256r1 is used
+                // [REQ:gemSpec_Krypt:GS-A_4357-01,GS-A_4357-02,GS-A_4361-02] Assure that brainpoolP256r1 is used
                 guard certificate.info.algorithm.alg == .bp256r1 else {
                     return Fail(
                         error: NFCSignatureProviderError.signingFailure(.unsupportedAlgorithm)

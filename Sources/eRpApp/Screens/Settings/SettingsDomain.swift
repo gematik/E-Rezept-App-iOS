@@ -36,7 +36,7 @@ struct SettingsDomain: ReducerProtocol {
         )
     }
 
-    private static func cleanupSubDomains<T>() -> EffectTask<T> {
+    static func cleanupSubDomains<T>() -> EffectTask<T> {
         .concatenate(
             HealthCardPasswordDomain.cleanup(),
             DebugDomain.cleanup(),
@@ -205,6 +205,7 @@ struct SettingsDomain: ReducerProtocol {
         // Tracking
         // [REQ:gemSpec_eRp_FdV:A_19088, A_19089, A_19092, A_19097] OptIn for usage tracking
         // [REQ:BSI-eRp-ePA:O.Purp_5#2] Actual disabling of analytics
+        // [REQ:gemSpec_eRp_FdV:A_19982#2] Opt out of analytics
         case let .toggleTrackingTapped(optIn):
             if optIn {
                 // [REQ:gemSpec_eRp_FdV:A_19091#3] Show comply route to display analytics usage within settings

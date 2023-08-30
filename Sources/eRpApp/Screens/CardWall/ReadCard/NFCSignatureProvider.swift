@@ -439,7 +439,7 @@ extension Publisher where Self.Output == HealthCardType, Self.Failure == NFCSign
                 .readAutCertificate()
                 .flatMap { certificate -> AnyPublisher<SignedChallenge, Swift.Error> in
                     // [REQ:gemSpec_Krypt:A_17207] Assure only brainpoolP256r1 is used
-                    // [REQ:gemSpec_Krypt:GS-A_4357-01,GS-A_4357-02] Assure that brainpoolP256r1 is used
+                    // [REQ:gemSpec_Krypt:GS-A_4357-01,GS-A_4357-02,GS-A_4361-02] Assure that brainpoolP256r1 is used
                     guard let alg = certificate.info.algorithm.alg else {
                         return Fail(
                             error: NFCSignatureProviderError.signingFailure(.unsupportedAlgorithm)
@@ -491,7 +491,7 @@ class EGKSigner: JWTSigner {
 
 extension PSOAlgorithm {
     // [REQ:gemSpec_Krypt:A_17207] Assure only brainpoolP256r1 is used
-    // [REQ:gemSpec_Krypt:GS-A_4357-01,GS-A_4357-02] Assure that brainpoolP256r1 is used
+    // [REQ:gemSpec_Krypt:GS-A_4357-01,GS-A_4357-02,GS-A_4361-02] Assure that brainpoolP256r1 is used
     var alg: JWT.Algorithm? {
         if case .signECDSA = self {
             return .bp256r1

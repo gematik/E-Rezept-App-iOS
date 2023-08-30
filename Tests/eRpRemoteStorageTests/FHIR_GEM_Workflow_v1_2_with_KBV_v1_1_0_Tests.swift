@@ -93,7 +93,7 @@ final class FHIR_GEM_Workflow_v1_2_with_KBV_v1_1_0_Tests: XCTestCase {
             date: "2021-04-01"
         )
         // patient
-        expect(task.patient?.name) == "Eva Kluge"
+        expect(task.patient?.name) == "Prof. Dr. Dr. med Eva Kluge"
         expect(task.patient?.address) == "Pflasterhofweg 111B\n50999 Köln"
         expect(task.patient?.birthDate) == "1982-01-03"
         expect(task.patient?.phone).to(beNil())
@@ -102,7 +102,7 @@ final class FHIR_GEM_Workflow_v1_2_with_KBV_v1_1_0_Tests: XCTestCase {
         expect(task.patient?.insuranceId) == "K030182229"
         // practitioner
         expect(task.practitioner?.lanr) == "987654423"
-        expect(task.practitioner?.name) == "Emma Schneider"
+        expect(task.practitioner?.name) == "Prof. Dr. med. Emma Schneider"
         expect(task.practitioner?.qualification) == "Fachärztin für Innere Medizin"
         expect(task.practitioner?.email).to(beNil())
         expect(task.practitioner?.address).to(beNil())

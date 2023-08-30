@@ -24,6 +24,7 @@ struct ProfilePictureView: View {
     let color: ProfileColor?
     let connection: ProfileConnectionStatus?
     let style: ProfilePictureView.Style
+    var isBorderOn = false
     let action: () -> Void
 
     enum Style {
@@ -107,6 +108,7 @@ struct ProfilePictureView: View {
                 }
                 .frame(width: style.size, height: style.size, alignment: .center)
                 .background(Circle().fill(color?.background ?? Colors.secondary))
+                .border(color?.border ?? Colors.secondary, width: isBorderOn ? 2 : 0, cornerRadius: 999)
                 .foregroundColor(Color(.secondaryLabel))
                 .padding(.vertical, 8)
                 .padding(.trailing, 16)
@@ -138,7 +140,8 @@ struct ProfilePictureView_Previews: PreviewProvider {
                 userImageData: nil,
                 color: .blue,
                 connection: .connected,
-                style: .small
+                style: .small,
+                isBorderOn: true
             ) {}
             ProfilePictureView(
                 image: .boyWithCard,

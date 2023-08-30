@@ -96,6 +96,7 @@ final class ChargeItemDomainTests: XCTestCase {
         await store.receive(.response(.deleteChargeItem(.success))) {
             $0.authenticationState = .authenticated
         }
+        await store.receive(.delegate(.close))
     }
 
     func testDeleteConfirmAlertWithError_showsErrorAlert() async {

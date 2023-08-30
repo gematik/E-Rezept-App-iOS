@@ -45,6 +45,7 @@ final class FHIR_GEM_ERPCHRG_v_1_0_0_ChargeItemTests: XCTestCase {
             return
         }
 
+        expect(chargeItem.taskId) == "200.000.001.206.112.29"
         expect(chargeItem.enteredDate) == "2023-02-23T15:08:32.699+00:00"
         expect(chargeItem.accessCode) == "abd4afed9f3f458114fc3407878213e110f238d1afa919fbed7282abbef68bfd"
 
@@ -77,7 +78,7 @@ final class FHIR_GEM_ERPCHRG_v_1_0_0_ChargeItemTests: XCTestCase {
         expect(chargeItem.patient?.insuranceId) == "X110465770"
         // practitioner
         expect(chargeItem.practitioner?.lanr) == "208818254"
-        expect(chargeItem.practitioner?.name) == "Dr. Schraßer"
+        expect(chargeItem.practitioner?.name) == "Dr. Dr. Schraßer"
         expect(chargeItem.practitioner?.qualification) == "Super-Facharzt für alles Mögliche"
         expect(chargeItem.practitioner?.email).to(beNil())
         expect(chargeItem.practitioner?.address).to(beNil())

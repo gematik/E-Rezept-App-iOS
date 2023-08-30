@@ -23,7 +23,7 @@ import OpenSSL
 
 /// Key-pair generator type based on BrainpoolP256r1
 ///
-/// [REQ:gemSpec_Krypt:GS-A_4357] Key pair generation delegated to OpenSSL with BrainpoolP256r1 parameters
+/// [REQ:gemSpec_Krypt:GS-A_4357,GS-A_4367] Key pair generation delegated to OpenSSL with BrainpoolP256r1 parameters
 public typealias BrainpoolKeyGenerator = () throws -> BrainpoolP256r1.KeyExchange.PrivateKey
 /// AES nonce generator type
 public typealias AESNonceGenerator = () throws -> Data
@@ -53,6 +53,7 @@ struct IDPCrypto {
         stateLength: Int = 16,
         randomGenerator: @escaping Random<Data> = { try generateSecureRandom(length: $0) },
         brainpoolKeyPairGenerator: @escaping BrainpoolKeyGenerator = {
+            // [REQ:gemSpec_eRp_FdV:A_19179#2] Key pair generation delegated to OpenSSL with BrainpoolP256r1 parameters
             // [REQ:BSI-eRp-ePA:O.Cryp_3#3] Brainpool key generator
             try BrainpoolP256r1.KeyExchange.generateKey()
         },
@@ -61,6 +62,8 @@ struct IDPCrypto {
             try generateSecureRandom(length: IDPCrypto.AES256GCMSpec.nonceBytes)
         },
         // [REQ:gemSpec_Krypt:GS-A_4389:1] 256bit GCM symmetric key
+        // [REQ:gemSpec_eRp_FdV:A_19179#3] AES key generation via CryptoKit
+        // [REQ:gemSpec_Krypt:GS-A_4368] AES key generation via CryptoKit
         aesKey: SymmetricKey = SymmetricKey(size: SymmetricKeySize(bitCount: 256))
     ) {
         self.verifierLength = verifierLength
