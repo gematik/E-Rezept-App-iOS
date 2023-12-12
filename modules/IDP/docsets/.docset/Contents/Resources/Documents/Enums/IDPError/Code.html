@@ -1,0 +1,1753 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Code Enumeration Reference</title>
+    <link rel="stylesheet" type="text/css" href="../../css/jazzy.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/highlight.css" />
+    <meta charset="utf-8">
+    <script src="../../js/jquery.min.js" defer></script>
+    <script src="../../js/jazzy.js" defer></script>
+    
+    <script src="../../js/lunr.min.js" defer></script>
+    <script src="../../js/typeahead.jquery.js" defer></script>
+    <script src="../../js/jazzy.search.js" defer></script>
+  </head>
+  <body>
+
+    <a name="//apple_ref/swift/Enum/Code" class="dashAnchor"></a>
+
+    <a title="Code Enumeration Reference"></a>
+
+    <header class="header">
+      <p class="header-col header-col--primary">
+        <a class="header-link" href="../../index.html">
+           1.16.0
+ Docs
+        </a>
+         (100% documented)
+      </p>
+    
+      <div class="header-col--secondary">
+        <form role="search" action="../../search.json">
+          <input type="text" placeholder="Search documentation" data-typeahead>
+        </form>
+      </div>
+    
+        <p class="header-col header-col--secondary">
+          <a class="header-link" href="https://github.com/gematik/E-Rezept-App-iOS">
+            <img class="header-icon" src="../../img/gh.png" alt="GitHub"/>
+            View on GitHub
+          </a>
+        </p>
+    
+    </header>
+
+    <p class="breadcrumbs">
+      <a class="breadcrumb" href="../../index.html"> Reference</a>
+      <img class="carat" src="../../img/carat.png" alt=""/>
+      Code Enumeration Reference
+    </p>
+
+    <div class="content-wrapper">
+      <nav class="navigation">
+        <ul class="nav-groups">
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../../Guides.html">Guides</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../readme.html">Readme</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../../Classes.html">Classes</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Classes/BiometricsSHA256Signer.html">BiometricsSHA256Signer</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Classes/BiometricsSHA256Signer/Error.html">– Error</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Classes/DefaultIDPSession.html">DefaultIDPSession</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Classes/DefaultIDPSession/Configuration.html">– Configuration</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Classes/DefaultSecureEnclaveSignatureProvider.html">DefaultSecureEnclaveSignatureProvider</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Classes/IDPInterceptor.html">IDPInterceptor</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Classes.html#/s:3IDP14PairingSessionC">PairingSession</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../../Enums.html">Enumerations</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Enums/ConversionError.html">ConversionError</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Enums/IDPCodeChallengeMode.html">IDPCodeChallengeMode</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Enums/IDPError.html">IDPError</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Enums/IDPError/ServerResponse.html">– ServerResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Enums/IDPError/Code.html">– Code</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Enums/IDPError/InternalError.html">– InternalError</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Enums/SecureEnclaveSignatureProviderError.html">SecureEnclaveSignatureProviderError</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../../Extensions.html">Extensions</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Extensions/BrainpoolP256r1.html">BrainpoolP256r1</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Extensions/BrainpoolP256r1/KeyExchange.html">– KeyExchange</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../../Protocols.html">Protocols</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Protocols/ChallengeSession.html">ChallengeSession</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Protocols/ExtAuthRequestStorage.html">ExtAuthRequestStorage</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Protocols/IDPClient.html">IDPClient</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Protocols/IDPEndpoint.html">IDPEndpoint</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Protocols/IDPSchedulers.html">IDPSchedulers</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Protocols/IDPSession.html">IDPSession</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Protocols/IDPSessionDelegate.html">IDPSessionDelegate</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Protocols/IDPStorage.html">IDPStorage</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Protocols/SecureEGKCertificateStorage.html">SecureEGKCertificateStorage</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Protocols/SecureEnclaveSignatureProvider.html">SecureEnclaveSignatureProvider</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../../Structs.html">Structures</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Structs/AuthenticationData.html">AuthenticationData</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Structs/BiometricAuthenticationSession.html">BiometricAuthenticationSession</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Structs/DiscoveryDocument.html">DiscoveryDocument</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Structs/ExtAuthChallengeSession.html">ExtAuthChallengeSession</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Structs/IDPChallenge.html">IDPChallenge</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Structs/IDPChallenge/Claim.html">– Claim</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Structs/IDPChallenge/UserConsent.html">– UserConsent</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Structs/IDPChallengeResponse.html">IDPChallengeResponse</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Structs/IDPChallengeSession.html">IDPChallengeSession</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Structs/IDPDirectoryKKApps.html">IDPDirectoryKKApps</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Structs/IDPExchangeToken.html">IDPExchangeToken</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Structs/IDPExtAuth.html">IDPExtAuth</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Structs/IDPExtAuthVerify.html">IDPExtAuthVerify</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Structs/IDPToken.html">IDPToken</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Structs/KKAppDirectory.html">KKAppDirectory</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Structs/KKAppDirectory/Entry.html">– Entry</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Structs/NestedJWT.html">NestedJWT</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Structs/PairingData.html">PairingData</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Structs/PairingEntries.html">PairingEntries</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Structs/PairingEntry.html">PairingEntry</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Structs/PrivateKeyContainer.html">PrivateKeyContainer</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Structs/PrivateKeyContainer/Error.html">– Error</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Structs/RegistrationData.html">RegistrationData</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Structs/RegistrationData/DeviceInformation.html">– DeviceInformation</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Structs/SignedAuthenticationData.html">SignedAuthenticationData</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Structs/SignedChallenge.html">SignedChallenge</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Structs/SignedPairingData.html">SignedPairingData</a>
+              </li>
+            </ul>
+          </li>
+          <li class="nav-group-name">
+            <a class="nav-group-name-link" href="../../Typealiases.html">Type Aliases</a>
+            <ul class="nav-group-tasks">
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Typealiases.html#/s:3IDP8IDPScopea">IDPScope</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Typealiases.html#/s:3IDP6Randoma">Random</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Typealiases.html#/s:3IDP12TimeProvidera">TimeProvider</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../../Typealiases.html#/s:3IDP12VerifierCodea">VerifierCode</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+      <article class="main-content">
+
+        <section class="section">
+          <div class="section-content top-matter">
+            <h1>Code</h1>
+              <div class="declaration">
+                <div class="language">
+                  
+                  <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">enum</span> <span class="kt">Code</span> <span class="p">:</span> <span class="kt">String</span></code></pre>
+
+                </div>
+              </div>
+            
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-content">
+            <div class="task-group">
+              <ul class="item-container">
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO4CodeO15clientIdMissingyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/clientIdMissing" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO4CodeO15clientIdMissingyA2EmF">clientIdMissing</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">clientIdMissing</span> <span class="o">=</span> <span class="s">"1002"</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO4CodeO18redirectUriMissingyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/redirectUriMissing" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO4CodeO18redirectUriMissingyA2EmF">redirectUriMissing</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">redirectUriMissing</span> <span class="o">=</span> <span class="s">"1004"</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO4CodeO12scopeMissingyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/scopeMissing" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO4CodeO12scopeMissingyA2EmF">scopeMissing</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">scopeMissing</span> <span class="o">=</span> <span class="s">"1005"</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO4CodeO18redirectUriInvalidyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/redirectUriInvalid" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO4CodeO18redirectUriInvalidyA2EmF">redirectUriInvalid</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">redirectUriInvalid</span> <span class="o">=</span> <span class="s">"1020"</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO4CodeO12scopeInvalidyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/scopeInvalid" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO4CodeO12scopeInvalidyA2EmF">scopeInvalid</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">scopeInvalid</span> <span class="o">=</span> <span class="s">"1022"</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO4CodeO17fachdienstUnknownyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/fachdienstUnknown" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO4CodeO17fachdienstUnknownyA2EmF">fachdienstUnknown</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">fachdienstUnknown</span> <span class="o">=</span> <span class="s">"1030"</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO4CodeO12generalErroryA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/generalError" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO4CodeO12generalErroryA2EmF">generalError</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">generalError</span> <span class="o">=</span> <span class="s">"1500"</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO4CodeO26pairingAuthorizationFailedyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/pairingAuthorizationFailed" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO4CodeO26pairingAuthorizationFailedyA2EmF">pairingAuthorizationFailed</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">pairingAuthorizationFailed</span> <span class="o">=</span> <span class="s">"2000"</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO4CodeO23requestSignatureMissingyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/requestSignatureMissing" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO4CodeO23requestSignatureMissingyA2EmF">requestSignatureMissing</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">requestSignatureMissing</span> <span class="o">=</span> <span class="s">"2001"</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO4CodeO12stateMissingyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/stateMissing" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO4CodeO12stateMissingyA2EmF">stateMissing</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">stateMissing</span> <span class="o">=</span> <span class="s">"2002"</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO4CodeO16algorithmInvalidyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/algorithmInvalid" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO4CodeO16algorithmInvalidyA2EmF">algorithmInvalid</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">algorithmInvalid</span> <span class="o">=</span> <span class="s">"2003"</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO4CodeO19responseTypeMissingyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/responseTypeMissing" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO4CodeO19responseTypeMissingyA2EmF">responseTypeMissing</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">responseTypeMissing</span> <span class="o">=</span> <span class="s">"2004"</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO4CodeO24responseTypeNotSupportedyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/responseTypeNotSupported" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO4CodeO24responseTypeNotSupportedyA2EmF">responseTypeNotSupported</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">responseTypeNotSupported</span> <span class="o">=</span> <span class="s">"2005"</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO4CodeO12stateInvalidyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/stateInvalid" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO4CodeO12stateInvalidyA2EmF">stateInvalid</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">stateInvalid</span> <span class="o">=</span> <span class="s">"2006"</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO4CodeO12nonceInvalidyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/nonceInvalid" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO4CodeO12nonceInvalidyA2EmF">nonceInvalid</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">nonceInvalid</span> <span class="o">=</span> <span class="s">"2007"</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO4CodeO26codeChallengeMethodInvalidyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/codeChallengeMethodInvalid" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO4CodeO26codeChallengeMethodInvalidyA2EmF">codeChallengeMethodInvalid</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">codeChallengeMethodInvalid</span> <span class="o">=</span> <span class="s">"2008"</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO4CodeO20codeChallengeMissingyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/codeChallengeMissing" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO4CodeO20codeChallengeMissingyA2EmF">codeChallengeMissing</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">codeChallengeMissing</span> <span class="o">=</span> <span class="s">"2009"</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO4CodeO20codeChallengeInvalidyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/codeChallengeInvalid" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO4CodeO20codeChallengeInvalidyA2EmF">codeChallengeInvalid</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">codeChallengeInvalid</span> <span class="o">=</span> <span class="s">"2010"</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO4CodeO25requestParameterDuplicateyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/requestParameterDuplicate" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO4CodeO25requestParameterDuplicateyA2EmF">requestParameterDuplicate</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">requestParameterDuplicate</span> <span class="o">=</span> <span class="s">"2011"</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO4CodeO15clientIdInvalidyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/clientIdInvalid" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO4CodeO15clientIdInvalidyA2EmF">clientIdInvalid</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">clientIdInvalid</span> <span class="o">=</span> <span class="s">"2012"</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO4CodeO23requestSignatureInvalidyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/requestSignatureInvalid" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO4CodeO23requestSignatureInvalidyA2EmF">requestSignatureInvalid</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">requestSignatureInvalid</span> <span class="o">=</span> <span class="s">"2013"</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO4CodeO30requestSignatureFromIdpMissingyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/requestSignatureFromIdpMissing" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO4CodeO30requestSignatureFromIdpMissingyA2EmF">requestSignatureFromIdpMissing</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">requestSignatureFromIdpMissing</span> <span class="o">=</span> <span class="s">"2014"</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO4CodeO23signingAlgorithmInvalidyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/signingAlgorithmInvalid" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO4CodeO23signingAlgorithmInvalidyA2EmF">signingAlgorithmInvalid</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">signingAlgorithmInvalid</span> <span class="o">=</span> <span class="s">"2015"</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO4CodeO30requestSignatureFromIdpInvalidyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/requestSignatureFromIdpInvalid" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO4CodeO30requestSignatureFromIdpInvalidyA2EmF">requestSignatureFromIdpInvalid</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">requestSignatureFromIdpInvalid</span> <span class="o">=</span> <span class="s">"2016"</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO4CodeO21autCertificateInvalidyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/autCertificateInvalid" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO4CodeO21autCertificateInvalidyA2EmF">autCertificateInvalid</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">autCertificateInvalid</span> <span class="o">=</span> <span class="s">"2020"</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO4CodeO27noResponseFromOcspOrTimeoutyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/noResponseFromOcspOrTimeout" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO4CodeO27noResponseFromOcspOrTimeoutyA2EmF">noResponseFromOcspOrTimeout</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">noResponseFromOcspOrTimeout</span> <span class="o">=</span> <span class="s">"2021"</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO4CodeO16challengeInvalidyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/challengeInvalid" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO4CodeO16challengeInvalidyA2EmF">challengeInvalid</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">challengeInvalid</span> <span class="o">=</span> <span class="s">"2030"</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO4CodeO23authorizationExpMissingyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/authorizationExpMissing" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO4CodeO23authorizationExpMissingyA2EmF">authorizationExpMissing</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">authorizationExpMissing</span> <span class="o">=</span> <span class="s">"2031"</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO4CodeO16challengeExpiredyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/challengeExpired" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO4CodeO16challengeExpiredyA2EmF">challengeExpired</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">challengeExpired</span> <span class="o">=</span> <span class="s">"2032"</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO4CodeO15ssoTokenInvalidyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/ssoTokenInvalid" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO4CodeO15ssoTokenInvalidyA2EmF">ssoTokenInvalid</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">ssoTokenInvalid</span> <span class="o">=</span> <span class="s">"2040"</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO4CodeO32ssoTokenAndChallengeIncompatibleyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/ssoTokenAndChallengeIncompatible" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO4CodeO32ssoTokenAndChallengeIncompatibleyA2EmF">ssoTokenAndChallengeIncompatible</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">ssoTokenAndChallengeIncompatible</span> <span class="o">=</span> <span class="s">"2041"</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO4CodeO28claimsOfUserConsentIsMissingyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/claimsOfUserConsentIsMissing" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO4CodeO28claimsOfUserConsentIsMissingyA2EmF">claimsOfUserConsentIsMissing</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">claimsOfUserConsentIsMissing</span> <span class="o">=</span> <span class="s">"2042"</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO4CodeO16encryptionFailedyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/encryptionFailed" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO4CodeO16encryptionFailedyA2EmF">encryptionFailed</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">encryptionFailed</span> <span class="o">=</span> <span class="s">"2050"</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO4CodeO12unknownErroryA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/unknownError" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO4CodeO12unknownErroryA2EmF">unknownError</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">unknownError</span> <span class="o">=</span> <span class="s">"2100"</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO4CodeO015codeVerifierAndC21ChallengeIncompatibleyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/codeVerifierAndCodeChallengeIncompatible" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO4CodeO015codeVerifierAndC21ChallengeIncompatibleyA2EmF">codeVerifierAndCodeChallengeIncompatible</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">codeVerifierAndCodeChallengeIncompatible</span> <span class="o">=</span> <span class="s">"3000"</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO4CodeO029missingClaimsInAuthenticationC0yA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/missingClaimsInAuthenticationCode" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO4CodeO029missingClaimsInAuthenticationC0yA2EmF">missingClaimsInAuthenticationCode</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">missingClaimsInAuthenticationCode</span> <span class="o">=</span> <span class="s">"3001"</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO4CodeO19codeVerifierMissingyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/codeVerifierMissing" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO4CodeO19codeVerifierMissingyA2EmF">codeVerifierMissing</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">codeVerifierMissing</span> <span class="o">=</span> <span class="s">"3004"</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO4CodeO013authorizationC7MissingyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/authorizationCodeMissing" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO4CodeO013authorizationC7MissingyA2EmF">authorizationCodeMissing</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">authorizationCodeMissing</span> <span class="o">=</span> <span class="s">"3005"</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO4CodeO16grantTypeMissingyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/grantTypeMissing" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO4CodeO16grantTypeMissingyA2EmF">grantTypeMissing</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">grantTypeMissing</span> <span class="o">=</span> <span class="s">"3006"</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO4CodeO20tokenClientIdInvalidyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/tokenClientIdInvalid" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO4CodeO20tokenClientIdInvalidyA2EmF">tokenClientIdInvalid</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">tokenClientIdInvalid</span> <span class="o">=</span> <span class="s">"3007"</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO4CodeO013authorizationC16SignatureInvalidyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/authorizationCodeSignatureInvalid" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO4CodeO013authorizationC16SignatureInvalidyA2EmF">authorizationCodeSignatureInvalid</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">authorizationCodeSignatureInvalid</span> <span class="o">=</span> <span class="s">"3010"</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO4CodeO013authorizationC7ExpiredyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/authorizationCodeExpired" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO4CodeO013authorizationC7ExpiredyA2EmF">authorizationCodeExpired</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">authorizationCodeExpired</span> <span class="o">=</span> <span class="s">"3011"</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO4CodeO15tokenExpMissingyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/tokenExpMissing" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO4CodeO15tokenExpMissingyA2EmF">tokenExpMissing</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">tokenExpMissing</span> <span class="o">=</span> <span class="s">"3012"</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO4CodeO013authorizationC11NotReadableyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/authorizationCodeNotReadable" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO4CodeO013authorizationC11NotReadableyA2EmF">authorizationCodeNotReadable</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">authorizationCodeNotReadable</span> <span class="o">=</span> <span class="s">"3013"</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO4CodeO21grantTypeNotSupportedyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/grantTypeNotSupported" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO4CodeO21grantTypeNotSupportedyA2EmF">grantTypeNotSupported</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">grantTypeNotSupported</span> <span class="o">=</span> <span class="s">"3014"</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO4CodeO19codeVerifierInvalidyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/codeVerifierInvalid" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO4CodeO19codeVerifierInvalidyA2EmF">codeVerifierInvalid</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">codeVerifierInvalid</span> <span class="o">=</span> <span class="s">"3016"</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO4CodeO18keyVerifierMissingyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/keyVerifierMissing" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO4CodeO18keyVerifierMissingyA2EmF">keyVerifierMissing</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">keyVerifierMissing</span> <span class="o">=</span> <span class="s">"3020"</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO4CodeO22keyVerifierNotReadableyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/keyVerifierNotReadable" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO4CodeO22keyVerifierNotReadableyA2EmF">keyVerifierNotReadable</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">keyVerifierNotReadable</span> <span class="o">=</span> <span class="s">"3021"</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO4CodeO15tokenKeyMissingyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/tokenKeyMissing" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO4CodeO15tokenKeyMissingyA2EmF">tokenKeyMissing</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">tokenKeyMissing</span> <span class="o">=</span> <span class="s">"3022"</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO4CodeO19tokenKeyNotReadableyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/tokenKeyNotReadable" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO4CodeO19tokenKeyNotReadableyA2EmF">tokenKeyNotReadable</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">tokenKeyNotReadable</span> <span class="o">=</span> <span class="s">"3023"</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO4CodeO25pairingDeactivationFailedyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/pairingDeactivationFailed" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO4CodeO25pairingDeactivationFailedyA2EmF">pairingDeactivationFailed</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">pairingDeactivationFailed</span> <span class="o">=</span> <span class="s">"4000"</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO4CodeO12accessDeniedyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/accessDenied" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO4CodeO12accessDeniedyA2EmF">accessDenied</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">accessDenied</span> <span class="o">=</span> <span class="s">"4001"</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO4CodeO13deviceInvalidyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/deviceInvalid" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO4CodeO13deviceInvalidyA2EmF">deviceInvalid</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">deviceInvalid</span> <span class="o">=</span> <span class="s">"4002"</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO4CodeO21keyRegistrationFailedyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/keyRegistrationFailed" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO4CodeO21keyRegistrationFailedyA2EmF">keyRegistrationFailed</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">keyRegistrationFailed</span> <span class="o">=</span> <span class="s">"4003"</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO4CodeO24duplicateKeyRegistrationyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/duplicateKeyRegistration" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO4CodeO24duplicateKeyRegistrationyA2EmF">duplicateKeyRegistration</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">duplicateKeyRegistration</span> <span class="o">=</span> <span class="s">"4004"</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:3IDP8IDPErrorO4CodeO30keyRegistrationDataNotReadableyA2EmF"></a>
+                    <a name="//apple_ref/swift/Element/keyRegistrationDataNotReadable" class="dashAnchor"></a>
+                    <a class="token" href="#/s:3IDP8IDPErrorO4CodeO30keyRegistrationDataNotReadableyA2EmF">keyRegistrationDataNotReadable</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="k">case</span> <span class="n">keyRegistrationDataNotReadable</span> <span class="o">=</span> <span class="s">"4005"</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+      </article>
+    </div>
+    <section class="footer">
+      <p>&copy; 2023 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2023-12-12)</p>
+      <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.3</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
+    </section>
+  </body>
+</html>

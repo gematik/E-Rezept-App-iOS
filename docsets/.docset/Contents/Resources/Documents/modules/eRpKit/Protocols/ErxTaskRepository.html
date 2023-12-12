@@ -21,7 +21,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="../index.html">
-           1.13.0
+           1.16.0
  Docs
         </a>
          (100% documented)
@@ -178,6 +178,9 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Protocols/DataMatrixStringEncoder.html">DataMatrixStringEncoder</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="../Protocols/ErxChargeItemMatrixCode.html">ErxChargeItemMatrixCode</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="../Protocols/ErxLocalDataStore.html">ErxLocalDataStore</a>
@@ -938,6 +941,98 @@ Note: The response does not verify that the pharmacy has accepted the order</p>
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:6eRpKit17ErxTaskRepositoryP27loadRemoteLatestAuditEvents3for7Combine12AnyPublisherVyAA12PagedContentVySayAA0cI5EventVGGAA0cE5ErrorOGSSSg_tF"></a>
+                    <a name="//apple_ref/swift/Method/loadRemoteLatestAuditEvents(for:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:6eRpKit17ErxTaskRepositoryP27loadRemoteLatestAuditEvents3for7Combine12AnyPublisherVyAA12PagedContentVySayAA0cI5EventVGGAA0cE5ErrorOGSSSg_tF">loadRemoteLatestAuditEvents(for:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Load all AuditEvent&rsquo;s from a remote (server)</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">loadRemoteLatestAuditEvents</span><span class="p">(</span><span class="k">for</span> <span class="nv">locale</span><span class="p">:</span> <span class="kt">String</span><span class="p">?)</span>
+    <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/PagedContent.html">PagedContent</a></span><span class="o">&lt;</span><span class="p">[</span><span class="kt"><a href="../Structs/ErxAuditEvent.html">ErxAuditEvent</a></span><span class="p">]</span><span class="o">&gt;</span><span class="p">,</span> <span class="kt"><a href="../Enums/ErxRepositoryError.html">ErxRepositoryError</a></span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Return Value</h4>
+                        <p>AnyPublisher that emits true if loading and sing the audit events was successful.
+       Raises a <code>DefaultErxTaskRepository.Error</code> if not</p>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:6eRpKit17ErxTaskRepositoryP25loadRemoteAuditEventsPage4from6locale7Combine12AnyPublisherVyAA12PagedContentVySayAA0cH5EventVGGAA0cE5ErrorOG10Foundation3URLV_SSSgtF"></a>
+                    <a name="//apple_ref/swift/Method/loadRemoteAuditEventsPage(from:locale:)" class="dashAnchor"></a>
+                    <a class="token" href="#/s:6eRpKit17ErxTaskRepositoryP25loadRemoteAuditEventsPage4from6locale7Combine12AnyPublisherVyAA12PagedContentVySayAA0cH5EventVGGAA0cE5ErrorOG10Foundation3URLV_SSSgtF">loadRemoteAuditEventsPage(from:<wbr>locale:<wbr>)</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Load one page of audit events from a remote (server) from an url previously provided by the server</p>
+
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">func</span> <span class="nf">loadRemoteAuditEventsPage</span><span class="p">(</span><span class="n">from</span> <span class="nv">url</span><span class="p">:</span> <span class="kt">URL</span><span class="p">,</span> <span class="nv">locale</span><span class="p">:</span> <span class="kt">String</span><span class="p">?)</span>
+    <span class="o">-&gt;</span> <span class="kt">AnyPublisher</span><span class="o">&lt;</span><span class="kt"><a href="../Structs/PagedContent.html">PagedContent</a></span><span class="o">&lt;</span><span class="p">[</span><span class="kt"><a href="../Structs/ErxAuditEvent.html">ErxAuditEvent</a></span><span class="p">]</span><span class="o">&gt;</span><span class="p">,</span> <span class="kt"><a href="../Enums/ErxRepositoryError.html">ErxRepositoryError</a></span><span class="o">&gt;</span></code></pre>
+
+                        </div>
+                      </div>
+                      <div>
+                        <h4>Parameters</h4>
+                        <table class="graybox">
+                          <tbody>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>url</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>destination of the request</p>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr>
+                              <td>
+                                <code>
+                                <em>locale</em>
+                                </code>
+                              </td>
+                              <td>
+                                <div>
+                                  <p>Location type of the language in which the result should be returned</p>
+                                </div>
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:6eRpKit17ErxTaskRepositoryP21loadRemoteChargeItems7Combine12AnyPublisherVySayAA0c6SparseH4ItemVGAA0cE5ErrorOGyF"></a>
                     <a name="//apple_ref/swift/Method/loadRemoteChargeItems()" class="dashAnchor"></a>
                     <a class="token" href="#/s:6eRpKit17ErxTaskRepositoryP21loadRemoteChargeItems7Combine12AnyPublisherVySayAA0c6SparseH4ItemVGAA0cE5ErrorOGyF">loadRemoteChargeItems()</a>
@@ -1288,7 +1383,7 @@ Uses the request headers  ACCESS_TOKEN with the containing insurance id</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2023 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2023-08-23)</p>
+      <p>&copy; 2023 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2023-12-12)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.3</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>

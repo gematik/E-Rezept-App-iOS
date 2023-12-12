@@ -60,7 +60,7 @@ i-01502,"MainDomain.Error.userSessionError","",UserSessionError
 i-01503,"MainDomain.Error.importDuplicate","Import of shared Task failed due to being a duplicate already existing within the app",
 i-01504,"MainDomain.Error.repositoryError","Saving or retrieving data failed",ErxRepositoryError
 i-01601,"PrescriptionDetailDomain.LoadingImageError.matrixCodeGenerationFailed","",
-i-02301,"RedeemMatrixCodeDomain.LoadingImageError.matrixCodeGenerationFailed","",
+i-02301,"MatrixCodeDomain.LoadingImageError.matrixCodeGenerationFailed","",
 i-02401,"RedeemServiceError.eRxRepository","When redeeming a task via Fachdienst",ErxRepositoryError
 i-02402,"RedeemServiceError.avs","When redeeming a task via AVS",AVSError
 i-02403,"RedeemServiceError.internalError","When an internal error occurs which most likely is a programming error",RedeemServiceError.InternalError
@@ -80,6 +80,11 @@ i-02602,"NFCHealthCardPasswordControllerError.openSecureSession","",
 i-02603,"NFCHealthCardPasswordControllerError.resetRetryCounter","",
 i-02604,"NFCHealthCardPasswordControllerError.wrongCan","",
 i-02605,"NFCHealthCardPasswordControllerError.changeReferenceData","",
+i-03601,"ChargeItemConsentService.Error.localStore","",LocalStoreError
+i-03602,"ChargeItemConsentService.Error.loginHandler","",LoginHandlerError
+i-03603,"ChargeItemConsentService.Error.erxRepository","",ErxRepositoryError
+i-03604,"ChargeItemConsentService.Error.unexpectedGrantConsentResponse","",
+i-03605,"ChargeItemConsentService.Error.unexpected","",
 i-03101,"ChargeItemDomainServiceAuthenticateResult.Error.loginHandler","",LoginHandlerError
 i-03102,"ChargeItemDomainServiceAuthenticateResult.Error.unexpected","",
 i-03401,"ChargeItemDomainServiceDeleteResult.Error.localStore","",LocalStoreError
@@ -90,11 +95,13 @@ i-03001,"ChargeItemDomainServiceFetchResult.Error.localStore","",LocalStoreError
 i-03002,"ChargeItemDomainServiceFetchResult.Error.loginHandler","",LoginHandlerError
 i-03003,"ChargeItemDomainServiceFetchResult.Error.erxRepository","",ErxRepositoryError
 i-03004,"ChargeItemDomainServiceFetchResult.Error.unexpected","",
+i-03005,"ChargeItemDomainServiceFetchResult.Error.chargeItemConsentService","",ChargeItemConsentService.Error
 i-03201,"ChargeItemListDomainServiceGrantResult.Error.localStore","",LocalStoreError
 i-03202,"ChargeItemListDomainServiceGrantResult.Error.loginHandler","",LoginHandlerError
 i-03203,"ChargeItemListDomainServiceGrantResult.Error.erxRepository","",ErxRepositoryError
 i-03204,"ChargeItemListDomainServiceGrantResult.Error.unexpectedGrantConsentResponse","",
 i-03205,"ChargeItemListDomainServiceGrantResult.Error.unexpected","",
+i-03206,"ChargeItemListDomainServiceGrantResult.Error.chargeItemConsentService","",ChargeItemConsentService.Error
 i-03301,"ChargeItemListDomainServiceRevokeResult.Error.localStore","",LocalStoreError
 i-03302,"ChargeItemListDomainServiceRevokeResult.Error.loginHandler","",LoginHandlerError
 i-03303,"ChargeItemListDomainServiceRevokeResult.Error.erxRepository","",ErxRepositoryError
@@ -107,6 +114,9 @@ i-03505,"ChargeItemPDFServiceError.dataMissingPatient","",
 i-03506,"ChargeItemPDFServiceError.dataMissingDoctor","",
 i-03507,"ChargeItemPDFServiceError.dataMissingPharmacy","",
 i-03508,"ChargeItemPDFServiceError.dataMissingInvoice","",
+i-02801,"AuditEventsServiceError.missingAuthentication","",
+i-02802,"AuditEventsServiceError.loginHandlerError","",LoginHandlerError
+i-02803,"AuditEventsServiceError.erxRepositoryError","",ErxRepositoryError
 i-01701,"RegisteredDevicesDomain.Error.generic","",
 i-01801,"RegisteredDevicesServiceError.missingAuthentication","",
 i-01802,"RegisteredDevicesServiceError.missingToken","",
@@ -126,6 +136,9 @@ i-02103,"IDTokenValidatorError.profileWithInsuranceIdExists","",
 i-02104,"IDTokenValidatorError.other","",
 i-02201,"UserProfileServiceError.localStoreError","",LocalStoreError
 i-00801,"UserSessionError.idpError","",IDPError
+i-,"MockAnswer.Error.decodingError","",
+i-20201,"DefaultDataMatrixStringEncoderError.stringEncoding","Generic error while encoding the string.",
+i-20202,"DefaultDataMatrixStringEncoderError.missingAccessCode","Access code is missing",
 i-20601,"ErxConsent.Error.unableToConstructConsentRequest","Unable to construct consent request",
 i-20602,"ErxConsent.Error.invalidErxConsentInput","Invalid ErxConsent input",
 i-20101,"ErxTask.Status.Error.decoding","",
@@ -138,7 +151,6 @@ i-20601,"ErxTaskOrder.Error.unableToConstructCommunicationRequest","Unable to co
 i-20602,"ErxTaskOrder.Error.invalidErxTaskOrderInput","Invalid ErxTaskOrder though previous validation checks have been passed",
 i-20001,"ErxRepositoryError.local","",LocalStoreError
 i-20002,"ErxRepositoryError.remote","",RemoteStoreError
-i-20201,"DefaultDataMatrixStringEncoderError.stringEncoding","Generic error while encoding the string.",
 i-20301,"LocalStoreError.notImplemented","",
 i-20302,"LocalStoreError.initialization","",
 i-20303,"LocalStoreError.write","",

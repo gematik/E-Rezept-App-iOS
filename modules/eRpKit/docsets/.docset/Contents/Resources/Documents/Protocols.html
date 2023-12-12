@@ -21,7 +21,7 @@
     <header class="header">
       <p class="header-col header-col--primary">
         <a class="header-link" href="index.html">
-           1.13.0
+           1.16.0
  Docs
         </a>
          (100% documented)
@@ -178,6 +178,9 @@
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Protocols/DataMatrixStringEncoder.html">DataMatrixStringEncoder</a>
+              </li>
+              <li class="nav-group-task">
+                <a class="nav-group-task-link" href="Protocols/ErxChargeItemMatrixCode.html">ErxChargeItemMatrixCode</a>
               </li>
               <li class="nav-group-task">
                 <a class="nav-group-task-link" href="Protocols/ErxLocalDataStore.html">ErxLocalDataStore</a>
@@ -532,34 +535,6 @@
                 <li class="item">
                   <div>
                     <code>
-                    <a name="/s:6eRpKit18ErxRemoteDataStoreP"></a>
-                    <a name="//apple_ref/swift/Protocol/ErxRemoteDataStore" class="dashAnchor"></a>
-                    <a class="token" href="#/s:6eRpKit18ErxRemoteDataStoreP">ErxRemoteDataStore</a>
-                    </code>
-                  </div>
-                  <div class="height-container">
-                    <div class="pointer-container"></div>
-                    <section class="section">
-                      <div class="pointer"></div>
-                      <div class="abstract">
-                        <p>Interface for the remote data store</p>
-
-                        <a href="Protocols/ErxRemoteDataStore.html" class="slightly-smaller">See more</a>
-                      </div>
-                      <div class="declaration">
-                        <h4>Declaration</h4>
-                        <div class="language">
-                          <p class="aside-title">Swift</p>
-                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">protocol</span> <span class="kt">ErxRemoteDataStore</span></code></pre>
-
-                        </div>
-                      </div>
-                    </section>
-                  </div>
-                </li>
-                <li class="item">
-                  <div>
-                    <code>
                     <a name="/s:6eRpKit23DataMatrixStringEncoderP"></a>
                     <a name="//apple_ref/swift/Protocol/DataMatrixStringEncoder" class="dashAnchor"></a>
                     <a class="token" href="#/s:6eRpKit23DataMatrixStringEncoderP">DataMatrixStringEncoder</a>
@@ -588,6 +563,34 @@
                 <li class="item">
                   <div>
                     <code>
+                    <a name="/s:6eRpKit23ErxChargeItemMatrixCodeP"></a>
+                    <a name="//apple_ref/swift/Protocol/ErxChargeItemMatrixCode" class="dashAnchor"></a>
+                    <a class="token" href="#/s:6eRpKit23ErxChargeItemMatrixCodeP">ErxChargeItemMatrixCode</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>conforming instances can be used to generate a matrix code</p>
+
+                        <a href="Protocols/ErxChargeItemMatrixCode.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">protocol</span> <span class="kt">ErxChargeItemMatrixCode</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
                     <a name="/s:6eRpKit17ErxTaskMatrixCodeP"></a>
                     <a name="//apple_ref/swift/Protocol/ErxTaskMatrixCode" class="dashAnchor"></a>
                     <a class="token" href="#/s:6eRpKit17ErxTaskMatrixCodeP">ErxTaskMatrixCode</a>
@@ -607,6 +610,34 @@
                         <div class="language">
                           <p class="aside-title">Swift</p>
                           <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">protocol</span> <span class="kt">ErxTaskMatrixCode</span></code></pre>
+
+                        </div>
+                      </div>
+                    </section>
+                  </div>
+                </li>
+                <li class="item">
+                  <div>
+                    <code>
+                    <a name="/s:6eRpKit18ErxRemoteDataStoreP"></a>
+                    <a name="//apple_ref/swift/Protocol/ErxRemoteDataStore" class="dashAnchor"></a>
+                    <a class="token" href="#/s:6eRpKit18ErxRemoteDataStoreP">ErxRemoteDataStore</a>
+                    </code>
+                  </div>
+                  <div class="height-container">
+                    <div class="pointer-container"></div>
+                    <section class="section">
+                      <div class="pointer"></div>
+                      <div class="abstract">
+                        <p>Interface for the remote data store</p>
+
+                        <a href="Protocols/ErxRemoteDataStore.html" class="slightly-smaller">See more</a>
+                      </div>
+                      <div class="declaration">
+                        <h4>Declaration</h4>
+                        <div class="language">
+                          <p class="aside-title">Swift</p>
+                          <pre class="highlight swift"><code><span class="kd">public</span> <span class="kd">protocol</span> <span class="kt">ErxRemoteDataStore</span></code></pre>
 
                         </div>
                       </div>
@@ -798,7 +829,7 @@ sourcery: StreamWrapped</p>
       </article>
     </div>
     <section class="footer">
-      <p>&copy; 2023 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2023-08-23)</p>
+      <p>&copy; 2023 <a class="link" href="https://www.gematik.de" target="_blank" rel="external noopener">gematik GmbH</a>. All rights reserved. (Last updated: 2023-12-12)</p>
       <p>Generated by <a class="link" href="https://github.com/realm/jazzy" target="_blank" rel="external noopener">jazzy ♪♫ v0.14.3</a>, a <a class="link" href="https://realm.io" target="_blank" rel="external noopener">Realm</a> project.</p>
     </section>
   </body>
